@@ -17,10 +17,10 @@ import type { BaseFilterComponent } from './baseMultiFilter';
 import { BaseMultiFilter } from './baseMultiFilter';
 import type { MultiFilterHandler } from './multiFilterHandler';
 import {
+    DEFAULT_CHILD_FILTER,
     getFilterModelForIndex,
     getMultiFilterDefs,
     getUpdatedMultiFilterModel,
-    updateGetValue,
 } from './multiFilterUtil';
 
 // This version of multi filter is only used when `enableFilterHandlers = true`
@@ -142,7 +142,7 @@ export class MultiFilterUi
             userCompFactory,
             filterDef,
             filterParams,
-            'agTextColumnFilter'
+            DEFAULT_CHILD_FILTER
         );
         if (!compDetails) {
             return AgPromise.resolve(null);
@@ -226,7 +226,7 @@ export class MultiFilterUi
             },
             onUiChange,
             source,
-            getValue: updateGetValue(this.beans, column as AgColumn, filterDef, getValue),
+            getValue: this.getHandler().getChildGetValue(index) ?? getValue,
         };
     }
 

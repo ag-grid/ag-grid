@@ -79,7 +79,6 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-    // debug: true,
     columnDefs: columnDefs,
     pinnedTopRowData: [
         {

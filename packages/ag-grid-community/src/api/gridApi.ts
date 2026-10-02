@@ -356,7 +356,11 @@ export interface _KeyboardNavigationGridApi {
     /** Clears the focused cell. */
     clearFocusedCell(): void;
 
-    /** Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned). */
+    /**
+     * Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned).
+     * A column that a `colSpan` covers focuses the cell spanning it, as keyboard navigation does, even when that
+     * cell is scrolled out of view.
+     */
     setFocusedCell(rowIndex: number, colKey: string | Column, rowPinned?: RowPinnedType): void;
 
     /** Sets the focus to the specified header. If `floatingFilter` is true, the Column's floatingFilter element will be focused. */

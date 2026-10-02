@@ -915,7 +915,7 @@ export class StateService extends BeanStub implements NamedBean {
             return;
         }
         const { colId, rowIndex, rowPinned } = focusedCellState;
-        focusSvc.setFocusedCell({
+        focusSvc.setFocusedCellOrSpan({
             column: colModel.colsById[colId] ?? null,
             rowIndex,
             rowPinned,

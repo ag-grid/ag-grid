@@ -1,5 +1,7 @@
-.ag-row-group {
+.custom-group-row {
     display: flex;
     align-items: center;
-    padding-left: 5px;
+    gap: 5px;
+    height: 100%;
+    margin-left: 5px;
 }

@@ -7,6 +7,8 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _getDefaultSimpleFilter, _getFilterParamsForDataType } from 'ag-grid-community';
 
+import { getChildFilter } from './multiFilterUtil';
+
 export class MultiFilterService extends BeanStub implements IMultiFilterService {
     readonly beanName = 'multiFilter' as const;
 
@@ -24,18 +26,16 @@ export class MultiFilterService extends BeanStub implements IMultiFilterService 
         }
         const translate = this.getLocaleTextFunc();
         filters = filters.map((filterDef) => {
-            const {
-                filter,
-                filterParams: existingChildFilterParams,
-                filterValueGetter: existingChildFilterValueGetter,
-            } = filterDef;
+            const { filterParams: existingChildFilterParams, filterValueGetter: existingChildFilterValueGetter } =
+                filterDef;
+            const filter = getChildFilter(filterDef);
             if (typeof filter !== 'string') {
                 return filterDef;
             }
             const { filterParams, filterValueGetter } = _getFilterParamsForDataType(
                 filter,
                 existingChildFilterParams,
-                existingChildFilterValueGetter ?? existingFilterValueGetter,
+                existingChildFilterValueGetter || existingFilterValueGetter,
                 dataTypeDefinition,
                 formatValue,
                 beans,

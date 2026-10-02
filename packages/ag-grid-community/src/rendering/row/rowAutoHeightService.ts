@@ -72,7 +72,10 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
             }
 
             if (cellHeight === undefined) {
-                if (beans.visibleCols.colSpanActive && isColCovered(beans.rowRenderer.getRowCtrlByNode(row), col)) {
+                if (
+                    beans.visibleCols.colSpanColCount !== 0 &&
+                    isColCovered(beans.rowRenderer.getRowCtrlByNode(row), col)
+                ) {
                     continue;
                 }
                 return;
@@ -101,7 +104,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         if (cellHeight == undefined) {
             delete autoHeights[colId];
             // only column spanning skips a missing measurement, so only then can the row shrink
-            if (previousCellHeight !== undefined && this.beans.visibleCols.colSpanActive) {
+            if (previousCellHeight !== undefined && this.beans.visibleCols.colSpanColCount !== 0) {
                 this.requestCheckAutoHeight();
             }
             return;
@@ -203,7 +206,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
 
 /** Whether `rowCtrl`'s row is at least as tall as each of its centre auto-height cells. */
 const isRowMeasured = (beans: BeanCollection, rowCtrl: RowCtrl): boolean => {
-    const { autoHeightCols, colSpanActive } = beans.visibleCols;
+    const { autoHeightCols, colSpanColCount } = beans.visibleCols;
     const rowNode = rowCtrl.rowNode;
     const rowHeight = rowNode.rowHeight!;
     for (let i = 0, len = autoHeightCols.length; i < len; ++i) {
@@ -213,7 +216,7 @@ const isRowMeasured = (beans: BeanCollection, rowCtrl: RowCtrl): boolean => {
         }
         const cellHeight = getCellAutoHeight(beans, col, rowNode);
         if (cellHeight === undefined) {
-            if (!colSpanActive || !isColCovered(rowCtrl, col)) {
+            if (colSpanColCount === 0 || !isColCovered(rowCtrl, col)) {
                 return false;
             }
         } else if (cellHeight !== null && rowHeight < cellHeight) {

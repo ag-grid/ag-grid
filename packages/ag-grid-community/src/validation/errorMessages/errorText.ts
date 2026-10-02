@@ -820,7 +820,7 @@ export const AG_GRID_ERRORS = {
         'Since v35, `api.hideOverlay()` does not hide the overlay when `activeOverlay` is set. Set `activeOverlay=null` instead.' as const,
     297: () =>
         '`api.hideOverlay()` does not hide the no matching rows overlay as it is only controlled by grid state. Set `suppressOverlays=["noMatchingRows"] to not show it.' as const,
-    298: () => `Columns Tool Panel \`buttons\` requires \`apply\` to enable Deferred Updates.` as const,
+    298: () => `Columns Tool Panel \`cancel\` button has no effect without the \`apply\` button.` as const,
     301: ({ key }: { key: string }) =>
         `Toolbar item \`${key}\` is missing the \`toolbarItem\` property and will not be rendered.` as const,
     302: ({

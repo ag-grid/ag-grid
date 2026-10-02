@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     clearFilter: 'Notīrīt',
     cancelFilter: 'Atcelt',
     cancelColumnToolPanel: 'Atcelt',
+    resetColumnToolPanel: 'Atiestatīt',
 
     // Filter Titles
     textFilter: 'Teksta filtrs',

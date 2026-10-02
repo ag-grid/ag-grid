@@ -8,8 +8,14 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
+import type { ColDef, DoesFilterPassParams, GridApi, GridOptions, IFilterComp, IFilterParams } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    GridStateModule,
+    NumberFilterModule,
+    TextFilterModule,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import { ColumnMenuModule, FiltersToolPanelModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import { FILTERS_SIDEBAR, openFiltersPanel } from './toolPanelHarness';
@@ -67,6 +73,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     const gridsManager = new TestGridsManager({
         modules: [
             ClientSideRowModelModule,
+            GridStateModule,
             TextFilterModule,
             NumberFilterModule,
             MultiFilterModule,
@@ -403,6 +410,29 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
         `);
     });
 
+    test("a child using the default filter, a text filter, gets the text floating filter, not the column's default", async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'name',
+                    floatingFilter: true,
+                    filter: 'agMultiColumnFilter',
+                    filterParams: { filters: [{ filter: true }, { filter: 'agSetColumnFilter' }] },
+                },
+            ],
+            rowData: ROWS,
+        });
+        await api.setColumnFilterModel('name', {
+            filterType: 'multi',
+            filterModels: [{ filterType: 'text', type: 'contains', filter: 'bob' }, null],
+        });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        expect(visibleFloatingKind()).toBe('text');
+        expect(visibleFloatingInput().value).toBe('bob');
+    });
+
     test('readOnly sub-filter renders a disabled floating filter that still reflects the model', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
@@ -488,6 +518,175 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
         `);
     });
 
+    test("a child with an empty filter value getter reads through the Multi Filter's, with and without filter handlers or an object data type", async () => {
+        for (const enableFilterHandlers of [true, false]) {
+            for (const cellDataType of ['text', 'object']) {
+                const api: GridApi = await gridsManager.createGridAndWait(
+                    `grid-${enableFilterHandlers}-${cellDataType}`,
+                    {
+                        enableFilterHandlers,
+                        columnDefs: [
+                            {
+                                field: 'name',
+                                cellDataType,
+                                valueFormatter: ({ value }) => value,
+                                filterValueGetter: ({ data }) => `${data.name}!`,
+                                filter: 'agMultiColumnFilter',
+                                filterParams: {
+                                    filters: [
+                                        { filter: 'agTextColumnFilter', filterValueGetter: '' },
+                                        { filter: 'agSetColumnFilter', filterValueGetter: '' },
+                                    ],
+                                },
+                            },
+                        ],
+                        rowData: ROWS,
+                    }
+                );
+                const filterBy = async (filterModels: (object | null)[]) => {
+                    await api.setColumnFilterModel('name', { filterType: 'multi', filterModels });
+                    api.onFilterChanged();
+                    await asyncSetTimeout(0);
+                    await new GridRows(api, `empty child getter, handlers ${enableFilterHandlers}, ${cellDataType}`)
+                        .check(`
+                            ROOT id:ROOT_NODE_ID
+                            └── LEAF id:2 name:"bob"
+                        `);
+                };
+                await filterBy([{ filterType: 'text', type: 'equals', filter: 'bob!' }, null]);
+                await filterBy([null, { filterType: 'set', values: ['bob!'] }]);
+            }
+        }
+    });
+
+    test("a child with its own filter value getter reads another column as that column's value", async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            enableFilterHandlers: true,
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: {
+                        filters: [
+                            {
+                                filter: {
+                                    component: 'agTextColumnFilter',
+                                    doesFilterPass: ({ node, handlerParams }: DoesFilterPassParams) =>
+                                        handlerParams.getValue(node, 'team') === 'red',
+                                },
+                                filterValueGetter: () => 'the child reads this',
+                            },
+                        ],
+                    },
+                },
+                { field: 'team' },
+            ],
+            rowData: [
+                { name: 'bob', team: 'red' },
+                { name: 'alice', team: 'blue' },
+            ],
+        });
+
+        await api.setColumnFilterModel('name', {
+            filterType: 'multi',
+            filterModels: [{ filterType: 'text', type: 'contains', filter: 'any' }],
+        });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        await new GridRows(api, 'child reads the other column').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"bob" team:"red"
+        `);
+    });
+
+    test('a set child refusing new params stops the Multi Filter refreshing the children after it', async () => {
+        const refreshSources: string[] = [];
+        const recordingHandler = () => ({
+            doesFilterPass: () => true,
+            refresh: ({ source }: { source: string }) => {
+                refreshSources.push(source);
+            },
+        });
+        const cols = (caseSensitive: boolean) => [
+            {
+                field: 'name',
+                filter: 'agMultiColumnFilter',
+                filterParams: {
+                    filters: [
+                        { filter: 'agSetColumnFilter', filterParams: { caseSensitive } },
+                        { filter: { component: 'agTextColumnFilter', handler: recordingHandler } },
+                    ],
+                },
+            },
+        ];
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            enableFilterHandlers: true,
+            columnDefs: cols(false),
+            rowData: ROWS,
+        });
+        await api.setColumnFilterModel('name', {
+            filterType: 'multi',
+            filterModels: [{ filterType: 'set', values: ['bob'] }, null],
+        });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        // the recorder does see a column definition the set child accepts
+        api.setGridOption('columnDefs', cols(false));
+        await asyncSetTimeout(0);
+        expect(refreshSources).toContain('colDef');
+        refreshSources.length = 0;
+
+        api.setGridOption('columnDefs', cols(true));
+        await asyncSetTimeout(0);
+
+        expect(api.getColumnFilterModel('name')).toBeNull();
+        expect(refreshSources).not.toContain('colDef');
+    });
+
+    test("a child filter component with its own filter value getter reads another column as that column's value", async () => {
+        let childParams: IFilterParams | undefined;
+        class ProbeFilter implements IFilterComp {
+            public init(params: IFilterParams): void {
+                childParams = params;
+            }
+            public getGui(): HTMLElement {
+                return document.createElement('div');
+            }
+            public isFilterActive(): boolean {
+                return false;
+            }
+            public doesFilterPass(): boolean {
+                return true;
+            }
+            public getModel(): null {
+                return null;
+            }
+            public setModel(): void {}
+        }
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: {
+                        filters: [{ filter: ProbeFilter, filterValueGetter: () => 'the child reads this' }],
+                    },
+                },
+                { field: 'team' },
+            ],
+            rowData: [{ name: 'bob', team: 'red' }],
+        });
+        await api.getColumnFilterInstance('name');
+        const node = api.getRowNode('0')!;
+
+        expect([childParams!.getValue(node), childParams!.getValue(node, 'team')]).toEqual([
+            'the child reads this',
+            'red',
+        ]);
+    });
+
     describe.each([false, true])('filterParams.filters changed (enableFilterHandlers: %s)', (enableFilterHandlers) => {
         const TEXT_CHILD = { filter: 'agTextColumnFilter', filterParams: { debounceMs: 0, maxNumConditions: 1 } };
 
@@ -532,6 +731,389 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
 
             await ColumnFilterHarness.open(api, 'name');
             expect(setFilterList()).toBeNull();
+        });
+
+        test("a set child's key change resets a Multi Filter whose model came from the initial state", async () => {
+            const setChild = (caseSensitive: boolean) => ({
+                filter: 'agSetColumnFilter',
+                filterParams: { caseSensitive },
+            });
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: colDefsWith([TEXT_CHILD, setChild(false)]),
+                rowData: ROWS,
+                initialState: {
+                    filter: {
+                        filterModel: {
+                            name: { filterType: 'multi', filterModels: [null, { filterType: 'set', values: ['bob'] }] },
+                        },
+                    },
+                },
+            });
+            await asyncSetTimeout(0);
+            expect(api.getDisplayedRowAtIndex(0)!.data.name).toBe('bob');
+            expect(api.getDisplayedRowCount()).toBe(1);
+
+            api.setGridOption('columnDefs', colDefsWith([TEXT_CHILD, setChild(true)]));
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnFilterModel('name')).toBeNull();
+            expect(api.getDisplayedRowCount()).toBe(4);
+        });
+
+        test("a set child's model reconciled while it takes a new getter keeps reading through the new getter", async () => {
+            const byFirst = ({ data }: { data: { first: string } }) => data.first;
+            const bySecond = ({ data }: { data: { second: string } }) => data.second;
+            const setChild = (filterValueGetter: typeof byFirst | typeof bySecond, values: string[]) => ({
+                filter: 'agSetColumnFilter',
+                filterValueGetter,
+                filterParams: { values },
+            });
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: colDefsWith([TEXT_CHILD, setChild(byFirst, ['A', 'B', 'C'])], { field: 'first' }),
+                rowData: [
+                    { first: 'A', second: 'C' },
+                    { first: 'C', second: 'A' },
+                    { first: 'B', second: 'B' },
+                ],
+            });
+            await api.setColumnFilterModel('first', {
+                filterType: 'multi',
+                filterModels: [null, { filterType: 'set', values: ['A', 'B'] }],
+            });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+            expect(api.getDisplayedRowCount()).toBe(2);
+
+            // the selection's B is no longer listed, so the model is reconciled during the update
+            api.setGridOption(
+                'columnDefs',
+                colDefsWith([TEXT_CHILD, setChild(bySecond, ['A', 'C'])], { field: 'first' })
+            );
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnFilterModel('first')).toEqual({
+                filterType: 'multi',
+                filterModels: [null, { filterType: 'set', values: ['A'] }],
+            });
+            await new GridRows(api, 'rows whose second value is A').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:1 first:"C"
+            `);
+        });
+
+        test("a set child's key change resets the Multi Filter while an earlier child reconciles its model in the same update", async () => {
+            const setChild = (values: string[], caseSensitive: boolean) => ({
+                filter: 'agSetColumnFilter',
+                filterParams: { values, caseSensitive },
+            });
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: colDefsWith([setChild(['A', 'B', 'C'], false), setChild(['A', 'B', 'C'], false)]),
+                rowData: [{ name: 'A' }, { name: 'B' }, { name: 'C' }, { name: 'a' }],
+            });
+            await api.setColumnFilterModel('name', {
+                filterType: 'multi',
+                filterModels: [
+                    { filterType: 'set', values: ['A', 'C'] },
+                    { filterType: 'set', values: ['A'] },
+                ],
+            });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+            expect(api.getDisplayedRowCount()).toBe(2);
+
+            // the first child's C is no longer listed, and the second child's keys change
+            api.setGridOption(
+                'columnDefs',
+                colDefsWith([setChild(['A', 'B'], false), setChild(['A', 'B', 'C'], true)])
+            );
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnFilterModel('name')).toBeNull();
+            expect(api.getDisplayedRowCount()).toBe(4);
+        });
+
+        test("a set child's new case sensitivity resets the whole Multi Filter", async () => {
+            const setChild = (caseSensitive: boolean) => ({
+                filter: 'agSetColumnFilter',
+                filterParams: { caseSensitive },
+            });
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: colDefsWith([TEXT_CHILD, setChild(false)]),
+                rowData: ROWS,
+            });
+
+            await api.setColumnFilterModel('name', {
+                filterType: 'multi',
+                filterModels: [
+                    { filterType: 'text', type: 'contains', filter: 'mi' },
+                    { filterType: 'set', values: ['michael'] },
+                ],
+            });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+            await new GridRows(api, 'both children filtering').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"michael"
+            `);
+
+            api.setGridOption('columnDefs', colDefsWith([TEXT_CHILD, setChild(true)]));
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnFilterModel('name')).toBeNull();
+            await new GridRows(api, 'multi filter reset').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 name:"michael"
+                ├── LEAF id:1 name:"michelle"
+                ├── LEAF id:2 name:"bob"
+                └── LEAF id:3 name:"alice"
+            `);
+        });
+
+        test("a set child's own filter value getter keeps the Multi Filter while the same and resets it when new", async () => {
+            const byName = ({ data }: { data: { name: string } }) => data.name;
+            const withChildGetter = (filterValueGetter: (params: { data: { name: string } }) => string) =>
+                colDefsWith([TEXT_CHILD, { filter: 'agSetColumnFilter', filterValueGetter }]);
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: withChildGetter(byName),
+                rowData: ROWS,
+            });
+            const model = { filterType: 'multi', filterModels: [null, { filterType: 'set', values: ['bob'] }] };
+            await api.setColumnFilterModel('name', model);
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            api.setGridOption('columnDefs', withChildGetter(byName));
+            await asyncSetTimeout(0);
+            expect(api.getColumnFilterModel('name')).toEqual(model);
+
+            api.setGridOption(
+                'columnDefs',
+                withChildGetter(({ data }) => data.name)
+            );
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnFilterModel('name')).toBeNull();
+            await new GridRows(api, "multi filter reset by the set child's getter").check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 name:"michael"
+                ├── LEAF id:1 name:"michelle"
+                ├── LEAF id:2 name:"bob"
+                └── LEAF id:3 name:"alice"
+            `);
+        });
+
+        test("a set child's open list refolds its values when only its case sensitivity changes", async () => {
+            const values = ['bob', 'Bob', 'alice'];
+            const setChild = (caseSensitive: boolean) => ({
+                filter: 'agSetColumnFilter',
+                filterParams: { values, caseSensitive },
+            });
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: colDefsWith([TEXT_CHILD, setChild(false)]),
+                rowData: ROWS,
+            });
+            const filter = await ColumnFilterHarness.open(api, 'name');
+            expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'alice', 'bob']);
+
+            api.setGridOption('columnDefs', colDefsWith([TEXT_CHILD, setChild(true)]));
+            await asyncSetTimeout(0);
+
+            expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'Bob', 'alice', 'bob']);
+        });
+
+        test('a set child whose filterParams is a function keeps them through a model update and a header rename, which it is told is a column definition update', async () => {
+            const sources: string[] = [];
+            const setChild = {
+                filter: 'agSetColumnFilter',
+                filterParams: ({ source }: { source: string }) => {
+                    sources.push(source);
+                    return { caseSensitive: true };
+                },
+            };
+            // without a data type, nothing replaces the function with parameters of its own
+            const cols = (headerName: string) => colDefsWith([setChild], { headerName, cellDataType: false });
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: cols('Name'),
+                rowData: [{ name: 'bob' }, { name: 'Bob' }, { name: 'cat' }],
+            });
+            const model = { filterType: 'multi', filterModels: [{ filterType: 'set', values: ['bob'] }] };
+            await api.setColumnFilterModel('name', model);
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            const callsBefore = sources.length;
+            api.setGridOption('columnDefs', cols('Name renamed'));
+            await asyncSetTimeout(0);
+
+            expect(sources.length).toBeGreaterThan(callsBefore);
+            expect(new Set(sources.slice(callsBefore))).toEqual(new Set(['colDef']));
+            expect(api.getColumnFilterModel('name')).toEqual(model);
+            await new GridRows(api, 'only the lower case bob').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:0 name:"bob"
+            `);
+        });
+
+        test("a set child's open tree list takes its new path getter, with or without new keys", async () => {
+            const byInitialThenName = (value: string | null) => (value ? [value[0], value] : null);
+            const byName = (value: string | null) => (value ? [value] : null);
+            const setChild = (caseSensitive: boolean, treeListPathGetter: typeof byName) => ({
+                filter: 'agSetColumnFilter',
+                filterParams: { caseSensitive, treeList: true, treeListPathGetter },
+            });
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: colDefsWith([TEXT_CHILD, setChild(false, byInitialThenName)]),
+                rowData: ROWS,
+            });
+            const filter = await ColumnFilterHarness.open(api, 'name');
+            expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'a', 'b', 'm']);
+
+            api.setGridOption('columnDefs', colDefsWith([TEXT_CHILD, setChild(false, byName)]));
+            await asyncSetTimeout(0);
+            expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'alice', 'bob', 'michael', 'michelle']);
+
+            api.setGridOption('columnDefs', colDefsWith([TEXT_CHILD, setChild(true, byInitialThenName)]));
+            await asyncSetTimeout(0);
+            expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'a', 'b', 'm']);
+        });
+
+        test('a set child turned into a tree list on a column that groups nothing shows the tree and keeps the filter', async () => {
+            const byInitialThenName = (value: string | null) => (value ? [value[0], value] : null);
+            const setChild = (treeList: boolean) => ({
+                filter: 'agSetColumnFilter',
+                filterParams: { treeList, treeListPathGetter: byInitialThenName },
+            });
+            const model = {
+                filterType: 'multi',
+                filterModels: [
+                    { filterType: 'text', type: 'contains', filter: 'o' },
+                    { filterType: 'set', values: ['alice', 'bob'] },
+                ],
+            };
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: colDefsWith([TEXT_CHILD, setChild(false)]),
+                rowData: ROWS,
+            });
+            await api.setColumnFilterModel('name', model);
+            api.onFilterChanged();
+            await ColumnFilterHarness.open(api, 'name');
+
+            api.setGridOption('columnDefs', colDefsWith([TEXT_CHILD, setChild(true)]));
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnFilterModel('name')).toEqual(model);
+            await new GridRows(api, 'both children still filter').check(`
+                ROOT id:ROOT_NODE_ID
+                └── LEAF id:2 name:"bob"
+            `);
+            // the text child leaves only bob, under his initial
+            const filter = await ColumnFilterHarness.open(api, 'name');
+            expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'b']);
+        });
+
+        test("a set child's open list shows its new values when only its provided values change", async () => {
+            const byName = ({ data }: { data: { name: string } }) => data.name;
+            const setChild = (values: string[]) => ({
+                filter: 'agSetColumnFilter',
+                filterValueGetter: byName,
+                filterParams: { values },
+            });
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: colDefsWith([TEXT_CHILD, setChild(['bob', 'alice'])]),
+                rowData: ROWS,
+            });
+            const filter = await ColumnFilterHarness.open(api, 'name');
+            expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'alice', 'bob']);
+
+            api.setGridOption('columnDefs', colDefsWith([TEXT_CHILD, setChild(['michael', 'michelle'])]));
+            await asyncSetTimeout(0);
+
+            expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'michael', 'michelle']);
+        });
+
+        test("an object column's Multi Filter keeps a set child's model when only the header changes", async () => {
+            const byName = ({ value }: { value: { name: string } }) => value.name;
+            const objectCol = (headerName: string) => [
+                {
+                    field: 'person',
+                    headerName,
+                    cellDataType: 'object',
+                    valueFormatter: byName,
+                    filter: 'agMultiColumnFilter',
+                    filterParams: { filters: [{ filter: 'agSetColumnFilter' }] },
+                },
+            ];
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: objectCol('Person'),
+                rowData: [{ person: { name: 'bob' } }, { person: { name: 'alice' } }],
+            });
+            const model = { filterType: 'multi', filterModels: [{ filterType: 'set', values: ['bob'] }] };
+            await api.setColumnFilterModel('person', model);
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+            expect(api.getDisplayedRowAtIndex(0)!.data.person.name).toBe('bob');
+            expect(api.getDisplayedRowCount()).toBe(1);
+
+            api.setGridOption('columnDefs', objectCol('Person renamed'));
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnFilterModel('person')).toEqual(model);
+            expect(api.getDisplayedRowCount()).toBe(1);
+            expect(api.getDisplayedRowAtIndex(0)!.data.person.name).toBe('bob');
+        });
+
+        test("the column's new filter value getter, or new key creator, resets a Multi Filter with a set child", async () => {
+            const setChild = {
+                filter: 'agSetColumnFilter',
+                filterParams: { valueFormatter: ({ value }: { value: string }) => value },
+            };
+            const col = (extra: ColDef) => colDefsWith([TEXT_CHILD, setChild], extra);
+            const byName = ({ data }: { data: { name: string } }) => data.name;
+            const asIs = ({ value }: { value: string }) => value;
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: col({ filterValueGetter: byName, keyCreator: asIs }),
+                rowData: ROWS,
+            });
+            const filterBobAndReset = async (update: ColDef, name: string) => {
+                await api.setColumnFilterModel('name', {
+                    filterType: 'multi',
+                    filterModels: [null, { filterType: 'set', values: ['bob'] }],
+                });
+                api.onFilterChanged();
+                await asyncSetTimeout(0);
+                expect(api.getDisplayedRowCount()).toBe(1);
+                api.setGridOption('columnDefs', col(update));
+                await asyncSetTimeout(0);
+
+                expect(api.getColumnFilterModel('name')).toBeNull();
+                await new GridRows(api, name).check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 name:"michael"
+                    ├── LEAF id:1 name:"michelle"
+                    ├── LEAF id:2 name:"bob"
+                    └── LEAF id:3 name:"alice"
+                `);
+            };
+
+            // the default case folding keeps `bob` naming the upper case keys
+            const upper = ({ value }: { value: string }) => value.toUpperCase();
+            await filterBobAndReset({ filterValueGetter: byName, keyCreator: upper }, 'reset by the key creator');
+            await filterBobAndReset(
+                { filterValueGetter: ({ data }) => `${data.name}!`, keyCreator: upper },
+                'reset by the getter'
+            );
         });
 
         test('an unrelated colDef change leaves the child set and the model alone', async () => {

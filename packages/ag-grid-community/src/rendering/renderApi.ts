@@ -25,7 +25,7 @@ export function refreshCells<TData = any>(beans: BeanCollection, params: Refresh
     beans.frameworkOverrides.wrapIncoming(() => {
         const { visibleCols, rowRenderer } = beans;
         // data mutated in place can change what a span callback returns
-        if (visibleCols.colSpanActive || visibleCols.rowSpanCols.length !== 0) {
+        if (visibleCols.colSpanColCount !== 0 || visibleCols.rowSpanCols.length !== 0) {
             const rowCtrls = rowRenderer.getRowCtrls(params.rowNodes);
             for (let i = 0, len = rowCtrls.length; i < len; ++i) {
                 rowCtrls[i].refreshSpans();

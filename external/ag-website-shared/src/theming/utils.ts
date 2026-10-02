@@ -1,15 +1,11 @@
-import { _asThemeImpl } from 'ag-stack';
-
-import type { Theme, themeQuartz } from 'ag-grid-community';
+import { type Theme, _asThemeImpl } from 'ag-stack';
 
 import { type ParamType } from './api';
 
-type InferThemeParams<T> = T extends Theme<infer P> ? P : never;
-
-export type ThemeParams = InferThemeParams<typeof themeQuartz>;
-// Known grid params keep editor autocomplete, but hosts (e.g. Studio) can supply
-// their own param keys via the `(string & {})` widening.
-export type ThemeParam = keyof ThemeParams | (string & {});
+// Each host registers its own param catalogue via setThemeParamSource, so the
+// key set is only known at runtime; ParamModel validates against that catalogue.
+export type ThemeParams = Record<string, unknown>;
+export type ThemeParam = string;
 
 export type ThemeImpl = ReturnType<typeof _asThemeImpl>;
 
