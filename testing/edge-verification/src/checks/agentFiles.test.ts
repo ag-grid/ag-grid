@@ -102,6 +102,32 @@ describe('agent-file sections must be populated', () => {
     }
 });
 
+describe('agent-files index-links checks twins in every mode', () => {
+    // Every index page resolves, but none of their markdown twins does.
+    const brokenTwins = (req: { url: string }): FakeResponse =>
+        req.url.endsWith('.md') && req.url !== `${WWW}/AGENTS.md`
+            ? { status: 404 }
+            : LINKS.includes(req.url)
+              ? { status: 200, headers: { 'content-type': 'text/html' } }
+              : site(req);
+
+    for (const fullLinks of [false, true]) {
+        it(`fails on a broken twin${fullLinks ? ' with --full-links' : ''}`, async () => {
+            const http = new FakeHttp(brokenTwins);
+            try {
+                const result = await runOne(
+                    check('agent-files.grid.index-links'),
+                    await fakeCtx(new FakeAws(healthyCloudFront()), http, { fullLinks })
+                );
+                assert.equal(result.status, 'fail', result.detail);
+                assert.match(result.detail ?? '', /\.md/);
+            } finally {
+                http.close();
+            }
+        });
+    }
+});
+
 describe('agent-files md-twins needs a twin to test', () => {
     const runTwins = async (respond: (req: { url: string }) => FakeResponse) => {
         const http = new FakeHttp(respond);
