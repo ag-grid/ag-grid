@@ -2082,6 +2082,47 @@ describe('htaccessRules', () => {
             expect(blog.has('x-robots-tag')).toBe(false);
             expect([...responseHeaders(vhost, { uri: '/react-data-grid/', status: 200 }).keys()]).toEqual([]);
         });
+
+        describe('blog asset cache cap (vhost fragment)', () => {
+            const CAP = `Header set Cache-Control "public, max-age=604800" "expr=%{REQUEST_URI} =~ m#^/blog/(assets|public)/# && %{REQUEST_STATUS} -in {'200', '206', '304'}"`;
+            const fragment = () => getBlogVhostHeaderFragment({ env: 'production' }, 'enforce');
+
+            it('ends the fragment with exactly the cap line, after the existing lines', () => {
+                const lines = fragment().split('\n');
+                expect(lines[lines.length - 1]).toBe(CAP);
+                const headers = lines.filter((l) => l.startsWith('Header '));
+                expect(headers.slice(0, -1)).toEqual([
+                    'Header always unset X-Robots-Tag "expr=%{REQUEST_URI} =~ m#^/blog/#"',
+                    'Header always unset Referrer-Policy "expr=%{REQUEST_URI} =~ m#^/blog/#"',
+                    'Header always set Referrer-Policy "strict-origin-when-cross-origin" "expr=%{REQUEST_URI} =~ m#^/blog/#"',
+                    'Header always unset Permissions-Policy "expr=%{REQUEST_URI} =~ m#^/blog/#"',
+                    'Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()" "expr=%{REQUEST_URI} =~ m#^/blog/#"',
+                    'Header always unset Content-Security-Policy "expr=%{REQUEST_URI} =~ m#^/blog/#"',
+                    expect.stringMatching(
+                        /^Header always set Content-Security-Policy "default-src 'self'; .*" "expr=%\{REQUEST_URI\} =~ m#\^\/blog\/#"$/
+                    ),
+                ]);
+            });
+
+            it('caps Ghost assets at 7 days on 200, 206 and 304 only, and nothing else under /blog/', () => {
+                const vhost = [compileHtaccess(fragment())];
+                const cacheControl = (uri: string, status: number) =>
+                    responseHeaders(vhost, { uri, status, contentType: 'text/css' }).get('cache-control');
+                for (const uri of ['/blog/assets/built/screen.css', '/blog/public/cards.min.js']) {
+                    for (const status of [200, 206, 304]) {
+                        expect(cacheControl(uri, status), `${uri} ${status}`).toEqual(['public, max-age=604800']);
+                    }
+                    // Ghost's own no-cache on a 404 is left alone (onsuccess table, and not in the list).
+                    expect(
+                        responseHeaders(vhost, { uri, status: 404, contentType: 'text/html', onSuccess: true }).get(
+                            'cache-control'
+                        )
+                    ).toBeUndefined();
+                }
+                expect(cacheControl('/blog/some-post/', 200)).toBeUndefined();
+                expect(cacheControl('/assets/built/screen.css', 200)).toBeUndefined();
+            });
+        });
     });
 
     describe('SE-81: Link header only on successful HTML documents', () => {

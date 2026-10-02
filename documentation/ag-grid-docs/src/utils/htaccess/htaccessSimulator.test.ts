@@ -376,6 +376,12 @@ RewriteRule ^ /%1.md [L]`);
             expect(() => evaluateExpr("-d '/a'", vars)).toThrow(/file test/);
         });
 
+        it('matches a value against a word list with -in', () => {
+            expect(evaluateExpr("%{REQUEST_STATUS} -in {'200', '206', '304'}", vars)).toBe(false);
+            expect(evaluateExpr("%{REQUEST_STATUS} -in {'404'}", vars)).toBe(true);
+            expect(() => evaluateExpr('%{REQUEST_STATUS} -in {200}', vars)).toThrow(/list item/);
+        });
+
         it('interpolates variables in quoted strings and runs file tests through the caller', () => {
             const seen: string[] = [];
             const dirs = (op: string, path: string) => {
