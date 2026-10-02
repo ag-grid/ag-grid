@@ -2,7 +2,14 @@ import { findByText, queryByText, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { ColDef, ColumnEventType, GetColumnMenuItemsParams, GridApi, GridOptions } from 'ag-grid-community';
+import type {
+    ColDef,
+    ColGroupDef,
+    ColumnEventType,
+    GetColumnMenuItemsParams,
+    GridApi,
+    GridOptions,
+} from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -311,7 +318,7 @@ describe('ToolPanelContextMenu', () => {
 
     describe('customisation via columnMenuItems / getColumnMenuItems', () => {
         async function createGrid(
-            cols: ColDef[],
+            cols: (ColDef | ColGroupDef)[],
             gridOptions: Partial<GridOptions>
         ): Promise<{ gridApi: GridApi; gridDiv: HTMLElement; toolPanel: any }> {
             const gridApi = await gridMgr.createGridAndWait('myGrid', {
@@ -364,7 +371,30 @@ describe('ToolPanelContextMenu', () => {
             await openContextMenu(toolPanel, gridDiv, 'Athlete');
             await clickMenuItem(gridDiv, 'Highlight column');
 
-            expect(action).toHaveBeenCalledWith(expect.objectContaining({ column: gridApi.getColumn('athlete') }));
+            expect(action).toHaveBeenCalledWith(
+                expect.objectContaining({ column: gridApi.getColumn('athlete'), columnGroup: null })
+            );
+        });
+
+        test('custom item actions receive the column group the menu was opened for', async () => {
+            const action = vi.fn();
+            const getColumnMenuItems = vi.fn((_params: GetColumnMenuItemsParams) => [
+                { name: 'Highlight group', action },
+            ]);
+            const { gridDiv, toolPanel } = await createGrid(
+                [
+                    { headerName: 'Athlete Details', groupId: 'details', children: [{ field: 'athlete' }] },
+                    { field: 'age' },
+                ],
+                { getColumnMenuItems }
+            );
+
+            await openContextMenu(toolPanel, gridDiv, 'Athlete Details');
+            await clickMenuItem(gridDiv, 'Highlight group');
+
+            const { columnGroup } = getColumnMenuItems.mock.calls[0][0];
+            expect(columnGroup?.getGroupId()).toBe('details');
+            expect(action).toHaveBeenCalledWith(expect.objectContaining({ column: null, columnGroup }));
         });
 
         test('custom sub menu item actions receive the column the menu was opened for', async () => {

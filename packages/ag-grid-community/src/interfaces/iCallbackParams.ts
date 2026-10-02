@@ -417,9 +417,15 @@ export interface GetGroupIncludeTotalRowParams<TData = any, TContext = any> exte
 export interface IMenuActionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /**
      * The column the menu relates to: the clicked cell's column for the Context Menu, or the column the menu is
-     * for in the Column Menu, Columns Tool Panel and Column Chooser. Otherwise null, including for column groups.
+     * for in the Column Menu, Columns Tool Panel and Column Chooser. Otherwise null, including for column groups
+     * (see `columnGroup`).
      */
     column: Column | null;
+    /**
+     * The column group the menu relates to: the group the Column Menu is for, or the group row in the Columns Tool
+     * Panel and Column Chooser. Otherwise null.
+     */
+    columnGroup: ProvidedColumnGroup | null;
     /** The row node, if a cell was clicked, otherwise null. */
     node: IRowNode<TData> | null;
     /** The value, if a cell was clicked, otherwise null.  */

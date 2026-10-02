@@ -2,7 +2,13 @@ import { waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { TestGridsManager, menuOption, openMenuOption, polyfillOffsetParent } from 'ag-test-utils';
 
-import type { ColumnEventType, ColumnMenuItemsSource, GetColumnMenuItemsParams } from 'ag-grid-community';
+import type {
+    ColumnEventType,
+    ColumnMenuItemsSource,
+    GetColumnMenuItemsParams,
+    GridApi,
+    IMenuActionParams,
+} from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import { AllEnterpriseModule, ColumnMenuModule, ColumnsToolPanelModule } from 'ag-grid-enterprise';
 
@@ -128,6 +134,86 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
         await openMenuOption('Add Age to values');
 
         expect(menuOption('Add Age to labels')).toBeNull();
+    });
+});
+
+function fireContextMenu(element: HTMLElement): void {
+    element.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }));
+}
+
+function headerCell(colId: string): HTMLElement {
+    return document.querySelector<HTMLElement>(`.ag-header-cell[col-id="${colId}"]`)!;
+}
+
+function groupHeaderCells(groupId: string): HTMLElement[] {
+    return Array.from(document.querySelectorAll<HTMLElement>('.ag-header-group-cell[col-id]')).filter((el) =>
+        el.getAttribute('col-id')!.startsWith(`${groupId}_`)
+    );
+}
+
+describe('column menu item action params', () => {
+    const gridMgr = new TestGridsManager({ modules: [AllEnterpriseModule] });
+    const action = vi.fn<(params: IMenuActionParams) => void>();
+    let api: GridApi;
+
+    beforeEach(async () => {
+        api = await gridMgr.createGridAndWait('column-menu-action-params', {
+            columnDefs: [
+                { field: 'athlete' },
+                { field: 'country' },
+                { headerName: 'Time', groupId: 'time', children: [{ field: 'age' }, { field: 'year' }] },
+                { headerName: 'Medals', groupId: 'medals', children: [{ field: 'gold' }, { field: 'silver' }] },
+            ],
+            rowData: [{ athlete: 'Michael Phelps', country: 'United States', age: 23, year: 2008, gold: 8 }],
+            suppressColumnVirtualisation: true,
+            // Moving Country between Age and Year splits the Time group into two header parts
+            initialState: { columnOrder: { orderedColIds: ['athlete', 'age', 'country', 'year', 'gold', 'silver'] } },
+            getColumnMenuItems: (params) => [...params.defaultItems, { name: 'Log Params', action }],
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+    });
+
+    afterEach(() => {
+        gridMgr.reset();
+        restoreOffsetParent?.();
+        restoreOffsetParent = undefined;
+        action.mockReset();
+    });
+
+    async function runLogParamsFrom(element: HTMLElement): Promise<IMenuActionParams> {
+        fireContextMenu(element);
+        (await openMenuOption('Log Params')).click();
+        expect(action).toHaveBeenCalledTimes(1);
+        const params = action.mock.calls[0][0];
+        action.mockReset();
+        return params;
+    }
+
+    test('a column header menu passes the column and a null column group', async () => {
+        const params = await runLogParamsFrom(headerCell('athlete'));
+
+        expect(params.column).toBe(api.getColumn('athlete'));
+        expect(params).toHaveProperty('columnGroup', null);
+    });
+
+    test('a column group header menu passes the column group and a null column', async () => {
+        const params = await runLogParamsFrom(groupHeaderCells('medals')[0]);
+
+        expect(params.column).toBeNull();
+        expect(params.columnGroup).toBe(api.getProvidedColumnGroup('medals'));
+    });
+
+    test('every part of a split column group passes the same column group', async () => {
+        const parts = groupHeaderCells('time');
+        expect(parts).toHaveLength(2);
+
+        const timeGroup = api.getProvidedColumnGroup('time');
+        expect(timeGroup).not.toBeNull();
+        for (const part of parts) {
+            const params = await runLogParamsFrom(part);
+            expect(params.column).toBeNull();
+            expect(params.columnGroup).toBe(timeGroup);
+        }
     });
 });
 
