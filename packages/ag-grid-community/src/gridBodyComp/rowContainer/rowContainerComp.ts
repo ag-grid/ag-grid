@@ -2,7 +2,7 @@ import { RefPlaceholder, _ensureDomOrder, _setDisplayed } from 'ag-stack';
 
 import type { BeanCollection } from '../../context/context';
 import { RowComp } from '../../rendering/row/rowComp';
-import type { RowCtrl, RowCtrlInstanceId } from '../../rendering/row/rowCtrl';
+import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { ElementParams } from '../../utils/element';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
@@ -34,14 +34,19 @@ function getElementParams(name: RowContainerName, options: RowContainerOptions, 
     };
 }
 
+/** Shared by every list with no rows: a drawn list is only read, then replaced. */
+const NO_ROWS: RowCtrl[] = [];
+
 export class RowContainerComp extends Component {
     private readonly eContainer: HTMLElement = RefPlaceholder;
     private readonly eSpannedContainer: HTMLElement = RefPlaceholder;
 
     private readonly name: RowContainerName;
 
-    private rowCompsNoSpan: { [id: RowCtrlInstanceId]: RowComp } = {};
-    private rowCompsWithSpan: { [id: RowCtrlInstanceId]: RowComp } = {};
+    /** The lists last drawn, swept for the rows the next list no longer has. */
+    private drawnNoSpan: RowCtrl[] = NO_ROWS;
+    private drawnWithSpan: RowCtrl[] = NO_ROWS;
+    private rowsPass = 0;
 
     // we ensure the rows are in the dom in the order in which they appear on screen when the
     // user requests this via gridOptions.ensureDomOrder. this is typically used for screen readers.
@@ -115,60 +120,62 @@ export class RowContainerComp extends Component {
         if (!container) {
             return;
         }
-        const oldRows = spanContainer ? { ...this.rowCompsWithSpan } : { ...this.rowCompsNoSpan };
-        const newComps: { [id: RowCtrlInstanceId]: RowComp } = {};
-
+        const prevRowCtrls = spanContainer ? this.drawnWithSpan : this.drawnNoSpan;
+        const drawn: RowCtrl[] = rowCtrls.length === 0 ? NO_ROWS : [];
         if (spanContainer) {
-            this.rowCompsWithSpan = newComps;
+            this.drawnWithSpan = drawn;
         } else {
-            this.rowCompsNoSpan = newComps;
+            this.drawnNoSpan = drawn;
         }
 
         this.lastPlacedElement = null;
 
-        const orderedRows: [rowComp: RowComp, isNew: boolean][] = [];
+        const pass = ++this.rowsPass;
+        const domOrder = this.domOrder;
+        // Every row when ordering the DOM, else only the new ones, which are appended.
+        let rowsToPlace: RowComp[] | null = null;
 
-        for (const rowCtrl of rowCtrls) {
-            const instanceId = rowCtrl.instanceId;
-            const existingRowComp = oldRows[instanceId];
+        for (let i = 0, len = rowCtrls.length; i < len; ++i) {
+            const rowCtrl = rowCtrls[i];
+            let rowComp = rowCtrl.drawnRowComp;
 
-            let rowComp: RowComp;
-
-            if (existingRowComp) {
-                rowComp = existingRowComp;
-                delete oldRows[instanceId];
-            } else {
-                if (!rowCtrl.rowNode.displayed) {
-                    continue;
+            if (rowComp) {
+                if (domOrder) {
+                    rowsToPlace ??= [];
+                    rowsToPlace.push(rowComp);
                 }
+            } else if (rowCtrl.rowNode.displayed) {
                 rowComp = new RowComp(rowCtrl, beans);
+                rowCtrl.drawnRowComp = rowComp;
+                rowsToPlace ??= [];
+                rowsToPlace.push(rowComp);
+            } else {
+                continue;
             }
-            newComps[instanceId] = rowComp;
-            orderedRows.push([rowComp, !existingRowComp]);
+            rowComp.drawnInPass = pass;
+            drawn.push(rowCtrl);
         }
 
-        this.removeOldRows(Object.values(oldRows));
-        this.addRowNodes(orderedRows, container);
-    }
-
-    private addRowNodes(rows: [rowComp: RowComp, isNew: boolean][], container: HTMLElement): void {
-        const { domOrder } = this;
-        for (const [rowComp, isNew] of rows) {
-            const eGui = rowComp.getGui();
-            if (!domOrder) {
-                if (isNew) {
+        if (rowsToPlace !== null) {
+            for (let i = 0, len = rowsToPlace.length; i < len; ++i) {
+                const eGui = rowsToPlace[i].getGui();
+                if (domOrder) {
+                    this.ensureDomOrder(eGui, container);
+                } else {
                     container.appendChild(eGui);
                 }
-            } else {
-                this.ensureDomOrder(eGui, container);
             }
         }
-    }
 
-    private removeOldRows(rowComps: RowComp[]): void {
-        for (const oldRowComp of rowComps) {
-            oldRowComp.getGui().remove();
-            oldRowComp.destroy();
+        // Last, as a destroy runs user code that can lay this list out again: a row a later layout kept is newer.
+        for (let i = 0, len = prevRowCtrls.length; i < len; ++i) {
+            const rowCtrl = prevRowCtrls[i];
+            const rowComp = rowCtrl.drawnRowComp;
+            if (rowComp !== undefined && rowComp.drawnInPass < pass) {
+                rowCtrl.drawnRowComp = undefined;
+                rowComp.getGui().remove();
+                rowComp.destroy();
+            }
         }
     }
 

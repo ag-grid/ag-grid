@@ -2,6 +2,7 @@ import { CssClassManager } from 'ag-stack';
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import type {
+    BeanCollection,
     CellCtrl,
     HorizontalSection,
     HorizontalSectionMap,
@@ -21,7 +22,7 @@ import { showJsComp } from '../jsComp';
 import { agFlushSync, agUseSyncExternalStore, getNextValueIfDifferent, isComponentStateless } from '../utils';
 
 const RowComp = ({ rowCtrl }: { rowCtrl: RowCtrl }) => {
-    const { context, gos, editSvc } = useContext(BeansContext);
+    const { context, gos } = useContext(BeansContext);
 
     const enableUses = useContext(RenderModeContext) === 'default';
 
@@ -40,15 +41,11 @@ const RowComp = ({ rowCtrl }: { rowCtrl: RowCtrl }) => {
     const [rowId, setRowId] = useState<string | null>(() => rowCtrl.rowId);
     const [rowBusinessKey, setRowBusinessKey] = useState<string | null>(() => rowCtrl.businessKey);
     const [userStyles, setUserStyles] = useState<RowStyle | undefined>(() => rowCtrl.rowStyles);
-    // Seeded so bulk-add doesn't flash empty rows; getInitialCellCtrls returns
-    // null when creation is deferred or not applicable.
-    const [cellCtrlsFlushSync, setCellCtrlsFlushSync] = useState<CellCtrl[] | null>(() =>
-        rowCtrl.getInitialCellCtrls()
-    );
-    const cellCtrlsRef = useRef<CellCtrl[] | null>(cellCtrlsFlushSync);
-    // the cell list last taken as the row gave it, and the columns version it was laid out at
-    const givenCellCtrlsRef = useRef<CellCtrl[] | null>(null);
-    const givenColsVersionRef = useRef(-1);
+    const [lanes] = useState(() => [
+        new CellLane(rowCtrl.getInitialCellCtrls(0)),
+        new CellLane(rowCtrl.getInitialCellCtrls(1)),
+        new CellLane(rowCtrl.getInitialCellCtrls(2)),
+    ]);
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
     const [embeddedFullWidthCompDetails, setEmbeddedFullWidthCompDetails] =
         useState<HorizontalSectionMap<UserCompDetails>>();
@@ -106,21 +103,6 @@ const RowComp = ({ rowCtrl }: { rowCtrl: RowCtrl }) => {
         cssManager.current = new CssClassManager(() => eGui.current);
     }
 
-    // Setup both approaches to avoid conditionally rendering Hooks even though we don't use both at the same time.
-    const cellsChanged = useRef<any>(() => {});
-    const sub = useCallback((onStoreChange: any) => {
-        cellsChanged.current = onStoreChange;
-        return () => {
-            cellsChanged.current = () => {};
-        };
-    }, []);
-    const cellCtrlsUses = agUseSyncExternalStore(sub, () => {
-        return cellCtrlsRef.current;
-    }, []);
-
-    // Will only use useSyncExternalStore if it is supported by the React version and the rendering mode has not been set to 'legacy
-    const cellCtrlsMerged = enableUses ? cellCtrlsUses : cellCtrlsFlushSync;
-
     const setRef = useCallback((eRef: HTMLDivElement | null) => {
         eGui.current = eRef;
         compBean.current = eRef ? context.createBean(new _EmptyBean()) : context.destroyBean(compBean.current);
@@ -137,6 +119,11 @@ const RowComp = ({ rowCtrl }: { rowCtrl: RowCtrl }) => {
             return;
         }
 
+        const notifyLanes = () => {
+            lanes[0].notify();
+            lanes[1].notify();
+            lanes[2].notify();
+        };
         const compProxy: IRowComp = {
             // the rowTop is managed by state, instead of direct style manipulation by rowCtrl (like all the other styles)
             // as we need to have an initial value when it's placed into he DOM for the first time, for animation to work.
@@ -147,37 +134,62 @@ const RowComp = ({ rowCtrl }: { rowCtrl: RowCtrl }) => {
             // React code to execute, so avoiding React for managing CSS Classes made the grid go much faster.
             toggleCss: (name, on) => cssManager.current!.toggleCss(name, on),
 
-            setDomOrder: (domOrder) => (domOrderRef.current = domOrder),
+            // ensureDomOrder is documented as initial, yet rows follow a prop change; investigate whether to
+            // make it truly initial, which would let this go with RowCtrl's listener (AG-18759).
+            setDomOrder: (domOrder) => {
+                const turnedOn = domOrder && !domOrderRef.current;
+                domOrderRef.current = domOrder;
+                if (!turnedOn) {
+                    return;
+                }
+                // an unchanged lane is not given again, so one shown unordered is put in order here
+                let changed = lanes[0].order();
+                changed = lanes[1].order() || changed;
+                changed = lanes[2].order() || changed;
+                if (!changed) {
+                    return;
+                }
+                notifyLanes();
+            },
             setRowIndex,
             setRowId,
             setRowBusinessKey,
             setUserStyles,
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
-            setCellCtrls: (next, useFlushSync, colsVersion) => {
-                const prevCellCtrls = cellCtrlsRef.current;
-                // showing the row's own list, laid out at the same columns: `next` already keeps its cells in order
-                const nextCells =
-                    prevCellCtrls === givenCellCtrlsRef.current && colsVersion === givenColsVersionRef.current
-                        ? next
-                        : getNextValueIfDifferent(prevCellCtrls, next, domOrderRef.current, true);
-                if (nextCells === next) {
-                    givenCellCtrlsRef.current = next;
-                    givenColsVersionRef.current = colsVersion;
+            setCellCtrls: (left, center, right, useFlushSync, colsVersion) => {
+                const domOrder = domOrderRef.current;
+                let changed = lanes[0].take(left, colsVersion, domOrder);
+                changed = lanes[1].take(center, colsVersion, domOrder) || changed;
+                changed = lanes[2].take(right, colsVersion, domOrder) || changed;
+                if (!changed) {
+                    return;
                 }
-                if (nextCells !== prevCellCtrls) {
-                    cellCtrlsRef.current = nextCells;
-                    if (enableUses) {
-                        cellsChanged.current();
-                    } else {
-                        agFlushSync(useFlushSync, () => setCellCtrlsFlushSync(nextCells));
-                    }
+                // the changed lanes go in one commit
+                if (enableUses) {
+                    notifyLanes();
+                } else {
+                    agFlushSync(useFlushSync, notifyLanes);
                 }
             },
             getPinnedLeftRowElement: () => ePinnedLeftCells.current ?? undefined,
             getScrollingRowElement: () => eScrollingCells.current ?? undefined,
             getPinnedRightRowElement: () => ePinnedRightCells.current ?? undefined,
-            refreshPinnedSections: () => setPinnedWidths(rowCtrl.getMappedPinnedCellGroupWidths()),
+            refreshPinnedSections: () => {
+                const widths = rowCtrl.getMappedPinnedCellGroupWidths();
+                const eCenter = eScrollingCells.current;
+                // a pinned section's width is on the element around its lane
+                const eLeft = ePinnedLeftCells.current?.parentElement;
+                const eRight = ePinnedRightCells.current?.parentElement;
+                if (!eCenter || widths.renderLeft !== !!eLeft || widths.renderRight !== !!eRight) {
+                    setPinnedWidths(widths);
+                    return;
+                }
+                // written as the vanilla row does, so a width change alone renders no row again
+                eCenter.style.width = `${widths.centerWidth}px`;
+                eLeft?.style.setProperty('width', `${widths.leftWidth}px`);
+                eRight?.style.setProperty('width', `${widths.rightWidth}px`);
+            },
             showFullWidth: (compDetails) => {
                 embeddedFullWidthCompDetailsRef.current = undefined;
                 setEmbeddedFullWidthCompDetails(undefined);
@@ -200,9 +212,10 @@ const RowComp = ({ rowCtrl }: { rowCtrl: RowCtrl }) => {
                         fullWidthEmbeddedLeftCompRef.current,
                         fullWidthEmbeddedCenterCompRef.current,
                         fullWidthEmbeddedRightCompRef.current,
-                    ].filter((r) => r != null);
+                    ];
                 }
-                return fullWidthCompRef.current ? [fullWidthCompRef.current] : [];
+                const renderer = fullWidthCompRef.current;
+                return renderer ? [renderer] : undefined;
             },
             getFullWidthCellRendererParams: () =>
                 fullWidthParamsRef.current ?? fullWidthEmbeddedCenterParamsRef.current,
@@ -370,21 +383,9 @@ const RowComp = ({ rowCtrl }: { rowCtrl: RowCtrl }) => {
     }, [top, transform, userStyles]);
 
     const showFullWidthFramework = isFullWidth && fullWidthCompDetails?.componentFromFramework;
-    const showCells = !isFullWidth && cellCtrlsMerged != null;
-
-    const { leftCellCtrls, centerCellCtrls, rightCellCtrls } = useMemo(() => {
-        const byLane: CellCtrl[][] = [[], [], []];
-
-        for (const cellCtrl of cellCtrlsMerged ?? []) {
-            byLane[rowCtrl.laneFor(cellCtrl.column)].push(cellCtrl);
-        }
-
-        return {
-            leftCellCtrls: byLane[0],
-            centerCellCtrls: byLane[1],
-            rightCellCtrls: byLane[2],
-        };
-    }, [cellCtrlsMerged, rowCtrl]);
+    const showCells = !isFullWidth;
+    const Lane = enableUses ? CellsLane : CellsLaneLegacy;
+    const showLane = (cellLane: CellLane) => <Lane cellLane={cellLane} printLayout={rowCtrl.printLayout} />;
 
     const { leftWidth, centerWidth, rightWidth, renderLeft, renderRight } = rowCtrl.getMappedPinnedCellGroupWidths();
 
@@ -400,16 +401,6 @@ const RowComp = ({ rowCtrl }: { rowCtrl: RowCtrl }) => {
         canRefreshFullWidthRef.current =
             reactFullWidthCellRendererStateless && !!fullWidthCompDetails && !!gos.get('reactiveCustomComponents');
     }, [reactFullWidthCellRendererStateless, fullWidthCompDetails]);
-
-    const showCellsJsx = (cellCtrls: CellCtrl[]) =>
-        cellCtrls.map((cellCtrl) => (
-            <CellComp
-                cellCtrl={cellCtrl}
-                editingCell={editSvc?.isEditing(cellCtrl, { withOpenEditor: true }) ?? false}
-                printLayout={rowCtrl.printLayout}
-                key={cellCtrl.instanceId}
-            />
-        ));
 
     const showFullWidthFrameworkJsx = () => {
         const FullWidthComp = fullWidthCompDetails!.componentClass;
@@ -479,7 +470,7 @@ const RowComp = ({ rowCtrl }: { rowCtrl: RowCtrl }) => {
                         'ag-grid-pinned-left-cells',
                         ePinnedLeftCells,
                         leftWidth,
-                        showCells ? showCellsJsx(leftCellCtrls) : showEmbeddedFrameworkSection('left'),
+                        showCells ? showLane(lanes[0]) : showEmbeddedFrameworkSection('left'),
                         true,
                         renderLeft
                     )}
@@ -487,13 +478,13 @@ const RowComp = ({ rowCtrl }: { rowCtrl: RowCtrl }) => {
                         'ag-grid-scrolling-cells',
                         eScrollingCells,
                         centerWidth,
-                        showCells ? showCellsJsx(centerCellCtrls) : showEmbeddedFrameworkSection('center')
+                        showCells ? showLane(lanes[1]) : showEmbeddedFrameworkSection('center')
                     )}
                     {renderCellSection(
                         'ag-grid-pinned-right-cells',
                         ePinnedRightCells,
                         rightWidth,
-                        showCells ? showCellsJsx(rightCellCtrls) : showEmbeddedFrameworkSection('right'),
+                        showCells ? showLane(lanes[2]) : showEmbeddedFrameworkSection('right'),
                         true,
                         renderRight
                     )}
@@ -508,5 +499,120 @@ const RowComp = ({ rowCtrl }: { rowCtrl: RowCtrl }) => {
         </div>
     );
 };
+
+class CellLane {
+    /** The list the row last gave, and the columns version it was laid out at. */
+    private given: CellCtrl[] | undefined = undefined;
+    private colsVersion = -1;
+    /** The cells changed since the mounted lane was last told. */
+    private pending = false;
+    /** Set by the mounted lane: the store change in the default render mode, the state setter in legacy mode. */
+    public changed: (cells: CellCtrl[] | undefined) => void = NOOP;
+
+    public constructor(public cells: CellCtrl[] | undefined) {}
+
+    public take(next: CellCtrl[], colsVersion: number, domOrder: boolean): boolean {
+        const given = this.given;
+        if (next === given) {
+            return false;
+        }
+        const prev = this.cells;
+        // showing the row's own list, laid out at the same columns: `next` already keeps its cells in order
+        const cells =
+            prev === given && colsVersion === this.colsVersion
+                ? next
+                : getNextValueIfDifferent(prev, next, domOrder, true);
+        this.given = next;
+        this.colsVersion = colsVersion;
+        if (cells === prev) {
+            return false;
+        }
+        this.cells = cells;
+        this.pending = true;
+        return true;
+    }
+
+    /** Shows the list the row last gave, which keeps its cells in column order. */
+    public order(): boolean {
+        const given = this.given;
+        if (given === undefined || this.cells === given) {
+            return false;
+        }
+        this.cells = given;
+        this.pending = true;
+        return true;
+    }
+
+    public notify(): void {
+        if (this.pending) {
+            this.pending = false;
+            this.changed(this.cells);
+        }
+    }
+
+    /** Bound once, so the store sees the same functions on every render. */
+    public readonly subscribe = (onStoreChange: () => void): (() => void) => {
+        this.changed = onStoreChange;
+        return () => {
+            this.changed = NOOP;
+        };
+    };
+    public readonly getCells = (): CellCtrl[] | undefined => this.cells;
+}
+
+const NOOP = () => {};
+
+interface CellsLaneProps {
+    cellLane: CellLane;
+    printLayout: boolean;
+}
+
+/** One lane of a row's cells, rendered on its own so a change to one lane leaves the others alone. */
+const CellsLaneComp = ({ cellLane, printLayout }: CellsLaneProps) => {
+    const cells = agUseSyncExternalStore(cellLane.subscribe, cellLane.getCells, undefined);
+    return renderCells(useContext(BeansContext), cells, printLayout);
+};
+
+/** The legacy render mode has no store, so the row sets the lane's state. */
+const CellsLaneLegacyComp = ({ cellLane, printLayout }: CellsLaneProps) => {
+    const [cells, setCells] = useState(cellLane.cells);
+    useLayoutEffect(() => {
+        cellLane.changed = setCells;
+        // the row may have given cells between this lane's first render and now
+        if (cellLane.cells !== cells) {
+            setCells(cellLane.cells);
+        }
+        return () => {
+            cellLane.changed = NOOP;
+        };
+    }, [cellLane]);
+    return renderCells(useContext(BeansContext), cells, printLayout);
+};
+
+const renderCells = (beans: BeanCollection, cells: CellCtrl[] | undefined, printLayout: boolean) => {
+    if (!cells) {
+        return null;
+    }
+    const editSvc = beans.editSvc;
+    // asked once per lane, so a grid with nothing in edit asks nothing per cell
+    const editSvcIfEditing = editSvc?.isEditing() ? editSvc : undefined;
+    return (
+        <>
+            {cells.map((cellCtrl) => (
+                <CellComp
+                    cellCtrl={cellCtrl}
+                    editingCell={editSvcIfEditing?.isEditing(cellCtrl, WITH_OPEN_EDITOR) ?? false}
+                    printLayout={printLayout}
+                    key={cellCtrl.instanceId}
+                />
+            ))}
+        </>
+    );
+};
+
+const WITH_OPEN_EDITOR = { withOpenEditor: true };
+
+const CellsLane = memo(CellsLaneComp);
+const CellsLaneLegacy = memo(CellsLaneLegacyComp);
 
 export default memo(RowComp);

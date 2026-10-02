@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import type { ComponentType, IComponent, WrappableInterface } from 'ag-grid-community';
 import { AgPromise } from 'ag-grid-community';
 
+import { isComponentStateless } from '../reactUi/utils';
 import generateNewKey from './keyGenerator';
 import type { PortalManager } from './portalManager';
 
@@ -102,19 +103,8 @@ export class ReactComponent implements IComponent<any>, WrappableInterface {
         return this.reactComponent.name;
     }
 
-    public getMemoType() {
-        return this.hasSymbol() ? Symbol.for('react.memo') : 0xead3;
-    }
-
-    private hasSymbol() {
-        return typeof Symbol === 'function' && Symbol.for;
-    }
-
-    protected isStateless(Component: any) {
-        return (
-            (typeof Component === 'function' && !(Component.prototype && Component.prototype.isReactComponent)) ||
-            (typeof Component === 'object' && Component.$$typeof === this.getMemoType())
-        );
+    protected isStateless(Component: any): boolean {
+        return isComponentStateless(Component);
     }
 
     public hasMethod(name: string): boolean {
