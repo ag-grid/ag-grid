@@ -4,9 +4,9 @@ import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
 import { useMemo } from 'react';
 
-import { RootContainer } from './components/general/RootContainer';
-import { darkModePreset, lightModePreset } from './components/presets/presets';
-import './model/registerParamDocs';
+import { RootContainer } from './RootContainer';
+import { darkModePreset, lightModePreset } from './presets';
+import './registerParamDocs';
 import './registerThemeBuilderConfig';
 
 export const ThemeBuilder = () => {

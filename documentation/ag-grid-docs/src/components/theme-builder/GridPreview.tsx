@@ -7,7 +7,7 @@ import { useApplicationConfigAtom } from '@ag-website-shared/theming/application
 import { useRenderedTheme } from '@ag-website-shared/theming/rendered-theme';
 import styled from '@emotion/styled';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
-import { memo, useRef, useState } from 'react';
+import { memo, useState } from 'react';
 
 import { AllCommunityModule, ClientSideRowModelModule, type GridState, ModuleRegistry } from 'ag-grid-community';
 import {
@@ -29,9 +29,9 @@ import {
 } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
-import { GridConfigDropdownButton } from '../grid-config/GridConfigDropdown';
-import { useGridOptions } from '../grid-config/grid-config-atom';
-import { allPresets } from '../presets/presets';
+import { GridConfigDropdownButton } from './GridConfigDropdown';
+import { useGridOptions } from './grid-config-atom';
+import { allPresets } from './presets';
 
 ModuleRegistry.registerModules([
     AllCommunityModule,
@@ -54,14 +54,14 @@ ModuleRegistry.registerModules([
 ]);
 
 const GridPreview = () => {
-    const { config, gridOptions, updateCount } = useGridOptions();
+    const { config, gridOptions, previewKey } = useGridOptions();
 
     const [container, setContainer] = useState<HTMLDivElement | null>(null);
 
     const [backgroundValue, setBackground] = useApplicationConfigAtom('previewPaneBackgroundColor');
     const backgroundColor = backgroundValue || allPresets[0].pageBackgroundColor;
 
-    const stateRef = useRef<GridState>({});
+    const [carriedState, setCarriedState] = useState<GridState>({});
 
     const theme = useRenderedTheme();
 
@@ -116,19 +116,29 @@ const GridPreview = () => {
                                 }}
                                 initialState={{
                                     rowSelection: config.rowSelection
-                                        ? stateRef.current.rowSelection || ['5', '3']
+                                        ? carriedState.rowSelection || ['5', '3']
                                         : undefined,
-                                    cellSelection: stateRef.current.cellSelection,
+                                    cellSelection: carriedState.cellSelection,
                                 }}
                                 onSelectionChanged={({ api }) => {
-                                    stateRef.current.rowSelection = api.getState().rowSelection || [];
+                                    setCarriedState((state) => ({
+                                        ...state,
+                                        rowSelection: api.getState().rowSelection || [],
+                                    }));
                                 }}
-                                onCellSelectionChanged={({ api }) => {
-                                    stateRef.current.cellSelection = config.showIntegratedChartPopup
-                                        ? undefined
-                                        : api.getState().cellSelection;
+                                onCellSelectionChanged={({ api, finished }) => {
+                                    // Dragging a range fires this on every cell; only the final one matters.
+                                    if (!finished) {
+                                        return;
+                                    }
+                                    setCarriedState((state) => ({
+                                        ...state,
+                                        cellSelection: config.showIntegratedChartPopup
+                                            ? undefined
+                                            : api.getState().cellSelection,
+                                    }));
                                 }}
-                                key={updateCount}
+                                key={previewKey}
                                 {...gridOptions}
                             />
                         )}

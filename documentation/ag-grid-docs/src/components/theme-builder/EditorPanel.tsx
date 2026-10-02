@@ -7,7 +7,7 @@ import {
     radiusIcon,
     verticalSpacingIcon,
 } from '@ag-website-shared/components/theme-builder/icons';
-import { useApplicationConfigAtom } from '@ag-website-shared/theming/application-config';
+import { useCollapsibleSections } from '@ag-website-shared/components/theme-builder/useCollapsibleSections';
 import styled from '@emotion/styled';
 
 import { BordersEditor } from './BordersEditor';
@@ -15,20 +15,7 @@ import { BordersEditor } from './BordersEditor';
 const DEFAULT_OPEN_SECTIONS = ['General', 'All Parameters'];
 
 export const EditorPanel = () => {
-    const [expanded, setExpanded] = useApplicationConfigAtom('expandedEditors');
-    const openSections = expanded || DEFAULT_OPEN_SECTIONS;
-
-    const toggleSection = (heading: string) => {
-        setExpanded(
-            openSections.includes(heading) ? openSections.filter((h) => h !== heading) : [...openSections, heading]
-        );
-    };
-
-    const sectionProps = (heading: string) => ({
-        heading,
-        isOpen: openSections.includes(heading),
-        onToggle: () => toggleSection(heading),
-    });
+    const sectionProps = useCollapsibleSections(DEFAULT_OPEN_SECTIONS);
 
     return (
         <PanelWrapper>

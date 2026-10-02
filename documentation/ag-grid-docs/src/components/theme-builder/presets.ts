@@ -1,9 +1,6 @@
-import { type Preset, applyPreset } from '@ag-website-shared/theming/preset';
+import type { Preset } from '@ag-website-shared/theming/preset';
 
 import { iconSetAlpine, iconSetQuartzLight } from 'ag-grid-community';
-
-export type { Preset };
-export { applyPreset };
 
 export const lightModePreset: Preset = {
     pageBackgroundColor: '#FAFAFA',
