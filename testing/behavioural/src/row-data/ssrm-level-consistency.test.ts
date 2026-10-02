@@ -107,6 +107,55 @@ describe('SSRM level consistency check', () => {
             expect(events).toEqual([]);
         });
 
+        test('does not display the extra row before the next block has loaded', async () => {
+            const server = createServer();
+            const getRows = (params: IServerSideGetRowsParams<Row>) => {
+                if (params.request.startRow === 0) {
+                    server.getRows(params);
+                }
+            };
+            const api: GridApi<Row> = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'id' }],
+                rowModelType: 'serverSide',
+                cacheBlockSize: BLOCK_SIZE,
+                serverSideInitialRowCount: TOTAL_ROWS,
+                suppressRowVirtualisation: true,
+                maxConcurrentDatasourceRequests: 1,
+                serverSideCheckLevelConsistency: true,
+                getRowId: ({ data }) => data.id,
+                serverSideDatasource: { getRows },
+            });
+
+            await waitFor(() => expect(api.getDisplayedRowAtIndex(9)?.id).toBe('9'));
+            expect(api.getDisplayedRowAtIndex(10)?.stub).toBe(true);
+        });
+
+        test('applies the option when it is changed after the grid is created', async () => {
+            const server = createServer();
+            const { api } = await createGrid(server.getRows, {});
+            server.requests.length = 0;
+
+            api.setGridOption('serverSideCheckLevelConsistency', true);
+            await waitFor(() => expect(server.requests).toHaveLength(3));
+
+            expect(server.requests).toEqual([
+                [0, 11],
+                [10, 21],
+                [20, 31],
+            ]);
+        });
+
+        test('does not report a refresh of consistent data', async () => {
+            const server = createServer();
+            const { api, events } = await createGrid(server.getRows, { serverSideCheckLevelConsistency: true });
+
+            api.refreshServerSide({ purge: false });
+            await waitFor(() => expect(server.requests).toHaveLength(6));
+            await waitForLoadingFinished(api);
+
+            expect(events).toEqual([]);
+        });
+
         test('infers the last row from a short block as before', async () => {
             const server = createServer();
             const getRows = (params: IServerSideGetRowsParams<Row>) => {

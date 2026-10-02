@@ -153,10 +153,11 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     private executeLoad(cache: LazyCache, startRow: number, endRow: number) {
         const ssrmParams = cache.getSsrmParams();
         const parentNode = cache.store.getParentNode() as RowNode;
+        const includesOverlapRow = cache.checksLevelConsistency();
         const request: IServerSideGetRowsRequest = {
             startRow,
             // one row past the block is compared with the next block's first row
-            endRow: cache.checksLevelConsistency() ? endRow + 1 : endRow,
+            endRow: includesOverlapRow ? endRow + 1 : endRow,
             rowGroupCols: ssrmParams.rowGroupCols,
             valueCols: ssrmParams.valueCols,
             pivotCols: ssrmParams.pivotCols,
@@ -181,7 +182,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
         const success = (params: LoadSuccessParams) => {
             this.onLoadComplete();
-            cache.onLoadSuccess(startRow, endRow - startRow, params);
+            cache.onLoadSuccess(startRow, endRow - startRow, params, includesOverlapRow);
             removeNodesFromLoadingMap();
         };
 

@@ -855,7 +855,15 @@ export class LazyCache extends BeanStub {
         return [...duplicates];
     }
 
-    public onLoadSuccess(firstRowIndex: number, numberOfRowsExpected: number, response: LoadSuccessParams) {
+    /**
+     * @param includesOverlapRow true when the response was requested with one extra row for the level consistency check
+     */
+    public onLoadSuccess(
+        firstRowIndex: number,
+        numberOfRowsExpected: number,
+        response: LoadSuccessParams,
+        includesOverlapRow = false
+    ) {
         if (!this.live) {
             return;
         }
@@ -883,15 +891,16 @@ export class LazyCache extends BeanStub {
         }
 
         const consistencyChecker = this.consistencyChecker;
-        const rowData = consistencyChecker
-            ? this.checkBlockConsistency(
-                  consistencyChecker,
-                  firstRowIndex,
-                  numberOfRowsExpected,
-                  response.rowData,
-                  grandTotalId
-              )
-            : response.rowData;
+        const rowData =
+            consistencyChecker && includesOverlapRow
+                ? this.checkBlockConsistency(
+                      consistencyChecker,
+                      firstRowIndex,
+                      numberOfRowsExpected,
+                      response.rowData,
+                      grandTotalId
+                  )
+                : response.rowData;
 
         const wasRefreshing = this.nodesToRefresh.size > 0;
         let skippedRowCount = 0;
@@ -1125,7 +1134,7 @@ export class LazyCache extends BeanStub {
     }
 
     public markNodesForRefresh() {
-        this.consistencyChecker?.clearBoundaries();
+        this.consistencyChecker?.reset();
         this.nodeMap.forEach((lazyNode) => {
             if (lazyNode.node.stub && !lazyNode.node.failedLoad) {
                 return;
@@ -1233,7 +1242,7 @@ export class LazyCache extends BeanStub {
             return;
         }
 
-        this.consistencyChecker?.clearBoundaries();
+        this.consistencyChecker?.reset();
         // the node map does not need entirely recreated, only the indexes need updated.
         const allNodes = new Array(this.nodeMap.getSize());
         const nodesMap = this.nodeMap;
@@ -1272,7 +1281,7 @@ export class LazyCache extends BeanStub {
     }
 
     public insertRowNodes(inserts: any[], indexToAdd?: number): RowNode[] {
-        this.consistencyChecker?.clearBoundaries();
+        this.consistencyChecker?.reset();
         // adjust row count to allow for footer row
         const realRowCount = this.store.getRowCount() - (this.store.getParentNode().sibling ? 1 : 0);
 
@@ -1330,7 +1339,7 @@ export class LazyCache extends BeanStub {
     }
 
     public removeRowNodes(idsToRemove: string[], newRowCount?: number): RowNode[] {
-        this.consistencyChecker?.clearBoundaries();
+        this.consistencyChecker?.reset();
         const removedNodes: RowNode[] = [];
         const nodesToVerify: RowNode[] = [];
 

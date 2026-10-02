@@ -74,9 +74,10 @@ export class LevelConsistencyChecker {
         return this.pending.size > 0;
     }
 
-    /** Boundary ids are positional, so they must be forgotten whenever rows move for any reason other than a read. */
-    public clearBoundaries(): void {
+    /** Boundary ids and pending inconsistencies are positional, so they must be forgotten whenever rows move for any reason other than a read. */
+    public reset(): void {
         this.boundaryIds.clear();
+        this.pending.clear();
     }
 
     public takeInconsistencies(): ServerSideLevelInconsistency[] {

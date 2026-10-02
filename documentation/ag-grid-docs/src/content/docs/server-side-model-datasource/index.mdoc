@@ -64,7 +64,7 @@ fetch data from the server.
 Rows fetched from the server are supplied to the grid via `params.success({ rowData: rows })`.
 
 {% note %}
-When [`serverSideCheckLevelConsistency`](./server-side-model-updating-refresh/#level-consistency) is enabled, `endRow` is one past the end of the block, so that the grid can compare the extra row with the next block. The datasource should return rows up to `endRow`, not a fixed block size.
+When `serverSideCheckLevelConsistency` is enabled, each request includes one extra row. Return all rows from `startRow` up to `endRow`. See [Level Consistency](./server-side-model-updating-refresh/#level-consistency).
 {% /note %}
 
 ## Registering the Datasource
