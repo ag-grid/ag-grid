@@ -14,11 +14,20 @@ import { DARK_MODE_INIT_SCRIPT, KBD_PLATFORM_INIT_SCRIPT } from '@utils/csp/inli
 import { Footer } from '@ag-website-shared/components/footer/Footer';
 import styles from '@layouts/Layout.module.scss';
 import { getApiPaths } from '@utils/apiMenuPath';
-import { SITE_BASE_URL, PUBLIC_GTM_ID, PUBLIC_GTM_AUTH, PUBLIC_GTM_PREVIEW, agGridVersion } from '@constants';
+import {
+    SITE_BASE_URL,
+    PUBLIC_GTM_ID,
+    PUBLIC_GTM_AUTH,
+    PUBLIC_GTM_PREVIEW,
+    PUBLIC_DASH0_ENDPOINT_URL,
+    PUBLIC_DASH0_AUTH_TOKEN,
+    agGridVersion,
+} from '@constants';
 import GoogleTagManager from '@ag-website-shared/components/google-tag-manager/GoogleTagManager.astro';
 import GoogleTagManagerBody from '@ag-website-shared/components/google-tag-manager/GoogleTagManagerBody.astro';
 import AnnouncementBanner from '@ag-website-shared/components/announcement-banner/AnnouncementBanner.astro';
 import JsonLd from '@ag-website-shared/components/structured-data/JsonLd.astro';
+import WebsiteMonitoring from '@ag-website-shared/components/website-monitoring/WebsiteMonitoring.astro';
 import { type JsonLdObject } from '@ag-website-shared/utils/structuredData';
 import { buildSiteStructuredData } from '@utils/docsStructuredData';
 import { getSocialImageUrl } from '@utils/socialImageUrl';
@@ -138,6 +147,7 @@ const announcementBannerProps = {
             ))
         }
         {(!isProduction || isArchive || hidePageFromSearchEngines) && <meta name="robots" content="noindex" />}
+        <slot name="head" />
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
         <ClientRouter />
@@ -200,6 +210,20 @@ const announcementBannerProps = {
 
         {structuredData.length > 0 && <JsonLd data={structuredData} />}
 
+        {/* Ahead of Google Tag Manager, so CSP violations from its tags are reported */}
+        {
+            !isDev && PUBLIC_DASH0_ENDPOINT_URL && PUBLIC_DASH0_AUTH_TOKEN && (
+                <WebsiteMonitoring
+                    serviceName="ag-grid-website"
+                    serviceVersion={agGridVersion}
+                    environment={
+                        isArchive ? 'archive' : isProduction ? 'production' : isStaging ? 'staging' : 'testing'
+                    }
+                    endpointUrl={PUBLIC_DASH0_ENDPOINT_URL}
+                    authToken={PUBLIC_DASH0_AUTH_TOKEN}
+                />
+            )
+        }
         {
             !isDev && (
                 <GoogleTagManager
