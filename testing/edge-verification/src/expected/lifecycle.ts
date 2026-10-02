@@ -36,8 +36,6 @@ export const PENDING = {
     chartsLegacyPrefixes:
         'ag-charts#8440 / #8441 (legacy-prefix redirects: files keep their path, renamed slugs in one hop)',
     chartsSeo: 'ag-charts#8440 / #8441 (one H1 and one <main>, absolute social images, /charts/options/ link)',
-    chartsFrameworkRoots:
-        'ag-charts#8440 / #8441 (/charts/react, /charts/angular and /charts/vue go to quick-start/ in one hop, as /charts/javascript does: SE-66 B3)',
     studioHosts: 'ag-studio#3096 / #3097 (one-hop host canonicalisation under /studio, Vary on HTML)',
     studioSeo: 'ag-studio#3096 / #3097 (one <main>, absolute social images, initial-scale=1)',
     studioNoOffers: 'ag-studio#3096 / #3097 (drops the "AG Studio Community" price-0 offer)',
