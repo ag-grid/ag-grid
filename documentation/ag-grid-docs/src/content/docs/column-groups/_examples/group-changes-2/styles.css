@@ -6,16 +6,6 @@
     background-color: #2244cc44;
 }
 
-.test-grid {
-    flex: 1 1 auto;
-}
-
-.test-container {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.test-header {
+.example-header {
     padding-bottom: 1rem;
 }

@@ -1,13 +1,3 @@
-.test-grid {
-    flex-grow: 1;
-}
-
-.test-container {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.test-header {
+.example-header {
     margin-bottom: 1rem;
 }
