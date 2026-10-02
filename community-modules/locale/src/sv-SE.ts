@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     addFilterCard: 'Lägg till filter',
     agTextColumnFilterDisplayName: 'Enkel filter',
     agNumberColumnFilterDisplayName: 'Enkel filter',
+    agBigIntColumnFilterDisplayName: 'Enkel filter',
     agDateColumnFilterDisplayName: 'Enkel filter',
     agSetColumnFilterDisplayName: 'Valfilter',
     agMultiColumnFilterDisplayName: 'Kombinationsfilter',

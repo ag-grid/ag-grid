@@ -16,6 +16,7 @@ import type {
     ISetFilterParams,
     NamedBean,
     Registry,
+    ResolvedFilter,
     SetFilterModel,
     SetFilterModelValue,
     UserCompDetails,
@@ -27,16 +28,17 @@ import {
     _getCellRendererDetails,
     _getFilterDetails,
     _isClientSideRowModel,
-    _isSetFilterByDefault,
     _mergeFilterParamsWithApplicationProvidedParams,
+    _resolveFilter,
 } from 'ag-grid-community';
 
+import { resolveFilterParams, resolveMultiFilterChildren } from '../../multiFilter/multiFilterUtil';
 import type { SetFilterTreeItems } from '../../setFilter/iSetDisplayValueModel';
 import type { SetFilterHandler } from '../../setFilter/setFilterHandler';
 import { formatTreeKey, getDataTypeKeyCreator, translateForSetFilter } from '../../setFilter/setFilterUtils';
+import type { AdvancedFilterExpressionService } from '../advancedFilterExpressionService';
 import { quoteSetPath, quoteSetValue } from '../advancedFilterExpressionService';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
-import { getMultiFilterChild } from '../customFilterOptions';
 import { AgSetValueAutocompleteRow } from './agSetValueAutocompleteRow';
 import { namesSetOperator } from './setFilterExpressionOperators';
 import { joinSetPath, splitSetPath, writeSetPath } from './setOperandsParser';
@@ -55,8 +57,10 @@ interface SetValueEntry extends AutocompleteEntry {
 /** The list offers these objects themselves, so one chosen from it comes back carrying its own path. */
 const isSetValueEntry = (entry: AutocompleteEntry): entry is SetValueEntry => 'path' in entry;
 
+const SET_FILTER = 'agSetColumnFilter';
+
 /** The value list reads the column like a Set Filter of the column's own. */
-const SET_FILTER_DEF: IFilterDef = { filter: 'agSetColumnFilter' };
+const SET_FILTER_DEF: IFilterDef = { filter: SET_FILTER };
 
 /** A column's Set Filter values, rebuilt whenever the underlying value model reloads. */
 interface SetColumnValues {
@@ -117,6 +121,7 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
 
     private registry: Registry;
     private userCompFactory: UserComponentFactory;
+    private advFilterExpSvc: AdvancedFilterExpressionService;
 
     /** Null marks a column with no usable handler, so one is not attempted again on every keystroke. */
     private readonly columns = new Map<string, SetColumn | null>();
@@ -126,17 +131,21 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
     public wireBeans(beans: BeanCollection): void {
         this.registry = beans.registry;
         this.userCompFactory = beans.userCompFactory;
+        this.advFilterExpSvc = beans.advFilterExpSvc as AdvancedFilterExpressionService;
     }
 
     public postConstruct(): void {
         // A handler reads the column definitions and the grouping when it is built, so a change to either
         // has to be pushed in. `refresh` is the column filter lifecycle's own way; it is not running here.
         const refresh = () => this.refreshColumns();
+        const refreshAndCreate = () => {
+            this.refreshColumns();
+            this.createPreservingColumns();
+        };
         this.addManagedEventListeners({
-            newColumnsLoaded: () => {
-                this.refreshColumns();
-                this.createPreservingColumns();
-            },
+            newColumnsLoaded: refreshAndCreate,
+            // inferring a data type rewrites the column definitions without loading new columns
+            dataTypesInferred: refreshAndCreate,
             advancedFilterEnabledChanged: (event) => {
                 // Turning it off discards the applied expression, the one thing holding these handlers.
                 if (event.enabled) {
@@ -145,7 +154,6 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
                     this.reset();
                 }
             },
-            dataTypesInferred: () => this.createPreservingColumns(),
             filterChanged: () => this.refreshAppliedValues(),
             columnRowGroupChanged: refresh,
             columnPivotModeChanged: refresh,
@@ -157,10 +165,11 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
     }
 
     /** Refreshed rather than rebuilt: an applied expression holds the instance, so a new one never reaches it. */
-    private refreshColumns(): void {
+    public refreshColumns(): void {
         const columns = this.columns;
+        const colModel = this.beans.colModel;
         for (const [colId, setColumn] of columns) {
-            const column = this.beans.colModel.getNonPivotColById(colId);
+            const column = colModel.getNonPivotColById(colId);
             if (setColumn && column && this.offersSetOperators(column)) {
                 const handler = setColumn.handler;
                 handler.refresh(this.createHandlerParams(column, 'colDef'));
@@ -190,14 +199,17 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         for (let i = 0, len = cols.length; i < len; ++i) {
             const column = cols[i];
             // One it holds is skipped before its params are read, as reading may call the app's function.
-            if (
-                column.primary &&
-                !this.columns.has(column.getColId()) &&
-                this.getSetFilterParams(column)?.preservePreviousValues
-            ) {
+            if (column.primary && !this.columns.has(column.getColId()) && this.isPreserving(column)) {
                 this.getSetColumn(column);
             }
         }
+    }
+
+    private isPreserving(column: AgColumn): boolean {
+        const setFilter = this.getSetFilter(column, _resolveFilter(this.beans, column));
+        const filterParams: ISetFilterParams | undefined =
+            setFilter && resolveFilterParams(this.beans, column, this.getSetColDef(column, setFilter));
+        return !!filterParams?.preservePreviousValues;
     }
 
     /** The handlers hold the values an applied expression names, so `preservePreviousValuesLimit` spares them. */
@@ -214,14 +226,15 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         }
     }
 
-    /** Whether the column offers `is any of` / `is none of`; cheap enough to ask on every parse. */
+    /** Whether the column offers `is any of` / `is none of`. */
     public offersSetOperators(column: AgColumn | null | undefined): boolean {
         if (!column) {
             return false;
         }
         // An option list naming them offers them whatever filter the column has, and asked for them by name,
         // so a missing module is reported rather than the list falling back silently to the default options.
-        if (namesSetOperator(column)) {
+        const resolved = _resolveFilter(this.beans, column);
+        if (namesSetOperator(this.advFilterExpSvc.getColumnFilterOptions(column, resolved))) {
             return this.gos.assertModuleRegistered('SetFilter', 4);
         }
         // Without the module there is no handler to filter with, so the options are not offered either.
@@ -229,50 +242,30 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
             return false;
         }
         // Otherwise it is the column's filter that decides: a Set Filter, or a Multi Filter holding one.
-        const colDef = column.colDef;
-        const hasSetFilter =
-            this.isSetFilterDef(column) ||
-            (colDef.filter === 'agMultiColumnFilter' &&
-                !!getMultiFilterChild(this.getMultiFilterParams(column), 'agSetColumnFilter'));
+        const setFilter = this.getSetFilter(column, resolved);
         // Both options are matched against the column's values, so a column with none to offer would take
         // a written value it can never resolve. Only the Client-Side Row Model can derive them from its rows.
-        return hasSetFilter && this.hasSetFilterValues(column);
+        return !!setFilter && this.hasSetFilterValues(column, setFilter);
     }
 
     /** Whether the column has a value list to match against: provided values, or rows the grid itself holds. */
-    private hasSetFilterValues(column: AgColumn): boolean {
+    private hasSetFilterValues(column: AgColumn, setFilter: ResolvedFilter): boolean {
         if (_isClientSideRowModel(this.gos)) {
             return true;
         }
-        return !!this.getSetFilterParams(column)?.values;
-    }
-
-    private getSetFilterParams(column: AgColumn): ISetFilterParams | undefined {
-        const filterParams = this.getSetColDef(column).filterParams;
-        // `filterParams` may be a function of the grid params, so it is resolved the way the handler's own are.
-        return typeof filterParams === 'function'
-            ? this.createHandlerParams(column, 'init').filterParams
-            : filterParams;
-    }
-
-    /** A `filterParams` function is merged as for the filter about to be created, so its children can be read. */
-    private getMultiFilterParams(column: AgColumn): any {
-        const colDef = column.colDef;
-        const filterParams = colDef.filterParams;
-        return typeof filterParams === 'function'
-            ? this.beans.colFilter!.createHandlerFilterParams(column, colDef, 'init')
-            : filterParams;
+        return !!resolveFilterParams(this.beans, column, this.getSetColDef(column, setFilter))?.values;
     }
 
     /** Whether the column's own filter is a Set Filter, so its `filterParams` are a list's and not a comparison's. */
-    public hasSetFilter(column: AgColumn | null | undefined): boolean {
-        return !!column && this.gos.isModuleRegistered('SetFilter') && this.isSetFilterDef(column);
+    public hasSetFilter(resolved: ResolvedFilter): boolean {
+        return this.gos.isModuleRegistered('SetFilter') && resolved.key === SET_FILTER;
     }
 
-    /** Read from the definition alone, so asking does not instantiate anything. */
-    private isSetFilterDef(column: AgColumn): boolean {
-        const filter = column.colDef.filter;
-        return filter === 'agSetColumnFilter' || (filter === true && _isSetFilterByDefault(this.gos));
+    /** The column's Set Filter, or its Multi Filter's: where the value list is configured. Read from the definitions alone. */
+    private getSetFilter(column: AgColumn, resolved: ResolvedFilter): ResolvedFilter | undefined {
+        return resolved.key === SET_FILTER
+            ? resolved
+            : resolveMultiFilterChildren(this.beans, column, resolved)?.find((child) => child.key === SET_FILTER);
     }
 
     /** The Set Filter keys a written path names, or `undefined` where the path names no value at all. */
@@ -453,7 +446,7 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
         if (setColumn.values) {
             return setColumn.values;
         }
-        // A reload installs a fresh promise while `isInitialised()` still reports the previous load, so the
+        // A reload installs a fresh promise while the previous load's values are still held, so the
         // promise says whether the keys are current. Waited on once per load, as `then` on an unresolved
         // one leaves a waiter behind for good and this is reached on every keystroke.
         const allKeys = setColumn.handler.valueModel.allKeys;
@@ -547,7 +540,8 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
             filterModifiedCallback: () => {},
             source: 'init',
         };
-        return _getFilterDetails(this.userCompFactory, this.getSetColDef(column), params, 'agSetColumnFilter');
+        const colDef = this.getSetColDef(column, this.getSetFilter(column, _resolveFilter(this.beans, column)));
+        return _getFilterDetails(this.userCompFactory, colDef, params, SET_FILTER);
     }
 
     /** `true` = forFloatingFilter, whose always-true `doesRowPassOtherFilter` is what offers every row's value. */
@@ -561,19 +555,14 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
      * component is not this one, and a Date Filter's `comparator` reaching a value list is called with
      * two cell values and throws.
      */
-    private getSetColDef(column: AgColumn): ColDef {
+    private getSetColDef(column: AgColumn, setFilter: ResolvedFilter | undefined): ColDef {
         const colDef = column.getColDef();
-        if (this.hasSetFilter(column)) {
+        const setFilterDef = setFilter?.def;
+        if (setFilterDef === colDef) {
             return colDef;
         }
-        // A Multi Filter keeps the value list's configuration on its Set Filter child; any other filter's
-        // params are written for itself, a Date Filter's `comparator` being called with two cell values here.
-        const child =
-            colDef.filter === 'agMultiColumnFilter'
-                ? getMultiFilterChild(this.getMultiFilterParams(column), 'agSetColumnFilter')
-                : undefined;
-        const filterParams = child ? child.filterParams : this.getKeyFormatterParams(colDef);
-        return { ...colDef, filter: 'agSetColumnFilter', filterParams };
+        const filterParams = setFilterDef ? setFilterDef.filterParams : this.getKeyFormatterParams(colDef);
+        return { ...colDef, filter: SET_FILTER, filterParams };
     }
 
     /** A data type's key creator names each value by its formatted text, so the list shows that text. */
@@ -587,14 +576,15 @@ export class AdvancedFilterSetService extends BeanStub<'valuesChanged'> implemen
 
     /** `colDef` is what tells the value model its source may have changed; on the first build nothing has. */
     private createHandlerParams(column: AgColumn, source: 'init' | 'colDef'): SetHandlerParams {
-        const colDef = this.getSetColDef(column);
-        const colFilter = this.beans.colFilter!;
-        const filterValueGetter = colFilter.resolveFilterValueGetter(
-            column,
-            SET_FILTER_DEF,
-            column.colDef.filterValueGetter,
-            undefined
-        );
+        const beans = this.beans;
+        const colFilter = beans.colFilter!;
+        const resolved = _resolveFilter(beans, column);
+        const setFilter = this.getSetFilter(column, resolved);
+        const colDef = this.getSetColDef(column, setFilter);
+        // as the rows are read: the Set Filter's own, else the column's as its filter reads it
+        const filterValueGetter =
+            setFilter?.filterValueGetter ??
+            _resolveFilter(beans, column, SET_FILTER_DEF, SET_FILTER, resolved).filterValueGetter;
         const params: SetHandlerParams = {
             ...this.createSharedParams(column),
             filterValueGetter,

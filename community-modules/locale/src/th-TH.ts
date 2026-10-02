@@ -118,6 +118,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     addFilterCard: 'เพิ่มตัวกรอง',
     agTextColumnFilterDisplayName: 'ตัวกรองอย่างง่าย',
     agNumberColumnFilterDisplayName: 'ตัวกรองอย่างง่าย',
+    agBigIntColumnFilterDisplayName: 'ตัวกรองอย่างง่าย',
     agDateColumnFilterDisplayName: 'ตัวกรองอย่างง่าย',
     agSetColumnFilterDisplayName: 'ตัวกรองการเลือก',
     agMultiColumnFilterDisplayName: 'ตัวกรองแบบผสม',

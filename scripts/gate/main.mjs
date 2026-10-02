@@ -1,6 +1,6 @@
 // Entry point for the repo's gate scripts: `node scripts/gate/main.mjs <gate> [args...]`.
 //
-// ./behave.sh, ./checks.sh, ./benches.sh and ./docs-e2e.sh are one-line shims onto this, so the run capture,
+// ./behave.sh, ./checks.sh, ./benches.sh, ./docs-e2e.sh and ./grid-e2e.sh are one-line shims onto this, so the run capture,
 // the `--async`/`--wait`/`--kill` dispatch and the argument parsing are written once rather than once per
 // gate. Each gate module contributes only what is its own: the command it runs, its flags, and its help.
 import path from 'node:path';
@@ -14,7 +14,7 @@ import { RunLog, preventIdleSleep, spawnAwait } from './run-log.mjs';
 // which packages/*/tsconfig.spec.json cannot type-check under `module: commonjs`. Revisit when Vite flips.
 process.env.VITE_CONFIG_NATIVE_IGNORE_WARNING = 'true';
 
-const GATES = ['behave', 'bench', 'checks', 'docs-e2e'];
+const GATES = ['behave', 'bench', 'checks', 'docs-e2e', 'grid-e2e'];
 
 const mainPath = fileURLToPath(import.meta.url);
 const rootDir = path.resolve(path.dirname(mainPath), '../..');

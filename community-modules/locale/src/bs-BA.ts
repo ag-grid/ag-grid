@@ -118,6 +118,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     addFilterCard: 'Dodaj filter',
     agTextColumnFilterDisplayName: 'Jednostavan filter',
     agNumberColumnFilterDisplayName: 'Jednostavan filter',
+    agBigIntColumnFilterDisplayName: 'Jednostavan filter',
     agDateColumnFilterDisplayName: 'Jednostavan filter',
     agSetColumnFilterDisplayName: 'Filter izbora',
     agMultiColumnFilterDisplayName: 'Kombinovani filter',

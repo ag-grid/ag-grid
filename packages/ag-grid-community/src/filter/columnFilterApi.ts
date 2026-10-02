@@ -2,6 +2,7 @@ import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { Column } from '../interfaces/iColumn';
 import type { FilterAction, FilterActionParams, FilterHandler, FilterModel, IFilter } from '../interfaces/iFilter';
+import { _getRowHandler } from './pairedFilterHandler';
 
 export function isColumnFilterPresent(beans: BeanCollection): boolean {
     const filterManager = beans.filterManager;
@@ -79,7 +80,7 @@ export function getColumnFilterHandler(beans: BeanCollection, colKey: string | C
         beans.log.error(12, { colKey });
         return undefined;
     }
-    return beans.colFilter?.getHandler(column, true);
+    return _getRowHandler(beans.colFilter?.getHandler(column, true));
 }
 
 export function doFilterAction(beans: BeanCollection, params: FilterActionParams): void {

@@ -53,19 +53,20 @@ export function getResolvedHorizontalOffset(params: HorizontalOffsetParams): num
 export function applyHorizontalPosition(eElement: HTMLElement, params: ApplyHorizontalPositionParams): void {
     const { offset, lane, width, isPrintLayout, isRtl, visibleCols } = params;
 
-    const useRightAnchor = !isPrintLayout && (isRtl ? lane !== 0 : lane === 2);
-
-    if (useRightAnchor) {
-        if (isRtl) {
-            eElement.style.right = `${offset}px`;
-        } else {
-            const containerWidth = visibleCols.getRightStickyColumnContainerWidth();
-            eElement.style.right = `${containerWidth - offset - width}px`;
-        }
-        eElement.style.left = '';
-        return;
-    }
-
-    eElement.style.left = `${offset}px`;
-    eElement.style.right = '';
+    const rightAnchored = isRightAnchored(lane, isRtl, isPrintLayout);
+    const position = getAnchoredPosition(offset, width, rightAnchored, isRtl, visibleCols);
+    eElement.style.left = rightAnchored ? '' : `${position}px`;
+    eElement.style.right = rightAnchored ? `${position}px` : '';
 }
+
+export const isRightAnchored = (lane: ColumnLane, isRtl: boolean, isPrintLayout: boolean): boolean =>
+    !isPrintLayout && (isRtl ? lane !== 0 : lane === 2);
+
+/** The `right` to write when right-anchored, else the `left`. */
+export const getAnchoredPosition = (
+    offset: number,
+    width: number,
+    rightAnchored: boolean,
+    isRtl: boolean,
+    visibleCols: VisibleColsService
+): number => (rightAnchored && !isRtl ? visibleCols.getRightStickyColumnContainerWidth() - offset - width : offset);

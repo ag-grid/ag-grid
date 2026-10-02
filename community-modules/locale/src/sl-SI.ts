@@ -118,6 +118,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     addFilterCard: 'Dodaj filter',
     agTextColumnFilterDisplayName: 'Enostavni filter',
     agNumberColumnFilterDisplayName: 'Enostavni filter',
+    agBigIntColumnFilterDisplayName: 'Enostavni filter',
     agDateColumnFilterDisplayName: 'Enostavni filter',
     agSetColumnFilterDisplayName: 'Filter izbora',
     agMultiColumnFilterDisplayName: 'Kombinirani filter',

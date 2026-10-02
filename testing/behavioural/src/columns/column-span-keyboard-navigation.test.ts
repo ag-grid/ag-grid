@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
-import type { ColDef, GridApi, GridOptions, NavigateToNextCellParams } from 'ag-grid-community';
+import type { ColDef, ColSpanParams, GridApi, GridOptions, NavigateToNextCellParams } from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
@@ -601,7 +601,7 @@ describe('Column Spanning Keyboard Navigation', () => {
         expect(getFocusedColId(api)).toBe('b');
     });
 
-    test('setFocusedCell on a covered column whose span is scrolled out of view to the left records that column', () => {
+    test('setFocusedCell on a covered column whose span is scrolled out of view to the left focuses the spanning column', () => {
         const api = createNavigationGrid({
             columnDefs: Array.from({ length: 40 }, (_, i) => ({
                 colId: `c${i}`,
@@ -613,10 +613,87 @@ describe('Column Spanning Keyboard Navigation', () => {
         api.ensureColumnVisible('c38');
         expect(getGridElement(api)!.querySelector('.ag-row[row-index="0"] .ag-cell[col-id="c0"]')).toBeNull();
 
-        // c0 spans c1, but the spanning cell is not drawn, so no drawn cell answers for c1
         api.setFocusedCell(0, 'c1');
 
+        expect(getFocusedColId(api)).toBe('c0');
+    });
+
+    test('setFocusedCell resolves a covered column in each pinned section, a span stopping at the section edge', () => {
+        const api = createNavigationGrid({
+            columnDefs: [
+                { colId: 'left', pinned: 'left', colSpan: () => 2 },
+                { colId: 'c0' },
+                { colId: 'c1', colSpan: () => 2 },
+                { colId: 'c2' },
+                { colId: 'r0', pinned: 'right', colSpan: () => 2 },
+                { colId: 'r1', pinned: 'right' },
+            ],
+            pinnedTopRowData: [{ a: 'p', b: 'p', c: 'p' }],
+        });
+
+        api.setFocusedCell(0, 'c2', 'top');
         expect(getFocusedColId(api)).toBe('c1');
+        expect(getFocusedRowPinned(api)).toBe('top');
+
+        api.setFocusedCell(0, 'c0');
+        expect(getFocusedColId(api)).toBe('c0');
+
+        api.setFocusedCell(0, 'c2');
+        expect(getFocusedColId(api)).toBe('c1');
+
+        api.setFocusedCell(0, 'r1');
+        expect(getFocusedColId(api)).toBe('r0');
+    });
+
+    test('setFocusedCell on a full-width row keeps the column asked for and asks no colSpan, rendered or not', () => {
+        const colSpan = vi.fn((_params: ColSpanParams) => 2);
+        const fullWidthIds = new Set(['a1', 'a99']);
+        const api = createNavigationGrid({
+            columnDefs: [
+                { colId: 'a', field: 'a', colSpan },
+                { colId: 'b', field: 'b' },
+                { colId: 'c', field: 'c' },
+            ],
+            rowData: Array.from({ length: 100 }, (_, i) => ({ a: `a${i}`, b: `b${i}`, c: `c${i}` })),
+            isFullWidthRow: ({ rowNode }) => !!rowNode.data && fullWidthIds.has(rowNode.data.a),
+            fullWidthCellRenderer: () => 'full width',
+            suppressRowVirtualisation: false,
+        });
+        const gridDiv = getGridElement(api)!;
+        expect(gridDiv.querySelector('.ag-row[row-index="1"]')).not.toBeNull();
+        expect(gridDiv.querySelector('.ag-row[row-index="99"]')).toBeNull();
+        colSpan.mockClear();
+
+        api.setFocusedCell(2, 'b');
+        expect(getFocusedColId(api)).toBe('a');
+
+        api.setFocusedCell(1, 'b');
+        expect(getFocusedColId(api)).toBe('b');
+
+        api.setFocusedCell(99, 'b');
+        expect(getFocusedColId(api)).toBe('b');
+
+        expect(gridDiv.querySelector('.ag-row[row-index="98"]')).toBeNull();
+        api.setFocusedCell(98, 'b');
+        expect(getFocusedColId(api)).toBe('a');
+
+        expect(colSpan.mock.calls.filter(([p]) => fullWidthIds.has(p.data?.a))).toEqual([]);
+    });
+
+    test('restoring focusedCell state on a covered column of a row not rendered focuses the spanning column', async () => {
+        const api = createNavigationGrid({
+            columnDefs: [
+                { colId: 'a', field: 'a', colSpan: () => 2 },
+                { colId: 'b', field: 'b' },
+                { colId: 'c', field: 'c' },
+            ],
+            rowData: Array.from({ length: 100 }, (_, i) => ({ a: `a${i}`, b: `b${i}`, c: `c${i}` })),
+            suppressRowVirtualisation: false,
+            initialState: { focusedCell: { colId: 'b', rowIndex: 99, rowPinned: null } },
+        });
+
+        await waitFor(() => expect(getFocusedRowIndex(api)).toBe(99));
+        expect(getFocusedColId(api)).toBe('a');
     });
 
     test('horizontal navigation clears the column covered by a spanning cell', () => {

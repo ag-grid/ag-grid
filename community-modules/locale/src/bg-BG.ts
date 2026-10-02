@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     addFilterCard: 'Добави филтър',
     agTextColumnFilterDisplayName: 'Прост филтър',
     agNumberColumnFilterDisplayName: 'Прост филтър',
+    agBigIntColumnFilterDisplayName: 'Прост филтър',
     agDateColumnFilterDisplayName: 'Прост филтър',
     agSetColumnFilterDisplayName: 'Филтър за избор',
     agMultiColumnFilterDisplayName: 'Комбиниран филтър',

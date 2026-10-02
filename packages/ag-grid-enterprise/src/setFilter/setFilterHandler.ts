@@ -37,7 +37,7 @@ import {
     translateForSetFilter,
     unformattedSetFilterText,
 } from './setFilterUtils';
-import SetFilterModelValuesType, { SetValueModel, isProvidedValues } from './setValueModel';
+import { SetValueModel, isProvidedValues } from './setValueModel';
 import type { SetValueModelParams } from './setValueModel';
 import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 
@@ -112,8 +112,11 @@ export class SetFilterHandler<TValue = string>
     public refresh(params: AgFilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): boolean {
         const { keysFormedBy, valueSource, caseSensitive, valueModel } = this;
         const wasPreserving = valueModel.isPreserving();
-        // a model over provided values names them, however the rows are read, while they stay provided
-        const keyedFromRows = this.isValuesTakenFromGrid() || !isProvidedValues(params.filterParams.values);
+        // provided values, the API's included, key the model until the definition's `values` changes
+        const values = params.filterParams.values;
+        const keyedFromRows =
+            valueModel.isValuesTakenFromGrid() ||
+            ((values ?? null) !== (this.params.filterParams.values ?? null) && !isProvidedValues(values));
         const wasTreeDataOrGrouping = this.isTreeDataOrGrouping();
         const valueModelParams = this.updateParams(params);
         const newValueSource = this.valueSource;
@@ -129,24 +132,25 @@ export class SetFilterHandler<TValue = string>
                         newValueSource.readsFormula !== valueSource.readsFormula)));
         // a type inferred from the first rows is the one the model was written for
         const inferring = keysChanged && !!this.beans.dataTypeSvc?.isInferring();
-        if (keysChanged && !inferring && params.model != null) {
+        const model = params.model;
+        if (keysChanged && !inferring && model != null) {
             // the model's keys may name nothing under the new rules, so the grid recreates the filter without it
             return false;
         }
-        // Before the values, whose reload may evict by what the model checks.
-        this.appliedModel.update(params.model);
+        // Before the reload, which reconciles the model once the values arrive and evicts by what it checks.
+        this.appliedModel.update(model);
         this.heldKeyIndex.update({ filterType: 'set', values: this.heldKeys });
         const turnedOff = wasPreserving && !params.filterParams.preservePreviousValues;
         if (turnedOff) {
             this.clearMissing(false);
         }
         // the rows are read again once the types are inferred, provided values are keyed again here
-        const rekeyed = keysChanged && !(inferring && this.isValuesTakenFromGrid());
+        const rekeyed = keysChanged && !(inferring && valueModel.isValuesTakenFromGrid());
         if (rekeyed) {
             this.keyShape = this.getKeyShape();
         }
         if (valueModel.refresh(valueModelParams, rekeyed)) {
-            this.refreshFilterValuesForColDef();
+            this.reloadValues(true);
         }
 
         // Once data has been seen, what left it goes from the model even with no rows left, as with a clear.
@@ -175,16 +179,17 @@ export class SetFilterHandler<TValue = string>
         valueModel.updateParams(this.updateParams(this.params));
         const keyShape = this.getKeyShape();
         // Provided values are keyed by the values alone, whatever the grouping.
-        const reshaped = keyShape !== this.keyShape && this.isValuesTakenFromGrid();
+        const reshaped = keyShape !== this.keyShape && valueModel.isValuesTakenFromGrid();
         this.keyShape = keyShape;
         if (!reshaped) {
             return false;
         }
-        // Its own load replaces the kept keys, as validation queued on an earlier one may add stale keys back;
-        // a reshaped model key names no row.
-        valueModel.refreshAll(true).then(() => {
-            this.dispatchLocalEvent({ type: 'dataChanged' });
-            this.keepModelKeys(undefined, true);
+        // After the load in flight, as validation queued on it may add stale keys back; a reshaped model key names no row.
+        valueModel.allKeys.then(() => {
+            valueModel.updateAllValues(true).then(() => {
+                this.dispatchLocalEvent({ type: 'dataChanged' });
+                this.keepModelKeys(undefined, true);
+            });
         });
         return true;
     }
@@ -384,20 +389,18 @@ export class SetFilterHandler<TValue = string>
 
     private onRowsLoaded(forColDef: boolean): void {
         // Tree Data toggling reloads the rows before its property event, so the rekey has to happen here.
-        // A first load still waiting for the rows reads these ones when they arrive.
-        if (!this.rekeyIfGroupingChanged() && this.valueModel.isInitialised()) {
+        if (!this.rekeyIfGroupingChanged()) {
             this.syncAfterDataChange(forColDef);
         }
     }
 
     public setFilterValues(values: (TValue | null)[]): void {
-        this.valueModel.overrideValues(values).then(() => {
-            this.refreshFilterValues();
-        });
+        this.valueModel.setProvidedValues(values);
+        this.refreshFilterValues();
     }
 
     public resetFilterValues(): void {
-        this.valueModel.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
+        this.valueModel.setProvidedValues(undefined);
         this.syncAfterDataChange(false);
     }
 
@@ -405,19 +408,9 @@ export class SetFilterHandler<TValue = string>
         this.reloadValues(false);
     }
 
-    /** As `refreshFilterValues`, loading once for a column definition however many ask. */
-    public refreshFilterValuesForColDef(): void {
-        this.reloadValues(true);
-    }
-
     /** Through the API the model is checked against the available values, for a column definition against all. */
     private reloadValues(forColDef: boolean): void {
-        const valueModel = this.valueModel;
-        // the model is still being initialised
-        if (!valueModel.isInitialised()) {
-            return;
-        }
-        valueModel.refreshValues(forColDef).then(() => {
+        this.valueModel.refreshValues(forColDef).then(() => {
             this.dispatchLocalEvent({ type: 'dataChanged', hardRefresh: true });
             this.validateModel(undefined, !forColDef);
         });
@@ -489,10 +482,11 @@ export class SetFilterHandler<TValue = string>
     }
 
     private syncAfterDataChange(forColDef: boolean): void {
-        if (!this.isValuesTakenFromGrid()) {
+        const valueModel = this.valueModel;
+        if (!valueModel.isValuesTakenFromGrid()) {
             return;
         }
-        this.valueModel.refreshValues(forColDef).then(() => {
+        valueModel.refreshValues(forColDef).then(() => {
             this.dispatchLocalEvent({ type: 'dataChanged' });
             this.validateModel({ afterDataChange: true });
         });
@@ -526,24 +520,18 @@ export class SetFilterHandler<TValue = string>
             return;
         }
         const valueModel = this.valueModel;
-        const existingFormattedKeys: Map<string | null, string | null> = new Map();
-        const addKey = (key: string | null) => existingFormattedKeys.set(this.caseFormat(key), key);
-        if (restrictToAvailableValues) {
-            for (const key of valueModel.availableKeys) {
-                addKey(key);
-            }
-        } else {
-            valueModel.allValues.forEach((_value, key) => addKey(key));
-        }
-        // No grid values means they are not known yet (cellDataType inference pending), not that all are selected,
-        // so the model waits for them, unless the caller knows the data is empty.
-        const takenFromGrid = valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
-        if (takenFromGrid && !valuesKnown && existingFormattedKeys.size === 0 && model.values.length > 0) {
+        const existingFormattedKeys = valueModel.mapFormattedKeys(restrictToAvailableValues);
+        // An empty grid-derived value set means the values are not yet known (e.g. the filter was
+        // instantiated before cellDataType inference populated the rows), not that everything is selected.
+        // Reconciling now would discard the applied criteria, unless the caller knows the data is empty.
+        const takenFromGrid = valueModel.isValuesTakenFromGrid();
+        const modelValues = model.values;
+        if (takenFromGrid && !valuesKnown && existingFormattedKeys.size === 0 && modelValues.length > 0) {
             return;
         }
         const newValues: SetFilterModelValue = [];
         let updated = false;
-        for (const unformattedKey of model.values) {
+        for (const unformattedKey of modelValues) {
             const formattedKey = this.caseFormat(setFilterNullIfBlank(unformattedKey));
             const existingUnformattedKey = existingFormattedKeys.get(formattedKey);
             if (existingUnformattedKey !== undefined) {
@@ -631,10 +619,6 @@ export class SetFilterHandler<TValue = string>
         } else if (updated || !model.filterType) {
             params.onModelChange({ filterType: this.filterType, values: newValues }, additionalEventAttributes);
         }
-    }
-
-    private isValuesTakenFromGrid(): boolean {
-        return this.valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
     }
 
     private doesFilterPassForTreeData(node: IRowNode, model: SetFilterAppliedModel): boolean | undefined {

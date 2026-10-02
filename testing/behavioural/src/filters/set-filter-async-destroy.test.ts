@@ -94,13 +94,16 @@ describe('Set Filter async destroy safety', () => {
         // Flush the macrotask that fires the values callback so capturedSuccess is populated
         await asyncSetTimeout(0);
 
+        let resolved = false;
+        valueModel.allKeys.then(() => {
+            resolved = true;
+        });
         api.destroy();
 
         capturedSuccess?.(['A', 'B', 'C']);
         await asyncSetTimeout(0);
 
-        // isInitialised() is set inside allKeys.then() — if the guard blocked resolution it stays false
-        expect(valueModel.isInitialised()).toBe(false);
+        expect(resolved).toBe(false);
     });
 
     test('destroy before PROVIDED_CALLBACK success() fires does not throw', async () => {

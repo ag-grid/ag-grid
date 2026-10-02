@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     addFilterCard: 'Přidat filtr',
     agTextColumnFilterDisplayName: 'Jednoduchý filtr',
     agNumberColumnFilterDisplayName: 'Jednoduchý filtr',
+    agBigIntColumnFilterDisplayName: 'Jednoduchý filtr',
     agDateColumnFilterDisplayName: 'Jednoduchý filtr',
     agSetColumnFilterDisplayName: 'Filtr výběru',
     agMultiColumnFilterDisplayName: 'Kombinovaný filtr',

@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     addFilterCard: 'Додати фільтр',
     agTextColumnFilterDisplayName: 'Простий фільтр',
     agNumberColumnFilterDisplayName: 'Простий фільтр',
+    agBigIntColumnFilterDisplayName: 'Простий фільтр',
     agDateColumnFilterDisplayName: 'Простий фільтр',
     agSetColumnFilterDisplayName: 'Фільтр вибору',
     agMultiColumnFilterDisplayName: 'Комбінований фільтр',

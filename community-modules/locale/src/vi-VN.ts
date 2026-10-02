@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     addFilterCard: 'Thêm Bộ Lọc',
     agTextColumnFilterDisplayName: 'Bộ Lọc Đơn Giản',
     agNumberColumnFilterDisplayName: 'Bộ Lọc Đơn Giản',
+    agBigIntColumnFilterDisplayName: 'Bộ Lọc Đơn Giản',
     agDateColumnFilterDisplayName: 'Bộ Lọc Đơn Giản',
     agSetColumnFilterDisplayName: 'Bộ Lọc Lựa Chọn',
     agMultiColumnFilterDisplayName: 'Bộ Lọc Kết Hợp',

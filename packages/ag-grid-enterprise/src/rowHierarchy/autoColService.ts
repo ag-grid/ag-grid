@@ -29,6 +29,8 @@ import {
     _resolveGroupTooltipValue,
 } from 'ag-grid-community';
 
+import { isGroupFilterDef } from './rowHierarchyUtils';
+
 const hasTooltipComponent = (colDef: ColDef | undefined): colDef is ColDef =>
     !!colDef && (colDef.tooltipComponent != null || colDef.tooltipComponentSelector != null);
 
@@ -263,7 +265,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
             const noFieldOrValueGetter =
-                !res.field && !res.valueGetter && !res.filterValueGetter && res.filter !== 'agGroupColumnFilter';
+                !res.field && !res.valueGetter && !res.filterValueGetter && !isGroupFilterDef(res.filter);
             if (noFieldOrValueGetter) {
                 res.filter = false;
             }

@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     addFilterCard: 'Szűrő hozzáadása',
     agTextColumnFilterDisplayName: 'Egyszerű szűrő',
     agNumberColumnFilterDisplayName: 'Egyszerű szűrő',
+    agBigIntColumnFilterDisplayName: 'Egyszerű szűrő',
     agDateColumnFilterDisplayName: 'Egyszerű szűrő',
     agSetColumnFilterDisplayName: 'Kiválasztási szűrő',
     agMultiColumnFilterDisplayName: 'Kombinált szűrő',

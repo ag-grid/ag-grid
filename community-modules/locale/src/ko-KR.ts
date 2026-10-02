@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     addFilterCard: '필터 추가',
     agTextColumnFilterDisplayName: '간단 필터',
     agNumberColumnFilterDisplayName: '간단 필터',
+    agBigIntColumnFilterDisplayName: '간단 필터',
     agDateColumnFilterDisplayName: '간단 필터',
     agSetColumnFilterDisplayName: '선택 필터',
     agMultiColumnFilterDisplayName: '복합 필터',

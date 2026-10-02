@@ -22,7 +22,12 @@ import {
     ValidationModule,
     enableDevValidations,
 } from 'ag-grid-community';
-import { AdvancedFilterModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
+import {
+    AdvancedFilterModule,
+    MultiFilterModule,
+    NewFiltersToolPanelModule,
+    SetFilterModule,
+} from 'ag-grid-enterprise';
 
 /** Custom Filter Options in the Advanced Filter: what a column offers, the grammar, the model, the Builder. */
 interface TestRow {
@@ -131,6 +136,7 @@ describe('Advanced Filter - custom filter options', () => {
             ValidationModule,
             AdvancedFilterModule,
             MultiFilterModule,
+            NewFiltersToolPanelModule,
             SetFilterModule,
             ClientSideRowModelModule,
         ],
@@ -648,6 +654,55 @@ describe('Advanced Filter - custom filter options', () => {
             const af = AdvancedFilterHarness.get(advanced);
             await af.type('[Athlete] ');
             expect(af.autocompleteEntries()).toEqual(['Regular Expression']);
+        });
+
+        /** The operators offered for `[Athlete] `. */
+        async function offeredFor(columnDefs: ColDef[]): Promise<string[]> {
+            const api = gridsManager.createGrid<TestRow>('grid1', {
+                columnDefs,
+                rowData: ROW_DATA,
+                enableAdvancedFilter: true,
+            });
+            await asyncSetTimeout(0);
+            const af = AdvancedFilterHarness.get(api);
+            await af.type('[Athlete] ');
+            const entries = af.autocompleteEntries();
+            gridsManager.reset();
+            return entries;
+        }
+
+        test('a list given by a function is read, on the column or a child', async () => {
+            const text = { filter: 'agTextColumnFilter', filterParams: () => STARTS_A_ONLY };
+            expect(await offeredFor([{ field: 'athlete', ...text }])).toEqual(['contains', 'Starts With A']);
+            expect(
+                await offeredFor([
+                    { field: 'athlete', filter: 'agMultiColumnFilter', filterParams: { filters: [text] } },
+                ])
+            ).toEqual(['contains', 'Starts With A']);
+        });
+
+        test("a selectable filter offers its active filter's options, not another child's", async () => {
+            const selectable = (defaultFilterIndex: number) =>
+                offeredFor([
+                    {
+                        field: 'athlete',
+                        filter: 'agSelectableColumnFilter',
+                        filterParams: {
+                            filters: [
+                                { filter: 'agTextColumnFilter', filterParams: STARTS_A_ONLY },
+                                { filter: 'agTextColumnFilter' },
+                            ],
+                            defaultFilterIndex,
+                        },
+                    },
+                ]);
+            const plain = await offeredFor([{ field: 'athlete', filter: 'agTextColumnFilter' }]);
+            const startsAOnly = await offeredFor([
+                { field: 'athlete', filter: 'agTextColumnFilter', filterParams: STARTS_A_ONLY },
+            ]);
+            expect(plain).toContain('contains');
+            expect(await selectable(1)).toEqual(plain);
+            expect(await selectable(0)).toEqual(startsAOnly);
         });
     });
 
@@ -1402,8 +1457,7 @@ describe('Advanced Filter - custom filter options', () => {
             expect(filteredAthletes(column)).toEqual(filteredAthletes(advanced));
         });
 
-        // Two values are bounds whoever declares them, so a custom option taking a pair is held to the same
-        // ordering rule as the built-in range, in the Advanced Filter as it already is in the column filter.
+        // On a number, bigint or date column a custom pair is held to the range's order, as in the column filter.
         test('a replacement of the range option is asked to put its values in order, as in the column filter', async () => {
             const columnDefs: GridOptions<TestRow>['columnDefs'] = [
                 { field: 'age', filter: 'agNumberColumnFilter', filterParams: { filterOptions: ['equals', OUTSIDE] } },
@@ -1436,6 +1490,40 @@ describe('Advanced Filter - custom filter options', () => {
                   filter: 21
                   filterTo: 38
             `);
+        });
+
+        // The column filter orders only number, bigint and date pairs, so a text pair is the author's to read.
+        test("a text column's pair is not held to an order, typed or built", async () => {
+            const api = gridsManager.createGrid('grid1', opts());
+            await asyncSetTimeout(0);
+
+            const af = AdvancedFilterHarness.get(api);
+            for (const [from, to] of [
+                ['Ann', 'Bolt'],
+                ['Bolt', 'Ann'],
+            ]) {
+                await af.applyExpression(`[Athlete] Between (Exclusive) ("${from}", "${to}")`);
+                await asyncSetTimeout(0);
+                expect(api.getAdvancedFilterModel()).toEqual({
+                    filterType: 'text',
+                    colId: 'athlete',
+                    type: 'betweenExclusive',
+                    filter: from,
+                    filterTo: to,
+                });
+            }
+
+            // Text that reads as dates is still text; typing the second value is what validates the pair.
+            api.setAdvancedFilterModel({
+                filterType: 'text',
+                colId: 'athlete',
+                type: 'betweenExclusive',
+                filter: '2024-02-01',
+                filterTo: '2024-03-01',
+            });
+            const builder = await AdvancedFilterBuilderHarness.open(api);
+            await builder.setValue((await builder.conditionItems())[0], '2024-01-01', 1);
+            expect(builder.applyDisabled()).toBe(false);
         });
     });
 

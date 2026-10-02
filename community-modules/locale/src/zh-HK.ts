@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     addFilterCard: '新增篩選',
     agTextColumnFilterDisplayName: '簡單篩選',
     agNumberColumnFilterDisplayName: '簡單篩選',
+    agBigIntColumnFilterDisplayName: '簡單篩選',
     agDateColumnFilterDisplayName: '簡單篩選',
     agSetColumnFilterDisplayName: '選擇篩選',
     agMultiColumnFilterDisplayName: '組合篩選',

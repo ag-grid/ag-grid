@@ -108,6 +108,7 @@ export const AG_GRID_LOCALE_EN_US = {
     addFilterCard: 'Add Filter',
     agTextColumnFilterDisplayName: 'Simple Filter',
     agNumberColumnFilterDisplayName: 'Simple Filter',
+    agBigIntColumnFilterDisplayName: 'Simple Filter',
     agDateColumnFilterDisplayName: 'Simple Filter',
     agSetColumnFilterDisplayName: 'Selection Filter',
     agMultiColumnFilterDisplayName: 'Combo Filter',

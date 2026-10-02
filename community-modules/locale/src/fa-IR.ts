@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     addFilterCard: 'افزودن فیلتر',
     agTextColumnFilterDisplayName: 'فیلتر ساده',
     agNumberColumnFilterDisplayName: 'فیلتر ساده',
+    agBigIntColumnFilterDisplayName: 'فیلتر ساده',
     agDateColumnFilterDisplayName: 'فیلتر ساده',
     agSetColumnFilterDisplayName: 'فیلتر انتخاب',
     agMultiColumnFilterDisplayName: 'فیلتر ترکیبی',

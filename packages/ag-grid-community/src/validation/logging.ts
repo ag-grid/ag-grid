@@ -2,7 +2,7 @@ import { BASE_URL } from '../baseUrl';
 import type { ValidationModuleName } from '../interfaces/iModule';
 import type { RowModelType } from '../interfaces/iRowModel';
 import { _isUmd } from '../modules/moduleRegistry';
-import { _errorOnce, _warnOnce } from '../utils/log';
+import { _errorOnce, _setDevDebugLogging, _warnOnce } from '../utils/log';
 import { VERSION } from '../version';
 import type { ErrorId, ErrorMap, GetErrorParams, MissingModuleErrors } from './errorMessages/errorText';
 
@@ -131,7 +131,11 @@ export function _configureDiagnostics(config: {
     capture?: boolean;
     throwOn?: readonly Severity[];
     suppress?: ErrorId[];
+    debug?: boolean;
 }): void {
+    if (config.debug !== undefined) {
+        _setDevDebugLogging(config.debug);
+    }
     if (config.throwOn !== undefined) {
         throwSeverities = config.throwOn;
     }

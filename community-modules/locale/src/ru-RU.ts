@@ -118,6 +118,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     addFilterCard: 'Добавить фильтр',
     agTextColumnFilterDisplayName: 'Простой фильтр',
     agNumberColumnFilterDisplayName: 'Простой фильтр',
+    agBigIntColumnFilterDisplayName: 'Простой фильтр',
     agDateColumnFilterDisplayName: 'Простой фильтр',
     agSetColumnFilterDisplayName: 'Фильтр выбора',
     agMultiColumnFilterDisplayName: 'Комбинированный фильтр',

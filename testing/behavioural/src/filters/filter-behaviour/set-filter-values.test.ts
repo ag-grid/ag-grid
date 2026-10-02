@@ -21,6 +21,7 @@ import type {
     SetFilterHandler,
     SetFilterValuesFuncParams,
     ValueFormatterParams,
+    ValueGetterParams,
 } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -201,6 +202,30 @@ describe('Set Filter — value model & UI (coverage)', () => {
             ├── LEAF id:1 country:"Austria"
             └── LEAF id:2 country:"Italy"
         `);
+    });
+
+    test('a value listed in the case seen first keeps that case when another filter hides the row it came from', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'country', filter: 'agSetColumnFilter' },
+                { field: 'sport', filter: 'agSetColumnFilter' },
+            ],
+            rowData: [
+                { country: 'Italy', sport: 'Ski' },
+                { country: 'italy', sport: 'Golf' },
+                { country: 'France', sport: 'Golf' },
+            ],
+        });
+        await api.setColumnFilterModel('sport', { values: ['Golf'] });
+        api.onFilterChanged();
+        await new GridRows(api, 'the Ski row hidden').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:1 country:"italy" sport:"Golf"
+            └── LEAF id:2 country:"France" sport:"Golf"
+        `);
+
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'France', 'Italy']);
     });
 
     test('(Select All) is indeterminate for a partial subset and clears the model when re-selected', async () => {
@@ -1668,6 +1693,65 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         await filterPeople(api);
     });
 
+    test("a selectable filter's child takes `defaultFilterParams` under its own, its params an object or a function", async () => {
+        const childParams = { values: ['zed', 'amy'] };
+        const labels: Record<string, string[]> = {};
+        for (const [form, filterParams] of Object.entries({ object: childParams, function: () => childParams })) {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers: true,
+                columnDefs: [
+                    {
+                        colId: 'person',
+                        field: 'winner.name',
+                        filter: 'agSelectableColumnFilter',
+                        filterParams: {
+                            defaultFilterParams: { values: ['default'], suppressSorting: true },
+                            filters: [{ filter: 'agSetColumnFilter', filterParams }],
+                        },
+                    },
+                ],
+                rowData: PEOPLE_ROWS,
+            });
+            // the child's `values` win; `suppressSorting`, from the defaults alone, keeps the order supplied
+            labels[form] = (await ColumnFilterHarness.open(api, 'person')).setFilterItemLabels();
+            gridsManager.reset();
+        }
+        const expected = ['(Select All)', 'zed', 'amy'];
+        expect(labels).toEqual({ object: expected, function: expected });
+    });
+
+    test("a selectable filter's Multi Filter children read its own value getter on an object column, its params an object or a function", async () => {
+        const rows: string[][] = [];
+        const multiParams = { filters: [{ filter: 'agTextColumnFilter' }] };
+        for (const filterParams of [multiParams, () => multiParams]) {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers: true,
+                columnDefs: [
+                    selectablePersonCol({ field: 'winner', valueFormatter: byName }, [
+                        {
+                            filter: 'agMultiColumnFilter',
+                            filterValueGetter: ({ data }: ValueGetterParams) => data.loser.name,
+                            filterParams,
+                        },
+                    ]),
+                ],
+                rowData: PEOPLE_ROWS,
+            });
+            await api.setColumnFilterModel('person', {
+                filterType: 'multi',
+                filterModels: [{ filterType: 'text', type: 'equals', filter: 'ann' }],
+            });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+            const winners: string[] = [];
+            api.forEachNodeAfterFilter((node) => winners.push(node.data.winner.name));
+            rows.push(winners);
+            gridsManager.reset();
+        }
+
+        expect(rows).toEqual([['bob'], ['bob']]);
+    });
+
     test("a selectable filter's multi filter keys its set child by the column's formatter", async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             enableFilterHandlers: true,
@@ -2821,20 +2905,67 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         expect(handler.getFilterKeys()).toEqual(['Red', 'red', 'Blue', 'blue', 'Green']);
     });
 
-    test('a new comparator and excelMode, which the keys do not depend on, keep the filter', async () => {
-        const countryCol = (comparator?: (a: string, b: string) => number) => ({
+    test('a new excelMode or comparator, which the keys do not depend on, keeps the filter and re-sorts its list', async () => {
+        const descending = (a: string | null, b: string | null) => (b ?? '').localeCompare(a ?? '');
+        const ascending = (a: string | null, b: string | null) => (a ?? '').localeCompare(b ?? '');
+        const countryCol = (
+            excelMode?: 'windows',
+            comparator?: typeof descending,
+            colDefComparator?: typeof descending
+        ) => ({
             field: 'country',
             filter: 'agSetColumnFilter',
-            filterParams: { comparator, excelMode: comparator ? 'windows' : undefined } as ISetFilterParams,
+            comparator: colDefComparator,
+            filterParams: { comparator, excelMode } as ISetFilterParams,
         });
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'athlete' }, countryCol()],
-            rowData: COUNTRY_ROWS,
+            rowData: [...COUNTRY_ROWS, { athlete: 'Eve', country: null }],
         });
         await filterCountries(api, ['France', 'Ireland', 'Spain']);
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        expect(filter.setFilterItemLabels()).toEqual([
+            '(Select All)',
+            '(Blanks)',
+            'France',
+            'Ireland',
+            'Italy',
+            'Spain',
+        ]);
+        const update = async (...args: Parameters<typeof countryCol>) => {
+            api.setGridOption('columnDefs', [{ field: 'athlete' }, countryCol(...args)]);
+            await asyncSetTimeout(0);
+        };
 
-        api.setGridOption('columnDefs', [{ field: 'athlete' }, countryCol((a, b) => b.localeCompare(a))]);
-        await asyncSetTimeout(0);
+        // the blanks go last in Excel mode
+        await update('windows');
+        expect(filter.setFilterItemLabels()).toEqual([
+            '(Select All)',
+            'France',
+            'Ireland',
+            'Italy',
+            'Spain',
+            '(Blanks)',
+        ]);
+        await update('windows', undefined, descending);
+        expect(filter.setFilterItemLabels()).toEqual([
+            '(Select All)',
+            'Spain',
+            'Italy',
+            'Ireland',
+            'France',
+            '(Blanks)',
+        ]);
+        // the filter's own comparator comes before the column's
+        await update('windows', ascending, descending);
+        expect(filter.setFilterItemLabels()).toEqual([
+            '(Select All)',
+            'France',
+            'Ireland',
+            'Italy',
+            'Spain',
+            '(Blanks)',
+        ]);
 
         expect(api.getColumnFilterModel('country')).toEqual({
             filterType: 'set',
@@ -2864,8 +2995,96 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
         expect(displayed(api, 'item')).toEqual(['Apple', 'Cherry', 'Sky', 'Sea']);
     });
 
+    test('a values callback whose filter is destroyed before it runs is never called', async () => {
+        let calls = 0;
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [
+                {
+                    field: 'colour',
+                    filter: 'agSetColumnFilter',
+                    filterParams: { values: () => calls++ },
+                },
+            ],
+            rowData: COLOUR_ROWS,
+        });
+        expect(api.getColumnFilterHandler('colour')).toBeDefined();
+        api.destroyFilter('colour');
+        await asyncSetTimeout(0);
+        expect(calls).toBe(0);
+
+        // control: the same callback runs once its filter outlives the deferral
+        api.getColumnFilterHandler('colour');
+        await asyncSetTimeout(0);
+        expect(calls).toBe(1);
+    });
+
+    test('a values callback answering again is not read, so a selection still to be applied is kept', async () => {
+        let answer: ((values: string[]) => void) | undefined;
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'colour',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        buttons: ['apply'],
+                        values: ({ success }: SetFilterValuesFuncParams) => {
+                            answer = success;
+                        },
+                    },
+                },
+            ],
+            rowData: COLOUR_ROWS,
+        });
+        // opened while the values load, so the list waits on the answer
+        const filter = await ColumnFilterHarness.open(api, 'colour');
+        await asyncSetTimeout(0);
+        answer!(['Red', 'Blue']);
+        await asyncSetTimeout(0);
+        await filter.toggleSetItem('Red');
+
+        answer!(['Red', 'Blue']);
+        await asyncSetTimeout(0);
+        await filter.apply();
+        answer!(['Green']);
+        await asyncSetTimeout(0);
+
+        expect({
+            model: api.getColumnFilterModel('colour'),
+            keys: (api.getColumnFilterHandler('colour') as SetFilterHandler).getFilterKeys(),
+        }).toEqual({ model: { filterType: 'set', values: ['Blue'] }, keys: ['Red', 'Blue'] });
+    });
+
+    test('values reloaded before the rows arrive read the rows once, when they arrive', async () => {
+        const reads: number[] = [];
+        for (const refreshes of [0, 5]) {
+            let read = 0;
+            const api: GridApi = gridsManager.createGrid('grid1', {
+                columnDefs: [
+                    {
+                        field: 'colour',
+                        filter: 'agSetColumnFilter',
+                        filterValueGetter: ({ data }) => {
+                            ++read;
+                            return data.colour;
+                        },
+                    },
+                ],
+            });
+            const handler = api.getColumnFilterHandler('colour') as SetFilterHandler;
+            for (let i = 0; i < refreshes; ++i) {
+                handler.refreshFilterValues();
+            }
+            api.setGridOption('rowData', COLOUR_ROWS);
+            await asyncSetTimeout(0);
+            reads.push(read);
+            gridsManager.reset();
+        }
+        expect(reads[0]).toBeGreaterThan(0);
+        expect(reads[1]).toBe(reads[0]);
+    });
+
     test('a model set while a values callback is pending is not replaced by one set before it', async () => {
-        let respond = () => {};
+        const respond: (() => void)[] = [];
         const api: GridApi = gridsManager.createGrid('grid1', {
             columnDefs: [
                 { field: 'item' },
@@ -2874,7 +3093,7 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
                     filter: 'agSetColumnFilter',
                     filterParams: {
                         values: (params: SetFilterValuesFuncParams) => {
-                            respond = () => params.success(['Red', 'Blue', 'Green']);
+                            respond.push(() => params.success(['Red', 'Blue', 'Green']));
                         },
                     },
                 },
@@ -2889,13 +3108,57 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
             await asyncSetTimeout(0);
         }
 
-        respond();
+        // The callback must have run, or the model below would hold without it.
+        expect(respond).toHaveLength(1);
+        respond[0]();
         await asyncSetTimeout(0);
         expect(api.getColumnFilterModel('colour')).toEqual({ filterType: 'set', values: ['Blue'] });
-        expect(displayed(api, 'item')).toEqual(['Sky', 'Sea']);
+        await new GridRows(api, 'the model set last filters the rows').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:2 item:"Sky" colour:"Blue"
+            └── LEAF id:3 item:"Sea" colour:"blue"
+        `);
     });
 
-    test('a values callback answering after a newer one does not replace its values', async () => {
+    test('a values callback answering after a newer one does not replace its values, nor is its answer read', async () => {
+        const pending: ((values: { colour: string }[]) => void)[] = [];
+        const keyed: string[] = [];
+        const keyCreator = ({ value }: KeyCreatorParams) => {
+            keyed.push(value.colour);
+            return value.colour;
+        };
+        const valueFormatter = ({ value }: ValueFormatterParams) => value?.colour;
+        const colourCol = (): ColDef => ({
+            field: 'colour',
+            keyCreator,
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                valueFormatter,
+                values: (params: SetFilterValuesFuncParams<any, { colour: string }>) => pending.push(params.success),
+            },
+        });
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [{ field: 'item' }, colourCol()],
+            rowData: COLOUR_ROWS,
+        });
+        const handler = api.getColumnFilterHandler<SetFilterHandler>('colour')!;
+        await asyncSetTimeout(0);
+        pending[0]([{ colour: 'Red' }]);
+
+        api.setGridOption('columnDefs', [{ field: 'item' }, colourCol()]);
+        await asyncSetTimeout(0);
+        api.setGridOption('columnDefs', [{ field: 'item' }, colourCol()]);
+        await asyncSetTimeout(0);
+        expect(pending.length).toBe(3);
+        pending[2]([{ colour: 'Blue' }]);
+        pending[1]([{ colour: 'Green' }]);
+        await asyncSetTimeout(0);
+
+        expect(handler.getFilterKeys()).toEqual(['Blue']);
+        expect(keyed).not.toContain('Green');
+    });
+
+    test('a values callback overtaken by another is not called if it has not been, and an open filter waits on the newest alone', async () => {
         const pending: ((values: string[]) => void)[] = [];
         const colourCol = (): ColDef => ({
             field: 'colour',
@@ -2906,23 +3169,72 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
             columnDefs: [{ field: 'item' }, colourCol()],
             rowData: COLOUR_ROWS,
         });
-        const handler = api.getColumnFilterHandler<SetFilterHandler>('colour')!;
         await asyncSetTimeout(0);
+        const filter = await ColumnFilterHarness.open(api, 'colour');
+        const loading = () => !document.querySelector('.ag-filter-loading')!.classList.contains('ag-hidden');
+
+        api.setGridOption('columnDefs', [{ field: 'item' }, colourCol()]);
+        api.setGridOption('columnDefs', [{ field: 'item' }, colourCol()]);
+        await asyncSetTimeout(0);
+        expect(pending.length).toBe(2);
         pending[0](['Red']);
+        await asyncSetTimeout(0);
+        expect(loading()).toBe(true);
 
-        api.setGridOption('columnDefs', [{ field: 'item' }, colourCol()]);
+        pending[1](['Blue']);
         await asyncSetTimeout(0);
-        api.setGridOption('columnDefs', [{ field: 'item' }, colourCol()]);
-        await asyncSetTimeout(0);
-        expect(pending.length).toBe(3);
-        pending[2](['Blue']);
-        pending[1](['Green']);
-        await asyncSetTimeout(0);
-
-        expect(handler.getFilterKeys()).toEqual(['Blue']);
+        expect(loading()).toBe(false);
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'Blue']);
     });
 
-    test('a values callback overtaken by a values list ends its loading, whether or not it ever answers', async () => {
+    test('a filter opened while a later values callback is pending shows its loading', async () => {
+        const pending: ((values: string[]) => void)[] = [];
+        const colourCol = (): ColDef => ({
+            field: 'colour',
+            filter: 'agSetColumnFilter',
+            filterParams: { values: (params: SetFilterValuesFuncParams) => pending.push(params.success) },
+        });
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [{ field: 'item' }, colourCol()],
+            rowData: COLOUR_ROWS,
+        });
+        api.getColumnFilterHandler('colour');
+        await asyncSetTimeout(0);
+        pending[0](['Red']);
+        api.setGridOption('columnDefs', [{ field: 'item' }, colourCol()]);
+        await asyncSetTimeout(0);
+        expect(pending.length).toBe(2);
+
+        await ColumnFilterHarness.open(api, 'colour');
+        expect(document.querySelector('.ag-filter-loading')!.classList.contains('ag-hidden')).toBe(false);
+    });
+
+    // The mini filter sits under the loading message, so focusing it would announce a field nobody can see.
+    test('a filter opened while its values load focuses the loading message, then the mini filter once they land', async () => {
+        const pending: ((values: string[]) => void)[] = [];
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [
+                { field: 'item' },
+                {
+                    field: 'colour',
+                    filter: 'agSetColumnFilter',
+                    filterParams: { values: (params: SetFilterValuesFuncParams) => pending.push(params.success) },
+                },
+            ],
+            rowData: COLOUR_ROWS,
+        });
+        await asyncSetTimeout(0);
+        await ColumnFilterHarness.open(api, 'colour');
+        const loading = document.querySelector<HTMLElement>('.ag-filter-loading')!;
+        expect(document.activeElement).toBe(loading);
+        expect(loading.getAttribute('role')).toBe('status');
+
+        pending[0](['Red']);
+        await asyncSetTimeout(0);
+        expect(document.activeElement).toBe(document.querySelector('.ag-mini-filter input'));
+    });
+
+    test("a values callback overtaken by a values list or the grid's own values ends its loading, whether or not it ever answers", async () => {
         const pending: ((values: string[]) => void)[] = [];
         const colourCol = (values: ISetFilterParams['values']): ColDef => ({
             field: 'colour',
@@ -2949,6 +3261,25 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
 
         expect(loading()).toBe(false);
         expect(api.getColumnFilterHandler<SetFilterHandler>('colour')!.getFilterKeys()).toEqual(['Red', 'Blue']);
+
+        api.setGridOption('columnDefs', [
+            { field: 'item' },
+            colourCol((params: SetFilterValuesFuncParams) => pending.push(params.success)),
+        ]);
+        await asyncSetTimeout(0);
+        expect(loading()).toBe(true);
+        api.setGridOption('columnDefs', [{ field: 'item' }, colourCol(undefined)]);
+        await asyncSetTimeout(0);
+        expect(loading()).toBe(false);
+        pending[1](['Green']);
+        await asyncSetTimeout(0);
+
+        expect(loading()).toBe(false);
+        expect(api.getColumnFilterHandler<SetFilterHandler>('colour')!.getFilterKeys()).toEqual([
+            'Red',
+            'Blue',
+            'Green',
+        ]);
     });
 });
 
@@ -2968,7 +3299,7 @@ describe('Set Filter — filterParams given as a function on a column with a cel
 
     const rowData = [{ value: 10 }, { value: 9 }];
 
-    test("its params apply over the data type's own, whose comparator still sorts the list, on a Set Filter or a Multi Filter's child", async () => {
+    test("its params apply over the data type's own, whose comparator sorts the list unless it gives its own, on a Set Filter or a Multi Filter's child", async () => {
         const setParams = () => ({ values: [10, 9, 100] });
         const colDefs: ColDef[] = [
             { field: 'value', filter: 'agSetColumnFilter', filterParams: setParams },
@@ -2976,6 +3307,11 @@ describe('Set Filter — filterParams given as a function on a column with a cel
                 field: 'value',
                 filter: 'agMultiColumnFilter',
                 filterParams: () => ({ filters: [{ filter: 'agSetColumnFilter', filterParams: setParams }] }),
+            },
+            {
+                field: 'value',
+                filter: 'agSetColumnFilter',
+                filterParams: () => ({ ...setParams(), comparator: (a: number, b: number) => b - a }),
             },
         ];
         const lists: string[][] = [];
@@ -2990,6 +3326,62 @@ describe('Set Filter — filterParams given as a function on a column with a cel
         expect(lists).toEqual([
             ['(Select All)', '9', '10', '100'],
             ['(Select All)', '9', '10', '100'],
+            ['(Select All)', '100', '10', '9'],
         ]);
+    });
+
+    test("an unchanged definition set again is not a change and does not load the values again, and reads back as the author's own functions", async () => {
+        let loads = 0;
+        const values = (params: SetFilterValuesFuncParams<any, number>) => {
+            loads++;
+            params.success([9, 10]);
+        };
+        const multiParams = () => ({ filters: [{ filter: 'agSetColumnFilter', filterParams: { values } }] });
+        // The Multi Filter's function is shared by columns that differ in their value getter.
+        const columnDefs: ColDef[] = [
+            { colId: 'set', field: 'value', filter: 'agSetColumnFilter', filterParams: () => ({ values }) },
+            { colId: 'multi', field: 'value', filter: 'agMultiColumnFilter', filterParams: multiParams },
+            {
+                colId: 'multiGetter',
+                field: 'value',
+                filterValueGetter: 'data.value',
+                filter: 'agMultiColumnFilter',
+                filterParams: multiParams,
+            },
+        ];
+        const colIds = ['set', 'multi', 'multiGetter'];
+        const api: GridApi = gridsManager.createGrid('grid1', { columnDefs, rowData });
+        for (const colId of colIds) {
+            api.getColumnFilterHandler(colId);
+        }
+        await asyncSetTimeout(0);
+        expect(loads).toBe(3);
+        let changes = 0;
+        for (const colId of colIds) {
+            api.getColumn(colId)!.addEventListener('colDefChanged', () => changes++);
+        }
+
+        api.setGridOption('columnDefs', columnDefs);
+        await asyncSetTimeout(0);
+        expect(changes).toBe(0);
+        expect(loads).toBe(3);
+
+        // The data type's params are laid under a function's result as the filter reads it, not in the definition.
+        const authored = columnDefs.map((colDef) => colDef.filterParams);
+        const readBack = () => api.getColumnDefs()!.map((colDef: ColDef) => colDef.filterParams);
+        expect(readBack()).toEqual(authored);
+        api.setGridOption('columnDefs', api.getColumnDefs());
+        await asyncSetTimeout(0);
+        expect(readBack()).toEqual(authored);
+        expect(loads).toBe(3);
+
+        // Another grid given them reads them for itself, after this one has gone.
+        const other: GridApi = gridsManager.createGrid('grid2', { columnDefs: api.getColumnDefs(), rowData });
+        api.destroy();
+        for (const colId of colIds) {
+            other.getColumnFilterHandler(colId);
+        }
+        await asyncSetTimeout(0);
+        expect(other.getColumnFilterHandler<SetFilterHandler>('set')!.getFilterKeys()).toEqual(['9', '10']);
     });
 });

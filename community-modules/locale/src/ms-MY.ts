@@ -118,6 +118,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     addFilterCard: 'Tambah Penapis',
     agTextColumnFilterDisplayName: 'Penapis Ringkas',
     agNumberColumnFilterDisplayName: 'Penapis Ringkas',
+    agBigIntColumnFilterDisplayName: 'Penapis Ringkas',
     agDateColumnFilterDisplayName: 'Penapis Ringkas',
     agSetColumnFilterDisplayName: 'Penapis Pemilihan',
     agMultiColumnFilterDisplayName: 'Penapis Gabungan',

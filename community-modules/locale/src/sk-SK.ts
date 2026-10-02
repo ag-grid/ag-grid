@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     addFilterCard: 'Pridať filter',
     agTextColumnFilterDisplayName: 'Jednoduchý filter',
     agNumberColumnFilterDisplayName: 'Jednoduchý filter',
+    agBigIntColumnFilterDisplayName: 'Jednoduchý filter',
     agDateColumnFilterDisplayName: 'Jednoduchý filter',
     agSetColumnFilterDisplayName: 'Filter výberu',
     agMultiColumnFilterDisplayName: 'Kombinovaný filter',

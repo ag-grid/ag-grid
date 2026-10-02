@@ -21,7 +21,7 @@ function doesImplementIComponent(candidate: any): boolean {
     return candidate.prototype && 'getGui' in candidate.prototype;
 }
 
-export function _getUserCompKeys<TDefinition>(
+function _getUserCompKeys<TDefinition>(
     frameworkOverrides: IFrameworkOverrides,
     defObject: TDefinition,
     type: ComponentType,

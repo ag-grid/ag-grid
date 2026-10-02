@@ -10,7 +10,15 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { ColDef, GridApi, IFilterParams, ISetFilterParams, SetAdvancedFilterModel } from 'ag-grid-community';
+import type {
+    ColDef,
+    GridApi,
+    IFilterParams,
+    ISetFilterParams,
+    SetAdvancedFilterModel,
+    ValueFormatterParams,
+    ValueGetterParams,
+} from 'ag-grid-community';
 import { MultiFilterModule } from 'ag-grid-enterprise';
 
 import { DEFAULT_OPTIONS, ROW_DATA, SET_MODULES } from './advancedFilterSetFixture';
@@ -546,15 +554,69 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
         expect(await missingInPicker()).toEqual(['Jamaica']);
     });
 
-    test('turning the Advanced Filter off closes an open Builder', async () => {
-        const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
-        api.showAdvancedFilterBuilder();
-        await asyncSetTimeout(0);
-        expect(document.querySelector('.ag-advanced-filter-builder')).not.toBeNull();
+    test("a Multi Filter's Set Filter child configures the picker, with the Multi Filter's params given as an object or a function", async () => {
+        const setChild = {
+            filter: 'agSetColumnFilter',
+            filterParams: { valueFormatter: (p: ValueFormatterParams) => `#${p.value}` },
+        };
+        const labels: string[][] = [];
+        for (const filterParams of [
+            { filters: [setChild] },
+            // Children only when called with the grid's params.
+            (params: IFilterParams) => params.rowModel && { filters: [setChild] },
+        ]) {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                ...DEFAULT_OPTIONS,
+                columnDefs: [
+                    { field: 'athlete', filter: 'agTextColumnFilter' },
+                    { field: 'country', filter: 'agMultiColumnFilter', filterParams },
+                ],
+            });
+            api.setAdvancedFilterModel({ filterType: 'set', colId: 'country', type: 'isAnyOf', values: ['Jamaica'] });
+            await openPicker(api);
+            labels.push(
+                Array.from(document.querySelectorAll(`${PICKER} .ag-set-filter-item .ag-checkbox-label`)).map(
+                    (el) => el.textContent?.trim() ?? ''
+                )
+            );
+            gridsManager.reset();
+        }
 
-        api.setGridOption('enableAdvancedFilter', false);
-        await asyncSetTimeout(0);
-        expect(document.querySelector('.ag-advanced-filter-builder')).toBeNull();
+        expect(labels[0]).toEqual([
+            '(Select All)',
+            '#null',
+            '#Jamaica',
+            '#Poland',
+            '#United Kingdom',
+            '#United States',
+        ]);
+        expect(labels[1]).toEqual(labels[0]);
+    });
+
+    test("a Multi Filter's Set Filter child reads the values through its own `filterValueGetter`", async () => {
+        const setChild = {
+            filter: 'agSetColumnFilter',
+            filterValueGetter: (p: ValueGetterParams) => `x-${p.data.country}`,
+        };
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete', filter: 'agTextColumnFilter' },
+                { field: 'country', filter: 'agMultiColumnFilter', filterParams: { filters: [setChild] } },
+            ],
+        });
+        api.setAdvancedFilterModel({ filterType: 'set', colId: 'country', type: 'isAnyOf', values: ['x-Jamaica'] });
+        await openPicker(api);
+
+        expect(
+            Array.from(document.querySelectorAll(`${PICKER} .ag-set-filter-item .ag-checkbox-label`)).map(
+                (el) => el.textContent?.trim() ?? ''
+            )
+        ).toEqual(['(Select All)', 'x-Jamaica', 'x-Poland', 'x-United Kingdom', 'x-United States', 'x-null']);
+        await new GridRows(api, 'set child getter').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:2 athlete:"Usain Bolt" country:"Jamaica"
+        `);
     });
 
     test('choosing another value in the picker updates the pill, the model and the rows', async () => {

@@ -912,6 +912,8 @@ describe('Set Filter preservePreviousValues - integration', () => {
         expect(handlerOf(api).getFilterKeys()).toEqual(['apple', 'APPLE']);
 
         api.setGridOption('columnDefs', [colDef(false)]);
+        // its callback runs before it is overtaken, as one overtaken first is never called
+        await asyncSetTimeout(0);
         api.setGridOption('columnDefs', [colDef(false)]);
         await waitFor(() => expect(pending.length).toBe(3));
         pending[2](['apple']);

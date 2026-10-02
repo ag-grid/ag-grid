@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     addFilterCard: 'הוסף מסנן',
     agTextColumnFilterDisplayName: 'מסנן פשוט',
     agNumberColumnFilterDisplayName: 'מסנן פשוט',
+    agBigIntColumnFilterDisplayName: 'מסנן פשוט',
     agDateColumnFilterDisplayName: 'מסנן פשוט',
     agSetColumnFilterDisplayName: 'מסנן בחירה',
     agMultiColumnFilterDisplayName: 'מסנן משולב',

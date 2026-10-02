@@ -94,11 +94,7 @@ export class SetFilterService extends BeanStub implements NamedBean, ISetFilterS
 
     /** Whether the column's params, a Multi or selectable filter child's, or a selectable filter's defaults opt in. */
     private wantsPreservedValues(column: AgColumn, def: IFilterDef): boolean {
-        let filterParams: PreservingFilterParams | undefined = def.filterParams;
-        if (typeof filterParams === 'function') {
-            // Merged as for the filter about to be created, so the function is handed every param it expects.
-            filterParams = this.beans.colFilter!.createHandlerFilterParams(column, def, 'init');
-        }
+        const filterParams: PreservingFilterParams | undefined = this.beans.colFilter!.resolveFilterParams(column, def);
         if (filterParams?.preservePreviousValues || filterParams?.defaultFilterParams?.preservePreviousValues) {
             return true;
         }

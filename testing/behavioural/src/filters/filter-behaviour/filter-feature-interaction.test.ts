@@ -1,4 +1,5 @@
 import {
+    ColumnFilterHarness,
     GridColumns,
     GridRows,
     TestGridsManager,
@@ -15,7 +16,7 @@ import {
     TextFilterModule,
     setupAgTestIds,
 } from 'ag-grid-community';
-import { RowGroupingModule, SetFilterModule, TreeDataModule } from 'ag-grid-enterprise';
+import { MultiFilterModule, RowGroupingModule, SetFilterModule, TreeDataModule } from 'ag-grid-enterprise';
 
 /**
  * Black-box coverage for how column filters compose with OTHER grid features (sort, pagination, row
@@ -28,6 +29,7 @@ describe('Filter + feature interaction', () => {
             TextFilterModule,
             NumberFilterModule,
             SetFilterModule,
+            MultiFilterModule,
             PaginationModule,
             RowGroupingModule,
             TreeDataModule,
@@ -291,6 +293,93 @@ describe('Filter + feature interaction', () => {
             └─┬ D GROUP id:D ag-Grid-AutoColumn:"D" n:"D" size:0
             · └── E LEAF id:E ag-Grid-AutoColumn:"E" n:"E" size:2
         `);
+    });
+
+    test("filter + tree data: a Set Filter lists the values of the rows the other filters show, a match's relatives included", async () => {
+        for (const excludeChildrenWhenTreeDataFiltering of [false, true]) {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'n', filter: 'agSetColumnFilter' }],
+                autoGroupColumnDef: { filter: 'agTextColumnFilter' },
+                treeData: true,
+                excludeChildrenWhenTreeDataFiltering,
+                rowData: [
+                    { id: 'A', n: 'A' },
+                    { id: 'B', parentId: 'A', n: 'B' },
+                    { id: 'C', parentId: 'A', n: 'C' },
+                    { id: 'D', n: 'D' },
+                    { id: 'E', parentId: 'D', n: 'E' },
+                ],
+                getRowId: (params) => params.data.id,
+                treeDataParentIdField: 'parentId',
+            });
+            const listed = async (match: string) => {
+                api.setFilterModel({ 'ag-Grid-AutoColumn': { filterType: 'text', type: 'equals', filter: match } });
+                await asyncSetTimeout(0);
+                const filter = await ColumnFilterHarness.open(api, 'n');
+                const labels = filter.setFilterItemLabels();
+                api.hidePopupMenu();
+                return labels;
+            };
+            // A matches, and its children are shown unless excluded.
+            expect({ excludeChildrenWhenTreeDataFiltering, labels: await listed('A') }).toEqual({
+                excludeChildrenWhenTreeDataFiltering,
+                labels: excludeChildrenWhenTreeDataFiltering ? ['(Select All)', 'A'] : ['(Select All)', 'A', 'B', 'C'],
+            });
+            // C matches, and A is shown as its parent either way.
+            expect({ excludeChildrenWhenTreeDataFiltering, labels: await listed('C') }).toEqual({
+                excludeChildrenWhenTreeDataFiltering,
+                labels: ['(Select All)', 'A', 'C'],
+            });
+            gridsManager.reset();
+        }
+    });
+
+    test("filter + tree data: a Multi Filter's Set child lists the rows its sibling shows, a match's relatives included", async () => {
+        const listed: Record<string, string[]> = {};
+        for (const enableFilterHandlers of [false, true]) {
+            for (const excludeChildrenWhenTreeDataFiltering of [false, true]) {
+                const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                    enableFilterHandlers,
+                    columnDefs: [
+                        {
+                            field: 'n',
+                            filter: 'agMultiColumnFilter',
+                            filterParams: {
+                                filters: [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }],
+                            },
+                        },
+                    ],
+                    autoGroupColumnDef: {},
+                    treeData: true,
+                    excludeChildrenWhenTreeDataFiltering,
+                    rowData: [
+                        { id: 'A', n: 'A' },
+                        { id: 'B', parentId: 'A', n: 'B' },
+                        { id: 'C', parentId: 'A', n: 'C' },
+                        { id: 'D', n: 'D' },
+                    ],
+                    getRowId: (params) => params.data.id,
+                    treeDataParentIdField: 'parentId',
+                });
+                await api.setColumnFilterModel('n', {
+                    filterType: 'multi',
+                    filterModels: [{ filterType: 'text', type: 'equals', filter: 'A' }, null],
+                });
+                api.onFilterChanged();
+                await asyncSetTimeout(0);
+                const filter = await ColumnFilterHarness.open(api, 'n');
+                listed[`handlers ${enableFilterHandlers}, exclude ${excludeChildrenWhenTreeDataFiltering}`] =
+                    filter.setFilterItemLabels();
+                gridsManager.reset();
+            }
+        }
+        // A matches through the Text child, and its children are shown unless excluded.
+        expect(listed).toEqual({
+            'handlers false, exclude false': ['(Select All)', 'A', 'B', 'C'],
+            'handlers false, exclude true': ['(Select All)', 'A'],
+            'handlers true, exclude false': ['(Select All)', 'A', 'B', 'C'],
+            'handlers true, exclude true': ['(Select All)', 'A'],
+        });
     });
 
     test('text filter re-applies to fresh data after rowData is replaced via setGridOption', async () => {
