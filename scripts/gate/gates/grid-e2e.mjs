@@ -7,14 +7,19 @@ import { NONE, VALUE, captureUsage, isCI } from '../args.mjs';
 const ALL_BROWSERS = ['chromium', 'firefox', 'webkit'];
 const UMD_PROJECTS = 'ag-grid-community,ag-grid-enterprise';
 
-/** `--project=x` and `--project x`, the two spellings Playwright accepts, in the forwarded arguments. */
+/**
+ * `--project=x` and `--project x y`, the two spellings Playwright accepts, in the forwarded arguments. The second
+ * takes every operand up to the next option, as Playwright does.
+ */
 function requestedProjects(forward) {
     const projects = [];
     forward.forEach((arg, index) => {
         if (arg.startsWith('--project=')) {
             projects.push(arg.slice('--project='.length));
-        } else if (arg === '--project' && forward[index + 1]) {
-            projects.push(forward[index + 1]);
+        } else if (arg === '--project') {
+            for (let next = index + 1; next < forward.length && !forward[next].startsWith('-'); next++) {
+                projects.push(forward[next]);
+            }
         }
     });
     return projects;
