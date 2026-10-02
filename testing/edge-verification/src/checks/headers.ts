@@ -1,16 +1,19 @@
 import { promises as dns } from 'node:dns';
 
 import { metaContents } from '../core/html';
-import { type Response, header, headerAll, headerTokens } from '../core/http';
+import { type Http, type Response, header, headerAll, headerTokens } from '../core/http';
 import { type CheckDef, Problems, budgeted, fail, pass, skip } from '../core/types';
 import {
     ARCHIVE_VALIDATOR_PROBE,
     ARCHIVE_VALIDATOR_REQUESTS,
+    BROWSER_CACHE_BLOG_CONTENT_URLS,
     BROWSER_CACHE_CAP_SECONDS,
+    BROWSER_CACHE_HEURISTIC_URLS,
     BROWSER_CACHE_PAGES,
     BROWSER_CACHE_ROWS,
     GZIP_REVALIDATION_PROBES,
     HEADER_ROWS,
+    HEURISTICALLY_CACHEABLE,
     type HeaderRow,
     NOT_MODIFIED_CACHE_CONTROL,
     NOT_MODIFIED_PROBE,
@@ -18,9 +21,20 @@ import {
 } from '../expected/headers';
 import { PENDING, finding } from '../expected/lifecycle';
 
-/** Why a response breaks the 7-day browser-cache cap (max-age or Expires; s-maxage exempt), or null. */
+/**
+ * Why a response breaks the 7-day browser-cache cap (max-age or Expires; s-maxage exempt), or is
+ * left to a heuristic lifetime (a Last-Modified and neither header), or null.
+ */
 export function browserCacheProblem(res: Response): string | null {
     const problems: string[] = [];
+    if (
+        HEURISTICALLY_CACHEABLE.has(res.status) &&
+        header(res, 'last-modified') !== undefined &&
+        !headerAll(res, 'cache-control').length &&
+        !headerAll(res, 'expires').length
+    ) {
+        problems.push('Last-Modified with no Cache-Control or Expires (heuristically cacheable)');
+    }
     for (const value of headerAll(res, 'cache-control')) {
         for (const [, seconds] of value.matchAll(/(?<![-\w])max-age\s*=\s*"?(\d+)/gi)) {
             if (Number(seconds) > BROWSER_CACHE_CAP_SECONDS) {
@@ -42,6 +56,16 @@ export function browserCacheProblem(res: Response): string | null {
 }
 
 const firstMatch = (html: string, pattern: RegExp): string | undefined => pattern.exec(html)?.[0];
+
+/** HEADs each URL (no redirect followed, so a 301 is judged itself) and holds it to the cap. */
+async function checkBrowserCache(http: Http, p: Problems, urls: Set<string>) {
+    for (const url of urls) {
+        const res = await http.head(url);
+        const problem = browserCacheProblem(res);
+        p.check(!problem, `${url} (${res.status}): ${problem}`);
+    }
+    return p.outcome(`${urls.size} responses, every class within 7 days`);
+}
 
 export function expectHeader(p: Problems, res: Response, name: string, exp: string | RegExp | null): void {
     const values = headerAll(res, name);
@@ -209,13 +233,24 @@ export function headerChecks(): CheckDef[] {
                         urls.add(new URL(found, BROWSER_CACHE_PAGES.blog).href);
                     }
                 }
-                for (const url of urls) {
-                    const res = await http.head(url);
-                    const problem = browserCacheProblem(res);
-                    p.check(!problem, `${url} (${res.status}): ${problem}`);
-                }
-                return p.outcome(`${urls.size} responses, every class within 7 days`);
+                return checkBrowserCache(http, p, urls);
             }),
+        },
+        {
+            id: 'headers.browser-cache-cap.heuristic',
+            area: 'headers',
+            title: 'Sitemaps, llms.txt, AGENTS.md, markdown twins and /.well-known/ files carry an explicit Cache-Control',
+            refs: ['SE-189'],
+            pending: PENDING.gridDefaultCache,
+            run: budgeted(({ http }, p) => checkBrowserCache(http, p, new Set(BROWSER_CACHE_HEURISTIC_URLS))),
+        },
+        {
+            id: 'headers.browser-cache-cap.blog-content',
+            area: 'headers',
+            title: "Ghost's uploads under /blog/content/ and its own 301s are cached for at most 7 days",
+            refs: ['SE-189'],
+            pending: PENDING.blogVhostCap,
+            run: budgeted(({ http }, p) => checkBrowserCache(http, p, new Set(BROWSER_CACHE_BLOG_CONTENT_URLS))),
         },
         ...HEADER_ROWS.map(headerCheck),
         ...GZIP_REVALIDATION_PROBES.map(

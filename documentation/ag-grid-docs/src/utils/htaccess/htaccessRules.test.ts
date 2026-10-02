@@ -188,7 +188,7 @@ describe('htaccessRules', () => {
         // ~10% of the document's age, growing without bound since the last deploy. That is the
         // stale-page-until-hard-refresh behaviour. no-cache removes it.
         const getNoCacheRule = (content: string) => {
-            const line = content.split('\n').find((l) => l.includes('"no-cache"'));
+            const line = content.split('\n').find((l) => l.includes('"no-cache"') && l.includes('CONTENT_TYPE'));
             expect(line).toBeDefined();
             return line!;
         };
@@ -1415,6 +1415,17 @@ describe('htaccessRules', () => {
             vi.resetModules();
         });
 
+        it('leaves the default Cache-Control to the root, so an unmatched archived file keeps the long cache', () => {
+            expect(archiveContent).not.toContain('# Default for every response no later rule matches');
+            for (const path of ['/sitemap-0.xml', '/files/ag-grid-community/styles/ag-grid.css', '/llms.txt']) {
+                const response = { uri: `${BASE}${path}`, status: 200, contentType: 'text/plain' };
+                expect(responseHeaders(deployed, response).get('cache-control'), path).toEqual([
+                    'public, max-age=604800, s-maxage=31536000',
+                ]);
+                expect(responseHeaders(inFlight, response).get('cache-control'), path).toEqual(['no-cache']);
+            }
+        });
+
         // Every path a rule anywhere is written for, so no rule can hide.
         const probePaths = () => [
             '/',
@@ -2084,14 +2095,17 @@ describe('htaccessRules', () => {
         });
 
         describe('blog asset cache cap (vhost fragment)', () => {
-            const CAP = `Header set Cache-Control "public, max-age=604800" "expr=%{REQUEST_URI} =~ m#^/blog/(assets|public)/# && %{REQUEST_STATUS} -in {'200', '206', '304'}"`;
+            const CAP = [
+                `Header set Cache-Control "public, max-age=604800" "expr=%{REQUEST_URI} =~ m#^/blog/(assets|public|content)/# && %{REQUEST_STATUS} -in {'200', '206', '304'}"`,
+                `Header set Cache-Control "public, max-age=604800" "expr=%{REQUEST_URI} =~ m#^/blog/# && %{REQUEST_STATUS} == '301'"`,
+            ];
             const fragment = () => getBlogVhostHeaderFragment({ env: 'production' }, 'enforce');
 
-            it('ends the fragment with exactly the cap line, after the existing lines', () => {
+            it('ends the fragment with exactly the cap lines, after the existing lines', () => {
                 const lines = fragment().split('\n');
-                expect(lines[lines.length - 1]).toBe(CAP);
+                expect(lines.slice(-CAP.length)).toEqual(CAP);
                 const headers = lines.filter((l) => l.startsWith('Header '));
-                expect(headers.slice(0, -1)).toEqual([
+                expect(headers.slice(0, -CAP.length)).toEqual([
                     'Header always unset X-Robots-Tag "expr=%{REQUEST_URI} =~ m#^/blog/#"',
                     'Header always unset Referrer-Policy "expr=%{REQUEST_URI} =~ m#^/blog/#"',
                     'Header always set Referrer-Policy "strict-origin-when-cross-origin" "expr=%{REQUEST_URI} =~ m#^/blog/#"',
@@ -2104,11 +2118,17 @@ describe('htaccessRules', () => {
                 ]);
             });
 
-            it('caps Ghost assets at 7 days on 200, 206 and 304 only, and nothing else under /blog/', () => {
+            it('caps Ghost assets and uploads at 7 days on 200, 206 and 304 only, and nothing else under /blog/', () => {
                 const vhost = [compileHtaccess(fragment())];
                 const cacheControl = (uri: string, status: number) =>
                     responseHeaders(vhost, { uri, status, contentType: 'text/css' }).get('cache-control');
-                for (const uri of ['/blog/assets/built/screen.css', '/blog/public/cards.min.js']) {
+                for (const uri of [
+                    '/blog/assets/built/screen.css',
+                    '/blog/public/cards.min.js',
+                    '/blog/content/images/size/w100/2024/08/me.jpeg',
+                    '/blog/content/media/2026/08/clip.mp4',
+                    '/blog/content/files/2026/08/doc.pdf',
+                ]) {
                     for (const status of [200, 206, 304]) {
                         expect(cacheControl(uri, status), `${uri} ${status}`).toEqual(['public, max-age=604800']);
                     }
@@ -2120,7 +2140,31 @@ describe('htaccessRules', () => {
                     ).toBeUndefined();
                 }
                 expect(cacheControl('/blog/some-post/', 200)).toBeUndefined();
+                expect(cacheControl('/blog/contentx/a.jpg', 200)).toBeUndefined();
                 expect(cacheControl('/assets/built/screen.css', 200)).toBeUndefined();
+                expect(cacheControl('/content/images/a.jpg', 200)).toBeUndefined();
+            });
+
+            it("caps Ghost's own 301s anywhere under /blog/, and leaves Apache's redirects and other statuses alone", () => {
+                const vhost = [compileHtaccess(fragment())];
+                // A proxied 301 is in headers_out like any proxied response: the onsuccess table applies.
+                const ghost = (uri: string, status: number) =>
+                    responseHeaders(vhost, { uri, status, contentType: 'text/plain', onSuccess: true }).get(
+                        'cache-control'
+                    );
+                for (const uri of ['/blog/author/sean', '/blog/Some-Post/', '/blog/amp/', '/blog/content/images/x']) {
+                    expect(ghost(uri, 301), uri).toEqual(['public, max-age=604800']);
+                }
+                for (const status of [302, 307, 308, 410]) {
+                    expect(ghost('/blog/author/sean', status), String(status)).toBeUndefined();
+                }
+                expect(ghost('/author/sean', 301)).toBeUndefined();
+                // Apache's own redirect (mod_rewrite R=301): the onsuccess table never reaches it.
+                expect(
+                    responseHeaders(vhost, { uri: '/blog/sitemap.xml', status: 301, contentType: 'text/html' }).get(
+                        'cache-control'
+                    )
+                ).toBeUndefined();
             });
         });
     });
@@ -2174,7 +2218,8 @@ describe('htaccessRules', () => {
             ['/images/foo/index.html', 'text/html', ['no-cache']],
             ['/_astro/design-system.BcXAtF3c.css', 'text/css', [LONG]],
             ['/_astro/fonts/2eb6e0e4fc33dd24.woff2', 'font/woff2', [LONG]],
-            ['/_astro/unhashed.css', 'text/css', undefined],
+            // Unhashed, so not long-cached: the default day.
+            ['/_astro/unhashed.css', 'text/css', [DAY]],
             ['/images/ag-logos/png-logos/react.png', 'image/png', [DAY]],
             ['/example-assets/olympic-winners.json', 'application/json', [DAY]],
             ['/theme-icons/quartz/quartz-icons.zip', 'application/zip', [DAY]],
@@ -2182,13 +2227,40 @@ describe('htaccessRules', () => {
             ['/scripts/gtm-init.js', 'text/javascript', [DAY]],
             ['/robots.txt', 'text/plain', [DAY]],
             ['/favicon.ico', 'image/x-icon', [DAY]],
-            ['/llms.txt', 'text/plain', undefined],
-            ['/sitemap-index.xml', 'application/xml', undefined],
+            // Classes with no rule of their own take the default rather than a heuristic lifetime.
+            ['/llms.txt', 'text/plain', [DAY]],
+            ['/sitemap-index.xml', 'application/xml', [DAY]],
+            ['/sitemap-0.xml', 'application/xml', [DAY]],
+            ['/.well-known/mcp/server-card.json', 'application/json', [DAY]],
+            ['/.well-known/acme-challenge/Abc_123-xyz', 'text/plain', [DAY]],
+            ['/changelog/changelog.json', 'application/json', [DAY]],
+            ['/files/ag-grid-community/styles/ag-grid.css', 'text/css', [DAY]],
+            ['/fonts/pdf-export/IBMPlexSansJP-Bold.ttf', 'font/ttf', [DAY]],
+            ['/downloads/ag-grid-design-system-30.1.0.zip', 'application/zip', [DAY]],
+            [
+                '/examples/column-definitions/column-definition-update/angular/app.component.ts',
+                'application/typescript',
+                [DAY],
+            ],
+            ['/charts/sitemap-0.xml', 'application/xml', [DAY]],
+            ['/charts/llms.txt', 'text/plain', [DAY]],
+            ['/studio/robots-disallow.json', 'application/json', [DAY]],
+            ['/studio/examples/ai/ai-overview-example/angular/ag-example-styles.css', 'text/css', [DAY]],
+            ['/archive/36.2.0/sitemap-0.xml', 'application/xml', [LONG]],
             ['/studio/archive/1.0.0/_astro/a.abcdefgh.js', 'text/javascript', ['no-cache']],
             ['/studio/archive/1.0.0/index.html', 'text/html', ['no-cache']],
             ['/studio/index.html', 'text/html', ['no-cache']],
         ])('production: %s (%s) -> %j', (uri, contentType, expected) => {
             expect(cache(productionContent, uri, contentType)).toEqual(expected);
+        });
+
+        it.each([
+            ['/sitemap-index.xml', 'application/xml'],
+            ['/llms.txt', 'text/plain'],
+            ['/.well-known/acme-challenge/Abc_123-xyz', 'text/plain'],
+            ['/images/logo.png', 'image/png'],
+        ])('staging: %s (%s) revalidates by default rather than taking a heuristic lifetime', (uri, contentType) => {
+            expect(cache(stagingContent, uri, contentType)).toEqual(['no-cache']);
         });
 
         it('never long-caches HTML outside a released archive', () => {

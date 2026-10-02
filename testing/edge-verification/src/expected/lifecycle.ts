@@ -39,6 +39,11 @@ export const PENDING = {
     studioHosts: 'ag-studio#3096 / #3097 (one-hop host canonicalisation under /studio, Vary on HTML)',
     studioSeo: 'ag-studio#3096 / #3097 (one <main>, absolute social images, initial-scale=1)',
     studioNoOffers: 'ag-studio#3096 / #3097 (drops the "AG Studio Community" price-0 offer)',
+    gridDefaultCache:
+        'grid#15434 / #15435 (a default Cache-Control in the root .htaccess, so nothing is left to a heuristic lifetime; no-cache on live markdown)',
+    /** Not a PR: Sean pastes the generated block into the Ghost box's vhost by hand. */
+    blogVhostCap:
+        "blog vhost block from generate-csp.ts --scope=blog (grid#15434 / #15435), pasted on the Ghost box: 7-day cap on /blog/content/ and on Ghost's 301s",
     gridOneHopSlash:
         'grid#15434 / #15435 (slash-less directory URLs on alias hosts reach the slashed www URL in one hop)',
     gridAcme: 'grid#15434 / #15435 (add-slash rules skip /.well-known/acme-challenge/ and the other DCV tokens)',

@@ -36,6 +36,19 @@ export const PERMISSIONS_POLICY_VALUE = 'geolocation=(), microphone=(), camera=(
  * Note: when changing this file please add/update the tests in
  * documentation/ag-grid-docs/testing/htaccess-harness
  */
+// Anything no later rule matches would otherwise go out with a Last-Modified and no Cache-Control,
+// which a browser may cache heuristically (RFC 9111 §4.2.2: typically 10% of its age, so an old
+// file for well over the site-wide 7-day cap). Sitemaps, llms.txt, /.well-known/ files, JSON
+// feeds, fonts, downloads and example sources were all in that state. Emitted first, so every
+// class with a rule of its own (pages, hashed assets, archives, robots.txt, ...) overrides it.
+// Production gives them the one-day cache of the other unhashed static files; staging, which
+// exists to check a deploy, has them revalidate. Root only: inside an archive build this would
+// come after the root's archive rule and cut its long cache back to a day.
+const defaultCacheRules = (value: string) => `
+# Default for every response no later rule matches: never left to a browser's heuristic lifetime.
+Header set Cache-Control "${value}"
+`;
+
 // Without Cache-Control, browsers heuristically cache for ~10% of a page's age - the
 // "had to hard-refresh" behaviour. no-cache (store, but always revalidate) removes it while
 // keeping back/forward navigation. Archived versions keep the heuristic window: immutable,
@@ -69,12 +82,12 @@ Header set X-Robots-Tag "noindex" "expr=%{CONTENT_TYPE} =~ m#^text/markdown# && 
 `;
 
 // Long-cache content-addressed assets. Matched on hash SHAPE rather than the /_astro/
-// directory so anything unhashed is never cached: a changed hash is a different URL, so a
+// directory so anything unhashed is never long-cached: a changed hash is a different URL, so a
 // fix can never be served stale. Replaces an inert mod_expires block - hence no <IfModule>
 // guard here, so a missing module fails loudly rather than silently.
 const hashedAssetCacheRules = `
 # Content-addressed assets - the filename carries a content hash, so changed content is
-# always a different URL. Matched by hash shape, so anything unhashed is not cached.
+# always a different URL. Matched by hash shape, so anything unhashed keeps the default.
 Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#/_astro/[^/]+\\.[A-Za-z0-9_-]{8}\\.[a-z0-9]+$# || %{REQUEST_URI} =~ m#/_astro/.*/[0-9a-f]{16}\\.[a-z0-9]+$#"
 `;
 
@@ -821,6 +834,7 @@ AddCharset utf-8 .md
 
 function getStagingHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
+${defaultCacheRules('no-cache')}
 ${documentNoCacheRules}
 ${redirectNoCacheRules}
 ${studioArchiveNoCacheRules}
@@ -846,6 +860,7 @@ Options -Indexes
 
 function getProductionHtaccessContent(inFlightArchiveRules: string): string {
     return `${baseRules}
+${unlessArchiveBuild(defaultCacheRules('public, max-age=86400'))}
 ${documentNoCacheRules}
 ${unlessArchiveBuild(redirectNoCacheRules)}
 ${unlessArchiveBuild(archiveMarkdownNoindexRules)}
@@ -947,11 +962,15 @@ export function getBlogVhostHeaderFragment(options: { env: CspEnv }, mode: CspMo
         `Header always unset Permissions-Policy ${condition}`,
         `Header always set Permissions-Policy "${PERMISSIONS_POLICY_VALUE}" ${condition}`,
         getBlogCspExprOverride(options, mode),
-        // Ghost sends its theme assets with max-age=31536000; the site-wide rule caps any client
-        // cache at 7 days. Plain `set`, not `always`: Ghost's header arrives in headers_out, which
-        // `always` (err_headers_out) would add a second copy beside rather than replace. Limited to
-        // 200, 206 and 304, so Ghost's own no-cache on a 404 is left alone.
-        `Header set Cache-Control "public, max-age=604800" "expr=%{REQUEST_URI} =~ m#^/blog/(assets|public)/# && %{REQUEST_STATUS} -in {'200', '206', '304'}"`,
+        // Ghost sends max-age=31536000 on its theme assets (/blog/assets/, /blog/public/), on
+        // uploaded images, media and files (/blog/content/), and on every 301 it issues itself
+        // (slash-less, mixed-case and /amp/ URLs); the site-wide rule caps any client cache at 7
+        // days. Plain `set`, not `always`: Ghost's header arrives in headers_out, which `always`
+        // (err_headers_out) would add a second copy beside rather than replace. The asset line is
+        // limited to 200, 206 and 304, so Ghost's own no-cache on a 404 is left alone; the 301
+        // line leaves Apache's own redirects untouched, as `set` never reaches them.
+        `Header set Cache-Control "public, max-age=604800" "expr=%{REQUEST_URI} =~ m#^/blog/(assets|public|content)/# && %{REQUEST_STATUS} -in {'200', '206', '304'}"`,
+        `Header set Cache-Control "public, max-age=604800" "expr=%{REQUEST_URI} =~ m#^/blog/# && %{REQUEST_STATUS} == '301'"`,
     ].join('\n');
 }
 

@@ -1,6 +1,9 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
+import type { CheckDef } from '../core/types';
+import { BROWSER_CACHE_HEURISTIC_URLS } from '../expected/headers';
+import { PENDING } from '../expected/lifecycle';
 import { FakeAws, FakeHttp, type FakeResponse, fakeCtx, healthyCloudFront } from '../testing/fakes';
 import { headerChecks } from './headers';
 
@@ -85,14 +88,25 @@ describe('headers.not-modified-keeps-cache', () => {
     });
 });
 
+interface CapOptions {
+    check?: CheckDef;
+    status?: (url: string) => number;
+    lastModified?: (url: string) => boolean;
+}
+
 describe('headers.browser-cache-cap', () => {
-    const cap = headerChecks().find((c) => c.id === 'headers.browser-cache-cap')!;
+    const byId = (id: string) => headerChecks().find((c) => c.id === id)!;
+    const cap = byId('headers.browser-cache-cap');
     const PAGE = '<script src="/_astro/app.AbCd1234.js"></script>';
     const BLOG =
         '<a href="https://www.ag-grid.com/blog/a-post/">p</a><script src="/blog/assets/built/prism.js"></script>' +
         '<link href="/blog/public/cards.min.css">';
 
-    async function runCap(cacheControl: (url: string) => string | undefined, expires?: (url: string) => string) {
+    async function runCap(
+        cacheControl: (url: string) => string | undefined,
+        expires?: (url: string) => string,
+        { check = cap, status = () => 200, lastModified = () => false }: CapOptions = {}
+    ) {
         const http = new FakeHttp((req) => {
             const url = new URL(req.url);
             const body = url.pathname === '/blog/' ? BLOG : PAGE;
@@ -104,10 +118,13 @@ describe('headers.browser-cache-cap', () => {
             if (expires) {
                 headers.expires = expires(req.url);
             }
-            return { status: 200, headers: { 'content-type': 'text/html', ...headers }, body };
+            if (lastModified(req.url)) {
+                headers['last-modified'] = 'Thu, 01 Jan 2015 00:00:00 GMT';
+            }
+            return { status: status(req.url), headers: { 'content-type': 'text/html', ...headers }, body };
         });
         try {
-            return await cap.run(await fakeCtx(new FakeAws(healthyCloudFront()), http));
+            return await check.run(await fakeCtx(new FakeAws(healthyCloudFront()), http));
         } finally {
             http.close();
         }
@@ -133,5 +150,69 @@ describe('headers.browser-cache-cap', () => {
         );
         assert.equal(outcome.status, 'fail', outcome.detail);
         assert.match(outcome.detail ?? '', /favicon\.ico.*Expires/);
+    });
+
+    it('fails a cacheable response with a Last-Modified and neither Cache-Control nor Expires', async () => {
+        const outcome = await runCap((url) => (url.endsWith('/robots.txt') ? undefined : 'no-cache'), undefined, {
+            lastModified: () => true,
+        });
+        assert.equal(outcome.status, 'fail', outcome.detail);
+        assert.match(outcome.detail ?? '', /\/robots\.txt \(200\): Last-Modified with no Cache-Control or Expires/);
+    });
+
+    it('leaves a response with no Last-Modified, or a status not cacheable by default, to pass', async () => {
+        for (const options of [{}, { lastModified: () => true, status: () => 302 }]) {
+            const outcome = await runCap(() => undefined, undefined, options);
+            assert.equal(outcome.status, 'pass', outcome.detail);
+        }
+    });
+
+    describe('headers.browser-cache-cap.heuristic', () => {
+        const heuristic = byId('headers.browser-cache-cap.heuristic');
+
+        it('is pending on the grid default and samples sitemaps, llms.txt, AGENTS.md and .well-known', () => {
+            assert.equal(heuristic.pending, PENDING.gridDefaultCache);
+            for (const url of ['/sitemap-index.xml', '/sitemap-0.xml', '/llms.txt', '/AGENTS.md', '/.well-known/']) {
+                assert.ok(
+                    BROWSER_CACHE_HEURISTIC_URLS.some((u) => u.includes(url)),
+                    url
+                );
+            }
+        });
+
+        it('fails the sitemap index as served today, and passes it with the default', async () => {
+            const today = await runCap(() => undefined, undefined, { check: heuristic, lastModified: () => true });
+            assert.equal(today.status, 'fail', today.detail);
+            assert.match(today.detail ?? '', /sitemap-index\.xml \(200\): Last-Modified/);
+            const fixed = await runCap(() => 'public, max-age=86400', undefined, {
+                check: heuristic,
+                lastModified: () => true,
+            });
+            assert.equal(fixed.status, 'pass', fixed.detail);
+        });
+    });
+
+    describe('headers.browser-cache-cap.blog-content', () => {
+        const blog = byId('headers.browser-cache-cap.blog-content');
+        const ghost = (cc: string) => (url: string) => (url.includes('/blog/') ? cc : 'no-cache');
+
+        it("fails Ghost's year-long images and 301s as served today, judging the 301 itself", async () => {
+            const outcome = await runCap(ghost('public, max-age=31536000'), undefined, {
+                check: blog,
+                status: (url) => (url.includes('/content/') ? 200 : 301),
+            });
+            assert.equal(outcome.status, 'fail', outcome.detail);
+            assert.match(outcome.detail ?? '', /\/blog\/content\/images\/[^ ]+ \(200\): max-age=31536000/);
+            assert.match(outcome.detail ?? '', /\/blog\/rss \(301\): max-age=31536000/);
+        });
+
+        it('passes once the vhost caps them at 7 days', async () => {
+            const outcome = await runCap(ghost('public, max-age=604800'), undefined, {
+                check: blog,
+                status: (url) => (url.includes('/content/') ? 200 : 301),
+            });
+            assert.equal(outcome.status, 'pass', outcome.detail);
+            assert.equal(blog.pending, PENDING.blogVhostCap);
+        });
     });
 });

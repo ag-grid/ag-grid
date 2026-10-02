@@ -32,3 +32,18 @@ test('the cap fails an Expires more than 7 days after Date', () => {
         /Expires is \d+s after Date/
     );
 });
+
+test('the cap fails a cacheable response left to a heuristic lifetime', () => {
+    const lastModified = { 'last-modified': ['Thu, 01 Jan 2015 00:00:00 GMT'] };
+    for (const status of [200, 206, 301, 404]) {
+        assert.match(browserCacheViolation(lastModified, status), /heuristically cacheable/, String(status));
+    }
+    // Not when anything explicit is there, nor without a Last-Modified, nor on a status that is
+    // not cacheable by default.
+    assert.equal(browserCacheViolation({ ...lastModified, 'cache-control': ['no-cache'] }, 200), null);
+    assert.equal(browserCacheViolation({ ...lastModified, expires: ['0'] }, 200), null);
+    assert.equal(browserCacheViolation({}, 200), null);
+    for (const status of [302, 304, 307, 403, 500]) {
+        assert.equal(browserCacheViolation(lastModified, status), null, String(status));
+    }
+});

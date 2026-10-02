@@ -214,11 +214,15 @@ await Promise.all(Array.from({ length: 8 }, worker));
 // Run-wide: no response at all, redirects, 304s and 404s included, may be cached by a browser for
 // more than 7 days (s-maxage is exempt).
 const cacheCapViolations = responses.flatMap(({ request: sent, response }) => {
-    const problem = browserCacheViolation({
-        'cache-control': headerValues(response, 'cache-control'),
-        expires: headerValues(response, 'expires'),
-        date: headerValues(response, 'date'),
-    });
+    const problem = browserCacheViolation(
+        {
+            'cache-control': headerValues(response, 'cache-control'),
+            expires: headerValues(response, 'expires'),
+            date: headerValues(response, 'date'),
+            'last-modified': headerValues(response, 'last-modified'),
+        },
+        response.status
+    );
     return problem ? [`${sent} -> ${response.status}: ${problem}`] : [];
 });
 
@@ -265,7 +269,9 @@ const featureSkipped = skipped.filter((r) => !sites[siteOf(r)].off);
 const coverageGaps = coverageErrors({ declared, minRows, executed: active, siteSkipped, featureSkipped });
 
 if (cacheCapViolations.length) {
-    console.log(`\n==> BROWSER CACHE CAP (${cacheCapViolations.length} responses over 7 days)`);
+    console.log(
+        `\n==> BROWSER CACHE CAP (${cacheCapViolations.length} responses over 7 days or left to a heuristic lifetime)`
+    );
     console.log(cacheCapViolations.map((v) => `  FAIL ${v}`).join('\n'));
 }
 if (failed.length) {
@@ -320,7 +326,7 @@ console.log(
     `\n==> ${totals.pass} passed, ${totals.fail} failed, ${totals.known} known-fail, ${totals.upass} unexpected-pass, ${skipped.length} skipped`
 );
 console.log(
-    `==> browser-cache cap (max-age and Expires at most 7 days): ${responses.length} responses, ${cacheCapViolations.length} over`
+    `==> browser-cache cap (max-age and Expires at most 7 days, none left to a heuristic): ${responses.length} responses, ${cacheCapViolations.length} over`
 );
 if (formOnlyFails) {
     console.log(
