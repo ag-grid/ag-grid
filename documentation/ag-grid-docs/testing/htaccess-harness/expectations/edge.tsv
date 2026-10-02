@@ -4,7 +4,7 @@
 # implemented yet (they must fail; an unexpected pass fails the run so the row gets promoted).
 
 # Every row here is unique coverage: raise this with each added row, lower it only with a reviewed deletion.
-# @min-rows 295
+# @min-rows 308
 # @category host-canonical-one-hop
 # Every non-www host that reaches the docroot lands on the final www URL in ONE hop - for grid,
 # charts and studio pages, and for archives (whose path must be kept).
@@ -31,6 +31,7 @@ angulargrid.ag-grid.com	/react-data-grid/getting-started/	301	https://www.ag-gri
 # A bare archive root: mod_rewrite leaves it to mod_dir (the archive's .htaccess is in that very
 # directory), so the root's <If> redirect adds the slash and canonicalises the host in one hop.
 apex	/archive/36.2.0	301	https://www.ag-grid.com/archive/36.2.0/	hops=1	final=200
+apex	/archive/36.2.0	301	https://www.ag-grid.com/archive/36.2.0/	scheme=http	hops=1	final=200
 apex	/archive/36.3.0?x=1	301	https://www.ag-grid.com/archive/36.3.0/?x=1	hops=1	final=200
 blog	/archive/36.2.0	301	https://www.ag-grid.com/archive/36.2.0/	hops=1	final=200
 angulargrid.com	/charts/archive/14.2.0	301	https://www.ag-grid.com/charts/archive/14.2.0/	hops=1	final=200
@@ -270,12 +271,26 @@ www	/sitemap-index.xml	200		cc=public, max-age=86400
 www	/sitemap-0.xml	200		cc=public, max-age=86400
 www	/llms.txt	200		cc=public, max-age=86400	ct~^text/plain
 www	/.well-known/mcp/server-card.json	200		cc=public, max-age=86400
-www	/changelog/changelog.json	200		cc=public, max-age=86400
-www	/files/ag-grid-community/styles/ag-grid.css	200		cc=public, max-age=86400
 www	/fonts/pdf-export/IBMPlexSansJP-Bold.ttf	200		cc=public, max-age=86400
 www	/charts/sitemap-0.xml	200		cc=public, max-age=86400
 www	/studio/llms.txt	200		cc=public, max-age=86400
 www	/archive/36.2.0/sitemap-0.xml	200		cc=public, max-age=604800, s-maxage=31536000
+www	/downloads/ag-grid-design-system-30.1.0.zip	200		cc=public, max-age=86400
+www	/debug/all-docs-pages.json	200		cc=public, max-age=86400
+# Fetched at runtime and changed at a release (feeds, example libraries, the example runner and
+# example sources): revalidated, so a 304 when unchanged rather than yesterday's copy for a day.
+www	/changelog/changelog.json	200		cc=no-cache
+www	/pipeline/pipeline.json	200		cc=no-cache
+www	/roadmap/roadmap.json	200		cc=no-cache
+www	/charts/changelog/changelog.json	200		cc=no-cache
+www	/files/ag-grid-community/styles/ag-grid.css	200		cc=no-cache
+www	/studio/files/ag-studio/dist/umd/ag-studio.min.js	200		cc=no-cache
+www	/charts/dev/ag-charts-community/dist/umd/ag-charts-community.js	200		cc=no-cache
+www	/example-runner/example-runner.js	200		cc=no-cache
+www	/examples/column-definitions/column-definition-update/angular/app.component.ts	200		cc=no-cache
+www	/examples/some-page/some-example/images/logo.png	200		cc=no-cache
+www	/archive/36.2.0/files/ag-grid-community/dist/ag-grid-community.min.js	200		cc=public, max-age=604800, s-maxage=31536000
+www	/archive/36.3.0/files/ag-grid-community/dist/ag-grid-community.min.js	200		cc=no-cache
 # /example/ is a live demo page: HTML no-cache, never the day-long asset cache.
 www	/example/	200		accept=html	cc=no-cache	ct~^text/html
 # Live 404: the root ErrorDocument, revalidated, no agent Link header.

@@ -174,7 +174,7 @@ describe('headers.browser-cache-cap', () => {
             assert.equal(heuristic.pending, PENDING.gridDefaultCache);
             for (const url of ['/sitemap-index.xml', '/sitemap-0.xml', '/llms.txt', '/AGENTS.md', '/.well-known/']) {
                 assert.ok(
-                    BROWSER_CACHE_HEURISTIC_URLS.some((u) => u.includes(url)),
+                    Object.keys(BROWSER_CACHE_HEURISTIC_URLS).some((u) => u.includes(url)),
                     url
                 );
             }
@@ -184,11 +184,25 @@ describe('headers.browser-cache-cap', () => {
             const today = await runCap(() => undefined, undefined, { check: heuristic, lastModified: () => true });
             assert.equal(today.status, 'fail', today.detail);
             assert.match(today.detail ?? '', /sitemap-index\.xml \(200\): Last-Modified/);
-            const fixed = await runCap(() => 'public, max-age=86400', undefined, {
+            const fixed = await runCap((url) => BROWSER_CACHE_HEURISTIC_URLS[url], undefined, {
                 check: heuristic,
                 lastModified: () => true,
             });
             assert.equal(fixed.status, 'pass', fixed.detail);
+        });
+
+        it('fails a feed or example library given the day default instead of no-cache', async () => {
+            const outcome = await runCap(() => 'public, max-age=86400', undefined, {
+                check: heuristic,
+                lastModified: () => true,
+            });
+            assert.equal(outcome.status, 'fail', outcome.detail);
+            assert.match(
+                outcome.detail ?? '',
+                /changelog\.json Cache-Control: got \["public, max-age=86400"\], expected \["no-cache"\]/
+            );
+            assert.match(outcome.detail ?? '', /\/files\/[^ ]+ Cache-Control: got/);
+            assert.doesNotMatch(outcome.detail ?? '', /sitemap-index\.xml Cache-Control/);
         });
     });
 
