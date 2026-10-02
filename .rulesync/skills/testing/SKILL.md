@@ -30,6 +30,8 @@ Search `testing/behavioural` for an existing harness before assuming a behaviour
 
 ## Regression Tests: Cover Every Reproduction Path
 
+This applies once a change needs a test. Styling-only changes, copy, refactors with existing coverage and type-only changes do not; the "Does this change need a test?" section of `.rulesync/rules/testing.md` has the full criteria.
+
 A bug rarely has one trigger. The same broken behaviour is usually reachable through several entry points — a programmatic API call, `applyColumnState`, a panel drag, a tool-panel drop — that run **different code paths** to the same end state. A fix that only patches the path in the ticket's first repro step can leave the others broken.
 
 When writing regression tests for a bug fix:

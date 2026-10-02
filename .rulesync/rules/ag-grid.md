@@ -123,6 +123,8 @@ Core dependency chain: `ag-grid-community` → `ag-grid-enterprise` → framewor
 
 **Behavioural tests are the primary test suite.** `testing/behavioural/` verifies grid behaviour as a black box; package unit tests are co-located in `packages/*/src`. `./behave.sh` runs both together as one multi-project Vitest run. The Testing Guide covers layer choice, async waiting patterns, and snapshots.
 
+**Not every change needs a test.** Add one for logic, state, events, interaction and API behaviour. Do not add one for styling-only changes (never assert exact pixel or CSS values), copy, refactors with existing coverage, or type-only changes. Say "No test added: <reason>" in your summary. The Testing Guide's "Does this change need a test?" section has the criteria.
+
 **Bug fix or feature work:** update the implementation (typically `packages/ag-grid-*/src/`), sync dependent docs and examples, then run `./behave.sh` and `./checks.sh`. Docs and example workflows are covered by the docs-pages and examples rules, which load when you touch those trees.
 
 ### Technical Requirements

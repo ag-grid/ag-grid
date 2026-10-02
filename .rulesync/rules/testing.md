@@ -49,7 +49,27 @@ const flush = async () => { await act(async () => { await asyncSetTimeout(0); })
 
 The skill covers the traps that make a `waitFor` unfalsifiable or a sleep load-bearing — negative assertions, polls that were already true, test IDs landing on a debounce, and sleeps that only look like safety margins — plus how to prove a wait is genuinely necessary. **Load it before converting any timing-dependent test.**
 
+## Does this change need a test?
+
+Decide before writing one. A test earns its place when it guards behaviour a user would notice if it broke: logic, state, events, keyboard and pointer interaction, API contracts.
+
+**Do not add a test for:**
+
+- **Styling-only changes** (padding, margin, colour, font, size, icons, theme parameters). Asserting `getComputedStyle(el).paddingLeft === '12px'` restates the CSS and fails on every design tweak. If the style carries behaviour, such as a layout that decides what is visible, clickable or scrollable, assert that outcome and not the number.
+- **Copy, docs and example text.** A docs-example spec is only for behaviour the example demonstrates (see `docs-example-specs.md`).
+- **Refactors.** The existing tests are the safety net; if they pass unchanged, the refactor is covered.
+- **Type-only and lint-only changes.** The type-check and lint gates cover them.
+- **Behaviour already covered.** Grep `testing/behavioural` and the e2e specs first.
+
+**Size the test to the change.** A regression test is a few lines in the suite that already owns the behaviour (see `test-organisation.md`). A new Playwright e2e spec is not the default for a one-property fix. If the test needs more setup than the fix, reconsider the layer or skip it.
+
+**Brittleness check.** Ask whether a legitimate design or refactor change would break the test without any user-visible regression. If yes, delete it.
+
+When a change gets no test, say so in the summary with the reason (e.g. "No test added: styling-only"). Do not add one by default to look thorough.
+
 ## Regression tests: cover every reproduction path
+
+This applies once a change needs a test, per the section above.
 
 A bug rarely has one trigger. Enumerate the reproduction paths named in the ticket and add a test for each — a programmatic API call, a panel drag and a tool-panel drop are three tests, not one. Test the plural case, not just N=1, and assert the observable end state for every path.
 
