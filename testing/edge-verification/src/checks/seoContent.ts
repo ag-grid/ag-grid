@@ -28,6 +28,7 @@ import {
     PAGES,
     REDIRECTING_HREFS,
     SITE_NAVIGATION,
+    STUDIO_OFFER,
 } from '../expected/seo';
 
 type PageKey = keyof typeof PAGES;
@@ -421,17 +422,20 @@ export function seoContentChecks(): CheckDef[] {
             }
         ),
         perPage(
-            'json-ld.studio-no-offers',
-            'Studio structured data carries no offers at all (AG Studio has no free tier)',
-            ['SE-162', 'ag-studio#3096 / #3097'],
+            'json-ld.studio-offers',
+            'Studio structured data carries exactly the AG Studio Community offer at price 0',
+            ['SE-162'],
             ['studioHome', 'studioDocs'],
             (html, p) => {
                 const nodes = validJsonLdNodes(html, (m) => p.add(m));
                 p.check(nodes.length > 0, 'no JSON-LD');
-                const offers = nodes.flatMap((n) => offersIn(n));
-                p.check(!offers.length, `offers: ${JSON.stringify(offers)}`);
-            },
-            { pending: PENDING.studioNoOffers }
+                const offers = nodes.flatMap((n) => offersIn(n)).flat() as any[];
+                p.eq(
+                    'offers',
+                    offers.map((o) => ({ name: o?.name, price: o?.price })),
+                    [STUDIO_OFFER]
+                );
+            }
         ),
         perPage(
             'json-ld.docs-article',

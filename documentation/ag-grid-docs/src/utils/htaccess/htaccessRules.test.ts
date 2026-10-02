@@ -2238,7 +2238,6 @@ describe('htaccessRules', () => {
             ['/debug/all-docs-pages.json', 'application/json', [DAY]],
             ['/charts/homepage/examples.js', 'text/javascript', [DAY]],
             ['/studio/example-assets/nuclear_walletcards.csv', 'text/csv', [DAY]],
-            ['/styles/bryntum-demo.css', 'text/css', [DAY]],
             ['/charts/sitemap-0.xml', 'application/xml', [DAY]],
             ['/charts/llms.txt', 'text/plain', [DAY]],
             ['/studio/robots-disallow.json', 'application/json', [DAY]],
@@ -2263,6 +2262,9 @@ describe('htaccessRules', () => {
             ],
             ['/charts/react/bar-series/examples/basic/data.js', 'text/javascript', ['no-cache']],
             ['/studio/examples/ai/ai-overview-example/angular/ag-example-styles.css', 'text/css', ['no-cache']],
+            // The Bryntum campaign stylesheet changes with its no-cache page (Sean, 2026-10-02).
+            ['/styles/bryntum-demo.css', 'text/css', ['no-cache']],
+            ['/styles/other.css', 'text/css', [DAY]],
             // ...an image inside an example directory too, though the asset rule matches it.
             ['/examples/some-page/some-example/images/logo.png', 'image/png', ['no-cache']],
             // Not a feed: a page directory's HTML, and a JSON file outside the three feed directories.

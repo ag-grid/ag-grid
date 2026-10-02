@@ -5,9 +5,10 @@
  *
  *   redirects      every alias host (apex, blog., react-grid., charts. ..., over http too) and legacy URL
  *                  reaches the right www URL in one hop, query string kept; archive URLs stay inside
- *                  their archive
+ *                  their archive; the charts framework hubs (SE-144) are reached in one hop
  *                  SE-4, SE-24, SE-26, SE-28, SE-29, SE-30, SE-40, SE-60, SE-61, SE-64, SE-66, SE-85,
- *                  SE-86, SE-88, SE-90, SE-91, SE-93, SE-94, SE-164, SE-166, SE-182, SE-186, SE-188
+ *                  SE-86, SE-88, SE-90, SE-91, SE-93, SE-94, SE-144, SE-164, SE-166, SE-182, SE-186,
+ *                  SE-188
  *   bot-outcomes   queries recent WAF logs: each crawler/agent family (Googlebot, OAI-SearchBot,
  *                  DuckAssistBot, Meta, LINE ...) is actually allowed, under a non-allowed threshold
  *                  SE-78, SE-184
@@ -32,8 +33,9 @@
  *                  SE-4, SE-26, SE-80, SE-116, SE-117, SE-186, SE-187, SE-189
  *   seo-content    sample pages: one H1 (and its visible text), <main>, viewport, canonical, absolute
  *                  og:image that loads, structured data (FAQPage only on the home page, its questions
- *                  visible; Organization on all three sites; one Community offer per product; each
- *                  framework's examples), blog links that answer directly, the changelog search page
+ *                  visible; Organization on all three sites; one Community offer per product, studio's
+ *                  included; each framework's examples), blog links that answer directly, the
+ *                  changelog search page
  *                  SE-8, SE-41, SE-42, SE-43, SE-44, SE-45, SE-46, SE-47, SE-48, SE-49, SE-50, SE-60,
  *                  SE-63, SE-71, SE-85, SE-87, SE-113, SE-162, SE-166, SE-183, SE-193, SE-194
  *   caching        the live cache: repeat requests hit for cached paths, never for HTML;

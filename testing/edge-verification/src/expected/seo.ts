@@ -69,6 +69,8 @@ export const ORGANIZATION = {
 /** SE-162: docs pages carry only the valid Community offer. */
 export const DOCS_OFFER = { name: 'AG Grid Community', price: '0' };
 export const CHARTS_OFFER = { name: 'AG Charts Community', price: '0' };
+/** Sean, 2026-10-02: studio keeps its Community offer, as every studio page emits it live. */
+export const STUDIO_OFFER = { name: 'AG Studio Community', price: '0' };
 
 /** SE-63: each framework's docs page describes its own examples, tied to that page's article. */
 export const DOCS_SOURCE_PLATFORMS: Array<{ page: 'reactDocs' | 'vueDocs'; runtimePlatform: string }> = [

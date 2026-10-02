@@ -151,13 +151,14 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/scri
 // changelog, pipeline and roadmap feeds (Changelog.tsx, Pipeline.tsx; roadmap.json is read at
 // build time today, but is the same kind of feed), the library builds examples load (/files/ on
 // grid and studio, /charts/dev/ on charts, the API reference JSON among them), the example runner,
-// and the example sources under every /examples/ directory. A day-long cache would pair a fresh
+// the example sources under every /examples/ directory, and the Bryntum campaign stylesheet, which
+// its no-cache page links and which changes with it. A day-long cache would pair a fresh
 // no-cache page with yesterday's data or library, so they revalidate instead: a 304 when unchanged.
 // After the static-asset and script rules, so an image or script inside an example or package
 // directory revalidates with it; before the archive rules, which keep released archives immutable.
 const releaseFetchedNoCacheRules = `
 # Unhashed files fetched at runtime that change at a release: always revalidate (a 304 when unchanged).
-Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/((charts|studio)/)?(changelog|pipeline|roadmap)/[^/]+\\.json$# || %{REQUEST_URI} =~ m#^/(files|studio/files|charts/dev)/# || %{REQUEST_URI} =~ m#/example-runner/# || %{REQUEST_URI} =~ m#/examples/.+\\.[A-Za-z0-9]+$#"
+Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/((charts|studio)/)?(changelog|pipeline|roadmap)/[^/]+\\.json$# || %{REQUEST_URI} =~ m#^/(files|studio/files|charts/dev)/# || %{REQUEST_URI} =~ m#/example-runner/# || %{REQUEST_URI} =~ m#/examples/.+\\.[A-Za-z0-9]+$# || %{REQUEST_URI} =~ m#^/styles/bryntum-demo\\.css$#"
 `;
 
 // A released archive version is permanently immutable, so unlike every other rule in this

@@ -4,7 +4,7 @@
 # implemented yet (they must fail; an unexpected pass fails the run so the row gets promoted).
 
 # Every row here is unique coverage: raise this with each added row, lower it only with a reviewed deletion.
-# @min-rows 308
+# @min-rows 309
 # @category host-canonical-one-hop
 # Every non-www host that reaches the docroot lands on the final www URL in ONE hop - for grid,
 # charts and studio pages, and for archives (whose path must be kept).
@@ -287,6 +287,7 @@ www	/files/ag-grid-community/styles/ag-grid.css	200		cc=no-cache
 www	/studio/files/ag-studio/dist/umd/ag-studio.min.js	200		cc=no-cache
 www	/charts/dev/ag-charts-community/dist/umd/ag-charts-community.js	200		cc=no-cache
 www	/example-runner/example-runner.js	200		cc=no-cache
+www	/styles/bryntum-demo.css	200		cc=no-cache
 www	/examples/column-definitions/column-definition-update/angular/app.component.ts	200		cc=no-cache
 www	/examples/some-page/some-example/images/logo.png	200		cc=no-cache
 www	/archive/36.2.0/files/ag-grid-community/dist/ag-grid-community.min.js	200		cc=public, max-age=604800, s-maxage=31536000
