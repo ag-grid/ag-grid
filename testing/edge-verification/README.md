@@ -18,7 +18,7 @@ npx tsx testing/edge-verification/src/main.ts --only redirects,headers --verbose
 
 Prerequisites: the AWS CLI on `PATH` with a working `ddos-report-readonly` profile, and a
 machine outside a datacenter IP range (the WAF behaviour rows assume Bot Control does not label the
-caller as a datacenter). A full run takes a few minutes and makes about 530 HTTP requests.
+caller as a datacenter). A full run takes a few minutes and makes about 550 HTTP requests.
 
 | Flag                   | Effect                                                                                                                               |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
@@ -29,7 +29,7 @@ caller as a datacenter). A full run takes a few minutes and makes about 530 HTTP
 | `--verbose`            | Show detail for passing checks, and log every HTTP request                                                                           |
 | `--full-links`         | Check every llms.txt index link (~850, slow and over the default cap: raise `--max-requests`)                                        |
 | `--days <n>`           | CloudTrail window for the edge-write summary (default 7)                                                                             |
-| `--max-requests <n>`   | HTTP request cap (default 600)                                                                                                       |
+| `--max-requests <n>`   | HTTP request cap (default 700)                                                                                                       |
 | `--concurrency <n>`    | Requests in flight (default 4, max 8)                                                                                                |
 | `--delay <ms>`         | Minimum gap between request starts (default 120)                                                                                     |
 | `--user-agent <ua>`    | Override the default browser User-Agent                                                                                              |
@@ -81,7 +81,7 @@ These are enforced in code, not by convention:
   parses (a parse over the whole group silently under-counts), matches the user agent inside
   `@message` rather than by header index, and the report prints the bytes actually scanned.
   `logs:StopQuery` is not granted, so a query that has started always runs to completion.
-- **HTTP is GET/HEAD only**, under a hard request cap (600 per run by default), at most 4 requests
+- **HTTP is GET/HEAD only**, under a hard request cap (700 per run by default), at most 4 requests
   in flight and at least 120 ms between request starts, with a current desktop Chrome User-Agent by
   default. Responses are memoised, and a document asked for by HEAD is fetched once as a GET that
   every check reading that URL shares; only the cache probes that must see a new response bypass it.
@@ -124,14 +124,15 @@ node --import tsx --test "src/**/*.test.ts"
 ## What it covers
 
 Areas, in report order (the `--only` names). The comment at the top of `src/main.ts` has the same
-areas as a short table, without counts. Counts are checks per area (pending / known issue).
+areas as a short table with the SE tickets each one cites (`src/main.test.ts` keeps those lists equal to
+the checks' refs) and what the live run does not check, without counts. Counts are checks per area (pending / known issue).
 
 | Area             | Checks        | What it verifies                                                                                                                                                                                                                                                                                                                                                                                      |
 | ---------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `cloudfront`     | 31 (5 / 0)    | Every field of the distribution settings, the single ALB origin, each cache behaviour (in order) and the cache and origin request policies they use, the real-time log configuration (SE-116/117), that markdown-negotiated pages never land on a caching behaviour without a key split, and the archive cache behaviours and function (pending `add-archive-cache-behaviors.sh`)                     |
 | `waf-config`     | 32 (9 / 3)    | Rule order and every field of every rule on both web ACLs (each managed group's complete override set included), both ACLs' settings, the shared-secret Allow rules, the `build-server` and `salience-bot` IP sets, Bot Control, AntiDDoS, the credential-scanner regex (SE-185), the non-browser rule and its allowlists (SE-78/184), rate rules, logging, redaction and retention                   |
 | `infra`          | 20 (1 / 1)    | Every field of each alarm (metric, dimensions, statistic, threshold, actions), the viewer certificate, Shield Advanced, the ALB, its security group and attributes, recent CloudTrail edge writes, 24h 5xx rate, origin share and healthy hosts                                                                                                                                                       |
-| `redirects`      | 187 (35 / 20) | First status, Location (query string included) and hop count for every host alias (over http too) and legacy URL in the SE ticket QA tables                                                                                                                                                                                                                                                           |
+| `redirects`      | 205 (53 / 20) | First status, Location (query string included) and hop count for every host alias (over http too) and legacy URL in the SE ticket QA tables; the charts framework roots to their quick start (SE-66 B3, pending ag-charts#8440 / #8441)                                                                                                                                                               |
 | `migration`      | 21 (15 / 0)   | The grid#15434 / #15435 archive `.htaccess` migration: alias hosts one hop to the same archive URL on www (slash-less directory URLs too, pending grid#15434/#15435), the grid rules that left the archive, markdown negotiation on 36.1.0/36.2.0, backups never served. Samples the lowest and highest version per site; `--only migration` checks all 16 (55 checks)                                |
 | `headers`        | 57 (20 / 1)   | Response headers per content class: the 7-day browser-cache cap on every class (s-maxage exempt; Ghost's uploads and 301s pending the vhost block) with nothing left to a heuristic lifetime, Link, security headers sent once (the blog-host 301 too), no X-Frame-Options, Cache-Control, Vary, X-Robots-Tag, markdown and favicon content types, 304 revalidation, internal hosts noindex, nofollow |
 | `caching`        | 25 (3 / 0)    | A repeat request is a hit on every caching behaviour, never-cached pages never hit, Host in the cache key, and HTML-markdown-HTML poisoning probes                                                                                                                                                                                                                                                    |
