@@ -63,6 +63,10 @@ fetch data from the server.
 
 Rows fetched from the server are supplied to the grid via `params.success({ rowData: rows })`.
 
+{% note %}
+When `serverSideCheckLevelConsistency` is enabled, each request includes one extra row. Return all rows from `startRow` up to `endRow`. See [Level Consistency](./server-side-model-updating-refresh/#level-consistency).
+{% /note %}
+
 ## Registering the Datasource
 
 The datasource is registered with the grid via either a) the grid property `serverSideDatasource` or b) the grid API.

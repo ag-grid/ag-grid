@@ -121,6 +121,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         paginationChanged: PaginationChangedEvent<TData, TContext>;
         componentStateChanged: ComponentStateChangedEvent<TData, TContext>;
         storeRefreshed: StoreRefreshedEvent<TData, TContext>;
+        serverSideLevelInconsistent: ServerSideLevelInconsistentEvent<TData, TContext>;
         stateUpdated: StateUpdatedEvent<TData, TContext>;
         columnMenuVisibleChanged: ColumnMenuVisibleChangedEvent<TData, TContext>;
         contextMenuVisibleChanged: ContextMenuVisibleChangedEvent<TData, TContext>;
@@ -1566,6 +1567,29 @@ export interface StoreRefreshedEvent<TData = any, TContext = any> extends AgGlob
 > {
     /** The route of the store which has finished refreshing, undefined if root level */
     route?: string[];
+}
+
+export interface ServerSideLevelInconsistency {
+    /**
+     * `duplicated` when rows were returned by blocks on both sides of the boundary,
+     * `dropped` when rows were returned by neither block.
+     */
+    type: 'duplicated' | 'dropped';
+    /** Index within the level of the first row of the block that starts at this boundary. */
+    boundaryIndex: number;
+    /** IDs of the rows returned by both blocks. Empty for `dropped`, as rows that were never returned have no known ID. */
+    rowIds: string[];
+}
+
+export interface ServerSideLevelInconsistentEvent<TData = any, TContext = any> extends AgGlobalEvent<
+    'serverSideLevelInconsistent',
+    TData,
+    TContext
+> {
+    /** The route of the level whose loaded blocks are not consistent with each other, `[]` for the root level. */
+    route: string[];
+    /** One entry for each block boundary where the loaded blocks disagree. */
+    inconsistencies: ServerSideLevelInconsistency[];
 }
 
 export interface StateUpdatedEvent<TData = any, TContext = any> extends AgGlobalEvent<'stateUpdated', TData, TContext> {

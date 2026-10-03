@@ -615,6 +615,18 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
+        serverSideCheckLevelConsistency: {
+            supportedRowModels: ['serverSide'],
+            validate: ({ serverSideCheckLevelConsistency, getRowId }) => {
+                if (serverSideCheckLevelConsistency && typeof getRowId !== 'function') {
+                    return _createValidationWarning(319, {
+                        feature: '`serverSideCheckLevelConsistency`',
+                        requirement: 'the `getRowId` callback',
+                    });
+                }
+                return null;
+            },
+        },
         serverSideDatasource: {
             supportedRowModels: ['serverSide'],
         },

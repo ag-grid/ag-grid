@@ -27,6 +27,7 @@ import type { NodeManager } from '../../nodeManager';
 import type { ServerSideRowModel } from '../../serverSideRowModel';
 import type { LazyBlockLoadingService } from './lazyBlockLoadingService';
 import type { LazyStore } from './lazyStore';
+import { LevelConsistencyChecker } from './levelConsistencyChecker';
 import { MultiIndexMap } from './multiIndexMap';
 
 interface LazyStoreNode {
@@ -108,6 +109,7 @@ export class LazyCache extends BeanStub {
      */
     private getRowIdFunc?: (params: WithoutGridCommon<GetRowIdParams>) => string;
     private isMasterDetail: boolean;
+    private consistencyChecker?: LevelConsistencyChecker;
 
     /**
      * A cache of removed group nodes, this is retained for preserving group
@@ -146,6 +148,12 @@ export class LazyCache extends BeanStub {
         this.defaultNodeIdPrefix = blockUtils.createNodeIdPrefix(store.getParentNode());
         this.getRowIdFunc = _getRowIdCallback(this.beans);
         this.isMasterDetail = gos.get('masterDetail');
+        if (this.getRowIdFunc != null && gos.get('serverSideCheckLevelConsistency')) {
+            this.consistencyChecker = new LevelConsistencyChecker({
+                getSettledIndex: (id) => this.getSettledLazyNode(this.nodeMap.getBy('id', id))?.index,
+                getSettledId: (index) => this.getSettledLazyNode(this.nodeMap.getBy('index', index))?.id,
+            });
+        }
     }
 
     public override destroy() {
@@ -855,7 +863,15 @@ export class LazyCache extends BeanStub {
         return [...duplicates];
     }
 
-    public onLoadSuccess(firstRowIndex: number, numberOfRowsExpected: number, response: LoadSuccessParams) {
+    /**
+     * @param includesOverlapRow true when the response was requested with one extra row for the level consistency check
+     */
+    public onLoadSuccess(
+        firstRowIndex: number,
+        numberOfRowsExpected: number,
+        response: LoadSuccessParams,
+        includesOverlapRow = false
+    ) {
         if (!this.live) {
             return;
         }
@@ -882,11 +898,25 @@ export class LazyCache extends BeanStub {
             this.serverSideRowModel.generateSecondaryColumns(response.pivotResultFields);
         }
 
+        const consistencyChecker = this.consistencyChecker;
+        let rowData = response.rowData;
+        if (consistencyChecker && includesOverlapRow) {
+            rowData = this.checkBlockConsistency(
+                consistencyChecker,
+                firstRowIndex,
+                numberOfRowsExpected,
+                rowData,
+                grandTotalId
+            );
+        } else {
+            consistencyChecker?.reset();
+        }
+
         const wasRefreshing = this.nodesToRefresh.size > 0;
         let skippedRowCount = 0;
         let grandTotalData: any = undefined;
-        for (let responseRowIndex = 0; responseRowIndex < response.rowData.length; responseRowIndex++) {
-            const data = response.rowData[responseRowIndex];
+        for (let responseRowIndex = 0; responseRowIndex < rowData.length; responseRowIndex++) {
+            const data = rowData[responseRowIndex];
 
             // Grand total rows are not regular store rows — collect and process after the loop
             if (grandTotalId != null && this.getRowId(data) === grandTotalId) {
@@ -927,7 +957,7 @@ export class LazyCache extends BeanStub {
         }
 
         // Adjust for grand total rows extracted from the response
-        const dataRowCount = response.rowData.length - skippedRowCount;
+        const dataRowCount = rowData.length - skippedRowCount;
 
         if (response.rowCount != undefined && response.rowCount !== -1) {
             // if the rowCount has been provided, set the row count
@@ -967,6 +997,64 @@ export class LazyCache extends BeanStub {
         if (wasRefreshing && finishedRefreshing) {
             this.fireRefreshFinishedEvent();
         }
+    }
+
+    /**
+     * Compares the block with the neighbouring blocks, and strips the extra row requested past the end of the block.
+     */
+    private checkBlockConsistency(
+        consistencyChecker: LevelConsistencyChecker,
+        firstRowIndex: number,
+        blockSize: number,
+        responseRows: any[],
+        grandTotalId: string | null
+    ): any[] {
+        const blockRows: any[] = [];
+        const rowIds: string[] = [];
+        let overlapId: string | undefined;
+        for (let i = 0, len = responseRows.length; i < len; ++i) {
+            const data = responseRows[i];
+            const id = this.getRowId(data)!;
+            if (id === grandTotalId) {
+                blockRows.push(data);
+            } else if (rowIds.length < blockSize) {
+                rowIds.push(id);
+                blockRows.push(data);
+            } else if (overlapId === undefined) {
+                overlapId = id;
+            }
+        }
+
+        if (consistencyChecker.checkBlock(firstRowIndex, blockSize, rowIds, overlapId)) {
+            this.lazyBlockLoadingSvc.addInconsistentCache(this);
+        }
+        return blockRows;
+    }
+
+    private getSettledLazyNode(lazyNode: LazyStoreNode | undefined): LazyStoreNode | undefined {
+        if (!lazyNode) {
+            return undefined;
+        }
+        const { node } = lazyNode;
+        const isSettled =
+            !node.stub && !node.failedLoad && !node.__needsRefreshWhenVisible && !this.nodesToRefresh.has(node);
+        return isSettled ? lazyNode : undefined;
+    }
+
+    public checksLevelConsistency(): boolean {
+        return this.consistencyChecker != null;
+    }
+
+    public dispatchLevelInconsistentEvent(): void {
+        const inconsistencies = this.consistencyChecker?.takeInconsistencies();
+        if (!this.live || !inconsistencies?.length) {
+            return;
+        }
+        this.eventSvc.dispatchEvent({
+            type: 'serverSideLevelInconsistent',
+            route: this.store.getParentNode().getRoute() ?? [],
+            inconsistencies,
+        });
     }
 
     public fireRefreshFinishedEvent() {
@@ -1056,6 +1144,7 @@ export class LazyCache extends BeanStub {
     }
 
     public markNodesForRefresh() {
+        this.consistencyChecker?.forgetBoundaries();
         this.nodeMap.forEach((lazyNode) => {
             if (lazyNode.node.stub && !lazyNode.node.failedLoad) {
                 return;
@@ -1163,6 +1252,7 @@ export class LazyCache extends BeanStub {
             return;
         }
 
+        this.consistencyChecker?.forgetBoundaries();
         // the node map does not need entirely recreated, only the indexes need updated.
         const allNodes = new Array(this.nodeMap.getSize());
         const nodesMap = this.nodeMap;
@@ -1201,6 +1291,7 @@ export class LazyCache extends BeanStub {
     }
 
     public insertRowNodes(inserts: any[], indexToAdd?: number): RowNode[] {
+        this.consistencyChecker?.reset();
         // adjust row count to allow for footer row
         const realRowCount = this.store.getRowCount() - (this.store.getParentNode().sibling ? 1 : 0);
 
@@ -1258,6 +1349,7 @@ export class LazyCache extends BeanStub {
     }
 
     public removeRowNodes(idsToRemove: string[], newRowCount?: number): RowNode[] {
+        this.consistencyChecker?.reset();
         const removedNodes: RowNode[] = [];
         const nodesToVerify: RowNode[] = [];
 

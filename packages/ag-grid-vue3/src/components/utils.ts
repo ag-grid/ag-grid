@@ -228,6 +228,7 @@ import type {
     RowSelectedEvent,
     RowValueChangedEvent,
     SelectionChangedEvent,
+    ServerSideLevelInconsistentEvent,
     SortChangedEvent,
     StateUpdatedEvent,
     StoreRefreshedEvent,
@@ -1553,6 +1554,13 @@ export interface Props<TData> {
          * @agModule `ServerSideRowModelModule`
          */
     serverSideEnableClientSideSort?: boolean,
+    /** When enabled, checks that the blocks loaded for each level are consistent with each other and fires `serverSideLevelInconsistent` when rows were duplicated or dropped across a block boundary, because the data changed on the server between block requests.
+         * Each block request asks for one extra row (`endRow` is one past the end of the block), which is compared with the first row of the next block and is not displayed. The datasource must return rows up to `endRow`.
+         * Requires `getRowId`.
+         * @default false
+         * @agModule `ServerSideRowModelModule`
+         */
+    serverSideCheckLevelConsistency?: boolean,
     /** When enabled, only refresh groups directly impacted by a filter. This property only applies when there is Row Grouping & filtering is handled on the server.
          * @default false
          * @initial
@@ -2186,6 +2194,7 @@ export interface Props<TData> {
    'onRow-data-updated'?: RowDataUpdatedEvent<TData>,
    'onAsync-transactions-flushed'?: AsyncTransactionsFlushedEvent<TData>,
    'onStore-refreshed'?: StoreRefreshedEvent<TData>,
+   'onServer-side-level-inconsistent'?: ServerSideLevelInconsistentEvent<TData>,
    'onHeader-focused'?: HeaderFocusedEvent<TData>,
    'onCell-clicked'?: CellClickedEvent<TData>,
    'onCell-double-clicked'?: CellDoubleClickedEvent<TData>,
@@ -2465,6 +2474,7 @@ export function getProps() {
         serverSideDatasource: undefined,
         serverSideSortAllLevels: undefined,
         serverSideEnableClientSideSort: undefined,
+        serverSideCheckLevelConsistency: undefined,
         serverSideOnlyRefreshFilteredGroups: undefined,
         serverSidePivotResultFieldSeparator: undefined,
         viewportDatasource: undefined,
@@ -2677,6 +2687,7 @@ export function getProps() {
         'onPagination-changed': undefined,
         'onComponent-state-changed': undefined,
         'onStore-refreshed': undefined,
+        'onServer-side-level-inconsistent': undefined,
         'onState-updated': undefined,
         'onColumn-menu-visible-changed': undefined,
         'onContext-menu-visible-changed': undefined,

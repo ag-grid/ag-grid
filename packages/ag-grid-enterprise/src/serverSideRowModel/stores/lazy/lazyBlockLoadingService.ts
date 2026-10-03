@@ -35,6 +35,9 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     // a map of caches to loading nodes
     private readonly cacheLoadingNodesMap: Map<LazyCache, Set<number>> = new Map();
 
+    // caches with level inconsistencies to report once loading goes idle
+    private readonly inconsistentCaches: Set<LazyCache> = new Set();
+
     // if a check is queued to happen this cycle
     private isCheckQueued = false;
 
@@ -52,6 +55,11 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
     public unsubscribe(cache: LazyCache) {
         this.cacheLoadingNodesMap.delete(cache);
+        this.inconsistentCaches.delete(cache);
+    }
+
+    public addInconsistentCache(cache: LazyCache) {
+        this.inconsistentCaches.add(cache);
     }
 
     /**
@@ -81,6 +89,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     }
 
     private queueLoadAction() {
+        this.dispatchLevelInconsistentEvents();
         const nextBlockToLoad = this.getBlockToLoad();
         if (!nextBlockToLoad) {
             return;
@@ -113,6 +122,38 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         }
     }
 
+    /** Reports each inconsistent level once it has nothing left to load, while other levels may still be loading. */
+    private dispatchLevelInconsistentEvents() {
+        const caches = this.inconsistentCaches;
+        if (caches.size === 0) {
+            return;
+        }
+        const toDispatch = [...caches].filter((cache) => !this.isLevelLoading(cache));
+        for (let i = 0, len = toDispatch.length; i < len; ++i) {
+            caches.delete(toDispatch[i]);
+        }
+        for (let i = 0, len = toDispatch.length; i < len; ++i) {
+            toDispatch[i].dispatchLevelInconsistentEvent();
+        }
+    }
+
+    private isLevelLoading(cache: LazyCache): boolean {
+        if (this.cacheLoadingNodesMap.get(cache)?.size || cache.getNodesToRefresh().size) {
+            return true;
+        }
+        const { firstRenderedRow, lastRenderedRow } = this.rowRenderer;
+        for (let i = firstRenderedRow; i <= lastRenderedRow; i++) {
+            const row = this.rowModel.getRow(i);
+            if (!row || (row.parent?.childStore as LazyStore | undefined)?.getCache() !== cache) {
+                continue;
+            }
+            if (row.__needsRefreshWhenVisible || (row.stub && !row.failedLoad)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private attemptLoad(cache: LazyCache, start: number, end: number) {
         const hasBandwidth = this.hasAvailableLoadBandwidth();
         // too many loads already, ignore the request as a successful request will requeue itself anyway
@@ -130,9 +171,11 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     private executeLoad(cache: LazyCache, startRow: number, endRow: number) {
         const ssrmParams = cache.getSsrmParams();
         const parentNode = cache.store.getParentNode() as RowNode;
+        const includesOverlapRow = cache.checksLevelConsistency();
         const request: IServerSideGetRowsRequest = {
             startRow,
-            endRow,
+            // one row past the block is compared with the next block's first row
+            endRow: includesOverlapRow ? endRow + 1 : endRow,
             rowGroupCols: ssrmParams.rowGroupCols,
             valueCols: ssrmParams.valueCols,
             pivotCols: ssrmParams.pivotCols,
@@ -157,7 +200,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
         const success = (params: LoadSuccessParams) => {
             this.onLoadComplete();
-            cache.onLoadSuccess(startRow, endRow - startRow, params);
+            cache.onLoadSuccess(startRow, endRow - startRow, params, includesOverlapRow);
             removeNodesFromLoadingMap();
         };
 
