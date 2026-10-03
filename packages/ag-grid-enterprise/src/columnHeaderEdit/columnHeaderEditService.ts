@@ -6,8 +6,9 @@ import type {
     MenuItemDef,
     NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _createIconNoSpan, isProvidedColumnGroup } from 'ag-grid-community';
+import { BeanStub, _createIconNoSpan, _setColGroupHeaderNameOverride, isProvidedColumnGroup } from 'ag-grid-community';
 
+import { getGridColumnGroup, getToolPanelGroupName } from '../sideBar/common/toolPanelColDefService';
 import { ColumnHeaderEditPopup } from './columnHeaderEditPopup';
 
 type EditTarget = AgColumn | AgProvidedColumnGroup;
@@ -72,31 +73,24 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
     }
 
     private getEditableHeaderName(target: EditTarget): string {
-        const { colNames } = this.beans;
+        const { beans } = this;
         const name = isProvidedColumnGroup(target)
-            ? colNames.getDisplayNameForProvidedColumnGroup(null, target, 'header')
-            : colNames.getDisplayNameForColumn(target, 'header');
+            ? getToolPanelGroupName(beans, target, 'header')
+            : beans.colNames.getDisplayNameForColumn(target, 'header');
         return name != null ? String(name) : '';
     }
 
     private applyHeaderName(target: EditTarget, headerName: string | null): void {
         if (isProvidedColumnGroup(target)) {
-            const overrides = this.beans.colModel.groupHeaderNameOverrides;
-            const { groupId } = target;
-            const current = overrides.get(groupId) ?? null;
-            if (current === headerName) {
+            const group = getGridColumnGroup(this.beans, target);
+            if (!_setColGroupHeaderNameOverride(this.beans, group, headerName)) {
                 return;
-            }
-            if (headerName == null) {
-                overrides.delete(groupId);
-            } else {
-                overrides.set(groupId, headerName);
             }
             this.beans.eventSvc.dispatchEvent({
                 type: 'columnHeaderNameChanged',
                 column: null,
                 columns: null,
-                columnGroup: target,
+                columnGroup: group,
                 source: 'uiColumnHeaderEdit',
             });
         } else {

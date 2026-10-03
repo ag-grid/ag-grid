@@ -31,6 +31,7 @@ import {
     _resolveHeaderTooltipValue,
 } from 'ag-grid-community';
 
+import { getGridColumnGroup } from '../sideBar/common/toolPanelColDefService';
 import type { ColumnModelItem } from './columnModelItem';
 import {
     ColumnSelectionLabelRendererFeature,
@@ -117,7 +118,7 @@ export class ToolPanelColumnGroupComp extends Component {
                     params,
                     source,
                     null,
-                    columnGroup,
+                    getGridColumnGroup(beans, columnGroup),
                     () => this.displayName
                 )
             );
@@ -142,7 +143,7 @@ export class ToolPanelColumnGroupComp extends Component {
                         _addGridCommonParams<TooltipCallbackParams>(gos, {
                             location: 'columnToolPanelColumnGroup',
                             colDef,
-                            column: columnGroup,
+                            column: getGridColumnGroup(beans, columnGroup),
                             value: displayName,
                             valueFormatted: displayName,
                         })
@@ -153,7 +154,7 @@ export class ToolPanelColumnGroupComp extends Component {
                     const colDef = columnGroup.getColGroupDef();
                     return {
                         ...(colDef ? { colDef } : {}),
-                        column: columnGroup,
+                        column: getGridColumnGroup(beans, columnGroup),
                         valueFormatted: this.displayName,
                     };
                 },
@@ -186,7 +187,12 @@ export class ToolPanelColumnGroupComp extends Component {
         this.refreshAriaLabel();
         this.setupTooltip();
 
-        const classes = _getToolPanelClassesFromColDef(columnGroup.getColGroupDef(), this.beans, null, columnGroup);
+        const classes = _getToolPanelClassesFromColDef(
+            columnGroup.getColGroupDef(),
+            this.beans,
+            null,
+            getGridColumnGroup(this.beans, columnGroup)
+        );
         for (const c of classes) {
             this.toggleCss(c, true);
         }

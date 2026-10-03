@@ -25,6 +25,7 @@ import {
     dispatchColumnResizedEvent,
     dispatchColumnVisibleEvent,
 } from './columnEventUtils';
+import { _setColGroupHeaderNameOverride } from './columnGroups/columnGroupState';
 import { GROUP_AUTO_COLUMN_ID, SELECTION_COLUMN_ID } from './columnUtils';
 
 export interface ColumnStateParams {
@@ -523,7 +524,14 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
         // Group header names live outside column state, so clear their overrides here too.
         const groupOverrides = colModel.groupHeaderNameOverrides;
         if (groupOverrides.size) {
-            groupOverrides.clear();
+            for (const groupId of Array.from(groupOverrides.keys())) {
+                const group = colModel.getColGroup(groupId);
+                if (group) {
+                    _setColGroupHeaderNameOverride(beans, group, null);
+                } else {
+                    groupOverrides.delete(groupId);
+                }
+            }
             eventSvc.dispatchEvent({
                 type: 'columnHeaderNameChanged',
                 column: null,

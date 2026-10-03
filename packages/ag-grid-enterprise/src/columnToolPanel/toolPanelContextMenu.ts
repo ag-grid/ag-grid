@@ -1,6 +1,8 @@
 import type {
     AgColumn,
     AgProvidedColumnGroup,
+    ColDef,
+    ColGroupDef,
     ColumnEventType,
     ColumnMenuItemsSource,
     DefaultColumnMenuItem,
@@ -16,6 +18,7 @@ import { PIVOT_TOKEN, SCROLL_INTO_VIEW_TOKEN, VALUE_TOKEN, columnMenuTokenLabel 
 import type { MenuItemMapper } from '../menu/menuItemMapper';
 import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from '../menu/menuSeparators';
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
+import { getGridColumnGroup, getToolPanelGroupName } from '../sideBar/common/toolPanelColDefService';
 import { MenuList } from '../widgets/menuList';
 import { isDeferredMode, refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
@@ -67,7 +70,7 @@ export class ToolPanelContextMenu extends Component {
         if (column.isColumn) {
             displayName = colNames.getDisplayNameForColumn(column, 'columnToolPanel');
         } else {
-            displayName = colNames.getDisplayNameForProvidedColumnGroup(null, column, 'columnToolPanel');
+            displayName = getToolPanelGroupName(this.beans, column, 'columnToolPanel');
         }
         this.displayName = displayName;
 
@@ -75,10 +78,13 @@ export class ToolPanelContextMenu extends Component {
 
         let col: AgColumn | null = null;
         let columnGroup: AgProvidedColumnGroup | null = null;
+        let colOrGroupDef: ColDef | ColGroupDef | null;
         if (isProvidedColumnGroup(column)) {
-            columnGroup = column;
+            columnGroup = getGridColumnGroup(this.beans, column);
+            colOrGroupDef = column.getColGroupDef();
         } else {
             col = column;
+            colOrGroupDef = column.colDef;
         }
 
         // Under functionsReadOnly the state-changing defaults are dropped, but non-mutating items (scroll
@@ -95,7 +101,7 @@ export class ToolPanelContextMenu extends Component {
             defaultItems = this.getDefaultTokens();
         }
 
-        const resolvedItems = _resolveColumnMenuItems(gos, col, columnGroup, source, defaultItems);
+        const resolvedItems = _resolveColumnMenuItems(gos, col, columnGroup, source, defaultItems, colOrGroupDef);
         const menuItemsMapped = this.mapMenuItems(resolvedItems, col);
 
         if (this.allowEditHeaderName) {
@@ -109,7 +115,6 @@ export class ToolPanelContextMenu extends Component {
         // a per-column/group `columnMenuItems` is explicitly configured (including an empty array, which
         // deliberately shows nothing). A grid-level `getColumnMenuItems` that resolves to nothing for this
         // column does not suppress it, matching how the grid only blocks the browser menu when it has items.
-        const colOrGroupDef = col?.colDef ?? columnGroup?.getColGroupDef();
         const handled = menuItemsMapped.length > 0 || colOrGroupDef?.columnMenuItems != null;
         if (handled) {
             const mouseEventOrTouch = this.mouseEventOrTouch;
