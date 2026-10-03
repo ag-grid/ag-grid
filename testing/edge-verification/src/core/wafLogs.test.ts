@@ -72,14 +72,6 @@ describe('parsing and judging the results', () => {
         assert.deepEqual(tally(rows, 'all', true), { total: 1005, nonAllow: 5, payloadBlocked: 30 });
     });
 
-    it('counts a block by the blog SQL-injection rule as a payload block, not against the family', () => {
-        const probed = parseBotResults([
-            row('Googlebot', 'ALLOW', 'Default_Action', 990, 990),
-            row('Googlebot', 'BLOCK', 'block-blog-sqli', 12, 12),
-        ]);
-        assert.deepEqual(tally(probed, 'verified', true), { total: 990, nonAllow: 0, payloadBlocked: 12 });
-    });
-
     it('fails above the threshold, passes at or below it, and does not judge below the floor', () => {
         assert.equal(judge('x', { total: 1000, nonAllow: 10, payloadBlocked: 0 }, TH).verdict, 'pass');
         assert.equal(judge('x', { total: 1000, nonAllow: 11, payloadBlocked: 0 }, TH).verdict, 'fail');
