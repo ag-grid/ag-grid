@@ -6,7 +6,10 @@ import type {
     ColDef,
     ColGroupDef,
     ColumnToolPanelAction,
+    ColumnToolPanelButtonDef,
     ColumnToolPanelState,
+    CustomFilterButton,
+    FilterButton,
     IColumnToolPanel,
     IToolPanelColumnCompParams,
     IToolPanelComp,
@@ -24,7 +27,7 @@ import type { PivotModePanel } from './pivotModePanel';
 import { isDeferredMode } from './toolPanelDeferredUiUtils';
 
 export interface ToolPanelColumnCompParams<TData = any, TContext = any>
-    extends IToolPanelParams<TData, TContext, ColumnToolPanelState>, IToolPanelColumnCompParams {}
+    extends IToolPanelParams<TData, TContext, ColumnToolPanelState>, IToolPanelColumnCompParams<TData, TContext> {}
 
 /** Captures full grid state for no-op detection (includes width to distinguish from resize). */
 interface GridStateSnapshot {
@@ -185,7 +188,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.initialised = true;
     }
 
-    private initButtons(buttons: ColumnToolPanelAction[]): void {
+    private initButtons(buttons: NonNullable<ToolPanelColumnCompParams['buttons']>): void {
         const buttonComp = this.createBean(new FilterButtonComp({ className: 'ag-column-panel-buttons' }));
         this.buttonsComp = buttonComp;
         this.childDestroyFuncs.push(() => {
@@ -194,7 +197,16 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
         const translate = this.getLocaleTextFunc();
 
-        const buttonDefs = buttons.map((type) => ({ type, label: translate(...BUTTON_LOCALE[type]) }));
+        const createCustomButton = ({ label, action }: ColumnToolPanelButtonDef): CustomFilterButton => ({
+            label,
+            onClick: () => action(_addGridCommonParams(this.gos, {})),
+        });
+
+        const buttonDefs = buttons.map((button): FilterButton | CustomFilterButton =>
+            typeof button === 'object'
+                ? createCustomButton(button)
+                : { type: button, label: translate(...BUTTON_LOCALE[button]) }
+        );
         buttonComp.updateButtons(buttonDefs);
         buttonComp.updateValidity(false);
         buttonComp.addManagedListeners(buttonComp, {

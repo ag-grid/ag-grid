@@ -529,6 +529,8 @@ export type {
 export type {
     BaseToolPanelParams,
     ColumnToolPanelAction,
+    ColumnToolPanelButtonActionParams,
+    ColumnToolPanelButtonDef,
     IToolPanel,
     IToolPanelColumnCompParams,
     IToolPanelComp,
