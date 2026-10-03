@@ -5,6 +5,7 @@ import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
 import { SetFilter } from './setFilter';
 import { SetFilterHandler } from './setFilterHandler';
+import { SetFilterService } from './setFilterService';
 import { applyExcelModeOptions } from './setFilterUtils';
 import { SetFloatingFilterComp } from './setFloatingFilter';
 
@@ -14,6 +15,7 @@ import { SetFloatingFilterComp } from './setFloatingFilter';
 export const SetFilterModule: _ModuleWithoutApi = {
     moduleName: 'SetFilter',
     version: VERSION,
+    beans: [SetFilterService],
     userComponents: {
         agSetColumnFilter: {
             classImp: SetFilter,

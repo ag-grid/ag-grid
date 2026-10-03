@@ -8,6 +8,7 @@ export const DEFAULT_LOCALE_TEXT = {
     noMatches: 'No matches.',
     ariaSearchFilterValues: 'Search filter values',
     ariaFilterList: 'Filter List',
+    ariaNotInCurrentData: 'not in current data',
     filterSummaryListInactive: 'is (All)',
     filterSummaryListSeparator: ', ',
     filterSummaryListShort: (variableValues: string[]) => `is (${variableValues[0]})`,

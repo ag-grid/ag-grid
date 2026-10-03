@@ -12,8 +12,40 @@ import type {
 } from 'ag-grid-community';
 import { _isBlank } from 'ag-grid-community';
 
+import type { SetFilterModelTreeItem, SetFilterTreeListFormatter } from './iSetDisplayValueModel';
 import type { SetFilterLocaleTextKey } from './localeText';
 import { DEFAULT_LOCALE_TEXT } from './localeText';
+
+/** Whether every key under the item, its own and its descendants', is in `keys`. */
+export function areAllTreeKeysIn(item: SetFilterModelTreeItem, keys: ReadonlySet<string | null>): boolean {
+    const itemKeys = item.keys;
+    if (itemKeys) {
+        for (let i = 0, len = itemKeys.length; i < len; ++i) {
+            if (!keys.has(itemKeys[i])) {
+                return false;
+            }
+        }
+    }
+    const children = item.children;
+    if (children) {
+        for (const child of children.values()) {
+            if (!areAllTreeKeysIn(child, keys)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+/** A tree item's label; a key-only leaf is labelled by its key, having no value for the formatter to describe. */
+export function formatTreeKey(
+    item: SetFilterModelTreeItem,
+    treeListFormatter: SetFilterTreeListFormatter | undefined
+): string | null {
+    return treeListFormatter && !item.keyOnly
+        ? treeListFormatter(item.treeKey, item.depth, item.parentTreeKeys)
+        : item.treeKey;
+}
 
 /** What the Mini Filter searches when the column configures no `textFormatter`. */
 export const unformattedSetFilterText: TextFormatter = (value) => value ?? null;
@@ -114,25 +146,20 @@ export function applyExcelModeOptions<V>(params: ISetFilterParams<any, V>, beans
     }
 }
 
-export function createTreeDataOrGroupingComparator(): (
-    a: [string | null, string[] | null],
-    b: [string | null, string[] | null]
-) => number {
-    return ([_aKey, aValue]: [string | null, string[] | null], [_bKey, bValue]: [string | null, string[] | null]) => {
-        if (aValue == null) {
-            return bValue == null ? 0 : -1;
-        } else if (bValue == null) {
+export function treeDataOrGroupingComparator(aValue: string[] | null, bValue: string[] | null): number {
+    if (aValue == null) {
+        return bValue == null ? 0 : -1;
+    } else if (bValue == null) {
+        return 1;
+    }
+    for (let i = 0; i < aValue.length; i++) {
+        if (i >= bValue.length) {
             return 1;
         }
-        for (let i = 0; i < aValue.length; i++) {
-            if (i >= bValue.length) {
-                return 1;
-            }
-            const diff = _defaultComparator(aValue[i], bValue[i]);
-            if (diff !== 0) {
-                return diff;
-            }
+        const diff = _defaultComparator(aValue[i], bValue[i]);
+        if (diff !== 0) {
+            return diff;
         }
-        return 0;
-    };
+    }
+    return 0;
 }

@@ -11,6 +11,10 @@
     );
 }
 
+.ag-set-filter-item-missing {
+    color: var(--ag-subtle-text-color);
+}
+
 .ag-set-filter-item-checkbox {
     display: flex;
     width: 100%;

@@ -1,4 +1,6 @@
+import { waitFor } from '@testing-library/dom';
 import {
+    ALL_SEVERITIES,
     ColumnFilterHarness,
     FilterDom,
     GridRows,
@@ -14,6 +16,7 @@ import {
     ExternalFilterModule,
     NumberFilterModule,
     TextFilterModule,
+    enableDevValidations,
     setupAgTestIds,
 } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
@@ -341,6 +344,29 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
         `);
     });
 
+    test('doFilterAction resets only the columns it names, given as an array or a single id', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: threeFilterCols,
+            rowData: PEOPLE,
+            enableFilterHandlers: true,
+        });
+        await api.setFilterModel({
+            athlete: { filterType: 'text', type: 'contains', filter: 'a' },
+            age: { filterType: 'number', type: 'greaterThan', filter: 20 },
+            country: { filterType: 'set', values: ['United States'] },
+        });
+        await asyncSetTimeout(0);
+
+        api.doFilterAction({ colId: ['athlete', 'country'], action: 'reset' });
+        await asyncSetTimeout(0);
+
+        expect(api.getFilterModel()).toEqual({ age: { filterType: 'number', type: 'greaterThan', filter: 20 } });
+
+        api.doFilterAction({ colId: 'age', action: 'reset' });
+        await asyncSetTimeout(0);
+        expect(api.getFilterModel()).toEqual({});
+    });
+
     test('setColumnFilterModel / getColumnFilterModel drive one column and round-trip', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: threeFilterCols,
@@ -378,5 +404,29 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
             ├── LEAF id:5 athlete:"Ryan Lochte" age:27 country:"United States"
             └── LEAF id:6 athlete:"Ian Thorpe" age:17 country:"Australia"
         `);
+    });
+});
+
+describe('doFilterAction without the Set Filter module', () => {
+    const gridsManager = new TestGridsManager({ modules: [TextFilterModule, ClientSideRowModelModule] });
+
+    afterEach(() => {
+        gridsManager.reset();
+        vi.restoreAllMocks();
+        enableDevValidations({ throwOn: ALL_SEVERITIES });
+    });
+
+    test('clearing preserved Set Filter values reports the missing module', async () => {
+        // Deliberate: the missing SetFilterModule is what error #200 reports.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [200] });
+        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'athlete', filter: 'agTextColumnFilter' }],
+            rowData: PEOPLE,
+        });
+
+        errorSpy.mockClear();
+        api.doFilterAction({ action: 'clearPreservedValues' });
+        await waitFor(() => expect(errorSpy.mock.calls.flat().join(' ')).toContain('error #200'));
     });
 });

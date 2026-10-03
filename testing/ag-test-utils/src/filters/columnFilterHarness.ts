@@ -21,11 +21,17 @@ export class ColumnFilterHarness {
         public readonly gridDiv: HTMLElement
     ) {}
 
-    /** Clicks the header filter button for `colId` and returns a harness scoped to the popup. */
-    public static async open(api: GridApi, colId: string): Promise<ColumnFilterHarness> {
+    /** Clicks the header, or floating, filter button for `colId` and returns a harness scoped to the popup. */
+    public static async open(
+        api: GridApi,
+        colId: string,
+        from: 'header' | 'floatingFilter' = 'header'
+    ): Promise<ColumnFilterHarness> {
         const gridDiv = getGridElement(api)! as HTMLElement;
         await asyncSetTimeout(0);
-        const button = getByTestId(gridDiv, agTestIdFor.headerFilterButton(colId));
+        const testId =
+            from === 'header' ? agTestIdFor.headerFilterButton(colId) : agTestIdFor.floatingFilterButton(colId);
+        const button = getByTestId(gridDiv, testId);
         await firePointerLikeClick(button);
         await asyncSetTimeout(0);
         return new ColumnFilterHarness(api, colId, gridDiv);

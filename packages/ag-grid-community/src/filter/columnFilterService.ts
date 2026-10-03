@@ -246,7 +246,10 @@ export class ColumnFilterService
     public postConstruct(): void {
         this.addManagedEventListeners({
             gridColumnsChanged: this.onColumnsChanged.bind(this),
-            dataTypesInferred: this.processFilterModelUpdateQueue.bind(this),
+            dataTypesInferred: () => {
+                this.beans.setFilterSvc?.createPreservingFilters();
+                this.processFilterModelUpdateQueue();
+            },
         });
 
         this.addManagedPropertyListener('pivotMode', this.onPivotModeChanged.bind(this));
@@ -1188,22 +1191,17 @@ export class ColumnFilterService
 
     private onColumnsChanged(): void {
         const columns: AgColumn[] = [];
-        const { colModel, filterManager, groupFilter } = this.beans;
+        const disposals: AgPromise<boolean>[] = [];
+        const { filterManager, groupFilter } = this.beans;
 
         this.allColumnFilters.forEach((wrapper, colId) => {
-            let currentColumn: AgColumn | undefined;
-            if (wrapper.column.primary) {
-                currentColumn = colModel.getNonPivotColById(colId);
-            } else {
-                currentColumn = colModel.colsById[colId];
-            }
             // group columns can be recreated with the same colId
-            if (currentColumn && currentColumn === wrapper.column) {
+            if (this.isCurrentColumn(wrapper.column)) {
                 return;
             }
 
             columns.push(wrapper.column);
-            this.disposeFilterWrapper(wrapper, 'columnChanged');
+            disposals.push(this.disposeFilterWrapper(wrapper, 'columnChanged'));
             this.disposeColumnListener(colId);
         });
 
@@ -1214,6 +1212,26 @@ export class ColumnFilterService
             // we report 'api' as the source, so that the client can distinguish
             filterManager?.onFilterChanged({ columns, source: 'api' });
         }
+
+        const setFilterSvc = this.beans.setFilterSvc;
+        if (setFilterSvc) {
+            // After disposal, which frees the colId a recreated column shares.
+            AgPromise.all(disposals).then(() => {
+                if (this.isAlive()) {
+                    setFilterSvc.createPreservingFilters();
+                }
+            });
+        }
+    }
+
+    public hasFilter(column: AgColumn): boolean {
+        return this.allColumnFilters.has(column.getColId());
+    }
+
+    public isCurrentColumn(column: AgColumn): boolean {
+        const colModel = this.beans.colModel;
+        const colId = column.getColId();
+        return (column.primary ? colModel.getNonPivotColById(colId) : colModel.colsById[colId]) === column;
     }
 
     public isFilterAllowed(column: AgColumn): boolean {
@@ -1317,7 +1335,7 @@ export class ColumnFilterService
         }
     }
 
-    // destroys the filter, so it no longer takes part
+    // destroys the filter, so it no longer takes part; one preserving values is recreated empty, to keep seeing them
     public destroyFilter(column: AgColumn, source: 'api' | 'paramsUpdated' = 'api'): void {
         const colId = column.getColId();
         const filterWrapper = this.allColumnFilters.get(colId);
@@ -1328,12 +1346,16 @@ export class ColumnFilterService
 
         if (filterWrapper) {
             this.disposeFilterWrapper(filterWrapper, source).then((wasActive) => {
-                if (wasActive && this.isAlive()) {
+                if (!this.isAlive()) {
+                    return;
+                }
+                if (wasActive) {
                     this.beans.filterManager?.onFilterChanged({
                         columns: [column],
                         source: 'api',
                     });
                 }
+                this.beans.setFilterSvc?.createPreservingFilters(column);
             });
         }
     }

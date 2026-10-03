@@ -485,8 +485,13 @@ export interface ColumnFilterState {
 }
 
 export interface FilterActionParams {
-    /** Column ID to perform action on. If `undefined`, will run for all columns. */
-    colId?: string;
-    /** Action to perform */
-    action: FilterAction;
+    /** Column ID, or IDs, to perform the action on. If `undefined`, will run for all columns. */
+    colId?: string | string[];
+    /**
+     * Action to perform. `clearPreservedValues` discards the values the Set Filter's `preservePreviousValues` keeps,
+     * wherever the column keeps them, except those an applied Advanced Filter expression names, and reconciles the
+     * filter model with what remains. `clearUnselectedPreservedValues` discards only those neither in the applied
+     * filter model nor named by an applied Advanced Filter expression, and leaves the model as it is.
+     */
+    action: FilterAction | 'clearPreservedValues' | 'clearUnselectedPreservedValues';
 }
