@@ -7,6 +7,8 @@ import type { Framework } from '@ag-grid-types';
 import { getDocsPages } from '@components/docs/utils/pageData';
 import { SideNavigation } from '@components/pages-navigation/components/SideNavigation';
 import { getPageDescription } from '@ag-website-shared/utils/getPageDescription';
+import TechnicalReviewCredit from '@components/technical-review-credit/TechnicalReviewCredit.astro';
+import { buildTechnicalReviewStructuredData } from '@utils/technicalReviewers';
 import { DOCS_TAB_ITEM_ID_PREFIX, MIGRATION_DOCUMENTATION_NAV_DATA } from '@ag-website-shared/constants';
 import { getHeadings } from '@utils/markdoc/getHeadings';
 import { isApiMenuPath } from '@utils/apiMenuPath';
@@ -17,7 +19,7 @@ import styles from '@ag-website-shared/components/page-styles/docs.module.scss';
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import { agLibraryVersion, DISABLE_MARKDOWN_DOCS } from '@constants';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
-import { buildDocsPageStructuredData } from '@utils/docsStructuredData';
+import { buildDocsPageStructuredData, getDocsPageUrl } from '@utils/docsStructuredData';
 
 export async function getStaticPaths() {
     const pages = await getCollection('docs');
@@ -28,7 +30,15 @@ const { page } = Astro.props;
 const currentFramework = Astro.params.framework as Framework;
 const pageName = Astro.params.pageName;
 const path = Astro.url.pathname;
-const { title, enterprise, hideSideMenu, hidePageMenu, headings: pageHeadings, migrationVersion } = page.data;
+const {
+    title,
+    enterprise,
+    hideSideMenu,
+    hidePageMenu,
+    headings: pageHeadings,
+    migrationVersion,
+    technicalReviewer,
+} = page.data;
 
 const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
 const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
@@ -50,15 +60,27 @@ const description = getPageDescription({
 });
 const descriptionWithSeoTagline = `${description ? `${description} ` : ''}${seoTagline}`;
 
-const pageStructuredData = buildDocsPageStructuredData({
-    canonicalUrlBase: metadata.canonicalUrlBase,
-    framework: currentFramework,
-    pageName,
-    title,
-    description: description || descriptionWithSeoTagline,
-    isEnterprise: enterprise,
-    frameworks: page.data.frameworks,
-});
+const pageStructuredData = [
+    ...buildDocsPageStructuredData({
+        canonicalUrlBase: metadata.canonicalUrlBase,
+        framework: currentFramework,
+        pageName,
+        title,
+        description: description || descriptionWithSeoTagline,
+        isEnterprise: enterprise,
+        frameworks: page.data.frameworks,
+    }),
+    ...(technicalReviewer
+        ? buildTechnicalReviewStructuredData({
+              pageUrl: getDocsPageUrl({
+                  canonicalUrlBase: metadata.canonicalUrlBase,
+                  framework: currentFramework,
+                  pageName,
+              }),
+              reviewer: technicalReviewer,
+          })
+        : []),
+];
 
 const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEntry<'docsNav'>;
 const { data: apiNavData } = (await getEntry('apiNav', 'nav')) as CollectionEntry<'apiNav'>;
@@ -132,6 +154,8 @@ const headings = await getHeadings({
                 version={version}
                 markdownHref={markdownUrl}
             />
+
+            {technicalReviewer && <TechnicalReviewCredit reviewer={technicalReviewer} />}
 
             {
                 /*

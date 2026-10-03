@@ -25,6 +25,8 @@ import LogoMark from '@components/logo/LogoMark';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import { DEFAULT_FRAMEWORK, DISABLE_MARKDOWN_DOCS } from '@constants';
 import { buildFAQPage, buildSiteNavigationElement, siteRootUrl } from '@ag-website-shared/utils/structuredData';
+import TechnicalReviewCredit from '@components/technical-review-credit/TechnicalReviewCredit.astro';
+import { buildTechnicalReviewStructuredData } from '@utils/technicalReviewers';
 
 const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
 const { data: faqData } = (await getEntry('faqs', 'homepage')) as CollectionEntry<'faqs'>;
@@ -130,7 +132,11 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/index.m
     description={'AG Grid is a feature-rich Data Grid for all major JavaScript frameworks, offering filtering, grouping, pivoting, and more. Free and open-source. Upgrade to Enterprise for advanced features.'}
     showSearchBar={false}
     showDocsNav={false}
-    pageStructuredData={[siteNavigationStructuredData, faqStructuredData]}
+    pageStructuredData={[
+        siteNavigationStructuredData,
+        faqStructuredData,
+        ...buildTechnicalReviewStructuredData({ pageUrl: siteRoot, reviewer: 'stephen' }),
+    ]}
     markdownUrl={markdownUrl}
 >
     <div class={styles.homepageHero}>
@@ -259,6 +265,8 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/index.m
     <LandingPageSection client:load {...sectionProps('faq-section')}>
         <LandingPageFAQ client:load FAQData={renderedFaqData} />
     </LandingPageSection>
+
+    <TechnicalReviewCredit reviewer="stephen" standalone />
 </Layout>
 
 <script>
