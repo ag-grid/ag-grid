@@ -36,6 +36,8 @@ export const PAYLOAD_RULES = new Set([
     'AWS-AWSManagedRulesKnownBadInputsRuleSet',
     'AWS-AWSManagedRulesAmazonIpReputationList',
     'block-credential-scanner-paths',
+    // add-blog-sqli-rule.sh, once switched to Block: an injection probe, whoever sends it.
+    'block-blog-sqli',
 ]);
 
 const VERIFIED_LABEL = 'bot-control:bot:verified';

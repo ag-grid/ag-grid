@@ -371,6 +371,16 @@ export function cfAclRulesWithAgentAllowlist(rateFirst: boolean, rules = cfAclRu
 }
 
 /**
+ * The ACL after add-blog-sqli-rule.sh: block-blog-sqli first, in Count or (after --mode block) in
+ * Block, every other rule one place down. Applied to `rules`, so it combines with the other scripts' fixtures.
+ */
+export function cfAclRulesWithBlogSqli(action: 'Count' | 'Block', rules = cfAclRules()): any[] {
+    const variants = cfDeclaredRules().get('block-blog-sqli')!.variants;
+    const rule = structuredClone(variants.find((v) => Object.keys(v.rule.Action)[0] === action)!.rule);
+    return [rule, ...rules].map((r, i) => ({ ...r, Priority: r.Priority === 10000000 ? r.Priority : i }));
+}
+
+/**
  * The ACL after tighten-p11-markdown-exemption.sh: p11's bare Accept exemption replaced, at the same
  * position, by AND(it, OR(the negotiable-path regexes)). Applied to `rules`, so it combines with
  * the other scripts' fixtures.

@@ -155,8 +155,26 @@ export function infraChecks(): CheckDef[] {
                     return fail('alarm not found');
                 }
                 const p = new Problems();
-                p.diff('alarm', projectAlarm(a), declaredAlarm(exp));
-                return p.outcome(`state ${a.StateValue}`);
+                const declared = declaredAlarm(exp);
+                // Silencing it changes nothing else: either state passes, the check below says which is live.
+                const silenced = exp.pendingActionsDisabled ? [{ ...declared, ActionsEnabled: false }] : [];
+                p.oneOf('alarm', projectAlarm(a), [declared, ...silenced]);
+                return p.outcome(`state ${a.StateValue}${a.ActionsEnabled ? '' : ', actions disabled'}`);
+            },
+        })),
+        ...ALARMS.filter((exp) => exp.pendingActionsDisabled).map((exp): CheckDef => ({
+            id: `infra.alarm.${exp.name}.actions-disabled`,
+            area: 'infra',
+            title: `Alarm ${exp.name} keeps evaluating but notifies nobody (actions disabled)`,
+            refs: ['waf-finding.md §14'],
+            pending: exp.pendingActionsDisabled,
+            async run({ aws }) {
+                const r = await aws.call('cloudwatch', 'describe-alarms', ['--alarm-names', exp.name], exp.region);
+                const a = r.MetricAlarms?.[0];
+                if (!a) {
+                    return fail('alarm not found');
+                }
+                return a.ActionsEnabled === false ? pass(`state ${a.StateValue}`) : fail('actions still enabled');
             },
         })),
         {

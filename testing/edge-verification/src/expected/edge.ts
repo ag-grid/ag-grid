@@ -316,6 +316,13 @@ export interface RuleExpectation extends Lifecycle {
      * sit between them, so two scripts that each insert straight after it pass in either order.
      */
     after?: string;
+    /** Pending rules: the rule this one precedes, for a rule inserted ahead of it. As `after`, mirrored. */
+    before?: string;
+    /**
+     * A later run of the rule's script that changes only its action. Either action passes; a check
+     * of its own reports which one is live.
+     */
+    pendingAction?: { action: WafAction; pending: string };
 }
 
 export interface IpSetExpectation {
@@ -370,6 +377,15 @@ export const CF_ACL = {
     },
     /** In priority order. The Shield group (priority 10000000) is checked separately. */
     rules: [
+        // Inserted first, ahead of the Allow rules, so no header secret or IP lets a probe past it.
+        {
+            name: 'block-blog-sqli',
+            action: 'Count',
+            metricName: 'blockBlogSqli',
+            before: 'allow-trusted-mcp-lambda',
+            pending: PENDING.blogSqliCount,
+            pendingAction: { action: 'Block', pending: PENDING.blogSqliBlock },
+        },
         { name: 'allow-trusted-mcp-lambda', action: 'Allow', metricName: 'allow-trusted-lambda' },
         { name: 'allow-trusted-ci-archive-tests', action: 'Allow', metricName: 'allow-trusted-lambda' },
         { name: 'allow-seo-bot', action: 'Allow', metricName: 'aud-bot-trusted' },
@@ -444,6 +460,22 @@ export const CF_ACL = {
         { prefix: '/rss/', transforms: ['LOWERCASE'] },
         { prefix: '/_astro/favicon-', transforms: ['LOWERCASE'] },
     ],
+
+    /**
+     * add-blog-sqli-rule.sh: SQL injection in the path, query string, user agent and body of
+     * requests to the Ghost blog, the body not on Ghost's authenticated admin API. The path is
+     * matched decoded and normalised, as Apache's ProxyPass /blog/ sees it; the values are decoded
+     * once, as Ghost reads them. A plain Block once switched: the agent 403 body does not fit.
+     */
+    blogSqli: {
+        prefix: '/blog/',
+        prefixTransforms: ['URL_DECODE', 'NORMALIZE_PATH'],
+        bodyExemptPrefix: '/blog/ghost/api/admin/',
+        userAgentHeader: 'user-agent',
+        transforms: ['URL_DECODE', 'HTML_ENTITY_DECODE'],
+        sensitivity: 'LOW',
+        bodyOversize: 'CONTINUE',
+    },
 
     /** Every managed group on the ACL, by rule name (live 2026-10-01). */
     managedGroups: {
@@ -807,6 +839,11 @@ export interface AlarmExpectation extends Lifecycle {
     topic: string;
     /** Whether the return to OK notifies the topic as well. */
     notifyOk: boolean;
+    /**
+     * A pending script disables the alarm's actions and changes nothing else. Enabled or disabled,
+     * the alarm passes; a check of its own reports which is live.
+     */
+    pendingActionsDisabled?: string;
 }
 
 /** Every alarm as describe-alarms returns it, live 2026-10-01 (descriptions and state aside). */
@@ -886,6 +923,8 @@ export const ALARMS: AlarmExpectation[] = [
         treatMissingData: 'notBreaching',
         topic: 'aws-global-sns-topic',
         notifyOk: false,
+        // Only scanners have tripped it; it stays as a graph, and waf-p11-captcha-solved alerts.
+        pendingActionsDisabled: PENDING.captchaServedSilenced,
     },
     {
         name: 'waf-p11-captcha-solved',

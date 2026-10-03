@@ -65,4 +65,9 @@ export const PENDING = {
     archiveCache: 'add-archive-cache-behaviors.sh',
     /** Opt-in, awaiting approval; independent of the other WAF scripts. */
     p11MarkdownScoped: 'tighten-p11-markdown-exemption.sh (p11 honours Accept: text/markdown only on negotiable paths)',
+    /** Independent of the other WAF scripts: Count for a week, then the same script with --mode block. */
+    blogSqliCount: 'add-blog-sqli-rule.sh (block-blog-sqli first in the ACL, Count)',
+    blogSqliBlock: 'add-blog-sqli-rule.sh --mode block (block-blog-sqli from Count to Block)',
+    captchaServedSilenced:
+        'change-captcha-alarm.sh (waf-p11-captcha-served keeps evaluating, actions disabled; waf-p11-captcha-solved alone notifies)',
 } as const;
