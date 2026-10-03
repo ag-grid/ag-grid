@@ -1,0 +1,41 @@
+{
+  "name": "ag-grid-edge-verification",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "testing/edge-verification/src",
+  "projectType": "application",
+  "targets": {
+    "test:edge-live": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "npx tsx src/main.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/src/**/*"],
+      "outputs": [],
+      "options": {
+        "command": "node --import tsx --test \"src/**/*.test.ts\"",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "build:types": {
+      "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/src/**/*", "{projectRoot}/tsconfig.json"],
+      "outputs": [],
+      "options": {
+        "command": "npx tsc -p tsconfig.json",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    }
+  },
+  "tags": ["test", "production-verification"]
+}

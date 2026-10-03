@@ -1,0 +1,465 @@
+import { promises as dns } from 'node:dns';
+
+import { metaContents } from '../core/html';
+import { type Http, type Response, header, headerAll, headerTokens } from '../core/http';
+import { type CheckDef, Problems, budgeted, fail, pass, skip } from '../core/types';
+import {
+    ARCHIVE_VALIDATOR_PROBE,
+    ARCHIVE_VALIDATOR_REQUESTS,
+    BLOG_HOST_REDIRECT,
+    BROWSER_CACHE_BLOG_CONTENT_URLS,
+    BROWSER_CACHE_CAP_SECONDS,
+    BROWSER_CACHE_HEURISTIC_URLS,
+    BROWSER_CACHE_PAGES,
+    BROWSER_CACHE_ROWS,
+    GZIP_REVALIDATION_PROBES,
+    HEADER_ROWS,
+    HEURISTICALLY_CACHEABLE,
+    type HeaderRow,
+    NOT_MODIFIED_CACHE_CONTROL,
+    NOT_MODIFIED_PROBE,
+    NO_X_FRAME_OPTIONS_URLS,
+    SECURITY_HEADERS,
+} from '../expected/headers';
+import { PENDING, finding } from '../expected/lifecycle';
+
+/**
+ * Why a response breaks the 7-day browser-cache cap (max-age or Expires; s-maxage exempt), or is
+ * left to a heuristic lifetime (a Last-Modified and neither header), or null.
+ */
+export function browserCacheProblem(res: Response): string | null {
+    const problems: string[] = [];
+    if (
+        HEURISTICALLY_CACHEABLE.has(res.status) &&
+        header(res, 'last-modified') !== undefined &&
+        !headerAll(res, 'cache-control').length &&
+        !headerAll(res, 'expires').length
+    ) {
+        problems.push('Last-Modified with no Cache-Control or Expires (heuristically cacheable)');
+    }
+    for (const value of headerAll(res, 'cache-control')) {
+        for (const [, seconds] of value.matchAll(/(?<![-\w])max-age\s*=\s*"?(\d+)/gi)) {
+            if (Number(seconds) > BROWSER_CACHE_CAP_SECONDS) {
+                problems.push(`max-age=${seconds}`);
+            }
+        }
+    }
+    for (const expires of headerAll(res, 'expires')) {
+        const until = Date.parse(expires);
+        const date = Date.parse(header(res, 'date') ?? '');
+        if (
+            !Number.isNaN(until) &&
+            (until - (Number.isNaN(date) ? Date.now() : date)) / 1000 > BROWSER_CACHE_CAP_SECONDS
+        ) {
+            problems.push(`Expires ${expires} is over 7 days after Date`);
+        }
+    }
+    return problems.length ? problems.join(', ') : null;
+}
+
+const firstMatch = (html: string, pattern: RegExp): string | undefined => pattern.exec(html)?.[0];
+
+/**
+ * HEADs each URL (no redirect followed, so a 301 is judged itself) and holds it to the cap, and,
+ * where `expected` names one, to its exact Cache-Control. Each URL must also answer with the status
+ * of the class it samples (`statuses`, default 200): a WAF 403, a 503 or a missing page carries
+ * different headers, so passing it would claim a class that was never reached.
+ */
+async function checkBrowserCache(
+    http: Http,
+    p: Problems,
+    urls: Set<string>,
+    expected: Record<string, string> = {},
+    statuses: Record<string, number> = {}
+) {
+    for (const url of urls) {
+        const res = await http.head(url);
+        const status = statuses[url] ?? 200;
+        if (res.status !== status) {
+            p.add(`${url}: expected ${status}, got ${res.status}, so its class was not reached`);
+            continue;
+        }
+        const problem = browserCacheProblem(res);
+        p.check(!problem, `${url} (${res.status}): ${problem}`);
+        if (expected[url] !== undefined) {
+            p.eq(`${url} Cache-Control`, headerAll(res, 'cache-control'), [expected[url]]);
+        }
+    }
+    return p.outcome(`${urls.size} responses, every class within 7 days`);
+}
+
+export function expectHeader(p: Problems, res: Response, name: string, exp: string | RegExp | null): void {
+    const values = headerAll(res, name);
+    if (exp === null) {
+        p.check(values.length === 0, `${name} should be absent, got ${JSON.stringify(values)}`);
+    } else if (typeof exp === 'string') {
+        p.check(values.length === 1, `${name}: expected exactly one, got ${values.length}`);
+        if (values.length) {
+            p.eq(name, values[0], exp);
+        }
+    } else {
+        const joined = values.join(', ');
+        p.check(exp.test(joined), `${name} ${JSON.stringify(joined)} does not match ${exp}`);
+    }
+}
+
+export function expectSecurityHeaders(p: Problems, res: Response): void {
+    for (const [name, exp] of Object.entries(SECURITY_HEADERS)) {
+        const values = headerAll(res, name);
+        p.check(values.length === 1, `${name}: expected exactly one copy, got ${values.length}`);
+        if (values.length === 1) {
+            if (typeof exp === 'string') {
+                p.eq(name, values[0], exp);
+            } else {
+                p.check(exp.test(values[0]), `${name} does not match ${exp}`);
+            }
+        }
+    }
+}
+
+export function isNoindexed(res: Response): boolean {
+    if (headerAll(res, 'x-robots-tag').some((v) => /noindex/i.test(v))) {
+        return true;
+    }
+    return metaContents(res.body, 'robots').some((v) => /noindex/i.test(v));
+}
+
+function headerCheck(row: HeaderRow): CheckDef {
+    return {
+        id: `headers.${row.id}`,
+        area: 'headers',
+        title: row.title,
+        refs: row.refs,
+        pending: row.pending,
+        knownIssue: row.knownIssue,
+        fixedBy: row.fixedBy,
+        async run({ http }) {
+            const res = await http.request({
+                method: row.method ?? 'GET',
+                url: row.url,
+                headers: row.accept ? { accept: row.accept } : undefined,
+            });
+            const p = new Problems();
+            if (row.status !== undefined) {
+                p.eq('status', res.status, row.status);
+            }
+            for (const [name, exp] of Object.entries(row.expect ?? {})) {
+                expectHeader(p, res, name, exp);
+            }
+            if (row.security) {
+                expectSecurityHeaders(p, res);
+            }
+            for (const token of row.varyIncludes ?? []) {
+                const vary = headerTokens(res, 'vary');
+                p.check(vary.includes(token), `Vary ${JSON.stringify(vary)} lacks ${token}`);
+            }
+            if (row.noindex) {
+                p.check(isNoindexed(res), 'not noindexed (no X-Robots-Tag or meta robots noindex)');
+            }
+            return p.outcome(`${res.status} ${row.url}`);
+        },
+    };
+}
+
+const GZIP = { 'accept-encoding': 'gzip' };
+
+/** Fresh misses for `url` carry one ETag and one Last-Modified: both hosts agree (a mismatch fails). */
+function validatorsAgree(id: string, url: string, lifecycle: { pending?: string; knownIssue?: string }): CheckDef {
+    return {
+        id,
+        area: 'headers',
+        title: `Both origin hosts send the same ETag and Last-Modified for ${new URL(url).pathname}`,
+        refs: [finding(19)],
+        ...lifecycle,
+        async run({ http }) {
+            const responses = [];
+            for (let i = 0; i < ARCHIVE_VALIDATOR_REQUESTS; i++) {
+                responses.push(await http.request({ method: 'HEAD', url, fresh: true }));
+            }
+            // A CloudFront hit replays one host's copy, so only misses say what each host serves.
+            const fromOrigin = responses.filter((r) => /^Miss from cloudfront$/i.test(header(r, 'x-cache') ?? ''));
+            if (fromOrigin.length < 2) {
+                return skip(`${fromOrigin.length} of ${responses.length} responses reached the origin`);
+            }
+            const etags = new Set(fromOrigin.map((r) => header(r, 'etag')));
+            const dates = new Set(fromOrigin.map((r) => header(r, 'last-modified')));
+            const p = new Problems();
+            // Agreement only means something between successful responses that carry both:
+            // identical missing validators, or matching error pages, must not pass.
+            const failed = fromOrigin.filter((r) => r.status !== 200);
+            p.check(!failed.length, `origin responses not 200: ${failed.map((r) => r.status).join(', ')}`);
+            for (const name of ['etag', 'last-modified']) {
+                const missing = fromOrigin.filter((r) => !header(r, name)).length;
+                p.check(
+                    !missing,
+                    `${name === 'etag' ? 'ETag' : 'Last-Modified'} missing on ${missing} of ${fromOrigin.length} origin responses`
+                );
+            }
+            p.check(etags.size === 1, `ETags differ: ${[...etags].join(' vs ')}`);
+            p.check(dates.size === 1, `Last-Modified differs: ${[...dates].join(' vs ')}`);
+            if (p.count) {
+                return p.outcome();
+            }
+            // Nothing in a response says which ALB target sent it, so agreement may be one host
+            // answering every time: only a disagreement proves anything about both.
+            return skip(
+                `inconclusive: ${fromOrigin.length} origin responses agree (ETag ${[...etags][0]}), but nothing shows they came from both hosts`
+            );
+        },
+    };
+}
+
+export function headerChecks(): CheckDef[] {
+    return [
+        {
+            id: 'headers.browser-cache-cap',
+            area: 'headers',
+            title: 'No response class is cached by a browser for more than 7 days (max-age, Expires; s-maxage exempt)',
+            refs: ['SE-189'],
+            run: budgeted(async ({ http }, p) => {
+                const statuses: Record<string, number> = {};
+                const urls = new Set<string>([
+                    ...BROWSER_CACHE_ROWS.map((id) => {
+                        const row = HEADER_ROWS.find((r) => r.id === id);
+                        if (!row) {
+                            throw new Error(`headers.browser-cache-cap: no header row ${id}`);
+                        }
+                        statuses[row.url] = row.status ?? 200;
+                        return row.url;
+                    }),
+                    ...BROWSER_CACHE_PAGES.html,
+                ]);
+                // Hashed assets, a blog post and the blog's theme assets are found on the pages.
+                for (const page of BROWSER_CACHE_PAGES.astro) {
+                    const asset = firstMatch(
+                        (await http.get(page)).body,
+                        /(?:\/[\w.-]+)*\/_astro\/[\w.-]+\.(?:js|css)/
+                    );
+                    p.check(!!asset, `no /_astro/ asset referenced from ${page}`);
+                    if (asset) {
+                        urls.add(new URL(asset, page).href);
+                    }
+                }
+                const blog = (await http.get(BROWSER_CACHE_PAGES.blog)).body;
+                urls.add(BROWSER_CACHE_PAGES.blog);
+                for (const [what, pattern] of [
+                    [
+                        'blog post',
+                        /https:\/\/www\.ag-grid\.com\/blog\/(?!tag\/|author\/|page\/|rss\/|assets\/|public\/|content\/)[\w-]+\/(?=")/,
+                    ],
+                    ['blog theme script', /\/blog\/assets\/built\/[\w.-]+\.js/],
+                    ['blog public stylesheet', /\/blog\/public\/[\w.-]+\.css/],
+                ] as const) {
+                    const found = firstMatch(blog, pattern);
+                    p.check(!!found, `no ${what} referenced from ${BROWSER_CACHE_PAGES.blog}`);
+                    if (found) {
+                        urls.add(new URL(found, BROWSER_CACHE_PAGES.blog).href);
+                    }
+                }
+                return checkBrowserCache(http, p, urls, {}, statuses);
+            }),
+        },
+        {
+            id: 'headers.browser-cache-cap.heuristic',
+            area: 'headers',
+            title: 'Sitemaps, llms.txt and /.well-known/ files get a day; markdown, feeds and example code revalidate',
+            refs: ['SE-189'],
+            pending: PENDING.gridDefaultCache,
+            run: budgeted(({ http }, p) =>
+                checkBrowserCache(
+                    http,
+                    p,
+                    new Set(Object.keys(BROWSER_CACHE_HEURISTIC_URLS)),
+                    BROWSER_CACHE_HEURISTIC_URLS
+                )
+            ),
+        },
+        {
+            id: 'headers.browser-cache-cap.blog-content',
+            area: 'headers',
+            title: "Ghost's uploads under /blog/content/ and its own 301s are cached for at most 7 days",
+            refs: ['SE-189'],
+            pending: PENDING.blogVhostCap,
+            run: budgeted(({ http }, p) =>
+                checkBrowserCache(
+                    http,
+                    p,
+                    new Set(Object.keys(BROWSER_CACHE_BLOG_CONTENT_URLS)),
+                    {},
+                    BROWSER_CACHE_BLOG_CONTENT_URLS
+                )
+            ),
+        },
+        {
+            id: 'headers.html.no-x-frame-options',
+            area: 'headers',
+            title: 'No X-Frame-Options on pages (the CSP frame-ancestors governs embedding)',
+            refs: ['SE-38'],
+            run: budgeted(async ({ http }, p) => {
+                for (const url of NO_X_FRAME_OPTIONS_URLS) {
+                    const res = await http.head(url);
+                    p.eq(`${url} status`, res.status, 200);
+                    const values = headerAll(res, 'x-frame-options');
+                    p.check(!values.length, `${url} sends X-Frame-Options ${JSON.stringify(values)}`);
+                }
+                return p.outcome(`${NO_X_FRAME_OPTIONS_URLS.length} pages`);
+            }),
+        },
+        {
+            id: 'headers.redirect.blog-host-301',
+            area: 'headers',
+            title: 'The blog.ag-grid.com 301 carries HSTS, Referrer-Policy, Permissions-Policy and one CSP',
+            refs: ['SE-93'],
+            async run({ http }) {
+                const res = await http.head(BLOG_HOST_REDIRECT.url);
+                const p = new Problems();
+                p.eq('status', res.status, 301);
+                p.eq('Location', header(res, 'location'), BLOG_HOST_REDIRECT.location);
+                expectSecurityHeaders(p, res);
+                return p.outcome();
+            },
+        },
+        ...HEADER_ROWS.map(headerCheck),
+        ...GZIP_REVALIDATION_PROBES.map(
+            (probe): CheckDef => ({
+                id: `headers.revalidate-gzip.${probe.id}`,
+                area: 'headers',
+                title: `A gzip ${probe.id} page revalidated with its -gzip ETag (If-None-Match) is a 304`,
+                refs: [finding(19)],
+                pending: probe.pending,
+                async run({ http }) {
+                    const full = await http.request({ url: probe.url, headers: GZIP, fresh: true });
+                    const etag = header(full, 'etag');
+                    const encoding = header(full, 'content-encoding');
+                    if (full.status !== 200 || !etag || encoding !== 'gzip') {
+                        return fail(
+                            `${full.status}, Content-Encoding ${encoding}, ETag ${etag}: nothing to revalidate`
+                        );
+                    }
+                    const res = await http.request({
+                        url: probe.url,
+                        headers: { ...GZIP, 'if-none-match': etag },
+                        fresh: true,
+                    });
+                    const p = new Problems();
+                    p.eq(`status for If-None-Match ${etag}`, res.status, 304);
+                    return p.outcome(`If-None-Match ${etag}: ${res.status}`);
+                },
+            })
+        ),
+        validatorsAgree('headers.archive-validators-agree', ARCHIVE_VALIDATOR_PROBE, {
+            pending: PENDING.archiveMtimes,
+        }),
+        {
+            id: 'headers.internal-host.prompts-docs-nxdomain',
+            area: 'headers',
+            title: 'prompts.docs.ag-grid.com no longer resolves (orphaned CNAME removed)',
+            refs: ['SE-187'],
+            async run() {
+                try {
+                    const r = await dns.resolve('prompts.docs.ag-grid.com');
+                    return fail(`resolves to ${r.join(', ')}`);
+                } catch (e: any) {
+                    return e.code === 'ENOTFOUND' || e.code === 'ENODATA' ? pass(e.code) : fail(`DNS error ${e.code}`);
+                }
+            },
+        },
+        {
+            id: 'headers.asset.hashed',
+            area: 'headers',
+            title: 'Content-hashed /_astro/ assets: public, max-age=604800, s-maxage=31536000, no Link',
+            refs: ['SE-189'],
+            async run({ http }) {
+                const asset = /\/_astro\/[\w.-]+\.[A-Za-z0-9_-]{8}\.css/.exec(
+                    (await http.get('https://www.ag-grid.com/')).body
+                )?.[0];
+                if (!asset) {
+                    return fail('no hashed stylesheet referenced from the home page');
+                }
+                const res = await http.head(`https://www.ag-grid.com${asset}`);
+                const p = new Problems();
+                p.eq('status', res.status, 200);
+                expectHeader(p, res, 'cache-control', 'public, max-age=604800, s-maxage=31536000');
+                expectHeader(p, res, 'link', null);
+                return p.outcome(asset);
+            },
+        },
+        {
+            id: 'headers.asset.charts-astro-live',
+            area: 'headers',
+            title: 'Every /charts/_astro/ stylesheet the charts home references exists',
+            refs: ['SE-190'],
+            run: budgeted(async ({ http }, p) => {
+                const html = (await http.get('https://www.ag-grid.com/charts/')).body;
+                const assets = [...new Set([...html.matchAll(/\/charts\/_astro\/[\w.-]+\.css/g)].map((m) => m[0]))];
+                p.check(assets.length > 0, 'no stylesheets found');
+                for (const a of assets) {
+                    const res = await http.head(`https://www.ag-grid.com${a}`);
+                    p.check(res.status === 200, `${a}: ${res.status}`);
+                }
+                return p.outcome(`${assets.length} stylesheets`);
+            }),
+        },
+        {
+            id: 'headers.not-modified-keeps-cache',
+            area: 'headers',
+            title: 'A 304 on a released archive page keeps its long cache (redirect no-cache excludes 304)',
+            refs: [finding(4), finding(8)],
+            async run({ http }) {
+                const url = NOT_MODIFIED_PROBE;
+                const full = await http.get(url);
+                const etag = header(full, 'etag');
+                const lastModified = header(full, 'last-modified');
+                if (full.status !== 200 || (!etag && !lastModified)) {
+                    return fail(
+                        `${full.status}, no validator to revalidate with (ETag ${etag}, Last-Modified ${lastModified})`
+                    );
+                }
+                // Last-Modified first: Apache's mod_deflate suffixes the ETag of a compressed response
+                // (-gzip) and then does not match it, so If-None-Match can miss a 304 the date gets.
+                const conditional: Record<string, string> = lastModified
+                    ? { 'if-modified-since': lastModified }
+                    : { 'if-none-match': etag! };
+                const validator = Object.keys(conditional)[0];
+                const res = await http.request({ url, headers: conditional, fresh: true });
+                const stored = header(full, 'cache-control');
+                const revalidated = headerAll(res, 'cache-control');
+                const p = new Problems();
+                // A 304 can only keep the long cache the 200 had: without it there is nothing to keep.
+                expectHeader(p, full, 'cache-control', NOT_MODIFIED_CACHE_CONTROL);
+                p.eq(`status for ${validator}`, res.status, 304);
+                // Absent is fine: a cache keeps the stored Cache-Control when a 304 does not resend it.
+                p.check(
+                    revalidated.length === 0 || (revalidated.length === 1 && revalidated[0] === stored),
+                    `304 Cache-Control ${JSON.stringify(revalidated)} replaces the stored ${JSON.stringify(stored)}`
+                );
+                return p.outcome(
+                    `${validator}: 304 Cache-Control ${revalidated.length ? revalidated[0] : '(not resent)'}; 200 had ${stored}`
+                );
+            },
+        },
+        {
+            id: 'headers.csp.main-vs-blog',
+            area: 'headers',
+            title: 'Main-site CSP lists sha256 hashes; the /blog/ CSP is a different policy with none',
+            refs: ['SE-40', 'SE-93'],
+            async run({ http }) {
+                const main = headerAll(await http.get('https://www.ag-grid.com/'), 'content-security-policy');
+                const blog = headerAll(await http.get('https://www.ag-grid.com/blog/'), 'content-security-policy');
+                const p = new Problems();
+                p.check(main.length === 1 && /'sha256-/.test(main[0]), 'main CSP has no sha256 entries');
+                p.check(blog.length === 1 && !/'sha256-/.test(blog[0]), 'blog CSP is missing or lists sha256 entries');
+                p.check(main[0] !== blog[0], 'blog and main CSP are identical (path scoping broken)');
+                p.check(
+                    /frame-src[^;]*https:\/\/ag-grid\.com/.test(blog[0] ?? ''),
+                    'blog frame-src lacks https://ag-grid.com (apex embeds)'
+                );
+                p.check(
+                    /frame-src[^;]*https:\/\/\*\.ag-grid\.com/.test(blog[0] ?? ''),
+                    'blog frame-src lacks https://*.ag-grid.com'
+                );
+                return p.outcome();
+            },
+        },
+    ];
+}

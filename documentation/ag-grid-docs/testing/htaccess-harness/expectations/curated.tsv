@@ -1,11 +1,13 @@
-# host	path	expect_status	expect_location_substring
-# host: "www" (default) or "apex" (sends Host: ag-grid.com). For 410/200, location is empty.
-# Assertions are on the SINGLE response (status + Location) so we never follow a redirect to
-# production (CloudFront would 403). A single response whose Location is the final target proves
-# the redirect is a single hop.
+# Hand-curated rows per ticket. Format: see lib/rows.mjs (host, path, status, EXACT Location,
+# optional assertions). A first response whose Location is already the final target proves a
+# single hop; rows can also follow the chain locally with hops=/final=.
+# Every row here is unique coverage: raise this with each added row, lower it only with a reviewed deletion.
+# @min-rows 288
+# @category curated-tickets
 
 # --- SE-30 ---
 www	/introducing-the-ag-grid-model-context-protocol-mcp-server/	301	https://www.ag-grid.com/blog/introducing-the-ag-grid-model-context-protocol-mcp-server/
+www	/introducing-the-ag-grid-model-context-protocol-mcp-server	301	/introducing-the-ag-grid-model-context-protocol-mcp-server/	hops=2
 
 # --- SE-60 (grid; the /charts/* ones are asserted in the charts section) ---
 www	/javascript-data-grid/grouping-sticky-groups/	301	/javascript-data-grid/grouping-display-types/
@@ -33,40 +35,44 @@ www	/charts/vue/bullet-series/	301	https://www.ag-grid.com/charts/vue/linear-gau
 # --- SE-61 main (non-/charts) ---
 www	/javascript-grid-cell-style/	301	/javascript-data-grid/cell-styles/
 www	/forum/	301	/community/
+www	/forum	301	/forum/	hops=2	final=200
+www	/javascript-grid-virtual-paging/anything/	301	/javascript-data-grid/infinite-scrolling/	hops=1	final=200
 www	/community-forums/	301	/community/
 www	/forum/showthread.php	410
 www	/testimonials.php	410
 www	/start-trial.php	301	/license-pricing/
 www	/gallery/simple-area/	301	https://www.ag-grid.com/charts/gallery/simple-area/
-www	/options/series/area/	301	https://www.ag-grid.com/charts/options/
+# /options/<path> keeps its path below /charts/options/ (a real options reference page)
+www	/options/series/area/	301	https://www.ag-grid.com/charts/options/series/area/
 www	/angular/pie-series/	301	https://www.ag-grid.com/charts/angular/pie-series/
 www	/react/expressions/	301	https://www.ag-grid.com/charts/react/quick-start/
 www	/ecosystem/	301	/community/tools-extensions/
 
-# --- SE-61 / SE-60 charts (served by the charts subdir .htaccess) ---
-www	/charts/core/bar-series/	301	/charts/javascript/bar-series/
-www	/charts/side/axes-types/	301	/charts/javascript/axes-types/
+# --- SE-61 / SE-60 charts (served by the charts subdir .htaccess, absolute www targets) ---
+www	/charts/core/bar-series/	301	https://www.ag-grid.com/charts/javascript/bar-series/
+www	/charts/side/axes-types/	301	https://www.ag-grid.com/charts/javascript/axes-types/
 # Archive: versioned archive docs are live content (the blanket 410 was removed), so a versioned
 # path serves; only the bare archive index redirects, to /documentation-archive.
 www	/charts/archive/13.1.0/javascript/getting-started/	200
-www	/charts/archive/	301	/charts/documentation-archive/
-# /charts/privacy has no charts-scoped page and must be 410 Gone (NOT a 301 to the apex policy). It
-# is the ONE charts semantic redirect deliberately NOT mirrored into the grid docroot (see
-# htaccessRules.ts), so the charts subdir stays its sole authority: the slashed form hits mod_alias
-# directly for a single 410.
+www	/charts/archive/	301	https://www.ag-grid.com/charts/documentation-archive/
+# /charts/privacy has no charts-scoped page and must be 410 Gone (NOT a 301 to the apex policy),
+# in both slash forms: the charts subdir is its sole authority.
 www	/charts/privacy/	410
-www	/charts/react-charts/react/area-series/	301	/charts/react/area-series/
-www	/charts/javascript/toolbar/	301	/charts/javascript/financial-charts-toolbar/
+www	/charts/privacy	410
+www	/charts/react-charts/react/area-series/	301	https://www.ag-grid.com/charts/react/area-series/
+www	/charts/javascript/toolbar/	301	https://www.ag-grid.com/charts/javascript/financial-charts-toolbar/
 
-# --- SE-66 host scoping: the chain-shortening rewrites must NOT force other hosts to www. On the
-# legacy charts host the guard skips them, so these fall through to the generic same-host add-slash
-# (path unchanged) instead of jumping to the www target. If the guard regressed, row 1 would land on
-# /angular-data-grid/grid-api/ (single-hop) and row 2 on /charts/react/linear-gauge/ (mirror). ---
+# --- SE-66 host scoping: the grid root's chain-shortening rewrites must NOT force other hosts to
+# www. On the legacy charts host the guard skips them, so this falls through to the generic
+# same-host add-slash (path unchanged). If the guard regressed it would land on
+# /angular-data-grid/grid-api/. ---
 charts	/angular-grid-api	301	/angular-grid-api/
-charts	/charts/react/bullet-series	301	/charts/react/bullet-series/
+# Below /charts the charts .htaccess governs instead (it replaces the root's rewrite rules), and its
+# legacy-page redirects are not host-gated: every host lands on the final www page.
+charts	/charts/react/bullet-series	301	https://www.ag-grid.com/charts/react/linear-gauge/#bullet-series
 
 # --- Regression: pre-existing redirects must still work unchanged ---
-www	/javascript-grid/	301	/javascript-data-grid/
+www	/javascript-grid/	301	https://www.ag-grid.com/javascript-data-grid/getting-started/	hops=1
 www	/documentation/angular/grouping/	301	/angular-data-grid/grouping/
 www	/react-grid/rxjs/	301	https://www.ag-grid.com/react-data-grid/data-update/
 
@@ -103,6 +109,7 @@ apex	/angular-data-grid/	301	https://www.ag-grid.com/angular-data-grid/
 apex	/vue-data-grid/	301	https://www.ag-grid.com/vue-data-grid/
 www	/charts/react/bar-series/	200
 
+# @category curated-blog-host
 # ── SE-91/SE-86: blog.ag-grid.com -> www.ag-grid.com/blog/ ────────────────────────────
 # Every row asserts the SINGLE response, so a Location holding the FINAL target is proof
 # of a single hop. Ordering bugs in the rule block show up here as a Location pointing at
@@ -414,6 +421,7 @@ blog	/index.php/tag/react/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
 blog	/index.php/category/angular/	301	https://www.ag-grid.com/blog/tag/angular/
 blog	/index.php/author/maxkoretskyi/	301	https://www.ag-grid.com/blog/author/maxkoretskyi/
 
+# @category curated-tickets
 # --- SE-169: the static EULA files redirect to the /eula/ pages ---
 www	/eula/AG-Grid-Enterprise-License-Latest.html	301	/eula/commercial/
 www	/eula/AG-Grid-Community-License.html	301	/eula/community/
