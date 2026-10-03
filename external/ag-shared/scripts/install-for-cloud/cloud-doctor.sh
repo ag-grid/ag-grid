@@ -77,7 +77,7 @@ if [[ -d "$REPO_ROOT/node_modules" ]]; then
         # Passes the integrity check but has no patches and no built plugins: the
         # setup script had to skip postinstall to fit its 5 minute cap.
         bad "node_modules restored from an unscripted cache — patches and plugin builds still pending"
-    elif (cd "$REPO_ROOT" && yarn check --integrity &>/dev/null); then
+    elif (cd "$REPO_ROOT" && yarn install --immutable &>/dev/null); then
         ok "node_modules present and in sync with yarn.lock"
     else
         bad "node_modules present but stale — an install is pending"
