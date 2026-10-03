@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 
 import type { Outcome } from '../core/types';
 import { ALARMS, ALB, SHIELD } from '../expected/edge';
+import { PENDING } from '../expected/lifecycle';
 import { FakeAws, alarmFixture, offlineCtx } from '../testing/fakes';
 import { infraChecks } from './infra';
 
@@ -165,6 +166,46 @@ describe('infra.alarm: every field that decides what an alarm watches, when and 
             assert.match(outcome.detail ?? '', pattern);
         });
     }
+});
+
+describe('infra.alarm: waf-p11-captcha-served before and after change-captcha-alarm.sh', () => {
+    const served = ALARMS.find((a) => a.name === 'waf-p11-captcha-served')!;
+    const solved = ALARMS.find((a) => a.name === 'waf-p11-captcha-solved')!;
+    const runOn = (id: string, alarm: any): Promise<Outcome> =>
+        check(id).run(offlineCtx(new FakeAws({ 'cloudwatch describe-alarms': () => ({ MetricAlarms: [alarm] }) })));
+    const silenced = (exp = served): any => ({ ...alarmFixture(exp), ActionsEnabled: false });
+
+    it('the served alarm passes with its actions enabled or disabled', async () => {
+        for (const alarm of [alarmFixture(served), silenced()]) {
+            const outcome = await runOn('infra.alarm.waf-p11-captcha-served', alarm);
+            assert.equal(outcome.status, 'pass', outcome.detail);
+        }
+    });
+
+    it('the pending check fails while the served alarm still notifies, and passes once silenced', async () => {
+        const id = 'infra.alarm.waf-p11-captcha-served.actions-disabled';
+        assert.equal(check(id).pending, PENDING.captchaServedSilenced);
+        const live = await runOn(id, alarmFixture(served));
+        assert.equal(live.status, 'fail');
+        assert.match(live.detail ?? '', /actions still enabled/);
+        assert.equal((await runOn(id, silenced())).status, 'pass');
+    });
+
+    it('silencing the served alarm does not excuse any other change to it', async () => {
+        const outcome = await runOn('infra.alarm.waf-p11-captcha-served', { ...silenced(), Threshold: 1 });
+        assert.equal(outcome.status, 'fail');
+        assert.match(outcome.detail ?? '', /alarm Threshold: got 1, expected 15000/);
+    });
+
+    it('the solved alarm, which now alerts alone, fails if its actions are disabled', async () => {
+        const outcome = await runOn('infra.alarm.waf-p11-captcha-solved', silenced(solved));
+        assert.equal(outcome.status, 'fail');
+        assert.match(outcome.detail ?? '', /alarm ActionsEnabled: got false, expected true/);
+        assert.equal(
+            infraChecks().some((c) => c.id === 'infra.alarm.waf-p11-captcha-solved.actions-disabled'),
+            false
+        );
+    });
 });
 
 describe('infra: Shield, the load balancer and its attributes', () => {

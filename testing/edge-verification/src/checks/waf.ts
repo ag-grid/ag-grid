@@ -272,25 +272,55 @@ const isDeclaredScopedAccept = (x: { leaf: Leaf; anyOf: Leaf[] }): boolean =>
     isDeclaredAccept(x.leaf) && JSON.stringify(x.anyOf.map(leafKey)) === JSON.stringify(negotiablePathKeys());
 
 /**
- * Where a pending inserted rule must sit: after `exp.after`, with only other pending rules that
- * follow the same rule in between. Two scripts that each insert straight after p11 therefore pass
- * in either order. Returns the problem, if any.
+ * Where a pending inserted rule must sit: after `exp.after` (or before `exp.before`), with only
+ * other pending rules anchored the same way in between. Two scripts that each insert straight after
+ * p11 therefore pass in either order. Returns the problem, if any.
  */
 export function pendingSiblingOrder(sortedRules: any[], exp: RuleExpectation): string | undefined {
     const names = sortedRules.map((r: any) => r.Name as string);
     const i = names.indexOf(exp.name);
-    const a = names.indexOf(exp.after ?? '');
+    const ahead = exp.before !== undefined;
+    const anchor = (ahead ? exp.before : exp.after) ?? '';
+    const a = names.indexOf(anchor);
     if (a < 0) {
-        return `${exp.after} not found`;
+        return `${anchor} not found`;
     }
-    if (i < a) {
-        return `${exp.name} (priority ${sortedRules[i].Priority}) is before ${exp.after}`;
+    if (ahead ? i > a : i < a) {
+        return `${exp.name} (priority ${sortedRules[i].Priority}) is ${ahead ? 'after' : 'before'} ${anchor}`;
     }
     const siblings = new Set(
-        CF_ACL.rules.filter((r) => r.pending && r.after === exp.after && r.name !== exp.name).map((r) => r.name)
+        CF_ACL.rules
+            .filter((r) => r.pending && r.name !== exp.name && (ahead ? r.before === anchor : r.after === anchor))
+            .map((r) => r.name)
     );
-    const others = names.slice(a + 1, i).filter((n) => !siblings.has(n));
-    return others.length ? `between ${exp.after} and ${exp.name}: ${others.join(', ')}` : undefined;
+    const others = names.slice(Math.min(a, i) + 1, Math.max(a, i)).filter((n) => !siblings.has(n));
+    const span = ahead ? `${exp.name} and ${anchor}` : `${anchor} and ${exp.name}`;
+    return others.length ? `between ${span}: ${others.join(', ')}` : undefined;
+}
+
+/** The actions a rule may have: its declared one, and the one a later run of its script switches it to. */
+const actionsOf = (exp: RuleExpectation): string[] => [
+    exp.action,
+    ...(exp.pendingAction ? [exp.pendingAction.action] : []),
+];
+
+/** An SqliMatchStatement's field (as leaves name fields), transformations, sensitivity and body oversize handling. */
+function sqliOf(
+    stmt: any
+): { field: string; transforms: string[]; sensitivity: string; oversize?: string } | undefined {
+    const s = stmt?.SqliMatchStatement;
+    if (!s || Object.keys(stmt).length !== 1) {
+        return undefined;
+    }
+    const f = s.FieldToMatch ?? {};
+    return {
+        field: f.SingleHeader ? `header:${String(f.SingleHeader.Name).toLowerCase()}` : (Object.keys(f)[0] ?? ''),
+        transforms: [...(s.TextTransformations ?? [])]
+            .sort((a: any, b: any) => a.Priority - b.Priority)
+            .map((t: any) => t.Type),
+        sensitivity: s.SensitivityLevel ?? 'LOW',
+        oversize: f.Body?.OversizeHandling,
+    };
 }
 
 /** The rate rules' asset exemptions as the live ACL has them: UriPath, LOWERCASE, prefixes STARTS_WITH. */
@@ -386,6 +416,57 @@ function p11UaAllowlist(p11: any): Extract<Leaf, { kind: 'regex' }> | undefined 
  * the rule's pending marker is removed; the marker only decides whether a failure counts yet.
  */
 const RULE_SHAPES: Record<string, { refs: string[]; check: (rule: any, live: Live, p: Problems) => Promise<void> }> = {
+    'block-blog-sqli': {
+        refs: [finding(21)],
+        // AND(path under /blog/, OR(SQLi in the path, the query string, the user agent, AND(NOT the
+        // Ghost admin API, SQLi in the body))): the shape add-blog-sqli-rule.sh builds.
+        async check(rule, _live, p) {
+            const s = CF_ACL.blogSqli;
+            const under = (prefix: string): string =>
+                leafKey({
+                    kind: 'byte',
+                    field: 'UriPath',
+                    value: prefix,
+                    positional: 'STARTS_WITH',
+                    transforms: s.prefixTransforms,
+                });
+            const parts = andOf(rule.Statement);
+            const scope = parts?.length === 2 ? leafOf(parts[0]) : undefined;
+            const alternatives: any[] | undefined = parts?.length === 2 ? parts[1]?.OrStatement?.Statements : undefined;
+            if (!scope || !Array.isArray(alternatives)) {
+                p.add('statement is not AND(path prefix, OR(SQLi matches))');
+                return;
+            }
+            // Decoded and normalised, so /%62log/ and //blog/ (which Apache hands to Ghost) are inside it.
+            p.eq('scope-down', leafKey(scope), under(s.prefix));
+            const matches = alternatives.map((alt) => {
+                const body = andOf(alt);
+                const exempt = body?.length === 2 ? noneOfLeaves(body[0]) : undefined;
+                return { match: sqliOf(body?.length === 2 ? body[1] : alt), exempt };
+            });
+            if (matches.some((m) => !m.match)) {
+                p.add('an alternative is not an SQLi match (or AND(NOT path prefix, SQLi match))');
+                return;
+            }
+            p.eq(
+                'inspected fields',
+                sorted(matches.map((m) => m.match!.field)),
+                sorted(['Body', 'QueryString', 'UriPath', `header:${s.userAgentHeader}`])
+            );
+            for (const { match, exempt } of matches) {
+                p.eq(`${match!.field} transforms`, match!.transforms, s.transforms);
+                p.eq(`${match!.field} sensitivity`, match!.sensitivity, s.sensitivity);
+                // Only the body skips the Ghost admin API: its path, query string and user agent are still inspected.
+                p.eq(
+                    `${match!.field} exemption`,
+                    exempt?.map(leafKey),
+                    match!.field === 'Body' ? [under(s.bodyExemptPrefix)] : undefined
+                );
+            }
+            const body = matches.find((m) => m.match!.field === 'Body');
+            p.eq('body oversize handling', body?.match!.oversize, s.bodyOversize);
+        },
+    },
     'block-datacenter-except-agent-paths': {
         refs: [finding(5)],
         // AND(data-centre label, NOT(any verified bot, or Accept: text/markdown on a negotiable path),
@@ -578,8 +659,8 @@ export function wafChecks(): CheckDef[] {
                     id: `waf-config.cf.rule.${exp.name}`,
                     area: 'waf-config',
                     title: exp.pending
-                        ? `${exp.name} present after ${exp.after} (only other pending inserts between), ${exp.action}`
-                        : `${exp.name}: statement as declared, ${exp.action}`,
+                        ? `${exp.name} present ${exp.before ? `before ${exp.before}` : `after ${exp.after}`} (only other pending inserts between), ${actionsOf(exp).join(' or ')}`
+                        : `${exp.name}: statement as declared, ${actionsOf(exp).join(' or ')}`,
                     refs: RULE_SHAPES[exp.name]?.refs ?? [finding(5)],
                     pending: exp.pending,
                     async run({ live }) {
@@ -594,7 +675,10 @@ export function wafChecks(): CheckDef[] {
                         if (between) {
                             p.add(between);
                         }
-                        p.eq('action', ruleAction(rules[i]), exp.action);
+                        const actions = actionsOf(exp);
+                        if (!actions.includes(ruleAction(rules[i]))) {
+                            p.eq('action', ruleAction(rules[i]), actions.join(' or '));
+                        }
                         p.eq('metric', rules[i].VisibilityConfig?.MetricName, exp.metricName);
                         if (exp.pending) {
                             // Once deployed, waf-config.cf.rules compares every field.
@@ -610,6 +694,26 @@ export function wafChecks(): CheckDef[] {
                     },
                 })
             ),
+        // A later run of a rule's script that changes only its action (the rule's own check accepts both).
+        ...CF_ACL.rules
+            .filter((r) => r.pendingAction)
+            .map((exp): CheckDef => {
+                const later = exp.pendingAction!;
+                return {
+                    id: `waf-config.cf.rule.${exp.name}.${later.action.toLowerCase()}`,
+                    area: 'waf-config',
+                    title: `${exp.name} switched from ${exp.action} to ${later.action}`,
+                    refs: RULE_SHAPES[exp.name]?.refs ?? [finding(5)],
+                    pending: later.pending,
+                    async run({ live }) {
+                        const r = (await live.cfAcl()).Rules.find((x: any) => x.Name === exp.name);
+                        if (!r) {
+                            return fail('rule not present');
+                        }
+                        return ruleAction(r) === later.action ? pass() : fail(`still ${ruleAction(r)}`);
+                    },
+                };
+            }),
         {
             id: 'waf-config.cf.verify-header-rules',
             area: 'waf-config',
