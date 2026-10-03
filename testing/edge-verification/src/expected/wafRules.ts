@@ -39,14 +39,6 @@ export const regex = (field: string, value: string, transforms: string[]): any =
         TextTransformations: transformations(transforms),
     },
 });
-/** The blog rule's SQL-injection match on one field (add-blog-sqli-rule.sh decodes and scores every field alike). */
-const sqli = (fieldMatch: any): any => ({
-    SqliMatchStatement: {
-        FieldToMatch: fieldMatch,
-        TextTransformations: transformations(CF_ACL.blogSqli.transforms),
-        SensitivityLevel: CF_ACL.blogSqli.sensitivity,
-    },
-});
 export const label = (key: string): any => ({ LabelMatchStatement: { Scope: 'LABEL', Key: key } });
 export const or = (...statements: any[]): any => ({ OrStatement: { Statements: statements } });
 export const and = (...statements: any[]): any => ({ AndStatement: { Statements: statements } });
@@ -166,27 +158,6 @@ function cfStatements(): Record<string, (exp: RuleExpectation) => DeclaredRule['
             one(rule(exp, v.pathPrefix ? and(secret, byte('UriPath', 'STARTS_WITH', v.pathPrefix)) : secret));
     }
     Object.assign(out, {
-        // add-blog-sqli-rule.sh: in Count, then (--mode block) the same rule with a plain Block.
-        'block-blog-sqli': (exp: RuleExpectation) => {
-            const s = CF_ACL.blogSqli;
-            const under = (prefix: string): any => byte('UriPath', 'STARTS_WITH', prefix, s.prefixTransforms);
-            const statement = and(
-                under(s.prefix),
-                or(
-                    sqli({ UriPath: {} }),
-                    sqli({ QueryString: {} }),
-                    sqli(fieldToMatch(`header:${s.userAgentHeader}`)),
-                    and(not(under(s.bodyExemptPrefix)), sqli({ Body: { OversizeHandling: s.bodyOversize } }))
-                )
-            );
-            const later = exp.pendingAction;
-            return [
-                { rule: rule(exp, statement) },
-                ...(later
-                    ? [{ rule: rule(exp, statement, { Action: action(later.action) }), pending: later.pending }]
-                    : []),
-            ];
-        },
         'allow-internal-ec2': (exp: RuleExpectation) => one(rule(exp, ipset(CF_ACL.buildServerIpSet))),
         'allow-mta-sts-policy': (exp: RuleExpectation) =>
             one(

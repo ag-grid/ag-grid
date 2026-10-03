@@ -278,11 +278,6 @@ export function canonicalWaf(node: unknown): unknown {
     if (Array.isArray(out.Statements)) {
         out.Statements = byJson(out.Statements);
     }
-    // SensitivityLevel is optional and defaults to LOW: absent and LOW are the same match.
-    const sqli = out.SqliMatchStatement as Record<string, unknown> | undefined;
-    if (sqli && sqli.SensitivityLevel === undefined) {
-        out.SqliMatchStatement = sortKeys({ ...sqli, SensitivityLevel: 'LOW' });
-    }
     for (const list of ['RuleActionOverrides', 'ExcludedRules']) {
         const items = out[list];
         if (Array.isArray(items) && items.length) {
