@@ -40,9 +40,9 @@ export class FilterListener extends BeanStub implements NamedBean {
 
     private onFilterChanged(advancedFilterEnabledChanged?: boolean): void {
         const storeParams = this.serverSideRowModel.getParams();
-        if (!storeParams) {
+        if (!storeParams?.datasource) {
             return;
-        } // params is undefined if no datasource set
+        } // without a datasource there is nothing to reload rows from
 
         const oldModel = storeParams.filterModel;
         let newModel: FilterModel | AdvancedFilterModel | null;

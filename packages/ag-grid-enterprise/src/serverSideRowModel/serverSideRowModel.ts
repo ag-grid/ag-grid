@@ -110,7 +110,13 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     public start(): void {
         this.started = true;
-        this.updateDatasource();
+        const datasource = this.gos.get('serverSideDatasource');
+        if (datasource) {
+            this.setDatasource(datasource);
+            return;
+        }
+        // No datasource: create an empty, fully loaded root store so the grid can be populated by transactions.
+        this.resetRootStore();
     }
 
     private destroyDatasource(): void {
@@ -418,7 +424,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         this.rootNode.level = -1;
         this.beans.selectionSvc?.syncInRowNode(this.rootNode);
 
-        if (this.datasource) {
+        // a datasource can only be set once started, so this also covers the datasource case
+        if (this.started) {
             this.storeParams = this.createStoreParams();
             this.rootNode.childStore = this.createBean(this.storeFactory.createStore(this.storeParams, this.rootNode));
             this.updateRowIndexesAndBounds();
