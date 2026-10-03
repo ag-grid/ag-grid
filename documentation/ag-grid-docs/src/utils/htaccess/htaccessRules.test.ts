@@ -4,6 +4,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import type * as Constants from '../../constants';
+import { FRAMEWORKS } from '../../constants';
 import {
     BRANCH_BUILDS_PATH_CONDITION,
     CAMPAIGNS_PATH_CONDITION,
@@ -14,9 +16,19 @@ import {
     IN_FLIGHT_BEGIN,
     IN_FLIGHT_END,
     PRODUCTION_CSP_PHASE,
+    getBlogVhostHeaderFragment,
     getHtaccessContent,
     getInFlightArchiveRules,
 } from './htaccessRules';
+import type { CompiledHtaccess } from './htaccessSimulator';
+import {
+    compileHtaccess,
+    followRedirects,
+    requestHeaders,
+    responseHeaders,
+    route,
+    samplePath,
+} from './htaccessSimulator';
 import { SITE_301_REDIRECTS, SITE_SINGLE_HOP_REWRITES } from './redirects';
 
 describe('htaccessRules', () => {
@@ -38,67 +50,6 @@ describe('htaccessRules', () => {
 
         it('staging output is unchanged', () => {
             expect(stagingContent).toMatchSnapshot();
-        });
-    });
-
-    describe('AG-17159 / AG-17158: non-www to www redirect', () => {
-        it('should redirect ag-grid.com to www.ag-grid.com', () => {
-            expect(productionContent).toContain('RewriteCond %{HTTP_HOST} ^ag-grid\\.com$ [NC]');
-            expect(productionContent).toContain('RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]');
-        });
-
-        it('should preserve the full path in the redirect', () => {
-            const match = productionContent.match(
-                /RewriteCond %\{HTTP_HOST\} \^ag-grid\\\.com\$ \[NC\]\s*\n\s*RewriteRule \^\(\.\*\)\$ https:\/\/www\.ag-grid\.com\/\$1/
-            );
-            expect(match).not.toBeNull();
-        });
-
-        it('should not redirect www.ag-grid.com (only bare domain)', () => {
-            const nonWwwCond = productionContent.match(/RewriteCond %\{HTTP_HOST\} \^ag-grid\\\.com\$/);
-            expect(nonWwwCond).not.toBeNull();
-        });
-    });
-
-    describe('AG-17136 / SE-26: Phase 1 subdomain 301 redirects', () => {
-        const phase1Subdomains = [
-            'angulargrid.ag-grid.com',
-            'angular-grid.ag-grid.com',
-            'javascript-grid.ag-grid.com',
-            'react-grid.ag-grid.com',
-        ];
-
-        for (const subdomain of phase1Subdomains) {
-            it(`should redirect ${subdomain} to www.ag-grid.com`, () => {
-                const escapedInHtaccess = subdomain.replace(/\./g, '\\.');
-                expect(productionContent).toContain(escapedInHtaccess);
-                expect(productionContent).toContain('https://www.ag-grid.com/$1 [R=301,L]');
-            });
-
-            it(`should redirect all paths for ${subdomain} (not just root)`, () => {
-                const lines = productionContent.split('\n');
-                const escapedInHtaccess = subdomain.replace(/\./g, '\\.');
-                const condIndex = lines.findIndex((l) => l.includes(escapedInHtaccess));
-                expect(condIndex).toBeGreaterThan(-1);
-                const ruleLineIndex = condIndex + 1;
-                expect(lines[ruleLineIndex]).toContain('^(.*)$');
-            });
-        }
-    });
-
-    describe('AG-17133: Security headers', () => {
-        it('should include Referrer-Policy header', () => {
-            expect(productionContent).toContain('Referrer-Policy');
-            expect(productionContent).toContain('strict-origin-when-cross-origin');
-        });
-
-        it('should include Permissions-Policy header', () => {
-            expect(productionContent).toContain('Permissions-Policy');
-            expect(productionContent).toContain('geolocation=(), microphone=(), camera=()');
-        });
-
-        it('should NOT include X-Frame-Options header directive (replaced by CSP frame-ancestors)', () => {
-            expect(productionContent).not.toMatch(/Header\s+.*set\s+X-Frame-Options/);
         });
     });
 
@@ -237,7 +188,7 @@ describe('htaccessRules', () => {
         // ~10% of the document's age, growing without bound since the last deploy. That is the
         // stale-page-until-hard-refresh behaviour. no-cache removes it.
         const getNoCacheRule = (content: string) => {
-            const line = content.split('\n').find((l) => l.includes('"no-cache"'));
+            const line = content.split('\n').find((l) => l.includes('"no-cache"') && l.includes('CONTENT_TYPE'));
             expect(line).toBeDefined();
             return line!;
         };
@@ -248,14 +199,46 @@ describe('htaccessRules', () => {
             });
         });
 
-        it('should scope it to HTML documents, not assets', () => {
-            expect(getNoCacheRule(productionContent)).toContain('%{CONTENT_TYPE} =~ m#^text/html#');
+        it('should scope it to HTML documents and their markdown variants, not assets', () => {
+            [productionContent, stagingContent].forEach((content) => {
+                const [, source] = getNoCacheRule(content).match(/%\{CONTENT_TYPE\} =~ m#([^#]+)#/)!;
+                const contentType = new RegExp(source);
+                expect(contentType.test('text/html; charset=utf-8')).toBe(true);
+                // A live page's markdown variant changes with the page, so it must revalidate too -
+                // whether fetched as /<page>.md or negotiated at the page URL.
+                expect(contentType.test('text/markdown; charset=utf-8')).toBe(true);
+                expect(contentType.test('text/css')).toBe(false);
+                expect(contentType.test('application/javascript')).toBe(false);
+                expect(contentType.test('text/plain')).toBe(false);
+            });
         });
 
         it('should exclude archived versions, which are immutable', () => {
             const rule = getNoCacheRule(productionContent);
             expect(rule).toContain('!(');
             expect(rule).toContain('archive/[0-9]');
+        });
+
+        it('should leave archived markdown to the archive long cache', () => {
+            // The exclusion is on the path, so an archive's .md keeps archiveCacheRules' long cache.
+            const [, source] = getNoCacheRule(productionContent).match(/REQUEST_URI\} =~ m#([^#]+)#/)!;
+            expect(new RegExp(source).test('/archive/36.2.0/react-data-grid/getting-started.md')).toBe(true);
+            expect(new RegExp(source).test('/react-data-grid/getting-started.md')).toBe(false);
+        });
+
+        it('revalidates a live page and its markdown twin, whether fetched as .md or negotiated', () => {
+            for (const content of [productionContent, stagingContent]) {
+                const files = [compileHtaccess(content)];
+                for (const [uri, contentType] of [
+                    ['/react-data-grid/getting-started/index.html', 'text/html; charset=utf-8'],
+                    ['/react-data-grid/getting-started.md', 'text/markdown; charset=utf-8'],
+                    ['/index.md', 'text/markdown; charset=utf-8'],
+                ]) {
+                    const headers = responseHeaders(files, { uri, status: 200, contentType });
+                    expect(headers.get('cache-control'), uri).toEqual(['no-cache']);
+                    expect(headers.has('x-robots-tag'), uri).toBe(false);
+                }
+            }
         });
 
         it('should use no-cache rather than no-store, to keep back/forward navigation', () => {
@@ -373,6 +356,206 @@ describe('htaccessRules', () => {
         });
     });
 
+    describe('Redirects are never cached', () => {
+        // A shared cache keying a redirect on the path alone would replay the first visitor's query
+        // string (carried into Location) to everyone after, so every redirect must be no-cache.
+        const getRedirectRules = (content: string) =>
+            content.split('\n').filter((l) => l.startsWith('Header always set Cache-Control'));
+
+        // Evaluates the rule's REQUEST_STATUS comparisons the way ap_expr does.
+        const appliesToStatus = (rule: string, status: number) =>
+            [...rule.matchAll(/%\{REQUEST_STATUS\} -(ge|lt|ne) (\d+)/g)].every(([, op, value]) => {
+                const n = Number(value);
+                return op === 'ge' ? status >= n : op === 'lt' ? status < n : status !== n;
+            });
+
+        it('sets no-cache on every redirect status, in both envs', () => {
+            [productionContent, stagingContent].forEach((content) => {
+                const rules = getRedirectRules(content);
+                // The only 'always' Cache-Control rule, so nothing else can override it on a redirect.
+                expect(rules).toHaveLength(1);
+                expect(rules[0]).toContain('Cache-Control "no-cache"');
+                for (const status of [301, 302, 303, 307, 308]) {
+                    expect(appliesToStatus(rules[0], status)).toBe(true);
+                }
+            });
+        });
+
+        it('never touches a 200, an error, or a 304', () => {
+            // A 304 refreshes the headers of the copy a cache already holds, so no-cache there would
+            // wipe out the long cache of every revalidated asset and released archive page.
+            const [rule] = getRedirectRules(productionContent);
+            for (const status of [200, 204, 304, 404, 410, 500]) {
+                expect(appliesToStatus(rule, status)).toBe(false);
+            }
+        });
+
+        it("uses 'always', the only header table Apache sends on a redirect", () => {
+            // The ordinary (onsuccess) table is dropped on non-2xx responses, which is also why no
+            // later onsuccess Cache-Control rule - an archive's own included - can override this one.
+            expect(getRedirectRules(productionContent)[0]).toMatch(/^Header always set /);
+        });
+    });
+
+    describe('Compressed responses revalidate', () => {
+        // The ETag Apache computes for the file, and the one mod_deflate sends with the gzip body.
+        const ETAG = '"8aea4-65cb43860ca80"';
+        const GZIP_ETAG = '"8aea4-65cb43860ca80-gzip"';
+        const PAGE = '/react-data-grid/getting-started/index.html';
+
+        const ifNoneMatchSeen = (content: string, ifNoneMatch: string, uri = PAGE) =>
+            requestHeaders([compileHtaccess(content)], { uri, headers: { 'If-None-Match': ifNoneMatch } }).get(
+                'if-none-match'
+            );
+
+        it('hands the handler the unsuffixed ETag a compressed page was revalidated with, in both envs', () => {
+            for (const content of [productionContent, stagingContent]) {
+                expect(ifNoneMatchSeen(content, GZIP_ETAG)).toEqual([ETAG]);
+                expect(ifNoneMatchSeen(content, GZIP_ETAG, '/_astro/DocsExampleRunner.CiSTQ4_g.css')).toEqual([ETAG]);
+            }
+        });
+
+        it('is the only request-header rule, in both envs', () => {
+            for (const content of [productionContent, stagingContent]) {
+                expect(compileHtaccess(content).requestHeaders).toHaveLength(1);
+            }
+        });
+
+        it('strips every suffix in a list of ETags, weak ones included', () => {
+            expect(ifNoneMatchSeen(productionContent, `W/${GZIP_ETAG}`)).toEqual([`W/${ETAG}`]);
+            expect(ifNoneMatchSeen(productionContent, `"a-1-gzip", W/${GZIP_ETAG},"c-3"`)).toEqual([
+                `"a-1", W/${ETAG},"c-3"`,
+            ]);
+        });
+
+        it('leaves uncompressed, brotli and wildcard validators alone', () => {
+            for (const value of [ETAG, '"8aea4-65cb43860ca80-br"', '*']) {
+                expect(ifNoneMatchSeen(productionContent, value)).toEqual([value]);
+            }
+        });
+
+        it('is not guarded by <IfModule>, so it cannot silently stop applying', () => {
+            const lines = productionContent.split('\n');
+            const index = lines.findIndex((l) => l.startsWith('RequestHeader edit* If-None-Match '));
+            const opened = lines.slice(0, index).filter((l) => l.startsWith('<IfModule')).length;
+            const closed = lines.slice(0, index).filter((l) => l.startsWith('</IfModule>')).length;
+            expect(opened).toBe(closed);
+        });
+    });
+
+    describe('Redirects are never cached, end to end', () => {
+        const WWW = 'https://www.ag-grid.com';
+        // Every kind of redirect the root file issues: scheme upgrade, host swap, add-slash, a
+        // single-hop rewrite, a mod_alias redirect, the sitemap alias and the blog host move.
+        const REDIRECTS = [
+            'http://www.ag-grid.com/react-data-grid/getting-started/?x=1',
+            'https://ag-grid.com/react-data-grid/getting-started/',
+            'http://ag-grid.com/',
+            'https://angulargrid.com/license-pricing/',
+            `${WWW}/react-data-grid/getting-started?x=1`,
+            `${WWW}/react-data-grid/whats-new`,
+            `${WWW}/javascript-grid-virtual-paging/`,
+            `${WWW}/sitemap.xml`,
+            'https://blog.ag-grid.com/some-post/',
+        ];
+        const redirectHeaders = (content: string, url: string) => {
+            const files = [compileHtaccess(content)];
+            const outcome = route(files, { url });
+            expect(outcome.type, url).toBe('redirect');
+            const status = (outcome as { status: number }).status;
+            return responseHeaders(files, { uri: new URL(url).pathname, status, contentType: 'text/html' });
+        };
+
+        it.each(REDIRECTS)('%s is sent with Cache-Control: no-cache', (url) => {
+            expect(redirectHeaders(productionContent, url).get('cache-control')).toEqual(['no-cache']);
+        });
+
+        it('covers the redirects staging gets from Apache itself, such as the mod_dir add-slash', () => {
+            // Staging carries no redirect rules of its own, but the always-table rule still reaches
+            // any redirect Apache issues there.
+            const files = [compileHtaccess(stagingContent)];
+            for (const status of [301, 302, 307, 308]) {
+                const headers = responseHeaders(files, { uri: '/react-data-grid/getting-started', status });
+                expect(headers.get('cache-control'), String(status)).toEqual(['no-cache']);
+            }
+        });
+
+        it('leaves a 304 to the long cache of the copy it revalidates', () => {
+            // A 304 refreshes the stored headers, so a no-cache there would undo the long cache. Apache
+            // sends the normal header table with a static-file 304 (verified on 2.4.52), and the
+            // redirect rule adds nothing to it.
+            const files = [compileHtaccess(productionContent)];
+            const uri = '/_astro/DocsExampleRunner.CiSTQ4_g.css';
+            expect(responseHeaders(files, { uri, status: 304, contentType: 'text/css' }).get('cache-control')).toEqual(
+                responseHeaders(files, { uri, status: 200, contentType: 'text/css' }).get('cache-control')
+            );
+        });
+    });
+
+    describe('Archived markdown variants are noindexed', () => {
+        const getNoindexRules = (content: string) => content.split('\n').filter((l) => l.includes('X-Robots-Tag'));
+
+        it('sets X-Robots-Tag: noindex on archived markdown only', () => {
+            const rules = getNoindexRules(productionContent);
+            expect(rules).toHaveLength(1);
+            expect(rules[0]).toMatch(/^Header set X-Robots-Tag "noindex" /);
+            const [, contentType] = rules[0].match(/%\{CONTENT_TYPE\} =~ m#([^#]+)#/)!;
+            const [, path] = rules[0].match(/%\{REQUEST_URI\} =~ m#([^#]+)#/)!;
+            // Matched on content type, so the variant negotiated at the page's own URL is covered.
+            expect(new RegExp(contentType).test('text/markdown; charset=utf-8')).toBe(true);
+            // Archived HTML is already noindexed by its robots meta tag.
+            expect(new RegExp(contentType).test('text/html; charset=utf-8')).toBe(false);
+            for (const archived of [
+                '/archive/36.2.0/react-data-grid/getting-started.md',
+                '/archive/36.2.0/react-data-grid/getting-started/',
+                '/charts/archive/11.0.4/react/line-series.md',
+                '/studio/archive/1.0.0/index.md',
+            ]) {
+                expect(new RegExp(path).test(archived)).toBe(true);
+            }
+            for (const live of ['/react-data-grid/getting-started.md', '/documentation-archive.md', '/index.md']) {
+                expect(new RegExp(path).test(live)).toBe(false);
+            }
+        });
+    });
+
+    // Both are root-owned: an archive's own .htaccess is applied after the root's, so a copy there
+    // would only duplicate the root's rule (and must not carry anything that undoes it).
+    describe('archive builds leave the redirect no-cache and markdown noindex to the root', () => {
+        let archiveContent: string;
+
+        beforeAll(async () => {
+            vi.resetModules();
+            vi.doMock('../../constants', async (importActual) => {
+                const actual = await importActual<typeof Constants>();
+                return { ...actual, SITE_BASE_URL: '/archive/36.2.0/' };
+            });
+            const archiveRules = await import('./htaccessRules');
+            archiveContent = archiveRules.getHtaccessContent({ env: 'production' });
+        });
+
+        afterAll(() => {
+            vi.doUnmock('../../constants');
+            vi.resetModules();
+        });
+
+        it('emits neither rule, nor anything touching X-Robots-Tag or the always-sent Cache-Control', () => {
+            expect(archiveContent).not.toContain('X-Robots-Tag');
+            expect(archiveContent).not.toContain('Header always set Cache-Control');
+            expect(archiveContent).not.toContain('REQUEST_STATUS} -ge 300');
+        });
+
+        it('leaves the If-None-Match suffix strip to the root, which mod_headers merges into archives', () => {
+            const uri = '/archive/36.2.0/react-data-grid/getting-started/index.html';
+            const headers = { 'If-None-Match': '"8aea4-65cb43860ca80-gzip"' };
+            const archiveFile = compileHtaccess(archiveContent, '/archive/36.2.0/');
+            expect(archiveFile.requestHeaders).toEqual([]);
+            expect(
+                requestHeaders([compileHtaccess(productionContent), archiveFile], { uri, headers }).get('if-none-match')
+            ).toEqual(['"8aea4-65cb43860ca80"']);
+        });
+    });
+
     describe('Archived Studio versions are never cached', () => {
         it('does not apply to the live Studio site, which caches normally', () => {
             // The rule is anchored to /studio/archive/ - /studio/ itself must keep the normal
@@ -417,6 +600,49 @@ describe('htaccessRules', () => {
 
         it('is production-only, like every other asset-caching rule', () => {
             expect(stagingContent).not.toContain('archive/[0-9]#"');
+        });
+
+        // An archive's own .htaccess is applied after the root one, so if it carried this rule
+        // it would override the root's in-flight no-cache for a release candidate under test.
+        describe('is left out of archive builds, so the root in-flight no-cache still wins', () => {
+            let archiveContent: string;
+
+            beforeAll(async () => {
+                vi.resetModules();
+                vi.doMock('../../constants', async (importActual) => {
+                    const actual = await importActual<typeof Constants>();
+                    return { ...actual, SITE_BASE_URL: '/archive/36.3.0/' };
+                });
+                const archiveRules = await import('./htaccessRules');
+                archiveContent = archiveRules.getHtaccessContent({ env: 'production' });
+            });
+
+            afterAll(() => {
+                vi.doUnmock('../../constants');
+                vi.resetModules();
+            });
+
+            it('emits no archive cache rule', () => {
+                expect(archiveContent).not.toContain('^/(charts/)?archive/[0-9]#"');
+            });
+
+            it('emits none of the unhashed asset cache rules either', () => {
+                // Images, example-assets, theme icons, videos and /scripts/*.js are unhashed, so
+                // each of these would also override the root's in-flight no-cache.
+                expect(archiveContent).not.toContain('/(images|example-assets|example|theme-icons|videos)/');
+                expect(archiveContent).not.toContain('m#/scripts/[^/]+');
+            });
+
+            it('keeps only cache rules that cannot match an archived release candidate', () => {
+                const cachingLines = archiveContent
+                    .split('\n')
+                    .filter((l) => l.startsWith('Header set Cache-Control') && l.includes('public'));
+                // The content-hashed asset rule (a changed hash is a new URL, so it can never be
+                // stale) and the root-anchored robots.txt/favicon.ico rule (never under /archive/).
+                expect(cachingLines).toHaveLength(2);
+                expect(cachingLines.find((l) => l.includes('/_astro/'))).toBeDefined();
+                expect(cachingLines.find((l) => l.includes('m#^/(robots'))).toBeDefined();
+            });
         });
 
         it('matches a real released grid and charts archive page, any content type', () => {
@@ -641,80 +867,24 @@ describe('htaccessRules', () => {
         });
     });
 
-    describe('SE-81: agent-useful Link header', () => {
-        it('should include a Link header pointing at llms.txt, the sitemap index and the MCP server', () => {
-            expect(productionContent).toContain('Header set Link');
-            expect(productionContent).toContain('</llms.txt>; rel=describedby');
-            expect(productionContent).toContain('</sitemap-index.xml>; rel=sitemap');
-            expect(productionContent).toContain(
-                '<https://www.ag-grid.com/javascript-data-grid/mcp-server/>; rel=related'
-            );
-        });
+    // The old per-framework charts URLs moved to the charts site. mod_alias is first-match, so the
+    // /documentation/<framework>/charts* rules once sat behind the broad /documentation/<framework>/
+    // prefix and never ran; requesting the URLs, not finding the rules, is what proves they work.
+    describe('AG-17152: legacy charts overview URLs reach the charts quick start in one hop', () => {
+        const cases = FRAMEWORKS.flatMap((framework) => [
+            [`/${framework}-charts/`, framework],
+            [`/${framework}-charts/overview/`, framework],
+            [`/documentation/${framework}/charts/`, framework],
+            [`/documentation/${framework}/charts-overview/`, framework],
+        ]);
 
-        it('should scope the Link header to successful HTML documents (not assets, redirects or errors)', () => {
-            const linkLine = productionContent.split('\n').find((l) => l.includes('set Link'));
-            expect(linkLine).toBeDefined();
-            // Not `always` (so it is skipped on error responses), and guarded by an expr that
-            // requires both a 200 status and an HTML content-type. The status check is what
-            // keeps it off the custom text/html 404 page (whose content-type alone would match).
-            expect(linkLine).not.toContain('always set Link');
-            expect(linkLine).toContain('"expr=%{REQUEST_STATUS} == 200 && %{CONTENT_TYPE} =~ m#^text/html#"');
-        });
-
-        it('should include the Link header on staging too so it can be verified before production', () => {
-            expect(stagingContent).toContain('Header set Link');
-            expect(stagingContent).toContain('</llms.txt>; rel=describedby');
-            expect(stagingContent).toContain('"expr=%{REQUEST_STATUS} == 200 && %{CONTENT_TYPE} =~ m#^text/html#"');
-        });
-    });
-
-    describe('AG-17152: /charts/ framework overview redirects', () => {
-        const chartsFrameworkRedirects = [
-            { from: '^/javascript-charts', to: 'charts/javascript/quick-start/' },
-            { from: '^/angular-charts', to: 'charts/angular/quick-start/' },
-            { from: '^/react-charts', to: 'charts/react/quick-start/' },
-            { from: '^/vue-charts', to: 'charts/vue/quick-start/' },
-        ];
-
-        for (const { from, to } of chartsFrameworkRedirects) {
-            it(`should have a server-side 301 for ${from} -> ${to}`, () => {
-                const matchingRedirect = SITE_301_REDIRECTS.find(
-                    (r) => 'fromPattern' in r && (r as any).fromPattern.includes(from.replace('^', ''))
-                );
-                expect(matchingRedirect).toBeDefined();
-                expect((matchingRedirect as any).to).toContain(to);
+        it.each(cases)('%s', (path, framework) => {
+            const files = [compileHtaccess(productionContent)];
+            expect(route(files, { url: `https://www.ag-grid.com${path}` })).toMatchObject({
+                type: 'redirect',
+                status: 301,
+                location: `https://www.ag-grid.com/charts/${framework}/quick-start/`,
             });
-        }
-
-        const docChartsRedirects = [
-            { from: '^/documentation/javascript/charts', to: 'charts/javascript/quick-start/' },
-            { from: '^/documentation/angular/charts', to: 'charts/angular/quick-start/' },
-            { from: '^/documentation/react/charts', to: 'charts/react/quick-start/' },
-            { from: '^/documentation/vue/charts', to: 'charts/vue/quick-start/' },
-        ];
-
-        for (const { from, to } of docChartsRedirects) {
-            it(`should have a server-side 301 for ${from} -> ${to}`, () => {
-                const matchingRedirect = SITE_301_REDIRECTS.find(
-                    (r) => 'fromPattern' in r && (r as any).fromPattern.includes(from.replace('^', ''))
-                );
-                expect(matchingRedirect).toBeDefined();
-                expect((matchingRedirect as any).to).toContain(to);
-            });
-        }
-
-        it('should render charts redirects as RedirectMatch 301 in the generated htaccess', () => {
-            expect(productionContent).toContain('RedirectMatch 301');
-            expect(productionContent).toContain('javascript-charts');
-        });
-    });
-
-    describe('AG-17157: noindex for archive paths', () => {
-        it('should have redirect rules for /archive paths', () => {
-            const archiveRedirects = SITE_301_REDIRECTS.filter(
-                (r) => 'fromPattern' in r && (r as any).fromPattern.includes('archive')
-            );
-            expect(archiveRedirects.length).toBeGreaterThan(0);
         });
     });
 
@@ -723,47 +893,6 @@ describe('htaccessRules', () => {
             const matches = productionContent.match(/RewriteEngine On/g);
             expect(matches).not.toBeNull();
             expect(matches!.length).toBe(1);
-        });
-    });
-
-    describe('htaccess quality: HTTPS redirect scoping', () => {
-        it('should scope the HTTPS redirect to www/bare domain only', () => {
-            const lines = productionContent.split('\n');
-            const httpsRuleIndex = lines.findIndex((l) => l.includes('RewriteCond %{SERVER_PORT} 80'));
-            expect(httpsRuleIndex).toBeGreaterThan(-1);
-            const hostCondIndex = lines.findIndex(
-                (l, i) =>
-                    i >= httpsRuleIndex - 3 &&
-                    i <= httpsRuleIndex + 3 &&
-                    l.includes('HTTP_HOST') &&
-                    (l.includes('ag-grid') || l.includes('www'))
-            );
-            expect(hostCondIndex).toBeGreaterThan(-1);
-        });
-    });
-
-    describe('htaccess quality: angulargrid.com redirect', () => {
-        it('should use HTTPS for angulargrid.com redirect', () => {
-            const lines = productionContent.split('\n');
-            const angulargridCondIndex = lines.findIndex(
-                (l) => l.includes('angulargrid\\.com') && !l.includes('.ag-grid.com')
-            );
-            expect(angulargridCondIndex).toBeGreaterThan(-1);
-            const nextRuleLine = lines.slice(angulargridCondIndex).find((l) => l.includes('RewriteRule'));
-            expect(nextRuleLine).toBeDefined();
-            expect(nextRuleLine).toContain('https://www.ag-grid.com');
-            expect(nextRuleLine).not.toContain('http\\:');
-        });
-
-        it('should redirect all paths for angulargrid.com (not just root)', () => {
-            const lines = productionContent.split('\n');
-            const angulargridCondIndex = lines.findIndex(
-                (l) => l.includes('angulargrid\\.com') && !l.includes('.ag-grid.com')
-            );
-            expect(angulargridCondIndex).toBeGreaterThan(-1);
-            const nextRuleLine = lines.slice(angulargridCondIndex).find((l) => l.includes('RewriteRule'));
-            expect(nextRuleLine).toBeDefined();
-            expect(nextRuleLine).toContain('^(.*)$');
         });
     });
 
@@ -1012,100 +1141,102 @@ describe('htaccessRules', () => {
             expect(loops).toEqual([]);
         });
 
-        it('does not keep a react-only bullet-series entry in the single-hop data (moved to the charts mirror)', () => {
-            const reactBullet = SITE_SINGLE_HOP_REWRITES.filter((r) => r.from.includes('bullet-series'));
-            expect(reactBullet).toEqual([]);
+        // The chain-shortening rewrites all target www, so a host guard skips them on every other
+        // host the docroot answers for. Its [S=n] count must equal the rules it guards: too small
+        // and the shortening leaks onto those hosts, too large and it swallows the host
+        // canonicalisation that follows.
+        it('skips the chain-shortening rules on other hosts, and only those rules', () => {
+            const files = [compileHtaccess(productionContent)];
+            const targets = new Set(SITE_SINGLE_HOP_REWRITES.map((rule) => rule.to));
+            const shortening = new Set(
+                files[0].rewriteRules.filter((rule) => targets.has(rule.substitution)).map((rule) => rule.source)
+            );
+            expect(shortening.size).toBeGreaterThan(0);
+            for (const rule of SITE_SINGLE_HOP_REWRITES) {
+                // On www the rule fires; on another host the guard must skip it (mod_alias may still match).
+                const onWww = route(files, { url: `https://www.ag-grid.com${rule.from}` });
+                expect(onWww, `${rule.from} on www`).toMatchObject({ location: rule.to });
+                expect(shortening.has((onWww as { by: string }).by), `${rule.from} on www`).toBe(true);
+                const outcome = route(files, { url: `https://studio.ag-grid.com${rule.from}` });
+                expect(shortening.has((outcome as { by?: string }).by ?? ''), `${rule.from} on studio`).toBe(false);
+            }
+            // The first rule after the guarded block still runs for a non-www host.
+            expect(route(files, { url: 'https://angulargrid.ag-grid.com/x/' })).toMatchObject({
+                type: 'redirect',
+                location: 'https://www.ag-grid.com/x/',
+            });
         });
     });
 
-    describe('SE-66: charts-subdir semantic redirects mirrored into the docroot', () => {
-        // The /charts subdir (ag-charts-website repo) owns these semantic redirects, but it only runs
-        // after the docroot normalises host/slash — so they are mirrored here to collapse to ONE hop.
-        // Assertions cover a representative rule per family; the full block is guarded by the snapshot.
+    // /charts/ and /studio/ are separate sites (the ag-charts and Studio repos) deployed with their
+    // own .htaccess. A child .htaccess with any mod_rewrite directive REPLACES the root's rewrite
+    // rules for every request below it (no RewriteOptions Inherit), so a root rule written for a
+    // /charts/ or /studio/ path never runs - verified in real Apache. The root mirrored the charts
+    // semantic redirects for a while (SE-66), which only ever produced dead rules, and the
+    // quick-start one would also have bounced the /charts/{react,angular,vue}/ landing hubs had it
+    // ever run. The child .htaccess owns those paths, so the root must treat them like any other
+    // path: whatever it does to /charts/<x> it must do identically to an unowned /<prefix>/<x>.
+    describe('SE-66 / waf-finding §2: the root leaves /charts/ and /studio/ to their own .htaccess', () => {
+        const NEUTRAL = 'zz-not-a-product';
+        const productPaths = [
+            '/charts/',
+            '/charts',
+            '/charts/react/',
+            '/charts/react',
+            '/charts/angular/',
+            '/charts/vue/',
+            '/charts/javascript/',
+            '/charts/react/bullet-series/',
+            '/charts/javascript/fonts',
+            '/charts/react/toolbar/',
+            '/charts/react/line',
+            '/charts/archive/',
+            '/charts/archive/12.0.0/',
+            '/charts/javascript-charts/javascript/bar-series/',
+            '/charts/enterprise-charts/react/bar-series/',
+            '/charts/enterprise-charts/foo/',
+            '/charts/react-charts/gallery/',
+            '/charts/core/line-series',
+            '/charts/side/',
+            '/charts/server-side-rendering/x/',
+            '/charts/vue/series/bar/',
+            '/charts/angular/axes/',
+            '/charts/documentation',
+            '/charts/react/zoom',
+            '/charts/react/cone-funnel-series',
+            '/charts/react/candlestick-series',
+            '/charts/react/zoom/?x=1',
+            '/studio/',
+            '/studio',
+            '/studio/react/getting-started',
+            '/studio/archive/',
+            '/studio/archive/1.0.0/',
+        ];
+        const hosts = [
+            'https://www.ag-grid.com',
+            'http://www.ag-grid.com',
+            'https://ag-grid.com',
+            'https://blog.ag-grid.com',
+        ];
 
-        it('collapses bullet-series to linear-gauge for every framework, with [NE] and the correct anchor', () => {
-            // #bullet-series (no trailing slash) — the id generated by the "## Bullet Series" heading;
-            // the previous react-only rule used the broken "#bullet-series/". [NE] keeps the # verbatim.
-            expect(productionContent).toContain(
-                'RewriteRule "^/?charts/(javascript|angular|react|vue)/bullet-series/?$" "https://www.ag-grid.com/charts/$1/linear-gauge/#bullet-series" [R=301,NE,L]'
+        it('routes every /charts/ and /studio/ path exactly as it routes the same path under an unowned prefix', () => {
+            const files = [compileHtaccess(productionContent)];
+            const neutralise = (value: string) => value.replace(/\/(charts|studio)(?=\/|$|\?)/, `/${NEUTRAL}`);
+            const differences = hosts.flatMap((host) =>
+                productPaths.flatMap((path) => {
+                    const product = route(files, { url: `${host}${path}` });
+                    const neutral = route(files, { url: `${host}${neutralise(path)}` });
+                    const productComparable = JSON.stringify({ ...product, by: undefined, path: undefined }).replace(
+                        /\/(charts|studio)(?=\/|"|\?)/,
+                        `/${NEUTRAL}`
+                    );
+                    const neutralComparable = JSON.stringify({ ...neutral, by: undefined, path: undefined });
+                    return productComparable === neutralComparable
+                        ? []
+                        : [`${host}${path}: ${JSON.stringify(product)} vs ${JSON.stringify(neutral)}`];
+                })
             );
-            expect(productionContent).not.toContain('linear-gauge/#bullet-series/');
-        });
-
-        it('mirrors the fonts, landing, backreference, catch-all and aggregate-index families', () => {
-            expect(productionContent).toContain(
-                'RewriteRule "^/?charts/(javascript|angular|react|vue)/fonts/?$" "https://www.ag-grid.com/charts/$1/text/" [R=301,L]'
-            );
-            expect(productionContent).toContain(
-                'RewriteRule "^/?charts/(javascript|angular|react|vue)/?$" "https://www.ag-grid.com/charts/$1/quick-start/" [R=301,L]'
-            );
-            expect(productionContent).toContain(
-                'RewriteRule "^/?charts/react-charts/react/(.+?)/?$" "https://www.ag-grid.com/charts/react/$1/" [R=301,L]'
-            );
-            expect(productionContent).toContain(
-                'RewriteRule "^/?charts/(javascript|angular|react|vue)/series(/.*)?$" "https://www.ag-grid.com/charts/$1/bar-series/" [R=301,L]'
-            );
-        });
-
-        it('does NOT mirror /charts/privacy (unresolved 410-vs-301, left to the charts subdir)', () => {
-            expect(productionContent).not.toContain('"^/?charts/privacy(/.*)?$"');
-        });
-
-        it('orders the enterprise-charts/react backreference before the enterprise-charts catch-all', () => {
-            // charts repo is first-match-wins: the specific /react/(.+) must win over the broad catch-all.
-            const specific = productionContent.indexOf('"^/?charts/enterprise-charts/react/(.+?)/?$"');
-            const catchAll = productionContent.indexOf('"^/?charts/enterprise-charts/(?!index\\.html$).+$"');
-            expect(specific).toBeGreaterThan(-1);
-            expect(catchAll).toBeGreaterThan(specific);
-        });
-
-        it('host-scopes the whole chain-shortening block, with an exact [S] skip count', () => {
-            // The single-hops + mirror + add-slash all rewrite to the canonical www host, so a host
-            // guard skips them for charts.ag-grid.com / studio.ag-grid.com. The [S] count MUST equal
-            // the number of RewriteRules it guards — overshoot would also skip the host canonicalisation
-            // rules (breaking the phase-1 subdomain redirects), undershoot would leak the chain-shortening.
-            const lines = productionContent.split('\n');
-            const guardIdx = lines.findIndex((l) => /RewriteRule \^ - \[S=\d+\]/.test(l));
-            expect(guardIdx).toBeGreaterThan(-1);
-            expect(lines[guardIdx - 1]).toContain('RewriteCond %{HTTP_HOST} !^(www\\.)?ag-grid\\.com$ [NC]');
-
-            const skip = Number(lines[guardIdx].match(/\[S=(\d+)\]/)![1]);
-            // The guarded span ends just before the https-upgrade host-swap (first `-> www/$1` rule).
-            const hostSwapIdx = lines.findIndex(
-                (l, i) => i > guardIdx && l.includes('https://www.ag-grid.com/$1 [R=301,L]')
-            );
-            expect(hostSwapIdx).toBeGreaterThan(guardIdx);
-            const guardedRuleCount = lines
-                .slice(guardIdx + 1, hostSwapIdx)
-                .filter((l) => /^\s*RewriteRule /.test(l)).length;
-            expect(skip).toBe(guardedRuleCount);
-        });
-    });
-
-    describe('SE-66 follow-up: no-slash /charts/* pages resolve in a single hop', () => {
-        it('emits a general single-hop rewrite that adds the trailing slash for any no-slash /charts/* path', () => {
-            expect(productionContent).toContain(
-                'RewriteRule "^/?(charts/.+[^/])$" "https://www.ag-grid.com/$1/" [R=301,L]'
-            );
-        });
-
-        it('guards the general charts rewrite so real files (dot in the last segment) are left alone', () => {
-            const lines = productionContent.split('\n');
-            const ruleIndex = lines.findIndex((l) => l.includes('"^/?(charts/.+[^/])$"'));
-            expect(ruleIndex).toBeGreaterThan(0);
-            expect(lines[ruleIndex - 1]).toContain('RewriteCond %{REQUEST_URI} /+[^.]+$');
-        });
-
-        it('runs the charts semantic mirror before the general add-slash, and both before the host-swap', () => {
-            // Ordering is load-bearing: the semantic mirror (divergent targets, e.g. bullet-series) must
-            // win over the general add-slash rule ([L]), and both must precede the apex/www host-swap so
-            // the whole thing resolves in ONE hop.
-            const mirror = productionContent.indexOf('"^/?charts/(javascript|angular|react|vue)/bullet-series/?$"');
-            const general = productionContent.indexOf('"^/?(charts/.+[^/])$"');
-            const hostSwap = productionContent.indexOf('RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]');
-            expect(mirror).toBeGreaterThan(-1);
-            expect(general).toBeGreaterThan(mirror);
-            expect(hostSwap).toBeGreaterThan(general);
+            expect(differences).toEqual([]);
         });
     });
 
@@ -1121,9 +1252,9 @@ describe('htaccessRules', () => {
         };
 
         const extractVaryPattern = (content: string) => {
-            const match = content.match(/<If "%\{REQUEST_URI\} =~ m#\^\/\(\?:(.+)\)\/\?\$#/);
+            const match = content.match(/<If "%\{REQUEST_URI\} =~ m#\^\/\(\?:(.+)\)\(\?:\/\|\/index\\\.html\)\?\$#/);
             expect(match).not.toBeNull();
-            return new RegExp(`^/(?:${match![1]})/?$`);
+            return new RegExp(`^/(?:${match![1]})(?:/|/index\\.html)?$`);
         };
 
         // One representative URL per group in the registry. Every URL in the sitemap must
@@ -1181,98 +1312,1230 @@ describe('htaccessRules', () => {
             '/sitemap-index.xml',
         ];
 
-        it('serves the per-page .md variant when Accept: text/markdown, gated by an on-disk check', () => {
-            expect(productionContent).toContain('RewriteCond %{HTTP_ACCEPT} text/markdown');
-            expect(productionContent).toContain('RewriteCond %{DOCUMENT_ROOT}/%1.md -f');
-            expect(productionContent).toContain('RewriteRule ^ /%1.md [L]');
-        });
+        // Archive builds ship their own production .htaccess (HTACCESS=production in
+        // .env.build.archive), served from /archive/<v>/, so negotiation must be anchored there
+        // rather than at the root - otherwise no archived page ever negotiates.
+        describe('archive builds negotiate under their own base path', () => {
+            let archiveContent: string;
 
-        it('applies the same negotiation rules on staging, in its own mod_rewrite block', () => {
-            // Staging has no redirect rewrites, so negotiation gets a dedicated block.
-            expect(stagingContent).toContain('mod_rewrite.c');
-            expect(stagingContent).toContain('RewriteEngine On');
-            expect(stagingContent).toContain('RewriteCond %{HTTP_ACCEPT} text/markdown');
-            expect(stagingContent).toContain('RewriteRule ^ /%1.md [L]');
-            // Both envs must negotiate exactly the same set of paths.
-            expect(extractNegotiationPattern(stagingContent).source).toBe(
-                extractNegotiationPattern(productionContent).source
-            );
-        });
+            beforeAll(async () => {
+                vi.resetModules();
+                vi.doMock('../../constants', async (importActual) => {
+                    const actual = await importActual<typeof Constants>();
+                    return { ...actual, SITE_BASE_URL: '/archive/36.2.0/' };
+                });
+                const archiveRules = await import('./htaccessRules');
+                archiveContent = archiveRules.getHtaccessContent({ env: 'production' });
+            });
 
-        it('runs the negotiation before the trailing-slash 301 so the canonical URL negotiates in one hop', () => {
-            const negotiationIndex = productionContent.indexOf('RewriteRule ^ /%1.md [L]');
-            const trailingSlashIndex = productionContent.indexOf('# Add trailing slash for directories');
-            expect(negotiationIndex).toBeGreaterThan(-1);
-            expect(trailingSlashIndex).toBeGreaterThan(-1);
-            expect(negotiationIndex).toBeLessThan(trailingSlashIndex);
-        });
+            afterAll(() => {
+                vi.doUnmock('../../constants');
+                vi.resetModules();
+            });
 
-        it('negotiates every page group in the registry, with and without a trailing slash', () => {
-            const pattern = extractNegotiationPattern(productionContent);
-            for (const path of negotiablePaths) {
-                expect(pattern.test(path), `${path} should negotiate`).toBe(true);
-                expect(pattern.test(path.replace(/\/$/, '')), `${path} (no trailing slash)`).toBe(true);
-            }
-        });
-
-        it('leaves pages without a .md twin untouched', () => {
-            const pattern = extractNegotiationPattern(productionContent);
-            for (const path of nonNegotiablePaths) {
-                expect(pattern.test(path), `${path} should not negotiate`).toBe(false);
-            }
-        });
-
-        it('captures the page path in %1 so the -f guard and rewrite target resolve to /<page>.md', () => {
-            const pattern = extractNegotiationPattern(productionContent);
-            // %1 is the first capture group, reused as `%1.md` in both the guard and the target.
-            expect('/community/events/'.match(pattern)?.[1]).toBe('community/events');
-            expect('/react-data-grid/cell-editing/'.match(pattern)?.[1]).toBe('react-data-grid/cell-editing');
-            expect('/license-pricing'.match(pattern)?.[1]).toBe('license-pricing');
-        });
-
-        it('adds Vary: Accept for exactly the negotiated paths (both envs) so shared caches key on the negotiated representation', () => {
-            for (const content of [productionContent, stagingContent]) {
-                expect(content).toContain('Header append Vary Accept');
-                // The Vary scope must cover the negotiated set exactly — narrower and a cache
-                // could serve markdown to a browser; wider and unrelated pages lose cache keying.
-                const varyPattern = extractVaryPattern(content);
+            it('negotiates every page group below the archive base, and nothing at the root', () => {
+                const pattern = extractNegotiationPattern(archiveContent);
                 for (const path of negotiablePaths) {
-                    expect(varyPattern.test(path), `${path} should carry Vary: Accept`).toBe(true);
+                    expect(pattern.test(`/archive/36.2.0${path}`), `/archive/36.2.0${path} should negotiate`).toBe(
+                        true
+                    );
+                    expect(pattern.test(path), `${path} is outside the archive`).toBe(false);
                 }
                 for (const path of nonNegotiablePaths) {
-                    expect(varyPattern.test(path), `${path} should not carry Vary: Accept`).toBe(false);
+                    expect(pattern.test(`/archive/36.2.0${path}`), `/archive/36.2.0${path}`).toBe(false);
                 }
-                expect(content).toContain(`%{REQUEST_URI} == '/'`);
-            }
-        });
+            });
 
-        it('negotiates the homepage (/) to /index.md via a dedicated stanza in both envs', () => {
-            // The homepage twin is a separate stanza: the root URL has no path segment to capture.
-            const homepageNegotiationRules = [
-                'RewriteCond %{REQUEST_URI} ^/$',
-                'RewriteCond %{DOCUMENT_ROOT}/index.md -f',
-                'RewriteRule ^ /index.md [L]',
+            it('treats the version dots literally', () => {
+                const pattern = extractNegotiationPattern(archiveContent);
+                expect(pattern.test('/archive/36x2x0/react-data-grid/cell-editing/')).toBe(false);
+            });
+
+            it('captures the docroot-relative path in %1 so the -f guard and target resolve inside the archive', () => {
+                const pattern = extractNegotiationPattern(archiveContent);
+                expect('/archive/36.2.0/react-data-grid/cell-editing/'.match(pattern)?.[1]).toBe(
+                    'archive/36.2.0/react-data-grid/cell-editing'
+                );
+                expect(archiveContent).toContain('RewriteCond %{DOCUMENT_ROOT}/%1.md -f');
+                expect(archiveContent).toContain('RewriteRule ^ /%1.md [L]');
+            });
+
+            it('negotiates the archive homepage to its own index.md', () => {
+                expect(archiveContent).toContain('RewriteCond %{REQUEST_URI} ^/archive/36\\.2\\.0/$');
+                expect(archiveContent).toContain('RewriteCond %{DOCUMENT_ROOT}/archive/36.2.0/index.md -f');
+                expect(archiveContent).toContain('RewriteRule ^ /archive/36.2.0/index.md [L]');
+            });
+
+            it('scopes Vary: Accept to the same archived paths', () => {
+                const varyPattern = extractVaryPattern(archiveContent);
+                for (const path of negotiablePaths) {
+                    expect(varyPattern.test(`/archive/36.2.0${path}`), `/archive/36.2.0${path}`).toBe(true);
+                    expect(
+                        varyPattern.test(`/archive/36.2.0${path.replace(/\/$/, '')}/index.html`),
+                        `/archive/36.2.0${path} via DirectoryIndex`
+                    ).toBe(true);
+                    expect(varyPattern.test(path), `${path} is outside the archive`).toBe(false);
+                }
+                expect(archiveContent).toContain('%{REQUEST_URI} =~ m#^/archive/36\\.2\\.0/(?:index\\.html)?$#');
+            });
+        });
+    });
+
+    // Archive builds ship this production .htaccess into /archive/<v>/, where Apache applies it after
+    // the root's (waf-finding.md §3, AG-17157). A per-directory RewriteRule only sees the path below
+    // that directory, so any root-relative rule there drops the archive prefix: ag-grid.com/archive/
+    // 36.2.0/react-data-grid/getting-started/ was host-swapped onto the CURRENT docs, and the
+    // current-site single-hop, blog and redirect rules fired inside archives. These tests deploy the
+    // generated archive file below the generated root file and request URLs through both.
+    describe('archive builds, deployed below the root .htaccess', () => {
+        const BASE = '/archive/36.3.0';
+        const WWW = 'https://www.ag-grid.com';
+        let archiveContent: string;
+        let deployed: CompiledHtaccess[];
+        let inFlight: CompiledHtaccess[];
+
+        beforeAll(async () => {
+            vi.resetModules();
+            vi.doMock('../../constants', async (importActual) => {
+                const actual = await importActual<typeof Constants>();
+                return { ...actual, SITE_BASE_URL: `${BASE}/` };
+            });
+            const archiveRules = await import('./htaccessRules');
+            archiveContent = archiveRules.getHtaccessContent({ env: 'production' });
+            const archiveFile = compileHtaccess(archiveContent, `${BASE}/`);
+            deployed = [compileHtaccess(productionContent), archiveFile];
+            inFlight = [
+                compileHtaccess(getHtaccessContent({ env: 'production', uncachedGridArchive: '36.3.0' })),
+                archiveFile,
             ];
-            for (const content of [productionContent, stagingContent]) {
-                for (const rule of homepageNegotiationRules) {
-                    expect(content).toContain(rule);
+        });
+
+        afterAll(() => {
+            vi.doUnmock('../../constants');
+            vi.resetModules();
+        });
+
+        it('leaves the default Cache-Control to the root, so an unmatched archived file keeps the long cache', () => {
+            expect(archiveContent).not.toContain('# Default for every response no later rule matches');
+            for (const path of ['/sitemap-0.xml', '/files/ag-grid-community/styles/ag-grid.css', '/llms.txt']) {
+                const response = { uri: `${BASE}${path}`, status: 200, contentType: 'text/plain' };
+                expect(responseHeaders(deployed, response).get('cache-control'), path).toEqual([
+                    'public, max-age=604800, s-maxage=31536000',
+                ]);
+                expect(responseHeaders(inFlight, response).get('cache-control'), path).toEqual(['no-cache']);
+            }
+        });
+
+        // Every path a rule anywhere is written for, so no rule can hide.
+        const probePaths = () => [
+            '/',
+            '/react-data-grid/getting-started/',
+            '/react-data-grid/getting-started',
+            '/react-data-grid/whats-new',
+            '/index.php',
+            '/react-data-grid/index.php',
+            '/react-data-grid/page.php/extra/',
+            '/javascript-data-grid/',
+            '/charts/react',
+            '/tag/react/',
+            '/2018/11/29/inside-fiber/',
+            '/some-post/amp/',
+            '/feed/',
+            '/theo/',
+            // Legacy URLs the harness found 404ing inside archives once the single-hop rewrites were
+            // dropped: mod_alias's broad /{fw}-grid/ prefix rule maps them onto a page that does not exist.
+            '/javascript-grid/themes-customising/',
+            '/react-grid/themes-provided/',
+            '/react-grid/fine-tuning/',
+            '/forum/x',
+            ...SITE_SINGLE_HOP_REWRITES.map((rule) => rule.from),
+            ...SITE_301_REDIRECTS.map((rule) => ('from' in rule ? rule.from : samplePath(rule.fromPattern))),
+        ];
+        const HOSTS = [
+            'https://www.ag-grid.com',
+            'http://www.ag-grid.com',
+            'https://ag-grid.com',
+            'https://blog.ag-grid.com',
+            'https://angulargrid.com',
+            'https://react-grid.ag-grid.com',
+        ];
+
+        it('canonicalises every alias host onto the same archive URL on https://www, in one hop', () => {
+            for (const host of HOSTS.slice(1)) {
+                const chain = followRedirects(deployed, { url: `${host}${BASE}/react-data-grid/getting-started/?x=1` });
+                expect(chain.hops, host).toHaveLength(1);
+                expect(chain.final.url, host).toBe(`${WWW}${BASE}/react-data-grid/getting-started/?x=1`);
+                // waf-finding.md §20.2: a slash-less directory path gets its slash in that same hop.
+                const slashless = followRedirects(deployed, {
+                    url: `${host}${BASE}/react-data-grid/getting-started?x=1`,
+                });
+                expect(
+                    slashless.hops.map((hop) => hop.location),
+                    host
+                ).toEqual([`${WWW}${BASE}/react-data-grid/getting-started/?x=1`]);
+            }
+        });
+
+        // mod_rewrite leaves the bare archive root to mod_dir, which slashed it on the alias host
+        // first (2 hops); the root's <If> redirect slashes and canonicalises it at once.
+        it('sends a bare archive root on any alias host to its slashed www URL in one hop', () => {
+            const dirExists = (path: string) => path === BASE;
+            for (const host of HOSTS.slice(1)) {
+                const chain = followRedirects(deployed, { url: `${host}${BASE}?x=1`, dirExists });
+                expect(
+                    chain.hops.map((hop) => hop.location),
+                    host
+                ).toEqual([`${WWW}${BASE}/?x=1`]);
+            }
+            // On www it is mod_dir's own single hop, so nothing here touches it.
+            expect(route(deployed, { url: `${WWW}${BASE}`, dirExists })).toMatchObject({ type: 'serve' });
+            // Only an existing directory directly below an archive tree.
+            expect(route(deployed, { url: `https://ag-grid.com${BASE}` })).toMatchObject({ type: 'serve' });
+        });
+
+        it('does the same for charts and studio archive roots, and for archives with no .htaccess', () => {
+            const root = compileHtaccess(productionContent);
+            const ownRules = (dir: string) =>
+                compileHtaccess(
+                    'RewriteEngine On\nRewriteCond %{HTTP_HOST} ^ag-grid\\.com$ [NC]\nRewriteRule ^ https://www.ag-grid.com%{REQUEST_URI} [R=301,L]',
+                    dir
+                );
+            const dirs = ['/charts/archive/14.2.0', '/studio/archive/3.0.0', '/archive/35.3.1'];
+            const dirExists = (path: string) => dirs.includes(path);
+            const files = [root, ownRules('/charts/archive/14.2.0/'), ownRules('/studio/archive/3.0.0/')];
+            for (const dir of dirs) {
+                const chain = followRedirects(files, { url: `https://ag-grid.com${dir}`, dirExists });
+                expect(
+                    chain.hops.map((hop) => hop.location),
+                    dir
+                ).toEqual([`${WWW}${dir}/`]);
+            }
+            // A file directly below /archive/ is not a version: it keeps its name.
+            expect(route(files, { url: 'https://ag-grid.com/archive/notes.txt', dirExists })).toMatchObject({
+                location: `${WWW}/archive/notes.txt`,
+            });
+        });
+
+        it('leaves both archive-root rules to the live root .htaccess', () => {
+            expect(productionContent).toContain('Redirect 301 "https://www.ag-grid.com%{REQUEST_URI}/"');
+            expect(productionContent).toContain('RewriteRule ^archive/[^/]+$');
+            expect(archiveContent).not.toContain('Redirect 301 "https://www.ag-grid.com%{REQUEST_URI}/"');
+            expect(archiveContent).not.toContain('RewriteRule ^archive/[^/]+$');
+        });
+
+        it('never redirects an archive URL out of the archive, from any host', () => {
+            const escapes = HOSTS.flatMap((host) =>
+                probePaths().flatMap((path) => {
+                    const outcome = route(deployed, { url: `${host}${BASE}${path}` });
+                    if (outcome.type !== 'redirect') {
+                        return [];
+                    }
+                    const target = new URL(outcome.location);
+                    return target.hostname === 'www.ag-grid.com' && target.pathname.startsWith(`${BASE}/`)
+                        ? []
+                        : [`${host}${BASE}${path} -> ${outcome.location}`];
+                })
+            );
+            expect(escapes).toEqual([]);
+        });
+
+        const at = (path: string, host = WWW) => route(deployed, { url: `${host}${BASE}${path}` });
+        const rebased = (to: string) => to.replace(WWW, `${WWW}${BASE}`);
+        const keptSingleHops = SITE_SINGLE_HOP_REWRITES.filter(
+            (r) => !/^https:\/\/www\.ag-grid\.com\/(charts|blog)\//.test(r.to)
+        );
+        const droppedSingleHops = SITE_SINGLE_HOP_REWRITES.filter((r) => !keptSingleHops.includes(r));
+
+        it('sends legacy single-hop URLs to their page inside the archive, in one hop', () => {
+            expect(at('/javascript-grid/themes-customising/')).toMatchObject({
+                location: `${WWW}${BASE}/javascript-data-grid/themes/`,
+            });
+            expect(at('/react-grid/themes-provided/')).toMatchObject({
+                location: `${WWW}${BASE}/react-data-grid/themes/`,
+            });
+            expect(at('/react-grid/fine-tuning/')).toMatchObject({
+                location: `${WWW}${BASE}/react-data-grid/react-hooks/`,
+            });
+            // Ahead of the trailing-slash fix, which would otherwise make it two hops.
+            expect(at('/react-data-grid/whats-new')).toMatchObject({ location: `${WWW}${BASE}/whats-new/` });
+        });
+
+        it('keeps every single-hop rewrite whose target the archive has a copy of, landing on a final URL', () => {
+            expect(keptSingleHops.length).toBeGreaterThan(0);
+            const wrong = keptSingleHops.flatMap(({ from, to }) => {
+                const chain = followRedirects(deployed, { url: `${WWW}${BASE}${from}` });
+                const ok = chain.hops.length === 1 && chain.final.url === rebased(to);
+                return ok ? [] : [`${from} -> ${chain.hops.map((hop) => hop.location).join(' -> ')}`];
+            });
+            expect(wrong).toEqual([]);
+        });
+
+        it('drops the single-hop rewrites onto charts and the blog, which no grid archive holds', () => {
+            expect(droppedSingleHops.length).toBeGreaterThan(0);
+            for (const { from, to } of droppedSingleHops) {
+                const outcome = at(from);
+                expect(outcome.type === 'redirect' ? outcome.location : null, from).not.toBe(to);
+            }
+            expect(archiveContent).not.toContain('https://www.ag-grid.com/charts/');
+        });
+
+        it('skips the single-hop rewrites on other hosts, which canonicalise first', () => {
+            for (const host of ['https://angulargrid.com', 'https://react-grid.ag-grid.com']) {
+                for (const { from } of keptSingleHops) {
+                    // Canonicalising a slash-less directory path adds its slash in the same hop.
+                    const canonical = /\/[^/.]+$/.test(from) ? `${from}/` : from;
+                    expect(at(from, host), `${host}${from}`).toMatchObject({ location: `${WWW}${BASE}${canonical}` });
                 }
             }
         });
 
-        it('registers the markdown MIME type so the .md files are served as text/markdown', () => {
-            expect(productionContent).toContain('AddType text/markdown md');
-            expect(stagingContent).toContain('AddType text/markdown md');
+        it('keeps the archive-internal fixes working: index.php, path-after-php, trailing slash, base-aware redirects', () => {
+            const at = (path: string) => route(deployed, { url: `${WWW}${BASE}${path}` });
+            expect(at('/index.php')).toMatchObject({ location: `${WWW}${BASE}/` });
+            expect(at('/react-data-grid/index.php')).toMatchObject({ location: `${WWW}${BASE}/react-data-grid/` });
+            expect(at('/react-data-grid/page.php/extra/')).toMatchObject({
+                location: `${WWW}${BASE}/react-data-grid/page.php`,
+            });
+            expect(at('/react-data-grid/getting-started')).toMatchObject({
+                location: `${WWW}${BASE}/react-data-grid/getting-started/`,
+            });
+            expect(at('/react-data-grid/whats-new/')).toMatchObject({ location: `${WWW}${BASE}/whats-new/` });
+            expect(at('/javascript-grid-virtual-paging/x/')).toMatchObject({
+                location: `${WWW}${BASE}/javascript-data-grid/infinite-scrolling/`,
+            });
+            expect(at('/forum/x/')).toMatchObject({ type: 'status', status: 410 });
+            expect(at('/react-data-grid/getting-started/')).toMatchObject({ type: 'serve' });
         });
 
-        it('serves .md as UTF-8 so table glyphs (✓/✗) are not mojibaked', () => {
-            expect(productionContent).toContain('AddCharset utf-8 .md');
-            expect(stagingContent).toContain('AddCharset utf-8 .md');
+        it('negotiates markdown inside the archive, with Vary on both representations', () => {
+            const page = `${BASE}/react-data-grid/getting-started/`;
+            const md = route(deployed, { url: `${WWW}${page}`, accept: 'text/markdown', fileExists: () => true });
+            expect(md).toEqual({
+                type: 'serve',
+                path: `${BASE}/react-data-grid/getting-started.md`,
+                query: '',
+                vary: ['Accept'],
+            });
+            const home = route(deployed, { url: `${WWW}${BASE}/`, accept: 'text/markdown', fileExists: () => true });
+            expect(home).toMatchObject({ path: `${BASE}/index.md` });
+            const html = responseHeaders(deployed, { uri: `${page}index.html`, status: 200, contentType: 'text/html' });
+            expect(html.get('vary')?.join(', ')).toMatch(/\bAccept\b/);
         });
 
-        it('registers the webp MIME type so the images are not served without a Content-Type', () => {
-            expect(productionContent).toContain('AddType image/webp .webp');
-            expect(stagingContent).toContain('AddType image/webp .webp');
+        // A content type and URL matrix covering every class an archive serves.
+        const archiveResponses = () =>
+            [
+                ['/index.html', 'text/html'],
+                ['/react-data-grid/getting-started/index.html', 'text/html; charset=utf-8'],
+                ['/react-data-grid/getting-started.md', 'text/markdown; charset=utf-8'],
+                ['/index.md', 'text/markdown'],
+                ['/llms.txt', 'text/plain'],
+                ['/scripts/gtm-init.js', 'text/javascript'],
+                ['/images/logo.svg', 'image/svg+xml'],
+                ['/example-assets/olympic-winners.json', 'application/json'],
+                ['/examples/a/b/main.ts', 'application/typescript'],
+                ['/_astro/unhashed.js', 'text/javascript'],
+                ['/robots.txt', 'text/plain'],
+            ].map(([path, contentType]) => ({ uri: `${BASE}${path}`, contentType }));
+        const HASHED = `${BASE}/_astro/DocsExampleRunner.CiSTQ4_g.css`;
+        const LONG = 'public, max-age=604800, s-maxage=31536000';
+
+        // The archive file is applied after the root, so any Cache-Control it sets on an unhashed
+        // URL would override the root's in-flight no-cache for a release candidate (T5).
+        it('the archive .htaccess itself caches nothing but content-hashed assets', () => {
+            const archiveOnly = [compileHtaccess(archiveContent, `${BASE}/`)];
+            for (const { uri, contentType } of archiveResponses()) {
+                const cacheControl = responseHeaders(archiveOnly, { uri, status: 200, contentType }).get(
+                    'cache-control'
+                );
+                expect(cacheControl ?? [], uri).not.toContain(LONG);
+                expect(
+                    (cacheControl ?? []).filter((value) => value.includes('max-age')),
+                    uri
+                ).toEqual([]);
+            }
+            expect(
+                responseHeaders(archiveOnly, { uri: HASHED, status: 200, contentType: 'text/css' }).get('cache-control')
+            ).toEqual([LONG]);
+        });
+
+        it('a released archive caches every response long', () => {
+            for (const { uri, contentType } of archiveResponses()) {
+                expect(responseHeaders(deployed, { uri, status: 200, contentType }).get('cache-control'), uri).toEqual([
+                    LONG,
+                ]);
+            }
+        });
+
+        it('a release candidate listed in flight serves every unhashed response no-cache', () => {
+            for (const { uri, contentType } of archiveResponses()) {
+                expect(responseHeaders(inFlight, { uri, status: 200, contentType }).get('cache-control'), uri).toEqual([
+                    'no-cache',
+                ]);
+            }
+            // A hashed asset is a new URL whenever its content changes, so it can never be stale.
+            expect(
+                responseHeaders(inFlight, { uri: HASHED, status: 200, contentType: 'text/css' }).get('cache-control')
+            ).toEqual([LONG]);
+        });
+
+        it('in flight applies to that version only, never another archive or the charts archive', () => {
+            for (const uri of ['/archive/36.2.0/index.html', '/charts/archive/36.3.0/index.html']) {
+                expect(
+                    responseHeaders(inFlight, { uri, status: 200, contentType: 'text/html' }).get('cache-control'),
+                    uri
+                ).toEqual([LONG]);
+            }
+        });
+
+        it('a 404 inside an archive is served by the root error page, which is never cached long', () => {
+            for (const files of [deployed, inFlight]) {
+                const errorPage = files[1].errorDocuments.get(404)!;
+                expect(
+                    responseHeaders(files, {
+                        uri: errorPage,
+                        status: 404,
+                        contentType: 'text/html',
+                        onSuccess: true,
+                    }).get('cache-control')
+                ).toEqual(['no-cache']);
+            }
+        });
+
+        it('archives keep exactly one enforcing CSP, with the examples policy, and the security headers', () => {
+            const headers = responseHeaders(deployed, {
+                uri: `${BASE}/react-data-grid/getting-started/index.html`,
+                status: 200,
+                contentType: 'text/html',
+            });
+            expect(headers.get('content-security-policy')).toHaveLength(1);
+            expect(headers.get('content-security-policy')![0]).toContain("'unsafe-eval'");
+            expect(headers.get('referrer-policy')).toEqual(['strict-origin-when-cross-origin']);
+            expect(headers.has('x-frame-options')).toBe(false);
+        });
+
+        it('sends every archive redirect with Cache-Control: no-cache, from the root rule', () => {
+            for (const path of [
+                '/react-data-grid/getting-started',
+                '/javascript-grid/themes-customising/',
+                '/index.php',
+            ]) {
+                for (const host of [WWW, 'https://ag-grid.com', 'http://www.ag-grid.com']) {
+                    const outcome = at(path, host);
+                    expect(outcome.type, `${host}${path}`).toBe('redirect');
+                    const headers = responseHeaders(deployed, {
+                        uri: `${BASE}${path}`,
+                        status: (outcome as { status: number }).status,
+                        contentType: 'text/html',
+                    });
+                    expect(headers.get('cache-control'), `${host}${path}`).toEqual(['no-cache']);
+                }
+            }
+        });
+
+        // AG-17157 / SE-24, waf-finding.md §11: archive HTML is noindexed by a <meta name="robots"> the
+        // layout emits for archive builds (see getIsArchive in env.test.ts). The .md twins have no
+        // <head>, so the root .htaccess noindexes them with a header instead - and they keep the
+        // released archive's long cache, unlike a live page's markdown.
+        it('noindexes archive markdown twins with X-Robots-Tag, keeping the long cache', () => {
+            const headers = responseHeaders(deployed, {
+                uri: `${BASE}/react-data-grid/getting-started.md`,
+                status: 200,
+                contentType: 'text/markdown; charset=utf-8',
+            });
+            expect(headers.get('x-robots-tag')).toEqual(['noindex']);
+            expect(headers.get('cache-control')).toEqual(['public, max-age=604800, s-maxage=31536000']);
+        });
+    });
+
+    // ---------------------------------------------------------------------------------------------
+    // Behaviour, through the simulator: what a request actually gets, rather than what the rules say.
+    // ---------------------------------------------------------------------------------------------
+
+    describe('host canonicalisation (AG-17158/AG-17159, SE-4, SE-26, SE-28, SE-29, SE-64, SE-66)', () => {
+        const WWW = 'https://www.ag-grid.com';
+        const ALIAS_HOSTS = [
+            'ag-grid.com',
+            'AG-Grid.com',
+            'angulargrid.ag-grid.com',
+            'angular-grid.ag-grid.com',
+            'javascript-grid.ag-grid.com',
+            'react-grid.ag-grid.com',
+            'angulargrid.com',
+            'www.angulargrid.com',
+        ];
+        const PATHS = ['/', '/react-data-grid/getting-started/', '/license-pricing/?utm_source=x&b=1', '/a/b/c/'];
+        const files = () => [compileHtaccess(productionContent)];
+
+        it.each(ALIAS_HOSTS.flatMap((host) => ['http', 'https'].map((scheme) => [scheme, host])))(
+            '%s://%s sends every path to the same path on https://www in one hop',
+            (scheme, host) => {
+                for (const path of PATHS) {
+                    const chain = followRedirects(files(), { url: `${scheme}://${host}${path}` });
+                    expect(chain.hops, `${scheme}://${host}${path}`).toHaveLength(1);
+                    expect(chain.hops[0].status).toBe(301);
+                    expect(chain.final.url).toBe(`${WWW}${path}`);
+                    expect(chain.final.outcome).toMatchObject({ type: 'serve' });
+                }
+            }
+        );
+
+        it('upgrades http on www to https in one hop, keeping path and query', () => {
+            const chain = followRedirects(files(), { url: 'http://www.ag-grid.com/react-data-grid/?x=1' });
+            expect(chain.hops.map((hop) => hop.location)).toEqual([`${WWW}/react-data-grid/?x=1`]);
+        });
+
+        it('leaves https://www alone', () => {
+            for (const path of PATHS) {
+                expect(route(files(), { url: `${WWW}${path}` })).toMatchObject({ type: 'serve' });
+            }
+        });
+
+        it('keeps certificate-validation files reachable over http, without a redirect', () => {
+            const path = '/.well-known/pki-validation/0123456789ABCDEF0123456789ABCDEF.txt';
+            expect(route(files(), { url: `http://www.ag-grid.com${path}` })).toMatchObject({ type: 'serve' });
+        });
+
+        // waf-finding.md §20.1: an HTTP-01 token has no extension, so the add-slash rule took it for a
+        // directory and the validation fetch got a 301 to a URL with no token behind it.
+        it.each(['/.well-known/acme-challenge/Abc_123-xyz', '/.well-known/cpanel-dcv/Abc_123-xyz'])(
+            'serves the certificate-validation token %s as it is, over http and https',
+            (path) => {
+                for (const scheme of ['http', 'https']) {
+                    expect(route(files(), { url: `${scheme}://www.ag-grid.com${path}` }), scheme).toMatchObject({
+                        type: 'serve',
+                        path,
+                    });
+                }
+                // An alias host is still canonicalised, but onto the token itself, not a slashed path.
+                const chain = followRedirects(files(), { url: `http://ag-grid.com${path}` });
+                expect(chain.hops.map((hop) => hop.location)).toEqual([`${WWW}${path}`]);
+                expect(chain.final.outcome).toMatchObject({ type: 'serve', path });
+            }
+        );
+
+        // waf-finding.md §20.2: a slash-less directory path on an alias host or over http took two
+        // hops, the host swap and then the add-slash. Both now happen in the one redirect.
+        it.each([
+            ...ALIAS_HOSTS.flatMap((host) => ['http', 'https'].map((scheme) => [scheme, host])),
+            ['http', 'www.ag-grid.com'],
+        ])(
+            '%s://%s adds the slash to a directory path in the same hop as the canonicalisation, and leaves files alone',
+            (scheme, host) => {
+                for (const path of ['/react-data-grid/getting-started', '/a/b/c']) {
+                    const chain = followRedirects(files(), { url: `${scheme}://${host}${path}?x=1` });
+                    expect(
+                        chain.hops.map((hop) => hop.location),
+                        `${scheme}://${host}${path}`
+                    ).toEqual([`${WWW}${path}/?x=1`]);
+                }
+                for (const path of ['/robots.txt', '/react-data-grid/page.html']) {
+                    const chain = followRedirects(files(), { url: `${scheme}://${host}${path}` });
+                    expect(
+                        chain.hops.map((hop) => hop.location),
+                        `${scheme}://${host}${path}`
+                    ).toEqual([`${WWW}${path}`]);
+                }
+            }
+        );
+
+        it('keeps markdown negotiation on a slash-less docs URL over https on www, without a redirect', () => {
+            const path = '/react-data-grid/getting-started';
+            expect(
+                route(files(), { url: `${WWW}${path}`, accept: 'text/markdown', fileExists: (p) => p === `${path}.md` })
+            ).toMatchObject({ type: 'serve', path: `${path}.md` });
+        });
+
+        // Apache decodes the path, matches the rules against the decoded bytes, and re-escapes it in
+        // the Location (the simulator's escaping is pinned against real Apache in its own suite).
+        it.each(ALIAS_HOSTS.flatMap((host) => ['http', 'https'].map((scheme) => [scheme, host])))(
+            '%s://%s keeps an encoded path encoded when canonicalising it',
+            (scheme, host) => {
+                const at = (path: string) => route(files(), { url: `${scheme}://${host}${path}` });
+                expect(at('/some%20page/?q=a%20b')).toMatchObject({ location: `${WWW}/some%20page/?q=a%20b` });
+                expect(at('/some%20page')).toMatchObject({ location: `${WWW}/some%20page/` });
+                expect(at('/caf%C3%A9/')).toMatchObject({ location: `${WWW}/caf%c3%a9/` });
+                expect(at('/a%23b/')).toMatchObject({ location: `${WWW}/a%23b/` });
+                expect(at('/a%26b/')).toMatchObject({ location: `${WWW}/a&b/` });
+                // A %3F would become the start of a query string, which Apache refuses.
+                expect(at('/a%3Fb/')).toMatchObject({ type: 'status', status: 403 });
+            }
+        );
+
+        it('matches a single-hop rule against the decoded path, keeping the query', () => {
+            for (const { from, to } of SITE_SINGLE_HOP_REWRITES.filter((rule) => !rule.to.includes('#')).slice(0, 20)) {
+                const encoded = from.replace(
+                    /[a-z]/,
+                    (letter) => `%${letter.charCodeAt(0).toString(16).toUpperCase()}`
+                );
+                expect(encoded).not.toBe(from);
+                for (const origin of [WWW, 'http://ag-grid.com']) {
+                    const chain = followRedirects(files(), { url: `${origin}${encoded}?q=a%20b` });
+                    expect(
+                        chain.hops.map((hop) => hop.location),
+                        `${origin}${encoded}`
+                    ).toEqual([`${to}?q=a%20b`]);
+                }
+            }
+        });
+
+        it('adds the trailing slash to a directory path in one hop, keeping the query', () => {
+            expect(route(files(), { url: `${WWW}/react-data-grid/getting-started?x=1` })).toMatchObject({
+                status: 301,
+                location: `${WWW}/react-data-grid/getting-started/?x=1`,
+            });
+            // Files (a dot in the path) are left alone.
+            expect(route(files(), { url: `${WWW}/robots.txt` })).toMatchObject({ type: 'serve' });
+        });
+
+        it('does not touch hosts it does not own, such as charts.ag-grid.com or studio.ag-grid.com', () => {
+            for (const host of ['charts.ag-grid.com', 'studio.ag-grid.com']) {
+                expect(route(files(), { url: `https://${host}/react-data-grid/` }), host).toMatchObject({
+                    type: 'serve',
+                });
+            }
+        });
+    });
+
+    // SE-85..SE-113 (SE-86, SE-91 in particular): blog.ag-grid.com moved to www.ag-grid.com/blog/.
+    // Every blog-host URL must leave the blog host in ONE hop - to its final destination, never via
+    // an intermediate slug Ghost would redirect again - or answer 410 for content that is gone.
+    describe('blog.ag-grid.com migration (SE-85..SE-113)', () => {
+        const files = () => [compileHtaccess(productionContent)];
+        const onBlog = (path: string) => route(files(), { url: `https://blog.ag-grid.com${path}` });
+
+        it.each([
+            // host swap, path kept
+            ['/some-post/', 'https://www.ag-grid.com/blog/some-post/'],
+            ['/', 'https://www.ag-grid.com/blog/'],
+            ['/some-post/?ref=x', 'https://www.ag-grid.com/blog/some-post/?ref=x'],
+            // AMP and feeds go straight to the Ghost equivalent
+            ['/some-post/amp/', 'https://www.ag-grid.com/blog/some-post/'],
+            ['/feed/', 'https://www.ag-grid.com/blog/rss/'],
+            ['/rss/', 'https://www.ag-grid.com/blog/rss/'],
+            ['/tag/javascript/feed/', 'https://www.ag-grid.com/blog/tag/javascript/rss/'],
+            ['/author/sean/rss/', 'https://www.ag-grid.com/blog/author/sean/rss/'],
+            ['/page/2/', 'https://www.ag-grid.com/blog/page/2/'],
+            ['/sitemap-posts.xml', 'https://www.ag-grid.com/blog/sitemap-posts.xml'],
+            ['/content/images/2020/a.png', 'https://www.ag-grid.com/blog/content/images/2020/a.png'],
+            // renamed tags map directly, not via the old tag
+            ['/tag/react/', 'https://www.ag-grid.com/blog/tag/react-data-grid/'],
+            ['/tag/react/feed/', 'https://www.ag-grid.com/blog/tag/react-data-grid/rss/'],
+            ['/tag/angular-grid/', 'https://www.ag-grid.com/blog/tag/angular/'],
+            ['/tag/vue-table/page/3/', 'https://www.ag-grid.com/blog/tag/vuejs/'],
+            ['/tag/jest/rss/', 'https://www.ag-grid.com/blog/tag/testing/rss/'],
+            // retired and renamed posts resolve in one hop
+            ['/showcase/', 'https://www.ag-grid.com/blog/ag-grid-showcase-examples-demos-samples-and-extensions/'],
+            ['/SHOWCASE/amp/', 'https://www.ag-grid.com/blog/ag-grid-showcase-examples-demos-samples-and-extensions/'],
+            [
+                '/javascript-grid-comparison-column-pinning-ag-grid/',
+                'https://www.ag-grid.com/react-data-grid/column-pinning/',
+            ],
+            ['/vuestic-ui-app-with-ag-grid-tutorial/', 'https://epicmax.co/blog/vuestic-ui-with-ag-grid'],
+            ['/private/', 'https://www.ag-grid.com/blog/'],
+            // WordPress-era permalinks
+            ['/2018/11/29/inside-fiber/', 'https://www.ag-grid.com/blog/inside-fiber/'],
+            ['/index.php/2019/01/02/some-post/feed/', 'https://www.ag-grid.com/blog/some-post/'],
+            [
+                '/2018/04/20/get-started-with-react-grid-in-5-minutes/',
+                'https://www.ag-grid.com/blog/react-get-started-with-react-grid-in-5-minutes/',
+            ],
+            ['/index.php/category/react/', 'https://www.ag-grid.com/blog/tag/react-data-grid/'],
+            ['/index.php/category/angular/feed/', 'https://www.ag-grid.com/blog/tag/angular/rss/'],
+            ['/index.php/tag/vue/', 'https://www.ag-grid.com/blog/tag/vue/'],
+            ['/index.php/author/niall/', 'https://www.ag-grid.com/blog/author/niall/'],
+            ['/index.php/feed/', 'https://www.ag-grid.com/blog/rss/'],
+            [
+                '/index.php/2018/11/29/inside-fiber',
+                'https://www.ag-grid.com/blog/inside-fiber-an-in-depth-overview-of-the-new-reconciliation-algorithm-in-react/',
+            ],
+        ])('%s -> %s in one hop', (path, location) => {
+            expect(onBlog(path)).toMatchObject({ type: 'redirect', status: 301, location });
+        });
+
+        it.each([
+            '/whats-new-in-ag-grid-v24/',
+            '/whats-new-in-ag-grid-v24/amp/amp/',
+            '/Whats-New-In-AG-Grid-V24/feed/',
+            '/avoiding-react-18-double-mount/',
+            '/email-sign-up/',
+            '/untitled/anything/',
+            '/wp-json/wp/v2/posts',
+            '/index.php/wp-json/',
+            '/wp-includes/js/jquery.js',
+            '/wp-content/plugins/x/readme.txt',
+            '/rsslatest.xml',
+            '/.well-known/nodeinfo',
+            '/.ghost/activitypub/inbox',
+            '/ag-grid-vs-datatables/',
+            '/tag/sorting/',
+            '/tag/redux/page/2/',
+        ])('%s is 410 Gone (SE-91 / SE-188)', (path) => {
+            expect(onBlog(path)).toMatchObject({ type: 'status', status: 410 });
+        });
+
+        it('never serves anything from the blog host: every request leaves it or is Gone', () => {
+            const probes = [
+                '/',
+                '/robots.txt',
+                '/react-data-grid/getting-started/',
+                '/charts/react/bar-series/',
+                '/studio/',
+                '/archive/36.0.0/',
+                '/llms.txt',
+                '/sitemap.xml',
+                '/favicon.ico',
+                '/index.php',
+            ];
+            for (const path of probes) {
+                const outcome = onBlog(path);
+                expect(outcome.type, path).not.toBe('serve');
+                if (outcome.type === 'redirect') {
+                    expect(new URL(outcome.location).hostname, path).not.toBe('blog.ag-grid.com');
+                }
+            }
+        });
+
+        it('every docs page a blog redirect targets is served directly, without another hop on www', () => {
+            const docsTargets = [
+                ...productionContent.matchAll(/https:\/\/www\.ag-grid\.com\/([a-z]+-data-grid\/[^ ]+\/) \[/g),
+            ]
+                .map(([, path]) => `/${path}`)
+                .filter((path) => !path.includes('$'));
+            expect(docsTargets.length).toBeGreaterThan(10);
+            for (const path of new Set(docsTargets)) {
+                expect(route(files(), { url: `https://www.ag-grid.com${path}` }), path).toMatchObject({
+                    type: 'serve',
+                });
+            }
+        });
+    });
+
+    describe('security headers and CSP (AG-17133, AG-17134, SE-38, SE-40, SE-93)', () => {
+        const pageClasses: [string, string][] = [
+            ['site', '/react-data-grid/getting-started/index.html'],
+            ['home', '/index.html'],
+            ['examples', '/examples/cell-editing/basic/reactFunctionalTs/index.html'],
+            ['archive', '/archive/36.0.0/react-data-grid/getting-started/index.html'],
+            ['campaigns', '/campaigns/bryntum-gantt/index.html'],
+            ['archived campaigns', '/archive/36.0.0/campaigns/bryntum-gantt/index.html'],
+            ['ecommerce', '/ecommerce/index.html'],
+        ];
+        const cspOf = (headers: Map<string, string[]>) => headers.get('content-security-policy') ?? [];
+        const scriptSrc = (csp: string) => csp.match(/script-src ([^;]*)/)?.[1] ?? '';
+
+        it.each(pageClasses)(
+            '%s: one enforcing CSP with frame-ancestors, both other headers always, no X-Frame-Options',
+            (_, uri) => {
+                const files = [compileHtaccess(productionContent)];
+                for (const status of [200, 301, 404, 410]) {
+                    const headers = responseHeaders(files, {
+                        uri: status === 404 ? '/404.html' : uri,
+                        status,
+                        contentType: 'text/html',
+                        onSuccess: status === 404 ? true : undefined,
+                    });
+                    expect(cspOf(headers), `${uri} ${status}`).toHaveLength(1);
+                    expect(cspOf(headers)[0]).toMatch(/frame-ancestors 'self' https:\/\/\*\.ag-grid\.com/);
+                    expect(headers.has('content-security-policy-report-only'), `${uri} ${status}`).toBe(
+                        PRODUCTION_CSP_PHASE === 'report-only'
+                    );
+                    expect(headers.get('referrer-policy'), `${uri} ${status}`).toEqual([
+                        'strict-origin-when-cross-origin',
+                    ]);
+                    expect(headers.get('permissions-policy'), `${uri} ${status}`).toEqual([
+                        'geolocation=(), microphone=(), camera=()',
+                    ]);
+                    expect(headers.has('x-frame-options')).toBe(false);
+                }
+            }
+        );
+
+        it("scopes 'unsafe-eval' and the bryntum.com allowance to the paths that need them", () => {
+            const files = [compileHtaccess(productionContent)];
+            const enforced = (uri: string) =>
+                cspOf(responseHeaders(files, { uri, status: 200, contentType: 'text/html' }))[0];
+            expect(scriptSrc(enforced('/react-data-grid/getting-started/index.html'))).not.toContain("'unsafe-eval'");
+            expect(scriptSrc(enforced('/examples/a/b/index.html'))).toContain("'unsafe-eval'");
+            expect(scriptSrc(enforced('/archive/36.0.0/react-data-grid/x/index.html'))).toContain("'unsafe-eval'");
+            expect(enforced('/campaigns/bryntum-gantt/index.html')).toContain('https://bryntum.com');
+            expect(scriptSrc(enforced('/campaigns/bryntum-gantt/index.html'))).not.toContain("'unsafe-eval'");
+            expect(enforced('/archive/36.0.0/campaigns/bryntum-gantt/index.html')).toContain('https://bryntum.com');
+            expect(enforced('/react-data-grid/getting-started/index.html')).not.toContain('bryntum.com');
+            expect(scriptSrc(enforced('/ecommerce/index.html'))).toContain("'unsafe-eval'");
+        });
+
+        it('staging: one enforcing CSP per class, and none at all under /branch-builds/', () => {
+            const files = [compileHtaccess(stagingContent)];
+            for (const [, uri] of pageClasses) {
+                expect(cspOf(responseHeaders(files, { uri, status: 200, contentType: 'text/html' })), uri).toHaveLength(
+                    1
+                );
+            }
+            expect(
+                responseHeaders(files, {
+                    uri: '/branch-builds/x/index.html',
+                    status: 200,
+                    contentType: 'text/html',
+                }).has('content-security-policy')
+            ).toBe(false);
+        });
+
+        // /blog/ is reverse-proxied to Ghost and never reads the .htaccess; the vhost fragment
+        // carries its headers, each guarded by an expr on the path.
+        it('blog (vhost fragment): one enforcing CSP, both other headers, X-Robots-Tag stripped, nothing outside /blog/', () => {
+            const vhost = [compileHtaccess(getBlogVhostHeaderFragment({ env: 'production' }, 'enforce'))];
+            const blog = responseHeaders(vhost, { uri: '/blog/some-post/', status: 200, contentType: 'text/html' });
+            expect(cspOf(blog)).toHaveLength(1);
+            expect(cspOf(blog)[0]).toContain('frame-ancestors');
+            expect(blog.get('referrer-policy')).toEqual(['strict-origin-when-cross-origin']);
+            expect(blog.get('permissions-policy')).toEqual(['geolocation=(), microphone=(), camera=()']);
+            expect(blog.has('x-robots-tag')).toBe(false);
+            expect([...responseHeaders(vhost, { uri: '/react-data-grid/', status: 200 }).keys()]).toEqual([]);
+        });
+
+        describe('blog asset cache cap (vhost fragment)', () => {
+            const CAP = [
+                `Header set Cache-Control "public, max-age=604800" "expr=%{REQUEST_URI} =~ m#^/blog/(assets|public|content)/# && %{REQUEST_STATUS} -in {'200', '206', '304'}"`,
+                `Header set Cache-Control "public, max-age=604800" "expr=%{REQUEST_URI} =~ m#^/blog/# && %{REQUEST_STATUS} == '301'"`,
+            ];
+            const fragment = () => getBlogVhostHeaderFragment({ env: 'production' }, 'enforce');
+
+            it('ends the fragment with exactly the cap lines, after the existing lines', () => {
+                const lines = fragment().split('\n');
+                expect(lines.slice(-CAP.length)).toEqual(CAP);
+                const headers = lines.filter((l) => l.startsWith('Header '));
+                expect(headers.slice(0, -CAP.length)).toEqual([
+                    'Header always unset X-Robots-Tag "expr=%{REQUEST_URI} =~ m#^/blog/#"',
+                    'Header always unset Referrer-Policy "expr=%{REQUEST_URI} =~ m#^/blog/#"',
+                    'Header always set Referrer-Policy "strict-origin-when-cross-origin" "expr=%{REQUEST_URI} =~ m#^/blog/#"',
+                    'Header always unset Permissions-Policy "expr=%{REQUEST_URI} =~ m#^/blog/#"',
+                    'Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()" "expr=%{REQUEST_URI} =~ m#^/blog/#"',
+                    'Header always unset Content-Security-Policy "expr=%{REQUEST_URI} =~ m#^/blog/#"',
+                    expect.stringMatching(
+                        /^Header always set Content-Security-Policy "default-src 'self'; .*" "expr=%\{REQUEST_URI\} =~ m#\^\/blog\/#"$/
+                    ),
+                ]);
+            });
+
+            it('caps Ghost assets and uploads at 7 days on 200, 206 and 304 only, and nothing else under /blog/', () => {
+                const vhost = [compileHtaccess(fragment())];
+                const cacheControl = (uri: string, status: number) =>
+                    responseHeaders(vhost, { uri, status, contentType: 'text/css' }).get('cache-control');
+                for (const uri of [
+                    '/blog/assets/built/screen.css',
+                    '/blog/public/cards.min.js',
+                    '/blog/content/images/size/w100/2024/08/me.jpeg',
+                    '/blog/content/media/2026/08/clip.mp4',
+                    '/blog/content/files/2026/08/doc.pdf',
+                ]) {
+                    for (const status of [200, 206, 304]) {
+                        expect(cacheControl(uri, status), `${uri} ${status}`).toEqual(['public, max-age=604800']);
+                    }
+                    // Ghost's own no-cache on a 404 is left alone (onsuccess table, and not in the list).
+                    expect(
+                        responseHeaders(vhost, { uri, status: 404, contentType: 'text/html', onSuccess: true }).get(
+                            'cache-control'
+                        )
+                    ).toBeUndefined();
+                }
+                expect(cacheControl('/blog/some-post/', 200)).toBeUndefined();
+                expect(cacheControl('/blog/contentx/a.jpg', 200)).toBeUndefined();
+                expect(cacheControl('/assets/built/screen.css', 200)).toBeUndefined();
+                expect(cacheControl('/content/images/a.jpg', 200)).toBeUndefined();
+            });
+
+            it("caps Ghost's own 301s anywhere under /blog/, and leaves Apache's redirects and other statuses alone", () => {
+                const vhost = [compileHtaccess(fragment())];
+                // A proxied 301 is in headers_out like any proxied response: the onsuccess table applies.
+                const ghost = (uri: string, status: number) =>
+                    responseHeaders(vhost, { uri, status, contentType: 'text/plain', onSuccess: true }).get(
+                        'cache-control'
+                    );
+                for (const uri of ['/blog/author/sean', '/blog/Some-Post/', '/blog/amp/', '/blog/content/images/x']) {
+                    expect(ghost(uri, 301), uri).toEqual(['public, max-age=604800']);
+                }
+                for (const status of [302, 307, 308, 410]) {
+                    expect(ghost('/blog/author/sean', status), String(status)).toBeUndefined();
+                }
+                expect(ghost('/author/sean', 301)).toBeUndefined();
+                // Apache's own redirect (mod_rewrite R=301): the onsuccess table never reaches it.
+                expect(
+                    responseHeaders(vhost, { uri: '/blog/sitemap.xml', status: 301, contentType: 'text/html' }).get(
+                        'cache-control'
+                    )
+                ).toBeUndefined();
+            });
+        });
+    });
+
+    describe('SE-81: Link header only on successful HTML documents', () => {
+        const files = () => [compileHtaccess(productionContent)];
+        const link = (uri: string, status: number, contentType: string, onSuccess?: boolean) =>
+            responseHeaders(files(), { uri, status, contentType, onSuccess }).get('link');
+
+        it('is on a 200 HTML page, pointing at llms.txt, the sitemap index and the MCP docs', () => {
+            expect(link('/react-data-grid/getting-started/index.html', 200, 'text/html; charset=utf-8')).toEqual([
+                '</llms.txt>; rel=describedby, </sitemap-index.xml>; rel=sitemap, <https://www.ag-grid.com/javascript-data-grid/mcp-server/>; rel=related',
+            ]);
+        });
+
+        it.each([
+            ['the 404 page', '/404.html', 404, 'text/html', true],
+            ['a redirect', '/react-data-grid/getting-started/index.html', 301, 'text/html', false],
+            ['an image', '/images/logo.png', 200, 'image/png', undefined],
+            ['a script', '/_astro/a.abcdefgh.js', 200, 'text/javascript', undefined],
+            ['llms.txt', '/llms.txt', 200, 'text/plain', undefined],
+            ['the sitemap', '/sitemap-index.xml', 200, 'application/xml', undefined],
+            ['a markdown twin', '/react-data-grid/getting-started.md', 200, 'text/markdown', undefined],
+        ] as const)('is not on %s', (_, uri, status, contentType, onSuccess) => {
+            expect(link(uri, status, contentType, onSuccess)).toBeUndefined();
+        });
+
+        it('is on staging too, so it can be verified there', () => {
+            expect(
+                responseHeaders([compileHtaccess(stagingContent)], {
+                    uri: '/index.html',
+                    status: 200,
+                    contentType: 'text/html',
+                }).has('link')
+            ).toBe(true);
+        });
+    });
+
+    // SE-189 and the 2026-09-18 crawler-storm work: what each class of response is cached for.
+    describe('Cache-Control per response class (SE-189)', () => {
+        const LONG = 'public, max-age=604800, s-maxage=31536000';
+        const DAY = 'public, max-age=86400';
+        const cache = (content: string, uri: string, contentType: string, status = 200) =>
+            responseHeaders([compileHtaccess(content)], { uri, status, contentType }).get('cache-control');
+
+        it.each([
+            ['/index.html', 'text/html; charset=utf-8', ['no-cache']],
+            ['/react-data-grid/getting-started/index.html', 'text/html', ['no-cache']],
+            ['/example/index.html', 'text/html', ['no-cache']],
+            ['/example-assets/flags/index.html', 'text/html', ['no-cache']],
+            ['/images/foo/index.html', 'text/html', ['no-cache']],
+            ['/_astro/design-system.BcXAtF3c.css', 'text/css', [LONG]],
+            ['/_astro/fonts/2eb6e0e4fc33dd24.woff2', 'font/woff2', [LONG]],
+            // Unhashed, so not long-cached: the default day.
+            ['/_astro/unhashed.css', 'text/css', [DAY]],
+            ['/images/ag-logos/png-logos/react.png', 'image/png', [DAY]],
+            ['/example-assets/olympic-winners.json', 'application/json', [DAY]],
+            ['/theme-icons/quartz/quartz-icons.zip', 'application/zip', [DAY]],
+            ['/videos/getting-started.json', 'application/json', [DAY]],
+            ['/scripts/gtm-init.js', 'text/javascript', [DAY]],
+            ['/robots.txt', 'text/plain', [DAY]],
+            ['/favicon.ico', 'image/x-icon', [DAY]],
+            // Classes with no rule of their own take the default rather than a heuristic lifetime.
+            ['/llms.txt', 'text/plain', [DAY]],
+            ['/sitemap-index.xml', 'application/xml', [DAY]],
+            ['/sitemap-0.xml', 'application/xml', [DAY]],
+            ['/.well-known/mcp/server-card.json', 'application/json', [DAY]],
+            ['/.well-known/acme-challenge/Abc_123-xyz', 'text/plain', [DAY]],
+            ['/fonts/pdf-export/IBMPlexSansJP-Bold.ttf', 'font/ttf', [DAY]],
+            ['/downloads/ag-grid-design-system-30.1.0.zip', 'application/zip', [DAY]],
+            ['/debug/all-docs-pages.json', 'application/json', [DAY]],
+            ['/charts/homepage/examples.js', 'text/javascript', [DAY]],
+            ['/studio/example-assets/nuclear_walletcards.csv', 'text/csv', [DAY]],
+            ['/charts/sitemap-0.xml', 'application/xml', [DAY]],
+            ['/charts/llms.txt', 'text/plain', [DAY]],
+            ['/studio/robots-disallow.json', 'application/json', [DAY]],
+            // Fetched at runtime and changed at a release: revalidated, never the default day.
+            ['/changelog/changelog.json', 'application/json', ['no-cache']],
+            ['/changelog/releaseVersionNotes.json', 'application/json', ['no-cache']],
+            ['/pipeline/pipeline.json', 'application/json', ['no-cache']],
+            ['/roadmap/roadmap.json', 'application/json', ['no-cache']],
+            ['/charts/changelog/changelog.json', 'application/json', ['no-cache']],
+            ['/studio/pipeline/pipeline.json', 'application/json', ['no-cache']],
+            ['/files/ag-grid-community/styles/ag-grid.css', 'text/css', ['no-cache']],
+            ['/files/reference/column-options.AUTO.json', 'application/json', ['no-cache']],
+            ['/studio/files/ag-studio/dist/umd/ag-studio.min.js', 'text/javascript', ['no-cache']],
+            ['/charts/dev/ag-charts-community/dist/umd/ag-charts-community.js', 'text/javascript', ['no-cache']],
+            ['/charts/dev/resolved-interfaces.json', 'application/json', ['no-cache']],
+            ['/example-runner/example-runner.js', 'text/javascript', ['no-cache']],
+            ['/charts/example-runner/charts-angular-boilerplate/main.ts', 'application/typescript', ['no-cache']],
+            [
+                '/examples/column-definitions/column-definition-update/angular/app.component.ts',
+                'application/typescript',
+                ['no-cache'],
+            ],
+            ['/charts/react/bar-series/examples/basic/data.js', 'text/javascript', ['no-cache']],
+            ['/studio/examples/ai/ai-overview-example/angular/ag-example-styles.css', 'text/css', ['no-cache']],
+            // The Bryntum campaign stylesheet changes with its no-cache page (Sean, 2026-10-02).
+            ['/styles/bryntum-demo.css', 'text/css', ['no-cache']],
+            ['/styles/other.css', 'text/css', [DAY]],
+            // ...an image inside an example directory too, though the asset rule matches it.
+            ['/examples/some-page/some-example/images/logo.png', 'image/png', ['no-cache']],
+            // Not a feed: a page directory's HTML, and a JSON file outside the three feed directories.
+            ['/changelog/releases/index.html', 'text/html', ['no-cache']],
+            ['/changelog-archive/changelog.json', 'application/json', [DAY]],
+            // Released archives keep their long cache; the in-flight block is tested below.
+            ['/archive/36.2.0/files/ag-grid-community/dist/ag-grid-community.min.js', 'text/javascript', [LONG]],
+            ['/archive/36.2.0/examples/a/b/angular/main.ts', 'application/typescript', [LONG]],
+            ['/archive/36.2.0/changelog/changelog.json', 'application/json', [LONG]],
+            ['/archive/36.2.0/sitemap-0.xml', 'application/xml', [LONG]],
+            ['/studio/archive/1.0.0/_astro/a.abcdefgh.js', 'text/javascript', ['no-cache']],
+            ['/studio/archive/1.0.0/index.html', 'text/html', ['no-cache']],
+            ['/studio/index.html', 'text/html', ['no-cache']],
+        ])('production: %s (%s) -> %j', (uri, contentType, expected) => {
+            expect(cache(productionContent, uri, contentType)).toEqual(expected);
+        });
+
+        it.each([
+            ['/sitemap-index.xml', 'application/xml'],
+            ['/llms.txt', 'text/plain'],
+            ['/.well-known/acme-challenge/Abc_123-xyz', 'text/plain'],
+            ['/images/logo.png', 'image/png'],
+        ])('staging: %s (%s) revalidates by default rather than taking a heuristic lifetime', (uri, contentType) => {
+            expect(cache(stagingContent, uri, contentType)).toEqual(['no-cache']);
+        });
+
+        it('never long-caches HTML outside a released archive', () => {
+            const htmlUris = [
+                '/index.html',
+                '/react-data-grid/index.html',
+                '/images/a/index.html',
+                '/scripts/index.html',
+                '/archive/index.html',
+                '/documentation-archive/index.html',
+                '/charts/documentation-archive/index.html',
+            ];
+            for (const uri of htmlUris) {
+                expect(cache(productionContent, uri, 'text/html'), uri).toEqual(['no-cache']);
+            }
+        });
+
+        it('serves 404s through the error page, which is never cached long', () => {
+            for (const content of [productionContent, stagingContent]) {
+                const files = [compileHtaccess(content)];
+                const errorPage = files[0].errorDocuments.get(404)!;
+                expect(errorPage).toBe('/404.html');
+                expect(
+                    responseHeaders(files, {
+                        uri: errorPage,
+                        status: 404,
+                        contentType: 'text/html',
+                        onSuccess: true,
+                    }).get('cache-control')
+                ).toEqual(['no-cache']);
+            }
+        });
+
+        // Charts archives from 14.0.0 point their ErrorDocument at a page under the archive, so the
+        // 404 is built for a URI the released-archive rule matches (verified on Apache 2.4.52).
+        describe('archive error responses', () => {
+            const files = () => [compileHtaccess(productionContent)];
+            const archived = (uri: string, status: number) =>
+                responseHeaders(files(), { uri, status, contentType: 'text/html' }).get('cache-control');
+            const errorPage = (uri: string, status = 404) =>
+                responseHeaders(files(), { uri, status, contentType: 'text/html', onSuccess: true }).get(
+                    'cache-control'
+                );
+
+            it.each([
+                '/charts/archive/14.0.0/404.html',
+                '/charts/archive/14.2.0/404.html',
+                '/charts/archive/14.3.0/404.html',
+                '/archive/36.2.0/404.html',
+            ])('an error served by the ErrorDocument %s is no-cache, not the long cache', (uri) => {
+                expect(errorPage(uri)).toEqual(['no-cache']);
+                expect(errorPage(uri, 410)).toEqual(['no-cache']);
+            });
+
+            it('leaves 12.x and 13.x charts archives on the charts error page, outside the archive', () => {
+                // Their ErrorDocument is /charts/404.html, which no archive rule ever matched.
+                expect(errorPage('/charts/404.html')).toEqual(['no-cache']);
+            });
+
+            it('keeps the long cache on every successful archive response, and on a 304', () => {
+                for (const uri of [
+                    '/charts/archive/14.0.0/react/quick-start/index.html',
+                    '/charts/archive/12.3.1/index.html',
+                    '/archive/36.2.0/react-data-grid/getting-started/index.html',
+                    '/archive/36.2.0/images/logo.svg',
+                ]) {
+                    for (const status of [200, 206, 304]) {
+                        expect(archived(uri, status), `${uri} ${status}`).toEqual([LONG]);
+                    }
+                }
+            });
+
+            it('still lets the in-flight block override it', () => {
+                const inFlight = [
+                    compileHtaccess(
+                        getHtaccessContent({
+                            env: 'production',
+                            uncachedGridArchive: '36.3.0',
+                            uncachedChartsArchive: '14.3.0',
+                        })
+                    ),
+                ];
+                for (const page of ['/archive/36.3.0/', '/charts/archive/14.3.0/']) {
+                    for (const status of [200, 304]) {
+                        expect(
+                            responseHeaders(inFlight, {
+                                uri: `${page}index.html`,
+                                status,
+                                contentType: 'text/html',
+                            }).get('cache-control'),
+                            `${page} ${status}`
+                        ).toEqual(['no-cache']);
+                    }
+                    expect(
+                        responseHeaders(inFlight, {
+                            uri: `${page}404.html`,
+                            status: 404,
+                            contentType: 'text/html',
+                            onSuccess: true,
+                        }).get('cache-control')
+                    ).toEqual(['no-cache']);
+                }
+            });
+
+            it('sits after the long-cache line it overrides, and before the studio and in-flight rules', () => {
+                const lines = productionContent.split('\n');
+                const longAt = lines.findIndex((l) => l.includes('^/(charts/)?archive/[0-9]#"'));
+                const errorAt = lines.findIndex(
+                    (l) => l.includes('REQUEST_STATUS} -ge 400') && l.includes('archive/[0-9]#')
+                );
+                const studioAt = lines.findIndex((l) => l.includes('m#^/studio/archive/#'));
+                const inFlightAt = lines.findIndex((l) => l === IN_FLIGHT_BEGIN);
+                expect(lines[longAt]).toContain('s-maxage=31536000');
+                expect(errorAt).toBeGreaterThan(longAt);
+                expect(studioAt).toBeGreaterThan(errorAt);
+                expect(inFlightAt).toBeGreaterThan(errorAt);
+            });
+
+            it('keeps redirects on the single no-cache from the always table', () => {
+                for (const status of [301, 302]) {
+                    expect(archived('/charts/archive/14.0.0/react/fonts', status)).toEqual(['no-cache']);
+                }
+            });
+        });
+
+        it('staging never caches anything long, so testers never see a stale asset', () => {
+            for (const [uri, type] of [
+                ['/_astro/design-system.BcXAtF3c.css', 'text/css'],
+                ['/images/a.png', 'image/png'],
+                ['/archive/36.0.0/index.html', 'text/html'],
+            ]) {
+                expect(cache(stagingContent, uri, type) ?? [], uri).not.toContain(LONG);
+                expect(cache(stagingContent, uri, type) ?? [], uri).not.toContain(DAY);
+            }
+        });
+    });
+
+    // SE-80: Accept: text/markdown negotiates each docs page to its .md twin, and every response
+    // for a negotiated URL - HTML or markdown - must say Vary: Accept so a shared cache keeps them apart.
+    describe('SE-80: markdown negotiation, end to end', () => {
+        const WWW = 'https://www.ag-grid.com';
+        const negotiable = [
+            '/react-data-grid/cell-editing/',
+            '/javascript-data-grid/getting-started/',
+            '/react-data-grid/',
+            '/about/',
+            '/community/events/',
+            '/eula/community/',
+            '/session/opening-keynote/',
+            '/campaigns/bryntum-gantt/',
+            '/landing-pages/react-data-grid/',
+            '/theme-builder/',
+        ];
+        const notNegotiable = [
+            '/javascript-data-grid/',
+            '/react-data-grid/errors/123/',
+            '/data-grid/cell-editing/',
+            '/contact/success/',
+            '/eula/',
+            '/examples/cell-editing/component-editor/reactFunctionalTs/',
+            '/debug/files/',
+        ];
+        const twin = (path: string) => (path === '/' ? '/index.md' : `${path.replace(/\/$/, '')}.md`);
+        const everyTwinExists = () => true;
+
+        const negotiate = (content: string, path: string, accept: string) =>
+            route([compileHtaccess(content)], { url: `${WWW}${path}`, accept, fileExists: everyTwinExists });
+
+        it.each([...negotiable, '/'])(
+            '%s serves its twin to Accept: text/markdown, with and without the slash',
+            (path) => {
+                for (const content of [productionContent, stagingContent]) {
+                    for (const requested of new Set([path, path === '/' ? '/' : path.replace(/\/$/, '')])) {
+                        // A slash-less URL with its own single-hop rewrite is slashed first; the
+                        // slashed URL then negotiates.
+                        const first = negotiate(content, requested, 'text/markdown');
+                        const variant =
+                            first.type === 'redirect' && first.location === `${WWW}${path}` ? path : requested;
+                        expect(negotiate(content, variant, 'text/markdown'), requested).toEqual({
+                            type: 'serve',
+                            path: twin(path),
+                            query: '',
+                            vary: ['Accept'],
+                        });
+                    }
+                }
+            }
+        );
+
+        it.each([...negotiable, '/'])('%s carries Vary: Accept on both the HTML and the markdown response', (path) => {
+            for (const content of [productionContent, stagingContent]) {
+                const files = [compileHtaccess(content)];
+                const html = responseHeaders(files, {
+                    uri: `${path}index.html`,
+                    status: 200,
+                    contentType: 'text/html',
+                });
+                expect(html.get('vary')?.join(', '), `${path} html`).toMatch(/\bAccept\b/);
+                const markdown = negotiate(content, path, 'text/markdown');
+                const md = responseHeaders(files, {
+                    uri: twin(path),
+                    status: 200,
+                    contentType: 'text/markdown',
+                    varyFromRewrite: markdown.type === 'serve' ? markdown.vary : [],
+                });
+                expect(md.get('vary')?.join(', '), `${path} md`).toMatch(/\bAccept\b/);
+            }
+        });
+
+        it.each(notNegotiable)('%s is never negotiated and keeps a URL-only cache key', (path) => {
+            const outcome = negotiate(productionContent, path, 'text/markdown');
+            expect(outcome).not.toMatchObject({ path: twin(path) });
+            expect(outcome.type === 'serve' ? outcome.vary : []).toEqual([]);
+            const headers = responseHeaders([compileHtaccess(productionContent)], {
+                uri: `${path}index.html`,
+                status: 200,
+                contentType: 'text/html',
+            });
+            expect(headers.get('vary') ?? []).toEqual([]);
+        });
+
+        it('serves HTML to a browser, and leaves a page without a twin on disk untouched', () => {
+            const browser = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8';
+            expect(negotiate(productionContent, '/about/', browser)).toMatchObject({ path: '/about/', vary: [] });
+            expect(
+                route([compileHtaccess(productionContent)], { url: `${WWW}/about/`, accept: 'text/markdown' })
+            ).toMatchObject({ type: 'serve', path: '/about/' });
+        });
+
+        it('does not loop a direct .md request into .md.md', () => {
+            expect(negotiate(productionContent, '/about.md', 'text/markdown')).toMatchObject({ path: '/about.md' });
+        });
+
+        // An explicit refusal must win: q=0 means "not acceptable" (RFC 9110 §12.4.2), but the
+        // rule is a substring match on the header.
+        it.fails('waf-finding.md §11: does not serve markdown to Accept: text/markdown;q=0', () => {
+            expect(negotiate(productionContent, '/about/', 'text/html, text/markdown;q=0')).toMatchObject({
+                path: '/about/',
+            });
+        });
+
+        it('registers .md as UTF-8 text/markdown, and .webp as an image', () => {
+            for (const content of [productionContent, stagingContent]) {
+                expect(content).toMatch(/^AddType text\/markdown md$/m);
+                expect(content).toMatch(/^AddCharset utf-8 \.md$/m);
+                expect(content).toMatch(/^AddType image\/webp \.webp$/m);
+            }
         });
     });
 
