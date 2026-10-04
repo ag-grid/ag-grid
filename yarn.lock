@@ -14152,6 +14152,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ag-e2e-testing@workspace:testing/e2e":
+  version: 0.0.0-use.local
+  resolution: "ag-e2e-testing@workspace:testing/e2e"
+  dependencies:
+    "@playwright/test": "npm:^1.63.0"
+    "@types/node": "npm:^22.15.3"
+    ag-grid-community: "npm:36.2.0-beta.20261002.1053"
+    ag-grid-enterprise: "npm:36.2.0-beta.20261002.1053"
+    playwright-ctrf-json-reporter: "npm:0.0.29"
+  languageName: unknown
+  linkType: soft
+
 "ag-grid-accessibility@workspace:testing/accessibility":
   version: 0.0.0-use.local
   resolution: "ag-grid-accessibility@workspace:testing/accessibility"
