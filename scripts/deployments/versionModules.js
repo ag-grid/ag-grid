@@ -184,7 +184,9 @@ function updateDependency(fileContents, property, dependencyVersion, chartsDepen
     const dependencyContents = fileContents[property];
 
     const gridDependency = function (key) {
-        return key.startsWith('ag-grid') || key.startsWith('@ag-grid') || key === 'ag-stack' || key === 'ag-e2e-testing';
+        return (
+            key.startsWith('ag-grid') || key.startsWith('@ag-grid') || key === 'ag-stack' || key === 'ag-e2e-testing'
+        );
     };
     const chartDependency = function (key) {
         return key.startsWith('ag-charts') || key.startsWith('@ag-charts');
