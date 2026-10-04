@@ -10,6 +10,10 @@ RELEASE_VERSION=$1
 RELEASE_BRANCH=$2
 ALLOWED_FILES="package.json|yarn.lock|version.ts|licenseManager.ts|.env|README.md|baseUrl.ts|documentation/ag-grid-docs/src/content/versions/ag-grid-versions.json|.mdoc|SECURITY.md"
 
+# Charts versions may only exist on the internal registry, so resolve against it as
+# `npm run bootstrap` does.
+export YARN_NPM_REGISTRY_SERVER="https://registry.ag-grid.com"
+
 # The bump rewrites dependency versions in package.json files, so yarn.lock has to be regenerated
 # in the same commit. CI runs `yarn install --immutable` on an exact node_modules cache hit and
 # fails every job on the branch when the lockfile is stale, so run the same check here before the
