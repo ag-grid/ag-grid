@@ -1,8 +1,10 @@
 #!/bin/bash
 
+set -euo pipefail
+
 TIMESTAMP=`date +%Y%m%d`
 
-SSH_LOCATION=$SSH_FILE
+SSH_LOCATION=${SSH_FILE:-}
 
 if [ -z "$SSH_LOCATION" ]
 then
@@ -22,7 +24,7 @@ function checkFileExists {
 checkFileExists $SSH_LOCATION
 
 # $1 is optional skipWarning argument
-if [ "$1" != "skipWarning" ]; then
+if [ "${1:-}" != "skipWarning" ]; then
     while true; do
       echo    ""
       echo    "*********************************** ******* ************************************************"

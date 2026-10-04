@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 if [ "$#" -lt 2 ]
   then
     echo "You must supply a release version and host"
@@ -7,7 +9,7 @@ if [ "$#" -lt 2 ]
     exit 1
 fi
 
-SSH_LOCATION=$SSH_FILE
+SSH_LOCATION=${SSH_FILE:-}
 
 if [ -z "$SSH_LOCATION" ]
 then

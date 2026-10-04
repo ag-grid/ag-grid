@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 ##########################################################################################
 ## This script is meant to live on ag-grid.com and be invoked by someone doing a deployment
 ## It's in a separate script as occasionally multiple "ssh -i" from a devs machine would
