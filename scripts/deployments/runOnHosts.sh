@@ -10,9 +10,12 @@
 ## runs `uploadReleaseZip.sh 35.0.0 $HOST` and `uploadReleaseZip.sh 35.0.0 $HOST_2` at the same time.
 ##
 ## The host is always passed as the LAST argument. That fits uploadReleaseZip.sh, archiveCurrentRelease.sh,
-## prepareNewDeployment.sh, switchRelease.sh, downloadChangelog.sh, uploadAndUnzipArchive.sh and
-## createArchiveAndUpload.sh. It does NOT fit patchUncachedArchives.sh, which takes the host third, before
-## its optional set|clear action: it can only be run through here without an action (i.e. the default "set").
+## prepareNewDeployment.sh, switchRelease.sh, downloadChangelog.sh and uploadAndUnzipArchive.sh. It does
+## NOT fit patchUncachedArchives.sh, which takes the host third, before its optional set|clear action: it can
+## only be run through here without an action (i.e. the default "set").
+##
+## Don't use it for createArchiveAndUpload.sh: every parallel run would rebuild the same archive in the shared
+## checkout at once. Run createDocsArchiveBundle.sh once, then uploadAndUnzipArchive.sh through here.
 ##
 ## Uses GNU parallel with the same options the TeamCity deploy steps use, prints the job log, and exits
 ## with parallel's status (the number of failed jobs, or non-zero if parallel itself failed).
@@ -39,7 +42,7 @@ JOBLOG="$(mktemp)"
 trap 'rm -f "$JOBLOG"' EXIT
 
 STATUS=0
-parallel --will-cite --tagstring '[{}]' --timeout 900 --joblog "$JOBLOG" "$@" {} ::: "${HOSTS[@]}" || STATUS=$?
+parallel --will-cite --quote --tagstring '[{}]' --timeout 900 --joblog "$JOBLOG" "$@" {} ::: "${HOSTS[@]}" || STATUS=$?
 
 cat "$JOBLOG"
 
