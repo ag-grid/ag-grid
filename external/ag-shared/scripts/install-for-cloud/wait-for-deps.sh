@@ -47,7 +47,7 @@ if [[ -f "$STATE/failed" ]] && ! install_in_flight; then
 fi
 
 if ! install_in_flight; then
-    if [[ -d node_modules ]] && yarn check --integrity &>/dev/null &&
+    if [[ -d node_modules ]] && yarn install --immutable &>/dev/null &&
         [[ ! -f "$AG_CLOUD_CACHE_DIR/unscripted" ]]; then
         log "dependencies already present and valid"
         exit 0

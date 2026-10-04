@@ -52,7 +52,8 @@
         "parallel": false,
         "commands": [
           "mkdir -p dist/artifacts/{projectRoot}",
-          "cd {projectRoot}/dist/ag-grid-angular && yarn pack -f ../../../../dist/artifacts/{projectRoot}.tgz",
+          "touch {projectRoot}/dist/ag-grid-angular/yarn.lock",
+          "cd {projectRoot}/dist/ag-grid-angular && yarn pack -o ../../../../dist/artifacts/{projectRoot}.tgz",
           "rm -rf dist/artifacts/{projectRoot}"
         ]
       }

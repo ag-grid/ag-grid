@@ -463,9 +463,10 @@ fi
 # ---------------------------------------------------------------------------
 
 if command -v yarn &>/dev/null && [[ -d node_modules ]]; then
-    # Verify lockfile hasn't changed since last install — Yarn 1 writes
-    # node_modules/.yarn-integrity which embeds a lockfile hash.
-    if yarn check --integrity &>/dev/null; then
+    # Yarn 4 has no "yarn check --integrity" probe; "yarn install --immutable"
+    # both verifies and (if needed) fixes node_modules in one step, and is a
+    # ~12ms no-op when nothing needs to change.
+    if yarn install --immutable &>/dev/null; then
         log_info "yarn and node_modules present and valid, skipping bootstrap"
         exit 0
     fi
@@ -474,7 +475,7 @@ if command -v yarn &>/dev/null && [[ -d node_modules ]]; then
         announce_deps_not_ready
         exit 0
     fi
-    yarn install --prefer-offline
+    yarn install
     exit $?
 fi
 
@@ -567,7 +568,7 @@ main() {
     # Delegate to yarn install — preinstall-worktree.sh handles COW cloning,
     # symlink fixes, and .nx cache. Postinstall handles patches, plugins, etc.
     log_info "Running yarn install (preinstall hook will handle COW cloning)"
-    if ! yarn install --prefer-offline; then
+    if ! yarn install; then
         log_error "yarn install failed"
         exit 2
     fi

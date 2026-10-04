@@ -56,10 +56,10 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "devDependencies": {
-    "web-streams-polyfill": "^4.3.0",
     "blob-polyfill": "^9.0.20240710",
     "compression-streams-polyfill": "^0.1.7",
-    "text-encoding-polyfill": "^0.6.7"
+    "text-encoding-polyfill": "^0.6.7",
+    "web-streams-polyfill": "^4.3.0"
   },
   "publishConfig": {
     "access": "public"
