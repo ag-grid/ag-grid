@@ -93,6 +93,13 @@ jobs:
               # ignoring it.
               run: corepack enable
 
+            - name: Create Yarn cache folder
+              # The dev-prompts review action runs setup-node with its default
+              # package-manager caching, which resolves Yarn 4's cache folder. Nothing
+              # here runs `yarn install`, so the folder never exists and the post-job
+              # cache save fails the job. Remove once dev-prompts disables that cache.
+              run: mkdir -p "$(yarn config get cacheFolder)"
+
             - name: Install @ag-grid/dev-prompts
               env:
                   NODE_AUTH_TOKEN: ${{ github.token }}
