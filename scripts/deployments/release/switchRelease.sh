@@ -39,11 +39,15 @@ fi
 
 CURRENT_HOST=$2
 
+# a per-run temp file, so parallel runs for different hosts cannot overwrite each other
+REMOTE_SCRIPT="$(mktemp)"
+trap 'rm -f "$REMOTE_SCRIPT"' EXIT
+
 # replace tokens in switchReleaseRemote.sh with env variables - we'll transfer the newly tokenised file to prod
-sed "s#\@GRID_ROOT_DIR\@#$GRID_ROOT_DIR#g" ./scripts/deployments/release/switchReleaseRemote.sh | sed "s#\@WWW_ROOT_DIR\@#$WWW_ROOT_DIR#g" | sed "s#\@CHARTS_ROOT_DIR\@#$CHARTS_ROOT_DIR#g" | sed "s#\@STUDIO_ROOT_DIR\@#$STUDIO_ROOT_DIR#g" | sed "s#\@WWW_ROOT_DIR\@#$WWW_ROOT_DIR#g" > /tmp/switchReleaseRemote.sh
+sed "s#\@GRID_ROOT_DIR\@#$GRID_ROOT_DIR#g" ./scripts/deployments/release/switchReleaseRemote.sh | sed "s#\@WWW_ROOT_DIR\@#$WWW_ROOT_DIR#g" | sed "s#\@CHARTS_ROOT_DIR\@#$CHARTS_ROOT_DIR#g" | sed "s#\@STUDIO_ROOT_DIR\@#$STUDIO_ROOT_DIR#g" | sed "s#\@WWW_ROOT_DIR\@#$WWW_ROOT_DIR#g" > "$REMOTE_SCRIPT"
 
 # copy the remote script that will create tmp dirs, unzip the new deployment etc to the upload dir (archives)
-scp -i $SSH_LOCATION -P $SSH_PORT "/tmp/switchReleaseRemote.sh" $CURRENT_HOST:$WWW_ROOT_DIR
+scp -i $SSH_LOCATION -P $SSH_PORT "$REMOTE_SCRIPT" $CURRENT_HOST:$WWW_ROOT_DIR/switchReleaseRemote.sh
 ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "chmod +x $WWW_ROOT_DIR/switchReleaseRemote.sh"
 
 # backup the old public html, unzip the new release and update permissions etc
