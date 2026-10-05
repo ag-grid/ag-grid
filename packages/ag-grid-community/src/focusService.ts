@@ -249,6 +249,22 @@ export class FocusService extends BeanStub implements NamedBean {
         });
     }
 
+    /** As keyboard navigation does, a column a colSpan covers focuses the spanning cell, rendered or not, and
+     *  vertical moves go on from the column asked for. */
+    public setFocusedCellOrSpan(params: CellFocusedParams): void {
+        const { rowIndex, rowPinned } = params;
+        // only a drawn colSpan can cover a column
+        const column = this.visibleCols.colSpanColCount !== 0 ? this.colModel.getCol(params.column) : null;
+        const rowNode = column && rowIndex != null ? _getRowNode(this.beans, { rowIndex, rowPinned }) : undefined;
+        const spanningCol = column && rowNode ? this.rowRenderer.getSpanningCol(column, rowNode) : null;
+        if (column && spanningCol && spanningCol !== column) {
+            this.setFocusedCell({ ...params, column: spanningCol });
+            this.navigation?.setCurrentColumnWithoutSpan(column);
+            return;
+        }
+        this.setFocusedCell(params);
+    }
+
     public setFocusedCell(params: CellFocusedParams): void {
         // as focus has been set, reset the flag
         this.setFocusRecovered();

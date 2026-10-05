@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     clearFilter: 'Išvalyti',
     cancelFilter: 'Atšaukti',
     cancelColumnToolPanel: 'Atšaukti',
+    resetColumnToolPanel: 'Atstatyti',
 
     // Filter Titles
     textFilter: 'Teksto filtras',
@@ -117,6 +118,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     addFilterCard: 'Pridėti filtrą',
     agTextColumnFilterDisplayName: 'Paprastas filtras',
     agNumberColumnFilterDisplayName: 'Paprastas filtras',
+    agBigIntColumnFilterDisplayName: 'Paprastas filtras',
     agDateColumnFilterDisplayName: 'Paprastas filtras',
     agSetColumnFilterDisplayName: 'Pasirinkimo filtras',
     agMultiColumnFilterDisplayName: 'Kombinuotas filtras',

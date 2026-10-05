@@ -1,6 +1,6 @@
 import type { AgPromise, IComponent } from 'ag-stack';
 
-import type { ColDef, ColKey } from '../entities/colDef';
+import type { ColDef, ColKey, ValueGetterFunc } from '../entities/colDef';
 import type { IFloatingFilterComp } from '../filter/floating/floatingFilter';
 import type { Column } from '../interfaces/iColumn';
 import type { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
@@ -42,6 +42,26 @@ export interface FilterHandlerBaseParams<
     onModelAsStringChange: () => void;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface AgFilterHandlerBaseParams<
+    TData = any,
+    TContext = any,
+    TModel = any,
+    TCustomParams = any,
+> extends FilterHandlerBaseParams<TData, TContext, TModel, TCustomParams> {
+    /** What `getValue` reads the filter's column through, which a Multi Filter passes on to its children. */
+    filterValueGetter: FilterValueGetter<TData> | undefined;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export type FilterValueGetter<TData = any> = string | ValueGetterFunc<TData>;
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export type FilterGetValueFunc<TData = any> = <TValue = any>(
+    node: IRowNode<TData>,
+    column?: ColKey<TData, TValue>
+) => TValue | null | undefined;
+
 export type QuickFilterParser = (quickFilter: string) => string[];
 export type QuickFilterMatcher = (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
 export type AlwaysPassFilter<TData = any> = (rowNode: IRowNode<TData>) => boolean;
@@ -62,6 +82,12 @@ export interface FilterHandlerParams<
      */
     additionalEventAttributes?: any;
 }
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface AgFilterHandlerParams<TData = any, TContext = any, TModel = any, TCustomParams = any>
+    extends
+        FilterHandlerParams<TData, TContext, TModel, TCustomParams>,
+        AgFilterHandlerBaseParams<TData, TContext, TModel, TCustomParams> {}
 
 export interface FilterHandler<TData = any, TContext = any, TModel = any, TCustomParams = any>
     extends SharedFilter, ReadOnlyFloatingFilterParent<TModel> {
@@ -112,8 +138,10 @@ export type FilterHandlers<TData = any, TValue = any, TContext = any, TModel = a
 export interface ColumnFilter<TData = any, TValue = any, TContext = any, TModel = any, TCustomParams = any> {
     /**
      * Filter component to use for this column.
-     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agBigIntColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`.
+     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agBigIntColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`, `agGroupColumnFilter`.
      * - Set to a custom filter `FilterDisplay`
+     *
+     * A name no filter is registered under is warned about and the default filter is used instead.
      */
     component: any;
     /**
@@ -121,14 +149,15 @@ export interface ColumnFilter<TData = any, TValue = any, TContext = any, TModel 
      * will be called for each row in the grid to see if it passes.
      * If any filter fails, then the row will be excluded from the final set.
      *
-     * Not required if providing a `handler`, or if not using Client-Side Row Model.
+     * Not required if providing a `handler`, if `component` names a provided filter, or if not using Client-Side Row Model.
      */
     doesFilterPass?: (params: DoesFilterPassParams<TData, TContext, TModel, TCustomParams>) => boolean;
     /**
      * Returns a handler which contains the logic for executing the filter.
      * Allows for more complex filter cases than `doesFilterPass`.
      *
-     * Not required if providing `doesFilterPass` (but will take precedence), or if not using Client-Side Row Model.
+     * Not required if providing `doesFilterPass` (but will take precedence), if `component` names a provided filter,
+     * or if not using Client-Side Row Model.
      */
     handler?: string | CreateFilterHandlerFunc<TData, TValue, TContext, TModel, TCustomParams>;
 }
@@ -141,12 +170,14 @@ export interface IFilterDef {
     /**
      * Filter to use for this column.
      * - Set to `true` to use the default filter.
-     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agBigIntColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
+     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agBigIntColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`, `agGroupColumnFilter`.
      * - Set to a custom filter `IFilterComp` when `enableFilterHandlers = false`.
      * - Set to a `ColumnFilter` when `enableFilterHandlers = true`
+     *
+     * A name no filter is registered under is warned about and the default filter is used instead.
      */
     filter?: any;
-    /** Params to be passed to the filter component specified in `filter`. */
+    /** Params to be passed to the filter component specified in `filter`, or a function returning them. */
     filterParams?: any;
 
     /**
@@ -337,6 +368,7 @@ export interface SharedFilterParams<TData = any, TContext = any> extends AgGridC
      * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.
      * The set filter uses this to remove from the list,
      * items that are no longer available due to the state of other filters (like Excel type filtering).
+     * With Tree Data, a row the other columns' filters display for a matching relative passes too.
      */
     doesRowPassOtherFilter: (rowNode: IRowNode<TData>) => boolean; // TODO: this method should be "doesRowPassOtherFilters"
 }

@@ -5,7 +5,7 @@ import type { IColumnSelectionPanelParams } from './iColumnSelectionPanel';
 import type { AgGridCommon } from './iCommon';
 import type { FilterAction } from './iFilter';
 
-export type ColumnToolPanelAction = 'apply' | 'cancel';
+export type ColumnToolPanelAction = 'apply' | 'cancel' | 'reset';
 
 export interface BaseToolPanelParams<TData = any, TContext = any, TState = any> extends AgGridCommon<TData, TContext> {
     /**
@@ -53,7 +53,15 @@ export interface IToolPanelColumnCompParams extends IColumnSelectionPanelParams,
     suppressPivots?: boolean;
     /** Suppress Pivot Mode selection */
     suppressPivotMode?: boolean;
-    /** Buttons to display at the bottom of the Columns Tool Panel. When 'apply' is included, changes are deferred until the apply button is clicked. */
+    /**
+     * Buttons to display at the bottom of the Columns Tool Panel, in the order they should be displayed in.
+     *
+     *  - `'apply'`: Changes are deferred until the Apply button is clicked.
+     *  - `'cancel'`: Discards any deferred changes. Only has an effect when `'apply'` is also included.
+     *  - `'reset'`: Discards any deferred changes and immediately resets the columns to the state defined in the column definitions.
+     *
+     * Only the `'apply'` button enables deferred changes.
+     */
     buttons?: ColumnToolPanelAction[];
 }
 

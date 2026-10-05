@@ -1,8 +1,7 @@
 import { LoadFontFamilyMenuFonts } from '@ag-website-shared/components/theme-builder/FontFamilyValueEditor';
 import { ThemeBuilderProvider } from '@ag-website-shared/components/theme-builder/ThemeBuilderProvider';
+import type { Theme } from 'ag-stack';
 import type { ReactNode } from 'react';
-
-import type { Theme } from 'ag-grid-community';
 
 import { RootContainer } from './RootContainer';
 import { PRESETS, toSharedPreset } from './presets';

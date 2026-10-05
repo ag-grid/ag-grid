@@ -57,7 +57,7 @@ When inspecting the DOM you'll notice the following roles and properties have be
 
     **Note:** You can set any aria property in the panel (role="treegrid") by using the `setGridAriaProperty` method in the [Grid Api](./grid-api/).
     - **aria-rowcount** - announces the number of rows.
-    - **aria-colcount** - announces the number of columns.
+    - **aria-colcount** - announces the number of columns, hidden columns included.
     - **aria-multiselectable="true"** - marks the grid as being able to select multiple rows.
 
 - **role="rowgroup"** - element that serve as container for the table header rows and grid rows.
@@ -66,12 +66,12 @@ When inspecting the DOM you'll notice the following roles and properties have be
     - **aria-selected** - only present if the row is selectable, it announces the selection state.
     - **aria-expanded** - present on expandable group and master rows, it announces the expansion state.
 - **role="columnheader"** - element containing a column header.
-    - **aria-colindex** - announces the visible index of the column.
-    - **aria-colspan** - only present if the column spans across multiple columns, it helps guide screen readers.
+    - **aria-colindex** - announces the index of the column among all columns, hidden columns included.
+    - **aria-colspan** - only present if the header spans across multiple columns, hidden columns included, it helps guide screen readers.
     - **aria-expanded** - only present in grouped headers, it announces the expand state.
     - **aria-sort** - only present in sortable columns, it announces the sort state.
 - **role="gridcell"** - element containing a grid cell.
-    - **aria-colindex** - announces the visible index of the cell.
+    - **aria-colindex** - announces the index of the cell's column among all columns, hidden columns included.
     - **aria-selected** - only present if the cell is selectable, it announces the selection state.
     - **aria-expanded** - only present in a group cell, it announces the expand state.
 - **role="tablist"** - element that serve as a container for a single levels of tab items.

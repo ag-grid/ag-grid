@@ -1,0 +1,19 @@
+{
+  "name": "ag-e2e-testing",
+  "version": "36.2.0-beta.20261002.1053",
+  "private": true,
+  "description": "Real-browser Playwright e2e tests for AG Grid behaviour",
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^22.15.3",
+    "ag-grid-community": "36.2.0-beta.20261002.1053",
+    "ag-grid-enterprise": "36.2.0-beta.20261002.1053",
+    "playwright-ctrf-json-reporter": "0.0.29"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git",
+    "directory": "testing/e2e"
+  },
+  "license": "MIT"
+}

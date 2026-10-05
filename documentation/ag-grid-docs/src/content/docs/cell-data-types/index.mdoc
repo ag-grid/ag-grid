@@ -74,7 +74,7 @@ Inference only works with the Client-Side Row Model. For other row models, defin
 
 Each of the pre-defined cell data types work by setting specific column definition properties with default values/callbacks. This enables the different grid features to work correctly for that data type.
 
-The column definition properties that are set based on the cell data type will override any in the [Default Column Definition](./column-definitions/#default-column-definitions), but will be overridden by any [Column Type](./column-definitions/#default-column-definitions) properties as well as properties set directly on individual column definitions. Note that for `filterParams`, only nested properties on the default column definition will be overridden (rather than the entire object).
+The column definition properties that are set based on the cell data type will override any in the [Default Column Definition](./column-definitions/#default-column-definitions), but will be overridden by any [Column Type](./column-definitions/#default-column-definitions) properties as well as properties set directly on individual column definitions. Note that for `filterParams`, only nested properties on the default column definition will be overridden (rather than the entire object). When `filterParams` is a function, the properties it returns override the cell data type's.
 
 If you wish to override one of the properties set below for all types, you can do so by creating a [Column Type](./column-definitions/#default-column-definitions), and assigning the column type to the [Default Column Definition](./column-definitions/#default-column-definitions).
 
@@ -82,7 +82,7 @@ All the cell data types set the following (unless specified):
 
 - A [Value Parser](./value-parsers/) to convert from `string` to the relevant data type.
 - A [Value Formatter](./value-formatters/) to convert from the relevant data type to `string` (except for `'text'`).
-- A [Key Creator](./grouping-data/#grouping-on-object-data) which uses the Value Formatter to allow Row Grouping to work (except for `'number'` and `'text'`).
+- A [Key Creator](./grouping-data/#grouping-on-object-data) which uses the Value Formatter to allow Row Grouping to work (only for `'date'`, `'dateString'`, `'dateTime'`, `'dateTimeString'` and `'object'`).
 
 Note that when using cell data types, the Value Formatter will not run for values in group columns (as they have already been formatted), or for aggregated values where the data type can differ. To apply custom formatting in these cases, cell data types will need to be disabled for the underlying columns.
 

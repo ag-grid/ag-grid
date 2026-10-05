@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     clearFilter: 'Notīrīt',
     cancelFilter: 'Atcelt',
     cancelColumnToolPanel: 'Atcelt',
+    resetColumnToolPanel: 'Atiestatīt',
 
     // Filter Titles
     textFilter: 'Teksta filtrs',
@@ -117,6 +118,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     addFilterCard: 'Pievienot filtru',
     agTextColumnFilterDisplayName: 'Vienkāršs filtrs',
     agNumberColumnFilterDisplayName: 'Vienkāršs filtrs',
+    agBigIntColumnFilterDisplayName: 'Vienkāršs filtrs',
     agDateColumnFilterDisplayName: 'Vienkāršs filtrs',
     agSetColumnFilterDisplayName: 'Atlases filtrs',
     agMultiColumnFilterDisplayName: 'Kombinētais filtrs',

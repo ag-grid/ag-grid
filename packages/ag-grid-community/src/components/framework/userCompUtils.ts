@@ -20,14 +20,12 @@ import type {
     SharedFilterUi,
 } from '../../interfaces/iFilter';
 import { isColumnFilterComp } from '../../interfaces/iFilter';
-import type { IFrameworkOverrides } from '../../interfaces/iFrameworkOverrides';
 import type { IHeaderComp, IHeaderParams, IInnerHeaderComponent } from '../../interfaces/iHeader';
 import type { ILoadingCellRendererComp } from '../../interfaces/iLoadingCellRenderer';
 import type { ComponentType, UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { ICellRendererComp, ICellRendererParams } from '../../rendering/cellRenderers/iCellRenderer';
 import type { ITooltipComp, ITooltipParams } from '../../tooltip/tooltipComponent';
 import type { UserComponentFactory } from './userComponentFactory';
-import { _getUserCompKeys } from './userComponentFactory';
 
 const DateComponent: ComponentType<IDateComp> = {
     name: 'dateComponent',
@@ -297,10 +295,6 @@ export function _getFloatingFilterCompDetails(
     defaultFloatingFilter: string
 ): UserCompDetails<IFloatingFilterComp> | undefined {
     return userCompFactory.getCompDetails(def, FloatingFilterComponent, defaultFloatingFilter, params);
-}
-
-export function _getFilterCompKeys(frameworkOverrides: IFrameworkOverrides, def: IFilterDef) {
-    return _getUserCompKeys(frameworkOverrides, def, FilterComponent);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

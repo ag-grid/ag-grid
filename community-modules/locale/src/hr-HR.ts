@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     clearFilter: 'Očisti',
     cancelFilter: 'Odustani',
     cancelColumnToolPanel: 'Odustani',
+    resetColumnToolPanel: 'Poništi',
 
     // Filter Titles
     textFilter: 'Tekstualni filter',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     addFilterCard: 'Dodaj filtriranje',
     agTextColumnFilterDisplayName: 'Jednostavan filter',
     agNumberColumnFilterDisplayName: 'Jednostavan filter',
+    agBigIntColumnFilterDisplayName: 'Jednostavan filter',
     agDateColumnFilterDisplayName: 'Jednostavan filter',
     agSetColumnFilterDisplayName: 'Filter za odabir',
     agMultiColumnFilterDisplayName: 'Kombinirani filter',

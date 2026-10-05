@@ -1,4 +1,3 @@
-import { VERSION } from 'ag-charts-community';
 import { createStore } from 'jotai';
 
 import { STORAGE_KEY_PREFIX, atomWithJSONStorage } from './JSONStorage';
@@ -11,9 +10,16 @@ const versionAtom = atomWithJSONStorage<string | null>('model-version', null);
 // cache when the internal format changes during development of a release
 const FORMAT_CHANGE_KEY = '20240704';
 
+let productVersion = 'unversioned';
+
+/** The host product's version, so each release clears models saved against the params it shipped before. */
+export const setProductVersion = (version: string) => {
+    productVersion = version;
+};
+
 export const initialiseStore = (): Store => {
     const store = createStore();
-    const expectedVersion = `${VERSION}.${FORMAT_CHANGE_KEY}`;
+    const expectedVersion = `${productVersion}.${FORMAT_CHANGE_KEY}`;
     const version = store.get(versionAtom);
     if (version !== expectedVersion) {
         for (const key of Object.keys(localStorage).filter((key) => key.startsWith(STORAGE_KEY_PREFIX))) {

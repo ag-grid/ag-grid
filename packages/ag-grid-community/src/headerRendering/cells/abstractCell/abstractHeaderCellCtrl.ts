@@ -47,6 +47,8 @@ export abstract class AbstractHeaderCellCtrl<
     TFeature extends IHeaderResizeFeature = IHeaderResizeFeature,
 > extends BeanStub {
     public readonly instanceId: HeaderCellCtrlInstanceId;
+    /** Scratch for the React list diff, trusted only where the list diffed holds this at that index. */
+    public diffIndex = 0;
 
     private isResizing: boolean;
     private resizeToggleTimeout = 0;

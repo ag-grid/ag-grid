@@ -7,6 +7,8 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _getDefaultSimpleFilter, _getFilterParamsForDataType } from 'ag-grid-community';
 
+import { DEFAULT_CHILD_FILTER, getChildFilter } from './multiFilterUtil';
+
 export class MultiFilterService extends BeanStub implements IMultiFilterService {
     readonly beanName = 'multiFilter' as const;
 
@@ -18,24 +20,25 @@ export class MultiFilterService extends BeanStub implements IMultiFilterService 
     ): { filterParams?: any; filterValueGetter?: string | ValueGetterFunc<any, any> } {
         let filters = existingFilterParams?.filters;
         const beans = this.beans;
-        if (!filters) {
+        if (!filters?.length) {
             const simpleFilter = _getDefaultSimpleFilter(dataTypeDefinition.baseDataType);
             filters = [{ filter: simpleFilter }, { filter: 'agSetColumnFilter' }];
         }
         const translate = this.getLocaleTextFunc();
         filters = filters.map((filterDef) => {
-            const {
-                filter,
-                filterParams: existingChildFilterParams,
-                filterValueGetter: existingChildFilterValueGetter,
-            } = filterDef;
+            const { filterParams: existingChildFilterParams, filterValueGetter: existingChildFilterValueGetter } =
+                filterDef;
+            const childFilter = getChildFilter(filterDef);
+            // the `{ component }` form builds the filter it names, so it takes that filter's params
+            const named = typeof childFilter === 'object' && childFilter !== null ? childFilter.component : childFilter;
+            const filter = named === true ? DEFAULT_CHILD_FILTER : named;
             if (typeof filter !== 'string') {
                 return filterDef;
             }
             const { filterParams, filterValueGetter } = _getFilterParamsForDataType(
                 filter,
                 existingChildFilterParams,
-                existingChildFilterValueGetter ?? existingFilterValueGetter,
+                existingChildFilterValueGetter || existingFilterValueGetter,
                 dataTypeDefinition,
                 formatValue,
                 beans,

@@ -4,6 +4,8 @@ import { _defaultComparator, _last, _toStringOrNull, _translate } from 'ag-stack
 import type {
     AgColumn,
     BeanCollection,
+    ColDef,
+    DataTypeFormatValueFunc,
     ISetFilterParams,
     TextFormatter,
     ValueFormatterParams,
@@ -38,6 +40,12 @@ export function processDataPath(
     return processedDataPath;
 }
 
+/** The key creator a data type gives its columns, which keys each value by its formatted text. */
+export function getDataTypeKeyCreator(beans: BeanCollection, colDef: ColDef): DataTypeFormatValueFunc | undefined {
+    const cellDataType = colDef.cellDataType;
+    return typeof cellDataType === 'string' ? beans.dataTypeSvc?.getFormatValue(cellDataType) : undefined;
+}
+
 /**
  * The Set Filter's missing value. Whitespace counts, so a blank cannot split into several keys the list
  * then renders as separate empty rows.
@@ -45,6 +53,18 @@ export function processDataPath(
 export function setFilterNullIfBlank<T>(value?: T): T | null {
     // `_isBlank` is not a type predicate, so the null test is what narrows `undefined` away, not redundancy.
     return value == null || _isBlank(value) ? null : value;
+}
+
+/** Each key under its case-folded form, so a key named in another case finds the one the values hold. */
+export function mapFormattedKeys(
+    keys: Iterable<string | null>,
+    caseFormat: <T extends string | null>(valueToFormat: T) => T
+): Map<string | null, string | null> {
+    const formattedKeys = new Map<string | null, string | null>();
+    for (const key of keys) {
+        formattedKeys.set(caseFormat(key), key);
+    }
+    return formattedKeys;
 }
 
 /** The Set Filter formats with its own formatter only, never the column's. */

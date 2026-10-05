@@ -3,7 +3,6 @@ import type {
     FilterDisplayComp,
     FilterDisplayParams,
     FilterDisplayState,
-    FilterHandler,
     FilterWrapperParams,
     IComponent,
     IMultiFilterDef,
@@ -11,16 +10,16 @@ import type {
     IMultiFilterParams,
     SharedFilterUi,
 } from 'ag-grid-community';
-import { AgPromise, _getFilterDetails, _isUseApplyButton, _refreshFilterUi } from 'ag-grid-community';
+import { AgPromise, _getFilterDetails, _isUseApplyButton, _refreshFilterUi, _resolveFilter } from 'ag-grid-community';
 
 import type { BaseFilterComponent } from './baseMultiFilter';
 import { BaseMultiFilter } from './baseMultiFilter';
 import type { MultiFilterHandler } from './multiFilterHandler';
 import {
+    DEFAULT_CHILD_FILTER,
     getFilterModelForIndex,
     getMultiFilterDefs,
     getUpdatedMultiFilterModel,
-    updateGetValue,
 } from './multiFilterUtil';
 
 // This version of multi filter is only used when `enableFilterHandlers = true`
@@ -38,19 +37,7 @@ export class MultiFilterUi
 
     public init(params: IMultiFilterParams & FilterDisplayParams<any, any, IMultiFilterModel>): AgPromise<void> {
         this.params = params;
-        const filterDefs = getMultiFilterDefs(params).map((filterDef) => {
-            if (filterDef.filterParams?.buttons) {
-                this.beans.log.warn(292, { colId: params.column.getColId() });
-                const newParams = { ...filterDef.filterParams };
-                delete newParams.buttons;
-                return {
-                    ...filterDef,
-                    filterParams: newParams,
-                };
-            }
-            return filterDef;
-        });
-        this.filterDefs = filterDefs;
+        this.filterDefs = getMultiFilterDefs(params);
 
         this.allState = params.state;
 
@@ -134,20 +121,27 @@ export class MultiFilterUi
     }
 
     private createFilter(filterDef: IMultiFilterDef, index: number): AgPromise<FilterDisplayComp | null> {
-        const userCompFactory = this.beans.userCompFactory;
+        const { beans, params } = this;
+        const column = params.column;
+        const userCompFactory = beans.userCompFactory;
 
-        const filterParams = this.updateParams(filterDef, this.params, index);
+        const filterParams = this.updateParams(filterDef, params, index);
 
         const compDetails = _getFilterDetails<FilterDisplayComp>(
             userCompFactory,
-            filterDef,
+            _resolveFilter(beans, column as AgColumn, filterDef, DEFAULT_CHILD_FILTER).def,
             filterParams,
-            'agTextColumnFilter'
+            DEFAULT_CHILD_FILTER
         );
         if (!compDetails) {
             return AgPromise.resolve(null);
         }
-        this.filterParams[index] = compDetails.params;
+        const childParams = compDetails.params;
+        if (childParams.buttons) {
+            beans.log.warn(292, { colId: column.getColId() });
+            delete childParams.buttons;
+        }
+        this.filterParams[index] = childParams;
         return compDetails.newAgStackInstance();
     }
 
@@ -179,7 +173,7 @@ export class MultiFilterUi
             const handler = this.getHandler();
             this.filters.forEach((filter, otherIndex) => {
                 if (index !== otherIndex) {
-                    handler.getHandler<FilterHandler>(otherIndex)?.onAnyFilterChanged?.();
+                    handler.onChildAnyFilterChanged(otherIndex);
                     filter?.onAnyFilterChanged?.();
                 }
             });
@@ -209,7 +203,7 @@ export class MultiFilterUi
                 onAnyFilterChanged();
             },
             onStateChange: (newState) => this.onStateChange(onStateChange, index, newState),
-            getHandler: () => this.getHandler().getHandler(index)!,
+            getHandler: () => this.getHandler().getChildDisplayHandler(index)!,
             onAction: (action, additionalEventAttributes, event) => {
                 if (_isUseApplyButton(params as FilterWrapperParams)) {
                     // child filters cannot perform actions within a multi filter
@@ -226,7 +220,7 @@ export class MultiFilterUi
             },
             onUiChange,
             source,
-            getValue: updateGetValue(this.beans, column as AgColumn, filterDef, getValue),
+            getValue: this.getHandler().getChildGetValue(index) ?? getValue,
         };
     }
 

@@ -66,6 +66,7 @@ import type { FilterActionParams, FilterModel, IFilter } from '../interfaces/iFi
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
 import type { FindCellParams, FindCellValueParams, FindMatch, FindPart } from '../interfaces/iFind';
 import type { AgModuleName } from '../interfaces/iModule';
+import type { INewFiltersToolPanel } from '../interfaces/iNewFiltersToolPanel';
 import type { PdfExportParams } from '../interfaces/iPdfCreator';
 import type { RedrawRowsParams } from '../interfaces/iRedrawRowsParams';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
@@ -356,7 +357,11 @@ export interface _KeyboardNavigationGridApi {
     /** Clears the focused cell. */
     clearFocusedCell(): void;
 
-    /** Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned). */
+    /**
+     * Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned).
+     * A column that a `colSpan` covers focuses the cell spanning it, as keyboard navigation does, even when that
+     * cell is scrolled out of view.
+     */
     setFocusedCell(rowIndex: number, colKey: string | Column, rowPinned?: RowPinnedType): void;
 
     /** Sets the focus to the specified header. If `floatingFilter` is true, the Column's floatingFilter element will be focused. */
@@ -1441,6 +1446,7 @@ export interface _SideBarGridApi<TData> {
 
     getToolPanelInstance(id: 'columns'): IColumnToolPanel | undefined;
     getToolPanelInstance(id: 'filters'): IFiltersToolPanel | undefined;
+    getToolPanelInstance(id: 'filters-new'): INewFiltersToolPanel | undefined;
     // This override is a duplicate but is required to make the general override public
     getToolPanelInstance<TToolPanel = IToolPanel<TData>>(id: string): TToolPanel | undefined;
     /**

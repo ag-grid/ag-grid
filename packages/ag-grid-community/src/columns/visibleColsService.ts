@@ -7,6 +7,8 @@ import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { edgeLeafColumn, isColumnGroup } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
 import { _isGroupHideColumnsUntilExpanded, _isRowNumbers } from '../gridOptionsUtils';
+import type { RowAutoHeightService } from '../rendering/row/rowAutoHeightService';
+import type { RowRenderer } from '../rendering/rowRenderer';
 import type { ColumnFlexService } from './columnFlexService';
 import type { ColumnGroupService } from './columnGroups/columnGroupService';
 import type { ColumnModel } from './columnModel';
@@ -26,6 +28,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     private colViewport: ColumnViewportService;
     private ctrlsSvc: CtrlsService;
     private colFlex?: ColumnFlexService;
+    private rowRenderer: RowRenderer;
+    private rowAutoHeight?: RowAutoHeightService;
     /** True iff any centre col has `flex > 0` — lets the flex pass be skipped when nothing flexes. */
     private flexActive = false;
 
@@ -43,8 +47,9 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     /** `allCols` with `colDef.autoHeight`. Reused across refreshes to stay warm. */
     public readonly autoHeightCols: AgColumn[] = [];
 
-    /** A displayed column has `colDef.colSpan`, so rows can differ in the cells they draw. */
-    public colSpanActive = false;
+    /** How many displayed columns have `colDef.colSpan`, sizing a row's colSpans cache; while not 0, rows can differ
+     *  in the cells they draw. */
+    public colSpanColCount = 0;
 
     /** `allCols` with a legacy `colDef.rowSpan`, whose cells re-read it as their row's data changes. */
     public readonly rowSpanCols: AgColumn[] = [];
@@ -62,6 +67,9 @@ export class VisibleColsService extends BeanStub implements NamedBean {
      *  are can tell whether it is looking at the same layout without re-deriving it. */
     public layoutVersion = 0;
 
+    /** A cell may have moved or resized with no section total changing since the cells were last placed. */
+    private cellsMoved = false;
+
     /** Bumped whenever `allCols` is replaced, so a cache keyed on the displayed columns need not hold the old list. */
     public displayedColsVersion = 0;
 
@@ -75,6 +83,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.colViewport = beans.colViewport;
         this.ctrlsSvc = beans.ctrlsSvc;
         this.colFlex = beans.colFlex;
+        this.rowRenderer = beans.rowRenderer;
+        this.rowAutoHeight = beans.rowAutoHeight;
     }
 
     /** `skipTreeBuild=true` reuses the trees; valid only when liveCols are unchanged (group toggle, width autosize). */
@@ -134,11 +144,14 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             }
             colFlex?.refreshFlexedColumns(flexParams);
         }
+        // a changed displayed set can trade one column's width for another's with no left or total moving
+        this.cellsMoved = true;
         // Reuse the section totals — except after a flex pass, which resized centre cols, so re-sum.
         this.updateBodyWidths(runFlex ? undefined : widths);
         this.setFirstRightAndLastLeftPinned(leftCols, rightCols, source);
         colViewport.checkViewportColumns(false);
 
+        this.rowAutoHeight?.requestCheckAutoHeight();
         this.eventSvc.dispatchEvent({ type: 'displayedColumnsChanged', source });
     }
 
@@ -152,12 +165,19 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         const newRightWidth = widths ? widths.right : getWidthOfColsInList(this.rightCols);
 
         if (this.bodyWidth === newBodyWidth && this.leftWidth === newLeftWidth && this.rightWidth === newRightWidth) {
+            // over the same displayed columns, a width change moves a section total or a later left
+            if (this.cellsMoved) {
+                this.cellsMoved = false;
+                this.rowRenderer.refreshCellPositions();
+            }
             return;
         }
         this.bodyWidth = newBodyWidth;
         this.leftWidth = newLeftWidth;
         this.rightWidth = newRightWidth;
         this.totalWidth = newBodyWidth + newLeftWidth + newRightWidth;
+        this.cellsMoved = false;
+        this.rowRenderer.refreshCellPositions();
 
         // `columnContainerWidthChanged` BEFORE `displayedColumnsWidthChanged`: the viewport must resize
         // before the scrollbar updates its visibility, and both are public, so the order is observable.
@@ -169,9 +189,9 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     /** Repositions each col's section-relative `left` without rebuilding the displayed set; returns
      *  per-section widths. Lighter sibling of `joinCols`, for resize / autosize / flex. */
     public setLeftValues(source: ColumnEventType): SectionWidths {
-        const left = setLeftsLeftToRight(this.leftCols, source);
-        const right = setLeftsLeftToRight(this.rightCols, source);
-        const center = setLeftsLeftToRight(this.centerCols, source);
+        const left = this.setLeftsLeftToRight(this.leftCols, source);
+        const right = this.setLeftsLeftToRight(this.rightCols, source);
+        const center = this.setLeftsLeftToRight(this.centerCols, source);
         this.setLeftValuesOfGroups(source);
         return { left, center, right };
     }
@@ -203,16 +223,26 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         // Destroyed prev refs are harmless: `AgColumn.destroy` already clears these flags, so the
         // false-clear short-circuits via the no-change guard.
         const prevLastLeft = this.prevLastLeftPinned;
-        if (prevLastLeft !== newLastLeft) {
+        const lastLeftMoved = prevLastLeft !== newLastLeft;
+        if (lastLeftMoved) {
             prevLastLeft?.setLastLeftPinned(false, source);
             newLastLeft?.setLastLeftPinned(true, source);
             this.prevLastLeftPinned = newLastLeft;
         }
         const prevFirstRight = this.prevFirstRightPinned;
-        if (prevFirstRight !== newFirstRight) {
+        const firstRightMoved = prevFirstRight !== newFirstRight;
+        if (firstRightMoved) {
             prevFirstRight?.setFirstRightPinned(false, source);
             newFirstRight?.setFirstRightPinned(true, source);
             this.prevFirstRightPinned = newFirstRight;
+        }
+        if (lastLeftMoved || firstRightMoved) {
+            this.rowRenderer.refreshPinnedEdgeCells(
+                lastLeftMoved ? prevLastLeft : null,
+                lastLeftMoved ? newLastLeft : null,
+                firstRightMoved ? prevFirstRight : null,
+                firstRightMoved ? newFirstRight : null
+            );
         }
     }
 
@@ -323,8 +353,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     public clear(): void {
         const prevAll = this.allCols;
         for (let i = 0, len = prevAll.length; i < len; ++i) {
-            prevAll[i].allColsIndex = -1;
-            prevAll[i].displayed = false;
+            const prev = prevAll[i];
+            prev.allColsIndex = -1;
+            prev.colSpanIndex = -1;
+            prev.displayed = false;
         }
         this.leftCols = [];
         this.rightCols = [];
@@ -332,7 +364,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.allCols = [];
         ++this.displayedColsVersion;
         this.autoHeightCols.length = 0;
-        this.colSpanActive = false;
+        this.colSpanColCount = 0;
         this.rowSpanCols.length = 0;
     }
 
@@ -363,12 +395,14 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         // reach `displayed === false` or `setLeftValuesOfGroups` won't clear their stale `left`.
         const prevAll = this.allCols;
         for (let i = 0, len = prevAll.length; i < len; ++i) {
-            prevAll[i].allColsIndex = -1;
-            prevAll[i].displayed = false;
+            const prev = prevAll[i];
+            prev.allColsIndex = -1;
+            prev.colSpanIndex = -1;
+            prev.displayed = false;
         }
         const all: AgColumn[] = [];
         this.autoHeightCols.length = 0;
-        this.colSpanActive = false;
+        this.colSpanColCount = 0;
         this.rowSpanCols.length = 0;
         // `layoutSection` accumulates `flexActive` / `headerGroupRowCount` across its three calls — reset them first.
         this.flexActive = false;
@@ -415,7 +449,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
                 autoHeightCols.push(col);
             }
             if (col.colSpan != null) {
-                this.colSpanActive = true;
+                col.colSpanIndex = this.colSpanColCount;
+                ++this.colSpanColCount;
+            } else {
+                col.colSpanIndex = -1;
             }
             if (col.rowSpan != null) {
                 rowSpanCols.push(col);
@@ -438,6 +475,19 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             }
             left += col.actualWidth;
         }
+        return left;
+    }
+
+    /** Restamps the lefts from 0, noting a moved one in `cellsMoved`; returns the section width. */
+    private setLeftsLeftToRight(cols: AgColumn[], source: ColumnEventType): number {
+        let left = 0;
+        let moved = false;
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            const col = cols[i];
+            moved = col.setLeft(left, source) || moved;
+            left += col.actualWidth;
+        }
+        this.cellsMoved ||= moved;
         return left;
     }
 
@@ -563,15 +613,4 @@ const checkLeftOnGroups = (tree: (AgColumn | AgColumnGroup)[]): void => {
             node.checkLeft();
         }
     }
-};
-
-/** Sets each col's `left` to the running offset; returns the total width (the final offset). */
-const setLeftsLeftToRight = (columns: AgColumn[], source: ColumnEventType): number => {
-    let left = 0;
-    for (let i = 0, len = columns.length; i < len; ++i) {
-        const column = columns[i];
-        column.setLeft(left, source);
-        left += column.actualWidth;
-    }
-    return left;
 };

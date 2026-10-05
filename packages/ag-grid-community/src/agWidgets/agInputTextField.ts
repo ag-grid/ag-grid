@@ -114,6 +114,12 @@ export class AgInputTextField<
         return this;
     }
 
+    /** Omit the input's border, background and focus shadow */
+    public setFrameless(frameless: boolean): this {
+        this.eInput.classList.toggle('ag-input-frameless', frameless);
+        return this;
+    }
+
     public override setDisabled(disabled: boolean): this {
         super.setDisabled(disabled);
         this.refreshClearButton();

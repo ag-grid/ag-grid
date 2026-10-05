@@ -2,8 +2,7 @@ import type { LocaleTextFunc } from 'ag-stack';
 import { _getDateParts, _parseBigIntOrNull } from 'ag-stack';
 
 import type { BeanCollection, UserComponentName } from '../context/context';
-import type { AgColumn } from '../entities/agColumn';
-import type { ValueFormatterParams, ValueGetterFunc, ValueGetterParams } from '../entities/colDef';
+import type { ValueFormatterParams, ValueGetterFunc } from '../entities/colDef';
 import type {
     BaseCellDataType,
     CheckDataTypes,
@@ -80,7 +79,7 @@ function isValidDate(value: any): boolean {
     return value instanceof Date && !isNaN(value.getTime());
 }
 
-// Merged onto `colDef.filterParams` by `setColDefPropsForDataType`, so nothing else tells one from the author's.
+// Laid under the author's `filterParams`, so only this tells the grid's params from the author's.
 const gridSuppliedFilterParams = new WeakSet<object>();
 
 function gridSupplied<T extends (...args: any[]) => any>(fn: T): T {
@@ -263,16 +262,16 @@ export function _getFilterParamsForDataType(
 ): { filterParams?: any; filterValueGetter?: string | ValueGetterFunc } {
     let filterValueGetter: string | ValueGetterFunc | undefined = existingFilterValueGetter;
     const usingSetFilter = filter === 'agSetColumnFilter';
-    if (!filterValueGetter && dataTypeDefinition.baseDataType === 'object' && !usingSetFilter) {
-        filterValueGetter = ({ column, node }: ValueGetterParams) =>
-            formatValue({
-                column,
-                node,
-                value: node ? beans.valueSvc.getValueFromData(column as AgColumn, node) : undefined,
-            });
+    const baseDataType = dataTypeDefinition.baseDataType;
+    if (!filterValueGetter && baseDataType === 'object' && !usingSetFilter) {
+        filterValueGetter = beans.dataTypeSvc?.objectFilterValueGetter;
+    }
+    // a function is laid over the data type's params when its filter is resolved
+    if (typeof existingFilterParams === 'function') {
+        return { filterParams: existingFilterParams, filterValueGetter };
     }
     const filterParamsMap = usingSetFilter ? setFilterParamsForEachDataType : filterParamsForEachDataType;
-    const filterParamsGetter = filterParamsMap[dataTypeDefinition.baseDataType];
+    const filterParamsGetter = filterParamsMap[baseDataType];
     const newFilterParams = filterParamsGetter({ dataTypeDefinition, formatValue, t: translate });
     const filterParams =
         typeof existingFilterParams === 'object'
@@ -296,20 +295,7 @@ const defaultFilters: Record<BaseCellDataType, UserComponentName> = {
     text: 'agTextColumnFilter',
 };
 
-const defaultFloatingFilters: Record<BaseCellDataType, UserComponentName> = {
-    boolean: 'agTextColumnFloatingFilter',
-    date: 'agDateColumnFloatingFilter',
-    dateString: 'agDateColumnFloatingFilter',
-    dateTime: 'agDateColumnFloatingFilter',
-    dateTimeString: 'agDateColumnFloatingFilter',
-    bigint: 'agBigIntColumnFloatingFilter',
-    number: 'agNumberColumnFloatingFilter',
-    object: 'agTextColumnFloatingFilter',
-    text: 'agTextColumnFloatingFilter',
-};
-
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _getDefaultSimpleFilter(cellDataType?: BaseCellDataType, isFloating: boolean = false): string {
-    const filterSet = isFloating ? defaultFloatingFilters : defaultFilters;
-    return filterSet[cellDataType ?? 'text'];
+export function _getDefaultSimpleFilter(cellDataType?: BaseCellDataType): string {
+    return defaultFilters[cellDataType ?? 'text'];
 }

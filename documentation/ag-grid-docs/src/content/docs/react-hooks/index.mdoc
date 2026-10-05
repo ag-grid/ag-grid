@@ -182,19 +182,25 @@ const App = () => {
 
 ## Debug Mode
 
-A good way to diagnose if you are causing the grid to update on each render is to enable the `debug` flag. In debug mode the grid will log extra details to the console including when a property has changed.
+A good way to diagnose if you are causing the grid to update on each render is to enable [debug logging](./dev-validation/#debug-logging). In debug mode the grid will log extra details to the console including when a property has changed.
 
 ```jsx
+import { enableDevValidations } from 'ag-grid-community';
+
+if (process.env.NODE_ENV !== 'production') {
+    enableDevValidations({ debug: true });
+}
+
 const App = () => {
-    return <AgGridReact debug />;
+    return <AgGridReact />;
 };
 ```
 
-For example if you have defined `defaultColDef` inline on your component then on every render you will see the following in the console with `debug` enabled.
+For example if you have defined `defaultColDef` inline on your component then on every render you will see the following in the console with debug logging enabled.
 
 ```jsx
 const App = () => {
-    return <AgGridReact defaultColDef={{ filter: true}} debug />;
+    return <AgGridReact defaultColDef={{ filter: true}} />;
 };
 ```
 

@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     clearFilter: 'Tyhjennä',
     cancelFilter: 'Peruuta',
     cancelColumnToolPanel: 'Peruuta',
+    resetColumnToolPanel: 'Nollaa',
 
     // Filter Titles
     textFilter: 'Tekstisuodatin',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     addFilterCard: 'Lisää suodatin',
     agTextColumnFilterDisplayName: 'Yksinkertainen suodatin',
     agNumberColumnFilterDisplayName: 'Yksinkertainen suodatin',
+    agBigIntColumnFilterDisplayName: 'Yksinkertainen suodatin',
     agDateColumnFilterDisplayName: 'Yksinkertainen suodatin',
     agSetColumnFilterDisplayName: 'Valintasuodatin',
     agMultiColumnFilterDisplayName: 'Yhdistelmä suodatin',

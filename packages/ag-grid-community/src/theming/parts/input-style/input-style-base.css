@@ -33,36 +33,49 @@
     input[type='datetime-local'],
     textarea
 ) {
-    border: var(--ag-input-border);
-    background-color: var(--ag-input-background-color);
     border-radius: var(--ag-input-border-radius);
     color: var(--ag-input-text-color);
     padding-inline: var(--ag-input-padding-start);
     min-height: var(--ag-input-height);
 
+    &:where(.ag-input-field-input:not(.ag-input-frameless)) {
+        border: var(--ag-input-border);
+        background-color: var(--ag-input-background-color);
+
+        &:where(:disabled) {
+            background-color: var(--ag-input-disabled-background-color);
+            border: var(--ag-input-disabled-border);
+        }
+
+        &:where(:focus) {
+            box-shadow: var(--ag-input-focus-shadow);
+            background-color: var(--ag-input-focus-background-color);
+            border: var(--ag-input-focus-border);
+        }
+
+        &:where(:invalid),
+        &:where(.invalid) {
+            background-color: var(--ag-input-invalid-background-color);
+            border: var(--ag-input-invalid-border);
+        }
+    }
+
+    &:where(.ag-input-frameless) {
+        border: none;
+        background-color: transparent;
+    }
+
     &:where(:disabled) {
-        background-color: var(--ag-input-disabled-background-color);
-        border: var(--ag-input-disabled-border);
         color: var(--ag-input-disabled-text-color);
     }
 
     &:where(:focus) {
         outline: none;
-        box-shadow: var(--ag-input-focus-shadow);
-        background-color: var(--ag-input-focus-background-color);
-        border: var(--ag-input-focus-border);
         color: var(--ag-input-focus-text-color);
     }
 
-    &:where(:invalid) {
-        background-color: var(--ag-input-invalid-background-color);
-        border: var(--ag-input-invalid-border);
-        color: var(--ag-input-invalid-text-color);
-    }
-
+    &:where(:invalid),
     &:where(.invalid) {
-        background-color: var(--ag-input-invalid-background-color);
-        border: var(--ag-input-invalid-border);
         color: var(--ag-input-invalid-text-color);
     }
 

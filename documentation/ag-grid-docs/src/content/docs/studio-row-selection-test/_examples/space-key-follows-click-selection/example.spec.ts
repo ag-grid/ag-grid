@@ -3,7 +3,11 @@ import { ensureGridReady, expect, test, waitForRowAnimations } from '@utils/grid
 test.agExample(import.meta, () => {
     test.eachFramework(
         'Space on a row does not select it when click selection is disabled',
-        async ({ agIdFor, page }) => {
+        async ({ agFramework, agIdFor, page }) => {
+            test.skip(
+                agFramework === 'vanilla',
+                'Vanilla does not support module registration, so the feature flag cannot be set'
+            );
             await ensureGridReady(page);
 
             await agIdFor.cell('0', 'athlete').first().click();
@@ -26,7 +30,11 @@ test.agExample(import.meta, () => {
 
     test.eachFramework(
         'Space on a row selects but does not deselect with enableSelection',
-        async ({ agIdFor, page }) => {
+        async ({ agFramework, agIdFor, page }) => {
+            test.skip(
+                agFramework === 'vanilla',
+                'Vanilla does not support module registration, so the feature flag cannot be set'
+            );
             await ensureGridReady(page);
 
             await page.locator('#select-enable').selectOption('enableSelection');

@@ -168,6 +168,8 @@ export class AgColumn<TValue = any>
     public buildToken: number = 0;
     /** 0-based index in `VisibleColsService.allCols` (displayed, visual order — RTL reversed), stamped each refresh. `-1` = not displayed. */
     public allColsIndex: number = -1;
+    /** Slot in a row's colSpans cache, stamped with `allColsIndex`; `-1` without `colDef.colSpan` or not displayed. */
+    public colSpanIndex: number = -1;
     /** `true` while in `ColumnModel.colsList` (live cols, hidden included); `false` when only in
      *  `colsById` — a pivot **primary** parked while a pivot result shows. Set by `refreshCols`. */
     public inColsList: boolean = false;
@@ -236,6 +238,7 @@ export class AgColumn<TValue = any>
     public override destroy() {
         super.destroy();
         this.allColsIndex = -1;
+        this.colSpanIndex = -1;
         this.displayed = false;
         this.colsListIndex = -1;
         this.inColsList = false;
@@ -277,7 +280,8 @@ export class AgColumn<TValue = any>
             this.initCalculatedColumnState(colDef);
             return false;
         }
-        ++this.beans.colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
+        const colModel = this.beans.colModel;
+        ++colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
         this.cachedSortTypes = null; // sort/initialSort/sortingOrder may have changed
         this.sortCycleIndex = undefined;
         this.initColDefHotFields();
@@ -288,7 +292,12 @@ export class AgColumn<TValue = any>
         if (colDef.spanRows !== oldColDef.spanRows) {
             this.beans.rowSpanSvc?.columnRowSpanChanged(this);
         }
-        this.dispatchColEvent('colDefChanged', source);
+        const colDefChangedInBuild = colModel.colDefChangedInBuild;
+        if (colDefChangedInBuild) {
+            colDefChangedInBuild.push(this);
+        } else {
+            this.dispatchColEvent('colDefChanged', source);
+        }
         this.beans.pivotResultCols?.recreateColDefsForSource(this, source);
         return true;
     }
@@ -616,13 +625,16 @@ export class AgColumn<TValue = any>
         return this.left! + this.actualWidth;
     }
 
-    public setLeft(left: number | null, source: ColumnEventType) {
+    /** @returns whether the left moved */
+    public setLeft(left: number | null, source: ColumnEventType): boolean {
         const oldLeft = this.left;
         this.oldLeft = oldLeft;
-        if (oldLeft !== left) {
-            this.left = left;
-            this.dispatchColEvent('leftChanged', source);
+        if (oldLeft === left) {
+            return false;
         }
+        this.left = left;
+        this.dispatchColEvent('leftChanged', source);
+        return true;
     }
 
     public isFilterActive(): boolean {

@@ -1,6 +1,8 @@
 #!/bin/bash
 
-SSH_LOCATION=$SSH_FILE
+set -euo pipefail
+
+SSH_LOCATION=${SSH_FILE:-}
 
 if [ -z "$SSH_LOCATION" ]
 then
@@ -21,4 +23,4 @@ CURRENT_HOST=$1
 
 checkFileExists $SSH_LOCATION
 
-ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "JIRA_CREDENTIALS=$JIRA_CREDENTIALS && cd /home/ubuntu/jira_reports && ./getChangelog.sh && ./getPipeline.sh"
+ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "JIRA_CREDENTIALS=${JIRA_CREDENTIALS:-} && cd /home/ubuntu/jira_reports && ./getChangelog.sh && ./getPipeline.sh"

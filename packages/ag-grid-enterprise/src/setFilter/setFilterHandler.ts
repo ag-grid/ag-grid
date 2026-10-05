@@ -2,10 +2,10 @@ import { _debounce, _last, _toStringOrNull } from 'ag-stack';
 
 import type {
     AgColumn,
-    BeanCollection,
+    AgFilterHandlerParams,
     DoesFilterPassParams,
     FilterHandler,
-    FilterHandlerParams,
+    FilterValueSource,
     IRowNode,
     SetFilterHandler as ISetFilterHandler,
     ISetFilterParams,
@@ -19,6 +19,7 @@ import {
     BeanStub,
     _addGridCommonParams,
     _bindFilterCallback,
+    _getFilterValueSource,
     _isBlank,
     _isClientSideRowModel,
 } from 'ag-grid-community';
@@ -27,29 +28,18 @@ import { CsrmValuesExtractor } from './csrmValueExtractor';
 import type { SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { SetFilterAppliedModel } from './setFilterAppliedModel';
 import {
+    getDataTypeKeyCreator,
     processDataPath,
     setFilterFormattedValue,
     setFilterNullIfBlank,
     translateForSetFilter,
     unformattedSetFilterText,
 } from './setFilterUtils';
-import SetFilterModelValuesType, { SetValueModel } from './setValueModel';
+import { SetValueModel, isProvidedValues } from './setValueModel';
+import type { SetValueModelParams } from './setValueModel';
 import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 
 type SetFilterHandlerEventType = 'anyFilterChanged' | 'dataChanged' | 'destroyed';
-
-function resolveKeyCreatorFlags(
-    beans: BeanCollection,
-    params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, any>>
-): { usingComplexObjects: boolean; userKeyCreator: boolean } {
-    const { colDef, filterParams } = params;
-    const keyCreator = filterParams.keyCreator ?? colDef.keyCreator;
-    const cellDataType = colDef.cellDataType;
-    // A data type installs its own formatter as the key creator, which says nothing about the values.
-    const gridSupplied =
-        typeof cellDataType === 'string' && keyCreator === beans.dataTypeSvc?.getFormatValue(cellDataType);
-    return { usingComplexObjects: !!keyCreator, userKeyCreator: !!keyCreator && !gridSupplied };
-}
 
 export class SetFilterHandler<TValue = string>
     extends BeanStub<SetFilterHandlerEventType>
@@ -57,7 +47,7 @@ export class SetFilterHandler<TValue = string>
 {
     /** Used to get the filter type for filter models. */
     public readonly filterType = 'set' as const;
-    public params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>;
+    public params: AgFilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>;
     /**
      * Here we keep track of the keys that are currently being used for filtering.
      * In most cases, the filtering keys are the same as the selected keys,
@@ -67,66 +57,87 @@ export class SetFilterHandler<TValue = string>
     private appliedModel: SetFilterAppliedModel;
     public valueModel: SetValueModel<TValue>;
     private createKey: (value: TValue | null | undefined, node?: IRowNode | null) => string | null;
+    /** The definition inputs the keys are formed from, compared by identity when the definition changes. */
+    private keysFormedBy: unknown;
+    private valueSource: FilterValueSource;
     private treeDataTreeList = false;
     private groupingTreeList = false;
     private caseSensitive: boolean = false;
     public valueFormatter?: (params: ValueFormatterParams) => string;
     private noValueFormatterSupplied = false;
 
-    public init(params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): void {
-        this.updateParams(params);
+    public init(params: AgFilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): void {
+        const caseFormat = this.caseFormat.bind(this);
+        // before any user callback, so `destroy` works after one throws
+        this.appliedModel = new SetFilterAppliedModel(caseFormat);
+        const valueModelParams = this.updateParams(params);
         const isTreeDataOrGrouping = this.isTreeDataOrGrouping.bind(this);
         const isTreeData = () => this.treeDataTreeList;
-        const createKey = this.createKey;
-        const caseFormat = this.caseFormat.bind(this);
         const { gos, beans } = this;
         const csrmValuesExtractor = _isClientSideRowModel(gos, beans.rowModel)
-            ? this.createManagedBean(
-                  new CsrmValuesExtractor<TValue>(
-                      createKey,
-                      caseFormat,
-                      params.getValue,
-                      isTreeDataOrGrouping,
-                      isTreeData
-                  )
-              )
+            ? this.createManagedBean(new CsrmValuesExtractor<TValue>(caseFormat, isTreeDataOrGrouping, isTreeData))
             : undefined;
         const valueModel = this.createManagedBean(
-            new SetValueModel(csrmValuesExtractor, caseFormat, createKey, isTreeDataOrGrouping, {
-                handlerParams: params,
-                ...resolveKeyCreatorFlags(this.beans, params),
-            })
+            new SetValueModel(csrmValuesExtractor, caseFormat, isTreeDataOrGrouping, valueModelParams)
         );
         this.addManagedListeners(valueModel, {
             availableValuesChanged: params.onModelAsStringChange,
         });
         this.valueModel = valueModel;
 
-        this.appliedModel = new SetFilterAppliedModel(this.caseFormat.bind(this));
-
         this.appliedModel.update(params.model);
 
-        this.validateModel(params);
+        this.validateModel();
 
         this.addEventListenersForDataChanges();
     }
 
-    public refresh(params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): void {
-        this.updateParams(params);
-        this.valueModel.refresh({
-            handlerParams: params,
-            ...resolveKeyCreatorFlags(this.beans, params),
-        });
+    public refresh(params: AgFilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): boolean {
+        const { keysFormedBy, valueSource, caseSensitive, valueModel } = this;
+        // provided values, the API's included, key the model until the definition's `values` changes
+        const values = params.filterParams.values;
+        const keyedFromRows =
+            valueModel.isValuesTakenFromGrid() ||
+            ((values ?? null) !== (this.params.filterParams.values ?? null) && !isProvidedValues(values));
+        const wasTreeDataOrGrouping = this.isTreeDataOrGrouping();
+        const valueModelParams = this.updateParams(params);
+        const newValueSource = this.valueSource;
+        // identity, as the rows cannot be read under the old definition once the column holds the new one
+        const keysChanged =
+            params.source === 'colDef' &&
+            (this.keysFormedBy !== keysFormedBy ||
+                this.caseSensitive !== caseSensitive ||
+                this.isTreeDataOrGrouping() !== wasTreeDataOrGrouping ||
+                (keyedFromRows &&
+                    (newValueSource.source !== valueSource.source ||
+                        newValueSource.kind !== valueSource.kind ||
+                        newValueSource.readsFormula !== valueSource.readsFormula)));
+        // a type inferred from the first rows is the one the model was written for
+        const inferring = keysChanged && !!this.beans.dataTypeSvc?.isInferring();
+        const model = params.model;
+        if (keysChanged && !inferring && model != null) {
+            // the model's keys may name nothing under the new rules, so the grid recreates the filter without it
+            return false;
+        }
+        // Before the reload, which reconciles the model once the values arrive.
+        this.appliedModel.update(model);
+        const reloading = valueModel.refresh(valueModelParams);
+        // the rows are read again once the types are inferred, provided values are keyed again here
+        if (reloading || (keysChanged && !(inferring && valueModel.isValuesTakenFromGrid()))) {
+            this.reloadValues(true);
+        }
 
-        this.appliedModel.update(params.model);
-
-        this.validateModel(params);
+        this.validateModel();
+        return true;
     }
 
-    private updateParams(params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>): void {
+    private updateParams(
+        params: AgFilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>
+    ): SetValueModelParams<TValue> {
         this.params = params;
         const {
             colDef,
+            filterValueGetter,
             filterParams: { caseSensitive, treeList, keyCreator, valueFormatter },
         } = params;
         this.caseSensitive = !!caseSensitive;
@@ -134,8 +145,18 @@ export class SetFilterHandler<TValue = string>
         this.treeDataTreeList = this.gos.get('treeData') && !!treeList && isGroupCol;
         this.groupingTreeList = !!this.beans.rowGroupColsSvc?.columns.length && !!treeList && isGroupCol;
         const resolvedKeyCreator = keyCreator ?? colDef.keyCreator;
+        const gridKeyCreator = !!resolvedKeyCreator && resolvedKeyCreator === getDataTypeKeyCreator(this.beans, colDef);
+        // a data type's key creator keys by the column's formatter; the type's own is rebuilt with the definitions
+        this.keysFormedBy = gridKeyCreator ? colDef.valueFormatter : resolvedKeyCreator;
+        this.valueSource = _getFilterValueSource(colDef, filterValueGetter);
         this.createKey = this.generateCreateKey(resolvedKeyCreator, this.isTreeDataOrGrouping());
         this.setValueFormatter(valueFormatter, resolvedKeyCreator, !!treeList, !!colDef.refData);
+        return {
+            handlerParams: params,
+            createKey: this.createKey,
+            usingComplexObjects: !!resolvedKeyCreator,
+            userKeyCreator: !!resolvedKeyCreator && !gridKeyCreator,
+        };
     }
 
     public doesFilterPass(params: DoesFilterPassParams<any, SetFilterModel>): boolean {
@@ -276,32 +297,33 @@ export class SetFilterHandler<TValue = string>
     }
 
     public onNewRowsLoaded(): void {
-        this.syncAfterDataChange();
+        this.syncAfterDataChange(false);
+    }
+
+    /** As `onNewRowsLoaded`, sharing the load a column definition refresh already started. */
+    public onNewRowsLoadedForColDef(): void {
+        this.syncAfterDataChange(true);
     }
 
     public setFilterValues(values: (TValue | null)[]): void {
-        this.valueModel.overrideValues(values).then(() => {
-            this.refreshFilterValues();
-        });
+        this.valueModel.setProvidedValues(values);
+        this.refreshFilterValues();
     }
 
     public resetFilterValues(): void {
-        this.valueModel.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
-        this.syncAfterDataChange();
+        this.valueModel.setProvidedValues(undefined);
+        this.syncAfterDataChange(false);
     }
 
-    /**
-     * @param suppressAvailableValuesCheck when refreshing values via the API, the model will be reset if all available values are selected.
-     * When refreshing due to internal changes, set this to `true` to do the reset check based on all values instead.
-     */
-    public refreshFilterValues(suppressAvailableValuesCheck?: boolean): void {
-        // the model is still being initialised
-        if (!this.valueModel.isInitialised()) {
-            return;
-        }
-        this.valueModel.refreshAll().then(() => {
+    public refreshFilterValues(): void {
+        this.reloadValues(false);
+    }
+
+    /** Through the API the model is checked against the available values, for a column definition against all. */
+    private reloadValues(forColDef: boolean): void {
+        this.valueModel.refreshValues(forColDef).then(() => {
             this.dispatchLocalEvent({ type: 'dataChanged', hardRefresh: true });
-            this.validateModel(this.params, undefined, !suppressAvailableValuesCheck);
+            this.validateModel(undefined, !forColDef);
         });
     }
 
@@ -325,9 +347,9 @@ export class SetFilterHandler<TValue = string>
     }
 
     private addEventListenersForDataChanges(): void {
-        this.addManagedPropertyListeners(['groupAllowUnbalanced'], () => this.syncAfterDataChange());
+        this.addManagedPropertyListeners(['groupAllowUnbalanced'], () => this.syncAfterDataChange(false));
 
-        const syncAfterDataChangeDebounced = _debounce(this, this.syncAfterDataChange.bind(this), 0);
+        const syncAfterDataChangeDebounced = _debounce(this, () => this.syncAfterDataChange(false), 0);
         this.addManagedEventListeners({
             cellValueChanged: (event) => {
                 // only interested in changes to do with this column
@@ -341,52 +363,45 @@ export class SetFilterHandler<TValue = string>
         });
     }
 
-    private syncAfterDataChange(): void {
-        if (!this.isValuesTakenFromGrid()) {
+    private syncAfterDataChange(forColDef: boolean): void {
+        const valueModel = this.valueModel;
+        if (!valueModel.isValuesTakenFromGrid()) {
             return;
         }
-
-        this.valueModel.refreshAll().then(() => {
+        valueModel.refreshValues(forColDef).then(() => {
             this.dispatchLocalEvent({ type: 'dataChanged' });
-            this.validateModel(this.params, { afterDataChange: true });
+            this.validateModel({ afterDataChange: true });
         });
     }
 
-    private validateModel(
-        params: FilterHandlerParams<any, any, SetFilterModel, ISetFilterParams<any, TValue>>,
-        additionalEventAttributes?: any,
-        restrictToAvailableValues?: boolean
-    ): void {
+    /** Reads the params once the values load, as a refresh in the meantime supersedes the model. */
+    private validateModel(additionalEventAttributes?: any, restrictToAvailableValues?: boolean): void {
         const valueModel = this.valueModel;
 
         valueModel.allKeys.then(() => {
+            const params = this.params;
             const model = params.model;
             if (model == null) {
                 return;
             }
-            const existingFormattedKeys: Map<string | null, string | null> = new Map();
-            const addKey = (key: string | null) => existingFormattedKeys.set(this.caseFormat(key), key);
-            if (restrictToAvailableValues) {
-                for (const key of valueModel.availableKeys) {
-                    addKey(key);
-                }
-            } else {
-                valueModel.allValues.forEach((_value, key) => addKey(key));
-            }
+            const existingFormattedKeys = valueModel.mapFormattedKeys(restrictToAvailableValues);
             // An empty grid-derived value set means the values are not yet known (e.g. the filter was
             // instantiated before cellDataType inference populated the rows), not that everything is selected.
             // Reconciling now would discard the applied criteria; leave the model untouched until real values
             // arrive and re-reconcile then (via cellValueChanged / dataTypesInferred / onNewRowsLoaded).
-            const takenFromGrid = valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
-            if (takenFromGrid && existingFormattedKeys.size === 0 && model.values.length > 0) {
+            const takenFromGrid = valueModel.isValuesTakenFromGrid();
+            const modelValues = model.values;
+            if (takenFromGrid && existingFormattedKeys.size === 0 && modelValues.length > 0) {
                 return;
             }
             const newValues: SetFilterModelValue = [];
             let updated = false;
-            for (const unformattedKey of model.values) {
+            for (const unformattedKey of modelValues) {
                 const formattedKey = this.caseFormat(setFilterNullIfBlank(unformattedKey));
                 const existingUnformattedKey = existingFormattedKeys.get(formattedKey);
                 if (existingUnformattedKey !== undefined) {
+                    // a key named twice, e.g. in two cases, is kept once
+                    existingFormattedKeys.delete(formattedKey);
                     newValues.push(existingUnformattedKey);
                     if (existingUnformattedKey !== unformattedKey) {
                         updated = true;
@@ -395,16 +410,15 @@ export class SetFilterHandler<TValue = string>
                     updated = true;
                 }
             }
-            const numNewValues = newValues.length;
             const filterParams = params.filterParams;
-            if (numNewValues === 0 && filterParams.excelMode) {
+            if (newValues.length === 0 && filterParams.excelMode) {
                 params.onModelChange(null, additionalEventAttributes);
                 return;
             }
             const clearOnAllSelected =
                 !filterParams.defaultToNothingSelected &&
                 (takenFromGrid || !filterParams.suppressClearModelOnRefreshValues);
-            const allSelected = clearOnAllSelected && numNewValues === existingFormattedKeys.size;
+            const allSelected = clearOnAllSelected && existingFormattedKeys.size === 0;
 
             if (updated || !model.filterType || allSelected) {
                 // if all values selected, remove model
@@ -412,10 +426,6 @@ export class SetFilterHandler<TValue = string>
                 params.onModelChange(newModel, additionalEventAttributes);
             }
         });
-    }
-
-    private isValuesTakenFromGrid(): boolean {
-        return this.valueModel.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
     }
 
     private doesFilterPassForTreeData(node: IRowNode, model: SetFilterAppliedModel): boolean | undefined {

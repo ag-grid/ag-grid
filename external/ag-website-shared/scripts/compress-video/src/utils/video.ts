@@ -1,4 +1,5 @@
 import ffmpeg from 'ffmpeg';
+import type { Video as FfmpegVideo } from 'ffmpeg';
 import { join, parse } from 'path';
 
 import { copyFiles, deleteFile, exists, fileSize } from './files';
@@ -43,7 +44,7 @@ export async function reduceVideo({
     width,
     frameRate,
 }: {
-    video: ReturnType<typeof ffmpeg>;
+    video: FfmpegVideo;
     /**
      * Destination of the resized video
      *

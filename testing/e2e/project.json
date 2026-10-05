@@ -1,0 +1,25 @@
+{
+  "name": "ag-e2e-testing",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "testing/e2e",
+  "projectType": "application",
+  "targets": {
+    "build:test": {
+      "dependsOn": ["^build:types"]
+    },
+    "lint": {
+      "command": "eslint",
+      "options": {
+        "cwd": "{projectRoot}"
+      }
+    },
+    "setup": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["{workspaceRoot}/scripts/ci/install-playwright.sh full chromium firefox webkit"],
+        "parallel": false
+      }
+    }
+  },
+  "tags": ["test", "e2e"]
+}

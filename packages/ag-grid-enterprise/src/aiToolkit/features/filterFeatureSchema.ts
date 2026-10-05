@@ -1,8 +1,13 @@
-import type { BeanCollection, StructuredSchemaParams } from 'ag-grid-community';
-import { _ADVANCED_FILTER_ONLY_OPTIONS, _classifyFilterOptions } from 'ag-grid-community';
+import type { AgColumn, BeanCollection, ResolvedFilter, StructuredSchemaParams } from 'ag-grid-community';
+import {
+    _ADVANCED_FILTER_ONLY_OPTIONS,
+    _classifyFilterOptions,
+    _getDisplayHandler,
+    _resolveFilter,
+} from 'ag-grid-community';
 
 import type { MultiFilterHandler } from '../../multiFilter/multiFilterHandler';
-import { getMultiFilterDefs } from '../../multiFilter/multiFilterUtil';
+import { resolveMultiFilterChildren } from '../../multiFilter/multiFilterUtil';
 import type { SetFilterHandler } from '../../setFilter/setFilterHandler';
 import type { SchemaBuilder } from '../schemaBuilder';
 import { s } from '../schemaBuilder';
@@ -10,13 +15,14 @@ import { buildAdvancedFilterFeatureSchema } from './advancedFilterFeatureSchema'
 
 const TextFilterKey = 'agTextColumnFilter';
 const NumberFilterKey = 'agNumberColumnFilter';
+const BigIntFilterKey = 'agBigIntColumnFilter';
 const DateFilterKey = 'agDateColumnFilter';
 
 const SetFilterKey = 'agSetColumnFilter';
 
 const MultiFilterKey = 'agMultiColumnFilter';
 
-const SimpleFilterKeys = [TextFilterKey, NumberFilterKey, DateFilterKey];
+const SimpleFilterKeys = [TextFilterKey, NumberFilterKey, BigIntFilterKey, DateFilterKey];
 
 export const buildFilterFeatureSchema = (beans: BeanCollection, params?: StructuredSchemaParams) => {
     const { advancedFilter } = beans;
@@ -46,16 +52,15 @@ const buildColumnFilterFeatureSchema = (beans: BeanCollection, params?: Structur
     const enableFilterHandlers = gos.get('enableFilterHandlers');
 
     for (const column of filterableColumns) {
-        const columnParams = params?.columns ? params.columns[column.colId] : undefined;
+        const colId = column.colId;
+        const columnParams = params?.columns?.[colId];
 
-        const colDef = column.colDef;
-        const defaultFilter = colFilter!.getDefaultFilter(column);
         const includeSetValues = columnParams?.includeSetValues ?? false;
-
+        // The column's model is its chosen filter's, the one its handler is built from.
         const filter = buildColumnFilterSchema(
-            colDef.filter,
-            colDef.filterParams,
-            defaultFilter,
+            beans,
+            column,
+            _resolveFilter(beans, column),
             (isMulti: boolean = false, multiIndex: number = 0) => {
                 if (!includeSetValues) {
                     return [];
@@ -63,10 +68,10 @@ const buildColumnFilterFeatureSchema = (beans: BeanCollection, params?: Structur
 
                 let handler: SetFilterHandler | undefined = undefined;
                 if (!isMulti) {
-                    handler = colFilter.getHandler(column, true) as SetFilterHandler;
+                    handler = _getDisplayHandler(colFilter.getHandler(column, true)) as SetFilterHandler;
                 } else if (enableFilterHandlers) {
-                    const multiHandler = colFilter.getHandler(column, true) as MultiFilterHandler;
-                    handler = multiHandler.getHandler(multiIndex) as SetFilterHandler;
+                    const multiHandler = _getDisplayHandler(colFilter.getHandler(column, true)) as MultiFilterHandler;
+                    handler = multiHandler.getChildDisplayHandler(multiIndex) as SetFilterHandler;
                 }
 
                 if (!handler) {
@@ -78,7 +83,7 @@ const buildColumnFilterFeatureSchema = (beans: BeanCollection, params?: Structur
         );
 
         if (filter) {
-            filterSchemas[column.colId] = filter.nullable();
+            filterSchemas[colId] = filter.nullable();
         }
     }
 
@@ -90,37 +95,20 @@ const buildColumnFilterFeatureSchema = (beans: BeanCollection, params?: Structur
 };
 
 function buildColumnFilterSchema(
-    filter: any,
-    filterParams: any | undefined,
-    defaultFilter: string,
+    beans: BeanCollection,
+    column: AgColumn,
+    resolved: ResolvedFilter,
     getKeys?: (isMulti?: boolean, index?: number) => (string | null)[]
 ): SchemaBuilder | null {
-    let filterKey: string | undefined = undefined;
-
-    if (typeof filter === 'string') {
-        filterKey = filter as string;
-    } else if (typeof filter === 'object' && typeof filter.component === 'string') {
-        filterKey = filter.component as string;
-    } else if (filter === true || (typeof filter === 'object' && filter.component === true)) {
-        filterKey = defaultFilter;
-    }
-
-    if (!filterKey) {
-        return null;
-    }
-
-    if (SimpleFilterKeys.includes(filterKey)) {
+    const filterKey = resolved.key;
+    if (filterKey && SimpleFilterKeys.includes(filterKey)) {
+        const filterParams = beans.colFilter!.resolveFilterParams(column, resolved.def);
         const maxConditions = filterParams?.maxNumConditions;
         // The filter's own definition of a usable entry, so the schema cannot offer a `type` it drops.
         // Read-only, so an entry it drops is not warned about again here.
-        const filterOptions = filterParams?.filterOptions
-            ? [
-                  ..._classifyFilterOptions(
-                      filterParams.filterOptions,
-                      () => {},
-                      _ADVANCED_FILTER_ONLY_OPTIONS
-                  ).offered.keys(),
-              ]
+        const userFilterOptions = filterParams?.filterOptions;
+        const filterOptions = userFilterOptions
+            ? [..._classifyFilterOptions(userFilterOptions, () => {}, _ADVANCED_FILTER_ONLY_OPTIONS).offered.keys()]
             : undefined;
         const useIsoSeparator = filterParams?.useIsoSeparator || false;
 
@@ -128,7 +116,7 @@ function buildColumnFilterSchema(
     } else if (filterKey === SetFilterKey) {
         return buildSetFilterSchema(getKeys);
     } else if (filterKey === MultiFilterKey) {
-        return buildMultiFilterSchema(getMultiFilterDefs(filterParams ?? {}), defaultFilter, getKeys);
+        return buildMultiFilterSchema(beans, column, resolveMultiFilterChildren(beans, column, resolved)!, getKeys);
     }
 
     return null;
@@ -144,7 +132,11 @@ const buildSimpleFilterSchema = (filterKey: string, params: SimpleFilterSchemaPa
     if (filterKey === DateFilterKey) {
         return buildDateFilterSchema(params);
     } else if (filterKey === NumberFilterKey) {
-        return buildNumberFilterSchema(params);
+        return buildScalarFilterSchema('number', 'Number', (description) => s.number(description), params);
+    } else if (filterKey === BigIntFilterKey) {
+        // The model holds a bigint as its decimal text.
+        const value = (description: string) => s.string({ pattern: '^-?\\d+$', description });
+        return buildScalarFilterSchema('bigint', 'BigInt', value, params);
     } else {
         return buildTextFilterSchema(params);
     }
@@ -187,7 +179,12 @@ const buildTextFilterSchema = (params: SimpleFilterSchemaParams) => {
     return buildJoinSchema(schema, 'text', params.maxConditions);
 };
 
-const buildNumberFilterSchema = (params: SimpleFilterSchemaParams) => {
+const buildScalarFilterSchema = (
+    filterType: 'number' | 'bigint',
+    title: string,
+    value: (description: string) => SchemaBuilder,
+    params: SimpleFilterSchemaParams
+) => {
     const options = params.filterOptions ?? [
         'equals',
         'notEqual',
@@ -201,13 +198,13 @@ const buildNumberFilterSchema = (params: SimpleFilterSchemaParams) => {
     ];
 
     const schema = s.object({
-        filterType: s.literal('number', 'Filter type identifier for number filters'),
-        type: s.enum(options, 'Number filter operation type'),
-        filter: s.number('Primary filter value').nullable(),
-        filterTo: s.number('Secondary filter value for range operations').nullable(),
+        filterType: s.literal(filterType, `Filter type identifier for ${filterType} filters`),
+        type: s.enum(options, `${title} filter operation type`),
+        filter: value('Primary filter value').nullable(),
+        filterTo: value('Secondary filter value for range operations').nullable(),
     });
 
-    return buildJoinSchema(schema, 'number', params.maxConditions);
+    return buildJoinSchema(schema, filterType, params.maxConditions);
 };
 
 const buildDateFilterSchema = (params: SimpleFilterSchemaParams) => {
@@ -255,14 +252,13 @@ const buildSetFilterSchema = (getKeys?: () => (string | null)[]) => {
 };
 
 const buildMultiFilterSchema = (
-    filters: any[],
-    defaultFilter: string,
+    beans: BeanCollection,
+    column: AgColumn,
+    children: ResolvedFilter[],
     getKeys: (isMulti: boolean, index?: number) => (string | null)[] = () => []
 ): SchemaBuilder | null => {
-    const childSchemas = filters
-        .map((filter: any, index: number) =>
-            buildColumnFilterSchema(filter.filter, filter.filterParams, defaultFilter, () => getKeys(true, index))
-        )
+    const childSchemas = children
+        .map((child, index) => buildColumnFilterSchema(beans, column, child, () => getKeys(true, index)))
         .filter((schema: SchemaBuilder | null): schema is SchemaBuilder => schema !== null);
 
     if (childSchemas.length === 0) {

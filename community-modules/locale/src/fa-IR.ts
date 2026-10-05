@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     clearFilter: 'پاک کردن',
     cancelFilter: 'لغو',
     cancelColumnToolPanel: 'لغو',
+    resetColumnToolPanel: 'بازنشانی',
 
     // Filter Titles
     textFilter: 'فیلتر متنی',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     addFilterCard: 'افزودن فیلتر',
     agTextColumnFilterDisplayName: 'فیلتر ساده',
     agNumberColumnFilterDisplayName: 'فیلتر ساده',
+    agBigIntColumnFilterDisplayName: 'فیلتر ساده',
     agDateColumnFilterDisplayName: 'فیلتر ساده',
     agSetColumnFilterDisplayName: 'فیلتر انتخاب',
     agMultiColumnFilterDisplayName: 'فیلتر ترکیبی',

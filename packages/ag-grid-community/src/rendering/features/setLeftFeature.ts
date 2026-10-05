@@ -4,7 +4,7 @@ import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
-import { isColumnGroup } from '../../entities/agColumnGroup';
+import { edgeLeafColumn, isColumnGroup } from '../../entities/agColumnGroup';
 import { _isDomLayout } from '../../gridOptionsUtils';
 import { applyHorizontalPosition, getResolvedHorizontalOffset } from './horizontalPositionUtils';
 
@@ -124,16 +124,12 @@ export class SetLeftFeature extends BeanStub {
             this.setHorizontalPosition(colOrGroup, value);
         }
 
-        if (isColumnGroup(this.columnOrGroup)) {
-            const children = this.columnOrGroup.getLeafColumns();
-
-            if (!children.length) {
-                return;
-            }
-
-            if (children.length > 1) {
-                _setAriaColSpan(this.ariaEl, children.length);
-            }
+        const group = this.columnOrGroup;
+        if (isColumnGroup(group)) {
+            // hidden columns keep their aria slots, so the group spans from its first leaf's slot to its last's
+            const last = edgeLeafColumn(group, false, true);
+            const colSpan = last ? last.ariaColIndex - group.ariaColIndex + 1 : 1;
+            _setAriaColSpan(this.ariaEl, colSpan > 1 ? colSpan : undefined);
         }
     }
 

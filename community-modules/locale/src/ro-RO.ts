@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     clearFilter: 'Curăță',
     cancelFilter: 'Anulează',
     cancelColumnToolPanel: 'Anulează',
+    resetColumnToolPanel: 'Resetează',
 
     // Filter Titles
     textFilter: 'Filtru text',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     addFilterCard: 'Adaugă filtru',
     agTextColumnFilterDisplayName: 'Filtru simplu',
     agNumberColumnFilterDisplayName: 'Filtru simplu',
+    agBigIntColumnFilterDisplayName: 'Filtru simplu',
     agDateColumnFilterDisplayName: 'Filtru simplu',
     agSetColumnFilterDisplayName: 'Filtru de selecție',
     agMultiColumnFilterDisplayName: 'Filtru combinat',

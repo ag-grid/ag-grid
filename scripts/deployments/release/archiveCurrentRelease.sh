@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 function checkFileExists {
     file=$1
     if ! [[ -f "$file" ]]
@@ -11,7 +13,7 @@ function checkFileExists {
 
 CURRENT_HOST=$1
 
-SSH_LOCATION=$SSH_FILE
+SSH_LOCATION=${SSH_FILE:-}
 
 if [ -z "$SSH_LOCATION" ]
 then

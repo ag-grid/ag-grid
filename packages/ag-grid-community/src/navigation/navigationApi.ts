@@ -17,7 +17,7 @@ export function setFocusedCell(
     colKey: string | Column,
     rowPinned?: RowPinnedType
 ) {
-    beans.focusSvc.setFocusedCell({ rowIndex, column: colKey, rowPinned, forceBrowserFocus: true });
+    beans.focusSvc.setFocusedCellOrSpan({ rowIndex, column: colKey, rowPinned, forceBrowserFocus: true });
 }
 
 export function tabToNextCell(beans: BeanCollection, event?: KeyboardEvent): boolean {

@@ -21,11 +21,17 @@ import {
     ClientSideRowModelModule,
     CustomFilterModule,
     DateFilterModule,
+    GridStateModule,
     NumberFilterModule,
     TextFilterModule,
     setupAgTestIds,
 } from 'ag-grid-community';
-import { AdvancedFilterModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
+import {
+    AdvancedFilterModule,
+    MultiFilterModule,
+    NewFiltersToolPanelModule,
+    SetFilterModule,
+} from 'ag-grid-enterprise';
 
 /** A filter component that filters nothing: only its `filterParams` matter here. */
 class MinimalFilter {
@@ -89,6 +95,8 @@ describe('Advanced Filter matches the column filter', () => {
             MultiFilterModule,
             CustomFilterModule,
             AdvancedFilterModule,
+            NewFiltersToolPanelModule,
+            GridStateModule,
             ClientSideRowModelModule,
         ],
     });
@@ -399,6 +407,32 @@ describe('Advanced Filter matches the column filter', () => {
             }
         );
 
+        test('params given as a function are read as the column filter reads them, on the column, a Multi Filter child or a Multi Filter', async () => {
+            const params = () => ({ textMatcher: wholeWord });
+            expect(await withColumnModel(params, contains('car'))).toEqual([0]);
+            expect(await withExpression(params, '[Name] contains "car"')).toEqual([0]);
+
+            const childDefs = multiDefs('child', params);
+            expect(await withColumnModel({}, multiContains('car'), childDefs)).toEqual([0]);
+            expect(await withExpression({}, '[Name] contains "car"', childDefs)).toEqual([0]);
+
+            const multiDefsFunc: GridOptions['columnDefs'] = [
+                { field: 'id' },
+                {
+                    field: 'name',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: () => ({
+                        filters: [
+                            { filter: 'agTextColumnFilter', filterParams: params },
+                            { filter: 'agSetColumnFilter' },
+                        ],
+                    }),
+                },
+            ];
+            expect(await withColumnModel({}, multiContains('car'), multiDefsFunc)).toEqual([0]);
+            expect(await withExpression({}, '[Name] contains "car"', multiDefsFunc)).toEqual([0]);
+        });
+
         test('a Multi Filter column reads `caseSensitive` from the same level as the formatter', async () => {
             expect(await withExpression({}, '[Name] contains "CAR"', multiDefs('child', {}))).toEqual([0, 1, 2]);
             expect(
@@ -478,6 +512,186 @@ describe('Advanced Filter matches the column filter', () => {
             expect(await withExpression(filterParams, '[Name] begins with " car "')).toEqual([1]);
             // Without it the spaces are part of what is looked for, on both sides.
             expect(await withExpression({}, '[Name] begins with " car "')).toEqual([]);
+        });
+
+        test("a Selectable Filter column's params are its filter's", async () => {
+            const selectableDefs = (filters: object[]): GridOptions['columnDefs'] => [
+                { field: 'id' },
+                { field: 'name', filter: 'agSelectableColumnFilter', filterParams: { filters } },
+            ];
+            const textWithTrim = { filter: 'agTextColumnFilter', filterParams: { trimInput: true } };
+            expect(await withExpression({}, '[Name] begins with " car "', selectableDefs([textWithTrim]))).toEqual([1]);
+            // A Multi Filter chosen there reads its Text Filter child's, as it does as the column's own filter.
+            const multi = { filter: 'agMultiColumnFilter', filterParams: { filters: [textWithTrim] } };
+            expect(await withExpression({}, '[Name] begins with " car "', selectableDefs([multi]))).toEqual([1]);
+        });
+
+        test('a Selectable Filter column follows a choice restored through the grid state', async () => {
+            const api = await gridsManager.createGridAndWait('advancedFilterGrid', {
+                columnDefs: [
+                    { field: 'id' },
+                    {
+                        field: 'name',
+                        filter: 'agSelectableColumnFilter',
+                        filterParams: {
+                            filters: [
+                                { filter: 'agTextColumnFilter', filterParams: { caseSensitive: true } },
+                                { filter: 'agTextColumnFilter' },
+                            ],
+                        },
+                    },
+                ],
+                rowData: [
+                    { id: 0, name: 'Carpet' },
+                    { id: 1, name: 'carpet' },
+                ],
+                enableAdvancedFilter: true,
+            });
+            const model = { filterType: 'text', colId: 'name', type: 'contains', filter: 'car' } as const;
+            api.setAdvancedFilterModel(model);
+            await asyncSetTimeout(0);
+            expect(getDisplayedIds(api)).toEqual([1]);
+
+            api.setState({ filter: { selectableFilters: { name: 1 }, advancedFilterModel: model } });
+            await asyncSetTimeout(0);
+            expect(getDisplayedIds(api)).toEqual([0, 1]);
+
+            // the applied expression follows a restore that names only the choice
+            api.setState({ filter: { selectableFilters: { name: 0 } } });
+            await asyncSetTimeout(0);
+            expect(getDisplayedIds(api)).toEqual([1]);
+
+            // and a restore naming the same choice does not filter again
+            const sources: string[] = [];
+            api.addEventListener('filterChanged', ({ source }) => sources.push(source ?? ''));
+            api.setState({ filter: { selectableFilters: { name: 0 } } });
+            await asyncSetTimeout(0);
+            expect(sources).toEqual([]);
+        });
+
+        test('a restore naming the choice already active by default does not filter again', async () => {
+            const api = await gridsManager.createGridAndWait('advancedFilterGrid', {
+                columnDefs: [
+                    {
+                        field: 'name',
+                        filter: 'agSelectableColumnFilter',
+                        filterParams: {
+                            filters: [{ filter: 'agTextColumnFilter' }, { filter: 'agNumberColumnFilter' }],
+                        },
+                    },
+                ],
+                rowData: [{ name: 'carpet' }],
+                enableAdvancedFilter: true,
+            });
+            api.setAdvancedFilterModel({ filterType: 'text', colId: 'name', type: 'contains', filter: 'car' });
+            await asyncSetTimeout(0);
+            const sources: string[] = [];
+            api.addEventListener('filterChanged', ({ source }) => sources.push(source ?? ''));
+
+            api.setState({ filter: { selectableFilters: { name: 0 } } });
+            await asyncSetTimeout(0);
+            expect(sources).toEqual([]);
+
+            // while one naming the other choice does
+            api.setState({ filter: { selectableFilters: { name: 1 } } });
+            await asyncSetTimeout(0);
+            expect(sources).not.toEqual([]);
+        });
+
+        test('a choice made while other text is typed keeps the applied expression and the typed text', async () => {
+            const api = await gridsManager.createGridAndWait('advancedFilterGrid', {
+                columnDefs: [
+                    { field: 'id' },
+                    {
+                        field: 'name',
+                        filter: 'agSelectableColumnFilter',
+                        filterParams: {
+                            filters: [
+                                { filter: 'agTextColumnFilter', filterParams: { caseSensitive: true } },
+                                { filter: 'agTextColumnFilter' },
+                            ],
+                        },
+                    },
+                ],
+                rowData: [
+                    { id: 0, name: 'Carpet' },
+                    { id: 1, name: 'carpet' },
+                ],
+                enableAdvancedFilter: true,
+            });
+            const model = { filterType: 'text', colId: 'name', type: 'contains', filter: 'car' } as const;
+            api.setAdvancedFilterModel(model);
+            await asyncSetTimeout(0);
+            const advanced = AdvancedFilterHarness.get(api);
+            for (const typed of ['[Name] contains "zzz"', '[Name] contains']) {
+                await advanced.type(typed);
+
+                api.setState({ filter: { selectableFilters: { name: 1 } } });
+                await asyncSetTimeout(0);
+                expect({ typed, model: api.getAdvancedFilterModel(), ids: getDisplayedIds(api) }).toEqual({
+                    typed,
+                    model,
+                    ids: [0, 1],
+                });
+                expect(advanced.value).toBe(typed);
+
+                api.setState({ filter: { selectableFilters: { name: 0 } } });
+                await asyncSetTimeout(0);
+                expect(getDisplayedIds(api)).toEqual([1]);
+
+                // as does any other change to the columns
+                api.setColumnsVisible(['id'], false);
+                await asyncSetTimeout(0);
+                expect({ typed, model: api.getAdvancedFilterModel() }).toEqual({ typed, model });
+                api.setColumnsVisible(['id'], true);
+            }
+        });
+
+        test('a choice made while an applied set value names nothing in the data filters by the new choice', async () => {
+            const api = await gridsManager.createGridAndWait('advancedFilterGrid', {
+                columnDefs: [
+                    { field: 'id' },
+                    {
+                        field: 'name',
+                        filter: 'agSelectableColumnFilter',
+                        filterParams: {
+                            filters: [
+                                { filter: 'agTextColumnFilter', filterParams: { caseSensitive: true } },
+                                { filter: 'agTextColumnFilter' },
+                            ],
+                        },
+                    },
+                    { field: 'country', filter: 'agSetColumnFilter' },
+                ],
+                rowData: [
+                    { id: 0, name: 'Carpet', country: 'Spain' },
+                    { id: 1, name: 'carpet', country: 'Spain' },
+                ],
+                enableAdvancedFilter: true,
+            });
+            api.setAdvancedFilterModel({
+                filterType: 'join',
+                type: 'AND',
+                conditions: [
+                    { filterType: 'text', colId: 'name', type: 'contains', filter: 'car' },
+                    { filterType: 'set', colId: 'country', type: 'isAnyOf', values: ['Spain', 'Nowhere'] },
+                ],
+            });
+            await asyncSetTimeout(0);
+            expect(getDisplayedIds(api)).toEqual([1]);
+
+            api.setState({ filter: { selectableFilters: { name: 1 } } });
+            await asyncSetTimeout(0);
+            expect(getDisplayedIds(api)).toEqual([0, 1]);
+            // the value the data cannot spell is still applied as it was
+            expect(api.getAdvancedFilterModel()).toEqual({
+                filterType: 'join',
+                type: 'AND',
+                conditions: [
+                    { filterType: 'text', colId: 'name', type: 'contains', filter: 'car' },
+                    { filterType: 'set', colId: 'country', type: 'isAnyOf', values: ['Spain', 'Nowhere'] },
+                ],
+            });
         });
 
         // Whatever is typed stays typed: the trim reaches the operand the filter matches on, never the text.
@@ -697,6 +911,36 @@ describe('Advanced Filter matches the column filter', () => {
 
         expect(getDisplayedIds(advancedApi)).toEqual([1]);
         expect([...sources]).toEqual(['advancedFilter']);
+    });
+
+    test('a Multi or Selectable Filter column reads `numberParser` and `numberFormatter` from its Number child, as given by a function', async () => {
+        const words = ['zero', 'one', 'two', 'three'];
+        const numberChild = {
+            filter: 'agNumberColumnFilter',
+            filterParams: () => ({
+                numberParser: (text: string | null) => (text ? words.indexOf(text) : null),
+                numberFormatter: (value: number | null) => (value == null ? null : words[value]),
+            }),
+        };
+        const multi = { filter: 'agMultiColumnFilter', filterParams: { filters: [numberChild] } };
+        const selectable = (child: object) => ({
+            filter: 'agSelectableColumnFilter',
+            filterParams: { filters: [child] },
+        });
+        for (const ageFilter of [multi, selectable(numberChild), selectable(multi)]) {
+            const api = await gridsManager.createGridAndWait('advancedFilterGrid', {
+                columnDefs: [{ field: 'id' }, { field: 'age', ...ageFilter }],
+                rowData: ROW_DATA,
+                enableAdvancedFilter: true,
+            });
+            await AdvancedFilterHarness.get(api).applyExpression('[Age] = two');
+            await asyncSetTimeout(0);
+
+            expect(getDisplayedIds(api)).toEqual([1]);
+            api.setAdvancedFilterModel(api.getAdvancedFilterModel());
+            expect(AdvancedFilterHarness.get(api).value).toBe('[Age] = two');
+            api.destroy();
+        }
     });
 
     // The bigint pair is the other half of the same threading, and reads through a different fallback.
@@ -1308,6 +1552,15 @@ describe('Advanced Filter matches the column filter', () => {
             ).toEqual(columnFilterIds);
         });
 
+        test("a Selectable Filter column reads its Date Filter's `comparator`", async () => {
+            const columnDefs = timedDefs(
+                { filters: [{ filter: 'agDateColumnFilter', filterParams: comparatorParams }] },
+                'agSelectableColumnFilter'
+            );
+            const model = { filterType: 'date', colId: 'when', type: 'equals', filter: '2008-08-24' } as const;
+            expect(await timedAdvancedFilter(model, columnDefs)).toEqual([0, 1]);
+        });
+
         // The child carries the rest of the comparison's configuration as well as the comparator.
         test("a Multi Filter column reads its date child's `inRangeInclusive`, in both", async () => {
             const columnDefs = timedDefs(
@@ -1597,6 +1850,40 @@ describe('Advanced Filter matches the column filter', () => {
             expect(seen.length).toBeGreaterThan(0);
             expect(seen.every((value) => typeof value === 'string')).toBe(true);
         });
+    });
+
+    test("a `date` column whose params are a function keeps its data type's `isValidDate`, so a cell that is not a date is refused", async () => {
+        const rowData = [
+            { id: 0, when: new Date(2008, 7, 24) },
+            { id: 1, when: 'not a date' },
+        ];
+        const columnDefs: GridOptions['columnDefs'] = [
+            { field: 'when', cellDataType: 'date', filter: 'agDateColumnFilter', filterParams: () => ({}) },
+        ];
+        const advanced = { filterType: 'date', colId: 'when', type: 'equals', filter: '2008-08-24' } as const;
+
+        const columnIds = await withColumnFilter(
+            'when',
+            { filterType: 'date', type: 'equals', dateFrom: '2008-08-24' },
+            columnDefs,
+            rowData
+        );
+        expect(columnIds).toEqual([0]);
+        expect(await withAdvancedFilter(advanced, columnDefs, rowData)).toEqual(columnIds);
+        expect(
+            await withAdvancedFilter(
+                advanced,
+                [
+                    {
+                        field: 'when',
+                        cellDataType: 'date',
+                        filter: 'agMultiColumnFilter',
+                        filterParams: () => ({ filters: [{ filter: 'agDateColumnFilter' }] }),
+                    },
+                ],
+                rowData
+            )
+        ).toEqual(columnIds);
     });
 });
 

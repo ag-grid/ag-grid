@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     clearFilter: 'साफ़ करें',
     cancelFilter: 'रद्द करें',
     cancelColumnToolPanel: 'रद्द करें',
+    resetColumnToolPanel: 'रीसेट करें',
 
     // Filter Titles
     textFilter: 'टेक्स्ट फ़िल्टर',
@@ -117,6 +118,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     addFilterCard: 'फ़िल्टर जोड़ें',
     agTextColumnFilterDisplayName: 'सरल फ़िल्टर',
     agNumberColumnFilterDisplayName: 'सरल फ़िल्टर',
+    agBigIntColumnFilterDisplayName: 'सरल फ़िल्टर',
     agDateColumnFilterDisplayName: 'सरल फ़िल्टर',
     agSetColumnFilterDisplayName: 'चयन फ़िल्टर',
     agMultiColumnFilterDisplayName: 'कॉम्बो फ़िल्टर',

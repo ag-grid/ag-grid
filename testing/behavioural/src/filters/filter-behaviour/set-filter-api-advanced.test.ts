@@ -120,6 +120,144 @@ describe('Set Filter — handler value manipulation API', () => {
         `);
     });
 
+    // A column definition reloads the list only where its own `values` change, so a change elsewhere keeps
+    // the list the API set, whichever API set it last; a new sort order re-sorts that list.
+    test('values set or reset through the API outlast a column definition change that keeps its values', async () => {
+        const values = ['Germany', 'Spain'];
+        const colDef = { field: 'country', filter: 'agSetColumnFilter', filterParams: { values } };
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [colDef],
+            rowData: [{ country: 'Italy' }, { country: 'France' }],
+        });
+        const updateColumn = async (headerName: string, suppressSorting: boolean) => {
+            api.setGridOption('columnDefs', [{ ...colDef, headerName, filterParams: { values, suppressSorting } }]);
+            await asyncSetTimeout(0);
+        };
+
+        handler(api, 'country').setFilterValues(['Poland', 'Austria']);
+        await asyncSetTimeout(0);
+        await updateColumn('Nation', false);
+        expect(handler(api, 'country').getFilterKeys()).toEqual(['Poland', 'Austria']);
+        const filter = await ColumnFilterHarness.open(api, 'country');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'Austria', 'Poland']);
+        api.hidePopupMenu();
+        await updateColumn('Nation', true);
+        expect(handler(api, 'country').getFilterKeys()).toEqual(['Poland', 'Austria']);
+        expect((await ColumnFilterHarness.open(api, 'country')).setFilterItemLabels()).toEqual([
+            '(Select All)',
+            'Poland',
+            'Austria',
+        ]);
+        api.hidePopupMenu();
+
+        handler(api, 'country').resetFilterValues();
+        await asyncSetTimeout(0);
+        await updateColumn('Land', false);
+        expect(handler(api, 'country').getFilterKeys()).toEqual(['Italy', 'France']);
+    });
+
+    test('values set through the API are supplied values, so a new value source keeps them and the selection', async () => {
+        const rowData = [
+            { a: 'Italy', b: 'Rome' },
+            { a: 'France', b: 'Paris' },
+        ];
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ colId: 'c', field: 'a', filter: 'agSetColumnFilter' }],
+            rowData,
+        });
+        const select = async (values: string[]) => {
+            await api.setColumnFilterModel('c', { filterType: 'set', values });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+        };
+        const readFrom = async (field: string) => {
+            api.setGridOption('columnDefs', [{ colId: 'c', field, filter: 'agSetColumnFilter' }]);
+            await asyncSetTimeout(0);
+            return { keys: handler(api, 'c').getFilterKeys(), model: api.getColumnFilterModel('c') };
+        };
+
+        handler(api, 'c').setFilterValues(['Poland', 'Austria']);
+        await asyncSetTimeout(0);
+        await select(['Poland']);
+        expect(await readFrom('b')).toEqual({
+            keys: ['Poland', 'Austria'],
+            model: { filterType: 'set', values: ['Poland'] },
+        });
+
+        // control: the rows' own values are keyed from the source, so a new one resets the filter
+        handler(api, 'c').resetFilterValues();
+        await asyncSetTimeout(0);
+        await select(['Rome']);
+        expect(await readFrom('a')).toEqual({ keys: ['Italy', 'France'], model: null });
+    });
+
+    test('values set or reset through the API while a values callback loads apply at once, and give way to a later reset or column definition `values`', async () => {
+        const setPoland = (api: GridApi) => handler(api, 'country').setFilterValues(['Poland']);
+        const reset = (api: GridApi) => handler(api, 'country').resetFilterValues();
+        const austriaColDef = (api: GridApi) =>
+            api.setGridOption('columnDefs', [
+                { field: 'country', filter: 'agSetColumnFilter', filterParams: { values: ['Austria'] } },
+            ]);
+        const cases: [string, ((api: GridApi) => void)[], string[]][] = [
+            ['reset', [reset], ['Italy']],
+            ['set', [setPoland], ['Poland']],
+            ['set, then reset', [setPoland, reset], ['Italy']],
+            ['set, then column definition values', [setPoland, austriaColDef], ['Austria']],
+        ];
+        const outcomes: Record<string, unknown> = {};
+        const expected: Record<string, unknown> = {};
+        for (const [name, steps, keys] of cases) {
+            const answers: ((values: string[]) => void)[] = [];
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [
+                    {
+                        field: 'country',
+                        filter: 'agSetColumnFilter',
+                        filterParams: { values: (params: SetFilterValuesFuncParams) => answers.push(params.success) },
+                    },
+                ],
+                rowData: [{ country: 'Italy' }],
+            });
+            handler(api, 'country');
+            await asyncSetTimeout(0);
+
+            for (let i = 0; i < steps.length; ++i) {
+                steps[i](api);
+            }
+            await asyncSetTimeout(0);
+            const before = handler(api, 'country').getFilterKeys();
+            // the overtaken answer is not read
+            answers[0](['Late']);
+            await asyncSetTimeout(0);
+            outcomes[name] = { before, after: handler(api, 'country').getFilterKeys(), calls: answers.length };
+            expected[name] = { before: keys, after: keys, calls: 1 };
+            gridsManager.reset();
+        }
+        expect(outcomes).toEqual(expected);
+    });
+
+    test('refreshFilterValues keeps only the selected values the other filters still leave available', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'country', filter: 'agSetColumnFilter' },
+                { field: 'sport', filter: 'agSetColumnFilter' },
+            ],
+            rowData: [
+                { country: 'Italy', sport: 'Ski' },
+                { country: 'France', sport: 'Golf' },
+                { country: 'Spain', sport: 'Ski' },
+            ],
+        });
+        await api.setColumnFilterModel('country', { filterType: 'set', values: ['Italy', 'France'] });
+        await api.setColumnFilterModel('sport', { filterType: 'set', values: ['Ski'] });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        handler(api, 'country').refreshFilterValues();
+        await asyncSetTimeout(0);
+        expect(api.getColumnFilterModel('country')).toEqual({ filterType: 'set', values: ['Italy'] });
+    });
+
     test('refreshFilterValues re-runs the values callback and re-derives the list', async () => {
         let batch = ['France', 'Germany'];
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {

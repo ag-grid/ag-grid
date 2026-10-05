@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     clearFilter: 'Kosongkan',
     cancelFilter: 'Batal',
     cancelColumnToolPanel: 'Batal',
+    resetColumnToolPanel: 'Set Semula',
 
     // Filter Titles
     textFilter: 'Penapis Teks',
@@ -117,6 +118,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     addFilterCard: 'Tambah Penapis',
     agTextColumnFilterDisplayName: 'Penapis Ringkas',
     agNumberColumnFilterDisplayName: 'Penapis Ringkas',
+    agBigIntColumnFilterDisplayName: 'Penapis Ringkas',
     agDateColumnFilterDisplayName: 'Penapis Ringkas',
     agSetColumnFilterDisplayName: 'Penapis Pemilihan',
     agMultiColumnFilterDisplayName: 'Penapis Gabungan',

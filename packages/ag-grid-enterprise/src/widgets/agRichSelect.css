@@ -71,9 +71,6 @@
     flex: 1 1 auto;
 
     :where(.ag-input-field-input) {
-        padding: 0 !important;
-        border: none !important;
-        box-shadow: none !important;
         text-overflow: ellipsis;
 
         &::placeholder {
@@ -82,6 +79,11 @@
     }
 
     left: var(--ag-spacing);
+}
+
+.ag-rich-select-typing-single {
+    /* because the first child is a frameless text input which has its own padding */
+    padding-inline-start: 0;
 }
 
 .ag-rich-select-typing-multi {
@@ -108,6 +110,8 @@
     }
 
     :where(.ag-rich-select-field-input) {
+        --ag-input-padding-start: 0;
+
         margin-left: 0.25rem;
         flex: 0 0 auto;
         min-width: 0;

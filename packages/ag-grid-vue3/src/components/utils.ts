@@ -382,7 +382,9 @@ export interface Props<TData> {
          * @deprecated v32.2 Use `rowSelection.copySelectedRows` instead.
          */
     suppressCopySingleCellRanges?: boolean,
-    /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard.
+    /** Set to `true` to always remove a trailing empty line from pasted data.
+         * Usually not needed: the grid removes the extra line added by Excel for Windows automatically.
+         * Unlike the automatic handling, this also removes a blank last row that was part of the copied range.
          * @default false
          * @agModule `ClipboardModule`
          */
@@ -887,9 +889,9 @@ export interface Props<TData> {
          */
     suppressChangeDetection?: boolean,
     /** Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems.
-         * It is also recommended to register the `ValidationModule` to identify any misconfigurations.
          * @default false
          * @initial
+         * @deprecated v36.3 Use `enableDevValidations({ debug: true })` instead.
          */
     debug?: boolean,
     /** Show or hide the loading UI.

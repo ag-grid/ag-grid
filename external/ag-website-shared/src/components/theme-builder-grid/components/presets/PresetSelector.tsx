@@ -1,8 +1,7 @@
 import { PresetButton, PresetScroller } from '@ag-website-shared/components/theme-builder/PresetScroller';
-import { ResetChangesModal } from '@ag-website-shared/components/theme-builder/ResetChangesModal';
-import { getChangedModelItemCount } from '@ag-website-shared/theming/changed-model-items';
+import { usePresetApply } from '@ag-website-shared/components/theme-builder/usePresetApply';
 import { useStore } from 'jotai';
-import { type CSSProperties, useMemo, useState } from 'react';
+import { type CSSProperties, useMemo } from 'react';
 
 import { type Theme, colorSchemeLight, themeQuartz } from 'ag-grid-community';
 
@@ -11,20 +10,14 @@ import { type Preset, allPresets, applyPreset } from './presets';
 
 export const PresetSelector = () => {
     const store = useStore();
-    const [showDialog, setShowDialog] = useState(false);
-    const [pendingPreset, setPendingPreset] = useState<Preset | null>(null);
 
     // allPresets is a static array, so the derived themes only need building once.
     const presetThemes = useMemo(() => allPresets.map(buildPresetTheme), []);
 
-    const selectPreset = (preset: Preset) => {
-        if (getChangedModelItemCount(store) > 1) {
-            setPendingPreset(preset);
-            setShowDialog(true);
-        } else {
-            applyPreset(store, preset);
-        }
-    };
+    const { selectPreset, resetChangesModal } = usePresetApply({
+        apply: (preset: Preset) => applyPreset(store, preset),
+        baselineChanges: 1,
+    });
 
     return (
         <>
@@ -43,13 +36,7 @@ export const PresetSelector = () => {
                     </PresetButton>
                 ))}
             </PresetScroller>
-            {pendingPreset && (
-                <ResetChangesModal
-                    showDialog={showDialog}
-                    setShowDialog={setShowDialog}
-                    onSuccess={() => applyPreset(store, pendingPreset)}
-                />
-            )}
+            {resetChangesModal}
         </>
     );
 };
