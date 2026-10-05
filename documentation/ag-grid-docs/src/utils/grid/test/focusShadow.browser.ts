@@ -118,8 +118,7 @@ export function auditFocusShadows(): FocusShadowIssue[] {
     };
 
     /** The layers painted outside the border box; an inset layer stays inside it and cannot be clipped. */
-    const outsetLayers = (shadow: string): string[] =>
-        shadowLayers(shadow).filter((layer) => !/\binset\b/.test(layer));
+    const outsetLayers = (shadow: string): string[] => shadowLayers(shadow).filter((layer) => !/\binset\b/.test(layer));
 
     /**
      * How far the layers reach beyond the border box: the furthest-reaching of them, each measured by summing
