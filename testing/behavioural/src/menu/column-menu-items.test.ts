@@ -200,7 +200,7 @@ describe('column menu item action params', () => {
         const params = await runLogParamsFrom(headerCell('athlete'));
 
         expect(params.column).toBe(api.getColumn('athlete'));
-        expect(params).toHaveProperty('columnGroup', null);
+        expect(params.columnGroup).toBeNull();
     });
 
     test('a column group header menu passes the column group and a null column', async () => {
@@ -268,7 +268,7 @@ describe('column menu item action params from filler group headers', () => {
         const params = await runMenuActionFrom(fillerCellAbove('athlete'), 'Log Params', action);
 
         expect(params.column).toBeNull();
-        expect(params).toHaveProperty('columnGroup', null);
+        expect(params.columnGroup).toBeNull();
     });
 
     test('a filler under a column group passes that column group', async () => {
