@@ -14618,6 +14618,7 @@ __metadata:
     typescript-eslint: "npm:^8.70.1"
     vite: "npm:^7.3.6"
     vitest: "npm:4.1.11"
+    yargs: "npm:^18.0.0"
   languageName: unknown
   linkType: soft
 
