@@ -100,7 +100,7 @@ Run each spec with the `docs-e2e.sh` helper from the **repository root**:
 **Important:**
 
 - Run from the repo root — `docs-e2e.sh` handles the working directory and Playwright config for you.
-- **The default run already validates every framework.** With no `--framework` flag, `eachFramework` runs the spec against all frameworks (typescript, vanilla, reactFunctionalTs, angular, vue3) in chromium — one command is the full cross-framework check. You do **not** need a separate run per framework.
+- **The default run validates every framework except the production React build.** With no `--framework` flag, `eachFramework` runs the spec against typescript, vanilla, reactFunctionalTs_Dev, angular and vue3 in chromium. Add `--all-variants` to include the production `reactFunctionalTs` build (CI always does). You do **not** need a separate run per framework.
 - Use the example folder name as the filter (e.g., `"aggregation-overview"`), NOT a glob pattern with `**/` (Playwright treats `*` as regex).
 - To run a single test by name, append `--grep "<test-name>"`.
 - To narrow to one framework while debugging a failure, use `--framework <name>` (valid: `typescript`, `vanilla`, `reactFunctionalTs`, `reactFunctionalTs_Dev`, `angular`, `vue3`).
@@ -145,7 +145,7 @@ The only acceptable fixed wait is a deliberate, documented debounce where no obs
 ## Definition of Done
 
 - Every targeted example has an `example.spec.ts` with meaningful assertions (no placeholders).
-- All tests pass across every framework (typescript, vanilla, reactFunctionalTs, angular, vue3) in chromium — i.e. a default `./docs-e2e.sh "<example-name>"` run is green.
+- All tests pass across every framework (typescript, vanilla, reactFunctionalTs, angular, vue3) in chromium — i.e. a `./docs-e2e.sh "<example-name>" --all-variants` run is green.
 - Assertions cover the behaviours described in the documentation for each example.
 - Every distinct behaviour the example's doc prose calls out has its own test block — not just one interaction (expand/sort/filter/toggle each behaviour the example demonstrates), and never value-only where an interaction is possible (see Pitfall 12).
 - No fixed `page.waitForTimeout(...)` is used to wait for grid state — waits are deterministic (see "Writing Deterministic (Non-Flaky) Tests").
