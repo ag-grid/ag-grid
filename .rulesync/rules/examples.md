@@ -1,7 +1,7 @@
 ---
 targets: ['*']
 description: 'Working with examples in AG Grid documentation'
-globs: ['_examples/**/*', 'documentation/**/_examples/**/*']
+globs: ['documentation/**/_examples/**/*']
 ---
 
 # Examples Guide
@@ -114,7 +114,7 @@ yarn nx generate-examples ag-grid-docs
 ./docs-e2e.sh "example-name" --grep "test name"
 
 # Run against a specific framework
-./docs-e2e.sh "example-name" --framework react
+./docs-e2e.sh "example-name" --framework reactFunctionalTs
 ```
 
 ## HTML Container Patterns
