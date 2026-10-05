@@ -74,9 +74,9 @@ Create a plan listing each example that needs a test written or updated. For eac
 
 Present this plan to the user before proceeding. Wait for approval.
 
-## STEP 2: Write Tests Using Playwright Expert
+## STEP 2: Write Tests With a Subagent
 
-For each example in the approved plan, use the **playwright-expert** subagent (via the Agent tool) to write the `example.spec.ts` file. Provide the subagent with:
+For each example in the approved plan, use a subagent (via the Agent tool) to write the `example.spec.ts` file. Provide the subagent with:
 
 1.  The core test reference (the "Test Reference" section below) **and** the situational pitfalls/patterns that apply to this example (from `reference/pitfalls-and-patterns.md` — see the index below)
 2.  The example's source code (main.ts, data.ts, etc.)
@@ -156,7 +156,7 @@ The only acceptable fixed wait is a deliberate, documented debounce where no obs
 
 ## Test Reference
 
-The core conventions below apply to almost every test — include them when delegating to the playwright-expert subagent. Situational guidance (12 pitfalls + worked patterns) lives in `reference/pitfalls-and-patterns.md`; use the index at the end of this section to pull in only the parts relevant to your example.
+The core conventions below apply to almost every test — include them when delegating to the subagent. Situational guidance (12 pitfalls + worked patterns) lives in `reference/pitfalls-and-patterns.md`; use the index at the end of this section to pull in only the parts relevant to your example.
 
 ### Imports
 
@@ -221,7 +221,7 @@ Avoid the use of `remoteGrid(page)`. Prefer using `agIdFor` locators and Playwri
 
 ### Pitfalls & Patterns Index
 
-Read the relevant entries from `reference/pitfalls-and-patterns.md` based on what your example does — don't load the whole file if only a couple apply. When delegating to the playwright-expert subagent, pass through just the entries that match.
+Read the relevant entries from `reference/pitfalls-and-patterns.md` based on what your example does — don't load the whole file if only a couple apply. When delegating to the subagent, pass through just the entries that match.
 
 | # | Pitfall | Read when the example… |
 | - | ------- | ---------------------- |
