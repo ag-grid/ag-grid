@@ -3,6 +3,8 @@
     z-index: 1;
     border-radius: var(--ag-border-radius);
     padding: 0;
+
+    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
     border: var(--ag-cell-editing-border) !important;
     box-shadow: var(--ag-cell-editing-shadow);
 
@@ -21,6 +23,7 @@
 
     &.ag-cell-editing-error,
     &.ag-cell-editor-input-invalid {
+        /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
         border-color: var(--ag-invalid-color) !important;
     }
 }

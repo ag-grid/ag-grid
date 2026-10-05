@@ -26,14 +26,14 @@
     height: 100%;
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-calculated-column-expression-wrap .ag-text-area-input {
     height: 100%;
     resize: none;
     padding-top: calc(var(--ag-spacing) / 2);
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-rtl .ag-calculated-column-expression-wrap .ag-text-area-input {
     /* rtl:ignore */
     padding-left: var(--ag-input-padding-start);
@@ -56,7 +56,7 @@
     }
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-standard-button.ag-calculated-column-expression-tool {
     padding: calc(var(--ag-spacing) / 2);
 }

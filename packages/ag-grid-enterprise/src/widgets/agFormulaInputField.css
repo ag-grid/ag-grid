@@ -65,7 +65,7 @@
     --ag-range-selection-background-color: var(--ag-formula-token-7-background-color);
 }
 
-/* stylelint-disable selector-max-specificity */
+/* stylelint-disable selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-range-handle.ag-formula-range-color-1,
 .ag-fill-handle.ag-formula-range-color-1 {
     background-color: var(--ag-formula-token-1-color);
