@@ -8,6 +8,22 @@ export function getGridColumnGroup(beans: BeanCollection, group: AgProvidedColum
     return beans.colModel.colDefGroupsById.get(group.groupId) ?? group;
 }
 
+/** A layout-only group has no grid group to fire `headerNameChanged`, so each tool panel fires it on its own copy. */
+export function createLayoutGroupRenameNotifier(beans: BeanCollection, group: AgProvidedColumnGroup): () => void {
+    const { groupId } = group;
+    let lastName = beans.colModel.groupHeaderNameOverrides.get(groupId) ?? null;
+    return () => {
+        const name = beans.colModel.groupHeaderNameOverrides.get(groupId) ?? null;
+        if (name === lastName) {
+            return;
+        }
+        lastName = name;
+        if (getGridColumnGroup(beans, group) === group) {
+            group.dispatchLocalEvent({ type: 'headerNameChanged' });
+        }
+    };
+}
+
 /** Names come from the copy's definition, which a custom layout may set, while `headerValueGetter` gets the grid's group. */
 export function getToolPanelGroupName(
     beans: BeanCollection,

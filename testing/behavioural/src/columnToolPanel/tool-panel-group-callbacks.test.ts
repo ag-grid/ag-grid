@@ -197,7 +197,7 @@ describe('Tool panel column group callbacks', () => {
         );
         expect(labels).toEqual(expect.arrayContaining(['Layout Results', 'Layout Only']));
     });
-    test('renaming a group that exists only in a custom layout fires headerNameChanged on its callback group', async () => {
+    test('renaming and resetting a group that exists only in a custom layout fires headerNameChanged on its callback group', async () => {
         const api = await createGrid({
             columnDefs: [{ field: 'gold' }],
             columnHeaderEdit: { applyMode: 'deferred' },
@@ -229,5 +229,53 @@ describe('Tool panel column group callbacks', () => {
         input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
 
         await waitFor(() => expect(onRenamed).toHaveBeenCalledTimes(1));
+
+        api.resetColumnState();
+
+        expect(onRenamed).toHaveBeenCalledTimes(2);
+    });
+
+    test('resetting a layout-only group renamed before the layout was reapplied notifies the current callback group', async () => {
+        const api = await createGrid({
+            columnDefs: [{ field: 'gold' }],
+            columnHeaderEdit: { applyMode: 'deferred' },
+        });
+        const toolPanel = api.getToolPanelInstance('panel') as any;
+        const layout = [
+            {
+                groupId: 'layoutOnly',
+                headerName: 'Layout Only',
+                headerNameEditable: true,
+                children: [{ field: 'gold' }],
+            },
+        ];
+        toolPanel.setColumnLayout(layout);
+        await waitForLabels(api, 1);
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        await openToolPanelContextMenu(toolPanel, gridDiv, 'Layout Only');
+        await userEvent.click(await findByText(gridDiv, 'Edit Column Name'));
+        const input = await waitFor(() => {
+            const el = document.querySelector('.ag-column-header-edit-popup-editor input') as HTMLInputElement | null;
+            expect(el).toBeTruthy();
+            return el!;
+        });
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Renamed');
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+        await findByText(gridDiv, 'Renamed');
+
+        const staleGroup = receivedGroups.find((group) => group?.getGroupId() === 'layoutOnly')!;
+        receivedGroups.length = 0;
+        toolPanel.setColumnLayout(layout);
+        await waitForLabels(api, 1);
+        const currentGroup = receivedGroups.find((group) => group?.getGroupId() === 'layoutOnly')!;
+        expect(currentGroup).not.toBe(staleGroup);
+        const onRenamed = vi.fn();
+        currentGroup.addEventListener('headerNameChanged', onRenamed);
+
+        api.resetColumnState();
+
+        expect(onRenamed).toHaveBeenCalledTimes(1);
     });
 });

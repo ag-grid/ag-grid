@@ -34,17 +34,17 @@ export const _setColGroupOpen = (
 
 /**
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- * Sets (or with `null`, clears) a group's header name override and fires `headerNameChanged` on `group`.
+ * Sets (or with `null`, clears) a group's header name override and fires `headerNameChanged` on the grid's group.
  * Callers dispatch the grid-level `columnHeaderNameChanged` event, so a batch of renames can share one.
  * Returns whether the name changed.
  */
 export const _setColGroupHeaderNameOverride = (
     beans: BeanCollection,
-    group: AgProvidedColumnGroup,
+    groupId: string,
     headerName: string | null
 ): boolean => {
-    const overrides = beans.colModel.groupHeaderNameOverrides;
-    const { groupId } = group;
+    const { colModel } = beans;
+    const overrides = colModel.groupHeaderNameOverrides;
     if ((overrides.get(groupId) ?? null) === headerName) {
         return false;
     }
@@ -53,7 +53,7 @@ export const _setColGroupHeaderNameOverride = (
     } else {
         overrides.set(groupId, headerName);
     }
-    group.dispatchLocalEvent({ type: 'headerNameChanged' });
+    colModel.getColGroup(groupId)?.dispatchLocalEvent({ type: 'headerNameChanged' });
     return true;
 };
 
@@ -85,7 +85,7 @@ export const _setColGroupState = (
             }
             if (
                 'headerName' in stateItem &&
-                _setColGroupHeaderNameOverride(beans, group, stateItem.headerName ?? null)
+                _setColGroupHeaderNameOverride(beans, group.groupId, stateItem.headerName ?? null)
             ) {
                 renamedGroups ??= [];
                 renamedGroups.push(group);

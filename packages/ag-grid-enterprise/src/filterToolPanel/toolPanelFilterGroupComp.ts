@@ -20,7 +20,11 @@ import {
 } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../agStack/agGroupComponent';
-import { getGridColumnGroup, getToolPanelGroupName } from '../sideBar/common/toolPanelColDefService';
+import {
+    createLayoutGroupRenameNotifier,
+    getGridColumnGroup,
+    getToolPanelGroupName,
+} from '../sideBar/common/toolPanelColDefService';
 import type { GroupComponent, GroupComponentParams } from '../widgets/gridEnterpriseWidgetTypes';
 import { ToolPanelFilterComp } from './toolPanelFilterComp';
 
@@ -232,10 +236,12 @@ export class ToolPanelFilterGroupComp extends Component {
         }
 
         const groupId = columnGroup.getGroupId();
+        const notifyLayoutGroupRenamed = createLayoutGroupRenameNotifier(this.beans, columnGroup);
         this.addManagedEventListeners({
             columnHeaderNameChanged: (event) => {
                 if (_isHeaderNameChangeForGroup(event, groupId)) {
                     onRenamed();
+                    notifyLayoutGroupRenamed();
                 }
             },
         });

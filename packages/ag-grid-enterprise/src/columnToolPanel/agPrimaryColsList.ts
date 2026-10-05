@@ -20,6 +20,7 @@ import type { VirtualListModel } from '../agStack/iVirtualList';
 import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
 import { VirtualListDragFeature } from '../features/virtualListDragFeature';
 import {
+    createLayoutGroupRenameNotifier,
     syncLayoutWithColumns,
     syncLayoutWithGrid,
     toolPanelCreateColumnTree,
@@ -70,6 +71,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private allColsTree: ColumnModelItem[];
     private displayedColsList: ColumnModelItem[];
     private destroyColumnItemFuncs: (() => void)[] = [];
+    private layoutGroupRenameNotifiers: (() => void)[] = [];
     private hasLoadedInitialState: boolean = false;
     // expanded group ids from the restored grid state, or null when there is no state to restore
     private restoredExpandedGroupIds: Set<string> | null = null;
@@ -87,6 +89,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
     private destroyColumnTree(): void {
         this.allColsTree = [];
+        this.layoutGroupRenameNotifiers = [];
         for (const f of this.destroyColumnItemFuncs) {
             f();
         }
@@ -113,6 +116,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         this.addManagedEventListeners({
             newColumnsLoaded: this.onColumnsChanged.bind(this),
+            columnHeaderNameChanged: this.onHeaderNameChanged.bind(this),
         });
 
         const listener = this.fireSelectionChangedEvent.bind(this);
@@ -468,6 +472,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
             parentList.push(item);
             addListeners(item);
+            this.layoutGroupRenameNotifiers.push(createLayoutGroupRenameNotifier(beans, columnGroup));
 
             recursivelyBuild(columnGroup.children, depth + 1, item.children);
         };
@@ -484,6 +489,12 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         this.destroyColumnTree();
         recursivelyBuild(columnTree, 0, this.allColsTree);
+    }
+
+    private onHeaderNameChanged(): void {
+        for (const notify of this.layoutGroupRenameNotifiers) {
+            notify();
+        }
     }
 
     private onColumnExpanded(): void {

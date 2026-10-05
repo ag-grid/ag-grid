@@ -525,12 +525,7 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
         const groupOverrides = colModel.groupHeaderNameOverrides;
         if (groupOverrides.size) {
             for (const groupId of Array.from(groupOverrides.keys())) {
-                const group = colModel.getColGroup(groupId);
-                if (group) {
-                    _setColGroupHeaderNameOverride(beans, group, null);
-                } else {
-                    groupOverrides.delete(groupId);
-                }
+                _setColGroupHeaderNameOverride(beans, groupId, null);
             }
             eventSvc.dispatchEvent({
                 type: 'columnHeaderNameChanged',

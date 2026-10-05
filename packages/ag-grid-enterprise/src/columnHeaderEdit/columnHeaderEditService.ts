@@ -82,10 +82,10 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
 
     private applyHeaderName(target: EditTarget, headerName: string | null): void {
         if (isProvidedColumnGroup(target)) {
-            const group = getGridColumnGroup(this.beans, target);
-            if (!_setColGroupHeaderNameOverride(this.beans, group, headerName)) {
+            if (!_setColGroupHeaderNameOverride(this.beans, target.groupId, headerName)) {
                 return;
             }
+            const group = getGridColumnGroup(this.beans, target);
             this.beans.eventSvc.dispatchEvent({
                 type: 'columnHeaderNameChanged',
                 column: null,
