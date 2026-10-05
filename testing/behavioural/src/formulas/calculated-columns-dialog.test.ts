@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
-import { GridColumns, GridRows, clickMenuOption } from 'ag-test-utils';
+import { GridColumns, GridRows, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
 import type { ColGroupDef } from 'ag-grid-community';
@@ -14,6 +14,7 @@ import {
     getExpressionInput,
     getSuggestionLabels,
     openEditDialogViaMenu,
+    selectDataType,
     selectOperatorSuggestion,
     setExpression,
     setupCalculatedColumnsSuite,
@@ -22,6 +23,467 @@ import {
 
 describe('ag-grid calculated columns', () => {
     setupCalculatedColumnsSuite();
+
+    test('a new deferred dialog disables Apply until an expression is entered', async () => {
+        const api = createGrid('calculated-initial-validation', {
+            calculatedColumns: { applyMode: 'deferred' },
+            columnDefs: [{ field: 'revenue' }],
+            rowData: [{ id: 'r1', revenue: 10 }],
+        });
+        showColumnMenu(api, 'revenue');
+        await clickMenuOption('Add Calculated Column');
+        expect(getDialogButton('Apply')).toBeDisabled();
+        setExpression('[Revenue]');
+        expect(getDialogButton('Apply')).not.toBeDisabled();
+        clickDialogButton('Apply');
+        expect(api.getColumn('calculated_1')!.getColDef().calculatedExpression).toBe('[revenue]');
+    });
+
+    test.each(['live', 'deferred'] as const)(
+        'a title-only %s edit preserves disabled data types',
+        async (applyMode) => {
+            const api = createGrid(`calculated-preserve-type-${applyMode}`, {
+                calculatedColumns: { applyMode },
+                columnDefs: [
+                    { field: 'revenue' },
+                    { colId: 'profit', calculatedExpression: '[revenue]', cellDataType: false },
+                ],
+                rowData: [{ id: 'r1', revenue: 10 }],
+            });
+            await openEditDialogViaMenu(api, 'profit');
+            const title = getCalculatedColumnDialog().querySelector('input')!;
+            title.value = 'Net Profit';
+            title.dispatchEvent(new Event('input', { bubbles: true }));
+            if (applyMode === 'deferred') {
+                clickDialogButton('Apply');
+            }
+            await waitFor(() => expect(api.getColumn('profit')!.getColDef().headerName).toBe('Net Profit'));
+            expect(api.getColumn('profit')!.getColDef().cellDataType).toBe(false);
+            expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe(10);
+        }
+    );
+
+    test.each(['Revenue [USD]', 'Revenue]', 'Revenue]]'])(
+        'header %s round-trips through the dialog',
+        async (headerName) => {
+            const api = createGrid('calculated-bracket-header', {
+                calculatedColumns: { applyMode: 'deferred' },
+                columnDefs: [
+                    { field: 'revenue', headerName },
+                    { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue]' },
+                ],
+                rowData: [{ id: 'r1', revenue: 10 }],
+            });
+            await openEditDialogViaMenu(api, 'profit');
+            expect(getExpressionInput().validationMessage).toBe('');
+            expect(getDialogButton('Apply')).not.toBeDisabled();
+            clickDialogButton('Apply');
+            expect(document.querySelector('.ag-calculated-column-form')).toBeNull();
+            expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[revenue]');
+            await openEditDialogViaMenu(api, 'profit');
+            setExpression('');
+            clickDialogButton('Columns');
+            getDialogButton('Columns').dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+            expect(getExpressionInput().validationMessage).toBe('');
+            clickDialogButton('Apply');
+            expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe(10);
+        }
+    );
+
+    test('autocomplete replaces a complete reference when the caret is inside it', async () => {
+        const api = createGrid('calculated-autocomplete-middle', {
+            columnDefs: [{ field: 'revenue' }, { colId: 'profit', calculatedExpression: '[revenue]' }],
+            rowData: [{ id: 'r1', revenue: 10 }],
+        });
+        await openEditDialogViaMenu(api, 'profit');
+        const input = getExpressionInput();
+        input.setSelectionRange(4, 4);
+        input.dispatchEvent(new Event('click', { bubbles: true }));
+        expect(input.getAttribute('aria-controls')).toBeTruthy();
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        expect(input.value).toBe('[Revenue]');
+        setExpression('"[Revenue]"');
+        input.setSelectionRange(5, 5);
+        input.dispatchEvent(new Event('click', { bubbles: true }));
+        expect(input).not.toHaveAttribute('aria-controls');
+    });
+
+    test('changing suggestion types preserves the controlling element', async () => {
+        const api = createGrid('calculated-suggestion-transition', {
+            columnDefs: [{ field: 'revenue' }, { colId: 'profit', calculatedExpression: '[revenue]' }],
+            rowData: [{ id: 'r1', revenue: 10 }],
+        });
+        await openEditDialogViaMenu(api, 'profit');
+        const input = getExpressionInput();
+        for (const expression of ['SU', '[Rev', 'SU']) {
+            setExpression(expression);
+            const listId = input.getAttribute('aria-controls');
+            expect(listId).toBeTruthy();
+            expect(document.getElementById(listId!)).toHaveAttribute('role', 'listbox');
+        }
+        for (const label of ['Columns', 'Functions', 'Operators']) {
+            clickDialogButton(label);
+            const button = getDialogButton(label);
+            expect(button).toHaveAttribute('aria-expanded', 'true');
+            expect(document.getElementById(button.getAttribute('aria-controls')!)).toHaveAttribute('role', 'listbox');
+            expect(input).not.toHaveAttribute('aria-controls');
+        }
+    });
+
+    test('duplicate full paths retain their distinguishing suffix in the picker', async () => {
+        const api = createGrid('calculated-duplicate-path-labels', {
+            columnDefs: [
+                {
+                    headerName: 'Group',
+                    children: [
+                        { field: 'a', headerName: 'Total' },
+                        { field: 'b', headerName: 'Total' },
+                    ],
+                },
+                { colId: 'profit', calculatedExpression: '[a] + [b]' },
+            ],
+            rowData: [{ id: 'r1', a: 10, b: 20 }],
+        });
+        await openEditDialogViaMenu(api, 'profit');
+        clickDialogButton('Columns');
+        const rows = Array.from(document.querySelectorAll('.ag-calculated-column-suggestion'));
+        expect(rows.map((row) => row.textContent?.trim())).toEqual(['Group›Total (a)', 'Group›Total (b)']);
+        expect(rows.map((row) => row.getAttribute('aria-label'))).toEqual(['Group › Total (a)', 'Group › Total (b)']);
+        getDialogButton('Columns').dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        expect(getExpressionInput().value).toContain('[Group Total (a)]');
+    });
+
+    test.each(['live', 'deferred'] as const)(
+        'reference restrictions apply to the %s dialog, not stored expressions',
+        async (applyMode) => {
+            const api = createGrid(`calculated-restricted-reference-${applyMode}`, {
+                calculatedColumns: {
+                    applyMode,
+                    isColumnReferenceable: ({ colDef, calculatedColumn }) =>
+                        colDef.field !== 'salary' || calculatedColumn?.getColId() === 'bonus',
+                },
+                columnDefs: [
+                    { field: 'salary', colId: 'server-salary', headerName: 'Salary' },
+                    { field: 'revenue' },
+                    { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue]' },
+                    { colId: 'bonus', headerName: 'Bonus', calculatedExpression: '[server-salary] * 0.1' },
+                    { colId: 'programmatic', calculatedExpression: '[server-salary]' },
+                ],
+                rowData: [{ id: 'r1', salary: 100, revenue: 10 }],
+            });
+            const rowNode = api.getRowNode('r1')!;
+            expect(api.getCellValue({ rowNode, colKey: 'programmatic' })).toBe(100);
+            await openEditDialogViaMenu(api, 'profit');
+            clickDialogButton('Columns');
+            expect(getSuggestionLabels()).not.toContain('Salary');
+            for (const expression of ['[Salary]', '[SALARY]', '[server-salary]']) {
+                setExpression(expression);
+                expect(getExpressionInput().validationMessage).toContain('cannot be used');
+                expect(getExpressionInput()).toHaveClass('invalid');
+                if (applyMode === 'deferred') {
+                    expect(getDialogButton('Apply')).toBeDisabled();
+                }
+            }
+            await asyncSetTimeout(0);
+            expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[revenue]');
+            setExpression('[Revenue] * 2');
+            expect(getExpressionInput()).not.toHaveClass('invalid');
+            if (applyMode === 'deferred') {
+                clickDialogButton('Apply');
+            }
+            await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'profit' })).toBe(20));
+            api.hidePopupMenu();
+            if (applyMode === 'live') {
+                document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+            }
+            await openEditDialogViaMenu(api, 'bonus');
+            clickDialogButton('Columns');
+            expect(getSuggestionLabels()).toContain('Salary');
+            setExpression('[Salary] * 0.2');
+            if (applyMode === 'deferred') {
+                clickDialogButton('Apply');
+            }
+            await waitFor(() => expect(api.getCellValue({ rowNode, colKey: 'bonus' })).toBe(20));
+        }
+    );
+
+    test('live conversion preserves unresolved escaped references verbatim', async () => {
+        const api = createGrid('calculated-live-unknown-reference', {
+            calculatedColumns: {
+                applyMode: 'live',
+                isColumnReferenceable: ({ colDef }) => colDef.field !== 'salary',
+            },
+            columnDefs: [
+                { field: 'salary' },
+                { field: 'revenue', headerName: 'Revenue]' },
+                { colId: 'profit', calculatedExpression: '[revenue]' },
+            ],
+            rowData: [{ id: 'r1', salary: 100, revenue: 20 }],
+        });
+        await openEditDialogViaMenu(api, 'profit');
+        setExpression('[salary]] + [revenue]');
+        await waitFor(() =>
+            expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[salary]] + [revenue]')
+        );
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toMatch(/^#/);
+        setExpression('[Missing]]] + [Revenue]]]');
+        await waitFor(() =>
+            expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[Missing]]] + [revenue]')
+        );
+        setExpression('[Revenue]]] * 2');
+        await waitFor(() => expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe(40));
+    });
+
+    test.each(['live', 'deferred'] as const)(
+        'the %s dialog checks resolved columns in cell references and ranges',
+        async (applyMode) => {
+            const api = createGrid('calculated-cell-reference-restrictions', {
+                calculatedColumns: { applyMode, isColumnReferenceable: ({ colDef }) => colDef.field !== 'salary' },
+                columnDefs: [
+                    { field: 'revenue' },
+                    { field: 'salary' },
+                    { field: 'cost' },
+                    {
+                        colId: 'profit',
+                        headerName: 'Profit',
+                        calculatedExpression: '[revenue]',
+                        cellDataType: 'number',
+                    },
+                ],
+                rowData: [
+                    { id: 'r1', revenue: 20, salary: 100, cost: 3 },
+                    { id: 'r2', revenue: 40, salary: 200, cost: 7 },
+                ],
+            });
+            await openEditDialogViaMenu(api, 'profit');
+            for (const expression of [
+                'B1',
+                'b1',
+                '=B1',
+                '  = B1',
+                '$B$1',
+                'B$1',
+                '$B1',
+                'B999',
+                'SUM(B1:B2)',
+                'SUM(A1:C2)',
+                'SUM($C$2:$A$1)',
+                'REF(COLUMN("salary"), ROW("r1"))',
+                'REF(COLUMN("B", true), ROW(1, true))',
+                'SUM(REF(COLUMN("revenue"), ROW("r1"), COLUMN("cost"), ROW("r2")))',
+            ]) {
+                setExpression(expression);
+                expect(getExpressionInput().validationMessage).toContain('Column "Salary" cannot be used');
+                if (applyMode === 'deferred') {
+                    expect(getDialogButton('Apply')).toBeDisabled();
+                }
+            }
+            document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+            expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[revenue]');
+            await openEditDialogViaMenu(api, 'profit');
+            setExpression('"B1 [Salary]"');
+            expect(getExpressionInput().validationMessage).toBe('');
+            setExpression('SUM(A1:A2) + SUM(C1:C2) + [Revenue]');
+            expect(getExpressionInput().validationMessage).toBe('');
+            if (applyMode === 'deferred') {
+                expect(getDialogButton('Apply')).toBeEnabled();
+                clickDialogButton('Apply');
+            }
+            await waitFor(() =>
+                expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe(90)
+            );
+        }
+    );
+
+    test.each(['live', 'deferred'] as const)(
+        'the first %s column rejects restricted A1 references',
+        async (applyMode) => {
+            const api = createGrid('calculated-first-a1-restriction', {
+                calculatedColumns: { applyMode, isColumnReferenceable: ({ colDef }) => colDef.field !== 'salary' },
+                columnDefs: [{ field: 'salary' }, { field: 'revenue' }],
+                rowData: [{ id: 'r1', salary: 100, revenue: 20 }],
+            });
+            showColumnMenu(api, 'revenue');
+            await clickMenuOption('Add Calculated Column');
+            setExpression('A1');
+            expect(getExpressionInput().validationMessage).toContain('Column "Salary" cannot be used');
+            if (applyMode === 'deferred') {
+                expect(getDialogButton('Apply')).toBeDisabled();
+            }
+        }
+    );
+
+    test.each(['live', 'deferred'] as const)(
+        'a new %s column callback receives no calculated column',
+        async (applyMode) => {
+            const referenceable = vi.fn(() => true);
+            const api = createGrid('calculated-reference-callback-context', {
+                calculatedColumns: { applyMode, isColumnReferenceable: referenceable },
+                context: { key: 'context' },
+                columnDefs: [{ field: 'revenue' }],
+                rowData: [{ id: 'r1', revenue: 10 }],
+            });
+            showColumnMenu(api, 'revenue');
+            await clickMenuOption('Add Calculated Column');
+            expect(referenceable).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    api,
+                    context: { key: 'context' },
+                    colDef: expect.objectContaining({ field: 'revenue' }),
+                    column: api.getColumn('revenue'),
+                    calculatedColumn: null,
+                })
+            );
+        }
+    );
+
+    test.each(
+        (['live', 'deferred'] as const).flatMap((applyMode) =>
+            ['[server-salary]', 'A1', 'REF(COLUMN("server-salary"), ROW("r1"))'].map((reference) => ({
+                applyMode,
+                reference,
+            }))
+        )
+    )('an unchanged restricted $reference survives $applyMode edits', async ({ applyMode, reference }) => {
+        const expression = `${reference} * 0.1`;
+        const changed = vi.fn();
+        const api = createGrid(`calculated-existing-restriction-${applyMode}`, {
+            columnDefs: [
+                { field: 'salary', colId: 'server-salary', headerName: 'Salary' },
+                { field: 'revenue' },
+                { colId: 'bonus', headerName: 'Bonus', calculatedExpression: expression, cellDataType: 'number' },
+            ],
+            rowData: [{ id: 'r1', salary: 100, revenue: 20 }],
+            onCalculatedColumnExpressionChanged: changed,
+        });
+        api.setGridOption('calculatedColumns', {
+            applyMode,
+            isColumnReferenceable: ({ colDef }) => colDef.field !== 'salary',
+        });
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'bonus' })).toBe(10);
+        await openEditDialogViaMenu(api, 'bonus');
+        const displayExpression = expression.replace('[server-salary]', '[Salary]');
+        expect(getExpressionInput().value).toBe(displayExpression);
+        expect(getExpressionInput()).not.toHaveClass('invalid');
+        if (applyMode === 'deferred') {
+            expect(getDialogButton('Apply')).toBeEnabled();
+            clickDialogButton('Apply');
+            await openEditDialogViaMenu(api, 'bonus');
+        }
+        const title = getCalculatedColumnDialog().querySelector('input')!;
+        title.value = 'Reward';
+        title.dispatchEvent(new Event('input', { bubbles: true }));
+        await selectDataType('Text');
+        if (applyMode === 'deferred') {
+            clickDialogButton('Apply');
+        }
+        await waitFor(() => {
+            expect(api.getColumn('bonus')!.getColDef()).toMatchObject({
+                headerName: 'Reward',
+                cellDataType: 'text',
+                calculatedExpression: expression,
+            });
+        });
+        expect(changed).not.toHaveBeenCalled();
+        if (applyMode === 'deferred') {
+            await openEditDialogViaMenu(api, 'bonus');
+        }
+        for (const edited of ['[Salary] * 0.2', '[SALARY] * 0.1', `${displayExpression} `]) {
+            setExpression(edited);
+            expect(getExpressionInput().validationMessage).toContain('cannot be used');
+            if (applyMode === 'deferred') {
+                expect(getDialogButton('Apply')).toBeDisabled();
+            }
+        }
+        await asyncSetTimeout(0);
+        expect(api.getColumn('bonus')!.getColDef().calculatedExpression).toBe(expression);
+        setExpression(displayExpression);
+        expect(getExpressionInput()).not.toHaveClass('invalid');
+        setExpression('[Revenue]');
+        if (applyMode === 'deferred') {
+            clickDialogButton('Apply');
+        }
+        await waitFor(() => expect(api.getColumn('bonus')!.getColDef().calculatedExpression).toBe('[revenue]'));
+    });
+
+    test('reference suggestions use primary columns across pivot modes, independently of visibility', async () => {
+        const api = createGrid('calculated-primary-suggestions', {
+            calculatedColumns: { isColumnReferenceable: ({ colDef }) => colDef.field !== 'salary' },
+            rowSelection: { mode: 'multiRow' },
+            getContextMenuItems: () => ['editCalculatedColumn'],
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'year', pivot: true },
+                { field: 'revenue', aggFunc: 'sum', hide: true },
+                { field: 'salary', aggFunc: 'sum' },
+                { colId: 'bonus', headerName: 'Bonus', calculatedExpression: '[revenue]', aggFunc: 'sum' },
+            ],
+            rowData: [{ id: 'r1', country: 'UK', year: 2026, revenue: 10, salary: 20 }],
+        });
+        for (const pivotMode of [false, true, false]) {
+            api.setGridOption('pivotMode', pivotMode);
+            if (pivotMode) {
+                expect(api.getPivotResultColumns()!.length).toBeGreaterThan(0);
+            }
+            api.showContextMenu({ column: api.getColumn('bonus'), value: null, source: 'api', x: 0, y: 0 });
+            await clickMenuOption('Edit Calculated Column');
+            expect(getExpressionInput().value).toBe('[Revenue]');
+            clickDialogButton('Columns');
+            expect(getSuggestionLabels()).toEqual(['Country', 'Year', 'Revenue']);
+            document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+        }
+    });
+
+    test('an all-restricted Columns picker opens without an active option', async () => {
+        const api = createGrid('calculated-empty-suggestions', {
+            calculatedColumns: { isColumnReferenceable: () => false },
+            columnDefs: [{ field: 'revenue' }, { colId: 'profit', calculatedExpression: '[revenue]' }],
+            rowData: [{ id: 'r1', revenue: 10 }],
+        });
+        await openEditDialogViaMenu(api, 'profit');
+        clickDialogButton('Columns');
+        const button = getDialogButton('Columns');
+        const list = document.getElementById(button.getAttribute('aria-controls')!)!;
+        expect(button).toHaveAttribute('aria-expanded', 'true');
+        expect(list).toHaveAttribute('role', 'listbox');
+        expect(list.querySelectorAll('[role="option"]')).toHaveLength(0);
+        expect(list).not.toHaveAttribute('aria-activedescendant');
+        button.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+        button.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        expect(getExpressionInput().value).toBe('[Revenue]');
+        button.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        expect(button).toHaveAttribute('aria-expanded', 'false');
+        expect(getCalculatedColumnDialog()).toBeInTheDocument();
+    });
+
+    test('reopening reads application state without changing duplicate-header references', async () => {
+        const context = { allowFirst: true };
+        const api = createGrid('calculated-reference-state', {
+            context,
+            calculatedColumns: {
+                isColumnReferenceable: ({ colDef, context }) => colDef.field !== 'first' || context.allowFirst,
+            },
+            columnDefs: [
+                { headerName: '2025', children: [{ field: 'first', headerName: 'Q4', hide: true }] },
+                { headerName: '2026', children: [{ field: 'second', headerName: 'Q4' }] },
+                { colId: 'profit', calculatedExpression: '[second]' },
+            ],
+            rowData: [{ id: 'r1', first: 10, second: 20 }],
+        });
+        await openEditDialogViaMenu(api, 'profit');
+        clickDialogButton('Columns');
+        expect(getSuggestionLabels()).toEqual(['2025›Q4', '2026›Q4']);
+        const reference = getExpressionInput().value;
+        context.allowFirst = false;
+        expect(getSuggestionLabels()).toEqual(['2025›Q4', '2026›Q4']);
+        document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+        await openEditDialogViaMenu(api, 'profit');
+        expect(getExpressionInput().value).toBe(reference);
+        clickDialogButton('Columns');
+        expect(getSuggestionLabels()).toEqual(['2026›Q4']);
+        setExpression('[202');
+        expect(getSuggestionLabels()).toEqual(['2026›Q4']);
+    });
 
     test('dialog displays and stores header references', async () => {
         const revenueColId = 'server-revenue-9d5101c8-4c2a-48e0-9ad2';

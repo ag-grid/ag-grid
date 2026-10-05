@@ -914,6 +914,8 @@ export const AG_GRID_LOCALE_EL_GR = {
     calculatedColumnExpressionAmbiguousReference:
         'Ασαφής αναφορά στήλης "${variable}". Χρησιμοποιήστε τη λίστα Στήλες ή μια πιο συγκεκριμένη διαδρομή ομάδας.',
     calculatedColumnExpressionUnknownReference: 'Άγνωστη αναφορά στήλης "${variable}".',
+    calculatedColumnExpressionRestrictedReference:
+        'Η στήλη "${variable}" δεν μπορεί να χρησιμοποιηθεί σε αυτή την έκφραση.',
     calculatedColumnExpressionEmpty: 'Εισαγάγετε μια έκφραση',
     calculatedColumnTitleEmpty: 'Εισαγάγετε έναν τίτλο',
     calculatedColumnApply: 'Εφαρμογή',

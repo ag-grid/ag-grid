@@ -206,7 +206,13 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     });
                 }
 
-                const { dataTypes, expressionPickers, applyMode } = calculatedColumns;
+                const { dataTypes, expressionPickers, applyMode, isColumnReferenceable } = calculatedColumns;
+                if (isColumnReferenceable != null && typeof isColumnReferenceable !== 'function') {
+                    return _createValidationWarning(321, {
+                        property: 'calculatedColumns.isColumnReferenceable',
+                        expected: 'a function',
+                    });
+                }
                 if (dataTypes != null) {
                     if (!Array.isArray(dataTypes) || dataTypes.some((dataType) => typeof dataType !== 'string')) {
                         return _createValidationWarning(321, {

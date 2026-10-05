@@ -929,6 +929,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     calculatedColumnExpressionAmbiguousReference:
         'Двосмислена референца колоне "${variable}". Користите листу Колоне или прецизнију путању групе.',
     calculatedColumnExpressionUnknownReference: 'Непозната референца колоне "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Колона "${variable}" не може да се користи у овом изразу.',
     calculatedColumnExpressionEmpty: 'Унесите израз',
     calculatedColumnTitleEmpty: 'Унесите наслов',
     calculatedColumnApply: 'Примени',

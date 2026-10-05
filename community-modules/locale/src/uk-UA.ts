@@ -911,6 +911,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     calculatedColumnExpressionAmbiguousReference:
         'Неоднозначне посилання на стовпець "${variable}". Скористайтеся списком Стовпці або точнішим шляхом групи.',
     calculatedColumnExpressionUnknownReference: 'Невідоме посилання на стовпець "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Стовпець "${variable}" не можна використовувати в цьому виразі.',
     calculatedColumnExpressionEmpty: 'Введіть вираз',
     calculatedColumnTitleEmpty: 'Введіть назву',
     calculatedColumnApply: 'Застосувати',

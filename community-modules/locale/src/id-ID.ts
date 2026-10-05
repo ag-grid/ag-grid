@@ -932,6 +932,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     calculatedColumnExpressionAmbiguousReference:
         'Referensi kolom ambigu "${variable}". Gunakan daftar Kolom atau jalur grup yang lebih spesifik.',
     calculatedColumnExpressionUnknownReference: 'Referensi kolom tidak diketahui "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Kolom "${variable}" tidak dapat digunakan dalam ekspresi ini.',
     calculatedColumnExpressionEmpty: 'Masukkan ekspresi',
     calculatedColumnTitleEmpty: 'Masukkan judul',
     calculatedColumnApply: 'Terapkan',

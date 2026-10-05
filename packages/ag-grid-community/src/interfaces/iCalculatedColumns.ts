@@ -4,13 +4,24 @@ import type { Bean } from '../context/bean';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
+import type { Column } from './iColumn';
+import type { AgGridCommon } from './iCommon';
 import type { HeaderPosition } from './iHeaderPosition';
 
 export type CalculatedColumnExpressionPicker = 'columns' | 'functions' | 'operators';
 
 type CalculatedColumnApplyMode = 'live' | 'deferred';
 
-export interface CalculatedColumnsOptions {
+export interface IsColumnReferenceableParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The candidate source column. */
+    column: Column;
+    /** The candidate source column's definition. */
+    colDef: ColDef<TData>;
+    /** The column being edited, or `null` when adding a column in either apply mode. */
+    calculatedColumn: Column | null;
+}
+
+export interface CalculatedColumnsOptions<TData = any, TContext = any> {
     /**
      * Cell data types shown in the Calculated Column dialog type selector.
      * Values must be built-in cell data types or custom types defined in `dataTypeDefinitions`.
@@ -22,6 +33,12 @@ export interface CalculatedColumnsOptions {
      * @default ['columns', 'functions', 'operators']
      */
     expressionPickers?: CalculatedColumnExpressionPicker[] | null;
+    /**
+     * Return `false` to exclude a source column from the dialog's picker and manually entered references.
+     * Called when the dialog opens. Does not restrict programmatic `calculatedExpression` values.
+     * Existing expressions can be kept unchanged; expression edits are checked against the restriction.
+     */
+    isColumnReferenceable?: (params: IsColumnReferenceableParams<TData, TContext>) => boolean;
     /**
      * Suppress highlighting the calculated column currently being edited by the dialog.
      * @default false
@@ -35,7 +52,8 @@ export interface CalculatedColumnsOptions {
     applyMode?: CalculatedColumnApplyMode;
 }
 
-export type CalculatedColumnsGridOption = boolean | CalculatedColumnsOptions;
+export type CalculatedColumnsGridOption<TData = any, TContext = any> =
+    boolean | CalculatedColumnsOptions<TData, TContext>;
 
 export type CalculatedColumnDef<TData = any, TValue = any> = ColDef<TData, TValue> & {
     calculatedExpression: string;

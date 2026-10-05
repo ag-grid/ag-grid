@@ -62,6 +62,8 @@ Register the Column Menu so users can add a calculated column from the header me
 
 The dialog shows references by header name, for example `[Revenue]`. When headers are duplicated under groups, it uses the shortest unique group path, such as `[2025 Q4]` and `[2026 Q4]`. It translates these display references back to `colId` references before updating the column definition.
 
+In dialog references, a literal `]` in a header name is escaped as `]]`. For example, the header `Revenue [USD]` appears as `[Revenue [USD]]]`. The Columns picker inserts the escaped reference automatically; stored `colId` references are unchanged.
+
 If two columns share the same header _and_ the same group hierarchy, the dialog falls back to appending the `colId`, for example `[2025 Q4 (revenue-q4)]`. This keeps the reference stable when columns are reordered. Give your columns distinct headers or group hierarchies to avoid this.
 
 The following example has duplicate `Q1`, `Q2`, `Q3` and `Q4` headers under `2025` and `2026` column groups. The year groups start collapsed and show a calculated `Total` column; expanding a group reveals the quarter columns. The dialog shows grouped references such as `[2025 Q4]` and `[2026 Q4]`, while the source code stores stable `colId` references such as `[q4_2025]` and `[q4_2026]`.
@@ -132,6 +134,31 @@ This only controls the expression picker buttons. Use an empty array or `null` t
 
 {% gridExampleRunner title="Dialog Expression Pickers" name="calculated-columns-dialog-helper-lists" /%}
 
+### isColumnReferenceable
+
+Use `isColumnReferenceable` to control which source columns can be referenced in the dialog. Return `false` to hide a column from the Columns picker and inline autocomplete, and reject manually entered references to it:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: {
+        isColumnReferenceable: ({ colDef, calculatedColumn }) =>
+            colDef.field !== 'salary' || calculatedColumn?.getColId() === 'bonus',
+    },
+};
+```
+
+The callback runs when the dialog opens. It receives the source `column` and `colDef`, the `calculatedColumn` being edited, and the usual `api` and `context` parameters. `calculatedColumn` is `null` when adding a new column in either apply mode. Changes to application state take effect the next time the dialog opens; they do not update an already-open picker.
+
+An existing expression can be kept unchanged even if it references a restricted column. Users can apply it in deferred mode or change its title and type in either mode. Once the expression text differs from the text displayed when the dialog opened, restricted references are rejected, including edits to casing, whitespace or arithmetic. Restoring the original text clears the restriction error.
+
+In deferred mode, a rejected reference disables Apply. In live mode, it shows a validation error and keeps the last committed expression until corrected. Programmatic `calculatedExpression` values and expressions restored from Grid State are unaffected. This is an editor restriction, not a data-security boundary.
+
+Visibility does not affect eligibility: hidden columns can be offered, and visible columns can be restricted. The picker uses primary columns in and out of pivot mode, excludes generated service columns, and keeps reference names stable when other columns are restricted.
+
+The following example permits Salary references when editing Bonus but excludes them when editing Sales Target or adding a new calculated column.
+
+{% gridExampleRunner title="Dialog Reference Restrictions" name="calculated-columns-reference-restrictions" /%}
+
 ### suppressColumnHighlighting
 
 Use `suppressColumnHighlighting` to disable the highlight while the dialog is open:
@@ -149,7 +176,7 @@ const gridOptions = {
 
 ### applyMode
 
-By default, dialog edits apply to the column immediately: **Add Calculated Column** creates the column and opens the dialog over it, and title, type and expression changes update the column as you type. Closing the dialog keeps the latest state; remove the column with **Remove Calculated Column**. An empty expression renders blank cells, and invalid or incomplete expressions render formula errors until fixed.
+By default, dialog edits apply to the column immediately: **Add Calculated Column** creates the column and opens the dialog over it, and title, type and expression changes update the column as you type. Closing the dialog keeps the latest state; remove the column with **Remove Calculated Column**. An empty expression renders blank cells, and invalid or incomplete expressions render formula errors until fixed. Expression edits containing references excluded by `isColumnReferenceable` are rejected before applying, including in live mode; unchanged existing expressions are preserved.
 
 Set `applyMode: 'deferred'` to hold changes until you click **Apply** instead. In deferred mode the dialog shows Apply and Cancel buttons and validates the expression, so you cannot apply an invalid one:
 

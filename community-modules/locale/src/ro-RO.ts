@@ -913,6 +913,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     calculatedColumnExpressionAmbiguousReference:
         'Referință de coloană ambiguă "${variable}". Utilizați lista Coloane sau o cale de grup mai specifică.',
     calculatedColumnExpressionUnknownReference: 'Referință de coloană necunoscută "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Coloana "${variable}" nu poate fi utilizată în această expresie.',
     calculatedColumnExpressionEmpty: 'Introduceți o expresie',
     calculatedColumnTitleEmpty: 'Introduceți un titlu',
     calculatedColumnApply: 'Aplică',

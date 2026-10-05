@@ -27,6 +27,7 @@ import type {
 import {
     BeanStub,
     _addColumnDefaultAndTypes,
+    _addGridCommonParams,
     _createUserColumn,
     _isCalculatedColumnsEnabled,
     _mergedEqual,
@@ -158,6 +159,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         this.addManagedPropertyListener('calculatedColumns', () => {
             if (!this.isEnabled()) {
                 this.clearDynamicColumnInstances();
+            } else {
+                this.adoptUserColumns();
             }
             this.refreshDynamicColumns('gridOptionsChanged');
             this.refreshOpenDialogHighlights();
@@ -362,7 +365,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             return;
         }
         // Built once and shared by toDraft + showDialog — both need the same column snapshot.
-        const mapper = createCalculatedColumnReferenceMapper(this.beans, this.beans.colModel.colsList, column.colId);
+        const mapper = this.createReferenceMapper(column.colId, column);
         const draft = this.toDraft(column, mapper);
         this.showDialog(
             draft,
@@ -738,6 +741,27 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return this.toCalculatedColDef(nextColDef, colId);
     }
 
+    private createReferenceMapper(
+        colId: string,
+        calculatedColumn: AgColumn | null = null
+    ): CalculatedColumnReferenceMapper {
+        const beans = this.beans;
+        const isColumnReferenceable = this.getOptions()?.isColumnReferenceable;
+        return createCalculatedColumnReferenceMapper(beans, beans.colModel.colDefList, colId, {
+            originalExpression: calculatedColumn ? (calculatedColumn.colDef.calculatedExpression ?? '') : undefined,
+            isColumnReferenceable: isColumnReferenceable
+                ? (column) =>
+                      isColumnReferenceable(
+                          _addGridCommonParams(this.gos, {
+                              column,
+                              colDef: column.colDef,
+                              calculatedColumn,
+                          })
+                      )
+                : undefined,
+        });
+    }
+
     private showDialog(
         draft: CalculatedColumnDraft,
         onApply: (draft: CalculatedColumnDraft) => void,
@@ -759,9 +783,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         }
 
         const state: { close?: () => void; resolved: boolean } = { resolved: false };
-        const beans = this.beans;
-        const mapper =
-            existingMapper ?? createCalculatedColumnReferenceMapper(beans, beans.colModel.colsList, draft.colId);
+        const mapper = existingMapper ?? this.createReferenceMapper(draft.colId);
 
         const getValidatedExpression = (
             nextDraft: CalculatedColumnDraft
@@ -901,11 +923,20 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         }
     }
 
-    private scheduleLiveApplyUpdate(draft: CalculatedColumnDraft, mapper: CalculatedColumnReferenceMapper): void {
+    private scheduleLiveApplyUpdate(
+        draft: CalculatedColumnDraft,
+        mapper: CalculatedColumnReferenceMapper
+    ): string | null {
         const colId = draft.colId;
+        // Only restricted references block live apply; unknown or incomplete ones flow through best-effort.
+        const result = mapper.toInternalExpression(draft.calculatedExpression);
+        if ('error' in result && result.error.type === 'restricted') {
+            this.cancelLiveApplyUpdate(colId);
+            return translateCalculatedColumnReferenceError(result.error, this.getLocaleTextFunc());
+        }
         this.pendingLiveApplyUpdatesByColId.set(colId, { draft, mapper });
         if (this.scheduledLiveApplyColIds.has(colId)) {
-            return;
+            return null;
         }
 
         // Coalesce keystrokes into one column rebuild per frame; a cancelled update leaves the frame
@@ -915,6 +946,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             this.scheduledLiveApplyColIds.delete(colId);
             this.flushLiveApplyUpdate(colId);
         });
+        return null;
     }
 
     private flushLiveApplyUpdate(colId: string): void {
@@ -954,13 +986,13 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         };
     }
 
-    private getDataTypeOptions(currentDataType?: string): CalculatedColumnDataTypeOption[] {
+    private getDataTypeOptions(currentDataType?: ColDef['cellDataType']): CalculatedColumnDataTypeOption[] {
         const configuredDataTypes = this.getOptions()?.dataTypes;
         const dataTypes = configuredDataTypes
             ? this.getValidConfiguredDataTypes(configuredDataTypes)
             : [...DEFAULT_CALCULATED_COLUMN_DATA_TYPES];
 
-        if (currentDataType != null && dataTypes.indexOf(currentDataType) < 0) {
+        if (typeof currentDataType === 'string' && dataTypes.indexOf(currentDataType) < 0) {
             dataTypes.push(currentDataType);
         }
 
@@ -1016,7 +1048,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return {
             colId,
             headerName: displayName ?? colDef.headerName ?? colId,
-            cellDataType: typeof cellDataType === 'string' ? cellDataType : DEFAULT_DRAFT.cellDataType,
+            cellDataType,
             calculatedExpression: mapper.toDisplayExpression(colDef.calculatedExpression ?? ''),
         };
     }
@@ -1069,7 +1101,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     private forEachCalculatedColumn(callback: (column: AgColumn, colId: string, expression: string) => void): void {
-        const cols = this.beans.colModel.colsList;
+        const cols = this.beans.colModel.colDefList;
         for (let i = 0, len = cols.length; i < len; ++i) {
             const column = cols[i];
             if (column.isCalculatedCol) {

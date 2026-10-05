@@ -21,6 +21,29 @@ import {
 describe('calculated columns - grid state persistence - saving and restoring a dynamic calc col', () => {
     setupCalculatedColumnsStateSuite();
 
+    test('restored expressions remain applicable after their source is restricted', async () => {
+        const source = createGrid('restricted-state-source', {
+            columnDefs: [{ field: 'salary' }],
+            rowData: [{ id: 'r1', salary: 100 }],
+        });
+        const colId = await addViaDialog(source, 'salary', '[Salary] * 0.1');
+        const state = source.getState();
+        const api = createGrid('restricted-state-target', {
+            columnDefs: [{ field: 'salary' }],
+            rowData: [{ id: 'r1', salary: 100 }],
+            calculatedColumns: { applyMode: 'deferred', isColumnReferenceable: () => false },
+            initialState: state,
+        });
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: colId })).toBe(10);
+        source.destroy();
+        api.showColumnMenu(colId);
+        await clickMenuOption('Edit Calculated Column');
+        expect(getDialog().querySelector('textarea')!.value).toBe('[Salary] * 0.1');
+        clickDialogButton('Apply');
+        expect(document.querySelector('.ag-calculated-column-form')).toBeNull();
+        expect(api.getColumn(colId)!.getColDef().calculatedExpression).toBe('[salary] * 0.1');
+    });
+
     // === core repro: initialState round-trip =====================================================
     test('a dynamic calc col added via the dialog is saved in getState().userColumns and recreated via initialState on a fresh grid', async () => {
         const api = createGrid('state-initial-source', {
@@ -240,6 +263,39 @@ describe('calculated columns - grid state persistence - saving and restoring a d
         expect(order(api)).toEqual(['a', 'b']);
         expect(api.getState().userColumns).toEqual(userColumns);
     });
+
+    test.each(['initialState', 'setState'] as const)(
+        'enabling adopts columns restored through %s while disabled',
+        async (restore) => {
+            const state: GridState = {
+                userColumns: [
+                    {
+                        colId: 'restored',
+                        created: true,
+                        properties: [{ property: 'calculatedExpression', value: '[a] * 2' }],
+                    },
+                ],
+            };
+            const api = createGrid(`state-disabled-enable-${restore}`, {
+                columnDefs: [{ field: 'a' }],
+                rowData: [{ id: 'r1', a: 5 }],
+                calculatedColumns: false,
+                initialState: restore === 'initialState' ? state : undefined,
+            });
+            await asyncSetTimeout(0);
+            if (restore === 'setState') {
+                api.setState(state);
+            }
+            expect(api.getColumn('restored')).toBeNull();
+            api.setGridOption('calculatedColumns', true);
+            expect(api.getColumn('restored')).not.toBeNull();
+            expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'restored' })).toBe(10);
+            api.setGridOption('calculatedColumns', false);
+            expect(api.getColumn('restored')).toBeNull();
+            api.setGridOption('calculatedColumns', true);
+            expect(order(api)).toEqual(['a', 'restored']);
+        }
+    );
 
     test('overrides and removals of declared columns are inert when calculated columns are disabled', async () => {
         const userColumns: GridState['userColumns'] = [

@@ -933,6 +933,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     calculatedColumnExpressionAmbiguousReference:
         'Nejasna referenca kolone "${variable}". Koristite listu kolona ili precizniju putanju grupe.',
     calculatedColumnExpressionUnknownReference: 'Nepoznata referenca kolone "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Kolona "${variable}" se ne može koristiti u ovom izrazu.',
     calculatedColumnExpressionEmpty: 'Unesite izraz',
     calculatedColumnTitleEmpty: 'Unesite naslov',
     calculatedColumnApply: 'Primijeni',
