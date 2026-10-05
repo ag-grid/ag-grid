@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "testing/edge-verification/src",
   "projectType": "application",
+  "implicitDependencies": ["ag-grid-docs"],
   "targets": {
     "test:edge-live": {
       "executor": "nx:run-commands",
@@ -14,7 +15,11 @@
     },
     "test": {
       "executor": "nx:run-commands",
-      "inputs": ["{projectRoot}/src/**/*"],
+      "inputs": [
+        "{projectRoot}/src/**/*",
+        "{workspaceRoot}/documentation/ag-grid-docs/src/utils/markdownPages.ts",
+        "{workspaceRoot}/documentation/ag-grid-docs/src/constants.ts"
+      ],
       "outputs": [],
       "options": {
         "command": "node --import tsx --test \"src/**/*.test.ts\"",
