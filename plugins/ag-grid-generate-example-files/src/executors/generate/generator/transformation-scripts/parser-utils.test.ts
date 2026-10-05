@@ -50,6 +50,10 @@ describe('getIntegratedDarkModeCode', () => {
             expect(code).toContain("updateChartThemes(themeMode !== undefined && themeMode.includes('dark'));");
         });
 
+        it('does not touch the api once the grid is destroyed, as the retry timer and listener can outlive it', () => {
+            expect(code).toContain('if (params.api.isDestroyed()) return;');
+        });
+
         it('does not push an unchanged theme list, which would re-render the chart', () => {
             expect(code).toContain('currentThemes.every((theme, i) => theme === modifiedThemes[i])');
         });
