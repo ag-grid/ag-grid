@@ -4,6 +4,8 @@ package-lock.json
 dist
 *.zip
 .github
+# Zed formats its own JSONC settings with trailing commas, which Prettier would strip
+.zed
 
 # Website
 .astro
