@@ -2,7 +2,7 @@ import { act, cleanup, render, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import type { GridApi, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, ModuleRegistry, RowApiModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ModuleRegistry, RenderApiModule, RowApiModule } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 const events: string[] = [];
@@ -10,7 +10,7 @@ let refuseRefresh: string | null = null;
 
 class SectionRenderer implements ICellRendererComp {
     private readonly eGui = document.createElement('div');
-    private section = '';
+    public section = '';
 
     public init(params: ICellRendererParams): void {
         this.section = params.pinned ?? 'center';
@@ -29,7 +29,7 @@ class SectionRenderer implements ICellRendererComp {
 
 describe('embedded full width row refresh (React)', () => {
     beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, RowApiModule]);
+        ModuleRegistry.registerModules([ClientSideRowModelModule, RenderApiModule, RowApiModule]);
     });
 
     afterEach(() => {
@@ -78,5 +78,32 @@ describe('embedded full width row refresh (React)', () => {
                 `refresh right right ${v}`,
             ]);
         }
+    });
+
+    test('getCellRendererInstances returns every section renderer of an embedded row, and the one of a full width row', async () => {
+        const apis: GridApi[] = [];
+        for (let i = 0; i < 2; ++i) {
+            const embedFullWidthRows = i === 0;
+            render(
+                <AgGridReact
+                    columnDefs={[{ colId: 'l', pinned: 'left' }, { field: 'v' }, { colId: 'r', pinned: 'right' }]}
+                    rowData={[{ id: '1', v: 'a' }]}
+                    isFullWidthRow={() => true}
+                    embedFullWidthRows={embedFullWidthRows}
+                    fullWidthCellRenderer={SectionRenderer}
+                    onGridReady={(e) => {
+                        apis[i] = e.api;
+                    }}
+                />
+            );
+        }
+        await waitFor(() => expect(events.length).toBe(4));
+
+        const sections = (api: GridApi) =>
+            api
+                .getCellRendererInstances()
+                .map((r) => (r as SectionRenderer).section)
+                .sort();
+        expect(apis.map(sections)).toEqual([['center', 'left', 'right'], ['center']]);
     });
 });

@@ -39,7 +39,7 @@ this restriction set the property `suppressMaxRenderedRowRestriction=true`.
 
 Column virtualisation is the insertion and removal of columns as the grid scrolls horizontally.
 
-There is no column buffer - no additional columns are rendered apart from the visible set. This is because horizontal scrolling is not as CPU intensive as vertical scrolling, thus the buffer is not needed for a good UI experience.
+The grid also renders the columns within 200px either side of the visible set, so fast horizontal scrolling shows fewer blank gaps.
 
 ## Suppress Virtualisation
 
