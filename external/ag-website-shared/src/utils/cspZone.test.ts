@@ -25,14 +25,27 @@ describe('getCspZone', () => {
 });
 
 describe('initFullReloadAcrossCspZones', () => {
-    // What the ClientRouter dispatches before it fetches the next page. Cancelling it makes the router
-    // load the page as a new document instead.
-    function beforePreparation(from: string, to: string) {
+    const origin = 'https://www.ag-grid.com';
+
+    // What the ClientRouter does around a navigation: dispatch the event, then run the loader unless it
+    // was cancelled. A cancelled navigation is loaded as a new document instead. `redirectedTo` is where
+    // the server sends the router, which it follows without dispatching the event again.
+    async function isLoadedAsNewDocument(from: string, to: string, redirectedTo?: string) {
         const event = new Event('astro:before-preparation', { cancelable: true });
-        const origin = 'https://www.ag-grid.com';
-        Object.assign(event, { from: new URL(from, origin), to: new URL(to, origin) });
-        document.dispatchEvent(event);
-        return event;
+        Object.assign(event, {
+            from: new URL(from, origin),
+            to: new URL(to, origin),
+            loader: async () => {
+                if (redirectedTo) {
+                    Object.assign(event, { to: new URL(redirectedTo, origin) });
+                }
+            },
+        });
+
+        if (document.dispatchEvent(event)) {
+            await (event as Event & { loader: () => Promise<void> }).loader();
+        }
+        return event.defaultPrevented;
     }
 
     beforeAll(() => {
@@ -44,11 +57,13 @@ describe('initFullReloadAcrossCspZones', () => {
         ${'/'}                                | ${'/campaigns/bryntum-gantt/'}
         ${'/campaigns/bryntum-gantt/'}        | ${'/'}
         ${'/javascript-data-grid/filtering/'} | ${'/charts/'}
+        ${'/javascript-data-grid/filtering/'} | ${'/charts'}
         ${'/charts/'}                         | ${'/javascript-data-grid/filtering/'}
         ${'/charts/'}                         | ${'/studio/'}
+        ${'/charts/'}                         | ${'/studio'}
         ${'/studio/'}                         | ${'/example/'}
-    `('loads $to as a new document when navigating from $from', ({ from, to }) => {
-        expect(beforePreparation(from, to).defaultPrevented).toBe(true);
+    `('loads $to as a new document when navigating from $from', async ({ from, to }) => {
+        expect(await isLoadedAsNewDocument(from, to)).toBe(true);
     });
 
     test.each`
@@ -57,7 +72,19 @@ describe('initFullReloadAcrossCspZones', () => {
         ${'/charts/'}                  | ${'/charts/examples/'}
         ${'/studio/'}                  | ${'/studio/license-pricing/'}
         ${'/campaigns/bryntum-gantt/'} | ${'/campaigns/bryntum-scheduler/'}
-    `('leaves $from to $to to the router', ({ from, to }) => {
-        expect(beforePreparation(from, to).defaultPrevented).toBe(false);
+    `('leaves $from to $to to the router', async ({ from, to }) => {
+        expect(await isLoadedAsNewDocument(from, to)).toBe(false);
+    });
+
+    test.each`
+        from                                  | to                                | redirectedTo
+        ${'/javascript-data-grid/filtering/'} | ${'/javascript-charts-overview/'} | ${'/charts/javascript-charts/'}
+        ${'/studio/'}                         | ${'/studio/old-page/'}            | ${'/javascript-data-grid/'}
+    `('loads $to as a new document when it redirects across zones', async ({ from, to, redirectedTo }) => {
+        expect(await isLoadedAsNewDocument(from, to, redirectedTo)).toBe(true);
+    });
+
+    test('leaves a redirect within the same zone to the router', async () => {
+        expect(await isLoadedAsNewDocument('/charts/', '/charts/old-page/', '/charts/new-page/')).toBe(false);
     });
 });
