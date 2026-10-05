@@ -20,6 +20,8 @@ env:
   IBM_TELEMETRY_DISABLED: true
   DEPLOYMENT_APP_ID: 957224
   TAG_NAME: ${{ github.head_ref || github.ref_name }}
+  NX_NO_CLOUD: 'true'
+  CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
 
 permissions:
   id-token: write  # Required for OIDC

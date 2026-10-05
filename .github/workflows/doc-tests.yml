@@ -18,6 +18,7 @@ env:
   CTRF_FILE: ./ctrf-report.json
   SLACK_CHANNEL: '#ci-grid-gate'
   AG_LIBRARY: grid
+  CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
 on:
   schedule:
       - cron: '30 2 * * *' # Run daily at 2:30am UTC. Temporarily enabled until full build is tested

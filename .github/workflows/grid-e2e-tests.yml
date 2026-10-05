@@ -15,6 +15,7 @@ env:
   CTRF_FILE: ./ctrf-report.json
   SLACK_CHANNEL: '#ci-grid-gate'
   AG_LIBRARY: grid
+  CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
 on:
   schedule:
     - cron: '30 3 * * *' # Daily at 3:30am UTC, an hour after doc-tests.yml. Deliberately not part of the PR CI.

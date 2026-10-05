@@ -48,6 +48,7 @@ env:
   CTRF_FILE: ./reports/performance.json
   SLACK_CHANNEL: '#ci-grid-gate'
   AG_LIBRARY: grid
+  CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
 
 permissions:
   contents: read

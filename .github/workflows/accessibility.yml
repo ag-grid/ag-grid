@@ -42,6 +42,7 @@ env:
   PREV_COMMIT_SHA_FILE: ./commit-sha.txt
   SLACK_CHANNEL: '#ci-grid-gate'
   AG_LIBRARY: grid
+  CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
