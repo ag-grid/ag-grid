@@ -734,6 +734,25 @@ describe('SSRM level consistency check', () => {
             expect(events).toEqual([]);
         });
 
+        test('keeps a pending report through a transaction that adds no rows', async () => {
+            const server = createDeferredServer();
+            const { api, events } = startGrid(server.getRows, { ...enabled, serverSideInitialRowCount: TOTAL_ROWS });
+            await waitFor(() => expect(server.pending.has(0)).toBe(true));
+            server.respond(0);
+            server.rows.splice(3, 1);
+            await waitFor(() => expect(server.pending.has(10)).toBe(true));
+            server.respond(10);
+            await waitFor(() => expect(server.pending.has(20)).toBe(true));
+
+            // row '0' is already cached, so nothing is inserted and no row moves
+            api.applyServerSideTransaction({ add: [{ id: '0' }], addIndex: 0 });
+            server.respondToAll();
+            await waitForLoadingFinished(api);
+
+            expect(events).toHaveLength(1);
+            expect(events[0].inconsistencies).toEqual([{ type: 'dropped', boundaryIndex: 10, rowIds: [] }]);
+        });
+
         test('does not compare a block with rows applied by applyServerSideRowData', async () => {
             const server = createDeferredServer();
             const { api, events } = startGrid(server.getRows, { ...enabled, serverSideInitialRowCount: TOTAL_ROWS });

@@ -1291,7 +1291,6 @@ export class LazyCache extends BeanStub {
     }
 
     public insertRowNodes(inserts: any[], indexToAdd?: number): RowNode[] {
-        this.consistencyChecker?.reset();
         // adjust row count to allow for footer row
         const realRowCount = this.store.getRowCount() - (this.store.getParentNode().sibling ? 1 : 0);
 
@@ -1327,6 +1326,7 @@ export class LazyCache extends BeanStub {
             return [];
         }
 
+        this.consistencyChecker?.reset();
         const nodesToMove = this.nodeMap.filter((node) => node.index >= addIndex);
         // delete all nodes which need moved first, so they don't get overwritten
         nodesToMove.forEach((lazyNode) => this.nodeMap.delete(lazyNode));

@@ -29,6 +29,8 @@ export class LevelConsistencyChecker {
         const duplicates = new Map<number, string[]>();
         const mismatches: number[] = [];
 
+        this.forgetEvictedBoundaries();
+
         for (let i = 0; i < rowCount; ++i) {
             const id = rowIds[i];
             const index = lookup.getSettledIndex(id);
@@ -83,6 +85,16 @@ export class LevelConsistencyChecker {
     /** Forgets where rows sat, but keeps inconsistencies already found by earlier reads. */
     public forgetBoundaries(): void {
         this.boundaryIds.clear();
+    }
+
+    /** A boundary is only compared while the block before it is cached, so drop the rest to keep this to the cache size. */
+    private forgetEvictedBoundaries(): void {
+        const { boundaryIds, lookup } = this;
+        boundaryIds.forEach((_id, boundary) => {
+            if (lookup.getSettledId(boundary - 1) === undefined) {
+                boundaryIds.delete(boundary);
+            }
+        });
     }
 
     public takeInconsistencies(): ServerSideLevelInconsistency[] {
