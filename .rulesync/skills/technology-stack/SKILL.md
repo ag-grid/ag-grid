@@ -26,7 +26,7 @@ The core grid logic is framework-agnostic. Framework-specific wrappers (`ag-grid
 ## Build System
 
 - **Nx**: Monorepo orchestration and build caching
-- **Yarn**: Package management (v1.x)
+- **Yarn**: Package management (version pinned by `packageManager` in `package.json`)
 - **TypeScript**: Strict mode enabled across all packages
 - **ESBuild/Rollup**: Bundle generation
 
