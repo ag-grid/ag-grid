@@ -1,3 +1,4 @@
+import { getCspZone } from '@ag-website-shared/utils/cspZone';
 import astroPackageJson from 'astro/package.json';
 import { createHash } from 'node:crypto';
 
@@ -475,6 +476,17 @@ describe('cspRules', () => {
             expect(CAMPAIGNS_PATH_CONDITION).toContain('/archive/');
             expect(CAMPAIGNS_PATH_CONDITION).toContain('/campaigns/');
         });
+    });
+
+    describe('client-side navigation', () => {
+        // A router navigation keeps the document's policy, so a differently-scoped path needs its own zone
+        it.each(['/campaigns/bryntum-gantt/', '/archive/36.0.0/campaigns/bryntum-gantt/'])(
+            'puts the campaigns-scope page %s in a zone of its own',
+            (path) => {
+                expect(CAMPAIGNS_PATH_REGEXP.test(path)).toBe(true);
+                expect(getCspZone(path)).not.toBe(getCspZone('/'));
+            }
+        );
     });
 
     describe("AG-17134 Phase B: script-src 'unsafe-inline' removed from the site scope", () => {
