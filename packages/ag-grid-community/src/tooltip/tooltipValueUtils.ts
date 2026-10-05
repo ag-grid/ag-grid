@@ -107,9 +107,10 @@ export function _getLegacyTooltipFieldValue(data: any, field: string, containsDo
 
 export function _initColTooltip(column: AgColumn): void {
     const { colDef } = column;
-    column.tooltipEnabled =
+    column.setTooltipEnabled(
         colDef.tooltip !== false &&
-        (_isCellTooltipConfigured(colDef) ||
-            colDef.tooltipComponent != null ||
-            colDef.tooltipComponentSelector != null);
+            (_isCellTooltipConfigured(colDef) ||
+                colDef.tooltipComponent != null ||
+                colDef.tooltipComponentSelector != null)
+    );
 }

@@ -285,7 +285,7 @@ export class RowNumbersService
     }
 
     private onHeaderClick(_e: MouseEvent): void {
-        if (Date.now() - this.lastColumnResized < 100 || !this.isIntegratedWithSelection || this.column?.resizing) {
+        if (Date.now() - this.lastColumnResized < 100 || !this.isIntegratedWithSelection || this.column?.isResizing()) {
             return;
         }
         this.focusAllCellsFromHeaderClick();

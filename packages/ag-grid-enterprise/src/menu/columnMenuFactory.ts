@@ -8,11 +8,11 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    _getAvailableSortTypes,
     _getDisplaySortForColumn,
     _getGrandTotalRow,
     _isClientSideRowModel,
     _isLegacyMenuEnabled,
+    _isSortTypeAvailable,
 } from 'ag-grid-community';
 
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
@@ -125,9 +125,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
                 column,
                 beans
             );
-            const allowedSortTypes = _getAvailableSortTypes(gos, column);
-
-            if (allowedSortTypes.has('default')) {
+            if (_isSortTypeAvailable(gos, column, 'default')) {
                 if (!(isAscending && isDefaultSort)) {
                     result.push('sortAscending');
                 }
@@ -135,7 +133,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
                     result.push('sortDescending');
                 }
             }
-            if (allowedSortTypes.has('absolute')) {
+            if (_isSortTypeAvailable(gos, column, 'absolute')) {
                 if (!(isAscending && isAbsoluteSort)) {
                     result.push('sortAbsoluteAscending');
                 }

@@ -193,9 +193,9 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
             }
         }
 
-        const widths = params.skipSetLeft ? undefined : visibleCols.setLeftValues(source);
+        const widths = params.skipSetLeft ? undefined : visibleCols.setLeftValues();
         if (params.updateBodyWidths) {
-            visibleCols.updateBodyWidths(widths);
+            visibleCols.updateBodyWidths(source, widths);
         }
 
         const unconstrainedFlexColumns = items

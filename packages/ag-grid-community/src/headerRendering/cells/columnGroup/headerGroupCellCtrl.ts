@@ -1,4 +1,4 @@
-import { KeyCode, _getActiveDomElement, _last } from 'ag-stack';
+import { KeyCode, _getActiveDomElement, _last, _setAriaColSpan } from 'ag-stack';
 
 import type { GroupResizeFeature } from '../../../columnResize/groupResizeFeature';
 import { _setColGroupOpen } from '../../../columns/columnGroups/columnGroupState';
@@ -9,12 +9,12 @@ import { _getHeaderGroupCompDetails } from '../../../components/framework/userCo
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
+import { edgeLeafColumn } from '../../../entities/agColumnGroup';
 import type { HeaderClassParams } from '../../../entities/colDef';
 import type { ColumnEventType } from '../../../events';
 import { _addGridCommonParams, _getEnableColumnSelection } from '../../../gridOptionsUtils';
 import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
-import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { CSS_COLUMN_HEADER_EDIT_HIGHLIGHTED } from '../../../styling/columnHeaderEditCss';
 import type { ComponentTooltip } from '../../../tooltip/headerTooltipSource';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
@@ -23,12 +23,10 @@ import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCell
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef } from '../cssClassApplier';
 import type { IHeaderGroupComp, IHeaderGroupParams } from './agColumnGroupHeader';
-import { GroupWidthFeature } from './groupWidthFeature';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     setResizableDisplayed(displayed: boolean): void;
-    setWidth(width: string): void;
     setHeaderWrapperMaxHeight(value: number | null): void;
     setHeaderWrapperHidden(value: boolean): void;
     setAriaExpanded(expanded: 'true' | 'false' | undefined): void;
@@ -68,6 +66,10 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private componentTooltip: ComponentTooltip = {};
     private readonly headerCompGuard = new ComponentInstanceGuard();
     private ariaAnnouncement?: string;
+    /** Where `aria-colspan` goes: a header comp's own column header, else the cell. */
+    private ariaEl: HTMLElement | null = null;
+    /** The colspan last written to `ariaEl`; null for a new one. */
+    private drawnAriaColSpan: number | null = null;
 
     public override wireComp(
         comp: IHeaderGroupCellComp,
@@ -80,7 +82,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         const { context, colNames, colHover, rangeSvc, colResize } = beans;
         this.comp = comp;
         compBean = setupCompBean(this, context, compBean);
+        // ahead of `setGui`, whose displayed-columns refresh writes `aria-colspan`
+        this.ariaEl = eGui.querySelector<HTMLElement>('[role=columnheader]') ?? eGui;
+        this.drawnAriaColSpan = null;
         this.setGui(eGui, compBean);
+        this.setupPosition();
 
         this.displayName = colNames.getDisplayNameForColumnGroup(column, 'header');
 
@@ -106,8 +112,6 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
         colHover?.createHoverFeature(compBean, leafCols, eGui);
         rangeSvc?.createRangeHighlightFeature(compBean, column, comp);
-        compBean.createManagedBean(new SetLeftFeature(column, eGui, beans));
-        compBean.createManagedBean(new GroupWidthFeature(comp, column));
         if (colResize) {
             this.resizeFeature = compBean.createManagedBean(colResize.createGroupResizeFeature(comp, eResize, column));
         } else {
@@ -221,6 +225,27 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
         this.comp.toggleCss('ag-header-highlight-before', beforeOn);
         this.comp.toggleCss('ag-header-highlight-after', afterOn);
+    }
+
+    protected override onDisplayedColumnsChanged(): void {
+        super.onDisplayedColumnsChanged();
+        const ariaEl = this.ariaEl;
+        if (ariaEl === null) {
+            return;
+        }
+        // hidden columns keep their aria slots, so the group spans from its first leaf's slot to its last's
+        const column = this.column;
+        const last = edgeLeafColumn(column, false, true);
+        const colSpan = last ? last.ariaColIndex - column.ariaColIndex + 1 : 1;
+        if (colSpan !== this.drawnAriaColSpan) {
+            this.drawnAriaColSpan = colSpan;
+            _setAriaColSpan(ariaEl, colSpan > 1 ? colSpan : undefined);
+        }
+    }
+
+    protected override setWidth(width: number): void {
+        super.setWidth(width);
+        this.comp.toggleCss('ag-hidden', width === 0);
     }
 
     protected resizeHeader(delta: number, shiftKey: boolean): void {

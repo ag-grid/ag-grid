@@ -288,8 +288,7 @@ export class MenuService extends BeanStub implements NamedBean {
             // make sure we've finished scrolling into view before displaying the menu
             _requestAnimationFrame(beans, () => {
                 const headerCellCtrl = ctrlsSvc.getHeaderRowContainerCtrl()?.getHeaderCtrlForColumn(column) as
-                    | HeaderCellCtrl
-                    | undefined;
+                    HeaderCellCtrl | undefined;
 
                 if (headerCellCtrl) {
                     this.showButtonMenu(
@@ -310,8 +309,8 @@ export class MenuService extends BeanStub implements NamedBean {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _setColMenuVisible(column: AgColumn, visible: boolean, source: ColumnEventType): void {
-    if (column.menuVisible !== visible) {
-        column.menuVisible = visible;
+    if (column.isMenuVisible() !== visible) {
+        column.setMenuVisible(visible);
         column.dispatchColEvent('menuVisibleChanged', source);
     }
 }
