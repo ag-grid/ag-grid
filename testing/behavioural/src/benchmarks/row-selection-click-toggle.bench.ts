@@ -61,7 +61,7 @@ suite('row selection — click toggle', () => {
                 api.flushAllAnimationFrames();
             },
             {
-                ...benchDefaults({ noiseFactor: 2 }),
+                ...benchDefaults(),
                 setup: async () => {
                     await gridsManager.reset();
                     api = gridsManager.createGrid(id, { ...gridOptions, rowData });

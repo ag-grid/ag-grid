@@ -134,6 +134,19 @@ export class Registry
         return null;
     }
 
+    /** Whether `getUserComponent` finds `name`, reporting it the same way when it does not. */
+    public hasUserComponent(propertyName: string, name: string): boolean {
+        if (
+            this.jsComps[name] ||
+            this.agGridDefaults[name as UserComponentName] ||
+            this.beans.frameworkOverrides.frameworkComponent(name, this.gos.get('components'), propertyName) != null
+        ) {
+            return true;
+        }
+        this.beans.validation?.missingUserComponent(propertyName, name, this.agGridDefaults, this.jsComps);
+        return false;
+    }
+
     public getSelector<TComponent extends AgBaseComponent<BeanCollection>>(
         name: AgComponentSelectorType
     ): ComponentSelector<TComponent> | undefined {

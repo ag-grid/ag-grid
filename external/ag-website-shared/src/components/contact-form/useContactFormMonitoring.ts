@@ -50,8 +50,11 @@ export function watchForStalledSubmit(formLocation: string) {
             'WARN'
         );
     }, SUBMIT_STALLED_MILLIS);
+    const cancel = () => window.clearTimeout(timeoutId);
     // Fired once the browser commits to the Salesforce page
-    window.addEventListener('pagehide', () => window.clearTimeout(timeoutId), { once: true });
+    window.addEventListener('pagehide', cancel, { once: true });
+    // A ClientRouter navigation leaves the form without firing pagehide
+    document.addEventListener('astro:before-swap', cancel, { once: true });
 }
 
 /**

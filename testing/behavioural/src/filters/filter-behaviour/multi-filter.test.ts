@@ -1,4 +1,5 @@
 import {
+    ALL_SEVERITIES,
     ColumnFilterHarness,
     FilterDom,
     GridRows,
@@ -14,6 +15,7 @@ import {
     GridStateModule,
     NumberFilterModule,
     TextFilterModule,
+    enableDevValidations,
     setupAgTestIds,
 } from 'ag-grid-community';
 import { ColumnMenuModule, FiltersToolPanelModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
@@ -89,6 +91,72 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
     });
     afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
+
+    test("a child's buttons are dropped with warning 292, whether its filterParams are an object or a function", async () => {
+        // Deliberate: child buttons are dropped with warning #292, asserted below.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [292] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        try {
+            const childParams = { object: { buttons: ['apply'] }, function: () => ({ buttons: ['apply'] }) };
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers: true,
+                columnDefs: (['object', 'function'] as const).map((colId) => ({
+                    colId,
+                    field: 'name',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: {
+                        filters: [
+                            { filter: 'agTextColumnFilter' },
+                            { filter: 'agSetColumnFilter', filterParams: childParams[colId] },
+                        ],
+                    },
+                })),
+                rowData: ROWS,
+            });
+
+            for (const colId of ['object', 'function']) {
+                await ColumnFilterHarness.open(api, colId);
+                expect(document.querySelectorAll('.ag-multi-filter .ag-set-filter-list')).toHaveLength(1);
+                expect(document.querySelectorAll('.ag-multi-filter .ag-filter-apply-panel')).toHaveLength(0);
+                api.hidePopupMenu();
+            }
+            const warnings = warnSpy.mock.calls.flat().join(' ');
+            expect(warnings).toContain('warning #292');
+            expect(['object', 'function'].filter((colId) => warnings.includes(`\`${colId}\``))).toEqual([
+                'object',
+                'function',
+            ]);
+        } finally {
+            warnSpy.mockRestore();
+            enableDevValidations({ throwOn: ALL_SEVERITIES });
+        }
+    });
+
+    test("an empty `filters` list takes the data type's default children, as no list does", async () => {
+        for (const filterParams of [{}, { filters: [] }]) {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'age', filter: 'agMultiColumnFilter', filterParams }],
+                rowData: [{ age: 5 }, { age: 50 }],
+            });
+            await ColumnFilterHarness.open(api, 'age');
+            expect(document.querySelector('.ag-filter-menu .ag-filter-body input[type="number"]')).not.toBeNull();
+            await new FilterDom(api, `default children of ${JSON.stringify(filterParams)}`, {
+                colId: 'age',
+            }).checkFilterDom(`
+                COLUMN FILTER (multi)
+                [simple]
+                operator: "Equals"
+                input: "" ⟨Filter...⟩
+                [set]
+                mini-filter: ""
+                ☑ (Select All)
+                ☑ 5
+                ☑ 50
+                model: null
+            `);
+            gridsManager.reset();
+        }
+    });
 
     test('default filters render text + set together; both must pass (AND)', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
@@ -643,6 +711,52 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
 
         expect(api.getColumnFilterModel('name')).toBeNull();
         expect(refreshSources).not.toContain('colDef');
+    });
+
+    test("a values callback, a Multi Filter child's or a Set Filter's own, is not called again when unchanged column definitions are set back, with or without filter handlers", async () => {
+        for (const enableFilterHandlers of [false, true]) {
+            const calls = { multi: 0, set: 0 };
+            const values = (colId: keyof typeof calls) => (params: { success: (values: string[]) => void }) => {
+                calls[colId]++;
+                params.success(['bob', 'alice']);
+            };
+            const api: GridApi = await gridsManager.createGridAndWait(`grid-${enableFilterHandlers}`, {
+                enableFilterHandlers,
+                columnDefs: [
+                    {
+                        colId: 'multi',
+                        field: 'name',
+                        filter: 'agMultiColumnFilter',
+                        filterParams: {
+                            filters: [
+                                { filter: 'agTextColumnFilter' },
+                                { filter: 'agSetColumnFilter', filterParams: { values: values('multi') } },
+                            ],
+                        },
+                    },
+                    {
+                        colId: 'set',
+                        field: 'name',
+                        filter: 'agSetColumnFilter',
+                        filterParams: { values: values('set') },
+                    },
+                ],
+                rowData: ROWS,
+            });
+            for (const colId of ['multi', 'set']) {
+                await ColumnFilterHarness.open(api, colId);
+                api.hidePopupMenu();
+            }
+            const loaded = { ...calls };
+            expect({ enableFilterHandlers, loaded }).toEqual({ enableFilterHandlers, loaded: { multi: 1, set: 1 } });
+
+            for (let i = 0; i < 2; ++i) {
+                api.setGridOption('columnDefs', api.getColumnDefs()!);
+                await asyncSetTimeout(0);
+            }
+
+            expect({ enableFilterHandlers, calls }).toEqual({ enableFilterHandlers, calls: loaded });
+        }
     });
 
     test("a child filter component with its own filter value getter reads another column as that column's value", async () => {

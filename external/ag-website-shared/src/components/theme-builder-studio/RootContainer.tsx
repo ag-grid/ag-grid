@@ -2,10 +2,9 @@ import { ImportExportButton } from '@ag-website-shared/components/theme-builder/
 import { applyPreset } from '@ag-website-shared/theming/preset';
 import { useRenderedTheme, useRenderedThemeInfo } from '@ag-website-shared/theming/rendered-theme';
 import styled from '@emotion/styled';
+import type { Theme } from 'ag-stack';
 import { useStore } from 'jotai';
 import { type ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
-
-import type { Theme } from 'ag-grid-community';
 
 import { EditorPanel } from './EditorPanel';
 import { PresetSelector } from './PresetSelector';

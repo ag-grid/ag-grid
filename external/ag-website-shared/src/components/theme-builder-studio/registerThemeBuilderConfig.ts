@@ -2,8 +2,11 @@ import { setFontFamilyOptions } from '@ag-website-shared/components/theme-builde
 import { setThemeCodeConfig } from '@ag-website-shared/components/theme-builder/themeImport';
 import { setNonAdvancedParams, setThemeParamSource } from '@ag-website-shared/theming/ParamModel';
 import { setFeatureModels } from '@ag-website-shared/theming/PartModel';
-import { setBaseTheme, setRenderedFeatures } from '@ag-website-shared/theming/rendered-theme';
+import { setBaseTheme } from '@ag-website-shared/theming/base-theme';
+import { setRenderedFeatures } from '@ag-website-shared/theming/rendered-theme';
+import { setProductVersion } from '@ag-website-shared/theming/store';
 import { getThemeDefaultParams } from '@ag-website-shared/theming/utils';
+import { agStudioVersion } from '@constants';
 import { _getEditableThemeParams, studioTheme } from 'ag-studio';
 
 import { STUDIO_FONT_FAMILY_OPTIONS } from './fonts';
@@ -14,9 +17,7 @@ import { STUDIO_CURATED_KEYS } from './params';
 // visible, so keep them out of the builder entirely: allParamModels() is what feeds
 // the advanced param list, theme import validation and the rendered preview.
 
-// Point the shared, host-agnostic theme-builder model at Studio's theme instead
-// of grid's themeQuartz. Studio has no swappable-part features, so both the
-// feature registry and the rendered-preview feature list are empty.
+// Studio has no swappable-part features, so both feature lists stay empty.
 setThemeParamSource(() => _getEditableThemeParams(getThemeDefaultParams(studioTheme)));
 setNonAdvancedParams(STUDIO_CURATED_KEYS);
 setFeatureModels(() => []);
@@ -27,3 +28,5 @@ setRenderedFeatures([]);
 setThemeCodeConfig({ themeVariable: 'studioTheme', importSource: 'ag-studio' });
 
 setFontFamilyOptions(STUDIO_FONT_FAMILY_OPTIONS);
+
+setProductVersion(agStudioVersion);

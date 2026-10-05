@@ -198,9 +198,14 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.eDeselect.classList.add('ag-hidden');
 
         if (allowTyping) {
-            this.eInput.setAutoComplete(false).setInputPlaceholder(placeholder).setSearchIcon(!!searchIcon);
+            this.eInput
+                .setAutoComplete(false)
+                .setInputPlaceholder(placeholder)
+                .setSearchIcon(!!searchIcon)
+                .setFrameless(true);
             if (!multiSelect) {
                 this.eDisplayField.classList.add('ag-hidden');
+                this.eWrapper.classList.add('ag-rich-select-typing-single');
             } else {
                 this.eWrapper.classList.add('ag-rich-select-typing-multi');
                 if (!suppressMultiSelectPillRenderer) {

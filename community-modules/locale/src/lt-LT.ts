@@ -118,6 +118,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     addFilterCard: 'Pridėti filtrą',
     agTextColumnFilterDisplayName: 'Paprastas filtras',
     agNumberColumnFilterDisplayName: 'Paprastas filtras',
+    agBigIntColumnFilterDisplayName: 'Paprastas filtras',
     agDateColumnFilterDisplayName: 'Paprastas filtras',
     agSetColumnFilterDisplayName: 'Pasirinkimo filtras',
     agMultiColumnFilterDisplayName: 'Kombinuotas filtras',

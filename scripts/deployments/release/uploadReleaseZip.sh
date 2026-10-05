@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 if [ "$#" -ne 2 ]
   then
     echo "You must supply a version file to upload, and ssh host"
@@ -23,7 +25,7 @@ FILENAME=release_"$TIMESTAMP"_v"$VERSION".zip
 
 CURRENT_HOST=$2
 
-SSH_LOCATION=$SSH_FILE
+SSH_LOCATION=${SSH_FILE:-}
 
 if [ -z "$SSH_LOCATION" ]
 then

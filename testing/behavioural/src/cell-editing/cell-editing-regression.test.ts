@@ -6,6 +6,7 @@ import {
     GridColumns,
     GridRows,
     TestGridsManager,
+    asyncSetTimeout,
     fakeElementAttribute,
     getAllRows,
     getRowHtmlElement,
@@ -16,6 +17,7 @@ import { vi } from 'vitest';
 
 import {
     CheckboxEditorModule,
+    ExternalFilterModule,
     LargeTextEditorModule,
     NumberEditorModule,
     TextEditorModule,
@@ -23,7 +25,7 @@ import {
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
-import type { CellEditingStoppedEvent, GridApi, GridOptions } from 'ag-grid-community';
+import type { CellEditRequestEvent, CellEditingStoppedEvent, GridApi, GridOptions } from 'ag-grid-community';
 import {
     CellSelectionModule,
     ClipboardModule,
@@ -40,6 +42,7 @@ describe('Cell Editing Regression', () => {
             LargeTextEditorModule,
             NumberEditorModule,
             CheckboxEditorModule,
+            ExternalFilterModule,
             RichSelectModule,
             CellSelectionModule,
             ClipboardModule,
@@ -1824,5 +1827,79 @@ describe('Cell Editing Regression', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:ROW_1 a:"A1" b:"B1"
         `);
+    });
+
+    // AG-18752 - a row filtered out by an edit animates out as a zombie, and its cells still take clicks.
+    describe('editing a cell whose row is animating out after a filtered-out edit', () => {
+        const createGridWithAnimatingOutRow = async (gridOptions: GridOptions = {}) => {
+            const onCellEditRequest = vi.fn((event: CellEditRequestEvent) =>
+                api.applyTransaction({ update: [{ ...event.data, price: event.newValue }] })
+            );
+            const api = await gridMgr.createGridAndWait('animatingOutRow', {
+                columnDefs: [{ field: 'name' }, { field: 'price', editable: true }],
+                rowData: [
+                    { id: '0', name: 'Row 0', price: null },
+                    { id: '1', name: 'Row 1', price: null },
+                ],
+                getRowId: ({ data }) => data.id,
+                isExternalFilterPresent: () => true,
+                doesExternalFilterPass: (node) => node.data.price == null,
+                readOnlyEdit: true,
+                onCellEditRequest,
+                // ensureDomOrder disables row animation, so both are needed for the row to linger.
+                animateRows: true,
+                ensureDomOrder: false,
+                ...gridOptions,
+            } satisfies GridOptions);
+            const gridDiv = getGridElement(api)! as HTMLElement;
+            const editingStarted = vi.fn();
+            api.addEventListener('cellEditingStarted', editingStarted);
+            api.addEventListener('rowEditingStarted', editingStarted);
+
+            const priceCell = gridDiv.querySelector<HTMLElement>('.ag-row[row-id="0"] [col-id="price"]')!;
+            api.applyTransaction({ update: [{ id: '0', name: 'Row 0', price: 100 }] });
+
+            // The row has left the displayed rows, but its DOM is still on screen while it animates out.
+            expect(api.getRowNode('0')!.rowIndex).toBeNull();
+            expect(priceCell.isConnected).toBe(true);
+
+            return { api, priceCell, editingStarted, onCellEditRequest };
+        };
+
+        test.each([
+            {
+                name: 'double-click',
+                gridOptions: {},
+                fire: (cell: HTMLElement) => fireEvent.dblClick(cell, { detail: 2 }),
+            },
+            {
+                name: 'single click with singleClickEdit',
+                gridOptions: { singleClickEdit: true },
+                fire: (cell: HTMLElement) => fireEvent.click(cell),
+            },
+            {
+                name: 'Enter key',
+                gridOptions: {},
+                fire: (cell: HTMLElement) => fireEvent.keyDown(cell, { key: 'Enter' }),
+            },
+            {
+                name: 'full row double-click',
+                gridOptions: { editType: 'fullRow' },
+                fire: (cell: HTMLElement) => fireEvent.dblClick(cell, { detail: 2 }),
+            },
+        ] satisfies { name: string; gridOptions: GridOptions; fire: (cell: HTMLElement) => void }[])(
+            '$name does not throw or start editing',
+            async ({ gridOptions, fire }) => {
+                const { api, priceCell, editingStarted, onCellEditRequest } =
+                    await createGridWithAnimatingOutRow(gridOptions);
+
+                expect(() => fire(priceCell)).not.toThrow();
+                await asyncSetTimeout(0);
+
+                expect(editingStarted).not.toHaveBeenCalled();
+                expect(api.getEditingCells()).toEqual([]);
+                expect(onCellEditRequest).not.toHaveBeenCalled();
+            }
+        );
     });
 });

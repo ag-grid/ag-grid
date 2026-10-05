@@ -16,6 +16,20 @@ For the full guide — runner flag reference, Vitest patterns, the complete asyn
 
 Search `testing/behavioural` for an existing harness before assuming a behaviour can't be black-box tested (e.g. `DragEventDispatcher` drives real header drags); extend the harness rather than dropping to a unit test.
 
+## Playwright e2e, behavioural test or docs-example spec
+
+Behavioural tests run in happy-dom, which has no layout engine and models native form controls differently from a browser. Pick the layer by what the behaviour depends on:
+
+| Write a... | When | Where |
+| --- | --- | --- |
+| **Behavioural test** (default) | The behaviour is grid logic driven through the public `GridApi` and DOM, and happy-dom models it faithfully. | `testing/behavioural/` |
+| **Playwright e2e spec** | The behaviour depends on real browser input, layout, scrolling or native controls (typed text in an `<input>`, wheel scrolling, column virtualisation, popup positioning), or must hold in Firefox and WebKit. It needs its own grid configuration, community or enterprise. | `testing/e2e/e2e/*.spec.ts` |
+| **Docs-example spec** | The behaviour is what a docs example demonstrates, and the example must keep working in every framework. | `example.spec.ts` beside the example (see `docs-example-specs.md`) |
+
+A Playwright e2e spec builds its grid from `mountGrid(page, { enterprise?, options })` in `testing/e2e/src/mountGrid.ts`, which loads the UMD bundle into a blank page: no docs site and no dev server. By default it loads the local build; `--url <site>` (or `BASE_URL`) loads it from `<site>/files/<package>/dist/` instead, so the same specs run against a local dev server or `https://grid-staging.ag-grid.com`. The enterprise bundle registers every enterprise module, so a spec cannot test a partial module registration. If the behaviour is the same in happy-dom and in Chrome, it belongs in `testing/behavioural/` instead.
+
+The e2e suite is slower than the behavioural one and is **not part of the PR CI**. The `Grid E2E Tests` workflow runs it nightly on Chromium, Firefox and WebKit, writing its run time to the job summary. A failing nightly run notifies Slack and raises a JIRA ticket, so run `./grid-e2e.sh --all-browsers` locally before relying on a new spec.
+
 ## Wait, don't sleep
 
 **Poll async grid updates with `waitFor`** (from `@testing-library/dom`). **Never** `await asyncSetTimeout(<fixed n>)` and then assert — a guessed delay is flaky and slow. A `no-restricted-syntax` ESLint rule in `testing/behavioural/eslint.config.mjs` flags every `asyncSetTimeout(n)` where `n > 0`.
@@ -35,7 +49,27 @@ const flush = async () => { await act(async () => { await asyncSetTimeout(0); })
 
 The skill covers the traps that make a `waitFor` unfalsifiable or a sleep load-bearing — negative assertions, polls that were already true, test IDs landing on a debounce, and sleeps that only look like safety margins — plus how to prove a wait is genuinely necessary. **Load it before converting any timing-dependent test.**
 
+## Does this change need a test?
+
+Decide before writing one. A test earns its place when it guards behaviour a user would notice if it broke: logic, state, events, keyboard and pointer interaction, API contracts.
+
+**Do not add a test for:**
+
+- **Styling-only changes** (padding, margin, colour, font, size, icons, theme parameters). Asserting `getComputedStyle(el).paddingLeft === '12px'` restates the CSS and fails on every design tweak. If the style carries behaviour, such as a layout that decides what is visible, clickable or scrollable, assert that outcome and not the number.
+- **Copy, docs and example text.** A docs-example spec is only for behaviour the example demonstrates (see `docs-example-specs.md`).
+- **Refactors.** The existing tests are the safety net; if they pass unchanged, the refactor is covered.
+- **Type-only and lint-only changes.** The type-check and lint gates cover them.
+- **Behaviour already covered.** Grep `testing/behavioural` and the e2e specs first.
+
+**Size the test to the change.** A regression test is a few lines in the suite that already owns the behaviour (see `test-organisation.md`). A new Playwright e2e spec is not the default for a one-property fix. If the test needs more setup than the fix, reconsider the layer or skip it.
+
+**Brittleness check.** Ask whether a legitimate design or refactor change would break the test without any user-visible regression. If yes, delete it.
+
+When a change gets no test, say so in the summary with the reason (e.g. "No test added: styling-only"). Do not add one by default to look thorough.
+
 ## Regression tests: cover every reproduction path
+
+This applies once a change needs a test, per the section above.
 
 A bug rarely has one trigger. Enumerate the reproduction paths named in the ticket and add a test for each — a programmatic API call, a panel drag and a tool-panel drop are three tests, not one. Test the plural case, not just N=1, and assert the observable end state for every path.
 
@@ -50,10 +84,11 @@ Pick the input that *separates* the two behaviours. A test that passes against b
 - `./behave.sh` — the whole unit suite (package + behavioural) as one multi-project Vitest run.
 - `./benches.sh` — behavioural benchmarks in headless Chromium.
 - `./docs-e2e.sh` — Playwright E2E against the docs site. The Nx target is `test:e2e`; there is **no** `e2e` target.
+- `./grid-e2e.sh` — real-browser Playwright specs in `testing/e2e`, chromium by default; `--all-browsers` runs chromium, firefox and webkit, `--project=<name>` one of them, `--url <site>` runs against a dev server or deployed site instead of the local build.
 
 ### Never block on a gate; read its log afterwards
 
-**Never run `./behave.sh`, `./checks.sh`, `./benches.sh` or `./docs-e2e.sh` in the foreground** — while a Bash call is in flight the user cannot reach the agent at all. Launch with the harness's background mechanism, which delivers a completion event in a later turn, and do other work meanwhile. (`--async` detaches the script itself and reports back to the terminal it was launched from when it ends — useful to a human, useless to an agent, which cannot be woken that way.)
+**Never run `./behave.sh`, `./checks.sh`, `./benches.sh`, `./docs-e2e.sh` or `./grid-e2e.sh` in the foreground** — while a Bash call is in flight the user cannot reach the agent at all. Launch with the harness's background mechanism, which delivers a completion event in a later turn, and do other work meanwhile. (`--async` detaches the script itself and reports back to the terminal it was launched from when it ends — useful to a human, useless to an agent, which cannot be woken that way.)
 
 **Never `sleep` to wait for a run.** One you backgrounded wakes the agent by itself; one started elsewhere has `--async-status` (exit 3 = still running) and `--wait`, below. For progress mid-run, grep the log — it is written live.
 

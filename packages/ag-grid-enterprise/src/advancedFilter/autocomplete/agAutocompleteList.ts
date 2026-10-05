@@ -73,6 +73,8 @@ export class AgAutocompleteList extends AgPopupComponent<
 
     private searchString = '';
     private lastAutoListHeight: number | null = null;
+    /** OPTIMIZATION: each entry's search text lower-cased once, as the entries are fixed for the list's life. */
+    private lowerCaseTexts: string[] | undefined;
 
     constructor(
         private readonly params: {
@@ -194,30 +196,29 @@ export class AgAutocompleteList extends AgPopupComponent<
      * Entries holding the search string, and the index of the one to suggest: the shortest starting with
      * it, otherwise the shortest holding it, the first offered winning a tie. `-1` where nothing matched.
      */
-    private runContainsSearch(
-        searchString: string,
-        entries: AutocompleteEntry[]
-    ): { matches: AutocompleteEntry[]; topIndex: number } {
+    private runContainsSearch(searchString: string): { matches: AutocompleteEntry[]; topIndex: number } {
+        const entries = this.params.autocompleteEntries;
         const lowerCaseSearchString = searchString.toLocaleLowerCase();
+        const texts = this.getLowerCaseTexts();
         const matches: AutocompleteEntry[] = [];
         let topIndex = -1;
         let topLength = 0;
         let topStartsWith = false;
         for (let i = 0, len = entries.length; i < len; ++i) {
-            const entry = entries[i];
-            const text = entry.searchValue ?? entry.displayValue ?? entry.key;
-            const index = text.toLocaleLowerCase().indexOf(lowerCaseSearchString);
+            const index = texts[i].indexOf(lowerCaseSearchString);
             if (index < 0) {
                 continue;
             }
+            const entry = entries[i];
+            const length = (entry.searchValue ?? entry.displayValue ?? entry.key).length;
             const startsWith = index === 0;
             if (
                 topIndex < 0 ||
                 (!topStartsWith && startsWith) ||
-                (topStartsWith === startsWith && text.length < topLength)
+                (topStartsWith === startsWith && length < topLength)
             ) {
                 topIndex = matches.length;
-                topLength = text.length;
+                topLength = length;
                 topStartsWith = startsWith;
             }
             matches.push(entry);
@@ -225,30 +226,45 @@ export class AgAutocompleteList extends AgPopupComponent<
         return { matches, topIndex };
     }
 
-    private runStartsWithSearch(searchString: string, entries: AutocompleteEntry[]): AutocompleteEntry[] {
+    private runStartsWithSearch(searchString: string): AutocompleteEntry[] {
+        const entries = this.params.autocompleteEntries;
         const lowerCaseSearchString = searchString.toLocaleLowerCase();
+        const texts = this.getLowerCaseTexts();
         const matches: AutocompleteEntry[] = [];
         for (let i = 0, len = entries.length; i < len; ++i) {
-            const entry = entries[i];
-            const text = entry.searchValue ?? entry.displayValue ?? entry.key;
-            if (text.toLocaleLowerCase().startsWith(lowerCaseSearchString)) {
-                matches.push(entry);
+            if (texts[i].startsWith(lowerCaseSearchString)) {
+                matches.push(entries[i]);
             }
         }
         return matches;
     }
 
+    private getLowerCaseTexts(): string[] {
+        let texts = this.lowerCaseTexts;
+        if (!texts) {
+            const entries = this.params.autocompleteEntries;
+            const len = entries.length;
+            texts = new Array(len);
+            for (let i = 0; i < len; ++i) {
+                const entry = entries[i];
+                texts[i] = (entry.searchValue ?? entry.displayValue ?? entry.key).toLocaleLowerCase();
+            }
+            this.lowerCaseTexts = texts;
+        }
+        return texts;
+    }
+
     /** One pass, producing the list to show and the row to suggest together, per keystroke. */
     private runSearch(): void {
-        const { autocompleteEntries, useStartsWithSearch, suggestFirstMatch, forceLastSelection } = this.params;
+        const { useStartsWithSearch, suggestFirstMatch, forceLastSelection } = this.params;
         const searchString = this.searchString;
 
         let matches: AutocompleteEntry[];
         let topIndex = 0;
         if (useStartsWithSearch) {
-            matches = this.runStartsWithSearch(searchString, autocompleteEntries);
+            matches = this.runStartsWithSearch(searchString);
         } else {
-            ({ matches, topIndex } = this.runContainsSearch(searchString, autocompleteEntries));
+            ({ matches, topIndex } = this.runContainsSearch(searchString));
             if (suggestFirstMatch) {
                 topIndex = 0;
             }

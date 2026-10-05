@@ -118,6 +118,7 @@ export const AG_GRID_LOCALE_BN_IN = {
     addFilterCard: 'ফিল্টার যোগ করুন',
     agTextColumnFilterDisplayName: 'সাধারণ ফিল্টার',
     agNumberColumnFilterDisplayName: 'সাধারণ ফিল্টার',
+    agBigIntColumnFilterDisplayName: 'সাধারণ ফিল্টার',
     agDateColumnFilterDisplayName: 'সাধারণ ফিল্টার',
     agSetColumnFilterDisplayName: 'সিলেকশন ফিল্টার',
     agMultiColumnFilterDisplayName: 'কম্বো ফিল্টার',

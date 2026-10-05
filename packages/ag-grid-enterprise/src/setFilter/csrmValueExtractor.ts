@@ -1,7 +1,7 @@
 import type { AgColumn, IClientSideRowModel, RowNode } from 'ag-grid-community';
-import { AgPromise, BeanStub } from 'ag-grid-community';
+import { BeanStub } from 'ag-grid-community';
 
-import { processDataPath, setFilterNullIfBlank } from './setFilterUtils';
+import { mapFormattedKeys, processDataPath, setFilterNullIfBlank } from './setFilterUtils';
 
 /** @param V type of value in the Set Filter */
 export class CsrmValuesExtractor<V> extends BeanStub {
@@ -17,38 +17,23 @@ export class CsrmValuesExtractor<V> extends BeanStub {
         super();
     }
 
-    public extractUniqueValuesAsync(
-        predicate: (node: RowNode) => boolean,
-        existingValues?: Map<string | null, V | null>
-    ): AgPromise<Map<string | null, V | null>> {
-        return new AgPromise((resolve) => {
-            if ((this.beans.rowModel as IClientSideRowModel).rowCountReady) {
-                resolve(this.extractUniqueValues(predicate, existingValues));
-            } else {
-                const [destroyFunc] = this.addManagedEventListeners({
-                    rowCountReady: () => {
-                        destroyFunc?.();
-                        resolve(this.extractUniqueValues(predicate, existingValues));
-                    },
-                });
-            }
-        });
-    }
-
+    /** `predicate` is `null` to read every row. */
     public extractUniqueValues(
-        predicate: (node: RowNode) => boolean,
+        predicate: ((node: RowNode) => boolean) | null,
         existingValues?: Map<string | null, V | null>
     ): Map<string | null, V | null> {
         const values: Map<string | null, V | null> = new Map();
-        const existingFormattedKeys = this.extractExistingFormattedKeys(existingValues);
+        const caseFormat = this.caseFormat;
+        const existingFormattedKeys = existingValues && mapFormattedKeys(existingValues.keys(), caseFormat);
         const formattedKeys: Set<string | null> = new Set();
         const treeData = this.isTreeData();
         const treeDataOrGrouping = this.isTreeDataOrGrouping();
-        const groupedCols = this.beans.rowGroupColsSvc?.columns;
+        const beans = this.beans;
+        const groupedCols = beans.rowGroupColsSvc?.columns;
         const groupAllowUnbalanced = this.gos.get('groupAllowUnbalanced');
 
         const addValue = (unformattedKey: string | null, value: V | null | undefined) => {
-            const formattedKey = this.caseFormat(unformattedKey);
+            const formattedKey = caseFormat(unformattedKey);
             if (!formattedKeys.has(formattedKey)) {
                 formattedKeys.add(formattedKey);
                 let keyToAdd = unformattedKey;
@@ -64,9 +49,9 @@ export class CsrmValuesExtractor<V> extends BeanStub {
             }
         };
 
-        (this.beans.rowModel as IClientSideRowModel).forEachLeafNode((node) => {
+        (beans.rowModel as IClientSideRowModel).forEachLeafNode((node) => {
             // only pull values from rows that have data. this means we skip filler group nodes.
-            if (!node.data || !predicate(node)) {
+            if (!node.data || (predicate && !predicate(node))) {
                 return;
             }
             if (treeDataOrGrouping) {
@@ -110,18 +95,5 @@ export class CsrmValuesExtractor<V> extends BeanStub {
         }
         const processedDataPath = processDataPath(dataPath, treeData, groupAllowUnbalanced);
         addValue(this.createKey(processedDataPath as any), processedDataPath as any);
-    }
-
-    private extractExistingFormattedKeys(
-        existingValues?: Map<string | null, V | null>
-    ): Map<string | null, string | null> | null {
-        if (!existingValues) {
-            return null;
-        }
-        const existingFormattedKeys: Map<string | null, string | null> = new Map();
-        existingValues.forEach((_value, key) => {
-            existingFormattedKeys.set(this.caseFormat(key), key);
-        });
-        return existingFormattedKeys;
     }
 }

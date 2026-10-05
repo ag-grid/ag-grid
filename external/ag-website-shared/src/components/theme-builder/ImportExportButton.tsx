@@ -1,8 +1,12 @@
+import { replaceHistoryUrl } from '@ag-website-shared/utils/historyUrl';
 import styled from '@emotion/styled';
 import type { Placement } from '@floating-ui/react';
 
 import { ThemeImportExportDialog, type ThemeImportExportDialogProps } from './ThemeImportExportDialog';
 import { UIPopupButton } from './UIPopupButton';
+
+/** Docs pages deep-link to #import to open the builder ready to paste a theme. */
+const hasImportHash = () => typeof window !== 'undefined' && window.location.hash === '#import';
 
 /**
  * Host-agnostic Import / Export control: a popup button wrapping the shared
@@ -20,8 +24,20 @@ export const ImportExportButton = ({
     <ButtonWrapper>
         <UIPopupButton
             allowedPlacements={allowedPlacements}
-            dropdownContent={(close) => <ThemeImportExportDialog close={close} {...dialogProps} />}
+            dropdownContent={(close) => (
+                <ThemeImportExportDialog
+                    close={close}
+                    initialTab={hasImportHash() ? 'Import' : 'Export'}
+                    {...dialogProps}
+                />
+            )}
             variant="primary"
+            initialOpen={hasImportHash()}
+            onClose={() => {
+                if (hasImportHash()) {
+                    replaceHistoryUrl(window.location.pathname + window.location.search);
+                }
+            }}
         >
             {downloadIcon} Import / Export
         </UIPopupButton>

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 # Set or clear the in-flight archive caching exemption in the root .htaccess on a remote box, for
 # grid and charts independently. Called by uploadAndUnzipArchive.sh during a grid release
 # candidate, and runnable on its own (e.g. for a charts-only release candidate).
@@ -32,7 +34,7 @@ CHARTS_VERSION=$2
 CURRENT_HOST=$3
 ACTION=${4:-set}
 
-export SSH_LOCATION=$SSH_FILE
+export SSH_LOCATION=${SSH_FILE:-}
 
 if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ || "$VERSION" == "-" ]]
 then
@@ -64,7 +66,7 @@ then
       exit 1;
 fi
 
-if [ -z "$GRID_ROOT_DIR" ]
+if [ -z "${GRID_ROOT_DIR:-}" ]
 then
       echo "\$GRID_ROOT_DIR is not set"
       exit 1;
@@ -90,7 +92,7 @@ function patchFailed {
         echo "The archive is cacheable - fix this and re-run, or it will serve stale.";
     fi
     rm -f "$LIVE_HTACCESS";
-    ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "rm -f $STAGED" 2>/dev/null;
+    ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "rm -f $STAGED" 2>/dev/null || true;
     exit 1;
 }
 
@@ -130,8 +132,10 @@ fi
 SWAP="cd $GRID_ROOT_DIR || exit 5; \
     [ \"\$(sha256sum < $STAGED | cut -d' ' -f1)\" = $PATCHED_SHA ] || { echo 'uploaded file does not match the patched one'; exit 4; }; \
     cp -p $REMOTE $BACKUP && chmod 644 $STAGED && mv $STAGED $REMOTE"
-ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "$SWAP"
-case $? in
+# capture the exit code rather than letting set -e stop here, so patchFailed can report and clean up
+SWAP_RC=0
+ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "$SWAP" || SWAP_RC=$?
+case $SWAP_RC in
     0) ;;
     4) patchFailed "The upload did not arrive intact. Re-run this.";;
     *) patchFailed "Could not move the patched root .htaccess into place.";;

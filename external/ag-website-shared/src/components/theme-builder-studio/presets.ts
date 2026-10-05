@@ -1,6 +1,5 @@
 import type { FontFamilyValue } from '@ag-website-shared/theming/api';
 import type { Preset as SharedPreset } from '@ag-website-shared/theming/preset';
-import type { ThemeParams } from '@ag-website-shared/theming/utils';
 
 import { DM_SANS, FRAUNCES, IBM_PLEX_MONO, INTER, MERRIWEATHER, SPACE_GROTESK } from './fonts';
 
@@ -456,14 +455,12 @@ export const PRESETS: StudioPreset[] = [
 
 /**
  * Convert the mode-appropriate variant of a Studio preset into the shared,
- * single-variant Preset consumed by applyPreset(). Studio's catalog is a
- * superset of grid's ThemeParams and studioTheme.withParams validates the keys
- * at apply time, so the grid-typed Preset cannot statically express them.
+ * single-variant Preset consumed by applyPreset().
  */
 export function toSharedPreset(preset: StudioPreset, isDark: boolean): SharedPreset {
     const variant = isDark ? preset.variants.dark : preset.variants.light;
     return {
         pageBackgroundColor: variant.background,
-        params: variant.params as unknown as Partial<ThemeParams>,
+        params: variant.params,
     };
 }

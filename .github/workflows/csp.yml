@@ -14,6 +14,7 @@ env:
     NX_NO_CLOUD: true
     CI: true
     DEFAULT_RETENTION_DAYS: 30
+    CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
 
 on:
     workflow_dispatch:

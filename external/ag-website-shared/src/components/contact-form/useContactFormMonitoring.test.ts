@@ -81,4 +81,12 @@ describe('watchForStalledSubmit', () => {
 
         expect(trackMonitoringEvent).not.toHaveBeenCalled();
     });
+
+    test('does not report once the visitor navigates to another page of the site', () => {
+        watchForStalledSubmit('Contact page');
+        document.dispatchEvent(new Event('astro:before-swap'));
+        vi.advanceTimersByTime(10_000);
+
+        expect(trackMonitoringEvent).not.toHaveBeenCalled();
+    });
 });

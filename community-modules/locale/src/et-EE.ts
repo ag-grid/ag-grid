@@ -118,6 +118,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     addFilterCard: 'Lisa filter',
     agTextColumnFilterDisplayName: 'Lihtfilter',
     agNumberColumnFilterDisplayName: 'Lihtfilter',
+    agBigIntColumnFilterDisplayName: 'Lihtfilter',
     agDateColumnFilterDisplayName: 'Lihtfilter',
     agSetColumnFilterDisplayName: 'Valikufilter',
     agMultiColumnFilterDisplayName: 'Kombineeritud filter',
