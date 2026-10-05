@@ -19,8 +19,8 @@
 const CSP_ZONES: { zone: string; pattern: RegExp }[] = [
     // Also matches the archived copies, which are served with the campaigns policy (CAMPAIGNS_PATH_CONDITION)
     { zone: 'campaigns', pattern: /^(?:\/archive\/[^/]+)?\/campaigns\// },
-    { zone: 'charts', pattern: /^\/charts\// },
-    { zone: 'studio', pattern: /^\/studio\// },
+    { zone: 'charts', pattern: /^\/charts(?:\/|$)/ },
+    { zone: 'studio', pattern: /^\/studio(?:\/|$)/ },
 ];
 
 const DEFAULT_CSP_ZONE = 'grid';
@@ -31,11 +31,22 @@ export function getCspZone(pathname: string): string {
 
 export function initFullReloadAcrossCspZones() {
     document.addEventListener('astro:before-preparation', (event) => {
-        const { from, to } = event as Event & { from: URL; to: URL };
+        const preparation = event as Event & { from: URL; to: URL; loader: () => Promise<void> };
+        const crossesZone = () => getCspZone(preparation.from.pathname) !== getCspZone(preparation.to.pathname);
 
-        if (getCspZone(from.pathname) !== getCspZone(to.pathname)) {
-            // A cancelled preparation makes the router fall back to loading `to` as a new document
+        if (crossesZone()) {
+            // A cancelled preparation makes the router load `to` as a new document
             event.preventDefault();
+            return;
         }
+
+        // The router follows same-origin redirects (`/charts` to `/charts/`) without another event
+        const load = preparation.loader;
+        preparation.loader = async () => {
+            await load();
+            if (crossesZone()) {
+                event.preventDefault();
+            }
+        };
     });
 }
