@@ -51,6 +51,7 @@ env:
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
   YARN_NPM_REGISTRY_SERVER: "https://registry.ag-grid.com"
   CI: true
+  CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

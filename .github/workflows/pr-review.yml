@@ -50,6 +50,8 @@ env:
     GIT_CONFIG_KEY_1: maintenance.auto
     GIT_CONFIG_VALUE_1: 'false'
     DEV_PROMPTS_CHANNEL: latest
+    NX_NO_CLOUD: 'true'
+    CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
 
 jobs:
     review:

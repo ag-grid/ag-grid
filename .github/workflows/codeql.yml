@@ -18,6 +18,8 @@ env:
     GIT_CONFIG_VALUE_0: '0'
     GIT_CONFIG_KEY_1: maintenance.auto
     GIT_CONFIG_VALUE_1: 'false'
+    NX_NO_CLOUD: 'true'
+    CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
 
 # Least-privilege default; the analyze job overrides this with its own block.
 permissions:
