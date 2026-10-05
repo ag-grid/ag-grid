@@ -19,7 +19,9 @@ on:
 
 env:
   CI: true
-  YARN_REGISTRY: 'https://registry.ag-grid.com'
+  YARN_NPM_REGISTRY_SERVER: 'https://registry.ag-grid.com'
+  NX_NO_CLOUD: 'true'
+  CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
 
 concurrency:
   group: post-deploy-verification-${{ github.ref }}

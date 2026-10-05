@@ -8,6 +8,7 @@ on:
         types: [opened, synchronize, reopened, ready_for_review]
 
 env:
+    YARN_NPM_REGISTRY_SERVER: 'https://registry.ag-grid.com'
     # Disable git's post-fetch background gc/maintenance for every git invocation in this
     # workflow (via git's GIT_CONFIG_* protocol); otherwise it rewrites .git/shallow
     # concurrently with the next chained `git fetch --depth 1`, intermittently failing job
@@ -17,6 +18,8 @@ env:
     GIT_CONFIG_VALUE_0: '0'
     GIT_CONFIG_KEY_1: maintenance.auto
     GIT_CONFIG_VALUE_1: 'false'
+    NX_NO_CLOUD: 'true'
+    CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
 
 # Least-privilege default; the analyze job overrides this with its own block.
 permissions:
@@ -26,6 +29,7 @@ jobs:
     analyze:
         name: Analyze (${{ matrix.language }})
         runs-on: 'ubuntu-latest'
+        if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
         permissions:
             # required for all workflows
             security-events: write

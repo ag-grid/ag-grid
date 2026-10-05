@@ -26,6 +26,8 @@ env:
     REPO_URL: ${{ github.server_url }}/${{ github.repository }}
     SLACK_CHANNEL: '#ci-grid-gate'
     AG_LIBRARY: grid
+    NX_NO_CLOUD: 'true'
+    CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
 
 jobs:
     # TODO: Re-enable rulesync-integrity job once rulesync issues are resolved
@@ -45,7 +47,7 @@ jobs:
     #               cache: 'yarn'
     #
     #         - name: Install dependencies
-    #           run: yarn install --frozen-lockfile
+    #           run: yarn install --immutable
     #
     #         - name: Verify Rulesync Integrity (Claude Code)
     #           id: rulesync-claudecode

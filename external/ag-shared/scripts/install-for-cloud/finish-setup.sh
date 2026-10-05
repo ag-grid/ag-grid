@@ -120,8 +120,8 @@ fi
 # Install
 # ---------------------------------------------------------------------------
 
-log "yarn install --prefer-offline in ${REPO_ROOT} (several minutes)"
-if yarn install --prefer-offline 2>&1 | tee "$STATE/install.log" | tail -5; then
+log "yarn install in ${REPO_ROOT} (several minutes)"
+if yarn install 2>&1 | tee "$STATE/install.log" | tail -5; then
     date +%s >"$STATE/ready"
     log "install finished in $((SECONDS - START_TS))s"
 else

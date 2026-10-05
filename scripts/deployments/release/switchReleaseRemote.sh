@@ -21,6 +21,19 @@ STUDIO_ROOT_DIR="@STUDIO_ROOT_DIR@"
 GRID_ROOT_DIR="@GRID_ROOT_DIR@"
 WWW_ROOT_DIR="@WWW_ROOT_DIR@"
 
+# Deliberately no "set -e": once the live html folder has been moved aside, stopping part-way would leave
+# the site down or missing its archives/charts/studio. Carry on through every step as before, but record
+# any failure so that the deployment step still fails and someone looks at it.
+FAILED=0
+trap 'echo "ERROR: command failed (exit $?) at line $LINENO" >&2; FAILED=1' ERR
+
+# sanity check the unpacked release before anything is moved - stop here, with the live site untouched, if it looks incomplete
+if ! [[ -f "$WWW_ROOT_DIR/public_html_tmp/index.html" ]]
+then
+    echo "$WWW_ROOT_DIR/public_html_tmp/index.html doesn't exist - not switching to the new release."
+    exit 1
+fi
+
 # create a backup of the html folder ONLY if it doesn't already exist - this handles the situation where multiple deployments are done on the same day
 # in that case we only want to backup the original html folder, not the subsequent attempts (for rollback)
 if [ -d "$WWW_ROOT_DIR/public_html_$TIMESTAMP" ];
@@ -56,3 +69,5 @@ cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/ecommerce $GRID_ROOT_DIR/
 cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/support $GRID_ROOT_DIR/
 cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/__shared $GRID_ROOT_DIR/
 cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/blog-examples $GRID_ROOT_DIR/
+
+exit $FAILED

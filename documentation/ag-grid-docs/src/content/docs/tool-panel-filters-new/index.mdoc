@@ -69,6 +69,21 @@ When the grid initialises, the tool panel only shows active filters provided in 
 
 {% gridExampleRunner title="New Filters Tool Panel State" name="state" /%}
 
+## Expand / Collapse Filters
+
+The filter cards in the tool panel can be expanded and collapsed by invoking methods on the Filters Tool Panel instance:
+
+{% interfaceDocumentation interfaceName="INewFiltersToolPanel" names=["expandFilters","collapseFilters"] config={"description":""} /%}
+
+```{% frameworkTransform=true %}
+// expands the 'age' and 'country' filter cards
+api.getToolPanelInstance('filters-new').expandFilters(['age', 'country']);
+```
+
+Only filters which already have a card in the tool panel are affected.
+
+{% gridExampleRunner title="Expand / Collapse Filters" name="expand-collapse-filters" /%}
+
 ## Filter Instances
 
 The filters provided in the tool panel are the same instances as the filter in the column menu. This has the following implications:

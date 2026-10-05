@@ -49,8 +49,9 @@ env:
   LIBRARY_WEBSITE_STATUS_CHANNEL: '#grid-website-status'
   AG_LIBRARY: grid
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
-  YARN_REGISTRY: "https://registry.ag-grid.com"
+  YARN_NPM_REGISTRY_SERVER: "https://registry.ag-grid.com"
   CI: true
+  CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -368,7 +369,8 @@ jobs:
     timeout-minutes: 30
     name: Lint & Format Check
     needs: [ detect-changes, init ]
-    if: ${{ always() && needs.detect-changes.result == 'success' }}
+    if: ${{ always() && needs.detect-changes.result == 'success' &&
+      (github.event.pull_request.draft == false || startsWith(github.head_ref, 'ghabot-ag-')) }}
     outputs:
       format: ${{ steps.format.outcome || '' }}
       lint: ${{ steps.lint.outcome || '' }}
@@ -710,6 +712,11 @@ jobs:
         with:
           node-version-file: package.json
 
+      - name: Enable corepack
+        # This job's own `yarn dlx` call below needs Yarn 4, not the runner's
+        # preinstalled Yarn Classic (which has no `dlx` command at all).
+        run: corepack enable
+
       - name: Fetch Refs
         run: |
           git fetch origin --depth 1 latest
@@ -735,10 +742,8 @@ jobs:
             echo "No JUnit XML files found under test-results/; nothing to merge."
             exit 0
           fi
-          YARN_REGISTRY=
-          yarn global add junit-report-merger
           echo "$reports" | (while read name ; do
-            yarn exec -s jrm reports/${name} "test-results/**/${name}"
+            yarn dlx -p junit-report-merger jrm reports/${name} "test-results/**/${name}"
           done)
 
       - name: Test Report
@@ -862,7 +867,8 @@ jobs:
     name: SonarQube Community
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    if: (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) &&
+      (github.event.pull_request.draft == false || startsWith(github.head_ref, 'ghabot-ag-'))
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -887,7 +893,8 @@ jobs:
     name: SonarQube Enterprise
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    if: (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) &&
+      (github.event.pull_request.draft == false || startsWith(github.head_ref, 'ghabot-ag-'))
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

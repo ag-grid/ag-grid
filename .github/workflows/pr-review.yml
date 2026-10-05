@@ -50,6 +50,8 @@ env:
     GIT_CONFIG_KEY_1: maintenance.auto
     GIT_CONFIG_VALUE_1: 'false'
     DEV_PROMPTS_CHANNEL: latest
+    NX_NO_CLOUD: 'true'
+    CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
 
 jobs:
     review:
@@ -86,6 +88,19 @@ jobs:
                   node-version-file: package.json
                   registry-url: https://npm.pkg.github.com
                   scope: '@ag-grid'
+
+            - name: Enable corepack
+              # Without this, the runner's preinstalled Yarn Classic hard-errors on
+              # this repo's "packageManager" pin (Yarn 4) instead of silently
+              # ignoring it.
+              run: corepack enable
+
+            - name: Create Yarn cache folder
+              # The dev-prompts review action runs setup-node with its default
+              # package-manager caching, which resolves Yarn 4's cache folder. Nothing
+              # here runs `yarn install`, so the folder never exists and the post-job
+              # cache save fails the job. Remove once dev-prompts disables that cache.
+              run: mkdir -p "$(yarn config get cacheFolder)"
 
             - name: Install @ag-grid/dev-prompts
               env:
