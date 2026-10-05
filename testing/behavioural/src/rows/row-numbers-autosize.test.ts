@@ -203,4 +203,25 @@ describe('Row numbers column autosize', () => {
         api.applyTransaction({ add: makeRows(3, 97) });
         await expectWidth(api, '101');
     });
+
+    test('resetting column state hands a user-sized column back to autosize', async () => {
+        const api = await createGrid(97, { rowNumbers: { resizable: true } });
+        api.setColumnWidths([{ key: ROW_NUMBERS_COLUMN_ID, newWidth: 70 }], true, 'uiColumnResized');
+
+        api.resetColumnState();
+        expect(rowNumberWidth(api)).toBe(60);
+
+        api.applyTransaction({ add: makeRows(3, 97) });
+        await expectWidth(api, '101');
+    });
+
+    test('resetting column state re-measures on the next transaction, even within the same digit count', async () => {
+        const api = await createGrid(100);
+
+        api.resetColumnState();
+        expect(rowNumberWidth(api)).toBe(60);
+
+        api.applyTransaction({ add: makeRows(1, 100) });
+        await expectWidth(api, '102');
+    });
 });

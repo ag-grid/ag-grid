@@ -25,6 +25,7 @@ import type {
     CellRange,
     ColDef,
     ColKind,
+    ColumnEventType,
     IRangeService,
     IRowNumbersRowResizeFeature,
     IRowNumbersService,
@@ -181,6 +182,16 @@ export class RowNumbersService
         } else if (had) {
             this.beans.colModel.refreshAll(source);
         }
+    }
+
+    public resetColumnState(source: ColumnEventType): void {
+        const column = this.column;
+        if (!column) {
+            return;
+        }
+        column.resetActualWidth(source);
+        column.resetWidthOwnership();
+        this.autoSizedTextLength = 0;
     }
 
     public override destroy(): void {
