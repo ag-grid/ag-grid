@@ -167,12 +167,15 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         const { stickyRowSvc, gos, showRowGroupCols } = this.beans;
         if (showRowGroupCols) {
-            this.addManagedPropertyListener('showOpenedGroup', () => {
+            const refreshShowRowGroupCells = () => {
                 const columns = showRowGroupCols.columns;
                 if (columns.length) {
                     this.refreshCells({ columns, force: true });
                 }
-            });
+            };
+            this.addManagedPropertyListener('showOpenedGroup', refreshShowRowGroupCells);
+            // the auto-group colDef is unchanged when row groups change, so no colDefChanged re-renders these cells
+            this.addManagedEventListeners({ columnRowGroupChanged: refreshShowRowGroupCells });
         }
 
         if (stickyRowSvc) {
