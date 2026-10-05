@@ -1,6 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { TestGridsManager, menuOption, openMenuOption, polyfillOffsetParent } from 'ag-test-utils';
+import type { Mock } from 'vitest';
 
 import type {
     ColumnEventType,
@@ -150,6 +151,20 @@ function groupHeaderCells(groupId: string): HTMLElement[] {
     );
 }
 
+async function runMenuActionFrom(
+    element: HTMLElement,
+    itemName: string,
+    action: Mock<(params: IMenuActionParams) => void>
+): Promise<IMenuActionParams> {
+    fireContextMenu(element);
+    (await openMenuOption(itemName)).click();
+    await waitFor(() => expect(menuOption(itemName)).toBeNull());
+    expect(action).toHaveBeenCalledTimes(1);
+    const params = action.mock.calls[0][0];
+    action.mockReset();
+    return params;
+}
+
 describe('column menu item action params', () => {
     const gridMgr = new TestGridsManager({ modules: [AllEnterpriseModule] });
     const action = vi.fn<(params: IMenuActionParams) => void>();
@@ -165,7 +180,7 @@ describe('column menu item action params', () => {
             ],
             rowData: [{ athlete: 'Michael Phelps', country: 'United States', age: 23, year: 2008, gold: 8 }],
             suppressColumnVirtualisation: true,
-            // Moving Country between Age and Year splits the Time group into two header parts
+            // Moving Country between Age and Year splits the Time group into two header parts.
             initialState: { columnOrder: { orderedColIds: ['athlete', 'age', 'country', 'year', 'gold', 'silver'] } },
             getColumnMenuItems: (params) => [...params.defaultItems, { name: 'Log Params', action }],
         });
@@ -179,15 +194,7 @@ describe('column menu item action params', () => {
         action.mockReset();
     });
 
-    async function runLogParamsFrom(element: HTMLElement): Promise<IMenuActionParams> {
-        fireContextMenu(element);
-        (await openMenuOption('Log Params')).click();
-        await waitFor(() => expect(menuOption('Log Params')).toBeNull());
-        expect(action).toHaveBeenCalledTimes(1);
-        const params = action.mock.calls[0][0];
-        action.mockReset();
-        return params;
-    }
+    const runLogParamsFrom = (element: HTMLElement) => runMenuActionFrom(element, 'Log Params', action);
 
     test('a column header menu passes the column and a null column group', async () => {
         const params = await runLogParamsFrom(headerCell('athlete'));
@@ -214,6 +221,61 @@ describe('column menu item action params', () => {
             expect(params.column).toBeNull();
             expect(params.columnGroup).toBe(timeGroup);
         }
+    });
+});
+
+describe('column menu item action params from filler group headers', () => {
+    const gridMgr = new TestGridsManager({ modules: [AllEnterpriseModule] });
+    const action = vi.fn<(params: IMenuActionParams) => void>();
+    let api: GridApi;
+
+    beforeEach(async () => {
+        api = await gridMgr.createGridAndWait('column-menu-filler-action-params', {
+            columnDefs: [
+                { field: 'athlete' },
+                {
+                    headerName: 'Results',
+                    groupId: 'results',
+                    children: [
+                        { field: 'year' },
+                        { headerName: 'Medals', groupId: 'medals', children: [{ field: 'gold' }, { field: 'silver' }] },
+                    ],
+                },
+            ],
+            // Filler cells are only rendered when the column header doesn't span the header height.
+            defaultColDef: { suppressSpanHeaderHeight: true },
+            rowData: [{ athlete: 'Michael Phelps', year: 2008, gold: 8, silver: 0 }],
+            suppressColumnVirtualisation: true,
+            getColumnMenuItems: (params) => [...params.defaultItems, { name: 'Log Params', action }],
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+    });
+
+    afterEach(() => {
+        gridMgr.reset();
+        restoreOffsetParent?.();
+        restoreOffsetParent = undefined;
+        action.mockReset();
+    });
+
+    function fillerCellAbove(colId: string): HTMLElement {
+        const fillerGroup = api.getColumn(colId)!.getOriginalParent()!;
+        expect(fillerGroup.isPadding()).toBe(true);
+        return groupHeaderCells(fillerGroup.getGroupId())[0];
+    }
+
+    test('a filler above an ungrouped column passes a null column group', async () => {
+        const params = await runMenuActionFrom(fillerCellAbove('athlete'), 'Log Params', action);
+
+        expect(params.column).toBeNull();
+        expect(params).toHaveProperty('columnGroup', null);
+    });
+
+    test('a filler under a column group passes that column group', async () => {
+        const params = await runMenuActionFrom(fillerCellAbove('year'), 'Log Params', action);
+
+        expect(params.column).toBeNull();
+        expect(params.columnGroup).toBe(api.getProvidedColumnGroup('results'));
     });
 });
 
