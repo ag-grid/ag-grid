@@ -1,2 +1,2 @@
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-export const VERSION = '36.2.0-beta.20261002.1053';
+export const VERSION = '36.2.0-beta.20261005.1010';

@@ -14,7 +14,7 @@ Do not leave the placeholder `example.spec.ts` in place. The placeholder only pr
 
 1. Read the page's `index.mdoc` and the example source to understand what the example demonstrates.
 2. Write assertions that exercise that specific behaviour (not just that the grid loads).
-3. Validate across all frameworks, e.g. `./docs-e2e.sh "<example-name>"` and per-framework runs. Use the grid documentation framework strings for `--framework` (validated against `ALL_FRAMEWORKS` in `documentation/ag-grid-docs/src/utils/grid/test-utils.ts`): `typescript`, `vanilla`, `reactFunctionalTs`, `reactFunctionalTs_Dev`, `angular`, `vue3`.
+3. Validate across all frameworks, e.g. `./docs-e2e.sh "<example-name>"`, which locally runs every framework except the production React build (`reactFunctionalTs`). Add `--all-variants` to include it; CI always does. To narrow to one framework, use the grid documentation framework strings for `--framework` (validated against `ALL_FRAMEWORKS` in `documentation/ag-grid-docs/src/utils/grid/test-utils.ts`): `typescript`, `vanilla`, `reactFunctionalTs`, `reactFunctionalTs_Dev`, `angular`, `vue3`.
 
 See [docs-e2e-tests/SKILL.md](../skills/docs-e2e-tests/SKILL.md) for the full procedure.
 

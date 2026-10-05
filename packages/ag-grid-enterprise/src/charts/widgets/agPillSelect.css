@@ -4,8 +4,17 @@
 }
 
 /* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
+.ag-pill-select .ag-column-drop {
+    /* pills sit flush with the panel, so the clipping drop zone grows outwards into the group container's padding and the list's padding below puts the pills back */
+    margin: calc(var(--ag-spacing) * -0.5);
+
+    /* the base 100% width cannot grow to absorb the negative margins */
+    width: auto;
+}
+
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-pill-select .ag-column-drop-list {
-    padding: 0;
+    padding: calc(var(--ag-spacing) * 0.5);
 }
 
 :where(.ag-pill-select) {
