@@ -62,6 +62,10 @@
     width: 100%;
     align-items: center;
     overflow: hidden;
+
+    /* room for the focus shadow of the input, which fills the body; the negative margin, absorbed by the header cell's padding, keeps the content box where it was */
+    padding: 0 calc(var(--ag-spacing) * 0.5);
+    margin: 0 calc(var(--ag-spacing) * -0.5);
 }
 
 .ag-floating-filter-input {

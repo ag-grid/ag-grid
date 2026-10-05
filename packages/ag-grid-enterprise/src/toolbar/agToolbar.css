@@ -26,7 +26,6 @@
 
 .ag-toolbar-button-wrapper {
     display: inline-flex;
-    padding: calc(var(--ag-spacing) * 0.25);
     height: 100%;
 }
 
@@ -34,7 +33,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--ag-spacing);
-    padding: var(--ag-spacing);
+    padding: calc(var(--ag-spacing) * 1.25);
     border: 0;
     background: transparent;
     color: var(--ag-toolbar-text-color);
@@ -45,6 +44,7 @@
     line-height: 1;
     white-space: nowrap;
     outline: none;
+    border-radius: 1px;
 }
 
 :where(.ag-toolbar-button) .ag-icon {
@@ -62,7 +62,7 @@
 }
 
 .ag-toolbar-button:focus-visible {
-    box-shadow: var(--ag-focus-shadow);
+    box-shadow: inset var(--ag-focus-shadow);
 }
 
 :where(.ag-toolbar-button:focus):not(:focus-visible) {
