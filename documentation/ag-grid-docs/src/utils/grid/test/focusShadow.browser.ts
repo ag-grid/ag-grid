@@ -117,14 +117,18 @@ export function auditFocusShadows(): FocusShadowIssue[] {
         return layers;
     };
 
+    /** The layers painted outside the border box; an inset layer stays inside it and cannot be clipped. */
+    const outsetLayers = (shadow: string): string[] =>
+        shadowLayers(shadow).filter((layer) => !/\binset\b/.test(layer));
+
     /**
-     * How far the shadow reaches beyond the border box: the furthest-reaching of its layers, each measured by
-     * summing its resolved pixel lengths. A focus ring is symmetrical, so offset, blur and spread all add to
-     * the reach. Reading the computed value rather than assuming a fixed extent keeps this true per theme.
+     * How far the layers reach beyond the border box: the furthest-reaching of them, each measured by summing
+     * its resolved pixel lengths. A focus ring is symmetrical, so offset, blur and spread all add to the
+     * reach. Reading the computed value rather than assuming a fixed extent keeps this true per theme.
      */
-    const shadowExtent = (shadow: string): number =>
+    const shadowExtent = (layers: string[]): number =>
         Math.max(
-            ...shadowLayers(shadow).map((layer) =>
+            ...layers.map((layer) =>
                 (layer.match(/[\d.]+px/g) ?? []).reduce((total, length) => total + parseFloat(length), 0)
             )
         );
@@ -294,12 +298,16 @@ export function auditFocusShadows(): FocusShadowIssue[] {
         for (let i = 0; i < chain.length; i++) {
             const node = chain[i]!;
             const shadow = shadowOf(node);
-            // Unchanged means this node has no focus shadow; `inset` means it has one that cannot be clipped.
-            if (shadow === shadowsBefore[i] || shadow === 'none' || /\binset\b/.test(shadow)) {
+            // Unchanged means this node has no focus shadow.
+            if (shadow === shadowsBefore[i] || shadow === 'none') {
+                continue;
+            }
+            const outset = outsetLayers(shadow);
+            if (outset.length === 0) {
                 continue;
             }
 
-            const clipper = findClipper(node, shadowExtent(shadow));
+            const clipper = findClipper(node, shadowExtent(outset));
             if (!clipper) {
                 continue;
             }

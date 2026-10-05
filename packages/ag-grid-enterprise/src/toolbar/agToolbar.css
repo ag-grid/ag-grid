@@ -26,9 +26,6 @@
 
 .ag-toolbar-button-wrapper {
     display: inline-flex;
-
-    /* always at least 3 pixels of padding to allow for the focus outline where the clipping toolbar edge is adjacent: above and below, and at the toolbar ends */
-    padding: max(var(--ag-spacing) * 0.25, 3px) calc(var(--ag-spacing) * 0.25);
     height: 100%;
 }
 
@@ -36,7 +33,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--ag-spacing);
-    padding: var(--ag-spacing);
+    padding: calc(var(--ag-spacing) * 1.25);
     border: 0;
     background: transparent;
     color: var(--ag-toolbar-text-color);
@@ -59,23 +56,13 @@
     color: var(--ag-icon-button-hover-color);
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
-.ag-toolbar > .ag-toolbar-button-wrapper:first-child {
-    padding-inline-start: max(var(--ag-spacing) * 0.25, 3px);
-}
-
-/* stylelint-disable-next-line selector-max-specificity */
-.ag-toolbar > .ag-toolbar-button-wrapper:last-child {
-    padding-inline-end: max(var(--ag-spacing) * 0.25, 3px);
-}
-
 :where(.ag-toolbar-button-wrapper:hover) .ag-toolbar-button,
 :where(.ag-toolbar-button-wrapper:hover .ag-toolbar-button) .ag-icon {
     color: var(--ag-icon-button-hover-color);
 }
 
 .ag-toolbar-button:focus-visible {
-    box-shadow: var(--ag-focus-shadow);
+    box-shadow: inset var(--ag-focus-shadow);
 }
 
 :where(.ag-toolbar-button:focus):not(:focus-visible) {

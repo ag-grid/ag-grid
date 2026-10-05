@@ -7,7 +7,11 @@
     "build": {
       "executor": "@nx/js:swc",
       "dependsOn": ["copySrcFilesForGeneration", "ag-shared:build"],
-      "inputs": ["{projectRoot}/src/**"],
+      "inputs": [
+        "{projectRoot}/src/**",
+        "{workspaceRoot}/packages/ag-grid-community/src/propertyKeys.ts",
+        "{workspaceRoot}/packages/ag-grid-community/src/eventTypes.ts"
+      ],
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "{projectRoot}/dist",
