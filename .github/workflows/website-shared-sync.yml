@@ -1,13 +1,15 @@
 name: Website shared sync
 
-# Posts to #website-sync when a merge to `latest` leaves external/ag-website-shared
-# changes unsynced, and when a sync PR opens. Read-only. See ag-dev-prompts
-# docs/website-shared-sync.md.
+# Keeps the external/ag-website-shared sync state in Notion, pings #website-sync when
+# a merge to `latest` leaves a file newly unsynced, and announces sync PRs. Read-only
+# on GitHub. See ag-dev-prompts docs/website-shared-sync.md.
 #
 # Prerequisites:
 #   secrets: SLACK_BOT_OAUTH_TOKEN
 #            AG_STUDIO_GITHUB_READ_APP_ID, AG_STUDIO_GITHUB_READ_APP_PRIVATE_KEY
+#            WEBSITE_SYNC_NOTION_TOKEN
 #   vars:    WEBSITE_SYNC_SLACK_CHANNEL
+#            WEBSITE_SYNC_NOTION_DATABASE
 #            WEBSITE_SYNC_DRY_RUN (optional, default 'true')
 
 on:
@@ -35,6 +37,11 @@ env:
     GIT_CONFIG_KEY_1: maintenance.auto
     GIT_CONFIG_VALUE_1: 'false'
     DEV_PROMPTS_CHANNEL: canary
+
+# One sync check at a time per repo; sync PR announcements run independently.
+concurrency:
+    group: ${{ github.event_name == 'pull_request' && format('website-shared-sync-pr-{0}', github.run_id) || 'website-shared-sync' }}
+    cancel-in-progress: false
 
 jobs:
     notify:
@@ -79,5 +86,7 @@ jobs:
                   slack_channel: ${{ vars.WEBSITE_SYNC_SLACK_CHANNEL }}
                   slack_bot_token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
                   repos_token: ${{ steps.studio-token.outputs.token }}
+                  notion_token: ${{ secrets.WEBSITE_SYNC_NOTION_TOKEN }}
+                  notion_database: ${{ vars.WEBSITE_SYNC_NOTION_DATABASE }}
                   trigger_sha: ${{ github.event.workflow_run.head_sha }}
                   dry_run: ${{ format('{0}', inputs.dry_run) || vars.WEBSITE_SYNC_DRY_RUN || 'true' }}
