@@ -3,7 +3,7 @@ title: "Columns Tool Panel - API"
 enterprise: true
 ---
 
-Control the Columns Tool Panel at runtime through its instance: show and hide sections, set a custom column layout, and expand or collapse column groups.
+Control the Columns Tool Panel at runtime through its instance: show and hide sections, set a custom column layout, and expand or collapse column groups. The full list of tool panel parameters is in [Tool Panel Parameters](#tool-panel-parameters).
 
 ## Columns Tool Panel Instance
 
@@ -15,7 +15,21 @@ const columnsToolPanel = api.getToolPanelInstance('columns');
 
 {% interfaceDocumentation interfaceName="IColumnToolPanel" names=["expandColumnGroups", "collapseColumnGroups", "setColumnLayout", "setPivotModeSectionVisible", "setRowGroupsSectionVisible", "setValuesSectionVisible", "setPivotSectionVisible"] config={"description":""} /%}
 
-The section visibility methods are covered in [Section Visibility](./tool-panel-columns-configuration/#section-visibility), and `setColumnLayout()` in [Custom Column Layout](./tool-panel-columns-configuration/#custom-column-layout).
+`setColumnLayout()` is covered in [Custom Column Layout](./tool-panel-columns-configuration/#custom-column-layout).
+
+## Section Visibility API
+
+Show or hide the Pivot Mode, Row Groups, Values and Column Labels sections after the grid is created by calling `setPivotModeSectionVisible()`, `setRowGroupsSectionVisible()`, `setValuesSectionVisible()` or `setPivotSectionVisible()`:
+
+```{% frameworkTransform=true %}
+// hides the Row Groups section
+columnsToolPanel.setRowGroupsSectionVisible(false);
+
+// shows the Column Labels section
+columnsToolPanel.setPivotSectionVisible(true);
+```
+
+The top area controls have no equivalent methods; they can only be removed through `toolPanelParams`. See [Section Visibility](./tool-panel-columns-configuration/#section-visibility) for an example.
 
 ## Expand / Collapse Column Groups
 
@@ -35,6 +49,20 @@ columnsToolPanel.expandColumnGroups(['athleteGroupId', 'competitionGroupId']);
 columnsToolPanel.collapseColumnGroups(['competitionGroupId']);
 ```
 
+To start with all column groups collapsed, set `contractColumnSelection` in `toolPanelParams` instead.
+
 In the example below, `onGridReady` collapses all column groups in the tool panel. Use the buttons to try each call from the snippet above.
 
 {% gridExampleRunner title="Expand / Collapse Column Groups" name="expand-collapse"  exampleHeight=640 /%}
+
+## Tool Panel Parameters
+
+The Columns section and the [Column Chooser](./column-chooser/) use the same column selection panel. Their shared options are defined by `IColumnSelectionPanelParams`, while `IToolPanelColumnCompParams` adds options for the other Columns Tool Panel sections. See [Providing Parameters to Tool Panels](./side-bar/#providing-parameters-to-tool-panels) for how to pass these to the tool panel.
+
+### IColumnSelectionPanelParams
+
+{% interfaceDocumentation interfaceName="IColumnSelectionPanelParams" config={"overrideBottomMargin":"1rem"} /%}
+
+### IToolPanelColumnCompParams
+
+{% interfaceDocumentation interfaceName="IToolPanelColumnCompParams" names=["suppressColumnMove", "suppressRowGroups", "suppressValues", "suppressPivots", "suppressPivotMode", "buttons"] config={"overrideBottomMargin":"1rem"} /%}

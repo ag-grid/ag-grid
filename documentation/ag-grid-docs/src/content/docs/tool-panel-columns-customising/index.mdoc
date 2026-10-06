@@ -5,14 +5,9 @@ enterprise: true
 
 Customise how columns appear in the Columns Tool Panel: their styling and names, custom labels, the context menu and the drag image.
 
-## Styling & Naming Columns
+## Styling Columns
 
-Style columns in the tool panel with `toolPanelClass`, and give them a different name there with `headerValueGetter`.
-
-The example below demonstrates both. Note the following:
-
-- The `gold`, `silver` and `bronze` columns are styled using `toolPanelClass`.
-- The country column uses a `headerValueGetter` to show a different name in the tool panel, the drop zones and the grid header. Drag it into the Row Groups section to see the drop zone name.
+The example below styles the `gold`, `silver` and `bronze` columns using `toolPanelClass`.
 
 {% gridExampleRunner title="Tool Panel Styling" name="styling"  exampleHeight=610 /%}
 
@@ -38,6 +33,8 @@ const gridOptions = {
 }
 ```
 
+## Naming Columns
+
 To give a column a different name in the tool panel, use a [`headerValueGetter`](./column-headers/#header-value-getters) and return the name when `params.location` is `'columnToolPanel'`:
 
 ```{% frameworkTransform=true %}
@@ -50,6 +47,8 @@ const gridOptions = {
     ]
 }
 ```
+
+In the [example above](#styling-columns), the country column uses a `headerValueGetter` to show a different name in the tool panel, the drop zones and the grid header. Drag it into the Row Groups section to see the drop zone name.
 
 ## Custom Column Labels
 
@@ -82,6 +81,8 @@ const gridOptions = {
     },
 };
 ```
+
+{% interfaceDocumentation interfaceName="IColumnSelectionPanelParams" names=["columnLabelRenderer", "columnLabelRendererParams", "columnLabelRendererSelector"] config={"description":"", "overrideBottomMargin":"1rem"} /%}
 
 The renderer receives either `column` or `columnGroup`, together with the resolved `displayName` and a `source` of `'columnsToolPanel'`. The same renderer can be configured independently for the [Column Chooser](./column-chooser/#custom-column-labels).
 

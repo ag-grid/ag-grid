@@ -5,24 +5,18 @@ enterprise: true
 
 Add Apply, Cancel and Reset buttons to the Columns Tool Panel, and stage changes until the user applies them.
 
-## Buttons
-
-Use `toolPanelParams.buttons` to display buttons at the bottom of the Columns Tool Panel, in the order they are listed:
-
-- `'apply'`: Enables [Deferred Updates](#deferred-updates) and commits all pending changes.
-- `'cancel'`: Discards all pending changes. Only has an effect alongside `'apply'`.
-- `'reset'`: Immediately resets the columns to the state defined in the Column Definitions, as [`api.resetColumnState()`](./column-state/#reference-state-resetColumnState) does, and discards any pending changes.
-
-The example below shows the buttons without Deferred Updates. Note the following:
-
-- Changes made in the Columns Tool Panel are applied immediately, as there is no **Apply** button.
-- **Reset** restores the columns to the state defined in the Column Definitions.
-
-{% gridExampleRunner title="Reset Button" name="reset-button" exampleHeight=630 /%}
-
 ## Deferred Updates
 
 Deferred Updates stage changes made in the Columns Tool Panel until the user clicks **Apply**. Users can make several configuration changes and apply them in a single update, avoiding intermediate recomputations or server requests.
+
+The example below demonstrates Deferred Updates. Note the following:
+
+- Changes made in the Columns Tool Panel are staged as pending changes.
+- **Apply** commits all pending changes in a single operation.
+- **Cancel** discards all pending changes and restores the last applied state.
+- **Reset** immediately restores the columns to the state defined in the Column Definitions and discards all pending changes.
+
+{% gridExampleRunner title="Deferred Updates" name="deferred-apply-mode-csrm"  exampleHeight=830 /%}
 
 Include `'apply'` in `toolPanelParams.buttons` to enable Deferred Updates:
 
@@ -46,18 +40,22 @@ const gridOptions = {
 };
 ```
 
-The example below demonstrates Deferred Updates. Note the following:
-
-- Changes made in the Columns Tool Panel are staged as pending changes.
-- **Apply** commits all pending changes in a single operation.
-- **Cancel** discards all pending changes and restores the last applied state.
-- **Reset** immediately restores the columns to the state defined in the Column Definitions and discards all pending changes.
-
-{% gridExampleRunner title="Deferred Updates" name="deferred-apply-mode-csrm"  exampleHeight=830 /%}
+{% interfaceDocumentation interfaceName="IToolPanelColumnCompParams" names=["buttons"] config={"description":"", "overrideBottomMargin":"1rem"} /%}
 
 {% note %}
 Changes made outside the Columns Tool Panel, such as dragging columns into the Row Group or Pivot Panels, using the Column Menu, or calling the Grid API, are applied immediately and clear any pending changes. Column pinning, resizing and group expansion do not clear pending changes.
 {% /note %}
+
+## Reset Without Deferred Updates
+
+The **Reset** button does not depend on Deferred Updates. Include `'reset'` without `'apply'` to add a button that resets the columns to the state defined in the Column Definitions, as [`api.resetColumnState()`](./column-state/#reference-state-resetColumnState) does.
+
+The example below adds only a **Reset** button. Note the following:
+
+- Changes made in the Columns Tool Panel are applied immediately, as there is no **Apply** button.
+- **Reset** restores the columns to the state defined in the Column Definitions.
+
+{% gridExampleRunner title="Reset Button" name="reset-button" exampleHeight=630 /%}
 
 ## Server-Side Row Model
 
