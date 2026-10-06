@@ -6,9 +6,15 @@ import type {
     MenuItemDef,
     NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _createIconNoSpan, _setColGroupHeaderNameOverride, isProvidedColumnGroup } from 'ag-grid-community';
+import {
+    BeanStub,
+    _createIconNoSpan,
+    _dispatchGroupHeaderNameChangedEvent,
+    _setColGroupHeaderNameOverride,
+    isProvidedColumnGroup,
+} from 'ag-grid-community';
 
-import { getGridColumnGroup, getToolPanelGroupName } from '../sideBar/common/toolPanelColDefService';
+import { getGridColumnGroup, getProvidedGroupDisplayName } from '../columns/providedColumnGroupUtils';
 import { ColumnHeaderEditPopup } from './columnHeaderEditPopup';
 
 type EditTarget = AgColumn | AgProvidedColumnGroup;
@@ -75,7 +81,7 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
     private getEditableHeaderName(target: EditTarget): string {
         const { beans } = this;
         const name = isProvidedColumnGroup(target)
-            ? getToolPanelGroupName(beans, target, 'header')
+            ? getProvidedGroupDisplayName(beans, target, 'header')
             : beans.colNames.getDisplayNameForColumn(target, 'header');
         return name != null ? String(name) : '';
     }
@@ -85,14 +91,12 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
             if (!_setColGroupHeaderNameOverride(this.beans, target.groupId, headerName)) {
                 return;
             }
-            const group = getGridColumnGroup(this.beans, target);
-            this.beans.eventSvc.dispatchEvent({
-                type: 'columnHeaderNameChanged',
-                column: null,
-                columns: null,
-                columnGroup: group,
-                source: 'uiColumnHeaderEdit',
-            });
+            const { beans } = this;
+            _dispatchGroupHeaderNameChangedEvent(
+                beans.eventSvc,
+                getGridColumnGroup(beans, target),
+                'uiColumnHeaderEdit'
+            );
         } else {
             target.setHeaderNameOverride(headerName, 'uiColumnHeaderEdit');
         }

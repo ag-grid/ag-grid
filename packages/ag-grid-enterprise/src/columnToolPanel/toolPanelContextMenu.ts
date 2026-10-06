@@ -13,12 +13,12 @@ import type {
 } from 'ag-grid-community';
 import { Component, _createIconNoSpan, isProvidedColumnGroup } from 'ag-grid-community';
 
+import { getGridColumnGroup, getProvidedGroupDisplayName } from '../columns/providedColumnGroupUtils';
 import { _resolveColumnMenuItems } from '../menu/columnMenuItemsResolver';
 import { PIVOT_TOKEN, SCROLL_INTO_VIEW_TOKEN, VALUE_TOKEN, columnMenuTokenLabel } from '../menu/columnMenuTokenLabels';
 import type { MenuItemMapper } from '../menu/menuItemMapper';
 import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from '../menu/menuSeparators';
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
-import { getGridColumnGroup, getToolPanelGroupName } from '../sideBar/common/toolPanelColDefService';
 import { MenuList } from '../widgets/menuList';
 import { isDeferredMode, refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
@@ -70,7 +70,7 @@ export class ToolPanelContextMenu extends Component {
         if (column.isColumn) {
             displayName = colNames.getDisplayNameForColumn(column, 'columnToolPanel');
         } else {
-            displayName = getToolPanelGroupName(this.beans, column, 'columnToolPanel');
+            displayName = getProvidedGroupDisplayName(this.beans, column, 'columnToolPanel');
         }
         this.displayName = displayName;
 

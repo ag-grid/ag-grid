@@ -20,11 +20,8 @@ import {
 } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../agStack/agGroupComponent';
-import {
-    createLayoutGroupRenameNotifier,
-    getGridColumnGroup,
-    getToolPanelGroupName,
-} from '../sideBar/common/toolPanelColDefService';
+import { getGridColumnGroup, getProvidedGroupDisplayName } from '../columns/providedColumnGroupUtils';
+import { createLayoutGroupRenameNotifier } from '../sideBar/common/toolPanelGroupUtils';
 import type { GroupComponent, GroupComponentParams } from '../widgets/gridEnterpriseWidgetTypes';
 import { ToolPanelFilterComp } from './toolPanelFilterComp';
 
@@ -44,6 +41,15 @@ export class ToolPanelFilterGroupComp extends Component {
         private readonly showingColumn: boolean
     ) {
         super();
+    }
+
+    /**
+     * The column or group user callbacks receive. Resolved on read, not cached: a custom layout keeps this
+     * comp across grid column changes, which can add or replace the grid's group.
+     */
+    private get callbackColumn(): AgColumn | AgProvidedColumnGroup {
+        const { columnGroup } = this;
+        return isProvidedColumnGroup(columnGroup) ? getGridColumnGroup(this.beans, columnGroup) : columnGroup;
     }
 
     public postConstruct(): void {
@@ -77,10 +83,6 @@ export class ToolPanelFilterGroupComp extends Component {
 
         const column = this.showingColumn ? (this.columnGroup as AgColumn) : undefined;
         const getColDef = () => column?.colDef ?? (this.columnGroup as AgProvidedColumnGroup).getColGroupDef();
-        const getTooltipColumn = () => {
-            const { columnGroup } = this;
-            return isProvidedColumnGroup(columnGroup) ? getGridColumnGroup(this.beans, columnGroup) : columnGroup;
-        };
         this.tooltipFeature = this.createOptionalManagedBean(
             this.beans.tooltipSvc?.createTooltip({
                 getGui: () => filterGroupComp.getTitleBarGui(),
@@ -94,7 +96,7 @@ export class ToolPanelFilterGroupComp extends Component {
                         _addGridCommonParams<TooltipCallbackParams>(gos, {
                             location: 'filterToolPanelColumnGroup',
                             colDef,
-                            column: getTooltipColumn(),
+                            column: this.callbackColumn,
                             value: displayName,
                             valueFormatted: displayName,
                         })
@@ -108,7 +110,7 @@ export class ToolPanelFilterGroupComp extends Component {
                     const colDef = getColDef();
                     return {
                         ...(colDef ? { colDef } : {}),
-                        column: getTooltipColumn(),
+                        column: this.callbackColumn,
                         valueFormatted: this.filterGroupName,
                     };
                 },
@@ -290,7 +292,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private getColumnGroupName(columnGroup: AgProvidedColumnGroup): string | null {
-        return getToolPanelGroupName(this.beans, columnGroup, 'filterToolPanel');
+        return getProvidedGroupDisplayName(this.beans, columnGroup, 'filterToolPanel');
     }
 
     private getColumnName(column: AgColumn): string | null {

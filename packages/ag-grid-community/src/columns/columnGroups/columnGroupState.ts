@@ -2,6 +2,7 @@ import type { BeanCollection } from '../../context/context';
 import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
 import type { ColumnEventType } from '../../events';
+import { _dispatchGroupHeaderNameChangedEvent } from '../columnEventUtils';
 
 interface ColGroupState {
     groupId: string;
@@ -94,13 +95,11 @@ export const _setColGroupState = (
 
         if (renamedGroups) {
             // Grid-level event so the state service can refresh the cached group header-name state.
-            eventSvc.dispatchEvent({
-                type: 'columnHeaderNameChanged',
-                column: null,
-                columns: null,
-                columnGroup: renamedGroups.length === 1 ? renamedGroups[0] : null,
-                source,
-            });
+            _dispatchGroupHeaderNameChangedEvent(
+                eventSvc,
+                renamedGroups.length === 1 ? renamedGroups[0] : null,
+                source
+            );
         }
 
         if (impactedGroups) {

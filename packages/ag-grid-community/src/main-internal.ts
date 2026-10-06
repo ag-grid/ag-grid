@@ -36,7 +36,11 @@ export type { IColumnHeaderEditService } from './interfaces/columnHeaderEdit';
 export { _getClientSideRowModel, _getServerSideRowModel, _getViewportRowModel } from './api/rowModelApiUtils';
 export { ChangedRowNodes as _ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
 export { _csrmFirstLeaf, _csrmReorderAllLeafs } from './clientSideRowModel/clientSideRowModelUtils';
-export { _dispatchColumnChangedEvent, dispatchColumnVisibleEvent } from './columns/columnEventUtils';
+export {
+    _dispatchColumnChangedEvent,
+    _dispatchGroupHeaderNameChangedEvent,
+    dispatchColumnVisibleEvent,
+} from './columns/columnEventUtils';
 export { _buildColumnTree } from './columns/buildColumnTree';
 export { _addColumnDefaultAndTypes, _createUserColumn } from './columns/colDefUtils';
 export { UserColumnService as _UserColumnService } from './columns/userColumns/userColumnService';

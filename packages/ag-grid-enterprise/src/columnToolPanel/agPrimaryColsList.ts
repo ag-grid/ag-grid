@@ -20,11 +20,11 @@ import type { VirtualListModel } from '../agStack/iVirtualList';
 import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
 import { VirtualListDragFeature } from '../features/virtualListDragFeature';
 import {
-    createLayoutGroupRenameNotifier,
     syncLayoutWithColumns,
     syncLayoutWithGrid,
     toolPanelCreateColumnTree,
 } from '../sideBar/common/toolPanelColDefService';
+import { createLayoutGroupRenameNotifier } from '../sideBar/common/toolPanelGroupUtils';
 import { VirtualList } from '../widgets/virtualList';
 import { ExpandState } from './agPrimaryColsHeader';
 import { ColumnModelItem } from './columnModelItem';

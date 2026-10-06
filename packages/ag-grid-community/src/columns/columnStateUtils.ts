@@ -21,6 +21,7 @@ import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
 import {
     _dispatchColumnChangedEvent,
+    _dispatchGroupHeaderNameChangedEvent,
     dispatchColumnPinnedEvent,
     dispatchColumnResizedEvent,
     dispatchColumnVisibleEvent,
@@ -527,13 +528,7 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
             for (const groupId of Array.from(groupOverrides.keys())) {
                 _setColGroupHeaderNameOverride(beans, groupId, null);
             }
-            eventSvc.dispatchEvent({
-                type: 'columnHeaderNameChanged',
-                column: null,
-                columns: null,
-                columnGroup: null,
-                source,
-            });
+            _dispatchGroupHeaderNameChangedEvent(eventSvc, null, source);
         }
 
         // Re-order + refresh + dispatch once, over the final (ordered) structure.
