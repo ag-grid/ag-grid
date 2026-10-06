@@ -28,6 +28,7 @@ import GoogleTagManagerBody from '@ag-website-shared/components/google-tag-manag
 import AnnouncementBanner from '@ag-website-shared/components/announcement-banner/AnnouncementBanner.astro';
 import JsonLd from '@ag-website-shared/components/structured-data/JsonLd.astro';
 import WebsiteMonitoring from '@ag-website-shared/components/website-monitoring/WebsiteMonitoring.astro';
+import CspZoneNavigation from '@ag-website-shared/components/csp-zone/CspZoneNavigation.astro';
 import {
     buildAgGridOrganization,
     buildSoftwareApplication,
@@ -174,6 +175,7 @@ const announcementBannerProps = {
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
         <ClientRouter />
+        <CspZoneNavigation />
         {!isStaging && <link rel="canonical" href={canonicalUrl} />}
         {markdownUrl && <link rel="alternate" type="text/markdown" href={markdownUrl} />}
         {
