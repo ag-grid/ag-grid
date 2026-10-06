@@ -161,6 +161,42 @@ The following example permits Salary references when editing Bonus but excludes 
 
 {% gridExampleRunner title="Dialog Reference Restrictions" name="calculated-columns-reference-restrictions" /%}
 
+### getValidationErrors
+
+Use `getValidationErrors` to add application-specific expression validation to the dialog. Return an array of error messages to reject the expression, or `null` or an empty array to accept it:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: {
+        getValidationErrors: ({ referencedColumns }) =>
+            referencedColumns.some(column => column.getColId() === 'salary')
+                ? ['Salary cannot be used in this report.']
+                : null,
+    },
+};
+```
+
+This synchronous callback supplements, rather than replaces, the grid's validation. It runs when the dialog opens, when the draft title, type or expression changes, and again on deferred Apply, but only after the expression passes the built-in reference, syntax and function-name checks. In live mode, empty and incomplete expressions retain their existing behaviour and skip this callback. Use the current `context` for application rules; callback results are not cached by expression.
+
+`colDef` is a copy of the draft definition with stored `[colId]` references; `displayExpression` contains the header-name references shown in the dialog. `referencedColumns` contains unique, directly referenced columns, including hidden columns, but does not recursively include dependencies of other calculated columns. `column` is the column being edited or created in live mode, or `null` for deferred creation.
+
+Returned messages use the expression field's invalid styling and tooltip, and are associated with the field for assistive technology. Messages are provided and localised by the application.
+
+- **Deferred mode:** errors disable Apply and leave the column unchanged.
+- **Live mode:** the full expression and error messages are saved, and the calculated column and dependent calculations display `#ERROR!` rather than evaluating it. Closing and reopening preserves the expression for correction. A later accepted edit clears the error. Empty or incomplete input clears the custom error and uses normal live-mode behaviour.
+
+Unlike `isColumnReferenceable`, unchanged expressions are revalidated. In live mode, changing only the title or type can block a previously accepted expression if the callback now rejects it, causing the column and dependent calculations to display `#ERROR!`. In deferred mode, the same rejection blocks Apply. This allows validation rules to depend on the whole draft and current application context, not just changes to the expression text.
+
+The callback is dialog-only: programmatic definitions, cell evaluation, sorting and state restoration do not call it. Saved errors survive state or column-definition restoration, even without the callback. Previously accepted expressions are not retrospectively blocked by restoring state under a different rule. Merely opening and closing their dialog validates the draft but does not change the stored column or its calculated values. This is a UI safeguard, not a data-security boundary. Use `isColumnReferenceable` separately when restricted columns should also be hidden from suggestions.
+
+In this example, edit **Sales Bonus** and enter `[Salary]`. Both messages appear and Apply is disabled. Enter `[Sales] * 0.2` to apply a valid expression instead.
+
+{% gridExampleRunner title="Custom Dialog Validation" name="calculated-columns-custom-validation" /%}
+
+{% interfaceDocumentation interfaceName="CalculatedColumnsOptions" names=["getValidationErrors"] /%}
+
+{% interfaceDocumentation interfaceName="CalculatedColumnValidationParams" /%}
+
 ### suppressColumnHighlighting
 
 Use `suppressColumnHighlighting` to disable the highlight while the dialog is open:

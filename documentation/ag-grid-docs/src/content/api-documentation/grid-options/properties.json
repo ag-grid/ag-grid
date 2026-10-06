@@ -227,6 +227,7 @@
             }
         },
         "calculatedColumns": {
+            "description": "Enables Calculated Columns. Set to `true` for defaults or provide options to configure the dialog. Disabled when omitted or `false`.",
             "more": {
                 "name": "Calculated Columns",
                 "url": "./calculated-columns/"

@@ -30,6 +30,10 @@
     z-index: 99999;
 }
 
+.ag-calculated-column-expression-tooltip {
+    white-space: pre-line;
+}
+
 .ag-tooltip:where(:not(.ag-tooltip-interactive)),
 .ag-tooltip-custom:where(:not(.ag-tooltip-interactive)) {
     pointer-events: none;

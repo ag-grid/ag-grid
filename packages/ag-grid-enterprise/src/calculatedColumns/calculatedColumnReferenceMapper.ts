@@ -92,9 +92,7 @@ export function createCalculatedColumnReferenceMapper(
         }
         let ast: FormulaNode;
         try {
-            const trimmedExpression = expression.trim();
-            const formula = trimmedExpression.startsWith('=') ? trimmedExpression : `=${trimmedExpression}`;
-            ast = parseFormula(beans, formula, 'absolute');
+            ast = parseCalculatedFormula(beans, expression);
         } catch (error) {
             if (!(error instanceof FormulaParseError)) {
                 throw error;
@@ -102,9 +100,11 @@ export function createCalculatedColumnReferenceMapper(
             // live edits may be incomplete; syntax validation belongs to deferred apply
             return;
         }
-        const primaryColumns = beans.colModel.colsList.filter((column) => column.primary);
-        const colId = findRestrictedColumn(beans, primaryColumns, ast, restrictedColIds);
-        return colId === undefined ? undefined : (colIdToReference.get(colId) ?? colId);
+        for (const column of visitReferencedColumns(beans, ast)) {
+            if (restrictedColIds.has(column.colId)) {
+                return colIdToReference.get(column.colId) ?? column.colId;
+            }
+        }
     };
 
     return {
@@ -157,18 +157,30 @@ export function createCalculatedColumnReferenceMapper(
     };
 }
 
-function findRestrictedColumn(
-    beans: BeanCollection,
-    primaryColumns: AgColumn[],
-    node: FormulaNode,
-    restrictedColIds: Set<string>
-): string | undefined {
+/** Parses a calculated expression for inspection; 'absolute' keeps A1 labels unresolved, so no rows are needed. */
+function parseCalculatedFormula(beans: BeanCollection, expression: string): FormulaNode {
+    const trimmed = expression.trim();
+    return parseFormula(beans, trimmed.startsWith('=') ? trimmed : `=${trimmed}`, 'absolute');
+}
+
+/** Collects unique, direct references from an already validated stored expression, without evaluating it. */
+export function getCalculatedColumnReferences(beans: BeanCollection, expression: string): AgColumn[] {
+    return [...new Set(visitReferencedColumns(beans, parseCalculatedFormula(beans, expression)))];
+}
+
+/** Yields each directly referenced column, expanding ranges; duplicates are yielded as encountered. */
+function* visitReferencedColumns(beans: BeanCollection, ast: FormulaNode): Generator<AgColumn> {
+    yield* visitNodeColumns(
+        beans,
+        beans.colModel.colsList.filter((column) => column.primary),
+        ast
+    );
+}
+
+function* visitNodeColumns(beans: BeanCollection, primaryColumns: AgColumn[], node: FormulaNode): Generator<AgColumn> {
     if (node.type === 'operation') {
         for (const operand of node.operands) {
-            const restricted = findRestrictedColumn(beans, primaryColumns, operand, restrictedColIds);
-            if (restricted !== undefined) {
-                return restricted;
-            }
+            yield* visitNodeColumns(beans, primaryColumns, operand);
         }
         return;
     }
@@ -182,7 +194,8 @@ function findRestrictedColumn(
         return;
     }
     if (start === end) {
-        return restrictedColIds.has(start.colId) ? start.colId : undefined;
+        yield start;
+        return;
     }
     // Ranges span A1 label positions, so expand them over the same primary list the labels index into.
     const startIndex = primaryColumns.indexOf(start);
@@ -191,10 +204,7 @@ function findRestrictedColumn(
         return;
     }
     for (let i = Math.min(startIndex, endIndex), last = Math.max(startIndex, endIndex); i <= last; ++i) {
-        const colId = primaryColumns[i].colId;
-        if (restrictedColIds.has(colId)) {
-            return colId;
-        }
+        yield primaryColumns[i];
     }
 }
 
