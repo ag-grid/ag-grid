@@ -20,6 +20,8 @@ import {
 } from 'ag-grid-community';
 
 import { AgGroupComponentSelector } from '../agStack/agGroupComponent';
+import { getGridColumnGroup, getProvidedGroupDisplayName } from '../columns/providedColumnGroupUtils';
+import { createLayoutGroupRenameNotifier } from '../sideBar/common/toolPanelGroupUtils';
 import type { GroupComponent, GroupComponentParams } from '../widgets/gridEnterpriseWidgetTypes';
 import { ToolPanelFilterComp } from './toolPanelFilterComp';
 
@@ -39,6 +41,15 @@ export class ToolPanelFilterGroupComp extends Component {
         private readonly showingColumn: boolean
     ) {
         super();
+    }
+
+    /**
+     * The column or group user callbacks receive. Resolved on read, not cached: a custom layout keeps this
+     * comp across grid column changes, which can add or replace the grid's group.
+     */
+    private get callbackColumn(): AgColumn | AgProvidedColumnGroup {
+        const { columnGroup } = this;
+        return isProvidedColumnGroup(columnGroup) ? getGridColumnGroup(this.beans, columnGroup) : columnGroup;
     }
 
     public postConstruct(): void {
@@ -85,7 +96,7 @@ export class ToolPanelFilterGroupComp extends Component {
                         _addGridCommonParams<TooltipCallbackParams>(gos, {
                             location: 'filterToolPanelColumnGroup',
                             colDef,
-                            column: this.columnGroup,
+                            column: this.callbackColumn,
                             value: displayName,
                             valueFormatted: displayName,
                         })
@@ -99,7 +110,7 @@ export class ToolPanelFilterGroupComp extends Component {
                     const colDef = getColDef();
                     return {
                         ...(colDef ? { colDef } : {}),
-                        column: this.columnGroup,
+                        column: this.callbackColumn,
                         valueFormatted: this.filterGroupName,
                     };
                 },
@@ -227,10 +238,12 @@ export class ToolPanelFilterGroupComp extends Component {
         }
 
         const groupId = columnGroup.getGroupId();
+        const notifyLayoutGroupRenamed = createLayoutGroupRenameNotifier(this.beans, columnGroup);
         this.addManagedEventListeners({
             columnHeaderNameChanged: (event) => {
                 if (_isHeaderNameChangeForGroup(event, groupId)) {
                     onRenamed();
+                    notifyLayoutGroupRenamed();
                 }
             },
         });
@@ -279,7 +292,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private getColumnGroupName(columnGroup: AgProvidedColumnGroup): string | null {
-        return this.beans.colNames.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'filterToolPanel');
+        return getProvidedGroupDisplayName(this.beans, columnGroup, 'filterToolPanel');
     }
 
     private getColumnName(column: AgColumn): string | null {

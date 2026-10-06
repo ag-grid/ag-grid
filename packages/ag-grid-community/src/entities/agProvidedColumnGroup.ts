@@ -11,7 +11,7 @@ export function isProvidedColumnGroup(
     return col instanceof AgProvidedColumnGroup;
 }
 
-export type AgProvidedColumnGroupEvent = 'expandedChanged' | 'expandableChanged';
+export type AgProvidedColumnGroupEvent = 'expandedChanged' | 'expandableChanged' | 'headerNameChanged';
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> implements ProvidedColumnGroup {
     public readonly isColumn = false as const;

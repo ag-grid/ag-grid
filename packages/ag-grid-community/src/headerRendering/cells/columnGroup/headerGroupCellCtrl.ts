@@ -2,7 +2,6 @@ import { KeyCode, _getActiveDomElement, _last } from 'ag-stack';
 
 import type { GroupResizeFeature } from '../../../columnResize/groupResizeFeature';
 import { _setColGroupOpen } from '../../../columns/columnGroups/columnGroupState';
-import { _isHeaderNameChangeForGroup } from '../../../columns/columnUtils';
 import { setupCompBean } from '../../../components/emptyBean';
 import { ComponentInstanceGuard } from '../../../components/framework/componentInstanceGuard';
 import { _getHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
@@ -351,11 +350,13 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         compBean.addManagedListeners(providedColGroup, {
             expandedChanged: listener,
             expandableChanged: listener,
+            headerNameChanged: () => this.refreshDisplayName(),
         });
         const groupId = providedColGroup.groupId;
         compBean.addManagedEventListeners({
+            // A group's headerValueGetter may read its columns' names, so column renames refresh it too.
             columnHeaderNameChanged: (event) => {
-                if (_isHeaderNameChangeForGroup(event, groupId)) {
+                if (event.column) {
                     this.refreshDisplayName();
                 }
             },
