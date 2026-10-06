@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
-import { GridColumns, GridRows, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
+import { GridColumns, GridRows, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
 import type { ColGroupDef } from 'ag-grid-community';
@@ -184,8 +184,14 @@ describe('ag-grid calculated columns', () => {
                     expect(getDialogButton('Apply')).toBeDisabled();
                 }
             }
-            await asyncSetTimeout(0);
-            expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[revenue]');
+            if (applyMode === 'live') {
+                await waitFor(() =>
+                    expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[server-salary]')
+                );
+                expect(api.getCellValue({ rowNode, colKey: 'profit' })).toBe('#REF!');
+            } else {
+                expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[revenue]');
+            }
             setExpression('[Revenue] * 2');
             expect(getExpressionInput()).not.toHaveClass('invalid');
             if (applyMode === 'deferred') {
@@ -279,7 +285,14 @@ describe('ag-grid calculated columns', () => {
                 }
             }
             document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
-            expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[revenue]');
+            if (applyMode === 'live') {
+                expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe(
+                    'SUM(REF(COLUMN("revenue"), ROW("r1"), COLUMN("cost"), ROW("r2")))'
+                );
+                expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe('#REF!');
+            } else {
+                expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[revenue]');
+            }
             await openEditDialogViaMenu(api, 'profit');
             setExpression('"B1 [Salary]"');
             expect(getExpressionInput().validationMessage).toBe('');
@@ -395,8 +408,14 @@ describe('ag-grid calculated columns', () => {
                 expect(getDialogButton('Apply')).toBeDisabled();
             }
         }
-        await asyncSetTimeout(0);
-        expect(api.getColumn('bonus')!.getColDef().calculatedExpression).toBe(expression);
+        if (applyMode === 'live') {
+            await waitFor(() =>
+                expect(api.getColumn('bonus')!.getColDef().calculatedExpression).toBe(`${expression} `)
+            );
+            expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'bonus' })).toBe('#REF!');
+        } else {
+            expect(api.getColumn('bonus')!.getColDef().calculatedExpression).toBe(expression);
+        }
         setExpression(displayExpression);
         expect(getExpressionInput()).not.toHaveClass('invalid');
         setExpression('[Revenue]');

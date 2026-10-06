@@ -58,6 +58,7 @@ import {
 import {
     USER_OWNED_PROPERTIES,
     clearStaleDataTypeProperties,
+    getCalculatedExpressionError,
     pickUserOwnedProperties,
     replaceBracketReferences,
 } from './calculatedColumnUtils';
@@ -112,11 +113,6 @@ type OpenCalculatedColumnDialog = {
     highlight: boolean;
 };
 
-type PendingLiveApplyUpdate = {
-    draft: CalculatedColumnDraft;
-    mapper: CalculatedColumnReferenceMapper;
-};
-
 type KnownCalculatedColumn = {
     column: AgColumn;
     expression: string;
@@ -141,7 +137,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     private suppressValidationChecks = 0;
     private readonly openDialogsByColId = new Map<string, OpenCalculatedColumnDialog>();
     private readonly scheduledLiveApplyColIds = new Set<string>();
-    private readonly pendingLiveApplyUpdatesByColId = new Map<string, PendingLiveApplyUpdate>();
+    private readonly pendingLiveApplyUpdatesByColId = new Map<string, CalculatedColumnUpdate>();
     // Memoised parse results keyed by expression; see getFormulaError.
     private readonly formulaErrorsByExpression = new Map<string, FormulaError | null>();
     // Guaranteed present: registered by CalculatedColumnsModule alongside this service.
@@ -216,6 +212,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         const calcExpr = _normaliseCalculatedExpression(safeColDef.calculatedExpression);
         if (calcExpr !== undefined) {
             safeColDef.calculatedExpression = calcExpr;
+            if (safeColDef.calculatedExpressionError === undefined && targetColumn.colDef.calculatedExpressionError) {
+                safeColDef.calculatedExpressionError = null;
+            }
             if (validateExpression && !_isStringLargerThan(calcExpr, 0, true)) {
                 _warnOnce('updateCalculatedColumn: calculatedExpression cannot be empty.');
                 return;
@@ -747,8 +746,10 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     ): CalculatedColumnReferenceMapper {
         const beans = this.beans;
         const isColumnReferenceable = this.getOptions()?.isColumnReferenceable;
+        const originalError = calculatedColumn && getCalculatedExpressionError(calculatedColumn.colDef);
         return createCalculatedColumnReferenceMapper(beans, beans.colModel.colDefList, colId, {
             originalExpression: calculatedColumn ? (calculatedColumn.colDef.calculatedExpression ?? '') : undefined,
+            originalError: originalError ? { type: 'restricted', reference: originalError.reference } : undefined,
             isColumnReferenceable: isColumnReferenceable
                 ? (column) =>
                       isColumnReferenceable(
@@ -797,7 +798,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 };
             }
             const result = mapper.toInternalExpression(nextDraft.calculatedExpression);
-            if ('error' in result) {
+            if (result.error) {
                 return {
                     valid: false,
                     error: translateCalculatedColumnReferenceError(result.error, this.getLocaleTextFunc()),
@@ -807,6 +808,13 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             return error ? { valid: false, error } : { valid: true, expression: result.expression };
         };
         const handleValidate = (nextDraft: CalculatedColumnDraft): string | null => {
+            if (liveApply) {
+                // live edits tolerate unknown or incomplete references; only blocked ones surface an error
+                const { error } = mapper.toInternalExpression(nextDraft.calculatedExpression);
+                return error?.type === 'restricted'
+                    ? translateCalculatedColumnReferenceError(error, this.getLocaleTextFunc())
+                    : null;
+            }
             const result = getValidatedExpression(nextDraft);
             return result.valid ? null : result.error;
         };
@@ -928,15 +936,22 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         mapper: CalculatedColumnReferenceMapper
     ): string | null {
         const colId = draft.colId;
-        // Only restricted references block live apply; unknown or incomplete ones flow through best-effort.
-        const result = mapper.toInternalExpression(draft.calculatedExpression);
-        if ('error' in result && result.error.type === 'restricted') {
-            this.cancelLiveApplyUpdate(colId);
-            return translateCalculatedColumnReferenceError(result.error, this.getLocaleTextFunc());
+        const { expression, error } = mapper.toInternalExpression(draft.calculatedExpression);
+        const restricted = error?.type === 'restricted' ? error : undefined;
+        const { colId: _, ...update } = this.toColDef({ ...draft, calculatedExpression: expression });
+        if (restricted) {
+            update.calculatedExpressionError = {
+                expression,
+                reason: 'restrictedReference',
+                reference: restricted.reference,
+            };
         }
-        this.pendingLiveApplyUpdatesByColId.set(colId, { draft, mapper });
+        const message = restricted
+            ? translateCalculatedColumnReferenceError(restricted, this.getLocaleTextFunc())
+            : null;
+        this.pendingLiveApplyUpdatesByColId.set(colId, update);
         if (this.scheduledLiveApplyColIds.has(colId)) {
-            return null;
+            return message;
         }
 
         // Coalesce keystrokes into one column rebuild per frame; a cancelled update leaves the frame
@@ -946,7 +961,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             this.scheduledLiveApplyColIds.delete(colId);
             this.flushLiveApplyUpdate(colId);
         });
-        return null;
+        return message;
     }
 
     private flushLiveApplyUpdate(colId: string): void {
@@ -956,12 +971,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         }
 
         this.pendingLiveApplyUpdatesByColId.delete(colId);
-        const { draft, mapper } = pending;
-        const { colId: _, ...update } = this.toColDef({
-            ...draft,
-            calculatedExpression: mapper.toInternalExpressionBestEffort(draft.calculatedExpression),
-        });
-        this.updateCalculatedColumn(colId, update, false);
+        this.updateCalculatedColumn(colId, pending, false);
     }
 
     private cancelLiveApplyUpdate(colId: string): void {

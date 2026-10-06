@@ -37,6 +37,7 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
      * Return `false` to exclude a source column from the dialog's picker and manually entered references.
      * Called when the dialog opens. Does not restrict programmatic `calculatedExpression` values.
      * Existing expressions can be kept unchanged; expression edits are checked against the restriction.
+     * Live edits with restricted references are saved with an error and do not evaluate until corrected.
      */
     isColumnReferenceable?: (params: IsColumnReferenceableParams<TData, TContext>) => boolean;
     /**
@@ -54,6 +55,16 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
 
 export type CalculatedColumnsGridOption<TData = any, TContext = any> =
     boolean | CalculatedColumnsOptions<TData, TContext>;
+
+/** Grid-managed validation state for a `calculatedExpression`, saved on the column definition. */
+export interface CalculatedExpressionError {
+    /** The `calculatedExpression` value the error applies to; the error is ignored once the expression changes. */
+    expression: string;
+    /** Why the expression is blocked from evaluating. */
+    reason: 'restrictedReference';
+    /** The display reference that was blocked. */
+    reference: string;
+}
 
 export type CalculatedColumnDef<TData = any, TValue = any> = ColDef<TData, TValue> & {
     calculatedExpression: string;

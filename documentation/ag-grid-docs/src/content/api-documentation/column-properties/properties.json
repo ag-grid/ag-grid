@@ -716,6 +716,7 @@
                 "url": "./calculated-columns/"
             }
         },
-        "calculatedExpression": {}
+        "calculatedExpression": {},
+        "calculatedExpressionError": {}
     }
 }

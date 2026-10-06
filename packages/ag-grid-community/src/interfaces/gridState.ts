@@ -190,11 +190,12 @@ export interface ColumnGroupState {
 }
 
 /**
- * The `ColDef` properties a user can configure through the grid's own UI, and so the only ones the
- * `userColumns` state section carries. UI that creates or edits columns extends this union as it gains
- * settings; everything else stays with `columnDefs` and the other state sections.
+ * The `ColDef` properties a user can configure through the grid's own UI, plus grid-managed validation
+ * state the UI saves alongside them, and so the only ones the `userColumns` state section carries. Column UI
+ * extends this union as it gains settings; everything else stays with `columnDefs` and the other state sections.
  */
-export type UserColumnPropertyKey = 'calculatedExpression' | 'cellDataType' | 'columnGroupShow' | 'headerName';
+export type UserColumnPropertyKey =
+    'calculatedExpression' | 'calculatedExpressionError' | 'cellDataType' | 'columnGroupShow' | 'headerName';
 
 /** One `ColDef` property the user configured, as a name/value pair. The value is typed by the property it
  *  names, so an entry cannot pair a property with a value the definition would reject. */

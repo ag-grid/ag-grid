@@ -175,8 +175,8 @@ export class CalculatedColumnForm extends Component {
         this.addDestroyFunc(() => this.closeSuggestionPopup());
         if (!this.liveApply) {
             this.setTitleError(this.validateTitle());
-            this.setExpressionError(this.onValidate(this.draft));
         }
+        this.setExpressionError(this.onValidate(this.draft));
     }
 
     public hideSuggestions(): void {

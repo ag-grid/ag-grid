@@ -7,7 +7,11 @@ import { FormulaParseError } from '../formula/ast/utils';
 import { createHeaderReferenceEntries, isAmbiguousHeaderReference } from '../formula/headerReferences';
 import { a1LabelToColIndex } from '../formula/refUtils';
 import type { ColumnSuggestion } from './calculatedColumnFormTypes';
-import { escapeDisplayReference, replaceBracketReferences } from './calculatedColumnUtils';
+import {
+    escapeDisplayReference,
+    getRestrictedReferenceMessage,
+    replaceBracketReferences,
+} from './calculatedColumnUtils';
 
 interface CalculatedColumnReferenceError {
     type: 'unknown' | 'ambiguous' | 'restricted';
@@ -16,8 +20,8 @@ interface CalculatedColumnReferenceError {
 
 export interface CalculatedColumnReferenceMapper {
     suggestions: ColumnSuggestion[];
-    toInternalExpression(expression: string): { expression: string } | { error: CalculatedColumnReferenceError };
-    toInternalExpressionBestEffort(expression: string): string;
+    /** The `expression` is always storable: unresolved references are preserved verbatim. */
+    toInternalExpression(expression: string): { expression: string; error?: CalculatedColumnReferenceError };
     toDisplayExpression(expression: string): string;
 }
 
@@ -28,11 +32,7 @@ export function translateCalculatedColumnReferenceError(
     translate: TranslateFn
 ): string {
     if (error.type === 'restricted') {
-        return translate(
-            'calculatedColumnExpressionRestrictedReference',
-            'Column "${variable}" cannot be used in this expression.',
-            [error.reference]
-        ).replace('${variable}', error.reference);
+        return getRestrictedReferenceMessage(translate, error.reference);
     }
     const [localeKey, defaultMessage] =
         error.type === 'ambiguous'
@@ -51,9 +51,10 @@ export function createCalculatedColumnReferenceMapper(
     options?: {
         isColumnReferenceable?: (column: AgColumn) => boolean;
         originalExpression?: string;
+        originalError?: CalculatedColumnReferenceError;
     }
 ): CalculatedColumnReferenceMapper {
-    const { isColumnReferenceable, originalExpression } = options ?? {};
+    const { isColumnReferenceable, originalExpression, originalError } = options ?? {};
     const referenceColumns = columns.filter((column) => !isSpecialCol(column));
     const entries = createHeaderReferenceEntries(beans, referenceColumns, excludedColId);
     const referenceToColId = new Map(entries.map((entry) => [entry.reference, entry.colId]));
@@ -118,19 +119,19 @@ export function createCalculatedColumnReferenceMapper(
             })),
         toInternalExpression(expression: string) {
             if (originalExpression !== undefined && expression === originalDisplayExpression) {
-                return { expression: originalExpression };
+                return { expression: originalExpression, error: originalError };
             }
             let error: CalculatedColumnReferenceError | undefined;
             let restrictedReference: string | undefined;
-            // Unresolved references are preserved verbatim, so the result doubles as the best-effort
-            // conversion the formula check below needs even when a reference error was found.
+            // Restricted references convert like permitted ones and unresolved ones are preserved
+            // verbatim, so the result is storable alongside the error and feeds the formula check below.
             const internalExpression = replaceBracketReferences(
                 expression,
                 (ref) => {
                     const colId = resolveReference(ref);
                     if (restrictedColIds.has(colId ?? ref)) {
                         restrictedReference ??= ref;
-                        return undefined;
+                        return colId;
                     }
                     if (colId != null) {
                         return colId;
@@ -148,15 +149,9 @@ export function createCalculatedColumnReferenceMapper(
             );
             restrictedReference ??= getRestrictedFormulaReference(internalExpression);
             if (restrictedReference !== undefined) {
-                return { error: { type: 'restricted', reference: restrictedReference } };
+                error = { type: 'restricted', reference: restrictedReference };
             }
-            return error !== undefined ? { error } : { expression: internalExpression };
-        },
-        toInternalExpressionBestEffort(expression: string) {
-            if (originalExpression !== undefined && expression === originalDisplayExpression) {
-                return originalExpression;
-            }
-            return replaceBracketReferences(expression, resolveReference, true);
+            return { expression: internalExpression, error };
         },
         toDisplayExpression,
     };
