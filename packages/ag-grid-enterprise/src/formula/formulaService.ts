@@ -13,8 +13,10 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _convertColumnEventSourceType } from 'ag-grid-community';
 
-import { getCalculatedExpressionError, getRestrictedReferenceMessage } from '../calculatedColumns/calculatedColumnUtils';
-
+import {
+    getCalculatedExpressionError,
+    getRestrictedReferenceMessage,
+} from '../calculatedColumns/calculatedColumnUtils';
 import { parseFormula } from './ast/parsers';
 import { serializeFormula } from './ast/serializer';
 import type { FormulaNode } from './ast/utils';
