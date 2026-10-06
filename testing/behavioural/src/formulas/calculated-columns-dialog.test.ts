@@ -283,14 +283,14 @@ describe('ag-grid calculated columns', () => {
             await openEditDialogViaMenu(api, 'profit');
             setExpression('"B1 [Salary]"');
             expect(getExpressionInput().validationMessage).toBe('');
-            setExpression('SUM(A1:A2) + SUM(C1:C2) + [Revenue]');
+            setExpression('[Revenue] + [Cost]');
             expect(getExpressionInput().validationMessage).toBe('');
             if (applyMode === 'deferred') {
                 expect(getDialogButton('Apply')).toBeEnabled();
                 clickDialogButton('Apply');
             }
             await waitFor(() =>
-                expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe(90)
+                expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe(23)
             );
         }
     );
