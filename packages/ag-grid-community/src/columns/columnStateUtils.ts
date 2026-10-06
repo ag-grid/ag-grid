@@ -505,6 +505,8 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
             // deliberate resize
             col.resetWidthOwnership();
         }
+        // the row numbers column is a service column outside the state above
+        beans.rowNumbersSvc?.resetColumnState(source);
 
         // Order from the now-current service cols: auto cols may have been recreated above (their colIds change
         // with the row-group set), so use the post-apply instances, not the pre-apply ids in `columnStates`.
