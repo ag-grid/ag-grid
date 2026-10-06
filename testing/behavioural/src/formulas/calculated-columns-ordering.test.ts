@@ -449,7 +449,7 @@ describe('calculated columns - display ordering', () => {
 
         const input = getExpressionInput();
         expect(input.classList.contains('invalid')).toBe(false);
-        expect(input.hasAttribute('aria-invalid')).toBe(false);
+        expect(input.getAttribute('aria-invalid')).toBe('false');
         expect(api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'calculated_1' })).toBe('#PARSE!');
     });
 
