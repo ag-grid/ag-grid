@@ -3,6 +3,7 @@ import { GridRows, TestGridsManager } from 'ag-test-utils';
 import { countLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { GridOptions, ServerSideTransactionResult } from 'ag-grid-community';
+import { ScrollApiModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 /**
@@ -11,7 +12,7 @@ import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModul
  */
 describe('SSRM without a datasource', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ServerSideRowModelApiModule, ServerSideRowModelModule, RowGroupingModule],
+        modules: [ScrollApiModule, ServerSideRowModelApiModule, ServerSideRowModelModule, RowGroupingModule],
     });
 
     afterEach(() => {
@@ -182,6 +183,43 @@ describe('SSRM without a datasource', () => {
         await new GridRows(api, 'after datasource').check(`
             ROOT id:<no-id>
             └── LEAF id:10 id:10 value:"Ten"
+        `);
+    });
+
+    test('rows added by transactions are not evicted by maxBlocksInCache', async () => {
+        const api = gridsManager.createGrid(null, {
+            ...createGridOptions(),
+            cacheBlockSize: 2,
+            maxBlocksInCache: 1,
+        });
+        api.applyServerSideTransaction({
+            add: Array.from({ length: 10 }, (_, i) => ({ id: i, value: `v${i}` })),
+        });
+
+        api.ensureIndexVisible(9);
+        api.ensureIndexVisible(0);
+
+        const values: string[] = [];
+        api.forEachNode((node) => values.push(node.data?.value));
+        expect(values).toEqual(Array.from({ length: 10 }, (_, i) => `v${i}`));
+        expect(countLoadingRows(api)).toBe(0);
+    });
+
+    test('client-side sort applies to rows added by transactions', async () => {
+        const api = gridsManager.createGrid(null, { ...createGridOptions(), serverSideEnableClientSideSort: true });
+        api.applyServerSideTransaction({
+            add: [
+                { id: 1, value: 'b' },
+                { id: 2, value: 'a' },
+            ],
+        });
+
+        api.applyColumnState({ state: [{ colId: 'value', sort: 'asc' }] });
+
+        await new GridRows(api, 'sorted').check(`
+            ROOT id:<no-id>
+            ├── LEAF id:2 id:2 value:"a"
+            └── LEAF id:1 id:1 value:"b"
         `);
     });
 });

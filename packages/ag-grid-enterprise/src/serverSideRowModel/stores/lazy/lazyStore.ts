@@ -694,7 +694,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
 
             const isClientSideSort = allRowsLoaded && isClientSideSortingEnabled;
-            if (!isClientSideSort) {
+            if (isClientSideSort) {
+                // client side sorting only handles one level, so allow it to pass through
+                // to recursive sort.
+                this.cache.clientSideSortRows();
+            } else if (this.ssrmParams.datasource) {
                 // if last row index was known, add a row back for lazy loading.
                 const oldCount = this.cache.getRowCount();
                 const lastKnown = this.cache.isLastRowIndexKnown();
@@ -705,10 +709,6 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 );
                 return;
             }
-
-            // client side sorting only handles one level, so allow it to pass through
-            // to recursive sort.
-            this.cache.clientSideSortRows();
         }
 
         // call refreshAfterSort on children, as we did not purge.

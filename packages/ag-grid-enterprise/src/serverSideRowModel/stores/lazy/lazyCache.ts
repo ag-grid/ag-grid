@@ -729,8 +729,12 @@ export class LazyCache extends BeanStub {
         // Delete all stub nodes which aren't in the viewport or already loading
         this.purgeStubsOutsideOfViewport();
 
-        if (this.store.getDisplayIndexEnd() == null || this.storeParams.maxBlocksInCache == null) {
-            // if group is collapsed, or max blocks missing, ignore the event
+        if (
+            this.store.getDisplayIndexEnd() == null ||
+            this.storeParams.maxBlocksInCache == null ||
+            !this.getSsrmParams().datasource
+        ) {
+            // if group is collapsed, max blocks missing, or there is no datasource to reload evicted rows, ignore the event
             return;
         }
 

@@ -28,9 +28,9 @@ export class SortListener extends BeanStub implements NamedBean {
 
     private onSortChanged(): void {
         const storeParams = this.serverSideRowModel.getParams();
-        if (!storeParams?.datasource) {
+        if (!storeParams) {
             return;
-        } // without a datasource there is nothing to reload rows from
+        } // params is undefined if no datasource set
 
         const newSortModel = _getSortModel(this.sortSvc);
         const oldSortModel = storeParams.sortModel;

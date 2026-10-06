@@ -114,6 +114,10 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     }
 
     private attemptLoad(cache: LazyCache, start: number, end: number) {
+        if (!cache.getSsrmParams().datasource) {
+            return;
+        }
+
         const hasBandwidth = this.hasAvailableLoadBandwidth();
         // too many loads already, ignore the request as a successful request will requeue itself anyway
         if (!hasBandwidth) {
