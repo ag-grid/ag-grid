@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { type ComponentPropsWithoutRef, type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
 export type PresetScrollerProps = {
     children: ReactNode;
@@ -47,12 +47,7 @@ export function PresetScroller({ children }: PresetScrollerProps) {
     );
 }
 
-/**
- * Shared button chrome for one preset in a PresetScroller - sizing, spacing,
- * scroll-snap alignment, and focus/hover states. Render whatever thumbnail
- * content makes sense for the host as children.
- */
-export const PresetButton = styled('button')`
+const PresetButtonChrome = styled('button')`
     border: solid 2px transparent !important;
     background: none !important;
     display: inline-block;
@@ -74,6 +69,22 @@ export const PresetButton = styled('button')`
         border-color: var(--color-brand-500);
     }
 `;
+
+/**
+ * Shared button chrome for one preset in a PresetScroller - sizing, spacing,
+ * scroll-snap alignment, and focus/hover states. Render whatever thumbnail
+ * content makes sense for the host as children. Clicking centres the preset,
+ * keeping the strip's next unseen presets reachable.
+ */
+export const PresetButton = ({ onClick, ...props }: ComponentPropsWithoutRef<'button'>) => (
+    <PresetButtonChrome
+        {...props}
+        onClick={(e) => {
+            onClick?.(e);
+            e.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }}
+    />
+);
 
 // min-height lives on the outermost element deliberately: it's the direct
 // flex item of the theme builder's Main layout, so its used height (even

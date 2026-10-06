@@ -1,12 +1,13 @@
 import { PresetButton, PresetScroller } from '@ag-website-shared/components/theme-builder/PresetScroller';
 import { usePresetApply } from '@ag-website-shared/components/theme-builder/usePresetApply';
+import { type Preset, applyPreset } from '@ag-website-shared/theming/preset';
 import { useStore } from 'jotai';
 import { type CSSProperties, useMemo } from 'react';
 
 import { type Theme, colorSchemeLight, themeQuartz } from 'ag-grid-community';
 
 import { PresetRender } from './PresetRender';
-import { type Preset, allPresets, applyPreset } from './presets';
+import { allPresets } from './presets';
 
 export const PresetSelector = () => {
     const store = useStore();
@@ -25,10 +26,7 @@ export const PresetSelector = () => {
                 {allPresets.map((preset, index) => (
                     <PresetButton
                         key={index}
-                        onClick={(e) => {
-                            selectPreset(preset);
-                            e.currentTarget.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-                        }}
+                        onClick={() => selectPreset(preset)}
                         style={{ '--page-background-color': preset.pageBackgroundColor } as CSSProperties}
                         aria-label={`Preset ${index + 1}`}
                     >

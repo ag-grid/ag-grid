@@ -19,7 +19,6 @@ const CONTAINER_REPO = packageJson.name in WEBSITE_PATH_PREFIX ? packageJson.nam
 // foreign host's tests assert against a product this repo may not install, or pins at its own
 // version, so a release of one product could redden an unrelated repository's CI. Run only our own.
 const THEME_BUILDER_HOSTS = {
-    'ag-grid': 'theme-builder-grid',
     'ag-studio': 'theme-builder-studio',
 };
 

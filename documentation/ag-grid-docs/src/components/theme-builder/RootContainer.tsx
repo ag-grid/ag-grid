@@ -2,9 +2,9 @@ import { ImportExportButton } from '@ag-website-shared/components/theme-builder/
 import { useRenderedTheme } from '@ag-website-shared/theming/rendered-theme';
 import styled from '@emotion/styled';
 
-import { EditorPanel } from '../editors/EditorPanel';
-import { PresetSelector } from '../presets/PresetSelector';
+import { EditorPanel } from './EditorPanel';
 import { GridPreview } from './GridPreview';
+import { PresetSelector } from './PresetSelector';
 
 const IMPORT_PLACEHOLDER = 'Paste your theme code here:\n\nconst myTheme = themeQuartz.withParams({...});';
 

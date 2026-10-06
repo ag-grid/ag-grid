@@ -32,6 +32,8 @@ import {
     themeQuartz,
 } from 'ag-grid-community';
 
+import { GRID_FONT_FAMILY_OPTIONS } from './fonts';
+
 setBaseTheme(themeQuartz);
 
 setThemeCodeConfig({ themeVariable: 'themeQuartz', importSource: 'ag-grid-community' });
@@ -104,70 +106,7 @@ setNonAdvancedParams([
     'iconSize',
 ]);
 
-setFontFamilyOptions([
-    {
-        label: 'System',
-        value: [
-            '-apple-system',
-            'BlinkMacSystemFont',
-            'Segoe UI',
-            'Roboto',
-            'Oxygen-Sans',
-            'Ubuntu',
-            'Cantarell',
-            'Helvetica Neue',
-            'sans-serif',
-        ],
-    },
-    {
-        label: 'Arial',
-        value: ['Arial', 'sans-serif'],
-    },
-    {
-        label: 'Inter',
-        value: { googleFont: 'Inter' },
-    },
-    {
-        label: 'IBM Plex Sans',
-        value: { googleFont: 'IBM Plex Sans' },
-    },
-    {
-        label: 'IBM Plex Mono',
-        value: { googleFont: 'IBM Plex Mono' },
-    },
-    {
-        label: 'Roboto',
-        value: { googleFont: 'Roboto' },
-    },
-    {
-        label: 'Inclusive Sans',
-        value: { googleFont: 'Inclusive Sans' },
-    },
-    {
-        label: 'Open Sans',
-        value: { googleFont: 'Open Sans' },
-    },
-    {
-        label: 'Lato',
-        value: { googleFont: 'Lato' },
-    },
-    {
-        label: 'Times New Roman',
-        value: 'Times New Roman',
-    },
-    {
-        label: 'Merriweather',
-        value: { googleFont: 'Merriweather' },
-    },
-    {
-        label: 'UnifrakturCook',
-        value: { googleFont: 'UnifrakturCook' },
-    },
-    {
-        label: 'Pixelify Sans',
-        value: { googleFont: 'Pixelify Sans' },
-    },
-]);
+setFontFamilyOptions(GRID_FONT_FAMILY_OPTIONS);
 
 setImageValuesDocsUrl('/react-data-grid/theming-parameters/#image-values');
 

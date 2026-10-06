@@ -4,7 +4,7 @@ import { memo, useLayoutEffect, useRef } from 'react';
 import type { ColDef, GridState, RowSelectionOptions, Theme } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
-import { defaultRowData } from '../grid-config/grid-data';
+import { defaultRowData } from './grid-data';
 
 // A tiny non-interactive grid used as a theme thumbnail
 const columnDefs: ColDef[] = [{ field: 'country' }, { field: 'sport' }];
