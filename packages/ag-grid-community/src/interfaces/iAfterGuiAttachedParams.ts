@@ -1,10 +1,5 @@
 export type ContainerType =
-    | 'columnMenu'
-    | 'contextMenu'
-    | 'toolPanel'
-    | 'floatingFilter'
-    | 'columnFilter'
-    | 'newFiltersToolPanel';
+    'columnMenu' | 'contextMenu' | 'toolPanel' | 'floatingFilter' | 'columnFilter' | 'newFiltersToolPanel';
 
 export interface IAfterGuiAttachedParams {
     /** Where this component is attached to. */

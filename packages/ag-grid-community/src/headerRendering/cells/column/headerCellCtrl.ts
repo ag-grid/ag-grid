@@ -39,22 +39,9 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
 }
 
 type HeaderAriaDescriptionKey =
-    | 'filter'
-    | 'menu'
-    | 'sort'
-    | 'selectAll'
-    | 'filterButton'
-    | 'cellSelection'
-    | 'showValuesAs'
-    | 'calculatedColumn';
+    'filter' | 'menu' | 'sort' | 'selectAll' | 'filterButton' | 'cellSelection' | 'showValuesAs' | 'calculatedColumn';
 type RefreshFunction =
-    | 'updateSortable'
-    | 'tooltip'
-    | 'headerClasses'
-    | 'headerStyles'
-    | 'wrapText'
-    | 'measuring'
-    | 'resize';
+    'updateSortable' | 'tooltip' | 'headerClasses' | 'headerStyles' | 'wrapText' | 'measuring' | 'resize';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgColumn, ResizeFeature> {

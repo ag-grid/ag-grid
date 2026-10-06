@@ -122,13 +122,7 @@ export type CommonFilterOptionKey = 'empty' | 'blank' | 'notBlank';
 
 /** The built-in option keys valid on a Text Filter. */
 export type TextFilterOptionKey =
-    | CommonFilterOptionKey
-    | 'equals'
-    | 'notEqual'
-    | 'contains'
-    | 'notContains'
-    | 'startsWith'
-    | 'endsWith';
+    CommonFilterOptionKey | 'equals' | 'notEqual' | 'contains' | 'notContains' | 'startsWith' | 'endsWith';
 
 /** The built-in option keys valid on the ordered filters, which compare values. */
 export type ScalarFilterOptionKey =

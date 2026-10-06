@@ -288,8 +288,7 @@ export class MenuService extends BeanStub implements NamedBean {
             // make sure we've finished scrolling into view before displaying the menu
             _requestAnimationFrame(beans, () => {
                 const headerCellCtrl = ctrlsSvc.getHeaderRowContainerCtrl()?.getHeaderCtrlForColumn(column) as
-                    | HeaderCellCtrl
-                    | undefined;
+                    HeaderCellCtrl | undefined;
 
                 if (headerCellCtrl) {
                     this.showButtonMenu(

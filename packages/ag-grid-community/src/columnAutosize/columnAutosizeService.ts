@@ -344,8 +344,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
         for (const columnGroup of columnGroups) {
             const headerGroupCtrl = headerRowContainerCtrl.getHeaderCtrlForColumn(columnGroup) as
-                | HeaderGroupCellCtrl
-                | undefined;
+                HeaderGroupCellCtrl | undefined;
             headerGroupCtrl?.resizeLeafColumnsToFit(source);
         }
     }
