@@ -258,6 +258,9 @@ $breakpoint-demo-fits: $demo-held-width + $hero-max-width + $demo-column-gap + $
 // Anchors the framework list to its button.
 .openInMenu {
     position: relative;
+    // Each menu's list is positioned against its own button: without the scope, both buttons share
+    // the one anchor name and the lists would all attach to the last of them.
+    anchor-scope: --open-in;
 }
 
 .openInButton {
@@ -265,6 +268,7 @@ $breakpoint-demo-fits: $demo-held-width + $hero-max-width + $demo-column-gap + $
     align-items: center;
     gap: $spacing-size-2;
     cursor: pointer;
+    anchor-name: --open-in;
     // A <summary> otherwise draws a disclosure triangle of its own.
     list-style: none;
 
@@ -309,6 +313,25 @@ $breakpoint-demo-fits: $demo-held-width + $hero-max-width + $demo-column-gap + $
     #{$selector-darkmode} & {
         background: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 12%);
         border: 1px solid color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 22%);
+    }
+
+    // Fixed, so the hero's scrolling and clipping cannot hide it; above the sticky site header and
+    // announcement banner, which a list flipped above its button would otherwise sit under.
+    @supports (position-area: bottom) and (anchor-scope: all) {
+        position: fixed;
+        z-index: 10010;
+        inset: auto;
+        position-anchor: --open-in;
+        position-area: bottom span-right;
+        // Flipped with the placement, so the gap stays between the list and the button.
+        margin-top: $spacing-size-1;
+        min-width: anchor-size(width);
+        max-height: calc(100dvh - #{$spacing-size-4});
+        overflow-y: auto;
+        position-try-fallbacks:
+            flip-block,
+            flip-inline,
+            flip-block flip-inline;
     }
 }
 
