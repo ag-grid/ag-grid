@@ -5,8 +5,9 @@ export type WithParamTypes<T> = {
 };
 
 // prettier-ignore
-type ParamTypeForLowercaseKey<K extends string> = K extends `${string}color`
-    ? ColorValue
+type ParamTypeForLowercaseKey<K extends string> = K extends `${string}scrollbarwidth`
+    ? ScrollbarWidthValue
+    : K extends `${string}color` ? ColorValue
     : K extends `${string}colorscheme` ? ColorSchemeValue
     : K extends `${string}color` ? ColorValue
     : K extends `${string}scale` ? ScaleValue
@@ -54,6 +55,14 @@ export type ColorValue =
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/color-scheme
  */
 export type ColorSchemeValue = 'light' | 'dark' | 'inherit' | 'normal' | AnyString | { ref: string };
+
+/**
+ * A CSS scrollbar-width value: "auto", "thin" or "none". "unset" applies no
+ * value, leaving the browser default.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-width
+ */
+export type ScrollbarWidthValue = 'unset' | 'auto' | 'thin' | 'none' | { ref: string };
 
 /**
  * A CSS dimension value with length units, e.g. "1px" or "2em". Alternatively:
@@ -175,14 +184,7 @@ export type ShadowValue = string | false | ShadowValueParams | ShadowValueParams
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/line-style
  */
 export type BorderStyleValue =
-    | 'none'
-    | 'solid'
-    | 'dotted'
-    | 'dashed'
-    | 'inset'
-    | 'outset'
-    | AnyString
-    | { ref: string };
+    'none' | 'solid' | 'dotted' | 'dashed' | 'inset' | 'outset' | AnyString | { ref: string };
 
 /**
  * A CSS font-family value consisting of a font name or comma-separated list of fonts in order of preference e.g. `"Roboto, -apple-system, 'Segoe UI', sans-serif"`. Alternatively:
@@ -194,10 +196,7 @@ export type BorderStyleValue =
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/font-family
  */
 export type FontFamilyValue =
-    | string
-    | { googleFont: string }
-    | Array<string | { googleFont: string }>
-    | { ref: string };
+    string | { googleFont: string } | Array<string | { googleFont: string }> | { ref: string };
 
 /**
  * A CSS font-weight value e.g. `500` or `"bold"`

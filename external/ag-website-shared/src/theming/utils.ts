@@ -202,4 +202,5 @@ const cssPropertyForParamType = {
     fontFamily: 'fontFamily',
     fontWeight: 'fontWeight',
     duration: 'transitionDuration',
+    scrollbarWidth: 'scrollbarWidth',
 } satisfies Record<ParamType, keyof CSSStyleDeclaration>;

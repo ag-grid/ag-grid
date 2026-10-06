@@ -217,7 +217,7 @@
                         },
                         {
                             "type": "item",
-                            "title": "Borders",
+                            "title": "Borders & Scrollbars",
                             "path": "theming-borders"
                         },
                         {

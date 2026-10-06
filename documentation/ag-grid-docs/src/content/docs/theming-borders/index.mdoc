@@ -1,8 +1,8 @@
 ---
-title: "Theming API: Customising Borders"
+title: "Theming API: Customising Borders & Scrollbars"
 ---
 
-Control the borders around rows, cells and UI elements.
+Control the borders around rows, cells and UI elements, and the appearance of scrollbars.
 
 Borders are controlled using theme parameters ending `Border`. See the [Borders section](./theming-api/#reference-borders) of the parameters reference for the core border parameters, or search "border" in the "All Parameters" section of the [Theme Builder](/theme-builder/) for a full list of border parameters.
 
@@ -29,3 +29,24 @@ const myTheme = themeQuartz.withParams({
 ### Borders between header cells
 
 Column borders between header cells have adjustable height, and there is also the option of styling the resize handle which is only present on resizable columns. See [Customising Headers](./theming-headers/) for more information.
+
+## Scrollbars
+
+By default the grid uses the browser's native scrollbars. These parameters change scrollbars throughout the grid, including those in tool panels and filters:
+
+- `scrollbarThumbColor` and `scrollbarTrackColor` - setting BOTH of these will change the colour of the draggable scroll thumb and of the track behind it. Setting only one will have no effect.
+- `scrollbarWidth` - set to `'thin'` for narrow scrollbars or `'auto'` for the browser default.
+- `bodyScrollbarBorder` - on browsers that always show scrollbars, this sets the border between the grid's main scrollbars and the cells.
+
+```js
+const myTheme = themeQuartz.withParams({
+    scrollbarThumbColor: '#9696C8',
+    scrollbarTrackColor: 'transparent',
+    scrollbarWidth: 'thin',
+    bodyScrollbarBorder: { color: '#9696C8' },
+});
+```
+
+This example also opens the Filters Tool Panel with a Set Filter, so you can see the scrollbar styles applied to other scrolling elements in the grid:
+
+{% gridExampleRunner title="Scrollbar Customisation" name="scrollbar-customisation"  exampleHeight=450 /%}

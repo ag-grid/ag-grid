@@ -4,7 +4,7 @@
     height: var(--ag-pagination-panel-height);
     border-top: var(--ag-footer-row-border);
     overflow: auto hidden;
-    scrollbar-width: thin;
+    scrollbar-width: var(--ag-scrollbar-width, thin);
 }
 
 .ag-paging-panel-content {

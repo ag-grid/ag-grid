@@ -161,11 +161,9 @@ export {
 export { _parseBigIntOrNull } from './utils/bigInt';
 export {
     _getMaxDivHeight,
-    _getScrollbarWidth,
     _getTabIndex,
     _isBrowserFirefox,
     _isBrowserSafari,
-    _isInvisibleScrollbar,
     _isIOSUserAgent,
     _isMacOsUserAgent,
     _isRealCssEngine,

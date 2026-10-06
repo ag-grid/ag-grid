@@ -1,11 +1,4 @@
-import {
-    RefPlaceholder,
-    _isIOSUserAgent,
-    _isInvisibleScrollbar,
-    _isMacOsUserAgent,
-    _isVisible,
-    _waitUntil,
-} from 'ag-stack';
+import { RefPlaceholder, _isIOSUserAgent, _isMacOsUserAgent, _isVisible, _waitUntil } from 'ag-stack';
 
 import type { BodyScrollEvent } from '../events';
 import type { ElementParams } from '../utils/element';
@@ -22,8 +15,9 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
     public readonly eViewport: HTMLElement = RefPlaceholder;
     protected readonly eContainer: HTMLElement = RefPlaceholder;
 
-    protected invisibleScrollbar: boolean;
+    protected invisibleScrollbar: boolean | undefined;
     protected hideTimeout: number = 0;
+    private invisibleScrollbarListenersAdded = false;
 
     protected abstract setScrollVisible(): void;
     public abstract getScrollPosition(): number;
@@ -39,8 +33,10 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
     }
 
     public postConstruct(): void {
+        const onScrollVisibilityChanged = this.onScrollVisibilityChanged.bind(this);
         this.addManagedEventListeners({
-            scrollVisibilityChanged: this.onScrollVisibilityChanged.bind(this),
+            scrollVisibilityChanged: onScrollVisibilityChanged,
+            scrollbarWidthChanged: onScrollVisibilityChanged,
         });
         this.onScrollVisibilityChanged();
         this.toggleCss('ag-apple-scrollbar', _isMacOsUserAgent() || _isIOSUserAgent());
@@ -52,14 +48,16 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
         window.clearTimeout(this.hideTimeout);
     }
 
-    protected initialiseInvisibleScrollbar(): void {
-        if (this.invisibleScrollbar !== undefined) {
+    protected refreshInvisibleScrollbar(): void {
+        const invisibleScrollbar = this.beans.scrollVisibleSvc.isInvisibleScrollbar();
+        if (invisibleScrollbar === undefined) {
             return;
         }
 
-        this.invisibleScrollbar = _isInvisibleScrollbar();
+        this.invisibleScrollbar = invisibleScrollbar;
 
-        if (this.invisibleScrollbar) {
+        if (invisibleScrollbar && !this.invisibleScrollbarListenersAdded) {
+            this.invisibleScrollbarListenersAdded = true;
             this.hideAndShowInvisibleScrollAsNeeded();
             this.addActiveListenerToggles();
         }
@@ -79,12 +77,7 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
     }
 
     protected onScrollVisibilityChanged(): void {
-        // initialiseInvisibleScrollbar should only be called once, but the reason
-        // this can't be inside `setComp` or `postConstruct` is the DOM might not
-        // be ready, so we call it until eventually, it gets calculated.
-        if (this.invisibleScrollbar === undefined) {
-            this.initialiseInvisibleScrollbar();
-        }
+        this.refreshInvisibleScrollbar();
 
         this.queueSetScrollVisible();
     }
