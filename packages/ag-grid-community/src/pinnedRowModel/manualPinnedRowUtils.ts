@@ -150,3 +150,7 @@ const _isNodeGrandTotal = (node: RowNode): boolean => !!node.footer && node.leve
 
 export const _isPinnedNodeGrandTotal = (node: RowNode): boolean =>
     !!node.pinnedSibling && _isNodeGrandTotal(node.pinnedSibling);
+
+/** True for the grand total row, whether rendered inline, sticky or pinned. */
+export const _isGrandTotalRowNode = (node: RowNode): boolean =>
+    _isNodeGrandTotal(node) || _isPinnedNodeGrandTotal(node);

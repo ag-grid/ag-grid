@@ -229,6 +229,11 @@ export interface CoreParams extends SharedThemeParams {
     footerRowBorder: BorderValue;
 
     /**
+     * Horizontal border between the grand total row and the data rows: above it when the grand total is at the bottom, below it when at the top. Applies whether the row is inline, sticky or pinned.
+     */
+    grandTotalRowBorder: BorderValue;
+
+    /**
      * Duration in seconds of the background color transition if headerCellHoverBackgroundColor or headerCellMovingBackgroundColor is set
      */
     headerCellBackgroundTransitionDuration: DurationValue;
@@ -845,6 +850,9 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     rowBorder: true,
     headerRowBorder: true,
     footerRowBorder: {
+        ref: 'rowBorder',
+    },
+    grandTotalRowBorder: {
         ref: 'rowBorder',
     },
     columnBorder: {

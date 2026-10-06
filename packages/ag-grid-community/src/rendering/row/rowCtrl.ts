@@ -28,6 +28,7 @@ import type {
 } from '../../events';
 import {
     _addGridCommonParams,
+    _getGrandTotalRow,
     _getRowHeightForNode,
     _isAnimateRows,
     _isClientSideLoadingRow,
@@ -49,6 +50,7 @@ import type { DataChangedEvent, IRowNode } from '../../interfaces/iRowNode';
 import type { RowPosition } from '../../interfaces/iRowPosition';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import type { GetNoteParams } from '../../interfaces/notes';
+import { _isGrandTotalRowNode } from '../../pinnedRowModel/manualPinnedRowUtils';
 import { calculateRowLevel } from '../../styling/rowStyleService';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
 import { _clamp } from '../../utils/number';
@@ -116,6 +118,7 @@ export interface MappedPinnedCellGroupWidths extends PinnedCellGroupWidths {
 }
 
 type RowCtrlEvent = RenderedRowEvent;
+type GrandTotalBorderSide = 'top' | 'bottom';
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowCtrl extends BeanStub<RowCtrlEvent> {
     public readonly instanceId: RowCtrlInstanceId;
@@ -136,6 +139,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     private firstRowOnPage: boolean;
     private lastRowOnPage: boolean;
+    private beforeGrandTotalBorder = false;
+    private grandTotalBorderSide: GrandTotalBorderSide | null | undefined;
 
     private active = true;
 
@@ -954,6 +959,38 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             this.lastRowOnPage = newLast;
             this.rowGui?.rowComp.toggleCss('ag-row-last', newLast);
         }
+
+        const newSide = this.getGrandTotalBorderSide();
+        if (this.grandTotalBorderSide !== newSide) {
+            this.grandTotalBorderSide = newSide;
+            const rowComp = this.rowGui?.rowComp;
+            rowComp?.toggleCss('ag-row-grand-total-border-top', newSide === 'top');
+            rowComp?.toggleCss('ag-row-grand-total-border-bottom', newSide === 'bottom');
+        }
+    }
+
+    /** The side of the grand total row that faces the data rows, or null for an inline grand total alone on its page. */
+    public getGrandTotalBorderSide(): GrandTotalBorderSide | null {
+        const rowNode = this.rowNode;
+        if (!_isGrandTotalRowNode(rowNode)) {
+            return null;
+        }
+        const rowPinned = rowNode.rowPinned;
+        if (rowPinned) {
+            return rowPinned === 'top' ? 'bottom' : 'top';
+        }
+        if (_getGrandTotalRow(this.gos) === 'top') {
+            return this.isLastRowOnPage() ? null : 'bottom';
+        }
+        return this.isFirstRowOnPage() ? null : 'top';
+    }
+
+    /** Set by the row container when the grand total row directly below this row draws the border between them. */
+    public setBeforeGrandTotalBorder(beforeGrandTotalBorder: boolean): void {
+        if (this.beforeGrandTotalBorder !== beforeGrandTotalBorder) {
+            this.beforeGrandTotalBorder = beforeGrandTotalBorder;
+            this.rowGui?.rowComp.toggleCss('ag-row-before-grand-total-border', beforeGrandTotalBorder);
+        }
     }
 
     public getAllCellCtrls(): CellCtrl[] {
@@ -1029,6 +1066,18 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (rowNode.footer) {
             classes.push('ag-row-footer');
+        }
+
+        if (_isGrandTotalRowNode(rowNode)) {
+            classes.push('ag-row-grand-total');
+            const borderSide = this.getGrandTotalBorderSide();
+            if (borderSide) {
+                classes.push(`ag-row-grand-total-border-${borderSide}`);
+            }
+        }
+
+        if (this.beforeGrandTotalBorder) {
+            classes.push('ag-row-before-grand-total-border');
         }
 
         classes.push('ag-row-level-' + this.rowLevel);
