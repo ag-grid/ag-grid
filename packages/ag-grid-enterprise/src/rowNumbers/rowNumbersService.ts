@@ -189,7 +189,12 @@ export class RowNumbersService
         if (!column) {
             return;
         }
+        const oldWidth = column.getActualWidth();
         column.resetActualWidth(source);
+        // resetActualWidth is silent, but the rendered header cell only follows widthChanged
+        if (column.getActualWidth() !== oldWidth) {
+            column.fireColumnWidthChangedEvent(source);
+        }
         column.resetWidthOwnership();
         this.autoSizedTextLength = 0;
     }

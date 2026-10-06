@@ -3,7 +3,7 @@ import { TestGridsManager, asyncSetTimeout, waitForEvent } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { ColumnResizedEvent, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ExternalFilterModule, ROW_NUMBERS_COLUMN_ID } from 'ag-grid-community';
+import { ClientSideRowModelModule, ExternalFilterModule, ROW_NUMBERS_COLUMN_ID, getGridElement } from 'ag-grid-community';
 import { RowNumbersModule } from 'ag-grid-enterprise';
 
 interface RowData {
@@ -59,6 +59,9 @@ describe('Row numbers column autosize', () => {
     const expectWidth = (api: GridApi, text: string) => waitFor(() => expect(rowNumberWidth(api)).toBe(widthFor(text)));
 
     const rowNumberWidth = (api: GridApi) => api.getColumn(ROW_NUMBERS_COLUMN_ID)!.getActualWidth();
+    const rowNumberHeaderWidth = (api: GridApi) =>
+        getGridElement(api)!.querySelector<HTMLElement>(`.ag-header-cell[col-id="${ROW_NUMBERS_COLUMN_ID}"]`)!.style
+            .width;
 
     test('widens when applyTransaction adds rows past a digit boundary', async () => {
         const api = await createGrid(97);
@@ -208,8 +211,11 @@ describe('Row numbers column autosize', () => {
         const api = await createGrid(97, { rowNumbers: { resizable: true } });
         api.setColumnWidths([{ key: ROW_NUMBERS_COLUMN_ID, newWidth: 70 }], true, 'uiColumnResized');
 
+        expect(rowNumberHeaderWidth(api)).toBe('70px');
+
         api.resetColumnState();
         expect(rowNumberWidth(api)).toBe(60);
+        expect(rowNumberHeaderWidth(api)).toBe('60px');
 
         api.applyTransaction({ add: makeRows(3, 97) });
         await expectWidth(api, '101');
