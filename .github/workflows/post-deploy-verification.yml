@@ -137,16 +137,17 @@ jobs:
           # commit not yet seen green. Both describe the automatic staging verification only: a
           # manual dispatch can point the suite at a hand-given URL, so its result says nothing
           # about staging and must not stand in as either one. The current run is still in_progress,
-          # so --status completed only ever sees earlier ones, and the limit is generous because the
+          # so keeping only completed runs only ever sees earlier ones, and the limit is generous because the
           # run that last passed is furthest away precisely when the range it anchors has the most
           # commits to name.
+          # The runs are filtered here rather than with --branch, --event or --status: those
+          # server-side filters have been seen to omit every recent run, and a stale list silently
+          # anchors this comparison to an old run.
           RUNS=$(gh run list \
             --workflow post-deploy-verification.yml \
-            --branch latest \
-            --event workflow_run \
-            --status completed \
             --limit 100 \
-            --json databaseId,headSha)
+            --json databaseId,headSha,headBranch,event,status \
+            --jq '[.[] | select(.headBranch == "latest" and .event == "workflow_run" and .status == "completed") | {databaseId, headSha}]')
 
           OUTCOME=""
           SHA=""
@@ -292,13 +293,13 @@ jobs:
         run: |
           set -e
           # The workflow run is still in progress, so this cannot select the current run.
+          # Filtered here for the same reason as in the previous step, then capped to the ten newest
+          # successes.
           CANDIDATES=$(gh run list \
             --workflow post-deploy-verification.yml \
-            --branch latest \
-            --status success \
-            --limit 10 \
-            --json databaseId \
-            --jq '.[].databaseId')
+            --limit 100 \
+            --json databaseId,headBranch,conclusion \
+            --jq '[.[] | select(.headBranch == "latest" and .conclusion == "success") | .databaseId][:10] | .[]')
 
           BASELINE=""
           for ID in $CANDIDATES; do
