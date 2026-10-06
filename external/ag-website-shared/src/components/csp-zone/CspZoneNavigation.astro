@@ -1,9 +1,6 @@
 ---
-
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 ---
 
-<script>
-    import { initFullReloadAcrossCspZones } from '@ag-website-shared/utils/cspZone';
-
-    initFullReloadAcrossCspZones();
-</script>
+{/* See public/scripts/csp-zone-navigation.js for the mechanism. */}
+<script is:inline src={urlWithBaseUrl('/scripts/csp-zone-navigation.js')}></script>
