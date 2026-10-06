@@ -1051,6 +1051,10 @@ export class LazyCache extends BeanStub {
         this.fireStoreUpdatedEvent();
     }
 
+    public markRowCountInferred(): void {
+        this.isLastRowInferred = true;
+    }
+
     public markNodesForRefresh() {
         this.nodeMap.forEach((lazyNode) => {
             if (lazyNode.node.stub && !lazyNode.node.failedLoad) {

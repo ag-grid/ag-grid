@@ -3,7 +3,7 @@ import { GridRows, TestGridsManager } from 'ag-test-utils';
 import { countLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { GridOptions, ServerSideTransactionResult } from 'ag-grid-community';
-import { ScrollApiModule } from 'ag-grid-community';
+import { GridStateModule, PaginationModule, ScrollApiModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 /**
@@ -12,7 +12,14 @@ import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModul
  */
 describe('SSRM without a datasource', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ScrollApiModule, ServerSideRowModelApiModule, ServerSideRowModelModule, RowGroupingModule],
+        modules: [
+            GridStateModule,
+            PaginationModule,
+            ScrollApiModule,
+            ServerSideRowModelApiModule,
+            ServerSideRowModelModule,
+            RowGroupingModule,
+        ],
     });
 
     afterEach(() => {
@@ -229,5 +236,45 @@ describe('SSRM without a datasource', () => {
             ├── LEAF id:2 id:2 value:"a"
             └── LEAF id:1 id:1 value:"b"
         `);
+    });
+
+    test('initial pagination state is restored when a datasource is set after startup', async () => {
+        const api = gridsManager.createGrid(null, {
+            ...createGridOptions(),
+            pagination: true,
+            paginationPageSize: 20,
+            serverSideInitialRowCount: 100,
+            initialState: { pagination: { page: 3, pageSize: 20 } },
+        });
+
+        api.setGridOption('serverSideDatasource', { getRows: () => {} });
+
+        await waitFor(() => expect(api.paginationGetCurrentPage()).toBe(3));
+    });
+
+    test('a row count supplied by a transaction does not cap rows loaded after a handover', async () => {
+        const api = gridsManager.createGrid(null, { ...createGridOptions(), cacheBlockSize: 2 });
+        api.applyServerSideTransaction({
+            add: [
+                { id: 1, value: 'One' },
+                { id: 2, value: 'Two' },
+                { id: 3, value: 'Three' },
+            ],
+        });
+        api.applyServerSideTransaction({ remove: [{ id: 3 }], rowCount: 2 });
+
+        const serverRows = Array.from({ length: 5 }, (_, i) => ({ id: i + 1, value: `Server ${i + 1}` }));
+        api.setGridOption('serverSideDatasource', {
+            getRows: (params) => {
+                const { startRow = 0, endRow = 0 } = params.request;
+                params.success({ rowData: serverRows.slice(startRow, endRow) });
+            },
+        });
+
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(5));
+        await waitFor(() => expect(countLoadingRows(api)).toBe(0));
+        const values: string[] = [];
+        api.forEachNode((node) => values.push(node.data?.value));
+        expect(values).toEqual(serverRows.map((row) => row.value));
     });
 });

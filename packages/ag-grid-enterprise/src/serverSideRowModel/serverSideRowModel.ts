@@ -205,7 +205,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         // the sort and filter listeners do not track changes without a datasource, so the models may be stale
         const { filterModel, sortModel } = this.createStoreParams();
         Object.assign(this.storeParams, { datasource: this.datasource, filterModel, sortModel });
-        this.getRootStore()?.forEachStoreDeep((store) => store.refreshStore(false));
+        this.getRootStore()?.forEachStoreDeep((store) => store.handOverToDatasource());
     }
 
     public applyRowData(rowDataParams: LoadSuccessParams, startRow: number, route: string[]) {

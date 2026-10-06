@@ -82,10 +82,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     }
 
     public postConstruct() {
-        if (this.level === 0) {
-            this.eventSvc.dispatchEventOnce({
-                type: 'rowCountReady',
-            });
+        if (this.level === 0 && this.ssrmParams.datasource) {
+            this.dispatchRowCountReady();
         }
         this.cache = this.createInitialCache();
 
@@ -98,14 +96,17 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         }
     }
 
+    private dispatchRowCountReady(): void {
+        this.eventSvc.dispatchEventOnce({ type: 'rowCountReady' });
+    }
+
     /**
      * With a datasource, the store starts with a stub row which triggers the first load. Without one, rows only
-     * arrive through transactions, so the store starts empty with its size known (inferred, as a datasource set
-     * later may hold more), which lets adds append to it.
+     * arrive through transactions, so the store starts empty with its size known, which lets adds append to it.
      */
     private createInitialCache(): LazyCache {
         if (!this.ssrmParams.datasource) {
-            return this.createManagedBean(new LazyCache(this, 0, true, this.storeParams, true));
+            return this.createManagedBean(new LazyCache(this, 0, true, this.storeParams));
         }
         const numberOfRows = this.level === 0 ? (this.storeUtils.getServerSideInitialRowCount() ?? 1) : 1;
         return this.createManagedBean(new LazyCache(this, numberOfRows, false, this.storeParams));
@@ -212,6 +213,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         if (isClientSideSort && isUpdateOrAdd) {
             // if client side sorting, we need to sort the rows after the transaction
             this.cache.clientSideSortRows();
+        }
+
+        if (this.level === 0 && insertedNodes?.length) {
+            // without a datasource, the first rows only arrive through a transaction
+            this.dispatchRowCountReady();
         }
 
         this.updateSelectionAfterTransaction(updatedNodes, removedNodes);
@@ -736,6 +742,12 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         // call refreshAfterFilter on children, as we did not purge.
         // if we did purge, no need to do this as all children were destroyed
         this.forEachChildStoreShallow((store) => store.refreshAfterFilter(params));
+    }
+
+    /** Reloads rows added by transactions from a newly set datasource, which then decides the store size. */
+    public handOverToDatasource(): void {
+        this.cache.markRowCountInferred();
+        this.cache.markNodesForRefresh();
     }
 
     /**
