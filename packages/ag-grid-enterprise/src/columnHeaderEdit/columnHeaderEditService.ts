@@ -155,7 +155,7 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
                 popup.setValue(initialValue);
             }
         };
-        // A tool panel target may be its own copy of a group; the grid's group is the one that fires on a rename.
+        // Tool panels pass their own copy of a group, which isn't told about renames, so listen on the grid's group.
         const listenerTarget = isProvidedColumnGroup(target) ? getGridColumnGroup(this.beans, target) : target;
         this.removePopupColListener = this.addManagedListeners(listenerTarget, { headerNameChanged: onNameChanged })[0];
 

@@ -855,6 +855,31 @@ describe('Editable group header name', () => {
         });
     });
 
+    test('a rename refreshes the editor opened from the group header menu', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', { columnDefs: groupDefs(), rowData });
+
+        getGridElement(api)!
+            .querySelector('.ag-header-group-cell')!
+            .dispatchEvent(
+                new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 })
+            );
+        await userEvent.click(await findByText(document.body, 'Edit Column Name'));
+        const input = await waitFor(() => {
+            const el = document.querySelector('.ag-column-header-edit-popup-editor input') as HTMLInputElement | null;
+            expect(el?.value).toBe('Group');
+            return el!;
+        });
+
+        api.setState({
+            columnGroup: {
+                openColumnGroupIds: [],
+                headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }],
+            },
+        });
+
+        await waitFor(() => expect(input.value).toBe('Renamed'));
+    });
+
     test('a group header built from a child column name refreshes when the child is renamed', async () => {
         const api = await gridMgr.createGridAndWait('myGrid', {
             columnDefs: groupDefs({
