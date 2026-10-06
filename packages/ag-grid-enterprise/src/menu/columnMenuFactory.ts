@@ -34,6 +34,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         const menuList = parent.createManagedBean(
             new MenuList(0, {
                 column: column ?? null,
+                columnGroup: columnGroup ?? null,
                 node: null,
                 value: null,
             })

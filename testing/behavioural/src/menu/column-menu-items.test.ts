@@ -1,20 +1,30 @@
 import { waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { TestGridsManager, menuOption, openMenuOption, polyfillOffsetParent } from 'ag-test-utils';
+import type { Mock } from 'vitest';
 
-import type { ColumnEventType, ColumnMenuItemsSource, GetColumnMenuItemsParams } from 'ag-grid-community';
+import type {
+    ColumnEventType,
+    ColumnMenuItemsSource,
+    GetColumnMenuItemsParams,
+    GridApi,
+    IMenuActionParams,
+} from 'ag-grid-community';
 import { ClientSideRowModelModule, ValidationModule } from 'ag-grid-community';
 import { AllEnterpriseModule, ColumnMenuModule, ColumnsToolPanelModule } from 'ag-grid-enterprise';
 
 let restoreOffsetParent: (() => void) | undefined;
+
+function fireContextMenu(element: HTMLElement): void {
+    element.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }));
+}
 
 /**
  * Fire a real `contextmenu` MouseEvent on the column entry's focus wrapper — the same path
  * AG Grid uses in production to open the context menu.
  */
 function openContextMenu(entry: HTMLElement): void {
-    const row = (entry.closest('.ag-virtual-list-item') as HTMLElement | null) ?? entry;
-    row.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }));
+    fireContextMenu((entry.closest('.ag-virtual-list-item') as HTMLElement | null) ?? entry);
 }
 
 describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
@@ -128,6 +138,144 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
         await openMenuOption('Add Age to values');
 
         expect(menuOption('Add Age to labels')).toBeNull();
+    });
+});
+
+function headerCell(colId: string): HTMLElement {
+    return document.querySelector<HTMLElement>(`.ag-header-cell[col-id="${colId}"]`)!;
+}
+
+function groupHeaderCells(groupId: string): HTMLElement[] {
+    return Array.from(document.querySelectorAll<HTMLElement>('.ag-header-group-cell[col-id]')).filter((el) =>
+        el.getAttribute('col-id')!.startsWith(`${groupId}_`)
+    );
+}
+
+async function runMenuActionFrom(
+    element: HTMLElement,
+    itemName: string,
+    action: Mock<(params: IMenuActionParams) => void>
+): Promise<IMenuActionParams> {
+    fireContextMenu(element);
+    (await openMenuOption(itemName)).click();
+    await waitFor(() => expect(menuOption(itemName)).toBeNull());
+    expect(action).toHaveBeenCalledTimes(1);
+    const params = action.mock.calls[0][0];
+    action.mockReset();
+    return params;
+}
+
+describe('column menu item action params', () => {
+    const gridMgr = new TestGridsManager({ modules: [AllEnterpriseModule] });
+    const action = vi.fn<(params: IMenuActionParams) => void>();
+    let api: GridApi;
+
+    beforeEach(async () => {
+        api = await gridMgr.createGridAndWait('column-menu-action-params', {
+            columnDefs: [
+                { field: 'athlete' },
+                { field: 'country' },
+                { headerName: 'Time', groupId: 'time', children: [{ field: 'age' }, { field: 'year' }] },
+                { headerName: 'Medals', groupId: 'medals', children: [{ field: 'gold' }, { field: 'silver' }] },
+            ],
+            rowData: [{ athlete: 'Michael Phelps', country: 'United States', age: 23, year: 2008, gold: 8 }],
+            suppressColumnVirtualisation: true,
+            // Moving Country between Age and Year splits the Time group into two header parts.
+            initialState: { columnOrder: { orderedColIds: ['athlete', 'age', 'country', 'year', 'gold', 'silver'] } },
+            getColumnMenuItems: (params) => [...params.defaultItems, { name: 'Log Params', action }],
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+    });
+
+    afterEach(() => {
+        gridMgr.reset();
+        restoreOffsetParent?.();
+        restoreOffsetParent = undefined;
+        action.mockReset();
+    });
+
+    const runLogParamsFrom = (element: HTMLElement) => runMenuActionFrom(element, 'Log Params', action);
+
+    test('a column header menu passes the column and a null column group', async () => {
+        const params = await runLogParamsFrom(headerCell('athlete'));
+
+        expect(params.column).toBe(api.getColumn('athlete'));
+        expect(params.columnGroup).toBeNull();
+    });
+
+    test('a column group header menu passes the column group and a null column', async () => {
+        const params = await runLogParamsFrom(groupHeaderCells('medals')[0]);
+
+        expect(params.column).toBeNull();
+        expect(params.columnGroup).toBe(api.getProvidedColumnGroup('medals'));
+    });
+
+    test('every part of a split column group passes the same column group', async () => {
+        const parts = groupHeaderCells('time');
+        expect(parts).toHaveLength(2);
+
+        const timeGroup = api.getProvidedColumnGroup('time');
+        expect(timeGroup).not.toBeNull();
+        for (const part of parts) {
+            const params = await runLogParamsFrom(part);
+            expect(params.column).toBeNull();
+            expect(params.columnGroup).toBe(timeGroup);
+        }
+    });
+});
+
+describe('column menu item action params from filler group headers', () => {
+    const gridMgr = new TestGridsManager({ modules: [AllEnterpriseModule] });
+    const action = vi.fn<(params: IMenuActionParams) => void>();
+    let api: GridApi;
+
+    beforeEach(async () => {
+        api = await gridMgr.createGridAndWait('column-menu-filler-action-params', {
+            columnDefs: [
+                { field: 'athlete' },
+                {
+                    headerName: 'Results',
+                    groupId: 'results',
+                    children: [
+                        { field: 'year' },
+                        { headerName: 'Medals', groupId: 'medals', children: [{ field: 'gold' }, { field: 'silver' }] },
+                    ],
+                },
+            ],
+            // Filler cells are only rendered when the column header doesn't span the header height.
+            defaultColDef: { suppressSpanHeaderHeight: true },
+            rowData: [{ athlete: 'Michael Phelps', year: 2008, gold: 8, silver: 0 }],
+            suppressColumnVirtualisation: true,
+            getColumnMenuItems: (params) => [...params.defaultItems, { name: 'Log Params', action }],
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+    });
+
+    afterEach(() => {
+        gridMgr.reset();
+        restoreOffsetParent?.();
+        restoreOffsetParent = undefined;
+        action.mockReset();
+    });
+
+    function fillerCellAbove(colId: string): HTMLElement {
+        const fillerGroup = api.getColumn(colId)!.getOriginalParent()!;
+        expect(fillerGroup.isPadding()).toBe(true);
+        return groupHeaderCells(fillerGroup.getGroupId())[0];
+    }
+
+    test('a filler above an ungrouped column passes a null column group', async () => {
+        const params = await runMenuActionFrom(fillerCellAbove('athlete'), 'Log Params', action);
+
+        expect(params.column).toBeNull();
+        expect(params.columnGroup).toBeNull();
+    });
+
+    test('a filler under a column group passes that column group', async () => {
+        const params = await runMenuActionFrom(fillerCellAbove('year'), 'Log Params', action);
+
+        expect(params.column).toBeNull();
+        expect(params.columnGroup).toBe(api.getProvidedColumnGroup('results'));
     });
 });
 
