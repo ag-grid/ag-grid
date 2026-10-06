@@ -3,7 +3,12 @@ import { TestGridsManager, asyncSetTimeout, waitForEvent } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
 import type { ColumnResizedEvent, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ExternalFilterModule, ROW_NUMBERS_COLUMN_ID, getGridElement } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ExternalFilterModule,
+    ROW_NUMBERS_COLUMN_ID,
+    getGridElement,
+} from 'ag-grid-community';
 import { RowNumbersModule } from 'ag-grid-enterprise';
 
 interface RowData {
