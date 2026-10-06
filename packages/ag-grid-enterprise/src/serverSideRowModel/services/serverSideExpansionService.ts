@@ -216,7 +216,12 @@ export class ServerSideExpansionService
                 const storeParams = this.serverSideRowModel.getParams();
                 rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
             }
-        } else if (oldChildStore && this.gos.get('purgeClosedRowNodes')) {
+        } else if (
+            oldChildStore &&
+            this.gos.get('purgeClosedRowNodes') &&
+            this.serverSideRowModel.getParams()?.datasource
+        ) {
+            // without a datasource the purged rows could not be reloaded
             rowNode.childStore = this.destroyBean(oldChildStore)!;
         }
     }

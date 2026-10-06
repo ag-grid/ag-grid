@@ -277,4 +277,23 @@ describe('SSRM without a datasource', () => {
         api.forEachNode((node) => values.push(node.data?.value));
         expect(values).toEqual(serverRows.map((row) => row.value));
     });
+
+    test('collapsing a group with purgeClosedRowNodes keeps its transaction-built children', () => {
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'sport' }],
+            rowModelType: 'serverSide',
+            purgeClosedRowNodes: true,
+            getRowId: (params) => [...(params.parentKeys ?? []), params.data.country ?? params.data.sport].join('-'),
+            isServerSideGroupOpenByDefault: () => true,
+        });
+        api.applyServerSideTransaction({ route: [], add: [{ country: 'Ireland' }] });
+        api.applyServerSideTransaction({ route: ['Ireland'], add: [{ sport: 'Rowing' }, { sport: 'Boxing' }] });
+        const group = api.getRowNode('Ireland')!;
+
+        api.setRowNodeExpanded(group, false);
+        api.setRowNodeExpanded(group, true);
+
+        expect(api.getDisplayedRowCount()).toBe(3);
+        expect(countLoadingRows(api)).toBe(0);
+    });
 });
