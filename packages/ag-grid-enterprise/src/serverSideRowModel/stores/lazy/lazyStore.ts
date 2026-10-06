@@ -100,11 +100,12 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     /**
      * With a datasource, the store starts with a stub row which triggers the first load. Without one, rows only
-     * arrive through transactions, so the store starts empty with its size known, which lets adds append to it.
+     * arrive through transactions, so the store starts empty with its size known (inferred, as a datasource set
+     * later may hold more), which lets adds append to it.
      */
     private createInitialCache(): LazyCache {
         if (!this.ssrmParams.datasource) {
-            return this.createManagedBean(new LazyCache(this, 0, true, this.storeParams));
+            return this.createManagedBean(new LazyCache(this, 0, true, this.storeParams, true));
         }
         const numberOfRows = this.level === 0 ? (this.storeUtils.getServerSideInitialRowCount() ?? 1) : 1;
         return this.createManagedBean(new LazyCache(this, numberOfRows, false, this.storeParams));

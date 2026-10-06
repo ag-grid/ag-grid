@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { GridRows, TestGridsManager } from 'ag-test-utils';
 import { countLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { GridOptions, ServerSideTransactionResult } from 'ag-grid-community';
@@ -131,14 +131,53 @@ describe('SSRM without a datasource', () => {
         expect(api.getDisplayedRowCount()).toBe(3);
     });
 
-    test('setting a datasource afterwards replaces the transaction-built store', async () => {
+    test('setting a datasource afterwards hands rows over without showing loading rows', async () => {
+        const api = gridsManager.createGrid(null, { ...createGridOptions(), rowSelection: { mode: 'multiRow' } });
+        api.applyServerSideTransaction({
+            add: [
+                { id: 1, value: 'One' },
+                { id: 2, value: 'Two' },
+            ],
+        });
+        const nodeOne = api.getRowNode('1')!;
+        nodeOne.setSelected(true);
+
+        let respond: (() => void) | undefined;
+        api.setGridOption('serverSideDatasource', {
+            getRows: (params) => {
+                respond = () =>
+                    params.success({
+                        rowData: [
+                            { id: 1, value: 'One from server' },
+                            { id: 3, value: 'Three' },
+                            { id: 4, value: 'Four' },
+                        ],
+                        rowCount: 3,
+                    });
+            },
+        });
+
+        await waitFor(() => expect(respond).toBeDefined());
+        expect(countLoadingRows(api)).toBe(0);
+        expect(api.getDisplayedRowCount()).toBe(2);
+
+        respond!();
+
+        await new GridRows(api, 'after handover').check(`
+            ROOT id:<no-id>
+            ├── LEAF selected id:1 id:1 value:"One from server"
+            ├── LEAF id:3 id:3 value:"Three"
+            └── LEAF id:4 id:4 value:"Four"
+        `);
+        expect(api.getRowNode('1')).toBe(nodeOne);
+    });
+
+    test('setting a datasource on an empty store loads from the datasource', async () => {
         const api = gridsManager.createGrid(null, createGridOptions());
-        api.applyServerSideTransaction({ add: [{ id: 1, value: 'One' }] });
 
         api.setGridOption('serverSideDatasource', {
             getRows: (params) => params.success({ rowData: [{ id: 10, value: 'Ten' }], rowCount: 1 }),
         });
-        await waitForEvent('firstDataRendered', api);
 
         await new GridRows(api, 'after datasource').check(`
             ROOT id:<no-id>

@@ -190,9 +190,22 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             return;
         }
 
+        const handOver = !this.datasource && !!this.getRootStore();
         this.destroyDatasource();
         this.datasource = datasource;
+        if (handOver) {
+            this.handOverToDatasource();
+            return;
+        }
         this.resetRootStore();
+    }
+
+    /** Reloads transaction-built stores in place, so their rows stay displayed and matching nodes are kept. */
+    private handOverToDatasource(): void {
+        // the sort and filter listeners do not track changes without a datasource, so the models may be stale
+        const { filterModel, sortModel } = this.createStoreParams();
+        Object.assign(this.storeParams, { datasource: this.datasource, filterModel, sortModel });
+        this.getRootStore()?.forEachStoreDeep((store) => store.refreshStore(false));
     }
 
     public applyRowData(rowDataParams: LoadSuccessParams, startRow: number, route: string[]) {
