@@ -930,6 +930,7 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     calculatedColumnExpressionAmbiguousReference:
         'Dvosmislena referenca kolone "${variable}". Koristite listu Kolone ili precizniju putanju grupe.',
     calculatedColumnExpressionUnknownReference: 'Nepoznata referenca kolone "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Kolona "${variable}" ne može da se koristi u ovom izrazu.',
     calculatedColumnExpressionEmpty: 'Unesite izraz',
     calculatedColumnTitleEmpty: 'Unesite naslov',
     calculatedColumnApply: 'Primeni',

@@ -908,6 +908,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     calculatedColumnExpressionAmbiguousReference:
         'הפניית עמודה דו-משמעית "${variable}". השתמש ברשימת העמודות או בנתיב קבוצה ספציפי יותר.',
     calculatedColumnExpressionUnknownReference: 'הפניית עמודה לא ידועה "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'לא ניתן להשתמש בעמודה "${variable}" בביטוי זה.',
     calculatedColumnExpressionEmpty: 'הזן ביטוי',
     calculatedColumnTitleEmpty: 'הזן כותרת',
     calculatedColumnApply: 'החל',

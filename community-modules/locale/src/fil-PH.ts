@@ -938,6 +938,8 @@ export const AG_GRID_LOCALE_FIL_PH = {
     calculatedColumnExpressionAmbiguousReference:
         'Malabo ang reference ng column "${variable}". Gamitin ang listahan ng Column o mas tiyak na landas ng grupo.',
     calculatedColumnExpressionUnknownReference: 'Hindi kilalang reference ng column "${variable}".',
+    calculatedColumnExpressionRestrictedReference:
+        'Hindi maaaring gamitin ang column na "${variable}" sa expression na ito.',
     calculatedColumnExpressionEmpty: 'Maglagay ng expression',
     calculatedColumnTitleEmpty: 'Maglagay ng pamagat',
     calculatedColumnApply: 'Ilapat',

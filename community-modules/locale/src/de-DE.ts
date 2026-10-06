@@ -917,6 +917,8 @@ export const AG_GRID_LOCALE_DE_DE = {
     calculatedColumnExpressionAmbiguousReference:
         'Mehrdeutiger Spaltenverweis "${variable}". Verwenden Sie die Spaltenliste oder einen spezifischeren Gruppenpfad.',
     calculatedColumnExpressionUnknownReference: 'Unbekannter Spaltenverweis "${variable}".',
+    calculatedColumnExpressionRestrictedReference:
+        'Die Spalte "${variable}" kann in diesem Ausdruck nicht verwendet werden.',
     calculatedColumnExpressionEmpty: 'Geben Sie einen Ausdruck ein',
     calculatedColumnTitleEmpty: 'Geben Sie einen Titel ein',
     calculatedColumnApply: 'Anwenden',

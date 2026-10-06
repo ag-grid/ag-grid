@@ -36,7 +36,7 @@ Register [Cell Data Types](./cell-data-types/) to give users formatting options 
 
 Calculated expressions do not need a leading equals sign (`=`). The value inside brackets must match a column `colId`, which defaults to the `field` when no explicit `colId` is provided.
 
-Calculated Columns are supported with all row models. Same-row bracket references are reliable everywhere. Cross-row and range references depend on the referenced rows being loaded in the current row model.
+Calculated Columns are supported with all row models.
 
 For Server-Side, Infinite and Viewport Row Models, sorting and filtering are datasource or server responsibilities. The grid displays calculated values for loaded rows, but does not client-sort or client-filter remote datasets by calculated results.
 
@@ -61,6 +61,8 @@ A calculated column can also be a pivot column (`pivot: true`): its per-row resu
 Register the Column Menu so users can add a calculated column from the header menu with **Add Calculated Column**. The header menu on a calculated column shows **Edit Calculated Column** to change its title, type and expression, and **Remove Calculated Column** to remove it. Right-clicking cells in a calculated column also shows **Remove Calculated Column**.
 
 The dialog shows references by header name, for example `[Revenue]`. When headers are duplicated under groups, it uses the shortest unique group path, such as `[2025 Q4]` and `[2026 Q4]`. It translates these display references back to `colId` references before updating the column definition.
+
+In dialog references, a literal `]` in a header name is escaped as `]]`. For example, the header `Revenue [USD]` appears as `[Revenue [USD]]]`. The Columns picker inserts the escaped reference automatically; stored `colId` references are unchanged.
 
 If two columns share the same header _and_ the same group hierarchy, the dialog falls back to appending the `colId`, for example `[2025 Q4 (revenue-q4)]`. This keeps the reference stable when columns are reordered. Give your columns distinct headers or group hierarchies to avoid this.
 
@@ -132,6 +134,33 @@ This only controls the expression picker buttons. Use an empty array or `null` t
 
 {% gridExampleRunner title="Dialog Expression Pickers" name="calculated-columns-dialog-helper-lists" /%}
 
+### isColumnReferenceable
+
+Use `isColumnReferenceable` to control which source columns can be referenced in the dialog. Return `false` to hide a column from the Columns picker and inline autocomplete, and reject manually entered references to it:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: {
+        isColumnReferenceable: ({ colDef, calculatedColumn }) =>
+            colDef.field !== 'salary' || calculatedColumn?.getColId() === 'bonus',
+    },
+};
+```
+
+The callback runs when the dialog opens. It receives the source `column` and `colDef`, the `calculatedColumn` being edited, and the usual `api` and `context` parameters. `calculatedColumn` is `null` when adding a new column in either apply mode. Changes to application state take effect the next time the dialog opens; they do not update an already-open picker.
+
+An existing expression that was not blocked by the dialog can be kept unchanged even if it references a restricted column. Users can apply it in deferred mode or change its title and type in either mode. Once the expression text differs from the text displayed when the dialog opened, restricted references are blocked, including edits to casing, whitespace or arithmetic. Restoring the original permitted expression text clears the restriction error.
+
+In deferred mode, a blocked reference disables Apply. In live mode, the full expression is saved with its restriction error, and cells display `#REF!` instead of evaluating it. Closing and reopening the dialog preserves the full expression and error so the user can correct it. Changing the title or type does not clear the restriction. The blocked status is also preserved by Grid State and `api.getColumnDefs()`.
+
+Programmatic `calculatedExpression` values remain unrestricted. Restoring state preserves whether an expression was permitted or blocked; it does not apply new restrictions to previously permitted expressions. This is an editor restriction, not a data-security boundary.
+
+Visibility does not affect eligibility: hidden columns can be offered, and visible columns can be restricted. The picker uses primary columns in and out of pivot mode, excludes generated service columns, and keeps reference names stable when other columns are restricted.
+
+The following example permits Salary references when editing Bonus but excludes them when editing Sales Target or adding a new calculated column.
+
+{% gridExampleRunner title="Dialog Reference Restrictions" name="calculated-columns-reference-restrictions" /%}
+
 ### suppressColumnHighlighting
 
 Use `suppressColumnHighlighting` to disable the highlight while the dialog is open:
@@ -149,7 +178,7 @@ const gridOptions = {
 
 ### applyMode
 
-By default, dialog edits apply to the column immediately: **Add Calculated Column** creates the column and opens the dialog over it, and title, type and expression changes update the column as you type. Closing the dialog keeps the latest state; remove the column with **Remove Calculated Column**. An empty expression renders blank cells, and invalid or incomplete expressions render formula errors until fixed.
+By default, dialog edits apply to the column immediately: **Add Calculated Column** creates the column and opens the dialog over it, and title, type and expression changes update the column as you type. Closing the dialog keeps the latest state; remove the column with **Remove Calculated Column**. An empty expression renders blank cells, and invalid or incomplete expressions render formula errors until fixed. Expression edits containing references excluded by `isColumnReferenceable` are saved but blocked from evaluation, preserving the full text for correction.
 
 Set `applyMode: 'deferred'` to hold changes until you click **Apply** instead. In deferred mode the dialog shows Apply and Cancel buttons and validates the expression, so you cannot apply an invalid one:
 

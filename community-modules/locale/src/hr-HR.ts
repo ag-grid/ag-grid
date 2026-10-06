@@ -912,6 +912,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     calculatedColumnExpressionAmbiguousReference:
         'Dvosmislena referenca stupca "${variable}". Upotrijebite popis Stupci ili određeniju putanju grupe.',
     calculatedColumnExpressionUnknownReference: 'Nepoznata referenca stupca "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Stupac "${variable}" ne može se koristiti u ovom izrazu.',
     calculatedColumnExpressionEmpty: 'Unesite izraz',
     calculatedColumnTitleEmpty: 'Unesite naslov',
     calculatedColumnApply: 'Primijeni',

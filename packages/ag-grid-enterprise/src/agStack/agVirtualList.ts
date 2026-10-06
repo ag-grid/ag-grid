@@ -31,6 +31,8 @@ import type { VirtualListModel } from './iVirtualList';
 export interface VirtualListParams<C> {
     cssIdentifier?: string;
     ariaRole?: string;
+    /** Keep list semantics for an open, empty picker. */
+    retainRoleWhenEmpty?: boolean;
     listName?: string;
     moveItemCallback?: (item: C, isUp: boolean) => void;
 }
@@ -78,6 +80,7 @@ export class AgVirtualList<
 > {
     private readonly cssIdentifier: string;
     private readonly ariaRole: string;
+    private readonly retainRoleWhenEmpty: boolean;
     private readonly listName?: string;
 
     protected model: VirtualListModel;
@@ -104,6 +107,7 @@ export class AgVirtualList<
 
         this.cssIdentifier = cssIdentifier;
         this.ariaRole = ariaRole;
+        this.retainRoleWhenEmpty = params?.retainRoleWhenEmpty ?? false;
         this.listName = listName;
         this.moveItemCallback = moveItemCallback;
     }
@@ -140,7 +144,10 @@ export class AgVirtualList<
         const listName = translate('ariaDefaultListName', this.listName || 'List');
         const ariaEl = this.eContainer;
 
-        _setAriaRole(ariaEl, this.model?.getRowCount() > 0 ? this.ariaRole : 'presentation');
+        _setAriaRole(
+            ariaEl,
+            this.retainRoleWhenEmpty || this.model?.getRowCount() > 0 ? this.ariaRole : 'presentation'
+        );
         _setAriaLabel(ariaEl, listName);
     }
 

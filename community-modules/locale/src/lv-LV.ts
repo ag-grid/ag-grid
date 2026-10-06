@@ -932,6 +932,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     calculatedColumnExpressionAmbiguousReference:
         'Neviennozīmīga kolonnas atsauce "${variable}". Izmantojiet kolonnu sarakstu vai precīzāku grupas ceļu.',
     calculatedColumnExpressionUnknownReference: 'Nezināma kolonnas atsauce "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Kolonnu "${variable}" nevar izmantot šajā izteiksmē.',
     calculatedColumnExpressionEmpty: 'Ievadiet izteiksmi',
     calculatedColumnTitleEmpty: 'Ievadiet nosaukumu',
     calculatedColumnApply: 'Piemērot',

@@ -909,6 +909,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     calculatedColumnExpressionAmbiguousReference:
         'مبہم کالم حوالہ "${variable}"۔ کالمز کی فہرست یا زیادہ مخصوص گروپ راستہ استعمال کریں۔',
     calculatedColumnExpressionUnknownReference: 'نامعلوم کالم حوالہ "${variable}"۔',
+    calculatedColumnExpressionRestrictedReference: 'اس اظہار میں کالم "${variable}" استعمال نہیں کیا جا سکتا۔',
     calculatedColumnExpressionEmpty: 'ایک اظہار درج کریں۔',
     calculatedColumnTitleEmpty: 'ایک عنوان درج کریں۔',
     calculatedColumnApply: 'لاگو کریں',

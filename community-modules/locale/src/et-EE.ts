@@ -930,6 +930,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     calculatedColumnExpressionAmbiguousReference:
         'Mitmetähenduslik veeruviide "${variable}". Kasuta veergude loendit või täpsemat rühmateed.',
     calculatedColumnExpressionUnknownReference: 'Tundmatu veeruviide "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Veergu "${variable}" ei saa selles avaldises kasutada.',
     calculatedColumnExpressionEmpty: 'Sisesta avaldis',
     calculatedColumnTitleEmpty: 'Sisesta pealkiri',
     calculatedColumnApply: 'Rakenda',
