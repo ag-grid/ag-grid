@@ -285,7 +285,7 @@
 }
 
 .ag-advanced-filter-builder-virtual-list-viewport {
-    scrollbar-width: thin;
+    scrollbar-width: var(--ag-scrollbar-width, thin);
 }
 
 .ag-advanced-filter-builder-virtual-list-container {

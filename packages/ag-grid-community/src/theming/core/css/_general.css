@@ -48,6 +48,16 @@
     background-color: var(--ag-data-background-color);
 }
 
+:where(.ag-body-horizontal-scroll:not(.ag-scrollbar-invisible)) > .ag-body-horizontal-scroll-viewport,
+:where(.ag-body-horizontal-scroll:not(.ag-scrollbar-invisible)) > .ag-body-horizontal-scroll-end-spacer {
+    border-top: var(--ag-body-scrollbar-border);
+}
+
+:where(.ag-body-vertical-scroll:not(.ag-scrollbar-invisible)) > .ag-body-vertical-scroll-viewport,
+.ag-scrollbar-probe {
+    border-inline-start: var(--ag-body-scrollbar-border);
+}
+
 .ag-viewport {
     position: relative;
 }

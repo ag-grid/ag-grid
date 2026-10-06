@@ -71,8 +71,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
 
         eGui.style.bottom = `${horizontalScrollHeight}px`;
         this.eSpacer.style.height = `${headerRowsOffset}px`;
-
-        this.toggleCss('ag-scrollbar-invisible', invisibleScrollbar);
+        this.toggleCss('ag-scrollbar-invisible', !!invisibleScrollbar);
         _setFixedWidth(eGui, adjustedScrollbarWidth);
         _setFixedWidth(this.eViewport, adjustedScrollbarWidth);
         _setFixedWidth(this.eContainer, adjustedScrollbarWidth);

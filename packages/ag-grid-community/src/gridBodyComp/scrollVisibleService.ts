@@ -1,11 +1,11 @@
-import { _getScrollbarWidth, _isInvisibleScrollbar } from 'ag-stack';
-
 import type { ColumnAnimationService } from '../columnMove/columnAnimationService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { CtrlsService } from '../ctrlsService';
+import type { StylesChangedEvent } from '../events';
 import { _canScrollVertically } from '../gridOptionsUtils';
+import { _createElement } from '../utils/element';
 import type { GridBodyCtrl } from './gridBodyCtrl';
 
 interface ScrollVisibilityState {
@@ -25,8 +25,8 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     private ctrlsSvc: CtrlsService;
     private colAnimation?: ColumnAnimationService;
 
-    // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
-    private scrollbarWidth: number;
+    private scrollbarWidth: number | undefined;
+    private invisibleScrollbar: boolean | undefined;
     private refreshTimer = 0;
 
     public wireBeans(beans: BeanCollection) {
@@ -50,14 +50,18 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
         this.horizontalScrollShowing = gos.get('alwaysShowHorizontalScroll') === true;
         this.verticalScrollShowing = gos.get('alwaysShowVerticalScroll') === true;
 
-        // sets an initial calculation for the scrollbar width
-        this.getScrollbarWidth();
+        this.ctrlsSvc.whenReady(this, () => this.measureScrollbar());
 
         const refresh = this.refresh.bind(this);
         this.addManagedEventListeners({
             displayedColumnsChanged: refresh,
             displayedColumnsWidthChanged: refresh,
             newColumnsLoaded: refresh,
+            stylesChanged: (event: StylesChangedEvent) => {
+                if (event.themeChanged) {
+                    this.measureScrollbar();
+                }
+            },
         });
     }
 
@@ -157,14 +161,14 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     }
 
     private getHorizontalScrollbarLayoutHeight(horizontalScrollShowing: boolean): number {
-        if (!horizontalScrollShowing || this.gos.get('suppressHorizontalScroll') || _isInvisibleScrollbar()) {
+        if (!horizontalScrollShowing || this.gos.get('suppressHorizontalScroll') || this.isInvisibleScrollbar()) {
             return 0;
         }
         return this.getScrollbarWidth() || 0;
     }
 
     private getAppliedHorizontalScrollbarLayoutHeight(): number {
-        if (this.gos.get('suppressHorizontalScroll') || _isInvisibleScrollbar()) {
+        if (this.gos.get('suppressHorizontalScroll') || this.isInvisibleScrollbar()) {
             return 0;
         }
         const height = Number.parseFloat(this.ctrlsSvc.get('fakeHScrollComp')?.getGui().style.height ?? '');
@@ -233,21 +237,70 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
     // the user might be using some non-standard scrollbar, eg a scrollbar that has zero
     // width and overlays (like the Safari scrollbar, but presented in Chrome). so we
     // allow the user to provide the scroll width before we work it out.
-    public getScrollbarWidth() {
+    public getScrollbarWidth(): number | undefined {
         if (this.scrollbarWidth == null) {
-            const gridOptionsScrollbarWidth = this.gos.get('scrollbarWidth');
-            const useGridOptions = typeof gridOptionsScrollbarWidth === 'number' && gridOptionsScrollbarWidth >= 0;
-            const scrollbarWidth = useGridOptions ? gridOptionsScrollbarWidth : _getScrollbarWidth();
+            this.measureScrollbar();
+        }
+        return this.scrollbarWidth;
+    }
 
-            if (scrollbarWidth != null) {
-                this.scrollbarWidth = scrollbarWidth;
+    /** True for overlay scrollbars that take up no space, undefined until the grid can be measured. */
+    public isInvisibleScrollbar(): boolean | undefined {
+        if (this.invisibleScrollbar == null) {
+            this.measureScrollbar();
+        }
+        return this.invisibleScrollbar;
+    }
 
-                this.eventSvc.dispatchEvent({
-                    type: 'scrollbarWidthChanged',
-                });
-            }
+    private measureScrollbar(): void {
+        const measured = this.measureScrollbarProbe();
+        if (measured == null) {
+            return;
         }
 
-        return this.scrollbarWidth;
+        const { nativeWidth, borderWidth } = measured;
+        const gridOptionsScrollbarWidth = this.gos.get('scrollbarWidth');
+        const useGridOptions = typeof gridOptionsScrollbarWidth === 'number' && gridOptionsScrollbarWidth >= 0;
+        const invisibleScrollbar = nativeWidth === 0;
+        const scrollbarWidth =
+            (useGridOptions ? gridOptionsScrollbarWidth : nativeWidth) + (invisibleScrollbar ? 0 : borderWidth);
+
+        if (scrollbarWidth !== this.scrollbarWidth || invisibleScrollbar !== this.invisibleScrollbar) {
+            this.scrollbarWidth = scrollbarWidth;
+            this.invisibleScrollbar = invisibleScrollbar;
+
+            this.eventSvc.dispatchEvent({
+                type: 'scrollbarWidthChanged',
+            });
+        }
+    }
+
+    private measureScrollbarProbe(): { nativeWidth: number; borderWidth: number } | null {
+        const eGridBody = this.ctrlsSvc.getGridBodyCtrl()?.eGridBody;
+        if (!eGridBody) {
+            return null;
+        }
+
+        const probe = _createElement({ tag: 'div', cls: 'ag-body-vertical-scroll-viewport ag-scrollbar-probe' });
+        const style = probe.style as CSSStyleDeclaration & { msOverflowStyle?: string };
+        style.width = style.height = '100px';
+        style.opacity = '0';
+        style.overflow = 'scroll';
+        style.msOverflowStyle = 'scrollbar'; // needed for WinJS apps
+        style.position = 'absolute';
+
+        eGridBody.appendChild(probe);
+        const clientWidth = probe.clientWidth;
+        const totalWidth = probe.offsetWidth - clientWidth;
+        const computed = getComputedStyle(probe);
+        const borderWidth =
+            (Number.parseFloat(computed.borderLeftWidth) || 0) + (Number.parseFloat(computed.borderRightWidth) || 0);
+        probe.remove();
+
+        // a zero client width means the probe was not laid out, e.g. the grid is not displayed yet
+        if (totalWidth === 0 && clientWidth === 0) {
+            return null;
+        }
+        return { nativeWidth: Math.max(0, totalWidth - borderWidth), borderWidth };
     }
 }

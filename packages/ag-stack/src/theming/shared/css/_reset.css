@@ -3,6 +3,7 @@
 :where([class^='ag-'])::after,
 :where([class^='ag-'])::before {
     box-sizing: border-box;
+    scrollbar-width: var(--ag-scrollbar-width);
 }
 
 /* stylelint-disable-next-line ag/no-low-performance-key-selector -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */

@@ -64,6 +64,11 @@ export interface CoreParams extends SharedThemeParams {
     autoHeightMinBodyHeight: LengthValue;
 
     /**
+     * Border along the edge of the grid's scrollbars that faces the grid content (above the horizontal scrollbar and beside the vertical scrollbar). The border takes up space in addition to the scrollbar. Not drawn for overlay scrollbars that only appear while scrolling.
+     */
+    bodyScrollbarBorder: BorderValue;
+
+    /**
      * Padding at the start and end of grid cells and header cells.
      */
     cellHorizontalPadding: LengthValue;
@@ -842,6 +847,7 @@ export interface CoreParams extends SharedThemeParams {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> = {
     wrapperBorder: true,
+    bodyScrollbarBorder: false,
     rowBorder: true,
     headerRowBorder: true,
     footerRowBorder: {

@@ -6,6 +6,7 @@ import type {
     FontWeightValue,
     LengthValue,
     ScaleValue,
+    ScrollbarWidthValue,
     ShadowValue,
 } from '../themeTypes';
 import {
@@ -272,6 +273,21 @@ export interface SharedThemeParams {
     rowHoverColor: ColorValue;
 
     /**
+     * Color of the draggable thumb of scrollbars in the grid. Must be set together with `scrollbarTrackColor`: if either is "unset" (the default for both), neither is applied and scrollbars inherit the scrollbar-color of the surrounding page.
+     */
+    scrollbarThumbColor: ColorValue;
+
+    /**
+     * Color of the track behind the thumb of scrollbars in the grid. Must be set together with `scrollbarThumbColor`: if either is "unset" (the default for both), neither is applied and scrollbars inherit the scrollbar-color of the surrounding page.
+     */
+    scrollbarTrackColor: ColorValue;
+
+    /**
+     * The CSS scrollbar-width for scrollbars in the grid: "auto", "thin" or "none". The default "unset" leaves most scrollbars at the browser default, and some compact UI elements like the status bar and tool panels use thin scrollbars.
+     */
+    scrollbarWidth: ScrollbarWidthValue;
+
+    /**
      * Amount of spacing around and inside UI elements. All padding and margins in the grid are defined as a multiple of this value.
      */
     spacing: LengthValue;
@@ -438,6 +454,9 @@ export const sharedDefaults: Readonly<SharedThemeParams> = {
     },
     iconSize: 16,
     iconColor: 'inherit',
+    scrollbarThumbColor: 'unset',
+    scrollbarTrackColor: 'unset',
+    scrollbarWidth: 'unset',
     toggleButtonWidth: 28,
     toggleButtonHeight: 18,
     toggleButtonOnBackgroundColor: accentColor,
