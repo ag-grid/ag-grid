@@ -1622,7 +1622,7 @@
                                         },
                                         {
                                             "type": "item",
-                                            "title": "Buttons & Deferred Updates",
+                                            "title": "Deferred Updates",
                                             "path": "tool-panel-columns-deferred-updates",
                                             "isEnterprise": true
                                         },
@@ -1634,7 +1634,7 @@
                                         },
                                         {
                                             "type": "item",
-                                            "title": "Column Layout & API",
+                                            "title": "API",
                                             "path": "tool-panel-columns-layout",
                                             "isEnterprise": true
                                         }

@@ -34,7 +34,13 @@ test.agExample(import.meta, () => {
         await expect(page.locator('.ag-menu-option-text', { hasText: 'Add Silver to values' })).toBeVisible();
         // colDef.columnMenuItems takes priority, so getColumnMenuItems never runs for this column
         await expect(page.locator('.ag-menu-option-text', { hasText: 'Highlight Column' })).toHaveCount(0);
-        await page.keyboard.press('Escape');
+        // The popup only listens for Escape from the next tick, so retry until the menu closes.
+        await expect(async () => {
+            await page.keyboard.press('Escape');
+            await expect(page.locator('.ag-menu-option-text', { hasText: 'Add Silver to values' })).toHaveCount(0, {
+                timeout: 500,
+            });
+        }).toPass();
 
         // Bronze's static array restricts the menu to only the "value" token
         await page.locator('.ag-column-select-column', { hasText: 'Bronze' }).click({ button: 'right' });

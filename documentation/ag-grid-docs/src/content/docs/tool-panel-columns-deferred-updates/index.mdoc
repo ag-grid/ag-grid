@@ -1,5 +1,5 @@
 ---
-title: "Columns Tool Panel - Buttons & Deferred Updates"
+title: "Columns Tool Panel - Deferred Updates"
 enterprise: true
 ---
 
@@ -58,5 +58,7 @@ The example below demonstrates Deferred Updates. Note the following:
 {% note %}
 Changes made outside the Columns Tool Panel, such as dragging columns into the Row Group or Pivot Panels, using the Column Menu, or calling the Grid API, are applied immediately and clear any pending changes. Column pinning, resizing and group expansion do not clear pending changes.
 {% /note %}
+
+## Server-Side Row Model
 
 With the [Server-Side Row Model](./server-side-model/), Deferred Updates batch several configuration changes into a single server request. See [Deferred Column Configuration](./server-side-model-grouping/#deferred-column-configuration) for an example.

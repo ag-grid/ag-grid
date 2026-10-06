@@ -61,24 +61,24 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
 };
 
-function showPivotModeSection() {
+function togglePivotModeSection() {
     const columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
-    columnToolPanel.setPivotModeSectionVisible(true);
+    columnToolPanel.setPivotModeSectionVisible(document.querySelector<HTMLInputElement>('#pivotModeSection')!.checked);
 }
 
-function showRowGroupsSection() {
+function toggleRowGroupsSection() {
     const columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
-    columnToolPanel.setRowGroupsSectionVisible(true);
+    columnToolPanel.setRowGroupsSectionVisible(document.querySelector<HTMLInputElement>('#rowGroupsSection')!.checked);
 }
 
-function showValuesSection() {
+function toggleValuesSection() {
     const columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
-    columnToolPanel.setValuesSectionVisible(true);
+    columnToolPanel.setValuesSectionVisible(document.querySelector<HTMLInputElement>('#valuesSection')!.checked);
 }
 
-function showPivotSection() {
+function togglePivotSection() {
     const columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
-    columnToolPanel.setPivotSectionVisible(true);
+    columnToolPanel.setPivotSectionVisible(document.querySelector<HTMLInputElement>('#pivotSection')!.checked);
 }
 
 // setup the grid after the page has finished loading

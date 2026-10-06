@@ -25,17 +25,22 @@ test.agExample(import.meta, () => {
         // The 'date' column is removed from the tool panel via colDef.suppressColumnsToolPanel=true.
         await expect(panel.locator('.ag-column-select-column-label', { hasText: 'Date' })).toHaveCount(0);
 
-        // Each button invokes the corresponding IColumnToolPanel section-visibility method.
-        await page.getByRole('button', { name: 'Show Pivot Mode Section' }).click();
-        await expect(pivotMode).toBeVisible();
+        // Each checkbox toggles the corresponding IColumnToolPanel section-visibility method on and off.
+        const toggles = [
+            { id: '#pivotModeSection', section: pivotMode },
+            { id: '#rowGroupsSection', section: rowGroups },
+            { id: '#valuesSection', section: values },
+            { id: '#pivotSection', section: columnLabels },
+        ];
 
-        await page.getByRole('button', { name: 'Show Row Groups Section' }).click();
-        await expect(rowGroups).toBeVisible();
+        for (const { id, section } of toggles) {
+            await page.locator(id).check();
+            await expect(section).toBeVisible();
+        }
 
-        await page.getByRole('button', { name: 'Show Values Section' }).click();
-        await expect(values).toBeVisible();
-
-        await page.getByRole('button', { name: 'Show Pivot Section' }).click();
-        await expect(columnLabels).toBeVisible();
+        for (const { id, section } of toggles) {
+            await page.locator(id).uncheck();
+            await expect(section).toBeHidden();
+        }
     });
 });

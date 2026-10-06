@@ -3,7 +3,15 @@ title: "Columns Tool Panel - Configuration"
 enterprise: true
 ---
 
-Configure the Columns Tool Panel through `toolPanelParams`, show and hide its sections, and prevent changes to grouping, aggregation and pivoting.
+Configure the Columns Tool Panel through `toolPanelParams`: show and hide its sections and columns, control the column order, and prevent changes to grouping, aggregation and pivoting.
+
+{% gridExampleRunner title="Tool Panel Simple" name="simple"  exampleHeight=630 /%}
+
+The example above shows the Columns Tool Panel with its default configuration, `sideBar: 'columns'`. Note the following:
+
+- Columns can only be dragged into the Row Groups, Values and Column Labels sections when their column definition allows it, using `enableRowGroup`, `enableValue` and `enablePivot` respectively.
+- The athlete, age, country, year, date and sport columns set `enableRowGroup` and `enablePivot`, so they can be dragged to the Row Groups and Column Labels sections.
+- The medal columns set `enableValue`, so they can be dragged to the Values section.
 
 ## Tool Panel Parameters
 
@@ -19,24 +27,115 @@ The Columns section and the [Column Chooser](./column-chooser/) use the same col
 
 ## Section Visibility
 
-Use the parameters starting `suppress*` above to remove controls and sections from the Columns Tool Panel.
+Use the following parameters to remove sections from the Columns Tool Panel:
+
+{% interfaceDocumentation interfaceName="IToolPanelColumnCompParams" names=["suppressPivotMode", "suppressRowGroups", "suppressValues", "suppressPivots"] config={"description":"", "overrideBottomMargin":"1rem"} /%}
+
+Use the following parameters to remove controls from the top area:
+
+{% interfaceDocumentation interfaceName="IColumnSelectionPanelParams" names=["suppressColumnExpandAll", "suppressColumnSelectAll", "suppressColumnFilter"] config={"description":"", "overrideBottomMargin":"1rem"} /%}
+
+To show or hide sections after the grid is created, call `setPivotModeSectionVisible()`, `setRowGroupsSectionVisible()`, `setValuesSectionVisible()` or `setPivotSectionVisible()` on the [Columns Tool Panel instance](./tool-panel-columns-layout/#columns-tool-panel-instance). The top area controls have no equivalent methods.
+
+The example below hides all of these sections and controls with the parameters above. Note the following:
+
+- The **Pivot Mode**, **Row Groups**, **Values** and **Column Labels** checkboxes show and hide each section using the methods above.
+- The Expand / Collapse All, Select / Unselect All and Search controls stay hidden, as they can only be set through `toolPanelParams`.
+- The date column is hidden from the tool panel; see [Hiding Columns](#hiding-columns).
+
+{% gridExampleRunner title="Section Visibility" name="section-visibility"  exampleHeight=630 /%}
+
+## Hiding Columns
 
 To remove a column from the tool panel, set `suppressColumnsToolPanel` on its column definition. This is useful for a column that works in the background, such as one the grid groups by, that users should not see.
 
 {% apiDocumentation source="column-properties/properties.json" section="columns" names=["suppressColumnsToolPanel"] /%}
 
-To show or hide sections after the grid is created, call `setPivotModeSectionVisible()`, `setRowGroupsSectionVisible()`, `setValuesSectionVisible()` or `setPivotSectionVisible()` on the [Columns Tool Panel instance](./tool-panel-columns-layout/#columns-tool-panel-instance).
+## Suppress Column Reordering
 
-The example below hides sections with these options and shows them again with the methods. Note the following:
+By default, reordering columns in the grid also reorders them in the Columns section. Set `suppressSyncLayoutWithGrid` to keep the tool panel order fixed.
 
-- The Row Groups, Values, Column Labels and Pivot Mode sections are hidden, along with the column filter, Select / Unselect All and Expand / Collapse All.
-- The date column is hidden from the tool panel using `suppressColumnsToolPanel=true`.
-- **Show Pivot Mode Section** calls `setPivotModeSectionVisible(true)`.
-- **Show Row Groups Section** calls `setRowGroupsSectionVisible(true)`.
-- **Show Values Section** calls `setValuesSectionVisible(true)`.
-- **Show Pivot Section** calls `setPivotSectionVisible(true)`.
+Users can also reorder columns by dragging them within the Columns section. Set `suppressColumnMove` to prevent this.
 
-{% gridExampleRunner title="Section Visibility" name="section-visibility"  exampleHeight=630 /%}
+```{% frameworkTransform=true %}
+const gridOptions = {
+    sideBar: {
+        toolPanels: [
+            {
+                id: 'columns',
+                labelDefault: 'Columns',
+                labelKey: 'columns',
+                iconKey: 'columns',
+                toolPanel: 'agColumnsToolPanel',
+                toolPanelParams: {
+                    // tool panel columns won't move when columns are reordered in the grid
+                    suppressSyncLayoutWithGrid: true,
+                    // prevents columns being reordered from the Columns Tool Panel
+                    suppressColumnMove: true,
+                },
+            },
+        ],
+        defaultToolPanel: 'columns',
+    },
+}
+```
+
+The two properties are usually enabled together, but can be set independently.
+
+The example below enables both properties. Note the following:
+
+- Moving columns in the grid doesn't reorder columns in the Columns Tool Panel, as `suppressSyncLayoutWithGrid=true`.
+- Columns can't be reordered from the Columns Tool Panel, as `suppressColumnMove=true`.
+
+{% gridExampleRunner title="Suppress Column Reordering" name="suppress-column-reordering"  exampleHeight=670 /%}
+
+## Custom Column Layout
+
+By default, the Columns section follows the order of `columnDefs` and stays in sync as columns move in the grid. To define a different layout, pass [Column Definitions](./column-definitions/) to `setColumnLayout()` on the [Columns Tool Panel instance](./tool-panel-columns-layout/#columns-tool-panel-instance).
+
+Given these column definitions supplied to the grid:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        { field: 'a' },
+        { field: 'b' },
+        { field: 'c' }
+    ]
+}
+```
+
+The following layout adds a group, reorders the columns and omits column `b`:
+
+```{% frameworkTransform=true %}
+const columnsToolPanel = api.getToolPanelInstance('columns');
+
+columnsToolPanel.setColumnLayout([
+    {
+        headerName: 'Group 1', // group doesn't appear in grid
+        children: [
+            { field: 'c' }, // custom column order with column "b" omitted
+            { field: 'a' }
+        ]
+    }
+]);
+```
+
+The layout can contain column groups that don't exist in the grid, and can omit or reorder columns, but every column it references must already exist in the grid.
+
+{% note %}
+When providing a custom layout, enable both `suppressSyncLayoutWithGrid` and `suppressColumnMove` (see [Suppress Column Reordering](#suppress-column-reordering)).
+{% /note %}
+
+The example below shows two custom layouts for the Columns Tool Panel. Note the following:
+
+- When the grid is initialised, the Columns Tool Panel layout matches `gridOptions.columnDefs`.
+- **Custom Sort Layout** calls `setColumnLayout(colDefs)` with the columns in ascending order.
+- **Custom Group Layout** calls `setColumnLayout(colDefs)` with column groups that don't appear in the grid.
+- Moving columns in the grid doesn't affect the custom layouts, as `suppressSyncLayoutWithGrid` is enabled.
+- Moving columns within the Columns Tool Panel is disabled, as `suppressColumnMove` is enabled.
+
+{% gridExampleRunner title="Custom Column Layout" name="custom-layout"  exampleHeight=640 /%}
 
 ## Read Only Functions
 

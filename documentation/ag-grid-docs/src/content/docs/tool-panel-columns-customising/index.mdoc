@@ -7,7 +7,16 @@ Customise how columns appear in the Columns Tool Panel: their styling and names,
 
 ## Styling & Naming Columns
 
-Add a CSS class to a column in the tool panel by setting `toolPanelClass` on its column definition:
+Style columns in the tool panel with `toolPanelClass`, and give them a different name there with `headerValueGetter`.
+
+The example below demonstrates both. Note the following:
+
+- The `gold`, `silver` and `bronze` columns are styled using `toolPanelClass`.
+- The country column uses a `headerValueGetter` to show a different name in the tool panel, the drop zones and the grid header. Drag it into the Row Groups section to see the drop zone name.
+
+{% gridExampleRunner title="Tool Panel Styling" name="styling"  exampleHeight=610 /%}
+
+To add a CSS class to a column in the tool panel, set `toolPanelClass` on its column definition:
 
 ```{% frameworkTransform=true spaceBetweenProperties=true %}
 const gridOptions = {
@@ -41,13 +50,6 @@ const gridOptions = {
     ]
 }
 ```
-
-The example below demonstrates both. Note the following:
-
-- The `gold`, `silver` and `bronze` columns are styled using `toolPanelClass`.
-- The country column uses a `headerValueGetter` to show a different name in the tool panel, the drop zones and the grid header. Drag it into the Row Groups section to see the drop zone name.
-
-{% gridExampleRunner title="Tool Panel Styling" name="styling"  exampleHeight=610 /%}
 
 ## Custom Column Labels
 
