@@ -62,6 +62,8 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
     /** Tracks whether the previous execute() call produced aggData, so we only clear once on transition. */
     private hadAgg = false;
 
+    private hasAggregateDependentFormulas = false;
+
     /** The value columns the last full pass keyed aggData by, held as the service's own ref-stable array
      *  so identity alone answers whether the keys moved. */
     private prevValueColumns: AgColumn[] | null = null;
@@ -82,11 +84,16 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         // Invariant for the whole sweep: a `valueGetter` can only derive from an aggregate once one
         // exists, while an active Show Values As mode is a transform in its own right.
         const hadAgg = this.hadAgg;
+        const hasAggregateDependentFormulas = this.hasAggregateDependentFormulas;
         const displayed = beans.visibleCols.allCols;
         let anyDependent = false;
         for (let i = 0, len = displayed.length; i < len; ++i) {
             const column = displayed[i];
-            if (column.showValuesAs != null || (hadAgg && column.valueGetter != null)) {
+            if (
+                column.showValuesAs != null ||
+                (hadAgg && column.valueGetter != null) ||
+                (hasAggregateDependentFormulas && column.isCalculatedCol)
+            ) {
                 anyDependent = true;
                 break;
             }
@@ -106,7 +113,11 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             for (let c = 0, cLen = cellCtrls.length; c < cLen; ++c) {
                 const cellCtrl = cellCtrls[c];
                 const column = cellCtrl.column;
-                if (column.showValuesAs != null || (hadAgg && column.valueGetter != null)) {
+                if (
+                    column.showValuesAs != null ||
+                    (hadAgg && column.valueGetter != null) ||
+                    (hasAggregateDependentFormulas && column.isCalculatedCol)
+                ) {
                     cellCtrl.refreshOrDestroyCell(AGG_DEPENDENT_REFRESH_PARAMS);
                 }
             }
@@ -116,6 +127,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
     // Stale aggData on demoted nodes is cleared by the group stage (setRowNodeGroup), not here.
     public execute(changedPath: ChangedPath | undefined): void {
         this.aggregate(changedPath, false);
+        this.hasAggregateDependentFormulas = this.beans.formula?.onAggregatesChanged() ?? false;
     }
 
     /** Re-aggregates only the root node, leaving every group aggregate untouched. Used when a Show Values As
@@ -123,6 +135,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
      *  groups are already correct, only the root total is missing — so a full re-aggregation would be wasted work. */
     public aggregateRootOnly(): void {
         this.aggregate(undefined, true);
+        this.hasAggregateDependentFormulas = this.beans.formula?.onAggregatesChanged() ?? false;
     }
 
     private aggregate(changedPath: ChangedPath | undefined, rootOnly: boolean): void {

@@ -69,6 +69,8 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
      */
     private readonly cachedResult: Map<RowNode, Map<AgColumn, CellFormula | null>> = new Map();
 
+    private readonly cachedGroupAggData = new WeakMap<RowNode, RowNode['aggData']>();
+
     /**
      * Stored at the class level so a `valueGetter` that resolves another formula cell (e.g. via
      * `api.getCellValue`) reuses the same cycle-detection state instead of hitting a false
@@ -101,6 +103,8 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
 
     /** Calculated columns use formula evaluation without enabling editable formula behaviours. */
     private calculatedColumnsActive = false;
+
+    private rowChangesAffectAllValues = false;
 
     public hasCachedRows(): boolean {
         return this.cachedResult.size > 0;
@@ -136,6 +140,9 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         const editableFormulasSupported = this.beans.rowModel.getType() === 'clientSide';
         const active = editableFormulasCompatible && editableFormulasSupported;
         const calculatedColumnsActive = calculatedColumnsCompatible;
+        this.rowChangesAffectAllValues =
+            active ||
+            (calculatedColumnsActive && (this.gos.get('treeData') || this.hasNonRowLocalCalculatedColumns(columns)));
 
         if (active !== this.active || calculatedColumnsActive !== this.calculatedColumnsActive) {
             this.active = active;
@@ -143,6 +150,48 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             this.rebuildColRefMap();
             this.refreshFormulas(true);
         }
+    }
+
+    private hasNonRowLocalCalculatedColumns(columns: AgColumn[]): boolean {
+        const columnsById = new Map(columns.map((column) => [column.colId, column]));
+        for (const column of columns) {
+            const expression = column.isCalculatedCol ? column.calculatedExpression?.trim() : undefined;
+            if (!expression) {
+                continue;
+            }
+            try {
+                const ast = parseFormula(this.beans, expression.startsWith('=') ? expression : `=${expression}`, true);
+                if (!this.isRowLocalExpression(ast, columnsById)) {
+                    return true;
+                }
+            } catch {
+                // preserve conservative invalidation when the expression cannot be classified
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private isRowLocalExpression(node: FormulaNode, columnsById: Map<string, AgColumn>): boolean {
+        if (node.type === 'operation') {
+            const builtIn = SUPPORTED_FUNCTIONS[node.operation.toUpperCase() as keyof typeof SUPPORTED_FUNCTIONS];
+            // custom functions (including built-in overrides) can read arbitrary rows or totals
+            return (
+                builtIn != null &&
+                this.getFunction(node.operation) === builtIn &&
+                node.operands.every((operand) => this.isRowLocalExpression(operand, columnsById))
+            );
+        }
+
+        const value = node.value;
+        if (value == null || typeof value !== 'object') {
+            return true;
+        }
+        if (!value.row.current || value.endRow != null) {
+            return false;
+        }
+        const column = columnsById.get(value.column.id);
+        return column != null && (column.isCalculatedCol || column.valueGetter == null);
     }
 
     public isEvaluationActive(): boolean {
@@ -286,10 +335,13 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         if (node.rowPinned != null && node.pinnedSibling) {
             return;
         }
-        // Evict this row's formulas so same-row calculated columns re-evaluate, then invalidate every
-        // cached value because an editable formula in another row may reference the changed row.
         this.dropRow(node);
-        this.bumpValueCacheAndRefresh(false);
+        if (this.rowChangesAffectAllValues) {
+            // references, getters and custom functions can depend on other rows or aggregates
+            this.bumpValueCacheAndRefresh(false);
+        } else {
+            this.beans.rowRenderer.refreshCells();
+        }
     }
 
     public override destroy(): void {
@@ -342,9 +394,7 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             return;
         }
 
-        // Default `true` covers the no-`changed` path (sort / filter / paginate / column change):
-        // row data is unchanged but absolute-index refs may resolve differently.
-        let needsRefresh = true;
+        let needsRefresh = this.rowChangesAffectAllValues;
 
         if (changed) {
             const { adds, removals, updates, reordered } = changed;
@@ -360,12 +410,21 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             //   - removals: a surviving formula might reference a removed row (now #REF!)
             //   - adds:     absolute-index refs (`ROW("N",true)`) can transition from #REF! to a row
             //   - updates:  a surviving formula might reference an updated row's value
-            needsRefresh = reordered || removals.length > 0 || adds.size > 0 || updates.size > 0;
+            needsRefresh &&= reordered || removals.length > 0 || adds.size > 0 || updates.size > 0;
         }
 
         if (needsRefresh) {
             this.bumpValueCacheAndRefresh();
         }
+    }
+
+    public onAggregatesChanged(): boolean {
+        if (!this.calculatedColumnsActive || !this.rowChangesAffectAllValues) {
+            return false;
+        }
+        // cell-change listeners may have cached values before aggregation finished
+        this.valueCacheVersion++;
+        return true;
     }
 
     /**
@@ -694,6 +753,12 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             return null;
         }
 
+        // aggregation can finish after cell-change listeners have already cached the parent's old values
+        if (row.group && this.cachedGroupAggData.get(row) !== row.aggData) {
+            this.dropRow(row);
+            this.cachedGroupAggData.set(row, row.aggData);
+        }
+
         const cache = this.cachedResult;
         let rowMap = cache.get(row);
         const cached = rowMap?.get(col);
@@ -828,6 +893,13 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             return rootCachedCellFormula.getValue();
         }
 
+        return this.evaluateCellFormula(rootCachedCellFormula);
+    }
+
+    // keep dependency traversal out of the cached-read path so it can be inlined
+    private evaluateCellFormula(rootCachedCellFormula: CellFormula): unknown {
+        const node = rootCachedCellFormula.rowNode;
+        const column = rootCachedCellFormula.column;
         // Reuse an existing ctx for nested evals (e.g. a valueGetter calling `api.getCellValue`)
         // so they share the visiting set and don't raise false-positive cycle errors.
         const existingCtx = this.activeCtx;

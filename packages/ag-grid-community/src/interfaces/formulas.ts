@@ -103,6 +103,8 @@ export interface IFormulaService extends Bean {
      * rows and, if the row order or set changed, drop stale computed values while keeping parsed ASTs.
      */
     onRowsChanged(changedRowNodes: ChangedRowNodes | undefined, newData: boolean | undefined): void;
+    /** Invalidates aggregate-dependent calculated values and returns whether their cells need refreshing. */
+    onAggregatesChanged(): boolean;
     getFunction(name: string): ((params: FormulaFunctionParams) => unknown) | undefined;
     getFunctionNames(): string[];
 }
