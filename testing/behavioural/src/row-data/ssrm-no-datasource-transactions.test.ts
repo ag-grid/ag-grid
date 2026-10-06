@@ -186,6 +186,14 @@ describe('SSRM without a datasource', () => {
         `);
     });
 
+    test('setting a datasource on an empty store uses serverSideInitialRowCount', () => {
+        const api = gridsManager.createGrid(null, { ...createGridOptions(), serverSideInitialRowCount: 100 });
+
+        api.setGridOption('serverSideDatasource', { getRows: () => {} });
+
+        expect(api.getDisplayedRowCount()).toBe(100);
+    });
+
     test('rows added by transactions are not evicted by maxBlocksInCache', async () => {
         const api = gridsManager.createGrid(null, {
             ...createGridOptions(),

@@ -190,7 +190,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             return;
         }
 
-        const handOver = !this.datasource && !!this.getRootStore();
+        const handOver = !this.datasource && (this.getRootStore()?.getRowCount() ?? 0) > 0;
         this.destroyDatasource();
         this.datasource = datasource;
         if (handOver) {
