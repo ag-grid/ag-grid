@@ -903,6 +903,7 @@ export const AG_GRID_LOCALE_DE_DE = {
     calculatedColumn: 'Berechnete Spalte',
     calculatedColumnAdd: 'Berechnete Spalte hinzufügen',
     calculatedColumnEdit: 'Berechnete Spalte bearbeiten',
+    calculatedColumnView: 'Berechnete Spalte anzeigen',
     calculatedColumnRemove: 'Berechnete Spalte entfernen',
     calculatedColumnTitle: 'Titel',
     calculatedColumnType: 'Typ',

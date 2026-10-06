@@ -896,6 +896,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     calculatedColumn: 'Vypočítaný sloupec',
     calculatedColumnAdd: 'Přidat vypočítaný sloupec',
     calculatedColumnEdit: 'Upravit vypočítaný sloupec',
+    calculatedColumnView: 'Zobrazit vypočítaný sloupec',
     calculatedColumnRemove: 'Odebrat vypočítaný sloupec',
     calculatedColumnTitle: 'Název',
     calculatedColumnType: 'Typ',

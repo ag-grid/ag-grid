@@ -918,6 +918,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     calculatedColumn: 'गणना किया गया कॉलम',
     calculatedColumnAdd: 'गणना किया गया कॉलम जोड़ें',
     calculatedColumnEdit: 'गणना किया गया कॉलम संपादित करें',
+    calculatedColumnView: 'गणना किया गया कॉलम देखें',
     calculatedColumnRemove: 'गणना किया गया कॉलम हटाएं',
     calculatedColumnTitle: 'शीर्षक',
     calculatedColumnType: 'प्रकार',

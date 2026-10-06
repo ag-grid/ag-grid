@@ -914,6 +914,7 @@ export const AG_GRID_LOCALE_BN_BD = {
     calculatedColumn: 'গণনাকৃত কলাম',
     calculatedColumnAdd: 'গণনাকৃত কলাম যোগ করুন',
     calculatedColumnEdit: 'গণনাকৃত কলাম সম্পাদনা করুন',
+    calculatedColumnView: 'গণনাকৃত কলাম দেখুন',
     calculatedColumnRemove: 'গণনাকৃত কলাম সরান',
     calculatedColumnTitle: 'শিরোনাম',
     calculatedColumnType: 'ধরন',

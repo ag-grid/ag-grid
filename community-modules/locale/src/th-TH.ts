@@ -915,6 +915,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     calculatedColumn: 'คอลัมน์คำนวณ',
     calculatedColumnAdd: 'เพิ่มคอลัมน์คำนวณ',
     calculatedColumnEdit: 'แก้ไขคอลัมน์คำนวณ',
+    calculatedColumnView: 'ดูคอลัมน์คำนวณ',
     calculatedColumnRemove: 'ลบคอลัมน์คำนวณ',
     calculatedColumnTitle: 'ชื่อเรื่อง',
     calculatedColumnType: 'ชนิด',

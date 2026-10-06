@@ -920,6 +920,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     calculatedColumn: 'Skaičiuojamasis stulpelis',
     calculatedColumnAdd: 'Pridėti skaičiuojamąjį stulpelį',
     calculatedColumnEdit: 'Redaguoti skaičiuojamąjį stulpelį',
+    calculatedColumnView: 'Žiūrėti skaičiuojamąjį stulpelį',
     calculatedColumnRemove: 'Pašalinti skaičiuojamąjį stulpelį',
     calculatedColumnTitle: 'Pavadinimas',
     calculatedColumnType: 'Tipas',

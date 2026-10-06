@@ -50,6 +50,7 @@ const COLUMN_DEFINITION_DEPRECATIONS: () => Deprecations<ColDef | ColGroupDef> =
 export const COLUMN_DEFINITION_MOD_VALIDATIONS: ModuleValidation<ColDef | ColGroupDef> = {
     allowFormula: 'Formula',
     calculatedExpression: 'CalculatedColumns',
+    calculatedColumnReadOnly: 'CalculatedColumns',
     aggFunc: 'SharedAggregation',
     showValuesAs: 'ShowValuesAs',
     initialShowValuesAs: 'ShowValuesAs',
@@ -460,6 +461,7 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     headerGroupComponent: undefined,
     headerGroupComponentParams: undefined,
     calculatedExpression: undefined,
+    calculatedColumnReadOnly: undefined,
     calculatedExpressionError: undefined,
     showValuesAs: undefined,
     initialShowValuesAs: undefined,
