@@ -105,6 +105,10 @@ In the example below, note the following:
 
 {% gridExampleRunner title="Asynchronous Example" name="transactions-async"  exampleHeight=615 /%}
 
+{% note %}
+Without a `serverSideDatasource`, the grid starts empty and can be populated purely through transactions (use `route` for grouped rows). Sorting, filtering and refreshing won't reload rows, and `maxBlocksInCache` and `purgeClosedRowNodes` are ignored, as purged rows could not be reloaded. Setting a datasource later reloads the rows from it in place.
+{% /note %}
+
 ## Showcase Example
 
 The following demonstrates a more complex example of transactions, it shows subscribing to a source of updates to provide the changes, while using dynamic row grouping, aggregation, and child counts. All of which react to the changes caused by the transactions.
