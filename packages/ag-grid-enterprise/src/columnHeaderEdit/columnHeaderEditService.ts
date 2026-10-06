@@ -155,9 +155,18 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
                 popup.setValue(initialValue);
             }
         };
-        // Tool panels pass their own copy of a group, which isn't told about renames, so listen on the grid's group.
-        const listenerTarget = isProvidedColumnGroup(target) ? getGridColumnGroup(this.beans, target) : target;
-        this.removePopupColListener = this.addManagedListeners(listenerTarget, { headerNameChanged: onNameChanged })[0];
+        // Grid-level, not the target's own event: a tool panel's group copy isn't told about renames, and a
+        // child's rename (no columnGroup on the event) can change the name a group headerValueGetter returns.
+        const isGroup = isProvidedColumnGroup(target);
+        const targetId = isGroup ? target.groupId : target.getColId();
+        this.removePopupColListener = this.addManagedEventListeners({
+            columnHeaderNameChanged: (event) => {
+                const eventId = isGroup ? event.columnGroup?.getGroupId() : event.column?.getColId();
+                if (!eventId || eventId === targetId) {
+                    onNameChanged();
+                }
+            },
+        })[0];
 
         this.setEditingTarget(target);
     }
