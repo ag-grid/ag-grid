@@ -181,6 +181,9 @@ const excludeErrors = [
     'XML Parsing Error: syntax error',
     'Layout was forced before the page was fully loaded. If stylesheets are not yet loaded this may cause a flash of unstyled content.',
     'Request to access cookie or storage on “<URL>” was blocked because it came from a tracker and Enhanced Tracking Protection is enabled.',
+    // Firefox Bounce Tracking Protection notice about the browser's own storage for the site; unrelated
+    // to the example or the grid.
+    'has been classified as a bounce tracker',
     'This site appears to use a scroll-linked positioning effect.',
     // Timing-dependent browser warning: a preloaded font occasionally isn't consumed within the
     // browser's few-second window (e.g. under CI load), emitting a benign warning unrelated to the grid.
