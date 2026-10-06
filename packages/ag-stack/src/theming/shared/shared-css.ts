@@ -278,7 +278,7 @@ export interface SharedThemeParams {
     scrollbarThumbColor: ColorValue;
 
     /**
-     * Color of the track behind the thumb of scrollbars in the grid. Must be set together with `scrollbarThumbColor`: if either is "unset" (the default for both), neither is applied and scrollbars inherit the scrollbar-color of the surrounding page.
+     * Color of the track behind the thumb of scrollbars in the grid. Must be set together with `scrollbarThumbColor`: if either is "unset" (the default for both), neither is applied and scrollbars inherit the scrollbar-color of the surrounding page. Not drawn for overlay scrollbars that only appear while scrolling.
      */
     scrollbarTrackColor: ColorValue;
 
