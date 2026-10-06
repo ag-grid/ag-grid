@@ -1163,10 +1163,8 @@ describe('Column Autosize', () => {
     // `mockGridLayout` recognises. Unrecognised, the width never resolves and the grid-body fit above
     // silently leaves every column at its start width, so the signature is asserted directly here.
     describe('scrollbar probe', () => {
-        test('the probe the grid builds measures conclusively, so the width is cached not re-measured', async () => {
-            // A signature this mock stops recognising reads 0/0, which the grid treats as "DOM not ready",
-            // leaving the overlay-scrollbar state unknown. 0 here is the overlay-scrollbar answer the mock
-            // gives every suite, so a conclusive measurement marks the fake scrollbar as invisible.
+        test("mockGridLayout recognises the grid's scrollbar probe", async () => {
+            // the mock reports overlay scrollbars, so a successful measurement marks the scrollbar invisible
             gridsManager.createGrid('myGrid', { columnDefs: [{ field: 'a' }], rowData: [{ a: 1 }] });
             await waitFor(() =>
                 expect(document.querySelector('.ag-body-vertical-scroll')!.classList).toContain(

@@ -77,7 +77,6 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
     }
 
     protected onScrollVisibilityChanged(): void {
-        // re-checked on each change: measuring needs the DOM and depends on the theme
         this.refreshInvisibleScrollbar();
 
         this.queueSetScrollVisible();
