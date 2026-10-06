@@ -35,7 +35,7 @@ export enum ServerSideTransactionResultStatus {
     Applied = 'Applied',
     /**
      * Store was not found, transaction not applied.
-     * Either invalid route, or the parent row has not yet been expanded.
+     * A row on the route does not exist, e.g. an invalid route or a parent row that has not been added or loaded yet.
      */
     StoreNotFound = 'StoreNotFound',
     /**
