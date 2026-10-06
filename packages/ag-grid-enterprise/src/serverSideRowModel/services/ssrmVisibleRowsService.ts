@@ -53,6 +53,8 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
         this.addManagedEventListeners({
             modelUpdated: markAllDirty,
             viewportChanged: markAllDirty,
+            // Without virtualisation the rendered rows can stay the same while the visible pixel range changes.
+            bodyHeightChanged: () => this.onScroll(false),
             paginationChanged: (event: PaginationChangedEvent) => {
                 if (event.newPage) {
                     this.onScroll(false);
@@ -262,10 +264,14 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
 
         const top = rowRenderer.firstVisibleVPixel;
         const bottom = rowRenderer.lastVisibleVPixel;
-        if (top != null && bottom != null && bottom > top) {
-            first = Math.max(first, rowModel.getRowIndexAtPixel(top));
-            last = Math.min(last, rowModel.getRowIndexAtPixel(bottom - 1));
+        if (top == null || bottom == null) {
+            return [first, last];
         }
+        if (bottom <= top) {
+            return [0, -1];
+        }
+        first = Math.max(first, rowModel.getRowIndexAtPixel(top));
+        last = Math.min(last, rowModel.getRowIndexAtPixel(bottom - 1));
         return [first, last];
     }
 

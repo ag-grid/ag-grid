@@ -1,8 +1,10 @@
 import { waitFor } from '@testing-library/dom';
 import {
     TestGridsManager,
+    installMockResizeObserver,
     mockGridLayout,
     nextAnimationFrame,
+    triggerResizeObservers,
     waitForEvent,
     waitForNoLoadingRows,
 } from 'ag-test-utils';
@@ -179,6 +181,26 @@ describe('SSRM subscribeToVisibleRows', () => {
         const last = api.getLastDisplayedRowIndex();
         expect(last - first).toBeGreaterThan(5);
         expect(recorder.ids()).toEqual(range(first, last));
+    });
+
+    test('resizing the grid without row virtualisation updates the subscribed rows', async () => {
+        const uninstall = installMockResizeObserver();
+        try {
+            const api = await createFlatGrid({ suppressRowVirtualisation: true }, 100);
+            const recorder = createRecorder();
+            api.subscribeToVisibleRows(recorder.handlers);
+            expect(recorder.ids()).toEqual(range(0, 5));
+
+            mockGridLayout.gridHeight = 600;
+            triggerResizeObservers();
+
+            await waitFor(() => expect(recorder.ids()).toEqual(range(0, 12)));
+            expect(recorder.reasons('subscribe')).toEqual(['initial', 'scroll']);
+            expect(recorder.violations).toEqual([]);
+        } finally {
+            mockGridLayout.gridHeight = 300;
+            uninstall();
+        }
     });
 
     test('debounceMs still delivers the final state', async () => {
