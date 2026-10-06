@@ -69,7 +69,7 @@ This is useful if you want to allow configuring the component. For example, you 
 {% if isFramework("javascript", "angular", "react") %}
 
 ```js
-colDef = {
+const gridOptions = {
     dragAndDropImageComponent: MyDragAndDropImageComponent,
     dragAndDropImageComponentParams : {
         accentColour: 'SlateGray'
@@ -81,7 +81,7 @@ colDef = {
 {% if isFramework("vue") %}
 
 ```js
-colDef = {
+const gridOptions = {
     dragAndDropImageComponent: 'MyDragAndDropImageComponent',
     dragAndDropImageComponentParams : {
         accentColour: 'SlateGray'

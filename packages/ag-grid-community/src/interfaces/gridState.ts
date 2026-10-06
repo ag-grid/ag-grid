@@ -297,7 +297,7 @@ export interface GridState {
     rowSelection?: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState;
     /** Current scroll position. Works for Client-Side Row Model only */
     scroll?: ScrollState;
-    /** Current Side Bar positioning and opened tool panel, including the state of each open tool panel */
+    /** Current Side Bar positioning and opened tool panel, including the state of each tool panel */
     sideBar?: SideBarState;
     /** Current sort columns and direction, ordered by `sortIndex` (column state) */
     sort?: SortState;

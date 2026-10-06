@@ -3,14 +3,14 @@ title: "Columns Tool Panel - Configuration"
 enterprise: true
 ---
 
-Configure the Columns Tool Panel through `toolPanelParams`: show and hide its sections and columns, control the column order, and prevent changes to grouping, aggregation and pivoting. See [Providing Parameters to Tool Panels](./side-bar/#providing-parameters-to-tool-panels) for how to pass these to the tool panel, and [Tool Panel Parameters](./tool-panel-columns-layout/#tool-panel-parameters) for the full list.
+Configure the Columns Tool Panel through `toolPanelParams`, column definitions and grid options: show and hide its sections and columns, control the column order, and prevent changes to grouping, aggregation and pivoting. See [Providing Parameters to Tool Panels](./side-bar/#providing-parameters-to-tool-panels) for how to pass these to the tool panel, and [Tool Panel Parameters](./tool-panel-columns-layout/#tool-panel-parameters) for the full list.
 
 {% gridExampleRunner title="Tool Panel Simple" name="simple"  exampleHeight=630 /%}
 
 The example above shows the Columns Tool Panel with its default configuration, `sideBar: 'columns'`. Note the following:
 
 - Columns can only be dragged into the Row Groups, Values and Column Labels sections when their column definition allows it, using `enableRowGroup`, `enableValue` and `enablePivot` respectively.
-- The athlete, age, country, year, date and sport columns set `enableRowGroup` and `enablePivot`, so they can be dragged to the Row Groups and Column Labels sections.
+- The athlete, age, country, year, date and sport columns set `enableRowGroup` and `enablePivot`, so they can be dragged to the Row Groups section, and to the Column Labels section once Pivot Mode is on.
 - The medal columns set `enableValue`, so they can be dragged to the Values section.
 
 ## Section Visibility
@@ -43,7 +43,7 @@ To remove a column from the tool panel, set `suppressColumnsToolPanel` on its co
 
 By default, reordering columns in the grid also reorders them in the Columns section. Set `suppressSyncLayoutWithGrid` to keep the tool panel order fixed.
 
-Users can also reorder columns by dragging them within the Columns section. Set `suppressColumnMove` to prevent this.
+Users can also reorder columns by dragging them within the Columns section. Set `suppressColumnMove` to prevent this. `suppressSyncLayoutWithGrid` also prevents it, so `suppressColumnMove` is only needed on its own when the tool panel should still follow the grid order.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -72,12 +72,10 @@ const gridOptions = {
 
 {% interfaceDocumentation interfaceName="IToolPanelColumnCompParams" names=["suppressColumnMove"] config={"description":"", "overrideBottomMargin":"1rem"} /%}
 
-The two properties are usually enabled together, but can be set independently.
-
 The example below enables both properties. Note the following:
 
 - Moving columns in the grid doesn't reorder columns in the Columns Tool Panel, as `suppressSyncLayoutWithGrid=true`.
-- Columns can't be reordered from the Columns Tool Panel, as `suppressColumnMove=true`.
+- Columns can't be reordered from the Columns Tool Panel, as both properties are enabled.
 
 {% gridExampleRunner title="Suppress Column Reordering" name="suppress-column-reordering"  exampleHeight=670 /%}
 
@@ -116,7 +114,7 @@ columnsToolPanel.setColumnLayout([
 The layout can contain column groups that don't exist in the grid, and can omit or reorder columns, but every column it references must already exist in the grid.
 
 {% note %}
-When providing a custom layout, enable both `suppressSyncLayoutWithGrid` and `suppressColumnMove` (see [Suppress Column Reordering](#suppress-column-reordering)).
+When providing a custom layout, enable `suppressSyncLayoutWithGrid` so that moving columns in the grid does not replace it (see [Suppress Column Reordering](#suppress-column-reordering)).
 {% /note %}
 
 The example below shows two custom layouts for the Columns Tool Panel. Note the following:
@@ -125,12 +123,18 @@ The example below shows two custom layouts for the Columns Tool Panel. Note the 
 - **Custom Sort Layout** calls `setColumnLayout(colDefs)` with the columns in ascending order.
 - **Custom Group Layout** calls `setColumnLayout(colDefs)` with column groups that don't appear in the grid.
 - Moving columns in the grid doesn't affect the custom layouts, as `suppressSyncLayoutWithGrid` is enabled.
-- Moving columns within the Columns Tool Panel is disabled, as `suppressColumnMove` is enabled.
+- Moving columns within the Columns Tool Panel is disabled, as `suppressSyncLayoutWithGrid` and `suppressColumnMove` are enabled.
 
 {% gridExampleRunner title="Custom Column Layout" name="custom-layout"  exampleHeight=640 /%}
 
 ## Read Only Functions
 
 Set the grid option `functionsReadOnly=true` to prevent users changing grouping, pivoting or aggregation through the UI. The Row Groups, Values and Column Labels sections stay visible, so users can see which columns are in use but cannot change them.
+
+The example below starts with `functionsReadOnly=true`. Note the following:
+
+- The grid is in pivot mode, grouped by country and sport, pivoted by year, with silver and bronze aggregated.
+- Columns cannot be dragged into or removed from the Row Groups, Values and Column Labels sections.
+- Untick **Functions Read Only** to allow changes again.
 
 {% gridExampleRunner title="Read Only Example" name="read-only"  exampleHeight=670 /%}

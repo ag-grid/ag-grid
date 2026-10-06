@@ -104,10 +104,10 @@ Right-clicking a column or column group label opens a menu with items for groupi
 
 The following menu items are shown by default based on the column's configuration and the grid's current state:
 
-- `scrollIntoView`: "Scroll into View". Scrolls the column into view. Hidden while pivoting or when the column is pinned.
-- `rowGroup`: "Group by" or "Un-Group by". Appears only when the column allows row grouping.
-- `value`: "Add to values" or "Remove from values". Adds or removes the column as an aggregated value (the **Values** section). Appears only when the column allows aggregation.
-- `pivot`: "Add to labels" or "Remove from labels". Adds or removes the column as a pivot column label (the **Column Labels** section). Appears only in pivot mode when the column allows pivoting.
+- `scrollIntoView`: "Scroll _column_ into View". Scrolls the column into view. Hidden while pivoting, or when the column is pinned or hidden.
+- `rowGroup`: "Group by _column_" or "Un-Group by _column_". Appears only when the column allows row grouping.
+- `value`: "Add _column_ to values" or "Remove _column_ from values". Adds or removes the column as an aggregated value (the **Values** section). Appears only when the column allows aggregation.
+- `pivot`: "Add _column_ to labels" or "Remove _column_ from labels". Adds or removes the column as a pivot column label (the **Column Labels** section). Appears only in pivot mode when the column allows pivoting.
 
 For a column group, `rowGroup`, `value` and `pivot` apply to every child column that individually allows the action; `scrollIntoView` scrolls only the first visible child column into view.
 
@@ -120,9 +120,9 @@ Customise the menu items with `colDef.columnMenuItems` or `getColumnMenuItems()`
 The example below shows both the built-in items and this customisation. Note the following:
 
 - Right-click **Gold** to see the built-in items plus an optional pinning sub-menu and a custom **Highlight Column** item, added by the `getColumnMenuItems()` callback.
-- **Silver** hides the "Scroll into View" item via a `colDef.columnMenuItems` callback. As `colDef.columnMenuItems` takes priority over `getColumnMenuItems()`, Silver doesn't get the Highlight Column item.
-- **Bronze** restricts its menu to only "Add to values" via a static `colDef.columnMenuItems` array, so it doesn't get the Highlight Column item either.
-- The column header menu and Column Chooser are unaffected: `getColumnMenuItems()` returns `params.defaultItems` unchanged for those sources.
+- **Silver** hides the "Scroll Silver into View" item via a `colDef.columnMenuItems` callback. As `colDef.columnMenuItems` takes priority over `getColumnMenuItems()`, Silver doesn't get the Highlight Column item.
+- **Bronze** restricts its menu to only "Add Bronze to values" via a static `colDef.columnMenuItems` array, so it doesn't get the Highlight Column item either.
+- `colDef.columnMenuItems` applies to every column menu, so the Silver and Bronze changes also apply to their column header menu and Column Chooser menu. Other columns keep their defaults in those menus, as `getColumnMenuItems()` returns `params.defaultItems` for those sources.
 
 {% gridExampleRunner title="Customising the Tool Panel Menu" name="customising-tool-panel-menu" exampleHeight=670 /%}
 

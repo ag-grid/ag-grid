@@ -62,23 +62,23 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function togglePivotModeSection() {
-    const columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
-    columnToolPanel.setPivotModeSectionVisible(document.querySelector<HTMLInputElement>('#pivotModeSection')!.checked);
+    const columnsToolPanel = gridApi!.getToolPanelInstance('columns')!;
+    columnsToolPanel.setPivotModeSectionVisible(document.querySelector<HTMLInputElement>('#pivotModeSection')!.checked);
 }
 
 function toggleRowGroupsSection() {
-    const columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
-    columnToolPanel.setRowGroupsSectionVisible(document.querySelector<HTMLInputElement>('#rowGroupsSection')!.checked);
+    const columnsToolPanel = gridApi!.getToolPanelInstance('columns')!;
+    columnsToolPanel.setRowGroupsSectionVisible(document.querySelector<HTMLInputElement>('#rowGroupsSection')!.checked);
 }
 
 function toggleValuesSection() {
-    const columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
-    columnToolPanel.setValuesSectionVisible(document.querySelector<HTMLInputElement>('#valuesSection')!.checked);
+    const columnsToolPanel = gridApi!.getToolPanelInstance('columns')!;
+    columnsToolPanel.setValuesSectionVisible(document.querySelector<HTMLInputElement>('#valuesSection')!.checked);
 }
 
 function togglePivotSection() {
-    const columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
-    columnToolPanel.setPivotSectionVisible(document.querySelector<HTMLInputElement>('#pivotSection')!.checked);
+    const columnsToolPanel = gridApi!.getToolPanelInstance('columns')!;
+    columnsToolPanel.setPivotSectionVisible(document.querySelector<HTMLInputElement>('#pivotSection')!.checked);
 }
 
 // setup the grid after the page has finished loading
