@@ -8,6 +8,8 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
+import type { ColDef } from 'ag-grid-community';
+
 import { DEFAULT_OPTIONS, ROW_DATA, SET_MODULES, displayedAthletes } from './advancedFilterSetFixture';
 
 describe('Advanced Filter - Set Filter value sources', () => {
@@ -648,6 +650,217 @@ describe('Advanced Filter - Set Filter value list', () => {
         await af.apply();
         expect(af.value).toBe('[Country] is any of ["Jamaica", "(Blanks)"]');
         expect(af.getModel().values).toEqual(['Jamaica', null]);
+    });
+
+    test('preserved values are not offered but still resolve, and filter once their rows return', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                { field: 'country', filter: 'agSetColumnFilter', filterParams: { preservePreviousValues: true } },
+            ],
+        });
+        // The value leaves before the Advanced Filter is first used, so only a filter made up front saw it.
+        api.setGridOption(
+            'rowData',
+            ROW_DATA.filter((row) => row.country !== 'Jamaica')
+        );
+        await asyncSetTimeout(0);
+        const af = AdvancedFilterHarness.get(api);
+        await af.type('[Country] is any of [');
+        expect(af.autocompleteEntries()).toEqual(['(Blanks)', 'Poland', 'United Kingdom', 'United States']);
+
+        await af.applyExpression('[Country] is any of ["Jamaica"]');
+        expect(af.getModel().values).toEqual(['Jamaica']);
+        expect(displayedAthletes(api)).toEqual([]);
+
+        api.setGridOption('rowData', ROW_DATA);
+        await asyncSetTimeout(0);
+        expect(displayedAthletes(api)).toEqual(['Usain Bolt']);
+        await af.type('[Country] is any of [');
+        expect(af.autocompleteEntries()).toEqual(['(Blanks)', 'Jamaica', 'Poland', 'United Kingdom', 'United States']);
+    });
+
+    test('turned on at runtime, it keeps a preserved value that leaves before it is first used', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            enableAdvancedFilter: false,
+            columnDefs: [
+                { field: 'athlete' },
+                { field: 'country', filter: 'agSetColumnFilter', filterParams: { preservePreviousValues: true } },
+            ],
+        });
+        api.setGridOption('enableAdvancedFilter', true);
+        api.setGridOption(
+            'rowData',
+            ROW_DATA.filter((row) => row.country !== 'Jamaica')
+        );
+        await asyncSetTimeout(0);
+
+        const af = AdvancedFilterHarness.get(api);
+        await af.applyExpression('[Country] is any of ["Jamaica"]');
+        expect(af.getModel().values).toEqual(['Jamaica']);
+    });
+
+    test('a value named by is none of inside a join is kept, and evicted once no expression names it', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete', filter: 'agTextColumnFilter' },
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: { preservePreviousValues: true, preservePreviousValuesLimit: 0 },
+                },
+            ],
+        });
+        const withoutJamaica = ROW_DATA.filter((row) => row.country !== 'Jamaica');
+        api.setAdvancedFilterModel({
+            filterType: 'join',
+            type: 'AND',
+            conditions: [
+                { filterType: 'text', colId: 'athlete', type: 'contains', filter: 'a' },
+                { filterType: 'set', colId: 'country', type: 'isNoneOf', values: ['Jamaica'] },
+            ],
+        });
+        await asyncSetTimeout(0);
+        api.setGridOption('rowData', withoutJamaica);
+        await asyncSetTimeout(0);
+
+        const af = AdvancedFilterHarness.get(api);
+        api.setAdvancedFilterModel(null);
+        await asyncSetTimeout(0);
+        await af.applyExpression('[Country] is any of ["Jamaica"]');
+        expect(af.getModel().values).toEqual(['Jamaica']);
+
+        api.setAdvancedFilterModel(null);
+        await asyncSetTimeout(0);
+        api.setGridOption('rowData', [...withoutJamaica]);
+        await asyncSetTimeout(0);
+        await af.applyExpression('[Country] is any of ["Jamaica"]');
+        expect(api.getAdvancedFilterModel()).toBeNull();
+    });
+
+    test('a tree list value known only from the applied expression is never handed to the path getter or formatter', async () => {
+        const treeListFormatter = vi.fn((pathKey: string | null) => `#${pathKey}`);
+        const treeListPathGetter = vi.fn((value: string | null) => [value ?? '']);
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        preservePreviousValues: true,
+                        treeList: true,
+                        treeListPathGetter,
+                        treeListFormatter,
+                    },
+                },
+            ],
+        });
+        api.setAdvancedFilterModel({ filterType: 'set', colId: 'country', type: 'isAnyOf', values: ['Atlantis'] });
+        await asyncSetTimeout(0);
+
+        await AdvancedFilterHarness.get(api).type('[Country] is any of [');
+        const formatted = treeListFormatter.mock.calls.map(([pathKey]) => pathKey);
+        expect(formatted).toContain('Poland');
+        expect(formatted).not.toContain('Atlantis');
+        // A path asked for 'Atlantis' would be asked of its missing value, beside the blank row's.
+        const pathsFor = (value: string | null) => treeListPathGetter.mock.calls.filter(([v]) => v === value).length;
+        expect(pathsFor('Poland')).toBeGreaterThan(0);
+        expect(pathsFor(null)).toBe(pathsFor('Poland'));
+    });
+
+    test('an applied value outlives the limit: it filters again when it returns, and can be applied while away', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                {
+                    field: 'country',
+                    filter: 'agSetColumnFilter',
+                    filterParams: { preservePreviousValues: true, preservePreviousValuesLimit: 0 },
+                },
+            ],
+        });
+        const withoutJamaica = ROW_DATA.filter((row) => row.country !== 'Jamaica');
+        const af = AdvancedFilterHarness.get(api);
+        await af.applyExpression('[Country] is any of ["Jamaica"]');
+        api.setGridOption('rowData', withoutJamaica);
+        await asyncSetTimeout(0);
+        expect(displayedAthletes(api)).toEqual([]);
+
+        api.setGridOption('rowData', ROW_DATA);
+        await asyncSetTimeout(0);
+        expect(displayedAthletes(api)).toEqual(['Usain Bolt']);
+
+        api.setGridOption('rowData', withoutJamaica);
+        await asyncSetTimeout(0);
+        // Cleared first, as re-typing the applied text leaves Apply disabled and proves nothing.
+        api.setAdvancedFilterModel(null);
+        await asyncSetTimeout(0);
+        await af.applyExpression('[Country] is any of ["Jamaica"]');
+        expect(af.getModel().values).toEqual(['Jamaica']);
+        api.setGridOption('rowData', ROW_DATA);
+        await asyncSetTimeout(0);
+        expect(displayedAthletes(api)).toEqual(['Usain Bolt']);
+    });
+
+    test('a key change drops the retained values, except those the applied expression names', async () => {
+        const columnDefs = (caseSensitive: boolean): ColDef[] => [
+            { field: 'athlete' },
+            {
+                field: 'country',
+                filter: 'agSetColumnFilter',
+                filterParams: { preservePreviousValues: true, caseSensitive },
+            },
+        ];
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: columnDefs(false),
+        });
+        const af = AdvancedFilterHarness.get(api);
+        await af.applyExpression('[Country] is any of ["Jamaica"]');
+        api.setGridOption(
+            'rowData',
+            ROW_DATA.filter((row) => row.country !== 'Jamaica' && row.country !== 'Poland')
+        );
+        await asyncSetTimeout(0);
+
+        api.setGridOption('columnDefs', columnDefs(true));
+        await asyncSetTimeout(0);
+        api.setAdvancedFilterModel(null);
+        await asyncSetTimeout(0);
+        await af.applyExpression('[Country] is any of ["Poland"]');
+        expect(api.getAdvancedFilterModel()).toBeNull();
+        await af.applyExpression('[Country] is any of ["Jamaica"]');
+        expect(af.getModel().values).toEqual(['Jamaica']);
+    });
+
+    test('rows arriving after grid start are offered as without the option, formatted by their data type', async () => {
+        const api = gridsManager.createGrid('grid1', {
+            enableAdvancedFilter: true,
+            columnDefs: [
+                { field: 'kept', filter: 'agSetColumnFilter', filterParams: { preservePreviousValues: true } },
+                { field: 'plain', filter: 'agSetColumnFilter' },
+            ],
+        });
+        await asyncSetTimeout(0);
+        const dates = [new Date(2024, 0, 1), new Date(2024, 0, 2)];
+        api.setGridOption(
+            'rowData',
+            dates.map((date) => ({ kept: date, plain: date }))
+        );
+        await asyncSetTimeout(0);
+
+        const af = AdvancedFilterHarness.get(api);
+        await af.type('[Plain] is any of [');
+        const plainEntries = af.autocompleteEntries();
+        expect(plainEntries).toHaveLength(2);
+        await af.type('[Kept] is any of [');
+        expect(af.autocompleteEntries()).toEqual(plainEntries);
     });
 });
 

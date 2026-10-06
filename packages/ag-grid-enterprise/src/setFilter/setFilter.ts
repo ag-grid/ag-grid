@@ -37,7 +37,13 @@ import type {
     SetFilterListItemSelectionChangedEvent,
 } from './setFilterListItem';
 import { SetFilterListItem } from './setFilterListItem';
-import { setFilterNullIfBlank, translateForSetFilter, unformattedSetFilterText } from './setFilterUtils';
+import {
+    areAllTreeKeysIn,
+    formatTreeKey,
+    setFilterNullIfBlank,
+    translateForSetFilter,
+    unformattedSetFilterText,
+} from './setFilterUtils';
 import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 
 /** @param V type of value in the Set Filter */
@@ -56,6 +62,7 @@ export class SetFilter<V = string>
     private virtualList: VirtualList<SetFilterListItem<V | string | null>, SetFilterModelTreeItem | string | null>;
 
     private hardRefreshVirtualList = false;
+    private keyOnlyVersion = 0;
 
     public handler: SetFilterHandler<V>;
     private handlerDestroyFuncs?: (() => void)[];
@@ -88,19 +95,22 @@ export class SetFilter<V = string>
         this.formatter =
             _bindFilterCallback(textFormatter, beans.gos, column, 'columnFilter') ?? unformattedSetFilterText;
 
+        const getKeyOnlyKeys = () => this.handler.valueModel.keyOnlyKeys;
         this.displayValueModel = treeList
             ? new TreeSetDisplayValueModel(
                   beans.log,
                   this.formatter,
                   treeListPathGetter,
                   treeListFormatter,
-                  handler.isTreeDataOrGrouping()
+                  handler.isTreeDataOrGrouping(),
+                  getKeyOnlyKeys
               )
             : (new FlatSetDisplayValueModel<V>(
                   beans.valueSvc,
                   () => this.handler.valueFormatter,
                   this.formatter,
-                  column as AgColumn
+                  column as AgColumn,
+                  getKeyOnlyKeys
               ) as any);
 
         handler.valueModel.allKeys.then((values) => {
@@ -154,11 +164,15 @@ export class SetFilter<V = string>
     }
 
     private redisplayValues(hardRefresh: boolean | undefined): void {
-        this.handler.valueModel.allKeys.then((values) => {
+        const valueModel = this.handler.valueModel;
+        valueModel.allKeys.then((values) => {
             if (this.isAlive()) {
                 this.updateDisplayedValues('reload', values ?? []);
                 this.setSelectedModel(this.state.model?.values ?? null);
-                if (hardRefresh) {
+                // A row is drawn differently for a key alone, so it is rebuilt when that changes.
+                const keyOnlyVersion = valueModel.keyOnlyVersion;
+                if (hardRefresh || keyOnlyVersion !== this.keyOnlyVersion) {
+                    this.keyOnlyVersion = keyOnlyVersion;
                     this.hardRefreshVirtualList = true;
                 }
                 this.checkAndRefreshVirtualList();
@@ -195,6 +209,7 @@ export class SetFilter<V = string>
                 }),
             ];
             this.handler = handler;
+            this.keyOnlyVersion = valueModel.keyOnlyVersion;
             const isLoading = valueModel.isLoading();
             if (oldHandler || isLoading) {
                 this.setIsLoading(isLoading);
@@ -437,7 +452,7 @@ export class SetFilter<V = string>
         const groupsExist = this.displayValueModel.hasGroups();
         const { isSelected, isExpanded } = this.isSelectedExpanded(item);
 
-        const { value, depth, isGroup, hasIndeterminateExpandState, selectedListener, expandedListener } =
+        const { value, depth, isGroup, hasIndeterminateExpandState, isKeyOnly, selectedListener, expandedListener } =
             this.newSetListItemAttributes(item);
 
         const itemParams: SetFilterListItemParams<V | string | null> = {
@@ -454,6 +469,8 @@ export class SetFilter<V = string>
             isGroup,
             isExpanded,
             hasIndeterminateExpandState,
+            isMissing: this.isItemMissing(item),
+            isKeyOnly: !!isKeyOnly,
         };
         const listItem = this.createBean(new SetFilterListItem<V | string | null>(itemParams));
 
@@ -465,14 +482,7 @@ export class SetFilter<V = string>
         return listItem;
     }
 
-    private newSetTreeItemAttributes(item: SetFilterModelTreeItem): {
-        value: V | string | (() => string) | null;
-        depth?: number;
-        isGroup?: boolean;
-        hasIndeterminateExpandState?: boolean;
-        selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void;
-        expandedListener?: (e: SetFilterListItemExpandedChangedEvent) => void;
-    } {
+    private newSetTreeItemAttributes(item: SetFilterModelTreeItem): SetListItemAttributes<V> {
         const displayValueModel = this.displayValueModel;
         const groupsExist = displayValueModel.hasGroups();
 
@@ -506,9 +516,10 @@ export class SetFilter<V = string>
         // A group additionally expands; both act for every key their row stands for.
         const children = item.children;
         return {
-            value: this.params.treeListFormatter?.(item.treeKey, item.depth, item.parentTreeKeys) ?? item.treeKey,
+            value: formatTreeKey(item, this.params.treeListFormatter) ?? item.treeKey,
             depth: item.depth,
             isGroup: !!children,
+            isKeyOnly: item.keyOnly,
             selectedListener: (e: SetFilterListItemSelectionChangedEvent<SetFilterModelTreeItem>) =>
                 this.onTreeItemSelected(e.item, e.isSelected),
             expandedListener: children
@@ -518,14 +529,7 @@ export class SetFilter<V = string>
         };
     }
 
-    private newSetListItemAttributes(item: SetFilterModelTreeItem | string | null): {
-        value: V | string | (() => string) | null;
-        depth?: number;
-        isGroup?: boolean;
-        hasIndeterminateExpandState?: boolean;
-        selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void;
-        expandedListener?: (e: SetFilterListItemExpandedChangedEvent) => void;
-    } {
+    private newSetListItemAttributes(item: SetFilterModelTreeItem | string | null): SetListItemAttributes<V> {
         // Tree item
         if (this.isSetFilterModelTreeItem(item)) {
             return this.newSetTreeItemAttributes(item);
@@ -551,8 +555,12 @@ export class SetFilter<V = string>
         }
 
         // List item
+        const valueModel = this.handler.valueModel;
+        const isKeyOnly = valueModel.keyOnlyKeys.has(item);
         return {
-            value: this.handler.valueModel.allValues.get(item) ?? null,
+            // Labelled by its key, never formatted as a value it does not have.
+            value: isKeyOnly ? () => this.handler.getFormattedValue(item) : (valueModel.allValues.get(item) ?? null),
+            isKeyOnly,
             selectedListener: (e: SetFilterListItemSelectionChangedEvent<string | null>) =>
                 this.onItemSelected(e.item, e.isSelected),
         };
@@ -563,7 +571,24 @@ export class SetFilter<V = string>
         component: SetFilterListItem<V | string | null>
     ): void {
         const { isSelected, isExpanded } = this.isSelectedExpanded(item);
-        component.refresh(item, isSelected, isExpanded);
+        component.refresh(item, isSelected, isExpanded, this.isItemMissing(item));
+    }
+
+    private isItemMissing(item: SetFilterModelTreeItem | string | null): boolean {
+        const missingKeys = this.handler.valueModel.missingKeys;
+        if (!missingKeys.size) {
+            return false;
+        }
+        if (this.isSetFilterModelTreeItem(item)) {
+            const displayValueModel = this.displayValueModel;
+            // The (Select All) and Add Selection rows span the list, so they are never muted.
+            return (
+                item !== displayValueModel.getSelectAllItem() &&
+                item !== displayValueModel.getAddSelectionToFilterItem() &&
+                areAllTreeKeysIn(item, missingKeys)
+            );
+        }
+        return missingKeys.has(item);
     }
 
     private isSelectedExpanded(item: SetFilterModelTreeItem | string | null): {
@@ -1054,7 +1079,7 @@ export class SetFilter<V = string>
             this.displayValueModel.updateDisplayedValuesToAllAvailable(
                 (key: string | null) => valueModel.allValues.get(key) ?? null,
                 allKeys,
-                valueModel.availableKeys,
+                valueModel.displayableKeys,
                 source
             );
             return;
@@ -1072,7 +1097,7 @@ export class SetFilter<V = string>
         this.displayValueModel.updateDisplayedValuesToMatchMiniFilter(
             (key: string | null) => valueModel.allValues.get(key) ?? null,
             allKeys,
-            valueModel.availableKeys,
+            valueModel.displayableKeys,
             matchesFilter,
             nullMatchesFilter,
             source
@@ -1222,6 +1247,16 @@ export class SetFilter<V = string>
     }
 }
 
+interface SetListItemAttributes<V> {
+    value: V | string | (() => string) | null;
+    depth?: number;
+    isGroup?: boolean;
+    hasIndeterminateExpandState?: boolean;
+    isKeyOnly?: boolean;
+    selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void;
+    expandedListener?: (e: SetFilterListItemExpandedChangedEvent) => void;
+}
+
 class ModelWrapper<V> implements VirtualListModel {
     constructor(private readonly model: ISetDisplayValueModel<V>) {}
 
@@ -1285,6 +1320,10 @@ class TreeModelWrapper implements VirtualListModel {
         if (oldRow == null && newRow == null) {
             return true;
         }
-        return oldRow?.treeKey === newRow?.treeKey && oldRow?.depth === newRow?.depth;
+        return (
+            oldRow?.treeKey === newRow?.treeKey &&
+            oldRow?.depth === newRow?.depth &&
+            oldRow?.keyOnly === newRow?.keyOnly
+        );
     }
 }

@@ -1108,8 +1108,8 @@ export interface _ColumnFilterGridApi {
     hideColumnFilter(): void;
 
     /**
-     * Perform the provided filter action for the column specified, or all columns.
-     * Requires `enableFilterHandlers = true`.
+     * Perform the provided filter action for the columns specified, or all columns.
+     * Requires `enableFilterHandlers = true`, except for the actions clearing the Set Filter's preserved values.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     doFilterAction(params: FilterActionParams): void;

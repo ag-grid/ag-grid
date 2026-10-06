@@ -3,7 +3,7 @@ title: "Set Filter - Data Updates"
 enterprise: true
 ---
 
-This section describes how changing data through [Cell Editing](./cell-editing/) and the application [Updating Data](./data-update/) impacts the Set Filter's values. This is only applicable when the Set Filter is taking its values from the grid's data.
+This section describes how changing data through [Cell Editing](./cell-editing/) and the application [Updating Data](./data-update/) impacts the Set Filter's values. This is only applicable when the Set Filter is taking its values from the grid's data, except for [Preserving Previous Values](#preserving-previous-values), which also covers provided values.
 
 ## Row / Cell Updates
 
@@ -96,3 +96,102 @@ The following example demonstrates how `api.setGridOption('rowData', data)` affe
   Click **Apply Data Update 2** and notice how 'B' returns to the filter list but remains unselected.
 
 {% gridExampleRunner title="Setting New Data" name="setting-new-data"  exampleHeight=500 /%}
+
+## Preserving Previous Values
+
+By default, a value that leaves the data is removed from the Filter List and its selected state is lost: if it later returns, it comes back as a new value. Set `preservePreviousValues` to keep values the filter has seen, together with whether they were selected. This suits filters that must survive data changing underneath them, for example:
+
+- a saved or linked filter model applied before the rows it names have loaded;
+- data that is cleared and reloaded, or replaced with `api.setGridOption('rowData', data)`;
+- live updates and transactions that remove a value's rows and later add them back.
+
+{% interfaceDocumentation interfaceName="ISetFilterParams" names=["preservePreviousValues", "preservePreviousValuesLimit"] config={"description":""} /%}
+
+With this enabled:
+
+- A selected value whose rows are all removed stays selected, so its rows pass the filter again when they return.
+- An unselected value whose rows are all removed stays unselected, so its rows stay filtered out when they return.
+- Values no longer in the data are listed after the current values in a muted colour, and screen readers, and the default tooltip when `showTooltips` is set, describe them as not in the current data. In [Excel Mode](./filter-set-excel-mode/), `(Blanks)` stays last unless `suppressSorting` is set. They can still be selected and deselected, and take part in the Mini Filter and **(Select All)**. In a [Tree List](./filter-set-tree-list/) they stay in place, and a group is muted once every value under it is no longer in the data.
+- Values in a filter model that the data has never contained are kept and listed by their key, so a model set before any rows are loaded is applied as written rather than reduced to the values present. Having no value, they are not passed to `valueFormatter`, the comparator, a cell renderer or the Tree List's `treeListPathGetter` and `treeListFormatter`, and `getFilterValues()` returns `null` for them.
+- The floating filter and the Filters Tool Panel include selected values that are no longer in the data, as the filter still selects them.
+- New values are added as normal: unselected while the filter is active, and selected while it is inactive.
+- Values supplied through `filterParams.values` or `setFilterValues` work the same way: a value missing from the latest list is kept.
+- Unless `caseSensitive` is set, a value that returns in another case keeps the case it had when it left.
+- When values are taken from the grid, a value hidden only because another column's filter excludes its rows is still in the data, so it is not kept: it is hidden from the list as usual. A `values` callback that leaves out such values drops them from the provided values, so they are kept.
+
+The following example demonstrates preserving previous values. Try the following:
+
+- Click **Select Only B**, then **Apply Data Update 1**. `'B'` and `'C'` are no longer in the data but are still listed, muted. `'B'` stays selected, so no rows are shown, and the floating filter and the **Filter Summaries** panel still read `'B'`.
+- Click **Apply Data Update 2**. `'B'` rows are shown again, and `'C'` rows stay filtered out as `'C'` is still unselected.
+- Click **Apply Data Update 1** again, then **Clear Preserved Values** to discard `'B'` and `'C'`. They leave the Filter List, and `'B'` leaves the model with them. The model then selects nothing, so no rows are shown until a value is selected again, even after **Apply Data Update 2** brings `'B'` back.
+
+{% gridExampleRunner title="Preserving Previous Values" name="preserve-previous-values"  exampleHeight=500 /%}
+
+The [Advanced Filter](./filter-advanced/) only suggests current values as you type, but still accepts a value that has left the data. Its Builder lists the values no longer in the data after the current ones, muted, as the Filter List does. The values an applied expression names are kept as a column filter's selected values are, and the rest count towards `preservePreviousValuesLimit`. In the following example, click **Apply Data Update 1**, then type `[Set Filter Column] is any of ["B"]` and apply it: `'B'` is no longer in the data and is not suggested, but it is accepted and no rows are shown. Click **Apply Data Update 2** and the `'B'` rows are shown again.
+
+{% gridExampleRunner title="Preserving Previous Values with the Advanced Filter" name="preserve-previous-values-advanced-filter"  exampleHeight=400 /%}
+
+In a [Tree List](./filter-set-tree-list/) on a group column, a value no longer in the data stays in its group, muted, and a group is muted once every value under it is gone. A model value that was never in the data is listed at the root by its key, in its own row even beside a group with the same label. The following examples show this with [Row Grouping](./grouping/) and [Tree Data](./tree-data/). Try the following, opening the filter from the floating filter's button after each step, with its groups expanded, to see the result:
+
+- Click **Select Paris and Madrid** (or **Select report.pdf and old.zip**). Madrid (or old.zip) is not in the data, so it is listed at the root by its key, `'Spain#Madrid'` (or `'Archive/old.zip'`).
+- Click **Remove Rome** (or **Remove beach.jpg**). The value stays in its group, muted and unselected.
+- Click **Remove France** (or **Remove Documents**). The whole group is muted, and `'Paris'` (or `'report.pdf'`) stays selected.
+- Click **Clear Preserved Values** to discard the values no longer in the data. `'Paris'` and `'Madrid'` (or `'report.pdf'` and `'old.zip'`) leave the model with them, so no rows pass until a value is selected again.
+
+{% gridExampleRunner title="Preserving Previous Values with Row Grouping" name="preserve-previous-values-grouping"  exampleHeight=500 /%}
+
+{% gridExampleRunner title="Preserving Previous Values with Tree Data" name="preserve-previous-values-tree-data"  exampleHeight=500 /%}
+
+### Limiting Preserved Values
+
+Selected values are always kept. Unselected values that are no longer in the data are kept up to `preservePreviousValuesLimit`:
+
+| `preservePreviousValuesLimit` | Unselected values kept once they leave the data                                                  |
+| ----------------------------- | ------------------------------------------------------------------------------------------------ |
+| not set                       | up to 100                                                                                        |
+| a number, for example `500`   | up to that number                                                                                |
+| `0`                           | none: only selected values are kept, so the list shows the current values plus the selected ones |
+| `-1`                          | all of them, with no limit                                                                       |
+
+When the limit is exceeded, the value that left the data first is discarded first. Discarding an unselected value does not change which rows pass the applied filter: it is not in the model, so if its rows return it is added back as a new, unselected value and its rows stay filtered out, exactly as if it had been kept. The limit only decides which of these values stay listed, and in memory, while their rows are away.
+
+Values are discarded when the values next reload, for example when the data changes or `refreshFilterValues` is called, not when a value is deselected. Only the applied filter model, and an applied Advanced Filter expression, protect a value: with an **Apply** button, a value selected but not yet applied can be discarded by such a reload.
+
+While the filter is inactive there is no model, so every retained value counts as unselected and the limit still applies. If a filter is applied later, a discarded value that returns is added back as a new, unselected value.
+
+### Clearing Preserved Values
+
+Call `api.doFilterAction()` with the `clearPreservedValues` action to discard the preserved values that are not in the current data. Set `colId` to a column ID, or an array of IDs, to clear only those; without it, every column is cleared. This works whether or not `enableFilterHandlers` is set:
+
+```{% frameworkTransform=true %}
+api.doFilterAction({ colId: 'col1', action: 'clearPreservedValues' });
+api.doFilterAction({ colId: ['col1', 'col2'], action: 'clearPreservedValues' });
+api.doFilterAction({ action: 'clearPreservedValues' });
+```
+
+The values are cleared wherever the column keeps them: its Set Filter, a Set Filter inside a [Multi Filter](./filter-multi/) or a selectable filter, and the [Advanced Filter](./filter-advanced/). Each filter model is then reconciled with the remaining values, as happens without `preservePreviousValues`: selected values that were discarded leave the model, and the filter becomes inactive if every remaining value is selected. The values an applied Advanced Filter expression names are kept, as the expression still uses them.
+
+The `clearUnselectedPreservedValues` action discards only the values that are not in the applied filter model. Those in it stay listed, and the model is left as it is:
+
+```{% frameworkTransform=true %}
+api.doFilterAction({ colId: 'col1', action: 'clearUnselectedPreservedValues' });
+```
+
+### Lifetime and Memory
+
+A filter only sees values while it exists, so a column with `preservePreviousValues` creates its filter up front rather than when it is first used:
+
+- Its filter is created once the grid knows the column's data type. While the [Advanced Filter](./filter-advanced/) is enabled, the Advanced Filter creates its own instead. Pivot result columns, which copy their value column's params, do not create one.
+- A `values` callback is therefore called when the grid starts.
+- A Set Filter inside a [Multi Filter](./filter-multi/) is created up front with the whole Multi Filter, including its other filters. A selectable filter only creates the filter that is selected, so a Set Filter there keeps values only while it is selected.
+
+Values are kept for the life of the filter. They are discarded if the filter is destroyed, for example with `api.destroyFilter`, after which the filter starts again from the current data. Turning the option off discards them too, as does turning the Advanced Filter on or off, which replaces the filters that kept them. They are also discarded when the rules that make their keys change:
+
+- A column definition update that changes how values are identified, such as `caseSensitive`, as listed in [Updating Set Filter Parameters](./filter-set/#updating-set-filter-parameters). With a filter applied, this resets the Set Filter. The values an applied Advanced Filter expression names stay listed, by their key.
+- For a [Tree List](./filter-set-tree-list/) on a group column that takes its values from the grid, the row group columns, `groupAllowUnbalanced` with Row Grouping, or Tree Data. These change the keys themselves, so model values that no longer match any value leave the model.
+
+Preserved values are not saved with [Grid State](./grid-state/): a saved model restores the selected values, and unselected values stay filtered out because they are not in the model.
+
+Keeping values also keeps them in memory. Columns whose values change constantly, such as timestamps, unique IDs or frequently edited cells, add a value for every change, and a value that is a complex object keeps that object alive. Lower `preservePreviousValuesLimit` for such columns, or set it to `0` to keep only what is selected.
+
+Each filter that takes its values from the grid reloads them from every row when the data changes, and reads every row again when another column's filter changes. Creating filters up front means every opted-in column pays that from the start, whether or not its filter is ever opened. Enable the option on the columns that need it rather than through `defaultColDef` on a wide grid.
