@@ -757,6 +757,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaFilterList: 'Senarai Penapis',
     ariaFilterToValue: 'Tapis hingga nilai',
     ariaFilterValue: 'Nilai Penapis',
+    ariaNotInCurrentData: 'tiada dalam data semasa',
     ariaFilterMenuOpen: 'Buka Menu Penapis',
     ariaFilteringOperator: 'Operator Penapisan',
     ariaHidden: 'tersembunyi',

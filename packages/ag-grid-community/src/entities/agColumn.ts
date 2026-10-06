@@ -895,8 +895,7 @@ export class AgColumn<TValue = any>
         }
         this.headerNameOverride = headerName;
         // Column-scoped event for the column's own header cell and tool panel entry, so they refresh
-        // without filtering by colId; the grid-level event drives the state service and keeps parity
-        // with column groups (which have no per-column event bus).
+        // without filtering by colId; the grid-level event drives the state service.
         this.dispatchColEvent('headerNameChanged', source);
         this.beans.eventSvc.dispatchEvent({
             type: 'columnHeaderNameChanged',

@@ -739,6 +739,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaFilterList: 'لیست فیلتر',
     ariaFilterToValue: 'فیلتر تا مقدار',
     ariaFilterValue: 'مقدار فیلتر',
+    ariaNotInCurrentData: 'در داده‌های فعلی نیست',
     ariaFilterMenuOpen: 'باز کردن منوی فیلتر',
     ariaFilteringOperator: 'عملگر فیلتر کردن',
     ariaHidden: 'مخفی',

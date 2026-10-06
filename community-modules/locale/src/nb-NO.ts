@@ -739,6 +739,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaFilterList: 'Filterliste',
     ariaFilterToValue: 'Filtrer til verdi',
     ariaFilterValue: 'Filterverdi',
+    ariaNotInCurrentData: 'ikke i gjeldende data',
     ariaFilterMenuOpen: 'Åpne filtermeny',
     ariaFilteringOperator: 'Filtreringsoperator',
     ariaHidden: 'skjult',

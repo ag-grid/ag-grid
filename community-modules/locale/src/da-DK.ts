@@ -741,6 +741,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaFilterList: 'Filterliste',
     ariaFilterToValue: 'Filtrer til værdi',
     ariaFilterValue: 'Filtrerværdi',
+    ariaNotInCurrentData: 'ikke i de aktuelle data',
     ariaFilterMenuOpen: 'Åbn Filtermenu',
     ariaFilteringOperator: 'Filtreringsoperator',
     ariaHidden: 'skjult',

@@ -14,9 +14,11 @@ import type {
 import { AgPromise, BeanStub, _addGridCommonParams } from 'ag-grid-community';
 
 import type { CsrmValuesExtractor } from './csrmValueExtractor';
-import { createTreeDataOrGroupingComparator, mapFormattedKeys, setFilterNullIfBlank } from './setFilterUtils';
+import { mapFormattedKeys, setFilterNullIfBlank, treeDataOrGroupingComparator } from './setFilterUtils';
 
 type SetValueModelEvent = 'availableValuesChanged' | 'loadingStart' | 'loadingEnd' | 'destroyed';
+
+const DEFAULT_MAX_PRESERVED_VALUES = 100;
 
 enum SetFilterModelValuesType {
     PROVIDED_LIST,
@@ -29,6 +31,8 @@ interface ValuesLoad {
     settle: (keys: (string | null)[]) => void;
     answered: boolean;
     readonly fromCallback: boolean;
+    /** Drops the kept keys; a load overtaking one still pending inherits it. */
+    replace: boolean;
 }
 
 export interface SetValueModelParams<TValue> {
@@ -49,13 +53,30 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     /** Remaining keys when filters from other columns have been applied. */
     public availableKeys = new Set<string | null>();
 
+    /** Keys kept by `preservePreviousValues` but absent from the current values, in the order they left. */
+    public readonly missingKeys = new Set<string | null>();
+
+    /** Missing keys known only from a model, whose values are unknown. */
+    public readonly keyOnlyKeys = new Set<string | null>();
+
+    /** Once any value has loaded, no values means an empty source rather than one not loaded yet. */
+    public valuesSeen = false;
+
+    /** Bumped whenever `keyOnlyKeys` changes, so a list rebuilds the rows it drew for a key alone. */
+    public keyOnlyVersion = 0;
+
+    /** The keys the list shows: the available keys, then the missing keys. */
+    public displayableKeys = this.availableKeys;
+
     private valuesType: SetFilterModelValuesType;
 
     private keyComparator: (a: string | null, b: string | null) => number;
-    private entryComparator: (a: [string | null, TValue | null], b: [string | null, TValue | null]) => number;
+    private valueComparator: (a: TValue | null, b: TValue | null) => number;
     private compareByValue: boolean;
 
     private providedValues: SetFilterValues<any, TValue> | null = null;
+
+    private formattedKeyIndex: Map<string | null, string | null> | undefined;
 
     private initialised: boolean = false;
 
@@ -71,6 +92,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         private readonly csrmValuesExtractor: CsrmValuesExtractor<TValue> | undefined,
         private readonly caseFormat: <T extends string | null>(valueToFormat: T) => T,
         private readonly isTreeDataOrGrouping: () => boolean,
+        private readonly isKeyChecked: (key: string | null) => boolean,
         private params: SetValueModelParams<TValue>
     ) {
         super();
@@ -88,8 +110,8 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         this.updateAllValues();
     }
 
-    /** Returns whether the values are being loaded again. */
-    public refresh(params: SetValueModelParams<TValue>): boolean {
+    /** Returns whether the values reload; `replace` drops the kept keys, made by rules no longer in force. */
+    public refresh(params: SetValueModelParams<TValue>, replace: boolean): boolean {
         const handlerParams = params.handlerParams;
 
         if (handlerParams.source !== 'colDef') {
@@ -104,12 +126,22 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         // the params change only with the column definition, so the API's values never read as its own
         const valuesChanged = (values ?? null) !== (oldHandlerParams.filterParams.values ?? null);
 
-        this.params = params;
         this.updateParams(params);
 
         if (valuesChanged) {
             this.setProvidedValues(values);
-            this.colDefLoad = this.updateAllValues();
+            this.colDefLoad = this.updateAllValues(replace);
+            return true;
+        }
+        if (replace) {
+            const current = this.current;
+            // its answer is keyed by the new rules, so it replaces kept keys rather than loading again
+            if (current && !current.answered && this.isPreserving()) {
+                current.replace = true;
+                this.colDefLoad = this.allKeys;
+                return false;
+            }
+            this.colDefLoad = this.updateAllValues(true);
             return true;
         }
         // the loaded values, the API's included, are sorted again; a load still pending sorts when it answers
@@ -125,6 +157,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
             }
             this.allKeys = AgPromise.resolve(keys);
             this.availableKeys = nextAvailable;
+            this.updateDisplayableKeys(keys);
         }
         return false;
     }
@@ -154,7 +187,9 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         return load;
     }
 
-    private updateParams(params: SetValueModelParams<TValue>): void {
+    /** Takes the key function and sort rules without reloading, which `refresh` does only for a column definition. */
+    public updateParams(params: SetValueModelParams<TValue>): void {
+        this.params = params;
         const {
             handlerParams: {
                 colDef,
@@ -173,21 +208,15 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
 
         const keyComparator = comparator ?? (colDef.comparator as (a: any, b: any) => number);
         const treeDataOrGrouping = this.isTreeDataOrGrouping();
-        let entryComparator: (a: [string | null, TValue | null], b: [string | null, TValue | null]) => number;
+        let valueComparator: (a: TValue | null, b: TValue | null) => number;
         if (treeDataOrGrouping && !keyComparator) {
-            entryComparator = createTreeDataOrGroupingComparator() as any;
+            valueComparator = treeDataOrGroupingComparator as any;
         } else if (treeList && !treeListPathGetter && !keyComparator) {
-            entryComparator = (
-                [_aKey, aValue]: [string | null, TValue | null],
-                [_bKey, bValue]: [string | null, TValue | null]
-            ) => _defaultComparator(aValue, bValue);
+            valueComparator = _defaultComparator;
         } else {
-            entryComparator = (
-                [_aKey, aValue]: [string | null, TValue | null],
-                [_bKey, bValue]: [string | null, TValue | null]
-            ) => keyComparator(aValue, bValue);
+            valueComparator = keyComparator;
         }
-        this.entryComparator = entryComparator;
+        this.valueComparator = valueComparator;
         this.keyComparator = (keyComparator as any) ?? _defaultComparator;
         // If using complex objects and a comparator is provided, sort by values, otherwise need to sort by the string keys.
         // Also if tree data, grouping, or date with tree list, then need to do value sort
@@ -198,12 +227,17 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         );
     }
 
-    public updateAllValues(): AgPromise<(string | null)[]> {
+    public updateAllValues(replace = false): AgPromise<(string | null)[]> {
         const { valuesType, providedValues } = this;
         const overtaken = this.current;
         const wasLoading = this.isLoading();
         const fromCallback = valuesType === SetFilterModelValuesType.PROVIDED_CALLBACK;
-        const load: ValuesLoad = { settle: () => {}, answered: false, fromCallback };
+        const load: ValuesLoad = {
+            settle: () => {},
+            answered: false,
+            fromCallback,
+            replace: replace || (!!overtaken && !overtaken.answered && overtaken.replace),
+        };
         this.current = load;
         this.readRowsWhenReady = undefined;
         if (wasLoading !== fromCallback) {
@@ -216,7 +250,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
                 if (fromCallback) {
                     this.dispatchLocalEvent({ type: 'loadingEnd' });
                 }
-                resolve(this.processAllValues(values));
+                resolve(this.processAllValues(values, load.replace));
             };
             switch (valuesType) {
                 case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES: {
@@ -302,8 +336,49 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         return this.initialised ? this.allValues.get(key)! : key;
     }
 
-    public getAvailableKeys(values: SetFilterModelValue): SetFilterModelValue {
-        return this.initialised ? values.filter((v) => this.availableKeys.has(v)) : values;
+    public getDisplayableKeys(values: SetFilterModelValue): SetFilterModelValue {
+        return this.initialised ? values.filter((v) => this.displayableKeys.has(v)) : values;
+    }
+
+    public isPreserving(): boolean {
+        return !!this.params.handlerParams.filterParams.preservePreviousValues;
+    }
+
+    /** Model keys the values do not hold join them as missing, so the list can show and select them. */
+    public addKeyOnlyKeys(keys: SetFilterModelValue): void {
+        const { allValues, keyOnlyKeys, missingKeys, caseFormat } = this;
+        const index = this.getFormattedKeyIndex();
+        for (let i = 0, len = keys.length; i < len; ++i) {
+            const key = keys[i];
+            allValues.set(key, null);
+            keyOnlyKeys.add(key);
+            missingKeys.add(key);
+            index.set(caseFormat(key), key);
+        }
+        if (keys.length) {
+            ++this.keyOnlyVersion;
+        }
+        this.resortKeys();
+    }
+
+    /** Cleared at once, so a load still in flight merges into what remains; only the sorted keys wait for it. */
+    public clearMissing(isKept: (key: string | null) => boolean): AgPromise<(string | null)[]> {
+        for (const key of this.missingKeys) {
+            if (!isKept(key)) {
+                this.dropKey(key);
+            }
+        }
+        return this.resortKeys();
+    }
+
+    /** Sorts once any load in flight has merged, as the kept keys changed ahead of it. */
+    private resortKeys(): AgPromise<(string | null)[]> {
+        this.allKeys = this.allKeys.then(() => {
+            const sortedKeys = this.sortKeys(this.allValues);
+            this.updateDisplayableKeys(sortedKeys);
+            return sortedKeys;
+        });
+        return this.allKeys;
     }
 
     /** The values' keys, or only the available ones, under their case-folded form. */
@@ -324,12 +399,102 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
         return csrmValuesExtractor.extractUniqueValues(predicate, existingValues);
     }
 
-    private processAllValues(values: Map<string | null, TValue | null> | null): (string | null)[] {
-        const sortedKeys = this.sortKeys(values);
+    private processAllValues(values: Map<string | null, TValue | null> | null, replace: boolean): (string | null)[] {
+        const freshValues = values ?? new Map();
+        if (freshValues.size) {
+            this.valuesSeen = true;
+        }
+        if (this.isPreserving() && !replace) {
+            this.mergeValues(freshValues);
+        } else {
+            if (this.keyOnlyKeys.size) {
+                ++this.keyOnlyVersion;
+            }
+            this.missingKeys.clear();
+            this.keyOnlyKeys.clear();
+            this.formattedKeyIndex = undefined;
+            this.allValues = freshValues;
+        }
+        return this.sortKeys(this.allValues);
+    }
 
-        this.allValues = values ?? new Map();
+    /** Folds the fresh values into the kept ones in place; one in another case keeps the kept key and value, its first-seen case. */
+    private mergeValues(freshValues: Map<string | null, TValue | null>): void {
+        const { caseFormat, missingKeys, keyOnlyKeys } = this;
+        const allValues = this.allValues;
+        const index = this.getFormattedKeyIndex();
+        // Kept keys present under another case; every other present key is in `freshValues` itself.
+        let remappedKeys: Set<string | null> | undefined;
+        const keyOnlyCount = keyOnlyKeys.size;
+        freshValues.forEach(function mergeFreshValue(value, freshKey) {
+            const formattedKey = caseFormat(freshKey);
+            let key = index.get(formattedKey);
+            if (key !== undefined && keyOnlyKeys.size && keyOnlyKeys.has(key)) {
+                allValues.delete(key);
+                keyOnlyKeys.delete(key);
+                missingKeys.delete(key);
+                key = undefined;
+            }
+            if (key === undefined) {
+                key = freshKey;
+                index.set(formattedKey, key);
+            }
+            if (key === freshKey) {
+                // A kept key keeps its position, so first-seen order holds under `suppressSorting`.
+                allValues.set(key, value);
+            } else {
+                remappedKeys ??= new Set();
+                remappedKeys.add(key);
+            }
+            if (missingKeys.size) {
+                missingKeys.delete(key);
+            }
+        });
+        if (keyOnlyKeys.size !== keyOnlyCount) {
+            ++this.keyOnlyVersion;
+        }
+        allValues.forEach(function markMissing(_value, key) {
+            if (!freshValues.has(key) && !remappedKeys?.has(key)) {
+                missingKeys.add(key);
+            }
+        });
+        this.evictMissing();
+    }
 
-        return sortedKeys;
+    public findKey(key: string | null): string | null | undefined {
+        return this.getFormattedKeyIndex().get(this.caseFormat(key));
+    }
+
+    /** Kept across merges and removals, which update it in place; a replacing load drops it. */
+    private getFormattedKeyIndex(): Map<string | null, string | null> {
+        let index = this.formattedKeyIndex;
+        if (!index) {
+            index = mapFormattedKeys(this.allValues.keys(), this.caseFormat);
+            this.formattedKeyIndex = index;
+        }
+        return index;
+    }
+
+    /** Only unchecked keys are evicted, so which rows pass never changes. */
+    private evictMissing(): void {
+        const max = this.params.handlerParams.filterParams.preservePreviousValuesLimit ?? DEFAULT_MAX_PRESERVED_VALUES;
+        const { missingKeys, isKeyChecked } = this;
+        if (max < 0 || missingKeys.size <= max) {
+            return;
+        }
+        const evictable = Array.from(missingKeys).filter((key) => !isKeyChecked(key));
+        for (let i = 0, len = evictable.length - max; i < len; ++i) {
+            this.dropKey(evictable[i]);
+        }
+    }
+
+    private dropKey(key: string | null): void {
+        this.allValues.delete(key);
+        this.missingKeys.delete(key);
+        if (this.keyOnlyKeys.delete(key)) {
+            ++this.keyOnlyVersion;
+        }
+        this.formattedKeyIndex?.delete(this.caseFormat(key));
     }
 
     private uniqueValues(values: (TValue | null)[] | null): Map<string | null, TValue | null> {
@@ -366,7 +531,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     }
 
     private sortKeys(nullableValues: Map<string | null, TValue | null> | null): (string | null)[] {
-        const values = nullableValues ?? new Map();
+        const values = nullableValues ?? new Map<string | null, TValue | null>();
 
         const filterParams = this.params.handlerParams.filterParams;
 
@@ -374,22 +539,78 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
             return Array.from(values.keys());
         }
 
-        let sortedKeys;
-        if (this.compareByValue) {
-            sortedKeys = Array.from(values.entries())
-                .sort(this.entryComparator)
-                .map(([key]) => key);
+        // Their values are unknown, so no comparator is handed one: ordered by key, after the rest.
+        const keyOnlyKeys = this.keyOnlyKeys.size > 0 && values === this.allValues ? this.keyOnlyKeys : undefined;
+        // Excel Mode lists the blank last, so it is left out of the sort.
+        const blankLast = !!filterParams.excelMode && values.has(null);
+        const keys: (string | null)[] = [];
+        const sortValues: (TValue | null)[] | undefined = this.compareByValue ? [] : undefined;
+        values.forEach(function collectSortedKey(value, key) {
+            if ((key === null && blankLast) || keyOnlyKeys?.has(key)) {
+                return;
+            }
+            keys.push(key);
+            if (sortValues) {
+                sortValues.push(value);
+            }
+        });
+
+        let sortedKeys: (string | null)[];
+        if (sortValues) {
+            const valueComparator = this.valueComparator;
+            const len = keys.length;
+            const order: number[] = [];
+            for (let i = 0; i < len; ++i) {
+                order.push(i);
+            }
+            order.sort(function compareSortValues(a, b) {
+                return valueComparator(sortValues[a], sortValues[b]);
+            });
+            sortedKeys = [];
+            for (let i = 0; i < len; ++i) {
+                sortedKeys.push(keys[order[i]]);
+            }
         } else {
-            sortedKeys = Array.from(values.keys()).sort(this.keyComparator);
+            sortedKeys = keys.sort(this.keyComparator);
         }
 
-        if (filterParams.excelMode && values.has(null)) {
-            // ensure the blank value always appears last
-            sortedKeys = sortedKeys.filter((v) => v != null);
+        if (keyOnlyKeys) {
+            const sortedKeyOnlyKeys = Array.from(keyOnlyKeys).sort(_defaultComparator);
+            for (let i = 0, len = sortedKeyOnlyKeys.length; i < len; ++i) {
+                const key = sortedKeyOnlyKeys[i];
+                if (key !== null || !blankLast) {
+                    sortedKeys.push(key);
+                }
+            }
+        }
+
+        if (blankLast) {
             sortedKeys.push(null);
         }
 
         return sortedKeys;
+    }
+
+    private updateDisplayableKeys(allKeys: (string | null)[]): void {
+        const { availableKeys, missingKeys } = this;
+        if (!missingKeys.size) {
+            this.displayableKeys = availableKeys;
+            return;
+        }
+        const displayableKeys = new Set(availableKeys);
+        for (let i = 0, len = allKeys.length; i < len; ++i) {
+            const key = allKeys[i];
+            if (missingKeys.has(key)) {
+                displayableKeys.add(key);
+            }
+        }
+        // Excel Mode lists the blank last when sorting, after the retained values too.
+        const { excelMode, suppressSorting } = this.params.handlerParams.filterParams;
+        if (excelMode && !suppressSorting && displayableKeys.has(null)) {
+            displayableKeys.delete(null);
+            displayableKeys.add(null);
+        }
+        this.displayableKeys = displayableKeys;
     }
 
     public isValuesTakenFromGrid(): boolean {
@@ -397,11 +618,18 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     }
 
     private updateAvailableKeys(allKeys: (string | null)[]): void {
-        const availableKeys = this.isValuesTakenFromGrid()
-            ? this.getAvailableValues((node) => this.params.handlerParams.doesRowPassOtherFilter(node))
-            : allKeys;
+        const missingKeys = this.missingKeys;
+        let availableKeys: (string | null)[];
+        if (this.isValuesTakenFromGrid()) {
+            availableKeys = this.getAvailableValues((node) => this.params.handlerParams.doesRowPassOtherFilter(node));
+        } else if (missingKeys.size) {
+            availableKeys = allKeys.filter((key) => !missingKeys.has(key));
+        } else {
+            availableKeys = allKeys;
+        }
 
         this.availableKeys = new Set(availableKeys);
+        this.updateDisplayableKeys(allKeys);
         window.setTimeout(() => {
             if (this.isAlive()) {
                 // event needs to be handled async

@@ -105,10 +105,15 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         column: AgColumn | undefined;
         columnGroup: AgProvidedColumnGroup | undefined;
     } {
-        const colIsColumn = columnOrGroup?.isColumn;
-        const column = colIsColumn ? columnOrGroup : undefined;
-        const columnGroup = colIsColumn ? undefined : columnOrGroup;
-        return { column, columnGroup };
+        if (columnOrGroup?.isColumn) {
+            return { column: columnOrGroup, columnGroup: undefined };
+        }
+        // Filler (padding) group headers belong to the nearest user-defined group, if any.
+        let columnGroup = columnOrGroup ?? null;
+        while (columnGroup?.isPadding()) {
+            columnGroup = columnGroup.originalParent;
+        }
+        return { column: undefined, columnGroup: columnGroup ?? undefined };
     }
 
     public showMenuAfterButtonClick(

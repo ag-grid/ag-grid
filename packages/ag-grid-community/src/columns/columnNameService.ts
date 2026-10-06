@@ -5,7 +5,7 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
-import type { AbstractColDef, ColDef, HeaderLocation, HeaderValueGetterParams } from '../entities/colDef';
+import type { AbstractColDef, ColDef, ColGroupDef, HeaderLocation, HeaderValueGetterParams } from '../entities/colDef';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -28,13 +28,13 @@ export class ColumnNameService extends BeanStub implements NamedBean {
         return headerName;
     }
 
+    /** `colGroupDef` defaults to the group's own; tool panels pass their layout's definition with the grid's group. */
     public getDisplayNameForProvidedColumnGroup(
         columnGroup: AgColumnGroup | null,
         providedColumnGroup: AgProvidedColumnGroup | null,
-        location: HeaderLocation
+        location: HeaderLocation,
+        colGroupDef: ColGroupDef | null | undefined = providedColumnGroup?.colGroupDef
     ): string | null {
-        const colGroupDef = providedColumnGroup?.colGroupDef;
-
         if (colGroupDef) {
             return this.getHeaderName(colGroupDef, null, columnGroup, providedColumnGroup, location);
         }
