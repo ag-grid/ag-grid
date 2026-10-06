@@ -440,6 +440,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         flushServerSideAsyncTransactions: 0,
         refreshServerSide: 0,
         getServerSideGroupLevelState: 0,
+        subscribeToVisibleRows: 0,
         onRowHeightChanged: 0,
         resetRowHeights: 0,
     }),

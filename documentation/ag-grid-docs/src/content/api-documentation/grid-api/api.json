@@ -1277,6 +1277,12 @@
             }
         },
         "getServerSideGroupLevelState": {},
+        "subscribeToVisibleRows": {
+            "more": {
+                "name": "Subscribing to Visible Rows",
+                "url": "./server-side-model-updating-visible-rows/"
+            }
+        },
         "retryServerSideLoads": {
             "more": {
                 "name": "Retry Loads",

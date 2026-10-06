@@ -29,6 +29,7 @@ const functionRowModels: { [name in ApiFunctionName]?: RowModelType[] } = {
     flushServerSideAsyncTransactions: [serverSide],
     refreshServerSide: [serverSide],
     getServerSideGroupLevelState: [serverSide],
+    subscribeToVisibleRows: [serverSide],
     refreshInfiniteCache: [infinite],
     purgeInfiniteCache: [infinite],
     getInfiniteRowCount: [infinite],

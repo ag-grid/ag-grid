@@ -31,10 +31,12 @@ import {
     refreshServerSide,
     retryServerSideLoads,
     setServerSideSelectionState,
+    subscribeToVisibleRows,
 } from './serverSideRowModelApi';
 import { ServerSideExpansionService } from './services/serverSideExpansionService';
 import { ServerSideSelectionService } from './services/serverSideSelectionService';
 import { SsrmRowChildrenService } from './services/ssrmRowChildrenService';
+import { SsrmVisibleRowsService } from './services/ssrmVisibleRowsService';
 import { LazyBlockLoadingService } from './stores/lazy/lazyBlockLoadingService';
 import { StoreFactory } from './stores/storeFactory';
 import { StoreUtils } from './stores/storeUtils';
@@ -79,6 +81,7 @@ export const ServerSideRowModelModule: _ModuleWithoutApi = {
 export const ServerSideRowModelApiModule: _ModuleWithApi<_ServerSideRowModelGridApi<any>> = {
     moduleName: 'ServerSideRowModelApi',
     version: VERSION,
+    beans: [SsrmVisibleRowsService],
     apiFunctions: {
         getServerSideSelectionState,
         setServerSideSelectionState,
@@ -89,6 +92,7 @@ export const ServerSideRowModelApiModule: _ModuleWithApi<_ServerSideRowModelGrid
         flushServerSideAsyncTransactions,
         refreshServerSide,
         getServerSideGroupLevelState,
+        subscribeToVisibleRows,
         resetRowHeights,
         onRowHeightChanged,
     },

@@ -25,6 +25,7 @@ import { setRowNodeGroupValue } from '../../../rowGrouping/rowGroupingUtils';
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { NodeManager } from '../../nodeManager';
 import type { ServerSideRowModel } from '../../serverSideRowModel';
+import type { SsrmVisibleRowsService } from '../../services/ssrmVisibleRowsService';
 import type { LazyBlockLoadingService } from './lazyBlockLoadingService';
 import type { LazyStore } from './lazyStore';
 import { MultiIndexMap } from './multiIndexMap';
@@ -149,6 +150,7 @@ export class LazyCache extends BeanStub {
     }
 
     public override destroy() {
+        (this.beans.ssrmVisibleRowsSvc as SsrmVisibleRowsService | undefined)?.onRowsReset();
         this.lazyBlockLoadingSvc.unsubscribe(this);
         this.numberOfRows = 0;
         this.nodeMap.forEach((node) => this.blockUtils.destroyRowNode(node.node));

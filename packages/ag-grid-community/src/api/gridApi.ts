@@ -72,6 +72,7 @@ import type { RedrawRowsParams } from '../interfaces/iRedrawRowsParams';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { LoadSuccessParams, RefreshServerSideParams } from '../interfaces/iServerSideRowModel';
 import type { IServerSideGroupSelectionState, IServerSideSelectionState } from '../interfaces/iServerSideSelection';
+import type { VisibleRowsHandlers, VisibleRowsOptions } from '../interfaces/iServerSideVisibleRows';
 import type { SideBarDef } from '../interfaces/iSideBar';
 import type { IStatusPanel } from '../interfaces/iStatusPanel';
 import type { IToolPanel } from '../interfaces/iToolPanel';
@@ -1751,6 +1752,17 @@ export interface _ServerSideRowModelGridApi<TData> extends _RowModelSharedApi {
      * @agModule `ServerSideRowModelApiModule`
      */
     getServerSideGroupLevelState(): ServerSideGroupLevelState[];
+
+    /**
+     * Tells the application which rows to subscribe to and unsubscribe from as loaded rows enter and leave the view,
+     * so that a server stream only sends updates for rows the user can see.
+     * `onSubscribe` is called straight away with the rows already visible. Every row passed to `onSubscribe` is later
+     * passed to `onUnsubscribe` exactly once, including when the returned function is called or the grid is destroyed.
+     * Loading rows, pinned rows, detail rows and total rows are not included. Requires `getRowId`.
+     * Returns a function that stops the subscription.
+     * @agModule `ServerSideRowModelApiModule`
+     */
+    subscribeToVisibleRows(handlers: VisibleRowsHandlers<TData>, options?: VisibleRowsOptions): () => void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

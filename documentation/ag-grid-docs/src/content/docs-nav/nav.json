@@ -1776,6 +1776,12 @@
                                             "title": "Transactions",
                                             "path": "server-side-model-updating-transactions",
                                             "isEnterprise": true
+                                        },
+                                        {
+                                            "type": "item",
+                                            "title": "Visible Rows",
+                                            "path": "server-side-model-updating-visible-rows",
+                                            "isEnterprise": true
                                         }
                                     ]
                                 },

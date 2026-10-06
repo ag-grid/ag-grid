@@ -608,6 +608,14 @@ export type {
 } from './interfaces/iServerSideRowModel';
 export type { IServerSideGroupSelectionState, IServerSideSelectionState } from './interfaces/iServerSideSelection';
 export type {
+    VisibleRow,
+    VisibleRowRef,
+    VisibleRowsHandlers,
+    VisibleRowsOptions,
+    VisibleRowsParams,
+    VisibleRowsReason,
+} from './interfaces/iServerSideVisibleRows';
+export type {
     IServerSideStore,
     ServerSideGroupLevelState,
     StoreRefreshAfterParams,
