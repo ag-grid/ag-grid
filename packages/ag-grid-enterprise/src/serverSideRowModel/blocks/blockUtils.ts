@@ -3,7 +3,6 @@ import { _doOnce, _exists } from 'ag-stack';
 import type {
     AgColumn,
     BeanCollection,
-    GridOptionsService,
     IShowRowGroupColsService,
     NamedBean,
     RowBounds,
@@ -25,11 +24,6 @@ import type { LazyStore } from '../stores/lazy/lazyStore';
 import type { StoreFactory } from '../stores/storeFactory';
 
 const GROUP_MISSING_KEY_ID = 'ag-Grid-MissingKey';
-
-/** A group with an empty key under `groupAllowUnbalanced` is not displayed, and its children always are. */
-export function _isUnbalancedGroup(gos: GridOptionsService, rowNode: RowNode): boolean {
-    return !!gos.get('groupAllowUnbalanced') && !!rowNode.group && rowNode.key === '';
-}
 
 export class BlockUtils extends BeanStub implements NamedBean {
     beanName = 'ssrmBlockUtils' as const;
@@ -285,7 +279,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         nextRowTop: { value: number },
         uiLevel: number
     ): void {
-        const isUnbalancedGroup = _isUnbalancedGroup(this.gos, rowNode);
+        const isUnbalancedGroup = this.gos.get('groupAllowUnbalanced') && rowNode.group && rowNode.key === '';
         const isHiddenOpenGroup = this.gos.get('groupHideOpenParents') && rowNode.group && rowNode.expanded;
         rowNode.setUiLevel(uiLevel);
         if (isHiddenOpenGroup || isUnbalancedGroup) {
