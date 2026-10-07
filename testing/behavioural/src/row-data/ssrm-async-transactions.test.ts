@@ -1,4 +1,4 @@
-import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from 'ag-test-utils';
 import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { GridApi, GridOptions, ServerSideTransaction, ServerSideTransactionResult } from 'ag-grid-community';
@@ -662,6 +662,85 @@ describe('SSRM merged async transactions', () => {
         expect(updatedIds(sequential)).toEqual([['q'], ['c1'], ['p']]);
         expect(updatedIds(merged)).toEqual(updatedIds(sequential));
         expect(merged.rows).toEqual(sequential.rows);
+    });
+
+    test('removing an uncached row next to a cached removal requests no more blocks than applying them in turn', async () => {
+        const rowData = Array.from({ length: 300 }, (_, i) => ({ id: i, value: `Row ${i}` }));
+        const run = async (merge: boolean) => {
+            let requests = 0;
+            const api = gridsManager.createGrid(null, {
+                columnDefs: [{ field: 'id' }, { field: 'value' }],
+                rowModelType: 'serverSide',
+                serverSideMergeAsyncTransactions: merge,
+                cacheBlockSize: 100,
+                maxBlocksInCache: 2,
+                rowBuffer: 0,
+                suppressRowVirtualisation: false,
+                getRowId: (params) => String(params.data.id),
+                serverSideDatasource: {
+                    getRows: (params) => {
+                        requests++;
+                        const rows = rowData.slice(params.request.startRow, params.request.endRow);
+                        params.success({ rowData: rows, rowCount: rowData.length });
+                    },
+                },
+            });
+            await new GridRows(api).check('skip-snapshot');
+            await waitForEvent('firstDataRendered', api);
+            api.ensureIndexVisible(250);
+            await waitForEvent('modelUpdated', api);
+            expect(api.getRowNode('0')).toBeTruthy();
+            expect(api.getRowNode('200')).toBeTruthy();
+            expect(api.getRowNode('150')).toBeUndefined();
+
+            const before = requests;
+            await applyAsync(api, [{ remove: [rowData[150]] }, { remove: [rowData[0]] }]);
+            await new GridRows(api).check('skip-snapshot');
+            // block load checks are queued with a zero-delay timeout, and the datasource responds synchronously
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+            return { requests: requests - before, rows: collectRows(api) };
+        };
+
+        const sequential = await run(false);
+        gridsManager.reset();
+        const merged = await run(true);
+
+        expect(merged.requests).toBe(sequential.requests);
+        expect(merged.rows).toEqual(sequential.rows);
+    });
+
+    test('calls getRowId for each queued row no more often than applying the transactions in turn', async () => {
+        const transactions: ServerSideTransaction[] = [
+            { update: [NEW(1, 'a')] },
+            { update: [NEW(1, 'b')], add: [NEW(50, 'added')] },
+            { update: [NEW(50, 'updated')] },
+            { remove: [NEW(2, 'x')] },
+        ];
+        const queuedRows = new Set(
+            transactions.flatMap((tx) => [...(tx.update ?? []), ...(tx.add ?? []), ...(tx.remove ?? [])])
+        );
+
+        const run = async (merge: boolean) => {
+            const callsPerRow: Record<string, number> = {};
+            const api = await createFlatGrid(merge, {
+                getRowId: (params) => {
+                    const id = String(params.data.id);
+                    if (queuedRows.has(params.data)) {
+                        callsPerRow[id] = (callsPerRow[id] ?? 0) + 1;
+                    }
+                    return id;
+                },
+            });
+            await applyAsync(api, transactions);
+            return callsPerRow;
+        };
+
+        const sequential = await run(false);
+        gridsManager.reset();
+        const merged = await run(true);
+
+        expect(merged).toEqual(sequential);
     });
 
     test('reports the missing module when the option is enabled without it', () => {

@@ -122,7 +122,7 @@ Transactions that set `addIndex` or `rowCount` are applied on their own, in orde
 
 Transactions are grouped by route, so transactions for different routes can be applied in a different order from the queue. For example, with transactions for routes A, B and then A again, the second A transaction is applied before the B transaction.
 
-`isApplyServerSideTransaction` is still called once for each transaction, and a transaction it rejects is left out of the merge. Every transaction in a merged batch is checked against the grid state from before that batch is applied, not after the other transactions in the same batch. `getRowId` is called for every queued row before `isApplyServerSideTransaction` runs.
+`isApplyServerSideTransaction` is still called once for each transaction, and a transaction it rejects is left out of the merge. Every transaction in a merged batch is checked against the grid state from before that batch is applied, not after the other transactions in the same batch. `getRowId` is called once for every queued row before `isApplyServerSideTransaction` runs, and not again when the merged batch is applied.
 
 Merging is skipped when `serverSideEnableClientSideSort` is enabled, as each transaction re-sorts the rows.
 

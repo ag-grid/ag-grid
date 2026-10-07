@@ -181,9 +181,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         return idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data });
     }
 
+    /** @param rowIds the id of each row's data, when already known */
     public applyAcceptedTransaction(
         transaction: ServerSideTransaction,
-        idFunc: RowIdFunc
+        idFunc: RowIdFunc,
+        rowIds?: Map<any, string>
     ): ServerSideTransactionResult {
         // needs checked before transactions are applied, as rows won't be contiguous immediately
         // after
@@ -191,7 +193,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
         let updatedNodes: RowNode[] | undefined = undefined;
         if (transaction.update?.length) {
-            updatedNodes = this.cache.updateRowNodes(transaction.update);
+            updatedNodes = this.cache.updateRowNodes(transaction.update, rowIds);
         }
 
         let insertedNodes: RowNode[] | undefined = undefined;
@@ -200,12 +202,14 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             if (addIndex != null && addIndex < 0) {
                 addIndex = undefined;
             }
-            insertedNodes = this.cache.insertRowNodes(transaction.add, addIndex);
+            insertedNodes = this.cache.insertRowNodes(transaction.add, addIndex, rowIds);
         }
 
         let removedNodes: RowNode[] | undefined = undefined;
         if (transaction.remove?.length) {
-            const allIdsToRemove = transaction.remove.map((data) => this.getRemoveRowId(idFunc, data));
+            const allIdsToRemove = transaction.remove.map(
+                (data) => rowIds?.get(data) ?? this.getRemoveRowId(idFunc, data)
+            );
             const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
             removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, transaction.rowCount);
         }

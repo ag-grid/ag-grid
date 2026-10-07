@@ -8,8 +8,8 @@ export interface TransactionMergeTarget {
     getRowId(data: any, op: TransactionRowOp): string | null | undefined;
     isRowCached(id: string): boolean;
     isAccepted(transaction: ServerSideTransaction): boolean;
-    /** Applies a transaction that has already been accepted. */
-    apply(transaction: ServerSideTransaction): ServerSideTransactionResult;
+    /** Applies a transaction that has already been accepted, with `rowIds` holding the id of each row's data. */
+    apply(transaction: ServerSideTransaction, rowIds?: Map<any, string>): ServerSideTransactionResult;
 }
 
 interface RowEntry {
@@ -167,6 +167,9 @@ class MergeBatch {
     public accept(transactionIndex: number, entries: RowEntry[], target: TransactionMergeTarget): void {
         this.transactionIndexes.push(transactionIndex);
         const { adds, updates, removes } = this;
+        // removing ids that are not cached only marks rows for refresh when the same removal deletes cached rows
+        const uncachedRemoves: RowEntry[] = [];
+        let removesRows = false;
 
         for (let i = 0, len = entries.length; i < len; ++i) {
             const { op, id, data } = entries[i];
@@ -195,15 +198,30 @@ class MergeBatch {
                     adds.delete(id);
                     this.addedBy.delete(id);
                     this.generations.set(id, this.getGeneration(id) + 1);
+                    removesRows = true;
                     continue;
                 }
                 if (removes.has(id)) {
                     continue;
                 }
+                if (!updates.has(id) && !target.isRowCached(id)) {
+                    uncachedRemoves.push(entries[i]);
+                    continue;
+                }
                 updates.delete(id);
                 removes.set(id, data);
+                removesRows = true;
             }
             this.contributions.push({ transactionIndex, op, id, generation: this.getGeneration(id) });
+        }
+
+        if (removesRows) {
+            for (let i = 0, len = uncachedRemoves.length; i < len; ++i) {
+                const { id, data } = uncachedRemoves[i];
+                if (!removes.has(id)) {
+                    removes.set(id, data);
+                }
+            }
         }
     }
 
@@ -218,18 +236,29 @@ class MergeBatch {
         }
 
         const merged: ServerSideTransaction = {};
+        const rowIds = new Map<any, string>();
+        const toRows = (rowsById: Map<string, any>) => {
+            const rows: any[] = [];
+            for (const [id, data] of rowsById) {
+                rowIds.set(data, id);
+                rows.push(data);
+            }
+            return rows;
+        };
         if (this.updates.size) {
-            merged.update = [...this.updates.values()];
+            merged.update = toRows(this.updates);
         }
         if (this.adds.size) {
-            merged.add = [...this.adds.values()];
+            merged.add = toRows(this.adds);
         }
         if (this.removes.size) {
-            merged.remove = [...this.removes.values()];
+            merged.remove = toRows(this.removes);
         }
 
         const hasChanges = merged.update || merged.add || merged.remove;
-        const result = hasChanges ? target.apply(merged) : { status: ServerSideTransactionResultStatus.Applied };
+        const result = hasChanges
+            ? target.apply(merged, rowIds)
+            : { status: ServerSideTransactionResultStatus.Applied };
         const { status } = result;
         if (status !== ServerSideTransactionResultStatus.Applied) {
             for (let i = 0, len = transactionIndexes.length; i < len; ++i) {

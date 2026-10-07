@@ -64,7 +64,7 @@ export class TransactionMergeService extends BeanStub implements NamedBean {
             getRowId: (data, op) => (op === 'remove' ? store.getRemoveRowId(idFunc, data) : cache.getRowId(data)),
             isRowCached: (id) => cache.isNodeInCache(id),
             isAccepted: (transaction) => store.isTransactionAccepted(transaction),
-            apply: (transaction) => store.applyAcceptedTransaction(transaction, idFunc),
+            apply: (transaction, rowIds) => store.applyAcceptedTransaction(transaction, idFunc, rowIds),
         });
     }
 }
