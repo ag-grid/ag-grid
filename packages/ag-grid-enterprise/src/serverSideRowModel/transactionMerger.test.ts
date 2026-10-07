@@ -205,6 +205,23 @@ describe('_applyMergedTransactions', () => {
         expect(store.applied).toEqual([{ remove: [row('a')] }, { add: [row('a', 3)] }]);
     });
 
+    it('accepts a transaction split out for its mixed removes after applying the batch before it', () => {
+        const store = new FakeStore(initial);
+        const seen: (number | undefined)[] = [];
+        const isAccepted = (_tx: ServerSideTransaction) => {
+            seen.push(store.snapshot().find((data) => data.id === 'a')?.v);
+            return true;
+        };
+
+        _applyMergedTransactions(
+            [{ update: [row('a', 1)] }, { remove: [row('b'), row('z')] }],
+            store.target(isAccepted)
+        );
+
+        expect(seen).toEqual([0, 1]);
+        expect(store.applied).toEqual([{ update: [row('a', 1)] }, { remove: [row('b'), row('z')] }]);
+    });
+
     it('matches applying the transactions one after the other for random streams', () => {
         let seed = 7;
         const random = (n: number) => {

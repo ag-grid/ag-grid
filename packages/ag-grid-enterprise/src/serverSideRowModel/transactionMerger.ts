@@ -48,15 +48,17 @@ export function _applyMergedTransactions(
         for (let i = 0, len = planned.length; i < len; ++i) {
             const { index, entries } = planned[i];
             const transaction = transactions[index];
-            if (!target.isAccepted(transaction)) {
-                results[index] = { status: ServerSideTransactionResultStatus.Cancelled };
-            } else if (batch.mixesCachedAndUncachedRemoves(entries, target)) {
+            if (batch.mixesCachedAndUncachedRemoves(entries, target)) {
                 // a removal that misses some ids and deletes others marks rows for refresh, so it must stay a call of its own
                 batch.apply(transactions, target, results);
                 batch = new MergeBatch();
-                results[index] = target.apply(transaction, getRowIds(entries));
-            } else {
+                results[index] = target.isAccepted(transaction)
+                    ? target.apply(transaction, getRowIds(entries))
+                    : { status: ServerSideTransactionResultStatus.Cancelled };
+            } else if (target.isAccepted(transaction)) {
                 batch.accept(index, entries, target);
+            } else {
+                results[index] = { status: ServerSideTransactionResultStatus.Cancelled };
             }
         }
         batch.apply(transactions, target, results);
