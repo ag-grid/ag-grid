@@ -633,6 +633,10 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
         serverSideMergeAsyncTransactions: {
             supportedRowModels: ['serverSide'],
+            validate: ({ serverSideEnableClientSideSort }) =>
+                serverSideEnableClientSideSort
+                    ? '`serverSideMergeAsyncTransactions` is ignored when `serverSideEnableClientSideSort` is enabled, as each transaction re-sorts the rows.'
+                    : null,
         },
         serverSideOnlyRefreshFilteredGroups: {
             supportedRowModels: ['serverSide'],

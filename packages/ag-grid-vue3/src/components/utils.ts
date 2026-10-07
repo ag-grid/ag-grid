@@ -1554,7 +1554,7 @@ export interface Props<TData> {
          */
     serverSideEnableClientSideSort?: boolean,
     /** When enabled, async transactions queued within `asyncTransactionWaitMillis` are merged so that each row is changed at most once per flush, with the same result as applying them one after the other. Merging is skipped when `serverSideEnableClientSideSort` is enabled.
-         * `isApplyServerSideTransaction` is called for each batch of merged transactions just before that batch is applied, so it sees the grid state from before its batch, not from after the other transactions in that batch.
+         * Transactions are grouped by route, so transactions for different routes can be applied in a different order from the queue. `isApplyServerSideTransaction` is still called once per transaction, but every transaction in a merged batch is checked against the grid state from before that batch is applied. `getRowId` is called for every queued row before `isApplyServerSideTransaction` runs.
          * @default false
          * @agModule `ServerSideRowModelMergeTransactionsModule`
          */
@@ -2017,7 +2017,7 @@ export interface Props<TData> {
          */
     isServerSideGroupOpenByDefault?: IsServerSideGroupOpenByDefault<TData>,
     /** Called before each server-side transaction is applied to a route's store, for both sync and async transactions. Return `false` to cancel the transaction: it is not applied and its result status is `Cancelled`. Use this to discard transactions already reflected in the loaded data, for example by comparing a version stored in `groupLevelInfo`.
-         * When `serverSideMergeAsyncTransactions` is enabled, it is called for each batch of merged transactions just before that batch is applied, so it sees the grid state from before its batch, not from after the other transactions in that batch.
+         * When `serverSideMergeAsyncTransactions` is enabled, it is still called once per transaction, but every transaction in a merged batch is checked against the grid state from before that batch is applied, and transactions for different routes can be checked in a different order from the queue.
          * @agModule `ServerSideRowModelModule`
          */
     isApplyServerSideTransaction?: IsApplyServerSideTransaction<TData>,

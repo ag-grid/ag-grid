@@ -1,8 +1,8 @@
-import { GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
 import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { GridApi, GridOptions, ServerSideTransaction, ServerSideTransactionResult } from 'ag-grid-community';
-import { ScrollApiModule } from 'ag-grid-community';
+import { ScrollApiModule, enableDevValidations } from 'ag-grid-community';
 import {
     RowGroupingModule,
     ServerSideRowModelApiModule,
@@ -362,6 +362,7 @@ describe('SSRM merged async transactions', () => {
 
     afterEach(() => {
         gridsManager.reset();
+        enableDevValidations({ throwOn: ALL_SEVERITIES });
     });
 
     const INITIAL: Row[] = Array.from({ length: 5 }, (_, i) => ({ id: i, value: `Row ${i}` }));
@@ -584,20 +585,29 @@ describe('SSRM merged async transactions', () => {
         expect(merged.rows.map((r) => r.id)).not.toContain('group-UK');
     });
 
+    const clientSortOptions = (merge: boolean): GridOptions => ({
+        columnDefs: [{ field: 'id' }, { field: 'value', sort: 'asc' }],
+        rowModelType: 'serverSide',
+        serverSideMergeAsyncTransactions: merge,
+        serverSideEnableClientSideSort: true,
+        getRowId: (params) => String(params.data.id),
+        serverSideDatasource: {
+            getRows: (params) => {
+                params.success({ rowData: [NEW('A', '1'), NEW('B', '2')], rowCount: 2 });
+            },
+        },
+    });
+
+    test('warns that merging is ignored when client-side sorting is enabled', () => {
+        expect(() => gridsManager.createGrid(null, clientSortOptions(true))).toThrow(
+            /`serverSideMergeAsyncTransactions` is ignored when `serverSideEnableClientSideSort` is enabled/
+        );
+    });
+
     test('client-side sorting keeps the order of tied rows that applying the transactions in turn gives', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [322] });
         const run = async (merge: boolean) => {
-            const api = gridsManager.createGrid(null, {
-                columnDefs: [{ field: 'id' }, { field: 'value', sort: 'asc' }],
-                rowModelType: 'serverSide',
-                serverSideMergeAsyncTransactions: merge,
-                serverSideEnableClientSideSort: true,
-                getRowId: (params) => String(params.data.id),
-                serverSideDatasource: {
-                    getRows: (params) => {
-                        params.success({ rowData: [NEW('A', '1'), NEW('B', '2')], rowCount: 2 });
-                    },
-                },
-            });
+            const api = gridsManager.createGrid(null, clientSortOptions(merge));
             await waitForEvent('firstDataRendered', api);
             return applyAsync(api, [{ update: [NEW('A', '3')] }, { update: [NEW('A', '2')] }]);
         };
