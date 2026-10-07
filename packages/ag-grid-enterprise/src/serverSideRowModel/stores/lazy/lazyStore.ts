@@ -29,8 +29,11 @@ import {
 import { _createRowNodeFooter, _destroyRowNodeFooter } from '../../../aggregation/footerUtils';
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { SSRMParams } from '../../serverSideRowModel';
+import { _applyMergedTransactions } from '../../transactionMerger';
 import type { StoreUtils } from '../storeUtils';
 import { LazyCache } from './lazyCache';
+
+type RowIdFunc = NonNullable<ReturnType<typeof _getRowIdCallback>>;
 
 export class LazyStore extends BeanStub implements IServerSideStore {
     private blockUtils: BlockUtils;
@@ -155,19 +158,55 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             };
         }
 
-        const applyCallback = this.gos.getCallback('isApplyServerSideTransaction');
-        if (applyCallback) {
-            const params: WithoutGridCommon<IsApplyServerSideTransactionParams> = {
-                transaction: transaction,
-                parentNode: this.parentRowNode,
-                groupLevelInfo: this.info,
-            };
-            const apply = applyCallback(params);
-            if (!apply) {
-                return { status: ServerSideTransactionResultStatus.Cancelled };
-            }
+        if (!this.isTransactionAccepted(transaction)) {
+            return { status: ServerSideTransactionResultStatus.Cancelled };
         }
 
+        return this.applyAcceptedTransaction(transaction, idFunc);
+    }
+
+    /**
+     * Applies transactions so that each row changes at most once per batch, with the same outcome as applying
+     * them one after the other.
+     *
+     * @returns one result per transaction, in the same order
+     */
+    public applyTransactionsMerged(transactions: ServerSideTransaction[]): ServerSideTransactionResult[] {
+        const idFunc = _getRowIdCallback(this.beans);
+        if (!idFunc) {
+            return transactions.map((transaction) => this.applyTransaction(transaction));
+        }
+
+        const cache = this.cache;
+        return _applyMergedTransactions(transactions, {
+            getRowId: (data, op) => (op === 'remove' ? this.getRemoveRowId(idFunc, data) : cache.getRowId(data)),
+            isRowCached: (id) => cache.isNodeInCache(id),
+            isAccepted: (transaction) => this.isTransactionAccepted(transaction),
+            apply: (transaction) => this.applyAcceptedTransaction(transaction, idFunc),
+        });
+    }
+
+    private isTransactionAccepted(transaction: ServerSideTransaction): boolean {
+        const applyCallback = this.gos.getCallback('isApplyServerSideTransaction');
+        if (!applyCallback) {
+            return true;
+        }
+        const params: WithoutGridCommon<IsApplyServerSideTransactionParams> = {
+            transaction: transaction,
+            parentNode: this.parentRowNode,
+            groupLevelInfo: this.info,
+        };
+        return !!applyCallback(params);
+    }
+
+    private getRemoveRowId(idFunc: RowIdFunc, data: any): string {
+        return idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data });
+    }
+
+    private applyAcceptedTransaction(
+        transaction: ServerSideTransaction,
+        idFunc: RowIdFunc
+    ): ServerSideTransactionResult {
         // needs checked before transactions are applied, as rows won't be contiguous immediately
         // after
         const allRowsLoaded = this.cache.isStoreFullyLoaded();
@@ -188,9 +227,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
         let removedNodes: RowNode[] | undefined = undefined;
         if (transaction.remove?.length) {
-            const allIdsToRemove = transaction.remove.map((data) =>
-                idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data })
-            );
+            const allIdsToRemove = transaction.remove.map((data) => this.getRemoveRowId(idFunc, data));
             const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
             removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, transaction.rowCount);
         }

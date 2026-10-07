@@ -10,6 +10,8 @@ import { BeanStub, ServerSideTransactionResultStatus } from 'ag-grid-community';
 
 import type { ServerSideRowModel } from './serverSideRowModel';
 import type { ServerSideSelectionService } from './services/serverSideSelectionService';
+import type { LazyStore } from './stores/lazy/lazyStore';
+import { _groupTransactionsByRoute } from './transactionMerger';
 
 interface AsyncTransactionWrapper {
     transaction: ServerSideTransaction;
@@ -60,17 +62,15 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
         const transactionsToRetry: AsyncTransactionWrapper[] = [];
         let atLeastOneTransactionApplied = false;
 
-        for (const txWrapper of this.asyncTransactions) {
-            let result: ServerSideTransactionResult | undefined;
-            const hasStarted = this.serverSideRowModel.executeOnStore(txWrapper.transaction.route!, (cache) => {
-                result = cache.applyTransaction(txWrapper.transaction);
-            });
+        const queued = this.asyncTransactions;
+        const mergedResults = this.gos.get('serverSideMergeAsyncTransactions')
+            ? this.applyTransactionsMerged(queued)
+            : undefined;
 
-            if (!hasStarted) {
-                result = { status: ServerSideTransactionResultStatus.StoreNotStarted };
-            } else if (result == undefined) {
-                result = { status: ServerSideTransactionResultStatus.StoreNotFound };
-            }
+        // the queue can grow while it is applied, and transactions added late are applied on their own
+        for (let i = 0; i < queued.length; ++i) {
+            const txWrapper = queued[i];
+            const result = mergedResults?.[i] ?? this.applyTransactionOnStore(txWrapper.transaction);
 
             resultsForEvent.push(result);
 
@@ -82,7 +82,7 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
             }
 
             if (txWrapper.callback) {
-                resultFuncs.push(() => txWrapper.callback!(result!));
+                resultFuncs.push(() => txWrapper.callback!(result));
             }
             if (result.status === ServerSideTransactionResultStatus.Applied) {
                 atLeastOneTransactionApplied = true;
@@ -114,6 +114,45 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
                 results: resultsForEvent,
             });
         }
+    }
+
+    private applyTransactionOnStore(transaction: ServerSideTransaction): ServerSideTransactionResult {
+        return this.applyOnStore(transaction.route, 1, (store) => [store.applyTransaction(transaction)])[0];
+    }
+
+    private applyTransactionsMerged(queued: AsyncTransactionWrapper[]): ServerSideTransactionResult[] {
+        const results: ServerSideTransactionResult[] = new Array(queued.length);
+        const groups = _groupTransactionsByRoute(queued.map((txWrapper) => txWrapper.transaction));
+        for (let i = 0, len = groups.length; i < len; ++i) {
+            const { route, indexes } = groups[i];
+            const transactions = indexes.map((index) => queued[index].transaction);
+            const groupResults = this.applyOnStore(route, transactions.length, (store) =>
+                store.applyTransactionsMerged(transactions)
+            );
+            for (let j = 0, groupLen = indexes.length; j < groupLen; ++j) {
+                results[indexes[j]] = groupResults[j];
+            }
+        }
+        return results;
+    }
+
+    /** @returns `count` results, from `apply` when the store exists */
+    private applyOnStore(
+        route: string[] | undefined,
+        count: number,
+        apply: (store: LazyStore) => ServerSideTransactionResult[]
+    ): ServerSideTransactionResult[] {
+        let results: ServerSideTransactionResult[] | undefined;
+        const hasStarted = this.serverSideRowModel.executeOnStore(route!, (store) => {
+            results = apply(store);
+        });
+        if (results) {
+            return results;
+        }
+        const status = hasStarted
+            ? ServerSideTransactionResultStatus.StoreNotFound
+            : ServerSideTransactionResultStatus.StoreNotStarted;
+        return Array.from({ length: count }, () => ({ status }));
     }
 
     public flushAsyncTransactions(): void {

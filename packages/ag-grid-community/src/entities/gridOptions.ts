@@ -1872,6 +1872,12 @@ export interface GridOptions<TData = any> {
      */
     serverSideEnableClientSideSort?: boolean;
     /**
+     * When enabled, async transactions queued within `asyncTransactionWaitMillis` are merged so that each row is changed at most once per flush, with the same result as applying them one after the other.
+     * @default false
+     * @agModule `ServerSideRowModelModule`
+     */
+    serverSideMergeAsyncTransactions?: boolean;
+    /**
      * When enabled, only refresh groups directly impacted by a filter. This property only applies when there is Row Grouping & filtering is handled on the server.
      * @default false
      * @initial

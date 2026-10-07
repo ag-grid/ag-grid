@@ -630,6 +630,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return toConstrainedNum('serverSideInitialRowCount', serverSideInitialRowCount, 1);
             },
         },
+        serverSideMergeAsyncTransactions: {
+            supportedRowModels: ['serverSide'],
+        },
         serverSideOnlyRefreshFilteredGroups: {
             supportedRowModels: ['serverSide'],
         },

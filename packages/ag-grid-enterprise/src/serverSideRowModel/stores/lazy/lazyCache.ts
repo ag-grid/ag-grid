@@ -1091,7 +1091,7 @@ export class LazyCache extends BeanStub {
         this.store.fireStoreUpdatedEvent();
     }
 
-    private getRowId(data: any): string | null {
+    public getRowId(data: any): string | null {
         if (this.getRowIdFunc == null) {
             return null;
         }
