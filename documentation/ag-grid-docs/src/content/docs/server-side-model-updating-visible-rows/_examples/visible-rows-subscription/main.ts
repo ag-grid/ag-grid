@@ -48,10 +48,8 @@ const gridOptions: GridOptions = {
     rowModelType: 'serverSide',
     cacheBlockSize: 50,
     getRowId: (params: GetRowIdParams) => {
-        const { data, parentKeys = [] } = params;
-        return data.athlete
-            ? [...parentKeys, data.athlete, data.year].join('/')
-            : [...parentKeys, data.country].join('/');
+        // group rows are keyed by country, leaf rows by the id added to each record on load
+        return params.level === 0 ? params.data.country : String(params.data.id);
     },
 };
 
@@ -133,6 +131,12 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
         .then(function (data) {
+            // adding row id to data
+            let idSequence = 0;
+            data.forEach(function (item: any) {
+                item.id = idSequence++;
+            });
+
             const fakeServer = new FakeServer(data);
             gridApi!.setGridOption('serverSideDatasource', getServerSideDatasource(fakeServer));
             startSubscription();

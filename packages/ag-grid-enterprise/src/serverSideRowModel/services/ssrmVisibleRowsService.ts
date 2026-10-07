@@ -3,6 +3,7 @@ import { _requestAnimationFrame } from 'ag-stack';
 import type {
     BeanCollection,
     BodyScrollEvent,
+    GridOptionsService,
     NamedBean,
     PaginationChangedEvent,
     RowGroupOpenedEvent,
@@ -15,6 +16,8 @@ import type {
     VisibleRowsReason,
 } from 'ag-grid-community';
 import { BeanStub, _addGridCommonParams, _getRowIdCallback, _isDomLayout } from 'ag-grid-community';
+
+import { _isUnbalancedGroup } from '../blocks/blockUtils';
 
 interface SubscribedRow {
     ref: VisibleRowRef;
@@ -215,10 +218,10 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
         const [first, last] = this.getRange(sub);
         const visible = this.getVisibleRows(sub, first, last);
 
-        const removed: RowsByReason<SubscribedRow> = new Map();
+        let removed: SubscribedRow[] = [];
         sub.rows.forEach((row, id) => {
             if (visible.get(id) !== row.node) {
-                addToReason(removed, this.getUnsubscribeReason(row.node), row);
+                removed.push(row);
             }
         });
 
@@ -237,11 +240,17 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
         sub.lastLast = last;
         sub.lastFlushTime = Date.now();
 
-        for (const reason of UNSUBSCRIBE_ORDER) {
-            const rows = removed.get(reason);
-            if (!rows || sub.stopped) {
-                continue;
+        while (removed.length && !sub.stopped) {
+            // Worked out again after each handler, which can purge or remove the rows still waiting.
+            const byReason: RowsByReason<SubscribedRow> = new Map();
+            for (const row of removed) {
+                addToReason(byReason, this.getUnsubscribeReason(row.node), row);
             }
+            const reason = UNSUBSCRIBE_ORDER.find((r) => byReason.has(r))!;
+            const rows = byReason.get(reason)!;
+            byReason.delete(reason);
+            removed = Array.from(byReason.values()).flat();
+
             const refs: VisibleRowRef[] = [];
             for (let i = 0, len = rows.length; i < len; ++i) {
                 const ref = rows[i].ref;
@@ -331,7 +340,7 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
         if (node.destroyed) {
             return this.destroyedRowReasons.get(node) ?? 'remove';
         }
-        if (isUnderCollapsedGroup(node)) {
+        if (isUnderCollapsedGroup(this.gos, node)) {
             return 'collapse';
         }
         return node.rowIndex == null ? 'remove' : 'scroll';
@@ -382,10 +391,11 @@ function isSubscribable(node: RowNode, includeGroups: boolean): boolean {
     );
 }
 
-function isUnderCollapsedGroup(node: RowNode): boolean {
+function isUnderCollapsedGroup(gos: GridOptionsService, node: RowNode): boolean {
     let parent = node.parent;
     while (parent && parent.level >= 0) {
-        if (!parent.expanded) {
+        // Matches BlockUtils.setDisplayIndex, which always shows the children of an unbalanced group.
+        if (!parent.expanded && !_isUnbalancedGroup(gos, parent)) {
             return true;
         }
         parent = parent.parent;

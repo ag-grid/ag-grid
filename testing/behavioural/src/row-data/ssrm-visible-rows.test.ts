@@ -538,6 +538,68 @@ describe('SSRM subscribeToVisibleRows', () => {
             expect(recorder.violations).toEqual([]);
         });
 
+        test('a purge from inside a reset handler labels the rows still waiting in that batch reset', async () => {
+            const api = createGroupedGrid();
+            await waitForNoLoadingRows(api);
+            api.setRowNodeExpanded(api.getRowNode('Ireland')!, true);
+            await waitForNoLoadingRows(api);
+            api.setRowNodeExpanded(api.getRowNode('Spain')!, true);
+            // Spain's rows only load once scrolled into view.
+            api.ensureIndexVisible(9, 'top');
+            await waitFor(() => expect(api.getRowNode('Spain/Spain-2')).toBeDefined());
+
+            let purged = false;
+            const recorder = createRecorder((call) => {
+                if (call.type === 'unsubscribe' && call.reason === 'reset' && !purged) {
+                    purged = true;
+                    api.refreshServerSide({ purge: true });
+                }
+            });
+            api.subscribeToVisibleRows(recorder.handlers);
+            const initial = recorder.ids();
+            const spainRows = initial.filter((id) => id.startsWith('Spain/'));
+            expect(spainRows.length).toBeGreaterThan(0);
+            expect(initial).toContain('Spain');
+
+            // Spain's rows are reset, while the Spain group and Ireland's last rows scroll out of view.
+            api.refreshServerSide({ route: ['Spain'], purge: true });
+            api.ensureIndexVisible(3, 'top');
+
+            await waitFor(() => expect(recorder.calls.filter((c) => c.type === 'unsubscribe')).toHaveLength(2));
+            const [first, second] = recorder.calls.filter((c) => c.type === 'unsubscribe');
+            expect(first).toEqual({ type: 'unsubscribe', reason: 'reset', ids: spainRows });
+            // The first handler's purge destroyed them, so they are reset rather than scrolled out.
+            expect(second.reason).toBe('reset');
+            expect(second.ids).toContain('Spain');
+            expect(second.ids.every((id) => initial.includes(id) && !spainRows.includes(id))).toBe(true);
+            expect(recorder.violations).toEqual([]);
+        });
+
+        test('rows under an empty-key group with groupAllowUnbalanced scroll out with reason scroll', async () => {
+            const api = createGroupedGrid({
+                groupAllowUnbalanced: true,
+                serverSideDatasource: {
+                    getRows: (params) => {
+                        const [country] = params.request.groupKeys;
+                        const rowData =
+                            country == null
+                                ? [{ country: '' }, { country: 'Ireland' }]
+                                : Array.from({ length: 20 }, (_, i) => ({ id: `${country}-${i}`, country, value: i }));
+                        params.success({ rowData, rowCount: rowData.length });
+                    },
+                },
+            });
+            await waitForNoLoadingRows(api);
+            const recorder = createRecorder();
+            api.subscribeToVisibleRows(recorder.handlers);
+            expect(recorder.ids()).toHaveLength(6);
+
+            api.ensureIndexVisible(15, 'top');
+
+            await waitFor(() => expect(recorder.reasons('unsubscribe')).toEqual(['scroll']));
+            expect(recorder.violations).toEqual([]);
+        });
+
         describe('a group collapsed and then destroyed before the next batch', () => {
             const irelandRows = range(0, 4).map((i) => `Ireland/Ireland-${i}`);
 
