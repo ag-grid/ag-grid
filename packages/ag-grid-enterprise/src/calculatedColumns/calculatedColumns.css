@@ -26,6 +26,24 @@
     height: 100%;
 }
 
+.ag-calculated-column-token-reference {
+    color: var(--ag-calculated-column-reference-color);
+}
+
+.ag-calculated-column-token-function {
+    color: var(--ag-calculated-column-function-color);
+}
+
+.ag-calculated-column-token-operator {
+    color: var(--ag-calculated-column-operator-color);
+}
+
+.ag-calculated-column-expression-error {
+    text-decoration: underline wavy var(--ag-calculated-column-error-underline-color);
+    text-underline-offset: 0.15em;
+    text-decoration-skip-ink: none;
+}
+
 /* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-calculated-column-expression-wrap .ag-text-area-input {
     height: 100%;

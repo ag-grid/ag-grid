@@ -17,12 +17,16 @@ import {
 interface CalculatedColumnReferenceError {
     type: 'unknown' | 'ambiguous' | 'restricted';
     reference: string;
+    range?: { start: number; end: number };
 }
 
 export interface CalculatedColumnReferenceMapper {
     suggestions: ColumnSuggestion[];
     /** The `expression` is always storable: unresolved references are preserved verbatim. */
-    toInternalExpression(expression: string): { expression: string; error?: CalculatedColumnReferenceError };
+    toInternalExpression(
+        expression: string,
+        mode?: 'diagnostics'
+    ): { expression: string; error?: CalculatedColumnReferenceError };
     toDisplayExpression(expression: string): string;
 }
 
@@ -118,24 +122,36 @@ export function createCalculatedColumnReferenceMapper(
                 searchText: `${reference} ${leafName}`,
                 displayPath: suffix ? [...path.slice(0, -1), `${leafName}${suffix}`] : path,
             })),
-        toInternalExpression(expression: string) {
-            if (originalExpression !== undefined && expression === originalDisplayExpression) {
+        toInternalExpression(expression: string, mode?: 'diagnostics') {
+            const unchanged = originalExpression !== undefined && expression === originalDisplayExpression;
+            if (unchanged && mode !== 'diagnostics') {
                 return { expression: originalExpression, error: originalError };
             }
             let error: CalculatedColumnReferenceError | undefined;
             let restrictedReference: string | undefined;
+            let restrictedRange: { start: number; end: number } | undefined;
+            let originalErrorRange: { start: number; end: number } | undefined;
             // Restricted references convert like permitted ones and unresolved ones are preserved
             // verbatim, so the result is storable alongside the error and feeds the formula check below.
             const internalExpression = replaceBracketReferences(
                 expression,
-                (ref) => {
+                (ref, start, end) => {
+                    if (originalError && normaliseReference(ref) === normaliseReference(originalError.reference)) {
+                        originalErrorRange ??= { start, end };
+                    }
                     const colId = resolveReference(ref);
                     if (restrictedColIds.has(colId ?? ref)) {
-                        restrictedReference ??= ref;
+                        if (restrictedReference === undefined) {
+                            restrictedReference = ref;
+                            restrictedRange = { start, end };
+                        }
                         return colId;
                     }
                     if (colId != null) {
                         return colId;
+                    }
+                    if (unchanged && beans.colModel.getCol(ref)) {
+                        return ref;
                     }
                     const caseInsensitiveColIds = caseInsensitiveReferenceToColIds.get(normaliseReference(ref));
                     const isAmbiguous =
@@ -143,14 +159,24 @@ export function createCalculatedColumnReferenceMapper(
                     error ??= {
                         type: isAmbiguous ? 'ambiguous' : 'unknown',
                         reference: ref,
+                        range: { start, end },
                     };
                     return undefined;
                 },
                 true
             );
-            restrictedReference ??= getRestrictedFormulaReference(internalExpression);
-            if (restrictedReference !== undefined) {
-                error = { type: 'restricted', reference: restrictedReference };
+            if (!unchanged) {
+                restrictedReference ??= getRestrictedFormulaReference(internalExpression);
+            }
+            if (!unchanged && restrictedReference !== undefined) {
+                error = { type: 'restricted', reference: restrictedReference, range: restrictedRange };
+            }
+            if (unchanged) {
+                // grandfather restrictions, but still diagnose missing columns when reopening a live draft
+                return {
+                    expression: originalExpression,
+                    error: originalError ? { ...originalError, range: originalErrorRange } : error,
+                };
             }
             return { expression: internalExpression, error };
         },

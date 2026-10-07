@@ -28,7 +28,7 @@ test.agExample(import.meta, () => {
             }
             await page.keyboard.press('F2');
 
-            const editable = page.locator('.ag-cell-inline-editing [contenteditable]').first();
+            const editable = page.locator('.ag-cell-inline-editing textarea').first();
             await expect(editable).toBeVisible();
             await page.keyboard.press('ControlOrMeta+A');
             await page.keyboard.type('=B7');
@@ -42,7 +42,7 @@ test.agExample(import.meta, () => {
                 ['4', '=B8'],
             ]) {
                 await agIdFor.cell(row, 'subtotal').first().dblclick();
-                await expect(editable).toHaveText(formula);
+                await expect(editable).toHaveValue(formula);
                 await page.keyboard.press('Escape');
             }
         }

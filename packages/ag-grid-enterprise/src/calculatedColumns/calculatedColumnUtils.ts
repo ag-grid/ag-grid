@@ -94,7 +94,7 @@ export function clearStaleDataTypeProperties(colDef: ColDef, userColDef: ColDef 
  */
 export function replaceBracketReferences(
     expression: string,
-    replaceReference: (reference: string) => string | undefined,
+    replaceReference: (reference: string, start: number, end: number) => string | undefined,
     escapedReferences = false
 ): string {
     let inString = false;
@@ -117,7 +117,7 @@ export function replaceBracketReferences(
             }
             result += expression.slice(lastIndex, i);
             const reference = expression.slice(i + 1, end);
-            result += `[${replaceReference(escapedReferences ? reference.replace(/]]/g, ']') : reference) ?? reference}]`;
+            result += `[${replaceReference(escapedReferences ? reference.replace(/]]/g, ']') : reference, i, end + 1) ?? reference}]`;
             lastIndex = end + 1;
             i = end;
         }

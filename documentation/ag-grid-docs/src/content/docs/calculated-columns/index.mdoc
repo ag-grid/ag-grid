@@ -62,6 +62,8 @@ Register the Column Menu so users can add a calculated column from the header me
 
 The dialog shows references by header name, for example `[Revenue]`. When headers are duplicated under groups, it uses the shortest unique group path, such as `[2025 Q4]` and `[2026 Q4]`. It translates these display references back to `colId` references before updating the column definition.
 
+The expression editor highlights references, functions and operators, and underlines the first problem — an unknown or restricted reference, a syntax error or an unknown function — with its message shown in a tooltip and announced to assistive technology. Diagnostics appear in both apply modes as you type. In live mode the text is still applied, and cells render a formula error until it is corrected.
+
 In dialog references, a literal `]` in a header name is escaped as `]]`. For example, the header `Revenue [USD]` appears as `[Revenue [USD]]]`. The Columns picker inserts the escaped reference automatically; stored `colId` references are unchanged.
 
 If two columns share the same header _and_ the same group hierarchy, the dialog falls back to appending the `colId`, for example `[2025 Q4 (revenue-q4)]`. This keeps the reference stable when columns are reordered. Give your columns distinct headers or group hierarchies to avoid this.
@@ -204,7 +206,7 @@ const gridOptions = {
 
 ### applyMode
 
-By default, dialog edits apply to the column immediately: **Add Calculated Column** creates the column and opens the dialog over it, and title, type and expression changes update the column as you type. Closing the dialog keeps the latest state; remove the column with **Remove Calculated Column**. An empty expression renders blank cells, and invalid or incomplete expressions render formula errors until fixed. Expression edits containing references excluded by `isColumnReferenceable` are saved but blocked from evaluation, preserving the full text for correction.
+By default, dialog edits apply to the column immediately: **Add Calculated Column** creates the column and opens the dialog over it, and title, type and expression changes update the column as you type. Closing the dialog keeps the latest state; remove the column with **Remove Calculated Column**. An empty expression renders blank cells, and invalid or incomplete expressions render formula errors until fixed, with the problem underlined in the dialog. Expression edits containing references excluded by `isColumnReferenceable` are saved but blocked from evaluation, preserving the full text for correction.
 
 Set `applyMode: 'deferred'` to hold changes until you click **Apply** instead. In deferred mode the dialog shows Apply and Cancel buttons and validates the expression, so you cannot apply an invalid one:
 

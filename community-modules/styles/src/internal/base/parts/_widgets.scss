@@ -754,53 +754,109 @@
         cursor: pointer;
     }
 
-    ////////////////////////////////////////
-    // Content Editable Field
-    ////////////////////////////////////////
-    .ag-content-editable-field-input {
-        background-color: var(--ag-background-color);
-        border: var(--ag-borders-input) var(--ag-input-border-color);
-        border-radius: var(--ag-border-radius);
-        color: var(--ag-foreground-color);
-        @include ag.unthemed-rtl(
-            (
-                padding-left: var(--ag-grid-size),
-            )
-        );
+    .ag-text-area-mirror-wrapper {
+        position: relative;
     }
 
-    .ag-cell-editor .ag-wrapper.ag-content-editable-field-input {
-        // assign internal variables to simplify the `line-height` value
-        --ag-internal-calculated-line-height: var(
-            --ag-line-height,
-            calc(var(--ag-row-height) - var(--ag-row-border-width))
-        );
-        --ag-internal-padded-row-height: calc(var(--ag-row-height) - var(--ag-row-border-width) - 2px);
-
-        line-height: Min(var(--ag-internal-calculated-line-height), var(--ag-internal-padded-row-height));
+    .ag-text-area-mirror-input {
+        -webkit-text-fill-color: transparent;
+        caret-color: currentcolor;
     }
 
-    .ag-content-editable-field-input:focus,
-    .ag-content-editable-field-input:focus-within {
-        box-shadow: var(--ag-input-focus-box-shadow);
-        border-color: var(--ag-input-focus-border-color);
+    :where(.ag-text-area-mirror-input)::placeholder {
+        -webkit-text-fill-color: currentcolor;
     }
 
-    :where(.ag-content-editable-field.ag-disabled .ag-content-editable-field-input) {
-        background-color: var(--ag-input-disabled-background-color);
-        border-color: var(--ag-input-disabled-border-color);
-        color: var(--ag-disabled-foreground-color);
+    :where(.ag-text-area-mirror-input)::selection {
+        background-color: var(--ag-range-selection-background-color);
     }
 
-    .ag-content-editable-field-input.invalid {
-        border-color: var(--ag-invalid-color);
+    .ag-text-area-mirror {
+        position: absolute;
+        overflow: hidden;
+        pointer-events: none;
+        user-select: none;
+        z-index: 1;
+    }
+
+    .ag-text-area-mirror-text {
+        box-sizing: border-box;
+        min-height: 100%;
+        width: 100%;
+        margin: 0;
+    }
+
+    :where(.ag-text-area-mirror-text)::after {
+        content: '\200b';
+    }
+
+    :where(.ag-text-area-mirror-composing) .ag-text-area-mirror-input {
+        -webkit-text-fill-color: currentcolor;
+    }
+
+    :where(.ag-text-area-mirror-composing) .ag-text-area-mirror {
+        visibility: hidden;
+    }
+
+    @media (forced-colors: active) {
+        .ag-text-area-mirror-input {
+            -webkit-text-fill-color: currentcolor;
+        }
+
+        .ag-text-area-mirror {
+            display: none;
+        }
     }
 
     ////////////////////////////////////////
     // Formula Field
     ////////////////////////////////////////
-    .ag-formula-token {
-        line-height: var(--ag-line-height, 1.6);
+    .ag-formula-input-field-input {
+        background-color: var(--ag-background-color);
+        border: var(--ag-borders-input) var(--ag-input-border-color);
+        border-radius: var(--ag-border-radius);
+        color: var(--ag-foreground-color);
+        outline: none;
+        padding: 0 var(--ag-grid-size);
+        white-space: pre;
+        resize: none;
+        overflow: auto;
+        scrollbar-width: none;
+    }
+
+    .ag-cell-inline-editing .ag-formula-input-field-input {
+        line-height: Min(
+            var(--ag-line-height, calc(var(--ag-row-height) - var(--ag-row-border-width))),
+            calc(var(--ag-row-height) - var(--ag-row-border-width) - 2px)
+        );
+    }
+
+    .ag-formula-input-field-input:focus {
+        box-shadow: var(--ag-input-focus-box-shadow);
+        border-color: var(--ag-input-focus-border-color);
+    }
+
+    .ag-formula-input-field-input:disabled {
+        background-color: var(--ag-input-disabled-background-color);
+        border-color: var(--ag-input-disabled-border-color);
+        color: var(--ag-disabled-foreground-color);
+    }
+
+    .ag-formula-input-field-input.invalid {
+        border-color: var(--ag-invalid-color);
+    }
+
+    .ag-formula-operator {
+        position: relative;
+        -webkit-text-fill-color: transparent;
+    }
+
+    :where(.ag-formula-operator)::after {
+        content: attr(data-symbol);
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        -webkit-text-fill-color: currentcolor;
     }
 
     .ag-formula-token-color-1 {
