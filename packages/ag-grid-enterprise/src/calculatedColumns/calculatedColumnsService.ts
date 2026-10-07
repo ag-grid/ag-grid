@@ -13,6 +13,7 @@ import type {
     CalculatedColumnExpressionPicker,
     CalculatedColumnUpdate,
     CalculatedColumnValidationReason,
+    CalculatedColumnValidationState,
     CalculatedColumnsOptions,
     ColDef,
     ColKey,
@@ -61,8 +62,6 @@ import {
     pickUserOwnedProperties,
     replaceBracketReferences,
 } from './calculatedColumnUtils';
-
-type ValidationState = 'valid' | CalculatedColumnValidationReason;
 
 // bounds the parse-error memo; dialog keystrokes feed it one entry per expression variant.
 const FORMULA_ERROR_CACHE_LIMIT = 256;
@@ -143,7 +142,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     private readonly inactiveDynamicColumns = new Map<string, DynamicCalculatedColumn>();
     /** Highest `calculated_N` index handed out to this grid, so {@link createUniqueColId} never reuses one. */
     private lastCalculatedColIndex = 0;
-    private validationStatesByColId = new Map<string, ValidationState>();
+    private validationStatesByColId = new Map<string, CalculatedColumnValidationState>();
     private validationStatesInitialised = false;
     // Guards the first lifecycle pass so the initial column set establishes a baseline without emitting events.
     private lifecycleInitialised = false;
@@ -306,11 +305,15 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return true;
     }
 
-    private getInvalidColumnReference(expression: string): string | undefined {
-        const colsById = this.beans.colModel.colsById;
+    /** `hasCol` defaults to the built columns; a build in progress passes its own, as `colsById` is only seeded
+     *  once the build finishes. */
+    private getInvalidColumnReference(
+        expression: string,
+        hasCol: (colId: string) => boolean = (colId) => !!this.beans.colModel.colsById[colId]
+    ): string | undefined {
         let invalidReference: string | undefined;
         replaceBracketReferences(expression, (ref) => {
-            if (invalidReference == null && !colsById[ref]) {
+            if (invalidReference == null && !hasCol(ref)) {
                 invalidReference = ref;
             }
             return ref;
@@ -518,10 +521,18 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         const source = build.source;
         const buildToken = build.buildToken;
         const newColDefs = build.newColDefs;
+        // `colsById` is seeded after the build, so references are resolved against the columns built so far plus
+        // every dynamic column, which is spliced in below.
+        const builtColsById = new Map(build.columns.map((col) => [col.colId, col]));
+        const hasCol = (colId: string) => builtColsById.has(colId) || dynamicColumns.has(colId);
         dynamicColumns.forEach((dc, colId) => {
-            const agCol = this.getOrCreateColumn(dc, colId, buildToken, source, newColDefs);
-            agCol.buildToken = buildToken; // So the post-build sweep keeps the col alive.
             const anchorId = dc.anchorColId;
+            const sourceColumn =
+                anchorId == null
+                    ? null
+                    : (builtColsById.get(anchorId) ?? dynamicColumns.get(anchorId)?.instance ?? null);
+            const agCol = this.getOrCreateColumn(dc, colId, buildToken, source, newColDefs, hasCol, sourceColumn);
+            agCol.buildToken = buildToken; // So the post-build sweep keeps the col alive.
             if (anchorId != null && anchorId !== colId && !userColumnSvc.getEntry(anchorId)?.removed) {
                 agCol.anchoredToColId = anchorId;
                 appendColumnToTree(build, agCol, anchorId);
@@ -685,7 +696,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         colId: string,
         buildToken: number,
         source: ColumnEventType,
-        newColDefs: boolean
+        newColDefs: boolean,
+        hasCol: (colId: string) => boolean,
+        sourceColumn: AgColumn | null
     ): AgColumn {
         const beans = this.beans;
         const existing = dc.instance;
@@ -693,10 +706,16 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             // Reuse the owned instance (always alive: contributed/stamped every refresh, nulled when
             // parked/removed). Restamp + refresh colDef in case expression/cellDataType changed.
             existing.buildToken = buildToken;
-            existing.reapplyColDef(this.processUserColDef(dc.colDef, colId), source, newColDefs);
+            existing.reapplyColDef(this.processUserColDef(dc.colDef, colId, hasCol, sourceColumn), source, newColDefs);
             return existing;
         }
-        const agCol = _createUserColumn(beans, this.processUserColDef(dc.colDef, colId), colId, true, buildToken);
+        const agCol = _createUserColumn(
+            beans,
+            this.processUserColDef(dc.colDef, colId, hasCol, sourceColumn),
+            colId,
+            true,
+            buildToken
+        );
         dc.instance = agCol;
         return agCol;
     }
@@ -704,18 +723,30 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     /** Applies `calculatedColumns.processColDef` to a dialog-created column's stored colDef. The result becomes the
      *  column's own colDef (`userProvidedColDef`) on purpose, so data type and show-values-as reads see it; the
      *  stored colDef is left untouched so the dialog and grid state only ever see the user's values. */
-    private processUserColDef(storedColDef: ColDef, colId: string): ColDef {
+    private processUserColDef(
+        storedColDef: ColDef,
+        colId: string,
+        hasCol: (colId: string) => boolean,
+        sourceColumn: AgColumn | null
+    ): ColDef {
         const processColDef = this.getOptions()?.processColDef;
         if (!processColDef) {
             return storedColDef;
         }
-        const result = processColDef(_addGridCommonParams(this.gos, { colDef: { ...storedColDef } }));
+        const validationState = this.getExpressionValidationState(storedColDef.calculatedExpression ?? '', hasCol);
+        const result = processColDef(
+            _addGridCommonParams(this.gos, { colDef: { ...storedColDef }, sourceColumn, validationState })
+        );
         if (result == null) {
             return storedColDef;
         }
-        const ignored = PROTECTED_COL_DEF_KEYS.filter(
+        const ignored: string[] = PROTECTED_COL_DEF_KEYS.filter(
             (key) => result[key] !== undefined && result[key] !== PROTECTED_COL_DEF_VALUES[key]
         );
+        // The colId is assigned when the column is added and keys its saved state and other columns' expressions.
+        if (result.colId !== undefined && result.colId !== colId) {
+            ignored.push('colId');
+        }
         if (ignored.length) {
             this.warn(335, { colId, properties: ignored });
         }
@@ -1100,11 +1131,14 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         };
     }
 
-    private getExpressionValidationState(expression: string): ValidationState {
+    private getExpressionValidationState(
+        expression: string,
+        hasCol?: (colId: string) => boolean
+    ): CalculatedColumnValidationState {
         if (!_isStringLargerThan(expression, 0, true)) {
             return 'valid';
         }
-        if (this.getInvalidColumnReference(expression) != null) {
+        if (this.getInvalidColumnReference(expression, hasCol) != null) {
             return 'unknownReference';
         }
         return this.getFormulaExpressionError(expression) == null ? 'valid' : 'invalidExpression';
@@ -1175,7 +1209,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
         const shouldDispatch = forceDispatch || this.validationStatesInitialised;
         const previousStates = this.validationStatesByColId;
-        const nextStates = new Map<string, ValidationState>();
+        const nextStates = new Map<string, CalculatedColumnValidationState>();
 
         this.forEachCalculatedColumn((column, colId, expression) => {
             const state = this.getExpressionValidationState(expression);

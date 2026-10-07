@@ -5,6 +5,7 @@ import { vi } from 'vitest';
 import type {
     CalculatedColumnProcessColDefParams,
     ColDef,
+    ColGroupDef,
     GridApi,
     GridOptions,
     GridState,
@@ -124,6 +125,38 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(cellValue(api, calcId)).toBe(20);
     });
 
+    test.each<[string, string, CalculatedColumnProcessColDefParams['validationState']]>([
+        ['a valid expression', '[a] + [b]', 'valid'],
+        ['an empty expression', '', 'valid'],
+        ['a reference to a missing column', '[missing] * 2', 'unknownReference'],
+        ['an expression that fails to parse', '[a] +', 'invalidExpression'],
+    ])('validationState is correct for a restored column with %s', async (name, expression, expected) => {
+        const processColDef = vi.fn<ProcessColDef>((params) => params.colDef);
+        const api = gridWithUserColumn(`pcd-valid-${name}`, 'calc', expression, processColDef);
+        await waitForColumn(api, 'calc');
+
+        const states = new Set(processColDef.mock.calls.map(([params]) => params.validationState));
+        expect([...states]).toEqual([expected]);
+    });
+
+    test('validationState follows the expression while typing in the dialog', async () => {
+        const processColDef = vi.fn<ProcessColDef>((params) => params.colDef);
+        const api = createGrid('pcd-valid-dialog', {
+            rowData: ROW_DATA,
+            columnDefs: columnDefs(),
+            calculatedColumns: { processColDef },
+        });
+        api.showColumnMenu('a');
+        await clickMenuOption('Add Calculated Column');
+        await waitFor(() => getDialog());
+        const lastState = () => processColDef.mock.calls.at(-1)![0].validationState;
+
+        setExpression('[a] +');
+        await waitFor(() => expect(lastState()).toBe('invalidExpression'));
+        setExpression('[a] + [b]');
+        await waitFor(() => expect(lastState()).toBe('valid'));
+    });
+
     test('returning params.colDef is the same as having no callback', async () => {
         const plain = gridWithUserColumn('pcd-b2-plain', 'calc', '[a] * 2', undefined);
         const passthrough = gridWithUserColumn('pcd-b2-pass', 'calc', '[a] * 2', (params) => params.colDef);
@@ -220,6 +253,31 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(warnings[0].join(' ')).toContain(colId);
     });
 
+    test('a callback changing colId has no effect and warns', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [335] });
+        const api = gridWithUserColumn('pcd-colid', 'calc', '[a] * 2', (params) => ({
+            ...params.colDef,
+            colId: 'renamed',
+        }));
+        await waitForColumn(api, 'calc');
+
+        expect(api.getColumn('renamed')).toBeNull();
+        expect(cellValue(api, 'calc')).toBe(20);
+        const warnings = warningsWith(warnSpy, 335);
+        expect(warnings.length).toBeGreaterThan(0);
+        expect(warnings[0].join(' ')).toContain('`colId`');
+    });
+
+    test('a callback returning the same colId does not warn', async () => {
+        const api = gridWithUserColumn('pcd-colid-same', 'calc', '[a] * 2', (params) => ({
+            ...params.colDef,
+            colId: 'calc',
+        }));
+        await waitForColumn(api, 'calc');
+
+        expect(warningsWith(warnSpy, 335)).toHaveLength(0);
+    });
+
     test('a callback that drops calculatedExpression keeps the column calculated', async () => {
         const api = gridWithUserColumn('pcd-guard', 'calc', '[a] * 2', () => ({ filter: true }));
         await waitForColumn(api, 'calc');
@@ -251,6 +309,77 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(colDef.cellDataType).toBe('text');
         expect(colDef.columnGroupShow).toBe('open');
         expect(Number(cellValue(api, 'calc'))).toBe(11);
+    });
+
+    test.each<[string, ColDef['columnGroupShow'], string]>([
+        ['an open', 'open', 'open'],
+        ['a closed', 'closed', 'closed'],
+    ])('the callback receives the columnGroupShow of %s anchor column', async (_, anchorShow, expected) => {
+        const processColDef = vi.fn<ProcessColDef>();
+        const api = createGrid(`pcd-group-show-${expected}`, {
+            rowData: ROW_DATA,
+            columnDefs: [
+                {
+                    groupId: 'money',
+                    openByDefault: anchorShow === 'open',
+                    children: [{ field: 'a', columnGroupShow: anchorShow }, { field: 'b' }],
+                } as ColGroupDef,
+            ],
+            calculatedColumns: { processColDef },
+        });
+
+        await addViaDialog(api, 'a', '[a] * 2');
+
+        expect(processColDef).toHaveBeenCalled();
+        for (const [params] of processColDef.mock.calls) {
+            expect(params.colDef.columnGroupShow).toBe(expected);
+        }
+    });
+
+    test('the callback receives no columnGroupShow when the anchor column has none', async () => {
+        const processColDef = vi.fn<ProcessColDef>();
+        const api = createGrid('pcd-group-show-none', {
+            rowData: ROW_DATA,
+            columnDefs: [
+                {
+                    groupId: 'money',
+                    children: [{ field: 'a' }, { field: 'b', columnGroupShow: 'open' }],
+                } as ColGroupDef,
+            ],
+            calculatedColumns: { processColDef },
+        });
+
+        await addViaDialog(api, 'a', '[a] * 2');
+
+        expect(processColDef).toHaveBeenCalled();
+        for (const [params] of processColDef.mock.calls) {
+            expect(params.colDef.columnGroupShow).toBeUndefined();
+        }
+    });
+
+    test('the callback receives the column the calculated column was added from as sourceColumn', async () => {
+        const processColDef = vi.fn<ProcessColDef>();
+        const api = createGrid('pcd-source-column', {
+            rowData: ROW_DATA,
+            columnDefs: columnDefs(),
+            calculatedColumns: { processColDef },
+        });
+
+        await addViaDialog(api, 'b', '[a] * 2');
+
+        expect(processColDef).toHaveBeenCalled();
+        for (const [params] of processColDef.mock.calls) {
+            expect(params.sourceColumn).toBe(api.getColumn('b'));
+        }
+    });
+
+    test('sourceColumn is null for a restored column that is not in a group', async () => {
+        const processColDef = vi.fn<ProcessColDef>();
+        const api = gridWithUserColumn('pcd-source-column-restored', 'calc', '[a] * 2', processColDef);
+        await waitForColumn(api, 'calc');
+
+        expect(processColDef).toHaveBeenCalled();
+        expect(processColDef.mock.calls.at(-1)![0].sourceColumn).toBeNull();
     });
 
     test('a callback suffixing headerName never compounds through dialog edits', async () => {

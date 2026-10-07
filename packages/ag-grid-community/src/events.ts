@@ -708,6 +708,12 @@ export interface PasteEndEvent<TData = any, TContext = any> extends AgGlobalEven
 export type CalculatedColumnValidationReason = 'unknownReference' | 'invalidExpression';
 
 /**
+ * The validation state of a calculated column's expression: `'valid'`, or the {@link CalculatedColumnValidationReason}.
+ * An empty expression is `'valid'`.
+ */
+export type CalculatedColumnValidationState = 'valid' | CalculatedColumnValidationReason;
+
+/**
  * Shared shape for calculated-column events. Extends {@link ColumnEvent}, so consumers get
  * `column`, `columns`, and `source` (a {@link ColumnEventType}, e.g. `'api'` for programmatic mutations
  * or `'calculatedColumn'` for actions taken via the calculated-column dialog or menu).

@@ -3,7 +3,8 @@ import type { ColumnState } from '../columns/columnStateUtils';
 import type { Bean } from '../context/bean';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
-import type { ColumnEventType } from '../events';
+import type { CalculatedColumnValidationState, ColumnEventType } from '../events';
+import type { Column } from './iColumn';
 import type { AgGridCommon } from './iCommon';
 import type { HeaderPosition } from './iHeaderPosition';
 
@@ -20,6 +21,18 @@ export interface CalculatedColumnProcessColDefParams<TData = any, TContext = any
      * and column types are merged in. A fresh copy is passed on every call.
      */
     colDef: ColDef<TData>;
+    /**
+     * The column the calculated column was added from, i.e. the one its menu was opened on. `null` when it was added
+     * from no column, or when that column is gone. A column restored from Grid State is not tied to the column it was
+     * added from: it gets the last column of its group, or `null` if it is not in a group.
+     */
+    sourceColumn: Column<TData> | null;
+    /**
+     * Whether `colDef.calculatedExpression` is currently valid: `'valid'`, `'unknownReference'` (it references a
+     * column that does not exist) or `'invalidExpression'` (it failed to parse). An empty expression is `'valid'`.
+     * While the Calculated Column dialog is open in `'live'` apply mode, the expression may be incomplete.
+     */
+    validationState: CalculatedColumnValidationState;
 }
 
 export interface CalculatedColumnsOptions<TData = any> {
@@ -52,8 +65,11 @@ export interface CalculatedColumnsOptions<TData = any> {
      *
      * Called every time the column is built. Return the full Column Definition to use; returning `params.colDef`
      * or `undefined` leaves the column unchanged. The returned definition takes precedence over `defaultColDef`
-     * and column types. `editable`, `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor` and
-     * `cellEditorSelector` are always overridden for calculated columns.
+     * and column types. `colId`, `editable`, `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor`
+     * and `cellEditorSelector` are always overridden for calculated columns.
+     *
+     * In `'live'` `applyMode` it is also called while the user types in the dialog, so keep it cheap and use
+     * `params.validationState` to tell whether the expression is complete.
      *
      * The returned definition is not shown in the dialog and is not saved in grid state. Stateful properties
      * such as `width`, `sort` and `hide` apply when the column is created; prefer the `initial*` forms.
