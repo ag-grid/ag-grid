@@ -1,3 +1,5 @@
+import { unref } from 'vue';
+
 import type { ComponentType, WrappableInterface } from 'ag-grid-community';
 import { BaseComponentWrapper, _warnForGrid } from 'ag-grid-community';
 
@@ -28,7 +30,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
             }
 
             public hasMethod(name: string): boolean {
-                const componentInstance = wrapper.getFrameworkComponentInstance();
+                const componentInstance = this.getVueInstance();
                 if (!componentInstance[name]) {
                     return (
                         componentInstance.$.exposed?.[name] != null ||
@@ -41,10 +43,9 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
             }
 
             public callMethod(name: string, args: IArguments): any {
-                const componentInstance = this.getFrameworkComponentInstance();
-                const frameworkComponentInstance = wrapper.getFrameworkComponentInstance();
-                if (frameworkComponentInstance[name]) {
-                    return frameworkComponentInstance[name].apply(componentInstance, args);
+                const componentInstance = this.getVueInstance();
+                if (componentInstance[name]) {
+                    return componentInstance[name](...args);
                 } else {
                     const fn =
                         componentInstance.$.exposed?.[name] ||
@@ -118,6 +119,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
 
 abstract class VueComponent<P> {
     private componentInstance: any;
+    private exposedInstance: any;
     private element!: HTMLElement;
     private unmount: any;
 
@@ -126,16 +128,41 @@ abstract class VueComponent<P> {
     }
 
     public destroy(): void {
-        if (
-            this.getFrameworkComponentInstance() &&
-            typeof this.getFrameworkComponentInstance().destroy === 'function'
-        ) {
-            this.getFrameworkComponentInstance().destroy();
+        const componentInstance = this.getVueInstance();
+        if (componentInstance && typeof componentInstance.destroy === 'function') {
+            componentInstance.destroy();
         }
         this.unmount?.();
     }
 
+    /**
+     * The instance handed to users via the grid API. Vue's public instance proxy does not include members
+     * exposed via `expose()` / `defineExpose()`, so when a component exposes members they are added as a fallback.
+     */
     public getFrameworkComponentInstance(): any {
+        const componentInstance = this.componentInstance;
+        const exposed = componentInstance?.$.exposed;
+        if (!exposed) {
+            return componentInstance;
+        }
+
+        this.exposedInstance ??= new Proxy(componentInstance, {
+            get(target, key, receiver) {
+                // read the Vue proxy unconditionally, as it reports keys such as `__v_skip` that its `has` trap does not
+                const value = Reflect.get(target, key, receiver);
+                if (value !== undefined || !(key in exposed)) {
+                    return value;
+                }
+                return unref(exposed[key]);
+            },
+            has(target, key) {
+                return key in target || key in exposed;
+            },
+        });
+        return this.exposedInstance;
+    }
+
+    protected getVueInstance(): any {
         return this.componentInstance;
     }
 

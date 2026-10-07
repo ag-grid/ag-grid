@@ -322,6 +322,12 @@ if (instances.length > 0) {
 }
 ```
 
+{% if isFramework("vue") %}
+{% note %}
+Methods on a Composition API or `<script setup>` component must be exposed with `expose()` / `defineExpose()` to be callable on the instance returned by `getCellRendererInstances()`. Options API `methods` are available without exposing them.
+{% /note %}
+{% /if %}
+
 Note that this method will only return instances of the Cell Component that exists. Due to Row and Column Virtualisation, Cell Components will only exist for Cells that are within the viewport of the Vertical and Horizontal scrolls.
 
 The example below demonstrates custom methods on Cell Components called by the application. The following can be noted:
