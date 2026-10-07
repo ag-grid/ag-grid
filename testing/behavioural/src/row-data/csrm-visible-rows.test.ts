@@ -475,6 +475,31 @@ describe('CSRM subscribeToVisibleRows', () => {
             expect(recorder.violations).toEqual([]);
         });
 
+        test('changing the parentKeys and route a handler receives does not report the row as moved', async () => {
+            const rowData = ['Ireland', 'Spain'].flatMap((country) =>
+                [0, 1].map((i) => ({ id: `${country}-${i}`, country, value: i }))
+            );
+            const api = await createGroupedGrid({ rowData, groupDefaultExpanded: -1 });
+            const recorder = createRecorder();
+            api.subscribeToVisibleRows({
+                ...recorder.handlers,
+                onSubscribe(rows, params) {
+                    for (const row of rows) {
+                        row.parentKeys.push('changed');
+                        row.route?.push('changed');
+                    }
+                    recorder.handlers.onSubscribe(rows, params);
+                },
+            });
+
+            api.applyTransaction({ update: [{ id: 'Ireland-1', country: 'Ireland', value: 5 }] });
+            api.applyTransaction({ add: [{ id: 'Ireland-2', country: 'Ireland', value: 2 }] });
+
+            await waitFor(() => expect(recorder.subscribed.has('Ireland-2')).toBe(true));
+            expect(recorder.calls.filter((c) => c.reason === 'move')).toEqual([]);
+            expect(recorder.violations).toEqual([]);
+        });
+
         test('a transaction that moves a visible row into an expanded group out of view reports it with reason move', async () => {
             const api = await createGroupedGrid({ groupDefaultExpanded: -1 });
             const recorder = createRecorder();

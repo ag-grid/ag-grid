@@ -497,7 +497,12 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
     }
 
     private createVisibleRow(ref: VisibleRowRef, node: RowNode): VisibleRow {
-        return { ...ref, group: !!node.group, data: node.data };
+        // Handlers get their own arrays: changing them must not affect the stored ref the move check compares.
+        const row: VisibleRow = { ...ref, parentKeys: ref.parentKeys.slice(), group: !!node.group, data: node.data };
+        if (ref.route) {
+            row.route = ref.route.slice();
+        }
+        return row;
     }
 
     private createParams(reason: VisibleRowsReason): VisibleRowsParams {
