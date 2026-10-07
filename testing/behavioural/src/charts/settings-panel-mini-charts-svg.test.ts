@@ -86,7 +86,7 @@ describe('chart settings panel mini chart thumbnails', () => {
         const match = Array.from(wrapper.querySelectorAll<HTMLElement>('.ag-chart-mini-thumbnail')).find(
             (el) => el.getAttribute('aria-label')?.split('. ')[0] === label
         );
-        expect(match, `thumbnail "${label}"`).toBeDefined();
+        expect(match).toBeDefined();
         return match!;
     }
 
