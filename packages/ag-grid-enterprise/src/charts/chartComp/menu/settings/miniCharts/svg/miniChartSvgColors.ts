@@ -38,7 +38,7 @@ export function resolveSvgColor(color: AgColorType | undefined, palette: AgColor
 }
 
 function firstStringColor(palette: AgColorType[]): string {
-    for (let i = 0; i < palette.length; i++) {
+    for (let i = 0, len = palette.length; i < len; ++i) {
         const entry = palette[i];
         if (typeof entry === 'string') {
             return entry;
@@ -71,7 +71,7 @@ function resolveGradient(color: RuntimeGradientColor, palette: AgColorType[], sv
         element.setAttribute('x2', String(x2));
         element.setAttribute('y2', String(y2));
     }
-    for (let i = 0; i < stops.length; i++) {
+    for (let i = 0, len = stops.length; i < len; ++i) {
         const stopElement = doc.createElementNS(SVG_NS, 'stop');
         stopElement.setAttribute('offset', String(stops[i].offset));
         stopElement.setAttribute('stop-color', stops[i].color);
@@ -86,13 +86,14 @@ function resolveGradient(color: RuntimeGradientColor, palette: AgColorType[], sv
 
 function getOrCreateDefs(svg: SVGSVGElement): Element {
     const children = svg.children;
-    for (let i = 0; i < children.length; i++) {
+    for (let i = 0, len = children.length; i < len; ++i) {
         if (children[i].localName === 'defs') {
             return children[i];
         }
     }
     const defs = svg.ownerDocument.createElementNS(SVG_NS, 'defs');
-    svg.insertBefore(defs, svg.firstChild);
+    const first = svg.firstElementChild;
+    svg.insertBefore(defs, first?.localName === 'title' ? first.nextSibling : first);
     return defs;
 }
 
@@ -107,11 +108,11 @@ function resolveStops(colorStops: AgGradientColorStop[], reverse: boolean): Reso
     let previousDefined = 0;
     let nextDefined = -1;
     let lastColor: string | undefined;
-    for (let i = 0; i < count && lastColor == null; i++) {
+    for (let i = 0; i < count && lastColor == null; ++i) {
         lastColor = stringColorOf(colorStops[i]);
     }
 
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < count; ++i) {
         if (i >= nextDefined) {
             nextDefined = findNextDefinedStop(colorStops, i);
         }
@@ -135,14 +136,14 @@ function resolveStops(colorStops: AgGradientColorStop[], reverse: boolean): Reso
         return stops;
     }
     const reversed: ResolvedStop[] = [];
-    for (let i = stops.length - 1; i >= 0; i--) {
+    for (let i = stops.length - 1; i >= 0; --i) {
         reversed.push({ offset: 1 - stops[i].offset, color: stops[i].color });
     }
     return reversed;
 }
 
 function findNextDefinedStop(colorStops: AgGradientColorStop[], from: number): number {
-    for (let i = from + 1; i < colorStops.length; i++) {
+    for (let i = from + 1, len = colorStops.length; i < len; ++i) {
         if (colorStops[i].stop != null) {
             return i;
         }

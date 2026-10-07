@@ -9,6 +9,8 @@
 //   run 4: 129.4 / 114.5 (0.88x); 48.0 / 40.4 (0.84x)
 //   run 5: 129.3 / 116.4 (0.90x); 48.4 / 30.8 (0.64x)
 //   run 6: 128.0 / 115.2 (0.90x); 48.8 / 30.7 (0.63x)
+//   run 7: 129.3 / 119.9 (0.93x); 48.8 / 29.8 (0.61x)
+//   run 8: 128.7 / 116.9 (0.91x); 48.2 / 30.4 (0.63x)
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import { bench, suite } from 'vitest';
 
