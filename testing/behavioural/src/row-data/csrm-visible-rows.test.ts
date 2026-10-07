@@ -353,6 +353,27 @@ describe('CSRM subscribeToVisibleRows', () => {
             expect(recorder.violations).toEqual([]);
         });
 
+        test('expandAll and collapseAll report the rows they show and hide with expand and collapse', async () => {
+            const api = await createGroupedGrid();
+            const recorder = createRecorder();
+            api.subscribeToVisibleRows(recorder.handlers);
+            const groups = recorder.calls[0].ids;
+            const irelandRows = range(0, 4).map((i) => `Ireland-${i}`);
+
+            api.expandAll();
+            await waitFor(() => expect(recorder.subscribed.has('Ireland-4')).toBe(true));
+            api.collapseAll();
+            await waitFor(() => expect(recorder.ids()).toHaveLength(3));
+
+            expect(recorder.calls.slice(1)).toEqual([
+                { type: 'unsubscribe', reason: 'scroll', ids: groups.slice(1) },
+                { type: 'subscribe', reason: 'expand', ids: irelandRows },
+                { type: 'unsubscribe', reason: 'collapse', ids: irelandRows },
+                { type: 'subscribe', reason: 'collapse', ids: groups.slice(1) },
+            ]);
+            expect(recorder.violations).toEqual([]);
+        });
+
         test('removing the grouping unsubscribes the group rows with reason reset', async () => {
             const api = await createGroupedGrid();
             const recorder = createRecorder();

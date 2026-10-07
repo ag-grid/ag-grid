@@ -12,6 +12,7 @@ test.agExample(import.meta, () => {
             await expect(log).toContainText('(initial)');
             await expect(count).not.toHaveText('0');
             expect(Number(await count.textContent())).toBeLessThan(40);
+            await expect(page.locator('#updatesSent')).not.toHaveText('0');
 
             await page.evaluate(() => {
                 const vp = document.querySelector('.ag-body-viewport') as HTMLElement;

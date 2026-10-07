@@ -34,8 +34,8 @@ export interface VisibleRowRef {
 export interface VisibleRow<TData = any> extends VisibleRowRef {
     /** `true` if the row is a group. */
     group: boolean;
-    /** The row's data. */
-    data: TData;
+    /** The row's data. Can be `undefined` for group rows the grid creates, such as with client-side row grouping. */
+    data: TData | undefined;
 }
 
 export interface VisibleRowsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

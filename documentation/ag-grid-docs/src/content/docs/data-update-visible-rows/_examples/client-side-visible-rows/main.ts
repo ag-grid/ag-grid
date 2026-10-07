@@ -5,6 +5,7 @@ import {
     HighlightChangesModule,
     ModuleRegistry,
     NumberFilterModule,
+    RowApiModule,
     TextFilterModule,
     VisibleRowsModule,
     createGrid,
@@ -21,6 +22,7 @@ ModuleRegistry.registerModules([
     ClientSideRowModelApiModule,
     HighlightChangesModule,
     NumberFilterModule,
+    RowApiModule,
     TextFilterModule,
     VisibleRowsModule,
 ]);

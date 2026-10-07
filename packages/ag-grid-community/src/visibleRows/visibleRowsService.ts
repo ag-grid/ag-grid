@@ -3,7 +3,7 @@ import { _requestAnimationFrame } from 'ag-stack';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { RowNode } from '../entities/rowNode';
-import type { BodyScrollEvent, PaginationChangedEvent, RowGroupOpenedEvent } from '../events';
+import type { BodyScrollEvent, ExpandOrCollapseAllEvent, PaginationChangedEvent, RowGroupOpenedEvent } from '../events';
 import {
     _addGridCommonParams,
     _getRowIdCallback,
@@ -34,6 +34,7 @@ interface VisibleRowsSubscription {
     readonly debounceMs: number | undefined;
     readonly rows: Map<string, SubscribedRow>;
     readonly expandedGroups: Set<RowNode>;
+    expandAllPending: boolean;
     collapsePending: boolean;
     scrollPending: boolean;
     sortPending: boolean;
@@ -81,6 +82,7 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
                 }
             },
             rowGroupOpened: this.onRowGroupOpened.bind(this),
+            expandOrCollapseAll: this.onExpandOrCollapseAll.bind(this),
             sortChanged: () => this.markPending('sortPending'),
             filterChanged: () => this.markPending('filterPending'),
             gridPreDestroyed: this.stopAll.bind(this),
@@ -105,6 +107,7 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
             debounceMs: options.debounceMs,
             rows: new Map(),
             expandedGroups: new Set(),
+            expandAllPending: false,
             collapsePending: false,
             scrollPending: false,
             sortPending: false,
@@ -190,6 +193,18 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
         this.markAllDirty(false);
     }
 
+    private onExpandOrCollapseAll(event: ExpandOrCollapseAllEvent): void {
+        const expanded = event.source === 'expandAll';
+        for (const sub of this.subscriptions) {
+            if (expanded) {
+                sub.expandAllPending = true;
+            } else {
+                sub.collapsePending = true;
+            }
+        }
+        this.markAllDirty(false);
+    }
+
     private markPending(pending: 'sortPending' | 'filterPending'): void {
         for (const sub of this.subscriptions) {
             sub[pending] = true;
@@ -261,6 +276,7 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
         }
 
         sub.expandedGroups.clear();
+        sub.expandAllPending = false;
         sub.collapsePending = false;
         sub.scrollPending = false;
         sub.sortPending = false;
@@ -404,7 +420,7 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
     }
 
     private getSubscribeReason(node: RowNode, sub: VisibleRowsSubscription): VisibleRowsReason {
-        if (sub.expandedGroups.size && hasAncestorIn(node, sub.expandedGroups)) {
+        if (sub.expandAllPending || (sub.expandedGroups.size && hasAncestorIn(node, sub.expandedGroups))) {
             return 'expand';
         }
         if (sub.collapsePending) {
