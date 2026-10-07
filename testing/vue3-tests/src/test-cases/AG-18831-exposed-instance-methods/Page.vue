@@ -1,5 +1,6 @@
 <template>
     <button id="check-instances" @click="checkInstances">Check renderer instances</button>
+    <button id="mutate-exposed" @click="mutateExposedState">Mutate exposed state</button>
     <ul>
         <li v-for="result in results" :key="result.id" :id="`result-${result.id}`">{{ result.text }}</li>
     </ul>
@@ -35,8 +36,15 @@ const SetupExposeRenderer = defineComponent({
     props: ['params'],
     setup(props, { expose }) {
         const exposedFunction = () => `setup-expose:${props.params.value}`;
-        expose({ exposedFunction });
-        return () => h('span', props.params.value);
+        const count = ref(0);
+        expose({
+            exposedFunction,
+            count,
+            increment() {
+                this.count++;
+            },
+        });
+        return () => h('span', [props.params.value, h('span', { class: 'exposed-count' }, count.value)]);
     },
 });
 
@@ -66,6 +74,15 @@ const results = ref([]);
 
 const onGridReady = (params) => {
     gridApi.value = params.api;
+};
+
+const mutateExposedState = () => {
+    const [instance] = gridApi.value.getCellRendererInstances({
+        rowNodes: [gridApi.value.getRowNode('setup-expose')],
+    });
+    instance.increment();
+    instance.count += 10;
+    results.value = [{ id: 'exposed-count', text: `count:${instance.count}` }];
 };
 
 const checkInstances = () => {

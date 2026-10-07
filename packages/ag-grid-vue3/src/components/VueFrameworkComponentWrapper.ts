@@ -1,4 +1,4 @@
-import { unref } from 'vue';
+import { proxyRefs } from 'vue';
 
 import type { ComponentType, WrappableInterface } from 'ag-grid-community';
 import { BaseComponentWrapper, _warnForGrid } from 'ag-grid-community';
@@ -146,14 +146,27 @@ abstract class VueComponent<P> {
             return componentInstance;
         }
 
-        this.exposedInstance ??= new Proxy(componentInstance, {
+        if (this.exposedInstance) {
+            return this.exposedInstance;
+        }
+
+        // unwraps refs on read and assigns to a ref's value on write, as Vue's own template ref proxy does
+        const exposedRefs = proxyRefs(exposed);
+        this.exposedInstance = new Proxy(componentInstance, {
             get(target, key, receiver) {
                 // read the Vue proxy unconditionally, as it reports keys such as `__v_skip` that its `has` trap does not
                 const value = Reflect.get(target, key, receiver);
                 if (value !== undefined || !(key in exposed)) {
                     return value;
                 }
-                return unref(exposed[key]);
+                return exposedRefs[key];
+            },
+            set(target, key, value) {
+                if (!(key in target) && key in exposed) {
+                    exposedRefs[key] = value;
+                    return true;
+                }
+                return Reflect.set(target, key, value);
             },
             has(target, key) {
                 return key in target || key in exposed;
