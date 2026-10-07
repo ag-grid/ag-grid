@@ -911,7 +911,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowLevel = newLevel;
     }
 
-    public isFirstRowOnPage(): boolean {
+    private isFirstRowOnPage(): boolean {
         const {
             rowNode: { rowIndex, rowPinned },
             beans: { pageBounds },
@@ -923,7 +923,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         return rowIndex === pageBounds.getFirstRow();
     }
 
-    public isLastRowOnPage(): boolean {
+    private isLastRowOnPage(): boolean {
         const {
             rowNode: { rowIndex, rowPinned },
             beans: { pageBounds, pinnedRowModel },
@@ -954,8 +954,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             this.lastRowOnPage = newLast;
             this.rowGui?.rowComp.toggleCss('ag-row-last', newLast);
         }
-
-        this.beans.grandTotalRowStylesSvc?.refreshRow(this);
     }
 
     public getAllCellCtrls(): CellCtrl[] {
@@ -1032,8 +1030,6 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         if (rowNode.footer) {
             classes.push('ag-row-footer');
         }
-
-        beans.grandTotalRowStylesSvc?.addInitialRowClasses(this, classes);
 
         classes.push('ag-row-level-' + this.rowLevel);
 

@@ -130,7 +130,6 @@ type InternalModuleName =
     | 'FilterCore'
     | 'FilterValue'
     | 'FindCore'
-    | 'GrandTotalRowStyles'
     | 'GroupEdit'
     | 'GroupCellRenderer'
     | 'GroupColumn'

@@ -98,7 +98,6 @@ export class RowContainerComp extends Component {
                 }
             },
             setHidden: (hidden: boolean) => _setDisplayed(eContainer, !hidden, { skipAriaHidden: true }),
-            toggleCss: (cssClassName: string, on: boolean) => eContainer.classList.toggle(cssClassName, on),
         };
 
         const ctrl = this.createManagedBean(new RowContainerCtrl(this.name));

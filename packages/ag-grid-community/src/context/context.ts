@@ -78,7 +78,6 @@ import type {
 import type { IFindService } from '../interfaces/iFind';
 import type { IFooterService } from '../interfaces/iFooterService';
 import type { IFrameworkOverrides } from '../interfaces/iFrameworkOverrides';
-import type { IGrandTotalRowStylesService } from '../interfaces/iGrandTotalRowStylesService';
 import type { IGroupEditService } from '../interfaces/iGroupEditService';
 import type { IGroupFilterService } from '../interfaces/iGroupFilterService';
 import type { IGroupHierarchyColService } from '../interfaces/iGroupHierarchyColService';
@@ -414,7 +413,6 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     rowAutoHeight?: RowAutoHeightService;
     rowChildrenSvc?: IRowChildrenService;
     footerSvc?: IFooterService;
-    grandTotalRowStylesSvc?: IGrandTotalRowStylesService;
     touchSvc?: TouchService;
     rowSpanSvc?: RowSpanService;
     spannedRowRenderer?: SpannedRowRenderer;

@@ -10,7 +10,7 @@ import {
 
 import { BeansContext } from '../beansContext';
 import useReactCommentEffect from '../reactComment';
-import { CssClasses, agFlushSync, classesList, getNextValueIfDifferent } from '../utils';
+import { agFlushSync, classesList, getNextValueIfDifferent } from '../utils';
 import RowComp from './rowComp';
 
 const RowContainerComp = ({
@@ -32,7 +32,6 @@ const RowContainerComp = ({
     const prevRowCtrlsRef = useRef<RowCtrl[]>([]);
     const [hidden, setHidden] = useState<boolean>(true);
     const hiddenRef = useRef(true);
-    const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
 
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>(() => []);
 
@@ -45,14 +44,8 @@ const RowContainerComp = ({
     const rowContainerCtrlRef = useRef<RowContainerCtrl>();
 
     const containerClasses = useMemo(
-        () =>
-            classesList(
-                _getRowContainerClass(name),
-                hidden ? 'ag-hidden' : null,
-                extraClassName,
-                cssClasses.toString()
-            ),
-        [extraClassName, name, hidden, cssClasses]
+        () => classesList(_getRowContainerClass(name), hidden ? 'ag-hidden' : null, extraClassName),
+        [extraClassName, name, hidden]
     );
     const spanClasses = useMemo(() => classesList('ag-spanning-container', _getRowSpanContainerClass(name)), [name]);
 
@@ -134,7 +127,6 @@ const RowContainerComp = ({
                     setHidden(hidden);
                 }
             },
-            toggleCss: (cssClassName: string, on: boolean) => setCssClasses((prev) => prev.setClass(cssClassName, on)),
         };
 
         rowContainerCtrlRef.current = context.createBean(new RowContainerCtrl(name));

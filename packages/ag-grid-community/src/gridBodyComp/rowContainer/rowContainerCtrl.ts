@@ -91,7 +91,6 @@ export interface IRowContainerComp {
     setContainerWidth(width: string): void;
     setOffsetTop(offset: string): void;
     setHidden(hidden: boolean): void;
-    toggleCss(cssClassName: string, on: boolean): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -277,8 +276,6 @@ export class RowContainerCtrl extends BeanStub {
     private onDisplayedRowsChanged(afterScroll: boolean = false): void {
         const rowCtrls = this.options.getRowCtrls(this.beans.rowRenderer);
         const isEmpty = rowCtrls.length === 0;
-        // before setRowCtrls so that newly created rows render with the right classes
-        this.beans.grandTotalRowStylesSvc?.onDisplayedRowsChanged(this.name, this.comp, rowCtrls);
         this.comp.setRowCtrls({
             rowCtrls: isEmpty ? this.EMPTY_CTRLS : rowCtrls,
             useFlushSync: afterScroll,

@@ -172,7 +172,7 @@
 .ag-grid-scrollable-area.ag-has-top-pinned-rows
     .ag-grid-pinned-top-rows
     > .ag-grid-pinned-top-rows-container
-    > .ag-row.ag-row-last:not(.ag-row-grand-total-border-bottom) {
+    > .ag-row.ag-row-last {
     > .ag-grid-pinned-left-cells,
     > .ag-grid-scrolling-cells,
     > .ag-grid-pinned-right-cells {

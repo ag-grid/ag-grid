@@ -1,7 +1,6 @@
 import type { _AggregationGridApi, _ModuleWithApi, _ModuleWithoutApi } from 'ag-grid-community';
 
 import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
-import { GrandTotalRowStylesModule } from '../grandTotalRowStyles/grandTotalRowStylesModule';
 import { VERSION } from '../version';
 import { AggColumnNameService } from './aggColumnNameService';
 import { AggFuncService } from './aggFuncService';
@@ -24,7 +23,7 @@ export const SharedAggregationModule: _ModuleWithApi<_AggregationGridApi<any>> =
         clearAggFuncs,
         setColumnAggFunc,
     },
-    dependsOn: [EnterpriseCoreModule, GrandTotalRowStylesModule],
+    dependsOn: [EnterpriseCoreModule],
 };
 
 /**
