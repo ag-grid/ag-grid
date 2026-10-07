@@ -7,12 +7,8 @@ import type {
     ServerSideGroupLevelState,
     ServerSideTransaction,
     ServerSideTransactionResult,
-    VisibleRowsHandlers,
-    VisibleRowsOptions,
 } from 'ag-grid-community';
 import { _getServerSideRowModel } from 'ag-grid-community';
-
-import { _getSsrmVisibleRowsService } from './services/ssrmVisibleRowsService';
 
 export function getServerSideSelectionState(
     beans: BeanCollection
@@ -71,12 +67,4 @@ export function refreshServerSide(beans: BeanCollection, params?: RefreshServerS
 
 export function getServerSideGroupLevelState(beans: BeanCollection): ServerSideGroupLevelState[] {
     return _getServerSideRowModel(beans)?.getStoreState() ?? [];
-}
-
-export function subscribeToVisibleRows<TData = any>(
-    beans: BeanCollection,
-    handlers: VisibleRowsHandlers<TData>,
-    options?: VisibleRowsOptions
-): () => void {
-    return _getSsrmVisibleRowsService(beans)?.subscribe(handlers, options) ?? (() => {});
 }

@@ -27,6 +27,7 @@ export type {
     _PivotGridApi,
     _RowGroupingGridApi,
     _ServerSideRowModelGridApi,
+    _ServerSideRowModelVisibleRowsGridApi,
     _SideBarGridApi,
     _StatusBarGridApi,
     _ToolbarGridApi,

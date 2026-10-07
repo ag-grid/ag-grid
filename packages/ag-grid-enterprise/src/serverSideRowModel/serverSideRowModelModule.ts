@@ -1,4 +1,9 @@
-import type { _ModuleWithApi, _ModuleWithoutApi, _ServerSideRowModelGridApi } from 'ag-grid-community';
+import type {
+    _ModuleWithApi,
+    _ModuleWithoutApi,
+    _ServerSideRowModelGridApi,
+    _ServerSideRowModelVisibleRowsGridApi,
+} from 'ag-grid-community';
 import {
     _CsrmSsrmSharedApiModule,
     _RowModelSharedApiModule,
@@ -31,8 +36,8 @@ import {
     refreshServerSide,
     retryServerSideLoads,
     setServerSideSelectionState,
-    subscribeToVisibleRows,
 } from './serverSideRowModelApi';
+import { subscribeToVisibleRows } from './serverSideRowModelVisibleRowsApi';
 import { ServerSideExpansionService } from './services/serverSideExpansionService';
 import { ServerSideSelectionService } from './services/serverSideSelectionService';
 import { SsrmRowChildrenService } from './services/ssrmRowChildrenService';
@@ -81,7 +86,6 @@ export const ServerSideRowModelModule: _ModuleWithoutApi = {
 export const ServerSideRowModelApiModule: _ModuleWithApi<_ServerSideRowModelGridApi<any>> = {
     moduleName: 'ServerSideRowModelApi',
     version: VERSION,
-    beans: [SsrmVisibleRowsService],
     apiFunctions: {
         getServerSideSelectionState,
         setServerSideSelectionState,
@@ -92,9 +96,32 @@ export const ServerSideRowModelApiModule: _ModuleWithApi<_ServerSideRowModelGrid
         flushServerSideAsyncTransactions,
         refreshServerSide,
         getServerSideGroupLevelState,
-        subscribeToVisibleRows,
         resetRowHeights,
         onRowHeightChanged,
     },
     dependsOn: [EnterpriseCoreModule, _RowModelSharedApiModule, _CsrmSsrmSharedApiModule, _SsrmInfiniteSharedApiModule],
+};
+
+/**
+ * The service behind `subscribeToVisibleRows`, so it is only created for the Server-Side Row Model.
+ * @internal
+ */
+const ServerSideRowModelVisibleRowsCoreModule: _ModuleWithoutApi = {
+    moduleName: 'ServerSideRowModelVisibleRowsCore',
+    version: VERSION,
+    rowModels: ['serverSide'],
+    beans: [SsrmVisibleRowsService],
+    dependsOn: [EnterpriseCoreModule],
+};
+
+/**
+ * @feature Server-Side Row Model -> Visible Rows Subscription
+ */
+export const ServerSideRowModelVisibleRowsModule: _ModuleWithApi<_ServerSideRowModelVisibleRowsGridApi<any>> = {
+    moduleName: 'ServerSideRowModelVisibleRows',
+    version: VERSION,
+    apiFunctions: {
+        subscribeToVisibleRows,
+    },
+    dependsOn: [EnterpriseCoreModule, ServerSideRowModelVisibleRowsCoreModule],
 };

@@ -32,6 +32,7 @@ export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, 1> = {
     RowGroupingPanel: 1,
     ServerSideRowModelApi: 1,
     ServerSideRowModel: 1,
+    ServerSideRowModelVisibleRows: 1,
     SetFilter: 1,
     ShowValuesAs: 1,
     SideBar: 1,

@@ -1752,7 +1752,9 @@ export interface _ServerSideRowModelGridApi<TData> extends _RowModelSharedApi {
      * @agModule `ServerSideRowModelApiModule`
      */
     getServerSideGroupLevelState(): ServerSideGroupLevelState[];
+}
 
+export interface _ServerSideRowModelVisibleRowsGridApi<TData> {
     /**
      * Tells the application which rows to subscribe to and unsubscribe from as loaded rows enter and leave the view,
      * so that a server stream only sends updates for rows the user can see.
@@ -1760,7 +1762,7 @@ export interface _ServerSideRowModelGridApi<TData> extends _RowModelSharedApi {
      * passed to `onUnsubscribe` exactly once, including when the returned function is called or the grid is destroyed.
      * Loading rows, pinned rows, detail rows and total rows are not included. Requires `getRowId`.
      * Returns a function that stops the subscription.
-     * @agModule `ServerSideRowModelApiModule`
+     * @agModule `ServerSideRowModelVisibleRowsModule`
      */
     subscribeToVisibleRows(handlers: VisibleRowsHandlers<TData>, options?: VisibleRowsOptions): () => void;
 }
@@ -2083,6 +2085,7 @@ export interface GridApi<TData = any>
         _PivotGridApi<TData>,
         _CellSelectionGridApi,
         _ServerSideRowModelGridApi<TData>,
+        _ServerSideRowModelVisibleRowsGridApi<TData>,
         _ContextMenuGridApi,
         _ColumnChooserGridApi,
         _MasterDetailGridApi,

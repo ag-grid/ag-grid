@@ -18,7 +18,12 @@ import type {
     VisibleRowsReason,
 } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
-import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import {
+    RowGroupingModule,
+    ServerSideRowModelApiModule,
+    ServerSideRowModelModule,
+    ServerSideRowModelVisibleRowsModule,
+} from 'ag-grid-enterprise';
 
 interface Call {
     type: 'subscribe' | 'unsubscribe';
@@ -72,7 +77,13 @@ function range(from: number, to: number): string[] {
 
 describe('SSRM subscribeToVisibleRows', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ServerSideRowModelModule, ServerSideRowModelApiModule, ScrollApiModule, RowGroupingModule],
+        modules: [
+            ServerSideRowModelModule,
+            ServerSideRowModelApiModule,
+            ServerSideRowModelVisibleRowsModule,
+            ScrollApiModule,
+            RowGroupingModule,
+        ],
     });
 
     let originalGridHeight: number;
@@ -361,6 +372,26 @@ describe('SSRM subscribeToVisibleRows', () => {
         expect(recorder.violations).toEqual([]);
     });
 
+    test('a purge from inside onUnsubscribe does not subscribe the rows it destroyed', async () => {
+        const api = await createFlatGrid();
+        let purged = false;
+        const recorder = createRecorder((call) => {
+            if (call.type === 'unsubscribe' && call.reason === 'scroll' && !purged) {
+                purged = true;
+                api.refreshServerSide({ purge: true });
+            }
+        });
+        api.subscribeToVisibleRows(recorder.handlers);
+
+        api.ensureIndexVisible(50, 'top');
+
+        await waitFor(() => expect(recorder.ids()).toEqual(range(50, 55)));
+        // The rows the scroll brought in were destroyed by the purge, so only their reloaded replacements arrive.
+        expect(recorder.reasons('subscribe')).toEqual(['initial', 'load']);
+        expect(recorder.reasons('unsubscribe')).toEqual(['scroll']);
+        expect(recorder.violations).toEqual([]);
+    });
+
     test('without getRowId it warns and never calls the handlers', async () => {
         const api = await createFlatGrid({ getRowId: undefined });
         const recorder = createRecorder();
@@ -445,6 +476,47 @@ describe('SSRM subscribeToVisibleRows', () => {
             api.subscribeToVisibleRows(recorder.handlers, { includeGroups: false });
 
             expect(recorder.ids()).toEqual(range(0, 4).map((i) => `Ireland/Ireland-${i}`));
+        });
+
+        test('a transaction that removes an expanded group unsubscribes it and its children with reason remove', async () => {
+            const api = createGroupedGrid();
+            await waitForNoLoadingRows(api);
+            api.setRowNodeExpanded(api.getRowNode('Ireland')!, true);
+            await waitForNoLoadingRows(api);
+            const recorder = createRecorder();
+            api.subscribeToVisibleRows(recorder.handlers);
+            expect(recorder.ids()).toEqual(['Ireland', ...range(0, 4).map((i) => `Ireland/Ireland-${i}`)]);
+
+            api.applyServerSideTransaction({ remove: [{ country: 'Ireland' }] });
+
+            await waitFor(() => expect(recorder.ids()).toEqual(['France', 'Spain']));
+            expect(recorder.reasons('unsubscribe')).toEqual(['remove']);
+            expect(recorder.violations).toEqual([]);
+        });
+
+        test('a scoped purge in the same frame as a removal labels each row by what happened to it', async () => {
+            const api = createGroupedGrid();
+            await waitForNoLoadingRows(api);
+            api.setRowNodeExpanded(api.getRowNode('Spain')!, true);
+            await waitForNoLoadingRows(api);
+            const recorder = createRecorder();
+            api.subscribeToVisibleRows(recorder.handlers);
+            const spainRows = range(0, 3).map((i) => `Spain/Spain-${i}`);
+            expect(recorder.ids()).toEqual(['Ireland', 'Spain', ...spainRows]);
+
+            api.refreshServerSide({ route: ['Spain'], purge: true });
+            api.applyServerSideTransaction({ remove: [{ country: 'Ireland' }] });
+
+            await waitFor(() =>
+                expect(recorder.ids()).toEqual(['Spain', ...range(0, 4).map((i) => `Spain/Spain-${i}`)])
+            );
+            // France can pass through the view while Spain's rows reload, so only the first batch is checked.
+            const unsubscribed = recorder.calls.filter((c) => c.type === 'unsubscribe').slice(0, 2);
+            expect(unsubscribed).toEqual([
+                { type: 'unsubscribe', reason: 'reset', ids: spainRows },
+                { type: 'unsubscribe', reason: 'remove', ids: ['Ireland'] },
+            ]);
+            expect(recorder.violations).toEqual([]);
         });
 
         test('group total rows and the grand total row are left out', async () => {

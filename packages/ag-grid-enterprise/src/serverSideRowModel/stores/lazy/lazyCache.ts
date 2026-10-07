@@ -150,10 +150,13 @@ export class LazyCache extends BeanStub {
     }
 
     public override destroy() {
-        (this.beans.ssrmVisibleRowsSvc as SsrmVisibleRowsService | undefined)?.onRowsReset();
+        const visibleRowsSvc = this.beans.ssrmVisibleRowsSvc as SsrmVisibleRowsService | undefined;
         this.lazyBlockLoadingSvc.unsubscribe(this);
         this.numberOfRows = 0;
-        this.nodeMap.forEach((node) => this.blockUtils.destroyRowNode(node.node));
+        this.nodeMap.forEach(({ node }) => {
+            visibleRowsSvc?.onRowDestroying(node);
+            this.blockUtils.destroyRowNode(node);
+        });
         this.nodeMap.clear();
         this.nodeDisplayIndexMap.clear();
         this.nodesToRefresh.clear();

@@ -110,6 +110,12 @@
                     "ssrmBundled": true
                 },
                 {
+                    "moduleName": "ServerSideRowModelVisibleRowsModule",
+                    "name": "Server Side Visible Rows Subscription",
+                    "path": "server-side-model-updating-visible-rows",
+                    "isEnterprise": true
+                },
+                {
                     "moduleName": "ViewportRowModelModule",
                     "name": "Viewport Row Model",
                     "path": "viewport",

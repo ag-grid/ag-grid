@@ -29,6 +29,7 @@ import {
 import { _createRowNodeFooter, _destroyRowNodeFooter } from '../../../aggregation/footerUtils';
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { SSRMParams } from '../../serverSideRowModel';
+import { _destroyAsVisibleRowsReset } from '../../services/ssrmVisibleRowsReset';
 import type { StoreUtils } from '../storeUtils';
 import { LazyCache } from './lazyCache';
 
@@ -689,7 +690,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 const oldCount = this.cache.getRowCount();
                 const lastKnown = this.cache.isLastRowIndexKnown();
                 const lastInferred = this.cache.isLastRowIndexInferred();
-                this.destroyBean(this.cache);
+                _destroyAsVisibleRowsReset(this.beans, () => this.destroyBean(this.cache));
                 this.cache = this.createManagedBean(
                     new LazyCache(this, oldCount, lastKnown, this.storeParams, lastInferred)
                 );
@@ -737,7 +738,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         if (purge) {
             this.grandTotalData = undefined;
             this.destroyGrandTotalRow();
-            this.destroyBean(this.cache);
+            _destroyAsVisibleRowsReset(this.beans, () => this.destroyBean(this.cache));
             this.cache = this.createManagedBean(new LazyCache(this, 1, false, this.storeParams));
             this.fireStoreUpdatedEvent();
             return;

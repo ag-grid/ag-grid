@@ -7,6 +7,8 @@ When a server streams live updates to the grid, it is wasteful to send updates f
 
 {% apiDocumentation source="grid-api/api.json" section="serverSideRowModel" names=["subscribeToVisibleRows"] /%}
 
+Subscribing to visible rows requires the `ServerSideRowModelVisibleRowsModule`.
+
 {% note %}
 Visible Rows requires [Row IDs](./server-side-model-configuration/#providing-row-ids). Without `getRowId` the grid logs a warning and returns a stop function that does nothing.
 {% /note %}
@@ -53,7 +55,7 @@ The `reason` in the params describes why a batch of rows was passed.
 | `expand`   | Rows shown by expanding a group.                                                                                                                                                                                                |
 | `collapse` | Rows hidden by collapsing a group, and rows revealed by the collapse.                                                                                                                                                           |
 | `reset`    | Rows dropped by a purge, such as `refreshServerSide({ purge: true })`, a sort or filter that reloads rows, a change of row grouping or pivot, or a new datasource.                                                              |
-| `remove`   | Rows no longer in the grid, such as rows removed by a transaction or by a refresh that does not purge.                                                                                                                          |
+| `remove`   | Rows no longer in the grid, such as rows removed by a transaction, including the children of a removed group, or by a refresh that does not purge.                                                                              |
 | `stop`     | The stop function was called or the grid was destroyed. When the grid is destroyed, this runs while the API is still usable.                                                                                                    |
 
 Rows that survive a sort or filter, for example with `serverSideEnableClientSideSort` when all rows are loaded, remain subscribed.

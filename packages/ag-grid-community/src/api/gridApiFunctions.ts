@@ -46,6 +46,7 @@ import type {
     _RowSelectionGridApi,
     _ScrollGridApi,
     _ServerSideRowModelGridApi,
+    _ServerSideRowModelVisibleRowsGridApi,
     _SideBarGridApi,
     _SortGridApi,
     _SsrmInfiniteSharedGridApi,
@@ -440,9 +441,12 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         flushServerSideAsyncTransactions: 0,
         refreshServerSide: 0,
         getServerSideGroupLevelState: 0,
-        subscribeToVisibleRows: 0,
         onRowHeightChanged: 0,
         resetRowHeights: 0,
+    }),
+
+    ...mod<_ServerSideRowModelVisibleRowsGridApi<any>>('ServerSideRowModelVisibleRows', {
+        subscribeToVisibleRows: 0,
     }),
 
     ...mod<_SideBarGridApi<any>>('SideBar', {

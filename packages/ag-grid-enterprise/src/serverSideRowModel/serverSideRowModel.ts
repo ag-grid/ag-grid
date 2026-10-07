@@ -42,6 +42,7 @@ import {
 } from 'ag-grid-community';
 
 import type { NodeManager } from './nodeManager';
+import { _destroyAsVisibleRowsReset } from './services/ssrmVisibleRowsReset';
 import type { LazyStore } from './stores/lazy/lazyStore';
 import type { StoreFactory } from './stores/storeFactory';
 
@@ -315,7 +316,10 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         if (!this.rootNode?.childStore) {
             return;
         }
-        this.rootNode.childStore = this.destroyBean(this.rootNode.childStore)!;
+        const rootNode = this.rootNode;
+        _destroyAsVisibleRowsReset(this.beans, () => {
+            rootNode.childStore = this.destroyBean(rootNode.childStore)!;
+        });
         this.nodeManager.clear();
     }
 

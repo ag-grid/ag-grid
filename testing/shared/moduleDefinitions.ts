@@ -87,6 +87,7 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, true>
     RowGroupingPanelModule: true,
     ServerSideRowModelApiModule: true,
     ServerSideRowModelModule: true,
+    ServerSideRowModelVisibleRowsModule: true,
     SetFilterModule: true,
     ShowValuesAsModule: true,
     SideBarModule: true,
