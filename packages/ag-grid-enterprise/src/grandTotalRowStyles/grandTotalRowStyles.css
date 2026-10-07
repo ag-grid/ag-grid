@@ -1,0 +1,67 @@
+/* The grand total row always draws the border between it and data rows, unlike normal rows
+   where the row above draws the border between it and the row below */
+
+/* stylelint-disable selector-max-specificity -- must match the 0,2,0 core rule that gives
+   every sticky bottom row a top row border, as the grand total row is usually sticky */
+.ag-row-grand-total-border-top:where(:not(.ag-full-width-row)),
+.ag-row-grand-total-border-top:where(.ag-embedded-full-width-row) {
+    > .ag-grid-pinned-left-cells,
+    > .ag-grid-scrolling-cells,
+    > .ag-grid-pinned-right-cells {
+        border-top: var(--ag-grand-total-row-border);
+    }
+}
+
+/* stylelint-enable selector-max-specificity */
+
+.ag-row-grand-total-border-top:where(.ag-full-width-row:not(.ag-embedded-full-width-row)) {
+    border-top: var(--ag-grand-total-row-border);
+}
+
+/* stylelint-disable selector-max-specificity -- must match the 0,2,0 core rule that gives
+   every row a bottom row border */
+.ag-row-grand-total-border-bottom:where(:not(.ag-full-width-row)),
+.ag-row-grand-total-border-bottom:where(.ag-embedded-full-width-row) {
+    > .ag-grid-pinned-left-cells,
+    > .ag-grid-scrolling-cells,
+    > .ag-grid-pinned-right-cells {
+        border-bottom: var(--ag-grand-total-row-border);
+    }
+}
+
+/* stylelint-enable selector-max-specificity */
+
+/* stylelint-disable-next-line selector-max-specificity -- must match the 0,3,0 core rule that gives full width rows a bottom row border */
+.ag-row-grand-total-border-bottom.ag-full-width-row:not(.ag-embedded-full-width-row) {
+    border-bottom: var(--ag-grand-total-row-border);
+}
+
+/* if a row is above a grand total row border we don't need a bottom border ourselves */
+
+/* stylelint-disable selector-max-specificity -- must match the 0,2,0 core rule that gives
+   every row a bottom row border */
+.ag-row-before-grand-total-border:where(:not(.ag-header-row, .ag-full-width-row)),
+.ag-row-before-grand-total-border:where(.ag-embedded-full-width-row) {
+    > .ag-grid-pinned-left-cells,
+    > .ag-grid-scrolling-cells,
+    > .ag-grid-pinned-right-cells {
+        border-bottom: none;
+    }
+}
+
+/* stylelint-enable selector-max-specificity */
+
+/* stylelint-disable-next-line selector-max-specificity -- must match the 0,3,0 core rule that gives full width rows a bottom row border */
+.ag-row-before-grand-total-border.ag-full-width-row:not(.ag-embedded-full-width-row) {
+    border-bottom: none;
+}
+
+/* Normally the pinned top/bottom row containers have a border between pinned rows and data rows,
+   but suppress this border if a grand total row is already drawing it */
+:where(.ag-grid-pinned-bottom-rows-container).ag-row-container-grand-total-at-edge {
+    border-top-color: transparent;
+}
+
+:where(.ag-grid-pinned-top-rows-container).ag-row-container-grand-total-at-edge {
+    border-bottom-color: transparent;
+}

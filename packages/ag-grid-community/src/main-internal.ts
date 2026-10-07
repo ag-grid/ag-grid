@@ -317,6 +317,7 @@ export type {
 } from './interfaces/iFilter';
 export type { FocusableContainer } from './interfaces/iFocusableContainer';
 export type { IFooterService } from './interfaces/iFooterService';
+export type { IGrandTotalRowStylesService } from './interfaces/iGrandTotalRowStylesService';
 export type { IFrameworkEventListenerService } from './interfaces/iFrameworkEventListenerService';
 export type { IFrameworkOverrides } from './interfaces/iFrameworkOverrides';
 export type { IGroupEditService as _IGroupEditService } from './interfaces/iGroupEditService';

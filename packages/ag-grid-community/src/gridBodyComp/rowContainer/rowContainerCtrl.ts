@@ -3,7 +3,6 @@ import { _isInDOM, _observeResize } from 'ag-stack';
 import { BeanStub } from '../../context/beanStub';
 import type { StickyTopOffsetChangedEvent } from '../../events';
 import { _isDomLayout } from '../../gridOptionsUtils';
-import { _isGrandTotalRowNode } from '../../pinnedRowModel/manualPinnedRowUtils';
 import type { RowCtrl } from '../../rendering/row/rowCtrl';
 import type { RowRenderer } from '../../rendering/rowRenderer';
 import type { SpannedRowRenderer } from '../../rendering/spanning/spannedRowRenderer';
@@ -107,8 +106,6 @@ export class RowContainerCtrl extends BeanStub {
     // Maintaining a constant reference enables optimization in React.
     private readonly EMPTY_CTRLS = [];
     private containerWidth: number | null = null;
-    private beforeGrandTotalBorderCtrl: RowCtrl | undefined;
-    private grandTotalAtEdge = false;
 
     constructor(private readonly name: RowContainerName) {
         super();
@@ -281,37 +278,12 @@ export class RowContainerCtrl extends BeanStub {
         const rowCtrls = this.options.getRowCtrls(this.beans.rowRenderer);
         const isEmpty = rowCtrls.length === 0;
         // before setRowCtrls so that newly created rows render with the right classes
-        this.updateGrandTotalRowNeighbour(rowCtrls);
+        this.beans.grandTotalRowStylesSvc?.onDisplayedRowsChanged(this.name, this.comp, rowCtrls);
         this.comp.setRowCtrls({
             rowCtrls: isEmpty ? this.EMPTY_CTRLS : rowCtrls,
             useFlushSync: afterScroll,
         });
 
         this.comp.setHidden(isEmpty);
-    }
-
-    private updateGrandTotalRowNeighbour(rowCtrls: RowCtrl[]): void {
-        const grandTotalCtrl = rowCtrls.find((ctrl) => _isGrandTotalRowNode(ctrl.rowNode));
-        const grandTotalIndex = grandTotalCtrl?.rowNode.rowIndex;
-        const borderSide = grandTotalCtrl?.getGrandTotalBorderSide();
-
-        let neighbourCtrl: RowCtrl | undefined;
-        if (grandTotalIndex != null && borderSide) {
-            const neighbourIndex = borderSide === 'top' ? grandTotalIndex - 1 : grandTotalIndex + 1;
-            neighbourCtrl = rowCtrls.find((ctrl) => ctrl.rowNode.rowIndex === neighbourIndex);
-        }
-
-        const beforeCtrl = borderSide === 'top' ? neighbourCtrl : undefined;
-        if (beforeCtrl !== this.beforeGrandTotalBorderCtrl) {
-            this.beforeGrandTotalBorderCtrl?.setBeforeGrandTotalBorder(false);
-            beforeCtrl?.setBeforeGrandTotalBorder(true);
-            this.beforeGrandTotalBorderCtrl = beforeCtrl;
-        }
-
-        const grandTotalAtEdge = !!borderSide && !neighbourCtrl;
-        if (grandTotalAtEdge !== this.grandTotalAtEdge) {
-            this.grandTotalAtEdge = grandTotalAtEdge;
-            this.comp.toggleCss('ag-row-container-grand-total-at-edge', grandTotalAtEdge);
-        }
     }
 }
