@@ -395,6 +395,9 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
      */
     private getMovedReason(row: SubscribedRow, sub: VisibleRowsSubscription): VisibleRowsReason {
         const node = row.node;
+        if (hasMovedParent(row.ref, node)) {
+            return 'move';
+        }
         if (isUnderCollapsedGroup(node)) {
             return 'collapse';
         }

@@ -416,6 +416,38 @@ describe('CSRM subscribeToVisibleRows', () => {
             expect(recorder.violations).toEqual([]);
         });
 
+        test('a transaction that moves a visible row into an expanded group out of view reports it with reason move', async () => {
+            const api = await createGroupedGrid({ groupDefaultExpanded: -1 });
+            const recorder = createRecorder();
+            api.subscribeToVisibleRows(recorder.handlers);
+            expect(recorder.subscribed.has('Ireland-1')).toBe(true);
+
+            api.applyTransaction({ update: [{ id: 'Ireland-1', country: 'Spain', value: 1 }] });
+
+            await waitFor(() => expect(recorder.subscribed.has('Ireland-1')).toBe(false));
+            expect(recorder.calls.filter((c) => c.type === 'unsubscribe')).toEqual([
+                { type: 'unsubscribe', reason: 'move', ids: ['Ireland-1'] },
+            ]);
+            expect(recorder.violations).toEqual([]);
+        });
+
+        test('a transaction that moves a visible row into a collapsed group reports it with reason move', async () => {
+            const api = await createGroupedGrid();
+            api.setRowNodeExpanded(api.getDisplayedRowAtIndex(0)!, true);
+            await nextAnimationFrame();
+            const recorder = createRecorder();
+            api.subscribeToVisibleRows(recorder.handlers);
+            expect(recorder.subscribed.has('Ireland-1')).toBe(true);
+
+            api.applyTransaction({ update: [{ id: 'Ireland-1', country: 'Spain', value: 1 }] });
+
+            await waitFor(() => expect(recorder.subscribed.has('Ireland-1')).toBe(false));
+            expect(recorder.calls.filter((c) => c.type === 'unsubscribe')).toEqual([
+                { type: 'unsubscribe', reason: 'move', ids: ['Ireland-1'] },
+            ]);
+            expect(recorder.violations).toEqual([]);
+        });
+
         test('removing the grouping unsubscribes the group rows with reason reset', async () => {
             const api = await createGroupedGrid();
             const recorder = createRecorder();
