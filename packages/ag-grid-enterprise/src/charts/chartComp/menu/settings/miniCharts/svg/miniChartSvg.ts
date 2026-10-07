@@ -110,18 +110,19 @@ export class MiniChartSvg extends Component {
             element.setAttribute(name, String(shape.attrs[name]));
         }
 
-        element.setAttribute('fill', shape.fill == null ? 'none' : this.resolvePaint(svg, shape.fill));
+        element.setAttribute('fill', shape.fill == null ? 'none' : this.resolvePaint(svg, shape.fill, shape));
         if (shape.stroke != null) {
-            element.setAttribute('stroke', this.resolvePaint(svg, shape.stroke));
+            element.setAttribute('stroke', this.resolvePaint(svg, shape.stroke, shape));
         }
         return element;
     }
 
-    private resolvePaint(svg: SVGSVGElement, paint: MiniChartSvgPaint): string {
+    private resolvePaint(svg: SVGSVGElement, paint: MiniChartSvgPaint, shape: MiniChartSvgShape): string {
         if (typeof paint === 'string') {
             return paint;
         }
-        return resolveSvgColor(this.colors(paint, this.fills, this.strokes, this.isCustomTheme), this.fills, svg);
+        const color = this.colors(paint, this.fills, this.strokes, this.isCustomTheme);
+        return resolveSvgColor(color, this.fills, svg, shape);
     }
 
     private createSvgElement<K extends 'svg' | 'g' | 'title' | 'path' | 'line'>(tag: K): SVGElementTagNameMap[K] {

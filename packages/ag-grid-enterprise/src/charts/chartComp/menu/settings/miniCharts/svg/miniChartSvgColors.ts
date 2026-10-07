@@ -1,6 +1,6 @@
 import type { AgColorType, AgGradientColor, AgGradientColorStop, AgGradientType } from 'ag-charts-types';
 
-import type { MiniChartSvgColorFn } from './miniChartSvgTypes';
+import type { MiniChartSvgColorFn, MiniChartSvgShape } from './miniChartSvgTypes';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const FALLBACK_COLOR = 'gray';
@@ -12,12 +12,26 @@ interface ResolvedStop {
     color: string;
 }
 
+interface BBox {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
+const NUMBER_PATTERN = /-?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?/gi;
+
 let gradientCounter = 0;
 
 export const plainSlotColor: MiniChartSvgColorFn = (slot, fills, strokes) =>
     slot.palette === 'fills' ? fills[slot.index] : strokes[slot.index];
 
-export function resolveSvgColor(color: AgColorType | undefined, palette: AgColorType[], svg: SVGSVGElement): string {
+export function resolveSvgColor(
+    color: AgColorType | undefined,
+    palette: AgColorType[],
+    svg: SVGSVGElement,
+    shape: MiniChartSvgShape
+): string {
     if (color == null) {
         return 'none';
     }
@@ -29,7 +43,7 @@ export function resolveSvgColor(color: AgColorType | undefined, palette: AgColor
     }
     switch (color.type) {
         case 'gradient':
-            return resolveGradient(color, palette, svg);
+            return resolveGradient(color, palette, svg, shape);
         case 'pattern':
             return typeof color.fill === 'string' ? color.fill : firstStringColor(palette);
         default:
@@ -47,7 +61,12 @@ function firstStringColor(palette: AgColorType[]): string {
     return FALLBACK_COLOR;
 }
 
-function resolveGradient(color: RuntimeGradientColor, palette: AgColorType[], svg: SVGSVGElement): string {
+function resolveGradient(
+    color: RuntimeGradientColor,
+    palette: AgColorType[],
+    svg: SVGSVGElement,
+    shape: MiniChartSvgShape
+): string {
     const { colorStops, gradient = 'linear', rotation = 0, reverse = false } = color;
     if (colorStops == null || colorStops.length === 0) {
         return firstStringColor(palette);
@@ -58,14 +77,18 @@ function resolveGradient(color: RuntimeGradientColor, palette: AgColorType[], sv
         return stops[0].color;
     }
 
+    // userSpaceOnUse, as objectBoundingBox paints nothing on a zero-height shape such as a flat line.
+    const bbox = getShapeBBox(shape);
     const doc = svg.ownerDocument;
     const element = doc.createElementNS(SVG_NS, gradient === 'radial' ? 'radialGradient' : 'linearGradient');
+    element.setAttribute('gradientUnits', 'userSpaceOnUse');
     if (gradient === 'radial') {
-        element.setAttribute('cx', '0.5');
-        element.setAttribute('cy', '0.5');
-        element.setAttribute('r', '0.5');
+        const { x, y, width, height } = bbox;
+        element.setAttribute('cx', String(x + width / 2));
+        element.setAttribute('cy', String(y + height / 2));
+        element.setAttribute('r', String(Math.hypot(width / 2, height / 2) / Math.SQRT2));
     } else {
-        const { x1, y1, x2, y2 } = linearGradientPoints(rotation);
+        const { x1, y1, x2, y2 } = linearGradientPoints(rotation, bbox);
         element.setAttribute('x1', String(x1));
         element.setAttribute('y1', String(y1));
         element.setAttribute('x2', String(x2));
@@ -151,14 +174,38 @@ function findNextDefinedStop(colorStops: AgGradientColorStop[], from: number): n
     return colorStops.length - 1;
 }
 
-/** Endpoints over the unit `objectBoundingBox`, matching AG Charts' linear gradient geometry for square bounds. */
-function linearGradientPoints(rotation: number): { x1: number; y1: number; x2: number; y2: number } {
+function getShapeBBox(shape: MiniChartSvgShape): BBox {
+    const attrs = shape.attrs;
+    const coords =
+        shape.tag === 'line'
+            ? [attrs.x1, attrs.y1, attrs.x2, attrs.y2].map(Number)
+            : (String(attrs.d).match(NUMBER_PATTERN) ?? []).map(Number);
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    for (let i = 0, len = coords.length - 1; i < len; i += 2) {
+        const x = coords[i];
+        const y = coords[i + 1];
+        minX = Math.min(minX, x);
+        maxX = Math.max(maxX, x);
+        minY = Math.min(minY, y);
+        maxY = Math.max(maxY, y);
+    }
+    return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
+}
+
+/** Mirrors AG Charts' linear gradient geometry over the shape's bounds. */
+function linearGradientPoints(rotation: number, bbox: BBox): { x1: number; y1: number; x2: number; y2: number } {
+    const { x, y, width, height } = bbox;
     const degrees = (((rotation + 90) % 360) + 360) % 360;
     const radians = (degrees * Math.PI) / 180;
     const cos = Math.cos(radians);
     const sin = Math.sin(radians);
-    const diagonal = Math.SQRT2 / 2;
-    const diagonalAngle = Math.PI / 4;
+    const cx = x + width / 2;
+    const cy = y + height / 2;
+    const diagonal = Math.hypot(width, height) / 2;
+    const diagonalAngle = Math.atan2(height, width);
 
     let quarteredAngle: number;
     if (radians < Math.PI / 2) {
@@ -171,5 +218,5 @@ function linearGradientPoints(rotation: number): { x1: number; y1: number; x2: n
         quarteredAngle = 2 * Math.PI - radians;
     }
     const length = diagonal * Math.abs(Math.cos(quarteredAngle - diagonalAngle));
-    return { x1: 0.5 + cos * length, y1: 0.5 + sin * length, x2: 0.5 - cos * length, y2: 0.5 - sin * length };
+    return { x1: cx + cos * length, y1: cy + sin * length, x2: cx - cos * length, y2: cy - sin * length };
 }
