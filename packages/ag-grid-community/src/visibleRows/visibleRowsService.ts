@@ -253,19 +253,41 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
     private flush(sub: VisibleRowsSubscription): void {
         const [first, last] = this.getRange(sub);
         const visible = this.getVisibleRows(sub, first, last);
+        const { removed, removedReasons, added } = this.diffRows(sub, visible);
 
-        let removed: SubscribedRow[] = [];
+        sub.expandedGroups.clear();
+        sub.expandAllPending = false;
+        sub.collapsePending = false;
+        sub.scrollPending = false;
+        sub.sortPending = false;
+        sub.filterPending = false;
+        sub.lastFirst = first;
+        sub.lastLast = last;
+        sub.lastFlushTime = Date.now();
+
+        this.unsubscribeRows(sub, removed, removedReasons);
+        if (this.subscribeRows(sub, added)) {
+            this.schedule(sub);
+        }
+    }
+
+    /** Compares the visible rows with the subscribed ones. Must run before the pending flags are cleared. */
+    private diffRows(
+        sub: VisibleRowsSubscription,
+        visible: Map<string, RowNode>
+    ): {
+        removed: SubscribedRow[];
+        removedReasons: Map<SubscribedRow, VisibleRowsReason>;
+        added: RowsByReason<RowNode>;
+    } {
+        const removed: SubscribedRow[] = [];
+        const removedReasons = new Map<SubscribedRow, VisibleRowsReason>();
         sub.rows.forEach((row, id) => {
             if (visible.get(id) !== row.node) {
                 removed.push(row);
+                removedReasons.set(row, this.getMovedReason(row, sub));
             }
         });
-
-        // Read before the pending flags below are cleared.
-        const removedReasons = new Map<SubscribedRow, VisibleRowsReason>();
-        for (const row of removed) {
-            removedReasons.set(row, this.getMovedReason(row, sub));
-        }
 
         const added: RowsByReason<RowNode> = new Map();
         visible.forEach((node, id) => {
@@ -283,26 +305,25 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
             }
         });
 
-        sub.expandedGroups.clear();
-        sub.expandAllPending = false;
-        sub.collapsePending = false;
-        sub.scrollPending = false;
-        sub.sortPending = false;
-        sub.filterPending = false;
-        sub.lastFirst = first;
-        sub.lastLast = last;
-        sub.lastFlushTime = Date.now();
+        return { removed, removedReasons, added };
+    }
 
-        while (removed.length && !sub.stopped) {
+    private unsubscribeRows(
+        sub: VisibleRowsSubscription,
+        removed: SubscribedRow[],
+        removedReasons: Map<SubscribedRow, VisibleRowsReason>
+    ): void {
+        let pending = removed;
+        while (pending.length && !sub.stopped) {
             // Worked out again after each handler, which can purge or remove the rows still waiting.
             const byReason: RowsByReason<SubscribedRow> = new Map();
-            for (const row of removed) {
+            for (const row of pending) {
                 addToReason(byReason, this.getUnsubscribeReason(row, removedReasons.get(row)!), row);
             }
             const reason = UNSUBSCRIBE_ORDER.find((r) => byReason.has(r))!;
             const rows = byReason.get(reason)!;
             byReason.delete(reason);
-            removed = Array.from(byReason.values()).flat();
+            pending = Array.from(byReason.values()).flat();
 
             const refs: VisibleRowRef[] = [];
             for (let i = 0, len = rows.length; i < len; ++i) {
@@ -312,7 +333,10 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
             }
             sub.handlers.onUnsubscribe(refs, this.createParams(reason));
         }
+    }
 
+    /** Returns true when rows were skipped because they are no longer visible, so another flush is needed. */
+    private subscribeRows(sub: VisibleRowsSubscription, added: RowsByReason<RowNode>): boolean {
         let rescheduleNeeded = false;
         for (const reason of SUBSCRIBE_ORDER) {
             const nodes = added.get(reason);
@@ -338,10 +362,7 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
                 sub.handlers.onSubscribe(rows, this.createParams(reason));
             }
         }
-
-        if (rescheduleNeeded) {
-            this.schedule(sub);
-        }
+        return rescheduleNeeded;
     }
 
     private isVisible(node: RowNode, first: number, last: number): boolean {
