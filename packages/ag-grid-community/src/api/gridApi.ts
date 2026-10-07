@@ -1760,7 +1760,8 @@ export interface _VisibleRowsGridApi<TData> {
      * so that a server stream only sends updates for rows the user can see.
      * `onSubscribe` is called straight away with the rows already visible. Every row passed to `onSubscribe` is later
      * passed to `onUnsubscribe` exactly once, including when the returned function is called or the grid is destroyed.
-     * Loading rows, pinned rows, detail rows and total rows are not included. Requires `getRowId`.
+     * Loading rows, rows that failed to load, pinned rows, detail rows, full-width rows and total rows are not included.
+     * Requires `getRowId`.
      * Returns a function that stops the subscription.
      * @agModule `VisibleRowsModule`
      */
