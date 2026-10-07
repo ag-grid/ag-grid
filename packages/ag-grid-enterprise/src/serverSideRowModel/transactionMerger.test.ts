@@ -183,6 +183,23 @@ describe('_applyMergedTransactions', () => {
         expect(store.applied).toEqual([{ update: [row('a', 1), row('b', 3)] }]);
     });
 
+    it('accepts each batch against the store as left by the earlier batches', () => {
+        const store = new FakeStore(initial);
+        const seen: (number | undefined)[] = [];
+        const isAccepted = (_tx: ServerSideTransaction) => {
+            seen.push(store.snapshot().find((data) => data.id === 'a')?.v);
+            return true;
+        };
+
+        _applyMergedTransactions(
+            [{ update: [row('a', 1)] }, { remove: [row('a')] }, { add: [row('a', 2)] }, { update: [row('a', 3)] }],
+            store.target(isAccepted)
+        );
+
+        expect(seen).toEqual([0, 0, undefined, undefined]);
+        expect(store.applied).toEqual([{ remove: [row('a')] }, { add: [row('a', 3)] }]);
+    });
+
     it('matches applying the transactions one after the other for random streams', () => {
         let seed = 7;
         const random = (n: number) => {

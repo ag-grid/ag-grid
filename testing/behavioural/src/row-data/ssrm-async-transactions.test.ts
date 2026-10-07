@@ -474,7 +474,7 @@ describe('SSRM merged async transactions', () => {
         expect(api.getDisplayedRowCount()).toBe(INITIAL.length);
     });
 
-    test('isApplyServerSideTransaction sees the state at the start of the flush, and rejected transactions are left out', async () => {
+    test('isApplyServerSideTransaction sees the state from before its batch, and rejected transactions are left out', async () => {
         const seenValues: string[] = [];
         const api = await createFlatGrid(true, {
             isApplyServerSideTransaction: (params) => {
@@ -495,6 +495,26 @@ describe('SSRM merged async transactions', () => {
         expect(outcome.flushedResultsLength).toBe(3);
     });
 
+    test('isApplyServerSideTransaction for a later batch sees the results of earlier batches', async () => {
+        const seenValues: string[] = [];
+        const api = await createFlatGrid(true, {
+            isApplyServerSideTransaction: (params) => {
+                seenValues.push(params.api.getRowNode('1')!.data.value);
+                return true;
+            },
+        });
+        const outcome = await applyAsync(api, [
+            { update: [NEW(1, 'first')] },
+            { add: [NEW('x', 'x')], addIndex: 0 },
+            { update: [NEW(1, 'second')] },
+            { update: [NEW(1, 'third')] },
+        ]);
+
+        expect(seenValues).toEqual(['Row 1', 'first', 'first', 'first']);
+        expect(outcome.results.map((r) => r.status)).toEqual(['Applied', 'Applied', 'Applied', 'Applied']);
+        expect(api.getRowNode('1')!.data).toEqual(NEW(1, 'third'));
+    });
+
     test('grouped routes: merged outcome equals sequential outcome including a later root-level group removal', async () => {
         const LEAVES = [
             { id: 'uk-alice', country: 'UK', athlete: 'Alice' },
@@ -508,14 +528,20 @@ describe('SSRM merged async transactions', () => {
             { route: ['UK'], add: [{ id: 'uk-zed', country: 'UK', athlete: 'Zed' }], remove: [LEAVES[1]] },
             { route: ['US'], update: [{ id: 'us-new', country: 'US', athlete: 'New 2' }] },
             { remove: [{ id: 'group-UK', country: 'UK' }] },
+            { route: ['UK'], update: [{ id: 'uk-alice', country: 'UK', athlete: 'Alice 3' }] },
         ];
 
         const run = async (merge: boolean) => {
+            const acceptedRoutes: string[] = [];
             const api = gridsManager.createGrid(null, {
                 columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
                 autoGroupColumnDef: { field: 'athlete' },
                 rowModelType: 'serverSide',
                 serverSideMergeAsyncTransactions: merge,
+                isApplyServerSideTransaction: (params) => {
+                    acceptedRoutes.push(params.parentNode.key ?? 'root');
+                    return true;
+                },
                 getRowId: (p) => p.data.id ?? `group-${p.data.country}`,
                 serverSideDatasource: {
                     getRows: (params) => {
@@ -535,7 +561,7 @@ describe('SSRM merged async transactions', () => {
             await waitForNoLoadingRows(api);
             const outcome = await applyAsync(api, transactions);
             await waitForNoLoadingRows(api);
-            return { ...outcome, rows: collectRows(api) };
+            return { ...outcome, rows: collectRows(api), acceptedRoutes };
         };
 
         const sequential = await run(false);
@@ -544,7 +570,16 @@ describe('SSRM merged async transactions', () => {
 
         expect(merged.rows).toEqual(sequential.rows);
         expect(merged.results.map((r) => r.status)).toEqual(sequential.results.map((r) => r.status));
-        expect(merged.results.map((r) => r.status)).toEqual(['Applied', 'Applied', 'Applied', 'Applied', 'Applied']);
+        expect(merged.results.map((r) => r.status)).toEqual([
+            'Applied',
+            'Applied',
+            'Applied',
+            'Applied',
+            'Applied',
+            'StoreNotFound',
+        ]);
+        expect(sequential.acceptedRoutes).toEqual(['UK', 'US', 'UK', 'US', 'root']);
+        expect(merged.acceptedRoutes).toEqual(['UK', 'UK', 'US', 'US', 'root']);
         expect(merged.flushedResultsLength).toBe(transactions.length);
         expect(merged.rows.map((r) => r.id)).not.toContain('group-UK');
     });

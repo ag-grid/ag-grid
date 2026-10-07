@@ -28,34 +28,53 @@ interface Contribution {
 /**
  * Applies transactions for one store so that each row changes at most once per batch, while giving the
  * same rows, data and order as applying them one after the other. Returns one result per transaction.
+ *
+ * Batches are planned from the transactions alone, then each batch's transactions are accepted against the
+ * store just before that batch is applied, so acceptance sees the results of the earlier batches.
  */
 export function _applyMergedTransactions(
     transactions: ServerSideTransaction[],
     target: TransactionMergeTarget
 ): ServerSideTransactionResult[] {
     const results: ServerSideTransactionResult[] = new Array(transactions.length);
-    let batch = new MergeBatch();
-    const flush = () => {
+    let plan = new BatchPlan();
+    let planned: { index: number; entries: RowEntry[] }[] = [];
+
+    const applyPlanned = () => {
+        if (planned.length === 0) {
+            return;
+        }
+        const batch = new MergeBatch();
+        for (let i = 0, len = planned.length; i < len; ++i) {
+            const { index, entries } = planned[i];
+            if (target.isAccepted(transactions[index])) {
+                batch.accept(index, entries, target);
+            } else {
+                results[index] = { status: ServerSideTransactionResultStatus.Cancelled };
+            }
+        }
         batch.apply(transactions, target, results);
-        batch = new MergeBatch();
+        plan = new BatchPlan();
+        planned = [];
     };
 
     for (let index = 0, len = transactions.length; index < len; ++index) {
         const transaction = transactions[index];
-        const entries = target.isAccepted(transaction) ? getMergeableEntries(transaction, target) : undefined;
-        if (entries === undefined) {
-            results[index] = { status: ServerSideTransactionResultStatus.Cancelled };
-        } else if (entries === null) {
-            flush();
-            results[index] = target.apply(transaction);
-        } else {
-            if (!batch.canAccept(entries)) {
-                flush();
-            }
-            batch.accept(index, entries, target);
+        const entries = getMergeableEntries(transaction, target);
+        if (!entries) {
+            applyPlanned();
+            results[index] = target.isAccepted(transaction)
+                ? target.apply(transaction)
+                : { status: ServerSideTransactionResultStatus.Cancelled };
+            continue;
         }
+        if (!plan.canAdd(entries)) {
+            applyPlanned();
+        }
+        plan.add(entries);
+        planned.push({ index, entries });
     }
-    flush();
+    applyPlanned();
 
     return results;
 }
@@ -95,25 +114,22 @@ function isArrayIndexKey(id: string): boolean {
     return /^(0|[1-9]\d*)$/.test(key) && Number(key) < 4294967295;
 }
 
-class MergeBatch {
-    private readonly transactionIndexes: number[] = [];
-    private readonly contributions: Contribution[] = [];
-    private readonly adds = new Map<string, any>();
-    private readonly updates = new Map<string, any>();
-    private readonly removes = new Map<string, any>();
-    private readonly addedBy = new Map<string, number>();
-    private readonly generations = new Map<string, number>();
+/**
+ * Decides batch boundaries before it is known which transactions are accepted or which rows are cached. It
+ * tracks every add and remove, so the accepted transactions of a planned batch can always be merged.
+ */
+class BatchPlan {
+    private readonly removedIds = new Set<string>();
     private maxIndexKeyAdd = -1;
     private hasNamedKeyAdd = false;
 
-    /** Whether the entries can join this batch without changing the outcome of applying it. */
-    public canAccept(entries: RowEntry[]): boolean {
+    public canAdd(entries: RowEntry[]): boolean {
         for (let i = 0, len = entries.length; i < len; ++i) {
             const { op, id } = entries[i];
             if (op !== 'add') {
                 continue;
             }
-            if (this.removes.has(id)) {
+            if (this.removedIds.has(id)) {
                 return false;
             }
             if (isArrayIndexKey(id) && (this.hasNamedKeyAdd || Number(id) < this.maxIndexKeyAdd)) {
@@ -122,6 +138,31 @@ class MergeBatch {
         }
         return true;
     }
+
+    public add(entries: RowEntry[]): void {
+        for (let i = 0, len = entries.length; i < len; ++i) {
+            const { op, id } = entries[i];
+            if (op === 'remove') {
+                this.removedIds.add(id);
+            } else if (op === 'add') {
+                if (isArrayIndexKey(id)) {
+                    this.maxIndexKeyAdd = Math.max(this.maxIndexKeyAdd, Number(id));
+                } else {
+                    this.hasNamedKeyAdd = true;
+                }
+            }
+        }
+    }
+}
+
+class MergeBatch {
+    private readonly transactionIndexes: number[] = [];
+    private readonly contributions: Contribution[] = [];
+    private readonly adds = new Map<string, any>();
+    private readonly updates = new Map<string, any>();
+    private readonly removes = new Map<string, any>();
+    private readonly addedBy = new Map<string, number>();
+    private readonly generations = new Map<string, number>();
 
     public accept(transactionIndex: number, entries: RowEntry[], target: TransactionMergeTarget): void {
         this.transactionIndexes.push(transactionIndex);
@@ -149,11 +190,6 @@ class MergeBatch {
                 }
                 adds.set(id, data);
                 this.addedBy.set(id, transactionIndex);
-                if (isArrayIndexKey(id)) {
-                    this.maxIndexKeyAdd = Math.max(this.maxIndexKeyAdd, Number(id));
-                } else {
-                    this.hasNamedKeyAdd = true;
-                }
             } else {
                 if (adds.has(id)) {
                     adds.delete(id);

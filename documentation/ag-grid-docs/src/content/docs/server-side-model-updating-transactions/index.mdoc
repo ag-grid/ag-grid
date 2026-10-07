@@ -120,7 +120,7 @@ Merging gives the same rows and data as applying the transactions one after the 
 
 Transactions that set `addIndex` or `rowCount` are applied on their own, in order. Each callback passed to `applyServerSideTransactionAsync` receives a result containing only the nodes for its own rows.
 
-`isApplyServerSideTransaction` is still called once for each transaction, and a transaction it rejects is left out of the merge. It is called for every queued transaction before any of them are applied, so it sees the grid state from the start of the flush rather than after the transactions before it.
+`isApplyServerSideTransaction` is still called once for each transaction, and a transaction it rejects is left out of the merge. It is called for each batch of merged transactions just before that batch is applied, so it sees the grid state from before its batch, not from after the other transactions in that batch.
 
 Merging is skipped when `serverSideEnableClientSideSort` is enabled, as each transaction re-sorts the rows.
 
