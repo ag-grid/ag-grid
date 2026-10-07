@@ -4,6 +4,7 @@ import {
     _setAriaActiveDescendant,
     _setAriaAutoComplete,
     _setAriaControls,
+    _setAriaDescribedBy,
     _setAriaExpanded,
     _setAriaHasPopup,
     _setAriaInvalid,
@@ -77,6 +78,12 @@ const CalculatedColumnFormElement: ElementParams = {
             children: [
                 { tag: 'ag-input-text-area', ref: 'eExpression' },
                 {
+                    tag: 'div',
+                    ref: 'eExpressionError',
+                    cls: 'ag-aria-description-container',
+                    attrs: { 'aria-live': 'polite', 'aria-atomic': 'true' },
+                },
+                {
                     tag: 'ag-field-set',
                     cls: 'ag-calculated-column-expression-tools',
                     ref: 'eExpressionTools',
@@ -120,6 +127,7 @@ export class CalculatedColumnForm extends Component {
     private readonly eTitle: GridInputTextField = RefPlaceholder;
     private readonly eType: GridSelect<string> = RefPlaceholder;
     private readonly eExpression: GridInputTextArea = RefPlaceholder;
+    private readonly eExpressionError: HTMLElement = RefPlaceholder;
     private readonly eColumns: HTMLButtonElement = RefPlaceholder;
     private readonly eFunctions: HTMLButtonElement = RefPlaceholder;
     private readonly eOperators: HTMLButtonElement = RefPlaceholder;
@@ -149,11 +157,11 @@ export class CalculatedColumnForm extends Component {
         expressionPickers: readonly CalculatedColumnExpressionPicker[],
         private readonly getColumnSuggestions: () => ColumnSuggestion[],
         private readonly getFunctionSuggestions: () => ColumnSuggestion[],
-        private readonly onValidate: (draft: CalculatedColumnDraft) => string | null,
-        private readonly onApply: (draft: CalculatedColumnDraft) => string | null,
+        private readonly onValidate: (draft: CalculatedColumnDraft) => string[] | null,
+        private readonly onApply: (draft: CalculatedColumnDraft) => string[] | null,
         private readonly onCancel: () => void,
         private readonly liveApply: boolean,
-        private readonly onDraftChange?: (draft: CalculatedColumnDraft) => string | null,
+        private readonly onDraftChange?: (draft: CalculatedColumnDraft) => string[] | null,
         private readonly readOnly = false
     ) {
         super(CalculatedColumnFormElement, [
@@ -168,8 +176,8 @@ export class CalculatedColumnForm extends Component {
     public postConstruct(): void {
         this.setupFormFields();
         this.setupActionButtons();
+        this.setupAria();
         if (!this.readOnly) {
-            this.setupAria();
             this.addFormFieldListeners();
             this.setupExpressionEditor();
             this.addActionListeners();
@@ -179,7 +187,7 @@ export class CalculatedColumnForm extends Component {
                 this.setTitleError(this.validateTitle());
             }
         }
-        // view mode validates too, so a saved expression blocked by `isColumnReferenceable` explains its #REF! cells
+        // view mode also explains validation errors without changing the stored expression
         this.setExpressionError(this.onValidate(this.draft));
     }
 
@@ -231,6 +239,10 @@ export class CalculatedColumnForm extends Component {
     }
 
     private setupAria(): void {
+        this.eExpressionError.id = `ag-calculated-column-expression-error-${this.getCompId()}`;
+        if (this.readOnly) {
+            return;
+        }
         const tabIndex = String(this.gos.get('tabIndex'));
         const input = this.eExpression.getInputElement();
         _setAriaAutoComplete(input, 'list');
@@ -282,9 +294,6 @@ export class CalculatedColumnForm extends Component {
         });
         this.eExpression.onValueChange((value) => {
             this.updateDraft({ calculatedExpression: value ?? '' });
-            if (!this.liveApply) {
-                this.setExpressionError(this.onValidate(this.draft));
-            }
             this.refreshContextSuggestions();
         });
     }
@@ -376,9 +385,14 @@ export class CalculatedColumnForm extends Component {
         inputEl.setAttribute('title', '');
     }
 
-    private setExpressionError(message: string | null): void {
+    private setExpressionError(errors: string[] | null): void {
+        const message = errors?.length ? errors.join('\n') : null;
+        if (message !== this.expressionValidationMessage) {
+            this.eExpressionError.textContent = message ?? '';
+        }
         this.expressionValidationMessage = message;
         const inputEl = this.eExpression.getInputElement();
+        _setAriaDescribedBy(inputEl, message ? this.eExpressionError.id : undefined);
         this.applyFieldError(inputEl, message);
         if (message && !this.expressionTooltipFeature) {
             this.expressionTooltipFeature = this.createValidationTooltip(
@@ -417,12 +431,8 @@ export class CalculatedColumnForm extends Component {
 
     private updateDraft(partial: Partial<CalculatedColumnDraft>): void {
         this.draft = { ...this.draft, ...partial };
-        if (this.onDraftChange) {
-            const error = this.onDraftChange(this.draft);
-            if (error || this.expressionValidationMessage) {
-                this.setExpressionError(error);
-            }
-        }
+        const errors = this.onDraftChange ? this.onDraftChange(this.draft) : this.onValidate(this.draft);
+        this.setExpressionError(errors);
     }
 
     private rememberExpressionSelection(): void {

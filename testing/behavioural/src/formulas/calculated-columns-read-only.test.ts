@@ -145,10 +145,43 @@ describe('calculated columns - read-only definitions', () => {
         expect(input).toHaveValue('[Salary] * 2');
         expect(input).toHaveAttribute('aria-invalid', 'true');
         expect(input).toHaveClass('invalid');
+        expect(input).toHaveAccessibleDescription(/cannot be used/);
         await userEvent.hover(input);
         await waitForTooltips(1);
         expect(getVisibleTooltips()[0]).toHaveTextContent('cannot be used');
     });
+
+    test.each(['live', 'deferred'] as const)(
+        'custom validation errors are accessible in a %s view dialog without changing the column',
+        async (applyMode) => {
+            const messages = ['This expression is not permitted.', 'Choose a different source column.'];
+            const onCalculatedEvent = vi.fn();
+            const api = createGrid(`read-only-custom-validation-${applyMode}`, {
+                columnDefs,
+                rowData,
+                calculatedColumns: { applyMode, getValidationErrors: () => messages },
+                onCalculatedColumnCreated: onCalculatedEvent,
+                onCalculatedColumnExpressionChanged: onCalculatedEvent,
+                onCalculatedColumnRemoved: onCalculatedEvent,
+                onCalculatedColumnValidationStateChanged: onCalculatedEvent,
+            });
+            showColumnMenu(api, 'profit');
+            await clickMenuOption('View Calculated Column');
+            const input = getExpressionInput();
+            expect(input).toHaveAttribute('readonly');
+            expect(input).not.toHaveAttribute('aria-autocomplete');
+            expect(input).toHaveAttribute('aria-invalid', 'true');
+            expect(input).toHaveAccessibleDescription(messages.join('\n'));
+            const description = document.getElementById(input.getAttribute('aria-describedby')!);
+            expect(description).toHaveAttribute('aria-live', 'polite');
+            closeDialog();
+            await asyncSetTimeout(0);
+            expect(api.getColumn('profit')!.getColDef().calculatedExpressionError).toBeUndefined();
+            expect(api.getState().userColumns).toBeUndefined();
+            expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe(7);
+            expect(onCalculatedEvent).not.toHaveBeenCalled();
+        }
+    );
 
     test.each(['live', 'deferred'] as const)(
         'adding from a read-only column stays editable in %s mode, including after restore',

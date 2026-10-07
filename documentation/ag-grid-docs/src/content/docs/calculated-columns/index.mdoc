@@ -189,6 +189,32 @@ The following example permits Salary references when editing Bonus but excludes 
 
 {% gridExampleRunner title="Dialog Reference Restrictions" name="calculated-columns-reference-restrictions" /%}
 
+### getValidationErrors
+
+Use `getValidationErrors` to add custom rules after the grid's built-in expression validation. Return an array of messages to show in the expression field's error tooltip, or `null` or an empty array to accept the expression.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: {
+        applyMode: 'deferred',
+        getValidationErrors: ({ referencedColumns }) =>
+            referencedColumns.some(column => column.getColId() === 'salary')
+                ? ['Salary cannot be used in this report.']
+                : null,
+    },
+};
+```
+
+{% interfaceDocumentation interfaceName="CalculatedColumnValidationParams" /%}
+
+In the example, edit **Sales Bonus** and enter `[Salary]` to see the validation messages and disabled Apply button.
+
+{% gridExampleRunner title="Custom Dialog Validation" name="calculated-columns-custom-validation" /%}
+
+{% note %}
+Validation applies only in the dialog; programmatic definitions are unaffected. Errors block Apply in deferred mode. In live mode, rejected edits are saved but display `#ERROR!` until corrected. Title and type edits also revalidate unchanged expressions.
+{% /note %}
+
 ### suppressColumnHighlighting
 
 Use `suppressColumnHighlighting` to disable the highlight while the dialog is open:

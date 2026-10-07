@@ -1061,6 +1061,10 @@
             border: var(--ag-borders) var(--ag-tooltip-error-border-color);
             font-weight: 500;
         }
+
+        &.ag-calculated-column-expression-tooltip {
+            white-space: pre-line;
+        }
     }
 
     .ag-tooltip.ag-tooltip-animate,

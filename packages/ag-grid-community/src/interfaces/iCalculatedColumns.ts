@@ -21,6 +21,17 @@ export interface IsColumnReferenceableParams<TData = any, TContext = any> extend
     calculatedColumn: Column | null;
 }
 
+export interface CalculatedColumnValidationParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** A copy of the draft definition, with the expression using stored `[colId]` references. */
+    colDef: CalculatedColumnDef<TData>;
+    /** The expression displayed in the dialog, using column header references. */
+    displayExpression: string;
+    /** Unique columns directly referenced by the expression, including hidden columns. */
+    referencedColumns: readonly Column[];
+    /** The calculated column, or `null` when adding a column in deferred mode. */
+    column: Column | null;
+}
+
 export interface CalculatedColumnsOptions<TData = any, TContext = any> {
     /**
      * Cell data types shown in the Calculated Column dialog type selector.
@@ -41,6 +52,15 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
      */
     isColumnReferenceable?: (params: IsColumnReferenceableParams<TData, TContext>) => boolean;
     /**
+     * Additional synchronous validation for expressions entered in the dialog, after built-in checks pass.
+     * Return error messages to reject the expression, or `null` / an empty array to accept it.
+     * Deferred mode blocks Apply; live mode saves rejected expressions with an error and prevents evaluation.
+     * Unlike `isColumnReferenceable`, unchanged expressions are revalidated on title/type edits and deferred Apply.
+     * In live mode, a title/type edit can therefore block a previously accepted expression.
+     * Not called during cell evaluation, for programmatic definitions, or when restoring state.
+     */
+    getValidationErrors?: (params: CalculatedColumnValidationParams<TData, TContext>) => string[] | null;
+    /**
      * Suppress highlighting the calculated column currently being edited by the dialog.
      * @default false
      */
@@ -57,14 +77,21 @@ export type CalculatedColumnsGridOption<TData = any, TContext = any> =
     boolean | CalculatedColumnsOptions<TData, TContext>;
 
 /** Grid-managed validation state for a `calculatedExpression`, saved on the column definition. */
-export interface CalculatedExpressionError {
+export type CalculatedExpressionError = {
     /** The `calculatedExpression` value the error applies to; the error is ignored once the expression changes. */
     expression: string;
-    /** Why the expression is blocked from evaluating. */
-    reason: 'restrictedReference';
-    /** The display reference that was blocked. */
-    reference: string;
-}
+} & (
+    | {
+          reason: 'restrictedReference';
+          /** The display reference that was blocked. */
+          reference: string;
+      }
+    | {
+          reason: 'customValidation';
+          /** Application-provided validation messages. */
+          messages: string[];
+      }
+);
 
 export type CalculatedColumnDef<TData = any, TValue = any> = ColDef<TData, TValue> & {
     calculatedExpression: string;

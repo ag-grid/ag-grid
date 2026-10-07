@@ -43,6 +43,12 @@ export function getRestrictedReferenceMessage(
     ).replace('${variable}', reference);
 }
 
+/** A calculated expression as a formula string, tolerating an existing leading `=` like evaluation does. */
+export function toFormulaString(expression: string): string {
+    const trimmed = expression.trim();
+    return trimmed.startsWith('=') ? trimmed : `=${trimmed}`;
+}
+
 /**
  * When `cellDataType` changes on a calculated column (e.g. via the Edit dialog moving Boolean →
  * Number), the data-type service does not re-resolve properties it implicitly set for the old
