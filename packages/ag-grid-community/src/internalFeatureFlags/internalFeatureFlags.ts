@@ -4,9 +4,15 @@ import type { InternalFeatureFlag, InternalFeatureFlags } from '../interfaces/iI
 // Studio only supplies the `studio` bean, so what it turns on is decided here and needs no change in Studio
 const STUDIO_FLAGS: Required<InternalFeatureFlags> = {
     clickToggleSelection: true,
+    forceCanvasMiniCharts: false,
     spaceKeyFollowsClickSelection: true,
 };
 
+/**
+ * Whether an internal behaviour flag is on, from the registered flags or else the Studio defaults.
+ *
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export function _isInternalFeatureFlagEnabled(beans: BeanCollection, flag: InternalFeatureFlag): boolean {
     const override = beans.internalFeatureFlags?.flags[flag];
     if (override !== undefined) {

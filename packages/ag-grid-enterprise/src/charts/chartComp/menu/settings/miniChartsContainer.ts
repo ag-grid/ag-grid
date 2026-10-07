@@ -2,7 +2,7 @@ import type { AgColorType } from 'ag-charts-types';
 import { _setAriaLabel } from 'ag-stack';
 
 import type { BeanCollection, ChartGroupsDef, ChartType } from 'ag-grid-community';
-import { Component, KeyCode, _createElement } from 'ag-grid-community';
+import { Component, KeyCode, _createElement, _isInternalFeatureFlagEnabled } from 'ag-grid-community';
 
 import { AgGroupComponent } from '../../../../agStack/agGroupComponent';
 import type { GroupComponent } from '../../../../widgets/gridEnterpriseWidgetTypes';
@@ -48,6 +48,8 @@ import {
 } from './miniCharts/index';
 // please leave this as is - we want it to be explicit for build reasons
 import type { MiniChart } from './miniCharts/miniChart';
+import { MiniChartSvg } from './miniCharts/svg/miniChartSvg';
+import { getMiniChartSvg } from './miniCharts/svg/miniChartSvgRegistry';
 
 type MiniChartMenuMapping = {
     [K in keyof ChartGroupsDef]-?: MiniChartMenuGroup<K>;
@@ -186,6 +188,7 @@ export class MiniChartsContainer extends Component {
             );
         }
 
+        const forceCanvas = _isInternalFeatureFlagEnabled(this.beans, 'forceCanvasMiniCharts');
         const eGui = this.getGui();
         const isEnterprise = this.chartController.isEnterprise();
         const isPivotChart = this.chartController.isPivotChart();
@@ -282,9 +285,29 @@ export class MiniChartsContainer extends Component {
 
                 this.wrappers.set(miniClassChartType, miniWrapper);
 
-                this.createBean(
-                    new MiniClass(miniWrapper, this.beans.agChartsExports, this.fills, this.strokes, this.isCustomTheme)
-                );
+                const svg = forceCanvas ? undefined : getMiniChartSvg(chartType);
+                if (svg) {
+                    this.createBean(
+                        new MiniChartSvg(
+                            miniWrapper,
+                            svg.template,
+                            svg.colors,
+                            this.fills,
+                            this.strokes,
+                            this.isCustomTheme
+                        )
+                    );
+                } else {
+                    this.createBean(
+                        new MiniClass(
+                            miniWrapper,
+                            this.beans.agChartsExports,
+                            this.fills,
+                            this.strokes,
+                            this.isCustomTheme
+                        )
+                    );
+                }
                 groupComponent.addItem(miniWrapper);
             }
 

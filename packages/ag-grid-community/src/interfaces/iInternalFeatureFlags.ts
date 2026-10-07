@@ -9,6 +9,10 @@ export interface InternalFeatureFlags {
      */
     clickToggleSelection?: boolean;
     /**
+     * Draws every chart settings mini chart on canvas rather than from its SVG template. For tests and benchmarks only.
+     */
+    forceCanvasMiniCharts?: boolean;
+    /**
      * Space obeys `enableClickSelection` as a click does, except on a cell showing a selection checkbox.
      */
     spaceKeyFollowsClickSelection?: boolean;

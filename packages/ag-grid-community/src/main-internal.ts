@@ -546,6 +546,7 @@ export type {
     ModuleName,
     ModuleValidationResult,
 } from './interfaces/iModule';
+export { _isInternalFeatureFlagEnabled } from './internalFeatureFlags/internalFeatureFlags';
 export { _createInternalFeatureFlagsModule } from './internalFeatureFlags/internalFeatureFlagsModule';
 export type { InternalFeatureFlags as _InternalFeatureFlags } from './interfaces/iInternalFeatureFlags';
 export { SharedMenuModule as _SharedMenuModule } from './misc/menu/sharedMenuModule';
