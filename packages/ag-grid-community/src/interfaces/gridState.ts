@@ -2,6 +2,7 @@ import type { ColDef } from '../entities/colDef';
 import type { ShowValuesAs, ShowValuesAsType } from '../entities/colDef-showValuesAs';
 import type { CellRangeType } from './IRangeService';
 import type { AdvancedFilterModel } from './advancedFilterModel';
+import type { CalculatedExpressionError } from './iCalculatedColumns';
 import type { RowGroupBulkExpansionState, RowGroupExpansionState } from './iExpansionService';
 import type { ColumnFilterState, FilterModel } from './iFilter';
 import type { RowPosition } from './iRowPosition';
@@ -190,12 +191,10 @@ export interface ColumnGroupState {
 }
 
 /**
- * The `ColDef` properties a user can configure through the grid's own UI, plus grid-managed validation
- * state the UI saves alongside them, and so the only ones the `userColumns` state section carries. Column UI
+ * The `ColDef` properties a user can configure through the grid's own UI and save in `userColumns`. Column UI
  * extends this union as it gains settings; everything else stays with `columnDefs` and the other state sections.
  */
-export type UserColumnPropertyKey =
-    'calculatedExpression' | 'calculatedExpressionError' | 'cellDataType' | 'columnGroupShow' | 'headerName';
+export type UserColumnPropertyKey = 'calculatedExpression' | 'cellDataType' | 'columnGroupShow' | 'headerName';
 
 /** One `ColDef` property the user configured, as a name/value pair. The value is typed by the property it
  *  names, so an entry cannot pair a property with a value the definition would reject. */
@@ -212,6 +211,8 @@ export interface UserColumnState {
     parentGroupId?: string | null;
     /** The column definition properties the user configured. Absent when `removed` is set. */
     properties?: UserColumnProperty[];
+    /** Validation rejection saved by the Calculated Column dialog, separate from the column definition. */
+    calculatedExpressionError?: CalculatedExpressionError;
     /** The user removed a column declared in `columnDefs`; it stays removed across restores. */
     removed?: boolean;
 }

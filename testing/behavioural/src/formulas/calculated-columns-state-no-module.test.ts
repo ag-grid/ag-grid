@@ -28,6 +28,7 @@ describe('calculated columns - grid state persistence without the calculated col
                     { property: 'cellDataType', value: 'text' },
                     { property: 'headerName', value: 'Double A' },
                 ],
+                calculatedExpressionError: { expression: '[a] * 2', reason: 'restrictedReference', reference: 'A' },
             },
         ];
         const api = gridsManager.createGrid('state-no-module', {
