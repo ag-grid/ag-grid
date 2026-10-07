@@ -14,7 +14,7 @@ The example below demonstrates Deferred Updates. Note the following:
 - Changes made in the Columns Tool Panel are staged as pending changes.
 - **Apply** commits all pending changes in a single operation.
 - **Cancel** discards all pending changes and restores the last applied state.
-- **Reset** immediately restores the columns to the state defined in the Column Definitions and discards all pending changes.
+- **Reset** immediately restores the columns to the state defined in the current Column Definitions and discards all pending changes.
 
 {% gridExampleRunner title="Deferred Updates" name="deferred-apply-mode-csrm"  exampleHeight=830 /%}
 
@@ -48,12 +48,12 @@ Changes made outside the Columns Tool Panel, such as dragging columns into the R
 
 ## Reset Without Deferred Updates
 
-The **Reset** button does not depend on Deferred Updates. Include `'reset'` without `'apply'` to add a button that resets the columns to the state defined in the Column Definitions, as [`api.resetColumnState()`](./column-state/#reference-state-resetColumnState) does.
+The **Reset** button does not depend on Deferred Updates. Include `'reset'` without `'apply'` to add a button that resets the columns to the state defined in the current Column Definitions, as [`api.resetColumnState()`](./column-state/#reference-state-resetColumnState) does.
 
 The example below adds only a **Reset** button. Note the following:
 
 - Changes made in the Columns Tool Panel are applied immediately, as there is no **Apply** button.
-- **Reset** restores the columns to the state defined in the Column Definitions.
+- **Reset** restores the columns to the state defined in the current Column Definitions.
 
 {% gridExampleRunner title="Reset Button" name="reset-button" exampleHeight=630 /%}
 
