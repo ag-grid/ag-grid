@@ -60,9 +60,14 @@ export class TransactionMergeService extends BeanStub implements NamedBean {
         }
 
         const cache = store.getCache();
+        const gos = this.gos;
+        const isServerSideGroup = gos.get('treeData') ? gos.get('isServerSideGroup') : undefined;
         return _applyMergedTransactions(transactions, {
             getRowId: (data, op) => (op === 'remove' ? store.getRemoveRowId(idFunc, data) : cache.getRowId(data)),
             isRowCached: (id) => cache.isNodeInCache(id),
+            // an update that turns a group into a leaf destroys its children, even if a later update turns it back
+            canSkipUpdate: (previousData, data) =>
+                !isServerSideGroup || isServerSideGroup(previousData) === isServerSideGroup(data),
             isAccepted: (transaction) => store.isTransactionAccepted(transaction),
             apply: (transaction, rowIds) => store.applyAcceptedTransaction(transaction, idFunc, rowIds),
         });

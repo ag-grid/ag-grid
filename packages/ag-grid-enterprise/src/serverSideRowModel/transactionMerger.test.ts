@@ -61,6 +61,7 @@ class FakeStore {
         return {
             getRowId: (data: Row) => data.id,
             isRowCached: (id) => this.rows.some((node) => node.id === id),
+            canSkipUpdate: () => true,
             isAccepted,
             apply: (tx) => this.apply(tx),
         };
@@ -220,6 +221,18 @@ describe('_applyMergedTransactions', () => {
 
         expect(seen).toEqual([0, 1]);
         expect(store.applied).toEqual([{ update: [row('a', 1)] }, { remove: [row('b'), row('z')] }]);
+    });
+
+    it('applies an update on its own when the update it replaces has effects of its own', () => {
+        const store = new FakeStore(initial);
+        const target = { ...store.target(), canSkipUpdate: (previous: Row) => previous.v !== 1 };
+
+        _applyMergedTransactions(
+            [{ update: [row('a', 1)] }, { update: [row('a', 2)] }, { update: [row('a', 3)] }],
+            target
+        );
+
+        expect(store.applied).toEqual([{ update: [row('a', 1)] }, { update: [row('a', 3)] }]);
     });
 
     it('matches applying the transactions one after the other for random streams', () => {

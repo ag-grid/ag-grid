@@ -757,6 +757,67 @@ describe('SSRM merged async transactions', () => {
         expect(merged).toEqual(sequential);
     });
 
+    test('tree data: a group that becomes a leaf and then a group again loses its children as when applied in turn', async () => {
+        const ROOT = [{ id: 'p', group: true, name: 'P' }];
+        const CHILDREN = [{ id: 'c1', group: false, name: 'C1' }];
+
+        const run = async (merge: boolean) => {
+            const api = gridsManager.createGrid(null, {
+                columnDefs: [{ field: 'name' }],
+                rowModelType: 'serverSide',
+                treeData: true,
+                serverSideMergeAsyncTransactions: merge,
+                isServerSideGroup: (data) => data.group,
+                getServerSideGroupKey: (data) => data.id,
+                getRowId: (params) => params.data.id,
+                serverSideDatasource: {
+                    getRows: (params) => {
+                        const rowData = params.request.groupKeys.length === 0 ? ROOT : CHILDREN;
+                        params.success({ rowData, rowCount: rowData.length });
+                    },
+                },
+            });
+            await waitForEvent('firstDataRendered', api);
+            api.setRowNodeExpanded(api.getRowNode('p')!, true);
+            await waitForNoLoadingRows(api);
+            expect(api.getRowNode('c1')).toBeDefined();
+
+            const outcome = await applyAsync(api, [
+                { update: [{ ...ROOT[0], group: false }] },
+                { update: [{ ...ROOT[0], group: true }] },
+            ]);
+            return { ...outcome, expanded: api.getRowNode('p')!.expanded };
+        };
+
+        const sequential = await run(false);
+        gridsManager.reset();
+        const merged = await run(true);
+
+        expect(sequential.expanded).toBe(false);
+        expect(sequential.rows.map((r) => r.id)).toEqual(['p']);
+        expect(merged.expanded).toBe(sequential.expanded);
+        expect(merged.rows).toEqual(sequential.rows);
+    });
+
+    test('a selected row updated to unselectable and back keeps the selection it has when applied in turn', async () => {
+        const run = async (merge: boolean) => {
+            const api = await createFlatGrid(merge, {
+                rowSelection: { mode: 'multiRow', isRowSelectable: (node) => node.data?.value !== 'locked' },
+            });
+            api.getRowNode('1')!.setSelected(true);
+            expect(api.getRowNode('1')!.isSelected()).toBe(true);
+
+            await applyAsync(api, [{ update: [NEW(1, 'locked')] }, { update: [NEW(1, 'free')] }]);
+            return api.getRowNode('1')!.isSelected();
+        };
+
+        const sequential = await run(false);
+        gridsManager.reset();
+        const merged = await run(true);
+
+        expect(merged).toBe(sequential);
+    });
+
     test('reports the missing module when the option is enabled without it', () => {
         const createGrid = () =>
             new TestGridsManager({ modules: [ServerSideRowModelApiModule, ServerSideRowModelModule] }).createGrid(

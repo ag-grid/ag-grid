@@ -7,6 +7,8 @@ export interface TransactionMergeTarget {
     /** The id the store resolves for `data` when applying `op`. */
     getRowId(data: any, op: TransactionRowOp): string | null | undefined;
     isRowCached(id: string): boolean;
+    /** Whether applying only `data` gives the same result as applying `previousData` and then `data`. */
+    canSkipUpdate(previousData: any, data: any): boolean;
     isAccepted(transaction: ServerSideTransaction): boolean;
     /** Applies a transaction that has already been accepted, with `rowIds` holding the id of each row's data. */
     apply(transaction: ServerSideTransaction, rowIds?: Map<any, string>): ServerSideTransactionResult;
@@ -55,10 +57,16 @@ export function _applyMergedTransactions(
                 results[index] = target.isAccepted(transaction)
                     ? target.apply(transaction, getRowIds(entries))
                     : { status: ServerSideTransactionResultStatus.Cancelled };
-            } else if (target.isAccepted(transaction)) {
-                batch.accept(index, entries, target);
             } else {
-                results[index] = { status: ServerSideTransactionResultStatus.Cancelled };
+                if (batch.skipsUpdateEffects(entries, target)) {
+                    batch.apply(transactions, target, results);
+                    batch = new MergeBatch();
+                }
+                if (target.isAccepted(transaction)) {
+                    batch.accept(index, entries, target);
+                } else {
+                    results[index] = { status: ServerSideTransactionResultStatus.Cancelled };
+                }
             }
         }
         batch.apply(transactions, target, results);
@@ -260,6 +268,18 @@ class MergeBatch {
             }
         }
         return Number(hasCached) + Number(hasUncached) + Number(hasAdded) > 1;
+    }
+
+    /** Whether merging the entries would replace a pending update whose own effects have to be applied. */
+    public skipsUpdateEffects(entries: RowEntry[], target: TransactionMergeTarget): boolean {
+        const updates = this.updates;
+        for (let i = 0, len = entries.length; i < len; ++i) {
+            const { op, id, data } = entries[i];
+            if (op === 'update' && updates.has(id) && !target.canSkipUpdate(updates.get(id), data)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private isRowPresent(id: string, target: TransactionMergeTarget): boolean {
