@@ -1,27 +1,30 @@
 import { _requestAnimationFrame } from 'ag-stack';
 
+import type { NamedBean } from '../context/bean';
+import { BeanStub } from '../context/beanStub';
+import type { RowNode } from '../entities/rowNode';
+import type { BodyScrollEvent, PaginationChangedEvent, RowGroupOpenedEvent } from '../events';
+import {
+    _addGridCommonParams,
+    _getRowIdCallback,
+    _isClientSideRowModel,
+    _isDomLayout,
+    _isServerSideRowModel,
+} from '../gridOptionsUtils';
 import type {
-    BeanCollection,
-    BodyScrollEvent,
-    GridOptionsService,
-    NamedBean,
-    PaginationChangedEvent,
-    RowGroupOpenedEvent,
-    RowNode,
     VisibleRow,
     VisibleRowRef,
     VisibleRowsHandlers,
     VisibleRowsOptions,
     VisibleRowsParams,
     VisibleRowsReason,
-} from 'ag-grid-community';
-import { BeanStub, _addGridCommonParams, _getRowIdCallback, _isDomLayout } from 'ag-grid-community';
-
-import { _isUnbalancedGroup } from '../blocks/blockUtils';
+} from '../interfaces/iVisibleRows';
 
 interface SubscribedRow {
     ref: VisibleRowRef;
     node: RowNode;
+    /** The row's index when last checked, to tell rows moved by a sort or filter from rows scrolled past. */
+    index: number | null;
 }
 
 interface VisibleRowsSubscription {
@@ -33,6 +36,8 @@ interface VisibleRowsSubscription {
     readonly expandedGroups: Set<RowNode>;
     collapsePending: boolean;
     scrollPending: boolean;
+    sortPending: boolean;
+    filterPending: boolean;
     scheduled: boolean;
     stopped: boolean;
     lastFlushTime: number;
@@ -45,11 +50,11 @@ type RowsByReason<T> = Map<VisibleRowsReason, T[]>;
 /** Why the grid destroyed a row, when it was not removed, e.g. by a transaction. */
 export type VisibleRowsDestroyReason = Extract<VisibleRowsReason, 'reset' | 'collapse'>;
 
-const UNSUBSCRIBE_ORDER: VisibleRowsReason[] = ['reset', 'remove', 'collapse', 'scroll'];
-const SUBSCRIBE_ORDER: VisibleRowsReason[] = ['expand', 'collapse', 'load', 'scroll'];
+const UNSUBSCRIBE_ORDER: VisibleRowsReason[] = ['reset', 'remove', 'collapse', 'filter', 'sort', 'scroll'];
+const SUBSCRIBE_ORDER: VisibleRowsReason[] = ['expand', 'collapse', 'filter', 'sort', 'load', 'scroll'];
 
-export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
-    beanName = 'ssrmVisibleRowsSvc' as const;
+export class VisibleRowsService extends BeanStub implements NamedBean {
+    beanName = 'visibleRowsSvc' as const;
 
     private readonly subscriptions = new Set<VisibleRowsSubscription>();
     /** Rows destroyed by a purge, reset or collapse, as opposed to a removal, e.g. by a transaction. */
@@ -76,13 +81,20 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
                 }
             },
             rowGroupOpened: this.onRowGroupOpened.bind(this),
+            sortChanged: () => this.markPending('sortPending'),
+            filterChanged: () => this.markPending('filterPending'),
             gridPreDestroyed: this.stopAll.bind(this),
         });
     }
 
     public subscribe(handlers: VisibleRowsHandlers, options: VisibleRowsOptions = {}): () => void {
+        const gos = this.gos;
+        if (!_isClientSideRowModel(gos) && !_isServerSideRowModel(gos)) {
+            this.warn(311, { functionName: 'subscribeToVisibleRows', rowModels: ['clientSide', 'serverSide'] });
+            return () => {};
+        }
         if (!_getRowIdCallback(this.beans)) {
-            this.warn(188, { feature: 'subscribeToVisibleRows' });
+            this.warn(336);
             return () => {};
         }
 
@@ -95,6 +107,8 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
             expandedGroups: new Set(),
             collapsePending: false,
             scrollPending: false,
+            sortPending: false,
+            filterPending: false,
             scheduled: false,
             stopped: false,
             lastFlushTime: 0,
@@ -108,7 +122,7 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
         const rows: VisibleRow[] = [];
         visible.forEach((node, id) => {
             const ref = this.createRef(id, node);
-            sub.rows.set(id, { ref, node });
+            sub.rows.set(id, { ref, node, index: node.rowIndex });
             rows.push(this.createVisibleRow(ref, node));
         });
         sub.lastFirst = first;
@@ -119,7 +133,7 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
         return () => this.stop(sub);
     }
 
-    /** Rows destroyed while `destroy` runs, including those in child stores, are reported with `reason`. */
+    /** Rows destroyed while `destroy` runs, including their child rows, are reported with `reason`. */
     public runDestroying(reason: VisibleRowsDestroyReason, destroy: () => void): void {
         const previous = this.destroyReason;
         this.destroyReason = reason;
@@ -130,8 +144,8 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
         }
     }
 
-    /** Called by a store cache before it destroys one of its rows. */
-    public onRowDestroying(node: RowNode): void {
+    /** Called by every row node as it is destroyed. */
+    public onRowDestroyed(node: RowNode): void {
         if (this.destroyReason) {
             this.destroyedRowReasons.set(node, this.destroyReason);
         }
@@ -172,6 +186,13 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
             } else {
                 sub.collapsePending = true;
             }
+        }
+        this.markAllDirty(false);
+    }
+
+    private markPending(pending: 'sortPending' | 'filterPending'): void {
+        for (const sub of this.subscriptions) {
+            sub[pending] = true;
         }
         this.markAllDirty(false);
     }
@@ -233,9 +254,17 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
             }
         });
 
+        // Read before the pending flags below are cleared.
+        const removedReasons = new Map<SubscribedRow, VisibleRowsReason>();
+        for (const row of removed) {
+            removedReasons.set(row, this.getMovedReason(row, sub));
+        }
+
         sub.expandedGroups.clear();
         sub.collapsePending = false;
         sub.scrollPending = false;
+        sub.sortPending = false;
+        sub.filterPending = false;
         sub.lastFirst = first;
         sub.lastLast = last;
         sub.lastFlushTime = Date.now();
@@ -244,7 +273,7 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
             // Worked out again after each handler, which can purge or remove the rows still waiting.
             const byReason: RowsByReason<SubscribedRow> = new Map();
             for (const row of removed) {
-                addToReason(byReason, this.getUnsubscribeReason(row.node), row);
+                addToReason(byReason, this.getUnsubscribeReason(row, removedReasons.get(row)!), row);
             }
             const reason = UNSUBSCRIBE_ORDER.find((r) => byReason.has(r))!;
             const rows = byReason.get(reason)!;
@@ -278,13 +307,17 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
                 }
                 const id = node.id!;
                 const ref = this.createRef(id, node);
-                sub.rows.set(id, { ref, node });
+                sub.rows.set(id, { ref, node, index: node.rowIndex });
                 rows.push(this.createVisibleRow(ref, node));
             }
             if (rows.length) {
                 sub.handlers.onSubscribe(rows, this.createParams(reason));
             }
         }
+
+        sub.rows.forEach((row) => {
+            row.index = row.node.rowIndex;
+        });
 
         if (rescheduleNeeded) {
             this.schedule(sub);
@@ -329,23 +362,45 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
         for (let i = first; i <= last; ++i) {
             const node = rowModel.getRow(i);
             const id = node?.id;
-            if (node && id != null && !visible.has(id) && isSubscribable(node, sub.includeGroups)) {
+            if (node && id != null && !visible.has(id) && this.isSubscribable(node, sub.includeGroups)) {
                 visible.set(id, node);
             }
         }
         return visible;
     }
 
-    private getUnsubscribeReason(node: RowNode): VisibleRowsReason {
-        if (node.destroyed) {
-            return this.destroyedRowReasons.get(node) ?? 'remove';
-        }
-        if (isUnderCollapsedGroup(this.gos, node)) {
+    /**
+     * The reason for a row that is still alive, taken while the batch's sort and filter flags are set.
+     * Destruction is checked separately, as a handler can destroy rows while the batch runs.
+     */
+    private getMovedReason(row: SubscribedRow, sub: VisibleRowsSubscription): VisibleRowsReason {
+        const node = row.node;
+        if (isUnderCollapsedGroup(node)) {
             return 'collapse';
         }
         // A refresh can keep a replaced row alive, with its old index, until the refresh finishes.
         const index = node.rowIndex;
-        return index != null && this.beans.rowModel.getRow(index) === node ? 'scroll' : 'remove';
+        if (index != null && this.beans.rowModel.getRow(index) === node) {
+            if (index !== row.index) {
+                if (sub.sortPending) {
+                    return 'sort';
+                }
+                if (sub.filterPending) {
+                    return 'filter';
+                }
+            }
+            return 'scroll';
+        }
+        // A row filtered out is still in the grid, unlike a removed row.
+        return sub.filterPending && this.beans.rowModel.getRowNode(row.ref.id) === node ? 'filter' : 'remove';
+    }
+
+    private getUnsubscribeReason(row: SubscribedRow, movedReason: VisibleRowsReason): VisibleRowsReason {
+        const node = row.node;
+        if (node.destroyed) {
+            return this.destroyedRowReasons.get(node) ?? 'remove';
+        }
+        return movedReason;
     }
 
     private getSubscribeReason(node: RowNode, sub: VisibleRowsSubscription): VisibleRowsReason {
@@ -354,6 +409,12 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
         }
         if (sub.collapsePending) {
             return 'collapse';
+        }
+        if (sub.filterPending) {
+            return 'filter';
+        }
+        if (sub.sortPending) {
+            return 'sort';
         }
         const index = node.rowIndex;
         const wasOutOfRange = index == null || index < sub.lastFirst || index > sub.lastLast;
@@ -380,24 +441,24 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
     private createParams(reason: VisibleRowsReason): VisibleRowsParams {
         return _addGridCommonParams<VisibleRowsParams>(this.gos, { reason });
     }
+
+    private isSubscribable(node: RowNode, includeGroups: boolean): boolean {
+        if (node.stub || node.failedLoad || node.detail || node.footer || node.rowPinned != null) {
+            return false;
+        }
+        if (!includeGroups && node.group) {
+            return false;
+        }
+        const isFullWidthRow = this.gos.getCallback('isFullWidthRow');
+        return !isFullWidthRow?.({ rowNode: node });
+    }
 }
 
-function isSubscribable(node: RowNode, includeGroups: boolean): boolean {
-    return (
-        !node.stub &&
-        !node.failedLoad &&
-        !node.detail &&
-        !node.footer &&
-        node.rowPinned == null &&
-        (includeGroups || !node.group)
-    );
-}
-
-function isUnderCollapsedGroup(gos: GridOptionsService, node: RowNode): boolean {
+/** A hidden group, such as one with an empty key under `groupAllowUnbalanced`, does not hide its children. */
+function isUnderCollapsedGroup(node: RowNode): boolean {
     let parent = node.parent;
     while (parent && parent.level >= 0) {
-        // Matches BlockUtils.setDisplayIndex, which always shows the children of an unbalanced group.
-        if (!parent.expanded && !_isUnbalancedGroup(gos, parent)) {
+        if (!parent.expanded && parent.rowIndex != null) {
             return true;
         }
         parent = parent.parent;
@@ -423,8 +484,4 @@ function addToReason<T>(map: RowsByReason<T>, reason: VisibleRowsReason, item: T
     } else {
         map.set(reason, [item]);
     }
-}
-
-export function _getSsrmVisibleRowsService(beans: BeanCollection): SsrmVisibleRowsService | undefined {
-    return beans.ssrmVisibleRowsSvc as SsrmVisibleRowsService | undefined;
 }

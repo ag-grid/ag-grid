@@ -74,11 +74,7 @@ export { RowNumbersModule } from './rowNumbers/rowNumbersModule';
 export { FiltersToolPanelModule, NewFiltersToolPanelModule } from './filterToolPanel/filtersToolPanelModule';
 export { MasterDetailModule } from './masterDetail/masterDetailModule';
 export { CellSelectionModule, RangeSelectionModule } from './rangeSelection/rangeSelectionModule';
-export {
-    ServerSideRowModelModule,
-    ServerSideRowModelApiModule,
-    ServerSideRowModelVisibleRowsModule,
-} from './serverSideRowModel/serverSideRowModelModule';
+export { ServerSideRowModelModule, ServerSideRowModelApiModule } from './serverSideRowModel/serverSideRowModelModule';
 export { FormulaModule } from './formula/formulaModule';
 export { NotesModule } from './notes/notesModule';
 export { ColumnHeaderEditModule } from './columnHeaderEdit/columnHeaderEditModule';

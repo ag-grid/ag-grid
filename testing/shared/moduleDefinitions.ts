@@ -52,6 +52,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module` | 'F
     UndoRedoEditModule: true,
     ValidationModule: true,
     ValueCacheModule: true,
+    VisibleRowsModule: true,
     FileInputOverlayModule: true,
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, true> = {
@@ -87,7 +88,6 @@ export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, true>
     RowGroupingPanelModule: true,
     ServerSideRowModelApiModule: true,
     ServerSideRowModelModule: true,
-    ServerSideRowModelVisibleRowsModule: true,
     SetFilterModule: true,
     ShowValuesAsModule: true,
     SideBarModule: true,

@@ -1,9 +1,4 @@
-import type {
-    _ModuleWithApi,
-    _ModuleWithoutApi,
-    _ServerSideRowModelGridApi,
-    _ServerSideRowModelVisibleRowsGridApi,
-} from 'ag-grid-community';
+import type { _ModuleWithApi, _ModuleWithoutApi, _ServerSideRowModelGridApi } from 'ag-grid-community';
 import {
     _CsrmSsrmSharedApiModule,
     _RowModelSharedApiModule,
@@ -37,11 +32,9 @@ import {
     retryServerSideLoads,
     setServerSideSelectionState,
 } from './serverSideRowModelApi';
-import { subscribeToVisibleRows } from './serverSideRowModelVisibleRowsApi';
 import { ServerSideExpansionService } from './services/serverSideExpansionService';
 import { ServerSideSelectionService } from './services/serverSideSelectionService';
 import { SsrmRowChildrenService } from './services/ssrmRowChildrenService';
-import { SsrmVisibleRowsService } from './services/ssrmVisibleRowsService';
 import { LazyBlockLoadingService } from './stores/lazy/lazyBlockLoadingService';
 import { StoreFactory } from './stores/storeFactory';
 import { StoreUtils } from './stores/storeUtils';
@@ -100,28 +93,4 @@ export const ServerSideRowModelApiModule: _ModuleWithApi<_ServerSideRowModelGrid
         onRowHeightChanged,
     },
     dependsOn: [EnterpriseCoreModule, _RowModelSharedApiModule, _CsrmSsrmSharedApiModule, _SsrmInfiniteSharedApiModule],
-};
-
-/**
- * The service behind `subscribeToVisibleRows`, so it is only created for the Server-Side Row Model.
- * @internal
- */
-const ServerSideRowModelVisibleRowsCoreModule: _ModuleWithoutApi = {
-    moduleName: 'ServerSideRowModelVisibleRowsCore',
-    version: VERSION,
-    rowModels: ['serverSide'],
-    beans: [SsrmVisibleRowsService],
-    dependsOn: [EnterpriseCoreModule],
-};
-
-/**
- * @feature Server-Side Row Model -> Visible Rows Subscription
- */
-export const ServerSideRowModelVisibleRowsModule: _ModuleWithApi<_ServerSideRowModelVisibleRowsGridApi<any>> = {
-    moduleName: 'ServerSideRowModelVisibleRows',
-    version: VERSION,
-    apiFunctions: {
-        subscribeToVisibleRows,
-    },
-    dependsOn: [EnterpriseCoreModule, ServerSideRowModelVisibleRowsCoreModule],
 };

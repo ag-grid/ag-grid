@@ -46,7 +46,6 @@ import type {
     _RowSelectionGridApi,
     _ScrollGridApi,
     _ServerSideRowModelGridApi,
-    _ServerSideRowModelVisibleRowsGridApi,
     _SideBarGridApi,
     _SortGridApi,
     _SsrmInfiniteSharedGridApi,
@@ -56,6 +55,7 @@ import type {
     _UndoRedoGridApi,
     _ValueApi,
     _ValueCacheApi,
+    _VisibleRowsGridApi,
 } from './gridApi';
 
 const mod = <TGridApi extends Partial<GridApi>>(
@@ -445,7 +445,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         resetRowHeights: 0,
     }),
 
-    ...mod<_ServerSideRowModelVisibleRowsGridApi<any>>('ServerSideRowModelVisibleRows', {
+    ...mod<_VisibleRowsGridApi<any>>('VisibleRows', {
         subscribeToVisibleRows: 0,
     }),
 

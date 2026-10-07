@@ -3,15 +3,11 @@ import {
     HighlightChangesModule,
     ModuleRegistry,
     RowApiModule,
+    VisibleRowsModule,
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
-import {
-    RowGroupingModule,
-    ServerSideRowModelApiModule,
-    ServerSideRowModelModule,
-    ServerSideRowModelVisibleRowsModule,
-} from 'ag-grid-enterprise';
+import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 import { FakeServer } from './fakeServer';
 
@@ -26,7 +22,7 @@ ModuleRegistry.registerModules([
     RowGroupingModule,
     ServerSideRowModelModule,
     ServerSideRowModelApiModule,
-    ServerSideRowModelVisibleRowsModule,
+    VisibleRowsModule,
 ]);
 
 const subscribed = new Map<string, VisibleRowRef>();

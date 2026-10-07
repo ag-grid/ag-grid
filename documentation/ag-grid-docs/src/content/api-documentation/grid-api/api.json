@@ -224,6 +224,12 @@
         "meta": {
             "displayName": "Row Displayed"
         },
+        "subscribeToVisibleRows": {
+            "more": {
+                "name": "Visible Rows",
+                "url": "./data-update-visible-rows/"
+            }
+        },
         "getDisplayedRowAtIndex": {
             "more": {
                 "name": "Rendering API",
@@ -1277,12 +1283,6 @@
             }
         },
         "getServerSideGroupLevelState": {},
-        "subscribeToVisibleRows": {
-            "more": {
-                "name": "Subscribing to Visible Rows",
-                "url": "./server-side-model-updating-visible-rows/"
-            }
-        },
         "retryServerSideLoads": {
             "more": {
                 "name": "Retry Loads",

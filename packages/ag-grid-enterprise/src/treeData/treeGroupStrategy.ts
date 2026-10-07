@@ -7,7 +7,7 @@ import type {
     RefreshModelParams,
     _ChangedRowNodes,
 } from 'ag-grid-community';
-import { BeanStub, RowNode } from 'ag-grid-community';
+import { BeanStub, RowNode, _destroyForVisibleRows } from 'ag-grid-community';
 
 import { setRowNodeGroup } from '../rowGrouping/rowGroupingUtils';
 import type { IRowGroupingStrategy } from '../rowHierarchy/rowHierarchyUtils';
@@ -87,9 +87,11 @@ export class TreeGroupStrategy<TData = any> extends BeanStub implements IRowGrou
     public clearNonLeafs(): void {
         const fillers = this.nonLeafsById;
         if (fillers) {
-            for (const node of fillers.values()) {
-                node._destroy(null);
-            }
+            _destroyForVisibleRows(this.beans, 'reset', () => {
+                for (const node of fillers.values()) {
+                    node._destroy(null);
+                }
+            });
             fillers.clear();
             this.nonLeafsById = null;
         }

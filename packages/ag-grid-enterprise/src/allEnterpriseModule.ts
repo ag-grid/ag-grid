@@ -26,11 +26,7 @@ import { RichSelectModule } from './richSelect/richSelectModule';
 import { RowGroupingEditModule } from './rowGrouping/rowGroupingEditModule';
 import { GroupFilterModule, RowGroupingModule, RowGroupingPanelModule } from './rowGrouping/rowGroupingModule';
 import { RowNumbersModule } from './rowNumbers/rowNumbersModule';
-import {
-    ServerSideRowModelApiModule,
-    ServerSideRowModelModule,
-    ServerSideRowModelVisibleRowsModule,
-} from './serverSideRowModel/serverSideRowModelModule';
+import { ServerSideRowModelApiModule, ServerSideRowModelModule } from './serverSideRowModel/serverSideRowModelModule';
 import { SetFilterModule } from './setFilter/setFilterModule';
 import { ShowValuesAsModule } from './showValuesAs/showValuesAsModule';
 import { SideBarModule } from './sideBar/sideBarModule';
@@ -62,7 +58,6 @@ const dependsOn = [
     GroupFilterModule,
     ServerSideRowModelModule,
     ServerSideRowModelApiModule,
-    ServerSideRowModelVisibleRowsModule,
     FormulaModule,
     NotesModule,
     ColumnHeaderEditModule,

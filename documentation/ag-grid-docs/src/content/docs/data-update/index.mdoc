@@ -60,3 +60,9 @@ High Frequency (achieved with Async Transactions) is a mechanism of applying man
 Use Async Transactions for doing add, remove or update operations that are frequent, e.g. for managing streaming updates into the grid of tens, hundreds or thousands of updates a second.
 
 See [High Frequency Updates](./data-update-high-frequency/) for more details.
+
+### Visible Rows
+
+When updates come from a stream, `api.subscribeToVisibleRows(handlers)` tells your application which rows are in view, so it only needs updates for those rows.
+
+See [Visible Rows](./data-update-visible-rows/) for more details.

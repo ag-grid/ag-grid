@@ -964,6 +964,7 @@ export const AG_GRID_ERRORS = {
         `\`GridChartsModule\` was deprecated in v33 — use \`IntegratedChartsModule\` instead.\n\n${missingChartsWithModule('IntegratedChartsModule')}` as const,
     335: ({ colId }: { colId: string }) =>
         `Column \`${colId}\` sets \`filter.handler\` or \`filter.doesFilterPass\`, which need \`enableFilterHandlers\`, so they are ignored and \`filter.component\` is used as the filter.` as const,
+    336: () => '`getRowId` callback must be provided for `subscribeToVisibleRows` to work.' as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -979,7 +980,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 335;
+export const MAX_ERROR_ID = 336;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

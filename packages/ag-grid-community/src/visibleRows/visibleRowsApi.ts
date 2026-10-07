@@ -1,11 +1,10 @@
-import type { BeanCollection, VisibleRowsHandlers, VisibleRowsOptions } from 'ag-grid-community';
-
-import { _getSsrmVisibleRowsService } from './services/ssrmVisibleRowsService';
+import type { BeanCollection } from '../context/context';
+import type { VisibleRowsHandlers, VisibleRowsOptions } from '../interfaces/iVisibleRows';
 
 export function subscribeToVisibleRows<TData = any>(
     beans: BeanCollection,
     handlers: VisibleRowsHandlers<TData>,
     options?: VisibleRowsOptions
 ): () => void {
-    return _getSsrmVisibleRowsService(beans)?.subscribe(handlers, options) ?? (() => {});
+    return beans.visibleRowsSvc?.subscribe(handlers, options) ?? (() => {});
 }

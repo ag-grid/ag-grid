@@ -19,6 +19,7 @@ import type {
 import {
     BeanStub,
     ServerSideTransactionResultStatus,
+    _destroyForVisibleRows,
     _getGrandTotalPinnedFloat,
     _getGrandTotalRow,
     _getGroupTotalRowCallback,
@@ -29,7 +30,6 @@ import {
 import { _createRowNodeFooter, _destroyRowNodeFooter } from '../../../aggregation/footerUtils';
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { SSRMParams } from '../../serverSideRowModel';
-import { _destroyForVisibleRows } from '../../services/ssrmVisibleRowsDestroy';
 import type { StoreUtils } from '../storeUtils';
 import { LazyCache } from './lazyCache';
 

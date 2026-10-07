@@ -13,7 +13,13 @@ import type {
     ValueService,
     _ChangedRowNodes,
 } from 'ag-grid-community';
-import { BeanStub, RowNode, _csrmFirstLeaf, _forEachChangedGroupDepthFirst } from 'ag-grid-community';
+import {
+    BeanStub,
+    RowNode,
+    _csrmFirstLeaf,
+    _destroyForVisibleRows,
+    _forEachChangedGroupDepthFirst,
+} from 'ag-grid-community';
 
 import type { IRowGroupingStrategy } from '../../rowHierarchy/rowHierarchyUtils';
 import { setRowNodeGroup } from '../rowGroupingUtils';
@@ -63,9 +69,11 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
 
     public clearNonLeafs(): void {
         const nonLeafsById = this.nonLeafsById;
-        for (const node of nonLeafsById.values()) {
-            node._destroy(null);
-        }
+        _destroyForVisibleRows(this.beans, 'reset', () => {
+            for (const node of nonLeafsById.values()) {
+                node._destroy(null);
+            }
+        });
         nonLeafsById.clear();
     }
 
@@ -454,7 +462,7 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
         }
 
         // Destroy stale group nodes that were not reused during insertion
-        this.destroyStaleGroups(groupsById);
+        _destroyForVisibleRows(this.beans, 'reset', () => this.destroyStaleGroups(groupsById));
     }
 
     /** Remove and destroy group nodes that were not reused (still have childrenAfterGroup === null) */

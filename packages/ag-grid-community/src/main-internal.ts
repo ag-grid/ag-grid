@@ -27,7 +27,6 @@ export type {
     _PivotGridApi,
     _RowGroupingGridApi,
     _ServerSideRowModelGridApi,
-    _ServerSideRowModelVisibleRowsGridApi,
     _SideBarGridApi,
     _StatusBarGridApi,
     _ToolbarGridApi,
@@ -468,6 +467,7 @@ export type { ExpressionService } from './valueService/expressionService';
 export type { ValueCache } from './valueService/valueCache';
 export type { ValueService } from './valueService/valueService';
 export { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
+export { _destroyForVisibleRows } from './visibleRows/visibleRowsUtils';
 export { Component } from './widgets/component';
 export type { AgComponentSelectorType, ComponentEvent, ComponentSelector } from './widgets/component';
 export * from './widgets/gridWidgetTypes';

@@ -110,12 +110,6 @@
                     "ssrmBundled": true
                 },
                 {
-                    "moduleName": "ServerSideRowModelVisibleRowsModule",
-                    "name": "Server Side Visible Rows Subscription",
-                    "path": "server-side-model-updating-visible-rows",
-                    "isEnterprise": true
-                },
-                {
                     "moduleName": "ViewportRowModelModule",
                     "name": "Viewport Row Model",
                     "path": "viewport",
@@ -561,6 +555,11 @@
                     "moduleName": "ClientSideRowModelApiModule",
                     "name": "Client-Side Row Model API",
                     "path": "grid-api/#reference-data"
+                },
+                {
+                    "moduleName": "VisibleRowsModule",
+                    "name": "Visible Rows",
+                    "path": "data-update-visible-rows"
                 },
                 {
                     "moduleName": "ServerSideRowModelApiModule",

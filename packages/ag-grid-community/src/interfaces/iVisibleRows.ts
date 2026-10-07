@@ -7,11 +7,14 @@ import type { AgGridCommon } from './iCommon';
  * - `'load'`: rows appeared in the view without scrolling, for example when their block finished loading.
  * - `'expand'`: rows shown by expanding a group.
  * - `'collapse'`: rows hidden, or brought into view, by collapsing a group.
- * - `'reset'`: rows dropped because their level was purged or the grid's rows were reset.
+ * - `'sort'`: rows moved into or out of the view by a sort that kept them in the grid.
+ * - `'filter'`: rows filtered in or out, or moved into or out of the view by a filter.
+ * - `'reset'`: rows dropped because the grid's rows were reset, for example by new row data, a purge or regrouping.
  * - `'remove'`: rows no longer in the grid, for example removed by a transaction or a refresh.
  * - `'stop'`: the subscription was stopped or the grid was destroyed.
  */
-export type VisibleRowsReason = 'initial' | 'scroll' | 'load' | 'expand' | 'collapse' | 'reset' | 'remove' | 'stop';
+export type VisibleRowsReason =
+    'initial' | 'scroll' | 'load' | 'expand' | 'collapse' | 'sort' | 'filter' | 'reset' | 'remove' | 'stop';
 
 /** Identifies a row passed to `subscribeToVisibleRows` handlers. Captured when the row was subscribed. */
 export interface VisibleRowRef {
@@ -19,10 +22,10 @@ export interface VisibleRowRef {
     id: string;
     /**
      * The keys from the top level down to and including this row.
-     * Only set for group rows (and tree data rows with children), which have a key.
+     * Set for rows that have a key: group rows, and every row in tree data. Not set for rows in flat data or leaf rows under groups.
      */
     route?: string[];
-    /** The keys of the parent groups, from the top level down. Empty for top-level rows. */
+    /** The keys of the parent groups, from the top level down. Empty for top-level rows and for rows in flat data. */
     parentKeys: string[];
     /** The row's level in the hierarchy. Top-level rows are level 0. */
     level: number;

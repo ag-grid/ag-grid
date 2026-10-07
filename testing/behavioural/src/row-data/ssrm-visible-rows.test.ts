@@ -9,79 +9,18 @@ import {
     waitForNoLoadingRows,
 } from 'ag-test-utils';
 
-import type {
-    GridApi,
-    GridOptions,
-    IServerSideDatasource,
-    IServerSideGetRowsParams,
-    VisibleRowRef,
-    VisibleRowsHandlers,
-    VisibleRowsReason,
-} from 'ag-grid-community';
-import { ScrollApiModule } from 'ag-grid-community';
-import {
-    RowGroupingModule,
-    ServerSideRowModelApiModule,
-    ServerSideRowModelModule,
-    ServerSideRowModelVisibleRowsModule,
-} from 'ag-grid-enterprise';
+import type { GridApi, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
+import { ScrollApiModule, VisibleRowsModule } from 'ag-grid-community';
+import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-interface Call {
-    type: 'subscribe' | 'unsubscribe';
-    reason: VisibleRowsReason;
-    ids: string[];
-}
-
-/** Records handler calls and checks that every subscribed row is unsubscribed exactly once. */
-function createRecorder(onCall?: (call: Call) => void) {
-    const subscribed = new Map<string, VisibleRowRef>();
-    const calls: Call[] = [];
-    const violations: string[] = [];
-
-    const handlers: VisibleRowsHandlers = {
-        onSubscribe(rows, params) {
-            for (const row of rows) {
-                if (subscribed.has(row.id)) {
-                    violations.push(`subscribed twice: ${row.id}`);
-                }
-                subscribed.set(row.id, row);
-            }
-            const call: Call = { type: 'subscribe', reason: params.reason, ids: rows.map((r) => r.id) };
-            calls.push(call);
-            onCall?.(call);
-        },
-        onUnsubscribe(rows, params) {
-            for (const row of rows) {
-                if (!subscribed.delete(row.id)) {
-                    violations.push(`unsubscribed without subscribe: ${row.id}`);
-                }
-            }
-            const call: Call = { type: 'unsubscribe', reason: params.reason, ids: rows.map((r) => r.id) };
-            calls.push(call);
-            onCall?.(call);
-        },
-    };
-
-    return {
-        handlers,
-        subscribed,
-        calls,
-        violations,
-        ids: () => Array.from(subscribed.keys()).sort((a, b) => a.localeCompare(b, undefined, { numeric: true })),
-        reasons: (type: Call['type']) => calls.filter((c) => c.type === type && c.ids.length).map((c) => c.reason),
-    };
-}
-
-function range(from: number, to: number): string[] {
-    return Array.from({ length: to - from + 1 }, (_, i) => String(from + i));
-}
+import { createRecorder, range } from './visibleRowsTestUtils';
 
 describe('SSRM subscribeToVisibleRows', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ServerSideRowModelModule,
             ServerSideRowModelApiModule,
-            ServerSideRowModelVisibleRowsModule,
+            VisibleRowsModule,
             ScrollApiModule,
             RowGroupingModule,
         ],
@@ -357,7 +296,8 @@ describe('SSRM subscribeToVisibleRows', () => {
         api.applyColumnState({ state: [{ colId: 'value', sort: 'desc' }] });
 
         await waitFor(() => expect(recorder.ids()).toEqual(range(14, 19)));
-        expect(recorder.reasons('unsubscribe')).toEqual(['scroll']);
+        expect(recorder.reasons('unsubscribe')).toEqual(['sort']);
+        expect(recorder.reasons('subscribe')).toEqual(['initial', 'sort']);
         expect(recorder.violations).toEqual([]);
     });
 
@@ -456,7 +396,7 @@ describe('SSRM subscribeToVisibleRows', () => {
         const api = await createFlatGrid({ getRowId: undefined });
         const recorder = createRecorder();
 
-        expect(() => api.subscribeToVisibleRows(recorder.handlers)).toThrow('warning #188');
+        expect(() => api.subscribeToVisibleRows(recorder.handlers)).toThrow('warning #336');
         expect(recorder.calls).toEqual([]);
     });
 

@@ -9,7 +9,7 @@ import type {
     RowGroupExpansionState,
     RowGroupOpenedEvent,
 } from 'ag-grid-community';
-import { RowNode, _getRowHeightForNode } from 'ag-grid-community';
+import { RowNode, _destroyForVisibleRows, _getRowHeightForNode } from 'ag-grid-community';
 
 import { BaseExpansionService } from '../../rowHierarchy/baseExpansionService';
 import type { ServerSideRowModel } from '../serverSideRowModel';
@@ -17,7 +17,6 @@ import type { StoreFactory } from '../stores/storeFactory';
 import { ExpandStrategy } from './expansion/strategies/defaultStrategy';
 import { ExpandAllStrategy } from './expansion/strategies/expandAllStrategy';
 import type { IExpansionStrategy } from './expansion/strategies/iExpansionStrategy';
-import { _destroyForVisibleRows } from './ssrmVisibleRowsDestroy';
 
 /**
  * Service for managing row expansion in the server-side row model.

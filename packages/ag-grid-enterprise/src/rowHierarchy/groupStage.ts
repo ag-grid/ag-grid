@@ -187,6 +187,8 @@ export class GroupStage<TData> extends BeanStub implements NamedBean, _IRowNodeG
             return null;
         }
         if (strategy) {
+            // The old strategy's group rows leave the grid with it, so destroy them rather than orphan them.
+            strategy.clearNonLeafs();
             this.strategy = this.destroyBean(strategy);
             this.needReset = true;
         }

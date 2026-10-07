@@ -157,6 +157,7 @@ import type { ChangeDetectionService } from '../valueService/changeDetectionServ
 import type { ExpressionService } from '../valueService/expressionService';
 import type { ValueCache } from '../valueService/valueCache';
 import type { ValueService } from '../valueService/valueService';
+import type { VisibleRowsService } from '../visibleRows/visibleRowsService';
 import type { PopupService } from '../widgets/popupService';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -346,6 +347,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     globalListener: AgGlobalEventListener;
     globalSyncListener: AgGlobalEventListener;
     stateSvc?: StateService;
+    visibleRowsSvc?: VisibleRowsService;
     overlays?: OverlayService;
     errorOverlay?: ErrorOverlayService;
     issueEvents?: IssueEventService;
@@ -481,7 +483,6 @@ type UntypedBeanNames =
     | 'ssrmSortSvc'
     | 'ssrmStoreFactory'
     | 'ssrmStoreUtils'
-    | 'ssrmVisibleRowsSvc'
     | 'statusBarSvc'
     | 'testIdSvc'
     | 'toolbarMenuBuilder'

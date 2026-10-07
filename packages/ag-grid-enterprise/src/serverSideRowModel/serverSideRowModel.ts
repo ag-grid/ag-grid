@@ -34,6 +34,7 @@ import {
     ROOT_NODE_ID,
     RowNode,
     _addRowHeightChangedListener,
+    _destroyForVisibleRows,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
     _getSortModel,
@@ -42,7 +43,6 @@ import {
 } from 'ag-grid-community';
 
 import type { NodeManager } from './nodeManager';
-import { _destroyForVisibleRows } from './services/ssrmVisibleRowsDestroy';
 import type { LazyStore } from './stores/lazy/lazyStore';
 import type { StoreFactory } from './stores/storeFactory';
 

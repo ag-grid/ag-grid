@@ -1,16 +1,15 @@
 ---
-title: "SSRM Subscribing to Visible Rows"
-enterprise: true
+title: "Visible Rows"
 ---
 
-When a server streams live updates to the grid, it is wasteful to send updates for rows the user cannot see. `subscribeToVisibleRows` tells your application which rows to subscribe to, and which to unsubscribe from, as loaded rows enter and leave the view.
+When a server streams live updates to the grid, it is wasteful to send updates for rows the user cannot see. `subscribeToVisibleRows` tells your application which rows to subscribe to, and which to unsubscribe from, as rows enter and leave the view.
 
-{% apiDocumentation source="grid-api/api.json" section="serverSideRowModel" names=["subscribeToVisibleRows"] /%}
+{% apiDocumentation source="grid-api/api.json" section="displayedRows" names=["subscribeToVisibleRows"] /%}
 
-Subscribing to visible rows requires the `ServerSideRowModelVisibleRowsModule`.
+Subscribing to visible rows requires the `VisibleRowsModule`, and is supported by the [Client-Side Row Model](./row-models/#client-side) and the [Server-Side Row Model](./server-side-model/) {% enterpriseIcon /%}. With any other row model the grid logs a warning and returns a stop function that does nothing.
 
 {% note %}
-Visible Rows requires [Row IDs](./server-side-model-configuration/#providing-row-ids). Without `getRowId` the grid logs a warning and returns a stop function that does nothing.
+Visible Rows requires [Row IDs](./row-ids/). Without `getRowId` the grid logs a warning and returns a stop function that does nothing.
 {% /note %}
 
 ## Handlers
@@ -32,10 +31,16 @@ stop();
 ```
 
 - `onSubscribe` receives `VisibleRow` objects, which include the row `data` and whether the row is a `group`.
-- `onUnsubscribe` receives `VisibleRowRef` objects, which hold only the `id`, `parentKeys`, `level` and, for group rows, the `route`. These are captured when the row is subscribed, as the row node may no longer exist when it is unsubscribed.
+- `onUnsubscribe` receives `VisibleRowRef` objects, which hold only the `id`, `parentKeys`, `level` and, for rows that have a key, the `route`. These are captured when the row is subscribed, as the row node may no longer exist when it is unsubscribed.
 - Every subscribed row is unsubscribed exactly once, including when the subscription is stopped or the grid is destroyed.
 - Within a batch, all `onUnsubscribe` calls are made before any `onSubscribe` calls. A batch can produce several calls, one for each reason.
 - `onSubscribe` is called synchronously with `reason: 'initial'`, with an empty array if no rows are visible yet.
+
+### Routes and Parent Keys
+
+- In flat data, `parentKeys` is empty and `route` is not set.
+- With row grouping, a group row's `route` holds the group keys down to and including the group, and `parentKeys` the keys of the groups above it. Leaf rows have `parentKeys` but no `route`.
+- With tree data, every row has a key, so `route` is the row's data path and `parentKeys` the path of its parent.
 
 {% interfaceDocumentation interfaceName="VisibleRowRef" config={ "description": "" } /%}
 
@@ -47,18 +52,20 @@ stop();
 
 The `reason` in the params describes why a batch of rows was passed.
 
-| Reason     | Meaning                                                                                                                                                                                                                         |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `initial`  | The rows already visible when the subscription started. Called synchronously, and may be empty.                                                                                                                                 |
-| `scroll`   | For `onSubscribe`, rows that entered the view because the user scrolled or changed page. For `onUnsubscribe`, rows that left the view while still in the grid, by scrolling, paging or being pushed out by rows inserted above. |
-| `load`     | Rows that appeared in place for any other reason: a block finished loading, rows were reloaded after a purge, or rows moved into view because rows above were removed or the row count changed.                                 |
-| `expand`   | Rows shown by expanding a group.                                                                                                                                                                                                |
-| `collapse` | Rows hidden by collapsing a group, and rows revealed by the collapse.                                                                                                                                                           |
-| `reset`    | Rows dropped by a purge, such as `refreshServerSide({ purge: true })`, a sort or filter that reloads rows, a change of row grouping or pivot, or a new datasource.                                                              |
-| `remove`   | Rows no longer in the grid, such as rows removed by a transaction, including the children of a removed group, or by a refresh that does not purge.                                                                              |
-| `stop`     | The stop function was called or the grid was destroyed. When the grid is destroyed, this runs while the API is still usable.                                                                                                    |
+| Reason     | Meaning                                                                                                                                                                                                                                       |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `initial`  | The rows already visible when the subscription started. Called synchronously, and may be empty.                                                                                                                                               |
+| `scroll`   | For `onSubscribe`, rows that entered the view because the user scrolled or changed page. For `onUnsubscribe`, rows that left the view while still in the grid, by scrolling, paging or being pushed out by rows inserted above.               |
+| `load`     | Rows that appeared in place for any other reason, such as new row data, a block that finished loading or rows that moved into view because rows above were removed.                                                                           |
+| `expand`   | Rows shown by expanding a group.                                                                                                                                                                                                              |
+| `collapse` | Rows hidden by collapsing a group, and rows revealed by the collapse.                                                                                                                                                                         |
+| `sort`     | Rows moved into or out of the view by a sort that kept them in the grid.                                                                                                                                                                      |
+| `filter`   | Rows filtered in or out, and rows moved into or out of the view by a filter.                                                                                                                                                                  |
+| `reset`    | Rows dropped because the grid's rows were reset, such as by new row data, a change of row grouping or pivot, a Server-Side purge (`refreshServerSide({ purge: true })`), a server-side sort or filter that reloads rows, or a new datasource. |
+| `remove`   | Rows no longer in the grid, such as rows removed by a transaction, including the children of a removed group, or by a Server-Side refresh that does not purge.                                                                                |
+| `stop`     | The stop function was called or the grid was destroyed. When the grid is destroyed, this runs while the API is still usable.                                                                                                                  |
 
-Rows that survive a sort or filter, for example with `serverSideEnableClientSideSort` when all rows are loaded, remain subscribed.
+New row data keeps the rows whose IDs are still present, so only the dropped rows are reset. With the Server-Side Row Model, rows that survive a sort or filter, for example with `serverSideEnableClientSideSort` when all rows are loaded, are reported with `sort` or `filter`.
 
 If a group is collapsed and its rows are then purged or removed before the handlers are next called, those rows are reported as `reset` or `remove` rather than `collapse`.
 
@@ -68,7 +75,7 @@ Only loaded rows in view are passed to the handlers. The following rows are neve
 
 - Loading placeholder rows and rows that failed to load.
 - Pinned rows.
-- Detail rows.
+- Detail rows and [Full Width Rows](./full-width-rows/).
 - Group total (footer) rows and the grand total row.
 
 ## Options
@@ -87,18 +94,30 @@ api.subscribeToVisibleRows(handlers, {
 });
 ```
 
-## Example
+## Examples
+
+### Client-Side Row Model
+
+The example below streams price updates to the subscribed rows only, using [Async Transactions](./data-update-high-frequency/).
+
+- The panel shows the number of subscribed rows, and a log of the latest batches with their reason and row count.
+- Scrolling, sorting and filtering produce subscribe and unsubscribe batches.
+- **New Row Data** replaces every row. The old rows are unsubscribed with the `reset` reason, and the new rows subscribed with the `load` reason.
+- **Stop** stops the stream and the subscription, unsubscribing all remaining rows with the `stop` reason.
+
+{% gridExampleRunner title="Visible Rows with the Client-Side Row Model" name="client-side-visible-rows" exampleHeight=615 /%}
+
+### Server-Side Row Model {% enterpriseIcon /%}
 
 The example below groups rows by country and uses a simulated stream that only updates subscribed rows.
 
-- The panel shows the number of subscribed rows, and a log of the latest batches with their reason and row count.
 - Scrolling, expanding groups and loading new blocks produce subscribe and unsubscribe batches.
 - **Purge** reloads all rows. The old rows are unsubscribed with the `reset` reason, and the new rows subscribed as they load.
 - **Stop** stops the stream and the subscription, unsubscribing all remaining rows with the `stop` reason.
 
-{% gridExampleRunner title="Subscribing to Visible Rows" name="visible-rows-subscription" exampleHeight=615 /%}
+{% gridExampleRunner title="Visible Rows with the Server-Side Row Model" name="server-side-visible-rows" exampleHeight=615 /%}
 
 ## Caveats
 
 - Sticky group rows whose index is above the visible range are unsubscribed.
-- During a refresh that does not purge, rows can be unsubscribed and then subscribed again.
+- During a Server-Side refresh that does not purge, rows can be unsubscribed and then subscribed again.

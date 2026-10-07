@@ -145,7 +145,6 @@ type InternalModuleName =
     | 'PinnedColumn'
     | 'Popup'
     | 'QuickFilterCore'
-    | 'ServerSideRowModelVisibleRowsCore'
     | 'SharedAggregation'
     | 'SharedColumnStateUpdateStrategy'
     | 'SharedDragAndDrop'
@@ -211,7 +210,8 @@ export type CommunityModuleName =
     | 'UndoRedoEdit'
     | 'Validation'
     | 'ValueCache'
-    | 'CellSpan';
+    | 'CellSpan'
+    | 'VisibleRows';
 
 export type EnterpriseModuleName =
     | 'AdvancedFilter'
@@ -244,7 +244,6 @@ export type EnterpriseModuleName =
     | 'RowGroupingPanel'
     | 'ServerSideRowModelApi'
     | 'ServerSideRowModel'
-    | 'ServerSideRowModelVisibleRows'
     | 'SetFilter'
     | 'ShowValuesAs'
     | 'SideBar'
@@ -308,6 +307,7 @@ export type AgModuleName =
     | 'ValidationModule'
     | 'ValueCacheModule'
     | 'CellSpanModule'
+    | 'VisibleRowsModule'
     // Enterprise
     | 'AdvancedFilterModule'
     | 'AllEnterpriseModule'
@@ -338,7 +338,6 @@ export type AgModuleName =
     | 'RowGroupingPanelModule'
     | 'ServerSideRowModelApiModule'
     | 'ServerSideRowModelModule'
-    | 'ServerSideRowModelVisibleRowsModule'
     | 'SetFilterModule'
     | 'ShowValuesAsModule'
     | 'SideBarModule'
