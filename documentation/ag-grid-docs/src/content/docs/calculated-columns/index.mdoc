@@ -74,11 +74,9 @@ The dialog manages calculated columns inside the grid without mutating the `colu
 
 Grid State also captures user edits to, and removals of, calculated columns declared in `columnDefs`, and re-applies them over the declared definitions on restore — so a stored state takes precedence over a changed declaration.
 
-This also applies if a declared column has since been marked `calculatedColumnReadOnly: true`. Restoring state still applies saved edits and removals; the read-only setting prevents new changes through the grid UI, not application-driven state restoration.
-
 ## Read-Only Calculated Columns
 
-Set `calculatedColumnReadOnly: true` to let users view a calculated column's definition without editing or removing it through the grid UI.
+Set `calculatedColumnReadOnly: true` to prevent users from editing or removing a calculated column through the grid UI. Users can still choose **View Calculated Column** to inspect its title, type and expression. **Remove Calculated Column** is disabled.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -96,15 +94,13 @@ const gridOptions = {
 };
 ```
 
-The column menu shows **View Calculated Column** instead of **Edit Calculated Column**, including custom menus using the `editCalculatedColumn` item. The dialog shows the title, type and expression in read-only fields, without insertion pickers or Apply/Cancel buttons. If the expression is blocked by [`isColumnReferenceable`](#iscolumnreferenceable), the dialog also shows its validation error. **Remove Calculated Column** remains visible but disabled in both the column menu and cell context menu.
-
-In this example, **Gross Margin** is read-only, while **Profit** can be edited. Users can still choose **Add Calculated Column** from either column's menu to create their own editable columns.
+In the example, **Gross Margin** is read-only, while **Profit** can be edited. Users can still add their own calculated columns.
 
 {% gridExampleRunner title="Read-Only Calculated Columns" name="calculated-columns-read-only" /%}
 
-Changing `columnDefs` can still update or remove a read-only column. Setting `calculatedColumnReadOnly: false` restores editing and removal through the UI. If the setting changes while the column's dialog is open, the dialog closes: committed live edits are kept, but pending live edits and deferred drafts are discarded.
-
-You can use `defaultColDef.calculatedColumnReadOnly` for application-declared columns. Dialog-created columns remain editable regardless of this default, including after Grid State restoration. This setting does not stop calculation or prevent sorting, filtering, moving or hiding the column.
+{% note %}
+This setting restricts UI changes only: updating `columnDefs` and restoring [Grid State](./grid-state/) can still change or remove the column. Columns created through the dialog remain editable, even when `defaultColDef.calculatedColumnReadOnly` is `true`.
+{% /note %}
 
 ## Dialog Options
 
