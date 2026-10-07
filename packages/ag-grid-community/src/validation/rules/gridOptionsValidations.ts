@@ -171,6 +171,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
         gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'RowSelection',
     rowStyle: 'RowStyle',
     serverSideDatasource: 'ServerSideRowModel',
+    serverSideMergeAsyncTransactions: 'ServerSideRowModelMergeTransactions',
     sideBar: 'SideBar',
     statusBar: 'StatusBar',
     treeData: (_options, gridOptions) =>

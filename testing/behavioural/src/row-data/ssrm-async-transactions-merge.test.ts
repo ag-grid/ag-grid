@@ -3,7 +3,12 @@ import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { GridApi, GridOptions, ServerSideTransaction, ServerSideTransactionResult } from 'ag-grid-community';
 import { ScrollApiModule } from 'ag-grid-community';
-import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import {
+    RowGroupingModule,
+    ServerSideRowModelApiModule,
+    ServerSideRowModelMergeTransactionsModule,
+    ServerSideRowModelModule,
+} from 'ag-grid-enterprise';
 
 interface Row {
     id: string | number;
@@ -18,7 +23,13 @@ interface Outcome {
 
 describe('SSRM merged async transactions', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ServerSideRowModelApiModule, ScrollApiModule, ServerSideRowModelModule, RowGroupingModule],
+        modules: [
+            ServerSideRowModelApiModule,
+            ScrollApiModule,
+            ServerSideRowModelModule,
+            ServerSideRowModelMergeTransactionsModule,
+            RowGroupingModule,
+        ],
     });
 
     afterEach(() => {
@@ -135,9 +146,13 @@ describe('SSRM merged async transactions', () => {
         expect(api.getDisplayedRowCount()).toBe(INITIAL.length);
     });
 
-    test('a transaction rejected by isApplyServerSideTransaction is cancelled while the others merge', async () => {
+    test('isApplyServerSideTransaction sees the state at the start of the flush, and rejected transactions are left out', async () => {
+        const seenValues: string[] = [];
         const api = await createFlatGrid(true, {
-            isApplyServerSideTransaction: (params) => params.transaction.update?.[0]?.value !== 'rejected',
+            isApplyServerSideTransaction: (params) => {
+                seenValues.push(params.api.getRowNode('1')!.data.value);
+                return params.transaction.update?.[0]?.value !== 'rejected';
+            },
         });
         const outcome = await applyAsync(api, [
             { update: [NEW(1, 'first')] },
@@ -145,6 +160,7 @@ describe('SSRM merged async transactions', () => {
             { update: [NEW(1, 'last')], add: [NEW(50, 'added')] },
         ]);
 
+        expect(seenValues).toEqual(['Row 1', 'Row 1', 'Row 1']);
         expect(outcome.results.map((r) => r.status)).toEqual(['Applied', 'Cancelled', 'Applied']);
         expect(api.getRowNode('1')!.data).toEqual(NEW(1, 'last'));
         expect(api.getRowNode('50')!.data).toEqual(NEW(50, 'added'));
@@ -203,5 +219,88 @@ describe('SSRM merged async transactions', () => {
         expect(merged.results.map((r) => r.status)).toEqual(['Applied', 'Applied', 'Applied', 'Applied', 'Applied']);
         expect(merged.flushedResultsLength).toBe(transactions.length);
         expect(merged.rows.map((r) => r.id)).not.toContain('group-UK');
+    });
+
+    test('client-side sorting keeps the order of tied rows that applying the transactions in turn gives', async () => {
+        const run = async (merge: boolean) => {
+            const api = gridsManager.createGrid(null, {
+                columnDefs: [{ field: 'id' }, { field: 'value', sort: 'asc' }],
+                rowModelType: 'serverSide',
+                serverSideMergeAsyncTransactions: merge,
+                serverSideEnableClientSideSort: true,
+                getRowId: (params) => String(params.data.id),
+                serverSideDatasource: {
+                    getRows: (params) => {
+                        params.success({ rowData: [NEW('A', '1'), NEW('B', '2')], rowCount: 2 });
+                    },
+                },
+            });
+            await waitForEvent('firstDataRendered', api);
+            return applyAsync(api, [{ update: [NEW('A', '3')] }, { update: [NEW('A', '2')] }]);
+        };
+
+        const sequential = await run(false);
+        gridsManager.reset();
+        const merged = await run(true);
+
+        expect(sequential.rows.map((r) => r.id)).toEqual(['B', 'A']);
+        expect(merged.rows).toEqual(sequential.rows);
+    });
+
+    test('tree data: an update that turns a group into a leaf still applies after earlier child transactions', async () => {
+        const ROOT = [
+            { id: 'p', group: true, name: 'P' },
+            { id: 'q', group: false, name: 'Q' },
+        ];
+        const CHILDREN = [{ id: 'c1', group: false, name: 'C1' }];
+        const transactions: ServerSideTransaction[] = [
+            { update: [{ ...ROOT[1], name: 'Q 2' }] },
+            { route: ['p'], update: [{ ...CHILDREN[0], name: 'C1 2' }] },
+            { update: [{ ...ROOT[0], group: false }] },
+        ];
+
+        const run = async (merge: boolean) => {
+            const api = gridsManager.createGrid(null, {
+                columnDefs: [{ field: 'name' }],
+                rowModelType: 'serverSide',
+                treeData: true,
+                serverSideMergeAsyncTransactions: merge,
+                isServerSideGroup: (data) => data.group,
+                getServerSideGroupKey: (data) => data.id,
+                getRowId: (params) => params.data.id,
+                serverSideDatasource: {
+                    getRows: (params) => {
+                        const rowData = params.request.groupKeys.length === 0 ? ROOT : CHILDREN;
+                        params.success({ rowData, rowCount: rowData.length });
+                    },
+                },
+            });
+            await waitForEvent('firstDataRendered', api);
+            api.setRowNodeExpanded(api.getRowNode('p')!, true);
+            await waitForNoLoadingRows(api);
+            return applyAsync(api, transactions);
+        };
+
+        const sequential = await run(false);
+        gridsManager.reset();
+        const merged = await run(true);
+
+        const updatedIds = (outcome: Outcome) => outcome.results.map((r) => r.update?.map((node) => node.id));
+        expect(updatedIds(sequential)).toEqual([['q'], ['c1'], ['p']]);
+        expect(updatedIds(merged)).toEqual(updatedIds(sequential));
+        expect(merged.rows).toEqual(sequential.rows);
+    });
+
+    test('reports the missing module when the option is enabled without it', () => {
+        const createGrid = () =>
+            new TestGridsManager({ modules: [ServerSideRowModelApiModule, ServerSideRowModelModule] }).createGrid(
+                null,
+                {
+                    rowModelType: 'serverSide',
+                    serverSideMergeAsyncTransactions: true,
+                }
+            );
+
+        expect(createGrid).toThrow(/ServerSideRowModelMergeTransactionsModule/);
     });
 });

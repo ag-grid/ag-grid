@@ -1553,9 +1553,10 @@ export interface Props<TData> {
          * @agModule `ServerSideRowModelModule`
          */
     serverSideEnableClientSideSort?: boolean,
-    /** When enabled, async transactions queued within `asyncTransactionWaitMillis` are merged so that each row is changed at most once per flush, with the same result as applying them one after the other.
+    /** When enabled, async transactions queued within `asyncTransactionWaitMillis` are merged so that each row is changed at most once per flush, with the same result as applying them one after the other. Merging is skipped when `serverSideEnableClientSideSort` is enabled.
+         * `isApplyServerSideTransaction` is called for every queued transaction before any of them are applied, so it sees the grid state from the start of the flush.
          * @default false
-         * @agModule `ServerSideRowModelModule`
+         * @agModule `ServerSideRowModelMergeTransactionsModule`
          */
     serverSideMergeAsyncTransactions?: boolean,
     /** When enabled, only refresh groups directly impacted by a filter. This property only applies when there is Row Grouping & filtering is handled on the server.
@@ -2015,7 +2016,8 @@ export interface Props<TData> {
          * @agModule `ServerSideRowModelModule`
          */
     isServerSideGroupOpenByDefault?: IsServerSideGroupOpenByDefault<TData>,
-    /** Allows cancelling transactions.
+    /** Called before each server-side transaction is applied to a route's store, for both sync and async transactions. Return `false` to cancel the transaction: it is not applied and its result status is `Cancelled`. Use this to discard transactions already reflected in the loaded data, for example by comparing a version stored in `groupLevelInfo`.
+         * When `serverSideMergeAsyncTransactions` is enabled, it is called for every queued async transaction before any of them are applied, so it sees the grid state from the start of the flush.
          * @agModule `ServerSideRowModelModule`
          */
     isApplyServerSideTransaction?: IsApplyServerSideTransaction<TData>,

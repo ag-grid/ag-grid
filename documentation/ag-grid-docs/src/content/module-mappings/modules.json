@@ -500,6 +500,12 @@
                     "moduleName": "ValueCacheModule",
                     "name": "Value Cache",
                     "path": "value-cache"
+                },
+                {
+                    "moduleName": "ServerSideRowModelMergeTransactionsModule",
+                    "name": "Server-Side Async Transaction Merging",
+                    "path": "server-side-model-updating-transactions/#merging-async-transactions",
+                    "isEnterprise": true
                 }
             ]
         },

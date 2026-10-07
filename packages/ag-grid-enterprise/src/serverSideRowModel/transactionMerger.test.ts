@@ -210,8 +210,11 @@ describe('_applyMergedTransactions', () => {
 });
 
 describe('_groupTransactionsByRoute', () => {
-    const indexes = (transactions: ServerSideTransaction[]) =>
-        _groupTransactionsByRoute(transactions).map((group) => [group.route, group.indexes]);
+    const removes = (tx: ServerSideTransaction) => !!tx.remove?.length;
+    const indexes = (
+        transactions: ServerSideTransaction[],
+        canChangeChildStores: (tx: ServerSideTransaction) => boolean = removes
+    ) => _groupTransactionsByRoute(transactions, canChangeChildStores).map((group) => [group.route, group.indexes]);
 
     it('groups interleaved routes in first-seen order', () => {
         expect(
@@ -236,6 +239,24 @@ describe('_groupTransactionsByRoute', () => {
             [['g'], [1]],
             [undefined, [2]],
             [['g'], [3]],
+        ]);
+    });
+
+    it('starts new groups when an update that can change child stores follows transactions for child routes', () => {
+        const transactions: ServerSideTransaction[] = [
+            { update: [row('a')] },
+            { route: ['g'], update: [row('b')] },
+            { update: [row('g')] },
+        ];
+
+        expect(indexes(transactions)).toEqual([
+            [undefined, [0, 2]],
+            [['g'], [1]],
+        ]);
+        expect(indexes(transactions, (tx) => removes(tx) || !!tx.update?.length)).toEqual([
+            [undefined, [0]],
+            [['g'], [1]],
+            [undefined, [2]],
         ]);
     });
 

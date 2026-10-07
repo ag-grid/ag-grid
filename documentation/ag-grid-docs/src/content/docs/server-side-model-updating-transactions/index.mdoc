@@ -107,7 +107,7 @@ In the example below, note the following:
 
 ### Merging Async Transactions
 
-Streaming sources such as WebSockets often send many changes for the same few rows. By default the grid applies each queued transaction separately, so a row updated many times in one window is processed many times. Enable `serverSideMergeAsyncTransactions` to have the grid merge the queued transactions for each route, so each row is changed at most once.
+Streaming sources such as WebSockets often send many changes for the same few rows. By default the grid applies each queued transaction separately, so a row updated many times in one window is processed many times. Enable `serverSideMergeAsyncTransactions` and register `ServerSideRowModelMergeTransactionsModule` to have the grid merge the queued transactions for each route, so each row is changed at most once.
 
 {% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["serverSideMergeAsyncTransactions"] /%}
 
@@ -118,7 +118,11 @@ Merging gives the same rows and data as applying the transactions one after the 
 - An add followed by a remove cancels out, and the row is never created.
 - An update followed by a remove becomes a remove.
 
-Transactions that set `addIndex` or `rowCount` are applied on their own, in order. `isApplyServerSideTransaction` is still called once for each transaction, and each callback passed to `applyServerSideTransactionAsync` receives a result containing only the nodes for its own rows.
+Transactions that set `addIndex` or `rowCount` are applied on their own, in order. Each callback passed to `applyServerSideTransactionAsync` receives a result containing only the nodes for its own rows.
+
+`isApplyServerSideTransaction` is still called once for each transaction, and a transaction it rejects is left out of the merge. It is called for every queued transaction before any of them are applied, so it sees the grid state from the start of the flush rather than after the transactions before it.
+
+Merging is skipped when `serverSideEnableClientSideSort` is enabled, as each transaction re-sorts the rows.
 
 ## Showcase Example
 

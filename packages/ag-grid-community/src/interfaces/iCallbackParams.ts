@@ -287,11 +287,11 @@ export interface IsServerSideGroupOpenByDefaultParams<TData = any, TContext = an
 }
 
 export interface IsApplyServerSideTransactionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /** The transaction getting applied. */
+    /** The transaction about to be applied. */
     transaction: ServerSideTransaction;
-    /** The parent RowNode, if transaction is applied to a group. */
+    /** The parent row node of the route the transaction is applied to. For the top level, this is the root node. */
     parentNode: IRowNode;
-    /** Store info, if any, as passed via the success() callback when loading data. */
+    /** The `groupLevelInfo` passed to `params.success()` when the rows for this route were loaded. */
     groupLevelInfo: any;
 }
 

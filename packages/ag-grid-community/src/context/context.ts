@@ -481,6 +481,7 @@ type UntypedBeanNames =
     | 'ssrmSortSvc'
     | 'ssrmStoreFactory'
     | 'ssrmStoreUtils'
+    | 'ssrmTxnMerger'
     | 'statusBarSvc'
     | 'testIdSvc'
     | 'toolbarMenuBuilder'

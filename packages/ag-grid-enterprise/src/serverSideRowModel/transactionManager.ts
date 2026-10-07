@@ -11,7 +11,7 @@ import { BeanStub, ServerSideTransactionResultStatus } from 'ag-grid-community';
 import type { ServerSideRowModel } from './serverSideRowModel';
 import type { ServerSideSelectionService } from './services/serverSideSelectionService';
 import type { LazyStore } from './stores/lazy/lazyStore';
-import { _groupTransactionsByRoute } from './transactionMerger';
+import type { TransactionMergeService } from './transactionMergeService';
 
 interface AsyncTransactionWrapper {
     transaction: ServerSideTransaction;
@@ -24,11 +24,13 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
     private valueCache?: ValueCache;
     private serverSideRowModel: ServerSideRowModel;
     private selectionSvc?: ServerSideSelectionService;
+    private txnMerger?: TransactionMergeService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueCache = beans.valueCache;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.selectionSvc = beans.selectionSvc as ServerSideSelectionService;
+        this.txnMerger = beans.ssrmTxnMerger as TransactionMergeService | undefined;
     }
 
     private asyncTransactionsTimeout: number | undefined;
@@ -63,9 +65,10 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
         let atLeastOneTransactionApplied = false;
 
         const queued = this.asyncTransactions;
-        const mergedResults = this.gos.get('serverSideMergeAsyncTransactions')
-            ? this.applyTransactionsMerged(queued)
-            : undefined;
+        const mergedResults = this.txnMerger?.applyTransactions(
+            queued.map((txWrapper) => txWrapper.transaction),
+            (route, count, apply) => this.applyOnStore(route, count, apply)
+        );
 
         // the queue can grow while it is applied, and transactions added late are applied on their own
         for (let i = 0; i < queued.length; ++i) {
@@ -118,22 +121,6 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
 
     private applyTransactionOnStore(transaction: ServerSideTransaction): ServerSideTransactionResult {
         return this.applyOnStore(transaction.route, 1, (store) => [store.applyTransaction(transaction)])[0];
-    }
-
-    private applyTransactionsMerged(queued: AsyncTransactionWrapper[]): ServerSideTransactionResult[] {
-        const results: ServerSideTransactionResult[] = new Array(queued.length);
-        const groups = _groupTransactionsByRoute(queued.map((txWrapper) => txWrapper.transaction));
-        for (let i = 0, len = groups.length; i < len; ++i) {
-            const { route, indexes } = groups[i];
-            const transactions = indexes.map((index) => queued[index].transaction);
-            const groupResults = this.applyOnStore(route, transactions.length, (store) =>
-                store.applyTransactionsMerged(transactions)
-            );
-            for (let j = 0, groupLen = indexes.length; j < groupLen; ++j) {
-                results[indexes[j]] = groupResults[j];
-            }
-        }
-        return results;
     }
 
     /** @returns `count` results, from `apply` when the store exists */

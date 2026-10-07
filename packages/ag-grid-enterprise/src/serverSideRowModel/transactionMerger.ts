@@ -250,11 +250,14 @@ export interface RouteTransactionGroup {
 }
 
 /**
- * Groups transactions by route, keeping groups in the order their routes first appear. A transaction that
- * removes rows from a route starts new groups for that route if any of its descendant routes have pending
- * transactions, so a group row is not removed before transactions queued earlier for its children.
+ * Groups transactions by route, keeping groups in the order their routes first appear. When
+ * `canChangeChildStores` holds for a transaction and any of its descendant routes have pending transactions,
+ * new groups are started for its route and those descendants, so the earlier child transactions still apply first.
  */
-export function _groupTransactionsByRoute(transactions: ServerSideTransaction[]): RouteTransactionGroup[] {
+export function _groupTransactionsByRoute(
+    transactions: ServerSideTransaction[],
+    canChangeChildStores: (transaction: ServerSideTransaction) => boolean
+): RouteTransactionGroup[] {
     const groups: RouteTransactionGroup[] = [];
     const openGroups = new Map<string, { keys: string[]; group: RouteTransactionGroup }>();
 
@@ -264,7 +267,7 @@ export function _groupTransactionsByRoute(transactions: ServerSideTransaction[])
         const keys = (route ?? []).map(String);
         const routeKey = JSON.stringify(keys);
 
-        if (transaction.remove?.length) {
+        if (canChangeChildStores(transaction)) {
             let closedDescendant = false;
             for (const [openKey, open] of openGroups) {
                 if (isDescendantRoute(open.keys, keys)) {
