@@ -174,6 +174,7 @@ function findNextDefinedStop(colorStops: AgGradientColorStop[], from: number): n
     return colorStops.length - 1;
 }
 
+/** Templates emit only absolute M/L/Z paths, so the numbers in `d` are x/y pairs. */
 function getShapeBBox(shape: MiniChartSvgShape): BBox {
     const attrs = shape.attrs;
     const coords =
