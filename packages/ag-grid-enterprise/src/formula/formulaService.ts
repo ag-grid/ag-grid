@@ -796,6 +796,9 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         const blocked = address.column.isCalculatedCol && getCalculatedExpressionError(address.column.colDef);
         if (blocked) {
             // reject before traversing dependencies, including when another formula reads this column
+            if (blocked.reason === 'customValidation') {
+                throw new FormulaError(blocked.messages.join('; '), '#ERROR!');
+            }
             throw new FormulaError(getRestrictedReferenceMessage(this.getLocaleTextFunc(), blocked.reference), '#REF!');
         }
         // unresolvedDeps only yields formula cells, so cache must exist.
