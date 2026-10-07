@@ -343,7 +343,9 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
         if (isUnderCollapsedGroup(this.gos, node)) {
             return 'collapse';
         }
-        return node.rowIndex == null ? 'remove' : 'scroll';
+        // A refresh can keep a replaced row alive, with its old index, until the refresh finishes.
+        const index = node.rowIndex;
+        return index != null && this.beans.rowModel.getRow(index) === node ? 'scroll' : 'remove';
     }
 
     private getSubscribeReason(node: RowNode, sub: VisibleRowsSubscription): VisibleRowsReason {

@@ -13,6 +13,7 @@ import type {
     GridApi,
     GridOptions,
     IServerSideDatasource,
+    IServerSideGetRowsParams,
     VisibleRowRef,
     VisibleRowsHandlers,
     VisibleRowsReason,
@@ -408,6 +409,46 @@ describe('SSRM subscribeToVisibleRows', () => {
         await waitFor(() => expect(recorder.ids()).toEqual(range(80, 85)));
         const everSubscribed = recorder.calls.filter((c) => c.type === 'subscribe').flatMap((c) => c.ids);
         expect(everSubscribed.filter((id) => range(50, 55).includes(id))).toEqual([]);
+        expect(recorder.violations).toEqual([]);
+    });
+
+    test('a row replaced by a refresh while another block still loads is unsubscribed with reason remove', async () => {
+        let rows = Array.from({ length: 20 }, (_, i) => ({ id: String(i), value: i }));
+        let deferred = false;
+        const pending: IServerSideGetRowsParams[] = [];
+        const respond = (params: IServerSideGetRowsParams) => {
+            const { startRow = 0, endRow = 0 } = params.request;
+            params.success({ rowData: rows.slice(startRow, endRow), rowCount: rows.length });
+        };
+        const api = await createFlatGrid({
+            cacheBlockSize: 3,
+            serverSideDatasource: { getRows: (params) => (deferred ? pending.push(params) : respond(params)) },
+        });
+        await waitForNoLoadingRows(api);
+        const recorder = createRecorder();
+        api.subscribeToVisibleRows(recorder.handlers);
+        expect(recorder.ids()).toEqual(range(0, 5));
+
+        rows = rows.map((row) => (row.id === '1' ? { id: 'x1', value: 100 } : row));
+        deferred = true;
+        api.refreshServerSide({ purge: false });
+        await waitFor(() => expect(pending.some((p) => p.request.startRow === 0)).toBe(true));
+
+        // The first block replaces row 1 while the other blocks are still refreshing.
+        respond(
+            pending.splice(
+                pending.findIndex((p) => p.request.startRow === 0),
+                1
+            )[0]
+        );
+        await waitFor(() => expect(recorder.subscribed.has('x1')).toBe(true));
+        expect(recorder.calls.filter((c) => c.type === 'unsubscribe')).toEqual([
+            { type: 'unsubscribe', reason: 'remove', ids: ['1'] },
+        ]);
+
+        deferred = false;
+        pending.splice(0).forEach(respond);
+        await waitForNoLoadingRows(api);
         expect(recorder.violations).toEqual([]);
     });
 
