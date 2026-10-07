@@ -352,6 +352,24 @@ describe('CSRM subscribeToVisibleRows', () => {
         expect(recorder.violations).toEqual([]);
     });
 
+    test('a row that is only partly visible because of a fractional row height is subscribed', async () => {
+        // With 1px rows, the number of visible rows is the viewport height.
+        const probe = await createFlatGrid({ rowHeight: 1 }, 1000);
+        const probeRecorder = createRecorder();
+        probe.subscribeToVisibleRows(probeRecorder.handlers);
+        const viewportHeight = probeRecorder.subscribed.size;
+        gridsManager.reset();
+
+        // Row 1 then starts half a pixel above the bottom edge of the viewport.
+        const api = await createFlatGrid({
+            getRowHeight: (params) => (params.data.id === '0' ? viewportHeight - 0.5 : 42),
+        });
+        const recorder = createRecorder();
+        api.subscribeToVisibleRows(recorder.handlers);
+
+        expect(recorder.ids()).toEqual(['0', '1']);
+    });
+
     test('without getRowId it warns and never calls the handlers', async () => {
         const api = await createFlatGrid({ getRowId: undefined });
         const recorder = createRecorder();

@@ -405,8 +405,13 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
             return [0, -1];
         }
         first = Math.max(first, rowModel.getRowIndexAtPixel(top));
-        // The scroll position can be fractional, so the last row is the one containing the last whole pixel in view.
-        last = Math.min(last, rowModel.getRowIndexAtPixel(Math.ceil(bottom) - 1));
+        // Scroll positions and row heights can be fractional, so check where the row at the bottom edge starts.
+        let lastVisible = rowModel.getRowIndexAtPixel(bottom);
+        const rowTop = rowModel.getRow(lastVisible)?.rowTop;
+        if (lastVisible > first && rowTop != null && rowTop >= bottom) {
+            lastVisible--;
+        }
+        last = Math.min(last, lastVisible);
         return [first, last];
     }
 
