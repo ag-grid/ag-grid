@@ -392,6 +392,25 @@ describe('SSRM subscribeToVisibleRows', () => {
         expect(recorder.violations).toEqual([]);
     });
 
+    test('a scroll from inside onUnsubscribe does not subscribe the rows it scrolled away from', async () => {
+        const api = await createFlatGrid();
+        let scrolled = false;
+        const recorder = createRecorder((call) => {
+            if (call.type === 'unsubscribe' && call.reason === 'scroll' && !scrolled) {
+                scrolled = true;
+                api.ensureIndexVisible(80, 'top');
+            }
+        });
+        api.subscribeToVisibleRows(recorder.handlers);
+
+        api.ensureIndexVisible(50, 'top');
+
+        await waitFor(() => expect(recorder.ids()).toEqual(range(80, 85)));
+        const everSubscribed = recorder.calls.filter((c) => c.type === 'subscribe').flatMap((c) => c.ids);
+        expect(everSubscribed.filter((id) => range(50, 55).includes(id))).toEqual([]);
+        expect(recorder.violations).toEqual([]);
+    });
+
     test('without getRowId it warns and never calls the handlers', async () => {
         const api = await createFlatGrid({ getRowId: undefined });
         const recorder = createRecorder();
@@ -517,6 +536,63 @@ describe('SSRM subscribeToVisibleRows', () => {
                 { type: 'unsubscribe', reason: 'remove', ids: ['Ireland'] },
             ]);
             expect(recorder.violations).toEqual([]);
+        });
+
+        describe('a group collapsed and then destroyed before the next batch', () => {
+            const irelandRows = range(0, 4).map((i) => `Ireland/Ireland-${i}`);
+
+            async function subscribeWithIrelandExpanded(options: GridOptions = {}) {
+                const api = createGroupedGrid(options);
+                await waitForNoLoadingRows(api);
+                api.setRowNodeExpanded(api.getRowNode('Ireland')!, true);
+                await waitForNoLoadingRows(api);
+                const recorder = createRecorder();
+                api.subscribeToVisibleRows(recorder.handlers);
+                expect(recorder.ids()).toEqual(['Ireland', ...irelandRows]);
+                return { api, recorder };
+            }
+
+            const unsubscribeCalls = (recorder: ReturnType<typeof createRecorder>) =>
+                recorder.calls.filter((c) => c.type === 'unsubscribe');
+
+            test('a purge of its rows labels them reset', async () => {
+                const { api, recorder } = await subscribeWithIrelandExpanded();
+
+                api.setRowNodeExpanded(api.getRowNode('Ireland')!, false);
+                api.refreshServerSide({ route: ['Ireland'], purge: true });
+
+                await waitFor(() => expect(recorder.ids()).toEqual(['France', 'Ireland', 'Spain']));
+                expect(unsubscribeCalls(recorder)).toEqual([
+                    { type: 'unsubscribe', reason: 'reset', ids: irelandRows },
+                ]);
+                expect(recorder.violations).toEqual([]);
+            });
+
+            test('a transaction removing the group labels it and its rows remove', async () => {
+                const { api, recorder } = await subscribeWithIrelandExpanded();
+
+                api.setRowNodeExpanded(api.getRowNode('Ireland')!, false);
+                api.applyServerSideTransaction({ remove: [{ country: 'Ireland' }] });
+
+                await waitFor(() => expect(recorder.ids()).toEqual(['France', 'Spain']));
+                expect(unsubscribeCalls(recorder)).toEqual([
+                    { type: 'unsubscribe', reason: 'remove', ids: ['Ireland', ...irelandRows] },
+                ]);
+                expect(recorder.violations).toEqual([]);
+            });
+
+            test('purgeClosedRowNodes still labels the rows it destroys on collapse as collapse', async () => {
+                const { api, recorder } = await subscribeWithIrelandExpanded({ purgeClosedRowNodes: true });
+
+                api.setRowNodeExpanded(api.getRowNode('Ireland')!, false);
+
+                await waitFor(() => expect(recorder.ids()).toEqual(['France', 'Ireland', 'Spain']));
+                expect(api.getRowNode('Ireland/Ireland-0')).toBeUndefined();
+                expect(unsubscribeCalls(recorder)).toEqual([
+                    { type: 'unsubscribe', reason: 'collapse', ids: irelandRows },
+                ]);
+                expect(recorder.violations).toEqual([]);
+            });
         });
 
         test('group total rows and the grand total row are left out', async () => {

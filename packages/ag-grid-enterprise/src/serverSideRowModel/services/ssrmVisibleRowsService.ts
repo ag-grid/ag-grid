@@ -39,6 +39,9 @@ interface VisibleRowsSubscription {
 
 type RowsByReason<T> = Map<VisibleRowsReason, T[]>;
 
+/** Why the grid destroyed a row, when it was not removed, e.g. by a transaction. */
+export type VisibleRowsDestroyReason = Extract<VisibleRowsReason, 'reset' | 'collapse'>;
+
 const UNSUBSCRIBE_ORDER: VisibleRowsReason[] = ['reset', 'remove', 'collapse', 'scroll'];
 const SUBSCRIBE_ORDER: VisibleRowsReason[] = ['expand', 'collapse', 'load', 'scroll'];
 
@@ -46,9 +49,9 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
     beanName = 'ssrmVisibleRowsSvc' as const;
 
     private readonly subscriptions = new Set<VisibleRowsSubscription>();
-    /** Rows destroyed by a purge or reset, as opposed to a removal, e.g. by a transaction. */
-    private readonly resetRows = new WeakSet<RowNode>();
-    private resetDepth = 0;
+    /** Rows destroyed by a purge, reset or collapse, as opposed to a removal, e.g. by a transaction. */
+    private readonly destroyedRowReasons = new WeakMap<RowNode, VisibleRowsDestroyReason>();
+    private destroyReason: VisibleRowsDestroyReason | undefined;
 
     public postConstruct(): void {
         const markAllDirty = () => this.markAllDirty(false);
@@ -113,20 +116,21 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
         return () => this.stop(sub);
     }
 
-    /** Rows destroyed while `destroy` runs, including those in child stores, are reported with reason `reset`. */
-    public runAsReset(destroy: () => void): void {
-        this.resetDepth++;
+    /** Rows destroyed while `destroy` runs, including those in child stores, are reported with `reason`. */
+    public runDestroying(reason: VisibleRowsDestroyReason, destroy: () => void): void {
+        const previous = this.destroyReason;
+        this.destroyReason = reason;
         try {
             destroy();
         } finally {
-            this.resetDepth--;
+            this.destroyReason = previous;
         }
     }
 
     /** Called by a store cache before it destroys one of its rows. */
     public onRowDestroying(node: RowNode): void {
-        if (this.resetDepth > 0) {
-            this.resetRows.add(node);
+        if (this.destroyReason) {
+            this.destroyedRowReasons.set(node, this.destroyReason);
         }
     }
 
@@ -253,11 +257,13 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
             if (!nodes || sub.stopped) {
                 continue;
             }
+            // An earlier handler can have scrolled the grid or changed the model.
+            const [first, last] = this.getRange(sub);
             const rows: VisibleRow[] = [];
             for (let i = 0, len = nodes.length; i < len; ++i) {
                 const node = nodes[i];
-                if (!this.isDisplayed(node)) {
-                    // An earlier handler changed the model; the next flush picks up what replaced this row.
+                if (!this.isVisible(node, first, last)) {
+                    // The next flush picks up whatever is visible now.
                     rescheduleNeeded = true;
                     continue;
                 }
@@ -276,9 +282,15 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
         }
     }
 
-    private isDisplayed(node: RowNode): boolean {
+    private isVisible(node: RowNode, first: number, last: number): boolean {
         const index = node.rowIndex;
-        return !node.destroyed && index != null && this.beans.rowModel.getRow(index) === node;
+        return (
+            !node.destroyed &&
+            index != null &&
+            index >= first &&
+            index <= last &&
+            this.beans.rowModel.getRow(index) === node
+        );
     }
 
     private getRange(sub: VisibleRowsSubscription): [number, number] {
@@ -316,11 +328,11 @@ export class SsrmVisibleRowsService extends BeanStub implements NamedBean {
     }
 
     private getUnsubscribeReason(node: RowNode): VisibleRowsReason {
+        if (node.destroyed) {
+            return this.destroyedRowReasons.get(node) ?? 'remove';
+        }
         if (isUnderCollapsedGroup(node)) {
             return 'collapse';
-        }
-        if (node.destroyed) {
-            return this.resetRows.has(node) ? 'reset' : 'remove';
         }
         return node.rowIndex == null ? 'remove' : 'scroll';
     }

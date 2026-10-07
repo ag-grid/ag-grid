@@ -17,6 +17,7 @@ import type { StoreFactory } from '../stores/storeFactory';
 import { ExpandStrategy } from './expansion/strategies/defaultStrategy';
 import { ExpandAllStrategy } from './expansion/strategies/expandAllStrategy';
 import type { IExpansionStrategy } from './expansion/strategies/iExpansionStrategy';
+import { _destroyForVisibleRows } from './ssrmVisibleRowsDestroy';
 
 /**
  * Service for managing row expansion in the server-side row model.
@@ -217,7 +218,9 @@ export class ServerSideExpansionService
                 rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
             }
         } else if (oldChildStore && this.gos.get('purgeClosedRowNodes')) {
-            rowNode.childStore = this.destroyBean(oldChildStore)!;
+            _destroyForVisibleRows(this.beans, 'collapse', () => {
+                rowNode.childStore = this.destroyBean(oldChildStore)!;
+            });
         }
     }
 

@@ -60,6 +60,8 @@ The `reason` in the params describes why a batch of rows was passed.
 
 Rows that survive a sort or filter, for example with `serverSideEnableClientSideSort` when all rows are loaded, remain subscribed.
 
+If a group is collapsed and its rows are then purged or removed before the handlers are next called, those rows are reported as `reset` or `remove` rather than `collapse`.
+
 ## Which Rows Are Included
 
 Only loaded rows in view are passed to the handlers. The following rows are never passed:
