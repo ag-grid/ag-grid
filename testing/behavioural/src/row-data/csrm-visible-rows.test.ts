@@ -311,6 +311,26 @@ describe('CSRM subscribeToVisibleRows', () => {
         expect(recorder.violations).toEqual([]);
     });
 
+    test('redrawing a row that becomes full width unsubscribes it, and subscribes it again when it stops being full width', async () => {
+        const api = await createFlatGrid({
+            isFullWidthRow: (params) => !!params.rowNode.data?.fullWidth,
+            fullWidthCellRenderer: () => 'full width',
+        });
+        const recorder = createRecorder();
+        api.subscribeToVisibleRows(recorder.handlers);
+        expect(recorder.ids()).toEqual(range(0, 5));
+
+        const node = api.getRowNode('2')!;
+        node.updateData({ ...node.data, fullWidth: true });
+        api.redrawRows({ rowNodes: [node] });
+        await waitFor(() => expect(recorder.ids()).toEqual(['0', '1', '3', '4', '5']));
+
+        node.updateData({ ...node.data, fullWidth: false });
+        api.redrawRows({ rowNodes: [node] });
+        await waitFor(() => expect(recorder.ids()).toEqual(range(0, 5)));
+        expect(recorder.violations).toEqual([]);
+    });
+
     test('without getRowId it warns and never calls the handlers', async () => {
         const api = await createFlatGrid({ getRowId: undefined });
         const recorder = createRecorder();

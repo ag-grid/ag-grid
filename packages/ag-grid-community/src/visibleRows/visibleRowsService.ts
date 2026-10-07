@@ -3,7 +3,13 @@ import { _areEqual, _requestAnimationFrame } from 'ag-stack';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { RowNode } from '../entities/rowNode';
-import type { BodyScrollEvent, ExpandOrCollapseAllEvent, PaginationChangedEvent, RowGroupOpenedEvent } from '../events';
+import type {
+    BodyScrollEvent,
+    DisplayedRowsChangedEvent,
+    ExpandOrCollapseAllEvent,
+    PaginationChangedEvent,
+    RowGroupOpenedEvent,
+} from '../events';
 import {
     _addGridCommonParams,
     _getRowIdCallback,
@@ -67,6 +73,12 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
         this.addManagedEventListeners({
             modelUpdated: markAllDirty,
             viewportChanged: markAllDirty,
+            // A partial redraw can change whether a row is full width, without a model or viewport change.
+            displayedRowsChanged: (event: DisplayedRowsChangedEvent) => {
+                if (!event.afterScroll) {
+                    this.markAllDirty(false);
+                }
+            },
             // Without virtualisation the rendered rows can stay the same while the visible pixel range changes.
             bodyHeightChanged: () => this.onScroll(false),
             paginationChanged: (event: PaginationChangedEvent) => {
