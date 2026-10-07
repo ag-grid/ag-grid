@@ -7,6 +7,7 @@ import type { AgGridCommon } from './iCommon';
  * - `'load'`: rows appeared in the view without scrolling, for example when their block finished loading.
  * - `'expand'`: rows shown by expanding a group.
  * - `'collapse'`: rows hidden, or brought into view, by collapsing a group.
+ * - `'move'`: a row moved to another parent, for example by a transaction changing its group. Passed to `onUnsubscribe` with its old `parentKeys` and `route`, then to `onSubscribe` with the new ones.
  * - `'sort'`: rows moved into or out of the view by a sort that kept them in the grid.
  * - `'filter'`: rows filtered in or out, or moved into or out of the view by a filter.
  * - `'reset'`: rows dropped because the grid's rows were reset, for example by new row data, a purge or regrouping.
@@ -14,7 +15,7 @@ import type { AgGridCommon } from './iCommon';
  * - `'stop'`: the subscription was stopped or the grid was destroyed.
  */
 export type VisibleRowsReason =
-    'initial' | 'scroll' | 'load' | 'expand' | 'collapse' | 'sort' | 'filter' | 'reset' | 'remove' | 'stop';
+    'initial' | 'scroll' | 'load' | 'expand' | 'collapse' | 'move' | 'sort' | 'filter' | 'reset' | 'remove' | 'stop';
 
 /** Identifies a row passed to `subscribeToVisibleRows` handlers. Captured when the row was subscribed. */
 export interface VisibleRowRef {

@@ -397,6 +397,25 @@ describe('CSRM subscribeToVisibleRows', () => {
             expect(recorder.violations).toEqual([]);
         });
 
+        test('a transaction that moves a visible row to another group reports it with reason move', async () => {
+            const rowData = ['Ireland', 'Spain'].flatMap((country) =>
+                [0, 1].map((i) => ({ id: `${country}-${i}`, country, value: i }))
+            );
+            const api = await createGroupedGrid({ rowData, groupDefaultExpanded: -1 });
+            const recorder = createRecorder();
+            api.subscribeToVisibleRows(recorder.handlers);
+            expect(recorder.subscribed.get('Ireland-1')).toMatchObject({ parentKeys: ['Ireland'] });
+
+            api.applyTransaction({ update: [{ id: 'Ireland-1', country: 'Spain', value: 1 }] });
+
+            await waitFor(() => expect(recorder.subscribed.get('Ireland-1')).toMatchObject({ parentKeys: ['Spain'] }));
+            expect(recorder.calls.slice(1)).toEqual([
+                { type: 'unsubscribe', reason: 'move', ids: ['Ireland-1'] },
+                { type: 'subscribe', reason: 'move', ids: ['Ireland-1'] },
+            ]);
+            expect(recorder.violations).toEqual([]);
+        });
+
         test('removing the grouping unsubscribes the group rows with reason reset', async () => {
             const api = await createGroupedGrid();
             const recorder = createRecorder();
@@ -437,5 +456,16 @@ describe('CSRM subscribeToVisibleRows', () => {
             level: 2,
         });
         expect(recorder.subscribed.get('a')).toMatchObject({ route: ['A'], parentKeys: [], level: 0 });
+
+        api.applyTransaction({ update: [{ id: 'c', path: ['A', 'C'], value: 3 }] });
+
+        await waitFor(() =>
+            expect(recorder.subscribed.get('c')).toMatchObject({ route: ['A', 'C'], parentKeys: ['A'], level: 1 })
+        );
+        expect(recorder.calls.filter((c) => c.reason === 'move')).toEqual([
+            { type: 'unsubscribe', reason: 'move', ids: ['c'] },
+            { type: 'subscribe', reason: 'move', ids: ['c'] },
+        ]);
+        expect(recorder.violations).toEqual([]);
     });
 });

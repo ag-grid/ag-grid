@@ -1,4 +1,4 @@
-import { _requestAnimationFrame } from 'ag-stack';
+import { _areEqual, _requestAnimationFrame } from 'ag-stack';
 
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -51,8 +51,8 @@ type RowsByReason<T> = Map<VisibleRowsReason, T[]>;
 /** Why the grid destroyed a row, when it was not removed, e.g. by a transaction. */
 export type VisibleRowsDestroyReason = Extract<VisibleRowsReason, 'reset' | 'collapse'>;
 
-const UNSUBSCRIBE_ORDER: VisibleRowsReason[] = ['reset', 'remove', 'collapse', 'filter', 'sort', 'scroll'];
-const SUBSCRIBE_ORDER: VisibleRowsReason[] = ['expand', 'collapse', 'filter', 'sort', 'load', 'scroll'];
+const UNSUBSCRIBE_ORDER: VisibleRowsReason[] = ['reset', 'remove', 'move', 'collapse', 'filter', 'sort', 'scroll'];
+const SUBSCRIBE_ORDER: VisibleRowsReason[] = ['expand', 'collapse', 'move', 'filter', 'sort', 'load', 'scroll'];
 
 export class VisibleRowsService extends BeanStub implements NamedBean {
     beanName = 'visibleRowsSvc' as const;
@@ -261,22 +261,27 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
             }
         });
 
-        const added: RowsByReason<RowNode> = new Map();
-        visible.forEach((node, id) => {
-            const existing = sub.rows.get(id);
-            if (existing?.node !== node) {
-                addToReason(added, this.getSubscribeReason(node, sub), node);
-            } else {
-                // Taken before any handler runs, so a sort or filter a handler applies is seen by the next flush.
-                existing.index = node.rowIndex;
-            }
-        });
-
         // Read before the pending flags below are cleared.
         const removedReasons = new Map<SubscribedRow, VisibleRowsReason>();
         for (const row of removed) {
             removedReasons.set(row, this.getMovedReason(row, sub));
         }
+
+        const added: RowsByReason<RowNode> = new Map();
+        visible.forEach((node, id) => {
+            const existing = sub.rows.get(id);
+            if (existing?.node !== node) {
+                addToReason(added, this.getSubscribeReason(node, sub), node);
+            } else if (hasMovedParent(existing.ref, node)) {
+                // A transaction moved the row to another parent, so its captured ref is out of date.
+                removed.push(existing);
+                removedReasons.set(existing, 'move');
+                addToReason(added, 'move', node);
+            } else {
+                // Taken before any handler runs, so a sort or filter a handler applies is seen by the next flush.
+                existing.index = node.rowIndex;
+            }
+        });
 
         sub.expandedGroups.clear();
         sub.expandAllPending = false;
@@ -479,6 +484,14 @@ function isUnderCollapsedGroup(node: RowNode): boolean {
         parent = parent.parent;
     }
     return false;
+}
+
+function hasMovedParent(ref: VisibleRowRef, node: RowNode): boolean {
+    return (
+        ref.level !== node.level ||
+        !_areEqual(ref.parentKeys, node.parent?.getRoute() ?? []) ||
+        !_areEqual(ref.route, node.getRoute())
+    );
 }
 
 function hasAncestorIn(node: RowNode, groups: Set<RowNode>): boolean {
