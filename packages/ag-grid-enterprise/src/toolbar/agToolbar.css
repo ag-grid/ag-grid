@@ -44,7 +44,6 @@
     line-height: 1;
     white-space: nowrap;
     outline: none;
-    border-radius: 1px;
 }
 
 :where(.ag-toolbar-button) .ag-icon {
@@ -77,12 +76,14 @@
 
 /* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-toolbar > .ag-toolbar-button-wrapper:first-child > .ag-toolbar-button {
-    border-start-start-radius: calc(var(--ag-border-radius) + 1px);
+    /* Ensure that the centre point of the radius is the same as the grid corner radius so that they line up nicely  */
+    border-start-start-radius: calc(var(--ag-wrapper-border-radius) - var(--ag-border-width));
 }
 
 /* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-toolbar > .ag-toolbar-button-wrapper:last-child > .ag-toolbar-button {
-    border-start-end-radius: calc(var(--ag-border-radius) + 1px);
+    /* Ensure that the centre point of the radius is the same as the grid corner radius so that they line up nicely  */
+    border-start-end-radius: calc(var(--ag-wrapper-border-radius) - var(--ag-border-width));
 }
 
 .ag-toolbar-panel {
