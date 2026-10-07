@@ -206,6 +206,29 @@ describe('CSRM subscribeToVisibleRows', () => {
         expect(recorder.violations).toEqual([]);
     });
 
+    test('a sort from inside onUnsubscribe reports the rows it moves out of view with reason sort', async () => {
+        const api = await createFlatGrid({ columnDefs: [{ field: 'value', sortable: true }] });
+        let sorted = false;
+        const recorder = createRecorder((call) => {
+            if (call.type === 'unsubscribe' && call.reason === 'scroll' && !sorted) {
+                sorted = true;
+                api.applyColumnState({ state: [{ colId: 'value', sort: 'desc' }] });
+            }
+        });
+        api.subscribeToVisibleRows(recorder.handlers);
+
+        // Rows 3 to 5 stay in view, then the sort in the handler moves them out.
+        api.ensureIndexVisible(3, 'top');
+
+        await waitFor(() => expect(recorder.ids()).toEqual(range(91, 96)));
+        const unsubscribed = recorder.calls.filter((c) => c.type === 'unsubscribe');
+        expect(unsubscribed).toEqual([
+            { type: 'unsubscribe', reason: 'scroll', ids: range(0, 2) },
+            { type: 'unsubscribe', reason: 'sort', ids: range(3, 5) },
+        ]);
+        expect(recorder.violations).toEqual([]);
+    });
+
     test('a filter hides rows and brings others into view with reason filter', async () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();

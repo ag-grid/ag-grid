@@ -266,6 +266,9 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
             const existing = sub.rows.get(id);
             if (existing?.node !== node) {
                 addToReason(added, this.getSubscribeReason(node, sub), node);
+            } else {
+                // Taken before any handler runs, so a sort or filter a handler applies is seen by the next flush.
+                existing.index = node.rowIndex;
             }
         });
 
@@ -330,10 +333,6 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
                 sub.handlers.onSubscribe(rows, this.createParams(reason));
             }
         }
-
-        sub.rows.forEach((row) => {
-            row.index = row.node.rowIndex;
-        });
 
         if (rescheduleNeeded) {
             this.schedule(sub);
