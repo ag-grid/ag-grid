@@ -360,8 +360,8 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
             const rows: VisibleRow[] = [];
             for (let i = 0, len = nodes.length; i < len; ++i) {
                 const node = nodes[i];
-                if (!this.isVisible(node, first, last)) {
-                    // The next flush picks up whatever is visible now.
+                if (!this.isVisible(node, first, last) || !this.isSubscribable(node, sub.includeGroups)) {
+                    // The next flush picks up whatever is visible and subscribable now.
                     rescheduleNeeded = true;
                     continue;
                 }
@@ -405,7 +405,8 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
             return [0, -1];
         }
         first = Math.max(first, rowModel.getRowIndexAtPixel(top));
-        last = Math.min(last, rowModel.getRowIndexAtPixel(bottom - 1));
+        // The scroll position can be fractional, so the last row is the one containing the last whole pixel in view.
+        last = Math.min(last, rowModel.getRowIndexAtPixel(Math.ceil(bottom) - 1));
         return [first, last];
     }
 
