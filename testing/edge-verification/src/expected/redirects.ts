@@ -53,6 +53,9 @@ const status = (from: string, code: number, refs: string[], extra: Partial<Redir
 
 const Q = '?utm_source=edge-check';
 
+/** The ref for the old PHP-era archive rows: the alarm they caused, not an SE ticket. */
+const OLD_PHP_ARCHIVES = 'ag-grid-lb1-target-5xx alarm, 2026-10-07';
+
 /** New archive builds get the fix from grid#15434 / #15435; already-deployed archives only from the migration. */
 const ARCHIVE_FIX = `${PENDING.gridArchiveRedirects} for new archive builds; ${PENDING.archiveMigration} for deployed ones`;
 
@@ -547,6 +550,25 @@ export const REDIRECTS: RedirectRow[] = [
     ),
     status(`${WWW}/blog/robots.txt`, 404, ['SE-188']),
     status(`${WWW}/blog/public/ghost.css`, 200, ['SE-188'], { note: 'live theme asset must not be caught' }),
+
+    // ---- old PHP-era grid archives (15.0.0-26.2.0) ---------------------------------------------
+    // Their Jira-backed pages, the Jira code and the include fragments returned 500 and tripped
+    // ag-grid-lb1-target-5xx on 2026-10-07 when crawled. features-overview/ was fixed in place.
+    r(`${WWW}/archive/24.0.0/ag-grid-changelog/`, `${WWW}/changelog/`, [OLD_PHP_ARCHIVES], {
+        pending: PENDING.legacyPhpArchives,
+    }),
+    r(`${WWW}/archive/24.0.0/ag-grid-pipeline/`, `${WWW}/pipeline/`, [OLD_PHP_ARCHIVES], {
+        pending: PENDING.legacyPhpArchives,
+    }),
+    status(`${WWW}/archive/24.0.0/jira_reports/jira_utilities.php`, 410, [OLD_PHP_ARCHIVES], {
+        pending: PENDING.legacyPhpArchives,
+    }),
+    status(`${WWW}/archive/21.2.2/getting-started/footer.php`, 410, [OLD_PHP_ARCHIVES], {
+        pending: PENDING.legacyPhpArchives,
+    }),
+    status(`${WWW}/archive/24.0.0/features-overview/`, 200, [OLD_PHP_ARCHIVES], {
+        note: 'PHP short tags rewritten in place on both web hosts, 2026-10-07',
+    }),
 
     // ---- misc --------------------------------------------------------------------------------
     status(`${WWW}/studio/r/theming/`, 200, ['SE-164']),

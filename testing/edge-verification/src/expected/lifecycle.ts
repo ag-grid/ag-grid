@@ -21,6 +21,8 @@ export const NEW_FINDING = (what: string): string => `${FIRST_RUN}: ${what} (not
 
 /** Pending changes, named once so every expectation that depends on one cites it identically. */
 export const PENDING = {
+    legacyPhpArchives:
+        'grid#15508 / #15509 (old PHP-era archives 15.0.0-26.2.0: changelog and pipeline pages redirect to the live ones; jira_reports/ and the getting-started fragments 410)',
     gridArchiveMarkdown: 'grid#15434 / #15435 (archive markdown negotiation, release-candidate archives uncached)',
     gridVaryHtml: 'grid#15434 / #15435 (Vary: Accept on HTML incl. DirectoryIndex)',
     gridArchiveRedirects: 'grid#15434 / #15435 (archive .htaccess redirects stay inside the archive)',
