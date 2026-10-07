@@ -2,7 +2,7 @@ import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, asyncSetTimeou
 import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { GridApi, GridOptions, ServerSideTransaction, ServerSideTransactionResult } from 'ag-grid-community';
-import { ScrollApiModule, enableDevValidations } from 'ag-grid-community';
+import { GRAND_TOTAL_ROW_ID, ScrollApiModule, enableDevValidations } from 'ag-grid-community';
 import {
     RowGroupingModule,
     ServerSideRowModelApiModule,
@@ -664,8 +664,21 @@ describe('SSRM merged async transactions', () => {
         expect(merged.rows).toEqual(sequential.rows);
     });
 
-    test('removing an uncached row next to a cached removal requests no more blocks than applying them in turn', async () => {
-        const rowData = Array.from({ length: 300 }, (_, i) => ({ id: i, value: `Row ${i}` }));
+    const BLOCK_ROWS = Array.from({ length: 300 }, (_, i) => ({ id: i, value: `Row ${i}` }));
+    const ROW = (id: number) => BLOCK_ROWS[id];
+
+    // blocks 0 and 2 are loaded, so removing a row from block 0 shifts the rows after the gap
+    test.each<[string, ServerSideTransaction[]]>([
+        ['an uncached removal, then a cached one', [{ remove: [ROW(150)] }, { remove: [ROW(0)] }]],
+        [
+            'a removal cancelling an add with an uncached id, then a cached removal',
+            [{ add: [{ id: 1000, value: 'new' }] }, { remove: [{ id: 1000 }, ROW(150)] }, { remove: [ROW(5)] }],
+        ],
+        [
+            'a removal of the last row with an uncached id, then a cached removal',
+            [{ remove: [ROW(299), ROW(150)] }, { remove: [ROW(5)] }],
+        ],
+    ])('requests no more blocks than applying the transactions in turn: %s', async (_name, transactions) => {
         const run = async (merge: boolean) => {
             let requests = 0;
             const api = gridsManager.createGrid(null, {
@@ -680,8 +693,8 @@ describe('SSRM merged async transactions', () => {
                 serverSideDatasource: {
                     getRows: (params) => {
                         requests++;
-                        const rows = rowData.slice(params.request.startRow, params.request.endRow);
-                        params.success({ rowData: rows, rowCount: rowData.length });
+                        const rows = BLOCK_ROWS.slice(params.request.startRow, params.request.endRow);
+                        params.success({ rowData: rows, rowCount: BLOCK_ROWS.length });
                     },
                 },
             });
@@ -694,7 +707,7 @@ describe('SSRM merged async transactions', () => {
             expect(api.getRowNode('150')).toBeUndefined();
 
             const before = requests;
-            await applyAsync(api, [{ remove: [rowData[150]] }, { remove: [rowData[0]] }]);
+            await applyAsync(api, transactions);
             await new GridRows(api).check('skip-snapshot');
             // block load checks are queued with a zero-delay timeout, and the datasource responds synchronously
             await asyncSetTimeout(0);
@@ -716,6 +729,7 @@ describe('SSRM merged async transactions', () => {
             { update: [NEW(1, 'b')], add: [NEW(50, 'added')] },
             { update: [NEW(50, 'updated')] },
             { remove: [NEW(2, 'x')] },
+            { update: [NEW(3, 'before total'), NEW(GRAND_TOTAL_ROW_ID, 'total')] },
         ];
         const queuedRows = new Set(
             transactions.flatMap((tx) => [...(tx.update ?? []), ...(tx.add ?? []), ...(tx.remove ?? [])])

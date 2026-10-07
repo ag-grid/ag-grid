@@ -44,13 +44,19 @@ export function _applyMergedTransactions(
         if (planned.length === 0) {
             return;
         }
-        const batch = new MergeBatch();
+        let batch = new MergeBatch();
         for (let i = 0, len = planned.length; i < len; ++i) {
             const { index, entries } = planned[i];
-            if (target.isAccepted(transactions[index])) {
-                batch.accept(index, entries, target);
-            } else {
+            const transaction = transactions[index];
+            if (!target.isAccepted(transaction)) {
                 results[index] = { status: ServerSideTransactionResultStatus.Cancelled };
+            } else if (batch.mixesCachedAndUncachedRemoves(entries, target)) {
+                // a removal that misses some ids and deletes others marks rows for refresh, so it must stay a call of its own
+                batch.apply(transactions, target, results);
+                batch = new MergeBatch();
+                results[index] = target.apply(transaction, getRowIds(entries));
+            } else {
+                batch.accept(index, entries, target);
             }
         }
         batch.apply(transactions, target, results);
@@ -60,11 +66,11 @@ export function _applyMergedTransactions(
 
     for (let index = 0, len = transactions.length; index < len; ++index) {
         const transaction = transactions[index];
-        const entries = getMergeableEntries(transaction, target);
-        if (!entries) {
+        const { entries, mergeable } = getRowEntries(transaction, target);
+        if (!mergeable) {
             applyPlanned();
             results[index] = target.isAccepted(transaction)
-                ? target.apply(transaction)
+                ? target.apply(transaction, getRowIds(entries))
                 : { status: ServerSideTransactionResultStatus.Cancelled };
             continue;
         }
@@ -79,13 +85,16 @@ export function _applyMergedTransactions(
     return results;
 }
 
-/** Returns `null` when the transaction has to be applied on its own. */
-function getMergeableEntries(transaction: ServerSideTransaction, target: TransactionMergeTarget): RowEntry[] | null {
+/** `mergeable` is false when the transaction has to be applied on its own, with `entries` holding the ids resolved so far. */
+function getRowEntries(
+    transaction: ServerSideTransaction,
+    target: TransactionMergeTarget
+): { entries: RowEntry[]; mergeable: boolean } {
+    const entries: RowEntry[] = [];
     if (transaction.addIndex != null || transaction.rowCount != null) {
-        return null;
+        return { entries, mergeable: false };
     }
 
-    const entries: RowEntry[] = [];
     // the store applies updates, then adds, then removes, whatever order they were given in
     const opArrays: [TransactionRowOp, any[] | undefined][] = [
         ['update', transaction.update],
@@ -100,12 +109,27 @@ function getMergeableEntries(transaction: ServerSideTransaction, target: Transac
             const data = rows[i];
             const id = target.getRowId(data, op);
             if (id == null || id === '' || id === GRAND_TOTAL_ROW_ID) {
-                return null;
+                if (id != null) {
+                    entries.push({ op, id, data });
+                }
+                return { entries, mergeable: false };
             }
             entries.push({ op, id, data });
         }
     }
-    return entries;
+    return { entries, mergeable: true };
+}
+
+function getRowIds(entries: RowEntry[]): Map<any, string> | undefined {
+    if (entries.length === 0) {
+        return undefined;
+    }
+    const rowIds = new Map<any, string>();
+    for (let i = 0, len = entries.length; i < len; ++i) {
+        const { id, data } = entries[i];
+        rowIds.set(data, id);
+    }
+    return rowIds;
 }
 
 /** Matches the order in which the store's object-keyed add map lists ids: array-index keys first, ascending. */
@@ -167,9 +191,6 @@ class MergeBatch {
     public accept(transactionIndex: number, entries: RowEntry[], target: TransactionMergeTarget): void {
         this.transactionIndexes.push(transactionIndex);
         const { adds, updates, removes } = this;
-        // removing ids that are not cached only marks rows for refresh when the same removal deletes cached rows
-        const uncachedRemoves: RowEntry[] = [];
-        let removesRows = false;
 
         for (let i = 0, len = entries.length; i < len; ++i) {
             const { op, id, data } = entries[i];
@@ -198,31 +219,49 @@ class MergeBatch {
                     adds.delete(id);
                     this.addedBy.delete(id);
                     this.generations.set(id, this.getGeneration(id) + 1);
-                    removesRows = true;
                     continue;
                 }
-                if (removes.has(id)) {
-                    continue;
-                }
-                if (!updates.has(id) && !target.isRowCached(id)) {
-                    uncachedRemoves.push(entries[i]);
+                if (!this.isRowPresent(id, target)) {
                     continue;
                 }
                 updates.delete(id);
                 removes.set(id, data);
-                removesRows = true;
             }
             this.contributions.push({ transactionIndex, op, id, generation: this.getGeneration(id) });
         }
+    }
 
-        if (removesRows) {
-            for (let i = 0, len = uncachedRemoves.length; i < len; ++i) {
-                const { id, data } = uncachedRemoves[i];
-                if (!removes.has(id)) {
-                    removes.set(id, data);
+    /**
+     * Whether the transaction removes both rows that exist at that point and rows that don't. Removing only rows
+     * that don't exist changes nothing, so those removes can be dropped from the batch. A row added in this batch
+     * exists only if the add can be inserted, which is the same for all of them.
+     */
+    public mixesCachedAndUncachedRemoves(entries: RowEntry[], target: TransactionMergeTarget): boolean {
+        const addedHere = new Set<string>();
+        let hasCached = false;
+        let hasUncached = false;
+        let hasAdded = false;
+        for (let i = 0, len = entries.length; i < len; ++i) {
+            const { op, id } = entries[i];
+            if (op === 'add') {
+                if (!this.isRowPresent(id, target)) {
+                    addedHere.add(id);
+                }
+            } else if (op === 'remove') {
+                if (addedHere.has(id) || this.adds.has(id)) {
+                    hasAdded = true;
+                } else if (this.isRowPresent(id, target)) {
+                    hasCached = true;
+                } else {
+                    hasUncached = true;
                 }
             }
         }
+        return Number(hasCached) + Number(hasUncached) + Number(hasAdded) > 1;
+    }
+
+    private isRowPresent(id: string, target: TransactionMergeTarget): boolean {
+        return this.updates.has(id) || (!this.removes.has(id) && target.isRowCached(id));
     }
 
     public apply(

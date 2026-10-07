@@ -1873,7 +1873,7 @@ export interface GridOptions<TData = any> {
     serverSideEnableClientSideSort?: boolean;
     /**
      * When enabled, async transactions queued within `asyncTransactionWaitMillis` are merged so that each row is changed at most once per flush, with the same result as applying them one after the other. Merging is skipped when `serverSideEnableClientSideSort` is enabled.
-     * Transactions are grouped by route, so transactions for different routes can be applied in a different order from the queue. `isApplyServerSideTransaction` is still called once per transaction, but every transaction in a merged batch is checked against the grid state from before that batch is applied. `getRowId` is called once for every queued row before `isApplyServerSideTransaction` runs, and not again when the merged batch is applied.
+     * Transactions are grouped by route, so transactions for different routes can be applied in a different order from the queue. `isApplyServerSideTransaction` is still called once per transaction, but every transaction in a merged batch is checked against the grid state from before that batch is applied. For merged transactions, `getRowId` is called once for every row before `isApplyServerSideTransaction` runs, and not again when the batch is applied. Transactions applied on their own, such as those with `addIndex`, `rowCount` or the grand total row, resolve row ids as usual.
      * @default false
      * @agModule `ServerSideRowModelMergeTransactionsModule`
      */

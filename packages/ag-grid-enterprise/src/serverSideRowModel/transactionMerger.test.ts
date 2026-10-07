@@ -49,7 +49,12 @@ class FakeStore {
             this.rows.splice(this.rows.indexOf(node), 1);
         }
 
-        return { status: ServerSideTransactionResultStatus.Applied, update, add, remove };
+        return {
+            status: ServerSideTransactionResultStatus.Applied,
+            update: transaction.update?.length ? update : undefined,
+            add: transaction.add?.length ? add : undefined,
+            remove: transaction.remove?.length ? remove : undefined,
+        };
     }
 
     public target(isAccepted: (tx: ServerSideTransaction) => boolean = () => true): TransactionMergeTarget {
@@ -146,8 +151,8 @@ describe('_applyMergedTransactions', () => {
             [['a'], undefined, undefined],
             [['a'], ['c'], undefined],
             [['c'], undefined, undefined],
-            [undefined, [], undefined],
-            [undefined, undefined, ['b']],
+            [undefined, ['d'], undefined],
+            [undefined, undefined, ['b', 'd']],
         ]);
     });
 
