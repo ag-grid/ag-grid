@@ -1726,7 +1726,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ServerSideRowModelModule`
      */
     @Input({ transform: booleanAttribute }) public serverSideEnableClientSideSort: boolean | undefined = undefined;
-    /** When enabled, async transactions queued within `asyncTransactionWaitMillis` are merged so that each row is changed at most once per flush, with the same result as applying them one after the other. Merging is skipped when `serverSideEnableClientSideSort` is enabled.
+    /** When enabled, async transactions queued within `asyncTransactionWaitMillis` are merged so that each row is changed at most once per flush, leaving the same rows and data as applying them one after the other. Merging is skipped when `serverSideEnableClientSideSort` is enabled.
      * Transactions are grouped by route, so transactions for different routes can be applied in a different order from the queue. `isApplyServerSideTransaction` is still called once per transaction, but every transaction in a merged batch is checked against the grid state from before that batch is applied. `getRowId` is called once for every queued row before `isApplyServerSideTransaction` runs, including for transactions it then cancels, and not again when the rows are applied. Only transactions with `addIndex` or `rowCount`, and rows after a grand total row, resolve row ids as usual.
      * @default false
      * @agModule `ServerSideRowModelMergeTransactionsModule`

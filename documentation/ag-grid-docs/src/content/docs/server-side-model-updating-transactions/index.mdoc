@@ -118,7 +118,7 @@ Merging gives the same rows and data as applying the transactions one after the 
 - An add followed by a remove cancels out, and the row is never created.
 - An update followed by a remove becomes a remove.
 
-Transactions that set `addIndex` or `rowCount` are applied on their own, in order. Each callback passed to `applyServerSideTransactionAsync` receives a result containing only the nodes for its own rows.
+Transactions that set `addIndex` or `rowCount` are applied on their own, in order. Each callback passed to `applyServerSideTransactionAsync` receives a result containing only the nodes for its own rows. A row that is added and then removed in the same flush is left out of every caller's result, so code that reacts to each node in `result.add` or `result.remove` does not see it.
 
 Transactions are grouped by route, so transactions for different routes can be applied in a different order from the queue. For example, with transactions for routes A, B and then A again, the second A transaction is applied before the B transaction.
 
