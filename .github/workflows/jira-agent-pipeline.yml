@@ -166,6 +166,7 @@ jobs:
                   jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
                   jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
                   jira_site_url: ${{ vars.JIRA_SITE_URL }}
+                  anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
 
             # CI-failure re-entry eligibility walk.
             - id: cifail
@@ -270,6 +271,7 @@ jobs:
                   jira_email: ${{ secrets.JIRA_AI_BOT_EMAIL }}
                   jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
                   jira_site_url: ${{ vars.JIRA_SITE_URL }}
+                  anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
 
             # Chooses the route all-or-nothing (never per-value) and folds both
             # post-lock skips into one `proceed`. Deliberately NOT
