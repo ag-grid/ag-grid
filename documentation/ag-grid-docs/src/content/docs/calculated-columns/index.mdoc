@@ -40,7 +40,7 @@ Calculated Columns are supported with all row models.
 
 For Server-Side, Infinite and Viewport Row Models, sorting and filtering are datasource or server responsibilities. The grid displays calculated values for loaded rows, but does not client-sort or client-filter remote datasets by calculated results.
 
-Calculated cells cannot be edited through cell editing, paste, fill handle or delete operations. To also prevent users from changing the column's definition, see [Read-Only Calculated Columns](#read-only-calculated-columns).
+Calculated cell values cannot be changed through cell editing, paste, fill handle or delete operations. Users can still change a calculated column's title, type and expression through its dialog. To prevent these dialog edits and removal through the grid's menus, see [Read-Only Calculated Columns](#read-only-calculated-columns).
 
 ## Row Groups and Tree Data
 
@@ -76,7 +76,9 @@ Grid State also captures user edits to, and removals of, calculated columns decl
 
 ## Read-Only Calculated Columns
 
-Set `calculatedColumnReadOnly: true` to prevent users from editing or removing a calculated column through the grid UI. Users can still choose **View Calculated Column** to inspect its title, type and expression. **Remove Calculated Column** is disabled.
+Set `calculatedColumnReadOnly: true` to prevent users from changing a column's title, type or expression in the dialog. Users can choose **View Calculated Column** to inspect its definition. **Remove Calculated Column** is disabled in the column and cell context menus.
+
+The example keeps **Gross Margin** read-only, while **Profit** and user-created calculated columns remain editable.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -93,8 +95,6 @@ const gridOptions = {
     ],
 };
 ```
-
-In the example, **Gross Margin** is read-only, while **Profit** can be edited. Users can still add their own calculated columns.
 
 {% gridExampleRunner title="Read-Only Calculated Columns" name="calculated-columns-read-only" /%}
 
