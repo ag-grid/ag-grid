@@ -11,6 +11,7 @@ import {
     escapeDisplayReference,
     getRestrictedReferenceMessage,
     replaceBracketReferences,
+    toFormulaString,
 } from './calculatedColumnUtils';
 
 interface CalculatedColumnReferenceError {
@@ -159,8 +160,7 @@ export function createCalculatedColumnReferenceMapper(
 
 /** Parses a calculated expression for inspection; 'absolute' keeps A1 labels unresolved, so no rows are needed. */
 function parseCalculatedFormula(beans: BeanCollection, expression: string): FormulaNode {
-    const trimmed = expression.trim();
-    return parseFormula(beans, trimmed.startsWith('=') ? trimmed : `=${trimmed}`, 'absolute');
+    return parseFormula(beans, toFormulaString(expression), 'absolute');
 }
 
 /** Collects unique, direct references from an already validated stored expression, without evaluating it. */

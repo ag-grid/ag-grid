@@ -63,6 +63,7 @@ import {
     getCalculatedExpressionError,
     pickUserOwnedProperties,
     replaceBracketReferences,
+    toFormulaString,
 } from './calculatedColumnUtils';
 
 type ValidationState = 'valid' | CalculatedColumnValidationReason;
@@ -281,7 +282,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         if (cache.size >= FORMULA_ERROR_CACHE_LIMIT) {
             cache.clear();
         }
-        const error = (this.beans.formula?.validateExpression(`=${expression}`) ?? null) as FormulaError | null;
+        const error = (this.beans.formula?.validateExpression(toFormulaString(expression)) ??
+            null) as FormulaError | null;
         cache.set(expression, error);
         return error;
     }

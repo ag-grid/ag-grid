@@ -110,6 +110,38 @@ describe('calculated columns - custom dialog validation', () => {
         expect(getValidationErrors).toHaveBeenCalledTimes(1);
     });
 
+    test('a leading equals sign receives custom validation in live mode', async () => {
+        const getValidationErrors = vi.fn(validate);
+        const api = createGrid('custom-validation-equals-live', {
+            columnDefs,
+            rowData,
+            calculatedColumns: { getValidationErrors },
+        });
+        await openEditDialogViaMenu(api, 'profit');
+        getValidationErrors.mockClear();
+        setExpression('=[Salary] + 1');
+        expect(getValidationErrors).toHaveBeenCalledTimes(1);
+        expect(getExpressionInput().validationMessage).toBe(messages.join('\n'));
+        closeDialog();
+        expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('=[server-salary] + 1');
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe('#ERROR!');
+    });
+
+    test('a leading equals sign validates and applies in deferred mode', async () => {
+        const api = createGrid('custom-validation-equals-deferred', {
+            columnDefs,
+            rowData,
+            calculatedColumns: { applyMode: 'deferred', getValidationErrors: validate },
+        });
+        await openEditDialogViaMenu(api, 'profit');
+        setExpression('=[Sales] + 1');
+        expect(getExpressionInput().validationMessage).toBe('');
+        expect(getDialogButton('Apply')).toBeEnabled();
+        clickDialogButton('Apply');
+        expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('=[sales] + 1');
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe(21);
+    });
+
     test.each(['live', 'deferred'] as const)(
         'validates title, type and current context in %s mode',
         async (applyMode) => {
