@@ -892,6 +892,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     columnHeaderEditCancel: '취소',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: '사용 가능한 열을 찾을 수 없습니다.',
     calculatedColumn: '계산된 열',
     calculatedColumnAdd: '계산된 열 추가',
     calculatedColumnEdit: '계산된 열 편집',

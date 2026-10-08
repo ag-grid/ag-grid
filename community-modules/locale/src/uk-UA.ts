@@ -895,6 +895,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     columnHeaderEditCancel: 'Скасувати',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Відповідних стовпців не знайдено.',
     calculatedColumn: 'Обчислюваний стовпець',
     calculatedColumnAdd: 'Додати обчислюваний стовпець',
     calculatedColumnEdit: 'Редагувати обчислюваний стовпець',

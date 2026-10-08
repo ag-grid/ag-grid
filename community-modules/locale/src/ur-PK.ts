@@ -892,6 +892,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     columnHeaderEditCancel: 'منسوخ کریں',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'کوئی موزوں کالم نہیں ملا۔',
     calculatedColumn: 'محسوب کالم',
     calculatedColumnAdd: 'محسوب کالم شامل کریں',
     calculatedColumnEdit: 'محسوب کالم میں ترمیم کریں',

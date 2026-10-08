@@ -912,6 +912,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     columnHeaderEditCancel: 'ยกเลิก',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'ไม่พบคอลัมน์ที่ใช้ได้',
     calculatedColumn: 'คอลัมน์คำนวณ',
     calculatedColumnAdd: 'เพิ่มคอลัมน์คำนวณ',
     calculatedColumnEdit: 'แก้ไขคอลัมน์คำนวณ',

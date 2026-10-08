@@ -897,6 +897,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     columnHeaderEditCancel: 'Peruuta',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Sopivia sarakkeita ei löytynyt.',
     calculatedColumn: 'Laskettu sarake',
     calculatedColumnAdd: 'Lisää laskettu sarake',
     calculatedColumnEdit: 'Muokkaa laskettua saraketta',

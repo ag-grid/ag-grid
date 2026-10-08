@@ -897,6 +897,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     columnHeaderEditCancel: 'Anulează',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nu au fost găsite coloane eligibile.',
     calculatedColumn: 'Coloană calculată',
     calculatedColumnAdd: 'Adăugare coloană calculată',
     calculatedColumnEdit: 'Editare coloană calculată',

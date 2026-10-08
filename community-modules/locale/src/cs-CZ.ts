@@ -893,6 +893,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     columnHeaderEditCancel: 'Zrušit',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nebyly nalezeny žádné vhodné sloupce.',
     calculatedColumn: 'Vypočítaný sloupec',
     calculatedColumnAdd: 'Přidat vypočítaný sloupec',
     calculatedColumnEdit: 'Upravit vypočítaný sloupec',

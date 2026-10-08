@@ -891,6 +891,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     columnHeaderEditCancel: 'בטל',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'לא נמצאו עמודות מתאימות.',
     calculatedColumn: 'עמודה מחושבת',
     calculatedColumnAdd: 'הוספת עמודה מחושבת',
     calculatedColumnEdit: 'עריכת עמודה מחושבת',

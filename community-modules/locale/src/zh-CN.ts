@@ -891,6 +891,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     columnHeaderEditCancel: '取消',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: '未找到符合条件的列。',
     calculatedColumn: '计算列',
     calculatedColumnAdd: '添加计算列',
     calculatedColumnEdit: '编辑计算列',

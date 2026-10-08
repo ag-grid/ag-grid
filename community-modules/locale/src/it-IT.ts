@@ -900,6 +900,7 @@ export const AG_GRID_LOCALE_IT_IT = {
     columnHeaderEditCancel: 'Annulla',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nessuna colonna idonea trovata.',
     calculatedColumn: 'Colonna calcolata',
     calculatedColumnAdd: 'Aggiungi colonna calcolata',
     calculatedColumnEdit: 'Modifica colonna calcolata',
