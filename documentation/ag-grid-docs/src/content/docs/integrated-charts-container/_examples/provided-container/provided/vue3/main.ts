@@ -69,7 +69,7 @@ const VueExample = defineComponent({
                     <div class="chart-wrapper">
                       <div class="chart-wrapper-top">
                         <h2 class="chart-wrapper-title">Chart created ${new Date().toLocaleString()}</h2>
-                        <button class="chart-wrapper-close">Destroy Chart</button>
+                        <div class="example-controls"><button class="chart-wrapper-close">Destroy Chart</button></div>
                       </div>
                       <div class="chart-wrapper-body"></div>
                     </div>

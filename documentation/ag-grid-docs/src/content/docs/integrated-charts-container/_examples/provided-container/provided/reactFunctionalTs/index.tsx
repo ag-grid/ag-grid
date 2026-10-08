@@ -89,7 +89,9 @@ const GridExample = () => {
                                         <h2 className="chart-wrapper-title">
                                             Chart created at {new Date().toLocaleString()}
                                         </h2>
-                                        <button onClick={() => updateChartParams(undefined)}>Destroy Chart</button>
+                                        <div className="example-controls">
+                                            <button onClick={() => updateChartParams(undefined)}>Destroy Chart</button>
+                                        </div>
                                     </div>
                                 </div>
                             ) : (
