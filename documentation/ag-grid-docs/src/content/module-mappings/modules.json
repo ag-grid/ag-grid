@@ -557,6 +557,11 @@
                     "path": "grid-api/#reference-data"
                 },
                 {
+                    "moduleName": "VisibleRowsModule",
+                    "name": "Visible Rows",
+                    "path": "data-update-visible-rows"
+                },
+                {
                     "moduleName": "ServerSideRowModelApiModule",
                     "name": "Server-Side Row Model API",
                     "path": "grid-api/#reference-serverSideRowModel",

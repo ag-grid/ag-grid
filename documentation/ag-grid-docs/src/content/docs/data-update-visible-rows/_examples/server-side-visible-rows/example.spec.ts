@@ -1,0 +1,35 @@
+import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
+
+test.agExample(import.meta, () => {
+    test.eachFramework(
+        'Visible rows are subscribed on load and scroll, and unsubscribed on purge and stop',
+        async ({ page }) => {
+            await waitForGridContent(page);
+
+            const count = page.locator('#subscribedCount');
+            const log = page.locator('#log');
+
+            await expect(log).toContainText('subscribe 0 (initial)');
+            await expect(log).toContainText('(load)');
+            await expect(count).not.toHaveText('0');
+
+            const loadedCount = Number(await count.textContent());
+            expect(loadedCount).toBeLessThan(40);
+
+            await page.evaluate(() => {
+                const vp = document.querySelector('.ag-body-viewport') as HTMLElement;
+                vp.scrollTop = 1500;
+            });
+            await expect(log).toContainText('(scroll)');
+
+            await page.getByRole('button', { name: 'Purge' }).click();
+            await expect(log).toContainText('unsubscribe');
+            await expect(log).toContainText('(reset)');
+            await expect(count).not.toHaveText('0');
+
+            await page.getByRole('button', { name: 'Stop' }).click();
+            await expect(log).toContainText('(stop)');
+            await expect(count).toHaveText('0');
+        }
+    );
+});

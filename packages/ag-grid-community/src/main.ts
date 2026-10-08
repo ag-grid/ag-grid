@@ -611,6 +611,14 @@ export type {
 } from './interfaces/iServerSideRowModel';
 export type { IServerSideGroupSelectionState, IServerSideSelectionState } from './interfaces/iServerSideSelection';
 export type {
+    VisibleRow,
+    VisibleRowRef,
+    VisibleRowsHandlers,
+    VisibleRowsOptions,
+    VisibleRowsParams,
+    VisibleRowsReason,
+} from './interfaces/iVisibleRows';
+export type {
     IServerSideStore,
     ServerSideGroupLevelState,
     StoreRefreshAfterParams,
@@ -1170,6 +1178,7 @@ export type { AgModuleName, Module } from './interfaces/iModule';
 export { EventApiModule } from './misc/apiEvents/apiEventModule';
 export { LocaleModule } from './misc/locale/localeModule';
 export { GridStateModule } from './misc/state/stateModule';
+export { VisibleRowsModule } from './visibleRows/visibleRowsModule';
 export { ModuleRegistry } from './modules/moduleRegistry';
 export { PaginationModule } from './pagination/paginationModule';
 export { PaginationPageNumbersModule } from './pagination/paginationPageNumbersModule';

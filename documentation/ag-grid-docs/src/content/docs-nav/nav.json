@@ -1213,6 +1213,11 @@
                             "type": "item",
                             "title": "High Frequency",
                             "path": "data-update-high-frequency"
+                        },
+                        {
+                            "type": "item",
+                            "title": "Visible Rows",
+                            "path": "data-update-visible-rows"
                         }
                     ]
                 },

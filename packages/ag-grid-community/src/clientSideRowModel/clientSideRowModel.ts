@@ -33,6 +33,7 @@ import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
 import type { RowNodeTransaction } from '../interfaces/rowNodeTransaction';
 import type { OverlayType } from '../rendering/overlays/overlayComponent';
 import type { ChangedPath } from '../utils/changedPath';
+import { _destroyForVisibleRows } from '../visibleRows/visibleRowsUtils';
 import { ChangedRowNodes } from './changedRowNodes';
 import { ClientSideNodeManager } from './clientSideNodeManager';
 
@@ -331,6 +332,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     }
 
     private onPropChange(properties: (keyof GridOptions)[]): void {
+        // Rows dropped by new row data or a change of grouping are reset, not removed.
+        _destroyForVisibleRows(this.beans, 'reset', () => this.refreshAfterPropChange(properties));
+    }
+
+    private refreshAfterPropChange(properties: (keyof GridOptions)[]): void {
         const { nodeManager, gos, beans } = this;
         const groupStage = beans.groupStage;
         if (!nodeManager) {

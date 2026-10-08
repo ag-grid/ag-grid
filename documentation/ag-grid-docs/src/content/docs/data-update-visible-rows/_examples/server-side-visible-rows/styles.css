@@ -1,0 +1,31 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.body {
+    flex: 1 1 0px;
+    display: flex;
+    gap: 1rem;
+    min-height: 0;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+}
+
+#log {
+    width: 220px;
+    margin: 0;
+    padding-left: 1.5rem;
+    overflow: auto;
+    font-size: 12px;
+}

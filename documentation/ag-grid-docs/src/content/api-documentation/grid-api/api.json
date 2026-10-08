@@ -224,6 +224,12 @@
         "meta": {
             "displayName": "Row Displayed"
         },
+        "subscribeToVisibleRows": {
+            "more": {
+                "name": "Visible Rows",
+                "url": "./data-update-visible-rows/"
+            }
+        },
         "getDisplayedRowAtIndex": {
             "more": {
                 "name": "Rendering API",
