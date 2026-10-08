@@ -41,7 +41,7 @@ ModuleRegistry.registerModules([
             @if (chartRef()) {
                 <div class="chart-wrapper-top">
                     <h2 class="chart-wrapper-title">Chart created at {{ createdTime() }}</h2>
-                    <button (click)="updateChart()">Destroy Chart</button>
+                    <div class="example-controls"><button (click)="updateChart()">Destroy Chart</button></div>
                 </div>
             } @else {
                 <div class="chart-placeholder">Chart will be displayed here.</div>

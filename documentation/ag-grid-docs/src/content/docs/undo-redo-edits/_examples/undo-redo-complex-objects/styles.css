@@ -6,5 +6,6 @@
 }
 
 .undo-redo-input {
-    width: 20px;
+    width: 48px;
+    text-align: center;
 }
