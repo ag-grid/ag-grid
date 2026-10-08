@@ -324,7 +324,7 @@ if (instances.length > 0) {
 
 {% if isFramework("vue") %}
 {% note %}
-Methods on a Composition API or `<script setup>` component must be exposed with `expose()` / `defineExpose()` to be callable on the instance returned by `getCellRendererInstances()`. Options API `methods` are available without exposing them.
+Methods on a `<script setup>` component, or on a Composition API component whose `setup()` does not return them, must be exposed with `defineExpose()` / `expose()` to be callable on the instance returned by `getCellRendererInstances()`. Options API `methods` and methods returned from `setup()` are available without exposing them.
 {% /note %}
 {% /if %}
 
