@@ -235,6 +235,15 @@ describe('_applyMergedTransactions', () => {
         expect(store.applied).toEqual([{ update: [row('a', 1)] }, { update: [row('a', 3)] }]);
     });
 
+    it('applies an update on its own when the add it replaces has effects of its own', () => {
+        const store = new FakeStore(initial);
+        const target = { ...store.target(), canSkipUpdate: (previous: Row) => previous.v !== 1 };
+
+        _applyMergedTransactions([{ add: [row('n', 1)] }, { update: [row('n', 2)] }], target);
+
+        expect(store.applied).toEqual([{ add: [row('n', 1)] }, { update: [row('n', 2)] }]);
+    });
+
     it('applies a transaction on its own when it updates a row twice and the first update has effects of its own', () => {
         const store = new FakeStore(initial);
         const target = { ...store.target(), canSkipUpdate: (previous: Row) => previous.v !== 1 };

@@ -287,12 +287,16 @@ class MergeBatch {
         return Number(hasCached) + Number(hasUncached) + Number(hasAdded) > 1;
     }
 
-    /** Whether merging the entries would replace a pending update whose own effects have to be applied. */
+    /** Whether merging the entries would replace a pending add or update whose own effects have to be applied. */
     public skipsUpdateEffects(entries: RowEntry[], target: TransactionMergeTarget): boolean {
-        const updates = this.updates;
+        const { adds, updates } = this;
         for (let i = 0, len = entries.length; i < len; ++i) {
             const { op, id, data } = entries[i];
-            if (op === 'update' && updates.has(id) && !target.canSkipUpdate(updates.get(id), data)) {
+            if (op !== 'update') {
+                continue;
+            }
+            const pending = updates.has(id) ? updates : adds;
+            if (pending.has(id) && !target.canSkipUpdate(pending.get(id), data)) {
                 return true;
             }
         }

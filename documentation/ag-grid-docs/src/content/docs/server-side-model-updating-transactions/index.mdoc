@@ -124,8 +124,6 @@ Transactions are grouped by route, so transactions for different routes can be a
 
 `isApplyServerSideTransaction` is still called once for each transaction, and a transaction it rejects is left out of the merge. Every transaction in a merged batch is checked against the grid state from before that batch is applied, not after the other transactions in the same batch. `getRowId` can also be called for rows in transactions that `isApplyServerSideTransaction` then cancels.
 
-Within a merged batch only the latest data for each row is applied, so `isRowSelectable` does not see the data of an update replaced in that batch. A selected row that such an update would make unselectable stays selected if the latest data makes it selectable again.
-
 Merging is skipped when `serverSideEnableClientSideSort` is enabled, as each transaction re-sorts the rows.
 
 ## Showcase Example
