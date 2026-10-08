@@ -284,7 +284,7 @@ describe('calculated columns - grid state persistence - overrides of columnDefs-
         await waitFor(() => expect(order(source)).toEqual(['a', 'b']));
 
         const savedState = source.getState();
-        expect(savedState.userColumns).toEqual([{ colId: 'declared', removed: true }]);
+        expect(savedState.userColumns).toEqual([{ colId: 'declared', type: 'calculated', removed: true }]);
 
         const target = createGrid('state-declared-remove-target', {
             rowData: STATIC_ROW_DATA,

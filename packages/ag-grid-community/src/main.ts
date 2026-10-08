@@ -698,6 +698,7 @@ export type { GridOptionsService, PropertyChangedEvent, PropertyValueChangedEven
 export type {
     AggregationColumnState,
     AggregationState,
+    CalculatedUserColumnState,
     CellSelectionCellState,
     CellSelectionState,
     ColumnGroupHeaderNameState,

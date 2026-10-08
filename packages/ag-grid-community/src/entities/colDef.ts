@@ -1,5 +1,4 @@
 import type { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from '../events';
-import type { CalculatedExpressionError } from '../interfaces/iCalculatedColumns';
 import type { ICellEditorParams } from '../interfaces/iCellEditor';
 import type { Column, ColumnGroup, ColumnGroupShowType, ProvidedColumnGroup } from '../interfaces/iColumn';
 import type { IColumnSelectionPanelParams } from '../interfaces/iColumnSelectionPanel';
@@ -358,8 +357,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @agModule `CalculatedColumnsModule`
      */
     calculatedExpression?: string;
-    /** Grid-managed validation state preserved when saving calculated column definitions. Do not set manually. */
-    calculatedExpressionError?: CalculatedExpressionError | null;
     /** Function or expression. Gets the value from your data for display. */
     valueGetter?: string | ValueGetterFunc<TData, TValue>;
     /** A function or expression to format a value, should return a string. */

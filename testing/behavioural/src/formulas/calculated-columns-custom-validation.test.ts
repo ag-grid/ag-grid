@@ -209,6 +209,81 @@ describe('calculated columns - custom dialog validation', () => {
         expect(read('dependent')).toBe(42);
     });
 
+    test('live validation changes invalidate values even when the final definition is unchanged', async () => {
+        const context = { allow: true };
+        const api = createGrid('custom-validation-metadata-only', {
+            columnDefs,
+            rowData,
+            context,
+            calculatedColumns: { getValidationErrors: ({ context }) => (context.allow ? null : messages) },
+        });
+        const read = (colKey: string) => api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey });
+        const savedDefs = api.getColumnDefs();
+        expect(read('dependent')).toBe(40);
+
+        context.allow = false;
+        await openEditDialogViaMenu(api, 'profit');
+        setTitle('Temporary');
+        setTitle('Profit');
+        closeDialog();
+        expect(api.getColumnDefs()).toEqual(savedDefs);
+        expect(read('profit')).toBe('#ERROR!');
+        expect(read('dependent')).toBe('#ERROR!');
+        expect(api.getState().userColumns?.find(({ colId }) => colId === 'profit')?.calculatedExpressionError).toEqual({
+            expression: '[sales]',
+            reason: 'customValidation',
+            messages,
+        });
+
+        context.allow = true;
+        await openEditDialogViaMenu(api, 'profit');
+        setTitle('Temporary');
+        setTitle('Profit');
+        closeDialog();
+        expect(api.getColumnDefs()).toEqual(savedDefs);
+        expect(read('profit')).toBe(20);
+        expect(read('dependent')).toBe(40);
+        expect(api.getState().userColumns).toBeUndefined();
+    });
+
+    test('restoring error-only state changes refreshes cached values without running validation', async () => {
+        const getValidationErrors = vi.fn(validate);
+        const api = createGrid('custom-validation-state-metadata', {
+            columnDefs,
+            rowData,
+            calculatedColumns: { getValidationErrors },
+        });
+        const read = () => api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'dependent' });
+        const userColumn = { colId: 'profit', properties: [] };
+        expect(read()).toBe(40);
+
+        api.setState({
+            userColumns: [
+                {
+                    ...userColumn,
+                    calculatedExpressionError: { expression: '[sales]', reason: 'customValidation', messages },
+                },
+            ],
+        });
+        expect(read()).toBe('#ERROR!');
+        expect(api.getColumn('profit')!.getColDef()).not.toHaveProperty('calculatedExpressionError');
+
+        api.setState({ userColumns: [userColumn] });
+        expect(read()).toBe(40);
+        expect(api.getState().userColumns?.[0]).not.toHaveProperty('calculatedExpressionError');
+
+        api.setState({
+            userColumns: [
+                {
+                    ...userColumn,
+                    calculatedExpressionError: { expression: '[server-salary]', reason: 'customValidation', messages },
+                },
+            ],
+        });
+        expect(read()).toBe(40);
+        expect(getValidationErrors).not.toHaveBeenCalled();
+    });
+
     test('live creation receives the new column and retains empty/incomplete input behaviour', async () => {
         const getValidationErrors = vi.fn(validate);
         const api = createGrid('custom-validation-live-create', {
@@ -265,14 +340,14 @@ describe('calculated columns - custom dialog validation', () => {
             expect(getExpressionInput().validationMessage).toBe(messages.join('\n'));
             closeDialog();
             expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[sales]');
-            expect(api.getColumn('profit')!.getColDef().calculatedExpressionError).toBeUndefined();
+            expect(api.getState().userColumns).toBeUndefined();
             expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe(20);
             expect(changed).not.toHaveBeenCalled();
         }
     );
 
     test.each(['state', 'definitions'] as const)(
-        'restores saved messages through %s without running callbacks',
+        'restores %s without running callbacks, preserving errors only in Grid State',
         async (via) => {
             const source = createGrid('custom-validation-source', {
                 columnDefs,
@@ -285,6 +360,13 @@ describe('calculated columns - custom dialog validation', () => {
             await waitFor(() => expect(source.getState().userColumns).toBeDefined());
             const state: GridState = JSON.parse(JSON.stringify(source.getState()));
             const savedDefs: ColDef[] = JSON.parse(JSON.stringify(source.getColumnDefs()));
+            expect(state.userColumns?.find(({ colId }) => colId === 'profit')?.calculatedExpressionError).toEqual({
+                expression: '[server-salary]',
+                reason: 'customValidation',
+                messages,
+            });
+            expect(source.getColumn('profit')!.getColDef()).not.toHaveProperty('calculatedExpressionError');
+            expect(savedDefs.find(({ colId }) => colId === 'profit')).not.toHaveProperty('calculatedExpressionError');
             source.destroy();
             const getValidationErrors = vi.fn(validate);
             const target = createGrid('custom-validation-target', {
@@ -293,13 +375,19 @@ describe('calculated columns - custom dialog validation', () => {
                 rowData,
                 calculatedColumns: { getValidationErrors },
             });
-            expect(target.getCellValue({ rowNode: target.getRowNode('r1')!, colKey: 'profit' })).toBe('#ERROR!');
+            expect(target.getCellValue({ rowNode: target.getRowNode('r1')!, colKey: 'profit' })).toBe(
+                via === 'state' ? '#ERROR!' : 100
+            );
             expect(getValidationErrors).not.toHaveBeenCalled();
             target.setGridOption('calculatedColumns', { applyMode: 'deferred' });
             await openEditDialogViaMenu(target, 'profit');
             expect(getExpressionInput().value).toBe('[Salary]');
-            expect(getExpressionInput().validationMessage).toBe(messages.join('\n'));
-            expect(getDialogButton('Apply')).toBeDisabled();
+            expect(getExpressionInput().validationMessage).toBe(via === 'state' ? messages.join('\n') : '');
+            if (via === 'state') {
+                expect(getDialogButton('Apply')).toBeDisabled();
+            } else {
+                expect(getDialogButton('Apply')).toBeEnabled();
+            }
             setExpression('[Sales] + 1');
             clickDialogButton('Apply');
             expect(target.getCellValue({ rowNode: target.getRowNode('r1')!, colKey: 'profit' })).toBe(21);
