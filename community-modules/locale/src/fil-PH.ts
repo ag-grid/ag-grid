@@ -921,6 +921,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     columnHeaderEditCancel: 'Kanselahin',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Walang nakitang angkop na column.',
     calculatedColumn: 'Kinalkulang Column',
     calculatedColumnAdd: 'Magdagdag ng Kinalkulang Column',
     calculatedColumnEdit: 'I-edit ang Kinalkulang Column',

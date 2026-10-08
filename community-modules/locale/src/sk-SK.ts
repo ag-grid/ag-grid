@@ -893,6 +893,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     columnHeaderEditCancel: 'Zrušiť',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nenašli sa žiadne vhodné stĺpce.',
     calculatedColumn: 'Vypočítaný stĺpec',
     calculatedColumnAdd: 'Pridať vypočítaný stĺpec',
     calculatedColumnEdit: 'Upraviť vypočítaný stĺpec',

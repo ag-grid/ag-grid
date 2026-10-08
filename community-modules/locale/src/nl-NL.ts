@@ -895,6 +895,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     columnHeaderEditCancel: 'Annuleren',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Geen geschikte kolommen gevonden.',
     calculatedColumn: 'Berekende kolom',
     calculatedColumnAdd: 'Berekende kolom toevoegen',
     calculatedColumnEdit: 'Berekende kolom bewerken',

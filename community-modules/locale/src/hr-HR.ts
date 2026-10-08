@@ -895,6 +895,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     columnHeaderEditCancel: 'Odustani',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nisu pronađeni odgovarajući stupci.',
     calculatedColumn: 'Izračunati stupac',
     calculatedColumnAdd: 'Dodaj izračunati stupac',
     calculatedColumnEdit: 'Uredi izračunati stupac',

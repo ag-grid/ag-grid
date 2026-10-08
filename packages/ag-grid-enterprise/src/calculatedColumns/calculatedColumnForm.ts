@@ -27,6 +27,7 @@ import {
     AgSelectSelector,
     Component,
     KeyCode,
+    _createElement,
 } from 'ag-grid-community';
 
 import { AgAutocompleteList } from '../advancedFilter/autocomplete/agAutocompleteList';
@@ -591,7 +592,20 @@ export class CalculatedColumnForm extends Component {
             ariaLabel: this.getLocaleTextFunc()('calculatedColumnSuggestions', 'Calculated Column Suggestions'),
         }).hideFunc;
         list.afterGuiAttached();
+        if (type === 'column' && suggestions.length === 0) {
+            this.showEmptyColumnsMessage(list);
+        }
         this.refreshAriaForSuggestions();
+    }
+
+    private showEmptyColumnsMessage(list: AgAutocompleteList): void {
+        const message = this.getLocaleTextFunc()('calculatedColumnNoEligibleColumns', 'No eligible columns found.');
+        const placeholder = _createElement({ tag: 'div', cls: 'ag-calculated-column-empty-message' });
+        placeholder.textContent = message;
+        list.addCss('ag-calculated-column-empty-picker');
+        list.getGui().appendChild(placeholder);
+        list.addManagedListeners(placeholder, { mousedown: (event) => event.preventDefault() });
+        this.beans.ariaAnnounce.announceValue(message, 'calculatedColumnNoEligibleColumns');
     }
 
     private createAutocompleteEntries(suggestions: ColumnSuggestion[]): AutocompleteEntry[] {

@@ -453,16 +453,32 @@ describe('ag-grid calculated columns', () => {
         }
     });
 
-    test('an all-restricted Columns picker opens without an active option', async () => {
+    test('an all-restricted Columns picker shows and announces its empty state', async () => {
         const api = createGrid('calculated-empty-suggestions', {
             calculatedColumns: { isColumnReferenceable: () => false },
             columnDefs: [{ field: 'revenue' }, { colId: 'profit', calculatedExpression: '[revenue]' }],
             rowData: [{ id: 'r1', revenue: 10 }],
         });
         await openEditDialogViaMenu(api, 'profit');
-        clickDialogButton('Columns');
         const button = getDialogButton('Columns');
+        button.focus();
+        clickDialogButton('Columns');
         const list = document.getElementById(button.getAttribute('aria-controls')!)!;
+        const message = 'No eligible columns found.';
+        const placeholder = document.querySelector<HTMLElement>('.ag-calculated-column-empty-message')!;
+        expect(placeholder).toBeVisible();
+        expect(placeholder).toHaveTextContent(message);
+        await waitFor(() =>
+            expect(document.querySelector('.ag-root-wrapper > .ag-aria-description-container')).toHaveTextContent(
+                message
+            )
+        );
+        expect(button).toHaveFocus();
+        const mouseDown = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+        placeholder.dispatchEvent(mouseDown);
+        expect(mouseDown.defaultPrevented).toBe(true);
+        placeholder.click();
+        expect(button).toHaveFocus();
         expect(button).toHaveAttribute('aria-expanded', 'true');
         expect(list).toHaveAttribute('role', 'listbox');
         expect(list.querySelectorAll('[role="option"]')).toHaveLength(0);
@@ -473,6 +489,24 @@ describe('ag-grid calculated columns', () => {
         button.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
         expect(button).toHaveAttribute('aria-expanded', 'false');
         expect(getCalculatedColumnDialog()).toBeInTheDocument();
+        for (const picker of ['Functions', 'Operators']) {
+            clickDialogButton(picker);
+            expect(document.querySelector('.ag-calculated-column-empty-message')).toBeNull();
+            expect(document.querySelectorAll('.ag-autocomplete-list [role="option"]').length).toBeGreaterThan(0);
+        }
+    });
+
+    test('the Columns picker shows an empty state when there are no other columns', async () => {
+        const api = createGrid('calculated-no-source-columns', {
+            columnDefs: [{ colId: 'constant', calculatedExpression: '1' }],
+            rowData: [{ id: 'r1' }],
+        });
+        await openEditDialogViaMenu(api, 'constant');
+        clickDialogButton('Columns');
+        expect(document.querySelector('.ag-calculated-column-empty-message')).toHaveTextContent(
+            'No eligible columns found.'
+        );
+        expect(document.querySelectorAll('.ag-autocomplete-list [role="option"]')).toHaveLength(0);
     });
 
     test('reopening reads application state without changing duplicate-header references', async () => {

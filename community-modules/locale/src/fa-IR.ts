@@ -894,6 +894,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     columnHeaderEditCancel: 'لغو',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'هیچ ستون واجد شرایطی یافت نشد.',
     calculatedColumn: 'ستون محاسبه‌شده',
     calculatedColumnAdd: 'افزودن ستون محاسبه‌شده',
     calculatedColumnEdit: 'ویرایش ستون محاسبه‌شده',

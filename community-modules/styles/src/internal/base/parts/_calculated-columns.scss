@@ -107,6 +107,21 @@
         width: var(--ag-calculated-column-suggestion-list-width);
     }
 
+    .ag-calculated-column-empty-picker {
+        display: grid;
+    }
+
+    :where(.ag-calculated-column-empty-picker) > .ag-autocomplete-list {
+        grid-area: 1 / 1;
+    }
+
+    .ag-calculated-column-empty-message {
+        grid-area: 1 / 1;
+        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+        overflow-wrap: anywhere;
+        align-self: center;
+    }
+
     .ag-calculated-column-actions {
         display: flex;
         justify-content: flex-end;

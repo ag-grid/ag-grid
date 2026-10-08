@@ -903,6 +903,7 @@ export const AG_GRID_LOCALE_FR_FR = {
     columnHeaderEditCancel: 'Annuler',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Aucune colonne admissible trouvée.',
     calculatedColumn: 'Colonne calculée',
     calculatedColumnAdd: 'Ajouter une colonne calculée',
     calculatedColumnEdit: 'Modifier la colonne calculée',

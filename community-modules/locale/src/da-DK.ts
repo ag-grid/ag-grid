@@ -895,6 +895,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     columnHeaderEditCancel: 'Annuller',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Ingen egnede kolonner fundet.',
     calculatedColumn: 'Beregnet kolonne',
     calculatedColumnAdd: 'Tilføj beregnet kolonne',
     calculatedColumnEdit: 'Rediger beregnet kolonne',
