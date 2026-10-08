@@ -137,7 +137,10 @@ describe('calculated columns - read-only definitions', () => {
         closeDialog();
         expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe('#REF!');
 
+        const state = api.getState();
         updateCalculatedColumnDef(api, 'profit', { calculatedColumnReadOnly: true });
+        api.setState(state);
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe('#REF!');
         showColumnMenu(api, 'profit');
         await clickMenuOption('View Calculated Column');
         const input = getExpressionInput();
@@ -176,7 +179,6 @@ describe('calculated columns - read-only definitions', () => {
             expect(description).toHaveAttribute('aria-live', 'polite');
             closeDialog();
             await asyncSetTimeout(0);
-            expect(api.getColumn('profit')!.getColDef().calculatedExpressionError).toBeUndefined();
             expect(api.getState().userColumns).toBeUndefined();
             expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe(7);
             expect(onCalculatedEvent).not.toHaveBeenCalled();

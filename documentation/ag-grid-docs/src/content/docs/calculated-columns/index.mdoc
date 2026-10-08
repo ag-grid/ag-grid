@@ -74,6 +74,8 @@ The dialog manages calculated columns inside the grid without mutating the `colu
 
 Grid State also captures user edits to, and removals of, calculated columns declared in `columnDefs`, and re-applies them over the declared definitions on restore — so a stored state takes precedence over a changed declaration.
 
+Use Grid State to preserve dialog validation errors as well. `api.getColumnDefs()` contains the column configuration, not validation errors; restoring definitions alone treats the expressions as programmatic definitions.
+
 ## Read-Only Calculated Columns
 
 Set `calculatedColumnReadOnly: true` to prevent users from changing a column's title, type or expression in the dialog. Users can choose **View Calculated Column** to inspect its definition. **Remove Calculated Column** is disabled in the column and cell context menus.
@@ -201,7 +203,7 @@ The callback runs when the dialog opens. It receives the source `column` and `co
 
 An existing expression that was not blocked by the dialog can be kept unchanged even if it references a restricted column. Users can apply it in deferred mode or change its title and type in either mode. Once the expression text differs from the text displayed when the dialog opened, restricted references are blocked, including edits to casing, whitespace or arithmetic. Restoring the original permitted expression text clears the restriction error.
 
-In deferred mode, a blocked reference disables Apply. In live mode, the full expression is saved with its restriction error, and cells display `#REF!` instead of evaluating it. Closing and reopening the dialog preserves the full expression and error so the user can correct it. Changing the title or type does not clear the restriction. The blocked status is also preserved by Grid State and `api.getColumnDefs()`.
+In deferred mode, a blocked reference disables Apply. In live mode, the full expression is saved with its restriction error, and cells display `#REF!` instead of evaluating it. Closing and reopening the dialog preserves the full expression and error so the user can correct it. Changing the title or type does not clear the restriction. Grid State also preserves the blocked status.
 
 Programmatic `calculatedExpression` values remain unrestricted. Restoring state preserves whether an expression was permitted or blocked; it does not apply new restrictions to previously permitted expressions. This is an editor restriction, not a data-security boundary.
 

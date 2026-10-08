@@ -462,7 +462,6 @@ const colDefPropertyMap: Record<ColOrGroupKey, undefined> = {
     headerGroupComponentParams: undefined,
     calculatedExpression: undefined,
     calculatedColumnReadOnly: undefined,
-    calculatedExpressionError: undefined,
     showValuesAs: undefined,
     initialShowValuesAs: undefined,
     showValuesAsDef: undefined,

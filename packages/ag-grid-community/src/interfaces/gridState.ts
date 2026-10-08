@@ -2,6 +2,7 @@ import type { ColDef } from '../entities/colDef';
 import type { ShowValuesAs, ShowValuesAsType } from '../entities/colDef-showValuesAs';
 import type { CellRangeType } from './IRangeService';
 import type { AdvancedFilterModel } from './advancedFilterModel';
+import type { CalculatedExpressionError } from './iCalculatedColumns';
 import type { RowGroupBulkExpansionState, RowGroupExpansionState } from './iExpansionService';
 import type { ColumnFilterState, FilterModel } from './iFilter';
 import type { RowPosition } from './iRowPosition';
@@ -190,12 +191,10 @@ export interface ColumnGroupState {
 }
 
 /**
- * The `ColDef` properties a user can configure through the grid's own UI, plus grid-managed validation
- * state the UI saves alongside them, and so the only ones the `userColumns` state section carries. Column UI
+ * The `ColDef` properties a user can configure through the grid's own UI and save in `userColumns`. Column UI
  * extends this union as it gains settings; everything else stays with `columnDefs` and the other state sections.
  */
-export type UserColumnPropertyKey =
-    'calculatedExpression' | 'calculatedExpressionError' | 'cellDataType' | 'columnGroupShow' | 'headerName';
+export type UserColumnPropertyKey = 'calculatedExpression' | 'cellDataType' | 'columnGroupShow' | 'headerName';
 
 /** One `ColDef` property the user configured, as a name/value pair. The value is typed by the property it
  *  names, so an entry cannot pair a property with a value the definition would reject. */
@@ -203,8 +202,12 @@ export type UserColumnProperty = {
     [K in UserColumnPropertyKey]: { property: K; value: ColDef[K] };
 }[UserColumnPropertyKey];
 
-export interface UserColumnState {
+/** A column the user configured through the Calculated Column dialog, or a change to a declared column made there. */
+export interface CalculatedUserColumnState {
     colId: string;
+    /** The kind of user column. Always saved; state from before other kinds existed omits it, and absent means
+     *  `'calculated'`. Every other kind must set its own `type`. */
+    type?: 'calculated';
     /** The user created this column; it exists only because of this entry. Without it the entry describes
      *  changes to a column declared in `columnDefs`, which the developer owns the existence of. */
     created?: boolean;
@@ -212,9 +215,14 @@ export interface UserColumnState {
     parentGroupId?: string | null;
     /** The column definition properties the user configured. Absent when `removed` is set. */
     properties?: UserColumnProperty[];
+    /** Validation rejection saved by the Calculated Column dialog, separate from the column definition. */
+    calculatedExpressionError?: CalculatedExpressionError;
     /** The user removed a column declared in `columnDefs`; it stays removed across restores. */
     removed?: boolean;
 }
+
+/** One entry of the `userColumns` state section. Kinds other than `'calculated'` join this union with a required `type`. */
+export type UserColumnState = CalculatedUserColumnState;
 
 export interface ColumnHeaderNameColumnState {
     colId: string;
