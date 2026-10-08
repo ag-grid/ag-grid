@@ -277,6 +277,13 @@
     top: calc(50% - var(--ag-header-column-border-height) * 0.5);
     border-right: var(--ag-header-column-border);
     right: 0;
+
+    /* always show column borders in forced colour mode */
+    @media (forced-colors: active) {
+        height: 100%;
+        top: 0;
+        border-right: solid 1px;
+    }
 }
 
 :where(.ag-body-horizontal-content-no-gap) {
