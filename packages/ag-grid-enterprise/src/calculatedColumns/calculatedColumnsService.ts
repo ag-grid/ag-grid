@@ -37,9 +37,11 @@ import {
 } from 'ag-grid-community';
 
 import { appendColumnToTree } from '../columns/columnTreeEdit';
+import { inspectFormulaExpression } from '../formula/ast/parsers';
 import type { FormulaError } from '../formula/ast/utils';
 import type { MenuRestoreFocusParams, MenuUtils } from '../menu/menuUtils';
 import { Dialog } from '../widgets/dialog';
+import type { CalculatedColumnExpressionPresentation } from './calculatedColumnExpressionEditor';
 import {
     CalculatedColumnForm,
     DEFAULT_CALCULATED_COLUMN_DATA_TYPES,
@@ -870,6 +872,27 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         };
     }
 
+    private inspectDialogExpression(
+        expression: string,
+        mapper: CalculatedColumnReferenceMapper
+    ): CalculatedColumnExpressionPresentation {
+        const { tokens, error, range } = inspectFormulaExpression(this.beans, expression);
+        const referenceError = mapper.toInternalExpression(expression, 'diagnostics').error;
+        if (referenceError) {
+            return {
+                tokens,
+                diagnostic: {
+                    message: translateCalculatedColumnReferenceError(referenceError, this.getLocaleTextFunc()),
+                    range: referenceError.range,
+                },
+            };
+        }
+        return {
+            tokens,
+            diagnostic: error ? { message: error.getTranslatedMessage(this.getLocaleTextFunc()), range } : undefined,
+        };
+    }
+
     private showDialog(
         draft: CalculatedColumnDraft,
         onApply: (draft: CalculatedColumnDraft) => void,
@@ -928,6 +951,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 this.getExpressionPickers(),
                 () => mapper.suggestions,
                 () => this.getFunctionSuggestions(),
+                (expression) => this.inspectDialogExpression(expression, mapper),
                 handleValidate,
                 handleApply,
                 handleCancel,

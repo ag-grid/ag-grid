@@ -284,7 +284,7 @@ describe('calculated columns - custom dialog validation', () => {
         expect(getValidationErrors).not.toHaveBeenCalled();
     });
 
-    test('live creation receives the new column and retains empty/incomplete input behaviour', async () => {
+    test('live creation receives the new column and commits empty/incomplete input without the callback', async () => {
         const getValidationErrors = vi.fn(validate);
         const api = createGrid('custom-validation-live-create', {
             columnDefs,
@@ -299,12 +299,15 @@ describe('calculated columns - custom dialog validation', () => {
         closeDialog();
         expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'calculated_1' })).toBe('#ERROR!');
         await openEditDialogViaMenu(api, 'calculated_1');
+        getValidationErrors.mockClear();
         setExpression('[Sales] +');
-        expect(getExpressionInput()).not.toHaveClass('invalid');
+        expect(getValidationErrors).not.toHaveBeenCalled();
+        expect(getExpressionInput()).toHaveClass('invalid');
         closeDialog();
         expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'calculated_1' })).toBe('#PARSE!');
         await openEditDialogViaMenu(api, 'calculated_1');
         setExpression('');
+        expect(getExpressionInput()).not.toHaveClass('invalid');
         closeDialog();
         expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'calculated_1' })).toBe('');
     });

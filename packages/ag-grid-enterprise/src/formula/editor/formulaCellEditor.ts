@@ -1,4 +1,4 @@
-import { RefPlaceholder, _isBrowserSafari, _placeCaretAtEnd } from 'ag-stack';
+import { RefPlaceholder, _isBrowserSafari } from 'ag-stack';
 
 import type { IFormulaCellEditorParams } from 'ag-grid-community';
 import { AgAbstractCellEditor, KeyCode } from 'ag-grid-community';
@@ -85,7 +85,7 @@ export class FormulaCellEditor<TData = any, TValue = any, TContext = any> extend
 
         const { defaultPrevented } = event;
         if (defaultPrevented || focusChanged) {
-            // stop contenteditable from inserting a tab when the grid handled navigation.
+            // the grid owns tab navigation during cell editing.
             event.preventDefault();
         }
 
@@ -113,11 +113,12 @@ export class FormulaCellEditor<TData = any, TValue = any, TContext = any> extend
             return;
         }
 
-        const { beans, eEditor } = this;
+        const eEditor = this.eEditor;
         if (!_isBrowserSafari()) {
             this.focusIn();
         }
-        _placeCaretAtEnd(beans, eEditor.getContentElement());
+        const input = eEditor.getInputElement();
+        input.setSelectionRange(input.value.length, input.value.length);
     }
 
     public focusIn(): void {
