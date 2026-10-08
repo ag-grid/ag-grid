@@ -16,7 +16,6 @@ import { ColumnHighlightPosition } from '../../../interfaces/iColumn';
 import type { IHeader, IHeaderParams } from '../../../interfaces/iHeader';
 import type { DisplaySortDef, SortDef, SortDirection } from '../../../interfaces/iSort';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
-import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import type { SelectAllFeature } from '../../../selection/selectAllFeature';
 import { CSS_COLUMN_HEADER_EDIT_HIGHLIGHTED } from '../../../styling/columnHeaderEditCss';
 import type { ComponentTooltip } from '../../../tooltip/headerTooltipSource';
@@ -30,7 +29,6 @@ import type { AgColumnHeader } from './agColumnHeader';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
-    setWidth(width: string): void;
     setAriaSort(sort?: AriaSortState): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
     getUserCompInstance(): IHeader | undefined;
@@ -39,22 +37,9 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
 }
 
 type HeaderAriaDescriptionKey =
-    | 'filter'
-    | 'menu'
-    | 'sort'
-    | 'selectAll'
-    | 'filterButton'
-    | 'cellSelection'
-    | 'showValuesAs'
-    | 'calculatedColumn';
+    'filter' | 'menu' | 'sort' | 'selectAll' | 'filterButton' | 'cellSelection' | 'showValuesAs' | 'calculatedColumn';
 type RefreshFunction =
-    | 'updateSortable'
-    | 'tooltip'
-    | 'headerClasses'
-    | 'headerStyles'
-    | 'wrapText'
-    | 'measuring'
-    | 'resize';
+    'updateSortable' | 'tooltip' | 'headerClasses' | 'headerStyles' | 'wrapText' | 'measuring' | 'resize';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgColumn, ResizeFeature> {
@@ -92,9 +77,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
         this.setGui(eGui, compBean);
         this.updateState();
-        this.setupWidth(compBean);
+        this.setupPosition();
         this.setupMovingCss(compBean);
-        this.setupPinnedCss(compBean);
+        this.refreshPinnedEdges();
         this.setupMenuClass(compBean);
         this.setupSortableClass(compBean);
         this.setupWrapTextClass();
@@ -123,7 +108,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         }
         colHover?.createHoverFeature(compBean, [column], eGui);
         rangeSvc?.createRangeHighlightFeature(compBean, column, comp);
-        compBean.createManagedBean(new SetLeftFeature(column, eGui, beans));
         compBean.createManagedBean(
             new ManagedFocusFeature(eGui, {
                 shouldStopEventPropagation: (e) => this.shouldStopEventPropagation(e),
@@ -505,16 +489,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         return !!colCanMove || !!colDef.enableRowGroup || !!colDef.enablePivot;
     }
 
-    private setupWidth(compBean: BeanStub): void {
-        const listener = () => {
-            const columnWidth = this.column.getActualWidth();
-            this.comp.setWidth(`${columnWidth}px`);
-        };
-
-        compBean.addManagedListeners(this.column, { widthChanged: listener });
-        listener();
-    }
-
     private setupMovingCss(compBean: BeanStub): void {
         const listener = () => {
             // this is what makes the header go dark when it is been moved (gives impression to
@@ -526,17 +500,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         listener();
     }
 
-    private setupPinnedCss(compBean: BeanStub): void {
-        const listener = () => {
-            this.comp.toggleCss('ag-header-cell-last-left-pinned', this.column.isLastLeftPinned());
-            this.comp.toggleCss('ag-header-cell-first-right-pinned', this.column.isFirstRightPinned());
-        };
-
-        compBean.addManagedListeners(this.column, {
-            lastLeftPinnedChanged: listener,
-            firstRightPinnedChanged: listener,
-        });
-        listener();
+    /** The visible columns call this as the column reaches or leaves a pinned edge. */
+    public refreshPinnedEdges(): void {
+        const { comp, column } = this;
+        if (!comp) {
+            return;
+        }
+        comp.toggleCss('ag-header-cell-last-left-pinned', column.isLastLeftPinned());
+        comp.toggleCss('ag-header-cell-first-right-pinned', column.isFirstRightPinned());
     }
 
     private setupMenuClass(compBean: BeanStub): void {

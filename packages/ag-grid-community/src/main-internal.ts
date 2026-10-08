@@ -99,8 +99,8 @@ export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { RowsDrop as _RowsDrop } from './dragAndDrop/rowDragTypes';
 export {
     _defaultPivotSort,
-    _getAvailableSortTypes,
     _getDisplaySortForColumn,
+    _isSortTypeAvailable,
     _normalizeSortType,
     _resolvePivotColumnForRow,
     _resolvePivotSort,

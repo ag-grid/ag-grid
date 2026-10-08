@@ -73,9 +73,9 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     /** Bumped whenever `allCols` is replaced, so a cache keyed on the displayed columns need not hold the old list. */
     public displayedColsVersion = 0;
 
-    /** Prev refresh's pinned-edge cols — drive an O(1) role-swap in `setFirstRightAndLastLeftPinned`. */
-    private prevLastLeftPinned: AgColumn | null = null;
-    private prevFirstRightPinned: AgColumn | null = null;
+    /** The pinned-edge cols, so `setPinnedEdges` swaps the roles in O(1). */
+    private lastLeftPinnedCol: AgColumn | null = null;
+    private firstRightPinnedCol: AgColumn | null = null;
 
     public wireBeans(beans: BeanCollection): void {
         this.colModel = beans.colModel;
@@ -111,13 +111,13 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             centerCols = [];
             rightCols = [];
             for (let i = 0, len = treeLeft.length; i < len; ++i) {
-                updateGroupsAndCollectLeaves(treeLeft[i], null, leftCols);
+                collectLeaves(treeLeft[i], null, leftCols);
             }
             for (let i = 0, len = treeCenter.length; i < len; ++i) {
-                updateGroupsAndCollectLeaves(treeCenter[i], null, centerCols);
+                collectLeaves(treeCenter[i], null, centerCols);
             }
             for (let i = 0, len = treeRight.length; i < len; ++i) {
-                updateGroupsAndCollectLeaves(treeRight[i], null, rightCols);
+                collectLeaves(treeRight[i], null, rightCols);
             }
         }
         // Replaced, never mutated in place: `colViewport` detects a changed render set by comparing
@@ -126,9 +126,11 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.centerCols = centerCols;
         this.rightCols = rightCols;
 
-        // `joinCols` stamps each col's `left` + returns section widths; then clear stale lefts + groups.
-        const widths = this.joinCols(source);
-        this.setLeftValuesOfGroups(source);
+        // `joinCols` stamps each col's `left` + returns section widths; then the groups' lefts.
+        const widths = this.joinCols();
+        this.setLeftValuesOfGroups();
+        // set before anything is drawn or told, so a cell drawn now and a listener's own refresh both see them
+        this.setPinnedEdges(leftCols, rightCols);
 
         // Run flex sizing when a flex col exists OR cols await a flex-then-reveal pass
         // (a "had flex" → "no flex" transition still needs the reveal).
@@ -147,16 +149,21 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         // a changed displayed set can trade one column's width for another's with no left or total moving
         this.cellsMoved = true;
         // Reuse the section totals — except after a flex pass, which resized centre cols, so re-sum.
-        this.updateBodyWidths(runFlex ? undefined : widths);
-        this.setFirstRightAndLastLeftPinned(leftCols, rightCols, source);
+        this.layoutBodyWidths(runFlex ? undefined : widths);
         colViewport.checkViewportColumns(false);
 
         this.rowAutoHeight?.requestCheckAutoHeight();
+        this.dispatchLayoutEvents(source);
         this.eventSvc.dispatchEvent({ type: 'displayedColumnsChanged', source });
     }
 
-    /** `widths` reuses totals already computed on the hot `refresh` path; omit to re-sum. */
-    public updateBodyWidths(widths?: SectionWidths): void {
+    /** Ends a resize, a fit or a flex pass; `widths` reuses totals already summed, else they are re-summed. */
+    public updateBodyWidths(source: ColumnEventType, widths?: SectionWidths): void {
+        this.layoutBodyWidths(widths);
+        this.dispatchLayoutEvents(source);
+    }
+
+    private layoutBodyWidths(widths: SectionWidths | undefined): void {
         // Above the comparison below: a move restamps the lefts and leaves all three totals unchanged.
         ++this.layoutVersion;
 
@@ -168,7 +175,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             // over the same displayed columns, a width change moves a section total or a later left
             if (this.cellsMoved) {
                 this.cellsMoved = false;
-                this.rowRenderer.refreshCellPositions();
+                this.refreshCellPositions();
             }
             return;
         }
@@ -177,7 +184,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.rightWidth = newRightWidth;
         this.totalWidth = newBodyWidth + newLeftWidth + newRightWidth;
         this.cellsMoved = false;
-        this.rowRenderer.refreshCellPositions();
+        this.refreshCellPositions();
 
         // `columnContainerWidthChanged` BEFORE `displayedColumnsWidthChanged`: the viewport must resize
         // before the scrollbar updates its visibility, and both are public, so the order is observable.
@@ -186,32 +193,47 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         eventSvc.dispatchEvent({ type: 'displayedColumnsWidthChanged' });
     }
 
+    /** Body cells and header cells are sized and placed here, once every left and width is set, never by column events. */
+    private refreshCellPositions(): void {
+        this.rowRenderer.refreshCellPositions();
+        this.ctrlsSvc.getHeaderRowContainerCtrl()?.refreshCellPositions();
+    }
+
+    /** Each column and group reports how its layout changed since it last did, now that the layout is final. */
+    private dispatchLayoutEvents(source: ColumnEventType): void {
+        const colModel = this.colModel;
+        dispatchColLayoutEvents(colModel.colsList, source);
+        // the primary columns are parked out of `colsList` while pivoting, and can still be resized
+        if (colModel.showingPivotResult) {
+            dispatchColLayoutEvents(colModel.colDefList, source);
+        }
+        // with no groups the trees hold only columns
+        if (colModel.colsTreeDepth !== 0) {
+            dispatchGroupLayoutEvents(this.treeLeft);
+            dispatchGroupLayoutEvents(this.treeCenter);
+            dispatchGroupLayoutEvents(this.treeRight);
+        }
+    }
+
     /** Repositions each col's section-relative `left` without rebuilding the displayed set; returns
      *  per-section widths. Lighter sibling of `joinCols`, for resize / autosize / flex. */
-    public setLeftValues(source: ColumnEventType): SectionWidths {
-        const left = this.setLeftsLeftToRight(this.leftCols, source);
-        const right = this.setLeftsLeftToRight(this.rightCols, source);
-        const center = this.setLeftsLeftToRight(this.centerCols, source);
-        this.setLeftValuesOfGroups(source);
+    public setLeftValues(): SectionWidths {
+        const left = this.setLeftsLeftToRight(this.leftCols);
+        const right = this.setLeftsLeftToRight(this.rightCols);
+        const center = this.setLeftsLeftToRight(this.centerCols);
+        this.setLeftValuesOfGroups();
         return { left, center, right };
     }
 
-    private setLeftValuesOfGroups(source: ColumnEventType): void {
-        // A col that left the displayed set keeps a stale `left`; clear it so it doesn't render offset.
-        // `setLeft(null)` short-circuits on already-null cols, so cheap on warm refreshes.
-        const colsList = this.colModel.colsList;
-        for (let i = 0, len = colsList.length; i < len; ++i) {
-            const column = colsList[i];
-            if (!column.displayed) {
-                column.setLeft(null, source);
-            }
+    private setLeftValuesOfGroups(): void {
+        if (this.colModel.colsTreeDepth !== 0) {
+            setGroupLefts(this.treeLeft);
+            setGroupLefts(this.treeRight);
+            setGroupLefts(this.treeCenter);
         }
-        checkLeftOnGroups(this.treeLeft);
-        checkLeftOnGroups(this.treeRight);
-        checkLeftOnGroups(this.treeCenter);
     }
 
-    private setFirstRightAndLastLeftPinned(leftCols: AgColumn[], rightCols: AgColumn[], source: ColumnEventType): void {
+    private setPinnedEdges(leftCols: AgColumn[], rightCols: AgColumn[]): void {
         const leftLen = leftCols.length;
         const newLastLeft = leftLen ? leftCols[leftLen - 1] : null;
         let newFirstRight: AgColumn | null = null;
@@ -220,29 +242,29 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             newFirstRight = this.gos.get('enableRtl') ? rightCols[rightLen - 1] : rightCols[0];
         }
 
-        // Destroyed prev refs are harmless: `AgColumn.destroy` already clears these flags, so the
-        // false-clear short-circuits via the no-change guard.
-        const prevLastLeft = this.prevLastLeftPinned;
+        const prevLastLeft = this.lastLeftPinnedCol;
         const lastLeftMoved = prevLastLeft !== newLastLeft;
         if (lastLeftMoved) {
-            prevLastLeft?.setLastLeftPinned(false, source);
-            newLastLeft?.setLastLeftPinned(true, source);
-            this.prevLastLeftPinned = newLastLeft;
+            prevLastLeft?.setLastLeftPinned(false);
+            newLastLeft?.setLastLeftPinned(true);
+            this.lastLeftPinnedCol = newLastLeft;
         }
-        const prevFirstRight = this.prevFirstRightPinned;
+        const prevFirstRight = this.firstRightPinnedCol;
         const firstRightMoved = prevFirstRight !== newFirstRight;
         if (firstRightMoved) {
-            prevFirstRight?.setFirstRightPinned(false, source);
-            newFirstRight?.setFirstRightPinned(true, source);
-            this.prevFirstRightPinned = newFirstRight;
+            prevFirstRight?.setFirstRightPinned(false);
+            newFirstRight?.setFirstRightPinned(true);
+            this.firstRightPinnedCol = newFirstRight;
         }
         if (lastLeftMoved || firstRightMoved) {
-            this.rowRenderer.refreshPinnedEdgeCells(
-                lastLeftMoved ? prevLastLeft : null,
-                lastLeftMoved ? newLastLeft : null,
-                firstRightMoved ? prevFirstRight : null,
-                firstRightMoved ? newFirstRight : null
-            );
+            const fromLastLeft = lastLeftMoved ? prevLastLeft : null;
+            const toLastLeft = lastLeftMoved ? newLastLeft : null;
+            const fromFirstRight = firstRightMoved ? prevFirstRight : null;
+            const toFirstRight = firstRightMoved ? newFirstRight : null;
+            this.rowRenderer.refreshPinnedEdgeCells(fromLastLeft, toLastLeft, fromFirstRight, toFirstRight);
+            this.ctrlsSvc
+                .getHeaderRowContainerCtrl()
+                ?.refreshPinnedEdgeCells(fromLastLeft, toLastLeft, fromFirstRight, toFirstRight);
         }
     }
 
@@ -357,6 +379,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             prev.allColsIndex = -1;
             prev.colSpanIndex = -1;
             prev.displayed = false;
+            prev.left = null;
         }
         this.leftCols = [];
         this.rightCols = [];
@@ -388,17 +411,18 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     /** One pass over displayed cols: stamps `allColsIndex` (display order; RTL flips sections) and
-     *  section-relative `left`, returning per-section widths so {@link updateBodyWidths} needn't re-sum. */
-    private joinCols(source: ColumnEventType): SectionWidths {
+     *  section-relative `left`, returning per-section widths so {@link layoutBodyWidths} needn't re-sum. */
+    private joinCols(): SectionWidths {
         const { leftCols, centerCols, rightCols } = this;
-        // `skipTreeBuild` path skips `clear()`, so un-stamp the prior set here: departed cols must
-        // reach `displayed === false` or `setLeftValuesOfGroups` won't clear their stale `left`.
+        // `skipTreeBuild` path skips `clear()`, so un-stamp the prior set here; `layoutSection` re-stamps the displayed.
+        // Destroy aside, a column leaves the displayed set only here or in `clear`, so only they clear its `left`.
         const prevAll = this.allCols;
         for (let i = 0, len = prevAll.length; i < len; ++i) {
             const prev = prevAll[i];
             prev.allColsIndex = -1;
             prev.colSpanIndex = -1;
             prev.displayed = false;
+            prev.left = null;
         }
         const all: AgColumn[] = [];
         this.autoHeightCols.length = 0;
@@ -413,13 +437,13 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         let centerWidth: number;
         let rightWidth: number;
         if (this.gos.get('enableRtl')) {
-            rightWidth = this.layoutSection(rightCols, all, hidePaddedHeaderRows, source);
-            centerWidth = this.layoutSection(centerCols, all, hidePaddedHeaderRows, source);
-            leftWidth = this.layoutSection(leftCols, all, hidePaddedHeaderRows, source);
+            rightWidth = this.layoutSection(rightCols, all, hidePaddedHeaderRows);
+            centerWidth = this.layoutSection(centerCols, all, hidePaddedHeaderRows);
+            leftWidth = this.layoutSection(leftCols, all, hidePaddedHeaderRows);
         } else {
-            leftWidth = this.layoutSection(leftCols, all, hidePaddedHeaderRows, source);
-            centerWidth = this.layoutSection(centerCols, all, hidePaddedHeaderRows, source);
-            rightWidth = this.layoutSection(rightCols, all, hidePaddedHeaderRows, source);
+            leftWidth = this.layoutSection(leftCols, all, hidePaddedHeaderRows);
+            centerWidth = this.layoutSection(centerCols, all, hidePaddedHeaderRows);
+            rightWidth = this.layoutSection(rightCols, all, hidePaddedHeaderRows);
         }
 
         this.allCols = all;
@@ -429,12 +453,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     /** Lays one section's cols into `all`: stamps `allColsIndex` + section-relative `left`, folding in the
      *  per-column lists and `flexActive`/`headerGroupRowCount`. A method not a closure, so it allocates nothing. */
-    private layoutSection(
-        cols: AgColumn[],
-        all: AgColumn[],
-        hidePaddedHeaderRows: boolean,
-        source: ColumnEventType
-    ): number {
+    private layoutSection(cols: AgColumn[], all: AgColumn[], hidePaddedHeaderRows: boolean): number {
         const { autoHeightCols, rowSpanCols } = this;
         let left = 0;
         // Leaves under one group are contiguous; skip the parent-chain walk for same-parent runs.
@@ -443,7 +462,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             const col = cols[i];
             col.allColsIndex = all.length;
             col.displayed = true;
-            col.setLeft(left, source);
+            col.oldLeft = col.reportedLeft;
+            col.left = left;
             all.push(col);
             if (col.colDef.autoHeight) {
                 autoHeightCols.push(col);
@@ -479,12 +499,14 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     /** Restamps the lefts from 0, noting a moved one in `cellsMoved`; returns the section width. */
-    private setLeftsLeftToRight(cols: AgColumn[], source: ColumnEventType): number {
+    private setLeftsLeftToRight(cols: AgColumn[]): number {
         let left = 0;
         let moved = false;
         for (let i = 0, len = cols.length; i < len; ++i) {
             const col = cols[i];
-            moved = col.setLeft(left, source) || moved;
+            moved ||= col.left !== left;
+            col.oldLeft = col.reportedLeft;
+            col.left = left;
             left += col.actualWidth;
         }
         this.cellsMoved ||= moved;
@@ -528,16 +550,16 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 }
 
-/** Top-down DFS: computes each `group.displayedChildren` and collects displayed leaves into `out` in one pass.
- *  `parentWithExpansion` carries `columnGroupShow` down (no per-group parent walk). Returns true if anything changed. */
-const updateGroupsAndCollectLeaves = (
+/** Top-down DFS: computes each `group.displayedChildren`, replaced only when it changes, and collects displayed
+ *  leaves into `out` in one pass. `parentWithExpansion` carries `columnGroupShow` down (no per-group parent walk). */
+const collectLeaves = (
     node: AgColumn | AgColumnGroup,
     parentWithExpansion: AgColumnGroup | null,
     out: AgColumn[]
-): boolean => {
+): void => {
     if (node.isColumn) {
         out.push(node);
-        return false;
+        return;
     }
     const myParentWithExpansion = node.isPadding() ? parentWithExpansion : node;
     const provided = myParentWithExpansion?.providedColumnGroup ?? null;
@@ -547,7 +569,6 @@ const updateGroupsAndCollectLeaves = (
     const oldLen = oldList?.length ?? 0;
     let newList: (AgColumn | AgColumnGroup)[] | null = null;
     let outLen = 0;
-    let descendantChanged = false;
     const children = node.children;
     if (children !== null) {
         const expanded = expandable && provided.expanded;
@@ -560,15 +581,13 @@ const updateGroupsAndCollectLeaves = (
                     continue;
                 }
                 const startOut = out.length;
-                if (updateGroupsAndCollectLeaves(child, myParentWithExpansion, out)) {
-                    descendantChanged = true;
-                }
+                collectLeaves(child, myParentWithExpansion, out);
                 if (out.length === startOut) {
                     // Empty group under an expandable parent — exclude.
                     continue;
                 }
-            } else if (updateGroupsAndCollectLeaves(child, myParentWithExpansion, out)) {
-                descendantChanged = true; // Not expandable: every child is displayed; recurse only to compute descendants.
+            } else {
+                collectLeaves(child, myParentWithExpansion, out);
             }
             if (newList !== null) {
                 newList.push(child);
@@ -583,15 +602,10 @@ const updateGroupsAndCollectLeaves = (
             ++outLen;
         }
     }
-    const selfChanged = newList !== null || outLen !== oldLen;
-    if (selfChanged) {
+    if (newList !== null || outLen !== oldLen) {
         // `newList === null` => same prefix but oldList was longer => truncate to `outLen`.
         node.displayedChildren = newList ?? oldList!.slice(0, outLen);
     }
-    if (selfChanged || descendantChanged) {
-        node.dispatchLocalEvent({ type: 'displayedChildrenChanged' });
-    }
-    return selfChanged || descendantChanged;
 };
 
 const displayedHeaderGroupDepth = (group: AgColumnGroup): number => {
@@ -606,11 +620,30 @@ const displayedHeaderGroupDepth = (group: AgColumnGroup): number => {
     return 0;
 };
 
-const checkLeftOnGroups = (tree: (AgColumn | AgColumnGroup)[]): void => {
+const dispatchColLayoutEvents = (cols: AgColumn[], source: ColumnEventType): void => {
+    for (let i = 0, len = cols.length; i < len; ++i) {
+        const col = cols[i];
+        // a listener's own update may have destroyed the rest
+        if (col.isAlive()) {
+            col.dispatchLayoutEvents(source);
+        }
+    }
+};
+
+const setGroupLefts = (tree: (AgColumn | AgColumnGroup)[]): void => {
     for (let i = 0, len = tree.length; i < len; ++i) {
         const node = tree[i];
         if (isColumnGroup(node)) {
-            node.checkLeft();
+            node.setLeftFromChildren();
+        }
+    }
+};
+
+const dispatchGroupLayoutEvents = (tree: (AgColumn | AgColumnGroup)[]): void => {
+    for (let i = 0, len = tree.length; i < len; ++i) {
+        const node = tree[i];
+        if (isColumnGroup(node)) {
+            node.dispatchLayoutEvents();
         }
     }
 };

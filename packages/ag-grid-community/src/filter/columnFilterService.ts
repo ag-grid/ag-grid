@@ -1740,8 +1740,8 @@ export class ColumnFilterService
         source: ColumnEventType,
         additionalEventAttributes?: any
     ): void {
-        if (column.filterActive !== active) {
-            column.filterActive = active;
+        if (column.isFilterActive() !== active) {
+            column.setFilterActive(active);
             column.dispatchColEvent('filterActiveChanged', source);
         }
         column.dispatchColEvent('filterChanged', source, additionalEventAttributes);

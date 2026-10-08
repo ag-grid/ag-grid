@@ -44,6 +44,8 @@ Most users will not need to use Column Events but they are made available for ad
 
 All events fired by the column are synchronous (events are normally asynchronous). The grid is also listening for these events internally. This means that when you receive an event, the grid may still have some work to do (e.g. if sort has changed, the grid UI may still have to do the sorting).
 
+The layout events `widthChanged`, `leftChanged`, `lastLeftPinnedChanged` and `firstRightPinnedChanged`, and `columnStateUpdated` for a width, are fired once every column has been laid out, so a listener sees every column at its new position.
+
 It is recommended to **not** call any grid API functions while receiving events from the `column`. Instead, it is best to put your logic into a timeout and call the grid in another VM tick.
 
 When adding event listeners to a column, they will stay with the column until the column is destroyed. Columns are destroyed when you add new columns to the grid. Column objects are NOT destroyed when the columns is removed from the DOM (e.g. column virtualisation removes the column due to horizontal scrolling, or the column is made invisible via the API).

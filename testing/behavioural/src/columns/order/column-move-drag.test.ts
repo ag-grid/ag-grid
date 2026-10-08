@@ -121,6 +121,44 @@ describe('column header drag reorder', () => {
         await waitFor(() => expect(colOrder(api)).toEqual(['b', 'c', 'd', 'a']));
     });
 
+    test('with moves deferred to the drop, the header the drag would drop beside shows where until the drop', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'a', width: 100 },
+                { field: 'b', width: 100 },
+                { field: 'd', width: 100 },
+            ],
+            rowData: [{ a: 1, b: 2, d: 4 }],
+            suppressMoveWhenColumnDragging: true,
+        });
+        const highlights = () =>
+            ['a', 'b', 'd'].flatMap((colId) => {
+                const classList = el(api, `.ag-header-cell[col-id="${colId}"]`).classList;
+                return ['before', 'after']
+                    .filter((side) => classList.contains(`ag-header-highlight-${side}`))
+                    .map((side) => `${colId}:${side}`);
+            });
+        const source = el(api, '.ag-header-cell[col-id="a"]');
+        const viewport = el(api, '.ag-grid-viewport');
+        const ownerDocument = source.ownerDocument;
+        const original = ownerDocument.elementsFromPoint?.bind(ownerDocument);
+        ownerDocument.elementsFromPoint = () => [viewport];
+        const dispatcher = new DragEventDispatcher('mouse', null, false);
+        try {
+            await dispatcher.startDrag(source, 5, 100);
+            await dispatcher.movePointer(viewport, 5, 100);
+            await dispatcher.movePointer(viewport, 250, 100);
+            expect(highlights()).toEqual(['d:after']);
+            expect(colOrder(api)).toEqual(['a', 'b', 'd']);
+            await dispatcher.finishDrag(viewport);
+        } finally {
+            ownerDocument.elementsFromPoint = original as typeof ownerDocument.elementsFromPoint;
+        }
+
+        await waitFor(() => expect(colOrder(api)).toEqual(['b', 'd', 'a']));
+        expect(highlights()).toEqual([]);
+    });
+
     test('dragging a header left to the front, hidden col preserved', async () => {
         const api = await createGrid();
         expect(colOrder(api)).toEqual(['a', 'b', 'c', 'd']);

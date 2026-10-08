@@ -302,9 +302,8 @@ describe('Column destruction', () => {
         }
     });
 
-    // VisibleColsService.clear() keeps `prevLastLeftPinned` / `prevFirstRightPinned` refs across
-    // refreshes for the role-swap optimisation. If the leaf at the pinned edge is removed AND
-    // destroyed between refreshes, the next refresh must not fire events on the dead bean.
+    // VisibleColsService keeps `lastLeftPinnedCol` / `firstRightPinnedCol` across refreshes for the role swap.
+    // If the leaf at the pinned edge is removed AND destroyed between refreshes, the next refresh must not tell it anything.
     test('removing the left-pinned edge col between refreshes does not fire events on the destroyed bean', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ colId: 'a', pinned: 'left' }, { colId: 'b', pinned: 'left' }, { colId: 'c' }],

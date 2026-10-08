@@ -65,6 +65,31 @@ export class HeaderRowContainerCtrl extends BeanStub implements ScrollPartner {
         this.filtersRowCtrl?.setRowWidth(width);
     }
 
+    public refreshCellPositions(): void {
+        const groupsRowCtrls = this.groupsRowCtrls;
+        for (let i = 0, len = groupsRowCtrls.length; i < len; ++i) {
+            groupsRowCtrls[i].refreshCellPositions();
+        }
+        this.columnsRowCtrl?.refreshCellPositions();
+        this.filtersRowCtrl?.refreshCellPositions();
+    }
+
+    /** Called by the visible columns with the columns that left or reached a pinned edge, null where none did. */
+    public refreshPinnedEdgeCells(
+        fromLastLeft: AgColumn | null,
+        toLastLeft: AgColumn | null,
+        fromFirstRight: AgColumn | null,
+        toFirstRight: AgColumn | null
+    ): void {
+        const columnsRowCtrl = this.columnsRowCtrl;
+        if (columnsRowCtrl) {
+            columnsRowCtrl.refreshPinnedEdges(fromLastLeft);
+            columnsRowCtrl.refreshPinnedEdges(toLastLeft);
+            columnsRowCtrl.refreshPinnedEdges(fromFirstRight);
+            columnsRowCtrl.refreshPinnedEdges(toFirstRight);
+        }
+    }
+
     public getAllCtrls(): HeaderRowCtrl[] {
         const res: HeaderRowCtrl[] = [...this.groupsRowCtrls];
 

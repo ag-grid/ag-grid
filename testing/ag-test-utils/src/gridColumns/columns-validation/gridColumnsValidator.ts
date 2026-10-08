@@ -1420,7 +1420,7 @@ export class GridColumnsValidator {
 
         // isFirstRightPinned: at most one column, must be the boundary adjacent to the centre body.
         // In LTR that's `rightCols[0]`; in RTL the right section is visually mirrored so the boundary
-        // is `rightCols[length - 1]`. (See `VisibleColsService.setFirstRightAndLastLeftPinned`.)
+        // is `rightCols[length - 1]`. (See `VisibleColsService.setPinnedEdges`.)
         if (rightCols.length > 0) {
             const firstRightPinnedCols = rightCols.filter((c) => c.isFirstRightPinned());
             if (firstRightPinnedCols.length > 1) {
