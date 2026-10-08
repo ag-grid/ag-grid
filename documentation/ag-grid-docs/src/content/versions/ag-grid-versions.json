@@ -22,7 +22,7 @@
             },
             {
                 "text": "Custom Renderers for Column Items in Columns Tool Panel",
-                "path": "./tool-panel-columns-customising/#custom-column-labels"
+                "path": "./tool-panel-columns-customising/#custom-label-renderers"
             }
         ],
         "notesPath": "./upgrading-to-ag-grid-36-2",

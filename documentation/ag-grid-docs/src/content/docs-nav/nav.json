@@ -1631,12 +1631,6 @@
                                             "title": "Customisation",
                                             "path": "tool-panel-columns-customising",
                                             "isEnterprise": true
-                                        },
-                                        {
-                                            "type": "item",
-                                            "title": "API",
-                                            "path": "tool-panel-columns-layout",
-                                            "isEnterprise": true
                                         }
                                     ]
                                 },

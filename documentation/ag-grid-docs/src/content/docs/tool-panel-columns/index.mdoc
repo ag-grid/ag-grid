@@ -9,36 +9,22 @@ The Columns Tool Panel provides controls for managing the grid's columns. Use it
 
 ## Columns Tool Panel Sections
 
-The Columns Tool Panel is split into the following sections, from top to bottom:
+The Columns Tool Panel is split into the following sections, from top to bottom.
 
-- Top area
-    - **Pivot Mode Section**: Toggle to turn [Pivot Mode](./pivoting/) on or off.
-    - **Expand / Collapse All**: Toggle to expand or collapse all column groups.
-    - **Select / Unselect All**: Toggle to select or unselect all columns.
-    - **Search**: Type to filter the Columns Section by column name.
-- **Columns Section**
-    - Lists every column available to the grid, grouped by column group. By default the order matches the order of the columns in the grid; see [Suppress Column Reordering](./tool-panel-columns-configuration/#suppress-column-reordering) to change this.
-    - **Select / Unselect Column (or Group)**: What selecting a column does depends on whether the grid is in pivot mode:
-        - **Pivot Mode Off**: Selecting a column toggles its visibility. A selected column is visible and an unselected column is hidden.
-        - **Pivot Mode On**: Selecting a column groups, aggregates or pivots it, depending on what the column allows.
-    - **Drag Handle**: Drag a column, with the mouse or by touch, to one of the following:
-        1. Row Groups Section
-        1. Values Section
-        1. Column Labels (Pivot) Section
-        1. Onto the grid, which makes the column visible. Requires the grid option `allowDragFromColumnsToolPanel`.
-        1. Elsewhere in the Columns Section, to reorder columns
-- **Row Groups Section**
-    - Columns here form the grid's [Row Grouping](./grouping/).
-- **Values Section**
-    - Columns here form the grid's [Aggregations](./aggregation/). The section follows the Excel naming convention of 'Values'.
-- **Column Labels (Pivot) Section**
-    - Columns here form the grid's [Pivot](./pivoting/). The section follows the Excel naming convention of 'Column Labels'.
-- **Context Menu**
-    - Right-click a column to open a menu for grouping, aggregating and pivoting it. See [Context Menu](./tool-panel-columns-customising/#context-menu).
+### Top Area
+
+Turn [Pivot Mode](./pivoting/) on or off, expand or collapse all column groups, select or unselect all columns, and search the Columns section by column name.
+
+### Columns Section
+
+Lists every column available to the grid, grouped by column group. Select a column to show or hide it or, in pivot mode, to group, aggregate or pivot it. Drag a column to reorder it, to move it into a drop zone or, when enabled, onto the grid to show it.
+
+### Drop Zones
+
+The **Row Groups Section**, **Values Section** and **Column Labels (Pivot) Section** hold the columns used for the grid's [Row Grouping](./grouping/), [Aggregation](./aggregation/) and [Pivoting](./pivoting/).
 
 ## Next Steps
 
-- [Configuration](./tool-panel-columns-configuration/) - showing and hiding sections and columns, column order and custom layouts, and making grouping, aggregation and pivoting read only.
+- [Configuration](./tool-panel-columns-configuration/) - showing and hiding sections and columns, column order and custom layouts, making grouping, aggregation and pivoting read only, and the full parameter and API reference.
 - [Deferred Updates](./tool-panel-columns-deferred-updates/) - adding Apply, Cancel and Reset buttons, and staging changes until they are applied.
-- [Customisation](./tool-panel-columns-customising/) - styling columns, rendering custom column labels, customising the context menu and the drag image.
-- [API](./tool-panel-columns-layout/) - the Columns Tool Panel instance methods, expanding and collapsing column groups, and the full list of tool panel parameters.
+- [Customisation](./tool-panel-columns-customising/) - styling columns, custom label renderers, expanding and collapsing column groups, customising the context menu and the drag image.
