@@ -690,20 +690,15 @@ function createAggregationSubMenu(
 
         result.push({
             name: localeTextFunc('noAggregation', 'None'),
-            action: () => {
-                valueColsSvc.removeColumns([columnToUse!], 'contextMenu');
-                valueColsSvc.setColumnAggFunc!(columnToUse, undefined, 'contextMenu');
-            },
+            action: () => valueColsSvc.removeColumns([columnToUse!], 'contextMenu'),
             checked: !columnIsAlreadyAggValue,
         });
 
         for (const funcName of funcNames) {
             result.push({
                 name: localeTextFunc(funcName, aggFuncSvc.getDefaultFuncLabel(funcName)),
-                action: () => {
-                    valueColsSvc.setColumnAggFunc!(columnToUse, funcName, 'contextMenu');
-                    valueColsSvc.addColumns([columnToUse!], 'contextMenu');
-                },
+                // activates the column too
+                action: () => valueColsSvc.setColumnAggFunc!(columnToUse, funcName, 'contextMenu'),
                 checked: columnIsAlreadyAggValue && columnToUse.aggFunc === funcName,
             });
         }

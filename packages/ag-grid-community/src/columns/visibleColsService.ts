@@ -69,6 +69,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     /** A cell may have moved or resized with no section total changing since the cells were last placed. */
     private cellsMoved = false;
+    /** The source of the last layout made inside a column update, whose layout events wait for its end. */
+    private pendingLayoutSource: ColumnEventType | null = null;
 
     /** Bumped whenever `allCols` is replaced, so a cache keyed on the displayed columns need not hold the old list. */
     public displayedColsVersion = 0;
@@ -199,8 +201,26 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.ctrlsSvc.getHeaderRowContainerCtrl()?.refreshCellPositions();
     }
 
-    /** Each column and group reports how its layout changed since it last did, now that the layout is final. */
-    private dispatchLayoutEvents(source: ColumnEventType): void {
+    /** Each column and group reports how its layout changed since it last did, now that the layout is final: inside
+     *  a column update, at its end, after its column events. `null` raises only what the update deferred. */
+    public dispatchLayoutEvents(source: ColumnEventType | null): void {
+        const colModel = this.colModel;
+        if (colModel.colEventsDepth !== 0) {
+            this.pendingLayoutSource = source;
+            return;
+        }
+        try {
+            colModel.flushColEvents();
+        } finally {
+            const layoutSource = source ?? this.pendingLayoutSource;
+            this.pendingLayoutSource = null;
+            if (layoutSource !== null) {
+                this.raiseLayoutEvents(layoutSource);
+            }
+        }
+    }
+
+    private raiseLayoutEvents(source: ColumnEventType): void {
         const colModel = this.colModel;
         dispatchColLayoutEvents(colModel.colsList, source);
         // the primary columns are parked out of `colsList` while pivoting, and can still be resized

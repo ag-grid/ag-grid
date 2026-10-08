@@ -598,13 +598,19 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
     /** Propagate a mode change to the grid. A mode needing an aggregated total on a not-yet-aggregated column
      *  promotes it to a value column (which re-aggregates). Otherwise just redraw the cells: a total mode reads the
      *  root aggregate on demand via the transform params (which aggregates the root lazily), so no re-agg here. */
-    private applyModeChangeEffects(column: AgColumn, source?: ColumnEventType): void {
-        column.dispatchStateUpdatedEvent('showValuesAs');
-        this.eventSvc.dispatchEvent({ type: 'columnShowValuesAsChanged' });
-        if (this.promoteToValueColumn(column, source)) {
-            return; // promotion re-aggregates and refreshes
+    private applyModeChangeEffects(column: AgColumn, source: ColumnEventType = 'api'): void {
+        const colModel = this.colModel;
+        colModel.beginColUpdate();
+        try {
+            column.dispatchStateUpdatedEvent('showValuesAs', source);
+            this.eventSvc.dispatchEvent({ type: 'columnShowValuesAsChanged' });
+            if (this.promoteToValueColumn(column, source)) {
+                return; // promotion re-aggregates and refreshes
+            }
+            this.rowRenderer.refreshCells({ columns: [column.colId], force: true });
+        } finally {
+            colModel.endColUpdate();
         }
-        this.rowRenderer.refreshCells({ columns: [column.colId], force: true });
     }
 
     /** Promote a not-yet-aggregated column to a value column (the mode's `defaultAggFunc`) when its active mode

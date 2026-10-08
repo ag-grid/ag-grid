@@ -232,8 +232,8 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
 
     // this method should only be used by the colModel to
     // change flex when required by the applyColumnState method.
-    public setColFlex(column: AgColumn, flex: number | null) {
+    public setColFlex(column: AgColumn, flex: number | null, source: ColumnEventType) {
         column.flex = flex ?? null;
-        column.dispatchStateUpdatedEvent('flex');
+        column.dispatchStateUpdatedEvent('flex', source);
     }
 }

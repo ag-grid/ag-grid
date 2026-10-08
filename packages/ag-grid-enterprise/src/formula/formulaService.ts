@@ -102,13 +102,18 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
     /** Calculated columns use formula evaluation without enabling editable formula behaviours. */
     private calculatedColumnsActive = false;
 
+    /** The `colDefsVersion` the references were last rebuilt and the cache dropped for. */
+    private refreshedColDefsVersion = -1;
+    /** Set when the active state changes, until the column refresh that changed it settles. */
+    private activeChanged = false;
+
     public hasCachedRows(): boolean {
         return this.cachedResult.size > 0;
     }
 
     /**
-     * Recompute `active`, the `formulaColumnsPresent` cache, and trigger a full formula refresh
-     * if the active state changed. Called by `columnModel` whenever the column set changes.
+     * Recompute `active` and the `formulaColumnsPresent` cache; a change in the active state refreshes the
+     * formulas once the column refresh settles. Called by `columnModel` whenever the column set changes.
      */
     public setFormulasActive(columns: AgColumn[]): void {
         const calculatedColumnsEnabled = this.beans.calculatedColsSvc?.isEnabled() === true;
@@ -140,9 +145,22 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         if (active !== this.active || calculatedColumnsActive !== this.calculatedColumnsActive) {
             this.active = active;
             this.calculatedColumnsActive = calculatedColumnsActive;
-            this.rebuildColRefMap();
-            this.refreshFormulas(true);
+            this.activeChanged = true;
         }
+    }
+
+    public onColsRefreshed(): void {
+        if (this.activeChanged) {
+            this.activeChanged = false;
+            this.refreshForCols();
+        }
+    }
+
+    /** Rebuilds the references and drops every cached formula, whose columns may have been recreated. */
+    private refreshForCols(): void {
+        this.rebuildColRefMap();
+        this.refreshFormulas(true);
+        this.refreshedColDefsVersion = this.beans.colModel.colDefsVersion;
     }
 
     public isEvaluationActive(): boolean {
@@ -200,13 +218,10 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
         };
 
         const onNewColumnsLoaded = () => {
-            if (!this.isEvaluationActive()) {
-                return;
+            // skipped when the column refresh of these definitions already did it
+            if (this.isEvaluationActive() && this.refreshedColDefsVersion !== this.beans.colModel.colDefsVersion) {
+                this.refreshForCols();
             }
-            this.rebuildColRefMap();
-            // Columns may have been destroyed and recreated; every cached CellFormula's `.column`
-            // reference could be dangling, so we can't safely keep the ASTs around either.
-            this.refreshFormulas(true);
         };
         const onColumnMoved = () => {
             if (!this.isEvaluationActive()) {

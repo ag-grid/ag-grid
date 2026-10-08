@@ -24,7 +24,7 @@ export interface IColsService {
     removeColumns(keys: (ColKey | null | undefined)[] | undefined, source: ColumnEventType): void;
 
     /** Recompute active cols with a shared scan: call {@link extractCol} per primary col, then finalise via {@link commitExtract}. */
-    extractCol(col: AgColumn, colIsNew: boolean): void;
+    extractCol(col: AgColumn, colIsNew: boolean, source: ColumnEventType): void;
     commitExtract(source: ColumnEventType): void;
 
     syncColState(

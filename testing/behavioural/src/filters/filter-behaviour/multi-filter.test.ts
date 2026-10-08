@@ -949,6 +949,36 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
             expect(api.getDisplayedRowCount()).toBe(4);
         });
 
+        test('a Multi Filter reset while a child reconciles its model in the same update tells its column once', async () => {
+            const setChild = (values: string[], caseSensitive: boolean) => ({
+                filter: 'agSetColumnFilter',
+                filterParams: { values, caseSensitive },
+            });
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: colDefsWith([setChild(['A', 'B', 'C'], false), setChild(['A', 'B', 'C'], false)]),
+                rowData: [{ name: 'A' }, { name: 'B' }, { name: 'C' }, { name: 'a' }],
+            });
+            await api.setColumnFilterModel('name', {
+                filterType: 'multi',
+                filterModels: [
+                    { filterType: 'set', values: ['A', 'C'] },
+                    { filterType: 'set', values: ['A'] },
+                ],
+            });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+            const seen: unknown[] = [];
+            api.getColumn('name')!.addEventListener('filterChanged', () => seen.push(api.getColumnFilterModel('name')));
+
+            api.setGridOption(
+                'columnDefs',
+                colDefsWith([setChild(['A', 'B'], false), setChild(['A', 'B', 'C'], true)])
+            );
+
+            expect(seen).toEqual([null]);
+        });
+
         test("a set child's new case sensitivity resets the whole Multi Filter", async () => {
             const setChild = (caseSensitive: boolean) => ({
                 filter: 'agSetColumnFilter',

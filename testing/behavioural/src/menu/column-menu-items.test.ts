@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
-import { TestGridsManager, menuOption, openMenuOption, polyfillOffsetParent } from 'ag-test-utils';
+import { TestGridsManager, clickMenuOption, menuOption, openMenuOption, polyfillOffsetParent } from 'ag-test-utils';
 import type { Mock } from 'vitest';
 
 import type {
@@ -138,6 +138,29 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
         await openMenuOption('Add Age to values');
 
         expect(menuOption('Add Age to labels')).toBeNull();
+    });
+
+    test('the aggregation sub-menu makes a column a value column with its function, and None removes it', async () => {
+        const api = await gridMgr.createGridAndWait('menu-agg-submenu', {
+            columnDefs: [
+                { field: 'athlete', rowGroup: true },
+                { field: 'age', enableValue: true },
+            ],
+            rowData,
+            getColumnMenuItems: () => ['valueAggSubMenu'],
+        });
+        const valueCols = () => api.getValueColumns().map((column) => `${column.getColId()}:${column.getAggFunc()}`);
+
+        restoreOffsetParent = polyfillOffsetParent();
+        api.showColumnMenu('age');
+        await clickMenuOption('Value Aggregation');
+        await clickMenuOption('Average');
+        expect(valueCols()).toEqual(['age:avg']);
+
+        api.showColumnMenu('age');
+        await clickMenuOption('Value Aggregation');
+        await clickMenuOption('None');
+        expect(valueCols()).toEqual([]);
     });
 });
 

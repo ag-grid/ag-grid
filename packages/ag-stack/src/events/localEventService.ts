@@ -51,6 +51,17 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         );
     }
 
+    /** Whether dispatching `eventType` would reach a listener, so a caller can skip building the event. A global
+     *  listener receives every type, so on a service with one (the grid's always has) this is always `true`. */
+    public hasListeners(eventType: TEventType): boolean {
+        return (
+            this.allSyncListeners.has(eventType) ||
+            this.allAsyncListeners.has(eventType) ||
+            this.globalSyncListeners.size !== 0 ||
+            this.globalAsyncListeners.size !== 0
+        );
+    }
+
     public addEventListener<T extends TEventType>(eventType: T, listener: IEventListener<T>, async = false): void {
         this.getListeners(eventType, async, true)!.add(listener);
     }

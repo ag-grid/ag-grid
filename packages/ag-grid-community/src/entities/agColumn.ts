@@ -6,7 +6,7 @@ import { updateSomeColumnState } from '../columns/columnStateUtils';
 import type { ColumnState } from '../columns/columnStateUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
-import type { ColumnEvent, ColumnEventType } from '../events';
+import type { ColumnEvent, ColumnEventType, ColumnStateUpdatedEvent } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type {
@@ -201,6 +201,9 @@ export class AgColumn<TValue = any>
     private frameworkEventListenerService: IFrameworkEventListenerService<any, any> | undefined = undefined;
     // Lazy — most columns never get a listener; allocated on first __addEventListener/addEventListener.
     private colEventSvc: LocalEventService<ColumnEventName> | null = null;
+    /** The `ColumnModel.colEventsEpoch` of the queue `lastQueuedEventAt` indexes. */
+    public queuedEventsEpoch: number = 0;
+    public lastQueuedEventAt: number = -1;
 
     /** Most recent build token that claimed this col — used to detect "already used in this refresh". */
     public buildToken: number = 0;
@@ -312,8 +315,7 @@ export class AgColumn<TValue = any>
             this.initCalculatedColumnState(colDef);
             return false;
         }
-        const colModel = this.beans.colModel;
-        ++colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
+        ++this.beans.colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
         this.colFlags &= ~COL_FLAG_SORT_TYPES_CACHED; // sort/initialSort/sortingOrder may have changed
         this.sortCycleIndex = undefined;
         this.initColDefHotFields();
@@ -324,12 +326,7 @@ export class AgColumn<TValue = any>
         if (colDef.spanRows !== oldColDef.spanRows) {
             this.beans.rowSpanSvc?.columnRowSpanChanged(this);
         }
-        const colDefChangedInBuild = colModel.colDefChangedInBuild;
-        if (colDefChangedInBuild) {
-            colDefChangedInBuild.push(this);
-        } else {
-            this.dispatchColEvent('colDefChanged', source);
-        }
+        this.dispatchColEvent('colDefChanged', source);
         this.beans.pivotResultCols?.recreateColDefsForSource(this, source);
         return true;
     }
@@ -752,7 +749,7 @@ export class AgColumn<TValue = any>
             }
             this.dispatchColEvent('visibleChanged', source);
         }
-        this.dispatchStateUpdatedEvent('hide');
+        this.dispatchStateUpdatedEvent('hide', source);
     }
 
     public isVisible(): boolean {
@@ -890,10 +887,11 @@ export class AgColumn<TValue = any>
         if (actualWidth !== this.reportedWidth) {
             this.reportedWidth = actualWidth;
             // a column still flexed was sized by its flex pass, as any other resize ends its flex
-            this.dispatchColEvent('widthChanged', this.flex != null ? 'flex' : source);
-            this.dispatchStateUpdatedEvent('width');
+            const widthSource = this.flex != null ? 'flex' : source;
+            this.dispatchColEvent('widthChanged', widthSource);
+            this.dispatchStateUpdatedEvent('width', widthSource);
         } else if (widthSet) {
-            this.dispatchStateUpdatedEvent('width');
+            this.dispatchStateUpdatedEvent('width', this.flex != null ? 'flex' : source);
         }
         // read after `widthChanged`, whose listener's own update may have moved the column and reported it
         const left = this.left;
@@ -985,19 +983,50 @@ export class AgColumn<TValue = any>
     }
 
     public dispatchColEvent(type: ColumnEventName, source: ColumnEventType, additionalEventAttributes?: any): void {
-        this.colEventSvc?.dispatchEvent(
-            _addGridCommonParams<ColumnEvent>(this.gos, {
-                type,
-                column: this,
-                columns: [this],
-                source,
-                ...additionalEventAttributes,
-            })
-        );
+        const colEventSvc = this.colEventSvc;
+        if (colEventSvc?.hasListeners(type)) {
+            this.raise(
+                colEventSvc,
+                _addGridCommonParams<ColumnEvent>(this.gos, {
+                    type,
+                    column: this,
+                    columns: [this],
+                    source,
+                    ...additionalEventAttributes,
+                })
+            );
+        }
     }
 
-    public dispatchStateUpdatedEvent(key: keyof ColumnState): void {
-        this.colEventSvc?.dispatchEvent({ type: 'columnStateUpdated', key } as AgEvent<'columnStateUpdated'>);
+    /** `key` names the `ColumnState` property that changed. */
+    public dispatchStateUpdatedEvent(key: keyof ColumnState, source: ColumnEventType): void {
+        const colEventSvc = this.colEventSvc;
+        if (colEventSvc?.hasListeners('columnStateUpdated')) {
+            this.raise(
+                colEventSvc,
+                _addGridCommonParams<ColumnStateUpdatedEvent>(this.gos, {
+                    type: 'columnStateUpdated',
+                    column: this,
+                    columns: [this],
+                    source,
+                    key,
+                })
+            );
+        }
+    }
+
+    private raise(colEventSvc: LocalEventService<ColumnEventName>, event: AgEvent<ColumnEventName>): void {
+        const colModel = this.beans.colModel;
+        if (colModel.colEventsDepth > 0) {
+            colModel.queueColEvent(this, event);
+        } else {
+            colEventSvc.dispatchEvent(event);
+        }
+    }
+
+    /** A column destroyed since the event was queued has dropped its listeners. */
+    public raiseQueuedEvent(event: AgEvent<ColumnEventName>): void {
+        this.colEventSvc?.dispatchEvent(event);
     }
 }
 

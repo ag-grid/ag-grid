@@ -44,7 +44,7 @@ Most users will not need to use Column Events but they are made available for ad
 
 All events fired by the column are synchronous (events are normally asynchronous). The grid is also listening for these events internally. This means that when you receive an event, the grid may still have some work to do (e.g. if sort has changed, the grid UI may still have to do the sorting).
 
-The layout events `widthChanged`, `leftChanged`, `lastLeftPinnedChanged` and `firstRightPinnedChanged`, and `columnStateUpdated` for a width, are fired once every column has been laid out, so a listener sees every column at its new position.
+When one call sets column definitions or column state, or shows, hides, pins, sorts, groups, pivots or aggregates columns, the events of the columns it changes are fired together once every column holds its new state, and a column changed the same way more than once in that call is told once, of its final state. The layout events `widthChanged`, `leftChanged`, `lastLeftPinnedChanged` and `firstRightPinnedChanged`, and `columnStateUpdated` for a width, are fired after them, once every column has been laid out, so a listener sees every column at its new position.
 
 It is recommended to **not** call any grid API functions while receiving events from the `column`. Instead, it is best to put your logic into a timeout and call the grid in another VM tick.
 

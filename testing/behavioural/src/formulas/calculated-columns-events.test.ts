@@ -2,7 +2,7 @@ import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
-import type { ColDef } from 'ag-grid-community';
+import type { ColDef, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 
 import {
     addCalculatedColumnDef,
@@ -131,6 +131,59 @@ describe('ag-grid calculated columns', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r1 revenue:10 cost:3
         `);
+    });
+
+    test('a column whose formula reference the first calculated column shifts is told once, of its final one', () => {
+        const api = createGrid('calculated-formula-ref-once', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
+        const seen: string[] = [];
+        api.getColumn('cost')!.addEventListener('formulaRefChanged', () =>
+            seen.push(
+                api
+                    .getAllGridColumns()
+                    .map((column) => column.getColId())
+                    .join()
+            )
+        );
+
+        api.setGridOption('columnDefs', [
+            { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+            { field: 'revenue' },
+            { field: 'cost' },
+        ]);
+
+        expect(seen).toEqual(['profit,revenue,cost']);
+    });
+
+    test('the cells are refreshed once when the first calculated column turns formulas on', () => {
+        let refreshes = 0;
+        class CountingRenderer implements ICellRendererComp {
+            private readonly eGui = document.createElement('span');
+            public init(params: ICellRendererParams): void {
+                this.eGui.textContent = String(params.value);
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                ++refreshes;
+                return true;
+            }
+        }
+        const columnDefs: ColDef[] = [{ field: 'revenue', cellRenderer: CountingRenderer }, { field: 'cost' }];
+        const api = createGrid('calculated-formula-refresh-once', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs,
+        });
+
+        api.setGridOption('columnDefs', [
+            ...columnDefs,
+            { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+        ]);
+
+        expect(refreshes).toBe(1);
     });
 
     test('calculated column columnDefs mutations dispatch newColumnsLoaded', async () => {

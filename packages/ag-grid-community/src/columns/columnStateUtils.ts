@@ -124,14 +124,14 @@ export const updateSomeColumnState = (
     if (sortSvc) {
         sortSvc.updateColSort(column, sort, source);
         if (sortIndex !== undefined) {
-            sortSvc.setColSortIndex(column, sortIndex);
+            sortSvc.setColSortIndex(column, sortIndex, source);
         }
     }
     if (pinned !== undefined) {
-        pinnedCols?.setColPinned(column, pinned);
+        pinnedCols?.setColPinned(column, pinned, source);
     }
     if (flex !== undefined) {
-        colFlex?.setColFlex(column, flex);
+        colFlex?.setColFlex(column, flex, source);
     }
 };
 
@@ -148,29 +148,34 @@ export function _setColsVisible(
     const colModel = beans.colModel;
     const newVisible = visible === true;
     let changed: AgColumn[] | null = null;
-    for (let i = 0, len = keys.length; i < len; ++i) {
-        const key = keys[i];
-        const col = typeof key === 'string' ? colModel.getCol(key) : key;
-        if (col === undefined || (filterLockedColumns && col.colDef.lockVisible)) {
-            continue;
+    colModel.beginColUpdate();
+    try {
+        for (let i = 0, len = keys.length; i < len; ++i) {
+            const key = keys[i];
+            const col = typeof key === 'string' ? colModel.getCol(key) : key;
+            if (col === undefined || (filterLockedColumns && col.colDef.lockVisible)) {
+                continue;
+            }
+            if (col.visible !== newVisible) {
+                col.setVisible(newVisible, source);
+                changed ??= [];
+                changed.push(col);
+            }
         }
-        if (col.visible !== newVisible) {
-            col.setVisible(newVisible, source);
-            changed ??= [];
-            changed.push(col);
+        if (changed) {
+            const { colAnimation, eventSvc } = beans;
+            colAnimation?.start();
+            try {
+                colModel.refreshColsDerivedState();
+                beans.visibleCols.refresh(source, false);
+                eventSvc.dispatchEvent({ type: 'columnEverythingChanged', source });
+                dispatchColumnVisibleEvent(eventSvc, changed, source);
+            } finally {
+                colAnimation?.finish();
+            }
         }
-    }
-    if (changed) {
-        const { colAnimation, eventSvc } = beans;
-        colAnimation?.start();
-        try {
-            colModel.refreshColsDerivedState();
-            beans.visibleCols.refresh(source, false);
-            eventSvc.dispatchEvent({ type: 'columnEverythingChanged', source });
-            dispatchColumnVisibleEvent(eventSvc, changed, source);
-        } finally {
-            colAnimation?.finish();
-        }
+    } finally {
+        colModel.endColUpdate();
     }
 }
 
@@ -182,6 +187,16 @@ export function _applyColumnState(
     params: ApplyColumnStateParams,
     source: ColumnEventType
 ): boolean {
+    const colModel = beans.colModel;
+    colModel.beginColUpdate();
+    try {
+        return applyColumnState(beans, params, source);
+    } finally {
+        colModel.endColUpdate();
+    }
+}
+
+function applyColumnState(beans: BeanCollection, params: ApplyColumnStateParams, source: ColumnEventType): boolean {
     const { colModel, colAnimation, calculatedColsSvc } = beans;
     const state = params.state;
     if (state && !Array.isArray(state)) {
@@ -426,6 +441,16 @@ function applyFieldState(
  *  order, and fire `columnsReset`.
  *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _resetColumnState(beans: BeanCollection, source: ColumnEventType): void {
+    const colModel = beans.colModel;
+    colModel.beginColUpdate();
+    try {
+        resetColumnState(beans, source);
+    } finally {
+        colModel.endColUpdate();
+    }
+}
+
+function resetColumnState(beans: BeanCollection, source: ColumnEventType): void {
     const { colModel, autoColSvc, selectionColSvc, eventSvc, gos, colAnimation, calculatedColsSvc } = beans;
 
     // Park API/dialog-added calc cols and revert edits/removals of declared ones, so the reset below runs
