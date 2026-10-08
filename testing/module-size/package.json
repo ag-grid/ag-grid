@@ -12,8 +12,8 @@
     "test:e2e": "tsx moduleCombinations.ts"
   },
   "dependencies": {
-    "ag-charts-community": "14.2.0-beta.20261004",
-    "ag-charts-enterprise": "14.2.0-beta.20261004",
+    "ag-charts-community": "14.2.0-beta.20261008",
+    "ag-charts-enterprise": "14.2.0-beta.20261008",
     "ag-grid-community": "36.2.0-beta.20261005.1010",
     "ag-grid-enterprise": "36.2.0-beta.20261005.1010",
     "ag-grid-react": "36.2.0-beta.20261005.1010",
