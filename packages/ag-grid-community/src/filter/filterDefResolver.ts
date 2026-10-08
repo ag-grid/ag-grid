@@ -61,23 +61,14 @@ export function _resolveFilter(
 /** Without filter handlers, the `{ component }` form builds its component, or what `true` does when it gives logic. */
 function withoutHandlerForm(beans: BeanCollection, column: AgColumn, def: FilterDefWithGetter): FilterDefWithGetter {
     const filter = def.filter;
-    if (isLogicWithoutHandlers(beans, filter)) {
-        beans.log.warn(335, { colId: column.getColId() });
-        return { ...def, filter: true };
-    }
     if (!isColumnFilterComp(filter) || beans.gos.get('enableFilterHandlers')) {
         return def;
     }
+    if (filter.handler || filter.doesFilterPass) {
+        beans.log.warn(335, { colId: column.getColId() });
+        return { ...def, filter: true };
+    }
     return { ...def, filter: filter.component };
-}
-
-/** Logic comes with a display component, which cannot be a filter on its own. */
-function isLogicWithoutHandlers(beans: BeanCollection, filter: unknown): boolean {
-    return (
-        isColumnFilterComp(filter) &&
-        !!(filter.handler || filter.doesFilterPass) &&
-        !beans.gos.get('enableFilterHandlers')
-    );
 }
 
 /** A name nothing is registered under (a stale `'set'`, a typo) builds what `true` does, so the column stays usable. */
@@ -169,6 +160,15 @@ function getParamsForDataType(
     }
     return (
         beans.multiFilter?.getParamsForDataType(filterParams, filterValueGetter, dataTypeDefinition, formatValue) ?? {}
+    );
+}
+
+/** Logic comes with a display component, which cannot be a filter on its own. */
+function isLogicWithoutHandlers(beans: BeanCollection, filter: unknown): boolean {
+    return (
+        isColumnFilterComp(filter) &&
+        !!(filter.handler || filter.doesFilterPass) &&
+        !beans.gos.get('enableFilterHandlers')
     );
 }
 
