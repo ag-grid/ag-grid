@@ -388,6 +388,8 @@ jobs:
                   jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
                   jira_site_url: ${{ vars.JIRA_SITE_URL }}
                   jira_ai_bot_account_id: ${{ vars.JIRA_AI_BOT_ACCOUNT_ID }}
+                  zendesk_subdomain: ${{ vars.ZENDESK_SUBDOMAIN }}
+                  zendesk_oauth_token: ${{ secrets.ZENDESK_OAUTH_TOKEN }}
 
     # -------------------------------------------------- execute
     # The ONLY job that may write to GitHub, and the only one that needs to.
@@ -606,6 +608,8 @@ jobs:
                   jira_api_token: ${{ secrets.JIRA_AI_BOT_API_TOKEN }}
                   jira_site_url: ${{ vars.JIRA_SITE_URL }}
                   jira_ai_bot_account_id: ${{ vars.JIRA_AI_BOT_ACCOUNT_ID }}
+                  zendesk_subdomain: ${{ vars.ZENDESK_SUBDOMAIN }}
+                  zendesk_oauth_token: ${{ secrets.ZENDESK_OAUTH_TOKEN }}
 
     # -------------------------------------------------- verify-rebuild
     # Second half of the gh-triage-manual-verify-rebuild button: repro-rebuild, only
