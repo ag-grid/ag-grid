@@ -294,20 +294,34 @@ The example below demonstrates these methods in action. Note the following:
 
 ## Buttons
 
-Use `toolPanelParams.buttons` to display buttons at the bottom of the Columns Tool Panel, in the order they are listed:
+Use `toolPanelParams.buttons` to display buttons at the bottom of the Columns Tool Panel, in the order they are listed. Each entry is either a provided button or a custom button:
 
 - `'apply'`: Enables [Deferred Updates](#deferred-updates) and commits all pending changes.
 - `'cancel'`: Discards all pending changes. Only has an effect alongside `'apply'`.
 - `'reset'`: Resets the columns to the state defined in the Column Definitions, as [`api.resetColumnState()`](./column-state/#reference-state-resetColumnState) does. It is applied immediately, even when Deferred Updates are enabled.
+- A [Custom Button](#custom-buttons) definition.
 
-Only the **Apply** button enables Deferred Updates, so **Reset** can be used with or without it.
+Only the **Apply** button enables Deferred Updates, so the other buttons can be used with or without it.
+
+### Custom Buttons
+
+Configure a custom button using the following properties:
+
+- `label`: Text displayed on the button.
+- `action`: Callback fired on click. Receives the grid `api` and `context`.
+
+Changes made by an `action` through the Grid API are applied immediately. When Deferred Updates are enabled, they clear any pending changes, as with any other change made outside the Columns Tool Panel.
+
+Buttons wrap onto a new line when they do not fit the width of the tool panel. To keep them on one line, set the tool panel's [`width`](./side-bar/#reference-ToolPanelDef-width) and [`minWidth`](./side-bar/#reference-ToolPanelDef-minWidth) in the Side Bar configuration.
 
 Note that in the example below:
 
 - Changes made in the Columns Tool Panel are applied immediately, as there is no **Apply** button.
+- **By Sport** and **By Country** are custom buttons that use `api.applyColumnState()` to group by Sport or Country and show only the summed Total and medal columns.
 - **Reset** restores the columns to the state defined in the Column Definitions.
+- The buttons wrap onto a second line, as they do not fit the tool panel's default width.
 
-{% gridExampleRunner title="Reset Button" name="reset-button" exampleHeight=630 /%}
+{% gridExampleRunner title="Buttons" name="buttons" exampleHeight=630 /%}
 
 ## Deferred Updates
 
