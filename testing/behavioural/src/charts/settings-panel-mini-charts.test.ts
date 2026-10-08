@@ -132,6 +132,10 @@ describe('chart settings panel mini chart thumbnails', () => {
                 expect(svgs).toHaveLength(1);
                 const svg = svgs[0];
                 expect(svg.getAttribute('aria-hidden')).toBe('true');
+                expect(svg.getAttribute('focusable')).toBe('false');
+                expect(svg.getAttribute('width')).toBe('58');
+                expect(svg.getAttribute('height')).toBe('58');
+                expect(svg.getAttribute('viewBox')).toBe('0 0 58 58');
                 expect(svg.firstElementChild?.localName).toBe('title');
                 expect(svg.firstElementChild?.textContent).toBe(tooltip);
                 expect(svg.querySelectorAll('path')).toHaveLength(paths);
@@ -147,15 +151,16 @@ describe('chart settings panel mini chart thumbnails', () => {
             }
         );
 
-        test('line and area series are clipped to the plot area by a nested svg', () => {
-            for (const label of ['Line', 'Area']) {
-                const svg = thumbnail(label).querySelector(SVG_SELECTOR)!;
-                const nested = svg.querySelector('svg')!;
-                expect(nested).not.toBeNull();
-                expect(nested.getAttribute('overflow')).toBe('hidden');
-                expect(nested.getAttribute('viewBox')).toBe('5 5 48 48');
-                expect(nested.querySelectorAll('path')).toHaveLength(3);
+        test.each(SVG_CASES)('$type clips only line and area series, to the plot area', ({ type, label }) => {
+            const nested = thumbnail(label).querySelectorAll(`${SVG_SELECTOR} svg`);
+            if (!/line|area/i.test(type)) {
+                expect(nested).toHaveLength(0);
+                return;
             }
+            expect(nested).toHaveLength(1);
+            expect(nested[0].getAttribute('overflow')).toBe('hidden');
+            expect(nested[0].getAttribute('viewBox')).toBe('5 5 48 48');
+            expect(nested[0].querySelectorAll('path')).toHaveLength(3);
         });
 
         test('pie thumbnail keeps its canvas and has no svg', () => {
