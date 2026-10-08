@@ -222,9 +222,7 @@ class MergeBatch {
         for (let i = 0, len = entries.length; i < len; ++i) {
             const { op, id, data } = entries[i];
             if (op === 'update') {
-                if (adds.has(id)) {
-                    adds.set(id, data);
-                } else if (updates.has(id) || (!removes.has(id) && target.isRowCached(id))) {
+                if (updates.has(id) || (!removes.has(id) && target.isRowCached(id))) {
                     updates.set(id, data);
                 } else {
                     continue;
@@ -295,8 +293,8 @@ class MergeBatch {
             if (op !== 'update') {
                 continue;
             }
-            const pending = updates.has(id) ? updates : adds;
-            if (pending.has(id) && !target.canSkipUpdate(pending.get(id), data)) {
+            // a row is created from the data it was added with, which an update does not fully redo
+            if (adds.has(id) || (updates.has(id) && !target.canSkipUpdate(updates.get(id), data))) {
                 return true;
             }
         }

@@ -114,7 +114,7 @@ Streaming sources such as WebSockets often send many changes for the same few ro
 Merging gives the same rows and data as applying the transactions one after the other:
 
 - Several updates to a row become one update with the latest data.
-- An add followed by updates becomes one add with the latest data.
+- An add is applied with the data it was given, and updates that follow it are applied separately.
 - An add followed by a remove cancels out, and the row is never created.
 - An update followed by a remove becomes a remove.
 

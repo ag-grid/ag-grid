@@ -94,7 +94,11 @@ describe('_applyMergedTransactions', () => {
 
     it.each<[string, ServerSideTransaction[], ServerSideTransaction[]]>([
         ['update + update', [{ update: [row('a', 1)] }, { update: [row('a', 2)] }], [{ update: [row('a', 2)] }]],
-        ['add + update', [{ add: [row('c', 1)] }, { update: [row('c', 2)] }], [{ add: [row('c', 2)] }]],
+        [
+            'add + update starts a new batch',
+            [{ add: [row('c', 1)] }, { update: [row('c', 2)] }],
+            [{ add: [row('c', 1)] }, { update: [row('c', 2)] }],
+        ],
         ['add + remove', [{ add: [row('c', 1)] }, { remove: [row('c')] }], []],
         ['update + remove', [{ update: [row('a', 1)] }, { remove: [row('a')] }], [{ remove: [row('a')] }]],
         [
@@ -158,14 +162,10 @@ describe('_applyMergedTransactions', () => {
     });
 
     it('does not report a removed-then-added row to callers of the removed one', () => {
-        const { results } = applyMerged(
-            [],
-            [{ add: [row('c', 1)] }, { update: [row('c', 2)] }, { remove: [row('c')] }, { add: [row('c', 3)] }]
-        );
+        const { results } = applyMerged([], [{ add: [row('c', 1)] }, { remove: [row('c')] }, { add: [row('c', 3)] }]);
 
         expect(results.map((r) => [ids(r.update), ids(r.add), ids(r.remove)])).toEqual([
             [undefined, [], undefined],
-            [[], undefined, undefined],
             [undefined, undefined, []],
             [undefined, ['c'], undefined],
         ]);
@@ -202,8 +202,8 @@ describe('_applyMergedTransactions', () => {
             store.target(isAccepted)
         );
 
-        expect(seen).toEqual([0, 0, undefined, undefined]);
-        expect(store.applied).toEqual([{ remove: [row('a')] }, { add: [row('a', 3)] }]);
+        expect(seen).toEqual([0, 0, undefined, 2]);
+        expect(store.applied).toEqual([{ remove: [row('a')] }, { add: [row('a', 2)] }, { update: [row('a', 3)] }]);
     });
 
     it('accepts a transaction split out for its mixed removes after applying the batch before it', () => {
