@@ -50,8 +50,9 @@ export function _applyMergedTransactions(
         for (let i = 0, len = planned.length; i < len; ++i) {
             const { index, entries } = planned[i];
             const transaction = transactions[index];
-            if (batch.mixesCachedAndUncachedRemoves(entries, target)) {
-                // a removal that misses some ids and deletes others marks rows for refresh, so it must stay a call of its own
+            if (batch.mixesCachedAndUncachedRemoves(entries, target) || replacesOwnUpdateEffects(entries, target)) {
+                // a removal that misses some ids and deletes others marks rows for refresh, and a row updated twice
+                // with effects that can't be skipped needs both updates, so either must stay a call of its own
                 batch.apply(transactions, target, results);
                 batch = new MergeBatch();
                 results[index] = target.isAccepted(transaction)
@@ -93,6 +94,22 @@ export function _applyMergedTransactions(
     applyPlanned();
 
     return results;
+}
+
+/** Whether the transaction updates a row twice, where the first update has effects that have to be applied. */
+function replacesOwnUpdateEffects(entries: RowEntry[], target: TransactionMergeTarget): boolean {
+    const updates = new Map<string, any>();
+    for (let i = 0, len = entries.length; i < len; ++i) {
+        const { op, id, data } = entries[i];
+        if (op !== 'update') {
+            continue;
+        }
+        if (updates.has(id) && !target.canSkipUpdate(updates.get(id), data)) {
+            return true;
+        }
+        updates.set(id, data);
+    }
+    return false;
 }
 
 /** `mergeable` is false when the transaction has to be applied on its own, with `entries` holding the ids resolved so far. */
