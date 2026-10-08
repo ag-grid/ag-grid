@@ -82,8 +82,8 @@ const salesRowClassRules: RowClassRules<IProduct> = {
 
 const VueExample = defineComponent({
     template: `
-        <div style="height: 100%; display: flex; flex-direction: column">
-            <div class="example-controls" style="flex: 0 1 0%">
+        <div class="example-wrapper">
+            <div class="example-controls">
                 <div class="controls-row">
                     <button @click="setThemeMode()">
                         {{ themeMode === 'dark' ? 'Enable Light Mode' : 'Enable Dark Mode' }}

@@ -170,7 +170,7 @@ const GridExample = () => {
                         <div className="controls-row">
                             <input
                                 type="submit"
-                                style={{ margin: '5px 0px', fontWeight: 'bold' }}
+                                style={{ marginTop: '5px', fontWeight: 'bold' }}
                                 value="Export to Excel"
                             />
                         </div>

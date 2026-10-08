@@ -16,6 +16,7 @@
 
 .toolbar {
     white-space: nowrap;
+    margin-bottom: var(--controls-gap);
 }
 
 .vertical-toolbar > span {

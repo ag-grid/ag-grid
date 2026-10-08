@@ -59,8 +59,8 @@ function numberCellFormatter(params: ValueFormatterParams) {
     selector: 'my-app',
     standalone: true,
     imports: [AgGridAngular],
-    template: `<div id="myApp" class="wrapper">
-        <div class="example-controls" style="padding-bottom: 4px">
+    template: `<div id="myApp" class="example-wrapper">
+        <div class="example-controls">
             <div class="controls-row">
                 <span>
                     <button (click)="onStopMessages()">&#9632; Stop</button>

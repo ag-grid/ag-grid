@@ -130,10 +130,7 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div className="example-wrapper">
-                <div
-                    className="example-controls"
-                    style={{ marginBottom: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}
-                >
+                <div className="example-controls" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                     <div className="controls-row">
                         <label htmlFor="language">Language:</label>
                         <select

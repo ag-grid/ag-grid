@@ -211,16 +211,16 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
-                <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }}>
+                <div className="example-wrapper">
                     <div className="example-controls">
-                        <div className="controls-row" style={{ marginBottom: '5px', minHeight: '30px' }}>
+                        <div className="controls-row" style={{ minHeight: '30px' }}>
                             <button onClick={reverseItems}>Reverse</button>
                             <button onClick={() => addFiveItems(true)}>Append</button>
                             <button onClick={() => addFiveItems(false)}>Prepend</button>
                             <button onClick={removeSelected}>Remove Selected</button>
                             <button onClick={updatePrices}>Update Prices</button>
                         </div>
-                        <div className="controls-row" style={{ marginBottom: '5px', minHeight: '30px' }}>
+                        <div className="controls-row" style={{ minHeight: '30px' }}>
                             <button id="groupingOn" onClick={() => onGroupingEnabled(true)}>
                                 Grouping On
                             </button>

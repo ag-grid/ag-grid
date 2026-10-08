@@ -6,14 +6,7 @@
     text-align: right;
 }
 
-.parent-container {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
 .top-container button {
-    margin-bottom: 4px;
     margin-right: 4px;
 }
 

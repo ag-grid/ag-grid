@@ -11,6 +11,6 @@
     opacity: 0.7;
 }
 
-.example-header > div {
+.example-header > div:not(.example-controls) {
     margin-bottom: 1rem;
 }

@@ -15,7 +15,7 @@
 }
 
 .toolbar {
-    height: 30px;
+    margin-bottom: var(--controls-gap);
     white-space: nowrap;
 }
 

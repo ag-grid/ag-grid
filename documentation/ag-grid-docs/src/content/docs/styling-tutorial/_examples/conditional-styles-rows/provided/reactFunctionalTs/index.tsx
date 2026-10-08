@@ -120,8 +120,8 @@ const GridExample = () => {
     };
 
     return (
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <div className="example-controls" style={{ flex: '0 1 0%' }}>
+        <div className="example-wrapper">
+            <div className="example-controls">
                 <div className="controls-row">
                     <button onClick={toggleThemeMode}>
                         {themeMode === 'dark' ? 'Enable Light Mode' : 'Enable Dark Mode'}

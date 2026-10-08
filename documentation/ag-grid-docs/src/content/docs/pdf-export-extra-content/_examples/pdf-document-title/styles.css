@@ -24,10 +24,6 @@
     height: 100%;
 }
 
-.example-wrapper {
-    gap: 8px;
-}
-
 .columns {
     display: flex;
     flex-direction: row;

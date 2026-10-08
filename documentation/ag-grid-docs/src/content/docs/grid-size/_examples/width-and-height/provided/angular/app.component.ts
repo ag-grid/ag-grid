@@ -19,8 +19,8 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
     imports: [AgGridAngular, NgStyle],
     selector: 'my-app',
     template: `
-        <div style="height: 100%; display: flex; flex-direction: column;">
-            <div class="example-controls" style="margin-bottom: 5px;">
+        <div class="example-wrapper">
+            <div class="example-controls">
                 <div class="controls-row">
                     <button (click)="fillLarge()">Fill 100%</button>
                     <button (click)="fillMedium()">Fill 60%</button>
