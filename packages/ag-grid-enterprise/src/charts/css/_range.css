@@ -86,7 +86,6 @@
             background-color: var(--ag-background-color);
             border: solid var(--ag-border-width) var(--ag-border-color);
             border-radius: 100%;
-            transform: translateY(calc(var(--ag-icon-size) * -0.5 + 1.5px));
         }
 
         &:focus::-moz-range-thumb {
