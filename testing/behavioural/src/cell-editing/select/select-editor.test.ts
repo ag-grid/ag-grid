@@ -1,8 +1,9 @@
 import { fireEvent, waitFor } from '@testing-library/dom';
+import { RefPlaceholder } from 'ag-stack';
 import { TestGridsManager, firePointerLikeClick, getAllRows } from 'ag-test-utils';
 
-import { SelectEditorModule, getGridElement } from 'ag-grid-community';
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import { AgSelectSelector, Component, CustomEditorModule, SelectEditorModule, getGridElement } from 'ag-grid-community';
+import type { GridApi, GridOptions, GridSelect, ICellEditorComp } from 'ag-grid-community';
 
 /**
  * Behavioural coverage for the Select cell editor (`agSelectCellEditor`) honouring
@@ -29,10 +30,28 @@ function pressEnter(gridDiv: HTMLElement, shiftKey = false): void {
     fireEvent.keyDown(wrapper, { key: 'Enter', shiftKey });
 }
 
+class ReadOnlySelectEditor extends Component implements ICellEditorComp {
+    public readonly select: GridSelect<string> = RefPlaceholder;
+
+    public postConstruct(): void {
+        this.setTemplate({ tag: 'div', children: [{ tag: 'ag-select', ref: 'select' }] }, [AgSelectSelector], {
+            select: {
+                readOnly: true,
+                value: 'Alpha',
+                options: ['Alpha', 'Beta', 'Gamma'].map((value) => ({ value, text: value })),
+            },
+        });
+    }
+
+    public getValue(): string | null | undefined {
+        return this.select.getValue();
+    }
+}
+
 describe('Select cell editor', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [SelectEditorModule],
+        modules: [SelectEditorModule, CustomEditorModule],
     });
 
     afterEach(() => gridMgr.reset());
@@ -50,6 +69,47 @@ describe('Select cell editor', () => {
         { id: '0', a: 'Alpha' },
         { id: '1', a: 'Beta' },
     ];
+
+    test('read-only selects allow programmatic updates and can become editable again', async () => {
+        const api = await createGrid({
+            columnDefs: [{ field: 'a', editable: true, cellEditor: ReadOnlySelectEditor }],
+            rowData: [{ a: 'Alpha' }],
+        });
+        api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+        const editor = api.getCellEditorInstances()[0] as ReadOnlySelectEditor;
+        const select = editor.select;
+        const wrapper = editor.getGui().querySelector<HTMLElement>('[role=combobox]')!;
+
+        expect(wrapper.getAttribute('aria-readonly')).toBe('true');
+        await firePointerLikeClick(wrapper);
+        select.showPicker();
+        expect(document.querySelector(OPTION_SELECTOR)).toBeNull();
+
+        select.setValue('Beta');
+        expect(wrapper.textContent?.trim()).toBe('Beta');
+        select.setReadOnly(false);
+        expect(wrapper.getAttribute('aria-readonly')).toBe('false');
+        await firePointerLikeClick(wrapper);
+        await waitFor(() => expect(document.querySelector(OPTION_SELECTOR)).not.toBeNull());
+
+        select.setReadOnly(true);
+        expect(wrapper.getAttribute('aria-expanded')).toBe('false');
+        expect(document.querySelector(OPTION_SELECTOR)).toBeNull();
+        expect(wrapper.textContent?.trim()).toBe('Beta');
+
+        select.setReadOnly(false);
+        await firePointerLikeClick(wrapper);
+        const option = await waitFor(() => {
+            const item = Array.from(document.querySelectorAll<HTMLElement>(OPTION_SELECTOR)).find(
+                (element) => element.textContent?.trim() === 'Gamma'
+            );
+            expect(item).toBeTruthy();
+            return item!;
+        });
+        await firePointerLikeClick(option);
+        api.stopEditing();
+        expect(api.getDisplayedRowAtIndex(0)?.data.a).toBe('Gamma');
+    });
 
     describe('enterNavigatesVerticallyAfterEdit', () => {
         test('Enter commit moves focus to the cell below when the option is on', async () => {

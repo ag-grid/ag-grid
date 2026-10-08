@@ -14,12 +14,12 @@ import type {
     ColumnEventName,
     ColumnGroup,
     ColumnGroupShowType,
-    ColumnHighlightPosition,
     ColumnInstanceId,
     ColumnPinnedType,
     HeaderColumnId,
     ProvidedColumnGroup,
 } from '../interfaces/iColumn';
+import { ColumnHighlightPosition } from '../interfaces/iColumn';
 import type { IFrameworkEventListenerService } from '../interfaces/iFrameworkEventListenerService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
@@ -88,6 +88,44 @@ export type ColKind = 'user' | 'auto-group' | 'selection' | 'row-number' | 'hier
  *  the header, so renumbering reorders rendered DOM. Also carried by `AgColumnGroup`. */
 export type ColumnLane = 0 | 1 | 2;
 
+// `AgColumn.colFlags` bits: boolean and tiny-enum state never read per value or per row, packed to cut the field count;
+// state read there keeps a plain field, a load with no mask. Bits stay below 0x40000000 so the field stays a V8 Smi (an
+// int32 in JavaScriptCore). Outside this file they are read and written only through the column's methods.
+/** The last column of the left-pinned lane, set by the visible columns. */
+const COL_FLAG_LAST_LEFT_PINNED = 0x00000001;
+/** The first column of the right-pinned lane, set by the visible columns. */
+const COL_FLAG_FIRST_RIGHT_PINNED = 0x00000002;
+/** {@link COL_FLAG_LAST_LEFT_PINNED} as its last `lastLeftPinnedChanged` reported it. */
+const COL_FLAG_REPORTED_LAST_LEFT_PINNED = 0x00000004;
+/** {@link COL_FLAG_FIRST_RIGHT_PINNED} as its last `firstRightPinnedChanged` reported it. */
+const COL_FLAG_REPORTED_FIRST_RIGHT_PINNED = 0x00000008;
+/** Width set by a deliberate user resize, so continuous auto-sizing must not change it. */
+const COL_FLAG_USER_SIZED = 0x00000010;
+/** Its filter is active; `filterActiveChanged` follows a change. */
+const COL_FLAG_FILTER_ACTIVE = 0x00000020;
+/** `colDef` configures a cell tooltip, resolved on a colDef change. */
+const COL_FLAG_TOOLTIP_ENABLED = 0x00000040;
+/** `colDef.tooltipField` is a dotted path, read as one unless dot notation is suppressed. */
+const COL_FLAG_TOOLTIP_FIELD_CONTAINS_DOTS = 0x00000080;
+/** Being dragged in the header; `movingChanged` follows a change. */
+const COL_FLAG_MOVING = 0x00000100;
+/** Being resized by a header drag. */
+const COL_FLAG_RESIZING = 0x00000200;
+/** Its column menu is open; `menuVisibleChanged` follows a change. */
+const COL_FLAG_MENU_VISIBLE = 0x00000400;
+/** {@link COL_FLAG_SORT_DEFAULT} and {@link COL_FLAG_SORT_ABSOLUTE} are cached; cleared on a colDef change. */
+const COL_FLAG_SORT_TYPES_CACHED = 0x00000800;
+/** The column offers the default sort. */
+const COL_FLAG_SORT_DEFAULT = 0x00001000;
+/** The column offers the absolute sort. */
+const COL_FLAG_SORT_ABSOLUTE = 0x00002000;
+/** A dragged column would drop before it; its header shows the drop line. */
+const COL_FLAG_HIGHLIGHT_BEFORE = 0x00004000;
+/** A dragged column would drop after it; its header shows the drop line. */
+const COL_FLAG_HIGHLIGHT_AFTER = 0x00008000;
+/** Its width was set since the last layout report, changed or not: the `width` state update follows, as for every other key. */
+const COL_FLAG_WIDTH_SET = 0x00010000;
+
 // Runtime wrapper around a (logic-free) column definition, holding all runtime state plus logic.
 // Child of either the original or the displayed tree; each group class implements only its own tree's interface.
 //
@@ -130,23 +168,25 @@ export class AgColumn<TValue = any>
     public calculatedExpression: string | undefined = undefined;
 
     // ── Layout / display ── read during rendering and header layout (per column, per refresh).
-    /** Current rendered width in px. Writes must go through `setActualWidth` for min/max clamping and the `widthChanged` event. */
+    /** Current rendered width in px. Writes must go through `setActualWidth` for min/max clamping and flex ownership. */
     public actualWidth: number = 0;
+    /** The `actualWidth` its last `widthChanged` reported. */
+    private reportedWidth: number = 0;
     public minWidth: number = 0;
     private maxWidth: number = 0;
-    /** Width set by a deliberate user resize, so continuous auto-sizing must not change it. */
-    private userSized: boolean = false;
     public flex: number | null = null;
     public pinned: ColumnPinnedType = null;
     /** `pinned` resolved to a lane; written wherever `pinned` is. */
     public pinnedLane: ColumnLane = 1;
     public left: number | null = null;
+    /** The `left` its last `leftChanged` reported. */
+    public reportedLeft: number | null = null;
+    /** Where the column was before the latest layout moved it; a header drawn by a column move starts here. */
     public oldLeft: number | null = null;
     /** User intent: should this column be shown if display rules allow it. */
     public visible: boolean = false;
     /** Whether this column is in the displayed (rendered) columns — kept in lockstep with `allColsIndex >= 0` */
     public displayed: boolean = false;
-    public filterActive = false;
     public sortDef: SortDef = getSortDefFromInput();
     public sortIndex: number | null | undefined = undefined;
     /** Sort direction applied to this column's pivot result columns. Isolated from {@link sortDef}.
@@ -154,8 +194,6 @@ export class AgColumn<TValue = any>
     public pivotSort: SortDirection | undefined = undefined;
     // measured header height when autoHeaderHeight is enabled
     public autoHeaderHeight: number | null = null;
-    public tooltipEnabled = false;
-    public tooltipFieldContainsDots: boolean = false;
 
     // ── Cold ── structure, transient interaction state, indices, events.
     /** Position in the resolved `sortingOrder` of the last header-click sort. Internal, not saved. */
@@ -179,10 +217,6 @@ export class AgColumn<TValue = any>
      *  `-1` until first stamped / when not in colsList. In pivot, parked primaries keep their pre-pivot index. */
     public colsListIndex: number = -1;
 
-    public moving = false;
-    public resizing = false;
-    public menuVisible = false;
-    public highlighted: ColumnHighlightPosition | null = null;
     public formulaRef: string | null = null;
 
     /** The column's "Show Values As" config resolved once on colDef change (built-in modes merged with user config).
@@ -198,8 +232,8 @@ export class AgColumn<TValue = any>
      *  newest-first. `undefined` = not anchored. Column-kind agnostic (currently set by the calc-column contributor). */
     public anchoredToColId: string | undefined = undefined;
 
-    private lastLeftPinned: boolean = false;
-    private firstRightPinned: boolean = false;
+    /** `COL_FLAG_*` bits; outside this file, read and written through the methods naming them. */
+    public colFlags: number = 0;
 
     public rowGroupActive = false;
     /** Position in `rowGroupColsSvc.columns` when {@link rowGroupActive}; else stale — always pair the read with a `rowGroupActive` check. */
@@ -215,9 +249,6 @@ export class AgColumn<TValue = any>
 
     public parent: AgColumnGroup | null = null;
     public originalParent: AgProvidedColumnGroup | null = null;
-
-    /** Public so the free `_getAvailableSortTypes` sort helper can cache on the column; nulled in {@link setColDef}. */
-    public cachedSortTypes: Set<SortType> | null = null;
 
     /** User-edited header name that takes precedence over `colDef.headerName`. Persisted in column state. */
     public headerNameOverride: string | null = null;
@@ -242,9 +273,10 @@ export class AgColumn<TValue = any>
         this.displayed = false;
         this.colsListIndex = -1;
         this.inColsList = false;
-        this.lastLeftPinned = false;
-        this.firstRightPinned = false;
+        this.colFlags &= ~(COL_FLAG_LAST_LEFT_PINNED | COL_FLAG_FIRST_RIGHT_PINNED);
         this.beans.rowSpanSvc?.deregister(this);
+        // listeners stay until destroy, so a walk its own listener interrupted tells it nothing more
+        this.colEventSvc = null;
     }
 
     public getInstanceId(): ColumnInstanceId {
@@ -282,7 +314,7 @@ export class AgColumn<TValue = any>
         }
         const colModel = this.beans.colModel;
         ++colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
-        this.cachedSortTypes = null; // sort/initialSort/sortingOrder may have changed
+        this.colFlags &= ~COL_FLAG_SORT_TYPES_CACHED; // sort/initialSort/sortingOrder may have changed
         this.sortCycleIndex = undefined;
         this.initColDefHotFields();
         this.beans.showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only
@@ -350,6 +382,9 @@ export class AgColumn<TValue = any>
         this.initState();
         this.initMinAndMaxWidths();
         this.resetActualWidth('gridInitializing');
+        // a column is created at its width, so nothing is told of it
+        this.reportedWidth = this.actualWidth;
+        this.colFlags &= ~COL_FLAG_WIDTH_SET;
         this.initDotNotation();
         this.initTooltip();
     }
@@ -358,12 +393,14 @@ export class AgColumn<TValue = any>
         const { field, tooltipField } = this.colDef;
         this.field = field;
         const suppress = this.gos.get('suppressFieldDotNotation');
+        this.colFlags &= ~COL_FLAG_TOOLTIP_FIELD_CONTAINS_DOTS;
         if (suppress) {
             this.fieldPath = null;
-            this.tooltipFieldContainsDots = false;
         } else {
             this.fieldPath = typeof field === 'string' && field.includes('.') ? field.split('.') : null;
-            this.tooltipFieldContainsDots = typeof tooltipField === 'string' && tooltipField.includes('.');
+            if (typeof tooltipField === 'string' && tooltipField.includes('.')) {
+                this.colFlags |= COL_FLAG_TOOLTIP_FIELD_CONTAINS_DOTS;
+            }
         }
     }
 
@@ -379,12 +416,12 @@ export class AgColumn<TValue = any>
 
     /** Kept apart from `resetActualWidth`, which `sizeColumnsToFit` also uses and must not change ownership. */
     public resetWidthOwnership(): void {
-        this.userSized = false;
+        this.colFlags &= ~COL_FLAG_USER_SIZED;
     }
 
     public resetActualWidth(source: ColumnEventType): void {
         const initialWidth = this.calculateColInitialWidth(this.colDef);
-        this.setActualWidth(initialWidth, source, true);
+        this.setActualWidth(initialWidth, source);
     }
 
     private calculateColInitialWidth(colDef: ColDef): number {
@@ -414,15 +451,33 @@ export class AgColumn<TValue = any>
     }
 
     public isTooltipEnabled(): boolean {
-        return this.tooltipEnabled;
+        return (this.colFlags & COL_FLAG_TOOLTIP_ENABLED) !== 0;
+    }
+
+    public setTooltipEnabled(enabled: boolean): void {
+        this.colFlags = enabled ? this.colFlags | COL_FLAG_TOOLTIP_ENABLED : this.colFlags & ~COL_FLAG_TOOLTIP_ENABLED;
     }
 
     public isTooltipFieldContainsDots(): boolean {
-        return this.tooltipFieldContainsDots;
+        return (this.colFlags & COL_FLAG_TOOLTIP_FIELD_CONTAINS_DOTS) !== 0;
     }
 
     public getHighlighted(): ColumnHighlightPosition | null {
-        return this.highlighted;
+        const flags = this.colFlags;
+        if ((flags & COL_FLAG_HIGHLIGHT_BEFORE) !== 0) {
+            return ColumnHighlightPosition.Before;
+        }
+        return (flags & COL_FLAG_HIGHLIGHT_AFTER) !== 0 ? ColumnHighlightPosition.After : null;
+    }
+
+    public setHighlighted(highlighted: ColumnHighlightPosition | null): void {
+        let flags = this.colFlags & ~(COL_FLAG_HIGHLIGHT_BEFORE | COL_FLAG_HIGHLIGHT_AFTER);
+        if (highlighted === ColumnHighlightPosition.Before) {
+            flags |= COL_FLAG_HIGHLIGHT_BEFORE;
+        } else if (highlighted === ColumnHighlightPosition.After) {
+            flags |= COL_FLAG_HIGHLIGHT_AFTER;
+        }
+        this.colFlags = flags;
     }
 
     private getColEventSvc(): LocalEventService<ColumnEventName> {
@@ -551,7 +606,19 @@ export class AgColumn<TValue = any>
     }
 
     public isMoving(): boolean {
-        return this.moving;
+        return (this.colFlags & COL_FLAG_MOVING) !== 0;
+    }
+
+    public setMoving(moving: boolean): void {
+        this.colFlags = moving ? this.colFlags | COL_FLAG_MOVING : this.colFlags & ~COL_FLAG_MOVING;
+    }
+
+    public isResizing(): boolean {
+        return (this.colFlags & COL_FLAG_RESIZING) !== 0;
+    }
+
+    public setResizing(resizing: boolean): void {
+        this.colFlags = resizing ? this.colFlags | COL_FLAG_RESIZING : this.colFlags & ~COL_FLAG_RESIZING;
     }
 
     public getSort(): SortDirection {
@@ -597,7 +664,11 @@ export class AgColumn<TValue = any>
     }
 
     public isMenuVisible(): boolean {
-        return this.menuVisible;
+        return (this.colFlags & COL_FLAG_MENU_VISIBLE) !== 0;
+    }
+
+    public setMenuVisible(visible: boolean): void {
+        this.colFlags = visible ? this.colFlags | COL_FLAG_MENU_VISIBLE : this.colFlags & ~COL_FLAG_MENU_VISIBLE;
     }
 
     public getAggFunc(): ColAggFunc {
@@ -616,29 +687,17 @@ export class AgColumn<TValue = any>
         return this.left;
     }
 
-    public getOldLeft(): number | null {
-        return this.oldLeft;
-    }
-
     public getRight(): number {
         // `left` is non-null on any displayed col, the only ones `getRight` makes sense for
         return this.left! + this.actualWidth;
     }
 
-    /** @returns whether the left moved */
-    public setLeft(left: number | null, source: ColumnEventType): boolean {
-        const oldLeft = this.left;
-        this.oldLeft = oldLeft;
-        if (oldLeft === left) {
-            return false;
-        }
-        this.left = left;
-        this.dispatchColEvent('leftChanged', source);
-        return true;
+    public isFilterActive(): boolean {
+        return (this.colFlags & COL_FLAG_FILTER_ACTIVE) !== 0;
     }
 
-    public isFilterActive(): boolean {
-        return this.filterActive;
+    public setFilterActive(active: boolean): void {
+        this.colFlags = active ? this.colFlags | COL_FLAG_FILTER_ACTIVE : this.colFlags & ~COL_FLAG_FILTER_ACTIVE;
     }
 
     /** @deprecated v33 Use `api.isColumnHovered(column)` instead. */
@@ -647,26 +706,21 @@ export class AgColumn<TValue = any>
         return !!this.beans.colHover?.isHovered(this);
     }
 
-    public setFirstRightPinned(firstRightPinned: boolean, source: ColumnEventType): void {
-        if (this.firstRightPinned !== firstRightPinned) {
-            this.firstRightPinned = firstRightPinned;
-            this.dispatchColEvent('firstRightPinnedChanged', source);
-        }
-    }
-
-    public setLastLeftPinned(lastLeftPinned: boolean, source: ColumnEventType): void {
-        if (this.lastLeftPinned !== lastLeftPinned) {
-            this.lastLeftPinned = lastLeftPinned;
-            this.dispatchColEvent('lastLeftPinnedChanged', source);
-        }
-    }
-
     public isFirstRightPinned(): boolean {
-        return this.firstRightPinned;
+        return (this.colFlags & COL_FLAG_FIRST_RIGHT_PINNED) !== 0;
     }
 
     public isLastLeftPinned(): boolean {
-        return this.lastLeftPinned;
+        return (this.colFlags & COL_FLAG_LAST_LEFT_PINNED) !== 0;
+    }
+
+    // set by the visible columns; `lastLeftPinnedChanged` and `firstRightPinnedChanged` follow from `dispatchLayoutEvents`
+    public setLastLeftPinned(on: boolean): void {
+        this.colFlags = on ? this.colFlags | COL_FLAG_LAST_LEFT_PINNED : this.colFlags & ~COL_FLAG_LAST_LEFT_PINNED;
+    }
+
+    public setFirstRightPinned(on: boolean): void {
+        this.colFlags = on ? this.colFlags | COL_FLAG_FIRST_RIGHT_PINNED : this.colFlags & ~COL_FLAG_FIRST_RIGHT_PINNED;
     }
 
     public isPinned(): boolean {
@@ -771,11 +825,11 @@ export class AgColumn<TValue = any>
     }
 
     public isUserSized(): boolean {
-        return this.userSized;
+        return (this.colFlags & COL_FLAG_USER_SIZED) !== 0;
     }
 
     public setUserSized(userSized: boolean): void {
-        this.userSized = userSized;
+        this.colFlags = userSized ? this.colFlags | COL_FLAG_USER_SIZED : this.colFlags & ~COL_FLAG_USER_SIZED;
     }
 
     public getAutoHeaderHeight(): number | null {
@@ -809,30 +863,54 @@ export class AgColumn<TValue = any>
         return toCellSpan(rowSpan(params));
     }
 
-    public setActualWidth(actualWidth: number, source: ColumnEventType, silent: boolean = false): void {
+    /** `widthChanged` and the `width` state update follow once the layout is final, from `dispatchLayoutEvents`. */
+    public setActualWidth(actualWidth: number, source: ColumnEventType): void {
         actualWidth = Math.max(actualWidth, this.minWidth);
         actualWidth = Math.min(actualWidth, this.maxWidth);
         // every user-driven resize arrives with this source and takes ownership. Not widened to all
         // sources: flex, `sizeColumnsToFit` and the auto-size API must leave ownership alone.
-        if (source === 'uiColumnResized') {
-            this.userSized = true;
-        }
+        this.colFlags |= source === 'uiColumnResized' ? COL_FLAG_WIDTH_SET | COL_FLAG_USER_SIZED : COL_FLAG_WIDTH_SET;
         if (this.actualWidth !== actualWidth) {
             // disable flex for this column if it was manually resized.
             this.actualWidth = actualWidth;
             if (this.flex != null && source !== 'flex' && source !== 'gridInitializing') {
                 this.flex = null;
             }
-
-            if (!silent) {
-                this.fireColumnWidthChangedEvent(source);
-            }
         }
-        this.dispatchStateUpdatedEvent('width');
     }
 
-    public fireColumnWidthChangedEvent(source: ColumnEventType): void {
-        this.dispatchColEvent('widthChanged', source);
+    /** Reports how its width, left and pinned edges changed since it last did, once the visible columns' layout is
+     *  final. Each baseline is updated before its event, so a listener's own update reports only what is new. */
+    public dispatchLayoutEvents(source: ColumnEventType): void {
+        const actualWidth = this.actualWidth;
+        const widthSet = (this.colFlags & COL_FLAG_WIDTH_SET) !== 0;
+        if (widthSet) {
+            this.colFlags &= ~COL_FLAG_WIDTH_SET;
+        }
+        if (actualWidth !== this.reportedWidth) {
+            this.reportedWidth = actualWidth;
+            // a column still flexed was sized by its flex pass, as any other resize ends its flex
+            this.dispatchColEvent('widthChanged', this.flex != null ? 'flex' : source);
+            this.dispatchStateUpdatedEvent('width');
+        } else if (widthSet) {
+            this.dispatchStateUpdatedEvent('width');
+        }
+        // read after `widthChanged`, whose listener's own update may have moved the column and reported it
+        const left = this.left;
+        if (left !== this.reportedLeft) {
+            this.reportedLeft = left;
+            this.dispatchColEvent('leftChanged', source);
+        }
+        let flags = this.colFlags;
+        if (edgeChanged(flags, COL_FLAG_LAST_LEFT_PINNED, COL_FLAG_REPORTED_LAST_LEFT_PINNED)) {
+            this.colFlags = flags ^ COL_FLAG_REPORTED_LAST_LEFT_PINNED;
+            this.dispatchColEvent('lastLeftPinnedChanged', source);
+            flags = this.colFlags;
+        }
+        if (edgeChanged(flags, COL_FLAG_FIRST_RIGHT_PINNED, COL_FLAG_REPORTED_FIRST_RIGHT_PINNED)) {
+            this.colFlags = flags ^ COL_FLAG_REPORTED_FIRST_RIGHT_PINNED;
+            this.dispatchColEvent('firstRightPinnedChanged', source);
+        }
     }
 
     public isGreaterThanMax(width: number): boolean {
@@ -923,6 +1001,9 @@ export class AgColumn<TValue = any>
     }
 }
 
+const edgeChanged = (flags: number, edge: number, reported: number): boolean =>
+    ((flags & edge) === 0) !== ((flags & reported) === 0);
+
 /** Whole cells, at least one; NaN counts as one. */
 const toCellSpan = (span: number): number => (span >= 2 ? Math.floor(span) : 1);
 
@@ -936,15 +1017,17 @@ export const getSortDefFromInput = (input?: unknown): SortDef => {
 
 // Free functions (not class methods) so they tree-shake out of the core bundle when the sort module is unused.
 
-/** Sort types from `colDef.sort`/`colDef.initialSort`; `null` contributes nothing, bare directions normalise to 'default'. */
-const getColDefAllowedSortTypes = (column: AgColumn): SortType[] => {
-    const res: SortType[] = [];
+const sortTypeFlag = (type: SortType): number => (type === 'absolute' ? COL_FLAG_SORT_ABSOLUTE : COL_FLAG_SORT_DEFAULT);
+
+/** `COL_FLAG_SORT_*` of `colDef.sort`/`colDef.initialSort`; `null` contributes nothing, bare directions normalise to 'default'. */
+const getColDefSortTypes = (column: AgColumn): number => {
     const { sort, initialSort } = column.colDef;
+    let res = 0;
     if (sort !== null) {
-        res.push(_normalizeSortType((sort as SortDef)?.type));
+        res |= sortTypeFlag(_normalizeSortType((sort as SortDef)?.type));
     }
     if (initialSort !== null) {
-        res.push(_normalizeSortType((initialSort as SortDef)?.type));
+        res |= sortTypeFlag(_normalizeSortType((initialSort as SortDef)?.type));
     }
     return res;
 };
@@ -952,14 +1035,14 @@ const getColDefAllowedSortTypes = (column: AgColumn): SortType[] => {
 const getSortingOrderInputs = (
     gos: GridOptionsService,
     column: AgColumn,
-    colDefAllowedSortTypes: SortType[]
+    colDefSortTypes: number
 ): (SortDirection | SortDef)[] =>
     column.colDef.sortingOrder ??
     gos.get('sortingOrder') ??
-    (colDefAllowedSortTypes.includes('absolute') ? DEFAULT_ABSOLUTE_SORTING_ORDER : DEFAULT_SORTING_ORDER);
+    ((colDefSortTypes & COL_FLAG_SORT_ABSOLUTE) !== 0 ? DEFAULT_ABSOLUTE_SORTING_ORDER : DEFAULT_SORTING_ORDER);
 
 export const getSortingOrder = (gos: GridOptionsService, column: AgColumn): SortDef[] => {
-    const inputs = getSortingOrderInputs(gos, column, getColDefAllowedSortTypes(column));
+    const inputs = getSortingOrderInputs(gos, column, getColDefSortTypes(column));
     const res = new Array<SortDef>(inputs.length);
     for (let i = 0, len = inputs.length; i < len; ++i) {
         res[i] = getSortDefFromInput(inputs[i]);
@@ -967,34 +1050,38 @@ export const getSortingOrder = (gos: GridOptionsService, column: AgColumn): Sort
     return res;
 };
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export const _getAvailableSortTypes = (gos: GridOptionsService, column: AgColumn): Set<SortType> => {
+/** The `COL_FLAG_SORT_DEFAULT` and `COL_FLAG_SORT_ABSOLUTE` bits of the sort types the column offers. */
+const getAvailableSortTypes = (gos: GridOptionsService, column: AgColumn): number => {
     const cacheable = gos.get('sortingOrder') == null; // deprecated `sortingOrder` disables the cache
-    const cached = column.cachedSortTypes;
-    if (cacheable && cached) {
-        return cached;
+    const flags = column.colFlags;
+    if (cacheable && (flags & COL_FLAG_SORT_TYPES_CACHED) !== 0) {
+        return flags & (COL_FLAG_SORT_DEFAULT | COL_FLAG_SORT_ABSOLUTE);
     }
-    const colDefAllowedSortTypes = getColDefAllowedSortTypes(column);
-    const types = new Set<SortType>(colDefAllowedSortTypes);
+    let types = getColDefSortTypes(column);
     // add each directional order entry's type — mirrors `getSortDefFromInput` without allocating a SortDef per entry
-    const order = getSortingOrderInputs(gos, column, colDefAllowedSortTypes);
+    const order = getSortingOrderInputs(gos, column, types);
     for (let i = 0, len = order.length; i < len; ++i) {
         const input = order[i];
         if (!_isSortDefValid(input)) {
             if (normalizeSortDirection(input)) {
-                types.add(_normalizeSortType(input));
+                types |= sortTypeFlag(_normalizeSortType(input));
             }
             continue;
         }
         if (input.direction) {
-            types.add(input.type);
+            types |= sortTypeFlag(input.type);
         }
     }
     if (cacheable) {
-        column.cachedSortTypes = types;
+        column.colFlags =
+            (flags & ~(COL_FLAG_SORT_DEFAULT | COL_FLAG_SORT_ABSOLUTE)) | types | COL_FLAG_SORT_TYPES_CACHED;
     }
     return types;
 };
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const _isSortTypeAvailable = (gos: GridOptionsService, column: AgColumn, type: SortType): boolean =>
+    (getAvailableSortTypes(gos, column) & sortTypeFlag(type)) !== 0;
 
 export const isSortDirectionValid = (maybeSortDir: unknown): maybeSortDir is SortDirection =>
     maybeSortDir === 'asc' || maybeSortDir === 'desc' || maybeSortDir === null;

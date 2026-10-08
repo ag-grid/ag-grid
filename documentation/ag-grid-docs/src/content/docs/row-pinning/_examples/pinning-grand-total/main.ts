@@ -63,8 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function getGrandTotalRow() {
     return document.querySelector<HTMLSelectElement>('#select-grand-total-row')?.value as
-        | GridOptions['grandTotalRow']
-        | 'isRowPinned';
+        GridOptions['grandTotalRow'] | 'isRowPinned';
 }
 
 function setGrandTotalRow(api: GridApi<IOlympicData>, value: GridOptions['grandTotalRow']) {

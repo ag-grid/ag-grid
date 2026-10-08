@@ -469,7 +469,7 @@ export function normaliseX(params: {
 
 export function setColumnsMoving(columns: AgColumn[], isMoving: boolean): void {
     for (const column of columns) {
-        column.moving = isMoving;
+        column.setMoving(isMoving);
         column.dispatchColEvent('movingChanged', 'uiColumnMoved');
     }
 }

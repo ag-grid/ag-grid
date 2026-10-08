@@ -901,6 +901,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     calculatedColumn: 'Изчислена колона',
     calculatedColumnAdd: 'Добавяне на изчислена колона',
     calculatedColumnEdit: 'Редактиране на изчислена колона',
+    calculatedColumnView: 'Преглед на изчислена колона',
     calculatedColumnRemove: 'Премахване на изчислена колона',
     calculatedColumnTitle: 'Заглавие',
     calculatedColumnType: 'Тип',

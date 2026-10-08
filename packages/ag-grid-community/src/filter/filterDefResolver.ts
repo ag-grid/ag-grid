@@ -58,7 +58,7 @@ export function _resolveFilter(
     };
 }
 
-/** The `{ component, handler, doesFilterPass }` form needs filter handlers; without them the component is the filter. */
+/** Without filter handlers, the `{ component }` form builds its component, or what `true` does when it gives logic. */
 function withoutHandlerForm(beans: BeanCollection, column: AgColumn, def: FilterDefWithGetter): FilterDefWithGetter {
     const filter = def.filter;
     if (!isColumnFilterComp(filter) || beans.gos.get('enableFilterHandlers')) {
@@ -66,6 +66,7 @@ function withoutHandlerForm(beans: BeanCollection, column: AgColumn, def: Filter
     }
     if (filter.handler || filter.doesFilterPass) {
         beans.log.warn(335, { colId: column.getColId() });
+        return { ...def, filter: true };
     }
     return { ...def, filter: filter.component };
 }
@@ -162,14 +163,23 @@ function getParamsForDataType(
     );
 }
 
+/** Logic comes with a display component, which cannot be a filter on its own. */
+function isLogicWithoutHandlers(beans: BeanCollection, filter: unknown): boolean {
+    return (
+        isColumnFilterComp(filter) &&
+        !!(filter.handler || filter.doesFilterPass) &&
+        !beans.gos.get('enableFilterHandlers')
+    );
+}
+
 /**
- * The filter `filter` builds: `true` and a name nothing is registered under build `defaultFilter`, the `{ component }`
- * form the filter it names; `undefined` for none or a component of the author's.
+ * The filter `filter` builds: `true`, a name nothing is registered under and logic without filter handlers build
+ * `defaultFilter`, the `{ component }` form the filter it names; `undefined` for none or a component of the author's.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _getFilterKey(beans: BeanCollection, filter: unknown, defaultFilter: string): string | undefined {
     const named = isColumnFilterComp(filter) ? filter.component : filter;
-    if (named === true || isUnregistered(beans, named)) {
+    if (named === true || isUnregistered(beans, named) || isLogicWithoutHandlers(beans, filter)) {
         return defaultFilter;
     }
     return typeof named === 'string' ? named : undefined;

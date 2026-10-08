@@ -109,8 +109,8 @@ const sortedToolPanelColumnDefs = [
 ];
 
 function setCustomSortLayout() {
-    const columnToolPanel = gridApi!.getToolPanelInstance('columns');
-    columnToolPanel!.setColumnLayout(sortedToolPanelColumnDefs);
+    const columnsToolPanel = gridApi!.getToolPanelInstance('columns');
+    columnsToolPanel!.setColumnLayout(sortedToolPanelColumnDefs);
 }
 
 const customToolPanelColumnDefs = [
@@ -139,8 +139,8 @@ const customToolPanelColumnDefs = [
 ];
 
 function setCustomGroupLayout() {
-    const columnToolPanel = gridApi!.getToolPanelInstance('columns');
-    columnToolPanel!.setColumnLayout(customToolPanelColumnDefs);
+    const columnsToolPanel = gridApi!.getToolPanelInstance('columns');
+    columnsToolPanel!.setColumnLayout(customToolPanelColumnDefs);
 }
 
 // setup the grid after the page has finished loading

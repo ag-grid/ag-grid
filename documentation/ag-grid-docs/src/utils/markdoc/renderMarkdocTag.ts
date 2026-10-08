@@ -91,8 +91,7 @@ async function renderMatrixTable(attributes: Record<string, any>): Promise<strin
         return '';
     }
     const entry = (await getEntry('matrixTable', attributes.dataFileName)) as
-        | CollectionEntry<'matrixTable'>
-        | undefined;
+        CollectionEntry<'matrixTable'> | undefined;
     if (!entry) {
         return '';
     }

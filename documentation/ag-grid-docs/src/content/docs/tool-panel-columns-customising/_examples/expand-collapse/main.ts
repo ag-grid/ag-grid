@@ -76,29 +76,29 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     sideBar: 'columns',
     onGridReady: (params) => {
-        const columnToolPanel = params.api.getToolPanelInstance('columns')!;
-        columnToolPanel.collapseColumnGroups();
+        const columnsToolPanel = params.api.getToolPanelInstance('columns')!;
+        columnsToolPanel.collapseColumnGroups();
     },
 };
 
 function expandAllGroups() {
-    const columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
-    columnToolPanel.expandColumnGroups();
+    const columnsToolPanel = gridApi!.getToolPanelInstance('columns')!;
+    columnsToolPanel.expandColumnGroups();
 }
 
 function collapseAllGroups() {
-    const columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
-    columnToolPanel.collapseColumnGroups();
+    const columnsToolPanel = gridApi!.getToolPanelInstance('columns')!;
+    columnsToolPanel.collapseColumnGroups();
 }
 
 function expandAthleteAndCompetitionGroups() {
-    const columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
-    columnToolPanel.expandColumnGroups(['athleteGroupId', 'competitionGroupId']);
+    const columnsToolPanel = gridApi!.getToolPanelInstance('columns')!;
+    columnsToolPanel.expandColumnGroups(['athleteGroupId', 'competitionGroupId']);
 }
 
 function collapseCompetitionGroups() {
-    const columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
-    columnToolPanel.collapseColumnGroups(['competitionGroupId']);
+    const columnsToolPanel = gridApi!.getToolPanelInstance('columns')!;
+    columnsToolPanel.collapseColumnGroups(['competitionGroupId']);
 }
 
 // setup the grid after the page has finished loading

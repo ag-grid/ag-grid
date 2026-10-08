@@ -916,6 +916,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     calculatedColumn: 'Arvutatud veerg',
     calculatedColumnAdd: 'Lisa arvutatud veerg',
     calculatedColumnEdit: 'Muuda arvutatud veergu',
+    calculatedColumnView: 'Vaata arvutatud veergu',
     calculatedColumnRemove: 'Eemalda arvutatud veerg',
     calculatedColumnTitle: 'Pealkiri',
     calculatedColumnType: 'Tüüp',

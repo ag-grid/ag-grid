@@ -1320,7 +1320,7 @@
         "functionsReadOnly": {
             "more": {
                 "name": "Read Only Functions",
-                "url": "./tool-panel-columns/#read-only-functions"
+                "url": "./tool-panel-columns-configuration/#read-only-functions"
             }
         },
         "removePivotHeaderRowWhenSingleValueColumn": {

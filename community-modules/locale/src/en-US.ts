@@ -905,6 +905,7 @@ export const AG_GRID_LOCALE_EN_US = {
     calculatedColumn: 'Calculated Column',
     calculatedColumnAdd: 'Add Calculated Column',
     calculatedColumnEdit: 'Edit Calculated Column',
+    calculatedColumnView: 'View Calculated Column',
     calculatedColumnRemove: 'Remove Calculated Column',
     calculatedColumnTitle: 'Title',
     calculatedColumnType: 'Type',

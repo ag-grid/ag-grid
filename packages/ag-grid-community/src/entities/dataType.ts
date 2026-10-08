@@ -42,15 +42,7 @@ export type ValueFormatterLiteFunc<TData, TValue, TContext = any> = (
  * `object` is any other type.
  */
 export type BaseCellDataType =
-    | 'text'
-    | 'number'
-    | 'bigint'
-    | 'boolean'
-    | 'date'
-    | 'dateString'
-    | 'object'
-    | 'dateTime'
-    | 'dateTimeString';
+    'text' | 'number' | 'bigint' | 'boolean' | 'date' | 'dateString' | 'object' | 'dateTime' | 'dateTimeString';
 
 interface BaseDataTypeDefinition<TValueType extends BaseCellDataType, TData = any, TValue = any, TContext = any> {
     /** The underlying data type */

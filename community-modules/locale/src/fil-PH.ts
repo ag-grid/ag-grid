@@ -924,6 +924,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     calculatedColumn: 'Kinalkulang Column',
     calculatedColumnAdd: 'Magdagdag ng Kinalkulang Column',
     calculatedColumnEdit: 'I-edit ang Kinalkulang Column',
+    calculatedColumnView: 'Tingnan ang Kinalkulang Column',
     calculatedColumnRemove: 'Alisin ang Kinalkulang Column',
     calculatedColumnTitle: 'Pamagat',
     calculatedColumnType: 'Uri',
