@@ -11,10 +11,6 @@ body {
     overflow: hidden;
 }
 
-.toolbar {
-    height: 30px;
-}
-
 .grid-wrapper {
     flex: 2 2 0px;
     min-width: 0;

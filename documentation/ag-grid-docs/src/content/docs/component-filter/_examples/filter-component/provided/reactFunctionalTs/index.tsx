@@ -69,7 +69,7 @@ const GridExample = () => {
                 <div className="example-wrapper">
                     <div className="example-controls">
                         <div className="controls-row">
-                            <button style={{ marginBottom: '5px' }} onClick={onClicked} className="btn btn-primary">
+                            <button onClick={onClicked} className="btn btn-primary">
                                 Invoke Filter Instance Method
                             </button>
                         </div>

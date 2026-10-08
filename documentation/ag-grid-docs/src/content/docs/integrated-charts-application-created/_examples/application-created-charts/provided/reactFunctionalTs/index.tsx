@@ -159,8 +159,8 @@ const GridExample = () => {
 
     return (
         <AgGridProvider modules={modules}>
-            <div id="myApp" className="wrapper">
-                <div className="example-controls" style={{ paddingBottom: '4px' }}>
+            <div id="myApp" className="example-wrapper">
+                <div className="example-controls">
                     <div className="controls-row">
                         <span>
                             <button onClick={onStopMessages}>&#9632; Stop</button>

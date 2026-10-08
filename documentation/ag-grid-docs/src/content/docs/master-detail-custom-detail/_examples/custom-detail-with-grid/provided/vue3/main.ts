@@ -32,7 +32,7 @@ const VueExample = defineComponent({
     template: `
         <div style="height: 100%">
             <div class="example-wrapper">
-                <div class="example-controls" style="margin-bottom: 5px;">
+                <div class="example-controls">
                     <div class="controls-row">
                         <button v-on:click="printDetailGridInfo()">Print Detail Grid Info</button>
                         <button v-on:click="expandCollapseAll()">Toggle Expand / Collapse</button>

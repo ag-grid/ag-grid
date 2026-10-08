@@ -96,7 +96,7 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <div className="example-controls" style={{ marginBottom: '5px' }}>
+                    <div className="example-controls">
                         <div className="controls-row">
                             <button onClick={onCallGold}>Gold</button>
                             <button onClick={onFirstRowGold}>First Row Gold</button>

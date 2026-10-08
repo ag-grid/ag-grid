@@ -23,7 +23,8 @@
     --range-track-bg: #efefef;
 
     --row-gap: 6px;
-    --controls-gap: calc(var(--row-gap) * 2);
+    /* Between the controls and the example beneath them. Matches the 8px the Charts examples have. */
+    --controls-gap: 8px;
     /* Inside a label that wraps its own control. Deliberately below `--row-gap` -- see the
        `.example-controls label` rule for why the two must not be equal. */
     --label-gap: 4px;

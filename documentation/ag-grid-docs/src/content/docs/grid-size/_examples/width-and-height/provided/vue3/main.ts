@@ -13,8 +13,8 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
     template: `
-        <div style="display: flex; flex-direction: column; height: 100%">
-            <div class="example-controls" style="margin-bottom: 5px;">
+        <div class="example-wrapper">
+            <div class="example-controls">
                 <div class="controls-row">
                     <button @click="fillLarge">Fill 100%</button>
                     <button @click="fillMedium">Fill 60%</button>

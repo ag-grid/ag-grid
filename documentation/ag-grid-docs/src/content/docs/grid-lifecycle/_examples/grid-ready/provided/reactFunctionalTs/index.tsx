@@ -49,15 +49,12 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <div className="example-header">
-                        <div className="example-controls" style={{ marginBottom: '1rem' }}>
-                            <div className="controls-row">
+                    <div className="example-controls">
+                        <div className="controls-row">
+                            <div>
                                 <input type="checkbox" id="pinFirstColumnOnLoad" />
                                 <label htmlFor="pinFirstColumnOnLoad">Pin first column on load</label>
                             </div>
-                        </div>
-
-                        <div style={{ marginBottom: '1rem' }}>
                             <button id="reloadGridButton" onClick={reloadGrid}>
                                 Reload Grid
                             </button>

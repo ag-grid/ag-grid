@@ -76,13 +76,13 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
-                <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }}>
+                <div className="example-wrapper">
                     <div className="example-controls">
-                        <div className="controls-row" style={{ marginBottom: '5px', minHeight: '30px' }}>
+                        <div className="controls-row">
                             <button onClick={addNewRow}>Add New Row</button>
                         </div>
                     </div>
-                    <div style={{ flex: '1 1 0px' }}>
+                    <div>
                         <div style={gridStyle}>
                             <AgGridReact
                                 ref={gridRef}

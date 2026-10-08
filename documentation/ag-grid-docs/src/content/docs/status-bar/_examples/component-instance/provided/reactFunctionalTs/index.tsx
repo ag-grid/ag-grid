@@ -104,9 +104,7 @@ const GridExample = () => {
             <div className="example-wrapper">
                 <div className="example-controls">
                     <div className="controls-row">
-                        <button onClick={toggleStatusBarComp} style={{ marginBottom: '10px' }}>
-                            Toggle Status Bar Component
-                        </button>
+                        <button onClick={toggleStatusBarComp}>Toggle Status Bar Component</button>
                     </div>
                 </div>
 

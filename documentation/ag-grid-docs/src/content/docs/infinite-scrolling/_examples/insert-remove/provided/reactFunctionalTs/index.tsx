@@ -208,16 +208,16 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
-                <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                <div className="example-wrapper">
                     <div className="example-controls">
-                        <div className="controls-row" style={{ marginBottom: '10px' }}>
+                        <div className="controls-row">
                             <button onClick={() => insertItemsAt2AndRefresh(5)}>Insert Rows</button>
                             <button onClick={() => removeItem(3, 10)}>Delete Rows</button>
                             <button onClick={setRowCountTo200}>Set Row Count</button>
                             <button onClick={rowsAndMaxFound}>Print Info</button>
                             <button onClick={jumpTo500}>Jump to 500</button>
                         </div>
-                        <div className="controls-row" style={{ marginBottom: '10px' }}>
+                        <div className="controls-row">
                             <button onClick={setPricesHigh}>Set Prices High</button>
                             <button onClick={setPricesLow}>Set Prices Low</button>
                             <button onClick={refreshCache}>Refresh Cache</button>

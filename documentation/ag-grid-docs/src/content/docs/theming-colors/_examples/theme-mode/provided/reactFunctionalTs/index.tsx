@@ -26,8 +26,8 @@ const theme = themeQuartz
 const GridExample = () => {
     return (
         <AgGridProvider modules={[AllEnterpriseModule]}>
-            <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                <div className="example-controls" style={{ flex: 0 }}>
+            <div className="example-wrapper">
+                <div className="example-controls">
                     <div className="controls-row">
                         <label>
                             Dark mode: <input type="checkbox" onChange={(e) => setDarkMode(e.target.checked)} />
