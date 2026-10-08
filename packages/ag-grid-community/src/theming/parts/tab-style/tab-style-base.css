@@ -48,6 +48,11 @@
 .ag-tab.ag-tab-selected {
     background-color: var(--ag-tab-selected-background-color);
     color: var(--ag-tab-selected-text-color);
+
+    /* the accent underline and the selected background both flatten to Canvas */
+    @media (forced-colors: active) {
+        background-color: SelectedItem;
+    }
 }
 
 .ag-tab.ag-tab-selected:where(:not(:first-of-type)) {

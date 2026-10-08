@@ -9,14 +9,18 @@
 
 .ag-range-field-input {
     padding: 0;
-    appearance: none;
     width: 100%;
     height: 100%;
-    background: none;
     overflow: visible;
 
     &:disabled {
         opacity: 0.5;
+    }
+
+    /* in forced colors mode use the native slider, which the browser renders in system colors */
+    @media not (forced-colors: active) {
+        appearance: none;
+        background: none;
     }
 }
 
@@ -25,34 +29,36 @@
    IMPORTANT this block must contain ONLY -webkit styles, as any browsers that
    don't support the -webkit prefix will ignore the entire block */
 .ag-range-field-input {
-    &::-webkit-slider-runnable-track {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 3px;
-        background-color: var(--ag-border-color);
-        border-radius: 1.5px;
-    }
+    @media not (forced-colors: active) {
+        &::-webkit-slider-runnable-track {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--ag-border-color);
+            border-radius: 1.5px;
+        }
 
-    &::-webkit-slider-thumb {
-        margin: 0;
-        padding: 0;
-        appearance: none;
-        width: var(--ag-icon-size);
-        height: var(--ag-icon-size);
-        background-color: var(--ag-background-color);
-        border: solid var(--ag-border-width) var(--ag-border-color);
-        border-radius: 100%;
-        transform: translateY(calc(var(--ag-icon-size) * -0.5 + 1.5px));
-    }
+        &::-webkit-slider-thumb {
+            margin: 0;
+            padding: 0;
+            appearance: none;
+            width: var(--ag-icon-size);
+            height: var(--ag-icon-size);
+            background-color: var(--ag-background-color);
+            border: solid var(--ag-border-width) var(--ag-border-color);
+            border-radius: 100%;
+            transform: translateY(calc(var(--ag-icon-size) * -0.5 + 1.5px));
+        }
 
-    &:focus::-webkit-slider-thumb {
-        box-shadow: var(--ag-focus-shadow);
-        border-color: var(--ag-accent-color);
-    }
+        &:focus::-webkit-slider-thumb {
+            box-shadow: var(--ag-focus-shadow);
+            border-color: var(--ag-accent-color);
+        }
 
-    &:active::-webkit-slider-runnable-track {
-        background-color: var(--ag-accent-color);
+        &:active::-webkit-slider-runnable-track {
+            background-color: var(--ag-accent-color);
+        }
     }
 }
 
@@ -61,33 +67,35 @@
    IMPORTANT this block must contain ONLY -moz styles, as any browsers that
    don't support the -moz prefix will ignore the entire block */
 .ag-range-field-input {
-    &::-moz-range-track {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 3px;
-        background-color: var(--ag-border-color);
-        border-radius: 1.5px;
-    }
+    @media not (forced-colors: active) {
+        &::-moz-range-track {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--ag-border-color);
+            border-radius: 1.5px;
+        }
 
-    &::-moz-ag-range-thumb {
-        margin: 0;
-        padding: 0;
-        appearance: none;
-        width: var(--ag-icon-size);
-        height: var(--ag-icon-size);
-        background-color: var(--ag-background-color);
-        border: solid var(--ag-border-width) var(--ag-border-color);
-        border-radius: 100%;
-        transform: translateY(calc(var(--ag-icon-size) * -0.5 + 1.5px));
-    }
+        &::-moz-range-thumb {
+            margin: 0;
+            padding: 0;
+            appearance: none;
+            width: var(--ag-icon-size);
+            height: var(--ag-icon-size);
+            background-color: var(--ag-background-color);
+            border: solid var(--ag-border-width) var(--ag-border-color);
+            border-radius: 100%;
+            transform: translateY(calc(var(--ag-icon-size) * -0.5 + 1.5px));
+        }
 
-    &:focus::-moz-ag-range-thumb {
-        box-shadow: var(--ag-focus-shadow);
-        border-color: var(--ag-accent-color);
-    }
+        &:focus::-moz-range-thumb {
+            box-shadow: var(--ag-focus-shadow);
+            border-color: var(--ag-accent-color);
+        }
 
-    &:active::-moz-ag-range-track {
-        background-color: var(--ag-accent-color);
+        &:active::-moz-range-track {
+            background-color: var(--ag-accent-color);
+        }
     }
 }

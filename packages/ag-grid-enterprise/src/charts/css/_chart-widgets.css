@@ -29,6 +29,11 @@
     margin-top: -4px;
     border-radius: 3px;
     background-color: var(--ag-foreground-color);
+
+    /* a non-system background colour maps to Canvas, hiding the dot */
+    @media (forced-colors: active) {
+        background-color: CanvasText;
+    }
 }
 
 .ag-angle-select-field {
