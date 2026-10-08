@@ -9,6 +9,7 @@ import type { GroupComponent } from '../../../../widgets/gridEnterpriseWidgetTyp
 import type { ChartController } from '../../chartController';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { getFullChartNameTranslationKey } from '../../utils/seriesTypeMapper';
+import { toSolidColors } from './miniChartSolidColors';
 import { MiniConeFunnel } from './miniCharts/funnel/miniConeFunnel';
 import { MiniFunnel } from './miniCharts/funnel/miniFunnel';
 import { MiniPyramid } from './miniCharts/funnel/miniPyramid';
@@ -48,6 +49,8 @@ import {
 } from './miniCharts/index';
 // please leave this as is - we want it to be explicit for build reasons
 import type { MiniChart } from './miniCharts/miniChart';
+import { MiniChartSvg } from './miniCharts/svg/miniChartSvg';
+import { MINI_CHART_SVG_GEOMETRY } from './miniCharts/svg/miniChartSvgGeometry';
 
 type MiniChartMenuMapping = {
     [K in keyof ChartGroupsDef]-?: MiniChartMenuGroup<K>;
@@ -190,6 +193,8 @@ export class MiniChartsContainer extends Component {
         const isEnterprise = this.chartController.isEnterprise();
         const isPivotChart = this.chartController.isPivotChart();
         const isRangeChart = !isPivotChart;
+        const solidFills = toSolidColors(this.fills);
+        const solidStrokes = toSolidColors(this.strokes);
 
         // Determine the set of chart types that are specified by the chartGroupsDef config, filtering out any entries
         // that are invalid for the current chart configuration (pivot/range) and license type
@@ -282,9 +287,20 @@ export class MiniChartsContainer extends Component {
 
                 this.wrappers.set(miniClassChartType, miniWrapper);
 
-                this.createBean(
-                    new MiniClass(miniWrapper, this.beans.agChartsExports, this.fills, this.strokes, this.isCustomTheme)
-                );
+                const svgTemplate = MINI_CHART_SVG_GEOMETRY[chartType];
+                if (svgTemplate) {
+                    this.createBean(new MiniChartSvg(miniWrapper, svgTemplate, solidFills, solidStrokes));
+                } else {
+                    this.createBean(
+                        new MiniClass(
+                            miniWrapper,
+                            this.beans.agChartsExports,
+                            this.fills,
+                            this.strokes,
+                            this.isCustomTheme
+                        )
+                    );
+                }
                 groupComponent.addItem(miniWrapper);
             }
 

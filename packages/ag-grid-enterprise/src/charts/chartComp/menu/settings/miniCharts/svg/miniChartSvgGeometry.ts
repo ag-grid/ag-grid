@@ -1,0 +1,612 @@
+import type { ChartType } from 'ag-grid-community';
+
+import type { MiniChartSvgTemplate } from './miniChartSvgTypes';
+
+/** Thumbnail geometry for the chart types drawn as inline SVG in the chart settings panel. */
+export const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> = {
+    groupedColumn: {
+        tooltip: 'groupedColumnTooltip',
+        children: [
+            {
+                tag: 'path',
+                attrs: { d: 'M 9 29 L 20 29 L 20 53 L 9 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 24 17 L 34 17 L 34 53 L 24 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 1 },
+                stroke: { palette: 'strokes', index: 1 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 38 5 L 49 5 L 49 53 L 38 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 2 },
+                stroke: { palette: 'strokes', index: 2 },
+            },
+            { tag: 'line', attrs: { x1: 5.5, y1: 5, x2: 5.5, y2: 56, 'stroke-width': 1 }, stroke: 'gray' },
+            { tag: 'line', attrs: { x1: 3, y1: 53.5, x2: 54, y2: 53.5, 'stroke-width': 1 }, stroke: 'gray' },
+        ],
+    },
+    stackedColumn: {
+        tooltip: 'stackedColumnTooltip',
+        children: [
+            {
+                tag: 'path',
+                attrs: { d: 'M 9 29 L 20 29 L 20 53 L 9 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 24 17 L 34 17 L 34 53 L 24 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 38 5 L 49 5 L 49 53 L 38 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 9 35 L 20 35 L 20 53 L 9 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 1 },
+                stroke: { palette: 'strokes', index: 1 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 24 26 L 34 26 L 34 53 L 24 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 1 },
+                stroke: { palette: 'strokes', index: 1 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 38 17 L 49 17 L 49 53 L 38 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 1 },
+                stroke: { palette: 'strokes', index: 1 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 9 47 L 20 47 L 20 53 L 9 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 2 },
+                stroke: { palette: 'strokes', index: 2 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 24 44 L 34 44 L 34 53 L 24 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 2 },
+                stroke: { palette: 'strokes', index: 2 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 38 41 L 49 41 L 49 53 L 38 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 2 },
+                stroke: { palette: 'strokes', index: 2 },
+            },
+            { tag: 'line', attrs: { x1: 5.5, y1: 5, x2: 5.5, y2: 56, 'stroke-width': 1 }, stroke: 'gray' },
+            { tag: 'line', attrs: { x1: 3, y1: 53.5, x2: 54, y2: 53.5, 'stroke-width': 1 }, stroke: 'gray' },
+        ],
+    },
+    normalizedColumn: {
+        tooltip: 'normalizedColumnTooltip',
+        children: [
+            {
+                tag: 'path',
+                attrs: { d: 'M 9 5 L 20 5 L 20 53 L 9 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 24 5 L 34 5 L 34 53 L 24 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 38 5 L 49 5 L 49 53 L 38 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 9 24 L 20 24 L 20 53 L 9 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 1 },
+                stroke: { palette: 'strokes', index: 1 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 24 19 L 34 19 L 34 53 L 24 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 1 },
+                stroke: { palette: 'strokes', index: 1 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 38 15 L 49 15 L 49 53 L 38 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 1 },
+                stroke: { palette: 'strokes', index: 1 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 9 43 L 20 43 L 20 53 L 9 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 2 },
+                stroke: { palette: 'strokes', index: 2 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 24 34 L 34 34 L 34 53 L 24 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 2 },
+                stroke: { palette: 'strokes', index: 2 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 38 24 L 49 24 L 49 53 L 38 53 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 2 },
+                stroke: { palette: 'strokes', index: 2 },
+            },
+            { tag: 'line', attrs: { x1: 5.5, y1: 5, x2: 5.5, y2: 56, 'stroke-width': 1 }, stroke: 'gray' },
+            { tag: 'line', attrs: { x1: 3, y1: 53.5, x2: 54, y2: 53.5, 'stroke-width': 1 }, stroke: 'gray' },
+        ],
+    },
+    groupedBar: {
+        tooltip: 'groupedBarTooltip',
+        children: [
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 9 L 29 9 L 29 20 L 5 20 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 24 L 41 24 L 41 34 L 5 34 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 1 },
+                stroke: { palette: 'strokes', index: 1 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 38 L 53 38 L 53 49 L 5 49 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 2 },
+                stroke: { palette: 'strokes', index: 2 },
+            },
+            { tag: 'line', attrs: { x1: 5.5, y1: 5, x2: 5.5, y2: 56, 'stroke-width': 1 }, stroke: 'gray' },
+            { tag: 'line', attrs: { x1: 3, y1: 53.5, x2: 54, y2: 53.5, 'stroke-width': 1 }, stroke: 'gray' },
+        ],
+    },
+    stackedBar: {
+        tooltip: 'stackedBarTooltip',
+        children: [
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 9 L 29 9 L 29 20 L 5 20 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 24 L 41 24 L 41 34 L 5 34 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 38 L 53 38 L 53 49 L 5 49 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 9 L 23 9 L 23 20 L 5 20 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 1 },
+                stroke: { palette: 'strokes', index: 1 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 24 L 32 24 L 32 34 L 5 34 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 1 },
+                stroke: { palette: 'strokes', index: 1 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 38 L 41 38 L 41 49 L 5 49 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 1 },
+                stroke: { palette: 'strokes', index: 1 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 9 L 11 9 L 11 20 L 5 20 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 2 },
+                stroke: { palette: 'strokes', index: 2 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 24 L 14 24 L 14 34 L 5 34 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 2 },
+                stroke: { palette: 'strokes', index: 2 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 38 L 17 38 L 17 49 L 5 49 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 2 },
+                stroke: { palette: 'strokes', index: 2 },
+            },
+            { tag: 'line', attrs: { x1: 5.5, y1: 5, x2: 5.5, y2: 56, 'stroke-width': 1 }, stroke: 'gray' },
+            { tag: 'line', attrs: { x1: 3, y1: 53.5, x2: 54, y2: 53.5, 'stroke-width': 1 }, stroke: 'gray' },
+        ],
+    },
+    normalizedBar: {
+        tooltip: 'normalizedBarTooltip',
+        children: [
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 9 L 53 9 L 53 20 L 5 20 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 24 L 53 24 L 53 34 L 5 34 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 38 L 53 38 L 53 49 L 5 49 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 9 L 34 9 L 34 20 L 5 20 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 1 },
+                stroke: { palette: 'strokes', index: 1 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 24 L 39 24 L 39 34 L 5 34 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 1 },
+                stroke: { palette: 'strokes', index: 1 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 38 L 43 38 L 43 49 L 5 49 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 1 },
+                stroke: { palette: 'strokes', index: 1 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 9 L 15 9 L 15 20 L 5 20 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 2 },
+                stroke: { palette: 'strokes', index: 2 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 24 L 24 24 L 24 34 L 5 34 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 2 },
+                stroke: { palette: 'strokes', index: 2 },
+            },
+            {
+                tag: 'path',
+                attrs: { d: 'M 5 38 L 34 38 L 34 49 L 5 49 Z', 'stroke-width': 0 },
+                fill: { palette: 'fills', index: 2 },
+                stroke: { palette: 'strokes', index: 2 },
+            },
+            { tag: 'line', attrs: { x1: 5.5, y1: 5, x2: 5.5, y2: 56, 'stroke-width': 1 }, stroke: 'gray' },
+            { tag: 'line', attrs: { x1: 3, y1: 53.5, x2: 54, y2: 53.5, 'stroke-width': 1 }, stroke: 'gray' },
+        ],
+    },
+    line: {
+        tooltip: 'lineTooltip',
+        children: [
+            {
+                tag: 'g',
+                clip: [5, 5, 48, 48],
+                children: [
+                    {
+                        tag: 'path',
+                        attrs: {
+                            d: 'M 5 46.143 L 29 32.429 L 53 18.714',
+                            'stroke-width': 3,
+                            'stroke-linecap': 'round',
+                        },
+                        stroke: { palette: 'fills', index: 0 },
+                    },
+                    {
+                        tag: 'path',
+                        attrs: {
+                            d: 'M 5 39.286 L 29 11.857 L 53 25.571',
+                            'stroke-width': 3,
+                            'stroke-linecap': 'round',
+                        },
+                        stroke: { palette: 'fills', index: 1 },
+                    },
+                    {
+                        tag: 'path',
+                        attrs: {
+                            d: 'M 5 18.714 L 29 32.429 L 53 46.143',
+                            'stroke-width': 3,
+                            'stroke-linecap': 'round',
+                        },
+                        stroke: { palette: 'fills', index: 2 },
+                    },
+                ],
+            },
+            { tag: 'line', attrs: { x1: 5.5, y1: 5, x2: 5.5, y2: 56, 'stroke-width': 1 }, stroke: 'gray' },
+            { tag: 'line', attrs: { x1: 3, y1: 53.5, x2: 54, y2: 53.5, 'stroke-width': 1 }, stroke: 'gray' },
+        ],
+    },
+    stackedLine: {
+        tooltip: 'stackedLineTooltip',
+        children: [
+            {
+                tag: 'g',
+                clip: [5, 5, 48, 48],
+                children: [
+                    {
+                        tag: 'path',
+                        attrs: {
+                            d: 'M 5 49.308 L 29 41.923 L 53 34.538',
+                            'stroke-width': 3,
+                            'stroke-linecap': 'round',
+                        },
+                        stroke: { palette: 'fills', index: 0 },
+                    },
+                    {
+                        tag: 'path',
+                        attrs: {
+                            d: 'M 5 41.923 L 29 19.769 L 53 19.769',
+                            'stroke-width': 3,
+                            'stroke-linecap': 'round',
+                        },
+                        stroke: { palette: 'fills', index: 1 },
+                    },
+                    {
+                        tag: 'path',
+                        attrs: { d: 'M 5 23.462 L 29 8.692 L 53 16.077', 'stroke-width': 3, 'stroke-linecap': 'round' },
+                        stroke: { palette: 'fills', index: 2 },
+                    },
+                ],
+            },
+            { tag: 'line', attrs: { x1: 5.5, y1: 5, x2: 5.5, y2: 56, 'stroke-width': 1 }, stroke: 'gray' },
+            { tag: 'line', attrs: { x1: 3, y1: 53.5, x2: 54, y2: 53.5, 'stroke-width': 1 }, stroke: 'gray' },
+        ],
+    },
+    normalizedLine: {
+        tooltip: 'normalizedLineTooltip',
+        children: [
+            {
+                tag: 'g',
+                clip: [5, 5, 48, 48],
+                children: [
+                    {
+                        tag: 'path',
+                        attrs: { d: 'M 5 50.423 L 29 44.302 L 53 32.06', 'stroke-width': 3, 'stroke-linecap': 'round' },
+                        stroke: { palette: 'fills', index: 0 },
+                    },
+                    {
+                        tag: 'path',
+                        attrs: {
+                            d: 'M 5 38.181 L 29 19.819 L 53 12.474',
+                            'stroke-width': 3,
+                            'stroke-linecap': 'round',
+                        },
+                        stroke: { palette: 'fills', index: 1 },
+                    },
+                    {
+                        tag: 'path',
+                        attrs: { d: 'M 5 7.577 L 29 7.577 L 53 7.577', 'stroke-width': 3, 'stroke-linecap': 'round' },
+                        stroke: { palette: 'fills', index: 2 },
+                    },
+                ],
+            },
+            { tag: 'line', attrs: { x1: 5.5, y1: 5, x2: 5.5, y2: 56, 'stroke-width': 1 }, stroke: 'gray' },
+            { tag: 'line', attrs: { x1: 3, y1: 53.5, x2: 54, y2: 53.5, 'stroke-width': 1 }, stroke: 'gray' },
+        ],
+    },
+    area: {
+        tooltip: 'groupedAreaTooltip',
+        children: [
+            {
+                tag: 'g',
+                clip: [5, 5, 48, 48],
+                children: [
+                    {
+                        tag: 'path',
+                        attrs: {
+                            d: 'M 5 46.143 L 29 32.429 L 53 18.714 L 53 53 L 29 53 L 5 53 L 5 46.143',
+                            'fill-opacity': 0.7,
+                            'stroke-width': 1,
+                            'stroke-opacity': 0.75,
+                        },
+                        fill: { palette: 'fills', index: 0 },
+                        stroke: { palette: 'strokes', index: 0 },
+                    },
+                    {
+                        tag: 'path',
+                        attrs: {
+                            d: 'M 5 39.286 L 29 11.857 L 53 25.571 L 53 53 L 29 53 L 5 53 L 5 39.286',
+                            'fill-opacity': 0.7,
+                            'stroke-width': 1,
+                            'stroke-opacity': 0.75,
+                        },
+                        fill: { palette: 'fills', index: 1 },
+                        stroke: { palette: 'strokes', index: 1 },
+                    },
+                    {
+                        tag: 'path',
+                        attrs: {
+                            d: 'M 5 18.714 L 29 32.429 L 53 46.143 L 53 53 L 29 53 L 5 53 L 5 18.714',
+                            'fill-opacity': 0.7,
+                            'stroke-width': 1,
+                            'stroke-opacity': 0.75,
+                        },
+                        fill: { palette: 'fills', index: 2 },
+                        stroke: { palette: 'strokes', index: 2 },
+                    },
+                ],
+            },
+            { tag: 'line', attrs: { x1: 5.5, y1: 5, x2: 5.5, y2: 56, 'stroke-width': 1 }, stroke: 'gray' },
+            { tag: 'line', attrs: { x1: 3, y1: 53.5, x2: 54, y2: 53.5, 'stroke-width': 1 }, stroke: 'gray' },
+        ],
+    },
+    stackedArea: {
+        tooltip: 'stackedAreaTooltip',
+        children: [
+            {
+                tag: 'g',
+                clip: [5, 5, 48, 48],
+                children: [
+                    {
+                        tag: 'path',
+                        attrs: {
+                            d: 'M 5 49.308 L 29 41.923 L 53 34.538 L 53 53 L 29 53 L 5 53 L 5 49.308',
+                            'stroke-width': 0,
+                        },
+                        fill: { palette: 'fills', index: 0 },
+                        stroke: { palette: 'strokes', index: 0 },
+                    },
+                    {
+                        tag: 'path',
+                        attrs: {
+                            d: 'M 5 41.923 L 29 19.769 L 53 19.769 L 53 34.538 L 29 41.923 L 5 49.308 L 5 41.923',
+                            'stroke-width': 0,
+                        },
+                        fill: { palette: 'fills', index: 1 },
+                        stroke: { palette: 'strokes', index: 1 },
+                    },
+                    {
+                        tag: 'path',
+                        attrs: {
+                            d: 'M 5 23.462 L 29 8.692 L 53 16.077 L 53 19.769 L 29 19.769 L 5 41.923 L 5 23.462',
+                            'stroke-width': 0,
+                        },
+                        fill: { palette: 'fills', index: 2 },
+                        stroke: { palette: 'strokes', index: 2 },
+                    },
+                ],
+            },
+            { tag: 'line', attrs: { x1: 5.5, y1: 5, x2: 5.5, y2: 56, 'stroke-width': 1 }, stroke: 'gray' },
+            { tag: 'line', attrs: { x1: 3, y1: 53.5, x2: 54, y2: 53.5, 'stroke-width': 1 }, stroke: 'gray' },
+        ],
+    },
+    normalizedArea: {
+        tooltip: 'normalizedAreaTooltip',
+        children: [
+            {
+                tag: 'g',
+                clip: [5, 5, 48, 48],
+                children: [
+                    {
+                        tag: 'path',
+                        attrs: {
+                            d: 'M 5 50.423 L 29 44.302 L 53 32.06 L 53 56.544 L 29 56.544 L 5 56.544 L 5 50.423',
+                            'stroke-width': 0,
+                        },
+                        fill: { palette: 'fills', index: 0 },
+                        stroke: { palette: 'strokes', index: 0 },
+                    },
+                    {
+                        tag: 'path',
+                        attrs: {
+                            d: 'M 5 38.181 L 29 19.819 L 53 12.474 L 53 32.06 L 29 44.302 L 5 50.423 L 5 38.181',
+                            'stroke-width': 0,
+                        },
+                        fill: { palette: 'fills', index: 1 },
+                        stroke: { palette: 'strokes', index: 1 },
+                    },
+                    {
+                        tag: 'path',
+                        attrs: {
+                            d: 'M 5 7.577 L 29 7.577 L 53 7.577 L 53 12.474 L 29 19.819 L 5 38.181 L 5 7.577',
+                            'stroke-width': 0,
+                        },
+                        fill: { palette: 'fills', index: 2 },
+                        stroke: { palette: 'strokes', index: 2 },
+                    },
+                ],
+            },
+            { tag: 'line', attrs: { x1: 5.5, y1: 5, x2: 5.5, y2: 56, 'stroke-width': 1 }, stroke: 'gray' },
+            { tag: 'line', attrs: { x1: 3, y1: 53.5, x2: 54, y2: 53.5, 'stroke-width': 1 }, stroke: 'gray' },
+        ],
+    },
+    histogram: {
+        tooltip: 'histogramTooltip',
+        children: [
+            {
+                tag: 'path',
+                attrs: {
+                    d: 'M 5.5 46.5 L 11.5 46.5 L 11.5 52.5 L 5.5 52.5 Z',
+                    'stroke-width': 1,
+                    'stroke-opacity': 0.75,
+                },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: {
+                    d: 'M 12.5 35.5 L 18.5 35.5 L 18.5 52.5 L 12.5 52.5 Z',
+                    'stroke-width': 1,
+                    'stroke-opacity': 0.75,
+                },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: {
+                    d: 'M 19.5 12.5 L 25.5 12.5 L 25.5 52.5 L 19.5 52.5 Z',
+                    'stroke-width': 1,
+                    'stroke-opacity': 0.75,
+                },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: {
+                    d: 'M 26.5 5.5 L 31.5 5.5 L 31.5 52.5 L 26.5 52.5 Z',
+                    'stroke-width': 1,
+                    'stroke-opacity': 0.75,
+                },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: {
+                    d: 'M 32.5 16.5 L 38.5 16.5 L 38.5 52.5 L 32.5 52.5 Z',
+                    'stroke-width': 1,
+                    'stroke-opacity': 0.75,
+                },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: {
+                    d: 'M 39.5 31.5 L 45.5 31.5 L 45.5 52.5 L 39.5 52.5 Z',
+                    'stroke-width': 1,
+                    'stroke-opacity': 0.75,
+                },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            {
+                tag: 'path',
+                attrs: {
+                    d: 'M 46.5 49.5 L 52.5 49.5 L 52.5 52.5 L 46.5 52.5 Z',
+                    'stroke-width': 1,
+                    'stroke-opacity': 0.75,
+                },
+                fill: { palette: 'fills', index: 0 },
+                stroke: { palette: 'strokes', index: 0 },
+            },
+            { tag: 'line', attrs: { x1: 5.5, y1: 5, x2: 5.5, y2: 56, 'stroke-width': 1 }, stroke: 'gray' },
+            { tag: 'line', attrs: { x1: 3, y1: 53.5, x2: 54, y2: 53.5, 'stroke-width': 1 }, stroke: 'gray' },
+        ],
+    },
+};
