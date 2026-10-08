@@ -52,8 +52,8 @@
 #
 # VERIFY - the run prints curl commands (full browser UA, which the WAF needs) for a sample of the
 # archives it changed. They go through CloudFront, so a cached archive response can still show the
-# old behaviour until it expires or is invalidated. Once testing/edge-verification has landed,
-# `NX_DAEMON=false yarn nx run ag-grid-edge-verification:test:edge-live` re-checks the live edge.
+# old behaviour until it expires or is invalidated. The edge verification suite in the ag-devops
+# repo (edge-tests/, `npm run edge-live`) re-checks the live edge.
 # Locally, documentation/ag-grid-docs/testing/htaccess-harness/archive-migration.sh runs the
 # patcher against real Apache (before and after) on the deployed-archive fixtures.
 
