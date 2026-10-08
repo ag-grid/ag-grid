@@ -2,6 +2,8 @@ import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { vi } from 'vitest';
 
+import type { CalculatedColumnValidationParams } from 'ag-grid-community';
+
 import {
     clickDialogButton,
     createGrid,
@@ -37,7 +39,7 @@ describe('calculated column expression editor', () => {
     ];
 
     test.each((['live', 'deferred'] as const).flatMap((applyMode) => cases.map((entry) => ({ ...entry, applyMode }))))(
-        '$applyMode underlines the reported error in $expression',
+        '$applyMode displays validation feedback according to apply mode for $expression',
         async ({ applyMode, expression, underline, message }) => {
             const api = createGrid('expression-diagnostics', {
                 calculatedColumns: { applyMode },
@@ -51,11 +53,20 @@ describe('calculated column expression editor', () => {
             await openEditDialogViaMenu(api, 'profit');
             setExpression(expression);
 
-            expect(getUnderlinedText()).toEqual([underline]);
             const input = getExpressionInput();
-            expect(input.validationMessage).toContain(message);
-            expect(input).toHaveAttribute('aria-invalid', 'true');
-            expect(document.getElementById(input.getAttribute('aria-describedby')!)?.textContent).toContain(message);
+            if (applyMode === 'deferred') {
+                expect(getUnderlinedText()).toEqual([underline]);
+                expect(input.validationMessage).toContain(message);
+                expect(input).toHaveAttribute('aria-invalid', 'true');
+                expect(document.getElementById(input.getAttribute('aria-describedby')!)?.textContent).toContain(
+                    message
+                );
+            } else {
+                expect(getUnderlinedText()).toEqual([]);
+                expect(input.validationMessage).toBe('');
+                expect(input).not.toHaveClass('invalid');
+                expect(input).not.toHaveAttribute('aria-describedby');
+            }
             expect(
                 getCalculatedColumnDialog().querySelector('.ag-calculated-column-expression-mirror')
             ).toHaveAttribute('aria-hidden', 'true');
@@ -124,7 +135,7 @@ describe('calculated column expression editor', () => {
         expect(getDialogButton('Apply')).toBeDisabled();
     });
 
-    test('reopening a live draft still diagnoses its unknown reference', async () => {
+    test('reopening a live draft does not show built-in reference validation', async () => {
         const api = createGrid('expression-live-reopen', {
             columnDefs: [{ field: 'revenue' }, { colId: 'profit', calculatedExpression: '[revenue]' }],
             rowData: [{ id: 'r1', revenue: 10 }],
@@ -134,8 +145,50 @@ describe('calculated column expression editor', () => {
         await waitFor(() => expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[Cots]'));
         document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
         await openEditDialogViaMenu(api, 'profit');
-        expect(getUnderlinedText()).toEqual(['[Cots]']);
-        expect(getExpressionInput().validationMessage).toContain('Unknown column reference "Cots"');
+        expect(getUnderlinedText()).toEqual([]);
+        expect(getExpressionInput().validationMessage).toBe('');
+    });
+
+    test.each(['typing', 'apply'] as const)(
+        'an untouched deferred expression is validated on %s, not on opening',
+        async (action) => {
+            const getValidationErrors = vi.fn(({ internalErrors }: CalculatedColumnValidationParams) => internalErrors);
+            const api = createGrid('expression-deferred-untouched', {
+                calculatedColumns: { applyMode: 'deferred', getValidationErrors },
+                columnDefs: [{ field: 'revenue' }, { colId: 'profit', calculatedExpression: '[revenue] +' }],
+                rowData: [{ id: 'r1', revenue: 10 }],
+            });
+            await openEditDialogViaMenu(api, 'profit');
+            expect(getValidationErrors).not.toHaveBeenCalled();
+            expect(getExpressionInput().validationMessage).toBe('');
+            expect(getExpressionInput()).not.toHaveClass('invalid');
+            expect(getUnderlinedText()).toEqual([]);
+            expect(
+                getCalculatedColumnDialog().querySelector('.ag-calculated-column-token-reference')?.textContent
+            ).toBe('[Revenue]');
+            expect(getDialogButton('Apply')).toBeEnabled();
+            if (action === 'typing') {
+                setExpression('[Revenue] -');
+            } else {
+                clickDialogButton('Apply');
+            }
+            expect(getValidationErrors).toHaveBeenCalledTimes(1);
+            expect(getExpressionInput()).toHaveClass('invalid');
+            expect(getDialogButton('Apply')).toBeDisabled();
+            expect(getUnderlinedText()).toEqual([action === 'typing' ? '-' : '+']);
+        }
+    );
+
+    test('live validation can retain built-in diagnostics through internalErrors', async () => {
+        const api = createGrid('expression-live-callback-diagnostics', {
+            calculatedColumns: { getValidationErrors: ({ internalErrors }) => internalErrors },
+            columnDefs: [{ field: 'revenue' }, { colId: 'profit', calculatedExpression: '[revenue]' }],
+            rowData: [{ id: 'r1', revenue: 10 }],
+        });
+        await openEditDialogViaMenu(api, 'profit');
+        setExpression('[Revenue] -');
+        expect(getUnderlinedText()).toEqual(['-']);
+        expect(getExpressionInput().validationMessage).toContain("Missing operand for '-'");
     });
 
     test('unchanged restricted references are not diagnosed as errors', async () => {

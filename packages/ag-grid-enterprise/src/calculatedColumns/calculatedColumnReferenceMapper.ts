@@ -3,7 +3,7 @@ import { isSpecialCol } from 'ag-grid-community';
 
 import { parseFormula } from '../formula/ast/parsers';
 import type { CellRef, FormulaNode } from '../formula/ast/utils';
-import { FormulaParseError } from '../formula/ast/utils';
+import { FormulaError, FormulaParseError } from '../formula/ast/utils';
 import { createHeaderReferenceEntries, isAmbiguousHeaderReference } from '../formula/headerReferences';
 import { a1LabelToColIndex } from '../formula/refUtils';
 import type { ColumnSuggestion } from './calculatedColumnFormTypes';
@@ -189,9 +189,24 @@ function parseCalculatedFormula(beans: BeanCollection, expression: string): Form
     return parseFormula(beans, toFormulaString(expression), 'absolute');
 }
 
-/** Collects unique, direct references from an already validated stored expression, without evaluating it. */
+/** Collects direct references without evaluation, retaining complete bracket references when syntax is invalid. */
 export function getCalculatedColumnReferences(beans: BeanCollection, expression: string): AgColumn[] {
-    return [...new Set(visitReferencedColumns(beans, parseCalculatedFormula(beans, expression)))];
+    try {
+        return [...new Set(visitReferencedColumns(beans, parseCalculatedFormula(beans, expression)))];
+    } catch (error) {
+        if (!(error instanceof FormulaError)) {
+            throw error;
+        }
+        const columns = new Set<AgColumn>();
+        replaceBracketReferences(expression, (ref) => {
+            const column = beans.colModel.getCol(ref);
+            if (column) {
+                columns.add(column);
+            }
+            return ref;
+        });
+        return [...columns];
+    }
 }
 
 /** Yields each directly referenced column, expanding ranges; duplicates are yielded as encountered. */

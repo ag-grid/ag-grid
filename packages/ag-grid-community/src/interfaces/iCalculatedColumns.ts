@@ -22,12 +22,17 @@ export interface IsColumnReferenceableParams<TData = any, TContext = any> extend
 }
 
 export interface CalculatedColumnValidationParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /** A copy of the draft definition, with the expression using stored `[colId]` references. */
+    /** A copy of the draft definition, with recognised references converted to stored `[colId]` references. */
     colDef: CalculatedColumnDef<TData>;
     /** The expression displayed in the dialog, using column header references. */
     displayExpression: string;
-    /** Unique columns directly referenced by the expression, including hidden columns. */
+    /**
+     * Unique columns directly referenced by the expression, including hidden columns.
+     * For invalid syntax, includes recognised complete bracket references.
+     */
     referencedColumns: readonly Column[];
+    /** Built-in validation errors, or `null`. Include these in the callback result to retain built-in validation. */
+    internalErrors: string[] | null;
     /** The calculated column, or `null` when adding a column in deferred mode. */
     column: Column | null;
 }
@@ -52,7 +57,9 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
      */
     isColumnReferenceable?: (params: IsColumnReferenceableParams<TData, TContext>) => boolean;
     /**
-     * Additional synchronous validation for expressions entered in the dialog, after built-in checks pass.
+     * Synchronous validation for expressions entered in the dialog, including expressions with built-in errors.
+     * Receives `internalErrors`; the returned messages replace built-in validation feedback.
+     * Column restrictions from `isColumnReferenceable` remain enforced.
      * Return error messages to reject the expression, or `null` / an empty array to accept it.
      * Deferred mode blocks Apply; live mode saves rejected expressions with an error and prevents evaluation.
      * Unlike `isColumnReferenceable`, unchanged expressions are revalidated on title/type edits and deferred Apply.

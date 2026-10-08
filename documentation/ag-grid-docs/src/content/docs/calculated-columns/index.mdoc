@@ -62,7 +62,7 @@ Register the Column Menu so users can add a calculated column from the header me
 
 The dialog shows references by header name, for example `[Revenue]`. When headers are duplicated under groups, it uses the shortest unique group path, such as `[2025 Q4]` and `[2026 Q4]`. It translates these display references back to `colId` references before updating the column definition.
 
-The expression editor highlights references, functions and operators, and underlines the first problem — an unknown or restricted reference, a syntax error or an unknown function — with its message shown in a tooltip and announced to assistive technology. Diagnostics appear in both apply modes as you type. In live mode the text is still applied, and cells render a formula error until it is corrected.
+The expression editor highlights references, functions and operators. In deferred edit dialogs, validation runs as you edit and on Apply, not when the dialog opens. Built-in errors are underlined, explained in a tooltip and announced to assistive technology. Live mode shows reference-restriction and custom validation errors, but does not automatically show syntax errors in the editor; invalid expressions still produce formula errors in grid cells.
 
 In dialog references, a literal `]` in a header name is escaped as `]]`. For example, the header `Revenue [USD]` appears as `[Revenue [USD]]]`. The Columns picker inserts the escaped reference automatically; stored `colId` references are unchanged.
 
@@ -217,16 +217,16 @@ The following example permits Salary references when editing Bonus but excludes 
 
 ### getValidationErrors
 
-Use `getValidationErrors` to add custom rules after the grid's built-in expression validation. Return an array of messages to show in the expression field's error tooltip, or `null` or an empty array to accept the expression.
+Use `getValidationErrors` to customise expression validation in either apply mode, including for invalid expressions. The callback receives built-in messages in `internalErrors`. Return the messages to show, or `null` or an empty array to accept the expression. Return `internalErrors` to keep the built-in validation.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     calculatedColumns: {
         applyMode: 'deferred',
-        getValidationErrors: ({ referencedColumns }) =>
+        getValidationErrors: ({ referencedColumns, internalErrors }) =>
             referencedColumns.some(column => column.getColId() === 'salary')
                 ? ['Salary cannot be used in this report.']
-                : null,
+                : internalErrors,
     },
 };
 ```
@@ -238,7 +238,7 @@ In the example, edit **Sales Bonus** and enter `[Salary]` to see the validation 
 {% gridExampleRunner title="Custom Dialog Validation" name="calculated-columns-custom-validation" /%}
 
 {% note %}
-Validation applies only in the dialog; programmatic definitions are unaffected. Errors block Apply in deferred mode. In live mode, rejected edits are saved but display `#ERROR!` until corrected. Title and type edits also revalidate unchanged expressions.
+Validation applies only in the dialog; programmatic definitions are unaffected. Errors block Apply in deferred mode. In live mode, rejected edits are saved but display `#ERROR!` until corrected. Title and type edits also revalidate unchanged expressions. Restrictions set by `isColumnReferenceable` remain enforced.
 {% /note %}
 
 ### suppressColumnHighlighting
@@ -258,9 +258,9 @@ const gridOptions = {
 
 ### applyMode
 
-By default, dialog edits apply to the column immediately: **Add Calculated Column** creates the column and opens the dialog over it, and title, type and expression changes update the column as you type. Closing the dialog keeps the latest state; remove the column with **Remove Calculated Column**. An empty expression renders blank cells, and invalid or incomplete expressions render formula errors until fixed, with the problem underlined in the dialog. Expression edits containing references excluded by `isColumnReferenceable` are saved but blocked from evaluation, preserving the full text for correction.
+By default, dialog edits apply to the column immediately: **Add Calculated Column** creates the column and opens the dialog over it, and title, type and expression changes update the column as you type. Closing the dialog keeps the latest state; remove the column with **Remove Calculated Column**. An empty expression renders blank cells, and invalid or incomplete expressions render formula errors until fixed. Expression edits containing references excluded by `isColumnReferenceable` are saved but blocked from evaluation, preserving the full text for correction.
 
-Set `applyMode: 'deferred'` to hold changes until you click **Apply** instead. In deferred mode the dialog shows Apply and Cancel buttons and validates the expression, so you cannot apply an invalid one:
+Set `applyMode: 'deferred'` to hold changes until you click **Apply** instead. The dialog shows Apply and Cancel buttons and validates edits before applying them:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
