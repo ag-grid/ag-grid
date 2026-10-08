@@ -576,7 +576,7 @@ export class RunLog {
         if (!id) {
             return 1;
         }
-        for (let waited = 0; ; ) {
+        for (let waited = 0; ;) {
             // Anything but `running` is terminal, and a run that died without recording it reads as terminal too.
             const status = this.readStatus(dir);
             if (status.state !== 'running') {

@@ -209,12 +209,12 @@ if (significantChanges.length > 0) {
 
     for (const diff of significantChanges) {
         const moduleName = diff.modules.length === 0 ? 'Base (no modules)' : diff.modules.join(', ');
-        const emoji = getChangeEmoji(diff.selfSizeDiff);
         const status = diff.isNew ? ' 🆕' : diff.isRemoved ? ' 🗑️' : '';
+        const emoji = getChangeEmoji(diff.selfSizeDiff);
 
         const shouldHighlight = Math.abs(diff.selfSizePercent) >= HIGHLIGHT_PERCENT;
         const cells = [
-            applyHighlight(`${emoji} ${moduleName}${status}`, shouldHighlight),
+            applyHighlight(`${status || emoji} ${moduleName}`, shouldHighlight),
             applyHighlight(formatSize(diff.baseSelfSize), shouldHighlight),
             applyHighlight(formatSize(diff.prSelfSize), shouldHighlight),
             applyHighlight(`**${formatDiff(diff.selfSizeDiff)}**`, shouldHighlight),
@@ -273,12 +273,12 @@ if (allChanges.length > 0) {
 
     for (const diff of allChanges) {
         const moduleName = diff.modules.length === 0 ? 'Base (no modules)' : diff.modules.join(', ');
-        const emoji = getChangeEmoji(diff.selfSizeDiff);
         const status = diff.isNew ? ' 🆕' : diff.isRemoved ? ' 🗑️' : '';
+        const emoji = getChangeEmoji(diff.selfSizeDiff);
 
         const shouldHighlight = Math.abs(diff.selfSizePercent) >= HIGHLIGHT_PERCENT;
         const cells = [
-            applyHighlight(`${emoji} ${moduleName}${status}`, shouldHighlight),
+            applyHighlight(`${status || emoji} ${moduleName}`, shouldHighlight),
             applyHighlight(formatSize(diff.baseSelfSize), shouldHighlight),
             applyHighlight(formatSize(diff.prSelfSize), shouldHighlight),
             applyHighlight(`**${formatDiff(diff.selfSizeDiff)}**`, shouldHighlight),

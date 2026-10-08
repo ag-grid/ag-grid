@@ -447,8 +447,7 @@ describe('groupRowEditable with pivot mode', () => {
 
                 // Verify the callback received the correct column
                 const lastCall = callsForGermany[callsForGermany.length - 1] as
-                    | Parameters<GroupRowEditableCallback>
-                    | undefined;
+                    Parameters<GroupRowEditableCallback> | undefined;
                 expect(lastCall).toBeDefined();
                 expect(lastCall![0].column.getColId()).toBe(pivotColId);
                 expect(lastCall![0].node.group).toBe(true);
@@ -645,8 +644,7 @@ describe('groupRowEditable with pivot mode', () => {
             expect(callsForCanada.length).toBeGreaterThan(0);
 
             const lastCall = callsForCanada[callsForCanada.length - 1] as
-                | Parameters<GroupRowValueSetterCallback>
-                | undefined;
+                Parameters<GroupRowValueSetterCallback> | undefined;
             expect(lastCall).toBeDefined();
             expect(lastCall![0].node.id).toBe('row-group-country-Canada');
             expect(lastCall![0].column.getColId()).toBe(pivotColId);

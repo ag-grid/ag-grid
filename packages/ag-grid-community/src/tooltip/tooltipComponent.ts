@@ -66,9 +66,7 @@ export type TooltipCallbackFunc<TData = any, TValue = any, TContext = any> = (
  * - callback: resolve content from the supplied params.
  */
 export type TooltipDefinition<TData = any, TValue = any, TContext = any> =
-    | boolean
-    | string
-    | TooltipCallbackFunc<TData, TValue, TContext>;
+    boolean | string | TooltipCallbackFunc<TData, TValue, TContext>;
 
 export interface ITooltipParams<TData = any, TValue = any, TContext = any> extends TooltipCallbackParams<
     TData,

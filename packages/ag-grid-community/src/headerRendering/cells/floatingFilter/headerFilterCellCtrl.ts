@@ -16,7 +16,6 @@ import { _getFilterModel } from '../../../filter/columnFilterUtils';
 import { _addGridCommonParams, _isLegacyMenuEnabled } from '../../../gridOptionsUtils';
 import type { UserCompDetails } from '../../../interfaces/iUserCompDetails';
 import type { PopupToggleResult } from '../../../misc/menu/menuService';
-import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { _getCalculatedColumnCssClasses } from '../../../styling/calculatedColumnCss';
 import { _stopPropagationForAgGrid } from '../../../utils/gridEvent';
 import { _createIconNoSpan } from '../../../utils/icon';
@@ -57,8 +56,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
         this.refreshHeaderStyles();
         this.setupCalculatedColumnCssClasses();
-        this.setupWidth(compBean);
-        this.setupLeft(compBean);
+        this.setupPosition();
         this.setupHover(compBean);
         this.setupFocus(compBean);
         this.setupAria();
@@ -262,11 +260,6 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.beans.colHover?.addHeaderFilterColumnHoverListener(compBean, this.comp, this.column, this.eGui);
     }
 
-    private setupLeft(compBean: BeanStub): void {
-        const setLeftFeature = new SetLeftFeature(this.column, this.eGui, this.beans);
-        compBean.createManagedBean(setLeftFeature);
-    }
-
     private setupFilterButton(): void {
         this.suppressFilterButton = !this.beans.menuSvc?.isFloatingFilterButtonEnabled(this.column);
         this.highlightFilterButtonWhenActive = !_isLegacyMenuEnabled(this.gos);
@@ -376,16 +369,6 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         if (colFilter?.isFilterActive(column)) {
             syncWithFilter(null);
         }
-    }
-
-    private setupWidth(compBean: BeanStub): void {
-        const listener = () => {
-            const width = `${this.column.getActualWidth()}px`;
-            this.comp.setWidth(width);
-        };
-
-        compBean.addManagedListeners(this.column, { widthChanged: listener });
-        listener();
     }
 
     private setupFilterChangedListener(compBean: BeanStub): void {
