@@ -815,6 +815,8 @@ describe('SSRM merged async transactions', () => {
         gridsManager.reset();
         const merged = await run(true);
 
+        // the server-side model does not deselect a row that an update makes unselectable
+        expect(sequential).toBe(true);
         expect(merged).toBe(sequential);
     });
 
