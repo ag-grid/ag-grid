@@ -30,7 +30,7 @@ test.agExample(import.meta, () => {
         await expect(filterItem(page, 'Rome').locator('input')).not.toBeChecked();
         await expect(filterItem(page, 'Italy')).not.toHaveClass(/ag-set-filter-item-missing/);
         await expect(filterItem(page, 'Spain#Madrid')).toHaveClass(/ag-set-filter-item-missing/);
-        await expect(filterItem(page, 'Spain#Madrid')).toHaveClass(/ag-set-filter-indent-0/);
+        await expect(filterItem(page, 'Spain#Madrid')).toHaveClass(/ag-set-filter-add-group-indent/);
         await expect(filterItem(page, 'Spain#Madrid').locator('input')).toBeChecked();
     });
 
