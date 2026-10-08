@@ -1612,7 +1612,27 @@
                                     "type": "item",
                                     "title": "Columns Tool Panel",
                                     "path": "tool-panel-columns",
-                                    "isEnterprise": true
+                                    "isEnterprise": true,
+                                    "children": [
+                                        {
+                                            "type": "item",
+                                            "title": "Configuration",
+                                            "path": "tool-panel-columns-configuration",
+                                            "isEnterprise": true
+                                        },
+                                        {
+                                            "type": "item",
+                                            "title": "Deferred Updates",
+                                            "path": "tool-panel-columns-deferred-updates",
+                                            "isEnterprise": true
+                                        },
+                                        {
+                                            "type": "item",
+                                            "title": "Customisation",
+                                            "path": "tool-panel-columns-customising",
+                                            "isEnterprise": true
+                                        }
+                                    ]
                                 },
                                 {
                                     "type": "item",
