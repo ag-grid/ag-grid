@@ -17,14 +17,12 @@ const VueExample = defineComponent({
     template: `
         <div style="height: 100%">
             <div class="example-wrapper">
-                <div class="example-header">
-                    <div class="example-controls" style="margin-bottom: 1rem;">
-                        <div class="controls-row">
+                <div class="example-controls">
+                    <div class="controls-row">
+                        <div>
                             <input type="checkbox" id="pinFirstColumnOnLoad">
                             <label for="pinFirstColumnOnLoad">Pin first column on load</label>
                         </div>
-                    </div>
-                    <div style="margin-bottom: 1rem;">
                         <button id="reloadGridButton" v-on:click="reloadGrid()">Reload Grid</button>
                     </div>
                 </div>

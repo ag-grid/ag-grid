@@ -56,8 +56,8 @@ function numberCellFormatter(params: ValueFormatterParams) {
 
 const VueExample = defineComponent({
     template: `
-    <div id="myApp" class="wrapper">
-        <div class="example-controls" style="padding-bottom: 4px">
+    <div id="myApp" class="example-wrapper">
+        <div class="example-controls">
             <div class="controls-row">
                 <span>
                     <button v-on:click="onStopMessages()">&#9632; Stop</button>

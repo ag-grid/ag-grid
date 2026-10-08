@@ -81,7 +81,7 @@ const VueExample = defineComponent({
                         </fieldset>
                     </div>
                     <div class="controls-row">
-                        <input type="submit" style="margin: 5px 0px; font-weight: bold;" value="Export to Excel">
+                        <input type="submit" style="margin-top: 5px; font-weight: bold;" value="Export to Excel">
                     </div>
                 </form>
                 <div class="grid-wrapper">

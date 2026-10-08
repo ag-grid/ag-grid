@@ -10,10 +10,6 @@
     --error: #ff7878;
 }
 
-.example-wrapper {
-    gap: var(--row-gap);
-}
-
 /* Deliberately a row, not the shared sheet's column: the request and response panes sit side by side */
 .example-controls {
     flex-direction: row;

@@ -1,13 +1,13 @@
-<div style="height: 100%; width: 100%; display: flex; flex-direction: column">
+<div class="example-wrapper">
     <div class="example-controls">
-        <div class="controls-row" style="margin-bottom: 5px; min-height: 30px">
+        <div class="controls-row" style="min-height: 30px">
             <button onclick="reverseItems()">Reverse</button>
             <button onclick="addFiveItems(true)">Append</button>
             <button onclick="addFiveItems(false)">Prepend</button>
             <button onclick="removeSelected()">Remove Selected</button>
             <button onclick="updatePrices()">Update Prices</button>
         </div>
-        <div class="controls-row" style="margin-bottom: 5px; min-height: 30px">
+        <div class="controls-row" style="min-height: 30px">
             <button id="groupingOn" onclick="onGroupingEnabled(true)">Grouping On</button>
             <button id="groupingOff" onclick="onGroupingEnabled(false)">Grouping Off</button>
             <button onclick="setSelectedToGroup('A')">Move to Group A</button>
