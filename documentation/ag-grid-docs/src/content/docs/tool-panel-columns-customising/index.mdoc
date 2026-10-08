@@ -82,15 +82,16 @@ const gridOptions = {
 
 The renderer receives either `column` or `columnGroup`, together with the resolved `displayName` and a `source` of `'columnsToolPanel'`. The same renderer can be configured independently for the [Column Chooser](./column-chooser/#custom-label-renderers).
 
+{% gridExampleRunner title="Custom Label Renderers" name="custom-column-labels" exampleHeight=610 /%}
+
 {% note %}
 Column search, tooltips, drag labels and accessibility announcements continue to use `displayName`, rather than text extracted from the renderer. Column selection rows have a fixed height, so renderer content should remain inline and fit within the configured list item height. Clicking the rendered label retains the normal selection behaviour; interactive elements should stop event propagation when they should not toggle the column.
 {% /note %}
-
-{% gridExampleRunner title="Custom Label Renderers" name="custom-column-labels" exampleHeight=610 /%}
-
 ## Expand / Collapse Column Groups
 
 Call `expandColumnGroups()` and `collapseColumnGroups()` on the [Columns Tool Panel instance](./tool-panel-columns-configuration/#columns-tool-panel-instance) to expand or collapse all of its column groups, or pass `groupId`s to target individual groups; see [Expand / Collapse API](#expand--collapse-api). To start with all column groups collapsed, set `contractColumnSelection` in `toolPanelParams` instead.
+
+{% interfaceDocumentation interfaceName="IColumnSelectionPanelParams" names=[ "contractColumnSelection"] config={"description":""} /%}
 
 In the example below, `onGridReady` collapses all column groups in the tool panel. Use the buttons to try each call from the [Expand / Collapse API](#expand--collapse-api).
 
@@ -132,17 +133,11 @@ The example below shows both the built-in items and this customisation. Note the
 
 {% partial file="../shared-partials/_drag-and-drop-image-component.mdoc" /%}
 
-## Parameters
-
-Set these in `toolPanelParams`:
-
-{% interfaceDocumentation interfaceName="IColumnSelectionPanelParams" names=["columnLabelRenderer", "columnLabelRendererParams", "columnLabelRendererSelector", "contractColumnSelection"] config={"description":"", "overrideBottomMargin":"1rem"} /%}
-
-See [Parameters](./tool-panel-columns-configuration/#parameters) for the full list of parameters.
-
 ## API
 
 ### Custom Label Renderer Parameters
+
+{% interfaceDocumentation interfaceName="IColumnSelectionPanelParams" names=["columnLabelRenderer", "columnLabelRendererParams", "columnLabelRendererSelector"] config={"description":"", "overrideBottomMargin":"1rem"} /%}
 
 The parameters passed to a custom label renderer:
 

@@ -15,15 +15,24 @@ The example above shows the Columns Tool Panel with its default configuration, `
 
 ## Section Visibility
 
-To remove a section from the Columns Tool Panel, set `suppressPivotMode`, `suppressRowGroups`, `suppressValues` or `suppressPivots` in `toolPanelParams`.
+To remove a section from the Columns Tool Panel, set `suppressPivotMode`, `suppressRowGroups`, `suppressValues` or `suppressPivots` in `toolPanelParams`. To remove a control from the top area, set `suppressColumnExpandAll`, `suppressColumnSelectAll` or `suppressColumnFilter`.
 
-To remove a control from the top area, set `suppressColumnExpandAll`, `suppressColumnSelectAll` or `suppressColumnFilter`.
+### Section Visibility API
 
-Sections can also be shown and hidden after the grid is created with the [Section Visibility API](#section-visibility-api).
+Show or hide the Pivot Mode, Row Groups, Values and Column Labels sections after the grid is created by calling `setPivotModeSectionVisible()`, `setRowGroupsSectionVisible()`, `setValuesSectionVisible()` or `setPivotSectionVisible()`:
+
+```{% frameworkTransform=true %}
+// get the Columns Tool Panel instance
+const columnsToolPanel = api.getToolPanelInstance('columns');
+// hides the Row Groups section
+columnsToolPanel.setRowGroupsSectionVisible(false);
+// shows the Column Labels section
+columnsToolPanel.setPivotSectionVisible(true);
+```
 
 The example below hides all of these sections and controls with the parameters above. Note the following:
 
-- The **Pivot Mode**, **Row Groups**, **Values** and **Column Labels** checkboxes show and hide each section using the [Section Visibility API](#section-visibility-api).
+- The **Pivot Mode**, **Row Groups**, **Values** and **Column Labels** checkboxes show and hide each section using the api methods.
 - The Expand / Collapse All, Select / Unselect All and Search controls stay hidden, as they can only be set through `toolPanelParams`.
 - The date column is hidden from the tool panel; see [Hiding Columns](#hiding-columns).
 
@@ -152,19 +161,3 @@ const columnsToolPanel = api.getToolPanelInstance('columns');
 ```
 
 {% interfaceDocumentation interfaceName="IColumnToolPanel" names=["setColumnLayout", "setPivotModeSectionVisible", "setRowGroupsSectionVisible", "setValuesSectionVisible", "setPivotSectionVisible"] config={"description":""} /%}
-
-`setColumnLayout()` is covered in [Custom Column Layout](#custom-column-layout).
-
-### Section Visibility API
-
-Show or hide the Pivot Mode, Row Groups, Values and Column Labels sections after the grid is created by calling `setPivotModeSectionVisible()`, `setRowGroupsSectionVisible()`, `setValuesSectionVisible()` or `setPivotSectionVisible()`:
-
-```{% frameworkTransform=true %}
-// hides the Row Groups section
-columnsToolPanel.setRowGroupsSectionVisible(false);
-
-// shows the Column Labels section
-columnsToolPanel.setPivotSectionVisible(true);
-```
-
-The top area controls have no equivalent methods; they can only be removed through `toolPanelParams`. See [Section Visibility](#section-visibility) for an example.
