@@ -122,6 +122,12 @@ body > #highlighter {
 .example-controls *::after {
     box-sizing: border-box;
     margin: 0;
+}
+
+/* Icon fonts draw their glyph in `::before` with the font set on the icon element, so neither gets
+   the controls' font. `:where()` keeps this at the specificity of `.example-controls *`, so an
+   example's own class rules still override it. */
+.example-controls *:where(:not(.fa, .fas, .far, .fab, .fal, .fa-solid, .fa-regular, .fa-brands)) {
     font-family: -apple-system, 'system-ui', sans-serif;
     font-size: 14px;
     font-weight: 500;
