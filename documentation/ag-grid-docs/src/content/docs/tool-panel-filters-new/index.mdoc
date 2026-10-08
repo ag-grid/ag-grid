@@ -11,7 +11,7 @@ The new **Filters Tool Panel** allows accessing the grid's filters without needi
 
 To use the new Filters Tool Panel, set `enableFilterHandlers = true`, and use the `'filters-new'` [Side Bar Configuration](./side-bar/#configuring-the-side-bar).
 
-If a filter is set from anywhere outside of the tool panel, e.g. from the column menu, the filter will automatically be added to the tool panel. Once a filter appears in the tool panel, it will remain until it's removed from within the tool panel.
+If a filter is set from anywhere outside of the tool panel, e.g. from the column menu, the filter will automatically be added to the tool panel. Once a filter appears in the tool panel, it will remain until it's removed from within the tool panel. Removing a filter from the tool panel also clears that filter.
 
 ## Using Buttons
 
@@ -71,11 +71,13 @@ When the grid initialises, the tool panel only shows active filters provided in 
 
 The filter cards shown in the tool panel are part of the [Side Bar](./side-bar/) state, which is separate from the filter model. Clearing the filter model with `api.setFilterModel(null)` therefore clears the filter values but leaves the (now inactive) cards in place.
 
-To remove every card, set the Side Bar state again with an empty `filters` array. `setState` resets any part of the grid state it is not given, so spread the current state to keep everything else (e.g. sorting) unchanged. Removing a card also clears that column's filter, so the filter state is cleared too and the rows are unfiltered:
+To remove every card, set the Side Bar state again with an empty `filters` array. `setState` resets any part of the grid state it is not given, so spread the current state to keep everything else (e.g. sorting) unchanged:
 
 ```
 api.setState({
     ...api.getState(),
+    // Set `filter` to `undefined`, otherwise the state spread above
+    // re-applies the current filters, which adds their cards back to the tool panel
     filter: undefined,
     sideBar: {
         visible: true,

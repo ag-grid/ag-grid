@@ -82,7 +82,8 @@ function clearFilterValues() {
 function clearToolPanel() {
     gridApi.setState({
         ...gridApi.getState(),
-        // removing a card also clears its filter
+        // Set `filter` to `undefined`, otherwise the state spread above
+        // re-applies the current filters, which adds their cards back to the tool panel
         filter: undefined,
         sideBar: {
             visible: true,
