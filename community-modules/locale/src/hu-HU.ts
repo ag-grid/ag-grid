@@ -903,6 +903,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     calculatedColumn: 'Számított oszlop',
     calculatedColumnAdd: 'Számított oszlop hozzáadása',
     calculatedColumnEdit: 'Számított oszlop szerkesztése',
+    calculatedColumnView: 'Számított oszlop megtekintése',
     calculatedColumnRemove: 'Számított oszlop eltávolítása',
     calculatedColumnTitle: 'Cím',
     calculatedColumnType: 'Típus',

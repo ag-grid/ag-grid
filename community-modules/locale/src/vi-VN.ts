@@ -896,6 +896,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     calculatedColumn: 'Cột tính toán',
     calculatedColumnAdd: 'Thêm cột tính toán',
     calculatedColumnEdit: 'Chỉnh sửa cột tính toán',
+    calculatedColumnView: 'Xem cột tính toán',
     calculatedColumnRemove: 'Xóa cột tính toán',
     calculatedColumnTitle: 'Tiêu đề',
     calculatedColumnType: 'Loại',

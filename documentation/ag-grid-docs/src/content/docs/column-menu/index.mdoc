@@ -48,7 +48,7 @@ The menu shows a default set of items. You can add your own items, or change whi
 
 When both are set, `colDef.columnMenuItems` takes priority over `getColumnMenuItems()`.
 
-The `source` param is one of `'columnMenu'`, `'columnsToolPanel'` or `'columnChooser'`, so a single callback can tailor the items for the column menu, the [Columns Tool Panel](./tool-panel-columns/#context-menu) context menu, and the [Column Chooser](./column-chooser/).
+The `source` param is one of `'columnMenu'`, `'columnsToolPanel'` or `'columnChooser'`, so a single callback can tailor the items for the column menu, the [Columns Tool Panel](./tool-panel-columns-customising/#context-menu) context menu, and the [Column Chooser](./column-chooser/).
 
 Each item is either a string or a `MenuItemDef`. Use a string to pick a built-in item and a `MenuItemDef` for your own. All built-in tokens share one type, `DefaultColumnMenuItem`, and each is shown only where it applies to the column and grid state. The column menu's [built-in items](#built-in-menu-items) are listed below.
 
@@ -75,7 +75,9 @@ The following is a list of all the default built-in menu items with the rules ab
 - `sortAbsoluteAscending`: Sort the column in ascending order by magnitude, ignoring the sign - see [Absolute Sorting](./row-sorting/#absolute-sorting). Not included in the default items when `columnMenu = 'legacy'`, when the column does not allow absolute sorting, or when the column is already sorted in absolute ascending order.
 - `sortAbsoluteDescending`: Sort the column in descending order by magnitude, ignoring the sign - see [Absolute Sorting](./row-sorting/#absolute-sorting). Not included in the default items when `columnMenu = 'legacy'`, when the column does not allow absolute sorting, or when the column is already sorted in absolute descending order.
 - `sortUnSort`: Clear the sort on the column. Not included in the default items when `columnMenu = 'legacy'`, or when the column is not sorted.
-- `calculatedColumn`: Show the Calculated Columns options. If the column selected is a Calculated Column, the menu will show options to edit and remove the column.
+- `calculatedColumn`: Add a Calculated Column. Only shown when [Calculated Columns](./calculated-columns/) is enabled, and not in pivot mode.
+- `editCalculatedColumn`: Edit the Calculated Column, or view it when the column is read-only. Only shown on a Calculated Column.
+- `removeCalculatedColumn`: Remove the Calculated Column. Only shown on a Calculated Column, and disabled when the column is read-only.
 - `editColumnName`: Rename the column header. Only shown when `headerNameEditable` is set on the column, and never on a calculated column, which is renamed via its **Edit Calculated Column** dialog instead.
 - `columnFilter`: Show the column filter. Not included in the default items when `columnMenu = 'legacy'`, a filter is not enabled, or the header filter button or floating filter button are displayed.
 - `columnChooser`: Show the [Column Chooser](./column-chooser/). Not included in the default items when `columnMenu = 'legacy'`.
@@ -95,7 +97,7 @@ If you do not override the list of menu items, then the items displayed will be 
 
 The `columnMenu = 'legacy'` rules above apply to the default items only. A token supplied explicitly through `columnMenuItems`, `getColumnMenuItems()`, `mainMenuItems` or `getMainMenuItems()` is still rendered under the legacy menu.
 
-[Columns Tool Panel](./tool-panel-columns/#context-menu) tokens such as `value` can also be returned here, and are shown where they apply to the column.
+[Columns Tool Panel](./tool-panel-columns-customising/#context-menu) tokens such as `value` can also be returned here, and are shown where they apply to the column.
 
 ### Menu Item Separators
 

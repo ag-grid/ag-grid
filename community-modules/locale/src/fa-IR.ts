@@ -897,6 +897,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     calculatedColumn: 'ستون محاسبه‌شده',
     calculatedColumnAdd: 'افزودن ستون محاسبه‌شده',
     calculatedColumnEdit: 'ویرایش ستون محاسبه‌شده',
+    calculatedColumnView: 'نمایش ستون محاسبه‌شده',
     calculatedColumnRemove: 'حذف ستون محاسبه‌شده',
     calculatedColumnTitle: 'عنوان',
     calculatedColumnType: 'نوع',

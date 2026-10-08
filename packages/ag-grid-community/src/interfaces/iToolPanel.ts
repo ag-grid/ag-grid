@@ -58,7 +58,7 @@ export interface IToolPanelColumnCompParams extends IColumnSelectionPanelParams,
      *
      *  - `'apply'`: Changes are deferred until the Apply button is clicked.
      *  - `'cancel'`: Discards any deferred changes. Only has an effect when `'apply'` is also included.
-     *  - `'reset'`: Discards any deferred changes and immediately resets the columns to the state defined in the column definitions.
+     *  - `'reset'`: Immediately resets the columns to the state defined in the current column definitions, discarding any pending changes.
      *
      * Only the `'apply'` button enables deferred changes.
      */

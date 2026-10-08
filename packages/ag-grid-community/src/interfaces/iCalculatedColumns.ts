@@ -76,7 +76,7 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
 export type CalculatedColumnsGridOption<TData = any, TContext = any> =
     boolean | CalculatedColumnsOptions<TData, TContext>;
 
-/** Grid-managed validation state for a `calculatedExpression`, saved on the column definition. */
+/** Grid-managed validation state for a `calculatedExpression`, persisted in Grid State. */
 export type CalculatedExpressionError = {
     /** The `calculatedExpression` value the error applies to; the error is ignored once the expression changes. */
     expression: string;
@@ -126,4 +126,5 @@ export interface ICalculatedColumnsService extends Bean {
     refreshDynamicColumns(source: ColumnEventType): void;
     isEnabled(): boolean;
     isHighlightedColumn(column: AgColumn | null): boolean;
+    getExpressionError(column: AgColumn): CalculatedExpressionError | undefined;
 }

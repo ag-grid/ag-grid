@@ -900,6 +900,7 @@ export const AG_GRID_LOCALE_PL_PL = {
     calculatedColumn: 'Kolumna obliczana',
     calculatedColumnAdd: 'Dodaj kolumnę obliczaną',
     calculatedColumnEdit: 'Edytuj kolumnę obliczaną',
+    calculatedColumnView: 'Wyświetl kolumnę obliczaną',
     calculatedColumnRemove: 'Usuń kolumnę obliczaną',
     calculatedColumnTitle: 'Tytuł',
     calculatedColumnType: 'Typ',

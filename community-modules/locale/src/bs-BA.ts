@@ -920,6 +920,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     calculatedColumn: 'Izračunata kolona',
     calculatedColumnAdd: 'Dodaj izračunatu kolonu',
     calculatedColumnEdit: 'Uredi izračunatu kolonu',
+    calculatedColumnView: 'Pregledaj izračunatu kolonu',
     calculatedColumnRemove: 'Ukloni izračunatu kolonu',
     calculatedColumnTitle: 'Naslov',
     calculatedColumnType: 'Tip',

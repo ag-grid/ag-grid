@@ -1,0 +1,17 @@
+.ag-row-grand-total {
+    /* ensure that the grand total row always appears on top of the row above */
+    z-index: 2;
+}
+
+.ag-row-grand-total::before {
+    content: '';
+    position: absolute;
+    /* shift the border 1px up to cover the bottom border of the row above */
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: #2196f3;
+    z-index: 3;
+    pointer-events: none;
+}

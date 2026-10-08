@@ -894,6 +894,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     calculatedColumn: 'עמודה מחושבת',
     calculatedColumnAdd: 'הוספת עמודה מחושבת',
     calculatedColumnEdit: 'עריכת עמודה מחושבת',
+    calculatedColumnView: 'הצג עמודה מחושבת',
     calculatedColumnRemove: 'הסרת עמודה מחושבת',
     calculatedColumnTitle: 'כותרת',
     calculatedColumnType: 'סוג',

@@ -2,6 +2,7 @@ import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { ColDef, ColGroupDef } from '../../entities/colDef';
 import type { UserColumnProperty, UserColumnPropertyKey, UserColumnState } from '../../interfaces/gridState';
+import type { CalculatedExpressionError } from '../../interfaces/iCalculatedColumns';
 import { _mergedEqual } from '../../utils/mergeDeep';
 import { forEachColDef } from '../columnUtils';
 
@@ -9,6 +10,7 @@ import { forEachColDef } from '../columnUtils';
  *  `removed` entry is a tombstone for a `columnDefs`-declared column the user deleted. */
 interface UserColumnEntry {
     properties?: ColDef;
+    calculatedExpressionError?: CalculatedExpressionError;
     /** The user created this column, rather than changing one the developer declared. */
     created?: boolean;
     parentGroupId?: string | null;
@@ -22,7 +24,8 @@ interface UserColumnEntry {
  *
  *  Entries are the record of what the user changed — nothing is derived by diffing definitions, and no
  *  marker is stamped on the column. Only serialisable definition properties belong here: properties owned
- *  by other state sections (width, hide, pinned, sort, …) stay with those sections.
+ *  by other state sections (width, hide, pinned, sort, …) stay with those sections. Validation metadata is
+ *  stored separately and never merged into column definitions.
  *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class UserColumnService extends BeanStub implements NamedBean {
     beanName = 'userColumnSvc' as const;
@@ -90,14 +93,19 @@ export class UserColumnService extends BeanStub implements NamedBean {
     }
 
     /** Records a column the user created, along with the group it belongs to. */
-    public setCreatedColumn(colId: string, properties: ColDef, parentGroupId: string | null): void {
-        this.entries.set(colId, { properties, parentGroupId, created: true });
+    public setCreatedColumn(
+        colId: string,
+        properties: ColDef,
+        parentGroupId: string | null,
+        calculatedExpressionError?: CalculatedExpressionError
+    ): void {
+        this.entries.set(colId, { properties, parentGroupId, created: true, calculatedExpressionError });
     }
 
     /** Records the properties the user changed on a `columnDefs`-declared column. Placement is left alone:
      *  the declared column stays where the developer put it. */
-    public setOverride(colId: string, properties: ColDef): void {
-        this.entries.set(colId, { properties });
+    public setOverride(colId: string, properties: ColDef, calculatedExpressionError?: CalculatedExpressionError): void {
+        this.entries.set(colId, { properties, calculatedExpressionError });
     }
 
     /** Tombstones a `columnDefs`-declared column so it stays removed across restores; a created column is
@@ -163,20 +171,23 @@ export class UserColumnService extends BeanStub implements NamedBean {
         const state: UserColumnState[] = [];
         entries.forEach((entry, colId) => {
             if (entry.removed) {
-                state.push({ colId, removed: true });
+                state.push({ colId, type: 'calculated', removed: true });
                 return;
             }
-            const { parentGroupId, created } = entry;
-            state.push(
-                created
-                    ? {
-                          colId,
-                          created,
-                          parentGroupId: parentGroupId ?? null,
-                          properties: toProperties(entry.properties),
-                      }
-                    : { colId, properties: toProperties(entry.properties) }
-            );
+            const { parentGroupId, created, calculatedExpressionError } = entry;
+            const columnState: UserColumnState = created
+                ? {
+                      colId,
+                      type: 'calculated',
+                      created,
+                      parentGroupId: parentGroupId ?? null,
+                      properties: toProperties(entry.properties),
+                  }
+                : { colId, type: 'calculated', properties: toProperties(entry.properties) };
+            if (calculatedExpressionError) {
+                columnState.calculatedExpressionError = calculatedExpressionError;
+            }
+            state.push(columnState);
         });
         return state;
     }
@@ -199,12 +210,16 @@ export class UserColumnService extends BeanStub implements NamedBean {
                     properties: this.acceptProperties(state.properties),
                     parentGroupId: state.parentGroupId ?? null,
                     created: true,
+                    calculatedExpressionError: state.calculatedExpressionError,
                 });
             } else if (this.isDeclared(colId)) {
                 // Changes to a column the developer no longer declares are dropped: state configures the
                 // developer's columns, it cannot reinstate one they have taken away. Resolved against the
                 // declarations, not the built columns — a tombstoned column is absent from the build.
-                next.set(colId, { properties: this.acceptProperties(state.properties) });
+                next.set(colId, {
+                    properties: this.acceptProperties(state.properties),
+                    calculatedExpressionError: state.calculatedExpressionError,
+                });
             }
         }
         if (entriesEqual(entries, next)) {
@@ -267,6 +282,7 @@ const entriesEqual = (a: Map<string, UserColumnEntry>, b: Map<string, UserColumn
             !!entry.removed !== !!other.removed ||
             !!entry.created !== !!other.created ||
             entry.parentGroupId !== other.parentGroupId ||
+            !_mergedEqual(entry.calculatedExpressionError, other.calculatedExpressionError) ||
             !_mergedEqual(entry.properties ?? {}, other.properties ?? {})
         ) {
             return false;

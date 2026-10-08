@@ -30,7 +30,7 @@ test.agExample(import.meta, () => {
         await expect(filterItem(page, 'beach.jpg').locator('input')).not.toBeChecked();
         await expect(filterItem(page, 'Pictures')).not.toHaveClass(/ag-set-filter-item-missing/);
         await expect(filterItem(page, 'Archive/old.zip')).toHaveClass(/ag-set-filter-item-missing/);
-        await expect(filterItem(page, 'Archive/old.zip')).toHaveClass(/ag-set-filter-indent-0/);
+        await expect(filterItem(page, 'Archive/old.zip')).toHaveClass(/ag-set-filter-add-group-indent/);
         await expect(filterItem(page, 'Archive/old.zip').locator('input')).toBeChecked();
     });
 

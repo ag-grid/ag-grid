@@ -894,6 +894,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     calculatedColumn: '計算欄',
     calculatedColumnAdd: '新增計算欄',
     calculatedColumnEdit: '編輯計算欄',
+    calculatedColumnView: '檢視計算欄',
     calculatedColumnRemove: '移除計算欄',
     calculatedColumnTitle: '標題',
     calculatedColumnType: '類型',
