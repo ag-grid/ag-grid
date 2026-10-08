@@ -37,13 +37,10 @@ for (const enableRtl of [false, true]) {
                             { field: 'bronze' },
                             { field: 'total' },
                         ],
-                        rowData: Array.from(
-                            { length: rowCount },
-                            (_, i): Record<string, string | number> => ({
-                                athlete: `Athlete ${i}`,
-                                total: i,
-                            })
-                        ),
+                        rowData: Array.from({ length: rowCount }, (_, i): Record<string, string | number> => ({
+                            athlete: `Athlete ${i}`,
+                            total: i,
+                        })),
                     });
                 },
                 { enableRtl, rowCount }

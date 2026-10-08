@@ -2,8 +2,7 @@ import type { AfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type AddPopupParams<TContainerType extends string> =
-    | LabelAddPopupParams<TContainerType>
-    | OwnsAddPopupParams<TContainerType>;
+    LabelAddPopupParams<TContainerType> | OwnsAddPopupParams<TContainerType>;
 interface BaseAddPopupParams<TContainerType extends string> {
     // if true then listens to background checking for clicks, so that when the background is clicked,
     // the child is removed again, giving a model look to popups.
