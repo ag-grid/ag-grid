@@ -233,7 +233,7 @@ E2E tests run via Playwright against the docs site. `./docs-e2e.sh` runs them di
 ./docs-e2e.sh --all-browsers
 
 # Run with a specific framework
-./docs-e2e.sh --framework react
+./docs-e2e.sh --framework reactFunctionalTs
 
 # Open Playwright UI mode
 ./docs-e2e.sh --ui

@@ -24,7 +24,11 @@
 .ag-cell.ag-cell-inline-editing {
     padding: var(--ag-spacing);
     height: calc(var(--ag-row-height) + var(--ag-spacing) * 3);
+
+    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
     border: var(--ag-input-border) !important;
+
+    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
     border-width: 1px !important;
 
     /* use gradient image to overlay input background onto background, so that
@@ -38,7 +42,10 @@
     }
 
     :where(.ag-has-focus) & {
+        /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
         border: var(--ag-input-focus-border) !important;
+
+        /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
         border-width: 1px !important;
     }
 }

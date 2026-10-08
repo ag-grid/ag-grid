@@ -742,6 +742,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     ariaFilterList: 'Списък за филтриране',
     ariaFilterToValue: 'Филтър до стойност',
     ariaFilterValue: 'Стойност на филтъра',
+    ariaNotInCurrentData: 'не е в текущите данни',
     ariaFilterMenuOpen: 'Отворете менюто за филтър',
     ariaFilteringOperator: 'Оператор за филтриране',
     ariaHidden: 'скрито',
@@ -914,6 +915,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     calculatedColumnExpressionAmbiguousReference:
         'Двусмислена препратка към колона "${variable}". Използвайте списъка с колони или по-конкретен път на групата.',
     calculatedColumnExpressionUnknownReference: 'Неизвестна препратка към колона "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Колоната "${variable}" не може да се използва в този израз.',
     calculatedColumnExpressionEmpty: 'Въведете израз',
     calculatedColumnTitleEmpty: 'Въведете заглавие',
     calculatedColumnApply: 'Приложи',

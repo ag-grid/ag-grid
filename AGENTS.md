@@ -26,7 +26,7 @@ Nothing needs to be arranged to read the result afterwards: every local run capt
 
 ### Content Locations
 
-- **Plugin marketplace:** Shared skills, subagents, commands, and guides are delivered via Claude Code plugins from [`ag-grid/ag-dev-prompts`](https://github.com/ag-grid/ag-dev-prompts) — `ag-core`, `ag-prodeng`, and `ag-grid` (enabled in `.claude/settings.json`). Invoke with the plugin prefix, e.g. `/ag-prodeng:pr-review`, `/ag-core:recall`.
+- **Plugin marketplace:** Shared skills, subagents, commands, and guides are delivered via Claude Code plugins from [`ag-grid/ag-dev-prompts`](https://github.com/ag-grid/ag-dev-prompts) — the set enabled under `enabledPlugins` in `.claude/settings.json`. Invoke with the plugin prefix, e.g. `/ag-eng:pr-review`, `/ag-core:recall`.
 - **Local overrides:** `.rulesync/` tracks repo-specific content that layers on top of the plugins. See the allowlist in `.rulesync/.gitignore` for what's tracked.
 - **Generated tool configs:** `./external/ag-shared/scripts/setup-prompts/setup-prompts.sh` (run at `yarn` time, safe to re-run by hand, no network needed) stages plugin content into `.rulesync/` and regenerates `.claude/`, `.cursor/`, `.codex/`, `.gemini/`, `.github/` and `AGENTS.md`. `CLAUDE.md` is a symlink to `AGENTS.md`, so it needs no separate edit. Never hand-edit any of those — change the matching `.rulesync/rules/*.md` and re-run that script.
 

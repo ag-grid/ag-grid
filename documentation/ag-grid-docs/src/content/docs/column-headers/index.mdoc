@@ -54,6 +54,8 @@ The **Edit Column Name** item is never offered for [calculated columns](./calcul
 
 Committing an empty value sets an empty header name; the header reverts to its Column Definition default only when the edit is cleared programmatically, such as `resetColumnState()`. Edited column names are persisted as part of [Column State](./column-state/) and [Grid State](./grid-state/); edited group names are persisted as part of Grid State. Both survive save and restore.
 
+Every rename fires the `columnHeaderNameChanged` grid event. The renamed column, or the renamed column group's provided column group (`columnGroup.getProvidedColumnGroup()`), also fires `headerNameChanged`, so a listener added there hears only about that header.
+
 {% note %}
 An edited name takes priority over any `headerValueGetter` on the column. Once the user has provided a custom header name, the `headerValueGetter` is no longer called for that column.
 {% /note %}

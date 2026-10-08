@@ -740,6 +740,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaFilterList: 'Filter Lijst',
     ariaFilterToValue: 'Filter naar waarde',
     ariaFilterValue: 'Filter Waarde',
+    ariaNotInCurrentData: 'niet in de huidige gegevens',
     ariaFilterMenuOpen: 'Open Filtermenu',
     ariaFilteringOperator: 'Filter Operator',
     ariaHidden: 'verborgen',
@@ -911,6 +912,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     calculatedColumnExpressionAmbiguousReference:
         'Dubbelzinnige kolomverwijzing "${variable}". Gebruik de lijst Kolommen of een specifieker groepspad.',
     calculatedColumnExpressionUnknownReference: 'Onbekende kolomverwijzing "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Kolom "${variable}" kan niet worden gebruikt in deze expressie.',
     calculatedColumnExpressionEmpty: 'Voer een expressie in',
     calculatedColumnTitleEmpty: 'Voer een titel in',
     calculatedColumnApply: 'Toepassen',

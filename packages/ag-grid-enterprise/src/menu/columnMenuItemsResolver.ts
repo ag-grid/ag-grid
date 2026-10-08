@@ -1,6 +1,8 @@
 import type {
     AgColumn,
     AgProvidedColumnGroup,
+    ColDef,
+    ColGroupDef,
     ColumnMenuItemsSource,
     DefaultColumnMenuItem,
     DefaultMenuItem,
@@ -24,10 +26,9 @@ export function _resolveColumnMenuItems(
     column: AgColumn | null,
     columnGroup: AgProvidedColumnGroup | null,
     source: ColumnMenuItemsSource,
-    defaultItems: ColumnMenuDefaultItems
+    defaultItems: ColumnMenuDefaultItems,
+    colOrGroupDef: ColDef | ColGroupDef | null | undefined = column?.colDef ?? columnGroup?.getColGroupDef()
 ): ColumnMenuItems {
-    const colOrGroupDef = column?.colDef ?? columnGroup?.getColGroupDef();
-
     const columnMenuItems = colOrGroupDef?.columnMenuItems;
     if (Array.isArray(columnMenuItems)) {
         return columnMenuItems;

@@ -60,7 +60,7 @@
     line-height: 1.5;
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 :where(.ag-column-panel) .ag-column-panel-buttons-apply-button:not(:disabled) {
     color: var(--ag-column-panel-apply-button-color);
     background-color: var(--ag-column-panel-apply-button-background-color);

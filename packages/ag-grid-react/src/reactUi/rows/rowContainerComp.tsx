@@ -71,7 +71,7 @@ const RowContainerComp = ({
         const eSpanContainerForCtrl = eSpanContainer.current ?? undefined;
 
         const updateRowCtrlsOrdered = (useFlushSync: boolean) => {
-            const next = getNextValueIfDifferent(prevRowCtrlsRef.current, rowCtrlsRef.current, domOrderRef.current)!;
+            const next = getNextValueIfDifferent(prevRowCtrlsRef.current, rowCtrlsRef.current, domOrderRef.current);
             if (next !== prevRowCtrlsRef.current) {
                 prevRowCtrlsRef.current = next;
                 agFlushSync(useFlushSync, () => setRowCtrlsOrdered(next));
@@ -83,7 +83,7 @@ const RowContainerComp = ({
                 prevSpannedRowCtrlsRef.current,
                 spannedRowCtrlsRef.current,
                 domOrderRef.current
-            )!;
+            );
             if (next !== prevSpannedRowCtrlsRef.current) {
                 prevSpannedRowCtrlsRef.current = next;
                 agFlushSync(useFlushSync, () => setSpannedRowCtrlsOrdered(next));

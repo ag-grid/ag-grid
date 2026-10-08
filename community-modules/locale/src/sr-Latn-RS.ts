@@ -754,6 +754,7 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     ariaFilterList: 'Lista filtera',
     ariaFilterToValue: 'Filtriraj do vrednosti',
     ariaFilterValue: 'Vrednost filtera',
+    ariaNotInCurrentData: 'nije u trenutnim podacima',
     ariaFilterMenuOpen: 'Otvori meni filtera',
     ariaFilteringOperator: 'Operator filtriranja',
     ariaHidden: 'skriveno',
@@ -929,6 +930,7 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     calculatedColumnExpressionAmbiguousReference:
         'Dvosmislena referenca kolone "${variable}". Koristite listu Kolone ili precizniju putanju grupe.',
     calculatedColumnExpressionUnknownReference: 'Nepoznata referenca kolone "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Kolona "${variable}" ne može da se koristi u ovom izrazu.',
     calculatedColumnExpressionEmpty: 'Unesite izraz',
     calculatedColumnTitleEmpty: 'Unesite naslov',
     calculatedColumnApply: 'Primeni',

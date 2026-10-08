@@ -58,8 +58,8 @@ export function _convertColumnEventSourceType(source: AgPropertyChangedSource): 
 
 /**
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- * Group header names are keyed by groupId in a shared store, so group renames only fire the grid-level
- * event. A missing columnGroup means a column rename or bulk change, so treat it as affecting every group.
+ * For listeners holding a group copy keyed by groupId (e.g. tool panel trees), which never hear the grid group's
+ * own `headerNameChanged`. A missing columnGroup means a column rename or bulk change, so treat it as affecting every group.
  */
 export function _isHeaderNameChangeForGroup(event: ColumnHeaderNameChangedEvent, groupId: string): boolean {
     return !event.columnGroup || event.columnGroup.getGroupId() === groupId;

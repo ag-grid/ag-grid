@@ -79,16 +79,17 @@ export function getCellRendererInstances<TData = any>(
             continue;
         }
 
-        if (!rowCtrl.isFullWidth()) {
+        const renderers = rowCtrl.getModeCellRenderers();
+        if (renderers === undefined) {
             continue;
         }
-
-        for (const renderer of rowCtrl.getModeCellRenderers()) {
+        for (let i = 0, len = renderers.length; i < len; ++i) {
+            const renderer = renderers[i];
             if (renderer != null) {
                 fullWidthRenderers.push(_unwrapUserComp(renderer));
             }
         }
     }
 
-    return [...fullWidthRenderers, ...cellRenderers];
+    return fullWidthRenderers.length === 0 ? cellRenderers : fullWidthRenderers.concat(cellRenderers);
 }

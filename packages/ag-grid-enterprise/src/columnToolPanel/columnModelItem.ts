@@ -2,6 +2,8 @@ import { LocalEventService } from 'ag-stack';
 
 import type { AgColumn, AgProvidedColumnGroup, BeanCollection, IEventEmitter, IEventListener } from 'ag-grid-community';
 
+import { getProvidedGroupDisplayName } from '../columns/providedColumnGroupUtils';
+
 type ColumnModelItemEvent = 'expandedChanged';
 export class ColumnModelItem implements IEventEmitter<ColumnModelItemEvent> {
     private readonly localEventService: LocalEventService<ColumnModelItemEvent> = new LocalEventService();
@@ -49,7 +51,7 @@ export class ColumnModelItem implements IEventEmitter<ColumnModelItemEvent> {
             this.cachedNameVersion = version;
             this.cachedNameOverride = override;
             this.cachedName = group
-                ? colNames.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'columnToolPanel')
+                ? getProvidedGroupDisplayName(beans, columnGroup, 'columnToolPanel')
                 : colNames.getDisplayNameForColumn(column, 'columnToolPanel');
         }
 

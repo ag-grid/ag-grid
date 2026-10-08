@@ -14,7 +14,7 @@ import { FormulaParseError } from './utils';
  *
  * @param beans Helpers for looking up rows/columns (used to resolve cell refs).
  * @param operand The raw text of the operand (e.g. `"123"`, `"true"`, `"A1"`).
- * @param unsafe If `true` it will not validate if the row/column exists when parsing the formula.
+ * @param unsafe Skip reference validation; 'absolute' also retains A1 positions as absolute references.
  * @returns A JS value (string/number/boolean/null), a Cell object, or undefined if unknown.
  * @throws FormulaParseError if a cell reference is invalid.
  *
@@ -26,7 +26,7 @@ import { FormulaParseError } from './utils';
 const parseOperand = (
     beans: BeanCollection,
     operand: string,
-    unsafe: boolean
+    unsafe: boolean | 'absolute'
 ): string | number | boolean | Cell | null | undefined => {
     const trimmed = operand.trim();
 
@@ -84,7 +84,7 @@ const parseOperand = (
             endRowAbsolute,
         } = parsed;
 
-        const toCell = (colAbs: boolean, colStr: string, rowAbs: boolean, rowStr: string, unsafe: boolean): Cell => {
+        const toCell = (colAbs: boolean, colStr: string, rowAbs: boolean, rowStr: string): Cell => {
             const col = colAbs || unsafe ? colStr.toUpperCase() : beans.formula?.getColByRef(colStr)?.colId;
             const row = rowAbs || unsafe ? rowStr : getFormulaRowByIndex(beans, Number(rowStr) - 1)?.id;
 
@@ -93,15 +93,15 @@ const parseOperand = (
             }
 
             return {
-                column: { id: col!, absolute: colAbs },
-                row: { id: row!, absolute: rowAbs },
+                column: { id: col!, absolute: colAbs || unsafe === 'absolute' },
+                row: { id: row!, absolute: rowAbs || unsafe === 'absolute' },
             };
         };
 
-        const start: Cell = toCell(startColAbsolute, startCol, startRowAbsolute, startRow, unsafe);
+        const start: Cell = toCell(startColAbsolute, startCol, startRowAbsolute, startRow);
 
         if (endCol && endRow) {
-            const end: Cell = toCell(endColAbsolute ?? false, endCol, endRowAbsolute ?? false, endRow, unsafe);
+            const end: Cell = toCell(endColAbsolute ?? false, endCol, endRowAbsolute ?? false, endRow);
             start.endColumn = end.column;
             start.endRow = end.row;
         }
@@ -309,14 +309,14 @@ function pickOpDefForContext(symbol: string, prevToken: string | undefined): Ope
  * Handles + - * / ^, unary +/-, postfix %, parentheses, and nested functions.
  *
  * @param expr The formula body (without the leading '=').
- * @param unsafe If `true` it will not validate if the row/column exists before returning the formula.
+ * @param unsafe Skip reference validation; 'absolute' also retains A1 positions as absolute references.
  * @returns A FormulaNode AST representing the expression.
  * @throws FormulaParseError for mismatched parentheses, missing operands, etc.
  *
  * @example
  * parseExpression(beans, 'SUM(1, 2+3)') // => { type:"operation", operation:"SUM", operands:[...]}
  */
-function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): FormulaNode {
+function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean | 'absolute'): FormulaNode {
     const tokens = tokenize(expr);
 
     const output: FormulaNode[] = [];
@@ -523,14 +523,19 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean): 
  * Parse a full formula string that starts with "=" into an AST.
  *
  * @param formula The full formula, e.g. "=SUM(A1, 2+3)".
- * @param unsafe If `true` it will not validate if the row/column exists when parsing the formula.
+ * @param unsafe If `true`, skip row/column validation. Use 'absolute' to also retain A1 positions as
+ *   absolute references, for column-only validation without loaded rows or an active formula engine.
  * @returns The root FormulaNode of the parsed expression.
  * @throws FormulaParseError if the "=" is missing or the body is invalid.
  *
  * @example
  * parseFormula(beans, '=1+2') // => operation("+", [1,2])
  */
-export const parseFormula = (beans: BeanCollection, formula: string, unsafe: boolean = false): FormulaNode => {
+export const parseFormula = (
+    beans: BeanCollection,
+    formula: string,
+    unsafe: boolean | 'absolute' = false
+): FormulaNode => {
     if (!_isExpressionString(formula)) {
         throw new FormulaParseError(17, 0, 1);
     }

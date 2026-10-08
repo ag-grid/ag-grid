@@ -741,6 +741,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaFilterList: 'Filterliste',
     ariaFilterToValue: 'Filtrer til værdi',
     ariaFilterValue: 'Filtrerværdi',
+    ariaNotInCurrentData: 'ikke i de aktuelle data',
     ariaFilterMenuOpen: 'Åbn Filtermenu',
     ariaFilteringOperator: 'Filtreringsoperator',
     ariaHidden: 'skjult',
@@ -911,6 +912,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     calculatedColumnExpressionAmbiguousReference:
         'Tvetydig kolonnereference "${variable}". Brug listen Kolonner eller en mere specifik gruppesti.',
     calculatedColumnExpressionUnknownReference: 'Ukendt kolonnereference "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Kolonnen "${variable}" kan ikke bruges i dette udtryk.',
     calculatedColumnExpressionEmpty: 'Indtast et udtryk',
     calculatedColumnTitleEmpty: 'Indtast en titel',
     calculatedColumnApply: 'Anvend',

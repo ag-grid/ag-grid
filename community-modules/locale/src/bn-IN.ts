@@ -754,6 +754,7 @@ export const AG_GRID_LOCALE_BN_IN = {
     ariaFilterList: 'ফিল্টার তালিকা',
     ariaFilterToValue: 'মান পর্যন্ত ফিল্টার করুন',
     ariaFilterValue: 'ফিল্টার মান',
+    ariaNotInCurrentData: 'বর্তমান ডেটায় নেই',
     ariaFilterMenuOpen: 'ফিল্টার মেনু খুলুন',
     ariaFilteringOperator: 'ফিল্টারিং অপারেটর',
     ariaHidden: 'লুকানো',
@@ -929,6 +930,7 @@ export const AG_GRID_LOCALE_BN_IN = {
     calculatedColumnExpressionAmbiguousReference:
         'অস্পষ্ট কলাম রেফারেন্স "${variable}"। কলাম তালিকা বা আরও নির্দিষ্ট গ্রুপ পাথ ব্যবহার করুন।',
     calculatedColumnExpressionUnknownReference: 'অজানা কলাম রেফারেন্স "${variable}"।',
+    calculatedColumnExpressionRestrictedReference: 'এই এক্সপ্রেশনে "${variable}" কলামটি ব্যবহার করা যাবে না।',
     calculatedColumnExpressionEmpty: 'একটি এক্সপ্রেশন লিখুন',
     calculatedColumnTitleEmpty: 'একটি শিরোনাম লিখুন',
     calculatedColumnApply: 'প্রয়োগ করুন',

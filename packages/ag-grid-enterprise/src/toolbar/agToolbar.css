@@ -26,7 +26,6 @@
 
 .ag-toolbar-button-wrapper {
     display: inline-flex;
-    padding: calc(var(--ag-spacing) * 0.25);
     height: 100%;
 }
 
@@ -34,7 +33,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--ag-spacing);
-    padding: var(--ag-spacing);
+    padding: calc(var(--ag-spacing) * 1.25);
     border: 0;
     background: transparent;
     color: var(--ag-toolbar-text-color);
@@ -62,7 +61,7 @@
 }
 
 .ag-toolbar-button:focus-visible {
-    box-shadow: var(--ag-focus-shadow);
+    box-shadow: inset var(--ag-focus-shadow);
 }
 
 :where(.ag-toolbar-button:focus):not(:focus-visible) {
@@ -75,14 +74,16 @@
     pointer-events: none;
 }
 
-/* stylelint-disable-next-line no-descending-specificity, selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-toolbar > .ag-toolbar-button-wrapper:first-child > .ag-toolbar-button {
-    border-start-start-radius: calc(var(--ag-border-radius) + 1px);
+    /* Ensure that the centre point of the radius is the same as the grid corner radius so that they line up nicely  */
+    border-start-start-radius: calc(var(--ag-wrapper-border-radius) - var(--ag-border-width));
 }
 
-/* stylelint-disable-next-line no-descending-specificity, selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-toolbar > .ag-toolbar-button-wrapper:last-child > .ag-toolbar-button {
-    border-start-end-radius: calc(var(--ag-border-radius) + 1px);
+    /* Ensure that the centre point of the radius is the same as the grid corner radius so that they line up nicely  */
+    border-start-end-radius: calc(var(--ag-wrapper-border-radius) - var(--ag-border-width));
 }
 
 .ag-toolbar-panel {
@@ -106,22 +107,22 @@
     margin: 0 calc(var(--ag-spacing) * 2);
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-toolbar-input + .ag-toolbar-input {
     margin-inline-start: 0;
 }
 
-/* stylelint-disable-next-line no-descending-specificity, selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-toolbar-right-start + .ag-toolbar-input {
     margin-inline-start: var(--ag-spacing);
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-toolbar > .ag-toolbar-input:first-child {
     margin-inline-start: var(--ag-spacing);
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-toolbar > .ag-toolbar-input:last-child {
     margin-inline-end: var(--ag-spacing);
 }
@@ -157,14 +158,12 @@
     padding-block: calc(var(--ag-spacing) * 0.5);
 }
 
-/*
+/* stylelint-disable-next-line selector-max-specificity --
  * The leading gap that keeps the text clear of the search icon needs a second class to survive
  * the cascade: the shared input-style part sets `padding-inline` on `.ag-input-field-input` at
  * the same (0,1,0) specificity, and its stylesheet is emitted after this one. The legacy
  * stylesheet climbs the same ladder for the same reason (`internal/base/parts/_toolbar.scss`).
  */
-
-/* stylelint-disable-next-line selector-max-specificity */
 .ag-toolbar-input .ag-toolbar-input-field {
     padding-inline-start: calc(var(--ag-icon-size) + var(--ag-spacing) * 2);
 }
@@ -191,7 +190,7 @@
     font-family: var(--ag-cell-font-family);
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-toolbar .ag-column-drop-horizontal {
     border-bottom: none;
     padding-inline-start: 0;
@@ -229,7 +228,7 @@
     border: var(--ag-input-focus-border);
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-toolbar-find .ag-toolbar-input-field {
     border: none;
     background-color: transparent;
@@ -237,7 +236,7 @@
     min-width: 0;
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-toolbar-find .ag-toolbar-input-field:focus {
     box-shadow: none;
     border: none;

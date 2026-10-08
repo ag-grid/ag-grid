@@ -10,14 +10,12 @@
     }
 }
 
-/** These all need different styling when used within the new filter tool panel compared to the existing use case within the legacy filter tool panel or column menu  */
-
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- These all need different styling when used within the new filter tool panel compared to the existing use case within the legacy filter tool panel or column menu */
 .ag-filter-panel .ag-simple-filter-body-wrapper {
     padding: var(--ag-widget-vertical-spacing) var(--ag-widget-container-horizontal-padding) 0;
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-filter-panel .ag-mini-filter {
     margin-top: var(--ag-widget-vertical-spacing);
     margin-left: var(--ag-widget-container-horizontal-padding);
@@ -49,7 +47,7 @@
 
 .ag-filter-card-heading {
     flex: 1;
-    overflow: hidden;
+    min-width: 0;
     padding-top: calc(var(--ag-widget-container-vertical-padding) - var(--ag-widget-vertical-spacing));
     padding-bottom: calc(var(--ag-widget-container-vertical-padding) - var(--ag-widget-vertical-spacing));
     padding-left: var(--ag-widget-horizontal-spacing);
@@ -66,6 +64,7 @@
     font-weight: var(--ag-header-font-weight);
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .ag-filter-card-expand-icon {
@@ -95,7 +94,7 @@
     color: var(--ag-filter-panel-card-subtle-hover-color);
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-filter-card-heading:hover .ag-filter-card-expand-icon {
     color: var(--ag-filter-panel-card-subtle-hover-color);
 }
@@ -127,6 +126,9 @@
 .ag-filter-card-add {
     padding: 0;
     border: 0;
+
+    /* room for the button's focus shadow once the panel scrolls; a margin, so the card's background does not show in it */
+    margin-bottom: calc(var(--ag-spacing) * 0.5);
 }
 
 .ag-filter-add-button {
@@ -144,9 +146,7 @@
 .ag-filter-add-select {
     border: 0;
 
-    /** These all need different styling when used within the new filter tool panel compared to the existing use case within editors  */
-
-    /* stylelint-disable-next-line selector-max-specificity */
+    /* stylelint-disable-next-line selector-max-specificity -- These all need different styling when used within the new filter tool panel compared to the existing use case within editors */
     .ag-rich-select-value {
         padding-block: calc(
             ((1.5 * var(--ag-font-size) + 2 * var(--ag-button-vertical-padding)) - var(--ag-input-height)) / 2
@@ -168,7 +168,7 @@
     line-height: 1.5;
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-filter-panel .ag-filter-panel-buttons-apply-button {
     color: var(--ag-filter-panel-apply-button-color);
     background-color: var(--ag-filter-panel-apply-button-background-color);
@@ -179,9 +179,9 @@
     padding-bottom: var(--ag-widget-container-vertical-padding);
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-filter-panel .ag-simple-filter-body-wrapper,
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-filter-panel .ag-set-filter-body-wrapper {
     padding-bottom: var(--ag-widget-container-vertical-padding);
 }

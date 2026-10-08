@@ -22,6 +22,7 @@ import type { CellCtrl } from '../cell/cellCtrl';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
 import { _suppressFullWidthMouseEvent } from '../renderUtils';
 import type { FullWidthTarget, IRowModeFeature } from './iRowModeFeature';
+import { NO_CELLS } from './normalRowFeature';
 import type { RowCtrl } from './rowCtrl';
 
 export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
@@ -101,12 +102,12 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
         return this.rowCtrl.printLayout || this.gos.get('embedFullWidthRows');
     }
 
-    public getModeCellRenderers(): (ICellRenderer | null | undefined)[] {
-        return this.rowCtrl.getCurrentRowComp()?.getFullWidthCellRenderers() ?? [];
+    public getModeCellRenderers(): (ICellRenderer | null | undefined)[] | undefined {
+        return this.rowCtrl.getCurrentRowComp()?.getFullWidthCellRenderers();
     }
 
     public getAllCellCtrls(): CellCtrl[] {
-        return [];
+        return NO_CELLS;
     }
 
     public recreateCell(_cellCtrl: CellCtrl): void {

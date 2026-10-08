@@ -739,6 +739,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaFilterList: 'لیست فیلتر',
     ariaFilterToValue: 'فیلتر تا مقدار',
     ariaFilterValue: 'مقدار فیلتر',
+    ariaNotInCurrentData: 'در داده‌های فعلی نیست',
     ariaFilterMenuOpen: 'باز کردن منوی فیلتر',
     ariaFilteringOperator: 'عملگر فیلتر کردن',
     ariaHidden: 'مخفی',
@@ -910,6 +911,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     calculatedColumnExpressionAmbiguousReference:
         'ارجاع مبهم ستون "${variable}". از فهرست ستون‌ها یا یک مسیر گروه دقیق‌تر استفاده کنید.',
     calculatedColumnExpressionUnknownReference: 'ارجاع ناشناخته ستون "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'نمی‌توان از ستون "${variable}" در این عبارت استفاده کرد.',
     calculatedColumnExpressionEmpty: 'یک عبارت وارد کنید',
     calculatedColumnTitleEmpty: 'یک عنوان وارد کنید',
     calculatedColumnApply: 'اعمال',

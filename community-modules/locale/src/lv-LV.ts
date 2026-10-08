@@ -756,6 +756,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaFilterList: 'Filtru saraksts',
     ariaFilterToValue: 'Filtrēt līdz vērtībai',
     ariaFilterValue: 'Filtra vērtība',
+    ariaNotInCurrentData: 'nav pašreizējos datos',
     ariaFilterMenuOpen: 'Atvērt filtra izvēlni',
     ariaFilteringOperator: 'Filtrēšanas operators',
     ariaHidden: 'slēpts',
@@ -931,6 +932,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     calculatedColumnExpressionAmbiguousReference:
         'Neviennozīmīga kolonnas atsauce "${variable}". Izmantojiet kolonnu sarakstu vai precīzāku grupas ceļu.',
     calculatedColumnExpressionUnknownReference: 'Nezināma kolonnas atsauce "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Kolonnu "${variable}" nevar izmantot šajā izteiksmē.',
     calculatedColumnExpressionEmpty: 'Ievadiet izteiksmi',
     calculatedColumnTitleEmpty: 'Ievadiet nosaukumu',
     calculatedColumnApply: 'Piemērot',

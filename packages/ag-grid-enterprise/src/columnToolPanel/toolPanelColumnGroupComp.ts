@@ -31,6 +31,7 @@ import {
     _resolveHeaderTooltipValue,
 } from 'ag-grid-community';
 
+import { getGridColumnGroup } from '../columns/providedColumnGroupUtils';
 import type { ColumnModelItem } from './columnModelItem';
 import {
     ColumnSelectionLabelRendererFeature,
@@ -94,6 +95,14 @@ export class ToolPanelColumnGroupComp extends Component {
         return this.modelItem.displayName;
     }
 
+    /**
+     * The group user callbacks receive. Resolved on read, not cached: a custom layout keeps this comp
+     * across grid column changes, which can add or replace the grid's group.
+     */
+    private get gridColumnGroup(): AgProvidedColumnGroup {
+        return getGridColumnGroup(this.beans, this.columnGroup);
+    }
+
     public postConstruct(): void {
         this.setTemplate(ToolPanelColumnGroupElement, [AgCheckboxSelector]);
 
@@ -117,7 +126,7 @@ export class ToolPanelColumnGroupComp extends Component {
                     params,
                     source,
                     null,
-                    columnGroup,
+                    this.gridColumnGroup,
                     () => this.displayName
                 )
             );
@@ -142,7 +151,7 @@ export class ToolPanelColumnGroupComp extends Component {
                         _addGridCommonParams<TooltipCallbackParams>(gos, {
                             location: 'columnToolPanelColumnGroup',
                             colDef,
-                            column: columnGroup,
+                            column: this.gridColumnGroup,
                             value: displayName,
                             valueFormatted: displayName,
                         })
@@ -153,7 +162,7 @@ export class ToolPanelColumnGroupComp extends Component {
                     const colDef = columnGroup.getColGroupDef();
                     return {
                         ...(colDef ? { colDef } : {}),
-                        column: columnGroup,
+                        column: this.gridColumnGroup,
                         valueFormatted: this.displayName,
                     };
                 },
@@ -186,7 +195,12 @@ export class ToolPanelColumnGroupComp extends Component {
         this.refreshAriaLabel();
         this.setupTooltip();
 
-        const classes = _getToolPanelClassesFromColDef(columnGroup.getColGroupDef(), this.beans, null, columnGroup);
+        const classes = _getToolPanelClassesFromColDef(
+            columnGroup.getColGroupDef(),
+            this.beans,
+            null,
+            this.gridColumnGroup
+        );
         for (const c of classes) {
             this.toggleCss(c, true);
         }

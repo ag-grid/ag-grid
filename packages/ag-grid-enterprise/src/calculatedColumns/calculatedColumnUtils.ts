@@ -1,13 +1,14 @@
-import type { ColDef, UserColumnPropertyKey } from 'ag-grid-community';
+import type { CalculatedExpressionError, ColDef, UserColumnPropertyKey } from 'ag-grid-community';
 import { _DATA_TYPE_DERIVED_COL_DEF_PROPERTIES } from 'ag-grid-community';
 
-/** The definition properties the Calculated Column dialog lets a user choose. Only these are recorded in
- *  the user-column layer: the rest of a calc col's definition is derived on build (`editable`,
+/** The definition properties and validation state persisted by the Calculated Column dialog. Only these
+ *  are recorded in the user-column layer: the rest is derived on build (`editable`,
  *  `suppressPaste`, the data-type properties), or owned by another grid state section (width, sort, …). */
 export const USER_OWNED_PROPERTIES: readonly UserColumnPropertyKey[] = [
     'headerName',
     'cellDataType',
     'calculatedExpression',
+    'calculatedExpressionError',
     'columnGroupShow',
 ];
 
@@ -22,6 +23,30 @@ export function pickUserOwnedProperties(colDef: ColDef): ColDef {
         }
     }
     return result;
+}
+
+/** The definition's saved expression error, unless the expression has since changed through another path. */
+export function getCalculatedExpressionError(colDef: ColDef): CalculatedExpressionError | undefined {
+    const error = colDef.calculatedExpressionError;
+    return error && error.expression === colDef.calculatedExpression ? error : undefined;
+}
+
+/** The user-facing message for a blocked reference, shared by the dialog and the cell's formula error. */
+export function getRestrictedReferenceMessage(
+    translate: (key: string, defaultValue: string, variableValues?: string[]) => string,
+    reference: string
+): string {
+    return translate(
+        'calculatedColumnExpressionRestrictedReference',
+        'Column "${variable}" cannot be used in this expression.',
+        [reference]
+    ).replace('${variable}', reference);
+}
+
+/** A calculated expression as a formula string, tolerating an existing leading `=` like evaluation does. */
+export function toFormulaString(expression: string): string {
+    const trimmed = expression.trim();
+    return trimmed.startsWith('=') ? trimmed : `=${trimmed}`;
 }
 
 /**
@@ -55,19 +80,23 @@ export function clearStaleDataTypeProperties(colDef: ColDef, userColDef: ColDef 
  * boundaries (`"..."`) are respected, including the SQL-style `""` escape — brackets inside a
  * string literal are left untouched.
  *
- * Callers that only need to visit (no rewrite) can return the input `ref` unchanged; the returned
- * string is identical to the input in that case.
+ * Callers can return undefined to preserve the original token, including any escaped brackets.
  *
  * Must stay in sync with the parser's `isInsideStringLiteral` semantics in
  * `formula/ast/parsers.ts`.
  *
  * @param expression The expression to scan, typically the raw `calculatedExpression` value.
  * @param replaceReference Receives each bracketed reference (without the brackets); the return
- *   value replaces the bracketed token in the output expression.
+ *   value replaces the bracketed token in the output expression, or undefined leaves it unchanged.
+ * @param escapedReferences Whether dialog references escape a closing bracket as `]]`.
  * @returns The expression with each reference replaced; returns the input verbatim when no
  *   bracket references are present.
  */
-export function replaceBracketReferences(expression: string, replaceReference: (reference: string) => string): string {
+export function replaceBracketReferences(
+    expression: string,
+    replaceReference: (reference: string) => string | undefined,
+    escapedReferences = false
+): string {
     let inString = false;
     let result = '';
     let lastIndex = 0;
@@ -82,17 +111,64 @@ export function replaceBracketReferences(expression: string, replaceReference: (
             continue;
         }
         if (!inString && char === '[') {
-            const end = expression.indexOf(']', i + 1);
+            const end = getBracketReferenceEnd(expression, i, escapedReferences);
             if (end === -1) {
                 continue;
             }
             result += expression.slice(lastIndex, i);
-            result += `[${replaceReference(expression.slice(i + 1, end))}]`;
+            const reference = expression.slice(i + 1, end);
+            result += `[${replaceReference(escapedReferences ? reference.replace(/]]/g, ']') : reference) ?? reference}]`;
             lastIndex = end + 1;
             i = end;
         }
     }
     return result + expression.slice(lastIndex);
+}
+
+export function escapeDisplayReference(reference: string): string {
+    return reference.replace(/]/g, ']]');
+}
+
+function getBracketReferenceEnd(expression: string, start: number, escapedReferences: boolean): number {
+    for (let i = start + 1; i < expression.length; ++i) {
+        if (expression[i] !== ']') {
+            continue;
+        }
+        if (escapedReferences && expression[i + 1] === ']') {
+            ++i;
+        } else {
+            return i;
+        }
+    }
+    return -1;
+}
+
+export function getDisplayReferenceToken(
+    expression: string,
+    caret: number
+): { start: number; end: number; prefix: string } | null {
+    let inString = false;
+    for (let i = 0; i < caret; ++i) {
+        const char = expression[i];
+        if (char === '"') {
+            if (expression[i + 1] === '"') {
+                ++i;
+            } else {
+                inString = !inString;
+            }
+        } else if (!inString && char === '[') {
+            const end = getBracketReferenceEnd(expression, i, true);
+            if (end === -1 || caret <= end) {
+                return {
+                    start: i,
+                    end: end === -1 ? caret : end + 1,
+                    prefix: expression.slice(i + 1, caret).replace(/]]/g, ']'),
+                };
+            }
+            i = end;
+        }
+    }
+    return null;
 }
 
 export function getOperatorReplacementRange(
@@ -111,7 +187,7 @@ export function getOperatorReplacementRange(
         return { start, end };
     }
 
-    if (isInsideStringLiteral(expression, start) || isInsideBracketReference(expression, start)) {
+    if (isInsideStringLiteral(expression, start) || getDisplayReferenceToken(expression, start) !== null) {
         return { start, end };
     }
 
@@ -202,12 +278,6 @@ function getNextNonSpaceIndex(expression: string, offset: number): number | null
         }
     }
     return null;
-}
-
-function isInsideBracketReference(expression: string, offset: number): boolean {
-    const bracketStart = expression.lastIndexOf('[', offset - 1);
-    const bracketEnd = expression.lastIndexOf(']', offset - 1);
-    return bracketStart > bracketEnd;
 }
 
 export function isInsideStringLiteral(expression: string, offset: number): boolean {

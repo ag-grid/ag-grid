@@ -757,6 +757,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaFilterList: 'Senarai Penapis',
     ariaFilterToValue: 'Tapis hingga nilai',
     ariaFilterValue: 'Nilai Penapis',
+    ariaNotInCurrentData: 'tiada dalam data semasa',
     ariaFilterMenuOpen: 'Buka Menu Penapis',
     ariaFilteringOperator: 'Operator Penapisan',
     ariaHidden: 'tersembunyi',
@@ -933,6 +934,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     calculatedColumnExpressionAmbiguousReference:
         'Rujukan lajur "${variable}" tidak jelas. Gunakan senarai Lajur atau laluan kumpulan yang lebih khusus.',
     calculatedColumnExpressionUnknownReference: 'Rujukan lajur "${variable}" tidak diketahui.',
+    calculatedColumnExpressionRestrictedReference: 'Lajur "${variable}" tidak boleh digunakan dalam ungkapan ini.',
     calculatedColumnExpressionEmpty: 'Masukkan satu ungkapan',
     calculatedColumnTitleEmpty: 'Masukkan satu tajuk',
     calculatedColumnApply: 'Guna Pakai',

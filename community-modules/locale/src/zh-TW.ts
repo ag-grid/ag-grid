@@ -737,6 +737,7 @@ export const AG_GRID_LOCALE_ZH_TW = {
     ariaFilterList: '篩選列表',
     ariaFilterToValue: '篩選到值',
     ariaFilterValue: '篩選值',
+    ariaNotInCurrentData: '不在當前資料中',
     ariaFilterMenuOpen: '打開篩選器選單',
     ariaFilteringOperator: '篩選運算子',
     ariaHidden: '隱藏',
@@ -907,6 +908,7 @@ export const AG_GRID_LOCALE_ZH_TW = {
     calculatedColumnExpressionAmbiguousReference:
         '欄位參照不明確 "${variable}"。請使用「欄位」清單或更具體的群組路徑。',
     calculatedColumnExpressionUnknownReference: '未知的欄位參照 "${variable}"。',
+    calculatedColumnExpressionRestrictedReference: '此運算式中不能使用欄位 "${variable}"。',
     calculatedColumnExpressionEmpty: '請輸入運算式',
     calculatedColumnTitleEmpty: '請輸入標題',
     calculatedColumnApply: '應用',

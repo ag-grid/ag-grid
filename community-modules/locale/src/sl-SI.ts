@@ -754,6 +754,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaFilterList: 'Seznam filtrov',
     ariaFilterToValue: 'Filter do vrednosti',
     ariaFilterValue: 'Vrednost filtra',
+    ariaNotInCurrentData: 'ni v trenutnih podatkih',
     ariaFilterMenuOpen: 'Odpri meni filtra',
     ariaFilteringOperator: 'Operator filtriranja',
     ariaHidden: 'skrito',
@@ -929,6 +930,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     calculatedColumnExpressionAmbiguousReference:
         'Dvoumna referenca stolpca "${variable}". Uporabite seznam stolpcev ali bolj določeno pot skupine.',
     calculatedColumnExpressionUnknownReference: 'Neznana referenca stolpca "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Stolpca "${variable}" ni mogoče uporabiti v tem izrazu.',
     calculatedColumnExpressionEmpty: 'Vnesite izraz',
     calculatedColumnTitleEmpty: 'Vnesite naslov',
     calculatedColumnApply: 'Uveljavi',

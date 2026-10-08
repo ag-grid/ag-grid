@@ -739,6 +739,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaFilterList: 'Seznam filtrů',
     ariaFilterToValue: 'Filtrovat do hodnoty',
     ariaFilterValue: 'Hodnota filtru',
+    ariaNotInCurrentData: 'není v aktuálních datech',
     ariaFilterMenuOpen: 'Otevřít nabídku filtru',
     ariaFilteringOperator: 'Operátor filtrování',
     ariaHidden: 'skryto',
@@ -909,6 +910,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     calculatedColumnExpressionAmbiguousReference:
         'Nejednoznačný odkaz na sloupec "${variable}". Použijte seznam Sloupce nebo konkrétnější cestu skupiny.',
     calculatedColumnExpressionUnknownReference: 'Neznámý odkaz na sloupec "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Sloupec "${variable}" nelze použít v tomto výrazu.',
     calculatedColumnExpressionEmpty: 'Zadejte výraz',
     calculatedColumnTitleEmpty: 'Zadejte název',
     calculatedColumnApply: 'Použít',

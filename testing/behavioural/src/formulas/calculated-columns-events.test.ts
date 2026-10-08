@@ -2,6 +2,8 @@ import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
+import type { ColDef } from 'ag-grid-community';
+
 import {
     addCalculatedColumnDef,
     clickDialogButton,
@@ -16,6 +18,55 @@ import {
 
 describe('ag-grid calculated columns', () => {
     setupCalculatedColumnsSuite();
+
+    test('pivot mode tracks lifecycle and validity of primary calculated columns', async () => {
+        const changed = vi.fn();
+        const created = vi.fn();
+        const removed = vi.fn();
+        const validity = vi.fn();
+        const base: ColDef[] = [
+            { field: 'country', rowGroup: true },
+            { field: 'year', pivot: true },
+            { field: 'revenue', aggFunc: 'sum' },
+        ];
+        const profit: ColDef = { colId: 'profit', calculatedExpression: '[revenue] * 2', aggFunc: 'sum' };
+        const api = createGrid('calculated-pivot-lifecycle', {
+            pivotMode: true,
+            rowData: [{ id: 'r1', country: 'UK', year: 2026, revenue: 10 }],
+            columnDefs: [...base, profit],
+            onCalculatedColumnCreated: created,
+            onCalculatedColumnExpressionChanged: changed,
+            onCalculatedColumnRemoved: removed,
+            onCalculatedColumnValidationStateChanged: validity,
+        });
+        await asyncSetTimeout(0);
+        api.setGridOption('columnDefs', [...base, { ...profit, calculatedExpression: '[revenue] * 3' }]);
+        await waitFor(() =>
+            expect(changed).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    column: api.getColumn('profit'),
+                    oldExpression: '[revenue] * 2',
+                    expression: '[revenue] * 3',
+                    source: 'api',
+                })
+            )
+        );
+        expect(changed).toHaveBeenCalledTimes(1);
+        expect(created).not.toHaveBeenCalled();
+        expect(removed).not.toHaveBeenCalled();
+        expect(validity).not.toHaveBeenCalled();
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe(30);
+        api.setGridOption('columnDefs', base);
+        await waitFor(() => expect(removed).toHaveBeenCalledTimes(1));
+        api.setGridOption('columnDefs', [...base, profit]);
+        await waitFor(() => expect(created).toHaveBeenCalledTimes(1));
+        api.setGridOption('columnDefs', [...base.slice(0, 2), profit]);
+        await waitFor(() =>
+            expect(validity).toHaveBeenCalledWith(expect.objectContaining({ valid: false, reason: 'unknownReference' }))
+        );
+        api.setGridOption('columnDefs', [...base, profit]);
+        await waitFor(() => expect(validity).toHaveBeenCalledWith(expect.objectContaining({ valid: true })));
+    });
 
     test('dispatches calculated column columnDefs lifecycle events', async () => {
         const created = vi.fn();

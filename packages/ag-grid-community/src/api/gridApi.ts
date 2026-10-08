@@ -808,7 +808,7 @@ export interface _ColumnGridApi<TData> {
     getAllDisplayedColumns(): Column[];
 
     /**
-     * Same as `getAllGridColumns()`, except only returns rendered columns, i.e. columns that are not within the viewport and therefore not rendered, due to column virtualisation, are not displayed.
+     * Same as `getAllGridColumns()`, except only returns rendered columns, i.e. columns more than 200px outside the viewport are not rendered, due to column virtualisation, and are not returned. Auto-height columns are always rendered.
      * @agModule `ColumnApiModule`
      */
     getAllDisplayedVirtualColumns(): Column[];
@@ -1108,8 +1108,8 @@ export interface _ColumnFilterGridApi {
     hideColumnFilter(): void;
 
     /**
-     * Perform the provided filter action for the column specified, or all columns.
-     * Requires `enableFilterHandlers = true`.
+     * Perform the provided filter action for the columns specified, or all columns.
+     * Requires `enableFilterHandlers = true`, except for the actions clearing the Set Filter's preserved values.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     doFilterAction(params: FilterActionParams): void;

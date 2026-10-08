@@ -6,6 +6,7 @@ interface HeaderReferenceEntry {
     leafName: string;
     path: string[];
     reference: string;
+    suffix?: string;
 }
 
 export function createHeaderReferenceEntries(
@@ -34,7 +35,8 @@ export function createHeaderReferenceEntries(
             continue;
         }
 
-        entry.reference = `${joinReferencePath(entry.path)} (${getStableReferenceSuffix(entry.colId)})`;
+        entry.suffix = ` (${getStableReferenceSuffix(entry.colId)})`;
+        entry.reference = `${joinReferencePath(entry.path)}${entry.suffix}`;
     }
 
     return entries;

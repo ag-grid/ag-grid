@@ -753,6 +753,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaFilterList: 'รายการตัวกรอง',
     ariaFilterToValue: 'กรองถึงค่า',
     ariaFilterValue: 'ค่าตัวกรอง',
+    ariaNotInCurrentData: 'ไม่มีในข้อมูลปัจจุบัน',
     ariaFilterMenuOpen: 'เปิดเมนูตัวกรอง',
     ariaFilteringOperator: 'ตัวดำเนินการกรอง',
     ariaHidden: 'ซ่อนอยู่',
@@ -928,6 +929,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     calculatedColumnExpressionAmbiguousReference:
         'การอ้างอิงคอลัมน์กำกวม "${variable}" ใช้รายการคอลัมน์หรือระบุเส้นทางกลุ่มให้ชัดเจนยิ่งขึ้น',
     calculatedColumnExpressionUnknownReference: 'ไม่รู้จักการอ้างอิงคอลัมน์ "${variable}"',
+    calculatedColumnExpressionRestrictedReference: 'ไม่สามารถใช้คอลัมน์ "${variable}" ในนิพจน์นี้ได้',
     calculatedColumnExpressionEmpty: 'ป้อนนิพจน์',
     calculatedColumnTitleEmpty: 'ป้อนชื่อเรื่อง',
     calculatedColumnApply: 'นำไปใช้',

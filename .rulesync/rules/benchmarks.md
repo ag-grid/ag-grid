@@ -1,7 +1,7 @@
 ---
 targets: ['*']
 description: 'Running and creating performance benchmarks for AG Grid'
-globs: ['testing/performance/**/*', '**/benchmark*']
+globs: ['**/benchmark*']
 ---
 
 # Benchmarks Guide
@@ -12,10 +12,7 @@ This guide covers running and creating performance benchmarks for AG Grid.
 
 Performance benchmarks help detect regressions and validate optimizations.
 
-**Two types of performance testing exist in AG Grid:**
-
-1. **Behavioural Benchmarks** (Vitest) - Located in `testing/behavioural/` - micro-benchmarks for specific operations
-2. **Performance E2E Tests** (Playwright) - Located in `testing/performance/e2e/` - end-to-end performance scenarios
+Behavioural benchmarks (Vitest) live in `testing/behavioural/` and measure specific operations.
 
 ## Running Benchmarks
 

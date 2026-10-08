@@ -39,14 +39,13 @@ export class CssClasses {
     }
 }
 
-export const isComponentStateless = (Component: any) => {
-    const hasSymbol = () => typeof Symbol === 'function' && Symbol.for;
-    const getMemoType = () => (hasSymbol() ? Symbol.for('react.memo') : 0xead3);
+const REACT_MEMO_TYPE = Symbol.for('react.memo');
 
-    return (
-        (typeof Component === 'function' && !(Component.prototype && Component.prototype.isReactComponent)) ||
-        (typeof Component === 'object' && Component.$$typeof === getMemoType())
-    );
+export const isComponentStateless = (Component: any): boolean => {
+    if (typeof Component === 'function') {
+        return !Component.prototype?.isReactComponent;
+    }
+    return typeof Component === 'object' && Component.$$typeof === REACT_MEMO_TYPE;
 };
 
 const reactVersion = React.version?.split('.')[0];
@@ -114,19 +113,20 @@ export function agUseSyncExternalStore<T>(
 
 /**
  * The list to render for `next`, keeping values already rendered in their previous order, so React moves no DOM node
- * and CSS transitions survive. Returns `prev` when nothing changed and `next` when it already has that order, so an
- * unchanged reference skips a render; otherwise builds the kept values in `prev` order with the new ones added.
+ * and CSS transitions survive. Returns `prev` when nothing changed, and `next` when nothing is rendered yet or it
+ * already has that order, so an unchanged reference skips a render; otherwise builds the kept values in `prev` order
+ * with the new ones added.
  * Each list must hold distinct values.
  * @param maintainOrder Follow `next`'s order, as the DOM must for accessibility
  * @param placeNewInOrder Put each new value before the kept value that follows it in `next`, not last
  */
 export function getNextValueIfDifferent<T extends { diffIndex: number }>(
-    prev: T[] | null,
-    next: T[] | null,
+    prev: T[] | undefined,
+    next: T[],
     maintainOrder: boolean,
     placeNewInOrder = false
-): T[] | null {
-    if (next == null || prev == null) {
+): T[] {
+    if (prev === undefined) {
         return next;
     }
     const prevLen = prev.length;

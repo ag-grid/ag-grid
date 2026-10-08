@@ -259,7 +259,11 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
             mouseEvent: (params as MouseShowContextMenuParams).mouseEvent ?? null,
             touchEvent: (params as TouchShowContextMenuParam).touchEvent ?? null,
             showMenuCallback: (eventOrTouch) =>
-                this.menu.showMenu({ node: rowNode, column, value, noteParams }, eventOrTouch, anchorToElement),
+                this.menu.showMenu(
+                    { node: rowNode, column, columnGroup: null, value, noteParams },
+                    eventOrTouch,
+                    anchorToElement
+                ),
             source,
         });
     }

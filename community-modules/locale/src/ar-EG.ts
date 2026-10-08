@@ -737,6 +737,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaFilterList: 'قائمة الفلترة',
     ariaFilterToValue: 'الفلترة إلى القيمة',
     ariaFilterValue: 'قيمة الفلترة',
+    ariaNotInCurrentData: 'غير موجود في البيانات الحالية',
     ariaFilterMenuOpen: 'فتح قائمة الفلترة',
     ariaFilteringOperator: 'مشغل الفلترة',
     ariaHidden: 'مخفي',
@@ -907,6 +908,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     calculatedColumnExpressionAmbiguousReference:
         'مرجع عمود غامض "${variable}". استخدم قائمة الأعمدة أو مسار مجموعة أكثر تحديدًا.',
     calculatedColumnExpressionUnknownReference: 'مرجع عمود غير معروف "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'لا يمكن استخدام العمود "${variable}" في هذا التعبير.',
     calculatedColumnExpressionEmpty: 'أدخل تعبيرًا',
     calculatedColumnTitleEmpty: 'أدخل عنوانًا',
     calculatedColumnApply: 'تطبيق',

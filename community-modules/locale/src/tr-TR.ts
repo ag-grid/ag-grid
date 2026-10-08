@@ -742,6 +742,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaFilterList: 'Filtre Listesi',
     ariaFilterToValue: 'Değere filtrele',
     ariaFilterValue: 'Filtre Değeri',
+    ariaNotInCurrentData: 'mevcut verilerde yok',
     ariaFilterMenuOpen: 'Filtre Menüsünü Aç',
     ariaFilteringOperator: 'Filtreleme Operatörü',
     ariaHidden: 'gizli',
@@ -913,6 +914,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     calculatedColumnExpressionAmbiguousReference:
         'Belirsiz sütun başvurusu "${variable}". Sütunlar listesini veya daha belirli bir grup yolunu kullanın.',
     calculatedColumnExpressionUnknownReference: 'Bilinmeyen sütun başvurusu "${variable}".',
+    calculatedColumnExpressionRestrictedReference: '"${variable}" sütunu bu ifadede kullanılamaz.',
     calculatedColumnExpressionEmpty: 'Bir ifade girin',
     calculatedColumnTitleEmpty: 'Bir başlık girin',
     calculatedColumnApply: 'Uygula',

@@ -743,6 +743,7 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaFilterList: 'Filter List',
     ariaFilterToValue: 'Filter to value',
     ariaFilterValue: 'Filter Value',
+    ariaNotInCurrentData: 'not in current data',
     ariaFilterMenuOpen: 'Open Filter Menu',
     ariaFilteringOperator: 'Filtering Operator',
     ariaHidden: 'hidden',
@@ -918,6 +919,7 @@ export const AG_GRID_LOCALE_EN_US = {
     calculatedColumnExpressionAmbiguousReference:
         'Ambiguous column reference "${variable}". Use the Columns list or a more specific group path.',
     calculatedColumnExpressionUnknownReference: 'Unknown column reference "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Column "${variable}" cannot be used in this expression.',
     calculatedColumnExpressionEmpty: 'Enter an expression',
     calculatedColumnTitleEmpty: 'Enter a title',
     calculatedColumnApply: 'Apply',

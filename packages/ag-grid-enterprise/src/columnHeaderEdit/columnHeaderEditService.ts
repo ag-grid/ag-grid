@@ -6,8 +6,15 @@ import type {
     MenuItemDef,
     NamedBean,
 } from 'ag-grid-community';
-import { BeanStub, _createIconNoSpan, isProvidedColumnGroup } from 'ag-grid-community';
+import {
+    BeanStub,
+    _createIconNoSpan,
+    _dispatchGroupHeaderNameChangedEvent,
+    _setColGroupHeaderNameOverride,
+    isProvidedColumnGroup,
+} from 'ag-grid-community';
 
+import { getGridColumnGroup, getProvidedGroupDisplayName } from '../columns/providedColumnGroupUtils';
 import { ColumnHeaderEditPopup } from './columnHeaderEditPopup';
 
 type EditTarget = AgColumn | AgProvidedColumnGroup;
@@ -72,33 +79,24 @@ export class ColumnHeaderEditService extends BeanStub implements NamedBean, ICol
     }
 
     private getEditableHeaderName(target: EditTarget): string {
-        const { colNames } = this.beans;
+        const { beans } = this;
         const name = isProvidedColumnGroup(target)
-            ? colNames.getDisplayNameForProvidedColumnGroup(null, target, 'header')
-            : colNames.getDisplayNameForColumn(target, 'header');
+            ? getProvidedGroupDisplayName(beans, target, 'header')
+            : beans.colNames.getDisplayNameForColumn(target, 'header');
         return name != null ? String(name) : '';
     }
 
     private applyHeaderName(target: EditTarget, headerName: string | null): void {
         if (isProvidedColumnGroup(target)) {
-            const overrides = this.beans.colModel.groupHeaderNameOverrides;
-            const { groupId } = target;
-            const current = overrides.get(groupId) ?? null;
-            if (current === headerName) {
+            if (!_setColGroupHeaderNameOverride(this.beans, target.groupId, headerName)) {
                 return;
             }
-            if (headerName == null) {
-                overrides.delete(groupId);
-            } else {
-                overrides.set(groupId, headerName);
-            }
-            this.beans.eventSvc.dispatchEvent({
-                type: 'columnHeaderNameChanged',
-                column: null,
-                columns: null,
-                columnGroup: target,
-                source: 'uiColumnHeaderEdit',
-            });
+            const { beans } = this;
+            _dispatchGroupHeaderNameChangedEvent(
+                beans.eventSvc,
+                getGridColumnGroup(beans, target),
+                'uiColumnHeaderEdit'
+            );
         } else {
             target.setHeaderNameOverride(headerName, 'uiColumnHeaderEdit');
         }

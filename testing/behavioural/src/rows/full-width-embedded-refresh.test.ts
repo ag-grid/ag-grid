@@ -1,14 +1,14 @@
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, RenderApiModule } from 'ag-grid-community';
 
 const events: string[] = [];
 let refuseRefresh: string | null = null;
 
 class SectionRenderer implements ICellRendererComp {
     private readonly eGui = document.createElement('div');
-    private section = '';
+    public section = '';
 
     public init(params: ICellRendererParams): void {
         this.section = params.pinned ?? 'center';
@@ -26,7 +26,7 @@ class SectionRenderer implements ICellRendererComp {
 }
 
 describe('embedded full width row refresh', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule] });
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RenderApiModule] });
 
     afterEach(() => {
         gridsManager.reset();
@@ -67,5 +67,26 @@ describe('embedded full width row refresh', () => {
             ]);
             expect(events.slice(3).sort()).toEqual([`init center ${v}`, `init left ${v}`, `init right ${v}`]);
         }
+    });
+
+    test('getCellRendererInstances returns every section renderer of an embedded row, and the one of a full width row', async () => {
+        const options = (embedFullWidthRows: boolean) => ({
+            columnDefs: [
+                { field: 'l', pinned: 'left' as const },
+                { field: 'v' },
+                { field: 'r', pinned: 'right' as const },
+            ],
+            rowData: [{ id: '1', v: 'a' }],
+            isFullWidthRow: () => true,
+            embedFullWidthRows,
+            fullWidthCellRenderer: SectionRenderer,
+        });
+        const embedded = gridsManager.createGrid('embedded', options(true));
+        const plain = gridsManager.createGrid('plain', options(false));
+        await asyncSetTimeout(0);
+
+        const sections = (renderers: unknown[]) => renderers.map((r) => (r as SectionRenderer).section).sort();
+        expect(sections(embedded.getCellRendererInstances())).toEqual(['center', 'left', 'right']);
+        expect(sections(plain.getCellRendererInstances())).toEqual(['center']);
     });
 });
