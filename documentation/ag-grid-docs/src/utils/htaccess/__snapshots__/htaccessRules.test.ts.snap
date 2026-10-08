@@ -19,12 +19,24 @@ AddType text/markdown md
 AddCharset utf-8 .md
 
 
-# Current pages: always revalidate. Excludes /archive/<v>/ which is immutable.
-Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# )"
+# Default for every response no later rule matches: never left to a browser's heuristic lifetime.
+Header set Cache-Control "public, max-age=86400"
+
+
+# Current pages and their markdown variants: always revalidate. Excludes /archive/<v>/ which is immutable.
+Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/(html|markdown)# && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# )"
+
+
+# Redirects: never cached, so a cached Location cannot carry one visitor's query string to another.
+Header always set Cache-Control "no-cache" "expr=%{REQUEST_STATUS} -ge 300 && %{REQUEST_STATUS} -lt 400 && %{REQUEST_STATUS} -ne 304"
+
+
+# Archived markdown variants: noindex, as the archived HTML is by its robots meta tag.
+Header set X-Robots-Tag "noindex" "expr=%{CONTENT_TYPE} =~ m#^text/markdown# && %{REQUEST_URI} =~ m#^/(charts/|studio/)?archive/[0-9]#"
 
 
 # Content-addressed assets - the filename carries a content hash, so changed content is
-# always a different URL. Matched by hash shape, so anything unhashed is not cached.
+# always a different URL. Matched by hash shape, so anything unhashed keeps the default.
 Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#/_astro/[^/]+\\.[A-Za-z0-9_-]{8}\\.[a-z0-9]+$# || %{REQUEST_URI} =~ m#/_astro/.*/[0-9a-f]{16}\\.[a-z0-9]+$#"
 
 
@@ -38,11 +50,19 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/(ima
 Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#/scripts/[^/]+\\.js$#"
 
 
+# Unhashed files fetched at runtime that change at a release: always revalidate (a 304 when unchanged).
+Header set Cache-Control "no-cache" "expr=%{REQUEST_URI} =~ m#^/((charts|studio)/)?(changelog|pipeline|roadmap)/[^/]+\\.json$# || %{REQUEST_URI} =~ m#^/(files|studio/files|charts/dev)/# || %{REQUEST_URI} =~ m#/example-runner/# || %{REQUEST_URI} =~ m#/examples/.+\\.[A-Za-z0-9]+$# || %{REQUEST_URI} =~ m#^/styles/bryntum-demo\\.css$#"
+
+
 # Released archive versions: fully immutable, so cache literally everything under them
 # indefinitely, not just specific asset types. Never applies to /studio/archive/, which stays
 # no-cache always (see studioArchiveNoCacheRules) or to a version still listed in the
 # in-flight block below, which overrides this back to no-cache for that version only.
 Header set Cache-Control "public, max-age=604800, s-maxage=31536000" "expr=%{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]#"
+# ...except error responses. Charts archives from 14.x serve their 404 through an ErrorDocument
+# under the archive, and the internal redirect to it matches the rule above. Overridden to
+# no-cache rather than left without a header, which CloudFront would cache for its default TTL.
+Header set Cache-Control "no-cache" "expr=%{REQUEST_STATUS} -ge 400 && %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]#"
 
 
 # Archived Studio versions: never cached. Does not apply to /studio/ itself.
@@ -87,11 +107,15 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
 </IfModule>
 
 
+# Let compressed responses revalidate: drop mod_deflate's "-gzip" ETag suffix from If-None-Match.
+RequestHeader edit* If-None-Match '-gzip"' '"'
+
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
     RewriteCond %{HTTP_HOST} !^(www\\.)?ag-grid\\.com$ [NC]
-    RewriteRule ^ - [S=238]
+    RewriteRule ^ - [S=228]
 
     # SE-64 / SE-66: single-hop chain shortening. These run before the https-upgrade and
     # host-swap so a matching legacy path on either www.ag-grid.com or ag-grid.com (any
@@ -249,13 +273,38 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     RewriteRule "^/?react-grid/licensing/$" "https://www.ag-grid.com/react-data-grid/community-vs-enterprise/" [R=301,L]
     RewriteRule "^/?react-grid/component-cell-editor/$" "https://www.ag-grid.com/react-data-grid/cell-editors/" [R=301,L]
     RewriteRule "^/?javascript-grid/server-side-model-high-frequency/$" "https://www.ag-grid.com/javascript-data-grid/server-side-model-updating-refresh/" [R=301,L]
+    RewriteRule "^/?javascript-grid/$" "https://www.ag-grid.com/javascript-data-grid/getting-started/" [R=301,L]
+    RewriteRule "^/?documentation/javascript/$" "https://www.ag-grid.com/javascript-data-grid/getting-started/" [R=301,L]
+    RewriteRule "^/?javascript-grid/server-side-model-refresh/$" "https://www.ag-grid.com/javascript-data-grid/server-side-model-updating-refresh/" [R=301,L]
+    RewriteRule "^/?javascript-grid/server-side-model-transactions/$" "https://www.ag-grid.com/javascript-data-grid/server-side-model-updating-transactions/" [R=301,L]
+    RewriteRule "^/?javascript-grid/server-side-operations-graphql/$" "https://www.ag-grid.com/javascript-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?javascript-grid/server-side-operations-nodejs/$" "https://www.ag-grid.com/javascript-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?javascript-grid/server-side-operations-oracle/$" "https://www.ag-grid.com/javascript-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?javascript-grid/server-side-operations-spark/$" "https://www.ag-grid.com/javascript-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?angular-grid/server-side-model-high-frequency/$" "https://www.ag-grid.com/angular-data-grid/server-side-model-updating-transactions/" [R=301,L]
+    RewriteRule "^/?angular-grid/server-side-model-transactions/$" "https://www.ag-grid.com/angular-data-grid/server-side-model-updating-transactions/" [R=301,L]
+    RewriteRule "^/?angular-grid/server-side-operations-graphql/$" "https://www.ag-grid.com/angular-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?angular-grid/server-side-operations-nodejs/$" "https://www.ag-grid.com/angular-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?angular-grid/server-side-operations-oracle/$" "https://www.ag-grid.com/angular-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?angular-grid/server-side-operations-spark/$" "https://www.ag-grid.com/angular-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?react-grid/server-side-model-high-frequency/$" "https://www.ag-grid.com/react-data-grid/server-side-model-updating-transactions/" [R=301,L]
+    RewriteRule "^/?react-grid/server-side-model-transactions/$" "https://www.ag-grid.com/react-data-grid/server-side-model-updating-transactions/" [R=301,L]
+    RewriteRule "^/?react-grid/server-side-operations-graphql/$" "https://www.ag-grid.com/react-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?react-grid/server-side-operations-nodejs/$" "https://www.ag-grid.com/react-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?react-grid/server-side-operations-oracle/$" "https://www.ag-grid.com/react-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?react-grid/server-side-operations-spark/$" "https://www.ag-grid.com/react-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?vue-grid/server-side-model-high-frequency/$" "https://www.ag-grid.com/vue-data-grid/server-side-model-updating-transactions/" [R=301,L]
+    RewriteRule "^/?vue-grid/server-side-model-transactions/$" "https://www.ag-grid.com/vue-data-grid/server-side-model-updating-transactions/" [R=301,L]
+    RewriteRule "^/?vue-grid/server-side-operations-graphql/$" "https://www.ag-grid.com/vue-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?vue-grid/server-side-operations-nodejs/$" "https://www.ag-grid.com/vue-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?vue-grid/server-side-operations-oracle/$" "https://www.ag-grid.com/vue-data-grid/server-side-model/" [R=301,L]
+    RewriteRule "^/?vue-grid/server-side-operations-spark/$" "https://www.ag-grid.com/vue-data-grid/server-side-model/" [R=301,L]
     RewriteRule "^/?react-data-grid/grouping-footers$" "https://www.ag-grid.com/react-data-grid/aggregation-total-rows/" [R=301,L]
     RewriteRule "^/?javascript-grid-server-side-model$" "https://www.ag-grid.com/javascript-data-grid/server-side-model/" [R=301,L]
     RewriteRule "^/?angular-grid-api$" "https://www.ag-grid.com/angular-data-grid/grid-api/" [R=301,L]
     RewriteRule "^/?ag-grid-changelog$" "https://www.ag-grid.com/changelog/" [R=301,L]
     RewriteRule "^/?example-react-redux$" "https://www.ag-grid.com/react-data-grid/getting-started/" [R=301,L]
     RewriteRule "^/?javascript-grid/building-typescript/$" "https://www.ag-grid.com/javascript-data-grid/installation/" [R=301,L]
-    RewriteRule "^/?charts/documentation$" "https://www.ag-grid.com/charts/documentation/" [R=301,L]
     RewriteRule "^/?documentation/javascript/server-side-model-row-stores/$" "https://www.ag-grid.com/javascript-data-grid/server-side-model-configuration/" [R=301,L]
     RewriteRule "^/?javascript-grid-value-formatters$" "https://www.ag-grid.com/javascript-data-grid/value-formatters/" [R=301,L]
     RewriteRule "^/?documentation/javascript/accessibility$" "https://www.ag-grid.com/javascript-data-grid/accessibility/" [R=301,L]
@@ -267,36 +316,23 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     RewriteRule "^/?angular-grid-filtering$" "https://www.ag-grid.com/angular-data-grid/filtering/" [R=301,L]
     RewriteRule "^/?javascript-grid-column-definitions$" "https://www.ag-grid.com/javascript-data-grid/column-definitions/" [R=301,L]
     RewriteRule "^/?angular-data-grid/cell-rendering/$" "https://www.ag-grid.com/angular-data-grid/component-cell-renderer/" [R=301,L]
-    RewriteRule "^/?charts/react/cone-funnel-series$" "https://www.ag-grid.com/charts/react/cone-funnel-series/" [R=301,L]
     RewriteRule "^/?javascript-data-grid/applying-theme-builder-styling-grid/$" "https://www.ag-grid.com/javascript-data-grid/theming/" [R=301,L]
-    RewriteRule "^/?charts/react/financial-charts-toolbar$" "https://www.ag-grid.com/charts/react/financial-charts-toolbar/" [R=301,L]
-    RewriteRule "^/?charts/react/api-state$" "https://www.ag-grid.com/charts/react/api-state/" [R=301,L]
     RewriteRule "^/?javascript-grid-cell-editor/$" "https://www.ag-grid.com/javascript-data-grid/cell-editors/" [R=301,L]
     RewriteRule "^/?documentation/javascript/component-header/$" "https://www.ag-grid.com/javascript-data-grid/column-headers/" [R=301,L]
     RewriteRule "^/?react-grid/getting-started/$" "https://www.ag-grid.com/react-data-grid/getting-started/" [R=301,L]
     RewriteRule "^/?javascript-grid-components/$" "https://www.ag-grid.com/javascript-data-grid/components/" [R=301,L]
     RewriteRule "^/?javascript-charts/overlays/$" "https://www.ag-grid.com/charts/javascript/quick-start/" [R=301,L]
-    RewriteRule "^/?charts/react/candlestick-series$" "https://www.ag-grid.com/charts/react/candlestick-series/" [R=301,L]
-    RewriteRule "^/?charts/react/zoom$" "https://www.ag-grid.com/charts/react/zoom/" [R=301,L]
     RewriteRule "^/?angular-data-grid/grid-properties/$" "https://www.ag-grid.com/angular-data-grid/grid-options/" [R=301,L]
     RewriteRule "^/?react-data-grid/cell-rendering/$" "https://www.ag-grid.com/react-data-grid/component-cell-renderer/" [R=301,L]
     RewriteRule "^/?javascript-data-grid/integrated-charts-toolbar/$" "https://www.ag-grid.com/javascript-data-grid/integrated-charts-menu/" [R=301,L]
     RewriteRule "^/?javascript-grid-data-update/$" "https://www.ag-grid.com/javascript-data-grid/data-update/" [R=301,L]
-    RewriteRule "^/?charts/react/linear-gauge$" "https://www.ag-grid.com/charts/react/linear-gauge/" [R=301,L]
     RewriteRule "^/?javascript-grid-provided-renderer-change/$" "https://www.ag-grid.com/javascript-data-grid/change-cell-renderers/" [R=301,L]
     RewriteRule "^/?javascript-charts/overview/$" "https://www.ag-grid.com/charts/javascript/quick-start/" [R=301,L]
     RewriteRule "^/?javascript-data-grid/grid-properties/$" "https://www.ag-grid.com/javascript-data-grid/grid-options/" [R=301,L]
     RewriteRule "^/?javascript-grid-cell-rendering-components/$" "https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/" [R=301,L]
     RewriteRule "^/?theme-builder$" "https://www.ag-grid.com/theme-builder/" [R=301,L]
     RewriteRule "^/?changelog$" "https://www.ag-grid.com/changelog/" [R=301,L]
-    RewriteRule "^/?charts/react/upgrade-to-ag-charts-11-2$" "https://www.ag-grid.com/charts/react/upgrade-to-ag-charts-11-2/" [R=301,L]
-    RewriteRule "^/?charts/react/upgrade-to-ag-charts-11-3$" "https://www.ag-grid.com/charts/react/upgrade-to-ag-charts-11-3/" [R=301,L]
-    RewriteRule "^/?charts/react/financial-charts$" "https://www.ag-grid.com/charts/react/financial-charts/" [R=301,L]
     RewriteRule "^/?javascript-data-grid/packages/$" "https://www.ag-grid.com/javascript-data-grid/modules/" [R=301,L]
-    RewriteRule "^/?charts/react/radial-gauge$" "https://www.ag-grid.com/charts/react/radial-gauge/" [R=301,L]
-    RewriteRule "^/?charts/react/range-bar-series$" "https://www.ag-grid.com/charts/react/range-bar-series/" [R=301,L]
-    RewriteRule "^/?charts/react/pyramid-series$" "https://www.ag-grid.com/charts/react/pyramid-series/" [R=301,L]
-    RewriteRule "^/?charts/react/ohlc-series$" "https://www.ag-grid.com/charts/react/ohlc-series/" [R=301,L]
     RewriteRule "^/?javascript-charts/bar-series/$" "https://www.ag-grid.com/charts/javascript/quick-start/" [R=301,L]
     RewriteRule "^/?documentation/vue/aggregation/$" "https://www.ag-grid.com/vue-data-grid/aggregation/" [R=301,L]
     RewriteRule "^/?vue-data-grid/cell-rendering/$" "https://www.ag-grid.com/vue-data-grid/component-cell-renderer/" [R=301,L]
@@ -304,7 +340,6 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     RewriteRule "^/?documentation/javascript/server-side-model/$" "https://www.ag-grid.com/javascript-data-grid/server-side-model/" [R=301,L]
     RewriteRule "^/?blog/charts/ag-charts-13-release-demos/high-frequency-synced-series$" "https://www.ag-grid.com/blog/charts/ag-charts-13-release-demos/high-frequency-synced-series/" [R=301,L]
     RewriteRule "^/?javascript-charts-overview/$" "https://www.ag-grid.com/charts/javascript/quick-start/" [R=301,L]
-    RewriteRule "^/?charts/react/funnel-series$" "https://www.ag-grid.com/charts/react/funnel-series/" [R=301,L]
     RewriteRule "^/?javascript-charts/pie-series/$" "https://www.ag-grid.com/charts/javascript/quick-start/" [R=301,L]
     RewriteRule "^/?javascript-grid-rendering-flow/$" "https://www.ag-grid.com/javascript-data-grid/cell-content/" [R=301,L]
     RewriteRule "^/?documentation/javascript/accessibility/$" "https://www.ag-grid.com/javascript-data-grid/accessibility/" [R=301,L]
@@ -315,29 +350,20 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     RewriteRule "^/?javascript-data-grid/grid-callbacks/$" "https://www.ag-grid.com/javascript-data-grid/grid-options/" [R=301,L]
     RewriteRule "^/?javascript-grid-cell-rendering/$" "https://www.ag-grid.com/javascript-data-grid/component-cell-renderer/" [R=301,L]
 
-    RewriteRule "^/?charts/(javascript|angular|react|vue)/bullet-series/?$" "https://www.ag-grid.com/charts/$1/linear-gauge/#bullet-series" [R=301,NE,L]
-    RewriteRule "^/?charts/(javascript|angular|react|vue)/fonts/?$" "https://www.ag-grid.com/charts/$1/text/" [R=301,L]
-    RewriteRule "^/?charts/(javascript|angular|react|vue)/?$" "https://www.ag-grid.com/charts/$1/quick-start/" [R=301,L]
-    RewriteRule "^/?charts/(javascript|react)/toolbar/?$" "https://www.ag-grid.com/charts/$1/financial-charts-toolbar/" [R=301,L]
-    RewriteRule "^/?charts/react/line/?$" "https://www.ag-grid.com/charts/react/line-series/" [R=301,L]
-    RewriteRule "^/?charts/archive/?$" "https://www.ag-grid.com/charts/documentation-archive/" [R=301,L]
-    RewriteRule "^/?charts/javascript-charts/javascript/(.+?)/?$" "https://www.ag-grid.com/charts/javascript/$1/" [R=301,L]
-    RewriteRule "^/?charts/angular-charts/angular/(.+?)/?$" "https://www.ag-grid.com/charts/angular/$1/" [R=301,L]
-    RewriteRule "^/?charts/react-charts/react/(.+?)/?$" "https://www.ag-grid.com/charts/react/$1/" [R=301,L]
-    RewriteRule "^/?charts/vue-charts/vue/(.+?)/?$" "https://www.ag-grid.com/charts/vue/$1/" [R=301,L]
-    RewriteRule "^/?charts/enterprise-charts/react/(.+?)/?$" "https://www.ag-grid.com/charts/react/$1/" [R=301,L]
-    RewriteRule "^/?charts/[a-z]+-charts/gallery(/.*)?$" "https://www.ag-grid.com/charts/gallery/" [R=301,L]
-    RewriteRule "^/?charts/[a-z]+-charts/options(/.*)?$" "https://www.ag-grid.com/charts/options/" [R=301,L]
-    RewriteRule "^/?charts/enterprise-charts/(?!index\\.html$).+$" "https://www.ag-grid.com/charts/enterprise-charts/" [R=301,L]
-    RewriteRule "^/?charts/(?:core|side)/?$" "https://www.ag-grid.com/charts/javascript/quick-start/" [R=301,L]
-    RewriteRule "^/?charts/core/(.+?)/?$" "https://www.ag-grid.com/charts/javascript/$1/" [R=301,L]
-    RewriteRule "^/?charts/side/(.+?)/?$" "https://www.ag-grid.com/charts/javascript/$1/" [R=301,L]
-    RewriteRule "^/?charts/server-side-rendering(/.*)?$" "https://www.ag-grid.com/charts/javascript/server-side-rendering/" [R=301,L]
-    RewriteRule "^/?charts/(javascript|angular|react|vue)/series(/.*)?$" "https://www.ag-grid.com/charts/$1/bar-series/" [R=301,L]
-    RewriteRule "^/?charts/(javascript|angular|react|vue)/axes(/.*)?$" "https://www.ag-grid.com/charts/$1/axes-configuration/" [R=301,L]
-
-    RewriteCond %{REQUEST_URI} /+[^.]+$
-    RewriteRule "^/?(charts/.+[^/])$" "https://www.ag-grid.com/$1/" [R=301,L]
+    # Slash-less directory URLs on a non-canonical host or scheme: add the slash and canonicalise
+    # in the same hop.
+    RewriteCond %{HTTP_HOST}:%{SERVER_PORT} ^(?:www\\.ag-grid\\.com:80|(?:ag-grid\\.com|angulargrid\\.ag-grid\\.com|angular-grid\\.ag-grid\\.com|javascript-grid\\.ag-grid\\.com|react-grid\\.ag-grid\\.com|angulargrid\\.com|www\\.angulargrid\\.com):[0-9]+)$ [NC]
+    RewriteCond %{REQUEST_URI} /+[^\\.]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/[A-F0-9]{32}\\.txt(?:\\ Comodo\\ DCV)?$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/(?:\\ Ballot169)?
+    RewriteRule ^(.+[^/])$ https://www.ag-grid.com%{REQUEST_URI}/ [R=301,L]
+    # A bare archive root on a non-canonical host or scheme: add the slash and canonicalise in the
+    # same hop.
+    RewriteCond %{HTTP_HOST}:%{SERVER_PORT} ^(?:www\\.ag-grid\\.com:80|(?:ag-grid\\.com|angulargrid\\.ag-grid\\.com|angular-grid\\.ag-grid\\.com|javascript-grid\\.ag-grid\\.com|react-grid\\.ag-grid\\.com|angulargrid\\.com|www\\.angulargrid\\.com):[0-9]+)$ [NC]
+    RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
+    RewriteRule ^archive/[^/]+$ https://www.ag-grid.com%{REQUEST_URI}/ [R=301,L]
 
     # Always use https for secure connections (scoped to www/bare domain only
     # so that charts.ag-grid.com and studio.ag-grid.com are not affected)
@@ -643,6 +669,10 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
 
     # Add trailing slash for directories
     RewriteCond %{REQUEST_URI} /+[^\\.]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/[A-F0-9]{32}\\.txt(?:\\ Comodo\\ DCV)?$
+    RewriteCond %{REQUEST_URI} !^/\\.well-known/pki-validation/(?:\\ Ballot169)?
     RewriteRule ^(.+[^/])$ %{REQUEST_URI}/ [R=301,L]
 
     # Redirect paths after a php file (ie index.php/path/path => index.php)
@@ -653,6 +683,10 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     RedirectMatch 302 ^/theo/$ https://www.ag-grid.com/
     
     Redirect 301 /sitemap.xml https://www.ag-grid.com/sitemap-index.xml
+    RedirectMatch 301 "^/documentation/javascript/charts.*" "https://www.ag-grid.com/charts/javascript/quick-start/"
+    RedirectMatch 301 "^/documentation/angular/charts.*" "https://www.ag-grid.com/charts/angular/quick-start/"
+    RedirectMatch 301 "^/documentation/react/charts.*" "https://www.ag-grid.com/charts/react/quick-start/"
+    RedirectMatch 301 "^/documentation/vue/charts.*" "https://www.ag-grid.com/charts/vue/quick-start/"
     Redirect 301 /introducing-the-ag-grid-model-context-protocol-mcp-server/ https://www.ag-grid.com/blog/introducing-the-ag-grid-model-context-protocol-mcp-server/
     Redirect 301 /javascript-data-grid/grouping-sticky-groups/ /javascript-data-grid/grouping-display-types/
     Redirect 301 /javascript-data-grid/global-style-upgrading-to-v28/ /javascript-data-grid/theming-v32-upgrading-to-v28/
@@ -672,7 +706,7 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /react-grid/ /react-data-grid/
     Redirect 301 /angular-grid/ /angular-data-grid/
     Redirect 301 /vue-grid/ /vue-data-grid/
-    Redirect 301 /ag-grid-8-performance-hacks-for-javascript/ /javascript-data-grid/
+    Redirect 301 /ag-grid-8-performance-hacks-for-javascript/ /javascript-data-grid/getting-started/
     Redirect 301 /ag-grid-angular-aot-dynamic-components/ https://medium.com/ag-grid/understanding-aot-and-dynamic-components-in-angular-2-9b7548ce5845
     Redirect 301 /ag-grid-angular-connect-2016/ https://medium.com/ag-grid/were-gonna-need-a-bigger-boat-from-speaker-to-sponsor-with-ag-grid-cf5e01a2d9ba
     Redirect 301 /ag-grid-angular-systemjs/ /angular-data-grid/
@@ -699,7 +733,7 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /ag-grid-building/ /javascript-data-grid/installation/
     Redirect 301 /javascript-data-grid/building/ /javascript-data-grid/installation/
     Redirect 301 /javascript-data-grid/npm/ /javascript-data-grid/installation/
-    Redirect 301 /javascript-data-grid/download/ /javascript-data-grid/installation
+    Redirect 301 /javascript-data-grid/download/ /javascript-data-grid/installation/
     Redirect 301 /ag-grid-datagrid-crud-part-1/ https://medium.com/ag-grid/building-a-crud-application-with-ag-grid-part-1-bf7f9715166e
     Redirect 301 /ag-grid-datagrid-crud-part-2/ https://medium.com/ag-grid/building-a-crud-application-with-ag-grid-part-2-c5e5e4548bf
     Redirect 301 /ag-grid-datagrid-crud-part-4/ https://medium.com/ag-grid/building-a-crud-application-with-ag-grid-part-4-3189034df922
@@ -959,7 +993,6 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /documentation/angular/status-bar/ /angular-data-grid/status-bar/
     Redirect 301 /documentation/angular/supported-browsers/ /angular-data-grid/supported-browsers/
     Redirect 301 /documentation/angular/systemjs/ /angular-data-grid/
-    Redirect 301 /angular-data-grid/systemjs/ /angular-data-grid/
     Redirect 301 /documentation/angular/testing/ /angular-data-grid/testing/
     Redirect 301 /documentation/angular/themes-customising/ /angular-data-grid/themes/
     Redirect 301 /documentation/angular/themes-provided/ /angular-data-grid/themes/
@@ -977,13 +1010,10 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /documentation/angular/view-refresh/ /angular-data-grid/view-refresh/
     Redirect 301 /documentation/angular/viewport/ /angular-data-grid/viewport/
     Redirect 301 /documentation/angular/webpack-2/ /angular-data-grid/
-    Redirect 301 /angular-data-grid/webpack-2/ /angular-data-grid/
     Redirect 301 /documentation/angular/webpack-3/ /angular-data-grid/
-    Redirect 301 /angular-data-grid/webpack-3/ /angular-data-grid/
     Redirect 301 /documentation/angular/webpack/ /angular-data-grid/
-    Redirect 301 /angular-data-grid/webpack/ /angular-data-grid/
     Redirect 301 /documentation/angular/ /angular-data-grid/
-    Redirect 301 /documentation/javascript/8-performance-hacks-for-javascript/ /javascript-data-grid/
+    Redirect 301 /documentation/javascript/8-performance-hacks-for-javascript/ /javascript-data-grid/getting-started/
     Redirect 301 /documentation/javascript/accessibility/ /javascript-data-grid/accessibility/
     Redirect 301 /documentation/javascript/accessing-data/ /javascript-data-grid/accessing-data/
     Redirect 301 /documentation/javascript/aggregation/ /javascript-data-grid/aggregation/
@@ -1131,7 +1161,6 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /documentation/javascript/scrolling-scenarios/ /javascript-data-grid/scrolling-performance/
     Redirect 301 /documentation/javascript/security/ /javascript-data-grid/security/
     Redirect 301 /documentation/javascript/selection-overview/ /javascript-data-grid/row-selection/
-    Redirect 301 /documentation/javascript/selection/ /javascript-data-grid/row-selection/
     Redirect 301 /documentation/javascript/selection/ /javascript-data-grid/row-selection/
     Redirect 301 /documentation/javascript/server-side-model-changing-columns/ /javascript-data-grid/server-side-model-changing-columns/
     Redirect 301 /documentation/javascript/server-side-model-datasource/ /javascript-data-grid/server-side-model-datasource/
@@ -1667,7 +1696,6 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /javascript-grid-model/ /javascript-data-grid/row-models/
     Redirect 301 /javascript-grid-modules-building/ /javascript-data-grid/modules/
     Redirect 301 /javascript-grid-modules-more-details/ /javascript-data-grid/modules/
-    Redirect 301 /javascript-data-grid/modules-more-details/ /javascript-data-grid/modules/
     Redirect 301 /javascript-grid-modules/ /javascript-data-grid/modules/
     Redirect 301 /javascript-grid-npm/ /javascript-data-grid/installation/
     Redirect 301 /javascript-grid-openfin-dashboard/ https://www.ag-grid.com/
@@ -1847,7 +1875,6 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /javascript-grid/group-cell-renderer/ /javascript-data-grid/grouping/
     Redirect 301 /javascript-grid/grouping/ /javascript-data-grid/grouping/
     Redirect 301 /javascript-grid/immutable-data/ https://www.ag-grid.com/
-    Redirect 301 /javascript-data-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /javascript-grid/index.html /javascript-data-grid/getting-started/
     Redirect 301 /javascript-grid/infinite-scrolling/ /javascript-data-grid/infinite-scrolling/
     Redirect 301 /javascript-grid/integrated-charts/ /javascript-data-grid/integrated-charts/
@@ -1873,7 +1900,6 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /javascript-grid/modules/ /javascript-data-grid/modules/
     Redirect 301 /javascript-grid/modules-building/ /javascript-data-grid/modules/
     Redirect 301 /javascript-grid/modules-more-details/ /javascript-data-grid/modules/
-    Redirect 301 /javascript-data-grid/modules-more-details/ /javascript-data-grid/modules/
     Redirect 301 /javascript-grid/overlays/ /javascript-data-grid/overlays/
     Redirect 301 /javascript-grid/packages/ /javascript-data-grid/modules/
     Redirect 301 /javascript-grid/packages-modules/ /javascript-data-grid/modules/
@@ -1910,18 +1936,15 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /javascript-grid/server-side-model-filtering/ /javascript-data-grid/server-side-model-filtering/
     Redirect 301 /javascript-grid/server-side-model-grouping/ /javascript-data-grid/server-side-model-grouping/
     Redirect 301 /javascript-grid/server-side-model-high-frequency/ /javascript-data-grid/server-side-model-updating-refresh/
-    Redirect 301 /javascript-data-grid/server-side-model-high-frequency/ /javascript-data-grid/server-side-model-updating-refresh/
     Redirect 301 /javascript-grid/server-side-model-master-detail/ /javascript-data-grid/server-side-model-master-detail/
     Redirect 301 /javascript-grid/server-side-model-pagination/ /javascript-data-grid/server-side-model-pagination/
     Redirect 301 /javascript-grid/server-side-model-pivoting/ /javascript-data-grid/server-side-model-pivoting/
     Redirect 301 /javascript-grid/server-side-model-refresh/ /javascript-data-grid/server-side-model-updating-refresh/
-    Redirect 301 /javascript-data-grid/server-side-model-refresh/ /javascript-data-grid/server-side-model-updating-refresh/
     Redirect 301 /javascript-grid/server-side-model-retry/ /javascript-data-grid/server-side-model-retry/
     Redirect 301 /javascript-grid/server-side-model-row-height/ /javascript-data-grid/server-side-model-row-height/
     Redirect 301 /javascript-grid/server-side-model-selection/ /javascript-data-grid/server-side-model-selection/
     Redirect 301 /javascript-grid/server-side-model-sorting/ /javascript-data-grid/server-side-model-sorting/
     Redirect 301 /javascript-grid/server-side-model-transactions/ /javascript-data-grid/server-side-model-updating-transactions/
-    Redirect 301 /javascript-data-grid/server-side-model-transactions/ /javascript-data-grid/server-side-model-updating-transactions/
     Redirect 301 /javascript-grid/server-side-model-tree-data/ /javascript-data-grid/server-side-model-tree-data/
     Redirect 301 /javascript-grid/server-side-model-updating/ /javascript-data-grid/server-side-model-updating/
     Redirect 301 /javascript-grid/server-side-operations-graphql/ /javascript-data-grid/server-side-model/
@@ -2044,7 +2067,6 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /angular-grid/group-cell-renderer/ /angular-data-grid/grouping/
     Redirect 301 /angular-grid/grouping/ /angular-data-grid/grouping/
     Redirect 301 /angular-grid/immutable-data/ https://www.ag-grid.com/
-    Redirect 301 /angular-data-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /angular-grid/index.html /angular-data-grid/getting-started/
     Redirect 301 /angular-grid/infinite-scrolling/ /angular-data-grid/infinite-scrolling/
     Redirect 301 /angular-grid/integrated-charts/ /angular-data-grid/integrated-charts/
@@ -2069,9 +2091,7 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /angular-grid/master-detail-refresh/ /angular-data-grid/master-detail-refresh/
     Redirect 301 /angular-grid/modules/ /angular-data-grid/modules/
     Redirect 301 /angular-grid/modules-building/ /angular-data-grid/modules/
-    Redirect 301 /angular-data-grid/modules-building/ /angular-data-grid/modules/
     Redirect 301 /angular-grid/modules-more-details/ /angular-data-grid/modules/
-    Redirect 301 /angular-data-grid/modules-more-details/ /angular-data-grid/modules/
     Redirect 301 /angular-grid/overlays/ /angular-data-grid/overlays/
     Redirect 301 /angular-grid/packages/ /angular-data-grid/modules/
     Redirect 301 /angular-grid/packages-modules/ /angular-data-grid/modules/
@@ -2109,18 +2129,15 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /angular-grid/server-side-model-filtering/ /angular-data-grid/server-side-model-filtering/
     Redirect 301 /angular-grid/server-side-model-grouping/ /angular-data-grid/server-side-model-grouping/
     Redirect 301 /angular-grid/server-side-model-high-frequency/ /angular-data-grid/server-side-model-updating-transactions/
-    Redirect 301 /angular-data-grid/server-side-model-high-frequency/ /angular-data-grid/server-side-model-updating-transactions/
     Redirect 301 /angular-grid/server-side-model-master-detail/ /angular-data-grid/server-side-model-master-detail/
     Redirect 301 /angular-grid/server-side-model-pagination/ /angular-data-grid/server-side-model-pagination/
     Redirect 301 /angular-grid/server-side-model-pivoting/ /angular-data-grid/server-side-model-pivoting/
     Redirect 301 /angular-grid/server-side-model-refresh/ /angular-data-grid/server-side-model-updating-refresh/
-    Redirect 301 /angular-data-grid/server-side-model-refresh/ /angular-data-grid/server-side-model-updating-refresh/
     Redirect 301 /angular-grid/server-side-model-retry/ /angular-data-grid/server-side-model-retry/
     Redirect 301 /angular-grid/server-side-model-row-height/ /angular-data-grid/server-side-model-row-height/
     Redirect 301 /angular-grid/server-side-model-selection/ /angular-data-grid/server-side-model-selection/
     Redirect 301 /angular-grid/server-side-model-sorting/ /angular-data-grid/server-side-model-sorting/
     Redirect 301 /angular-grid/server-side-model-transactions/ /angular-data-grid/server-side-model-updating-transactions/
-    Redirect 301 /angular-data-grid/server-side-model-transactions/ /angular-data-grid/server-side-model-updating-transactions/
     Redirect 301 /angular-grid/server-side-model-tree-data/ /angular-data-grid/server-side-model-tree-data/
     Redirect 301 /angular-grid/server-side-model-updating/ /angular-data-grid/server-side-model-updating/
     Redirect 301 /angular-grid/server-side-operations-graphql/ /angular-data-grid/server-side-model/
@@ -2246,7 +2263,6 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /react-grid/group-cell-renderer/ /react-data-grid/grouping/
     Redirect 301 /react-grid/grouping/ /react-data-grid/grouping/
     Redirect 301 /react-grid/immutable-data/ https://www.ag-grid.com/
-    Redirect 301 /react-data-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /react-grid/index.html /react-data-grid/getting-started/
     Redirect 301 /react-grid/infinite-scrolling/ /react-data-grid/infinite-scrolling/
     Redirect 301 /react-grid/integrated-charts/ /react-data-grid/integrated-charts/
@@ -2271,9 +2287,7 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /react-grid/master-detail-refresh/ /react-data-grid/master-detail-refresh/
     Redirect 301 /react-grid/modules/ /react-data-grid/modules/
     Redirect 301 /react-grid/modules-building/ /react-data-grid/modules/
-    Redirect 301 /react-data-grid/modules-building/ /react-data-grid/modules/
     Redirect 301 /react-grid/modules-more-details/ /react-data-grid/modules/
-    Redirect 301 /react-data-grid/modules-more-details/ /react-data-grid/modules/
     Redirect 301 /react-grid/overlays/ /react-data-grid/overlays/
     Redirect 301 /react-grid/packages/ /react-data-grid/modules/
     Redirect 301 /react-grid/packages-modules/ /react-data-grid/modules/
@@ -2314,18 +2328,15 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /react-grid/server-side-model-filtering/ /react-data-grid/server-side-model-filtering/
     Redirect 301 /react-grid/server-side-model-grouping/ /react-data-grid/server-side-model-grouping/
     Redirect 301 /react-grid/server-side-model-high-frequency/ /react-data-grid/server-side-model-updating-transactions/
-    Redirect 301 /react-data-grid/server-side-model-high-frequency/ /react-data-grid/server-side-model-updating-transactions/
     Redirect 301 /react-grid/server-side-model-master-detail/ /react-data-grid/server-side-model-master-detail/
     Redirect 301 /react-grid/server-side-model-pagination/ /react-data-grid/server-side-model-pagination/
     Redirect 301 /react-grid/server-side-model-pivoting/ /react-data-grid/server-side-model-pivoting/
     Redirect 301 /react-grid/server-side-model-refresh/ /react-data-grid/server-side-model-updating-refresh/
-    Redirect 301 /react-data-grid/server-side-model-refresh/ /react-data-grid/server-side-model-updating-refresh/
     Redirect 301 /react-grid/server-side-model-retry/ /react-data-grid/server-side-model-retry/
     Redirect 301 /react-grid/server-side-model-row-height/ /react-data-grid/server-side-model-row-height/
     Redirect 301 /react-grid/server-side-model-selection/ /react-data-grid/server-side-model-selection/
     Redirect 301 /react-grid/server-side-model-sorting/ /react-data-grid/server-side-model-sorting/
     Redirect 301 /react-grid/server-side-model-transactions/ /react-data-grid/server-side-model-updating-transactions/
-    Redirect 301 /react-data-grid/server-side-model-transactions/ /react-data-grid/server-side-model-updating-transactions/
     Redirect 301 /react-grid/server-side-model-tree-data/ /react-data-grid/server-side-model-tree-data/
     Redirect 301 /react-grid/server-side-model-updating/ /react-data-grid/server-side-model-updating/
     Redirect 301 /react-grid/server-side-operations-graphql/ /react-data-grid/server-side-model/
@@ -2448,7 +2459,6 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /vue-grid/group-cell-renderer/ /vue-data-grid/grouping/
     Redirect 301 /vue-grid/grouping/ /vue-data-grid/grouping/
     Redirect 301 /vue-grid/immutable-data/ https://www.ag-grid.com/
-    Redirect 301 /vue-data-grid/immutable-data/ https://www.ag-grid.com/
     Redirect 301 /vue-grid/index.html /vue-data-grid/getting-started/
     Redirect 301 /vue-grid/infinite-scrolling/ /vue-data-grid/infinite-scrolling/
     Redirect 301 /vue-grid/integrated-charts/ /vue-data-grid/integrated-charts/
@@ -2473,9 +2483,7 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /vue-grid/master-detail-refresh/ /vue-data-grid/master-detail-refresh/
     Redirect 301 /vue-grid/modules/ /vue-data-grid/modules/
     Redirect 301 /vue-grid/modules-building/ /vue-data-grid/modules/
-    Redirect 301 /vue-data-grid/modules-building/ /vue-data-grid/modules/
     Redirect 301 /vue-grid/modules-more-details/ /vue-data-grid/modules/
-    Redirect 301 /vue-data-grid/modules-more-details/ /vue-data-grid/modules/
     Redirect 301 /vue-grid/overlays/ /vue-data-grid/overlays/
     Redirect 301 /vue-grid/packages/ /vue-data-grid/modules/
     Redirect 301 /vue-grid/packages-modules/ /vue-data-grid/modules/
@@ -2513,18 +2521,15 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /vue-grid/server-side-model-filtering/ /vue-data-grid/server-side-model-filtering/
     Redirect 301 /vue-grid/server-side-model-grouping/ /vue-data-grid/server-side-model-grouping/
     Redirect 301 /vue-grid/server-side-model-high-frequency/ /vue-data-grid/server-side-model-updating-transactions/
-    Redirect 301 /vue-data-grid/server-side-model-high-frequency/ /vue-data-grid/server-side-model-updating-transactions/
     Redirect 301 /vue-grid/server-side-model-master-detail/ /vue-data-grid/server-side-model-master-detail/
     Redirect 301 /vue-grid/server-side-model-pagination/ /vue-data-grid/server-side-model-pagination/
     Redirect 301 /vue-grid/server-side-model-pivoting/ /vue-data-grid/server-side-model-pivoting/
     Redirect 301 /vue-grid/server-side-model-refresh/ /vue-data-grid/server-side-model-updating-refresh/
-    Redirect 301 /vue-data-grid/server-side-model-refresh/ /vue-data-grid/server-side-model-updating-refresh/
     Redirect 301 /vue-grid/server-side-model-retry/ /vue-data-grid/server-side-model-retry/
     Redirect 301 /vue-grid/server-side-model-row-height/ /vue-data-grid/server-side-model-row-height/
     Redirect 301 /vue-grid/server-side-model-selection/ /vue-data-grid/server-side-model-selection/
     Redirect 301 /vue-grid/server-side-model-sorting/ /vue-data-grid/server-side-model-sorting/
     Redirect 301 /vue-grid/server-side-model-transactions/ /vue-data-grid/server-side-model-updating-transactions/
-    Redirect 301 /vue-data-grid/server-side-model-transactions/ /vue-data-grid/server-side-model-updating-transactions/
     Redirect 301 /vue-grid/server-side-model-tree-data/ /vue-data-grid/server-side-model-tree-data/
     Redirect 301 /vue-grid/server-side-model-updating/ /vue-data-grid/server-side-model-updating/
     Redirect 301 /vue-grid/server-side-operations-graphql/ /vue-data-grid/server-side-model/
@@ -2614,10 +2619,6 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     RedirectMatch 301 "^/angular-charts.*" "https://www.ag-grid.com/charts/angular/quick-start/"
     RedirectMatch 301 "^/react-charts.*" "https://www.ag-grid.com/charts/react/quick-start/"
     RedirectMatch 301 "^/vue-charts.*" "https://www.ag-grid.com/charts/vue/quick-start/"
-    RedirectMatch 301 "^/documentation/javascript/charts.*" "https://www.ag-grid.com/charts/javascript/quick-start/"
-    RedirectMatch 301 "^/documentation/angular/charts.*" "https://www.ag-grid.com/charts/angular/quick-start/"
-    RedirectMatch 301 "^/documentation/react/charts.*" "https://www.ag-grid.com/charts/react/quick-start/"
-    RedirectMatch 301 "^/documentation/vue/charts.*" "https://www.ag-grid.com/charts/vue/quick-start/"
     RedirectMatch 301 "^/archive/$" "/documentation-archive/"
     Redirect 301 /javascript-data-grid/component-types/ /javascript-data-grid/components/
     Redirect 301 /angular-data-grid/component-types/ /angular-data-grid/components/
@@ -2681,10 +2682,9 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /angular-data-grid/integrated-charts-toolbar/ /angular-data-grid/integrated-charts-menu/
     Redirect 301 /react-data-grid/integrated-charts-toolbar/ /react-data-grid/integrated-charts-menu/
     Redirect 301 /vue-data-grid/integrated-charts-toolbar/ /vue-data-grid/integrated-charts-menu/
-    Redirect 301 /javascript-data-grid/building/ /javascript-data-grid/modules/
-    Redirect 301 /angular-data-grid/building/ /angular-data-grid/modules/
-    Redirect 301 /react-data-grid/building/ /react-data-grid/modules/
-    Redirect 301 /vue-data-grid/building/ /vue-data-grid/modules/
+    Redirect 301 /angular-data-grid/building/ /angular-data-grid/installation/
+    Redirect 301 /react-data-grid/building/ /react-data-grid/installation/
+    Redirect 301 /vue-data-grid/building/ /vue-data-grid/installation/
     Redirect 301 /javascript-data-grid/packages-modules/ /javascript-data-grid/modules/
     Redirect 301 /angular-data-grid/packages-modules/ /angular-data-grid/modules/
     Redirect 301 /react-data-grid/packages-modules/ /react-data-grid/modules/
@@ -2694,9 +2694,6 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /react-data-grid/packages/ /react-data-grid/modules/
     Redirect 301 /vue-data-grid/packages/ /vue-data-grid/modules/
     Redirect 301 /javascript-data-grid/modules-building/ /javascript-data-grid/modules/
-    Redirect 301 /angular-data-grid/modules-building/ /angular-data-grid/modules/
-    Redirect 301 /react-data-grid/modules-building/ /react-data-grid/modules/
-    Redirect 301 /vue-data-grid/modules-building/ /vue-data-grid/modules/
     Redirect 301 /javascript-data-grid/client-side-model/ /javascript-data-grid/row-models/
     Redirect 301 /angular-data-grid/client-side-model/ /angular-data-grid/row-models/
     Redirect 301 /react-data-grid/client-side-model/ /react-data-grid/row-models/
@@ -2725,7 +2722,7 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /vue-data-grid/whats-new /whats-new
     Redirect 301 /angular-data-grid/whats-new /whats-new
     Redirect 301 /javascript-data-grid/whats-new /whats-new
-    Redirect 301 /vue-data-grid/framework-data-flow /vue-data-grid/getting-started/
+    Redirect 301 /vue-data-grid/framework-data-flow/ /vue-data-grid/getting-started/
     Redirect 301 /react-data-grid/licensing/ /react-data-grid/community-vs-enterprise/
     Redirect 301 /vue-data-grid/licensing/ /vue-data-grid/community-vs-enterprise/
     Redirect 301 /angular-data-grid/licensing/ /angular-data-grid/community-vs-enterprise/
@@ -2864,10 +2861,10 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     Redirect 301 /angular-data-grid/upgrading-to-ag-grid-32-2 /angular-data-grid/upgrading-to-ag-grid-32-2-1
     Redirect 301 /react-data-grid/upgrading-to-ag-grid-32-2 /react-data-grid/upgrading-to-ag-grid-32-2-1
     Redirect 301 /vue-data-grid/upgrading-to-ag-grid-32-2 /vue-data-grid/upgrading-to-ag-grid-32-2-1
-    Redirect 301 /javascript-data-grid/accented-sort /javascript-data-grid/#locale-specific-sort
-    Redirect 301 /angular-data-grid/accented-sort /angular-data-grid/#locale-specific-sort
-    Redirect 301 /react-data-grid/accented-sort /react-data-grid/#locale-specific-sort
-    Redirect 301 /vue-data-grid/accented-sort /vue-data-grid/#locale-specific-sort
+    Redirect 301 /javascript-data-grid/accented-sort/ /javascript-data-grid/row-sorting/#locale-specific-sort
+    Redirect 301 /angular-data-grid/accented-sort/ /angular-data-grid/row-sorting/#locale-specific-sort
+    Redirect 301 /react-data-grid/accented-sort/ /react-data-grid/row-sorting/#locale-specific-sort
+    Redirect 301 /vue-data-grid/accented-sort/ /vue-data-grid/row-sorting/#locale-specific-sort
     Redirect 301 /javascript-data-grid/server-side-operations-nodejs /javascript-data-grid/server-side-model
     Redirect 301 /angular-data-grid/server-side-operations-nodejs /angular-data-grid/server-side-model
     Redirect 301 /react-data-grid/server-side-operations-nodejs /react-data-grid/server-side-model
@@ -3012,6 +3009,13 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
 </IfModule>
 
 
+# A bare archive root on a non-canonical host or scheme, where the archive has its own .htaccess:
+# add the slash and canonicalise in one hop (mod_rewrite leaves this request to mod_dir).
+<If "'%{HTTP_HOST}:%{SERVER_PORT}' =~ m#^(?:www\\.ag-grid\\.com:80|(?:ag-grid\\.com|angulargrid\\.ag-grid\\.com|angular-grid\\.ag-grid\\.com|javascript-grid\\.ag-grid\\.com|react-grid\\.ag-grid\\.com|angulargrid\\.com|www\\.angulargrid\\.com|blog\\.ag-grid\\.com):[0-9]+)$#i && %{REQUEST_URI} =~ m#^/(?:charts/|studio/)?archive/[^/]+$# && -d '%{DOCUMENT_ROOT}%{REQUEST_URI}'">
+    Redirect 301 "https://www.ag-grid.com%{REQUEST_URI}/"
+</If>
+
+
 # X-Frame-Options intentionally omitted: it can't allow-list subdomains, so it blocks
 # blog.ag-grid.com (and other *.ag-grid.com) from embedding examples. Clickjacking
 # protection is handled by the CSP frame-ancestors directive instead (see cspRules.ts).
@@ -3020,7 +3024,7 @@ Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 
 # SE-80: negotiated pages content-negotiate on Accept (see the markdown rewrite), so shared
 # caches must key on it. Scoped to the negotiated paths so the rest of the site keeps its default.
-<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/.]+|(?:react|angular|vue)-data-grid|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|cookies|eula/(?:commercial|community)|modern-slavery|privacy|terms-of-use|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)/?$# || %{REQUEST_URI} == '/'">
+<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/.]+|(?:react|angular|vue)-data-grid|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|cookies|eula/(?:commercial|community)|modern-slavery|privacy|terms-of-use|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)(?:/|/index\\.html)?$# || %{REQUEST_URI} =~ m#^/(?:index\\.html)?$#">
     Header append Vary Accept
 </If>
 
@@ -3092,8 +3096,16 @@ AddType text/markdown md
 AddCharset utf-8 .md
 
 
-# Current pages: always revalidate. Excludes /archive/<v>/ which is immutable.
-Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/html# && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# )"
+# Default for every response no later rule matches: never left to a browser's heuristic lifetime.
+Header set Cache-Control "no-cache"
+
+
+# Current pages and their markdown variants: always revalidate. Excludes /archive/<v>/ which is immutable.
+Header set Cache-Control "no-cache" "expr=%{CONTENT_TYPE} =~ m#^text/(html|markdown)# && !( %{REQUEST_URI} =~ m#^/(charts/)?archive/[0-9]# )"
+
+
+# Redirects: never cached, so a cached Location cannot carry one visitor's query string to another.
+Header always set Cache-Control "no-cache" "expr=%{REQUEST_STATUS} -ge 300 && %{REQUEST_STATUS} -lt 400 && %{REQUEST_STATUS} -ne 304"
 
 
 # Archived Studio versions: never cached. Does not apply to /studio/ itself.
@@ -3108,6 +3120,10 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
 
 # BEGIN in-flight release archives - patched in place, do not edit by hand
 # END in-flight release archives
+
+
+# Let compressed responses revalidate: drop mod_deflate's "-gzip" ETag suffix from If-None-Match.
+RequestHeader edit* If-None-Match '-gzip"' '"'
 
 
 <IfModule mod_rewrite.c>
@@ -3129,7 +3145,7 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
 
 # SE-80: negotiated pages content-negotiate on Accept (see the markdown rewrite), so shared
 # caches must key on it. Scoped to the negotiated paths so the rest of the site keeps its default.
-<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/.]+|(?:react|angular|vue)-data-grid|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|cookies|eula/(?:commercial|community)|modern-slavery|privacy|terms-of-use|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)/?$# || %{REQUEST_URI} == '/'">
+<If "%{REQUEST_URI} =~ m#^/(?:(?:react|angular|vue|javascript)-data-grid/[^/.]+|(?:react|angular|vue)-data-grid|about|changelog|documentation-archive|example|license-pricing|pipeline|roadmap|whats-new|community(?:/(?:beyond-the-prompt|events|media|showcase|tools-extensions))?|session/[^/.]+|campaigns/bryntum-[^/.]+|landing-pages/[^/.]+|react-table|cookies|eula/(?:commercial|community)|modern-slavery|privacy|terms-of-use|example-(?:finance|hr|inventory)|contact|niall|licensing|reference|sitemap|theme-builder)(?:/|/index\\.html)?$# || %{REQUEST_URI} =~ m#^/(?:index\\.html)?$#">
     Header append Vary Accept
 </If>
 

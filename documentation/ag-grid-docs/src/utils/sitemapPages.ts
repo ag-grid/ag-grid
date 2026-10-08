@@ -39,5 +39,10 @@ export async function getSitemapAllowPaths() {
         urlWithBaseUrl('/campaigns/bryntum-task-board'),
     ];
 
-    return allowPaths.map(addTrailingSlash);
+    // SE-182: the bare archive roots 301 to the documentation archive. `$` opens the exact root
+    // only (it outranks the archive Disallow by one character), so the redirect is crawlable while
+    // every archived page stays blocked. Studio's root is absent: it returns 403, not a redirect.
+    const archiveRoots = [urlWithBaseUrl('/archive/$'), urlWithBaseUrl('/charts/archive/$')];
+
+    return allowPaths.map(addTrailingSlash).concat(archiveRoots);
 }
