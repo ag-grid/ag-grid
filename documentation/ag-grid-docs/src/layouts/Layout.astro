@@ -31,6 +31,7 @@ import WebsiteMonitoring from '@ag-website-shared/components/website-monitoring/
 import { type JsonLdObject } from '@ag-website-shared/utils/structuredData';
 import { buildSiteStructuredData } from '@utils/docsStructuredData';
 import { getSocialImageUrl } from '@utils/socialImageUrl';
+import CspZoneNavigation from '@ag-website-shared/components/csp-zone/CspZoneNavigation.astro';
 
 interface Props {
     title: string;
@@ -151,6 +152,7 @@ const announcementBannerProps = {
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
         <ClientRouter />
+        <CspZoneNavigation />
         {!isStaging && <link rel="canonical" href={canonicalUrl} />}
         {markdownUrl && <link rel="alternate" type="text/markdown" href={markdownUrl} />}
         {
