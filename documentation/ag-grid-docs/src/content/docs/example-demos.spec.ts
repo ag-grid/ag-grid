@@ -71,19 +71,23 @@ test.describe('Demo page header layout', () => {
                 const heading = copy.getByRole('heading', { level: 1 });
                 await expect(heading).toBeVisible();
 
-                const copyBox = await copy.boundingBox();
-                const headingBox = await heading.boundingBox();
-                const linksBox = await copy.getByRole('link', { name: 'See On GitHub' }).boundingBox();
+                // One synchronous read: a scrollbar appearing shifts the centred header sideways between round trips.
+                layouts[demo] = await copy.evaluate((copyEl) => {
+                    const copyBox = copyEl.getBoundingClientRect();
+                    const headingBox = copyEl.querySelector('h1')!.getBoundingClientRect();
+                    const links = Array.from(copyEl.querySelectorAll('a'));
+                    const linksBox = links
+                        .find((link) => link.textContent?.includes('See On GitHub'))!
+                        .getBoundingClientRect();
 
-                const headingBottom = (headingBox?.y ?? 0) + (headingBox?.height ?? 0);
-                layouts[demo] = {
-                    // The links and the reserved intro below them, with the heading's own height
-                    // taken out — this is the height the reserve is responsible for.
-                    copyHeightBelowHeading: Math.round((copyBox?.y ?? 0) + (copyBox?.height ?? 0) - headingBottom),
-                    // Relative to the copy column, not to the page scroll position.
-                    linksX: Math.round((linksBox?.x ?? 0) - (copyBox?.x ?? 0)),
-                    linksYBelowHeading: Math.round((linksBox?.y ?? 0) - headingBottom),
-                };
+                    const headingBottom = headingBox.y + headingBox.height;
+                    return {
+                        // The height the reserve owns: the links and intro, without the heading's own height.
+                        copyHeightBelowHeading: Math.round(copyBox.y + copyBox.height - headingBottom),
+                        linksX: Math.round(linksBox.x - copyBox.x),
+                        linksYBelowHeading: Math.round(linksBox.y - headingBottom),
+                    };
+                });
             }
 
             const distinctLayouts = new Set(Object.values(layouts).map((layout) => JSON.stringify(layout)));
