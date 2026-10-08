@@ -12,6 +12,10 @@ export class CalculatedColumnExpressionEditor extends AgTextAreaMirror {
     constructor(field: GridInputTextArea) {
         super(field);
         this.addCss('ag-calculated-column-expression-mirror');
+    }
+
+    public override postConstruct(): void {
+        super.postConstruct();
         this.eText.classList.add('ag-calculated-column-expression-text');
     }
 
