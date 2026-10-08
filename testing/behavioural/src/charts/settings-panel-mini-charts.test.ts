@@ -182,6 +182,18 @@ describe('chart settings panel mini chart thumbnails', () => {
     });
 
     describe('palette colours', () => {
+        function expectPaletteColours(theme: AgChartTheme): void {
+            const { fills, strokes } = theme.palette as { fills: string[]; strokes: string[] };
+            for (const { label } of SVG_CASES) {
+                const paths = Array.from(thumbnail(label).querySelectorAll(`${SVG_SELECTOR} path`));
+                const paints = paths.flatMap((path) => [path.getAttribute('fill'), path.getAttribute('stroke')]);
+                const colours = paints.filter((paint) => paint != null && paint !== 'none');
+                expect(colours.length).toBeGreaterThan(0);
+                colours.forEach((colour) => expect([...fills, ...strokes]).toContain(colour));
+                paths.forEach((path) => expect(['none', ...fills]).toContain(path.getAttribute('fill')));
+            }
+        }
+
         test('series fills and strokes come from the active palette and follow palette navigation', async () => {
             await openSettingsPanel(gridsManager, { gridOptions: themedGridOptions({ t1: T1, t2: T2 }) });
             const [first] = document.querySelectorAll<HTMLElement>('.ag-chart-settings-mini-wrapper');
@@ -190,6 +202,7 @@ describe('chart settings panel mini chart thumbnails', () => {
             expect(seriesPaints('groupedColumn', 'fill')).toEqual(T1.palette!.fills);
             expect(seriesPaints('groupedColumn', 'stroke')).toEqual(T1.palette!.strokes);
             expect(seriesPaints('line', 'stroke')).toEqual(T1.palette!.fills);
+            expectPaletteColours(T1);
 
             document.querySelector<HTMLElement>('.ag-chart-settings-next')!.click();
 
@@ -202,6 +215,7 @@ describe('chart settings panel mini chart thumbnails', () => {
             );
             expect(seriesPaints('groupedColumn', 'stroke')).toEqual(T2.palette!.strokes);
             expect(seriesPaints('line', 'stroke')).toEqual(T2.palette!.fills);
+            expectPaletteColours(T2);
         });
 
         test('gradient and pattern palette entries render as solid colours', async () => {
