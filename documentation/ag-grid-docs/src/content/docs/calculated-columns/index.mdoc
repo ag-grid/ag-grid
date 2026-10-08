@@ -40,7 +40,7 @@ Calculated Columns are supported with all row models.
 
 For Server-Side, Infinite and Viewport Row Models, sorting and filtering are datasource or server responsibilities. The grid displays calculated values for loaded rows, but does not client-sort or client-filter remote datasets by calculated results.
 
-Calculated columns are always read-only. They cannot be edited through cell editing, paste, fill handle or delete operations.
+Calculated cell values cannot be changed through cell editing, paste, fill handle or delete operations. Users can still change a calculated column's title, type and expression through its dialog. To prevent these dialog edits and removal through the grid's menus, see [Read-Only Calculated Columns](#read-only-calculated-columns).
 
 ## Row Groups and Tree Data
 
@@ -75,6 +75,56 @@ The dialog manages calculated columns inside the grid without mutating the `colu
 Grid State also captures user edits to, and removals of, calculated columns declared in `columnDefs`, and re-applies them over the declared definitions on restore — so a stored state takes precedence over a changed declaration.
 
 Use Grid State to preserve dialog validation errors as well. `api.getColumnDefs()` contains the column configuration, not validation errors; restoring definitions alone treats the expressions as programmatic definitions.
+
+## Read-Only Calculated Columns
+
+Set `calculatedColumnReadOnly: true` to prevent users from changing a column's title, type or expression in the dialog. Users can choose **View Calculated Column** to inspect its definition. **Remove Calculated Column** is disabled in the column and cell context menus.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: true,
+    columnDefs: [
+        { field: 'revenue' },
+        { field: 'cost' },
+        {
+            colId: 'grossMargin',
+            calculatedExpression: '([revenue] - [cost]) / [revenue]',
+            cellDataType: 'number',
+            calculatedColumnReadOnly: true,
+        },
+    ],
+};
+```
+
+The example keeps **Gross Margin** read-only, while **Profit** and user-created calculated columns remain editable.
+
+{% gridExampleRunner title="Read-Only Calculated Columns" name="calculated-columns-read-only" /%}
+
+{% note %}
+This setting restricts UI changes only: updating `columnDefs` and restoring [Grid State](./grid-state/) can still change or remove the column. Columns created through the dialog remain editable, even when `defaultColDef.calculatedColumnReadOnly` is `true`.
+{% /note %}
+
+### Hiding Menu Items
+
+The calculated column actions are built-in menu items. To stop users adding, editing or removing calculated columns from the menus, filter them out of the default items with [getColumnMenuItems](./column-menu/#customising-the-menu-items) and [getContextMenuItems](./context-menu/#configuring-the-context-menu):
+
+- `calculatedColumn`: **Add Calculated Column**, in the column menu.
+- `editCalculatedColumn`: **Edit Calculated Column**, or **View Calculated Column** when the column is read-only, in the column menu.
+- `removeCalculatedColumn`: **Remove Calculated Column**, in the column menu and the cell context menu.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: true,
+    getColumnMenuItems: ({ defaultItems }) =>
+        defaultItems.filter(
+            item => item !== 'editCalculatedColumn' && item !== 'removeCalculatedColumn'
+        ),
+    getContextMenuItems: ({ defaultItems }) =>
+        defaultItems?.filter(item => item !== 'removeCalculatedColumn'),
+};
+```
+
+As with [read-only columns](#read-only-calculated-columns), this only removes the menu entries. Updating `columnDefs` and restoring [Grid State](./grid-state/) can still change or remove the column.
 
 ## Dialog Options
 

@@ -895,6 +895,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     calculatedColumn: '計算列',
     calculatedColumnAdd: '計算列を追加',
     calculatedColumnEdit: '計算列を編集',
+    calculatedColumnView: '計算列を表示',
     calculatedColumnRemove: '計算列を削除',
     calculatedColumnTitle: 'タイトル',
     calculatedColumnType: '種類',

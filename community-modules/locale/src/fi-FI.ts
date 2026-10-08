@@ -900,6 +900,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     calculatedColumn: 'Laskettu sarake',
     calculatedColumnAdd: 'Lisää laskettu sarake',
     calculatedColumnEdit: 'Muokkaa laskettua saraketta',
+    calculatedColumnView: 'Näytä laskettu sarake',
     calculatedColumnRemove: 'Poista laskettu sarake',
     calculatedColumnTitle: 'Otsikko',
     calculatedColumnType: 'Tyyppi',

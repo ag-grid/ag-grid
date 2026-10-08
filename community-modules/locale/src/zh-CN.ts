@@ -894,6 +894,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     calculatedColumn: '计算列',
     calculatedColumnAdd: '添加计算列',
     calculatedColumnEdit: '编辑计算列',
+    calculatedColumnView: '查看计算列',
     calculatedColumnRemove: '删除计算列',
     calculatedColumnTitle: '标题',
     calculatedColumnType: '类型',

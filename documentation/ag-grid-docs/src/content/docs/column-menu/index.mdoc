@@ -75,7 +75,9 @@ The following is a list of all the default built-in menu items with the rules ab
 - `sortAbsoluteAscending`: Sort the column in ascending order by magnitude, ignoring the sign - see [Absolute Sorting](./row-sorting/#absolute-sorting). Not included in the default items when `columnMenu = 'legacy'`, when the column does not allow absolute sorting, or when the column is already sorted in absolute ascending order.
 - `sortAbsoluteDescending`: Sort the column in descending order by magnitude, ignoring the sign - see [Absolute Sorting](./row-sorting/#absolute-sorting). Not included in the default items when `columnMenu = 'legacy'`, when the column does not allow absolute sorting, or when the column is already sorted in absolute descending order.
 - `sortUnSort`: Clear the sort on the column. Not included in the default items when `columnMenu = 'legacy'`, or when the column is not sorted.
-- `calculatedColumn`: Show the Calculated Columns options. If the column selected is a Calculated Column, the menu will show options to edit and remove the column.
+- `calculatedColumn`: Add a Calculated Column. Only shown when [Calculated Columns](./calculated-columns/) is enabled, and not in pivot mode.
+- `editCalculatedColumn`: Edit the Calculated Column, or view it when the column is read-only. Only shown on a Calculated Column.
+- `removeCalculatedColumn`: Remove the Calculated Column. Only shown on a Calculated Column, and disabled when the column is read-only.
 - `editColumnName`: Rename the column header. Only shown when `headerNameEditable` is set on the column, and never on a calculated column, which is renamed via its **Edit Calculated Column** dialog instead.
 - `columnFilter`: Show the column filter. Not included in the default items when `columnMenu = 'legacy'`, a filter is not enabled, or the header filter button or floating filter button are displayed.
 - `columnChooser`: Show the [Column Chooser](./column-chooser/). Not included in the default items when `columnMenu = 'legacy'`.

@@ -901,6 +901,7 @@ export const AG_GRID_LOCALE_ES_ES = {
     calculatedColumn: 'Columna calculada',
     calculatedColumnAdd: 'Añadir columna calculada',
     calculatedColumnEdit: 'Editar columna calculada',
+    calculatedColumnView: 'Ver columna calculada',
     calculatedColumnRemove: 'Eliminar columna calculada',
     calculatedColumnTitle: 'Título',
     calculatedColumnType: 'Tipo',

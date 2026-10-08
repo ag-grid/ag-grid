@@ -11,6 +11,15 @@
     min-height: 0;
 }
 
+/* use the disabled palette without losing focus, text selection or validation styles */
+.ag-calculated-column-form :where(.ag-input-field-input[readonly]) {
+    --ag-input-background-color: var(--ag-input-disabled-background-color);
+    --ag-input-border: var(--ag-input-disabled-border);
+    --ag-input-text-color: var(--ag-input-disabled-text-color);
+    --ag-input-focus-background-color: var(--ag-input-disabled-background-color);
+    --ag-input-focus-text-color: var(--ag-input-disabled-text-color);
+}
+
 .ag-calculated-column-expression-wrap {
     display: flex;
     flex-direction: column;
