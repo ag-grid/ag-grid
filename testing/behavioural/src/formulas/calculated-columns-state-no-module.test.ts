@@ -21,6 +21,7 @@ describe('calculated columns - grid state persistence without the calculated col
         const userColumns: GridState['userColumns'] = [
             {
                 colId: 'calc_1',
+                type: 'calculated',
                 created: true,
                 parentGroupId: null,
                 properties: [
@@ -45,8 +46,8 @@ describe('calculated columns - grid state persistence without the calculated col
 
     test('overrides and removals of declared columns are inert when the module is not registered', () => {
         const userColumns: GridState['userColumns'] = [
-            { colId: 'a', properties: [{ property: 'headerName', value: 'Overridden' }] },
-            { colId: 'b', removed: true },
+            { colId: 'a', type: 'calculated', properties: [{ property: 'headerName', value: 'Overridden' }] },
+            { colId: 'b', type: 'calculated', removed: true },
         ];
         const api = gridsManager.createGrid('state-no-module-declared', {
             rowData: [{ id: 'r1', a: 5, b: 2 }],

@@ -242,6 +242,7 @@ describe('calculated columns - grid state persistence - saving and restoring a d
         const userColumns: GridState['userColumns'] = [
             {
                 colId: 'calc_1',
+                type: 'calculated',
                 created: true,
                 parentGroupId: null,
                 properties: [
@@ -299,8 +300,8 @@ describe('calculated columns - grid state persistence - saving and restoring a d
 
     test('overrides and removals of declared columns are inert when calculated columns are disabled', async () => {
         const userColumns: GridState['userColumns'] = [
-            { colId: 'a', properties: [{ property: 'headerName', value: 'Overridden' }] },
-            { colId: 'b', removed: true },
+            { colId: 'a', type: 'calculated', properties: [{ property: 'headerName', value: 'Overridden' }] },
+            { colId: 'b', type: 'calculated', removed: true },
         ];
         const api = createGrid('state-disabled-declared', {
             rowData: [{ id: 'r1', a: 5, b: 2 }],
@@ -315,6 +316,36 @@ describe('calculated columns - grid state persistence - saving and restoring a d
         expect(order(api)).toEqual(['a', 'b']);
         expect(api.getColumn('a')!.getColDef().headerName).toBeUndefined();
         expect(api.getState().userColumns).toEqual(userColumns);
+    });
+
+    test('entries saved without a type restore as calculated columns and are re-saved with one', async () => {
+        const api = createGrid('state-untyped-entries', {
+            rowData: [{ id: 'r1', a: 5, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            initialState: {
+                userColumns: [
+                    {
+                        colId: 'calc_1',
+                        created: true,
+                        parentGroupId: null,
+                        properties: [{ property: 'calculatedExpression', value: '[a] * 2' }],
+                    },
+                    { colId: 'b', removed: true },
+                ],
+            },
+        });
+        await waitFor(() => expect(order(api)).toEqual(['a', 'calc_1']));
+
+        expect(api.getState().userColumns).toEqual([
+            {
+                colId: 'calc_1',
+                type: 'calculated',
+                created: true,
+                parentGroupId: null,
+                properties: [{ property: 'calculatedExpression', value: '[a] * 2' }],
+            },
+            { colId: 'b', type: 'calculated', removed: true },
+        ]);
     });
 
     // === columnGroupShow is persisted, not re-derived from the anchor on restore =================

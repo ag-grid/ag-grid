@@ -171,13 +171,19 @@ export class UserColumnService extends BeanStub implements NamedBean {
         const state: UserColumnState[] = [];
         entries.forEach((entry, colId) => {
             if (entry.removed) {
-                state.push({ colId, removed: true });
+                state.push({ colId, type: 'calculated', removed: true });
                 return;
             }
             const { parentGroupId, created, calculatedExpressionError } = entry;
             const columnState: UserColumnState = created
-                ? { colId, created, parentGroupId: parentGroupId ?? null, properties: toProperties(entry.properties) }
-                : { colId, properties: toProperties(entry.properties) };
+                ? {
+                      colId,
+                      type: 'calculated',
+                      created,
+                      parentGroupId: parentGroupId ?? null,
+                      properties: toProperties(entry.properties),
+                  }
+                : { colId, type: 'calculated', properties: toProperties(entry.properties) };
             if (calculatedExpressionError) {
                 columnState.calculatedExpressionError = calculatedExpressionError;
             }

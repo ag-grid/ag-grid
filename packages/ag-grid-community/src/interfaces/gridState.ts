@@ -202,8 +202,12 @@ export type UserColumnProperty = {
     [K in UserColumnPropertyKey]: { property: K; value: ColDef[K] };
 }[UserColumnPropertyKey];
 
-export interface UserColumnState {
+/** A column the user configured through the Calculated Column dialog, or a change to a declared column made there. */
+export interface CalculatedUserColumnState {
     colId: string;
+    /** The kind of user column. Always saved; state from before other kinds existed omits it, and absent means
+     *  `'calculated'`. Every other kind must set its own `type`. */
+    type?: 'calculated';
     /** The user created this column; it exists only because of this entry. Without it the entry describes
      *  changes to a column declared in `columnDefs`, which the developer owns the existence of. */
     created?: boolean;
@@ -216,6 +220,9 @@ export interface UserColumnState {
     /** The user removed a column declared in `columnDefs`; it stays removed across restores. */
     removed?: boolean;
 }
+
+/** One entry of the `userColumns` state section. Kinds other than `'calculated'` join this union with a required `type`. */
+export type UserColumnState = CalculatedUserColumnState;
 
 export interface ColumnHeaderNameColumnState {
     colId: string;
