@@ -161,7 +161,8 @@ export class CalculatedColumnForm extends Component {
         private readonly onApply: (draft: CalculatedColumnDraft) => string[] | null,
         private readonly onCancel: () => void,
         private readonly liveApply: boolean,
-        private readonly onDraftChange?: (draft: CalculatedColumnDraft) => string[] | null
+        private readonly onDraftChange?: (draft: CalculatedColumnDraft) => string[] | null,
+        private readonly readOnly = false
     ) {
         super(CalculatedColumnFormElement, [
             AgInputTextFieldSelector,
@@ -174,16 +175,19 @@ export class CalculatedColumnForm extends Component {
 
     public postConstruct(): void {
         this.setupFormFields();
-        this.setupAria();
         this.setupActionButtons();
-        this.addFormFieldListeners();
-        this.setupExpressionEditor();
-        this.addActionListeners();
-        this.addFormListeners();
-        this.addDestroyFunc(() => this.closeSuggestionPopup());
-        if (!this.liveApply) {
-            this.setTitleError(this.validateTitle());
+        this.setupAria();
+        if (!this.readOnly) {
+            this.addFormFieldListeners();
+            this.setupExpressionEditor();
+            this.addActionListeners();
+            this.addFormListeners();
+            this.addDestroyFunc(() => this.closeSuggestionPopup());
+            if (!this.liveApply) {
+                this.setTitleError(this.validateTitle());
+            }
         }
+        // view mode also explains validation errors without changing the stored expression
         this.setExpressionError(this.onValidate(this.draft));
     }
 
@@ -209,12 +213,21 @@ export class CalculatedColumnForm extends Component {
             .setLabel(translate('calculatedColumnType', 'Type'))
             .setLabelAlignment('top')
             .addOptions(this.dataTypeOptions)
-            .setValue(typeof this.draft.cellDataType === 'string' ? this.draft.cellDataType : undefined, true);
+            .setValue(typeof this.draft.cellDataType === 'string' ? this.draft.cellDataType : undefined, true)
+            .setReadOnly(this.readOnly);
+        if (this.readOnly) {
+            // readonly rather than disabled: the fields stay focusable and their text selectable
+            for (const field of [this.eTitle, this.eExpression]) {
+                field.getInputElement().readOnly = true;
+            }
+        }
         this.eExpression
             .setLabel(translate('calculatedColumnExpression', 'Expression'))
             .setLabelAlignment('top')
             .setAutoComplete(false)
-            .setInputPlaceholder(translate('calculatedColumnExpressionPlaceholder', 'Type here'))
+            .setInputPlaceholder(
+                this.readOnly ? undefined : translate('calculatedColumnExpressionPlaceholder', 'Type here')
+            )
             .setRows(3)
             .setValue(this.draft.calculatedExpression, true);
 
@@ -226,9 +239,12 @@ export class CalculatedColumnForm extends Component {
     }
 
     private setupAria(): void {
+        this.eExpressionError.id = `ag-calculated-column-expression-error-${this.getCompId()}`;
+        if (this.readOnly) {
+            return;
+        }
         const tabIndex = String(this.gos.get('tabIndex'));
         const input = this.eExpression.getInputElement();
-        this.eExpressionError.id = `ag-calculated-column-expression-error-${this.getCompId()}`;
         _setAriaAutoComplete(input, 'list');
         _setAriaHasPopup(input, 'listbox');
 
@@ -250,15 +266,15 @@ export class CalculatedColumnForm extends Component {
             btn.type = 'button';
         }
 
-        const hasColumns = this.expressionPickers.has('columns');
-        const hasFunctions = this.expressionPickers.has('functions');
-        const hasOperators = this.expressionPickers.has('operators');
+        const hasColumns = !this.readOnly && this.expressionPickers.has('columns');
+        const hasFunctions = !this.readOnly && this.expressionPickers.has('functions');
+        const hasOperators = !this.readOnly && this.expressionPickers.has('operators');
 
         _setDisplayed(this.eColumns, hasColumns);
         _setDisplayed(this.eFunctions, hasFunctions);
         _setDisplayed(this.eOperators, hasOperators);
         this.eExpressionTools.setDisplayed(hasColumns || hasFunctions || hasOperators);
-        _setDisplayed(this.eActions, !this.liveApply);
+        _setDisplayed(this.eActions, !this.liveApply && !this.readOnly);
     }
 
     private addFormFieldListeners(): void {

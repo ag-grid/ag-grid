@@ -1,0 +1,164 @@
+---
+title: "Columns Tool Panel - Customisation"
+enterprise: true
+---
+
+Customise how columns appear in the Columns Tool Panel: their styling and names, custom label renderers, expanding and collapsing column groups, the context menu and the drag image.
+
+## Styling Columns
+
+The example below styles the `gold`, `silver` and `bronze` columns using `toolPanelClass`.
+
+{% gridExampleRunner title="Tool Panel Styling" name="styling"  exampleHeight=610 /%}
+
+To add a CSS class to a column in the tool panel, set `toolPanelClass` on its column definition:
+
+```{% frameworkTransform=true spaceBetweenProperties=true %}
+const gridOptions = {
+    columnDefs: [
+        // set as string
+        { field: 'gold', toolPanelClass: 'tp-gold' },
+
+        // set as array of strings
+        { field: 'silver', toolPanelClass: ['tp-silver'] },
+
+        // set as function returning string or array of strings
+        {
+            field: 'bronze',
+            toolPanelClass: params => {
+                return 'tp-bronze';
+            },
+        }
+    ]
+}
+```
+
+## Naming Columns
+
+To give a column a different name in the tool panel, use a [`headerValueGetter`](./column-headers/#header-value-getters) and return the name when `params.location` is `'columnToolPanel'`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'country',
+            headerValueGetter: params => params.location === 'columnToolPanel' ? 'Country (TP)' : 'Country',
+        }
+    ]
+}
+```
+
+In the [example above](#styling-columns), the country column uses a `headerValueGetter` to show a different name in the tool panel, the drop zones and the grid header. Drag it into the Row Groups section to see the drop zone name.
+
+## Custom Label Renderers
+
+Use `columnLabelRenderer` to replace the text shown for columns and column groups in the Columns section. The grid continues to provide and manage the checkbox, drag handle and group expand controls.
+
+Supply the renderer directly, or reference a name registered in the grid's [`components`](./components/#registering-custom-components) map, and pass additional properties through `columnLabelRendererParams`. To use different renderers for different columns or column groups, use `columnLabelRendererSelector` instead.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    components: {
+        customColumnLabel: CustomColumnLabel,
+    },
+    sideBar: {
+        toolPanels: [{
+            id: 'columns',
+            labelDefault: 'Columns',
+            labelKey: 'columns',
+            iconKey: 'columns',
+            toolPanel: 'agColumnsToolPanel',
+            toolPanelParams: {
+                columnLabelRenderer: 'customColumnLabel',
+                columnLabelRendererParams: {
+                    columnIcon: '●',
+                    columnGroupIcon: '◆',
+                },
+            },
+        }],
+    },
+};
+```
+
+The renderer receives either `column` or `columnGroup`, together with the resolved `displayName` and a `source` of `'columnsToolPanel'`. The same renderer can be configured independently for the [Column Chooser](./column-chooser/#custom-label-renderers).
+
+{% gridExampleRunner title="Custom Label Renderers" name="custom-column-labels" exampleHeight=610 /%}
+
+{% note %}
+Column search, tooltips, drag labels and accessibility announcements continue to use `displayName`, rather than text extracted from the renderer. Column selection rows have a fixed height, so renderer content should remain inline and fit within the configured list item height. Clicking the rendered label retains the normal selection behaviour; interactive elements should stop event propagation when they should not toggle the column.
+{% /note %}
+## Expand / Collapse Column Groups
+
+Call `expandColumnGroups()` and `collapseColumnGroups()` on the [Columns Tool Panel instance](./tool-panel-columns-configuration/#columns-tool-panel-instance) to expand or collapse all of its column groups, or pass `groupId`s to target individual groups; see [Expand / Collapse API](#expand--collapse-api). To start with all column groups collapsed, set `contractColumnSelection` in `toolPanelParams` instead.
+
+{% interfaceDocumentation interfaceName="IColumnSelectionPanelParams" names=[ "contractColumnSelection"] config={"description":""} /%}
+
+In the example below, `onGridReady` collapses all column groups in the tool panel. Use the buttons to try each call from the [Expand / Collapse API](#expand--collapse-api).
+
+{% gridExampleRunner title="Expand / Collapse Column Groups" name="expand-collapse"  exampleHeight=640 /%}
+
+{% note %}
+The expanded column groups are saved and restored as part of [Grid State](./grid-state/).
+{% /note %}
+
+## Context Menu
+
+Right-clicking a column or column group label opens a menu with items for grouping, aggregating and pivoting. The menu can be customised, including with custom menu items.
+
+### Built-In Menu Items
+
+The following menu items are shown by default based on the column's configuration and the grid's current state:
+
+- `scrollIntoView`: "Scroll _column_ into View". Scrolls the column into view. Hidden while pivoting, or when the column is pinned or hidden.
+- `rowGroup`: "Group by _column_" or "Un-Group by _column_". Appears only when the column allows row grouping.
+- `value`: "Add _column_ to values" or "Remove _column_ from values". Adds or removes the column as an aggregated value (the **Values** section). Appears only when the column allows aggregation.
+- `pivot`: "Add _column_ to labels" or "Remove _column_ from labels". Adds or removes the column as a pivot column label (the **Column Labels** section). Appears only in pivot mode when the column allows pivoting.
+
+For a column group, `rowGroup`, `value` and `pivot` apply to every child column that individually allows the action; `scrollIntoView` scrolls only the first visible child column into view.
+
+With [Read Only Functions](./tool-panel-columns-configuration/#read-only-functions), `rowGroup`, `value` and `pivot` are not shown.
+
+### Custom Menu Items
+
+Customise the menu items with `colDef.columnMenuItems` or `getColumnMenuItems()`. See [Column Menu - Customising the menu items](./column-menu/#customising-the-menu-items). The callback's `params.source` is `'columnsToolPanel'` when triggered from the Columns Tool Panel.
+
+The example below shows both the built-in items and this customisation. Note the following:
+
+- Right-click **Gold** to see the built-in items plus an optional pinning sub-menu and a custom **Highlight Column** item, added by the `getColumnMenuItems()` callback.
+- **Silver** hides the "Scroll Silver into View" item via a `colDef.columnMenuItems` callback. As `colDef.columnMenuItems` takes priority over `getColumnMenuItems()`, Silver doesn't get the Highlight Column item.
+- **Bronze** restricts its menu to only "Add Bronze to values" via a static `colDef.columnMenuItems` array, so it doesn't get the Highlight Column item either.
+- `colDef.columnMenuItems` applies to every column menu, so the Silver and Bronze changes also apply to their column header menu and Column Chooser menu. Other columns keep their defaults in those menus, as `getColumnMenuItems()` returns `params.defaultItems` for those sources.
+
+{% gridExampleRunner title="Customising the Tool Panel Menu" name="customising-tool-panel-menu" exampleHeight=670 /%}
+
+{% partial file="../shared-partials/_drag-and-drop-image-component.mdoc" /%}
+
+## API
+
+### Custom Label Renderer Parameters
+
+{% interfaceDocumentation interfaceName="IColumnSelectionPanelParams" names=["columnLabelRenderer", "columnLabelRendererParams", "columnLabelRendererSelector"] config={"description":"", "overrideBottomMargin":"1rem"} /%}
+
+The parameters passed to a custom label renderer:
+
+{% interfaceDocumentation interfaceName="IColumnSelectionLabelRendererParams" /%}
+
+### Expand / Collapse API
+
+```{% frameworkTransform=true %}
+const columnsToolPanel = api.getToolPanelInstance('columns');
+
+// expands all column groups in the Columns Tool Panel
+columnsToolPanel.expandColumnGroups();
+
+// collapses all column groups in the Columns Tool Panel
+columnsToolPanel.collapseColumnGroups();
+
+// expands the 'Athlete' and 'Competition' column groups in the Columns Tool Panel
+columnsToolPanel.expandColumnGroups(['athleteGroupId', 'competitionGroupId']);
+
+// collapses the 'Competition' column group in the Columns Tool Panel
+columnsToolPanel.collapseColumnGroups(['competitionGroupId']);
+```
+
+{% interfaceDocumentation interfaceName="IColumnToolPanel" names=["expandColumnGroups", "collapseColumnGroups"] config={"description":""} /%}

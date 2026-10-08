@@ -918,6 +918,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     calculatedColumn: 'Aprēķinātā kolonna',
     calculatedColumnAdd: 'Pievienot aprēķināto kolonnu',
     calculatedColumnEdit: 'Rediģēt aprēķināto kolonnu',
+    calculatedColumnView: 'Skatīt aprēķināto kolonnu',
     calculatedColumnRemove: 'Noņemt aprēķināto kolonnu',
     calculatedColumnTitle: 'Nosaukums',
     calculatedColumnType: 'Tips',

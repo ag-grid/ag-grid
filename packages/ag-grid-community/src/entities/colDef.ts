@@ -1,5 +1,4 @@
 import type { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from '../events';
-import type { CalculatedExpressionError } from '../interfaces/iCalculatedColumns';
 import type { ICellEditorParams } from '../interfaces/iCellEditor';
 import type { Column, ColumnGroup, ColumnGroupShowType, ProvidedColumnGroup } from '../interfaces/iColumn';
 import type { IColumnSelectionPanelParams } from '../interfaces/iColumnSelectionPanel';
@@ -354,12 +353,18 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Expression used to calculate this column's value from other columns in the same row.
      * Use bracket references to read other columns by `colId`, e.g. `[revenue] - [cost]`.
-     * Calculated columns are read-only.
+     * Calculated cells cannot be edited directly.
      * @agModule `CalculatedColumnsModule`
      */
     calculatedExpression?: string;
-    /** Grid-managed validation state preserved when saving calculated column definitions. Do not set manually. */
-    calculatedExpressionError?: CalculatedExpressionError | null;
+    /**
+     * Allow the calculated column's definition to be viewed, but not edited or removed through the grid UI.
+     * Does not prevent changes through `columnDefs` or Grid State restoration.
+     * Dialog-created columns do not inherit this option from `defaultColDef`.
+     * @default false
+     * @agModule `CalculatedColumnsModule`
+     */
+    calculatedColumnReadOnly?: boolean;
     /** Function or expression. Gets the value from your data for display. */
     valueGetter?: string | ValueGetterFunc<TData, TValue>;
     /** A function or expression to format a value, should return a string. */

@@ -28,17 +28,23 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework('colDef.columnMenuItems overrides getColumnMenuItems for that column', async ({ page }) => {
-        // Silver's callback filters out "Scroll into View" but keeps "Add to values"
+        // Silver's callback filters out "Scroll Silver into View" but keeps "Add Silver to values"
         await page.locator('.ag-column-select-column', { hasText: 'Silver' }).click({ button: 'right' });
-        await expect(page.locator('.ag-menu-option-text', { hasText: 'Scroll into View' })).toHaveCount(0);
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'Scroll Silver into View' })).toHaveCount(0);
         await expect(page.locator('.ag-menu-option-text', { hasText: 'Add Silver to values' })).toBeVisible();
         // colDef.columnMenuItems takes priority, so getColumnMenuItems never runs for this column
         await expect(page.locator('.ag-menu-option-text', { hasText: 'Highlight Column' })).toHaveCount(0);
-        await page.keyboard.press('Escape');
+        // The popup only listens for Escape from the next tick, so retry until the menu closes.
+        await expect(async () => {
+            await page.keyboard.press('Escape');
+            await expect(page.locator('.ag-menu-option-text', { hasText: 'Add Silver to values' })).toHaveCount(0, {
+                timeout: 500,
+            });
+        }).toPass();
 
         // Bronze's static array restricts the menu to only the "value" token
         await page.locator('.ag-column-select-column', { hasText: 'Bronze' }).click({ button: 'right' });
-        await expect(page.locator('.ag-menu-option-text', { hasText: 'Scroll into View' })).toHaveCount(0);
+        await expect(page.locator('.ag-menu-option-text', { hasText: 'Scroll Bronze into View' })).toHaveCount(0);
         await expect(page.locator('.ag-menu-option-text', { hasText: 'Add Bronze to values' })).toBeVisible();
         await expect(page.locator('.ag-menu-option-text', { hasText: 'Highlight Column' })).toHaveCount(0);
     });

@@ -920,6 +920,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     calculatedColumn: 'Lajur Dikira',
     calculatedColumnAdd: 'Tambah Lajur Dikira',
     calculatedColumnEdit: 'Sunting Lajur Dikira',
+    calculatedColumnView: 'Lihat Lajur Dikira',
     calculatedColumnRemove: 'Buang Lajur Dikira',
     calculatedColumnTitle: 'Tajuk',
     calculatedColumnType: 'Jenis',

@@ -898,6 +898,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     calculatedColumn: 'Beregnet kolonne',
     calculatedColumnAdd: 'Tilføj beregnet kolonne',
     calculatedColumnEdit: 'Rediger beregnet kolonne',
+    calculatedColumnView: 'Vis beregnet kolonne',
     calculatedColumnRemove: 'Fjern beregnet kolonne',
     calculatedColumnTitle: 'Titel',
     calculatedColumnType: 'Type',
