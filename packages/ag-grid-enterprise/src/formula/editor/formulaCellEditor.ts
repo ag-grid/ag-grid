@@ -1,4 +1,4 @@
-import { RefPlaceholder, _isBrowserSafari } from 'ag-stack';
+import { RefPlaceholder } from 'ag-stack';
 
 import type { IFormulaCellEditorParams } from 'ag-grid-community';
 import { AgAbstractCellEditor, KeyCode } from 'ag-grid-community';
@@ -113,11 +113,9 @@ export class FormulaCellEditor<TData = any, TValue = any, TContext = any> extend
             return;
         }
 
-        const eEditor = this.eEditor;
-        if (!_isBrowserSafari()) {
-            this.focusIn();
-        }
-        const input = eEditor.getInputElement();
+        // setting a textarea selection does not focus it, including in Safari.
+        this.focusIn();
+        const input = this.eEditor.getInputElement();
         input.setSelectionRange(input.value.length, input.value.length);
     }
 

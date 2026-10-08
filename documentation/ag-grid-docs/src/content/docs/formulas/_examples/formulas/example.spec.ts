@@ -30,8 +30,10 @@ test.agExample(import.meta, () => {
 
             const editable = page.locator('.ag-cell-inline-editing textarea').first();
             await expect(editable).toBeVisible();
+            await expect(editable).toBeFocused();
             await page.keyboard.press('ControlOrMeta+A');
             await page.keyboard.type('=B7');
+            await expect(editable).toHaveValue('=B7');
             await page.keyboard.press('Control+Enter');
             await expect(editable).toHaveCount(0);
 

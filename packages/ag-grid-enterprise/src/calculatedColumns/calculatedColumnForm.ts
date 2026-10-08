@@ -192,8 +192,11 @@ export class CalculatedColumnForm extends Component {
                 this.setTitleError(this.validateTitle());
             }
         }
-        // view mode also explains validation errors without changing the stored expression
-        this.setExpressionError(this.onValidate(this.draft));
+        // colour untouched deferred drafts without validating them; view mode still explains errors
+        this.setExpressionError(this.liveApply || this.readOnly ? this.onValidate(this.draft) : null);
+        if (!this.liveApply && !this.draft.calculatedExpression.trim()) {
+            this.eApply.disabled = true;
+        }
     }
 
     public hideSuggestions(): void {
@@ -400,9 +403,12 @@ export class CalculatedColumnForm extends Component {
         }
         const expression = this.draft.calculatedExpression;
         const presentation = this.inspectExpression(expression);
+        // only underline a diagnostic whose message is part of the chosen validation feedback
+        if (!presentation.diagnostic || !errors?.includes(presentation.diagnostic.message)) {
+            presentation.diagnostic = undefined;
+        }
         this.expressionEditor.refresh(expression, presentation);
-        const messages = presentation.diagnostic ? [presentation.diagnostic.message] : errors;
-        const message = messages?.length ? messages.join('\n') : null;
+        const message = errors?.length ? errors.join('\n') : null;
         if (message !== this.expressionValidationMessage) {
             this.eExpressionError.textContent = message ?? '';
         }

@@ -433,7 +433,7 @@ describe('calculated columns - display ordering', () => {
         ]);
     });
 
-    test('live apply mode commits invalid expressions while showing their diagnostic', async () => {
+    test('live apply mode commits invalid expressions without built-in validation feedback', async () => {
         const api = createGrid('calculated-live-preview-invalid-expression', {
             rowData: [{ id: 'r1', age: 23 }],
             columnDefs: [{ field: 'age' }],
@@ -448,9 +448,9 @@ describe('calculated columns - display ordering', () => {
         await waitFor(() => expect(api.getColumn('calculated_1')!.getColDef().calculatedExpression).toBe('[age] +'));
 
         const input = getExpressionInput();
-        expect(input.classList.contains('invalid')).toBe(true);
-        expect(input.getAttribute('aria-invalid')).toBe('true');
-        expect(input.validationMessage).toContain("Missing operand for '+'");
+        expect(input.classList.contains('invalid')).toBe(false);
+        expect(input.getAttribute('aria-invalid')).not.toBe('true');
+        expect(input.validationMessage).toBe('');
         expect(api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'calculated_1' })).toBe('#PARSE!');
     });
 
