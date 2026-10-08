@@ -172,3 +172,12 @@
     position: absolute;
     margin-left: var(--ag-spacing);
 }
+
+/* colour swatches and the spectrum must show real colours, so opt them out of forced colors */
+.ag-color-picker-color,
+.ag-color-input-color,
+.ag-recent-color,
+.ag-spectrum-color,
+.ag-spectrum-tool {
+    forced-color-adjust: none;
+}

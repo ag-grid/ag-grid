@@ -59,6 +59,10 @@
     right: -1px;
     border-radius: 50%;
     background-color: var(--ag-icon-button-active-indicator-color);
+
+    @media (forced-colors: active) {
+        background-color: CanvasText;
+    }
 }
 
 .ag-filter-active {

@@ -24,6 +24,10 @@
     font-size: inherit;
     font-family: inherit;
     line-height: inherit;
+
+    &:where(:focus) {
+        outline: var(--ag-internal-accessible-no-outline, revert);
+    }
 }
 
 :where([class^='ag-']):where(div, span, label):focus-visible {
@@ -31,7 +35,7 @@
         focussable by the grid, get an inset shadow since they are often
         right up against the edge of an overflow:hidden container that
         will crop a regular shadow  */
-    outline: none;
+    outline: var(--ag-internal-accessible-no-outline, revert);
     box-shadow: inset var(--ag-focus-shadow);
 
     &:where(.invalid) {

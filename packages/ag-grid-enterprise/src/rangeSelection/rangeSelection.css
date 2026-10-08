@@ -124,3 +124,13 @@
 .ag-range-handle {
     cursor: nwse-resize;
 }
+
+.ag-cell {
+    /* custom properties are never forced, so system colours set here flow into every rule above */
+    @media (forced-colors: active) {
+        --ag-range-selection-background-color: SelectedItem;
+        --ag-range-selection-chart-background-color: SelectedItem;
+        --ag-range-selection-chart-category-background-color: SelectedItem;
+        --ag-range-selection-border-color: Highlight;
+    }
+}
