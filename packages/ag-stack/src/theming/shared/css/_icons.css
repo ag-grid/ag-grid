@@ -1,6 +1,12 @@
 :where(.ag-icon)::before {
     content: '';
     background-color: currentcolor;
+
+    /* currentcolor is not a system color, so it maps to Canvas and the masked glyph vanishes */
+    @media (forced-colors: active) {
+        background-color: CanvasText;
+    }
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -33,6 +39,14 @@
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
+
+    /* In forced colour mode, the browser automatically gives text a "backplate"
+     * to ensure it is visible regardless of the background colour it's rendered
+     * against. Do the same thing for icons so that we still have the
+     * appropriate contrast over selected rows */
+    @media (forced-colors: active) {
+        background-color: Canvas;
+    }
 }
 
 .ag-disabled .ag-icon,

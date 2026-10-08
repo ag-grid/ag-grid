@@ -15,7 +15,7 @@
     text-shadow: inherit;
 
     &:focus-visible {
-        outline: none;
+        outline: var(--ag-internal-accessible-no-outline, revert);
         box-shadow: var(--ag-focus-shadow);
     }
 }

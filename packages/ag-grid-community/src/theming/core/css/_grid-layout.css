@@ -218,6 +218,11 @@
     border: 1px solid transparent;
     line-height: var(--ag-internal-content-line-height);
     -webkit-font-smoothing: subpixel-antialiased;
+
+    /* forced colors paints transparent borders, doubling the column and row borders */
+    @media (forced-colors: active) {
+        border-color: Canvas;
+    }
 }
 
 .ag-cell {
@@ -290,6 +295,12 @@
     border-color: var(--ag-range-selection-border-color);
     border-style: var(--ag-range-selection-border-style);
     outline: initial;
+
+    /* every border collapses to CanvasText, so only an outline can mark the focused cell */
+    @media (forced-colors: active) {
+        outline: 2px solid Highlight;
+        outline-offset: -2px;
+    }
 }
 
 /* remove the box shadow added by default to all focussed divs because rows
@@ -421,6 +432,12 @@
         var(--ag-selected-row-background-color),
         var(--ag-selected-row-background-color)
     );
+}
+
+@media (forced-colors: active) {
+    .ag-row.ag-row-selected {
+        --ag-internal-row-overlay-color: SelectedItem;
+    }
 }
 
 .ag-column-hover {

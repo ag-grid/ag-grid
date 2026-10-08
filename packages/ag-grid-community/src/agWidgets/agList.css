@@ -8,5 +8,9 @@
 
     &.ag-active-item {
         background-color: var(--ag-row-hover-color);
+
+        @media (forced-colors: active) {
+            background-color: SelectedItem;
+        }
     }
 }

@@ -4,31 +4,10 @@
     position: relative;
     width: var(--ag-icon-size);
     height: var(--ag-icon-size);
-    background-color: var(--ag-checkbox-unchecked-background-color);
-    border: solid var(--ag-checkbox-border-width) var(--ag-checkbox-unchecked-border-color);
-
-    /* the box fill and its masked tick are background colours, which must be preserved when printing */
-    print-color-adjust: exact;
-
-    &:where(.ag-checked) {
-        background-color: var(--ag-checkbox-checked-background-color);
-        border-color: var(--ag-checkbox-checked-border-color);
-    }
-
-    &:where(.ag-checked)::after {
-        background-color: var(--ag-checkbox-checked-shape-color);
-    }
-
-    &:where(.ag-disabled) {
-        opacity: 0.5;
-        filter: grayscale();
-    }
 }
 
 .ag-checkbox-input,
 .ag-radio-button-input {
-    appearance: none;
-    opacity: 0;
     margin: 0;
     display: block;
     width: var(--ag-icon-size);
@@ -40,49 +19,81 @@
     cursor: pointer;
 }
 
-.ag-checkbox-input-wrapper::after,
-.ag-radio-button-input-wrapper::after {
-    content: '';
-    position: absolute;
-    display: block;
-    inset: 0;
-    mask-position: center;
-    mask-repeat: no-repeat;
-    pointer-events: none;
-}
+/* in forced colors mode use the native inputs, which the browser renders in system colors */
+@media not (forced-colors: active) {
+    .ag-checkbox-input-wrapper,
+    .ag-radio-button-input-wrapper {
+        background-color: var(--ag-checkbox-unchecked-background-color);
+        border: solid var(--ag-checkbox-border-width) var(--ag-checkbox-unchecked-border-color);
 
-.ag-checkbox-input-wrapper:where(:focus-within, :active),
-.ag-radio-button-input-wrapper:where(:focus-within, :active) {
-    box-shadow: var(--ag-focus-shadow);
-}
+        /* the box fill and its masked tick are background colours, which must be preserved when printing */
+        print-color-adjust: exact;
 
-.ag-checkbox-input-wrapper {
-    border-radius: var(--ag-checkbox-border-radius);
+        &:where(.ag-checked) {
+            background-color: var(--ag-checkbox-checked-background-color);
+            border-color: var(--ag-checkbox-checked-border-color);
+        }
 
-    &:where(.ag-checked)::after {
-        mask-image: var(--ag-checkbox-checked-shape-image);
+        &:where(.ag-checked)::after {
+            background-color: var(--ag-checkbox-checked-shape-color);
+        }
+
+        &:where(.ag-disabled) {
+            opacity: 0.5;
+            filter: grayscale();
+        }
     }
 
-    &:where(.ag-indeterminate) {
-        background-color: var(--ag-checkbox-indeterminate-background-color);
-        border-color: var(--ag-checkbox-indeterminate-border-color);
+    .ag-checkbox-input,
+    .ag-radio-button-input {
+        appearance: none;
+        opacity: 0;
     }
 
-    &:where(.ag-indeterminate)::after {
-        background-color: var(--ag-checkbox-indeterminate-shape-color);
-        mask-image: var(--ag-checkbox-indeterminate-shape-image);
+    .ag-checkbox-input-wrapper::after,
+    .ag-radio-button-input-wrapper::after {
+        content: '';
+        position: absolute;
+        display: block;
+        inset: 0;
+        mask-position: center;
+        mask-repeat: no-repeat;
+        pointer-events: none;
     }
-}
 
-/* stylelint-disable-next-line -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-.ag-cell-editing-error .ag-checkbox-input-wrapper:focus-within {
-    box-shadow: var(--ag-focus-error-shadow);
-}
+    .ag-checkbox-input-wrapper:where(:focus-within, :active),
+    .ag-radio-button-input-wrapper:where(:focus-within, :active) {
+        box-shadow: var(--ag-focus-shadow);
+    }
 
-.ag-radio-button-input-wrapper {
-    border-radius: 100%;
+    .ag-checkbox-input-wrapper {
+        border-radius: var(--ag-checkbox-border-radius);
 
-    &:where(.ag-checked)::after {
-        mask-image: var(--ag-radio-checked-shape-image);
+        &:where(.ag-checked)::after {
+            mask-image: var(--ag-checkbox-checked-shape-image);
+        }
+
+        &:where(.ag-indeterminate) {
+            background-color: var(--ag-checkbox-indeterminate-background-color);
+            border-color: var(--ag-checkbox-indeterminate-border-color);
+        }
+
+        &:where(.ag-indeterminate)::after {
+            background-color: var(--ag-checkbox-indeterminate-shape-color);
+            mask-image: var(--ag-checkbox-indeterminate-shape-image);
+        }
+    }
+
+    /* stylelint-disable-next-line -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
+    .ag-cell-editing-error .ag-checkbox-input-wrapper:focus-within {
+        box-shadow: var(--ag-focus-error-shadow);
+    }
+
+    .ag-radio-button-input-wrapper {
+        border-radius: 100%;
+
+        &:where(.ag-checked)::after {
+            mask-image: var(--ag-radio-checked-shape-image);
+        }
     }
 }
