@@ -78,8 +78,6 @@ Grid State also captures user edits to, and removals of, calculated columns decl
 
 Set `calculatedColumnReadOnly: true` to prevent users from changing a column's title, type or expression in the dialog. Users can choose **View Calculated Column** to inspect its definition. **Remove Calculated Column** is disabled in the column and cell context menus.
 
-The example keeps **Gross Margin** read-only, while **Profit** and user-created calculated columns remain editable.
-
 ```{% frameworkTransform=true %}
 const gridOptions = {
     calculatedColumns: true,
@@ -96,11 +94,35 @@ const gridOptions = {
 };
 ```
 
+The example keeps **Gross Margin** read-only, while **Profit** and user-created calculated columns remain editable.
+
 {% gridExampleRunner title="Read-Only Calculated Columns" name="calculated-columns-read-only" /%}
 
 {% note %}
 This setting restricts UI changes only: updating `columnDefs` and restoring [Grid State](./grid-state/) can still change or remove the column. Columns created through the dialog remain editable, even when `defaultColDef.calculatedColumnReadOnly` is `true`.
 {% /note %}
+
+### Hiding Menu Items
+
+The calculated column actions are built-in menu items. To stop users adding, editing or removing calculated columns from the menus, filter them out of the default items with [getColumnMenuItems](./column-menu/#customising-the-menu-items) and [getContextMenuItems](./context-menu/#configuring-the-context-menu):
+
+- `calculatedColumn`: **Add Calculated Column**, in the column menu.
+- `editCalculatedColumn`: **Edit Calculated Column**, or **View Calculated Column** when the column is read-only, in the column menu.
+- `removeCalculatedColumn`: **Remove Calculated Column**, in the column menu and the cell context menu.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: true,
+    getColumnMenuItems: ({ defaultItems }) =>
+        defaultItems.filter(
+            item => item !== 'editCalculatedColumn' && item !== 'removeCalculatedColumn'
+        ),
+    getContextMenuItems: ({ defaultItems }) =>
+        defaultItems?.filter(item => item !== 'removeCalculatedColumn'),
+};
+```
+
+As with [read-only columns](#read-only-calculated-columns), this only removes the menu entries. Updating `columnDefs` and restoring [Grid State](./grid-state/) can still change or remove the column.
 
 ## Dialog Options
 
