@@ -116,6 +116,7 @@
     }
 
     .ag-calculated-column-empty-message {
+        opacity: 0.5;
         grid-area: 1 / 1;
         padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
         overflow-wrap: anywhere;
