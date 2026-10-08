@@ -8,26 +8,11 @@ import type { RowNodeTransaction } from './rowNodeTransaction';
 
 // Type exposed to user
 export type ClientSideRowModelStep =
-    | 'everything'
-    | 'group'
-    | 'filter'
-    | 'sort'
-    | 'map'
-    | 'aggregate'
-    | 'filter_aggregates'
-    | 'pivot'
-    | 'nothing';
+    'everything' | 'group' | 'filter' | 'sort' | 'map' | 'aggregate' | 'filter_aggregates' | 'pivot' | 'nothing';
 
 // Internal type - without `everything`
 export type ClientSideRowModelStage =
-    | 'group'
-    | 'filter'
-    | 'sort'
-    | 'map'
-    | 'aggregate'
-    | 'filter_aggregates'
-    | 'pivot'
-    | 'nothing';
+    'group' | 'filter' | 'sort' | 'map' | 'aggregate' | 'filter_aggregates' | 'pivot' | 'nothing';
 
 export interface IClientSideRowModel<TData = any> extends IRowModel {
     /** The root row containing all the rows */

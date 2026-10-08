@@ -8,11 +8,7 @@ import { AgPromise, _warnForGrid } from 'ag-grid-community';
  */
 export function getInstance<
     TGridComponent extends IFilter | FilterDisplay | IToolPanel | ICellEditor | IStatusPanel =
-        | IFilter
-        | FilterDisplay
-        | IToolPanel
-        | ICellEditor
-        | IStatusPanel,
+        IFilter | FilterDisplay | IToolPanel | ICellEditor | IStatusPanel,
     TCustomComponent extends TGridComponent = TGridComponent,
 >(wrapperComponent: TGridComponent, callback: (customComponent: TCustomComponent | undefined) => void): void {
     const promise = (wrapperComponent as any)?.getInstance?.() ?? AgPromise.resolve(undefined);

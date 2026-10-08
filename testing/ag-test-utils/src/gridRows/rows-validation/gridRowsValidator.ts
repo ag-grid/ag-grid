@@ -11,11 +11,7 @@ import type { RowAllLeafs } from './validator-leafs';
 import { verifyAllLeafChildrenWithChildrenAfterGroup, verifyLeafs } from './validator-leafs';
 
 type RowChildrenField =
-    | 'childrenAfterGroup'
-    | 'childrenAfterFilter'
-    | 'childrenAfterAggFilter'
-    | 'childrenAfterSort'
-    | 'allLeafChildren';
+    'childrenAfterGroup' | 'childrenAfterFilter' | 'childrenAfterAggFilter' | 'childrenAfterSort' | 'allLeafChildren';
 
 interface NamedRowSet {
     readonly name: RowChildrenField;

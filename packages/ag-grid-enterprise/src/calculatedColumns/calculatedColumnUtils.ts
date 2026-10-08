@@ -1,14 +1,13 @@
-import type { CalculatedExpressionError, ColDef, UserColumnPropertyKey } from 'ag-grid-community';
+import type { ColDef, UserColumnPropertyKey } from 'ag-grid-community';
 import { _DATA_TYPE_DERIVED_COL_DEF_PROPERTIES } from 'ag-grid-community';
 
-/** The definition properties and validation state persisted by the Calculated Column dialog. Only these
+/** The definition properties persisted by the Calculated Column dialog. Only these
  *  are recorded in the user-column layer: the rest is derived on build (`editable`,
  *  `suppressPaste`, the data-type properties), or owned by another grid state section (width, sort, …). */
 export const USER_OWNED_PROPERTIES: readonly UserColumnPropertyKey[] = [
     'headerName',
     'cellDataType',
     'calculatedExpression',
-    'calculatedExpressionError',
     'columnGroupShow',
 ];
 
@@ -23,12 +22,6 @@ export function pickUserOwnedProperties(colDef: ColDef): ColDef {
         }
     }
     return result;
-}
-
-/** The definition's saved expression error, unless the expression has since changed through another path. */
-export function getCalculatedExpressionError(colDef: ColDef): CalculatedExpressionError | undefined {
-    const error = colDef.calculatedExpressionError;
-    return error && error.expression === colDef.calculatedExpression ? error : undefined;
 }
 
 /** The user-facing message for a blocked reference, shared by the dialog and the cell's formula error. */

@@ -1,6 +1,6 @@
 import type { BeanCollection } from '../../context/context';
 import { _getRowHeightAsNumber } from '../../gridOptionsUtils';
-import { getAnchoredPosition, getResolvedHorizontalOffset, isRightAnchored } from '../features/horizontalPositionUtils';
+import { getAnchoredPosition, getPrintLayoutOffset, isRightAnchored } from '../features/horizontalPositionUtils';
 import type { CellCtrl } from './cellCtrl';
 
 // Called each time the cell component attaches (initial mount and any remount).
@@ -63,9 +63,7 @@ export function _refreshCellPosition(beans: BeanCollection, cellCtrl: CellCtrl):
     const isRtl = gos.get('enableRtl');
     // column.left is the distance from the start edge in LTR and RTL, and a span starts at its own column
     const left = column.left;
-    const offset = isPrintLayout
-        ? getResolvedHorizontalOffset({ left, lane, width, isPrintLayout, isRtl, visibleCols })
-        : left;
+    const offset = isPrintLayout ? getPrintLayoutOffset(left, lane, width, isRtl, visibleCols) : left;
     if (offset == null) {
         return;
     }

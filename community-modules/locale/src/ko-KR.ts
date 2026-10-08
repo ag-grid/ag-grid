@@ -895,6 +895,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     calculatedColumn: '계산된 열',
     calculatedColumnAdd: '계산된 열 추가',
     calculatedColumnEdit: '계산된 열 편집',
+    calculatedColumnView: '계산된 열 보기',
     calculatedColumnRemove: '계산된 열 제거',
     calculatedColumnTitle: '제목',
     calculatedColumnType: '유형',

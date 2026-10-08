@@ -18,14 +18,7 @@ export interface JoinAdvancedFilterModel {
 }
 
 export type TextAdvancedFilterModelType =
-    | 'equals'
-    | 'notEqual'
-    | 'contains'
-    | 'notContains'
-    | 'startsWith'
-    | 'endsWith'
-    | 'blank'
-    | 'notBlank';
+    'equals' | 'notEqual' | 'contains' | 'notContains' | 'startsWith' | 'endsWith' | 'blank' | 'notBlank';
 
 export type ScalarAdvancedFilterModelType =
     | 'equals'

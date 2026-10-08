@@ -14,6 +14,21 @@
         min-height: 0;
     }
 
+    // the panel scope gives this precedence over legacy theme input selectors
+    .ag-calculated-column-panel .ag-calculated-column-form .ag-input-field-input[readonly] {
+        --ag-background-color: var(--ag-input-disabled-background-color);
+        --ag-input-border-color: var(--ag-input-disabled-border-color);
+        color: var(--ag-disabled-foreground-color);
+
+        &.invalid:not(:focus) {
+            border: var(--ag-borders-input-invalid) var(--ag-input-border-color-invalid);
+        }
+
+        &.invalid:focus {
+            border-color: var(--ag-invalid-color);
+        }
+    }
+
     .ag-calculated-column-expression-wrap {
         display: flex;
         flex-direction: column;

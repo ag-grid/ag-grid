@@ -717,6 +717,6 @@
             }
         },
         "calculatedExpression": {},
-        "calculatedExpressionError": {}
+        "calculatedColumnReadOnly": {}
     }
 }

@@ -538,6 +538,19 @@
             box-shadow: none;
         }
 
+        &.ag-select-readonly {
+            .ag-picker-field-wrapper {
+                --ag-background-color: var(--ag-input-disabled-background-color);
+                --ag-border-color: var(--ag-input-disabled-border-color);
+                color: var(--ag-disabled-foreground-color);
+            }
+
+            .ag-picker-field-display {
+                user-select: text;
+                cursor: text;
+            }
+        }
+
         &:not(.ag-cell-editor, .ag-label-align-top) {
             min-height: var(--ag-list-item-height);
         }

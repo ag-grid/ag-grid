@@ -224,8 +224,7 @@ export class RichSelectAsyncRequestsFeature<TValue = any> {
         }
 
         let pageResultOrPromise:
-            | RichSelectAsyncValuesPageResult<TValue>
-            | Promise<RichSelectAsyncValuesPageResult<TValue>>;
+            RichSelectAsyncValuesPageResult<TValue> | Promise<RichSelectAsyncValuesPageResult<TValue>>;
         try {
             pageResultOrPromise = valuesPage(requestParams);
         } catch (error) {

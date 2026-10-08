@@ -59,8 +59,7 @@ export class PolarChartProxy extends ChartProxy<
         // options this proxy supplied, and `getOptions()` only returns those.
         const options = this.getChart().chartOptions?.processedOptions as AgPolarChartOptions | undefined;
         const firstSeries = options?.series?.[0] as
-            | Pick<AgNightingaleSeriesOptions, 'grouped' | 'stacked' | 'normalizedTo'>
-            | undefined;
+            Pick<AgNightingaleSeriesOptions, 'grouped' | 'stacked' | 'normalizedTo'> | undefined;
         const getStackedValue = () => (firstSeries?.normalizedTo ? 'normalized' : 'stacked');
         if (standaloneChartType === 'nightingale') {
             return firstSeries?.grouped ? 'grouped' : getStackedValue();
@@ -102,11 +101,7 @@ export class PolarChartProxy extends ChartProxy<
     }
 
     protected override getSeriesChartThemeDefaults(): AgChartThemeOverrides[
-        | 'radar-line'
-        | 'radar-area'
-        | 'nightingale'
-        | 'radial-column'
-        | 'radial-bar'] {
+        'radar-line' | 'radar-area' | 'nightingale' | 'radial-column' | 'radial-bar'] {
         return {
             series: {
                 highlight: getSeriesHighlight(this.crossFiltering),

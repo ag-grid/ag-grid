@@ -189,12 +189,7 @@ export class RowNumbersService
         if (!column) {
             return;
         }
-        const oldWidth = column.getActualWidth();
         column.resetActualWidth(source);
-        // resetActualWidth is silent, but the rendered header cell only follows widthChanged
-        if (column.getActualWidth() !== oldWidth) {
-            column.fireColumnWidthChangedEvent(source);
-        }
         column.resetWidthOwnership();
         this.autoSizedTextLength = 0;
     }
@@ -304,7 +299,7 @@ export class RowNumbersService
     }
 
     private onHeaderClick(_e: MouseEvent): void {
-        if (Date.now() - this.lastColumnResized < 100 || !this.isIntegratedWithSelection || this.column?.resizing) {
+        if (Date.now() - this.lastColumnResized < 100 || !this.isIntegratedWithSelection || this.column?.isResizing()) {
             return;
         }
         this.focusAllCellsFromHeaderClick();

@@ -162,7 +162,7 @@ We've created several demos to showcase AG Grid's rich feature set across differ
 <br>
 </details>
 <details>
-    
+
   <summary>🧑‍💼 <b>HR Demo</b></summary>
   <br>
   <p>HR data example showing hierarchical employee data:</p>
@@ -520,7 +520,7 @@ Initially built to power [Integrated Charts](https://www.ag-grid.com/angular-dat
 </div>
 
 <div align="center">
-    
+
 <hr/>
 
 <strong>Follow us to keep up to date with all the latest news from AG Grid:</strong>

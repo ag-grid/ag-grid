@@ -127,37 +127,80 @@ describe('calculated columns - blocked live expressions', () => {
         expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe(19);
     });
 
-    test.each(['state', 'definitions'] as const)('preserves the blocked reason through %s restore', async (via) => {
-        const source = createGrid('blocked-source', { columnDefs, rowData, calculatedColumns });
-        showColumnMenu(source, 'sales');
+    test('resetting and restoring a dynamic column retains its validation metadata', async () => {
+        const api = createGrid('blocked-parked-column', { columnDefs, rowData, calculatedColumns });
+        showColumnMenu(api, 'sales');
         await clickMenuOption('Add Calculated Column');
-        setExpression('[Sales] + [Salary] - 1');
+        setExpression('[Salary]');
         closeDialog();
-        await waitFor(() => expect(source.getState().userColumns).toBeDefined());
-        const initialState: GridState = JSON.parse(JSON.stringify(source.getState()));
-        const savedDefs: ColDef[] = JSON.parse(JSON.stringify(source.getColumnDefs()));
-        source.destroy();
-        const target = createGrid('blocked-target', {
-            columnDefs: via === 'state' ? columnDefs : savedDefs,
-            initialState: via === 'state' ? initialState : undefined,
-            rowData,
-            calculatedColumns,
-        });
-        expect(target.getCellValue({ rowNode: target.getRowNode('r1')!, colKey: 'calculated_1' })).toBe('#REF!');
-        await openEditDialogViaMenu(target, 'calculated_1');
-        expect(getExpressionInput().value).toBe('[Sales] + [Salary] - 1');
+        const savedColumnState = api.getColumnState();
+        const savedUserColumns = api.getState().userColumns;
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'calculated_1' })).toBe('#REF!');
+
+        api.resetColumnState();
+        expect(api.getColumn('calculated_1')).toBeNull();
+        expect(api.getState().userColumns).toBeUndefined();
+
+        api.applyColumnState({ state: savedColumnState, applyOrder: true });
+        expect(api.getState().userColumns).toEqual(savedUserColumns);
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'calculated_1' })).toBe('#REF!');
+        expect(api.getColumn('calculated_1')!.getColDef()).not.toHaveProperty('calculatedExpressionError');
+        await openEditDialogViaMenu(api, 'calculated_1');
+        expect(getExpressionInput().value).toBe('[Salary]');
         expect(getExpressionInput().validationMessage).toContain('cannot be used');
-        setExpression('[Sales] + 1');
-        closeDialog();
-        expect(target.getCellValue({ rowNode: target.getRowNode('r1')!, colKey: 'calculated_1' })).toBe(21);
-        const correctedState: GridState = JSON.parse(JSON.stringify(target.getState()));
-        target.destroy();
-        const corrected = createGrid('corrected-target', {
-            columnDefs: via === 'state' ? columnDefs : savedDefs,
-            initialState: correctedState,
-            rowData,
-            calculatedColumns,
-        });
-        expect(corrected.getCellValue({ rowNode: corrected.getRowNode('r1')!, colKey: 'calculated_1' })).toBe(21);
     });
+
+    test.each(['state', 'definitions'] as const)(
+        'restores %s, preserving restrictions only in Grid State',
+        async (via) => {
+            const source = createGrid('blocked-source', { columnDefs, rowData, calculatedColumns });
+            showColumnMenu(source, 'sales');
+            await clickMenuOption('Add Calculated Column');
+            setExpression('[Sales] + [Salary] - 1');
+            closeDialog();
+            await waitFor(() => expect(source.getState().userColumns).toBeDefined());
+            const initialState: GridState = JSON.parse(JSON.stringify(source.getState()));
+            const savedDefs: ColDef[] = JSON.parse(JSON.stringify(source.getColumnDefs()));
+            expect(
+                initialState.userColumns?.find(({ colId }) => colId === 'calculated_1')?.calculatedExpressionError
+            ).toEqual({
+                expression: '[sales] + [server-salary] - 1',
+                reason: 'restrictedReference',
+                reference: 'Salary',
+            });
+            expect(source.getColumn('calculated_1')!.getColDef()).not.toHaveProperty('calculatedExpressionError');
+            expect(savedDefs.find(({ colId }) => colId === 'calculated_1')).not.toHaveProperty(
+                'calculatedExpressionError'
+            );
+            source.destroy();
+            const target = createGrid('blocked-target', {
+                columnDefs: via === 'state' ? columnDefs : savedDefs,
+                initialState: via === 'state' ? initialState : undefined,
+                rowData,
+                calculatedColumns,
+            });
+            expect(target.getCellValue({ rowNode: target.getRowNode('r1')!, colKey: 'calculated_1' })).toBe(
+                via === 'state' ? '#REF!' : 119
+            );
+            await openEditDialogViaMenu(target, 'calculated_1');
+            expect(getExpressionInput().value).toBe('[Sales] + [Salary] - 1');
+            if (via === 'state') {
+                expect(getExpressionInput().validationMessage).toContain('cannot be used');
+            } else {
+                expect(getExpressionInput().validationMessage).toBe('');
+            }
+            setExpression('[Sales] + 1');
+            closeDialog();
+            expect(target.getCellValue({ rowNode: target.getRowNode('r1')!, colKey: 'calculated_1' })).toBe(21);
+            const correctedState: GridState = JSON.parse(JSON.stringify(target.getState()));
+            target.destroy();
+            const corrected = createGrid('corrected-target', {
+                columnDefs: via === 'state' ? columnDefs : savedDefs,
+                initialState: correctedState,
+                rowData,
+                calculatedColumns,
+            });
+            expect(corrected.getCellValue({ rowNode: corrected.getRowNode('r1')!, colKey: 'calculated_1' })).toBe(21);
+        }
+    );
 });

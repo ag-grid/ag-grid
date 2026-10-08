@@ -373,6 +373,66 @@ describe('htaccessRules', () => {
         });
     });
 
+    describe('Old PHP-era grid archives (15.0.0-26.2.0)', () => {
+        // [regex, target or '-', flags] for each rule in the block, in order.
+        const archiveRules = () =>
+            productionContent
+                .split('\n')
+                .filter((l) => l.includes('RewriteRule "^/?archive/(?:1[5-9]|2[0-6])'))
+                .map((l) => {
+                    const m = l.match(/RewriteRule "([^"]+)" (\S+) \[([^\]]+)\]/);
+                    return { regex: new RegExp(m![1]), target: m![2].replace(/"/g, ''), flags: m![3] };
+                });
+        const ruleFor = (path: string) => archiveRules().find((r) => r.regex.test(path.replace(/^\//, '')));
+
+        it('emits three rules, each guarded to the www host', () => {
+            const lines = productionContent.split('\n');
+            const at = lines
+                .map((l, i) => (l.includes('RewriteRule "^/?archive/(?:1[5-9]|2[0-6])') ? i : -1))
+                .filter((i) => i > -1);
+            expect(at).toHaveLength(3);
+            at.forEach((i) => expect(lines[i - 1]).toBe('    RewriteCond %{HTTP_HOST} ^www\\.ag-grid\\.com$ [NC]'));
+        });
+
+        it('redirects the Jira-backed changelog and pipeline pages to the live ones, dropping the query', () => {
+            expect(ruleFor('/archive/24.0.0/ag-grid-changelog/')).toMatchObject({
+                target: 'https://www.ag-grid.com/changelog/',
+                flags: 'R=301,QSD,L',
+            });
+            expect(ruleFor('/archive/15.0.0/ag-grid-pipeline/index.php')).toMatchObject({
+                target: 'https://www.ag-grid.com/pipeline/',
+                flags: 'R=301,QSD,L',
+            });
+            expect(ruleFor('/archive/26.2.0/ag-grid-changelog')?.target).toBe('https://www.ag-grid.com/changelog/');
+        });
+
+        it('serves 410 for jira_reports/ and the getting-started include fragments', () => {
+            [
+                '/archive/24.0.0/jira_reports/jira_utilities.php',
+                '/archive/26.2.0/jira_reports/',
+                '/archive/21.2.2/getting-started/footer.php',
+                '/archive/19.1.4/getting-started/header.php',
+            ].forEach((path) => expect(ruleFor(path)).toMatchObject({ target: '-', flags: 'R=410,L' }));
+        });
+
+        it('leaves everything else alone: other pages, other versions, charts archives', () => {
+            [
+                '/archive/24.0.0/features-overview/',
+                '/archive/24.0.0/getting-started/',
+                '/archive/24.0.0/getting-started/step1.png',
+                '/archive/14.2.0/ag-grid-changelog/',
+                '/archive/27.0.0/ag-grid-changelog/',
+                '/archive/36.2.0/jira_reports/',
+                '/charts/archive/24.0.0/ag-grid-changelog/',
+                '/changelog/',
+            ].forEach((path) => expect(ruleFor(path)).toBeUndefined());
+        });
+
+        it('is production only', () => {
+            expect(stagingContent).not.toContain('ag-grid-changelog');
+        });
+    });
+
     describe('Archived Studio versions are never cached', () => {
         it('does not apply to the live Studio site, which caches normally', () => {
             // The rule is anchored to /studio/archive/ - /studio/ itself must keep the normal

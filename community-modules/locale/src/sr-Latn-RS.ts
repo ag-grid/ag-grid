@@ -916,6 +916,7 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     calculatedColumn: 'Izračunata kolona',
     calculatedColumnAdd: 'Dodaj izračunatu kolonu',
     calculatedColumnEdit: 'Izmeni izračunatu kolonu',
+    calculatedColumnView: 'Prikaži izračunatu kolonu',
     calculatedColumnRemove: 'Ukloni izračunatu kolonu',
     calculatedColumnTitle: 'Naslov',
     calculatedColumnType: 'Tip',
