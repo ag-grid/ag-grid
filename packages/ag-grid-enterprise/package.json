@@ -114,7 +114,7 @@
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
     "ag-grid-community": "36.2.0-beta.20261008.1557",
-    "ag-stack": "36.2.0-beta.20261008.1557"
+    "ag-stack": "36.2.0"
   },
   "optionalDependencies": {
     "ag-charts-community": "14.2.0-beta.20261008",
