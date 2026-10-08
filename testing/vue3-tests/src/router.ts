@@ -26,6 +26,16 @@ const routes = [
         component: () => import('./test-cases/AG-11760-header-support/Page.vue'),
     },
     {
+        path: '/ag-18831',
+        name: 'AG-18831 Exposed Instance Methods',
+        component: () => import('./test-cases/AG-18831-exposed-instance-methods/Page.vue'),
+    },
+    {
+        path: '/ag-18831-getters',
+        name: 'AG-18831 Exposed Instance Getters',
+        component: () => import('./test-cases/AG-18831-exposed-instance-getters/Page.vue'),
+    },
+    {
         path: '/ag-13735',
         name: 'AG-13735 Class Instances RowData',
         component: () => import('./test-cases/AG-13735-class-instances-rowdata/Page.vue'),
