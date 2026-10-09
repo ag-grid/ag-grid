@@ -128,6 +128,39 @@ export class FilterPanelService
     }
 
     public remove(id: string): void {
+        const index = this.removeFilter(id);
+        if (index != null) {
+            this.dispatchStatesUpdates(this.orderedStates[index]); // undefined if no elements after
+        }
+    }
+
+    public setFilters(ids: string[]): void {
+        const { states, orderedStates, beans } = this;
+        const newIds = new Set(ids);
+        for (const id of this.getIds()) {
+            if (!newIds.has(id)) {
+                this.removeFilter(id);
+            }
+        }
+
+        const newStates = new Map<string, StateWrapper>();
+        for (const id of newIds) {
+            const stateWrapper = states.get(id) ?? this.createFilterStateWrapper(id, false);
+            if (stateWrapper) {
+                newStates.set(id, stateWrapper);
+            } else if (!beans.colModel.getNonPivotColById(id)) {
+                beans.log.warn(336, { colId: id });
+            }
+        }
+        states.clear();
+        newStates.forEach((stateWrapper, id) => states.set(id, stateWrapper));
+        orderedStates.length = 0;
+        orderedStates.push(...newStates.keys());
+        this.dispatchStatesUpdates();
+    }
+
+    /** Returns the index the filter had in `orderedStates`, or `undefined` if it was not shown. */
+    private removeFilter(id: string): number | undefined {
         const {
             states,
             orderedStates,
@@ -135,10 +168,11 @@ export class FilterPanelService
         } = this;
         const state = states.get(id);
         if (!state) {
-            return;
+            return undefined;
         }
         state.destroy?.();
         const column = state.state.column;
+        // must be removed before `destroyFilter`, otherwise `onFilterDestroyed` recreates it
         states.delete(id);
         selectableFilter?.clearActive(id);
         colFilter?.destroyFilter(column);
@@ -148,8 +182,7 @@ export class FilterPanelService
         });
         const index = orderedStates.indexOf(id);
         orderedStates.splice(index, 1);
-        const newActiveId = orderedStates[index]; // undefined if no elements after
-        this.dispatchStatesUpdates(newActiveId);
+        return index;
     }
 
     public getState<S extends FilterPanelFilterState>(id: string): S | undefined {

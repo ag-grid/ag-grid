@@ -79,25 +79,6 @@ function clearFilterValues() {
 // `setState` resets any section of the grid state it is not given, so the handlers below
 // spread the current state to keep everything else (e.g. sorting) unchanged
 
-function clearToolPanel() {
-    gridApi.setState({
-        ...gridApi.getState(),
-        // Set `filter` to `undefined`, otherwise the state spread above
-        // re-applies the current filters, which adds their cards back to the tool panel
-        filter: undefined,
-        sideBar: {
-            visible: true,
-            position: 'right',
-            openToolPanel: 'filters-new',
-            toolPanels: {
-                'filters-new': {
-                    filters: [],
-                } as NewFiltersToolPanelState,
-            },
-        },
-    });
-}
-
 function restoreInitialState() {
     gridApi.setState({ ...gridApi.getState(), filter: undefined, sideBar: initialSideBarState });
 }
