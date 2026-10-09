@@ -5,6 +5,7 @@ import {
     PinnedRowModule,
     createGrid,
     enableDevValidations,
+    themeQuartz,
 } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -18,6 +19,9 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, Pin
 let gridApi: GridApi;
 
 const gridOptions: GridOptions<IOlympicData> = {
+    theme: themeQuartz.withParams({
+        grandTotalRowBorder: { width: 2, color: '#2196f3' },
+    }),
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
         { field: 'gold', aggFunc: 'sum' },

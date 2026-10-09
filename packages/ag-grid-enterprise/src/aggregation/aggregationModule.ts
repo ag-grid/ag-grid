@@ -6,6 +6,7 @@ import { AggColumnNameService } from './aggColumnNameService';
 import { AggFuncService } from './aggFuncService';
 import { AggregatedChildrenSvc } from './aggregatedChildrenSvc';
 import { addAggFuncs, clearAggFuncs, setColumnAggFunc } from './aggregationApi';
+import aggregationModuleCSS from './aggregationModule.css';
 import { AggregationStage } from './aggregationStage';
 import { FilterAggregatesStage } from './filterAggregatesStage';
 import { FooterService } from './footerService';
@@ -23,6 +24,7 @@ export const SharedAggregationModule: _ModuleWithApi<_AggregationGridApi<any>> =
         clearAggFuncs,
         setColumnAggFunc,
     },
+    css: [aggregationModuleCSS],
     dependsOn: [EnterpriseCoreModule],
 };
 
