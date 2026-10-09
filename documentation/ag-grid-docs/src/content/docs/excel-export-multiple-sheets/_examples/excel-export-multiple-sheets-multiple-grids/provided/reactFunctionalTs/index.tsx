@@ -192,10 +192,10 @@ const GridExample = () => {
     const getTopToolBar = () => (
         <div className="example-controls">
             <div className="controls-row">
-                <button type="button" className="btn btn-default excel" onClick={onExcelExport}>
+                <button type="button" className="excel" onClick={onExcelExport}>
                     <i className="far fa-file-excel" style={{ marginRight: 5, color: 'green' }}></i>Export to Excel
                 </button>
-                <button type="button" className="btn btn-default reset" onClick={reset}>
+                <button type="button" className="reset" onClick={reset}>
                     <i className="fas fa-redo" style={{ marginRight: 5 }}></i>Reset
                 </button>
             </div>
@@ -223,7 +223,7 @@ const GridExample = () => {
 
     return (
         <AgGridProvider modules={modules}>
-            <div className="top-container">
+            <div className="example-wrapper">
                 {getTopToolBar()}
                 <div className="grid-wrapper">
                     {getGridWrapper(0)}

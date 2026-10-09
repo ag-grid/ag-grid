@@ -58,9 +58,9 @@ export class SportRenderer implements ICellRendererAngularComp {
     standalone: true,
     imports: [AgGridAngular],
     selector: 'my-app',
-    template: /*html */ ` <div class="top-container">
-        <div class="example-toolbar panel panel-default example-controls">
-            <div class="panel-body controls-row">
+    template: /*html */ ` <div class="example-wrapper">
+        <div class="example-controls">
+            <div class="controls-row">
                 <div class="button-group" role="group" aria-label="Drag behaviour">
                     <input type="radio" id="move" name="radio" checked #eMoveRadio />
                     <label for="move">Remove Source Rows</label>
@@ -69,11 +69,9 @@ export class SportRenderer implements ICellRendererAngularComp {
                     <input type="radio" id="none" name="radio" />
                     <label for="none">None</label>
                 </div>
-                <span class="input-group-button">
-                    <button type="button" class="btn btn-default reset" (click)="reset()">
-                        <i class="fas fa-redo" style="margin-right: 5px;"></i>Reset
-                    </button>
-                </span>
+                <button type="button" class="reset" (click)="reset()">
+                    <i class="fas fa-redo" style="margin-right: 5px;"></i>Reset
+                </button>
             </div>
         </div>
         <div class="grid-wrapper">

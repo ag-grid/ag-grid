@@ -5,12 +5,3 @@
 .number-cell {
     text-align: right;
 }
-
-.top-container button {
-    margin-right: 4px;
-}
-
-.center-container {
-    min-height: 10px;
-    flex: 1 1 auto;
-}
