@@ -74,6 +74,14 @@
     }
 }
 
+:where(.ag-set-filter-item-missing) .ag-checkbox-input-wrapper {
+    border-style: dashed;
+
+    &:where(.ag-checked) {
+        background-color: color-mix(in srgb, var(--ag-checkbox-checked-background-color), transparent);
+    }
+}
+
 /* stylelint-disable-next-line -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-cell-editing-error .ag-checkbox-input-wrapper:focus-within {
     box-shadow: var(--ag-focus-error-shadow);

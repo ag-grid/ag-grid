@@ -66,8 +66,8 @@ function clearPreservedValues() {
 
 function reset() {
     gridApi!.setFilterModel(null);
-    restoreData();
-    clearPreservedValues();
+    gridApi!.setGridOption('rowData', getRowData());
+    gridApi!.doFilterAction({ colId: 'ag-Grid-AutoColumn', action: 'clearPreservedValues' });
 }
 
 // setup the grid after the page has finished loading

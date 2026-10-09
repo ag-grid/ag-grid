@@ -65,7 +65,7 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
     /** Bumped whenever `keyOnlyKeys` changes, so a list rebuilds the rows it drew for a key alone. */
     public keyOnlyVersion = 0;
 
-    /** The keys the list shows: the available keys, then the missing keys. */
+    /** The keys the list shows: the available and missing keys, in the values' order. */
     public displayableKeys = this.availableKeys;
 
     private valuesType: SetFilterModelValuesType;
@@ -535,12 +535,24 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
 
         const filterParams = this.params.handlerParams.filterParams;
 
-        if (filterParams.suppressSorting) {
-            return Array.from(values.keys());
-        }
-
-        // Their values are unknown, so no comparator is handed one: ordered by key, after the rest.
+        // Their values are unknown, so no comparator is handed one: after the rest, ordered by key when sorting.
         const keyOnlyKeys = this.keyOnlyKeys.size > 0 && values === this.allValues ? this.keyOnlyKeys : undefined;
+
+        if (filterParams.suppressSorting) {
+            if (!keyOnlyKeys) {
+                return Array.from(values.keys());
+            }
+            const unsortedKeys: (string | null)[] = [];
+            values.forEach(function collectValueKey(_value, key) {
+                if (!keyOnlyKeys.has(key)) {
+                    unsortedKeys.push(key);
+                }
+            });
+            for (const key of keyOnlyKeys) {
+                unsortedKeys.push(key);
+            }
+            return unsortedKeys;
+        }
         // Excel Mode lists the blank last, so it is left out of the sort.
         const blankLast = !!filterParams.excelMode && values.has(null);
         const keys: (string | null)[] = [];
@@ -593,22 +605,17 @@ export class SetValueModel<TValue> extends BeanStub<SetValueModelEvent> {
 
     private updateDisplayableKeys(allKeys: (string | null)[]): void {
         const { availableKeys, missingKeys } = this;
-        if (!missingKeys.size) {
+        if (!missingKeys.size && !this.isPreserving()) {
             this.displayableKeys = availableKeys;
             return;
         }
-        const displayableKeys = new Set(availableKeys);
+        // In the values' order, not the rows', so a value leaving or returning never moves the others.
+        const displayableKeys = new Set<string | null>();
         for (let i = 0, len = allKeys.length; i < len; ++i) {
             const key = allKeys[i];
-            if (missingKeys.has(key)) {
+            if (availableKeys.has(key) || missingKeys.has(key)) {
                 displayableKeys.add(key);
             }
-        }
-        // Excel Mode lists the blank last when sorting, after the retained values too.
-        const { excelMode, suppressSorting } = this.params.handlerParams.filterParams;
-        if (excelMode && !suppressSorting && displayableKeys.has(null)) {
-            displayableKeys.delete(null);
-            displayableKeys.add(null);
         }
         this.displayableKeys = displayableKeys;
     }

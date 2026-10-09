@@ -84,7 +84,7 @@ describe('Set Filter preservePreviousValues - filter list', () => {
             item.querySelector('.ag-checkbox-label')?.textContent?.trim()
         );
 
-    test('retained values are listed after the current ones, muted, and announced', async () => {
+    test('retained values keep their sorted place, marked, and announced', async () => {
         const api = createGrid(rows('A', 'B', 'C', 'D'));
         await asyncSetTimeout(0);
         await setModel(api, ['A', 'B']);
@@ -96,10 +96,10 @@ describe('Set Filter preservePreviousValues - filter list', () => {
             COLUMN FILTER (set)
             mini-filter: ""
             ▪ (Select All)
-            ☐ C
-            ☐ D
             ☑ A
             ☑ B
+            ☐ C
+            ☐ D
             model:
               filterType: "set"
               values:
@@ -110,11 +110,84 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         const labels = Array.from(popup().querySelectorAll<HTMLElement>('.ag-filter-virtual-list-item')).map((el) =>
             el.getAttribute('aria-label')
         );
-        expect(labels).toEqual([null, null, null, 'A, not in current data', 'B, not in current data']);
+        expect(labels).toEqual([null, 'A, not in current data', 'B, not in current data', null, null]);
 
         await setRowData(api, rows('A', 'C', 'D'));
-        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', 'C', 'D', 'B']);
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', 'B', 'C', 'D']);
         expect(missingItems()).toEqual(['B']);
+    });
+
+    test('preservePreviousValuesLabel follows each value not in the data, until it returns', async () => {
+        const api = createGrid(rows('A', 'B', 'C'), { preservePreviousValuesLabel: '(not in rows)' });
+        await asyncSetTimeout(0);
+        await setModel(api, ['A', 'Z']);
+        await setRowData(api, rows('A', 'C'));
+
+        const filter = await ColumnFilterHarness.open(api, 'value');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', 'B (not in rows)', 'C', 'Z (not in rows)']);
+        const labels = () =>
+            Array.from(popup().querySelectorAll('.ag-set-filter-item-missing-label')).map((el) => el.textContent);
+        expect(labels()).toEqual(['(not in rows)', '(not in rows)']);
+
+        await setRowData(api, rows('A', 'B'));
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', 'B', 'C (not in rows)', 'Z (not in rows)']);
+    });
+
+    test('preservePreviousValuesLabel labels a tree list group once all of it has left the data', async () => {
+        const row = (value: string): Row => ({ id: String(nextId++), value });
+        const api = gridsManager.createGrid<Row>('grid', {
+            columnDefs: [
+                {
+                    field: 'value',
+                    cellDataType: 'dateString',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        preservePreviousValues: true,
+                        preservePreviousValuesLabel: '(not in rows)',
+                        treeList: true,
+                    },
+                },
+            ],
+            getRowId: ({ data }) => data.id,
+            rowData: [row('2024-01-01'), row('2025-02-01')],
+        });
+        await asyncSetTimeout(0);
+        await setRowData(api, [row('2025-02-01')]);
+
+        const filter = await ColumnFilterHarness.open(api, 'value');
+        popup().querySelector<HTMLElement>('.ag-set-filter-group-closed-icon')!.click();
+        await asyncSetTimeout(0);
+        expect(filter.setFilterItemLabels()).toEqual([
+            '(Select All)',
+            '2024 (not in rows)',
+            'January (not in rows)',
+            '01 (not in rows)',
+            '2025',
+            'February',
+            '01',
+        ]);
+    });
+
+    test('preservePreviousValuesLabel is shown as given after a cell renderer, until the value returns', async () => {
+        const cellRenderer = (params: { value: unknown }) => `#${params.value}`;
+        const api = createGrid(rows('A', 'B'), { preservePreviousValuesLabel: '- gone', cellRenderer });
+        await asyncSetTimeout(0);
+        await setRowData(api, rows('A'));
+
+        const filter = await ColumnFilterHarness.open(api, 'value');
+        expect(filter.setFilterItemLabels()).toEqual(['#(Select All)', '#A', '#B - gone']);
+        await setRowData(api, rows('A', 'B'));
+        expect(filter.setFilterItemLabels()).toEqual(['#(Select All)', '#A', '#B']);
+    });
+
+    test('preservePreviousValuesLabel still labels a retained value whose formatter answers an empty string', async () => {
+        const valueFormatter = ({ value }: { value: string }) => (value === 'B' ? '' : value);
+        const api = createGrid(rows('A', 'B'), { preservePreviousValuesLabel: '(not in rows)', valueFormatter });
+        await asyncSetTimeout(0);
+        await setRowData(api, rows('A'));
+
+        const filter = await ColumnFilterHarness.open(api, 'value');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'A', '(not in rows)']);
     });
 
     test('a retained value whose formatter answers nothing is announced by its value', async () => {
@@ -151,6 +224,44 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         await ColumnFilterHarness.open(api, 'value');
         const item = Array.from(popup().querySelectorAll<HTMLElement>('.ag-set-filter-item')).find(
             (el) => el.querySelector('.ag-checkbox-label')?.textContent?.trim() === 'B'
+        )!;
+        await userEvent.hover(item);
+        await waitForTooltips(1);
+        expect(getVisibleTooltips()[0].textContent).toBe('B, not in current data');
+    });
+
+    test('with tooltips only when truncated, a labelled value is measured apart from its label', async () => {
+        const isValueSpan = (el: Element) => el.classList.contains('ag-set-filter-item-missing-value');
+        vi.spyOn(Element.prototype, 'scrollWidth', 'get').mockImplementation(function (this: Element) {
+            return isValueSpan(this) ? 200 : 0;
+        });
+        vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: Element) {
+            return isValueSpan(this) ? 100 : 0;
+        });
+        const api = gridsManager.createGrid<Row>('grid', {
+            columnDefs: [
+                {
+                    field: 'value',
+                    filter: 'agSetColumnFilter',
+                    filterParams: {
+                        preservePreviousValues: true,
+                        preservePreviousValuesLabel: '(not in rows)',
+                        showTooltips: true,
+                    },
+                },
+            ],
+            getRowId: ({ data }) => data.id,
+            rowData: rows('A', 'B'),
+            tooltipShowDelay: 0,
+            tooltipSwitchShowDelay: 0,
+            tooltipShowMode: 'whenTruncated',
+        });
+        await asyncSetTimeout(0);
+        await setRowData(api, rows('A'));
+
+        await ColumnFilterHarness.open(api, 'value');
+        const item = Array.from(popup().querySelectorAll<HTMLElement>('.ag-set-filter-item')).find(
+            (el) => el.querySelector('.ag-checkbox-label')?.textContent?.trim() === 'B (not in rows)'
         )!;
         await userEvent.hover(item);
         await waitForTooltips(1);
@@ -227,7 +338,7 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         await filter.miniFilterSearch('');
 
         await setRowData(api, rows('A', 'X'));
-        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', '<A>', '<X>', '<B>']);
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', '<A>', '<B>', '<X>']);
         expect(missingItems()).toEqual(['<B>']);
     });
 
@@ -321,7 +432,7 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         const filter = await ColumnFilterHarness.open(api, 'value');
         await filter.miniFilterSearch('p');
         await filter.apply();
-        expect(modelOf(api)?.values).toEqual(['Pear', 'Apple']);
+        expect(modelOf(api)?.values).toEqual(['Apple', 'Pear']);
 
         await setRowData(api, rows('Apple', 'Avocado', 'Pear'));
         expect(shown(api)).toEqual(['Apple', 'Pear']);
@@ -365,7 +476,7 @@ describe('Set Filter preservePreviousValues - filter list', () => {
 
         const filter = await ColumnFilterHarness.open(api, 'value');
         await filter.miniFilterSearch('a');
-        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'Avocado', 'Pear', 'Apple']);
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'Apple', 'Avocado', 'Pear']);
 
         await filter.miniFilterSearch('app');
         expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'Apple']);
@@ -377,7 +488,7 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         expect(shown(api)).toEqual(['Apple', 'Pear']);
     });
 
-    test('a tree list keeps retained leaves in place, and mutes a group once all of it is retained', async () => {
+    test('a tree list keeps retained leaves in place, and marks a group once all of it is retained', async () => {
         const row = (value: string): Row => ({ id: String(nextId++), value });
         const api = gridsManager.createGrid<Row>('grid', {
             columnDefs: [
@@ -411,7 +522,7 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         expect(filter.setFilterItemLabels()).toEqual(allLabels);
         expect(missingItems()).toEqual(['2024', 'January', '01', '02', '03']);
 
-        // Every value retained: each group is muted, but (Select All) spans the list and is not.
+        // Every value retained: each group is marked, but (Select All) spans the list and is not.
         await setRowData(api, []);
         await expandAll();
         expect(missingItems()).toEqual(allLabels.slice(1));
@@ -463,7 +574,7 @@ describe('Set Filter preservePreviousValues - filter list', () => {
         expect(cellRenderer.mock.calls.map(([params]) => params.value)).not.toContain('Z');
     });
 
-    test('in Excel Mode the Add Selection row is never muted, though it holds no keys', async () => {
+    test('in Excel Mode the Add Selection row is never marked, though it holds no keys', async () => {
         const api = createGrid(
             rows('2024-01-01', '2025-01-01'),
             { treeList: true, excelMode: 'windows' },
