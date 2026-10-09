@@ -393,6 +393,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.colEventsRaisingAt = i + 3;
             try {
                 (queue[i] as QueuedEventOwner).raiseQueuedEvent(queue[i + 1] as AgEvent<string>);
+                if (this.hasColChangesStaged()) {
+                    this.runColChanges();
+                }
             } catch (e) {
                 error = threw ? error : e;
                 threw = true;

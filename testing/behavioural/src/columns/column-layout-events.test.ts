@@ -1056,21 +1056,26 @@ describe('the column events of one call', () => {
         expect(seen).toEqual(['sort:a', 'visible:c']);
     });
 
-    test('an aggregation change made from a column event tells its column once the listener returns, within the call', () => {
-        const api = createGrid([{ field: 'a' }, { field: 'b' }, { field: 'c' }, { field: 'd', aggFunc: 'sum' }]);
+    test('an aggregation change made from a column event tells its column once the listener returns and the rows are aggregated with it', () => {
+        const api = createGrid([
+            { field: 'a' },
+            { field: 'b', rowGroup: true },
+            { field: 'c' },
+            { field: 'd', aggFunc: 'sum' },
+        ]);
         const seen: string[] = [];
         api.getColumn('a')!.addEventListener('visibleChanged', () => {
             seen.push('call');
-            api.setColumnAggFunc('d', 'avg');
+            api.setColumnAggFunc('d', 'count');
             seen.push('returned');
         });
         api.getColumn('d')!.addEventListener('columnStateUpdated', (event) =>
-            seen.push(`d:${'key' in event ? event.key : ''}`)
+            seen.push(`d:${'key' in event ? event.key : ''}:${api.getDisplayedRowAtIndex(0)!.aggData?.d}`)
         );
 
         api.applyColumnState({ state: [{ colId: 'a', hide: true }] });
 
-        expect(seen).toEqual(['call', 'returned', 'd:aggFunc']);
+        expect(seen).toEqual(['call', 'returned', 'd:aggFunc:1']);
     });
 
     test('a column moved again by an update made from another column event is told once, of where it ends', () => {
@@ -1240,10 +1245,15 @@ describe('the column events of one call', () => {
 
     test('a row group column a column listener adds while it is told is grouped by once the call returns', () => {
         const api = createGrid();
+        const grouped: boolean[] = [];
         api.getColumn('a')!.addEventListener('visibleChanged', () => api.addRowGroupColumns(['b']));
+        api.getColumn('b')!.addEventListener('columnRowGroupChanged', () =>
+            grouped.push(api.getDisplayedRowAtIndex(0)!.group === true && api.getColumn('ag-Grid-AutoColumn') !== null)
+        );
 
         api.setColumnsVisible(['a'], false);
 
+        expect(grouped).toEqual([true]);
         expect(api.getColumn('ag-Grid-AutoColumn')).not.toBeNull();
         expect(api.getDisplayedRowAtIndex(0)!.group).toBe(true);
     });
