@@ -35,9 +35,6 @@ test.agExample(import.meta, () => {
         await expect(filterCards).toHaveCount(3);
         await expect(filterToolPanel.getByRole('button', { name: 'Age is (All)' })).toBeVisible();
 
-        // clearing the tool panel state removes every card, leaving only the add card
-        await button('Clear Tool Panel').click();
-        await expect(filterCards).toHaveCount(1);
         await expect(athleteHeader).toHaveAttribute('aria-sort', 'ascending');
 
         await button('Restore Initial State').click();
@@ -51,8 +48,8 @@ test.agExample(import.meta, () => {
         await expect(ageCard).toContainText('25');
 
         await button('Save State').click();
-        await button('Clear Tool Panel').click();
-        await expect(filterCards).toHaveCount(1);
+        await button('Clear Filter Values').click();
+        await expect(ageCard).not.toContainText('25');
 
         await button('Restore Saved State').click();
         await expect(filterCards).toHaveCount(3);

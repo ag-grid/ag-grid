@@ -68,6 +68,12 @@ export class WrapperToolPanel extends Component implements INewFiltersToolPanel,
         this.beans.filterPanelSvc?.setFiltersExpanded(false, colIds);
     }
 
+    public setFilters(colIds: string[]): void {
+        if (this.filterPanel) {
+            this.beans.filterPanelSvc?.setFilters(colIds);
+        }
+    }
+
     public getState(): NewFiltersToolPanelState {
         return this.beans.filterPanelSvc?.getGridState() ?? {};
     }
