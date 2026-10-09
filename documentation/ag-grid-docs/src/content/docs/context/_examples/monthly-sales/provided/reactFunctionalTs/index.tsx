@@ -205,23 +205,22 @@ const GridExample = () => {
                                 placeholder="Filter..."
                             />
 
-                            <span style={{ paddingLeft: '20px' }}>
-                                <b>Period:</b>
-                                <button onClick={() => onChangeMonth(-1)}>
-                                    <i className="fa fa-chevron-left"></i>
-                                </button>
-                                <button onClick={() => onChangeMonth(1)}>
-                                    <i className="fa fa-chevron-right"></i>
-                                </button>
-                                <span id="monthName" style={{ width: '100px', display: 'inline-block' }}>
-                                    Year to Jan
-                                </span>
+                            <span className="gap-left">Period:</span>
+                            <button onClick={() => onChangeMonth(-1)}>
+                                <i className="fa fa-chevron-left"></i>
+                            </button>
+                            <button onClick={() => onChangeMonth(1)}>
+                                <i className="fa fa-chevron-right"></i>
+                            </button>
+                            <span id="monthName" style={{ width: '100px', display: 'inline-block' }}>
+                                Year to Jan
                             </span>
 
-                            <span style={{ paddingLeft: '20px' }}>
-                                <b>Legend:</b>&nbsp;&nbsp;
-                                <div className="cell-bud legend-box"></div> Actual&nbsp;&nbsp;
-                                <div className="cell-act legend-box"></div> Budget
+                            <span className="legend-item gap-left">
+                                <span className="legend-swatch cell-bud"></span>Actual
+                            </span>
+                            <span className="legend-item">
+                                <span className="legend-swatch cell-act"></span>Budget
                             </span>
                         </div>
                     </div>

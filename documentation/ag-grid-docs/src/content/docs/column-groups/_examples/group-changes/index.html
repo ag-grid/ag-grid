@@ -1,22 +1,19 @@
 <div class="example-wrapper">
     <div class="example-controls">
         <div class="controls-row">
-            <label>
-                <button onclick="onBtNoGroups()">No Groups</button>
-            </label>
-            <label>
-                <div class="participant-group legend-box"></div>
-                <button onclick="onParticipantInGroupOnly()">Participant in Group</button>
-            </label>
-            <label>
-                <div class="medals-group legend-box"></div>
-                <button onclick="onMedalsInGroupOnly()">Medals in Group</button>
-            </label>
-            <label>
-                <div class="participant-group legend-box"></div>
-                <div class="medals-group legend-box"></div>
-                <button onclick="onParticipantAndMedalsInGroups()">Participant and Medals in Group</button>
-            </label>
+            <button onclick="onBtNoGroups()">No Groups</button>
+            <button onclick="onParticipantInGroupOnly()">Participant in Group</button>
+            <button onclick="onMedalsInGroupOnly()">Medals in Group</button>
+            <button onclick="onParticipantAndMedalsInGroups()">Participant and Medals in Group</button>
+
+            <span class="legend-item gap-left">
+                <span class="legend-swatch participant-group"></span>
+                Participant
+            </span>
+            <span class="legend-item">
+                <span class="legend-swatch medals-group"></span>
+                Medals
+            </span>
         </div>
     </div>
     <div id="myGrid" class="test-grid"></div>
