@@ -394,14 +394,14 @@ export class ToolPanelContextMenu extends Component {
 
     private getDefaultTokens(): DefaultToolPanelItem[] {
         const tokens: DefaultToolPanelItem[] = [];
-        if (this.columnMove && !isMoveBlocked(this.beans, this.columns, this.params)) {
-            tokens.push('moveUp', 'moveDown');
-        }
         const { menuItemMap, columns } = this;
         for (const [key, val] of menuItemMap) {
             if (columns.some((col) => val.allowedFunction(col))) {
                 tokens.push(key);
             }
+        }
+        if (this.columnMove && !isMoveBlocked(this.beans, this.columns, this.params)) {
+            tokens.push('moveUp', 'moveDown');
         }
         return tokens;
     }

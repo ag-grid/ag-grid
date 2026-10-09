@@ -492,7 +492,7 @@ describe('ToolPanelContextMenu', () => {
 
             await findByText(gridDiv, 'Read-only custom');
             expect(queryByText(gridDiv, 'Group by Athlete')).toBeNull();
-            expect(getColumnMenuItems.mock.calls[0][0].defaultItems).toEqual(['moveUp', 'moveDown', 'scrollIntoView']);
+            expect(getColumnMenuItems.mock.calls[0][0].defaultItems).toEqual(['scrollIntoView', 'moveUp', 'moveDown']);
         });
 
         test('under functionsReadOnly with no callback the menu still offers scroll into view', async () => {
