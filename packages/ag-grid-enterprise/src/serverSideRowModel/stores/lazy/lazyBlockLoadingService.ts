@@ -127,7 +127,19 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         this.queueLoadCheck();
     }
 
-    private executeLoad(cache: LazyCache, startRow: number, endRow: number) {
+    /**
+     * Requests the block containing `storeIndex` immediately, bypassing the queue and debounce.
+     * @returns true if the datasource responded before `getRows` returned
+     */
+    public loadBlockInline(cache: LazyCache, storeIndex: number): boolean {
+        const startRow = cache.getBlockStartIndex(storeIndex);
+        if (!this.hasAvailableLoadBandwidth() || this.isRowLoading(cache, startRow)) {
+            return false;
+        }
+        return this.executeLoad(cache, startRow, startRow + cache.getBlockSize(), true);
+    }
+
+    private executeLoad(cache: LazyCache, startRow: number, endRow: number, inline = false): boolean {
         const ssrmParams = cache.getSsrmParams();
         const parentNode = cache.store.getParentNode() as RowNode;
         const request: IServerSideGetRowsRequest = {
@@ -155,15 +167,21 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             }
         };
 
+        // Responses arriving before getRows returns happen mid-render, so the cache must defer its events.
+        let insideGetRows = false;
+        let responded = false;
+
         const success = (params: LoadSuccessParams) => {
+            responded = true;
             this.onLoadComplete();
-            cache.onLoadSuccess(startRow, endRow - startRow, params);
+            cache.onLoadSuccess(startRow, endRow - startRow, params, inline && insideGetRows);
             removeNodesFromLoadingMap();
         };
 
         const fail = () => {
+            responded = true;
             this.onLoadComplete();
-            cache.onLoadFailed(startRow, endRow - startRow);
+            cache.onLoadFailed(startRow, endRow - startRow, inline && insideGetRows);
             removeNodesFromLoadingMap();
         };
 
@@ -181,7 +199,10 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
         addNodesToLoadingMap();
         this.outboundRequests += 1;
+        insideGetRows = true;
         cache.getSsrmParams().datasource?.getRows(params);
+        insideGetRows = false;
+        return responded;
     }
 
     private getBlockToLoad() {

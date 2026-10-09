@@ -174,6 +174,12 @@ export class LazyCache extends BeanStub {
         const node = this.nodeDisplayIndexMap.get(displayIndex);
         if (node) {
             // if we have the node, check if it needs refreshed when rendered
+            if (node.stub && !node.failedLoad) {
+                const stubIndex = this.nodeMap.getBy('node', node)?.index;
+                if (stubIndex != null && this.loadBlockInline(stubIndex)) {
+                    return this.nodeDisplayIndexMap.get(displayIndex);
+                }
+            }
             if (node.stub || node.__needsRefreshWhenVisible) {
                 this.lazyBlockLoadingSvc.queueLoadCheck();
             }
@@ -257,7 +263,7 @@ export class LazyCache extends BeanStub {
     /**
      * Used for creating and positioning a stub node without firing a store updated event
      */
-    private createStubNode(storeIndex: number, displayIndex: number): RowNode {
+    private createStubNode(storeIndex: number, displayIndex: number): RowNode | undefined {
         // bounds are acquired before creating the node, as otherwise it'll use it's own empty self to calculate
         const rowBounds = this.store.getRowBounds(displayIndex);
         const newNode = this.createRowAtIndex(storeIndex, null, (node) => {
@@ -274,8 +280,15 @@ export class LazyCache extends BeanStub {
                 }
             }
         }
+        if (this.loadBlockInline(storeIndex)) {
+            return this.nodeDisplayIndexMap.get(displayIndex);
+        }
         this.lazyBlockLoadingSvc.queueLoadCheck();
         return newNode;
+    }
+
+    private loadBlockInline(storeIndex: number): boolean {
+        return this.gos.get('serverSideSynchronousLoad') && this.lazyBlockLoadingSvc.loadBlockInline(this, storeIndex);
     }
 
     /**
@@ -855,7 +868,12 @@ export class LazyCache extends BeanStub {
         return [...duplicates];
     }
 
-    public onLoadSuccess(firstRowIndex: number, numberOfRowsExpected: number, response: LoadSuccessParams) {
+    public onLoadSuccess(
+        firstRowIndex: number,
+        numberOfRowsExpected: number,
+        response: LoadSuccessParams,
+        deferEvents = false
+    ) {
         if (!this.live) {
             return;
         }
@@ -960,6 +978,19 @@ export class LazyCache extends BeanStub {
             this.clientSideSortRows();
         }
 
+        if (deferEvents) {
+            this.serverSideRowModel.updateRowIndexesAndBounds();
+            queueMicrotask(() => this.fireLoadSuccessEvents(wasRefreshing));
+        } else {
+            this.fireLoadSuccessEvents(wasRefreshing);
+        }
+    }
+
+    private fireLoadSuccessEvents(wasRefreshing: boolean) {
+        if (!this.live) {
+            return;
+        }
+
         this.fireStoreUpdatedEvent();
 
         // Happens after store updated, as store updating can clear our excess rows.
@@ -1024,7 +1055,7 @@ export class LazyCache extends BeanStub {
         return this.isLastRowInferred;
     }
 
-    public onLoadFailed(firstRowIndex: number, numberOfRowsExpected: number) {
+    public onLoadFailed(firstRowIndex: number, numberOfRowsExpected: number, deferEvents = false) {
         if (!this.live) {
             return;
         }
@@ -1052,7 +1083,11 @@ export class LazyCache extends BeanStub {
             this.fireRefreshFinishedEvent();
         }
 
-        this.fireStoreUpdatedEvent();
+        if (deferEvents) {
+            queueMicrotask(() => this.fireStoreUpdatedEvent());
+        } else {
+            this.fireStoreUpdatedEvent();
+        }
     }
 
     public markNodesForRefresh() {

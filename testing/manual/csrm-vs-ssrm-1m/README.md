@@ -14,6 +14,23 @@ React / Angular / Vue pages are the untouched template pages.
 - SSRM datasource scope: slice + sort + filter (no grouping / aggregation).
 - Harness: a manual test project.
 
+## Grid changes on this branch
+
+The branch also carries work-in-progress grid changes that were uncommitted in the working tree when the
+experiment ran: a new `serverSideSynchronousLoad` option (default `false`).
+
+- When on, and the datasource calls `success` synchronously, SSRM requests the block as soon as a row is
+  first needed instead of rendering a loading row first, so rows render with data and no loading row.
+- Files: `lazyBlockLoadingService.ts` (`loadBlockInline`), `lazyCache.ts` (inline load, deferred events),
+  `gridOptions.ts` / `gridOptionsDefault.ts` / `propertyKeys.ts` (option), the Angular and Vue wrappers,
+  and `testing/behavioural/src/server-side-row-model/synchronous-load.test.ts`.
+- The harness switch is `?mode=ssrm&syncLoad=1` (also a toggle link on the page).
+
+**The results below were measured with the option off**, i.e. the stock SSRM path: loading row first,
+then the synchronous datasource fills it. They are the baseline, not a measurement of
+`serverSideSynchronousLoad`. That likely explains SSRM's scroll jank (about one `getRows` per frame).
+Not yet done: re-run with `?syncLoad=1` and compare.
+
 ## Running it
 
 This project is gitignored under `testing/manual/` on `latest` (only `template/` is tracked), so it is
@@ -41,13 +58,13 @@ without awaiting and poll `window.exp.results`).
 
 ## Files
 
-| File | Purpose |
-| --- | --- |
-| `src/config.ts` | Module registration, `RowData`, `columnDefs`, `defaultColDef`, shared `gridOptions` (no `rowData`) |
-| `src/data.ts` | Seeded (mulberry32) generator for the rows, so both modes see identical data |
-| `src/datasource.ts` | Synchronous SSRM datasource: filters, sorts and slices a plain array, calls `params.success` before `getRows` returns |
-| `src/javascript/main.ts` | Harness: mode switch, timed actions, results table, `window.exp` |
-| `src/javascript/index.html` | Toolbar, grid, results panel |
+| File                        | Purpose                                                                                                               |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `src/config.ts`             | Module registration, `RowData`, `columnDefs`, `defaultColDef`, shared `gridOptions` (no `rowData`)                    |
+| `src/data.ts`               | Seeded (mulberry32) generator for the rows, so both modes see identical data                                          |
+| `src/datasource.ts`         | Synchronous SSRM datasource: filters, sorts and slices a plain array, calls `params.success` before `getRows` returns |
+| `src/javascript/main.ts`    | Harness: mode switch, timed actions, results table, `window.exp`                                                      |
+| `src/javascript/index.html` | Toolbar, grid, results panel                                                                                          |
 
 ## Design
 
@@ -94,19 +111,19 @@ without awaiting and poll `window.exp.results`).
 Built bundle (`vite build` + `vite preview`), visible Chrome, 1M rows, one run per mode. Grid version
 `36.2.0-beta.20261008.1557` (local source build). Single runs: treat small gaps as noise.
 
-| | CSRM | Sync SSRM |
-| --- | --- | --- |
-| Load to painted | 318 ms | 31-35 ms (first block only) |
-| Sort string asc | 3.6 s | 1.1 s (1.06 s in datasource) |
-| Sort number desc | 1.0 s | 0.41 s |
-| Sort country asc, then total desc | 1.5 s | 0.73 s |
-| Filter text, `athlete` contains "A1" (2,806 rows) | 241 ms | 83 ms |
-| Filter numeric (120,039 rows) | 233 ms | 75 ms |
-| Clear filter or sort | 84-215 ms | 33-45 ms |
-| Fast scroll, mean frame | 9.4 ms | 24.9 ms |
-| Slow scroll, mean frame | 9.3 ms | 36 ms |
-| Slow scroll, frames over 50 ms (of 600) | 0 | 145-165 |
-| Heap added by load (GC-forced) | about +209 MB | about +1 MB |
+|                                                   | CSRM          | Sync SSRM                    |
+| ------------------------------------------------- | ------------- | ---------------------------- |
+| Load to painted                                   | 318 ms        | 31-35 ms (first block only)  |
+| Sort string asc                                   | 3.6 s         | 1.1 s (1.06 s in datasource) |
+| Sort number desc                                  | 1.0 s         | 0.41 s                       |
+| Sort country asc, then total desc                 | 1.5 s         | 0.73 s                       |
+| Filter text, `athlete` contains "A1" (2,806 rows) | 241 ms        | 83 ms                        |
+| Filter numeric (120,039 rows)                     | 233 ms        | 75 ms                        |
+| Clear filter or sort                              | 84-215 ms     | 33-45 ms                     |
+| Fast scroll, mean frame                           | 9.4 ms        | 24.9 ms                      |
+| Slow scroll, mean frame                           | 9.3 ms        | 36 ms                        |
+| Slow scroll, frames over 50 ms (of 600)           | 0             | 145-165                      |
+| Heap added by load (GC-forced)                    | about +209 MB | about +1 MB                  |
 
 Raw timings of the underlying runs: CSRM `apiMs` for sorts was 3.6 s / 0.95 s / 1.5 s with `totalMs`
 within ~50 ms of that; SSRM `apiMs` was 3-18 ms with the cost showing up in `datasourcePrepareMs`.
@@ -149,10 +166,10 @@ overhead) for that reason. The figures above come from a separate procedure: on 
 take a heap snapshot (which forces a full GC) -> read the heap -> call `exp.actions.load()` -> take a
 second snapshot -> read the heap again.
 
-| | Heap after data, GC'd | Heap after load, GC'd | Delta |
-| --- | --- | --- | --- |
-| CSRM | 453.6 MB | 662.9 MB | about +209 MB |
-| SSRM | 372.6 MB | 373.7 MB | about +1 MB |
+|      | Heap after data, GC'd | Heap after load, GC'd | Delta         |
+| ---- | --------------------- | --------------------- | ------------- |
+| CSRM | 453.6 MB              | 662.9 MB              | about +209 MB |
+| SSRM | 372.6 MB              | 373.7 MB              | about +1 MB   |
 
 The two baselines differ by ~80 MB for identical data, so only the deltas are meaningful. (Heap
 snapshots must be written inside a workspace root for the Chrome DevTools MCP; they were written to the

@@ -1553,6 +1553,13 @@ export interface Props<TData> {
          * @agModule `ServerSideRowModelModule`
          */
     serverSideEnableClientSideSort?: boolean,
+    /** When enabled, the Server-side Row Model calls `getRows` as soon as a row is first needed, instead of after rendering a loading row.
+         * If the datasource calls `success` synchronously, rows render with data and no loading row is shown.
+         * Datasources that respond asynchronously are unaffected.
+         * @default false
+         * @agModule `ServerSideRowModelModule`
+         */
+    serverSideSynchronousLoad?: boolean,
     /** When enabled, only refresh groups directly impacted by a filter. This property only applies when there is Row Grouping & filtering is handled on the server.
          * @default false
          * @initial
@@ -2465,6 +2472,7 @@ export function getProps() {
         serverSideDatasource: undefined,
         serverSideSortAllLevels: undefined,
         serverSideEnableClientSideSort: undefined,
+        serverSideSynchronousLoad: undefined,
         serverSideOnlyRefreshFilteredGroups: undefined,
         serverSidePivotResultFieldSeparator: undefined,
         viewportDatasource: undefined,
