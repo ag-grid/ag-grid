@@ -84,12 +84,62 @@ export function _findFocusableElements(
             return _isVisible(node);
         }) as HTMLElement[];
     const excludeNodes = new Set(rootNode.querySelectorAll(excludeString));
+    const tabStops = excludeNodes.size ? nodes.filter((element) => !excludeNodes.has(element)) : nodes;
 
-    if (!excludeNodes.size) {
-        return nodes;
+    return removeNonTabStopRadios(rootNode, tabStops);
+}
+
+/**
+ * Native radios sharing a name (and form) are one Tab stop, the focused or checked radio, with arrow
+ * keys moving within the group. Mirror that, as managed Tab handling bypasses the browser.
+ */
+function removeNonTabStopRadios(rootNode: HTMLElement, elements: HTMLElement[]): HTMLElement[] {
+    const groups = new Map<HTMLFormElement | null, Map<string, HTMLInputElement[]>>();
+
+    for (let i = 0, len = elements.length; i < len; ++i) {
+        const radio = elements[i] as HTMLInputElement;
+        // tagName rather than instanceof, which fails for a document from another window
+        if (radio.tagName !== 'INPUT' || radio.type !== 'radio' || !radio.name) {
+            continue;
+        }
+
+        const { form, name } = radio;
+        let groupsInForm = groups.get(form);
+        if (!groupsInForm) {
+            groupsInForm = new Map();
+            groups.set(form, groupsInForm);
+        }
+
+        const group = groupsInForm.get(name);
+        if (group) {
+            group.push(radio);
+        } else {
+            groupsInForm.set(name, [radio]);
+        }
     }
 
-    return nodes.filter((element) => !excludeNodes.has(element));
+    if (!groups.size) {
+        return elements;
+    }
+
+    const activeEl = (rootNode.getRootNode() as Document | ShadowRoot).activeElement;
+    const nonTabStops = new Set<HTMLElement>();
+
+    groups.forEach((groupsInForm) =>
+        groupsInForm.forEach((group) => {
+            const tabStop = group.find((radio) => radio === activeEl) ?? group.find((radio) => radio.checked);
+            if (!tabStop) {
+                return;
+            }
+            for (let i = 0, len = group.length; i < len; ++i) {
+                if (group[i] !== tabStop) {
+                    nonTabStops.add(group[i]);
+                }
+            }
+        })
+    );
+
+    return nonTabStops.size ? elements.filter((element) => !nonTabStops.has(element)) : elements;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
