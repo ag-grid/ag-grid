@@ -386,12 +386,16 @@ export class ColumnModel extends BeanStub implements NamedBean {
         let threw = false;
         let error: unknown;
         // `length` re-read: a listener's update appends to the queue being raised
-        for (let i = 0; i < queue.length; i += 3) {
-            this.colEventsRaisingAt = i + 3;
+        for (let i = 0; i < queue.length;) {
             try {
-                (queue[i] as QueuedEventOwner).raiseQueuedEvent(queue[i + 1] as AgEvent<string>);
+                // a role change a listener made, even one that then threw, runs before the next owner is told
                 if (this.hasColChangesStaged()) {
                     this.runColChanges();
+                } else {
+                    const at = i;
+                    i += 3;
+                    this.colEventsRaisingAt = i;
+                    (queue[at] as QueuedEventOwner).raiseQueuedEvent(queue[at + 1] as AgEvent<string>);
                 }
             } catch (e) {
                 error = threw ? error : e;

@@ -1110,6 +1110,27 @@ describe('the column events of one call', () => {
         expect(seen).toEqual(['a:desc', 'a-state:sort', 'b:asc']);
     });
 
+    test('a column told by an earlier call is told again, not merged into the column now queued where it was', () => {
+        const api = createGrid();
+        const seen: string[] = [];
+        for (const colId of ['a', 'b']) {
+            const column = api.getColumn(colId)!;
+            column.addEventListener('visibleChanged', (event) =>
+                seen.push(`${colId}<-${event.column!.getColId()}:${column.isVisible()}`)
+            );
+        }
+
+        api.applyColumnState({ state: [{ colId: 'a', hide: true }] });
+        api.applyColumnState({
+            state: [
+                { colId: 'b', hide: true },
+                { colId: 'a', hide: false },
+            ],
+        });
+
+        expect(seen).toEqual(['a<-a:false', 'b<-b:false', 'a<-a:true']);
+    });
+
     test('a column one call ungroups and groups again is told once', () => {
         const api = createGrid([{ field: 'a', rowGroup: true }, { field: 'b' }, { field: 'c' }, { field: 'd' }]);
         const a = api.getColumn('a')!;

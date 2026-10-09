@@ -357,4 +357,29 @@ describe('Cols service events', () => {
             expect(everything.length).toBe(1);
         });
     });
+
+    test('an aggregation change a column listener makes and then throws runs before the next column is told', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'a' },
+                { field: 'b', rowGroup: true },
+                { field: 'c' },
+                { field: 'd', aggFunc: 'sum' },
+            ],
+            rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
+        });
+        const seen: string[] = [];
+        api.getColumn('a')!.addEventListener('visibleChanged', () => {
+            api.setColumnAggFunc('d', 'count');
+            throw new Error('listener failed');
+        });
+        api.getColumn('d')!.addEventListener('columnStateUpdated', () =>
+            seen.push(String(api.getDisplayedRowAtIndex(0)!.aggData?.d))
+        );
+
+        expect(() => api.applyColumnState({ state: [{ colId: 'a', hide: true }] })).toThrow('listener failed');
+
+        // the count of the group's one row, not its sum
+        expect(seen).toEqual(['1']);
+    });
 });
