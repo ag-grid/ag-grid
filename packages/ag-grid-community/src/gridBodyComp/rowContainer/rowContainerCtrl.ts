@@ -169,7 +169,6 @@ export class RowContainerCtrl extends BeanStub {
         this.registerWithCtrlsService();
     }
 
-    /** Published for application CSS; nothing in the grid reads it. */
     private setPinnedRowBorderWidth(): void {
         this.eContainer.style.setProperty(
             '--ag-pinned-row-border-width',

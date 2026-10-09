@@ -166,6 +166,7 @@ export class GridBodyCtrl extends BeanStub {
             pinnedHeightChanged: setPinnedRowsHeights,
             pinnedRowsChanged: setPinnedRowsHeights,
             headerHeightChanged: setPinnedRowsHeights,
+            stylesChanged: setPinnedRowsHeights,
             gridSizeChanged: () => {
                 // Reported, so a width change announces itself; a height-only resize still re-pushes,
                 // because the scrollbars may have moved.
