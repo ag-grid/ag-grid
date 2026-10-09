@@ -81,6 +81,7 @@ module.exports = {
                             '--ag-indentation-level',
                             '--ag-row-highlight-level',
                             '--ag-horizontal-size',
+                            '--ag-pinned-row-border-width',
                         ],
                     },
                 ],
