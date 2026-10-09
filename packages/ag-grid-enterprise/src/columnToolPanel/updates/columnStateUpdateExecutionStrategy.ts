@@ -430,27 +430,40 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
 
         const sortedEntries = operations.sort((a, b) => a.seq - b.seq);
 
-        // Batch the role-column operations (rowGroup/aggregation/pivot) so consecutive ones share one
-        // refresh. Order-sensitive ops read live model state that a deferred role op leaves stale until
-        // refreshCols runs — columnOrder reads `colModel.colsList`, pivotMode reads `pivotColsSvc.columns`
-        // — so flush the batch before each, exactly as the unbatched path would.
-        // All ops here carry `eventType: 'toolPanelUi'`, so the flush source matches every dispatch.
+        // Consecutive role-column operations share one update, so one refresh. The others read live model state a
+        // deferred role op leaves stale (`colModel.colsList`, `pivotColsSvc.columns`), so the update closes before each.
         const colModel = beans.colModel;
-        colModel.beginColBatch();
+        let threw = false;
+        let error: unknown;
+        // a listener's throw is rethrown once every operation is applied
+        const closeUpdate = () => {
+            try {
+                colModel.endColUpdate();
+            } catch (e) {
+                error = threw ? error : e;
+                threw = true;
+            }
+        };
         try {
-            for (const operation of sortedEntries) {
-                if (!isRoleColumnOperation(operation)) {
-                    // Close + reopen the batch to flush staged role changes, so this op reads fresh state.
-                    colModel.endColBatch('toolPanelUi');
-                    colModel.beginColBatch();
+            colModel.beginColUpdate();
+            try {
+                for (const operation of sortedEntries) {
+                    if (!isRoleColumnOperation(operation)) {
+                        // Close + reopen the update to run the staged role changes, so this op reads fresh state.
+                        closeUpdate();
+                        colModel.beginColUpdate();
+                    }
+                    this.applyOperation(operation);
                 }
-                this.applyOperation(operation);
+            } finally {
+                closeUpdate();
             }
         } finally {
-            colModel.endColBatch('toolPanelUi');
+            this.reset();
         }
-
-        this.reset();
+        if (threw) {
+            throw error;
+        }
     }
 
     private applyOperation(operation: CommitOperation): void {

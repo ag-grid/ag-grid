@@ -461,14 +461,11 @@ export async function dragRenderedPrimaryColumnToRowGroups(
 ) {
     const dragHandle = await getRenderedPrimaryColumnDragHandle(toolPanel, toolPanelGui, label);
     const dispatcher = new DragEventDispatcher('mouse', null, false);
-    const ownerDocument = dropZoneGui.ownerDocument;
-    const originalElementsFromPoint = ownerDocument.elementsFromPoint?.bind(ownerDocument);
     const originalDragRect = dragHandle.getBoundingClientRect.bind(dragHandle);
     const originalDropZoneRect = dropZoneGui.getBoundingClientRect.bind(dropZoneGui);
     const dragRect = new DOMRect(10, 10, 24, 24);
     const dropRect = new DOMRect(100, 100, 240, 80);
 
-    ownerDocument.elementsFromPoint = () => [dropZoneGui];
     dragHandle.getBoundingClientRect = () => dragRect;
     dropZoneGui.getBoundingClientRect = () => dropRect;
 
@@ -479,7 +476,7 @@ export async function dragRenderedPrimaryColumnToRowGroups(
         // resulting state change themselves.
         await dispatcher.finishDrag(dropZoneGui);
     } finally {
-        ownerDocument.elementsFromPoint = originalElementsFromPoint as typeof ownerDocument.elementsFromPoint;
+        dispatcher.reset();
         dragHandle.getBoundingClientRect = originalDragRect;
         dropZoneGui.getBoundingClientRect = originalDropZoneRect;
     }

@@ -815,6 +815,32 @@ describe('Editable group header name', () => {
             expect(api.getDisplayNameForColumnGroup(api.getColumnGroup('athleteGroup')!, 'header')).toBe('Renamed');
         });
 
+        test('tells each group applied state renames once both hold their new names', async () => {
+            const { api } = await createTwoGroupGrid();
+            const name = (groupId: string) => api.getDisplayNameForColumnGroup(api.getColumnGroup(groupId)!, 'header');
+            const seen: string[] = [];
+            for (const groupId of ['athleteGroup', 'otherGroup']) {
+                api.getColumnGroup(groupId)!
+                    .getProvidedColumnGroup()
+                    .addEventListener('headerNameChanged', () =>
+                        seen.push(`${groupId}: ${name('athleteGroup')}, ${name('otherGroup')}`)
+                    );
+            }
+
+            api.setState({
+                columnGroup: {
+                    openColumnGroupIds: [],
+                    headerNames: [
+                        { groupId: 'athleteGroup', headerName: 'Renamed' },
+                        { groupId: 'otherGroup', headerName: 'Other Renamed' },
+                    ],
+                },
+            });
+            await asyncSetTimeout(0);
+
+            expect(seen).toEqual(['athleteGroup: Renamed, Other Renamed', 'otherGroup: Renamed, Other Renamed']);
+        });
+
         test('does not fire when applied state leaves the name unchanged', async () => {
             const { api, renamed } = await createTwoGroupGrid({ initialState: renamedState });
 

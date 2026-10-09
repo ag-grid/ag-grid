@@ -1,6 +1,7 @@
 import type { AgChartThemeOverrides } from 'ag-charts-types';
 import type { AgEvent, ScrollDirection } from 'ag-stack';
 
+import type { ColumnState } from './columns/columnStateUtils';
 import type { RowsDropParams } from './dragAndDrop/rowDragTypes';
 import type { ColDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
@@ -1096,12 +1097,23 @@ export interface ColumnEvent<
     TData = any,
     TContext = any,
 > extends AgGridEvent<TData, TContext, T> {
-    /** The impacted column, only set if action was on one column */
+    /** The impacted column, only set when the event concerns a single column */
     column: Column | null;
     /** List of all impacted columns */
     columns: Column[] | null;
     /** String describing where the event is coming from */
     source: ColumnEventType;
+}
+
+/** Raised by a column when a property of its `ColumnState` is updated. `Column.addEventListener` types the listener with
+ *  `ColumnEvent`, so a listener narrows to this type to read `key`. */
+export interface ColumnStateUpdatedEvent<TData = any, TContext = any> extends ColumnEvent<
+    'columnStateUpdated',
+    TData,
+    TContext
+> {
+    /** The `ColumnState` property updated */
+    key: keyof ColumnState;
 }
 
 export interface ColumnResizedEvent<TData = any, TContext = any> extends ColumnEvent<'columnResized', TData, TContext> {

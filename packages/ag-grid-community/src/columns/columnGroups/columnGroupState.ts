@@ -54,7 +54,7 @@ export const _setColGroupHeaderNameOverride = (
     } else {
         overrides.set(groupId, headerName);
     }
-    colModel.getColGroup(groupId)?.dispatchLocalEvent({ type: 'headerNameChanged' });
+    colModel.getColGroup(groupId)?.dispatchGroupEvent('headerNameChanged');
     return true;
 };
 
@@ -70,8 +70,10 @@ export const _setColGroupState = (
         return;
     }
 
-    colAnimation?.start();
+    // one update, so a group is told once every group holds its state and the columns are laid out
+    colModel.beginColUpdate();
     try {
+        colAnimation?.start();
         let impactedGroups: AgProvidedColumnGroup[] | null = null;
         let renamedGroups: AgProvidedColumnGroup[] | null = null;
         for (let i = 0; i < stateLen; ++i) {
@@ -112,6 +114,7 @@ export const _setColGroupState = (
         }
     } finally {
         colAnimation?.finish();
+        colModel.endColUpdate();
     }
 };
 

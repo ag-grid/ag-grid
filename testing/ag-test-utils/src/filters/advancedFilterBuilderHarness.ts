@@ -304,27 +304,24 @@ export class AdvancedFilterBuilderHarness {
         }
         const toClientY = targetRow * BUILDER_ROW_HEIGHT + Math.round(BUILDER_ROW_HEIGHT * 0.75);
         const orderBeforeDrop = columnPillOrder();
-        const doc = handle.ownerDocument;
-        const originalElementsFromPoint = doc.elementsFromPoint?.bind(doc);
-        // The drop target resolves via elementsFromPoint; point it at the builder container.
-        doc.elementsFromPoint = () => [container];
         const dispatcher = new DragEventDispatcher('pointer', null, false);
         try {
             await dispatcher.startDrag(handle, 10, BUILDER_ROW_HEIGHT);
             await dispatcher.movePointer(container, 10, BUILDER_ROW_HEIGHT + 5);
             await dispatcher.movePointer(container, 10, toClientY);
             await dispatcher.finishDrag(container);
-            // The drop re-renders the builder list asynchronously. Poll for the reordered pills
-            // rather than guessing a delay — a drop that never lands must fail here, not silently
-            // in the caller's assertion.
-            await waitFor(() => {
-                if (columnPillOrder() === orderBeforeDrop) {
-                    throw new Error('builder rows did not reorder after drop');
-                }
-            });
         } finally {
-            doc.elementsFromPoint = originalElementsFromPoint as typeof doc.elementsFromPoint;
+            // a drag that throws must not leave its hit-test stub for the next test
+            dispatcher.reset();
         }
+        // The drop re-renders the builder list asynchronously. Poll for the reordered pills
+        // rather than guessing a delay — a drop that never lands must fail here, not silently
+        // in the caller's assertion.
+        await waitFor(() => {
+            if (columnPillOrder() === orderBeforeDrop) {
+                throw new Error('builder rows did not reorder after drop');
+            }
+        });
         return this;
     }
 

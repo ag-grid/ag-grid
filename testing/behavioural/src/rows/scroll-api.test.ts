@@ -264,4 +264,42 @@ describe('scroll API', () => {
             }
         });
     });
+
+    describe('a grid taller than the browser can draw', () => {
+        // the rows are drawn at a scaled offset that moves with the scroll, so a row kept through a scroll moves too
+        test('rows kept rendered through a scroll stay one row height apart from the rows drawn for it', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a' }],
+                rowData: Array.from({ length: 30000 }, (_, i) => ({ a: i })),
+                suppressRowVirtualisation: false,
+            });
+            const rowGaps = () => {
+                const rows = Array.from(
+                    TestGridsManager.getHTMLElement(api)!.querySelectorAll<HTMLElement>('.ag-row[row-index]')
+                );
+                const tops = rows
+                    .map((row) => ({
+                        index: Number(row.getAttribute('row-index')),
+                        top: Number(/translateY\((-?[\d.]+)px\)/.exec(row.style.transform)?.[1]),
+                    }))
+                    .sort((a, b) => a.index - b.index);
+                const gaps = new Set<number>();
+                for (let i = 1; i < tops.length; ++i) {
+                    gaps.add(tops[i].top - tops[i - 1].top);
+                }
+                return { rows: tops.length, gaps: [...gaps] };
+            };
+            api.ensureIndexVisible(15000, 'top');
+            await asyncSetTimeout(0);
+
+            api.ensureIndexVisible(15005, 'top');
+            await asyncSetTimeout(0);
+
+            expect(rowGaps()).toEqual({ rows: 21, gaps: [42] });
+            // stretched: the row is drawn above its own top, at a scaled offset
+            const drawn =
+                TestGridsManager.getHTMLElement(api)!.querySelector<HTMLElement>('.ag-row[row-index="15005"]');
+            expect(Number(/translateY\(([\d.]+)px\)/.exec(drawn!.style.transform)?.[1])).toBeLessThan(15005 * 42);
+        });
+    });
 });

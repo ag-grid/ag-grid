@@ -113,63 +113,44 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
             return;
         }
 
-        let actualPinned: ColumnPinnedType;
-        if (pinned === true || pinned === 'left') {
-            actualPinned = 'left';
-        } else if (pinned === 'right') {
-            actualPinned = 'right';
-        } else {
-            actualPinned = null;
-        }
+        const actualPinned = toPinnedSide(pinned);
 
-        const updatedCols: AgColumn[] = [];
-
-        for (const key of keys) {
-            if (!key) {
-                continue;
-            }
-            const column = colModel.getCol(key);
-            if (!column) {
-                continue;
+        let updatedCols: AgColumn[] | null = null;
+        colModel.beginColUpdate();
+        try {
+            for (let i = 0, len = keys.length; i < len; ++i) {
+                const key = keys[i];
+                const column = key ? colModel.getCol(key) : null;
+                if (column && column.pinned !== actualPinned) {
+                    this.setColPinned(column, actualPinned, source);
+                    updatedCols ??= [];
+                    updatedCols.push(column);
+                }
             }
 
-            if (column.getPinned() !== actualPinned) {
-                this.setColPinned(column, actualPinned);
-                updatedCols.push(column);
+            if (updatedCols) {
+                // Slide the pinned/unpinned cols and the gap they leave, rather than jumping.
+                colAnimation?.start();
+                try {
+                    visibleCols.refresh(source, false);
+                    dispatchColumnPinnedEvent(this.eventSvc, updatedCols, source);
+                } finally {
+                    colAnimation?.finish();
+                }
             }
-        }
-
-        if (updatedCols.length) {
-            // Slide the pinned/unpinned cols and the gap they leave, rather than jumping.
-            colAnimation?.start();
-            try {
-                visibleCols.refresh(source, false);
-                dispatchColumnPinnedEvent(this.eventSvc, updatedCols, source);
-            } finally {
-                colAnimation?.finish();
-            }
+        } finally {
+            colModel.endColUpdate();
         }
     }
 
     public initCol(column: AgColumn): void {
         const { pinned, initialPinned } = column.colDef;
-        if (pinned !== undefined) {
-            this.setColPinned(column, pinned);
-        } else {
-            this.setColPinned(column, initialPinned);
-        }
+        writeColPinned(column, pinned !== undefined ? pinned : initialPinned);
     }
 
-    public setColPinned(column: AgColumn, pinned: ColumnPinnedType): void {
-        if (pinned === true || pinned === 'left') {
-            column.pinned = 'left';
-        } else if (pinned === 'right') {
-            column.pinned = 'right';
-        } else {
-            column.pinned = null;
-        }
-        column.pinnedLane = _laneOfPinned(column.pinned);
-        column.dispatchStateUpdatedEvent('pinned');
+    public setColPinned(column: AgColumn, pinned: ColumnPinnedType, source: ColumnEventType): void {
+        writeColPinned(column, pinned);
+        column.dispatchStateUpdatedEvent('pinned', source);
     }
 
     public getHeaderResizeDiff(diff: number, column: AgColumn | AgColumnGroup): number {
@@ -245,3 +226,16 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         return { columns: columnsToRemove, hasLockedPinned };
     }
 }
+
+const toPinnedSide = (pinned: ColumnPinnedType): 'left' | 'right' | null => {
+    if (pinned === true || pinned === 'left') {
+        return 'left';
+    }
+    return pinned === 'right' ? 'right' : null;
+};
+
+const writeColPinned = (column: AgColumn, pinned: ColumnPinnedType): void => {
+    const side = toPinnedSide(pinned);
+    column.pinned = side;
+    column.pinnedLane = _laneOfPinned(side);
+};

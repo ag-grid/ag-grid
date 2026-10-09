@@ -19,7 +19,7 @@ Show Values As requires the `ShowValuesAsModule` and is only supported with the 
 
 ## Column Menu
 
-The Show Values As submenu is off by default. To let the user switch mode from the [Column Menu](./column-menu/), register the `ColumnMenuModule` and set `enableShowValuesAs: true` on the required columns. Switching mode only updates the affected column — it does not re-aggregate, re-sort or re-filter.
+The Show Values As submenu is off by default. To let the user switch mode from the [Column Menu](./column-menu/), register the `ColumnMenuModule` and set `enableShowValuesAs: true` on the required columns. Switching mode only updates the affected column — it does not re-aggregate, re-sort or re-filter unless it promotes the column to a value column, as described below.
 
 The effect depends on where you set it:
 
@@ -37,7 +37,7 @@ const gridOptions = {
 };
 ```
 
-A numeric column that is not yet aggregated is promoted to a value column when a mode needing a total is chosen.
+A numeric column that is not yet aggregated is promoted to a value column when a mode needing a total is chosen, except while pivoting.
 
 ## Built-in Modes
 

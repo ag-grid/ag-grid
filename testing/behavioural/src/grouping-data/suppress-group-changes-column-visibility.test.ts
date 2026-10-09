@@ -45,22 +45,14 @@ describe('suppressGroupChangesColumnVisibility', () => {
         return header;
     }
 
-    /**
-     * Drags an element from `source` to `target` using AG Grid's pointer-based drag system.
-     * Mocks `elementsFromPoint` (happy-dom does not implement it) and bounding rects on both ends
-     * so the DragService correctly resolves the drop target. Mirrors the pattern used by
-     * `dragRenderedPrimaryColumnToRowGroups` in deferredPivotModeHarness.ts.
-     */
+    /** Drags `source` onto `target`, with mocked rects since happy-dom has no layout to resolve the drop target. */
     async function dragSourceToTarget(source: HTMLElement, target: HTMLElement): Promise<void> {
         const dispatcher = new DragEventDispatcher('mouse', null, false);
-        const ownerDocument = target.ownerDocument;
-        const originalElementsFromPoint = ownerDocument.elementsFromPoint?.bind(ownerDocument);
         const originalSourceRect = source.getBoundingClientRect.bind(source);
         const originalTargetRect = target.getBoundingClientRect.bind(target);
         const sourceRect = new DOMRect(10, 10, 24, 24);
         const targetRect = new DOMRect(100, 100, 240, 80);
 
-        ownerDocument.elementsFromPoint = () => [target];
         source.getBoundingClientRect = () => sourceRect;
         target.getBoundingClientRect = () => targetRect;
 
@@ -69,7 +61,7 @@ describe('suppressGroupChangesColumnVisibility', () => {
             await dispatcher.movePointer(target, targetRect.left + 10, targetRect.top + 10);
             await dispatcher.finishDrag(target);
         } finally {
-            ownerDocument.elementsFromPoint = originalElementsFromPoint as typeof ownerDocument.elementsFromPoint;
+            dispatcher.reset();
             source.getBoundingClientRect = originalSourceRect;
             target.getBoundingClientRect = originalTargetRect;
         }

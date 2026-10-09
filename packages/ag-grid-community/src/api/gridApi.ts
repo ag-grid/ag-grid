@@ -1567,7 +1567,7 @@ export interface _AggregationGridApi<TData> {
     clearAggFuncs(): void;
 
     /**
-     * Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function.
+     * Sets the agg function for a column, making it a value column; a blank `aggFunc` stops it aggregating. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function.
      * @agModule `RowGroupingModule / PivotModule / TreeDataModule`
      */
     setColumnAggFunc<TValue = any>(key: ColKey<TData, TValue>, aggFunc: ColAggFunc<TData, TValue>): void;

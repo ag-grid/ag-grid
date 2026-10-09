@@ -1738,9 +1738,6 @@ async function dragHeaderToRowGroupPanel(api: GridApi, colId: string): Promise<v
         throw new Error(`drag setup failed: source=${!!source} panel=${!!panel}`);
     }
     const dispatcher = new DragEventDispatcher('mouse', null, false);
-    const ownerDocument = source.ownerDocument;
-    const original = ownerDocument.elementsFromPoint?.bind(ownerDocument);
-    ownerDocument.elementsFromPoint = () => [panel];
     try {
         await dispatcher.startDrag(source, 5, 15);
         await dispatcher.movePointer(source, 12, 15);
@@ -1748,6 +1745,6 @@ async function dragHeaderToRowGroupPanel(api: GridApi, colId: string): Promise<v
         await dispatcher.movePointer(panel, 90, 10);
         await dispatcher.finishDrag(panel);
     } finally {
-        ownerDocument.elementsFromPoint = original as typeof ownerDocument.elementsFromPoint;
+        dispatcher.reset();
     }
 }

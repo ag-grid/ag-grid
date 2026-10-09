@@ -26,10 +26,6 @@ describe('Editable header name — columns tool panel drag ghost', () => {
             return found!;
         });
         const dispatcher = new DragEventDispatcher('mouse', null, false);
-        // happy-dom has no hit-testing; the tool panel is not a drop target, so an empty hit list is correct.
-        const ownerDocument = handle.ownerDocument;
-        const originalElementsFromPoint = ownerDocument.elementsFromPoint?.bind(ownerDocument);
-        ownerDocument.elementsFromPoint = () => [];
         try {
             await dispatcher.startDrag(handle, 10, 10);
             await dispatcher.movePointer(handle, 60, 60);
@@ -41,7 +37,6 @@ describe('Editable header name — columns tool panel drag ghost', () => {
             return label.textContent ?? '';
         } finally {
             await dispatcher.finishDrag(handle);
-            ownerDocument.elementsFromPoint = originalElementsFromPoint as typeof ownerDocument.elementsFromPoint;
             await waitFor(() => expect(document.querySelector('.ag-dnd-ghost-label')).toBeNull());
         }
     }

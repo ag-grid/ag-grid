@@ -2336,7 +2336,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** A column was moved.
      */
     @Output() public columnMoved: EventEmitter<ColumnMovedEvent<TData>> = new EventEmitter<ColumnMovedEvent<TData>>();
-    /** A value column was added or removed.
+    /** A value column was added, removed or reordered, or its aggregation function changed.
      */
     @Output() public columnValueChanged: EventEmitter<ColumnValueChangedEvent<TData>> = new EventEmitter<
         ColumnValueChangedEvent<TData>

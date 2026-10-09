@@ -2671,7 +2671,7 @@ export interface GridOptions<TData = any> {
      */
     onColumnMoved?(event: ColumnMovedEvent<TData>): void;
     /**
-     * A value column was added or removed.
+     * A value column was added, removed or reordered, or its aggregation function changed.
      */
     onColumnValueChanged?(event: ColumnValueChangedEvent<TData>): void;
     /**

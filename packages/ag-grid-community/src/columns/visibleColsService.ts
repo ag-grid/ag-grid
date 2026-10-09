@@ -69,6 +69,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
     /** A cell may have moved or resized with no section total changing since the cells were last placed. */
     private cellsMoved = false;
+    /** The source of the first layout made inside a column update, whose layout events wait for its end. */
+    private pendingLayoutSource: ColumnEventType | null = null;
 
     /** Bumped whenever `allCols` is replaced, so a cache keyed on the displayed columns need not hold the old list. */
     public displayedColsVersion = 0;
@@ -187,7 +189,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.refreshCellPositions();
 
         // `columnContainerWidthChanged` BEFORE `displayedColumnsWidthChanged`: the viewport must resize
-        // before the scrollbar updates its visibility, and both are public, so the order is observable.
+        // before the scrollbar updates its visibility.
         const eventSvc = this.eventSvc;
         eventSvc.dispatchEvent({ type: 'columnContainerWidthChanged' });
         eventSvc.dispatchEvent({ type: 'displayedColumnsWidthChanged' });
@@ -199,8 +201,27 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.ctrlsSvc.getHeaderRowContainerCtrl()?.refreshCellPositions();
     }
 
-    /** Each column and group reports how its layout changed since it last did, now that the layout is final. */
+    /** Each column and group reports how its layout changed since it last did, now that the layout is final: inside
+     *  a column update, at its end, after its column events. */
     private dispatchLayoutEvents(source: ColumnEventType): void {
+        if (this.colModel.colUpdateDepth === 0) {
+            this.raiseLayoutEvents(source);
+        } else {
+            // the first layout's: a nested or listener-made layout joins the update, it does not relabel it
+            this.pendingLayoutSource ??= source;
+        }
+    }
+
+    /** Raises the layout events a column update deferred; called as it ends. */
+    public raiseDeferredLayoutEvents(): void {
+        const source = this.pendingLayoutSource;
+        if (source !== null) {
+            this.pendingLayoutSource = null;
+            this.raiseLayoutEvents(source);
+        }
+    }
+
+    private raiseLayoutEvents(source: ColumnEventType): void {
         const colModel = this.colModel;
         dispatchColLayoutEvents(colModel.colsList, source);
         // the primary columns are parked out of `colsList` while pivoting, and can still be resized
