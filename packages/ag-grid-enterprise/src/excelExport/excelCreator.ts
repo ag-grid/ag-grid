@@ -360,7 +360,7 @@ export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetPara
     const { fileName = 'export.xlsx' } = params;
 
     const workbook = new Workbook();
-    getMultipleSheetsAsExcelCompressed(params, workbook).then((contents) => {
+    void getMultipleSheetsAsExcelCompressed(params, workbook).then((contents) => {
         if (contents) {
             const downloadFileName = typeof fileName === 'function' ? fileName() : fileName;
 
@@ -402,7 +402,7 @@ export class ExcelCreator
                 suppressPrependAuthorToNotes,
             };
 
-            this.packageCompressedFile(exportParams).then((packageFile) => {
+            void this.packageCompressedFile(exportParams).then((packageFile) => {
                 if (packageFile) {
                     _downloadFile(this.resolveFileName(mergedParams), packageFile);
                 }
@@ -450,7 +450,7 @@ export class ExcelCreator
     }
 
     public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void {
-        getMultipleSheetsAsExcelCompressed(params, this.workbook, this.beans.context.getId()).then((contents) => {
+        void getMultipleSheetsAsExcelCompressed(params, this.workbook, this.beans.context.getId()).then((contents) => {
             const { fileName = 'export.xlsx' } = params;
             if (contents) {
                 const downloadFileName = typeof fileName === 'function' ? fileName() : fileName;

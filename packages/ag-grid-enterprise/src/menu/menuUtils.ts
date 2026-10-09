@@ -37,7 +37,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
             // don't return focus to the header
             return;
         }
-        this.focusEventSourceOrHeaderCell(restoreFocusParams);
+        void this.focusEventSourceOrHeaderCell(restoreFocusParams);
     }
 
     public closePopupAndRestoreFocusOnSelect(
@@ -70,7 +70,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
                     preventScrollOnBrowserFocus: true,
                 });
             } else {
-                this.focusEventSourceOrHeaderCell(restoreFocusParams);
+                void this.focusEventSourceOrHeaderCell(restoreFocusParams);
             }
         }
     }
