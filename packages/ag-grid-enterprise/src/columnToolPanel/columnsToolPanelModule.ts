@@ -18,6 +18,8 @@ export const ColumnsToolPanelModule: _ModuleWithoutApi = {
     beans: [ColumnToolPanelFactory],
     userComponents: { agColumnsToolPanel: ColumnToolPanel },
     icons: {
+        menuMoveUp: 'up',
+        menuMoveDown: 'down',
         ensureColumnVisible: 'column-arrow',
         // column tool panel tab
         columnsToolPanel: 'columns',

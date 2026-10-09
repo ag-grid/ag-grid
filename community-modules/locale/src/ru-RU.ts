@@ -340,6 +340,10 @@ export const AG_GRID_LOCALE_RU_RU = {
     enabled: 'Включено',
 
     // Menu
+    moveLeft: 'Переместить влево',
+    moveRight: 'Переместить вправо',
+    moveUp: 'Переместить вверх',
+    moveDown: 'Переместить вниз',
     pinColumn: 'Закрепить столбец',
     pinLeft: 'Закрепить слева',
     pinRight: 'Закрепить справа',

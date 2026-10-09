@@ -328,6 +328,10 @@ export const AG_GRID_LOCALE_EN_US = {
     enabled: 'Enabled',
 
     // Menu
+    moveLeft: 'Move Left',
+    moveRight: 'Move Right',
+    moveUp: 'Move Up',
+    moveDown: 'Move Down',
     pinColumn: 'Pin Column',
     pinLeft: 'Pin Left',
     pinRight: 'Pin Right',

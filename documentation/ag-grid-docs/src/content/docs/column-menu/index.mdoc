@@ -82,6 +82,8 @@ The following is a list of all the default built-in menu items with the rules ab
 - `columnFilter`: Show the column filter. Not included in the default items when `columnMenu = 'legacy'`, a filter is not enabled, or the header filter button or floating filter button are displayed.
 - `columnChooser`: Show the [Column Chooser](./column-chooser/). Not included in the default items when `columnMenu = 'legacy'`.
 - `pinSubMenu`: Sub-menu for pinning. Always shown.
+- `moveLeft`: Move the column or column group one available position to the left.
+- `moveRight`: Move the column or column group one available position to the right.
 - `valueAggSubMenu`: Sub-menu for value aggregation. Always shown.
 - `autoSizeThis`: Auto-size the current column. Always shown.
 - `autoSizeAll`: Auto-size all columns. Always shown.
@@ -92,6 +94,8 @@ The following is a list of all the default built-in menu items with the rules ab
 - `contractAll`: Collapse all groups. Only shown if grouping by at least one column.
 
 The `defaultItems` list will change on different calls, depending on, for example, which columns are currently used for grouping.
+
+**Move Left** and **Move Right** provide a pointer alternative to dragging. They follow the visual direction, including in RTL, and keep columns in their current pinned section. Groups move together, preserving their internal order. Moving respects column movement restrictions, including `suppressMovableColumns`, `suppressMovable`, `lockPosition` and `marryChildren`. Unavailable directions are disabled. The labels can be customised with the `moveLeft` and `moveRight` locale keys, and the arrows with the `menuMoveLeft` and `menuMoveRight` icons.
 
 If you do not override the list of menu items, then the items displayed will be based on the rules above.
 

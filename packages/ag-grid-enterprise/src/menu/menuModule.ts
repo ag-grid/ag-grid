@@ -73,6 +73,11 @@ export const ColumnMenuModule: _ModuleWithApi<_ColumnChooserGridApi> = {
     version: VERSION,
     beans: [EnterpriseMenuFactory, ColumnMenuFactory, ColumnChooserFactory],
     icons: {
+        menuMoveLeft: 'left',
+        menuMoveRight: 'right',
+        // the column chooser offers the same move items as the Columns Tool Panel
+        menuMoveUp: 'up',
+        menuMoveDown: 'down',
         ensureColumnVisible: 'column-arrow',
         // menu tab icon in legacy tabbed enterprise column menu
         legacyMenu: 'menu',

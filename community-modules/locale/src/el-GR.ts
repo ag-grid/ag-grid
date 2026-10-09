@@ -342,6 +342,10 @@ export const AG_GRID_LOCALE_EL_GR = {
     enabled: 'Ενεργοποιημένο',
 
     // Menu
+    moveLeft: 'Μετακίνηση αριστερά',
+    moveRight: 'Μετακίνηση δεξιά',
+    moveUp: 'Μετακίνηση πάνω',
+    moveDown: 'Μετακίνηση κάτω',
     pinColumn: 'Καρφίτσωμα Στήλης',
     pinLeft: 'Καρφίτσωμα Αριστερά',
     pinRight: 'Καρφίτσωμα Δεξιά',

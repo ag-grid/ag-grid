@@ -215,6 +215,7 @@ export {
     _getCallbackForEvent,
     _getCheckboxes,
     _getCheckboxLocation,
+    _getDomData,
     _getEnableColumnSelection,
     _getFillHandle,
     _getGrandTotalPinnedFloat,

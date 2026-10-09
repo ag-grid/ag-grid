@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_SV_SE = {
     enabled: 'Aktiverad',
 
     // Menu
+    moveLeft: 'Flytta åt vänster',
+    moveRight: 'Flytta åt höger',
+    moveUp: 'Flytta upp',
+    moveDown: 'Flytta ned',
     pinColumn: 'Fäst Kolumn',
     pinLeft: 'Fäst Vänster',
     pinRight: 'Fäst Höger',

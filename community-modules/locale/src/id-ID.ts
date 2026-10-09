@@ -341,6 +341,10 @@ export const AG_GRID_LOCALE_ID_ID = {
     enabled: 'Diaktifkan',
 
     // Menu
+    moveLeft: 'Pindahkan ke Kiri',
+    moveRight: 'Pindahkan ke Kanan',
+    moveUp: 'Pindahkan ke Atas',
+    moveDown: 'Pindahkan ke Bawah',
     pinColumn: 'Sematkan Kolom',
     pinLeft: 'Sematkan Kiri',
     pinRight: 'Sematkan Kanan',

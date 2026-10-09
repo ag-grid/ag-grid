@@ -103,18 +103,22 @@ The expanded column groups are saved and restored as part of [Grid State](./grid
 
 ## Context Menu
 
-Right-clicking a column or column group label opens a menu with items for grouping, aggregating and pivoting. The menu can be customised, including with custom menu items.
+Right-clicking or long-pressing a column or column group label opens a menu with items for moving, grouping, aggregating and pivoting. The menu can be customised, including with custom menu items.
 
 ### Built-In Menu Items
 
 The following menu items are shown by default based on the column's configuration and the grid's current state:
 
+- `moveUp`: "Move Up". Moves the column or group one available position up the list.
+- `moveDown`: "Move Down". Moves the column or group one available position down the list.
 - `scrollIntoView`: "Scroll _column_ into View". Scrolls the column into view. Hidden while pivoting, or when the column is pinned or hidden.
 - `rowGroup`: "Group by _column_" or "Un-Group by _column_". Appears only when the column allows row grouping.
 - `value`: "Add _column_ to values" or "Remove _column_ from values". Adds or removes the column as an aggregated value (the **Values** section). Appears only when the column allows aggregation.
 - `pivot`: "Add _column_ to labels" or "Remove _column_ from labels". Adds or removes the column as a pivot column label (the **Column Labels** section). Appears only in pivot mode when the column allows pivoting.
 
 For a column group, `rowGroup`, `value` and `pivot` apply to every child column that individually allows the action; `scrollIntoView` scrolls only the first visible child column into view.
+
+**Move Up** and **Move Down** move groups together and respect the same restrictions as keyboard column reordering. They are not available when column moving or synchronisation with the grid is suppressed, or while the panel is in pivot mode. Unavailable directions are disabled. In deferred mode, moves are staged until **Apply**. The same items appear in the [Column Chooser](./column-chooser/). Customise their labels using the `moveUp` and `moveDown` locale keys, and their arrows using the `menuMoveUp` and `menuMoveDown` icons.
 
 With [Read Only Functions](./tool-panel-columns-configuration/#read-only-functions), `rowGroup`, `value` and `pivot` are not shown.
 

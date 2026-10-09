@@ -341,6 +341,10 @@ export const AG_GRID_LOCALE_MS_MY = {
     enabled: 'Diaktifkan',
 
     // Menu
+    moveLeft: 'Alih ke Kiri',
+    moveRight: 'Alih ke Kanan',
+    moveUp: 'Alih ke Atas',
+    moveDown: 'Alih ke Bawah',
     pinColumn: 'Sematkan Lajur',
     pinLeft: 'Sematkan Kiri',
     pinRight: 'Sematkan Kanan',

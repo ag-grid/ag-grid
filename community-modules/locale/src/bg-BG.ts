@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_BG_BG = {
     enabled: 'Активиран',
 
     // Menu
+    moveLeft: 'Преместване наляво',
+    moveRight: 'Преместване надясно',
+    moveUp: 'Преместване нагоре',
+    moveDown: 'Преместване надолу',
     pinColumn: 'Закрепване на колоната',
     pinLeft: 'Закрепване наляво',
     pinRight: 'Закрепване надясно',

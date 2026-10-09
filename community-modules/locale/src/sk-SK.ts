@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_SK_SK = {
     enabled: 'Povolené',
 
     // Menu
+    moveLeft: 'Presunúť doľava',
+    moveRight: 'Presunúť doprava',
+    moveUp: 'Presunúť nahor',
+    moveDown: 'Presunúť nadol',
     pinColumn: 'Pripnúť stĺpec',
     pinLeft: 'Pripnúť vľavo',
     pinRight: 'Pripnúť vpravo',

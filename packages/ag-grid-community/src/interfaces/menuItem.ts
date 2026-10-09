@@ -150,6 +150,8 @@ export interface IMenuItemComp<TData = any, TContext = any>
     extends IComponent<IMenuItemParams<TData, TContext>>, IMenuItem {}
 
 export type DefaultMenuItem =
+    | 'moveLeft'
+    | 'moveRight'
     | 'pinSubMenu'
     | 'pinLeft'
     | 'pinRight'
@@ -197,7 +199,7 @@ export type DefaultMenuItem =
  * The concrete item shown for a token depends on the column's current state (e.g. `rowGroup`
  * renders "Group by" or "Un-Group by").
  */
-export type DefaultToolPanelItem = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot';
+export type DefaultToolPanelItem = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot' | 'moveUp' | 'moveDown';
 
 /**
  * The complete set of built-in menu item tokens usable with `columnMenuItems` / `getColumnMenuItems`

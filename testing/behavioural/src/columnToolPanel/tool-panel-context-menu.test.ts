@@ -478,7 +478,7 @@ describe('ToolPanelContextMenu', () => {
             await findByText(gridDiv, 'Pin Column');
         });
 
-        test('under functionsReadOnly a callback receives only the non-mutating defaults', async () => {
+        test('under functionsReadOnly a callback still receives movement and navigation defaults', async () => {
             const getColumnMenuItems = vi.fn((params: GetColumnMenuItemsParams) => [
                 ...params.defaultItems,
                 { name: 'Read-only custom' },
@@ -492,8 +492,7 @@ describe('ToolPanelContextMenu', () => {
 
             await findByText(gridDiv, 'Read-only custom');
             expect(queryByText(gridDiv, 'Group by Athlete')).toBeNull();
-            // Scroll into view is non-mutating so it survives read-only; the state-changing defaults do not.
-            expect(getColumnMenuItems.mock.calls[0][0].defaultItems).toEqual(['scrollIntoView']);
+            expect(getColumnMenuItems.mock.calls[0][0].defaultItems).toEqual(['moveUp', 'moveDown', 'scrollIntoView']);
         });
 
         test('under functionsReadOnly with no callback the menu still offers scroll into view', async () => {
@@ -501,7 +500,7 @@ describe('ToolPanelContextMenu', () => {
 
             await openContextMenu(toolPanel, gridDiv, 'Athlete');
 
-            // Non-mutating navigation stays available and enabled; the state-changing defaults are gone.
+            // Navigation stays available; grouping and aggregation functions are read-only.
             const scrollItem = await findByText(gridDiv, 'Scroll Athlete into View');
             expect(scrollItem.closest('.ag-menu-option')!.classList.contains('ag-menu-option-disabled')).toBe(false);
             expect(queryByText(gridDiv, 'Group by Athlete')).toBeNull();
@@ -511,7 +510,7 @@ describe('ToolPanelContextMenu', () => {
             await clickMenuItem(gridDiv, 'Scroll Athlete into View');
         });
 
-        test('under functionsReadOnly with no scrollable column the menu does not open', async () => {
+        test('under functionsReadOnly a pinned column still offers movement', async () => {
             const { gridDiv, toolPanel } = await createGrid(
                 [{ field: 'athlete', minWidth: 200, pinned: 'left' }, { field: 'age' }],
                 { functionsReadOnly: true }
@@ -519,8 +518,8 @@ describe('ToolPanelContextMenu', () => {
 
             await openContextMenu(toolPanel, gridDiv, 'Athlete');
 
-            // A pinned column has no valid scroll-into-view target, and every other default mutates state,
-            // so with no callback there is nothing to show.
+            // Pinning removes scroll-into-view; read-only functions remove grouping actions.
+            await findByText(gridDiv, 'Move Down');
             expect(queryByText(gridDiv, 'Scroll Athlete into View')).toBeNull();
             expect(queryByText(gridDiv, 'Group by Athlete')).toBeNull();
         });
@@ -531,12 +530,12 @@ describe('ToolPanelContextMenu', () => {
                 'separator' as const,
                 { name: 'Lonely Item' },
             ]);
-            // A pinned column under functionsReadOnly has no valid default (scroll into view needs an
-            // unpinned target, the rest mutate state), so defaultItems is [] and the list starts with a separator.
+            // Disable movement and functions on a pinned column to leave no default items.
             const { gridDiv, toolPanel } = await createGrid(
                 [{ field: 'athlete', minWidth: 200, pinned: 'left' }, { field: 'age' }],
                 {
                     functionsReadOnly: true,
+                    suppressMovableColumns: true,
                     getColumnMenuItems,
                 }
             );

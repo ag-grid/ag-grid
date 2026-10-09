@@ -319,7 +319,11 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
                 new TabbedColumnMenu(column, restoreFocusParams, this.lastSelectedTab, restrictToTabs, eventSource)
             );
         } else {
-            const menuItems = (this.beans.colMenuFactory as ColumnMenuFactory).getMenuItems(column, columnGroup);
+            const menuItems = (this.beans.colMenuFactory as ColumnMenuFactory).getMenuItems(
+                column,
+                columnGroup,
+                eventSource
+            );
             return menuItems.length
                 ? this.createBean(
                       new ColumnContextMenu(menuItems, column, columnGroup, restoreFocusParams, eventSource)

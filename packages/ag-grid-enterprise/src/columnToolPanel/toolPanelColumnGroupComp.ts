@@ -33,6 +33,7 @@ import {
 
 import { getGridColumnGroup } from '../columns/providedColumnGroupUtils';
 import type { ColumnModelItem } from './columnModelItem';
+import type { ToolPanelColumnMove } from './columnMoveUtils';
 import {
     ColumnSelectionLabelRendererFeature,
     isColumnSelectionLabelRendererEnabled,
@@ -83,7 +84,8 @@ export class ToolPanelColumnGroupComp extends Component {
         private readonly eventType: ColumnEventType,
         private readonly focusWrapper: HTMLElement,
         private readonly params: ToolPanelColumnCompParams,
-        private readonly source: ColumnSelectionPanelSource
+        private readonly source: ColumnSelectionPanelSource,
+        private readonly columnMove?: ToolPanelColumnMove
     ) {
         super();
         const { columnGroup, depth } = modelItem;
@@ -247,7 +249,15 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private onContextMenu(e: MouseEvent | Touch): void {
         const contextMenu = this.createBean(
-            new ToolPanelContextMenu(this.columnGroup, e, this.focusWrapper, this.params, this.eventType, this.source)
+            new ToolPanelContextMenu(
+                this.columnGroup,
+                e,
+                this.focusWrapper,
+                this.params,
+                this.eventType,
+                this.source,
+                this.columnMove
+            )
         );
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {

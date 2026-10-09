@@ -342,6 +342,10 @@ export const AG_GRID_LOCALE_HU_HU = {
     enabled: 'Engedélyezve',
 
     // Menu
+    moveLeft: 'Mozgatás balra',
+    moveRight: 'Mozgatás jobbra',
+    moveUp: 'Mozgatás felfelé',
+    moveDown: 'Mozgatás lefelé',
     pinColumn: 'Oszlop rögzítése',
     pinLeft: 'Rögzítés balra',
     pinRight: 'Rögzítés jobbra',

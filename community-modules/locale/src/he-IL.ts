@@ -336,6 +336,10 @@ export const AG_GRID_LOCALE_HE_IL = {
     enabled: 'מופעל',
 
     // Menu
+    moveLeft: 'העבר שמאלה',
+    moveRight: 'העבר ימינה',
+    moveUp: 'העבר למעלה',
+    moveDown: 'העבר למטה',
     pinColumn: 'נעל עמודה',
     pinLeft: 'נעל לשמאל',
     pinRight: 'נעל לימין',
