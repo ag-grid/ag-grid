@@ -102,6 +102,7 @@ export const _PUBLIC_EVENTS = [
     'paginationChanged',
     'componentStateChanged',
     'storeRefreshed',
+    'serverSideLevelInconsistent',
     'stateUpdated',
     'columnMenuVisibleChanged',
     'contextMenuVisibleChanged',
