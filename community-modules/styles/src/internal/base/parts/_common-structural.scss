@@ -930,6 +930,14 @@
         text-overflow: ellipsis;
     }
 
+    // Firefox mis-resolves a text selection drag ending in an overflow: hidden flex item; clip avoids the scroll container,
+    // and min-width: 0 restores truncation since clip does not lift the flex item's automatic minimum size.
+    :where(.ag-selectable) .ag-cell-value:not(.ag-allow-overflow),
+    :where(.ag-selectable) .ag-group-value {
+        overflow: clip;
+        min-width: 0;
+    }
+
     .ag-cell-wrapper {
         display: flex;
         align-items: center;

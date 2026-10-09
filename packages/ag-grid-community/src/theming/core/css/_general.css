@@ -451,11 +451,18 @@
     flex: 1 1 auto;
 }
 
-/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-.ag-cell-value:not(.ag-allow-overflow),
+.ag-cell-value:where(:not(.ag-allow-overflow)),
 .ag-group-value {
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* Firefox mis-resolves a text selection drag ending in an overflow: hidden flex item; clip avoids the scroll container,
+   and min-width: 0 restores truncation since clip does not lift the flex item's automatic minimum size. */
+:where(.ag-selectable) .ag-cell-value:where(:not(.ag-allow-overflow)),
+:where(.ag-selectable) .ag-group-value {
+    overflow: clip;
+    min-width: 0;
 }
 
 .ag-cell-wrap-text {
