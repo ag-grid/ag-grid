@@ -1,5 +1,3 @@
-/* stylelint-disable selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-
 .ag-header {
     font-size: var(--ag-header-font-size);
     font-family: var(--ag-header-font-family);
@@ -8,36 +6,34 @@
 }
 
 .ag-header-row {
-    .ag-grid-scrolling-cells {
-        background-color: var(--ag-header-background-color);
-    }
-
-    /* Pinned header sections need an opaque background, but --ag-header-background-color might be
-       semi-transparent, so apply an opaque base and re-apply the header color on top */
-    > .ag-grid-pinned-left-cells,
-    > .ag-grid-pinned-right-cells {
-        /* apply an opaque background */
-        background-image: linear-gradient(var(--ag-background-color), var(--ag-background-color));
-    }
-
-    .ag-grid-container-wrapper {
-        /* re-apply the transparent header color over the opaque background */
-        background-color: var(--ag-header-background-color);
-        width: 100%;
-        height: 100%;
-    }
-
     position: absolute;
     height: var(--ag-header-height);
     border-bottom: none;
-
-    .ag-grid-pinned-left-cells,
-    .ag-grid-pinned-right-cells {
-        overflow: visible;
-    }
 }
 
-/* stylelint-enable selector-max-specificity */
+:where(.ag-header-row) .ag-grid-scrolling-cells {
+    background-color: var(--ag-header-background-color);
+}
+
+/* Pinned header sections need an opaque background, but --ag-header-background-color might be
+   semi-transparent, so apply an opaque base and re-apply the header color on top */
+:where(.ag-header-row) > .ag-grid-pinned-left-cells,
+:where(.ag-header-row) > .ag-grid-pinned-right-cells {
+    /* apply an opaque background */
+    background-image: linear-gradient(var(--ag-background-color), var(--ag-background-color));
+}
+
+:where(.ag-header-row) .ag-grid-container-wrapper {
+    /* re-apply the transparent header color over the opaque background */
+    background-color: var(--ag-header-background-color);
+    width: 100%;
+    height: 100%;
+}
+
+:where(.ag-header-row) .ag-grid-pinned-left-cells,
+:where(.ag-header-row) .ag-grid-pinned-right-cells {
+    overflow: visible;
+}
 
 .ag-header-cell-menu-button,
 .ag-header-cell-filter-button,
@@ -305,11 +301,6 @@
 
 .ag-header-highlight-after::after {
     right: 0;
-
-    /* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-    :where(.ag-grid-pinned-left-cells) & {
-        right: 1px;
-    }
 }
 
 /* RESIZE HANDLE */

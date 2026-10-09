@@ -1,4 +1,3 @@
-/* stylelint-disable selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-chart {
     position: relative;
     display: flex;
@@ -317,7 +316,7 @@
         margin-bottom: 0;
     }
 
-    .ag-label {
+    :where(.ag-label) {
         display: inline-block;
     }
 }
@@ -338,12 +337,7 @@
     margin: 0;
 }
 
-.ag-group {
-    .ag-charts-data-group-item {
-        position: relative;
-        padding-bottom: var(--ag-widget-container-vertical-padding);
-    }
-
+:where(.ag-group) {
     .ag-charts-data-group-item:where(:not(:last-child)) {
         margin-bottom: var(--ag-spacing);
     }
@@ -366,19 +360,7 @@
         margin: var(--ag-spacing) 0;
     }
 
-    .ag-charts-format-sub-level-group-container {
-        display: flex;
-        flex-direction: column;
-        padding: var(--ag-widget-vertical-spacing) 0;
-    }
-
     .ag-charts-settings-group-container {
-        row-gap: 8px;
-        display: grid;
-        grid-template-columns: 60px 1fr 60px 1fr 60px;
-        border-top: none;
-        font-weight: 500;
-
         :where(.ag-chart-mini-thumbnail:nth-child(3n + 1)) {
             grid-column: 1;
         }
@@ -390,22 +372,6 @@
         :where(.ag-chart-mini-thumbnail:nth-child(3n + 3)) {
             grid-column: 5;
         }
-    }
-
-    .ag-charts-settings-group-title-bar,
-    .ag-charts-data-group-title-bar,
-    .ag-charts-format-top-level-group-title-bar {
-        border-top: none;
-        margin: 0;
-        font-weight: 500;
-        position: relative;
-        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
-    }
-
-    .ag-charts-format-sub-level-group-title-bar {
-        background: none;
-        font-weight: 500;
-        padding: var(--ag-widget-vertical-spacing) 0;
     }
 
     &.ag-charts-format-top-level-group,
@@ -428,7 +394,6 @@
 
     &.ag-charts-format-top-level-group,
     .ag-charts-format-top-level-group-item,
-    &.ag-charts-format-sub-level-group,
     .ag-charts-format-sub-level-group-item:last-child {
         padding: 0;
         margin: 0;
@@ -436,10 +401,6 @@
 
     .ag-charts-advanced-settings-top-level-group-container {
         margin: 0;
-    }
-
-    .ag-charts-advanced-settings-top-level-group-title-bar,
-    .ag-charts-advanced-settings-top-level-group-container {
         padding: 0 var(--ag-widget-container-horizontal-padding);
     }
 
@@ -449,18 +410,78 @@
     }
 }
 
+.ag-group {
+    /* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
+    .ag-charts-data-group-item {
+        position: relative;
+        padding-bottom: var(--ag-widget-container-vertical-padding);
+    }
+
+    /* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
+    .ag-charts-format-sub-level-group-container {
+        display: flex;
+        flex-direction: column;
+        padding: var(--ag-widget-vertical-spacing) 0;
+    }
+
+    /* stylelint-disable-next-line selector-max-specificity -- display: grid must beat .ag-group-container { display: flex } in agGroupComponent.css, component CSS injected after this module CSS */
+    .ag-charts-settings-group-container {
+        row-gap: 8px;
+        display: grid;
+        grid-template-columns: 60px 1fr 60px 1fr 60px;
+        border-top: none;
+        font-weight: 500;
+    }
+
+    /* stylelint-disable-next-line selector-max-specificity -- padding must beat .ag-group-title-bar { padding } in agGroupComponent.css, component CSS injected after this module CSS */
+    .ag-charts-settings-group-title-bar,
+    /* stylelint-disable-next-line selector-max-specificity -- padding must beat .ag-group-title-bar { padding } in agGroupComponent.css, component CSS injected after this module CSS */
+    .ag-charts-data-group-title-bar,
+    /* stylelint-disable-next-line selector-max-specificity -- padding must beat .ag-group-title-bar { padding } in agGroupComponent.css, component CSS injected after this module CSS */
+    .ag-charts-format-top-level-group-title-bar {
+        border-top: none;
+        margin: 0;
+        font-weight: 500;
+        position: relative;
+        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+    }
+
+    /* stylelint-disable-next-line selector-max-specificity -- padding must beat .ag-group-title-bar { padding } in agGroupComponent.css, component CSS injected after this module CSS */
+    .ag-charts-format-sub-level-group-title-bar {
+        background: none;
+        font-weight: 500;
+        padding: var(--ag-widget-vertical-spacing) 0;
+    }
+
+    /* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
+    &.ag-charts-format-sub-level-group {
+        padding: 0;
+        margin: 0;
+    }
+
+    /* stylelint-disable-next-line selector-max-specificity -- padding must beat .ag-group-title-bar { padding } in agGroupComponent.css, component CSS injected after this module CSS */
+    .ag-charts-advanced-settings-top-level-group-title-bar {
+        padding: 0 var(--ag-widget-container-horizontal-padding);
+    }
+}
+
 .ag-chart-settings-card-item.ag-not-selected:hover {
     opacity: 0.35;
 }
 
 :where(.ag-dragging-range-handle) .ag-dialog,
 :where(.ag-dragging-fill-handle) .ag-dialog {
-    /* stylelint-disable-next-line ag/no-low-performance-key-selector -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
+    /* stylelint-disable-next-line ag/no-low-performance-key-selector, selector-max-specificity -- must beat AG Charts' own pointer-events: auto rules, whose CSS order relative to the grid's is outside our control */
     .ag-charts-canvas-center,
+    /* stylelint-disable-next-line selector-max-specificity -- must beat AG Charts' own pointer-events: auto rules, whose CSS order relative to the grid's is outside our control */
     .ag-charts-series-area,
+    /* stylelint-disable-next-line selector-max-specificity -- must beat AG Charts' own pointer-events: auto rules, whose CSS order relative to the grid's is outside our control */
     .ag-charts-proxy-elem,
+    /* stylelint-disable-next-line selector-max-specificity -- must beat AG Charts' own pointer-events: auto rules, whose CSS order relative to the grid's is outside our control */
     .ag-charts-proxy-legend-toolbar,
+    /* stylelint-disable-next-line selector-max-specificity -- must beat AG Charts' own pointer-events: auto rules, whose CSS order relative to the grid's is outside our control */
     .ag-charts-toolbar,
+    /* stylelint-disable-next-line selector-max-specificity -- must beat AG Charts' own pointer-events: auto rules, whose CSS order relative to the grid's is outside our control */
     .ag-charts-canvas-overlay > * {
         pointer-events: none;
     }

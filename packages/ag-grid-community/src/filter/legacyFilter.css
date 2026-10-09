@@ -1,4 +1,4 @@
-/* stylelint-disable ag/no-low-performance-key-selector -- `> *` is required for
+/* stylelint-disable-next-line ag/no-low-performance-key-selector -- `> *` is required for
    legacy custom filters where custom component DOM is added directly to
    .ag-filter without .ag-filter-wrapper. To prevent slowing down applications
    that don't use legacy custom filters. We add this file dynamically when legacy

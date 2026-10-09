@@ -22,8 +22,7 @@
     cursor: row-resize;
 }
 
-/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-.ag-grid-pinned-bottom-rows .ag-row-numbers-resizer {
+:where(.ag-grid-pinned-bottom-rows) .ag-row-numbers-resizer {
     bottom: unset;
     top: -2px;
 }

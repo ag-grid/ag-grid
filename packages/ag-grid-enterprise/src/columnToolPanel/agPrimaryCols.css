@@ -69,19 +69,23 @@
 .ag-column-select-column-group-readonly {
     opacity: 0.5;
     pointer-events: none;
+}
 
-    /* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
+.ag-column-select-column-group-readonly {
     .ag-icon {
         opacity: 0.5;
     }
 
-    /* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
     &.ag-icon-grip {
         opacity: 0.35;
     }
 }
 
 .ag-column-select-column-readonly {
+    .ag-icon {
+        opacity: 0.5;
+    }
+
     .ag-icon-grip {
         opacity: 0.35;
     }

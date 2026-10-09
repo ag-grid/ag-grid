@@ -1,27 +1,23 @@
-/* stylelint-disable selector-max-specificity -- cell and column borders have
-    lots of overlapping rules defined in different files that rely on different
-    specificities to work, one day it would be good to tackle this and properly
-    refactor border styles to be less specific */
-
 /**
  * NOTE: these don't need RTL versions when pinning columns, "left" always means
  * visually on the left
  */
 
-.ag-header-row .ag-grid-pinned-right-cells .ag-grid-container-wrapper {
+:where(.ag-header-row .ag-grid-pinned-right-cells) .ag-grid-container-wrapper {
     /* rtl:ignore */
     border-left: var(--ag-pinned-column-border);
 }
 
-.ag-header-row .ag-grid-pinned-left-cells .ag-grid-container-wrapper {
+:where(.ag-header-row .ag-grid-pinned-left-cells) .ag-grid-container-wrapper {
     /* rtl:ignore */
     border-right: var(--ag-pinned-column-border);
 }
 
 /* print layout renders every column in the scrolling lane, so the pinned border
    moves from the lane edge onto the header cells either side of the boundary */
-.ag-layout-print .ag-header-row .ag-grid-pinned-left-cells,
-.ag-layout-print .ag-header-row .ag-grid-pinned-right-cells {
+
+:where(.ag-layout-print .ag-header-row) .ag-grid-pinned-left-cells,
+:where(.ag-layout-print .ag-header-row) .ag-grid-pinned-right-cells {
     display: none;
 }
 
@@ -35,6 +31,7 @@
     border-left: var(--ag-pinned-column-border);
 }
 
+/* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-cell.ag-cell-first-right-pinned:not(
         .ag-cell-range-left,
         .ag-cell-range-single-cell,
@@ -44,6 +41,7 @@
     border-left: var(--ag-pinned-column-border);
 }
 
+/* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-cell.ag-cell-last-left-pinned:not(
         .ag-cell-range-right,
         .ag-cell-range-single-cell,
@@ -53,23 +51,23 @@
     border-right: var(--ag-pinned-column-border);
 }
 
-.ag-grid-pinned-left-cells .ag-header-cell-resize::after {
+:where(.ag-grid-pinned-left-cells) .ag-header-cell-resize::after {
     /* rtl:ignore */
     left: calc(50% - var(--ag-header-column-resize-handle-width));
 }
 
-.ag-grid-pinned-right-cells .ag-header-cell-resize::after {
+:where(.ag-grid-pinned-right-cells) .ag-header-cell-resize::after {
     /* rtl:ignore */
     left: 50%;
 }
 
-.ag-grid-pinned-left-cells .ag-header-cell-resize {
+:where(.ag-grid-pinned-left-cells) .ag-header-cell-resize {
     /* pinned left headers always have their resize on the right, even in RTL mode */
     /* rtl:ignore */
     right: -3px;
 }
 
-.ag-grid-pinned-right-cells .ag-header-cell-resize {
+:where(.ag-grid-pinned-right-cells) .ag-header-cell-resize {
     /* pinned right headers always have their resize on the left, even in RTL mode */
     /* rtl:ignore */
     left: -3px;

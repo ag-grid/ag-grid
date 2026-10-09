@@ -1,6 +1,3 @@
-/* stylelint-disable selector-max-specificity -- we want print styles to be
-   slightly more specific than screen styles to ensure that customers don't break
-   print while overriding screen styles */
 .ag-layout-print {
     &.ag-grid-scrolling-rows {
         display: block;
@@ -29,7 +26,7 @@
     .ag-grid-scrolling-container,
     .ag-header-row,
     .ag-full-width-anchor {
-        /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
+        /* stylelint-disable-next-line declaration-no-important -- printed grids must always shrink to their columns (see above), whatever width is set elsewhere */
         width: auto !important;
     }
 }
@@ -39,10 +36,15 @@
         display: table;
         container-type: normal;
 
+        /* stylelint-disable-next-line selector-max-specificity -- print styles are deliberately slightly more specific than screen styles so that customers overriding screen styles don't break print */
         .ag-root-wrapper-body,
+        /* stylelint-disable-next-line selector-max-specificity -- print styles are deliberately slightly more specific than screen styles so that customers overriding screen styles don't break print */
         .ag-root,
+        /* stylelint-disable-next-line selector-max-specificity -- print styles are deliberately slightly more specific than screen styles so that customers overriding screen styles don't break print */
         .ag-grid-scrolling-container,
+        /* stylelint-disable-next-line selector-max-specificity -- print styles are deliberately slightly more specific than screen styles so that customers overriding screen styles don't break print */
         .ag-body-horizontal-scroll-viewport,
+        /* stylelint-disable-next-line selector-max-specificity -- print styles are deliberately slightly more specific than screen styles so that customers overriding screen styles don't break print */
         .ag-virtual-list-viewport {
             /* stylelint-disable-next-line declaration-no-important -- force auto height because 100% height elements with overflow hidden cause printing issues in Edge */
             height: auto !important;
@@ -54,7 +56,9 @@
             display: block !important;
         }
 
+        /* stylelint-disable-next-line selector-max-specificity -- print styles are deliberately slightly more specific than screen styles so that customers overriding screen styles don't break print */
         .ag-row,
+        /* stylelint-disable-next-line selector-max-specificity -- print styles are deliberately slightly more specific than screen styles so that customers overriding screen styles don't break print */
         .ag-cell {
             break-inside: avoid;
         }

@@ -46,6 +46,16 @@
     outline: none;
 }
 
+:where(.ag-toolbar > .ag-toolbar-button-wrapper:first-child) > .ag-toolbar-button {
+    /* Ensure that the centre point of the radius is the same as the grid corner radius so that they line up nicely  */
+    border-start-start-radius: calc(var(--ag-wrapper-border-radius) - var(--ag-border-width));
+}
+
+:where(.ag-toolbar > .ag-toolbar-button-wrapper:last-child) > .ag-toolbar-button {
+    /* Ensure that the centre point of the radius is the same as the grid corner radius so that they line up nicely  */
+    border-start-end-radius: calc(var(--ag-wrapper-border-radius) - var(--ag-border-width));
+}
+
 :where(.ag-toolbar-button) .ag-icon {
     color: var(--ag-icon-color);
 }
@@ -74,18 +84,6 @@
     pointer-events: none;
 }
 
-/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-.ag-toolbar > .ag-toolbar-button-wrapper:first-child > .ag-toolbar-button {
-    /* Ensure that the centre point of the radius is the same as the grid corner radius so that they line up nicely  */
-    border-start-start-radius: calc(var(--ag-wrapper-border-radius) - var(--ag-border-width));
-}
-
-/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-.ag-toolbar > .ag-toolbar-button-wrapper:last-child > .ag-toolbar-button {
-    /* Ensure that the centre point of the radius is the same as the grid corner radius so that they line up nicely  */
-    border-start-end-radius: calc(var(--ag-wrapper-border-radius) - var(--ag-border-width));
-}
-
 .ag-toolbar-panel {
     display: inline-flex;
 
@@ -107,23 +105,19 @@
     margin: 0 calc(var(--ag-spacing) * 2);
 }
 
-/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-.ag-toolbar-input + .ag-toolbar-input {
+:where(.ag-toolbar-input) + .ag-toolbar-input {
     margin-inline-start: 0;
 }
 
-/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-.ag-toolbar-right-start + .ag-toolbar-input {
+:where(.ag-toolbar-right-start) + .ag-toolbar-input {
     margin-inline-start: var(--ag-spacing);
 }
 
-/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-.ag-toolbar > .ag-toolbar-input:first-child {
+:where(.ag-toolbar) > .ag-toolbar-input:where(:first-child) {
     margin-inline-start: var(--ag-spacing);
 }
 
-/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-.ag-toolbar > .ag-toolbar-input:last-child {
+:where(.ag-toolbar) > .ag-toolbar-input:where(:last-child) {
     margin-inline-end: var(--ag-spacing);
 }
 

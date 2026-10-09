@@ -73,8 +73,7 @@
     padding: calc(var(--ag-spacing) / 2);
 }
 
-/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-.ag-notes-popup-editor .ag-text-area-input[readonly] {
+:where(.ag-notes-popup-editor) .ag-text-area-input[readonly] {
     background-color: var(--ag-note-popup-background-color);
     border: none;
 }

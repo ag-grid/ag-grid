@@ -35,8 +35,10 @@
     background-repeat: no-repeat;
 }
 
-.ag-disabled .ag-icon,
-/* stylelint-disable-next-line selector-max-specificity -- false positive bug, [disabled] is in ignore list */
+.ag-disabled .ag-icon {
+    opacity: 0.5;
+}
+
 [disabled] .ag-icon {
     opacity: 0.5;
 }

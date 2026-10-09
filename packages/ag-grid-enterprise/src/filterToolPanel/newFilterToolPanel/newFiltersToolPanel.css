@@ -89,13 +89,12 @@
     transition: color 0.25s ease-in-out;
 }
 
-.ag-filter-card-expand-icon:hover,
-.ag-filter-card-delete-icon:hover {
+:where(.ag-filter-card-heading:hover) .ag-filter-card-expand-icon {
     color: var(--ag-filter-panel-card-subtle-hover-color);
 }
 
-/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-.ag-filter-card-heading:hover .ag-filter-card-expand-icon {
+.ag-filter-card-expand-icon:hover,
+.ag-filter-card-delete-icon:hover {
     color: var(--ag-filter-panel-card-subtle-hover-color);
 }
 
@@ -181,7 +180,6 @@
 
 /* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-filter-panel .ag-simple-filter-body-wrapper,
-/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-.ag-filter-panel .ag-set-filter-body-wrapper {
+:where(.ag-filter-panel) .ag-set-filter-body-wrapper {
     padding-bottom: var(--ag-widget-container-vertical-padding);
 }

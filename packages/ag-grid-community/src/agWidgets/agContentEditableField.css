@@ -18,15 +18,15 @@
     overflow: auto;
     overflow-y: hidden;
 
-    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
+    /* stylelint-disable-next-line declaration-no-important -- this single-line field scrolls horizontally without a scrollbar, which must never show, even if customer CSS styles scrollbars */
     -ms-overflow-style: none !important;
 
-    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
+    /* stylelint-disable-next-line declaration-no-important -- this single-line field scrolls horizontally without a scrollbar, which must never show, even if customer CSS styles scrollbars */
     scrollbar-width: none !important;
 }
 
 .ag-content-editable-field-input::-webkit-scrollbar {
-    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
+    /* stylelint-disable-next-line declaration-no-important -- this single-line field scrolls horizontally without a scrollbar, which must never show, even if customer CSS styles scrollbars */
     display: none !important;
 }
 

@@ -1,36 +1,40 @@
-/* stylelint-disable selector-max-specificity -- cell and column borders have
-    lots of overlapping rules defined in different files that rely on different
-    specificities to work, one day it would be good to tackle this and properly
-    refactor border styles to be less specific */
-
+/* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-cell-range-selected:not(.ag-cell-focus),
+/* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-cell-range-selected.ag-cell-range-chart,
+/* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-grid-viewport:not(.ag-has-focus) .ag-cell-range-single-cell:not(.ag-cell-inline-editing) {
     background-color: var(--ag-range-selection-background-color);
+}
 
-    &.ag-cell-range-chart {
+:where(
+    .ag-cell-range-selected:not(.ag-cell-focus),
+    .ag-cell-range-selected.ag-cell-range-chart,
+    .ag-grid-viewport:not(.ag-has-focus) .ag-cell-range-single-cell:not(.ag-cell-inline-editing)
+).ag-cell-range-chart {
+    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
+    background-color: var(--ag-range-selection-chart-background-color) !important;
+
+    &:where(.ag-cell-range-chart-category) {
         /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
-        background-color: var(--ag-range-selection-chart-background-color) !important;
-
-        &.ag-cell-range-chart-category {
-            /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
-            background-color: var(--ag-range-selection-chart-category-background-color) !important;
-        }
+        background-color: var(--ag-range-selection-chart-category-background-color) !important;
     }
 }
 
+/* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-cell-range-selected-1:not(.ag-cell-focus),
+/* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-cell-range-selected-1.ag-cell-range-chart,
+/* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-cell-range-selected-1.ag-formula-range,
+/* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-root:not(.ag-context-menu-open)
     .ag-grid-viewport:not(.ag-has-focus)
     .ag-cell-range-selected-1:not(.ag-cell-inline-editing) {
     background-color: var(--ag-range-selection-background-color);
 }
 
-.ag-cell-range-selected-2:not(.ag-cell-focus),
-.ag-cell-range-selected-2.ag-cell-range-chart,
-.ag-cell-range-selected-2.ag-formula-range {
+.ag-cell-range-selected-2:where(:not(.ag-cell-focus), .ag-cell-range-chart, .ag-formula-range) {
     /* use background-image to overlay a semi transparent color over the background-color */
     background-image: linear-gradient(
         var(--ag-range-selection-background-color),
@@ -38,18 +42,14 @@
     );
 }
 
-.ag-cell-range-selected-3:not(.ag-cell-focus),
-.ag-cell-range-selected-3.ag-cell-range-chart,
-.ag-cell-range-selected-3.ag-formula-range {
+.ag-cell-range-selected-3:where(:not(.ag-cell-focus), .ag-cell-range-chart, .ag-formula-range) {
     /* use background-image to overlay 2 layers of a semi transparent color over the background-color */
     background-image:
         linear-gradient(var(--ag-range-selection-background-color), var(--ag-range-selection-background-color)),
         linear-gradient(var(--ag-range-selection-background-color), var(--ag-range-selection-background-color));
 }
 
-.ag-cell-range-selected-4:not(.ag-cell-focus),
-.ag-cell-range-selected-4.ag-cell-range-chart,
-.ag-cell-range-selected-4.ag-formula-range {
+.ag-cell-range-selected-4:where(:not(.ag-cell-focus), .ag-cell-range-chart, .ag-formula-range) {
     /* use background-image to overlay 3 layers of a semi transparent color over the background-color */
     background-image:
         linear-gradient(var(--ag-range-selection-background-color), var(--ag-range-selection-background-color)),
@@ -57,12 +57,15 @@
         linear-gradient(var(--ag-range-selection-background-color), var(--ag-range-selection-background-color));
 }
 
+/* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell) {
+    /* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
     &.ag-cell-range-top {
         border-top-color: var(--ag-range-selection-border-color);
         border-top-style: var(--ag-range-selection-border-style);
     }
 
+    /* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
     &.ag-cell-range-right {
         /* rtl:ignore */
         border-right-color: var(--ag-range-selection-border-color);
@@ -70,11 +73,13 @@
         border-right-style: var(--ag-range-selection-border-style);
     }
 
+    /* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
     &.ag-cell-range-bottom {
         border-bottom-color: var(--ag-range-selection-border-color);
         border-bottom-style: var(--ag-range-selection-border-style);
     }
 
+    /* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
     &.ag-cell-range-left {
         /* rtl:ignore */
         border-left-color: var(--ag-range-selection-border-color);
@@ -83,25 +88,33 @@
     }
 }
 
+/* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-cell.ag-selection-fill-top,
+/* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-cell.ag-selection-fill-top.ag-cell-range-selected {
     border-top: 1px dashed;
     border-top-color: var(--ag-range-selection-border-color);
 }
 
+/* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-cell.ag-selection-fill-right,
+/* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-cell.ag-selection-fill-right.ag-cell-range-selected {
     /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
     border-right: 1px dashed var(--ag-range-selection-border-color) !important;
 }
 
+/* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-cell.ag-selection-fill-bottom,
+/* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-cell.ag-selection-fill-bottom.ag-cell-range-selected {
     border-bottom: 1px dashed;
     border-bottom-color: var(--ag-range-selection-border-color);
 }
 
+/* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-cell.ag-selection-fill-left,
+/* stylelint-disable-next-line selector-max-specificity -- cell and column borders have lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-cell.ag-selection-fill-left.ag-cell-range-selected {
     /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
     border-left: 1px dashed var(--ag-range-selection-border-color) !important;

@@ -30,18 +30,16 @@
     border-radius: var(--ag-input-border-radius);
     border: var(--ag-picker-list-border);
     box-shadow: var(--ag-dropdown-shadow);
+}
 
-    /* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-    :where(.ag-rich-select-loading) {
-        display: flex;
-        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+:where(.ag-virtual-list-viewport.ag-rich-select-list) .ag-rich-select-loading {
+    display: flex;
+    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+}
 
-        /* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-        :where(.ag-loading-text) {
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-    }
+:where(.ag-virtual-list-viewport.ag-rich-select-list .ag-rich-select-loading) .ag-loading-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .ag-rich-select-row {

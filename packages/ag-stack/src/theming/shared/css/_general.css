@@ -1,10 +1,10 @@
 .ag-hidden {
-    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
+    /* stylelint-disable-next-line declaration-no-important -- state class toggled by the grid; elements it hides must never be made visible by other rules */
     display: none !important;
 }
 
 .ag-invisible {
-    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
+    /* stylelint-disable-next-line declaration-no-important -- state class toggled by the grid; elements it hides must never be made visible by other rules */
     visibility: hidden !important;
 }
 

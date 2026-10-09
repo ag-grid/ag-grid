@@ -60,10 +60,10 @@
     flex: 1 1 auto;
     -webkit-overflow-scrolling: touch;
 
-    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
+    /* stylelint-disable-next-line declaration-no-important -- the grid draws its own scrollbars, so native ones must never show, even if customer CSS styles scrollbars */
     -ms-overflow-style: none !important;
 
-    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
+    /* stylelint-disable-next-line declaration-no-important -- the grid draws its own scrollbars, so native ones must never show, even if customer CSS styles scrollbars */
     scrollbar-width: none !important;
 }
 
@@ -74,7 +74,7 @@
 }
 
 .ag-grid-viewport::-webkit-scrollbar {
-    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
+    /* stylelint-disable-next-line declaration-no-important -- the grid draws its own scrollbars, so native ones must never show, even if customer CSS styles scrollbars */
     display: none !important;
 }
 
@@ -148,8 +148,8 @@
     display: flex;
     flex: 1 1 auto;
 
-    /* stylelint-disable-next-line declaration-no-important -- we have to state this for rtl, otherwise row-reverse is inherited */
-    flex-direction: row !important;
+    /* not reversed in RTL, so deliberately absent from the :where(.ag-rtl) flex-direction rule below */
+    flex-direction: row;
     min-height: 0;
 }
 
@@ -246,11 +246,11 @@
 }
 
 :where(.ag-row-animation.ag-prevent-animation) .ag-row {
-    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
+    /* stylelint-disable-next-line declaration-no-important -- rows must never animate while the grid suppresses animation, even if customer CSS adds row transitions */
     transition: none !important;
 
     &:where(.ag-row.ag-after-created) {
-        /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
+        /* stylelint-disable-next-line declaration-no-important -- rows must never animate while the grid suppresses animation, even if customer CSS adds row transitions */
         transition: none !important;
     }
 }
@@ -378,16 +378,13 @@
     }
 }
 
-/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-.ag-spanning-container .ag-grid-scrolling-cells {
+:where(.ag-spanning-container) .ag-grid-scrolling-cells {
     /* centre spanned cells must paint above regular centre cells while remaining below pinned sections. */
     z-index: 1;
 }
 
-/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-.ag-spanning-container .ag-grid-pinned-left-cells,
-/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-.ag-spanning-container .ag-grid-pinned-right-cells {
+:where(.ag-spanning-container) .ag-grid-pinned-left-cells,
+:where(.ag-spanning-container) .ag-grid-pinned-right-cells {
     /* pinned spanned cells must paint above both centre spans and regular pinned cells. */
     z-index: 3;
     overflow: visible;
@@ -422,6 +419,10 @@
   * Cells
   ****************************
   */
+:where(.ag-spanning-container) .ag-cell {
+    pointer-events: auto;
+}
+
 .ag-cell {
     display: inline-block;
     position: absolute;
@@ -435,11 +436,6 @@
     }
 }
 
-/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-.ag-spanning-container .ag-cell {
-    pointer-events: auto;
-}
-
 /* This is used when using a Cell Wrapper (eg row drag, selection, or auto-height).
      If not using wrapper, ag-cell-value is on a div, which is 100% width. However when
      in a wrapper, it's a span (not a div), so we need 100% width to provide consistent
@@ -451,8 +447,7 @@
     flex: 1 1 auto;
 }
 
-/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-.ag-cell-value:not(.ag-allow-overflow),
+.ag-cell-value:where(:not(.ag-allow-overflow)),
 .ag-group-value {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -493,7 +488,7 @@
     border-bottom: none;
     white-space: nowrap;
 
-    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
+    /* stylelint-disable-next-line declaration-no-important -- grid layout depends on this box model, so customer box-sizing resets must never change it */
     box-sizing: content-box !important;
 }
 
@@ -527,7 +522,7 @@
 }
 
 .ag-opacity-zero {
-    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
+    /* stylelint-disable-next-line declaration-no-important -- state class toggled by the grid; elements it hides must never be made visible by other rules */
     opacity: 0 !important;
 }
 
@@ -568,7 +563,6 @@
 :where(.ag-ltr) {
     direction: ltr;
 
-    .ag-grid-scrolling-rows,
     .ag-grid-pinned-top-rows,
     .ag-grid-pinned-bottom-rows,
     .ag-grid-pinned-top-rows-container,
@@ -590,7 +584,6 @@
     direction: rtl;
     text-align: right;
 
-    .ag-grid-scrolling-rows,
     .ag-grid-pinned-top-rows,
     .ag-grid-pinned-bottom-rows,
     .ag-grid-pinned-top-rows-container,

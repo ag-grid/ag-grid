@@ -1,9 +1,4 @@
-/* stylelint-disable selector-max-specificity -- grid layout has
-    lots of overlapping rules defined in different files that rely on different
-    specificities to work, one day it would be good to tackle this and properly
-    refactor border styles to be less specific */
-
-.ag-row:not(.ag-row-level-0) .ag-pivot-leaf-group {
+:where(.ag-row:not(.ag-row-level-0)) .ag-pivot-leaf-group {
     margin-left: var(--ag-row-group-indent-size);
 }
 
@@ -39,7 +34,7 @@
 }
 
 .ag-cell-data-changed {
-    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
+    /* stylelint-disable-next-line declaration-no-important -- the flash must override a background-color set inline on the cell by the user's cellStyle */
     background-color: var(--ag-value-change-value-highlight-background-color) !important;
 }
 
@@ -48,7 +43,7 @@
 }
 
 .ag-cell-highlight {
-    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
+    /* stylelint-disable-next-line declaration-no-important -- the flash must override a background-color set inline on the cell by the user's cellStyle */
     background-color: var(--ag-range-selection-highlight-color) !important;
 }
 
@@ -82,17 +77,19 @@
     width: 100%;
     height: var(--ag-row-height);
 
+    /* stylelint-disable-next-line selector-max-specificity -- grid layout has lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
     &.ag-row-editing-invalid {
         background-color: var(--ag-full-row-edit-invalid-background-color);
     }
 }
 
+/* stylelint-disable-next-line selector-max-specificity -- grid layout has lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-row.ag-full-width-row:not(.ag-embedded-full-width-row) {
     border-bottom: var(--ag-row-border);
 }
 
-.ag-row:where(:not(.ag-header-row, .ag-full-width-row)),
-.ag-row:where(.ag-embedded-full-width-row) {
+:where(.ag-row:not(.ag-header-row, .ag-full-width-row)),
+:where(.ag-row.ag-embedded-full-width-row) {
     > .ag-grid-pinned-left-cells,
     > .ag-grid-scrolling-cells,
     > .ag-grid-pinned-right-cells {
@@ -103,8 +100,8 @@
 /* Remove the border-bottom for the last row in a pinned-bottom container as
    the bottom border of the grid serves */
 :where(.ag-grid-pinned-bottom-rows-container) {
-    .ag-row-last:where(:not(.ag-header-row, .ag-full-width-row)),
-    .ag-row-last:where(.ag-embedded-full-width-row) {
+    :where(.ag-row-last:not(.ag-header-row, .ag-full-width-row)),
+    :where(.ag-row-last.ag-embedded-full-width-row) {
         > .ag-grid-pinned-left-cells,
         > .ag-grid-scrolling-cells,
         > .ag-grid-pinned-right-cells {
@@ -114,8 +111,8 @@
 }
 
 :where(.ag-grid-sticky-bottom-rows-container) {
-    .ag-row:where(:not(.ag-header-row, .ag-full-width-row)),
-    .ag-row:where(.ag-embedded-full-width-row) {
+    :where(.ag-row:not(.ag-header-row, .ag-full-width-row)),
+    :where(.ag-row.ag-embedded-full-width-row) {
         > .ag-grid-pinned-left-cells,
         > .ag-grid-scrolling-cells,
         > .ag-grid-pinned-right-cells {
@@ -140,27 +137,25 @@
     height: 100%;
 }
 
-.ag-row:not(.ag-header-row) {
-    /* Pinned rows need an opaque background, but the row background might be semi-transparent (very common
-       for --ag-odd-row-background-color) so we use inheritance to pass the background down from the row */
-    > .ag-grid-pinned-left-cells,
-    > .ag-grid-pinned-right-cells {
-        background-color: inherit;
+/* Pinned rows need an opaque background, but the row background might be semi-transparent (very common
+   for --ag-odd-row-background-color) so we use inheritance to pass the background down from the row */
+:where(.ag-row:not(.ag-header-row)) > .ag-grid-pinned-left-cells,
+:where(.ag-row:not(.ag-header-row)) > .ag-grid-pinned-right-cells {
+    background-color: inherit;
 
-        /* apply an opaque background */
-        background-image: linear-gradient(var(--ag-data-background-color), var(--ag-data-background-color));
-    }
-
-    > .ag-grid-pinned-left-cells > .ag-grid-container-wrapper,
-    > .ag-grid-pinned-right-cells > .ag-grid-container-wrapper {
-        /* re-apply the transparent row color over the opaque background */
-        background-color: inherit;
-    }
+    /* apply an opaque background */
+    background-image: linear-gradient(var(--ag-data-background-color), var(--ag-data-background-color));
 }
 
-.ag-body-vertical-content-no-gap .ag-has-bottom-pinned-rows {
-    .ag-grid-scrolling-container .ag-row-last,
-    .ag-grid-pinned-bottom-rows .ag-grid-sticky-bottom-rows-container .ag-row-last {
+:where(.ag-row:not(.ag-header-row) > .ag-grid-pinned-left-cells) > .ag-grid-container-wrapper,
+:where(.ag-row:not(.ag-header-row) > .ag-grid-pinned-right-cells) > .ag-grid-container-wrapper {
+    /* re-apply the transparent row color over the opaque background */
+    background-color: inherit;
+}
+
+:where(.ag-body-vertical-content-no-gap .ag-has-bottom-pinned-rows) {
+    :where(.ag-grid-scrolling-container .ag-row-last),
+    :where(.ag-grid-pinned-bottom-rows .ag-grid-sticky-bottom-rows-container .ag-row-last) {
         > .ag-grid-pinned-left-cells,
         > .ag-grid-scrolling-cells,
         > .ag-grid-pinned-right-cells {
@@ -169,10 +164,12 @@
     }
 }
 
-.ag-grid-scrollable-area.ag-has-top-pinned-rows
-    .ag-grid-pinned-top-rows
-    > .ag-grid-pinned-top-rows-container
-    > .ag-row.ag-row-last {
+:where(
+    .ag-grid-scrollable-area.ag-has-top-pinned-rows
+        .ag-grid-pinned-top-rows
+        > .ag-grid-pinned-top-rows-container
+        > .ag-row.ag-row-last
+) {
     > .ag-grid-pinned-left-cells,
     > .ag-grid-scrolling-cells,
     > .ag-grid-pinned-right-cells {
@@ -184,6 +181,8 @@
    grid edge to prevent a double border. The use of the child  combinator `>`
    is to ensure that the ag-body-vertical-content-no-gap class only hides the
    border of rows in the same grid, not in nested detail grids  */
+
+/* stylelint-disable-next-line selector-max-specificity -- grid layout has lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-body-vertical-content-no-gap
     > .ag-grid-viewport
     > .ag-grid-scrollable-area
@@ -193,12 +192,14 @@
     border-bottom-color: transparent;
 }
 
-.ag-body-vertical-content-no-gap
-    > .ag-grid-viewport
-    > .ag-grid-scrollable-area
-    > .ag-grid-scrolling-rows
-    > .ag-grid-scrolling-container
-    > .ag-row-last:not(.ag-full-width-row) {
+:where(
+    .ag-body-vertical-content-no-gap
+        > .ag-grid-viewport
+        > .ag-grid-scrollable-area
+        > .ag-grid-scrolling-rows
+        > .ag-grid-scrolling-container
+        > .ag-row-last:not(.ag-full-width-row)
+) {
     > .ag-grid-pinned-left-cells,
     > .ag-grid-scrolling-cells,
     > .ag-grid-pinned-right-cells {
@@ -212,6 +213,7 @@
 }
 
 .ag-cell,
+/* stylelint-disable-next-line selector-max-specificity -- grid layout has lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-full-width-row .ag-cell-wrapper.ag-row-group {
     /* There is always a 1px border around cells, defaulting to transparent to
            avoid layout shift when we add a selection border. */
@@ -229,6 +231,7 @@
     position: absolute;
 }
 
+/* stylelint-disable-next-line selector-max-specificity -- grid layout has lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-spanned-cell-wrapper > .ag-spanned-cell {
     display: block;
     position: relative;
@@ -274,17 +277,23 @@
     }
 }
 
+/* stylelint-disable-next-line selector-max-specificity -- grid layout has lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-row > .ag-cell-wrapper.ag-row-group {
     padding-left: calc(
         var(--ag-cell-horizontal-padding) + var(--ag-row-group-indent-size) * var(--ag-indentation-level)
     );
 }
 
+/* stylelint-disable-next-line selector-max-specificity -- grid layout has lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-cell-focus:not(.ag-cell-range-selected):focus-within,
+/* stylelint-disable-next-line selector-max-specificity -- grid layout has lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-context-menu-open .ag-cell-focus:not(.ag-cell-range-selected),
+/* stylelint-disable-next-line selector-max-specificity -- grid layout has lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-full-width-row.ag-row-focus:focus .ag-cell-wrapper.ag-row-group,
+/* stylelint-disable-next-line selector-max-specificity -- grid layout has lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-context-menu-open .ag-full-width-row.ag-row-focus .ag-cell-wrapper.ag-row-group,
 .ag-cell-range-single-cell,
+/* stylelint-disable-next-line selector-max-specificity -- grid layout has lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-cell-range-single-cell.ag-cell-range-handle {
     border: 1px solid;
     border-color: var(--ag-range-selection-border-color);
@@ -294,7 +303,8 @@
 
 /* remove the box shadow added by default to all focussed divs because rows
            use a border only to indicate focus */
-.ag-full-width-row.ag-row-focus:focus {
+
+.ag-full-width-row:where(.ag-row-focus:focus) {
     box-shadow: none;
 }
 
@@ -317,7 +327,7 @@
 .ag-grid-pinned-left-cells::after,
 .ag-grid-scrolling-cells::after,
 .ag-grid-pinned-right-cells::after,
-.ag-full-width-row:not(.ag-embedded-full-width-row)::after {
+.ag-full-width-row:where(:not(.ag-embedded-full-width-row))::after {
     content: var(--ag-internal-row-highlight-content, none);
     position: absolute;
     inset: var(--ag-internal-row-highlight-inset, auto);
@@ -342,19 +352,19 @@
     --ag-internal-row-highlight-inset: auto 0 0;
 }
 
-.ag-row-highlight-indent > .ag-grid-scrolling-cells::after,
-.ag-row-highlight-indent.ag-full-width-row:not(.ag-embedded-full-width-row)::after {
+:where(.ag-row-highlight-indent) > .ag-grid-scrolling-cells::after,
+.ag-full-width-row:where(.ag-row-highlight-indent:not(.ag-embedded-full-width-row))::after {
     margin-left: calc(
         2 * (var(--ag-cell-widget-spacing) + var(--ag-icon-size)) + var(--ag-cell-horizontal-padding) +
             var(--ag-row-highlight-level) * var(--ag-row-group-indent-size)
     );
 }
 
-.ag-row-highlight-inside {
+:where(.ag-row-highlight-inside) {
     > .ag-grid-pinned-left-cells::after,
     > .ag-grid-scrolling-cells::after,
     > .ag-grid-pinned-right-cells::after,
-    &.ag-full-width-row:not(.ag-embedded-full-width-row)::after {
+    &.ag-full-width-row:where(:not(.ag-embedded-full-width-row))::after {
         --ag-internal-row-highlight-content: '';
 
         inset: 0;
@@ -377,23 +387,20 @@
 /* row selection and hover colors are added on a ::before pseudo element so
       that they overlay on top of the alternating row backgrounds rather than
       replacing them */
-.ag-row-selected,
-.ag-row-hover:not(.ag-full-width-row) {
-    .ag-grid-pinned-left-cells::before,
-    .ag-grid-pinned-right-cells::before,
-    .ag-grid-scrolling-cells::before {
-        content: '';
-        display: block;
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background-color: var(--ag-internal-row-overlay-color);
-        background-image: var(--ag-internal-row-overlay-image);
-    }
+:where(.ag-row-selected, .ag-row-hover:not(.ag-full-width-row)) .ag-grid-pinned-left-cells::before,
+:where(.ag-row-selected, .ag-row-hover:not(.ag-full-width-row)) .ag-grid-pinned-right-cells::before,
+:where(.ag-row-selected, .ag-row-hover:not(.ag-full-width-row)) .ag-grid-scrolling-cells::before {
+    content: '';
+    display: block;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-color: var(--ag-internal-row-overlay-color);
+    background-image: var(--ag-internal-row-overlay-image);
 }
 
 .ag-row-selected.ag-full-width-row::before,
-.ag-row-hover.ag-full-width-row.ag-row-group::before {
+.ag-full-width-row:where(.ag-row-hover.ag-row-group)::before {
     content: '';
     display: block;
     position: absolute;
@@ -408,6 +415,7 @@
 }
 
 .ag-row-hover:not(.ag-full-width-row),
+/* stylelint-disable-next-line selector-max-specificity -- grid layout has lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-row-hover.ag-full-width-row.ag-row-group {
     --ag-internal-row-overlay-color: var(--ag-row-hover-color);
 }
@@ -437,14 +445,21 @@
 }
 
 /* right-align numeric values in cells with wrappers */
-.ag-right-aligned-cell .ag-cell-value,
-.ag-right-aligned-cell .ag-group-value {
+
+:where(.ag-right-aligned-cell) .ag-cell-value,
+:where(.ag-right-aligned-cell) .ag-group-value {
     /* rtl:ignore */
     margin-left: auto;
 }
 
-.ag-cell:not(.ag-cell-inline-editing),
-/* stylelint-disable-next-line no-descending-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
+.ag-cell:where(:not(.ag-cell-inline-editing)) {
+    padding-left: calc(
+        var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size) * var(--ag-indentation-level)
+    );
+    padding-right: calc(var(--ag-cell-horizontal-padding) - 1px);
+}
+
+/* stylelint-disable-next-line no-descending-specificity, selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-full-width-row .ag-cell-wrapper.ag-row-group {
     padding-left: calc(
         var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size) * var(--ag-indentation-level)
@@ -455,6 +470,8 @@
 /* in full width rows, a cell renderer is rendered directly into a row with no
       cell in between, in which case we need to apply the padding to the cell
       renderer's wrapper. */
+
+/* stylelint-disable-next-line selector-max-specificity -- grid layout has lots of overlapping rules defined in different files that rely on different specificities to work. At some point we should refactor these to lower specificity. */
 .ag-row > .ag-cell-wrapper {
     padding-left: calc(var(--ag-cell-horizontal-padding) - 1px);
     padding-right: calc(var(--ag-cell-horizontal-padding) - 1px);
@@ -470,11 +487,12 @@
     padding: calc(var(--ag-spacing) * 3.75);
 }
 
-.ag-layout-auto-height,
-.ag-layout-print {
-    .ag-grid-scrolling-rows {
-        min-height: var(--ag-auto-height-min-body-height);
-    }
+.ag-layout-auto-height .ag-grid-scrolling-rows {
+    min-height: var(--ag-auto-height-min-body-height);
+}
+
+.ag-layout-print .ag-grid-scrolling-rows {
+    min-height: var(--ag-auto-height-min-body-height);
 }
 
 /* reset these to prevent inheritance by detail grids. */
@@ -511,7 +529,7 @@
     animation: ag-skeleton-loading 1.5s ease-in-out 0.5s infinite;
 }
 
-.ag-right-aligned-cell .ag-skeleton-effect {
+:where(.ag-right-aligned-cell) .ag-skeleton-effect {
     margin-left: auto;
 }
 

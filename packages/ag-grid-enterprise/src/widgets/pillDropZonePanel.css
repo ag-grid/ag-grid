@@ -99,8 +99,7 @@
 }
 
 .ag-column-drop-horizontal-half-width {
-    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
-    width: 50% !important;
+    width: 50%;
 }
 
 .ag-column-drop-cell-ghost {

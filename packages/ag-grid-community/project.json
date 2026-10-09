@@ -191,7 +191,7 @@
     "lint:depcruise": {},
     "lint": {
       "dependsOn": ["lint:knip", "lint:depcruise"],
-      "command": "eslint && stylelint './src/**/*css'",
+      "command": "eslint && stylelint './src/**/*css' && stylelint --config ../../.stylelintrc.no-disables.js './src/**/*css'",
       "options": {
         "cwd": "{projectRoot}"
       }
