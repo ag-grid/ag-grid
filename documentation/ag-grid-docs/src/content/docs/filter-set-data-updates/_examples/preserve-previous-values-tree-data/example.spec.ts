@@ -17,7 +17,7 @@ test.agExample(import.meta, () => {
         await expect(closed).toHaveCount(0);
     };
 
-    test.eachFramework('a file no longer in the data stays in its folder, muted', async ({ page }) => {
+    test.eachFramework('a file no longer in the data stays in its folder, marked', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
@@ -34,7 +34,7 @@ test.agExample(import.meta, () => {
         await expect(filterItem(page, 'Archive/old.zip').locator('input')).toBeChecked();
     });
 
-    test.eachFramework('a folder is muted once every file under it is gone', async ({ page }) => {
+    test.eachFramework('a folder is marked once every file under it is gone', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 

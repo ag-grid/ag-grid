@@ -581,7 +581,7 @@ export class SetFilter<V = string>
         }
         if (this.isSetFilterModelTreeItem(item)) {
             const displayValueModel = this.displayValueModel;
-            // The (Select All) and Add Selection rows span the list, so they are never muted.
+            // The (Select All) and Add Selection rows span the list, so they are never marked missing.
             return (
                 item !== displayValueModel.getSelectAllItem() &&
                 item !== displayValueModel.getAddSelectionToFilterItem() &&

@@ -277,6 +277,11 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      * @default 100
      */
     preservePreviousValuesLimit?: number;
+    /**
+     * Requires `preservePreviousValues = true`. Text shown as given after each value in the Filter List that is no
+     * longer in the data, for example `'(not in rows)'`.
+     */
+    preservePreviousValuesLabel?: string;
 }
 
 /**

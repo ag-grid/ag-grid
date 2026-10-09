@@ -17,7 +17,7 @@ test.agExample(import.meta, () => {
         await expect(closed).toHaveCount(0);
     };
 
-    test.eachFramework('a value no longer in the data stays in its group, muted', async ({ page }) => {
+    test.eachFramework('a value no longer in the data stays in its group, marked', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
@@ -34,7 +34,7 @@ test.agExample(import.meta, () => {
         await expect(filterItem(page, 'Spain#Madrid').locator('input')).toBeChecked();
     });
 
-    test.eachFramework('a group is muted once every value under it is gone', async ({ page }) => {
+    test.eachFramework('a group is marked once every value under it is gone', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 

@@ -20,21 +20,28 @@ ModuleRegistry.registerModules([
     SetFilterModule,
 ]);
 
-let gridApi: GridApi;
+let gridApi: GridApi<IOlympicData>;
+let allData: IOlympicData[] = [];
 
-const gridOptions: GridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
+        { field: 'athlete', minWidth: 180 },
         {
-            headerName: 'Set Filter Column',
-            field: 'col1',
+            field: 'country',
             filter: 'agSetColumnFilter',
             filterParams: {
                 preservePreviousValues: true,
+                preservePreviousValuesLabel: '(not in rows)',
             },
             floatingFilter: true,
-            minWidth: 250,
+            minWidth: 200,
         },
+        { field: 'sport' },
+        { field: 'year' },
     ],
+    defaultColDef: {
+        flex: 1,
+    },
     enableFilterHandlers: true,
     sideBar: {
         toolPanels: [
@@ -49,42 +56,44 @@ const gridOptions: GridOptions = {
         ],
         defaultToolPanel: 'filters',
     },
-    rowData: getRowData(),
     onFirstDataRendered: onFirstDataRendered,
 };
 
-function getRowData() {
-    return [{ col1: 'A' }, { col1: 'A' }, { col1: 'B' }, { col1: 'C' }];
+function rowsOfYear(year: number) {
+    return allData.filter((row) => row.year === year);
 }
 
-function selectOnlyB() {
-    gridApi!.setFilterModel({ col1: { filterType: 'set', values: ['B'] } });
+function showYear(year: number) {
+    gridApi!.setGridOption('rowData', rowsOfYear(year));
 }
 
-function updateOne() {
-    gridApi!.setGridOption('rowData', [{ col1: 'A' }, { col1: 'A' }, { col1: 'D' }]);
-}
-
-function updateTwo() {
-    gridApi!.setGridOption('rowData', [{ col1: 'A' }, { col1: 'B' }, { col1: 'C' }, { col1: 'D' }]);
+function selectAlgeriaAndArgentina() {
+    gridApi!.setFilterModel({ country: { filterType: 'set', values: ['Algeria', 'Argentina'] } });
 }
 
 function clearPreservedValues() {
-    gridApi!.doFilterAction({ colId: 'col1', action: 'clearPreservedValues' });
+    gridApi!.doFilterAction({ colId: 'country', action: 'clearPreservedValues' });
 }
 
 function reset() {
     gridApi!.setFilterModel(null);
-    gridApi!.setGridOption('rowData', getRowData());
-    clearPreservedValues();
+    gridApi!.setGridOption('rowData', rowsOfYear(2008));
+    gridApi!.doFilterAction({ colId: 'country', action: 'clearPreservedValues' });
 }
 
-function onFirstDataRendered(params: FirstDataRenderedEvent) {
-    params.api.getToolPanelInstance('filters')!.expandFilters();
+function onFirstDataRendered(params: FirstDataRenderedEvent<IOlympicData>) {
+    params.api.getToolPanelInstance('filters')!.expandFilters(['country']);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
+
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then((response) => response.json())
+        .then((data: IOlympicData[]) => {
+            allData = data;
+            gridApi!.setGridOption('rowData', rowsOfYear(2008));
+        });
 });

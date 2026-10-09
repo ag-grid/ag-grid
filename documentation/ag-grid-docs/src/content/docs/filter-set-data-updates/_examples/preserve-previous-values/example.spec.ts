@@ -9,54 +9,65 @@ test.agExample(import.meta, () => {
             .filter({ has: page.locator('.ag-checkbox-label', { hasText: new RegExp(`^${escaped}$`) }) });
     };
     const filterItemCheckbox = (page: any, label: string) => filterItem(page, label).locator('input[type="checkbox"]');
-    const rows = (page: any) => page.locator('.ag-grid-scrolling-container .ag-row[row-id]');
+    const itemAt = (page: any, position: number) =>
+        page.locator(`.ag-filter-toolpanel .ag-virtual-list-item[aria-posinset="${position}"] .ag-checkbox-label`);
     const sideButton = (page: any, label: string) =>
         page.locator('.ag-side-button', { hasText: new RegExp(`^\\s*${label}\\s*$`) });
+    const click = (page: any, name: string) => page.getByRole('button', { name }).click();
+    // The grid's row count, less its header and floating filter rows.
+    const expectRowCount = (page: any, count: number) =>
+        expect(page.locator('[role="grid"][aria-rowcount]')).toHaveAttribute('aria-rowcount', String(count + 2));
 
-    test.eachFramework('values that leave the data keep their selected state', async ({ page }) => {
+    test.eachFramework('countries that leave the data keep their place and selected state', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        await page.getByRole('button', { name: 'Select Only B' }).click();
-        await expect(rows(page)).toHaveCount(1);
+        await click(page, 'Select Algeria and Argentina');
+        await expectRowCount(page, 53);
 
-        // Apply Data Update 1 -> A,A,D: 'B' and 'C' leave the data but stay listed, muted, and keep their state.
-        await page.getByRole('button', { name: 'Apply Data Update 1' }).click();
-        await expect(filterItem(page, 'B')).toHaveClass(/ag-set-filter-item-missing/);
-        await expect(filterItemCheckbox(page, 'B')).toBeChecked();
-        await expect(filterItem(page, 'C')).toHaveClass(/ag-set-filter-item-missing/);
-        await expect(filterItemCheckbox(page, 'C')).not.toBeChecked();
-        await expect(page.locator('.ag-floating-filter input')).toHaveValue('(1) B');
-        await expect(rows(page)).toHaveCount(0);
+        // 2004 has no Afghanistan, Algeria or Armenia rows: each keeps its place, Algeria still selected.
+        await click(page, 'Show 2004');
+        await expect(itemAt(page, 2)).toHaveText('Afghanistan (not in rows)');
+        await expect(itemAt(page, 3)).toHaveText('Algeria (not in rows)');
+        await expect(itemAt(page, 4)).toHaveText('Argentina');
+        await expect(itemAt(page, 5)).toHaveText('Armenia (not in rows)');
+        await expect(filterItem(page, 'Algeria (not in rows)')).toHaveClass(/ag-set-filter-item-missing/);
+        await expect(filterItemCheckbox(page, 'Algeria (not in rows)')).toBeChecked();
+        await expect(filterItem(page, 'Afghanistan (not in rows)')).toHaveClass(/ag-set-filter-item-missing/);
+        await expect(filterItemCheckbox(page, 'Afghanistan (not in rows)')).not.toBeChecked();
+        await expect(filterItem(page, 'Argentina')).not.toHaveClass(/ag-set-filter-item-missing/);
+        await expectRowCount(page, 49);
+        await expect(page.locator('.ag-floating-filter input')).toHaveValue('(2) Algeria,Argentina');
         await sideButton(page, 'Filter Summaries').click();
-        await expect(page.locator('.ag-filter-card-summary')).toHaveText('is (B)');
+        await expect(page.locator('.ag-filter-card-summary')).toHaveText('is (Algeria, Argentina)');
         await sideButton(page, 'Filters').click();
 
-        // Apply Data Update 2 -> 'B' and 'C' return: 'B' rows show again, 'C' stays filtered out.
-        await page.getByRole('button', { name: 'Apply Data Update 2' }).click();
-        await expect(filterItem(page, 'B')).not.toHaveClass(/ag-set-filter-item-missing/);
-        await expect(filterItemCheckbox(page, 'B')).toBeChecked();
-        await expect(filterItemCheckbox(page, 'C')).not.toBeChecked();
-        await expect(rows(page)).toHaveCount(1);
+        // Back to 2008: Algeria's rows pass again.
+        await click(page, 'Show 2008');
+        await expect(itemAt(page, 3)).toHaveText('Algeria');
+        await expect(filterItemCheckbox(page, 'Algeria')).toBeChecked();
+        await expectRowCount(page, 53);
     });
 
-    test.eachFramework('Clear Preserved Values drops values not in the data, and from the model', async ({ page }) => {
-        await ensureGridReady(page);
-        await waitForGridContent(page);
+    test.eachFramework(
+        'Clear Preserved Values drops countries not in the data, and from the model',
+        async ({ page }) => {
+            await ensureGridReady(page);
+            await waitForGridContent(page);
 
-        await page.getByRole('button', { name: 'Select Only B' }).click();
-        await page.getByRole('button', { name: 'Apply Data Update 1' }).click();
-        await expect(filterItem(page, 'B')).toHaveClass(/ag-set-filter-item-missing/);
-        await expect(filterItem(page, 'C')).toHaveClass(/ag-set-filter-item-missing/);
+            await click(page, 'Select Algeria and Argentina');
+            await click(page, 'Show 2004');
+            await expect(filterItem(page, 'Algeria (not in rows)')).toHaveCount(1);
+            await click(page, 'Clear Preserved Values');
+            await expect(itemAt(page, 2)).toHaveText('Argentina');
+            await expect(filterItem(page, 'Afghanistan (not in rows)')).toHaveCount(0);
+            await expect(filterItem(page, 'Algeria (not in rows)')).toHaveCount(0);
+            await expect(filterItem(page, 'Armenia (not in rows)')).toHaveCount(0);
 
-        await page.getByRole('button', { name: 'Clear Preserved Values' }).click();
-        await expect(filterItem(page, 'B')).toHaveCount(0);
-        await expect(filterItem(page, 'C')).toHaveCount(0);
-        await expect(filterItem(page, 'D')).toHaveCount(1);
-
-        // Had 'B' stayed in the model, its rows would pass again once they return.
-        await page.getByRole('button', { name: 'Apply Data Update 2' }).click();
-        await expect(filterItemCheckbox(page, 'B')).not.toBeChecked();
-        await expect(rows(page)).toHaveCount(0);
-    });
+            // Had Algeria stayed in the model, its rows would pass again once they return.
+            await click(page, 'Show 2008');
+            await expect(filterItemCheckbox(page, 'Algeria')).not.toBeChecked();
+            await expectRowCount(page, 51);
+        }
+    );
 });
