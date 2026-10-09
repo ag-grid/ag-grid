@@ -2,10 +2,6 @@
     flex-wrap: wrap;
 }
 
-#myGrid {
-    flex: 1;
-}
-
 #myChart {
     flex: 2;
     min-height: 530px;

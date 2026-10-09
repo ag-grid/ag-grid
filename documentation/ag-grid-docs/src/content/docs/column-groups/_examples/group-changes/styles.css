@@ -1,16 +1,3 @@
-.example-header {
-    margin-bottom: 1rem;
-}
-
-.example-header label {
-    margin-left: 10px;
-    margin-right: 10px;
-}
-
-.example-header label:first-child {
-    margin-left: 0;
-}
-
 .participant-group {
     background-color: #33cc3344;
 }
