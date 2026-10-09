@@ -63,11 +63,6 @@ body {
     overflow: hidden;
 }
 
-/* Hide codesandbox highlighter */
-body > #highlighter {
-    display: none;
-}
-
 /* Additional Styles */
 #myGrid {
     height: 100%;

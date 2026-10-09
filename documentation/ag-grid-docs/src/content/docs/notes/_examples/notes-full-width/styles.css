@@ -1,7 +1,3 @@
-.example-header {
-    color: var(--ag-secondary-foreground-color);
-}
-
 .notes-full-width-row {
     display: flex;
     box-sizing: border-box;

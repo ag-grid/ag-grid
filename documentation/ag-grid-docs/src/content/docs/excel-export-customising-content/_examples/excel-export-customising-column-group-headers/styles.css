@@ -10,11 +10,6 @@
     margin-bottom: 0;
 }
 
-.option {
-    display: block;
-    margin: 5px 10px 0 0;
-}
-
 .grid-wrapper {
     display: flex;
 }
@@ -22,11 +17,4 @@
 .grid-wrapper > div {
     width: 100%;
     height: 100%;
-}
-
-.columns {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 16px;
 }
