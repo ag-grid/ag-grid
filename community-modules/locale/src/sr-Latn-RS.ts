@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     enabled: 'Omogućeno',
 
     // Menu
+    moveLeft: 'Pomeri ulevo',
+    moveRight: 'Pomeri udesno',
+    moveUp: 'Pomeri nagore',
+    moveDown: 'Pomeri nadole',
     pinColumn: 'Zakači kolonu',
     pinLeft: 'Zakači levo',
     pinRight: 'Zakači desno',

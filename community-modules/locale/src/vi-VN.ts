@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_VI_VN = {
     enabled: 'Đã bật',
 
     // Menu
+    moveLeft: 'Di chuyển sang trái',
+    moveRight: 'Di chuyển sang phải',
+    moveUp: 'Di chuyển lên',
+    moveDown: 'Di chuyển xuống',
     pinColumn: 'Ghim Cột',
     pinLeft: 'Ghim Trái',
     pinRight: 'Ghim Phải',

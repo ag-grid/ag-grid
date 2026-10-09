@@ -341,6 +341,10 @@ export const AG_GRID_LOCALE_LT_LT = {
     enabled: 'Įjungta',
 
     // Menu
+    moveLeft: 'Perkelti į kairę',
+    moveRight: 'Perkelti į dešinę',
+    moveUp: 'Perkelti aukštyn',
+    moveDown: 'Perkelti žemyn',
     pinColumn: 'Prisegti stulpelį',
     pinLeft: 'Prisegti kairėje',
     pinRight: 'Prisegti dešinėje',

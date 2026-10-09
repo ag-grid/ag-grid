@@ -336,6 +336,10 @@ export const AG_GRID_LOCALE_JA_JP = {
     enabled: '有効',
 
     // Menu
+    moveLeft: '左に移動',
+    moveRight: '右に移動',
+    moveUp: '上に移動',
+    moveDown: '下に移動',
     pinColumn: '列の固定',
     pinLeft: '左に固定',
     pinRight: '右に固定',

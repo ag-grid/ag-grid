@@ -338,6 +338,10 @@ export const AG_GRID_LOCALE_UK_UA = {
     enabled: 'Увімкнено',
 
     // Menu
+    moveLeft: 'Перемістити ліворуч',
+    moveRight: 'Перемістити праворуч',
+    moveUp: 'Перемістити вгору',
+    moveDown: 'Перемістити вниз',
     pinColumn: 'Закріпити Стовпець',
     pinLeft: 'Закріпити Ліворуч',
     pinRight: 'Закріпити Праворуч',

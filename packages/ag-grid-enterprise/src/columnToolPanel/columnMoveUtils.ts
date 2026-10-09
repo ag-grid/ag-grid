@@ -4,7 +4,6 @@ import type {
     BeanCollection,
     ColumnEventType,
     ColumnPanelItemDragStartEvent,
-    GridOptionsService,
 } from 'ag-grid-community';
 import { isProvidedColumnGroup } from 'ag-grid-community';
 
@@ -13,6 +12,11 @@ import type { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
 import { isDeferredMode, refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
+
+export interface ToolPanelColumnMove {
+    canMove(isUp: boolean): boolean;
+    move(isUp: boolean): void;
+}
 
 export const getCurrentColumnsBeingMoved = (column: AgColumn | AgProvidedColumnGroup | null): AgColumn[] => {
     if (isProvidedColumnGroup(column)) {
@@ -55,21 +59,16 @@ const getMoveDiff = (allColumns: AgColumn[], currentColumns: AgColumn[] | null, 
 };
 
 export const isMoveBlocked = (
-    gos: GridOptionsService,
     beans: BeanCollection,
     currentColumns: AgColumn[],
     params: ColumnStateUpdateParams
 ): boolean => {
-    const deferMode = isDeferredMode(params);
-    const preventMoving = gos.get('suppressMovableColumns') || beans.columnStateUpdateStrategy.getPivotMode(deferMode);
-
-    if (preventMoving) {
-        return true;
-    }
-
-    const hasNotMovable = currentColumns.find(({ colDef }) => !!colDef.suppressMovable || !!colDef.lockPosition);
-
-    return !!hasNotMovable;
+    const { colMoves, columnStateUpdateStrategy } = beans;
+    return (
+        !colMoves ||
+        colMoves.isMovingSuppressed(currentColumns) ||
+        columnStateUpdateStrategy.getPivotMode(isDeferredMode(params))
+    );
 };
 
 export const moveItem = (

@@ -27,6 +27,7 @@ import {
 } from 'ag-grid-community';
 
 import type { ColumnModelItem } from './columnModelItem';
+import type { ToolPanelColumnMove } from './columnMoveUtils';
 import {
     ColumnSelectionLabelRendererFeature,
     isColumnSelectionLabelRendererEnabled,
@@ -62,7 +63,8 @@ export class ToolPanelColumnComp extends Component {
         private readonly focusWrapper: HTMLElement,
         private readonly params: ToolPanelColumnCompParams,
         private readonly eventType: ColumnEventType,
-        private readonly source: ColumnSelectionPanelSource
+        private readonly source: ColumnSelectionPanelSource,
+        private readonly columnMove?: ToolPanelColumnMove
     ) {
         super();
         const { column, depth } = modelItem;
@@ -189,7 +191,15 @@ export class ToolPanelColumnComp extends Component {
 
     private onContextMenu(e: MouseEvent | Touch): void {
         const contextMenu = this.createBean(
-            new ToolPanelContextMenu(this.column, e, this.focusWrapper, this.params, this.eventType, this.source)
+            new ToolPanelContextMenu(
+                this.column,
+                e,
+                this.focusWrapper,
+                this.params,
+                this.eventType,
+                this.source,
+                this.columnMove
+            )
         );
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {

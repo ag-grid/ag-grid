@@ -20,6 +20,8 @@ import type { MenuItemMapper } from '../menu/menuItemMapper';
 import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from '../menu/menuSeparators';
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
+import type { ToolPanelColumnMove } from './columnMoveUtils';
+import { isMoveBlocked } from './columnMoveUtils';
 import { isDeferredMode, refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
 
@@ -52,7 +54,8 @@ export class ToolPanelContextMenu extends Component {
         private readonly parentEl: HTMLElement,
         private readonly params: ColumnStateUpdateParams,
         private readonly eventType: ColumnEventType,
-        private readonly source: ColumnMenuItemsSource
+        private readonly source: ColumnMenuItemsSource,
+        private readonly columnMove?: ToolPanelColumnMove
     ) {
         super({ tag: 'div', cls: 'ag-menu' });
     }
@@ -87,10 +90,7 @@ export class ToolPanelContextMenu extends Component {
             colOrGroupDef = column.colDef;
         }
 
-        // Under functionsReadOnly the state-changing defaults are dropped, but non-mutating items (scroll
-        // into view) remain, so a read-only grid can still be navigated. A user callback can additionally
-        // contribute items. An explicitly-returned state-changing token still renders disabled rather than
-        // being dropped (see resolveToolPanelToken), so read-only cannot be bypassed.
+        // Read-only functions restrict grouping, values and pivoting, not navigation or column order.
         const functionsReadOnly = gos.get('functionsReadOnly');
         let defaultItems: DefaultToolPanelItem[];
         if (!this.isActive()) {
@@ -140,6 +140,18 @@ export class ToolPanelContextMenu extends Component {
         const expanded: (DefaultMenuItem | MenuItemDef | 'separator')[] = [];
         for (let i = 0, len = items.length; i < len; ++i) {
             const item = items[i];
+            if (item === 'moveUp' || item === 'moveDown') {
+                if (this.columnMove) {
+                    const isUp = item === 'moveUp';
+                    expanded.push({
+                        name: this.getLocaleTextFunc()(item, isUp ? 'Move Up' : 'Move Down'),
+                        icon: _createIconNoSpan(isUp ? 'menuMoveUp' : 'menuMoveDown', this.beans, column),
+                        disabled: !this.columnMove.canMove(isUp),
+                        action: () => this.columnMove?.move(isUp),
+                    });
+                }
+                continue;
+            }
             if (typeof item === 'string') {
                 const token = item as DefaultToolPanelItem;
                 if (menuItemMap.has(token)) {
@@ -371,6 +383,7 @@ export class ToolPanelContextMenu extends Component {
 
     private isActive(): boolean {
         return (
+            !!this.columnMove ||
             this.allowScrollIntoView ||
             this.allowGrouping ||
             this.allowValues ||
@@ -386,6 +399,9 @@ export class ToolPanelContextMenu extends Component {
             if (columns.some((col) => val.allowedFunction(col))) {
                 tokens.push(key);
             }
+        }
+        if (this.columnMove && !isMoveBlocked(this.beans, this.columns, this.params)) {
+            tokens.push('moveUp', 'moveDown');
         }
         return tokens;
     }

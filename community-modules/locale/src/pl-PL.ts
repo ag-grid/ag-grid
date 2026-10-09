@@ -340,6 +340,10 @@ export const AG_GRID_LOCALE_PL_PL = {
     enabled: 'Włączone',
 
     // Menu
+    moveLeft: 'Przenieś w lewo',
+    moveRight: 'Przenieś w prawo',
+    moveUp: 'Przenieś w górę',
+    moveDown: 'Przenieś w dół',
     pinColumn: 'Przypnij Kolumnę',
     pinLeft: 'Przypnij po Lewej',
     pinRight: 'Przypnij po Prawej',

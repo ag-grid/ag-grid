@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_DA_DK = {
     enabled: 'Aktiveret',
 
     // Menu
+    moveLeft: 'Flyt til venstre',
+    moveRight: 'Flyt til højre',
+    moveUp: 'Flyt op',
+    moveDown: 'Flyt ned',
     pinColumn: 'Fastgør Kolonne',
     pinLeft: 'Fastgør Venstre',
     pinRight: 'Fastgør Højre',

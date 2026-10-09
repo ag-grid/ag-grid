@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_NL_NL = {
     enabled: 'Ingeschakeld',
 
     // Menu
+    moveLeft: 'Naar links verplaatsen',
+    moveRight: 'Naar rechts verplaatsen',
+    moveUp: 'Omhoog verplaatsen',
+    moveDown: 'Omlaag verplaatsen',
     pinColumn: 'Kolom vastzetten',
     pinLeft: 'Links vastzetten',
     pinRight: 'Rechts vastzetten',

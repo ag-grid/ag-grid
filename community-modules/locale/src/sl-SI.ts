@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_SL_SI = {
     enabled: 'Omogočeno',
 
     // Menu
+    moveLeft: 'Premakni levo',
+    moveRight: 'Premakni desno',
+    moveUp: 'Premakni gor',
+    moveDown: 'Premakni dol',
     pinColumn: 'Pripni stolpec',
     pinLeft: 'Pripni levo',
     pinRight: 'Pripni desno',

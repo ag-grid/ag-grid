@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_BS_BA = {
     enabled: 'Omogućeno',
 
     // Menu
+    moveLeft: 'Pomjeri lijevo',
+    moveRight: 'Pomjeri desno',
+    moveUp: 'Pomjeri gore',
+    moveDown: 'Pomjeri dolje',
     pinColumn: 'Zakači kolonu',
     pinLeft: 'Zakači lijevo',
     pinRight: 'Zakači desno',

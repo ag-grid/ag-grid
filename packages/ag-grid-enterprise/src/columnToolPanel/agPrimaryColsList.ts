@@ -14,7 +14,7 @@ import type {
     ColumnToolPanelState,
     ComponentSelector,
 } from 'ag-grid-community';
-import { Component, DragSourceType, _clamp, isProvidedColumnGroup } from 'ag-grid-community';
+import { Component, DragSourceType, isProvidedColumnGroup } from 'ag-grid-community';
 
 import type { VirtualListModel } from '../agStack/iVirtualList';
 import type { VirtualListDragItem } from '../agStack/iVirtualListDragFeature';
@@ -33,7 +33,7 @@ import type { ToolPanelColumnCompParams } from './columnToolPanel';
 import { selectAllChildren } from './modelItemUtils';
 import { ToolPanelColumnComp } from './toolPanelColumnComp';
 import { ToolPanelColumnGroupComp } from './toolPanelColumnGroupComp';
-import { isDeferredMode } from './toolPanelDeferredUiUtils';
+import { isDeferredMode, refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
 
 class UIColumnModel implements VirtualListModel {
     constructor(private readonly items: ColumnModelItem[]) {}
@@ -77,6 +77,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private restoredExpandedGroupIds: Set<string> | null = null;
     private skipRefocus: boolean = false;
     private customColumnLayout: AbstractColDef[] | null = null;
+    private isPreventMove: boolean = false;
 
     constructor() {
         super({ tag: 'div', cls: PRIMARY_COLS_LIST_PANEL_CLASS, role: 'presentation' });
@@ -131,19 +132,13 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         this.expandGroupsByDefault = !contractColumnSelection;
 
-        const isPreventMove = suppressColumnMove || suppressSyncLayoutWithGrid;
+        this.isPreventMove = !!suppressColumnMove || !!suppressSyncLayoutWithGrid;
 
         const virtualList = this.createManagedBean(
             new VirtualList<ToolPanelColumnGroupComp | ToolPanelColumnComp, ColumnModelItem>({
                 cssIdentifier: 'column-select',
                 ariaRole: 'tree',
-                moveItemCallback: (item, isUp) => {
-                    if (isPreventMove) {
-                        return;
-                    }
-
-                    this.moveItems(item, isUp);
-                },
+                moveItemCallback: (item, isUp) => this.moveItems(item.modelItem, isUp),
             })
         );
         this.virtualList = virtualList;
@@ -159,7 +154,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             this.onColumnsChanged();
         }
 
-        if (isPreventMove) {
+        if (this.isPreventMove) {
             return;
         }
 
@@ -167,7 +162,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     }
 
     private createItemDragFeature(): void {
-        const { gos, beans, virtualList } = this;
+        const { beans, virtualList } = this;
         this.createManagedBean(
             new VirtualListDragFeature<
                 AgPrimaryColsList,
@@ -186,7 +181,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 getCurrentDragValue: (listItemDragStartEvent: ColumnPanelItemDragStartEvent) =>
                     getCurrentDragValue(listItemDragStartEvent),
                 isMoveBlocked: (currentDragValue: AgColumn | AgProvidedColumnGroup | null) =>
-                    isMoveBlocked(gos, beans, getCurrentColumnsBeingMoved(currentDragValue), this.params),
+                    isMoveBlocked(beans, getCurrentColumnsBeingMoved(currentDragValue), this.params),
                 getNumRows: (comp: AgPrimaryColsList) => comp.getDisplayedColsList().length,
                 moveItem: (
                     currentDragValue: AgColumn | AgProvidedColumnGroup | null,
@@ -203,45 +198,52 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         );
     }
 
-    private moveItems(item: ToolPanelColumnComp | ToolPanelColumnGroupComp, isUp: boolean): void {
-        const { gos, beans } = this;
-        const { modelItem } = item;
-        const { group, columnGroup, column, expanded } = modelItem;
-        const currentColumns = getCurrentColumnsBeingMoved(group ? columnGroup : column);
+    private getMoveTarget(item: ColumnModelItem, isUp: boolean): { columns: AgColumn[]; toIndex: number } | null {
+        const { beans, params, displayedColsList } = this;
+        const columns = getCurrentColumnsBeingMoved(item.group ? item.columnGroup : item.column);
+        const currentIndex = displayedColsList.indexOf(item);
+        if (!this.isAlive() || currentIndex < 0 || this.isPreventMove || isMoveBlocked(beans, columns, params)) {
+            return null;
+        }
+        const order = isDeferredMode(params)
+            ? beans.columnStateUpdateStrategy.getPrimaryColumns(true)
+            : beans.colModel.colsList;
+        const step = isUp ? -1 : 1;
+        for (let index = currentIndex + step; index >= 0 && index < displayedColsList.length; index += step) {
+            const target = displayedColsList[index];
+            if (target.group && target.expanded) {
+                continue;
+            }
+            const targetColumns = getCurrentColumnsBeingMoved(target.group ? target.columnGroup : target.column);
+            const move = beans.colMoves?.getColumnMoveTarget(columns, targetColumns, isUp, order);
+            if (move) {
+                return move;
+            }
+        }
+        return null;
+    }
 
-        if (isMoveBlocked(gos, beans, currentColumns, this.params)) {
+    private moveItems(item: ColumnModelItem, isUp: boolean): void {
+        const move = this.getMoveTarget(item, isUp);
+        if (!move) {
             return;
         }
-
-        const currentIndex = this.displayedColsList.indexOf(modelItem);
-        const diff = isUp ? -1 : 1;
-        let movePadding = 0;
-
-        if (isUp) {
-            const children = item.columnDepth > 0 ? column.parent?.children : null;
-            if (children?.length && column === children[0]) {
-                movePadding = -1;
-            }
-        } else if (group) {
-            movePadding = expanded ? modelItem.children.length : 0;
-        }
-
-        const nextItem = _clamp(currentIndex + movePadding + diff, 0, this.displayedColsList.length - 1);
-
         this.skipRefocus = true;
-        moveItem(
-            beans,
-            currentColumns,
-            {
-                rowIndex: nextItem,
-                position: isUp ? 'top' : 'bottom',
-                component: this.virtualList.getComponentAt(nextItem) as ToolPanelColumnComp | ToolPanelColumnGroupComp,
-            },
-            this.params,
+        this.beans.columnStateUpdateStrategy.moveColumns(
+            isDeferredMode(this.params),
+            move.columns,
+            move.toIndex,
             this.eventType
         );
-
-        this.focusRowIfAlive(nextItem - movePadding).then(() => {
+        refreshDeferredToolPanelUi(this.beans, this.params);
+        const nextIndex = this.displayedColsList.findIndex((next) =>
+            item.group
+                ? next.group &&
+                  next.columnGroup.groupId === item.columnGroup.groupId &&
+                  next.columnGroup.getLeafColumns().includes(move.columns[0])
+                : !next.group && next.column === item.column
+        );
+        this.focusRowIfAlive(nextIndex).then(() => {
             this.skipRefocus = false;
         });
     }
@@ -251,6 +253,12 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         listItemElement: HTMLElement
     ): ToolPanelColumnGroupComp | ToolPanelColumnComp {
         const { allowDragging, eventType, params, source, groupsExist } = this;
+        const columnMove = this.isPreventMove
+            ? undefined
+            : {
+                  canMove: (isUp: boolean) => !!this.getMoveTarget(item, isUp),
+                  move: (isUp: boolean) => this.moveItems(item, isUp),
+              };
         if (item.group) {
             const renderedGroup = new ToolPanelColumnGroupComp(
                 item,
@@ -258,7 +266,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                 eventType,
                 listItemElement,
                 params,
-                source
+                source,
+                columnMove
             );
             this.createBean(renderedGroup);
 
@@ -272,7 +281,8 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             listItemElement,
             params,
             eventType,
-            source
+            source,
+            columnMove
         );
         this.createBean(columnComp);
 
