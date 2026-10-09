@@ -864,9 +864,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     footerRowBorder: {
         ref: 'rowBorder',
     },
-    grandTotalRowBorder: {
-        ref: 'rowBorder',
-    },
+    grandTotalRowBorder: false,
     columnBorder: {
         style: 'solid',
         width: 1,
