@@ -154,7 +154,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
     }
 
     public getHeaderResizeDiff(diff: number, column: AgColumn | AgColumnGroup): number {
-        if (column.pinnedLane !== 1) {
+        if (diff > 0 && column.pinnedLane !== 1) {
             const { leftWidth, rightWidth } = this;
 
             const bodyWidth = this.getAvailableViewportWidth() - MIN_CENTER_VIEWPORT_WIDTH;
