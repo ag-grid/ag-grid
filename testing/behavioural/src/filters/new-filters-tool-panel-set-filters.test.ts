@@ -68,7 +68,7 @@ describe('new filters tool panel setFilters', () => {
 
     test('an empty array removes every card and clears their filters', async () => {
         const api = createGrid([{ colId: 'name' }, { colId: 'age', expanded: true }]);
-        api.setColumnFilterModel('age', { filterType: 'number', type: 'equals', filter: 30 });
+        await api.setColumnFilterModel('age', { filterType: 'number', type: 'equals', filter: 30 });
         api.onFilterChanged();
         await waitForCards(api, [
             ['Name', false],
@@ -191,7 +191,7 @@ describe('new filters tool panel setFilters', () => {
             ['Country', false],
         ]);
         toolPanel(api).expandFilters(['country']);
-        api.setColumnFilterModel('age', { filterType: 'number', type: 'equals', filter: 30 });
+        await api.setColumnFilterModel('age', { filterType: 'number', type: 'equals', filter: 30 });
         api.onFilterChanged();
         await waitForCards(api, [
             ['Name', false],
