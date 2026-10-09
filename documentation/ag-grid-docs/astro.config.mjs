@@ -11,6 +11,7 @@ import { loadEnv } from 'vite';
 import mkcert from 'vite-plugin-mkcert';
 import svgr from 'vite-plugin-svgr';
 
+import agAiApiProxy from '../../external/ag-website-shared/plugins/agAiApiProxy';
 import agCacheSitemap from '../../external/ag-website-shared/plugins/agCacheSitemap';
 import agLinkChecker from '../../external/ag-website-shared/plugins/agLinkChecker';
 import agMkcertPreview from '../../external/ag-website-shared/plugins/agMkcertPreview';
@@ -166,6 +167,16 @@ const {
      * Escape hatch for the generation collapse; the two strategies produce identical output.
      */
     DISABLE_EXAMPLE_GEN_COLLAPSE,
+
+    /**
+     * AG AI API endpoint dev token
+     */
+    AG_AI_API_DEV_TOKEN,
+
+    /**
+     * AG AI API endpoint for the dev-server proxy, instead of staging (eg, a locally running AG AI API)
+     */
+    AG_AI_API_DEV_URL,
 } = dotenvExpand.expand(dotenv).parsed;
 console.log(
     'Astro configuration',
@@ -192,6 +203,8 @@ console.log(
             STUDIO_ROBOTS_DISALLOW_JSON_URL,
             AG_EXAMPLE_FORMAT,
             DISABLE_EXAMPLE_GEN_COLLAPSE,
+            AG_AI_API_DEV_TOKEN_envVar: Boolean(AG_AI_API_DEV_TOKEN),
+            AG_AI_API_DEV_URL,
         },
         null,
         2
@@ -200,6 +213,7 @@ console.log(
 
 const plugins = [
     agSourcemapCors(),
+    agAiApiProxy({ devToken: AG_AI_API_DEV_TOKEN, target: AG_AI_API_DEV_URL }),
     svgr(),
     agHotModuleReload(),
     agDevCsp(),

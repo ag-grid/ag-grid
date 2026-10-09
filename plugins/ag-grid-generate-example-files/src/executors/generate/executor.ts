@@ -1,5 +1,5 @@
 import type { ExecutorContext } from '@nx/devkit';
-import { readFile, readJSONFile, writeFile } from 'ag-shared/plugin-utils';
+import { getAiApiExampleUrl, readFile, readJSONFile, writeFile } from 'ag-shared/plugin-utils';
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -292,10 +292,9 @@ export async function generateFiles(options: ExecutorOptions, gridOptionsTypes: 
             mergedFiles = useAgRandom(mergedFiles);
         }
 
-        // Replace EXAMPLE_ENV placeholders from environment
+        // Replace EXAMPLE_ENV placeholders
         const exampleEnvVars: Record<string, string | undefined> = {
-            AI_API_URL: process.env.AG_AI_API_URL,
-            AI_API_TOKEN: process.env.AG_AI_API_DEV_TOKEN,
+            AI_API_URL: getAiApiExampleUrl(isDev),
         };
         for (const [fileName, content] of Object.entries(mergedFiles)) {
             if (typeof content !== 'string') {
