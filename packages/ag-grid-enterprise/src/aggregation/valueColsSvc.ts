@@ -130,7 +130,7 @@ export class ValueColsSvc extends BaseColsService implements NamedBean, IValueCo
             } else {
                 this.recordColChange(column);
             }
-            colModel.flushColChanges(source, membershipChanged ? 'membership' : 'dispatch');
+            colModel.stageColChanges(source, membershipChanged ? 'membership' : 'dispatch');
         } finally {
             colModel.endColUpdate();
         }

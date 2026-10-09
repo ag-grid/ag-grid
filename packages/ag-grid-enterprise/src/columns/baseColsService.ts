@@ -187,27 +187,27 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         if (colModel.colsList.length === 0) {
             return;
         }
+        // `before` stays ref-stable: `applyActiveCols` reassigns the order array wholesale.
+        const before = this.columns;
+
+        const newCols: AgColumn[] = [];
+        for (let i = 0, keysLen = providedColKeys.length; i < keysLen; ++i) {
+            const column = colModel.getNonPivotCol(providedColKeys[i]);
+            if (column) {
+                newCols.push(column);
+            }
+        }
+        // Provided keys, hierarchy virtuals expanded before each source.
+        const orderedSet = this.expandActiveCols(newCols);
+        const orderedArr = Array.from(orderedSet);
+        const change = this.stageChangedColsBetween(before, orderedArr);
+        if (change === 'none') {
+            return; // identical membership + order — nothing to refresh or dispatch
+        }
         colModel.beginColUpdate();
         try {
-            // `before` stays ref-stable: `applyActiveCols` reassigns the order array wholesale.
-            const before = this.columns;
-
-            const newCols: AgColumn[] = [];
-            for (let i = 0, keysLen = providedColKeys.length; i < keysLen; ++i) {
-                const column = colModel.getNonPivotCol(providedColKeys[i]);
-                if (column) {
-                    newCols.push(column);
-                }
-            }
-            // Provided keys, hierarchy virtuals expanded before each source.
-            const orderedSet = this.expandActiveCols(newCols);
-            const orderedArr = Array.from(orderedSet);
-            const change = this.stageChangedColsBetween(before, orderedArr);
-            if (change === 'none') {
-                return; // identical membership + order — nothing to refresh or dispatch
-            }
             this.applyActiveCols(before, orderedSet, orderedArr, source, true);
-            colModel.flushColChanges(source, change); // animated refresh; defers when batched
+            colModel.stageColChanges(source, change); // animated refresh, run when the update ends
         } finally {
             colModel.endColUpdate();
         }
@@ -275,8 +275,8 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         return pending;
     }
 
-    /** Re-stamp active-col indexes once if a staged change moved the set; called by
-     *  {@link ColumnModel.flushColChanges} before refresh/dispatch read the stamped positions. */
+    /** Re-stamp active-col indexes once if a staged change moved the set; called when the column update ends, before
+     *  refresh/dispatch read the stamped positions. */
     public flushReindex(): void {
         if (this.reindexPending) {
             this.reindexPending = false;
@@ -284,7 +284,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         }
     }
 
-    /** Dispatch this service's staged change (if any); called by {@link ColumnModel.flushColChanges}. */
+    /** Dispatch this service's staged change (if any); called when the column update that staged it ends. */
     public dispatchColChange(source: ColumnEventType): void {
         // Drain batched side-effects (rowGroup visibility) unconditionally, so they're never stranded.
         this.onColActiveChangesComplete(source);
@@ -331,7 +331,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
             } else {
                 this.stageRemovedFrom(before);
             }
-            colModel.flushColChanges(src, 'membership'); // add/remove → animated refresh; defers when batched
+            colModel.stageColChanges(src, 'membership'); // add/remove → animated refresh, run when the update ends
         } finally {
             colModel.endColUpdate();
         }

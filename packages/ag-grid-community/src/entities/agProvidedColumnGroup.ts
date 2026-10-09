@@ -1,3 +1,5 @@
+import type { AgEvent } from 'ag-stack';
+
 import { BeanStub } from '../context/beanStub';
 import type { Column, ColumnGroupShowType, ColumnInstanceId, ProvidedColumnGroup } from '../interfaces/iColumn';
 import type { AgColumn } from './agColumn';
@@ -31,6 +33,10 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
 
     /** Cache previous `setExpandable` visibility so `AgColumn.setVisible` ancestor walk can stop when unchanged. */
     private lastVisible = false;
+
+    /** The `ColumnModel.colEventsEpoch` of the queue `lastQueuedEventAt` indexes. */
+    public queuedEventsEpoch = 0;
+    public lastQueuedEventAt = -1;
 
     // stable key for framework (React) rendering and old-vs-new destroy diffing
     public readonly instanceId: ColumnInstanceId = getNextColInstanceId();
@@ -78,7 +84,7 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
             return false;
         }
         this.expanded = expanded;
-        this.dispatchLocalEvent({ type: 'expandedChanged' });
+        this.dispatchGroupEvent('expandedChanged');
         return true;
     }
 
@@ -137,7 +143,7 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
         const expandable = flags === EXPANDABLE_ALL;
         if (this.expandable !== expandable) {
             this.expandable = expandable;
-            this.dispatchLocalEvent({ type: 'expandableChanged' });
+            this.dispatchGroupEvent('expandableChanged');
         }
         const visible = flags !== 0;
         if (this.lastVisible === visible) {
@@ -145,6 +151,28 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
         }
         this.lastVisible = visible;
         return true;
+    }
+
+    /** Raises `type`, or inside a column update queues it with the columns' events, until every column and group holds
+     *  its new state. */
+    public dispatchGroupEvent(type: AgProvidedColumnGroupEvent): void {
+        const localEventService = this.localEventService;
+        if (!localEventService?.hasListeners(type)) {
+            return;
+        }
+        const colModel = this.beans.colModel;
+        if (colModel.colUpdateDepth === 0) {
+            localEventService.dispatchEvent({ type });
+        } else {
+            colModel.queueColEvent(this, { type });
+        }
+    }
+
+    /** A group destroyed since the event was queued has dropped its listeners. */
+    public raiseQueuedEvent(event: AgEvent<AgProvidedColumnGroupEvent>): void {
+        if (this.isAlive()) {
+            this.localEventService?.dispatchEvent(event);
+        }
     }
 }
 

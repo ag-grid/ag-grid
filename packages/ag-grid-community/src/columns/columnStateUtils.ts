@@ -402,7 +402,7 @@ function applyFieldState(
 
     const headerName = orDefault(stateItem?.headerName, defaultState?.headerName);
     if (headerName !== undefined) {
-        column.setHeaderNameOverride(headerName);
+        column.setHeaderNameOverride(headerName, source);
     }
 
     // No flex → fall back to width.

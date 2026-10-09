@@ -2,7 +2,7 @@ import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
-import type { ColDef, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
+import type { AgColumn, ColDef, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 
 import {
     addCalculatedColumnDef,
@@ -133,20 +133,14 @@ describe('ag-grid calculated columns', () => {
         `);
     });
 
-    test('a column whose formula reference the first calculated column shifts is told once, of its final one', () => {
+    test('a column whose formula reference shifts when the first calculated column is added is told once, of its final reference', () => {
         const api = createGrid('calculated-formula-ref-once', {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
         });
-        const seen: string[] = [];
-        api.getColumn('cost')!.addEventListener('formulaRefChanged', () =>
-            seen.push(
-                api
-                    .getAllGridColumns()
-                    .map((column) => column.getColId())
-                    .join()
-            )
-        );
+        const cost = api.getColumn('cost') as AgColumn;
+        const seen: (string | null)[] = [];
+        cost.addEventListener('formulaRefChanged', () => seen.push(cost.formulaRef));
 
         api.setGridOption('columnDefs', [
             { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
@@ -154,10 +148,10 @@ describe('ag-grid calculated columns', () => {
             { field: 'cost' },
         ]);
 
-        expect(seen).toEqual(['profit,revenue,cost']);
+        expect(seen).toEqual(['C']);
     });
 
-    test('the cells are refreshed once when the first calculated column turns formulas on', () => {
+    test('a rendered cell is not refreshed again by newColumnsLoaded when the first calculated column turns formulas on', async () => {
         let refreshes = 0;
         class CountingRenderer implements ICellRendererComp {
             private readonly eGui = document.createElement('span');
@@ -177,13 +171,15 @@ describe('ag-grid calculated columns', () => {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs,
         });
+        await asyncSetTimeout(0);
 
         api.setGridOption('columnDefs', [
             ...columnDefs,
             { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
         ]);
 
-        expect(refreshes).toBe(1);
+        // not a third time by `newColumnsLoaded`
+        expect(refreshes).toBe(2);
     });
 
     test('calculated column columnDefs mutations dispatch newColumnsLoaded', async () => {

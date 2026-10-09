@@ -1105,13 +1105,14 @@ export interface ColumnEvent<
     source: ColumnEventType;
 }
 
-/** The `columnStateUpdated` column event; `Column.addEventListener` types its listener with `ColumnEvent`. */
+/** Raised by a column when a property of its `ColumnState` is updated. `Column.addEventListener` types the listener with
+ *  `ColumnEvent`, so a listener narrows to this type to read `key`. */
 export interface ColumnStateUpdatedEvent<TData = any, TContext = any> extends ColumnEvent<
     'columnStateUpdated',
     TData,
     TContext
 > {
-    /** The `ColumnState` property that changed */
+    /** The `ColumnState` property updated */
     key: keyof ColumnState;
 }
 

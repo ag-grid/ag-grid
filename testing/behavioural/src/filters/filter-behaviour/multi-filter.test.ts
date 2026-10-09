@@ -917,7 +917,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
             `);
         });
 
-        test("a set child's key change resets the Multi Filter while an earlier child reconciles its model in the same update", async () => {
+        test("a set child's key change resets the Multi Filter, telling its column once within the update, while an earlier child reconciles its model in it", async () => {
             const setChild = (values: string[], caseSensitive: boolean) => ({
                 filter: 'agSetColumnFilter',
                 filterParams: { values, caseSensitive },
@@ -937,46 +937,20 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
             api.onFilterChanged();
             await asyncSetTimeout(0);
             expect(api.getDisplayedRowCount()).toBe(2);
+            const seen: unknown[] = [];
+            api.getColumn('name')!.addEventListener('filterChanged', () => seen.push(api.getColumnFilterModel('name')));
 
             // the first child's C is no longer listed, and the second child's keys change
             api.setGridOption(
                 'columnDefs',
                 colDefsWith([setChild(['A', 'B'], false), setChild(['A', 'B', 'C'], true)])
             );
+            // within the update only: the filter change raised after it is not this update's
+            expect(seen).toEqual([null]);
             await asyncSetTimeout(0);
 
             expect(api.getColumnFilterModel('name')).toBeNull();
             expect(api.getDisplayedRowCount()).toBe(4);
-        });
-
-        test('a Multi Filter reset while a child reconciles its model in the same update tells its column once', async () => {
-            const setChild = (values: string[], caseSensitive: boolean) => ({
-                filter: 'agSetColumnFilter',
-                filterParams: { values, caseSensitive },
-            });
-            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
-                enableFilterHandlers,
-                columnDefs: colDefsWith([setChild(['A', 'B', 'C'], false), setChild(['A', 'B', 'C'], false)]),
-                rowData: [{ name: 'A' }, { name: 'B' }, { name: 'C' }, { name: 'a' }],
-            });
-            await api.setColumnFilterModel('name', {
-                filterType: 'multi',
-                filterModels: [
-                    { filterType: 'set', values: ['A', 'C'] },
-                    { filterType: 'set', values: ['A'] },
-                ],
-            });
-            api.onFilterChanged();
-            await asyncSetTimeout(0);
-            const seen: unknown[] = [];
-            api.getColumn('name')!.addEventListener('filterChanged', () => seen.push(api.getColumnFilterModel('name')));
-
-            api.setGridOption(
-                'columnDefs',
-                colDefsWith([setChild(['A', 'B'], false), setChild(['A', 'B', 'C'], true)])
-            );
-
-            expect(seen).toEqual([null]);
         });
 
         test("a set child's new case sensitivity resets the whole Multi Filter", async () => {

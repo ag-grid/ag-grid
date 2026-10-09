@@ -436,13 +436,24 @@ export class DataTypeService extends BeanStub implements NamedBean {
     }
 
     private processColumnsPendingInference(rowData: any[], columnTypeOverridesExist: boolean): void {
-        const beans = this.beans;
         this.initialData = rowData;
-        const state: ColumnState[] = [];
         this.destroyColumnStateUpdateListeners();
+        // one update, so a column redefined here is told once every inferred column holds its new definition
+        const colModel = this.colModel;
+        colModel.beginColUpdate();
+        try {
+            this.applyInferredColDefs(columnTypeOverridesExist);
+        } finally {
+            colModel.endColUpdate();
+        }
+        this.initialData = null;
+    }
+
+    private applyInferredColDefs(columnTypeOverridesExist: boolean): void {
+        const beans = this.beans;
+        const state: ColumnState[] = [];
         const rowGroupColumnStateWithoutIndex: { [colId: string]: ColumnState } = Object.create(null);
         const pivotColumnStateWithoutIndex: { [colId: string]: ColumnState } = Object.create(null);
-
         for (const colId of Object.keys(this.columnStateUpdatesPendingInference)) {
             const updatedColumnState = this.resetColDefAndGetColumnState(colId, columnTypeOverridesExist);
             if (!updatedColumnState) {
@@ -469,7 +480,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (state.length) {
             _applyColumnState(beans, { state }, 'cellDataTypeInferred');
         }
-        this.initialData = null;
     }
 
     private resetColDefAndGetColumnState(colId: string, columnTypeOverridesExist: boolean): ColumnState | null {

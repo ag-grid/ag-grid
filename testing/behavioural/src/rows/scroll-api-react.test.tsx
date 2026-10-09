@@ -29,8 +29,10 @@ describe('fake scrollbars in React', () => {
         await waitFor(() => expect(find('.ag-body-horizontal-scroll-viewport')).not.toBeNull());
         const scroll = (selector: string, axis: 'scrollTop' | 'scrollLeft', value: number) => {
             const element = find(selector)!;
-            element[axis] = value;
-            element.dispatchEvent(new Event('scroll'));
+            act(() => {
+                element[axis] = value;
+                element.dispatchEvent(new Event('scroll'));
+            });
         };
         return { viewport: find('.ag-grid-viewport')!, scroll };
     };

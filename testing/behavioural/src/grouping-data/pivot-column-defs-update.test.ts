@@ -1,6 +1,6 @@
 import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, asyncSetTimeout } from 'ag-test-utils';
 
-import type { ColDef, Column } from 'ag-grid-community';
+import type { ColDef, Column, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -929,5 +929,50 @@ describe('pivot column identity across columnDefs updates', () => {
             · ├── LEAF hidden id:0 pivot_sport_Run_gold:1 pivot_sport_Swim_gold:1
             · └── LEAF hidden id:1 pivot_sport_Run_gold:2 pivot_sport_Swim_gold:2
         `);
+    });
+
+    test('a value column redefined draws each pivot result cell again once', async () => {
+        const told: string[] = [];
+        class CountingRenderer implements ICellRendererComp {
+            private readonly eGui = document.createElement('span');
+            private id = '';
+            public init(params: ICellRendererParams): void {
+                this.id = `${params.column!.getColId()}@${params.node.id}`;
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                told.push(this.id);
+                return true;
+            }
+        }
+        const defs: ColDef[] = [
+            { field: 'country', rowGroup: true },
+            { field: 'sport', pivot: true },
+            { field: 'gold', aggFunc: 'sum', headerName: 'Gold', cellRenderer: CountingRenderer },
+        ];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: defs,
+            pivotMode: true,
+            groupDefaultExpanded: -1,
+            rowData: [
+                { country: 'A', sport: 'S1', gold: 1 },
+                { country: 'A', sport: 'S2', gold: 2 },
+                { country: 'B', sport: 'S1', gold: 3 },
+            ],
+        });
+        await asyncSetTimeout(0);
+
+        defs[2].headerName = 'Gold Medals';
+        api.setGridOption('columnDefs', defs);
+        await asyncSetTimeout(0);
+
+        expect(told.sort()).toEqual([
+            'pivot_sport_S1_gold@row-group-country-A',
+            'pivot_sport_S1_gold@row-group-country-B',
+            'pivot_sport_S2_gold@row-group-country-A',
+            'pivot_sport_S2_gold@row-group-country-B',
+        ]);
     });
 });

@@ -161,7 +161,7 @@
             }
         },
         "columnStateUpdated": {
-            "description": "The column state has been updated. The event is a `ColumnStateUpdatedEvent`, whose `key` is the `ColumnState` property that changed.",
+            "description": "The column state has been updated. The event is a `ColumnStateUpdatedEvent`, whose `key` is the `ColumnState` property updated.",
             "type": {
                 "arguments": {
                     "event": "ColumnEvent"

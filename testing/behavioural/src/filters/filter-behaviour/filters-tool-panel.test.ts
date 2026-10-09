@@ -153,6 +153,42 @@ describe('Filters Tool Panel', () => {
         expect(panel.isGroupExpandedByTitle('Person')).toBe(true);
     });
 
+    test('a group shows the active-filter indicator while any of its columns is filtered', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    headerName: 'Person',
+                    children: [
+                        { field: 'name', filter: 'agTextColumnFilter' },
+                        { field: 'age', filter: 'agNumberColumnFilter' },
+                        { field: 'city', filter: 'agTextColumnFilter' },
+                    ],
+                },
+            ],
+            rowData: [{ name: 'Alice', age: 30, city: 'Dublin' }],
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+        const name = { filterType: 'text', type: 'contains', filter: 'A' };
+        const age = { filterType: 'number', type: 'greaterThan', filter: 1 };
+
+        api.setFilterModel({ name, age });
+        await asyncSetTimeout(0);
+        expect(panel.isActive('Person')).toBe(true);
+
+        api.setFilterModel({ age });
+        await asyncSetTimeout(0);
+        expect(panel.isActive('Person')).toBe(true);
+
+        api.setFilterModel({ name });
+        await asyncSetTimeout(0);
+        expect(panel.isActive('Person')).toBe(true);
+
+        api.setFilterModel(null);
+        await asyncSetTimeout(0);
+        expect(panel.isActive('Person')).toBe(false);
+    });
+
     test('group title bars are disclosure buttons wired to the container they expand', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [

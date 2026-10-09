@@ -1,7 +1,8 @@
-import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, PaginationModule, TextFilterModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, PaginationModule, TextFilterModule, getGridElement } from 'ag-grid-community';
 
 const COLUMN_DEFS = [{ field: 'name', filter: true }];
 
@@ -1436,6 +1437,42 @@ describe('Pagination with Data Changes', () => {
             for (let i = 1; i < names.length; i++) {
                 expect(names[i - 1] >= names[i]).toBe(true);
             }
+        });
+    });
+
+    describe('row heights', () => {
+        test('a row on an earlier page growing leaves the current page drawn from its top', async () => {
+            const api = createGrid(gridsManager);
+            const rowTops = () =>
+                ['10', '11'].map(
+                    (rowIndex) =>
+                        getGridElement(api)!.querySelector<HTMLElement>(`.ag-row[row-index="${rowIndex}"]`)?.style
+                            .transform
+                );
+            api.paginationGoToPage(1);
+            await waitFor(() => expect(rowTops()).toEqual(['translateY(0px)', 'translateY(42px)']));
+
+            api.getRowNode('0')!.setRowHeight(100);
+            api.onRowHeightChanged();
+
+            expect(rowTops()).toEqual(['translateY(0px)', 'translateY(42px)']);
+            await asyncSetTimeout(0);
+            expect(rowTops()).toEqual(['translateY(0px)', 'translateY(42px)']);
+        });
+    });
+
+    describe('first and last rows', () => {
+        test('a row kept through a model update that adds a row after it is no longer styled the last row', async () => {
+            const api = createGrid(gridsManager, { rowData: makeRowData(5) });
+            const lastRows = () =>
+                Array.from(getGridElement(api)!.querySelectorAll<HTMLElement>('.ag-row.ag-row-last')).map((row) =>
+                    row.getAttribute('row-id')
+                );
+            await waitFor(() => expect(lastRows()).toEqual(['4']));
+
+            api.setGridOption('rowData', makeRowData(6));
+
+            await waitFor(() => expect(lastRows()).toEqual(['5']));
         });
     });
 });

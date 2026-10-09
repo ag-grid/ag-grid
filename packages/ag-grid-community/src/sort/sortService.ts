@@ -68,9 +68,6 @@ export class SortService extends BeanStub implements NamedBean {
             }
         }
 
-        let updatedColumns: AgColumn[];
-        let threw = false;
-        let error: unknown;
         colModel.beginColUpdate();
         try {
             // Only the clicked column (always first) carries the cycle position; coupled sources share the def.
@@ -84,7 +81,7 @@ export class SortService extends BeanStub implements NamedBean {
             }
 
             const doingMultiSort = (multiSort || gos.get('alwaysMultiSort')) && !gos.get('suppressMultiSort');
-            updatedColumns = doingMultiSort ? [] : this.clearSortBarTheseColumns(columnsToUpdate, source);
+            const updatedColumns = doingMultiSort ? [] : this.clearSortBarTheseColumns(columnsToUpdate, source);
 
             // Must run after clearSortBarTheseColumns, which may clear sibling sources in single-sort mode.
             if (displayCol) {
@@ -92,21 +89,12 @@ export class SortService extends BeanStub implements NamedBean {
             }
 
             this.updateSortIndex(column, source);
-        } finally {
-            // a column listener's error follows the grid's event, so the rows are still sorted
-            try {
-                colModel.endColUpdate();
-            } catch (e) {
-                threw = true;
-                error = e;
+            for (let i = 0, len = columnsToUpdate.length; i < len; ++i) {
+                updatedColumns.push(columnsToUpdate[i]);
             }
-        }
-        for (let i = 0, len = columnsToUpdate.length; i < len; ++i) {
-            updatedColumns.push(columnsToUpdate[i]);
-        }
-        this.dispatchSortChangedEvents(source, updatedColumns);
-        if (threw) {
-            throw error;
+            this.dispatchSortChangedEvents(source, updatedColumns);
+        } finally {
+            colModel.endColUpdate();
         }
     }
 

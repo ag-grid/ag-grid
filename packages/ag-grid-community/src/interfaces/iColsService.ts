@@ -10,13 +10,13 @@ export type ColumnChangedEventType = 'columnValueChanged' | 'columnPivotChanged'
 export interface IColsService {
     columns: AgColumn[];
 
-    /** Cols staged since the last flush; non-null = awaiting dispatch. {@link ColumnModel.flushColChanges} */
+    /** Cols staged since the last flush; non-null = awaiting dispatch when the column update ends. */
     readonly pendingChanged: Set<AgColumn> | null;
 
-    /** Dispatch this service's staged change (if any); called by {@link ColumnModel.flushColChanges}. */
+    /** Dispatch this service's staged change (if any); called when the column update that staged it ends. */
     dispatchColChange(source: ColumnEventType): void;
 
-    /** Re-stamp active-col indexes once if a staged change moved the set; called by {@link ColumnModel.flushColChanges}. */
+    /** Re-stamp active-col indexes once if a staged change moved the set; called when the column update ends. */
     flushReindex(): void;
 
     setColumns(colKeys: ColKey[] | undefined, source: ColumnEventType): void;

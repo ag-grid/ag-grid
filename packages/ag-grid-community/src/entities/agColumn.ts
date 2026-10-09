@@ -970,16 +970,23 @@ export class AgColumn<TValue = any>
             return;
         }
         this.headerNameOverride = headerName;
-        // Column-scoped event for the column's own header cell and tool panel entry, so they refresh
-        // without filtering by colId; the grid-level event drives the state service.
-        this.dispatchColEvent('headerNameChanged', source);
-        this.beans.eventSvc.dispatchEvent({
-            type: 'columnHeaderNameChanged',
-            column: this,
-            columns: null,
-            columnGroup: null,
-            source,
-        });
+        const colModel = this.beans.colModel;
+        // one update with the auto columns a rename redefines, so each is told once all hold the new name
+        colModel.beginColUpdate();
+        try {
+            // Column-scoped event for the column's own header cell and tool panel entry, so they refresh
+            // without filtering by colId; the grid-level event drives the state service.
+            this.dispatchColEvent('headerNameChanged', source);
+            this.beans.eventSvc.dispatchEvent({
+                type: 'columnHeaderNameChanged',
+                column: this,
+                columns: null,
+                columnGroup: null,
+                source,
+            });
+        } finally {
+            colModel.endColUpdate();
+        }
     }
 
     public dispatchColEvent(type: ColumnEventName, source: ColumnEventType, additionalEventAttributes?: any): void {
@@ -998,7 +1005,7 @@ export class AgColumn<TValue = any>
         }
     }
 
-    /** `key` names the `ColumnState` property that changed. */
+    /** `key` names the `ColumnState` property updated. */
     public dispatchStateUpdatedEvent(key: keyof ColumnState, source: ColumnEventType): void {
         const colEventSvc = this.colEventSvc;
         if (colEventSvc?.hasListeners('columnStateUpdated')) {
@@ -1017,7 +1024,7 @@ export class AgColumn<TValue = any>
 
     private raise(colEventSvc: LocalEventService<ColumnEventName>, event: AgEvent<ColumnEventName>): void {
         const colModel = this.beans.colModel;
-        if (colModel.colEventsDepth > 0) {
+        if (colModel.colUpdateDepth > 0) {
             colModel.queueColEvent(this, event);
         } else {
             colEventSvc.dispatchEvent(event);
