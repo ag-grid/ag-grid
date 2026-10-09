@@ -47,13 +47,13 @@ const SportRenderer = defineComponent({
 
 const VueExample = defineComponent({
     template: /* html */ `
-        <div class="top-container">
+        <div class="example-wrapper">
             <div class="example-controls">
                 <div class="controls-row">
-                    <button type="button" class="btn btn-default excel" @click="onExcelExport()">
+                    <button type="button" class="excel" @click="onExcelExport()">
                         <i class="far fa-file-excel" style="margin-right: 5px; color: green;"></i>Export to Excel
                     </button>
-                    <button type="button" class="btn btn-default reset" @click="reset()">
+                    <button type="button" class="reset" @click="reset()">
                         <i class="fas fa-redo" style="margin-right: 5px;"></i>Reset
                     </button>
                 </div>

@@ -1,87 +1,83 @@
 <div class="example-wrapper">
     <div class="example-controls">
-        <div class="columns controls-row">
-            <fieldset class="column">
-                <legend>Header</legend>
-                <div class="row">
-                    Position
-                    <select id="headerPosition">
-                        <option>Left</option>
-                        <option>Center</option>
-                        <option>Right</option>
-                    </select>
-                </div>
-                <div class="row">
-                    Font
-                    <select id="headerFontName">
-                        <option>Calibri</option>
-                        <option>Arial</option>
-                    </select>
-                    <select id="headerFontSize">
-                        <option>11</option>
-                        <option>12</option>
-                        <option>13</option>
-                        <option>14</option>
-                        <option>16</option>
-                        <option>20</option>
-                    </select>
-                    <select id="headerFontWeight">
-                        <option>Regular</option>
-                        <option>Bold</option>
-                        <option>Italic</option>
-                        <option>Bold Italic</option>
-                    </select>
-                    <label class="option underline" for="headerUnderline">
-                        <input type="checkbox" id="headerUnderline" /><u>U</u>
-                    </label>
-                </div>
-                <div class="row option">
-                    Value
-                    <input type="text" id="headerValue" />
-                </div>
-            </fieldset>
-            <fieldset class="column">
-                <legend>Footer</legend>
-                <div class="row">
-                    Position
-                    <select id="footerPosition">
-                        <option>Left</option>
-                        <option>Center</option>
-                        <option>Right</option>
-                    </select>
-                </div>
-                <div class="row">
-                    Font
-                    <select id="footerFontName">
-                        <option>Calibri</option>
-                        <option>Arial</option>
-                    </select>
-                    <select id="footerFontSize">
-                        <option>11</option>
-                        <option>12</option>
-                        <option>13</option>
-                        <option>14</option>
-                        <option>16</option>
-                        <option>20</option>
-                    </select>
-                    <select id="footerFontWeight">
-                        <option>Regular</option>
-                        <option>Bold</option>
-                        <option>Italic</option>
-                        <option>Bold Italic</option>
-                    </select>
-                    <label class="option underline" for="footerUnderline">
-                        <input type="checkbox" id="footerUnderline" /><u>U</u>
-                    </label>
-                </div>
-                <div class="row">
-                    Value
-                    <input type="text" id="footerValue" />
-                </div>
-            </fieldset>
+        <div class="controls-row">
+            <span class="gap-right">Header</span>
+            <label>
+                Position
+                <select id="headerPosition">
+                    <option>Left</option>
+                    <option>Center</option>
+                    <option>Right</option>
+                </select>
+            </label>
+            <span class="gap-left">Font</span>
+            <select id="headerFontName" aria-label="Header font name">
+                <option>Calibri</option>
+                <option>Arial</option>
+            </select>
+            <select id="headerFontSize" aria-label="Header font size">
+                <option>11</option>
+                <option>12</option>
+                <option>13</option>
+                <option>14</option>
+                <option>16</option>
+                <option>20</option>
+            </select>
+            <select id="headerFontWeight" aria-label="Header font weight">
+                <option>Regular</option>
+                <option>Bold</option>
+                <option>Italic</option>
+                <option>Bold Italic</option>
+            </select>
+            <label>
+                <input type="checkbox" id="headerUnderline" />
+                <u>U</u>
+            </label>
+            <label class="gap-left">
+                Value
+                <input type="text" id="headerValue" />
+            </label>
         </div>
         <div class="controls-row">
-            <button onclick="onBtExport()" style="margin-top: 5px; font-weight: bold">Export to Excel</button>
+            <span class="gap-right">Footer</span>
+            <label>
+                Position
+                <select id="footerPosition">
+                    <option>Left</option>
+                    <option>Center</option>
+                    <option>Right</option>
+                </select>
+            </label>
+            <span class="gap-left">Font</span>
+            <select id="footerFontName" aria-label="Footer font name">
+                <option>Calibri</option>
+                <option>Arial</option>
+            </select>
+            <select id="footerFontSize" aria-label="Footer font size">
+                <option>11</option>
+                <option>12</option>
+                <option>13</option>
+                <option>14</option>
+                <option>16</option>
+                <option>20</option>
+            </select>
+            <select id="footerFontWeight" aria-label="Footer font weight">
+                <option>Regular</option>
+                <option>Bold</option>
+                <option>Italic</option>
+                <option>Bold Italic</option>
+            </select>
+            <label>
+                <input type="checkbox" id="footerUnderline" />
+                <u>U</u>
+            </label>
+            <label class="gap-left">
+                Value
+                <input type="text" id="footerValue" />
+            </label>
+        </div>
+        <div class="controls-row">
+            <button onclick="onBtExport()" style="font-weight: bold">Export to Excel</button>
         </div>
     </div>
     <div class="grid-wrapper">

@@ -182,8 +182,8 @@ const GridExample = () => {
     };
 
     const getTopToolBar = () => (
-        <div className="example-toolbar panel panel-default example-controls">
-            <div className="panel-body controls-row">
+        <div className="example-controls">
+            <div className="controls-row">
                 <div className="button-group" role="group" aria-label="Drag behaviour" onChange={onRadioChange}>
                     <input type="radio" id="move" name="radio" value="0" checked={radioChecked === 0} />
                     <label htmlFor="move">Remove Source Rows</label>
@@ -192,11 +192,9 @@ const GridExample = () => {
                     <input type="radio" id="none" name="radio" value="2" checked={radioChecked === 2} />
                     <label htmlFor="none">None</label>
                 </div>
-                <span className="input-group-button">
-                    <button type="button" className="btn btn-default reset" onClick={reset}>
-                        <i className="fas fa-redo" style={{ marginRight: '5px' }}></i>Reset
-                    </button>
-                </span>
+                <button type="button" className="reset" onClick={reset}>
+                    <i className="fas fa-redo" style={{ marginRight: '5px' }}></i>Reset
+                </button>
             </div>
         </div>
     );
@@ -222,7 +220,7 @@ const GridExample = () => {
 
     return (
         <AgGridProvider modules={modules}>
-            <div className="top-container">
+            <div className="example-wrapper">
                 {getTopToolBar()}
                 <div className="grid-wrapper">
                     {getGridWrapper(0)}

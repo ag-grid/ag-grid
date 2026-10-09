@@ -1,35 +1,5 @@
-.option {
-    display: block;
-    margin: 5px 10px 0 0;
-}
-
 .grid-wrapper {
     display: flex;
-}
-
-.margin-container {
-    position: relative;
-    border: 1px solid gray;
-    border-radius: 5px;
-    padding: 10px;
-    width: 360px;
-    margin-left: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
-
-.column.margin-container label {
-    width: 115px;
-    white-space: nowrap;
-    display: flex;
-    overflow: hidden;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.column.margin-container input {
-    max-width: 40px;
 }
 
 .grid-wrapper > div {
@@ -37,8 +7,6 @@
     height: 100%;
 }
 
-.columns {
-    display: flex;
-    flex-direction: row;
-    gap: 16px;
+.example-controls input[type='number'] {
+    width: 84px;
 }
