@@ -1,4 +1,3 @@
-import type { IColor, _IUtil } from 'ag-charts-types';
 import type {
     AgComponentSelector,
     AgCoreBeanCollection,
@@ -11,7 +10,7 @@ import { RefPlaceholder } from 'ag-stack';
 import type { AgInputTextFieldParams, _AgWidgetSelectorType } from 'ag-grid-community';
 import { AgInputTextField } from 'ag-grid-community';
 
-import type { IAgChartsExports } from './iAgChartsExports';
+import { AgColor } from './agColor';
 
 type AgColorInputEvent = 'colorChanged';
 export class AgColorInput<
@@ -31,11 +30,6 @@ export class AgColorInput<
     AgInputTextFieldParams<TComponentSelectorType>,
     AgColorInputEvent
 > {
-    private color: _IUtil['Color'];
-
-    public wireBeans(beans: TBeanCollection): void {
-        this.color = (beans.agChartsExports as IAgChartsExports)._Util.Color;
-    }
     private readonly eColor: HTMLElement = RefPlaceholder;
 
     constructor() {
@@ -61,14 +55,14 @@ export class AgColorInput<
         });
     }
 
-    public setColor(color: IColor): void {
+    public setColor(color: AgColor): void {
         const rgbaColor = color.toRgbaString();
-        this.setValue(this.color.fromString(rgbaColor).toHexString().toUpperCase(), true);
+        this.setValue(AgColor.fromString(rgbaColor).toHexString().toUpperCase(), true);
         this.eColor.style.backgroundColor = rgbaColor;
     }
 
     public override setValue(value?: string | null | undefined, silent?: boolean | undefined): this {
-        const isValid = this.color.validColorString(value ?? '');
+        const isValid = AgColor.validColorString(value ?? '');
         this.eInput.setCustomValidity(
             isValid ? '' : this.getLocaleTextFunc()('invalidColor', 'Color value is invalid')
         );
@@ -79,8 +73,8 @@ export class AgColorInput<
         return this;
     }
 
-    public onColorChanged(callback: (color: IColor) => void): void {
-        this.addManagedListeners(this, { colorChanged: () => callback(this.color.fromString(this.value!)) });
+    public onColorChanged(callback: (color: AgColor) => void): void {
+        this.addManagedListeners(this, { colorChanged: () => callback(AgColor.fromString(this.value!)) });
     }
 }
 
