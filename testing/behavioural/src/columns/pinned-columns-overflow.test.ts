@@ -177,8 +177,7 @@ describe('Resizing pinned columns wider than the viewport', () => {
         gridsManager.reset();
     });
 
-    // Five columns pinned at 200px is 1000px of pinned columns in a 600px grid. Returning [] from
-    // processUnpinnedColumns keeps them all pinned, so the pinned section overflows the viewport.
+    // Returning [] from processUnpinnedColumns keeps 5 x 200px columns pinned in a 600px grid.
     const createGrid = async (columnCount: number, pinned: ColumnPinnedType = 'left'): Promise<GridApi> => {
         const fields = ['a', 'b', 'c', 'd', 'e'].slice(0, columnCount);
         const api = gridsManager.createGrid('myGrid', {
