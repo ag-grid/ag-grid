@@ -4,7 +4,7 @@ import { userEvent } from '@testing-library/user-event';
 import { TestGridsManager } from 'ag-test-utils';
 
 import type { IFilterComp } from 'ag-grid-community';
-import { ClientSideRowModelModule, CustomFilterModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, CustomFilterModule, TextFilterModule } from 'ag-grid-community';
 
 function createInput(className: string): HTMLInputElement {
     const input = document.createElement('input');
@@ -156,5 +156,78 @@ describe('Filter menu focus trap', () => {
         // native Shift+Tab would escape the menu: the trap must intercept and wrap to the last tabbable
         await user.tab({ shift: true });
         expect(input).toHaveFocus();
+    });
+});
+
+describe('Simple filter AND/OR join operator keyboard navigation', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, TextFilterModule],
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    async function openFilter() {
+        const api = await gridsManager.createGridAndWait('joinOperatorKeyboardGrid', {
+            columnDefs: [{ field: 'a', filter: 'agTextColumnFilter', filterParams: { numAlwaysVisibleConditions: 2 } }],
+            rowData: [{ a: 'x' }],
+        });
+
+        api.showColumnFilter('a');
+
+        const menu = await waitFor(() => {
+            const menu = document.querySelector<HTMLElement>('.ag-menu');
+            expect(menu?.querySelector('.ag-filter-condition-operator-or input')).toBeTruthy();
+            return menu!;
+        });
+
+        // the join operator is disabled until the first condition is complete
+        await userEvent.type(menu.querySelector<HTMLInputElement>('.ag-filter-body input')!, 'x');
+
+        const and = menu.querySelector<HTMLInputElement>('.ag-filter-condition-operator-and input')!;
+        const or = menu.querySelector<HTMLInputElement>('.ag-filter-condition-operator-or input')!;
+        const joinPanel = and.closest<HTMLElement>('.ag-filter-condition')!;
+        await waitFor(() => expect(and).toBeEnabled());
+
+        return { and, or, joinPanel };
+    }
+
+    test('Tab and Shift+Tab treat the radio group as a single stop on the checked radio', async () => {
+        const { and, or, joinPanel } = await openFilter();
+        const user = userEvent.setup();
+
+        expect(and).toBeChecked();
+        and.focus();
+
+        await user.tab();
+        expect(or).not.toHaveFocus();
+        expect(joinPanel).not.toContainElement(document.activeElement as HTMLElement);
+
+        await user.tab({ shift: true });
+        expect(and).toHaveFocus();
+
+        await user.tab({ shift: true });
+        expect(joinPanel).not.toContainElement(document.activeElement as HTMLElement);
+    });
+
+    test('arrow keys move between AND and OR, and Tab then returns to the newly checked radio', async () => {
+        const { and, or, joinPanel } = await openFilter();
+        const user = userEvent.setup();
+
+        and.focus();
+        await user.keyboard('{ArrowRight}');
+        expect(or).toHaveFocus();
+        expect(or).toBeChecked();
+
+        await user.tab({ shift: true });
+        expect(joinPanel).not.toContainElement(document.activeElement as HTMLElement);
+
+        await user.tab();
+        expect(or).toHaveFocus();
+
+        await user.keyboard('{ArrowLeft}');
+        expect(and).toHaveFocus();
+        expect(and).toBeChecked();
     });
 });
