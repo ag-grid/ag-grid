@@ -27,11 +27,14 @@ import {
     AgSelectSelector,
     Component,
     KeyCode,
+    _createElement,
 } from 'ag-grid-community';
 
 import { AgAutocompleteList } from '../advancedFilter/autocomplete/agAutocompleteList';
 import type { AutocompleteEntry } from '../advancedFilter/autocomplete/autocompleteParams';
 import { CalculatedColumnAutocompleteRow } from './calculatedColumnAutocompleteRow';
+import type { CalculatedColumnExpressionPresentation } from './calculatedColumnExpressionEditor';
+import { CalculatedColumnExpressionEditor } from './calculatedColumnExpressionEditor';
 import type {
     CalculatedColumnDataTypeOption,
     CalculatedColumnDraft,
@@ -150,6 +153,7 @@ export class CalculatedColumnForm extends Component {
     private suggestionSourceType: SuggestionSourceType | null = null;
     private openSuggestions: ColumnSuggestion[] = [];
     private expressionSelection: { start: number; end: number } | null = null;
+    private expressionEditor: CalculatedColumnExpressionEditor;
 
     constructor(
         private draft: CalculatedColumnDraft,
@@ -157,6 +161,7 @@ export class CalculatedColumnForm extends Component {
         expressionPickers: readonly CalculatedColumnExpressionPicker[],
         private readonly getColumnSuggestions: () => ColumnSuggestion[],
         private readonly getFunctionSuggestions: () => ColumnSuggestion[],
+        private readonly inspectExpression: (expression: string) => CalculatedColumnExpressionPresentation,
         private readonly onValidate: (draft: CalculatedColumnDraft) => string[] | null,
         private readonly onApply: (draft: CalculatedColumnDraft) => string[] | null,
         private readonly onCancel: () => void,
@@ -177,9 +182,9 @@ export class CalculatedColumnForm extends Component {
         this.setupFormFields();
         this.setupActionButtons();
         this.setupAria();
+        this.setupExpressionEditor();
         if (!this.readOnly) {
             this.addFormFieldListeners();
-            this.setupExpressionEditor();
             this.addActionListeners();
             this.addFormListeners();
             this.addDestroyFunc(() => this.closeSuggestionPopup());
@@ -187,8 +192,11 @@ export class CalculatedColumnForm extends Component {
                 this.setTitleError(this.validateTitle());
             }
         }
-        // view mode also explains validation errors without changing the stored expression
-        this.setExpressionError(this.onValidate(this.draft));
+        // colour untouched deferred drafts without validating them; view mode still explains errors
+        this.setExpressionError(this.liveApply || this.readOnly ? this.onValidate(this.draft) : null);
+        if (!this.liveApply && !this.draft.calculatedExpression.trim()) {
+            this.eApply.disabled = true;
+        }
     }
 
     public hideSuggestions(): void {
@@ -299,10 +307,14 @@ export class CalculatedColumnForm extends Component {
     }
 
     private setupExpressionEditor(): void {
+        this.expressionEditor = this.createManagedBean(new CalculatedColumnExpressionEditor(this.eExpression));
         const input = this.eExpression.getInputElement();
         // prevents spellcheck while writing formulas
         input.setAttribute('spellcheck', 'false');
 
+        if (this.readOnly) {
+            return;
+        }
         this.addManagedElementListeners(input, {
             click: () => {
                 this.rememberExpressionSelection();
@@ -386,6 +398,16 @@ export class CalculatedColumnForm extends Component {
     }
 
     private setExpressionError(errors: string[] | null): void {
+        if (!this.isAlive()) {
+            return;
+        }
+        const expression = this.draft.calculatedExpression;
+        const presentation = this.inspectExpression(expression);
+        // only underline a diagnostic whose message is part of the chosen validation feedback
+        if (!presentation.diagnostic || !errors?.includes(presentation.diagnostic.message)) {
+            presentation.diagnostic = undefined;
+        }
+        this.expressionEditor.refresh(expression, presentation);
         const message = errors?.length ? errors.join('\n') : null;
         if (message !== this.expressionValidationMessage) {
             this.eExpressionError.textContent = message ?? '';
@@ -591,7 +613,20 @@ export class CalculatedColumnForm extends Component {
             ariaLabel: this.getLocaleTextFunc()('calculatedColumnSuggestions', 'Calculated Column Suggestions'),
         }).hideFunc;
         list.afterGuiAttached();
+        if (type === 'column' && suggestions.length === 0) {
+            this.showEmptyColumnsMessage(list);
+        }
         this.refreshAriaForSuggestions();
+    }
+
+    private showEmptyColumnsMessage(list: AgAutocompleteList): void {
+        const message = this.getLocaleTextFunc()('calculatedColumnNoEligibleColumns', 'No eligible columns found.');
+        const placeholder = _createElement({ tag: 'div', cls: 'ag-calculated-column-empty-message' });
+        placeholder.textContent = message;
+        list.addCss('ag-calculated-column-empty-picker');
+        list.getGui().appendChild(placeholder);
+        list.addManagedListeners(placeholder, { mousedown: (event) => event.preventDefault() });
+        this.beans.ariaAnnounce.announceValue(message, 'calculatedColumnNoEligibleColumns');
     }
 
     private createAutocompleteEntries(suggestions: ColumnSuggestion[]): AutocompleteEntry[] {

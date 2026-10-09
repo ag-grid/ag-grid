@@ -23,8 +23,12 @@ const cssPlugin = {
             // UMD builds: non-source CSS (legacy themes) gets injected as <style> tags
             const isUmd = /:(umd|umd:watch)$/.test(process.env.NX_TASK_TARGET_TARGET ?? '');
             if (isUmd && isLegacyCSS) {
+                // Embedded as a string, so JS minification can't shrink it. Whitespace only: full minify
+                // rewrites values (`0.5` -> `.5`, `bold` -> `700`) and merges rules for ~0.1kB more gzipped.
+                const minifiedCSS = (await esbuild.transform(outputCSS, { loader: 'css', minifyWhitespace: true }))
+                    .code;
                 return {
-                    contents: `(function(){if(typeof document!=="undefined"){var s=document.createElement("style");s.setAttribute("data-ag-scope","legacy");s.textContent=${JSON.stringify(outputCSS)};document.head.appendChild(s);}})();`,
+                    contents: `(function(){if(typeof document!=="undefined"){var s=document.createElement("style");s.setAttribute("data-ag-scope","legacy");s.textContent=${JSON.stringify(minifiedCSS)};document.head.appendChild(s);}})();`,
                     loader: 'js',
                 };
             }

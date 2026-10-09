@@ -913,6 +913,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     columnHeaderEditCancel: 'Loobu',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Sobivaid veerge ei leitud.',
     calculatedColumn: 'Arvutatud veerg',
     calculatedColumnAdd: 'Lisa arvutatud veerg',
     calculatedColumnEdit: 'Muuda arvutatud veergu',

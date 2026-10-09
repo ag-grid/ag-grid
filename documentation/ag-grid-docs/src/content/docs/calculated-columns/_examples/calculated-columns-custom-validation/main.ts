@@ -28,10 +28,10 @@ const gridOptions: GridOptions<Employee> = {
     ],
     calculatedColumns: {
         applyMode: 'deferred',
-        getValidationErrors: ({ referencedColumns }) =>
+        getValidationErrors: ({ referencedColumns, internalErrors }) =>
             referencedColumns.some((column) => column.getColId() === 'salary')
                 ? ['Salary cannot be used in this report.', 'Choose a sales-based expression.']
-                : null,
+                : internalErrors,
     },
     defaultColDef: { flex: 1, minWidth: 120 },
 };

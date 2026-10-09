@@ -3,7 +3,7 @@ import { isSpecialCol } from 'ag-grid-community';
 
 import { parseFormula } from '../formula/ast/parsers';
 import type { CellRef, FormulaNode } from '../formula/ast/utils';
-import { FormulaParseError } from '../formula/ast/utils';
+import { FormulaError, FormulaParseError } from '../formula/ast/utils';
 import { createHeaderReferenceEntries, isAmbiguousHeaderReference } from '../formula/headerReferences';
 import { a1LabelToColIndex } from '../formula/refUtils';
 import type { ColumnSuggestion } from './calculatedColumnFormTypes';
@@ -17,12 +17,16 @@ import {
 interface CalculatedColumnReferenceError {
     type: 'unknown' | 'ambiguous' | 'restricted';
     reference: string;
+    range?: { start: number; end: number };
 }
 
 export interface CalculatedColumnReferenceMapper {
     suggestions: ColumnSuggestion[];
     /** The `expression` is always storable: unresolved references are preserved verbatim. */
-    toInternalExpression(expression: string): { expression: string; error?: CalculatedColumnReferenceError };
+    toInternalExpression(
+        expression: string,
+        mode?: 'diagnostics'
+    ): { expression: string; error?: CalculatedColumnReferenceError };
     toDisplayExpression(expression: string): string;
 }
 
@@ -118,24 +122,36 @@ export function createCalculatedColumnReferenceMapper(
                 searchText: `${reference} ${leafName}`,
                 displayPath: suffix ? [...path.slice(0, -1), `${leafName}${suffix}`] : path,
             })),
-        toInternalExpression(expression: string) {
-            if (originalExpression !== undefined && expression === originalDisplayExpression) {
+        toInternalExpression(expression: string, mode?: 'diagnostics') {
+            const unchanged = originalExpression !== undefined && expression === originalDisplayExpression;
+            if (unchanged && mode !== 'diagnostics') {
                 return { expression: originalExpression, error: originalError };
             }
             let error: CalculatedColumnReferenceError | undefined;
             let restrictedReference: string | undefined;
+            let restrictedRange: { start: number; end: number } | undefined;
+            let originalErrorRange: { start: number; end: number } | undefined;
             // Restricted references convert like permitted ones and unresolved ones are preserved
             // verbatim, so the result is storable alongside the error and feeds the formula check below.
             const internalExpression = replaceBracketReferences(
                 expression,
-                (ref) => {
+                (ref, start, end) => {
+                    if (originalError && normaliseReference(ref) === normaliseReference(originalError.reference)) {
+                        originalErrorRange ??= { start, end };
+                    }
                     const colId = resolveReference(ref);
                     if (restrictedColIds.has(colId ?? ref)) {
-                        restrictedReference ??= ref;
+                        if (restrictedReference === undefined) {
+                            restrictedReference = ref;
+                            restrictedRange = { start, end };
+                        }
                         return colId;
                     }
                     if (colId != null) {
                         return colId;
+                    }
+                    if (unchanged && beans.colModel.getCol(ref)) {
+                        return ref;
                     }
                     const caseInsensitiveColIds = caseInsensitiveReferenceToColIds.get(normaliseReference(ref));
                     const isAmbiguous =
@@ -143,14 +159,24 @@ export function createCalculatedColumnReferenceMapper(
                     error ??= {
                         type: isAmbiguous ? 'ambiguous' : 'unknown',
                         reference: ref,
+                        range: { start, end },
                     };
                     return undefined;
                 },
                 true
             );
-            restrictedReference ??= getRestrictedFormulaReference(internalExpression);
-            if (restrictedReference !== undefined) {
-                error = { type: 'restricted', reference: restrictedReference };
+            if (!unchanged) {
+                restrictedReference ??= getRestrictedFormulaReference(internalExpression);
+            }
+            if (!unchanged && restrictedReference !== undefined) {
+                error = { type: 'restricted', reference: restrictedReference, range: restrictedRange };
+            }
+            if (unchanged) {
+                // grandfather restrictions, but still diagnose missing columns when reopening a live draft
+                return {
+                    expression: originalExpression,
+                    error: originalError ? { ...originalError, range: originalErrorRange } : error,
+                };
             }
             return { expression: internalExpression, error };
         },
@@ -163,9 +189,24 @@ function parseCalculatedFormula(beans: BeanCollection, expression: string): Form
     return parseFormula(beans, toFormulaString(expression), 'absolute');
 }
 
-/** Collects unique, direct references from an already validated stored expression, without evaluating it. */
+/** Collects direct references without evaluation, retaining complete bracket references when syntax is invalid. */
 export function getCalculatedColumnReferences(beans: BeanCollection, expression: string): AgColumn[] {
-    return [...new Set(visitReferencedColumns(beans, parseCalculatedFormula(beans, expression)))];
+    try {
+        return [...new Set(visitReferencedColumns(beans, parseCalculatedFormula(beans, expression)))];
+    } catch (error) {
+        if (!(error instanceof FormulaError)) {
+            throw error;
+        }
+        const columns = new Set<AgColumn>();
+        replaceBracketReferences(expression, (ref) => {
+            const column = beans.colModel.getCol(ref);
+            if (column) {
+                columns.add(column);
+            }
+            return ref;
+        });
+        return [...columns];
+    }
 }
 
 /** Yields each directly referenced column, expanding ranges; duplicates are yielded as encountered. */

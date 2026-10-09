@@ -892,6 +892,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     columnHeaderEditCancel: 'キャンセル',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: '使用可能な列が見つかりません。',
     calculatedColumn: '計算列',
     calculatedColumnAdd: '計算列を追加',
     calculatedColumnEdit: '計算列を編集',

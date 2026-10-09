@@ -913,6 +913,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     columnHeaderEditCancel: 'Откажи',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Нису пронађене одговарајуће колоне.',
     calculatedColumn: 'Израчуната колона',
     calculatedColumnAdd: 'Додај израчунату колону',
     calculatedColumnEdit: 'Измени израчунату колону',

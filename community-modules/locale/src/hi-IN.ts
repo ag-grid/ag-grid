@@ -915,6 +915,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     columnHeaderEditCancel: 'रद्द करें',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'कोई उपयुक्त कॉलम नहीं मिला।',
     calculatedColumn: 'गणना किया गया कॉलम',
     calculatedColumnAdd: 'गणना किया गया कॉलम जोड़ें',
     calculatedColumnEdit: 'गणना किया गया कॉलम संपादित करें',

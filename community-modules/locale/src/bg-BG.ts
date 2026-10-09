@@ -898,6 +898,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     columnHeaderEditCancel: 'Отказ',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Не са намерени подходящи колони.',
     calculatedColumn: 'Изчислена колона',
     calculatedColumnAdd: 'Добавяне на изчислена колона',
     calculatedColumnEdit: 'Редактиране на изчислена колона',

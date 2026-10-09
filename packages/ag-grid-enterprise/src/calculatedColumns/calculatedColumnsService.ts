@@ -37,9 +37,11 @@ import {
 } from 'ag-grid-community';
 
 import { appendColumnToTree } from '../columns/columnTreeEdit';
+import { inspectFormulaExpression } from '../formula/ast/parsers';
 import type { FormulaError } from '../formula/ast/utils';
 import type { MenuRestoreFocusParams, MenuUtils } from '../menu/menuUtils';
 import { Dialog } from '../widgets/dialog';
+import type { CalculatedColumnExpressionPresentation } from './calculatedColumnExpressionEditor';
 import {
     CalculatedColumnForm,
     DEFAULT_CALCULATED_COLUMN_DATA_TYPES,
@@ -219,7 +221,6 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     private updateCalculatedColumn(
         column: ColKey,
         colDef: CalculatedColumnUpdate,
-        validateExpression = true,
         expressionError?: CalculatedExpressionError
     ): void {
         if (!this.isEnabled()) {
@@ -236,16 +237,6 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         const calcExpr = _normaliseCalculatedExpression(safeColDef.calculatedExpression);
         if (calcExpr !== undefined) {
             safeColDef.calculatedExpression = calcExpr;
-            if (validateExpression && !_isStringLargerThan(calcExpr, 0, true)) {
-                _warnOnce('updateCalculatedColumn: calculatedExpression cannot be empty.');
-                return;
-            }
-            if (
-                validateExpression &&
-                (!this.validateColumnReferences(calcExpr) || !this.validateFormulaExpression(calcExpr))
-            ) {
-                return;
-            }
         }
 
         const targetColId = targetColumn.colId;
@@ -279,9 +270,6 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 oldExpression ?? ''
             );
         }
-        if (validateExpression) {
-            this.checkValidationStates(source, true);
-        }
         this.refreshCalculatedColumn(targetColId);
     }
 
@@ -304,15 +292,6 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return this.getFormulaError(expression)?.getTranslatedMessage(this.getLocaleTextFunc()) ?? null;
     }
 
-    private validateFormulaExpression(expression: string): boolean {
-        const error = this.getFormulaExpressionError(expression);
-        if (error) {
-            _warnOnce(error);
-            return false;
-        }
-        return true;
-    }
-
     private getInvalidColumnReference(expression: string): string | undefined {
         const colsById = this.beans.colModel.colsById;
         let invalidReference: string | undefined;
@@ -324,22 +303,6 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         });
 
         return invalidReference;
-    }
-
-    private validateColumnReferences(expression: string): boolean {
-        const invalidReference = this.getInvalidColumnReference(expression);
-
-        if (invalidReference != null) {
-            _warnOnce(
-                translateCalculatedColumnReferenceError(
-                    { type: 'unknown', reference: invalidReference },
-                    this.getLocaleTextFunc()
-                )
-            );
-            return false;
-        }
-
-        return true;
     }
 
     public openCalculatedColumnDialog(
@@ -393,6 +356,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             (nextDraft) => {
                 const { colId: _, ...update } = this.toColDef(nextDraft);
                 this.updateCalculatedColumn(column.colId, update);
+                this.checkValidationStates('calculatedColumn', true);
             },
             liveApply,
             column,
@@ -810,27 +774,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         liveApply: boolean
     ): DialogExpressionValidation {
         const { expression, error } = mapper.toInternalExpression(draft.calculatedExpression);
-        if (error) {
-            const restricted = error.type === 'restricted';
-            return {
-                expression,
-                errors:
-                    !liveApply || restricted
-                        ? [translateCalculatedColumnReferenceError(error, this.getLocaleTextFunc())]
-                        : null,
-                expressionError: restricted
-                    ? { expression, reason: 'restrictedReference', reference: error.reference }
-                    : undefined,
-            };
-        }
-        if (!_isStringLargerThan(expression, 0, true)) {
-            return {
-                expression,
-                errors: liveApply
-                    ? null
-                    : [this.getLocaleTextFunc()('calculatedColumnExpressionEmpty', 'Enter an expression')],
-            };
-        }
+        const restricted = error?.type === 'restricted';
         const column = this.beans.colModel.getCol(draft.colId) ?? null;
         const getValidationErrors = this.getOptions()?.getValidationErrors;
         const savedError = column && this.getExpressionError(column);
@@ -838,16 +782,18 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             savedError?.reason === 'customValidation' && savedError.expression === expression ? savedError : undefined;
         const savedMessages = savedCustomError?.messages ?? null;
         // fast path: without a callback, live mode can only surface the saved messages below
-        if (liveApply && !getValidationErrors) {
+        if (liveApply && !getValidationErrors && !restricted) {
             return { expression, errors: savedMessages, expressionError: savedCustomError };
         }
-        const formulaError = this.getFormulaExpressionError(expression);
-        if (formulaError) {
-            return { expression, errors: liveApply ? null : [formulaError] };
-        }
+        const internalError = error
+            ? translateCalculatedColumnReferenceError(error, this.getLocaleTextFunc())
+            : !_isStringLargerThan(expression, 0, true)
+              ? this.getLocaleTextFunc()('calculatedColumnExpressionEmpty', 'Enter an expression')
+              : (this.inspectDialogExpression(draft.calculatedExpression, mapper).diagnostic?.message ?? null);
+        const internalErrors = internalError ? [internalError] : null;
 
         // saved errors survive state restoration; application callbacks are never run during restore
-        let errors = savedMessages;
+        let errors = internalErrors ?? savedMessages;
         if (getValidationErrors) {
             errors = getValidationErrors(
                 _addGridCommonParams(this.gos, {
@@ -858,15 +804,41 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                     },
                     displayExpression: draft.calculatedExpression,
                     referencedColumns: getCalculatedColumnReferences(this.beans, expression),
+                    internalErrors,
                     column,
                 })
             );
         }
-        const messages = errors?.length ? [...errors] : null;
+        const messages = errors?.length ? [...errors] : restricted ? internalErrors : null;
         return {
             expression,
             errors: messages,
-            expressionError: messages ? { expression, reason: 'customValidation', messages } : undefined,
+            expressionError: restricted
+                ? { expression, reason: 'restrictedReference', reference: error.reference }
+                : messages && (getValidationErrors || savedCustomError)
+                  ? { expression, reason: 'customValidation', messages }
+                  : undefined,
+        };
+    }
+
+    private inspectDialogExpression(
+        expression: string,
+        mapper: CalculatedColumnReferenceMapper
+    ): CalculatedColumnExpressionPresentation {
+        const { tokens, error, range } = inspectFormulaExpression(this.beans, expression);
+        const referenceError = mapper.toInternalExpression(expression, 'diagnostics').error;
+        if (referenceError) {
+            return {
+                tokens,
+                diagnostic: {
+                    message: translateCalculatedColumnReferenceError(referenceError, this.getLocaleTextFunc()),
+                    range: referenceError.range,
+                },
+            };
+        }
+        return {
+            tokens,
+            diagnostic: error ? { message: error.getTranslatedMessage(this.getLocaleTextFunc()), range } : undefined,
         };
     }
 
@@ -928,6 +900,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 this.getExpressionPickers(),
                 () => mapper.suggestions,
                 () => this.getFunctionSuggestions(),
+                (expression) => this.inspectDialogExpression(expression, mapper),
                 handleValidate,
                 handleApply,
                 handleCancel,
@@ -1036,7 +1009,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         }
 
         this.pendingLiveApplyUpdatesByColId.delete(colId);
-        this.updateCalculatedColumn(colId, pending.colDef, false, pending.expressionError);
+        this.updateCalculatedColumn(colId, pending.colDef, pending.expressionError);
     }
 
     private cancelLiveApplyUpdate(colId: string): void {

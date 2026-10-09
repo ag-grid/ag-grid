@@ -62,6 +62,9 @@ describe('calculated columns - read-only definitions', () => {
 
             expect(getByRole(document.body, 'dialog', { name: 'View Calculated Column' })).toBeTruthy();
             const form = getCalculatedColumnDialog();
+            const mirror = form.querySelector('.ag-calculated-column-expression-mirror');
+            expect(mirror).toHaveAttribute('aria-hidden', 'true');
+            expect(mirror).toHaveTextContent('[Revenue] - [Cost]');
             expect(getByRole(form, 'textbox', { name: 'Title' })).toHaveFocus();
             for (const [label, value] of [
                 ['Title', 'Profit'],

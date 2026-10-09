@@ -917,6 +917,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     columnHeaderEditCancel: 'Atšaukti',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Tinkamų stulpelių nerasta.',
     calculatedColumn: 'Skaičiuojamasis stulpelis',
     calculatedColumnAdd: 'Pridėti skaičiuojamąjį stulpelį',
     calculatedColumnEdit: 'Redaguoti skaičiuojamąjį stulpelį',

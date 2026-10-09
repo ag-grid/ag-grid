@@ -2,12 +2,24 @@ import { _isExpressionString } from 'ag-stack';
 
 import type { BeanCollection } from 'ag-grid-community';
 
+import type { FormulaErrorId } from '../i18n';
 import { isFormulaIdentChar, isFormulaIdentStart, isStandaloneRefToken, parseA1Ref } from '../refUtils';
 import { getFormulaRowByIndex } from '../rowAccess';
 import type { OperatorDef } from './operators';
 import { OP_BY_SYMBOL, OP_SYMBOLS_DESC } from './operators';
 import type { Cell, CellRef, FormulaNode, FormulaOperation } from './utils';
-import { FormulaParseError } from './utils';
+import { FormulaError, FormulaParseError, findFirstInvalidOperation } from './utils';
+
+export interface FormulaSourceToken {
+    start: number;
+    end: number;
+    type: 'reference' | 'function' | 'operator' | 'text';
+}
+
+interface FormulaExpressionSource {
+    tokens: FormulaSourceToken[];
+    error?: FormulaParseError;
+}
 
 /**
  * Converts a single operand string into a JS primitive or Cell object.
@@ -121,9 +133,27 @@ const parseOperand = (
  *
  * @example tokenize('SUM(A1, 2)') // => ["SUM","(","A1",",","2",")"]
  */
-function tokenize(expr: string): string[] {
+function tokenize(expr: string, source?: FormulaExpressionSource): string[] {
     const tokens: string[] = [];
     let i = 0;
+
+    const addToken = (start: number, end: number, type: FormulaSourceToken['type'] = 'text') => {
+        tokens.push(expr.slice(start, end));
+        source?.tokens.push({ start, end, type });
+    };
+    const reportError = (error: FormulaParseError) => {
+        if (!source) {
+            throw error;
+        }
+        source.error ??= error;
+    };
+    const isFunctionNameAt = (end: number): boolean => {
+        let k = end;
+        while (k < expr.length && /\s/.test(expr[k])) {
+            k++;
+        }
+        return expr[k] === '(';
+    };
 
     const lexCellRange = (s: string, start: number): number => {
         let j = start;
@@ -198,9 +228,11 @@ function tokenize(expr: string): string[] {
                 j++;
             }
             if (j >= expr.length) {
-                throw new FormulaParseError(4, i, expr.length);
+                reportError(new FormulaParseError(4, i, i + 1));
+                addToken(i, expr.length);
+                break;
             }
-            tokens.push(expr.slice(i, j + 1));
+            addToken(i, j + 1);
             i = j + 1;
             continue;
         }
@@ -211,27 +243,41 @@ function tokenize(expr: string): string[] {
             while (j < expr.length && /[0-9.]/.test(expr[j])) {
                 j++;
             }
-            tokens.push(expr.slice(i, j));
+            addToken(i, j);
             i = j;
             continue;
         }
 
         // calculated-column same-row reference (e.g. [revenue])
         if (ch === '[') {
-            const end = expr.indexOf(']', i + 1);
-            if (end < 0) {
-                throw new FormulaParseError(5, i, i + 1, [ch]);
+            let end = expr.indexOf(']', i + 1);
+            // display references escape closing brackets; stored references keep the formula grammar
+            while (source && end >= 0 && expr[end + 1] === ']') {
+                end = expr.indexOf(']', end + 2);
             }
-            tokens.push(expr.slice(i, end + 1));
+            if (end < 0) {
+                reportError(new FormulaParseError(5, i, i + 1, [ch]));
+                addToken(i, expr.length, 'reference');
+                break;
+            }
+            addToken(i, end + 1, 'reference');
             i = end + 1;
             continue;
         }
 
         // cell / range with $ support (e.g., $A1, A$1, $A$1:$B10)
         if (ch === '$' || isFormulaIdentStart(ch)) {
-            const len = lexCellRange(expr, i);
+            let len = 0;
+            try {
+                len = lexCellRange(expr, i);
+            } catch (error) {
+                if (!(error instanceof FormulaParseError)) {
+                    throw error;
+                }
+                reportError(error);
+            }
             if (len > 0) {
-                tokens.push(expr.slice(i, i + len));
+                addToken(i, i + len, 'reference');
                 i += len;
                 continue;
             }
@@ -240,14 +286,14 @@ function tokenize(expr: string): string[] {
             while (j < expr.length && isFormulaIdentChar(expr[j])) {
                 j++;
             }
-            tokens.push(expr.slice(i, j));
+            addToken(i, j, source && isFunctionNameAt(j) ? 'function' : 'text');
             i = j;
             continue;
         }
 
         // delimiters: parentheses and comma
         if (ch === '(' || ch === ')' || ch === ',') {
-            tokens.push(ch);
+            addToken(i, i + 1);
             i++;
             continue;
         }
@@ -255,20 +301,24 @@ function tokenize(expr: string): string[] {
         // operators (greedy longest-first match)
         const firstMatch = OP_SYMBOLS_DESC.find((sym) => expr.startsWith(sym, i));
         if (!firstMatch) {
-            throw new FormulaParseError(5, i, i + 1, [ch]);
+            reportError(new FormulaParseError(5, i, i + 1, [ch]));
+            addToken(i, i + 1);
+            i++;
+            continue;
         }
 
-        tokens.push(firstMatch);
+        addToken(i, i + firstMatch.length, 'operator');
         i += firstMatch.length;
     }
 
     return tokens;
 }
 
-type OperatorFrame =
+type OperatorFrame = { index: number } & (
     | { kind: 'op'; def: OperatorDef }
     | { kind: 'parenthesis'; outLen: number }
-    | { kind: 'function'; name: string; args: FormulaNode[] };
+    | { kind: 'function'; name: string; args: FormulaNode[] }
+);
 
 function shouldReduce(top: OperatorDef, incoming: OperatorDef): boolean {
     if (top.fixity !== 'infix' || incoming.fixity !== 'infix') {
@@ -316,8 +366,20 @@ function pickOpDefForContext(symbol: string, prevToken: string | undefined): Ope
  * @example
  * parseExpression(beans, 'SUM(1, 2+3)') // => { type:"operation", operation:"SUM", operands:[...]}
  */
-function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean | 'absolute'): FormulaNode {
-    const tokens = tokenize(expr);
+function parseExpression(
+    beans: BeanCollection,
+    expr: string,
+    unsafe: boolean | 'absolute',
+    source?: FormulaExpressionSource
+): FormulaNode {
+    const tokens = tokenize(expr, source);
+    if (source?.error) {
+        throw source.error;
+    }
+    const errorAt = (id: FormulaErrorId, index: number, values?: readonly unknown[]) => {
+        const token = source?.tokens[index];
+        return new FormulaParseError(id, token?.start ?? index, token?.end ?? index + 1, values);
+    };
 
     const output: FormulaNode[] = [];
     const ops: OperatorFrame[] = [];
@@ -334,7 +396,7 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean | 
             if (def.fixity !== 'infix') {
                 const right = output.pop();
                 if (!right) {
-                    throw new FormulaParseError(7, 0, 0, [def.symbol]);
+                    throw errorAt(7, frame.index, [def.symbol]);
                 }
 
                 // unary plus is a no-op
@@ -367,14 +429,14 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean | 
             const right = output.pop();
             const left = output.pop();
             if (!left || !right) {
-                throw new FormulaParseError(7, 0, 0, [def.symbol]);
+                throw errorAt(7, frame.index, [def.symbol]);
             }
             output.push({ type: 'operation', operation: def.symbol, operands: [left, right] });
             return;
         }
 
         // parenthesis/function should not be reduced directly here
-        throw new FormulaParseError(8, 0, 0);
+        throw errorAt(8, frame.index);
     };
 
     let i = 0;
@@ -384,15 +446,15 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean | 
         // Function start: IDENT '('
         if (isFormulaIdentStart(token[0]) && tokens[i + 1] === '(') {
             const name = token;
-            ops.push({ kind: 'function', name, args: [] });
-            ops.push({ kind: 'parenthesis', outLen: output.length });
+            ops.push({ kind: 'function', name, args: [], index: i });
+            ops.push({ kind: 'parenthesis', outLen: output.length, index: i + 1 });
             i += 2;
             continue;
         }
 
         // Grouping '('
         if (token === '(') {
-            ops.push({ kind: 'parenthesis', outLen: output.length });
+            ops.push({ kind: 'parenthesis', outLen: output.length, index: i });
             i++;
             continue;
         }
@@ -401,7 +463,7 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean | 
         if (token === ',') {
             const prevToken = tokens[i - 1];
             if (prevToken == null || prevToken === '(' || prevToken === ',') {
-                throw new FormulaParseError(10, i, i + 1);
+                throw errorAt(10, i);
             }
 
             // reduce until '('
@@ -413,17 +475,17 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean | 
                 if (top.kind === 'op') {
                     applyTop();
                 } else {
-                    throw new FormulaParseError(9, i, i + 1);
+                    throw errorAt(9, i);
                 }
             }
             const paren = ops[ops.length - 1];
             if (paren?.kind !== 'parenthesis') {
-                throw new FormulaParseError(10, i, i + 1);
+                throw errorAt(10, i);
             }
             // function frame must be just below '('
             const maybeFunction = ops[ops.length - 2];
             if (maybeFunction?.kind !== 'function') {
-                throw new FormulaParseError(11, i, i + 1);
+                throw errorAt(11, i);
             }
             // Only consume an arg if something was produced since '('
             if (output.length > paren.outLen) {
@@ -436,7 +498,7 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean | 
         // Closing ')'
         if (token === ')') {
             if (tokens[i - 1] === ',') {
-                throw new FormulaParseError(10, i, i + 1);
+                throw errorAt(10, i);
             }
 
             // reduce until '('
@@ -448,12 +510,12 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean | 
                 if (top.kind === 'op') {
                     applyTop();
                 } else {
-                    throw new FormulaParseError(12, i, i + 1);
+                    throw errorAt(12, i);
                 }
             }
             const paren = ops[ops.length - 1];
             if (paren?.kind !== 'parenthesis') {
-                throw new FormulaParseError(13, i, i + 1);
+                throw errorAt(13, i);
             }
             const parenOutLen = paren.outLen;
             ops.pop(); // pop '('
@@ -489,7 +551,7 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean | 
                 }
             }
 
-            ops.push({ kind: 'op', def: incoming });
+            ops.push({ kind: 'op', def: incoming, index: i });
             i++;
             continue;
         }
@@ -497,7 +559,7 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean | 
         // Operand
         const parsed = parseOperand(beans, token, unsafe);
         if (parsed === undefined) {
-            throw new FormulaParseError(14, 0, token.length, [token]);
+            throw errorAt(14, i, [token]);
         }
         output.push({ type: 'operand', value: parsed });
         i++;
@@ -509,12 +571,12 @@ function parseExpression(beans: BeanCollection, expr: string, unsafe: boolean | 
         if (top.kind === 'op') {
             applyTop();
         } else {
-            throw new FormulaParseError(15, 0, 0);
+            throw errorAt(15, top.index);
         }
     }
 
     if (output.length !== 1) {
-        throw new FormulaParseError(16, 0, 0);
+        throw errorAt(16, tokens.length - 1);
     }
     return output[0];
 }
@@ -542,6 +604,48 @@ export const parseFormula = (
     const body = formula.slice(1).trim();
     return normalizeRefCells(parseExpression(beans, body, unsafe));
 };
+
+/** Inspects display text without evaluating it. Ranges use textarea (UTF-16) offsets, end-exclusive. */
+export function inspectFormulaExpression(
+    beans: BeanCollection,
+    expression: string
+): { tokens: FormulaSourceToken[]; error: FormulaError | null; range?: { start: number; end: number } } {
+    const source: FormulaExpressionSource = { tokens: [] };
+    const prefix = /^\s*=/.exec(expression)?.[0].length ?? 0;
+    const body = expression.slice(prefix);
+    const trimmedBody = body.trim();
+    if (prefix && !trimmedBody) {
+        return { tokens: [], error: new FormulaError(16), range: { start: prefix - 1, end: prefix } };
+    }
+    let error: FormulaError | null = null;
+    let range: { start: number; end: number } | undefined;
+    try {
+        if (trimmedBody) {
+            const ast = normalizeRefCells(parseExpression(beans, body, true, source));
+            const invalidOperation = findFirstInvalidOperation(ast, (name) => !!beans.formula?.getFunction(name));
+            if (invalidOperation) {
+                error = new FormulaError(27, [invalidOperation]);
+                const invalidToken = source.tokens.find(
+                    (token) => token.type === 'function' && body.slice(token.start, token.end) === invalidOperation
+                );
+                range = invalidToken && { start: invalidToken.start, end: invalidToken.end };
+            }
+        }
+    } catch (err) {
+        if (!(err instanceof FormulaError)) {
+            throw err;
+        }
+        error = err;
+        if (err instanceof FormulaParseError && err.errorEnd > err.errorStart) {
+            range = { start: err.errorStart, end: err.errorEnd };
+        }
+    }
+    return {
+        tokens: source.tokens.map((token) => ({ ...token, start: token.start + prefix, end: token.end + prefix })),
+        error,
+        range: range && { start: range.start + prefix, end: range.end + prefix },
+    };
+}
 
 function isOperation(node: FormulaNode, name: string): node is FormulaOperation {
     return node.type === 'operation' && node.operation.toUpperCase() === name.toUpperCase();

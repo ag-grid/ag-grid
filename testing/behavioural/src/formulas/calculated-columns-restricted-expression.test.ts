@@ -117,6 +117,8 @@ describe('calculated columns - blocked live expressions', () => {
         api.setGridOption('calculatedColumns', { ...calculatedColumns, applyMode: 'deferred' });
         await openEditDialogViaMenu(api, 'profit');
         expect(getExpressionInput().value).toBe('[Salary] - 1');
+        expect(getExpressionInput().validationMessage).toBe('');
+        clickDialogButton('Apply');
         expect(getExpressionInput().validationMessage).toContain('cannot be used');
         expect(getDialogButton('Apply')).toBeDisabled();
         setExpression('[Sales] - 1');

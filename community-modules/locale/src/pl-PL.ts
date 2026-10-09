@@ -897,6 +897,7 @@ export const AG_GRID_LOCALE_PL_PL = {
     columnHeaderEditCancel: 'Anuluj',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nie znaleziono odpowiednich kolumn.',
     calculatedColumn: 'Kolumna obliczana',
     calculatedColumnAdd: 'Dodaj kolumnę obliczaną',
     calculatedColumnEdit: 'Edytuj kolumnę obliczaną',

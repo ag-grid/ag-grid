@@ -917,6 +917,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     columnHeaderEditCancel: 'Batal',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Tiada lajur yang layak ditemui.',
     calculatedColumn: 'Lajur Dikira',
     calculatedColumnAdd: 'Tambah Lajur Dikira',
     calculatedColumnEdit: 'Sunting Lajur Dikira',

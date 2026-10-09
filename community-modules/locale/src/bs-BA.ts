@@ -917,6 +917,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     columnHeaderEditCancel: 'Otkaži',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nisu pronađene odgovarajuće kolone.',
     calculatedColumn: 'Izračunata kolona',
     calculatedColumnAdd: 'Dodaj izračunatu kolonu',
     calculatedColumnEdit: 'Uredi izračunatu kolonu',
