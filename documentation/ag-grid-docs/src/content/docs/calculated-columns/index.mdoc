@@ -317,11 +317,9 @@ Manage calculated columns through column definitions, like other columns. Read t
 
 The dialog manages calculated columns inside the grid without mutating the `columnDefs` array supplied by the application. To persist user-created calculated columns, read the complete current definitions from `api.getColumnDefs()`.
 
-The following example adds, edits and removes a Profit Margin column through these APIs, and logs the calculated columns currently in the grid:
+The following example adds, edits and removes a Profit Margin column through these APIs, and logs calculated-column changes:
 
 {% gridExampleRunner title="Calculated Columns API" name="calculated-columns-api" /%}
-
-Calculated Column events also use stored `colId` references in their expression payloads. For example, an event raised from the dialog still reports `[revenue]`, not `[Revenue]`.
 
 ### Column Properties
 
@@ -333,4 +331,29 @@ Calculated Column events also use stored `colId` references in their expression 
 
 ### Events
 
-{% apiDocumentation source="grid-events/events.json" section="calculatedColumns" names=["calculatedColumnCreated", "calculatedColumnExpressionChanged", "calculatedColumnRemoved", "calculatedColumnValidationStateChanged"] /%}
+Use `calculatedColumnChanged` to track changes to `headerName`, `cellDataType`, `calculatedExpression` and `columnGroupShow`. Its `changes` object contains only changed properties, with their previous and new values. Deferred Apply raises one event for all changes; live mode raises an event for each committed update. Initialisation and Grid State restoration do not raise this event.
+
+```js
+const gridOptions = {
+    onCalculatedColumnChanged: event => {
+        const { headerName, cellDataType, calculatedExpression } = event.changes;
+        if (headerName) {
+            console.log('Title:', headerName.oldValue, headerName.newValue);
+        }
+        if (cellDataType) {
+            console.log('Type:', cellDataType.oldValue, cellDataType.newValue);
+        }
+        if (calculatedExpression) {
+            console.log('Expression:', calculatedExpression.oldValue, calculatedExpression.newValue);
+        }
+    },
+};
+```
+
+`calculatedColumnExpressionChanged` is deprecated but continues to fire. To migrate, use `onCalculatedColumnChanged` and check `event.changes.calculatedExpression`, as above.
+
+{% note %}
+Live expressions can be incomplete or invalid. Recognised references use stored `colId` values, such as `[revenue]`; references the dialog cannot resolve remain as typed, so they can still contain header names.
+{% /note %}
+
+{% apiDocumentation source="grid-events/events.json" section="calculatedColumns" names=["calculatedColumnCreated", "calculatedColumnChanged", "calculatedColumnRemoved", "calculatedColumnValidationStateChanged"] /%}
