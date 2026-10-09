@@ -381,7 +381,7 @@ describe('chart settings panel mini chart thumbnails', () => {
         });
     });
 
-    test('customCombo renders its grey axes and pen icon over palette-coloured series', async () => {
+    test('customCombo renders palette-coloured series, its axes and a literal-coloured pen icon', async () => {
         await openSettingsPanel(gridsManager, {
             chartType: 'customCombo',
             seriesChartTypes: [
