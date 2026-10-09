@@ -82,13 +82,9 @@
             }
         },
         "calculatedColumnChanged": {
-            "more": {
-                "name": "Calculated Columns Events",
-                "url": "./calculated-columns/#events"
-            }
-        },
-        "calculatedColumnExpressionChanged": {
-            "description": "Deprecated. Use `calculatedColumnChanged` and check `event.changes.calculatedExpression`. The previous expression is `event.changes.calculatedExpression.oldValue` and the new expression is `event.changes.calculatedExpression.newValue`.",
+            "interfaceHierarchyOverrides": {
+                "exclude": ["ColDef"]
+            },
             "more": {
                 "name": "Calculated Columns Events",
                 "url": "./calculated-columns/#events"

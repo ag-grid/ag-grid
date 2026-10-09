@@ -367,7 +367,11 @@ describe('ag-grid calculated columns', () => {
                 { colId: 'bonus', headerName: 'Bonus', calculatedExpression: expression, cellDataType: 'number' },
             ],
             rowData: [{ id: 'r1', salary: 100, revenue: 20 }],
-            onCalculatedColumnExpressionChanged: changed,
+            onCalculatedColumnChanged: (event) => {
+                if (event.changes.calculatedExpression) {
+                    changed(event);
+                }
+            },
         });
         api.setGridOption('calculatedColumns', {
             applyMode,
