@@ -1,0 +1,56 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#grid,
+app-root {
+    display: block;
+    height: calc(100% - 80px);
+}
+
+ag-grid-angular {
+    display: block;
+    height: 100%;
+}
+
+#framework-menu {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    margin-bottom: 20px;
+    gap: 4px;
+    background: #eee;
+    border-radius: 8px;
+    padding: 0 12px;
+}
+
+#framework-menu a {
+    text-decoration: none;
+    color: #000;
+    font-family: system-ui, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 8px 20px;
+    border-radius: 6px;
+    transition:
+        background 0.15s,
+        color 0.15s;
+}
+
+#framework-menu a:hover {
+    background: #d4e4f780;
+    color: #000;
+}
+
+#framework-menu a.active {
+    background: #bbd4f0;
+    color: #000;
+    font-weight: 700;
+}

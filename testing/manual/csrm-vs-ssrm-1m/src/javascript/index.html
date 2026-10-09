@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CSRM vs sync SSRM - 1M rows</title>
+        <link rel="stylesheet" href="../styles.css" />
+        <style>
+            #grid {
+                height: 45vh;
+            }
+            #toolbar {
+                font-family: system-ui, sans-serif;
+                font-size: 14px;
+                margin: 8px 0;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+                align-items: center;
+            }
+            #mode {
+                font-weight: 700;
+                margin-right: 12px;
+            }
+            #toolbar a.active {
+                font-weight: 700;
+            }
+            #results {
+                font-family: ui-monospace, monospace;
+                font-size: 12px;
+                overflow: auto;
+                max-height: 28vh;
+            }
+            #results table {
+                border-collapse: collapse;
+            }
+            #results th,
+            #results td {
+                border: 1px solid #ccc;
+                padding: 2px 8px;
+                text-align: right;
+                white-space: nowrap;
+            }
+            #results td:first-child {
+                text-align: left;
+            }
+        </style>
+        <script src="../menu.js" defer></script>
+    </head>
+    <body>
+        <div id="toolbar">
+            <span id="mode"></span>
+            <a id="link-csrm" href="?mode=csrm">CSRM</a> | <a id="link-ssrm" href="?mode=ssrm">SSRM</a> |
+            <a id="link-sync" href="?mode=ssrm&syncLoad=1">SSRM: sync load</a>
+            <span id="controls" style="display: contents"></span>
+        </div>
+        <div id="grid"></div>
+        <div id="results"></div>
+        <script type="module" src="./main.ts"></script>
+    </body>
+</html>
