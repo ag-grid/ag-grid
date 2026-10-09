@@ -151,7 +151,7 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             return null;
         }
 
-        const targetIndex = order.indexOf(before ? targets[0] : targets[targets.length - 1]) + (before ? 0 : 1);
+        const targetIndex = order.indexOf(before ? targets[0] : targets.at(-1)!) + (before ? 0 : 1);
         const toIndex = targetIndex - order.slice(0, targetIndex).filter((column) => moving.includes(column)).length;
         const proposedOrder = order.slice();
         _moveInArray(proposedOrder, moving, toIndex);
