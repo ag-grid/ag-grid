@@ -262,8 +262,8 @@ export class OverlayService extends BeanStub implements NamedBean {
         this.userForcedNoRows = true;
         this.doShowOverlay(NoRowsOverlayDef);
     }
-    public async showExportOverlay(heavyOperation: () => void) {
-        const { gos, beans } = this;
+    public showExportOverlay(heavyOperation: () => void): void {
+        const gos = this.gos;
         if (
             !this.eWrapper ||
             gos.get('activeOverlay') ||
@@ -276,18 +276,24 @@ export class OverlayService extends BeanStub implements NamedBean {
             return;
         }
 
-        // wait until the wrapper has mounted the overlay component
         const desiredDef = this.getDesiredDefWithOverride(ExportingOverlayDef);
         if (!desiredDef) {
             heavyOperation();
             return;
         }
 
+        void this.runWithExportOverlay(desiredDef, heavyOperation);
+    }
+
+    private async runWithExportOverlay(desiredDef: OverlayDef, heavyOperation: () => void): Promise<void> {
+        const beans = this.beans;
+
         // Make sure if multiple export calls are run we don't clear until the last one.
         this.exportsInProgress++;
         // Aim to restore cell focus after it is lost due to the overlay
         this.focusedCell = beans.focusSvc.getFocusedCell();
 
+        // wait until the wrapper has mounted the overlay component
         await this.doShowOverlay(desiredDef);
 
         // ensure the overlay has a chance to be painted
