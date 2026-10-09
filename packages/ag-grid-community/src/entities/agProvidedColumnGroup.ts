@@ -1,5 +1,6 @@
 import type { AgEvent } from 'ag-stack';
 
+import type { QueuedEventOwner } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
 import type { Column, ColumnGroupShowType, ColumnInstanceId, ProvidedColumnGroup } from '../interfaces/iColumn';
 import type { AgColumn } from './agColumn';
@@ -15,7 +16,10 @@ export function isProvidedColumnGroup(
 
 export type AgProvidedColumnGroupEvent = 'expandedChanged' | 'expandableChanged' | 'headerNameChanged';
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> implements ProvidedColumnGroup {
+export class AgProvidedColumnGroup
+    extends BeanStub<AgProvidedColumnGroupEvent>
+    implements ProvidedColumnGroup, QueuedEventOwner
+{
     public readonly isColumn = false as const;
 
     public originalParent: AgProvidedColumnGroup | null;
@@ -34,9 +38,7 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
     /** Cache previous `setExpandable` visibility so `AgColumn.setVisible` ancestor walk can stop when unchanged. */
     private lastVisible = false;
 
-    /** The `ColumnModel.colEventsEpoch` of the queue `lastQueuedEventAt` indexes. */
-    public queuedEventsEpoch = 0;
-    public lastQueuedEventAt = -1;
+    public lastQueuedEventAt = 0;
 
     // stable key for framework (React) rendering and old-vs-new destroy diffing
     public readonly instanceId: ColumnInstanceId = getNextColInstanceId();

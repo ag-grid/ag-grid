@@ -2,6 +2,7 @@ import type { AgEvent, IAgEventEmitter } from 'ag-stack';
 import { LocalEventService, _escapeString } from 'ag-stack';
 
 import { _addColumnDefaultAndTypes } from '../columns/colDefUtils';
+import type { QueuedEventOwner } from '../columns/columnModel';
 import { updateSomeColumnState } from '../columns/columnStateUtils';
 import type { ColumnState } from '../columns/columnStateUtils';
 import { BeanStub } from '../context/beanStub';
@@ -134,7 +135,7 @@ const COL_FLAG_WIDTH_SET = 0x00010000;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgColumn<TValue = any>
     extends BeanStub<ColumnEventName>
-    implements Column, IAgEventEmitter<ColumnEventName>
+    implements Column, IAgEventEmitter<ColumnEventName>, QueuedEventOwner
 {
     public readonly isColumn = true as const;
 
@@ -201,9 +202,7 @@ export class AgColumn<TValue = any>
     private frameworkEventListenerService: IFrameworkEventListenerService<any, any> | undefined = undefined;
     // Lazy — most columns never get a listener; allocated on first __addEventListener/addEventListener.
     private colEventSvc: LocalEventService<ColumnEventName> | null = null;
-    /** The `ColumnModel.colEventsEpoch` of the queue `lastQueuedEventAt` indexes. */
-    public queuedEventsEpoch: number = 0;
-    public lastQueuedEventAt: number = -1;
+    public lastQueuedEventAt: number = 0;
 
     /** Most recent build token that claimed this col — used to detect "already used in this refresh". */
     public buildToken: number = 0;

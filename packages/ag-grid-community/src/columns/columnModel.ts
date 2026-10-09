@@ -26,8 +26,8 @@ import { _convertColumnEventSourceType, _destroyColumnTreeAll, _destroyColumnTre
  *  `'reorder'` (a same-set move) rebuilds and animates, but keeps the set so skips the legacy event. */
 type ColChangeKind = 'dispatch' | 'membership' | 'reorder';
 /** A column or provided column group whose events a column update queues. */
-interface QueuedEventOwner {
-    queuedEventsEpoch: number;
+export interface QueuedEventOwner {
+    /** Its last entry in the queue, or a stale index into an emptied one; never negative, to read in bounds. */
     lastQueuedEventAt: number;
     raiseQueuedEvent(event: AgEvent<string>): void;
 }
@@ -64,8 +64,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
     /** Each queued column or group, its event and the index of its previous entry (`-1` for none): nothing allocated
      *  per event. */
     private readonly queuedColEvents: QueuedColEvents = [];
-    /** Moves on whenever the queue is emptied, so an owner's index into an earlier one is never followed. */
-    private colEventsEpoch = 1;
     /** While the queue is raised, the index past the event being raised, so a change to an owner already told queues
      *  anew. */
     private colEventsRaisingAt = 0;
@@ -356,10 +354,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
      *  it: the owner is told once, in the first one's place, with the latest payload. */
     public queueColEvent(owner: QueuedEventOwner, event: AgEvent<string>): void {
         const queue = this.queuedColEvents;
-        const epoch = this.colEventsEpoch;
-        let prev = -1;
-        if (owner.queuedEventsEpoch === epoch) {
-            prev = owner.lastQueuedEventAt;
+        let prev = owner.lastQueuedEventAt;
+        // a stale index from an emptied queue never lands on this owner: queuing it here would have moved the index
+        if (prev < queue.length && queue[prev] === owner) {
             const type = event.type;
             for (let i = prev, told = this.colEventsRaisingAt; i >= told; i = queue[i + 2] as number) {
                 const queued = queue[i + 1] as AgEvent<string>;
@@ -373,7 +370,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
                 }
             }
         } else {
-            owner.queuedEventsEpoch = epoch;
+            prev = -1;
         }
         owner.lastQueuedEventAt = queue.length;
         queue.push(owner, event, prev);
@@ -403,7 +400,6 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
         this.colEventsRaisingAt = 0;
         queue.length = 0;
-        ++this.colEventsEpoch;
         if (threw) {
             throw error;
         }
