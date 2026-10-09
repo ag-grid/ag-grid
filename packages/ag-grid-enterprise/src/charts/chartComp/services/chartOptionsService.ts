@@ -648,7 +648,7 @@ export class ChartOptionsService extends BeanStub {
     private updateChart(chartOptions: AgChartOptions) {
         const chartRef = this.chartController.getChartProxy().getChartRef();
         chartRef.skipAnimations();
-        chartRef.updateDelta(chartOptions);
+        void chartRef.updateDelta(chartOptions);
     }
 
     private createChartOptions(): AgChartOptionsWithThemeOverrides {

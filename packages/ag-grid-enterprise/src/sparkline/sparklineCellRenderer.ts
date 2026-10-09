@@ -133,7 +133,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             this.sparklineInstance = params.createSparkline!(this.sparklineOptions);
             return true;
         } else if (this.sparklineInstance) {
-            this.sparklineInstance.update({
+            void this.sparklineInstance.update({
                 ...this.sparklineOptions,
                 data,
                 width,

@@ -413,7 +413,7 @@ export class GridChartComp extends Component {
         this.updateChart(updatedThemeOverrides);
 
         if (params?.chartId) {
-            this.chartProxy
+            void this.chartProxy
                 .getChart()
                 .waitForUpdate()
                 .then(() => {
@@ -442,7 +442,7 @@ export class GridChartComp extends Component {
         const chartUpdateParams = this.chartController.getChartUpdateParams(updatedOverrides);
         chartProxy.update(chartUpdateParams);
 
-        this.chartProxy
+        void this.chartProxy
             .getChart()
             .waitForUpdate()
             .then(() => {
@@ -596,7 +596,7 @@ export class GridChartComp extends Component {
     }
 
     private raiseChartCreatedEvent(): void {
-        this.chartProxy
+        void this.chartProxy
             .getChart()
             .waitForUpdate()
             .then(() => {

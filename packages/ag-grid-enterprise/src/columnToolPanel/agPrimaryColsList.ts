@@ -241,7 +241,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             this.eventType
         );
 
-        this.focusRowIfAlive(nextItem - movePadding).then(() => {
+        void this.focusRowIfAlive(nextItem - movePadding).then(() => {
             this.skipRefocus = false;
         });
     }
@@ -531,7 +531,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         virtualList.refresh();
 
         if (focusedRow != null) {
-            this.focusRowIfAlive(focusedRow);
+            void this.focusRowIfAlive(focusedRow);
         }
 
         this.notifyListeners();

@@ -109,7 +109,7 @@ export class AgContextMenuService<
                 this.createLoadingIcon(mouseEvent);
             }
 
-            menuItems.then((menuItems) => {
+            const menuShown = menuItems.then((menuItems) => {
                 if (this.lastPromise !== currentPromise) {
                     return;
                 }
@@ -137,6 +137,12 @@ export class AgContextMenuService<
                 }
 
                 this.destroyLoadingSpinner?.();
+            });
+            void menuShown.catch((error: unknown) => {
+                if (this.lastPromise === currentPromise) {
+                    this.destroyLoadingSpinner?.();
+                }
+                throw error;
             });
             return true;
         }

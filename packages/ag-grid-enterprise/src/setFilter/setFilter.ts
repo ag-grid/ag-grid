@@ -883,7 +883,7 @@ export class SetFilter<V = string>
         this.updateDisplayedValues('expansion');
 
         this.checkAndRefreshVirtualList();
-        this.focusRowIfAlive(focusedRow);
+        void this.focusRowIfAlive(focusedRow);
     }
 
     private refreshAfterSelection(): void {
@@ -891,7 +891,7 @@ export class SetFilter<V = string>
 
         this.checkAndRefreshVirtualList();
         this.onUiChanged();
-        this.focusRowIfAlive(focusedRow);
+        void this.focusRowIfAlive(focusedRow);
     }
 
     public setMiniFilter(newMiniFilter: string | null, silent?: boolean): void {
