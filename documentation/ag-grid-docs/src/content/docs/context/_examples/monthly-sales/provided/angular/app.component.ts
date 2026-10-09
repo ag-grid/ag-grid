@@ -54,22 +54,21 @@ ModuleRegistry.registerModules([
                     placeholder="Filter..."
                 />
 
-                <span style="padding-left: 20px;">
-                    <b>Period:</b>
-                    <button (click)="onChangeMonth(-1)">
-                        <i class="fa fa-chevron-left"></i>
-                    </button>
-                    <button (click)="onChangeMonth(1)">
-                        <i class="fa fa-chevron-right"></i>
-                    </button>
-                    <span id="monthName" style="width: 100px; display: inline-block;">Year to Jan</span>
-                </span>
+                <span class="gap-left">Period:</span>
+                <button (click)="onChangeMonth(-1)">
+                    <i class="fa fa-chevron-left"></i>
+                </button>
+                <button (click)="onChangeMonth(1)">
+                    <i class="fa fa-chevron-right"></i>
+                </button>
+                <span id="monthName" style="width: 100px; display: inline-block;">Year to Jan</span>
 
-                <span style="padding-left: 20px;">
-                    <b>Legend:</b>&nbsp;&nbsp;
-                    <div class="cell-bud legend-box"></div>
-                    Actual&nbsp;&nbsp;
-                    <div class="cell-act legend-box"></div>
+                <span class="legend-item gap-left">
+                    <span class="legend-swatch cell-bud"></span>
+                    Actual
+                </span>
+                <span class="legend-item">
+                    <span class="legend-swatch cell-act"></span>
                     Budget
                 </span>
             </div>

@@ -3,13 +3,6 @@
     border: 1px solid #aaa;
 }
 
-.legend-box {
-    width: 15px;
-    height: 15px;
-    display: inline-block;
-    vertical-align: text-top;
-}
-
 .ag-cell button {
     padding: 0.25rem;
     margin-right: 0.25rem;

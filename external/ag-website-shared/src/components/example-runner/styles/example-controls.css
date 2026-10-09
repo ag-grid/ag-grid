@@ -395,6 +395,23 @@ body > #highlighter {
     border: 0;
 }
 
+/* A key explaining what the example's cell or header colours mean: a swatch followed by its text.
+   The swatch's colour comes from the example's own class, usually the same class that colours the
+   cells it describes, e.g. `<span class="legend-swatch locked-col"></span>`. */
+.example-controls .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--label-gap);
+}
+
+.example-controls .legend-swatch {
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--button-border);
+    border-radius: 3px;
+}
+
 /* Disabled controls, including any labels/values grouped in a disabled control-group */
 .example-controls button:disabled,
 .example-controls select:disabled,
