@@ -5,6 +5,7 @@ import { Component } from 'ag-grid-community';
 
 import type { AgChartsExports } from '../../../../agChartsExports';
 import type { ChartTranslationKey, ChartTranslationService } from '../../../services/chartTranslationService';
+import { MINI_CHART_PADDING, MINI_CHART_SIZE } from './svg/miniChartSvg';
 
 const CANVAS_CLASS = 'ag-chart-mini-thumbnail-canvas';
 
@@ -15,8 +16,8 @@ export abstract class MiniChart extends Component {
         this.chartTranslation = beans.chartTranslation as ChartTranslationService;
     }
 
-    protected readonly size: number = 58;
-    protected readonly padding: number = 5;
+    protected readonly size: number = MINI_CHART_SIZE;
+    protected readonly padding: number = MINI_CHART_PADDING;
     protected readonly root: Group;
     protected readonly scene: Scene;
 

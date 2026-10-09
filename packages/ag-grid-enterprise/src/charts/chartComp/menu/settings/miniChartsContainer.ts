@@ -49,7 +49,7 @@ import {
 } from './miniCharts/index';
 // please leave this as is - we want it to be explicit for build reasons
 import type { MiniChart } from './miniCharts/miniChart';
-import { MiniChartSvg } from './miniCharts/svg/miniChartSvg';
+import { createMiniChartSvg } from './miniCharts/svg/miniChartSvg';
 import { MINI_CHART_SVG_GEOMETRY } from './miniCharts/svg/miniChartSvgGeometry';
 
 type MiniChartMenuMapping = {
@@ -289,7 +289,13 @@ export class MiniChartsContainer extends Component {
 
                 const svgTemplate = MINI_CHART_SVG_GEOMETRY[chartType];
                 if (svgTemplate) {
-                    this.createBean(new MiniChartSvg(miniWrapper, svgTemplate, solidFills, solidStrokes));
+                    createMiniChartSvg(
+                        miniWrapper,
+                        svgTemplate,
+                        solidFills,
+                        solidStrokes,
+                        this.chartTranslation.translate(svgTemplate.tooltip)
+                    );
                 } else {
                     this.createBean(
                         new MiniClass(

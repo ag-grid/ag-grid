@@ -122,8 +122,17 @@ describe('chart settings panel mini chart thumbnails', () => {
             await openSettingsPanel(gridsManager);
         });
 
+        test('the svg is a 58x58, hidden-from-assistive-tech image', () => {
+            const svg = thumbnail('Grouped Column').querySelector(SVG_SELECTOR)!;
+            expect(svg.getAttribute('aria-hidden')).toBe('true');
+            expect(svg.getAttribute('focusable')).toBe('false');
+            expect(svg.getAttribute('width')).toBe('58');
+            expect(svg.getAttribute('height')).toBe('58');
+            expect(svg.getAttribute('viewBox')).toBe('0 0 58 58');
+        });
+
         test.each(SVG_CASES)(
-            '$type renders $paths series paths, 2 axis lines and the $tooltip title in one svg',
+            '$type renders $paths series paths, then 2 axis lines, under the $tooltip title in one svg',
             ({ label, tooltip, paths }) => {
                 const el = thumbnail(label);
                 expect(el.querySelector('canvas')).toBeNull();
@@ -131,36 +140,29 @@ describe('chart settings panel mini chart thumbnails', () => {
                 const svgs = el.querySelectorAll(SVG_SELECTOR);
                 expect(svgs).toHaveLength(1);
                 const svg = svgs[0];
-                expect(svg.getAttribute('aria-hidden')).toBe('true');
-                expect(svg.getAttribute('focusable')).toBe('false');
-                expect(svg.getAttribute('width')).toBe('58');
-                expect(svg.getAttribute('height')).toBe('58');
-                expect(svg.getAttribute('viewBox')).toBe('0 0 58 58');
                 expect(svg.firstElementChild?.localName).toBe('title');
                 expect(svg.firstElementChild?.textContent).toBe(tooltip);
-                expect(svg.querySelectorAll('path')).toHaveLength(paths);
-                const lines = svg.querySelectorAll('line');
-                expect(lines).toHaveLength(2);
-                lines.forEach((line) => expect(line.getAttribute('stroke')).toBe('gray'));
 
                 // the axes are drawn over the series
-                const allShapes = Array.from(svg.querySelectorAll('path, line'));
-                expect(allShapes.slice(-2).every((el) => el.localName === 'line')).toBe(true);
+                const shapes = Array.from(svg.querySelectorAll('path, line'));
+                expect(shapes.map((shape) => shape.localName)).toEqual([...Array(paths).fill('path'), 'line', 'line']);
+                shapes.slice(-2).forEach((line) => expect(line.getAttribute('stroke')).toBe('gray'));
 
                 expect(svg.querySelector('defs, clipPath, linearGradient, radialGradient, pattern')).toBeNull();
             }
         );
 
-        test.each(SVG_CASES)('$type clips only line and area series, to the plot area', ({ type, label }) => {
-            const nested = thumbnail(label).querySelectorAll(`${SVG_SELECTOR} svg`);
-            if (!/line|area/i.test(type)) {
-                expect(nested).toHaveLength(0);
-                return;
+        test('only the line and area series are clipped, to the plot area', () => {
+            for (const { type, label } of SVG_CASES) {
+                const nested = thumbnail(label).querySelector(`${SVG_SELECTOR} svg`);
+                if (!/line|area/i.test(type)) {
+                    expect(nested).toBeNull();
+                    continue;
+                }
+                expect(nested!.getAttribute('overflow')).toBe('hidden');
+                expect(nested!.getAttribute('viewBox')).toBe('5 5 48 48');
+                expect(nested!.querySelectorAll('path')).toHaveLength(3);
             }
-            expect(nested).toHaveLength(1);
-            expect(nested[0].getAttribute('overflow')).toBe('hidden');
-            expect(nested[0].getAttribute('viewBox')).toBe('5 5 48 48');
-            expect(nested[0].querySelectorAll('path')).toHaveLength(3);
         });
 
         test('pie thumbnail keeps its canvas and has no svg', () => {
@@ -187,16 +189,21 @@ describe('chart settings panel mini chart thumbnails', () => {
     });
 
     describe('palette colours', () => {
-        function expectPaletteColours(theme: AgChartTheme): void {
-            const { fills, strokes } = theme.palette as { fills: string[]; strokes: string[] };
+        /** Every series in every svg thumbnail is painted, and only with colours from the given palette. */
+        function expectPaletteColours({ fills, strokes }: { fills: string[]; strokes: string[] }): void {
             for (const { label } of SVG_CASES) {
                 const paths = Array.from(thumbnail(label).querySelectorAll(`${SVG_SELECTOR} path`));
-                const paints = paths.flatMap((path) => [path.getAttribute('fill'), path.getAttribute('stroke')]);
-                const colours = paints.filter((paint) => paint != null && paint !== 'none');
-                expect(colours.length).toBeGreaterThan(0);
-                colours.forEach((colour) => expect([...fills, ...strokes]).toContain(colour));
-                paths.forEach((path) => expect(['none', ...fills]).toContain(path.getAttribute('fill')));
+                expect(paths.length).toBeGreaterThan(0);
+                paths.forEach((path) => {
+                    expect(['none', ...fills]).toContain(path.getAttribute('fill'));
+                    expect([null, ...fills, ...strokes]).toContain(path.getAttribute('stroke'));
+                    expect([path.getAttribute('fill'), path.getAttribute('stroke')]).not.toEqual(['none', null]);
+                });
             }
+        }
+
+        function themePalette(theme: AgChartTheme): { fills: string[]; strokes: string[] } {
+            return theme.palette as { fills: string[]; strokes: string[] };
         }
 
         test('series fills and strokes come from the active palette and follow palette navigation', async () => {
@@ -205,9 +212,10 @@ describe('chart settings panel mini chart thumbnails', () => {
 
             expect(activeWrapper()).toBe(first);
             expect(seriesPaints('groupedColumn', 'fill')).toEqual(T1.palette!.fills);
-            expect(seriesPaints('groupedColumn', 'stroke')).toEqual(T1.palette!.strokes);
+            expect(seriesPaints('groupedColumn', 'stroke')).toEqual([null, null, null]);
+            expect(seriesPaints('area', 'stroke')).toEqual(T1.palette!.strokes);
             expect(seriesPaints('line', 'stroke')).toEqual(T1.palette!.fills);
-            expectPaletteColours(T1);
+            expectPaletteColours(themePalette(T1));
 
             document.querySelector<HTMLElement>('.ag-chart-settings-next')!.click();
 
@@ -218,9 +226,9 @@ describe('chart settings panel mini chart thumbnails', () => {
                 },
                 { timeout: 3000 }
             );
-            expect(seriesPaints('groupedColumn', 'stroke')).toEqual(T2.palette!.strokes);
+            expect(seriesPaints('area', 'stroke')).toEqual(T2.palette!.strokes);
             expect(seriesPaints('line', 'stroke')).toEqual(T2.palette!.fills);
-            expectPaletteColours(T2);
+            expectPaletteColours(themePalette(T2));
         });
 
         test('gradient and pattern palette entries render as solid colours', async () => {
@@ -270,7 +278,7 @@ describe('chart settings panel mini chart thumbnails', () => {
             });
 
             expect(seriesPaints('groupedColumn', 'fill')).toEqual(['#123456', '#234567', '#123456']);
-            expect(seriesPaints('groupedColumn', 'stroke')).toEqual(['#654321', '#765432', '#654321']);
+            expect(seriesPaints('area', 'stroke')).toEqual(['#654321', '#765432', '#654321']);
             expect(seriesPaints('line', 'stroke')).toEqual(['#123456', '#234567', '#123456']);
         });
 
@@ -282,14 +290,7 @@ describe('chart settings panel mini chart thumbnails', () => {
                 },
             });
 
-            for (const { label } of SVG_CASES) {
-                const paths = thumbnail(label).querySelectorAll(`${SVG_SELECTOR} path`);
-                expect(paths.length).toBeGreaterThan(0);
-                paths.forEach((path) => {
-                    expect(['#123456', 'none']).toContain(path.getAttribute('fill'));
-                    expect(['#654321', '#123456', null]).toContain(path.getAttribute('stroke'));
-                });
-            }
+            expectPaletteColours({ fills: ['#123456'], strokes: ['#654321'] });
         });
     });
 });

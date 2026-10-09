@@ -6,31 +6,21 @@ export interface MiniChartSvgSlot {
     index: number;
 }
 
-/** A palette slot, or a literal colour that does not depend on the palette (e.g. the axis `gray`). */
-export type MiniChartSvgPaint = MiniChartSvgSlot | string;
-
+/** A series shape, drawn as an SVG path. */
 export interface MiniChartSvgShape {
-    tag: 'path' | 'line';
-    /** Geometry and non-colour presentation attributes, written as-is. */
-    attrs: Record<string, string | number>;
+    d: string;
     /** Omitted means `fill="none"`. */
-    fill?: MiniChartSvgPaint;
+    fill?: MiniChartSvgSlot;
     /** Omitted means no stroke. */
-    stroke?: MiniChartSvgPaint;
+    stroke?: MiniChartSvgSlot;
+    /** Non-colour presentation attributes, written as-is. */
+    attrs?: Record<string, string | number>;
 }
-
-export interface MiniChartSvgGroup {
-    tag: 'g';
-    /** `[x, y, width, height]` in thumbnail coordinates; children outside it are hidden. */
-    clip?: [number, number, number, number];
-    transform?: string;
-    children: MiniChartSvgNode[];
-}
-
-export type MiniChartSvgNode = MiniChartSvgShape | MiniChartSvgGroup;
 
 export interface MiniChartSvgTemplate {
     tooltip: ChartTranslationKey;
-    /** Drawn in document order, so later nodes are painted over earlier ones. */
-    children: MiniChartSvgNode[];
+    /** Hides the parts of the series that fall outside the plot area. */
+    clip?: true;
+    /** Drawn in order, so later shapes are painted over earlier ones. The axes are drawn over all of them. */
+    series: MiniChartSvgShape[];
 }
