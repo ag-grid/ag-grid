@@ -46,7 +46,11 @@ describe('calculated column expression editor', () => {
                 columnDefs: [
                     { field: 'revenue', colId: 'server-generated-revenue-id', headerName: 'Revenue' },
                     { field: 'cost' },
-                    { colId: 'profit', calculatedExpression: '[server-generated-revenue-id] - [cost]' },
+                    {
+                        colId: 'profit',
+                        headerName: 'Profit',
+                        calculatedExpression: '[server-generated-revenue-id] - [cost]',
+                    },
                 ],
                 rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             });
@@ -104,7 +108,7 @@ describe('calculated column expression editor', () => {
             calculatedColumns: { applyMode: 'deferred' },
             columnDefs: [
                 { field: 'revenue', headerName: 'Revenue [USD]' },
-                { colId: 'profit', calculatedExpression: '[revenue]' },
+                { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue]' },
             ],
             rowData: [{ id: 'r1', revenue: 10 }],
         });
@@ -155,7 +159,10 @@ describe('calculated column expression editor', () => {
             const getValidationErrors = vi.fn(({ internalErrors }: CalculatedColumnValidationParams) => internalErrors);
             const api = createGrid('expression-deferred-untouched', {
                 calculatedColumns: { applyMode: 'deferred', getValidationErrors },
-                columnDefs: [{ field: 'revenue' }, { colId: 'profit', calculatedExpression: '[revenue] +' }],
+                columnDefs: [
+                    { field: 'revenue' },
+                    { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue] +' },
+                ],
                 rowData: [{ id: 'r1', revenue: 10 }],
             });
             await openEditDialogViaMenu(api, 'profit');
@@ -197,7 +204,10 @@ describe('calculated column expression editor', () => {
                 applyMode: 'deferred',
                 isColumnReferenceable: ({ colDef }) => colDef.field !== 'salary',
             },
-            columnDefs: [{ field: 'salary' }, { colId: 'bonus', calculatedExpression: '[salary] * 0.1' }],
+            columnDefs: [
+                { field: 'salary' },
+                { colId: 'bonus', headerName: 'Bonus', calculatedExpression: '[salary] * 0.1' },
+            ],
             rowData: [{ id: 'r1', salary: 100 }],
         });
         await openEditDialogViaMenu(api, 'bonus');
