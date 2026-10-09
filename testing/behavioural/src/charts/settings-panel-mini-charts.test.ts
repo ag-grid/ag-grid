@@ -3,7 +3,7 @@ import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import type { AgChartTheme } from 'ag-charts-types';
 import { TestGridsManager, canvasPolyfill } from 'ag-test-utils';
 
-import type { ChartType, GridApi, GridOptions } from 'ag-grid-community';
+import type { ChartType, GridApi, GridOptions, SeriesChartType } from 'ag-grid-community';
 import { ClientSideRowModelModule, setupAgTestIds } from 'ag-grid-community';
 import { CellSelectionModule, IntegratedChartsModule } from 'ag-grid-enterprise';
 
@@ -25,6 +25,9 @@ interface SvgCase {
     label: string;
     tooltip: string;
     paths: number;
+    axes?: 'polar' | 'none';
+    seriesOverAxes?: true;
+    clip?: true;
 }
 
 const SVG_CASES: SvgCase[] = [
@@ -34,14 +37,59 @@ const SVG_CASES: SvgCase[] = [
     { type: 'groupedBar', label: 'Grouped Bar', tooltip: 'Grouped', paths: 3 },
     { type: 'stackedBar', label: 'Stacked Bar', tooltip: 'Stacked', paths: 9 },
     { type: 'normalizedBar', label: '100% Stacked Bar', tooltip: '100% Stacked', paths: 9 },
-    { type: 'line', label: 'Line', tooltip: 'Line', paths: 3 },
-    { type: 'stackedLine', label: 'Stacked Line', tooltip: 'Stacked', paths: 3 },
-    { type: 'normalizedLine', label: '100% Stacked Line', tooltip: '100% Stacked', paths: 3 },
-    { type: 'area', label: 'Area', tooltip: 'Area', paths: 3 },
-    { type: 'stackedArea', label: 'Stacked Area', tooltip: 'Stacked', paths: 3 },
-    { type: 'normalizedArea', label: '100% Stacked Area', tooltip: '100% Stacked', paths: 3 },
+    { type: 'line', label: 'Line', tooltip: 'Line', paths: 3, clip: true },
+    { type: 'stackedLine', label: 'Stacked Line', tooltip: 'Stacked', paths: 3, clip: true },
+    { type: 'normalizedLine', label: '100% Stacked Line', tooltip: '100% Stacked', paths: 3, clip: true },
+    { type: 'area', label: 'Area', tooltip: 'Area', paths: 3, clip: true },
+    { type: 'stackedArea', label: 'Stacked Area', tooltip: 'Stacked', paths: 3, clip: true },
+    { type: 'normalizedArea', label: '100% Stacked Area', tooltip: '100% Stacked', paths: 3, clip: true },
     { type: 'histogram', label: 'Histogram', tooltip: 'Histogram', paths: 7 },
+    { type: 'pie', label: 'Pie', tooltip: 'Pie', paths: 6, axes: 'none' },
+    { type: 'donut', label: 'Donut', tooltip: 'Donut', paths: 6, axes: 'none' },
+    { type: 'scatter', label: 'Scatter', tooltip: 'Scatter', paths: 8, clip: true },
+    { type: 'bubble', label: 'Bubble', tooltip: 'Bubble', paths: 5, clip: true },
+    { type: 'radarLine', label: 'Radar Line', tooltip: 'Radar Line', paths: 27, axes: 'polar' },
+    { type: 'radarArea', label: 'Radar Area', tooltip: 'Radar Area', paths: 3, axes: 'polar' },
+    {
+        type: 'nightingale',
+        label: 'Nightingale',
+        tooltip: 'Nightingale',
+        paths: 18,
+        axes: 'polar',
+        seriesOverAxes: true,
+    },
+    {
+        type: 'radialColumn',
+        label: 'Radial Column',
+        tooltip: 'Radial Column',
+        paths: 18,
+        axes: 'polar',
+        seriesOverAxes: true,
+    },
+    { type: 'radialBar', label: 'Radial Bar', tooltip: 'Radial Bar', paths: 9, axes: 'polar', seriesOverAxes: true },
+    { type: 'rangeBar', label: 'Range Bar', tooltip: 'Range Bar', paths: 3 },
+    { type: 'rangeArea', label: 'Range Area', tooltip: 'Range Area', paths: 3 },
+    { type: 'sunburst', label: 'Sunburst', tooltip: 'Sunburst', paths: 9, axes: 'none' },
+    { type: 'funnel', label: 'Funnel', tooltip: 'Funnel', paths: 3, axes: 'none', clip: true },
+    { type: 'coneFunnel', label: 'Cone Funnel', tooltip: 'Cone Funnel', paths: 3, axes: 'none', clip: true },
+    { type: 'pyramid', label: 'Pyramid', tooltip: 'Pyramid', paths: 3, axes: 'none', clip: true },
+    { type: 'columnLineCombo', label: 'Column & Line', tooltip: 'Column & Line', paths: 3, clip: true },
+    { type: 'areaColumnCombo', label: 'Area & Column', tooltip: 'Area & Column', paths: 3, clip: true },
 ];
+
+const CUSTOM_COMBO_CASE: SvgCase = {
+    type: 'customCombo',
+    label: 'Custom Combination',
+    tooltip: 'Custom Combination',
+    paths: 4,
+    clip: true,
+};
+
+const AXIS_SHAPES: Record<'cartesian' | 'polar' | 'none', string[]> = {
+    cartesian: ['line', 'line'],
+    polar: ['circle', 'circle', 'circle', 'circle'],
+    none: [],
+};
 
 const T1: AgChartTheme = {
     palette: { fills: ['#111111', '#222222', '#333333'], strokes: ['#444444', '#555555', '#666666'] },
@@ -88,7 +136,11 @@ describe('chart settings panel mini chart thumbnails', () => {
 
     async function openSettingsPanel(
         manager: TestGridsManager,
-        { chartType = 'groupedColumn', gridOptions = {} }: { chartType?: ChartType; gridOptions?: GridOptions } = {}
+        {
+            chartType = 'groupedColumn',
+            seriesChartTypes,
+            gridOptions = {},
+        }: { chartType?: ChartType; seriesChartTypes?: SeriesChartType[]; gridOptions?: GridOptions } = {}
     ): Promise<GridApi> {
         const api = await manager.createGridAndWait('grid1', {
             columnDefs: COLUMN_DEFS,
@@ -100,6 +152,7 @@ describe('chart settings panel mini chart thumbnails', () => {
         const chartRef = api.createRangeChart({
             cellRange: { columns: ['country', 'gold', 'silver', 'bronze'] },
             chartType,
+            seriesChartTypes,
         })!;
         await chartRef.chart.waitForUpdate();
         api.openChartToolPanel({ chartId: chartRef.chartId, panel: 'settings' });
@@ -111,10 +164,37 @@ describe('chart settings panel mini chart thumbnails', () => {
         return { customChartThemes: themes, chartThemes: Object.keys(themes) };
     }
 
-    function seriesPaints(type: ChartType, attr: 'fill' | 'stroke', wrapper?: HTMLElement): (string | null)[] {
+    function seriesPaints(
+        type: ChartType,
+        attr: 'fill' | 'stroke' | 'fill-opacity',
+        wrapper?: HTMLElement
+    ): (string | null)[] {
         const label = SVG_CASES.find((c) => c.type === type)!.label;
         const svg = thumbnail(label, wrapper).querySelector(SVG_SELECTOR)!;
         return Array.from(svg.querySelectorAll('path')).map((path) => path.getAttribute(attr));
+    }
+
+    /** The svg's shapes in paint order, as `path`, `line` (cartesian axes) or `circle` (polar rings). */
+    function expectSvgShapes(el: HTMLElement, { tooltip, paths, axes, seriesOverAxes }: SvgCase): void {
+        expect(el.querySelector('canvas')).toBeNull();
+
+        const svgs = el.querySelectorAll(SVG_SELECTOR);
+        expect(svgs).toHaveLength(1);
+        const svg = svgs[0];
+        expect(svg.firstElementChild?.localName).toBe('title');
+        expect(svg.firstElementChild?.textContent).toBe(tooltip);
+
+        const axisNames = AXIS_SHAPES[axes ?? 'cartesian'];
+        const series: string[] = Array(paths).fill('path');
+        const shapes = Array.from(svg.querySelectorAll('path, line, circle'));
+        expect(shapes.map((shape) => shape.localName)).toEqual(
+            seriesOverAxes ? [...axisNames, ...series] : [...series, ...axisNames]
+        );
+        shapes
+            .filter((shape) => shape.localName !== 'path')
+            .forEach((axis) => expect(axis.getAttribute('stroke')).toBe('gray'));
+
+        expect(svg.querySelector('defs, clipPath, linearGradient, radialGradient, pattern')).toBeNull();
     }
 
     describe('svg thumbnails', () => {
@@ -132,44 +212,39 @@ describe('chart settings panel mini chart thumbnails', () => {
         });
 
         test.each(SVG_CASES)(
-            '$type renders $paths series paths, then 2 axis lines, under the $tooltip title in one svg',
-            ({ label, tooltip, paths }) => {
-                const el = thumbnail(label);
-                expect(el.querySelector('canvas')).toBeNull();
-
-                const svgs = el.querySelectorAll(SVG_SELECTOR);
-                expect(svgs).toHaveLength(1);
-                const svg = svgs[0];
-                expect(svg.firstElementChild?.localName).toBe('title');
-                expect(svg.firstElementChild?.textContent).toBe(tooltip);
-
-                // the axes are drawn over the series
-                const shapes = Array.from(svg.querySelectorAll('path, line'));
-                expect(shapes.map((shape) => shape.localName)).toEqual([...Array(paths).fill('path'), 'line', 'line']);
-                shapes.slice(-2).forEach((line) => expect(line.getAttribute('stroke')).toBe('gray'));
-
-                expect(svg.querySelector('defs, clipPath, linearGradient, radialGradient, pattern')).toBeNull();
+            '$type renders $paths series paths and its axes under the $tooltip title in one svg',
+            (svgCase) => {
+                expectSvgShapes(thumbnail(svgCase.label), svgCase);
             }
         );
 
-        test('only the line and area series are clipped, to the plot area', () => {
-            for (const { type, label } of SVG_CASES) {
+        test('the polar rings fade inwards from the outer ring', () => {
+            const rings = Array.from(thumbnail('Radar Line').querySelectorAll(`${SVG_SELECTOR} circle`));
+            expect(rings.map((ring) => ring.getAttribute('stroke-opacity'))).toEqual(['0.5', '0.2', '0.2', '0.2']);
+            expect(rings.map((ring) => ring.getAttribute('fill'))).toEqual(['none', 'none', 'none', 'none']);
+        });
+
+        test('only the series of clipped types are clipped, to the plot area', () => {
+            for (const { label, paths, clip } of SVG_CASES) {
                 const nested = thumbnail(label).querySelector(`${SVG_SELECTOR} svg`);
-                if (!/line|area/i.test(type)) {
+                if (!clip) {
                     expect(nested).toBeNull();
                     continue;
                 }
                 expect(nested!.getAttribute('overflow')).toBe('hidden');
                 expect(nested!.getAttribute('viewBox')).toBe('5 5 48 48');
-                expect(nested!.querySelectorAll('path')).toHaveLength(3);
+                expect(nested!.querySelectorAll('path')).toHaveLength(paths);
             }
         });
 
-        test('pie thumbnail keeps its canvas and has no svg', () => {
-            const el = thumbnail('Pie');
-            expect(el.querySelector('canvas.ag-chart-mini-thumbnail-canvas')).not.toBeNull();
-            expect(el.querySelector('svg')).toBeNull();
-        });
+        test.each(['Box Plot', 'Treemap', 'Heatmap', 'Waterfall'])(
+            '%s thumbnail keeps its canvas and has no svg',
+            (label) => {
+                const el = thumbnail(label);
+                expect(el.querySelector('canvas.ag-chart-mini-thumbnail-canvas')).not.toBeNull();
+                expect(el.querySelector('svg')).toBeNull();
+            }
+        );
 
         test('clicking a thumbnail moves ag-selected and the selected aria-label suffix', async () => {
             expect(thumbnail('Grouped Column').classList.contains('ag-selected')).toBe(true);
@@ -217,6 +292,12 @@ describe('chart settings panel mini chart thumbnails', () => {
             expect(seriesPaints('line', 'stroke')).toEqual(T1.palette!.fills);
             expectPaletteColours(themePalette(T1));
 
+            const [f0, f1, f2] = T1.palette!.fills as string[];
+            expect(seriesPaints('scatter', 'fill')).toEqual([f0, f1, f2, f0, f1, f2, f0, f1]);
+            expect(seriesPaints('rangeArea', 'fill')).toEqual([f0, f2, f1]);
+            expect(seriesPaints('coneFunnel', 'fill-opacity')).toEqual([null, '0.8', '0.6']);
+            expect(seriesPaints('bubble', 'fill-opacity')).toEqual(Array(5).fill('0.7'));
+
             document.querySelector<HTMLElement>('.ag-chart-settings-next')!.click();
 
             await waitFor(
@@ -261,7 +342,13 @@ describe('chart settings panel mini chart thumbnails', () => {
                         barGroup: ['bar', 'stackedBar', 'normalizedBar'],
                         lineGroup: ['line', 'stackedLine', 'normalizedLine'],
                         areaGroup: ['area', 'stackedArea', 'normalizedArea'],
-                        statisticalGroup: ['histogram'],
+                        pieGroup: ['pie', 'donut'],
+                        scatterGroup: ['scatter', 'bubble'],
+                        polarGroup: ['radarLine', 'radarArea', 'nightingale', 'radialColumn', 'radialBar'],
+                        statisticalGroup: ['histogram', 'rangeBar', 'rangeArea'],
+                        hierarchicalGroup: ['sunburst'],
+                        funnelGroup: ['funnel', 'coneFunnel', 'pyramid'],
+                        combinationGroup: ['columnLineCombo', 'areaColumnCombo'],
                     },
                 },
             },
@@ -292,5 +379,29 @@ describe('chart settings panel mini chart thumbnails', () => {
 
             expectPaletteColours({ fills: ['#123456'], strokes: ['#654321'] });
         });
+    });
+
+    test('customCombo renders its grey axes and pen icon over palette-coloured series', async () => {
+        await openSettingsPanel(gridsManager, {
+            chartType: 'customCombo',
+            seriesChartTypes: [
+                { colId: 'gold', chartType: 'groupedColumn', secondaryAxis: false },
+                { colId: 'silver', chartType: 'line', secondaryAxis: false },
+                { colId: 'bronze', chartType: 'area', secondaryAxis: false },
+            ],
+            gridOptions: themedGridOptions({ t1: T1 }),
+        });
+
+        const el = thumbnail(CUSTOM_COMBO_CASE.label);
+        expectSvgShapes(el, CUSTOM_COMBO_CASE);
+
+        const [f0, f1, f2] = T1.palette!.fills as string[];
+        const paths = Array.from(el.querySelectorAll(`${SVG_SELECTOR} path`));
+        expect(paths.map((path) => [path.getAttribute('fill'), path.getAttribute('stroke')])).toEqual([
+            [f0, null],
+            [f1, null],
+            ['none', f2],
+            ['whitesmoke', 'darkslategrey'],
+        ]);
     });
 });
