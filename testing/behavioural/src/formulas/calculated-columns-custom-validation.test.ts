@@ -441,7 +441,7 @@ describe('calculated columns - custom dialog validation', () => {
                 columnDefs,
                 rowData,
                 calculatedColumns: { applyMode, getValidationErrors: () => messages },
-                onCalculatedColumnExpressionChanged: changed,
+                onCalculatedColumnChanged: changed,
             });
             await openEditDialogViaMenu(api, 'profit');
             expect(getExpressionInput().validationMessage).toBe(applyMode === 'live' ? messages.join('\n') : '');

@@ -46,6 +46,7 @@ export const _PUBLIC_EVENTS = [
     'pasteStart',
     'pasteEnd',
     'calculatedColumnCreated',
+    'calculatedColumnChanged',
     'calculatedColumnExpressionChanged',
     'calculatedColumnRemoved',
     'calculatedColumnValidationStateChanged',

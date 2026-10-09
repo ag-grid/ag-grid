@@ -15,6 +15,7 @@ import type {
     BodyScrollEvent,
     BulkEditingStartedEvent,
     BulkEditingStoppedEvent,
+    CalculatedColumnChangedEvent,
     CalculatedColumnCreatedEvent,
     CalculatedColumnExpressionChangedEvent,
     CalculatedColumnRemovedEvent,
@@ -2635,7 +2636,14 @@ export interface GridOptions<TData = any> {
      */
     onCalculatedColumnCreated?(event: CalculatedColumnCreatedEvent<TData>): void;
     /**
+     * A calculated column's title, data type, expression or group visibility has changed.
+     * Fires once per committed update, not during initialisation or Grid State restoration.
+     * Live updates can contain incomplete or invalid expressions.
+     */
+    onCalculatedColumnChanged?(event: CalculatedColumnChangedEvent<TData>): void;
+    /**
      * A calculated column expression has changed.
+     * @deprecated v36.3 Use `onCalculatedColumnChanged` and check `event.changes.calculatedExpression` instead.
      */
     onCalculatedColumnExpressionChanged?(event: CalculatedColumnExpressionChangedEvent<TData>): void;
     /**

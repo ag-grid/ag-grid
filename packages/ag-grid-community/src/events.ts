@@ -66,6 +66,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         pasteStart: PasteStartEvent<TData, TContext>;
         pasteEnd: PasteEndEvent<TData, TContext>;
         calculatedColumnCreated: CalculatedColumnCreatedEvent<TData, TContext>;
+        calculatedColumnChanged: CalculatedColumnChangedEvent<TData, TContext>;
         calculatedColumnExpressionChanged: CalculatedColumnExpressionChangedEvent<TData, TContext>;
         calculatedColumnRemoved: CalculatedColumnRemovedEvent<TData, TContext>;
         calculatedColumnValidationStateChanged: CalculatedColumnValidationStateChangedEvent<TData, TContext>;
@@ -720,8 +721,24 @@ export interface CalculatedColumnBaseEvent<T extends AgEventType, TData = any, T
 > {
     /** The calculated column the event relates to. Always set — calc-col events always target exactly one column. */
     column: Column;
-    /** The current expression on the column — uses internal `[colId]` references, not header-name references. */
+    /** The stored expression. Recognised dialog references use `[colId]`; unresolved live input can retain display references. */
     expression: string;
+}
+
+export type CalculatedColumnChanges = {
+    [K in 'headerName' | 'cellDataType' | 'calculatedExpression' | 'columnGroupShow']?: {
+        oldValue: ColDef[K];
+        newValue: ColDef[K];
+    };
+};
+
+export interface CalculatedColumnChangedEvent<TData = any, TContext = any> extends CalculatedColumnBaseEvent<
+    'calculatedColumnChanged',
+    TData,
+    TContext
+> {
+    /** Changed definition properties and their previous/new values. Never empty; values are snapshots. */
+    changes: CalculatedColumnChanges;
 }
 
 export interface CalculatedColumnCreatedEvent<TData = any, TContext = any> extends CalculatedColumnBaseEvent<
@@ -736,6 +753,7 @@ export interface CalculatedColumnRemovedEvent<TData = any, TContext = any> exten
     TContext
 > {}
 
+/** @deprecated v36.3 Use `CalculatedColumnChangedEvent` and check `changes.calculatedExpression` instead. */
 export interface CalculatedColumnExpressionChangedEvent<TData = any, TContext = any> extends CalculatedColumnBaseEvent<
     'calculatedColumnExpressionChanged',
     TData,

@@ -31,6 +31,7 @@ import type {
     BodyScrollEvent,
     BulkEditingStartedEvent,
     BulkEditingStoppedEvent,
+    CalculatedColumnChangedEvent,
     CalculatedColumnCreatedEvent,
     CalculatedColumnExpressionChangedEvent,
     CalculatedColumnRemovedEvent,
@@ -2297,7 +2298,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public calculatedColumnCreated: EventEmitter<CalculatedColumnCreatedEvent<TData>> = new EventEmitter<
         CalculatedColumnCreatedEvent<TData>
     >();
+    /** A calculated column's title, data type, expression or group visibility has changed.
+     * Fires once per committed update, not during initialisation or Grid State restoration.
+     * Live updates can contain incomplete or invalid expressions.
+     */
+    @Output() public calculatedColumnChanged: EventEmitter<CalculatedColumnChangedEvent<TData>> = new EventEmitter<
+        CalculatedColumnChangedEvent<TData>
+    >();
     /** A calculated column expression has changed.
+     * @deprecated v36.3 Use `onCalculatedColumnChanged` and check `event.changes.calculatedExpression` instead.
      */
     @Output() public calculatedColumnExpressionChanged: EventEmitter<CalculatedColumnExpressionChangedEvent<TData>> =
         new EventEmitter<CalculatedColumnExpressionChangedEvent<TData>>();
