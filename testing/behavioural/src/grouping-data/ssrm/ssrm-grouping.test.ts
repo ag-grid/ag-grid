@@ -8,7 +8,7 @@ import type {
     IServerSideGetRowsRequest,
 } from 'ag-grid-community';
 import { CsvExportModule, GROUP_TOTAL_ROW_ID_PREFIX } from 'ag-grid-community';
-import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 describe('csv exports for server-side grouping', () => {
     const gridManager = new TestGridsManager({
@@ -383,7 +383,7 @@ describe('csv exports for server-side grouping', () => {
 
 describe('SSRM footer mirrors the group field value', () => {
     const gridManager = new TestGridsManager({
-        modules: [RowGroupingModule, ServerSideRowModelModule],
+        modules: [RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule],
     });
 
     beforeEach(() => gridManager.reset());
@@ -445,6 +445,29 @@ describe('SSRM footer mirrors the group field value', () => {
         expect(footerNode.footer).toBe(true);
 
         expect(api.getCellValue({ rowNode: footerNode, colKey: 'grp' })).toBe('Ireland');
+    });
+
+    test('repeated updates to a group keep its group total row', async () => {
+        const api = await gridManager.createGridAndWait(null, {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'sales', aggFunc: 'sum' },
+            ],
+            rowModelType: 'serverSide',
+            serverSideDatasource: createMirrorDatasource(),
+            getRowId: ({ data, parentKeys }: GetRowIdParams) =>
+                data.id ?? [...(parentKeys ?? []), data.country].join('|'),
+            groupTotalRow: 'bottom',
+        });
+
+        await ssrmExpandAndLoadAll(api);
+        await waitForNoLoadingRows(api);
+
+        const groupData = { id: 'g-Ireland', key: 'Ireland', country: 'Ireland', group: true, leafGroup: true };
+        for (const sales of [1, 2, 3]) {
+            api.applyServerSideTransaction({ update: [{ ...groupData, sales }] });
+            expect(api.getRowNode('g-Ireland')!.sibling?.footer).toBe(true);
+        }
     });
 
     test('a group total row turned on after load takes the height getRowHeight gives it, not its group', async () => {

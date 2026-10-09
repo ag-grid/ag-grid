@@ -105,6 +105,27 @@ In the example below, note the following:
 
 {% gridExampleRunner title="Asynchronous Example" name="transactions-async"  exampleHeight=615 /%}
 
+### Merging Async Transactions
+
+Streaming sources such as WebSockets often send many changes for the same few rows. By default the grid applies each queued transaction separately, so a row updated many times in one window is processed many times. Enable `serverSideMergeAsyncTransactions` and register `ServerSideRowModelMergeTransactionsModule` to have the grid merge the queued transactions for each route, so each row is usually changed only once per flush.
+
+{% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["serverSideMergeAsyncTransactions"] /%}
+
+Merging gives the same rows and data as applying the transactions one after the other:
+
+- Several updates to a row become one update with the latest data.
+- An add is applied with the data it was given, and updates that follow it are applied separately.
+- An add followed by a remove cancels out, and the row is never created.
+- An update followed by a remove becomes a remove.
+
+Transactions that set `addIndex` or `rowCount` are applied on their own, in order. Each callback passed to `applyServerSideTransactionAsync` receives a result containing only the nodes for its own rows. A row that is added and then removed in the same merged batch is left out of every caller's result, so code that reacts to each node in `result.add` or `result.remove` does not see it. Transactions applied in separate batches, for example either side of one with `addIndex`, still report the node.
+
+Transactions are grouped by route, so transactions for different routes can be applied in a different order from the queue. For example, with transactions for routes A, B and then A again, the second A transaction is applied before the B transaction.
+
+`isApplyServerSideTransaction` is still called once for each transaction, and a transaction it rejects is left out of the merge. Every transaction in a merged batch is checked against the grid state from before that batch is applied, not after the other transactions in the same batch. `getRowId` can also be called for rows in transactions that `isApplyServerSideTransaction` then cancels.
+
+Merging is skipped when `serverSideEnableClientSideSort` is enabled, as each transaction re-sorts the rows.
+
 ## Showcase Example
 
 The following demonstrates a more complex example of transactions, it shows subscribing to a source of updates to provide the changes, while using dynamic row grouping, aggregation, and child counts. All of which react to the changes caused by the transactions.

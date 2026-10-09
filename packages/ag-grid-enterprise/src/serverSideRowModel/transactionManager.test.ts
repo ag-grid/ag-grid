@@ -44,7 +44,7 @@ describe('TransactionManager internal flush branches', () => {
         executeOnStore = vi.fn();
 
         manager = new TransactionManager();
-        manager['gos'] = { get: () => 50 } as any;
+        manager['gos'] = { get: (key: string) => (key === 'asyncTransactionWaitMillis' ? 50 : undefined) } as any;
         manager['eventSvc'] = { dispatchEvent } as any;
         manager['valueCache'] = { onDataChanged: vi.fn() } as any;
         manager['serverSideRowModel'] = { executeOnStore } as any;
