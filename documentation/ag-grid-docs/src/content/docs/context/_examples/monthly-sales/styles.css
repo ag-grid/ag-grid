@@ -3,10 +3,6 @@
     padding-bottom: 2px;
 }
 
-label {
-    font-weight: normal;
-}
-
 .cell-act {
     background: rgba(255, 0, 0, 0.1);
 }
@@ -15,18 +11,6 @@ label {
     background: rgba(0, 255, 0, 0.1);
 }
 
-.legend-box {
-    display: inline-block;
-    border: 1px solid black;
-    width: 12px;
-    height: 12px;
-}
-
 .cell-figure {
     text-align: right;
-}
-
-.example-wrapper {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 14px;
 }
