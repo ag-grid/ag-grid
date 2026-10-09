@@ -315,7 +315,7 @@ function tokenize(expr: string, source?: FormulaExpressionSource): string[] {
 }
 
 type OperatorFrame = { index: number } & (
-    | { kind: 'op'; def: OperatorDef }
+    | { kind: 'op'; def: OperatorDef; outLen: number }
     | { kind: 'parenthesis'; outLen: number }
     | { kind: 'function'; name: string; args: FormulaNode[] }
 );
@@ -392,6 +392,10 @@ function parseExpression(
 
         if (frame.kind === 'op') {
             const def = frame.def;
+            // only a postfix operand precedes its operator; any other read before it belongs to a lower operator
+            if (def.fixity !== 'postfix' && output.length <= frame.outLen) {
+                throw errorAt(7, frame.index, [def.symbol]);
+            }
 
             if (def.fixity !== 'infix') {
                 const right = output.pop();
@@ -551,7 +555,7 @@ function parseExpression(
                 }
             }
 
-            ops.push({ kind: 'op', def: incoming, index: i });
+            ops.push({ kind: 'op', def: incoming, index: i, outLen: output.length });
             i++;
             continue;
         }

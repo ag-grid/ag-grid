@@ -737,7 +737,10 @@ export class CalculatedColumnForm extends Component {
             case KeyCode.ENTER:
                 event.preventDefault();
                 event.stopPropagation();
-                this.confirmSelectedSuggestion();
+                // Enter on an empty picker has nothing to confirm, so it stays open showing why
+                if (event.key === KeyCode.TAB || this.openSuggestions.length !== 0) {
+                    this.confirmSelectedSuggestion();
+                }
                 return;
         }
     }
