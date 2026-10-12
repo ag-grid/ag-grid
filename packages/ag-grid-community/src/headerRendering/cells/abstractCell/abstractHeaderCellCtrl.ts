@@ -381,7 +381,7 @@ export abstract class AbstractHeaderCellCtrl<
     private getViewportAdjustedResizeDiff(e: KeyboardEvent): number {
         const diff = this.getResizeDiff(e);
         const { pinnedCols } = this.beans;
-        return pinnedCols ? pinnedCols.getHeaderResizeDiff(diff, this.column) : diff;
+        return pinnedCols ? pinnedCols.getHeaderResizeDiff(diff, this.column, e.shiftKey) : diff;
     }
 
     private getResizeDiff(e: KeyboardEvent): number {

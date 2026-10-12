@@ -46,8 +46,11 @@ export class ChartCrossFilterService extends BeanStub implements NamedBean {
         }
 
         const filterManager = this.beans.filterManager;
+        if (!filterManager) {
+            return;
+        }
 
-        filterManager?.getColumnFilterInstance(colId).then((filter) => {
+        void filterManager.getColumnFilterInstance(colId).then((filter) => {
             const filterType = (filter as IProvidedFilter)?.filterType;
             let setFilter: SetFilter | undefined;
             let processModel = (model: any): any => model;

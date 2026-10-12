@@ -3,7 +3,7 @@ import { isRowNumberCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
-import { _laneOfPinned } from '../entities/agColumn';
+import { _laneOfPinned, isColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
@@ -153,8 +153,21 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         column.dispatchStateUpdatedEvent('pinned', source);
     }
 
-    public getHeaderResizeDiff(diff: number, column: AgColumn | AgColumnGroup): number {
-        if (column.pinnedLane !== 1) {
+    /**
+     * A shift resize hands the width change to the next column (see `ColumnResizeService.setColumnWidths`),
+     * so when that column is in the same pinned section the section's total width does not change.
+     */
+    public isShiftResizeWithinPinnedSection(column: AgColumn, shiftKey: boolean): boolean {
+        const takeFromAdjacent = shiftKey !== (this.gos.get('colResizeDefault') === 'shift');
+        return takeFromAdjacent && this.beans.visibleCols.getColAfter(column)?.pinnedLane === column.pinnedLane;
+    }
+
+    public getHeaderResizeDiff(diff: number, column: AgColumn | AgColumnGroup, shiftKey: boolean): number {
+        if (isColumn(column) && this.isShiftResizeWithinPinnedSection(column, shiftKey)) {
+            return diff;
+        }
+
+        if (diff > 0 && column.pinnedLane !== 1) {
             const { leftWidth, rightWidth } = this;
 
             const bodyWidth = this.getAvailableViewportWidth() - MIN_CENTER_VIEWPORT_WIDTH;
