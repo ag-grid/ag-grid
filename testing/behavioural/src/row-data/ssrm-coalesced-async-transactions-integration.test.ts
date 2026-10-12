@@ -1,11 +1,4 @@
-import {
-    ALL_SEVERITIES,
-    GridRows,
-    TestGridsManager,
-    asyncSetTimeout,
-    waitForEvent,
-    waitForNoLoadingRows,
-} from 'ag-test-utils';
+import { ALL_SEVERITIES, GridRows, TestGridsManager, waitForEvent, waitForNoLoadingRows } from 'ag-test-utils';
 
 import type {
     AsyncTransactionsFlushed,
@@ -938,9 +931,7 @@ describe('SSRM coalesced async transactions with other grid options', () => {
             api.applyServerSideTransactionAsync({ update: [ROW(1, 'a')] }, (r) => results.push(r));
             api.applyServerSideTransactionAsync({ update: [ROW(1, 'b')] }, (r) => results.push(r));
             api.destroy();
-            // the flush timer, then the deferred result callbacks
-            await asyncSetTimeout(0);
-            await asyncSetTimeout(0);
+            await vi.waitFor(() => expect(results).toHaveLength(2));
             return results.map(summarise);
         });
 
@@ -1114,7 +1105,7 @@ describe('SSRM coalesced async transactions with other grid options', () => {
         ]);
         expect(coalesced.requestsAfter).toEqual([]);
         expect(coalesced.displayedRowCount).toBe(302);
-        // row 5 is updated, then no longer cached once the adds land, in both modes
+        // row 5 is updated, then its block is no longer cached after the flush, in both modes
         expect(coalesced.cached).toEqual([null, null, ROW(250, 'c'), ROW('n1', 'new 1'), ROW('n2', 'new 2')]);
     });
 });
