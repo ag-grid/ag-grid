@@ -5,7 +5,7 @@ import type { AgGridCommon } from './iCommon';
  * - `'initial'`: the rows already visible when the subscription started.
  * - `'scroll'`: rows entered the view by scrolling or paging, or left the view while still in the grid.
  * - `'load'`: rows appeared in the view without scrolling, for example when their block finished loading.
- * - `'expand'`: rows shown by expanding a group.
+ * - `'expand'`: rows shown by expanding a group, and the group row it hides when `groupHideOpenParents` is set.
  * - `'collapse'`: rows hidden, or brought into view, by collapsing a group.
  * - `'move'`: a row moved to another parent, for example by a transaction changing its group. Passed to `onUnsubscribe` with its old `parentKeys` and `route`, then to `onSubscribe` with the new ones.
  * - `'sort'`: rows moved into or out of the view by a sort that kept them in the grid.

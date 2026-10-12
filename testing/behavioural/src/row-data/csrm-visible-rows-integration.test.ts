@@ -256,8 +256,8 @@ describe('CSRM subscribeToVisibleRows integration', () => {
             api.setRowNodeExpanded(api.getRowNode(ireland)!, false);
             await waitFor(() => expect(recorder.ids()).toEqual([...groups].sort()));
 
-            // Leaves out the batch that unsubscribes the hidden parent, covered by the skipped BUG test below.
-            expect(recorder.calls.filter((c) => !c.ids.includes(ireland) || c.type === 'subscribe').slice(1)).toEqual([
+            expect(recorder.calls.slice(1)).toEqual([
+                { type: 'unsubscribe', reason: 'expand', ids: [ireland] },
                 { type: 'unsubscribe', reason: 'scroll', ids: [spain, france] },
                 { type: 'subscribe', reason: 'expand', ids: irelandRows },
                 { type: 'unsubscribe', reason: 'collapse', ids: irelandRows },
@@ -266,9 +266,7 @@ describe('CSRM subscribeToVisibleRows integration', () => {
             expect(recorder.violations).toEqual([]);
         });
 
-        // BUG: the open parent hidden by groupHideOpenParents is still in the grid, but is unsubscribed with
-        // reason 'remove', which the docs reserve for rows no longer in the grid.
-        test.skip('groupHideOpenParents: the open parent it hides is not reported as removed', async () => {
+        test('groupHideOpenParents: the open parent it hides is unsubscribed with expand, not as removed', async () => {
             const api = await createGroupedGrid({ groupHideOpenParents: true, groupDisplayType: 'multipleColumns' });
             const recorder = createRecorder();
             api.subscribeToVisibleRows(recorder.handlers);
@@ -279,7 +277,22 @@ describe('CSRM subscribeToVisibleRows integration', () => {
             await waitFor(() => expect(recorder.subscribed.has(ireland)).toBe(false));
             expect(api.getRowNode(ireland)).toBeDefined();
             const call = recorder.calls.find((c) => c.type === 'unsubscribe' && c.ids.includes(ireland))!;
-            expect(call.reason).not.toBe('remove');
+            expect(call.reason).toBe('expand');
+        });
+
+        test('groupHideOpenParents: expandAll unsubscribes the open parents it hides with expand', async () => {
+            const api = await createGroupedGrid({ groupHideOpenParents: true, groupDisplayType: 'multipleColumns' });
+            const recorder = createRecorder();
+            api.subscribeToVisibleRows(recorder.handlers);
+            const groups = groupIds(api);
+
+            api.expandAll();
+
+            await waitFor(() => expect(recorder.calls.length).toBeGreaterThan(1));
+            expect(recorder.calls.filter((c) => c.type === 'unsubscribe')).toEqual([
+                { type: 'unsubscribe', reason: 'expand', ids: groups },
+            ]);
+            expect(recorder.violations).toEqual([]);
         });
 
         test("groupDisplayType 'groupRows' still reports the group rows, which are drawn full width", async () => {

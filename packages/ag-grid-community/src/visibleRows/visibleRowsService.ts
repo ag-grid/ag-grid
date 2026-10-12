@@ -59,7 +59,16 @@ type PendingFlag = 'expandAllPending' | 'collapsePending' | 'scrollPending' | 's
 /** Why the grid destroyed a row, when it was not removed, e.g. by a transaction. */
 export type VisibleRowsDestroyReason = Extract<VisibleRowsReason, 'reset' | 'collapse'>;
 
-const UNSUBSCRIBE_ORDER: VisibleRowsReason[] = ['reset', 'remove', 'move', 'collapse', 'filter', 'sort', 'scroll'];
+const UNSUBSCRIBE_ORDER: VisibleRowsReason[] = [
+    'reset',
+    'remove',
+    'move',
+    'expand',
+    'collapse',
+    'filter',
+    'sort',
+    'scroll',
+];
 const SUBSCRIBE_ORDER: VisibleRowsReason[] = ['expand', 'collapse', 'move', 'filter', 'sort', 'load', 'scroll'];
 
 export class VisibleRowsService extends BeanStub implements NamedBean {
@@ -421,8 +430,17 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
             }
             return 'scroll';
         }
-        // A row filtered out is still in the grid, unlike a removed row.
-        return sub.filterPending && this.beans.rowModel.getRowNode(row.ref.id) === node ? 'filter' : 'remove';
+        if (this.beans.rowModel.getRowNode(row.ref.id) === node) {
+            // With `groupHideOpenParents`, expanding a group hides its row, which stays in the grid.
+            if (node.expanded && (sub.expandAllPending || sub.expandedGroups.has(node))) {
+                return 'expand';
+            }
+            // A row filtered out is still in the grid, unlike a removed row.
+            if (sub.filterPending) {
+                return 'filter';
+            }
+        }
+        return 'remove';
     }
 
     private getSubscribeReason(node: RowNode, sub: VisibleRowsSubscription): VisibleRowsReason {
