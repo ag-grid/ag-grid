@@ -5,7 +5,7 @@ import { allParamModels } from './ParamModel';
 import type { PartModel } from './PartModel';
 import { FeatureModel } from './PartModel';
 import { enabledAdvancedParamsAtom } from './advanced-params';
-import { getBaseTheme } from './base-theme';
+import { getRenderedBaseThemeAtom } from './base-theme';
 import { getReinterpretationElement } from './utils';
 
 export type RenderedThemeInfo = {
@@ -30,7 +30,7 @@ let previousStyleSheet: CSSStyleSheet | null = null;
 const renderedThemeInfoAtom = atom((get): RenderedThemeInfo => {
     const enabledAdvancedParams = get(enabledAdvancedParamsAtom);
 
-    let theme = getBaseTheme();
+    let theme = get(getRenderedBaseThemeAtom());
 
     const usedParts: PartModel[] = [];
     for (const featureName of renderedFeatureNames) {

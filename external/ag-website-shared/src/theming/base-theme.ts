@@ -1,4 +1,5 @@
 import type { Theme } from 'ag-stack';
+import { type Atom, atom } from 'jotai';
 
 let baseTheme: Theme | undefined;
 
@@ -17,3 +18,15 @@ export const getBaseTheme = (): Theme => {
     }
     return baseTheme;
 };
+
+let renderedBaseThemeAtom: Atom<Theme> = atom(() => getBaseTheme());
+
+/**
+ * Hosts whose base theme follows the user's choices, such as a light or dark
+ * preset, supply it as an atom for the preview and the fields' defaults to follow.
+ */
+export const setRenderedBaseThemeAtom = (themeAtom: Atom<Theme>) => {
+    renderedBaseThemeAtom = themeAtom;
+};
+
+export const getRenderedBaseThemeAtom = (): Atom<Theme> => renderedBaseThemeAtom;
