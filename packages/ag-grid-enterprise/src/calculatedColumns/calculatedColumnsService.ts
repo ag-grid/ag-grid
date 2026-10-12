@@ -245,12 +245,13 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             return;
         }
         const oldColDef = pickUserOwnedProperties(targetColumn.colDef);
+        const current = this.getDraftColDef(targetColumn);
         const safeColDef: CalculatedColumnUpdate = { ...colDef };
         // the dialog shows a resolved title/type; do not persist these defaults on unrelated edits.
         if (safeColDef.headerName === this.getDraftHeaderName(targetColumn)) {
             delete safeColDef.headerName;
         }
-        if (safeColDef.cellDataType === targetColumn.colDef.cellDataType) {
+        if (safeColDef.cellDataType === current.cellDataType) {
             delete safeColDef.cellDataType;
         }
         const calcExpr = _normaliseCalculatedExpression(safeColDef.calculatedExpression);
@@ -266,9 +267,6 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         // Dialog-created columns compare stored definitions, so `processColDef` output never makes an unchanged
         // edit look changed. Error-only changes also invalidate evaluated values and update persisted state.
         const merged = _addColumnDefaultAndTypes(this.beans, nextColDef, targetColId);
-        const current = dynamicColumn
-            ? _addColumnDefaultAndTypes(this.beans, dynamicColumn.colDef, targetColId)
-            : targetColumn.colDef;
         const changed =
             !_mergedEqual(merged, current) || !_mergedEqual(nextExpressionError, entry?.calculatedExpressionError);
         // Skip when unchanged: a redundant override entry would needlessly re-apply on every later rebuild.
@@ -1162,18 +1160,21 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     private toDraft(column: AgColumn, mapper: CalculatedColumnReferenceMapper): CalculatedColumnDraft {
-        const colId = column.colId;
-        // Dialog-created columns fill from the stored colDef, so the dialog shows and saves the user's values
-        // rather than `processColDef` output.
-        const storedColDef = this.dynamicColumns.get(colId)?.colDef;
-        const colDef = storedColDef ? _addColumnDefaultAndTypes(this.beans, storedColDef, colId) : column.colDef;
-        const cellDataType = colDef.cellDataType;
+        const colDef = this.getDraftColDef(column);
         return {
-            colId,
+            colId: column.colId,
             headerName: this.getDraftHeaderName(column),
-            cellDataType,
+            cellDataType: colDef.cellDataType,
             calculatedExpression: mapper.toDisplayExpression(colDef.calculatedExpression ?? ''),
         };
+    }
+
+    /** Dialog-created columns resolve to the stored colDef, so the dialog shows and saves the user's values
+     *  rather than `processColDef` output. */
+    private getDraftColDef(column: AgColumn): ColDef {
+        const colId = column.colId;
+        const storedColDef = this.dynamicColumns.get(colId)?.colDef;
+        return storedColDef ? _addColumnDefaultAndTypes(this.beans, storedColDef, colId) : column.colDef;
     }
 
     private getDraftHeaderName(column: AgColumn): string {
