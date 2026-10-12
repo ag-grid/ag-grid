@@ -74,6 +74,7 @@ export const sonarjsConfig = [
             'unicorn/prefer-at': 0,
             'unicorn/prefer-string-raw': 'error',
             'unicorn/prefer-includes': 0,
+            'unicorn/no-negation-in-equality-check': 'error',
             'unicorn/no-zero-fractions': 0,
             'unicorn/no-useless-fallback-in-spread': 'error',
 

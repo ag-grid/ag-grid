@@ -165,7 +165,7 @@ function migrateV26_2(model: ChartModel) {
             .map(({ type, ...axisProps }: any) => ({
                 [type]: { ...minimalAxis, ...axisProps },
             }))
-            .reduce(merge, {});
+            .reduce((merged: object, options: object) => merge(merged, options), {});
         for (const v of ALL_AXIS_TYPES.filter((v) => updatedAxes[v] == null)) {
             updatedAxes[v] = { ...minimalAxis };
         }
@@ -180,7 +180,7 @@ function migrateV26_2(model: ChartModel) {
                 ...otherChartOptions,
             },
         }))
-        .reduce(merge, {});
+        .reduce((merged: object, options: object) => merge(merged, options), {});
 
     model = {
         ...otherModelProps,
