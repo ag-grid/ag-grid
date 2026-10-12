@@ -65,10 +65,15 @@ export interface VisibleRowsOptions {
      */
     includeBuffer?: boolean;
     /**
-     * The minimum time in milliseconds between calls while rows keep changing. A final call is always made once
-     * changes stop. If not set, the handlers are called at most once per animation frame.
+     * Wait until rows have stopped changing for this many milliseconds before calling the handlers.
+     * If neither `debounceMs` nor `throttleMs` is set, the handlers are called at most once per animation frame.
      */
     debounceMs?: number;
+    /**
+     * The minimum time in milliseconds between calls while rows keep changing. A final call is always made once
+     * changes stop. With `debounceMs`, also the longest a change waits for rows to stop changing.
+     */
+    throttleMs?: number;
     /**
      * Set to `false` to leave group rows out.
      * @default true

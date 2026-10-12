@@ -38,6 +38,7 @@ interface VisibleRowsSubscription {
     readonly includeBuffer: boolean;
     readonly includeGroups: boolean;
     readonly debounceMs: number | undefined;
+    readonly throttleMs: number | undefined;
     readonly rows: Map<string, SubscribedRow>;
     readonly expandedGroups: Set<RowNode>;
     expandAllPending: boolean;
@@ -48,6 +49,9 @@ interface VisibleRowsSubscription {
     scheduled: boolean;
     stopped: boolean;
     lastFlushTime: number;
+    /** When the first change not yet flushed happened. */
+    firstChangeTime: number;
+    timer: ReturnType<typeof setTimeout> | undefined;
     lastFirst: number;
     lastLast: number;
 }
@@ -131,6 +135,7 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
             includeBuffer: options.includeBuffer ?? false,
             includeGroups: options.includeGroups ?? true,
             debounceMs: options.debounceMs,
+            throttleMs: options.throttleMs,
             rows: new Map(),
             expandedGroups: new Set(),
             expandAllPending: false,
@@ -141,6 +146,8 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
             scheduled: false,
             stopped: false,
             lastFlushTime: 0,
+            firstChangeTime: 0,
+            timer: undefined,
             lastFirst: 0,
             lastLast: -1,
         };
@@ -215,26 +222,38 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
     }
 
     private schedule(sub: VisibleRowsSubscription): void {
-        if (sub.scheduled || sub.stopped) {
+        const { debounceMs, throttleMs } = sub;
+        const timed = debounceMs != null || throttleMs != null;
+        if (sub.stopped || (sub.scheduled && !timed)) {
             return;
         }
+        if (!timed) {
+            sub.scheduled = true;
+            _requestAnimationFrame(this.beans, () => this.runScheduled(sub));
+            return;
+        }
+
+        const now = Date.now();
+        sub.firstChangeTime = sub.scheduled ? sub.firstChangeTime : now;
         sub.scheduled = true;
 
-        const run = () => {
-            sub.scheduled = false;
-            if (sub.stopped || !this.isAlive()) {
-                return;
-            }
-            this.flush(sub);
-        };
+        // Each change pushes the debounce back, but a pending change never waits longer than `throttleMs`,
+        // and calls are never closer together than `throttleMs`.
+        const settledTime = now + (debounceMs ?? 0);
+        const dueTime =
+            throttleMs == null
+                ? settledTime
+                : Math.max(sub.lastFlushTime + throttleMs, Math.min(settledTime, sub.firstChangeTime + throttleMs));
+        clearTimeout(sub.timer);
+        sub.timer = setTimeout(() => this.runScheduled(sub), Math.max(0, dueTime - now));
+    }
 
-        const debounceMs = sub.debounceMs;
-        if (debounceMs == null) {
-            _requestAnimationFrame(this.beans, run);
+    private runScheduled(sub: VisibleRowsSubscription): void {
+        sub.scheduled = false;
+        if (sub.stopped || !this.isAlive()) {
             return;
         }
-        const delay = Math.max(0, sub.lastFlushTime + debounceMs - Date.now());
-        setTimeout(run, delay);
+        this.flush(sub);
     }
 
     private flush(sub: VisibleRowsSubscription): void {

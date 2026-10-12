@@ -108,16 +108,55 @@ describe('CSRM subscribeToVisibleRows', () => {
         expect(recorder.ids()).toEqual(range(first, last));
     });
 
-    test('debounceMs still delivers the final state', async () => {
+    test('throttleMs still delivers the final state', async () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();
-        api.subscribeToVisibleRows(recorder.handlers, { debounceMs: 20 });
+        api.subscribeToVisibleRows(recorder.handlers, { throttleMs: 20 });
 
         api.ensureIndexVisible(30, 'top');
         api.ensureIndexVisible(60, 'top');
 
         await waitFor(() => expect(recorder.ids()).toEqual(range(60, 65)));
         expect(recorder.violations).toEqual([]);
+    });
+
+    test('debounceMs makes no call until rows stop changing', async () => {
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        api.subscribeToVisibleRows(recorder.handlers, { debounceMs: 100 });
+        vi.useFakeTimers();
+        try {
+            api.ensureIndexVisible(30, 'top');
+            await vi.advanceTimersByTimeAsync(90);
+            expect(recorder.ids()).toEqual(range(0, 5));
+
+            api.ensureIndexVisible(60, 'top');
+            await vi.advanceTimersByTimeAsync(90);
+            expect(recorder.ids()).toEqual(range(0, 5));
+
+            await vi.advanceTimersByTimeAsync(20);
+            expect(recorder.ids()).toEqual(range(60, 65));
+            expect(recorder.reasons('subscribe')).toEqual(['initial', 'scroll']);
+            expect(recorder.violations).toEqual([]);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    test('throttleMs caps how long debounceMs delays a change', async () => {
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        api.subscribeToVisibleRows(recorder.handlers, { debounceMs: 1000, throttleMs: 50 });
+        vi.useFakeTimers();
+        try {
+            api.ensureIndexVisible(30, 'top');
+            await vi.advanceTimersByTimeAsync(60);
+
+            expect(recorder.ids()).toEqual(range(30, 35));
+            expect(recorder.violations).toEqual([]);
+        } finally {
+            vi.useRealTimers();
+        }
     });
 
     test('the stop function unsubscribes every row with reason stop and stops further calls', async () => {

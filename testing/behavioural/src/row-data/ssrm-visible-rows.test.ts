@@ -154,10 +154,10 @@ describe('SSRM subscribeToVisibleRows', () => {
         }
     });
 
-    test('debounceMs still delivers the final state', async () => {
+    test('throttleMs still delivers the final state', async () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();
-        api.subscribeToVisibleRows(recorder.handlers, { debounceMs: 20 });
+        api.subscribeToVisibleRows(recorder.handlers, { throttleMs: 20 });
 
         api.ensureIndexVisible(150, 'top');
         api.ensureIndexVisible(300, 'top');

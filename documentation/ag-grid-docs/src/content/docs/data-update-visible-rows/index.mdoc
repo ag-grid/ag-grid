@@ -81,11 +81,15 @@ Only loaded rows in view are passed to the handlers. The following rows are neve
 
 - Set `includeBuffer` to `true` to also subscribe to rows rendered in the row buffer, so updates are ready before the rows scroll into view.
 - Set `includeGroups` to `false` if the stream only has updates for leaf rows.
+- Set `throttleMs` to limit how often the handlers are called while the user scrolls, so updates keep arriving during a scroll at a rate the stream can handle.
+- Set `debounceMs` to wait until scrolling stops before calling the handlers, so rows that are scrolled past quickly, for example by dragging the scrollbar, are never subscribed. This suits streams where each subscription is costly.
+- Set both to wait for scrolling to stop, but call the handlers at least every `throttleMs` during a long, slow scroll.
 
 ```{% frameworkTransform=true %}
 api.subscribeToVisibleRows(handlers, {
     includeBuffer: true,
-    debounceMs: 200,
+    debounceMs: 150,
+    throttleMs: 1000,
     includeGroups: false,
 });
 ```
