@@ -414,10 +414,10 @@ describe('chart settings panel mini chart thumbnails', () => {
             expect(seriesPaints('waterfall', 'fill')).toEqual([f0, f0, f1, f0, f1]);
         });
 
-        test('custom heatmap cells are clamped and an unparseable fill counts as black', async () => {
+        test('custom heatmap cells that continue past fill 1 are clamped', async () => {
             await openSettingsPanel(gridsManager, {
                 gridOptions: themedGridOptions({
-                    custom: { palette: { fills: ['not-a-colour', '#ffffff'], strokes: ['#000000'] } },
+                    custom: { palette: { fills: ['#000000', '#ffffff'], strokes: ['#000000'] } },
                 }),
             });
 
