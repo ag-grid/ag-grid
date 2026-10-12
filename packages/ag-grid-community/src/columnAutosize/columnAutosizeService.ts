@@ -1007,7 +1007,7 @@ function isContinuousSupported(gos: GridOptionsService): boolean {
 function getAvailableWidth({ ctrlsSvc, scrollVisibleSvc }: BeanCollection): number {
     const gridBodyCtrl = ctrlsSvc.getGridBodyCtrl();
     const removeScrollWidth = scrollVisibleSvc.isVerticalScrollShowing();
-    const scrollWidthToRemove = removeScrollWidth ? scrollVisibleSvc.getScrollbarWidth() : 0;
+    const scrollWidthToRemove = removeScrollWidth ? (scrollVisibleSvc.getScrollbarWidth() ?? 0) : 0;
     // bodyViewportWidth should be calculated from eGridBody, not eBodyViewport
     // because we change the width of the bodyViewport to hide the real browser scrollbar
     const bodyViewportWidth = _getInnerWidth(gridBodyCtrl.eGridBody);

@@ -8,6 +8,7 @@
     font-size: var(--ag-font-size);
     font-weight: var(--ag-font-weight);
     color-scheme: var(--ag-browser-color-scheme);
+    scrollbar-color: var(--ag-scrollbar-thumb-color) var(--ag-scrollbar-track-color);
     color: var(--ag-text-color);
 
     --ag-indentation-level: 0;

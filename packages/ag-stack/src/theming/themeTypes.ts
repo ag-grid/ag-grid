@@ -5,8 +5,9 @@ export type WithParamTypes<T> = {
 };
 
 // prettier-ignore
-type ParamTypeForLowercaseKey<K extends string> = K extends `${string}color`
-    ? ColorValue
+type ParamTypeForLowercaseKey<K extends string> = K extends `${string}scrollbarwidth`
+    ? ScrollbarWidthValue
+    : K extends `${string}color` ? ColorValue
     : K extends `${string}colorscheme` ? ColorSchemeValue
     : K extends `${string}color` ? ColorValue
     : K extends `${string}scale` ? ScaleValue
@@ -54,6 +55,14 @@ export type ColorValue =
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/color-scheme
  */
 export type ColorSchemeValue = 'light' | 'dark' | 'inherit' | 'normal' | AnyString | { ref: string };
+
+/**
+ * A CSS scrollbar-width value: "auto", "thin" or "none". "unset" applies no
+ * value, leaving the browser default.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/CSS/scrollbar-width
+ */
+export type ScrollbarWidthValue = 'unset' | 'auto' | 'thin' | 'none' | { ref: string };
 
 /**
  * A CSS dimension value with length units, e.g. "1px" or "2em". Alternatively:
