@@ -85,7 +85,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
             pinnedCols &&
             growth > 0 &&
             key.pinnedLane !== 1 &&
-            !pinnedCols.isShiftResizeWithinPinnedSection(key, this.resizeWithShiftKey)
+            !pinnedCols.isShiftResizeBetweenPinnedColumns(key, this.resizeWithShiftKey)
         ) {
             // still set the width when no growth fits, so a finished drag completes
             newWidth = actualWidth + pinnedCols.getPinnedResizeGrowth(growth, this.resizeStartPinnedWidth);

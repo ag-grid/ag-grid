@@ -325,6 +325,29 @@ describe('Resizing pinned columns wider than the viewport', () => {
         expect(width(api, 'e')).toBe(200);
     });
 
+    test('shift-resize grows an overflowing pinned column into the next column in the other pinned section', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: ['a', 'b', 'c', 'd', 'e'].map((field, index) => ({
+                field,
+                width: 200,
+                pinned: index < 2 ? ('left' as const) : ('right' as const),
+                resizable: true,
+            })),
+            rowData: [{ a: 'a', b: 'b', c: 'c', d: 'd', e: 'e' }],
+            processUnpinnedColumns: () => [],
+            colResizeDefault: 'shift',
+        });
+        await asyncSetTimeout(0);
+
+        await dragResizeBy('b', 60);
+        expect(width(api, 'b')).toBe(260);
+        expect(width(api, 'c')).toBe(140);
+
+        await pressResizeKey('b', 'ArrowRight');
+        expect(width(api, 'b')).toBeGreaterThan(260);
+        expect(width(api, 'b') + width(api, 'c')).toBe(400);
+    });
+
     describe('pinned header groups', () => {
         const createGroupedGrid = async (
             groups: string[][],
@@ -414,6 +437,43 @@ describe('Resizing pinned columns wider than the viewport', () => {
                 ['a', 'b'],
                 ['c', 'd', 'e'],
             ]);
+            const forceShiftKey = (event: Event) => Object.defineProperty(event, 'shiftKey', { value: true });
+            document.addEventListener('mousedown', forceShiftKey, true);
+            document.addEventListener('mousemove', forceShiftKey, true);
+            try {
+                const dispatcher = new DragEventDispatcher('mouse');
+                await dispatcher.startDrag(groupBar('g0'), 400, 10);
+                await dispatcher.movePointer(groupBar('g0'), 460, 10);
+                await dispatcher.finishDrag();
+                await asyncSetTimeout(0);
+            } finally {
+                document.removeEventListener('mousedown', forceShiftKey, true);
+                document.removeEventListener('mousemove', forceShiftKey, true);
+            }
+
+            expect(totalWidth(api, ['a', 'b'])).toBe(460);
+            expect(totalWidth(api, ['c', 'd', 'e'])).toBe(540);
+        });
+
+        test('shift-dragging an overflowing left-pinned group takes width from the right-pinned group after it', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    ['a', 'b'],
+                    ['c', 'd', 'e'],
+                ].map((fields, index) => ({
+                    headerName: `Group ${index}`,
+                    groupId: `g${index}`,
+                    children: fields.map((field) => ({
+                        field,
+                        width: 200,
+                        pinned: index === 0 ? ('left' as const) : ('right' as const),
+                        resizable: true,
+                    })),
+                })),
+                rowData: [{ a: 'a', b: 'b', c: 'c', d: 'd', e: 'e' }],
+                processUnpinnedColumns: () => [],
+            });
+            await asyncSetTimeout(0);
             const forceShiftKey = (event: Event) => Object.defineProperty(event, 'shiftKey', { value: true });
             document.addEventListener('mousedown', forceShiftKey, true);
             document.addEventListener('mousemove', forceShiftKey, true);

@@ -93,9 +93,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     private limitPinnedGrowth(width: number): number {
         const { resizeCols, beans } = this;
         const pinnedCols = beans.pinnedCols;
-        const lane = this.getPinnedLane();
-
-        if (!pinnedCols || !resizeCols || lane === 1 || this.isTakingFromGroupInLane(lane)) {
+        if (!pinnedCols || !resizeCols || this.getPinnedLane() === 1 || this.isTakingFromPinnedGroup()) {
             return width;
         }
 
@@ -110,10 +108,10 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         return actualWidth + pinnedCols.getPinnedResizeGrowth(growth, this.resizeStartPinnedWidth);
     }
 
-    /** A shift resize takes the width from the next group, so the pinned section keeps its width when both share a lane. */
-    private isTakingFromGroupInLane(lane: ColumnLane): boolean {
+    /** A shift resize takes the width from the next group, so the total pinned width does not change when that group is pinned too. */
+    private isTakingFromPinnedGroup(): boolean {
         const takeFromCols = this.resizeTakeFromCols;
-        return !!takeFromCols?.length && takeFromCols.every((col) => col.pinnedLane === lane);
+        return !!takeFromCols?.length && takeFromCols.every((col) => col.pinnedLane !== 1);
     }
 
     private getPinnedLane(): ColumnLane {

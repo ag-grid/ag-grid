@@ -155,11 +155,12 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
 
     /**
      * A shift resize hands the width change to the next column (see `ColumnResizeService.setColumnWidths`),
-     * so when that column is in the same pinned section the section's total width does not change.
+     * so when that column is also pinned (in either section) the total pinned width does not change.
      */
-    public isShiftResizeWithinPinnedSection(column: AgColumn, shiftKey: boolean): boolean {
+    public isShiftResizeBetweenPinnedColumns(column: AgColumn, shiftKey: boolean): boolean {
         const takeFromAdjacent = shiftKey !== (this.gos.get('colResizeDefault') === 'shift');
-        return takeFromAdjacent && this.beans.visibleCols.getColAfter(column)?.pinnedLane === column.pinnedLane;
+        const colAfter = takeFromAdjacent ? this.beans.visibleCols.getColAfter(column) : null;
+        return !!colAfter && colAfter.pinnedLane !== 1;
     }
 
     public getPinnedWidth(): number {
@@ -174,7 +175,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
     }
 
     public getHeaderResizeDiff(diff: number, column: AgColumn | AgColumnGroup, shiftKey: boolean): number {
-        if (isColumn(column) && this.isShiftResizeWithinPinnedSection(column, shiftKey)) {
+        if (isColumn(column) && this.isShiftResizeBetweenPinnedColumns(column, shiftKey)) {
             return diff;
         }
 
