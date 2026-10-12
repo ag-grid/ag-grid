@@ -378,7 +378,7 @@ export class ExcelCreator
 
     protected getMergedParams(params?: ExcelExportParams): ExcelExportParams {
         const baseParams = this.gos.get('defaultExcelExportParams');
-        return Object.assign({}, baseParams, params);
+        return { ...baseParams, ...params };
     }
 
     protected export(userParams?: ExcelExportParams): void {

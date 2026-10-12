@@ -68,7 +68,7 @@ const cellFactory: ExcelOOXMLTemplate = {
             ];
         }
 
-        return Object.assign({}, obj, { children });
+        return { ...obj, children };
     },
 };
 

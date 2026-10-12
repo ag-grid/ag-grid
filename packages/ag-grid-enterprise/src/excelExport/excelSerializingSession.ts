@@ -98,7 +98,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         super(config);
         this.formulaSvc = config.formulaSvc;
         this.notesSvc = config.notesSvc;
-        this.config = Object.assign({}, config);
+        this.config = { ...config };
         this.workbook = config.workbook;
 
         this.stylesByIds = {};

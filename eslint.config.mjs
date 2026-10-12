@@ -57,6 +57,9 @@ export const sonarjsConfig = [
             'sonarjs/no-misused-promises': 0,
             'sonarjs/no-fallthrough': 0,
 
+            // Core ESLint rules matching SonarCloud issues.
+            'prefer-object-spread': 'error',
+
             // Unicorn rules, as referenced from the SonarCloud documentation.
             // 'unicorn/prefer-number-properties': 1,
             // 'unicorn/prefer-modern-dom-apis': 1,
