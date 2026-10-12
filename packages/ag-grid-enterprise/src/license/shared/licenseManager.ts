@@ -200,12 +200,12 @@ export class LicenseManager {
 
     private isWebsiteUrl(): boolean {
         const hostname = this.getHostname();
-        return hostname.match(/^(?:[\w-]+\.)?(ag-grid|bryntum)\.com$/) !== null;
+        return /^(?:[\w-]+\.)?(ag-grid|bryntum)\.com$/.exec(hostname) !== null;
     }
 
     private isLocalhost(): boolean {
         const hostname = this.getHostname();
-        return hostname.match(/^(?:127\.0\.0\.1|localhost)$/) !== null;
+        return /^(?:127\.0\.0\.1|localhost)$/.exec(hostname) !== null;
     }
 
     private static formatDate(date: any): string {

@@ -36,6 +36,7 @@ export default [
             '@typescript-eslint/no-this-alias': 'off',
             '@typescript-eslint/no-for-in-array': 'error',
             '@typescript-eslint/no-floating-promises': 'error',
+            '@typescript-eslint/prefer-regexp-exec': 'error',
             'no-restricted-syntax': [
                 'error',
                 'ForInStatement',
