@@ -65,6 +65,7 @@ function createService(
         get: vi.fn((key: string) => (key === 'enableRtl' ? enableRtl : undefined)),
         getCallback: vi.fn(() => undefined),
     };
+    (svc as any).beans = { gos: (svc as any).gos };
 
     return svc;
 }
@@ -272,6 +273,69 @@ describe('BasePopupService', () => {
                     parentRect: offsetParent,
                 });
                 expect(pos).toEqual({ x: 300, y: 200 });
+            });
+        });
+
+        describe('popupParent is body and the page is scrolled 1000px down a 3000px document', () => {
+            // htmlHeight 800 models html { height: 100% } in an 800px viewport (content overflows <html>); 3000 is an auto-height html
+            function getBodyParentedPosition(
+                htmlHeight: number,
+                headerSource: Partial<DOMRect>
+            ): { x: number; y: number } {
+                const docElement = document.documentElement;
+                docElement.style.height = `${htmlHeight}px`;
+                const rect = (height: number) =>
+                    ({
+                        top: -1000,
+                        left: 0,
+                        right: 1280,
+                        bottom: height - 1000,
+                        width: 1280,
+                        height,
+                        x: 0,
+                        y: -1000,
+                        toJSON() {},
+                    }) as DOMRect;
+                vi.spyOn(docElement, 'getBoundingClientRect').mockReturnValue(rect(htmlHeight));
+                vi.spyOn(document.body, 'getBoundingClientRect').mockReturnValue(rect(3000));
+                vi.spyOn(docElement, 'clientHeight', 'get').mockReturnValue(800);
+                vi.spyOn(docElement, 'scrollHeight', 'get').mockReturnValue(3000);
+                vi.spyOn(docElement, 'scrollTop', 'get').mockReturnValue(1000);
+
+                const svc = Object.create(TestPopupService.prototype) as TestPopupService;
+                const gos = { get: vi.fn((key: string) => (key === 'popupParent' ? document.body : undefined)) };
+                (svc as any).popupList = [];
+                (svc as any).gos = gos;
+                (svc as any).beans = { gos };
+
+                const eventSource = createMockElement(headerSource);
+                const ePopup = createMockElement({}, { offsetWidth: 250, offsetHeight: 320 });
+                const spy = vi.spyOn(svc, 'positionPopup').mockImplementation(() => {});
+
+                svc.positionPopupByComponent({ ePopup, eventSource, position: 'under', type: 'columnMenu' });
+
+                return spy.mock.calls[0][0].updatePosition!();
+            }
+
+            afterEach(() => {
+                document.documentElement.style.height = '';
+            });
+
+            it('opens under the source when the viewport has room below it', () => {
+                const pos = getBodyParentedPosition(800, { top: 51, left: 0, right: 200, bottom: 99 });
+                // under (tl-bl): y = header.bottom - html.top = 99 + 1000
+                expect(pos.y).toBe(1099);
+            });
+
+            it('opens above the source when it sits near the bottom of the viewport', () => {
+                const pos = getBodyParentedPosition(800, { top: 700, left: 0, right: 200, bottom: 748 });
+                // above (bl-tl): y = header.top - html.top - popupHeight = 700 + 1000 - 320
+                expect(pos.y).toBe(1380);
+            });
+
+            it('opens under the source near the viewport bottom when an auto-height html has room below it', () => {
+                const pos = getBodyParentedPosition(3000, { top: 700, left: 0, right: 200, bottom: 748 });
+                expect(pos.y).toBe(1748);
             });
         });
     });
