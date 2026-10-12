@@ -1091,7 +1091,7 @@ export class LazyCache extends BeanStub {
         this.store.fireStoreUpdatedEvent();
     }
 
-    private getRowId(data: any): string | null {
+    public getRowId(data: any): string | null {
         if (this.getRowIdFunc == null) {
             return null;
         }
@@ -1179,11 +1179,11 @@ export class LazyCache extends BeanStub {
     /**
      * Transaction Support here
      */
-    public updateRowNodes(updates: any[]): RowNode[] {
+    public updateRowNodes(updates: any[], rowIds?: Map<any, string>): RowNode[] {
         const updatedNodes: RowNode[] = [];
         const { blockUtils, nodeMap } = this;
         for (const data of updates) {
-            const id = this.getRowId(data);
+            const id = rowIds?.get(data) ?? this.getRowId(data);
             if (id === GRAND_TOTAL_ROW_ID) {
                 const grandTotalNode = this.setGrandTotalData(data);
                 if (grandTotalNode) {
@@ -1200,7 +1200,7 @@ export class LazyCache extends BeanStub {
         return updatedNodes;
     }
 
-    public insertRowNodes(inserts: any[], indexToAdd?: number): RowNode[] {
+    public insertRowNodes(inserts: any[], indexToAdd?: number, rowIds?: Map<any, string>): RowNode[] {
         // adjust row count to allow for footer row
         const realRowCount = this.store.getRowCount() - (this.store.getParentNode().sibling ? 1 : 0);
 
@@ -1215,7 +1215,7 @@ export class LazyCache extends BeanStub {
         const uniqueInsertsMap: { [id: string]: any } = {};
 
         inserts.forEach((data) => {
-            const dataId = this.getRowId(data)!;
+            const dataId = (rowIds?.get(data) ?? this.getRowId(data))!;
             // Grand total is not a regular store row — store the data and let
             // setDisplayIndexes create the footer node on next render.
             if (dataId === GRAND_TOTAL_ROW_ID) {

@@ -39,6 +39,7 @@ import { LazyBlockLoadingService } from './stores/lazy/lazyBlockLoadingService';
 import { StoreFactory } from './stores/storeFactory';
 import { StoreUtils } from './stores/storeUtils';
 import { TransactionManager } from './transactionManager';
+import { TransactionMergeService } from './transactionMergeService';
 
 /**
  * @feature Server-Side Row Model
@@ -93,4 +94,16 @@ export const ServerSideRowModelApiModule: _ModuleWithApi<_ServerSideRowModelGrid
         onRowHeightChanged,
     },
     dependsOn: [EnterpriseCoreModule, _RowModelSharedApiModule, _CsrmSsrmSharedApiModule, _SsrmInfiniteSharedApiModule],
+};
+
+/**
+ * @feature Server-Side Row Model
+ * @gridOption serverSideMergeAsyncTransactions
+ */
+export const ServerSideRowModelMergeTransactionsModule: _ModuleWithoutApi = {
+    moduleName: 'ServerSideRowModelMergeTransactions',
+    version: VERSION,
+    rowModels: ['serverSide'],
+    beans: [TransactionMergeService],
+    dependsOn: [ServerSideRowModelModule],
 };

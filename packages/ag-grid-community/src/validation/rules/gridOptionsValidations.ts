@@ -171,6 +171,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
         gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'RowSelection',
     rowStyle: 'RowStyle',
     serverSideDatasource: 'ServerSideRowModel',
+    serverSideMergeAsyncTransactions: 'ServerSideRowModelMergeTransactions',
     sideBar: 'SideBar',
     statusBar: 'StatusBar',
     treeData: (_options, gridOptions) =>
@@ -636,6 +637,13 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             validate({ serverSideInitialRowCount }) {
                 return toConstrainedNum('serverSideInitialRowCount', serverSideInitialRowCount, 1);
             },
+        },
+        serverSideMergeAsyncTransactions: {
+            supportedRowModels: ['serverSide'],
+            validate: ({ serverSideEnableClientSideSort }) =>
+                serverSideEnableClientSideSort
+                    ? '`serverSideMergeAsyncTransactions` is ignored when `serverSideEnableClientSideSort` is enabled, as each transaction re-sorts the rows.'
+                    : null,
         },
         serverSideOnlyRefreshFilteredGroups: {
             supportedRowModels: ['serverSide'],

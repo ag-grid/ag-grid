@@ -32,6 +32,8 @@ import type { SSRMParams } from '../../serverSideRowModel';
 import type { StoreUtils } from '../storeUtils';
 import { LazyCache } from './lazyCache';
 
+export type RowIdFunc = NonNullable<ReturnType<typeof _getRowIdCallback>>;
+
 export class LazyStore extends BeanStub implements IServerSideStore {
     private blockUtils: BlockUtils;
     private storeUtils: StoreUtils;
@@ -155,26 +157,43 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             };
         }
 
-        const applyCallback = this.gos.getCallback('isApplyServerSideTransaction');
-        if (applyCallback) {
-            const params: WithoutGridCommon<IsApplyServerSideTransactionParams> = {
-                transaction: transaction,
-                parentNode: this.parentRowNode,
-                groupLevelInfo: this.info,
-            };
-            const apply = applyCallback(params);
-            if (!apply) {
-                return { status: ServerSideTransactionResultStatus.Cancelled };
-            }
+        if (!this.isTransactionAccepted(transaction)) {
+            return { status: ServerSideTransactionResultStatus.Cancelled };
         }
 
+        return this.applyAcceptedTransaction(transaction, idFunc);
+    }
+
+    public isTransactionAccepted(transaction: ServerSideTransaction): boolean {
+        const applyCallback = this.gos.getCallback('isApplyServerSideTransaction');
+        if (!applyCallback) {
+            return true;
+        }
+        const params: WithoutGridCommon<IsApplyServerSideTransactionParams> = {
+            transaction: transaction,
+            parentNode: this.parentRowNode,
+            groupLevelInfo: this.info,
+        };
+        return !!applyCallback(params);
+    }
+
+    public getRemoveRowId(idFunc: RowIdFunc, data: any): string {
+        return idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data });
+    }
+
+    /** @param rowIds the id of each row's data, when already known */
+    public applyAcceptedTransaction(
+        transaction: ServerSideTransaction,
+        idFunc: RowIdFunc,
+        rowIds?: Map<any, string>
+    ): ServerSideTransactionResult {
         // needs checked before transactions are applied, as rows won't be contiguous immediately
         // after
         const allRowsLoaded = this.cache.isStoreFullyLoaded();
 
         let updatedNodes: RowNode[] | undefined = undefined;
         if (transaction.update?.length) {
-            updatedNodes = this.cache.updateRowNodes(transaction.update);
+            updatedNodes = this.cache.updateRowNodes(transaction.update, rowIds);
         }
 
         let insertedNodes: RowNode[] | undefined = undefined;
@@ -183,13 +202,13 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             if (addIndex != null && addIndex < 0) {
                 addIndex = undefined;
             }
-            insertedNodes = this.cache.insertRowNodes(transaction.add, addIndex);
+            insertedNodes = this.cache.insertRowNodes(transaction.add, addIndex, rowIds);
         }
 
         let removedNodes: RowNode[] | undefined = undefined;
         if (transaction.remove?.length) {
-            const allIdsToRemove = transaction.remove.map((data) =>
-                idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data })
+            const allIdsToRemove = transaction.remove.map(
+                (data) => rowIds?.get(data) ?? this.getRemoveRowId(idFunc, data)
             );
             const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
             removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, transaction.rowCount);
