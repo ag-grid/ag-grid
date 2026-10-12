@@ -898,9 +898,11 @@ export const AG_GRID_LOCALE_EL_GR = {
     columnHeaderEditCancel: 'Ακύρωση',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Δεν βρέθηκαν κατάλληλες στήλες.',
     calculatedColumn: 'Υπολογιζόμενη στήλη',
     calculatedColumnAdd: 'Προσθήκη υπολογιζόμενης στήλης',
     calculatedColumnEdit: 'Επεξεργασία υπολογιζόμενης στήλης',
+    calculatedColumnView: 'Προβολή υπολογιζόμενης στήλης',
     calculatedColumnRemove: 'Αφαίρεση υπολογιζόμενης στήλης',
     calculatedColumnTitle: 'Τίτλος',
     calculatedColumnType: 'Τύπος',

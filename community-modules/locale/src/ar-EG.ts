@@ -891,9 +891,11 @@ export const AG_GRID_LOCALE_AR_EG = {
     columnHeaderEditCancel: 'إلغاء',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'لم يتم العثور على أعمدة مؤهلة.',
     calculatedColumn: 'عمود محسوب',
     calculatedColumnAdd: 'إضافة عمود محسوب',
     calculatedColumnEdit: 'تعديل عمود محسوب',
+    calculatedColumnView: 'عرض عمود محسوب',
     calculatedColumnRemove: 'إزالة عمود محسوب',
     calculatedColumnTitle: 'العنوان',
     calculatedColumnType: 'النوع',

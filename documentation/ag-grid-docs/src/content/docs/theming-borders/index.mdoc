@@ -29,3 +29,31 @@ const myTheme = themeQuartz.withParams({
 ### Borders between header cells
 
 Column borders between header cells have adjustable height, and there is also the option of styling the resize handle which is only present on resizable columns. See [Customising Headers](./theming-headers/) for more information.
+
+## Styling the Grand Total Row Border
+
+In AG Grid, the border between two rows is owned by the row above, and drawn as a `border-bottom`. When using a [Grand Total Row](./aggregation-total-rows/) it's common to want to style the border above the grand total.
+
+We recommend using the following CSS to draw a border slightly outside the grand total row so that it covers the existing row border above it:
+
+```css
+.ag-row-grand-total {
+    /* ensure that the grand total row appears on top of the row above */
+    z-index: 2;
+}
+
+.ag-row-grand-total::before {
+    content: '';
+    position: absolute;
+    /* shift the border 1px up to cover the bottom border of the row above */
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: #2196f3;
+    z-index: 3;
+    pointer-events: none;
+}
+```
+
+{% gridExampleRunner title="Grand Total Row Border" name="grand-total-border" exampleHeight=450 /%}

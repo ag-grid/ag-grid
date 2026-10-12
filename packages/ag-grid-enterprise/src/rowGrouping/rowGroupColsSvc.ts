@@ -26,10 +26,16 @@ export class RowGroupColsSvc extends OrderedColsService implements NamedBean, IR
         const movedColumn = columns[fromIndex];
         const reordered = columns.slice();
         reordered.splice(toIndex, 0, reordered.splice(fromIndex, 1)[0]);
-        this.resetActiveCols(reordered);
-        // Reorder: multiple group cols must resnap to the new hierarchy order, sliding as they go.
-        this.stageColChange(movedColumn);
-        this.colModel.flushColChanges(source, 'reorder');
+        const colModel = this.colModel;
+        colModel.beginColUpdate();
+        try {
+            this.resetActiveCols(reordered);
+            // Reorder: multiple group cols must resnap to the new hierarchy order, sliding as they go.
+            this.stageColChange(movedColumn);
+            colModel.stageColChanges(source, 'reorder');
+        } finally {
+            colModel.endColUpdate();
+        }
     }
 
     protected override onColActiveChanged(column: AgColumn, active: boolean, source: ColumnEventType): void {

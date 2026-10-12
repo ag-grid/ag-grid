@@ -14,6 +14,21 @@
         min-height: 0;
     }
 
+    // the panel scope gives this precedence over legacy theme input selectors
+    .ag-calculated-column-panel .ag-calculated-column-form .ag-input-field-input[readonly] {
+        --ag-background-color: var(--ag-input-disabled-background-color);
+        --ag-input-border-color: var(--ag-input-disabled-border-color);
+        color: var(--ag-disabled-foreground-color);
+
+        &.invalid:not(:focus) {
+            border: var(--ag-borders-input-invalid) var(--ag-input-border-color-invalid);
+        }
+
+        &.invalid:focus {
+            border-color: var(--ag-invalid-color);
+        }
+    }
+
     .ag-calculated-column-expression-wrap {
         display: flex;
         flex-direction: column;
@@ -58,6 +73,24 @@
         }
     }
 
+    .ag-calculated-column-token-reference {
+        color: var(--ag-calculated-column-reference-color);
+    }
+
+    .ag-calculated-column-token-function {
+        color: var(--ag-calculated-column-function-color);
+    }
+
+    .ag-calculated-column-token-operator {
+        color: var(--ag-calculated-column-operator-color);
+    }
+
+    .ag-calculated-column-expression-error {
+        text-decoration: underline wavy var(--ag-calculated-column-error-underline-color);
+        text-underline-offset: 0.15em;
+        text-decoration-skip-ink: none;
+    }
+
     .ag-standard-button.ag-calculated-column-expression-tool {
         padding: calc(var(--ag-grid-size) / 2);
     }
@@ -90,6 +123,22 @@
 
     .ag-calculated-column-picker-list {
         width: var(--ag-calculated-column-suggestion-list-width);
+    }
+
+    .ag-calculated-column-empty-picker {
+        display: grid;
+    }
+
+    :where(.ag-calculated-column-empty-picker) > .ag-autocomplete-list {
+        grid-area: 1 / 1;
+    }
+
+    .ag-calculated-column-empty-message {
+        opacity: 0.5;
+        grid-area: 1 / 1;
+        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+        overflow-wrap: anywhere;
+        align-self: center;
     }
 
     .ag-calculated-column-actions {

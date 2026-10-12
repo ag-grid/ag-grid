@@ -219,15 +219,17 @@ describe('SSRM: interactive pivot column sorting (pivotSort)', () => {
         ]);
         await waitFor(() => expect(pivotsOf(api)).toEqual(['2004_gold', '2000_gold']));
 
-        const pill = getGridElement(api)!.querySelector('.ag-column-drop-horizontal-pivot .ag-column-drop-cell')!;
+        // the panel rebuilds its pills when the pivot columns change, so each read finds the current one
+        const getPill = () =>
+            getGridElement(api)!.querySelector('.ag-column-drop-horizontal-pivot .ag-column-drop-cell')!;
         const shown = (selector: string) => {
-            const icon = pill.querySelector(selector);
+            const icon = getPill().querySelector(selector);
             return !!icon && !icon.classList.contains('ag-hidden');
         };
         expect(shown('.ag-sort-ascending-icon')).toBe(false);
         expect(shown('.ag-sort-descending-icon')).toBe(false);
 
-        pill.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+        getPill().dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
         await waitFor(() => {
             expect(shown('.ag-sort-ascending-icon')).toBe(true);
             expect(pivotsOf(api)).toEqual(['2000_gold', '2004_gold']);

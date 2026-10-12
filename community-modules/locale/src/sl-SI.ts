@@ -913,9 +913,11 @@ export const AG_GRID_LOCALE_SL_SI = {
     columnHeaderEditCancel: 'Prekliči',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Ni ustreznih stolpcev.',
     calculatedColumn: 'Izračunani stolpec',
     calculatedColumnAdd: 'Dodaj izračunani stolpec',
     calculatedColumnEdit: 'Uredi izračunani stolpec',
+    calculatedColumnView: 'Ogled izračunanega stolpca',
     calculatedColumnRemove: 'Odstrani izračunani stolpec',
     calculatedColumnTitle: 'Naslov',
     calculatedColumnType: 'Tip',

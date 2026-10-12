@@ -153,7 +153,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     public autoSizeCols(paramsInput: AutoSizeColumnParams): void {
-        this.autoSizeColsAsync(this.withUiActionStrategyParams(paramsInput)).then((cols) =>
+        void this.autoSizeColsAsync(this.withUiActionStrategyParams(paramsInput)).then((cols) =>
             this.dispatchAutoSized(cols)
         );
     }
@@ -171,9 +171,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
         setWidthAnimation(this.beans, true);
 
-        return this.innerAutoSizeCols(params).then((columnsAutoSized) => {
+        const sized = this.innerAutoSizeCols(params).then((columnsAutoSized) => {
             if (!params.scaleUpToFitGridWidth) {
-                setWidthAnimation(this.beans, false);
                 return columnsAutoSized;
             }
 
@@ -197,10 +196,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 animate: false,
             });
 
-            setWidthAnimation(this.beans, false);
-
             return columnsAutoSized;
         });
+
+        return sized.finally(() => setWidthAnimation(this.beans, false));
     }
 
     private innerAutoSizeCols(params: AutoSizeColumnParams): Promise<Set<AgColumn>> {
@@ -344,8 +343,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
         for (const columnGroup of columnGroups) {
             const headerGroupCtrl = headerRowContainerCtrl.getHeaderCtrlForColumn(columnGroup) as
-                | HeaderGroupCellCtrl
-                | undefined;
+                HeaderGroupCellCtrl | undefined;
             headerGroupCtrl?.resizeLeafColumnsToFit(source);
         }
     }
@@ -556,10 +554,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             const colWidth = column.getActualWidth();
             const targetWidth = _clamp(colWidth, minOverride, maxOverride);
 
-            // NOTE: we assign values to `this.actualWidth` of each column without firing events
-            // for this reason we need to manually dispatch resize events after the resize has been done for each column.
             if (targetWidth != colWidth) {
-                column.setActualWidth(targetWidth, source, true);
+                column.setActualWidth(targetWidth, source);
             }
         }
 
@@ -571,7 +567,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 for (const column of colsToSpread) {
                     const newWidth =
                         limitsMap?.[column.getId()]?.minWidth ?? params?.defaultMinWidth ?? column.minWidth;
-                    column.setActualWidth(newWidth, source, true);
+                    column.setActualWidth(newWidth, source);
                 }
             } else {
                 const scale = availablePixels / getWidthOfColsInList(colsToSpread);
@@ -604,19 +600,14 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                         newWidth = pixelsForLastCol;
                     }
 
-                    column.setActualWidth(newWidth, source, true);
+                    column.setActualWidth(newWidth, source);
                     pixelsForLastCol -= newWidth;
                 }
             }
         }
 
-        // see NOTE above
-        for (const col of colsToDispatchEventFor) {
-            col.fireColumnWidthChangedEvent(source);
-        }
-
         const visibleCols = this.beans.visibleCols;
-        visibleCols.updateBodyWidths(visibleCols.setLeftValues(source));
+        visibleCols.updateBodyWidths(source, visibleCols.setLeftValues());
 
         if (silent) {
             return;

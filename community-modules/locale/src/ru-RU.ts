@@ -917,9 +917,11 @@ export const AG_GRID_LOCALE_RU_RU = {
     columnHeaderEditCancel: 'Отмена',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Подходящие столбцы не найдены.',
     calculatedColumn: 'Вычисляемый столбец',
     calculatedColumnAdd: 'Добавить вычисляемый столбец',
     calculatedColumnEdit: 'Редактировать вычисляемый столбец',
+    calculatedColumnView: 'Просмотреть вычисляемый столбец',
     calculatedColumnRemove: 'Удалить вычисляемый столбец',
     calculatedColumnTitle: 'Заголовок',
     calculatedColumnType: 'Тип',

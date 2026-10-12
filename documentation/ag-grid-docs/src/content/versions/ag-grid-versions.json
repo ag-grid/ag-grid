@@ -22,7 +22,7 @@
             },
             {
                 "text": "Custom Renderers for Column Items in Columns Tool Panel",
-                "path": "./tool-panel-columns/#custom-column-labels"
+                "path": "./tool-panel-columns-customising/#custom-label-renderers"
             }
         ],
         "notesPath": "./upgrading-to-ag-grid-36-2",
@@ -39,7 +39,7 @@
             },
             {
                 "text": "Custom Context Menu Items in Columns Tool Panel",
-                "path": "./tool-panel-columns/#custom-menu-items"
+                "path": "./tool-panel-columns-customising/#custom-menu-items"
             },
             {
                 "text": "AI Coding Skill",
@@ -140,7 +140,7 @@
             },
             {
                 "text": "Columns Tool Panel Deferred Updates",
-                "path": "./tool-panel-columns/#deferred-updates"
+                "path": "./tool-panel-columns-deferred-updates/#deferred-updates"
             },
             {
                 "text": "Rich Select Editor Improvements",

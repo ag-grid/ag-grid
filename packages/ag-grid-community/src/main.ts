@@ -303,6 +303,7 @@ export type { ContainerType, IAfterGuiAttachedParams } from './interfaces/iAfter
 export type {
     CalculatedColumnDef,
     CalculatedColumnExpressionPicker,
+    CalculatedColumnProperty,
     CalculatedColumnsGridOption,
     CalculatedColumnsOptions,
     CalculatedColumnUpdate,
@@ -698,6 +699,7 @@ export type { GridOptionsService, PropertyChangedEvent, PropertyValueChangedEven
 export type {
     AggregationColumnState,
     AggregationState,
+    CalculatedUserColumnState,
     CellSelectionCellState,
     CellSelectionState,
     ColumnGroupHeaderNameState,

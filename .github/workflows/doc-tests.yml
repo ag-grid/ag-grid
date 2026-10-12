@@ -69,11 +69,6 @@ on:
         type: boolean
         default: true
         required: true
-      force_jira_ticket:
-        description: 'Force create a Jira ticket even if the run is not scheduled'
-        type: boolean
-        default: false
-        required: true
 
 permissions:
   contents: read
@@ -368,18 +363,6 @@ jobs:
           CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
           SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           SLACK_CHANNEL: ${{ env.SLACK_CHANNEL }}
-          PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
-          CURRENT_COMMIT_SHA: ${{ github.sha }}
-          IS_SUCCESS: ${{ env.IS_SUCCESS }}
-
-      - name: Create Jira Ticket
-        uses: ./.github/actions/jira-integration
-        continue-on-error: true
-        if: ${{ github.event_name == 'schedule' || inputs.force_jira_ticket }}
-        with:
-          JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
-          JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' is failing."
-          CTRF_REPORT_FILE: ${{ env.CTRF_FILE }}
           PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
           CURRENT_COMMIT_SHA: ${{ github.sha }}
           IS_SUCCESS: ${{ env.IS_SUCCESS }}

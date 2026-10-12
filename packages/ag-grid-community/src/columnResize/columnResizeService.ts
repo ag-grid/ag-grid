@@ -224,7 +224,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
                     viewportWidth:
                         (pinnedColChanged && ctrlsSvc.get('gridBodyCtrl')?.getReportedCenterWidth()) || undefined,
                 }) ?? [];
-            visibleCols.updateBodyWidths(visibleCols.setLeftValues(source));
+            visibleCols.updateBodyWidths(source, visibleCols.setLeftValues());
             colViewport.checkViewportColumns();
         }
 

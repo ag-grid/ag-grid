@@ -467,8 +467,8 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
         });
     });
 
-    // A commit runs its role-column ops inside one beginColBatch/endColBatch. endColBatch flushes without the
-    // `change` kind, so the batch must still animate a reorder and skip the legacy event for a lone reorder.
+    // A commit runs its role-column ops inside one column update, which must still animate a reorder and skip the
+    // legacy event for a lone reorder.
     describe('committing a batched role-column change', () => {
         const createGroupedGrid = async (columnDefs: ColDef[]) => {
             const gridApi = await gridMgr.createGridAndWait('myGrid', {

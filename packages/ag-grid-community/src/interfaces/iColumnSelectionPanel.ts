@@ -23,7 +23,10 @@ export interface IColumnSelectionPanelParams {
     columnLabelRenderer?: any;
     /** Additional parameters passed to the `columnLabelRenderer`. */
     columnLabelRendererParams?: any;
-    /** Callback to select which renderer to use for an individual column or column group label. */
+    /**
+     * Callback to select which renderer to use for an individual column or column group label.
+     * The result can also provide renderer-specific `params`. Return `undefined` to use `columnLabelRenderer`.
+     */
     columnLabelRendererSelector?: ColumnSelectionLabelRendererSelectorFunc;
 }
 

@@ -893,9 +893,11 @@ export const AG_GRID_LOCALE_NB_NO = {
     columnHeaderEditCancel: 'Avbryt',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Ingen egnede kolonner funnet.',
     calculatedColumn: 'Beregnet kolonne',
     calculatedColumnAdd: 'Legg til beregnet kolonne',
     calculatedColumnEdit: 'Rediger beregnet kolonne',
+    calculatedColumnView: 'Vis beregnet kolonne',
     calculatedColumnRemove: 'Fjern beregnet kolonne',
     calculatedColumnTitle: 'Tittel',
     calculatedColumnType: 'Type',

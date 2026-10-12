@@ -897,9 +897,11 @@ export const AG_GRID_LOCALE_TR_TR = {
     columnHeaderEditCancel: 'İptal',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Uygun sütun bulunamadı.',
     calculatedColumn: 'Hesaplanan sütun',
     calculatedColumnAdd: 'Hesaplanan sütun ekle',
     calculatedColumnEdit: 'Hesaplanan sütunu düzenle',
+    calculatedColumnView: 'Hesaplanan sütunu görüntüle',
     calculatedColumnRemove: 'Hesaplanan sütunu kaldır',
     calculatedColumnTitle: 'Başlık',
     calculatedColumnType: 'Tür',

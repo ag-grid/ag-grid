@@ -916,9 +916,11 @@ export const AG_GRID_LOCALE_ID_ID = {
     columnHeaderEditCancel: 'Batal',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Tidak ditemukan kolom yang memenuhi syarat.',
     calculatedColumn: 'Kolom Terhitung',
     calculatedColumnAdd: 'Tambah Kolom Terhitung',
     calculatedColumnEdit: 'Sunting Kolom Terhitung',
+    calculatedColumnView: 'Lihat Kolom Terhitung',
     calculatedColumnRemove: 'Hapus Kolom Terhitung',
     calculatedColumnTitle: 'Judul',
     calculatedColumnType: 'Tipe',

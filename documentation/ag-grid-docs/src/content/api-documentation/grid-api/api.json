@@ -1060,7 +1060,7 @@
         "getToolPanelInstance": {
             "more": {
                 "name": "Tool Panel Expand / Collapse Column Groups",
-                "url": "./tool-panel-columns/#expand--collapse-column-groups"
+                "url": "./tool-panel-columns-customising/#expand--collapse-column-groups"
             }
         },
         "getToolbarItemInstance": {

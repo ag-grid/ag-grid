@@ -198,8 +198,19 @@
         --ag-indentation-level: 0;
     }
 
-    .ag-set-filter-item-missing {
-        color: color-mix(in srgb, transparent, var(--ag-foreground-color) 50%);
+    .ag-set-filter-item-missing-content {
+        display: flex;
+        column-gap: var(--ag-grid-size);
+    }
+
+    .ag-set-filter-item-missing-value {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .ag-set-filter-item-missing-label {
+        flex: none;
     }
 
     .ag-set-filter-item {

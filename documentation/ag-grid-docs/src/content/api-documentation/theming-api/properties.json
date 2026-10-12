@@ -430,6 +430,10 @@
         "columnHeaderEditHighlightColor": {},
         "calculatedColumnParentSuggestionColor": {},
         "calculatedColumnSuggestionListWidth": {},
+        "calculatedColumnReferenceColor": {},
+        "calculatedColumnFunctionColor": {},
+        "calculatedColumnOperatorColor": {},
+        "calculatedColumnErrorUnderlineColor": {},
         "rangeSelectionChartBackgroundColor": {},
         "rangeSelectionChartCategoryBackgroundColor": {}
     },

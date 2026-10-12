@@ -898,9 +898,11 @@ export const AG_GRID_LOCALE_PT_BR = {
     columnHeaderEditCancel: 'Cancelar',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nenhuma coluna elegível encontrada.',
     calculatedColumn: 'Coluna calculada',
     calculatedColumnAdd: 'Adicionar coluna calculada',
     calculatedColumnEdit: 'Editar coluna calculada',
+    calculatedColumnView: 'Ver coluna calculada',
     calculatedColumnRemove: 'Remover coluna calculada',
     calculatedColumnTitle: 'Título',
     calculatedColumnType: 'Tipo',

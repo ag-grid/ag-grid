@@ -915,9 +915,11 @@ export const AG_GRID_LOCALE_LV_LV = {
     columnHeaderEditCancel: 'Atcelt',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nav atrasta neviena piemērota kolonna.',
     calculatedColumn: 'Aprēķinātā kolonna',
     calculatedColumnAdd: 'Pievienot aprēķināto kolonnu',
     calculatedColumnEdit: 'Rediģēt aprēķināto kolonnu',
+    calculatedColumnView: 'Skatīt aprēķināto kolonnu',
     calculatedColumnRemove: 'Noņemt aprēķināto kolonnu',
     calculatedColumnTitle: 'Nosaukums',
     calculatedColumnType: 'Tips',

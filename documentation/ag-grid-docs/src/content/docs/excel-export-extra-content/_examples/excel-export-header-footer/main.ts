@@ -57,9 +57,7 @@ const getValues = (type: string) => {
     };
 
     obj.position = (document.querySelector('#' + type + 'Position') as HTMLInputElement).value as
-        | 'Left'
-        | 'Center'
-        | 'Right';
+        'Left' | 'Center' | 'Right';
 
     const fontName = (document.querySelector('#' + type + 'FontName') as HTMLInputElement).value;
     const fontSize = (document.querySelector('#' + type + 'FontSize') as HTMLInputElement).value;
