@@ -1,7 +1,7 @@
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import { TestGridsManager, canvasPolyfill } from 'ag-test-utils';
 
-import type { ChartRef, ChartType, GridApi } from 'ag-grid-community';
+import type { ChartRef, ChartType, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, setupAgTestIds } from 'ag-grid-community';
 import { CellSelectionModule, IntegratedChartsModule } from 'ag-grid-enterprise';
 
@@ -18,8 +18,12 @@ describe('normalized (100% stacked) integrated charts', () => {
     afterAll(() => canvasPolyfill.reset());
     afterEach(() => gridsManager.reset());
 
-    async function createChart(chartType: ChartType): Promise<{ api: GridApi; chartRef: ChartRef }> {
+    async function createChart(
+        chartType: ChartType,
+        gridOptions: GridOptions = {}
+    ): Promise<{ api: GridApi; chartRef: ChartRef }> {
         const api = await gridsManager.createGridAndWait('grid1', {
+            ...gridOptions,
             columnDefs: [
                 { field: 'period', chartDataType: 'category' },
                 { field: 'recurring' },
@@ -69,6 +73,21 @@ describe('normalized (100% stacked) integrated charts', () => {
 
             const { tooltipValues, tickLabels } = getRenderedText(chartRef);
             expect(tooltipValues).toEqual(['237438']);
+            expect(tickLabels).toEqual(PERCENT_TICKS);
+        }
+    );
+
+    test.each<ChartType>(['normalizedColumn', 'normalizedBar', 'normalizedLine', 'normalizedArea'])(
+        '%s - a global theme formatter still formats tooltips, the value axis keeps percentages',
+        async (chartType) => {
+            const { chartRef } = await createChart(chartType, {
+                chartThemeOverrides: {
+                    common: { formatter: (params) => (params.type === 'number' ? `£${params.value}` : undefined) },
+                },
+            });
+
+            const { tooltipValues, tickLabels } = getRenderedText(chartRef);
+            expect(tooltipValues).toEqual(['£237438']);
             expect(tickLabels).toEqual(PERCENT_TICKS);
         }
     );

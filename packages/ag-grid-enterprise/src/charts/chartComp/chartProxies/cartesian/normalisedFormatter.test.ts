@@ -1,22 +1,42 @@
-import type { AnyFormatterSource, FormatterParams } from 'ag-charts-types';
+import type { AgCartesianChartOptions, AnyFormatterSource, FormatterParams } from 'ag-charts-types';
 
-import { NORMALISED_CHART_FORMATTER } from './normalisedFormatter';
+import { createNormalisedFormatter } from './normalisedFormatter';
 
-const formatY = (NORMALISED_CHART_FORMATTER as Record<'y', (params: FormatterParams) => unknown>).y;
+type FunctionFormatter = (params: FormatterParams) => unknown;
 
-function format(source: AnyFormatterSource) {
-    return formatY({ type: 'number', source, property: 'y', value: 49.6 } as FormatterParams);
+function params(source: AnyFormatterSource, property: 'x' | 'y' = 'y') {
+    return { type: 'number', source, property, value: 49.6 } as FormatterParams;
 }
 
-describe('NORMALISED_CHART_FORMATTER', () => {
+const poundFormatter = (p: FormatterParams) => `£${p.value}`;
+
+describe('createNormalisedFormatter', () => {
     test.each<AnyFormatterSource>(['axis-label', 'crosshair'])('adds a percentage to %s values', (source) => {
-        expect(format(source)).toBe('50%');
+        const formatter = createNormalisedFormatter(undefined) as FunctionFormatter;
+        expect(formatter(params(source))).toBe('50%');
     });
 
     test.each<AnyFormatterSource>(['tooltip', 'series-label', 'legend-label'])(
         'leaves %s values to the default formatting',
         (source) => {
-            expect(format(source)).toBeUndefined();
+            const formatter = createNormalisedFormatter(undefined) as FunctionFormatter;
+            expect(formatter(params(source))).toBeUndefined();
         }
     );
+
+    test('a theme function formatter formats everything except percentage axis values', () => {
+        const formatter = createNormalisedFormatter(poundFormatter) as FunctionFormatter;
+        expect(formatter(params('axis-label'))).toBe('50%');
+        expect(formatter(params('tooltip'))).toBe('£49.6');
+        expect(formatter(params('series-label'))).toBe('£49.6');
+        expect(formatter(params('axis-label', 'x'))).toBe('£49.6');
+    });
+
+    test('a theme formatter keyed by property keeps its other properties', () => {
+        const themeFormatter: AgCartesianChartOptions['formatter'] = { x: poundFormatter, y: poundFormatter };
+        const formatter = createNormalisedFormatter(themeFormatter) as Record<'x' | 'y', FunctionFormatter>;
+        expect(formatter.x).toBe(poundFormatter);
+        expect(formatter.y(params('axis-label'))).toBe('50%');
+        expect(formatter.y(params('tooltip'))).toBe('£49.6');
+    });
 });

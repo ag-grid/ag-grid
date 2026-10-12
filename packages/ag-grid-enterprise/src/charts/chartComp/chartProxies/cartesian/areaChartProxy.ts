@@ -2,7 +2,7 @@ import type { AgAreaSeriesOptions, AgCartesianAxisOptions, AgCartesianChartOptio
 
 import type { UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
-import { NORMALISED_CHART_FORMATTER } from './normalisedFormatter';
+import { createNormalisedFormatter } from './normalisedFormatter';
 
 export class AreaChartProxy extends CartesianChartProxy<'area'> {
     protected override getAxes(params: UpdateParams): Record<string, AgCartesianAxisOptions> {
@@ -25,7 +25,9 @@ export class AreaChartProxy extends CartesianChartProxy<'area'> {
         commonChartOptions: AgCartesianChartOptions
     ): AgCartesianChartOptions {
         const options = super.getUpdateOptions(params, commonChartOptions);
-        return this.isNormalised() ? { ...options, formatter: NORMALISED_CHART_FORMATTER } : options;
+        return this.isNormalised()
+            ? { ...options, formatter: createNormalisedFormatter(this.getThemeFormatter(commonChartOptions)) }
+            : options;
     }
 
     protected override getSeries(params: UpdateParams) {
