@@ -76,6 +76,9 @@ export const sonarjsConfig = [
             'unicorn/prefer-includes': 0,
             'unicorn/no-zero-fractions': 0,
             'unicorn/no-useless-fallback-in-spread': 'error',
+
+            // Import rules, as referenced from the SonarCloud documentation.
+            'import-x/no-mutable-exports': 'error',
         },
     },
 ];
