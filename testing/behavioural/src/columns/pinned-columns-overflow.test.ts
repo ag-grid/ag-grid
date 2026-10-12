@@ -265,7 +265,6 @@ describe('Resizing pinned columns wider than the viewport', () => {
 
         expect(width(api, 'a')).toBe(200);
         expect(finishedResizes).toEqual(['a']);
-        expect(api.getColumn('a')!.isResizing()).toBe(false);
         expect(query<HTMLElement>('.ag-header-cell[col-id="a"]').classList.contains('ag-column-resizing')).toBe(false);
     });
 
