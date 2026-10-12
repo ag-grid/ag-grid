@@ -37,7 +37,7 @@ export const getColumnMoveMenuItem = (
 
     const headerRowIndex = headerCtrl.rowCtrl.rowIndex;
     const before = (key === 'moveLeft') !== gos.get('enableRtl');
-    const getMove = () => {
+    const getMovingColumns = () => {
         const leaves = headerColumn.isColumn ? [headerColumn] : headerColumn.getLeafColumns();
         const order = beans.colModel.colsList.filter((col) => col.pinned === leaves[0]?.pinned);
         const movingIndexes = order.flatMap((col, index) => (leaves.includes(col) ? [index] : []));
@@ -57,6 +57,21 @@ export const getColumnMoveMenuItem = (
             }
         }
         const columns = order.slice(first, last + 1).filter((col) => groupLeaves.includes(col));
+        return { columns, order, first, last };
+    };
+    const moving = getMovingColumns();
+    if (!moving || colMoves.isMovingSuppressed(moving.columns)) {
+        return null;
+    }
+    const getMove = () => {
+        if (beans.colModel.pivotMode || gos.get('functionsReadOnly')) {
+            return null;
+        }
+        const moving = getMovingColumns();
+        if (!moving) {
+            return null;
+        }
+        const { columns, order, first, last } = moving;
         const step = before ? -1 : 1;
         const edge = before ? first : last;
         let crossedVisibleColumn = false;

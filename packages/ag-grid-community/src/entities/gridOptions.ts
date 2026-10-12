@@ -147,6 +147,7 @@ import type {
     GetChartMenuItemsParams,
     GetChartToolbarItemsParams,
     GetChildCount,
+    GetColumnDropZoneMenuItemsParams,
     GetColumnMenuItemsParams,
     GetContextMenuItemsParams,
     GetGroupAggFilteringParams,
@@ -202,7 +203,12 @@ import type { SortDirection } from '../interfaces/iSort';
 import type { StatusBar } from '../interfaces/iStatusPanel';
 import type { Toolbar } from '../interfaces/iToolbar';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
-import type { DefaultColumnMenuItem, DefaultMenuItem, MenuItemDef } from '../interfaces/menuItem';
+import type {
+    DefaultColumnDropZoneMenuItem,
+    DefaultColumnMenuItem,
+    DefaultMenuItem,
+    MenuItemDef,
+} from '../interfaces/menuItem';
 import type { FullWidthNotesDataSource, NotesDataSource } from '../interfaces/notes';
 import type { RowNumbersOptions } from '../interfaces/rowNumbers';
 import type { OverlaySelectorFunc, OverlayType } from '../rendering/overlays/overlayComponent';
@@ -2295,6 +2301,13 @@ export interface GridOptions<TData = any> {
      */
     getColumnMenuItems?: GetColumnMenuItems<TData>;
     /**
+     * Customise the context menu for pills in Row Group, Pivot and Values drop zones. Return `[]` to hide it.
+     * Called when pills are created to determine menu availability for accessibility, and when opening a menu.
+     * Independent of `columnMenuItems` and `getColumnMenuItems`.
+     * @agModule `RowGroupingPanelModule` / `ColumnsToolPanelModule`
+     */
+    getColumnDropZoneMenuItems?: GetColumnDropZoneMenuItems<TData>;
+    /**
      * Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
      */
     postProcessPopup?: PostProcessPopup<TData>;
@@ -3228,6 +3241,10 @@ export type GetMainMenuItems<TData = any, TContext = any> = (
 export type GetColumnMenuItems<TData = any, TContext = any> = (
     params: GetColumnMenuItemsParams<TData, TContext>
 ) => MenuCallbackReturn<DefaultColumnMenuItem, TData, TContext>;
+
+export type GetColumnDropZoneMenuItems<TData = any, TContext = any> = (
+    params: GetColumnDropZoneMenuItemsParams<TData, TContext>
+) => MenuCallbackReturn<DefaultColumnDropZoneMenuItem, TData, TContext>;
 
 export type GetChartMenuItems<TData = any, TContext = any> = (
     params: GetChartMenuItemsParams<TData, TContext>

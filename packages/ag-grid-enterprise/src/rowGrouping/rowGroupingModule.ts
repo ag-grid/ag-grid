@@ -13,6 +13,7 @@ import {
     StickyRowModule,
 } from '../rowHierarchy/rowHierarchyModule';
 import { VERSION } from '../version';
+import { MenuItemModule } from '../widgets/menuItemModule';
 import { AgGridHeaderDropZonesSelector } from './columnDropZones/agGridHeaderDropZones';
 import { RowGroupPanelBuilder } from './columnDropZones/rowGroupPanelBuilder';
 import { GroupFilter, processGroupFilterParams } from './groupFilter/groupFilter';
@@ -78,6 +79,8 @@ export const RowGroupingPanelModule: _ModuleWithoutApi = {
     beans: [RowGroupPanelBuilder],
     selectors: [AgGridHeaderDropZonesSelector],
     icons: {
+        menuMoveLeft: 'left',
+        menuMoveRight: 'right',
         // identifies the pivot drop zone
         pivotPanel: 'pivot',
         // "Row groups" drop zone in column tool panel
@@ -87,7 +90,7 @@ export const RowGroupingPanelModule: _ModuleWithoutApi = {
         // version of panelDelimiter used in RTL mode
         panelDelimiterRtl: 'small-left',
     },
-    dependsOn: [SharedColumnStateUpdateStrategyModule, _PopupModule],
+    dependsOn: [SharedColumnStateUpdateStrategyModule, _PopupModule, MenuItemModule],
 };
 
 /**

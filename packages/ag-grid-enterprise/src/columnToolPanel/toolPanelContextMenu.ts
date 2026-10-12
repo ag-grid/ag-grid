@@ -19,9 +19,8 @@ import { PIVOT_TOKEN, SCROLL_INTO_VIEW_TOKEN, VALUE_TOKEN, columnMenuTokenLabel 
 import type { MenuItemMapper } from '../menu/menuItemMapper';
 import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from '../menu/menuSeparators';
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
-import { MenuList } from '../widgets/menuList';
+import { _showMenuListPopup } from '../widgets/menuPopupUtils';
 import type { ToolPanelColumnMove } from './columnMoveUtils';
-import { isMoveBlocked } from './columnMoveUtils';
 import { isDeferredMode, refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
 
@@ -90,16 +89,19 @@ export class ToolPanelContextMenu extends Component {
             colOrGroupDef = column.colDef;
         }
 
-        // Read-only functions restrict grouping, values and pivoting, not navigation or column order.
+        // Read-only functions omit grouping actions but retain navigation and disabled movement items.
         const functionsReadOnly = gos.get('functionsReadOnly');
-        let defaultItems: DefaultToolPanelItem[];
+        let defaultItems: (DefaultToolPanelItem | 'separator')[];
         if (!this.isActive()) {
             defaultItems = [];
         } else if (functionsReadOnly) {
-            defaultItems = this.getDefaultTokens().filter((token) => !this.menuItemMap.get(token)?.mutatesState);
+            defaultItems = this.getDefaultTokens().filter(
+                (token) => token === MENU_ITEM_SEPARATOR || !this.menuItemMap.get(token)?.mutatesState
+            );
         } else {
             defaultItems = this.getDefaultTokens();
         }
+        _normaliseSeparators(defaultItems, MENU_ITEM_SEPARATOR);
 
         const resolvedItems = _resolveColumnMenuItems(gos, col, columnGroup, source, defaultItems, colOrGroupDef);
         const menuItemsMapped = this.mapMenuItems(resolvedItems, col);
@@ -141,13 +143,18 @@ export class ToolPanelContextMenu extends Component {
         for (let i = 0, len = items.length; i < len; ++i) {
             const item = items[i];
             if (item === 'moveUp' || item === 'moveDown') {
-                if (this.columnMove) {
-                    const isUp = item === 'moveUp';
+                const isUp = item === 'moveUp';
+                if (!this.isMoveSuppressed()) {
+                    const isDisabled = () => this.gos.get('functionsReadOnly') || !this.columnMove?.canMove(isUp);
                     expanded.push({
                         name: this.getLocaleTextFunc()(item, isUp ? 'Move Up' : 'Move Down'),
                         icon: _createIconNoSpan(isUp ? 'menuMoveUp' : 'menuMoveDown', this.beans, column),
-                        disabled: !this.columnMove.canMove(isUp),
-                        action: () => this.columnMove?.move(isUp),
+                        disabled: isDisabled(),
+                        action: () => {
+                            if (!isDisabled()) {
+                                this.columnMove?.move(isUp);
+                            }
+                        },
                     });
                 }
                 continue;
@@ -167,7 +174,9 @@ export class ToolPanelContextMenu extends Component {
         // cannot be resolved, so keep the built definitions and drop the tokens.
         const mapped: (MenuItemDef | 'separator')[] = menuItemMapper
             ? menuItemMapper.mapWithStockItems(expanded, column, null, undefined, () => this.getGui(), this.eventType)
-            : expanded.filter((item): item is MenuItemDef => typeof item !== 'string');
+            : expanded.filter(
+                  (item): item is MenuItemDef | 'separator' => typeof item !== 'string' || item === MENU_ITEM_SEPARATOR
+              );
 
         // Collapse duplicate/stranded separators, matching the column menu (ColumnMenuFactory.getMenuItems).
         _normaliseSeparators(mapped, MENU_ITEM_SEPARATOR);
@@ -340,44 +349,12 @@ export class ToolPanelContextMenu extends Component {
         column: AgColumn | null,
         columnGroup: AgProvidedColumnGroup | null
     ): void {
-        const eGui = this.getGui();
-        const menuList = this.createBean(new MenuList(0, { column, columnGroup, node: null, value: null }));
-        const localeTextFunc = this.getLocaleTextFunc();
-
-        let hideFunc = () => {};
-
-        eGui.appendChild(menuList.getGui());
-        menuList.addMenuItems(menuItemsMapped);
-        menuList.addManagedListeners(menuList, {
-            closeMenu: () => {
-                this.parentEl.focus();
-                hideFunc();
-            },
-        });
-
-        const popupSvc = this.beans.popupSvc!;
-        const addPopupRes = popupSvc.addPopup({
-            modal: true,
-            eChild: eGui,
-            closeOnEsc: true,
-            afterGuiAttached: () => menuList.focusInto(),
-            ariaLabel: localeTextFunc('ariaLabelContextMenu', 'Context Menu'),
-            closedCallback: (e: KeyboardEvent) => {
-                if (e instanceof KeyboardEvent) {
-                    this.parentEl.focus();
-                }
-                this.destroyBean(menuList);
-            },
-        });
-
-        if (addPopupRes) {
-            hideFunc = addPopupRes.hideFunc;
-        }
-
-        popupSvc.positionPopupUnderMouseEvent({
-            type: 'columnContextMenu',
-            mouseEvent: this.mouseEventOrTouch,
-            ePopup: eGui,
+        _showMenuListPopup(this, this.beans, {
+            menuItems: menuItemsMapped,
+            menuContext: { column, columnGroup, node: null, value: null },
+            ePopup: this.getGui(),
+            positionBy: this.mouseEventOrTouch,
+            restoreFocus: () => this.parentEl.focus(),
         });
     }
 
@@ -392,16 +369,21 @@ export class ToolPanelContextMenu extends Component {
         );
     }
 
-    private getDefaultTokens(): DefaultToolPanelItem[] {
-        const tokens: DefaultToolPanelItem[] = [];
+    private isMoveSuppressed(): boolean {
+        const colMoves = this.beans.colMoves;
+        return !this.columnMove || !colMoves || colMoves.isMovingSuppressed(this.columns);
+    }
+
+    private getDefaultTokens(): (DefaultToolPanelItem | 'separator')[] {
+        const tokens: (DefaultToolPanelItem | 'separator')[] = [];
         const { menuItemMap, columns } = this;
         for (const [key, val] of menuItemMap) {
             if (columns.some((col) => val.allowedFunction(col))) {
                 tokens.push(key);
             }
         }
-        if (this.columnMove && !isMoveBlocked(this.beans, this.columns, this.params)) {
-            tokens.push('moveUp', 'moveDown');
+        if (!this.isMoveSuppressed()) {
+            tokens.push(MENU_ITEM_SEPARATOR, 'moveUp', 'moveDown');
         }
         return tokens;
     }

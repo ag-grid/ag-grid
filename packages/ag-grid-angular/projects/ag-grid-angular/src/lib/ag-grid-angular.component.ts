@@ -120,6 +120,7 @@ import type {
     GetChartMenuItems,
     GetChartToolbarItems,
     GetChildCount,
+    GetColumnDropZoneMenuItems,
     GetColumnMenuItems,
     GetContextMenuItems,
     GetDataPath,
@@ -2037,6 +2038,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ColumnMenuModule` / `ColumnsToolPanelModule`
      */
     @Input() public getColumnMenuItems: GetColumnMenuItems<TData> | undefined = undefined;
+    /** Customise the context menu for pills in Row Group, Pivot and Values drop zones. Return `[]` to hide it.
+     * Called when pills are created to determine menu availability for accessibility, and when opening a menu.
+     * Independent of `columnMenuItems` and `getColumnMenuItems`.
+     * @agModule `RowGroupingPanelModule` / `ColumnsToolPanelModule`
+     */
+    @Input() public getColumnDropZoneMenuItems: GetColumnDropZoneMenuItems<TData> | undefined = undefined;
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
      */
     @Input() public postProcessPopup: PostProcessPopup<TData> | undefined = undefined;

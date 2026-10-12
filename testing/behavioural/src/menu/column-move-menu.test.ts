@@ -1,4 +1,4 @@
-import { findByText, getAllByText, getByText, queryByText, waitFor } from '@testing-library/dom';
+import { findByRole, findByText, getAllByText, getByText, queryByText, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { TestGridsManager, polyfillOffsetParent } from 'ag-test-utils';
 
@@ -56,7 +56,7 @@ describe('column movement menu actions', () => {
             header.focus();
             header.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
         }
-        await findByText(grid, labels(surface)[0]);
+        await findByRole(grid, 'menu');
         return grid;
     }
 
@@ -78,16 +78,18 @@ describe('column movement menu actions', () => {
         test.each(['suppressMovable', 'lockPosition'] as const)('explicit items respect %s', async (restriction) => {
             const api = await create({
                 columnDefs: columnDefs.map((col) => (col.field === 'b' ? { ...col, [restriction]: true } : col)),
-                getColumnMenuItems: () => (surface === 'header' ? ['moveLeft', 'moveRight'] : ['moveUp', 'moveDown']),
+                getColumnMenuItems: () =>
+                    surface === 'header'
+                        ? ['moveLeft', 'moveRight', { name: 'Custom action' }]
+                        : ['moveUp', 'moveDown', { name: 'Custom action' }],
             });
             const before = order(api);
             const grid = await open(surface, api);
             for (const label of labels(surface)) {
-                const item = getByText(grid, label).closest('[role="menuitem"]')!;
-                expect(item.getAttribute('aria-disabled')).toBe('true');
-                await userEvent.click(item);
-                expect(order(api)).toEqual(before);
+                expect(queryByText(grid, label)).toBeNull();
             }
+            expect(getByText(grid, 'Custom action')).toBeTruthy();
+            expect(order(api)).toEqual(before);
         });
 
         test('disables movement beyond the first and last positions', async () => {
@@ -96,11 +98,15 @@ describe('column movement menu actions', () => {
             expect(
                 getByText(grid, labels(surface)[0]).closest('[role="menuitem"]')!.getAttribute('aria-disabled')
             ).toBe('true');
+            await userEvent.click(getByText(grid, labels(surface)[0]));
+            expect(order(api)).toEqual(['a', 'b', 'c', 'd']);
+            expect(getByText(grid, labels(surface)[1])).toBeTruthy();
             await userEvent.keyboard('{Escape}');
             grid = await open(surface, api, 'D');
             expect(
                 getByText(grid, labels(surface)[1]).closest('[role="menuitem"]')!.getAttribute('aria-disabled')
             ).toBe('true');
+            expect(getByText(grid, labels(surface)[0])).toBeTruthy();
         });
 
         test('does not split married children', async () => {
@@ -119,6 +125,28 @@ describe('column movement menu actions', () => {
             await userEvent.click(getByText(grid, labels(surface)[0]));
             expect(order(api)).toEqual(['a', 'b', 'c', 'd']);
         });
+
+        test.each([false, true])(
+            'read-only functions prevent moves, changed after opening=%s',
+            async (changeAfterOpening) => {
+                const api = await create({ functionsReadOnly: !changeAfterOpening });
+                const grid = await open(surface, api);
+                if (changeAfterOpening) {
+                    api.setGridOption('functionsReadOnly', true);
+                }
+                for (const label of labels(surface)) {
+                    const item = getByText(grid, label).closest<HTMLElement>('[role="menuitem"]')!;
+                    if (!changeAfterOpening) {
+                        expect(item.getAttribute('aria-disabled')).toBe('true');
+                    }
+                    await userEvent.click(item);
+                    if (changeAfterOpening) {
+                        break;
+                    }
+                }
+                expect(order(api)).toEqual(['a', 'b', 'c', 'd']);
+            }
+        );
 
         test('offers no default movement when globally suppressed', async () => {
             const api = await create({ suppressMovableColumns: true });
@@ -241,7 +269,7 @@ describe('column movement menu actions', () => {
         expect(order(api)).toEqual(['a', 'c', 'b', 'd']);
     });
 
-    test('the column chooser offers the same move items', async () => {
+    test.each(['A', 'B'])('the column chooser disables unavailable directions for %s', async (name) => {
         const api = await create({ sideBar: undefined }, headerGrids);
         api.showColumnChooser();
         const dialog = await waitFor(() => {
@@ -254,14 +282,18 @@ describe('column movement menu actions', () => {
             const viewport = dialog.querySelector<HTMLElement>('.ag-column-select-virtual-list-viewport')!;
             Object.defineProperty(viewport, 'offsetHeight', { value: 300, configurable: true });
             viewport.dispatchEvent(new Event('scroll'));
-            const item = getByText(dialog, 'B').closest<HTMLElement>('.ag-virtual-list-item');
+            const item = getByText(dialog, name).closest<HTMLElement>('.ag-virtual-list-item');
             expect(item).not.toBeNull();
             return item!;
         });
         entry.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
         const grid = getGridElement(api) as HTMLElement;
-        await userEvent.click(await findByText(grid, 'Move Down'));
-        expect(order(api)).toEqual(['a', 'c', 'b', 'd']);
+        const down = await findByText(grid, 'Move Down');
+        expect(getByText(grid, 'Move Up').closest('[role="menuitem"]')!.getAttribute('aria-disabled') === 'true').toBe(
+            name === 'A'
+        );
+        await userEvent.click(down);
+        expect(order(api)).toEqual(name === 'A' ? ['b', 'a', 'c', 'd'] : ['a', 'c', 'b', 'd']);
     });
 
     test('tool panel actions do not require the Column Menu module', async () => {
@@ -273,6 +305,20 @@ describe('column movement menu actions', () => {
         ).not.toBeNull();
         await userEvent.click(getByText(grid, 'Move Down'));
         expect(order(api)).toEqual(['a', 'c', 'b', 'd']);
+    });
+
+    test.each([false, true])('separates the default CTP move items, standalone module=%s', async (standalone) => {
+        const api = await create({}, standalone ? panelGrids : grids);
+        const grid = await open('panel', api);
+        const up = getByText(grid, 'Move Up').closest('[role="menuitem"]')!;
+        const down = getByText(grid, 'Move Down').closest('[role="menuitem"]')!;
+        expect(up.previousElementSibling?.classList.contains('ag-menu-separator')).toBe(true);
+        expect(down.previousElementSibling).toBe(up);
+        expect(grid.querySelectorAll('.ag-menu-separator')).toHaveLength(1);
+        await userEvent.keyboard('{Escape}');
+        api.setGridOption('suppressMovableColumns', true);
+        await open('panel', api);
+        expect(grid.querySelectorAll('.ag-menu-separator')).toHaveLength(0);
     });
 
     test('tool-panel move indices account for generated columns', async () => {
@@ -290,18 +336,25 @@ describe('column movement menu actions', () => {
         expect(order(api)).toEqual(['a', 'c', 'b', 'd']);
     });
 
-    test('does not offer tool-panel moves in pivot mode', async () => {
-        const api = await create({
-            pivotMode: true,
-            // a grouped row must render, or `firstDataRendered` never fires and grid creation never settles
-            columnDefs: columnDefs.map((col) => (col.field === 'a' ? { ...col, rowGroup: true } : col)),
-            getColumnMenuItems: ({ defaultItems }) => [...defaultItems, { name: 'Custom action' }],
+    describe.each<Surface>(['header', 'panel'])('pivot-mode %s menus', (surface) => {
+        test.each([false, true])('disables column moves with pivot active=%s', async (pivot) => {
+            const api = await create({
+                pivotMode: true,
+                columnDefs: [
+                    { field: 'a', rowGroup: true },
+                    { field: 'b', pivot },
+                    { field: 'c', aggFunc: 'sum' },
+                    { field: 'd', aggFunc: 'sum' },
+                ],
+                getColumnMenuItems: ({ defaultItems }) => [...defaultItems, { name: 'Custom action' }],
+            });
+            const name = surface === 'header' ? api.getAllDisplayedColumns().at(-1)!.getColId() : 'B';
+            const grid = await open(surface, api, name);
+            await findByText(grid, 'Custom action');
+            for (const label of labels(surface)) {
+                expect(getByText(grid, label).closest('[role="menuitem"]')!.getAttribute('aria-disabled')).toBe('true');
+            }
         });
-        const grid = getGridElement(api) as HTMLElement;
-        await openToolPanelContextMenu(api.getToolPanelInstance('columns'), grid, 'B');
-        await findByText(grid, 'Custom action');
-        expect(queryByText(grid, 'Move Up')).toBeNull();
-        expect(queryByText(grid, 'Move Down')).toBeNull();
     });
 
     test('moves a collapsed tool-panel group as a block', async () => {

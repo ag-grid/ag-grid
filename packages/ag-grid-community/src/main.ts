@@ -904,6 +904,7 @@ export type {
     FillHandleOptions,
     GetChartMenuItems,
     GetChartToolbarItems,
+    GetColumnDropZoneMenuItems,
     GetColumnMenuItems,
     GetContextMenuItems,
     GetDataPath,
@@ -972,6 +973,7 @@ export type {
     GetChartMenuItemsParams,
     GetChartToolbarItemsParams,
     GetChildCount,
+    GetColumnDropZoneMenuItemsParams,
     GetColumnMenuItemsParams,
     GetContextMenuItemsParams,
     GetGroupAggFilteringParams,
@@ -1065,6 +1067,7 @@ export type {
 export type {
     BaseMenuItem,
     BaseMenuItemParams,
+    DefaultColumnDropZoneMenuItem,
     DefaultColumnMenuItem,
     DefaultMenuItem,
     DefaultToolPanelItem,
