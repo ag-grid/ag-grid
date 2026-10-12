@@ -38,19 +38,3 @@
     width: 100%;
     height: 100%;
 }
-
-.example-wrapper {
-    display: grid;
-    grid-template-rows: auto 1fr;
-    height: 100%;
-    width: 100%;
-}
-
-.example-button-row {
-    padding-right: 8px;
-}
-
-#myGrid {
-    height: 100%;
-    width: 100%;
-}
