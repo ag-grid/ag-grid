@@ -32,6 +32,6 @@ export class NumberFilterHandler extends ScalarFilterHandler<NumberFilterModel, 
     }
 
     protected override isValid(value: number): boolean {
-        return !isNaN(value);
+        return !Number.isNaN(Number(value));
     }
 }

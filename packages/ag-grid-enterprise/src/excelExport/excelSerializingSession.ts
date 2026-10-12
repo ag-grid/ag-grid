@@ -822,7 +822,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         } else if (type === 'n') {
             const numberValue = Number(value);
 
-            if (isNaN(numberValue)) {
+            if (Number.isNaN(numberValue)) {
                 return { type: 'empty', value: null, escaped: false };
             } else {
                 value = numberValue.toString();
@@ -898,7 +898,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         if (typeof value === 'bigint') {
             return false;
         }
-        return isFinite(value) && value !== '' && !isNaN(parseFloat(value));
+        return Number.isFinite(Number(value)) && value !== '' && !Number.isNaN(Number.parseFloat(value));
     }
 
     private getStyleById(styleId?: string | null): ExcelStyle | null {

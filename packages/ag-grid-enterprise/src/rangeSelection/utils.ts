@@ -11,7 +11,7 @@ export function findLineByLeastSquares(values: number[]) {
         const splitExponent = value.toString().split('e-');
 
         if (splitExponent.length > 1) {
-            maxDecimals = Math.max(maxDecimals, parseInt(splitExponent[1], 10));
+            maxDecimals = Math.max(maxDecimals, Number.parseInt(splitExponent[1], 10));
             continue;
         }
 
@@ -41,7 +41,7 @@ export function findLineByLeastSquares(values: number[]) {
     const result: number[] = [];
 
     for (let x = 0; x <= len; x++) {
-        result.push(parseFloat((x * m + b).toFixed(maxDecimals)));
+        result.push(Number.parseFloat((x * m + b).toFixed(maxDecimals)));
     }
 
     return result;

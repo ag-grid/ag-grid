@@ -60,7 +60,7 @@ const parseOperand = (
 
     // numbers
     const num = Number(trimmed);
-    if (!isNaN(num)) {
+    if (!Number.isNaN(num)) {
         return num;
     }
 
