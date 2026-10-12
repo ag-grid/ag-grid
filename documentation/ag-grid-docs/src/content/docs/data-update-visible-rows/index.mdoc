@@ -13,7 +13,7 @@ Subscribing to visible rows requires the `VisibleRowsModule` and [Row IDs](./row
 The method takes a pair of handlers and returns a function that stops the subscription.
 
 ```{% frameworkTransform=true %}
-const stop = api.subscribeToVisibleRows({
+const stopVisibleRowsSubscription = api.subscribeToVisibleRows({
     onSubscribe: (rows, params) => {
         stream.subscribe(rows.map((row) => row.id));
     },
@@ -23,7 +23,7 @@ const stop = api.subscribeToVisibleRows({
 });
 
 // later
-stop();
+stopVisibleRowsSubscription();
 ```
 
 - `onSubscribe` receives `VisibleRow` objects, which include the row `data` and whether the row is a `group`.
