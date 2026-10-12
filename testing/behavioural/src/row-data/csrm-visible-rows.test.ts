@@ -143,6 +143,25 @@ describe('CSRM subscribeToVisibleRows', () => {
         }
     });
 
+    test('debounceMs still calls the handlers while data updates keep arriving', async () => {
+        const api = await createFlatGrid();
+        const recorder = createRecorder();
+        api.subscribeToVisibleRows(recorder.handlers, { debounceMs: 100 });
+        vi.useFakeTimers();
+        try {
+            api.ensureIndexVisible(30, 'top');
+            for (let i = 0; i < 5; ++i) {
+                api.applyTransaction({ update: [{ id: '30', value: i }] });
+                await vi.advanceTimersByTimeAsync(50);
+            }
+
+            expect(recorder.ids()).toEqual(range(30, 35));
+            expect(recorder.violations).toEqual([]);
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
     test('throttleMs caps how long debounceMs delays a change', async () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();

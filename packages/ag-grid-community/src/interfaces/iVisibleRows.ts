@@ -46,7 +46,7 @@ export interface VisibleRowsOptions {
      */
     includeBuffer?: boolean;
     /**
-     * Wait until rows have stopped changing for this many milliseconds before calling the handlers.
+     * Wait until the view has stopped scrolling for this many milliseconds before calling the handlers.
      * If neither `debounceMs` nor `throttleMs` is set, changes are passed to the handlers at most once per animation frame.
      */
     debounceMs?: number;

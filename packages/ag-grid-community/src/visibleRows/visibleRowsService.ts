@@ -3,7 +3,7 @@ import { _areEqual, _requestAnimationFrame } from 'ag-stack';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { RowNode } from '../entities/rowNode';
-import type { BodyScrollEvent, DisplayedRowsChangedEvent } from '../events';
+import type { BodyScrollEvent, DisplayedRowsChangedEvent, PaginationChangedEvent } from '../events';
 import {
     _addGridCommonParams,
     _getRowIdCallback,
@@ -46,9 +46,10 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         const markDirty = () => this.markPending();
+        const markViewMoved = () => this.markPending(true);
         this.addManagedEventListeners({
             modelUpdated: markDirty,
-            viewportChanged: markDirty,
+            viewportChanged: markViewMoved,
             // A partial redraw can change whether a row is full width, without a model or viewport change.
             displayedRowsChanged: (event: DisplayedRowsChangedEvent) => {
                 if (!event.afterScroll) {
@@ -56,11 +57,12 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
                 }
             },
             // Without virtualisation the rendered rows can stay the same while the visible pixel range changes.
-            bodyHeightChanged: markDirty,
-            paginationChanged: markDirty,
+            bodyHeightChanged: markViewMoved,
+            // Fired after every model update too, so only a new page moves the view.
+            paginationChanged: (event: PaginationChangedEvent) => this.markPending(event.newPage),
             bodyScroll: (event: BodyScrollEvent) => {
                 if (event.direction === 'vertical') {
-                    this.markPending(true);
+                    this.markPending(true, true);
                 }
             },
             rowGroupOpened: markDirty,
@@ -133,18 +135,19 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
     }
 
     /** Schedules a flush for every subscription, only for those without the buffer if `unbufferedOnly`. */
-    private markPending(unbufferedOnly = false): void {
+    private markPending(viewMoved = false, unbufferedOnly = false): void {
         for (const sub of this.subscriptions) {
             if (!unbufferedOnly || !sub.includeBuffer) {
-                this.schedule(sub);
+                this.schedule(sub, viewMoved);
             }
         }
     }
 
-    private schedule(sub: VisibleRowsSubscription): void {
+    /** Only a moving view pushes a pending debounce back, so a steady stream of data updates cannot starve it. */
+    private schedule(sub: VisibleRowsSubscription, viewMoved = false): void {
         const { debounceMs, throttleMs } = sub;
         const timed = debounceMs != null || throttleMs != null;
-        if (sub.stopped || (sub.scheduled && !timed)) {
+        if (sub.stopped || (sub.scheduled && (!timed || !viewMoved))) {
             return;
         }
         if (!timed) {
@@ -157,7 +160,7 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
         sub.firstChangeTime = sub.scheduled ? sub.firstChangeTime : now;
         sub.scheduled = true;
 
-        // Each change pushes the debounce back, but a pending change never waits longer than `throttleMs`,
+        // Each view move pushes the debounce back, but a pending change never waits longer than `throttleMs`,
         // and calls are never closer together than `throttleMs`.
         const settledTime = now + (debounceMs ?? 0);
         const dueTime =
