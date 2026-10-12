@@ -387,7 +387,6 @@ const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> 
         ],
     },
     donut: DONUT,
-    doughnut: DONUT,
     sunburst: {
         tooltip: 'sunburstTooltip',
         axes: 'none',
