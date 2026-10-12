@@ -167,15 +167,16 @@
             // Workspace Packages: one row per (.snyk file, wildcard rule), listing the vulns the rule covers.
             // Driven only by the .snyk files, not by review decisions.
             const workspaceRules = new Map(); // snykFile\0rule → { snykFile, rule, vulns: Map<id, {vuln, selfFlagged, ignored}> }
+            // An expired rule no longer suppresses the vuln in Snyk, so it stays pending for renewal
+            const isLive = expires => !(expires && new Date(expires) <= new Date());
             function addWorkspaceVuln(project, vuln, ws, suppressed) {
                 const snykFile = getSnykFilePath(project);
                 const key = snykFile + '\0' + ws.rule;
                 if (!workspaceRules.has(key)) workspaceRules.set(key, { snykFile, rule: ws.rule, vulns: new Map() });
                 const vulns = workspaceRules.get(key).vulns;
                 if (vulns.has(vuln.id)) return;
-                // An expired rule no longer suppresses the vuln in Snyk, so it stays pending for renewal
-                const ignored = suppressed || !!ignorePatternsByFile[snykFile]?.[vuln.id]?.some(e =>
-                    e.path === ws.rule && !(e.expires && new Date(e.expires) <= new Date()));
+                const ignored = suppressed
+                    || !!ignorePatternsByFile[snykFile]?.[vuln.id]?.some(e => e.path === ws.rule && isLive(e.expires));
                 vulns.set(vuln.id, { vuln, selfFlagged: ws.selfFlagged, ignored });
             }
             for (const { vuln, project } of allVulnEntries) {
@@ -188,7 +189,8 @@
                 for (const vuln of (project.filtered?.ignore || [])) {
                     const id = vuln.id;
                     const ws = workspaceIgnoreRule(vuln);
-                    if (ws) { addWorkspaceVuln(project, vuln, ws, true); continue; }
+                    // A saved scan's suppression only holds until the expiry it recorded
+                    if (ws) { addWorkspaceVuln(project, vuln, ws, !!vuln.filtered?.ignored?.some(i => isLive(i.expires))); continue; }
                     if (decisions[id]?.status === 'resolved') continue;
                     const snykFile = getSnykFilePath(project);
                     const depPath = (vuln.from?.slice(1) || []).join(' > ');
