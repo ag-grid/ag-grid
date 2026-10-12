@@ -1,15 +1,31 @@
-import type { ColDef, UserColumnPropertyKey } from 'ag-grid-community';
+import type { CalculatedColumnChanges, ColDef, UserColumnPropertyKey } from 'ag-grid-community';
 import { _DATA_TYPE_DERIVED_COL_DEF_PROPERTIES } from 'ag-grid-community';
 
 /** The definition properties persisted by the Calculated Column dialog. Only these
  *  are recorded in the user-column layer: the rest is derived on build (`editable`,
  *  `suppressPaste`, the data-type properties), or owned by another grid state section (width, sort, …). */
-export const USER_OWNED_PROPERTIES: readonly UserColumnPropertyKey[] = [
+export const USER_OWNED_PROPERTIES = [
     'headerName',
     'cellDataType',
     'calculatedExpression',
     'columnGroupShow',
-];
+] as const satisfies readonly UserColumnPropertyKey[];
+
+/** Compares the user-owned values without retaining either definition in the event payload. */
+export function getCalculatedColumnChanges(oldColDef: ColDef, colDef: ColDef): CalculatedColumnChanges | null {
+    const changes: CalculatedColumnChanges = {};
+    const compare = <K extends keyof CalculatedColumnChanges>(property: K): void => {
+        const oldValue = oldColDef[property];
+        const newValue = colDef[property];
+        if (oldValue !== newValue) {
+            changes[property] = { oldValue, newValue } as CalculatedColumnChanges[K];
+        }
+    };
+    for (const property of USER_OWNED_PROPERTIES) {
+        compare(property);
+    }
+    return Object.keys(changes).length ? changes : null;
+}
 
 /** Projects a calc col's definition onto the properties a user configured, for persisting in grid state.
  *  `undefined` values are kept: they record a property the user cleared. */

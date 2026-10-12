@@ -1,4 +1,10 @@
-import type { ColDef, GridApi, GridOptions, ValueFormatterLiteParams } from 'ag-grid-community';
+import type {
+    CalculatedColumnChangedEvent,
+    ColDef,
+    GridApi,
+    GridOptions,
+    ValueFormatterLiteParams,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ColumnApiModule,
@@ -93,11 +99,16 @@ const gridOptions: GridOptions<SalesRow> = {
         },
     },
     calculatedColumns: true,
+    onCalculatedColumnChanged,
     defaultColDef: {
         flex: 1,
         minWidth: 130,
     },
 };
+
+function onCalculatedColumnChanged(event: CalculatedColumnChangedEvent<SalesRow>) {
+    console.log('Calculated column changed:', event.column.getColId(), event.changes);
+}
 
 // Get: read the calculated columns currently in the grid.
 function logCalculatedColumns() {
