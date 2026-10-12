@@ -176,8 +176,11 @@ export class BlockUtils extends BeanStub implements NamedBean {
         if (rowNode.group) {
             const getGroupIncludeFooter = _getGroupTotalRowCallback(this.beans.gos);
             const shouldRowShowFooter = getGroupIncludeFooter({ node: rowNode });
-            if (shouldRowShowFooter && !rowNode.sibling) {
-                _createRowNodeFooter(rowNode, this.beans);
+            if (shouldRowShowFooter) {
+                // an existing total row is kept, `RowNode.updateData` already mirrors data onto it
+                if (!rowNode.sibling) {
+                    _createRowNodeFooter(rowNode, this.beans);
+                }
                 return;
             }
         }
