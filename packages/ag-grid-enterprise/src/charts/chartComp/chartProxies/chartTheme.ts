@@ -56,7 +56,7 @@ export function createAgChartTheme(
         crossFilteringOverrides,
         gridOptionsThemeOverrides,
         apiThemeOverrides,
-        { ...(chartOptionsToRestore ?? {}) },
+        { ...chartOptionsToRestore },
         updatedOverrides,
     ];
 

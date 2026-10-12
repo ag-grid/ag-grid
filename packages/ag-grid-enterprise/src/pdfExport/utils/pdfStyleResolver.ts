@@ -129,8 +129,8 @@ export function mergeWatermark(
         ...baseWatermark,
         ...overrideWatermark,
         style: {
-            ...(baseWatermark.style ?? {}),
-            ...(overrideWatermark.style ?? {}),
+            ...baseWatermark.style,
+            ...overrideWatermark.style,
         },
     };
 }

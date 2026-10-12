@@ -79,8 +79,8 @@ export class PartImpl implements Part {
             // part need to come after default params to prevent them from being
             // immediately overridden.
             [defaultModeName]: {
-                ...(modeParams[defaultModeName] ?? {}),
-                ...(params ?? {}),
+                ...modeParams[defaultModeName],
+                ...params,
             },
             ...modeParams,
         };

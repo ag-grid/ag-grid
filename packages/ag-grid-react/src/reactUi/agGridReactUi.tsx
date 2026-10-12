@@ -236,7 +236,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         return {
             width: '100%',
             height: '100%',
-            ...(props.containerStyle || {}),
+            ...props.containerStyle,
         };
     }, [props.containerStyle]);
 
