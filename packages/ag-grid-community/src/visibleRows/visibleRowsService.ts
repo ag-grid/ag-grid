@@ -113,7 +113,7 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
             return () => {};
         }
         if (!_getRowIdCallback(this.beans)) {
-            this.warn(336);
+            this.warn(188, { feature: '`subscribeToVisibleRows`' });
             return () => {};
         }
 

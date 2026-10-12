@@ -396,7 +396,7 @@ describe('SSRM subscribeToVisibleRows', () => {
         const api = await createFlatGrid({ getRowId: undefined });
         const recorder = createRecorder();
 
-        expect(() => api.subscribeToVisibleRows(recorder.handlers)).toThrow('warning #336');
+        expect(() => api.subscribeToVisibleRows(recorder.handlers)).toThrow('warning #188');
         expect(recorder.calls).toEqual([]);
     });
 
