@@ -1,8 +1,12 @@
 export interface Stock {
     id: string;
     sector: string;
+    exchange: string;
+    country: string;
     symbol: string;
     price: number;
+    change: number;
+    volume: number;
 }
 
 export type ClientMessage = { type: 'subscribe' | 'unsubscribe'; ids: string[] };
@@ -11,6 +15,8 @@ export type ServerMessage = { type: 'update'; rows: Stock[] };
 const LATENCY_MS = 150;
 const UPDATE_INTERVAL_MS = 1000;
 const SECTORS = ['Energy', 'Finance', 'Healthcare', 'Industrials', 'Technology'];
+const EXCHANGES = ['NYSE', 'NASDAQ', 'LSE'];
+const COUNTRIES = ['United States', 'United Kingdom', 'Germany', 'Japan'];
 
 // the server's copy of the stocks, keyed by id
 const stocks = new Map<string, Stock>();
@@ -24,7 +30,16 @@ export function fetchStocks(): Stock[] {
         for (let i = 0; i < 20; i++) {
             const id = `${dataVersion}-${stocks.size}`;
             const symbol = `${sector.slice(0, 3).toUpperCase()}${String(i).padStart(2, '0')}`;
-            stocks.set(id, { id, sector, symbol, price: Math.round(Math.random() * 10000) / 100 });
+            stocks.set(id, {
+                id,
+                sector,
+                exchange: EXCHANGES[i % EXCHANGES.length],
+                country: COUNTRIES[(i * 7) % COUNTRIES.length],
+                symbol,
+                price: Math.round((1 + Math.random() * 99) * 100) / 100,
+                change: 0,
+                volume: Math.round(Math.random() * 100000),
+            });
         }
     });
     return copy([...stocks.values()]);
@@ -60,7 +75,10 @@ class FakeServer {
             // group rows have no stock, so get no updates
             const stock = stocks.get(id);
             if (stock) {
-                stock.price = Math.round((stock.price + Math.random() - 0.5) * 100) / 100;
+                const price = Math.max(0.01, Math.round((stock.price + Math.random() - 0.5) * 100) / 100);
+                stock.change = Math.round(((price - stock.price) / stock.price) * 10000) / 100;
+                stock.price = price;
+                stock.volume += Math.round(Math.random() * 1000);
                 rows.push(stock);
             }
         }

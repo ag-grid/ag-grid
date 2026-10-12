@@ -10,7 +10,7 @@ import {
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
-import { RowGroupingModule } from 'ag-grid-enterprise';
+import { ColumnsToolPanelModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import type { ServerMessage, Stock } from './fakeSocket';
 import { FakeSocket, fetchStocks } from './fakeSocket';
@@ -23,6 +23,7 @@ if (process.env.NODE_ENV !== 'production') {
 ModuleRegistry.registerModules([
     ClientSideRowModelModule,
     ClientSideRowModelApiModule,
+    ColumnsToolPanelModule,
     HighlightChangesModule,
     NumberFilterModule,
     RowGroupingModule,
@@ -40,11 +41,17 @@ let gridApi: GridApi<Stock>;
 const gridOptions: GridOptions<Stock> = {
     columnDefs: [
         { field: 'sector', rowGroup: true, hide: true },
+        { field: 'exchange' },
+        { field: 'country' },
         { field: 'symbol', filter: 'agTextColumnFilter' },
         { field: 'price', filter: 'agNumberColumnFilter', enableCellChangeFlash: true },
+        { field: 'change', headerName: 'Change %', enableCellChangeFlash: true },
+        { field: 'volume', enableCellChangeFlash: true },
     ],
-    defaultColDef: { flex: 1 },
+    // any column can be grouped, from the Columns Tool Panel
+    defaultColDef: { flex: 1, minWidth: 100, enableRowGroup: true },
     groupDefaultExpanded: 1,
+    sideBar: 'columns',
     getRowId: (params: GetRowIdParams<Stock>) => params.data.id,
     onGridReady: (params) => {
         params.api.setGridOption('rowData', fetchStocks());
@@ -55,8 +62,13 @@ const gridOptions: GridOptions<Stock> = {
 };
 
 function renderCount() {
-    document.querySelector('#subscribedCount')!.textContent = String(subscribed.size);
-    document.querySelector('#updatesSent')!.textContent = String(updatesSent);
+    const subscribedCount = document.querySelector('#subscribedCount');
+    const updatesSentCount = document.querySelector('#updatesSent');
+    // the panel can be removed before the grid is destroyed, which unsubscribes the remaining rows
+    if (subscribedCount && updatesSentCount) {
+        subscribedCount.textContent = String(subscribed.size);
+        updatesSentCount.textContent = String(updatesSent);
+    }
 }
 
 function onServerMessage(api: GridApi<Stock>, message: ServerMessage) {

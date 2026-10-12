@@ -72,8 +72,13 @@ function createDatasource(socket: FakeSocket): IServerSideDatasource<PortfolioRo
 }
 
 function renderCount() {
-    document.querySelector('#subscribedCount')!.textContent = String(subscribed.size);
-    document.querySelector('#updatesSent')!.textContent = String(updatesSent);
+    const subscribedCount = document.querySelector('#subscribedCount');
+    const updatesSentCount = document.querySelector('#updatesSent');
+    // the panel can be removed before the grid is destroyed, which unsubscribes the remaining rows
+    if (subscribedCount && updatesSentCount) {
+        subscribedCount.textContent = String(subscribed.size);
+        updatesSentCount.textContent = String(updatesSent);
+    }
 }
 
 function onServerMessage(api: GridApi<PortfolioRow>, message: ServerMessage) {

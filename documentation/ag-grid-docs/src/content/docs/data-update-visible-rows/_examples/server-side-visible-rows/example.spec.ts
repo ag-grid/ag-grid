@@ -1,4 +1,4 @@
-import { expect, test, waitForGridContent } from '@utils/grid/test-utils';
+import { expect, scrollGridRelative, test, waitForGridContent } from '@utils/grid/test-utils';
 
 test.agExample(import.meta, () => {
     test.eachFramework(
@@ -17,10 +17,7 @@ test.agExample(import.meta, () => {
             await expect(count).not.toHaveText('0');
             expect(Number(await count.textContent())).toBeLessThan(40);
 
-            await page.evaluate(() => {
-                const vp = document.querySelector('.ag-body-viewport') as HTMLElement;
-                vp.scrollTop = 1500;
-            });
+            await scrollGridRelative('element', page, { y: 1500 });
             await expectLogged('(scroll)');
 
             await page.getByRole('button', { name: 'Purge' }).click();
