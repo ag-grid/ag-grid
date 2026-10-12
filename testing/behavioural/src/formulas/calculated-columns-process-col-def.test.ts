@@ -575,7 +575,6 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
     test('callback-only properties raise no calculated column events', async () => {
         const created = vi.fn();
         const changed = vi.fn();
-        const updated = vi.fn();
         const api = createGrid('pcd-e6', {
             rowData: ROW_DATA,
             columnDefs: columnDefs(),
@@ -589,13 +588,11 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
             },
             initialState: { userColumns: userColumnsState('calc', '[a] * 2') },
             onCalculatedColumnCreated: created,
-            onCalculatedColumnExpressionChanged: changed,
-            onCalculatedColumnChanged: updated,
+            onCalculatedColumnChanged: changed,
         });
         await waitFor(() => expect(Number(cellValue(api, 'calc'))).toBe(11));
         created.mockClear();
         changed.mockClear();
-        updated.mockClear();
 
         // Re-applying the callback (a fresh inline formatter and the rewritten expression again) rebuilds the column.
         api.setGridOption('calculatedColumns', {
@@ -619,13 +616,11 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
 
         expect(created).not.toHaveBeenCalled();
         expect(changed).not.toHaveBeenCalled();
-        expect(updated).not.toHaveBeenCalled();
     });
 
     test('with callback-only properties, real changes still raise the calculated column events', async () => {
         const created = vi.fn();
         const changed = vi.fn();
-        const updated = vi.fn();
         const api = createGrid('pcd-e6-control', {
             rowData: ROW_DATA,
             columnDefs: columnDefs(),
@@ -633,14 +628,12 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
                 processColDef: (params) => ({ ...params.colDef, valueFormatter: (p) => `#${p.value}` }),
             },
             onCalculatedColumnCreated: created,
-            onCalculatedColumnExpressionChanged: changed,
-            onCalculatedColumnChanged: updated,
+            onCalculatedColumnChanged: changed,
         });
 
         const calcId = await addViaDialog(api, 'a', '[a] * 2');
         await waitFor(() => expect(created).toHaveBeenCalledTimes(1));
         changed.mockClear();
-        updated.mockClear();
 
         api.showColumnMenu(calcId);
         await clickMenuOption('Edit Calculated Column');
@@ -649,13 +642,11 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         clickDialogButton('Apply');
         await waitFor(() =>
             expect(changed).toHaveBeenCalledWith(
-                expect.objectContaining({ oldExpression: '[a] * 2', expression: '[a] * 3' })
+                expect.objectContaining({
+                    changes: { calculatedExpression: { oldValue: '[a] * 2', newValue: '[a] * 3' } },
+                })
             )
         );
-        expect(updated).toHaveBeenCalledTimes(1);
-        expect(updated.mock.calls[0][0].changes).toEqual({
-            calculatedExpression: { oldValue: '[a] * 2', newValue: '[a] * 3' },
-        });
         expect(cellValue(api, calcId)).toBe(30);
         expect(created).toHaveBeenCalledTimes(1);
     });
