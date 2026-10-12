@@ -6,7 +6,6 @@ import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell
 import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
 
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
-    private lastResizeAmount: number;
     private resizeStartWidth: number;
     private resizeStartPinnedWidth: number;
     private resizeWithShiftKey: boolean;
@@ -74,13 +73,13 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     }
 
     private onResizing(finished: boolean, resizeAmount: number): void {
-        const { column: key, lastResizeAmount, resizeStartWidth, beans } = this;
-
-        let resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
-
+        const { column: key, resizeStartWidth, beans } = this;
         const { pinnedCols, ctrlsSvc, colResize } = beans;
 
-        const growth = resizeAmountNormalised - lastResizeAmount;
+        let newWidth = resizeStartWidth + this.normaliseResizeAmount(resizeAmount);
+        // measured from the applied width, as a width outside min/max is never applied
+        const actualWidth = key.getActualWidth();
+        const growth = newWidth - actualWidth;
 
         if (
             growth > 0 &&
@@ -90,22 +89,11 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
             const bodyWidth = ctrlsSvc.getGridBodyCtrl().getViewportWidthWithoutScrollbar() - 50;
             // pinned columns that overflowed when the drag started can grow back to their starting width
             const room = Math.max(bodyWidth, this.resizeStartPinnedWidth) - this.getPinnedWidth();
-
-            if (room <= 0) {
-                return;
-            }
-
-            if (growth > room) {
-                // fill the remaining space rather than ignoring the tick
-                resizeAmountNormalised = lastResizeAmount + room;
-            }
+            // fill the remaining space; still set the width so a finished drag completes
+            newWidth = actualWidth + Math.min(growth, Math.max(room, 0));
         }
 
-        this.lastResizeAmount = resizeAmountNormalised;
-
-        const columnWidths = [{ key, newWidth: resizeStartWidth + resizeAmountNormalised }];
-
-        colResize?.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, 'uiColumnResized');
+        colResize?.setColumnWidths([{ key, newWidth }], this.resizeWithShiftKey, finished, 'uiColumnResized');
 
         if (finished) {
             this.toggleColumnResizing(false);
@@ -115,7 +103,6 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private onResizeStart(shiftKey: boolean): void {
         this.resizeStartWidth = this.column.getActualWidth();
         this.resizeStartPinnedWidth = this.getPinnedWidth();
-        this.lastResizeAmount = 0;
         this.resizeWithShiftKey = shiftKey;
 
         this.toggleColumnResizing(true);
