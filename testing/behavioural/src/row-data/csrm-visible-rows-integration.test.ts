@@ -189,7 +189,7 @@ describe('CSRM subscribeToVisibleRows integration', () => {
             });
         });
 
-        test('treeDataChildrenField: a transaction re-parenting a visible row reports it with reason move', async () => {
+        test('treeDataParentIdField: a transaction re-parenting a visible row reports it with reason move', async () => {
             const api = await createTreeGrid({
                 getDataPath: undefined,
                 treeDataParentIdField: 'parentId',
@@ -256,6 +256,7 @@ describe('CSRM subscribeToVisibleRows integration', () => {
             api.setRowNodeExpanded(api.getRowNode(ireland)!, false);
             await waitFor(() => expect(recorder.ids()).toEqual([...groups].sort()));
 
+            // Leaves out the batch that unsubscribes the hidden parent, covered by the skipped BUG test below.
             expect(recorder.calls.filter((c) => !c.ids.includes(ireland) || c.type === 'subscribe').slice(1)).toEqual([
                 { type: 'unsubscribe', reason: 'scroll', ids: [spain, france] },
                 { type: 'subscribe', reason: 'expand', ids: irelandRows },
