@@ -494,7 +494,7 @@ describe('Set Filter preservePreviousValues - integration', () => {
         expect(await keyCounts()).toEqual([1, 1, 1]);
     });
 
-    test('the Filters Tool Panel lists retained values after the current ones, muted', async () => {
+    test('the Filters Tool Panel lists retained values in their sorted place, marked', async () => {
         const api = createGrid(rows('A', 'B', 'C'), setFilter(), { sideBar: FILTERS_SIDEBAR });
         await asyncSetTimeout(0);
         await setModel(api, 'value', { filterType: 'set', values: ['A'] });
@@ -502,7 +502,7 @@ describe('Set Filter preservePreviousValues - integration', () => {
 
         const panel = await openFiltersPanel(api);
         await panel.expandGroup('Value');
-        await waitFor(() => expect(panel.setFilterItemLabels('Value')).toEqual(['(Select All)', 'B', 'C', 'A']));
+        await waitFor(() => expect(panel.setFilterItemLabels('Value')).toEqual(['(Select All)', 'A', 'B', 'C']));
         expect(missingLabels(document.querySelector('.ag-filter-toolpanel')!)).toEqual(['A']);
     });
 
@@ -567,14 +567,35 @@ describe('Set Filter preservePreviousValues - integration', () => {
         expect(missingLabels(popup())).toEqual([]);
     });
 
-    test('suppressSorting lists values in first-seen order, retained ones after', async () => {
+    test('suppressSorting lists values in first-seen order, retained ones included', async () => {
         const api = createGrid(rows('C', 'A', 'B'), setFilter({ suppressSorting: true }));
         await asyncSetTimeout(0);
         await setModel(api, 'value', { filterType: 'set', values: ['C', 'A'] });
         await setRowData(api, rows('B', 'D'));
 
         const filter = await ColumnFilterHarness.open(api, 'value');
-        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'B', 'D', 'C', 'A']);
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'C', 'A', 'B', 'D']);
+    });
+
+    test('suppressSorting keeps first-seen order while the rows reorder, so a value leaving moves no other', async () => {
+        const api = createGrid(rows('C', 'A', 'B'), setFilter({ suppressSorting: true }));
+        await asyncSetTimeout(0);
+        await setRowData(api, rows('A', 'B', 'C'));
+
+        const filter = await ColumnFilterHarness.open(api, 'value');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'C', 'A', 'B']);
+        await setRowData(api, rows('A', 'C'));
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'C', 'A', 'B']);
+    });
+
+    test('suppressSorting lists a model value never in the data after the values the data has held', async () => {
+        const api = createGrid(rows('C', 'A'), setFilter({ suppressSorting: true }));
+        await asyncSetTimeout(0);
+        await setModel(api, 'value', { filterType: 'set', values: ['Z'] });
+        await setRowData(api, rows('B'));
+
+        const filter = await ColumnFilterHarness.open(api, 'value');
+        expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'C', 'A', 'B', 'Z']);
     });
 
     test('refreshValuesOnOpen keeps a value the callback stops returning', async () => {

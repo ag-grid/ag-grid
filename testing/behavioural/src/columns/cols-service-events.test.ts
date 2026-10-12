@@ -8,7 +8,7 @@ import { AggregationModule, PivotModule, RowGroupingModule } from 'ag-grid-enter
  * Event coverage for every public entry point of the cols services (rowGroup / pivot / value).
  * Locks the redesign's invariant: each logical mutation dispatches its grid `columnXChanged` event
  * exactly once (a batch of changes collapses to one), with the changed columns as payload; and the
- * per-column event fires immediately on the affected column.
+ * per-column event fires on the affected column before the call returns.
  */
 describe('Cols service events', () => {
     const gridsManager = new TestGridsManager({
@@ -82,6 +82,34 @@ describe('Cols service events', () => {
             expect(api.getRowGroupColumns().length).toBe(0);
         });
 
+        test('removeRowGroupColumns reports the removed columns and those they shift up, in grouping order', async () => {
+            const api = gridsManager.createGrid('g', baseOptions());
+            api.setRowGroupColumns(['a', 'b', 'c']);
+            await asyncSetTimeout(0);
+            const events = capture(api, 'columnRowGroupChanged');
+
+            api.removeRowGroupColumns(['b', 'a']);
+            await asyncSetTimeout(0);
+
+            expect(events.length).toBe(1);
+            expect(ids(events[0].columns)).toEqual(['a', 'b', 'c']);
+            expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['c']);
+        });
+
+        test('addRowGroupColumns reports only the columns it groups, as setRowGroupColumns does', async () => {
+            const api = gridsManager.createGrid('g', baseOptions());
+            api.setRowGroupColumns(['a']);
+            await asyncSetTimeout(0);
+            const events = capture(api, 'columnRowGroupChanged');
+
+            api.addRowGroupColumns(['a', 'b']);
+            await asyncSetTimeout(0);
+
+            expect(events.length).toBe(1);
+            expect(ids(events[0].columns)).toEqual(['b']);
+            expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['a', 'b']);
+        });
+
         test('moveRowGroupColumn fires columnRowGroupChanged once, reporting the moved column', async () => {
             const api = gridsManager.createGrid('g', baseOptions());
             api.setRowGroupColumns(['a', 'b']);
@@ -97,7 +125,7 @@ describe('Cols service events', () => {
             expect(api.getRowGroupColumns().map((c) => c.getColId())).toEqual(['b', 'a']);
         });
 
-        test('the per-column columnRowGroupChanged event fires immediately on the affected column', async () => {
+        test('the per-column columnRowGroupChanged event fires on the affected column before the call returns', async () => {
             const api = gridsManager.createGrid('g', baseOptions());
             await asyncSetTimeout(0);
             const colA = api.getColumn('a')!;
@@ -106,7 +134,7 @@ describe('Cols service events', () => {
 
             api.addRowGroupColumns(['a']);
 
-            // Per-column events are immediate (not batched) — assert before any tick.
+            // column events are synchronous, unlike the grid event: assert before any tick
             expect(colEvents.length).toBe(1);
         });
     });
@@ -137,6 +165,34 @@ describe('Cols service events', () => {
             expect(ids(events[0].columns)).toEqual(['c']);
             expect(api.getColumn('c')!.getAggFunc()).toBe('sum');
         });
+
+        test('addValueColumns reports only the columns it adds', async () => {
+            const api = gridsManager.createGrid('g', baseOptions());
+            api.setValueColumns(['a']);
+            await asyncSetTimeout(0);
+            const events = capture(api, 'columnValueChanged');
+
+            api.addValueColumns(['a', 'b']);
+            await asyncSetTimeout(0);
+
+            expect(events.length).toBe(1);
+            expect(ids(events[0].columns)).toEqual(['b']);
+            expect(api.getValueColumns().map((c) => c.getColId())).toEqual(['a', 'b']);
+        });
+
+        test('setColumnAggFunc removing a value col reports it and the value cols it shifts up, as removeValueColumns does', async () => {
+            const api = gridsManager.createGrid('g', baseOptions());
+            api.setValueColumns(['a', 'b', 'c']);
+            await asyncSetTimeout(0);
+            const events = capture(api, 'columnValueChanged');
+
+            api.setColumnAggFunc('a', null);
+            await asyncSetTimeout(0);
+
+            expect(events.length).toBe(1);
+            expect(ids(events[0].columns)).toEqual(['a', 'b', 'c']);
+            expect(api.getValueColumns().map((c) => c.getColId())).toEqual(['b', 'c']);
+        });
     });
 
     describe('pivot', () => {
@@ -151,6 +207,20 @@ describe('Cols service events', () => {
             expect(events.length).toBe(1);
             expect(ids(events[0].columns)).toEqual(['a', 'b']);
             expect(api.getPivotColumns().map((c) => c.getColId())).toEqual(['a', 'b']);
+        });
+
+        test('removePivotColumns reports the removed columns and those they shift up, in pivot order', async () => {
+            const api = gridsManager.createGrid('g', baseOptions());
+            api.setPivotColumns(['a', 'b', 'c']);
+            await asyncSetTimeout(0);
+            const events = capture(api, 'columnPivotChanged');
+
+            api.removePivotColumns(['c', 'a']);
+            await asyncSetTimeout(0);
+
+            expect(events.length).toBe(1);
+            expect(ids(events[0].columns)).toEqual(['a', 'b', 'c']);
+            expect(api.getPivotColumns().map((c) => c.getColId())).toEqual(['b']);
         });
     });
 
@@ -286,5 +356,30 @@ describe('Cols service events', () => {
             await asyncSetTimeout(0);
             expect(everything.length).toBe(1);
         });
+    });
+
+    test('an aggregation change a column listener makes and then throws runs before the next column is told', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'a' },
+                { field: 'b', rowGroup: true },
+                { field: 'c' },
+                { field: 'd', aggFunc: 'sum' },
+            ],
+            rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
+        });
+        const seen: string[] = [];
+        api.getColumn('a')!.addEventListener('visibleChanged', () => {
+            api.setColumnAggFunc('d', 'count');
+            throw new Error('listener failed');
+        });
+        api.getColumn('d')!.addEventListener('columnStateUpdated', () =>
+            seen.push(String(api.getDisplayedRowAtIndex(0)!.aggData?.d))
+        );
+
+        expect(() => api.applyColumnState({ state: [{ colId: 'a', hide: true }] })).toThrow('listener failed');
+
+        // the count of the group's one row, not its sum
+        expect(seen).toEqual(['1']);
     });
 });

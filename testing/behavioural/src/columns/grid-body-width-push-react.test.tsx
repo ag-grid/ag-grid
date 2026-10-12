@@ -5,7 +5,13 @@ import React from 'react';
 import { afterEach, beforeAll, describe, expect, test } from 'vitest';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnApiModule, ModuleRegistry, RenderApiModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    ModuleRegistry,
+    RenderApiModule,
+    ScrollApiModule,
+} from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 const VIEWPORT_WIDTH = mockGridLayout.gridWidth;
@@ -58,7 +64,7 @@ describe('Grid body width push (React)', () => {
         });
 
     beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnApiModule, RenderApiModule]);
+        ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnApiModule, RenderApiModule, ScrollApiModule]);
         // No TestGridsManager here, so the layout mock that gives the viewport a width has to be installed.
         mockGridLayout.init();
     });
@@ -177,5 +183,41 @@ describe('Grid body width push (React)', () => {
 
         act(() => api.setColumnsPinned(['b'], 'right'));
         await waitFor(() => expect(rowSections()).toEqual({ left: '150px', center: '350px', right: '100px' }));
+    });
+
+    test("a centre group's label is sticky while the group is scrolled part out, as it scrolls and as it resizes", async () => {
+        let ready!: Promise<GridApi>;
+        // the grid body finds the horizontal scrollbar a frame after mounting, before the grid is ready
+        await act(async () => {
+            ready = renderGrid({
+                columnDefs: [
+                    { colId: 'a', width: 200 },
+                    { headerName: 'G', children: [{ colId: 'g1' }, { colId: 'g2' }] },
+                    { colId: 'z' },
+                ],
+                defaultColDef: { width: 500 },
+                rowData: [{}],
+            });
+            await asyncSetTimeout(0);
+        });
+        const api = await ready;
+        const sticky = () =>
+            Array.from(document.querySelectorAll('.ag-header-group-text'))
+                .find((text) => text.textContent === 'G')
+                ?.closest('.ag-header-group-cell-label')
+                ?.classList.contains('ag-sticky-label');
+        await waitFor(() => expect(sticky()).toBe(false));
+
+        act(() => api.ensureColumnVisible('z'));
+        await waitFor(() => expect(sticky()).toBe(true));
+
+        act(() => api.setColumnWidths([{ key: 'a', newWidth: 900 }]));
+        await waitFor(() => expect(sticky()).toBe(false));
+
+        act(() => api.setColumnWidths([{ key: 'a', newWidth: 200 }]));
+        await waitFor(() => expect(sticky()).toBe(true));
+
+        act(() => api.ensureColumnVisible('a'));
+        await waitFor(() => expect(sticky()).toBe(false));
     });
 });

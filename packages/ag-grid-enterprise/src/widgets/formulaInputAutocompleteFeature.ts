@@ -98,11 +98,7 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
             return;
         }
 
-        const caretOffsets = field.getCaretOffsetsForAutocomplete(value);
-        if (!caretOffsets) {
-            this.closeFunctionAutocomplete();
-            return;
-        }
+        const caretOffsets = field.getCaretOffsetsForAutocomplete();
 
         if (isCaretInsideRefToken(beans, value, caretOffsets.valueOffset)) {
             this.closeFunctionAutocomplete();
@@ -239,7 +235,6 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
 
         field.getContentElement().focus({ preventScroll: true });
         field.applyFormulaValueChange({
-            currentValue: value,
             nextValue,
             caret: insertPos + 1,
         });

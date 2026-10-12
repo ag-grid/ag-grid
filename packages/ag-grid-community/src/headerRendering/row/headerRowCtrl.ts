@@ -162,7 +162,25 @@ export class HeaderRowCtrl extends BeanStub {
         const layoutChanged = isPrintLayout !== this.isPrintLayout;
         this.isPrintLayout = isPrintLayout;
         this.onVirtualColumnsChanged(false, layoutChanged);
+        if (layoutChanged) {
+            this.refreshCellPositions();
+        }
         this.onRowHeightChanged();
+    }
+
+    public refreshCellPositions(): void {
+        const allCtrls = this.allCtrls;
+        for (let i = 0, len = allCtrls.length; i < len; ++i) {
+            allCtrls[i].refreshPosition();
+        }
+    }
+
+    public refreshPinnedEdges(column: AgColumn | null): void {
+        const ctrl = column && this.ctrlsById?.get(column.getUniqueId());
+        // ids repeat across pivot rebuilds, so the cell must be this column's
+        if (ctrl instanceof HeaderCellCtrl && ctrl.column === column) {
+            ctrl.refreshPinnedEdges();
+        }
     }
 
     /** Pushed by `GridBodyCtrl.updateWidths`, so the row does not derive it from the viewport itself. */

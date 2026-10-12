@@ -893,9 +893,11 @@ export const AG_GRID_LOCALE_CS_CZ = {
     columnHeaderEditCancel: 'Zrušit',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nebyly nalezeny žádné vhodné sloupce.',
     calculatedColumn: 'Vypočítaný sloupec',
     calculatedColumnAdd: 'Přidat vypočítaný sloupec',
     calculatedColumnEdit: 'Upravit vypočítaný sloupec',
+    calculatedColumnView: 'Zobrazit vypočítaný sloupec',
     calculatedColumnRemove: 'Odebrat vypočítaný sloupec',
     calculatedColumnTitle: 'Název',
     calculatedColumnType: 'Typ',
@@ -910,6 +912,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     calculatedColumnExpressionAmbiguousReference:
         'Nejednoznačný odkaz na sloupec "${variable}". Použijte seznam Sloupce nebo konkrétnější cestu skupiny.',
     calculatedColumnExpressionUnknownReference: 'Neznámý odkaz na sloupec "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Sloupec "${variable}" nelze použít v tomto výrazu.',
     calculatedColumnExpressionEmpty: 'Zadejte výraz',
     calculatedColumnTitleEmpty: 'Zadejte název',
     calculatedColumnApply: 'Použít',

@@ -913,9 +913,11 @@ export const AG_GRID_LOCALE_ET_EE = {
     columnHeaderEditCancel: 'Loobu',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Sobivaid veerge ei leitud.',
     calculatedColumn: 'Arvutatud veerg',
     calculatedColumnAdd: 'Lisa arvutatud veerg',
     calculatedColumnEdit: 'Muuda arvutatud veergu',
+    calculatedColumnView: 'Vaata arvutatud veergu',
     calculatedColumnRemove: 'Eemalda arvutatud veerg',
     calculatedColumnTitle: 'Pealkiri',
     calculatedColumnType: 'Tüüp',
@@ -930,6 +932,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     calculatedColumnExpressionAmbiguousReference:
         'Mitmetähenduslik veeruviide "${variable}". Kasuta veergude loendit või täpsemat rühmateed.',
     calculatedColumnExpressionUnknownReference: 'Tundmatu veeruviide "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Veergu "${variable}" ei saa selles avaldises kasutada.',
     calculatedColumnExpressionEmpty: 'Sisesta avaldis',
     calculatedColumnTitleEmpty: 'Sisesta pealkiri',
     calculatedColumnApply: 'Rakenda',

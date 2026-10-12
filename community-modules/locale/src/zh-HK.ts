@@ -891,9 +891,11 @@ export const AG_GRID_LOCALE_ZH_HK = {
     columnHeaderEditCancel: '取消',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: '找不到符合條件的欄。',
     calculatedColumn: '計算欄',
     calculatedColumnAdd: '新增計算欄',
     calculatedColumnEdit: '編輯計算欄',
+    calculatedColumnView: '檢視計算欄',
     calculatedColumnRemove: '移除計算欄',
     calculatedColumnTitle: '標題',
     calculatedColumnType: '類型',
@@ -907,6 +909,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     calculatedColumnDefaultTitle: '未命名',
     calculatedColumnExpressionAmbiguousReference: '欄參照不明確 "${variable}"。請使用「欄」清單或更具體的群組路徑。',
     calculatedColumnExpressionUnknownReference: '未知的欄參照 "${variable}"。',
+    calculatedColumnExpressionRestrictedReference: '此運算式中不能使用欄 "${variable}"。',
     calculatedColumnExpressionEmpty: '請輸入運算式',
     calculatedColumnTitleEmpty: '請輸入標題',
     calculatedColumnApply: '應用',

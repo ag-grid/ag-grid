@@ -17,12 +17,7 @@ import {
 import { FilterDomErrors, FilterDomValidator } from './filterDomValidator';
 
 export type FilterDomMode =
-    | 'auto'
-    | 'column-filter'
-    | 'advanced-filter'
-    | 'builder'
-    | 'floating-filter'
-    | 'filters-tool-panel';
+    'auto' | 'column-filter' | 'advanced-filter' | 'builder' | 'floating-filter' | 'filters-tool-panel';
 
 export interface FilterDomOptions {
     mode?: FilterDomMode;

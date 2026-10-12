@@ -134,6 +134,7 @@ import type {
     BodyScrollEvent,
     BulkEditingStartedEvent,
     BulkEditingStoppedEvent,
+    CalculatedColumnChangedEvent,
     CalculatedColumnCreatedEvent,
     CalculatedColumnExpressionChangedEvent,
     CalculatedColumnRemovedEvent,
@@ -425,7 +426,7 @@ export interface Props<TData> {
     /** Enables and configures Calculated Columns.
          * @agModule `CalculatedColumnsModule`
          */
-    calculatedColumns?: CalculatedColumnsGridOption,
+    calculatedColumns?: CalculatedColumnsGridOption<TData>,
     /** Configures editing of column and column group header names via the UI. Requires
          * `headerNameEditable` on the relevant Column or Column Group Definitions.
          * @agModule `ColumnHeaderEditModule`
@@ -2099,6 +2100,7 @@ export interface Props<TData> {
    'onPaste-start'?: PasteStartEvent<TData>,
    'onPaste-end'?: PasteEndEvent<TData>,
    'onCalculated-column-created'?: CalculatedColumnCreatedEvent<TData>,
+   'onCalculated-column-changed'?: CalculatedColumnChangedEvent<TData>,
    'onCalculated-column-expression-changed'?: CalculatedColumnExpressionChangedEvent<TData>,
    'onCalculated-column-removed'?: CalculatedColumnRemovedEvent<TData>,
    'onCalculated-column-validation-state-changed'?: CalculatedColumnValidationStateChangedEvent<TData>,
@@ -2621,6 +2623,7 @@ export function getProps() {
         'onPaste-start': undefined,
         'onPaste-end': undefined,
         'onCalculated-column-created': undefined,
+        'onCalculated-column-changed': undefined,
         'onCalculated-column-expression-changed': undefined,
         'onCalculated-column-removed': undefined,
         'onCalculated-column-validation-state-changed': undefined,

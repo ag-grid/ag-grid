@@ -56,12 +56,13 @@ export function installMockResizeObserver(): () => void {
 }
 
 /** The grid throttles these callbacks to an animation frame, so poll the assertion rather than reading it
- *  straight back. Entries are empty because no `_observeResize` callback reads them. */
-export function triggerResizeObservers(): void {
+ *  straight back. Entries are empty because no `_observeResize` callback reads them. A `target` fires only
+ *  the observers watching it, as a real resize of that element would. */
+export function triggerResizeObservers(target?: Element): void {
     // Copied: a callback may observe or disconnect, which would otherwise mutate the list mid-iteration.
     for (const registration of registrations.slice()) {
         const { elements, observer } = registration;
-        if (elements.size) {
+        if (target ? elements.has(target) : elements.size) {
             registration.callback([], observer);
         }
     }

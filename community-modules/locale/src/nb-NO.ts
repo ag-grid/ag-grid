@@ -893,9 +893,11 @@ export const AG_GRID_LOCALE_NB_NO = {
     columnHeaderEditCancel: 'Avbryt',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Ingen egnede kolonner funnet.',
     calculatedColumn: 'Beregnet kolonne',
     calculatedColumnAdd: 'Legg til beregnet kolonne',
     calculatedColumnEdit: 'Rediger beregnet kolonne',
+    calculatedColumnView: 'Vis beregnet kolonne',
     calculatedColumnRemove: 'Fjern beregnet kolonne',
     calculatedColumnTitle: 'Tittel',
     calculatedColumnType: 'Type',
@@ -910,6 +912,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     calculatedColumnExpressionAmbiguousReference:
         'Tvetydig kolonnereferanse "${variable}". Bruk Kolonner-listen eller en mer spesifikk gruppebane.',
     calculatedColumnExpressionUnknownReference: 'Ukjent kolonnereferanse "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Kolonnen "${variable}" kan ikke brukes i dette uttrykket.',
     calculatedColumnExpressionEmpty: 'Skriv inn et uttrykk',
     calculatedColumnTitleEmpty: 'Skriv inn en tittel',
     calculatedColumnApply: 'Bruk',

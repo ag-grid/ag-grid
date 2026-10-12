@@ -39,15 +39,7 @@ export interface GridDraggingEvent<TData = any, TContext = any>
         AgGridCommon<TData, TContext> {}
 
 export type DragAndDropIcon =
-    | 'pinned'
-    | 'move'
-    | 'left'
-    | 'right'
-    | 'group'
-    | 'aggregate'
-    | 'pivot'
-    | 'notAllowed'
-    | 'hide';
+    'pinned' | 'move' | 'left' | 'right' | 'group' | 'aggregate' | 'pivot' | 'notAllowed' | 'hide';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class DragAndDropService extends BaseDragAndDropService<

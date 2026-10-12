@@ -296,8 +296,7 @@ export class AgComponentStub<
     }
 
     public getParentComponent<T extends AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>>():
-        | T
-        | undefined {
+        T | undefined {
         return this.parentComponent as T;
     }
 

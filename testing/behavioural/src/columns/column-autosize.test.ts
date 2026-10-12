@@ -749,6 +749,28 @@ describe('Column Autosize', () => {
             `);
             await asyncSetTimeout(0);
         });
+
+        test('width animation is switched off when autosize fails part-way', async () => {
+            const rejections: unknown[] = [];
+            const onRejection = (reason: unknown) => rejections.push(reason);
+            process.on('unhandledRejection', onRejection);
+            try {
+                const api = gridsManager.createGrid('myGrid', {
+                    animateColumnResizing: true,
+                    columnDefs: [{ colId: 'a', minWidth: 150 }],
+                });
+                api.getColumn('a')!.addEventListener('widthChanged', () => {
+                    throw new Error('widthChanged listener failed');
+                });
+
+                api.autoSizeColumns(['a']);
+
+                await waitFor(() => expect(rejections).toEqual([new Error('widthChanged listener failed')]));
+                expect(document.querySelector('.ag-animate-autosize')).toBeNull();
+            } finally {
+                process.off('unhandledRejection', onRejection);
+            }
+        });
     });
 
     describe('autoSizeAllColumns', () => {

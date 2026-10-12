@@ -568,9 +568,12 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         return null;
                     }
                     const headerPosition = focusSvc.focusedHeader ?? { headerRowIndex: 0, column };
+                    const readOnly = !!column.colDef.calculatedColumnReadOnly;
 
                     return {
-                        name: localeTextFunc('calculatedColumnEdit', 'Edit Calculated Column'),
+                        name: readOnly
+                            ? localeTextFunc('calculatedColumnView', 'View Calculated Column')
+                            : localeTextFunc('calculatedColumnEdit', 'Edit Calculated Column'),
                         icon: _createIconNoSpan('calculatedColumnEdit', beans, null),
                         action: () =>
                             calculatedColsSvc.openCalculatedColumnDialog(column, 'edit', true, {
@@ -585,6 +588,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                         ? {
                               name: localeTextFunc('calculatedColumnRemove', 'Remove Calculated Column'),
                               icon: _createIconNoSpan('calculatedColumnRemove', beans, null),
+                              disabled: !!column.colDef.calculatedColumnReadOnly,
                               action: () => calculatedColsSvc.removeCalculatedColumn(column),
                           }
                         : null;
@@ -690,20 +694,15 @@ function createAggregationSubMenu(
 
         result.push({
             name: localeTextFunc('noAggregation', 'None'),
-            action: () => {
-                valueColsSvc.removeColumns([columnToUse!], 'contextMenu');
-                valueColsSvc.setColumnAggFunc!(columnToUse, undefined, 'contextMenu');
-            },
+            action: () => valueColsSvc.removeColumns([columnToUse!], 'contextMenu'),
             checked: !columnIsAlreadyAggValue,
         });
 
         for (const funcName of funcNames) {
             result.push({
                 name: localeTextFunc(funcName, aggFuncSvc.getDefaultFuncLabel(funcName)),
-                action: () => {
-                    valueColsSvc.setColumnAggFunc!(columnToUse, funcName, 'contextMenu');
-                    valueColsSvc.addColumns([columnToUse!], 'contextMenu');
-                },
+                // activates the column too
+                action: () => valueColsSvc.setColumnAggFunc!(columnToUse, funcName, 'contextMenu'),
                 checked: columnIsAlreadyAggValue && columnToUse.aggFunc === funcName,
             });
         }

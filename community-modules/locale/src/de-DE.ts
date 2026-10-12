@@ -900,9 +900,11 @@ export const AG_GRID_LOCALE_DE_DE = {
     columnHeaderEditCancel: 'Abbrechen',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Keine geeigneten Spalten gefunden.',
     calculatedColumn: 'Berechnete Spalte',
     calculatedColumnAdd: 'Berechnete Spalte hinzufügen',
     calculatedColumnEdit: 'Berechnete Spalte bearbeiten',
+    calculatedColumnView: 'Berechnete Spalte anzeigen',
     calculatedColumnRemove: 'Berechnete Spalte entfernen',
     calculatedColumnTitle: 'Titel',
     calculatedColumnType: 'Typ',
@@ -917,6 +919,8 @@ export const AG_GRID_LOCALE_DE_DE = {
     calculatedColumnExpressionAmbiguousReference:
         'Mehrdeutiger Spaltenverweis "${variable}". Verwenden Sie die Spaltenliste oder einen spezifischeren Gruppenpfad.',
     calculatedColumnExpressionUnknownReference: 'Unbekannter Spaltenverweis "${variable}".',
+    calculatedColumnExpressionRestrictedReference:
+        'Die Spalte "${variable}" kann in diesem Ausdruck nicht verwendet werden.',
     calculatedColumnExpressionEmpty: 'Geben Sie einen Ausdruck ein',
     calculatedColumnTitleEmpty: 'Geben Sie einen Titel ein',
     calculatedColumnApply: 'Anwenden',

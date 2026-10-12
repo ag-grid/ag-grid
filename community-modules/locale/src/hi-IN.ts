@@ -915,9 +915,11 @@ export const AG_GRID_LOCALE_HI_IN = {
     columnHeaderEditCancel: 'रद्द करें',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'कोई उपयुक्त कॉलम नहीं मिला।',
     calculatedColumn: 'गणना किया गया कॉलम',
     calculatedColumnAdd: 'गणना किया गया कॉलम जोड़ें',
     calculatedColumnEdit: 'गणना किया गया कॉलम संपादित करें',
+    calculatedColumnView: 'गणना किया गया कॉलम देखें',
     calculatedColumnRemove: 'गणना किया गया कॉलम हटाएं',
     calculatedColumnTitle: 'शीर्षक',
     calculatedColumnType: 'प्रकार',
@@ -932,6 +934,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     calculatedColumnExpressionAmbiguousReference:
         'अस्पष्ट कॉलम संदर्भ "${variable}"। कॉलम सूची का उपयोग करें या अधिक विशिष्ट समूह पथ दें।',
     calculatedColumnExpressionUnknownReference: 'अज्ञात कॉलम संदर्भ "${variable}"।',
+    calculatedColumnExpressionRestrictedReference: 'इस अभिव्यक्ति में "${variable}" कॉलम का उपयोग नहीं किया जा सकता।',
     calculatedColumnExpressionEmpty: 'एक अभिव्यक्ति दर्ज करें',
     calculatedColumnTitleEmpty: 'एक शीर्षक दर्ज करें',
     calculatedColumnApply: 'लागू करें',

@@ -1,0 +1,11 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+
+ignore:
+    SNYK-JS-AGGRIDCOMMUNITY-7414157:
+        - ag-grid-community@* > *:
+              reason: >-
+                  Local workspace package (0.0.0-use.local) - matched against advisories for old published versions
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-10-12T10:22:59.787Z
+patch: {}

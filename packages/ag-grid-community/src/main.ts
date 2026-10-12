@@ -303,10 +303,14 @@ export type { ContainerType, IAfterGuiAttachedParams } from './interfaces/iAfter
 export type {
     CalculatedColumnDef,
     CalculatedColumnExpressionPicker,
+    CalculatedColumnProperty,
     CalculatedColumnsGridOption,
     CalculatedColumnsOptions,
     CalculatedColumnUpdate,
+    CalculatedColumnValidationParams,
+    CalculatedExpressionError,
     ICalculatedColumnsService,
+    IsColumnReferenceableParams,
 } from './interfaces/iCalculatedColumns';
 export type { ColumnHeaderEditApplyMode, ColumnHeaderEditOptions } from './interfaces/iColumnHeaderEdit';
 export type {
@@ -695,6 +699,7 @@ export type { GridOptionsService, PropertyChangedEvent, PropertyValueChangedEven
 export type {
     AggregationColumnState,
     AggregationState,
+    CalculatedUserColumnState,
     CellSelectionCellState,
     CellSelectionState,
     ColumnGroupHeaderNameState,

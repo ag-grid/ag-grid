@@ -108,6 +108,7 @@
         "columnHoverColor": {},
         "dataBackgroundColor": {},
         "footerRowBorder": {},
+        "grandTotalRowBorder": {},
         "fullRowEditInvalidBackgroundColor": {},
         "rowBatchEditBackgroundColor": {},
         "rowBatchEditTextColor": {},
@@ -434,6 +435,10 @@
         "columnHeaderEditHighlightColor": {},
         "calculatedColumnParentSuggestionColor": {},
         "calculatedColumnSuggestionListWidth": {},
+        "calculatedColumnReferenceColor": {},
+        "calculatedColumnFunctionColor": {},
+        "calculatedColumnOperatorColor": {},
+        "calculatedColumnErrorUnderlineColor": {},
         "rangeSelectionChartBackgroundColor": {},
         "rangeSelectionChartCategoryBackgroundColor": {}
     },

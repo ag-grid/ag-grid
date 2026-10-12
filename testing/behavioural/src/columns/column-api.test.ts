@@ -1,8 +1,9 @@
+import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, Column, ColumnState } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
+import { ClientSideRowModelModule, ColumnApiModule, TextFilterModule, TooltipModule } from 'ag-grid-community';
+import { ColumnMenuModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('Column API', () => {
     const gridsManager = new TestGridsManager({
@@ -1594,6 +1595,52 @@ describe('Column API', () => {
                 └─┬ GROUP
                   └── pivot_sport__gold width:200 columnGroupShow:open
             `);
+        });
+    });
+});
+
+describe('Column state getters', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ColumnApiModule, ColumnMenuModule, TextFilterModule, TooltipModule],
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    test('each keeps its own value while the others change', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'p', pinned: 'left', filter: true, tooltip: () => 'x' }, { field: 'a' }],
+            rowData: [{ p: 'x', a: 1 }],
+        });
+        const p = api.getColumn('p')!;
+        const state = () => ({
+            lastLeftPinned: p.isLastLeftPinned(),
+            filterActive: p.isFilterActive(),
+            tooltipEnabled: p.isTooltipEnabled(),
+            menuVisible: p.isMenuVisible(),
+        });
+        expect(state()).toEqual({
+            lastLeftPinned: true,
+            filterActive: false,
+            tooltipEnabled: true,
+            menuVisible: false,
+        });
+
+        await api.setColumnFilterModel('p', { type: 'contains', filter: 'x' });
+        api.onFilterChanged();
+        // the menu opens once the header has scrolled into view, a frame later
+        api.showColumnMenu('p');
+        await waitFor(() => expect(p.isMenuVisible()).toBe(true));
+        expect(state()).toEqual({ lastLeftPinned: true, filterActive: true, tooltipEnabled: true, menuVisible: true });
+
+        api.setColumnsPinned(['a'], 'left');
+        api.hidePopupMenu();
+        expect(state()).toEqual({
+            lastLeftPinned: false,
+            filterActive: true,
+            tooltipEnabled: true,
+            menuVisible: false,
         });
     });
 });

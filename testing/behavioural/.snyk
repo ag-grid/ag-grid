@@ -1,6 +1,34 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-BABELPLUGINTRANSFORMMODULESSYSTEMJS-16624576:
+    - ag-grid-react@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.751Z
+  SNYK-JS-AGGRIDENTERPRISE-7414158:
+    - ag-grid-enterprise@* > *:
+        reason: >-
+            Local workspace package (0.0.0-use.local) - matched against advisories for old published versions
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.750Z
+  SNYK-JS-AGGRIDCOMMUNITY-7414157:
+    - ag-grid-react@* > *:
+        reason: >-
+            Local workspace package (0.0.0-use.local) - matched against advisories for old published versions
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.750Z
+    - ag-grid-enterprise@* > *:
+        reason: >-
+            Local workspace package (0.0.0-use.local) - matched against advisories for old published versions
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.749Z
+    - ag-grid-community@* > *:
+        reason: >-
+            Local workspace package (0.0.0-use.local) - matched against advisories for old published versions
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.749Z
   SNYK-JS-XLSX-6252523:
     - xlsx@0.18.5:
         reason: Only used for behavioural tests and is dev only

@@ -368,6 +368,14 @@ Header set Cache-Control "public, max-age=86400" "expr=%{REQUEST_URI} =~ m#^/(ro
     RewriteCond %{HTTP_HOST} ^www\\.angulargrid\\.com$
     RewriteRule ^(.*)$ https://www.ag-grid.com/$1 [R=301,L]
 
+    # Old PHP-era grid archives (15.0.0-26.2.0): Jira-backed pages and include fragments
+    RewriteCond %{HTTP_HOST} ^www\\.ag-grid\\.com$ [NC]
+    RewriteRule "^/?archive/(?:1[5-9]|2[0-6])\\.[0-9]+\\.[0-9]+/ag-grid-changelog(?:/.*)?$" "https://www.ag-grid.com/changelog/" [R=301,QSD,L]
+    RewriteCond %{HTTP_HOST} ^www\\.ag-grid\\.com$ [NC]
+    RewriteRule "^/?archive/(?:1[5-9]|2[0-6])\\.[0-9]+\\.[0-9]+/ag-grid-pipeline(?:/.*)?$" "https://www.ag-grid.com/pipeline/" [R=301,QSD,L]
+    RewriteCond %{HTTP_HOST} ^www\\.ag-grid\\.com$ [NC]
+    RewriteRule "^/?archive/(?:1[5-9]|2[0-6])\\.[0-9]+\\.[0-9]+/(?:jira_reports(?:/.*)?|getting-started/(?:footer|header)\\.php)$" - [R=410,L]
+
     # blog.ag-grid.com -> www.ag-grid.com/blog/ (SE-86/SE-91). Host-scoped, so www and
     # apex are unaffected. ORDER MATTERS: specific rules first, catch-all host swap last.
     # Targets are final destinations, not intermediate slugs -- SE-86 requires one hop.

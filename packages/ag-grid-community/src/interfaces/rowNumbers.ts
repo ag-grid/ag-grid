@@ -1,5 +1,6 @@
 import type { AgColumn } from '../entities/agColumn';
 import type { ColDef } from '../entities/colDef';
+import type { ColumnEventType } from '../events';
 import type { AgColumnHeader } from '../headerRendering/cells/column/agColumnHeader';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
 import type { CellPosition } from './iCellPosition';
@@ -64,6 +65,8 @@ export interface RowNumbersOptions extends Pick<
 export interface IRowNumbersService {
     column: AgColumn | null;
     refreshCols(): AgColumn<any> | null;
+    /** Restore the colDef width and hand the width back to autosize, as a column state reset does for user columns. */
+    resetColumnState(source: ColumnEventType): void;
     setupForHeader(comp: AgColumnHeader): void;
     handleMouseDownOnCell(cell: CellPosition, mouseEvent: MouseEvent): boolean;
     handleKeyDownOnCell(cell: CellPosition, event: KeyboardEvent): boolean;

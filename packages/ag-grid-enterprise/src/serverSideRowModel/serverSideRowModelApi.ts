@@ -14,9 +14,7 @@ export function getServerSideSelectionState(
     beans: BeanCollection
 ): IServerSideSelectionState | IServerSideGroupSelectionState | null {
     return (beans.selectionSvc?.getSelectionState() ?? null) as
-        | IServerSideSelectionState
-        | IServerSideGroupSelectionState
-        | null;
+        IServerSideSelectionState | IServerSideGroupSelectionState | null;
 }
 
 export function setServerSideSelectionState(

@@ -19,3 +19,7 @@ Do not leave the placeholder `example.spec.ts` in place. The placeholder only pr
 See [docs-e2e-tests/SKILL.md](../skills/docs-e2e-tests/SKILL.md) for the full procedure.
 
 A behaviour that needs a real browser but is not what a docs example demonstrates (an arbitrary configuration, or an enterprise feature) belongs in `testing/e2e` instead: see *Playwright e2e, behavioural test or docs-example spec* in `testing.md`.
+
+**Exception: style-only examples**
+
+We have a rule in testing.md that styles are not tested. We test what classes are applied to the grid but not the computed style. If the only purpose of an example is to demonstrate styles - CSS rules or theming API parameters - these do not need testing. This is the only circumstance in which it is acceptable to leave the default `example.spec.ts` placeholder in place.

@@ -895,9 +895,11 @@ export const AG_GRID_LOCALE_UK_UA = {
     columnHeaderEditCancel: 'Скасувати',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Відповідних стовпців не знайдено.',
     calculatedColumn: 'Обчислюваний стовпець',
     calculatedColumnAdd: 'Додати обчислюваний стовпець',
     calculatedColumnEdit: 'Редагувати обчислюваний стовпець',
+    calculatedColumnView: 'Переглянути обчислюваний стовпець',
     calculatedColumnRemove: 'Видалити обчислюваний стовпець',
     calculatedColumnTitle: 'Назва',
     calculatedColumnType: 'Тип',
@@ -912,6 +914,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     calculatedColumnExpressionAmbiguousReference:
         'Неоднозначне посилання на стовпець "${variable}". Скористайтеся списком Стовпці або точнішим шляхом групи.',
     calculatedColumnExpressionUnknownReference: 'Невідоме посилання на стовпець "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Стовпець "${variable}" не можна використовувати в цьому виразі.',
     calculatedColumnExpressionEmpty: 'Введіть вираз',
     calculatedColumnTitleEmpty: 'Введіть назву',
     calculatedColumnApply: 'Застосувати',

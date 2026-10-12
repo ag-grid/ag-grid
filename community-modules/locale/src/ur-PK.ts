@@ -892,9 +892,11 @@ export const AG_GRID_LOCALE_UR_PK = {
     columnHeaderEditCancel: 'منسوخ کریں',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'کوئی موزوں کالم نہیں ملا۔',
     calculatedColumn: 'محسوب کالم',
     calculatedColumnAdd: 'محسوب کالم شامل کریں',
     calculatedColumnEdit: 'محسوب کالم میں ترمیم کریں',
+    calculatedColumnView: 'محسوب کالم دیکھیں',
     calculatedColumnRemove: 'محسوب کالم ہٹائیں',
     calculatedColumnTitle: 'عنوان',
     calculatedColumnType: 'قسم',
@@ -909,6 +911,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     calculatedColumnExpressionAmbiguousReference:
         'مبہم کالم حوالہ "${variable}"۔ کالمز کی فہرست یا زیادہ مخصوص گروپ راستہ استعمال کریں۔',
     calculatedColumnExpressionUnknownReference: 'نامعلوم کالم حوالہ "${variable}"۔',
+    calculatedColumnExpressionRestrictedReference: 'اس اظہار میں کالم "${variable}" استعمال نہیں کیا جا سکتا۔',
     calculatedColumnExpressionEmpty: 'ایک اظہار درج کریں۔',
     calculatedColumnTitleEmpty: 'ایک عنوان درج کریں۔',
     calculatedColumnApply: 'لاگو کریں',

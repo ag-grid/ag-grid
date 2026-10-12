@@ -10,7 +10,6 @@ name: Website shared sync
 #            WEBSITE_SYNC_NOTION_TOKEN
 #   vars:    WEBSITE_SYNC_SLACK_CHANNEL
 #            WEBSITE_SYNC_NOTION_DATABASE
-#            WEBSITE_SYNC_DRY_RUN (optional, default 'true')
 
 on:
     workflow_run:
@@ -88,5 +87,6 @@ jobs:
                   repos_token: ${{ steps.studio-token.outputs.token }}
                   notion_token: ${{ secrets.WEBSITE_SYNC_NOTION_TOKEN }}
                   notion_database: ${{ vars.WEBSITE_SYNC_NOTION_DATABASE }}
+                  quiet_authors: ${{ vars.WEBSITE_SHARED_QUIET_AUTHORS }}
                   trigger_sha: ${{ github.event.workflow_run.head_sha }}
-                  dry_run: ${{ format('{0}', inputs.dry_run) || vars.WEBSITE_SYNC_DRY_RUN || 'true' }}
+                  dry_run: ${{ github.event_name == 'workflow_dispatch' && format('{0}', inputs.dry_run) || 'false' }}

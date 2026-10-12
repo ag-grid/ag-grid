@@ -234,6 +234,11 @@ export interface CoreParams extends SharedThemeParams {
     footerRowBorder: BorderValue;
 
     /**
+     * Horizontal border between the grand total row and the data rows: above it when the grand total is at the bottom, below it when at the top. This border is drawn on top of the existing border, so should be opaque to hide it.
+     */
+    grandTotalRowBorder: BorderValue;
+
+    /**
      * Duration in seconds of the background color transition if headerCellHoverBackgroundColor or headerCellMovingBackgroundColor is set
      */
     headerCellBackgroundTransitionDuration: DurationValue;
@@ -450,6 +455,18 @@ export interface CoreParams extends SharedThemeParams {
      * Width of the calculated column suggestion list opened from helper buttons.
      */
     calculatedColumnSuggestionListWidth: LengthValue;
+
+    /** Colour of column references in the Calculated Column expression editor. */
+    calculatedColumnReferenceColor: ColorValue;
+
+    /** Colour of function names in the Calculated Column expression editor. */
+    calculatedColumnFunctionColor: ColorValue;
+
+    /** Colour of operators in the Calculated Column expression editor. */
+    calculatedColumnOperatorColor: ColorValue;
+
+    /** Colour of error underlines in the Calculated Column expression editor. */
+    calculatedColumnErrorUnderlineColor: ColorValue;
 
     /**
      * Color of the indicator line used to show where a row will be inserted when dragging to reorder rows
@@ -853,6 +870,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     footerRowBorder: {
         ref: 'rowBorder',
     },
+    grandTotalRowBorder: false,
     columnBorder: {
         style: 'solid',
         width: 1,
@@ -912,6 +930,10 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     columnHeaderEditHighlightColor: accentMix(0.12),
     calculatedColumnParentSuggestionColor: foregroundMix(0.75),
     calculatedColumnSuggestionListWidth: 200,
+    calculatedColumnReferenceColor: '#3269c6',
+    calculatedColumnFunctionColor: '#007c1f',
+    calculatedColumnOperatorColor: { ref: 'foregroundColor' },
+    calculatedColumnErrorUnderlineColor: { ref: 'invalidColor' },
     rowNumbersSelectedColor: accentMix(0.5),
     columnHoverColor: accentMix(0.05),
     selectedRowBackgroundColor: accentMix(0.12),

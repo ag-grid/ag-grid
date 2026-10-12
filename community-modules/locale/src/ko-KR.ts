@@ -892,9 +892,11 @@ export const AG_GRID_LOCALE_KO_KR = {
     columnHeaderEditCancel: '취소',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: '사용 가능한 열을 찾을 수 없습니다.',
     calculatedColumn: '계산된 열',
     calculatedColumnAdd: '계산된 열 추가',
     calculatedColumnEdit: '계산된 열 편집',
+    calculatedColumnView: '계산된 열 보기',
     calculatedColumnRemove: '계산된 열 제거',
     calculatedColumnTitle: '제목',
     calculatedColumnType: '유형',
@@ -909,6 +911,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     calculatedColumnExpressionAmbiguousReference:
         '모호한 열 참조 "${variable}". 열 목록을 사용하거나 더 구체적인 그룹 경로를 사용하세요.',
     calculatedColumnExpressionUnknownReference: '알 수 없는 열 참조 "${variable}".',
+    calculatedColumnExpressionRestrictedReference: '이 식에서는 "${variable}" 열을 사용할 수 없습니다.',
     calculatedColumnExpressionEmpty: '식을 입력하세요',
     calculatedColumnTitleEmpty: '제목을 입력하세요',
     calculatedColumnApply: '적용',

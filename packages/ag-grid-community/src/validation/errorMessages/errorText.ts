@@ -963,7 +963,7 @@ export const AG_GRID_ERRORS = {
     334: () =>
         `\`GridChartsModule\` was deprecated in v33 — use \`IntegratedChartsModule\` instead.\n\n${missingChartsWithModule('IntegratedChartsModule')}` as const,
     335: ({ colId }: { colId: string }) =>
-        `Column \`${colId}\` sets \`filter.handler\` or \`filter.doesFilterPass\`, which need \`enableFilterHandlers\`, so they are ignored and \`filter.component\` is used as the filter.` as const,
+        `Column \`${colId}\` sets \`filter.handler\` or \`filter.doesFilterPass\`, which need \`enableFilterHandlers\`, so the default filter is used, as \`filter: true\` does.` as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
