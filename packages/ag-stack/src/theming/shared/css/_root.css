@@ -11,6 +11,12 @@
     color: var(--ag-text-color);
 
     --ag-indentation-level: 0;
+
+    /* We use this to hide focus outlines when we are rendering a more attractive box
+       shadow, but forced colour mode hides hides box shadows and requires outlines. */
+    @media not (forced-colors: active) {
+        --ag-internal-accessible-no-outline: none;
+    }
 }
 
 /* TODO scoped to ag-toolbar for minor release, should make global in v37.0 */

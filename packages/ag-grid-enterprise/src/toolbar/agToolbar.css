@@ -43,7 +43,7 @@
     cursor: pointer;
     line-height: 1;
     white-space: nowrap;
-    outline: none;
+    outline: var(--ag-internal-accessible-no-outline, revert);
 }
 
 :where(.ag-toolbar-button) .ag-icon {
@@ -150,7 +150,6 @@
     font-family: inherit;
     font-weight: inherit;
     line-height: 1.5;
-    outline: none;
     background-color: var(--ag-input-background-color);
     border: var(--ag-input-border);
     border-radius: var(--ag-input-border-radius);

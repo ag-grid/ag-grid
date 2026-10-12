@@ -116,6 +116,11 @@
     background-color: var(--ag-side-button-selected-background-color);
     border-top: var(--ag-side-button-selected-border);
     border-bottom: var(--ag-side-button-selected-border);
+
+    /* the accent underline and the selected background both flatten to Canvas */
+    @media (forced-colors: active) {
+        background-color: SelectedItem;
+    }
 }
 
 .ag-side-button.ag-selected::before {

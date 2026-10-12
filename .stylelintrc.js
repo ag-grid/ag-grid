@@ -6,6 +6,13 @@ module.exports = {
     rules: {
         'declaration-no-important': true,
         'keyframe-declaration-no-important': true,
+        'declaration-property-value-disallowed-list': [
+            { '/^outline(-style)?$/': ['/^(none|0)$/', '/var\\(\\s*--ag-internal-accessible-no-outline\\s*\\)/'] },
+            {
+                message:
+                    'Use "outline: var(--ag-internal-accessible-no-outline, revert)" so the focus ring returns in forced colors mode',
+            },
+        ],
         'comment-empty-line-before': [
             'always',
             {

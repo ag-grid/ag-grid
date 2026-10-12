@@ -70,7 +70,6 @@
     }
 
     &:where(:focus) {
-        outline: none;
         color: var(--ag-input-focus-text-color);
     }
 
