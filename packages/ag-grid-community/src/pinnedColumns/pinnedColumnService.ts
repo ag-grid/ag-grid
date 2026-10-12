@@ -167,10 +167,14 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         return this.leftWidth + this.rightWidth;
     }
 
-    /** The part of a mouse resize's `growth` that keeps the pinned sections within the viewport, or their drag-start width if wider. */
-    public getPinnedResizeGrowth(growth: number, resizeStartPinnedWidth: number): number {
+    /** The part of a resize's `growth` that keeps the pinned sections within the viewport, or their resize-start width if wider. */
+    public getPinnedResizeGrowth(
+        growth: number,
+        resizeStartPinnedWidth: number,
+        pinnedWidth: number = this.getPinnedWidth()
+    ): number {
         const bodyWidth = this.getAvailableViewportWidth() - MIN_CENTER_VIEWPORT_WIDTH;
-        const room = Math.max(bodyWidth, resizeStartPinnedWidth) - this.getPinnedWidth();
+        const room = Math.max(bodyWidth, resizeStartPinnedWidth) - pinnedWidth;
         return Math.min(growth, Math.max(room, 0));
     }
 

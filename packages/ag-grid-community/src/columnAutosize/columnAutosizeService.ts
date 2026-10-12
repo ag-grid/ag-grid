@@ -39,6 +39,8 @@ interface AutoSizeColumnParams {
     defaultMaxWidth?: number;
     columnLimits?: SizeColumnsToContentColumnLimits[];
     scaleUpToFitGridWidth?: boolean;
+    /** Stops pinned columns growing past the viewport, as a user resize by mouse or keyboard does. */
+    limitPinnedGrowth?: boolean;
     source?: ColumnEventType;
 }
 
@@ -216,6 +218,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 defaultMaxWidth,
                 defaultMinWidth,
                 columnLimits = [],
+                limitPinnedGrowth,
                 source = 'api',
             } = params;
 
@@ -227,7 +230,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             // the LHS sized, but RHS no. so we keep looping through the visible columns until
             // no more cols are available (rendered) to be resized
 
-            const { animationFrameSvc, renderStatus, colModel, autoWidthCalc, visibleCols } = this.beans;
+            const { animationFrameSvc, renderStatus, colModel, autoWidthCalc, visibleCols, pinnedCols } = this.beans;
 
             // we autosize after animation frames finish in case any cell renderers need to complete first. this can
             // happen eg if client code is calling api.autoSizeAllColumns() straight after grid is initialised, but grid
@@ -261,6 +264,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             );
             const shouldSkipHeader = skipHeader ?? this.gos.get('skipHeaderOnAutoSize');
             const shouldSkipHeaderGroups = skipHeaderGroups ?? shouldSkipHeader;
+            const pinnedLimit = limitPinnedGrowth ? pinnedCols : undefined;
+            const startPinnedWidth = pinnedLimit?.getPinnedWidth() ?? 0;
+            // tracked locally, as the pinned widths only update once the columns are refreshed
+            let pinnedWidth = startPinnedWidth;
 
             while (changesThisTimeAround !== 0) {
                 changesThisTimeAround = 0;
@@ -292,8 +299,17 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                         const columnLimit = columnLimitsIndex[column.colId] ?? {};
                         columnLimit.minWidth ??= defaultMinWidth;
                         columnLimit.maxWidth ??= defaultMaxWidth;
-                        const newWidth = normaliseColumnWidth(column, preferredWidth, columnLimit);
-                        widthsChanged ||= newWidth !== column.getActualWidth();
+                        let newWidth = normaliseColumnWidth(column, preferredWidth, columnLimit);
+                        const actualWidth = column.getActualWidth();
+                        if (pinnedLimit && column.pinnedLane !== 1) {
+                            const growth = newWidth - actualWidth;
+                            if (growth > 0) {
+                                newWidth =
+                                    actualWidth + pinnedLimit.getPinnedResizeGrowth(growth, startPinnedWidth, pinnedWidth);
+                            }
+                            pinnedWidth += newWidth - actualWidth;
+                        }
+                        widthsChanged ||= newWidth !== actualWidth;
                         column.setActualWidth(newWidth, source);
                         columnsAutoSized.add(column);
                         changesThisTimeAround++;
@@ -367,7 +383,13 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
 
         const autoSizeColListener = () => {
-            this.autoSizeColumn(column, 'uiColumnResized', skipHeaderOnAutoSize);
+            this.autoSizeCols({
+                colKeys: [column],
+                skipHeader: skipHeaderOnAutoSize,
+                skipHeaderGroups: true,
+                limitPinnedGrowth: true,
+                source: 'uiColumnResized',
+            });
         };
 
         element.addEventListener('dblclick', autoSizeColListener);
@@ -400,6 +422,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                     colKeys: keys,
                     skipHeader: skipHeaderOnAutoSize,
                     stopAtGroup: columnGroup,
+                    limitPinnedGrowth: true,
                     source: 'uiColumnResized',
                 });
             }

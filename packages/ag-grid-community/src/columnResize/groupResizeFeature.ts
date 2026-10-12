@@ -55,7 +55,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         if (!gos.get('suppressAutoSize') && colAutosize) {
             this.addDestroyFunc(
                 colAutosize.addColumnGroupResize(this.eResize, this.columnGroup, () =>
-                    this.resizeLeafColumnsToFit('uiColumnResized')
+                    this.resizeLeafColumnsToFit('uiColumnResized', true)
                 )
             );
         }
@@ -156,12 +156,25 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         return columnSizeAndRatios;
     }
 
-    public resizeLeafColumnsToFit(source: ColumnEventType): void {
-        const preferredSize = this.beans.autoWidthCalc!.getPreferredWidthForColumnGroup(this.columnGroup);
+    /** `limitPinnedGrowth` stops pinned columns growing past the viewport, as a user resize by mouse or keyboard does. */
+    public resizeLeafColumnsToFit(source: ColumnEventType, limitPinnedGrowth?: boolean): void {
+        const { autoWidthCalc, pinnedCols } = this.beans;
+        const preferredSize = autoWidthCalc!.getPreferredWidthForColumnGroup(this.columnGroup);
         const initialValues = this.getInitialValues();
+        const { resizeStartWidth } = initialValues;
 
-        if (preferredSize > initialValues.resizeStartWidth) {
-            this.resizeColumns(initialValues, preferredSize, source, true);
+        if (preferredSize <= resizeStartWidth) {
+            return;
+        }
+
+        let width = preferredSize;
+        if (limitPinnedGrowth && pinnedCols && this.getPinnedLane() !== 1) {
+            const pinnedWidth = pinnedCols.getPinnedWidth();
+            width = resizeStartWidth + pinnedCols.getPinnedResizeGrowth(width - resizeStartWidth, pinnedWidth);
+        }
+
+        if (width > resizeStartWidth) {
+            this.resizeColumns(initialValues, width, source, true);
         }
     }
 

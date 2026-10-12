@@ -1,9 +1,9 @@
 import { DragEventDispatcher, TestGridsManager, asyncSetTimeout, dispatchGridSizeChanged } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 
 import type { ColumnPinnedType, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnApiModule, ScrollApiModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, ScrollApiModule } from 'ag-grid-community';
 
 const overflowingColumnDefs = [
     { field: 'a', pinned: 'left' as const, width: 300 },
@@ -159,7 +159,9 @@ describe('Pinned columns wider than the viewport', () => {
 });
 
 describe('Resizing pinned columns wider than the viewport', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, ColumnApiModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule],
+    });
     let originalGridWidth: number;
 
     beforeAll(() => {
@@ -175,6 +177,7 @@ describe('Resizing pinned columns wider than the viewport', () => {
 
     afterEach(() => {
         gridsManager.reset();
+        vi.restoreAllMocks();
     });
 
     // Returning [] from processUnpinnedColumns keeps 5 x 200px columns pinned in a 600px grid.
@@ -197,6 +200,14 @@ describe('Resizing pinned columns wider than the viewport', () => {
     };
 
     const width = (api: GridApi, colId: string): number => api.getColumn(colId)!.getActualWidth();
+
+    // happy-dom has no text layout, so fix the width autosize measures (it adds autoSizePadding, 20px, on top)
+    const mockAutosizeContentWidth = (contentWidth: number): void => {
+        const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetWidth')!.get!;
+        vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement) {
+            return this.tagName === 'FORM' ? contentWidth : original.call(this);
+        });
+    };
 
     const dragResizeBy = async (colId: string, dx: number): Promise<void> => {
         const bar = query<HTMLElement>(`.ag-header-cell[col-id="${colId}"] .ag-header-cell-resize`);
@@ -490,6 +501,67 @@ describe('Resizing pinned columns wider than the viewport', () => {
 
             expect(totalWidth(api, ['a', 'b'])).toBe(460);
             expect(totalWidth(api, ['c', 'd', 'e'])).toBe(540);
+        });
+
+        test('double-clicking a pinned group handle autosizes it only up to the viewport limit', async () => {
+            const api = await createGroupedGrid([['a', 'b']]);
+
+            mockAutosizeContentWidth(480);
+            groupBar('g0').dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+            await asyncSetTimeout(0);
+
+            expect(totalWidth(api, ['a', 'b'])).toBe(550);
+        });
+
+        test('double-clicking an overflowing pinned group handle does not grow it', async () => {
+            const api = await createGroupedGrid([
+                ['a', 'b'],
+                ['c', 'd', 'e'],
+            ]);
+
+            mockAutosizeContentWidth(480);
+            groupBar('g0').dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+            await asyncSetTimeout(0);
+
+            expect(totalWidth(api, ['a', 'b'])).toBe(400);
+        });
+    });
+
+    describe('double-click autosize', () => {
+        const dblClickResizeBar = async (colId: string): Promise<void> => {
+            const bar = query<HTMLElement>(`.ag-header-cell[col-id="${colId}"] .ag-header-cell-resize`);
+            bar.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+            await asyncSetTimeout(0);
+        };
+
+        test('a pinned column grows only up to the viewport limit', async () => {
+            const api = await createGrid(2);
+
+            mockAutosizeContentWidth(480);
+            await dblClickResizeBar('a');
+
+            expect(width(api, 'a')).toBe(350);
+        });
+
+        test('an overflowing pinned column can be shrunk but not grown', async () => {
+            const api = await createGrid(5);
+
+            mockAutosizeContentWidth(480);
+            await dblClickResizeBar('a');
+            expect(width(api, 'a')).toBe(200);
+
+            mockAutosizeContentWidth(80);
+            await dblClickResizeBar('a');
+            expect(width(api, 'a')).toBe(100);
+        });
+
+        test('an unpinned column is not limited', async () => {
+            const api = await createGrid(2, null);
+
+            mockAutosizeContentWidth(480);
+            await dblClickResizeBar('a');
+
+            expect(width(api, 'a')).toBe(500);
         });
     });
 });
