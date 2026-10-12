@@ -299,7 +299,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         private readonly _frameworkCompWrapper: AngularFrameworkComponentWrapper
     ) {
         this._nativeElement = elementDef.nativeElement;
-        this._fullyReady.then(() => {
+        void this._fullyReady.then(() => {
             // Register the status flag reset before any events are fired
             // so that we can swap to synchronous event firing as soon as the grid is ready
             this._holdEvents = false;
@@ -411,7 +411,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
 
             if (this._holdEvents) {
                 // if the user is listening to events, wait for ngAfterViewInit to fire first, then emit the grid events
-                this._fullyReady.then(() => fireEmitter());
+                void this._fullyReady.then(() => fireEmitter());
             } else {
                 fireEmitter();
             }

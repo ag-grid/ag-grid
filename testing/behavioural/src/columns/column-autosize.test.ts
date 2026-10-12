@@ -17,6 +17,7 @@
  *     `dblclick` on header-cell handles, covered by header-rendering tests elsewhere.
  *   - `sizeColumnsToFitGridBody` retry timeouts (100 ms / 500 ms) — would need fake timers.
  */
+import { waitFor } from '@testing-library/dom';
 import { _getScrollbarWidth } from 'ag-stack';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, mockGridLayout } from 'ag-test-utils';
 
@@ -748,6 +749,28 @@ describe('Column Autosize', () => {
                   └── c2 width:130
             `);
             await asyncSetTimeout(0);
+        });
+
+        test('width animation is switched off when autosize fails part-way', async () => {
+            const rejections: unknown[] = [];
+            const onRejection = (reason: unknown) => rejections.push(reason);
+            process.on('unhandledRejection', onRejection);
+            try {
+                const api = gridsManager.createGrid('myGrid', {
+                    animateColumnResizing: true,
+                    columnDefs: [{ colId: 'a', minWidth: 150 }],
+                });
+                api.getColumn('a')!.addEventListener('widthChanged', () => {
+                    throw new Error('widthChanged listener failed');
+                });
+
+                api.autoSizeColumns(['a']);
+
+                await waitFor(() => expect(rejections).toEqual([new Error('widthChanged listener failed')]));
+                expect(document.querySelector('.ag-animate-autosize')).toBeNull();
+            } finally {
+                process.off('unhandledRejection', onRejection);
+            }
         });
     });
 
