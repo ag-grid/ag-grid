@@ -1,5 +1,5 @@
 import type { AgColorType } from 'ag-charts-types';
-import { _setAriaLabel } from 'ag-stack';
+import { _getDocument, _setAriaLabel } from 'ag-stack';
 
 import type { BeanCollection, ChartGroupsDef, ChartType } from 'ag-grid-community';
 import { Component, KeyCode, _createElement } from 'ag-grid-community';
@@ -150,6 +150,7 @@ export class MiniChartsContainer extends Component {
         const isPivotChart = this.chartController.isPivotChart();
         const isRangeChart = !isPivotChart;
         const solidFills = toSolidColors(this.fills);
+        const doc = _getDocument(this.beans);
         const solidStrokes = toSolidColors(this.strokes);
 
         // Determine the set of chart types that are specified by the chartGroupsDef config, filtering out any entries
@@ -242,7 +243,7 @@ export class MiniChartsContainer extends Component {
 
                 this.wrappers.set(chartType, miniWrapper);
 
-                const template = getMiniChartSvgTemplate(chartType, this.isCustomTheme, solidFills);
+                const template = getMiniChartSvgTemplate(chartType, this.isCustomTheme, solidFills, doc);
                 if (template) {
                     createMiniChartSvg(
                         miniWrapper,

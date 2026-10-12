@@ -227,9 +227,9 @@ const STOCK_HEATMAP_FILLS = [
     'rgb(207, 230, 0)',
 ];
 
-const parseColor = (color: string | undefined): AgColor => {
+const parseColor = (color: string | undefined, doc: Document): AgColor => {
     try {
-        return AgColor.fromString(color!);
+        return AgColor.fromString(color!, doc);
     } catch {
         return new AgColor(0, 0, 0);
     }
@@ -239,8 +239,8 @@ const parseColor = (color: string | undefined): AgColor => {
  * Custom theme heatmap cells run from fill 0 towards fill 1 in steps of 0.2, continuing past fill 1
  * (as the canvas thumbnail did) with each channel clamped to 0..1 by `AgColor`.
  */
-const customHeatmapFills = (paletteFills: string[]): string[] => {
-    const [c0, c1] = [0, 1].map((i) => parseColor(paletteFills[i % paletteFills.length]));
+const customHeatmapFills = (paletteFills: string[], doc: Document): string[] => {
+    const [c0, c1] = [0, 1].map((i) => parseColor(paletteFills[i % paletteFills.length], doc));
     return HEATMAP_CELLS.map((_, i) => {
         const t = i * 0.2;
         const mix = (a: number, b: number) => a * (1 - t) + b * t;
@@ -741,17 +741,18 @@ const STOCK_THEME_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> = {
     heatmap: heatmap(STOCK_HEATMAP_FILLS),
 };
 
-/** The thumbnail geometry for a chart type, given the theme kind and, for the custom heatmap, the solid palette fills. */
+/** The thumbnail geometry for a chart type, given the theme kind and, for the custom heatmap, the solid palette fills and the document their colour names resolve in. */
 export function getMiniChartSvgTemplate(
     chartType: ChartType,
     isCustomTheme: boolean,
-    paletteFills: string[]
+    paletteFills: string[],
+    doc: Document
 ): MiniChartSvgTemplate | undefined {
     if (!isCustomTheme) {
         return STOCK_THEME_GEOMETRY[chartType] ?? MINI_CHART_SVG_GEOMETRY[chartType];
     }
     if (chartType === 'heatmap') {
-        return heatmap(customHeatmapFills(paletteFills));
+        return heatmap(customHeatmapFills(paletteFills, doc));
     }
     return MINI_CHART_SVG_GEOMETRY[chartType];
 }

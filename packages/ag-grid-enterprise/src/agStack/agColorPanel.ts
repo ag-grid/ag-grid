@@ -5,7 +5,7 @@ import type {
     BaseProperties,
     IPropertiesService,
 } from 'ag-stack';
-import { AgComponentStub, RefPlaceholder, _exists, _setDisplayed } from 'ag-stack';
+import { AgComponentStub, RefPlaceholder, _exists, _getDocument, _setDisplayed } from 'ag-stack';
 
 import { KeyCode } from 'ag-grid-community';
 
@@ -339,7 +339,7 @@ export class AgColorPanel<
         // the recent color list needs to know color has actually changed
         const colorPicker = this.picker;
 
-        const existingColor = AgColor.fromString(colorPicker.getValue());
+        const existingColor = AgColor.fromString(colorPicker.getValue(), _getDocument(this.beans));
         if (existingColor.toRgbaString() !== rgbaColor) {
             this.colorChanged = true;
         }
@@ -413,7 +413,7 @@ export class AgColorPanel<
     }
 
     public setValue(val: string): void {
-        const color = AgColor.fromString(val);
+        const color = AgColor.fromString(val, _getDocument(this.beans));
         this.setColor(color, true);
     }
 

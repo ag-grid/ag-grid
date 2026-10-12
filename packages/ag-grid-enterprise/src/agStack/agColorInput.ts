@@ -5,7 +5,7 @@ import type {
     BaseProperties,
     IPropertiesService,
 } from 'ag-stack';
-import { RefPlaceholder } from 'ag-stack';
+import { RefPlaceholder, _getDocument } from 'ag-stack';
 
 import type { AgInputTextFieldParams, _AgWidgetSelectorType } from 'ag-grid-community';
 import { AgInputTextField } from 'ag-grid-community';
@@ -57,12 +57,12 @@ export class AgColorInput<
 
     public setColor(color: AgColor): void {
         const rgbaColor = color.toRgbaString();
-        this.setValue(AgColor.fromString(rgbaColor).toHexString().toUpperCase(), true);
+        this.setValue(AgColor.fromString(rgbaColor, _getDocument(this.beans)).toHexString().toUpperCase(), true);
         this.eColor.style.backgroundColor = rgbaColor;
     }
 
     public override setValue(value?: string | null | undefined, silent?: boolean | undefined): this {
-        const isValid = AgColor.validColorString(value ?? '');
+        const isValid = AgColor.validColorString(value ?? '', _getDocument(this.beans));
         this.eInput.setCustomValidity(
             isValid ? '' : this.getLocaleTextFunc()('invalidColor', 'Color value is invalid')
         );
@@ -74,7 +74,9 @@ export class AgColorInput<
     }
 
     public onColorChanged(callback: (color: AgColor) => void): void {
-        this.addManagedListeners(this, { colorChanged: () => callback(AgColor.fromString(this.value!)) });
+        this.addManagedListeners(this, {
+            colorChanged: () => callback(AgColor.fromString(this.value!, _getDocument(this.beans))),
+        });
     }
 }
 

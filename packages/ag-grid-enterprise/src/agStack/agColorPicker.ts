@@ -5,6 +5,7 @@ import type {
     BaseProperties,
     IPropertiesService,
 } from 'ag-stack';
+import { _getDocument } from 'ag-stack';
 
 import type { AgPickerFieldParams, _AgWidgetSelectorType } from 'ag-grid-community';
 import { AgPickerField, _createElement } from 'ag-grid-community';
@@ -167,7 +168,9 @@ export class AgColorPicker<
         }
 
         this.eDisplayFieldColor.style.backgroundColor = color;
-        this.eDisplayFieldText.textContent = AgColor.fromString(color).toHexString().toUpperCase();
+        this.eDisplayFieldText.textContent = AgColor.fromString(color, _getDocument(this.beans))
+            .toHexString()
+            .toUpperCase();
 
         return super.setValue(color);
     }

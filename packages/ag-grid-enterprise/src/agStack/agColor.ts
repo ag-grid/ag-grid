@@ -1,6 +1,6 @@
 // A port of the AG Charts `Color` class, limited to what the colour picker widgets and the custom theme heatmap
 // mini chart use. Parsing must stay identical: the colour input validates free text with `validColorString`.
-// CSS colour names are resolved by the browser rather than a lookup table.
+// CSS colour names are resolved by the browser, in the grid's document, rather than a lookup table.
 import { _createElement } from 'ag-grid-community';
 
 const clamp = (min: number, value: number, max: number): number => Math.min(max, Math.max(min, value));
@@ -21,12 +21,13 @@ const NON_COLOR_KEYWORDS = new Set(['currentcolor', 'inherit', 'initial', 'unset
 
 /**
  * Resolves a CSS colour through the browser, by computing the `color` of a probe element inside `container`.
+ * A `var()` value the browser rejects is still computed, inheriting the container's colour.
  * @returns The computed colour (`rgb()` / `rgba()` for any colour the browser knows), or `''` when invalid.
  */
 export function _resolveCssColor(value: string, container: HTMLElement): string {
     const probe = _createElement({ tag: 'span' });
     probe.style.color = value;
-    if (!probe.style.color) {
+    if (!probe.style.color && !/\bvar\(/i.test(value)) {
         return '';
     }
     // keep the probe off-screen to avoid layout impact while still letting the browser resolve the colour.
@@ -42,11 +43,11 @@ export function _resolveCssColor(value: string, container: HTMLElement): string 
 }
 
 /** A CSS colour name (or system colour) resolved by the browser to rgba components in [0, 1]. */
-function namedColorToRgba(name: string): number[] | undefined {
+function namedColorToRgba(name: string, doc: Document): number[] | undefined {
     if (!/^[a-z]+$/i.test(name) || NON_COLOR_KEYWORDS.has(name.toLowerCase())) {
         return;
     }
-    const rgba = stringToRgba(_resolveCssColor(name, document.body));
+    const rgba = stringToRgba(_resolveCssColor(name, doc.body));
     if (rgba?.length === 3 || rgba?.length === 4) {
         return rgba;
     }
@@ -292,8 +293,9 @@ export class AgColor {
      * Accepts #rgb, #rgba, #rrggbb, #rrggbbaa, rgb()/rgba(), hsl()/hsla(), oklch(), CSS colour names and
      * system colours. `currentcolor` and the CSS-wide keywords are rejected.
      * `oklab()`, `lab()`, `lch()` and `color()` are not supported.
+     * @param doc - The document colour names resolve in: the one the grid is rendered in.
      */
-    public static validColorString(str: string): boolean {
+    public static validColorString(str: string, doc: Document): boolean {
         if (str.includes('#')) {
             return !!parseHex(str);
         }
@@ -308,11 +310,11 @@ export class AgColor {
             const rgba = stringToRgba(str);
             return rgba != null && (rgba.length === 3 || rgba.length === 4);
         }
-        return !!namedColorToRgba(str);
+        return !!namedColorToRgba(str, doc);
     }
 
     /** Parses the formats `validColorString` accepts; throws on anything else. */
-    public static fromString(str: string): AgColor {
+    public static fromString(str: string, doc: Document): AgColor {
         if (str.includes('#')) {
             return fromHexString(str);
         }
@@ -343,7 +345,7 @@ export class AgColor {
             }
             throw new Error(`Malformed rgb/rgba color string: '${str}'`);
         }
-        const named = namedColorToRgba(str);
+        const named = namedColorToRgba(str, doc);
         if (named) {
             const [r, g, b, a = 1] = named;
             return new AgColor(r, g, b, a);

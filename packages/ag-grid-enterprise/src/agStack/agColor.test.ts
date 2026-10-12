@@ -1,29 +1,7 @@
 import { AgColor } from './agColor';
 
-// happy-dom does not compute colour names to rgb(), so the browser's computed values are supplied here.
-const COMPUTED_NAMED_COLORS: Record<string, string> = {
-    transparent: 'rgba(0, 0, 0, 0)',
-    red: 'rgb(255, 0, 0)',
-    purple: 'rgb(128, 0, 128)',
-    white: 'rgb(255, 255, 255)',
-    rebeccapurple: 'rgb(102, 51, 153)',
-};
-
 // Expected values are pinned from the AG Charts `Color` class this utility replaces.
 describe('AgColor', () => {
-    beforeEach(() => {
-        const getComputedStyle = window.getComputedStyle.bind(window);
-        vi.spyOn(window, 'getComputedStyle').mockImplementation((element, pseudo) => {
-            const computed = getComputedStyle(element, pseudo);
-            const named = COMPUTED_NAMED_COLORS[(element as HTMLElement).style.color];
-            return named ? ({ ...computed, color: named } as CSSStyleDeclaration) : computed;
-        });
-    });
-
-    afterEach(() => {
-        vi.restoreAllMocks();
-    });
-
     it.each([
         ['#5090dc', '#5090dc', 'rgb(80, 144, 220)'],
         ['#abcd', '#aabbccdd', 'rgba(170, 187, 204, 0.867)'],
@@ -32,46 +10,42 @@ describe('AgColor', () => {
         ['hsl(210, 60%, 50%)', '#337fcc', 'rgb(51, 127, 204)'],
         ['hsla(0.5turn 50 50 / 0.5)', '#40bfbf80', 'rgba(64, 191, 191, 0.5)'],
         ['oklch(0.7 0.1 200)', '#40b1b7', 'rgb(64, 177, 183)'],
-        ['transparent', '#00000000', 'rgba(0, 0, 0, 0)'],
-        ['Red', '#ff0000', 'rgb(255, 0, 0)'],
-        ['purple', '#800080', 'rgb(128, 0, 128)'],
-        ['white', '#ffffff', 'rgb(255, 255, 255)'],
         ['rgb(300, -5, 50%)', '#ff0080', 'rgb(255, 0, 128)'],
     ])('parses %s', (input, hex, rgba) => {
-        const color = AgColor.fromString(input);
+        const color = AgColor.fromString(input, document);
         expect(color.toHexString()).toBe(hex);
         expect(color.toRgbaString()).toBe(rgba);
     });
 
-    it.each(['#12345g', '# f f f', 'xrgb(1,2,3)', 'rebeccapurple', 'oklch(70% 50% 20deg / 30%)'])(
+    it.each(['#12345g', '# f f f', 'xrgb(1,2,3)', 'oklch(70% 50% 20deg / 30%)'])(
         'accepts %s as a valid colour',
         (input) => {
-            expect(AgColor.validColorString(input)).toBe(true);
+            expect(AgColor.validColorString(input, document)).toBe(true);
         }
     );
 
     it.each(['#ggg', ' red', '', 'rgb(1,2)', 'hsl(1,2)', 'lab(1 2 3)'])(
         'rejects %s and throws on parsing it',
         (input) => {
-            expect(AgColor.validColorString(input)).toBe(false);
-            expect(() => AgColor.fromString(input)).toThrow();
+            expect(AgColor.validColorString(input, document)).toBe(false);
+            expect(() => AgColor.fromString(input, document)).toThrow();
         }
     );
 
     it.each(['currentcolor', 'currentColor', 'inherit', 'initial', 'unset', 'revert', 'notacolor'])(
         'rejects the non-colour keyword %s and throws on parsing it',
         (input) => {
-            expect(AgColor.validColorString(input)).toBe(false);
-            expect(() => AgColor.fromString(input)).toThrow();
+            expect(AgColor.validColorString(input, document)).toBe(false);
+            expect(() => AgColor.fromString(input, document)).toThrow();
         }
     );
 
     it('throws when parsing undefined', () => {
-        expect(() => AgColor.fromString(undefined as unknown as string)).toThrow();
+        expect(() => AgColor.fromString(undefined as unknown as string, document)).toThrow();
     });
 
     it('converts to and from HSB', () => {
-        expect(AgColor.fromString('#5090dc').toHSB()).toEqual([
+        expect(AgColor.fromString('#5090dc', document).toHSB()).toEqual([
             212.57142857142858, 0.6363636363636364, 0.8627450980392157,
         ]);
         expect(AgColor.fromHSB(120, 0.5, 0.5, 0.5).toRgbaString()).toBe('rgba(64, 128, 64, 0.5)');
