@@ -31,7 +31,6 @@
         display: flex;
         align-items: center;
         gap: 6px;
-        white-space: nowrap;
     }
 
     input {
@@ -42,4 +41,6 @@
 .enterpriseIcon {
     --icon-size: var(--text-fs-lg);
     --icon-color: var(--color-enterprise-icon);
+
+    flex-shrink: 0;
 }
