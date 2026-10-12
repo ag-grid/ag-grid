@@ -690,7 +690,7 @@ export function _combineAttributesAndGridOptions(
     // Loop through component props, if they are not undefined and a valid gridOption copy to gridOptions
     for (const key of gridOptionsKeys) {
         const value = component[key];
-        if (typeof value !== 'undefined') {
+        if (value !== undefined) {
             mergedOptions[key] = value;
         }
     }

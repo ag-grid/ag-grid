@@ -14,7 +14,7 @@ export function toolPanelCreateColumnTree(
         if (isColGroupDef(abstractColDef)) {
             // creating 'dummy' group which is not associated with grid column group
             const groupDef = abstractColDef;
-            const groupId = typeof groupDef.groupId !== 'undefined' ? groupDef.groupId : groupDef.headerName;
+            const groupId = groupDef.groupId !== undefined ? groupDef.groupId : groupDef.headerName;
             const group = new AgProvidedColumnGroup(groupDef, groupId!, false, depth);
             const children: (AgColumn | AgProvidedColumnGroup)[] = [];
             for (const def of groupDef.children) {

@@ -247,7 +247,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         }
 
         const suppressChartRangesSupplied =
-            typeof params.suppressChartRanges !== 'undefined' && params.suppressChartRanges !== null;
+            params.suppressChartRanges !== undefined && params.suppressChartRanges !== null;
         const suppressChartRanges = suppressChartRangesSupplied ? params.suppressChartRanges : true;
 
         return this.createChart({
