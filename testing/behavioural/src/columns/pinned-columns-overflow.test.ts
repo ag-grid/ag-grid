@@ -211,10 +211,14 @@ describe('Resizing pinned columns wider than the viewport', () => {
     const width = (api: GridApi, colId: string): number => api.getColumn(colId)!.getActualWidth();
 
     // happy-dom has no text layout, so fix the width autosize measures (it adds autoSizePadding, 20px, on top)
-    const mockAutosizeContentWidth = (contentWidth: number): void => {
+    const mockAutosizeContentWidth = (contentWidth: number, contentWidthByColId: Record<string, number> = {}): void => {
         const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetWidth')!.get!;
         vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement) {
-            return this.tagName === 'FORM' ? contentWidth : original.call(this);
+            if (this.tagName !== 'FORM') {
+                return original.call(this);
+            }
+            const colId = this.querySelector('[col-id]')?.getAttribute('col-id') ?? '';
+            return contentWidthByColId[colId] ?? contentWidth;
         });
     };
 
@@ -536,6 +540,17 @@ describe('Resizing pinned columns wider than the viewport', () => {
             await asyncSetTimeout(0);
 
             expect(totalWidth(api, ['a', 'b'])).toBe(550);
+        });
+
+        test('double-clicking a pinned group handle shrinks its columns before limiting the growing ones', async () => {
+            const api = await createGroupedGrid([['a', 'b']]);
+
+            mockAutosizeContentWidth(0, { a: 380, b: 80 });
+            groupBar('g0').dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+            await asyncSetTimeout(0);
+
+            expect(width(api, 'a')).toBe(400);
+            expect(width(api, 'b')).toBe(100);
         });
 
         test('double-clicking an overflowing pinned group handle does not grow it', async () => {

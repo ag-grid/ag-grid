@@ -26,6 +26,7 @@ import type {
     SizeColumnsToContentColumnLimits,
     SizeColumnsToContentStrategy,
 } from '../interfaces/autoSize';
+import type { PinnedColumnService } from '../pinnedColumns/pinnedColumnService';
 import { MIN_CENTER_VIEWPORT_WIDTH } from '../pinnedColumns/pinnedColumnService';
 import { _clamp } from '../utils/number';
 import { TouchListener } from '../widgets/touchListener';
@@ -281,6 +282,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 let widthsChanged = false;
 
                 const updatedColumns: AgColumn[] = [];
+                const newWidths = new Map<AgColumn, number>();
 
                 for (const key of colKeys) {
                     if (!key) {
@@ -304,24 +306,21 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                         const columnLimit = columnLimitsIndex[column.colId] ?? {};
                         columnLimit.minWidth ??= defaultMinWidth;
                         columnLimit.maxWidth ??= defaultMaxWidth;
-                        let newWidth = normaliseColumnWidth(column, preferredWidth, columnLimit);
-                        const actualWidth = column.getActualWidth();
-                        if (pinnedLimit && column.pinnedLane !== 1) {
-                            const growth = newWidth - actualWidth;
-                            if (growth > 0) {
-                                newWidth =
-                                    actualWidth +
-                                    pinnedLimit.getPinnedResizeGrowth(growth, startPinnedWidth, pinnedWidth);
-                            }
-                            pinnedWidth += newWidth - actualWidth;
-                        }
-                        widthsChanged ||= newWidth !== actualWidth;
-                        column.setActualWidth(newWidth, source);
+                        newWidths.set(column, normaliseColumnWidth(column, preferredWidth, columnLimit));
                         columnsAutoSized.add(column);
                         changesThisTimeAround++;
                     }
 
                     updatedColumns.push(column);
+                }
+
+                if (pinnedLimit) {
+                    pinnedWidth = limitPinnedWidths(newWidths, pinnedLimit, startPinnedWidth, pinnedWidth);
+                }
+
+                for (const [column, newWidth] of newWidths) {
+                    widthsChanged ||= newWidth !== column.getActualWidth();
+                    column.setActualWidth(newWidth, source);
                 }
 
                 if (updatedColumns.length && widthsChanged) {
@@ -1031,6 +1030,44 @@ function normaliseColumnWidth(
     }
 
     return newWidth;
+}
+
+/**
+ * Caps the growth of pinned columns in `newWidths` to keep the pinned sections within the viewport, returning the new pinned width.
+ * Shrinking columns are counted first, so the room they free goes to the growing ones whatever their order.
+ */
+function limitPinnedWidths(
+    newWidths: Map<AgColumn, number>,
+    pinnedCols: PinnedColumnService,
+    startPinnedWidth: number,
+    pinnedWidth: number
+): number {
+    const growingCols: AgColumn[] = [];
+    for (const [column, newWidth] of newWidths) {
+        if (column.pinnedLane === 1) {
+            continue;
+        }
+        const growth = newWidth - column.getActualWidth();
+        if (growth > 0) {
+            growingCols.push(column);
+        } else {
+            pinnedWidth += growth;
+        }
+    }
+
+    for (let i = 0, len = growingCols.length; i < len; ++i) {
+        const column = growingCols[i];
+        const actualWidth = column.getActualWidth();
+        const growth = pinnedCols.getPinnedResizeGrowth(
+            newWidths.get(column)! - actualWidth,
+            startPinnedWidth,
+            pinnedWidth
+        );
+        newWidths.set(column, actualWidth + growth);
+        pinnedWidth += growth;
+    }
+
+    return pinnedWidth;
 }
 
 /** The Viewport Row Model never renders a measurable cell set, so content measurement cannot be repeated. */
