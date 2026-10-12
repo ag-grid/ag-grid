@@ -298,7 +298,7 @@ The callback only runs for columns created in the dialog, including those restor
 
 It runs every time the column is built: when the column is created, each time it is edited in the dialog, when it is restored from Grid State, and when the `calculatedColumns` option changes. Properties derived from the column's values, such as `enableValue` above, follow the user's edits.
 
-In `'live'` [apply mode](#apply-mode) it also runs while the user types, once per animation frame at most, so keep it cheap. The expression in `params.colDef` may be incomplete at that point. Use `params.validationState` to tell: it is `'valid'` (an empty expression counts as valid), `'unknownReference'` when the expression refers to a column that does not exist, or `'invalidExpression'` when it fails to parse. For example, apply a formatter only once the formula works:
+In `'live'` [apply mode](#applymode) it also runs while the user types, once per animation frame at most, so keep it cheap. The expression in `params.colDef` may be incomplete at that point. Use `params.validationState` to tell: it is `'valid'` (an empty expression counts as valid), `'unknownReference'` when the expression refers to a column that does not exist, or `'invalidExpression'` when it fails to parse. For example, apply a formatter only once the formula works:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
