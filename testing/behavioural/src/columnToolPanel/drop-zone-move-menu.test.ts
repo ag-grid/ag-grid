@@ -94,7 +94,7 @@ describe('drop zone move menus', () => {
             expect(document.activeElement).toBe(pill(api, zone, horizontal));
         });
 
-        test.each([false, true])('disables first/last moves and read-only functions, RTL=%s', async (enableRtl) => {
+        test.each([false, true])('disables first/last moves and hides read-only moves, RTL=%s', async (enableRtl) => {
             const api = await create(zone, { enableRtl });
             const labels = horizontal ? ['Move Left', 'Move Right'] : ['Move Up', 'Move Down'];
             if (horizontal && enableRtl) {
@@ -107,14 +107,14 @@ describe('drop zone move menus', () => {
                 await userEvent.keyboard('{Escape}');
             }
             api.setGridOption('functionsReadOnly', true);
-            const menu = await open(api, zone, horizontal);
-            for (const label of labels) {
-                const item = getByRole(menu, 'menuitem', { name: label });
-                expect(item.getAttribute('aria-disabled')).toBe('true');
-                await userEvent.click(item);
-            }
-            expect(pill(api, zone, horizontal).getAttribute('aria-haspopup')).toBe('menu');
+            const item = pill(api, zone, horizontal);
+            fireEvent.contextMenu(item);
+            expect(getGridElement(api)!.querySelector('[role="menu"]')).toBeNull();
+            expect(item.hasAttribute('aria-haspopup')).toBe(false);
             expect(order(api, zone)).toEqual(['a', 'b', 'c']);
+            api.setGridOption('functionsReadOnly', false);
+            const menu = await open(api, zone, horizontal);
+            expect(getByRole(menu, 'menuitem', { name: labels[0] }).getAttribute('aria-disabled')).not.toBe('true');
         });
 
         test('shows disabled moves for a single item', async () => {
@@ -141,14 +141,13 @@ describe('drop zone move menus', () => {
             expect(document.activeElement).toBe(item);
         });
 
-        test.each(['suppressMovableColumns', 'suppressMovable', 'lockPosition'] as const)(
+        test.each(['functionsReadOnly', 'suppressMovable'] as const)(
             'hides moves when %s is set, even when explicitly requested',
             async (restriction) => {
                 const api = await create(zone, {
-                    suppressMovableColumns: restriction === 'suppressMovableColumns',
+                    functionsReadOnly: restriction === 'functionsReadOnly',
                     defaultColDef: {
                         suppressMovable: restriction === 'suppressMovable',
-                        lockPosition: restriction === 'lockPosition',
                     },
                     getColumnDropZoneMenuItems: () => ['moveUp', 'moveDown', 'moveLeft', 'moveRight'],
                 });
@@ -156,6 +155,19 @@ describe('drop zone move menus', () => {
                 fireEvent.contextMenu(item);
                 expect(getGridElement(api)!.querySelector('[role="menu"]')).toBeNull();
                 expect(item.hasAttribute('aria-haspopup')).toBe(false);
+            }
+        );
+
+        test.each(['suppressMovableColumns', 'lockPosition'] as const)(
+            'allows panel reordering when %s prevents grid column reordering',
+            async (restriction) => {
+                const api = await create(zone, {
+                    suppressMovableColumns: restriction === 'suppressMovableColumns',
+                    defaultColDef: { lockPosition: restriction === 'lockPosition' },
+                });
+                const menu = await open(api, zone, horizontal);
+                await userEvent.click(getByRole(menu, 'menuitem', { name: horizontal ? 'Move Left' : 'Move Up' }));
+                expect(order(api, zone)).toEqual(['b', 'a', 'c']);
             }
         );
 
@@ -179,7 +191,7 @@ describe('drop zone move menus', () => {
             expect(document.activeElement).toBe(pill(api, zone, horizontal));
         });
 
-        test('allows suppressing menus by purpose without calling column-menu callbacks', async () => {
+        test('allows suppressing menus by source without calling column-menu callbacks', async () => {
             const getColumnMenuItems = vi.fn(() => []);
             const columnMenuItems = vi.fn(() => []);
             const getColumnDropZoneMenuItems = vi.fn(() => []);
@@ -203,7 +215,7 @@ describe('drop zone move menus', () => {
                     api,
                     context,
                     column: api.getColumn('b'),
-                    purpose: zone,
+                    source: zone,
                     defaultItems: horizontal ? ['moveLeft', 'moveRight'] : ['moveUp', 'moveDown'],
                 })
             );
@@ -239,8 +251,8 @@ describe('drop zone move menus', () => {
         const action = vi.fn();
         const api = await create('aggregation', {
             functionsReadOnly: true,
-            getColumnDropZoneMenuItems: ({ purpose, defaultItems }) =>
-                purpose === 'aggregation' ? [{ name: 'Inspect', action }] : defaultItems,
+            getColumnDropZoneMenuItems: ({ source, defaultItems }) =>
+                source === 'aggregation' ? [{ name: 'Inspect', action }] : defaultItems,
         });
         const item = pill(api, 'aggregation');
         expect(item.getAttribute('aria-haspopup')).toBe('menu');
@@ -321,15 +333,69 @@ describe('drop zone move menus', () => {
         }
     );
 
-    test.each([1, -1])('locked row groups cannot move in either direction, lock=%s', async (groupLockGroupColumns) => {
-        const api = await create('rowGroup', { groupLockGroupColumns });
-        const menu = await open(api, 'rowGroup', false, 'A');
-        for (const item of menu.querySelectorAll('[role="menuitem"]')) {
-            expect(item.getAttribute('aria-disabled')).toBe('true');
-            await userEvent.click(item);
-        }
-        expect(pill(api, 'rowGroup', false, 'A').getAttribute('aria-haspopup')).toBe('menu');
-        expect(order(api, 'rowGroup')).toEqual(['a', 'b', 'c']);
+    describe.each([false, true])('row-group locking, horizontal=%s', (horizontal) => {
+        test.each([1, -1])('hides moves only for locked row groups, lock=%s', async (groupLockGroupColumns) => {
+            const api = await create('rowGroup', {
+                groupLockGroupColumns,
+                getColumnDropZoneMenuItems: () => ['moveUp', 'moveDown', 'moveLeft', 'moveRight'],
+            });
+            for (const name of groupLockGroupColumns === -1 ? ['A', 'B', 'C'] : ['A']) {
+                const item = pill(api, 'rowGroup', horizontal, name);
+                fireEvent.contextMenu(item);
+                expect(getGridElement(api)!.querySelector('[role="menu"]')).toBeNull();
+                expect(item.hasAttribute('aria-haspopup')).toBe(false);
+            }
+            if (groupLockGroupColumns === 1) {
+                const menu = await open(api, 'rowGroup', horizontal);
+                const previous = getByRole(menu, 'menuitem', { name: horizontal ? 'Move Left' : 'Move Up' });
+                const next = getByRole(menu, 'menuitem', { name: horizontal ? 'Move Right' : 'Move Down' });
+                expect(previous.getAttribute('aria-disabled')).toBe('true');
+                expect(next.getAttribute('aria-disabled')).not.toBe('true');
+                await userEvent.click(next);
+                expect(order(api, 'rowGroup')).toEqual(['a', 'c', 'b']);
+
+                api.setRowGroupColumns(['b', 'a', 'c']);
+                expect(pill(api, 'rowGroup', horizontal, 'B').hasAttribute('aria-haspopup')).toBe(false);
+                const updatedMenu = await open(api, 'rowGroup', horizontal, 'A');
+                expect(updatedMenu.querySelectorAll('[role="menuitem"]')).toHaveLength(2);
+            }
+        });
+    });
+
+    describe.each<Zone>(['rowGroup', 'pivot', 'aggregation'])('%s layout synchronisation', (zone) => {
+        test.each([false, true])(
+            'hides CTP moves without suppressing horizontal panels, deferred=%s',
+            async (deferred) => {
+                const api = await create(zone, {
+                    sideBar: {
+                        toolPanels: [
+                            {
+                                id: 'columns',
+                                labelDefault: 'Columns',
+                                labelKey: 'columns',
+                                iconKey: 'columnsToolPanel',
+                                toolPanel: 'agColumnsToolPanel',
+                                toolPanelParams: {
+                                    suppressSyncLayoutWithGrid: true,
+                                    buttons: deferred ? ['apply', 'cancel'] : undefined,
+                                },
+                            },
+                        ],
+                        defaultToolPanel: 'columns',
+                    },
+                    getColumnDropZoneMenuItems: () => ['moveUp', 'moveDown', 'moveLeft', 'moveRight'],
+                });
+                const item = pill(api, zone);
+                fireEvent.contextMenu(item);
+                expect(getGridElement(api)!.querySelector('[role="menu"]')).toBeNull();
+                expect(item.hasAttribute('aria-haspopup')).toBe(false);
+                if (zone !== 'aggregation') {
+                    const menu = await open(api, zone, true);
+                    await userEvent.click(getByRole(menu, 'menuitem', { name: 'Move Left' }));
+                    expect(order(api, zone)).toEqual(['b', 'a', 'c']);
+                }
+            }
+        );
     });
 
     test('closes the menu when the panel is rebuilt', async () => {

@@ -89,7 +89,7 @@ export class ToolPanelContextMenu extends Component {
             colOrGroupDef = column.colDef;
         }
 
-        // Read-only functions omit grouping actions but retain navigation and disabled movement items.
+        // Read-only functions retain navigation but omit movement and grouping actions.
         const functionsReadOnly = gos.get('functionsReadOnly');
         let defaultItems: (DefaultToolPanelItem | 'separator')[];
         if (!this.isActive()) {
@@ -371,7 +371,12 @@ export class ToolPanelContextMenu extends Component {
 
     private isMoveSuppressed(): boolean {
         const colMoves = this.beans.colMoves;
-        return !this.columnMove || !colMoves || colMoves.isMovingSuppressed(this.columns);
+        return (
+            this.gos.get('functionsReadOnly') ||
+            !this.columnMove ||
+            !colMoves ||
+            colMoves.isMovingSuppressed(this.columns)
+        );
     }
 
     private getDefaultTokens(): (DefaultToolPanelItem | 'separator')[] {

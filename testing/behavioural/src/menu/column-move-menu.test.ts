@@ -129,12 +129,22 @@ describe('column movement menu actions', () => {
         test.each([false, true])(
             'read-only functions prevent moves, changed after opening=%s',
             async (changeAfterOpening) => {
-                const api = await create({ functionsReadOnly: !changeAfterOpening });
+                const api = await create({
+                    functionsReadOnly: !changeAfterOpening,
+                    getColumnMenuItems: () =>
+                        surface === 'header'
+                            ? ['moveLeft', 'moveRight', { name: 'Custom action' }]
+                            : ['moveUp', 'moveDown', { name: 'Custom action' }],
+                });
                 const grid = await open(surface, api);
                 if (changeAfterOpening) {
                     api.setGridOption('functionsReadOnly', true);
                 }
                 for (const label of labels(surface)) {
+                    if (surface === 'panel' && !changeAfterOpening) {
+                        expect(queryByText(grid, label)).toBeNull();
+                        continue;
+                    }
                     const item = getByText(grid, label).closest<HTMLElement>('[role="menuitem"]')!;
                     if (!changeAfterOpening) {
                         expect(item.getAttribute('aria-disabled')).toBe('true');
@@ -400,6 +410,11 @@ describe('column movement menu actions', () => {
             await findByText(grid, 'Scroll B into View');
             expect(queryByText(grid, 'Move Up')).toBeNull();
             expect(queryByText(grid, 'Move Down')).toBeNull();
+
+            await userEvent.keyboard('{Escape}');
+            await open('header', api);
+            await userEvent.click(getByText(grid, 'Move Left'));
+            expect(order(api)).toEqual(['b', 'a', 'c', 'd']);
         }
     );
 

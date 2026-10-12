@@ -41,13 +41,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         this.addManagedEventListeners({ newColumnsLoaded: this.refreshGui.bind(this) });
 
         this.addManagedPropertyListeners(
-            [
-                'functionsReadOnly',
-                'rowGroupPanelSuppressSort',
-                'groupLockGroupColumns',
-                'getColumnDropZoneMenuItems',
-                'suppressMovableColumns',
-            ],
+            ['functionsReadOnly', 'rowGroupPanelSuppressSort', 'groupLockGroupColumns', 'getColumnDropZoneMenuItems'],
             this.refreshGui.bind(this)
         );
     }
@@ -105,11 +99,11 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         return comp;
     }
 
-    private isMoveSuppressed(column: AgColumn): boolean {
+    private isMoveSuppressed(comp: DropZoneColumnComp): boolean {
         return !!(
-            this.gos.get('suppressMovableColumns') ||
-            column.colDef.suppressMovable ||
-            column.colDef.lockPosition
+            this.updateParams?.suppressSyncLayoutWithGrid ||
+            comp.getItem().colDef.suppressMovable ||
+            !comp.isMovable()
         );
     }
 
@@ -122,7 +116,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
             DefaultColumnDropZoneMenuItem,
             { direction: (typeof directions)[number]; isPrevious: boolean }
         >();
-        const suppressMove = this.isMoveSuppressed(column);
+        const suppressMove = this.isMoveSuppressed(comp);
         for (let index = 0; !suppressMove && index < directions.length; ++index) {
             const direction = directions[index];
             const isTowardStart = index === 0;
@@ -133,7 +127,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
         const items =
             gos.getCallback('getColumnDropZoneMenuItems')?.({
                 column,
-                purpose: this.dropZonePurpose,
+                source: this.dropZonePurpose,
                 defaultItems,
             }) ?? defaultItems;
         const menuItems = items.filter(
@@ -165,7 +159,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
                     disabled: this.getItemMoveIndex(comp, isPrevious) === null,
                     action: () => {
                         this.hideMoveMenu?.();
-                        if (!this.isMoveSuppressed(column)) {
+                        if (!this.isMoveSuppressed(comp)) {
                             this.moveItem(comp, isPrevious);
                         }
                     },

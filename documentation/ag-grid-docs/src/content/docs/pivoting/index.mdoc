@@ -101,9 +101,9 @@ const gridOptions = {
 
 ### Reordering Pivot Columns
 
-Right-click a pivot column pill and choose **Move Left** or **Move Right** to reorder it without dragging. In the vertical Columns Tool Panel, the options are **Move Up** and **Move Down**. With a pill focused, **Shift+F10** or the context-menu key opens the same menu. Unavailable directions and moves blocked by `functionsReadOnly` are disabled. Move items are hidden when `suppressMovableColumns`, `suppressMovable` or `lockPosition` prevents movement. Pivot mode does not disable reordering within this panel.
+Right-click a pivot column pill and choose **Move Left** or **Move Right** to reorder it without dragging. In the vertical Columns Tool Panel, the options are **Move Up** and **Move Down**. With a pill focused, **Shift+F10** or the context-menu key opens the same menu. Unavailable directions are disabled. Move items are hidden when `functionsReadOnly` or `suppressMovable` is enabled, or when the Columns Tool Panel has `suppressSyncLayoutWithGrid` enabled. `suppressMovableColumns`, `lockPosition` and pivot mode do not prevent reordering within this panel.
 
-Use `getColumnDropZoneMenuItems` to customise or suppress these menus. The callback receives `purpose: 'pivot'` for this panel, including when displayed in the toolbar. See [Drop Zone Menus](./tool-panel-columns-customising/#drop-zone-menus) for configuration, translations and icons.
+Use `getColumnDropZoneMenuItems` to customise or suppress these menus. The callback receives `source: 'pivot'` for this panel, including when displayed in the toolbar. See [Drop Zone Menus](./tool-panel-columns-customising/#drop-zone-menus) for configuration, translations and icons.
 
 ## Pivot Mode vs Pivot Active
 

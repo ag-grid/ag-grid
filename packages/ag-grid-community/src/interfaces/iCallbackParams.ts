@@ -58,7 +58,7 @@ export interface GetColumnDropZoneMenuItemsParams<TData = any, TContext = any> e
     /** The column represented by the drop-zone pill. */
     column: Column;
     /** The function of the drop zone, regardless of its orientation or location. */
-    purpose: 'rowGroup' | 'pivot' | 'aggregation';
+    source: 'rowGroup' | 'pivot' | 'aggregation';
     /** Default movement tokens, including disabled directions: up/down for vertical panels, left/right for horizontal panels. */
     defaultItems: DefaultColumnDropZoneMenuItem[];
 }
