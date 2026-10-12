@@ -1,7 +1,29 @@
 import { AgColor } from './agColor';
 
+// happy-dom does not compute colour names to rgb(), so the browser's computed values are supplied here.
+const COMPUTED_NAMED_COLORS: Record<string, string> = {
+    transparent: 'rgba(0, 0, 0, 0)',
+    red: 'rgb(255, 0, 0)',
+    purple: 'rgb(128, 0, 128)',
+    white: 'rgb(255, 255, 255)',
+    rebeccapurple: 'rgb(102, 51, 153)',
+};
+
 // Expected values are pinned from the AG Charts `Color` class this utility replaces.
 describe('AgColor', () => {
+    beforeEach(() => {
+        const getComputedStyle = window.getComputedStyle.bind(window);
+        vi.spyOn(window, 'getComputedStyle').mockImplementation((element, pseudo) => {
+            const computed = getComputedStyle(element, pseudo);
+            const named = COMPUTED_NAMED_COLORS[(element as HTMLElement).style.color];
+            return named ? ({ ...computed, color: named } as CSSStyleDeclaration) : computed;
+        });
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
     it.each([
         ['#5090dc', '#5090dc', 'rgb(80, 144, 220)'],
         ['#abcd', '#aabbccdd', 'rgba(170, 187, 204, 0.867)'],
