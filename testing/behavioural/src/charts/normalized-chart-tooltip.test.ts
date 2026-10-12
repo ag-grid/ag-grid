@@ -102,6 +102,24 @@ describe('normalized (100% stacked) integrated charts', () => {
         expect(tickLabels).toEqual(PERCENT_TICKS);
     });
 
+    test('changing the theme to a y format string replaces the previous theme formatter', async () => {
+        const { api, chartRef } = await createChart('normalizedColumn', {
+            chartThemeOverrides: { common: { formatter: (params) => `£${params.value}` } },
+        });
+
+        api.updateChart({
+            type: 'rangeChartUpdate',
+            chartId: chartRef.chartId,
+            chartThemeOverrides: { common: { formatter: { y: ',.0f' } } },
+        });
+        await chartRef.chart.waitForUpdate();
+
+        const { tooltipValues, tickLabels } = getRenderedText(chartRef);
+        expect(tooltipValues).toEqual(['237,438']);
+        expect(tickLabels).toEqual(PERCENT_TICKS);
+        expect(chartRef.chart.getOptions().formatter).toBeUndefined();
+    });
+
     const pounds = (params: { value: unknown }) => `£${params.value}`;
     const quarter = (params: { value: unknown }) => `Q ${params.value}`;
     test.each<[string, GridOptions]>([

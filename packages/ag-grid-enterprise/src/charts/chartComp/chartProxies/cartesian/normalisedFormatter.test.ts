@@ -50,6 +50,11 @@ describe('createNormalisedFormatter', () => {
         expect(valueAxis.label?.formatter?.(tickParams)).toBe('50%');
     });
 
+    test('a theme y format string removes a formatter installed by an earlier update', () => {
+        const options = applyNormalisedFormatting({ formatter: poundFormatter }, { type: 'number' }, { y: ',.0f' });
+        expect(options).not.toHaveProperty('formatter');
+    });
+
     test('a theme formatter keyed by property keeps its other properties', () => {
         const themeFormatter: AgCartesianChartOptions['formatter'] = { x: poundFormatter, y: poundFormatter };
         const formatter = createNormalisedFormatter(themeFormatter) as Record<'x' | 'y', FunctionFormatter>;

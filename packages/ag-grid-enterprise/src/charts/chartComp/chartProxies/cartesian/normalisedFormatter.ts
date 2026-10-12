@@ -49,6 +49,7 @@ function createNormalisedFormatter(themeFormatter: ChartFormatter | undefined): 
  * Shows the value axis of a 100% stacked chart as percentages. A theme `y` format string (or time format) can't be
  * composed with, so it is left to format everything, and the '%' goes on the value axis label, which wins for ticks.
  * Tooltips are formatted by the theme's `y` format before AG Charts would fall back to the axis label formatter.
+ * The chart options carry over between updates, so a formatter installed by an earlier update is removed.
  */
 export function applyNormalisedFormatting(
     options: AgCartesianChartOptions,
@@ -58,7 +59,8 @@ export function applyNormalisedFormatting(
     const themeY = typeof themeFormatter === 'object' ? themeFormatter.y : undefined;
     if (themeY != null && typeof themeY !== 'function') {
         valueAxis.label = { ...valueAxis.label, formatter: (params) => toPercent(params.value) };
-        return options;
+        const { formatter: _, ...withoutFormatter } = options;
+        return withoutFormatter;
     }
     return { ...options, formatter: createNormalisedFormatter(themeFormatter) };
 }
