@@ -15,8 +15,8 @@ export class AgChartsExports extends BeanStub implements NamedBean, IAgChartsExp
 
     constructor(params: IntegratedModule) {
         super();
-        this.create = params.create as any;
+        this.create = params.create;
         this._Theme = params._Theme;
-        this.isEnterprise = params.isEnterprise as any;
+        this.isEnterprise = params.isEnterprise;
     }
 }

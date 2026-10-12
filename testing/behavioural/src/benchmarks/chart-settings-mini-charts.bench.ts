@@ -3,13 +3,13 @@
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import { bench, suite } from 'vitest';
 
-import type { ChartRef, ColDef, GridApi, GridOptions, Module } from 'ag-grid-community';
+import type { ChartRef, ColDef, GridApi, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { CellSelectionModule, IntegratedChartsModule } from 'ag-grid-enterprise';
 
 import { BenchGridsManager, benchDefaults } from './bench-utils';
 
-const baseModules: Module[] = [
+const modules: Module[] = [
     ClientSideRowModelModule,
     CellSelectionModule,
     IntegratedChartsModule.with(AgChartsEnterpriseModule),
@@ -31,22 +31,15 @@ const columnDefs: ColDef[] = [
     { field: 'bronze', chartDataType: 'series' },
 ];
 
-const MEASURE_MS = 3000;
-
 const MINI_CHART_SELECTOR = '.ag-chart-mini-thumbnail';
 
-const benchSettingsRebuild = (
-    gridsManager: BenchGridsManager,
-    name: string,
-    gridId: string,
-    gridOptions: GridOptions,
-    modules: Module[]
-) => {
+suite('chart settings mini charts', () => {
+    const gridsManager = new BenchGridsManager();
     let api!: GridApi;
     let chartRef!: ChartRef;
 
     bench(
-        name,
+        'all default chart types',
         async () => {
             api.updateChart({ type: 'rangeChartUpdate', chartId: chartRef.chartId });
             await chartRef.chart.waitForUpdate();
@@ -56,8 +49,8 @@ const benchSettingsRebuild = (
             setup: async () => {
                 await gridsManager.reset();
                 api = gridsManager.createGrid(
-                    gridId,
-                    { ...gridOptions, columnDefs, rowData, cellSelection: true, popupParent: document.body },
+                    'MC1',
+                    { columnDefs, rowData, cellSelection: true, popupParent: document.body },
                     { modules }
                 );
                 api.flushAllAnimationFrames();
@@ -81,12 +74,6 @@ const benchSettingsRebuild = (
                     throw new Error('updateChart did not rebuild the mini charts');
                 }
             },
-            time: MEASURE_MS,
         })
     );
-};
-
-suite('chart settings mini charts', () => {
-    const gridsManager = new BenchGridsManager();
-    benchSettingsRebuild(gridsManager, 'all default chart types', 'MC1', {}, baseModules);
 });

@@ -686,9 +686,9 @@ const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> 
         clip: true,
         axes: 'none',
         series: [
-            filled('M 53 5 L 53 18.241 L 5 18.241 L 5 5 M 53 18.241', 0),
-            filled('M 48.2 21.552 L 48.2 34.793 L 9.8 34.793 L 9.8 21.552 M 48.2 34.793', 0),
-            filled('M 39.2 38.103 L 39.2 53 L 18.8 53 L 18.8 38.103 M 39.2 53', 0),
+            filled('M 53 5 L 53 18.241 L 5 18.241 L 5 5', 0),
+            filled('M 48.2 21.552 L 48.2 34.793 L 9.8 34.793 L 9.8 21.552', 0),
+            filled('M 39.2 38.103 L 39.2 53 L 18.8 53 L 18.8 38.103', 0),
         ],
     },
     coneFunnel: {
@@ -696,9 +696,9 @@ const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> 
         clip: true,
         axes: 'none',
         series: [
-            filled('M 53 5 L 42.2 19.897 L 15.8 19.897 L 5 5 M 42.2 19.897', 0),
-            filled('M 42.2 19.897 L 33.2 38.103 L 24.8 38.103 L 15.8 19.897 M 33.2 38.103', 0, 0.8),
-            filled('M 33.2 38.103 L 33.2 53 L 24.8 53 L 24.8 38.103 M 33.2 53', 0, 0.6),
+            filled('M 53 5 L 42.2 19.897 L 15.8 19.897 L 5 5', 0),
+            filled('M 42.2 19.897 L 33.2 38.103 L 24.8 38.103 L 15.8 19.897', 0, 0.8),
+            filled('M 33.2 38.103 L 33.2 53 L 24.8 53 L 24.8 38.103', 0, 0.6),
         ],
     },
     pyramid: {
@@ -706,9 +706,9 @@ const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> 
         clip: true,
         axes: 'none',
         series: [
-            filled('M 29 5 L 35.4 18.241 L 22.6 18.241 M 35.4 18.241', 0),
-            filled('M 37 21.552 L 43.4 34.793 L 14.6 34.793 L 21 21.552 M 43.4 34.793', 1),
-            filled('M 45 38.103 L 53 53 L 5 53 L 13 38.103 M 53 53', 2),
+            filled('M 29 5 L 35.4 18.241 L 22.6 18.241', 0),
+            filled('M 37 21.552 L 43.4 34.793 L 14.6 34.793 L 21 21.552', 1),
+            filled('M 45 38.103 L 53 53 L 5 53 L 13 38.103', 2),
         ],
     },
     boxPlot: boxPlot(false),

@@ -12,6 +12,8 @@ describe('AgColor', () => {
         ['oklch(0.7 0.1 200)', '#40b1b7', 'rgb(64, 177, 183)'],
         ['transparent', '#00000000', 'rgba(0, 0, 0, 0)'],
         ['Red', '#ff0000', 'rgb(255, 0, 0)'],
+        ['purple', '#800080', 'rgb(128, 0, 128)'],
+        ['white', '#ffffff', 'rgb(255, 255, 255)'],
         ['rgb(300, -5, 50%)', '#ff0080', 'rgb(255, 0, 128)'],
     ])('parses %s', (input, hex, rgba) => {
         const color = AgColor.fromString(input);
@@ -28,6 +30,14 @@ describe('AgColor', () => {
 
     it.each(['#ggg', ' red', '', 'rgb(1,2)', 'hsl(1,2)', 'lab(1 2 3)'])(
         'rejects %s and throws on parsing it',
+        (input) => {
+            expect(AgColor.validColorString(input)).toBe(false);
+            expect(() => AgColor.fromString(input)).toThrow();
+        }
+    );
+
+    it.each(['currentcolor', 'currentColor', 'inherit', 'initial', 'unset', 'revert', 'notacolor'])(
+        'rejects the non-colour keyword %s and throws on parsing it',
         (input) => {
             expect(AgColor.validColorString(input)).toBe(false);
             expect(() => AgColor.fromString(input)).toThrow();
