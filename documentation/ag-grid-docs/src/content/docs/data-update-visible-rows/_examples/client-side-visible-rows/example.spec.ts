@@ -25,6 +25,16 @@ test.agExample(import.meta, () => {
             await expectLogged('(reset)');
             await expect(count).not.toHaveText('0');
 
+            const countNow = async () => Number(await count.textContent());
+
+            const withGroups = await countNow();
+            await page.locator('#includeGroups').uncheck();
+            await expect(async () => expect(await countNow()).toBeLessThan(withGroups)).toPass();
+
+            const withoutBuffer = await countNow();
+            await page.locator('#includeBuffer').check();
+            await expect(async () => expect(await countNow()).toBeGreaterThan(withoutBuffer)).toPass();
+
             await toggle.click();
             await expectLogged('(stop)');
             await expect(count).toHaveText('0');

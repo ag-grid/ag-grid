@@ -103,6 +103,7 @@ The example below [groups](./grouping/) stocks by sector. The handlers send the 
 - The panel shows the number of subscribed rows and the number of updates the server has sent. Each batch is logged to the console with its reason and row count.
 - Scrolling, sorting and filtering produce subscribe and unsubscribe batches.
 - Changing the grouping in the [Columns Tool Panel](./tool-panel-columns/) moves rows to new parents. Those rows are unsubscribed and subscribed again with the `move` reason.
+- **Include buffer** and **Include group rows** set the `includeBuffer` and `includeGroups` options. Changing either subscribes again, so the rows are unsubscribed with the `stop` reason and passed again with the `initial` reason.
 - **New Row Data** replaces every stock with a new ID. The old stocks are unsubscribed with the `reset` reason, and the new stocks subscribed with the `load` reason.
 - **Stop** stops the subscription and so the stream, unsubscribing all remaining rows with the `stop` reason. **Start** subscribes again, passing the rows in view with the `initial` reason.
 

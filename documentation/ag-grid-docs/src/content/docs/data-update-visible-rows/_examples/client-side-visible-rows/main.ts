@@ -82,22 +82,28 @@ function onServerMessage(api: GridApi<Stock>, message: ServerMessage) {
 }
 
 function startSubscription(api: GridApi<Stock>, socket: FakeSocket) {
-    stopSubscription = api.subscribeToVisibleRows({
-        onSubscribe: (rows, params) => {
-            const ids = rows.map((row) => row.id);
-            ids.forEach((id) => subscribed.add(id));
-            socket.send({ type: 'subscribe', ids });
-            console.log(`subscribe ${rows.length} (${params.reason})`);
-            renderCount();
+    stopSubscription = api.subscribeToVisibleRows(
+        {
+            onSubscribe: (rows, params) => {
+                const ids = rows.map((row) => row.id);
+                ids.forEach((id) => subscribed.add(id));
+                socket.send({ type: 'subscribe', ids });
+                console.log(`subscribe ${rows.length} (${params.reason})`);
+                renderCount();
+            },
+            onUnsubscribe: (rows, params) => {
+                const ids = rows.map((row) => row.id);
+                ids.forEach((id) => subscribed.delete(id));
+                socket.send({ type: 'unsubscribe', ids });
+                console.log(`unsubscribe ${rows.length} (${params.reason})`);
+                renderCount();
+            },
         },
-        onUnsubscribe: (rows, params) => {
-            const ids = rows.map((row) => row.id);
-            ids.forEach((id) => subscribed.delete(id));
-            socket.send({ type: 'unsubscribe', ids });
-            console.log(`unsubscribe ${rows.length} (${params.reason})`);
-            renderCount();
-        },
-    });
+        {
+            includeBuffer: document.querySelector<HTMLInputElement>('#includeBuffer')?.checked ?? false,
+            includeGroups: document.querySelector<HTMLInputElement>('#includeGroups')?.checked ?? true,
+        }
+    );
 }
 
 function resetData() {
@@ -113,6 +119,14 @@ function toggleStream() {
         startSubscription(gridApi, socket);
     }
     document.querySelector('#toggleStream')!.textContent = stopSubscription ? 'Stop' : 'Start';
+}
+
+function onOptionsChanged() {
+    // the options are fixed for a subscription, so subscribe again to apply them
+    if (stopSubscription) {
+        stopSubscription();
+        startSubscription(gridApi, socket);
+    }
 }
 
 // setup the grid after the page has finished loading
