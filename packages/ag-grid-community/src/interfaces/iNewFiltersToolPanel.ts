@@ -79,13 +79,8 @@ export interface INewFiltersToolPanel extends IToolPanel {
     /** Collapses the filter cards with the supplied `colIds`, or all filter cards if not supplied. */
     collapseFilterCards(colIds?: string[]): void;
     /**
-     * Shows a filter card for each of the supplied `colIds`, in that order, and removes every other card.
-     * Removing a card clears that column's filter, so omitting a filtered column removes its filter.
-     * Pass an empty array to remove every card.
-     *
-     * Cards that are already shown keep their expanded state; new cards are collapsed.
-     * Columns that cannot show a card, such as those with `suppressFiltersToolPanel`, are skipped.
-     * IDs that are not columns in the grid are skipped and a warning is logged.
+     * Shows a filter card for each of the supplied `colIds`, in that order. Every other card is removed and its filter cleared.
+     * Existing cards keep their expanded state; new cards are collapsed.
      */
     setFilterCards(colIds: string[]): void;
     /** Returns the filter cards currently shown, in order, with their expanded state. */

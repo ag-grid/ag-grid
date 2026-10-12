@@ -128,10 +128,13 @@ export class FilterPanelService
     }
 
     public remove(id: string): void {
-        const index = this.removeFilter(id);
-        if (index != null) {
-            this.dispatchStatesUpdates(this.orderedStates[index]); // undefined if no elements after
+        const orderedStates = this.orderedStates;
+        const index = orderedStates.indexOf(id);
+        if (index === -1) {
+            return;
         }
+        this.removeFilter(id);
+        this.dispatchStatesUpdates(orderedStates[index]); // undefined if no elements after
     }
 
     public setFilterCards(ids: string[]): void {
@@ -159,8 +162,7 @@ export class FilterPanelService
         this.dispatchStatesUpdates();
     }
 
-    /** Returns the index the filter had in `orderedStates`, or `undefined` if it was not shown. */
-    private removeFilter(id: string): number | undefined {
+    private removeFilter(id: string): void {
         const {
             states,
             orderedStates,
@@ -168,7 +170,7 @@ export class FilterPanelService
         } = this;
         const state = states.get(id);
         if (!state) {
-            return undefined;
+            return;
         }
         state.destroy?.();
         const column = state.state.column;
@@ -180,9 +182,7 @@ export class FilterPanelService
             type: 'filterSwitched',
             column,
         });
-        const index = orderedStates.indexOf(id);
-        orderedStates.splice(index, 1);
-        return index;
+        orderedStates.splice(orderedStates.indexOf(id), 1);
     }
 
     public getState<S extends FilterPanelFilterState>(id: string): S | undefined {
