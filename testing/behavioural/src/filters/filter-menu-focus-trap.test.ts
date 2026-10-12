@@ -5,6 +5,7 @@ import { TestGridsManager } from 'ag-test-utils';
 
 import type { IFilterComp } from 'ag-grid-community';
 import { ClientSideRowModelModule, CustomFilterModule, TextFilterModule } from 'ag-grid-community';
+import { MultiFilterModule } from 'ag-grid-enterprise';
 
 function createInput(className: string): HTMLInputElement {
     const input = document.createElement('input');
@@ -65,6 +66,18 @@ class PanelBetweenInputsFilter extends StaticPanelFilter {
 class PanelBeforeInputFilter extends StaticPanelFilter {
     protected override createChildren(): HTMLElement[] {
         return [createStaticPanel(), createInput('test-filter-input')];
+    }
+}
+
+class RadioGroupFirstFilter extends StaticPanelFilter {
+    protected override createChildren(): HTMLElement[] {
+        const [unchecked, checked] = [createInput('test-unchecked'), createInput('test-checked')];
+        for (const radio of [unchecked, checked]) {
+            radio.type = 'radio';
+            radio.name = 'choice';
+        }
+        checked.checked = true;
+        return [unchecked, checked, createInput('test-filter-input')];
     }
 }
 
@@ -244,5 +257,41 @@ describe('Simple filter AND/OR join operator keyboard navigation', () => {
         expect(backwards ? and : or).toHaveFocus();
         expect(and).not.toBeChecked();
         expect(or).not.toBeChecked();
+    });
+});
+
+describe('Multi filter radio group entry', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, CustomFilterModule, TextFilterModule, MultiFilterModule],
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    test('entering through the top tab guard lands on the checked radio of a leading group', async () => {
+        const api = await gridsManager.createGridAndWait('multiFilterRadioGrid', {
+            columnDefs: [
+                {
+                    field: 'a',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: { filters: [{ filter: RadioGroupFirstFilter }, { filter: 'agTextColumnFilter' }] },
+                },
+            ],
+            rowData: [{ a: 1 }],
+        });
+
+        api.showColumnFilter('a');
+
+        const multiFilter = await waitFor(() => {
+            const element = document.querySelector<HTMLElement>('.ag-menu .ag-multi-filter');
+            expect(element?.querySelector('.test-checked')).toBeTruthy();
+            return element!;
+        });
+
+        (document.activeElement as HTMLElement | null)?.blur();
+        multiFilter.querySelector<HTMLElement>(':scope > .ag-tab-guard-top')!.focus();
+
+        expect(multiFilter.querySelector('.test-checked')).toHaveFocus();
     });
 });

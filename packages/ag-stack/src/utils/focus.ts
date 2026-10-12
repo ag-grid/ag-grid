@@ -87,7 +87,8 @@ export function _findFocusableElements(
     return excludeNodes.size ? nodes.filter((element) => !excludeNodes.has(element)) : nodes;
 }
 
-function removeNonTabStopRadios(rootNode: HTMLElement, elements: HTMLElement[]): HTMLElement[] {
+/** Named radios are one Tab stop, the focused or checked radio, as managed Tab handling bypasses the browser. */
+export function _removeNonTabStopRadios(rootNode: HTMLElement, elements: HTMLElement[]): HTMLElement[] {
     const activeEl = (rootNode.getRootNode() as Document | ShadowRoot).activeElement;
     const groups = new Map<HTMLFormElement | null, Map<string, HTMLInputElement>>();
 
@@ -133,7 +134,7 @@ export function _focusInto(
     onlyUnmanaged = false,
     excludeTabGuards = false
 ): boolean {
-    const focusableElements = removeNonTabStopRadios(
+    const focusableElements = _removeNonTabStopRadios(
         rootNode,
         _findFocusableElements(rootNode, excludeTabGuards ? '.ag-tab-guard' : null, onlyUnmanaged)
     );
@@ -162,7 +163,7 @@ export function _focusIntoTabbableFirst(rootNode: HTMLElement, up = false, exclu
               const managedRoot = element.closest(`.${FOCUS_MANAGED_CLASS}`);
               return managedRoot !== null && rootNode.contains(managedRoot);
           });
-    const tabStops = removeNonTabStopRadios(rootNode, pool);
+    const tabStops = _removeNonTabStopRadios(rootNode, pool);
     const toFocus = up ? _last(tabStops) : tabStops[0];
 
     if (toFocus) {
@@ -188,7 +189,7 @@ export function _findNextFocusableElement(params: {
     if (onlyUnmanaged) {
         focusable = focusable.filter((el) => el === activeEl || _getTabIndex(el) !== '-1');
     }
-    focusable = removeNonTabStopRadios(rootNode, focusable);
+    focusable = _removeNonTabStopRadios(rootNode, focusable);
 
     const activeIndex = onlyManaged ? focusable.findIndex((el) => el.contains(activeEl)) : focusable.indexOf(activeEl);
 
