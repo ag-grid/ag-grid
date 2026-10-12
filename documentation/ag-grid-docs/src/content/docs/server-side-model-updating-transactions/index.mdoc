@@ -114,7 +114,7 @@ By default the grid applies each queued transaction separately, so a row updated
 Note the following:
 
 - Transactions that set `addIndex` or `rowCount` are applied on their own, in order.
-- Each callback receives a result containing only the nodes for its own rows. A row added and then removed in the same coalesced batch is left out of every result.
+- Each `applyServerSideTransactionAsync` callback receives a result containing only the nodes for its own rows. A row added and then removed in the same coalesced batch is left out of every result, but is still reported if the add and remove land in separate batches.
 - Transactions are grouped by route, so transactions for different routes can be applied in a different order from the queue.
 - `isApplyServerSideTransaction` is still called once per transaction, but against the grid state from before the batch is applied. `getRowId` can be called for rows in transactions it then cancels.
 - Coalescing is skipped when `serverSideEnableClientSideSort` is enabled, as each transaction re-sorts the rows.
