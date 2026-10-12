@@ -109,7 +109,7 @@ describe('SSRM coalesced async transactions with other grid options', () => {
         return rows;
     };
 
-    /** The rows the model holds, without the DOM, which some scenarios render a frame later. */
+    /** Compares the row model only; the DOM is checked where the coalesced outcome is pinned. */
     const diagramOf = (api: GridApi) => new GridRows(api, '', { checkDom: false }).makeDiagram(true);
 
     /** Runs the scenario applying transactions in turn, then coalesced, and requires the same outcome. */
@@ -386,6 +386,7 @@ describe('SSRM coalesced async transactions with other grid options', () => {
                 { add: [GROUP('UK', 0)] },
                 { route: ['UK'], add: [{ id: 'uk-zed', country: 'UK', athlete: 'Zed', sales: 1 }] },
             ]);
+            await waitForNoLoadingRows(api);
             return { results, expanded: api.getRowNode('group-UK')!.expanded, diagram: diagramOf(api) };
         });
 
@@ -683,7 +684,7 @@ describe('SSRM coalesced async transactions with other grid options', () => {
 
     test('row spanning: spans follow the latest values after coalesced updates', async () => {
         let api!: GridApi;
-        await compareWithSequential(async (merge) => {
+        const coalesced = await compareWithSequential(async (merge) => {
             api = gridsManager.createGrid(
                 null,
                 flatOptions(merge, {
@@ -700,6 +701,11 @@ describe('SSRM coalesced async transactions with other grid options', () => {
             return { results, diagram: diagramOf(api) };
         });
 
+        expect(coalesced.results).toEqual([
+            { status: 'Applied', update: ['3'] },
+            { status: 'Applied', update: ['1'] },
+            { status: 'Applied', update: ['1'] },
+        ]);
         await new GridRows(api, 'coalesced').check(`
             ROOT id:<no-id>
             ├── LEAF id:0 id:"0" value:"Row 0"
@@ -742,6 +748,7 @@ describe('SSRM coalesced async transactions with other grid options', () => {
     });
 
     test('without getRowId every queued transaction is cancelled, as in turn', async () => {
+        // 206: transactions need getRowId and are ignored without it
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [206] });
         const coalesced = await compareWithSequential(async (merge) => {
             const api = gridsManager.createGrid(null, flatOptions(merge, { getRowId: undefined }));
@@ -1080,7 +1087,7 @@ describe('SSRM coalesced async transactions with other grid options', () => {
             await waitForNoLoadingRows(api);
             const loadedBefore = requests.length;
 
-            const { results } = await applyAsync(api, [
+            const { results, flushed } = await applyAsync(api, [
                 { update: [ROW(5, 'a')] },
                 { add: [ROW('n1', 'new 1')] },
                 { update: [ROW(150, 'unloaded')] },
@@ -1091,6 +1098,7 @@ describe('SSRM coalesced async transactions with other grid options', () => {
             return {
                 results,
                 requestsAfter: requests.slice(loadedBefore),
+                lastUpdated: flushed[4].update?.map((node) => node.data),
                 cached: ['5', '150', '250', 'n1', 'n2'].map((id) => api.getRowNode(id)?.data ?? null),
                 displayedRowCount: api.getDisplayedRowCount(),
             };
@@ -1105,6 +1113,7 @@ describe('SSRM coalesced async transactions with other grid options', () => {
         ]);
         expect(coalesced.requestsAfter).toEqual([]);
         expect(coalesced.displayedRowCount).toBe(302);
+        expect(coalesced.lastUpdated).toEqual([ROW(5, 'b'), ROW(250, 'c')]);
         // row 5 is updated, then its block is no longer cached after the flush, in both modes
         expect(coalesced.cached).toEqual([null, null, ROW(250, 'c'), ROW('n1', 'new 1'), ROW('n2', 'new 2')]);
     });
