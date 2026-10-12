@@ -74,9 +74,7 @@
 /* Example page layout.
  *
  * An example is a column: the controls sit at their natural height, and whatever else the
- * wrapper holds -- the grid, a chart, a canvas -- takes the height that is left. Examples
- * used to spell this out in their own stylesheet, which drifted into dozens of variants of
- * the same three rules.
+ * wrapper holds -- the grid, a chart, a canvas -- takes the height that is left.
  *
  * The grow rule keys off "not the controls" rather than naming the example's own element,
  * because that element differs per framework: a plain `div` in vanilla and React,
@@ -104,10 +102,8 @@
     min-height: 0;
 }
 
-/* A handful of examples lay their root out as a horizontal split -- two grids side by side, or a
-   grid beside a panel -- rather than as controls above an example. They opt out with this
-   modifier: the layout turns back into a row, and the grow rule above stops claiming their
-   children, so the example's own `flex` values on those children are left to govern. */
+/* For a root laid out as a horizontal split, such as two grids side by side. The grow rule above
+   skips its children, so the example's own `flex` values govern them. */
 .example-wrapper--row {
     flex-direction: row;
 }
@@ -159,10 +155,8 @@ body > #highlighter {
     appearance: none;
     display: inline-block;
     height: 36px;
-    /* Even padding, so the text centres in the 36px box. The 5px/7px it replaces sat the text a
-       pixel high, which only showed once a control with no box of its own -- a checkbox and its
-       label, say -- stood next to a button in the same row: `.controls-row` centres the two boxes
-       on each other, so that pixel became a visible step between their two runs of text. */
+    /* Even padding centres the text in the 36px box, so it lines up with the text of a boxless
+       neighbour, such as a checkbox label, that `.controls-row` centres beside it. */
     padding: 6px 14px;
     white-space: nowrap;
     border-radius: 6px;
@@ -399,12 +393,8 @@ body > #highlighter {
 .example-controls label {
     display: inline-flex;
     align-items: center;
-    /* Tighter than the gap between controls, so the pair reads as one control. At the same 6px a
-       wrapped control sat as far from its own text as that text sat from the next control along:
-       on the active-overlay switcher, a "Loading" checkbox leading a row of buttons left "Loading"
-       looking equally attached to the first button. Only labels that wrap their control have more
-       than one flex item, so this reaches nothing else -- a label that merely sits beside its
-       control, and a `.button-group` segment, both hold text alone and ignore the gap. */
+    /* Tighter than the gap between controls, so a wrapped control reads as attached to its own
+       text rather than equally to the next control along. */
     gap: var(--label-gap);
     /* A label toggles its control on click, so repeated clicks would otherwise select its text. */
     user-select: none;

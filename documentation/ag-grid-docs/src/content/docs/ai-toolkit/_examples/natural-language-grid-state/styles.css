@@ -1,5 +1,3 @@
-/* The control styles this example used to carry a copy of now come from the shared sheet; only the
-   status colours and this example's own two-pane layout are left here. */
 :root {
     --success: #0759c2;
     --error: #dc0505;
