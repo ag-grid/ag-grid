@@ -1,4 +1,5 @@
 import { waitFor } from '@testing-library/dom';
+import { AgChartsCommunityModule } from 'ag-charts-community';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import type { AgChartTheme } from 'ag-charts-types';
 import { TestGridsManager, canvasPolyfill } from 'ag-test-utils';
@@ -449,5 +450,32 @@ describe('chart settings panel mini chart thumbnails', () => {
             ['none', f2],
             ['whitesmoke', 'darkslategrey'],
         ]);
+    });
+
+    describe.each([
+        { name: 'AgChartsCommunityModule', chartsModule: AgChartsCommunityModule },
+        { name: 'AgChartsEnterpriseModule', chartsModule: AgChartsEnterpriseModule },
+    ])('with $name', ({ chartsModule }) => {
+        const moduleGridsManager = new TestGridsManager({
+            modules: [ClientSideRowModelModule, CellSelectionModule, IntegratedChartsModule.with(chartsModule)],
+        });
+        afterEach(() => moduleGridsManager.reset());
+
+        test('every thumbnail is an svg coloured from the theme palette', async () => {
+            await openSettingsPanel(moduleGridsManager, { gridOptions: themedGridOptions({ t1: T1 }) });
+
+            const wrapper = activeWrapper();
+            const thumbnails = Array.from(wrapper.querySelectorAll<HTMLElement>('.ag-chart-mini-thumbnail'));
+            expect(thumbnails.length).toBeGreaterThan(0);
+            thumbnails.forEach((el) => expect(el.querySelectorAll(`:scope > ${SVG_SELECTOR}`)).toHaveLength(1));
+            expect(wrapper.querySelector('canvas')).toBeNull();
+            expect(seriesPaints('groupedColumn', 'fill', wrapper)).toEqual(T1.palette!.fills);
+        });
+
+        test('a stock theme renders svg thumbnails', async () => {
+            await openSettingsPanel(moduleGridsManager);
+
+            expectSvgShapes(thumbnail('Grouped Column'), SVG_CASES[0]);
+        });
     });
 });

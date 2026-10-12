@@ -1,4 +1,4 @@
-import type { AgCartesianAxisType, AgChartThemeOverrides, AgChartThemePalette, IChartTheme } from 'ag-charts-types';
+import type { AgCartesianAxisType, AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-types';
 
 import type {
     BeanCollection,
@@ -411,21 +411,10 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
         return this.gos.get('chartThemes') || DEFAULT_THEMES;
     }
 
-    public getThemes(): IChartTheme[] {
-        const themeNames = this.getThemeNames();
-
-        return themeNames.map((themeName) => {
-            const stockTheme = isStockTheme(themeName, this.agChartsExports._Theme);
-            const theme = stockTheme ? themeName : this.chartProxy.lookupCustomChartTheme(themeName);
-            return this.agChartsExports._Theme.getChartTheme(theme);
-        });
-    }
-
     public getPalettes(): AgChartThemePalette[] {
-        const themes = this.getThemes();
-
-        return themes.map((theme) => {
-            return theme.palette;
+        return this.getThemeNames().map((themeName) => {
+            const theme = isStockTheme(themeName) ? themeName : this.chartProxy.lookupCustomChartTheme(themeName);
+            return this.agChartsExports._Theme.getChartTheme(theme).palette;
         });
     }
 
