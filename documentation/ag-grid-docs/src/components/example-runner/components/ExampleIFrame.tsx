@@ -126,9 +126,7 @@ const applyExampleStyleChanges = (document: Document, darkMode: boolean | null) 
     if (darkMode != null) {
         document.documentElement.dataset.colorScheme = darkMode ? 'dark' : 'light';
         document.documentElement.dataset.agThemeMode = darkMode ? 'dark-blue' : 'light';
-        // The shared loading logo marks an example revealed on a dark site with `data-dark-mode`,
-        // which the shared controls sheet also reads, and never clears it. Keep it in step, or
-        // switching to light leaves the controls with light text on a light page.
+        // The loading logo sets `data-dark-mode` but never clears it, and the controls sheet reads it
         document.documentElement.dataset.darkMode = String(darkMode);
     }
     injectStylesheet(document);
