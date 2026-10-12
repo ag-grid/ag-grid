@@ -37,6 +37,7 @@ const pendingRequests = new Map<number, IServerSideGetRowsParams<PortfolioRow>>(
 let nextRequestId = 0;
 let updatesSent = 0;
 let stopSubscription: (() => void) | undefined;
+let socket: FakeSocket;
 
 let gridApi: GridApi<PortfolioRow>;
 
@@ -53,7 +54,7 @@ const gridOptions: GridOptions<PortfolioRow> = {
     // the id is the row's path, so it is unique across levels
     getRowId: (params: GetRowIdParams<PortfolioRow>) => params.data.id,
     onGridReady: (params) => {
-        const socket = new FakeSocket();
+        socket = new FakeSocket();
         socket.onmessage = (message) => onServerMessage(params.api, message);
         params.api.setGridOption('serverSideDatasource', createDatasource(socket));
         startSubscription(params.api, socket);
@@ -73,16 +74,6 @@ function createDatasource(socket: FakeSocket): IServerSideDatasource<PortfolioRo
 function renderCount() {
     document.querySelector('#subscribedCount')!.textContent = String(subscribed.size);
     document.querySelector('#updatesSent')!.textContent = String(updatesSent);
-}
-
-function addLogEntry(text: string) {
-    const log = document.querySelector('#log')!;
-    const entry = document.createElement('li');
-    entry.textContent = text;
-    log.prepend(entry);
-    while (log.children.length > 8) {
-        log.lastElementChild!.remove();
-    }
 }
 
 function onServerMessage(api: GridApi<PortfolioRow>, message: ServerMessage) {
@@ -109,13 +100,13 @@ function startSubscription(api: GridApi<PortfolioRow>, socket: FakeSocket) {
         onSubscribe: (rows, params) => {
             rows.forEach((row) => subscribed.set(row.id, row.parentKeys));
             socket.send({ type: 'subscribe', ids: rows.map((row) => row.id) });
-            addLogEntry(`subscribe ${rows.length} (${params.reason})`);
+            console.log(`subscribe ${rows.length} (${params.reason})`);
             renderCount();
         },
         onUnsubscribe: (rows, params) => {
             rows.forEach((row) => subscribed.delete(row.id));
             socket.send({ type: 'unsubscribe', ids: rows.map((row) => row.id) });
-            addLogEntry(`unsubscribe ${rows.length} (${params.reason})`);
+            console.log(`unsubscribe ${rows.length} (${params.reason})`);
             renderCount();
         },
     });
@@ -125,10 +116,15 @@ function purge() {
     gridApi.refreshServerSide({ purge: true });
 }
 
-function stopStream() {
-    // unsubscribing every row also stops the server streaming, while rows still load over the socket
-    stopSubscription?.();
-    stopSubscription = undefined;
+function toggleStream() {
+    if (stopSubscription) {
+        // unsubscribing every row also stops the server streaming, while rows still load over the socket
+        stopSubscription();
+        stopSubscription = undefined;
+    } else {
+        startSubscription(gridApi, socket);
+    }
+    document.querySelector('#toggleStream')!.textContent = stopSubscription ? 'Stop' : 'Start';
 }
 
 // setup the grid after the page has finished loading

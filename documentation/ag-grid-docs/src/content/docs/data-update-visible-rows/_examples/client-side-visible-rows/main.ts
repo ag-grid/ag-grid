@@ -33,6 +33,7 @@ ModuleRegistry.registerModules([
 const subscribed = new Set<string>();
 let updatesSent = 0;
 let stopSubscription: (() => void) | undefined;
+let socket: FakeSocket;
 
 let gridApi: GridApi<Stock>;
 
@@ -47,7 +48,7 @@ const gridOptions: GridOptions<Stock> = {
     getRowId: (params: GetRowIdParams<Stock>) => params.data.id,
     onGridReady: (params) => {
         params.api.setGridOption('rowData', fetchStocks());
-        const socket = new FakeSocket();
+        socket = new FakeSocket();
         socket.onmessage = (message) => onServerMessage(params.api, message);
         startSubscription(params.api, socket);
     },
@@ -56,16 +57,6 @@ const gridOptions: GridOptions<Stock> = {
 function renderCount() {
     document.querySelector('#subscribedCount')!.textContent = String(subscribed.size);
     document.querySelector('#updatesSent')!.textContent = String(updatesSent);
-}
-
-function addLogEntry(text: string) {
-    const log = document.querySelector('#log')!;
-    const entry = document.createElement('li');
-    entry.textContent = text;
-    log.prepend(entry);
-    while (log.children.length > 8) {
-        log.lastElementChild!.remove();
-    }
 }
 
 function onServerMessage(api: GridApi<Stock>, message: ServerMessage) {
@@ -84,14 +75,14 @@ function startSubscription(api: GridApi<Stock>, socket: FakeSocket) {
             const ids = rows.map((row) => row.id);
             ids.forEach((id) => subscribed.add(id));
             socket.send({ type: 'subscribe', ids });
-            addLogEntry(`subscribe ${rows.length} (${params.reason})`);
+            console.log(`subscribe ${rows.length} (${params.reason})`);
             renderCount();
         },
         onUnsubscribe: (rows, params) => {
             const ids = rows.map((row) => row.id);
             ids.forEach((id) => subscribed.delete(id));
             socket.send({ type: 'unsubscribe', ids });
-            addLogEntry(`unsubscribe ${rows.length} (${params.reason})`);
+            console.log(`unsubscribe ${rows.length} (${params.reason})`);
             renderCount();
         },
     });
@@ -101,10 +92,15 @@ function resetData() {
     gridApi.setGridOption('rowData', fetchStocks());
 }
 
-function stopStream() {
-    // unsubscribing every row also stops the server streaming
-    stopSubscription?.();
-    stopSubscription = undefined;
+function toggleStream() {
+    if (stopSubscription) {
+        // unsubscribing every row also stops the server streaming
+        stopSubscription();
+        stopSubscription = undefined;
+    } else {
+        startSubscription(gridApi, socket);
+    }
+    document.querySelector('#toggleStream')!.textContent = stopSubscription ? 'Stop' : 'Start';
 }
 
 // setup the grid after the page has finished loading
