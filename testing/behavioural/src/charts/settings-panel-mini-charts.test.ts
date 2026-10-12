@@ -21,6 +21,8 @@ const ROW_DATA = [
     { country: 'Norway', gold: 7, silver: 5, bronze: 1 },
 ];
 
+const PLOT_AREA = '5 5 48 48';
+
 interface SvgCase {
     type: ChartType;
     label: string;
@@ -28,7 +30,8 @@ interface SvgCase {
     paths: number;
     axes?: 'polar' | 'none';
     seriesOverAxes?: true;
-    clip?: true;
+    /** The clip rectangle's `viewBox`. */
+    clip?: string;
 }
 
 const SVG_CASES: SvgCase[] = [
@@ -38,17 +41,17 @@ const SVG_CASES: SvgCase[] = [
     { type: 'groupedBar', label: 'Grouped Bar', tooltip: 'Grouped', paths: 3 },
     { type: 'stackedBar', label: 'Stacked Bar', tooltip: 'Stacked', paths: 9 },
     { type: 'normalizedBar', label: '100% Stacked Bar', tooltip: '100% Stacked', paths: 9 },
-    { type: 'line', label: 'Line', tooltip: 'Line', paths: 3, clip: true },
-    { type: 'stackedLine', label: 'Stacked Line', tooltip: 'Stacked', paths: 3, clip: true },
-    { type: 'normalizedLine', label: '100% Stacked Line', tooltip: '100% Stacked', paths: 3, clip: true },
-    { type: 'area', label: 'Area', tooltip: 'Area', paths: 3, clip: true },
-    { type: 'stackedArea', label: 'Stacked Area', tooltip: 'Stacked', paths: 3, clip: true },
-    { type: 'normalizedArea', label: '100% Stacked Area', tooltip: '100% Stacked', paths: 3, clip: true },
+    { type: 'line', label: 'Line', tooltip: 'Line', paths: 3, clip: PLOT_AREA },
+    { type: 'stackedLine', label: 'Stacked Line', tooltip: 'Stacked', paths: 3, clip: PLOT_AREA },
+    { type: 'normalizedLine', label: '100% Stacked Line', tooltip: '100% Stacked', paths: 3, clip: PLOT_AREA },
+    { type: 'area', label: 'Area', tooltip: 'Area', paths: 3, clip: PLOT_AREA },
+    { type: 'stackedArea', label: 'Stacked Area', tooltip: 'Stacked', paths: 3, clip: PLOT_AREA },
+    { type: 'normalizedArea', label: '100% Stacked Area', tooltip: '100% Stacked', paths: 3, clip: PLOT_AREA },
     { type: 'histogram', label: 'Histogram', tooltip: 'Histogram', paths: 7 },
     { type: 'pie', label: 'Pie', tooltip: 'Pie', paths: 6, axes: 'none' },
     { type: 'donut', label: 'Donut', tooltip: 'Donut', paths: 6, axes: 'none' },
-    { type: 'scatter', label: 'Scatter', tooltip: 'Scatter', paths: 8, clip: true },
-    { type: 'bubble', label: 'Bubble', tooltip: 'Bubble', paths: 5, clip: true },
+    { type: 'scatter', label: 'Scatter', tooltip: 'Scatter', paths: 8, clip: PLOT_AREA },
+    { type: 'bubble', label: 'Bubble', tooltip: 'Bubble', paths: 5, clip: PLOT_AREA },
     { type: 'radarLine', label: 'Radar Line', tooltip: 'Radar Line', paths: 27, axes: 'polar' },
     { type: 'radarArea', label: 'Radar Area', tooltip: 'Radar Area', paths: 3, axes: 'polar' },
     {
@@ -71,14 +74,14 @@ const SVG_CASES: SvgCase[] = [
     { type: 'rangeBar', label: 'Range Bar', tooltip: 'Range Bar', paths: 3 },
     { type: 'rangeArea', label: 'Range Area', tooltip: 'Range Area', paths: 3 },
     { type: 'sunburst', label: 'Sunburst', tooltip: 'Sunburst', paths: 9, axes: 'none' },
-    { type: 'funnel', label: 'Funnel', tooltip: 'Funnel', paths: 3, axes: 'none', clip: true },
-    { type: 'coneFunnel', label: 'Cone Funnel', tooltip: 'Cone Funnel', paths: 3, axes: 'none', clip: true },
-    { type: 'pyramid', label: 'Pyramid', tooltip: 'Pyramid', paths: 3, axes: 'none', clip: true },
-    { type: 'columnLineCombo', label: 'Column & Line', tooltip: 'Column & Line', paths: 3, clip: true },
-    { type: 'areaColumnCombo', label: 'Area & Column', tooltip: 'Area & Column', paths: 3, clip: true },
-    { type: 'boxPlot', label: 'Box Plot', tooltip: 'Box Plot', paths: 18 },
-    { type: 'treemap', label: 'Treemap', tooltip: 'Treemap', paths: 5, axes: 'none', clip: true },
-    { type: 'heatmap', label: 'Heatmap', tooltip: 'Heatmap', paths: 9, axes: 'none', clip: true },
+    { type: 'funnel', label: 'Funnel', tooltip: 'Funnel', paths: 3, axes: 'none', clip: PLOT_AREA },
+    { type: 'coneFunnel', label: 'Cone Funnel', tooltip: 'Cone Funnel', paths: 3, axes: 'none', clip: PLOT_AREA },
+    { type: 'pyramid', label: 'Pyramid', tooltip: 'Pyramid', paths: 3, axes: 'none', clip: PLOT_AREA },
+    { type: 'columnLineCombo', label: 'Column & Line', tooltip: 'Column & Line', paths: 3, clip: PLOT_AREA },
+    { type: 'areaColumnCombo', label: 'Area & Column', tooltip: 'Area & Column', paths: 3, clip: PLOT_AREA },
+    { type: 'boxPlot', label: 'Box Plot', tooltip: 'Box Plot', paths: 3 },
+    { type: 'treemap', label: 'Treemap', tooltip: 'Treemap', paths: 5, axes: 'none', clip: '5 5 53 53' },
+    { type: 'heatmap', label: 'Heatmap', tooltip: 'Heatmap', paths: 9, axes: 'none' },
     { type: 'waterfall', label: 'Waterfall', tooltip: 'Waterfall', paths: 5 },
 ];
 
@@ -87,12 +90,12 @@ const CUSTOM_COMBO_CASE: SvgCase = {
     label: 'Custom Combination',
     tooltip: 'Custom Combination',
     paths: 4,
-    clip: true,
+    clip: PLOT_AREA,
 };
 
 const AXIS_SHAPES: Record<'cartesian' | 'polar' | 'none', string[]> = {
     cartesian: ['line', 'line'],
-    polar: ['circle', 'circle', 'circle', 'circle'],
+    polar: ['ring', 'ring', 'ring', 'ring'],
     none: [],
 };
 
@@ -176,10 +179,20 @@ describe('chart settings panel mini chart thumbnails', () => {
     ): (string | null)[] {
         const label = SVG_CASES.find((c) => c.type === type)!.label;
         const svg = thumbnail(label, wrapper).querySelector(SVG_SELECTOR)!;
-        return Array.from(svg.querySelectorAll('path')).map((path) => path.getAttribute(attr));
+        return seriesPaths(svg).map((path) => path.getAttribute(attr));
     }
 
-    /** The svg's shapes in paint order, as `path`, `line` (cartesian axes) or `circle` (polar rings). */
+    /** The gray polar rings, drawn as paths. */
+    function polarRings(svg: Element): Element[] {
+        return Array.from(svg.querySelectorAll('path')).filter((path) => path.getAttribute('stroke') === 'gray');
+    }
+
+    function seriesPaths(svg: Element): Element[] {
+        const rings = polarRings(svg);
+        return Array.from(svg.querySelectorAll('path')).filter((path) => !rings.includes(path));
+    }
+
+    /** The svg's shapes in paint order, as `path`, `line` (cartesian axes) or `ring` (polar rings). */
     function expectSvgShapes(el: HTMLElement, { tooltip, paths, axes, seriesOverAxes }: SvgCase): void {
         expect(el.querySelector('canvas')).toBeNull();
 
@@ -191,12 +204,13 @@ describe('chart settings panel mini chart thumbnails', () => {
 
         const axisNames = AXIS_SHAPES[axes ?? 'cartesian'];
         const series: string[] = Array(paths).fill('path');
-        const shapes = Array.from(svg.querySelectorAll('path, line, circle'));
-        expect(shapes.map((shape) => shape.localName)).toEqual(
+        const rings = polarRings(svg);
+        const shapes = Array.from(svg.querySelectorAll('path, line'));
+        expect(shapes.map((shape) => (rings.includes(shape) ? 'ring' : shape.localName))).toEqual(
             seriesOverAxes ? [...axisNames, ...series] : [...series, ...axisNames]
         );
         shapes
-            .filter((shape) => shape.localName !== 'path')
+            .filter((shape) => shape.localName === 'line')
             .forEach((axis) => expect(axis.getAttribute('stroke')).toBe('gray'));
 
         expect(svg.querySelector('defs, clipPath, linearGradient, radialGradient, pattern')).toBeNull();
@@ -224,12 +238,12 @@ describe('chart settings panel mini chart thumbnails', () => {
         );
 
         test('the polar rings fade inwards from the outer ring', () => {
-            const rings = Array.from(thumbnail('Radar Line').querySelectorAll(`${SVG_SELECTOR} circle`));
+            const rings = polarRings(thumbnail('Radar Line').querySelector(SVG_SELECTOR)!);
             expect(rings.map((ring) => ring.getAttribute('stroke-opacity'))).toEqual(['0.5', '0.2', '0.2', '0.2']);
             expect(rings.map((ring) => ring.getAttribute('fill'))).toEqual(['none', 'none', 'none', 'none']);
         });
 
-        test('only the series of clipped types are clipped, to the plot area', () => {
+        test('only the series of clipped types are clipped', () => {
             for (const { label, paths, clip } of SVG_CASES) {
                 const nested = thumbnail(label).querySelector(`${SVG_SELECTOR} svg`);
                 if (!clip) {
@@ -237,7 +251,7 @@ describe('chart settings panel mini chart thumbnails', () => {
                     continue;
                 }
                 expect(nested!.getAttribute('overflow')).toBe('hidden');
-                expect(nested!.getAttribute('viewBox')).toBe('5 5 48 48');
+                expect(nested!.getAttribute('viewBox')).toBe(clip);
                 expect(nested!.querySelectorAll('path')).toHaveLength(paths);
             }
         });
@@ -274,11 +288,11 @@ describe('chart settings panel mini chart thumbnails', () => {
         function expectPaletteColours({ fills, strokes }: { fills: string[]; strokes: string[] }): void {
             // Heatmap cells blend the palette's first two fills, so they are asserted separately.
             for (const { label } of SVG_CASES.filter(({ type }) => type !== 'heatmap')) {
-                const paths = Array.from(thumbnail(label).querySelectorAll(`${SVG_SELECTOR} path`));
+                const paths = seriesPaths(thumbnail(label).querySelector(SVG_SELECTOR)!);
                 expect(paths.length).toBeGreaterThan(0);
                 paths.forEach((path) => {
                     expect(['none', ...fills]).toContain(path.getAttribute('fill'));
-                    expect([null, ...fills, ...strokes]).toContain(path.getAttribute('stroke'));
+                    expect([null, 'none', ...fills, ...strokes]).toContain(path.getAttribute('stroke'));
                     expect([path.getAttribute('fill'), path.getAttribute('stroke')]).not.toEqual(['none', null]);
                 });
             }
@@ -340,7 +354,7 @@ describe('chart settings panel mini chart thumbnails', () => {
             expect(document.querySelector(`${SVG_SELECTOR} defs, ${SVG_SELECTOR} linearGradient`)).toBeNull();
         });
 
-        test('a short palette repeats its colours', async () => {
+        test('a short palette repeats its colours, except for area outlines', async () => {
             await openSettingsPanel(gridsManager, {
                 gridOptions: themedGridOptions({
                     short: { palette: { fills: ['#123456', '#234567'], strokes: ['#654321', '#765432'] } },
@@ -348,7 +362,8 @@ describe('chart settings panel mini chart thumbnails', () => {
             });
 
             expect(seriesPaints('groupedColumn', 'fill')).toEqual(['#123456', '#234567', '#123456']);
-            expect(seriesPaints('area', 'stroke')).toEqual(['#654321', '#765432', '#654321']);
+            expect(seriesPaints('area', 'stroke')).toEqual(['#654321', '#765432', 'none']);
+            expect(seriesPaints('radarArea', 'stroke')).toEqual(['#654321', '#765432', 'none']);
             expect(seriesPaints('line', 'stroke')).toEqual(['#123456', '#234567', '#123456']);
         });
 
@@ -366,11 +381,7 @@ describe('chart settings panel mini chart thumbnails', () => {
         test('stock themes colour box plot, treemap, heatmap and waterfall with fixed theme colours', async () => {
             await openSettingsPanel(gridsManager);
 
-            const boxes = [0, 6, 12];
-            const boxOpacity = seriesPaints('boxPlot', 'fill-opacity');
-            expect(boxes.map((i) => boxOpacity[i])).toEqual(['0.3', '0.3', '0.3']);
-            const boxFills = seriesPaints('boxPlot', 'fill');
-            expect(boxFills.filter((_, i) => !boxes.includes(i))).toEqual(Array(15).fill('none'));
+            expect(seriesPaints('boxPlot', 'fill-opacity')).toEqual(['0.3', '0.3', '0.3']);
 
             expect(seriesPaints('treemap', 'stroke')).toEqual(Array(5).fill('#ffffff'));
 
@@ -396,13 +407,9 @@ describe('chart settings panel mini chart thumbnails', () => {
             const [f0, f1, f2] = T1.palette!.fills as string[];
             const [s0, s1, s2] = T1.palette!.strokes as string[];
 
-            const boxPlotFills = seriesPaints('boxPlot', 'fill');
-            const boxPlotStrokes = seriesPaints('boxPlot', 'stroke');
-            [f0, f1, f2].forEach((fill, i) => expect(boxPlotFills[i * 6]).toBe(fill));
-            [s0, s1, s2].forEach((stroke, i) =>
-                expect(boxPlotStrokes.slice(i * 6, i * 6 + 6)).toEqual(Array(6).fill(stroke))
-            );
-            expect(seriesPaints('boxPlot', 'fill-opacity')).toEqual(Array(18).fill(null));
+            expect(seriesPaints('boxPlot', 'fill')).toEqual([f0, f1, f2]);
+            expect(seriesPaints('boxPlot', 'stroke')).toEqual([s0, s1, s2]);
+            expect(seriesPaints('boxPlot', 'fill-opacity')).toEqual([null, null, null]);
 
             expect(seriesPaints('treemap', 'fill')).toEqual([f0, f1, f2, f0, f1]);
             expect(seriesPaints('treemap', 'stroke')).toEqual([s0, s1, s2, s0, s1]);

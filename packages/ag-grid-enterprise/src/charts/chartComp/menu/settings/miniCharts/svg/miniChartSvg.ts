@@ -1,14 +1,17 @@
-import type { MiniChartSvgPaint, MiniChartSvgShape, MiniChartSvgTemplate } from './miniChartSvgTypes';
+import type {
+    MiniChartSvgCrispPart,
+    MiniChartSvgPaint,
+    MiniChartSvgShape,
+    MiniChartSvgTemplate,
+} from './miniChartSvgTypes';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 const MINI_CHART_SIZE = 58;
-const MINI_CHART_PADDING = 5;
 
-const PLOT_SIZE = MINI_CHART_SIZE - 2 * MINI_CHART_PADDING;
 const AXIS_LINES = [
-    { x1: 5.5, y1: 5, x2: 5.5, y2: 56 },
-    { x1: 3, y1: 53.5, x2: 54, y2: 53.5 },
+    [5, 5, 5, 56],
+    [3, 53, 54, 53],
 ];
 const POLAR_CENTRE = MINI_CHART_SIZE / 2;
 const POLAR_RINGS = [
@@ -20,6 +23,64 @@ const POLAR_RINGS = [
 
 type SvgAttrs = Record<string, string | number>;
 
+/** The nearest device pixel boundary, rounding halves up as the canvas did. */
+const toDevicePixels = (value: number, pixelRatio: number): number => Math.round(value * pixelRatio + 1e-8);
+
+const QUARTER_ARC_HANDLE = (4 / 3) * Math.tan(Math.PI / 8);
+
+/**
+ * A circle as four cubic Béziers starting from its rightmost point, the way the canvas drew arcs, as browsers
+ * anti-alias that path differently from a true `<circle>`.
+ */
+function circlePathData(cx: number, cy: number, r: number): string {
+    const k = QUARTER_ARC_HANDLE * r;
+    return [
+        `M ${cx + r} ${cy}`,
+        `C ${cx + r} ${cy + k} ${cx + k} ${cy + r} ${cx} ${cy + r}`,
+        `C ${cx - k} ${cy + r} ${cx - r} ${cy + k} ${cx - r} ${cy}`,
+        `C ${cx - r} ${cy - k} ${cx - k} ${cy - r} ${cx} ${cy - r}`,
+        `C ${cx + k} ${cy - r} ${cx + r} ${cy - k} ${cx + r} ${cy}`,
+    ].join(' ');
+}
+
+/** A vertical or horizontal line, moved so that its stroke covers whole device pixels as the canvas did. */
+function crispLine(line: number[], strokeWidth: number, pixelRatio: number): number[] {
+    const [x1, y1, x2, y2] = line;
+    const strokeDevicePixels = Math.trunc(strokeWidth * pixelRatio);
+    const snapCentre = (centre: number) =>
+        strokeDevicePixels % 2 === 0
+            ? toDevicePixels(centre, pixelRatio) / pixelRatio
+            : (toDevicePixels(centre - 0.5 / pixelRatio, pixelRatio) + 0.5) / pixelRatio;
+    if (x1 === x2) {
+        return [snapCentre(x1), y1, snapCentre(x2), y2];
+    }
+    if (y1 === y2) {
+        return [x1, snapCentre(y1), x2, snapCentre(y2)];
+    }
+    return line;
+}
+
+/**
+ * Path data for parts snapped to device pixels the way the canvas thumbnails were: rectangle edges round to the
+ * nearest device pixel, and a stroked rectangle is inset so that its outline falls inside those edges.
+ */
+function crispPathData(parts: MiniChartSvgCrispPart[], strokeWidth: number, pixelRatio: number): string {
+    const snap = (value: number) => toDevicePixels(value, pixelRatio) / pixelRatio;
+    return parts
+        .map((part) => {
+            if ('rect' in part) {
+                const [x, y, width, height] = part.rect;
+                const inset = strokeWidth / 2;
+                const [x1, y1] = [snap(x) + inset, snap(y) + inset];
+                const [x2, y2] = [snap(x + width) - inset, snap(y + height) - inset];
+                return `M ${x1} ${y1} H ${x2} V ${y2} H ${x1} Z`;
+            }
+            const [x1, y1, x2, y2] = crispLine(part.line, strokeWidth, pixelRatio);
+            return `M ${x1} ${y1} L ${x2} ${y2}`;
+        })
+        .join(' ');
+}
+
 /** Draws a chart settings panel thumbnail as inline SVG, from geometry data and solid palette colours. */
 export function createMiniChartSvg(
     container: HTMLElement,
@@ -29,6 +90,7 @@ export function createMiniChartSvg(
     title: string
 ): void {
     const doc = container.ownerDocument;
+    const pixelRatio = doc.defaultView?.devicePixelRatio ?? 1;
     const create = (tag: string, attrs: SvgAttrs = {}): Element => {
         const element = doc.createElementNS(SVG_NS, tag);
         for (const name of Object.keys(attrs)) {
@@ -41,9 +103,22 @@ export function createMiniChartSvg(
             return paint;
         }
         const colors = paint.palette === 'fills' ? fills : strokes;
-        return colors.length ? colors[paint.index % colors.length] : 'none';
+        if (!colors.length || (paint.wrap === false && paint.index >= colors.length)) {
+            return 'none';
+        }
+        return colors[paint.index % colors.length];
     };
-    const createShape = ({ d, fill, stroke, attrs }: MiniChartSvgShape): Element => {
+    const createShape = (shape: MiniChartSvgShape): Element => {
+        const { fill, stroke, attrs } = shape;
+        let d: string;
+        if ('circle' in shape) {
+            const [cx, cy, r] = shape.circle;
+            d = circlePathData(cx, cy, r);
+        } else if (typeof shape.d === 'string') {
+            d = shape.d;
+        } else {
+            d = crispPathData(shape.d, stroke ? Number(attrs?.['stroke-width'] ?? 1) : 0, pixelRatio);
+        }
         const path = create('path', { d, ...attrs, fill: fill ? resolve(fill) : 'none' });
         if (stroke) {
             path.setAttribute('stroke', resolve(stroke));
@@ -57,18 +132,17 @@ export function createMiniChartSvg(
         }
         if (template.axes === 'polar') {
             return POLAR_RINGS.map(({ r, opacity }) =>
-                create('circle', {
-                    cx: POLAR_CENTRE,
-                    cy: POLAR_CENTRE,
-                    r,
-                    fill: 'none',
-                    'stroke-width': 1,
+                createShape({
+                    circle: [POLAR_CENTRE, POLAR_CENTRE, r],
                     stroke: 'gray',
-                    'stroke-opacity': opacity,
+                    attrs: { 'stroke-width': 1, 'stroke-opacity': opacity },
                 })
             );
         }
-        return AXIS_LINES.map((axis) => create('line', { ...axis, 'stroke-width': 1, stroke: 'gray' }));
+        return AXIS_LINES.map((line) => {
+            const [x1, y1, x2, y2] = crispLine(line, 1, pixelRatio);
+            return create('line', { x1, y1, x2, y2, 'stroke-width': 1, stroke: 'gray' });
+        });
     };
 
     const svg = create('svg', {
@@ -89,18 +163,9 @@ export function createMiniChartSvg(
     svg.append(...axesBeforeSeries);
 
     // A nested viewport clips without needing a <defs> clipPath with a document-unique id.
-    const seriesParent = template.clip
-        ? svg.appendChild(
-              create('svg', {
-                  x: MINI_CHART_PADDING,
-                  y: MINI_CHART_PADDING,
-                  width: PLOT_SIZE,
-                  height: PLOT_SIZE,
-                  viewBox: `${MINI_CHART_PADDING} ${MINI_CHART_PADDING} ${PLOT_SIZE} ${PLOT_SIZE}`,
-                  overflow: 'hidden',
-              })
-          )
-        : svg;
+    const createClip = ([x, y, width, height]: number[]) =>
+        create('svg', { x, y, width, height, viewBox: `${x} ${y} ${width} ${height}`, overflow: 'hidden' });
+    const seriesParent = template.clip ? svg.appendChild(createClip(template.clip)) : svg;
     for (const shape of template.series) {
         seriesParent.appendChild(createShape(shape));
     }

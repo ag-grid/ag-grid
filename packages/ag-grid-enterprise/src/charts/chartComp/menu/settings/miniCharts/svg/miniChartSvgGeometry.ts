@@ -1,25 +1,37 @@
 import type { ChartType } from 'ag-grid-community';
 
 import { AgColor } from '../../../../../../agStack/agColor';
-import type { MiniChartSvgPaint, MiniChartSvgShape, MiniChartSvgSlot, MiniChartSvgTemplate } from './miniChartSvgTypes';
+import type {
+    MiniChartSvgCrispPart,
+    MiniChartSvgPaint,
+    MiniChartSvgShape,
+    MiniChartSvgSlot,
+    MiniChartSvgTemplate,
+} from './miniChartSvgTypes';
 
 const fills = (index: number): MiniChartSvgSlot => ({ palette: 'fills', index });
 const strokes = (index: number): MiniChartSvgSlot => ({ palette: 'strokes', index });
+/** Area outlines are left off, rather than reusing stroke colours, when the palette has fewer strokes than series. */
+const areaStrokes = (index: number): MiniChartSvgSlot => ({ palette: 'strokes', index, wrap: false });
+
+/** The area inside the axes, `[x, y, width, height]`. */
+const PLOT_AREA = [5, 5, 48, 48];
 
 const OUTLINE = { 'stroke-width': 1, 'stroke-opacity': 0.75 };
 
-const rectPath = (x1: number, y1: number, x2: number, y2: number): string =>
-    `M ${x1} ${y1} L ${x2} ${y1} L ${x2} ${y2} L ${x1} ${y2} Z`;
+const crispRect = (x: number, y: number, width: number, height: number): MiniChartSvgCrispPart[] => [
+    { rect: [x, y, width, height] },
+];
 
-/** A column or bar with corners (x1, y1) and (x2, y2), filled with the series colour. */
-const rect = (x1: number, y1: number, x2: number, y2: number, series: number): MiniChartSvgShape => ({
-    d: rectPath(x1, y1, x2, y2),
+/** A column or bar, filled with the series colour. */
+const rect = (x: number, y: number, width: number, height: number, series: number): MiniChartSvgShape => ({
+    d: crispRect(x, y, width, height),
     fill: fills(series),
 });
 
-/** A histogram bin with corners (x1, y1) and (x2, y2), outlined like today's histogram series. */
-const bin = (x1: number, y1: number, x2: number, y2: number): MiniChartSvgShape => ({
-    d: rectPath(x1, y1, x2, y2),
+/** A histogram bin, outlined like today's histogram series. */
+const bin = (x: number, y: number, width: number, height: number): MiniChartSvgShape => ({
+    d: crispRect(x, y, width, height),
     fill: fills(0),
     stroke: strokes(0),
     attrs: OUTLINE,
@@ -39,7 +51,7 @@ const area = (d: string, series: number): MiniChartSvgShape => ({ d, fill: fills
 const outlinedArea = (d: string, series: number): MiniChartSvgShape => ({
     d,
     fill: fills(series),
-    stroke: strokes(series),
+    stroke: areaStrokes(series),
     attrs: { 'fill-opacity': 0.7, ...OUTLINE },
 });
 
@@ -51,7 +63,9 @@ const filled = (d: string, series: number, fillOpacity?: number): MiniChartSvgSh
 
 /** A circular marker centred on (cx, cy), filled with the series colour. */
 const dot = (cx: number, cy: number, r: number, series: number, fillOpacity?: number): MiniChartSvgShape =>
-    filled(`M ${cx} ${cy} m ${-r} 0 a ${r} ${r} 0 1 0 ${2 * r} 0 a ${r} ${r} 0 1 0 ${-2 * r} 0 Z`, series, fillOpacity);
+    fillOpacity == null
+        ? { circle: [cx, cy, r], fill: fills(series) }
+        : { circle: [cx, cy, r], fill: fills(series), attrs: { 'fill-opacity': fillOpacity } };
 
 const RADAR_OUTLINE = { 'stroke-width': 1, 'stroke-opacity': 0.5, 'stroke-linecap': 'round' };
 
@@ -66,7 +80,7 @@ const radarLine = (d: string, series: number): MiniChartSvgShape => ({
 const radarArea = (d: string, series: number): MiniChartSvgShape => ({
     d,
     fill: fills(series),
-    stroke: strokes(series),
+    stroke: areaStrokes(series),
     attrs: { 'fill-opacity': 0.8, ...RADAR_OUTLINE },
 });
 
@@ -101,61 +115,52 @@ const DONUT: MiniChartSvgTemplate = {
     ],
 };
 
-/** One box plot: the box corners, then the median, whiskers and caps as `[x1, y1, x2, y2]` lines. */
-const boxAndWhiskers = (
-    [x1, y1, x2, y2]: number[],
-    lines: number[][],
-    series: number,
-    stockTheme: boolean
-): MiniChartSvgShape[] => [
-    {
-        d: rectPath(x1, y1, x2, y2),
-        fill: fills(series),
-        stroke: strokes(series),
-        attrs: stockTheme ? { ...OUTLINE, 'fill-opacity': 0.3 } : OUTLINE,
-    },
-    ...lines.map(([lx1, ly1, lx2, ly2]) => ({
-        d: `M ${lx1} ${ly1} L ${lx2} ${ly2}`,
-        stroke: strokes(series),
-        attrs: OUTLINE,
-    })),
-];
+/**
+ * One box plot: the box `[x, y, width, height]`, then the median, whiskers and caps as `[x1, y1, x2, y2]` lines.
+ * Drawn as one path so that its translucent outline does not darken where the lines meet the box.
+ */
+const boxAndWhiskers = (box: number[], lines: number[][], series: number, stockTheme: boolean): MiniChartSvgShape => ({
+    d: [{ rect: box }, ...lines.map((line) => ({ line }))],
+    fill: fills(series),
+    stroke: strokes(series),
+    attrs: stockTheme ? { ...OUTLINE, 'fill-opacity': 0.3 } : OUTLINE,
+});
 
 const boxPlot = (stockTheme: boolean): MiniChartSvgTemplate => ({
     tooltip: 'boxPlotTooltip',
     series: [
-        ...boxAndWhiskers(
-            [8.5, 19.5, 17.5, 37.5],
+        boxAndWhiskers(
+            [8, 19, 10, 19],
             [
-                [8, 29.5, 18, 29.5],
-                [13.5, 10, 13.5, 19],
-                [13.5, 47, 13.5, 38],
-                [8, 10.5, 18, 10.5],
-                [8, 47.5, 18, 47.5],
+                [8, 29, 18, 29],
+                [13, 10, 13, 19],
+                [13, 47, 13, 38],
+                [8, 10, 18, 10],
+                [8, 47, 18, 47],
             ],
             0,
             stockTheme
         ),
-        ...boxAndWhiskers(
-            [24.5, 15.5, 33.5, 33.5],
+        boxAndWhiskers(
+            [24, 15, 10, 19],
             [
-                [24, 24.5, 34, 24.5],
-                [29.5, 5, 29.5, 15],
-                [29.5, 44, 29.5, 34],
-                [24, 5.5, 34, 5.5],
-                [24, 44.5, 34, 44.5],
+                [24, 24, 34, 24],
+                [29, 5, 29, 15],
+                [29, 44, 29, 34],
+                [24, 5, 34, 5],
+                [24, 44, 34, 44],
             ],
             1,
             stockTheme
         ),
-        ...boxAndWhiskers(
-            [40.5, 24.5, 49.5, 41.5],
+        boxAndWhiskers(
+            [40, 24, 10, 18],
             [
-                [40, 33.5, 50, 33.5],
-                [45.5, 15, 45.5, 24],
-                [45.5, 51, 45.5, 42],
-                [40, 15.5, 50, 15.5],
-                [40, 51.5, 50, 51.5],
+                [40, 33, 50, 33],
+                [45, 15, 45, 24],
+                [45, 51, 45, 42],
+                [40, 15, 50, 15],
+                [40, 51, 50, 51],
             ],
             2,
             stockTheme
@@ -164,22 +169,23 @@ const boxPlot = (stockTheme: boolean): MiniChartSvgTemplate => ({
 });
 
 const treemap = (stockTheme: boolean): MiniChartSvgTemplate => {
-    const tile = (x1: number, y1: number, x2: number, y2: number, series: number): MiniChartSvgShape => ({
-        d: rectPath(x1, y1, x2, y2),
+    const tile = (x: number, y: number, width: number, height: number, series: number): MiniChartSvgShape => ({
+        d: crispRect(x, y, width, height),
         fill: fills(series),
         stroke: stockTheme ? '#ffffff' : strokes(series),
         attrs: { 'stroke-width': 0.75 },
     });
     return {
         tooltip: 'treemapTooltip',
-        clip: true,
+        // As the canvas did: clipped at the plot area's top left only.
+        clip: [5, 5, 53, 53],
         axes: 'none',
         series: [
-            tile(5.375, 5.375, 36.625, 28.625, 0),
-            tile(5.375, 29.375, 36.625, 52.625, 1),
-            tile(37.375, 5.375, 52.625, 28.625, 2),
-            tile(37.375, 29.375, 52.625, 44.625, 3),
-            tile(37.375, 45.375, 52.625, 52.625, 4),
+            tile(5, 5, 31.8, 23.85, 0),
+            tile(5, 29.15, 31.8, 23.85, 1),
+            tile(37.1, 5, 15.9, 23.85, 2),
+            tile(37.1, 29, 15.9, 15.9, 3),
+            tile(37.1, 45.05, 15.9, 7.95, 4),
         ],
     };
 };
@@ -188,22 +194,25 @@ const treemap = (stockTheme: boolean): MiniChartSvgTemplate => {
 const waterfall = (up: MiniChartSvgPaint, down: MiniChartSvgPaint): MiniChartSvgTemplate => ({
     tooltip: 'waterfallTooltip',
     series: [
-        { d: rectPath(8, 33, 15, 48), fill: up },
-        { d: rectPath(17, 21, 24, 33), fill: up },
-        { d: rectPath(25, 21, 33, 33), fill: down },
-        { d: rectPath(34, 10, 41, 33), fill: up },
-        { d: rectPath(43, 10, 50, 21), fill: down },
+        { d: crispRect(7.667, 33, 7.111, 15), fill: up },
+        { d: crispRect(16.556, 21, 7.111, 12), fill: up },
+        { d: crispRect(25.444, 21, 7.111, 12), fill: down },
+        { d: crispRect(34.333, 10, 7.111, 23), fill: up },
+        { d: crispRect(43.222, 10, 7.111, 11), fill: down },
     ],
 });
 
-/** Heatmap cell origins, column by column; each cell is 14 by 14. */
-const HEATMAP_CELLS = [7, 22, 37].flatMap((x) => [7, 22, 37].map((y) => [x, y]));
+/** Heatmap cell origins, column by column. */
+const HEATMAP_CELLS = [6.505, 21.552, 36.599].flatMap((x) => [6.505, 21.552, 36.599].map((y) => [x, y]));
+const HEATMAP_CELL_SIZE = 14.897;
 
 const heatmap = (cellFills: string[]): MiniChartSvgTemplate => ({
     tooltip: 'heatmapTooltip',
-    clip: true,
     axes: 'none',
-    series: HEATMAP_CELLS.map(([x, y], i) => ({ d: rectPath(x, y, x + 14, y + 14), fill: cellFills[i] })),
+    series: HEATMAP_CELLS.map(([x, y], i) => ({
+        d: crispRect(x, y, HEATMAP_CELL_SIZE, HEATMAP_CELL_SIZE),
+        fill: cellFills[i],
+    })),
 });
 
 const STOCK_HEATMAP_FILLS = [
@@ -243,71 +252,71 @@ const customHeatmapFills = (paletteFills: string[]): string[] => {
 const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> = {
     groupedColumn: {
         tooltip: 'groupedColumnTooltip',
-        series: [rect(9, 29, 20, 53, 0), rect(24, 17, 34, 53, 1), rect(38, 5, 49, 53, 2)],
+        series: [rect(9.364, 29, 10.182, 24, 0), rect(23.909, 17, 10.182, 36, 1), rect(38.455, 5, 10.182, 48, 2)],
     },
     stackedColumn: {
         tooltip: 'stackedColumnTooltip',
         series: [
-            rect(9, 29, 20, 53, 0),
-            rect(24, 17, 34, 53, 0),
-            rect(38, 5, 49, 53, 0),
-            rect(9, 35, 20, 53, 1),
-            rect(24, 26, 34, 53, 1),
-            rect(38, 17, 49, 53, 1),
-            rect(9, 47, 20, 53, 2),
-            rect(24, 44, 34, 53, 2),
-            rect(38, 41, 49, 53, 2),
+            rect(9.364, 29, 10.182, 24, 0),
+            rect(23.909, 17, 10.182, 36, 0),
+            rect(38.455, 5, 10.182, 48, 0),
+            rect(9.364, 35, 10.182, 18, 1),
+            rect(23.909, 26, 10.182, 27, 1),
+            rect(38.455, 17, 10.182, 36, 1),
+            rect(9.364, 47, 10.182, 6, 2),
+            rect(23.909, 44, 10.182, 9, 2),
+            rect(38.455, 41, 10.182, 12, 2),
         ],
     },
     normalizedColumn: {
         tooltip: 'normalizedColumnTooltip',
         series: [
-            rect(9, 5, 20, 53, 0),
-            rect(24, 5, 34, 53, 0),
-            rect(38, 5, 49, 53, 0),
-            rect(9, 24, 20, 53, 1),
-            rect(24, 19, 34, 53, 1),
-            rect(38, 15, 49, 53, 1),
-            rect(9, 43, 20, 53, 2),
-            rect(24, 34, 34, 53, 2),
-            rect(38, 24, 49, 53, 2),
+            rect(9.364, 5, 10.182, 48, 0),
+            rect(23.909, 5, 10.182, 48, 0),
+            rect(38.455, 5, 10.182, 48, 0),
+            rect(9.364, 24.2, 10.182, 28.8, 1),
+            rect(23.909, 19.4, 10.182, 33.6, 1),
+            rect(38.455, 14.6, 10.182, 38.4, 1),
+            rect(9.364, 43.4, 10.182, 9.6, 2),
+            rect(23.909, 33.8, 10.182, 19.2, 2),
+            rect(38.455, 24.2, 10.182, 28.8, 2),
         ],
     },
     groupedBar: {
         tooltip: 'groupedBarTooltip',
-        series: [rect(5, 9, 29, 20, 0), rect(5, 24, 41, 34, 1), rect(5, 38, 53, 49, 2)],
+        series: [rect(5, 9.364, 24, 10.182, 0), rect(5, 23.909, 36, 10.182, 1), rect(5, 38.455, 48, 10.182, 2)],
     },
     stackedBar: {
         tooltip: 'stackedBarTooltip',
         series: [
-            rect(5, 9, 29, 20, 0),
-            rect(5, 24, 41, 34, 0),
-            rect(5, 38, 53, 49, 0),
-            rect(5, 9, 23, 20, 1),
-            rect(5, 24, 32, 34, 1),
-            rect(5, 38, 41, 49, 1),
-            rect(5, 9, 11, 20, 2),
-            rect(5, 24, 14, 34, 2),
-            rect(5, 38, 17, 49, 2),
+            rect(5, 9.364, 24, 10.182, 0),
+            rect(5, 23.909, 36, 10.182, 0),
+            rect(5, 38.455, 48, 10.182, 0),
+            rect(5, 9.364, 18, 10.182, 1),
+            rect(5, 23.909, 27, 10.182, 1),
+            rect(5, 38.455, 36, 10.182, 1),
+            rect(5, 9.364, 6, 10.182, 2),
+            rect(5, 23.909, 9, 10.182, 2),
+            rect(5, 38.455, 12, 10.182, 2),
         ],
     },
     normalizedBar: {
         tooltip: 'normalizedBarTooltip',
         series: [
-            rect(5, 9, 53, 20, 0),
-            rect(5, 24, 53, 34, 0),
-            rect(5, 38, 53, 49, 0),
-            rect(5, 9, 34, 20, 1),
-            rect(5, 24, 39, 34, 1),
-            rect(5, 38, 43, 49, 1),
-            rect(5, 9, 15, 20, 2),
-            rect(5, 24, 24, 34, 2),
-            rect(5, 38, 34, 49, 2),
+            rect(5, 9.364, 48, 10.182, 0),
+            rect(5, 23.909, 48, 10.182, 0),
+            rect(5, 38.455, 48, 10.182, 0),
+            rect(5, 9.364, 28.8, 10.182, 1),
+            rect(5, 23.909, 33.6, 10.182, 1),
+            rect(5, 38.455, 38.4, 10.182, 1),
+            rect(5, 9.364, 9.6, 10.182, 2),
+            rect(5, 23.909, 19.2, 10.182, 2),
+            rect(5, 38.455, 28.8, 10.182, 2),
         ],
     },
     line: {
         tooltip: 'lineTooltip',
-        clip: true,
+        clip: PLOT_AREA,
         series: [
             line('M 5 46.143 L 29 32.429 L 53 18.714', 0),
             line('M 5 39.286 L 29 11.857 L 53 25.571', 1),
@@ -316,7 +325,7 @@ const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> 
     },
     stackedLine: {
         tooltip: 'stackedLineTooltip',
-        clip: true,
+        clip: PLOT_AREA,
         series: [
             line('M 5 49.308 L 29 41.923 L 53 34.538', 0),
             line('M 5 41.923 L 29 19.769 L 53 19.769', 1),
@@ -325,7 +334,7 @@ const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> 
     },
     normalizedLine: {
         tooltip: 'normalizedLineTooltip',
-        clip: true,
+        clip: PLOT_AREA,
         series: [
             line('M 5 50.423 L 29 44.302 L 53 32.06', 0),
             line('M 5 38.181 L 29 19.819 L 53 12.474', 1),
@@ -334,7 +343,7 @@ const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> 
     },
     area: {
         tooltip: 'groupedAreaTooltip',
-        clip: true,
+        clip: PLOT_AREA,
         series: [
             outlinedArea('M 5 46.143 L 29 32.429 L 53 18.714 L 53 53 L 29 53 L 5 53 L 5 46.143', 0),
             outlinedArea('M 5 39.286 L 29 11.857 L 53 25.571 L 53 53 L 29 53 L 5 53 L 5 39.286', 1),
@@ -343,7 +352,7 @@ const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> 
     },
     stackedArea: {
         tooltip: 'stackedAreaTooltip',
-        clip: true,
+        clip: PLOT_AREA,
         series: [
             area('M 5 49.308 L 29 41.923 L 53 34.538 L 53 53 L 29 53 L 5 53 L 5 49.308', 0),
             area('M 5 41.923 L 29 19.769 L 53 19.769 L 53 34.538 L 29 41.923 L 5 49.308 L 5 41.923', 1),
@@ -352,7 +361,7 @@ const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> 
     },
     normalizedArea: {
         tooltip: 'normalizedAreaTooltip',
-        clip: true,
+        clip: PLOT_AREA,
         series: [
             area('M 5 50.423 L 29 44.302 L 53 32.06 L 53 56.544 L 29 56.544 L 5 56.544 L 5 50.423', 0),
             area('M 5 38.181 L 29 19.819 L 53 12.474 L 53 32.06 L 29 44.302 L 5 50.423 L 5 38.181', 1),
@@ -362,13 +371,13 @@ const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> 
     histogram: {
         tooltip: 'histogramTooltip',
         series: [
-            bin(5.5, 46.5, 11.5, 52.5),
-            bin(12.5, 35.5, 18.5, 52.5),
-            bin(19.5, 12.5, 25.5, 52.5),
-            bin(26.5, 5.5, 31.5, 52.5),
-            bin(32.5, 16.5, 38.5, 52.5),
-            bin(39.5, 31.5, 45.5, 52.5),
-            bin(46.5, 49.5, 52.5, 52.5),
+            bin(5, 45.615, 6.857, 7.385),
+            bin(11.857, 34.539, 6.857, 18.462),
+            bin(18.714, 12.385, 6.857, 40.615),
+            bin(25.571, 5, 6.857, 48),
+            bin(32.429, 16.077, 6.857, 36.923),
+            bin(39.286, 30.846, 6.857, 22.154),
+            bin(46.143, 49.308, 6.857, 3.692),
         ],
     },
     pie: {
@@ -617,7 +626,7 @@ const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> 
     },
     scatter: {
         tooltip: 'scatterTooltip',
-        clip: true,
+        clip: PLOT_AREA,
         series: [
             dot(17.644, 11, 2.5, 0),
             dot(25.289, 36.2, 2.5, 1),
@@ -631,7 +640,7 @@ const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> 
     },
     bubble: {
         tooltip: 'bubbleTooltip',
-        clip: true,
+        clip: PLOT_AREA,
         series: [
             dot(14.3, 38.6, 5, 0, 0.7),
             dot(31.5, 33.8, 7, 1, 0.7),
@@ -642,7 +651,11 @@ const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> 
     },
     rangeBar: {
         tooltip: 'rangeBarTooltip',
-        series: [rect(9, 10, 20, 38, 0), rect(24, 15, 34, 48, 1), rect(38, 10, 49, 38, 2)],
+        series: [
+            rect(9.364, 10, 10.182, 27.918, 0),
+            rect(23.909, 15.429, 10.182, 32.571, 1),
+            rect(38.455, 10, 10.182, 27.918, 2),
+        ],
     },
     rangeArea: {
         tooltip: 'rangeAreaTooltip',
@@ -654,24 +667,28 @@ const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> 
     },
     columnLineCombo: {
         tooltip: 'columnLineComboTooltip',
-        clip: true,
-        series: [rect(15, 17, 24, 53, 0), rect(34, 5, 43, 53, 1), line('M 5 29 L 17 41 L 29 17 L 41 29 L 53 41', 2)],
+        clip: PLOT_AREA,
+        series: [
+            rect(14.6, 17, 9.6, 36, 0),
+            rect(33.8, 5, 9.6, 48, 1),
+            line('M 5 29 L 17 41 L 29 17 L 41 29 L 53 41', 2),
+        ],
     },
     areaColumnCombo: {
         tooltip: 'areaColumnComboTooltip',
-        clip: true,
+        clip: PLOT_AREA,
         series: [
             filled('M 5 13 L 17 21 L 29 5 L 41 13 L 53 21 L 53 53 L 5 53', 0, 0.8),
-            rect(15, 29, 24, 53, 1),
-            rect(34, 17, 43, 53, 2),
+            rect(14.6, 29, 9.6, 24, 1),
+            rect(33.8, 17, 9.6, 36, 2),
         ],
     },
     customCombo: {
         tooltip: 'customComboTooltip',
-        clip: true,
+        clip: PLOT_AREA,
         series: [
-            rect(15, 17, 24, 53, 0),
-            rect(34, 5, 43, 53, 1),
+            rect(14.6, 17, 9.6, 36, 0),
+            rect(33.8, 5, 9.6, 48, 1),
             line('M 5 29 L 17 41 L 29 17 L 41 29 L 53 41', 2),
             {
                 d: 'M 25.76 43.46 L 31.27 48.53 M 49.86 22 L 49.86 22 C 49.02 21.318 47.896 21.096 46.86 21.41 L 46.86 21.41 C 45.555 21.773 44.388 22.518 43.51 23.55 L 25.51 43.8 L 25.43 43.89 L 23.01 51.89 L 22.83 52.46 L 31.02 48.86 L 49.02 28.52 L 49.02 28.52 C 49.941 27.522 50.543 26.272 50.75 24.93 L 50.75 24.93 C 50.954 23.866 50.621 22.771 49.86 22 Z M 41.76 25.5 L 47.34 30.5 M 40.74 26.65 L 46.25 31.71',
@@ -683,7 +700,7 @@ const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> 
     },
     funnel: {
         tooltip: 'funnelTooltip',
-        clip: true,
+        clip: PLOT_AREA,
         axes: 'none',
         series: [
             filled('M 53 5 L 53 18.241 L 5 18.241 L 5 5', 0),
@@ -693,7 +710,7 @@ const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> 
     },
     coneFunnel: {
         tooltip: 'coneFunnelTooltip',
-        clip: true,
+        clip: PLOT_AREA,
         axes: 'none',
         series: [
             filled('M 53 5 L 42.2 19.897 L 15.8 19.897 L 5 5', 0),
@@ -703,7 +720,7 @@ const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> 
     },
     pyramid: {
         tooltip: 'pyramidTooltip',
-        clip: true,
+        clip: PLOT_AREA,
         axes: 'none',
         series: [
             filled('M 29 5 L 35.4 18.241 L 22.6 18.241', 0),
