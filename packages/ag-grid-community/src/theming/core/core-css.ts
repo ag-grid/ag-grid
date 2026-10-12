@@ -229,6 +229,11 @@ export interface CoreParams extends SharedThemeParams {
     footerRowBorder: BorderValue;
 
     /**
+     * Horizontal border between the grand total row and the data rows: above it when the grand total is at the bottom, below it when at the top. This border is drawn on top of the existing border, so should be opaque to hide it.
+     */
+    grandTotalRowBorder: BorderValue;
+
+    /**
      * Duration in seconds of the background color transition if headerCellHoverBackgroundColor or headerCellMovingBackgroundColor is set
      */
     headerCellBackgroundTransitionDuration: DurationValue;
@@ -859,6 +864,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     footerRowBorder: {
         ref: 'rowBorder',
     },
+    grandTotalRowBorder: false,
     columnBorder: {
         style: 'solid',
         width: 1,
