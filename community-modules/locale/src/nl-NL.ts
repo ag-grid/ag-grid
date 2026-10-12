@@ -895,9 +895,11 @@ export const AG_GRID_LOCALE_NL_NL = {
     columnHeaderEditCancel: 'Annuleren',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Geen geschikte kolommen gevonden.',
     calculatedColumn: 'Berekende kolom',
     calculatedColumnAdd: 'Berekende kolom toevoegen',
     calculatedColumnEdit: 'Berekende kolom bewerken',
+    calculatedColumnView: 'Berekende kolom bekijken',
     calculatedColumnRemove: 'Berekende kolom verwijderen',
     calculatedColumnTitle: 'Titel',
     calculatedColumnType: 'Type',
@@ -912,6 +914,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     calculatedColumnExpressionAmbiguousReference:
         'Dubbelzinnige kolomverwijzing "${variable}". Gebruik de lijst Kolommen of een specifieker groepspad.',
     calculatedColumnExpressionUnknownReference: 'Onbekende kolomverwijzing "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Kolom "${variable}" kan niet worden gebruikt in deze expressie.',
     calculatedColumnExpressionEmpty: 'Voer een expressie in',
     calculatedColumnTitleEmpty: 'Voer een titel in',
     calculatedColumnApply: 'Toepassen',

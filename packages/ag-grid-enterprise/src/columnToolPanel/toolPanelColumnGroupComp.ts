@@ -174,6 +174,8 @@ export class ToolPanelColumnGroupComp extends Component {
         this.addManagedElementListeners(eLabel, { click: this.onLabelClicked.bind(this) });
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
         this.addManagedListeners(modelItem, { expandedChanged: this.onExpandChanged.bind(this) });
+        // Grid-level, not the grid group's own event: a custom layout keeps this copy while the grid's group is
+        // replaced, and a child's rename can change the name a group headerValueGetter returns.
         this.addManagedEventListeners({ columnHeaderNameChanged: this.onHeaderNameChanged.bind(this) });
 
         const touchListener = new TouchListener(this.getGui(), false);

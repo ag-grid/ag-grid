@@ -916,9 +916,11 @@ export const AG_GRID_LOCALE_ID_ID = {
     columnHeaderEditCancel: 'Batal',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Tidak ditemukan kolom yang memenuhi syarat.',
     calculatedColumn: 'Kolom Terhitung',
     calculatedColumnAdd: 'Tambah Kolom Terhitung',
     calculatedColumnEdit: 'Sunting Kolom Terhitung',
+    calculatedColumnView: 'Lihat Kolom Terhitung',
     calculatedColumnRemove: 'Hapus Kolom Terhitung',
     calculatedColumnTitle: 'Judul',
     calculatedColumnType: 'Tipe',
@@ -933,6 +935,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     calculatedColumnExpressionAmbiguousReference:
         'Referensi kolom ambigu "${variable}". Gunakan daftar Kolom atau jalur grup yang lebih spesifik.',
     calculatedColumnExpressionUnknownReference: 'Referensi kolom tidak diketahui "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Kolom "${variable}" tidak dapat digunakan dalam ekspresi ini.',
     calculatedColumnExpressionEmpty: 'Masukkan ekspresi',
     calculatedColumnTitleEmpty: 'Masukkan judul',
     calculatedColumnApply: 'Terapkan',

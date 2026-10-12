@@ -1029,6 +1029,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (rowNode.footer) {
             classes.push('ag-row-footer');
+            if (rowNode.level === -1) {
+                classes.push('ag-row-grand-total');
+            }
         }
 
         classes.push('ag-row-level-' + this.rowLevel);

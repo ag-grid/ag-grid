@@ -921,9 +921,11 @@ export const AG_GRID_LOCALE_FIL_PH = {
     columnHeaderEditCancel: 'Kanselahin',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Walang nakitang angkop na column.',
     calculatedColumn: 'Kinalkulang Column',
     calculatedColumnAdd: 'Magdagdag ng Kinalkulang Column',
     calculatedColumnEdit: 'I-edit ang Kinalkulang Column',
+    calculatedColumnView: 'Tingnan ang Kinalkulang Column',
     calculatedColumnRemove: 'Alisin ang Kinalkulang Column',
     calculatedColumnTitle: 'Pamagat',
     calculatedColumnType: 'Uri',
@@ -938,6 +940,8 @@ export const AG_GRID_LOCALE_FIL_PH = {
     calculatedColumnExpressionAmbiguousReference:
         'Malabo ang reference ng column "${variable}". Gamitin ang listahan ng Column o mas tiyak na landas ng grupo.',
     calculatedColumnExpressionUnknownReference: 'Hindi kilalang reference ng column "${variable}".',
+    calculatedColumnExpressionRestrictedReference:
+        'Hindi maaaring gamitin ang column na "${variable}" sa expression na ito.',
     calculatedColumnExpressionEmpty: 'Maglagay ng expression',
     calculatedColumnTitleEmpty: 'Maglagay ng pamagat',
     calculatedColumnApply: 'Ilapat',

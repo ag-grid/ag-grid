@@ -891,9 +891,11 @@ export const AG_GRID_LOCALE_ZH_CN = {
     columnHeaderEditCancel: '取消',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: '未找到符合条件的列。',
     calculatedColumn: '计算列',
     calculatedColumnAdd: '添加计算列',
     calculatedColumnEdit: '编辑计算列',
+    calculatedColumnView: '查看计算列',
     calculatedColumnRemove: '删除计算列',
     calculatedColumnTitle: '标题',
     calculatedColumnType: '类型',
@@ -907,6 +909,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     calculatedColumnDefaultTitle: '未命名',
     calculatedColumnExpressionAmbiguousReference: '列引用不明确 "${variable}"。请使用“列”列表或更具体的分组路径。',
     calculatedColumnExpressionUnknownReference: '未知的列引用 "${variable}"。',
+    calculatedColumnExpressionRestrictedReference: '此表达式中不能使用列 "${variable}"。',
     calculatedColumnExpressionEmpty: '请输入表达式',
     calculatedColumnTitleEmpty: '请输入标题',
     calculatedColumnApply: '应用',

@@ -27,13 +27,7 @@ export interface ChartSettingsPanel {
 }
 
 export type ChartFormatPanelGroup =
-    | 'chart'
-    | 'titles'
-    | 'legend'
-    | 'axis'
-    | 'horizontalAxis'
-    | 'verticalAxis'
-    | 'series';
+    'chart' | 'titles' | 'legend' | 'axis' | 'horizontalAxis' | 'verticalAxis' | 'series';
 
 export type ChartDataPanelGroup = 'categories' | 'series' | 'seriesChartType' | 'chartSpecific';
 
@@ -70,15 +64,7 @@ export interface ChartToolPanelsDef {
 }
 
 export type CrossFilterChartType =
-    | 'column'
-    | 'bar'
-    | 'line'
-    | 'scatter'
-    | 'bubble'
-    | 'pie'
-    | 'donut'
-    | 'doughnut'
-    | 'area';
+    'column' | 'bar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'donut' | 'doughnut' | 'area';
 
 export type ChartToolPanelMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat';
 export type ChartToolbarMenuItemOptions = 'chartLink' | 'chartUnlink' | 'chartDownload' | 'chartMenu';
@@ -136,10 +122,6 @@ export type ChartTypeExCombo = Exclude<ChartType, ComboChartType>;
 export type SeriesGroupType = 'grouped' | 'stacked' | 'normalized';
 
 export type DefaultChartMenuItem =
-    | 'chartEdit'
-    | 'chartAdvancedSettings'
-    | 'chartUnlink'
-    | 'chartLink'
-    | 'chartDownload';
+    'chartEdit' | 'chartAdvancedSettings' | 'chartUnlink' | 'chartLink' | 'chartDownload';
 
 export interface GridChartContext<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}

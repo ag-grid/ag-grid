@@ -1,4 +1,5 @@
 import { OpenInCTA } from '@ag-website-shared/components/open-in-cta/OpenInCTA';
+import { absoluteAiApiProxyUrls } from '@ag-website-shared/utils/aiApiProxy';
 import { cleanIndexHtml } from '@ag-website-shared/utils/cleanIndexHtml';
 import { fetchRuntimeFiles } from '@ag-website-shared/utils/fetchRuntimeFiles';
 import type { FileContents } from '@components/example-generator/types';
@@ -38,6 +39,9 @@ export const OpenInPlunkr: FunctionComponent<Props> = ({
                 const indexHtml = isDev ? cleanIndexHtml(html) : html;
                 const localFiles = { ...files };
                 stripOutExampleGeneratorCode(localFiles);
+                if (isDev) {
+                    absoluteAiApiProxyUrls(localFiles, window.location.origin);
+                }
                 const plunkrExampleFiles = {
                     ...runtimeFiles,
                     ...localFiles,

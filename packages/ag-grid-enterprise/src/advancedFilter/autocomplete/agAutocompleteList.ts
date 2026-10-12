@@ -83,6 +83,7 @@ export class AgAutocompleteList extends AgPopupComponent<
             useStartsWithSearch?: boolean;
             suggestFirstMatch?: boolean;
             autoSizeList?: boolean;
+            retainRoleWhenEmpty?: boolean;
             maxVisibleItems?: number;
             onListHeightChanged?: () => void;
             rowComponentCreator?: AutocompleteRowComponentCreator;
@@ -99,7 +100,9 @@ export class AgAutocompleteList extends AgPopupComponent<
     public postConstruct(): void {
         this.setupLoading();
         this.autocompleteEntries = this.params.autocompleteEntries;
-        this.virtualList = this.createManagedBean(new VirtualList({ cssIdentifier: 'autocomplete' }));
+        this.virtualList = this.createManagedBean(
+            new VirtualList({ cssIdentifier: 'autocomplete', retainRoleWhenEmpty: this.params.retainRoleWhenEmpty })
+        );
         const virtualList = this.virtualList;
         const virtualListGui = virtualList.getGui();
         virtualList.getAriaElement().id = this.getListId();

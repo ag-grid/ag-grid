@@ -915,9 +915,11 @@ export const AG_GRID_LOCALE_LV_LV = {
     columnHeaderEditCancel: 'Atcelt',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nav atrasta neviena piemērota kolonna.',
     calculatedColumn: 'Aprēķinātā kolonna',
     calculatedColumnAdd: 'Pievienot aprēķināto kolonnu',
     calculatedColumnEdit: 'Rediģēt aprēķināto kolonnu',
+    calculatedColumnView: 'Skatīt aprēķināto kolonnu',
     calculatedColumnRemove: 'Noņemt aprēķināto kolonnu',
     calculatedColumnTitle: 'Nosaukums',
     calculatedColumnType: 'Tips',
@@ -932,6 +934,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     calculatedColumnExpressionAmbiguousReference:
         'Neviennozīmīga kolonnas atsauce "${variable}". Izmantojiet kolonnu sarakstu vai precīzāku grupas ceļu.',
     calculatedColumnExpressionUnknownReference: 'Nezināma kolonnas atsauce "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Kolonnu "${variable}" nevar izmantot šajā izteiksmē.',
     calculatedColumnExpressionEmpty: 'Ievadiet izteiksmi',
     calculatedColumnTitleEmpty: 'Ievadiet nosaukumu',
     calculatedColumnApply: 'Piemērot',

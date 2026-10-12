@@ -900,9 +900,11 @@ export const AG_GRID_LOCALE_IT_IT = {
     columnHeaderEditCancel: 'Annulla',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nessuna colonna idonea trovata.',
     calculatedColumn: 'Colonna calcolata',
     calculatedColumnAdd: 'Aggiungi colonna calcolata',
     calculatedColumnEdit: 'Modifica colonna calcolata',
+    calculatedColumnView: 'Visualizza colonna calcolata',
     calculatedColumnRemove: 'Rimuovi colonna calcolata',
     calculatedColumnTitle: 'Titolo',
     calculatedColumnType: 'Tipo',
@@ -917,6 +919,8 @@ export const AG_GRID_LOCALE_IT_IT = {
     calculatedColumnExpressionAmbiguousReference:
         'Riferimento di colonna ambiguo "${variable}". Usa l\'elenco Colonne o un percorso di gruppo più specifico.',
     calculatedColumnExpressionUnknownReference: 'Riferimento di colonna sconosciuto "${variable}".',
+    calculatedColumnExpressionRestrictedReference:
+        'La colonna "${variable}" non può essere utilizzata in questa espressione.',
     calculatedColumnExpressionEmpty: "Inserisci un'espressione",
     calculatedColumnTitleEmpty: 'Inserisci un titolo',
     calculatedColumnApply: 'Applica',

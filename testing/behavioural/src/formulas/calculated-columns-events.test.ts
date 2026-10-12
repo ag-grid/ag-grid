@@ -2,6 +2,8 @@ import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
+import type { AgColumn, ColDef, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
+
 import {
     addCalculatedColumnDef,
     clickDialogButton,
@@ -16,6 +18,55 @@ import {
 
 describe('ag-grid calculated columns', () => {
     setupCalculatedColumnsSuite();
+
+    test('pivot mode tracks lifecycle and validity of primary calculated columns', async () => {
+        const changed = vi.fn();
+        const created = vi.fn();
+        const removed = vi.fn();
+        const validity = vi.fn();
+        const base: ColDef[] = [
+            { field: 'country', rowGroup: true },
+            { field: 'year', pivot: true },
+            { field: 'revenue', aggFunc: 'sum' },
+        ];
+        const profit: ColDef = { colId: 'profit', calculatedExpression: '[revenue] * 2', aggFunc: 'sum' };
+        const api = createGrid('calculated-pivot-lifecycle', {
+            pivotMode: true,
+            rowData: [{ id: 'r1', country: 'UK', year: 2026, revenue: 10 }],
+            columnDefs: [...base, profit],
+            onCalculatedColumnCreated: created,
+            onCalculatedColumnExpressionChanged: changed,
+            onCalculatedColumnRemoved: removed,
+            onCalculatedColumnValidationStateChanged: validity,
+        });
+        await asyncSetTimeout(0);
+        api.setGridOption('columnDefs', [...base, { ...profit, calculatedExpression: '[revenue] * 3' }]);
+        await waitFor(() =>
+            expect(changed).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    column: api.getColumn('profit'),
+                    oldExpression: '[revenue] * 2',
+                    expression: '[revenue] * 3',
+                    source: 'api',
+                })
+            )
+        );
+        expect(changed).toHaveBeenCalledTimes(1);
+        expect(created).not.toHaveBeenCalled();
+        expect(removed).not.toHaveBeenCalled();
+        expect(validity).not.toHaveBeenCalled();
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe(30);
+        api.setGridOption('columnDefs', base);
+        await waitFor(() => expect(removed).toHaveBeenCalledTimes(1));
+        api.setGridOption('columnDefs', [...base, profit]);
+        await waitFor(() => expect(created).toHaveBeenCalledTimes(1));
+        api.setGridOption('columnDefs', [...base.slice(0, 2), profit]);
+        await waitFor(() =>
+            expect(validity).toHaveBeenCalledWith(expect.objectContaining({ valid: false, reason: 'unknownReference' }))
+        );
+        api.setGridOption('columnDefs', [...base, profit]);
+        await waitFor(() => expect(validity).toHaveBeenCalledWith(expect.objectContaining({ valid: true })));
+    });
 
     test('dispatches calculated column columnDefs lifecycle events', async () => {
         const created = vi.fn();
@@ -80,6 +131,55 @@ describe('ag-grid calculated columns', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r1 revenue:10 cost:3
         `);
+    });
+
+    test('a column whose formula reference shifts when the first calculated column is added is told once, of its final reference', () => {
+        const api = createGrid('calculated-formula-ref-once', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
+        const cost = api.getColumn('cost') as AgColumn;
+        const seen: (string | null)[] = [];
+        cost.addEventListener('formulaRefChanged', () => seen.push(cost.formulaRef));
+
+        api.setGridOption('columnDefs', [
+            { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+            { field: 'revenue' },
+            { field: 'cost' },
+        ]);
+
+        expect(seen).toEqual(['C']);
+    });
+
+    test('a rendered cell is not refreshed again by newColumnsLoaded when the first calculated column turns formulas on', async () => {
+        let refreshes = 0;
+        class CountingRenderer implements ICellRendererComp {
+            private readonly eGui = document.createElement('span');
+            public init(params: ICellRendererParams): void {
+                this.eGui.textContent = String(params.value);
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                ++refreshes;
+                return true;
+            }
+        }
+        const columnDefs: ColDef[] = [{ field: 'revenue', cellRenderer: CountingRenderer }, { field: 'cost' }];
+        const api = createGrid('calculated-formula-refresh-once', {
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs,
+        });
+        await asyncSetTimeout(0);
+
+        api.setGridOption('columnDefs', [
+            ...columnDefs,
+            { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+        ]);
+
+        // not a third time by `newColumnsLoaded`
+        expect(refreshes).toBe(2);
     });
 
     test('calculated column columnDefs mutations dispatch newColumnsLoaded', async () => {

@@ -658,7 +658,7 @@ export interface _ColumnAutosizeApi {
 }
 
 export interface _ColumnResizeApi {
-    /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
+    /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnResized` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
     setColumnWidths(
         columnWidths: { key: ColKey; newWidth: number }[],
         finished?: boolean,
@@ -1568,7 +1568,7 @@ export interface _AggregationGridApi<TData> {
     clearAggFuncs(): void;
 
     /**
-     * Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function.
+     * Sets the agg function for a column, making it a value column; a blank `aggFunc` stops it aggregating. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function.
      * @agModule `RowGroupingModule / PivotModule / TreeDataModule`
      */
     setColumnAggFunc<TValue = any>(key: ColKey<TData, TValue>, aggFunc: ColAggFunc<TData, TValue>): void;

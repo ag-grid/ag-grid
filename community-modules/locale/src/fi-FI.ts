@@ -897,9 +897,11 @@ export const AG_GRID_LOCALE_FI_FI = {
     columnHeaderEditCancel: 'Peruuta',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Sopivia sarakkeita ei löytynyt.',
     calculatedColumn: 'Laskettu sarake',
     calculatedColumnAdd: 'Lisää laskettu sarake',
     calculatedColumnEdit: 'Muokkaa laskettua saraketta',
+    calculatedColumnView: 'Näytä laskettu sarake',
     calculatedColumnRemove: 'Poista laskettu sarake',
     calculatedColumnTitle: 'Otsikko',
     calculatedColumnType: 'Tyyppi',
@@ -914,6 +916,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     calculatedColumnExpressionAmbiguousReference:
         'Moniselitteinen sarakeviittaus "${variable}". Käytä Sarakkeet-luetteloa tai tarkempaa ryhmäpolkua.',
     calculatedColumnExpressionUnknownReference: 'Tuntematon sarakeviittaus "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Saraketta "${variable}" ei voi käyttää tässä lausekkeessa.',
     calculatedColumnExpressionEmpty: 'Anna lauseke',
     calculatedColumnTitleEmpty: 'Anna otsikko',
     calculatedColumnApply: 'Käytä',

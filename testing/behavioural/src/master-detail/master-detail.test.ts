@@ -11,12 +11,12 @@ import {
 import type { MockInstance } from 'vitest';
 
 import type { GetDetailRowDataParams, GetRowIdParams, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
+import { ClientSideRowModelModule, ColumnApiModule, enableDevValidations, getGridElement } from 'ag-grid-community';
 import { MasterDetailModule } from 'ag-grid-enterprise';
 
 describe('ag-grid master detail', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, MasterDetailModule],
+        modules: [ClientSideRowModelModule, ColumnApiModule, MasterDetailModule],
     });
     let consoleErrorSpy: MockInstance | undefined;
     let consoleWarnSpy: MockInstance | undefined;
@@ -450,5 +450,54 @@ describe('ag-grid master detail', () => {
         await asyncSetTimeout(0);
 
         expect(consoleWarnSpy).not.toHaveBeenCalled();
+    });
+    test('a detail row kept while collapsed is shown again sized to the columns as they are now', async () => {
+        const details: HTMLElement[] = [];
+        class Detail {
+            private readonly eGui = document.createElement('div');
+            constructor() {
+                details.push(this.eGui);
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                return true;
+            }
+        }
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'l', pinned: 'left', width: 100 },
+                { field: 'v', width: 200 },
+            ],
+            rowData: [{ id: '1', l: 'x', v: 'y' }],
+            getRowId: (params) => params.data.id,
+            masterDetail: true,
+            isRowMaster: () => true,
+            detailCellRenderer: Detail,
+            keepDetailRows: true,
+            embedFullWidthRows: true,
+        });
+        const sectionWidths = () =>
+            ['ag-grid-pinned-left-cells', 'ag-grid-scrolling-cells', 'ag-grid-pinned-right-cells'].map(
+                (section) =>
+                    getGridElement(api)!.querySelector<HTMLElement>(`.ag-full-width-row .${section}`)?.style.width
+            );
+        const master = api.getRowNode('1')!;
+
+        master.setExpanded(true);
+        await asyncSetTimeout(0);
+        expect(sectionWidths()).toEqual(['0px', '300px', '0px']);
+        const built = details.length;
+
+        master.setExpanded(false);
+        await asyncSetTimeout(0);
+        api.setColumnWidths([{ key: 'l', newWidth: 150 }]);
+        master.setExpanded(true);
+        await asyncSetTimeout(0);
+        expect(sectionWidths()).toEqual(['0px', '350px', '0px']);
+        // the kept row is shown again, not built anew
+        expect(details.length).toBe(built);
+        expect(getGridElement(api)!.querySelector('.ag-full-width-row')!.contains(details[0])).toBe(true);
     });
 });

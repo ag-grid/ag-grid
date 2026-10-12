@@ -11,6 +11,19 @@
     min-height: var(--ag-list-item-height);
 }
 
+:where(.ag-select-readonly) .ag-picker-field-wrapper {
+    --ag-picker-button-background-color: var(--ag-input-disabled-background-color);
+    --ag-picker-button-focus-background-color: var(--ag-input-disabled-background-color);
+    --ag-picker-button-border: var(--ag-input-disabled-border);
+
+    color: var(--ag-input-disabled-text-color);
+}
+
+:where(.ag-select-readonly) .ag-picker-field-display {
+    user-select: text;
+    cursor: text;
+}
+
 :where(.ag-select) {
     .ag-picker-field-wrapper {
         padding-left: var(--ag-spacing);

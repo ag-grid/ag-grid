@@ -892,9 +892,11 @@ export const AG_GRID_LOCALE_JA_JP = {
     columnHeaderEditCancel: 'キャンセル',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: '使用可能な列が見つかりません。',
     calculatedColumn: '計算列',
     calculatedColumnAdd: '計算列を追加',
     calculatedColumnEdit: '計算列を編集',
+    calculatedColumnView: '計算列を表示',
     calculatedColumnRemove: '計算列を削除',
     calculatedColumnTitle: 'タイトル',
     calculatedColumnType: '種類',
@@ -909,6 +911,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     calculatedColumnExpressionAmbiguousReference:
         '列参照があいまいです "${variable}"。列リストを使用するか、より具体的なグループパスを指定してください。',
     calculatedColumnExpressionUnknownReference: '不明な列参照です "${variable}"。',
+    calculatedColumnExpressionRestrictedReference: '列 "${variable}" はこの式では使用できません。',
     calculatedColumnExpressionEmpty: '式を入力してください',
     calculatedColumnTitleEmpty: 'タイトルを入力してください',
     calculatedColumnApply: '適用',

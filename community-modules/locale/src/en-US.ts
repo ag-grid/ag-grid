@@ -902,9 +902,11 @@ export const AG_GRID_LOCALE_EN_US = {
     columnHeaderEditCancel: 'Cancel',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'No eligible columns found.',
     calculatedColumn: 'Calculated Column',
     calculatedColumnAdd: 'Add Calculated Column',
     calculatedColumnEdit: 'Edit Calculated Column',
+    calculatedColumnView: 'View Calculated Column',
     calculatedColumnRemove: 'Remove Calculated Column',
     calculatedColumnTitle: 'Title',
     calculatedColumnType: 'Type',
@@ -919,6 +921,7 @@ export const AG_GRID_LOCALE_EN_US = {
     calculatedColumnExpressionAmbiguousReference:
         'Ambiguous column reference "${variable}". Use the Columns list or a more specific group path.',
     calculatedColumnExpressionUnknownReference: 'Unknown column reference "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Column "${variable}" cannot be used in this expression.',
     calculatedColumnExpressionEmpty: 'Enter an expression',
     calculatedColumnTitleEmpty: 'Enter a title',
     calculatedColumnApply: 'Apply',

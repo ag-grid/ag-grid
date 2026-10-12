@@ -423,7 +423,7 @@ export interface GridOptions<TData = any> {
      * Enables and configures Calculated Columns.
      * @agModule `CalculatedColumnsModule`
      */
-    calculatedColumns?: CalculatedColumnsGridOption;
+    calculatedColumns?: CalculatedColumnsGridOption<TData>;
     /**
      * Configures editing of column and column group header names via the UI. Requires
      * `headerNameEditable` on the relevant Column or Column Group Definitions.
@@ -2671,7 +2671,7 @@ export interface GridOptions<TData = any> {
      */
     onColumnMoved?(event: ColumnMovedEvent<TData>): void;
     /**
-     * A value column was added or removed.
+     * A value column was added, removed or reordered, or its aggregation function changed.
      */
     onColumnValueChanged?(event: ColumnValueChangedEvent<TData>): void;
     /**

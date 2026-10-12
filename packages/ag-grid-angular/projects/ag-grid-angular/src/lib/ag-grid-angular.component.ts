@@ -590,7 +590,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Enables and configures Calculated Columns.
      * @agModule `CalculatedColumnsModule`
      */
-    @Input() public calculatedColumns: CalculatedColumnsGridOption | undefined = undefined;
+    @Input() public calculatedColumns: CalculatedColumnsGridOption<TData> | undefined = undefined;
     /** Configures editing of column and column group header names via the UI. Requires
      * `headerNameEditable` on the relevant Column or Column Group Definitions.
      * @agModule `ColumnHeaderEditModule`
@@ -2336,7 +2336,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** A column was moved.
      */
     @Output() public columnMoved: EventEmitter<ColumnMovedEvent<TData>> = new EventEmitter<ColumnMovedEvent<TData>>();
-    /** A value column was added or removed.
+    /** A value column was added, removed or reordered, or its aggregation function changed.
      */
     @Output() public columnValueChanged: EventEmitter<ColumnValueChangedEvent<TData>> = new EventEmitter<
         ColumnValueChangedEvent<TData>

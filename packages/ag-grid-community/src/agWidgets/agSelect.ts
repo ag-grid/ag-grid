@@ -9,7 +9,7 @@ import type {
     ITooltipFeature,
     TooltipCtrl,
 } from 'ag-stack';
-import { KeyCode, _isElementOverflowingCallback, _setAriaLabelledBy } from 'ag-stack';
+import { KeyCode, _isElementOverflowingCallback, _setAriaLabelledBy, _setAriaReadOnly } from 'ag-stack';
 
 import type { ListOption } from './agList';
 import { AgList } from './agList';
@@ -28,6 +28,7 @@ export interface AgSelectParams<TComponentSelectorType extends string, TValue = 
     pickerAriaLabelKey?: string;
     pickerAriaLabelValue?: string;
     placeholder?: string;
+    readOnly?: boolean;
 }
 type AgSelectEvent = 'selectedItem';
 export interface AgSelectSelectedItemEvent extends AgEvent<'selectedItem'> {
@@ -78,6 +79,7 @@ export class AgSelect<
         | undefined;
     private tooltipFeature?: ITooltipFeature;
     private commitKeyboardEvent?: KeyboardEvent;
+    private readOnly = false;
 
     constructor(config?: AgSelectParams<TComponentSelectorType, TValue>) {
         super({
@@ -109,7 +111,7 @@ export class AgSelect<
         this.createListComponent();
         this.eWrapper.tabIndex = this.gos.get('tabIndex')!;
 
-        const { options, value, placeholder } = this.config;
+        const { options, value, placeholder, readOnly } = this.config;
         if (options != null) {
             this.addOptions(options);
         }
@@ -119,6 +121,9 @@ export class AgSelect<
         }
         if (placeholder && value == null) {
             this.eDisplayField.textContent = placeholder;
+        }
+        if (readOnly != null) {
+            this.setReadOnly(readOnly);
         }
 
         this.addManagedElementListeners(this.eWrapper, { focusout: this.onWrapperFocusOut.bind(this) });
@@ -189,7 +194,32 @@ export class AgSelect<
         super.beforeHidePicker();
     }
 
+    public setReadOnly(readOnly: boolean): this {
+        this.readOnly = readOnly;
+        _setAriaReadOnly(this.getAriaElement(), readOnly);
+        this.toggleCss('ag-select-readonly', readOnly);
+        if (readOnly) {
+            this.hidePicker();
+        }
+        return this;
+    }
+
+    protected override onLabelOrWrapperMouseDown(e?: MouseEvent): void {
+        if (this.readOnly) {
+            this.eWrapper.focus();
+            return;
+        }
+        super.onLabelOrWrapperMouseDown(e);
+    }
+
     protected override onKeyDown(e: KeyboardEvent): void {
+        if (this.readOnly) {
+            if ((e.ctrlKey || e.metaKey) && e.code === KeyCode.A) {
+                e.preventDefault();
+                this.eDisplayField.ownerDocument.getSelection()?.selectAllChildren(this.eDisplayField);
+            }
+            return;
+        }
         const { key } = e;
 
         if (key === KeyCode.TAB) {
@@ -230,7 +260,7 @@ export class AgSelect<
 
     public override showPicker() {
         const listComponent = this.listComponent;
-        if (!listComponent) {
+        if (this.readOnly || !listComponent) {
             return;
         }
 

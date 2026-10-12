@@ -649,7 +649,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
             }
             callback(node, index);
         };
-        this.forEachNode(wrappedCallback);
+        this.forEachNodeAfterFilterAndSort(wrappedCallback, true);
     }
 
     public forEachNodeAfterFilterAndSort(

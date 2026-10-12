@@ -911,9 +911,11 @@ export const AG_GRID_LOCALE_BN_BD = {
     columnHeaderEditCancel: 'বাতিল করুন',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'কোনো উপযুক্ত কলাম পাওয়া যায়নি।',
     calculatedColumn: 'গণনাকৃত কলাম',
     calculatedColumnAdd: 'গণনাকৃত কলাম যোগ করুন',
     calculatedColumnEdit: 'গণনাকৃত কলাম সম্পাদনা করুন',
+    calculatedColumnView: 'গণনাকৃত কলাম দেখুন',
     calculatedColumnRemove: 'গণনাকৃত কলাম সরান',
     calculatedColumnTitle: 'শিরোনাম',
     calculatedColumnType: 'ধরন',
@@ -928,6 +930,7 @@ export const AG_GRID_LOCALE_BN_BD = {
     calculatedColumnExpressionAmbiguousReference:
         'অস্পষ্ট কলাম রেফারেন্স "${variable}"। কলাম তালিকা বা আরও নির্দিষ্ট গ্রুপ পথ ব্যবহার করুন।',
     calculatedColumnExpressionUnknownReference: 'অজানা কলাম রেফারেন্স "${variable}"।',
+    calculatedColumnExpressionRestrictedReference: 'এই এক্সপ্রেশনে "${variable}" কলামটি ব্যবহার করা যাবে না।',
     calculatedColumnExpressionEmpty: 'একটি এক্সপ্রেশন লিখুন',
     calculatedColumnTitleEmpty: 'একটি শিরোনাম লিখুন',
     calculatedColumnApply: 'প্রয়োগ করুন',

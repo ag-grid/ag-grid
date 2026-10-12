@@ -1,3 +1,5 @@
+import type { ColDef } from 'ag-grid-community';
+
 export interface CalculatedColumnDataTypeOption {
     value: string;
     text: string;
@@ -6,7 +8,7 @@ export interface CalculatedColumnDataTypeOption {
 export interface CalculatedColumnDraft {
     colId: string;
     headerName: string;
-    cellDataType: string;
+    cellDataType: ColDef['cellDataType'];
     calculatedExpression: string;
 }
 

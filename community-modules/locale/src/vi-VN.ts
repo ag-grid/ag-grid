@@ -893,9 +893,11 @@ export const AG_GRID_LOCALE_VI_VN = {
     columnHeaderEditCancel: 'Hủy',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Không tìm thấy cột đủ điều kiện.',
     calculatedColumn: 'Cột tính toán',
     calculatedColumnAdd: 'Thêm cột tính toán',
     calculatedColumnEdit: 'Chỉnh sửa cột tính toán',
+    calculatedColumnView: 'Xem cột tính toán',
     calculatedColumnRemove: 'Xóa cột tính toán',
     calculatedColumnTitle: 'Tiêu đề',
     calculatedColumnType: 'Loại',
@@ -910,6 +912,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     calculatedColumnExpressionAmbiguousReference:
         'Tham chiếu cột không rõ ràng "${variable}". Hãy dùng danh sách Cột hoặc đường dẫn nhóm cụ thể hơn.',
     calculatedColumnExpressionUnknownReference: 'Tham chiếu cột không xác định "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Không thể sử dụng cột "${variable}" trong biểu thức này.',
     calculatedColumnExpressionEmpty: 'Nhập một biểu thức',
     calculatedColumnTitleEmpty: 'Nhập tiêu đề',
     calculatedColumnApply: 'Áp dụng',

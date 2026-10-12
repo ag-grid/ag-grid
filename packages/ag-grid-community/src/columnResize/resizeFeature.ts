@@ -110,7 +110,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     }
 
     public toggleColumnResizing(resizing: boolean): void {
-        this.column.resizing = resizing;
+        this.column.setResizing(resizing);
         this.comp.toggleCss('ag-column-resizing', resizing);
     }
 

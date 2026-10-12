@@ -11,8 +11,19 @@
     );
 }
 
-.ag-set-filter-item-missing {
-    color: var(--ag-subtle-text-color);
+.ag-set-filter-item-missing-content {
+    display: flex;
+    column-gap: var(--ag-spacing);
+}
+
+.ag-set-filter-item-missing-value {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ag-set-filter-item-missing-label {
+    flex: none;
 }
 
 .ag-set-filter-item-checkbox {

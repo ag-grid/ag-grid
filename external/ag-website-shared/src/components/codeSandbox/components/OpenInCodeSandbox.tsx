@@ -1,5 +1,6 @@
 import type { InternalFramework } from '@ag-grid-types';
 import { OpenInCTA } from '@ag-website-shared/components/open-in-cta/OpenInCTA';
+import { absoluteAiApiProxyUrls } from '@ag-website-shared/utils/aiApiProxy';
 import { cleanIndexHtml } from '@ag-website-shared/utils/cleanIndexHtml';
 import { fetchRuntimeFiles } from '@ag-website-shared/utils/fetchRuntimeFiles';
 import type { FileContents } from '@components/example-generator/types';
@@ -41,6 +42,9 @@ export const OpenInCodeSandbox: FunctionComponent<Props> = ({
                 const indexHtml = isDev ? cleanIndexHtml(html) : html;
                 const localFiles = { ...files };
                 stripOutExampleGeneratorCode(localFiles);
+                if (isDev) {
+                    absoluteAiApiProxyUrls(localFiles, window.location.origin);
+                }
                 // Non-React examples run on the `static` CodeSandbox runtime and resolve AG Grid straight
                 // from `index.html`, so a `package.json` would be misleading and is not sent.
                 const sandboxFiles = {

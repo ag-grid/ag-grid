@@ -291,5 +291,9 @@
         --ag-column-header-edit-highlight-color: #bbb;
         --ag-calculated-column-parent-suggestion-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 80%);
         --ag-calculated-column-suggestion-list-width: 200px;
+        --ag-calculated-column-reference-color: #3269c6;
+        --ag-calculated-column-function-color: #007c1f;
+        --ag-calculated-column-operator-color: var(--ag-foreground-color);
+        --ag-calculated-column-error-underline-color: var(--ag-invalid-color);
     }
 }

@@ -7,12 +7,7 @@ import type { IRowNode } from './iRowNode';
 export type PdfPageOrientation = 'portrait' | 'landscape';
 
 export type PdfBuiltInFontFamily =
-    | 'Helvetica'
-    | 'Helvetica-Bold'
-    | 'Times-Roman'
-    | 'Times-Bold'
-    | 'Courier'
-    | 'Courier-Bold';
+    'Helvetica' | 'Helvetica-Bold' | 'Times-Roman' | 'Times-Bold' | 'Courier' | 'Courier-Bold';
 
 export type PdfFontFamily = PdfBuiltInFontFamily | (string & {});
 

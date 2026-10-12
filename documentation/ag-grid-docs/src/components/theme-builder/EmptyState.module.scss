@@ -18,19 +18,6 @@
     text-align: center;
 }
 
-.iconLight {
-    #{$selector-darkmode} & {
-        display: none;
-    }
-}
-
-.iconDark {
-    display: none;
-
-    #{$selector-darkmode} & {
-        display: block;
-    }
-}
 .paragraphyEmpty {
     text-align: center;
     line-height: 1.5;
