@@ -503,6 +503,22 @@ describe('Resizing pinned columns wider than the viewport', () => {
             expect(totalWidth(api, ['c', 'd', 'e'])).toBe(540);
         });
 
+        test('Alt+Shift+Arrow grows an overflowing pinned group by taking width from the next pinned group', async () => {
+            const api = await createGroupedGrid([
+                ['a', 'b'],
+                ['c', 'd', 'e'],
+            ]);
+            const headerCell = query<HTMLElement>('.ag-header-group-cell[col-id^="g0_"]');
+            headerCell.focus();
+            const init = { key: 'ArrowRight', altKey: true, shiftKey: true, bubbles: true, cancelable: true };
+            headerCell.dispatchEvent(new KeyboardEvent('keydown', init));
+            headerCell.dispatchEvent(new KeyboardEvent('keyup', init));
+            await asyncSetTimeout(0);
+
+            expect(totalWidth(api, ['a', 'b'])).toBeGreaterThan(400);
+            expect(totalWidth(api, ['a', 'b', 'c', 'd', 'e'])).toBe(1000);
+        });
+
         test('double-clicking a pinned group handle autosizes it only up to the viewport limit', async () => {
             const api = await createGroupedGrid([['a', 'b']]);
 

@@ -5,6 +5,7 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import { _laneOfPinned, isColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
+import { getColGroupAfter } from '../entities/agColumnGroup';
 import type { ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
@@ -163,6 +164,13 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         return !!colAfter && colAfter.pinnedLane !== 1;
     }
 
+    /** A shift resize of a group takes the width from the next group, so the total pinned width does not change when that group is pinned too. */
+    private isShiftResizeBetweenPinnedGroups(columnGroup: AgColumnGroup, shiftKey: boolean): boolean {
+        const groupAfter = shiftKey ? getColGroupAfter(this.beans.visibleCols, columnGroup) : null;
+        const takeFromCols = groupAfter?.getDisplayedLeafColumns().filter((col) => col.isResizable());
+        return !!takeFromCols?.length && takeFromCols.every((col) => col.pinnedLane !== 1);
+    }
+
     public getPinnedWidth(): number {
         return this.leftWidth + this.rightWidth;
     }
@@ -179,7 +187,10 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
     }
 
     public getHeaderResizeDiff(diff: number, column: AgColumn | AgColumnGroup, shiftKey: boolean): number {
-        if (isColumn(column) && this.isShiftResizeBetweenPinnedColumns(column, shiftKey)) {
+        const isShiftResizeBetweenPinned = isColumn(column)
+            ? this.isShiftResizeBetweenPinnedColumns(column, shiftKey)
+            : this.isShiftResizeBetweenPinnedGroups(column, shiftKey);
+        if (isShiftResizeBetweenPinned) {
             return diff;
         }
 
