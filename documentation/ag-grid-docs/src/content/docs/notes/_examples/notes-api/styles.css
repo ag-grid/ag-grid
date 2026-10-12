@@ -1,17 +1,4 @@
-.toolbar-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-}
-
-.toolbar-field {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.toolbar-field input[type='text'] {
+#note-author {
     width: 140px;
 }
 
