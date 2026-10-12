@@ -2,7 +2,7 @@ import { DragEventDispatcher, TestGridsManager, asyncSetTimeout, dispatchGridSiz
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 
-import type { ColumnPinnedType, GridApi } from 'ag-grid-community';
+import type { ColumnPinnedType, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule, ScrollApiModule } from 'ag-grid-community';
 
 const overflowingColumnDefs = [
@@ -178,13 +178,18 @@ describe('Resizing pinned columns wider than the viewport', () => {
     });
 
     // Returning [] from processUnpinnedColumns keeps 5 x 200px columns pinned in a 600px grid.
-    const createGrid = async (columnCount: number, pinned: ColumnPinnedType = 'left'): Promise<GridApi> => {
+    const createGrid = async (
+        columnCount: number,
+        pinned: ColumnPinnedType = 'left',
+        gridOptions: GridOptions = {}
+    ): Promise<GridApi> => {
         const fields = ['a', 'b', 'c', 'd', 'e'].slice(0, columnCount);
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: fields.map((field) => ({ field, width: 200 })),
             defaultColDef: { pinned, resizable: true },
             rowData: [{ a: 'a', b: 'b', c: 'c', d: 'd', e: 'e' }],
             processUnpinnedColumns: () => [],
+            ...gridOptions,
         });
         await asyncSetTimeout(0);
         expect(api.getColumnState().every((column) => column.pinned === pinned)).toBe(true);
@@ -202,11 +207,12 @@ describe('Resizing pinned columns wider than the viewport', () => {
         await asyncSetTimeout(0);
     };
 
-    const pressResizeKey = async (colId: string, key: 'ArrowLeft' | 'ArrowRight'): Promise<void> => {
+    const pressResizeKey = async (colId: string, key: 'ArrowLeft' | 'ArrowRight', shiftKey = false): Promise<void> => {
         const headerCell = query<HTMLElement>(`.ag-header-cell[col-id="${colId}"]`);
         headerCell.focus();
-        headerCell.dispatchEvent(new KeyboardEvent('keydown', { key, altKey: true, bubbles: true, cancelable: true }));
-        headerCell.dispatchEvent(new KeyboardEvent('keyup', { key, altKey: true, bubbles: true, cancelable: true }));
+        const init = { key, altKey: true, shiftKey, bubbles: true, cancelable: true };
+        headerCell.dispatchEvent(new KeyboardEvent('keydown', init));
+        headerCell.dispatchEvent(new KeyboardEvent('keyup', init));
         await asyncSetTimeout(0);
     };
 
@@ -250,5 +256,30 @@ describe('Resizing pinned columns wider than the viewport', () => {
         expect(width(api, 'b')).toBe(200);
         await pressResizeKey('b', 'ArrowRight');
         expect(width(api, 'b')).toBeLessThan(200);
+    });
+
+    // Shift-resize takes the width from the next column, so the pinned section keeps its total width.
+    test('overflowing pinned columns can be grown by shift-resize when the next column is in the same section', async () => {
+        const api = await createGrid(5);
+
+        await pressResizeKey('b', 'ArrowRight', true);
+        expect(width(api, 'b')).toBeGreaterThan(200);
+        expect(width(api, 'c')).toBeLessThan(200);
+        expect(width(api, 'b') + width(api, 'c')).toBe(400);
+    });
+
+    test('colResizeDefault shift lets overflowing pinned columns grow by mouse within the section', async () => {
+        const api = await createGrid(5, 'left', { colResizeDefault: 'shift' });
+
+        await dragResizeBy('a', 60);
+        expect(width(api, 'a')).toBeGreaterThan(200);
+        expect(width(api, 'a') + width(api, 'b')).toBe(400);
+    });
+
+    test('shift-resize still cannot grow the last pinned column, which has no neighbour in its section', async () => {
+        const api = await createGrid(5);
+
+        await pressResizeKey('e', 'ArrowRight', true);
+        expect(width(api, 'e')).toBe(200);
     });
 });
