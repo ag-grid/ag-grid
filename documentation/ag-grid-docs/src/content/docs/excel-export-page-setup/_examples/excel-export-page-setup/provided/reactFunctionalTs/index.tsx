@@ -168,7 +168,7 @@ const GridExample = () => {
                             </label>
                         </div>
                         <div className="controls-row">
-                            <input type="submit" style={{ fontWeight: 'bold' }} value="Export to Excel" />
+                            <input type="submit" className="primary" value="Export to Excel" />
                         </div>
                     </form>
                     <div className="grid-wrapper">

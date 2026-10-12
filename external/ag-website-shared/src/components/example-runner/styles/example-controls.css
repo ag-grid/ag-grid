@@ -18,6 +18,12 @@
     --button-active-border: #d0d5dd;
     --button-active-hover-bg: #dfe2e8;
 
+    /* The website's primary button (`--color-button-primary-*`), which the example page cannot
+       read because it does not load the design system. */
+    --button-primary-fg: #fff;
+    --button-primary-bg: #0e4491;
+    --button-primary-hover-bg: #00388f;
+
     --input-accent: #0e4491;
     --input-focus-border: #3d7acd;
     --range-track-bg: #efefef;
@@ -52,6 +58,10 @@
     --button-active-bg: #344054;
     --button-active-border: #475467;
     --button-active-hover-bg: #3d4a5f;
+
+    --button-primary-fg: #141d2c;
+    --button-primary-bg: #a9c5ec;
+    --button-primary-hover-bg: #d4e3f8;
 
     --input-accent: #a9c5ec;
     --input-focus-border: #3d7acd;
@@ -279,6 +289,20 @@ body > #highlighter {
         inset 0 0 0 1px var(--input-focus-border),
         inset 0 0 0 2px var(--main-bg);
     outline: none;
+}
+
+/* Primary button: the one action an example is built around, such as Export, stands out from the
+   controls that configure it. */
+.example-controls :is(button, input[type='submit']).primary {
+    font-weight: 600;
+    color: var(--button-primary-fg);
+    background-color: var(--button-primary-bg);
+    border-color: var(--button-primary-bg);
+}
+
+.example-controls :is(button, input[type='submit']).primary:hover {
+    background-color: var(--button-primary-hover-bg);
+    border-color: var(--button-primary-hover-bg);
 }
 
 /* Toggle buttons: a pressed button reflects that its single on/off option is applied */

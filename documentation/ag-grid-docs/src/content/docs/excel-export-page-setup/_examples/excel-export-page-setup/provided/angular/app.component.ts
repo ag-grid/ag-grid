@@ -85,7 +85,7 @@ ModuleRegistry.registerModules([
                 <label for="footer">Footer <input type="number" id="footer" value="0.3" min="0" step="0.05" /></label>
             </div>
             <div class="controls-row">
-                <input type="submit" style="font-weight: bold;" value="Export to Excel" />
+                <input type="submit" class="primary" value="Export to Excel" />
             </div>
         </form>
         <div class="grid-wrapper">
