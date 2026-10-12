@@ -6,8 +6,8 @@ import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell
 import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
 
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
-    private lastResizeAmount: number;
     private resizeStartWidth: number;
+    private resizeStartPinnedWidth: number;
     private resizeWithShiftKey: boolean;
 
     constructor(
@@ -73,28 +73,27 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     }
 
     private onResizing(finished: boolean, resizeAmount: number): void {
-        const { column: key, lastResizeAmount, resizeStartWidth, beans } = this;
-
-        const resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
-        const newWidth = resizeStartWidth + resizeAmountNormalised;
-
-        const columnWidths = [{ key, newWidth }];
-
+        const { column: key, resizeStartWidth, beans } = this;
         const { pinnedCols, ctrlsSvc, colResize } = beans;
 
-        if (this.column.pinnedLane !== 1) {
-            const leftWidth = pinnedCols?.leftWidth ?? 0;
-            const rightWidth = pinnedCols?.rightWidth ?? 0;
-            const bodyWidth = ctrlsSvc.getGridBodyCtrl().getViewportWidthWithoutScrollbar() - 50;
+        let newWidth = resizeStartWidth + this.normaliseResizeAmount(resizeAmount);
+        // measured from the applied width, as a width outside min/max is never applied
+        const actualWidth = key.getActualWidth();
+        const growth = newWidth - actualWidth;
 
-            if (leftWidth + rightWidth + (resizeAmountNormalised - lastResizeAmount) > bodyWidth) {
-                return;
-            }
+        if (
+            growth > 0 &&
+            key.pinnedLane !== 1 &&
+            !pinnedCols?.isShiftResizeWithinPinnedSection(key, this.resizeWithShiftKey)
+        ) {
+            const bodyWidth = ctrlsSvc.getGridBodyCtrl().getViewportWidthWithoutScrollbar() - 50;
+            // pinned columns that overflowed when the drag started can grow back to their starting width
+            const room = Math.max(bodyWidth, this.resizeStartPinnedWidth) - this.getPinnedWidth();
+            // fill the remaining space; still set the width so a finished drag completes
+            newWidth = actualWidth + Math.min(growth, Math.max(room, 0));
         }
 
-        this.lastResizeAmount = resizeAmountNormalised;
-
-        colResize?.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, 'uiColumnResized');
+        colResize?.setColumnWidths([{ key, newWidth }], this.resizeWithShiftKey, finished, 'uiColumnResized');
 
         if (finished) {
             this.toggleColumnResizing(false);
@@ -103,10 +102,15 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
     private onResizeStart(shiftKey: boolean): void {
         this.resizeStartWidth = this.column.getActualWidth();
-        this.lastResizeAmount = 0;
+        this.resizeStartPinnedWidth = this.getPinnedWidth();
         this.resizeWithShiftKey = shiftKey;
 
         this.toggleColumnResizing(true);
+    }
+
+    private getPinnedWidth(): number {
+        const { pinnedCols } = this.beans;
+        return (pinnedCols?.leftWidth ?? 0) + (pinnedCols?.rightWidth ?? 0);
     }
 
     public toggleColumnResizing(resizing: boolean): void {
