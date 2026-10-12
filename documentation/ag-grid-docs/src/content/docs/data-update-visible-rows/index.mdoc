@@ -92,20 +92,20 @@ api.subscribeToVisibleRows(handlers, {
 
 ## Examples
 
-### Client-Side Row Model
+### Client-Side Row Model {% enterpriseIcon /%}
 
-The example below streams price updates to the subscribed rows only, using [Async Transactions](./data-update-high-frequency/).
+The example below [groups](./grouping/) stocks by sector. The handlers send the subscribed row IDs over a simulated websocket, which streams price updates for the subscribed stocks only. The updates are applied with [Async Transactions](./data-update-high-frequency/).
 
-- The panel shows the number of subscribed rows, and a log of the latest batches with their reason and row count.
+- The panel shows the number of subscribed rows, the number of updates the server has sent, and a log of the latest batches with their reason and row count.
 - Scrolling, sorting and filtering produce subscribe and unsubscribe batches.
-- **New Row Data** replaces every row. The old rows are unsubscribed with the `reset` reason, and the new rows subscribed with the `load` reason.
+- **New Row Data** replaces every stock with a new ID. The old stocks are unsubscribed with the `reset` reason, and the new stocks subscribed with the `load` reason.
 - **Stop** stops the stream and the subscription, unsubscribing all remaining rows with the `stop` reason.
 
 {% gridExampleRunner title="Visible Rows with the Client-Side Row Model" name="client-side-visible-rows" exampleHeight=615 /%}
 
 ### Server-Side Row Model {% enterpriseIcon /%}
 
-The example below groups rows by country and uses a simulated stream that only updates subscribed rows.
+The example below shows a portfolio of regions, sectors and stocks as [Tree Data](./server-side-model-tree-data/). Rows are loaded over a simulated websocket, and the same socket streams price updates for the subscribed stocks only. The updates are applied with [Transactions](./server-side-model-updating-transactions/), using each row's `parentKeys` as the route.
 
 - Scrolling, expanding groups and loading new blocks produce subscribe and unsubscribe batches.
 - **Purge** reloads all rows. The old rows are unsubscribed with the `reset` reason, and the new rows subscribed as they load.

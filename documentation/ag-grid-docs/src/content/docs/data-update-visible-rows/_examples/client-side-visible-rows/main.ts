@@ -1,16 +1,19 @@
-import type { GetRowIdParams, GridApi, GridOptions, VisibleRowRef } from 'ag-grid-community';
+import type { GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     HighlightChangesModule,
     ModuleRegistry,
     NumberFilterModule,
-    RowApiModule,
     TextFilterModule,
     VisibleRowsModule,
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
+
+import type { ServerMessage, Stock } from './fakeSocket';
+import { FakeSocket, fetchStocks } from './fakeSocket';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -22,42 +25,32 @@ ModuleRegistry.registerModules([
     ClientSideRowModelApiModule,
     HighlightChangesModule,
     NumberFilterModule,
-    RowApiModule,
+    RowGroupingModule,
     TextFilterModule,
     VisibleRowsModule,
 ]);
 
-interface Stock {
-    id: string;
-    symbol: string;
-    price: number;
-}
-
-const subscribed = new Map<string, VisibleRowRef>();
+const subscribed = new Set<string>();
 let updatesSent = 0;
-let dataVersion = 0;
 let stopSubscription: (() => void) | undefined;
-let streamTimer: ReturnType<typeof setInterval> | undefined;
 
 let gridApi: GridApi<Stock>;
 
-function createRowData(): Stock[] {
-    dataVersion++;
-    return Array.from({ length: 1000 }, (_, i) => ({
-        id: `${dataVersion}-${i}`,
-        symbol: `STK${String(i).padStart(4, '0')}`,
-        price: Math.round(Math.random() * 10000) / 100,
-    }));
-}
-
 const gridOptions: GridOptions<Stock> = {
     columnDefs: [
+        { field: 'sector', rowGroup: true, hide: true },
         { field: 'symbol', filter: 'agTextColumnFilter' },
         { field: 'price', filter: 'agNumberColumnFilter', enableCellChangeFlash: true },
     ],
     defaultColDef: { flex: 1 },
-    rowData: createRowData(),
+    groupDefaultExpanded: 1,
+    rowData: fetchStocks(),
     getRowId: (params: GetRowIdParams<Stock>) => params.data.id,
+    onGridReady: (params) => {
+        const socket = new FakeSocket();
+        socket.onmessage = (message) => onServerMessage(params.api, message);
+        startSubscription(params.api, socket);
+    },
 };
 
 function renderCount() {
@@ -75,43 +68,39 @@ function addLogEntry(text: string) {
     }
 }
 
-function startSubscription() {
-    stopSubscription = gridApi.subscribeToVisibleRows({
+function onServerMessage(api: GridApi<Stock>, message: ServerMessage) {
+    updatesSent += message.rows.length;
+    // ignore updates that were already on their way when their rows were unsubscribed
+    const update = message.rows.filter((row) => subscribed.has(row.id));
+    api.applyTransactionAsync({ update });
+    renderCount();
+}
+
+function startSubscription(api: GridApi<Stock>, socket: FakeSocket) {
+    stopSubscription = api.subscribeToVisibleRows({
         onSubscribe: (rows, params) => {
-            rows.forEach((row) => subscribed.set(row.id, row));
+            const ids = rows.map((row) => row.id);
+            ids.forEach((id) => subscribed.add(id));
+            socket.send({ type: 'subscribe', ids });
             addLogEntry(`subscribe ${rows.length} (${params.reason})`);
             renderCount();
         },
         onUnsubscribe: (rows, params) => {
-            rows.forEach((row) => subscribed.delete(row.id));
+            const ids = rows.map((row) => row.id);
+            ids.forEach((id) => subscribed.delete(id));
+            socket.send({ type: 'unsubscribe', ids });
             addLogEntry(`unsubscribe ${rows.length} (${params.reason})`);
             renderCount();
         },
     });
 }
 
-function startStream() {
-    // only the subscribed rows receive price updates
-    streamTimer = setInterval(() => {
-        const update: Stock[] = [];
-        for (const id of subscribed.keys()) {
-            const data = gridApi.getRowNode(id)?.data;
-            if (data) {
-                update.push({ ...data, price: Math.round((data.price + Math.random() - 0.5) * 100) / 100 });
-            }
-        }
-        updatesSent += update.length;
-        gridApi.applyTransactionAsync({ update });
-        renderCount();
-    }, 1000);
-}
-
 function resetData() {
-    gridApi.setGridOption('rowData', createRowData());
+    gridApi.setGridOption('rowData', fetchStocks());
 }
 
 function stopStream() {
-    clearInterval(streamTimer);
+    // unsubscribing every row also stops the server streaming
     stopSubscription?.();
     stopSubscription = undefined;
 }
@@ -120,6 +109,4 @@ function stopStream() {
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-    startSubscription();
-    startStream();
 });
