@@ -1726,8 +1726,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ServerSideRowModelModule`
      */
     @Input({ transform: booleanAttribute }) public serverSideEnableClientSideSort: boolean | undefined = undefined;
-    /** When enabled, async transactions queued within `asyncTransactionWaitMillis` are merged so that each row is changed at most once per merged batch, leaving the same rows and data as applying them one after the other. Merging is skipped when `serverSideEnableClientSideSort` is enabled.
-     * Transactions are grouped by route, so transactions for different routes can be applied in a different order from the queue. `isApplyServerSideTransaction` is still called once per transaction, but every transaction in a merged batch is checked against the grid state from before that batch is applied. `getRowId` can also be called for rows in transactions that `isApplyServerSideTransaction` then cancels.
+    /** When enabled, async transactions queued within `asyncTransactionWaitMillis` are coalesced so that each row is changed at most once per batch, with the same outcome as applying them one after the other. Ignored when `serverSideEnableClientSideSort` is enabled.
+     * Transactions for different routes can be applied in a different order from the queue.
      * @default false
      * @agModule `ServerSideRowModelMergeTransactionsModule`
      */
@@ -2189,8 +2189,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ServerSideRowModelModule`
      */
     @Input() public isServerSideGroupOpenByDefault: IsServerSideGroupOpenByDefault<TData> | undefined = undefined;
-    /** Called before each server-side transaction is applied to a route's store, for both sync and async transactions. Return `false` to cancel the transaction: it is not applied and its result status is `Cancelled`. Use this to discard transactions already reflected in the loaded data, for example by comparing a version stored in `groupLevelInfo`.
-     * When `serverSideMergeAsyncTransactions` is enabled, it is still called once per transaction, but every transaction in a merged batch is checked against the grid state from before that batch is applied, and transactions for different routes can be checked in a different order from the queue.
+    /** Allows cancelling transactions.
+     * When `serverSideMergeAsyncTransactions` is enabled, each transaction in a coalesced batch is checked against the grid state from before that batch is applied.
      * @agModule `ServerSideRowModelModule`
      */
     @Input() public isApplyServerSideTransaction: IsApplyServerSideTransaction<TData> | undefined = undefined;

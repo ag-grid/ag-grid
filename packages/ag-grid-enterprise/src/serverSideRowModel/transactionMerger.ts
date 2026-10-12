@@ -3,6 +3,9 @@ import { GRAND_TOTAL_ROW_ID, ServerSideTransactionResultStatus } from 'ag-grid-c
 
 type TransactionRowOp = 'add' | 'update' | 'remove';
 
+// the store applies updates, then adds, then removes, whatever order they were given in
+const ROW_OPS: TransactionRowOp[] = ['update', 'add', 'remove'];
+
 export interface TransactionMergeTarget {
     /** The id the store resolves for `data` when applying `op`. */
     getRowId(data: any, op: TransactionRowOp): string | null | undefined;
@@ -42,6 +45,13 @@ export function _applyMergedTransactions(
     let plan = new BatchPlan();
     let planned: { index: number; entries: RowEntry[] }[] = [];
 
+    const applyAlone = (index: number, entries: RowEntry[]) => {
+        const transaction = transactions[index];
+        results[index] = target.isAccepted(transaction)
+            ? target.apply(transaction, new Map(entries.map(({ id, data }) => [data, id])))
+            : { status: ServerSideTransactionResultStatus.Cancelled };
+    };
+
     const applyPlanned = () => {
         if (planned.length === 0) {
             return;
@@ -49,21 +59,18 @@ export function _applyMergedTransactions(
         let batch = new MergeBatch();
         for (let i = 0, len = planned.length; i < len; ++i) {
             const { index, entries } = planned[i];
-            const transaction = transactions[index];
             if (batch.mixesCachedAndUncachedRemoves(entries, target) || replacesOwnUpdateEffects(entries, target)) {
                 // a removal that misses some ids and deletes others marks rows for refresh, and a row updated twice
                 // with effects that can't be skipped needs both updates, so either must stay a call of its own
                 batch.apply(transactions, target, results);
                 batch = new MergeBatch();
-                results[index] = target.isAccepted(transaction)
-                    ? target.apply(transaction, getRowIds(entries))
-                    : { status: ServerSideTransactionResultStatus.Cancelled };
+                applyAlone(index, entries);
             } else {
                 if (batch.skipsUpdateEffects(entries, target)) {
                     batch.apply(transactions, target, results);
                     batch = new MergeBatch();
                 }
-                if (target.isAccepted(transaction)) {
+                if (target.isAccepted(transactions[index])) {
                     batch.accept(index, entries, target);
                 } else {
                     results[index] = { status: ServerSideTransactionResultStatus.Cancelled };
@@ -76,13 +83,10 @@ export function _applyMergedTransactions(
     };
 
     for (let index = 0, len = transactions.length; index < len; ++index) {
-        const transaction = transactions[index];
-        const { entries, mergeable } = getRowEntries(transaction, target);
+        const { entries, mergeable } = getRowEntries(transactions[index], target);
         if (!mergeable) {
             applyPlanned();
-            results[index] = target.isAccepted(transaction)
-                ? target.apply(transaction, getRowIds(entries))
-                : { status: ServerSideTransactionResultStatus.Cancelled };
+            applyAlone(index, entries);
             continue;
         }
         if (!plan.canAdd(entries)) {
@@ -122,13 +126,8 @@ function getRowEntries(
         return { entries, mergeable: false };
     }
 
-    // the store applies updates, then adds, then removes, whatever order they were given in
-    const opArrays: [TransactionRowOp, any[] | undefined][] = [
-        ['update', transaction.update],
-        ['add', transaction.add],
-        ['remove', transaction.remove],
-    ];
-    for (const [op, rows] of opArrays) {
+    for (const op of ROW_OPS) {
+        const rows = transaction[op];
         if (!rows) {
             continue;
         }
@@ -147,22 +146,9 @@ function getRowEntries(
     return { entries, mergeable: true };
 }
 
-function getRowIds(entries: RowEntry[]): Map<any, string> | undefined {
-    if (entries.length === 0) {
-        return undefined;
-    }
-    const rowIds = new Map<any, string>();
-    for (let i = 0, len = entries.length; i < len; ++i) {
-        const { id, data } = entries[i];
-        rowIds.set(data, id);
-    }
-    return rowIds;
-}
-
 /** Matches the order in which the store's object-keyed add map lists ids: array-index keys first, ascending. */
 function isArrayIndexKey(id: string): boolean {
-    const key = String(id);
-    return /^(0|[1-9]\d*)$/.test(key) && Number(key) < 4294967295;
+    return /^(0|[1-9]\d*)$/.test(id) && Number(id) < 4294967295;
 }
 
 /**
@@ -222,11 +208,10 @@ class MergeBatch {
         for (let i = 0, len = entries.length; i < len; ++i) {
             const { op, id, data } = entries[i];
             if (op === 'update') {
-                if (updates.has(id) || (!removes.has(id) && target.isRowCached(id))) {
-                    updates.set(id, data);
-                } else {
+                if (!this.isRowPresent(id, target)) {
                     continue;
                 }
+                updates.set(id, data);
             } else if (op === 'add') {
                 if (adds.has(id)) {
                     if (this.addedBy.get(id) === transactionIndex) {
@@ -317,22 +302,15 @@ class MergeBatch {
 
         const merged: ServerSideTransaction = {};
         const rowIds = new Map<any, string>();
-        const toRows = (rowsById: Map<string, any>) => {
-            const rows: any[] = [];
-            for (const [id, data] of rowsById) {
-                rowIds.set(data, id);
-                rows.push(data);
+        const rowsByOp = { update: this.updates, add: this.adds, remove: this.removes };
+        for (const op of ROW_OPS) {
+            const rowsById = rowsByOp[op];
+            if (rowsById.size) {
+                merged[op] = Array.from(rowsById, ([id, data]) => {
+                    rowIds.set(data, id);
+                    return data;
+                });
             }
-            return rows;
-        };
-        if (this.updates.size) {
-            merged.update = toRows(this.updates);
-        }
-        if (this.adds.size) {
-            merged.add = toRows(this.adds);
-        }
-        if (this.removes.size) {
-            merged.remove = toRows(this.removes);
         }
 
         const hasChanges = merged.update || merged.add || merged.remove;
@@ -348,28 +326,19 @@ class MergeBatch {
         }
 
         const nodesById = new Map<string, IRowNode>();
-        for (const nodes of [result.update, result.add, result.remove]) {
-            if (!nodes) {
-                continue;
-            }
-            for (let i = 0, len = nodes.length; i < len; ++i) {
-                const node = nodes[i];
+        for (const op of ROW_OPS) {
+            for (const node of result[op] ?? []) {
                 nodesById.set(node.id!, node);
             }
         }
 
         for (let i = 0, len = transactionIndexes.length; i < len; ++i) {
             const index = transactionIndexes[i];
-            const transaction = transactions[index];
             const callerResult: ServerSideTransactionResult = { status };
-            if (transaction.update?.length) {
-                callerResult.update = [];
-            }
-            if (transaction.add?.length) {
-                callerResult.add = [];
-            }
-            if (transaction.remove?.length) {
-                callerResult.remove = [];
+            for (const op of ROW_OPS) {
+                if (transactions[index][op]?.length) {
+                    callerResult[op] = [];
+                }
             }
             results[index] = callerResult;
         }
