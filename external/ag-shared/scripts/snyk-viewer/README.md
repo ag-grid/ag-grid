@@ -97,7 +97,7 @@ Review decisions are persisted to `tmp/snyk-review-state.json` (keyed by vuln ID
 statuses: `resolved` / `skipped` / `reopened`). This file is local and not committed.
 Resolved/skipped vulns move to a collapsible "Reviewed" accordion at the bottom.
 
-The queue is divided into **three always-visible sections**, each collapsible via
+The queue is divided into **four always-visible sections**, each collapsible via
 `<details>`. A vuln can appear in multiple sections simultaneously.
 
 ### Section 1 — Dependency Upgrades
@@ -175,6 +175,29 @@ group), **By Dep** and **By File**. In By Dep, the body is sub-grouped by **top-
 - **✓ Add All to .snyk** — adds all checked paths across all non-skipped cards
 - **✓ Mark All as Resolved** — marks all non-skipped vulns as resolved
 
+### Section 4 — Workspace Packages
+
+A special case kept apart from Sections 1–3: any vuln whose dep path goes through a local Yarn
+workspace (a `<name>@0.0.0-use.local` entry in `vuln.from`) appears **only** here. Yarn Berry
+records every workspace at that placeholder version, so Snyk:
+
+- follows workspace links into each workspace's own (dev) dependencies — already scanned in that
+  workspace's project, e.g. `ag-grid-angular@0.0.0-use.local > karma@6.4.4 > braces@3.0.3`; and
+- matches the workspace package itself as version `0.0.0`, flagging advisories for old published
+  versions (e.g. `ag-grid-community` `<31.3.4`).
+
+Each row is one `(.snyk file, rule)` pair, where the rule is the path up to the first workspace
+with its version replaced by a wildcard: `ag-grid-angular@* > *` (Snyk does not match `@0.0.0`
+against `0.0.0-use.local`, so the wildcard is required). The row lists every vuln ID the rule would
+cover. **Add N ignores to .snyk** writes one entry per `(vuln ID, rule)` for the checked rows via
+`/add-snyk-ignores`, using the section's own expiry and one of two reasons — *workspace
+dependency*, or *workspace package itself* when the vulnerable package is the workspace — then
+reloads the ignore patterns.
+
+Row state comes only from the `.snyk` files and the scan's `filtered.ignore`, not from review
+decisions. A vuln reached only through workspaces is auto-resolved once all of its rules are in
+`.snyk`; a vuln with other paths too needs both its Section 3 paths and its workspace rules done.
+
 ---
 
 ## Server API
@@ -194,6 +217,7 @@ are `{ ok: true, ... }` or `{ ok: false, error: "..." }`.
 | `POST` | `/remove-dep` | Delete a dep entry from a `package.json` (`packageJsonPath`, `dep`, `field?`) |
 | `POST` | `/apply-resolution` | Write a `resolutions` entry to root `package.json` (`key`, `version`) |
 | `POST` | `/add-snyk-ignore` | Add or update an ignore entry in a `.snyk` file (`snykFile`, `vulnId`, `path`, `reason`, `expires`) |
+| `POST` | `/add-snyk-ignores` | Batch of `/add-snyk-ignore` entries (`entries: [{snykFile, vulnId, path, reason, expires}]`) |
 | `POST` | `/update-snyk` | Update stale dep-path keys in `.snyk` files (`updates: [{snykFile, vulnId, oldPath, newPath}]`) |
 | `GET` | `/run-snyk` | SSE stream — runs `yarn nx snyk:test:json`, emits stdout/stderr, reloads data on success |
 | `GET` | `/*.css`, `/*.js` | Static UI files served from the same directory |

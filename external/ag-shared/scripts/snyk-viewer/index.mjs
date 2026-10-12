@@ -623,6 +623,24 @@ const server = createServer((req, res) => {
         return;
     }
 
+    // ── add-snyk-ignores endpoint (batch of add-snyk-ignore entries) ──
+    if (req.method === 'POST' && url.pathname === '/add-snyk-ignores') {
+        readBody(req).then(body => {
+            try {
+                const { entries } = JSON.parse(body);
+                for (const { snykFile, vulnId, path: depPath, reason, expires } of (entries || [])) {
+                    addSnykIgnoreEntry(snykFile, vulnId, depPath, reason, expires);
+                }
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ ok: true, added: entries?.length ?? 0 }));
+            } catch (err) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ ok: false, error: err.message }));
+            }
+        });
+        return;
+    }
+
     // ── reset-review-state endpoint ──
     if (req.method === 'POST' && url.pathname === '/reset-review-state') {
         try {

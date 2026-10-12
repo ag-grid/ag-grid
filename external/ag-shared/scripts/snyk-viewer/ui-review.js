@@ -12,6 +12,28 @@
         'MCP/dev tooling - not a directly exposed production dependency',
     ];
 
+    // Yarn Berry records every local workspace package at this placeholder version.
+    const WORKSPACE_VERSION_SUFFIX = '@0.0.0-use.local';
+    const WORKSPACE_REASONS = {
+        dependency: 'Local workspace package - its dependencies are scanned and triaged in its own project',
+        self: 'Local workspace package (0.0.0-use.local) - matched against advisories for old published versions',
+    };
+
+    // Snyk follows workspace links into each workspace's own (dev) dependencies, and matches the
+    // workspace itself as version 0.0.0. Both are noise in the consuming project, so a path through
+    // a workspace is ignored with one wildcard rule: the path up to the workspace, then `@* > *`.
+    function workspaceIgnoreRule(vuln) {
+        const deps = vuln.from?.slice(1) || [];
+        const wsIdx = deps.findIndex(d => d.endsWith(WORKSPACE_VERSION_SUFFIX));
+        if (wsIdx === -1) return null;
+        const workspace = deps[wsIdx].slice(0, -WORKSPACE_VERSION_SUFFIX.length);
+        return {
+            rule: [...deps.slice(0, wsIdx), `${workspace}@*`, '*'].join(' > '),
+            workspace,
+            selfFlagged: deps[deps.length - 1].endsWith(WORKSPACE_VERSION_SUFFIX),
+        };
+    }
+
     window.initReviewQueue = function (projects, ignorePatternsByFileInit, reviewState, sharedExpiry, _rootPackageName) {
         let ignorePatternsByFile = ignorePatternsByFileInit;
         const { esc, sevClass, stripVer, getSnykFilePath, getNearIgnoredPath,
@@ -25,6 +47,9 @@
             }
         }
         const reportVulnIds = new Set(allVulnEntries.map(e => e.vuln.id));
+
+        // Paths through a local workspace are handled only by the Workspace Packages section
+        const depVulnEntries = allVulnEntries.filter(e => !workspaceIgnoreRule(e.vuln));
 
         // Local mutable copy of review state
         const localRS = JSON.parse(JSON.stringify(reviewState));
@@ -66,7 +91,7 @@
 
             // Section 1: Dep groups — Map: depName → { depName, vulns: Map<id,{id,vuln}>, files: Map<pkgPath,version> }
             const depGroups = new Map();
-            for (const { vuln, project } of allVulnEntries) {
+            for (const { vuln, project } of depVulnEntries) {
                 const dec = decisions[vuln.id];
                 if (dec?.status === 'resolved' || dec?.status === 'skipped') continue;
                 const topDep = vuln.from?.[1] || '';
@@ -82,7 +107,7 @@
 
             // Section 2: Resolution groups — Map: pkgName → { fixVersion, items: [{id,vuln,entries}] }
             const resGroups = new Map();
-            for (const { vuln, project } of allVulnEntries) {
+            for (const { vuln, project } of depVulnEntries) {
                 const dec = decisions[vuln.id];
                 if (dec?.status === 'resolved' || dec?.status === 'skipped') continue;
                 const fix = sameMajorFixVersion(vuln);
@@ -104,7 +129,7 @@
             const nearItems = new Map();   // snykFile → [{id,vuln,entry,nearMatch,resolved}]
             const ignoreVulns = new Map(); // id → {id,vuln,paths:[{snykFile,depPath,topLevelDep}]}
 
-            for (const { vuln, project } of allVulnEntries) {
+            for (const { vuln, project } of depVulnEntries) {
                 const id = vuln.id;
                 const decision = decisions[id];
                 if (decision?.status === 'resolved' || decision?.status === 'skipped') continue;
@@ -139,10 +164,29 @@
                 }
             }
 
+            // Workspace Packages: one row per (.snyk file, wildcard rule), listing the vulns the rule covers.
+            // Driven only by the .snyk files, not by review decisions.
+            const workspaceRules = new Map(); // snykFile\0rule → { snykFile, rule, vulns: Map<id, {vuln, selfFlagged, ignored}> }
+            function addWorkspaceVuln(project, vuln, ws, suppressed) {
+                const snykFile = getSnykFilePath(project);
+                const key = snykFile + '\0' + ws.rule;
+                if (!workspaceRules.has(key)) workspaceRules.set(key, { snykFile, rule: ws.rule, vulns: new Map() });
+                const vulns = workspaceRules.get(key).vulns;
+                if (vulns.has(vuln.id)) return;
+                const ignored = suppressed || !!ignorePatternsByFile[snykFile]?.[vuln.id]?.some(e => e.path === ws.rule);
+                vulns.set(vuln.id, { vuln, selfFlagged: ws.selfFlagged, ignored });
+            }
+            for (const { vuln, project } of allVulnEntries) {
+                const ws = workspaceIgnoreRule(vuln);
+                if (ws) addWorkspaceVuln(project, vuln, ws, false);
+            }
+
             // Include vulns suppressed by .snyk (filtered.ignore) — show as already-resolved in Snyk Ignores
             for (const project of projects) {
                 for (const vuln of (project.filtered?.ignore || [])) {
                     const id = vuln.id;
+                    const ws = workspaceIgnoreRule(vuln);
+                    if (ws) { addWorkspaceVuln(project, vuln, ws, true); continue; }
                     if (decisions[id]?.status === 'resolved') continue;
                     const snykFile = getSnykFilePath(project);
                     const depPath = (vuln.from?.slice(1) || []).join(' > ');
@@ -168,17 +212,32 @@
                 if (entry) reviewed.push({ id, vuln: entry.vuln, decision: dec });
             }
 
+            const pendingWorkspaceIds = new Set();
+            for (const { vulns } of workspaceRules.values()) {
+                for (const [id, { ignored }] of vulns) if (!ignored) pendingWorkspaceIds.add(id);
+            }
+
             // Auto-resolve vulns whose every path is already covered by a .snyk entry
             const autoResolvedIds = new Set();
             for (const [id, { vuln, paths }] of ignoreVulns) {
-                if (paths.length && paths.every(p => p.alreadyIgnored) && !seenReviewed.has(id)) {
+                if (paths.length && paths.every(p => p.alreadyIgnored) && !pendingWorkspaceIds.has(id) && !seenReviewed.has(id)) {
                     autoResolvedIds.add(id);
                     seenReviewed.add(id);
                     reviewed.push({ id, vuln, decision: { status: 'resolved', resolution: 'snyk-ignore', note: 'All paths already in .snyk' } });
                 }
             }
+            // Vulns reached only through workspaces resolve once all their workspace rules are in .snyk
+            const nearIds = new Set([...nearItems.values()].flat().map(item => item.id));
+            for (const { vulns } of workspaceRules.values()) {
+                for (const [id, { vuln }] of vulns) {
+                    if (ignoreVulns.has(id) || nearIds.has(id) || pendingWorkspaceIds.has(id) || seenReviewed.has(id)) continue;
+                    autoResolvedIds.add(id);
+                    seenReviewed.add(id);
+                    reviewed.push({ id, vuln, decision: { status: 'resolved', resolution: 'snyk-ignore', note: 'All workspace paths in .snyk' } });
+                }
+            }
 
-            return { depGroups, resGroups, ignoreData: { nearItems, ignoreVulns, autoResolvedIds }, reviewed };
+            return { depGroups, resGroups, ignoreData: { nearItems, ignoreVulns, autoResolvedIds }, workspaceRules, reviewed };
         }
 
         // ── HTML helpers ──
@@ -668,6 +727,72 @@
             </details>`;
         }
 
+        // ── Section 4: Workspace Packages ──
+        function renderWorkspaceSection(workspaceRules) {
+            if (!workspaceRules.size) return '';
+            const rows = [...workspaceRules.values()]
+                .map(r => ({ ...r, pending: [...r.vulns].filter(([, v]) => !v.ignored) }))
+                .sort((a, b) => (!a.pending.length - !b.pending.length)
+                    || a.snykFile.localeCompare(b.snykFile) || a.rule.localeCompare(b.rule));
+            const pendingRows = rows.filter(r => r.pending.length);
+            const pendingEntryCount = pendingRows.reduce((n, r) => n + r.pending.length, 0);
+
+            const vulnTagsHtml = vulns => vulns.map(([id, { vuln }]) => {
+                const s = sevClass(vuln);
+                return `<a class="vuln-tag-link" href="https://security.snyk.io/vuln/${esc(id)}" target="_blank" rel="noopener" title="${esc(vuln.title || '')}"><span class="sev-badge ${s}" style="font-size:9px;padding:1px 4px">${s}</span> <span style="font-family:monospace;font-size:11px">${esc(id)}</span></a>`;
+            }).join('');
+            const ruleHtml = (snykFile, rule) =>
+                `<span class="s3-file-badge">${esc(snykFile)}</span><span class="ws-rule">${esc(rule)}</span>`;
+
+            const pendingHtml = pendingRows.map(({ snykFile, rule, pending }) => `<div class="path-checkbox-row ws-rule-row">
+                    <input type="checkbox" class="ws-rule-cb" checked data-snyk-file="${esc(snykFile)}" data-rule="${esc(rule)}">
+                    ${ruleHtml(snykFile, rule)}
+                    <span class="ws-rule-vulns">${vulnTagsHtml(pending)}</span>
+                </div>`).join('');
+            const doneRows = rows.filter(r => !r.pending.length);
+            const doneHtml = doneRows.map(({ snykFile, rule, vulns }) => `<div class="path-checkbox-row path-already-ignored ws-rule-row">
+                    <span class="path-already-ignored-check">&#x2713;</span>
+                    ${ruleHtml(snykFile, rule)}
+                    <span class="already-ignored-badge">${vulns.size} vuln${vulns.size !== 1 ? 's' : ''} in .snyk</span>
+                </div>`).join('');
+
+            const formHtml = pendingRows.length ? `<div class="s3-expiry-row ws-form-row">
+                    <label class="ignore-form-label">Expiry</label>
+                    <input type="text" class="ignore-form-input" id="expiry-ws" value="${esc(sharedExpiry || '')}" placeholder="2026-06-08T00:00:00.000Z" style="width:280px">
+                </div>
+                <div class="s3-expiry-row ws-form-row">
+                    <label class="ignore-form-label">Reason (workspace dependency)</label>
+                    <input type="text" class="ignore-form-input ws-reason" id="ws-reason-dependency" value="${esc(WORKSPACE_REASONS.dependency)}">
+                </div>
+                <div class="s3-expiry-row ws-form-row">
+                    <label class="ignore-form-label">Reason (workspace package itself)</label>
+                    <input type="text" class="ignore-form-input ws-reason" id="ws-reason-self" value="${esc(WORKSPACE_REASONS.self)}">
+                </div>` : '';
+            const addBtnHtml = pendingRows.length
+                ? `<button class="btn btn-sm btn-accent s3-dep-add-btn" data-action="add-workspace-rules">Add ${pendingEntryCount} ignore${pendingEntryCount !== 1 ? 's' : ''} to .snyk</button>`
+                : '';
+
+            return `<details class="tool-section">
+                <summary class="tool-section-header">
+                    <span class="tool-section-chevron">&#x25BC;</span>
+                    <span class="tool-section-num">4</span>
+                    <span class="tool-section-title">Workspace Packages</span>
+                    <span class="tool-section-desc">Paths through local workspaces &#x2014; one wildcard rule per workspace.</span>
+                    <span class="tool-section-badge">${pendingRows.length} / ${rows.length}</span>
+                </summary>
+                <div class="tool-section-body">
+                    <p class="ws-intro">Snyk follows local Yarn workspace links (<code>0.0.0-use.local</code>) into each workspace's own
+                        dependencies, which are already scanned in that workspace's project, and matches the workspace packages
+                        themselves as version 0.0.0. Each row adds its <code>&lt;workspace&gt;@* &gt; *</code> rule to the
+                        <code>.snyk</code> file for every vulnerability listed.</p>
+                    ${formHtml}
+                    ${pendingHtml}
+                    ${addBtnHtml}
+                    ${doneRows.length ? (pendingRows.length ? doneRowsHtml(doneRows.length, doneHtml) : doneHtml) : ''}
+                </div>
+            </details>`;
+        }
+
         // ── Category D group (reused inside Section 3 near panel) ──
         function renderCatDGroup(snykFile, items) {
             const groupId = 'near-' + snykFile.replace(/[^a-z0-9]/gi, '-');
@@ -807,7 +932,7 @@
 
         // ── Render the full tab ──
         function renderReviewQueueTab() {
-            const { depGroups, resGroups, ignoreData, reviewed } = buildSections();
+            const { depGroups, resGroups, ignoreData, workspaceRules, reviewed } = buildSections();
 
             applyProgress(reviewed);
 
@@ -815,9 +940,11 @@
             html += renderDepUpgradeSection(depGroups);
             html += renderResolutionSection(resGroups);
             html += renderIgnoreSection(ignoreData);
+            html += renderWorkspaceSection(workspaceRules);
 
-            const pendingIgnoreCount = ignoreData.ignoreVulns.size - ignoreData.autoResolvedIds.size;
-            if (!depGroups.size && !resGroups.size && !pendingIgnoreCount) {
+            const pendingIgnoreCount = [...ignoreData.ignoreVulns.keys()].filter(id => !ignoreData.autoResolvedIds.has(id)).length;
+            const pendingWorkspaceCount = [...workspaceRules.values()].filter(r => [...r.vulns.values()].some(v => !v.ignored)).length;
+            if (!depGroups.size && !resGroups.size && !pendingIgnoreCount && !pendingWorkspaceCount) {
                 html = `<div class="rq-empty"><div class="empty-icon">&#x1F389;</div><p>No pending items &#x2014; all vulnerabilities reviewed!</p></div>`;
             }
 
@@ -1156,6 +1283,8 @@
                     handleUpdateSnyk(btn);
                 } else if (action === 'update-all-near') {
                     handleUpdateAllNear(btn);
+                } else if (action === 'add-workspace-rules') {
+                    handleAddWorkspaceRules(btn);
                 } else if (action === 'toggle-dep-group') {
                     const group = document.getElementById(btn.dataset.groupId);
                     if (group) group.classList.toggle('s3-dep-group--collapsed');
@@ -1440,6 +1569,39 @@
                     refreshIgnorePatterns();
                 } else { btn.disabled = false; btn.textContent = 'Update All in This File'; alert('Failed: ' + data.error); }
             }).catch(err => { btn.disabled = false; btn.textContent = 'Update All in This File'; alert('Request failed: ' + err.message); });
+        }
+
+        function handleAddWorkspaceRules(btn) {
+            const expires = document.getElementById('expiry-ws')?.value?.trim() || '';
+            const reasons = {
+                dependency: document.getElementById('ws-reason-dependency')?.value?.trim() || '',
+                self: document.getElementById('ws-reason-self')?.value?.trim() || '',
+            };
+            if (!expires) { alert('Please enter an expiry date.'); return; }
+            if (!reasons.dependency || !reasons.self) { alert('Please enter both reasons.'); return; }
+
+            const { workspaceRules } = buildSections();
+            const entries = [];
+            document.querySelectorAll('.ws-rule-cb:checked').forEach(cb => {
+                const { snykFile, rule } = cb.dataset;
+                for (const [vulnId, { selfFlagged, ignored }] of workspaceRules.get(snykFile + '\0' + rule)?.vulns || []) {
+                    if (ignored) continue;
+                    entries.push({ snykFile, vulnId, path: rule, reason: selfFlagged ? reasons.self : reasons.dependency, expires });
+                }
+            });
+            if (!entries.length) { alert('No checked rules.'); return; }
+
+            const label = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Adding…';
+            fetch('/add-snyk-ignores', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ entries }),
+            }).then(r => r.json()).then(data => {
+                if (data.ok) refreshIgnorePatterns();
+                else { btn.disabled = false; btn.textContent = label; alert('Failed: ' + data.error); }
+            }).catch(err => { btn.disabled = false; btn.textContent = label; alert('Request failed: ' + err.message); });
         }
 
         function applyDecision(ids, status, extra) {
