@@ -35,6 +35,7 @@ export default [
             // '@typescript-eslint/no-unnecessary-type-assertion': 'error', rule fails on CI
             '@typescript-eslint/no-this-alias': 'off',
             '@typescript-eslint/no-for-in-array': 'error',
+            '@typescript-eslint/no-floating-promises': 'error',
             'no-restricted-syntax': [
                 'error',
                 'ForInStatement',
