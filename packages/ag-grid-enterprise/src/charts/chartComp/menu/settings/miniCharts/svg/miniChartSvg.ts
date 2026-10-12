@@ -2,8 +2,8 @@ import type { MiniChartSvgPaint, MiniChartSvgShape, MiniChartSvgTemplate } from 
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
-export const MINI_CHART_SIZE = 58;
-export const MINI_CHART_PADDING = 5;
+const MINI_CHART_SIZE = 58;
+const MINI_CHART_PADDING = 5;
 
 const PLOT_SIZE = MINI_CHART_SIZE - 2 * MINI_CHART_PADDING;
 const AXIS_LINES = [

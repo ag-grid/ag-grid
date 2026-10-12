@@ -1,6 +1,7 @@
 import type { ChartType } from 'ag-grid-community';
 
-import type { MiniChartSvgShape, MiniChartSvgSlot, MiniChartSvgTemplate } from './miniChartSvgTypes';
+import { AgColor } from '../../../../../../agStack/agColor';
+import type { MiniChartSvgPaint, MiniChartSvgShape, MiniChartSvgSlot, MiniChartSvgTemplate } from './miniChartSvgTypes';
 
 const fills = (index: number): MiniChartSvgSlot => ({ palette: 'fills', index });
 const strokes = (index: number): MiniChartSvgSlot => ({ palette: 'strokes', index });
@@ -100,8 +101,146 @@ const DONUT: MiniChartSvgTemplate = {
     ],
 };
 
-/** Thumbnail geometry for the chart types drawn as inline SVG in the chart settings panel. */
-export const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> = {
+/** One box plot: the box corners, then the median, whiskers and caps as `[x1, y1, x2, y2]` lines. */
+const boxAndWhiskers = (
+    [x1, y1, x2, y2]: number[],
+    lines: number[][],
+    series: number,
+    stockTheme: boolean
+): MiniChartSvgShape[] => [
+    {
+        d: rectPath(x1, y1, x2, y2),
+        fill: fills(series),
+        stroke: strokes(series),
+        attrs: stockTheme ? { ...OUTLINE, 'fill-opacity': 0.3 } : OUTLINE,
+    },
+    ...lines.map(([lx1, ly1, lx2, ly2]) => ({
+        d: `M ${lx1} ${ly1} L ${lx2} ${ly2}`,
+        stroke: strokes(series),
+        attrs: OUTLINE,
+    })),
+];
+
+const boxPlot = (stockTheme: boolean): MiniChartSvgTemplate => ({
+    tooltip: 'boxPlotTooltip',
+    series: [
+        ...boxAndWhiskers(
+            [8.5, 19.5, 17.5, 37.5],
+            [
+                [8, 29.5, 18, 29.5],
+                [13.5, 10, 13.5, 19],
+                [13.5, 47, 13.5, 38],
+                [8, 10.5, 18, 10.5],
+                [8, 47.5, 18, 47.5],
+            ],
+            0,
+            stockTheme
+        ),
+        ...boxAndWhiskers(
+            [24.5, 15.5, 33.5, 33.5],
+            [
+                [24, 24.5, 34, 24.5],
+                [29.5, 5, 29.5, 15],
+                [29.5, 44, 29.5, 34],
+                [24, 5.5, 34, 5.5],
+                [24, 44.5, 34, 44.5],
+            ],
+            1,
+            stockTheme
+        ),
+        ...boxAndWhiskers(
+            [40.5, 24.5, 49.5, 41.5],
+            [
+                [40, 33.5, 50, 33.5],
+                [45.5, 15, 45.5, 24],
+                [45.5, 51, 45.5, 42],
+                [40, 15.5, 50, 15.5],
+                [40, 51.5, 50, 51.5],
+            ],
+            2,
+            stockTheme
+        ),
+    ],
+});
+
+const treemap = (stockTheme: boolean): MiniChartSvgTemplate => {
+    const tile = (x1: number, y1: number, x2: number, y2: number, series: number): MiniChartSvgShape => ({
+        d: rectPath(x1, y1, x2, y2),
+        fill: fills(series),
+        stroke: stockTheme ? '#ffffff' : strokes(series),
+        attrs: { 'stroke-width': 0.75 },
+    });
+    return {
+        tooltip: 'treemapTooltip',
+        clip: true,
+        axes: 'none',
+        series: [
+            tile(5.375, 5.375, 36.625, 28.625, 0),
+            tile(5.375, 29.375, 36.625, 52.625, 1),
+            tile(37.375, 5.375, 52.625, 28.625, 2),
+            tile(37.375, 29.375, 52.625, 44.625, 3),
+            tile(37.375, 45.375, 52.625, 52.625, 4),
+        ],
+    };
+};
+
+/** Waterfall bars in data order `[4, 3, -3, 6, -3]`, each filled with the up or down colour. */
+const waterfall = (up: MiniChartSvgPaint, down: MiniChartSvgPaint): MiniChartSvgTemplate => ({
+    tooltip: 'waterfallTooltip',
+    series: [
+        { d: rectPath(8, 33, 15, 48), fill: up },
+        { d: rectPath(17, 21, 24, 33), fill: up },
+        { d: rectPath(25, 21, 33, 33), fill: down },
+        { d: rectPath(34, 10, 41, 33), fill: up },
+        { d: rectPath(43, 10, 50, 21), fill: down },
+    ],
+});
+
+/** Heatmap cell origins, column by column; each cell is 14 by 14. */
+const HEATMAP_CELLS = [7, 22, 37].flatMap((x) => [7, 22, 37].map((y) => [x, y]));
+
+const heatmap = (cellFills: string[]): MiniChartSvgTemplate => ({
+    tooltip: 'heatmapTooltip',
+    clip: true,
+    axes: 'none',
+    series: HEATMAP_CELLS.map(([x, y], i) => ({ d: rectPath(x, y, x + 14, y + 14), fill: cellFills[i] })),
+});
+
+const STOCK_HEATMAP_FILLS = [
+    'rgb(255, 160, 58)',
+    'rgb(249, 169, 46)',
+    'rgb(243, 178, 35)',
+    'rgb(237, 186, 23)',
+    'rgb(231, 195, 12)',
+    'rgb(225, 204, 0)',
+    'rgb(219, 213, 0)',
+    'rgb(213, 222, 0)',
+    'rgb(207, 230, 0)',
+];
+
+const parseColor = (color: string | undefined): AgColor => {
+    try {
+        return AgColor.fromString(color!);
+    } catch {
+        return new AgColor(0, 0, 0);
+    }
+};
+
+/**
+ * Custom theme heatmap cells run from fill 0 towards fill 1 in steps of 0.2, continuing past fill 1
+ * (as the canvas thumbnail did) with each channel clamped to 0..1 by `AgColor`.
+ */
+const customHeatmapFills = (paletteFills: string[]): string[] => {
+    const [c0, c1] = [0, 1].map((i) => parseColor(paletteFills[i % paletteFills.length]));
+    return HEATMAP_CELLS.map((_, i) => {
+        const t = i * 0.2;
+        const mix = (a: number, b: number) => a * (1 - t) + b * t;
+        return new AgColor(mix(c0.r, c1.r), mix(c0.g, c1.g), mix(c0.b, c1.b), mix(c0.a, c1.a)).toRgbaString();
+    });
+};
+
+/** Thumbnail geometry coloured from the palette; stock themes override some types below. */
+const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> = {
     groupedColumn: {
         tooltip: 'groupedColumnTooltip',
         series: [rect(9, 29, 20, 53, 0), rect(24, 17, 34, 53, 1), rect(38, 5, 49, 53, 2)],
@@ -573,4 +712,30 @@ export const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemp
             filled('M 45 38.103 L 53 53 L 5 53 L 13 38.103 M 53 53', 2),
         ],
     },
+    boxPlot: boxPlot(false),
+    treemap: treemap(false),
+    waterfall: waterfall(fills(0), fills(1)),
 };
+
+/** Stock themes colour these thumbnails with fixed theme colours instead of the palette. */
+const STOCK_THEME_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> = {
+    boxPlot: boxPlot(true),
+    treemap: treemap(true),
+    waterfall: waterfall('#5090dc', '#ffa03a'),
+    heatmap: heatmap(STOCK_HEATMAP_FILLS),
+};
+
+/** The thumbnail geometry for a chart type, given the theme kind and, for the custom heatmap, the solid palette fills. */
+export function getMiniChartSvgTemplate(
+    chartType: ChartType,
+    isCustomTheme: boolean,
+    paletteFills: string[]
+): MiniChartSvgTemplate | undefined {
+    if (!isCustomTheme) {
+        return STOCK_THEME_GEOMETRY[chartType] ?? MINI_CHART_SVG_GEOMETRY[chartType];
+    }
+    if (chartType === 'heatmap') {
+        return heatmap(customHeatmapFills(paletteFills));
+    }
+    return MINI_CHART_SVG_GEOMETRY[chartType];
+}

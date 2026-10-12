@@ -10,47 +10,8 @@ import type { ChartController } from '../../chartController';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
 import { getFullChartNameTranslationKey } from '../../utils/seriesTypeMapper';
 import { toSolidColors } from './miniChartSolidColors';
-import { MiniConeFunnel } from './miniCharts/funnel/miniConeFunnel';
-import { MiniFunnel } from './miniCharts/funnel/miniFunnel';
-import { MiniPyramid } from './miniCharts/funnel/miniPyramid';
-import {
-    MiniArea,
-    MiniAreaColumnCombo,
-    MiniBar,
-    MiniBoxPlot,
-    MiniBubble,
-    MiniColumn,
-    MiniColumnLineCombo,
-    MiniCustomCombo,
-    MiniDonut,
-    MiniHeatmap,
-    MiniHistogram,
-    MiniLine,
-    MiniNightingale,
-    MiniNormalizedArea,
-    MiniNormalizedBar,
-    MiniNormalizedColumn,
-    MiniNormalizedLine,
-    MiniPie,
-    MiniRadarArea,
-    MiniRadarLine,
-    MiniRadialBar,
-    MiniRadialColumn,
-    MiniRangeArea,
-    MiniRangeBar,
-    MiniScatter,
-    MiniStackedArea,
-    MiniStackedBar,
-    MiniStackedColumn,
-    MiniStackedLine,
-    MiniSunburst,
-    MiniTreemap,
-    MiniWaterfall,
-} from './miniCharts/index';
-// please leave this as is - we want it to be explicit for build reasons
-import type { MiniChart } from './miniCharts/miniChart';
 import { createMiniChartSvg } from './miniCharts/svg/miniChartSvg';
-import { MINI_CHART_SVG_GEOMETRY } from './miniCharts/svg/miniChartSvgGeometry';
+import { getMiniChartSvgTemplate } from './miniCharts/svg/miniChartSvgGeometry';
 
 type MiniChartMenuMapping = {
     [K in keyof ChartGroupsDef]-?: MiniChartMenuGroup<K>;
@@ -64,74 +25,69 @@ interface MiniChartMenuItem {
     range: boolean;
     pivot: boolean;
     enterprise: boolean;
-    icon: MiniChartSelector;
-}
-
-export type MiniChartSelector = {
     chartType: ChartType;
-    miniChart: new (...args: any[]) => MiniChart;
-};
+}
 
 const miniChartMapping: MiniChartMenuMapping = {
     columnGroup: {
-        column: { range: true, pivot: true, enterprise: false, icon: MiniColumn },
-        stackedColumn: { range: true, pivot: true, enterprise: false, icon: MiniStackedColumn },
-        normalizedColumn: { range: true, pivot: true, enterprise: false, icon: MiniNormalizedColumn },
+        column: { range: true, pivot: true, enterprise: false, chartType: 'groupedColumn' },
+        stackedColumn: { range: true, pivot: true, enterprise: false, chartType: 'stackedColumn' },
+        normalizedColumn: { range: true, pivot: true, enterprise: false, chartType: 'normalizedColumn' },
     },
     barGroup: {
-        bar: { range: true, pivot: true, enterprise: false, icon: MiniBar },
-        stackedBar: { range: true, pivot: true, enterprise: false, icon: MiniStackedBar },
-        normalizedBar: { range: true, pivot: true, enterprise: false, icon: MiniNormalizedBar },
+        bar: { range: true, pivot: true, enterprise: false, chartType: 'groupedBar' },
+        stackedBar: { range: true, pivot: true, enterprise: false, chartType: 'stackedBar' },
+        normalizedBar: { range: true, pivot: true, enterprise: false, chartType: 'normalizedBar' },
     },
     pieGroup: {
-        pie: { range: true, pivot: true, enterprise: false, icon: MiniPie },
-        donut: { range: true, pivot: true, enterprise: false, icon: MiniDonut },
-        doughnut: { range: true, pivot: true, enterprise: false, icon: MiniDonut },
+        pie: { range: true, pivot: true, enterprise: false, chartType: 'pie' },
+        donut: { range: true, pivot: true, enterprise: false, chartType: 'donut' },
+        doughnut: { range: true, pivot: true, enterprise: false, chartType: 'donut' },
     },
     lineGroup: {
-        line: { range: true, pivot: true, enterprise: false, icon: MiniLine },
-        stackedLine: { range: true, pivot: true, enterprise: false, icon: MiniStackedLine },
-        normalizedLine: { range: true, pivot: true, enterprise: false, icon: MiniNormalizedLine },
+        line: { range: true, pivot: true, enterprise: false, chartType: 'line' },
+        stackedLine: { range: true, pivot: true, enterprise: false, chartType: 'stackedLine' },
+        normalizedLine: { range: true, pivot: true, enterprise: false, chartType: 'normalizedLine' },
     },
     scatterGroup: {
-        scatter: { range: true, pivot: true, enterprise: false, icon: MiniScatter },
-        bubble: { range: true, pivot: true, enterprise: false, icon: MiniBubble },
+        scatter: { range: true, pivot: true, enterprise: false, chartType: 'scatter' },
+        bubble: { range: true, pivot: true, enterprise: false, chartType: 'bubble' },
     },
     areaGroup: {
-        area: { range: true, pivot: true, enterprise: false, icon: MiniArea },
-        stackedArea: { range: true, pivot: true, enterprise: false, icon: MiniStackedArea },
-        normalizedArea: { range: true, pivot: true, enterprise: false, icon: MiniNormalizedArea },
+        area: { range: true, pivot: true, enterprise: false, chartType: 'area' },
+        stackedArea: { range: true, pivot: true, enterprise: false, chartType: 'stackedArea' },
+        normalizedArea: { range: true, pivot: true, enterprise: false, chartType: 'normalizedArea' },
     },
     polarGroup: {
-        radarLine: { range: true, pivot: false, enterprise: true, icon: MiniRadarLine },
-        radarArea: { range: true, pivot: false, enterprise: true, icon: MiniRadarArea },
-        nightingale: { range: true, pivot: false, enterprise: true, icon: MiniNightingale },
-        radialColumn: { range: true, pivot: false, enterprise: true, icon: MiniRadialColumn },
-        radialBar: { range: true, pivot: false, enterprise: true, icon: MiniRadialBar },
+        radarLine: { range: true, pivot: false, enterprise: true, chartType: 'radarLine' },
+        radarArea: { range: true, pivot: false, enterprise: true, chartType: 'radarArea' },
+        nightingale: { range: true, pivot: false, enterprise: true, chartType: 'nightingale' },
+        radialColumn: { range: true, pivot: false, enterprise: true, chartType: 'radialColumn' },
+        radialBar: { range: true, pivot: false, enterprise: true, chartType: 'radialBar' },
     },
     statisticalGroup: {
-        boxPlot: { range: true, pivot: false, enterprise: true, icon: MiniBoxPlot },
-        histogram: { range: true, pivot: false, enterprise: false, icon: MiniHistogram },
-        rangeBar: { range: true, pivot: false, enterprise: true, icon: MiniRangeBar },
-        rangeArea: { range: true, pivot: false, enterprise: true, icon: MiniRangeArea },
+        boxPlot: { range: true, pivot: false, enterprise: true, chartType: 'boxPlot' },
+        histogram: { range: true, pivot: false, enterprise: false, chartType: 'histogram' },
+        rangeBar: { range: true, pivot: false, enterprise: true, chartType: 'rangeBar' },
+        rangeArea: { range: true, pivot: false, enterprise: true, chartType: 'rangeArea' },
     },
     hierarchicalGroup: {
-        treemap: { range: true, pivot: true, enterprise: true, icon: MiniTreemap },
-        sunburst: { range: true, pivot: true, enterprise: true, icon: MiniSunburst },
+        treemap: { range: true, pivot: true, enterprise: true, chartType: 'treemap' },
+        sunburst: { range: true, pivot: true, enterprise: true, chartType: 'sunburst' },
     },
     specializedGroup: {
-        heatmap: { range: true, pivot: false, enterprise: true, icon: MiniHeatmap },
-        waterfall: { range: true, pivot: false, enterprise: true, icon: MiniWaterfall },
+        heatmap: { range: true, pivot: false, enterprise: true, chartType: 'heatmap' },
+        waterfall: { range: true, pivot: false, enterprise: true, chartType: 'waterfall' },
     },
     combinationGroup: {
-        columnLineCombo: { range: true, pivot: true, enterprise: false, icon: MiniColumnLineCombo },
-        areaColumnCombo: { range: true, pivot: true, enterprise: false, icon: MiniAreaColumnCombo },
-        customCombo: { range: true, pivot: true, enterprise: false, icon: MiniCustomCombo },
+        columnLineCombo: { range: true, pivot: true, enterprise: false, chartType: 'columnLineCombo' },
+        areaColumnCombo: { range: true, pivot: true, enterprise: false, chartType: 'areaColumnCombo' },
+        customCombo: { range: true, pivot: true, enterprise: false, chartType: 'customCombo' },
     },
     funnelGroup: {
-        funnel: { range: true, pivot: false, enterprise: true, icon: MiniFunnel },
-        coneFunnel: { range: true, pivot: false, enterprise: true, icon: MiniConeFunnel },
-        pyramid: { range: true, pivot: false, enterprise: true, icon: MiniPyramid },
+        funnel: { range: true, pivot: false, enterprise: true, chartType: 'funnel' },
+        coneFunnel: { range: true, pivot: false, enterprise: true, chartType: 'coneFunnel' },
+        pyramid: { range: true, pivot: false, enterprise: true, chartType: 'pyramid' },
     },
 };
 
@@ -262,7 +218,7 @@ export class MiniChartsContainer extends Component {
             );
 
             for (const menuItem of items) {
-                const { miniChart: MiniClass, chartType } = menuItem.icon;
+                const { chartType } = menuItem;
                 const miniWrapper = _createElement({
                     tag: 'div',
                     cls: 'ag-chart-mini-thumbnail',
@@ -270,9 +226,8 @@ export class MiniChartsContainer extends Component {
                     attrs: { tabindex: '0' },
                 });
 
-                const miniClassChartType: ChartType = chartType;
                 const listener = () => {
-                    this.chartController.setChartType(miniClassChartType);
+                    this.chartController.setChartType(chartType);
                     this.updateSelectedMiniChart();
                 };
                 this.addManagedListeners(miniWrapper, {
@@ -285,26 +240,16 @@ export class MiniChartsContainer extends Component {
                     },
                 });
 
-                this.wrappers.set(miniClassChartType, miniWrapper);
+                this.wrappers.set(chartType, miniWrapper);
 
-                const svgTemplate = MINI_CHART_SVG_GEOMETRY[chartType];
-                if (svgTemplate) {
+                const template = getMiniChartSvgTemplate(chartType, this.isCustomTheme, solidFills);
+                if (template) {
                     createMiniChartSvg(
                         miniWrapper,
-                        svgTemplate,
+                        template,
                         solidFills,
                         solidStrokes,
-                        this.chartTranslation.translate(svgTemplate.tooltip)
-                    );
-                } else {
-                    this.createBean(
-                        new MiniClass(
-                            miniWrapper,
-                            this.beans.agChartsExports,
-                            this.fills,
-                            this.strokes,
-                            this.isCustomTheme
-                        )
+                        this.chartTranslation.translate(template.tooltip)
                     );
                 }
                 groupComponent.addItem(miniWrapper);
