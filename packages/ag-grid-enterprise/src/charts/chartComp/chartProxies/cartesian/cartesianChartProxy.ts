@@ -53,12 +53,24 @@ export abstract class CartesianChartProxy<
         };
     }
 
-    /** The chart-level formatter set through the chart theme, e.g. `chartThemeOverrides.common.formatter`. */
+    /**
+     * The chart-level formatter set through the chart theme, e.g. `chartThemeOverrides.common.formatter`. Mirrors
+     * AG Charts' theme resolution: outer theme layers win, and a series-type formatter wins over a common one.
+     */
     protected getThemeFormatter(commonChartOptions: AgCartesianChartOptions): AgCartesianChartOptions['formatter'] {
-        const overrides: AgChartThemeOverrides | undefined = this.agChartsExports._Theme.getChartTheme(
-            commonChartOptions.theme
-        ).overrides;
-        return overrides?.[this.standaloneChartType]?.formatter ?? overrides?.common?.formatter;
+        const overrides: AgChartThemeOverrides[] = [];
+        let theme = commonChartOptions.theme;
+        while (typeof theme === 'object') {
+            if (theme.overrides) {
+                overrides.push(theme.overrides);
+            }
+            theme = theme.baseTheme;
+        }
+        const seriesType = this.standaloneChartType;
+        return (
+            overrides.find((o) => o[seriesType]?.formatter)?.[seriesType]?.formatter ??
+            overrides.find((o) => o.common?.formatter)?.common?.formatter
+        );
     }
 
     protected getData(params: UpdateParams, axes: Record<string, AgCartesianAxisOptions>): any[] {
