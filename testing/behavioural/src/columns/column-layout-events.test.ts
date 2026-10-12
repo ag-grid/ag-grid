@@ -1,10 +1,11 @@
 import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-import { DragEventDispatcher, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { DragEventDispatcher, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type {
     AgColumn,
     ColDef,
+    ColGroupDef,
     Column,
     ColumnGroup,
     ColumnStateUpdatedEvent,
@@ -18,6 +19,7 @@ import {
     ColumnApiModule,
     ColumnAutoSizeModule,
     RowSelectionModule,
+    TextFilterModule,
     getGridElement,
 } from 'ag-grid-community';
 import { AllEnterpriseModule, PivotModule, RowGroupingModule, ShowValuesAsModule } from 'ag-grid-enterprise';
@@ -762,6 +764,20 @@ describe('the column events of one call', () => {
         });
 
         expect(seen).toEqual(['visible:b,d', 'state:b,d']);
+    });
+
+    test('a column listener destroying the grid ends the call, telling no column after it', () => {
+        const api = createGrid();
+        const seen: string[] = [];
+        api.getColumn('a')!.addEventListener('visibleChanged', () => {
+            seen.push('a');
+            api.destroy();
+        });
+        api.getColumn('c')!.addEventListener('visibleChanged', () => seen.push('c'));
+
+        api.setColumnsVisible(['a', 'c'], false);
+
+        expect([api.isDestroyed(), seen]).toEqual([true, ['a']]);
     });
 
     test('a column hidden with others by new column definitions is told once every one is hidden and laid out', () => {
@@ -1606,6 +1622,29 @@ describe('the header a column rebuild draws', () => {
         gridsManager.reset();
     });
 
+    test('a group of a column scrolled out of view is drawn once the column sizes its header row', async () => {
+        const defs = (autoHeaderHeight: boolean): (ColDef | ColGroupDef)[] => [
+            { colId: 'a', width: 3000 },
+            { groupId: 'g', headerName: 'G', children: [{ colId: 'x', autoHeaderHeight }] },
+        ];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: defs(false),
+            rowData: [{}],
+            suppressColumnVirtualisation: false,
+        });
+        await asyncSetTimeout(0);
+        const groupDrawn = () =>
+            Array.from(getGridElement(api)!.querySelectorAll('.ag-header-group-text')).some(
+                (text) => text.textContent === 'G'
+            );
+        expect(groupDrawn()).toBe(false);
+
+        api.setGridOption('columnDefs', defs(true));
+        await asyncSetTimeout(0);
+
+        expect(groupDrawn()).toBe(true);
+    });
+
     test('pivot mode switched on with nothing to pivot draws none of the columns it hides', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'a' }, { field: 'b' }],
@@ -1624,5 +1663,82 @@ describe('the header a column rebuild draws', () => {
             displayed: 0,
             drawnHeaders: [],
         });
+    });
+});
+
+describe('the rows a column update refreshes', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, RowGroupingModule, TextFilterModule],
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    const rowData = [
+        { id: '1', country: 'Ireland', sport: 'Rowing', gold: 1 },
+        { id: '2', country: 'Ireland', sport: 'Boxing', gold: 3 },
+        { id: '3', country: 'France', sport: 'Rowing', gold: 2 },
+    ];
+
+    function countRefreshes(api: GridApi): () => number {
+        let refreshes = 0;
+        api.addEventListener('modelUpdated', () => ++refreshes);
+        return () => refreshes;
+    }
+
+    test('new column definitions that group and sort the rows refresh them once', async () => {
+        const api = gridsManager.createGrid('groupAndSort', {
+            columnDefs: [{ field: 'country' }, { field: 'sport' }, { field: 'gold' }],
+            rowData,
+            getRowId: ({ data }) => data.id,
+        });
+        await asyncSetTimeout(0);
+        const refreshes = countRefreshes(api);
+
+        api.setGridOption('columnDefs', [
+            { field: 'country', rowGroup: true, hide: true },
+            { field: 'sport' },
+            { field: 'gold', sort: 'desc' },
+        ]);
+        await asyncSetTimeout(0);
+
+        expect(refreshes()).toBe(1);
+        await new GridRows(api, 'grouped and sorted').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF hidden id:2 country:"Ireland" sport:"Boxing" gold:3
+            │ └── LEAF hidden id:1 country:"Ireland" sport:"Rowing" gold:1
+            └─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · └── LEAF hidden id:3 country:"France" sport:"Rowing" gold:2
+        `);
+    });
+
+    test('a filter on a column the update removes, as it groups the rows, lets its rows back in the same refresh', async () => {
+        const api = gridsManager.createGrid('filterRemoved', {
+            columnDefs: [{ field: 'country' }, { field: 'sport', filter: 'agTextColumnFilter' }, { field: 'gold' }],
+            rowData,
+            getRowId: ({ data }) => data.id,
+        });
+        api.setFilterModel({ sport: { filterType: 'text', type: 'equals', filter: 'Rowing' } });
+        await asyncSetTimeout(0);
+        expect(api.getDisplayedRowCount()).toBe(2);
+        const refreshes = countRefreshes(api);
+        let filterChanges = 0;
+        api.addEventListener('filterChanged', () => ++filterChanges);
+
+        api.setGridOption('columnDefs', [{ field: 'country', rowGroup: true, hide: true }, { field: 'gold' }]);
+        // releasing the removed column's filter does not refresh the rows a second time
+        await waitFor(() => expect(filterChanges).toBe(1));
+
+        expect(refreshes()).toBe(1);
+        await new GridRows(api, 'filter released and grouped').check(`
+            ROOT id:ROOT_NODE_ID
+            ├─┬ LEAF_GROUP collapsed id:row-group-country-Ireland ag-Grid-AutoColumn:"Ireland"
+            │ ├── LEAF hidden id:1 country:"Ireland" gold:1
+            │ └── LEAF hidden id:2 country:"Ireland" gold:3
+            └─┬ LEAF_GROUP collapsed id:row-group-country-France ag-Grid-AutoColumn:"France"
+            · └── LEAF hidden id:3 country:"France" gold:2
+        `);
     });
 });

@@ -60,10 +60,10 @@ describe('Sorting', () => {
         gridMgr.reset();
     });
 
-    test('the sort-order index badge shows only in a multi-column sort', async () => {
+    test('the sort-order index badge shows only in a multi-column sort, and never on a column that is not sortable', async () => {
         const api = await gridMgr.createGridAndWait('sort-order-badge', {
-            columnDefs: [{ field: 'a' }, { field: 'b' }],
-            rowData: [{ a: 1, b: 2 }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'c', sortable: false }],
+            rowData: [{ a: 1, b: 2, c: 3 }],
         });
         await asyncSetTimeout(0);
         const gridDiv = getGridElement(api)! as HTMLElement;
@@ -83,13 +83,17 @@ describe('Sorting', () => {
             state: [
                 { colId: 'a', sort: 'asc', sortIndex: 0 },
                 { colId: 'b', sort: 'asc', sortIndex: 1 },
+                { colId: 'c', sort: 'asc', sortIndex: 2 },
             ],
         });
         await waitFor(() => {
+            // column state sorts `c` too, so its badge is hidden by its not being sortable
+            expect(api.getColumnState().find((s) => s.colId === 'c')?.sort).toBe('asc');
             expect(sortOrderEl('a')?.classList.contains('ag-hidden')).toBe(false);
             expect(sortOrderEl('a')?.textContent).toBe('1');
             expect(sortOrderEl('b')?.textContent).toBe('2');
         });
+        expect(sortOrderEl('c')?.classList.contains('ag-hidden')).toBe(true);
     });
 
     const columnDefs = [{ field: 'sport', sortable: false }, { field: 'year' }, { field: 'amount' }, { field: 'day' }];

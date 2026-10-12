@@ -63,4 +63,37 @@ test.describe('community grid in a real browser', () => {
         }).toPass();
         await expect(headerCell('col0')).toHaveCount(0);
     });
+
+    // A hidden viewport measures no size; reading that as a change each frame kept the grid scheduling frames forever.
+    test('a grid in a container hidden with display:none stops scheduling animation frames', async ({ page }) => {
+        const { grid } = await mountGrid(page, {
+            options: () => ({
+                columnDefs: [{ field: 'make' }, { field: 'model' }],
+                rowData: [{ make: 'Toyota', model: 'Celica' }],
+            }),
+        });
+
+        const framesRequestedWhileHidden = await page.evaluate(async () => {
+            const requestFrame = window.requestAnimationFrame.bind(window);
+            const frames = async (count: number) => {
+                for (let i = 0; i < count; ++i) {
+                    await new Promise((resolve) => requestFrame(resolve));
+                }
+            };
+            let requested = 0;
+            window.requestAnimationFrame = (callback) => {
+                ++requested;
+                return requestFrame(callback);
+            };
+            document.querySelector<HTMLElement>('#myGrid')!.parentElement!.style.display = 'none';
+            // the frames the hiding itself schedules
+            await frames(10);
+            requested = 0;
+            await frames(30);
+            return requested;
+        });
+
+        await expect(grid).toBeHidden();
+        expect(framesRequestedWhileHidden).toBe(0);
+    });
 });

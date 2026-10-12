@@ -96,6 +96,43 @@ describe('Column Groups', () => {
         });
     });
 
+    test("a centre group's label is sticky while the group is scrolled part out, as it scrolls and as it resizes", async () => {
+        const api = gridsManager.createGrid('sticky-label', {
+            columnDefs: [
+                { colId: 'a', width: 200 },
+                { headerName: 'G', children: [{ colId: 'g1' }, { colId: 'g2' }] },
+                { colId: 'z' },
+            ],
+            defaultColDef: { width: 500 },
+            rowData: [{}],
+        });
+        await asyncSetTimeout(0);
+        const sticky = () =>
+            Array.from(document.querySelectorAll('.ag-header-group-text'))
+                .find((text) => text.textContent === 'G')!
+                .closest('.ag-header-group-cell-label')!
+                .classList.contains('ag-sticky-label');
+        const seen: boolean[] = [sticky()];
+
+        api.ensureColumnVisible('z');
+        await asyncSetTimeout(0);
+        seen.push(sticky());
+
+        api.setColumnWidths([{ key: 'a', newWidth: 900 }]);
+        await asyncSetTimeout(0);
+        seen.push(sticky());
+
+        api.setColumnWidths([{ key: 'a', newWidth: 200 }]);
+        await asyncSetTimeout(0);
+        seen.push(sticky());
+
+        api.ensureColumnVisible('a');
+        await asyncSetTimeout(0);
+        seen.push(sticky());
+
+        expect(seen).toEqual([false, true, false, true, false]);
+    });
+
     describe('empty groups stay findable (matches released behaviour)', () => {
         test('a group declared with no children remains discoverable via the group APIs', async () => {
             const api = gridsManager.createGrid('empty-declared', {

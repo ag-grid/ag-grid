@@ -499,5 +499,14 @@ describe('ag-grid master detail', () => {
         // the kept row is shown again, not built anew
         expect(details.length).toBe(built);
         expect(getGridElement(api)!.querySelector('.ag-full-width-row')!.contains(details[0])).toBe(true);
+
+        // a column refresh lays the hidden row out too
+        master.setExpanded(false);
+        await asyncSetTimeout(0);
+        api.setColumnsVisible(['v'], false);
+        master.setExpanded(true);
+        await asyncSetTimeout(0);
+        expect(sectionWidths()).toEqual(['0px', '150px', '0px']);
+        expect(details.length).toBe(built);
     });
 });
