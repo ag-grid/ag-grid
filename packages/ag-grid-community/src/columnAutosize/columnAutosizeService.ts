@@ -305,7 +305,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                             const growth = newWidth - actualWidth;
                             if (growth > 0) {
                                 newWidth =
-                                    actualWidth + pinnedLimit.getPinnedResizeGrowth(growth, startPinnedWidth, pinnedWidth);
+                                    actualWidth +
+                                    pinnedLimit.getPinnedResizeGrowth(growth, startPinnedWidth, pinnedWidth);
                             }
                             pinnedWidth += newWidth - actualWidth;
                         }
