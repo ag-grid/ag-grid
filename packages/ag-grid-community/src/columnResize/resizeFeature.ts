@@ -84,7 +84,11 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
         const growth = resizeAmountNormalised - lastResizeAmount;
 
-        if (growth > 0 && this.column.pinnedLane !== 1) {
+        if (
+            growth > 0 &&
+            key.pinnedLane !== 1 &&
+            !pinnedCols?.isShiftResizeWithinPinnedSection(key, this.resizeWithShiftKey)
+        ) {
             const leftWidth = pinnedCols?.leftWidth ?? 0;
             const rightWidth = pinnedCols?.rightWidth ?? 0;
             const bodyWidth = ctrlsSvc.getGridBodyCtrl().getViewportWidthWithoutScrollbar() - 50;
