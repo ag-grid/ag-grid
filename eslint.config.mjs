@@ -58,6 +58,7 @@ export const sonarjsConfig = [
             'sonarjs/no-fallthrough': 0,
 
             // Unicorn rules, as referenced from the SonarCloud documentation.
+            'unicorn/prefer-array-some': 'error',
             // 'unicorn/prefer-number-properties': 1,
             // 'unicorn/prefer-modern-dom-apis': 1,
             // 'unicorn/no-array-for-each': 1,

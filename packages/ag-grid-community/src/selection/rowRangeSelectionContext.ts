@@ -177,7 +177,7 @@ export class RowRangeSelectionContext {
 
         // OPTIMIZATION: `newRange` is what `getRange()` would recompute once `node` is the end,
         // so reuse it rather than walking the row model again.
-        if (newRange.find((newRangeNode) => newRangeNode.id === this.endId)) {
+        if (newRange.some((newRangeNode) => newRangeNode.id === this.endId)) {
             // Range between root and given node contains the current "end"
             // so this is an extension of the current range direction
             this.setEndRange(node);
