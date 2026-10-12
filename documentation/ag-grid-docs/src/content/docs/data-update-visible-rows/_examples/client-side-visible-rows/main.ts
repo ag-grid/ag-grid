@@ -44,9 +44,9 @@ const gridOptions: GridOptions<Stock> = {
     ],
     defaultColDef: { flex: 1 },
     groupDefaultExpanded: 1,
-    rowData: fetchStocks(),
     getRowId: (params: GetRowIdParams<Stock>) => params.data.id,
     onGridReady: (params) => {
+        params.api.setGridOption('rowData', fetchStocks());
         const socket = new FakeSocket();
         socket.onmessage = (message) => onServerMessage(params.api, message);
         startSubscription(params.api, socket);
@@ -72,7 +72,9 @@ function onServerMessage(api: GridApi<Stock>, message: ServerMessage) {
     updatesSent += message.rows.length;
     // ignore updates that were already on their way when their rows were unsubscribed
     const update = message.rows.filter((row) => subscribed.has(row.id));
-    api.applyTransactionAsync({ update });
+    if (update.length) {
+        api.applyTransactionAsync({ update });
+    }
     renderCount();
 }
 

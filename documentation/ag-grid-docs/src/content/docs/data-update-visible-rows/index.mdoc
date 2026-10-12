@@ -105,7 +105,7 @@ The example below [groups](./grouping/) stocks by sector. The handlers send the 
 
 ### Server-Side Row Model {% enterpriseIcon /%}
 
-The example below shows a portfolio of regions, sectors and stocks as [Tree Data](./server-side-model-tree-data/). Rows are loaded over a simulated websocket, and the same socket streams price updates for the subscribed stocks only. The updates are applied with [Transactions](./server-side-model-updating-transactions/), using each row's `parentKeys` as the route.
+The example below shows a portfolio of regions, sectors and stocks as [Tree Data](./server-side-model-tree-data/). Rows are loaded over a simulated websocket, and the same socket streams price updates for the subscribed stocks only. The updates are applied with [Asynchronous Transactions](./server-side-model-updating-transactions/#asynchronous-updates), using each row's `parentKeys` as the route.
 
 - Scrolling, expanding groups and loading new blocks produce subscribe and unsubscribe batches.
 - **Purge** reloads all rows. The old rows are unsubscribed with the `reset` reason, and the new rows subscribed as they load.
