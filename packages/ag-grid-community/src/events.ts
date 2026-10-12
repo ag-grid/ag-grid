@@ -10,6 +10,7 @@ import type { AgEventType, AgInternalEventType, AgPublicEventType, BuildEventTyp
 import type { FilterRequestSource } from './filter/iColumnFilter';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
+import type { CalculatedColumnProperty } from './interfaces/iCalculatedColumns';
 import type { ChartType } from './interfaces/iChartOptions';
 import type { Column, ColumnEventName, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
@@ -726,7 +727,7 @@ export interface CalculatedColumnBaseEvent<T extends AgEventType, TData = any, T
 }
 
 export type CalculatedColumnChanges = {
-    [K in 'headerName' | 'cellDataType' | 'calculatedExpression' | 'columnGroupShow']?: {
+    [K in CalculatedColumnProperty]?: {
         oldValue: ColDef[K];
         newValue: ColDef[K];
     };

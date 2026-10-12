@@ -350,8 +350,6 @@ const gridOptions = {
 };
 ```
 
-`calculatedColumnExpressionChanged` is deprecated but continues to fire. To migrate, use `onCalculatedColumnChanged` and check `event.changes.calculatedExpression`, as above.
-
 {% note %}
 Live expressions can be incomplete or invalid. Recognised references use stored `colId` values, such as `[revenue]`; references the dialog cannot resolve remain as typed, so they can still contain header names.
 {% /note %}
