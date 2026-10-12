@@ -35,7 +35,8 @@ stopVisibleRowsSubscription();
 
 - In flat data, `parentKeys` is empty and `route` is not set.
 - With row grouping, a group row's `route` holds the group keys down to and including the group, and `parentKeys` the keys of the groups above it. Leaf rows have `parentKeys` but no `route`.
-- With tree data, every row has a key, so `route` is the row's data path and `parentKeys` the path of its parent.
+- With client-side tree data, every row has a key, so `route` is the row's data path and `parentKeys` the path of its parent.
+- With server-side tree data, only the expandable rows have a key, from `getServerSideGroupKey`, so leaf rows have `parentKeys` but no `route`. Expandable rows are passed with `group` set to `true`.
 
 {% interfaceDocumentation interfaceName="VisibleRowRef" config={ "description": "" } /%}
 

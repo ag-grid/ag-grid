@@ -473,7 +473,12 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
         }
         sub.rows.set(id, { ref, node, index: node.rowIndex });
         // Handlers get their own arrays: changing them must not affect the stored ref the move check compares.
-        const row: VisibleRow = { ...ref, parentKeys: ref.parentKeys.slice(), group: !!node.group, data: node.data };
+        const row: VisibleRow = {
+            ...ref,
+            parentKeys: ref.parentKeys.slice(),
+            group: this.isGroup(node),
+            data: node.data,
+        };
         if (route) {
             row.route = route.slice();
         }
@@ -484,11 +489,16 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
         return _addGridCommonParams<VisibleRowsParams>(this.gos, { reason });
     }
 
+    /** Server-side tree data leaves `group` unset, so its expandable rows are found by whether they have children. */
+    private isGroup(node: RowNode): boolean {
+        return !!node.group || (!!this.gos.get('treeData') && node.hasChildren());
+    }
+
     private isSubscribable(node: RowNode, includeGroups: boolean): boolean {
         if (node.stub || node.failedLoad || node.detail || node.footer || node.rowPinned != null) {
             return false;
         }
-        if (!includeGroups && node.group) {
+        if (!includeGroups && this.isGroup(node)) {
             return false;
         }
         const isFullWidthRow = this.gos.getCallback('isFullWidthRow');

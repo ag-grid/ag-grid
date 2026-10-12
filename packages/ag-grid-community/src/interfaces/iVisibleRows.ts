@@ -23,7 +23,8 @@ export interface VisibleRowRef {
     id: string;
     /**
      * The keys from the top level down to and including this row.
-     * Set for rows that have a key: group rows, and every row in tree data. Not set for rows in flat data or leaf rows under groups.
+     * Set for rows that have a key: group rows, every row in client-side tree data, and the expandable rows in server-side tree data.
+     * Not set for rows in flat data, leaf rows under groups, or leaf rows in server-side tree data.
      */
     route?: string[];
     /** The keys of the parent groups, from the top level down. Empty for top-level rows and for rows in flat data. */
@@ -33,7 +34,7 @@ export interface VisibleRowRef {
 }
 
 export interface VisibleRow<TData = any> extends VisibleRowRef {
-    /** `true` if the row is a group. */
+    /** `true` if the row is a group, including the expandable rows in server-side tree data. */
     group: boolean;
     /** The row's data. Can be `undefined` for group rows the grid creates, such as with client-side row grouping. */
     data: TData | undefined;

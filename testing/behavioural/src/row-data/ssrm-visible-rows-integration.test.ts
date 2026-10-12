@@ -198,12 +198,9 @@ describe('SSRM subscribeToVisibleRows integration', () => {
         });
     });
 
-    // BUG: SSRM tree data never sets RowNode.group, so expandable tree rows are passed with group false,
-    // unlike client-side tree data, where parents have group true. Its leaf rows have no key either, so they
-    // are passed without the route the docs promise for every row in tree data.
     describe('tree data group flag and route', () => {
-        test.skip('expandable tree rows are passed with group true, and leaf rows with a route', async () => {
-            const api = gridsManager.createGrid('myGrid', {
+        function createTreeGrid(): GridApi {
+            return gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'id' }],
                 rowModelType: 'serverSide',
                 treeData: true,
@@ -220,13 +217,28 @@ describe('SSRM subscribeToVisibleRows integration', () => {
                     },
                 },
             });
+        }
+
+        test('expandable tree rows are passed with group true, and leaf rows, which have no key, without a route', async () => {
+            const api = createTreeGrid();
             await waitForNoLoadingRows(api);
             const recorder = createRecorder();
 
             api.subscribeToVisibleRows(recorder.handlers);
 
             expect(recorder.subscribed.get('A')).toMatchObject({ group: true, route: ['A'] });
-            expect(recorder.subscribed.get('B')).toMatchObject({ group: false, route: ['B'] });
+            expect(recorder.subscribed.get('B')).toMatchObject({ group: false });
+            expect(recorder.subscribed.get('B')!.route).toBeUndefined();
+        });
+
+        test('includeGroups false leaves out the expandable tree rows', async () => {
+            const api = createTreeGrid();
+            await waitForNoLoadingRows(api);
+            const recorder = createRecorder();
+
+            api.subscribeToVisibleRows(recorder.handlers, { includeGroups: false });
+
+            expect(recorder.ids()).toEqual(['B']);
         });
     });
 
