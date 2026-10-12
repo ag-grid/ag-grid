@@ -134,11 +134,11 @@ toolPanel.setFilterCards(
 
 Both checks are needed, because a card whose applied filter has been cleared but not yet applied still filters the rows.
 
-The example below demonstrates choosing filter cards:
+The example below demonstrates choosing filter cards. It starts with filters on Age and Country:
 
-- **Show Athlete, Country, Year** calls `setFilterCards(['athlete', 'country', 'year'])`. The Age card is removed and its filter is cleared.
+- **Show Athlete, Country, Year** calls `setFilterCards(['athlete', 'country', 'year'])`. The Age card is removed and its filter is cleared. Country keeps its filter.
 - **Reverse Order** reverses the order of the current cards.
-- **Remove Inactive Cards** removes the cards that have no filter.
+- **Remove Inactive Cards** removes the cards that have no filter, keeping Country (and Age, if still shown).
 - **Remove All Cards** calls `setFilterCards([])`. Every card is removed and the rows are unfiltered.
 
 {% gridExampleRunner title="Choosing Filter Cards" name="set-filter-cards" /%}

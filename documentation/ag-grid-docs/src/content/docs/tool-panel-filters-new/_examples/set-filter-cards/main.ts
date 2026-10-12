@@ -45,7 +45,10 @@ const gridOptions: GridOptions<IOlympicData> = {
     enableFilterHandlers: true,
     initialState: {
         filter: {
-            filterModel: { age: { filterType: 'number', type: 'lessThan', filter: 25 } },
+            filterModel: {
+                age: { filterType: 'number', type: 'lessThan', filter: 25 },
+                country: { filterType: 'set', values: ['United States', 'Russia'] },
+            },
         },
         sideBar: {
             visible: true,
