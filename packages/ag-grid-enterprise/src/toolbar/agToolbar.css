@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     overflow: auto hidden;
-    scrollbar-width: thin;
+    scrollbar-width: var(--ag-scrollbar-width, thin);
     border-bottom: var(--ag-header-row-border);
     min-height: var(--ag-header-height);
     background-color: var(--ag-toolbar-background-color);

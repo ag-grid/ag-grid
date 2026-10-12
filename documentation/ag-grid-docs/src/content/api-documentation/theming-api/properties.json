@@ -52,9 +52,9 @@
     },
     "borders": {
         "meta": {
-            "displayName": "Borders",
+            "displayName": "Borders & Scrollbars",
             "page": {
-                "name": "Theming API: Customising Borders",
+                "name": "Theming API: Customising Borders & Scrollbars",
                 "url": "./theming-borders/"
             }
         },
@@ -65,7 +65,11 @@
         "wrapperBorder": {},
         "wrapperBorderRadius": {},
         "columnBorder": {},
-        "pinnedColumnBorder": {}
+        "pinnedColumnBorder": {},
+        "scrollbarThumbColor": {},
+        "scrollbarTrackColor": {},
+        "scrollbarWidth": {},
+        "bodyScrollbarBorder": {}
     },
     "headers": {
         "meta": {

@@ -79,7 +79,7 @@
     position: relative;
     padding-top: var(--ag-side-button-bar-top-padding);
     overflow: hidden auto;
-    scrollbar-width: thin;
+    scrollbar-width: var(--ag-scrollbar-width, thin);
 }
 
 .ag-side-button {

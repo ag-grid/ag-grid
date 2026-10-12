@@ -1208,6 +1208,7 @@ export type {
     LengthValue,
     Part,
     ScaleValue,
+    ScrollbarWidthValue,
     ShadowValue,
     ShadowValueParams,
     Theme,
