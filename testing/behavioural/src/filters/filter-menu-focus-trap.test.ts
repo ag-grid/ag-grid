@@ -230,4 +230,19 @@ describe('Simple filter AND/OR join operator keyboard navigation', () => {
         expect(and).toHaveFocus();
         expect(and).toBeChecked();
     });
+
+    test.each([false, true])('an unchecked group is a single Tab stop (backwards: %s)', async (backwards) => {
+        const { and, or, joinPanel } = await openFilter();
+        const user = userEvent.setup();
+        and.checked = false;
+        (backwards ? or : and).focus();
+
+        await user.tab({ shift: backwards });
+        expect(joinPanel).not.toContainElement(document.activeElement as HTMLElement);
+
+        await user.tab({ shift: !backwards });
+        expect(backwards ? and : or).toHaveFocus();
+        expect(and).not.toBeChecked();
+        expect(or).not.toBeChecked();
+    });
 });
