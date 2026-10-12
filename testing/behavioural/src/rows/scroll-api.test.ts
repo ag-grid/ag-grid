@@ -7,13 +7,14 @@ import {
     CellSpanModule,
     ClientSideRowModelModule,
     GridStateModule,
+    RowApiModule,
     RowAutoHeightModule,
     ScrollApiModule,
 } from 'ag-grid-community';
 
 describe('scroll API', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, GridStateModule, ScrollApiModule],
+        modules: [ClientSideRowModelModule, GridStateModule, RowApiModule, ScrollApiModule],
     });
 
     afterEach(() => {
@@ -263,6 +264,22 @@ describe('scroll API', () => {
                 mockGridLayout.elementHeightOverride = undefined;
             }
         });
+    });
+
+    test('the rendered rows are listed in row order after scrolling up to rows not drawn yet', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'a' }],
+            rowData: Array.from({ length: 200 }, (_, i) => ({ a: i })),
+            suppressRowVirtualisation: false,
+        });
+        api.ensureIndexVisible(100, 'top');
+        await asyncSetTimeout(0);
+        // the rows above the ones kept are drawn after them
+        api.ensureIndexVisible(95, 'top');
+        await asyncSetTimeout(0);
+
+        const indexes = api.getRenderedNodes().map((node) => node.rowIndex);
+        expect(indexes).toEqual(Array.from({ length: 21 }, (_, i) => 85 + i));
     });
 
     describe('a grid taller than the browser can draw', () => {

@@ -112,7 +112,7 @@ describe('column header drag reorder', () => {
         await waitFor(() => expect(colOrder(api)).toEqual(['b', 'c', 'd', 'a']));
     });
 
-    test('with moves deferred to the drop, the header the drag would drop beside shows where until the drop', async () => {
+    test('with moves deferred to the drop, the header the drag would drop beside shows where, and the dragged one is moving, until the drop', async () => {
         const api = await gridsManager.createGridAndWait('myGrid', {
             columnDefs: [
                 { field: 'a', width: 100 },
@@ -137,6 +137,7 @@ describe('column header drag reorder', () => {
             await dispatcher.movePointer(viewport, 5, 100);
             await dispatcher.movePointer(viewport, 250, 100);
             expect(highlights()).toEqual(['d:after']);
+            expect(source.classList.contains('ag-header-cell-moving')).toBe(true);
             expect(colOrder(api)).toEqual(['a', 'b', 'd']);
             await dispatcher.finishDrag(viewport);
         } finally {
@@ -145,6 +146,51 @@ describe('column header drag reorder', () => {
 
         await waitFor(() => expect(colOrder(api)).toEqual(['b', 'd', 'a']));
         expect(highlights()).toEqual([]);
+        expect(el(api, '.ag-header-cell[col-id="a"]').classList.contains('ag-header-cell-moving')).toBe(false);
+    });
+
+    test('with moves deferred to the drop, a dragged group header is moving, and the group it would drop beside shows where, until the drop', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                {
+                    groupId: 'g1',
+                    children: [
+                        { field: 'a', width: 100 },
+                        { field: 'b', width: 100 },
+                    ],
+                },
+                {
+                    groupId: 'g2',
+                    children: [
+                        { field: 'c', width: 100 },
+                        { field: 'd', width: 100 },
+                    ],
+                },
+            ],
+            rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
+            suppressMoveWhenColumnDragging: true,
+        });
+        const groupState = (groupId: string) => {
+            const classList = el(api, `.ag-header-group-cell[col-id^="${groupId}_"]`).classList;
+            const classes = ['ag-header-cell-moving', 'ag-header-highlight-before', 'ag-header-highlight-after'];
+            return `${groupId}:${classes.filter((cssClass) => classList.contains(cssClass)).join()}`;
+        };
+        const seen: string[] = [];
+        const viewport = el(api, '.ag-grid-viewport');
+        const dispatcher = new DragEventDispatcher('mouse', null, false);
+        try {
+            await dispatcher.startDrag(el(api, '.ag-header-group-cell[col-id^="g2_"]'), 350, 100);
+            await dispatcher.movePointer(viewport, 350, 100);
+            await dispatcher.movePointer(viewport, 5, 100);
+            seen.push(groupState('g1'), groupState('g2'));
+            await dispatcher.finishDrag(viewport);
+        } finally {
+            dispatcher.reset();
+        }
+
+        await waitFor(() => expect(colOrder(api)).toEqual(['c', 'd', 'a', 'b']));
+        seen.push(groupState('g1'), groupState('g2'));
+        expect(seen).toEqual(['g1:ag-header-highlight-before', 'g2:ag-header-cell-moving', 'g1:', 'g2:']);
     });
 
     test('dragging a header left to the front, hidden col preserved', async () => {

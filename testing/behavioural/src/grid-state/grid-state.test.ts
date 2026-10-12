@@ -1045,8 +1045,7 @@ describe('StateService - Grid State Management', () => {
         });
 
         test('CSRM: getState reflects new node IDs after group column change via setGridOption', async () => {
-            // columnRowGroupChanged fires while changeEventsDispatching=true (before CSRM re-groups),
-            // so expansion state must be refreshed on newColumnsLoaded instead.
+            // expansion state is cached by node id, which a re-group from new column definitions changes
             const api = gridsManager.createGrid('csrmRegroup', {
                 columnDefs: [
                     { field: 'sport', rowGroup: true, hide: true },
@@ -1136,7 +1135,33 @@ describe('StateService - Grid State Management', () => {
 
             // Cached state must reflect the new name-based IDs, not stale sport-based IDs
             const expansion = api.getState().rowGroupExpansion;
-            expect(expansion?.expandedRowGroupIds).not.toContain('row-group-sport-Football');
+            expect(expansion?.expandedRowGroupIds ?? []).toEqual([]);
+        });
+
+        test('CSRM: getState reports the groups groupDefaultExpanded opens once the row groups change', async () => {
+            const api = gridsManager.createGrid('csrmDefaultExpanded', {
+                columnDefs: [{ field: 'sport', hide: true }, { field: 'name' }],
+                rowData: defaultRowData.slice(0, 3),
+                getRowId: ({ data }) => data.id,
+                groupDefaultExpanded: -1,
+            });
+            expect(api.getState().rowGroupExpansion?.expandedRowGroupIds ?? []).toEqual([]);
+
+            api.setRowGroupColumns(['sport']);
+            await new GridRows(api, 'grouped by sport').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP id:row-group-sport-Football ag-Grid-AutoColumn:"Football"
+                │ └── LEAF id:1 sport:"Football" name:"Alice"
+                ├─┬ LEAF_GROUP id:row-group-sport-Tennis ag-Grid-AutoColumn:"Tennis"
+                │ └── LEAF id:2 sport:"Tennis" name:"Bob"
+                └─┬ LEAF_GROUP id:row-group-sport-Golf ag-Grid-AutoColumn:"Golf"
+                · └── LEAF id:3 sport:"Golf" name:"Charlie"
+            `);
+            expect(api.getState().rowGroupExpansion?.expandedRowGroupIds).toEqual([
+                'row-group-sport-Football',
+                'row-group-sport-Tennis',
+                'row-group-sport-Golf',
+            ]);
         });
 
         test('should capture pagination state', async () => {
