@@ -10,9 +10,8 @@ export function _destroyForVisibleRows(
     reason: VisibleRowsDestroyReason,
     destroy: () => void
 ): void {
-    const visibleRowsSvc = beans.visibleRowsSvc;
-    if (visibleRowsSvc) {
-        visibleRowsSvc.runDestroying(reason, destroy);
+    if (beans.visibleRowsSvc) {
+        beans.visibleRowsSvc.runDestroying(reason, destroy);
     } else {
         destroy();
     }

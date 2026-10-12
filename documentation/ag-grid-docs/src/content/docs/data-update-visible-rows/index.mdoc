@@ -6,11 +6,7 @@ When a server streams live updates to the grid, it is wasteful to send updates f
 
 {% apiDocumentation source="grid-api/api.json" section="displayedRows" names=["subscribeToVisibleRows"] /%}
 
-Subscribing to visible rows requires the `VisibleRowsModule`, and is supported by the [Client-Side Row Model](./row-models/#client-side) and the [Server-Side Row Model](./server-side-model/) {% enterpriseIcon /%}. With any other row model the grid logs a warning and returns a stop function that does nothing.
-
-{% note %}
-Visible Rows requires [Row IDs](./row-ids/). Without `getRowId` the grid logs a warning and returns a stop function that does nothing.
-{% /note %}
+Subscribing to visible rows requires the `VisibleRowsModule` and [Row IDs](./row-ids/), and is supported by the [Client-Side Row Model](./row-models/#client-side) and the [Server-Side Row Model](./server-side-model/) {% enterpriseIcon /%}. Without `getRowId`, or with any other row model, the grid logs a warning and returns a stop function that does nothing.
 
 ## Handlers
 
@@ -34,7 +30,6 @@ stop();
 - `onUnsubscribe` receives `VisibleRowRef` objects, which hold only the `id`, `parentKeys`, `level` and, for rows that have a key, the `route`. These are captured when the row is subscribed, as the row node may no longer exist when it is unsubscribed.
 - Every subscribed row is unsubscribed exactly once, including when the subscription is stopped or the grid is destroyed.
 - Within a batch, all `onUnsubscribe` calls are made before any `onSubscribe` calls. A batch can produce several calls, one for each reason.
-- `onSubscribe` is called synchronously with `reason: 'initial'`, with an empty array if no rows are visible yet.
 
 ### Routes and Parent Keys
 
@@ -83,7 +78,6 @@ Only loaded rows in view are passed to the handlers. The following rows are neve
 
 {% interfaceDocumentation interfaceName="VisibleRowsOptions" config={ "description": "" } /%}
 
-- By default, handlers are called at most once per animation frame. When `debounceMs` is set, they are called at most once per `debounceMs` while changes continue, followed by a final call once changes stop.
 - Set `includeBuffer` to `true` to also subscribe to rows rendered in the row buffer, so updates are ready before the rows scroll into view.
 - Set `includeGroups` to `false` if the stream only has updates for leaf rows.
 

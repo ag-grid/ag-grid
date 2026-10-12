@@ -1,4 +1,4 @@
-import { _areEqual, _requestAnimationFrame } from 'ag-stack';
+import { _areEqual, _pushToMapArray, _requestAnimationFrame } from 'ag-stack';
 
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -54,6 +54,8 @@ interface VisibleRowsSubscription {
 
 type RowsByReason<T> = Map<VisibleRowsReason, T[]>;
 
+type PendingFlag = 'expandAllPending' | 'collapsePending' | 'scrollPending' | 'sortPending' | 'filterPending';
+
 /** Why the grid destroyed a row, when it was not removed, e.g. by a transaction. */
 export type VisibleRowsDestroyReason = Extract<VisibleRowsReason, 'reset' | 'collapse'>;
 
@@ -69,35 +71,42 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
     private destroyReason: VisibleRowsDestroyReason | undefined;
 
     public postConstruct(): void {
-        const markAllDirty = () => this.markAllDirty(false);
+        const markDirty = () => this.markPending();
         this.addManagedEventListeners({
-            modelUpdated: markAllDirty,
-            viewportChanged: markAllDirty,
+            modelUpdated: markDirty,
+            viewportChanged: markDirty,
             // A partial redraw can change whether a row is full width, without a model or viewport change.
             displayedRowsChanged: (event: DisplayedRowsChangedEvent) => {
                 if (!event.afterScroll) {
-                    this.markAllDirty(false);
+                    this.markPending();
                 }
             },
             // Without virtualisation the rendered rows can stay the same while the visible pixel range changes.
-            bodyHeightChanged: () => this.onScroll(false),
-            paginationChanged: (event: PaginationChangedEvent) => {
-                if (event.newPage) {
-                    this.onScroll(false);
-                } else {
-                    this.markAllDirty(false);
-                }
-            },
+            bodyHeightChanged: () => this.markPending('scrollPending'),
+            paginationChanged: (event: PaginationChangedEvent) =>
+                this.markPending(event.newPage ? 'scrollPending' : undefined),
             bodyScroll: (event: BodyScrollEvent) => {
                 if (event.direction === 'vertical') {
-                    this.onScroll(true);
+                    this.markPending('scrollPending', true);
                 }
             },
-            rowGroupOpened: this.onRowGroupOpened.bind(this),
-            expandOrCollapseAll: this.onExpandOrCollapseAll.bind(this),
+            rowGroupOpened: (event: RowGroupOpenedEvent) => {
+                if (event.expanded) {
+                    for (const sub of this.subscriptions) {
+                        sub.expandedGroups.add(event.node as RowNode);
+                    }
+                }
+                this.markPending(event.expanded ? undefined : 'collapsePending');
+            },
+            expandOrCollapseAll: (event: ExpandOrCollapseAllEvent) =>
+                this.markPending(event.source === 'expandAll' ? 'expandAllPending' : 'collapsePending'),
             sortChanged: () => this.markPending('sortPending'),
             filterChanged: () => this.markPending('filterPending'),
-            gridPreDestroyed: this.stopAll.bind(this),
+            gridPreDestroyed: () => {
+                for (const sub of Array.from(this.subscriptions)) {
+                    this.stop(sub);
+                }
+            },
         });
     }
 
@@ -133,13 +142,8 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
         this.subscriptions.add(sub);
 
         const [first, last] = this.getRange(sub);
-        const visible = this.getVisibleRows(sub, first, last);
         const rows: VisibleRow[] = [];
-        visible.forEach((node, id) => {
-            const ref = this.createRef(id, node);
-            sub.rows.set(id, { ref, node, index: node.rowIndex });
-            rows.push(this.createVisibleRow(ref, node));
-        });
+        this.getVisibleRows(sub, first, last).forEach((node, id) => rows.push(this.addRow(sub, id, node)));
         sub.lastFirst = first;
         sub.lastLast = last;
         sub.lastFlushTime = Date.now();
@@ -166,17 +170,6 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
         }
     }
 
-    public override destroy(): void {
-        this.stopAll();
-        super.destroy();
-    }
-
-    private stopAll(): void {
-        for (const sub of Array.from(this.subscriptions)) {
-            this.stop(sub);
-        }
-    }
-
     private stop(sub: VisibleRowsSubscription): void {
         if (sub.stopped) {
             return;
@@ -193,46 +186,12 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
         }
     }
 
-    private onRowGroupOpened(event: RowGroupOpenedEvent): void {
-        const node = event.node as RowNode;
+    /** Sets `flag` on every subscription and schedules a flush, only for those without the buffer if `unbufferedOnly`. */
+    private markPending(flag?: PendingFlag, unbufferedOnly = false): void {
         for (const sub of this.subscriptions) {
-            if (event.expanded) {
-                sub.expandedGroups.add(node);
-            } else {
-                sub.collapsePending = true;
+            if (flag) {
+                sub[flag] = true;
             }
-        }
-        this.markAllDirty(false);
-    }
-
-    private onExpandOrCollapseAll(event: ExpandOrCollapseAllEvent): void {
-        const expanded = event.source === 'expandAll';
-        for (const sub of this.subscriptions) {
-            if (expanded) {
-                sub.expandAllPending = true;
-            } else {
-                sub.collapsePending = true;
-            }
-        }
-        this.markAllDirty(false);
-    }
-
-    private markPending(pending: 'sortPending' | 'filterPending'): void {
-        for (const sub of this.subscriptions) {
-            sub[pending] = true;
-        }
-        this.markAllDirty(false);
-    }
-
-    private onScroll(fromBodyScroll: boolean): void {
-        for (const sub of this.subscriptions) {
-            sub.scrollPending = true;
-        }
-        this.markAllDirty(fromBodyScroll);
-    }
-
-    private markAllDirty(unbufferedOnly: boolean): void {
-        for (const sub of this.subscriptions) {
             if (!unbufferedOnly || !sub.includeBuffer) {
                 this.schedule(sub);
             }
@@ -305,12 +264,12 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
         visible.forEach((node, id) => {
             const existing = sub.rows.get(id);
             if (existing?.node !== node) {
-                addToReason(added, this.getSubscribeReason(node, sub), node);
+                _pushToMapArray(added, this.getSubscribeReason(node, sub), node);
             } else if (hasMovedParent(existing.ref, node)) {
                 // A transaction moved the row to another parent, so its captured ref is out of date.
                 removed.push(existing);
                 removedReasons.set(existing, 'move');
-                addToReason(added, 'move', node);
+                _pushToMapArray(added, 'move', node);
             } else {
                 // Taken before any handler runs, so a sort or filter a handler applies is seen by the next flush.
                 existing.index = node.rowIndex;
@@ -330,7 +289,11 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
             // Worked out again after each handler, which can purge or remove the rows still waiting.
             const byReason: RowsByReason<SubscribedRow> = new Map();
             for (const row of pending) {
-                addToReason(byReason, this.getUnsubscribeReason(row, removedReasons.get(row)!), row);
+                const node = row.node;
+                const reason = node.destroyed
+                    ? (this.destroyedRowReasons.get(node) ?? 'remove')
+                    : removedReasons.get(row)!;
+                _pushToMapArray(byReason, reason, row);
             }
             const reason = UNSUBSCRIBE_ORDER.find((r) => byReason.has(r))!;
             const rows = byReason.get(reason)!;
@@ -365,10 +328,7 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
                     rescheduleNeeded = true;
                     continue;
                 }
-                const id = node.id!;
-                const ref = this.createRef(id, node);
-                sub.rows.set(id, { ref, node, index: node.rowIndex });
-                rows.push(this.createVisibleRow(ref, node));
+                rows.push(this.addRow(sub, node.id!, node));
             }
             if (rows.length) {
                 sub.handlers.onSubscribe(rows, this.createParams(reason));
@@ -437,7 +397,8 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
         if (hasMovedParent(row.ref, node)) {
             return 'move';
         }
-        if (isUnderCollapsedGroup(node)) {
+        // A hidden group, such as one with an empty key under `groupAllowUnbalanced`, does not hide its children.
+        if (hasAncestor(node, (parent) => !parent.expanded && parent.rowIndex != null)) {
             return 'collapse';
         }
         // A refresh can keep a replaced row alive, with its old index, until the refresh finishes.
@@ -457,16 +418,11 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
         return sub.filterPending && this.beans.rowModel.getRowNode(row.ref.id) === node ? 'filter' : 'remove';
     }
 
-    private getUnsubscribeReason(row: SubscribedRow, movedReason: VisibleRowsReason): VisibleRowsReason {
-        const node = row.node;
-        if (node.destroyed) {
-            return this.destroyedRowReasons.get(node) ?? 'remove';
-        }
-        return movedReason;
-    }
-
     private getSubscribeReason(node: RowNode, sub: VisibleRowsSubscription): VisibleRowsReason {
-        if (sub.expandAllPending || (sub.expandedGroups.size && hasAncestorIn(node, sub.expandedGroups))) {
+        if (
+            sub.expandAllPending ||
+            (sub.expandedGroups.size && hasAncestor(node, (parent) => sub.expandedGroups.has(parent)))
+        ) {
             return 'expand';
         }
         if (sub.collapsePending) {
@@ -483,24 +439,18 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
         return sub.scrollPending && wasOutOfRange ? 'scroll' : 'load';
     }
 
-    private createRef(id: string, node: RowNode): VisibleRowRef {
-        const ref: VisibleRowRef = {
-            id,
-            parentKeys: node.parent?.getRoute() ?? [],
-            level: node.level,
-        };
+    /** Stores the row as subscribed and returns the row to pass to `onSubscribe`. */
+    private addRow(sub: VisibleRowsSubscription, id: string, node: RowNode): VisibleRow {
+        const ref: VisibleRowRef = { id, parentKeys: node.parent?.getRoute() ?? [], level: node.level };
         const route = node.getRoute();
         if (route) {
             ref.route = route;
         }
-        return ref;
-    }
-
-    private createVisibleRow(ref: VisibleRowRef, node: RowNode): VisibleRow {
+        sub.rows.set(id, { ref, node, index: node.rowIndex });
         // Handlers get their own arrays: changing them must not affect the stored ref the move check compares.
         const row: VisibleRow = { ...ref, parentKeys: ref.parentKeys.slice(), group: !!node.group, data: node.data };
-        if (ref.route) {
-            row.route = ref.route.slice();
+        if (route) {
+            row.route = route.slice();
         }
         return row;
     }
@@ -521,18 +471,6 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
     }
 }
 
-/** A hidden group, such as one with an empty key under `groupAllowUnbalanced`, does not hide its children. */
-function isUnderCollapsedGroup(node: RowNode): boolean {
-    let parent = node.parent;
-    while (parent && parent.level >= 0) {
-        if (!parent.expanded && parent.rowIndex != null) {
-            return true;
-        }
-        parent = parent.parent;
-    }
-    return false;
-}
-
 function hasMovedParent(ref: VisibleRowRef, node: RowNode): boolean {
     return (
         ref.level !== node.level ||
@@ -541,22 +479,13 @@ function hasMovedParent(ref: VisibleRowRef, node: RowNode): boolean {
     );
 }
 
-function hasAncestorIn(node: RowNode, groups: Set<RowNode>): boolean {
+function hasAncestor(node: RowNode, predicate: (parent: RowNode) => boolean): boolean {
     let parent = node.parent;
     while (parent && parent.level >= 0) {
-        if (groups.has(parent)) {
+        if (predicate(parent)) {
             return true;
         }
         parent = parent.parent;
     }
     return false;
-}
-
-function addToReason<T>(map: RowsByReason<T>, reason: VisibleRowsReason, item: T): void {
-    const list = map.get(reason);
-    if (list) {
-        list.push(item);
-    } else {
-        map.set(reason, [item]);
-    }
 }
