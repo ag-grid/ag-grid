@@ -324,4 +324,90 @@ describe('Resizing pinned columns wider than the viewport', () => {
         await pressResizeKey('e', 'ArrowRight', true);
         expect(width(api, 'e')).toBe(200);
     });
+
+    describe('pinned header groups', () => {
+        const createGroupedGrid = async (groups: string[][], gridOptions: GridOptions = {}): Promise<GridApi> => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: groups.map((fields, index) => ({
+                    headerName: `Group ${index}`,
+                    groupId: `g${index}`,
+                    children: fields.map((field) => ({ field, width: 200, pinned: 'left' as const, resizable: true })),
+                })),
+                rowData: [{ a: 'a', b: 'b', c: 'c', d: 'd', e: 'e' }],
+                processUnpinnedColumns: () => [],
+                ...gridOptions,
+            });
+            await asyncSetTimeout(0);
+            expect(api.getColumnState().every((column) => column.pinned === 'left')).toBe(true);
+            return api;
+        };
+
+        const groupBar = (groupId: string): HTMLElement =>
+            query<HTMLElement>(`.ag-header-group-cell[col-id^="${groupId}_"] .ag-header-cell-resize`);
+
+        const totalWidth = (api: GridApi, colIds: string[]): number =>
+            colIds.reduce((total, colId) => total + width(api, colId), 0);
+
+        test('dragging a pinned group stops growing at the viewport limit and can still shrink', async () => {
+            const api = await createGroupedGrid([['a', 'b']]);
+            const dispatcher = new DragEventDispatcher('mouse');
+
+            await dispatcher.startDrag(groupBar('g0'), 400, 10);
+            await dispatcher.movePointer(groupBar('g0'), 700, 10);
+            await dispatcher.finishDrag();
+            await asyncSetTimeout(0);
+            expect(totalWidth(api, ['a', 'b'])).toBe(550);
+
+            await dispatcher.startDrag(groupBar('g0'), 550, 10);
+            await dispatcher.movePointer(groupBar('g0'), 450, 10);
+            await dispatcher.finishDrag();
+            await asyncSetTimeout(0);
+            expect(totalWidth(api, ['a', 'b'])).toBe(450);
+        });
+
+        test('an overflowing pinned group shrunk during a drag can grow back to its starting width', async () => {
+            const api = await createGroupedGrid([
+                ['a', 'b'],
+                ['c', 'd', 'e'],
+            ]);
+            expect(query<HTMLElement>('.ag-grid-viewport').classList.contains('ag-pinned-columns-overflow')).toBe(true);
+            const dispatcher = new DragEventDispatcher('mouse');
+
+            await dispatcher.startDrag(groupBar('g0'), 400, 10);
+            await dispatcher.movePointer(groupBar('g0'), 300, 10);
+            expect(totalWidth(api, ['a', 'b'])).toBe(300);
+            await dispatcher.movePointer(groupBar('g0'), 500, 10);
+            expect(totalWidth(api, ['a', 'b'])).toBe(400);
+            await dispatcher.finishDrag();
+            await asyncSetTimeout(0);
+
+            expect(totalWidth(api, ['a', 'b'])).toBe(400);
+            expect(
+                query<HTMLElement>('.ag-header-group-cell[col-id^="g0_"]').classList.contains('ag-column-resizing')
+            ).toBe(false);
+        });
+
+        test('shift-dragging an overflowing pinned group grows it by taking width from the next pinned group', async () => {
+            const api = await createGroupedGrid([
+                ['a', 'b'],
+                ['c', 'd', 'e'],
+            ]);
+            const forceShiftKey = (event: Event) => Object.defineProperty(event, 'shiftKey', { value: true });
+            document.addEventListener('mousedown', forceShiftKey, true);
+            document.addEventListener('mousemove', forceShiftKey, true);
+            try {
+                const dispatcher = new DragEventDispatcher('mouse');
+                await dispatcher.startDrag(groupBar('g0'), 400, 10);
+                await dispatcher.movePointer(groupBar('g0'), 460, 10);
+                await dispatcher.finishDrag();
+                await asyncSetTimeout(0);
+            } finally {
+                document.removeEventListener('mousedown', forceShiftKey, true);
+                document.removeEventListener('mousemove', forceShiftKey, true);
+            }
+
+            expect(totalWidth(api, ['a', 'b'])).toBe(460);
+            expect(totalWidth(api, ['c', 'd', 'e'])).toBe(540);
+        });
+    });
 });

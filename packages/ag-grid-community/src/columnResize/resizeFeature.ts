@@ -74,7 +74,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
     private onResizing(finished: boolean, resizeAmount: number): void {
         const { column: key, resizeStartWidth, beans } = this;
-        const { pinnedCols, ctrlsSvc, colResize } = beans;
+        const { pinnedCols, colResize } = beans;
 
         let newWidth = resizeStartWidth + this.normaliseResizeAmount(resizeAmount);
         // measured from the applied width, as a width outside min/max is never applied
@@ -82,15 +82,13 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         const growth = newWidth - actualWidth;
 
         if (
+            pinnedCols &&
             growth > 0 &&
             key.pinnedLane !== 1 &&
-            !pinnedCols?.isShiftResizeWithinPinnedSection(key, this.resizeWithShiftKey)
+            !pinnedCols.isShiftResizeWithinPinnedSection(key, this.resizeWithShiftKey)
         ) {
-            const bodyWidth = ctrlsSvc.getGridBodyCtrl().getViewportWidthWithoutScrollbar() - 50;
-            // pinned columns that overflowed when the drag started can grow back to their starting width
-            const room = Math.max(bodyWidth, this.resizeStartPinnedWidth) - this.getPinnedWidth();
-            // fill the remaining space; still set the width so a finished drag completes
-            newWidth = actualWidth + Math.min(growth, Math.max(room, 0));
+            // still set the width when no growth fits, so a finished drag completes
+            newWidth = actualWidth + pinnedCols.getPinnedResizeGrowth(growth, this.resizeStartPinnedWidth);
         }
 
         colResize?.setColumnWidths([{ key, newWidth }], this.resizeWithShiftKey, finished, 'uiColumnResized');
@@ -102,15 +100,10 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
     private onResizeStart(shiftKey: boolean): void {
         this.resizeStartWidth = this.column.getActualWidth();
-        this.resizeStartPinnedWidth = this.getPinnedWidth();
+        this.resizeStartPinnedWidth = this.beans.pinnedCols?.getPinnedWidth() ?? 0;
         this.resizeWithShiftKey = shiftKey;
 
         this.toggleColumnResizing(true);
-    }
-
-    private getPinnedWidth(): number {
-        const { pinnedCols } = this.beans;
-        return (pinnedCols?.leftWidth ?? 0) + (pinnedCols?.rightWidth ?? 0);
     }
 
     public toggleColumnResizing(resizing: boolean): void {

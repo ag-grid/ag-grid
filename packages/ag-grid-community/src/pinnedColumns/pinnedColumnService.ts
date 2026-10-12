@@ -162,6 +162,21 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         return takeFromAdjacent && this.beans.visibleCols.getColAfter(column)?.pinnedLane === column.pinnedLane;
     }
 
+    public getPinnedWidth(): number {
+        return this.leftWidth + this.rightWidth;
+    }
+
+    /**
+     * Limits the growth of a pinned column or group during a mouse resize, so the pinned sections stay narrower
+     * than the viewport. Pinned columns that overflowed when the drag started can grow back to that width.
+     * @returns the part of `growth` that fits, filling the remaining space
+     */
+    public getPinnedResizeGrowth(growth: number, resizeStartPinnedWidth: number): number {
+        const bodyWidth = this.getAvailableViewportWidth() - MIN_CENTER_VIEWPORT_WIDTH;
+        const room = Math.max(bodyWidth, resizeStartPinnedWidth) - this.getPinnedWidth();
+        return Math.min(growth, Math.max(room, 0));
+    }
+
     public getHeaderResizeDiff(diff: number, column: AgColumn | AgColumnGroup, shiftKey: boolean): number {
         if (isColumn(column) && this.isShiftResizeWithinPinnedSection(column, shiftKey)) {
             return diff;

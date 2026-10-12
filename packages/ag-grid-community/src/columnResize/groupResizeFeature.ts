@@ -1,6 +1,6 @@
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
-import type { AgColumn } from '../entities/agColumn';
+import type { AgColumn, ColumnLane } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { edgeLeafColumn, getColGroupAtLevel } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
@@ -19,6 +19,7 @@ interface ColumnSizeAndRatios {
 export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private resizeCols?: AgColumn[];
     private resizeStartWidth: number;
+    private resizeStartPinnedWidth: number;
     private resizeRatios?: number[];
 
     private resizeTakeFromCols?: AgColumn[];
@@ -77,6 +78,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         this.resizeTakeFromCols = groupAfterColumns;
         this.resizeTakeFromStartWidth = groupAfterStartWidth;
         this.resizeTakeFromRatios = groupAfterRatios;
+        this.resizeStartPinnedWidth = this.beans.pinnedCols?.getPinnedWidth() ?? 0;
 
         this.toggleColumnResizing(true);
     }
@@ -85,17 +87,47 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         const resizeAmountNormalised = this.normaliseDragChange(resizeAmount);
         const width = this.resizeStartWidth + resizeAmountNormalised;
 
-        this.resizeColumnsFromLocalValues(width, source, finished);
+        this.resizeColumnsFromLocalValues(this.limitPinnedGrowth(width), source, finished);
+    }
+
+    private limitPinnedGrowth(width: number): number {
+        const { resizeCols, beans } = this;
+        const pinnedCols = beans.pinnedCols;
+        const lane = this.getPinnedLane();
+
+        if (!pinnedCols || !resizeCols || lane === 1 || this.isTakingFromGroupInLane(lane)) {
+            return width;
+        }
+
+        // measured from the applied widths, as a width outside min/max is never applied
+        const actualWidth = getTotalWidth(resizeCols);
+        const growth = width - actualWidth;
+
+        if (growth <= 0) {
+            return width;
+        }
+
+        return actualWidth + pinnedCols.getPinnedResizeGrowth(growth, this.resizeStartPinnedWidth);
+    }
+
+    /** A shift resize takes the width from the next group, so the pinned section keeps its width when both share a lane. */
+    private isTakingFromGroupInLane(lane: ColumnLane): boolean {
+        const takeFromCols = this.resizeTakeFromCols;
+        return !!takeFromCols?.length && takeFromCols.every((col) => col.pinnedLane === lane);
+    }
+
+    private getPinnedLane(): ColumnLane {
+        const { columnGroup } = this;
+        const firstDisplayedLeafCol = edgeLeafColumn(columnGroup, true, false);
+        return firstDisplayedLeafCol ? firstDisplayedLeafCol.pinnedLane : columnGroup.pinnedLane;
     }
 
     public getInitialValues(shiftKey?: boolean): ColumnSizeAndRatios {
-        const getInitialSizeOfColumns = (columns: AgColumn[]) =>
-            columns.reduce((totalWidth: number, column: AgColumn) => totalWidth + column.getActualWidth(), 0);
         const getSizeRatiosOfColumns = (columns: AgColumn[], initialSizeOfColumns: number) =>
             columns.map((column) => column.getActualWidth() / initialSizeOfColumns);
 
         const columnsToResize = this.getColumnsToResize();
-        const resizeStartWidth = getInitialSizeOfColumns(columnsToResize);
+        const resizeStartWidth = getTotalWidth(columnsToResize);
         const resizeRatios = getSizeRatiosOfColumns(columnsToResize, resizeStartWidth);
 
         const columnSizeAndRatios: ColumnSizeAndRatios = {
@@ -115,8 +147,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
             const groupAfterColumns = (columnSizeAndRatios.groupAfterColumns = takeFromLeafCols.filter((col) =>
                 col.isResizable()
             ));
-            const groupAfterStartWidth = (columnSizeAndRatios.groupAfterStartWidth =
-                getInitialSizeOfColumns(groupAfterColumns));
+            const groupAfterStartWidth = (columnSizeAndRatios.groupAfterStartWidth = getTotalWidth(groupAfterColumns));
             columnSizeAndRatios.groupAfterRatios = getSizeRatiosOfColumns(groupAfterColumns, groupAfterStartWidth);
         } else {
             columnSizeAndRatios.groupAfterColumns = undefined;
@@ -209,9 +240,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     // note - this method is duplicated in RenderedHeaderCell - should refactor out?
     private normaliseDragChange(dragChange: number): number {
         let result = dragChange;
-        const { columnGroup } = this;
-        const firstDisplayedLeafCol = edgeLeafColumn(columnGroup, true, false);
-        const lane = firstDisplayedLeafCol ? firstDisplayedLeafCol.pinnedLane : columnGroup.pinnedLane;
+        const lane = this.getPinnedLane();
 
         if (this.gos.get('enableRtl')) {
             // for RTL, dragging left makes the col bigger, except when pinning left
@@ -236,6 +265,9 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         this.resizeTakeFromRatios = undefined;
     }
 }
+
+const getTotalWidth = (columns: AgColumn[]): number =>
+    columns.reduce((totalWidth: number, column: AgColumn) => totalWidth + column.getActualWidth(), 0);
 
 /** Scan leaf-by-leaf from `columnGroup`'s trailing edge to the adjacent displayed group at the same level. */
 const getColGroupAfter = (visibleCols: VisibleColsService, columnGroup: AgColumnGroup): AgColumnGroup | null => {
