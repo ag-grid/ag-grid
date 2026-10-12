@@ -75,6 +75,10 @@ const SVG_CASES: SvgCase[] = [
     { type: 'pyramid', label: 'Pyramid', tooltip: 'Pyramid', paths: 3, axes: 'none', clip: true },
     { type: 'columnLineCombo', label: 'Column & Line', tooltip: 'Column & Line', paths: 3, clip: true },
     { type: 'areaColumnCombo', label: 'Area & Column', tooltip: 'Area & Column', paths: 3, clip: true },
+    { type: 'boxPlot', label: 'Box Plot', tooltip: 'Box Plot', paths: 18 },
+    { type: 'treemap', label: 'Treemap', tooltip: 'Treemap', paths: 5, axes: 'none', clip: true },
+    { type: 'heatmap', label: 'Heatmap', tooltip: 'Heatmap', paths: 9, axes: 'none', clip: true },
+    { type: 'waterfall', label: 'Waterfall', tooltip: 'Waterfall', paths: 5 },
 ];
 
 const CUSTOM_COMBO_CASE: SvgCase = {
@@ -237,14 +241,15 @@ describe('chart settings panel mini chart thumbnails', () => {
             }
         });
 
-        test.each(['Box Plot', 'Treemap', 'Heatmap', 'Waterfall'])(
-            '%s thumbnail keeps its canvas and has no svg',
-            (label) => {
-                const el = thumbnail(label);
-                expect(el.querySelector('canvas.ag-chart-mini-thumbnail-canvas')).not.toBeNull();
-                expect(el.querySelector('svg')).toBeNull();
-            }
-        );
+        test('every thumbnail is an svg and none is a canvas', () => {
+            const wrapper = activeWrapper();
+            const thumbnails = wrapper.querySelectorAll('.ag-chart-mini-thumbnail');
+            expect(thumbnails).toHaveLength(SVG_CASES.length);
+            expect(wrapper.querySelectorAll(`.ag-chart-mini-thumbnail > ${SVG_SELECTOR}`)).toHaveLength(
+                SVG_CASES.length
+            );
+            expect(wrapper.querySelector('canvas')).toBeNull();
+        });
 
         test('clicking a thumbnail moves ag-selected and the selected aria-label suffix', async () => {
             expect(thumbnail('Grouped Column').classList.contains('ag-selected')).toBe(true);
@@ -266,7 +271,8 @@ describe('chart settings panel mini chart thumbnails', () => {
     describe('palette colours', () => {
         /** Every series in every svg thumbnail is painted, and only with colours from the given palette. */
         function expectPaletteColours({ fills, strokes }: { fills: string[]; strokes: string[] }): void {
-            for (const { label } of SVG_CASES) {
+            // Heatmap cells blend the palette's first two fills, so they are asserted separately.
+            for (const { label } of SVG_CASES.filter(({ type }) => type !== 'heatmap')) {
                 const paths = Array.from(thumbnail(label).querySelectorAll(`${SVG_SELECTOR} path`));
                 expect(paths.length).toBeGreaterThan(0);
                 paths.forEach((path) => {
@@ -333,35 +339,11 @@ describe('chart settings panel mini chart thumbnails', () => {
             expect(document.querySelector(`${SVG_SELECTOR} defs, ${SVG_SELECTOR} linearGradient`)).toBeNull();
         });
 
-        // The remaining canvas thumbnails do not all support short palettes, so only the svg groups are shown.
-        const svgChartGroupsDef: GridOptions = {
-            chartToolPanelsDef: {
-                settingsPanel: {
-                    chartGroupsDef: {
-                        columnGroup: ['column', 'stackedColumn', 'normalizedColumn'],
-                        barGroup: ['bar', 'stackedBar', 'normalizedBar'],
-                        lineGroup: ['line', 'stackedLine', 'normalizedLine'],
-                        areaGroup: ['area', 'stackedArea', 'normalizedArea'],
-                        pieGroup: ['pie', 'donut'],
-                        scatterGroup: ['scatter', 'bubble'],
-                        polarGroup: ['radarLine', 'radarArea', 'nightingale', 'radialColumn', 'radialBar'],
-                        statisticalGroup: ['histogram', 'rangeBar', 'rangeArea'],
-                        hierarchicalGroup: ['sunburst'],
-                        funnelGroup: ['funnel', 'coneFunnel', 'pyramid'],
-                        combinationGroup: ['columnLineCombo', 'areaColumnCombo'],
-                    },
-                },
-            },
-        };
-
         test('a short palette repeats its colours', async () => {
             await openSettingsPanel(gridsManager, {
-                gridOptions: {
-                    ...svgChartGroupsDef,
-                    ...themedGridOptions({
-                        short: { palette: { fills: ['#123456', '#234567'], strokes: ['#654321', '#765432'] } },
-                    }),
-                },
+                gridOptions: themedGridOptions({
+                    short: { palette: { fills: ['#123456', '#234567'], strokes: ['#654321', '#765432'] } },
+                }),
             });
 
             expect(seriesPaints('groupedColumn', 'fill')).toEqual(['#123456', '#234567', '#123456']);
@@ -371,13 +353,77 @@ describe('chart settings panel mini chart thumbnails', () => {
 
         test('a single-colour palette renders every svg thumbnail', async () => {
             await openSettingsPanel(gridsManager, {
-                gridOptions: {
-                    ...svgChartGroupsDef,
-                    ...themedGridOptions({ single: { palette: { fills: ['#123456'], strokes: ['#654321'] } } }),
-                },
+                gridOptions: themedGridOptions({ single: { palette: { fills: ['#123456'], strokes: ['#654321'] } } }),
             });
 
             expectPaletteColours({ fills: ['#123456'], strokes: ['#654321'] });
+            expect(seriesPaints('heatmap', 'fill')).toEqual(Array(9).fill('rgb(18, 52, 86)'));
+        });
+    });
+
+    describe('theme-coloured thumbnails', () => {
+        test('stock themes colour box plot, treemap, heatmap and waterfall with fixed theme colours', async () => {
+            await openSettingsPanel(gridsManager);
+
+            const boxes = [0, 6, 12];
+            const boxOpacity = seriesPaints('boxPlot', 'fill-opacity');
+            expect(boxes.map((i) => boxOpacity[i])).toEqual(['0.3', '0.3', '0.3']);
+            const boxFills = seriesPaints('boxPlot', 'fill');
+            expect(boxFills.filter((_, i) => !boxes.includes(i))).toEqual(Array(15).fill('none'));
+
+            expect(seriesPaints('treemap', 'stroke')).toEqual(Array(5).fill('#ffffff'));
+
+            expect(seriesPaints('heatmap', 'fill')).toEqual([
+                'rgb(255, 160, 58)',
+                'rgb(249, 169, 46)',
+                'rgb(243, 178, 35)',
+                'rgb(237, 186, 23)',
+                'rgb(231, 195, 12)',
+                'rgb(225, 204, 0)',
+                'rgb(219, 213, 0)',
+                'rgb(213, 222, 0)',
+                'rgb(207, 230, 0)',
+            ]);
+            expect(seriesPaints('heatmap', 'stroke')).toEqual(Array(9).fill(null));
+
+            const [up, down] = ['#5090dc', '#ffa03a'];
+            expect(seriesPaints('waterfall', 'fill')).toEqual([up, up, down, up, down]);
+        });
+
+        test('custom themes colour box plot, treemap, heatmap and waterfall from the palette', async () => {
+            await openSettingsPanel(gridsManager, { gridOptions: themedGridOptions({ t1: T1 }) });
+            const [f0, f1, f2] = T1.palette!.fills as string[];
+            const [s0, s1, s2] = T1.palette!.strokes as string[];
+
+            const boxPlotFills = seriesPaints('boxPlot', 'fill');
+            const boxPlotStrokes = seriesPaints('boxPlot', 'stroke');
+            [f0, f1, f2].forEach((fill, i) => expect(boxPlotFills[i * 6]).toBe(fill));
+            [s0, s1, s2].forEach((stroke, i) =>
+                expect(boxPlotStrokes.slice(i * 6, i * 6 + 6)).toEqual(Array(6).fill(stroke))
+            );
+            expect(seriesPaints('boxPlot', 'fill-opacity')).toEqual(Array(18).fill(null));
+
+            expect(seriesPaints('treemap', 'fill')).toEqual([f0, f1, f2, f0, f1]);
+            expect(seriesPaints('treemap', 'stroke')).toEqual([s0, s1, s2, s0, s1]);
+
+            // #111111 towards #222222 in steps of 0.2, continuing past #222222.
+            expect(seriesPaints('heatmap', 'fill')).toEqual(
+                [17, 20, 24, 27, 31, 34, 37, 41, 44].map((c) => `rgb(${c}, ${c}, ${c})`)
+            );
+
+            expect(seriesPaints('waterfall', 'fill')).toEqual([f0, f0, f1, f0, f1]);
+        });
+
+        test('custom heatmap cells are clamped and an unparseable fill counts as black', async () => {
+            await openSettingsPanel(gridsManager, {
+                gridOptions: themedGridOptions({
+                    custom: { palette: { fills: ['not-a-colour', '#ffffff'], strokes: ['#000000'] } },
+                }),
+            });
+
+            expect(seriesPaints('heatmap', 'fill')).toEqual(
+                [0, 51, 102, 153, 204, 255, 255, 255, 255].map((c) => `rgb(${c}, ${c}, ${c})`)
+            );
         });
     });
 
