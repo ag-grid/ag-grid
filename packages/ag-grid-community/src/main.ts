@@ -616,7 +616,6 @@ export type {
     VisibleRowsHandlers,
     VisibleRowsOptions,
     VisibleRowsParams,
-    VisibleRowsReason,
 } from './interfaces/iVisibleRows';
 export type {
     IServerSideStore,

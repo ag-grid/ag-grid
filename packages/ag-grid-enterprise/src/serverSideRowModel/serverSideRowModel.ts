@@ -34,7 +34,6 @@ import {
     ROOT_NODE_ID,
     RowNode,
     _addRowHeightChangedListener,
-    _destroyForVisibleRows,
     _getRowHeightAsNumber,
     _getRowHeightForNode,
     _getSortModel,
@@ -316,10 +315,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
         if (!this.rootNode?.childStore) {
             return;
         }
-        const rootNode = this.rootNode;
-        _destroyForVisibleRows(this.beans, 'reset', () => {
-            rootNode.childStore = this.destroyBean(rootNode.childStore)!;
-        });
+        this.rootNode.childStore = this.destroyBean(this.rootNode.childStore)!;
         this.nodeManager.clear();
     }
 

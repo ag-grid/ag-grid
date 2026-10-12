@@ -8,8 +8,8 @@ test.agExample(import.meta, () => {
 
             const logs: string[] = [];
             page.on('console', (msg) => logs.push(msg.text()));
-            const expectLogged = (text: string) =>
-                expect(() => expect(logs.some((l) => l.includes(text))).toBe(true)).toPass();
+            const expectLogged = (prefix: string) =>
+                expect(() => expect(logs.some((l) => l.startsWith(prefix))).toBe(true)).toPass();
 
             const count = page.locator('#subscribedCount');
             const toggle = page.locator('#toggleStream');
@@ -17,22 +17,26 @@ test.agExample(import.meta, () => {
             await expect(count).not.toHaveText('0');
             expect(Number(await count.textContent())).toBeLessThan(40);
 
+            logs.length = 0;
             await scrollGridRelative('element', page, { y: 1500 });
-            await expectLogged('(scroll)');
+            await expectLogged('unsubscribe ');
+            await expectLogged('subscribe ');
 
+            logs.length = 0;
             await page.getByRole('button', { name: 'Purge' }).click();
-            await expectLogged('unsubscribe');
-            await expectLogged('(reset)');
-            await expectLogged('(load)');
+            await expectLogged('unsubscribe ');
+            await expectLogged('subscribe ');
             await expect(count).not.toHaveText('0');
 
+            logs.length = 0;
             await toggle.click();
-            await expectLogged('(stop)');
+            await expectLogged('unsubscribe ');
             await expect(count).toHaveText('0');
             await expect(toggle).toHaveText('Start');
 
+            logs.length = 0;
             await toggle.click();
-            await expectLogged('(initial)');
+            await expectLogged('subscribe ');
             await expect(count).not.toHaveText('0');
             await expect(toggle).toHaveText('Stop');
         }

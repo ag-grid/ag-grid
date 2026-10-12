@@ -1,8 +1,7 @@
-import type { VisibleRowRef, VisibleRowsHandlers, VisibleRowsReason } from 'ag-grid-community';
+import type { VisibleRowRef, VisibleRowsHandlers } from 'ag-grid-community';
 
 export interface Call {
     type: 'subscribe' | 'unsubscribe';
-    reason: VisibleRowsReason;
     ids: string[];
 }
 
@@ -13,24 +12,24 @@ export function createRecorder(onCall?: (call: Call) => void) {
     const violations: string[] = [];
 
     const handlers: VisibleRowsHandlers = {
-        onSubscribe(rows, params) {
+        onSubscribe(rows) {
             for (const row of rows) {
                 if (subscribed.has(row.id)) {
                     violations.push(`subscribed twice: ${row.id}`);
                 }
                 subscribed.set(row.id, row);
             }
-            const call: Call = { type: 'subscribe', reason: params.reason, ids: rows.map((r) => r.id) };
+            const call: Call = { type: 'subscribe', ids: rows.map((r) => r.id) };
             calls.push(call);
             onCall?.(call);
         },
-        onUnsubscribe(rows, params) {
+        onUnsubscribe(rows) {
             for (const row of rows) {
                 if (!subscribed.delete(row.id)) {
                     violations.push(`unsubscribed without subscribe: ${row.id}`);
                 }
             }
-            const call: Call = { type: 'unsubscribe', reason: params.reason, ids: rows.map((r) => r.id) };
+            const call: Call = { type: 'unsubscribe', ids: rows.map((r) => r.id) };
             calls.push(call);
             onCall?.(call);
         },
@@ -42,7 +41,8 @@ export function createRecorder(onCall?: (call: Call) => void) {
         calls,
         violations,
         ids: () => Array.from(subscribed.keys()).sort((a, b) => a.localeCompare(b, undefined, { numeric: true })),
-        reasons: (type: Call['type']) => calls.filter((c) => c.type === type && c.ids.length).map((c) => c.reason),
+        /** The ids of each non-empty call of this type. */
+        batches: (type: Call['type']) => calls.filter((c) => c.type === type && c.ids.length).map((c) => c.ids),
     };
 }
 

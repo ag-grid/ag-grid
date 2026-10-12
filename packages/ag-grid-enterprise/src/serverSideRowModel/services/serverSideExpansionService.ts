@@ -9,7 +9,7 @@ import type {
     RowGroupExpansionState,
     RowGroupOpenedEvent,
 } from 'ag-grid-community';
-import { RowNode, _destroyForVisibleRows, _getRowHeightForNode } from 'ag-grid-community';
+import { RowNode, _getRowHeightForNode } from 'ag-grid-community';
 
 import { BaseExpansionService } from '../../rowHierarchy/baseExpansionService';
 import type { ServerSideRowModel } from '../serverSideRowModel';
@@ -217,9 +217,7 @@ export class ServerSideExpansionService
                 rowNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, rowNode));
             }
         } else if (oldChildStore && this.gos.get('purgeClosedRowNodes')) {
-            _destroyForVisibleRows(this.beans, 'collapse', () => {
-                rowNode.childStore = this.destroyBean(oldChildStore)!;
-            });
+            rowNode.childStore = this.destroyBean(oldChildStore)!;
         }
     }
 

@@ -102,16 +102,16 @@ function onServerMessage(api: GridApi<PortfolioRow>, message: ServerMessage) {
 
 function startSubscription(api: GridApi<PortfolioRow>, socket: FakeSocket) {
     stopSubscription = api.subscribeToVisibleRows({
-        onSubscribe: (rows, params) => {
+        onSubscribe: (rows) => {
             rows.forEach((row) => subscribed.set(row.id, row.parentKeys));
             socket.send({ type: 'subscribe', ids: rows.map((row) => row.id) });
-            console.log(`subscribe ${rows.length} (${params.reason})`);
+            console.log(`subscribe ${rows.length}`);
             renderCount();
         },
-        onUnsubscribe: (rows, params) => {
+        onUnsubscribe: (rows) => {
             rows.forEach((row) => subscribed.delete(row.id));
             socket.send({ type: 'unsubscribe', ids: rows.map((row) => row.id) });
-            console.log(`unsubscribe ${rows.length} (${params.reason})`);
+            console.log(`unsubscribe ${rows.length}`);
             renderCount();
         },
     });

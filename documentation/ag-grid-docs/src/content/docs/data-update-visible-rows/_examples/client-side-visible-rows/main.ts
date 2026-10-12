@@ -84,18 +84,18 @@ function onServerMessage(api: GridApi<Stock>, message: ServerMessage) {
 function startSubscription(api: GridApi<Stock>, socket: FakeSocket) {
     stopSubscription = api.subscribeToVisibleRows(
         {
-            onSubscribe: (rows, params) => {
+            onSubscribe: (rows) => {
                 const ids = rows.map((row) => row.id);
                 ids.forEach((id) => subscribed.add(id));
                 socket.send({ type: 'subscribe', ids });
-                console.log(`subscribe ${rows.length} (${params.reason})`);
+                console.log(`subscribe ${rows.length}`);
                 renderCount();
             },
-            onUnsubscribe: (rows, params) => {
+            onUnsubscribe: (rows) => {
                 const ids = rows.map((row) => row.id);
                 ids.forEach((id) => subscribed.delete(id));
                 socket.send({ type: 'unsubscribe', ids });
-                console.log(`unsubscribe ${rows.length} (${params.reason})`);
+                console.log(`unsubscribe ${rows.length}`);
                 renderCount();
             },
         },

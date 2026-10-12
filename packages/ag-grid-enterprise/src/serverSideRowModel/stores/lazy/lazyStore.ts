@@ -19,7 +19,6 @@ import type {
 import {
     BeanStub,
     ServerSideTransactionResultStatus,
-    _destroyForVisibleRows,
     _getGrandTotalPinnedFloat,
     _getGrandTotalRow,
     _getGroupTotalRowCallback,
@@ -690,7 +689,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 const oldCount = this.cache.getRowCount();
                 const lastKnown = this.cache.isLastRowIndexKnown();
                 const lastInferred = this.cache.isLastRowIndexInferred();
-                _destroyForVisibleRows(this.beans, 'reset', () => this.destroyBean(this.cache));
+                this.destroyBean(this.cache);
                 this.cache = this.createManagedBean(
                     new LazyCache(this, oldCount, lastKnown, this.storeParams, lastInferred)
                 );
@@ -738,7 +737,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         if (purge) {
             this.grandTotalData = undefined;
             this.destroyGrandTotalRow();
-            _destroyForVisibleRows(this.beans, 'reset', () => this.destroyBean(this.cache));
+            this.destroyBean(this.cache);
             this.cache = this.createManagedBean(new LazyCache(this, 1, false, this.storeParams));
             this.fireStoreUpdatedEvent();
             return;

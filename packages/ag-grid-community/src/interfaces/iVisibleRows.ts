@@ -1,22 +1,5 @@
 import type { AgGridCommon } from './iCommon';
 
-/**
- * Why a batch of rows was passed to `onSubscribe` or `onUnsubscribe`.
- * - `'initial'`: the rows already visible when the subscription started.
- * - `'scroll'`: rows entered the view by scrolling or paging, or left the view while still in the grid.
- * - `'load'`: rows appeared in the view without scrolling, for example when their block finished loading.
- * - `'expand'`: rows shown by expanding a group, and the group row it hides when `groupHideOpenParents` is set.
- * - `'collapse'`: rows hidden, or brought into view, by collapsing a group.
- * - `'move'`: a row moved to another parent, for example by a transaction changing its group. Passed to `onUnsubscribe` with its old `parentKeys` and `route`, then to `onSubscribe` with the new ones.
- * - `'sort'`: rows moved into or out of the view by a sort that kept them in the grid.
- * - `'filter'`: rows filtered in or out, or moved into or out of the view by a filter.
- * - `'reset'`: rows dropped because the grid's rows were reset, for example by new row data, a purge or regrouping.
- * - `'remove'`: rows no longer in the grid, for example removed by a transaction or a refresh.
- * - `'stop'`: the subscription was stopped or the grid was destroyed.
- */
-export type VisibleRowsReason =
-    'initial' | 'scroll' | 'load' | 'expand' | 'collapse' | 'move' | 'sort' | 'filter' | 'reset' | 'remove' | 'stop';
-
 /** Identifies a row passed to `subscribeToVisibleRows` handlers. Captured when the row was subscribed. */
 export interface VisibleRowRef {
     /** The row ID, as returned by `getRowId`. */
@@ -40,20 +23,18 @@ export interface VisibleRow<TData = any> extends VisibleRowRef {
     data: TData | undefined;
 }
 
-export interface VisibleRowsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /** Why the rows were passed. */
-    reason: VisibleRowsReason;
-}
+export interface VisibleRowsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {}
 
 export interface VisibleRowsHandlers<TData = any, TContext = any> {
     /**
      * Called with rows that became visible and loaded. Each row is passed once, until it is passed to `onUnsubscribe`.
-     * Called straight away with the rows already visible, with `reason: 'initial'`, even if there are none.
+     * Called straight away with the rows already visible, even if there are none.
      */
     onSubscribe(rows: VisibleRow<TData>[], params: VisibleRowsParams<TData, TContext>): void;
     /**
      * Called with rows that are no longer visible or no longer in the grid. Every subscribed row is passed here exactly once.
-     * Within one batch, `onUnsubscribe` is called before `onSubscribe`.
+     * When rows change, `onUnsubscribe` is called before `onSubscribe`. A row that moves to another parent is passed
+     * to `onUnsubscribe` with its old `parentKeys` and `route`, then to `onSubscribe` with the new ones.
      */
     onUnsubscribe(rows: VisibleRowRef[], params: VisibleRowsParams<TData, TContext>): void;
 }
@@ -66,7 +47,7 @@ export interface VisibleRowsOptions {
     includeBuffer?: boolean;
     /**
      * Wait until rows have stopped changing for this many milliseconds before calling the handlers.
-     * If neither `debounceMs` nor `throttleMs` is set, the handlers are called at most once per animation frame.
+     * If neither `debounceMs` nor `throttleMs` is set, changes are passed to the handlers at most once per animation frame.
      */
     debounceMs?: number;
     /**
