@@ -6,7 +6,7 @@ When a server streams live updates to the grid, it is wasteful to send updates f
 
 {% apiDocumentation source="grid-api/api.json" section="displayedRows" names=["subscribeToVisibleRows"] /%}
 
-Subscribing to visible rows requires the `VisibleRowsModule` and [Row IDs](./row-ids/), and is supported by the [Client-Side Row Model](./row-models/#client-side) and the [Server-Side Row Model](./server-side-model/) {% enterpriseIcon /%}. Without `getRowId`, or with any other row model, the grid logs a warning and returns a stop function that does nothing.
+Subscribing to visible rows requires the `VisibleRowsModule` and [Row IDs](./row-ids/), and is supported by the [Client-Side Row Model](./row-models/#client-side) and the [Server-Side Row Model](./server-side-model/) {% enterpriseIcon /%}.
 
 ## Handlers
 
