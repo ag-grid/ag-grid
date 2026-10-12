@@ -65,6 +65,7 @@ export const sonarjsConfig = [
             'unicorn/prefer-dom-node-remove': 1,
             'unicorn/prefer-math-trunc': 0,
             'unicorn/prefer-at': 0,
+            'unicorn/prefer-string-raw': 'error',
             'unicorn/prefer-includes': 0,
             'unicorn/no-zero-fractions': 0,
         },
