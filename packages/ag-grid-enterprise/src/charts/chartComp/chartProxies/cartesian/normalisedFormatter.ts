@@ -31,7 +31,7 @@ export function mergeThemeFormatters(formatters: (ChartFormatter | undefined)[])
 // AG Charts formats tooltips with the axis label formatter, so the '%' is scoped here to axis ticks and crosshair.
 // Any theme formatter (e.g. chartThemeOverrides.common.formatter) still formats everything else, as the chart-level
 // formatter set here replaces it.
-export function createNormalisedFormatter(themeFormatter: ChartFormatter | undefined): ChartFormatter {
+function createNormalisedFormatter(themeFormatter: ChartFormatter | undefined): ChartFormatter {
     const formatWithTheme = (params: FormatterParams) => {
         const formatter = typeof themeFormatter === 'function' ? themeFormatter : themeFormatter?.[params.property];
         return typeof formatter === 'function' ? formatter(params) : undefined;

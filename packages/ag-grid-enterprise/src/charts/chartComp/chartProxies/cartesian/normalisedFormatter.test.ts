@@ -1,11 +1,20 @@
-import type { AgCartesianChartOptions, AnyFormatterSource, FormatterParams } from 'ag-charts-types';
+import type {
+    AgCartesianAxisOptions,
+    AgCartesianChartOptions,
+    AnyFormatterSource,
+    FormatterParams,
+} from 'ag-charts-types';
 
-import { createNormalisedFormatter, mergeThemeFormatters } from './normalisedFormatter';
+import { applyNormalisedFormatting, mergeThemeFormatters } from './normalisedFormatter';
 
 type FunctionFormatter = (params: FormatterParams) => unknown;
 
 function params(source: AnyFormatterSource, property: 'x' | 'y' = 'y') {
     return { type: 'number', source, property, value: 49.6 } as FormatterParams;
+}
+
+function createNormalisedFormatter(themeFormatter: AgCartesianChartOptions['formatter']) {
+    return applyNormalisedFormatting({}, { type: 'number' }, themeFormatter).formatter;
 }
 
 const poundFormatter = (p: FormatterParams) => `£${p.value}`;
@@ -30,6 +39,13 @@ describe('createNormalisedFormatter', () => {
         expect(formatter(params('tooltip'))).toBe('£49.6');
         expect(formatter(params('series-label'))).toBe('£49.6');
         expect(formatter(params('axis-label', 'x'))).toBe('£49.6');
+    });
+
+    test('a theme y format string is left to format everything, and the value axis label adds the percentage', () => {
+        const valueAxis: AgCartesianAxisOptions = { type: 'number' };
+        const options = applyNormalisedFormatting({}, valueAxis, { y: ',.0f' });
+        expect(options.formatter).toBeUndefined();
+        expect((valueAxis.label?.formatter as FunctionFormatter)(params('axis-label'))).toBe('50%');
     });
 
     test('a theme formatter keyed by property keeps its other properties', () => {
