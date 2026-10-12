@@ -166,11 +166,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         return this.leftWidth + this.rightWidth;
     }
 
-    /**
-     * Limits the growth of a pinned column or group during a mouse resize, so the pinned sections stay narrower
-     * than the viewport. Pinned columns that overflowed when the drag started can grow back to that width.
-     * @returns the part of `growth` that fits, filling the remaining space
-     */
+    /** The part of a mouse resize's `growth` that keeps the pinned sections within the viewport, or their drag-start width if wider. */
     public getPinnedResizeGrowth(growth: number, resizeStartPinnedWidth: number): number {
         const bodyWidth = this.getAvailableViewportWidth() - MIN_CENTER_VIEWPORT_WIDTH;
         const room = Math.max(bodyWidth, resizeStartPinnedWidth) - this.getPinnedWidth();

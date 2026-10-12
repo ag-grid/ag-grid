@@ -326,19 +326,23 @@ describe('Resizing pinned columns wider than the viewport', () => {
     });
 
     describe('pinned header groups', () => {
-        const createGroupedGrid = async (groups: string[][], gridOptions: GridOptions = {}): Promise<GridApi> => {
+        const createGroupedGrid = async (
+            groups: string[][],
+            gridOptions: GridOptions = {},
+            pinned: ColumnPinnedType = 'left'
+        ): Promise<GridApi> => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: groups.map((fields, index) => ({
                     headerName: `Group ${index}`,
                     groupId: `g${index}`,
-                    children: fields.map((field) => ({ field, width: 200, pinned: 'left' as const, resizable: true })),
+                    children: fields.map((field) => ({ field, width: 200, pinned, resizable: true })),
                 })),
                 rowData: [{ a: 'a', b: 'b', c: 'c', d: 'd', e: 'e' }],
                 processUnpinnedColumns: () => [],
                 ...gridOptions,
             });
             await asyncSetTimeout(0);
-            expect(api.getColumnState().every((column) => column.pinned === 'left')).toBe(true);
+            expect(api.getColumnState().every((column) => column.pinned === pinned)).toBe(true);
             return api;
         };
 
@@ -360,6 +364,24 @@ describe('Resizing pinned columns wider than the viewport', () => {
 
             await dispatcher.startDrag(groupBar('g0'), 550, 10);
             await dispatcher.movePointer(groupBar('g0'), 450, 10);
+            await dispatcher.finishDrag();
+            await asyncSetTimeout(0);
+            expect(totalWidth(api, ['a', 'b'])).toBe(450);
+        });
+
+        // Right-pinned groups resize in the opposite direction: dragging left makes them wider.
+        test('dragging a right-pinned group stops growing at the viewport limit and can still shrink', async () => {
+            const api = await createGroupedGrid([['a', 'b']], {}, 'right');
+            const dispatcher = new DragEventDispatcher('mouse');
+
+            await dispatcher.startDrag(groupBar('g0'), 400, 10);
+            await dispatcher.movePointer(groupBar('g0'), 100, 10);
+            await dispatcher.finishDrag();
+            await asyncSetTimeout(0);
+            expect(totalWidth(api, ['a', 'b'])).toBe(550);
+
+            await dispatcher.startDrag(groupBar('g0'), 100, 10);
+            await dispatcher.movePointer(groupBar('g0'), 200, 10);
             await dispatcher.finishDrag();
             await asyncSetTimeout(0);
             expect(totalWidth(api, ['a', 'b'])).toBe(450);
