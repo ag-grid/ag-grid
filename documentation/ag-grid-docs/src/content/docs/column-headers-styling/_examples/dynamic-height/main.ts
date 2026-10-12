@@ -95,14 +95,14 @@ function setIdText(id: string, value: string | number | undefined) {
 }
 
 function setPivotOn() {
-    document.querySelector('#requiresPivot')!.classList.remove('hidden');
+    document.querySelectorAll('.requires-pivot').forEach((row) => row.classList.remove('hidden'));
     document.querySelector('#requiresNotPivot')!.classList.add('hidden');
     gridApi!.setGridOption('pivotMode', true);
     setIdText('pivot', 'on');
 }
 
 function setPivotOff() {
-    document.querySelector('#requiresPivot')!.classList.add('hidden');
+    document.querySelectorAll('.requires-pivot').forEach((row) => row.classList.add('hidden'));
     document.querySelector('#requiresNotPivot')!.classList.remove('hidden');
     gridApi!.setGridOption('pivotMode', false);
     setIdText('pivot', 'off');

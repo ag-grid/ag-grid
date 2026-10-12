@@ -158,6 +158,8 @@ const GridExample = () => {
                             <label htmlFor="left">
                                 Left <input type="number" id="left" defaultValue="0.7" min="0" step="0.05" />
                             </label>
+                        </div>
+                        <div className="controls-row">
                             <label htmlFor="header">
                                 Header <input type="number" id="header" defaultValue="0.3" min="0" step="0.05" />
                             </label>

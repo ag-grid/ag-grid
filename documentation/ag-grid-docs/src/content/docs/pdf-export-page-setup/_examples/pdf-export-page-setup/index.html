@@ -2,6 +2,8 @@
     <div class="controls example-controls" onchange="onPdfExportOptionsChanged()">
         <div class="controls-row">
             <button onclick="onBtExport()">Export to PDF</button>
+        </div>
+        <div class="controls-row">
             <label for="pageSize">Page size</label>
             <select id="pageSize">
                 <option value="A4">A4</option>
@@ -19,6 +21,8 @@
                 <option value="compact">Compact</option>
                 <option value="wide">Wide</option>
             </select>
+        </div>
+        <div class="controls-row">
             <label><input id="repeatHeader" type="checkbox" checked /> Repeat table headers</label>
         </div>
     </div>

@@ -79,6 +79,8 @@ ModuleRegistry.registerModules([
                 <label for="right">Right <input type="number" id="right" value="0.7" min="0" step="0.05" /></label>
                 <label for="bottom">Bottom <input type="number" id="bottom" value="0.75" min="0" step="0.05" /></label>
                 <label for="left">Left <input type="number" id="left" value="0.7" min="0" step="0.05" /></label>
+            </div>
+            <div class="controls-row">
                 <label for="header">Header <input type="number" id="header" value="0.3" min="0" step="0.05" /></label>
                 <label for="footer">Footer <input type="number" id="footer" value="0.3" min="0" step="0.05" /></label>
             </div>

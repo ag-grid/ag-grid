@@ -126,6 +126,8 @@ const GridExample = () => {
                             Case Insensitive:
                             <button onClick={() => setModel('insensitive')}>API: setModel() - mismatching case</button>
                             <button onClick={() => getModel('insensitive')}>API: getModel()</button>
+                        </div>
+                        <div className="controls-row">
                             <button onClick={() => setFilterValues('insensitive')}>
                                 API: setFilterValues() - mismatching case
                             </button>
@@ -136,6 +138,8 @@ const GridExample = () => {
                             Case Sensitive:
                             <button onClick={() => setModel('sensitive')}>API: setModel() - mismatching case</button>
                             <button onClick={() => getModel('sensitive')}>API: getModel()</button>
+                        </div>
+                        <div className="controls-row">
                             <button onClick={() => setFilterValues('sensitive')}>
                                 API: setFilterValues() - mismatching case
                             </button>
