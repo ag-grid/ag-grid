@@ -10,6 +10,8 @@ export const sonarjsConfig = [
     {
         files: ['**/*.{js,ts,tsx}'],
         rules: {
+            'unicorn/prefer-native-coercion-functions': 'error',
+
             // The plan is to work through these rules and enable them where possible.
             // For now, turning them off to avoid noise and enable other sonarjs rules.
             'sonarjs/no-duplicate-string': 0,

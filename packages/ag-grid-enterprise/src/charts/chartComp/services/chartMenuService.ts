@@ -88,7 +88,7 @@ export class ChartMenuService extends BeanStub implements NamedBean {
                 }
                 return menuOption;
             })
-            .filter((panel) => Boolean(panel));
+            .filter(Boolean);
         let panels = panelsOverride ?? Object.values(CHART_TOOL_PANEL_MENU_OPTIONS);
 
         // pivot charts use the column tool panel instead of the data panel
