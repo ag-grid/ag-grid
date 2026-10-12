@@ -5,6 +5,7 @@ import { test as base, expect as playwrightExpect } from '@playwright/test';
 import { type AgModuleName, wrapAgTestIdFor } from 'ag-grid-community';
 
 import { applyCpuThrottle, clearCpuThrottle } from './test/applyCpuThrottle';
+import { focusAuditEnabled, recordFocusShadows, reportFocusShadows } from './test/focusShadow';
 import {
     routeExampleAssetsFromDisk,
     routeExternalThroughMirror,
@@ -180,6 +181,9 @@ const excludeErrors = [
     'XML Parsing Error: syntax error',
     'Layout was forced before the page was fully loaded. If stylesheets are not yet loaded this may cause a flash of unstyled content.',
     'Request to access cookie or storage on “<URL>” was blocked because it came from a tracker and Enhanced Tracking Protection is enabled.',
+    // Firefox Bounce Tracking Protection notice about the browser's own storage for the site; unrelated
+    // to the example or the grid.
+    'has been classified as a bounce tracker',
     'This site appears to use a scroll-linked positioning effect.',
     // Timing-dependent browser warning: a preloaded font occasionally isn't consumed within the
     // browser's few-second window (e.g. under CI load), emitting a benign warning unrelated to the grid.
@@ -442,8 +446,9 @@ const frameworkTest =
             }
 
             await loadPage(page, agExampleUrl, agFramework, loadPageOptions, agModules);
+            await recordFocusShadows(page);
             await applyCpuThrottle({ page, cpuThrottle }, testInfo);
-            await testBody({
+            const body = testBody({
                 page,
                 agExampleUrl,
                 agIdFor,
@@ -454,6 +459,9 @@ const frameworkTest =
                 request,
                 context,
             } as TestFixtures);
+            // While auditing focus shadows the body only drives the grid into the states the example
+            // demonstrates, and having focused every element beforehand is enough to break its assertions.
+            await (focusAuditEnabled ? body.catch(() => {}) : body);
             await clearCpuThrottle({ page, cpuThrottle });
         };
 
@@ -513,11 +521,15 @@ async function checkForErrorsAndTearDownExample(errors: string[], page: Page, pe
         console.log(`Test failed, page URL: ${page.url()}`);
     }
 
-    if (errors.length > 0) {
+    if (errors.length > 0 && !focusAuditEnabled) {
         expect(errors, `Error / Warnings found in console:\n\n - ${errors.join('\n\n - ')}\n\n${page.url()}`).toEqual(
             []
         );
     }
+
+    // Audited while the grid is still in the page, and after the test body so that focusing every element
+    // cannot perturb the assertions.
+    await reportFocusShadows(page);
 
     // Settled first so the example's own fetch applies its rows while the grid is still there.
     const hadDataRequestInFlight = await pendingRequests.settle(page);
@@ -540,7 +552,9 @@ async function checkForErrorsAndTearDownExample(errors: string[], page: Page, pe
     const destructionErrors = errors.filter(
         (error) => !(hadDataRequestInFlight && error.includes(DESTROYED_GRID_WARNING))
     );
-    expect(destructionErrors, 'Example Errors during destruction').toEqual([]);
+    if (!focusAuditEnabled) {
+        expect(destructionErrors, 'Example Errors during destruction').toEqual([]);
+    }
 
     // Ensure the routes registered by the fixtures are removed to avoid warnings in the logs
     await page.unrouteAll({ behavior: 'ignoreErrors' });

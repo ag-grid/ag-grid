@@ -142,6 +142,7 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
                 childComponent,
                 contextParams: {
                     column: null,
+                    columnGroup: null,
                     node: null,
                     value: null,
                 },

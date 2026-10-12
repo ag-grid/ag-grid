@@ -70,11 +70,14 @@ export interface LegacyFilterWrapper extends BaseFilterWrapper<IFilterComp, IFil
     filter?: IFilterComp;
 }
 
+export type HandlerGenerator =
+    CreateFilterHandlerFunc | FilterHandlerName | ((params: DoesFilterPassParams) => boolean);
+
 export interface HandlerFilterWrapper extends BaseFilterWrapper<FilterDisplayComp, FilterDisplayParams> {
     isHandler: true;
     handler: FilterHandler;
     /** This is only used to see whether the handler has changed */
-    handlerGenerator: CreateFilterHandlerFunc | FilterHandlerName | ((params: DoesFilterPassParams) => boolean);
+    handlerGenerator: HandlerGenerator;
     handlerParams: AgFilterHandlerBaseParams;
 }
 

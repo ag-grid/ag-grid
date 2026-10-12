@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 if [ "$#" -lt 1 ]
   then
     echo "You must supply a release version number"

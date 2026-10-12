@@ -44,7 +44,7 @@ env:
   NX_NO_CLOUD: true
   NX_BRANCH: ${{ github.ref }}
   SHARP_IGNORE_GLOBAL_LIBVIPS: true
-  YARN_REGISTRY: "https://registry.ag-grid.com"
+  YARN_NPM_REGISTRY_SERVER: "https://registry.ag-grid.com"
   CI: true
   SHARD_COUNT: 3
 

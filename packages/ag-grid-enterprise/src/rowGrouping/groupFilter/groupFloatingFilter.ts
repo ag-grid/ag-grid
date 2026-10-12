@@ -14,6 +14,7 @@ import {
     AgInputTextField,
     AgPromise,
     Component,
+    _getDisplayHandler,
     _getFloatingFilterAriaLabel,
     _isGroupMultiAutoColumn,
 } from 'ag-grid-community';
@@ -214,7 +215,7 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         if (!column) {
             updateText();
         } else if (this.gos.get('enableFilterHandlers')) {
-            updateText(colFilter.getHandler(column));
+            updateText(_getDisplayHandler(colFilter.getHandler(column)));
         } else {
             colFilter.getOrCreateFilterUi(column)?.then((filter) => {
                 updateText(filter);

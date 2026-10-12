@@ -13,6 +13,7 @@ import {
 
 import type {
     AdvancedFilterModel,
+    GridApi,
     GridOptions,
     ISetFilterParams,
     SetAdvancedFilterModel,
@@ -26,7 +27,7 @@ import {
     TextFilterModule,
     enableDevValidations,
 } from 'ag-grid-community';
-import { AdvancedFilterModule, MultiFilterModule } from 'ag-grid-enterprise';
+import { AdvancedFilterModule, MultiFilterModule, NewFiltersToolPanelModule } from 'ag-grid-enterprise';
 
 import type { TestRow } from './advancedFilterSetFixture';
 import {
@@ -152,6 +153,44 @@ describe('Advanced Filter - Set Filter configuration', () => {
             colId: 'country',
             type: 'isAnyOf',
             values: ['Jamaica'],
+        });
+    });
+
+    test('a column event while a value is missing from the data keeps the operands the filter was applied with', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+        await af.applyExpression('[Country] is any of ["Jamaica"] OR [Age] > 24');
+        expect(displayedAthletes(api)).toEqual(['Emma Thompson', 'Usain Bolt', 'Li Wei']);
+
+        api.setGridOption(
+            'rowData',
+            ROW_DATA.filter(({ country }) => country !== 'Jamaica')
+        );
+        // the column now reads operands in tenths, so the applied text spells another number than it was applied as
+        api.setGridOption('columnDefs', [
+            { field: 'athlete', filter: 'agTextColumnFilter' },
+            { field: 'country', filter: 'agSetColumnFilter' },
+            {
+                field: 'age',
+                filter: 'agNumberColumnFilter',
+                filterParams: {
+                    numberParser: (text: string | null) => (text == null ? null : Number(text) / 10),
+                    numberFormatter: (value: number | null) => (value == null ? null : String(value * 10)),
+                },
+            },
+        ]);
+        await asyncSetTimeout(0);
+
+        expect({ model: api.getAdvancedFilterModel(), rows: displayedAthletes(api) }).toEqual({
+            model: {
+                filterType: 'join',
+                type: 'OR',
+                conditions: [
+                    { filterType: 'set', colId: 'country', type: 'isAnyOf', values: ['Jamaica'] },
+                    { filterType: 'number', colId: 'age', type: 'greaterThan', filter: 24 },
+                ],
+            },
+            rows: ['Emma Thompson', 'Li Wei'],
         });
     });
 
@@ -1083,7 +1122,9 @@ describe('Advanced Filter - Set Filter column without the Set Filter module', ()
 });
 
 describe('Advanced Filter - Set Filter and grid state', () => {
-    const gridsManager = new TestGridsManager({ modules: [...SET_MODULES, GridStateModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [...SET_MODULES, GridStateModule, NewFiltersToolPanelModule],
+    });
 
     beforeAll(() => installFilterLayoutMock());
     afterAll(() => uninstallFilterLayoutMock());
@@ -1134,10 +1175,41 @@ describe('Advanced Filter - Set Filter and grid state', () => {
         expect(AdvancedFilterHarness.get(restored).value).toBe('[Country] is any of ["JAMAICA"]');
         expect(displayedAthletes(restored)).toEqual(['Usain Bolt']);
     });
+
+    test("a Selectable Filter choice restored through the grid state offers the new choice's values", async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            ...DEFAULT_OPTIONS,
+            columnDefs: [
+                { field: 'athlete' },
+                {
+                    field: 'country',
+                    filter: 'agSelectableColumnFilter',
+                    filterParams: {
+                        filters: [
+                            { filter: 'agSetColumnFilter' },
+                            {
+                                filter: 'agSetColumnFilter',
+                                filterValueGetter: ({ data }: ValueGetterParams<TestRow>) => data?.country?.slice(0, 2),
+                            },
+                        ],
+                    },
+                },
+            ],
+        });
+        const af = AdvancedFilterHarness.get(api);
+        await af.type('[Country] is any of [');
+        expect(af.autocompleteEntries()).toEqual(['(Blanks)', 'Jamaica', 'Poland', 'United Kingdom', 'United States']);
+
+        api.setState({ filter: { selectableFilters: { country: 1 } } });
+        await af.type('[Country] is any of [');
+        expect(af.autocompleteEntries()).toEqual(['(Blanks)', 'Ja', 'Po', 'Un']);
+    });
 });
 
 describe('Advanced Filter - a column opted in to the set operators', () => {
-    const gridsManager = new TestGridsManager({ modules: [...SET_MODULES, DateFilterModule, MultiFilterModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [...SET_MODULES, DateFilterModule, MultiFilterModule, NewFiltersToolPanelModule],
+    });
 
     beforeAll(() => installFilterLayoutMock());
     afterAll(() => uninstallFilterLayoutMock());
@@ -1170,6 +1242,78 @@ describe('Advanced Filter - a column opted in to the set operators', () => {
 
         expect(seen).toEqual([]);
         expect(af.autocompleteEntries()).toEqual(['(Blanks)', 'Jamaica', 'Poland', 'United Kingdom', 'United States']);
+    });
+
+    test("a Selectable Filter column offers them where its active filter has a Set Filter, read through that one's getter and params", async () => {
+        const setFilter = {
+            filter: 'agSetColumnFilter',
+            filterValueGetter: ({ data }: ValueGetterParams<TestRow>) => data?.country?.slice(0, 2),
+            filterParams: {
+                valueFormatter: ({ value }) => (value == null ? value : `${value}!`),
+            } satisfies ISetFilterParams,
+        };
+        const multi = { filter: 'agMultiColumnFilter', filterParams: { filters: [setFilter] } };
+        for (const active of [setFilter, multi]) {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                ...DEFAULT_OPTIONS,
+                columnDefs: [
+                    { field: 'athlete' },
+                    { field: 'country', filter: 'agSelectableColumnFilter', filterParams: { filters: [active] } },
+                ],
+            });
+            const af = AdvancedFilterHarness.get(api);
+
+            await af.type('[Country] is any of [');
+            expect(af.autocompleteEntries()).toEqual(['(Blanks)', 'Ja!', 'Po!', 'Un!']);
+            gridsManager.reset();
+        }
+    });
+
+    test("a Selectable Filter column's Set Filter without a getter of its own reads through the column's, with or without data types", async () => {
+        for (const cellDataType of [undefined, false]) {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                ...DEFAULT_OPTIONS,
+                columnDefs: [
+                    { field: 'athlete' },
+                    {
+                        field: 'country',
+                        cellDataType,
+                        filterValueGetter: ({ data }: ValueGetterParams<TestRow>) => data?.country?.slice(0, 2),
+                        filter: 'agSelectableColumnFilter',
+                        filterParams: { filters: [{ filter: 'agSetColumnFilter' }] },
+                    },
+                ],
+            });
+            const af = AdvancedFilterHarness.get(api);
+
+            await af.type('[Country] is any of [');
+            expect(af.autocompleteEntries()).toEqual(['(Blanks)', 'Ja', 'Po', 'Un']);
+            gridsManager.reset();
+        }
+    });
+
+    test('a Selectable Filter child left to the default offers them only where the Set Filter is the default filter', async () => {
+        for (const suppressSetFilterByDefault of [false, true]) {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                ...DEFAULT_OPTIONS,
+                suppressSetFilterByDefault,
+                columnDefs: [
+                    { field: 'athlete' },
+                    {
+                        field: 'country',
+                        filter: 'agSelectableColumnFilter',
+                        filterParams: { filters: [{ filter: true }] },
+                    },
+                ],
+            });
+            const af = AdvancedFilterHarness.get(api);
+
+            await af.type('[Country] ');
+            expect(af.autocompleteEntries()).toEqual(
+                suppressSetFilterByDefault ? TEXT_OPTIONS : [...TEXT_OPTIONS, ...SET_OPTIONS]
+            );
+            gridsManager.reset();
+        }
     });
 
     test("a Multi Filter reads the value list off its Set Filter child, whose params are a list's", async () => {
@@ -1346,5 +1490,50 @@ describe('Advanced Filter - a column opted in to the set operators', () => {
         await asyncSetTimeout(0);
 
         expect(api.getDisplayedRowCount()).toBe(1);
+    });
+
+    test('a value list built before the rows arrive lists them as the data type they are inferred to be', async () => {
+        const columnDefs = [{ field: 'day', filter: 'agSetColumnFilter' }];
+        const rowData = [{ day: new Date(2024, 0, 2) }, { day: new Date(2024, 0, 3) }];
+        const listed = async (api: GridApi) =>
+            (await AdvancedFilterHarness.get(api).type('[Day] is any of [')).autocompleteEntries();
+
+        const control = await gridsManager.createGridAndWait('control', {
+            enableAdvancedFilter: true,
+            columnDefs,
+            rowData,
+        });
+        const expected = await listed(control);
+        expect(expected).toEqual(['2024 › January › 02', '2024 › January › 03']);
+        control.destroy();
+
+        const api = gridsManager.createGrid('grid1', { enableAdvancedFilter: true, columnDefs });
+        await asyncSetTimeout(0);
+        expect(await listed(api)).toEqual([]);
+        api.setGridOption('rowData', rowData);
+        await asyncSetTimeout(0);
+        expect(await listed(api)).toEqual(expected);
+    });
+
+    test('a set expression applied before the rows arrive filters by the data type they are inferred to be', async () => {
+        const api = gridsManager.createGrid('grid1', {
+            enableAdvancedFilter: true,
+            columnDefs: [{ field: 'athlete' }, { field: 'day', filter: 'agSetColumnFilter' }],
+        });
+        await asyncSetTimeout(0);
+        const model: SetAdvancedFilterModel = {
+            filterType: 'set',
+            colId: 'day',
+            type: 'isAnyOf',
+            values: ['2024-01-02'],
+        };
+        api.setAdvancedFilterModel(model);
+        api.setGridOption('rowData', [
+            { athlete: 'Ann', day: new Date(2024, 0, 2) },
+            { athlete: 'Bob', day: new Date(2024, 0, 3) },
+        ]);
+        await asyncSetTimeout(0);
+        expect(displayedAthletes(api)).toEqual(['Ann']);
+        expect(api.getAdvancedFilterModel()).toEqual(model);
     });
 });

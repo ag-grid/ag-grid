@@ -118,6 +118,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     addFilterCard: 'Додај филтер',
     agTextColumnFilterDisplayName: 'Једноставан филтер',
     agNumberColumnFilterDisplayName: 'Једноставан филтер',
+    agBigIntColumnFilterDisplayName: 'Једноставан филтер',
     agDateColumnFilterDisplayName: 'Једноставан филтер',
     agSetColumnFilterDisplayName: 'Филтер избора',
     agMultiColumnFilterDisplayName: 'Комбиновани филтер',
@@ -753,6 +754,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaFilterList: 'Листа филтера',
     ariaFilterToValue: 'Филтрирај до вредности',
     ariaFilterValue: 'Вредност филтера',
+    ariaNotInCurrentData: 'није у тренутним подацима',
     ariaFilterMenuOpen: 'Отвори мени филтера',
     ariaFilteringOperator: 'Оператор филтрирања',
     ariaHidden: 'скривено',
@@ -911,9 +913,11 @@ export const AG_GRID_LOCALE_SR_RS = {
     columnHeaderEditCancel: 'Откажи',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Нису пронађене одговарајуће колоне.',
     calculatedColumn: 'Израчуната колона',
     calculatedColumnAdd: 'Додај израчунату колону',
     calculatedColumnEdit: 'Измени израчунату колону',
+    calculatedColumnView: 'Прикажи израчунату колону',
     calculatedColumnRemove: 'Уклони израчунату колону',
     calculatedColumnTitle: 'Наслов',
     calculatedColumnType: 'Тип',
@@ -928,6 +932,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     calculatedColumnExpressionAmbiguousReference:
         'Двосмислена референца колоне "${variable}". Користите листу Колоне или прецизнију путању групе.',
     calculatedColumnExpressionUnknownReference: 'Непозната референца колоне "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Колона "${variable}" не може да се користи у овом изразу.',
     calculatedColumnExpressionEmpty: 'Унесите израз',
     calculatedColumnTitleEmpty: 'Унесите наслов',
     calculatedColumnApply: 'Примени',

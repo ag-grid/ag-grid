@@ -33,9 +33,12 @@ export interface IMultiFilterDef extends IFilterDef {
     /** The title to be used when a filter is displayed inside a sub-menu or accordion. */
     title?: string;
 
-    /** Child filter component to use inside the Multi Filter. Set to `true` to use the Text Filter. */
+    /**
+     * Child filter component to use inside the Multi Filter. Set to `true` to use the Text Filter.
+     * A name no filter is registered under is warned about and the Text Filter is used instead.
+     */
     filter?: IFilterType | ColumnFilter;
-    /** Custom parameters to be passed to the child filter component. */
+    /** Custom parameters to be passed to the child filter component, or a function returning them. */
     filterParams?: any;
     /** Floating filter component to use for the child filter. */
     floatingFilterComponent?: IFloatingFilterType;
@@ -59,7 +62,7 @@ export type MultiFilterParams<TData = any> = IMultiFilterParams & IFilterParams<
  * Parameters used in `colDef.filterParams` to configure a Multi Filter (`agMultiColumnFilter`).
  */
 export interface IMultiFilterParams {
-    /** An array of filter definition objects. */
+    /** An array of filter definition objects. Without one, or with an empty one, the defaults are shown. */
     filters?: IMultiFilterDef[];
     /**
      * If true, all UI inputs managed by this filter are for display only, and the filter can only

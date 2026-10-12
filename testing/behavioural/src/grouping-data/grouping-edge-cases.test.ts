@@ -1,8 +1,27 @@
+import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, cachedJSONObjects } from 'ag-test-utils';
-import { afterEach, beforeEach, describe, test } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
+import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
+
+class GroupCountRenderer {
+    private eGui = document.createElement('span');
+    init(params: any) {
+        this.eGui.className = 'group-count-renderer';
+        this.eGui.textContent = `${params.api.getRowGroupColumns().length}:${params.value}`;
+    }
+    getGui() {
+        return this.eGui;
+    }
+    refresh() {
+        return false;
+    }
+}
+
+const groupCountRendererTexts = () =>
+    Array.from(document.querySelectorAll('.group-count-renderer')).map((el) => el.textContent);
 
 describe('ag-grid grouping edge cases', () => {
     const gridsManager = new TestGridsManager({
@@ -285,5 +304,58 @@ describe('ag-grid grouping edge cases', () => {
             · └─┬ LEAF_GROUP id:row-group-category--subcategory-Sub2 ag-Grid-AutoColumn:"Sub2"
             · · └── LEAF id:2 category:null subcategory:"Sub2" name:"Item 2"
         `);
+    });
+
+    describe('group cell renderer is re-evaluated when row groups change', () => {
+        const createGrid = (columnDefs: ColDef[], autoGroupColumnDef?: ColDef) =>
+            gridsManager.createGrid('myGrid', {
+                columnDefs,
+                autoGroupColumnDef,
+                groupDefaultExpanded: 1,
+                rowData: [
+                    { id: '1', company: 'A', website: 'x', revenue: 1 },
+                    { id: '2', company: 'B', website: 'y', revenue: 2 },
+                ],
+                getRowId: (params) => params.data.id,
+            });
+
+        test('cellRendererSelector on the grouped column feeds the group inner renderer', async () => {
+            const api = createGrid([
+                {
+                    field: 'company',
+                    rowGroup: true,
+                    hide: true,
+                    cellRendererSelector: (params) =>
+                        params.node?.group ? { component: GroupCountRenderer } : undefined,
+                },
+                { field: 'website', enableRowGroup: true },
+                { field: 'revenue' },
+            ]);
+            await waitFor(() => expect(groupCountRendererTexts()).toEqual(['1:A', '1:B']));
+
+            api.addRowGroupColumns(['website']);
+            await waitFor(() => expect(groupCountRendererTexts().slice(0, 2)).toEqual(['2:A', '2:B']));
+
+            api.removeRowGroupColumns(['website']);
+            await waitFor(() => expect(groupCountRendererTexts()).toEqual(['1:A', '1:B']));
+        });
+
+        test('cellRendererSelector on autoGroupColumnDef', async () => {
+            const api = createGrid(
+                [
+                    { field: 'company', rowGroup: true, hide: true },
+                    { field: 'website', enableRowGroup: true },
+                    { field: 'revenue' },
+                ],
+                {
+                    cellRendererSelector: (params) =>
+                        params.node?.group ? { component: GroupCountRenderer } : undefined,
+                }
+            );
+            await waitFor(() => expect(groupCountRendererTexts()).toEqual(['1:A', '1:B']));
+
+            api.addRowGroupColumns(['website']);
+            await waitFor(() => expect(groupCountRendererTexts()).toEqual(['2:A', '2:x', '2:B', '2:y']));
+        });
     });
 });

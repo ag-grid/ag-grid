@@ -57,8 +57,7 @@ suite(`delta sort transactions (${ROW_COUNT / 1000}k rows, multi-column sort)`, 
         modules: [ClientSideRowModelModule, ClientSideRowModelApiModule, ColumnApiModule],
     });
 
-    let deltaSortApi!: GridApi<IData>;
-    let fullSortApi!: GridApi<IData>;
+    let api!: GridApi<IData>;
     let idx = 0;
 
     const gridOptions = {
@@ -72,44 +71,34 @@ suite(`delta sort transactions (${ROW_COUNT / 1000}k rows, multi-column sort)`, 
         getRowId: ({ data }: { data: IData }) => String(data.id),
     };
 
-    // noiseFactor 2 → time 2000ms; each iteration is a single tiny transaction, so it needs many
-    // iterations and warmupIterations:25 to settle before measuring.
-    const benchOptions = benchDefaults({
-        noiseFactor: 2,
-        warmupIterations: 25,
-        setup: () => {
-            idx = 0;
-            deltaSortApi ??= gridsManager.createGrid('delta', {
-                ...gridOptions,
-                deltaSort: true,
-                rowData: baseRowData.slice(),
-            });
-            fullSortApi ??= gridsManager.createGrid('full', {
-                ...gridOptions,
-                deltaSort: false,
-                rowData: baseRowData.slice(),
-            });
-        },
-        teardown: async () => {
-            deltaSortApi = undefined!;
-            fullSortApi = undefined!;
-            await gridsManager.reset();
-        },
-    });
+    const benchOptions = (deltaSort: boolean) =>
+        benchDefaults({
+            setup: async () => {
+                await gridsManager.reset();
+                idx = 0;
+                api = gridsManager.createGrid('delta-sort', {
+                    ...gridOptions,
+                    deltaSort,
+                    rowData: baseRowData.slice(),
+                });
+            },
+        });
 
     bench(
         'applyTransaction (deltaSort: true) - 1 update',
         () => {
-            deltaSortApi.applyTransaction(prebuiltTransactions[idx++ % PREBUILT_COUNT]);
+            api.applyTransaction(prebuiltTransactions[idx++ % PREBUILT_COUNT]);
+            api.flushAllAnimationFrames();
         },
-        benchOptions
+        benchOptions(true)
     );
 
     bench(
         'applyTransaction (deltaSort: false) - 1 update',
         () => {
-            fullSortApi.applyTransaction(prebuiltTransactions[idx++ % PREBUILT_COUNT]);
+            api.applyTransaction(prebuiltTransactions[idx++ % PREBUILT_COUNT]);
+            api.flushAllAnimationFrames();
         },
-        benchOptions
+        benchOptions(false)
     );
 });

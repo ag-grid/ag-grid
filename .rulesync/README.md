@@ -118,7 +118,7 @@ Rules load automatically when you edit files matching their glob patterns.
 | Rule            | Activates on                                   | Description                                            |
 | --------------- | ---------------------------------------------- | ----------------------------------------------------- |
 | 🟢 `testing`    | `**/*.test.ts`, `**/*.spec.ts`, `testing/**/*` | Testing strategies, Vitest patterns, and verification |
-| 🟢 `benchmarks` | `testing/performance/**/*`, `**/benchmark*`    | Running and creating performance benchmarks           |
+| 🟢 `benchmarks` | `**/benchmark*`                                | Running and creating performance benchmarks           |
 
 ### Documentation and Examples
 

@@ -25,6 +25,7 @@ export class MenuList extends AgMenuList<
         level?: number,
         menuActionParams: WithoutGridCommon<IMenuActionParams> = {
             column: null,
+            columnGroup: null,
             node: null,
             value: null,
         }

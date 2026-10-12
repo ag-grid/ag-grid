@@ -1,6 +1,6 @@
 import { bench, suite } from 'vitest';
 
-import type { AgColumn, ColDef, IRowNode } from 'ag-grid-community';
+import type { AgColumn, ColDef, GridApi, IRowNode } from 'ag-grid-community';
 import {
     CellApiModule,
     CellStyleModule,
@@ -11,7 +11,7 @@ import {
     TooltipModule,
 } from 'ag-grid-community';
 
-import { BenchGridsManager, SimplePRNG } from './bench-utils';
+import { BenchGridsManager, SimplePRNG, benchDefaults } from './bench-utils';
 
 suite('getValue profiling', () => {
     const rowCount = 2000;
@@ -44,72 +44,67 @@ suite('getValue profiling', () => {
         rowData.push(row);
     }
 
-    const api = gridsManager.createGrid('G', {
-        columnDefs,
-        rowData,
-        getRowId: ({ data }) => data.id,
-    });
-
-    const rowNodes: IRowNode[] = [];
-    api.forEachNode((n) => rowNodes.push(n));
-
-    const firstField = 'col_0';
     const lastField = `col_${colCount - 1}`;
-    const firstCol = api.getColumn(firstField)! as AgColumn;
-    const lastCol = api.getColumn(lastField)! as AgColumn;
+    let api!: GridApi;
+    let rowNodes: IRowNode[] = [];
+    let lastCol!: AgColumn;
+    // A grid per bench, built in setup: one built at import renders rows before every bench, and the JIT
+    // feedback that leaves in the value path is the rendering code's, not the bench's.
+    const options = benchDefaults({
+        setup: async () => {
+            await gridsManager.reset();
+            api = gridsManager.createGrid('G', { columnDefs, rowData, getRowId: ({ data }) => data.id });
+            rowNodes = [];
+            api.forEachNode((n) => rowNodes.push(n));
+            lastCol = api.getColumn(lastField)! as AgColumn;
+        },
+    });
 
     // Each loop accumulates the read value into `sink` (returned) so V8 can't dead-code-eliminate the
-    // getDataValue call — otherwise the bench would measure nothing and look impossibly fast.
-    bench(`getDataValue by string (first col)`, () => {
-        let sink = 0;
-        for (let i = 0; i < rowCount; ++i) {
-            sink += rowNodes[i].getDataValue(firstField) ? 1 : 0;
-        }
-        return sink as any;
-    });
-
-    bench(`getDataValue by string (last of ${colCount} cols)`, () => {
-        let sink = 0;
-        for (let i = 0; i < rowCount; ++i) {
-            sink += rowNodes[i].getDataValue(lastField) ? 1 : 0;
-        }
-        return sink as any;
-    });
-
-    bench(`getDataValue by Column object (first col)`, () => {
-        let sink = 0;
-        for (let i = 0; i < rowCount; ++i) {
-            sink += rowNodes[i].getDataValue(firstCol) ? 1 : 0;
-        }
-        return sink as any;
-    });
-
-    bench(`getDataValue by Column object (last of ${colCount} cols)`, () => {
-        let sink = 0;
-        for (let i = 0; i < rowCount; ++i) {
-            sink += rowNodes[i].getDataValue(lastCol) ? 1 : 0;
-        }
-        return sink as any;
-    });
-
-    bench(`getCellValue by string (last of ${colCount} cols)`, () => {
-        let sink = 0;
-        for (let i = 0; i < rowCount; ++i) {
-            sink += api.getCellValue({ rowNode: rowNodes[i], colKey: lastField, useFormatter: false }) ? 1 : 0;
-        }
-        return sink as any;
-    });
-
-    bench(`direct data access`, () => {
-        let sum = 0;
-        for (let i = 0; i < rowCount; ++i) {
-            const val = (rowNodes[i] as any).data[lastField];
-            if (val) {
-                sum++;
+    // getDataValue call — otherwise the bench would measure nothing and look impossibly fast. A call reads
+    // the rows PASSES times: one pass is a few 5µs timer steps, too coarse to measure.
+    const PASSES = 10;
+    bench(
+        `getDataValue by string (last of ${colCount} cols)`,
+        () => {
+            let sink = 0;
+            for (let p = 0; p < PASSES; ++p) {
+                for (let i = 0; i < rowCount; ++i) {
+                    sink += rowNodes[i].getDataValue(lastField) ? 1 : 0;
+                }
             }
-        }
-        return sum as any;
-    });
+            return sink as any;
+        },
+        options
+    );
+
+    bench(
+        `getDataValue by Column object (last of ${colCount} cols)`,
+        () => {
+            let sink = 0;
+            for (let p = 0; p < PASSES; ++p) {
+                for (let i = 0; i < rowCount; ++i) {
+                    sink += rowNodes[i].getDataValue(lastCol) ? 1 : 0;
+                }
+            }
+            return sink as any;
+        },
+        options
+    );
+
+    bench(
+        `getCellValue by string (last of ${colCount} cols)`,
+        () => {
+            let sink = 0;
+            for (let p = 0; p < PASSES; ++p) {
+                for (let i = 0; i < rowCount; ++i) {
+                    sink += api.getCellValue({ rowNode: rowNodes[i], colKey: lastField, useFormatter: false }) ? 1 : 0;
+                }
+            }
+            return sink as any;
+        },
+        options
+    );
 });
 
 suite('getValue profiling (all columns per row)', () => {
@@ -166,46 +161,49 @@ suite('getValue profiling (all columns per row)', () => {
         rowData.push(row);
     }
 
-    const uniformApi = gridsManager.createGrid('U', {
-        columnDefs: uniformDefs,
-        rowData,
-        getRowId: ({ data }) => data.id,
-    });
-    const variedApi = gridsManager.createGrid('V', {
-        columnDefs: variedDefs,
-        rowData,
-        getRowId: ({ data }) => data.id,
-    });
-
-    const uniformNodes: IRowNode[] = [];
-    uniformApi.forEachNode((n) => uniformNodes.push(n));
-    const variedNodes: IRowNode[] = [];
-    variedApi.forEachNode((n) => variedNodes.push(n));
-
-    const uniformCols = uniformApi.getColumns()! as AgColumn[];
-    const variedCols = variedApi.getColumns()! as AgColumn[];
-
-    bench(`getDataValue uniform colDefs (${colCount} cols x ${rowCount} rows)`, () => {
-        let sink = 0;
-        for (let i = 0; i < rowCount; ++i) {
-            const node = uniformNodes[i];
-            for (let c = 0; c < colCount; ++c) {
-                sink += node.getDataValue(uniformCols[c]) ? 1 : 0;
+    let nodes: IRowNode[] = [];
+    let cols: AgColumn[] = [];
+    const options = (columnDefs: ColDef[]) =>
+        benchDefaults({
+            setup: async () => {
+                await gridsManager.reset();
+                const api = gridsManager.createGrid('V', { columnDefs, rowData, getRowId: ({ data }) => data.id });
+                nodes = [];
+                api.forEachNode((n) => nodes.push(n));
+                cols = api.getColumns()! as AgColumn[];
+            },
+        });
+    // Two literals, not one shared fn: closures from one site share their feedback, so the varied loop would
+    // inherit the uniform one's shapes and the control would stop isolating them.
+    bench(
+        `getDataValue uniform colDefs (${colCount} cols x ${rowCount} rows)`,
+        () => {
+            let sink = 0;
+            for (let i = 0; i < rowCount; ++i) {
+                const node = nodes[i];
+                for (let c = 0; c < colCount; ++c) {
+                    sink += node.getDataValue(cols[c]) ? 1 : 0;
+                }
             }
-        }
-        return sink as any;
-    });
+            return sink as any;
+        },
+        options(uniformDefs)
+    );
 
-    bench(`getDataValue varied colDefs (${colCount} cols x ${rowCount} rows)`, () => {
-        let sink = 0;
-        for (let i = 0; i < rowCount; ++i) {
-            const node = variedNodes[i];
-            for (let c = 0; c < colCount; ++c) {
-                sink += node.getDataValue(variedCols[c]) ? 1 : 0;
+    bench(
+        `getDataValue varied colDefs (${colCount} cols x ${rowCount} rows)`,
+        () => {
+            let sink = 0;
+            for (let i = 0; i < rowCount; ++i) {
+                const node = nodes[i];
+                for (let c = 0; c < colCount; ++c) {
+                    sink += node.getDataValue(cols[c]) ? 1 : 0;
+                }
             }
-        }
-        return sink as any;
-    });
+            return sink as any;
+        },
+        options(variedDefs)
+    );
 });
 
 suite('getValue profiling (valueGetter columns)', () => {
@@ -233,20 +231,29 @@ suite('getValue profiling (valueGetter columns)', () => {
         rowData.push(row);
     }
 
-    const api = gridsManager.createGrid('VG', { columnDefs, rowData, getRowId: ({ data }) => data.id });
+    let nodes: IRowNode[] = [];
+    let cols: AgColumn[] = [];
 
-    const nodes: IRowNode[] = [];
-    api.forEachNode((n) => nodes.push(n));
-    const cols = api.getColumns()! as AgColumn[];
-
-    bench(`getDataValue valueGetter cols (${colCount} cols x ${rowCount} rows)`, () => {
-        let sink = 0;
-        for (let i = 0; i < rowCount; ++i) {
-            const node = nodes[i];
-            for (let c = 0; c < colCount; ++c) {
-                sink += node.getDataValue(cols[c]) ? 1 : 0;
+    bench(
+        `getDataValue valueGetter cols (${colCount} cols x ${rowCount} rows)`,
+        () => {
+            let sink = 0;
+            for (let i = 0; i < rowCount; ++i) {
+                const node = nodes[i];
+                for (let c = 0; c < colCount; ++c) {
+                    sink += node.getDataValue(cols[c]) ? 1 : 0;
+                }
             }
-        }
-        return sink as any;
-    });
+            return sink as any;
+        },
+        benchDefaults({
+            setup: async () => {
+                await gridsManager.reset();
+                const api = gridsManager.createGrid('VG', { columnDefs, rowData, getRowId: ({ data }) => data.id });
+                nodes = [];
+                api.forEachNode((n) => nodes.push(n));
+                cols = api.getColumns()! as AgColumn[];
+            },
+        })
+    );
 });

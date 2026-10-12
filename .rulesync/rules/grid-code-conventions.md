@@ -1,7 +1,7 @@
 ---
 targets: ['*']
 description: 'AG Grid-specific source code conventions (layered on the shared code-quality guide)'
-globs: ['packages/*/src/**/*.ts', 'community-modules/*/src/**/*.ts', 'enterprise-modules/*/src/**/*.ts']
+globs: ['packages/*/src/**/*.ts', 'community-modules/*/src/**/*.ts']
 ---
 
 # AG Grid Source Conventions

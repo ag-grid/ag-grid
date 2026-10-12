@@ -1,6 +1,7 @@
 import type { AgChartThemeOverrides } from 'ag-charts-types';
 import type { AgEvent, ScrollDirection } from 'ag-stack';
 
+import type { ColumnState } from './columns/columnStateUtils';
 import type { RowsDropParams } from './dragAndDrop/rowDragTypes';
 import type { ColDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
@@ -9,6 +10,7 @@ import type { AgEventType, AgInternalEventType, AgPublicEventType, BuildEventTyp
 import type { FilterRequestSource } from './filter/iColumnFilter';
 import type { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import type { GridState } from './interfaces/gridState';
+import type { CalculatedColumnProperty } from './interfaces/iCalculatedColumns';
 import type { ChartType } from './interfaces/iChartOptions';
 import type { Column, ColumnEventName, ColumnGroup, ColumnPinnedType, ProvidedColumnGroup } from './interfaces/iColumn';
 import type { AgGridCommon, WithoutGridCommon } from './interfaces/iCommon';
@@ -65,6 +67,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         pasteStart: PasteStartEvent<TData, TContext>;
         pasteEnd: PasteEndEvent<TData, TContext>;
         calculatedColumnCreated: CalculatedColumnCreatedEvent<TData, TContext>;
+        calculatedColumnChanged: CalculatedColumnChangedEvent<TData, TContext>;
         calculatedColumnExpressionChanged: CalculatedColumnExpressionChangedEvent<TData, TContext>;
         calculatedColumnRemoved: CalculatedColumnRemovedEvent<TData, TContext>;
         calculatedColumnValidationStateChanged: CalculatedColumnValidationStateChangedEvent<TData, TContext>;
@@ -725,8 +728,24 @@ export interface CalculatedColumnBaseEvent<T extends AgEventType, TData = any, T
 > {
     /** The calculated column the event relates to. Always set — calc-col events always target exactly one column. */
     column: Column;
-    /** The current expression on the column — uses internal `[colId]` references, not header-name references. */
+    /** The stored expression. Recognised dialog references use `[colId]`; unresolved live input can retain display references. */
     expression: string;
+}
+
+export type CalculatedColumnChanges = {
+    [K in CalculatedColumnProperty]?: {
+        oldValue: ColDef[K];
+        newValue: ColDef[K];
+    };
+};
+
+export interface CalculatedColumnChangedEvent<TData = any, TContext = any> extends CalculatedColumnBaseEvent<
+    'calculatedColumnChanged',
+    TData,
+    TContext
+> {
+    /** Changed definition properties and their previous/new values. Never empty; values are snapshots. */
+    changes: CalculatedColumnChanges;
 }
 
 export interface CalculatedColumnCreatedEvent<TData = any, TContext = any> extends CalculatedColumnBaseEvent<
@@ -741,6 +760,7 @@ export interface CalculatedColumnRemovedEvent<TData = any, TContext = any> exten
     TContext
 > {}
 
+/** @deprecated v36.3 Use `CalculatedColumnChangedEvent` and check `changes.calculatedExpression` instead. */
 export interface CalculatedColumnExpressionChangedEvent<TData = any, TContext = any> extends CalculatedColumnBaseEvent<
     'calculatedColumnExpressionChanged',
     TData,
@@ -1102,12 +1122,23 @@ export interface ColumnEvent<
     TData = any,
     TContext = any,
 > extends AgGridEvent<TData, TContext, T> {
-    /** The impacted column, only set if action was on one column */
+    /** The impacted column, only set when the event concerns a single column */
     column: Column | null;
     /** List of all impacted columns */
     columns: Column[] | null;
     /** String describing where the event is coming from */
     source: ColumnEventType;
+}
+
+/** Raised by a column when a property of its `ColumnState` is updated. `Column.addEventListener` types the listener with
+ *  `ColumnEvent`, so a listener narrows to this type to read `key`. */
+export interface ColumnStateUpdatedEvent<TData = any, TContext = any> extends ColumnEvent<
+    'columnStateUpdated',
+    TData,
+    TContext
+> {
+    /** The `ColumnState` property updated */
+    key: keyof ColumnState;
 }
 
 export interface ColumnResizedEvent<TData = any, TContext = any> extends ColumnEvent<'columnResized', TData, TContext> {

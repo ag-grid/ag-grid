@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     addFilterCard: 'Thêm Bộ Lọc',
     agTextColumnFilterDisplayName: 'Bộ Lọc Đơn Giản',
     agNumberColumnFilterDisplayName: 'Bộ Lọc Đơn Giản',
+    agBigIntColumnFilterDisplayName: 'Bộ Lọc Đơn Giản',
     agDateColumnFilterDisplayName: 'Bộ Lọc Đơn Giản',
     agSetColumnFilterDisplayName: 'Bộ Lọc Lựa Chọn',
     agMultiColumnFilterDisplayName: 'Bộ Lọc Kết Hợp',
@@ -738,6 +739,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaFilterList: 'Danh sách Lọc',
     ariaFilterToValue: 'Lọc đến giá trị',
     ariaFilterValue: 'Giá trị Lọc',
+    ariaNotInCurrentData: 'không có trong dữ liệu hiện tại',
     ariaFilterMenuOpen: 'Mở Menu Bộ lọc',
     ariaFilteringOperator: 'Toán tử Lọc',
     ariaHidden: 'ẩn',
@@ -891,9 +893,11 @@ export const AG_GRID_LOCALE_VI_VN = {
     columnHeaderEditCancel: 'Hủy',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Không tìm thấy cột đủ điều kiện.',
     calculatedColumn: 'Cột tính toán',
     calculatedColumnAdd: 'Thêm cột tính toán',
     calculatedColumnEdit: 'Chỉnh sửa cột tính toán',
+    calculatedColumnView: 'Xem cột tính toán',
     calculatedColumnRemove: 'Xóa cột tính toán',
     calculatedColumnTitle: 'Tiêu đề',
     calculatedColumnType: 'Loại',
@@ -908,6 +912,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     calculatedColumnExpressionAmbiguousReference:
         'Tham chiếu cột không rõ ràng "${variable}". Hãy dùng danh sách Cột hoặc đường dẫn nhóm cụ thể hơn.',
     calculatedColumnExpressionUnknownReference: 'Tham chiếu cột không xác định "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Không thể sử dụng cột "${variable}" trong biểu thức này.',
     calculatedColumnExpressionEmpty: 'Nhập một biểu thức',
     calculatedColumnTitleEmpty: 'Nhập tiêu đề',
     calculatedColumnApply: 'Áp dụng',

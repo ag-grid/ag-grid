@@ -117,13 +117,13 @@ runs:
               NX_DAEMON: 'false'
           run: |
               set -euo pipefail
-              # Deliberately a FULL install, unlike cloud-setup.sh's --ignore-scripts
+              # Deliberately a FULL install, unlike cloud-setup.sh's scripts-disabled
               # pass. patch-package, allow-scripts and the nx plugin build all run
-              # here. A tree baked without them would still pass `yarn check
-              # --integrity` on the far side, so the session would call itself ready
+              # here. A tree baked without them would still pass `yarn install
+              # --immutable` on the far side, so the session would call itself ready
               # with patches unapplied — the exact trap the `unscripted` marker
               # exists to catch.
-              yarn install --frozen-lockfile
+              yarn install --immutable
 
         - name: Report tree shape
           if: steps.existing.outputs.hit != 'true'

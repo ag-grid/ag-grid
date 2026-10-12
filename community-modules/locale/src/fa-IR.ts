@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     addFilterCard: 'افزودن فیلتر',
     agTextColumnFilterDisplayName: 'فیلتر ساده',
     agNumberColumnFilterDisplayName: 'فیلتر ساده',
+    agBigIntColumnFilterDisplayName: 'فیلتر ساده',
     agDateColumnFilterDisplayName: 'فیلتر ساده',
     agSetColumnFilterDisplayName: 'فیلتر انتخاب',
     agMultiColumnFilterDisplayName: 'فیلتر ترکیبی',
@@ -738,6 +739,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaFilterList: 'لیست فیلتر',
     ariaFilterToValue: 'فیلتر تا مقدار',
     ariaFilterValue: 'مقدار فیلتر',
+    ariaNotInCurrentData: 'در داده‌های فعلی نیست',
     ariaFilterMenuOpen: 'باز کردن منوی فیلتر',
     ariaFilteringOperator: 'عملگر فیلتر کردن',
     ariaHidden: 'مخفی',
@@ -892,9 +894,11 @@ export const AG_GRID_LOCALE_FA_IR = {
     columnHeaderEditCancel: 'لغو',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'هیچ ستون واجد شرایطی یافت نشد.',
     calculatedColumn: 'ستون محاسبه‌شده',
     calculatedColumnAdd: 'افزودن ستون محاسبه‌شده',
     calculatedColumnEdit: 'ویرایش ستون محاسبه‌شده',
+    calculatedColumnView: 'نمایش ستون محاسبه‌شده',
     calculatedColumnRemove: 'حذف ستون محاسبه‌شده',
     calculatedColumnTitle: 'عنوان',
     calculatedColumnType: 'نوع',
@@ -909,6 +913,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     calculatedColumnExpressionAmbiguousReference:
         'ارجاع مبهم ستون "${variable}". از فهرست ستون‌ها یا یک مسیر گروه دقیق‌تر استفاده کنید.',
     calculatedColumnExpressionUnknownReference: 'ارجاع ناشناخته ستون "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'نمی‌توان از ستون "${variable}" در این عبارت استفاده کرد.',
     calculatedColumnExpressionEmpty: 'یک عبارت وارد کنید',
     calculatedColumnTitleEmpty: 'یک عنوان وارد کنید',
     calculatedColumnApply: 'اعمال',

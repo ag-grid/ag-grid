@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
 # Shrink a yarn v1 download cache before it is saved to the GitHub Actions cache.
 #
+# KNOWN FOLLOW-UP (Yarn 4 migration): this script's glob (`npm-*`) matches Yarn
+# v1's cache-entry naming only. Yarn 4's cache holds one .zip per package at
+# <name>-npm-<version>-<hash>-<id>.zip, so on a Yarn 4 cache dir this script's
+# loop matches nothing and is a harmless no-op — nothing crashes, but nothing is
+# hollowed either. In practice this matters less than it did under Yarn 1: unlike
+# Yarn 1 (which fetches every platform's optional-dependency binaries up front and
+# only then filters by os/cpu), Yarn 4 fetches only the current platform's optional
+# deps by default, so its cache does not accumulate the foreign-platform bloat this
+# script was written to trim. Revisit only if CI's saved yarn-cache size regresses.
+#
 # Usage: hollow-yarn-cache.sh <yarn-cache-dir>
 #
 # yarn v1 fetches every optional dependency in the lockfile and only then checks its

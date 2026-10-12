@@ -39,6 +39,7 @@
 }
 
 .ag-cell-data-changed {
+    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
     background-color: var(--ag-value-change-value-highlight-background-color) !important;
 }
 
@@ -47,6 +48,7 @@
 }
 
 .ag-cell-highlight {
+    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
     background-color: var(--ag-range-selection-highlight-color) !important;
 }
 
@@ -410,8 +412,6 @@
     --ag-internal-row-overlay-color: var(--ag-row-hover-color);
 }
 
-/* stylelint-disable no-descending-specificity */
-
 .ag-row-hover.ag-row-selected {
     --ag-internal-row-overlay-color: var(--ag-row-hover-color);
 
@@ -422,8 +422,6 @@
         var(--ag-selected-row-background-color)
     );
 }
-
-/* stylelint-enable no-descending-specificity */
 
 .ag-column-hover {
     background-color: var(--ag-column-hover-color);
@@ -446,7 +444,7 @@
 }
 
 .ag-cell:not(.ag-cell-inline-editing),
-/* stylelint-disable-next-line no-descending-specificity */
+/* stylelint-disable-next-line no-descending-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-full-width-row .ag-cell-wrapper.ag-row-group {
     padding-left: calc(
         var(--ag-cell-horizontal-padding) - 1px + var(--ag-row-group-indent-size) * var(--ag-indentation-level)

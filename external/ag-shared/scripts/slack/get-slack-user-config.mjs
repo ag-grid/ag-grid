@@ -1,3 +1,5 @@
+import { ghaWarning } from "./_ci-notification-utils.mjs";
+
 const SLACK_USER_KEY_MAP = {
     "Slack ID": "slackId",
     "Full Name": "fullName",
@@ -7,6 +9,13 @@ const SLACK_USER_KEY_MAP = {
 };
 
 const getDataSourceQueryUrl = (dataSourceId) => `https://api.notion.com/v1/data_sources/${dataSourceId}/query`;
+
+// Every caller is a notification step with nothing downstream to rescue it, so a stalled socket
+// would hold the job open until the runner's own ceiling rather than fail it. Bound each request,
+// and the page count too: the loop follows Notion's cursor, so a response that kept setting
+// `has_more` would spin forever. The directory is tens of rows against a 100-row page size.
+const NOTION_TIMEOUT_MS = 15000;
+const MAX_PAGES = 20;
 
 /**
  * Extracts plain values from Notion property objects.
@@ -125,7 +134,21 @@ function simplifyQueryResults(response, keyMap) {
   return response.results.map((page) => simplifyPage(page, keyMap));
 }
 
-export async function getSlackUserConfig({
+/**
+ * Every caller treats a returned `error` as "name the authors by login and carry on", so a
+ * failure here must not throw: two of the notification scripts wrap the call in no handler at
+ * all, and a socket error or the request timeout would abort them instead of degrading the
+ * message. Only the paginated read is guarded; the validation below already returns its errors.
+ */
+export async function getSlackUserConfig(options) {
+    try {
+        return await queryUserDirectory(options);
+    } catch (error) {
+        return { error: `Notion request failed: ${error.message}` };
+    }
+}
+
+async function queryUserDirectory({
     notionApiToken,
     notionDataSourceId,
     notionApiVersion = "2026-03-11",
@@ -135,10 +158,12 @@ export async function getSlackUserConfig({
     // even after the data source grows past Notion's default page size.
     const allResults = [];
     let startCursor;
+    let pages = 0;
     do {
         const body = startCursor ? JSON.stringify({ start_cursor: startCursor }) : undefined;
         const response = await fetch(queryUrl, {
             method: "post",
+            signal: AbortSignal.timeout(NOTION_TIMEOUT_MS),
             headers: {
                 "Authorization": `Bearer ${notionApiToken}`,
                 "Notion-Version": notionApiVersion,
@@ -155,7 +180,16 @@ export async function getSlackUserConfig({
 
         allResults.push(...data.results);
         startCursor = data.has_more ? data.next_cursor : undefined;
-    } while (startCursor);
+    } while (startCursor && ++pages < MAX_PAGES);
+
+    if (startCursor) {
+        // Reported rather than swallowed: a short list means a contributor is named instead of
+        // @-mentioned, which reads as a directory gap rather than a truncated read.
+        ghaWarning(
+            `Notion still had more rows after ${MAX_PAGES} pages; the user directory is incomplete, so some authors may be named instead of mentioned.`,
+            { title: "Slack user directory truncated" }
+        );
+    }
 
     if (allResults.length === 0) {
         return { error: "Notion query returned no rows, so the schema cannot be validated. Check the data source has at least one entry." };

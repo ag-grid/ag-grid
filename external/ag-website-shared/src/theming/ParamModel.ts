@@ -1,51 +1,20 @@
 import { useAtom, useAtomValue } from 'jotai';
 
-import { themeQuartz } from 'ag-grid-community';
-
 import type { PersistentAtom } from './JSONStorage';
 import { atomWithJSONStorage } from './JSONStorage';
 import { type ParamType, getParamType } from './api';
+import { getBaseTheme } from './base-theme';
 import type { Store } from './store';
 import { type ThemeParam, getThemeDefaultParams, memoize, titleCase } from './utils';
 
 const paramModels: Record<string, unknown> = {};
 
-// Params that are editable in the UI immediately without adding as an advanced param.
-// Grid's default set; hosts can override the whole set via setNonAdvancedParams.
-const gridNonAdvancedParams = new Set([
-    'fontFamily',
-    'fontSize',
-    'backgroundColor',
-    'foregroundColor',
-    'accentColor',
-    'borderColor',
-    'wrapperBorder',
-    'rowBorder',
-    'columnBorder',
-    'headerRowBorder',
-    'spacing',
-    'wrapperBorderRadius',
-    'borderRadius',
-    'headerBackgroundColor',
-    'headerTextColor',
-    'headerFontFamily',
-    'headerFontSize',
-    'headerFontWeight',
-    'headerVerticalPaddingScale',
-    'cellTextColor',
-    'dataBackgroundColor',
-    'oddRowBackgroundColor',
-    'rowVerticalPaddingScale',
-    'cellHorizontalPaddingScale',
-    'iconSize',
-]);
-
-let nonAdvancedParams = gridNonAdvancedParams;
+let nonAdvancedParams = new Set<string>();
 
 /**
- * Hosts can supply the set of params that are editable directly (not only as an
- * advanced param). Defaults to grid's set. Must be called before any ParamModel
- * is used, since onlyEditableAsAdvancedParam is read against this set.
+ * Hosts supply the params that are editable directly rather than only after
+ * being added as an advanced param. Must be called before any ParamModel is
+ * used, since onlyEditableAsAdvancedParam is read against this set.
  */
 export const setNonAdvancedParams = (params: Iterable<string>) => {
     nonAdvancedParams = new Set(params);
@@ -53,12 +22,11 @@ export const setNonAdvancedParams = (params: Iterable<string>) => {
 
 type ThemeParamSource = () => Record<string, unknown>;
 
-let themeParamSource: ThemeParamSource = () => getThemeDefaultParams(themeQuartz);
+let themeParamSource: ThemeParamSource = () => getThemeDefaultParams(getBaseTheme());
 
 /**
- * Hosts can supply the source of "all params" the builder knows about (e.g.
- * Studio's studioTheme default params rather than grid's themeQuartz). Defaults
- * to grid's themeQuartz. Must be called before allParamModels() is first
+ * Hosts supply the catalogue of params the builder knows about; the base
+ * theme's own params otherwise. Must be called before allParamModels() is first
  * evaluated, since that result is memoized.
  */
 export const setThemeParamSource = (source: ThemeParamSource) => {

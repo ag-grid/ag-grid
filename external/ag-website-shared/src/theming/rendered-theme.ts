@@ -1,12 +1,11 @@
-import { _asThemeImpl } from 'ag-stack';
+import { type Theme, _asThemeImpl } from 'ag-stack';
 import { atom, useAtomValue } from 'jotai';
-
-import { type Theme, themeQuartz } from 'ag-grid-community';
 
 import { allParamModels } from './ParamModel';
 import type { PartModel } from './PartModel';
 import { FeatureModel } from './PartModel';
 import { enabledAdvancedParamsAtom } from './advanced-params';
+import { getBaseTheme } from './base-theme';
 import { getReinterpretationElement } from './utils';
 
 export type RenderedThemeInfo = {
@@ -15,21 +14,12 @@ export type RenderedThemeInfo = {
     usedParts: PartModel[];
 };
 
-let baseTheme: Theme = themeQuartz;
-
-/**
- * Hosts supply the base theme the preview renders from (e.g. Studio's
- * studioTheme). Defaults to grid's themeQuartz.
- */
-export const setBaseTheme = (theme: Theme) => {
-    baseTheme = theme;
-};
-
-let renderedFeatureNames: string[] = ['iconSet'];
+let renderedFeatureNames: string[] = [];
 
 /**
  * Hosts supply which swappable-part features feed into the rendered preview
- * theme. Defaults to grid's ['iconSet']. Hosts without parts supply [].
+ * theme - a subset of setFeatureModels, the rest being applied by the host's
+ * own preview rather than the theme.
  */
 export const setRenderedFeatures = (featureNames: string[]) => {
     renderedFeatureNames = featureNames;
@@ -40,7 +30,7 @@ let previousStyleSheet: CSSStyleSheet | null = null;
 const renderedThemeInfoAtom = atom((get): RenderedThemeInfo => {
     const enabledAdvancedParams = get(enabledAdvancedParamsAtom);
 
-    let theme = baseTheme;
+    let theme = getBaseTheme();
 
     const usedParts: PartModel[] = [];
     for (const featureName of renderedFeatureNames) {

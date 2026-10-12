@@ -1,17 +1,20 @@
-import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
 import {
+    BigIntFilterModule,
     ClientSideRowModelModule,
     CustomFilterModule,
     DateFilterModule,
     NumberFilterModule,
     TextFilterModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import {
     AdvancedFilterModule,
     AggregationModule,
     AiToolkitModule,
     MultiFilterModule,
+    NewFiltersToolPanelModule,
     PivotModule,
     RowGroupingModule,
     SetFilterModule,
@@ -374,6 +377,7 @@ describe('getStructuredSchema - filter feature', () => {
                 AiToolkitModule,
                 TextFilterModule,
                 NumberFilterModule,
+                BigIntFilterModule,
                 DateFilterModule,
                 CustomFilterModule,
             ],
@@ -424,6 +428,35 @@ describe('getStructuredSchema - filter feature', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 age:25
             `);
+        });
+
+        test('includes bigint filter schema, named or as the default filter of a bigint column', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'named', cellDataType: 'bigint', filter: 'agBigIntColumnFilter' },
+                    { field: 'byDefault', cellDataType: 'bigint', filter: true },
+                ],
+                rowData: [{ named: 10n, byDefault: 20n }],
+            });
+
+            const filterModel = toJSON(api.getStructuredSchema()).properties.filter.properties.filterModel;
+            for (const colId of ['named', 'byDefault']) {
+                const join = filterModel.properties[colId];
+                expect(join.properties.filterType.enum).toEqual(['bigint']);
+                const condition = join.properties.conditions.items;
+                expect(condition.properties.filterType.enum).toEqual(['bigint']);
+                // A bigint model holds its operands as decimal text.
+                expect(condition.properties.filter).toEqual({
+                    type: ['string', 'null'],
+                    pattern: '^-?\\d+$',
+                    description: 'Primary filter value',
+                });
+                expect(condition.properties.filterTo).toEqual({
+                    type: ['string', 'null'],
+                    pattern: '^-?\\d+$',
+                    description: 'Secondary filter value for range operations',
+                });
+            }
         });
 
         test('includes date filter schema', async () => {
@@ -744,7 +777,9 @@ describe('getStructuredSchema - filter feature', () => {
             `);
         });
 
-        test('ignores unrecognised filter keys', async () => {
+        test('describes a column whose filter names nothing registered by the default filter it builds', async () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [101] });
+            const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [
                     { field: 'name', filter: 'myCustomFilter' as any },
@@ -752,21 +787,24 @@ describe('getStructuredSchema - filter feature', () => {
                 ],
                 rowData: [{ name: 'Alice', age: 25 }],
             });
-            await new GridColumns(api, `ignores unrecognised filter keys setup`).checkColumns(`
+            await new GridColumns(api, `unregistered filter name setup`).checkColumns(`
                 CENTER
                 ├── name "Name" width:200
                 └── age "Age" width:200
             `);
-            await new GridRows(api, `ignores unrecognised filter keys setup`).check(`
+            await new GridRows(api, `unregistered filter name setup`).check(`
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 name:"Alice" age:25
             `);
 
             const schema = toJSON(api.getStructuredSchema());
             const filterModel = schema.properties.filter.properties.filterModel;
-            expect(filterModel.properties.name).toBeUndefined();
+            expect(JSON.stringify(filterModel.properties.name)).toContain('"enum":["text"]');
             expect(filterModel.properties.age).toBeDefined();
-            await new GridRows(api, `ignores unrecognised filter keys final state`).check(`
+            const warnings = warnSpy.mock.calls.flat().join(' ');
+            warnSpy.mockRestore();
+            expect(warnings).toContain('Could not find `myCustomFilter` component');
+            await new GridRows(api, `unregistered filter name final state`).check(`
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 name:"Alice" age:25
             `);
@@ -1043,6 +1081,68 @@ describe('getStructuredSchema - filter feature', () => {
             const ageFilter = resolveNullable(schema.properties.filter.properties.filterModel.properties.age);
             const [child] = ageFilter.properties.filterModels.items.anyOf.map(resolveNullable);
             expect(child.properties.filterType.enum).toEqual(['text']);
+        });
+
+        test('children from filterParams given as a function are the ones it returns, each described by its own params, function or object', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    {
+                        field: 'name',
+                        filter: 'agMultiColumnFilter',
+                        filterParams: () => ({
+                            filters: [
+                                { filter: 'agTextColumnFilter', filterParams: () => ({ maxNumConditions: 1 }) },
+                                { filter: 'agSetColumnFilter' },
+                            ],
+                        }),
+                    },
+                ],
+                rowData: [{ name: 'Alice' }],
+            });
+
+            const schema = toJSON(api.getStructuredSchema());
+            const nameFilter = resolveNullable(schema.properties.filter.properties.filterModel.properties.name);
+            // A child that has no model is described as `null`.
+            const children = nameFilter.properties.filterModels.items.anyOf.filter((child: any) => child.properties);
+            expect(children.map((child: any) => child.properties.filterType.enum[0])).toEqual(['text', 'set']);
+            // One condition, so no join wrapper.
+            expect(children[0].properties.conditions).toBeUndefined();
+        });
+    });
+
+    describe('selectable filter', () => {
+        const gridsManager = new TestGridsManager({
+            modules: [
+                ClientSideRowModelModule,
+                AiToolkitModule,
+                NewFiltersToolPanelModule,
+                NumberFilterModule,
+                SetFilterModule,
+            ],
+        });
+        afterEach(() => gridsManager.reset());
+
+        test('describes the filter a selectable column has chosen, as that is the model it takes', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'byDefault', filter: 'agSelectableColumnFilter' },
+                    {
+                        field: 'chosen',
+                        filter: 'agSelectableColumnFilter',
+                        filterParams: {
+                            filters: [{ filter: 'agSetColumnFilter' }, { filter: 'agNumberColumnFilter' }],
+                            defaultFilterIndex: 1,
+                        },
+                    },
+                ],
+                rowData: [{ byDefault: 1, chosen: 2 }],
+                enableFilterHandlers: true,
+            });
+
+            const filterModel = toJSON(api.getStructuredSchema()).properties.filter.properties.filterModel;
+            // With the Set Filter module loaded, the defaults start on the Selection Filter.
+            expect(resolveNullable(filterModel.properties.byDefault).properties.filterType.enum).toEqual(['set']);
+            expect(resolveNullable(filterModel.properties.chosen).properties.filterType.enum).toEqual(['number']);
         });
     });
 });

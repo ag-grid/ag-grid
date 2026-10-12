@@ -193,9 +193,9 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
             }
         }
 
-        const widths = params.skipSetLeft ? undefined : visibleCols.setLeftValues(source);
+        const widths = params.skipSetLeft ? undefined : visibleCols.setLeftValues();
         if (params.updateBodyWidths) {
-            visibleCols.updateBodyWidths(widths);
+            visibleCols.updateBodyWidths(source, widths);
         }
 
         const unconstrainedFlexColumns = items
@@ -232,8 +232,8 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
 
     // this method should only be used by the colModel to
     // change flex when required by the applyColumnState method.
-    public setColFlex(column: AgColumn, flex: number | null) {
+    public setColFlex(column: AgColumn, flex: number | null, source: ColumnEventType) {
         column.flex = flex ?? null;
-        column.dispatchStateUpdatedEvent('flex');
+        column.dispatchStateUpdatedEvent('flex', source);
     }
 }

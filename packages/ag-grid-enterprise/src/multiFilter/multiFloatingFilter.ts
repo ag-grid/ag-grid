@@ -1,15 +1,16 @@
 import { _clearElement, _setDisplayed } from 'ag-stack';
 
 import type {
+    AgColumn,
     ElementParams,
     FilterChangedEvent,
     FloatingFilterDisplayParams,
     IFilter,
-    IFilterDef,
     IFloatingFilterComp,
     IFloatingFilterParams,
     IMultiFilterModel,
     MultiFilterParams,
+    ResolvedFilter,
     UserCompDetails,
 } from 'ag-grid-community';
 import {
@@ -18,12 +19,18 @@ import {
     _getDefaultFloatingFilterType,
     _getFloatingFilterCompDetails,
     _mergeDeep,
+    _resolveFilter,
 } from 'ag-grid-community';
 
 import { MultiFilter } from './multiFilter';
 import type { MultiFilterHandler } from './multiFilterHandler';
 import { MultiFilterUi } from './multiFilterUi';
-import { DEFAULT_CHILD_FLOATING_FILTER, getMultiFilterDefs, getUpdatedMultiFilterModel } from './multiFilterUtil';
+import {
+    DEFAULT_CHILD_FILTER,
+    getMultiFilterDefs,
+    getUpdatedMultiFilterModel,
+    resolveFilterParams,
+} from './multiFilterUtil';
 
 const MultiFloatingFilterElement: ElementParams = {
     tag: 'div',
@@ -122,11 +129,14 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         const floatingFilterParamsList: IFloatingFilterParams<IFilter>[] = [];
         const filterParams = params.filterParams as MultiFilterParams;
         const currentParentModel = params.currentParentModel;
+        const { beans, gos } = this;
+        const column = params.column as AgColumn;
 
         const filterDefs = getMultiFilterDefs(filterParams);
-        filterDefs.forEach((filterDef, index) => {
+        for (let index = 0, len = filterDefs.length; index < len; ++index) {
             const floatingFilterParams: IFloatingFilterParams<IFilter> = {
                 ...params,
+                filterParams: { ...filterParams }, // one child's params are not another's
                 // set the parent filter instance for each floating filter to the relevant child filter instance
                 parentFilterInstance: (callback) => {
                     this.parentMultiFilterInstance((parent) => {
@@ -141,7 +151,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                 // return the parent model for the specific filter
                 currentParentModel: () => currentParentModel()?.filterModels?.[index] ?? null,
             };
-            if (this.gos.get('enableFilterHandlers')) {
+            if (gos.get('enableFilterHandlers')) {
                 const reactiveParams = floatingFilterParams as unknown as FloatingFilterDisplayParams;
                 reactiveParams.model = reactiveParams.model?.filterModels?.[index] ?? null;
                 const { onModelChange, getHandler } = reactiveParams;
@@ -155,19 +165,17 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                         ),
                         additionalEventAttributes
                     );
-                reactiveParams.getHandler = () => {
-                    const multiFilterHandler = getHandler() as MultiFilterHandler;
-                    return multiFilterHandler.getHandler(index)!;
-                };
+                reactiveParams.getHandler = () => (getHandler() as MultiFilterHandler).getChildDisplayHandler(index)!;
             }
-            _mergeDeep(floatingFilterParams.filterParams, filterDef.filterParams);
+            const child = _resolveFilter(beans, column, filterDefs[index], DEFAULT_CHILD_FILTER);
+            _mergeDeep(floatingFilterParams.filterParams, resolveFilterParams(beans, column, child.def));
 
-            const compDetails = this.getCompDetails(filterDef, floatingFilterParams);
+            const compDetails = this.getCompDetails(child, floatingFilterParams);
             if (compDetails) {
                 compDetailsList.push(compDetails);
                 floatingFilterParamsList.push(floatingFilterParams);
             }
-        });
+        }
         return { compDetailsList, floatingFilterParamsList };
     }
 
@@ -209,14 +217,9 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         super.destroy();
     }
 
-    private getCompDetails(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): UserCompDetails | undefined {
-        const { frameworkOverrides, userCompFactory } = this.beans;
-        // a child's `true` is the Text Filter, whatever the column's own default is
-        const defaultComponentName =
-            _getDefaultFloatingFilterType(frameworkOverrides, filterDef, () => DEFAULT_CHILD_FLOATING_FILTER) ??
-            'agReadOnlyFloatingFilter';
-
-        return _getFloatingFilterCompDetails(userCompFactory, filterDef, params, defaultComponentName);
+    private getCompDetails(child: ResolvedFilter, params: IFloatingFilterParams<IFilter>): UserCompDetails | undefined {
+        const defaultComponentName = _getDefaultFloatingFilterType(child.key) ?? 'agReadOnlyFloatingFilter';
+        return _getFloatingFilterCompDetails(this.beans.userCompFactory, child.def, params, defaultComponentName);
     }
 
     private parentMultiFilterInstance(cb: (instance: MultiFilter | MultiFilterUi) => void): void {

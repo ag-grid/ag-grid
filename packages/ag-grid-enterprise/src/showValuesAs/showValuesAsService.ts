@@ -430,7 +430,7 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
             this.ensureConfig(column);
             this.applyActive(column, type, selection);
         }
-        this.applyModeChangeEffects(column, source);
+        this.applyModeChangeEffects(column, source, true);
     }
 
     public getActiveModeLabel(column: AgColumn): string | null {
@@ -598,25 +598,36 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
     /** Propagate a mode change to the grid. A mode needing an aggregated total on a not-yet-aggregated column
      *  promotes it to a value column (which re-aggregates). Otherwise just redraw the cells: a total mode reads the
      *  root aggregate on demand via the transform params (which aggregates the root lazily), so no re-agg here. */
-    private applyModeChangeEffects(column: AgColumn, source?: ColumnEventType): void {
-        column.dispatchStateUpdatedEvent('showValuesAs');
-        this.eventSvc.dispatchEvent({ type: 'columnShowValuesAsChanged' });
-        if (this.promoteToValueColumn(column, source)) {
-            return; // promotion re-aggregates and refreshes
+    private applyModeChangeEffects(column: AgColumn, source: ColumnEventType = 'api', fromState = false): void {
+        const colModel = this.colModel;
+        colModel.beginColUpdate();
+        try {
+            column.dispatchStateUpdatedEvent('showValuesAs', source);
+            this.eventSvc.dispatchEvent({ type: 'columnShowValuesAsChanged' });
+            if (this.promoteToValueColumn(column, source, fromState)) {
+                return; // promotion re-aggregates and refreshes
+            }
+            this.rowRenderer.refreshCells({ columns: [column.colId], force: true });
+        } finally {
+            colModel.endColUpdate();
         }
-        this.rowRenderer.refreshCells({ columns: [column.colId], force: true });
     }
 
     /** Promote a not-yet-aggregated column to a value column (the mode's `defaultAggFunc`) when its active mode
      *  needs an aggregated total. No-op (returns `false`) when not needed or already a
      *  value column / pivoting. Triggers a one-time re-aggregation. */
-    private promoteToValueColumn(column: AgColumn, source: ColumnEventType = 'api'): boolean {
+    private promoteToValueColumn(column: AgColumn, source: ColumnEventType, fromState: boolean): boolean {
         const aggFunc = column.showValuesAs?.def.defaultAggFunc;
         const valueColsSvc = this.valueColsSvc;
         if (!aggFunc || column.aggregationActive || this.colModel.isPivotActive() || !valueColsSvc) {
             return false;
         }
-        valueColsSvc.setColumnAggFunc(column, aggFunc, source);
+        if (fromState) {
+            // as an `aggFunc` in the same state: the apply's refresh and events report it
+            valueColsSvc.syncColState(column, { colId: column.colId, aggFunc }, undefined, source);
+        } else {
+            valueColsSvc.setColumnAggFunc(column, aggFunc, source);
+        }
         return true;
     }
 

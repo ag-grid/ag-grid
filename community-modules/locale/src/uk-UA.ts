@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     addFilterCard: 'Додати фільтр',
     agTextColumnFilterDisplayName: 'Простий фільтр',
     agNumberColumnFilterDisplayName: 'Простий фільтр',
+    agBigIntColumnFilterDisplayName: 'Простий фільтр',
     agDateColumnFilterDisplayName: 'Простий фільтр',
     agSetColumnFilterDisplayName: 'Фільтр вибору',
     agMultiColumnFilterDisplayName: 'Комбінований фільтр',
@@ -740,6 +741,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     ariaFilterList: 'Список фільтрів',
     ariaFilterToValue: 'Фільтрувати до значення',
     ariaFilterValue: 'Значення фільтру',
+    ariaNotInCurrentData: 'немає в поточних даних',
     ariaFilterMenuOpen: 'Відкрити меню фільтру',
     ariaFilteringOperator: 'Оператор фільтрування',
     ariaHidden: 'приховано',
@@ -893,9 +895,11 @@ export const AG_GRID_LOCALE_UK_UA = {
     columnHeaderEditCancel: 'Скасувати',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Відповідних стовпців не знайдено.',
     calculatedColumn: 'Обчислюваний стовпець',
     calculatedColumnAdd: 'Додати обчислюваний стовпець',
     calculatedColumnEdit: 'Редагувати обчислюваний стовпець',
+    calculatedColumnView: 'Переглянути обчислюваний стовпець',
     calculatedColumnRemove: 'Видалити обчислюваний стовпець',
     calculatedColumnTitle: 'Назва',
     calculatedColumnType: 'Тип',
@@ -910,6 +914,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     calculatedColumnExpressionAmbiguousReference:
         'Неоднозначне посилання на стовпець "${variable}". Скористайтеся списком Стовпці або точнішим шляхом групи.',
     calculatedColumnExpressionUnknownReference: 'Невідоме посилання на стовпець "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Стовпець "${variable}" не можна використовувати в цьому виразі.',
     calculatedColumnExpressionEmpty: 'Введіть вираз',
     calculatedColumnTitleEmpty: 'Введіть назву',
     calculatedColumnApply: 'Застосувати',

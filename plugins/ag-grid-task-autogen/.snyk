@@ -1,6 +1,50 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-NX-20537053:
+    - nx@20.8.4:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:37:02.792Z
+  SNYK-JS-NX-20417219:
+    - nx@20.8.4:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:35:34.094Z
+  SNYK-JS-BRACEEXPANSION-20244952:
+    - nx@20.8.4 > minimatch@9.0.3 > brace-expansion@2.1.4:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:31:44.814Z
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:31:44.799Z
+    - '@nx/devkit@20.8.4 > minimatch@9.0.3 > brace-expansion@2.1.4':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:31:44.790Z
+  SNYK-JS-BRACEEXPANSION-20244948:
+    - nx@20.8.4 > minimatch@9.0.3 > brace-expansion@2.1.4:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:30:45.642Z
+    - '@nx/devkit@20.8.4 > ejs@3.1.10 > jake@10.9.4 > filelist@1.0.4 > minimatch@5.1.6 > brace-expansion@2.1.4':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:30:45.627Z
+    - '@nx/devkit@20.8.4 > minimatch@9.0.3 > brace-expansion@2.1.4':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:30:45.624Z
   SNYK-JS-NX-18593778:
     - 'nx@*':
         reason: 'Fix requires nx 22.7.7+, a two-major upgrade: ten @nx/* packages must move in lockstep and three patch-package patches pinned to 20.8.4 (nx, @nx/esbuild, @nx/js) need regenerating. Scheduled work rather than a dependency bump. Dev-only: nx is the build orchestrator and is not shipped in any published AG Grid package.'

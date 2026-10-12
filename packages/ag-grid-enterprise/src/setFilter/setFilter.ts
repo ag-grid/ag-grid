@@ -37,7 +37,13 @@ import type {
     SetFilterListItemSelectionChangedEvent,
 } from './setFilterListItem';
 import { SetFilterListItem } from './setFilterListItem';
-import { setFilterNullIfBlank, translateForSetFilter, unformattedSetFilterText } from './setFilterUtils';
+import {
+    areAllTreeKeysIn,
+    formatTreeKey,
+    setFilterNullIfBlank,
+    translateForSetFilter,
+    unformattedSetFilterText,
+} from './setFilterUtils';
 import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 
 /** @param V type of value in the Set Filter */
@@ -56,6 +62,7 @@ export class SetFilter<V = string>
     private virtualList: VirtualList<SetFilterListItem<V | string | null>, SetFilterModelTreeItem | string | null>;
 
     private hardRefreshVirtualList = false;
+    private keyOnlyVersion = 0;
 
     public handler: SetFilterHandler<V>;
     private handlerDestroyFuncs?: (() => void)[];
@@ -83,23 +90,27 @@ export class SetFilter<V = string>
         const handler = this.updateHandler(params.getHandler() as unknown as SetFilterHandler<V>);
 
         const { column, textFormatter, treeList, treeListPathGetter, treeListFormatter } = params;
+        const beans = this.beans;
 
         this.formatter =
-            _bindFilterCallback(textFormatter, this.beans.gos, column, 'columnFilter') ?? unformattedSetFilterText;
+            _bindFilterCallback(textFormatter, beans.gos, column, 'columnFilter') ?? unformattedSetFilterText;
 
+        const getKeyOnlyKeys = () => this.handler.valueModel.keyOnlyKeys;
         this.displayValueModel = treeList
             ? new TreeSetDisplayValueModel(
-                  this.beans.log,
+                  beans.log,
                   this.formatter,
                   treeListPathGetter,
                   treeListFormatter,
-                  handler.isTreeDataOrGrouping()
+                  handler.isTreeDataOrGrouping(),
+                  getKeyOnlyKeys
               )
             : (new FlatSetDisplayValueModel<V>(
-                  this.beans.valueSvc,
+                  beans.valueSvc,
                   () => this.handler.valueFormatter,
                   this.formatter,
-                  column as AgColumn
+                  column as AgColumn,
+                  getKeyOnlyKeys
               ) as any);
 
         handler.valueModel.allKeys.then((values) => {
@@ -109,10 +120,6 @@ export class SetFilter<V = string>
             this.updateDisplayedValues('reload', values ?? []);
             this.resetSelectionState(values ?? []);
         });
-
-        if (handler.valueModel.isLoading()) {
-            this.setIsLoading(true);
-        }
 
         this.initialiseFilterBodyUi();
     }
@@ -148,10 +155,30 @@ export class SetFilter<V = string>
         this.formatter =
             _bindFilterCallback(textFormatter, this.beans.gos, column, 'columnFilter') ?? unformattedSetFilterText;
 
-        if (this.displayValueModel instanceof TreeSetDisplayValueModel) {
-            this.displayValueModel.updateParams(treeListPathGetter, treeListFormatter);
+        const displayValueModel = this.displayValueModel;
+        if (displayValueModel instanceof TreeSetDisplayValueModel) {
+            displayValueModel.updateParams(treeListPathGetter, treeListFormatter);
         }
-        this.handler.refreshFilterValuesForColDef();
+        // the handler decides whether the values load again; the list is redrawn under the new params either way
+        this.redisplayValues(true);
+    }
+
+    private redisplayValues(hardRefresh: boolean | undefined): void {
+        const valueModel = this.handler.valueModel;
+        valueModel.allKeys.then((values) => {
+            if (this.isAlive()) {
+                this.updateDisplayedValues('reload', values ?? []);
+                this.setSelectedModel(this.state.model?.values ?? null);
+                // A row is drawn differently for a key alone, so it is rebuilt when that changes.
+                const keyOnlyVersion = valueModel.keyOnlyVersion;
+                if (hardRefresh || keyOnlyVersion !== this.keyOnlyVersion) {
+                    this.keyOnlyVersion = keyOnlyVersion;
+                    this.hardRefreshVirtualList = true;
+                }
+                this.checkAndRefreshVirtualList();
+                this.showOrHideResults();
+            }
+        });
     }
 
     private updateHandler(handler: SetFilterHandler<V>): SetFilterHandler<V> {
@@ -160,6 +187,7 @@ export class SetFilter<V = string>
             for (const func of this.handlerDestroyFuncs ?? []) {
                 func();
             }
+            const valueModel = handler.valueModel;
             this.handlerDestroyFuncs = [
                 ...this.addManagedListeners(handler, {
                     anyFilterChanged: (event) => {
@@ -173,26 +201,19 @@ export class SetFilter<V = string>
                             }
                         });
                     },
-                    dataChanged: ({ hardRefresh }) => {
-                        handler.valueModel.allKeys.then((values) => {
-                            if (this.isAlive()) {
-                                this.updateDisplayedValues('reload', values ?? []);
-                                this.setSelectedModel(this.state.model?.values ?? null);
-                                if (hardRefresh) {
-                                    this.hardRefreshVirtualList = true;
-                                }
-                                this.checkAndRefreshVirtualList();
-                                this.showOrHideResults();
-                            }
-                        });
-                    },
+                    dataChanged: ({ hardRefresh }) => this.redisplayValues(hardRefresh),
                 }),
-                ...this.addManagedListeners(handler.valueModel, {
+                ...this.addManagedListeners(valueModel, {
                     loadingStart: () => this.setIsLoading(true),
                     loadingEnd: () => this.setIsLoading(false),
                 }),
             ];
             this.handler = handler;
+            this.keyOnlyVersion = valueModel.keyOnlyVersion;
+            const isLoading = valueModel.isLoading();
+            if (oldHandler || isLoading) {
+                this.setIsLoading(isLoading);
+            }
         }
         return handler;
     }
@@ -211,6 +232,8 @@ export class SetFilter<V = string>
                     tag: 'div',
                     ref: 'eFilterLoading',
                     cls: 'ag-filter-loading ag-loading ag-hidden',
+                    role: 'status',
+                    attrs: { tabindex: '-1' },
                     children: [
                         { tag: 'span', ref: 'eFilterLoadingIcon', cls: 'ag-loading-icon' },
                         { tag: 'span', cls: 'ag-loading-text', children: translateForSetFilter(this, 'loadingOoo') },
@@ -328,10 +351,16 @@ export class SetFilter<V = string>
     }
 
     private setIsLoading(isLoading: boolean): void {
-        _setDisplayed(this.eFilterLoading, isLoading);
+        const eFilterLoading = this.eFilterLoading;
+        const hadFocus = !isLoading && _getActiveDomElement(this.beans) === eFilterLoading;
+        _setDisplayed(eFilterLoading, isLoading);
         if (!isLoading) {
             // hard refresh when async data received
             this.hardRefreshVirtualList = true;
+        }
+        if (hadFocus) {
+            // hiding the message would otherwise drop focus out of the filter
+            this.focusFirstElement();
         }
     }
 
@@ -423,7 +452,7 @@ export class SetFilter<V = string>
         const groupsExist = this.displayValueModel.hasGroups();
         const { isSelected, isExpanded } = this.isSelectedExpanded(item);
 
-        const { value, depth, isGroup, hasIndeterminateExpandState, selectedListener, expandedListener } =
+        const { value, depth, isGroup, hasIndeterminateExpandState, isKeyOnly, selectedListener, expandedListener } =
             this.newSetListItemAttributes(item);
 
         const itemParams: SetFilterListItemParams<V | string | null> = {
@@ -440,6 +469,8 @@ export class SetFilter<V = string>
             isGroup,
             isExpanded,
             hasIndeterminateExpandState,
+            isMissing: this.isItemMissing(item),
+            isKeyOnly: !!isKeyOnly,
         };
         const listItem = this.createBean(new SetFilterListItem<V | string | null>(itemParams));
 
@@ -451,14 +482,7 @@ export class SetFilter<V = string>
         return listItem;
     }
 
-    private newSetTreeItemAttributes(item: SetFilterModelTreeItem): {
-        value: V | string | (() => string) | null;
-        depth?: number;
-        isGroup?: boolean;
-        hasIndeterminateExpandState?: boolean;
-        selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void;
-        expandedListener?: (e: SetFilterListItemExpandedChangedEvent) => void;
-    } {
+    private newSetTreeItemAttributes(item: SetFilterModelTreeItem): SetListItemAttributes<V> {
         const displayValueModel = this.displayValueModel;
         const groupsExist = displayValueModel.hasGroups();
 
@@ -492,9 +516,10 @@ export class SetFilter<V = string>
         // A group additionally expands; both act for every key their row stands for.
         const children = item.children;
         return {
-            value: this.params.treeListFormatter?.(item.treeKey, item.depth, item.parentTreeKeys) ?? item.treeKey,
+            value: formatTreeKey(item, this.params.treeListFormatter) ?? item.treeKey,
             depth: item.depth,
             isGroup: !!children,
+            isKeyOnly: item.keyOnly,
             selectedListener: (e: SetFilterListItemSelectionChangedEvent<SetFilterModelTreeItem>) =>
                 this.onTreeItemSelected(e.item, e.isSelected),
             expandedListener: children
@@ -504,14 +529,7 @@ export class SetFilter<V = string>
         };
     }
 
-    private newSetListItemAttributes(item: SetFilterModelTreeItem | string | null): {
-        value: V | string | (() => string) | null;
-        depth?: number;
-        isGroup?: boolean;
-        hasIndeterminateExpandState?: boolean;
-        selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void;
-        expandedListener?: (e: SetFilterListItemExpandedChangedEvent) => void;
-    } {
+    private newSetListItemAttributes(item: SetFilterModelTreeItem | string | null): SetListItemAttributes<V> {
         // Tree item
         if (this.isSetFilterModelTreeItem(item)) {
             return this.newSetTreeItemAttributes(item);
@@ -537,8 +555,12 @@ export class SetFilter<V = string>
         }
 
         // List item
+        const valueModel = this.handler.valueModel;
+        const isKeyOnly = valueModel.keyOnlyKeys.has(item);
         return {
-            value: this.handler.valueModel.allValues.get(item) ?? null,
+            // Labelled by its key, never formatted as a value it does not have.
+            value: isKeyOnly ? () => this.handler.getFormattedValue(item) : (valueModel.allValues.get(item) ?? null),
+            isKeyOnly,
             selectedListener: (e: SetFilterListItemSelectionChangedEvent<string | null>) =>
                 this.onItemSelected(e.item, e.isSelected),
         };
@@ -549,7 +571,24 @@ export class SetFilter<V = string>
         component: SetFilterListItem<V | string | null>
     ): void {
         const { isSelected, isExpanded } = this.isSelectedExpanded(item);
-        component.refresh(item, isSelected, isExpanded);
+        component.refresh(item, isSelected, isExpanded, this.isItemMissing(item));
+    }
+
+    private isItemMissing(item: SetFilterModelTreeItem | string | null): boolean {
+        const missingKeys = this.handler.valueModel.missingKeys;
+        if (!missingKeys.size) {
+            return false;
+        }
+        if (this.isSetFilterModelTreeItem(item)) {
+            const displayValueModel = this.displayValueModel;
+            // The (Select All) and Add Selection rows span the list, so they are never marked missing.
+            return (
+                item !== displayValueModel.getSelectAllItem() &&
+                item !== displayValueModel.getAddSelectionToFilterItem() &&
+                areAllTreeKeysIn(item, missingKeys)
+            );
+        }
+        return missingKeys.has(item);
     }
 
     private isSelectedExpanded(item: SetFilterModelTreeItem | string | null): {
@@ -612,16 +651,22 @@ export class SetFilter<V = string>
 
         this.refreshVirtualList();
 
-        const { eMiniFilter } = this;
-
-        eMiniFilter.setInputPlaceholder(translateForSetFilter(this, 'searchOoo'));
+        this.eMiniFilter.setInputPlaceholder(translateForSetFilter(this, 'searchOoo'));
 
         if (!params?.suppressFocus) {
-            if (eMiniFilter.isDisplayed()) {
-                eMiniFilter.getFocusableElement().focus();
-            } else {
-                this.virtualList.awaitStable(() => this.virtualList.focusRow(0));
-            }
+            this.focusFirstElement();
+        }
+    }
+
+    /** The mini filter sits under the loading message, so while values load the message takes focus instead. */
+    private focusFirstElement(): void {
+        const { eMiniFilter, eFilterLoading } = this;
+        if (this.handler.valueModel.isLoading()) {
+            eFilterLoading.focus();
+        } else if (eMiniFilter.isDisplayed()) {
+            eMiniFilter.getFocusableElement().focus();
+        } else {
+            this.virtualList.awaitStable(() => this.virtualList.focusRow(0));
         }
     }
 
@@ -1034,7 +1079,7 @@ export class SetFilter<V = string>
             this.displayValueModel.updateDisplayedValuesToAllAvailable(
                 (key: string | null) => valueModel.allValues.get(key) ?? null,
                 allKeys,
-                valueModel.availableKeys,
+                valueModel.displayableKeys,
                 source
             );
             return;
@@ -1052,7 +1097,7 @@ export class SetFilter<V = string>
         this.displayValueModel.updateDisplayedValuesToMatchMiniFilter(
             (key: string | null) => valueModel.allValues.get(key) ?? null,
             allKeys,
-            valueModel.availableKeys,
+            valueModel.displayableKeys,
             matchesFilter,
             nullMatchesFilter,
             source
@@ -1159,18 +1204,16 @@ export class SetFilter<V = string>
                 this.resetSelectionState(keys ?? []);
             } else {
                 // select all values from the model that exist in the filter
-                this.selectedKeys.clear();
+                const selectedKeys = this.selectedKeys;
+                selectedKeys.clear();
 
-                const existingFormattedKeys: Map<string | null, string | null> = new Map();
-                valueModel.allValues.forEach((_value, key) => {
-                    existingFormattedKeys.set(handler.caseFormat(key), key);
-                });
+                const existingFormattedKeys = valueModel.mapFormattedKeys();
 
                 model.forEach((unformattedKey) => {
                     const formattedKey = handler.caseFormat(setFilterNullIfBlank(unformattedKey));
                     const existingUnformattedKey = existingFormattedKeys.get(formattedKey);
                     if (existingUnformattedKey !== undefined) {
-                        this.selectedKeys.add(existingUnformattedKey);
+                        selectedKeys.add(existingUnformattedKey);
                     }
                 });
             }
@@ -1202,6 +1245,16 @@ export class SetFilter<V = string>
 
         super.destroy();
     }
+}
+
+interface SetListItemAttributes<V> {
+    value: V | string | (() => string) | null;
+    depth?: number;
+    isGroup?: boolean;
+    hasIndeterminateExpandState?: boolean;
+    isKeyOnly?: boolean;
+    selectedListener: (e: SetFilterListItemSelectionChangedEvent) => void;
+    expandedListener?: (e: SetFilterListItemExpandedChangedEvent) => void;
 }
 
 class ModelWrapper<V> implements VirtualListModel {
@@ -1267,6 +1320,10 @@ class TreeModelWrapper implements VirtualListModel {
         if (oldRow == null && newRow == null) {
             return true;
         }
-        return oldRow?.treeKey === newRow?.treeKey && oldRow?.depth === newRow?.depth;
+        return (
+            oldRow?.treeKey === newRow?.treeKey &&
+            oldRow?.depth === newRow?.depth &&
+            oldRow?.keyOnly === newRow?.keyOnly
+        );
     }
 }

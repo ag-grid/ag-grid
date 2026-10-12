@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 if [ "$#" -lt 3 ]
   then
     echo "You must supply a grid version, a charts version & a host"
@@ -25,7 +27,7 @@ VERSION=$1
 CHARTS_VERSION=$2
 CURRENT_HOST=$3
 
-export SSH_LOCATION=$SSH_FILE
+export SSH_LOCATION=${SSH_FILE:-}
 
 # a few safety checks
 if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
@@ -49,9 +51,9 @@ fi
 ARCHIVE="archive_`date +%Y%m%d`_$VERSION.tar.gz"
 
 
-# delete dir if it exists - can ignore dir not found error
-echo "ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST \"cd $GRID_ROOT_DIR/archive/ && [[ -d $VERSION ]] && rm -r $VERSION\""
-ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "cd $GRID_ROOT_DIR/archive/ && [[ -d $VERSION ]] && rm -r $VERSION"
+# delete dir if it exists (an if, rather than "[[ -d ]] && rm", so a missing dir doesn't fail the ssh)
+echo "ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST \"cd $GRID_ROOT_DIR/archive/ && if [[ -d $VERSION ]]; then rm -r $VERSION; fi\""
+ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "cd $GRID_ROOT_DIR/archive/ && if [[ -d $VERSION ]]; then rm -r $VERSION; fi"
 
 # upload file
 echo "ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST \"mkdir -p $GRID_ROOT_DIR/archive/$VERSION\""

@@ -58,3 +58,7 @@ export function _isHiddenParent(node: RowNode, ancestor: RowNode, gos: GridOptio
     }
     return currentNode === ancestor;
 }
+
+/** Named as `filter` or by the `{ component }` form, which builds the filter it names. */
+export const isGroupFilterDef = (filter: any): boolean =>
+    (typeof filter === 'object' && filter !== null ? filter.component : filter) === 'agGroupColumnFilter';

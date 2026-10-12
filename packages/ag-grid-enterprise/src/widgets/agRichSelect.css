@@ -21,7 +21,7 @@
     padding: var(--ag-spacing);
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-virtual-list-viewport.ag-rich-select-list {
     position: relative;
     width: 100%;
@@ -31,12 +31,12 @@
     border: var(--ag-picker-list-border);
     box-shadow: var(--ag-dropdown-shadow);
 
-    /* stylelint-disable-next-line selector-max-specificity */
+    /* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
     :where(.ag-rich-select-loading) {
         display: flex;
         padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
 
-        /* stylelint-disable-next-line selector-max-specificity */
+        /* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
         :where(.ag-loading-text) {
             overflow: hidden;
             text-overflow: ellipsis;
@@ -71,9 +71,6 @@
     flex: 1 1 auto;
 
     :where(.ag-input-field-input) {
-        padding: 0 !important;
-        border: none !important;
-        box-shadow: none !important;
         text-overflow: ellipsis;
 
         &::placeholder {
@@ -82,6 +79,11 @@
     }
 
     left: var(--ag-spacing);
+}
+
+.ag-rich-select-typing-single {
+    /* because the first child is a frameless text input which has its own padding */
+    padding-inline-start: 0;
 }
 
 .ag-rich-select-typing-multi {
@@ -108,6 +110,8 @@
     }
 
     :where(.ag-rich-select-field-input) {
+        --ag-input-padding-start: 0;
+
         margin-left: 0.25rem;
         flex: 0 0 auto;
         min-width: 0;

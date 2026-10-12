@@ -1,16 +1,14 @@
-import type { AgColumn, IRowNode } from 'ag-grid-community';
+import type { IFilterOptionDef, IRowNode } from 'ag-grid-community';
 
 import type { ADVANCED_FILTER_LOCALE_TEXT } from '../advancedFilterLocaleText';
 import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
-import { getColumnFilterOptions } from '../customFilterOptions';
 import type { DataTypeFilterExpressionOperators, FilterExpressionOperator } from '../filterExpressionOperators';
 import { getEntries } from '../filterExpressionOperators';
 
 const SET_OPERATOR_KEYS = ['isAnyOf', 'isNoneOf'] as const;
 
-/** Whether the column's own option list names a set operator, which is how any filter asks for them. */
-export function namesSetOperator(column: AgColumn): boolean {
-    const options = getColumnFilterOptions(column);
+/** Whether a column's own option list names a set operator, which is how any filter asks for them. */
+export function namesSetOperator(options: (string | IFilterOptionDef)[] | undefined): boolean {
     for (let i = 0, len = options?.length ?? 0; i < len; ++i) {
         const option = options![i];
         // A key only: a definition under one of these names is the author's own option, not this one.

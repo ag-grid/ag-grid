@@ -50,6 +50,16 @@ www	/charts/side/axes-types/	301	/charts/javascript/axes-types/
 # path serves; only the bare archive index redirects, to /documentation-archive.
 www	/charts/archive/13.1.0/javascript/getting-started/	200
 www	/charts/archive/	301	/charts/documentation-archive/
+# Old PHP-era grid archives (15.0.0-26.2.0): the Jira-backed changelog and pipeline pages redirect
+# to the live ones in one hop; the Jira code and the getting-started include fragments are gone.
+www	/archive/24.0.0/ag-grid-changelog/	301	https://www.ag-grid.com/changelog/
+www	/archive/26.2.0/ag-grid-changelog	301	https://www.ag-grid.com/changelog/
+www	/archive/15.0.0/ag-grid-pipeline/index.php	301	https://www.ag-grid.com/pipeline/
+www	/archive/24.0.0/jira_reports/jira_utilities.php	410
+www	/archive/21.2.2/getting-started/footer.php	410
+www	/archive/19.1.4/getting-started/header.php	410
+# On the apex they first move to www (unchanged behaviour), then the rule above applies.
+apex	/archive/24.0.0/ag-grid-changelog/	301	https://www.ag-grid.com/archive/24.0.0/ag-grid-changelog/
 # /charts/privacy has no charts-scoped page and must be 410 Gone (NOT a 301 to the apex policy). It
 # is the ONE charts semantic redirect deliberately NOT mirrored into the grid docroot (see
 # htaccessRules.ts), so the charts subdir stays its sole authority: the slashed form hits mod_alias

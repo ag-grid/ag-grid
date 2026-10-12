@@ -8,6 +8,7 @@ const DEFAULT_LOCALE_TEXT = {
     ariaLabelFilterCardHasEdits: 'Has Edits',
     agTextColumnFilterDisplayName: 'Simple Filter',
     agNumberColumnFilterDisplayName: 'Simple Filter',
+    agBigIntColumnFilterDisplayName: 'Simple Filter',
     agDateColumnFilterDisplayName: 'Simple Filter',
     agSetColumnFilterDisplayName: 'Selection Filter',
     agMultiColumnFilterDisplayName: 'Combo Filter',

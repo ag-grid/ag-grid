@@ -1,4 +1,5 @@
 import type { AgColumn } from '../entities/agColumn';
+import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColumnEvent, ColumnEventType } from '../events';
 import type { ColumnChangedEventType } from '../interfaces/iColsService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
@@ -103,4 +104,23 @@ export function dispatchColumnResizedEvent(
             source,
         });
     }
+}
+
+/**
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ * Grid-level counterpart to the group's `headerNameChanged`, fired after `_setColGroupHeaderNameOverride`.
+ * Pass `null` when a batch renamed more than one group.
+ */
+export function _dispatchGroupHeaderNameChangedEvent(
+    eventSvc: IEventService,
+    columnGroup: AgProvidedColumnGroup | null,
+    source: ColumnEventType
+): void {
+    eventSvc.dispatchEvent({
+        type: 'columnHeaderNameChanged',
+        column: null,
+        columns: null,
+        columnGroup,
+        source,
+    });
 }

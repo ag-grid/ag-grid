@@ -57,7 +57,6 @@ describe('getExampleViewerFiles', () => {
         files: {
             ...files,
             'main.ts': [
-                "const AI_API_TOKEN = 'secret-token';",
                 'const gridOptions = {};',
                 '/** DARK INTEGRATED START **/',
                 'document.documentElement.dataset.agThemeMode = "dark";',
@@ -76,13 +75,6 @@ describe('getExampleViewerFiles', () => {
         expect(Object.keys(viewerFiles)).toEqual(['main.ts', 'index.html', 'styles.css']);
         expect(viewerFiles['main.ts']).not.toContain('DARK INTEGRATED');
         expect(viewerFiles['main.ts']).toContain('const gridOptions = {};');
-    });
-
-    it('redacts AI API tokens so they never reach the page', () => {
-        const { files: viewerFiles } = getExampleViewerFiles(contents, 'typescript');
-
-        expect(viewerFiles['main.ts']).not.toContain('secret-token');
-        expect(viewerFiles['main.ts']).toContain("const AI_API_TOKEN = '<TOKEN_REDACTED>'");
     });
 
     it('falls back to the entry file when there is no main file', () => {

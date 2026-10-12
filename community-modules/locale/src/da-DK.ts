@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     addFilterCard: 'Tilføj filter',
     agTextColumnFilterDisplayName: 'Simpelt filter',
     agNumberColumnFilterDisplayName: 'Simpelt filter',
+    agBigIntColumnFilterDisplayName: 'Simpelt filter',
     agDateColumnFilterDisplayName: 'Simpelt filter',
     agSetColumnFilterDisplayName: 'Valgfilter',
     agMultiColumnFilterDisplayName: 'Kombinationsfilter',
@@ -740,6 +741,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaFilterList: 'Filterliste',
     ariaFilterToValue: 'Filtrer til værdi',
     ariaFilterValue: 'Filtrerværdi',
+    ariaNotInCurrentData: 'ikke i de aktuelle data',
     ariaFilterMenuOpen: 'Åbn Filtermenu',
     ariaFilteringOperator: 'Filtreringsoperator',
     ariaHidden: 'skjult',
@@ -893,9 +895,11 @@ export const AG_GRID_LOCALE_DA_DK = {
     columnHeaderEditCancel: 'Annuller',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Ingen egnede kolonner fundet.',
     calculatedColumn: 'Beregnet kolonne',
     calculatedColumnAdd: 'Tilføj beregnet kolonne',
     calculatedColumnEdit: 'Rediger beregnet kolonne',
+    calculatedColumnView: 'Vis beregnet kolonne',
     calculatedColumnRemove: 'Fjern beregnet kolonne',
     calculatedColumnTitle: 'Titel',
     calculatedColumnType: 'Type',
@@ -910,6 +914,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     calculatedColumnExpressionAmbiguousReference:
         'Tvetydig kolonnereference "${variable}". Brug listen Kolonner eller en mere specifik gruppesti.',
     calculatedColumnExpressionUnknownReference: 'Ukendt kolonnereference "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Kolonnen "${variable}" kan ikke bruges i dette udtryk.',
     calculatedColumnExpressionEmpty: 'Indtast et udtryk',
     calculatedColumnTitleEmpty: 'Indtast en titel',
     calculatedColumnApply: 'Anvend',

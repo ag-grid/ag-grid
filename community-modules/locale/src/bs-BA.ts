@@ -118,6 +118,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     addFilterCard: 'Dodaj filter',
     agTextColumnFilterDisplayName: 'Jednostavan filter',
     agNumberColumnFilterDisplayName: 'Jednostavan filter',
+    agBigIntColumnFilterDisplayName: 'Jednostavan filter',
     agDateColumnFilterDisplayName: 'Jednostavan filter',
     agSetColumnFilterDisplayName: 'Filter izbora',
     agMultiColumnFilterDisplayName: 'Kombinovani filter',
@@ -755,6 +756,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     ariaFilterList: 'Lista filtera',
     ariaFilterToValue: 'Filtriraj do vrijednosti',
     ariaFilterValue: 'Vrijednost filtera',
+    ariaNotInCurrentData: 'nije u trenutnim podacima',
     ariaFilterMenuOpen: 'Otvori meni filtera',
     ariaFilteringOperator: 'Operator filtriranja',
     ariaHidden: 'skriveno',
@@ -915,9 +917,11 @@ export const AG_GRID_LOCALE_BS_BA = {
     columnHeaderEditCancel: 'Otkaži',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nisu pronađene odgovarajuće kolone.',
     calculatedColumn: 'Izračunata kolona',
     calculatedColumnAdd: 'Dodaj izračunatu kolonu',
     calculatedColumnEdit: 'Uredi izračunatu kolonu',
+    calculatedColumnView: 'Pregledaj izračunatu kolonu',
     calculatedColumnRemove: 'Ukloni izračunatu kolonu',
     calculatedColumnTitle: 'Naslov',
     calculatedColumnType: 'Tip',
@@ -932,6 +936,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     calculatedColumnExpressionAmbiguousReference:
         'Nejasna referenca kolone "${variable}". Koristite listu kolona ili precizniju putanju grupe.',
     calculatedColumnExpressionUnknownReference: 'Nepoznata referenca kolone "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Kolona "${variable}" se ne može koristiti u ovom izrazu.',
     calculatedColumnExpressionEmpty: 'Unesite izraz',
     calculatedColumnTitleEmpty: 'Unesite naslov',
     calculatedColumnApply: 'Primijeni',

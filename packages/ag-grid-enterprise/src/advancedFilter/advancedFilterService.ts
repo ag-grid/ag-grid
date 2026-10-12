@@ -49,6 +49,10 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
 
     private expressionProxy: ExpressionProxy;
     private appliedExpression: string | null = null;
+    /** The applied text, kept while a change to the columns suspends it and forgotten when the feature is off. */
+    private requestedExpression: string | null = null;
+    /** Whether the text shown was applied or confirmed, so a change to the columns may apply it once it can. */
+    private expressionConfirmed = false;
     /**
      * The model the applied expression resolved to, held alongside the function built from it rather than
      * re-derived on every read: a Set Filter value whose text stops resolving falls back to that text as
@@ -62,7 +66,6 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     private expression: string | null = null;
     private expressionFunction: FilterExpressionFunction | null;
     private expressionParams: FilterExpressionFunctionParams | null;
-    private isValid: boolean = true;
 
     public postConstruct(): void {
         this.setEnabled(this.gos.get('enableAdvancedFilter'), true);
@@ -86,6 +89,20 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.addManagedListeners(this.advFilterSetSvc, {
             valuesChanged: () => this.refreshAppliedExpressionText(),
         });
+        const selectableFilter = this.beans.selectableFilter;
+        if (selectableFilter) {
+            // the column's filter is read through the choice, so its caches go, then the value lists, which can
+            // rewrite the text, then the parse; the same expression can match other rows, so they are filtered again
+            this.addManagedListeners(selectableFilter, {
+                selectedFilterChanged: () => {
+                    this.advFilterExpSvc.resetColumnCaches();
+                    this.advFilterSetSvc.refreshColumns();
+                    if (this.updateValidity() || this.isFilterPresent()) {
+                        this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
+                    }
+                },
+            });
+        }
     }
 
     private revalidateAndApply(): void {
@@ -161,6 +178,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         if (expression !== this.expression) {
             this.expression = expression;
             this.appliedExpression = expression;
+            this.requestedExpression = expression;
         }
         // Refreshed even where the text is unchanged: a value that now resolves clears the fault it reported,
         // and a blank is written the same way whether or not it resolved.
@@ -184,7 +202,14 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     }
 
     public setExpressionDisplayValue(expression: string | null): void {
+        if (expression !== this.expression) {
+            this.expressionConfirmed = false;
+        }
         this.expression = expression;
+    }
+
+    public submitExpression(): void {
+        this.expressionConfirmed = true;
     }
 
     public isCurrentExpressionApplied(): boolean {
@@ -198,7 +223,6 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
 
         return new FilterExpressionParser({
             expression,
-            gos: this.gos,
             colModel: this.colModel,
             dataTypeSvc: this.dataTypeSvc,
             valueSvc: this.valueSvc,
@@ -228,34 +252,49 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
 
     private setEnabled(enabled: boolean, silent?: boolean): void {
         const previousValue = this.enabled;
-        const isValidRowModel = _isClientSideRowModel(this.gos) || _isServerSideRowModel(this.gos);
+        const gos = this.gos;
+        const isValidRowModel = _isClientSideRowModel(gos) || _isServerSideRowModel(gos);
         if (enabled && !isValidRowModel) {
             this.warn(123);
         }
-        this.enabled = enabled && isValidRowModel;
-        if (!silent && this.enabled !== previousValue) {
+        const isEnabled = enabled && isValidRowModel;
+        this.enabled = isEnabled;
+        if (!isEnabled) {
+            this.expressionConfirmed = false;
+            this.requestedExpression = null;
+        }
+        if (!silent && isEnabled !== previousValue) {
             this.eventSvc.dispatchEvent({
                 type: 'advancedFilterEnabledChanged',
-                enabled: this.enabled,
+                enabled: isEnabled,
             });
         }
     }
 
     public applyExpression(): void {
-        const expressionParser = this.createExpressionParser(this.expression);
+        const expression = this.expression;
+        this.expressionConfirmed = true;
+        this.applyExpressionFromParser(this.parseExpression(expression), expression);
+        this.requestedExpression = this.appliedExpression;
+    }
+
+    private parseExpression(expression: string | null): FilterExpressionParser | null {
+        const expressionParser = this.createExpressionParser(expression);
         expressionParser?.parseExpression();
-        this.applyExpressionFromParser(expressionParser);
+        return expressionParser;
     }
 
     public getAppliedExpressionDisplayValue(): string | null {
         return this.appliedExpression;
     }
 
-    private applyExpressionFromParser(expressionParser: FilterExpressionParser | null): void {
+    private applyExpressionFromParser(
+        expressionParser: FilterExpressionParser | null,
+        expression: string | null
+    ): void {
         // The text being applied is the author's own, so nothing about it is ours to re-render.
         this.appliedTextUnresolved = false;
-        this.isValid = !expressionParser || expressionParser.isValid();
-        if (!expressionParser || !this.isValid) {
+        if (!expressionParser?.isValid()) {
             this.expressionFunction = null;
             this.expressionParams = null;
             this.appliedExpression = null;
@@ -268,38 +307,76 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
 
         this.expressionFunction = expressionFunction;
         this.expressionParams = params;
-        this.appliedExpression = this.expression;
+        this.appliedExpression = expression;
         // Taken from the same parse as the function, so the model always names what the filter matches on.
         this.appliedModel = expressionParser.getModel();
         this.appliedBuilderModel = expressionParser.getModel(true);
     }
 
+    /** Reads the applied expression again under the columns' current configuration; returns whether it changed. */
     public updateValidity(): boolean {
+        if (!this.enabled) {
+            return false;
+        }
         this.advFilterExpSvc.resetColumnCaches();
-        const expressionParser = this.createExpressionParser(this.expression);
-        expressionParser?.parseExpression();
-        const isValid = !expressionParser || expressionParser.isValid();
-
-        const wasValid = this.isValid;
         const wasApplied = this.appliedExpression;
         const wasPresent = !!this.expressionFunction;
-
-        // Valid and still reporting a fault is the advisory case: an unresolved value reads back as the
-        // text it was written as, so re-applying would rebuild the filter from that instead of its key.
-        if (isValid && expressionParser?.getValidationMessage()) {
-            this.isValid = true;
+        const shown = this.expression;
+        const pendingParser = this.expressionConfirmed && shown !== wasApplied ? this.parseExpression(shown) : null;
+        if (pendingParser?.isValid() && !pendingParser.getValidationMessage()) {
+            this.applyExpressionFromParser(pendingParser, shown);
+            this.requestedExpression = shown;
         } else {
-            this.applyExpressionFromParser(expressionParser);
+            const applied = this.requestedExpression;
+            const appliedParser = this.parseExpression(applied);
+            // Valid and still reporting a fault is the advisory case: an unresolved value reads back as the
+            // text it was written as, so re-applying would rebuild the filter from that instead of its key.
+            if (appliedParser?.isValid() && appliedParser.getValidationMessage()) {
+                this.reapplyKeepingSetValues(appliedParser);
+            } else {
+                this.applyExpressionFromParser(appliedParser, applied);
+            }
         }
-        this.ctrl.refreshComp();
-        this.ctrl.refreshBuilderComp();
-        // The advisory branch leaves the applied state alone, so validity alone does not say whether
-        // the rows need another pass.
-        return (
-            isValid !== wasValid || this.appliedExpression !== wasApplied || !!this.expressionFunction !== wasPresent
-        );
+        const ctrl = this.ctrl;
+        ctrl.refreshComp();
+        ctrl.refreshBuilderComp();
+        return this.appliedExpression !== wasApplied || !!this.expressionFunction !== wasPresent;
+    }
+
+    /**
+     * Re-reads the applied text under the current columns, keeping each set condition's applied values, which its
+     * text cannot spell; a parse of another shape or other operands keeps everything as the applied model names it.
+     */
+    private reapplyKeepingSetValues(parser: FilterExpressionParser): void {
+        const applied = this.expressionParams;
+        if (!applied) {
+            return;
+        }
+        const { expressionFunction, params } = parser.getFunction();
+        const operands = params.operands;
+        const appliedOperands = applied.operands;
+        const len = operands.length;
+        if (len !== appliedOperands.length) {
+            return;
+        }
+        // only a set condition's operand is a function: the row test its keys resolved to
+        for (let i = 0; i < len; ++i) {
+            const appliedOperand = appliedOperands[i];
+            const operand = operands[i];
+            if (typeof appliedOperand === 'function' && typeof operand === 'function') {
+                operands[i] = appliedOperand;
+            } else if (!isSameOperand(appliedOperand, operand)) {
+                return;
+            }
+        }
+        this.expressionFunction = expressionFunction;
+        this.expressionParams = params;
     }
 }
+
+/** A date operand is parsed into a new instance each time, so it compares by time. */
+const isSameOperand = (a: unknown, b: unknown): boolean =>
+    a === b || (a instanceof Date && b instanceof Date && a.getTime() === b.getTime());
 
 /** The applied model is held rather than re-parsed per read, so a reader must not get the live instance. */
 const cloneModel = (model: AdvancedFilterModel | null): AdvancedFilterModel | null => {

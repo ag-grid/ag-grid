@@ -118,6 +118,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     addFilterCard: 'เพิ่มตัวกรอง',
     agTextColumnFilterDisplayName: 'ตัวกรองอย่างง่าย',
     agNumberColumnFilterDisplayName: 'ตัวกรองอย่างง่าย',
+    agBigIntColumnFilterDisplayName: 'ตัวกรองอย่างง่าย',
     agDateColumnFilterDisplayName: 'ตัวกรองอย่างง่าย',
     agSetColumnFilterDisplayName: 'ตัวกรองการเลือก',
     agMultiColumnFilterDisplayName: 'ตัวกรองแบบผสม',
@@ -752,6 +753,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaFilterList: 'รายการตัวกรอง',
     ariaFilterToValue: 'กรองถึงค่า',
     ariaFilterValue: 'ค่าตัวกรอง',
+    ariaNotInCurrentData: 'ไม่มีในข้อมูลปัจจุบัน',
     ariaFilterMenuOpen: 'เปิดเมนูตัวกรอง',
     ariaFilteringOperator: 'ตัวดำเนินการกรอง',
     ariaHidden: 'ซ่อนอยู่',
@@ -910,9 +912,11 @@ export const AG_GRID_LOCALE_TH_TH = {
     columnHeaderEditCancel: 'ยกเลิก',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'ไม่พบคอลัมน์ที่ใช้ได้',
     calculatedColumn: 'คอลัมน์คำนวณ',
     calculatedColumnAdd: 'เพิ่มคอลัมน์คำนวณ',
     calculatedColumnEdit: 'แก้ไขคอลัมน์คำนวณ',
+    calculatedColumnView: 'ดูคอลัมน์คำนวณ',
     calculatedColumnRemove: 'ลบคอลัมน์คำนวณ',
     calculatedColumnTitle: 'ชื่อเรื่อง',
     calculatedColumnType: 'ชนิด',
@@ -927,6 +931,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     calculatedColumnExpressionAmbiguousReference:
         'การอ้างอิงคอลัมน์กำกวม "${variable}" ใช้รายการคอลัมน์หรือระบุเส้นทางกลุ่มให้ชัดเจนยิ่งขึ้น',
     calculatedColumnExpressionUnknownReference: 'ไม่รู้จักการอ้างอิงคอลัมน์ "${variable}"',
+    calculatedColumnExpressionRestrictedReference: 'ไม่สามารถใช้คอลัมน์ "${variable}" ในนิพจน์นี้ได้',
     calculatedColumnExpressionEmpty: 'ป้อนนิพจน์',
     calculatedColumnTitleEmpty: 'ป้อนชื่อเรื่อง',
     calculatedColumnApply: 'นำไปใช้',

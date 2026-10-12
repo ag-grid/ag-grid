@@ -108,6 +108,7 @@ export const AG_GRID_LOCALE_EN_US = {
     addFilterCard: 'Add Filter',
     agTextColumnFilterDisplayName: 'Simple Filter',
     agNumberColumnFilterDisplayName: 'Simple Filter',
+    agBigIntColumnFilterDisplayName: 'Simple Filter',
     agDateColumnFilterDisplayName: 'Simple Filter',
     agSetColumnFilterDisplayName: 'Selection Filter',
     agMultiColumnFilterDisplayName: 'Combo Filter',
@@ -742,6 +743,7 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaFilterList: 'Filter List',
     ariaFilterToValue: 'Filter to value',
     ariaFilterValue: 'Filter Value',
+    ariaNotInCurrentData: 'not in current data',
     ariaFilterMenuOpen: 'Open Filter Menu',
     ariaFilteringOperator: 'Filtering Operator',
     ariaHidden: 'hidden',
@@ -900,9 +902,11 @@ export const AG_GRID_LOCALE_EN_US = {
     columnHeaderEditCancel: 'Cancel',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'No eligible columns found.',
     calculatedColumn: 'Calculated Column',
     calculatedColumnAdd: 'Add Calculated Column',
     calculatedColumnEdit: 'Edit Calculated Column',
+    calculatedColumnView: 'View Calculated Column',
     calculatedColumnRemove: 'Remove Calculated Column',
     calculatedColumnTitle: 'Title',
     calculatedColumnType: 'Type',
@@ -917,6 +921,7 @@ export const AG_GRID_LOCALE_EN_US = {
     calculatedColumnExpressionAmbiguousReference:
         'Ambiguous column reference "${variable}". Use the Columns list or a more specific group path.',
     calculatedColumnExpressionUnknownReference: 'Unknown column reference "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Column "${variable}" cannot be used in this expression.',
     calculatedColumnExpressionEmpty: 'Enter an expression',
     calculatedColumnTitleEmpty: 'Enter a title',
     calculatedColumnApply: 'Apply',

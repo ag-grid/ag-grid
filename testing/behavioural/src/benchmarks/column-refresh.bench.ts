@@ -58,16 +58,10 @@ const buildGroupedCols = (leavesPerGroup: number, groupCount: number, variant: '
 
 suite('column refresh — pure col-model rebuild paths (tiny rowData)', () => {
     let gridId = 0;
-    // 1.5: with the GC-stability flags these col-rebuilds sit ~1.5–2% in isolation; higher factors mostly
-    // buy CPU-contention noise on a long run, and keep the suite within the per-run time budget.
-    const benchRefresh = (
-        name: string,
-        initial: GridOptions,
-        apply: (api: GridApi, iter: number) => void,
-        noiseFactor = 1.5
-    ) => {
+    // Cell re-layout after a column change waits on a frame never flushed here: these measure the model.
+    const gridsManager = new BenchGridsManager({ modules });
+    const benchRefresh = (name: string, initial: GridOptions, apply: (api: GridApi, iter: number) => void) => {
         const id = `CR${++gridId}`;
-        const gridsManager = new BenchGridsManager({ modules });
         let api!: GridApi;
         let iter = 0;
         bench(
@@ -76,7 +70,7 @@ suite('column refresh — pure col-model rebuild paths (tiny rowData)', () => {
                 apply(api, iter++);
             },
             {
-                ...benchDefaults({ noiseFactor }),
+                ...benchDefaults(),
                 setup: async () => {
                     await gridsManager.reset();
                     iter = 0;
@@ -92,11 +86,6 @@ suite('column refresh — pure col-model rebuild paths (tiny rowData)', () => {
     benchRefresh('setColumnDefs 10 flat cols (alternating defs)', { columnDefs: cols10A }, (api, i) => {
         api.setGridOption('columnDefs', i & 1 ? cols10A : cols10B);
     });
-    const cols50A = buildFlatCols(50, 'A');
-    const cols50B = buildFlatCols(50, 'B');
-    benchRefresh('setColumnDefs 50 flat cols (alternating defs)', { columnDefs: cols50A }, (api, i) => {
-        api.setGridOption('columnDefs', i & 1 ? cols50A : cols50B);
-    });
 
     // Grouped colDef rebuilds.
     const groupedShallowA = buildGroupedCols(5, 4, 'A'); // 4 groups × 5 leaves
@@ -104,34 +93,26 @@ suite('column refresh — pure col-model rebuild paths (tiny rowData)', () => {
     benchRefresh('setColumnDefs 4 groups × 5 cols (alternating defs)', { columnDefs: groupedShallowA }, (api, i) => {
         api.setGridOption('columnDefs', i & 1 ? groupedShallowA : groupedShallowB);
     });
-    const groupedDeepA = buildGroupedCols(5, 10, 'A'); // 10 groups × 5 leaves
-    const groupedDeepB = buildGroupedCols(5, 10, 'B');
-    benchRefresh('setColumnDefs 10 groups × 5 cols (alternating defs)', { columnDefs: groupedDeepA }, (api, i) => {
-        api.setGridOption('columnDefs', i & 1 ? groupedDeepA : groupedDeepB);
-    });
 
     const cols20A = buildFlatCols(20, 'A');
-    benchRefresh('setColumnDefs 20 flat cols (no-op fast path, same ref)', { columnDefs: cols20A }, (api) => {
-        api.setGridOption('columnDefs', cols20A);
+    // Both no-op fast paths: an equal-shape new array, then that same array again.
+    benchRefresh('setColumnDefs 20 flat cols (no-op: equal new ref, then same ref)', { columnDefs: cols20A }, (api) => {
+        const equal = buildFlatCols(20, 'A');
+        api.setGridOption('columnDefs', equal);
+        api.setGridOption('columnDefs', equal);
     });
-
-    benchRefresh(
-        'setColumnDefs 20 flat cols (no-op fast path, equal-shape new ref)',
-        { columnDefs: cols20A },
-        (api) => {
-            api.setGridOption('columnDefs', buildFlatCols(20, 'A'));
-        }
-    );
 
     // Service-col toggles — `refreshCols`'s service-col wrap path. Already exercises change (on/off).
-    benchRefresh('toggle rowSelection on/off (20 cols)', { columnDefs: cols20A }, (api) => {
-        api.setGridOption('rowSelection', { mode: 'multiRow' });
-        api.setGridOption('rowSelection', undefined);
-    });
-    benchRefresh('toggle rowNumbers on/off (20 cols)', { columnDefs: cols20A, rowNumbers: false }, (api) => {
-        api.setGridOption('rowNumbers', true);
-        api.setGridOption('rowNumbers', false);
-    });
+    benchRefresh(
+        'toggle rowSelection + rowNumbers on/off (20 cols)',
+        { columnDefs: cols20A, rowNumbers: false },
+        (api) => {
+            api.setGridOption('rowSelection', { mode: 'multiRow' });
+            api.setGridOption('rowSelection', undefined);
+            api.setGridOption('rowNumbers', true);
+            api.setGridOption('rowNumbers', false);
+        }
+    );
 
     // rowGroup toggle — auto-group col created/destroyed each iteration.
     benchRefresh('addRowGroupColumns / removeRowGroupColumns (20 cols)', { columnDefs: cols20A }, (api) => {

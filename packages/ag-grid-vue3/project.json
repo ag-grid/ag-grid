@@ -60,7 +60,7 @@
         "parallel": false,
         "commands": [
           "mkdir -p ../../dist/artifacts/{projectRoot}",
-          "yarn pack -f ../../dist/artifacts/{projectRoot}.tgz",
+          "yarn pack -o ../../dist/artifacts/{projectRoot}.tgz",
           "rm -rf ../../dist/artifacts/{projectRoot}"
         ]
       }

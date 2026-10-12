@@ -4,7 +4,7 @@ import type { ColDef, GridOptions, Module, Params } from 'ag-grid-community';
 import { AllCommunityModule, ClientSideRowModelModule, NumberFilterModule, TextEditorModule } from 'ag-grid-community';
 import { AllEnterpriseModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { BenchGridsManager, benchDefaults } from './bench-utils';
+import { BenchGridsManager, benchDefaults, untimedPrepare } from './bench-utils';
 
 suite('render cells with different module sets', () => {
     const rowData = buildRandomData(100);
@@ -34,10 +34,13 @@ suite('render cells with different module sets', () => {
     ]) {
         bench(
             'Run with ' + modules.map((m) => m.moduleName).join(),
-            () => {
-                gridsManager.createGrid('M', gridOptions, params);
-                gridsManager.destroyAll();
-            },
+            // The previous call's grid is destroyed untimed: a call measures creating one.
+            untimedPrepare(
+                () => gridsManager.destroyAll(),
+                () => {
+                    gridsManager.createGrid('M', gridOptions, params);
+                }
+            ),
             makeBenchOptions(modules)
         );
     }

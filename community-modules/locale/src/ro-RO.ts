@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     addFilterCard: 'Adaugă filtru',
     agTextColumnFilterDisplayName: 'Filtru simplu',
     agNumberColumnFilterDisplayName: 'Filtru simplu',
+    agBigIntColumnFilterDisplayName: 'Filtru simplu',
     agDateColumnFilterDisplayName: 'Filtru simplu',
     agSetColumnFilterDisplayName: 'Filtru de selecție',
     agMultiColumnFilterDisplayName: 'Filtru combinat',
@@ -741,6 +742,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaFilterList: 'Listă de Filtre',
     ariaFilterToValue: 'Filtrează până la valoare',
     ariaFilterValue: 'Valoare Filtrată',
+    ariaNotInCurrentData: 'nu există în datele curente',
     ariaFilterMenuOpen: 'Deschide Meniul Filtrului',
     ariaFilteringOperator: 'Operator de Filtrare',
     ariaHidden: 'ascuns',
@@ -895,9 +897,11 @@ export const AG_GRID_LOCALE_RO_RO = {
     columnHeaderEditCancel: 'Anulează',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nu au fost găsite coloane eligibile.',
     calculatedColumn: 'Coloană calculată',
     calculatedColumnAdd: 'Adăugare coloană calculată',
     calculatedColumnEdit: 'Editare coloană calculată',
+    calculatedColumnView: 'Vizualizare coloană calculată',
     calculatedColumnRemove: 'Eliminare coloană calculată',
     calculatedColumnTitle: 'Titlu',
     calculatedColumnType: 'Tip',
@@ -912,6 +916,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     calculatedColumnExpressionAmbiguousReference:
         'Referință de coloană ambiguă "${variable}". Utilizați lista Coloane sau o cale de grup mai specifică.',
     calculatedColumnExpressionUnknownReference: 'Referință de coloană necunoscută "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Coloana "${variable}" nu poate fi utilizată în această expresie.',
     calculatedColumnExpressionEmpty: 'Introduceți o expresie',
     calculatedColumnTitleEmpty: 'Introduceți un titlu',
     calculatedColumnApply: 'Aplică',

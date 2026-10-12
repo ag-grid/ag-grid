@@ -420,6 +420,11 @@ export interface IMenuActionParams<TData = any, TContext = any> extends AgGridCo
      * for in the Column Menu, Columns Tool Panel and Column Chooser. Otherwise null, including for column groups.
      */
     column: Column | null;
+    /**
+     * The column group the menu relates to: the group the Column Menu is for, or the group row in the Columns Tool
+     * Panel and Column Chooser. Otherwise null.
+     */
+    columnGroup: ProvidedColumnGroup | null;
     /** The row node, if a cell was clicked, otherwise null. */
     node: IRowNode<TData> | null;
     /** The value, if a cell was clicked, otherwise null.  */

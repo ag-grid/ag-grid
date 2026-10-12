@@ -60,16 +60,11 @@ suite('formulas - flat grid evaluation', () => {
     let toggle = 0;
     const benchOptions: BenchOptions = {
         ...benchDefaults(),
-        setup: () => {
-            if (!api) {
-                api = createFlatGrid();
-                evaluateAll(api);
-                toggle = 0;
-            }
-        },
-        teardown: async () => {
-            api = undefined!;
+        setup: async () => {
             await gridsManager.reset();
+            api = createFlatGrid();
+            evaluateAll(api);
+            toggle = 0;
         },
     };
 
@@ -78,6 +73,7 @@ suite('formulas - flat grid evaluation', () => {
         () => {
             toggle = toggle === 0 ? 1 : 0;
             api.applyTransaction({ update: [{ id: 'r0', a: 1 + toggle, b: 1 }] });
+            api.flushAllAnimationFrames();
             evaluateAll(api);
         },
         benchOptions
@@ -112,21 +108,16 @@ suite('formulas - dependent re-evaluation on update', () => {
     let sourceValue = 10;
     const benchOptions: BenchOptions = {
         ...benchDefaults(),
-        setup: () => {
-            if (!api) {
-                api = gridsManager.createGrid('G', {
-                    columnDefs: [{ field: 'value' }],
-                    defaultColDef: { allowFormula: true },
-                    rowData,
-                    getRowId: ({ data }) => data.id as string,
-                });
-                resolveColumnForAllRows(api, 'value');
-                sourceValue = 10;
-            }
-        },
-        teardown: async () => {
-            api = undefined!;
+        setup: async () => {
             await gridsManager.reset();
+            api = gridsManager.createGrid('G', {
+                columnDefs: [{ field: 'value' }],
+                defaultColDef: { allowFormula: true },
+                rowData,
+                getRowId: ({ data }) => data.id as string,
+            });
+            resolveColumnForAllRows(api, 'value');
+            sourceValue = 10;
         },
     };
 
@@ -135,6 +126,7 @@ suite('formulas - dependent re-evaluation on update', () => {
         () => {
             sourceValue = sourceValue === 10 ? 20 : 10;
             api.applyTransaction({ update: [{ id: 'source', value: sourceValue }] });
+            api.flushAllAnimationFrames();
             resolveColumnForAllRows(api, 'value');
         },
         benchOptions
@@ -175,17 +167,12 @@ suite('formulas - large range aggregate', () => {
     let toggle = 0;
     const benchOptions: BenchOptions = {
         ...benchDefaults(),
-        setup: () => {
-            if (!api) {
-                api = createRangeGrid();
-                const aggNode = api.getRowNode('agg')!;
-                api.getCellValue({ rowNode: aggNode, colKey: 'total', useFormatter: false });
-                toggle = 0;
-            }
-        },
-        teardown: async () => {
-            api = undefined!;
+        setup: async () => {
             await gridsManager.reset();
+            api = createRangeGrid();
+            const aggNode = api.getRowNode('agg')!;
+            api.getCellValue({ rowNode: aggNode, colKey: 'total', useFormatter: false });
+            toggle = 0;
         },
     };
 
@@ -194,17 +181,24 @@ suite('formulas - large range aggregate', () => {
         () => {
             toggle = toggle === 0 ? 1 : 0;
             api.applyTransaction({ update: [{ id: 'r0', c0: toggle }] });
+            api.flushAllAnimationFrames();
             const rowNode = api.getRowNode('agg')!;
             api.getCellValue({ rowNode, colKey: 'total', useFormatter: false });
         },
         benchOptions
     );
 
+    // A cached read is sub-microsecond, under the 5µs timer step, so a call times a batch of them.
+    const WARM_READS = 100;
     bench(
         `warm: re-read SUM over ${rowCount * colCount} cells (no invalidation)`,
         () => {
             const rowNode = api.getRowNode('agg')!;
-            api.getCellValue({ rowNode, colKey: 'total', useFormatter: false });
+            let value = api.getCellValue({ rowNode, colKey: 'total', useFormatter: false });
+            for (let i = 1; i < WARM_READS; ++i) {
+                value = api.getCellValue({ rowNode, colKey: 'total', useFormatter: false });
+            }
+            return value;
         },
         benchOptions
     );
@@ -244,16 +238,11 @@ suite('formulas - column reorder', () => {
     let forward = true;
     const benchOptions: BenchOptions = {
         ...benchDefaults(),
-        setup: () => {
-            if (!api) {
-                api = createGrid();
-                evaluateAll(api); // prime cache: ASTs parsed, values cached
-                forward = true;
-            }
-        },
-        teardown: async () => {
-            api = undefined!;
+        setup: async () => {
             await gridsManager.reset();
+            api = createGrid();
+            evaluateAll(api); // prime cache: ASTs parsed, values cached
+            forward = true;
         },
     };
 
@@ -269,6 +258,7 @@ suite('formulas - column reorder', () => {
                 state: forward ? orderForward : orderReversed,
                 applyOrder: true,
             });
+            api.flushAllAnimationFrames();
             evaluateAll(api);
         },
         benchOptions

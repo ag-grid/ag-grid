@@ -20,6 +20,8 @@ env:
   IBM_TELEMETRY_DISABLED: true
   DEPLOYMENT_APP_ID: 957224
   TAG_NAME: ${{ github.head_ref || github.ref_name }}
+  NX_NO_CLOUD: 'true'
+  CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
 
 permissions:
   id-token: write  # Required for OIDC
@@ -58,9 +60,14 @@ jobs:
           node-version-file: package.json
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Enable corepack
+        # Without this, the runner's preinstalled Yarn Classic silently ignores
+        # this repo's "packageManager" pin (Yarn 4).
+        run: corepack enable
+
       - name: Yarn
         run: |
-          yarn install --ci
+          yarn install --immutable
 
       - name: Build
         run: |

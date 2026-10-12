@@ -310,6 +310,119 @@ describe('Advanced Filter - Set Filter grammar - validation', () => {
         ]);
     });
 
+    test('a change to the columns keeps the applied filter, whatever was confirmed or typed since', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+        const af = AdvancedFilterHarness.get(api);
+        const applied = { filterType: 'text', colId: 'athlete', type: 'contains', filter: 'a' };
+        await af.applyExpression('[Athlete] contains "a"');
+        expect(api.getAdvancedFilterModel()).toEqual(applied);
+        const sources: string[] = [];
+        api.addEventListener('filterChanged', ({ source }) => sources.push(source ?? ''));
+
+        // a change the applied expression does not depend on filters nothing again
+        api.setColumnsVisible(['country'], false);
+        await asyncSetTimeout(0);
+        expect(sources).toEqual([]);
+
+        // text confirmed while its column is hidden cannot apply, and leaves the applied filter alone
+        await af.applyExpression('[Country] is any of ["Jamaica"]');
+        api.setColumnsVisible(['age'], false);
+        await asyncSetTimeout(0);
+        expect(api.getAdvancedFilterModel()).toEqual(applied);
+
+        // nor is it applied once it could be after an edit, even one typing it back without confirming it
+        await af.type('[Athlete] contains "e"');
+        await af.type('[Country] is any of ["Jamaica"]');
+        api.setGridOption('includeHiddenColumnsInAdvancedFilter', true);
+        await asyncSetTimeout(0);
+        expect(api.getAdvancedFilterModel()).toEqual(applied);
+        expect(af.value).toBe('[Country] is any of ["Jamaica"]');
+        expect(displayedAthletes(api)).toEqual(['Michael Phelps', 'Emma Thompson', 'Usain Bolt', 'Anna Kowalski']);
+    });
+
+    test('an applied filter its column leaves comes back with the column, however it was applied', async () => {
+        const model = { filterType: 'text', colId: 'athlete', type: 'contains', filter: 'a' } as const;
+        type Step = (api: GridApi, af: AdvancedFilterHarness) => Promise<unknown>;
+        const applyText: Step = (_api, af) => af.applyExpression('[Athlete] contains "a"');
+        const applies: Record<string, { apply: Step; whileHidden?: Step }> = {
+            'through the input': { apply: applyText },
+            'through the API': { apply: async (api) => api.setAdvancedFilterModel(model) },
+            'then edited and typed back': {
+                apply: async (api, af) => {
+                    await applyText(api, af);
+                    await af.type('[Athlete] contains "e"');
+                    await af.type('[Athlete] contains "a"');
+                },
+            },
+            'with an unapplied edit left in the input': {
+                apply: async (api, af) => {
+                    await applyText(api, af);
+                    await af.type('[Athlete] contains "e"');
+                },
+            },
+            'then typed back while its column is hidden': {
+                apply: async (api, af) => {
+                    await applyText(api, af);
+                    await af.type('[Athlete] contains "e"');
+                },
+                whileHidden: (_api, af) => af.type('[Athlete] contains "a"'),
+            },
+        };
+        const outcomes: Record<string, unknown> = {};
+        const expected: Record<string, unknown> = {};
+        for (const [name, { apply, whileHidden }] of Object.entries(applies)) {
+            const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+            const af = AdvancedFilterHarness.get(api);
+            await apply(api, af);
+            api.setColumnsVisible(['athlete'], false);
+            await asyncSetTimeout(0);
+            const hidden = { model: api.getAdvancedFilterModel(), rows: displayedAthletes(api).length };
+            await whileHidden?.(api, af);
+            api.setColumnsVisible(['athlete'], true);
+            await asyncSetTimeout(0);
+            outcomes[name] = {
+                hidden,
+                shown: { model: api.getAdvancedFilterModel(), rows: displayedAthletes(api).length },
+            };
+            expected[name] = { hidden: { model: null, rows: 5 }, shown: { model, rows: 4 } };
+            gridsManager.reset();
+        }
+        expect(outcomes).toEqual(expected);
+    });
+
+    test('a change to the columns while the Advanced Filter is off applies nothing', async () => {
+        const outcomes: Record<string, unknown> = {};
+        const expected: Record<string, unknown> = {};
+        // confirmed while its column is hidden, or applied and then suspended by hiding it: either could apply later
+        const scenarios: Record<string, (api: GridApi, af: AdvancedFilterHarness) => Promise<unknown>> = {
+            'text confirmed while its column is hidden': async (api, af) => {
+                api.setColumnsVisible(['country'], false);
+                await af.applyExpression('[Country] is any of ["Jamaica"]');
+            },
+            'an applied filter its column left': async (api, af) => {
+                await af.applyExpression('[Country] is any of ["Jamaica"]');
+                api.setColumnsVisible(['country'], false);
+                await asyncSetTimeout(0);
+            },
+        };
+        for (const [name, setUp] of Object.entries(scenarios)) {
+            const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
+            await setUp(api, AdvancedFilterHarness.get(api));
+            const sources: string[] = [];
+            api.addEventListener('filterChanged', ({ source }) => sources.push(source ?? ''));
+            api.setGridOption('enableAdvancedFilter', false);
+            api.setGridOption('includeHiddenColumnsInAdvancedFilter', true);
+            await asyncSetTimeout(0);
+            api.setGridOption('enableAdvancedFilter', true);
+            api.setColumnsVisible(['country'], true);
+            await asyncSetTimeout(0);
+            outcomes[name] = { sources, model: api.getAdvancedFilterModel(), rows: displayedAthletes(api).length };
+            expected[name] = { sources: [], model: null, rows: 5 };
+            gridsManager.reset();
+        }
+        expect(outcomes).toEqual(expected);
+    });
+
     test('an unknown value is reported against its own span', async () => {
         const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
         const af = AdvancedFilterHarness.get(api);

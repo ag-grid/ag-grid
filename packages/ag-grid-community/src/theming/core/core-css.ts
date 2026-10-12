@@ -446,6 +446,18 @@ export interface CoreParams extends SharedThemeParams {
      */
     calculatedColumnSuggestionListWidth: LengthValue;
 
+    /** Colour of column references in the Calculated Column expression editor. */
+    calculatedColumnReferenceColor: ColorValue;
+
+    /** Colour of function names in the Calculated Column expression editor. */
+    calculatedColumnFunctionColor: ColorValue;
+
+    /** Colour of operators in the Calculated Column expression editor. */
+    calculatedColumnOperatorColor: ColorValue;
+
+    /** Colour of error underlines in the Calculated Column expression editor. */
+    calculatedColumnErrorUnderlineColor: ColorValue;
+
     /**
      * Color of the indicator line used to show where a row will be inserted when dragging to reorder rows
      */
@@ -906,6 +918,10 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     columnHeaderEditHighlightColor: accentMix(0.12),
     calculatedColumnParentSuggestionColor: foregroundMix(0.75),
     calculatedColumnSuggestionListWidth: 200,
+    calculatedColumnReferenceColor: '#3269c6',
+    calculatedColumnFunctionColor: '#007c1f',
+    calculatedColumnOperatorColor: { ref: 'foregroundColor' },
+    calculatedColumnErrorUnderlineColor: { ref: 'invalidColor' },
     rowNumbersSelectedColor: accentMix(0.5),
     columnHoverColor: accentMix(0.05),
     selectedRowBackgroundColor: accentMix(0.12),

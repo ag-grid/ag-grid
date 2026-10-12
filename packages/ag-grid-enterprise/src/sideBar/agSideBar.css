@@ -11,7 +11,7 @@
 }
 
 .ag-tool-panel-wrapper.ag-tool-panel-animating {
-    /* !important required to override .ag-hidden to tool panel remains visible while animating */
+    /* stylelint-disable-next-line declaration-no-important -- !important required to override .ag-hidden so tool panel remains visible while animating */
     display: block !important;
     transition: width var(--ag-side-bar-panel-animation-duration) ease-in-out;
 }

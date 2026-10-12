@@ -50,10 +50,16 @@ export abstract class BaseSingleColService extends BeanStub {
     protected refreshColDef(source: ColumnEventType): void {
         const col = this.column;
         if (col) {
-            const colDef = this.createColDef();
-            col.setColDef(colDef, null, source);
             const beans = this.beans;
-            _applyColumnState(beans, { state: [_getColumnStateFromColDef(beans, colDef, col.colId)] }, source);
+            const colModel = beans.colModel;
+            colModel.beginColUpdate();
+            try {
+                const colDef = this.createColDef();
+                col.setColDef(colDef, null, source);
+                _applyColumnState(beans, { state: [_getColumnStateFromColDef(beans, colDef, col.colId)] }, source);
+            } finally {
+                colModel.endColUpdate();
+            }
         }
     }
 

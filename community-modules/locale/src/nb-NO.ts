@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     addFilterCard: 'Legg til filter',
     agTextColumnFilterDisplayName: 'Enkel filter',
     agNumberColumnFilterDisplayName: 'Enkel filter',
+    agBigIntColumnFilterDisplayName: 'Enkel filter',
     agDateColumnFilterDisplayName: 'Enkel filter',
     agSetColumnFilterDisplayName: 'Utvalgfilter',
     agMultiColumnFilterDisplayName: 'Kombinasjonsfilter',
@@ -738,6 +739,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaFilterList: 'Filterliste',
     ariaFilterToValue: 'Filtrer til verdi',
     ariaFilterValue: 'Filterverdi',
+    ariaNotInCurrentData: 'ikke i gjeldende data',
     ariaFilterMenuOpen: 'Åpne filtermeny',
     ariaFilteringOperator: 'Filtreringsoperator',
     ariaHidden: 'skjult',
@@ -891,9 +893,11 @@ export const AG_GRID_LOCALE_NB_NO = {
     columnHeaderEditCancel: 'Avbryt',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Ingen egnede kolonner funnet.',
     calculatedColumn: 'Beregnet kolonne',
     calculatedColumnAdd: 'Legg til beregnet kolonne',
     calculatedColumnEdit: 'Rediger beregnet kolonne',
+    calculatedColumnView: 'Vis beregnet kolonne',
     calculatedColumnRemove: 'Fjern beregnet kolonne',
     calculatedColumnTitle: 'Tittel',
     calculatedColumnType: 'Type',
@@ -908,6 +912,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     calculatedColumnExpressionAmbiguousReference:
         'Tvetydig kolonnereferanse "${variable}". Bruk Kolonner-listen eller en mer spesifikk gruppebane.',
     calculatedColumnExpressionUnknownReference: 'Ukjent kolonnereferanse "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Kolonnen "${variable}" kan ikke brukes i dette uttrykket.',
     calculatedColumnExpressionEmpty: 'Skriv inn et uttrykk',
     calculatedColumnTitleEmpty: 'Skriv inn en tittel',
     calculatedColumnApply: 'Bruk',

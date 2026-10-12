@@ -9,9 +9,19 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { FilterChangedEvent, FilterModifiedEvent, GridApi, GridState } from 'ag-grid-community';
+import type {
+    FilterChangedEvent,
+    FilterHandler,
+    FilterHandlerParams,
+    FilterModifiedEvent,
+    GridApi,
+    GridState,
+    IDoesFilterPassParams,
+    IFilterComp,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    CustomFilterModule,
     GridStateModule,
     NumberFilterModule,
     TextFilterModule,
@@ -56,6 +66,7 @@ describe('Filter State & Events', () => {
             SetFilterModule,
             FiltersToolPanelModule,
             GridStateModule,
+            CustomFilterModule,
             ClientSideRowModelModule,
         ],
     });
@@ -66,6 +77,46 @@ describe('Filter State & Events', () => {
     });
     afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
+
+    test("a custom filter's initial model, cleared through the API, stays cleared when its column leaves the grid and comes back", async () => {
+        class CountryFilter implements IFilterComp {
+            private model: string | null = null;
+            private readonly eGui = document.createElement('div');
+            public init(): void {}
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public isFilterActive(): boolean {
+                return this.model != null;
+            }
+            public doesFilterPass({ data }: IDoesFilterPassParams<Athlete>): boolean {
+                return data.country === this.model;
+            }
+            public getModel(): string | null {
+                return this.model;
+            }
+            public setModel(model: string | null): void {
+                this.model = model;
+            }
+        }
+        const columnDefs = [{ field: 'athlete' }, { field: 'country', filter: CountryFilter }];
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs,
+            rowData: ATHLETES,
+            initialState: { filter: { filterModel: { country: 'Russia' } } },
+        });
+        expect([api.getFilterModel(), api.getDisplayedRowCount()]).toEqual([{ country: 'Russia' }, 1]);
+
+        api.setFilterModel(null);
+        await asyncSetTimeout(0);
+        expect([api.getFilterModel(), api.getDisplayedRowCount()]).toEqual([{}, ATHLETES.length]);
+
+        api.setGridOption('columnDefs', columnDefs.slice(0, 1));
+        await asyncSetTimeout(0);
+        api.setGridOption('columnDefs', columnDefs);
+        await asyncSetTimeout(0);
+        expect([api.getFilterModel(), api.getDisplayedRowCount()]).toEqual([{}, ATHLETES.length]);
+    });
 
     // ===== STATE: getState() -> initialState round-trip (recreate grid) =====
 
@@ -310,6 +361,35 @@ describe('Filter State & Events', () => {
         `);
 
         api.removeEventListener('filterChanged', onChanged);
+    });
+
+    test('a handler changing its own model is refreshed as the source of the change', async () => {
+        let handlerParams: FilterHandlerParams<Athlete> | undefined;
+        const refreshSources: string[] = [];
+        const handler = (): FilterHandler<Athlete> => ({
+            init: (params) => {
+                handlerParams = params;
+            },
+            doesFilterPass: ({ model, data }) => data.athlete.includes(model.filter),
+            refresh: ({ source }) => {
+                refreshSources.push(source);
+            },
+        });
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            enableFilterHandlers: true,
+            columnDefs: [{ field: 'athlete', filter: { component: 'agTextColumnFilter', handler } }],
+            rowData: ATHLETES,
+        });
+
+        api.getColumnFilterHandler('athlete');
+        handlerParams!.onModelChange({ filterType: 'text', type: 'contains', filter: 'Natalie' });
+        await asyncSetTimeout(0);
+
+        expect(refreshSources).toEqual(['handler']);
+        await new GridRows(api, 'handler-set model').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:1 athlete:"Natalie Coughlin"
+        `);
     });
 
     test('api.onFilterChanged fires source "api" with an empty columns array', async () => {

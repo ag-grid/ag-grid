@@ -222,7 +222,7 @@ describe('Advanced Filter — operand parser edge cases', () => {
         });
 
         // Quotes hold text, and blank text is not a number the user wrote, however `Number` reads it.
-        test('a blank quoted number operand is rejected', async () => {
+        test('a blank or empty quoted number operand is rejected', async () => {
             const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
 
             await AdvancedFilterHarness.get(api).applyExpression('[Age] = " "');
@@ -233,6 +233,17 @@ describe('Advanced Filter — operand parser edge cases', () => {
                 ADVANCED FILTER
                 input: "[Age] = " ""
                 valid: false — Expression has an error. Value is not a number - " ".
+                buttons: Apply ⊘ | Builder
+                model: null
+            `);
+
+            await AdvancedFilterHarness.get(api).applyExpression('[Age] = ""');
+            await asyncSetTimeout(0);
+            expect(displayedAthletes(api)).toEqual(ALL);
+            await new FilterDom(api, 'empty quoted number panel').checkFilterDom(`
+                ADVANCED FILTER
+                input: "[Age] = """
+                valid: false — Expression has an error. Value is missing - "".
                 buttons: Apply ⊘ | Builder
                 model: null
             `);

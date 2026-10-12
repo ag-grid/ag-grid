@@ -1,0 +1,30 @@
+---
+// no-inline: Vite would otherwise inline a file this small as a data: URL, which the CSP blocks
+import cspViolationBufferUrl from './cspViolationBuffer.js?url&no-inline';
+import type { WebsiteMonitoringConfig } from './websiteMonitoring';
+
+type Props = WebsiteMonitoringConfig;
+
+// Named explicitly, since Astro.props also carries the parent's scoped-style `data-astro-cid-*`
+const { serviceName, serviceVersion, environment, endpointUrl, authToken } = Astro.props as Props;
+const config: Props = { serviceName, serviceVersion, environment, endpointUrl, authToken };
+// Escape `<` so no config value can close the <script> element it is embedded in.
+const configJson = JSON.stringify(config).replace(/</g, '\\u003c');
+---
+
+{/* Must come before Google Tag Manager, so that violations from its tags are held too. A classic
+    script from our own origin, so it runs straight away and the site CSP allows it. */}
+<script is:inline src={cspViolationBufferUrl}></script>
+
+{/* A JSON data block rather than define:vars, which would render an inline script the site CSP does
+    not authorise. The bundled script below reads it once, on the first full page load. */}
+<script is:inline id="website-monitoring-config" type="application/json" set:html={configJson}></script>
+
+<script>
+    import { initWebsiteMonitoring } from '@ag-website-shared/components/website-monitoring/websiteMonitoring';
+
+    const config = document.getElementById('website-monitoring-config')?.textContent;
+    if (config) {
+        initWebsiteMonitoring(JSON.parse(config));
+    }
+</script>

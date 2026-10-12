@@ -204,9 +204,9 @@ export class BaseDragService<
             return; // Already handled
         }
 
-        // handle suppressTouch/includeTouch for touch pointers
+        // treat non-mouse/pen as touch: assistive tech (e.g. Android Voice Access) injects touches with pointerType ''
         const pointerType = pointerEvent.pointerType;
-        if (pointerType === 'touch') {
+        if (pointerType !== 'mouse' && pointerType !== 'pen') {
             if (beans.gos.get('suppressTouch') || !params.includeTouch) {
                 return;
             }

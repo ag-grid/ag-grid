@@ -1439,6 +1439,13 @@ details.tool-section:not([open]) .tool-section-chevron {
 .s3-dep-reason { flex: 1; min-width: 0; }
 .s3-dep-preset { flex: 0 0 auto; max-width: 160px; cursor: pointer; }
 .s3-dep-add-btn { display: block; margin-top: 8px; margin-left: auto; }
+/* ── Section 4: Workspace Packages ── */
+.ws-intro { font-size: 11px; color: var(--c-text-muted); margin: 0 0 10px; line-height: 1.5; }
+.ws-form-row { margin-bottom: 6px; }
+.ws-reason { flex: 1; min-width: 240px; }
+.ws-rule-row { align-items: center; flex-wrap: wrap; }
+.ws-rule { font-family: monospace; font-size: 12px; font-weight: 700; color: var(--c-accent); }
+.ws-rule-vulns { display: flex; flex-wrap: wrap; gap: 4px; margin-left: auto; }
 .s3-file-badge { font-family: monospace; font-size: 10px; color: var(--c-text-muted); background: rgba(255,255,255,0.05); border: 1px solid var(--c-border); border-radius: 3px; padding: 1px 5px; white-space: nowrap; flex-shrink: 0; }
 
 /* ── Section 3: View toggle button ── */

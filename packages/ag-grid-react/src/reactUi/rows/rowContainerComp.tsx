@@ -71,7 +71,7 @@ const RowContainerComp = ({
         const eSpanContainerForCtrl = eSpanContainer.current ?? undefined;
 
         const updateRowCtrlsOrdered = (useFlushSync: boolean) => {
-            const next = getNextValueIfDifferent(prevRowCtrlsRef.current, rowCtrlsRef.current, domOrderRef.current)!;
+            const next = getNextValueIfDifferent(prevRowCtrlsRef.current, rowCtrlsRef.current, domOrderRef.current);
             if (next !== prevRowCtrlsRef.current) {
                 prevRowCtrlsRef.current = next;
                 agFlushSync(useFlushSync, () => setRowCtrlsOrdered(next));
@@ -83,7 +83,7 @@ const RowContainerComp = ({
                 prevSpannedRowCtrlsRef.current,
                 spannedRowCtrlsRef.current,
                 domOrderRef.current
-            )!;
+            );
             if (next !== prevSpannedRowCtrlsRef.current) {
                 prevSpannedRowCtrlsRef.current = next;
                 agFlushSync(useFlushSync, () => setSpannedRowCtrlsOrdered(next));
@@ -158,14 +158,12 @@ const RowContainerComp = ({
     const buildSpanContainer = () => (
         <div className={spanClasses} ref={setSpanContainerRef} role={'presentation'}>
             {spannedRowCtrlsOrdered.map((rowCtrl) => (
-                <RowComp rowCtrl={rowCtrl} containerType={containerOptions.type} key={rowCtrl.instanceId}></RowComp>
+                <RowComp rowCtrl={rowCtrl} key={rowCtrl.instanceId}></RowComp>
             ))}
         </div>
     );
 
-    const rows = rowCtrlsOrdered.map((rowCtrl) => (
-        <RowComp rowCtrl={rowCtrl} containerType={containerOptions.type} key={rowCtrl.instanceId}></RowComp>
-    ));
+    const rows = rowCtrlsOrdered.map((rowCtrl) => <RowComp rowCtrl={rowCtrl} key={rowCtrl.instanceId}></RowComp>);
 
     return (
         <div className={containerClasses} ref={setContainerRef} role={'presentation'}>

@@ -20,8 +20,9 @@ import {
     asyncSetTimeout,
     mockGridLayout,
 } from 'ag-test-utils';
+import { installMockResizeObserver } from 'ag-test-utils/polyfills/mockResizeObserver';
 
-import type { ColDef, ColGroupDef, GridApi, Module } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi, ICellRendererComp, ICellRendererParams, Module } from 'ag-grid-community';
 import {
     AlignedGridsModule,
     CellStyleModule,
@@ -710,6 +711,41 @@ describe('Column Features', () => {
             }
 
             expect({ collapsed, opened }).toEqual({ collapsed: false, opened: true });
+        });
+
+        test('hiding the taller of two auto-height columns shrinks the row to the other', async () => {
+            const cellHeights = new Map([
+                ['tall', 120],
+                ['short', 60],
+            ]);
+            mockGridLayout.useRealOffsetDimensions = true;
+            mockGridLayout.elementHeightOverride = (el) =>
+                el.classList.contains('ag-cell-wrapper')
+                    ? cellHeights.get(el.closest('.ag-cell')?.getAttribute('col-id') ?? '')
+                    : undefined;
+            const uninstallResizeObserver = installMockResizeObserver();
+            try {
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs: [
+                        { colId: 'tall', autoHeight: true },
+                        { colId: 'short', autoHeight: true },
+                    ],
+                    rowData: [{ id: 'r0' }],
+                    getRowId: (params) => params.data.id,
+                });
+                const row = api.getRowNode('r0')!;
+                await waitFor(() => expect(row.rowHeight).toBe(120));
+
+                api.setGridOption('columnDefs', [
+                    { colId: 'tall', autoHeight: true, hide: true },
+                    { colId: 'short', autoHeight: true },
+                ]);
+                await waitFor(() => expect(row.rowHeight).toBe(60));
+            } finally {
+                uninstallResizeObserver();
+                mockGridLayout.useRealOffsetDimensions = false;
+                mockGridLayout.elementHeightOverride = undefined;
+            }
         });
 
         test('colDef.colSpan + colDef.autoHeight on same grid draws the span and sets the auto-height cell up', () => {
@@ -1761,6 +1797,27 @@ describe('Column Features', () => {
             expect(cellFor(api, 'c1')).toBe(before);
         });
 
+        test('moving a left-pinned column past another keeps both pinned cells', async () => {
+            const api = gridsManager.createGrid('virtualisedCells', {
+                columnDefs: virtualisedCols(120),
+                rowData: [virtualisedRow(120)],
+                suppressColumnVirtualisation: false,
+                suppressAnimationFrame: true,
+            });
+            await asyncSetTimeout(0);
+            api.setColumnsPinned(['c0', 'c1'], 'left');
+            await asyncSetTimeout(0);
+            const c0 = cellFor(api, 'c0');
+            const c1 = cellFor(api, 'c1');
+
+            api.moveColumns(['c1'], 0);
+            await asyncSetTimeout(0);
+
+            expect(renderedColIds(api).slice(0, 2)).toEqual(['c1', 'c0']);
+            expect(cellFor(api, 'c0')).toBe(c0);
+            expect(cellFor(api, 'c1')).toBe(c1);
+        });
+
         // A retained cell keeps its element and so its container. Unpinning a cell held only by focus is
         // the one way to re-lane it while it is in no lane's column list, where nothing else would notice.
         test('a cell retained by focus is rebuilt when its column is unpinned out of view', async () => {
@@ -1784,6 +1841,74 @@ describe('Column Features', () => {
             expect(cellsFor(api, 'c0').length).toBe(1);
             expect(laneOfRenderedCell(api, 'c0')).toBeNull();
             expectLanesConsistent(api);
+        });
+
+        test('a cell drawn for a focus set outside the viewport takes a colDef change', async () => {
+            const api = createVirtualisedGrid();
+            await asyncSetTimeout(0);
+
+            const drawnBefore = renderedCells(api);
+            api.setFocusedCell(0, 'c60');
+            await asyncSetTimeout(0);
+            expect(virtualColIds(api)).not.toContain('c60');
+            expect(renderedColIds(api)).toEqual([...virtualColIds(api), 'c60']);
+            // the cells already drawn are kept, not drawn again
+            const drawnAfter = renderedCells(api);
+            for (let i = 0, len = drawnBefore.length; i < len; ++i) {
+                expect(drawnAfter[i]).toBe(drawnBefore[i]);
+            }
+
+            api.setGridOption(
+                'columnDefs',
+                virtualisedCols(120).map((colDef) => (colDef.colId === 'c60' ? { ...colDef, wrapText: true } : colDef))
+            );
+            await asyncSetTimeout(0);
+
+            expect(cellFor(api, 'c60')?.classList.contains('ag-cell-wrap-text')).toBe(true);
+        });
+
+        test('a column unpinned from the right draws one cell in its new lane, which takes a colDef change', async () => {
+            let rendererCount = 0;
+            class CountingRenderer implements ICellRendererComp {
+                private readonly eGui = document.createElement('span');
+                public init(params: ICellRendererParams): void {
+                    ++rendererCount;
+                    this.eGui.textContent = String(params.value);
+                }
+                public getGui(): HTMLElement {
+                    return this.eGui;
+                }
+                public refresh(): boolean {
+                    return true;
+                }
+            }
+            const columnDefs = virtualisedCols(120).map((colDef) =>
+                colDef.colId === 'c1' ? { ...colDef, cellRenderer: CountingRenderer } : colDef
+            );
+            const api = gridsManager.createGrid('virtualisedCells', {
+                columnDefs,
+                rowData: [virtualisedRow(120)],
+                suppressColumnVirtualisation: false,
+            });
+            await asyncSetTimeout(0);
+
+            api.setColumnsPinned(['c1'], 'right');
+            await asyncSetTimeout(0);
+            expect(laneOfRenderedCell(api, 'c1')).toBe('right');
+
+            const rendererCountPinned = rendererCount;
+            api.setColumnsPinned(['c1'], null);
+            await asyncSetTimeout(0);
+            expect(laneOfRenderedCell(api, 'c1')).toBeNull();
+
+            api.setGridOption(
+                'columnDefs',
+                columnDefs.map((colDef) => (colDef.colId === 'c1' ? { ...colDef, wrapText: true } : colDef))
+            );
+            await asyncSetTimeout(0);
+
+            expect(cellFor(api, 'c1')?.classList.contains('ag-cell-wrap-text')).toBe(true);
+            expect(rendererCount - rendererCountPinned).toBe(1);
         });
 
         // Full-row editing makes every cell of the row worth retaining, so a scroll that takes them all out

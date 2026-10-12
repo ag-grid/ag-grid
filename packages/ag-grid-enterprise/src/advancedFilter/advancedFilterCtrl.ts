@@ -107,13 +107,14 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
 
     public toggleFilterBuilder(params: { source: 'api' | 'ui'; force?: boolean; eventSource?: HTMLElement }): void {
         const { source, force, eventSource } = params;
-        if ((force && this.eBuilderDialog) || (force === false && !this.eBuilderDialog)) {
+        const builderDialog = this.eBuilderDialog;
+        if ((force && builderDialog) || (force === false && !builderDialog)) {
             // state requested is already active
             return;
         }
-        if (this.eBuilderDialog) {
+        if (builderDialog) {
             this.builderDestroySource = source;
-            this.destroyBean(this.eBuilderDialog);
+            this.destroyBean(builderDialog);
             return;
         }
 
@@ -126,11 +127,12 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
             ...this.gos.get('advancedFilterBuilderParams'),
         };
 
-        this.eBuilderComp = this.createBean(new AdvancedFilterBuilderComp());
-        this.eBuilderDialog = this.createBean(
+        const builderComp = this.createBean(new AdvancedFilterBuilderComp());
+        this.eBuilderComp = builderComp;
+        const dialog = this.createBean(
             new Dialog({
                 title: this.advFilterExpSvc.translate('advancedFilterBuilderTitle'),
-                component: this.eBuilderComp,
+                component: builderComp,
                 width,
                 height,
                 resizable: true,
@@ -146,10 +148,14 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
                 },
             })
         );
+        this.eBuilderDialog = dialog;
 
         this.dispatchFilterBuilderVisibleChangedEvent(source, true);
 
-        this.eBuilderDialog.addEventListener('destroyed', () => {
+        dialog.addEventListener('destroyed', () => {
+            if (this.eBuilderDialog !== dialog) {
+                return; // closing its popup destroys the dialog a second time
+            }
             this.destroyBean(this.eBuilderComp);
             this.eBuilderComp = undefined;
             this.eBuilderDialog = undefined;
@@ -184,6 +190,9 @@ export class AdvancedFilterCtrl extends BeanStub<AdvancedFilterCtrlEvent> implem
 
     private onEnabledChanged(enabled: boolean): void {
         this.enabled = enabled;
+        if (!enabled) {
+            this.toggleFilterBuilder({ source: 'api', force: false }); // the API cannot hide it once disabled
+        }
         this.updateComps();
     }
 

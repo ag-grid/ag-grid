@@ -118,6 +118,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     addFilterCard: 'Добавить фильтр',
     agTextColumnFilterDisplayName: 'Простой фильтр',
     agNumberColumnFilterDisplayName: 'Простой фильтр',
+    agBigIntColumnFilterDisplayName: 'Простой фильтр',
     agDateColumnFilterDisplayName: 'Простой фильтр',
     agSetColumnFilterDisplayName: 'Фильтр выбора',
     agMultiColumnFilterDisplayName: 'Комбинированный фильтр',
@@ -756,6 +757,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaFilterList: 'Список фильтра',
     ariaFilterToValue: 'Фильтровать до значения',
     ariaFilterValue: 'Значение фильтра',
+    ariaNotInCurrentData: 'нет в текущих данных',
     ariaFilterMenuOpen: 'Открыть меню фильтра',
     ariaFilteringOperator: 'Оператор фильтрации',
     ariaHidden: 'скрыто',
@@ -915,9 +917,11 @@ export const AG_GRID_LOCALE_RU_RU = {
     columnHeaderEditCancel: 'Отмена',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Подходящие столбцы не найдены.',
     calculatedColumn: 'Вычисляемый столбец',
     calculatedColumnAdd: 'Добавить вычисляемый столбец',
     calculatedColumnEdit: 'Редактировать вычисляемый столбец',
+    calculatedColumnView: 'Просмотреть вычисляемый столбец',
     calculatedColumnRemove: 'Удалить вычисляемый столбец',
     calculatedColumnTitle: 'Заголовок',
     calculatedColumnType: 'Тип',
@@ -932,6 +936,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     calculatedColumnExpressionAmbiguousReference:
         'Неоднозначная ссылка на столбец "${variable}". Используйте список столбцов или более точный путь группы.',
     calculatedColumnExpressionUnknownReference: 'Неизвестная ссылка на столбец "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Столбец "${variable}" нельзя использовать в этом выражении.',
     calculatedColumnExpressionEmpty: 'Введите выражение',
     calculatedColumnTitleEmpty: 'Введите заголовок',
     calculatedColumnApply: 'Применить',

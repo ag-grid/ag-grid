@@ -17,7 +17,14 @@ import {
     buildValueEdits,
     buildValuePartialUpdate,
 } from './bench-data';
-import { BenchGridsManager, SimplePRNG, benchAlternating, benchDefaults } from './bench-utils';
+import {
+    BenchGridsManager,
+    SimplePRNG,
+    benchAlternating,
+    benchDefaults,
+    benchRebuild,
+    rebuildRows,
+} from './bench-utils';
 
 const groupingModules = [ClientSideRowModelModule, ClientSideRowModelApiModule, RowGroupingModule];
 
@@ -31,9 +38,9 @@ suite('grouping — plain (3 levels, 20k rows)', () => {
     const updatedRowData = buildGroupedStructuralUpdate(rowData);
 
     const options = benchDefaults({
-        noiseFactor: 2,
-        setup: () => {
-            api ??= gridsManager.createGrid('grouping-plain', {
+        setup: async () => {
+            await gridsManager.reset();
+            api = gridsManager.createGrid('grouping-plain', {
                 columnDefs: [
                     { field: 'group1', rowGroup: true, hide: true },
                     { field: 'group2', rowGroup: true, hide: true },
@@ -48,18 +55,11 @@ suite('grouping — plain (3 levels, 20k rows)', () => {
                 getRowId: ({ data }) => data.id,
             });
         },
-        teardown: async () => {
-            api = undefined!;
-            await gridsManager.reset();
-        },
-    }); // noisy suite (~5% rme @1×)
+    });
 
     bench(
         `grouping from scratch ${rowData.length} rows`,
-        () => {
-            api.setGridOption('rowData', []);
-            api.setGridOption('rowData', rowData);
-        },
+        rebuildRows(() => api, rowData),
         options
     );
 
@@ -68,6 +68,7 @@ suite('grouping — plain (3 levels, 20k rows)', () => {
         `update grouping rowData ${updatedRowData.length} rows`,
         () => {
             api.setGridOption('rowData', updateForward ? updatedRowData : rowData);
+            api.flushAllAnimationFrames();
             updateForward = !updateForward;
         },
         options
@@ -84,9 +85,9 @@ suite('grouping — sorting (5 levels, 15k rows)', () => {
     const updatedRowData = buildGroupedStructuralUpdate(rowData);
 
     const options = benchDefaults({
-        noiseFactor: 3,
-        setup: () => {
-            api ??= gridsManager.createGrid('grouping-sorting', {
+        setup: async () => {
+            await gridsManager.reset();
+            api = gridsManager.createGrid('grouping-sorting', {
                 columnDefs: [
                     { field: 'group1', rowGroup: true, sort: 'asc' },
                     { field: 'group2', rowGroup: true, sort: 'asc' },
@@ -103,18 +104,11 @@ suite('grouping — sorting (5 levels, 15k rows)', () => {
                 getRowId: ({ data }) => data.id,
             });
         },
-        teardown: async () => {
-            api = undefined!;
-            await gridsManager.reset();
-        },
-    }); // noisy suite (~3% rme @1×)
+    });
 
     bench(
         `sorting from scratch ${rowData.length} rows (5 sorts)`,
-        () => {
-            api.setGridOption('rowData', []);
-            api.setGridOption('rowData', rowData);
-        },
+        rebuildRows(() => api, rowData),
         options
     );
 
@@ -123,6 +117,7 @@ suite('grouping — sorting (5 levels, 15k rows)', () => {
         `update sorting rowData ${updatedRowData.length} rows (5 sorts)`,
         () => {
             api.setGridOption('rowData', updateForward ? updatedRowData : rowData);
+            api.flushAllAnimationFrames();
             updateForward = !updateForward;
         },
         options
@@ -130,7 +125,7 @@ suite('grouping — sorting (5 levels, 15k rows)', () => {
 });
 
 // ── Grouping + aggregation (3 levels, 50 value cols) ─────────────────────────────────────────────
-// Wide value-column rows so aggregation cost dominates pipeline overhead. Each bench alternates
+// Wide value-column rows so aggregation cost dominates pipeline overhead. The update benches alternate
 // forward/reverse so every iteration does real work (the immutable path always detects a change).
 
 const AGG_ROW_COUNT = 5_000;
@@ -202,21 +197,7 @@ suite(`grouping — aggregation (${AGG_ROW_COUNT} rows, ${AGG_VALUE_COLS} value 
         const tag = cellsPath ? 'CellsPath' : 'RowsPath';
         const gridOptions = aggGridOptions(cellsPath);
 
-        benchAlternating(
-            gridsManager,
-            `full refresh — ${tag}`,
-            gridOptions,
-            [],
-            (refreshApi) => {
-                refreshApi.setGridOption('rowData', []);
-                refreshApi.setGridOption('rowData', aggDataA);
-            },
-            (refreshApi) => {
-                refreshApi.setGridOption('rowData', []);
-                refreshApi.setGridOption('rowData', aggDataA);
-            },
-            4 // inherently noisy (~7% rme even at 4×) — full pivot/agg rebuild per iteration
-        );
+        benchRebuild(gridsManager, `full refresh — ${tag}`, gridOptions, aggDataA);
 
         benchAlternating(
             gridsManager,
@@ -268,9 +249,9 @@ suite('grouping — filtering (3 levels, 12k rows)', () => {
     const updatedRowData = buildGroupedCellUpdate(rowData);
 
     const options = benchDefaults({
-        noiseFactor: 4,
-        setup: () => {
-            api ??= gridsManager.createGrid('grouping-filter', {
+        setup: async () => {
+            await gridsManager.reset();
+            api = gridsManager.createGrid('grouping-filter', {
                 columnDefs: [
                     { field: 'group1', rowGroup: true, hide: true },
                     { field: 'group2', rowGroup: true, hide: true },
@@ -285,11 +266,7 @@ suite('grouping — filtering (3 levels, 12k rows)', () => {
                 getRowId: ({ data }) => data.id,
             });
         },
-        teardown: async () => {
-            api = undefined!;
-            await gridsManager.reset();
-        },
-    }); // noisy suite (~3.7% rme @1×)
+    });
 
     const filterAAA = { name: { filterType: 'text', type: 'contains', filter: 'aaa' } };
     let filterOn = false;
@@ -298,6 +275,7 @@ suite('grouping — filtering (3 levels, 12k rows)', () => {
         () => {
             filterOn = !filterOn;
             api.setFilterModel(filterOn ? filterAAA : null);
+            api.flushAllAnimationFrames();
         },
         options
     );
@@ -312,6 +290,7 @@ suite('grouping — filtering (3 levels, 12k rows)', () => {
             }
             useUpdated = !useUpdated;
             api.setGridOption('rowData', useUpdated ? updatedRowData : rowData);
+            api.flushAllAnimationFrames();
         },
         options
     );

@@ -1180,6 +1180,28 @@ describe('Column Mutations - applyColumnState', () => {
                 └── c "C" width:200 rowGroup
             `);
         });
+
+        test('a width applied before inference is kept over the width of the inferred column type, even at the current width', async () => {
+            const api = gridsManager.createGrid('widthKeptOverInference', {
+                columnTypes: { narrow: { width: 80 } },
+                dataTypeDefinitions: {
+                    narrowNumber: {
+                        baseDataType: 'number',
+                        extendsDataType: 'number',
+                        columnTypes: ['narrow'],
+                        dataTypeMatcher: (value: any) => typeof value === 'number',
+                    } as any,
+                },
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+            });
+            await asyncSetTimeout(0);
+
+            api.applyColumnState({ state: [{ colId: 'a', width: 200 }] });
+            api.setGridOption('rowData', [{ a: 1, b: 2 }]);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnState().map((s) => `${s.colId}:${s.width}`)).toEqual(['a:200', 'b:80']);
+        });
     });
 
     describe('rowGroupIndex null clears the prior flag', () => {

@@ -18,7 +18,10 @@
  *   node bench-compare.mjs base [dir] [options]    Measure the base checkout's grid source
  *   node bench-compare.mjs test [dir] [options]    Measure the test checkout's grid source
  *   node bench-compare.mjs compare [options]       Compare saved results and generate report
- *   node bench-compare.mjs all [options]           Run base, then test, then compare
+ *   node bench-compare.mjs all [dir] [options]     Run base and test paired in time, then compare
+ *
+ * `all` runs both sides at once, taking turns per bench through a local turn server, then reruns in fresh processes
+ * what one round could not settle; how it judges a bench is in .rulesync/rules/benchmarks.md ("Comparing runs").
  *
  * Defaults:
  *   base dir: <parent>/ag-grid2
@@ -26,37 +29,48 @@
  *   results:  ./tmp/   (relative to this script)
  *
  * Options:
- *   --runs <n>        Re-runs per side (default: 1). Precision comes from each bench's own sampling
- *                     (tinybench rme), not from re-runs; raise this only to guard against a fluky
- *                     process, or lengthen a noisy bench instead. Runs interleave with --runs > 1.
+ *   --runs <n>        Rounds `all` may run (default 3), and above 1 two more for a slower lean. 1 is a screen,
+ *                     reported at whatever confidence one round gives. base/test always run one round.
+ *   --all-rounds      Run every bench in every round (to seed the noise history or validate the screen).
  *   --filter <glob>   Filter benchmark files (forwarded to vitest bench). Repeatable, and the run covers
  *                     the union: `--filter scroll --filter column-update`.
  *   --output <path>   Output directory for results (default: ./tmp)
- *   --node            Run benchmarks in node/happy-dom instead of the default real Chromium (Playwright).
- *                     Both sides must use the same engine — `compare` refuses a node-vs-browser mix.
  *
  * Files written to the output directory (a `--filter`ed run is incomplete, so its files gain a
  * `-partial` suffix — base-run-1-partial.json, base-meta-partial.json, bench-compare-result-partial.md
  * — to keep them distinct from a full comparison; pass the same `--filter` to `compare`):
- *   base-run-<n>.json         Raw vitest bench output for base run <n> (one file per run).
- *   test-run-<n>.json         Same, for the test side.
- *   base-meta.json            Cohort metadata: engine (node/browser), filter, run files, etc.
- *   bench-compare-result.json Machine-readable comparison: per-benchmark ops/sec, rme, delta
- *                             with confidence interval, and unmatched benchmarks.
- *   bench-compare-result.md   Human-readable report with a Notable Changes table, detailed
- *                             per-group tables, and a list of unmatched benchmarks.
+ *   base-run-<n>.json         Raw vitest bench output for base round <n> (one file per round).
+ *   base-run-<n>.samples.ndjson  Every measured call's time per bench and slice for that round.
+ *   test-run-<n>.json         Same, for the test side (and test-run-<n>.samples.ndjson).
+ *   base-meta.json            Cohort metadata: engine, filter, run files, pairing, etc.
+ *   bench-compare-result.json Machine-readable comparison: per-benchmark result, confidence, times per
+ *                             call, rounds, and unmatched benchmarks.
+ *   bench-compare-result.md   Human-readable report: the faster/slower table, then every benchmark by file.
+ *   process-noise.json        Between-process noise observations for this machine/engine.
+ *   round-confirmations.json  Round-1 flags per run and whether a later round upheld them.
  *
  * Examples:
- *   node bench-compare.mjs all                     # Measure base, then test, then compare
- *   node bench-compare.mjs all --node              # Same, in node/happy-dom (faster, no layout)
+ *   node bench-compare.mjs all                     # Measure base and test paired, then compare
  *   node bench-compare.mjs base ~/other-grid       # Measure a custom base checkout
- *   node bench-compare.mjs all --runs 5 --filter "getvalue"
+ *   node bench-compare.mjs all --runs 1 --filter "getvalue"   # Screen only
+ *   node bench-compare.mjs all --all-rounds --runs 3          # Seed the noise history
  */
-import { spawnSync } from 'node:child_process';
-import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { spawn, spawnSync } from 'node:child_process';
+import {
+    copyFileSync,
+    existsSync,
+    mkdirSync,
+    readFileSync,
+    readdirSync,
+    rmSync,
+    statSync,
+    writeFileSync,
+} from 'node:fs';
+import { createServer } from 'node:http';
 import { createRequire } from 'node:module';
 import os from 'node:os';
 import { basename, dirname, join, resolve } from 'node:path';
+import { createInterface } from 'node:readline';
 import { fileURLToPath } from 'node:url';
 
 const SELF = fileURLToPath(import.meta.url);
@@ -77,37 +91,45 @@ if (!command || command === '--help' || command === '-h') {
   node bench-compare.mjs base [dir] [options]   Run base benchmarks
   node bench-compare.mjs test [dir] [options]   Run test benchmarks
   node bench-compare.mjs compare [options]       Compare results
-  node bench-compare.mjs all [options]           Run base, then test, then compare
+  node bench-compare.mjs all [dir] [options]     Run base [dir] and test paired in time, then compare
   node bench-compare.mjs backup [options]        Archive the current results into a timestamped subfolder
 
 Both sides always run THIS checkout's benchmark files; base/test [dir] only selects which checkout's
 grid source (packages/) they measure. So the comparison can never drift on differing bench definitions.
 
+all runs the two sides at once, taking turns per bench (which side goes first alternates by round), so
+drift lands on both sides alike. Each bench is the likeliest of faster, slower or same (under 2%), with
+that likelihood as its confidence. Round 1 runs every bench; later rounds rerun, in fresh processes, the
+changes and what more runs could settle or change.
+
 Options:
-  --runs <n>        Re-runs per side (default: 1; precision comes from each bench's sampling, not re-runs)
-  --filter <glob>   Filter benchmark files (repeatable; the run covers the union)
-  --output <path>   Results directory (default: ./tmp)
-  --node            Run in node/happy-dom instead of the default real Chromium (both sides must match)
+  --runs <n>         Rounds all may run (default 3; above 1, two more for a slower lean; 1 = screen only)
+  --all-rounds       Every bench in every round (seeds the noise history, validates the screen)
+  --filter <glob>    Filter benchmark files (repeatable; the run covers the union)
+  --output <path>    Results directory (default: ./tmp)
 
 Files written to the output directory (a --filter'ed run is incomplete, so its files gain a
 "-partial" suffix, e.g. bench-compare-result-partial.md; pass the same --filter to "compare"):
-  base-run-<n>.json            Raw vitest output for base run <n> (one per run).
-  test-run-<n>.json            Raw vitest output for test run <n> (one per run).
-  bench-compare-result.json    Structured comparison (all benchmarks, both sides, deltas).
-  bench-compare-result.md      Human-readable report (notable changes + detailed tables).`);
+  base-run-<n>.json            Raw vitest output for base round <n> (one per round).
+  test-run-<n>.json            Raw vitest output for test round <n> (one per round).
+  <side>-run-<n>.samples.ndjson  Every measured call's time per bench and slice.
+  bench-compare-result.json    Structured comparison (result, confidence, times per call, rounds).
+  bench-compare-result.md      Human-readable report (faster/slower table, then every benchmark).
+  process-noise.json           Between-process noise learned on this machine/engine.
+  round-confirmations.json     Round-1 flags per run and whether a later round upheld them.`);
     process.exit(command ? 0 : 1);
 }
 
 if (!['base', 'test', 'compare', 'all', 'backup'].includes(command)) {
-    console.error(`Unknown command: ${command}. Use 'base', 'test', 'compare', 'all', or 'backup'.`);
+    console.error(`Unknown command: ${command}. Use 'base', 'test', 'compare', 'all' or 'backup'.`);
     process.exit(1);
 }
 
-let runs = 1;
+let runs = 0;
+let allRounds = false;
 const filters = [];
 let outputDir = join(__dirname, 'tmp');
 let targetDir = '';
-let node = false;
 
 /** Read the value for a `--flag <value>` pair, erroring if the value is missing. */
 function takeValue(flag, rawArgs, i) {
@@ -130,15 +152,15 @@ for (let i = 1; i < args.length; i++) {
             }
             break;
         }
+        case '--all-rounds':
+            allRounds = true;
+            break;
         case '--filter':
             // Repeatable: vitest takes several file-path substrings and runs their union.
             filters.push(takeValue('--filter', args, i++));
             break;
         case '--output':
             outputDir = resolve(takeValue('--output', args, i++));
-            break;
-        case '--node':
-            node = true;
             break;
         default:
             if (args[i].startsWith('-')) {
@@ -151,6 +173,17 @@ for (let i = 1; i < args.length; i++) {
             break;
     }
 }
+
+// A bench leaning slower may run this many rounds past --runs: a slowdown gets investigated, so one is reported only
+// once more rounds have confirmed it or pulled it back to the same.
+const SLOWER_EXTRA_ROUNDS = 2;
+
+// Only a paired `all` can adapt: base/test have nothing to compare against mid-run.
+const adaptive = command === 'all';
+if (!adaptive && (runs > 1 || allRounds)) {
+    console.warn(`--runs and --all-rounds are ignored here: only a paired \`all\` runs confirmation rounds.`);
+}
+runs = adaptive ? runs || 3 : 1;
 
 // A filtered run only covers some benchmarks, so its outputs are tagged `-partial` to keep them
 // distinct from a complete comparison's files (and from each other). Pass the same `--filter` to
@@ -167,8 +200,11 @@ const EXCLUDED_BENCH_FILES = ['modules.bench'];
 
 // Resolve target directory defaults: base is the sibling baseline checkout, test is THIS checkout
 // (so it works from any folder name / worktree, not just one literally named `ag-grid`).
-if (!targetDir && (command === 'base' || command === 'test')) {
-    targetDir = command === 'base' ? resolve(SIBLING_PARENT, 'ag-grid2') : MONOREPO_ROOT;
+if (!targetDir && command === 'test') {
+    targetDir = MONOREPO_ROOT;
+}
+if (!targetDir && (command === 'base' || command === 'all')) {
+    targetDir = resolve(SIBLING_PARENT, 'ag-grid2');
 }
 
 mkdirSync(outputDir, { recursive: true });
@@ -222,8 +258,6 @@ if (command === 'backup') {
 
 // ── Benchmark runner ──
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
 const BEHAVIOURAL_DIR = join(MONOREPO_ROOT, 'testing', 'behavioural');
 
 /** On macOS, wrap a command in `caffeinate -i` so a long run isn't throttled/slept (no-op elsewhere). */
@@ -260,9 +294,9 @@ async function chromiumVersion() {
 async function collectEnv() {
     const cpus = os.cpus();
     return {
-        engine: node ? 'node' : 'browser',
+        engine: 'browser',
         node: process.version,
-        chromium: node ? null : await chromiumVersion(),
+        chromium: await chromiumVersion(),
         cpu: cpus[0]?.model?.trim() ?? 'unknown',
         cpuCount: cpus.length,
         os: `${os.type()} ${os.release()} (${os.arch()})`,
@@ -283,46 +317,98 @@ function ensurePlaywrightBrowsers() {
 }
 
 /**
- * Run vitest bench once. Returns the process exit status (0 = clean, non-zero = some benchmark
- * errored — e.g. a feature absent in this checkout — which is NOT necessarily fatal). Returns
- * null only when the benchmark could not be launched at all. The caller decides whether the run
- * is usable by inspecting the output file, not by trusting the exit code alone.
+ * Extract a file-unique identifier from a filepath. Returns a path relative to the monorepo
+ * root (stable across base/test checkouts that live in different absolute directories) by
+ * anchoring on the first known top-level segment. Falls back to the basename if nothing
+ * recognisable is found.
  */
-function runBenchmarks(projectDir, outputFile) {
+const RELATIVE_ANCHORS = ['/testing/', '/packages/', '/community-modules/', '/external/'];
+function fileIdentity(filepath) {
+    for (const anchor of RELATIVE_ANCHORS) {
+        const idx = filepath.lastIndexOf(anchor);
+        if (idx !== -1) {
+            return filepath.slice(idx + 1); // strip the leading '/'
+        }
+    }
+    const slash = filepath.lastIndexOf('/');
+    return slash === -1 ? filepath : filepath.slice(slash + 1);
+}
+
+/** Read a JSON file, or null when it is missing or unreadable. */
+function readJsonOrNull(path) {
+    if (!existsSync(path)) {
+        return null;
+    }
+    try {
+        return JSON.parse(readFileSync(path, 'utf-8'));
+    } catch {
+        return null;
+    }
+}
+
+/** Copy a child's output to ours line by line behind a side prefix, so two concurrent sides stay readable. */
+function pipePrefixed(stream, out, prefix) {
+    createInterface({ input: stream, crlfDelay: Infinity }).on('line', (line) => out.write(`${prefix}${line}\n`));
+}
+
+/**
+ * Run vitest bench once. Resolves to the process exit status (0 = clean, non-zero = some benchmark
+ * errored — e.g. a feature absent in this checkout — which is NOT necessarily fatal), or null only
+ * when the benchmark could not be launched at all. The caller decides whether the run is usable by
+ * inspecting the output file, not by trusting the exit code alone. A paired side passes its turn
+ * env and an output prefix.
+ */
+function runBenchmarks(projectDir, outputFile, sideEnv, prefix, selection) {
     // Always run THIS checkout's bench code, but alias the grid packages to the checkout being
     // measured (projectDir). Both sides share identical benchmark definitions; only the grid source
     // under test differs.
     if (!existsSync(join(projectDir, 'packages'))) {
         console.error(`Error: ${join(projectDir, 'packages')} does not exist.`);
-        return null;
+        return Promise.resolve(null);
     }
 
     const benchArgs = ['vitest', 'bench', '--outputJson', outputFile];
     for (const ex of EXCLUDED_BENCH_FILES) {
         benchArgs.push('--exclude', `**/${ex}*`);
     }
-    benchArgs.push(...filters);
+    if (selection) {
+        benchArgs.push('-t', selection.pattern, ...selection.files);
+    } else {
+        benchArgs.push(...filters);
+    }
 
-    console.log(`  Dir: ${projectDir}`);
-    console.log(`  Running: npx ${benchArgs.join(' ')}\n`);
+    console.log(`${prefix}  Dir: ${projectDir}`);
+    console.log(`${prefix}  Running: npx ${benchArgs.join(' ')}\n`);
 
     const { cmd, args: spawnArgs } = caffeinated('npx', benchArgs);
-    const result = spawnSync(cmd, spawnArgs, {
+    const child = spawn(cmd, spawnArgs, {
         cwd: BEHAVIOURAL_DIR,
-        stdio: 'inherit',
+        stdio: prefix ? ['ignore', 'pipe', 'pipe'] : 'inherit',
         env: {
             ...process.env,
             NX_DAEMON: 'false',
-            ...(node ? { BENCH_NODE: '1' } : {}),
             AG_BENCH_PACKAGES: join(projectDir, 'packages'),
+            ...sideEnv,
         },
     });
-
-    if (result.status !== 0) {
-        console.warn(`\n  vitest exited non-zero (${result.status}) — some benchmarks errored; inspecting output.`);
+    if (prefix) {
+        pipePrefixed(child.stdout, process.stdout, prefix);
+        pipePrefixed(child.stderr, process.stderr, prefix);
     }
-    return result.status;
+    return new Promise((resolvePromise) => {
+        child.on('error', () => resolvePromise(null));
+        child.on('close', (status) => {
+            if (status !== 0) {
+                console.warn(
+                    `\n${prefix}  vitest exited non-zero (${status}) — some benchmarks errored; inspecting output.`
+                );
+            }
+            resolvePromise(status);
+        });
+    });
 }
+
+const isMeasured = (entry) => entry !== undefined && Number.isFinite(entry.hz) && entry.hz > 0;
 
 /**
  * Parse a freshly-written run file and classify each benchmark as valid (finite, positive hz) or
@@ -331,16 +417,8 @@ function runBenchmarks(projectDir, outputFile) {
  * failure that must abort the cohort, as opposed to a feature-missing benchmark we can skip.
  */
 function inspectRunFile(path) {
-    if (!existsSync(path)) {
-        return null;
-    }
-    let parsed;
-    try {
-        parsed = JSON.parse(readFileSync(path, 'utf-8'));
-    } catch {
-        return null;
-    }
-    if (!Array.isArray(parsed.files)) {
+    const parsed = readJsonOrNull(path);
+    if (!parsed || !Array.isArray(parsed.files)) {
         return null;
     }
     const valid = [];
@@ -348,7 +426,7 @@ function inspectRunFile(path) {
     for (const file of parsed.files) {
         for (const group of file.groups ?? []) {
             for (const bench of group.benchmarks ?? []) {
-                if (Number.isFinite(bench.hz) && bench.hz > 0) {
+                if (isMeasured(bench)) {
                     valid.push(bench.name);
                 } else {
                     invalid.push(bench.name);
@@ -362,6 +440,8 @@ function inspectRunFile(path) {
     return { parsed, valid, invalid };
 }
 
+const uniqueId = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+
 /** Stamp a run file with its cohort identity so `compare` can reject stale / cross-cohort files. */
 function stampRunFile(path, parsed, stamp) {
     parsed.__benchCompare = stamp;
@@ -371,33 +451,30 @@ function stampRunFile(path, parsed, stamp) {
 // ── Run phase ──
 
 /**
- * Build one side's cohort. Returns `writeMeta(completed)` and `runOne(i)` so callers can drive the
- * runs — sequentially (`base`/`test`) or interleaved across both sides (`all`).
+ * Build one side's cohort in `dir`. Returns `writeMeta(completed, extra)` and `runOne(i, …)` so
+ * callers can drive the runs — sequentially (`base`/`test`) or paired in time (`all`).
  */
-function createSide(label, sideTargetDir, env) {
+function createSide(label, sideTargetDir, env, dir) {
     // Unique id binding every run file in this cohort to its meta. `compare` refuses to load a run
     // file whose stamp doesn't match — so a stale file left over from an interrupted previous run
     // (different checkout / build) can never be silently averaged in again.
-    const cohortId = `${label}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+    const cohortId = `${label}-${uniqueId()}`;
     const git = gitInfo(sideTargetDir);
-    const metaPath = join(outputDir, `${label}-meta${partialSuffix}.json`);
+    const metaPath = join(dir, `${label}-meta${partialSuffix}.json`);
+    // Only rounds that completed: a confirmation round runs when the previous one left benches unsettled.
     const cohortFiles = [];
-    for (let i = 1; i <= runs; i++) {
-        cohortFiles.push(`${label}-run-${i}${partialSuffix}.json`);
-    }
-    // Cumulative wall-clock of this side's vitest runs (excludes cooldowns), recorded in the meta.
+    const sampleFiles = [];
+    // Cumulative wall-clock of this side's vitest runs, recorded in the meta.
     let durationMs = 0;
     // ISO time the last run of this side actually finished — the side's own "max run date". Set only
     // after a run succeeds, so an interrupted later run can't poison it (unlike the meta write time).
     let lastRunAt = '';
-    // Per-benchmark rme samples across runs, used to suggest the noiseFactor each bench should set.
-    const rmeByName = new Map();
 
     // The `compare` phase reads both sides' metadata to (a) refuse incompatible settings (filter,
     // engine, exclude list), (b) load only the declared run files, and (c) reject incomplete or
     // mismatched-cohort files. We write meta up-front with completed:false so an interrupted run
     // is detectable, then rewrite completed:true only once every run has produced usable output.
-    function writeMeta(completed) {
+    function writeMeta(completed, extra) {
         writeFileSync(
             metaPath,
             JSON.stringify(
@@ -405,24 +482,19 @@ function createSide(label, sideTargetDir, env) {
                     label,
                     cohortId,
                     completed,
-                    engine: node ? 'node' : 'browser',
+                    engine: 'browser',
                     partial: isPartial,
                     filter,
                     excludedFiles: EXCLUDED_BENCH_FILES,
-                    runsRequested: runs,
+                    maxRounds: runs,
                     runFiles: cohortFiles,
+                    sampleFiles,
                     targetDir: sideTargetDir,
                     git,
                     env,
                     durationMs,
                     lastRunAt,
-                    // Per-bench noiseFactor to set, from this side's measured rme:
-                    // - band: lands rme in [0.5%, 1.5%] (can be 8–16×, slow — the "ideal").
-                    // - pragmatic: capped ≤4×, accepts ~2.5% rme — a sane default to actually set.
-                    suggestedNoiseFactors: {
-                        band: buildFactors(suggestNoiseFactor),
-                        pragmatic: buildFactors(pragmaticNoiseFactor),
-                    },
+                    ...extra,
                     timestamp: new Date().toISOString(),
                 },
                 null,
@@ -431,42 +503,33 @@ function createSide(label, sideTargetDir, env) {
         );
     }
 
-    /**
-     * Worst (max) rme per bench across runs → factor via `fn`; only entries that differ from 1.
-     * Max, not mean: a factor must cover the noisiest run, else a bench that was tight once and
-     * loose twice would be under-provisioned.
-     */
-    function buildFactors(fn) {
-        const out = {};
-        for (const [name, samples] of rmeByName) {
-            const factor = fn(Math.max(...samples));
-            if (factor !== 1) {
-                out[name] = factor;
-            }
-        }
-        return out;
-    }
-
-    function runOne(i) {
-        const outFile = join(outputDir, `${label}-run-${i}${partialSuffix}.json`);
-        console.log(`--- ${label} run ${i}/${runs} (${sideTargetDir}) ---`);
+    /** Throws when the run is unusable; a paired caller must let the other side finish first. */
+    async function runOne(i, sideEnv = {}, prefix = '', selection = null) {
+        const runFile = `${label}-run-${i}${partialSuffix}.json`;
+        const samplesFile = `${label}-run-${i}${partialSuffix}.samples.ndjson`;
+        const outFile = join(dir, runFile);
+        // A run that dies before writing its output must not leave an earlier invocation's file to be adopted.
+        rmSync(outFile, { force: true });
+        console.log(`${prefix}--- ${label} round ${i} (${sideTargetDir}) ---`);
+        // Stamped like the run file, so compare can tell a stale samples file from this round's.
+        const samplesPath = join(dir, samplesFile);
+        writeFileSync(samplesPath, `${JSON.stringify({ cohortId })}\n`);
+        const runEnv = { ...sideEnv, AG_BENCH_SAMPLES: samplesPath };
         const start = Date.now();
-        const status = runBenchmarks(sideTargetDir, outFile);
+        const status = await runBenchmarks(sideTargetDir, outFile, runEnv, prefix, selection);
         durationMs += Date.now() - start;
         if (status === null) {
-            console.error(`${label} benchmark could not be launched at run ${i}, aborting.`);
-            process.exit(1);
+            throw new Error(`${label} benchmark could not be launched at run ${i}, aborting.`);
         }
 
         // Decide usability from the output, not the exit code: a non-zero exit caused only by a
         // feature-missing benchmark still leaves a fully usable file for everything else.
         const inspected = inspectRunFile(outFile);
         if (!inspected) {
-            console.error(
+            throw new Error(
                 `${label} run ${i} produced no usable benchmark results (vitest exit ${status}). ` +
                     `This is a real failure (build/import error), not a missing feature. Aborting.`
             );
-            process.exit(1);
         }
         if (inspected.invalid.length > 0) {
             console.warn(
@@ -478,21 +541,9 @@ function createSide(label, sideTargetDir, env) {
             }
         }
         stampRunFile(outFile, inspected.parsed, { cohortId, label, runIndex: i });
+        cohortFiles.push(runFile);
+        sampleFiles.push(samplesFile);
         lastRunAt = new Date().toISOString();
-
-        // Collect each bench's rme so the meta can suggest per-bench noiseFactors.
-        for (const file of inspected.parsed.files ?? []) {
-            for (const group of file.groups ?? []) {
-                for (const bench of group.benchmarks ?? []) {
-                    let samples = rmeByName.get(bench.name);
-                    if (!samples) {
-                        samples = [];
-                        rmeByName.set(bench.name, samples);
-                    }
-                    samples.push(bench.rme);
-                }
-            }
-        }
     }
 
     return { writeMeta, runOne, getDurationMs: () => durationMs };
@@ -504,125 +555,324 @@ function fmtDuration(ms) {
     if (s < 60) {
         return `${s.toFixed(1)}s`;
     }
-    return `${Math.floor(s / 60)}m ${Math.round(s % 60)}s`;
+    // Rounded before splitting, so 539.6s is 9m 0s rather than 8m 60s.
+    const whole = Math.round(s);
+    return `${Math.floor(whole / 60)}m ${whole % 60}s`;
 }
 
-// The noiseFactor (relative to the bench's current sampling) that would land its rme in [0.5%, 1.7%].
-// rme ∝ 1/√time, so reaching the band costs (rme/target)² more time; < 0.5% means over-sampled, so a
-// factor below 1 runs it faster (floored at 0.5 — 0.25 risks under-sampling). Returns 1 when in band.
-// Capped — benches needing more are inherently noisy (high per-iteration cost → few samples).
-const NOISE_BAND_LOW = 0.5;
-const NOISE_BAND_HIGH = 1.7;
-const OVER_SAMPLED_FLOOR = 0.5;
-function suggestNoiseFactor(rme) {
-    if (rme >= NOISE_BAND_LOW && rme <= NOISE_BAND_HIGH) {
-        return 1;
+// ── Turn server: pairs the two sides in time ──
+
+// How long a side may run without asking for its next turn before the other is let go anyway — a
+// hung side must not deadlock the pair. Starting covers Vite's first dependency optimisation.
+const TURN_STALL_MS = { starting: 600_000, running: 300_000 };
+// A wait is answered within this, so neither fetch nor the browser→node RPC ever times it out.
+const TURN_POLL_MS = 20_000;
+
+/**
+ * Local HTTP server the two vitest processes ask for turns (via the `benchTurn` browser command).
+ * Only a side holding the turn runs: it keeps it from its grant until it asks for its next bench, so
+ * its untimed work (teardown, next file's import) also runs while the other side is idle.
+ */
+async function startTurnServer(firstPair) {
+    const newSide = () => ({
+        state: 'starting',
+        stalled: false,
+        since: Date.now(),
+        key: '',
+        granted: false,
+        waiter: null,
+        seen: new Set(),
+    });
+    const base = newSide();
+    const test = newSide();
+    const sides = new Map([
+        ['base', base],
+        ['test', test],
+    ]);
+    // The side that did not run last goes next, so no side runs two benches back to back (that measured ~10%
+    // slower on micro-benches: no idle time for V8's GC); which side starts each bench alternates by round.
+    let lastRan = firstPair % 2 === 0 ? test : base;
+    let overtaken = 0;
+
+    function answer(side, granted) {
+        const waiter = side.waiter;
+        if (waiter) {
+            side.waiter = null;
+            clearTimeout(waiter.timer);
+            waiter.res.end(JSON.stringify({ granted }));
+        }
     }
-    const factor = rme * rme; // (rme / 1.0%)²
-    if (factor >= 1) {
-        return Math.min(16, Math.ceil(factor));
+
+    /** The side that did not run last, else whichever side is behind the other. */
+    function pickNext() {
+        if (base.key === test.key) {
+            return lastRan === base ? test : base;
+        }
+        if (base.seen.has(test.key)) {
+            return test;
+        }
+        if (test.seen.has(base.key)) {
+            return base;
+        }
+        // Neither reached the other's bench (one skipped a failed file or suite): files run in the sequencer's
+        // order; within one file nothing says which side is behind, so those benches may run unpaired.
+        return test.key.split('::')[0].localeCompare(base.key.split('::')[0]) < 0 ? test : base;
     }
-    return Math.max(OVER_SAMPLED_FLOOR, Math.round(factor * 4) / 4);
+
+    function schedule() {
+        const now = Date.now();
+        const waiting = [];
+        let stalled = null;
+        for (const side of sides.values()) {
+            if (side.state === 'waiting') {
+                waiting.push(side);
+            } else if (side.state !== 'done' && !side.stalled) {
+                if (now - side.since < TURN_STALL_MS[side.state]) {
+                    return;
+                }
+                stalled = side;
+            }
+        }
+        if (waiting.length === 0) {
+            return;
+        }
+        const next = waiting.length === 2 ? pickNext() : waiting[0];
+        if (stalled) {
+            // Not busy again until it next asks for a turn, or every later grant would wait out the limit too.
+            stalled.stalled = true;
+            overtaken++;
+            console.warn(`\n  Turn server: a side has not asked for a turn in minutes; running the other unpaired.`);
+        }
+        lastRan = next;
+        next.state = 'running';
+        next.since = now;
+        next.seen.add(next.key);
+        next.granted = true;
+        answer(next, true);
+    }
+
+    const server = createServer((req, res) => {
+        const url = new URL(req.url, 'http://localhost');
+        const side = sides.get(url.searchParams.get('side'));
+        res.setHeader('Content-Type', 'application/json');
+        if (!side) {
+            res.statusCode = 400;
+            res.end('{}');
+            return;
+        }
+        if (url.pathname === '/request') {
+            side.state = 'waiting';
+            side.stalled = false;
+            side.since = Date.now();
+            side.key = url.searchParams.get('key') ?? '';
+            side.granted = false;
+            res.end('{}');
+            schedule();
+            return;
+        }
+        if (side.granted) {
+            res.end(JSON.stringify({ granted: true }));
+            return;
+        }
+        answer(side, false);
+        side.waiter = { res, timer: setTimeout(() => answer(side, false), TURN_POLL_MS) };
+    });
+    await new Promise((resolvePromise) => server.listen(0, '127.0.0.1', resolvePromise));
+    const watchdog = setInterval(schedule, 1000);
+
+    return {
+        url: `http://127.0.0.1:${server.address().port}`,
+        sideDone(label) {
+            const side = sides.get(label);
+            side.state = 'done';
+            answer(side, false);
+            schedule();
+        },
+        close() {
+            clearInterval(watchdog);
+            answer(base, false);
+            answer(test, false);
+            server.close();
+        },
+        /** Benches both sides reached, those only one side reached, and forced overtakes. */
+        stats() {
+            const unpaired = [];
+            let paired = 0;
+            for (const key of base.seen) {
+                if (test.seen.has(key)) {
+                    paired++;
+                } else {
+                    unpaired.push(key);
+                }
+            }
+            for (const key of test.seen) {
+                if (!base.seen.has(key)) {
+                    unpaired.push(key);
+                }
+            }
+            return { paired, unpaired, overtaken };
+        },
+    };
 }
 
-// Pragmatic factor: accept up to ~2.5% rme as-is, cap the bump at 4× (so precision improves without
-// the band's 8–16× blow-up), but still drop below 1 for over-sampled benches so they run faster.
-function pragmaticNoiseFactor(rme) {
-    if (rme < NOISE_BAND_LOW) {
-        return Math.max(OVER_SAMPLED_FLOOR, Math.round(rme * rme * 4) / 4);
+/** One round of both sides at once, taking turns per bench. Rejects only after both processes are gone. */
+async function runPairedRound(base, test, i, selection) {
+    const turns = await startTurnServer(i - 1);
+    const sideEnv = (label) => ({ AG_BENCH_SIDE: label, AG_BENCH_TURN_URL: turns.url });
+    const results = await Promise.allSettled([
+        base.runOne(i, sideEnv('base'), '[base] ', selection).finally(() => turns.sideDone('base')),
+        test.runOne(i, sideEnv('test'), '[test] ', selection).finally(() => turns.sideDone('test')),
+    ]);
+    turns.close();
+    for (const result of results) {
+        if (result.status === 'rejected') {
+            throw result.reason;
+        }
     }
-    if (rme <= 2.5) {
-        return 1;
-    }
-    return Math.min(4, Math.ceil((rme / 2) ** 2)); // target ~2%
+    return turns.stats();
 }
 
-async function cooldown(i) {
-    if (i > 1) {
-        console.log('--- Cooldown (4s) ---');
-        await sleep(4000);
-    }
+function round(v, decimals) {
+    const f = 10 ** decimals;
+    return Math.round(v * f) / f;
 }
 
-if (command === 'base' || command === 'test') {
-    console.log(`=== Running ${command} benchmarks ===`);
-    console.log(`Directory:  ${targetDir}`);
-    console.log(`Runs:       ${runs}`);
-    console.log(`Output:     ${outputDir}`);
-    if (filter) {
-        console.log(`Filter:     ${filter}`);
-    }
-    console.log(`Env:        ${node ? 'node/happy-dom' : 'real Chromium (Playwright)'}`);
-    console.log('');
-
-    if (!node) {
-        ensurePlaywrightBrowsers();
-    }
-
-    const env = await collectEnv();
-    const side = createSide(command, targetDir, env);
-    side.writeMeta(false);
-    for (let i = 1; i <= runs; i++) {
-        await cooldown(i);
-        side.runOne(i);
-        console.log('');
-    }
-    side.writeMeta(true);
-
-    console.log(
-        `\n=== ${command} benchmarks complete in ${fmtDuration(side.getDurationMs())} ` +
-            `(${runs} runs saved to ${outputDir}) ===`
-    );
-    process.exit(0);
-}
-
-if (command === 'all') {
-    const baseDir = targetDir || resolve(SIBLING_PARENT, 'ag-grid2');
-    const testDir = MONOREPO_ROOT;
-    console.log(`=== Running all — interleaved test/base ===`);
-    console.log(`Base:       ${baseDir}`);
-    console.log(`Test:       ${testDir}`);
-    console.log(`Runs:       ${runs} per side`);
-    console.log(`Env:        ${node ? 'node/happy-dom' : 'real Chromium (Playwright)'}`);
-    console.log('');
-
-    if (!node) {
-        ensurePlaywrightBrowsers();
-    }
-
-    const env = await collectEnv();
-    const test = createSide('test', testDir, env);
-    const base = createSide('base', baseDir, env);
-    test.writeMeta(false);
-    base.writeMeta(false);
-
-    // Interleave test then base every run, so slow machine drift (thermal throttling, background
-    // load) biases both sides equally instead of penalising whichever ran last.
-    let coolIndex = 1;
-    for (let i = 1; i <= runs; i++) {
-        await cooldown(coolIndex++);
-        test.runOne(i);
-        await cooldown(coolIndex++);
-        base.runOne(i);
-        console.log('');
-    }
-
-    test.writeMeta(true);
-    base.writeMeta(true);
-
-    console.log(
-        `\n=== runs complete — test ${fmtDuration(test.getDurationMs())}, ` +
-            `base ${fmtDuration(base.getDurationMs())}, ` +
-            `total ${fmtDuration(test.getDurationMs() + base.getDurationMs())} ===`
-    );
-
+/** Run `compare` on `dir` in a child, so its report lands beside the runs it read. */
+function spawnCompare(dir) {
     console.log(`\n========== bench-compare compare ==========`);
-    const compareArgs = ['--output', outputDir];
+    const compareArgs = ['--output', dir];
     for (const each of filters) {
         compareArgs.push('--filter', each);
     }
-    const result = spawnSync('node', [SELF, 'compare', ...compareArgs], { stdio: 'inherit' });
-    process.exit(result.status ?? 1);
+    return spawnSync('node', [SELF, 'compare', ...compareArgs], { stdio: 'inherit' }).status ?? 1;
+}
+
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** The benches the last compare left unsettled (all of them with --all-rounds), as a vitest selection. */
+function nextRoundSelection(dir, roundIndex) {
+    const result = readJsonOrNull(join(dir, `bench-compare-result${partialSuffix}.json`));
+    const open = (result?.benchmarks ?? []).filter((c) => (allRounds && roundIndex <= runs) || !c.settled);
+    if (open.length === 0) {
+        return null;
+    }
+    // vitest's -t matches getTaskFullName: suites then bench, never the file (a top-level suite has no parent task),
+    // so these anchored names select exactly them; the report's group name starts with the file, which is dropped.
+    const names = open.map((c) => {
+        const suites = c.group.split(' > ');
+        if (suites[0] === c.file) {
+            suites.shift();
+        }
+        suites.push(c.name);
+        return `^${escapeRegExp(suites.join(' '))}$`;
+    });
+    return { files: [...new Set(open.map((c) => basename(c.file)))], pattern: names.join('|'), count: open.length };
+}
+
+try {
+    if (command === 'base' || command === 'test') {
+        console.log(`=== Running ${command} benchmarks ===`);
+        console.log(`Directory:  ${targetDir}`);
+        console.log(`Rounds:     1`);
+        console.log(`Output:     ${outputDir}`);
+        if (filter) {
+            console.log(`Filter:     ${filter}`);
+        }
+        console.log(`Env:        real Chromium (Playwright)`);
+        console.log('');
+
+        ensurePlaywrightBrowsers();
+
+        const env = await collectEnv();
+        const side = createSide(command, targetDir, env, outputDir);
+        side.writeMeta(false);
+        await side.runOne(1);
+        side.writeMeta(true);
+
+        console.log(
+            `\n=== ${command} benchmarks complete in ${fmtDuration(side.getDurationMs())} (saved to ${outputDir}) ===`
+        );
+        process.exit(0);
+    }
+
+    if (command === 'all') {
+        const baseDir = targetDir;
+        const testDir = MONOREPO_ROOT;
+        console.log(`=== Running all — base and test paired per bench ===`);
+        console.log(`Base:       ${baseDir}`);
+        console.log(`Test:       ${testDir}`);
+        const benches = allRounds ? 'every bench' : 'unsettled benches after the first';
+        const slowerRounds = runs > 1 ? `, and ${SLOWER_EXTRA_ROUNDS} more for an unconfirmed slowdown` : '';
+        console.log(`Rounds:     up to ${runs}, ${benches}${slowerRounds}`);
+        console.log(`Output:     ${outputDir}`);
+        console.log(`Env:        real Chromium (Playwright)`);
+        console.log('');
+
+        ensurePlaywrightBrowsers();
+
+        const env = await collectEnv();
+        const test = createSide('test', testDir, env, outputDir);
+        const base = createSide('base', baseDir, env, outputDir);
+        test.writeMeta(false);
+        base.writeMeta(false);
+        const wallStart = Date.now();
+        // Both sides' metas carry it: their rounds were paired in time, so no shift between sessions lies between them.
+        const session = uniqueId();
+        let extra = { session };
+
+        const unpaired = new Set();
+        let paired = 0;
+        let overtaken = 0;
+        const roundWallMs = [];
+        const roundLimit = runs > 1 ? runs + SLOWER_EXTRA_ROUNDS : runs;
+        for (let i = 1; i <= roundLimit; i++) {
+            const roundStart = Date.now();
+            let selection = null;
+            if (i > 1) {
+                // Judge the rounds so far; a confirmation round reruns, in fresh processes, what is unsettled.
+                test.writeMeta(true, extra);
+                base.writeMeta(true, extra);
+                if (spawnCompare(outputDir) !== 0) {
+                    throw new Error(`compare failed after round ${i - 1}.`);
+                }
+                selection = nextRoundSelection(outputDir, i);
+                if (!selection) {
+                    console.log(`\n=== every bench settled after round ${i - 1} ===`);
+                    break;
+                }
+                console.log(
+                    `\n=== round ${i}: ${selection.count} unsettled bench(es) in ${selection.files.length} file(s) ===`
+                );
+            }
+            const stats = await runPairedRound(base, test, i, selection);
+            roundWallMs.push(Date.now() - roundStart);
+            paired += stats.paired;
+            overtaken += stats.overtaken;
+            for (const key of stats.unpaired) {
+                unpaired.add(key);
+            }
+            extra = {
+                session,
+                pairing: { paired, unpaired: [...unpaired], overtaken },
+                wallMs: Date.now() - wallStart,
+                roundWallMs,
+            };
+            console.log('');
+        }
+        extra.wallMs = Date.now() - wallStart;
+
+        test.writeMeta(true, extra);
+        base.writeMeta(true, extra);
+
+        console.log(
+            `\n=== runs complete in ${fmtDuration(extra.wallMs)} wall — test ${fmtDuration(test.getDurationMs())}, ` +
+                `base ${fmtDuration(base.getDurationMs())} of process time ===`
+        );
+        process.exit(spawnCompare(outputDir));
+    }
+} catch (err) {
+    console.error(err instanceof Error ? err.message : err);
+    process.exit(1);
 }
 
 // ── Compare phase ──
@@ -675,59 +925,114 @@ function loadRuns(label, meta) {
                 process.exit(1);
             }
         }
-        results.push(parsed);
+        results.push({ parsed, samples: loadSamples(label, meta, results.length) });
     }
     return results;
+}
+
+/** One round's `file::name#k` → its slices' calls, each `[time in 0.1µs, count, …]`; null when it recorded none. */
+function loadSamples(label, meta, index) {
+    const name = meta.sampleFiles?.[index];
+    if (!name) {
+        return null;
+    }
+    const path = join(outputDir, name);
+    const lines = existsSync(path) ? readFileSync(path, 'utf-8').split('\n') : [];
+    const stamp = lines[0] ? JSON.parse(lines[0]) : null;
+    if (stamp?.cohortId !== meta.cohortId) {
+        console.error(
+            `Error: ${path} is missing or not part of the current ${label} cohort. ` +
+                `Re-run "node bench-compare.mjs ${label}" to regenerate a clean cohort.`
+        );
+        process.exit(1);
+    }
+    const samples = new Map();
+    for (let i = 1; i < lines.length; i++) {
+        if (lines[i]) {
+            const entry = JSON.parse(lines[i]);
+            samples.set(entry[0], entry[1]);
+        }
+    }
+    return samples;
 }
 
 function isExcluded(filepath) {
     return EXCLUDED_BENCH_FILES.some((ex) => filepath.includes(ex));
 }
 
+// Calls past Q3 + 3·IQR (Tukey's far-out fence) are GC/thermal pauses, not the operation. The IQR is
+// floored at one timer step: a sub-step bench's calls sit on one or two values, and its steps are real time.
+const FENCE_IQRS = 3;
+
 /**
- * Extract a file-unique identifier from a filepath. Returns a path relative to the monorepo
- * root (stable across base/test checkouts that live in different absolute directories) by
- * anchoring on the first known top-level segment. Falls back to the basename if nothing
- * recognisable is found.
+ * Plain and fenced mean (ms) of one slice's calls, from `[time in 0.1µs, count, …]` sorted ascending. The
+ * fenced mean keeps both halves of a benchAlternating split, which a median would jump between.
  */
-const RELATIVE_ANCHORS = ['/testing/', '/packages/', '/community-modules/', '/external/'];
-function fileIdentity(filepath) {
-    for (const anchor of RELATIVE_ANCHORS) {
-        const idx = filepath.lastIndexOf(anchor);
-        if (idx !== -1) {
-            return filepath.slice(idx + 1); // strip the leading '/'
+function callStats(runLengths) {
+    let count = 0;
+    let sum = 0;
+    let step = Infinity;
+    for (let i = 0; i < runLengths.length; i += 2) {
+        count += runLengths[i + 1];
+        sum += runLengths[i] * runLengths[i + 1];
+        if (i > 0) {
+            step = Math.min(step, runLengths[i] - runLengths[i - 2]);
         }
     }
-    const slash = filepath.lastIndexOf('/');
-    return slash === -1 ? filepath : filepath.slice(slash + 1);
+    const q1 = valueAtRank(runLengths, Math.floor(count / 4));
+    const q3 = valueAtRank(runLengths, Math.floor((3 * count) / 4));
+    const fence = q3 + FENCE_IQRS * Math.max(q3 - q1, step === Infinity ? 0 : step);
+    let kept = 0;
+    let keptSum = 0;
+    for (let i = 0; i < runLengths.length && runLengths[i] <= fence; i += 2) {
+        kept += runLengths[i + 1];
+        keptSum += runLengths[i] * runLengths[i + 1];
+    }
+    return { count, mean: sum / count / 1e4, fenced: keptSum / kept / 1e4 };
 }
 
-function extractBenchmarks(runData) {
+/** The call time at a 0-based rank of a sorted run-length list. */
+function valueAtRank(runLengths, rank) {
+    let seen = 0;
+    for (let i = 0; i < runLengths.length; i += 2) {
+        seen += runLengths[i + 1];
+        if (rank < seen) {
+            return runLengths[i];
+        }
+    }
+    return runLengths[runLengths.length - 2];
+}
+
+/** One round's benches by key, each with its slices' call statistics when the round recorded them. */
+function extractRound(round) {
     const map = new Map();
-    for (const file of runData.files) {
+    for (const file of round.parsed.files) {
         if (isExcluded(file.filepath)) {
             continue;
         }
         const fileId = fileIdentity(file.filepath);
+        // Same-named benches in one file are told apart by occurrence, as their turn keys are.
+        const seen = new Map();
         for (const group of file.groups) {
             for (const bench of group.benchmarks) {
-                // Include fileId in the key — two files can legitimately share
-                // suite/bench names, and without it one would silently overwrite the other.
-                const key = `${fileId} :: ${group.fullName} > ${bench.name}`;
-                map.set(key, {
+                const occurrence = (seen.get(bench.name) ?? 0) + 1;
+                seen.set(bench.name, occurrence);
+                const recorded = round.samples?.get(`${fileId}::${bench.name}#${occurrence}`);
+                let slices = recorded ? recorded.map(callStats) : null;
+                // A record whose call count disagrees with vitest's belongs to some other bench.
+                if (slices && slices.reduce((n, slice) => n + slice.count, 0) !== bench.sampleCount) {
+                    slices = null;
+                }
+                // Include fileId in the key — two files can legitimately share suite/bench names.
+                map.set(`${fileId} :: ${group.fullName} > ${bench.name}`, {
                     name: bench.name,
                     group: group.fullName,
                     file: fileId,
                     hz: bench.hz,
                     mean: bench.mean,
-                    min: bench.min,
                     rme: bench.rme,
-                    sd: bench.sd,
                     sampleCount: bench.sampleCount,
-                    // p99/median: a high ratio means rare large spikes (GC/thermal pauses) rather than
-                    // broadband variance — those benches don't tighten with more samples, only less data.
-                    spike: bench.median > 0 ? bench.p99 / bench.median : 1,
-                    totalTime: bench.totalTime ?? 0,
+                    slices,
                 });
             }
         }
@@ -735,107 +1040,20 @@ function extractBenchmarks(runData) {
     return map;
 }
 
-/** Sample standard deviation (Bessel-corrected). Returns 0 if n < 2. */
-function sampleStdDev(values, mean) {
-    if (values.length < 2) {
-        return 0;
-    }
-    let sumSq = 0;
-    for (const v of values) {
-        const d = v - mean;
-        sumSq += d * d;
-    }
-    return Math.sqrt(sumSq / (values.length - 1));
-}
-
-/**
- * Aggregate benchmark results across all runs.
- * - Point estimate: inverse-variance weighted mean hz — each run weighted by 1/MoE², so a run with
- *   a tighter confidence interval counts for more (better than a plain mean/median of medians).
- * - Uncertainty: max of (a) the combined within-run CI from that weighting, and (b) the run-to-run
- *   relative std dev. The max keeps a tight within-run CI from hiding real run-to-run variance.
- * With a single run this reduces to that run's own hz and rme.
- */
-function aggregateRuns(allRuns) {
-    // Collect per-benchmark samples across runs
-    const samplesByKey = new Map();
-
-    for (const runData of allRuns) {
-        const benchmarks = extractBenchmarks(runData);
-        for (const [key, data] of benchmarks) {
-            let bucket = samplesByKey.get(key);
-            if (!bucket) {
-                bucket = {
-                    name: data.name,
-                    group: data.group,
-                    file: data.file,
-                    hz: [],
-                    rme: [],
-                    spike: [],
-                    totalTime: [],
-                    sampleCount: 0,
-                };
-                samplesByKey.set(key, bucket);
+/** Per bench, its entry in every round of one side (a hole where that round lacks it). */
+function collectSide(rounds) {
+    const benches = new Map();
+    for (let r = 0; r < rounds.length; r++) {
+        for (const [key, data] of extractRound(rounds[r])) {
+            let bench = benches.get(key);
+            if (!bench) {
+                bench = { name: data.name, group: data.group, file: data.file, rounds: [] };
+                benches.set(key, bench);
             }
-            bucket.hz.push(data.hz);
-            bucket.rme.push(data.rme);
-            bucket.spike.push(data.spike);
-            bucket.totalTime.push(data.totalTime);
-            bucket.sampleCount += data.sampleCount;
+            bench.rounds[r] = data;
         }
     }
-
-    const result = new Map();
-    for (const [key, bucket] of samplesByKey) {
-        const hzs = bucket.hz;
-        const rmes = bucket.rme;
-        const n = hzs.length;
-        const meanHz = hzs.reduce((a, b) => a + b, 0) / n;
-
-        // Inverse-variance weighting in absolute margin-of-error units. The 95% z-factor cancels
-        // between each weight and the combined MoE, so working in MoE directly is exact.
-        let weightSum = 0;
-        let weightedHzSum = 0;
-        let allMoEUsable = true;
-        for (let i = 0; i < n; i++) {
-            const moe = (hzs[i] * rmes[i]) / 100;
-            if (!(moe > 0)) {
-                allMoEUsable = false;
-                break;
-            }
-            const weight = 1 / (moe * moe);
-            weightSum += weight;
-            weightedHzSum += weight * hzs[i];
-        }
-
-        let hz;
-        let withinRme;
-        if (allMoEUsable && weightSum > 0) {
-            hz = weightedHzSum / weightSum;
-            const combinedMoE = Math.sqrt(1 / weightSum);
-            withinRme = hz > 0 ? (combinedMoE / hz) * 100 : 0;
-        } else {
-            // A run reported rme 0 / non-finite — fall back to a plain mean and the mean rme.
-            hz = meanHz;
-            withinRme = rmes.reduce((a, b) => a + b, 0) / n;
-        }
-
-        // Run-to-run scatter — don't let a tight within-run CI hide real between-run variance.
-        const betweenRme = meanHz > 0 ? (sampleStdDev(hzs, meanHz) / meanHz) * 100 : 0;
-
-        result.set(key, {
-            name: bucket.name,
-            group: bucket.group,
-            file: bucket.file,
-            hz,
-            rme: Math.max(withinRme, betweenRme),
-            spike: Math.max(...bucket.spike),
-            totalTime: bucket.totalTime.reduce((a, b) => a + b, 0) / bucket.totalTime.length,
-            sampleCount: bucket.sampleCount,
-            runCount: n,
-        });
-    }
-    return result;
+    return benches;
 }
 
 /** Read the sidecar metadata file for a side. Returns null if missing (e.g. legacy runs). */
@@ -888,17 +1106,13 @@ if (baseMeta.filter !== testMeta.filter) {
             `Comparison restricted to the intersection of benchmarks.\n`
     );
 }
-// Different runs counts are tolerated. Each side's rme already mixes run-to-run std with the
-// within-run rme (`Math.max` floor), so a side with fewer runs reports the larger of the two
-// uncertainties — its noise band widens naturally. Warn loudly when the gap is big enough that
-// the user should consider re-running.
+// Rounds pair by index, so the side with more rounds has its extra ones ignored.
 const baseRunsCount = baseMeta.runFiles?.length ?? 0;
 const testRunsCount = testMeta.runFiles?.length ?? 0;
 if (baseRunsCount !== testRunsCount) {
     console.warn(
-        `Warning: unequal run counts (base: ${baseRunsCount}, test: ${testRunsCount}). ` +
-            `The side with fewer runs has a wider noise band; deltas near the margin may flip ` +
-            `after re-running with matched counts.\n`
+        `Warning: unequal round counts (base: ${baseRunsCount}, test: ${testRunsCount}). Only the first ` +
+            `${Math.min(baseRunsCount, testRunsCount)} round(s) of each side are paired and compared.\n`
     );
 }
 const baseExcl = (baseMeta.excludedFiles ?? []).join(',');
@@ -910,14 +1124,14 @@ if (baseExcl !== testExcl) {
     );
     process.exit(1);
 }
-// Node and browser timings are not comparable (different engine, layout, GC). Refuse a cross-engine
-// comparison rather than report a meaningless delta. `engine` is absent on legacy meta — tolerate that.
+// Results from the retired node/happy-dom engine are not comparable with the browser's. `engine` is absent
+// on legacy meta — tolerate that.
 const baseEngine = baseMeta.engine;
 const testEngine = testMeta.engine;
 if (baseEngine && testEngine && baseEngine !== testEngine) {
     console.error(
         `Error: base and test were run with different engines (base: ${baseEngine}, test: ${testEngine}). ` +
-            `Re-run both sides with the same engine — either both default (browser) or both with --node.`
+            `Re-run both sides.`
     );
     process.exit(1);
 }
@@ -925,125 +1139,675 @@ if (baseEngine && testEngine && baseEngine !== testEngine) {
 const baseRuns = loadRuns('base', baseMeta);
 const testRuns = loadRuns('test', testMeta);
 
-const baseAgg = aggregateRuns(baseRuns);
-const testAgg = aggregateRuns(testRuns);
+const baseSide = collectSide(baseRuns);
+const testSide = collectSide(testRuns);
+
+// ── Statistics ──
+//
+// A round's delta is ln(base / test) from each side's slices; between processes it also moves by τ, or τ_out in an
+// outlier pair. Student-t tails, an A/A self-check and the run's own z-spread keep the variance honest.
+
+// Below FLOOR_PCT a change is too small to act on, however precisely it is measured: it is `same`.
+const FLOOR_PCT = 2;
+const FLOOR_LOG = Math.log(1 + FLOOR_PCT / 100);
+// The share of unchanged benches and the scale of real changes, until a run has enough benches to fit its own,
+// rounded from a fit on 150-bench runs (86%, 6.6%).
+const DEFAULT_PRIOR = { unchanged: 0.85, scale: 0.06 };
+// A result this likely is settled; later rounds rerun only what could still get there.
+const SETTLED = 0.95;
+// The two-sided 95% point: where a few slices' t tail is matched, and a `same` result's ± range.
+const Z_975 = 1.96;
+// Between-process noise until enough benches were seen in two process pairs, rounded from a fit on 438 held-out
+// rounds (τ 2.9%, an outlier pair in 8% of rounds at 13.5%).
+const DEFAULT_NOISE = { tau: 0.03, outlierShare: 0.08, outlierTau: 0.13 };
+// Accounts with more outlier rounds than this are left out: at an outlier share of a tenth, each is 1000× rarer.
+const MAX_OUTLIERS = 3;
+// Fewer benches than this make a median or MAD across them too rough to trust.
+const MIN_POOL = 10;
+// The empirical null narrows intervals only from this many benches, and to no less than NULL_MIN_FACTOR.
+const NULL_NARROW_POOL = 30;
+const NULL_MIN_FACTOR = 0.5;
+// The A/A self-check is calibrated where a tenth of its checks lie beyond, so a dozen of them set the scale, not the
+// one or two most extreme checks of a run.
+const SELF_CHECK_TARGET = 0.1;
+const Z_SELF = 1.645;
+const HISTORY_FILE = 'process-noise.json';
+// Bumped when the history's shape changes: an older file is started afresh.
+const HISTORY_VERSION = 2;
+const RECORD_FILE = 'round-confirmations.json';
+const HISTORY_COHORTS = 50;
+
+const LOG_2PI = Math.log(2 * Math.PI);
+const pctOf = (logRatio) => (Math.exp(logRatio) - 1) * 100;
+const logNormal = (delta, sd) => -((delta / sd) ** 2) / 2 - Math.log(sd) - LOG_2PI / 2;
+
+function logSumExp(values) {
+    let top = -Infinity;
+    for (const v of values) {
+        top = Math.max(top, v);
+    }
+    let sum = 0;
+    for (const v of values) {
+        sum += Math.exp(v - top);
+    }
+    return top + Math.log(sum);
+}
+
+function median(values) {
+    const sorted = values.slice().sort((a, b) => a - b);
+    return sorted[sorted.length >> 1];
+}
+
+/** Mean and sample variance (0 when fewer than 2 values). */
+function meanAndVariance(values) {
+    const n = values.length;
+    let sum = 0;
+    for (let i = 0; i < n; i++) {
+        sum += values[i];
+    }
+    const mean = sum / n;
+    let sumSq = 0;
+    for (let i = 0; i < n; i++) {
+        sumSq += (values[i] - mean) ** 2;
+    }
+    return { mean, variance: n > 1 ? sumSq / (n - 1) : 0 };
+}
+
+/** An estimate from log-ratios: its mean, and the variance of that mean with its df. */
+function sliceEstimate(logRatios) {
+    const { mean, variance } = meanAndVariance(logRatios);
+    const n = logRatios.length;
+    return { delta: mean, within: variance / n, df: n - 1 };
+}
+
+// From this many slices a side drops its fastest and slowest: a GC cycle or other brief disturbance lands in one
+// slice, and a trimmed mean does not move with it.
+const TRIM_FROM = 8;
+
+/**
+ * One side's slices: the trimmed mean of their log fenced means, its variance (Tukey–McLaughlin, from the
+ * winsorised spread) and df.
+ */
+function sideEstimate(slices) {
+    const logs = slices.map((slice) => Math.log(slice.fenced)).sort((a, b) => a - b);
+    const n = logs.length;
+    const trim = n >= TRIM_FROM ? 1 : 0;
+    const kept = n - 2 * trim;
+    const winsorised = logs.slice();
+    for (let i = 0; i < trim; i++) {
+        winsorised[i] = logs[trim];
+        winsorised[n - 1 - i] = logs[n - 1 - trim];
+    }
+    let sum = 0;
+    for (let i = trim; i < n - trim; i++) {
+        sum += logs[i];
+    }
+    const variance = meanAndVariance(winsorised).variance;
+    return { mean: sum / kept, variance: ((n - 1) * variance) / (kept * (kept - 1)), df: kept - 1 };
+}
+
+/**
+ * One round of one bench. The two sides measured at different moments, so their slices are not paired: each
+ * side is estimated on its own and the variances add (Welch). The self-check compares each side's two outer
+ * slices with their inner neighbours, which linear drift reaches equally.
+ */
+function pairRound(b, t) {
+    if (b.slices?.length >= 2 && t.slices?.length >= 2) {
+        const base = sideEstimate(b.slices);
+        const test = sideEstimate(t.slices);
+        const within = base.variance + test.variance;
+        const df = within > 0 ? within ** 2 / (base.variance ** 2 / base.df + test.variance ** 2 / test.df) : Infinity;
+        let selfCheck = null;
+        if (b.slices.length >= 4 && t.slices.length >= 4) {
+            const selfRatios = [];
+            for (const side of [b.slices, t.slices]) {
+                const last = side.length - 1;
+                selfRatios.push(
+                    Math.log(side[0].fenced / side[1].fenced),
+                    Math.log(side[last].fenced / side[last - 1].fenced)
+                );
+            }
+            selfCheck = sliceEstimate(selfRatios);
+        }
+        const plainMean = (slices) => meanAndVariance(slices.map((slice) => Math.log(slice.mean))).mean;
+        return {
+            delta: base.mean - test.mean,
+            within,
+            df,
+            meanDelta: plainMean(b.slices) - plainMean(t.slices),
+            selfCheck,
+            baseMs: Math.exp(base.mean),
+        };
+    }
+    // No usable slices (a run file from before them, or a count mismatch): tinybench's mean and its 95% rme.
+    const delta = Math.log(b.mean / t.mean);
+    return {
+        delta,
+        within: ((b.rme / Z_975) ** 2 + (t.rme / Z_975) ** 2) / 1e4,
+        df: Infinity,
+        meanDelta: delta,
+        selfCheck: null,
+        baseMs: b.mean,
+    };
+}
+
+/**
+ * Student-t quantile for a standard-normal quantile `z` at `df` degrees of freedom (Cornish–Fisher, within 4% from
+ * 3 df). A spread from a few slices understates the noise as often as not, and t pays for that in the tails.
+ */
+function tQuantile(z, df) {
+    if (!Number.isFinite(df)) {
+        return z;
+    }
+    const z3 = z ** 3;
+    const z5 = z ** 5;
+    const z7 = z ** 7;
+    return (
+        z +
+        (z3 + z) / (4 * df) +
+        (5 * z5 + 16 * z3 + 3 * z) / (96 * df ** 2) +
+        (3 * z7 + 19 * z5 + 17 * z3 - 15 * z) / (384 * df ** 3)
+    );
+}
 
 // Report unmatched benchmarks
-const baseOnly = [...baseAgg.keys()].filter((k) => !testAgg.has(k));
-const testOnly = [...testAgg.keys()].filter((k) => !baseAgg.has(k));
+const baseOnly = [...baseSide.keys()].filter((k) => !testSide.has(k));
+const testOnly = [...testSide.keys()].filter((k) => !baseSide.has(k));
 if (baseOnly.length > 0) {
     console.log(`Note: ${baseOnly.length} benchmark(s) only in base (removed or renamed?):`);
     for (const k of baseOnly) {
-        console.log(`  - ${baseAgg.get(k).name}`);
+        console.log(`  - ${baseSide.get(k).name}`);
     }
 }
 if (testOnly.length > 0) {
     console.log(`Note: ${testOnly.length} benchmark(s) only in test (added or renamed?):`);
     for (const k of testOnly) {
-        console.log(`  - ${testAgg.get(k).name}`);
+        console.log(`  - ${testSide.get(k).name}`);
     }
 }
 
-// Build comparison using within-run rme for confidence intervals
+// Each bench's rounds, from those both sides measured.
 const comparisons = [];
 const invalidComparisons = [];
-for (const [key, base] of baseAgg) {
-    const test = testAgg.get(key);
+for (const [key, base] of baseSide) {
+    const test = testSide.get(key);
     if (!test) {
         continue;
     }
-
-    // Guard against zero / non-finite baseline (or test) hz — would yield Infinity/NaN in the
-    // delta and contaminate the report. We surface these as a separate "invalid" list instead.
-    const baseHzValid = Number.isFinite(base.hz) && base.hz > 0;
-    const testHzValid = Number.isFinite(test.hz) && test.hz >= 0;
-    if (!baseHzValid || !testHzValid) {
-        invalidComparisons.push({
-            key,
-            name: base.name,
-            group: base.group,
-            file: base.file,
-            baseHz: base.hz,
-            testHz: test.hz,
-            reason: !baseHzValid ? 'invalid base hz' : 'invalid test hz',
-        });
+    const rounds = [];
+    let baseCalls = Infinity;
+    let testCalls = Infinity;
+    const roundCount = Math.min(base.rounds.length, test.rounds.length);
+    for (let r = 0; r < roundCount; r++) {
+        const b = base.rounds[r];
+        const t = test.rounds[r];
+        if (isMeasured(b) && isMeasured(t)) {
+            rounds.push({ round: r + 1, ...pairRound(b, t) });
+            baseCalls = Math.min(baseCalls, b.sampleCount);
+            testCalls = Math.min(testCalls, t.sampleCount);
+        }
+    }
+    if (rounds.length === 0) {
+        // Zero / non-finite hz on a side (an errored bench) would yield Infinity/NaN in the delta.
+        invalidComparisons.push({ key, name: base.name, group: base.group, file: base.file });
         continue;
     }
-
-    const delta = ((test.hz - base.hz) / base.hz) * 100;
-
-    // Combined margin of error from both sides' rme (propagated in quadrature)
-    const combinedRme = Math.sqrt(base.rme ** 2 + test.rme ** 2);
-    const deltaLo = round(delta - combinedRme, 1);
-    const deltaHi = round(delta + combinedRme, 1);
-
-    comparisons.push({
-        key,
-        name: base.name,
-        group: base.group,
-        file: base.file,
-        baseHz: round(base.hz, 4),
-        baseRme: round(base.rme, 2),
-        baseSamples: base.sampleCount,
-        testHz: round(test.hz, 4),
-        testRme: round(test.rme, 2),
-        testSamples: test.sampleCount,
-        testSpike: round(test.spike, 2),
-        testTime: round(test.totalTime, 0),
-        delta: round(delta, 2),
-        deltaLo,
-        deltaHi,
-        deltaConservative: deltaLo > 0 ? deltaLo : deltaHi < 0 ? deltaHi : 0,
-        combinedRme: round(combinedRme, 2),
-    });
+    comparisons.push({ key, name: base.name, group: base.group, file: base.file, rounds, baseCalls, testCalls });
 }
 
-if (invalidComparisons.length > 0) {
-    console.log(
-        `Note: ${invalidComparisons.length} benchmark(s) skipped due to invalid hz (non-finite or non-positive base):`
-    );
-    for (const c of invalidComparisons) {
-        console.log(`  - ${c.name}: ${c.reason} (base=${c.baseHz}, test=${c.testHz})`);
+// Each round's own slice spread is its within-run variance: calls within a slice are neither independent (GC
+// cycles) nor alike (an alternating or cycling bench), so no call-level model predicts it. It is widened to the
+// normal variance with the same 97.5% tail as t at its df.
+const roundEstimates = comparisons.flatMap((c) => c.rounds);
+for (const e of roundEstimates) {
+    e.within *= (tQuantile(Z_975, e.df) / Z_975) ** 2;
+}
+const selfChecks = roundEstimates.map((e) => e.selfCheck).filter(Boolean);
+
+// Self-check: A/A intervals that miss 0 should be SELF_CHECK_TARGET of them; if more do, the within-run variance is
+// too small by the factor that brings the miss rate back to target, and every bench's within-run variance is scaled
+// by it. Each t is mapped onto the normal scale at the same tail.
+// A check with no spread (identical ratios) has no scale to test.
+const selfZ = selfChecks
+    .filter((e) => e.within > 0)
+    .map((e) => (Math.abs(e.delta) / Math.sqrt(e.within)) * (Z_SELF / tQuantile(Z_SELF, e.df)))
+    .sort((a, b) => b - a);
+const selfOutside = selfZ.filter((z) => z > Z_SELF).length;
+const selfAllowed = Math.floor(SELF_CHECK_TARGET * selfZ.length);
+const selfFactor = selfZ.length >= MIN_POOL && selfOutside > selfAllowed ? selfZ[selfAllowed] / Z_SELF : 1;
+for (const e of roundEstimates) {
+    e.within *= selfFactor ** 2;
+}
+
+// ── Between-process noise: a machine-wide mixture, learned from this run's benches seen in two or more rounds ──
+//
+// A bench's spread in one run does not predict its next, so a round is ordinary (±τ) or, at the outlier share, an
+// outlier (±τ_out), and a bench's rounds weigh each way of accounting for them by how well they then agree.
+
+/** Machine + engine identity the history is valid for; node version and time of day don't matter. */
+function machineFingerprint(env) {
+    return JSON.stringify([env?.engine, env?.chromium, env?.cpu, env?.cpuCount, env?.os]);
+}
+
+// A bench seen in two process pairs: each round's delta and within-run variance.
+const runObservations = {};
+for (const c of comparisons) {
+    if (c.rounds.length > 1) {
+        runObservations[c.key] = c.rounds.map((e) => [e.delta, e.within]);
     }
 }
 
-function round(v, decimals) {
-    const f = 10 ** decimals;
-    return Math.round(v * f) / f;
+const cohortKey = `${baseMeta.cohortId}+${testMeta.cohortId}`;
+
+/** The HISTORY_COHORTS most recent cohorts, so a per-machine file stops growing. */
+function newestCohorts(cohorts) {
+    const kept = Object.entries(cohorts)
+        .sort((a, b) => (a[1].at < b[1].at ? 1 : -1))
+        .slice(0, HISTORY_COHORTS);
+    return Object.fromEntries(kept);
+}
+const fingerprint = machineFingerprint(baseMeta.env ?? testMeta.env);
+const historyPath = join(outputDir, HISTORY_FILE);
+const storedHistory = readJsonOrNull(historyPath);
+const history =
+    storedHistory?.fingerprint === fingerprint && storedHistory.version === HISTORY_VERSION
+        ? storedHistory
+        : { fingerprint, version: HISTORY_VERSION, cohorts: {} };
+if (Object.keys(runObservations).length) {
+    // Keyed by cohort, so comparing the same runs again replaces their observations instead of counting twice.
+    history.cohorts[cohortKey] = { at: new Date().toISOString(), benches: runObservations };
+    history.cohorts = newestCohorts(history.cohorts);
+    writeFileSync(historyPath, JSON.stringify(history));
+}
+
+const noiseModel = ({ tau, outlierShare, outlierTau }) => ({
+    tau,
+    outlierShare,
+    outlierTau,
+    tau2: tau * tau,
+    outlierTau2: outlierTau * outlierTau,
+    logOrdinary: Math.log(1 - outlierShare),
+    logOutlier: Math.log(outlierShare),
+});
+
+const outlierMaskCache = [];
+/** Ascending masks of `k` rounds with at most MAX_OUTLIERS set, so a long run never walks all 2^k. */
+function outlierMasks(k) {
+    let masks = outlierMaskCache[k];
+    if (!masks) {
+        masks = [0];
+        const counts = [0];
+        // Each mask grows by one outlier above its highest, so every mask is built exactly once.
+        for (let j = 0; j < masks.length; j++) {
+            if (counts[j] < MAX_OUTLIERS) {
+                for (let bit = 32 - Math.clz32(masks[j]); bit < k; bit++) {
+                    masks.push(masks[j] | (1 << bit));
+                    counts.push(counts[j] + 1);
+                }
+            }
+        }
+        masks.sort((a, b) => a - b);
+        outlierMaskCache[k] = masks;
+    }
+    return masks;
 }
 
 /**
- * Sort biggest-change-first. Primary key is the signed raw delta — the same metric the
- * "Result" column shows ("1.20x faster" etc.) — so the visible ordering matches the displayed
- * numbers. Conservative delta is used elsewhere (to classify rows as certain vs noisy) but
- * disagreed with what readers see in the Result column when used as the sort key.
- *
- * Within each direction (improvements / regressions), descending by magnitude — so the
- * biggest improvement is at the top, then smaller improvements, then unchanged, then small
- * regressions, then the worst regression at the bottom. This is sign-aware: regressions stay
- * grouped at the bottom rather than sorting purely by absolute magnitude.
- *
- * Tie-break on conservative delta (so equally-fast benchmarks with tighter CIs rank higher)
- * then on name for determinism.
+ * Every way a bench's rounds can be ordinary or outliers (up to MAX_OUTLIERS outliers, the all-ordinary way first):
+ * each way's inverse-variance estimate and its weight, the way's prior times how well the rounds agree under it, θ
+ * integrated out. `scale` multiplies every variance.
  */
-function bySignedDeltaDesc(a, b) {
-    const rawDiff = b.delta - a.delta;
-    if (rawDiff !== 0) {
-        return rawDiff;
+function mixtureOf(rounds, noise, scale = 1) {
+    const k = rounds.length;
+    const components = [];
+    const variances = new Array(k);
+    const masks = outlierMasks(k);
+    for (let j = 0; j < masks.length; j++) {
+        const mask = masks[j];
+        let outliers = 0;
+        let weights = 0;
+        let delta = 0;
+        let meanDelta = 0;
+        let logVariances = 0;
+        for (let i = 0; i < k; i++) {
+            const outlier = (mask >> i) & 1;
+            outliers += outlier;
+            const v = scale * (rounds[i].within + (outlier ? noise.outlierTau2 : noise.tau2));
+            variances[i] = v;
+            weights += 1 / v;
+            delta += rounds[i].delta / v;
+            meanDelta += rounds[i].meanDelta / v;
+            logVariances += Math.log(v);
+        }
+        delta /= weights;
+        let misfit = 0;
+        for (let i = 0; i < k; i++) {
+            misfit += (rounds[i].delta - delta) ** 2 / variances[i];
+        }
+        const logPrior = outliers * noise.logOutlier + (k - outliers) * noise.logOrdinary;
+        const logWeight = logPrior - misfit / 2 - logVariances / 2 - ((k - 1) * LOG_2PI) / 2 - Math.log(weights) / 2;
+        components.push({ logWeight, delta, meanDelta: meanDelta / weights, variance: 1 / weights });
     }
-    const ciDiff = b.deltaConservative - a.deltaConservative;
-    if (ciDiff !== 0) {
-        return ciDiff;
+    const logMarginal = logSumExp(components.map((c) => c.logWeight));
+    for (const c of components) {
+        c.weight = Math.exp(c.logWeight - logMarginal);
     }
-    return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+    return { components, logMarginal };
 }
 
-comparisons.sort(bySignedDeltaDesc);
+/** The mixture as one estimate (its mean and variance), for display and a projection of later rounds. */
+function summaryOf(components) {
+    let delta = 0;
+    let meanDelta = 0;
+    let second = 0;
+    for (const c of components) {
+        delta += c.weight * c.delta;
+        meanDelta += c.weight * c.meanDelta;
+        second += c.weight * (c.variance + c.delta ** 2);
+    }
+    return { delta, meanDelta, variance: second - delta ** 2 };
+}
+
+/** τ, the outlier share and τ_out that make the observed benches' rounds likeliest (coordinate ascent). */
+function fitNoise(benches) {
+    if (benches.length < NULL_NARROW_POOL) {
+        return { ...DEFAULT_NOISE, fitted: false };
+    }
+    const logLikelihood = (params) => {
+        const noise = noiseModel(params);
+        let sum = 0;
+        for (const rounds of benches) {
+            sum += mixtureOf(rounds, noise).logMarginal;
+        }
+        return sum;
+    };
+    // An outlier must be one: τ_out at least twice τ, or the two would trade places.
+    const valid = (p) =>
+        p.tau >= 0.002 && p.outlierTau >= 2 * p.tau && p.outlierShare >= 0.005 && p.outlierShare <= 0.5;
+    let best = DEFAULT_NOISE;
+    let bestLogLikelihood = logLikelihood(best);
+    for (let step = 1.5; step > 1.01; step = Math.sqrt(step)) {
+        let moved = true;
+        while (moved) {
+            moved = false;
+            for (const field of ['tau', 'outlierTau', 'outlierShare']) {
+                for (const factor of [step, 1 / step]) {
+                    const next = { ...best, [field]: best[field] * factor };
+                    if (valid(next)) {
+                        const nextLogLikelihood = logLikelihood(next);
+                        if (nextLogLikelihood > bestLogLikelihood) {
+                            best = next;
+                            bestLogLikelihood = nextLogLikelihood;
+                            moved = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return { ...best, fitted: true };
+}
+
+const observedBenches = [];
+for (const cohort of Object.values(history.cohorts)) {
+    for (const rounds of Object.values(cohort.benches)) {
+        observedBenches.push(rounds.map(([delta, within]) => ({ delta, within, meanDelta: delta })));
+    }
+}
+const fittedNoise = fitNoise(observedBenches);
+const noise = noiseModel(fittedNoise);
+
+// Separate sessions differ by the machine's heat (a round can shift 18%), which only pairing in time cancels: the
+// run-wide median shift is taken out, so a change that moves every bench alike shows only in that shift.
+const paired = Boolean(baseMeta.session) && baseMeta.session === testMeta.session;
+const shiftTaken = !paired && comparisons.length >= MIN_POOL;
+const sessionShift = shiftTaken ? median(comparisons.map((c) => median(c.rounds.map((e) => e.delta)))) : 0;
+for (const e of roundEstimates) {
+    e.delta -= sessionShift;
+    e.meanDelta -= sessionShift;
+}
+
+// Empirical null: in an A/B most benches don't change, so the run's own z-scores show its real noise, either
+// way: on A/A runs the slice and τ model over-covered ~2×. Outliers are the mixture's, so the all-ordinary
+// account is measured, and every variance is then scaled by it.
+const zScores = comparisons.map((c) => {
+    const core = mixtureOf(c.rounds, noise).components[0];
+    return core.delta / Math.sqrt(core.variance);
+});
+const zCentre = zScores.length ? median(zScores) : 0;
+const nullFloor = zScores.length >= NULL_NARROW_POOL ? NULL_MIN_FACTOR : 1;
+const nullFactor =
+    zScores.length >= MIN_POOL ? Math.max(nullFloor, 1.4826 * median(zScores.map((z) => Math.abs(z - zCentre)))) : 1;
+const nullScale = nullFactor ** 2;
+
+for (const c of comparisons) {
+    c.mixture = mixtureOf(c.rounds, noise, nullScale).components;
+    c.all = summaryOf(c.mixture);
+    c.core = c.mixture[0];
+    c.firstMixture = c.rounds[0].round === 1 ? mixtureOf([c.rounds[0]], noise, nullScale).components : null;
+}
+
+// ── Result: the likeliest of faster / slower / same ──
+//
+// A bench's true change θ is 0 if unchanged, else Laplace(scale), and its estimate adds normal noise. The run's
+// estimates fit the unchanged share and scale by maximum likelihood; each posterior splits at ±floor.
+
+/** log of the slab's mass in each region, over θ within ±8 sd of the estimate (a sd/10 grid); one shared offset. */
+function slabLogMass(delta, sd, scale) {
+    const step = sd / 10;
+    // Factored out of every weight, so a far estimate's tiny density does not underflow to 0.
+    const offset = -Math.abs(delta) / scale;
+    let faster = 0;
+    let slower = 0;
+    let same = 0;
+    for (let k = -80; k <= 80; k++) {
+        const theta = delta + k * step;
+        const weight = Math.exp(-(k * k) / 200 - offset - Math.abs(theta) / scale);
+        if (theta > FLOOR_LOG) {
+            faster += weight;
+        } else if (theta < -FLOOR_LOG) {
+            slower += weight;
+        } else {
+            same += weight;
+        }
+    }
+    // × step / (2 scale) for the Laplace density and its grid, × 1 / (sd √2π) for the normal likelihood.
+    const base = offset + Math.log(step / (2 * scale)) - Math.log(sd) - LOG_2PI / 2;
+    return { faster, slower, same, base };
+}
+
+/** The unchanged spike's log likelihood and the slab's, for one estimate. */
+function logLikelihoods(delta, sd, prior) {
+    const slab = slabLogMass(delta, sd, prior.scale);
+    const spike = Math.log(prior.unchanged) + logNormal(delta, sd);
+    return { spike, slab, changed: Math.log(1 - prior.unchanged) + slab.base };
+}
+
+const sdOf = (variance) => Math.max(1e-9, Math.sqrt(variance));
+
+/** The unchanged share and change scale that make the run's mixtures likeliest; the default for a small run. */
+function fitPrior(mixtures) {
+    if (mixtures.length < NULL_NARROW_POOL) {
+        return { ...DEFAULT_PRIOR, fitted: false };
+    }
+    // A component's weight, noise and spike likelihood do not depend on the prior, so they are computed once.
+    const parts = mixtures.map((mixture) =>
+        mixture.map((m) => {
+            const sd = sdOf(m.variance);
+            return { delta: m.delta, sd, logWeight: Math.log(m.weight), spike: logNormal(m.delta, sd) };
+        })
+    );
+    let best = { logLikelihood: -Infinity, prior: DEFAULT_PRIOR };
+    for (let scale = 0.002; scale < 0.5; scale *= 1.1) {
+        // The slab's mass does not depend on the unchanged share, so it is computed once per scale.
+        const slabs = parts.map((bench) =>
+            bench.map((p) => {
+                const slab = slabLogMass(p.delta, p.sd, scale);
+                return slab.base + Math.log(slab.faster + slab.slower + slab.same);
+            })
+        );
+        for (let unchanged = 0.3; unchanged < 0.996; unchanged += 0.005) {
+            const logUnchanged = Math.log(unchanged);
+            const logChanged = Math.log(1 - unchanged);
+            let logLikelihood = 0;
+            for (let i = 0; i < parts.length; i++) {
+                const bench = parts[i];
+                const terms = [];
+                for (let j = 0; j < bench.length; j++) {
+                    const spike = logUnchanged + bench[j].spike;
+                    const changed = logChanged + slabs[i][j];
+                    const top = Math.max(spike, changed);
+                    terms.push(bench[j].logWeight + top + Math.log(Math.exp(spike - top) + Math.exp(changed - top)));
+                }
+                logLikelihood += logSumExp(terms);
+            }
+            if (logLikelihood > best.logLikelihood) {
+                best = { logLikelihood, prior: { unchanged, scale } };
+            }
+        }
+    }
+    return { ...best.prior, fitted: true };
+}
+
+const prior = fitPrior(comparisons.map((c) => c.mixture));
+
+/** The likeliest of `faster` / `slower` / `same` for a mixture of estimates of ln(base / test), and its probability. */
+function resultOf(mixture) {
+    const parts = [];
+    let top = -Infinity;
+    for (const m of mixture) {
+        const part = { logWeight: Math.log(m.weight), ...logLikelihoods(m.delta, sdOf(m.variance), prior) };
+        parts.push(part);
+        top = Math.max(top, part.logWeight + Math.max(part.spike, part.changed));
+    }
+    let unchanged = 0;
+    let faster = 0;
+    let slower = 0;
+    let same = 0;
+    for (const p of parts) {
+        unchanged += Math.exp(p.logWeight + p.spike - top);
+        const changedWeight = Math.exp(p.logWeight + p.changed - top);
+        faster += changedWeight * p.slab.faster;
+        slower += changedWeight * p.slab.slower;
+        same += changedWeight * p.slab.same;
+    }
+    const total = unchanged + faster + slower + same;
+    faster /= total;
+    slower /= total;
+    same = 1 - faster - slower;
+    if (faster > same && faster > slower) {
+        return { result: 'faster', confidence: faster, slower };
+    }
+    if (slower > same) {
+        return { result: 'slower', confidence: slower, slower };
+    }
+    return { result: 'same', confidence: same, slower };
+}
+
+let completedRounds = 0;
+for (const c of comparisons) {
+    completedRounds = Math.max(completedRounds, c.rounds[c.rounds.length - 1].round);
+}
+const maxRounds = testMeta.maxRounds ?? 1;
+
+// A reported slowdown sends someone looking for its cause, so a lean takes every round left, up to SLOWER_EXTRA_ROUNDS
+// past --runs, until SLOWER_SETTLED sure, rather than being shrunk away by the prior unexamined.
+const SLOWER_LEAN = 0.1;
+const SLOWER_Z = 1.5;
+const SLOWER_SETTLED = 0.99;
+
+for (const c of comparisons) {
+    Object.assign(c, resultOf(c.mixture));
+    // The measurement's own 95% range, shown with a `same`.
+    c.rangePct = pctOf(Z_975 * sdOf(c.all.variance));
+    // A change must hold in a second process pair (a round-1 change can be one process's luck); a doubtful
+    // result reruns only while the rounds left could settle it or change it: noise they cannot beat is reported.
+    const z = c.all.delta / sdOf(c.all.variance);
+    c.leansSlower = c.slower >= SLOWER_LEAN || (c.all.delta <= -FLOOR_LOG && z <= -SLOWER_Z);
+    const leansSlower = c.leansSlower && maxRounds > 1;
+    const settledAt = leansSlower ? SLOWER_SETTLED : SETTLED;
+    const remainingRounds = Math.max(0, maxRounds + (leansSlower ? SLOWER_EXTRA_ROUNDS : 0) - completedRounds);
+    let reachable = false;
+    if (remainingRounds > 0 && c.confidence < settledAt) {
+        // Later rounds projected as ordinary ones agreeing with this estimate.
+        let perRound = 0;
+        for (const e of c.rounds) {
+            perRound += nullScale * (e.within + noise.tau2);
+        }
+        perRound /= c.rounds.length;
+        const variance = 1 / (1 / c.core.variance + remainingRounds / perRound);
+        const best = resultOf([{ weight: 1, delta: c.all.delta, variance }]);
+        reachable = leansSlower || best.confidence >= settledAt || best.result !== c.result;
+    }
+    c.settled = !(reachable || (c.result !== 'same' && c.rounds.length === 1 && remainingRounds > 0));
+    const first = c.firstMixture ? resultOf(c.firstMixture) : null;
+    c.flagged = first !== null && first.result !== 'same' && first.confidence >= SETTLED;
+    c.upheld = c.flagged && c.result === first.result && c.confidence >= SETTLED;
+    c.delta = round(pctOf(c.all.delta), 2);
+    c.meanDelta = round(pctOf(c.all.meanDelta), 2);
+    c.roundsLabel = c.rounds.map((e) => e.round).join('+');
+    let baseLog = 0;
+    for (const e of c.rounds) {
+        baseLog += Math.log(e.baseMs);
+    }
+    c.baseMs = Math.exp(baseLog / c.rounds.length);
+    // From the same estimate as the ratio, so the two never disagree.
+    c.testMs = c.baseMs / Math.exp(c.all.delta);
+}
+
+// Running record of round-1 flags and whether a fresh process pair upheld them.
+const recordPath = join(outputDir, RECORD_FILE);
+const record = readJsonOrNull(recordPath) ?? { cohorts: {} };
+const confirmableNow = comparisons.filter((c) => c.flagged && c.rounds.length > 1);
+// Only a run with something to confirm, so runs that had none do not push real ones out of the cap.
+if (confirmableNow.length) {
+    record.cohorts[cohortKey] = {
+        at: new Date().toISOString(),
+        confirmed: confirmableNow.map((c) => c.key),
+        upheld: confirmableNow.filter((c) => c.upheld).map((c) => c.key),
+    };
+    record.cohorts = newestCohorts(record.cohorts);
+    writeFileSync(recordPath, JSON.stringify(record, null, 2));
+}
+let recordConfirmed = 0;
+let recordUpheld = 0;
+for (const cohort of Object.values(record.cohorts)) {
+    recordConfirmed += cohort.confirmed.length;
+    recordUpheld += cohort.upheld.length;
+}
+
+if (invalidComparisons.length > 0) {
+    console.log(`Note: ${invalidComparisons.length} benchmark(s) skipped: no round measured on both sides:`);
+    for (const c of invalidComparisons) {
+        console.log(`  - ${c.name}`);
+    }
+}
+
+// Biggest speed-up first, slow-downs last; ties on name for determinism.
+comparisons.sort((a, b) => b.delta - a.delta || a.name.localeCompare(b.name));
+
+const resultCounts = { faster: 0, slower: 0, same: 0 };
+for (const c of comparisons) {
+    resultCounts[c.result]++;
+}
+// Only changes this likely are listed as changes; a less sure one stays in its file's table with its confidence.
+const REPORTED = 0.9;
+const changes = comparisons.filter((c) => c.result !== 'same' && c.confidence >= REPORTED);
+const unsureChanges = comparisons.filter((c) => c.result !== 'same' && c.confidence < REPORTED).length;
+const reportedFaster = changes.filter((c) => c.result === 'faster').length;
+const reportedSlower = changes.length - reportedFaster;
+const roundSizes = [];
+for (const c of comparisons) {
+    for (const e of c.rounds) {
+        roundSizes[e.round - 1] = (roundSizes[e.round - 1] ?? 0) + 1;
+    }
+}
 
 // ── Output ──
 
 const jsonPath = join(outputDir, `bench-compare-result${partialSuffix}.json`);
 const mdPath = join(outputDir, `bench-compare-result${partialSuffix}.md`);
+const confidencePct = (c) => Math.min(99, Math.round(c.confidence * 100));
 
 writeFileSync(
     jsonPath,
@@ -1051,9 +1815,43 @@ writeFileSync(
         {
             baseRuns: baseRuns.length,
             testRuns: testRuns.length,
-            benchmarks: comparisons,
-            baseOnly: baseOnly.map((k) => baseAgg.get(k).name),
-            testOnly: testOnly.map((k) => testAgg.get(k).name),
+            roundSizes,
+            paired,
+            sessionShiftPct: round(pctOf(sessionShift), 2),
+            floorPct: FLOOR_PCT,
+            prior: { unchangedPct: round(prior.unchanged * 100, 1), scalePct: round(pctOf(prior.scale), 2) },
+            results: resultCounts,
+            selfCheck: { outside: selfOutside, total: selfZ.length, factor: round(selfFactor, 3) },
+            nullFactor: round(nullFactor, 3),
+            noise: {
+                typicalPct: round(noise.tau * 100, 2),
+                outlierSharePct: round(noise.outlierShare * 100, 1),
+                outlierPct: round(noise.outlierTau * 100, 2),
+                fromHistory: fittedNoise.fitted,
+            },
+            record: { confirmed: recordConfirmed, upheld: recordUpheld },
+            benchmarks: comparisons.map((c) => ({
+                key: c.key,
+                name: c.name,
+                group: c.group,
+                file: c.file,
+                result: c.result,
+                confidence: round(c.confidence, 4),
+                rangePct: round(c.rangePct, 2),
+                settled: c.settled,
+                flagged: c.flagged,
+                rounds: c.roundsLabel,
+                baseMs: round(c.baseMs, 5),
+                testMs: round(c.testMs, 5),
+                delta: c.delta,
+                meanDelta: c.meanDelta,
+                sdPct: round(Math.sqrt(c.all.variance) * 100, 2),
+                withinPct: round(Math.sqrt(c.rounds.reduce((sum, e) => sum + e.within, 0) / c.rounds.length) * 100, 2),
+                baseCalls: c.baseCalls,
+                testCalls: c.testCalls,
+            })),
+            baseOnly: baseOnly.map((k) => baseSide.get(k).name),
+            testOnly: testOnly.map((k) => testSide.get(k).name),
             invalid: invalidComparisons,
         },
         null,
@@ -1063,102 +1861,108 @@ writeFileSync(
 
 // ── Markdown ──
 
-function fmtHz(hz) {
-    if (hz >= 10000) {
-        return hz.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+/** Milliseconds per call to three significant figures. */
+function fmtMs(ms) {
+    if (ms >= 100) {
+        return ms.toFixed(0);
     }
-    if (hz >= 100) {
-        return hz.toFixed(1);
+    if (ms >= 10) {
+        return ms.toFixed(1);
     }
-    if (hz >= 10) {
-        return hz.toFixed(2);
+    if (ms >= 1) {
+        return ms.toFixed(2);
     }
-    return hz.toFixed(3);
+    return ms.toPrecision(3);
 }
 
 /**
  * Report-friendly file label. Drops the default benchmark-folder prefix for files that live
  * there (so `foo.bench.ts` / `tree-data/flatten.bench.ts` show without the long `testing/...`
- * path) and strips the `.bench.ts` suffix everywhere for brevity.
+ * path); the `.bench.ts` extension stays so the column names the file to edit.
  */
 const BENCH_DIR_PREFIX = 'testing/behavioural/src/benchmarks/';
-// Keep the `.bench.ts` extension so the column names the file to edit when adjusting a noiseFactor.
 function shortFile(file) {
     return file.startsWith(BENCH_DIR_PREFIX) ? file.slice(BENCH_DIR_PREFIX.length) : file;
 }
 
-/** Format speedup as "1.23x faster" / "1.10x slower" / "unchanged". */
-function fmtSpeedup(c) {
-    if (!(c.baseHz > 0) || !(c.testHz > 0)) {
-        return 'n/a';
-    }
-    const ratio = c.testHz / c.baseHz;
-    if (ratio >= 1.005) {
-        return `${ratio.toFixed(2)}x faster`;
-    }
-    if (ratio <= 0.995) {
-        return `${(1 / ratio).toFixed(2)}x slower`;
-    }
-    return 'unchanged';
+/** A markdown table padded as prettier pads one, so formatting the report changes nothing. */
+function mdTable(head, rows, rightAligned) {
+    const widths = head.map((title, i) => {
+        let width = Math.max(3, title.length);
+        for (const row of rows) {
+            width = Math.max(width, row[i].length);
+        }
+        return width;
+    });
+    const line = (cells) =>
+        `| ${cells.map((cell, i) => (rightAligned[i] ? cell.padStart(widths[i]) : cell.padEnd(widths[i]))).join(' | ')} |`;
+    const rule = `| ${widths.map((w, i) => (rightAligned[i] ? `${'-'.repeat(w - 1)}:` : '-'.repeat(w))).join(' | ')} |`;
+    return `${[line(head), rule, ...rows.map(line)].join('\n')}\n\n`;
 }
 
-/** A result is "noisy" when the delta is within the combined margin of error. */
-function isNoisy(c) {
-    return c.deltaConservative === 0;
-}
-
-// Reporting thresholds. Small raw deltas inside the confidence interval are just benchmark
-// jitter and add noise to the report - filter them out.
-//
-// - CERTAIN_MIN_PCT: the *conservative* delta (CI endpoint nearest zero) must exceed this. 2% — the
-//   timer + GC-stability fixes tightened most benches to ~1–2% rme, so a real ~2% move clears its CI
-//   and is worth surfacing, without flagging sub-2% wobble. (Was 3; 1.6 proved too aggressive.)
-// - NOISY_MIN_PCT: only surface within-CI items when the raw delta is large enough to suggest
-//   the benchmark is flaky or needs more runs - not every 3% wobble.
-const CERTAIN_MIN_PCT = 2;
-const NOISY_MIN_PCT = 10;
-
-// Precision bands for the console summary: ≥ HIGH = imprecise (raise noiseFactor), ≤ LOW =
-// over-sampled (lower it to run faster). The per-bench factors come from suggestNoiseFactor /
-// pragmaticNoiseFactor, surfaced in the report's "Suggested noiseFactors" table.
-const RME_HIGH_PCT = 3;
-const RME_LOW_PCT = 0.5;
+const RESULT_MARK = { faster: '↑', slower: '↓', same: '~' };
+/** Test's speed relative to base behind its mark, and for `same` the resolution: "↑ 1.42×", "~ 1.01× ±3%". */
+const fmtResult = (c) =>
+    `${RESULT_MARK[c.result]} ${Math.exp(c.all.delta).toFixed(2)}×${c.result === 'same' ? ` ±${Math.round(c.rangePct)}%` : ''}`;
 
 const partialFilter = baseMeta.partial || testMeta.partial ? baseMeta.filter || testMeta.filter : '';
 let md = partialFilter ? `# Benchmark Comparison (partial)\n\n` : `# Benchmark Comparison\n\n`;
 if (partialFilter) {
     md += `> ⚠️ **Partial run** — filtered to \`${partialFilter}\`. This is not a complete comparison.\n\n`;
 }
-const baseRunCount = baseRuns.length;
-const testRunCount = testRuns.length;
-const runCountLabel =
-    baseRunCount === testRunCount
-        ? `${baseRunCount} run(s) per side`
-        : `${baseRunCount} base run(s), ${testRunCount} test run(s)`;
 const totalDurationMs = (baseMeta.durationMs ?? 0) + (testMeta.durationMs ?? 0);
 
-// First chapter: exactly what was compared, and where it ran. (rme / aggregation method belong with
-// the detailed tables — they say nothing useful for a single run.)
 const reportEnv = baseMeta.env ?? testMeta.env ?? {};
+// The noise model as both the report and the console state it.
+const noiseLabel = {
+    tau: (noise.tau * 100).toFixed(1),
+    share: (noise.outlierShare * 100).toFixed(0),
+    outlier: (noise.outlierTau * 100).toFixed(0),
+};
 const sideLine = (label, meta) => {
     const g = meta.git;
     const where = g?.branch ? `\`${g.branch}\`${g.commit ? ` @ ${g.commit}` : ''}` : '(unknown branch)';
     const dir = meta.targetDir ? ` · \`${basename(meta.targetDir)}\`` : '';
     return `- **${label}** — ${where}${dir}`;
 };
-const engineLine =
-    reportEnv.engine === 'node'
-        ? `node ${reportEnv.node ?? '?'} + happy-dom (no layout engine)`
-        : `real browser — Chromium ${reportEnv.chromium ?? '?'} (node ${reportEnv.node ?? '?'})`;
-md += `## Comparison\n\n`;
+const roundsLine = roundSizes.map((n, i) => `round ${i + 1}: ${n}`).join(', ');
+// Each run's wall time, which includes judging the runs before it.
+const roundWallMs = baseMeta.roundWallMs ?? [];
+const roundsTimed = roundSizes
+    .map((n, i) => `run ${i + 1} ${roundWallMs[i] ? `${fmtDuration(roundWallMs[i])} ` : ''}(${n} benches)`)
+    .join(', ');
 md += `${sideLine('base', baseMeta)}\n`;
 md += `${sideLine('test', testMeta)}\n`;
-md += `- **Engine** — ${engineLine}\n`;
+md += `- **Machine** — Chromium ${reportEnv.chromium ?? '?'}`;
 if (reportEnv.cpu) {
-    md += `- **CPU** — ${reportEnv.cpu}${reportEnv.cpuCount ? ` × ${reportEnv.cpuCount}` : ''}\n`;
+    md += ` · ${reportEnv.cpu}${reportEnv.cpuCount ? ` × ${reportEnv.cpuCount}` : ''}`;
 }
-md += `- **Runs** — ${runCountLabel} · ${fmtDuration(totalDurationMs)} `;
-md += `(base ${fmtDuration(baseMeta.durationMs ?? 0)}, test ${fmtDuration(testMeta.durationMs ?? 0)})\n`;
+md += `\n`;
+const wall = fmtDuration(paired ? (baseMeta.wallMs ?? 0) : totalDurationMs);
+md += `- **Wall time** — ${wall}: ${roundsTimed}\n`;
+if (shiftTaken) {
+    md += `- **Separate sessions** — base and test did not run paired, so the median bench's shift `;
+    md += `(test ${Math.abs(pctOf(sessionShift)).toFixed(1)}% ${sessionShift >= 0 ? 'faster' : 'slower'}) is taken out `;
+    md += `of every result: a change that moves every bench alike shows only here\n`;
+} else if (!paired) {
+    md += `- **Separate sessions** — base and test did not run paired, and under ${MIN_POOL} benches are too few to `;
+    md += `measure the shift between sessions, so none was taken out\n`;
+}
+md += `- **Results** — ${reportedFaster} faster, ${reportedSlower} slower, ${resultCounts.same} same`;
+md += unsureChanges
+    ? `; ${unsureChanges} likelier changed than not but under ${REPORTED * 100}% sure, left in the tables\n`
+    : `\n`;
+md += `- **Result** — test's speed relative to base: ↑ faster, ↓ slower, ~ same (a change under ${FLOOR_PCT}%, `;
+md += `± the measurement's 95% range)\n`;
+md += `- **Confidence** — how likely the result is right, given that ${Math.round(prior.unchanged * 100)}% of benches `;
+md += `${prior.fitted ? 'in this run' : 'in a typical run'} did not change and a real `;
+md += `change is typically ${pctOf(prior.scale).toFixed(1)}%; from every round's calls, between-process noise `;
+md += `(±${noiseLabel.tau}%, and ±${noiseLabel.outlier}% for the ${noiseLabel.share}% of process pairs that land far off; `;
+md += `${fittedNoise.fitted ? 'learned on this machine' : 'default'}) and the run's own spread across benches`;
+md += selfFactor > 1 ? `; within-run noise widened ×${selfFactor.toFixed(2)} by the A/A self-check\n` : `\n`;
+if (recordConfirmed) {
+    md += `- **Round-1 changes upheld** — ${recordUpheld} of ${recordConfirmed} in ${Object.keys(record.cohorts).length} recorded runs\n`;
+}
 // Later of the two sides — the run as a whole finished when the slower side did. ISO strings sort lexically.
 const runTimes = [testMeta.lastRunAt ?? testMeta.timestamp, baseMeta.lastRunAt ?? baseMeta.timestamp].filter(Boolean);
 const ranAtIso = runTimes.length ? runTimes.reduce((a, b) => (a > b ? a : b)) : '';
@@ -1166,104 +1970,41 @@ const ranAt = ranAtIso
     ? new Date(ranAtIso).toLocaleString('en-GB', { timeZone: 'Europe/London', hour12: false }).replace(',', '')
     : '';
 md += ranAt ? `- **When** — ${ranAt} (UK)\n\n` : `\n`;
-// Aggregation method only matters across multiple runs; for a single run hz/rme are the run's own.
-if (baseRunCount > 1 || testRunCount > 1) {
-    md += `> Aggregation: inverse-variance weighted hz; rme = max(run-to-run std, within-run rme).\n\n`;
-}
 
-// "Certain" = confidence interval excludes zero AND its nearest endpoint exceeds the threshold.
-// "Noisy"   = delta is within the CI (flaky or needs more runs), only surfaced when the raw
-//             delta is large enough to warrant investigation.
-const notableCertain = comparisons
-    .filter((c) => !isNoisy(c) && Math.abs(c.deltaConservative) >= CERTAIN_MIN_PCT)
-    .sort(bySignedDeltaDesc);
-const notableNoisy = comparisons
-    .filter((c) => isNoisy(c) && Math.abs(c.delta) >= NOISY_MIN_PCT)
-    .sort(bySignedDeltaDesc);
-const notable = [...notableCertain, ...notableNoisy];
+const RESULT_HEAD = ['Result', 'Confidence', 'ms per call, base → test', 'Runs'];
+const RESULT_RIGHT = [false, true, true, true];
+const resultCells = (c) => [
+    fmtResult(c),
+    `${confidencePct(c)}%`,
+    `${fmtMs(c.baseMs)} → ${fmtMs(c.testMs)}`,
+    String(c.rounds.length),
+];
 
-function writeNotableTable(header, rows) {
-    if (rows.length === 0) {
-        return;
-    }
-    md += `${header}\n\n`;
-    md += `| File | Benchmark | base (ops/s) | test (ops/s) | Result |\n`;
-    md += `|------|-----------|-------------|-------------|--------|\n`;
-    for (const c of rows) {
-        md += `| ${shortFile(c.file)} | ${c.name} | ${fmtHz(c.baseHz)} | ${fmtHz(c.testHz)} | **${fmtSpeedup(c)}** |\n`;
-    }
-    md += `\n`;
-}
+const changeTable = (list) =>
+    mdTable(
+        ['Benchmark', ...RESULT_HEAD, 'File'],
+        list.map((c) => [c.name, ...resultCells(c), shortFile(c.file)]),
+        [false, ...RESULT_RIGHT, false]
+    );
 
-if (notable.length > 0) {
-    writeNotableTable('## Notable Changes (outside margin of error)', notableCertain);
-    writeNotableTable('## Notable Changes — Noisy (delta within margin of error)', notableNoisy);
+md += `## Changes\n\n`;
+if (changes.length) {
+    md += changeTable(changes);
 } else {
-    md += `## No notable changes detected.\n\n`;
+    md += `No benchmark changed with at least ${REPORTED * 100}% confidence.\n\n`;
 }
 
-// The benches that ran but moved within noise — so the report says how many were checked, not just
-// the few that changed.
-const unchangedCount = comparisons.length - notable.length;
-if (unchangedCount > 0) {
-    md += `_${unchangedCount} other benchmark(s) ran with no notable change._\n\n`;
+// Measured slower but not confirmed: kept in view, as a lean that repeats across runs is worth a targeted rerun.
+const slowerUnconfirmed = comparisons.filter((c) => c.leansSlower && !changes.includes(c));
+if (slowerUnconfirmed.length) {
+    md += `## Slower, not confirmed\n\n`;
+    md += `At least ${SLOWER_LEAN * 100}% likely slower, or measured at least ${FLOOR_PCT}% and ${SLOWER_Z}× its noise `;
+    md += `slower, without reaching ${REPORTED * 100}%; one that recurs across runs is worth a \`--filter\`ed run of `;
+    md += `its file with more rounds.\n\n`;
+    md += changeTable(slowerUnconfirmed);
 }
 
-// Suggested noiseFactor changes are tuned to the TEST side (the branch being adjusted). Base runs the
-// SAME bench code, so it's a thermal cross-check: if base is also noisy the variance is real/inherent
-// and worth a factor; if base is calm but test is noisy it's likely a thermal fluke on the test run —
-// re-run before chasing it. The "band" factor targets rme [0.5%, 1.5%]; "pragmatic" caps the bump at 4×.
-const CORROBORATION_RATIO = 0.6; // base rme ≥ 60% of test's ⇒ the noise shows on both sides ⇒ real.
-const SPIKE_THRESHOLD = 2.5; // p99/median above this ⇒ rare large pauses dominate; more samples barely help.
-// Noise floor = this run's median rme. On a thermally-hot run most benches sit near it (base is hot too,
-// so they all "corroborate"), so only flag a bench well ABOVE the floor — a true outlier worth acting
-// on, not the whole thermal baseline. OVER_FACTORED_MS: an over-precise bench is only worth lowering if
-// it actually spends time (high factor); a cheap bench is precise because it's fast, not over-sampled.
-const NOISE_FLOOR_RATIO = 2.5;
-const OVER_FACTORED_MS = 3000;
-const rmeSorted = comparisons.map((c) => c.testRme).sort((a, b) => a - b);
-const noiseFloor = rmeSorted.length ? rmeSorted[Math.floor(rmeSorted.length / 2)] : 0;
-const aboveFloor = (t) => t.rme > noiseFloor * NOISE_FLOOR_RATIO;
-const tuning = comparisons
-    .map((c) => ({
-        c,
-        rme: c.testRme,
-        baseRme: c.baseRme,
-        spike: c.testSpike,
-        time: c.testTime,
-        band: suggestNoiseFactor(c.testRme),
-        prag: pragmaticNoiseFactor(c.testRme),
-        corroborated: c.baseRme >= c.testRme * CORROBORATION_RATIO,
-        spikeBound: c.testSpike >= SPIKE_THRESHOLD,
-    }))
-    .filter((t) => t.band !== 1 || t.prag !== 1)
-    .sort((a, b) => b.rme - a.rme);
-
-// Buckets. Noisy buckets require the bench to be a real outlier (aboveFloor) AND corroborated by base —
-// otherwise it's just this run's thermal baseline, with no action to take. Over-sampled benches are only
-// worth listing when they actually spend time (over-factored), else lowering saves nothing meaningful.
-const overSampled = tuning.filter((t) => t.prag < 1 && t.time > OVER_FACTORED_MS);
-const thermalSuspect = tuning.filter((t) => t.prag > 1 && !t.corroborated && aboveFloor(t));
-const raise = tuning.filter((t) => t.prag > 1 && t.corroborated && !t.spikeBound && aboveFloor(t));
-const reduceData = tuning.filter((t) => t.prag > 1 && t.corroborated && t.spikeBound && aboveFloor(t));
-const review = tuning.filter((t) => t.prag === 1 && t.band > 1 && t.corroborated && aboveFloor(t));
-
-function writeFactorTable(header, note, rows) {
-    if (rows.length === 0) {
-        return;
-    }
-    md += `### ${header}\n\n${note}\n\n`;
-    md += `| File | Benchmark | test rme | base rme | spike | band | pragmatic |\n|------|-----------|---------|---------|-------|------|-----------|\n`;
-    for (const t of rows) {
-        md += `| ${shortFile(t.c.file)} | ${t.c.name} | ±${t.rme.toFixed(2)}% | ±${t.baseRme.toFixed(2)}% | ${t.spike.toFixed(1)}× | ×${t.band} | ×${t.prag} |\n`;
-    }
-    md += `\n`;
-}
-
-// Suggested noiseFactors table is rendered at the very end of the report (after Detailed Results).
-
-// Key by file + group so two bench files with identically-named suites don't get merged into
-// one section (and so each section's header can show its file of origin).
+// Key by file + group so two bench files with identically-named suites don't get merged into one section.
 const byFileGroup = new Map();
 for (const c of comparisons) {
     const key = `${c.file} :: ${c.group}`;
@@ -1274,20 +2015,15 @@ for (const c of comparisons) {
 }
 
 if (byFileGroup.size > 0) {
-    md += `## Detailed Results\n\n`;
-    md += `rme = relative margin of error (lower = more precise).\n\n`;
-
+    md += `## All benchmarks\n\n`;
     for (const { file, group, items } of byFileGroup.values()) {
         const shortGroup = group.includes(' > ') ? group.split(' > ').pop() : group;
         md += `### ${shortFile(file)} › ${shortGroup}\n\n`;
-        md += `| Benchmark | base ops/s (rme) | test ops/s (rme) | Result |\n`;
-        md += `|-----------|-----------------|-----------------|--------|\n`;
-        for (const c of items) {
-            const result = fmtSpeedup(c);
-            const cell = isNoisy(c) ? `${result} <sub>noisy</sub>` : `**${result}**`;
-            md += `| ${c.name} | ${fmtHz(c.baseHz)} (±${c.baseRme.toFixed(1)}%) | ${fmtHz(c.testHz)} (±${c.testRme.toFixed(1)}%) | ${cell} |\n`;
-        }
-        md += `\n`;
+        md += mdTable(
+            ['Benchmark', ...RESULT_HEAD],
+            items.map((c) => [c.name, ...resultCells(c)]),
+            [false, ...RESULT_RIGHT]
+        );
     }
 }
 
@@ -1296,7 +2032,7 @@ if (baseOnly.length > 0 || testOnly.length > 0) {
     if (baseOnly.length > 0) {
         md += `**Only in base** (removed or renamed?):\n`;
         for (const k of baseOnly) {
-            const b = baseAgg.get(k);
+            const b = baseSide.get(k);
             md += `- [${shortFile(b.file)}] ${b.name}\n`;
         }
         md += `\n`;
@@ -1304,7 +2040,7 @@ if (baseOnly.length > 0 || testOnly.length > 0) {
     if (testOnly.length > 0) {
         md += `**Only in test** (added or renamed?):\n`;
         for (const k of testOnly) {
-            const t = testAgg.get(k);
+            const t = testSide.get(k);
             md += `- [${shortFile(t.file)}] ${t.name}\n`;
         }
         md += `\n`;
@@ -1312,56 +2048,17 @@ if (baseOnly.length > 0 || testOnly.length > 0) {
 }
 
 if (invalidComparisons.length > 0) {
-    md += `## Skipped (invalid hz)\n\n`;
-    md += `These benchmarks were excluded from the comparison because the base or test had a `;
-    md += `non-positive or non-finite hz value.\n\n`;
+    md += `## Skipped (not measured on both sides)\n\n`;
+    md += `No round measured these benchmarks on both sides (an errored bench, or a feature one checkout lacks).\n\n`;
     for (const c of invalidComparisons) {
-        md += `- [${shortFile(c.file)}] ${c.name}: ${c.reason} (base=${c.baseHz}, test=${c.testHz})\n`;
+        md += `- [${shortFile(c.file)}] ${c.name}\n`;
     }
     md += `\n`;
 }
 
-if (
-    raise.length > 0 ||
-    reduceData.length > 0 ||
-    thermalSuspect.length > 0 ||
-    overSampled.length > 0 ||
-    review.length > 0
-) {
-    md += `## Suggested noiseFactors\n\n`;
-    md += `Noise floor this run (median rme): **±${noiseFloor.toFixed(2)}%** — only benches above ±${(noiseFloor * NOISE_FLOOR_RATIO).toFixed(2)}% are listed, so the rest sit at the run's baseline with no action to take. `;
-    md += `Tuned to the **test** side; **base rme** is the thermal cross-check (noisy on both ⇒ real), `;
-    md += `**spike** is p99/median (high ⇒ rare pauses, not broadband noise). Set with \`benchDefaults(…, factor)\`; \`pragmatic\` caps the bump at 4×.\n\n`;
-    writeFactorTable(
-        'Under-sampled (raise noiseFactor)',
-        'Broadband noise (low spike) that base agrees is real — raise the factor (more samples tighten it), or improve the benchmark setup / grid code so the operation is less variable.',
-        raise
-    );
-    writeFactorTable(
-        'Spike-bound (reduce the dataset)',
-        `Real noise (base agrees) but dominated by rare pauses (spike ≥ ${SPIKE_THRESHOLD}× p99/median) — GC/layout, not under-sampling. More samples barely help; shrink the dataset to cut the pauses.`,
-        reduceData
-    );
-    writeFactorTable(
-        'Test-only noise (likely thermal — re-run before adjusting)',
-        'Noisy on test but base was calm, so it’s probably a thermal fluke on this run rather than the bench. Confirm with another run before changing a factor.',
-        thermalSuspect
-    );
-    writeFactorTable(
-        'Outside the ideal band (review)',
-        `Above the ${NOISE_BAND_HIGH}% band but pragmatic leaves them as-is — to tighten, reduce the dataset or set a manual factor.`,
-        review
-    );
-    writeFactorTable(
-        'Over-sampled benchmarks (lower noiseFactor to run faster)',
-        `Already very precise (rme < ${NOISE_BAND_LOW}%); a factor < 1 runs them faster with ample precision.`,
-        overSampled
-    );
-}
-
 md += `---\n\n`;
 const generatedAt = new Date().toLocaleString('en-GB', { timeZone: 'Europe/London', hour12: false }).replace(',', '');
-md += `*Generated by bench-compare.mjs — ${runCountLabel}, weighted hz, ${generatedAt} (UK)*\n`;
+md += `_Generated by bench-compare.mjs — ${generatedAt} (UK)_\n`;
 
 writeFileSync(mdPath, md);
 
@@ -1370,38 +2067,20 @@ writeFileSync(mdPath, md);
 console.log('Results written to:');
 console.log(`  ${jsonPath}`);
 console.log(`  ${mdPath}`);
-const tooNoisy = tuning.filter((t) => t.rme >= RME_HIGH_PCT).length;
-const overSampledCount = tuning.filter((t) => t.rme <= RME_LOW_PCT).length;
-if (tooNoisy > 0 || overSampledCount > 0) {
+console.log(
+    `\n=== Summary (benches per round: ${roundsLine}) — ${reportedFaster} faster, ${reportedSlower} slower, ` +
+        `${resultCounts.same} same${unsureChanges ? `, ${unsureChanges} under ${REPORTED * 100}% sure` : ''} ===`
+);
+console.log(
+    `  self-check ${selfOutside}/${selfZ.length} outside${selfFactor > 1 ? ` (widened ×${selfFactor.toFixed(2)})` : ''}` +
+        ` · τ ±${noiseLabel.tau}%, ${noiseLabel.share}% outliers ±${noiseLabel.outlier}%` +
+        ` (${fittedNoise.fitted ? 'history' : 'default'})` +
+        ` · empirical null ×${nullFactor.toFixed(2)}` +
+        (shiftTaken ? ` · separate sessions, shift ${pctOf(sessionShift).toFixed(1)}% taken out` : '') +
+        (!paired && !shiftTaken ? ' · separate sessions, too few benches to take a shift out' : '')
+);
+for (const c of changes) {
     console.log(
-        `\n⚙️  noiseFactor: ${tooNoisy} bench(es) ≥ ${RME_HIGH_PCT}% (raise), ${overSampledCount} ≤ ${RME_LOW_PCT}% ` +
-            `(lower to run faster). See the report's "Suggested noiseFactors" table.`
+        `  ${fmtResult(c).padEnd(14)} ${String(confidencePct(c)).padStart(2)}%  [${shortFile(c.file)}] ${c.name}`
     );
-}
-console.log(`\n=== Summary (${runCountLabel}, weighted hz) ===`);
-
-function printNotableLine(c) {
-    const arrow = c.delta > 0 ? '↑' : '↓';
-    const result = fmtSpeedup(c);
-    console.log(
-        `  ${arrow} ${result.padStart(16)}  [${shortFile(c.file)}] ${c.name}  (${fmtHz(c.baseHz)} → ${fmtHz(c.testHz)} ops/s)`
-    );
-}
-
-if (notable.length > 0) {
-    if (notableCertain.length > 0) {
-        console.log(`\n-- Certain (outside margin of error) --`);
-        for (const c of notableCertain) {
-            printNotableLine(c);
-        }
-    }
-    if (notableNoisy.length > 0) {
-        console.log(`\n-- Noisy (delta within margin of error) --`);
-        for (const c of notableNoisy) {
-            printNotableLine(c);
-        }
-        console.log(`\n  ${notableNoisy.length} of ${notable.length} notable change(s) are within noise.`);
-    }
-} else {
-    console.log('  No notable changes detected.');
 }

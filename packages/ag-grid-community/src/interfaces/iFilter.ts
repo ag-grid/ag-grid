@@ -138,8 +138,10 @@ export type FilterHandlers<TData = any, TValue = any, TContext = any, TModel = a
 export interface ColumnFilter<TData = any, TValue = any, TContext = any, TModel = any, TCustomParams = any> {
     /**
      * Filter component to use for this column.
-     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agBigIntColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`.
+     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agBigIntColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`, `agGroupColumnFilter`.
      * - Set to a custom filter `FilterDisplay`
+     *
+     * A name no filter is registered under is warned about and the default filter is used instead.
      */
     component: any;
     /**
@@ -147,14 +149,15 @@ export interface ColumnFilter<TData = any, TValue = any, TContext = any, TModel 
      * will be called for each row in the grid to see if it passes.
      * If any filter fails, then the row will be excluded from the final set.
      *
-     * Not required if providing a `handler`, or if not using Client-Side Row Model.
+     * Not required if providing a `handler`, if `component` names a provided filter, or if not using Client-Side Row Model.
      */
     doesFilterPass?: (params: DoesFilterPassParams<TData, TContext, TModel, TCustomParams>) => boolean;
     /**
      * Returns a handler which contains the logic for executing the filter.
      * Allows for more complex filter cases than `doesFilterPass`.
      *
-     * Not required if providing `doesFilterPass` (but will take precedence), or if not using Client-Side Row Model.
+     * Not required if providing `doesFilterPass` (but will take precedence), if `component` names a provided filter,
+     * or if not using Client-Side Row Model.
      */
     handler?: string | CreateFilterHandlerFunc<TData, TValue, TContext, TModel, TCustomParams>;
 }
@@ -167,12 +170,14 @@ export interface IFilterDef {
     /**
      * Filter to use for this column.
      * - Set to `true` to use the default filter.
-     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agBigIntColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`.
+     * - Set to the name of a provided filter: `agNumberColumnFilter`, `agBigIntColumnFilter`, `agTextColumnFilter`, `agDateColumnFilter`, `agMultiColumnFilter`, `agSetColumnFilter`, `agGroupColumnFilter`.
      * - Set to a custom filter `IFilterComp` when `enableFilterHandlers = false`.
      * - Set to a `ColumnFilter` when `enableFilterHandlers = true`
+     *
+     * A name no filter is registered under is warned about and the default filter is used instead.
      */
     filter?: any;
-    /** Params to be passed to the filter component specified in `filter`. */
+    /** Params to be passed to the filter component specified in `filter`, or a function returning them. */
     filterParams?: any;
 
     /**
@@ -363,6 +368,7 @@ export interface SharedFilterParams<TData = any, TContext = any> extends AgGridC
      * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.
      * The set filter uses this to remove from the list,
      * items that are no longer available due to the state of other filters (like Excel type filtering).
+     * With Tree Data, a row the other columns' filters display for a matching relative passes too.
      */
     doesRowPassOtherFilter: (rowNode: IRowNode<TData>) => boolean; // TODO: this method should be "doesRowPassOtherFilters"
 }
@@ -479,8 +485,13 @@ export interface ColumnFilterState {
 }
 
 export interface FilterActionParams {
-    /** Column ID to perform action on. If `undefined`, will run for all columns. */
-    colId?: string;
-    /** Action to perform */
-    action: FilterAction;
+    /** Column ID, or IDs, to perform the action on. If `undefined`, will run for all columns. */
+    colId?: string | string[];
+    /**
+     * Action to perform. `clearPreservedValues` discards the values the Set Filter's `preservePreviousValues` keeps,
+     * wherever the column keeps them, except those an applied Advanced Filter expression names, and reconciles the
+     * filter model with what remains. `clearUnselectedPreservedValues` discards only those neither in the applied
+     * filter model nor named by an applied Advanced Filter expression, and leaves the model as it is.
+     */
+    action: FilterAction | 'clearPreservedValues' | 'clearUnselectedPreservedValues';
 }

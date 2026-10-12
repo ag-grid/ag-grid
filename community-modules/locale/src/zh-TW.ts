@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_ZH_TW = {
     addFilterCard: '添加篩選條件',
     agTextColumnFilterDisplayName: '簡單篩選',
     agNumberColumnFilterDisplayName: '簡單篩選',
+    agBigIntColumnFilterDisplayName: '簡單篩選',
     agDateColumnFilterDisplayName: '簡單篩選',
     agSetColumnFilterDisplayName: '選擇篩選',
     agMultiColumnFilterDisplayName: '組合篩選',
@@ -736,6 +737,7 @@ export const AG_GRID_LOCALE_ZH_TW = {
     ariaFilterList: '篩選列表',
     ariaFilterToValue: '篩選到值',
     ariaFilterValue: '篩選值',
+    ariaNotInCurrentData: '不在當前資料中',
     ariaFilterMenuOpen: '打開篩選器選單',
     ariaFilteringOperator: '篩選運算子',
     ariaHidden: '隱藏',
@@ -889,9 +891,11 @@ export const AG_GRID_LOCALE_ZH_TW = {
     columnHeaderEditCancel: '取消',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: '找不到符合條件的欄。',
     calculatedColumn: '計算欄位',
     calculatedColumnAdd: '新增計算欄位',
     calculatedColumnEdit: '編輯計算欄位',
+    calculatedColumnView: '檢視計算欄位',
     calculatedColumnRemove: '移除計算欄位',
     calculatedColumnTitle: '標題',
     calculatedColumnType: '類型',
@@ -906,6 +910,7 @@ export const AG_GRID_LOCALE_ZH_TW = {
     calculatedColumnExpressionAmbiguousReference:
         '欄位參照不明確 "${variable}"。請使用「欄位」清單或更具體的群組路徑。',
     calculatedColumnExpressionUnknownReference: '未知的欄位參照 "${variable}"。',
+    calculatedColumnExpressionRestrictedReference: '此運算式中不能使用欄位 "${variable}"。',
     calculatedColumnExpressionEmpty: '請輸入運算式',
     calculatedColumnTitleEmpty: '請輸入標題',
     calculatedColumnApply: '應用',

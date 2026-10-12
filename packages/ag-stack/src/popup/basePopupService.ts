@@ -726,8 +726,15 @@ export abstract class BasePopupService<
 
     public isElementWithinCustomPopup(el: HTMLElement): boolean {
         const eDocument = _getDocument(this.beans);
+        const eRootDiv = this.beans.eRootDiv;
         while (el && el !== eDocument.body) {
-            if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) {
+            // Don't flag an element as being inside a custom pop-up if said popup contains this whole grid.
+            // Otherwise, if one grid opens a custom popup containing a second grid, then every cell in the
+            // second grid would count as being inside a custom popup
+            if (
+                el.parentElement === null ||
+                (el.classList.contains('ag-custom-component-popup') && !el.contains(eRootDiv))
+            ) {
                 return true;
             }
             el = el.parentElement;

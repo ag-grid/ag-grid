@@ -63,29 +63,28 @@ const colIdsOf = (defs: (ColDef | ColGroupDef)[]): string[] => {
 
 suite('column update — applyColumnState / getColumnState paths (tiny rowData)', () => {
     let gridId = 0;
-    // 1.5: with the GC-stability flags these mutations sit ~1.5–2% in isolation; higher factors mostly
-    // buy CPU-contention noise on a long run, and keep the suite within the per-run time budget.
+    // Cell re-layout after a column change waits on a frame never flushed here: these measure the model.
+    const gridsManager = new BenchGridsManager({ modules });
+    // Every call makes a change and undoes it, so calls are alike and each one does real work.
     const benchUpdate = (
         name: string,
         initial: GridOptions,
-        apply: (api: GridApi, iter: number) => void,
-        noiseFactor = 1.5
+        roundTrip: (api: GridApi) => void,
+        init?: (api: GridApi) => void
     ) => {
         const id = `CU${++gridId}`;
-        const gridsManager = new BenchGridsManager({ modules });
         let api!: GridApi;
-        let iter = 0;
         bench(
             name,
             () => {
-                apply(api, iter++);
+                roundTrip(api);
             },
             {
-                ...benchDefaults({ noiseFactor }),
+                ...benchDefaults(),
                 setup: async () => {
                     await gridsManager.reset();
-                    iter = 0;
                     api = gridsManager.createGrid(id, { ...initial, rowData: tinyRows });
+                    init?.(api);
                 },
             }
         );
@@ -94,80 +93,66 @@ suite('column update — applyColumnState / getColumnState paths (tiny rowData)'
     const cols50 = buildFlatCols(50);
     const ids50 = colIdsOf(cols50);
 
-    benchUpdate('getColumnState 50 flat cols', { columnDefs: cols50 }, (api) => {
-        api.getColumnState();
-    });
-
-    benchUpdate(
-        'applyColumnState restore saved state 50 flat cols',
-        { columnDefs: cols50 },
-        (() => {
-            let saved: ColumnState[] | null = null;
-            return (api: GridApi) => {
-                saved ??= api.getColumnState();
-                api.applyColumnState({ state: saved, applyOrder: true });
+    // Reset and restore both have work to do only from a state away from the colDefs'.
+    const sorted = ['c40', 'c44'];
+    const custom50: ColumnState[] = ids50
+        .slice()
+        .reverse()
+        .map((colId, i): ColumnState => {
+            const sortIndex = sorted.indexOf(colId);
+            return {
+                colId,
+                width: i % 3 === 0 ? 150 : undefined,
+                pinned: i < 3 ? 'left' : null,
+                sort: sortIndex < 0 ? null : 'asc',
+                sortIndex: sortIndex < 0 ? null : sortIndex,
+                hide: i % 5 === 4,
             };
-        })()
+        });
+    benchUpdate(
+        'save, reset and restore column state 50 cols (order, width, pinned, sort, hidden)',
+        { columnDefs: cols50 },
+        (api) => {
+            const saved = api.getColumnState();
+            api.resetColumnState();
+            api.applyColumnState({ state: saved, applyOrder: true });
+        },
+        (api) => api.applyColumnState({ state: custom50, applyOrder: true })
     );
 
-    const forward50: ColumnState[] = ids50.map((colId) => ({ colId }));
-    const reversed50: ColumnState[] = ids50
+    const mixed = [...buildFlatCols(18), ...buildGroupedCols(5, 6).slice(2)]; // 20 flat + 6 groups × 5
+    const mixedIds = colIdsOf(mixed);
+    const mixedForward: ColumnState[] = mixedIds.map((colId) => ({ colId }));
+    const mixedReversed: ColumnState[] = mixedIds
         .slice()
         .reverse()
         .map((colId) => ({ colId }));
-    benchUpdate('applyColumnState reverse/forward order 50 cols (applyOrder)', { columnDefs: cols50 }, (api, i) => {
-        api.applyColumnState({ state: i & 1 ? forward50 : reversed50, applyOrder: true });
-    });
+    benchUpdate(
+        'applyColumnState reverse and restore order, 20 flat + 6 groups × 5 cols',
+        { columnDefs: mixed },
+        (api) => {
+            api.applyColumnState({ state: mixedReversed, applyOrder: true });
+            api.applyColumnState({ state: mixedForward, applyOrder: true });
+        }
+    );
 
     const hideHalf50: ColumnState[] = ids50.map((colId, i) => ({ colId, hide: (i & 1) === 0 }));
-    const showAll50: ColumnState[] = ids50.map((colId) => ({ colId, hide: false }));
-    benchUpdate('applyColumnState toggle visibility half of 50 cols', { columnDefs: cols50 }, (api, i) => {
-        api.applyColumnState({ state: i & 1 ? showAll50 : hideHalf50 });
-    });
+    benchUpdate(
+        'hide 50 cols, show half, show all (with selection col)',
+        { columnDefs: cols50, rowSelection: { mode: 'multiRow' } },
+        (api) => {
+            api.setColumnsVisible(ids50, false);
+            api.applyColumnState({ state: hideHalf50 });
+            api.applyColumnState({ defaultState: { hide: false } });
+        }
+    );
 
     const pinLeft50: ColumnState[] = ids50.map((colId, i) => ({ colId, pinned: i < 5 ? ('left' as const) : null }));
     const unpinned50: ColumnState[] = ids50.map((colId) => ({ colId, pinned: null }));
-    benchUpdate('applyColumnState toggle pinned 5 of 50 cols', { columnDefs: cols50 }, (api, i) => {
-        api.applyColumnState({ state: i & 1 ? unpinned50 : pinLeft50 });
+    benchUpdate('applyColumnState pin and unpin 5 of 50 cols', { columnDefs: cols50 }, (api) => {
+        api.applyColumnState({ state: pinLeft50 });
+        api.applyColumnState({ state: unpinned50 });
     });
-
-    benchUpdate('setColumnsVisible toggle 50 cols', { columnDefs: cols50 }, (api, i) => {
-        api.setColumnsVisible(ids50, (i & 1) === 1);
-    });
-
-    benchUpdate(
-        'setColumnsVisible toggle 50 cols (with selection col)',
-        { columnDefs: cols50, rowSelection: { mode: 'multiRow' } },
-        (api, i) => {
-            api.setColumnsVisible(ids50, (i & 1) === 1);
-        }
-    );
-
-    benchUpdate('resetColumnState 50 cols', { columnDefs: cols50 }, (api) => {
-        api.resetColumnState();
-    });
-
-    const cols20 = buildFlatCols(20);
-    const addRowGroup: ColumnState[] = [{ colId: 'group', rowGroup: true, rowGroupIndex: 0 }];
-    const clearRowGroup: ColumnState[] = [{ colId: 'group', rowGroup: false, rowGroupIndex: null }];
-    benchUpdate('applyColumnState toggle rowGroup (auto col churn) 20 cols', { columnDefs: cols20 }, (api, i) => {
-        api.applyColumnState({ state: i & 1 ? clearRowGroup : addRowGroup });
-    });
-
-    const grouped = buildGroupedCols(5, 8); // 8 groups × 5 leaves
-    const gIds = colIdsOf(grouped);
-    const gForward: ColumnState[] = gIds.map((colId) => ({ colId }));
-    const gReversed: ColumnState[] = gIds
-        .slice()
-        .reverse()
-        .map((colId) => ({ colId }));
-    benchUpdate(
-        'applyColumnState reverse/forward order 8 groups × 5 cols (applyOrder)',
-        { columnDefs: grouped },
-        (api, i) => {
-            api.applyColumnState({ state: i & 1 ? gForward : gReversed, applyOrder: true });
-        }
-    );
 
     const sortAsc6: ColumnState[] = ids50
         .slice(0, 6)
@@ -175,40 +160,44 @@ suite('column update — applyColumnState / getColumnState paths (tiny rowData)'
     const sortDesc6: ColumnState[] = ids50
         .slice(0, 6)
         .map((colId, i) => ({ colId, sort: 'desc' as const, sortIndex: i }));
-    benchUpdate('applyColumnState multi-sort 6 of 50 cols', { columnDefs: cols50 }, (api, i) => {
-        api.applyColumnState({ state: i & 1 ? sortAsc6 : sortDesc6 });
+    benchUpdate('applyColumnState multi-sort 6 of 50 cols, asc then desc', { columnDefs: cols50 }, (api) => {
+        api.applyColumnState({ state: sortAsc6 });
+        api.applyColumnState({ state: sortDesc6 });
     });
 
-    const widthA50: ColumnState[] = ids50.map((colId) => ({ colId, width: 120 }));
-    const widthB50: ColumnState[] = ids50.map((colId) => ({ colId, width: 180 }));
-    benchUpdate('applyColumnState set width 50 cols', { columnDefs: cols50 }, (api, i) => {
-        api.applyColumnState({ state: i & 1 ? widthA50 : widthB50 });
+    const flex50: ColumnState[] = ids50.map((colId) => ({ colId, flex: 1 }));
+    const width50: ColumnState[] = ids50.map((colId) => ({ colId, width: 120, flex: null }));
+    benchUpdate('applyColumnState flex then fixed width 50 cols', { columnDefs: cols50 }, (api) => {
+        api.applyColumnState({ state: flex50 });
+        api.applyColumnState({ state: width50 });
     });
 
-    const flexA50: ColumnState[] = ids50.map((colId) => ({ colId, flex: 1 }));
-    const flexB50: ColumnState[] = ids50.map((colId) => ({ colId, flex: 2 }));
-    benchUpdate('applyColumnState set flex 50 cols', { columnDefs: cols50 }, (api, i) => {
-        api.applyColumnState({ state: i & 1 ? flexA50 : flexB50 });
-    });
-
-    const addAgg: ColumnState[] = [{ colId: 'value', aggFunc: 'sum' }];
-    const clearAgg: ColumnState[] = [{ colId: 'value', aggFunc: null }];
-    benchUpdate('applyColumnState toggle aggFunc on value col 20 cols', { columnDefs: cols20 }, (api, i) => {
-        api.applyColumnState({ state: i & 1 ? clearAgg : addAgg });
-    });
+    const cols20 = buildFlatCols(20);
+    const addGroupAndAgg: ColumnState[] = [
+        { colId: 'group', rowGroup: true, rowGroupIndex: 0 },
+        { colId: 'value', aggFunc: 'sum' },
+    ];
+    const clearGroupAndAgg: ColumnState[] = [
+        { colId: 'group', rowGroup: false, rowGroupIndex: null },
+        { colId: 'value', aggFunc: null },
+    ];
+    benchUpdate(
+        'applyColumnState rowGroup + aggFunc on and off (auto col churn) 20 cols',
+        { columnDefs: cols20 },
+        (api) => {
+            api.applyColumnState({ state: addGroupAndAgg });
+            api.applyColumnState({ state: clearGroupAndAgg });
+        }
+    );
 
     const addPivot: ColumnState[] = [{ colId: 'group', pivot: true, pivotIndex: 0 }];
     const clearPivot: ColumnState[] = [{ colId: 'group', pivot: false, pivotIndex: null }];
     benchUpdate(
-        'applyColumnState toggle pivot (pivotMode) 20 cols',
+        'applyColumnState pivot on and off (pivotMode) 20 cols',
         { columnDefs: cols20, pivotMode: true },
-        (api, i) => {
-            api.applyColumnState({ state: i & 1 ? clearPivot : addPivot });
+        (api) => {
+            api.applyColumnState({ state: addPivot });
+            api.applyColumnState({ state: clearPivot });
         }
     );
-
-    const partialState: ColumnState[] = [{ colId: 'c0', hide: true }];
-    benchUpdate('applyColumnState with defaultState (49 cols defaulted)', { columnDefs: cols50 }, (api, i) => {
-        api.applyColumnState({ state: partialState, defaultState: { hide: (i & 1) === 0 } });
-    });
 });

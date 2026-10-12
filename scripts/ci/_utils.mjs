@@ -1,144 +1,3 @@
-import fs from 'node:fs';
-
-export function getHeader(
-    isSuccess,
-    link,
-    workflowName,
-    jobId,
-    jobUrl,
-    branchName,
-    bold,
-    inlineCode,
-    lastFailedStep,
-    section
-) {
-    const emoji = isSuccess ? '✅' : '❌';
-    const jobLink = link(`${workflowName} #${jobId}`, jobUrl);
-    const atStep = lastFailedStep ? ` at step ${inlineCode(lastFailedStep)}` : '';
-    const status = isSuccess ? bold('is successful') : `${bold('failed')}${atStep}`;
-    return section(`${emoji} AgGrid / ${jobLink} run (on ${branchName}) ${status}`);
-}
-
-export function getGitDiffLinks(repoUrl, currentCommitSha, previousCommitSha, context, section, link, parsedReport) {
-    if (!repoUrl) {
-        return context('No git diff available');
-    }
-
-    const links = new Set();
-    parsedReport?.results?.tests?.forEach((test) => {
-        try {
-            const controlGitHash = getGitHashFromTest(test);
-            const variantGitHash = getGitHashFromTest(test, 'variant');
-            if (!controlGitHash || !variantGitHash || controlGitHash === variantGitHash) {
-                return;
-            }
-            links.add(getDiffUrl(controlGitHash, variantGitHash, repoUrl));
-        } catch (e) {}
-    });
-
-    if (links.size === 0) {
-        if (!currentCommitSha || !previousCommitSha || previousCommitSha === currentCommitSha) {
-            return context('No new changes');
-        }
-        links.add(getDiffUrl(previousCommitSha, currentCommitSha, repoUrl));
-    }
-    const linksArr = [...links].map((url) => getGitDiffLink(url, (t) => t, link));
-    return section(linksArr.join('\n'));
-}
-
-export function getDiffUrl(controlHash, variantHash, repoUrl) {
-    return `${repoUrl}/compare/${controlHash.slice(0, 7)}...${variantHash.slice(0, 7)}`;
-}
-
-export function getGitDiffLink(url, section, link) {
-    return section(link('Git diff', url));
-}
-
-export function getGitHashFromTest(test, type = 'control') {
-    return test?.extra?.annotations?.[0]?.description?.[type]?.gitHash;
-}
-
-export function parseCtrfReport(ctrfReportFile) {
-    try {
-        const rawReport = fs.readFileSync(ctrfReportFile, 'utf8').trim();
-        if (!rawReport) {
-            console.warn(`Report file ${ctrfReportFile} is empty. Continuing without it.`);
-        }
-        return JSON.parse(rawReport);
-    } catch (error) {
-        console.warn(`Failed to read CTRF report from ${ctrfReportFile}. Continuing without it.`);
-    }
-}
-function renderStat(statKey, parsedReport) {
-    return `${statKey}: ${parsedReport.results.summary[statKey]}`;
-}
-
-export function getStats(parsedReport, context) {
-    if (!parsedReport || !parsedReport.results || !parsedReport.results.summary) {
-        return '';
-    }
-    return parsedReport
-        ? context(
-              `Tests ${['failed', 'passed', 'skipped']
-                  .filter((n) => parsedReport.results.summary[n])
-                  .map((key) => renderStat(key, parsedReport))
-                  .join(', ')}`
-          )
-        : '';
-}
-
-function formatMemoryBytes(bytes) {
-    const abs = Math.abs(bytes);
-    if (abs < 1024) {
-        return `${bytes} B`;
-    }
-    if (abs < 1024 * 1024) {
-        return `${(bytes / 1024).toFixed(1)} KB`;
-    }
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-// Render any `memory`-type annotations (from informational memory benchmarks, e.g.
-// cell-memory.spec.ts) into the PR comment. Returns '' when there are none, so timing-only
-// runs are unaffected.
-export function getMemoryStats(parsedReport, context, section) {
-    const tests = parsedReport?.results?.tests;
-    if (!tests) {
-        return '';
-    }
-
-    const blocks = [];
-    for (const test of tests) {
-        const annotation = test.extra?.annotations?.find((a) => a && a.type === 'memory');
-        if (!annotation) {
-            continue;
-        }
-
-        let summary;
-        try {
-            summary =
-                typeof annotation.description === 'string'
-                    ? JSON.parse(annotation.description)
-                    : annotation.description;
-        } catch {
-            continue;
-        }
-        if (!summary?.control || !summary?.variant) {
-            continue;
-        }
-
-        const { control, variant } = summary;
-        const lines = [
-            summary.scenario,
-            `allocated/run  ${control.version}: ${formatMemoryBytes(control.allocBytes)}  ${variant.version}: ${formatMemoryBytes(variant.allocBytes)}  Δ ${summary.allocDeltaPct.toFixed(1)}%`,
-            `retained (GC)  ${control.version}: ${formatMemoryBytes(control.retainedBytes)}  ${variant.version}: ${formatMemoryBytes(variant.retainedBytes)}  Δ ${formatMemoryBytes(summary.retainedDeltaBytes)}`,
-        ];
-        blocks.push(section(lines.join('\n')));
-    }
-
-    return blocks.length ? context('Memory benchmarks (informational)') + blocks.join('') : '';
-}
-
 const JIRA_API_URL = 'https://ag-grid.atlassian.net/rest/api/2';
 
 // Transition an issue to a new status
@@ -216,10 +75,6 @@ export async function addJiraComment(issueKey, body) {
     }
 }
 
-export function jiraLink(text, url) {
-    return `[${text}|${url}]`;
-}
-
 export async function getCurrentJiraUser() {
     const url = `${JIRA_API_URL}/myself`;
     try {
@@ -249,16 +104,6 @@ export async function getJiraIssueComments(issueKey) {
         return data.comments || [];
     } catch (error) {
         console.error('Error fetching comments:', error.message);
-        throw error;
-    }
-}
-
-export async function getJiraWatches(issueKey) {
-    const url = `https://ag-grid.atlassian.net/rest/api/3/issue/${issueKey}/watchers`;
-    try {
-        return await commonFetch(url, { method: 'GET' });
-    } catch (error) {
-        console.error('Error fetching watchers:', error.message);
         throw error;
     }
 }

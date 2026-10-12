@@ -1,16 +1,16 @@
-/* stylelint-disable-next-line ag/no-low-performance-key-selector */
+/* stylelint-disable-next-line ag/no-low-performance-key-selector -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 :where([class^='ag-']),
 :where([class^='ag-'])::after,
 :where([class^='ag-'])::before {
     box-sizing: border-box;
 }
 
-/* stylelint-disable-next-line ag/no-low-performance-key-selector */
+/* stylelint-disable-next-line ag/no-low-performance-key-selector -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 :where([class^='ag-']):where(button) {
     color: inherit;
 }
 
-/* stylelint-disable-next-line ag/no-low-performance-key-selector */
+/* stylelint-disable-next-line ag/no-low-performance-key-selector -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 :where([class^='ag-']):where(
     input:not([type]),
     input[type='text'],
@@ -42,7 +42,7 @@
 /* This next block must be on its own because browsers that don't support
    ::-ms-clear will ignore the whole block if it is placed in the above block */
 
-/* stylelint-disable-next-line ag/no-low-performance-key-selector */
+/* stylelint-disable-next-line ag/no-low-performance-key-selector -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 :where([class^='ag-']) ::-ms-clear {
     display: none;
 }

@@ -29,6 +29,35 @@ describe('Excel export', () => {
         };
     };
 
+    const exportFrozenColumnCount = async (api: GridApi, params: ExcelExportParams) => {
+        api.exportDataAsExcel(params);
+        const zip = XLSX.CFB.read(new Uint8Array(await (await objectUrls.pullBlob()).arrayBuffer()), { type: 'array' });
+        const sheetXml = new TextDecoder().decode(XLSX.CFB.find(zip, '/xl/worksheets/sheet1.xml').content);
+        return Number(/<pane\b[^>]*xSplit="(\d+)"/.exec(sheetXml)?.[1] ?? 0);
+    };
+
+    test('freezeColumns counts the frozen columns once, whatever the body cells span', async () => {
+        const api = gridsManager.createGrid('excel-freeze-col-span', {
+            columnDefs: [
+                { field: 'a', pinned: 'left', colSpan: (params) => (params.node?.rowIndex === 0 ? 2 : 1) },
+                { field: 'b', pinned: 'left' },
+                { field: 'c' },
+            ],
+            rowData: [
+                { a: 'a0', b: 'b0', c: 'c0' },
+                { a: 'a1', b: 'b1', c: 'c1' },
+            ],
+        });
+
+        expect(await exportFrozenColumnCount(api, { freezeColumns: 'pinned' })).toBe(2);
+        expect(await exportFrozenColumnCount(api, { freezeColumns: ({ column }) => column.getColId() !== 'c' })).toBe(
+            2
+        );
+
+        api.applyColumnState({ state: [{ colId: 'c', pinned: 'left' }] });
+        expect(await exportFrozenColumnCount(api, { freezeColumns: 'pinned' })).toBe(3);
+    });
+
     test('a span past the last exported column merges only up to it, as the grid draws it', async () => {
         const api = gridsManager.createGrid('excel-col-span', {
             columnDefs: [

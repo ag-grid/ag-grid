@@ -39,9 +39,13 @@ cd ../../../
 echo "Uploading $FILENAME"
 scp -i $SSH_KEY_LOCATION -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $FILENAME $SSH_USER@$SSH_HOST:$WWW_ROOT_DIR/
 
-sed "s#\@WWW_ROOT_DIR\@#$WWW_ROOT_DIR#g" ./scripts/deployments/updateGridStagingRemote.sh |  sed "s#\@FILENAME\@#$FILENAME#g" > /tmp/updateGridStagingRemote.sh
+# a per-run temp file, so concurrent runs on the same agent cannot overwrite each other
+REMOTE_SCRIPT="$(mktemp)"
+trap 'rm -f "$REMOTE_SCRIPT"' EXIT
 
-scp -i $SSH_KEY_LOCATION -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null /tmp/updateGridStagingRemote.sh $SSH_USER@$SSH_HOST:$WWW_ROOT_DIR/
+sed "s#\@WWW_ROOT_DIR\@#$WWW_ROOT_DIR#g" ./scripts/deployments/updateGridStagingRemote.sh |  sed "s#\@FILENAME\@#$FILENAME#g" > "$REMOTE_SCRIPT"
+
+scp -i $SSH_KEY_LOCATION -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$REMOTE_SCRIPT" $SSH_USER@$SSH_HOST:$WWW_ROOT_DIR/updateGridStagingRemote.sh
 
 echo "Updating Grid Staging with $FILENAME"
 ssh -i $SSH_KEY_LOCATION -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "cd $WWW_ROOT_DIR && chmod +x updateGridStagingRemote.sh && ./updateGridStagingRemote.sh"

@@ -28,6 +28,17 @@ const containerWidths = (): string[] =>
 const headerRowWidths = (): string[] =>
     Array.from(document.querySelectorAll<HTMLElement>('.ag-header-row'), (row) => row.style.width);
 
+/** The first row's pinned-left, scrolling and pinned-right cell sections, `null` where the row leaves one out. */
+const rowSections = () => {
+    const sectionWidth = (section: string): string | null =>
+        document.querySelector<HTMLElement>(`.ag-row[row-index="0"] > .ag-grid-${section}-cells`)?.style.width ?? null;
+    return {
+        left: sectionWidth('pinned-left'),
+        center: sectionWidth('scrolling'),
+        right: sectionWidth('pinned-right'),
+    };
+};
+
 const buildCols = (count: number): ColDef[] => {
     const cols: ColDef[] = [];
     for (let i = 0; i < count; ++i) {
@@ -141,5 +152,30 @@ describe('Grid body width push (React)', () => {
         // against the old rows.
         expect(Array.from(document.querySelectorAll('.ag-header-row'))).not.toEqual(before);
         expect(headerRowWidths()).toEqual(['1500px']);
+    });
+
+    test('a row sizes its sections, and adds and removes the pinned ones, as the columns change', async () => {
+        const api = await renderGrid({
+            columnDefs: [
+                { field: 'p', width: 100, pinned: 'left' },
+                { field: 'a', width: 100 },
+                { field: 'b', width: 100 },
+                { field: 'r', width: 50, pinned: 'right' },
+            ],
+            rowData: [{ p: 1, a: 2, b: 3, r: 4 }],
+        });
+        await waitFor(() => expect(rowSections()).toEqual({ left: '100px', center: '200px', right: '50px' }));
+
+        act(() => api.setColumnWidths([{ key: 'p', newWidth: 150 }]));
+        await waitFor(() => expect(rowSections()).toEqual({ left: '150px', center: '200px', right: '50px' }));
+
+        act(() => api.setColumnWidths([{ key: 'a', newWidth: 300 }]));
+        await waitFor(() => expect(rowSections()).toEqual({ left: '150px', center: '400px', right: '50px' }));
+
+        act(() => api.setColumnsPinned(['r'], null));
+        await waitFor(() => expect(rowSections()).toEqual({ left: '150px', center: '450px', right: null }));
+
+        act(() => api.setColumnsPinned(['b'], 'right'));
+        await waitFor(() => expect(rowSections()).toEqual({ left: '150px', center: '350px', right: '100px' }));
     });
 });

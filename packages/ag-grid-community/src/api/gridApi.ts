@@ -66,6 +66,7 @@ import type { FilterActionParams, FilterModel, IFilter } from '../interfaces/iFi
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
 import type { FindCellParams, FindCellValueParams, FindMatch, FindPart } from '../interfaces/iFind';
 import type { AgModuleName } from '../interfaces/iModule';
+import type { INewFiltersToolPanel } from '../interfaces/iNewFiltersToolPanel';
 import type { PdfExportParams } from '../interfaces/iPdfCreator';
 import type { RedrawRowsParams } from '../interfaces/iRedrawRowsParams';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
@@ -358,7 +359,8 @@ export interface _KeyboardNavigationGridApi {
 
     /**
      * Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned).
-     * A column that a drawn `colSpan` covers focuses the cell spanning it, as keyboard navigation does.
+     * A column that a `colSpan` covers focuses the cell spanning it, as keyboard navigation does, even when that
+     * cell is scrolled out of view.
      */
     setFocusedCell(rowIndex: number, colKey: string | Column, rowPinned?: RowPinnedType): void;
 
@@ -655,7 +657,7 @@ export interface _ColumnAutosizeApi {
 }
 
 export interface _ColumnResizeApi {
-    /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
+    /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnResized` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
     setColumnWidths(
         columnWidths: { key: ColKey; newWidth: number }[],
         finished?: boolean,
@@ -806,7 +808,7 @@ export interface _ColumnGridApi<TData> {
     getAllDisplayedColumns(): Column[];
 
     /**
-     * Same as `getAllGridColumns()`, except only returns rendered columns, i.e. columns that are not within the viewport and therefore not rendered, due to column virtualisation, are not displayed.
+     * Same as `getAllGridColumns()`, except only returns rendered columns, i.e. columns more than 200px outside the viewport are not rendered, due to column virtualisation, and are not returned. Auto-height columns are always rendered.
      * @agModule `ColumnApiModule`
      */
     getAllDisplayedVirtualColumns(): Column[];
@@ -1106,8 +1108,8 @@ export interface _ColumnFilterGridApi {
     hideColumnFilter(): void;
 
     /**
-     * Perform the provided filter action for the column specified, or all columns.
-     * Requires `enableFilterHandlers = true`.
+     * Perform the provided filter action for the columns specified, or all columns.
+     * Requires `enableFilterHandlers = true`, except for the actions clearing the Set Filter's preserved values.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     doFilterAction(params: FilterActionParams): void;
@@ -1444,6 +1446,7 @@ export interface _SideBarGridApi<TData> {
 
     getToolPanelInstance(id: 'columns'): IColumnToolPanel | undefined;
     getToolPanelInstance(id: 'filters'): IFiltersToolPanel | undefined;
+    getToolPanelInstance(id: 'filters-new'): INewFiltersToolPanel | undefined;
     // This override is a duplicate but is required to make the general override public
     getToolPanelInstance<TToolPanel = IToolPanel<TData>>(id: string): TToolPanel | undefined;
     /**
@@ -1564,7 +1567,7 @@ export interface _AggregationGridApi<TData> {
     clearAggFuncs(): void;
 
     /**
-     * Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function.
+     * Sets the agg function for a column, making it a value column; a blank `aggFunc` stops it aggregating. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function.
      * @agModule `RowGroupingModule / PivotModule / TreeDataModule`
      */
     setColumnAggFunc<TValue = any>(key: ColKey<TData, TValue>, aggFunc: ColAggFunc<TData, TValue>): void;

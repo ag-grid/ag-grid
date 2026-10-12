@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 # Set or clear the in-flight archive caching exemption in the root .htaccess on a remote box.
 # Called by uploadAndUnzipArchive.sh during a grid release candidate, and runnable on its own.
 
@@ -27,7 +29,7 @@ CHARTS_VERSION=$2
 CURRENT_HOST=$3
 ACTION=${4:-set}
 
-export SSH_LOCATION=$SSH_FILE
+export SSH_LOCATION=${SSH_FILE:-}
 
 if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
 then
@@ -53,7 +55,7 @@ then
       exit 1;
 fi
 
-if [ -z "$GRID_ROOT_DIR" ]
+if [ -z "${GRID_ROOT_DIR:-}" ]
 then
       echo "\$GRID_ROOT_DIR is not set"
       exit 1;
@@ -79,7 +81,7 @@ function patchFailed {
         echo "The archive is cacheable - fix this and re-run, or it will serve stale.";
     fi
     rm -f "$LIVE_HTACCESS";
-    ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "rm -f $STAGED" 2>/dev/null;
+    ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "rm -f $STAGED" 2>/dev/null || true;
     exit 1;
 }
 

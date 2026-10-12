@@ -40,13 +40,24 @@ export const SET_FILTER_ADD_SELECTION_TO_FILTER = '__AG_ADD_SELECTION_TO_FILTER_
 /** Read `keys` through this, so a group with none loops zero times instead of every reader testing for it. */
 export const NO_SET_FILTER_KEYS: readonly (string | null)[] = [];
 
+export type SetFilterTreeListFormatter = (
+    pathKey: string | null,
+    level: number,
+    parentPathKeys: (string | null)[]
+) => string;
+
+/** Path nodes are keyed by their upper-cased tree key; a value known only by its key is keyed by its own item. */
+export type SetFilterTreeItems = Map<string | null | SetFilterModelTreeItem, SetFilterModelTreeItem>;
+
 export interface SetFilterModelTreeItem {
     treeKey: string | null;
     depth: number;
     filterPasses: boolean;
     available: boolean;
     expanded?: boolean;
-    children?: Map<string | null, SetFilterModelTreeItem>;
+    children?: SetFilterTreeItems;
     keys?: (string | null)[];
     parentTreeKeys: (string | null)[];
+    /** A leaf for a value known only by its key, which has no value to format or render. */
+    keyOnly?: boolean;
 }

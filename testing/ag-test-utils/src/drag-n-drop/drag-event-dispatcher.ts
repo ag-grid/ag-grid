@@ -36,6 +36,8 @@ export class DragEventDispatcher {
     private _currentDropTarget: Element | null = null;
     private _currentX = 0;
     private _currentY = 0;
+    private pointerTarget: Element | null = null;
+    private hitTestRoot: Document | ShadowRoot | null = null;
 
     /** Lazily created so environments without DataTransfer can still use pointer-only drags. */
     public get dataTransfer(): DataTransfer {
@@ -79,6 +81,7 @@ export class DragEventDispatcher {
         const { down } = INTERACTION_EVENT_NAMES[this.eventType];
 
         this.dragHandle = dragHandle;
+        this.installHitTest(dragHandle);
         const moveTarget = this.getMoveTarget();
         this.upTarget = moveTarget;
 
@@ -100,6 +103,7 @@ export class DragEventDispatcher {
         }
 
         const { move } = INTERACTION_EVENT_NAMES[this.eventType];
+        this.pointerTarget = targetElement;
 
         if (this.html5DragDrop) {
             // HTML5 drag-and-drop: fire move on the document/dragHandle, then drag enter/leave/over
@@ -170,7 +174,11 @@ export class DragEventDispatcher {
             await this.fire(dragHandle, 'dragend', { clientX: currentX, clientY: currentY });
         }
 
-        await this.fire(resolvedUpTarget, up, { clientX: currentX, clientY: currentY, buttons: 0 });
+        try {
+            await this.fire(resolvedUpTarget, up, { clientX: currentX, clientY: currentY, buttons: 0 });
+        } finally {
+            this.removeHitTest();
+        }
     }
 
     public async cancelDrag(): Promise<void> {
@@ -209,15 +217,50 @@ export class DragEventDispatcher {
         if (this.html5DragDrop) {
             await this.fire(dragHandle, 'dragend', { clientX: x, clientY: y });
         }
-        await this.fire(resolvedUpTarget, up, { clientX: x, clientY: y, buttons: 0 });
+        try {
+            await this.fire(resolvedUpTarget, up, { clientX: x, clientY: y, buttons: 0 });
+        } finally {
+            this.removeHitTest();
+        }
     }
 
     public reset() {
+        this.removeHitTest();
         this.upTarget = null;
         this.dragHandle = null;
         this._currentDropTarget = null;
         this._currentX = 0;
         this._currentY = 0;
+    }
+
+    /** happy-dom has no hit-testing, so the grid's drop target lookup sees the element the pointer last moved over. */
+    private installHitTest(dragHandle: Element): void {
+        const rootNode = dragHandle.getRootNode();
+        const root = rootNode instanceof ShadowRoot ? rootNode : dragHandle.ownerDocument;
+        if (typeof Object.getPrototypeOf(root).elementsFromPoint === 'function') {
+            return;
+        }
+        root.elementsFromPoint = this.hitTest;
+        this.hitTestRoot = root;
+    }
+
+    /** Topmost first, then its ancestors, as a browser stacks them, so a container matches over any of its children. */
+    private readonly hitTest = (): Element[] => {
+        const stack: Element[] = [];
+        for (let element = this.pointerTarget; element; element = element.parentElement) {
+            stack.push(element);
+        }
+        return stack;
+    };
+
+    private removeHitTest(): void {
+        const root = this.hitTestRoot;
+        // only our own: another dispatcher may have installed its stub since
+        if (root?.elementsFromPoint === this.hitTest) {
+            delete (root as { elementsFromPoint?: unknown }).elementsFromPoint;
+        }
+        this.hitTestRoot = null;
+        this.pointerTarget = null;
     }
 
     private getMoveTarget(): Element | Document {

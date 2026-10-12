@@ -1,6 +1,7 @@
 import type { AdvancedFilterModel, AgColumn, BaseCellDataType } from 'ag-grid-community';
 import { _trimInputForFilter } from 'ag-grid-community';
 
+import type { OperatorName } from './advancedFilterExpressionService';
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import type { AutocompleteEntry, AutocompleteListParams } from './autocomplete/autocompleteParams';
 import type { OperandsKind } from './filterExpressionOperators';
@@ -18,11 +19,8 @@ import {
     checkAndUpdateExpression,
     findEndPosition,
     findStartPosition,
-    getBigIntParser,
-    getNumberParser,
     getRangeOrderMessage,
     getSearchString,
-    getTextFilterParams,
     updateExpression,
 } from './filterExpressionUtils';
 import { SET_LIST_OPEN_CHAR, SetOperandsParser, joinSetPath, splitSetPath } from './set/setOperandsParser';
@@ -166,7 +164,7 @@ class OperatorParser implements Parser {
 
     /** The longest name in `entries` written at the start position, and whether one is still being typed. */
     private matchOperatorName(
-        entries: AutocompleteEntry[],
+        names: OperatorName[],
         minLength: number,
         partialSearchValue: string
     ): { key: string | undefined; length: number; isPartialMatch: boolean } {
@@ -175,18 +173,18 @@ class OperatorParser implements Parser {
         let key: string | undefined;
         let length = 0;
         let isPartialMatch = false;
-        for (let i = 0, len = entries.length; i < len; ++i) {
-            const entry = entries[i];
-            const displayValue = entry.displayValue ?? '';
+        for (let i = 0, len = names.length; i < len; ++i) {
+            const name = names[i];
+            const { displayValue, lowerCaseDisplayValue } = name;
             // Lengths come from the name as written: lower-casing can change them, `İ` becoming two units.
-            const lowerCaseDisplayValue = displayValue.toLocaleLowerCase();
+            const nameLength = displayValue.length;
             if (
-                displayValue.length > length &&
-                displayValue.length >= minLength &&
+                nameLength > length &&
+                nameLength >= minLength &&
                 isNameAt(expression, startPosition, displayValue, lowerCaseDisplayValue)
             ) {
-                key = entry.key;
-                length = displayValue.length;
+                key = name.key;
+                length = nameLength;
             }
             if (lowerCaseDisplayValue.startsWith(partialSearchValue)) {
                 isPartialMatch = true;
@@ -197,26 +195,19 @@ class OperatorParser implements Parser {
 
     /** Longest match wins, offered names first, so a name another starts with or contains still resolves. */
     private parseOperator(fromComplete: boolean, endPosition: number): boolean {
-        const { params, startPosition } = this;
+        const { params, startPosition, baseCellDataType, column } = this;
         const expression = params.expression;
-        const columnOperators = params.advFilterExpSvc.getColumnOperators(this.baseCellDataType, this.column);
+        const advFilterExpSvc = params.advFilterExpSvc;
+        const names = advFilterExpSvc.getOperatorNames(baseCellDataType, column);
         this.endPosition = endPosition;
 
         const minLength = endPosition - startPosition + 1;
         const partialSearchValue = expression.slice(startPosition, endPosition + 1).toLocaleLowerCase() + ' ';
-        const activeOperators = columnOperators?.activeOperators;
-        let match = this.matchOperatorName(
-            columnOperators?.operators.getEntries(activeOperators) ?? [],
-            minLength,
-            partialSearchValue
-        );
+        let match = this.matchOperatorName(names?.offered ?? [], minLength, partialSearchValue);
         // A second list only where what is offered is less than what resolves; otherwise the same scan twice.
-        if (activeOperators) {
-            const resolvable = this.matchOperatorName(
-                columnOperators!.operators.getEntries(),
-                minLength,
-                partialSearchValue
-            );
+        const all = names?.all;
+        if (all) {
+            const resolvable = this.matchOperatorName(all, minLength, partialSearchValue);
             if (resolvable.length > match.length || (!match.key && resolvable.isPartialMatch)) {
                 match = resolvable;
             }
@@ -228,11 +219,7 @@ class OperatorParser implements Parser {
             this.parsedOperator = matchedOperator;
             this.endPosition = matchEndPosition;
             this.matchEndPosition = matchEndPosition;
-            const operator = params.advFilterExpSvc.getExpressionOperator(
-                this.baseCellDataType,
-                matchedOperator,
-                this.column
-            )!;
+            const operator = advFilterExpSvc.getExpressionOperator(baseCellDataType, matchedOperator, column)!;
             this.operands = operator.operands;
             const operatorDisplayValue = operator.displayValue;
             const userValue = expression.slice(startPosition, matchEndPosition + 1);
@@ -265,42 +252,25 @@ function isNameAt(
     );
 }
 
+/** The message for an operand its type cannot read; `1.5` is a number a bigint rejects, so it needs its own. */
+const INVALID_OPERAND_KEYS: Record<BaseCellDataType, keyof typeof ADVANCED_FILTER_LOCALE_TEXT | undefined> = {
+    number: 'advancedFilterValidationNotANumber',
+    bigint: 'advancedFilterValidationNotABigInt',
+    date: 'advancedFilterValidationInvalidDate',
+    dateString: 'advancedFilterValidationInvalidDate',
+    dateTime: 'advancedFilterValidationInvalidDate',
+    dateTimeString: 'advancedFilterValidationInvalidDate',
+    boolean: undefined,
+    object: undefined,
+    text: undefined,
+};
+
 class OperandParser implements Parser {
     public endPosition: number | undefined;
     private quotes: `'` | `"` | undefined;
     private operand = '';
     private modelValue: number | string;
     private validationMessage: string | null = null;
-
-    private readonly filterValidationSetters: Record<
-        BaseCellDataType,
-        (modelValue: string | number | bigint | null) => any
-    > = {
-        // Read from the argument, not `this.modelValue`, which keeps the raw text when the parser rejects it.
-        number: (modelValue) => {
-            // A column's own `numberParser` reports unreadable input as null, where `Number` gives NaN.
-            if (modelValue == null || isNaN(modelValue as number)) {
-                this.validationMessage = this.params.advFilterExpSvc.translate('advancedFilterValidationNotANumber');
-            }
-        },
-        // `1.5` is a number the parser still rejects, so this needs its own message, not the number one.
-        bigint: (modelValue) => {
-            if (modelValue == null) {
-                this.validationMessage = this.params.advFilterExpSvc.translate('advancedFilterValidationNotABigInt');
-            }
-        },
-        date: (modelValue) => {
-            if (modelValue == null) {
-                this.validationMessage = this.params.advFilterExpSvc.translate('advancedFilterValidationInvalidDate');
-            }
-        },
-        dateString: (...args) => this.filterValidationSetters.date(...args),
-        dateTime: (...args) => this.filterValidationSetters.date(...args),
-        dateTimeString: (...args) => this.filterValidationSetters.date(...args),
-        boolean(): void {},
-        object(): void {},
-        text(): void {},
-    };
 
     constructor(
         private readonly params: FilterExpressionParserParams,
@@ -373,23 +343,30 @@ class OperandParser implements Parser {
     }
 
     private parseOperand(fromComplete: boolean, position: number): void {
-        const { advFilterExpSvc, advFilterSetSvc } = this.params;
+        const advFilterExpSvc = this.params.advFilterExpSvc;
+        const { baseCellDataType, column } = this;
         this.endPosition = position;
-        if (getTextFilterParams(this.column, this.baseCellDataType, advFilterSetSvc)?.trimInput) {
-            this.operand = _trimInputForFilter(this.operand) ?? this.operand;
+        let operand = this.operand;
+        if (advFilterExpSvc.isOperandTrimmed(column, baseCellDataType)) {
+            operand = _trimInputForFilter(operand) ?? operand;
+            this.operand = operand;
         }
-        this.modelValue = this.operand;
+        this.modelValue = operand;
         if (fromComplete && this.quotes) {
             // missing end quote
             this.validationMessage = advFilterExpSvc.translate('advancedFilterValidationMissingQuote');
-        } else if (this.modelValue === '') {
+        } else if (operand === '') {
             this.validationMessage = advFilterExpSvc.translate('advancedFilterValidationMissingValue');
         } else {
-            const modelValue = advFilterExpSvc.getOperandModelValue(this.operand, this.baseCellDataType, this.column!);
+            const modelValue = advFilterExpSvc.getOperandModelValue(operand, baseCellDataType, column!);
             if (modelValue != null) {
                 this.modelValue = modelValue;
             }
-            this.filterValidationSetters[this.baseCellDataType](modelValue);
+            const invalidKey = INVALID_OPERAND_KEYS[baseCellDataType];
+            // a column's own parser reports unreadable input as null, where `Number` gives NaN
+            if (invalidKey && (modelValue == null || Number.isNaN(modelValue))) {
+                this.validationMessage = advFilterExpSvc.translate(invalidKey);
+            }
         }
     }
 }
@@ -568,8 +545,8 @@ export class ColFilterExpressionParser {
         object: (a: string) => string;
         text: (a: string) => string;
     } = {
-        number: (operand) => getNumberParser(this.columnParser!.column, this.params.gos)(operand)!,
-        bigint: (operand) => getBigIntParser(this.columnParser!.column, this.params.gos)(operand)!,
+        number: (operand) => this.params.advFilterExpSvc.getNumberParser(this.columnParser!.column)(operand)!,
+        bigint: (operand) => this.params.advFilterExpSvc.getBigIntParser(this.columnParser!.column)(operand)!,
         date: (operand) =>
             this.params.valueSvc.parseValue(this.columnParser!.column!, null, operand, undefined) as Date,
         dateString: (operand) => this.operandValueGetters.date(operand),
@@ -679,9 +656,12 @@ export class ColFilterExpressionParser {
         if (this.operatorParser!.operands !== 'range' || !to) {
             return null;
         }
+        const params = this.params;
+        const columnParser = this.columnParser!;
         const message = getRangeOrderMessage(
-            this.params.advFilterExpSvc,
-            this.columnParser!.getColId(),
+            params.advFilterExpSvc,
+            columnParser.getColId(),
+            columnParser.baseCellDataType,
             this.getOperandValue(from),
             this.getOperandValue(to),
             from.getRawValue()
@@ -690,7 +670,7 @@ export class ColFilterExpressionParser {
             ? {
                   message,
                   startPosition: to.startPosition,
-                  endPosition: to.endPosition ?? this.params.expression.length - 1,
+                  endPosition: to.endPosition ?? params.expression.length - 1,
                   selfContained: true,
               }
             : null;

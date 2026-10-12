@@ -1,7 +1,16 @@
 import { _areEqual } from 'ag-stack';
 
-import type { IMultiFilterDef, IMultiFilterModel, IMultiFilterParams, SharedFilterUi } from 'ag-grid-community';
-import { ProvidedFilter } from 'ag-grid-community';
+import type {
+    AgColumn,
+    BeanCollection,
+    IFilterDef,
+    IMultiFilterDef,
+    IMultiFilterModel,
+    IMultiFilterParams,
+    ResolvedFilter,
+    SharedFilterUi,
+} from 'ag-grid-community';
+import { ProvidedFilter, _resolveFilter } from 'ag-grid-community';
 
 export function getMultiFilterDefs(params: IMultiFilterParams | undefined): IMultiFilterDef[] {
     const filters = params?.filters;
@@ -13,7 +22,35 @@ export function getMultiFilterDefs(params: IMultiFilterParams | undefined): IMul
 
 /** What a child's `filter: true` resolves to, whatever the column's data type. */
 export const DEFAULT_CHILD_FILTER = 'agTextColumnFilter';
-export const DEFAULT_CHILD_FLOATING_FILTER = 'agTextColumnFloatingFilter';
+
+/** A Multi Filter's children as each is built, or `undefined` where `multi` is not a Multi Filter. */
+export function resolveMultiFilterChildren(
+    beans: BeanCollection,
+    column: AgColumn,
+    multi: ResolvedFilter
+): ResolvedFilter[] | undefined {
+    return multi.key === 'agMultiColumnFilter'
+        ? resolveChildFilters(beans, column, multi, resolveFilterParams(beans, column, multi.def))
+        : undefined;
+}
+
+/** The children of the Multi Filter `multi`, from its params already resolved, as resolving calls any function. */
+export function resolveChildFilters(
+    beans: BeanCollection,
+    column: AgColumn,
+    multi: ResolvedFilter,
+    multiParams: any
+): ResolvedFilter[] {
+    return getMultiFilterDefs(multiParams).map((def) =>
+        _resolveFilter(beans, column, def, DEFAULT_CHILD_FILTER, multi)
+    );
+}
+
+/** Without the column filters a function cannot be called with their params, so it is returned uncalled. */
+export function resolveFilterParams(beans: BeanCollection, column: AgColumn, filterDef: IFilterDef): any {
+    const colFilter = beans.colFilter;
+    return colFilter ? colFilter.resolveFilterParams(column, filterDef) : filterDef.filterParams;
+}
 
 /** `undefined` is deliberately not folded in: the handler path gives it no filter at all rather than the default. */
 export function getChildFilter(def: IMultiFilterDef): IMultiFilterDef['filter'] {

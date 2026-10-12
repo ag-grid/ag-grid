@@ -1,17 +1,13 @@
-import { _parseBigIntOrNull, _parseDateTimeFromString, _toStringOrNull } from 'ag-stack';
+import { _parseDateTimeFromString, _toStringOrNull } from 'ag-stack';
 
-import { _bindFilterCallback, _isRangeOutOfOrder, _toFiniteNumber } from 'ag-grid-community';
+import { _getDefaultSimpleFilter, _isRangeOutOfOrder, _toFiniteNumber } from 'ag-grid-community';
 import type {
     AgColumn,
     BaseCellDataType,
     ColumnAdvancedFilterModel,
     ColumnModel,
     DataTypeService,
-    GridOptionsService,
-    IBigIntFilterParams,
     IRowNode,
-    ITextFilterParams,
-    NumberFilterParams,
     SetAdvancedFilterModel,
     SetFilterModelValue,
     ValueService,
@@ -19,7 +15,6 @@ import type {
 
 import type { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import type { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
-import { getMultiFilterChild } from './customFilterOptions';
 import type { FilterExpressionEvaluatorParams, FilterExpressionOperator } from './filterExpressionOperators';
 import { OPERAND_COUNT } from './filterExpressionOperators';
 import type { AdvancedFilterSetService } from './set/advancedFilterSetService';
@@ -60,36 +55,44 @@ function getFormattedOperands(
  */
 export function getConditionValidationMessage(
     advFilterExpSvc: AdvancedFilterExpressionService,
-    gos: GridOptionsService,
     model: PartialColumnFilterModel,
     column: AgColumn | null | undefined,
     baseCellDataType: BaseCellDataType,
     operator: FilterExpressionOperator<any> | undefined
 ): string | null {
-    if (!model.colId) {
+    const colId = model.colId;
+    if (!colId) {
         return advFilterExpSvc.translate('advancedFilterBuilderValidationSelectColumn');
     }
     if (!model.type) {
         return advFilterExpSvc.translate('advancedFilterBuilderValidationSelectOption');
     }
     const columnModel = model as ColumnAdvancedFilterModel;
+    const operandsKind = operator?.operands;
     // A list has no operand slot to format, so it is judged on the values themselves: none chosen is nothing to apply.
-    if (operator?.operands === 'list') {
+    if (operandsKind === 'list') {
         return (columnModel as SetAdvancedFilterModel).values?.length
             ? null
             : advFilterExpSvc.translate('advancedFilterBuilderValidationEnterValue');
     }
-    const operands = getFormattedOperands(advFilterExpSvc, columnModel, OPERAND_COUNT[operator?.operands ?? 'none']);
+    const operands = getFormattedOperands(advFilterExpSvc, columnModel, OPERAND_COUNT[operandsKind ?? 'none']);
     if (!operands) {
         return advFilterExpSvc.translate('advancedFilterBuilderValidationEnterValue');
     }
-    if (operator?.operands !== 'range') {
+    if (operandsKind !== 'range') {
         return null;
     }
     const readBound = (value: string | number | undefined) =>
-        getModelOperandBound(column, gos, baseCellDataType, value);
+        getModelOperandBound(column, advFilterExpSvc, baseCellDataType, value);
     const { filter, filterTo } = model;
-    return getRangeOrderMessage(advFilterExpSvc, model.colId, readBound(filter), readBound(filterTo), operands[0]);
+    return getRangeOrderMessage(
+        advFilterExpSvc,
+        colId,
+        baseCellDataType,
+        readBound(filter),
+        readBound(filterTo),
+        operands[0]
+    );
 }
 
 type RangeBound = number | bigint | Date | null;
@@ -101,10 +104,15 @@ type RangeBound = number | bigint | Date | null;
 export function getRangeOrderMessage(
     advFilterExpSvc: AdvancedFilterExpressionService,
     colId: string,
+    baseCellDataType: BaseCellDataType,
     from: RangeBound,
     to: RangeBound,
     fromDisplayValue: string
 ): string | null {
+    // As in the column filter, which orders a number, bigint or date pair but leaves a text one to its option.
+    if (_getDefaultSimpleFilter(baseCellDataType) === 'agTextColumnFilter') {
+        return null;
+    }
     const { inRangeInclusive } = advFilterExpSvc.getExpressionEvaluatorParams(colId);
     if (!_isRangeOutOfOrder(from, to, inRangeInclusive)) {
         return null;
@@ -125,7 +133,7 @@ export function getRangeOrderMessage(
  */
 function getModelOperandBound(
     column: AgColumn | null | undefined,
-    gos: GridOptionsService,
+    advFilterExpSvc: AdvancedFilterExpressionService,
     baseCellDataType: BaseCellDataType,
     value: string | number | undefined
 ): RangeBound {
@@ -133,10 +141,10 @@ function getModelOperandBound(
         return null;
     }
     if (baseCellDataType === 'bigint') {
-        return getBigIntParser(column, gos)(_toStringOrNull(value));
+        return advFilterExpSvc.getBigIntParser(column)(_toStringOrNull(value));
     }
     if (baseCellDataType === 'number') {
-        return typeof value === 'number' ? _toFiniteNumber(value) : getNumberParser(column, gos)(value);
+        return typeof value === 'number' ? _toFiniteNumber(value) : advFilterExpSvc.getNumberParser(column)(value);
     }
     return _parseDateTimeFromString(_toStringOrNull(value));
 }
@@ -152,7 +160,6 @@ export interface PartialColumnFilterModel extends ColumnFilterModelOperands {
 
 export interface FilterExpressionParserParams {
     expression: string;
-    gos: GridOptionsService;
     colModel: ColumnModel;
     dataTypeSvc?: DataTypeService;
     valueSvc: ValueService;
@@ -245,72 +252,7 @@ export type FilterExpressionFunction = (
     params: FilterExpressionFunctionParams
 ) => boolean;
 
-type FilterOperandParser<V> = (value: string | null) => V | null;
-
-const bigIntParams = (column: AgColumn | null | undefined): IBigIntFilterParams | undefined =>
-    column?.colDef.filterParams;
-
-/** Read unpaired, unlike the number equivalent, so hex and the like can be typed with a parser alone. */
-export const getBigIntParser = (
-    column: AgColumn | null | undefined,
-    gos: GridOptionsService
-): FilterOperandParser<bigint> =>
-    _bindFilterCallback(bigIntParams(column)?.bigintParser, gos, column, 'advancedFilter') ?? _parseBigIntOrNull;
-
-export const getBigIntFormatter = (column: AgColumn | null | undefined, gos: GridOptionsService) =>
-    _bindFilterCallback(bigIntParams(column)?.bigintFormatter, gos, column, 'advancedFilter');
-
-/**
- * The `filterParams` of a number column whose operands are written in its own syntax rather than as plain
- * numbers. Both a `numberParser` and a `numberFormatter` are needed: an operand the column cannot write, it
- * must not read, or a parser reading a syntax the plain number is not in would reinterpret what the grid stored.
- */
-function customNumberOperandParams(column: AgColumn | null | undefined): NumberFilterParams | undefined {
-    const filterParams = column?.colDef.filterParams;
-    return filterParams?.numberParser != null && filterParams.numberFormatter != null ? filterParams : undefined;
-}
-
-/** `Number` reads blank text as zero, which is not a number anyone wrote. */
-const parseNumberOrNull = (value: string | null): number | null => (value?.trim() ? Number(value) : null);
-
-/** Plain-number reading stays the default: only a column that reads *and* writes its own syntax departs from it. */
-export const getNumberParser = (
-    column: AgColumn | null | undefined,
-    gos: GridOptionsService
-): FilterOperandParser<number> =>
-    _bindFilterCallback(customNumberOperandParams(column)?.numberParser, gos, column, 'advancedFilter') ??
-    parseNumberOrNull;
-
-export const getNumberFormatter = (column: AgColumn | null | undefined, gos: GridOptionsService) =>
-    _bindFilterCallback(customNumberOperandParams(column)?.numberFormatter, gos, column, 'advancedFilter');
-
-export function hasCustomNumberOperands(column: AgColumn | null | undefined): boolean {
-    return customNumberOperandParams(column) != null;
-}
-
-/**
- * The params the column's Text Filter compares with — for a Multi Filter, its Text Filter child's alone, as
- * the child is created with (`MultiFilterHandler` merges the column's own params in only on a later refresh).
- */
-export function getTextFilterParams(
-    column: AgColumn | null | undefined,
-    baseCellDataType: BaseCellDataType | undefined,
-    advFilterSetSvc: AdvancedFilterSetService
-): ITextFilterParams | undefined {
-    // An unresolved data type reads as text, as its converter does.
-    if (baseCellDataType != null && baseCellDataType !== 'text' && baseCellDataType !== 'object') {
-        return undefined;
-    }
-    const colDef = column?.colDef;
-    const filter = colDef?.filter;
-    if (filter === 'agMultiColumnFilter') {
-        return getMultiFilterChild(colDef?.filterParams, 'agTextColumnFilter')?.filterParams;
-    }
-    // Named as readily as supplied, so any other component's params are its own; a Set Filter's `textFormatter`
-    // formats its list rather than a comparison, and `filter: true` resolves to one under enterprise.
-    const isTextFilter = filter == null || filter === true || filter === 'agTextColumnFilter';
-    return isTextFilter && !advFilterSetSvc.hasSetFilter(column) ? colDef?.filterParams : undefined;
-}
+export type FilterOperandParser<V> = (value: string | null) => V | null;
 
 export function getSearchString(value: string, position: number, endPosition: number): string {
     if (!value) {

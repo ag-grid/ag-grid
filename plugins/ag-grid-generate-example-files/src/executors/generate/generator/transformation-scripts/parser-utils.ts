@@ -758,6 +758,9 @@ const darkModeTs = `
 
         // update chart themes based on dark mode status
         const updateChartThemes = (isDark: boolean): void => {
+            // the retry timer and colour scheme listener can outlive the grid (e.g. when the example is torn down)
+            if (params.api.isDestroyed()) return;
+
             const themes: string[] = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];            
             const currentThemes = params.api.getGridOption('chartThemes');    
             const customTheme = currentThemes && currentThemes.some(theme => theme.startsWith('my-custom-theme'));
@@ -806,6 +809,9 @@ const darkModeJS = `
         const readThemeMode = () => document.documentElement.dataset.agThemeMode;
 
         const updateChartThemes = (isDark) => { 
+            // the retry timer and colour scheme listener can outlive the grid (e.g. when the example is torn down)
+            if (params.api.isDestroyed()) return;
+
             const themes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];            
             const currentThemes = params.api.getGridOption('chartThemes');                    
             const customTheme = currentThemes && currentThemes.some(theme => theme.startsWith('my-custom-theme'));

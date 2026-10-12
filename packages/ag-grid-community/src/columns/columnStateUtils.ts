@@ -21,10 +21,12 @@ import type { ColumnPinnedType } from '../interfaces/iColumn';
 import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
 import {
     _dispatchColumnChangedEvent,
+    _dispatchGroupHeaderNameChangedEvent,
     dispatchColumnPinnedEvent,
     dispatchColumnResizedEvent,
     dispatchColumnVisibleEvent,
 } from './columnEventUtils';
+import { _setColGroupHeaderNameOverride } from './columnGroups/columnGroupState';
 import { GROUP_AUTO_COLUMN_ID, SELECTION_COLUMN_ID } from './columnUtils';
 
 export interface ColumnStateParams {
@@ -122,14 +124,14 @@ export const updateSomeColumnState = (
     if (sortSvc) {
         sortSvc.updateColSort(column, sort, source);
         if (sortIndex !== undefined) {
-            sortSvc.setColSortIndex(column, sortIndex);
+            sortSvc.setColSortIndex(column, sortIndex, source);
         }
     }
     if (pinned !== undefined) {
-        pinnedCols?.setColPinned(column, pinned);
+        pinnedCols?.setColPinned(column, pinned, source);
     }
     if (flex !== undefined) {
-        colFlex?.setColFlex(column, flex);
+        colFlex?.setColFlex(column, flex, source);
     }
 };
 
@@ -146,29 +148,34 @@ export function _setColsVisible(
     const colModel = beans.colModel;
     const newVisible = visible === true;
     let changed: AgColumn[] | null = null;
-    for (let i = 0, len = keys.length; i < len; ++i) {
-        const key = keys[i];
-        const col = typeof key === 'string' ? colModel.getCol(key) : key;
-        if (col === undefined || (filterLockedColumns && col.colDef.lockVisible)) {
-            continue;
+    colModel.beginColUpdate();
+    try {
+        for (let i = 0, len = keys.length; i < len; ++i) {
+            const key = keys[i];
+            const col = typeof key === 'string' ? colModel.getCol(key) : key;
+            if (col === undefined || (filterLockedColumns && col.colDef.lockVisible)) {
+                continue;
+            }
+            if (col.visible !== newVisible) {
+                col.setVisible(newVisible, source);
+                changed ??= [];
+                changed.push(col);
+            }
         }
-        if (col.visible !== newVisible) {
-            col.setVisible(newVisible, source);
-            changed ??= [];
-            changed.push(col);
+        if (changed) {
+            const { colAnimation, eventSvc } = beans;
+            colAnimation?.start();
+            try {
+                colModel.refreshColsDerivedState();
+                beans.visibleCols.refresh(source, false);
+                eventSvc.dispatchEvent({ type: 'columnEverythingChanged', source });
+                dispatchColumnVisibleEvent(eventSvc, changed, source);
+            } finally {
+                colAnimation?.finish();
+            }
         }
-    }
-    if (changed) {
-        const { colAnimation, eventSvc } = beans;
-        colAnimation?.start();
-        try {
-            colModel.refreshColsDerivedState();
-            beans.visibleCols.refresh(source, false);
-            eventSvc.dispatchEvent({ type: 'columnEverythingChanged', source });
-            dispatchColumnVisibleEvent(eventSvc, changed, source);
-        } finally {
-            colAnimation?.finish();
-        }
+    } finally {
+        colModel.endColUpdate();
     }
 }
 
@@ -180,6 +187,16 @@ export function _applyColumnState(
     params: ApplyColumnStateParams,
     source: ColumnEventType
 ): boolean {
+    const colModel = beans.colModel;
+    colModel.beginColUpdate();
+    try {
+        return applyColumnState(beans, params, source);
+    } finally {
+        colModel.endColUpdate();
+    }
+}
+
+function applyColumnState(beans: BeanCollection, params: ApplyColumnStateParams, source: ColumnEventType): boolean {
     const { colModel, colAnimation, calculatedColsSvc } = beans;
     const state = params.state;
     if (state && !Array.isArray(state)) {
@@ -385,7 +402,7 @@ function applyFieldState(
 
     const headerName = orDefault(stateItem?.headerName, defaultState?.headerName);
     if (headerName !== undefined) {
-        column.setHeaderNameOverride(headerName);
+        column.setHeaderNameOverride(headerName, source);
     }
 
     // No flex → fall back to width.
@@ -424,13 +441,24 @@ function applyFieldState(
  *  order, and fire `columnsReset`.
  *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _resetColumnState(beans: BeanCollection, source: ColumnEventType): void {
+    const colModel = beans.colModel;
+    colModel.beginColUpdate();
+    try {
+        resetColumnState(beans, source);
+    } finally {
+        colModel.endColUpdate();
+    }
+}
+
+function resetColumnState(beans: BeanCollection, source: ColumnEventType): void {
     const { colModel, autoColSvc, selectionColSvc, eventSvc, gos, colAnimation, calculatedColsSvc } = beans;
 
     // Park API/dialog-added calc cols and revert edits/removals of declared ones, so the reset below runs
     // against the original set — via the calc svc, so the rebuild emits no calc lifecycle/validation events.
+    // Parking snapshots validation metadata from the user-column entries, so it must run before `clear()`.
+    const dynamicColsReset = calculatedColsSvc?.resetDynamicColumnDefs(true) ?? false;
     const userColumnsCleared = beans.userColumnSvc?.clear() ?? false;
     if (calculatedColsSvc) {
-        const dynamicColsReset = calculatedColsSvc.resetDynamicColumnDefs(true);
         if (dynamicColsReset || userColumnsCleared) {
             calculatedColsSvc.refreshDynamicColumns(source);
         }
@@ -503,6 +531,8 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
             // deliberate resize
             col.resetWidthOwnership();
         }
+        // the row numbers column is a service column outside the state above
+        beans.rowNumbersSvc?.resetColumnState(source);
 
         // Order from the now-current service cols: auto cols may have been recreated above (their colIds change
         // with the row-group set), so use the post-apply instances, not the pre-apply ids in `columnStates`.
@@ -523,14 +553,10 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
         // Group header names live outside column state, so clear their overrides here too.
         const groupOverrides = colModel.groupHeaderNameOverrides;
         if (groupOverrides.size) {
-            groupOverrides.clear();
-            eventSvc.dispatchEvent({
-                type: 'columnHeaderNameChanged',
-                column: null,
-                columns: null,
-                columnGroup: null,
-                source,
-            });
+            for (const groupId of Array.from(groupOverrides.keys())) {
+                _setColGroupHeaderNameOverride(beans, groupId, null);
+            }
+            _dispatchGroupHeaderNameChangedEvent(eventSvc, null, source);
         }
 
         // Re-order + refresh + dispatch once, over the final (ordered) structure.

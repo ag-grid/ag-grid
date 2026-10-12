@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     addFilterCard: 'Προσθήκη Φίλτρου',
     agTextColumnFilterDisplayName: 'Απλό Φίλτρο',
     agNumberColumnFilterDisplayName: 'Απλό Φίλτρο',
+    agBigIntColumnFilterDisplayName: 'Απλό Φίλτρο',
     agDateColumnFilterDisplayName: 'Απλό Φίλτρο',
     agSetColumnFilterDisplayName: 'Φίλτρο Επιλογής',
     agMultiColumnFilterDisplayName: 'Σύνθετο Φίλτρο',
@@ -743,6 +744,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaFilterList: 'Λίστα Φίλτρων',
     ariaFilterToValue: 'Φίλτρο σε τιμή',
     ariaFilterValue: 'Τιμή Φίλτρου',
+    ariaNotInCurrentData: 'δεν υπάρχει στα τρέχοντα δεδομένα',
     ariaFilterMenuOpen: 'Άνοιγμα Μενού Φίλτρου',
     ariaFilteringOperator: 'Τελεστής Φιλτραρίσματος',
     ariaHidden: 'κρυφό',
@@ -896,9 +898,11 @@ export const AG_GRID_LOCALE_EL_GR = {
     columnHeaderEditCancel: 'Ακύρωση',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Δεν βρέθηκαν κατάλληλες στήλες.',
     calculatedColumn: 'Υπολογιζόμενη στήλη',
     calculatedColumnAdd: 'Προσθήκη υπολογιζόμενης στήλης',
     calculatedColumnEdit: 'Επεξεργασία υπολογιζόμενης στήλης',
+    calculatedColumnView: 'Προβολή υπολογιζόμενης στήλης',
     calculatedColumnRemove: 'Αφαίρεση υπολογιζόμενης στήλης',
     calculatedColumnTitle: 'Τίτλος',
     calculatedColumnType: 'Τύπος',
@@ -913,6 +917,8 @@ export const AG_GRID_LOCALE_EL_GR = {
     calculatedColumnExpressionAmbiguousReference:
         'Ασαφής αναφορά στήλης "${variable}". Χρησιμοποιήστε τη λίστα Στήλες ή μια πιο συγκεκριμένη διαδρομή ομάδας.',
     calculatedColumnExpressionUnknownReference: 'Άγνωστη αναφορά στήλης "${variable}".',
+    calculatedColumnExpressionRestrictedReference:
+        'Η στήλη "${variable}" δεν μπορεί να χρησιμοποιηθεί σε αυτή την έκφραση.',
     calculatedColumnExpressionEmpty: 'Εισαγάγετε μια έκφραση',
     calculatedColumnTitleEmpty: 'Εισαγάγετε έναν τίτλο',
     calculatedColumnApply: 'Εφαρμογή',

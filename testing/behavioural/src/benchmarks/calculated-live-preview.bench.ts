@@ -4,7 +4,7 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { CellApiModule, ClientSideRowModelModule, RowApiModule, ValidationModule } from 'ag-grid-community';
 import { CalculatedColumnsModule, ColumnMenuModule, FormulaModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import { BenchGridsManager, IS_HAPPY_DOM, benchDefaults } from './bench-utils';
+import { BenchGridsManager, benchDefaults } from './bench-utils';
 
 // Measures the live-preview keystroke flush WORK (rebuildCols + CSRM refreshModel + formula cache
 // wipe + viewport re-evaluation). requestAnimationFrame is overridden to fire synchronously so the
@@ -20,20 +20,6 @@ const modules = [
     RowGroupingModule,
     ValidationModule,
 ];
-
-// Only happy-dom needs this: it has no layout, so the dialog's centering reads a null offsetParent.
-// A real browser (`--browser`) has native offsetParent — overriding it there would corrupt layout.
-if (IS_HAPPY_DOM) {
-    Object.defineProperty(HTMLElement.prototype, 'offsetParent', {
-        configurable: true,
-        get(this: HTMLElement) {
-            if (this.closest('.ag-measurement-container')) {
-                return null;
-            }
-            return this.parentElement;
-        },
-    });
-}
 
 // Synchronous rAF: the live-preview scheduler coalesces per frame; firing inline makes each
 // keystroke's flush run synchronously inside the input event so the bench measures only the work.
@@ -103,9 +89,10 @@ const readAllRows = (api: GridApi): void => {
 
 suite('calculated columns — live preview keystroke flush (synchronous rAF)', () => {
     let gridId = 0;
+    // Each setup's reset destroys the previous bench's open editor, else typeExpression types into its textarea.
+    const gridsManager = new BenchGridsManager({ modules });
     const benchKeystroke = (name: string, rows: number, sortOnMargin: boolean, extraCols = 0, grouped = false) => {
         const id = `LP${++gridId}`;
-        const gridsManager = new BenchGridsManager({ modules });
         let api!: GridApi;
         let iter = 0;
         bench(
@@ -132,16 +119,19 @@ suite('calculated columns — live preview keystroke flush (synchronous rAF)', (
                     }
                     menuItem.click();
                     await new Promise<void>((resolve) => setTimeout(resolve, 1));
+                    if (document.querySelectorAll('.ag-calculated-column-form textarea').length !== 1) {
+                        throw new Error('expected exactly one open expression editor');
+                    }
                 },
             }
         );
     };
 
+    // Cost is linear in rows: 1k is mostly the fixed per-keystroke work, 10k mostly the per-row work, and the
+    // variants sit at 10k so each one isolates its own cost against the plain 10k bench.
     benchKeystroke('keystroke flush — 1k rows, chained calc, no sort', 1_000, false);
     benchKeystroke('keystroke flush — 10k rows, chained calc, no sort', 10_000, false);
-    benchKeystroke('keystroke flush — 100k rows, chained calc, no sort', 100_000, false);
     benchKeystroke('keystroke flush — 10k rows, chained calc, SORTED on dependent margin', 10_000, true);
-    benchKeystroke('keystroke flush — 100k rows, chained calc, SORTED on dependent margin', 100_000, true);
-    benchKeystroke('keystroke flush — 100k rows, 200 extra cols, no sort', 100_000, false, 200);
-    benchKeystroke('keystroke flush — 100k rows, GROUPED region + sum aggs', 100_000, false, 0, true);
+    benchKeystroke('keystroke flush — 10k rows, 200 extra cols, no sort', 10_000, false, 200);
+    benchKeystroke('keystroke flush — 10k rows, GROUPED region + sum aggs', 10_000, false, 0, true);
 });

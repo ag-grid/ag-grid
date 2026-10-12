@@ -71,6 +71,8 @@ const darkParams = () =>
         formulaToken5Color: '#e772ba',
         formulaToken6Color: '#f69b5f',
         formulaToken7Color: '#a3e6ff',
+        calculatedColumnReferenceColor: '#4da3e5',
+        calculatedColumnFunctionColor: '#24bb4a',
     }) as const;
 
 const makeColorSchemeDarkTreeShakeable = () =>

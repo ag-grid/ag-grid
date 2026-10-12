@@ -13,5 +13,4 @@ export type AgWidgetSelectorType =
     | 'AG-RADIO-BUTTON'
     | 'AG-SELECT'
     | 'AG-SLIDER'
-    | 'AG-TOGGLE-BUTTON'
-    | 'AG-CONTENT-EDITABLE-FIELD';
+    | 'AG-TOGGLE-BUTTON';

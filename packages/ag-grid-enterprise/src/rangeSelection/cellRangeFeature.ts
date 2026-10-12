@@ -142,8 +142,8 @@ export class CellRangeFeature implements ICellRangeFeature {
         );
     }
 
-    public updateRangeBordersIfRangeCount(): void {
-        // we only need to update range borders if we are in a range
+    /** A cell's side borders depend on its displayed neighbours. */
+    public onDisplayedColumnsChanged(): void {
         if (this.rangeCount > 0) {
             this.updateRangeBorders();
             this.refreshRangeStyleAndHandle();

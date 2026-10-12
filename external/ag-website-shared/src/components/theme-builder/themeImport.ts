@@ -1,25 +1,32 @@
-import type { Part } from 'ag-grid-community';
+import type { Part } from 'ag-stack';
 
 import { allParamModels } from '../../theming/ParamModel';
 import { allFeatureModels } from '../../theming/PartModel';
 import { parseThemeCode, validateAndConvertToPreset } from '../../theming/parseThemeCode';
-import { type Preset, applyPreset } from '../../theming/preset';
+import { applyPreset } from '../../theming/preset';
 import type { RenderedThemeInfo } from '../../theming/rendered-theme';
 import type { Store } from '../../theming/store';
 
-// Host-agnostic import/export of theme code. The generated snippet and the
-// import statement differ per host (studioTheme from 'ag-studio', themeQuartz
-// from 'ag-grid-community', a future charts theme, ...), supplied here.
 type ThemeCodeConfig = {
     themeVariable: string;
     importSource: string;
 };
 
-let themeCodeConfig: ThemeCodeConfig = { themeVariable: 'themeQuartz', importSource: 'ag-grid-community' };
+let themeCodeConfig: ThemeCodeConfig | undefined;
 
 export const setThemeCodeConfig = (config: ThemeCodeConfig) => {
     themeCodeConfig = config;
 };
+
+const getThemeCodeConfig = (): ThemeCodeConfig => {
+    if (!themeCodeConfig) {
+        throw new Error('No theme code config, call setThemeCodeConfig() before importing or exporting a theme');
+    }
+    return themeCodeConfig;
+};
+
+const noParamsError = () =>
+    `Could not find any theme parameters. Expected code like: ${getThemeCodeConfig().themeVariable}.withParams({ backgroundColor: "#fff" })`;
 
 // Themes can swap out whole parts (icon sets, tab styles, ...), unlike a plain
 // param. Match any identifier in the pasted code against each part's known
@@ -75,6 +82,7 @@ export function validateThemeCode(code: string): ValidationResult {
     const parseResult = parseThemeCode(code, {
         isRecognizedParam: (key) => validParamKeys.has(key),
         extractParts,
+        noParamsError,
     });
     if (!parseResult.success) {
         return { status: 'error', validParamCount: 0, error: parseResult.error };
@@ -87,18 +95,11 @@ export function validateThemeCode(code: string): ValidationResult {
         return {
             status: 'error',
             validParamCount: 0,
-            error:
-                warnings.length > 0
-                    ? warnings.join('\n')
-                    : `Could not find any theme parameters. Expected code like: ${themeCodeConfig.themeVariable}.withParams({ backgroundColor: "#fff" })`,
+            error: warnings.length > 0 ? warnings.join('\n') : noParamsError(),
         };
     }
 
-    // validateAndConvertToPreset only validates each param value against the
-    // theming engine, so its params bag is a plain Record rather than the
-    // stricter Partial<ThemeParams> - safe to widen here.
-    const preset = parsedPreset as Preset;
-    const apply = (store: Store) => applyPreset(store, preset);
+    const apply = (store: Store) => applyPreset(store, parsedPreset);
 
     if (warnings.length === 0) {
         return { status: 'success', validParamCount, apply };
@@ -108,7 +109,7 @@ export function validateThemeCode(code: string): ValidationResult {
 }
 
 export function renderThemeCodeSample({ overriddenParams, usedParts }: RenderedThemeInfo): string {
-    const { themeVariable, importSource } = themeCodeConfig;
+    const { themeVariable, importSource } = getThemeCodeConfig();
     const imports = [themeVariable];
     let code = '';
     code += `// to use myTheme in an application, pass it to the theme option\n`;

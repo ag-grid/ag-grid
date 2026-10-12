@@ -261,24 +261,29 @@ export class AdvancedFilterComp extends Component {
     }
 
     private onValueConfirmed(isValid: boolean): void {
-        if (!isValid || this.isApplyDisabled) {
+        if (!isValid) {
+            this.advancedFilter.submitExpression(); // applied by a change to the columns that lets it, while still shown
+            return;
+        }
+        if (this.isApplyDisabled) {
             return;
         }
         this.eButtons?.updateValidity(false);
+        const { eAutocomplete, advancedFilter } = this;
         // Applying finishes every list the expression holds, so a separator naming no value in one is
         // redundant wherever the caret sits: it never has to have left the list, or moved at all.
-        const stripped = this.stripRedundantSeparators(this.eAutocomplete.getValue()?.length ?? 0);
+        const stripped = this.stripRedundantSeparators(eAutocomplete.getValue()?.length ?? 0);
         if (stripped != null) {
             // The list is only updated if one is open, so tidying the text cannot open one.
-            this.eAutocomplete.setValue({
+            eAutocomplete.setValue({
                 value: stripped,
                 position: stripped.length,
                 silent: true,
                 updateListOnlyIfOpen: true,
             });
-            this.advancedFilter.setExpressionDisplayValue(stripped);
+            advancedFilter.setExpressionDisplayValue(stripped);
         }
-        this.advancedFilter.applyExpression();
+        advancedFilter.applyExpression();
         this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
     }
 

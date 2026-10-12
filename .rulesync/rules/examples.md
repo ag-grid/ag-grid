@@ -1,7 +1,7 @@
 ---
 targets: ['*']
 description: 'Working with examples in AG Grid documentation'
-globs: ['_examples/**/*', 'documentation/**/_examples/**/*']
+globs: ['documentation/**/_examples/**/*']
 ---
 
 # Examples Guide
@@ -114,7 +114,7 @@ yarn nx generate-examples ag-grid-docs
 ./docs-e2e.sh "example-name" --grep "test name"
 
 # Run against a specific framework
-./docs-e2e.sh "example-name" --framework react
+./docs-e2e.sh "example-name" --framework reactFunctionalTs
 ```
 
 ## HTML Container Patterns
@@ -163,15 +163,7 @@ The flexbox layout makes the controls sit at the top and the grid fills the rema
 
 Every example **must** have an `example.spec.ts` file — without it, the build fails.
 
-When you **add a new example** or **create a new doc page** with examples, the example is not complete until its `example.spec.ts` contains **meaningful** assertions — not the placeholder template — and passes across every framework. A placeholder that only proves the grid mounts asserts nothing about the behaviour the example exists to demonstrate.
-
-Follow these steps (the `docs-e2e-tests` skill walks through them):
-
-1. Read the page's `index.mdoc` and the example source to understand what the example demonstrates.
-2. Write assertions that exercise that specific behaviour (not just that the grid loads).
-3. Validate across all frameworks, e.g. `./docs-e2e.sh "<example-name>"`.
-
-See [docs-e2e-tests/SKILL.md](../skills/docs-e2e-tests/SKILL.md) for the full procedure.
+What that spec must contain, and when the placeholder is acceptable, is in [`docs-example-specs.md`](docs-example-specs.md), which loads alongside this guide for every example file.
 
 ## Best Practices
 

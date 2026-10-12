@@ -171,6 +171,64 @@ describe('row DOM order (React)', () => {
         expect(cellColIds(api!, 'scrolling')).toEqual(['a', 'c']);
     });
 
+    test('cells moved without DOM order are drawn in column order once print layout turns it on', async () => {
+        let api: GridApi<Cols> | undefined;
+        render(
+            <AgGridReact<Cols>
+                rowData={[{ a: 'a', b: 'b', c: 'c' }]}
+                columnDefs={[{ field: 'a' }, { field: 'b' }, { field: 'c' }]}
+                onGridReady={(e) => {
+                    api = e.api;
+                }}
+            />
+        );
+        await waitFor(() => expect(rowCellColIds(api!, 0)).toEqual(['a', 'b', 'c']));
+
+        act(() => {
+            api!.applyColumnState({ applyOrder: true, state: [{ colId: 'c' }, { colId: 'b' }, { colId: 'a' }] });
+        });
+        await act(async () => {
+            await asyncSetTimeout(0);
+        });
+        expect(rowCellColIds(api!, 0)).toEqual(['a', 'b', 'c']);
+
+        act(() => {
+            api!.setGridOption('domLayout', 'print');
+        });
+
+        await waitFor(() => expect(rowCellColIds(api!, 0)).toEqual(['c', 'b', 'a']));
+    });
+
+    test('cells moved without ensureDomOrder follow the column order once the prop enables it', async () => {
+        let api: GridApi<Cols> | undefined;
+        const rowData = [{ a: 'a', b: 'b', c: 'c' }];
+        const columnDefs = [{ field: 'a' as const }, { field: 'b' as const }, { field: 'c' as const }];
+        const grid = (ensureDomOrder: boolean) => (
+            <AgGridReact<Cols>
+                rowData={rowData}
+                columnDefs={columnDefs}
+                ensureDomOrder={ensureDomOrder}
+                onGridReady={(e) => {
+                    api = e.api;
+                }}
+            />
+        );
+        const { rerender } = render(grid(false));
+        await waitFor(() => expect(rowCellColIds(api!, 0)).toEqual(['a', 'b', 'c']));
+
+        act(() => {
+            api!.applyColumnState({ applyOrder: true, state: [{ colId: 'c' }, { colId: 'b' }, { colId: 'a' }] });
+        });
+        await act(async () => {
+            await asyncSetTimeout(0);
+        });
+        expect(rowCellColIds(api!, 0)).toEqual(['a', 'b', 'c']);
+
+        rerender(grid(true));
+
+        await waitFor(() => expect(rowCellColIds(api!, 0)).toEqual(['c', 'b', 'a']));
+    });
+
     test('a row a scroll brings in draws its cells once they are laid out', async () => {
         let api: GridApi<Cols> | undefined;
         render(

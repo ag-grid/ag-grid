@@ -104,6 +104,7 @@ import type {
 } from '../interfaces/iRowNodeStage';
 import type { ISelectionService } from '../interfaces/iSelectionService';
 import type { IServerSideTransactionManager } from '../interfaces/iServerSideRowModel';
+import type { ISetFilterService } from '../interfaces/iSetFilterService';
 import type { IShowRowGroupColsService } from '../interfaces/iShowRowGroupColsService';
 import type { IShowRowGroupColsValueService } from '../interfaces/iShowRowGroupColsValueService';
 import type { IShowValuesAsService } from '../interfaces/iShowValuesAsService';
@@ -419,6 +420,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     rowGroupPanelBuilder?: IRowGroupPanelBuilder;
     groupFilter?: IGroupFilterService;
     multiFilter?: IMultiFilterService;
+    setFilterSvc?: ISetFilterService;
     filterPanelSvc?: IFilterPanelService;
     selectableFilter?: ISelectableFilterService;
     testIdSvc?: ITestIdService;

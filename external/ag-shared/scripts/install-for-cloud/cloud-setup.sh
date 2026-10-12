@@ -23,7 +23,7 @@
 #   3. restores a prebuilt, fully-scripted node_modules published by CI as a
 #      release asset keyed by sha256(yarn.lock) — the fast path, and the only one
 #      that lets a session start ready rather than owing a finish-setup.sh run
-#   4. failing that, runs `yarn install --ignore-scripts` (the slow, cacheable
+#   4. failing that, runs `yarn install` with scripts disabled (the slow, cacheable
 #      part) and seeds $AG_CLOUD_CACHE_DIR from the result
 #   5. records the resolved node path, so per-session SessionStart can restore in
 #      seconds if the repo is re-cloned
@@ -463,19 +463,20 @@ install_dependencies() {
     # A full install of this monorepo takes ~9 minutes on a cloud VM (measured:
     # 534s), which does not fit in Anthropic's ~5 minute setup-script cap — an
     # earlier revision simply burned its whole budget and seeded nothing. So skip
-    # the postinstall chain here (`--ignore-scripts`, plus AG_SKIP_PLUGIN_BUILD for
-    # any script that slips through): resolving, fetching and linking is the slow,
-    # cacheable part, while allow-scripts, patch-package and the nx plugin build
-    # are comparatively quick and get done by the session's own install.
+    # the postinstall chain here (scripts disabled via YARN_ENABLE_SCRIPTS=false,
+    # plus AG_SKIP_PLUGIN_BUILD for any script that slips through): resolving,
+    # fetching and linking is the slow, cacheable part, while allow-scripts,
+    # patch-package and the nx plugin build are comparatively quick and get done
+    # by the session's own install.
     #
     # What lands in the snapshot is therefore a complete-but-unscripted
-    # node_modules plus a warm ~/.cache/yarn. The SessionStart hook then runs a
-    # real `yarn install --prefer-offline` in the background, which applies
-    # patches and runs scripts against already-linked packages.
+    # node_modules plus a warm Yarn cache. The SessionStart hook then runs a
+    # real `yarn install` in the background, which applies patches and runs
+    # scripts against already-linked packages.
     export AG_SKIP_PLUGIN_BUILD=1
 
-    log_info "yarn install --prefer-offline --ignore-scripts (budget ${budget}s)"
-    with_timeout "$budget" yarn install --prefer-offline --ignore-scripts
+    log_info "YARN_ENABLE_SCRIPTS=false yarn install (budget ${budget}s)"
+    with_timeout "$budget" env YARN_ENABLE_SCRIPTS=false yarn install
     local rc=$?
     if ((rc != 0)); then
         # Remove the half-built tree rather than snapshotting it. It is not cached,
@@ -528,8 +529,8 @@ seed_node_modules_cache() {
         sha256_of "$REPO_ROOT/yarn.lock" >"$AG_CLOUD_CACHE_DIR/yarn.lock.sha256"
     fi
 
-    # The tree was built with --ignore-scripts, so patch-package has not run and
-    # the plugins are unbuilt — yet `yarn check --integrity` still passes on it.
+    # The tree was built with scripts disabled, so patch-package has not run and
+    # the plugins are unbuilt — yet `yarn install --immutable` still passes on it.
     # Without this marker the SessionStart hook would take its fast path and call
     # the session ready with patches unapplied. The hook uses it to tell the
     # session to run finish-setup.sh, which scripts the tree, refreshes this cache

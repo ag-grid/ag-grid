@@ -2,6 +2,7 @@ import type {
     ColDef,
     ColumnEventType,
     ColumnHeaderNameChangedEvent,
+    ColumnState,
     IAutoColService,
     ITooltipParams,
     NamedBean,
@@ -28,6 +29,8 @@ import {
     _mergeDeep,
     _resolveGroupTooltipValue,
 } from 'ag-grid-community';
+
+import { isGroupFilterDef } from './rowHierarchyUtils';
 
 const hasTooltipComponent = (colDef: ColDef | undefined): colDef is ColDef =>
     !!colDef && (colDef.tooltipComponent != null || colDef.tooltipComponentSelector != null);
@@ -137,10 +140,24 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
     }
 
     public updateColumns(event: PropertyValueChangedEvent<'autoGroupColumnDef'>) {
-        const source = _convertColumnEventSourceType(event.source);
         const cols = this.columns;
-        for (let i = 0, len = cols.length; i < len; ++i) {
-            this.updateOneAutoCol(cols[i], i, source);
+        const len = cols.length;
+        if (len === 0) {
+            return;
+        }
+        const beans = this.beans;
+        const source = _convertColumnEventSourceType(event.source);
+        const state = new Array<ColumnState>(len);
+        const colModel = beans.colModel;
+        colModel.beginColUpdate();
+        try {
+            for (let i = 0; i < len; ++i) {
+                state[i] = this.updateOneAutoCol(cols[i], i, source);
+            }
+            // one state pass lays the auto cols out once, and tells them together
+            _applyColumnState(beans, { state }, source);
+        } finally {
+            colModel.endColUpdate();
         }
     }
 
@@ -226,8 +243,8 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         return newCol;
     }
 
-    /** Refreshes an auto group col to load changes from defaultColDef or autoGroupColDef */
-    private updateOneAutoCol(colToUpdate: AgColumn, index: number, source: ColumnEventType) {
+    /** Refreshes an auto group col to load changes from defaultColDef or autoGroupColDef, returning the state to apply */
+    private updateOneAutoCol(colToUpdate: AgColumn, index: number, source: ColumnEventType): ColumnState {
         const beans = this.beans;
         const oldColDef = colToUpdate.colDef;
         const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
@@ -235,7 +252,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         const colId = colToUpdate.colId;
         const colDef = this.createAutoColDef(colId, underlyingColumn ?? undefined, index);
         colToUpdate.setColDef(colDef, null, source);
-        _applyColumnState(beans, { state: [_getColumnStateFromColDef(beans, colDef, colId)] }, source);
+        return _getColumnStateFromColDef(beans, colDef, colId);
     }
 
     private createAutoColDef(colId: string, underlyingColumn?: AgColumn, index?: number): ColDef {
@@ -263,7 +280,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
             const noFieldOrValueGetter =
-                !res.field && !res.valueGetter && !res.filterValueGetter && res.filter !== 'agGroupColumnFilter';
+                !res.field && !res.valueGetter && !res.filterValueGetter && !isGroupFilterDef(res.filter);
             if (noFieldOrValueGetter) {
                 res.filter = false;
             }
@@ -427,36 +444,40 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         if (columns.length === 0) {
             return;
         }
-        const { gos, visibleCols, rowModel } = this.beans;
+        const { gos, visibleCols, rowModel, colModel } = this.beans;
         const isFeatureEnabled = _isGroupHideColumnsUntilExpanded(gos);
         let changed = false;
-
-        if (!isFeatureEnabled) {
-            if (setAllColumnsVisible(columns)) {
-                changed = true;
-            }
-        } else if (columns.length > 1) {
-            // Only applies with multiple columns: the first is always visible, so a single
-            // column needs no adjustment.
-            const maxLevel = columns.length - 2;
-            const rootChildren = rowModel?.rootNode?.childrenAfterGroup;
-            const deepestExpandedLevel = this.getDeepestExpandedLevel(rootChildren, maxLevel);
-
-            if (deepestExpandedLevel >= maxLevel) {
+        colModel.beginColUpdate();
+        try {
+            if (!isFeatureEnabled) {
                 if (setAllColumnsVisible(columns)) {
                     changed = true;
                 }
-            } else {
-                for (let level = 0; level < columns.length - 1; level++) {
-                    if (setColumnVisible(columns[level + 1], deepestExpandedLevel >= level)) {
+            } else if (columns.length > 1) {
+                // Only applies with multiple columns: the first is always visible, so a single
+                // column needs no adjustment.
+                const maxLevel = columns.length - 2;
+                const rootChildren = rowModel?.rootNode?.childrenAfterGroup;
+                const deepestExpandedLevel = this.getDeepestExpandedLevel(rootChildren, maxLevel);
+
+                if (deepestExpandedLevel >= maxLevel) {
+                    if (setAllColumnsVisible(columns)) {
                         changed = true;
+                    }
+                } else {
+                    for (let level = 0; level < columns.length - 1; level++) {
+                        if (setColumnVisible(columns[level + 1], deepestExpandedLevel >= level)) {
+                            changed = true;
+                        }
                     }
                 }
             }
-        }
-        if (changed && canRefresh) {
-            // skipTreeBuild=false: visibility changed, so the displayed-col partition must be rebuilt.
-            visibleCols.refresh('api', false);
+            if (changed && canRefresh) {
+                // skipTreeBuild=false: visibility changed, so the displayed-col partition must be rebuilt.
+                visibleCols.refresh('api', false);
+            }
+        } finally {
+            colModel.endColUpdate();
         }
     }
 }

@@ -8,4 +8,7 @@
     --ag-grid-size: 3px;
     --ag-list-item-height: 20px;
     --ag-font-size: 10px;
+
+    /* Use a smaller focus shadow to avoid the focus outline being clipped by containers with little padding  */
+    --ag-input-focus-box-shadow: 0 0 0 1px #2196f378;
 }

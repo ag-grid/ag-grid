@@ -2,12 +2,18 @@ import { _getDateParts } from 'ag-stack';
 
 import type { LogService, TextFormatter } from 'ag-grid-community';
 
-import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
+import type {
+    ISetDisplayValueModel,
+    SetFilterModelTreeItem,
+    SetFilterTreeItems,
+    SetFilterTreeListFormatter,
+} from './iSetDisplayValueModel';
 import { NO_SET_FILTER_KEYS, SET_FILTER_ADD_SELECTION_TO_FILTER, SET_FILTER_SELECT_ALL } from './iSetDisplayValueModel';
+import { formatTreeKey } from './setFilterUtils';
 
 export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     /** all displayed items in a tree structure */
-    private allDisplayedItemsTree: Map<string | null, SetFilterModelTreeItem> = new Map();
+    private allDisplayedItemsTree: SetFilterTreeItems = new Map();
     /** all displayed items flattened and filtered */
     private activeDisplayedItemsFlat: SetFilterModelTreeItem[] = [];
 
@@ -35,18 +41,15 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     constructor(
         private readonly log: LogService,
         private readonly formatter: TextFormatter,
-        private treeListPathGetter?: (value: V | null) => string[] | null,
-        private treeListFormatter?: (
-            pathKey: string | null,
-            level: number,
-            parentPathKeys: (string | null)[]
-        ) => string,
-        private readonly treeDataOrGrouping?: boolean
+        private treeListPathGetter: ((value: V | null) => string[] | null) | undefined,
+        private treeListFormatter: SetFilterTreeListFormatter | undefined,
+        private readonly treeDataOrGrouping: boolean,
+        private readonly getKeyOnlyKeys: () => ReadonlySet<string | null>
     ) {}
 
     public updateParams(
         treeListPathGetter?: (value: V | null) => string[] | null,
-        treeListFormatter?: (pathKey: string | null, level: number, parentPathKeys: (string | null)[]) => string
+        treeListFormatter?: SetFilterTreeListFormatter
     ) {
         this.treeListPathGetter = treeListPathGetter;
         this.treeListFormatter = treeListFormatter;
@@ -96,20 +99,35 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         allKeys: Iterable<string | null>,
         availableKeys: Set<string | null>
     ): void {
-        const allDisplayedItemsTree = new Map<string | null, SetFilterModelTreeItem>();
+        const allDisplayedItemsTree: SetFilterTreeItems = new Map();
         this.allDisplayedItemsTree = allDisplayedItemsTree;
         let groupsExist = false;
 
         const treeListPathGetter = this.getTreeListPathGetter(getValue, availableKeys);
+        const keyOnlyKeys = this.getKeyOnlyKeys();
         for (const key of allKeys) {
-            const value = getValue(key)!;
-            const dataPath = treeListPathGetter(value) ?? [null];
+            const available = availableKeys.has(key);
+            if (keyOnlyKeys.has(key)) {
+                // A value known only by its key has no path to ask for, so it is its own leaf at the root.
+                const leaf: SetFilterModelTreeItem = {
+                    treeKey: key,
+                    depth: 0,
+                    filterPasses: true,
+                    expanded: false,
+                    available,
+                    parentTreeKeys: [],
+                    keys: [key],
+                    keyOnly: true,
+                };
+                allDisplayedItemsTree.set(leaf, leaf);
+                continue;
+            }
+            const dataPath = treeListPathGetter(getValue(key)!) ?? [null];
             const dataPathLength = dataPath.length;
             if (dataPathLength > 1) {
                 groupsExist = true;
             }
-            const available = availableKeys.has(key);
-            let children: Map<string | null, SetFilterModelTreeItem> | undefined = allDisplayedItemsTree;
+            let children: SetFilterTreeItems | undefined = allDisplayedItemsTree;
             let item: SetFilterModelTreeItem | undefined;
             let parentTreeKeys: (string | null)[] = [];
             for (let depth = 0; depth < dataPathLength; depth++) {
@@ -183,7 +201,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     private flattenItems(): void {
         this.activeDisplayedItemsFlat = [];
-        const recursivelyFlattenDisplayedItems = (items: Map<string | null, SetFilterModelTreeItem>) => {
+        const recursivelyFlattenDisplayedItems = (items: SetFilterTreeItems) => {
             for (const item of items.values()) {
                 if (!item.filterPasses || !item.available) {
                     continue;
@@ -215,6 +233,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
     }
 
     private updateFilter(matchesFilter: (valueToCheck: string | null) => boolean, nullMatchesFilter: boolean): void {
+        const treeListFormatter = this.treeListFormatter;
         const passesFilter = (item: SetFilterModelTreeItem) => {
             if (!item.available) {
                 return false;
@@ -223,13 +242,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
                 return nullMatchesFilter;
             }
 
-            return matchesFilter(
-                this.formatter(
-                    this.treeListFormatter
-                        ? this.treeListFormatter(item.treeKey, item.depth, item.parentTreeKeys)
-                        : item.treeKey
-                )
-            );
+            return matchesFilter(this.formatter(formatTreeKey(item, treeListFormatter)));
         };
 
         for (const item of this.allDisplayedItemsTree.values()) {
@@ -315,7 +328,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
 
     private updateExpandAll(): void {
         const recursiveExpansionCheck = (
-            items: Map<string | null, SetFilterModelTreeItem>,
+            items: SetFilterTreeItems,
             someTrue: boolean,
             someFalse: boolean
         ): boolean | undefined => {

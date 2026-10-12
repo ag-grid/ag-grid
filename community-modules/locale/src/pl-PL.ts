@@ -117,6 +117,7 @@ export const AG_GRID_LOCALE_PL_PL = {
     addFilterCard: 'Dodaj filtr',
     agTextColumnFilterDisplayName: 'Prosty filtr',
     agNumberColumnFilterDisplayName: 'Prosty filtr',
+    agBigIntColumnFilterDisplayName: 'Prosty filtr',
     agDateColumnFilterDisplayName: 'Prosty filtr',
     agSetColumnFilterDisplayName: 'Filtr wyboru',
     agMultiColumnFilterDisplayName: 'Filtr złożony',
@@ -741,6 +742,7 @@ export const AG_GRID_LOCALE_PL_PL = {
     ariaFilterList: 'Lista Filtrowania',
     ariaFilterToValue: 'Filtr do wartości',
     ariaFilterValue: 'Wartość Filtra',
+    ariaNotInCurrentData: 'brak w bieżących danych',
     ariaFilterMenuOpen: 'Otwórz Menu Filtrów',
     ariaFilteringOperator: 'Operator Filtrowania',
     ariaHidden: 'ukryte',
@@ -895,9 +897,11 @@ export const AG_GRID_LOCALE_PL_PL = {
     columnHeaderEditCancel: 'Anuluj',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nie znaleziono odpowiednich kolumn.',
     calculatedColumn: 'Kolumna obliczana',
     calculatedColumnAdd: 'Dodaj kolumnę obliczaną',
     calculatedColumnEdit: 'Edytuj kolumnę obliczaną',
+    calculatedColumnView: 'Wyświetl kolumnę obliczaną',
     calculatedColumnRemove: 'Usuń kolumnę obliczaną',
     calculatedColumnTitle: 'Tytuł',
     calculatedColumnType: 'Typ',
@@ -912,6 +916,7 @@ export const AG_GRID_LOCALE_PL_PL = {
     calculatedColumnExpressionAmbiguousReference:
         'Niejednoznaczne odwołanie do kolumny "${variable}". Użyj listy Kolumny lub bardziej szczegółowej ścieżki grupy.',
     calculatedColumnExpressionUnknownReference: 'Nieznane odwołanie do kolumny "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Kolumny "${variable}" nie można użyć w tym wyrażeniu.',
     calculatedColumnExpressionEmpty: 'Wprowadź wyrażenie',
     calculatedColumnTitleEmpty: 'Wprowadź tytuł',
     calculatedColumnApply: 'Zastosuj',

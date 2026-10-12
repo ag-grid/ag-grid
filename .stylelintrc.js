@@ -1,7 +1,11 @@
 module.exports = {
     extends: 'stylelint-config-standard',
     plugins: ['./plugins/stylelint-plugin-ag/index.mjs'],
+    reportDescriptionlessDisables: true,
+    reportNeedlessDisables: true,
     rules: {
+        'declaration-no-important': true,
+        'keyframe-declaration-no-important': true,
         'comment-empty-line-before': [
             'always',
             {

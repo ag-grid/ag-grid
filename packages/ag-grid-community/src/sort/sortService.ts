@@ -54,7 +54,7 @@ export class SortService extends BeanStub implements NamedBean {
         source: ColumnEventType,
         cycleIndex?: number
     ): void {
-        const { gos, showRowGroupCols } = this.beans;
+        const { gos, showRowGroupCols, colModel } = this.beans;
         const coupled = _isColumnsSortingCoupledToGroup(gos);
 
         const columnsToUpdate: AgColumn[] = [column];
@@ -68,29 +68,34 @@ export class SortService extends BeanStub implements NamedBean {
             }
         }
 
-        // Only the clicked column (always first) carries the cycle position; coupled sources share the def.
-        for (let i = 0, len = columnsToUpdate.length; i < len; ++i) {
-            this.setColSort(columnsToUpdate[i], sortDef, source, i === 0 ? cycleIndex : undefined);
-        }
+        colModel.beginColUpdate();
+        try {
+            // Only the clicked column (always first) carries the cycle position; coupled sources share the def.
+            for (let i = 0, len = columnsToUpdate.length; i < len; ++i) {
+                this.setColSort(columnsToUpdate[i], sortDef, source, i === 0 ? cycleIndex : undefined);
+            }
 
-        const displayCol = coupled ? column.showRowGroupCol : null;
-        if (displayCol) {
-            columnsToUpdate.push(displayCol);
-        }
+            const displayCol = coupled ? column.showRowGroupCol : null;
+            if (displayCol) {
+                columnsToUpdate.push(displayCol);
+            }
 
-        const doingMultiSort = (multiSort || gos.get('alwaysMultiSort')) && !gos.get('suppressMultiSort');
-        const updatedColumns = doingMultiSort ? [] : this.clearSortBarTheseColumns(columnsToUpdate, source);
+            const doingMultiSort = (multiSort || gos.get('alwaysMultiSort')) && !gos.get('suppressMultiSort');
+            const updatedColumns = doingMultiSort ? [] : this.clearSortBarTheseColumns(columnsToUpdate, source);
 
-        // Must run after clearSortBarTheseColumns, which may clear sibling sources in single-sort mode.
-        if (displayCol) {
-            this.setColSort(displayCol, this.getCoupledGroupSortDef(displayCol), source);
-        }
+            // Must run after clearSortBarTheseColumns, which may clear sibling sources in single-sort mode.
+            if (displayCol) {
+                this.setColSort(displayCol, this.getCoupledGroupSortDef(displayCol), source);
+            }
 
-        this.updateSortIndex(column);
-        for (let i = 0, len = columnsToUpdate.length; i < len; ++i) {
-            updatedColumns.push(columnsToUpdate[i]);
+            this.updateSortIndex(column, source);
+            for (let i = 0, len = columnsToUpdate.length; i < len; ++i) {
+                updatedColumns.push(columnsToUpdate[i]);
+            }
+            this.dispatchSortChangedEvents(source, updatedColumns);
+        } finally {
+            colModel.endColUpdate();
         }
-        this.dispatchSortChangedEvents(source, updatedColumns);
     }
 
     /** A coupled display group col's own sortDef derived from its source cols: the first sorted source's
@@ -106,7 +111,7 @@ export class SortService extends BeanStub implements NamedBean {
         return getSortDefFromInput();
     }
 
-    private updateSortIndex(lastColToChange: AgColumn) {
+    private updateSortIndex(lastColToChange: AgColumn, source: ColumnEventType) {
         const { gos, colModel } = this.beans;
         const isCoupled = _isColumnsSortingCoupledToGroup(gos);
         const lastSortIndexCol = isCoupled ? lastColToChange.showRowGroupCol || lastColToChange : lastColToChange;
@@ -135,7 +140,7 @@ export class SortService extends BeanStub implements NamedBean {
             const col = allCols[i];
             const target = targetIndex.get(col) ?? null;
             if ((col.sortIndex ?? null) !== target) {
-                this.setColSortIndex(col, target);
+                this.setColSortIndex(col, target, source);
             }
         }
     }
@@ -369,7 +374,7 @@ export class SortService extends BeanStub implements NamedBean {
 
     private setColSort(column: AgColumn, sortDef: SortDef, source: ColumnEventType, cycleIndex?: number): void {
         const prevSortDef = column.getSortDef();
-        // Stamped before the events below, so a re-entrant sort write during dispatch clears it and wins.
+        // Stamped before the events below are raised, so a sort a listener writes clears it and wins.
         column.sortCycleIndex = cycleIndex;
         if (!areSortDefsEqual(prevSortDef, sortDef)) {
             // Presence flip changes membership (drop all); direction/type-only keeps order (drop opts).
@@ -381,13 +386,13 @@ export class SortService extends BeanStub implements NamedBean {
             column.setSortDef(sortDef);
             column.dispatchColEvent('sortChanged', source);
         }
-        column.dispatchStateUpdatedEvent('sort');
+        column.dispatchStateUpdatedEvent('sort', source);
     }
 
-    public setColSortIndex(column: AgColumn, sortOrder?: number | null): void {
+    public setColSortIndex(column: AgColumn, sortOrder: number | null | undefined, source: ColumnEventType): void {
         column.sortIndex = sortOrder;
         this.invalidate();
-        column.dispatchStateUpdatedEvent('sortIndex');
+        column.dispatchStateUpdatedEvent('sortIndex', source);
     }
 }
 

@@ -36,12 +36,17 @@ export type { IColumnHeaderEditService } from './interfaces/columnHeaderEdit';
 export { _getClientSideRowModel, _getServerSideRowModel, _getViewportRowModel } from './api/rowModelApiUtils';
 export { ChangedRowNodes as _ChangedRowNodes } from './clientSideRowModel/changedRowNodes';
 export { _csrmFirstLeaf, _csrmReorderAllLeafs } from './clientSideRowModel/clientSideRowModelUtils';
-export { _dispatchColumnChangedEvent, dispatchColumnVisibleEvent } from './columns/columnEventUtils';
+export {
+    _dispatchColumnChangedEvent,
+    _dispatchGroupHeaderNameChangedEvent,
+    dispatchColumnVisibleEvent,
+} from './columns/columnEventUtils';
 export { _buildColumnTree } from './columns/buildColumnTree';
 export { _addColumnDefaultAndTypes, _createUserColumn } from './columns/colDefUtils';
 export { UserColumnService as _UserColumnService } from './columns/userColumns/userColumnService';
 export { _isCalculatedColumnsEnabled, _normaliseCalculatedExpression } from './columns/calculatedColumnUtils';
 export { BaseSingleColService as _BaseSingleColService } from './columns/baseSingleColService';
+export { _setColGroupHeaderNameOverride } from './columns/columnGroups/columnGroupState';
 export type { ColumnModel } from './columns/columnModel';
 export type { ColumnNameService } from './columns/columnNameService';
 export { _applyColumnState, _resetColumnState, _setColsVisible } from './columns/columnStateUtils';
@@ -94,8 +99,8 @@ export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { RowsDrop as _RowsDrop } from './dragAndDrop/rowDragTypes';
 export {
     _defaultPivotSort,
-    _getAvailableSortTypes,
     _getDisplaySortForColumn,
+    _isSortTypeAvailable,
     _normalizeSortType,
     _resolvePivotColumnForRow,
     _resolvePivotSort,
@@ -146,6 +151,9 @@ export {
     _isGridSuppliedFilterOptions,
     _isGridSuppliedFilterParam,
 } from './filter/filterDataTypeUtils';
+export { _getDefaultFilter, _getFilterKey, _resolveFilter } from './filter/filterDefResolver';
+export type { ResolvedFilter } from './filter/filterDefResolver';
+export { _getDisplayHandler, _getRowHandler } from './filter/pairedFilterHandler';
 export { translateForFilter as _translateForFilter } from './filter/filterLocaleText';
 export {
     PRESET_DATE_FILTER_TYPES as _PRESET_DATE_FILTER_TYPES,
@@ -194,7 +202,6 @@ export type {
     IRowContainerComp,
     RowContainerName,
     RowContainerOptions,
-    RowContainerType,
 } from './gridBodyComp/rowContainer/rowContainerCtrl';
 export type { ScrollVisibleService } from './gridBodyComp/scrollVisibleService';
 export { GridCtrl } from './gridComp/gridCtrl';
@@ -321,6 +328,7 @@ export type { ColumnTreeBuild, ColumnTreeEdit } from './columns/buildColumnTree'
 
 export type { IMenuFactory, ShowMenuAfterButtonClickOptions } from './interfaces/iMenuFactory';
 export type { IMultiFilterService } from './interfaces/iMultiFilterService';
+export type { ISetFilterService } from './interfaces/iSetFilterService';
 export type {
     HorizontalSection,
     HorizontalSectionMap,
@@ -475,7 +483,6 @@ export { TabGuardComp } from './widgets/tabGuardComp';
 export { AgAbstractInputField } from './agWidgets/agAbstractInputField';
 export { AgAbstractLabel } from './agWidgets/agAbstractLabel';
 export { AgCheckbox, AgCheckboxSelector } from './agWidgets/agCheckbox';
-export { AgContentEditableField, AgContentEditableFieldSelector } from './agWidgets/agContentEditableField';
 export { AgFieldSet, AgFieldSetSelector } from './agWidgets/agFieldSet';
 export type {
     AgCheckboxParams,

@@ -95,6 +95,11 @@ export function _setAriaDisabled(element: Element, disabled: boolean): void {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _setAriaReadOnly(element: Element, readOnly: boolean): void {
+    _setAriaAttribute(element, 'readonly', readOnly);
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _setAriaHidden(element: Element, hidden: boolean): void {
     _toggleAriaAttribute(element, 'hidden', hidden);
 }
@@ -160,8 +165,8 @@ export function _setAriaColIndex(element: Element, colIndex: number): void {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _setAriaColSpan(element: Element, colSpan: number): void {
-    _setAriaAttribute(element, 'colspan', colSpan);
+export function _setAriaColSpan(element: Element, colSpan: number | undefined): void {
+    _toggleAriaAttribute(element, 'colspan', colSpan);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

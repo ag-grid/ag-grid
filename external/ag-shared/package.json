@@ -24,7 +24,6 @@
       "default": "./dist/package/scripts/junit-processor/src/processor.js"
     }
   },
-  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/ag-grid/ag-shared.git"
@@ -32,15 +31,14 @@
   "keywords": [],
   "author": "AG Grid <info@ag-grid.com>",
   "license": "MIT",
-  "dependencies": {},
   "devDependencies": {
-    "typescript": "^5.8.3",
-    "glob": "^11.1.0",
     "@nx/devkit": "^20.8.4",
-    "@types/yargs": "^17.0.35",
     "@swc/helpers": "0.5.23",
-    "tinypool": "^2.2.0",
+    "@types/yargs": "^17.0.35",
+    "glob": "^11.1.0",
     "process": "0.11.10",
+    "tinypool": "^2.2.0",
+    "typescript": "^5.8.3",
     "xml-js": "^1.6.11"
   },
   "publishConfig": {
