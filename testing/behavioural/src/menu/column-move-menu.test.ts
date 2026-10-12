@@ -1,4 +1,13 @@
-import { findByRole, findByText, getAllByText, getByText, queryByText, waitFor } from '@testing-library/dom';
+import {
+    findByRole,
+    findByText,
+    fireEvent,
+    getAllByText,
+    getByRole,
+    getByText,
+    queryByText,
+    waitFor,
+} from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { TestGridsManager, polyfillOffsetParent } from 'ag-test-utils';
 
@@ -39,6 +48,24 @@ describe('column movement menu actions', () => {
             sideBar: { toolPanels: ['columns'], defaultToolPanel: 'columns' },
             ...options,
         });
+    const createDeferred = (options: GridOptions = {}) =>
+        create({
+            sideBar: {
+                toolPanels: [
+                    {
+                        id: 'columns',
+                        labelDefault: 'Columns',
+                        labelKey: 'columns',
+                        iconKey: 'columns',
+                        toolPanel: 'agColumnsToolPanel',
+                        toolPanelParams: { buttons: ['apply', 'cancel', 'reset'] },
+                    },
+                ],
+                defaultToolPanel: 'columns',
+            },
+            ...options,
+        });
+
     const order = (api: GridApi) => api.getColumnState().map(({ colId }) => colId);
     const labels = (surface: Surface) =>
         surface === 'header' ? ['Move Left', 'Move Right'] : ['Move Up', 'Move Down'];
@@ -440,6 +467,76 @@ describe('column movement menu actions', () => {
         await userEvent.click(getByText(grid, button === 'apply' ? 'Apply' : 'Cancel', { selector: 'button' }));
         expect(order(api)).toEqual(button === 'apply' ? ['a', 'c', 'b', 'd'] : ['a', 'b', 'c', 'd']);
     });
+
+    test('uses the pending column order for repeated moves and boundary availability', async () => {
+        const api = await createDeferred();
+        const grid = getGridElement(api) as HTMLElement;
+        for (let i = 0; i < 2; ++i) {
+            await open('panel', api);
+            await userEvent.click(getByRole(grid, 'menuitem', { name: 'Move Down' }));
+            expect(order(api)).toEqual(['a', 'b', 'c', 'd']);
+        }
+        await open('panel', api);
+        expect(getByRole(grid, 'menuitem', { name: 'Move Down' }).getAttribute('aria-disabled')).toBe('true');
+        expect(getByRole(grid, 'menuitem', { name: 'Move Up' }).getAttribute('aria-disabled')).not.toBe('true');
+        await userEvent.keyboard('{Escape}');
+        await userEvent.click(getByRole(grid, 'button', { name: 'Apply' }));
+        expect(order(api)).toEqual(['a', 'c', 'd', 'b']);
+    });
+
+    test('Reset restores initial column order and menu availability after applied and pending moves', async () => {
+        const api = await createDeferred();
+        const grid = await open('panel', api);
+        await userEvent.click(getByRole(grid, 'menuitem', { name: 'Move Down' }));
+        await userEvent.click(getByRole(grid, 'button', { name: 'Apply' }));
+        expect(order(api)).toEqual(['a', 'c', 'b', 'd']);
+
+        await open('panel', api);
+        await userEvent.click(getByRole(grid, 'menuitem', { name: 'Move Down' }));
+        expect(order(api)).toEqual(['a', 'c', 'b', 'd']);
+        await userEvent.click(getByRole(grid, 'button', { name: 'Reset' }));
+        expect(order(api)).toEqual(['a', 'b', 'c', 'd']);
+        expect((getByRole(grid, 'button', { name: 'Apply' }) as HTMLButtonElement).disabled).toBe(true);
+        await open('panel', api);
+        for (const name of ['Move Up', 'Move Down']) {
+            expect(getByRole(grid, 'menuitem', { name }).getAttribute('aria-disabled')).not.toBe('true');
+        }
+    });
+
+    test.each([false, true])(
+        'move menus follow pending pivot mode and Cancel restores them, initial=%s',
+        async (pivotMode) => {
+            const api = await createDeferred({
+                pivotMode,
+                columnDefs: columnDefs.map((col) => ({ ...col, enableRowGroup: true, rowGroup: true })),
+            });
+            const grid = getGridElement(api) as HTMLElement;
+            await userEvent.click(getByRole(grid, 'checkbox', { name: 'Pivot Mode' }));
+            expect(api.isPivotMode()).toBe(pivotMode);
+
+            await open('panel', api);
+            for (const name of ['Move Up', 'Move Down']) {
+                expect(getByRole(grid, 'menuitem', { name }).getAttribute('aria-disabled') === 'true').toBe(!pivotMode);
+            }
+            await userEvent.keyboard('{Escape}');
+            const groupPanel = grid.querySelector<HTMLElement>('.ag-column-drop-vertical.ag-column-drop-rowgroup')!;
+            fireEvent.contextMenu(getByText(groupPanel, 'B').closest<HTMLElement>('.ag-column-drop-cell')!);
+            const menu = await findByRole(grid, 'menu');
+            expect(getByRole(menu, 'menuitem', { name: 'Move Up' }).getAttribute('aria-disabled')).not.toBe('true');
+            await userEvent.click(getByRole(menu, 'menuitem', { name: 'Move Up' }));
+            expect(api.getRowGroupColumns().map((col) => col.getColId())).toEqual(['a', 'b', 'c', 'd']);
+            expect(groupPanel.querySelector('.ag-column-drop-cell-text')?.textContent).toBe('B');
+
+            await userEvent.click(getByRole(grid, 'button', { name: 'Cancel' }));
+            expect(api.isPivotMode()).toBe(pivotMode);
+            expect((getByRole(grid, 'checkbox', { name: 'Pivot Mode' }) as HTMLInputElement).checked).toBe(pivotMode);
+            expect(groupPanel.querySelector('.ag-column-drop-cell-text')?.textContent).toBe('A');
+            await open('panel', api);
+            for (const name of ['Move Up', 'Move Down']) {
+                expect(getByRole(grid, 'menuitem', { name }).getAttribute('aria-disabled') === 'true').toBe(pivotMode);
+            }
+        }
+    );
 
     test('applies a deferred married-group move without splitting its children', async () => {
         const api = await create({

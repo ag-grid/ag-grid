@@ -6,6 +6,8 @@ import type { GridApi, GridOptions } from 'ag-grid-community';
 import { LocaleModule, getGridElement } from 'ag-grid-community';
 import { ColumnsToolPanelModule, PivotModule, RowGroupingModule, RowGroupingPanelModule } from 'ag-grid-enterprise';
 
+import { openToolPanelContextMenu } from './toolPanelContextMenuHarness';
+
 type Zone = 'rowGroup' | 'pivot' | 'aggregation';
 
 describe('drop zone move menus', () => {
@@ -43,6 +45,24 @@ describe('drop zone move menus', () => {
             rowGroupPanelShow: 'always',
             pivotPanelShow: 'always',
             sideBar: { toolPanels: ['columns'], defaultToolPanel: 'columns' },
+            ...options,
+        });
+
+    const createDeferred = (zone: Zone, options: GridOptions = {}) =>
+        create(zone, {
+            sideBar: {
+                toolPanels: [
+                    {
+                        id: 'columns',
+                        labelDefault: 'Columns',
+                        labelKey: 'columns',
+                        iconKey: 'columnsToolPanel',
+                        toolPanel: 'agColumnsToolPanel',
+                        toolPanelParams: { buttons: ['apply', 'cancel', 'reset'] },
+                    },
+                ],
+                defaultToolPanel: 'columns',
+            },
             ...options,
         });
 
@@ -311,6 +331,82 @@ describe('drop zone move menus', () => {
                     expect(order(api, zone)).toEqual(button === 'Cancel' ? ['a', 'b', 'c'] : ['b', 'a', 'c'])
                 );
             }
+        }
+    );
+
+    describe.each<Zone>(['rowGroup', 'pivot', 'aggregation'])('deferred %s move menus', (zone) => {
+        test('uses the pending order for repeated moves and boundary availability', async () => {
+            const api = await createDeferred(zone);
+            const grid = getGridElement(api) as HTMLElement;
+            for (const [direction, expected] of [
+                ['Move Up', ['B', 'A', 'C']],
+                ['Move Down', ['A', 'B', 'C']],
+                ['Move Down', ['A', 'C', 'B']],
+            ] as const) {
+                const menu = await open(api, zone);
+                await userEvent.click(getByRole(menu, 'menuitem', { name: direction }));
+                expect(order(api, zone)).toEqual(['a', 'b', 'c']);
+                expect(
+                    Array.from(panel(api, zone).querySelectorAll('.ag-column-drop-cell-text'), (el) => el.textContent)
+                ).toEqual(expected.map((name) => (zone === 'aggregation' ? `sum(${name})` : name)));
+            }
+            const menu = await open(api, zone);
+            expect(getByRole(menu, 'menuitem', { name: 'Move Down' }).getAttribute('aria-disabled')).toBe('true');
+            expect(getByRole(menu, 'menuitem', { name: 'Move Up' }).getAttribute('aria-disabled')).not.toBe('true');
+            await userEvent.keyboard('{Escape}');
+            await userEvent.click(getByRole(grid, 'button', { name: 'Apply' }));
+            expect(order(api, zone)).toEqual(['a', 'c', 'b']);
+        });
+
+        test('Reset clears pending moves and restores the initial order, not the last applied order', async () => {
+            const api = await createDeferred(zone);
+            const grid = getGridElement(api) as HTMLElement;
+            let menu = await open(api, zone);
+            await userEvent.click(getByRole(menu, 'menuitem', { name: 'Move Up' }));
+            await userEvent.click(getByRole(grid, 'button', { name: 'Apply' }));
+            expect(order(api, zone)).toEqual(['b', 'a', 'c']);
+
+            menu = await open(api, zone, false, 'A');
+            await userEvent.click(getByRole(menu, 'menuitem', { name: 'Move Down' }));
+            expect(order(api, zone)).toEqual(['b', 'a', 'c']);
+            await userEvent.click(getByRole(grid, 'button', { name: 'Reset' }));
+            expect(order(api, zone)).toEqual(['a', 'b', 'c']);
+            expect((getByRole(grid, 'button', { name: 'Apply' }) as HTMLButtonElement).disabled).toBe(true);
+
+            menu = await open(api, zone);
+            for (const name of ['Move Up', 'Move Down']) {
+                expect(getByRole(menu, 'menuitem', { name }).getAttribute('aria-disabled')).not.toBe('true');
+            }
+        });
+    });
+
+    test.each([1, -1])(
+        'hides moves for newly staged locked row groups before Apply, lock=%s',
+        async (groupLockGroupColumns) => {
+            const api = await createDeferred('rowGroup', {
+                groupLockGroupColumns,
+                columnDefs: ['a', 'b', 'c'].map((field) => ({ field, enableRowGroup: true })),
+            });
+            const grid = getGridElement(api) as HTMLElement;
+            for (const name of ['A', 'B']) {
+                await openToolPanelContextMenu(api.getToolPanelInstance('columns'), grid, name);
+                await userEvent.click(getByRole(grid, 'menuitem', { name: `Group by ${name}` }));
+            }
+            expect(order(api, 'rowGroup')).toEqual([]);
+            for (const name of groupLockGroupColumns === -1 ? ['A', 'B'] : ['A']) {
+                const item = pill(api, 'rowGroup', false, name);
+                fireEvent.contextMenu(item);
+                expect(queryByRole(grid, 'menu')).toBeNull();
+                expect(item.hasAttribute('aria-haspopup')).toBe(false);
+            }
+            if (groupLockGroupColumns === 1) {
+                const menu = await open(api, 'rowGroup');
+                expect(getByRole(menu, 'menuitem', { name: 'Move Up' }).getAttribute('aria-disabled')).toBe('true');
+                await userEvent.keyboard('{Escape}');
+            }
+            await userEvent.click(getByRole(grid, 'button', { name: 'Cancel' }));
+            expect(panel(api, 'rowGroup').querySelector('.ag-column-drop-cell')).toBeNull();
+            expect(order(api, 'rowGroup')).toEqual([]);
         }
     );
 
