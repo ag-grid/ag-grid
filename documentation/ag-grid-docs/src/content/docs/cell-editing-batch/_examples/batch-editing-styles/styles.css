@@ -1,19 +1,3 @@
-.example-wrapper {
-    display: grid;
-    grid-template-rows: auto 1fr;
-    height: 100%;
-    width: 100%;
-}
-
-.example-button-row {
-    padding-right: 8px;
-}
-
-#myGrid {
-    height: 100%;
-    width: 100%;
-}
-
 .ag-cell-batch-edit {
     background-color: rgba(59, 255, 49, 0.16);
     color: #c48965;
