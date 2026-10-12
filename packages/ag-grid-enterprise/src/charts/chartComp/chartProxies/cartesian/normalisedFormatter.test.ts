@@ -1,4 +1,5 @@
 import type {
+    AgAxisLabelFormatterParams,
     AgCartesianAxisOptions,
     AgCartesianChartOptions,
     AnyFormatterSource,
@@ -45,7 +46,8 @@ describe('createNormalisedFormatter', () => {
         const valueAxis: AgCartesianAxisOptions = { type: 'number' };
         const options = applyNormalisedFormatting({}, valueAxis, { y: ',.0f' });
         expect(options.formatter).toBeUndefined();
-        expect((valueAxis.label?.formatter as FunctionFormatter)(params('axis-label'))).toBe('50%');
+        const tickParams = { type: 'number', value: 49.6, index: 0 } as AgAxisLabelFormatterParams;
+        expect(valueAxis.label?.formatter?.(tickParams)).toBe('50%');
     });
 
     test('a theme formatter keyed by property keeps its other properties', () => {
