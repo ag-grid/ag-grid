@@ -1,0 +1,45 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+
+ignore:
+    SNYK-JS-AGGRIDENTERPRISE-7414158:
+        - ag-grid-enterprise@* > *:
+              reason: >-
+                  Local workspace package (0.0.0-use.local) - matched against advisories for old published versions
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-10-12T10:22:59.752Z
+    SNYK-JS-AGGRIDCOMMUNITY-7414157:
+        - ag-grid-enterprise@* > *:
+              reason: >-
+                  Local workspace package (0.0.0-use.local) - matched against advisories for old published versions
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-10-12T10:22:59.752Z
+        - ag-grid-community@* > *:
+              reason: >-
+                  Local workspace package (0.0.0-use.local) - matched against advisories for old published versions
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-10-12T10:22:59.751Z
+    SNYK-JS-BRACEEXPANSION-20244952:
+        - playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.9:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-10-12T09:31:45.147Z
+    SNYK-JS-BRACEEXPANSION-20244948:
+        - playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > glob@13.0.6 > minimatch@10.2.5 > brace-expansion@5.0.9:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-10-12T09:30:45.984Z
+    SNYK-JS-AJV-15274295:
+        - playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > ajv-formats@3.0.1 > ajv@8.17.1:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-10-12T09:28:50.953Z
+        - playwright-ctrf-json-reporter@0.0.29 > ctrf@0.2.0 > ajv@8.17.1:
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-10-12T09:28:50.951Z
+patch: {}
