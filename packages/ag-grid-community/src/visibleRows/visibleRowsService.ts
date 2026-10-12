@@ -420,27 +420,23 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
         // A refresh can keep a replaced row alive, with its old index, until the refresh finishes.
         const index = node.rowIndex;
         if (index != null && this.beans.rowModel.getRow(index) === node) {
-            if (index !== row.index) {
-                if (sub.sortPending) {
-                    return 'sort';
-                }
-                if (sub.filterPending) {
-                    return 'filter';
-                }
-            }
-            return 'scroll';
+            return getDisplayedRowReason(sub, index !== row.index);
         }
-        if (this.beans.rowModel.getRowNode(row.ref.id) === node) {
-            // With `groupHideOpenParents`, expanding a group hides its row, which stays in the grid.
-            if (node.expanded && (sub.expandAllPending || sub.expandedGroups.has(node))) {
-                return 'expand';
-            }
-            // A row filtered out is still in the grid, unlike a removed row.
-            if (sub.filterPending) {
-                return 'filter';
-            }
+        return this.getUndisplayedRowReason(row, sub);
+    }
+
+    /** The reason for a row that is no longer displayed, such as one hidden by a filter or removed. */
+    private getUndisplayedRowReason(row: SubscribedRow, sub: VisibleRowsSubscription): VisibleRowsReason {
+        const node = row.node;
+        if (this.beans.rowModel.getRowNode(row.ref.id) !== node) {
+            return 'remove';
         }
-        return 'remove';
+        // With `groupHideOpenParents`, expanding a group hides its row, which stays in the grid.
+        if (node.expanded && (sub.expandAllPending || sub.expandedGroups.has(node))) {
+            return 'expand';
+        }
+        // A row filtered out is still in the grid, unlike a removed row.
+        return sub.filterPending ? 'filter' : 'remove';
     }
 
     private getSubscribeReason(node: RowNode, sub: VisibleRowsSubscription): VisibleRowsReason {
@@ -504,6 +500,17 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
         const isFullWidthRow = this.gos.getCallback('isFullWidthRow');
         return !isFullWidthRow?.({ rowNode: node });
     }
+}
+
+/** The reason for a row that is still displayed but out of range: a sort or filter that moved it, or a scroll. */
+function getDisplayedRowReason(sub: VisibleRowsSubscription, indexChanged: boolean): VisibleRowsReason {
+    if (indexChanged && sub.sortPending) {
+        return 'sort';
+    }
+    if (indexChanged && sub.filterPending) {
+        return 'filter';
+    }
+    return 'scroll';
 }
 
 function hasMovedParent(ref: VisibleRowRef, node: RowNode): boolean {
