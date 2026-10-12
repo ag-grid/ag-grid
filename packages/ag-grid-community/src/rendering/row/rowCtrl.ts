@@ -1035,7 +1035,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
                 // the border goes on the side facing the data rows
                 const position = rowNode.rowPinned ?? _getGrandTotalRow(this.gos);
                 const atTop = position === 'top' || position === 'pinnedTop';
-                classes.push(atTop ? 'ag-row-grand-total-border-bottom' : 'ag-row-grand-total-border-top');
+                classes.push(`ag-row-grand-total-border-${atTop ? 'bottom' : 'top'}`);
             }
         }
 
