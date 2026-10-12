@@ -195,7 +195,8 @@ dependency*, or *workspace package itself* when the vulnerable package is the wo
 reloads the ignore patterns.
 
 Row state comes only from the `.snyk` files and the scan's `filtered.ignore`, not from review
-decisions. A vuln reached only through workspaces is auto-resolved once all of its rules are in
+decisions. A rule past its `expires` date no longer counts, so its row stays pending and adding it
+again renews the entry in place. A vuln reached only through workspaces is auto-resolved once all of its rules are in
 `.snyk`; a vuln with other paths too needs both its Section 3 paths and its workspace rules done.
 
 ---

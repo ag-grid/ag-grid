@@ -173,7 +173,9 @@
                 if (!workspaceRules.has(key)) workspaceRules.set(key, { snykFile, rule: ws.rule, vulns: new Map() });
                 const vulns = workspaceRules.get(key).vulns;
                 if (vulns.has(vuln.id)) return;
-                const ignored = suppressed || !!ignorePatternsByFile[snykFile]?.[vuln.id]?.some(e => e.path === ws.rule);
+                // An expired rule no longer suppresses the vuln in Snyk, so it stays pending for renewal
+                const ignored = suppressed || !!ignorePatternsByFile[snykFile]?.[vuln.id]?.some(e =>
+                    e.path === ws.rule && !(e.expires && new Date(e.expires) <= new Date()));
                 vulns.set(vuln.id, { vuln, selfFlagged: ws.selfFlagged, ignored });
             }
             for (const { vuln, project } of allVulnEntries) {
