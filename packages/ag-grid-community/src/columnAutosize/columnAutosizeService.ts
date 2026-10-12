@@ -155,6 +155,11 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     public autoSizeCols(paramsInput: AutoSizeColumnParams): void {
+        const { source } = paramsInput;
+        // a menu auto-size is a user resize, so it respects the pinned limit like a drag or a double-click
+        if (source && UI_MENU_SOURCES.has(source)) {
+            paramsInput = { ...paramsInput, limitPinnedGrowth: true };
+        }
         void this.autoSizeColsAsync(this.withUiActionStrategyParams(paramsInput)).then((cols) =>
             this.dispatchAutoSized(cols)
         );
@@ -327,7 +332,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             }
 
             if (!shouldSkipHeaderGroups) {
-                this.autoSizeColumnGroupsByColumns(colKeys, source, stopAtGroup);
+                this.autoSizeColumnGroupsByColumns(colKeys, source, stopAtGroup, limitPinnedGrowth);
             }
 
             resolve(columnsAutoSized);
@@ -338,7 +343,12 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         this.autoSizeCols({ colKeys: [key], skipHeader, skipHeaderGroups: true, source });
     }
 
-    private autoSizeColumnGroupsByColumns(keys: ColKey[], source: ColumnEventType, stopAtGroup?: AgColumnGroup): void {
+    private autoSizeColumnGroupsByColumns(
+        keys: ColKey[],
+        source: ColumnEventType,
+        stopAtGroup?: AgColumnGroup,
+        limitPinnedGrowth?: boolean
+    ): void {
         const { colModel, ctrlsSvc } = this.beans;
         const columnGroups = new Set<AgColumnGroup>();
 
@@ -361,7 +371,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         for (const columnGroup of columnGroups) {
             const headerGroupCtrl = headerRowContainerCtrl.getHeaderCtrlForColumn(columnGroup) as
                 HeaderGroupCellCtrl | undefined;
-            headerGroupCtrl?.resizeLeafColumnsToFit(source);
+            headerGroupCtrl?.resizeLeafColumnsToFit(source, limitPinnedGrowth);
         }
     }
 

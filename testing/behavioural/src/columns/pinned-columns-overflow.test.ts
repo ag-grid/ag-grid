@@ -1,9 +1,18 @@
-import { DragEventDispatcher, TestGridsManager, asyncSetTimeout, dispatchGridSizeChanged } from 'ag-test-utils';
+import userEvent from '@testing-library/user-event';
+import {
+    DragEventDispatcher,
+    TestGridsManager,
+    asyncSetTimeout,
+    dispatchGridSizeChanged,
+    openMenuOption,
+    polyfillOffsetParent,
+} from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 
 import type { ColumnPinnedType, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, ScrollApiModule } from 'ag-grid-community';
+import { ColumnMenuModule } from 'ag-grid-enterprise';
 
 const overflowingColumnDefs = [
     { field: 'a', pinned: 'left' as const, width: 300 },
@@ -578,6 +587,32 @@ describe('Resizing pinned columns wider than the viewport', () => {
             await dblClickResizeBar('a');
 
             expect(width(api, 'a')).toBe(500);
+        });
+
+        test('the column menu Autosize This Column does not grow an overflowing pinned column', async () => {
+            const menuGridsManager = new TestGridsManager({
+                modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, ColumnMenuModule],
+            });
+            const restoreOffsetParent = polyfillOffsetParent();
+            try {
+                const api = menuGridsManager.createGrid('myGrid', {
+                    columnDefs: ['a', 'b', 'c', 'd', 'e'].map((field) => ({ field, width: 200 })),
+                    defaultColDef: { pinned: 'left', resizable: true },
+                    rowData: [{ a: 'a', b: 'b', c: 'c', d: 'd', e: 'e' }],
+                    processUnpinnedColumns: () => [],
+                });
+                await asyncSetTimeout(0);
+
+                mockAutosizeContentWidth(480);
+                api.showColumnMenu('a');
+                await userEvent.click(await openMenuOption('Autosize This Column'));
+                await asyncSetTimeout(0);
+
+                expect(width(api, 'a')).toBe(200);
+            } finally {
+                restoreOffsetParent();
+                menuGridsManager.reset();
+            }
         });
     });
 });
