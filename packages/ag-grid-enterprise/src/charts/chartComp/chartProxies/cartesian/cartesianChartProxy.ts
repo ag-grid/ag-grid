@@ -15,6 +15,7 @@ import { _parseDateTimeFromString } from 'ag-stack';
 import type { UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
 import { getSeriesHighlight } from '../chartTheme';
+import { applyNormalisedFormatting, mergeThemeFormatters } from './normalisedFormatter';
 
 export abstract class CartesianChartProxy<
     TSeries extends
@@ -44,20 +45,29 @@ export abstract class CartesianChartProxy<
         commonChartOptions: AgCartesianChartOptions
     ): AgCartesianChartOptions {
         const axes = this.getAxes(params, commonChartOptions);
-
-        return {
+        const options: AgCartesianChartOptions = {
             ...commonChartOptions,
             data: this.getData(params, axes),
             axes,
             series: this.getSeries(params),
         };
+
+        return this.isNormalised()
+            ? applyNormalisedFormatting(options, axes.y, this.getThemeFormatter(commonChartOptions))
+            : options;
+    }
+
+    /** Whether this is a 100% stacked chart, whose value axis shows percentages. */
+    protected isNormalised(): boolean {
+        return false;
     }
 
     /**
      * The chart-level formatter set through the chart theme, e.g. `chartThemeOverrides.common.formatter`. Mirrors
-     * AG Charts' theme resolution: outer theme layers win, and a series-type formatter wins over a common one.
+     * AG Charts' theme resolution: outer theme layers win, a series-type formatter wins over a common one, and
+     * formatters keyed by property merge property by property.
      */
-    protected getThemeFormatter(commonChartOptions: AgCartesianChartOptions): AgCartesianChartOptions['formatter'] {
+    private getThemeFormatter(commonChartOptions: AgCartesianChartOptions): AgCartesianChartOptions['formatter'] {
         const overrides: AgChartThemeOverrides[] = [];
         let theme = commonChartOptions.theme;
         while (typeof theme === 'object') {
@@ -67,10 +77,10 @@ export abstract class CartesianChartProxy<
             theme = theme.baseTheme;
         }
         const seriesType = this.standaloneChartType;
-        return (
-            overrides.find((o) => o[seriesType]?.formatter)?.[seriesType]?.formatter ??
-            overrides.find((o) => o.common?.formatter)?.common?.formatter
-        );
+        return mergeThemeFormatters([
+            ...overrides.map((o) => o[seriesType]?.formatter),
+            ...overrides.map((o) => o.common?.formatter),
+        ]);
     }
 
     protected getData(params: UpdateParams, axes: Record<string, AgCartesianAxisOptions>): any[] {

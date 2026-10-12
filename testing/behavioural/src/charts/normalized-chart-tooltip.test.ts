@@ -92,6 +92,41 @@ describe('normalized (100% stacked) integrated charts', () => {
         }
     );
 
+    test('a theme y format string still formats tooltips, the value axis keeps percentages', async () => {
+        const { chartRef } = await createChart('normalizedColumn', {
+            chartThemeOverrides: { common: { formatter: { y: ',.0f' } } },
+        });
+
+        const { tooltipValues, tickLabels } = getRenderedText(chartRef);
+        expect(tooltipValues).toEqual(['237,438']);
+        expect(tickLabels).toEqual(PERCENT_TICKS);
+    });
+
+    const pounds = (params: { value: unknown }) => `£${params.value}`;
+    const quarter = (params: { value: unknown }) => `Q ${params.value}`;
+    test.each<[string, GridOptions]>([
+        [
+            'a custom theme y and an override x',
+            {
+                customChartThemes: {
+                    pounds: { baseTheme: 'ag-default', overrides: { common: { formatter: { y: pounds } } } },
+                },
+                chartThemes: ['pounds'],
+                chartThemeOverrides: { common: { formatter: { x: quarter } } },
+            },
+        ],
+        [
+            'a common y and a series-type x',
+            { chartThemeOverrides: { common: { formatter: { y: pounds } }, bar: { formatter: { x: quarter } } } },
+        ],
+    ])('theme formatters keyed by property merge across %s', async (_, gridOptions) => {
+        const { chartRef } = await createChart('normalizedColumn', gridOptions);
+
+        const { tooltipValues, tickLabels } = getRenderedText(chartRef);
+        expect(tooltipValues).toEqual(['£237438']);
+        expect(tickLabels).toEqual(PERCENT_TICKS);
+    });
+
     test('switching from normalizedColumn to stackedColumn removes the percentage ticks', async () => {
         const { api, chartRef } = await createChart('normalizedColumn');
 

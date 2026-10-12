@@ -1,6 +1,6 @@
 import type { AgCartesianChartOptions, AnyFormatterSource, FormatterParams } from 'ag-charts-types';
 
-import { createNormalisedFormatter } from './normalisedFormatter';
+import { createNormalisedFormatter, mergeThemeFormatters } from './normalisedFormatter';
 
 type FunctionFormatter = (params: FormatterParams) => unknown;
 
@@ -38,5 +38,21 @@ describe('createNormalisedFormatter', () => {
         expect(formatter.x).toBe(poundFormatter);
         expect(formatter.y(params('axis-label'))).toBe('50%');
         expect(formatter.y(params('tooltip'))).toBe('£49.6');
+    });
+});
+
+describe('mergeThemeFormatters', () => {
+    const otherFormatter = (p: FormatterParams) => `#${p.value}`;
+
+    test('merges formatters keyed by property, the first defined property winning', () => {
+        expect(mergeThemeFormatters([{ x: poundFormatter }, undefined, { x: otherFormatter, y: ',.0f' }])).toEqual({
+            x: poundFormatter,
+            y: ',.0f',
+        });
+    });
+
+    test('a function formatter replaces formatters of lower priority', () => {
+        expect(mergeThemeFormatters([poundFormatter, { y: otherFormatter }])).toBe(poundFormatter);
+        expect(mergeThemeFormatters([undefined, undefined])).toBeUndefined();
     });
 });

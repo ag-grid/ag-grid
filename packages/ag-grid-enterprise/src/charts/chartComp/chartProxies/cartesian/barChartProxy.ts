@@ -1,9 +1,8 @@
-import type { AgBarSeriesOptions, AgCartesianAxisOptions, AgCartesianChartOptions } from 'ag-charts-types';
+import type { AgBarSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-types';
 
 import { isStacked } from '../../utils/seriesTypeMapper';
 import type { UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
-import { createNormalisedFormatter } from './normalisedFormatter';
 
 const HORIZONTAL_CHART_TYPES = new Set(['bar', 'groupedBar', 'stackedBar', 'normalizedBar']);
 
@@ -21,16 +20,6 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
         };
 
         return axes;
-    }
-
-    protected override getUpdateOptions(
-        params: UpdateParams,
-        commonChartOptions: AgCartesianChartOptions
-    ): AgCartesianChartOptions {
-        const options = super.getUpdateOptions(params, commonChartOptions);
-        return this.isNormalised()
-            ? { ...options, formatter: createNormalisedFormatter(this.getThemeFormatter(commonChartOptions)) }
-            : options;
     }
 
     protected override getSeries(params: UpdateParams): AgBarSeriesOptions[] {
@@ -77,7 +66,7 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
         return allSeries;
     }
 
-    private isNormalised() {
+    protected override isNormalised() {
         const normalisedCharts = ['normalizedColumn', 'normalizedBar'];
         return !this.crossFiltering && normalisedCharts.includes(this.chartType);
     }

@@ -1,8 +1,7 @@
-import type { AgCartesianAxisOptions, AgCartesianChartOptions, AgLineSeriesOptions } from 'ag-charts-types';
+import type { AgCartesianAxisOptions, AgLineSeriesOptions } from 'ag-charts-types';
 
 import type { UpdateParams } from '../chartProxy';
 import { CartesianChartProxy } from './cartesianChartProxy';
-import { createNormalisedFormatter } from './normalisedFormatter';
 
 export class LineChartProxy extends CartesianChartProxy<'line'> {
     protected override getAxes(params: UpdateParams): Record<string, AgCartesianAxisOptions> {
@@ -18,16 +17,6 @@ export class LineChartProxy extends CartesianChartProxy<'line'> {
         };
 
         return axes;
-    }
-
-    protected override getUpdateOptions(
-        params: UpdateParams,
-        commonChartOptions: AgCartesianChartOptions
-    ): AgCartesianChartOptions {
-        const options = super.getUpdateOptions(params, commonChartOptions);
-        return this.isNormalised()
-            ? { ...options, formatter: createNormalisedFormatter(this.getThemeFormatter(commonChartOptions)) }
-            : options;
     }
 
     protected override getSeries(params: UpdateParams) {
@@ -50,7 +39,7 @@ export class LineChartProxy extends CartesianChartProxy<'line'> {
         return this.crossFiltering ? this.extractLineAreaCrossFilterSeries(series, params) : series;
     }
 
-    private isNormalised() {
+    protected override isNormalised() {
         const normalisedCharts = ['normalizedLine'];
         return !this.crossFiltering && normalisedCharts.includes(this.chartType);
     }
