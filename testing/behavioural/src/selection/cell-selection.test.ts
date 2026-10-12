@@ -17,6 +17,7 @@ import type { GridApi, GridOptions, ICellRendererComp, ICellRendererParams } fro
 import {
     AgPromise,
     ClientSideRowModelModule,
+    ColumnApiModule,
     NumberEditorModule,
     PaginationModule,
     PinnedRowModule,
@@ -1286,6 +1287,64 @@ describe('Cell Selection', () => {
                 `);
             });
 
+            test('a group header announces column selection as the option is turned on and off', async () => {
+                const [api] = await createGrid({
+                    columnDefs: [
+                        {
+                            groupId: 'group',
+                            headerName: 'Group',
+                            children: [{ field: 'sport' }, { field: 'year', columnGroupShow: 'open' }],
+                        },
+                        { field: 'day' },
+                    ],
+                    rowData,
+                });
+                const gridDiv = getGridElement(api)! as HTMLElement;
+                const groupAnnouncement = async () => {
+                    api.setFocusedHeader('day');
+                    await waitFor(() => expect(getAriaAnnouncementText(gridDiv)).toContain('sort'));
+                    api.setFocusedHeader(api.getColumnGroup('group')!);
+                    const text = await waitFor(() => {
+                        const announced = getAriaAnnouncementText(gridDiv);
+                        expect(announced).toContain('column group');
+                        return announced;
+                    });
+                    return text.includes('toggle selection') ? 'select and expand' : 'expand';
+                };
+                const seen = [await groupAnnouncement()];
+
+                api.setGridOption('cellSelection', { enableColumnSelection: true });
+                seen.push(await groupAnnouncement());
+
+                api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['sport', 'year'] });
+                seen.push(await groupAnnouncement());
+
+                api.setGridOption('cellSelection', true);
+                seen.push(await groupAnnouncement());
+
+                expect(seen).toEqual(['expand', 'select and expand', 'select and expand', 'expand']);
+            });
+
+            test('a group header shows it is selectable as column selection is turned on and off', async () => {
+                const [api] = await createGrid({
+                    columnDefs: [{ groupId: 'group', headerName: 'Group', children: [{ field: 'sport' }] }],
+                    rowData,
+                });
+                const selectable = () =>
+                    getGridElement(api)!
+                        .querySelector('.ag-header-group-cell')!
+                        .classList.contains('ag-header-group-cell-selectable');
+                const seen = [selectable()];
+
+                api.setGridOption('cellSelection', { enableColumnSelection: true });
+                seen.push(selectable());
+
+                api.setGridOption('cellSelection', true);
+                seen.push(selectable());
+
+                expect(seen).toEqual([false, true, false]);
+            });
+
             test('expandable group header announces ENTER expand or collapse when column selection is disabled', async () => {
                 const [api] = await createGrid({
                     columnDefs: [
@@ -1452,6 +1511,111 @@ describe('Cell Selection', () => {
                     └── LEAF id:6 sport:"rowing" year:2019
                 `);
             });
+        });
+    });
+
+    describe('Header highlight', () => {
+        const highlightGridMgr = new TestGridsManager({
+            modules: [ClientSideRowModelModule, CellSelectionModule, ColumnApiModule],
+        });
+
+        afterEach(() => {
+            highlightGridMgr.reset();
+        });
+
+        test('a header cell is highlighted while ranges cover its columns, as the ranges, the group open state, a hide, a pin, a move and the option change', async () => {
+            const api = highlightGridMgr.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'a' },
+                    {
+                        groupId: 'g',
+                        headerName: 'G',
+                        children: [{ field: 'b' }, { field: 'c', columnGroupShow: 'open' }],
+                    },
+                ],
+                rowData: [{ a: 1, b: 2, c: 3 }],
+                cellSelection: { enableHeaderHighlight: true },
+            });
+            await asyncSetTimeout(0);
+            const highlighted = () =>
+                Array.from(getGridElement(api)!.querySelectorAll('.ag-header-range-highlight'), (cell) =>
+                    cell.classList.contains('ag-header-group-cell') ? 'G' : cell.getAttribute('col-id')
+                ).join();
+            const seen: string[] = [highlighted()];
+
+            api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['b'] });
+            seen.push(highlighted());
+
+            api.setColumnGroupOpened('g', true);
+            seen.push(highlighted());
+
+            api.clearCellSelection();
+            api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['b', 'c'] });
+            seen.push(highlighted());
+
+            api.clearCellSelection();
+            seen.push(highlighted());
+
+            // a group is covered by its columns' ranges together, in any order
+            api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['b'] });
+            api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['c'] });
+            seen.push(highlighted());
+            api.clearCellSelection();
+            api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['b'] });
+            api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['b', 'c'] });
+            seen.push(highlighted());
+            api.clearCellSelection();
+
+            // hiding `c` leaves the group spanning only `b`
+            api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['b'] });
+            api.setColumnsVisible(['c'], false);
+            seen.push(highlighted());
+            api.setColumnsVisible(['c'], true);
+            seen.push(highlighted());
+            api.clearCellSelection();
+
+            // a pin or a move that takes `c` out of the centre group leaves it spanning only `b`
+            api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['b'] });
+            seen.push(highlighted());
+            api.setColumnsPinned(['c'], 'left');
+            seen.push(highlighted());
+            api.setColumnsPinned(['c'], null);
+            seen.push(highlighted());
+            api.moveColumns(['c'], 0);
+            seen.push(highlighted());
+
+            api.setGridOption('cellSelection', { enableHeaderHighlight: false });
+            seen.push(highlighted());
+            api.setGridOption('cellSelection', { enableHeaderHighlight: true });
+            seen.push(highlighted());
+
+            // turned back on, it highlights the ranges as they are then, not as they were when turned off
+            api.setGridOption('cellSelection', { enableHeaderHighlight: false });
+            api.clearCellSelection();
+            api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['a'] });
+            seen.push(highlighted());
+            api.setGridOption('cellSelection', { enableHeaderHighlight: true });
+            seen.push(highlighted());
+
+            expect(seen).toEqual([
+                '',
+                'G,b',
+                'b',
+                'G,b,c',
+                '',
+                'G,b,c',
+                'G,b,c',
+                'G,b',
+                'b',
+                'b',
+                'G,b',
+                'b',
+                'G,b',
+                '',
+                'G,b',
+                '',
+                'a',
+            ]);
         });
     });
 });

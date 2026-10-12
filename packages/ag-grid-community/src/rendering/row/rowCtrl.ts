@@ -11,7 +11,6 @@ import {
     _setAriaRowIndex,
 } from 'ag-stack';
 
-import { setupCompBean } from '../../components/emptyBean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn, ColumnLane } from '../../entities/agColumn';
@@ -104,7 +103,8 @@ export interface IRowComp {
 export interface RowGui {
     rowComp: IRowComp;
     element: HTMLElement;
-    compBean: BeanStub;
+    /** React's bean for the mounted comp, else the row ctrl itself. */
+    compBean: BeanStub<any>;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -230,10 +230,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public setComp(rowComp: IRowComp, element: HTMLElement, compBean: BeanStub<any> | undefined): void {
-        const { context, rowRenderer } = this.beans;
-        const rowCompBean = setupCompBean(this, context, compBean);
-
-        const rowGui: RowGui = { rowComp, element, compBean: rowCompBean };
+        const rowRenderer = this.beans.rowRenderer;
+        const rowGui: RowGui = { rowComp, element, compBean: compBean ?? this };
         this.rowGui = rowGui;
 
         this.initialiseRowComp();
@@ -1249,6 +1247,11 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.dispatchLocalEvent(event);
         this.beans.eventSvc.dispatchEvent(event);
         this.destroyRowDragComp();
+        // a comp still mounted keeps React's bean, whose listeners must stop with this ctrl
+        const compBean = this.rowGui?.compBean;
+        if (compBean !== this) {
+            this.destroyBean(compBean, this.beans.context);
+        }
         super.destroy();
     }
 

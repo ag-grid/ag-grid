@@ -3,7 +3,6 @@ import { KeyCode, _getActiveDomElement, _isKeyboardMode, _setDisplayed } from 'a
 
 import type { ResizeFeature } from '../../../columnResize/resizeFeature';
 import { isRowNumberCol } from '../../../columns/columnUtils';
-import { setupCompBean } from '../../../components/emptyBean';
 import type { ComponentInstanceClaim } from '../../../components/framework/componentInstanceGuard';
 import { ComponentInstanceGuard } from '../../../components/framework/componentInstanceGuard';
 import { _getHeaderCompDetails } from '../../../components/framework/userCompUtils';
@@ -72,8 +71,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.comp = comp;
 
         const { column, beans } = this;
-        const { colResize, context, colHover, rangeSvc } = beans;
-        const compBean = setupCompBean(this, context, compBeanInput);
+        const { colResize, colHover, rangeSvc } = beans;
+        const compBean = this.setupCompBean(compBeanInput);
 
         this.setGui(eGui, compBean);
         this.updateState();

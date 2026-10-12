@@ -1,4 +1,3 @@
-import { setupCompBean } from '../../components/emptyBean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn, ColumnLane } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
@@ -37,6 +36,8 @@ export class HeaderRowCtrl extends BeanStub {
     public readonly instanceId: HeaderRowCtrlInstanceId = instanceIdSequence++ as HeaderRowCtrlInstanceId;
 
     private comp: IHeaderRowComp | null = null;
+    /** React's bean for the mounted comp, which this ctrl destroys if it dies first. */
+    private compBean: BeanStub | undefined = undefined;
     public headerRowClass: string;
 
     // Maintain a map and corresponding array of the header cell ctrls for performance
@@ -91,7 +92,7 @@ export class HeaderRowCtrl extends BeanStub {
      */
     public setComp(comp: IHeaderRowComp, compBean: BeanStub | undefined, initCompState: boolean = true): void {
         this.comp = comp;
-        compBean = setupCompBean(this, this.beans.context, compBean);
+        compBean = this.setupCompBean(compBean);
 
         if (initCompState) {
             this.setRowIndex(this.rowIndex);
@@ -392,10 +393,25 @@ export class HeaderRowCtrl extends BeanStub {
         return focused;
     }
 
+    /** Where the comp's listeners register: React's bean for this mount, or this ctrl for a vanilla comp, which dies with it. */
+    private setupCompBean(compBean: BeanStub | undefined): BeanStub {
+        if (!compBean) {
+            return this;
+        }
+        this.compBean = compBean;
+        compBean.addDestroyFunc(() => {
+            if (this.compBean === compBean) {
+                this.compBean = undefined;
+            }
+        });
+        return compBean;
+    }
+
     public override destroy(): void {
         this.allCtrls = this.destroyBeans(this.allCtrls);
         this.ctrlsById = undefined;
         this.comp = null;
+        this.compBean = this.destroyBean(this.compBean);
         super.destroy();
     }
 }

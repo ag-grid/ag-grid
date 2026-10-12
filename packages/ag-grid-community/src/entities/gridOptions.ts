@@ -3309,7 +3309,7 @@ export interface CellSelectionOptions<TData = any, TContext = any> {
     suppressMultiRanges?: boolean;
     /**
      * If `true` the header of cells containing ranges will be highlighted.
-     * @default false;
+     * @default false
      */
     enableHeaderHighlight?: boolean;
     /**
