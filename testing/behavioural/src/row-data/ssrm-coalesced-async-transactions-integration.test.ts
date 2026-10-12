@@ -109,7 +109,11 @@ describe('SSRM coalesced async transactions with other grid options', () => {
         return rows;
     };
 
-    /** Compares the row model only; the DOM is checked where the coalesced outcome is pinned. */
+    /**
+     * Compares the row model only. Some setups leave stale DOM attributes whether or not the transactions are
+     * coalesced (a group total row keeps its old row-index after an add), so tests that pin a diagram check the
+     * DOM themselves where it is reliable.
+     */
     const diagramOf = (api: GridApi) => new GridRows(api, '', { checkDom: false }).makeDiagram(true);
 
     /** Runs the scenario applying transactions in turn, then coalesced, and requires the same outcome. */
