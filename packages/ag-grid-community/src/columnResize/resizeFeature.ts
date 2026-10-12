@@ -8,6 +8,7 @@ import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/c
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private lastResizeAmount: number;
     private resizeStartWidth: number;
+    private resizeStartPinnedWidth: number;
     private resizeWithShiftKey: boolean;
 
     constructor(
@@ -75,10 +76,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private onResizing(finished: boolean, resizeAmount: number): void {
         const { column: key, lastResizeAmount, resizeStartWidth, beans } = this;
 
-        const resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
-        const newWidth = resizeStartWidth + resizeAmountNormalised;
-
-        const columnWidths = [{ key, newWidth }];
+        let resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
 
         const { pinnedCols, ctrlsSvc, colResize } = beans;
 
@@ -89,16 +87,23 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
             key.pinnedLane !== 1 &&
             !pinnedCols?.isShiftResizeWithinPinnedSection(key, this.resizeWithShiftKey)
         ) {
-            const leftWidth = pinnedCols?.leftWidth ?? 0;
-            const rightWidth = pinnedCols?.rightWidth ?? 0;
             const bodyWidth = ctrlsSvc.getGridBodyCtrl().getViewportWidthWithoutScrollbar() - 50;
+            // pinned columns that overflowed when the drag started can grow back to their starting width
+            const room = Math.max(bodyWidth, this.resizeStartPinnedWidth) - this.getPinnedWidth();
 
-            if (leftWidth + rightWidth + growth > bodyWidth) {
+            if (room <= 0) {
                 return;
+            }
+
+            if (growth > room) {
+                // fill the remaining space rather than ignoring the tick
+                resizeAmountNormalised = lastResizeAmount + room;
             }
         }
 
         this.lastResizeAmount = resizeAmountNormalised;
+
+        const columnWidths = [{ key, newWidth: resizeStartWidth + resizeAmountNormalised }];
 
         colResize?.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, 'uiColumnResized');
 
@@ -109,10 +114,16 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
     private onResizeStart(shiftKey: boolean): void {
         this.resizeStartWidth = this.column.getActualWidth();
+        this.resizeStartPinnedWidth = this.getPinnedWidth();
         this.lastResizeAmount = 0;
         this.resizeWithShiftKey = shiftKey;
 
         this.toggleColumnResizing(true);
+    }
+
+    private getPinnedWidth(): number {
+        const { pinnedCols } = this.beans;
+        return (pinnedCols?.leftWidth ?? 0) + (pinnedCols?.rightWidth ?? 0);
     }
 
     public toggleColumnResizing(resizing: boolean): void {

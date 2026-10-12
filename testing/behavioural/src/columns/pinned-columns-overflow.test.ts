@@ -242,6 +242,24 @@ describe('Resizing pinned columns wider than the viewport', () => {
         expect(width(api, 'b')).toBeLessThan(200);
     });
 
+    test('an overflowing pinned column shrunk during a drag can grow back to its starting width in the same drag', async () => {
+        const api = await createGrid(5);
+        const bar = query<HTMLElement>('.ag-header-cell[col-id="a"] .ag-header-cell-resize');
+        const dispatcher = new DragEventDispatcher('mouse');
+
+        await dispatcher.startDrag(bar, 200, 10);
+        await dispatcher.movePointer(bar, 100, 10);
+        expect(width(api, 'a')).toBe(100);
+        await dispatcher.movePointer(bar, 160, 10);
+        expect(width(api, 'a')).toBe(160);
+        await dispatcher.movePointer(bar, 260, 10);
+        expect(width(api, 'a')).toBe(200);
+        await dispatcher.finishDrag();
+        await asyncSetTimeout(0);
+
+        expect(width(api, 'a')).toBe(200);
+    });
+
     // Right-pinned columns resize in the opposite direction: dragging or pressing right makes them narrower.
     test('overflowing right-pinned columns can be shrunk but not grown, by mouse and keyboard', async () => {
         const api = await createGrid(5, 'right');
