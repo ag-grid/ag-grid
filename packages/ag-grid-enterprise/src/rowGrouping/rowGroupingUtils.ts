@@ -57,24 +57,18 @@ export const setRowNodeGroup = (rowNode: RowNode, beans: BeanCollection, group: 
     doSetRowNodeGroup(rowNode.pinnedSibling, beans, group);
 };
 
-export const isRowGroupColLocked = (column: AgColumn | undefined | null, beans: BeanCollection): boolean => {
-    const { gos, rowGroupColsSvc } = beans;
-
-    if (!rowGroupColsSvc || !column) {
+export const isRowGroupColLocked = (
+    column: AgColumn | undefined | null,
+    beans: BeanCollection,
+    rowGroupColumns = beans.rowGroupColsSvc?.columns
+): boolean => {
+    const groupLockGroupColumns = beans.gos.get('groupLockGroupColumns');
+    if (!rowGroupColumns || !column || groupLockGroupColumns === 0) {
         return false;
     }
 
-    const groupLockGroupColumns = gos.get('groupLockGroupColumns');
-    if (!column.isRowGroupActive() || groupLockGroupColumns === 0) {
-        return false;
-    }
-
-    if (groupLockGroupColumns === -1) {
-        return true;
-    }
-
-    const colIndex = rowGroupColsSvc.columns.findIndex((groupCol) => groupCol.colId === column.colId);
-    return groupLockGroupColumns > colIndex;
+    const colIndex = rowGroupColumns.findIndex((groupCol) => groupCol.colId === column.colId);
+    return colIndex >= 0 && (groupLockGroupColumns === -1 || groupLockGroupColumns > colIndex);
 };
 
 /**

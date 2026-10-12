@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_BN_IN = {
     enabled: 'সক্রিয়',
 
     // Menu
+    moveLeft: 'বামে সরান',
+    moveRight: 'ডানে সরান',
+    moveUp: 'উপরে সরান',
+    moveDown: 'নিচে সরান',
     pinColumn: 'কলাম পিন করুন',
     pinLeft: 'বামে পিন করুন',
     pinRight: 'ডানে পিন করুন',

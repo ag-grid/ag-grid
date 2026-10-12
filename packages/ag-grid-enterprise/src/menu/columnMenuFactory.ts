@@ -18,6 +18,7 @@ import {
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
 import { _resolveColumnMenuItems } from './columnMenuItemsResolver';
+import { getColumnMenuHeaderCtrl } from './columnMoveMenuUtils';
 import type { MenuItemMapper } from './menuItemMapper';
 import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from './menuSeparators';
 
@@ -57,9 +58,10 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
     public getMenuItems(
         column: AgColumn | null = null,
-        columnGroup: AgProvidedColumnGroup | null = null
+        columnGroup: AgProvidedColumnGroup | null = null,
+        sourceElement?: HTMLElement
     ): (DefaultColumnMenuItem | MenuItemDef)[] {
-        const defaultItems = this.getDefaultMenuOptions(column, columnGroup);
+        const defaultItems = this.getDefaultMenuOptions(column, columnGroup, sourceElement);
         // Copy so normalising never mutates a user-provided columnMenuItems/mainMenuItems array in place.
         const result = [..._resolveColumnMenuItems(this.gos, column, columnGroup, 'columnMenu', defaultItems)];
 
@@ -72,7 +74,8 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
     private getDefaultMenuOptions(
         column: AgColumn | null,
-        columnGroup: AgProvidedColumnGroup | null = null
+        columnGroup: AgProvidedColumnGroup | null = null,
+        sourceElement?: HTMLElement
     ): DefaultMenuItem[] {
         const result: DefaultMenuItem[] = [];
 
@@ -91,6 +94,12 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         const isLegacyMenuEnabled = _isLegacyMenuEnabled(gos);
 
         const addColumnItems = () => {
+            const headerColumn = getColumnMenuHeaderCtrl(beans, sourceElement)?.column;
+            const group = headerColumn && !headerColumn.isColumn ? headerColumn : columnGroup;
+            const columnsToMove = column ? [column] : group?.getLeafColumns();
+            if (columnsToMove && beans.colMoves && !beans.colMoves.isMovingSuppressed(columnsToMove)) {
+                result.push('moveLeft', 'moveRight', MENU_ITEM_SEPARATOR);
+            }
             if (!isLegacyMenuEnabled && colChooserFactory) {
                 result.push('columnChooser');
             }

@@ -22,6 +22,7 @@ import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGr
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 import type { ColumnChooserFactory } from './columnChooserFactory';
 import { PIVOT_TOKEN, SCROLL_INTO_VIEW_TOKEN, VALUE_TOKEN, columnMenuTokenLabel } from './columnMenuTokenLabels';
+import { getColumnMoveMenuItem } from './columnMoveMenuUtils';
 import { validateMenuItem } from './menuItemValidations';
 import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from './menuSeparators';
 
@@ -124,6 +125,20 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             validateMenuItem(gos, key);
 
             switch (key) {
+                case 'moveLeft':
+                case 'moveRight':
+                    return getColumnMoveMenuItem(
+                        beans,
+                        column,
+                        columnGroup,
+                        sourceElement(),
+                        source,
+                        key,
+                        localeTextFunc
+                    );
+                case 'moveUp':
+                case 'moveDown':
+                    return null;
                 case 'pinSubMenu':
                     return pinnedCols && column
                         ? {

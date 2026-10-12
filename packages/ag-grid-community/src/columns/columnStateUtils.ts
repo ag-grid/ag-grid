@@ -470,7 +470,7 @@ function resetColumnState(beans: BeanCollection, source: ColumnEventType): void 
         return;
     }
 
-    // Reset state per colDef, tracking max explicit rowGroup/pivot index so boolean-only cols get fallback
+    // Reset state per colDef, tracking max explicit group/pivot/value index so unindexed cols get fallback
     // indexes after them. `colDefList` is `colDefTree`'s flat leaf set (same count), sizing the array exactly.
     const selectionCol = selectionColSvc?.column ?? null;
     const initialAutoCols = autoColSvc?.columns;
@@ -479,14 +479,18 @@ function resetColumnState(beans: BeanCollection, source: ColumnEventType): void 
     let stateIdx = 0;
     let maxRowGroupIndex = -1;
     let maxPivotIndex = -1;
+    let maxValueIndex = -1;
     const addColState = (col: AgColumn) => {
         const stateItem = getColumnStateFromColDef(beans, col);
-        const { rowGroupIndex, pivotIndex } = stateItem;
+        const { rowGroupIndex, pivotIndex, valueIndex } = stateItem;
         if (rowGroupIndex != null && rowGroupIndex > maxRowGroupIndex) {
             maxRowGroupIndex = rowGroupIndex;
         }
         if (pivotIndex != null && pivotIndex > maxPivotIndex) {
             maxPivotIndex = pivotIndex;
+        }
+        if (valueIndex != null && valueIndex > maxValueIndex) {
+            maxValueIndex = valueIndex;
         }
         columnStates[stateIdx++] = stateItem;
     };
@@ -502,7 +506,7 @@ function resetColumnState(beans: BeanCollection, source: ColumnEventType): void 
     // Leaves in colDef declaration order (stable; colDefList can be permuted by a tool-panel reorder).
     forEachColTreeLeaf(colModel.colDefTree, addColState);
 
-    // Second pass: assign fallback indexes to boolean-only group/pivot cols (after the max above).
+    // Second pass: assign fallback indexes to unindexed group/pivot/value cols (after the max above).
     for (let i = 0, len = columnStates.length; i < len; ++i) {
         const stateItem = columnStates[i];
         if (stateItem.rowGroup && stateItem.rowGroupIndex == null) {
@@ -510,6 +514,9 @@ function resetColumnState(beans: BeanCollection, source: ColumnEventType): void 
         }
         if (stateItem.pivot && stateItem.pivotIndex == null) {
             stateItem.pivotIndex = ++maxPivotIndex;
+        }
+        if (stateItem.aggFunc && stateItem.valueIndex == null) {
+            stateItem.valueIndex = ++maxValueIndex;
         }
     }
 
@@ -901,6 +908,7 @@ export function getColumnStateFromColDef(beans: BeanCollection, column: AgColumn
         pivotIndex,
         pivotSort: _resolvePivotSortFromColDef(colDef),
         aggFunc: colDef.aggFunc ?? colDef.initialAggFunc ?? null,
+        valueIndex: colDef.valueIndex ?? colDef.initialValueIndex ?? null,
         showValuesAs: beans.showValuesAsSvc?.colDefSelection(colDef) ?? null,
         headerName: null,
     };

@@ -341,6 +341,10 @@ export const AG_GRID_LOCALE_DE_DE = {
     enabled: 'Aktiviert',
 
     // Menu
+    moveLeft: 'Nach links verschieben',
+    moveRight: 'Nach rechts verschieben',
+    moveUp: 'Nach oben verschieben',
+    moveDown: 'Nach unten verschieben',
     pinColumn: 'Spalte anheften',
     pinLeft: 'Links anheften',
     pinRight: 'Rechts anheften',

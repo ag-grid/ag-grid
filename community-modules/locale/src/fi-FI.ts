@@ -341,6 +341,10 @@ export const AG_GRID_LOCALE_FI_FI = {
     enabled: 'Käytössä',
 
     // Menu
+    moveLeft: 'Siirrä vasemmalle',
+    moveRight: 'Siirrä oikealle',
+    moveUp: 'Siirrä ylös',
+    moveDown: 'Siirrä alas',
     pinColumn: 'Kiinnitä sarake',
     pinLeft: 'Kiinnitä vasemmalle',
     pinRight: 'Kiinnitä oikealle',

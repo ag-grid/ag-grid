@@ -340,6 +340,10 @@ export const AG_GRID_LOCALE_TR_TR = {
     enabled: 'Etkin',
 
     // Menu
+    moveLeft: 'Sola Taşı',
+    moveRight: 'Sağa Taşı',
+    moveUp: 'Yukarı Taşı',
+    moveDown: 'Aşağı Taşı',
     pinColumn: 'Sütunu Sabitle',
     pinLeft: 'Sola Sabitle',
     pinRight: 'Sağa Sabitle',

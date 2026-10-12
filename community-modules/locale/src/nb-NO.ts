@@ -338,6 +338,10 @@ export const AG_GRID_LOCALE_NB_NO = {
     enabled: 'Aktivert',
 
     // Menu
+    moveLeft: 'Flytt til venstre',
+    moveRight: 'Flytt til høyre',
+    moveUp: 'Flytt opp',
+    moveDown: 'Flytt ned',
     pinColumn: 'Fest Kolonne',
     pinLeft: 'Fest til Venstre',
     pinRight: 'Fest til Høyre',

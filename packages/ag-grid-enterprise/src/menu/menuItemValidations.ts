@@ -1,6 +1,8 @@
 import type { DefaultMenuItem, GridOptionsService, _ValidationModuleName } from 'ag-grid-community';
 
 const MENU_ITEM_MODULES: Record<DefaultMenuItem, _ValidationModuleName | _ValidationModuleName[]> = {
+    moveLeft: 'ColumnMove',
+    moveRight: 'ColumnMove',
     pinSubMenu: 'PinnedColumn',
     pinLeft: 'PinnedColumn',
     pinRight: 'PinnedColumn',

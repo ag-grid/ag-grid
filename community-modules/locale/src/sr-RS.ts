@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_SR_RS = {
     enabled: 'Омогућено',
 
     // Menu
+    moveLeft: 'Помери улево',
+    moveRight: 'Помери удесно',
+    moveUp: 'Помери нагоре',
+    moveDown: 'Помери надоле',
     pinColumn: 'Закачи колону',
     pinLeft: 'Закачи лево',
     pinRight: 'Закачи десно',

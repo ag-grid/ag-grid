@@ -340,6 +340,10 @@ export const AG_GRID_LOCALE_PT_PT = {
     enabled: 'Ativado',
 
     // Menu
+    moveLeft: 'Mover para a esquerda',
+    moveRight: 'Mover para a direita',
+    moveUp: 'Mover para cima',
+    moveDown: 'Mover para baixo',
     pinColumn: 'Fixar Coluna',
     pinLeft: 'Fixar à Esquerda',
     pinRight: 'Fixar à Direita',

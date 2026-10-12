@@ -1,4 +1,4 @@
-import { waitFor } from '@testing-library/dom';
+import { getByText, waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
 
 import type { AgColumn, ColDef, GridApi, IColumnStateUpdateStrategy } from 'ag-grid-community';
@@ -97,7 +97,7 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
 
     describe('column reordering', () => {
         test('blocks column reordering in CTP when suppressSyncLayoutWithGrid is true in deferred mode', async () => {
-            const { toolPanel } = await createGrid({ suppressSyncLayoutWithGrid: true });
+            const { toolPanel, toolPanelGui } = await createGrid({ suppressSyncLayoutWithGrid: true });
 
             // No ToolPanel-type drag sources should be registered
             const dndService = toolPanel.beans.dragAndDrop;
@@ -106,16 +106,19 @@ describe('deferred column tool panel with suppressSyncLayoutWithGrid', () => {
                 .filter((ds: any) => ds.type === 0); // DragSourceType.ToolPanel = 0
             expect(toolPanelDragSources).toHaveLength(0);
 
-            // moveItemCallback should be a no-op (order unchanged after calling it)
-            const listPanel = toolPanel.primaryColsPanel.primaryColsListPanel;
-            const virtualList = listPanel['virtualList'];
-            const displayedColsList = listPanel.getDisplayedColsList() as any[];
-            const firstItem = displayedColsList[0];
-
-            expect(virtualList['moveItemCallback']).toBeDefined();
-            virtualList['moveItemCallback'](firstItem, false);
+            // happy-dom needs a viewport height to render the virtual-list rows.
+            const viewport = toolPanelGui.querySelector<HTMLElement>('.ag-column-select-virtual-list-viewport')!;
+            Object.defineProperty(viewport, 'offsetHeight', { value: 300, configurable: true });
+            viewport.dispatchEvent(new Event('scroll'));
+            const firstItem = await waitFor(() =>
+                getByText(viewport, 'Athlete').closest<HTMLElement>('.ag-virtual-list-item')!
+            );
+            firstItem.focus();
+            expect(document.activeElement).toBe(firstItem);
+            firstItem.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', shiftKey: true, bubbles: true }));
 
             expect(getDisplayedPrimaryColumnOrder(toolPanel)).toEqual(['athlete', 'age', 'country', 'sport', 'gold']);
+            expect(getApplyButton(toolPanelGui).disabled).toBe(true);
         });
     });
 

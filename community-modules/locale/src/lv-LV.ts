@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_LV_LV = {
     enabled: 'Iespējots',
 
     // Menu
+    moveLeft: 'Pārvietot pa kreisi',
+    moveRight: 'Pārvietot pa labi',
+    moveUp: 'Pārvietot uz augšu',
+    moveDown: 'Pārvietot uz leju',
     pinColumn: 'Piespraust kolonnu',
     pinLeft: 'Piespraust pa kreisi',
     pinRight: 'Piespraust pa labi',
