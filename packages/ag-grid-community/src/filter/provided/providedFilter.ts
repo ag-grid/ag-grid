@@ -13,7 +13,6 @@ import { PositionableFeature } from '../../rendering/features/positionableFeatur
 import type { ElementParams } from '../../utils/element';
 import type { ComponentSelector } from '../../widgets/component';
 import { Component } from '../../widgets/component';
-import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import type { FilterLocaleTextKey } from '../filterLocaleText';
 import { translateForFilter } from '../filterLocaleText';
 import type {
@@ -80,20 +79,12 @@ export abstract class ProvidedFilter<
             children: [this.createBodyTemplate()],
         };
         this.setTemplate(element, this.getAgComponents());
-        this.createManagedBean(
-            new ManagedFocusFeature(this.getFocusableElement(), {
-                handleKeyDown: this.handleKeyDown.bind(this),
-            })
-        );
-
         this.positionableFeature = this.createBean(
             new PositionableFeature(this.getPositionableElement(), {
                 forcePopupParentAsOffsetParent: true,
             })
         );
     }
-
-    protected handleKeyDown(_e: KeyboardEvent): void {}
 
     public abstract getModelFromUi(): M | null;
 

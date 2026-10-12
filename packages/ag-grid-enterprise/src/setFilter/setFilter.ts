@@ -20,6 +20,7 @@ import type {
 import {
     AgInputTextFieldSelector,
     KeyCode,
+    ManagedFocusFeature,
     ProvidedFilter,
     _bindFilterCallback,
     _createIconNoSpan,
@@ -254,9 +255,16 @@ export class SetFilter<V = string>
         return [AgInputTextFieldSelector];
     }
 
-    protected override handleKeyDown(e: KeyboardEvent): void {
-        super.handleKeyDown(e);
+    public override postConstruct(): void {
+        super.postConstruct();
+        this.createManagedBean(
+            new ManagedFocusFeature(this.getFocusableElement(), {
+                handleKeyDown: this.handleKeyDown.bind(this),
+            })
+        );
+    }
 
+    private handleKeyDown(e: KeyboardEvent): void {
         if (e.defaultPrevented) {
             return;
         }
