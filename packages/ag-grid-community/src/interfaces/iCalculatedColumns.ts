@@ -100,6 +100,9 @@ export type CalculatedExpressionError = {
       }
 );
 
+/** The `ColDef` properties a user can change on a calculated column. */
+export type CalculatedColumnProperty = 'calculatedExpression' | 'cellDataType' | 'columnGroupShow' | 'headerName';
+
 export type CalculatedColumnDef<TData = any, TValue = any> = ColDef<TData, TValue> & {
     calculatedExpression: string;
 };

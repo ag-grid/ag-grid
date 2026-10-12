@@ -215,6 +215,23 @@ describe('ag-grid export overlay', () => {
             `);
         });
 
+        test('csv export error reaches the caller when the export overlay is suppressed', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [{ athlete: 'John', sport: 'Tennis', age: 25 }],
+                suppressOverlays: ['exporting'],
+            });
+
+            expect(() =>
+                api.exportDataAsCsv({
+                    processCellCallback: () => {
+                        throw new Error('processCellCallback failed');
+                    },
+                })
+            ).toThrow('processCellCallback failed');
+            expect(URL.createObjectURL).not.toHaveBeenCalled();
+        });
+
         test('export overlay does not override an overlay shown via api.showNoRowsOverlay', async () => {
             // Test is to show we don't break an existing implementation where a dev has used the noRowsOverlay to show
             // a custom overlay during the export of the csv

@@ -1,11 +1,4 @@
-import {
-    _debounce,
-    _getInnerWidth,
-    _getScrollLeft,
-    _isElementChildOfClass,
-    _isInvisibleScrollbar,
-    _setScrollLeft,
-} from 'ag-stack';
+import { _debounce, _getInnerWidth, _getScrollLeft, _isElementChildOfClass, _setScrollLeft } from 'ag-stack';
 
 import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
@@ -166,6 +159,7 @@ export class GridBodyCtrl extends BeanStub {
             pinnedHeightChanged: setPinnedRowsHeights,
             pinnedRowsChanged: setPinnedRowsHeights,
             headerHeightChanged: setPinnedRowsHeights,
+            stylesChanged: setPinnedRowsHeights,
             gridSizeChanged: () => {
                 // Reported, so a width change announces itself; a height-only resize still re-pushes,
                 // because the scrollbars may have moved.
@@ -757,8 +751,9 @@ export class GridBodyCtrl extends BeanStub {
 
         // Showing the horizontal scrollbar is debounced, so it can still measure zero here while it is
         // about to take up space. Fall back to the size the scroll comps themselves will apply.
-        const scrollbarWidth = this.scrollVisibleSvc.getScrollbarWidth() || 0;
-        if (scrollbarWidth === 0 && _isInvisibleScrollbar()) {
+        const scrollVisibleSvc = this.scrollVisibleSvc;
+        const scrollbarWidth = scrollVisibleSvc.getScrollbarWidth() || 0;
+        if (scrollbarWidth === 0 && scrollVisibleSvc.isInvisibleScrollbar()) {
             return INVISIBLE_SCROLLBAR_SIZE;
         }
         return scrollbarWidth;

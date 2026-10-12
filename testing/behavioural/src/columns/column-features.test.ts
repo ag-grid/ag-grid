@@ -27,13 +27,16 @@ import {
     AlignedGridsModule,
     CellStyleModule,
     ClientSideRowModelModule,
+    ColumnHoverModule,
     DragAndDropModule,
     RenderApiModule,
     RowAutoHeightModule,
     RowDragModule,
     ScrollApiModule,
     TextEditorModule,
+    TextFilterModule,
     enableDevValidations,
+    getGridElement,
 } from 'ag-grid-community';
 import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
 
@@ -423,6 +426,21 @@ describe('Column Features', () => {
                 ├── name "Name" width:300
                 └── age "Age" width:200
             `);
+        });
+
+        test('the grid states its column count as the column definitions change', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+            });
+            const colCount = () => getGridElement(api)!.querySelector('[aria-colcount]')?.getAttribute('aria-colcount');
+            const seen = [colCount()];
+
+            api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }, { field: 'c' }]);
+            seen.push(colCount());
+            api.setGridOption('columnDefs', [{ field: 'a' }]);
+            seen.push(colCount());
+
+            expect(seen).toEqual(['2', '3', '1']);
         });
     });
 
@@ -1938,6 +1956,70 @@ describe('Column Features', () => {
             }
             expect(rendered).toContain('c60');
             expectLanesConsistent(api);
+        });
+    });
+
+    describe('column hover', () => {
+        const hoverGridsManager = new TestGridsManager({
+            modules: [ClientSideRowModelModule, ColumnHoverModule, TextFilterModule],
+        });
+
+        afterEach(() => {
+            hoverGridsManager.reset();
+        });
+
+        test('the cells, header and floating filter of the hovered column are marked, and only while it is hovered', async () => {
+            const api = hoverGridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+                defaultColDef: { filter: 'agTextColumnFilter', floatingFilter: true },
+                rowData: [
+                    { a: 'a1', b: 'b1' },
+                    { a: 'a2', b: 'b2' },
+                ],
+                columnHoverHighlight: true,
+            });
+            await asyncSetTimeout(0);
+            const gridElement = TestGridsManager.getHTMLElement(api)!;
+            const hovered = () =>
+                Array.from(gridElement.querySelectorAll('.ag-column-hover'), (element) => {
+                    if (element.classList.contains('ag-cell')) {
+                        return `cell:${element.getAttribute('col-id')}`;
+                    }
+                    const kind = element.classList.contains('ag-floating-filter') ? 'filter' : 'header';
+                    return `${kind}:${element.closest('[col-id]')?.getAttribute('col-id') ?? element.getAttribute('col-id')}`;
+                })
+                    .sort()
+                    .join(' ');
+            const cell = (rowIndex: number, colId: string) =>
+                gridElement.querySelector(`.ag-row[row-index="${rowIndex}"] .ag-cell[col-id="${colId}"]`)!;
+            const seen: string[] = [hovered()];
+
+            cell(0, 'a').dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+            seen.push(hovered());
+
+            cell(0, 'a').dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
+            cell(1, 'b').dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+            seen.push(hovered());
+
+            cell(1, 'b').dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
+            seen.push(hovered());
+
+            cell(0, 'a').dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+            api.setGridOption('columnHoverHighlight', false);
+            seen.push(hovered());
+
+            cell(0, 'a').dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
+            cell(1, 'b').dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+            seen.push(hovered());
+
+            expect(seen).toEqual([
+                '',
+                'cell:a cell:a filter:a header:a',
+                'cell:b cell:b filter:b header:b',
+                '',
+                '',
+                '',
+            ]);
         });
     });
 });

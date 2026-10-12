@@ -243,7 +243,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
                   next.columnGroup.getLeafColumns().includes(move.columns[0])
                 : !next.group && next.column === item.column
         );
-        this.focusRowIfAlive(nextIndex).then(() => {
+        void this.focusRowIfAlive(nextIndex).then(() => {
             this.skipRefocus = false;
         });
     }
@@ -541,7 +541,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         virtualList.refresh();
 
         if (focusedRow != null) {
-            this.focusRowIfAlive(focusedRow);
+            void this.focusRowIfAlive(focusedRow);
         }
 
         this.notifyListeners();

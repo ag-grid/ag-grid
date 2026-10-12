@@ -26,7 +26,6 @@
 }
 
 .ag-paging-page-number:focus-visible {
-    outline: none;
     box-shadow: var(--ag-focus-shadow);
 }
 

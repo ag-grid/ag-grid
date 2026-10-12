@@ -303,6 +303,7 @@ export type { ContainerType, IAfterGuiAttachedParams } from './interfaces/iAfter
 export type {
     CalculatedColumnDef,
     CalculatedColumnExpressionPicker,
+    CalculatedColumnProperty,
     CalculatedColumnsGridOption,
     CalculatedColumnsOptions,
     CalculatedColumnUpdate,
@@ -1210,6 +1211,7 @@ export type {
     LengthValue,
     Part,
     ScaleValue,
+    ScrollbarWidthValue,
     ShadowValue,
     ShadowValueParams,
     Theme,

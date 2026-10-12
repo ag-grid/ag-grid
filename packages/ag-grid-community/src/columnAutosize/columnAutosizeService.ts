@@ -153,7 +153,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     public autoSizeCols(paramsInput: AutoSizeColumnParams): void {
-        this.autoSizeColsAsync(this.withUiActionStrategyParams(paramsInput)).then((cols) =>
+        void this.autoSizeColsAsync(this.withUiActionStrategyParams(paramsInput)).then((cols) =>
             this.dispatchAutoSized(cols)
         );
     }
@@ -171,9 +171,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
         setWidthAnimation(this.beans, true);
 
-        return this.innerAutoSizeCols(params).then((columnsAutoSized) => {
+        const sized = this.innerAutoSizeCols(params).then((columnsAutoSized) => {
             if (!params.scaleUpToFitGridWidth) {
-                setWidthAnimation(this.beans, false);
                 return columnsAutoSized;
             }
 
@@ -197,10 +196,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 animate: false,
             });
 
-            setWidthAnimation(this.beans, false);
-
             return columnsAutoSized;
         });
+
+        return sized.finally(() => setWidthAnimation(this.beans, false));
     }
 
     private innerAutoSizeCols(params: AutoSizeColumnParams): Promise<Set<AgColumn>> {
@@ -1008,7 +1007,7 @@ function isContinuousSupported(gos: GridOptionsService): boolean {
 function getAvailableWidth({ ctrlsSvc, scrollVisibleSvc }: BeanCollection): number {
     const gridBodyCtrl = ctrlsSvc.getGridBodyCtrl();
     const removeScrollWidth = scrollVisibleSvc.isVerticalScrollShowing();
-    const scrollWidthToRemove = removeScrollWidth ? scrollVisibleSvc.getScrollbarWidth() : 0;
+    const scrollWidthToRemove = removeScrollWidth ? (scrollVisibleSvc.getScrollbarWidth() ?? 0) : 0;
     // bodyViewportWidth should be calculated from eGridBody, not eBodyViewport
     // because we change the width of the bodyViewport to hide the real browser scrollbar
     const bodyViewportWidth = _getInnerWidth(gridBodyCtrl.eGridBody);

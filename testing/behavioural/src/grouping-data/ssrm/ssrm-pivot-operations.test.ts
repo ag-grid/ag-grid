@@ -31,6 +31,7 @@ interface RecordedRequest {
     pivotMode: boolean;
     pivotCols: string[];
     valueCols: string[];
+    aggFuncs: (string | undefined)[];
     groupKeys: string[];
     range: [number | undefined, number | undefined];
     filterModel: any;
@@ -49,6 +50,7 @@ function createRecordingServer(allData: any[]) {
                 pivotMode: !!request.pivotMode,
                 pivotCols: (request.pivotCols ?? []).map((col) => col.id),
                 valueCols: (request.valueCols ?? []).map((col) => col.id),
+                aggFuncs: (request.valueCols ?? []).map((col) => col.aggFunc),
                 groupKeys: [...(request.groupKeys ?? [])],
                 range: [request.startRow, request.endRow],
                 filterModel: request.filterModel,
@@ -147,6 +149,27 @@ describe('SSRM pivot-mode operations (characterization)', () => {
             ├── GROUP-leafGroup collapsed id:0 ag-Grid-AutoColumn:"Russia" 2000_gold:3 2004_gold:4
             └── GROUP-leafGroup collapsed id:1 ag-Grid-AutoColumn:"USA" 2000_gold:1 2004_gold:2
         `);
+    });
+
+    test('1b. an aggFunc changed by new column definitions, with no row groups, refetches the pivot', async () => {
+        const { datasource, requests } = createRecordingServer(SMALL_DATA);
+        const columnDefs = (aggFunc: string) => [
+            { field: 'year', pivot: true, hide: true },
+            { field: 'gold', aggFunc, hide: true },
+        ];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: columnDefs('sum'),
+            pivotMode: true,
+            rowModelType: 'serverSide',
+            serverSideDatasource: datasource,
+        });
+        await waitForEvent('firstDataRendered', api);
+        await waitForNoLoadingRows(api);
+        expect(requests.length).toBe(1);
+
+        api.setGridOption('columnDefs', columnDefs('max'));
+        await waitForNoLoadingRows(api);
+        expect(requests.map((request) => request.aggFuncs)).toEqual([['sum'], ['max']]);
     });
 
     test('2. block eviction (maxBlocksInCache) — re-request for evicted block still carries pivot flags', async () => {

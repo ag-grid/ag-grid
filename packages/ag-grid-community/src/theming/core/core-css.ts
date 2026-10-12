@@ -64,6 +64,11 @@ export interface CoreParams extends SharedThemeParams {
     autoHeightMinBodyHeight: LengthValue;
 
     /**
+     * Border along the edge of the grid's scrollbars that faces the grid content (above the horizontal scrollbar and beside the vertical scrollbar). The border takes up space in addition to the scrollbar. Not drawn for overlay scrollbars that only appear while scrolling.
+     */
+    bodyScrollbarBorder: BorderValue;
+
+    /**
      * Padding at the start and end of grid cells and header cells.
      */
     cellHorizontalPadding: LengthValue;
@@ -227,6 +232,11 @@ export interface CoreParams extends SharedThemeParams {
      * Horizontal borders above footer components like the pagination and status bars
      */
     footerRowBorder: BorderValue;
+
+    /**
+     * Horizontal border between the grand total row and the data rows: above it when the grand total is at the bottom, below it when at the top. This border is drawn on top of the existing border, so should be opaque to hide it.
+     */
+    grandTotalRowBorder: BorderValue;
 
     /**
      * Duration in seconds of the background color transition if headerCellHoverBackgroundColor or headerCellMovingBackgroundColor is set
@@ -854,11 +864,13 @@ export interface CoreParams extends SharedThemeParams {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> = {
     wrapperBorder: true,
+    bodyScrollbarBorder: false,
     rowBorder: true,
     headerRowBorder: true,
     footerRowBorder: {
         ref: 'rowBorder',
     },
+    grandTotalRowBorder: false,
     columnBorder: {
         style: 'solid',
         width: 1,
