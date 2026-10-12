@@ -102,11 +102,7 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
                 this.markPending(event.source === 'expandAll' ? 'expandAllPending' : 'collapsePending'),
             sortChanged: () => this.markPending('sortPending'),
             filterChanged: () => this.markPending('filterPending'),
-            gridPreDestroyed: () => {
-                for (const sub of Array.from(this.subscriptions)) {
-                    this.stop(sub);
-                }
-            },
+            gridPreDestroyed: this.stopAll.bind(this),
         });
     }
 
@@ -167,6 +163,17 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
     public onRowDestroyed(node: RowNode): void {
         if (this.destroyReason) {
             this.destroyedRowReasons.set(node, this.destroyReason);
+        }
+    }
+
+    public override destroy(): void {
+        this.stopAll();
+        super.destroy();
+    }
+
+    private stopAll(): void {
+        for (const sub of Array.from(this.subscriptions)) {
+            this.stop(sub);
         }
     }
 
@@ -290,10 +297,10 @@ export class VisibleRowsService extends BeanStub implements NamedBean {
             const byReason: RowsByReason<SubscribedRow> = new Map();
             for (const row of pending) {
                 const node = row.node;
-                const reason = node.destroyed
+                const rowReason = node.destroyed
                     ? (this.destroyedRowReasons.get(node) ?? 'remove')
                     : removedReasons.get(row)!;
-                _pushToMapArray(byReason, reason, row);
+                _pushToMapArray(byReason, rowReason, row);
             }
             const reason = UNSUBSCRIBE_ORDER.find((r) => byReason.has(r))!;
             const rows = byReason.get(reason)!;
