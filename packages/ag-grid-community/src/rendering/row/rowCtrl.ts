@@ -11,6 +11,8 @@ import {
     _setAriaRowIndex,
 } from 'ag-stack';
 
+import type { CompBeanOwner } from '../../components/emptyBean';
+import { destroyCompBean, setupCompBean } from '../../components/emptyBean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn, ColumnLane } from '../../entities/agColumn';
@@ -117,7 +119,7 @@ export interface MappedPinnedCellGroupWidths extends PinnedCellGroupWidths {
 
 type RowCtrlEvent = RenderedRowEvent;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export class RowCtrl extends BeanStub<RowCtrlEvent> {
+export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
     public readonly instanceId: RowCtrlInstanceId;
     /** Scratch for the React list diff, trusted only where the list diffed holds this at that index. */
     public diffIndex = 0;
@@ -128,6 +130,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private readonly rowType: RowType;
 
     private rowGui: RowGui | undefined;
+    public compBean: BeanStub<any> | undefined = undefined;
     private readonly rowModeFeature: IRowModeFeature;
     private mappedPinnedWidths: MappedPinnedCellGroupWidths | undefined = undefined;
 
@@ -231,7 +234,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
     public setComp(rowComp: IRowComp, element: HTMLElement, compBean: BeanStub<any> | undefined): void {
         const rowRenderer = this.beans.rowRenderer;
-        const rowGui: RowGui = { rowComp, element, compBean: compBean ?? this };
+        const rowGui: RowGui = { rowComp, element, compBean: setupCompBean(this, compBean) };
         this.rowGui = rowGui;
 
         this.initialiseRowComp();
@@ -1247,11 +1250,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.dispatchLocalEvent(event);
         this.beans.eventSvc.dispatchEvent(event);
         this.destroyRowDragComp();
-        // a comp still mounted keeps React's bean, whose listeners must stop with this ctrl
-        const compBean = this.rowGui?.compBean;
-        if (compBean !== this) {
-            this.destroyBean(compBean, this.beans.context);
-        }
+        destroyCompBean(this);
         super.destroy();
     }
 

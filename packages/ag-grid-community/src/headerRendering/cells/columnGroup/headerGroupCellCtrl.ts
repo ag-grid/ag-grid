@@ -2,6 +2,7 @@ import { KeyCode, _getActiveDomElement, _last, _setAriaColSpan } from 'ag-stack'
 
 import type { GroupResizeFeature } from '../../../columnResize/groupResizeFeature';
 import { _setColGroupOpen } from '../../../columns/columnGroups/columnGroupState';
+import { setupCompBean } from '../../../components/emptyBean';
 import { ComponentInstanceGuard } from '../../../components/framework/componentInstanceGuard';
 import { _getHeaderGroupCompDetails } from '../../../components/framework/userCompUtils';
 import type { BeanStub } from '../../../context/beanStub';
@@ -79,7 +80,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         const { column, beans } = this;
         const { colNames, colHover, rangeSvc, colResize } = beans;
         this.comp = comp;
-        compBean = this.setupCompBean(compBean);
+        compBean = setupCompBean(this, compBean);
         // ahead of `setGui`, whose displayed-columns refresh writes `aria-colspan`
         this.ariaEl = eGui.querySelector<HTMLElement>('[role=columnheader]') ?? eGui;
         this.drawnAriaColSpan = null;

@@ -7,6 +7,7 @@ import {
     _setAriaLabel,
 } from 'ag-stack';
 
+import { setupCompBean } from '../../../components/emptyBean';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
 import type { HeaderClassParams } from '../../../entities/colDef';
@@ -46,7 +47,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         compBeanInput: BeanStub | undefined
     ): void {
         this.comp = comp;
-        const compBean = this.setupCompBean(compBeanInput);
+        const compBean = setupCompBean(this, compBeanInput);
         this.eButtonShowMainFilter = eButtonShowMainFilter;
         this.eFloatingFilterBody = eFloatingFilterBody;
 
