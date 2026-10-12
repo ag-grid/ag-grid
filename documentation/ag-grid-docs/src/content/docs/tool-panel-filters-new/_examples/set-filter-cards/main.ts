@@ -60,33 +60,24 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
 };
 
-function getToolPanel() {
-    return gridApi!.getToolPanelInstance('filters-new')!;
-}
-
 function showAthleteCountryYear() {
-    getToolPanel().setFilters(['athlete', 'country', 'year']);
+    gridApi!.getToolPanelInstance('filters-new')!.setFilterCards(['athlete', 'country', 'year']);
 }
 
 function reverseOrder() {
-    const toolPanel = getToolPanel();
+    const toolPanel = gridApi!.getToolPanelInstance('filters-new')!;
     const colIds = (toolPanel.getState().filters ?? []).map(({ colId }) => colId);
-    toolPanel.setFilters(colIds.reverse());
+    toolPanel.setFilterCards(colIds.reverse());
 }
 
 function removeInactiveCards() {
-    const toolPanel = getToolPanel();
+    const toolPanel = gridApi!.getToolPanelInstance('filters-new')!;
     const colIds = (toolPanel.getState().filters ?? []).map(({ colId }) => colId);
-    toolPanel.setFilters(
-        colIds.filter(
-            (colId) =>
-                gridApi!.getColumnFilterModel(colId) != null || gridApi!.getColumnFilterModel(colId, true) != null
-        )
-    );
+    toolPanel.setFilterCards(colIds.filter((colId) => gridApi!.getColumnFilterModel(colId) != null));
 }
 
 function removeAllCards() {
-    getToolPanel().setFilters([]);
+    gridApi!.getToolPanelInstance('filters-new')!.setFilterCards([]);
 }
 
 // setup the grid after the page has finished loading

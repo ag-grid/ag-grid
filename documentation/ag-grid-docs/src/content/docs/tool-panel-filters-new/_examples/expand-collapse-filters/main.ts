@@ -52,19 +52,19 @@ const gridOptions: GridOptions<IOlympicData> = {
 };
 
 function expandAgeAndCountry() {
-    gridApi!.getToolPanelInstance('filters-new')!.expandFilters(['age', 'country']);
+    gridApi!.getToolPanelInstance('filters-new')!.expandFilterCards(['age', 'country']);
 }
 
 function collapseAge() {
-    gridApi!.getToolPanelInstance('filters-new')!.collapseFilters(['age']);
+    gridApi!.getToolPanelInstance('filters-new')!.collapseFilterCards(['age']);
 }
 
 function expandAll() {
-    gridApi!.getToolPanelInstance('filters-new')!.expandFilters();
+    gridApi!.getToolPanelInstance('filters-new')!.expandFilterCards();
 }
 
 function collapseAll() {
-    gridApi!.getToolPanelInstance('filters-new')!.collapseFilters();
+    gridApi!.getToolPanelInstance('filters-new')!.collapseFilterCards();
 }
 
 // setup the grid after the page has finished loading

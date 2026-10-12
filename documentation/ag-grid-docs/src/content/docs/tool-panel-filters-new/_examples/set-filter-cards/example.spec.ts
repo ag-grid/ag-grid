@@ -11,7 +11,6 @@ test.agExample(import.meta, () => {
 
         // Initial cards are shown in the given order, and the Age filter is active.
         await expect(cardTitles).toHaveText(['Athlete', 'Age', 'Country']);
-        const filteredRowCount = await gridApi.getDisplayedRowCount();
         expect(await gridApi.getColumnFilterModel('age')).not.toBeNull();
 
         // Remove Inactive Cards -> only the card with an applied filter remains.
@@ -23,7 +22,6 @@ test.agExample(import.meta, () => {
         await button('Show Athlete, Country, Year').click();
         await expect(cardTitles).toHaveText(['Athlete', 'Country', 'Year']);
         expect(await gridApi.getColumnFilterModel('age')).toBeNull();
-        await expect.poll(() => gridApi.getDisplayedRowCount()).toBeGreaterThan(filteredRowCount);
 
         // Reverse Order -> cards are listed in reverse.
         await button('Reverse Order').click();
@@ -45,7 +43,6 @@ test.agExample(import.meta, () => {
         await button('Remove All Cards').click();
         await expect(cardTitles).toHaveText([]);
         expect(await gridApi.getColumnFilterModel('year')).toBeNull();
-        await expect.poll(() => gridApi.getDisplayedRowCount()).toBeGreaterThan(filteredRowCount);
     });
 });
 

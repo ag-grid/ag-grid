@@ -5,7 +5,7 @@ import type { ColDef, GridApi, GridOptions, NewFiltersToolPanelState } from 'ag-
 import { enableDevValidations, getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
-describe('new filters tool panel setFilters', () => {
+describe('new filters tool panel setFilterCards', () => {
     const gridsManager = new TestGridsManager({
         modules: [AllEnterpriseModule],
     });
@@ -76,7 +76,7 @@ describe('new filters tool panel setFilters', () => {
         ]);
         expect(api.getDisplayedRowCount()).toBe(2);
 
-        toolPanel(api).setFilters([]);
+        toolPanel(api).setFilterCards([]);
         await waitForCards(api, []);
         await asyncSetTimeout(0);
 
@@ -96,7 +96,7 @@ describe('new filters tool panel setFilters', () => {
         const ageInput = getGridElement(api)!.querySelector('.ag-filter-card:not(.ag-filter-card-add) input');
         expect(ageInput).toBeTruthy();
 
-        toolPanel(api).setFilters(['country', 'age', 'name']);
+        toolPanel(api).setFilterCards(['country', 'age', 'name']);
         await waitForCards(api, [
             ['Country', false],
             ['Age', true],
@@ -120,7 +120,7 @@ describe('new filters tool panel setFilters', () => {
             ['Age', false],
         ]);
 
-        toolPanel(api).setFilters(['name', 'country']);
+        toolPanel(api).setFilterCards(['name', 'country']);
         await waitForCards(api, [
             ['Name', true],
             ['Country', false],
@@ -142,7 +142,7 @@ describe('new filters tool panel setFilters', () => {
         ]);
         expect(api.getDisplayedRowCount()).toBe(1);
 
-        toolPanel(api).setFilters(['name']);
+        toolPanel(api).setFilterCards(['name']);
         await waitForCards(api, [['Name', false]]);
         await asyncSetTimeout(0);
 
@@ -190,7 +190,7 @@ describe('new filters tool panel setFilters', () => {
             ['Age', true],
             ['Country', false],
         ]);
-        toolPanel(api).expandFilters(['country']);
+        toolPanel(api).expandFilterCards(['country']);
         await api.setColumnFilterModel('age', { filterType: 'number', type: 'equals', filter: 30 });
         api.onFilterChanged();
         await waitForCards(api, [
@@ -200,7 +200,7 @@ describe('new filters tool panel setFilters', () => {
         ]);
 
         const colIds = (toolPanel(api).getState().filters ?? []).map(({ colId }) => colId);
-        toolPanel(api).setFilters(
+        toolPanel(api).setFilterCards(
             colIds.filter(
                 (colId) => api.getColumnFilterModel(colId) != null || api.getColumnFilterModel(colId, true) != null
             )
@@ -210,6 +210,81 @@ describe('new filters tool panel setFilters', () => {
         await asyncSetTimeout(0);
         expect(getCards(api)).toEqual([['Age', true]]);
         expect(api.getDisplayedRowCount()).toBe(2);
+    });
+
+    describe('the documented recipe with buttons', () => {
+        const buttonsSideBar: GridOptions['sideBar'] = {
+            toolPanels: [
+                {
+                    id: 'filters-new',
+                    labelDefault: 'Filters',
+                    labelKey: 'filters',
+                    iconKey: 'filter',
+                    toolPanel: 'agNewFiltersToolPanel',
+                    toolPanelParams: { buttons: ['apply'] },
+                },
+            ],
+        };
+
+        const buttonsColumnDefs: ColDef[] = COLUMN_DEFS.map((colDef) => ({
+            ...colDef,
+            filterParams: { buttons: ['apply'] },
+        }));
+
+        function createButtonsGrid(filters: NewFiltersToolPanelState['filters']): GridApi {
+            return createGrid(filters, { sideBar: buttonsSideBar }, buttonsColumnDefs);
+        }
+
+        function removeInactiveCards(api: GridApi): void {
+            const colIds = (toolPanel(api).getState().filters ?? []).map(({ colId }) => colId);
+            toolPanel(api).setFilterCards(
+                colIds.filter(
+                    (colId) => api.getColumnFilterModel(colId) != null || api.getColumnFilterModel(colId, true) != null
+                )
+            );
+        }
+
+        function typeIntoNameCard(api: GridApi, value: string): void {
+            const input = getGridElement(api)!.querySelector<HTMLInputElement>(
+                '.ag-filter-card:not(.ag-filter-card-add) input'
+            )!;
+            input.value = value;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+
+        test('keeps a card that only has unapplied changes', async () => {
+            const api = createButtonsGrid([{ colId: 'name', expanded: true }, { colId: 'age' }]);
+            await waitForCards(api, [
+                ['Name', true],
+                ['Age', false],
+            ]);
+
+            typeIntoNameCard(api, 'Alice');
+            await waitFor(() => expect(api.getColumnFilterModel('name', true)).not.toBeNull());
+            expect(api.getColumnFilterModel('name')).toBeNull();
+
+            removeInactiveCards(api);
+            await waitForCards(api, [['Name', true]]);
+        });
+
+        test('keeps a card whose applied filter has been cleared but not re-applied', async () => {
+            const api = createButtonsGrid([{ colId: 'name', expanded: true }, { colId: 'age' }]);
+            await api.setColumnFilterModel('name', { filterType: 'text', type: 'equals', filter: 'Alice' });
+            api.onFilterChanged();
+            await waitForCards(api, [
+                ['Name', true],
+                ['Age', false],
+            ]);
+            expect(api.getDisplayedRowCount()).toBe(1);
+
+            typeIntoNameCard(api, '');
+            await waitFor(() => expect(api.getColumnFilterModel('name', true)).toBeNull());
+            expect(api.getColumnFilterModel('name')).not.toBeNull();
+
+            removeInactiveCards(api);
+            await waitForCards(api, [['Name', true]]);
+            expect(api.getDisplayedRowCount()).toBe(1);
+        });
     });
 
     test('ignores duplicates, and only warns for ids that are not columns', async () => {
@@ -223,7 +298,7 @@ describe('new filters tool panel setFilters', () => {
         ]);
         await waitForCards(api, []);
 
-        toolPanel(api).setFilters(['age', 'name', 'age', 'country', 'noFilter', 'unknown']);
+        toolPanel(api).setFilterCards(['age', 'name', 'age', 'country', 'noFilter', 'unknown']);
         await waitForCards(api, [
             ['Age', false],
             ['Name', false],
@@ -234,7 +309,7 @@ describe('new filters tool panel setFilters', () => {
         expect(consoleWarnSpy.mock.calls[0].join(' ')).toContain('`unknown`');
     });
 
-    test('cards removed by setFilters can be re-added, and the order stays correct after a later removal', async () => {
+    test('cards removed by setFilterCards can be re-added, and the order stays correct after a later removal', async () => {
         const api = createGrid([{ colId: 'name' }, { colId: 'age' }, { colId: 'country' }]);
         await waitForCards(api, [
             ['Name', false],
@@ -242,11 +317,11 @@ describe('new filters tool panel setFilters', () => {
             ['Country', false],
         ]);
 
-        toolPanel(api).setFilters([]);
-        toolPanel(api).setFilters(['age']);
+        toolPanel(api).setFilterCards([]);
+        toolPanel(api).setFilterCards(['age']);
         await waitForCards(api, [['Age', false]]);
 
-        toolPanel(api).setFilters(['country', 'name', 'age']);
+        toolPanel(api).setFilterCards(['country', 'name', 'age']);
         await waitForCards(api, [
             ['Country', false],
             ['Name', false],
@@ -266,7 +341,7 @@ describe('new filters tool panel setFilters', () => {
     test('applies to a tool panel that has not been opened', async () => {
         const api = createGrid([], { initialState: undefined });
 
-        toolPanel(api).setFilters(['age', 'name']);
+        toolPanel(api).setFilterCards(['age', 'name']);
         expect(toolPanel(api).getState()).toEqual({
             filters: [
                 { colId: 'age', expanded: false },

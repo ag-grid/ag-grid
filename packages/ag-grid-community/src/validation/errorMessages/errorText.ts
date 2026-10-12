@@ -967,7 +967,7 @@ export const AG_GRID_ERRORS = {
     336: ({ colId, properties }: { colId: string; properties: string[] }) =>
         `\`calculatedColumns.processColDef\` returned \`${(properties ?? []).join('`, `')}\` for calculated column \`${colId}\`. These properties are always overridden for calculated columns and have been ignored.` as const,
     337: ({ colId }: { colId: string }) =>
-        `\`setFilters\` on the New Filters Tool Panel was passed \`${colId}\`, which is not a column in the grid, so no card is shown for it.` as const,
+        `\`setFilterCards\` on the New Filters Tool Panel was passed \`${colId}\`, which is not a column in the grid, so no card is shown for it.` as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 

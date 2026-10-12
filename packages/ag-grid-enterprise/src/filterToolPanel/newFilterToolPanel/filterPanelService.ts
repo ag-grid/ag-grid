@@ -134,7 +134,7 @@ export class FilterPanelService
         }
     }
 
-    public setFilters(ids: string[]): void {
+    public setFilterCards(ids: string[]): void {
         const { states, orderedStates, beans } = this;
         const newIds = new Set(ids);
         for (const id of this.getIds()) {
@@ -228,7 +228,7 @@ export class FilterPanelService
         });
     }
 
-    public setFiltersExpanded(expanded: boolean, ids?: string[]): void {
+    public setFilterCardsExpanded(expanded: boolean, ids?: string[]): void {
         const states = this.states;
         for (const id of ids ?? this.getIds()) {
             const state = states.get(id)?.state;

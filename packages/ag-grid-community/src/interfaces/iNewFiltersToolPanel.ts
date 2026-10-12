@@ -75,9 +75,9 @@ export type FilterPanelFilterState = FilterPanelSummaryState | FilterPanelDetail
 
 export interface INewFiltersToolPanel extends IToolPanel {
     /** Expands the filter cards with the supplied `colIds`, or all filter cards if not supplied. */
-    expandFilters(colIds?: string[]): void;
+    expandFilterCards(colIds?: string[]): void;
     /** Collapses the filter cards with the supplied `colIds`, or all filter cards if not supplied. */
-    collapseFilters(colIds?: string[]): void;
+    collapseFilterCards(colIds?: string[]): void;
     /**
      * Shows a filter card for each of the supplied `colIds`, in that order, and removes every other card.
      * Removing a card clears that column's filter, so omitting a filtered column removes its filter.
@@ -87,7 +87,7 @@ export interface INewFiltersToolPanel extends IToolPanel {
      * Columns that cannot show a card, such as those with `suppressFiltersToolPanel`, are skipped.
      * IDs that are not columns in the grid are skipped and a warning is logged.
      */
-    setFilters(colIds: string[]): void;
+    setFilterCards(colIds: string[]): void;
     /** Returns the filter cards currently shown, in order, with their expanded state. */
     getState(): NewFiltersToolPanelState;
 }
@@ -100,8 +100,8 @@ export interface IFilterPanelService extends IEventEmitter<'filterPanelStateChan
     remove(id: string): void;
     getState(id: string): FilterPanelFilterState | undefined;
     expand(id: string, expanded: boolean): void;
-    setFiltersExpanded(expanded: boolean, ids?: string[]): void;
-    setFilters(ids: string[]): void;
+    setFilterCardsExpanded(expanded: boolean, ids?: string[]): void;
+    setFilterCards(ids: string[]): void;
     updateType(id: string, filterDef: SelectableFilterDef): void;
     getActions(): { actions: FilterAction[]; canApply: boolean } | undefined;
     doAction(action: FilterAction): void;

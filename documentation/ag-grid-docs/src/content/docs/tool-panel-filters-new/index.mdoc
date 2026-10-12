@@ -71,7 +71,7 @@ When the grid initialises, the tool panel only shows active filters provided in 
 
 The filter cards shown in the tool panel are part of the [Side Bar](./side-bar/) state, which is separate from the filter model. Clearing the filter model with `api.setFilterModel(null)` therefore clears the filter values but leaves the (now inactive) cards in place.
 
-To remove cards from the tool panel programmatically, see [Set Filters](#set-filters).
+To remove cards from the tool panel programmatically, see [Choosing Filter Cards](#choosing-filter-cards).
 
 A saved layout can be restored by setting the `sideBar` state to a previously captured one. `setState` resets any part of the grid state it is not given, so spread the current state to keep everything else (e.g. sorting) unchanged. Replace the `filter` state too to restore each card's values as well as the cards themselves. See [Grid State](./grid-state/) for the full `getState` and `setState` semantics.
 
@@ -84,30 +84,30 @@ The example below demonstrates these operations:
 
 {% gridExampleRunner title="New Filters Tool Panel State" name="state" /%}
 
-## Expand / Collapse Filters
+## Expand / Collapse Filter Cards
 
 The filter cards in the tool panel can be expanded and collapsed by invoking methods on the Filters Tool Panel instance:
 
-{% interfaceDocumentation interfaceName="INewFiltersToolPanel" names=["expandFilters","collapseFilters"] config={"description":""} /%}
+{% interfaceDocumentation interfaceName="INewFiltersToolPanel" names=["expandFilterCards","collapseFilterCards"] config={"description":""} /%}
 
 ```{% frameworkTransform=true %}
 // expands the 'age' and 'country' filter cards
-api.getToolPanelInstance('filters-new').expandFilters(['age', 'country']);
+api.getToolPanelInstance('filters-new').expandFilterCards(['age', 'country']);
 ```
 
 Only filters which already have a card in the tool panel are affected.
 
-{% gridExampleRunner title="Expand / Collapse Filters" name="expand-collapse-filters" /%}
+{% gridExampleRunner title="Expand / Collapse Filter Cards" name="expand-collapse-filters" /%}
 
-## Set Filters
+## Choosing Filter Cards
 
-`setFilters` sets exactly which filter cards are shown in the tool panel, and in what order. **Any column omitted from the list has its card removed, and its filter is cleared.** Passing an empty array (`[]`) removes every card and clears their filters.
+`setFilterCards` sets exactly which filter cards are shown in the tool panel, and in what order. **Any column omitted from the list has its card removed, and its filter is cleared.** Passing an empty array (`[]`) removes every card and clears their filters.
 
-{% interfaceDocumentation interfaceName="INewFiltersToolPanel" names=["setFilters","getState"] config={"description":""} /%}
+{% interfaceDocumentation interfaceName="INewFiltersToolPanel" names=["setFilterCards","getState"] config={"description":""} /%}
 
 ```{% frameworkTransform=true %}
 // shows only the 'athlete', 'country' and 'year' cards, in that order
-api.getToolPanelInstance('filters-new').setFilters(['athlete', 'country', 'year']);
+api.getToolPanelInstance('filters-new').setFilterCards(['athlete', 'country', 'year']);
 ```
 
 - Cards are shown in the order given.
@@ -121,23 +121,27 @@ To remove only the cards that have no active filter, use `getState` to get the c
 ```{% frameworkTransform=true %}
 const toolPanel = api.getToolPanelInstance('filters-new');
 const colIds = (toolPanel.getState().filters ?? []).map(({ colId }) => colId);
-toolPanel.setFilters(colIds.filter((colId) => api.getColumnFilterModel(colId) != null || api.getColumnFilterModel(colId, true) != null));
+toolPanel.setFilterCards(colIds.filter((colId) => api.getColumnFilterModel(colId) != null));
 ```
 
-This keeps cards with an applied filter, and cards with unapplied changes (when [buttons](#using-buttons) are used).
+When [Using Buttons](#using-buttons), a card can also have changes that have not been applied yet. To keep those cards too, also check the unapplied model:
 
-{% note %}
-`api.refreshToolPanel()` currently re-applies the cached initial card list, which can undo the result of `setFilters`. This is a known issue.
-{% /note %}
+```{% frameworkTransform=true %}
+toolPanel.setFilterCards(
+    colIds.filter((colId) => api.getColumnFilterModel(colId) != null || api.getColumnFilterModel(colId, true) != null)
+);
+```
 
-The example below demonstrates setting filters:
+Both checks are needed, because a card whose applied filter has been cleared but not yet applied still filters the rows.
 
-- **Show Athlete, Country, Year** calls `setFilters(['athlete', 'country', 'year'])`. The Age card is removed and its filter is cleared.
+The example below demonstrates choosing filter cards:
+
+- **Show Athlete, Country, Year** calls `setFilterCards(['athlete', 'country', 'year'])`. The Age card is removed and its filter is cleared.
 - **Reverse Order** reverses the order of the current cards.
 - **Remove Inactive Cards** removes the cards that have no filter.
-- **Remove All Cards** calls `setFilters([])`. Every card is removed and the rows are unfiltered.
+- **Remove All Cards** calls `setFilterCards([])`. Every card is removed and the rows are unfiltered.
 
-{% gridExampleRunner title="Set Filters" name="set-filters" /%}
+{% gridExampleRunner title="Choosing Filter Cards" name="set-filter-cards" /%}
 
 ## Filter Instances
 
