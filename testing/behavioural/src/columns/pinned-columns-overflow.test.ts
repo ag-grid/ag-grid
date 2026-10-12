@@ -1,9 +1,18 @@
-import { DragEventDispatcher, TestGridsManager, asyncSetTimeout, dispatchGridSizeChanged } from 'ag-test-utils';
+import userEvent from '@testing-library/user-event';
+import {
+    DragEventDispatcher,
+    TestGridsManager,
+    asyncSetTimeout,
+    dispatchGridSizeChanged,
+    openMenuOption,
+    polyfillOffsetParent,
+} from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 
 import type { ColumnPinnedType, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnApiModule, ScrollApiModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, ScrollApiModule } from 'ag-grid-community';
+import { ColumnMenuModule } from 'ag-grid-enterprise';
 
 const overflowingColumnDefs = [
     { field: 'a', pinned: 'left' as const, width: 300 },
@@ -159,7 +168,9 @@ describe('Pinned columns wider than the viewport', () => {
 });
 
 describe('Resizing pinned columns wider than the viewport', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, ColumnApiModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule],
+    });
     let originalGridWidth: number;
 
     beforeAll(() => {
@@ -175,6 +186,7 @@ describe('Resizing pinned columns wider than the viewport', () => {
 
     afterEach(() => {
         gridsManager.reset();
+        vi.restoreAllMocks();
     });
 
     // Returning [] from processUnpinnedColumns keeps 5 x 200px columns pinned in a 600px grid.
@@ -197,6 +209,18 @@ describe('Resizing pinned columns wider than the viewport', () => {
     };
 
     const width = (api: GridApi, colId: string): number => api.getColumn(colId)!.getActualWidth();
+
+    // happy-dom has no text layout, so fix the width autosize measures (it adds autoSizePadding, 20px, on top)
+    const mockAutosizeContentWidth = (contentWidth: number, contentWidthByColId: Record<string, number> = {}): void => {
+        const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetWidth')!.get!;
+        vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement) {
+            if (this.tagName !== 'FORM') {
+                return original.call(this);
+            }
+            const colId = this.querySelector('[col-id]')?.getAttribute('col-id') ?? '';
+            return contentWidthByColId[colId] ?? contentWidth;
+        });
+    };
 
     const dragResizeBy = async (colId: string, dx: number): Promise<void> => {
         const bar = query<HTMLElement>(`.ag-header-cell[col-id="${colId}"] .ag-header-cell-resize`);
@@ -323,5 +347,287 @@ describe('Resizing pinned columns wider than the viewport', () => {
 
         await pressResizeKey('e', 'ArrowRight', true);
         expect(width(api, 'e')).toBe(200);
+    });
+
+    test('shift-resize grows an overflowing pinned column into the next column in the other pinned section', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: ['a', 'b', 'c', 'd', 'e'].map((field, index) => ({
+                field,
+                width: 200,
+                pinned: index < 2 ? ('left' as const) : ('right' as const),
+                resizable: true,
+            })),
+            rowData: [{ a: 'a', b: 'b', c: 'c', d: 'd', e: 'e' }],
+            processUnpinnedColumns: () => [],
+            colResizeDefault: 'shift',
+        });
+        await asyncSetTimeout(0);
+
+        await dragResizeBy('b', 60);
+        expect(width(api, 'b')).toBe(260);
+        expect(width(api, 'c')).toBe(140);
+
+        await pressResizeKey('b', 'ArrowRight');
+        expect(width(api, 'b')).toBeGreaterThan(260);
+        expect(width(api, 'b') + width(api, 'c')).toBe(400);
+    });
+
+    describe('pinned header groups', () => {
+        const createGroupedGrid = async (
+            groups: string[][],
+            gridOptions: GridOptions = {},
+            pinned: ColumnPinnedType = 'left'
+        ): Promise<GridApi> => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: groups.map((fields, index) => ({
+                    headerName: `Group ${index}`,
+                    groupId: `g${index}`,
+                    children: fields.map((field) => ({ field, width: 200, pinned, resizable: true })),
+                })),
+                rowData: [{ a: 'a', b: 'b', c: 'c', d: 'd', e: 'e' }],
+                processUnpinnedColumns: () => [],
+                ...gridOptions,
+            });
+            await asyncSetTimeout(0);
+            expect(api.getColumnState().every((column) => column.pinned === pinned)).toBe(true);
+            return api;
+        };
+
+        const groupBar = (groupId: string): HTMLElement =>
+            query<HTMLElement>(`.ag-header-group-cell[col-id^="${groupId}_"] .ag-header-cell-resize`);
+
+        const totalWidth = (api: GridApi, colIds: string[]): number =>
+            colIds.reduce((total, colId) => total + width(api, colId), 0);
+
+        test('dragging a pinned group stops growing at the viewport limit and can still shrink', async () => {
+            const api = await createGroupedGrid([['a', 'b']]);
+            const dispatcher = new DragEventDispatcher('mouse');
+
+            await dispatcher.startDrag(groupBar('g0'), 400, 10);
+            await dispatcher.movePointer(groupBar('g0'), 700, 10);
+            await dispatcher.finishDrag();
+            await asyncSetTimeout(0);
+            expect(totalWidth(api, ['a', 'b'])).toBe(550);
+
+            await dispatcher.startDrag(groupBar('g0'), 550, 10);
+            await dispatcher.movePointer(groupBar('g0'), 450, 10);
+            await dispatcher.finishDrag();
+            await asyncSetTimeout(0);
+            expect(totalWidth(api, ['a', 'b'])).toBe(450);
+        });
+
+        // Right-pinned groups resize in the opposite direction: dragging left makes them wider.
+        test('dragging a right-pinned group stops growing at the viewport limit and can still shrink', async () => {
+            const api = await createGroupedGrid([['a', 'b']], {}, 'right');
+            const dispatcher = new DragEventDispatcher('mouse');
+
+            await dispatcher.startDrag(groupBar('g0'), 400, 10);
+            await dispatcher.movePointer(groupBar('g0'), 100, 10);
+            await dispatcher.finishDrag();
+            await asyncSetTimeout(0);
+            expect(totalWidth(api, ['a', 'b'])).toBe(550);
+
+            await dispatcher.startDrag(groupBar('g0'), 100, 10);
+            await dispatcher.movePointer(groupBar('g0'), 200, 10);
+            await dispatcher.finishDrag();
+            await asyncSetTimeout(0);
+            expect(totalWidth(api, ['a', 'b'])).toBe(450);
+        });
+
+        test('an overflowing pinned group shrunk during a drag can grow back to its starting width', async () => {
+            const api = await createGroupedGrid([
+                ['a', 'b'],
+                ['c', 'd', 'e'],
+            ]);
+            expect(query<HTMLElement>('.ag-grid-viewport').classList.contains('ag-pinned-columns-overflow')).toBe(true);
+            const dispatcher = new DragEventDispatcher('mouse');
+
+            await dispatcher.startDrag(groupBar('g0'), 400, 10);
+            await dispatcher.movePointer(groupBar('g0'), 300, 10);
+            expect(totalWidth(api, ['a', 'b'])).toBe(300);
+            await dispatcher.movePointer(groupBar('g0'), 500, 10);
+            expect(totalWidth(api, ['a', 'b'])).toBe(400);
+            await dispatcher.finishDrag();
+            await asyncSetTimeout(0);
+
+            expect(totalWidth(api, ['a', 'b'])).toBe(400);
+            expect(
+                query<HTMLElement>('.ag-header-group-cell[col-id^="g0_"]').classList.contains('ag-column-resizing')
+            ).toBe(false);
+        });
+
+        test('shift-dragging an overflowing pinned group grows it by taking width from the next pinned group', async () => {
+            const api = await createGroupedGrid([
+                ['a', 'b'],
+                ['c', 'd', 'e'],
+            ]);
+            const forceShiftKey = (event: Event) => Object.defineProperty(event, 'shiftKey', { value: true });
+            document.addEventListener('mousedown', forceShiftKey, true);
+            document.addEventListener('mousemove', forceShiftKey, true);
+            try {
+                const dispatcher = new DragEventDispatcher('mouse');
+                await dispatcher.startDrag(groupBar('g0'), 400, 10);
+                await dispatcher.movePointer(groupBar('g0'), 460, 10);
+                await dispatcher.finishDrag();
+                await asyncSetTimeout(0);
+            } finally {
+                document.removeEventListener('mousedown', forceShiftKey, true);
+                document.removeEventListener('mousemove', forceShiftKey, true);
+            }
+
+            expect(totalWidth(api, ['a', 'b'])).toBe(460);
+            expect(totalWidth(api, ['c', 'd', 'e'])).toBe(540);
+        });
+
+        test('shift-dragging an overflowing left-pinned group takes width from the right-pinned group after it', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    ['a', 'b'],
+                    ['c', 'd', 'e'],
+                ].map((fields, index) => ({
+                    headerName: `Group ${index}`,
+                    groupId: `g${index}`,
+                    children: fields.map((field) => ({
+                        field,
+                        width: 200,
+                        pinned: index === 0 ? ('left' as const) : ('right' as const),
+                        resizable: true,
+                    })),
+                })),
+                rowData: [{ a: 'a', b: 'b', c: 'c', d: 'd', e: 'e' }],
+                processUnpinnedColumns: () => [],
+            });
+            await asyncSetTimeout(0);
+            const forceShiftKey = (event: Event) => Object.defineProperty(event, 'shiftKey', { value: true });
+            document.addEventListener('mousedown', forceShiftKey, true);
+            document.addEventListener('mousemove', forceShiftKey, true);
+            try {
+                const dispatcher = new DragEventDispatcher('mouse');
+                await dispatcher.startDrag(groupBar('g0'), 400, 10);
+                await dispatcher.movePointer(groupBar('g0'), 460, 10);
+                await dispatcher.finishDrag();
+                await asyncSetTimeout(0);
+            } finally {
+                document.removeEventListener('mousedown', forceShiftKey, true);
+                document.removeEventListener('mousemove', forceShiftKey, true);
+            }
+
+            expect(totalWidth(api, ['a', 'b'])).toBe(460);
+            expect(totalWidth(api, ['c', 'd', 'e'])).toBe(540);
+        });
+
+        test('Alt+Shift+Arrow grows an overflowing pinned group by taking width from the next pinned group', async () => {
+            const api = await createGroupedGrid([
+                ['a', 'b'],
+                ['c', 'd', 'e'],
+            ]);
+            const headerCell = query<HTMLElement>('.ag-header-group-cell[col-id^="g0_"]');
+            headerCell.focus();
+            const init = { key: 'ArrowRight', altKey: true, shiftKey: true, bubbles: true, cancelable: true };
+            headerCell.dispatchEvent(new KeyboardEvent('keydown', init));
+            headerCell.dispatchEvent(new KeyboardEvent('keyup', init));
+            await asyncSetTimeout(0);
+
+            expect(totalWidth(api, ['a', 'b'])).toBeGreaterThan(400);
+            expect(totalWidth(api, ['a', 'b', 'c', 'd', 'e'])).toBe(1000);
+        });
+
+        test('double-clicking a pinned group handle autosizes it only up to the viewport limit', async () => {
+            const api = await createGroupedGrid([['a', 'b']]);
+
+            mockAutosizeContentWidth(480);
+            groupBar('g0').dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+            await asyncSetTimeout(0);
+
+            expect(totalWidth(api, ['a', 'b'])).toBe(550);
+        });
+
+        test('double-clicking a pinned group handle shrinks its columns before limiting the growing ones', async () => {
+            const api = await createGroupedGrid([['a', 'b']]);
+
+            mockAutosizeContentWidth(0, { a: 380, b: 80 });
+            groupBar('g0').dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+            await asyncSetTimeout(0);
+
+            expect(width(api, 'a')).toBe(400);
+            expect(width(api, 'b')).toBe(100);
+        });
+
+        test('double-clicking an overflowing pinned group handle does not grow it', async () => {
+            const api = await createGroupedGrid([
+                ['a', 'b'],
+                ['c', 'd', 'e'],
+            ]);
+
+            mockAutosizeContentWidth(480);
+            groupBar('g0').dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+            await asyncSetTimeout(0);
+
+            expect(totalWidth(api, ['a', 'b'])).toBe(400);
+        });
+    });
+
+    describe('double-click autosize', () => {
+        const dblClickResizeBar = async (colId: string): Promise<void> => {
+            const bar = query<HTMLElement>(`.ag-header-cell[col-id="${colId}"] .ag-header-cell-resize`);
+            bar.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+            await asyncSetTimeout(0);
+        };
+
+        test('a pinned column grows only up to the viewport limit', async () => {
+            const api = await createGrid(2);
+
+            mockAutosizeContentWidth(480);
+            await dblClickResizeBar('a');
+
+            expect(width(api, 'a')).toBe(350);
+        });
+
+        test('an overflowing pinned column can be shrunk but not grown', async () => {
+            const api = await createGrid(5);
+
+            mockAutosizeContentWidth(480);
+            await dblClickResizeBar('a');
+            expect(width(api, 'a')).toBe(200);
+
+            mockAutosizeContentWidth(80);
+            await dblClickResizeBar('a');
+            expect(width(api, 'a')).toBe(100);
+        });
+
+        test('an unpinned column is not limited', async () => {
+            const api = await createGrid(2, null);
+
+            mockAutosizeContentWidth(480);
+            await dblClickResizeBar('a');
+
+            expect(width(api, 'a')).toBe(500);
+        });
+
+        test('the column menu Autosize This Column does not grow an overflowing pinned column', async () => {
+            const menuGridsManager = new TestGridsManager({
+                modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, ColumnMenuModule],
+            });
+            const restoreOffsetParent = polyfillOffsetParent();
+            try {
+                const api = menuGridsManager.createGrid('myGrid', {
+                    columnDefs: ['a', 'b', 'c', 'd', 'e'].map((field) => ({ field, width: 200 })),
+                    defaultColDef: { pinned: 'left', resizable: true },
+                    rowData: [{ a: 'a', b: 'b', c: 'c', d: 'd', e: 'e' }],
+                    processUnpinnedColumns: () => [],
+                });
+                await asyncSetTimeout(0);
+
+                mockAutosizeContentWidth(480);
+                api.showColumnMenu('a');
+                await userEvent.click(await openMenuOption('Autosize This Column'));
+                await asyncSetTimeout(0);
+
+                expect(width(api, 'a')).toBe(200);
+            } finally {
+                restoreOffsetParent();
+                menuGridsManager.reset();
+            }
+        });
     });
 });

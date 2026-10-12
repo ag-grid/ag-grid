@@ -259,9 +259,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         resizeFeature.resizeColumns(initialValues, initialValues.resizeStartWidth + delta, 'uiColumnResized', true);
     }
 
-    public resizeLeafColumnsToFit(source: ColumnEventType): void {
+    public resizeLeafColumnsToFit(source: ColumnEventType, limitPinnedGrowth?: boolean): void {
         // check to avoid throwing when a component has not been setup yet (React 18)
-        this.resizeFeature?.resizeLeafColumnsToFit(source);
+        this.resizeFeature?.resizeLeafColumnsToFit(source, limitPinnedGrowth);
     }
 
     private createUserCompParams(): IHeaderGroupParams {

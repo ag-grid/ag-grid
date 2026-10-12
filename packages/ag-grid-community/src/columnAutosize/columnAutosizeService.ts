@@ -26,6 +26,7 @@ import type {
     SizeColumnsToContentColumnLimits,
     SizeColumnsToContentStrategy,
 } from '../interfaces/autoSize';
+import type { PinnedColumnService } from '../pinnedColumns/pinnedColumnService';
 import { MIN_CENTER_VIEWPORT_WIDTH } from '../pinnedColumns/pinnedColumnService';
 import { _clamp } from '../utils/number';
 import { TouchListener } from '../widgets/touchListener';
@@ -39,6 +40,8 @@ interface AutoSizeColumnParams {
     defaultMaxWidth?: number;
     columnLimits?: SizeColumnsToContentColumnLimits[];
     scaleUpToFitGridWidth?: boolean;
+    /** Stops pinned columns growing past the viewport, as a user resize by mouse or keyboard does. */
+    limitPinnedGrowth?: boolean;
     source?: ColumnEventType;
 }
 
@@ -153,6 +156,11 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 
     public autoSizeCols(paramsInput: AutoSizeColumnParams): void {
+        const { source } = paramsInput;
+        // a menu auto-size is a user resize, so it respects the pinned limit like a drag or a double-click
+        if (source && UI_MENU_SOURCES.has(source)) {
+            paramsInput = { ...paramsInput, limitPinnedGrowth: true };
+        }
         void this.autoSizeColsAsync(this.withUiActionStrategyParams(paramsInput)).then((cols) =>
             this.dispatchAutoSized(cols)
         );
@@ -216,6 +224,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 defaultMaxWidth,
                 defaultMinWidth,
                 columnLimits = [],
+                limitPinnedGrowth,
                 source = 'api',
             } = params;
 
@@ -227,7 +236,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             // the LHS sized, but RHS no. so we keep looping through the visible columns until
             // no more cols are available (rendered) to be resized
 
-            const { animationFrameSvc, renderStatus, colModel, autoWidthCalc, visibleCols } = this.beans;
+            const { animationFrameSvc, renderStatus, colModel, autoWidthCalc, visibleCols, pinnedCols } = this.beans;
 
             // we autosize after animation frames finish in case any cell renderers need to complete first. this can
             // happen eg if client code is calling api.autoSizeAllColumns() straight after grid is initialised, but grid
@@ -261,6 +270,10 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             );
             const shouldSkipHeader = skipHeader ?? this.gos.get('skipHeaderOnAutoSize');
             const shouldSkipHeaderGroups = skipHeaderGroups ?? shouldSkipHeader;
+            const pinnedLimit = limitPinnedGrowth ? pinnedCols : undefined;
+            const startPinnedWidth = pinnedLimit?.getPinnedWidth() ?? 0;
+            // tracked locally, as the pinned widths only update once the columns are refreshed
+            let pinnedWidth = startPinnedWidth;
 
             while (changesThisTimeAround !== 0) {
                 changesThisTimeAround = 0;
@@ -269,6 +282,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 let widthsChanged = false;
 
                 const updatedColumns: AgColumn[] = [];
+                const newWidths = new Map<AgColumn, number>();
 
                 for (const key of colKeys) {
                     if (!key) {
@@ -292,14 +306,21 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                         const columnLimit = columnLimitsIndex[column.colId] ?? {};
                         columnLimit.minWidth ??= defaultMinWidth;
                         columnLimit.maxWidth ??= defaultMaxWidth;
-                        const newWidth = normaliseColumnWidth(column, preferredWidth, columnLimit);
-                        widthsChanged ||= newWidth !== column.getActualWidth();
-                        column.setActualWidth(newWidth, source);
+                        newWidths.set(column, normaliseColumnWidth(column, preferredWidth, columnLimit));
                         columnsAutoSized.add(column);
                         changesThisTimeAround++;
                     }
 
                     updatedColumns.push(column);
+                }
+
+                if (pinnedLimit) {
+                    pinnedWidth = limitPinnedWidths(newWidths, pinnedLimit, startPinnedWidth, pinnedWidth);
+                }
+
+                for (const [column, newWidth] of newWidths) {
+                    widthsChanged ||= newWidth !== column.getActualWidth();
+                    column.setActualWidth(newWidth, source);
                 }
 
                 if (updatedColumns.length && widthsChanged) {
@@ -310,7 +331,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             }
 
             if (!shouldSkipHeaderGroups) {
-                this.autoSizeColumnGroupsByColumns(colKeys, source, stopAtGroup);
+                this.autoSizeColumnGroupsByColumns(colKeys, source, stopAtGroup, limitPinnedGrowth);
             }
 
             resolve(columnsAutoSized);
@@ -321,7 +342,12 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         this.autoSizeCols({ colKeys: [key], skipHeader, skipHeaderGroups: true, source });
     }
 
-    private autoSizeColumnGroupsByColumns(keys: ColKey[], source: ColumnEventType, stopAtGroup?: AgColumnGroup): void {
+    private autoSizeColumnGroupsByColumns(
+        keys: ColKey[],
+        source: ColumnEventType,
+        stopAtGroup?: AgColumnGroup,
+        limitPinnedGrowth?: boolean
+    ): void {
         const { colModel, ctrlsSvc } = this.beans;
         const columnGroups = new Set<AgColumnGroup>();
 
@@ -344,7 +370,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         for (const columnGroup of columnGroups) {
             const headerGroupCtrl = headerRowContainerCtrl.getHeaderCtrlForColumn(columnGroup) as
                 HeaderGroupCellCtrl | undefined;
-            headerGroupCtrl?.resizeLeafColumnsToFit(source);
+            headerGroupCtrl?.resizeLeafColumnsToFit(source, limitPinnedGrowth);
         }
     }
 
@@ -367,7 +393,13 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         const skipHeaderOnAutoSize = this.gos.get('skipHeaderOnAutoSize');
 
         const autoSizeColListener = () => {
-            this.autoSizeColumn(column, 'uiColumnResized', skipHeaderOnAutoSize);
+            this.autoSizeCols({
+                colKeys: [column],
+                skipHeader: skipHeaderOnAutoSize,
+                skipHeaderGroups: true,
+                limitPinnedGrowth: true,
+                source: 'uiColumnResized',
+            });
         };
 
         element.addEventListener('dblclick', autoSizeColListener);
@@ -400,6 +432,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                     colKeys: keys,
                     skipHeader: skipHeaderOnAutoSize,
                     stopAtGroup: columnGroup,
+                    limitPinnedGrowth: true,
                     source: 'uiColumnResized',
                 });
             }
@@ -997,6 +1030,44 @@ function normaliseColumnWidth(
     }
 
     return newWidth;
+}
+
+/**
+ * Caps the growth of pinned columns in `newWidths` to keep the pinned sections within the viewport, returning the new pinned width.
+ * Shrinking columns are counted first, so the room they free goes to the growing ones whatever their order.
+ */
+function limitPinnedWidths(
+    newWidths: Map<AgColumn, number>,
+    pinnedCols: PinnedColumnService,
+    startPinnedWidth: number,
+    pinnedWidth: number
+): number {
+    const growingCols: AgColumn[] = [];
+    for (const [column, newWidth] of newWidths) {
+        if (column.pinnedLane === 1) {
+            continue;
+        }
+        const growth = newWidth - column.getActualWidth();
+        if (growth > 0) {
+            growingCols.push(column);
+        } else {
+            pinnedWidth += growth;
+        }
+    }
+
+    for (let i = 0, len = growingCols.length; i < len; ++i) {
+        const column = growingCols[i];
+        const actualWidth = column.getActualWidth();
+        const growth = pinnedCols.getPinnedResizeGrowth(
+            newWidths.get(column)! - actualWidth,
+            startPinnedWidth,
+            pinnedWidth
+        );
+        newWidths.set(column, actualWidth + growth);
+        pinnedWidth += growth;
+    }
+
+    return pinnedWidth;
 }
 
 /** The Viewport Row Model never renders a measurable cell set, so content measurement cannot be repeated. */

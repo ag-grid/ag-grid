@@ -5,6 +5,7 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import { _laneOfPinned, isColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
+import { getColGroupAfter } from '../entities/agColumnGroup';
 import type { ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
@@ -155,15 +156,41 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
 
     /**
      * A shift resize hands the width change to the next column (see `ColumnResizeService.setColumnWidths`),
-     * so when that column is in the same pinned section the section's total width does not change.
+     * so when that column is also pinned (in either section) the total pinned width does not change.
      */
-    public isShiftResizeWithinPinnedSection(column: AgColumn, shiftKey: boolean): boolean {
+    public isShiftResizeBetweenPinnedColumns(column: AgColumn, shiftKey: boolean): boolean {
         const takeFromAdjacent = shiftKey !== (this.gos.get('colResizeDefault') === 'shift');
-        return takeFromAdjacent && this.beans.visibleCols.getColAfter(column)?.pinnedLane === column.pinnedLane;
+        const colAfter = takeFromAdjacent ? this.beans.visibleCols.getColAfter(column) : null;
+        return !!colAfter && colAfter.pinnedLane !== 1;
+    }
+
+    /** A shift resize of a group takes the width from the next group, so the total pinned width does not change when that group is pinned too. */
+    private isShiftResizeBetweenPinnedGroups(columnGroup: AgColumnGroup, shiftKey: boolean): boolean {
+        const groupAfter = shiftKey ? getColGroupAfter(this.beans.visibleCols, columnGroup) : null;
+        const takeFromCols = groupAfter?.getDisplayedLeafColumns().filter((col) => col.isResizable());
+        return !!takeFromCols?.length && takeFromCols.every((col) => col.pinnedLane !== 1);
+    }
+
+    public getPinnedWidth(): number {
+        return this.leftWidth + this.rightWidth;
+    }
+
+    /** The part of a resize's `growth` that keeps the pinned sections within the viewport, or their resize-start width if wider. */
+    public getPinnedResizeGrowth(
+        growth: number,
+        resizeStartPinnedWidth: number,
+        pinnedWidth: number = this.getPinnedWidth()
+    ): number {
+        const bodyWidth = this.getAvailableViewportWidth() - MIN_CENTER_VIEWPORT_WIDTH;
+        const room = Math.max(bodyWidth, resizeStartPinnedWidth) - pinnedWidth;
+        return Math.min(growth, Math.max(room, 0));
     }
 
     public getHeaderResizeDiff(diff: number, column: AgColumn | AgColumnGroup, shiftKey: boolean): number {
-        if (isColumn(column) && this.isShiftResizeWithinPinnedSection(column, shiftKey)) {
+        const isShiftResizeBetweenPinned = isColumn(column)
+            ? this.isShiftResizeBetweenPinnedColumns(column, shiftKey)
+            : this.isShiftResizeBetweenPinnedGroups(column, shiftKey);
+        if (isShiftResizeBetweenPinned) {
             return diff;
         }
 
