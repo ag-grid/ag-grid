@@ -410,6 +410,33 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(propertiesOf(api.getState(), 'calc')?.headerName).toBe('Profit');
     });
 
+    test('a dialog data-type edit is saved when the callback overrides cellDataType', async () => {
+        const api = createGrid('pcd-b8-type', {
+            rowData: ROW_DATA,
+            columnDefs: columnDefs(),
+            calculatedColumns: { processColDef: (params) => ({ ...params.colDef, cellDataType: 'text' }) },
+            initialState: {
+                userColumns: userColumnsState('calc', '[a] * 2', [{ property: 'cellDataType', value: 'number' }]),
+            },
+        });
+        await waitForColumn(api, 'calc');
+        const openEditDialog = async () => {
+            api.showColumnMenu('calc');
+            await clickMenuOption('Edit Calculated Column');
+            await waitFor(() => getDialog());
+        };
+        const shownDataType = () => getDialog().querySelector('.ag-select .ag-picker-field-display')!.textContent;
+
+        await openEditDialog();
+        expect(shownDataType()).toBe('Number');
+        await selectDataType('Text');
+        clickDialogButton('Apply');
+        await waitFor(() => expect(propertiesOf(api.getState(), 'calc')?.cellDataType).toBe('text'));
+
+        await openEditDialog();
+        expect(shownDataType()).toBe('Text');
+    });
+
     test('mutating params.colDef and returning nothing has no effect', async () => {
         const api = gridWithUserColumn('pcd-b9', 'calc', '[a] * 2', (params) => {
             params.colDef.headerClass = 'mutated';
