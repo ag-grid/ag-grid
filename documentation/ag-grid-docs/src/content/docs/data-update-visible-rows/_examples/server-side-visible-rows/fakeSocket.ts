@@ -29,7 +29,9 @@ function copy<T>(value: T): T {
 function sortRows(rows: PortfolioRow[], sortModel: SortModelItem[]): void {
     rows.sort((a: any, b: any) => {
         for (const { colId, sort } of sortModel) {
-            const diff = a[colId] < b[colId] ? -1 : a[colId] > b[colId] ? 1 : 0;
+            // the Portfolio column is the auto group column, which shows the row's name
+            const field = colId === 'ag-Grid-AutoColumn' ? 'name' : colId;
+            const diff = a[field] < b[field] ? -1 : a[field] > b[field] ? 1 : 0;
             if (diff) {
                 return sort === 'asc' ? diff : -diff;
             }
