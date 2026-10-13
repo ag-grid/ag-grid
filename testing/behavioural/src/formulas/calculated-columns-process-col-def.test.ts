@@ -22,6 +22,7 @@ import {
     propertiesOf,
     selectDataType,
     setExpression,
+    setTitle,
     setupCalculatedColumnsStateSuite,
 } from './calculatedColumnsStateHarness';
 
@@ -676,5 +677,119 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         );
         expect(cellValue(api, calcId)).toBe(30);
         expect(created).toHaveBeenCalledTimes(1);
+    });
+
+    test('a user title edit raises calculatedColumnChanged when the callback fixes headerName', async () => {
+        const changed = vi.fn();
+        const api = createGrid('pcd-e-header', {
+            rowData: ROW_DATA,
+            columnDefs: columnDefs(),
+            calculatedColumns: {
+                applyMode: 'deferred',
+                processColDef: (params) => ({ ...params.colDef, headerName: 'Report' }),
+            },
+            initialState: {
+                userColumns: userColumnsState('calc', '[a] * 2', [{ property: 'headerName', value: 'Profit' }]),
+            },
+            onCalculatedColumnChanged: changed,
+        });
+        await waitForColumn(api, 'calc');
+
+        api.showColumnMenu('calc');
+        await clickMenuOption('Edit Calculated Column');
+        await waitFor(() => getDialog());
+        setTitle('Margin');
+        clickDialogButton('Apply');
+
+        await waitFor(() => expect(propertiesOf(api.getState(), 'calc')?.headerName).toBe('Margin'));
+        expect(changed).toHaveBeenCalledTimes(1);
+        expect(changed.mock.calls[0][0].changes).toEqual({ headerName: { oldValue: 'Profit', newValue: 'Margin' } });
+        expect(headerOf(api, 'calc')).toBe('Report');
+    });
+
+    test('an empty expression returned by the callback gives blank values', async () => {
+        const api = gridWithUserColumn('pcd-empty-expression', 'calc', '[a] * 2', (params) => ({
+            ...params.colDef,
+            calculatedExpression: '',
+        }));
+        await waitForColumn(api, 'calc');
+
+        expect(api.getColumn('calc')!.getColDef().calculatedExpression).toBe('');
+        expect(cellValue(api, 'calc')).toBe('');
+    });
+
+    test('a saved validation error still blocks a column whose expression the callback rewrites', async () => {
+        const api = createGrid('pcd-saved-error', {
+            rowData: ROW_DATA,
+            columnDefs: columnDefs(),
+            calculatedColumns: {
+                processColDef: (params) => ({
+                    ...params.colDef,
+                    calculatedExpression: `(${params.colDef.calculatedExpression})`,
+                }),
+            },
+            initialState: {
+                userColumns: [
+                    {
+                        ...userColumnsState('calc', '[a] * 2')![0],
+                        calculatedExpressionError: {
+                            expression: '[a] * 2',
+                            reason: 'customValidation',
+                            messages: ['Not allowed'],
+                        },
+                    },
+                ],
+            },
+        });
+        await waitForColumn(api, 'calc');
+
+        expect(api.getColumn('calc')!.getColDef().calculatedExpression).toBe('([a] * 2)');
+        expect(cellValue(api, 'calc')).toBe('#ERROR!');
+    });
+
+    test('an unchanged restricted expression can still be applied when the callback rewrites it', async () => {
+        const changed = vi.fn();
+        const api = createGrid('pcd-restricted-unchanged', {
+            rowData: ROW_DATA,
+            columnDefs: columnDefs(),
+            calculatedColumns: {
+                applyMode: 'deferred',
+                isColumnReferenceable: ({ colDef }) => colDef.field !== 'b',
+                processColDef: (params) => ({
+                    ...params.colDef,
+                    calculatedExpression: `(${params.colDef.calculatedExpression})`,
+                }),
+            },
+            initialState: { userColumns: userColumnsState('calc', '[b] * 2') },
+            onCalculatedColumnChanged: changed,
+        });
+        await waitForColumn(api, 'calc');
+
+        api.showColumnMenu('calc');
+        await clickMenuOption('Edit Calculated Column');
+        await waitFor(() => getDialog());
+        setTitle('Doubled');
+        clickDialogButton('Apply');
+
+        await waitFor(() => expect(propertiesOf(api.getState(), 'calc')?.headerName).toBe('Doubled'));
+        expect(propertiesOf(api.getState(), 'calc')?.calculatedExpression).toBe('[b] * 2');
+        expect(cellValue(api, 'calc')).toBe(6);
+    });
+
+    test('sourceColumn is the auto group column when the column is added from it', async () => {
+        const processColDef = vi.fn<ProcessColDef>();
+        const api = createGrid('pcd-source-auto-group', {
+            rowData: ROW_DATA,
+            columnDefs: [{ field: 'g', rowGroup: true, hide: true }, { field: 'a' }, { field: 'b' }],
+            calculatedColumns: { processColDef },
+        });
+        await waitFor(() => expect(api.getColumn('ag-Grid-AutoColumn')).not.toBeNull());
+
+        await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
+
+        expect(processColDef).toHaveBeenCalled();
+        for (const [params] of processColDef.mock.calls) {
+            expect(params.sourceColumn).toBe(api.getColumn('ag-Grid-AutoColumn'));
+        }
     });
 });
