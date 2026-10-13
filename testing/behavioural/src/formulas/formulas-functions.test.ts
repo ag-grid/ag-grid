@@ -537,6 +537,25 @@ describe('ag-grid formulas function semantics', () => {
         `);
     });
 
+    test('COUNT counts bigint cells as numbers', async () => {
+        const api = createGrid('fn-count-bigint', {
+            rowData: [
+                { id: 'r1', big: 1n, cn: '=COUNT(REF(COLUMN("big"),ROW("r1"),COLUMN("big"),ROW("r3")))' },
+                { id: 'r2', big: null },
+                { id: 'r3', big: 9007199254740993n },
+            ],
+            columnDefs: [{ field: 'big', cellDataType: 'bigint' }, { field: 'cn' }],
+        });
+        await asyncSetTimeout(rowNumberRefreshBufferMs);
+
+        await new GridRows(api, 'count over bigint', gridRowsOpts).check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:r1 row-number:"1" big:"1n" cn:2
+            ├── LEAF id:r2 row-number:"2" big:null
+            └── LEAF id:r3 row-number:"3" big:"9007199254740993n"
+        `);
+    });
+
     test('deeply nested parentheses parse and evaluate correctly', async () => {
         const api = createGrid('fn-deep-parens', {
             rowData: [

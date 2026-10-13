@@ -62,7 +62,7 @@ export const sonarjsConfig = [
 
             // Unicorn rules, as referenced from the SonarCloud documentation.
             'unicorn/prefer-array-some': 'error',
-            // 'unicorn/prefer-number-properties': 1,
+            'unicorn/prefer-number-properties': 'error',
             // 'unicorn/prefer-modern-dom-apis': 1,
             // 'unicorn/no-array-for-each': 1,
             'unicorn/no-typeof-undefined': 'error',

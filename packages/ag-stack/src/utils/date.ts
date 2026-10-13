@@ -192,7 +192,7 @@ export function _parseDateTimeFromString(
 
     const fields = dateStr.split('-').map((f) => Number.parseInt(f, 10));
 
-    if (fields.filter((f) => !isNaN(f)).length !== 3) {
+    if (fields.filter((f) => !Number.isNaN(f)).length !== 3) {
         return null;
     }
 

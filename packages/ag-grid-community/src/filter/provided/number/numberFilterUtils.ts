@@ -45,7 +45,7 @@ export function processNumberFilterValue(value?: number | null): number | null {
     if (value == null) {
         return null;
     }
-    return isNaN(value) ? null : value;
+    return Number.isNaN(Number(value)) ? null : value;
 }
 
 export function mapValuesFromNumberFilterModel(

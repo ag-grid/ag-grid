@@ -65,7 +65,7 @@ export class LicenseManager {
 
     private static extractExpiry(license: string) {
         const restrictionHashed = license.substring(license.lastIndexOf('_') + 1, license.length);
-        return new Date(parseInt(LicenseManager.decode(restrictionHashed), 10));
+        return new Date(Number.parseInt(LicenseManager.decode(restrictionHashed), 10));
     }
 
     private static extractLicenseComponents(licenseKey: string) {
@@ -115,7 +115,7 @@ export class LicenseManager {
 
         if (valid) {
             expiry = LicenseManager.extractExpiry(license);
-            valid = !isNaN(expiry.getTime());
+            valid = !Number.isNaN(expiry.getTime());
 
             if (valid) {
                 expired = gridReleaseDate > expiry;
@@ -232,7 +232,7 @@ export class LicenseManager {
     }
 
     private static getGridReleaseDate() {
-        return new Date(parseInt(LicenseManager.decode(LicenseManager.RELEASE_INFORMATION), 10));
+        return new Date(Number.parseInt(LicenseManager.decode(LicenseManager.RELEASE_INFORMATION), 10));
     }
 
     private static decode(input: string): string {

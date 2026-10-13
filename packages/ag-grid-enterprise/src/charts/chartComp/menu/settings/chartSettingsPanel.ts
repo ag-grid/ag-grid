@@ -196,7 +196,7 @@ export class ChartSettingsPanel extends Component {
         this.chartController.setChartThemeName(this.themes[index]);
 
         window.setTimeout(() => {
-            currentGui.style.left = `${-parseFloat(final)}px`;
+            currentGui.style.left = `${-Number.parseFloat(final)}px`;
             nextGui.style.left = '0px';
         }, 0);
 

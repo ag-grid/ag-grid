@@ -261,7 +261,7 @@ export class ChartDatasource extends BeanStub {
 
                     // aggregated value
                     if (value && _hasOwn(value, 'toString')) {
-                        value = parseFloat(value.toString());
+                        value = Number.parseFloat(value.toString());
                     }
 
                     data[colId] = value != null && typeof value.toNumber === 'function' ? value.toNumber() : value;

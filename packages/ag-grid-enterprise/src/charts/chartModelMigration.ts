@@ -463,7 +463,7 @@ type VersionParts = { major: number; minor: number; patch: number };
 function versionParts(versionRaw: string): VersionParts {
     const version = versionRaw.includes('-beta') ? versionRaw.replace(/-beta.*/, '') : versionRaw;
     const split = typeof version === 'string' ? version.split('.').map(Number) : [];
-    if (split.length !== 3 || split.some((v) => isNaN(v))) {
+    if (split.length !== 3 || split.some((v) => Number.isNaN(v))) {
         throw _errorToThrowWithoutAttribution(253, { version });
     }
 

@@ -283,7 +283,7 @@ function addSheetName(worksheet: ExcelWorksheet): void {
         if (append === '') {
             append = '_1';
         } else {
-            const curr = parseInt(append.slice(1), 10);
+            const curr = Number.parseInt(append.slice(1), 10);
             append = `_${curr + 1}`;
         }
     }
