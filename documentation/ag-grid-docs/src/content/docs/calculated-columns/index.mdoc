@@ -276,7 +276,7 @@ const gridOptions = {
 
 ### processColDef
 
-Use `processColDef` to customise the column definition of calculated columns your users create in the dialog, for example to add a filter, allow aggregation or apply consistent formatting. It receives the column's own definition and returns the definition to use:
+Use `processColDef` to customise calculated columns that users create in the dialog, for example to add a filter or allow aggregation. It receives the column's own definition, as set in the dialog, and returns the definition to use. The returned definition takes precedence over `defaultColDef` and column types:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -290,42 +290,21 @@ const gridOptions = {
 };
 ```
 
+In the example, the **Profit** column is restored from Grid State as if a user had created it, so it has a filter button and can be aggregated from the column menu.
+
+{% gridExampleRunner title="Customising Calculated Column Definitions" name="calculated-columns-process-col-def" /%}
+
 {% interfaceDocumentation interfaceName="CalculatedColumnProcessColDefParams" /%}
 
-`params.colDef` holds the properties set in the dialog (`headerName`, `cellDataType`, `calculatedExpression` and `columnGroupShow`) before `defaultColDef` and column types are merged in. It is a fresh copy on every call, so changing it without returning it has no effect. Return the full column definition: returning `params.colDef` or `undefined` leaves the column unchanged. The returned definition is treated as the column's own definition, so it takes precedence over `defaultColDef` and column types.
-
-The callback only runs for columns created in the dialog, including those restored from [Grid State](./grid-state/). Calculated columns declared in `columnDefs` are not passed to it; set their properties in `columnDefs` instead.
-
-It runs every time the column is built: when the column is created, each time it is edited in the dialog, when it is restored from Grid State, and when the `calculatedColumns` option changes. Properties derived from the column's values, such as `enableValue` above, follow the user's edits.
-
-In `'live'` [apply mode](#applymode) it also runs while the user types, once per animation frame at most, so keep it cheap. The expression in `params.colDef` may be incomplete at that point. Use `params.validationState` to tell: it is `'valid'` (an empty expression counts as valid), `'unknownReference'` when the expression refers to a column that does not exist, or `'invalidExpression'` when it fails to parse. For example, apply a formatter only once the formula works:
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    calculatedColumns: {
-        processColDef: (params) =>
-            params.validationState === 'valid'
-                ? { ...params.colDef, valueFormatter: (p) => p.value?.toFixed(2) }
-                : params.colDef,
-    },
-};
-```
-
-Calculated columns are always read-only, so `editable`, `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor` and `cellEditorSelector` are always overridden. The `colId` is also always overridden: the grid assigns it when the column is added, and it identifies the column in Grid State. If the returned definition sets any of them to a different value, that value is ignored and a console warning is logged. If it has no `calculatedExpression`, the user's expression is kept.
-
-The dialog shows and saves the user's values, not the callback's. For example, a callback that appends a suffix to `headerName` changes the column header, but the dialog still shows the title the user typed. The callback's output is not saved in Grid State; it is applied again when the column is restored. Expressions in other calculated columns refer to the column by the header the grid shows, including any `headerName` set by the callback.
-
-Stateful properties such as `width`, `sort` and `hide` are applied when the column is created, so prefer their `initial*` forms, such as `initialWidth`. Column state saved in Grid State takes precedence over `initial*` properties set by the callback. Do not call column APIs from the callback.
+{% note %}
+The callback runs each time the column is built, including on every dialog edit and on restore from [Grid State](./grid-state/). It does not run for calculated columns declared in `columnDefs`. The dialog and Grid State keep the user's values, not the callback's. `colId`, `editable`, `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor` and `cellEditorSelector` are always overridden. Prefer `initial*` properties, such as `initialWidth`, to stateful ones.
+{% /note %}
 
 {% if isFramework("react") %}
 {% note %}
-The `calculatedColumns` option is compared by reference. Wrap it in `useMemo` so it keeps the same reference between renders; an inline object rebuilds the calculated columns on every render.
+Wrap the `calculatedColumns` option in `useMemo`. It is compared by reference, so an inline object rebuilds the calculated columns on every render.
 {% /note %}
 {% /if %}
-
-The following example adds a filter to every calculated column created in the dialog, and allows number columns to be aggregated from the column menu. The **Profit** column is restored from Grid State as if a user had created it, so it shows a filter button that the declared columns do not have:
-
-{% gridExampleRunner title="Customising Calculated Column Definitions" name="calculated-columns-process-col-def" /%}
 
 ## Advanced Calculated Columns
 
