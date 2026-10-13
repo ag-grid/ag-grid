@@ -289,6 +289,42 @@ describe('CSRM viewportSubscription', () => {
             expect(recorder.calls).toHaveLength(2);
         });
 
+        test('changing the option inside onUnsubscribe while restarting subscribes the rows once, with the new handlers', async () => {
+            const newRecorder = createRecorder();
+            const oldRecorder = createRecorder((call) => {
+                if (call.type === 'unsubscribe') {
+                    subscribe(api, newRecorder);
+                }
+            });
+            const api = await createFlatGrid({ viewportSubscription: oldRecorder.handlers });
+
+            api.subscribeToViewport();
+
+            expect(oldRecorder.calls).toEqual([
+                { type: 'subscribe', ids: range(0, 5) },
+                { type: 'unsubscribe', ids: range(0, 5) },
+            ]);
+            expect(newRecorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
+            expect(newRecorder.violations).toEqual([]);
+        });
+
+        test('destroying the grid inside onUnsubscribe while restarting makes no further call', async () => {
+            const recorder = createRecorder((call) => {
+                if (call.type === 'unsubscribe') {
+                    api.destroy();
+                }
+            });
+            const api = await createFlatGrid({ viewportSubscription: recorder.handlers });
+
+            api.subscribeToViewport();
+            await nextAnimationFrame();
+
+            expect(recorder.calls).toEqual([
+                { type: 'subscribe', ids: range(0, 5) },
+                { type: 'unsubscribe', ids: range(0, 5) },
+            ]);
+        });
+
         test('unsubscribeFromViewport inside onUnsubscribe skips the rest of the batch', async () => {
             const recorder = createRecorder((call) => {
                 if (call.type === 'unsubscribe') {

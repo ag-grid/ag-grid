@@ -75,6 +75,10 @@ export class ViewportSubscriptionService extends BeanStub implements NamedBean {
     /** Unsubscribes any current rows, then subscribes to the rows in view with the `viewportSubscription` grid option. */
     public start(fromApi: boolean): void {
         this.stop();
+        // The `onUnsubscribe` handler can have destroyed the grid, or changed the option, which has already restarted.
+        if (this.sub || !this.isAlive()) {
+            return;
+        }
         const { gos, beans } = this;
         if (!_isClientSideRowModel(gos) && !_isServerSideRowModel(gos)) {
             return;
