@@ -45,6 +45,21 @@ const ENQUIRY_TYPE_OPTIONS = [
     'General',
 ] as const;
 
+/**
+ * Field length limits match those of the backend the form submits to
+ */
+const MAX_LENGTHS = {
+    firstName: 40,
+    lastName: 80,
+    company: 255,
+    email: 80,
+} as const;
+
+const maxLengthRule = (value: number) => ({
+    value,
+    message: `Max ${value} characters`,
+});
+
 type FormValues = {
     first_name: string;
     last_name: string;
@@ -249,28 +264,41 @@ export const ContactForm: FunctionComponent<Props> = ({
                         id="first_name"
                         type="text"
                         placeholder="First Name"
-                        {...register('first_name', { required: 'First name is required', maxLength: 40 })}
+                        {...register('first_name', {
+                            required: 'First name is required',
+                            maxLength: maxLengthRule(MAX_LENGTHS.firstName),
+                        })}
                     />
                     <div className={styles.errorContainer}>
                         {errors.first_name && <p className="error">{errors.first_name.message}</p>}
                     </div>
                 </div>
-                <div className="input-field">
+                <div className={classnames('input-field', { 'input-error': errors.last_name })}>
                     <label htmlFor="last_name">Last Name</label>
                     <input
                         id="last_name"
                         type="text"
                         placeholder="Last Name"
-                        {...register('last_name', { maxLength: 80 })}
+                        {...register('last_name', {
+                            maxLength: maxLengthRule(MAX_LENGTHS.lastName),
+                        })}
                     />
                     <div className={styles.errorContainer}>
                         {errors.last_name && <p className="error">{errors.last_name.message}</p>}
                     </div>
                 </div>
             </div>
-            <div className="input-field">
+            <div className={classnames('input-field', { 'input-error': errors.company })}>
                 <label htmlFor="company">Company</label>
-                <input id="company" type="text" placeholder="Company" {...register('company', { maxLength: 40 })} />
+                <input
+                    id="company"
+                    type="text"
+                    placeholder="Company"
+                    {...register('company', { maxLength: maxLengthRule(MAX_LENGTHS.company) })}
+                />
+                <div className={styles.errorContainer}>
+                    {errors.company && <p className="error">{errors.company.message}</p>}
+                </div>
             </div>
             <div className={classnames('input-field', { 'input-error': errors.email })}>
                 <label htmlFor="email">Work email</label>
@@ -282,7 +310,7 @@ export const ContactForm: FunctionComponent<Props> = ({
                         placeholder="Work email"
                         {...register('email', {
                             required: 'Email is required',
-                            maxLength: 80,
+                            maxLength: maxLengthRule(MAX_LENGTHS.email),
                             pattern: {
                                 value: /^(?:[a-zA-Z0-9_'^&/+%!-]+(?:\.[a-zA-Z0-9_'^&/+%!-]+)*|"(?:[^"\\]|\\.)+")@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/,
                                 message: 'Enter a valid email',
