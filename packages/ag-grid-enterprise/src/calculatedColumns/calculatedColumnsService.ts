@@ -572,7 +572,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     /** Row grouping is extracted from the build after `contributeTo`, and auto group columns are refreshed after that,
-     *  so `autoColSvc.columns` still holds the previous build's. Keep those the incoming grouping does not remove. */
+     *  so `autoColSvc.columns` still holds the previous build's. Keep those the incoming grouping does not remove.
+     *  Dynamic columns are not in `builtColumns` yet, so their previous build's instances stand in for them. */
     private getKeptAutoCols(builtColumns: AgColumn[]): AgColumn[] {
         const { autoColSvc, rowGroupColsSvc, colModel, gos } = this.beans;
         const autoCols = autoColSvc?.columns;
@@ -581,12 +582,15 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         }
         const previousCols = new Set(colModel.colDefList);
         const groupedColIds = new Set<string>();
-        for (let i = 0, len = builtColumns.length; i < len; ++i) {
-            const col = builtColumns[i];
-            if (rowGroupColsSvc?.willExtractCol(col, !previousCols.has(col))) {
+        const addIfGrouped = (col: AgColumn | null) => {
+            if (col && rowGroupColsSvc?.willExtractCol(col, !previousCols.has(col))) {
                 groupedColIds.add(col.colId);
             }
+        };
+        for (let i = 0, len = builtColumns.length; i < len; ++i) {
+            addIfGrouped(builtColumns[i]);
         }
+        this.dynamicColumns.forEach((dc) => addIfGrouped(dc.instance));
         return autoCols.filter((autoCol) => {
             const showRowGroup = autoCol.colDef.showRowGroup;
             return typeof showRowGroup === 'string' ? groupedColIds.has(showRowGroup) : groupedColIds.size > 0;
@@ -1224,9 +1228,12 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         };
     }
 
+    /** With `processColDef` set, the authored title, so the callback's headerName is never shown or saved back.
+     *  Otherwise the header's display name, as before the callback existed. */
     private getDraftHeaderName(column: AgColumn): string {
-        if (this.dynamicColumns.has(column.colId)) {
-            return column.headerNameOverride ?? this.getAuthoredColDef(column).headerName ?? column.colId;
+        const authoredColDef = this.dynamicColumns.get(column.colId)?.authoredColDef;
+        if (authoredColDef) {
+            return column.headerNameOverride ?? authoredColDef.headerName ?? column.colId;
         }
         return (
             this.beans.colNames.getDisplayNameForColumn(column, 'header') || (column.colDef.headerName ?? column.colId)
