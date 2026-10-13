@@ -815,6 +815,62 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         }
     });
 
+    test.each([
+        { groupDisplayType: 'singleColumn' as const, columnDefs: columnDefs(), autoColId: 'ag-Grid-AutoColumn' },
+        {
+            groupDisplayType: 'multipleColumns' as const,
+            columnDefs: [{ field: 'g', rowGroup: true, hide: true }, { field: 'a' }, { field: 'b' }],
+            autoColId: 'ag-Grid-AutoColumn-calc',
+        },
+    ])(
+        'sourceColumn is the auto group column of a grouped calculated column ($groupDisplayType)',
+        async ({ groupDisplayType, columnDefs, autoColId }) => {
+            const processColDef = vi.fn<ProcessColDef>();
+            const api = gridWithUserColumn('pcd-source-calc-auto-group', 'calc', '[a] * 2', processColDef, {
+                columnDefs,
+                groupDisplayType,
+            });
+            await waitForColumn(api, 'calc');
+            api.applyColumnState({ state: [{ colId: 'calc', rowGroup: true }] });
+            await waitForColumn(api, autoColId);
+            processColDef.mockClear();
+
+            const calcId = await addViaDialog(api, autoColId, '[b] * 2');
+
+            const callsForAdded = processColDef.mock.calls.filter(([params]) => params.colDef.colId === calcId);
+            expect(callsForAdded.length).toBeGreaterThan(0);
+            for (const [params] of callsForAdded) {
+                expect(params.sourceColumn).toBe(api.getColumn(autoColId));
+            }
+        }
+    );
+
+    test.each([
+        { label: 'without a callback', callback: false, expectedTitle: 'Profit!' },
+        { label: 'with a callback', callback: true, expectedTitle: 'Profit' },
+    ])(
+        'with a defaultColDef.headerValueGetter, the dialog title is $expectedTitle $label',
+        async ({ callback, expectedTitle }) => {
+            const api = createGrid('pcd-header-value-getter', {
+                rowData: ROW_DATA,
+                columnDefs: columnDefs(),
+                defaultColDef: { headerValueGetter: (params) => `${params.colDef?.headerName}!` },
+                calculatedColumns: callback ? { processColDef: (params) => params.colDef } : true,
+                initialState: {
+                    userColumns: userColumnsState('calc', '[a] * 2', [{ property: 'headerName', value: 'Profit' }]),
+                },
+            });
+            await waitForColumn(api, 'calc');
+            expect(headerOf(api, 'calc')).toBe('Profit!');
+
+            api.showColumnMenu('calc');
+            await clickMenuOption('Edit Calculated Column');
+            await waitFor(() => getDialog());
+
+            expect(getDialog().querySelector<HTMLInputElement>('input')!.value).toBe(expectedTitle);
+        }
+    );
+
     test('without a callback the dialog title of a restored column inherits defaultColDef.headerName', async () => {
         const api = gridWithUserColumn('pcd-default-header', 'calc', '[a] * 2', undefined, {
             defaultColDef: { headerName: 'Inherited' },
