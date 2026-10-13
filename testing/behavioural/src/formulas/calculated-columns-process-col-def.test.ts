@@ -781,6 +781,30 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         );
     });
 
+    test('the validation state event follows a callback replaced through setGridOption', async () => {
+        const validity = vi.fn();
+        const passthrough: ProcessColDef = (params) => params.colDef;
+        const api = gridWithUserColumn('pcd-validation-option-change', 'calc', '[a] * 2', passthrough, {
+            onCalculatedColumnValidationStateChanged: validity,
+        });
+        await waitFor(() => expect(cellValue(api, 'calc')).toBe(20));
+
+        api.setGridOption('calculatedColumns', {
+            processColDef: (params) => ({ ...params.colDef, calculatedExpression: '[missing]' }),
+        });
+        await waitFor(() =>
+            expect(validity).toHaveBeenCalledWith(
+                expect.objectContaining({ expression: '[missing]', valid: false, reason: 'unknownReference' })
+            )
+        );
+
+        validity.mockClear();
+        api.setGridOption('calculatedColumns', { processColDef: passthrough });
+        await waitFor(() =>
+            expect(validity).toHaveBeenCalledWith(expect.objectContaining({ expression: '[a] * 2', valid: true }))
+        );
+    });
+
     test('an unchanged restricted expression can still be applied when the callback rewrites it', async () => {
         const changed = vi.fn();
         const api = createGrid('pcd-restricted-unchanged', {

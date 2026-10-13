@@ -197,6 +197,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 this.adoptUserColumns();
             }
             this.refreshDynamicColumns('gridOptionsChanged');
+            this.checkValidationStates('gridOptionsChanged');
             this.refreshOpenDialogHighlights();
         });
     }
