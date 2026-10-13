@@ -203,7 +203,9 @@ const waterfall = (up: MiniChartSvgPaint, down: MiniChartSvgPaint): MiniChartSvg
 });
 
 /** Heatmap cell origins, column by column. */
-const HEATMAP_CELLS = [6.505, 21.552, 36.599].flatMap((x) => [6.505, 21.552, 36.599].map((y) => [x, y]));
+const HEATMAP_CELLS = /* #__PURE__ */ [6.505, 21.552, 36.599].flatMap((x) =>
+    [6.505, 21.552, 36.599].map((y) => [x, y])
+);
 const HEATMAP_CELL_SIZE = 14.897;
 
 const heatmap = (cellFills: string[]): MiniChartSvgTemplate => ({
@@ -728,17 +730,17 @@ const MINI_CHART_SVG_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> 
             filled('M 45 38.103 L 53 53 L 5 53 L 13 38.103', 2),
         ],
     },
-    boxPlot: boxPlot(false),
-    treemap: treemap(false),
-    waterfall: waterfall(fills(0), fills(1)),
+    boxPlot: /* #__PURE__ */ boxPlot(false),
+    treemap: /* #__PURE__ */ treemap(false),
+    waterfall: /* #__PURE__ */ waterfall(fills(0), fills(1)),
 };
 
 /** Stock themes colour these thumbnails with fixed theme colours instead of the palette. */
 const STOCK_THEME_GEOMETRY: Partial<Record<ChartType, MiniChartSvgTemplate>> = {
-    boxPlot: boxPlot(true),
-    treemap: treemap(true),
-    waterfall: waterfall('#5090dc', '#ffa03a'),
-    heatmap: heatmap(STOCK_HEATMAP_FILLS),
+    boxPlot: /* #__PURE__ */ boxPlot(true),
+    treemap: /* #__PURE__ */ treemap(true),
+    waterfall: /* #__PURE__ */ waterfall('#5090dc', '#ffa03a'),
+    heatmap: /* #__PURE__ */ heatmap(STOCK_HEATMAP_FILLS),
 };
 
 /** The thumbnail geometry for a chart type, given the theme kind and, for the custom heatmap, the solid palette fills and the document their colour names resolve in. */
