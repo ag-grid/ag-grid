@@ -1,448 +1,227 @@
 #!/usr/bin/env node
 /* eslint-disable no-console -- standalone CLI generator: writes rows to stdout / status to stderr */
-// gen-main-expectations.mjs
+// Expectation rows for the GRID .htaccess (the docroot root, or a grid archive build), one or more
+// per redirect rule, with EXACT predicted Locations.
 //
-// Parse the emitted production .htaccess for the MAIN ag-grid-docs repo and synthesise
-// behavioural-harness expectation rows for EVERY redirect rule, encoding the real Apache
-// behaviours that the live httpd harness verifies:
+// The prediction models the request path through the rules in the order Apache applies them:
+//   1. mod_rewrite (per-dir, runs first): the SE-64/66 single-hop rewrites (in an archive, the
+//      subset rebased onto the archive's own copy of each target), the index.php strips, the add-trailing-slash rule for a dot-less slash-less path, the .php
+//      path-suffix strip;
+//   2. mod_alias, FIRST match in config order (not longest match): `Redirect` is a segment-prefix
+//      match that APPENDS the unmatched remainder to the target; `RedirectMatch` is a regex with
+//      $N substitution and no append.
+// /charts/* and /studio/* are not modelled here: their child .htaccess replaces these rewrite rules
+// (see gen-subsite-expectations.mjs).
 //
-//   * mod_alias is FIRST-match in config order (not longest-match).
-//   * A parent mod_rewrite trailing-slash rule appends `/` to any no-trailing-slash, dot-less
-//     path BEFORE mod_alias runs -> such a request's FIRST 301 just adds the slash. Dotted
-//     paths (.php) are NOT slash-rewritten.
-//   * The SE-* single-hop RewriteRules run BEFORE the trailing-slash rule and host-swap, so a
-//     dot-less no-slash path that is itself a single-hop `from` jumps straight to its target.
-//   * The https-upgrade RewriteRule only fires on :80; the local httpd listens on a high port, so it
-//     never triggers. "www" rows are curled with `Host: www.ag-grid.com` (so the host-scoped
-//     chain-shortening guard fires for them); assertions are path substrings, so the origin is
-//     immaterial. The host-swap only fires for `Host: ag-grid.com` (apex rows).
+// What a rule's author INTENDED is its own target. Where Apache will do something else, the row
+// asserts the intended Location and is marked known-fail, so the defect is reported rather than
+// frozen in as "expected":
+//   - double-slash: a slash-less `from` with a slashed `to` appends the request's trailing slash,
+//     giving `<to>/` + `/`.
+//   - shadowed: an earlier, broader rule answers first with a different Location.
 //
-// Output: tab-separated rows `host \t path \t expect_status \t expect_location_substring`.
-// We emit a PREDICTED expectation per row; the companion validate step curls each against real
-// Apache and reconciles. Anything we cannot synthesise a path for is logged to stderr.
+// Usage: node gen-main-expectations.mjs <emitted .htaccess> [--base /archive/36.2.0]
 import { readFileSync } from 'node:fs';
 
-const htaccessPath = process.argv[2];
-if (!htaccessPath) {
-    console.error('usage: gen-main-expectations.mjs <emitted .htaccess>');
+import { Rows, SampleGaps, collapseSlashes, knownFailMarker, substitute, synthFromPattern } from './lib.mjs';
+
+const args = process.argv.slice(2);
+const file = args.find((a) => !a.startsWith('--') && args[args.indexOf(a) - 1] !== '--base');
+const base = args.includes('--base') ? args[args.indexOf('--base') + 1] : '';
+if (!file) {
+    console.error('usage: gen-main-expectations.mjs <emitted .htaccess> [--base /archive/<v>]');
     process.exit(2);
 }
-const lines = readFileSync(htaccessPath, 'utf8').split('\n');
+const lines = readFileSync(file, 'utf8').split('\n');
+const SITE = 'https://www.ag-grid.com';
 
-const rows = []; // { host, path, status, loc, family, note }
-const skipped = [];
-
-const add = (host, path, status, loc, family, note = '') => rows.push({ host, path, status, loc, family, note });
-
-// A path is slash-rewritten (trailing-slash hop fires first) when it has NO trailing slash AND
-// its last segment contains no dot. Mirrors `RewriteCond %{REQUEST_URI} /+[^.]+$` + the rule
-// `^(.+[^/])$` -> `%{REQUEST_URI}/`.
-const isSlashRewritten = (p) => {
-    if (p.endsWith('/')) {
-        return false;
-    }
-    const lastSeg = p.slice(p.lastIndexOf('/') + 1);
-    return lastSeg.length > 0 && !lastSeg.includes('.');
-};
-
-// Collect the SE-* single-hop rewrite `from` -> `to` pairs. These RewriteRules run BEFORE the
-// trailing-slash rule and the host-swap, so the path jumps straight to its absolute www target in
-// ONE hop on EITHER host (www or apex) — that single-hop-regardless-of-host property is SE-66.
-const singleHopFroms = new Set();
-const singleHopPairs = []; // { from, to }
-const reRewrite = /^\s*RewriteRule\s+"\^\/\?(.+?)\$"\s+"([^"]+)"\s+\[R=301(?:,NE)?,L\]/;
+// ---------------------------------------------------------------- parse
+const singleHop = new Map(); // from -> to
+const alias = []; // { kind: 'prefix'|'regex', status, from|re, to, text }
 for (const line of lines) {
-    const m = line.match(reRewrite);
-    if (m) {
-        // Skip the SE-66 charts mirror block + the general charts add-slash rule: those RewriteRules
-        // are regex PATTERNS (alternations, character classes, quantifiers, lookahead), not literal
-        // single-hop `from` paths. They collapse the charts-subdir semantic redirects, and are
-        // predicted independently by gen-charts-expectations.mjs. A genuine single-hop `from` is a
-        // literal path with no unescaped regex metacharacters.
-        if (/[()|[\]{}+*?]/.test(m[1])) {
-            continue;
+    let m;
+    if ((m = line.match(/^\s*RewriteRule\s+"\^\/\?(.+?)\$"\s+"([^"]+)"\s+\[R=301(?:,NE)?,L\]/))) {
+        // literal single-hop rewrites only (the per-dir pattern, so the same `from` in an archive)
+        if (!/[()|[\]{}+*?]/.test(m[1])) {
+            singleHop.set('/' + m[1].replace(/\\\./g, '.'), m[2]);
         }
-        // unescape the \. that the generator inserts
-        const from = '/' + m[1].replace(/\\\./g, '.');
-        singleHopFroms.add(from);
-        singleHopPairs.push({ from, to: m[2] });
+    } else if ((m = line.match(/^\s*Redirect (301|410)\s+(\S+)(?:\s+(\S+))?\s*$/))) {
+        alias.push({ kind: 'prefix', status: Number(m[1]), from: m[2], to: m[3] ?? '', text: line.trim() });
+    } else if ((m = line.match(/^\s*RedirectMatch (301|302|410)\s+"?([^"\s]+)"?(?:\s+"?([^"\s]+)"?)?\s*$/))) {
+        alias.push({
+            kind: 'regex',
+            status: Number(m[1]),
+            re: new RegExp(m[2]),
+            src: m[2],
+            to: m[3] ?? '',
+            text: line.trim(),
+        });
     }
 }
 
-// --- Parse rules in config order ---
-const reRedirect301 = /^\s*Redirect 301\s+(\S+)\s+(\S+)\s*$/;
-const reRedirect410 = /^\s*Redirect 410\s+(\S+)\s*$/;
-const reRMatch = /^\s*RedirectMatch\s+(301|410|302)\s+"?([^"\s]+)"?\s*(?:"?([^"\s]+)"?)?\s*$/;
+// ---------------------------------------------------------------- model
+const prefixMatches = (path, from) =>
+    path === from || (path.startsWith(from) && (from.endsWith('/') || path[from.length] === '/'));
 
-let nRedirect301 = 0,
-    nRedirect410 = 0,
-    nRMatch = 0,
-    nRewrite = singleHopFroms.size;
-
-// Helper: for a relative target, the Location substring on localhost is the target path itself.
-// For an absolute https://www.ag-grid.com target, Location contains that absolute URL.
-const locFor = (to) => to; // substring match works for both relative and absolute
-
-// ---- Redirect 301 (prefix match in mod_alias) ----
-for (const line of lines) {
-    const m = line.match(reRedirect301);
-    if (!m) {
-        continue;
+/** What a directive answers for a path, or null when it does not match. */
+function apply(d, path) {
+    if (d.kind === 'prefix') {
+        if (!prefixMatches(path, d.from)) {
+            return null;
+        }
+        return { status: d.status, loc: d.status === 410 ? '' : d.to + path.slice(d.from.length), by: d };
     }
-    nRedirect301++;
-    const from = m[1];
-    const to = m[2];
+    const m = path.match(d.re);
+    if (!m) {
+        return null;
+    }
+    return { status: d.status, loc: d.status === 410 ? '' : substitute(d.to, m), by: d };
+}
 
-    // Skip the SE single-hop entries duplicated as Redirect? They are RewriteRules, not Redirect,
-    // so they won't appear here. Good.
+/** The first response for a www request, or null for "served/404". */
+function simulate(path) {
+    const rel = path.slice(base.length + 1); // per-dir path below the .htaccess directory
+    if (path.startsWith(`${base}/`) && singleHop.has(`/${rel}`)) {
+        return { status: 301, loc: singleHop.get(`/${rel}`), by: 'single-hop' };
+    }
+    if (rel === 'index.php') {
+        return { status: 301, loc: `${base}/`, by: 'index.php' };
+    }
+    let m;
+    if ((m = rel.match(/^(.*)\/index\.php$/))) {
+        return { status: 301, loc: `${base}/${m[1]}/`, by: 'index.php' };
+    }
+    if (/\/+[^.]+$/.test(path) && /^(.+[^/])$/.test(rel)) {
+        return { status: 301, loc: `${path}/`, by: 'slash' };
+    }
+    if ((m = rel.match(/^(.*)\.php(\/.+)$/))) {
+        return { status: 301, loc: `${base}/${m[1]}.php`, by: 'php-path' };
+    }
+    for (const d of alias) {
+        const r = apply(d, path);
+        if (r) {
+            return r;
+        }
+    }
+    return null;
+}
 
-    // Variant A: request the `from` exactly.
-    if (isSlashRewritten(from)) {
-        // dot-less, no-slash: trailing-slash hop fires first UNLESS it's a single-hop `from`.
-        if (singleHopFroms.has(from)) {
-            add('www', from, '301', locFor(to), 'redirect301-singlehop', 'single-hop rewrite pre-empts');
+const rows = new Rows();
+const gaps = new SampleGaps(`${file}${base ? ` (base ${base})` : ''}`);
+const counts = { ok: 0, doubleSlash: 0, shadowed: 0 };
+
+/** Follow a chain of www responses to its end (at most 5 hops). */
+function finalOf(loc) {
+    let current = loc;
+    for (let i = 0; i < 5; i++) {
+        const path = current.replace(/^https:\/\/www\.ag-grid\.com/, '');
+        if (!path.startsWith('/')) {
+            return current;
+        }
+        const next = simulate(path);
+        if (!next || next.status !== 301) {
+            return path;
+        }
+        current = next.loc;
+    }
+    return current;
+}
+
+/**
+ * One row for request `path` generated from directive `d`, asserting what `d` intends. `synthetic`
+ * marks a request made up to exercise the prefix append (a /child/ below a renamed page): no rule
+ * author had an intent for it, so its row records Apache's mechanics instead.
+ */
+function rowFor(path, d, { synthetic = false } = {}) {
+    const sim = simulate(path);
+    if (!sim) {
+        // A sample is only made for a rule it matches, so this is a generator bug: dropping the row
+        // would also lower @min-rows, losing the rule's coverage silently.
+        throw new Error(`no rule matches generated sample ${path} (from: ${d.text})`);
+    }
+    if (sim.by === d) {
+        const intended = collapseSlashes(sim.loc);
+        if (intended !== sim.loc) {
+            counts.doubleSlash++;
+            rows.add('www', path, sim.status, intended, [
+                knownFailMarker(
+                    'harness finding: mod_alias prefix append doubles the slash (slash-less from, slashed to)',
+                    { status: sim.status, loc: intended },
+                    sim
+                ),
+            ]);
         } else {
-            add('www', from, '301', from + '/', 'redirect301-slashhop', 'trailing-slash hop first');
-            // and the slashed form resolves to the real target
-            add('www', from + '/', '301', locFor(to), 'redirect301', 'slashed form -> target');
+            counts.ok++;
+            rows.add('www', path, sim.status, sim.loc);
+        }
+        return;
+    }
+    const own = apply(d, path);
+    if (synthetic || typeof sim.by === 'string' || !own || collapseSlashes(own.loc) === collapseSlashes(sim.loc)) {
+        // a mod_rewrite step answered first (slash hop, index.php, single-hop), or an earlier rule
+        // answers identically: that IS the behaviour
+        counts.ok++;
+        rows.add('www', path, sim.status, sim.loc);
+        return;
+    }
+    const sameEnd = finalOf(sim.loc) === finalOf(own.loc);
+    counts.shadowed++;
+    const how = sameEnd ? 'reaches the target in 2+ hops' : `ends on ${finalOf(sim.loc)}, not the target`;
+    const intended = { status: own.status, loc: collapseSlashes(own.loc) };
+    rows.add('www', path, intended.status, intended.loc, [
+        knownFailMarker(`harness finding: shadowed by an earlier rule (${sim.by.text}) - ${how}`, intended, sim),
+    ]);
+}
+
+// ---------------------------------------------------------------- rows
+rows.section(base ? `grid-archive-redirects` : 'grid-redirects');
+for (const d of alias) {
+    if (d.kind === 'prefix') {
+        rowFor(d.from, d);
+        const last = d.from.slice(d.from.lastIndexOf('/') + 1);
+        if (!d.from.endsWith('/') && !last.includes('.')) {
+            // a directory-style page: its slashed form is the one links and crawlers use
+            rowFor(`${d.from}/`, d);
+        } else if (d.from.endsWith('/')) {
+            rowFor(`${d.from}child/`, d, { synthetic: true });
         }
     } else {
-        // has trailing slash or a dot -> mod_alias matches directly.
-        add('www', from, '301', locFor(to), 'redirect301', '');
-    }
-
-    // Variant B: a child segment under a directory-style `from` (ends with `/`). mod_alias is a
-    // PREFIX match, so `/from/child` -> `to` + `child` (target gets the remainder appended).
-    if (from.endsWith('/')) {
-        const childReq = from + 'child';
-        // child has no dot and no trailing slash -> trailing-slash hop fires first.
-        add('www', childReq, '301', childReq + '/', 'redirect301-child-slashhop', 'child: trailing-slash hop first');
-        // slashed child resolves: mod_alias appends remainder to target.
-        const childSlashed = from + 'child/';
-        const childTarget = to.endsWith('/') ? to + 'child/' : to + '/child/';
-        add('www', childSlashed, '301', childTarget, 'redirect301-child', 'prefix match appends remainder');
-    }
-}
-
-// ---- Redirect 410 (prefix) ----
-for (const line of lines) {
-    const m = line.match(reRedirect410);
-    if (!m) {
-        continue;
-    }
-    // guard: don't double-count the "Redirect 301" lines (regex is anchored to 410 so fine)
-    nRedirect410++;
-    const from = m[1];
-    if (isSlashRewritten(from)) {
-        add('www', from, '301', from + '/', 'redirect410-slashhop', 'trailing-slash hop first');
-        add('www', from + '/', '410', '', 'redirect410', 'slashed form -> 410');
-    } else {
-        add('www', from, '410', '', 'redirect410', '');
-    }
-}
-
-// ---- RedirectMatch (regex) ----
-// We synthesise a sample path from the pattern and predict the target. Because mod_alias appends
-// the unmatched URL remainder for RedirectMatch, we keep predictions conservative: assert the
-// status + that Location CONTAINS the rule's target stem. Validation reconciles exact values.
-for (const line of lines) {
-    const m = line.match(reRMatch);
-    if (!m) {
-        continue;
-    }
-    const status = m[1];
-    let pat = m[2];
-    const to = m[3] || '';
-    nRMatch++;
-
-    // Build a concrete matching sample from the regex pattern.
-    const sample = synthFromPattern(pat);
-    if (sample == null) {
-        skipped.push(`RedirectMatch ${status} ${pat} -> ${to} (could not synthesise path)`);
-        continue;
-    }
-
-    // backref substitution for the target stem (best-effort; validation confirms exact)
-    let predictedLoc = to;
-    if (to.includes('$1') || to.includes('$2')) {
-        predictedLoc = substituteBackrefs(pat, sample, to);
-    }
-    // Family label from pattern
-    const family = 'redirectmatch-' + status;
-
-    if (status === '410') {
-        // sample may be slash-rewritten first
-        if (isSlashRewritten(sample)) {
-            add('www', sample, '301', sample + '/', family + '-slashhop', `pattern ${pat}`);
-            add('www', sample + '/', '410', '', family, `pattern ${pat}`);
-        } else {
-            add('www', sample, '410', '', family, `pattern ${pat}`);
-        }
-        continue;
-    }
-    if (status === '302') {
-        add('www', sample, '302', predictedLoc, family, `pattern ${pat}`);
-        continue;
-    }
-    // 301: if sample is dot-less no-slash and would be slash-rewritten, the trailing-slash hop
-    // fires first. To assert the actual redirect target cleanly, prefer a slashed sample where
-    // the pattern allows it.
-    if (isSlashRewritten(sample)) {
-        const slashed = sample + '/';
-        if (new RegExp(pat).test(slashed)) {
-            // use slashed sample so mod_alias fires (still need to re-predict backrefs)
-            let loc2 = to;
-            if (to.includes('$1') || to.includes('$2')) {
-                loc2 = substituteBackrefs(pat, slashed, to);
-            }
-            add('www', slashed, '301', loc2, family, `pattern ${pat} (slashed sample)`);
-            // also record the no-slash -> slash hop to guard that nuance
-            add('www', sample, '301', sample + '/', family + '-slashhop', `pattern ${pat}`);
-        } else {
-            // pattern only matches the no-slash form; trailing-slash hop would break it, so the
-            // redirect must out-rank the trailing-slash rule (it runs later) -> expect target.
-            // mod_rewrite trailing-slash has [L]; mod_alias runs in a later phase only if no
-            // mod_rewrite rule matched. Validation will tell us; predict target.
-            add('www', sample, '301', predictedLoc, family, `pattern ${pat} (no-slash only)`);
-        }
-    } else {
-        add('www', sample, '301', predictedLoc, family, `pattern ${pat}`);
-    }
-}
-
-// Synthesise a concrete path that matches a (simple, anchored) Apache regex pattern.
-function synthFromPattern(pat) {
-    let p = pat;
-    const anchoredStart = p.startsWith('^');
-    if (anchoredStart) {
-        p = p.slice(1);
-    }
-    if (p.endsWith('$')) {
-        p = p.slice(0, -1);
-    }
-
-    // If not anchored at start (e.g. "/archive$"), prefix something realistic.
-    let prefix = anchoredStart ? '' : '/documentation';
-
-    // Walk the pattern producing a literal sample.
-    let out = '';
-    let i = 0;
-    while (i < p.length) {
-        const c = p[i];
-        if (c === '\\') {
-            // escaped literal
-            out += p[i + 1];
-            i += 2;
+        const sample = synthFromPattern(d.src);
+        if (!d.re.test(sample)) {
+            gaps.add(d.text, (path) => d.re.test(path));
             continue;
         }
-        if (c === '(') {
-            // find matching close paren (no nested groups in these patterns)
-            let depth = 1;
-            let j = i + 1;
-            while (j < p.length && depth > 0) {
-                if (p[j] === '\\') {
-                    j += 2;
-                    continue;
-                }
-                if (p[j] === '(') {
-                    depth++;
-                }
-                if (p[j] === ')') {
-                    depth--;
-                }
-                j++;
-            }
-            const inner = p.slice(i + 1, j - 1); // content of group
-            let rest = p.slice(j); // remainder after group
-            const quant = rest[0]; // ? * + or undefined
-            // Choose an alternative within the group (first alt before any top-level |)
-            let alt = inner;
-            const bar = topLevelBar(inner);
-            if (bar >= 0) {
-                alt = inner.slice(0, bar);
-            }
-            // Expand the chosen alt as a sub-pattern.
-            let altSample = synthInner(alt);
-            // Apply quantifier: ? -> include once; * -> include once (to exercise remainder); + -> once.
-            // For a trailing optional group like (/.*)? choose to include a child so we exercise the
-            // append behaviour where relevant; but for a clean target assertion, include minimal.
-            if (quant === '?') {
-                // include the group once (covers the "with suffix" case)
-                out += altSample;
-                i = j + 1;
-                continue;
-            }
-            out += altSample;
-            i = j;
-            continue;
-        }
-        if (c === '.') {
-            // ".*" or ".+" or "."
-            const next = p[i + 1];
-            if (next === '*') {
-                out += 'sample';
-                i += 2;
-                continue;
-            }
-            if (next === '+') {
-                out += 'sample';
-                i += 2;
-                continue;
-            }
-            out += 'x';
-            i += 1;
-            continue;
-        }
-        if (c === '[') {
-            // char class: pick a letter; skip to ]
-            let j = i + 1;
-            while (j < p.length && p[j] !== ']') {
-                j++;
-            }
-            out += 'a';
-            i = j + 1;
-            // possible quantifier
-            if (p[i] === '+' || p[i] === '*') {
-                i++;
-            }
-            continue;
-        }
-        // plain literal
-        out += c;
-        i++;
-    }
-    let result = prefix + out;
-    // normalise: ensure starts with /
-    if (!result.startsWith('/')) {
-        result = '/' + result;
-    }
-    return result;
-}
-
-// expand an inner alternative (may contain /.* etc.)
-function synthInner(s) {
-    let out = '';
-    let i = 0;
-    while (i < s.length) {
-        const c = s[i];
-        if (c === '\\') {
-            out += s[i + 1];
-            i += 2;
-            continue;
-        }
-        if (c === '.') {
-            const next = s[i + 1];
-            if (next === '*' || next === '+') {
-                out += 'sample';
-                i += 2;
-                continue;
-            }
-            out += 'x';
-            i++;
-            continue;
-        }
-        if (c === '[') {
-            let j = i + 1;
-            while (j < s.length && s[j] !== ']') {
-                j++;
-            }
-            out += 'a';
-            i = j + 1;
-            if (s[i] === '+' || s[i] === '*') {
-                i++;
-            }
-            continue;
-        }
-        out += c;
-        i++;
-    }
-    return out;
-}
-
-function topLevelBar(inner) {
-    let depth = 0;
-    for (let i = 0; i < inner.length; i++) {
-        if (inner[i] === '\\') {
-            i++;
-            continue;
-        }
-        if (inner[i] === '(') {
-            depth++;
-        } else if (inner[i] === ')') {
-            depth--;
-        } else if (inner[i] === '|' && depth === 0) {
-            return i;
+        rowFor(sample, d);
+        if (!sample.endsWith('/') && d.re.test(`${sample}/`)) {
+            rowFor(`${sample}/`, d);
         }
     }
-    return -1;
 }
 
-// Substitute $1/$2 in target using the synthesised sample run through the pattern.
-function substituteBackrefs(pat, sample, to) {
-    try {
-        const re = new RegExp(pat);
-        const mm = sample.match(re);
-        if (!mm) {
-            return to;
-        }
-        return to.replace(/\$(\d)/g, (_, d) => mm[Number(d)] ?? '');
-    } catch {
-        return to;
-    }
+// SE-64 / SE-66: a single-hop rewrite lands on its final www URL in ONE 301, on www and apex - in an
+// archive, on the archive's own copy of the target.
+rows.section(base ? 'grid-archive-single-hop' : 'grid-single-hop');
+for (const [from, to] of singleHop) {
+    // its own variant: an alias row for the same request (emitted above) must not swallow the hop check
+    rows.add('www', `${base}${from}`, 301, to, ['hops=1'], 'single-hop');
+    rows.add('apex', `${base}${from}`, 301, to);
 }
 
-// ---- SE-* single-hop rewrites (RewriteRule, run before trailing-slash + host-swap) ----
-// www: lands on the absolute www target in ONE hop. apex (Host: ag-grid.com): SAME single hop,
-// because the rewrite fires before the non-www->www host-swap (SE-66 proof).
-for (const { from, to } of singleHopPairs) {
-    add('www', from, '301', to, 'single-hop-rewrite', 'RewriteRule before trailing-slash');
-    add('apex', from, '301', to, 'single-hop-rewrite-apex', 'SE-66: one hop on apex too');
+rows.section(base ? 'grid-archive-infra' : 'grid-infra');
+// host canonicalisation keeps the path (and, in an archive, the archive prefix)
+for (const p of [`${base}/javascript-data-grid/getting-started/`, `${base}/license-pricing/`]) {
+    rows.add('apex', p, 301, `${SITE}${p}`);
 }
+rows.add('www', `${base}/index.php`, 301, `${base}/`);
+rows.add('www', `${base}/documentation/index.php`, 301, `${base}/documentation/`);
+// the trailing slash on the suffix keeps the slash rule out of the way, so the php-path rule fires
+rows.add('www', `${base}/cookies.php/extra/`, 301, `${base}/cookies.php`);
+rows.add('www', `${base}/license-pricing`, 301, `${base}/license-pricing/`);
 
-// ---- Infra RewriteRules (host-swap, https-upgrade-context, index.php, php-path, trailing-slash) ----
-// apex host-swap: a plain path on Host: ag-grid.com takes ONE hop to the www origin (the path is
-// preserved; this proves the non-www->www rule, separate from the SE single-hops).
-infraRows();
-function infraRows() {
-    // host-swap on a path with no single-hop override -> www origin, path preserved
-    add(
-        'apex',
-        '/javascript-data-grid/getting-started/',
-        '301',
-        'https://www.ag-grid.com/javascript-data-grid/getting-started/',
-        'infra-host-swap',
-        'non-www -> www, path preserved'
-    );
-    add(
-        'apex',
-        '/license-pricing/',
-        '301',
-        'https://www.ag-grid.com/license-pricing/',
-        'infra-host-swap',
-        'non-www -> www'
-    );
-    // index.php removal
-    add('www', '/index.php', '301', '/', 'infra-index-php', 'strip index.php');
-    add(
-        'www',
-        '/documentation/index.php',
-        '301',
-        '/documentation/',
-        'infra-index-php-path',
-        'strip trailing index.php'
-    );
-    // php path-suffix stripping: /foo.php/bar/ -> /foo.php. The trailing slash on the suffix means
-    // the trailing-slash rule does NOT pre-empt (the path already ends in /), so the php-path-strip
-    // rule actually fires (a bare /cookies.php/extra would first take a harmless trailing-slash hop).
-    add('www', '/cookies.php/extra/', '301', '/cookies.php', 'infra-php-path', 'strip path after .php');
-    // trailing-slash add for a dotless no-slash path that is NOT otherwise redirected
-    add('www', '/license-pricing', '301', '/license-pricing/', 'infra-trailing-slash', 'add trailing slash');
-}
-
-// --- No-shadow rows: real live pages that must stay 200 and must NOT be caught by broad regexes.
-const noShadow = [
-    // real *-data-grid pages must NOT be swallowed by the broad /{fw}-grid/ prefix rules nor by
-    // the SE single-hop overrides nor the broad charts RedirectMatch catch-alls.
+// live pages that must not be swallowed by a broad rule
+rows.section(base ? 'grid-archive-no-shadow' : 'grid-no-shadow');
+const shadowedLive = [];
+for (const p of [
     '/angular-data-grid/getting-started/',
     '/react-data-grid/cell-editing/',
     '/javascript-data-grid/getting-started/',
@@ -450,45 +229,34 @@ const noShadow = [
     '/angular-data-grid/grid-api/',
     '/react-data-grid/aggregation-total-rows/',
     '/javascript-data-grid/integrated-charts/',
-    '/charts/react/bar-series/',
-    // pages whose first path segment is react/angular/vue/javascript-like but are NOT the charts
-    // catch-all (those patterns are ^/react/... with a slash, distinct from /react-data-grid/...).
     '/react-data-grid/components/',
     '/angular-data-grid/filtering/',
     '/javascript-data-grid/cell-editing/',
     '/vue-data-grid/grid-options/',
-    // a deep grid page that shares a stem with a redirect target family
     '/javascript-data-grid/aggregation/',
     '/angular-data-grid/component-cell-renderer/',
-];
-for (const p of noShadow) {
-    add('www', p, '200', '', 'no-shadow', 'live page must stay 200');
-}
-
-// Explicit nuance: the bare dot-less no-slash /forum (matched by RedirectMatch 410 ^/forum(/|$))
-// first takes the harmless trailing-slash hop, THEN /forum/ 410s. Guards both halves.
-add('www', '/forum', '301', '/forum/', 'redirectmatch-410-slashhop', 'no-slash -> slash hop before 410');
-
-// --- Emit ---
-const header = [
-    '# host\tpath\texpect_status\texpect_location_substring',
-    '# GENERATED by gen-main-expectations.mjs from the emitted production .htaccess.',
-    '# host: "www" (default) or "apex" (Host: ag-grid.com). Assertions are on the SINGLE response.',
-    '#',
-    `# rules: Redirect301=${nRedirect301} Redirect410=${nRedirect410} RedirectMatch=${nRMatch} single-hop-rewrites=${nRewrite}`,
-    '#',
-].join('\n');
-
-const body = rows.map((r) => `${r.host}\t${r.path}\t${r.status}\t${r.loc}`).join('\n');
-process.stdout.write(header + '\n' + body + '\n');
-
-console.error(
-    `# Parsed: Redirect301=${nRedirect301} Redirect410=${nRedirect410} RedirectMatch=${nRMatch} singleHop=${nRewrite}`
-);
-console.error(`# Emitted ${rows.length} candidate rows.`);
-if (skipped.length) {
-    console.error(`# SKIPPED ${skipped.length}:`);
-    for (const s of skipped) {
-        console.error('#   ' + s);
+]) {
+    const caught = simulate(base + p);
+    if (caught) {
+        // Dropping the 200 row here would hide exactly the regression this section exists to catch
+        // (and lower @min-rows with it), so a caught live page stops the regeneration instead.
+        shadowedLive.push(`${base + p} -> ${caught.status} ${caught.loc} by ${caught.by.text ?? caught.by}`);
     }
+    rows.add('www', base + p, 200);
 }
+
+if (shadowedLive.length) {
+    console.error(`ERROR: ${file}: ${shadowedLive.length} protected live page(s) caught by a redirect:`);
+    shadowedLive.forEach((s) => console.error(`  ${s}`));
+    process.exit(1);
+}
+gaps.exitIfAny();
+
+process.stdout.write(
+    rows.toString([
+        `GENERATED by gen-main-expectations.mjs${base ? ` --base ${base}` : ''} - do not hand-edit; regenerate (see README).`,
+        `rules: alias=${alias.length} single-hop=${singleHop.size}; rows=${rows.count} (${counts.doubleSlash} double-slash, ${counts.shadowed} shadowed: known-fail)`,
+        `@min-rows ${rows.count}`,
+    ])
+);
+console.error(`# ${file}${base ? ` (base ${base})` : ''}: ${rows.count} rows; ${JSON.stringify(counts)}`);

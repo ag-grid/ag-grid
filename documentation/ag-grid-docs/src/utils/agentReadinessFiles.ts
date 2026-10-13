@@ -62,7 +62,9 @@ interface AgentReadinessLinks {
 function buildLinks({ siteRoot, gridDocsPrefix }: AgentReadinessInput): AgentReadinessLinks {
     const grid = `${siteRoot}${gridDocsPrefix}/`;
     return {
-        dataGrid: grid,
+        // The docs entry point rather than the JavaScript docs root, which is a client-side
+        // forwarder with no sitemap entry and no markdown twin (waf-finding.md §20.3).
+        dataGrid: `${grid}getting-started/`,
         charts: `${siteRoot}charts/`,
         studio: `${siteRoot}studio/`,
         dataGridDocs: `${grid}getting-started/`,

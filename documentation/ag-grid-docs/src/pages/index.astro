@@ -24,7 +24,8 @@ import { FrameworkTextAnimation } from '@ag-website-shared/components/framework-
 import LogoMark from '@components/logo/LogoMark';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import { DEFAULT_FRAMEWORK, DISABLE_MARKDOWN_DOCS } from '@constants';
-import { buildFAQPage, buildSiteNavigationElement, siteRootUrl } from '@ag-website-shared/utils/structuredData';
+import { buildSiteNavigationElement, siteRootUrl } from '@ag-website-shared/utils/structuredData';
+import { buildHomepageFAQPage } from '@utils/docsStructuredData';
 
 const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
 const { data: faqData } = (await getEntry('faqs', 'homepage')) as CollectionEntry<'faqs'>;
@@ -48,22 +49,8 @@ const sectionProps = (id: string) => {
     };
 };
 
-// Reduce the markdown FAQ answers to plain text so the structured data matches the visible answer and
-// stays valid for rich results. Covers the inline markdown used in these answers: images, links,
-// bold/italic emphasis, inline code, and line-leading heading/quote/list markers.
-const toPlainText = (markdown: string): string =>
-    markdown
-        .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1') // images -> alt text
-        .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1') // links -> link text
-        .replace(/(\*\*|__)(.*?)\1/g, '$2') // bold
-        .replace(/(\*|_)(.*?)\1/g, '$2') // italic
-        .replace(/`([^`]+)`/g, '$1') // inline code
-        .replace(/^\s{0,3}(?:#{1,6}|>|[-*+]|\d+\.)\s+/gm, ''); // heading / quote / list markers
+const faqStructuredData = buildHomepageFAQPage({ canonicalUrlBase: metadata.canonicalUrlBase, items: faqData });
 const siteRoot = siteRootUrl(metadata.canonicalUrlBase);
-const faqStructuredData = buildFAQPage({
-    pageUrl: siteRoot,
-    items: faqData.map(({ question, answer }) => ({ question, answer: toPlainText(answer) })),
-});
 
 // SiteNavigationElement built from the primary header nav, so it stays in sync with the
 // rendered navigation. GitHub is dropped (external repo, already in Organization.sameAs).

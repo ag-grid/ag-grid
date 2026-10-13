@@ -2,7 +2,9 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
+import { SESSIONS, sessionSlug } from './beyondThePromptSessions';
 import { GRID_MARKDOWN_PAGE_GROUPS, markdownPathAlternation, markdownPathPatterns } from './markdownPages';
+import { ROUTE_FILES, resolveRoute, sampleRoutePath } from './pageRoutes.test-utils';
 
 const DIST = join(__dirname, '../../dist');
 const SITEMAP = join(DIST, 'sitemap-0.xml');
@@ -31,6 +33,50 @@ describe('GRID_MARKDOWN_PAGE_GROUPS', () => {
         for (const group of GRID_MARKDOWN_PAGE_GROUPS) {
             expect(group.describes, JSON.stringify(group)).toBeTruthy();
         }
+    });
+});
+
+// SE-80: the registry and the `.md.ts` endpoints must agree, checked from the source tree so it runs
+// on every unit run rather than only after a full build (waf-finding.md §16 T7).
+describe('markdown endpoints agree with the registry, without a build', () => {
+    const recordedSession = SESSIONS.find((session) => session.youtubeUrl)!;
+    const SAMPLE_PARAMS = {
+        framework: 'react',
+        pageName: 'getting-started',
+        bryntumProduct: 'bryntum-scheduler-pro',
+        slug: sessionSlug(recordedSession.title),
+    };
+    // AGENTS.md is a standalone file, and index.md is the homepage's twin, negotiated by its own rule.
+    const NOT_PAGE_TWINS = ['AGENTS.md.ts', 'index.md.ts'];
+    const endpoints = ROUTE_FILES.filter((file) => file.endsWith('.md.ts') && !NOT_PAGE_TWINS.includes(file)).map(
+        (file) => {
+            const twin = sampleRoutePath(file, SAMPLE_PARAMS);
+            return { file, twin, page: `${twin.replace(/\.md$/, '')}/` };
+        }
+    );
+
+    it('finds the endpoints, so the checks below are not vacuous', () => {
+        expect(endpoints.length).toBeGreaterThan(20);
+    });
+
+    it.each(endpoints)('$twin is the twin of a page the build emits', ({ twin, page }) => {
+        expect(resolveRoute(twin), twin).toBeDefined();
+        expect(resolveRoute(page), page).toBeDefined();
+    });
+
+    it.each(endpoints)('$page negotiates to its twin', ({ page }) => {
+        expect(isNegotiable(page)).toBe(true);
+    });
+
+    it('serves every registry group from at least one endpoint', () => {
+        const unserved = GRID_MARKDOWN_PAGE_GROUPS.filter(({ pattern }) => pattern).filter(
+            ({ pattern }) => !endpoints.some(({ page }) => new RegExp(`^/(?:${pattern})/?$`).test(page))
+        );
+        expect(unserved.map(({ describes }) => describes)).toEqual([]);
+    });
+
+    it('serves the homepage twin at index.md', () => {
+        expect(resolveRoute('/index.md')).toBe('index.md.ts');
     });
 });
 
@@ -64,8 +110,17 @@ function builtSitemapPaths(): string[] {
 const sitemapPaths = builtSitemapPaths();
 const hasCompleteBuild = sitemapPaths.length > 1000;
 
+// Reported as a todo rather than vanishing into a skipped describe, so a run without a build says
+// plainly that the built-site coverage check did not happen (waf-finding.md §16 T7).
+if (!hasCompleteBuild) {
+    it.todo(
+        `every sitemap URL has a .md twin in dist — NOT CHECKED: needs a complete build at ${SITEMAP} ` +
+            `(found ${sitemapPaths.length} URLs); run \`nx build ag-grid-docs\` first`
+    );
+}
+
 // The invariant this whole feature rests on: an agent can append `.md` to any URL in the sitemap.
-// Requires a build (`nx build ag-grid-docs`); skipped otherwise so unit runs stay fast.
+// Requires a build (`nx build ag-grid-docs`); the source-tree checks above run either way.
 describe.runIf(hasCompleteBuild)('every sitemap URL has a .md twin in dist', () => {
     // Guard against a vacuous pass: if filtering ever empties the set, the assertions below would
     // hold trivially and the check would silently stop protecting anything.

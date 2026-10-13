@@ -1,12 +1,19 @@
 import type { Framework, InternalFramework } from '@ag-grid-types';
 import {
     type BreadcrumbItem,
+    type FaqItem,
     type JsonLdObject,
+    buildAgGridOrganization,
     buildBreadcrumbList,
     buildDocsTopic,
+    buildFAQPage,
+    buildSoftwareApplication,
+    buildSoftwareSourceCode,
     buildTechArticle,
+    buildWebSite,
     getDocsTopicId,
     getSoftwareApplicationId,
+    getTechArticleId,
     siteRootUrl,
 } from '@ag-website-shared/utils/structuredData';
 import { DOCS_FRAMEWORK_REDIRECT_PAGE } from '@components/docs/constants';
@@ -20,6 +27,73 @@ const FRAMEWORK_PACKAGES: Record<Framework, string> = {
     angular: 'ag-grid-angular',
     vue: 'ag-grid-vue3',
 };
+
+interface SiteStructuredDataInput {
+    canonicalUrlBase: string;
+    name: string;
+    description: string;
+    /** The AG Grid package version; any pre-release suffix is dropped. */
+    version: string;
+}
+
+/**
+ * Structured data emitted on every page: the company, the site, and AG Grid itself. Only the
+ * Community offer is listed, as Google rejects an offer without a price.
+ */
+export function buildSiteStructuredData({
+    canonicalUrlBase,
+    name,
+    description,
+    version,
+}: SiteStructuredDataInput): JsonLdObject[] {
+    return [
+        buildAgGridOrganization(),
+        buildWebSite({ canonicalUrlBase, name, description }),
+        buildSoftwareApplication({
+            canonicalUrlBase,
+            name: 'AG Grid',
+            version: version.split('-')[0],
+            sameAs: ['https://www.npmjs.com/package/ag-grid-community'],
+            offers: [
+                {
+                    '@type': 'Offer',
+                    name: 'AG Grid Community',
+                    price: '0',
+                    priceCurrency: 'USD',
+                    url: `${siteRootUrl(canonicalUrlBase)}license-pricing/`,
+                },
+            ],
+        }),
+    ];
+}
+
+// Covers the inline markdown used in the FAQ answers: images, links, bold/italic emphasis, inline
+// code, and line-leading heading/quote/list markers.
+const markdownToPlainText = (markdown: string): string =>
+    markdown
+        .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1') // images -> alt text
+        .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1') // links -> link text
+        .replace(/(\*\*|__)(.*?)\1/g, '$2') // bold
+        .replace(/(\*|_)(.*?)\1/g, '$2') // italic
+        .replace(/`([^`]+)`/g, '$1') // inline code
+        .replace(/^\s{0,3}(?:#{1,6}|>|[-*+]|\d+\.)\s+/gm, ''); // heading / quote / list markers
+
+/**
+ * The home page `FAQPage`. Answers are reduced from markdown to plain text so the structured data
+ * matches the visible answer and stays valid for rich results.
+ */
+export function buildHomepageFAQPage({
+    canonicalUrlBase,
+    items,
+}: {
+    canonicalUrlBase: string;
+    items: FaqItem[];
+}): JsonLdObject {
+    return buildFAQPage({
+        pageUrl: siteRootUrl(canonicalUrlBase),
+        items: items.map(({ question, answer }) => ({ question, answer: markdownToPlainText(answer) })),
+    });
+}
 
 export function getDocsPageUrl({
     canonicalUrlBase,
@@ -115,6 +189,33 @@ function getBreadcrumbItems({
             : [{ name: `${getFrameworkDisplayText(framework)} Data Grid`, url: frameworkRootUrl }];
 
     return [{ name: 'AG Grid', url: siteRoot }, ...frameworkItems, { name: title, url: pageUrl }];
+}
+
+/**
+ * The `SoftwareSourceCode` node for an example embedded on a framework docs page, linked to that
+ * page's `TechArticle`. `internalFramework` is the example's resolved framework, which can differ
+ * from the page's (see `getExampleSourceCodeProperties`).
+ */
+export function buildExampleSourceCode({
+    canonicalUrlBase,
+    framework,
+    pageName,
+    exampleName,
+    internalFramework,
+}: {
+    canonicalUrlBase: string;
+    framework: Framework;
+    pageName: string;
+    exampleName: string;
+    internalFramework: InternalFramework;
+}): JsonLdObject {
+    const pageUrl = getDocsPageUrl({ canonicalUrlBase, framework, pageName });
+    return buildSoftwareSourceCode({
+        pageUrl,
+        exampleName,
+        ...getExampleSourceCodeProperties(internalFramework),
+        aboutEntityId: getTechArticleId(pageUrl),
+    });
 }
 
 /**
