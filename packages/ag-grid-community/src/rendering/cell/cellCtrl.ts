@@ -10,6 +10,8 @@ import {
 } from 'ag-stack';
 
 import { isColumnSelectionCol, isRowNumberCol } from '../../columns/columnUtils';
+import type { CompBeanOwner } from '../../components/emptyBean';
+import { destroyCompBean, setupCompBean } from '../../components/emptyBean';
 import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
@@ -99,7 +101,7 @@ let instanceIdSequence = 0;
 export type CellCtrlInstanceId = BrandedType<string, 'CellCtrlInstanceId'>;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export class CellCtrl extends BeanStub {
+export class CellCtrl extends BeanStub implements CompBeanOwner {
     public readonly instanceId: CellCtrlInstanceId;
     /** Scratch for a list diff, trusted only where the list diffed holds this at that index. */
     public diffIndex = 0;
@@ -113,6 +115,7 @@ export class CellCtrl extends BeanStub {
     public eGui: HTMLElement;
 
     public comp: ICellComp;
+    public compBean: BeanStub | undefined = undefined;
     public editCompDetails?: UserCompDetails;
 
     public printLayout: boolean;
@@ -277,7 +280,7 @@ export class CellCtrl extends BeanStub {
         this.eGui = eCell;
         this.drawnAriaColIndex = -1;
         this.printLayout = printLayout;
-        compBean ??= this;
+        compBean = setupCompBean(this, compBean);
 
         this.addDomData(compBean);
         const isClientSideLoadingCell = this.isClientSideLoadingCell();
@@ -1091,6 +1094,7 @@ export class CellCtrl extends BeanStub {
             this.beans.focusSvc.attemptToRecoverFocus();
         }
 
+        destroyCompBean(this);
         super.destroy();
     }
 

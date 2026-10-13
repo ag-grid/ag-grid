@@ -31,6 +31,7 @@ import type {
     BodyScrollEvent,
     BulkEditingStartedEvent,
     BulkEditingStoppedEvent,
+    CalculatedColumnChangedEvent,
     CalculatedColumnCreatedEvent,
     CalculatedColumnExpressionChangedEvent,
     CalculatedColumnRemovedEvent,
@@ -120,6 +121,7 @@ import type {
     GetChartMenuItems,
     GetChartToolbarItems,
     GetChildCount,
+    GetColumnDropZoneMenuItems,
     GetColumnMenuItems,
     GetContextMenuItems,
     GetDataPath,
@@ -299,7 +301,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         private readonly _frameworkCompWrapper: AngularFrameworkComponentWrapper
     ) {
         this._nativeElement = elementDef.nativeElement;
-        this._fullyReady.then(() => {
+        void this._fullyReady.then(() => {
             // Register the status flag reset before any events are fired
             // so that we can swap to synchronous event firing as soon as the grid is ready
             this._holdEvents = false;
@@ -411,7 +413,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
 
             if (this._holdEvents) {
                 // if the user is listening to events, wait for ngAfterViewInit to fire first, then emit the grid events
-                this._fullyReady.then(() => fireEmitter());
+                void this._fullyReady.then(() => fireEmitter());
             } else {
                 fireEmitter();
             }
@@ -691,7 +693,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ColumnAutoSizeModule`
      */
     @Input() public autoSizeStrategy: AutoSizeStrategy<TData> | undefined = undefined;
-    /** Set to `true` to animate changes to column width when auto-sizing the columns.
+    /** Set to `true` to animate changes to column width from auto-sizing, flex, showing or hiding columns, expanding or collapsing column groups, and applying column state or column definitions.
      * @default false
      */
     @Input({ transform: booleanAttribute }) public animateColumnResizing: boolean | undefined = undefined;
@@ -2047,6 +2049,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ColumnMenuModule` / `ColumnsToolPanelModule`
      */
     @Input() public getColumnMenuItems: GetColumnMenuItems<TData> | undefined = undefined;
+    /** Customise the context menu for pills in Row Group, Pivot and Values drop zones. Return `[]` to hide it.
+     * Called when pills are created to determine menu availability for accessibility, and when opening a menu.
+     * Independent of `columnMenuItems` and `getColumnMenuItems`.
+     * @agModule `RowGroupingPanelModule` / `ColumnsToolPanelModule`
+     */
+    @Input() public getColumnDropZoneMenuItems: GetColumnDropZoneMenuItems<TData> | undefined = undefined;
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
      */
     @Input() public postProcessPopup: PostProcessPopup<TData> | undefined = undefined;
@@ -2307,7 +2315,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public calculatedColumnCreated: EventEmitter<CalculatedColumnCreatedEvent<TData>> = new EventEmitter<
         CalculatedColumnCreatedEvent<TData>
     >();
+    /** A calculated column's title, data type, expression or group visibility has changed.
+     * Fires once per committed update, not during initialisation or Grid State restoration.
+     * Live updates can contain incomplete or invalid expressions.
+     */
+    @Output() public calculatedColumnChanged: EventEmitter<CalculatedColumnChangedEvent<TData>> = new EventEmitter<
+        CalculatedColumnChangedEvent<TData>
+    >();
     /** A calculated column expression has changed.
+     * @deprecated v36.3 Use `onCalculatedColumnChanged` and check `event.changes.calculatedExpression` instead.
      */
     @Output() public calculatedColumnExpressionChanged: EventEmitter<CalculatedColumnExpressionChangedEvent<TData>> =
         new EventEmitter<CalculatedColumnExpressionChangedEvent<TData>>();

@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_ET_EE = {
     enabled: 'Lubatud',
 
     // Menu
+    moveLeft: 'Liiguta vasakule',
+    moveRight: 'Liiguta paremale',
+    moveUp: 'Liiguta üles',
+    moveDown: 'Liiguta alla',
     pinColumn: 'Kinnita veerg',
     pinLeft: 'Kinnita vasakule',
     pinRight: 'Kinnita paremale',

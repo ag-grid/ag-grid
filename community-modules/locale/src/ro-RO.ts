@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_RO_RO = {
     enabled: 'Activat',
 
     // Menu
+    moveLeft: 'Mută la stânga',
+    moveRight: 'Mută la dreapta',
+    moveUp: 'Mută în sus',
+    moveDown: 'Mută în jos',
     pinColumn: 'Fixează Coloana',
     pinLeft: 'Fixează la Stânga',
     pinRight: 'Fixează la Dreapta',

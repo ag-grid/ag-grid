@@ -1,4 +1,26 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+    SNYK-JS-BRACEEXPANSION-20244952:
+        - '@typescript-eslint/eslint-plugin@8.70.1 > @typescript-eslint/type-utils@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-10-12T09:31:44.682Z
+        - '@typescript-eslint/parser@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-10-12T09:31:44.638Z
+    SNYK-JS-BRACEEXPANSION-20244948:
+        - '@typescript-eslint/eslint-plugin@8.70.1 > @typescript-eslint/type-utils@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-10-12T09:30:45.530Z
+        - '@typescript-eslint/parser@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9':
+              reason: >-
+                  Used in build & dev - not included in final production build
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-10-12T09:30:45.506Z
 patch: {}

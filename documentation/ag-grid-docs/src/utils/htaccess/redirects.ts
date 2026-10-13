@@ -32,6 +32,9 @@ const pageForAllFrameworks = (from: string, to: string): Redirect[] => [
 // www URL in a SINGLE hop regardless of host or scheme. Targets are absolute www URLs (with
 // no query string, so Apache preserves any inbound query). Destinations were derived by
 // replaying the current redirect rules to their fixpoint.
+//
+// No /charts/ or /studio/ sources: those sites' own .htaccess replaces these rewrite rules for
+// every request below them, so such an entry would never run (see htaccessRules.ts).
 export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
     // The slash-less framework whats-new paths, which would otherwise pick up the
     // add-trailing-slash 301 first and reach /whats-new/ in two hops.
@@ -260,6 +263,106 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
         from: '/javascript-grid/server-side-model-high-frequency/',
         to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model-updating-refresh/',
     },
+    // The bare roots of two prefix redirects. The prefix rule must keep its /javascript-data-grid/
+    // target so sub-pages map across, but for the root itself that target only forwards on to
+    // getting-started in the browser - a second hop. These anchored rewrites match the root alone.
+    { from: '/javascript-grid/', to: 'https://www.ag-grid.com/javascript-data-grid/getting-started/' },
+    { from: '/documentation/javascript/', to: 'https://www.ag-grid.com/javascript-data-grid/getting-started/' },
+    // The same prefix shadowing for the server-side pages renamed after the /{framework}-grid/ move:
+    // the broad prefix sent these to the renamed /{framework}-data-grid/ URL, which redirects again.
+    {
+        from: '/javascript-grid/server-side-model-refresh/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model-updating-refresh/',
+    },
+    {
+        from: '/javascript-grid/server-side-model-transactions/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model-updating-transactions/',
+    },
+    {
+        from: '/javascript-grid/server-side-operations-graphql/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model/',
+    },
+    {
+        from: '/javascript-grid/server-side-operations-nodejs/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model/',
+    },
+    {
+        from: '/javascript-grid/server-side-operations-oracle/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model/',
+    },
+    {
+        from: '/javascript-grid/server-side-operations-spark/',
+        to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model/',
+    },
+    {
+        from: '/angular-grid/server-side-model-high-frequency/',
+        to: 'https://www.ag-grid.com/angular-data-grid/server-side-model-updating-transactions/',
+    },
+    {
+        from: '/angular-grid/server-side-model-transactions/',
+        to: 'https://www.ag-grid.com/angular-data-grid/server-side-model-updating-transactions/',
+    },
+    {
+        from: '/angular-grid/server-side-operations-graphql/',
+        to: 'https://www.ag-grid.com/angular-data-grid/server-side-model/',
+    },
+    {
+        from: '/angular-grid/server-side-operations-nodejs/',
+        to: 'https://www.ag-grid.com/angular-data-grid/server-side-model/',
+    },
+    {
+        from: '/angular-grid/server-side-operations-oracle/',
+        to: 'https://www.ag-grid.com/angular-data-grid/server-side-model/',
+    },
+    {
+        from: '/angular-grid/server-side-operations-spark/',
+        to: 'https://www.ag-grid.com/angular-data-grid/server-side-model/',
+    },
+    {
+        from: '/react-grid/server-side-model-high-frequency/',
+        to: 'https://www.ag-grid.com/react-data-grid/server-side-model-updating-transactions/',
+    },
+    {
+        from: '/react-grid/server-side-model-transactions/',
+        to: 'https://www.ag-grid.com/react-data-grid/server-side-model-updating-transactions/',
+    },
+    {
+        from: '/react-grid/server-side-operations-graphql/',
+        to: 'https://www.ag-grid.com/react-data-grid/server-side-model/',
+    },
+    {
+        from: '/react-grid/server-side-operations-nodejs/',
+        to: 'https://www.ag-grid.com/react-data-grid/server-side-model/',
+    },
+    {
+        from: '/react-grid/server-side-operations-oracle/',
+        to: 'https://www.ag-grid.com/react-data-grid/server-side-model/',
+    },
+    {
+        from: '/react-grid/server-side-operations-spark/',
+        to: 'https://www.ag-grid.com/react-data-grid/server-side-model/',
+    },
+    {
+        from: '/vue-grid/server-side-model-high-frequency/',
+        to: 'https://www.ag-grid.com/vue-data-grid/server-side-model-updating-transactions/',
+    },
+    {
+        from: '/vue-grid/server-side-model-transactions/',
+        to: 'https://www.ag-grid.com/vue-data-grid/server-side-model-updating-transactions/',
+    },
+    {
+        from: '/vue-grid/server-side-operations-graphql/',
+        to: 'https://www.ag-grid.com/vue-data-grid/server-side-model/',
+    },
+    {
+        from: '/vue-grid/server-side-operations-nodejs/',
+        to: 'https://www.ag-grid.com/vue-data-grid/server-side-model/',
+    },
+    {
+        from: '/vue-grid/server-side-operations-oracle/',
+        to: 'https://www.ag-grid.com/vue-data-grid/server-side-model/',
+    },
+    { from: '/vue-grid/server-side-operations-spark/', to: 'https://www.ag-grid.com/vue-data-grid/server-side-model/' },
 
     {
         from: '/react-data-grid/grouping-footers',
@@ -273,7 +376,6 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
     { from: '/ag-grid-changelog', to: 'https://www.ag-grid.com/changelog/' },
     { from: '/example-react-redux', to: 'https://www.ag-grid.com/react-data-grid/getting-started/' },
     { from: '/javascript-grid/building-typescript/', to: 'https://www.ag-grid.com/javascript-data-grid/installation/' },
-    { from: '/charts/documentation', to: 'https://www.ag-grid.com/charts/documentation/' },
     {
         from: '/documentation/javascript/server-side-model-row-stores/',
         to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model-configuration/',
@@ -303,16 +405,10 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
         from: '/angular-data-grid/cell-rendering/',
         to: 'https://www.ag-grid.com/angular-data-grid/component-cell-renderer/',
     },
-    { from: '/charts/react/cone-funnel-series', to: 'https://www.ag-grid.com/charts/react/cone-funnel-series/' },
     {
         from: '/javascript-data-grid/applying-theme-builder-styling-grid/',
         to: 'https://www.ag-grid.com/javascript-data-grid/theming/',
     },
-    {
-        from: '/charts/react/financial-charts-toolbar',
-        to: 'https://www.ag-grid.com/charts/react/financial-charts-toolbar/',
-    },
-    { from: '/charts/react/api-state', to: 'https://www.ag-grid.com/charts/react/api-state/' },
     { from: '/javascript-grid-cell-editor/', to: 'https://www.ag-grid.com/javascript-data-grid/cell-editors/' },
     {
         from: '/documentation/javascript/component-header/',
@@ -321,8 +417,6 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
     { from: '/react-grid/getting-started/', to: 'https://www.ag-grid.com/react-data-grid/getting-started/' },
     { from: '/javascript-grid-components/', to: 'https://www.ag-grid.com/javascript-data-grid/components/' },
     { from: '/javascript-charts/overlays/', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
-    { from: '/charts/react/candlestick-series', to: 'https://www.ag-grid.com/charts/react/candlestick-series/' },
-    { from: '/charts/react/zoom', to: 'https://www.ag-grid.com/charts/react/zoom/' },
     { from: '/angular-data-grid/grid-properties/', to: 'https://www.ag-grid.com/angular-data-grid/grid-options/' },
     {
         from: '/react-data-grid/cell-rendering/',
@@ -333,7 +427,6 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
         to: 'https://www.ag-grid.com/javascript-data-grid/integrated-charts-menu/',
     },
     { from: '/javascript-grid-data-update/', to: 'https://www.ag-grid.com/javascript-data-grid/data-update/' },
-    { from: '/charts/react/linear-gauge', to: 'https://www.ag-grid.com/charts/react/linear-gauge/' },
     {
         from: '/javascript-grid-provided-renderer-change/',
         to: 'https://www.ag-grid.com/javascript-data-grid/change-cell-renderers/',
@@ -349,20 +442,7 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
     },
     { from: '/theme-builder', to: 'https://www.ag-grid.com/theme-builder/' },
     { from: '/changelog', to: 'https://www.ag-grid.com/changelog/' },
-    {
-        from: '/charts/react/upgrade-to-ag-charts-11-2',
-        to: 'https://www.ag-grid.com/charts/react/upgrade-to-ag-charts-11-2/',
-    },
-    {
-        from: '/charts/react/upgrade-to-ag-charts-11-3',
-        to: 'https://www.ag-grid.com/charts/react/upgrade-to-ag-charts-11-3/',
-    },
-    { from: '/charts/react/financial-charts', to: 'https://www.ag-grid.com/charts/react/financial-charts/' },
     { from: '/javascript-data-grid/packages/', to: 'https://www.ag-grid.com/javascript-data-grid/modules/' },
-    { from: '/charts/react/radial-gauge', to: 'https://www.ag-grid.com/charts/react/radial-gauge/' },
-    { from: '/charts/react/range-bar-series', to: 'https://www.ag-grid.com/charts/react/range-bar-series/' },
-    { from: '/charts/react/pyramid-series', to: 'https://www.ag-grid.com/charts/react/pyramid-series/' },
-    { from: '/charts/react/ohlc-series', to: 'https://www.ag-grid.com/charts/react/ohlc-series/' },
     { from: '/javascript-charts/bar-series/', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
     { from: '/documentation/vue/aggregation/', to: 'https://www.ag-grid.com/vue-data-grid/aggregation/' },
     { from: '/vue-data-grid/cell-rendering/', to: 'https://www.ag-grid.com/vue-data-grid/component-cell-renderer/' },
@@ -376,7 +456,6 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
         to: 'https://www.ag-grid.com/blog/charts/ag-charts-13-release-demos/high-frequency-synced-series/',
     },
     { from: '/javascript-charts-overview/', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
-    { from: '/charts/react/funnel-series', to: 'https://www.ag-grid.com/charts/react/funnel-series/' },
     { from: '/javascript-charts/pie-series/', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
     { from: '/javascript-grid-rendering-flow/', to: 'https://www.ag-grid.com/javascript-data-grid/cell-content/' },
     {
@@ -404,6 +483,17 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     // SE-186: Bing still probes the conventional /sitemap.xml location; the real sitemap lives at
     // /sitemap-index.xml, already registered via the Sitemap: line in robots.txt.
     { from: '/sitemap.xml', to: 'https://www.ag-grid.com/sitemap-index.xml' },
+
+    // AG-17152: the old /documentation/<framework>/charts* pages moved to the charts site. mod_alias
+    // is first-match, so these must precede the broad /documentation/<framework>/ prefix rules
+    // below, which otherwise sent them to a non-existent /<framework>-data-grid/charts*/ page.
+    {
+        fromPattern: '^/documentation/javascript/charts.*',
+        to: 'https://www.ag-grid.com/charts/javascript/quick-start/',
+    },
+    { fromPattern: '^/documentation/angular/charts.*', to: 'https://www.ag-grid.com/charts/angular/quick-start/' },
+    { fromPattern: '^/documentation/react/charts.*', to: 'https://www.ag-grid.com/charts/react/quick-start/' },
+    { fromPattern: '^/documentation/vue/charts.*', to: 'https://www.ag-grid.com/charts/vue/quick-start/' },
 
     // SE-30: legacy MCP announcement slug that 404s on www -> the blog post (same slug) where the
     // announcement actually lives, preserving the content for external links / historical index entries.
@@ -456,7 +546,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-grid/', to: '/react-data-grid/' },
     { from: '/angular-grid/', to: '/angular-data-grid/' },
     { from: '/vue-grid/', to: '/vue-data-grid/' },
-    { from: '/ag-grid-8-performance-hacks-for-javascript/', to: '/javascript-data-grid/' },
+    { from: '/ag-grid-8-performance-hacks-for-javascript/', to: '/javascript-data-grid/getting-started/' },
     {
         from: '/ag-grid-angular-aot-dynamic-components/',
         to: 'https://medium.com/ag-grid/understanding-aot-and-dynamic-components-in-angular-2-9b7548ce5845',
@@ -501,7 +591,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/ag-grid-building/', to: '/javascript-data-grid/installation/' },
     { from: '/javascript-data-grid/building/', to: '/javascript-data-grid/installation/' },
     { from: '/javascript-data-grid/npm/', to: '/javascript-data-grid/installation/' },
-    { from: '/javascript-data-grid/download/', to: '/javascript-data-grid/installation' },
+    { from: '/javascript-data-grid/download/', to: '/javascript-data-grid/installation/' },
     {
         from: '/ag-grid-datagrid-crud-part-1/',
         to: 'https://medium.com/ag-grid/building-a-crud-application-with-ag-grid-part-1-bf7f9715166e',
@@ -895,7 +985,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/angular/status-bar/', to: '/angular-data-grid/status-bar/' },
     { from: '/documentation/angular/supported-browsers/', to: '/angular-data-grid/supported-browsers/' },
     { from: '/documentation/angular/systemjs/', to: '/angular-data-grid/' },
-    { from: '/angular-data-grid/systemjs/', to: '/angular-data-grid/' },
     { from: '/documentation/angular/testing/', to: '/angular-data-grid/testing/' },
     { from: '/documentation/angular/themes-customising/', to: '/angular-data-grid/themes/' },
     { from: '/documentation/angular/themes-provided/', to: '/angular-data-grid/themes/' },
@@ -913,13 +1002,13 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/angular/view-refresh/', to: '/angular-data-grid/view-refresh/' },
     { from: '/documentation/angular/viewport/', to: '/angular-data-grid/viewport/' },
     { from: '/documentation/angular/webpack-2/', to: '/angular-data-grid/' },
-    { from: '/angular-data-grid/webpack-2/', to: '/angular-data-grid/' },
     { from: '/documentation/angular/webpack-3/', to: '/angular-data-grid/' },
-    { from: '/angular-data-grid/webpack-3/', to: '/angular-data-grid/' },
     { from: '/documentation/angular/webpack/', to: '/angular-data-grid/' },
-    { from: '/angular-data-grid/webpack/', to: '/angular-data-grid/' },
     { from: '/documentation/angular/', to: '/angular-data-grid/' },
-    { from: '/documentation/javascript/8-performance-hacks-for-javascript/', to: '/javascript-data-grid/' },
+    {
+        from: '/documentation/javascript/8-performance-hacks-for-javascript/',
+        to: '/javascript-data-grid/getting-started/',
+    },
     { from: '/documentation/javascript/accessibility/', to: '/javascript-data-grid/accessibility/' },
     { from: '/documentation/javascript/accessing-data/', to: '/javascript-data-grid/accessing-data/' },
     { from: '/documentation/javascript/aggregation/', to: '/javascript-data-grid/aggregation/' },
@@ -1128,7 +1217,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/documentation/javascript/scrolling-scenarios/', to: '/javascript-data-grid/scrolling-performance/' },
     { from: '/documentation/javascript/security/', to: '/javascript-data-grid/security/' },
     { from: '/documentation/javascript/selection-overview/', to: '/javascript-data-grid/row-selection/' },
-    { from: '/documentation/javascript/selection/', to: '/javascript-data-grid/row-selection/' },
     { from: '/documentation/javascript/selection/', to: '/javascript-data-grid/row-selection/' },
     {
         from: '/documentation/javascript/server-side-model-changing-columns/',
@@ -1832,7 +1920,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/javascript-grid-model/', to: '/javascript-data-grid/row-models/' },
     { from: '/javascript-grid-modules-building/', to: '/javascript-data-grid/modules/' },
     { from: '/javascript-grid-modules-more-details/', to: '/javascript-data-grid/modules/' },
-    { from: '/javascript-data-grid/modules-more-details/', to: '/javascript-data-grid/modules/' },
     { from: '/javascript-grid-modules/', to: '/javascript-data-grid/modules/' },
     { from: '/javascript-grid-npm/', to: '/javascript-data-grid/installation/' },
     { from: '/javascript-grid-openfin-dashboard/', to: 'https://www.ag-grid.com/' },
@@ -2036,7 +2123,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/javascript-grid/group-cell-renderer/', to: '/javascript-data-grid/grouping/' },
     { from: '/javascript-grid/grouping/', to: '/javascript-data-grid/grouping/' },
     { from: '/javascript-grid/immutable-data/', to: 'https://www.ag-grid.com/' },
-    { from: '/javascript-data-grid/immutable-data/', to: 'https://www.ag-grid.com/' },
     { from: '/javascript-grid/index.html', to: '/javascript-data-grid/getting-started/' },
     { from: '/javascript-grid/infinite-scrolling/', to: '/javascript-data-grid/infinite-scrolling/' },
     { from: '/javascript-grid/integrated-charts/', to: '/javascript-data-grid/integrated-charts/' },
@@ -2074,7 +2160,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/javascript-grid/modules/', to: '/javascript-data-grid/modules/' },
     { from: '/javascript-grid/modules-building/', to: '/javascript-data-grid/modules/' },
     { from: '/javascript-grid/modules-more-details/', to: '/javascript-data-grid/modules/' },
-    { from: '/javascript-data-grid/modules-more-details/', to: '/javascript-data-grid/modules/' },
     { from: '/javascript-grid/overlays/', to: '/javascript-data-grid/overlays/' },
     { from: '/javascript-grid/packages/', to: '/javascript-data-grid/modules/' },
     { from: '/javascript-grid/packages-modules/', to: '/javascript-data-grid/modules/' },
@@ -2124,10 +2209,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
         to: '/javascript-data-grid/server-side-model-updating-refresh/',
     },
     {
-        from: '/javascript-data-grid/server-side-model-high-frequency/',
-        to: '/javascript-data-grid/server-side-model-updating-refresh/',
-    },
-    {
         from: '/javascript-grid/server-side-model-master-detail/',
         to: '/javascript-data-grid/server-side-model-master-detail/',
     },
@@ -2140,10 +2221,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
         from: '/javascript-grid/server-side-model-refresh/',
         to: '/javascript-data-grid/server-side-model-updating-refresh/',
     },
-    {
-        from: '/javascript-data-grid/server-side-model-refresh/',
-        to: '/javascript-data-grid/server-side-model-updating-refresh/',
-    },
     { from: '/javascript-grid/server-side-model-retry/', to: '/javascript-data-grid/server-side-model-retry/' },
     {
         from: '/javascript-grid/server-side-model-row-height/',
@@ -2153,10 +2230,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/javascript-grid/server-side-model-sorting/', to: '/javascript-data-grid/server-side-model-sorting/' },
     {
         from: '/javascript-grid/server-side-model-transactions/',
-        to: '/javascript-data-grid/server-side-model-updating-transactions/',
-    },
-    {
-        from: '/javascript-data-grid/server-side-model-transactions/',
         to: '/javascript-data-grid/server-side-model-updating-transactions/',
     },
     { from: '/javascript-grid/server-side-model-tree-data/', to: '/javascript-data-grid/server-side-model-tree-data/' },
@@ -2296,7 +2369,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/angular-grid/group-cell-renderer/', to: '/angular-data-grid/grouping/' },
     { from: '/angular-grid/grouping/', to: '/angular-data-grid/grouping/' },
     { from: '/angular-grid/immutable-data/', to: 'https://www.ag-grid.com/' },
-    { from: '/angular-data-grid/immutable-data/', to: 'https://www.ag-grid.com/' },
     { from: '/angular-grid/index.html', to: '/angular-data-grid/getting-started/' },
     { from: '/angular-grid/infinite-scrolling/', to: '/angular-data-grid/infinite-scrolling/' },
     { from: '/angular-grid/integrated-charts/', to: '/angular-data-grid/integrated-charts/' },
@@ -2324,9 +2396,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/angular-grid/master-detail-refresh/', to: '/angular-data-grid/master-detail-refresh/' },
     { from: '/angular-grid/modules/', to: '/angular-data-grid/modules/' },
     { from: '/angular-grid/modules-building/', to: '/angular-data-grid/modules/' },
-    { from: '/angular-data-grid/modules-building/', to: '/angular-data-grid/modules/' },
     { from: '/angular-grid/modules-more-details/', to: '/angular-data-grid/modules/' },
-    { from: '/angular-data-grid/modules-more-details/', to: '/angular-data-grid/modules/' },
     { from: '/angular-grid/overlays/', to: '/angular-data-grid/overlays/' },
     { from: '/angular-grid/packages/', to: '/angular-data-grid/modules/' },
     { from: '/angular-grid/packages-modules/', to: '/angular-data-grid/modules/' },
@@ -2374,30 +2444,18 @@ export const SITE_301_REDIRECTS: Redirect[] = [
         to: '/angular-data-grid/server-side-model-updating-transactions/',
     },
     {
-        from: '/angular-data-grid/server-side-model-high-frequency/',
-        to: '/angular-data-grid/server-side-model-updating-transactions/',
-    },
-    {
         from: '/angular-grid/server-side-model-master-detail/',
         to: '/angular-data-grid/server-side-model-master-detail/',
     },
     { from: '/angular-grid/server-side-model-pagination/', to: '/angular-data-grid/server-side-model-pagination/' },
     { from: '/angular-grid/server-side-model-pivoting/', to: '/angular-data-grid/server-side-model-pivoting/' },
     { from: '/angular-grid/server-side-model-refresh/', to: '/angular-data-grid/server-side-model-updating-refresh/' },
-    {
-        from: '/angular-data-grid/server-side-model-refresh/',
-        to: '/angular-data-grid/server-side-model-updating-refresh/',
-    },
     { from: '/angular-grid/server-side-model-retry/', to: '/angular-data-grid/server-side-model-retry/' },
     { from: '/angular-grid/server-side-model-row-height/', to: '/angular-data-grid/server-side-model-row-height/' },
     { from: '/angular-grid/server-side-model-selection/', to: '/angular-data-grid/server-side-model-selection/' },
     { from: '/angular-grid/server-side-model-sorting/', to: '/angular-data-grid/server-side-model-sorting/' },
     {
         from: '/angular-grid/server-side-model-transactions/',
-        to: '/angular-data-grid/server-side-model-updating-transactions/',
-    },
-    {
-        from: '/angular-data-grid/server-side-model-transactions/',
         to: '/angular-data-grid/server-side-model-updating-transactions/',
     },
     { from: '/angular-grid/server-side-model-tree-data/', to: '/angular-data-grid/server-side-model-tree-data/' },
@@ -2525,7 +2583,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-grid/group-cell-renderer/', to: '/react-data-grid/grouping/' },
     { from: '/react-grid/grouping/', to: '/react-data-grid/grouping/' },
     { from: '/react-grid/immutable-data/', to: 'https://www.ag-grid.com/' },
-    { from: '/react-data-grid/immutable-data/', to: 'https://www.ag-grid.com/' },
     { from: '/react-grid/index.html', to: '/react-data-grid/getting-started/' },
     { from: '/react-grid/infinite-scrolling/', to: '/react-data-grid/infinite-scrolling/' },
     { from: '/react-grid/integrated-charts/', to: '/react-data-grid/integrated-charts/' },
@@ -2550,9 +2607,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-grid/master-detail-refresh/', to: '/react-data-grid/master-detail-refresh/' },
     { from: '/react-grid/modules/', to: '/react-data-grid/modules/' },
     { from: '/react-grid/modules-building/', to: '/react-data-grid/modules/' },
-    { from: '/react-data-grid/modules-building/', to: '/react-data-grid/modules/' },
     { from: '/react-grid/modules-more-details/', to: '/react-data-grid/modules/' },
-    { from: '/react-data-grid/modules-more-details/', to: '/react-data-grid/modules/' },
     { from: '/react-grid/overlays/', to: '/react-data-grid/overlays/' },
     { from: '/react-grid/packages/', to: '/react-data-grid/modules/' },
     { from: '/react-grid/packages-modules/', to: '/react-data-grid/modules/' },
@@ -2602,25 +2657,16 @@ export const SITE_301_REDIRECTS: Redirect[] = [
         from: '/react-grid/server-side-model-high-frequency/',
         to: '/react-data-grid/server-side-model-updating-transactions/',
     },
-    {
-        from: '/react-data-grid/server-side-model-high-frequency/',
-        to: '/react-data-grid/server-side-model-updating-transactions/',
-    },
     { from: '/react-grid/server-side-model-master-detail/', to: '/react-data-grid/server-side-model-master-detail/' },
     { from: '/react-grid/server-side-model-pagination/', to: '/react-data-grid/server-side-model-pagination/' },
     { from: '/react-grid/server-side-model-pivoting/', to: '/react-data-grid/server-side-model-pivoting/' },
     { from: '/react-grid/server-side-model-refresh/', to: '/react-data-grid/server-side-model-updating-refresh/' },
-    { from: '/react-data-grid/server-side-model-refresh/', to: '/react-data-grid/server-side-model-updating-refresh/' },
     { from: '/react-grid/server-side-model-retry/', to: '/react-data-grid/server-side-model-retry/' },
     { from: '/react-grid/server-side-model-row-height/', to: '/react-data-grid/server-side-model-row-height/' },
     { from: '/react-grid/server-side-model-selection/', to: '/react-data-grid/server-side-model-selection/' },
     { from: '/react-grid/server-side-model-sorting/', to: '/react-data-grid/server-side-model-sorting/' },
     {
         from: '/react-grid/server-side-model-transactions/',
-        to: '/react-data-grid/server-side-model-updating-transactions/',
-    },
-    {
-        from: '/react-data-grid/server-side-model-transactions/',
         to: '/react-data-grid/server-side-model-updating-transactions/',
     },
     { from: '/react-grid/server-side-model-tree-data/', to: '/react-data-grid/server-side-model-tree-data/' },
@@ -2745,7 +2791,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/vue-grid/group-cell-renderer/', to: '/vue-data-grid/grouping/' },
     { from: '/vue-grid/grouping/', to: '/vue-data-grid/grouping/' },
     { from: '/vue-grid/immutable-data/', to: 'https://www.ag-grid.com/' },
-    { from: '/vue-data-grid/immutable-data/', to: 'https://www.ag-grid.com/' },
     { from: '/vue-grid/index.html', to: '/vue-data-grid/getting-started/' },
     { from: '/vue-grid/infinite-scrolling/', to: '/vue-data-grid/infinite-scrolling/' },
     { from: '/vue-grid/integrated-charts/', to: '/vue-data-grid/integrated-charts/' },
@@ -2770,9 +2815,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/vue-grid/master-detail-refresh/', to: '/vue-data-grid/master-detail-refresh/' },
     { from: '/vue-grid/modules/', to: '/vue-data-grid/modules/' },
     { from: '/vue-grid/modules-building/', to: '/vue-data-grid/modules/' },
-    { from: '/vue-data-grid/modules-building/', to: '/vue-data-grid/modules/' },
     { from: '/vue-grid/modules-more-details/', to: '/vue-data-grid/modules/' },
-    { from: '/vue-data-grid/modules-more-details/', to: '/vue-data-grid/modules/' },
     { from: '/vue-grid/overlays/', to: '/vue-data-grid/overlays/' },
     { from: '/vue-grid/packages/', to: '/vue-data-grid/modules/' },
     { from: '/vue-grid/packages-modules/', to: '/vue-data-grid/modules/' },
@@ -2813,25 +2856,16 @@ export const SITE_301_REDIRECTS: Redirect[] = [
         from: '/vue-grid/server-side-model-high-frequency/',
         to: '/vue-data-grid/server-side-model-updating-transactions/',
     },
-    {
-        from: '/vue-data-grid/server-side-model-high-frequency/',
-        to: '/vue-data-grid/server-side-model-updating-transactions/',
-    },
     { from: '/vue-grid/server-side-model-master-detail/', to: '/vue-data-grid/server-side-model-master-detail/' },
     { from: '/vue-grid/server-side-model-pagination/', to: '/vue-data-grid/server-side-model-pagination/' },
     { from: '/vue-grid/server-side-model-pivoting/', to: '/vue-data-grid/server-side-model-pivoting/' },
     { from: '/vue-grid/server-side-model-refresh/', to: '/vue-data-grid/server-side-model-updating-refresh/' },
-    { from: '/vue-data-grid/server-side-model-refresh/', to: '/vue-data-grid/server-side-model-updating-refresh/' },
     { from: '/vue-grid/server-side-model-retry/', to: '/vue-data-grid/server-side-model-retry/' },
     { from: '/vue-grid/server-side-model-row-height/', to: '/vue-data-grid/server-side-model-row-height/' },
     { from: '/vue-grid/server-side-model-selection/', to: '/vue-data-grid/server-side-model-selection/' },
     { from: '/vue-grid/server-side-model-sorting/', to: '/vue-data-grid/server-side-model-sorting/' },
     {
         from: '/vue-grid/server-side-model-transactions/',
-        to: '/vue-data-grid/server-side-model-updating-transactions/',
-    },
-    {
-        from: '/vue-data-grid/server-side-model-transactions/',
         to: '/vue-data-grid/server-side-model-updating-transactions/',
     },
     { from: '/vue-grid/server-side-model-tree-data/', to: '/vue-data-grid/server-side-model-tree-data/' },
@@ -2983,14 +3017,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { fromPattern: '^/react-charts.*', to: 'https://www.ag-grid.com/charts/react/quick-start/' },
     { fromPattern: '^/vue-charts.*', to: 'https://www.ag-grid.com/charts/vue/quick-start/' },
 
-    {
-        fromPattern: '^/documentation/javascript/charts.*',
-        to: 'https://www.ag-grid.com/charts/javascript/quick-start/',
-    },
-    { fromPattern: '^/documentation/angular/charts.*', to: 'https://www.ag-grid.com/charts/angular/quick-start/' },
-    { fromPattern: '^/documentation/react/charts.*', to: 'https://www.ag-grid.com/charts/react/quick-start/' },
-    { fromPattern: '^/documentation/vue/charts.*', to: 'https://www.ag-grid.com/charts/vue/quick-start/' },
-
     // Anchored at `^`: an unanchored `/archive/$` also matches sub-site paths that end in
     // `/archive/` (e.g. `/charts/archive/`) and, because the root .htaccess is evaluated before the
     // /charts sub-directory one, hijacks them to the grid's own documentation-archive. Keep it
@@ -3076,10 +3102,9 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/react-data-grid/integrated-charts-toolbar/', to: '/react-data-grid/integrated-charts-menu/' },
     { from: '/vue-data-grid/integrated-charts-toolbar/', to: '/vue-data-grid/integrated-charts-menu/' },
 
-    { from: '/javascript-data-grid/building/', to: '/javascript-data-grid/modules/' },
-    { from: '/angular-data-grid/building/', to: '/angular-data-grid/modules/' },
-    { from: '/react-data-grid/building/', to: '/react-data-grid/modules/' },
-    { from: '/vue-data-grid/building/', to: '/vue-data-grid/modules/' },
+    { from: '/angular-data-grid/building/', to: '/angular-data-grid/installation/' },
+    { from: '/react-data-grid/building/', to: '/react-data-grid/installation/' },
+    { from: '/vue-data-grid/building/', to: '/vue-data-grid/installation/' },
 
     { from: '/javascript-data-grid/packages-modules/', to: '/javascript-data-grid/modules/' },
     { from: '/angular-data-grid/packages-modules/', to: '/angular-data-grid/modules/' },
@@ -3092,9 +3117,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/vue-data-grid/packages/', to: '/vue-data-grid/modules/' },
 
     { from: '/javascript-data-grid/modules-building/', to: '/javascript-data-grid/modules/' },
-    { from: '/angular-data-grid/modules-building/', to: '/angular-data-grid/modules/' },
-    { from: '/react-data-grid/modules-building/', to: '/react-data-grid/modules/' },
-    { from: '/vue-data-grid/modules-building/', to: '/vue-data-grid/modules/' },
 
     { from: '/javascript-data-grid/client-side-model/', to: '/javascript-data-grid/row-models/' },
     { from: '/angular-data-grid/client-side-model/', to: '/angular-data-grid/row-models/' },
@@ -3137,7 +3159,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/vue-data-grid/whats-new', to: '/whats-new' },
     { from: '/angular-data-grid/whats-new', to: '/whats-new' },
     { from: '/javascript-data-grid/whats-new', to: '/whats-new' },
-    { from: '/vue-data-grid/framework-data-flow', to: '/vue-data-grid/getting-started/' },
+    { from: '/vue-data-grid/framework-data-flow/', to: '/vue-data-grid/getting-started/' },
 
     { from: '/react-data-grid/licensing/', to: '/react-data-grid/community-vs-enterprise/' },
     { from: '/vue-data-grid/licensing/', to: '/vue-data-grid/community-vs-enterprise/' },
@@ -3184,7 +3206,8 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     ...pageForAllFrameworks('global-style-customisation-sass-legacy', 'theming-v32-customisation-sass-legacy'),
     ...pageForAllFrameworks('tree-data-hierarchy', 'tree-data-paths'),
     ...pageForAllFrameworks('upgrading-to-ag-grid-32-2', 'upgrading-to-ag-grid-32-2-1'),
-    ...pageForAllFrameworks('accented-sort', '#locale-specific-sort'),
+    // Slashed source: a prefix match would otherwise append the request's trailing slash after the anchor.
+    ...pageForAllFrameworks('accented-sort/', 'row-sorting/#locale-specific-sort'),
     ...pageForAllFrameworks('server-side-operations-nodejs', 'server-side-model'),
     ...pageForAllFrameworks('server-side-operations-graphql', 'server-side-model'),
     ...pageForAllFrameworks('server-side-operations-oracle', 'server-side-model'),

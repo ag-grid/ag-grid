@@ -81,7 +81,10 @@
                 "url": "./calculated-columns/#events"
             }
         },
-        "calculatedColumnExpressionChanged": {
+        "calculatedColumnChanged": {
+            "interfaceHierarchyOverrides": {
+                "exclude": ["ColDef"]
+            },
             "more": {
                 "name": "Calculated Columns Events",
                 "url": "./calculated-columns/#events"

@@ -104,7 +104,7 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
 
         const target = Math.min(width, maxWidth);
         // The seeded `min-width` is the floor, so reading it back is what keeps a narrower row from shrinking it.
-        if (target > parseFloat(ePicker.style.minWidth || '0')) {
+        if (target > Number.parseFloat(ePicker.style.minWidth || '0')) {
             ePicker.style.minWidth = `${target}px`;
             this.alignPickerToComponent();
         }

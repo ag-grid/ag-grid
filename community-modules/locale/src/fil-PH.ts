@@ -343,6 +343,10 @@ export const AG_GRID_LOCALE_FIL_PH = {
     enabled: 'Naka-enable',
 
     // Menu
+    moveLeft: 'Ilipat pakaliwa',
+    moveRight: 'Ilipat pakanan',
+    moveUp: 'Ilipat pataas',
+    moveDown: 'Ilipat pababa',
     pinColumn: 'I-pin ang Column',
     pinLeft: 'I-pin sa Kaliwa',
     pinRight: 'I-pin sa Kanan',

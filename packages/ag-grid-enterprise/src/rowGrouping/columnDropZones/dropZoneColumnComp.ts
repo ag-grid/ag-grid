@@ -75,7 +75,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         super.postConstruct();
 
         if (this.deferApply) {
-            this.eDragHandle.setAttribute('data-column-tool-panel-deferred', '');
+            this.eDragHandle.dataset.columnToolPanelDeferred = '';
         }
 
         // A rename leaves the drop zone's column lists unchanged, so the panel won't rebuild this pill.
@@ -484,7 +484,14 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     private isGroupingAndLocked(): boolean {
-        return this.isGroupingZone() && isRowGroupColLocked(this.column, this.beans);
+        return (
+            this.isGroupingZone() &&
+            isRowGroupColLocked(
+                this.column,
+                this.beans,
+                this.beans.columnStateUpdateStrategy.getRowGroupColumns(this.deferApply)
+            )
+        );
     }
 
     private isAggregationZone() {

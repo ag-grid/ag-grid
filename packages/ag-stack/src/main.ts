@@ -26,6 +26,7 @@ export type {
     ImageValue,
     LengthValue,
     ScaleValue,
+    ScrollbarWidthValue,
     ShadowValue,
     ShadowValueParams,
     WithParamTypes,

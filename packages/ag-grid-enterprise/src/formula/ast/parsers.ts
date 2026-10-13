@@ -60,7 +60,7 @@ const parseOperand = (
 
     // numbers
     const num = Number(trimmed);
-    if (!isNaN(num)) {
+    if (!Number.isNaN(num)) {
         return num;
     }
 
@@ -450,8 +450,10 @@ function parseExpression(
         // Function start: IDENT '('
         if (isFormulaIdentStart(token[0]) && tokens[i + 1] === '(') {
             const name = token;
-            ops.push({ kind: 'function', name, args: [], index: i });
-            ops.push({ kind: 'parenthesis', outLen: output.length, index: i + 1 });
+            ops.push(
+                { kind: 'function', name, args: [], index: i },
+                { kind: 'parenthesis', outLen: output.length, index: i + 1 }
+            );
             i += 2;
             continue;
         }

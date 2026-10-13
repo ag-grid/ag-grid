@@ -20,6 +20,7 @@ import type {
 import {
     AgInputTextFieldSelector,
     KeyCode,
+    ManagedFocusFeature,
     ProvidedFilter,
     _bindFilterCallback,
     _createIconNoSpan,
@@ -254,9 +255,16 @@ export class SetFilter<V = string>
         return [AgInputTextFieldSelector];
     }
 
-    protected override handleKeyDown(e: KeyboardEvent): void {
-        super.handleKeyDown(e);
+    public override postConstruct(): void {
+        super.postConstruct();
+        this.createManagedBean(
+            new ManagedFocusFeature(this.getFocusableElement(), {
+                handleKeyDown: this.handleKeyDown.bind(this),
+            })
+        );
+    }
 
+    private handleKeyDown(e: KeyboardEvent): void {
         if (e.defaultPrevented) {
             return;
         }
@@ -883,7 +891,7 @@ export class SetFilter<V = string>
         this.updateDisplayedValues('expansion');
 
         this.checkAndRefreshVirtualList();
-        this.focusRowIfAlive(focusedRow);
+        void this.focusRowIfAlive(focusedRow);
     }
 
     private refreshAfterSelection(): void {
@@ -891,7 +899,7 @@ export class SetFilter<V = string>
 
         this.checkAndRefreshVirtualList();
         this.onUiChanged();
-        this.focusRowIfAlive(focusedRow);
+        void this.focusRowIfAlive(focusedRow);
     }
 
     public setMiniFilter(newMiniFilter: string | null, silent?: boolean): void {

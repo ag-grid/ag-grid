@@ -17,6 +17,9 @@ interface Props {
 
 type TrialFormState = 'success' | 'error' | 'loading' | 'idle';
 
+// Matches the backend limit for the company field
+const COMPANY_MAX_LENGTH = 255;
+
 const getFormErrorMessage = (message: string) => {
     let errorMessage = MESSAGES.formErrorDefault;
 
@@ -59,6 +62,15 @@ const validateRequired = (value: string) => {
     return validation;
 };
 
+const validateCompany = (company: string) => {
+    let validation = '';
+    if (company.length > COMPANY_MAX_LENGTH) {
+        validation = MESSAGES.validationCompanyTooLong;
+    }
+
+    return validation;
+};
+
 function useEmailValidation(initialValue: string = '') {
     const [email, setEmail] = useState<string>(initialValue);
     const [emailError, setEmailError] = useState<string>(validateEmail(initialValue));
@@ -90,6 +102,23 @@ function useRequiredValidation(initialValue: string = '') {
         valueError,
         value,
         handleValueChange,
+    };
+}
+
+function useCompanyValidation(initialValue: string = '') {
+    const [company, setCompany] = useState<string>(initialValue);
+    const [companyError, setCompanyError] = useState<string>(validateCompany(initialValue));
+
+    const handleCompanyChange: ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
+        const value = e.target?.value;
+        setCompany(value);
+        setCompanyError(validateCompany(value));
+    }, []);
+
+    return {
+        companyError,
+        company,
+        handleCompanyChange,
     };
 }
 
@@ -169,6 +198,9 @@ function useTrialForm({ submitUrl }: Props) {
     } = useRequiredValidation();
     const lastNameError = wasValidated && validatedLastNameError ? validatedLastNameError : '';
 
+    const { companyError: validatedCompanyError, company, handleCompanyChange } = useCompanyValidation();
+    const companyError = wasValidated && validatedCompanyError ? validatedCompanyError : '';
+
     const { checked: marketingEmailConsent, handleCheckedChange: handleMarketingEmailConsentChange } = useCheckbox();
 
     const {
@@ -194,7 +226,7 @@ function useTrialForm({ submitUrl }: Props) {
             e.preventDefault();
             setWasValidated(true);
 
-            if (validatedEmailError || validatedFirstNameError || validatedLastNameError) {
+            if (validatedEmailError || validatedFirstNameError || validatedLastNameError || validatedCompanyError) {
                 setFormState('error');
                 return;
             }
@@ -205,7 +237,6 @@ function useTrialForm({ submitUrl }: Props) {
             const currentPage = window.location.pathname;
 
             try {
-                const company = (document.getElementById('company') as HTMLInputElement)?.value || '';
                 const response = await submitTrialLicenceFormData({
                     submitUrl,
                     firstName,
@@ -249,9 +280,11 @@ function useTrialForm({ submitUrl }: Props) {
             validatedEmailError,
             validatedFirstNameError,
             validatedLastNameError,
+            validatedCompanyError,
             firstName,
             lastName,
             email,
+            company,
             marketingEmailConsent,
             emailTrackingConsent,
             isFranceOrItaly,
@@ -270,6 +303,9 @@ function useTrialForm({ submitUrl }: Props) {
         lastName,
         lastNameError,
         handleLastNameChange,
+        company,
+        companyError,
+        handleCompanyChange,
         marketingEmailConsent,
         handleMarketingEmailConsentChange,
         emailTrackingConsent,
@@ -293,6 +329,9 @@ export const TrialLicenceForm: FunctionComponent<Props> = ({ submitUrl }: Props)
         lastName,
         lastNameError,
         handleLastNameChange,
+        company,
+        companyError,
+        handleCompanyChange,
         marketingEmailConsent,
         handleMarketingEmailConsentChange,
         emailTrackingConsent,
@@ -301,14 +340,22 @@ export const TrialLicenceForm: FunctionComponent<Props> = ({ submitUrl }: Props)
         handleFranceOrItalyChange,
         handleFormSubmit,
     } = useTrialForm({ submitUrl });
-    const hasFormError = Boolean(emailError || firstNameError || lastNameError);
+    const hasFormError = Boolean(emailError || firstNameError || lastNameError || companyError);
 
     return (
         <form id={ZI_FORM_ID} noValidate className={styles.trialForm} onSubmit={handleFormSubmit}>
             <div className={styles.inputs}>
-                <div className={classnames('input-field', styles.companyField)}>
+                <div className={classnames('input-field', styles.companyField, { 'input-error': companyError })}>
                     <label htmlFor="company">Company (optional)</label>
-                    <input placeholder="Company" type="text" id="company" name="company" />
+                    <input
+                        placeholder="Company"
+                        type="text"
+                        id="company"
+                        name="company"
+                        value={company}
+                        onChange={handleCompanyChange}
+                    />
+                    <p className="error">{MESSAGES.validationCompanyTooLong}</p>
                 </div>
 
                 <div className={classnames('input-field', styles.emailField, { 'input-error': emailError })}>

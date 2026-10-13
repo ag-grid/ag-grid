@@ -1,4 +1,5 @@
-import { setupCompBean } from '../../components/emptyBean';
+import type { CompBeanOwner } from '../../components/emptyBean';
+import { destroyCompBean, setupCompBean } from '../../components/emptyBean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn, ColumnLane } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
@@ -33,10 +34,11 @@ let instanceIdSequence = 0;
 export type HeaderRowCtrlInstanceId = BrandedType<number, 'HeaderRowCtrlInstanceId'>;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export class HeaderRowCtrl extends BeanStub {
+export class HeaderRowCtrl extends BeanStub implements CompBeanOwner {
     public readonly instanceId: HeaderRowCtrlInstanceId = instanceIdSequence++ as HeaderRowCtrlInstanceId;
 
     private comp: IHeaderRowComp | null = null;
+    public compBean: BeanStub | undefined = undefined;
     public headerRowClass: string;
 
     // Maintain a map and corresponding array of the header cell ctrls for performance
@@ -91,7 +93,7 @@ export class HeaderRowCtrl extends BeanStub {
      */
     public setComp(comp: IHeaderRowComp, compBean: BeanStub | undefined, initCompState: boolean = true): void {
         this.comp = comp;
-        compBean = setupCompBean(this, this.beans.context, compBean);
+        compBean = setupCompBean(this, compBean);
 
         if (initCompState) {
             this.setRowIndex(this.rowIndex);
@@ -396,6 +398,7 @@ export class HeaderRowCtrl extends BeanStub {
         this.allCtrls = this.destroyBeans(this.allCtrls);
         this.ctrlsById = undefined;
         this.comp = null;
+        destroyCompBean(this);
         super.destroy();
     }
 }

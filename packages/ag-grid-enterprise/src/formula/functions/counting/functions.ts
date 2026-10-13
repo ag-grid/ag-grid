@@ -6,7 +6,7 @@ import { criteriaToPredicate, isRangeParam, isValueParam, take } from '../utils'
 export const COUNT = ({ values }: FormulaFunctionParams): number => {
     let count = 0;
     for (const v of values) {
-        if (v != null && v !== '' && !isNaN(v as any)) {
+        if (v != null && v !== '' && !Number.isNaN(Number(v))) {
             count++;
         }
     }

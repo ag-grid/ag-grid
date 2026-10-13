@@ -51,7 +51,7 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         const yearParser = (param: 'minValidYear' | 'maxValidYear', fallback: number) => {
             const value = params[param];
             if (value != null) {
-                if (!isNaN(value)) {
+                if (!Number.isNaN(Number(value))) {
                     return value == null ? fallback : Number(value);
                 } else {
                     this.beans.log.warn(82, { param });

@@ -411,6 +411,28 @@ describe('Row Numbers Cell Selection', () => {
             └── LEAF id:6 row-number:"7" sport:"rowing" year:2019 amount:32 day:"saturday"
         `);
     });
+
+    test('row number cells follow enableHeaderHighlight turned off and on', async () => {
+        const [api] = await createGrid({
+            columnDefs,
+            rowData,
+            rowNumbers: true,
+            cellSelection: { enableHeaderHighlight: true },
+        });
+        const highlighted = () =>
+            Array.from(getGridElement(api)!.querySelectorAll('.ag-row-number-range-highlight'), (cell) =>
+                cell.closest('[row-index]')!.getAttribute('row-index')
+            ).join();
+
+        api.addCellRange({ rowStartIndex: 1, rowEndIndex: 2, columns: ['sport'] });
+        await waitFor(() => expect(highlighted()).toBe('1,2'));
+
+        api.setGridOption('cellSelection', { enableHeaderHighlight: false });
+        await waitFor(() => expect(highlighted()).toBe(''));
+
+        api.setGridOption('cellSelection', { enableHeaderHighlight: true });
+        await waitFor(() => expect(highlighted()).toBe('1,2'));
+    });
 });
 
 describe('Row Numbers Keyboard Navigation', () => {

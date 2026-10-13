@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_KO_KR = {
     enabled: '사용 중',
 
     // Menu
+    moveLeft: '왼쪽으로 이동',
+    moveRight: '오른쪽으로 이동',
+    moveUp: '위로 이동',
+    moveDown: '아래로 이동',
     pinColumn: '열 고정',
     pinLeft: '왼쪽에 고정',
     pinRight: '오른쪽에 고정',

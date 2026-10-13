@@ -1,0 +1,41 @@
+/**
+ * Unlike normal rows, which are always owned by the row above and drawn as a
+ * border-bottom, Grand Total rows draw their own border using a pseudo element
+ */
+.ag-row-grand-total-border-top,
+.ag-row-grand-total-border-bottom {
+    /* raise this row above its neighbours so that the border can render on top of them  */
+    z-index: 2;
+}
+
+.ag-row-grand-total-border-top::before,
+.ag-row-grand-total-border-bottom::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+
+    /* above the row's own pinned cell lanes (z-index 2) */
+    z-index: 3;
+    pointer-events: none;
+}
+
+.ag-row-grand-total-border-top::before {
+    top: calc(-1 * var(--ag-internal-row-border-width));
+    border-top: var(--ag-grand-total-row-border);
+}
+
+.ag-row-grand-total-border-bottom::before {
+    bottom: 0;
+    border-bottom: var(--ag-grand-total-row-border);
+}
+
+/* Special case: when the grand total row is in the sticky bottom container, it needs to draw the border along its top edge because that's where the existing border is  */
+:where(.ag-grid-sticky-bottom-rows-container) .ag-row-grand-total-border-top::before {
+    top: 0;
+}
+
+/* Special case: when the grand total row is in the pinned top container, it needs to draw the border just outside itself because that's where the existing border is drawn  */
+:where(.ag-grid-pinned-top-rows-container > .ag-row-last).ag-row-grand-total-border-bottom::before {
+    bottom: calc(-1 * var(--ag-pinned-row-border-width));
+}

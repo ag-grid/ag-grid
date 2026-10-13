@@ -28,6 +28,7 @@ import {
 } from './columnEventUtils';
 import { _setColGroupHeaderNameOverride } from './columnGroups/columnGroupState';
 import { GROUP_AUTO_COLUMN_ID, SELECTION_COLUMN_ID } from './columnUtils';
+import { _setColumnWidthAnimation, _startReorderingColumnWidthAnimation } from './columnWidthAnimation';
 
 export interface ColumnStateParams {
     /** True if the column is hidden */
@@ -165,12 +166,14 @@ export function _setColsVisible(
         if (changed) {
             const { colAnimation, eventSvc } = beans;
             colAnimation?.start();
+            _setColumnWidthAnimation(beans, true);
             try {
                 colModel.refreshColsDerivedState();
                 beans.visibleCols.refresh(source, false);
                 eventSvc.dispatchEvent({ type: 'columnEverythingChanged', source });
                 dispatchColumnVisibleEvent(eventSvc, changed, source);
             } finally {
+                _setColumnWidthAnimation(beans, false);
                 colAnimation?.finish();
             }
         }
@@ -217,6 +220,7 @@ function applyColumnState(beans: BeanCollection, params: ApplyColumnStateParams,
     }
 
     colAnimation?.start();
+    const finishWidthAnimation = _startReorderingColumnWidthAnimation(beans);
     try {
         // Capture once, before any mutation: the single dispatch below diffs the whole operation.
         const stateChanges = captureColumnStateChanges(beans);
@@ -235,6 +239,7 @@ function applyColumnState(beans: BeanCollection, params: ApplyColumnStateParams,
 
         return unmatched === null; // true ⇒ every provided state matched a column
     } finally {
+        finishWidthAnimation();
         colAnimation?.finish();
     }
 }
@@ -470,7 +475,7 @@ function resetColumnState(beans: BeanCollection, source: ColumnEventType): void 
         return;
     }
 
-    // Reset state per colDef, tracking max explicit rowGroup/pivot index so boolean-only cols get fallback
+    // Reset state per colDef, tracking max explicit group/pivot/value index so unindexed cols get fallback
     // indexes after them. `colDefList` is `colDefTree`'s flat leaf set (same count), sizing the array exactly.
     const selectionCol = selectionColSvc?.column ?? null;
     const initialAutoCols = autoColSvc?.columns;
@@ -479,14 +484,18 @@ function resetColumnState(beans: BeanCollection, source: ColumnEventType): void 
     let stateIdx = 0;
     let maxRowGroupIndex = -1;
     let maxPivotIndex = -1;
+    let maxValueIndex = -1;
     const addColState = (col: AgColumn) => {
         const stateItem = getColumnStateFromColDef(beans, col);
-        const { rowGroupIndex, pivotIndex } = stateItem;
+        const { rowGroupIndex, pivotIndex, valueIndex } = stateItem;
         if (rowGroupIndex != null && rowGroupIndex > maxRowGroupIndex) {
             maxRowGroupIndex = rowGroupIndex;
         }
         if (pivotIndex != null && pivotIndex > maxPivotIndex) {
             maxPivotIndex = pivotIndex;
+        }
+        if (valueIndex != null && valueIndex > maxValueIndex) {
+            maxValueIndex = valueIndex;
         }
         columnStates[stateIdx++] = stateItem;
     };
@@ -502,7 +511,7 @@ function resetColumnState(beans: BeanCollection, source: ColumnEventType): void 
     // Leaves in colDef declaration order (stable; colDefList can be permuted by a tool-panel reorder).
     forEachColTreeLeaf(colModel.colDefTree, addColState);
 
-    // Second pass: assign fallback indexes to boolean-only group/pivot cols (after the max above).
+    // Second pass: assign fallback indexes to unindexed group/pivot/value cols (after the max above).
     for (let i = 0, len = columnStates.length; i < len; ++i) {
         const stateItem = columnStates[i];
         if (stateItem.rowGroup && stateItem.rowGroupIndex == null) {
@@ -511,9 +520,13 @@ function resetColumnState(beans: BeanCollection, source: ColumnEventType): void 
         if (stateItem.pivot && stateItem.pivotIndex == null) {
             stateItem.pivotIndex = ++maxPivotIndex;
         }
+        if (stateItem.aggFunc && stateItem.valueIndex == null) {
+            stateItem.valueIndex = ++maxValueIndex;
+        }
     }
 
     colAnimation?.start();
+    const finishWidthAnimation = _startReorderingColumnWidthAnimation(beans);
     try {
         // Single capture before any mutation — the lone finalize dispatch diffs the whole reset.
         const stateChanges = captureColumnStateChanges(beans);
@@ -562,6 +575,7 @@ function resetColumnState(beans: BeanCollection, source: ColumnEventType): void 
         // Re-order + refresh + dispatch once, over the final (ordered) structure.
         finalizeChange(beans, { state: orderState, applyOrder: true }, source, stateChanges);
     } finally {
+        finishWidthAnimation();
         colAnimation?.finish();
     }
 
@@ -901,6 +915,7 @@ export function getColumnStateFromColDef(beans: BeanCollection, column: AgColumn
         pivotIndex,
         pivotSort: _resolvePivotSortFromColDef(colDef),
         aggFunc: colDef.aggFunc ?? colDef.initialAggFunc ?? null,
+        valueIndex: colDef.valueIndex ?? colDef.initialValueIndex ?? null,
         showValuesAs: beans.showValuesAsSvc?.colDefSelection(colDef) ?? null,
         headerName: null,
     };

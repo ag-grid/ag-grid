@@ -81,11 +81,13 @@ describe('column header popup toggle buttons (AG-16350)', () => {
                 onColumnMenuVisibleChanged: (event) => visibilityEvents.push(event.visible),
             });
             const button = eGridDiv.querySelector<HTMLElement>(selector)!;
+            const headerCell = eGridDiv.querySelector<HTMLElement>('.ag-header-cell[col-id="athlete"]')!;
 
             const openEvent = mouseDown(button);
             expect(openEvent.defaultPrevented).toBe(true);
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(1);
             expect(button.classList.contains(OPEN_MENU_CLASS)).toBe(true);
+            expect(headerCell.classList.contains('ag-column-menu-visible')).toBe(true);
             if (selector === '.ag-header-cell-menu-button') {
                 expect(document.querySelector('.ag-popup')?.contains(document.activeElement)).toBe(true);
             }
@@ -98,6 +100,7 @@ describe('column header popup toggle buttons (AG-16350)', () => {
             expect(closeEvent.defaultPrevented).toBe(false);
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);
             expect(button.classList.contains(OPEN_MENU_CLASS)).toBe(false);
+            expect(headerCell.classList.contains('ag-column-menu-visible')).toBe(false);
 
             mouseClick(button, 1);
             expect(document.querySelectorAll('.ag-popup')).toHaveLength(0);

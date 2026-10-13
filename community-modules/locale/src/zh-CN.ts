@@ -336,6 +336,10 @@ export const AG_GRID_LOCALE_ZH_CN = {
     enabled: '启用',
 
     // Menu
+    moveLeft: '向左移动',
+    moveRight: '向右移动',
+    moveUp: '向上移动',
+    moveDown: '向下移动',
     pinColumn: '固定列',
     pinLeft: '固定在左侧',
     pinRight: '固定在右侧',

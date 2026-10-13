@@ -1,3 +1,5 @@
+import { inflateRawSync } from 'node:zlib';
+
 import { ZipContainer } from './zipContainer';
 
 const readUInt16LE = (buffer: Uint8Array, offset: number): number => buffer[offset] | (buffer[offset + 1] << 8);
@@ -8,6 +10,30 @@ describe('When adding a file to a zip container with deflation', () => {
     const testPath: string = 'test-path/file-name.csv';
     const smallContent = 'aaaaaaaaaaaaaaaaaaaa'; // 20 bytes without deflation - Deflated size: 4 bytes
     const largeContent = 'aaaaaaaaaaaaaaaaaaaa'.repeat(1000); // 20kb without deflation - Deflated size: 38 bytes
+
+    it('preserves entry order and contents across compression batches', async () => {
+        const zipContainer = new ZipContainer();
+        const contents = Array.from({ length: 9 }, (_, index) => `${index}:\u00e9`.repeat(30000));
+        for (let i = 0; i < contents.length; ++i) {
+            zipContainer.addFile(`sheet${i}.xml`, contents[i]);
+        }
+        const archive = new Uint8Array(await (await zipContainer.getZipFile()).arrayBuffer());
+        let offset = 0;
+        for (let i = 0; i < contents.length; ++i) {
+            const nameLength = readUInt16LE(archive, offset + 26);
+            const extraLength = readUInt16LE(archive, offset + 28);
+            const compressedSize = readUInt32LE(archive, offset + 18);
+            const contentStart = offset + 30 + nameLength + extraLength;
+            expect(new TextDecoder().decode(archive.subarray(offset + 30, offset + 30 + nameLength))).toBe(
+                `sheet${i}.xml`
+            );
+            expect(inflateRawSync(archive.subarray(contentStart, contentStart + compressedSize)).toString('utf8')).toBe(
+                contents[i]
+            );
+            offset = contentStart + compressedSize;
+        }
+        expect(offset).toBe(readUInt32LE(archive, archive.length - 22 + 16));
+    });
 
     it('should handle a single small text header', async () => {
         const zipContainer = new ZipContainer();

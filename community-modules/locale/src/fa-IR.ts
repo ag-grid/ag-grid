@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_FA_IR = {
     enabled: 'فعال',
 
     // Menu
+    moveLeft: 'انتقال به چپ',
+    moveRight: 'انتقال به راست',
+    moveUp: 'انتقال به بالا',
+    moveDown: 'انتقال به پایین',
     pinColumn: 'سنجاق کردن ستون',
     pinLeft: 'سنجاق کردن به چپ',
     pinRight: 'سنجاق کردن به راست',

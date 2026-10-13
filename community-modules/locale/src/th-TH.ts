@@ -338,6 +338,10 @@ export const AG_GRID_LOCALE_TH_TH = {
     enabled: 'เปิดใช้งาน',
 
     // Menu
+    moveLeft: 'ย้ายไปทางซ้าย',
+    moveRight: 'ย้ายไปทางขวา',
+    moveUp: 'ย้ายขึ้น',
+    moveDown: 'ย้ายลง',
     pinColumn: 'ปักหมุดคอลัมน์',
     pinLeft: 'ปักหมุดซ้าย',
     pinRight: 'ปักหมุดขวา',

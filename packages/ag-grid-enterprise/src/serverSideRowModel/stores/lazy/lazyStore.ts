@@ -432,9 +432,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     }
 
     public hasExpandableMasterRows(): boolean {
-        return !!this.cache
+        return this.cache
             .getNodes()
-            .find(({ node }) => (node.master && node.isExpandable()) || !!node.childStore?.hasExpandableMasterRows());
+            .some(({ node }) => (node.master && node.isExpandable()) || !!node.childStore?.hasExpandableMasterRows());
     }
 
     /**

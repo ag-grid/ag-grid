@@ -98,7 +98,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         super(config);
         this.formulaSvc = config.formulaSvc;
         this.notesSvc = config.notesSvc;
-        this.config = Object.assign({}, config);
+        this.config = { ...config };
         this.workbook = config.workbook;
 
         this.stylesByIds = {};
@@ -602,6 +602,9 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         if (valueForCell === undefined) {
             return 'empty';
         }
+        if (typeof valueForCell === 'number') {
+            return Number.isFinite(valueForCell) ? 'n' : 's';
+        }
 
         let dataType: ExcelOOXMLDataType = 's';
         try {
@@ -681,20 +684,13 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         const processedType = this.getTypeFromStyle(actualStyle, value) || type;
 
         const { type: processedCellType, value: processedValue, escaped } = this.getCellValue(processedType, value);
-        const styles: string[] = [];
-
-        if (actualStyle) {
-            styles.push(styleId!);
-        }
-
+        styleId = actualStyle ? styleId : undefined;
         if (escaped) {
-            styles.push('_quotePrefix');
+            styleId = styleId == null ? '_quotePrefix' : this.getStyleId([styleId, '_quotePrefix']);
         }
-
-        styleId = this.getStyleId(styles) || undefined;
 
         return {
-            styleId,
+            styleId: styleId || undefined,
             data: {
                 type: processedCellType,
                 value: processedValue,
@@ -822,7 +818,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         } else if (type === 'n') {
             const numberValue = Number(value);
 
-            if (isNaN(numberValue)) {
+            if (Number.isNaN(numberValue)) {
                 return { type: 'empty', value: null, escaped: false };
             } else {
                 value = numberValue.toString();
@@ -847,13 +843,23 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
             return null;
         }
 
-        const filteredStyleIds = styleIds.filter((styleId) => this.stylesByIds[styleId] != null);
-        if (!filteredStyleIds.length) {
-            return null;
+        let firstStyleId: string | null = null;
+        let filteredStyleIds: string[] | undefined;
+        const stylesByIds = this.stylesByIds;
+        for (let i = 0, len = styleIds.length; i < len; ++i) {
+            const styleId = styleIds[i];
+            if (stylesByIds[styleId] == null) {
+                continue;
+            }
+            if (firstStyleId === null) {
+                firstStyleId = styleId;
+            } else {
+                filteredStyleIds ??= [firstStyleId];
+                filteredStyleIds.push(styleId);
+            }
         }
-
-        if (filteredStyleIds.length === 1) {
-            return filteredStyleIds[0];
+        if (!filteredStyleIds) {
+            return firstStyleId;
         }
 
         const key: string = filteredStyleIds.join('-');
@@ -887,18 +893,17 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
     }
 
     private isFormula(value: string | null) {
-        if (value == null) {
+        if (!this.config.autoConvertFormulas || value == null) {
             return false;
         }
-        const strValue = String(value);
-        return this.config.autoConvertFormulas && _isExpressionString(strValue);
+        return _isExpressionString(String(value));
     }
 
     private isNumerical(value: any): boolean {
         if (typeof value === 'bigint') {
             return false;
         }
-        return isFinite(value) && value !== '' && !isNaN(parseFloat(value));
+        return Number.isFinite(Number(value)) && value !== '' && !Number.isNaN(Number.parseFloat(value));
     }
 
     private getStyleById(styleId?: string | null): ExcelStyle | null {

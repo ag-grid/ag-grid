@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_CS_CZ = {
     enabled: 'Povoleno',
 
     // Menu
+    moveLeft: 'Přesunout doleva',
+    moveRight: 'Přesunout doprava',
+    moveUp: 'Přesunout nahoru',
+    moveDown: 'Přesunout dolů',
     pinColumn: 'Připnout sloupec',
     pinLeft: 'Připnout vlevo',
     pinRight: 'Připnout vpravo',

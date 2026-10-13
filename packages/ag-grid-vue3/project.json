@@ -26,7 +26,11 @@
     },
     "build": {
       "executor": "nx:run-script",
-      "dependsOn": ["ag-grid-community:build:package", "updateGridAndColumnProperties"],
+      "dependsOn": [
+        "ag-grid-community:build:types",
+        "ag-grid-community:build:package",
+        "updateGridAndColumnProperties"
+      ],
       "inputs": [
         "tsDeclarations",
         "{projectRoot}/src/**",

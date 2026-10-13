@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_HI_IN = {
     enabled: 'सक्षम',
 
     // Menu
+    moveLeft: 'बाएँ ले जाएँ',
+    moveRight: 'दाएँ ले जाएँ',
+    moveUp: 'ऊपर ले जाएँ',
+    moveDown: 'नीचे ले जाएँ',
     pinColumn: 'कॉलम पिन करें',
     pinLeft: 'बाएं पिन करें',
     pinRight: 'दाएं पिन करें',

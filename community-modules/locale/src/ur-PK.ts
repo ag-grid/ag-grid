@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_UR_PK = {
     enabled: 'فعال',
 
     // Menu
+    moveLeft: 'بائیں منتقل کریں',
+    moveRight: 'دائیں منتقل کریں',
+    moveUp: 'اوپر منتقل کریں',
+    moveDown: 'نیچے منتقل کریں',
     pinColumn: 'کالم کو پن کریں',
     pinLeft: 'بائیں پن کریں',
     pinRight: 'دائیں پن کریں',

@@ -53,7 +53,7 @@ export class AgInputNumberField<
         this.addManagedListeners(eInput, {
             blur: () => {
                 const floatedValue = Number.parseFloat(eInput.value);
-                const value = isNaN(floatedValue) ? '' : this.normalizeBlurValue(floatedValue.toString());
+                const value = Number.isNaN(floatedValue) ? '' : this.normalizeBlurValue(floatedValue.toString());
 
                 if (this.value !== value) {
                     this.setValue(value);

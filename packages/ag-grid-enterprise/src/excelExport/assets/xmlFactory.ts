@@ -1,6 +1,11 @@
-import type { HeaderElement, PrefixedXmlAttributes, XmlElement } from 'ag-grid-community';
+import type { HeaderElement, XmlElement } from 'ag-grid-community';
 
 const LINE_SEPARATOR = '\r\n';
+const XML_CHUNK_SIZE = 65536;
+
+export interface XmlFactoryElement extends Omit<XmlElement, 'children'> {
+    children?: Iterable<XmlFactoryElement>;
+}
 
 function returnAttributeIfPopulated(key: string, value: any, booleanTransformer?: (currentValue: boolean) => string) {
     if (!value && value !== '' && value !== 0) {
@@ -36,11 +41,11 @@ export function createXmlHeader(headerElement: HeaderElement = {}): string {
     return `${headerStart}xml ${att} ${headerEnd}`;
 }
 
-export function createXml(xmlElement: XmlElement, booleanTransformer?: (currentValue: boolean) => string): string {
+function getAttributes(xmlElement: XmlFactoryElement, booleanTransformer?: (currentValue: boolean) => string): string {
     let props: string = '';
     if (xmlElement.properties) {
         if (xmlElement.properties.prefixedAttributes) {
-            xmlElement.properties.prefixedAttributes.forEach((prefixedSet: PrefixedXmlAttributes) => {
+            for (const prefixedSet of xmlElement.properties.prefixedAttributes) {
                 for (const key of Object.keys(prefixedSet.map)) {
                     props += returnAttributeIfPopulated(
                         prefixedSet.prefix + key,
@@ -48,7 +53,7 @@ export function createXml(xmlElement: XmlElement, booleanTransformer?: (currentV
                         booleanTransformer
                     );
                 }
-            });
+            }
         }
 
         if (xmlElement.properties.rawMap) {
@@ -57,22 +62,59 @@ export function createXml(xmlElement: XmlElement, booleanTransformer?: (currentV
             }
         }
     }
-    let result: string = '<' + xmlElement.name + props;
+    return props;
+}
 
-    if (!xmlElement.children && xmlElement.textNode == null) {
-        return result + '/>' + LINE_SEPARATOR;
-    }
+class XmlWriter {
+    private readonly chunks: string[] = [];
+    private readonly currentChunk: string[] = [];
+    private currentChunkSize = 0;
 
-    if (xmlElement.textNode != null) {
-        return result + '>' + xmlElement.textNode + '</' + xmlElement.name + '>' + LINE_SEPARATOR;
-    }
+    public constructor(private readonly booleanTransformer?: (currentValue: boolean) => string) {}
 
-    result += '>' + LINE_SEPARATOR;
-    if (xmlElement.children) {
-        for (const it of xmlElement.children) {
-            result += createXml(it, booleanTransformer);
+    public writeElement(element: XmlFactoryElement): void {
+        const { name, children, textNode } = element;
+        const opening = '<' + name + getAttributes(element, this.booleanTransformer);
+        if (!children && textNode == null) {
+            this.write(opening + '/>' + LINE_SEPARATOR);
+        } else if (textNode != null) {
+            this.write(opening + '>' + textNode + '</' + name + '>' + LINE_SEPARATOR);
+        } else {
+            this.write(opening + '>' + LINE_SEPARATOR);
+            if (children) {
+                for (const child of children) {
+                    this.writeElement(child);
+                }
+            }
+            this.write('</' + name + '>' + LINE_SEPARATOR);
         }
     }
 
-    return result + '</' + xmlElement.name + '>' + LINE_SEPARATOR;
+    public toString(): string {
+        this.flush();
+        return this.chunks.join('');
+    }
+
+    private write(value: string): void {
+        this.currentChunk.push(value);
+        this.currentChunkSize += value.length;
+        if (this.currentChunkSize >= XML_CHUNK_SIZE) {
+            this.flush();
+        }
+    }
+
+    private flush(): void {
+        this.chunks.push(this.currentChunk.join(''));
+        this.currentChunk.length = 0;
+        this.currentChunkSize = 0;
+    }
+}
+
+export function createXml(
+    xmlElement: XmlFactoryElement,
+    booleanTransformer?: (currentValue: boolean) => string
+): string {
+    const writer = new XmlWriter(booleanTransformer);
+    writer.writeElement(xmlElement);
+    return writer.toString();
 }

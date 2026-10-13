@@ -1,9 +1,8 @@
-import type { ExcelOOXMLTemplate } from 'ag-grid-community';
-
 import { buildSharedString } from '../../assets/excelUtils';
+import type { XmlFactoryElement } from '../../assets/xmlFactory';
 
-const sharedStrings: ExcelOOXMLTemplate = {
-    getTemplate(strings: Map<string, number>) {
+const sharedStrings = {
+    getTemplate(strings: Map<string, number>): XmlFactoryElement {
         return {
             name: 'sst',
             properties: {

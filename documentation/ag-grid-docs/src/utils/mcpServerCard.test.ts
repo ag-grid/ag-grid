@@ -1,4 +1,5 @@
 import { buildMcpServerCard } from './mcpServerCard';
+import { resolveRoute } from './pageRoutes.test-utils';
 
 const INPUT = {
     siteRoot: 'https://www.ag-grid.com/',
@@ -51,5 +52,32 @@ describe('buildMcpServerCard', () => {
         const agGridUrls = urls.filter((u) => u.includes('ag-grid.com'));
         expect(agGridUrls.length).toBeGreaterThan(0);
         expect(agGridUrls.every((u) => u.startsWith('https://www.ag-grid.com/'))).toBe(true);
+    });
+
+    // SE-79: an agent probing the well-known location must find the card, and every link in it
+    // must work without a base URL to resolve against.
+    test('is served at the well-known location', () => {
+        expect(resolveRoute('/.well-known/mcp/server-card.json')).toBe('.well-known/mcp/server-card.json.ts');
+    });
+
+    test('declares every field an agent needs to discover and launch the server', () => {
+        for (const field of ['name', 'title', 'description', 'homepage', 'documentation', 'repository']) {
+            expect(card[field], field).toBeTruthy();
+        }
+        expect(card.packages.length).toBeGreaterThan(0);
+        expect(Object.keys(card.mcpServers)).toEqual([card.name]);
+    });
+
+    test('uses only absolute https URLs', () => {
+        const urls = [card.homepage, card.documentation, card.repository.url];
+        for (const url of urls) {
+            expect(new URL(url).protocol, url).toBe('https:');
+        }
+    });
+
+    test('links documentation the grid build emits', () => {
+        const { hostname, pathname } = new URL(card.documentation);
+        expect(hostname).toBe('www.ag-grid.com');
+        expect(resolveRoute(pathname)).toBeDefined();
     });
 });

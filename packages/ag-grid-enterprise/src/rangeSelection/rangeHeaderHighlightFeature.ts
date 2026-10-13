@@ -9,84 +9,70 @@ export class RangeHeaderHighlightFeature extends BeanStub {
         private readonly comp: IHeaderCellComp
     ) {
         super();
-        this.resetColumnMap();
     }
 
     public postConstruct(): void {
-        this.addManagedPropertyListener('cellSelection', () => {
-            this.refreshActive();
+        const onRangeSelectionChanged = this.onRangeSelectionChanged.bind(this);
+        this.addManagedEventListeners({
+            rangeSelectionChanged: onRangeSelectionChanged,
+            displayedColumnsChanged: onRangeSelectionChanged,
         });
+        this.addManagedPropertyListener('cellSelection', this.refreshActive.bind(this));
         this.refreshActive();
-        this.setupRangeHeaderHighlight();
     }
 
     private resetColumnMap(): void {
-        this.columnMap.clear();
-
-        let columns: AgColumn[] | null;
-        if (this.column.isColumn) {
-            columns = [this.column];
-        } else {
-            columns = this.column.getDisplayedLeafColumns();
+        const { columnMap, column } = this;
+        columnMap.clear();
+        if (column.isColumn) {
+            columnMap.set(column, false);
+            return;
         }
-
-        for (const column of columns) {
-            this.columnMap.set(column, false);
+        const leafColumns = column.getDisplayedLeafColumns();
+        for (let i = 0, len = leafColumns.length; i < len; ++i) {
+            columnMap.set(leafColumns[i], false);
         }
     }
 
     private refreshActive(): void {
         const { gos, rangeSvc } = this.beans;
         const selection = gos.get('cellSelection');
+        const isActive = !!(selection && rangeSvc && typeof selection === 'object' && selection.enableHeaderHighlight);
+        if (isActive === this.isActive) {
+            return;
+        }
 
-        this.isActive = !!(selection && rangeSvc && typeof selection === 'object' && selection.enableHeaderHighlight);
+        this.isActive = isActive;
+        if (isActive) {
+            this.onRangeSelectionChanged();
+        } else {
+            this.comp.toggleCss('ag-header-range-highlight', false);
+        }
     }
 
-    private setupRangeHeaderHighlight(): void {
-        const listener = this.onRangeSelectionChanged.bind(this);
-
-        this.addManagedEventListeners({
-            rangeSelectionChanged: listener,
-            columnPinned: listener,
-            columnMoved: listener,
-            columnGroupOpened: listener,
-        });
-
-        listener();
-    }
-
-    public onRangeSelectionChanged(): void {
+    private onRangeSelectionChanged(): void {
         if (!this.isActive) {
             return;
         }
 
         this.resetColumnMap();
+        const columnMap = this.columnMap;
+        let uncovered = columnMap.size;
 
+        // a group is highlighted once every column it displays is in some range, as each column's own header is
         const ranges = this.beans.rangeSvc!.getCellRanges();
-        let hasRange = false;
-        let isAllColumnRange = true;
-
-        for (const range of ranges) {
-            if (hasRange) {
-                break;
-            }
-
-            for (const column of range.columns) {
-                if (this.columnMap.has(column as AgColumn)) {
-                    this.columnMap.set(column as AgColumn, true);
-                    hasRange ||= true;
+        for (let i = 0, len = ranges.length; i < len && uncovered > 0; ++i) {
+            const columns = ranges[i].columns;
+            for (let j = 0, colsLen = columns.length; j < colsLen; ++j) {
+                const column = columns[j] as AgColumn;
+                if (columnMap.get(column) === false) {
+                    columnMap.set(column, true);
+                    --uncovered;
                 }
             }
         }
 
-        for (const value of Array.from(this.columnMap.values())) {
-            if (value === false) {
-                isAllColumnRange = false;
-                break;
-            }
-        }
-
-        this.comp.toggleCss('ag-header-range-highlight', hasRange && isAllColumnRange);
+        this.comp.toggleCss('ag-header-range-highlight', columnMap.size > 0 && uncovered === 0);
     }
 
     public override destroy(): void {

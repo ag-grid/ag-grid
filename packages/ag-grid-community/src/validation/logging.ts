@@ -11,7 +11,7 @@ const MIN_PARAM_LENGTH = 100;
 const VERSION_PARAM_NAME = '_version_';
 
 let getConsoleMessage: (<TId extends ErrorId>(id: TId, args: GetErrorParams<TId>) => any[]) | null = null;
-export let baseDocLink = `${BASE_URL}/javascript-data-grid`;
+let baseDocLink = `${BASE_URL}/javascript-data-grid`;
 /**
  * The ValidationService passes itself in if it has been included.
  * @param logger
@@ -25,6 +25,10 @@ export function provideValidationServiceLogger(
 /** Set by the Framework override to give us accurate links for the framework  */
 export function setValidationDocLink(docLink: string) {
     baseDocLink = docLink;
+}
+
+export function getValidationDocLink(): string {
+    return baseDocLink;
 }
 
 export type Severity = 'error' | 'warning' | 'deprecation';

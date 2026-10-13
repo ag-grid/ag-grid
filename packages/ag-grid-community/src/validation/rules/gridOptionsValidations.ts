@@ -18,6 +18,10 @@ import { _createDeprecationWarning, _createValidationWarning, buildAllValidNames
  *
  */
 const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
+    onCalculatedColumnExpressionChanged: {
+        version: '36.3',
+        message: 'Use `onCalculatedColumnChanged` and check `event.changes.calculatedExpression` instead.',
+    },
     suppressLoadingOverlay: { version: '32', message: 'Use `loading`=false instead.' },
 
     enableFillHandle: { version: '32.2', message: 'Use `cellSelection.handle` instead.' },
@@ -139,6 +143,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     getLocaleText: 'Locale',
     getMainMenuItems: 'ColumnMenu',
     getColumnMenuItems: ['ColumnMenu', 'ColumnsToolPanel'],
+    getColumnDropZoneMenuItems: ['RowGroupingPanel', 'ColumnsToolPanel'],
     getRowClass: 'RowStyle',
     getRowStyle: 'RowStyle',
     groupTotalRow: (_options, gridOptions) =>

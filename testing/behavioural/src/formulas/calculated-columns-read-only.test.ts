@@ -47,7 +47,7 @@ describe('calculated columns - read-only definitions', () => {
                 columnDefs,
                 rowData,
                 onCalculatedColumnCreated: onCalculatedEvent,
-                onCalculatedColumnExpressionChanged: onCalculatedEvent,
+                onCalculatedColumnChanged: onCalculatedEvent,
                 onCalculatedColumnRemoved: onCalculatedEvent,
                 onCalculatedColumnValidationStateChanged: onCalculatedEvent,
             });
@@ -167,7 +167,7 @@ describe('calculated columns - read-only definitions', () => {
                 rowData,
                 calculatedColumns: { applyMode, getValidationErrors: () => messages },
                 onCalculatedColumnCreated: onCalculatedEvent,
-                onCalculatedColumnExpressionChanged: onCalculatedEvent,
+                onCalculatedColumnChanged: onCalculatedEvent,
                 onCalculatedColumnRemoved: onCalculatedEvent,
                 onCalculatedColumnValidationStateChanged: onCalculatedEvent,
             });

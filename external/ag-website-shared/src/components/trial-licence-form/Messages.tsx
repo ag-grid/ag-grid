@@ -4,6 +4,7 @@ export const MESSAGES: Record<string, string | ReactElement> = {
     validationEmailRequired: 'Email is required',
     validationEmailInvalid: 'Invalid email format',
     validationRequiredField: 'Required field',
+    validationCompanyTooLong: 'Max 255 characters',
 
     formErrorDefault: (
         <>

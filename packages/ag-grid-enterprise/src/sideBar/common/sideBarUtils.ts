@@ -3,7 +3,7 @@ import { _last } from 'ag-stack';
 import type { AbstractColDef, ColDef, ColGroupDef } from 'ag-grid-community';
 
 export function isColGroupDef(colDef: AbstractColDef): colDef is ColGroupDef {
-    return !!colDef && typeof (colDef as ColGroupDef).children !== 'undefined';
+    return !!colDef && (colDef as ColGroupDef).children !== undefined;
 }
 
 function getId(colDef: AbstractColDef): string | undefined {

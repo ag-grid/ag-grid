@@ -216,6 +216,10 @@ function wrapPreformattedText(
     return lines;
 }
 
+// OPTIMIZATION: hoisted so escapePdfString's per-character loop does not call String.raw.
+const ESCAPED_OPEN_PAREN = String.raw`\(`;
+const ESCAPED_CLOSE_PAREN = String.raw`\)`;
+
 /**
  * Escape a PDF string literal and encode non-ASCII bytes using octal escapes.
  * @param value - Source text.
@@ -229,9 +233,9 @@ export function escapePdfString(value: string): string {
         const byte = toWinAnsiByte(codePoint) ?? 0x3f;
 
         if (byte === 0x28) {
-            output += '\\(';
+            output += ESCAPED_OPEN_PAREN;
         } else if (byte === 0x29) {
-            output += '\\)';
+            output += ESCAPED_CLOSE_PAREN;
         } else if (byte === 0x5c) {
             output += '\\\\';
         } else if (byte >= 0x20 && byte <= 0x7e) {

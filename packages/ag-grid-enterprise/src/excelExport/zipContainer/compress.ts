@@ -1,10 +1,10 @@
-const compressBlob = async (
-    data: Blob
-): Promise<{
-    size: number;
-    content: Blob;
-}> => {
-    // Callback to extract the compressed data
+const COMPRESSION_CHUNK_SIZE = 65536;
+
+export const deflateLocalFile = async (
+    rawContent: string | Uint8Array
+): Promise<{ size: number; content: Uint8Array }> => {
+    const bytes = typeof rawContent === 'string' ? new TextEncoder().encode(rawContent) : rawContent;
+    let offset = 0;
     let chunksSize = 0;
     const chunks: Uint8Array[] = [];
     const writeCompressedData: WritableStream<Uint8Array> = new WritableStream({
@@ -14,47 +14,28 @@ const compressBlob = async (
         },
     });
 
-    // Create readable stream from blob
-    const readable = new ReadableStream({
-        start: (controller) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                if (e.target?.result) {
-                    controller.enqueue(e.target.result);
-                }
-
+    const readable = new ReadableStream<Uint8Array>({
+        pull: (controller) => {
+            if (offset === bytes.length) {
                 controller.close();
-            };
-
-            reader.readAsArrayBuffer(data);
+                return;
+            }
+            const end = Math.min(offset + COMPRESSION_CHUNK_SIZE, bytes.length);
+            // Compressors may transfer chunks; the source bytes are still needed for the ZIP checksum.
+            controller.enqueue(bytes.slice(offset, end));
+            offset = end;
         },
     });
 
-    // Perform the compression using the browser's native CompressionStream API
-    // Ref https://developer.mozilla.org/en-US/docs/Web/API/CompressionStream for details
-    const compressStream = new (window as any).CompressionStream('deflate-raw');
+    const compressStream = new CompressionStream('deflate-raw');
     await readable.pipeThrough(compressStream).pipeTo(writeCompressedData);
 
-    // Return the compressed data
-    return {
-        size: chunksSize,
-        content: new Blob(chunks),
-    };
-};
-
-export const deflateLocalFile = async (
-    rawContent: string | Uint8Array
-): Promise<{
-    size: number;
-    content: Uint8Array;
-}> => {
-    const contentAsBlob = new Blob([rawContent]);
-    const { size: compressedSize, content: compressedContent } = await compressBlob(contentAsBlob);
-
-    const compressedContentAsUint8Array = new Uint8Array(await compressedContent.arrayBuffer());
-
-    return {
-        size: compressedSize,
-        content: compressedContentAsUint8Array,
-    };
+    const content = new Uint8Array(chunksSize);
+    let written = 0;
+    for (let i = 0, len = chunks.length; i < len; ++i) {
+        const chunk = chunks[i];
+        content.set(chunk, written);
+        written += chunk.length;
+    }
+    return { size: chunksSize, content };
 };

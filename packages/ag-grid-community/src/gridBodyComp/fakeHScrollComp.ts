@@ -53,21 +53,19 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         super.destroy();
     }
 
-    protected override initialiseInvisibleScrollbar(): void {
-        if (this.invisibleScrollbar !== undefined) {
-            return;
-        }
-
+    protected override refreshInvisibleScrollbar(): void {
+        const wasInvisible = this.invisibleScrollbar;
         this.enableRtl = this.gos.get('enableRtl');
-        super.initialiseInvisibleScrollbar();
+        super.refreshInvisibleScrollbar();
 
-        if (this.invisibleScrollbar) {
+        if (this.invisibleScrollbar !== wasInvisible) {
             this.refreshCompBottom();
         }
     }
 
     private refreshCompBottom(): void {
         if (!this.invisibleScrollbar) {
+            this.getGui().style.bottom = '';
             return;
         }
         const bottomPinnedHeight = this.beans.pinnedRowModel?.getPinnedBottomTotalHeight() ?? 0;
@@ -104,7 +102,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
                 return;
             }
             this.setScrollVisibleDebounce = 0;
-            this.toggleCss('ag-scrollbar-invisible', invisibleScrollbar);
+            this.toggleCss('ag-scrollbar-invisible', !!invisibleScrollbar);
             _setFixedHeight(this.getGui(), scrollContainerSize);
             _setFixedHeight(this.eViewport, scrollContainerSize);
             _setFixedHeight(this.eContainer, scrollContainerSize);

@@ -5,15 +5,16 @@ import type {
     BaseProperties,
     IPropertiesService,
 } from 'ag-stack';
+import { _getDocument } from 'ag-stack';
 
 import type { AgPickerFieldParams, _AgWidgetSelectorType } from 'ag-grid-community';
 import { AgPickerField, _createElement } from 'ag-grid-community';
 
+import { AgColor } from './agColor';
 import { AgColorPanel } from './agColorPanel';
 import agColorPickerCSS from './agColorPicker.css';
 import type { AgDialogCallbacks } from './agDialog';
 import { AgDialog } from './agDialog';
-import type { IAgChartsExports } from './iAgChartsExports';
 
 export interface AgColorPickerParams<TComponentSelectorType extends string> extends Omit<
     AgPickerFieldParams<TComponentSelectorType>,
@@ -167,9 +168,7 @@ export class AgColorPicker<
         }
 
         this.eDisplayFieldColor.style.backgroundColor = color;
-        this.eDisplayFieldText.textContent = (this.beans.agChartsExports as IAgChartsExports)._Util.Color.fromString(
-            color
-        )
+        this.eDisplayFieldText.textContent = AgColor.fromString(color, _getDocument(this.beans))
             .toHexString()
             .toUpperCase();
 

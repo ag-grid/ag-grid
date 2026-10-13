@@ -1,6 +1,21 @@
+import type { Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 
 import { mountGrid } from '../src/mountGrid';
+
+/** What the browser draws at the centre of the Medals group label: the label itself, or a header covering it. */
+const medalsLabelShown = (page: Page) =>
+    page.evaluate(() => {
+        const text = Array.from(document.querySelectorAll('.ag-header-group-text')).find(
+            (element) => element.textContent === 'Medals'
+        );
+        const rect = text?.getBoundingClientRect();
+        const drawn = rect && document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        return {
+            sticky: !!text?.closest('.ag-sticky-label'),
+            covered: drawn ? !text!.contains(drawn) && !drawn.contains(text!) : null,
+        };
+    });
 
 test.describe('community grid in a real browser', () => {
     test('typing into the text editor and pressing Tab commits the value and moves focus right', async ({ page }) => {
@@ -62,5 +77,125 @@ test.describe('community grid in a real browser', () => {
             await expect(headerCell('col19')).toBeVisible({ timeout: 500 });
         }).toPass();
         await expect(headerCell('col0')).toHaveCount(0);
+    });
+
+    test('right to left, a sticky group label stays clear of the right-pinned columns as they widen', async ({
+        page,
+    }) => {
+        const { withApi } = await mountGrid(page, {
+            options: () => ({
+                enableRtl: true,
+                columnDefs: [
+                    { field: 'athlete', width: 200 },
+                    { headerName: 'Medals', children: [{ field: 'gold' }, { field: 'silver' }] },
+                    { field: 'total', width: 100, pinned: 'right' },
+                ],
+                defaultColDef: { width: 400 },
+                rowData: [{ athlete: 'Michael Phelps', gold: 8, silver: 0, total: 8 }],
+            }),
+        });
+
+        await withApi((api) => api.ensureColumnVisible('silver', 'start'));
+        await expect.poll(() => medalsLabelShown(page)).toEqual({ sticky: true, covered: false });
+
+        await withApi((api) => api.setColumnWidths([{ key: 'total', newWidth: 300 }]));
+        await expect.poll(() => medalsLabelShown(page)).toEqual({ sticky: true, covered: false });
+    });
+
+    test('a sticky group label stays clear of the left-pinned columns as they widen', async ({ page }) => {
+        const { withApi } = await mountGrid(page, {
+            options: () => ({
+                columnDefs: [
+                    { field: 'athlete', width: 100, pinned: 'left' },
+                    { headerName: 'Medals', children: [{ field: 'gold' }, { field: 'silver' }] },
+                    { field: 'total', width: 200 },
+                ],
+                defaultColDef: { width: 400 },
+                rowData: [{ athlete: 'Michael Phelps', gold: 8, silver: 0, total: 8 }],
+            }),
+        });
+
+        await withApi((api) => api.ensureColumnVisible('silver', 'start'));
+        await expect.poll(() => medalsLabelShown(page)).toEqual({ sticky: true, covered: false });
+
+        await withApi((api) => api.setColumnWidths([{ key: 'athlete', newWidth: 300 }]));
+        await expect.poll(() => medalsLabelShown(page)).toEqual({ sticky: true, covered: false });
+    });
+
+    test('a group unpinned at runtime keeps its label in view as it scrolls, and one pinned at runtime never sticks', async ({
+        page,
+    }) => {
+        const { withApi } = await mountGrid(page, {
+            options: () => ({
+                columnDefs: [
+                    {
+                        headerName: 'Medals',
+                        children: [
+                            { field: 'gold', pinned: 'left' },
+                            { field: 'silver', pinned: 'left' },
+                        ],
+                    },
+                    { field: 'athlete' },
+                    { field: 'total' },
+                ],
+                defaultColDef: { width: 400 },
+                rowData: [{ athlete: 'Michael Phelps', gold: 8, silver: 0, total: 8 }],
+            }),
+        });
+
+        await withApi((api) => api.setColumnsPinned(['gold', 'silver'], null));
+        await withApi((api) => api.ensureColumnVisible('silver', 'start'));
+        await expect.poll(() => medalsLabelShown(page)).toEqual({ sticky: true, covered: false });
+
+        await withApi((api) => api.ensureColumnVisible('gold', 'start'));
+        await withApi((api) => api.setColumnsPinned(['gold', 'silver'], 'left'));
+        await withApi((api) =>
+            api.setColumnWidths([
+                { key: 'gold', newWidth: 150 },
+                { key: 'silver', newWidth: 150 },
+            ])
+        );
+        // a scroll inside the pinned group's own extent, where a centre group would stick
+        await withApi(
+            (api) =>
+                new Promise<void>((resolve) => {
+                    api.addEventListener('bodyScroll', () => resolve());
+                    document.querySelector('.ag-grid-viewport')!.scrollLeft = 100;
+                })
+        );
+        expect(await medalsLabelShown(page)).toEqual({ sticky: false, covered: false });
+    });
+
+    // A hidden viewport measures no size; reading that as a change each frame kept the grid scheduling frames forever.
+    test('a grid in a container hidden with display:none stops scheduling animation frames', async ({ page }) => {
+        const { grid } = await mountGrid(page, {
+            options: () => ({
+                columnDefs: [{ field: 'make' }, { field: 'model' }],
+                rowData: [{ make: 'Toyota', model: 'Celica' }],
+            }),
+        });
+
+        const framesRequestedWhileHidden = await page.evaluate(async () => {
+            const requestFrame = window.requestAnimationFrame.bind(window);
+            const frames = async (count: number) => {
+                for (let i = 0; i < count; ++i) {
+                    await new Promise((resolve) => requestFrame(resolve));
+                }
+            };
+            let requested = 0;
+            window.requestAnimationFrame = (callback) => {
+                ++requested;
+                return requestFrame(callback);
+            };
+            document.querySelector<HTMLElement>('#myGrid')!.parentElement!.style.display = 'none';
+            // the frames the hiding itself schedules
+            await frames(10);
+            requested = 0;
+            await frames(30);
+            return requested;
+        });
+
+        await expect(grid).toBeHidden();
+        expect(framesRequestedWhileHidden).toBe(0);
     });
 });

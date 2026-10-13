@@ -3,6 +3,7 @@ import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup
 import { isProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
 import type { ColumnEventType } from '../../events';
 import { _dispatchGroupHeaderNameChangedEvent } from '../columnEventUtils';
+import { _setColumnWidthAnimation } from '../columnWidthAnimation';
 
 interface ColGroupState {
     groupId: string;
@@ -74,6 +75,7 @@ export const _setColGroupState = (
     colModel.beginColUpdate();
     try {
         colAnimation?.start();
+        _setColumnWidthAnimation(beans, true);
         let impactedGroups: AgProvidedColumnGroup[] | null = null;
         let renamedGroups: AgProvidedColumnGroup[] | null = null;
         for (let i = 0; i < stateLen; ++i) {
@@ -113,6 +115,7 @@ export const _setColGroupState = (
             });
         }
     } finally {
+        _setColumnWidthAnimation(beans, false);
         colAnimation?.finish();
         colModel.endColUpdate();
     }

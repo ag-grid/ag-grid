@@ -90,7 +90,7 @@ export function createXlsxExcel(
     addSheetName(worksheet);
     registerStyles(styles, XLSX_SHEET_NAMES.length);
 
-    const newConfig = Object.assign({}, config);
+    const newConfig = { ...config };
 
     // Table export is not compatible with pivot mode nor master/detail features
     if (config.exportAsExcelTable && config.pivotModeActive) {
@@ -199,7 +199,7 @@ export function addXlsxHeaderFooterImageToMap(
         XLSX_WORKSHEET_HEADER_FOOTER_IMAGES.set(sheetIndex, headerFooterImagesForSheet);
     }
 
-    if (!headerFooterImagesForSheet.find((img) => img.id === image.id)) {
+    if (!headerFooterImagesForSheet.some((img) => img.id === image.id)) {
         headerFooterImagesForSheet.push(image as ExcelHeaderFooterCalculatedImage);
     }
 }
@@ -221,10 +221,7 @@ export function addXlsxBodyImageToMap(
                 image.position = {};
             }
 
-            image.position = Object.assign({}, image.position, {
-                row: rowIndex,
-                column: columnsToExport.indexOf(col) + 1,
-            });
+            image.position = { ...image.position, row: rowIndex, column: columnsToExport.indexOf(col) + 1 };
         }
         setExcelImageTotalWidth(calculatedImage, columnsToExport);
         setExcelImageTotalHeight(calculatedImage, rowHeight);
@@ -286,7 +283,7 @@ function addSheetName(worksheet: ExcelWorksheet): void {
         if (append === '') {
             append = '_1';
         } else {
-            const curr = parseInt(append.slice(1), 10);
+            const curr = Number.parseInt(append.slice(1), 10);
             append = `_${curr + 1}`;
         }
     }

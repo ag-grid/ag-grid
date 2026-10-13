@@ -1,8 +1,9 @@
-import type { ExcelImage, ExcelOOXMLTemplate, XmlElement } from 'ag-grid-community';
+import type { ExcelImage, XmlElement } from 'ag-grid-community';
 import { _clamp } from 'ag-grid-community';
 
 import type { ExcelCalculatedImage, ImageAnchor, ImageBoxSize, ImageColor } from '../../assets/excelInterfaces';
 import { pixelsToEMU } from '../../assets/excelUtils';
+import type { XmlFactoryElement } from '../../assets/xmlFactory';
 import { XLSX_WORKSHEET_IMAGES, XLSX_WORKSHEET_IMAGE_IDS } from '../../excelXlsxFactory';
 
 const getAnchor = (name: string, imageAnchor: ImageAnchor): XmlElement => ({
@@ -330,30 +331,31 @@ const getPicture = (
     };
 };
 
-const drawingFactory: ExcelOOXMLTemplate = {
-    getTemplate(config: { sheetIndex: number }) {
-        const { sheetIndex } = config;
-        const sheetImages = XLSX_WORKSHEET_IMAGES.get(sheetIndex);
-        const sheetImageIds = XLSX_WORKSHEET_IMAGE_IDS.get(sheetIndex);
-
-        const children = sheetImages!.map((image, idx) => {
-            const boxSize = getImageBoxSize(image);
-            return {
-                name: 'xdr:twoCellAnchor',
-                properties: {
-                    rawMap: {
-                        editAs: 'absolute',
-                    },
+function* getImageTemplates(sheetIndex: number): Iterable<XmlElement> {
+    const sheetImages = XLSX_WORKSHEET_IMAGES.get(sheetIndex)!;
+    const sheetImageIds = XLSX_WORKSHEET_IMAGE_IDS.get(sheetIndex)!;
+    for (let i = 0, len = sheetImages.length; i < len; ++i) {
+        const image = sheetImages[i];
+        const boxSize = getImageBoxSize(image);
+        yield {
+            name: 'xdr:twoCellAnchor',
+            properties: {
+                rawMap: {
+                    editAs: 'absolute',
                 },
-                children: [
-                    getAnchor('from', boxSize.from),
-                    getAnchor('to', boxSize.to),
-                    getPicture(image, idx, sheetImageIds!.get(image.id)!.index, boxSize),
-                    { name: 'xdr:clientData' },
-                ],
-            };
-        });
+            },
+            children: [
+                getAnchor('from', boxSize.from),
+                getAnchor('to', boxSize.to),
+                getPicture(image, i, sheetImageIds.get(image.id)!.index, boxSize),
+                { name: 'xdr:clientData' },
+            ],
+        };
+    }
+}
 
+const drawingFactory = {
+    getTemplate(config: { sheetIndex: number }): XmlFactoryElement {
         return {
             name: 'xdr:wsDr',
             properties: {
@@ -362,7 +364,7 @@ const drawingFactory: ExcelOOXMLTemplate = {
                     'xmlns:xdr': 'http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing',
                 },
             },
-            children,
+            children: getImageTemplates(config.sheetIndex),
         };
     },
 };

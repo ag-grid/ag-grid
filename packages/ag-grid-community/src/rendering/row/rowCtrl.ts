@@ -11,7 +11,8 @@ import {
     _setAriaRowIndex,
 } from 'ag-stack';
 
-import { setupCompBean } from '../../components/emptyBean';
+import type { CompBeanOwner } from '../../components/emptyBean';
+import { destroyCompBean, setupCompBean } from '../../components/emptyBean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn, ColumnLane } from '../../entities/agColumn';
@@ -28,6 +29,7 @@ import type {
 } from '../../events';
 import {
     _addGridCommonParams,
+    _getGrandTotalRow,
     _getRowHeightForNode,
     _isAnimateRows,
     _isClientSideLoadingRow,
@@ -104,7 +106,8 @@ export interface IRowComp {
 export interface RowGui {
     rowComp: IRowComp;
     element: HTMLElement;
-    compBean: BeanStub;
+    /** React's bean for the mounted comp, else the row ctrl itself. */
+    compBean: BeanStub<any>;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -117,7 +120,7 @@ export interface MappedPinnedCellGroupWidths extends PinnedCellGroupWidths {
 
 type RowCtrlEvent = RenderedRowEvent;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export class RowCtrl extends BeanStub<RowCtrlEvent> {
+export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
     public readonly instanceId: RowCtrlInstanceId;
     /** Scratch for the React list diff, trusted only where the list diffed holds this at that index. */
     public diffIndex = 0;
@@ -128,6 +131,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private readonly rowType: RowType;
 
     private rowGui: RowGui | undefined;
+    public compBean: BeanStub<any> | undefined = undefined;
     private readonly rowModeFeature: IRowModeFeature;
     private mappedPinnedWidths: MappedPinnedCellGroupWidths | undefined = undefined;
 
@@ -230,10 +234,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public setComp(rowComp: IRowComp, element: HTMLElement, compBean: BeanStub<any> | undefined): void {
-        const { context, rowRenderer } = this.beans;
-        const rowCompBean = setupCompBean(this, context, compBean);
-
-        const rowGui: RowGui = { rowComp, element, compBean: rowCompBean };
+        const rowRenderer = this.beans.rowRenderer;
+        const rowGui: RowGui = { rowComp, element, compBean: setupCompBean(this, compBean) };
         this.rowGui = rowGui;
 
         this.initialiseRowComp();
@@ -593,7 +595,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             rowSelected: () => this.onRowSelected(),
             rowIndexChanged: this.onRowIndexChanged.bind(this),
             topChanged: this.onTopChanged.bind(this),
-            ...(expansionSvc?.getRowExpandedListeners(this) ?? {}),
+            ...expansionSvc?.getRowExpandedListeners(this),
         });
 
         if (rowNode.detail) {
@@ -1002,8 +1004,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         const classes: string[] = [];
 
-        classes.push('ag-row');
-        classes.push(this.rowFocused ? 'ag-row-focus' : 'ag-row-no-focus');
+        classes.push('ag-row', this.rowFocused ? 'ag-row-focus' : 'ag-row-no-focus');
 
         if (this.fadeInAnimation) {
             classes.push('ag-opacity-zero');
@@ -1031,6 +1032,10 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             classes.push('ag-row-footer');
             if (rowNode.level === -1) {
                 classes.push('ag-row-grand-total');
+                // the border goes on the side facing the data rows
+                const position = rowNode.rowPinned ?? _getGrandTotalRow(this.gos);
+                const atTop = position === 'top' || position === 'pinnedTop';
+                classes.push(`ag-row-grand-total-border-${atTop ? 'bottom' : 'top'}`);
             }
         }
 
@@ -1249,6 +1254,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.dispatchLocalEvent(event);
         this.beans.eventSvc.dispatchEvent(event);
         this.destroyRowDragComp();
+        destroyCompBean(this);
         super.destroy();
     }
 

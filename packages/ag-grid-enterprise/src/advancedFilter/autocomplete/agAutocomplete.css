@@ -61,6 +61,10 @@
 
 .ag-autocomplete-row-selected {
     background-color: var(--ag-selected-row-background-color);
+
+    @media (forced-colors: active) {
+        background-color: SelectedItem;
+    }
 }
 
 .ag-autocomplete-loading {

@@ -35,7 +35,7 @@ describe('ag-grid calculated columns', () => {
             rowData: [{ id: 'r1', country: 'UK', year: 2026, revenue: 10 }],
             columnDefs: [...base, profit],
             onCalculatedColumnCreated: created,
-            onCalculatedColumnExpressionChanged: changed,
+            onCalculatedColumnChanged: changed,
             onCalculatedColumnRemoved: removed,
             onCalculatedColumnValidationStateChanged: validity,
         });
@@ -45,7 +45,9 @@ describe('ag-grid calculated columns', () => {
             expect(changed).toHaveBeenCalledWith(
                 expect.objectContaining({
                     column: api.getColumn('profit'),
-                    oldExpression: '[revenue] * 2',
+                    changes: {
+                        calculatedExpression: { oldValue: '[revenue] * 2', newValue: '[revenue] * 3' },
+                    },
                     expression: '[revenue] * 3',
                     source: 'api',
                 })
@@ -76,7 +78,7 @@ describe('ag-grid calculated columns', () => {
             rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
             onCalculatedColumnCreated: created,
-            onCalculatedColumnExpressionChanged: changed,
+            onCalculatedColumnChanged: changed,
             onCalculatedColumnRemoved: removed,
         });
         await new GridColumns(api, `dispatches calculated column columnDefs lifecycle events setup`).checkColumns(`
@@ -101,15 +103,25 @@ describe('ag-grid calculated columns', () => {
         );
 
         updateCalculatedColumnDef(api, 'profit', { headerName: 'Profit' });
-        await waitFor(() => expect(api.getColumn('profit')!.getColDef().headerName).toBe('Profit'));
-        expect(changed).not.toHaveBeenCalled();
+        await waitFor(() =>
+            expect(changed).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    column: api.getColumn('profit'),
+                    changes: { headerName: { oldValue: undefined, newValue: 'Profit' } },
+                    expression: '[revenue] - [cost]',
+                    source: 'api',
+                })
+            )
+        );
 
         updateCalculatedColumnDef(api, 'profit', { calculatedExpression: '[revenue] * [cost]' });
         await waitFor(() =>
             expect(changed).toHaveBeenCalledWith(
                 expect.objectContaining({
                     column: api.getColumn('profit'),
-                    oldExpression: '[revenue] - [cost]',
+                    changes: {
+                        calculatedExpression: { oldValue: '[revenue] - [cost]', newValue: '[revenue] * [cost]' },
+                    },
                     expression: '[revenue] * [cost]',
                     source: 'api',
                 })
@@ -318,7 +330,7 @@ describe('ag-grid calculated columns', () => {
                 { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
             ],
             onCalculatedColumnCreated: created,
-            onCalculatedColumnExpressionChanged: changed,
+            onCalculatedColumnChanged: changed,
         });
         await new GridColumns(
             api,
@@ -352,7 +364,9 @@ describe('ag-grid calculated columns', () => {
             expect(changed).toHaveBeenCalledWith(
                 expect.objectContaining({
                     column: api.getColumn('profit'),
-                    oldExpression: '[revenue] - [cost]',
+                    changes: {
+                        calculatedExpression: { oldValue: '[revenue] - [cost]', newValue: '[missing] + 1' },
+                    },
                     expression: '[missing] + 1',
                     source: 'api',
                 })
@@ -378,7 +392,7 @@ describe('ag-grid calculated columns', () => {
                 { field: 'cost', headerName: 'Cost' },
                 { colId: 'profit', headerName: 'Profit', calculatedExpression: '[revenue] - [cost]' },
             ],
-            onCalculatedColumnExpressionChanged: changed,
+            onCalculatedColumnChanged: changed,
             onCalculatedColumnRemoved: removed,
         });
         await new GridColumns(api, `dispatches calculated column UI update and remove events setup`).checkColumns(`
@@ -403,7 +417,9 @@ describe('ag-grid calculated columns', () => {
             expect(changed).toHaveBeenCalledWith(
                 expect.objectContaining({
                     column: api.getColumn('profit'),
-                    oldExpression: '[revenue] - [cost]',
+                    changes: {
+                        calculatedExpression: { oldValue: '[revenue] - [cost]', newValue: '[revenue] * [cost]' },
+                    },
                     expression: '[revenue] * [cost]',
                     source: 'calculatedColumn',
                 })
