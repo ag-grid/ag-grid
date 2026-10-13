@@ -553,13 +553,13 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     /** `colsById` is seeded after the build, so `processColDef` resolves columns against the ones built so far, the
-     *  generated auto group columns, and the dynamic columns spliced in alongside them. */
+     *  auto group columns the incoming grouping keeps, and the dynamic columns spliced in alongside them. */
     private createColDefProcessor(
         processColDef: ProcessColDef,
         builtColumns: AgColumn[]
     ): (dc: DynamicCalculatedColumn, colId: string) => ColDef {
         const colsById = new Map(builtColumns.map((col) => [col.colId, col]));
-        const autoCols = this.beans.autoColSvc?.columns ?? [];
+        const autoCols = this.getKeptAutoCols(builtColumns);
         for (let i = 0, len = autoCols.length; i < len; ++i) {
             colsById.set(autoCols[i].colId, autoCols[i]);
         }
@@ -569,6 +569,28 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             getCol: (colId) => colsById.get(colId) ?? dynamicColumns.get(colId)?.instance ?? null,
         };
         return (dc, colId) => this.processUserColDef(processColDef, dc, colId, lookup);
+    }
+
+    /** Row grouping is extracted from the build after `contributeTo`, and auto group columns are refreshed after that,
+     *  so `autoColSvc.columns` still holds the previous build's. Keep those the incoming grouping does not remove. */
+    private getKeptAutoCols(builtColumns: AgColumn[]): AgColumn[] {
+        const { autoColSvc, rowGroupColsSvc, colModel, gos } = this.beans;
+        const autoCols = autoColSvc?.columns;
+        if (!autoCols?.length || gos.get('treeData')) {
+            return autoCols ?? [];
+        }
+        const previousCols = new Set(colModel.colDefList);
+        const groupedColIds = new Set<string>();
+        for (let i = 0, len = builtColumns.length; i < len; ++i) {
+            const col = builtColumns[i];
+            if (rowGroupColsSvc?.willExtractCol(col, !previousCols.has(col))) {
+                groupedColIds.add(col.colId);
+            }
+        }
+        return autoCols.filter((autoCol) => {
+            const showRowGroup = autoCol.colDef.showRowGroup;
+            return typeof showRowGroup === 'string' ? groupedColIds.has(showRowGroup) : groupedColIds.size > 0;
+        });
     }
 
     private clearDynamicColumnInstances(): void {

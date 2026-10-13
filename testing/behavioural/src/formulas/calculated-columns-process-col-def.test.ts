@@ -793,6 +793,28 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         }
     });
 
+    test('sourceColumn is null once a column rebuild removes the grouping behind the auto group column', async () => {
+        const processColDef = vi.fn<ProcessColDef>();
+        const api = createGrid('pcd-source-auto-group-removed', {
+            rowData: ROW_DATA,
+            columnDefs: [{ field: 'g', type: 'grouped', hide: true }, { field: 'a' }, { field: 'b' }],
+            columnTypes: { grouped: { rowGroup: true } },
+            calculatedColumns: { processColDef },
+        });
+        await waitFor(() => expect(api.getColumn('ag-Grid-AutoColumn')).not.toBeNull());
+        const calcId = await addViaDialog(api, 'ag-Grid-AutoColumn', '[a] * 2');
+        processColDef.mockClear();
+
+        api.setGridOption('columnTypes', { grouped: { rowGroup: false } });
+
+        expect(api.getColumn('ag-Grid-AutoColumn')).toBeNull();
+        expect(api.getColumn(calcId)).not.toBeNull();
+        expect(processColDef).toHaveBeenCalled();
+        for (const [params] of processColDef.mock.calls) {
+            expect(params.sourceColumn).toBeNull();
+        }
+    });
+
     test('without a callback the dialog title of a restored column inherits defaultColDef.headerName', async () => {
         const api = gridWithUserColumn('pcd-default-header', 'calc', '[a] * 2', undefined, {
             defaultColDef: { headerName: 'Inherited' },
