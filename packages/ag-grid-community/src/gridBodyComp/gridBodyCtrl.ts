@@ -464,6 +464,16 @@ export class GridBodyCtrl extends BeanStub {
         }, COLUMN_WIDTH_ANIMATION_MS);
     }
 
+    /** Ends a lingering animation window early so widths written next apply immediately; no-op mid-operation. */
+    public cancelColumnWidthAnimation(): void {
+        if (this.columnWidthAnimationDepth > 0 || this.columnWidthAnimationTimeout === undefined) {
+            return;
+        }
+        window.clearTimeout(this.columnWidthAnimationTimeout);
+        this.columnWidthAnimationTimeout = undefined;
+        this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_WIDTH_ANIMATION, false);
+    }
+
     public setCellTextSelection(selectable: boolean = false): void {
         this.comp.setCellSelectableCss(CSS_CLASS_CELL_SELECTABLE, selectable);
     }

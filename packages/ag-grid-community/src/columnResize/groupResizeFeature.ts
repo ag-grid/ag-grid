@@ -1,3 +1,4 @@
+import { _cancelColumnWidthAnimation } from '../columns/columnWidthAnimation';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
@@ -78,6 +79,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         this.resizeTakeFromStartWidth = groupAfterStartWidth;
         this.resizeTakeFromRatios = groupAfterRatios;
 
+        _cancelColumnWidthAnimation(this.beans);
         this.toggleColumnResizing(true);
     }
 

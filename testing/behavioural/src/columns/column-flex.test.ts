@@ -1042,4 +1042,33 @@ describe('Column Flex with animateColumnResizing', () => {
             restoreOffsetParent?.();
         }
     });
+
+    test('a viewport resize straight after an animated change re-flexes without animation', async () => {
+        const originalGridWidth = mockGridLayout.gridWidth;
+        let uninstallResizeObserver: (() => void) | undefined;
+        let restoreOffsetParent: (() => void) | undefined;
+        try {
+            restoreOffsetParent = polyfillOffsetParent();
+            uninstallResizeObserver = installMockResizeObserver();
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                defaultColDef: { flex: 1 },
+                animateColumnResizing: true,
+            });
+
+            api.setColumnsVisible(['c'], false);
+            expect(api.getColumn('a')!.getActualWidth()).toBe(1000);
+            expect(isAnimating(api)).toBe(true);
+
+            mockGridLayout.gridWidth = 1200;
+            triggerResizeObservers();
+
+            await waitFor(() => expect(api.getColumn('a')!.getActualWidth()).toBe(1200));
+            expect(isAnimating(api)).toBe(false);
+        } finally {
+            mockGridLayout.gridWidth = originalGridWidth;
+            uninstallResizeObserver?.();
+            restoreOffsetParent?.();
+        }
+    });
 });

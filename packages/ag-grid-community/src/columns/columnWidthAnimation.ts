@@ -9,3 +9,9 @@ export function _setColumnWidthAnimation({ ctrlsSvc }: BeanCollection, enable: b
         gridBodyCtrl?.finishColumnWidthAnimation();
     }
 }
+
+/** Drops any lingering animation window so the next width changes apply immediately, e.g. during a header drag. */
+export function _cancelColumnWidthAnimation({ ctrlsSvc }: BeanCollection): void {
+    const gridBodyCtrl = ctrlsSvc.isAlive() ? ctrlsSvc.get('gridBodyCtrl') : undefined;
+    gridBodyCtrl?.cancelColumnWidthAnimation();
+}

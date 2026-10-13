@@ -1,5 +1,6 @@
 import { _setDisplayed } from 'ag-stack';
 
+import { _cancelColumnWidthAnimation } from '../columns/columnWidthAnimation';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
@@ -105,6 +106,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         this.resizeStartPinnedWidth = this.getPinnedWidth();
         this.resizeWithShiftKey = shiftKey;
 
+        _cancelColumnWidthAnimation(this.beans);
         this.toggleColumnResizing(true);
     }
 
