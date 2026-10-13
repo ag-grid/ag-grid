@@ -1017,14 +1017,20 @@ describe('Column Flex with animateColumnResizing', () => {
         await waitFor(() => expect(isAnimating(animated)).toBe(false));
     });
 
-    test.each<[string, (api: GridApi) => void]>([
+    test.each<[string, (api: GridApi) => void, string[]]>([
         [
             'applyColumnState',
             (api) => api.applyColumnState({ state: [{ colId: 'a' }, { colId: 'b' }], applyOrder: true }),
+            ['a', 'b'],
         ],
-        ['resetColumnState', (api) => api.resetColumnState()],
-        ['setGridOption columnDefs', (api) => api.setGridOption('columnDefs', [{ colId: 'a' }, { colId: 'b' }])],
-    ])('a reordering %s does not animate when suppressColumnMoveAnimation is set', (_, reorder) => {
+        ['resetColumnState', (api) => api.resetColumnState(), ['a', 'b', 'c']],
+        [
+            'setGridOption columnDefs',
+            (api) => api.setGridOption('columnDefs', [{ colId: 'a' }, { colId: 'b' }]),
+            ['a', 'b'],
+        ],
+        ['moveColumns', (api) => api.moveColumns(['a'], 0), ['a', 'b']],
+    ])('a reordering %s does not animate when suppressColumnMoveAnimation is set', (_, reorder, expectedOrder) => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
             defaultColDef: { flex: 1 },
@@ -1040,7 +1046,7 @@ describe('Column Flex with animateColumnResizing', () => {
 
         reorder(api);
 
-        expect(api.getAllDisplayedColumns().map((col) => col.getColId())).not.toEqual(['b', 'a']);
+        expect(api.getAllDisplayedColumns().map((col) => col.getColId())).toEqual(expectedOrder);
         expect(isAnimating(api)).toBe(false);
     });
 

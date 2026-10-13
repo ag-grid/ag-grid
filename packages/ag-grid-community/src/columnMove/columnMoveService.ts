@@ -2,6 +2,7 @@ import type { HorizontalDirection } from 'ag-stack';
 import { _last, _moveInArray, _removeFromArray } from 'ag-stack';
 
 import { _setColsVisible } from '../columns/columnStateUtils';
+import { _cancelColumnWidthAnimation } from '../columns/columnWidthAnimation';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { GridDragSource } from '../dragAndDrop/dragAndDropService';
@@ -46,6 +47,10 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             return;
         }
 
+        if (this.gos.get('suppressColumnMoveAnimation')) {
+            // a lingering width transition would otherwise slide the moved columns
+            _cancelColumnWidthAnimation(this.beans);
+        }
         colAnimation?.start();
         try {
             // we want to pull all the columns out first and put them into an ordered list
