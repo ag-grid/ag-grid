@@ -123,6 +123,12 @@
     font-size: var(--text-fs-xl);
     font-weight: var(--text-regular);
     color: var(--color-text-tertiary);
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+        text-decoration: underline;
+    }
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         position: absolute;
