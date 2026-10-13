@@ -747,6 +747,40 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(cellValue(api, 'calc')).toBe('#ERROR!');
     });
 
+    test('the validation state event follows the expression the callback rewrites', async () => {
+        const validity = vi.fn();
+        const api = createGrid('pcd-validation-effective', {
+            rowData: ROW_DATA,
+            columnDefs: columnDefs(),
+            calculatedColumns: {
+                processColDef: (params) =>
+                    params.colDef.colId === 'calc'
+                        ? { ...params.colDef, calculatedExpression: '[ref] + 1' }
+                        : params.colDef,
+            },
+            initialState: {
+                userColumns: [...userColumnsState('ref', '[a]')!, ...userColumnsState('calc', '[a] * 2')!],
+            },
+            onCalculatedColumnValidationStateChanged: validity,
+        });
+        await waitFor(() => expect(cellValue(api, 'calc')).toBe(11));
+        expect(validity).not.toHaveBeenCalled();
+
+        api.showColumnMenu('ref');
+        await clickMenuOption('Remove Calculated Column');
+
+        await waitFor(() =>
+            expect(validity).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    column: api.getColumn('calc'),
+                    expression: '[ref] + 1',
+                    valid: false,
+                    reason: 'unknownReference',
+                })
+            )
+        );
+    });
+
     test('an unchanged restricted expression can still be applied when the callback rewrites it', async () => {
         const changed = vi.fn();
         const api = createGrid('pcd-restricted-unchanged', {

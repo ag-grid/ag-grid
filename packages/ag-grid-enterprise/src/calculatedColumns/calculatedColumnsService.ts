@@ -211,7 +211,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     /** The column's definition as the user authored it. The dialog, the reference mapper, saved validation errors and
-     *  calculated-column events all read this, so `processColDef` output never shows as, or hides, a user edit. */
+     *  the created/changed/removed events all read this, so `processColDef` output never shows as, or hides, a user
+     *  edit. Validation state events read the built expression instead, as that is the one the grid evaluates. */
     private getAuthoredColDef(column: AgColumn): ColDef {
         return this.dynamicColumns.get(column.colId)?.authoredColDef ?? column.colDef;
     }
@@ -1289,7 +1290,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         for (let i = 0, len = cols.length; i < len; ++i) {
             const column = cols[i];
             if (column.isCalculatedCol) {
-                callback(column, column.colId, this.getAuthoredColDef(column).calculatedExpression ?? '');
+                callback(column, column.colId, column.colDef.calculatedExpression ?? '');
             }
         }
     }
