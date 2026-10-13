@@ -672,7 +672,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             // remove the selection column (paste into selection is not supported)
             // this columns should be removed from the paste operation but not
             // from the range itself.
-            const selectionColIdx = columns.findIndex(isColumnSelectionCol);
+            const selectionColIdx = columns.findIndex((col) => isColumnSelectionCol(col));
             if (selectionColIdx !== -1) {
                 columns.splice(selectionColIdx, 1);
             }
