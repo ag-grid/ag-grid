@@ -14,7 +14,7 @@ import {
     _isHiddenSingleChildGroup,
     _isServerSideRowModel,
 } from '../gridOptionsUtils';
-import type { ExportParams, ShouldRowBeSkippedParams } from '../interfaces/exportParams';
+import type { ExportParams } from '../interfaces/exportParams';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { IRowModel } from '../interfaces/iRowModel';
 import { createExportHeaderLayout } from './exportHeaderLayout';
@@ -64,7 +64,6 @@ export class GridSerializer extends BeanStub implements NamedBean {
         columnsToExport: AgColumn[],
         node: RowNode
     ): void {
-        const rowSkipper: (params: ShouldRowBeSkippedParams) => boolean = params.shouldRowBeSkipped || (() => false);
         // if onlySelected, we ignore groupHideOpenParents as the user has explicitly selected the rows they wish to export.
         // similarly, if specific rowNodes are provided we do the same. (the clipboard service uses rowNodes to define which rows to export)
         const isClipboardExport = params.rowPositions != null;
@@ -92,16 +91,14 @@ export class GridSerializer extends BeanStub implements NamedBean {
             return;
         }
 
-        const shouldRowBeSkipped = rowSkipper(_addGridCommonParams(this.gos, { node }));
-
-        if (shouldRowBeSkipped) {
+        if (params.shouldRowBeSkipped?.(_addGridCommonParams(this.gos, { node }))) {
             return;
         }
 
         const rowAccumulator: RowAccumulator = gridSerializingSession.onNewBodyRow(node);
-        columnsToExport.forEach((column: AgColumn, index: number) => {
-            rowAccumulator.onColumn(column, index, node);
-        });
+        for (let i = 0, len = columnsToExport.length; i < len; ++i) {
+            rowAccumulator.onColumn(columnsToExport[i], i, node);
+        }
 
         if (params.getCustomContentBelowRow) {
             const content = params.getCustomContentBelowRow(_addGridCommonParams(this.gos, { node }));

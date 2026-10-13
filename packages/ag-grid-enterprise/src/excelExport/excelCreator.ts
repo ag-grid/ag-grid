@@ -503,6 +503,7 @@ export class ExcelCreator
         });
 
         const { gos, cellStyles } = this.beans;
+        const defaultStyles = ['cell'];
 
         return (params) => {
             const { rowType, rowIndex, value, column, columnGroup, node } = params;
@@ -531,13 +532,15 @@ export class ExcelCreator
                 return headerClasses;
             }
 
-            const applicableStyles: string[] = ['cell'];
-
             if (!styleIds.length) {
-                return applicableStyles;
+                return defaultStyles;
             }
 
-            const colDef = (column as AgColumn).getDefinition();
+            const colDef = (column as AgColumn).getColDef();
+            if (!colDef.cellClass && !colDef.cellClassRules) {
+                return defaultStyles;
+            }
+            const applicableStyles: string[] = ['cell'];
             cellStyles?.processAllCellClasses(
                 colDef,
                 _addGridCommonParams(gos, {
@@ -555,6 +558,9 @@ export class ExcelCreator
                 }
             );
 
+            if (applicableStyles.length < 2) {
+                return applicableStyles;
+            }
             return applicableStyles.sort((left: string, right: string): number => {
                 const leftIdx = styleIdOrder.get(left) ?? -1;
                 const rightIdx = styleIdOrder.get(right) ?? -1;

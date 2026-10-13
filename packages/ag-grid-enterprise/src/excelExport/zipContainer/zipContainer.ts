@@ -1,5 +1,7 @@
-import type { PreprocessedZipFile, ProcessedZipFile } from './zipContainerHelper';
+import type { ProcessedZipFile } from './zipContainerHelper';
 import { buildCentralDirectoryEnd, getHeaderAndContent, getHeaders, preprocessFileForZip } from './zipContainerHelper';
+
+const MAX_CONCURRENT_COMPRESSIONS = 4;
 
 export interface ZipFile {
     path: string;
@@ -37,15 +39,19 @@ export class ZipContainer {
     }
 
     public async getZipFile(mimeType: string = 'application/zip'): Promise<Blob> {
-        const textOutput = await this.buildCompressedFileStream();
-        this.clearStream();
-        return new Blob([textOutput], { type: mimeType });
+        try {
+            return await this.buildCompressedFileStream(mimeType);
+        } finally {
+            this.clearStream();
+        }
     }
 
     public getUncompressedZipFile(mimeType: string = 'application/zip'): Blob {
-        const textOutput = this.buildFileStream();
-        this.clearStream();
-        return new Blob([textOutput], { type: mimeType });
+        try {
+            return this.buildFileStream(mimeType);
+        } finally {
+            this.clearStream();
+        }
     }
 
     private clearStream(): void {
@@ -53,72 +59,47 @@ export class ZipContainer {
         this.files = [];
     }
 
-    private packageFiles(files: ProcessedZipFile[]) {
+    private packageFiles(files: ProcessedZipFile[], mimeType: string): Blob {
         let fileLen: number = 0;
         let folderLen: number = 0;
+        const fileData: BlobPart[] = [];
+        const folderData: BlobPart[] = [];
 
         for (const currentFile of files) {
             const { localFileHeader, centralDirectoryHeader, content } = currentFile;
             fileLen += localFileHeader.length + content.length;
             folderLen += centralDirectoryHeader.length;
-        }
-
-        const fileData: Uint8Array = new Uint8Array(fileLen);
-        const folderData: Uint8Array = new Uint8Array(folderLen);
-
-        let fileOffset = 0;
-        let folderOffset = 0;
-        for (const currentFile of files) {
-            const { localFileHeader, centralDirectoryHeader, content } = currentFile;
-
-            // Append fileHeader to fData
-            fileData.set(localFileHeader, fileOffset);
-            fileOffset += localFileHeader.length;
-
-            // Append content to fData
-            fileData.set(content, fileOffset);
-            fileOffset += content.length;
-
-            // Append folder header to foData
-            folderData.set(centralDirectoryHeader, folderOffset);
-            folderOffset += centralDirectoryHeader.length;
+            fileData.push(localFileHeader, content);
+            folderData.push(centralDirectoryHeader);
         }
 
         const folderEnd = buildCentralDirectoryEnd(files.length, folderLen, fileLen);
-
-        // Append folder data and file data
-        const result = new Uint8Array(fileData.length + folderData.length + folderEnd.length);
-
-        result.set(fileData);
-        result.set(folderData, fileData.length);
-        result.set(folderEnd, fileData.length + folderData.length);
-
-        return result;
+        return new Blob([...fileData, ...folderData, folderEnd], { type: mimeType });
     }
 
-    private async buildCompressedFileStream(): Promise<Uint8Array> {
+    private async buildCompressedFileStream(mimeType: string): Promise<Blob> {
         const totalFiles: ZipFile[] = [...this.folders, ...this.files];
-        const preprocessed: PreprocessedZipFile[] = await Promise.all(totalFiles.map(preprocessFileForZip));
         const processed: ProcessedZipFile[] = [];
 
         let offset = 0;
-        for (let i = 0; i < totalFiles.length; i++) {
-            const currentFile = totalFiles[i];
-            const { rawContent, rawSize, deflatedContent, deflatedSize, isCompressed } = preprocessed[i];
-            const headers = getHeaders(currentFile, isCompressed, offset, rawSize, rawContent, deflatedSize);
-            const contentToUse = deflatedContent ?? rawContent;
-            processed.push({
-                ...headers,
-                content: contentToUse,
-                isCompressed,
-            });
-            offset += headers.localFileHeader.length + contentToUse.length;
+        for (let start = 0, len = totalFiles.length; start < len; start += MAX_CONCURRENT_COMPRESSIONS) {
+            const batch = totalFiles.slice(start, start + MAX_CONCURRENT_COMPRESSIONS);
+            const preprocessed = await Promise.all(batch.map(preprocessFileForZip));
+            for (let i = 0, batchSize = batch.length; i < batchSize; ++i) {
+                const currentFile = batch[i];
+                const { rawContent, rawSize, deflatedContent, deflatedSize, isCompressed } = preprocessed[i];
+                const headers = getHeaders(currentFile, isCompressed, offset, rawSize, rawContent, deflatedSize);
+                const contentToUse = deflatedContent ?? rawContent;
+                processed.push({ ...headers, content: contentToUse, isCompressed });
+                offset += headers.localFileHeader.length + contentToUse.length;
+                currentFile.content = undefined;
+            }
         }
 
-        return this.packageFiles(processed);
+        return this.packageFiles(processed, mimeType);
     }
 
-    private buildFileStream(): Uint8Array {
+    private buildFileStream(mimeType: string): Blob {
         const totalFiles: ZipFile[] = [...this.folders, ...this.files];
         const readyFiles: ProcessedZipFile[] = [];
         let lL = 0;
@@ -130,6 +111,6 @@ export class ZipContainer {
             lL += localFileHeader.length + content.length;
         }
 
-        return this.packageFiles(readyFiles);
+        return this.packageFiles(readyFiles, mimeType);
     }
 }
