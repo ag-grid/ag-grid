@@ -605,7 +605,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         await clickMenuOption('Edit Calculated Column');
         await waitFor(() => getDialog());
         const dialog = within(getDialog());
-        expect(dialog.getByRole('button', { name: 'Apply', exact: true })).toBeEnabled();
+        expect(dialog.getByRole<HTMLButtonElement>('button', { name: 'Apply' }).disabled).toBe(false);
         expect(dialog.queryByRole('button', { name: /^(Columns|Functions|Operators)$/ })).toBeNull();
     });
 
