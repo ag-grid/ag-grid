@@ -97,7 +97,8 @@
     flex: 0 0 auto;
 }
 
-.example-wrapper:not(.example-wrapper--row) > :not(.example-controls, .example-header) {
+/* Zero specificity, so an example that sizes its own element by class or tag keeps that size */
+:where(.example-wrapper:not(.example-wrapper--row)) > :where(:not(.example-controls, .example-header)) {
     flex: 1 1 0;
     min-height: 0;
 }

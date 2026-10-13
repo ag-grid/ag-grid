@@ -2,6 +2,10 @@
     font-weight: bold;
 }
 
+.example-wrapper {
+    gap: 0;
+}
+
 .top {
     flex: 1 1 auto;
 }
