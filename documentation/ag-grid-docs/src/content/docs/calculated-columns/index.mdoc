@@ -274,6 +274,32 @@ const gridOptions = {
 
 {% gridExampleRunner title="Deferred Apply Mode" name="calculated-columns-apply-mode" /%}
 
+### processColDef
+
+Use `processColDef` to customise calculated columns that users create in the dialog, for example to add a filter or allow aggregation. It receives the column's own definition, as set in the dialog, and returns the definition to use. The returned definition takes precedence over `defaultColDef` and column types:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: {
+        processColDef: (params) => ({
+            ...params.colDef,
+            filter: true,
+            enableValue: params.colDef.cellDataType === 'number',
+        }),
+    },
+};
+```
+
+In the example, the **Profit** column is restored from Grid State as if a user had created it, so it has a filter button and can be aggregated from the column menu.
+
+{% gridExampleRunner title="Customising Calculated Column Definitions" name="calculated-columns-process-col-def" /%}
+
+{% interfaceDocumentation interfaceName="CalculatedColumnProcessColDefParams" /%}
+
+{% note %}
+The callback runs each time the column is built, including on every dialog edit and on restore from [Grid State](./grid-state/). It does not run for calculated columns declared in `columnDefs`. The dialog and Grid State keep the user's values, not the callback's. `colId`, `editable`, `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor` and `cellEditorSelector` are always overridden. Prefer `initial*` properties, such as `initialWidth`, to stateful ones.
+{% /note %}
+
 ## Advanced Calculated Columns
 
 Calculated columns can use the same [Mathematical Operators](./formula-reference/#mathematical-operators) and [Provided Functions](./formula-reference/#provided-functions) as [formulas](./formulas/), and can reference other calculated columns in the same row. This allows chained derived values such as profit, margin and status.
