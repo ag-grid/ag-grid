@@ -193,7 +193,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         }
 
         const highlighted = column.getHighlighted();
-        const isColumnMoveAtThisLevel = !!this.rowCtrl.getHeaderCellCtrls().find((ctrl) => {
+        const isColumnMoveAtThisLevel = this.rowCtrl.getHeaderCellCtrls().some((ctrl) => {
             return ctrl.column.isMoving();
         });
 

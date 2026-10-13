@@ -199,7 +199,7 @@ export function addXlsxHeaderFooterImageToMap(
         XLSX_WORKSHEET_HEADER_FOOTER_IMAGES.set(sheetIndex, headerFooterImagesForSheet);
     }
 
-    if (!headerFooterImagesForSheet.find((img) => img.id === image.id)) {
+    if (!headerFooterImagesForSheet.some((img) => img.id === image.id)) {
         headerFooterImagesForSheet.push(image as ExcelHeaderFooterCalculatedImage);
     }
 }
