@@ -30,7 +30,7 @@ const gridOptions = {
 - `onUnsubscribe` receives `ViewportRowRef` objects, which hold only the `id`, `type`, `parentKeys`, `level` and, for rows that have a key, the `route`. These are captured when the row is subscribed, as the row node may no longer exist when it is unsubscribed.
 - Every subscribed row is unsubscribed exactly once.
 - When rows change, `onUnsubscribe` is called before `onSubscribe`.
-- A row moved to another parent, for example by a transaction that changes its group or data path, is unsubscribed with its old `parentKeys` and `route`, then subscribed with the new ones.
+- A row moved to another parent, for example by a transaction that changes its group or data path, is unsubscribed with its old `parentKeys` and `route`, then subscribed with the new ones. A tree data row that gains its first child or loses its last one is also unsubscribed, then subscribed with `hasChildren` updated.
 - New row data keeps the rows whose IDs are still present, so only the dropped rows are unsubscribed.
 
 {% if isFramework("react") %}
@@ -76,7 +76,7 @@ Only loaded rows in view are passed to the handlers. The following rows are neve
 
 - [Loading placeholder rows](./server-side-model-loading-rows/) and [rows that failed to load](./server-side-model-retry/).
 - [Detail Rows](./master-detail/) and [Full Width Rows](./full-width-rows/).
-- [Group total (footer) rows and the grand total row](./aggregation-total-rows/), including when the grand total row is pinned.
+- [Group total (footer) rows and the grand total row](./aggregation-total-rows/), including when the grand total row is pinned, and the root row shown in [pivot mode](./pivoting/) without row groups, which holds the totals.
 - Rows [provided](./row-pinning/#providing-pinned-row-data) with `pinnedTopRowData` or `pinnedBottomRowData`. These rows are not in the row model, so there is no source row to subscribe to.
 
 Rows [pinned](./row-pinning/) by the user or with `isRowPinned` are always in view, so a pinned row is subscribed even when its place in the grid is scrolled out of view. It is unsubscribed once it is neither pinned nor in view.

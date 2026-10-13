@@ -714,12 +714,15 @@ describe('CSRM viewportSubscription', () => {
         await waitFor(() =>
             expect(recorder.subscribed.get('c')).toMatchObject({ route: ['A', 'C'], parentKeys: ['A'], level: 1 })
         );
+        // b loses its only child, so it is passed again with hasChildren updated.
         expect(recorder.calls.slice(1)).toEqual([
-            { type: 'unsubscribe', ids: ['c'] },
-            { type: 'subscribe', ids: ['c'] },
+            { type: 'unsubscribe', ids: ['b', 'c'] },
+            { type: 'subscribe', ids: ['b', 'c'] },
         ]);
+        expect(recorder.subscribed.get('b')).toMatchObject({ hasChildren: false });
         // The ref passed to onUnsubscribe is the one captured when the row was subscribed.
         expect(recorder.unsubscribedRefs).toEqual([
+            { type: 'tree', id: 'b', route: ['A', 'B'], parentKeys: ['A'], level: 1 },
             { type: 'tree', id: 'c', route: ['A', 'B', 'C'], parentKeys: ['A', 'B'], level: 2 },
         ]);
         expect(recorder.violations).toEqual([]);
@@ -774,6 +777,35 @@ describe('CSRM viewportSubscription', () => {
         api.setGridOption('viewportSubscription', { ...recorder.handlers, includeGroups: false });
 
         expect(recorder.ids()).toEqual(['x']);
+        expect(recorder.violations).toEqual([]);
+    });
+
+    test('a tree data row that gains or loses its only child is unsubscribed and subscribed again with hasChildren updated', async () => {
+        const recorder = createRecorder();
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'value' }],
+            treeData: true,
+            groupDefaultExpanded: -1,
+            getDataPath: (data) => data.path,
+            getRowId: (params) => params.data.id,
+            rowData: [{ id: 'a', path: ['A'], value: 1 }],
+            viewportSubscription: recorder.handlers,
+        });
+        expect(recorder.subscribed.get('a')).toMatchObject({ hasChildren: false });
+
+        api.applyTransaction({ add: [{ id: 'b', path: ['A', 'B'], value: 2 }] });
+        await waitFor(() => expect(recorder.subscribed.get('a')).toMatchObject({ hasChildren: true }));
+        expect(recorder.calls.slice(1)).toEqual([
+            { type: 'unsubscribe', ids: ['a'] },
+            { type: 'subscribe', ids: ['a', 'b'] },
+        ]);
+
+        api.applyTransaction({ remove: [{ id: 'b', path: ['A', 'B'], value: 2 }] });
+        await waitFor(() => expect(recorder.subscribed.get('a')).toMatchObject({ hasChildren: false }));
+        expect(recorder.calls.slice(3)).toEqual([
+            { type: 'unsubscribe', ids: ['a', 'b'] },
+            { type: 'subscribe', ids: ['a'] },
+        ]);
         expect(recorder.violations).toEqual([]);
     });
 });

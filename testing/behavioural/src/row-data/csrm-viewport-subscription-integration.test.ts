@@ -205,10 +205,13 @@ describe('CSRM viewportSubscription integration', () => {
             api.applyTransaction({ update: [{ id: 'r', parentId: 's' }] });
 
             await waitFor(() => expect(recorder.subscribed.get('r')).toMatchObject({ parentKeys: ['s'], level: 1 }));
+            // q loses its only child and s gains its first, so both are passed again with hasChildren updated.
             expect(recorder.calls.slice(1)).toEqual([
-                { type: 'unsubscribe', ids: ['r'] },
-                { type: 'subscribe', ids: ['r'] },
+                { type: 'unsubscribe', ids: ['q', 'r', 's'] },
+                { type: 'subscribe', ids: ['q', 's', 'r'] },
             ]);
+            expect(recorder.subscribed.get('q')).toMatchObject({ hasChildren: false });
+            expect(recorder.subscribed.get('s')).toMatchObject({ hasChildren: true });
             expect(recorder.violations).toEqual([]);
         });
     });
@@ -791,7 +794,7 @@ describe('CSRM viewportSubscription integration', () => {
                 expect(recorder.violations).toEqual([]);
             });
 
-            test('removing every row group in pivot mode unsubscribes the groups and subscribes the single root row', async () => {
+            test('removing every row group in pivot mode unsubscribes the groups and leaves out the root row', async () => {
                 const recorder = createRecorder();
                 const { api } = await createPivotModeGrid(recorder);
 
@@ -803,11 +806,8 @@ describe('CSRM viewportSubscription integration', () => {
                 expect(displayedIds(api)).toEqual(['ROOT_NODE_ID']);
                 expect(recorder.calls.slice(1)).toEqual([
                     { type: 'unsubscribe', ids: ['row-group-country-Ireland', 'row-group-country-Spain'] },
-                    { type: 'subscribe', ids: ['ROOT_NODE_ID'] },
                 ]);
-                expect([...recorder.subscribed.values()]).toEqual([
-                    { type: 'group', id: 'ROOT_NODE_ID', route: [], parentKeys: [], level: -1, data: undefined },
-                ]);
+                expect(recorder.ids()).toEqual([]);
                 expect(recorder.violations).toEqual([]);
             });
         });

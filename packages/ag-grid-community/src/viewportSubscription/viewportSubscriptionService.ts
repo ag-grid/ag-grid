@@ -22,6 +22,7 @@ import type {
 interface SubscribedRow {
     ref: ViewportRowRef;
     node: RowNode;
+    isGroup: boolean;
 }
 
 interface ActiveSubscription {
@@ -163,17 +164,17 @@ export class ViewportSubscriptionService extends BeanStub implements NamedBean {
     private flush(sub: ActiveSubscription): void {
         const inView = this.getViewportRows(sub);
 
-        // A row moved to another parent by a transaction is passed again, as its captured ref is out of date.
+        // A row moved to another parent, or that gained or lost children, is passed again, as its captured ref is out of date.
         const removed: ViewportRowRef[] = [];
         sub.rows.forEach((row, id) => {
-            if (inView.get(id) !== row.node || hasMovedParent(row.ref, row.node)) {
+            if (inView.get(id) !== row.node || this.isStale(row, row.node)) {
                 removed.push(row.ref);
             }
         });
         const added: RowNode[] = [];
         inView.forEach((node, id) => {
             const existing = sub.rows.get(id);
-            if (existing?.node !== node || hasMovedParent(existing.ref, node)) {
+            if (existing?.node !== node || this.isStale(existing, node)) {
                 added.push(node);
             }
         });
@@ -293,7 +294,8 @@ export class ViewportSubscriptionService extends BeanStub implements NamedBean {
     /** Stores the row as subscribed and returns the row to pass to `onSubscribe`. */
     private addRow(sub: ActiveSubscription, id: string, node: RowNode): ViewportRow {
         const ref = this.createRef(id, node);
-        sub.rows.set(id, { ref, node });
+        const isGroup = this.isGroup(node);
+        sub.rows.set(id, { ref, node, isGroup });
         // Handlers get their own arrays: changing them must not affect the stored ref the move check compares.
         const parentKeys = ref.parentKeys.slice();
         const data = node.data;
@@ -301,7 +303,7 @@ export class ViewportSubscriptionService extends BeanStub implements NamedBean {
             case 'group':
                 return { ...ref, parentKeys, route: ref.route.slice(), data };
             case 'tree': {
-                const row: ViewportTreeRow = { ...ref, parentKeys, hasChildren: this.isGroup(node), data };
+                const row: ViewportTreeRow = { ...ref, parentKeys, hasChildren: isGroup, data };
                 if (ref.route) {
                     row.route = ref.route.slice();
                 }
@@ -325,6 +327,10 @@ export class ViewportSubscriptionService extends BeanStub implements NamedBean {
         return { type: 'leaf', id, parentKeys, level };
     }
 
+    private isStale(row: SubscribedRow, node: RowNode): boolean {
+        return row.isGroup !== this.isGroup(node) || hasMovedParent(row.ref, node);
+    }
+
     private createParams(): ViewportSubscriptionParams {
         return _addGridCommonParams<ViewportSubscriptionParams>(this.gos, {});
     }
@@ -335,7 +341,8 @@ export class ViewportSubscriptionService extends BeanStub implements NamedBean {
     }
 
     private isSubscribable(node: RowNode, includeGroups: boolean): boolean {
-        if (node.stub || node.failedLoad || node.detail || node.footer || node.rowPinned != null) {
+        // Level -1 is the root row, shown in pivot mode without row groups. It holds totals, like the grand total row.
+        if (node.level === -1 || node.stub || node.failedLoad || node.detail || node.footer || node.rowPinned != null) {
             return false;
         }
         if (!includeGroups && this.isGroup(node)) {
