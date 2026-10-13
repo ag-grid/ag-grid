@@ -16,7 +16,7 @@ import { applyPrevColumnsOrder } from './colsApplyPrevOrder';
 import { ColWrapperCache } from './columnGroups/colWrapperCache';
 import { captureColumnStateChanges, dispatchColStateChanges } from './columnStateUtils';
 import { _convertColumnEventSourceType, _destroyColumnTreeAll, _destroyColumnTreeUnused } from './columnUtils';
-import { _setColumnWidthAnimation } from './columnWidthAnimation';
+import { _startReorderingColumnWidthAnimation } from './columnWidthAnimation';
 
 // Two parallel col representations:
 //   colDefList / colDefTree  — PRIMARY cols (user-defined leaves + hierarchy virtuals).
@@ -219,9 +219,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const oldAllGroups = this.colDefAllGroups;
 
         this.beginColUpdate();
-        if (stateChanges) {
-            _setColumnWidthAnimation(beans, true);
-        }
+        const finishWidthAnimation = stateChanges ? _startReorderingColumnWidthAnimation(beans) : null;
         try {
             const builder = _buildColumnTree(
                 beans,
@@ -308,9 +306,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
                 colAutosize?.applyAutosizeStrategy();
             }
         } finally {
-            if (stateChanges) {
-                _setColumnWidthAnimation(beans, false);
-            }
+            finishWidthAnimation?.();
             this.endColUpdate();
         }
     }

@@ -28,7 +28,7 @@ import {
 } from './columnEventUtils';
 import { _setColGroupHeaderNameOverride } from './columnGroups/columnGroupState';
 import { GROUP_AUTO_COLUMN_ID, SELECTION_COLUMN_ID } from './columnUtils';
-import { _setColumnWidthAnimation } from './columnWidthAnimation';
+import { _setColumnWidthAnimation, _startReorderingColumnWidthAnimation } from './columnWidthAnimation';
 
 export interface ColumnStateParams {
     /** True if the column is hidden */
@@ -219,11 +219,8 @@ function applyColumnState(beans: BeanCollection, params: ApplyColumnStateParams,
         return false;
     }
 
-    const animateWidths = !(params.applyOrder && beans.gos.get('suppressColumnMoveAnimation'));
     colAnimation?.start();
-    if (animateWidths) {
-        _setColumnWidthAnimation(beans, true);
-    }
+    const finishWidthAnimation = _startReorderingColumnWidthAnimation(beans);
     try {
         // Capture once, before any mutation: the single dispatch below diffs the whole operation.
         const stateChanges = captureColumnStateChanges(beans);
@@ -242,9 +239,7 @@ function applyColumnState(beans: BeanCollection, params: ApplyColumnStateParams,
 
         return unmatched === null; // true ⇒ every provided state matched a column
     } finally {
-        if (animateWidths) {
-            _setColumnWidthAnimation(beans, false);
-        }
+        finishWidthAnimation();
         colAnimation?.finish();
     }
 }
@@ -530,12 +525,8 @@ function resetColumnState(beans: BeanCollection, source: ColumnEventType): void 
         }
     }
 
-    // the width transition also slides cells, so it must not bring back the reorder animation
-    const animateWidths = !beans.gos.get('suppressColumnMoveAnimation');
     colAnimation?.start();
-    if (animateWidths) {
-        _setColumnWidthAnimation(beans, true);
-    }
+    const finishWidthAnimation = _startReorderingColumnWidthAnimation(beans);
     try {
         // Single capture before any mutation — the lone finalize dispatch diffs the whole reset.
         const stateChanges = captureColumnStateChanges(beans);
@@ -584,9 +575,7 @@ function resetColumnState(beans: BeanCollection, source: ColumnEventType): void 
         // Re-order + refresh + dispatch once, over the final (ordered) structure.
         finalizeChange(beans, { state: orderState, applyOrder: true }, source, stateChanges);
     } finally {
-        if (animateWidths) {
-            _setColumnWidthAnimation(beans, false);
-        }
+        finishWidthAnimation();
         colAnimation?.finish();
     }
 

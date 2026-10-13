@@ -449,14 +449,20 @@ export class GridBodyCtrl extends BeanStub {
         this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_WIDTH_ANIMATION, true);
     }
 
-    public finishColumnWidthAnimation(): void {
+    /** `skipTransition` removes the class before any style recalc sees it, so nothing laid out since animates. */
+    public finishColumnWidthAnimation(skipTransition?: boolean): void {
         const depth = Math.max(0, this.columnWidthAnimationDepth - 1);
         this.columnWidthAnimationDepth = depth;
         if (depth > 0 || !this.eGridBody.classList.contains(CSS_CLASS_COLUMN_WIDTH_ANIMATION)) {
             return;
         }
-        // The class must outlive the width writes: a transition only starts if a style recalc sees it.
         window.clearTimeout(this.columnWidthAnimationTimeout);
+        this.columnWidthAnimationTimeout = undefined;
+        if (skipTransition) {
+            this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_WIDTH_ANIMATION, false);
+            return;
+        }
+        // The class must outlive the width writes: a transition only starts if a style recalc sees it.
         this.columnWidthAnimationTimeout = window.setTimeout(() => {
             this.columnWidthAnimationTimeout = undefined;
             if (this.isAlive()) {
