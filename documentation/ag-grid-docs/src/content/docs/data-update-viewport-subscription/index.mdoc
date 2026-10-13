@@ -48,15 +48,19 @@ Each row has a `type`, which tells the kinds of row apart:
 - `'leaf'`: any other row, such as a row in flat data or a leaf row under groups. It has no `route`.
 
 ```{% frameworkTransform=true %}
-onSubscribe: (rows) => {
-    rows.forEach((row) => {
-        if (row.type === 'group') {
-            stream.subscribeToGroup(row.route);
-        } else {
-            stream.subscribe(row.id);
-        }
-    });
-},
+const gridOptions = {
+    viewportSubscription: {
+        onSubscribe: (rows) => {
+            rows.forEach((row) => {
+                if (row.type === 'group') {
+                    stream.subscribeToGroup(row.route);
+                } else {
+                    stream.subscribe(row.id);
+                }
+            });
+        },
+    },
+};
 ```
 
 ## Subscribing and Unsubscribing
