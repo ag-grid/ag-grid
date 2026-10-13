@@ -65,6 +65,7 @@ export const sonarjsConfig = [
             'unicorn/no-typeof-undefined': 'error',
             'unicorn/no-useless-fallback-in-spread': 'error',
             'unicorn/prefer-array-some': 'error',
+            'unicorn/prefer-dom-node-dataset': 'error',
             'unicorn/prefer-native-coercion-functions': 'error',
             'unicorn/prefer-number-properties': 'error',
             'unicorn/prefer-single-call': 'error',

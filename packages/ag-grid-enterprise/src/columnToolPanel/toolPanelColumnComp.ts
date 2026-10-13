@@ -279,7 +279,8 @@ export class ToolPanelColumnComp extends Component {
         const { gos, eventSvc, dragAndDrop } = beans;
 
         if (isDeferredMode(this.params)) {
-            eDragHandle.setAttribute('data-column-tool-panel-deferred', '');
+            // Icons are HTML or SVG elements, both of which have `dataset`.
+            (eDragHandle as HTMLElement | SVGElement).dataset.columnToolPanelDeferred = '';
         }
 
         let hideColumnOnExit = !gos.get('suppressDragLeaveHidesColumns');

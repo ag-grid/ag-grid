@@ -79,7 +79,7 @@ describe('style injection', () => {
         _injectGlobalCSS('.a {}', styleContainer, 'feature-a', undefined, 0, undefined);
 
         const injected = styleContainer.nextElementSibling;
-        expect(injected?.getAttribute('data-ag-css')).toBe('feature-a');
+        expect((injected as HTMLStyleElement | null)?.dataset.agCss).toBe('feature-a');
         expect(injected?.nextElementSibling).toBe(after);
         expect(before.nextElementSibling).toBe(styleContainer);
     });
