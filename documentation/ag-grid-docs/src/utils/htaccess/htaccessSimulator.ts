@@ -11,8 +11,8 @@
  *   .htaccess with rewrite rules applies (a child's rewrite block REPLACES its parent's unless it
  *   asks to inherit, which is why the root's /charts/ rules never ran under /charts/).
  *   Conditions ([OR], [NC], negation, -f), back-references ($N, %N), [L], [R=nnn], [G],
- *   [NE], [S=n], internal rewrites (re-run as a new request) and the Vary header mod_rewrite adds
- *   when a condition on a request header holds.
+ *   [NE], [QSD], [S=n], internal rewrites (re-run as a new request) and the Vary header
+ *   mod_rewrite adds when a condition on a request header holds.
  * - URL escaping, as Apache 2.4 does it: the request path is decoded once (an invalid escape is a
  *   400, %00 a 404) and rules match the decoded bytes; an external redirect's path is re-escaped
  *   unless [NE], with lowercase hex; a query string the rule did not change goes out as it came in;
@@ -140,7 +140,7 @@ export interface ResponseContext {
 
 // The flags this model implements. Any other flag ([B], [QSA], [PT], [UnsafeAllow3F], ...) changes
 // routing or escaping in a way it does not reproduce, so it throws rather than being dropped.
-const RULE_FLAGS = new Set(['L', 'R', 'NC', 'NE', 'S', 'G']);
+const RULE_FLAGS = new Set(['L', 'R', 'NC', 'NE', 'QSD', 'S', 'G']);
 const COND_FLAGS = new Set(['NC', 'OR']);
 
 const flagsOf = (raw: string | undefined, supported: Set<string>, source: string): Flags => {
@@ -522,14 +522,15 @@ function serverVariable(name: string, ctx: RewriteContext): string {
 
 /**
  * The Location of a mod_rewrite external redirect. The substitution's own query replaces the
- * request's (an empty one drops it); the path is escaped unless [NE], and so is a query the rule
- * changed, while the request's own query goes out exactly as it came in.
+ * request's (an empty one drops it, and so does [QSD] when it has none); the path is escaped unless
+ * [NE], and so is a query the rule changed, while the request's own query goes out exactly as it
+ * came in.
  */
-function rewriteLocation(substitution: string, ctx: RewriteContext, noEscape: boolean): string {
+function rewriteLocation(substitution: string, ctx: RewriteContext, noEscape: boolean, discardQuery: boolean): string {
     const queryAt = substitution.indexOf('?');
     const target = qualify(queryAt === -1 ? substitution : substitution.slice(0, queryAt), ctx);
     const ownQuery = queryAt === -1 ? undefined : substitution.slice(queryAt + 1);
-    const query = ownQuery ?? ctx.query;
+    const query = ownQuery ?? (discardQuery ? '' : ctx.query);
     const escapedQuery = noEscape || ownQuery === undefined || ownQuery === ctx.query ? query : escapePath(query);
     // Unescaped bytes go out as they are, and a client reads them as UTF-8.
     return fromByteString((noEscape ? target : escapeLocation(target)) + (query ? `?${escapedQuery}` : ''));
@@ -616,7 +617,7 @@ function runRewrite(file: CompiledHtaccess, ctx: RewriteContext): RewriteResult 
         }
         if (redirectFlag !== undefined) {
             const status = redirectFlag === true ? 302 : Number(redirectFlag);
-            const location = rewriteLocation(expanded.text, ctx, rule.flags.has('NE'));
+            const location = rewriteLocation(expanded.text, ctx, rule.flags.has('NE'), rule.flags.has('QSD'));
             return { outcome: { type: 'redirect', status, location, by: rule.source }, vary };
         }
         if (!expanded.text.startsWith('/') || expanded.text.includes('?')) {

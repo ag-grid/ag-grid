@@ -752,6 +752,21 @@ const getArchiveRootSlashRedirect = (): string => `
 </If>
 `;
 
+// Grid archives 15.0.0-26.2.0 are snapshots of the old PHP docs. Their changelog and pipeline
+// pages fetched Jira live through jira_reports/ and now fail (PHP has no curl extension), so they
+// redirect to the live pages. jira_reports/ itself and the getting-started include fragments,
+// when requested directly, can never work, so they are gone (410). Without these rules all of
+// them return 500, which is what tripped the ag-grid-lb1-target-5xx alarm when crawlers hit them.
+// Placed after the host redirects, so other hosts reach www first; www only. Live site only: those
+// archives have no .htaccess of their own, so the root's rules are the ones they see.
+const legacyPhpArchiveRules = `    # Old PHP-era grid archives (15.0.0-26.2.0): Jira-backed pages and include fragments
+    RewriteCond %{HTTP_HOST} ^www\\.ag-grid\\.com$ [NC]
+    RewriteRule "^/?archive/(?:1[5-9]|2[0-6])\\.[0-9]+\\.[0-9]+/ag-grid-changelog(?:/.*)?$" "https://www.ag-grid.com/changelog/" [R=301,QSD,L]
+    RewriteCond %{HTTP_HOST} ^www\\.ag-grid\\.com$ [NC]
+    RewriteRule "^/?archive/(?:1[5-9]|2[0-6])\\.[0-9]+\\.[0-9]+/ag-grid-pipeline(?:/.*)?$" "https://www.ag-grid.com/pipeline/" [R=301,QSD,L]
+    RewriteCond %{HTTP_HOST} ^www\\.ag-grid\\.com$ [NC]
+    RewriteRule "^/?archive/(?:1[5-9]|2[0-6])\\.[0-9]+\\.[0-9]+/(?:jira_reports(?:/.*)?|getting-started/(?:footer|header)\\.php)$" - [R=410,L]`;
+
 // Lazily built: the redirect generation resolves urlWithBaseUrl (which needs the
 // build-time base URL), so it must not run at module import — only when the
 // production .htaccess is actually generated.
@@ -794,6 +809,8 @@ ${certificateValidationExemptions}
     RewriteCond %{HTTP_HOST} ^angulargrid\\.com$ [OR]
     RewriteCond %{HTTP_HOST} ^www\\.angulargrid\\.com$
     RewriteRule ^(.*)$ ${getHostCanonicalTarget()} [R=301,L]
+
+${unlessArchiveBuild(legacyPhpArchiveRules)}
 
 ${isArchiveBuild() ? getArchiveBlogHostRule() : blogHostRedirectRules}
 
