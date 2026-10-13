@@ -2,6 +2,10 @@ import { BeanStub } from '../../../context/beanStub';
 import type { AgColumnGroup } from '../../../entities/agColumnGroup';
 import type { BodyScrollEvent } from '../../../events';
 
+// the grid body keeps the pinned widths in these variables, so no label is told of a change
+const LTR_OFFSET = 'calc(var(--ag-cell-horizontal-padding) + var(--ag-internal-pinned-left-width, 0px))';
+const RTL_OFFSET = 'calc(var(--ag-cell-horizontal-padding) + var(--ag-internal-pinned-right-width, 0px))';
+
 export class GroupStickyLabelFeature extends BeanStub {
     private isSticky = false;
     private left: number | null = null;
@@ -19,29 +23,27 @@ export class GroupStickyLabelFeature extends BeanStub {
         const { ctrlsSvc } = beans;
         ctrlsSvc.whenReady(this, () => {
             const refreshPosition = this.refreshPosition.bind(this);
-            const refreshStickyOffset = this.refreshStickyOffset.bind(this);
 
-            if (columnGroup.pinnedLane === 1) {
-                this.addManagedEventListeners({
-                    bodyScroll: (event: BodyScrollEvent) => {
-                        if (event.direction === 'horizontal') {
-                            this.updateSticky(event.left);
-                        }
-                    },
-                    leftPinnedWidthChanged: refreshStickyOffset,
-                });
+            // the offset applies only while the label is sticky
+            if (this.gos.get('enableRtl')) {
+                this.eLabel.style.setProperty('right', RTL_OFFSET);
+            } else {
+                this.eLabel.style.setProperty('left', LTR_OFFSET);
             }
 
+            this.addManagedEventListeners({
+                bodyScroll: (event: BodyScrollEvent) => {
+                    if (event.direction === 'horizontal') {
+                        this.updateSticky(event.left);
+                    }
+                },
+                columnResized: refreshPosition,
+            });
             this.addManagedListeners(columnGroup, {
                 leftChanged: refreshPosition,
                 displayedChildrenChanged: refreshPosition,
             });
-            this.addManagedEventListeners({
-                columnResized: refreshPosition,
-            });
 
-            this.addManagedPropertyListener('enableRtl', refreshStickyOffset);
-            this.refreshStickyOffset();
             this.refreshPosition();
         });
     }
@@ -51,7 +53,8 @@ export class GroupStickyLabelFeature extends BeanStub {
         const left = columnGroup.getLeft();
         const width = columnGroup.getActualWidth();
 
-        if (left == null || width === 0) {
+        // a reused group can move lanes, and only the scrolling lane slides under the pinned columns
+        if (columnGroup.pinnedLane !== 1 || left == null || width === 0) {
             this.left = null;
             this.right = null;
             this.setSticky(false);
@@ -88,32 +91,5 @@ export class GroupStickyLabelFeature extends BeanStub {
 
         this.isSticky = value;
         eLabel.classList.toggle('ag-sticky-label', value);
-    }
-
-    private refreshStickyOffset(): void {
-        if (this.columnGroup.pinnedLane !== 1) {
-            this.eLabel.style.removeProperty('left');
-            this.eLabel.style.removeProperty('right');
-            return;
-        }
-
-        const {
-            beans: { gos, visibleCols },
-            eLabel,
-        } = this;
-        const isRtl = gos.get('enableRtl');
-        const pinnedOffset = isRtl
-            ? visibleCols.getRightStickyColumnContainerWidth()
-            : visibleCols.getLeftStickyColumnContainerWidth();
-
-        const offset = `calc(var(--ag-cell-horizontal-padding) + ${pinnedOffset}px)`;
-
-        if (isRtl) {
-            eLabel.style.removeProperty('left');
-            eLabel.style.setProperty('right', offset);
-        } else {
-            eLabel.style.removeProperty('right');
-            eLabel.style.setProperty('left', offset);
-        }
     }
 }

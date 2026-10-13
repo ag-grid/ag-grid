@@ -453,4 +453,42 @@ describe('Grid body width push', () => {
         await asyncSetTimeout(0);
         expect(rowSections()).toEqual({ left: '150px', center: '350px', right: '100px' });
     });
+
+    test('pushes the pinned widths the sticky group labels are offset by, as a pinned column resizes and unpins', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { colId: 'left', width: 120, pinned: 'left' },
+                { headerName: 'Group', children: [{ colId: 'a' }, { colId: 'b' }] },
+                { colId: 'right', width: 150, pinned: 'right' },
+            ],
+            rowData: [{}],
+        });
+        await asyncSetTimeout(0);
+
+        const viewport = query('.ag-grid-viewport');
+        const pinnedWidths = () => [
+            viewport.style.getPropertyValue('--ag-internal-pinned-left-width'),
+            viewport.style.getPropertyValue('--ag-internal-pinned-right-width'),
+        ];
+        expect(pinnedWidths()).toEqual(['120px', '150px']);
+
+        api.setColumnWidths([{ key: 'right', newWidth: 210 }]);
+        await asyncSetTimeout(0);
+        expect(pinnedWidths()).toEqual(['120px', '210px']);
+
+        api.setColumnsPinned(['right'], null);
+        await asyncSetTimeout(0);
+        expect(pinnedWidths()).toEqual(['120px', '0px']);
+    });
+
+    test('pushes zero pinned widths for a grid with none, so a grid nested inside another does not inherit its widths', async () => {
+        gridsManager.createGrid('myGrid', { columnDefs: [{ colId: 'a' }], rowData: [{}] });
+        await asyncSetTimeout(0);
+
+        const style = query('.ag-grid-viewport').style;
+        expect([
+            style.getPropertyValue('--ag-internal-pinned-left-width'),
+            style.getPropertyValue('--ag-internal-pinned-right-width'),
+        ]).toEqual(['0px', '0px']);
+    });
 });

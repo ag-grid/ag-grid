@@ -78,9 +78,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         compBean: BeanStub<any> | undefined
     ): void {
         const { column, beans } = this;
-        const { context, colNames, colHover, rangeSvc, colResize } = beans;
+        const { colNames, colHover, rangeSvc, colResize } = beans;
         this.comp = comp;
-        compBean = setupCompBean(this, context, compBean);
+        compBean = setupCompBean(this, compBean);
         // ahead of `setGui`, whose displayed-columns refresh writes `aria-colspan`
         this.ariaEl = eGui.querySelector<HTMLElement>('[role=columnheader]') ?? eGui;
         this.drawnAriaColSpan = null;
@@ -104,7 +104,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.setupUserComp();
         this.addHeaderMouseListeners(compBean, eHeaderCompWrapper);
 
-        this.addManagedPropertyListener('groupHeaderHeight', this.refreshMaxHeaderHeight.bind(this));
+        compBean.addManagedPropertyListener('groupHeaderHeight', this.refreshMaxHeaderHeight.bind(this));
         this.refreshMaxHeaderHeight();
 
         const leafCols = column.getProvidedColumnGroup().getLeafColumns();
@@ -128,11 +128,10 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
         this.addHighlightListeners(compBean, leafCols);
 
-        this.addManagedEventListeners({
-            cellSelectionChanged: () => this.refreshAnnouncement(),
+        compBean.addManagedPropertyListener('cellSelection', () => {
+            this.refreshSelectableCss();
+            this.refreshAnnouncement();
         });
-
-        compBean.addManagedPropertyListener('cellSelection', () => this.refreshAnnouncement());
         compBean.addManagedPropertyListener('suppressMovableColumns', this.onSuppressColMoveChange);
         this.addResizeAndMoveKeyboardListeners(compBean);
         // Make sure this is the last destroy func as it clears the gui and comp
@@ -317,9 +316,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private addHeaderMouseListeners(compBean: BeanStub, eHeaderCompWrapper: HTMLElement): void {
         const {
             column,
-            comp,
             beans: { rangeSvc },
-            gos,
         } = this;
 
         const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
@@ -335,11 +332,15 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             contextmenu: contextMenuListener,
         });
 
-        comp.toggleCss('ag-header-group-cell-selectable', _getEnableColumnSelection(gos));
+        this.refreshSelectableCss();
         const mouseListener = rangeSvc?.createHeaderGroupCellMouseListenerFeature(this.column, eHeaderCompWrapper);
         if (mouseListener) {
-            this.createManagedBean(mouseListener);
+            compBean.createManagedBean(mouseListener);
         }
+    }
+
+    private refreshSelectableCss(): void {
+        this.comp.toggleCss('ag-header-group-cell-selectable', _getEnableColumnSelection(this.gos));
     }
 
     private handleMouseOverChange(isMouseOver: boolean): void {

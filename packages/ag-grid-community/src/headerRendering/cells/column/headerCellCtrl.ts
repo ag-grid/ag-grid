@@ -72,8 +72,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         this.comp = comp;
 
         const { column, beans } = this;
-        const { colResize, context, colHover, rangeSvc } = beans;
-        const compBean = setupCompBean(this, context, compBeanInput);
+        const { colResize, colHover, rangeSvc } = beans;
+        const compBean = setupCompBean(this, compBeanInput);
 
         this.setGui(eGui, compBean);
         this.updateState();

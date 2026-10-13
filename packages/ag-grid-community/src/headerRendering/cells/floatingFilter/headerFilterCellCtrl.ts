@@ -47,7 +47,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         compBeanInput: BeanStub | undefined
     ): void {
         this.comp = comp;
-        const compBean = setupCompBean(this, this.beans.context, compBeanInput);
+        const compBean = setupCompBean(this, compBeanInput);
         this.eButtonShowMainFilter = eButtonShowMainFilter;
         this.eFloatingFilterBody = eFloatingFilterBody;
 

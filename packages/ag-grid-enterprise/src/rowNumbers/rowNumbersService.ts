@@ -88,6 +88,8 @@ export class RowNumbersService
 
         this.addManagedPropertyListeners(['rowNumbers', 'cellSelection'], (e: PropertyValueChangedEvent<any>) => {
             this.updateColumns(e);
+            // the cells' range classes read `cellSelection`, and an unchanged colDef refreshes no cell
+            this.refreshCells(true);
         });
 
         this.refreshSelectionIntegration();

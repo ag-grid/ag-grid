@@ -12,6 +12,8 @@ import {
     _setAriaColIndex,
 } from 'ag-stack';
 
+import type { CompBeanOwner } from '../../../components/emptyBean';
+import { destroyCompBean } from '../../../components/emptyBean';
 import { BeanStub } from '../../../context/beanStub';
 import type { GridDragSource } from '../../../dragAndDrop/dragAndDropService';
 import type { AgColumn } from '../../../entities/agColumn';
@@ -51,7 +53,10 @@ export abstract class AbstractHeaderCellCtrl<
     TComp extends IAbstractHeaderCellComp = IAbstractHeaderCellComp,
     TColumn extends AgColumn | AgColumnGroup = AgColumn | AgColumnGroup,
     TFeature extends IHeaderResizeFeature = IHeaderResizeFeature,
-> extends BeanStub {
+>
+    extends BeanStub
+    implements CompBeanOwner
+{
     public readonly instanceId: HeaderCellCtrlInstanceId;
     /** Scratch for the React list diff, trusted only where the list diffed holds this at that index. */
     public diffIndex = 0;
@@ -63,6 +68,7 @@ export abstract class AbstractHeaderCellCtrl<
     public eGui: HTMLElement;
     protected resizeFeature: TFeature | null = null;
     protected comp: TComp;
+    public compBean: BeanStub | undefined = undefined;
 
     public lastFocusEvent: KeyboardEvent | null = null;
 
@@ -590,6 +596,7 @@ export abstract class AbstractHeaderCellCtrl<
     }
 
     public override destroy(): void {
+        destroyCompBean(this);
         super.destroy();
 
         (this.column as any) = null;

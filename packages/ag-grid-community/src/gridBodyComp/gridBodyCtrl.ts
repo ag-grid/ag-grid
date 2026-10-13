@@ -76,6 +76,9 @@ export class GridBodyCtrl extends BeanStub {
 
     private reportedViewportWidth: number | null = null;
     private scrollableAreaWidth: number | null = null;
+    // -1 so the first push writes 0px too, which a detail grid needs to stop inheriting its master's widths
+    private pinnedLeftWidth = -1;
+    private pinnedRightWidth = -1;
 
     public scrollFeature: GridBodyScrollFeature;
 
@@ -121,6 +124,7 @@ export class GridBodyCtrl extends BeanStub {
         this.disableBrowserDragging();
         this.addStopEditingWhenGridLosesFocus();
         this.updatePinnedColumnStickyOffsets();
+        this.updatePinnedWidths();
         this.updateScrollingClasses();
 
         // Every completion of the registered set, not just the first: React may re-create a consumer,
@@ -136,6 +140,7 @@ export class GridBodyCtrl extends BeanStub {
         const updatePinnedColumnStickyOffsets = this.updatePinnedColumnStickyOffsets.bind(this);
 
         const onPinnedWidthChanged = () => {
+            this.updatePinnedWidths();
             this.updateWidths();
             this.updateScrollingClasses();
         };
@@ -445,6 +450,22 @@ export class GridBodyCtrl extends BeanStub {
         classList.toggle('ag-body-horizontal-content-no-gap', !scrollVisibleSvc.horizontalScrollGap);
         classList.toggle('ag-has-left-pinned-cols', visibleCols.getLeftStickyColumnContainerWidth() > 0);
         classList.toggle('ag-has-right-pinned-cols', visibleCols.getRightStickyColumnContainerWidth() > 0);
+    }
+
+    /** Read by the sticky group header labels' offsets. */
+    private updatePinnedWidths(): void {
+        const visibleCols = this.beans.visibleCols;
+        const leftWidth = visibleCols.getLeftStickyColumnContainerWidth();
+        const rightWidth = visibleCols.getRightStickyColumnContainerWidth();
+        const style = this.eGridViewport.style;
+        if (leftWidth !== this.pinnedLeftWidth) {
+            this.pinnedLeftWidth = leftWidth;
+            style.setProperty('--ag-internal-pinned-left-width', `${leftWidth}px`);
+        }
+        if (rightWidth !== this.pinnedRightWidth) {
+            this.pinnedRightWidth = rightWidth;
+            style.setProperty('--ag-internal-pinned-right-width', `${rightWidth}px`);
+        }
     }
 
     private updatePinnedColumnStickyOffsets(): void {
