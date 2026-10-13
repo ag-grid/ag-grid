@@ -120,13 +120,13 @@ function createGrowingList(rowContentWidth: number, getListWidth: () => number, 
 describe('AgRichSelectList', () => {
     it('clears active option attributes when highlight is removed', () => {
         const { list, wrapper } = createList<string>();
-        wrapper.setAttribute('data-active-option', 'option-1');
+        wrapper.dataset.activeOption = 'option-1';
         wrapper.setAttribute('aria-activedescendant', 'option-1');
         list.setCurrentList(['a', 'b']);
 
         list.highlightIndex(-1);
 
-        expect(wrapper.hasAttribute('data-active-option')).toBe(false);
+        expect(wrapper.dataset.activeOption).toBeUndefined();
         expect(wrapper.hasAttribute('aria-activedescendant')).toBe(false);
     });
 
@@ -199,7 +199,7 @@ describe('AgRichSelectList', () => {
             (list as any).drawVirtualRows(true);
 
             expect(row.toggleHighlighted).toHaveBeenCalledWith(true);
-            expect(wrapper.getAttribute('data-active-option')).toBe('ag-rich-select-row-123');
+            expect(wrapper.dataset.activeOption).toBe('ag-rich-select-row-123');
         } finally {
             drawVirtualRowsSpy.mockRestore();
         }

@@ -63,7 +63,8 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
             return true;
         }
 
-        return !sourceElement.hasAttribute('data-column-tool-panel-deferred');
+        // Tool panel drag sources are HTML or SVG elements, both of which have `dataset`.
+        return (sourceElement as HTMLElement | SVGElement).dataset.columnToolPanelDeferred === undefined;
     }
 
     protected override minimumAllowedNewInsertIndex(): number {
