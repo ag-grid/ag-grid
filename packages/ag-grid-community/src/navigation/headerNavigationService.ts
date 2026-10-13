@@ -73,6 +73,12 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         });
     }
 
+    public onHeaderClicked(column: AgColumn): void {
+        if (column.isSpanHeaderHeight()) {
+            this.currentHeaderRowWithoutSpan = (column.getFirstRealParent()?.getLevel() ?? -1) + 1;
+        }
+    }
+
     public getHeaderPositionForColumn(
         colKey: string | Column | ColumnGroup,
         floatingFilter: boolean
