@@ -84,12 +84,47 @@ export function _findFocusableElements(
             return _isVisible(node);
         }) as HTMLElement[];
     const excludeNodes = new Set(rootNode.querySelectorAll(excludeString));
+    return excludeNodes.size ? nodes.filter((element) => !excludeNodes.has(element)) : nodes;
+}
 
-    if (!excludeNodes.size) {
-        return nodes;
+/** Named radios are one Tab stop, the focused or checked radio, as managed Tab handling bypasses the browser. */
+export function _removeNonTabStopRadios(rootNode: HTMLElement, elements: HTMLElement[]): HTMLElement[] {
+    const activeEl = (rootNode.getRootNode() as Document | ShadowRoot).activeElement;
+    const groups = new Map<HTMLFormElement | null, Map<string, HTMLInputElement>>();
+
+    for (let i = 0, len = elements.length; i < len; ++i) {
+        const radio = elements[i];
+        if (!isNamedRadio(radio) || (!radio.checked && radio !== activeEl)) {
+            continue;
+        }
+
+        const { form, name } = radio;
+        let groupsInForm = groups.get(form);
+        if (!groupsInForm) {
+            groupsInForm = new Map();
+            groups.set(form, groupsInForm);
+        }
+
+        if (radio === activeEl || !groupsInForm.has(name)) {
+            groupsInForm.set(name, radio);
+        }
     }
 
-    return nodes.filter((element) => !excludeNodes.has(element));
+    return groups.size
+        ? elements.filter((element) => {
+              const tabStop = isNamedRadio(element) ? groups.get(element.form)?.get(element.name) : null;
+              return !tabStop || tabStop === element;
+          })
+        : elements;
+}
+
+function isNamedRadio(element: HTMLElement): element is HTMLInputElement {
+    // avoid instanceof so radios from another window are recognised too.
+    return (
+        element.tagName === 'INPUT' &&
+        (element as HTMLInputElement).type === 'radio' &&
+        !!(element as HTMLInputElement).name
+    );
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -99,10 +134,9 @@ export function _focusInto(
     onlyUnmanaged = false,
     excludeTabGuards = false
 ): boolean {
-    const focusableElements = _findFocusableElements(
+    const focusableElements = _removeNonTabStopRadios(
         rootNode,
-        excludeTabGuards ? '.ag-tab-guard' : null,
-        onlyUnmanaged
+        _findFocusableElements(rootNode, excludeTabGuards ? '.ag-tab-guard' : null, onlyUnmanaged)
     );
     const toFocus = up ? _last(focusableElements) : focusableElements[0];
 
@@ -129,7 +163,8 @@ export function _focusIntoTabbableFirst(rootNode: HTMLElement, up = false, exclu
               const managedRoot = element.closest(`.${FOCUS_MANAGED_CLASS}`);
               return managedRoot !== null && rootNode.contains(managedRoot);
           });
-    const toFocus = up ? _last(pool) : pool[0];
+    const tabStops = _removeNonTabStopRadios(rootNode, pool);
+    const toFocus = up ? _last(tabStops) : tabStops[0];
 
     if (toFocus) {
         toFocus.focus({ preventScroll: true });
@@ -154,6 +189,7 @@ export function _findNextFocusableElement(params: {
     if (onlyUnmanaged) {
         focusable = focusable.filter((el) => el === activeEl || _getTabIndex(el) !== '-1');
     }
+    focusable = _removeNonTabStopRadios(rootNode, focusable);
 
     const activeIndex = onlyManaged ? focusable.findIndex((el) => el.contains(activeEl)) : focusable.indexOf(activeEl);
 

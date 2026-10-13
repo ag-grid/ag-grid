@@ -4,7 +4,7 @@ import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _getDocument } from '../utils/document';
-import { _findFocusableElements, _findNextFocusableElement } from '../utils/focus';
+import { _findFocusableElements, _findNextFocusableElement, _removeNonTabStopRadios } from '../utils/focus';
 import type { StopPropagationCallbacks } from './agManagedFocusFeature';
 import { AgManagedFocusFeature } from './agManagedFocusFeature';
 
@@ -222,8 +222,10 @@ export class AgTabGuardCtrl<
 
     private findNextElementOutsideAndFocus(up: boolean, excludeElements?: HTMLElement[]): boolean {
         const eDocument = _getDocument(this.beans);
-        const focusableEls = _findFocusableElements(eDocument.body, null, true)
-            .filter((element) => element.tabIndex >= 0)
+        const focusableEls = _removeNonTabStopRadios(
+            eDocument.body,
+            _findFocusableElements(eDocument.body, null, true).filter((element) => element.tabIndex >= 0)
+        )
             .map((element, domIndex) => ({ element, domIndex }))
             .sort((a, b) => {
                 const tabIndexA = a.element.tabIndex || Number.MAX_SAFE_INTEGER;
@@ -324,7 +326,10 @@ export class AgTabGuardCtrl<
     }
 
     public focusInnerElement(fromBottom = false): boolean {
-        const focusable = _findFocusableElements(this.eFocusableElement);
+        const focusable = _removeNonTabStopRadios(
+            this.eFocusableElement,
+            _findFocusableElements(this.eFocusableElement)
+        );
 
         if (this.tabGuardsAreActive()) {
             // remove tab guards from this component from list of focusable elements
