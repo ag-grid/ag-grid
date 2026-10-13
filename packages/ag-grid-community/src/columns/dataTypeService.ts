@@ -875,6 +875,18 @@ function validateDataTypeDefinition(
 
 const isNumberOrBigintType = (v: unknown) => typeof v === 'bigint' || typeof v === 'number';
 const isNumberOrBigintBaseDataType = (v: string) => v === 'number' || v === 'bigint';
+const isDateValueOfBaseDataType = (baseDataType: string, value: unknown): boolean => {
+    switch (baseDataType) {
+        case 'date':
+        case 'dateTime':
+            return value instanceof Date;
+        case 'dateString':
+        case 'dateTimeString':
+            return typeof value === 'string';
+        default:
+            return false;
+    }
+};
 
 function createGroupSafeValueFormatter(
     dataTypeDefinition: DataTypeDefinition | CoreDataTypeDefinition,
@@ -897,6 +909,12 @@ function createGroupSafeValueFormatter(
                 }
 
                 const { baseDataType } = dataTypeDefinition;
+
+                // min / max of dates return one of the original values, so format it when the type still matches
+                if ((aggFunc === 'min' || aggFunc === 'max') && isDateValueOfBaseDataType(baseDataType, value)) {
+                    return dataTypeDefinition.valueFormatter!(params);
+                }
+
                 if (isNumberOrBigintBaseDataType(baseDataType) && aggFunc !== 'count') {
                     if (isNumberOrBigintType(value)) {
                         return dataTypeDefinition.valueFormatter!(params);
