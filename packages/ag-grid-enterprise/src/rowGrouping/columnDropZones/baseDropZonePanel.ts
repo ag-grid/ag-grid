@@ -9,8 +9,8 @@ import type {
 } from 'ag-grid-community';
 import { DragSourceType, _createIconNoSpan, _shouldUpdateColVisibilityAfterGroup } from 'ag-grid-community';
 
+import type { ColumnToolPanelChildParams } from '../../columnToolPanel/columnToolPanel';
 import { isDeferredMode } from '../../columnToolPanel/toolPanelDeferredUiUtils';
-import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';
 import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from '../../menu/menuSeparators';
 import { _showMenuListPopup } from '../../widgets/menuPopupUtils';
 import type { PillDropZonePanelParams } from '../../widgets/pillDropZonePanel';
@@ -26,10 +26,10 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
     constructor(
         horizontal: boolean,
         private readonly dropZonePurpose: TDropZone,
-        protected readonly updateParams?: ColumnStateUpdateParams,
+        protected readonly updateParams?: ColumnToolPanelChildParams,
         embedded = false
     ) {
-        super(horizontal);
+        super(horizontal, updateParams?.eWrapperPanel);
         this.embedded = embedded;
         this.addElementClasses(this.getGui(), this.dropZonePurpose.toLowerCase());
     }

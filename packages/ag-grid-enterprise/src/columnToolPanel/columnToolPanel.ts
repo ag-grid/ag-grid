@@ -22,9 +22,17 @@ import columnToolPanelCSS from './columnToolPanel.css';
 import type { ColumnToolPanelFactory } from './columnToolPanelFactory';
 import type { PivotModePanel } from './pivotModePanel';
 import { isDeferredMode } from './toolPanelDeferredUiUtils';
+import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
+
+export interface ColumnToolPanelChildParams extends ColumnStateUpdateParams {
+    eWrapperPanel?: HTMLElement;
+}
 
 export interface ToolPanelColumnCompParams<TData = any, TContext = any>
-    extends IToolPanelParams<TData, TContext, ColumnToolPanelState>, IToolPanelColumnCompParams {}
+    extends
+        IToolPanelParams<TData, TContext, ColumnToolPanelState>,
+        IToolPanelColumnCompParams,
+        ColumnToolPanelChildParams {}
 
 /** Captures full grid state for no-op detection (includes width to distinguish from resize). */
 interface GridStateSnapshot {
@@ -99,6 +107,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         const mergedParams = {
             ...defaultParams,
             ...params,
+            eWrapperPanel: this.getGui(),
         };
         this.params = mergedParams;
         this.appliedParams = params;
