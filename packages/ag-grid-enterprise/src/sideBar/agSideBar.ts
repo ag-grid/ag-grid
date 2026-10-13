@@ -482,7 +482,7 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
                     return;
                 }
                 const params = _addGridCommonParams<IToolPanelParams>(this.gos, {
-                    ...(toolPanelDef.toolPanelParams ?? {}),
+                    ...toolPanelDef.toolPanelParams,
                     initialState: sideBarState?.toolPanels?.[id],
                     onStateUpdated: () => this.dispatchSideBarUpdated(),
                 });

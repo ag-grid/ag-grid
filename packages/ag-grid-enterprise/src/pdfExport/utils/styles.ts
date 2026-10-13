@@ -15,7 +15,7 @@ export function mergePdfCellStyles(
     }
 
     return {
-        ...(baseStyle ?? {}),
-        ...(overrideStyle ?? {}),
+        ...baseStyle,
+        ...overrideStyle,
     };
 }

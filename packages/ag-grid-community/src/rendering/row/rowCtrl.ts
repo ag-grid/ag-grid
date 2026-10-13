@@ -594,7 +594,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             rowSelected: () => this.onRowSelected(),
             rowIndexChanged: this.onRowIndexChanged.bind(this),
             topChanged: this.onTopChanged.bind(this),
-            ...(expansionSvc?.getRowExpandedListeners(this) ?? {}),
+            ...expansionSvc?.getRowExpandedListeners(this),
         });
 
         if (rowNode.detail) {
