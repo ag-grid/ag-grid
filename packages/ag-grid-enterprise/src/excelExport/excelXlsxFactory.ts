@@ -90,7 +90,7 @@ export function createXlsxExcel(
     addSheetName(worksheet);
     registerStyles(styles, XLSX_SHEET_NAMES.length);
 
-    const newConfig = Object.assign({}, config);
+    const newConfig = { ...config };
 
     // Table export is not compatible with pivot mode nor master/detail features
     if (config.exportAsExcelTable && config.pivotModeActive) {
@@ -221,10 +221,7 @@ export function addXlsxBodyImageToMap(
                 image.position = {};
             }
 
-            image.position = Object.assign({}, image.position, {
-                row: rowIndex,
-                column: columnsToExport.indexOf(col) + 1,
-            });
+            image.position = { ...image.position, row: rowIndex, column: columnsToExport.indexOf(col) + 1 };
         }
         setExcelImageTotalWidth(calculatedImage, columnsToExport);
         setExcelImageTotalHeight(calculatedImage, rowHeight);

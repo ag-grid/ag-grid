@@ -220,8 +220,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
                 }
                 this.dispatchVisibleChangedEvent(false, false, column, columnGroup, defaultTab);
             },
-            afterGuiAttached: (params) =>
-                menu.afterGuiAttached(Object.assign({}, { container: containerType }, params)),
+            afterGuiAttached: (params) => menu.afterGuiAttached({ ...params, container: containerType }),
             // if defaultTab is not present, positionCallback will be called
             // after `showTabBasedOnPreviousSelection` is called.
             positionCallback: defaultTab ? () => positionCallback(menu) : undefined,

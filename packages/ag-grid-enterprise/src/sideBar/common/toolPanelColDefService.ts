@@ -94,14 +94,14 @@ function getLeafPathTrees(columns: AgColumn[]): AbstractColDef[] {
                 // skip over padding groups
                 leafPathTree = childDef;
             } else {
-                const groupDef = Object.assign({}, node.getColGroupDef());
+                const groupDef = { ...node.getColGroupDef() };
                 // ensure group contains groupId
                 groupDef.groupId = node.getGroupId();
                 groupDef.children = [childDef];
                 leafPathTree = groupDef;
             }
         } else {
-            const colDef = Object.assign({}, node.colDef);
+            const colDef = { ...node.colDef };
             // ensure col contains colId
             colDef.colId = node.colId;
             leafPathTree = colDef;
