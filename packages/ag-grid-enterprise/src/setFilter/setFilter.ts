@@ -72,6 +72,7 @@ export class SetFilter<V = string>
     private displayValueModel: ISetDisplayValueModel<V>;
 
     private miniFilterText: string | null = null;
+    private showingNoMatches = false;
 
     /** When true, in excelMode = 'windows', it adds previously selected filter items to newly checked filter selection */
     private addCurrentSelectionToFilter: boolean = false;
@@ -796,6 +797,11 @@ export class SetFilter<V = string>
 
         _setDisplayed(this.eFilterNoMatches, hideResults);
         _setDisplayed(this.eSetFilterList, !hideResults);
+
+        if (hideResults && !this.showingNoMatches) {
+            this.beans.ariaAnnounce.announceValue(translateForSetFilter(this, 'noMatches'), 'setFilter');
+        }
+        this.showingNoMatches = hideResults;
     }
 
     private resetMiniFilter(): void {
