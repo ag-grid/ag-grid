@@ -1216,8 +1216,8 @@
                         },
                         {
                             "type": "item",
-                            "title": "Visible Rows",
-                            "path": "data-update-visible-rows"
+                            "title": "Viewport Subscription",
+                            "path": "data-update-viewport-subscription"
                         }
                     ]
                 },

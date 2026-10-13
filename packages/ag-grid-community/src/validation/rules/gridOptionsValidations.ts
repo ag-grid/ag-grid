@@ -179,6 +179,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     undoRedoCellEditing: 'UndoRedoEdit',
     valueCache: 'ValueCache',
     viewportDatasource: 'ViewportRowModel',
+    viewportSubscription: 'ViewportSubscription',
 };
 
 /**
@@ -309,6 +310,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             },
         },
         enableCellSpan: {
+            supportedRowModels: ['clientSide', 'serverSide'],
+        },
+        viewportSubscription: {
             supportedRowModels: ['clientSide', 'serverSide'],
         },
         enableRangeSelection: {

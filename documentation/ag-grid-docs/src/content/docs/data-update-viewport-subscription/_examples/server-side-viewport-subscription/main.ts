@@ -8,7 +8,7 @@ import type {
 import {
     HighlightChangesModule,
     ModuleRegistry,
-    VisibleRowsModule,
+    ViewportSubscriptionModule,
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
@@ -27,7 +27,7 @@ ModuleRegistry.registerModules([
     ServerSideRowModelModule,
     ServerSideRowModelApiModule,
     TreeDataModule,
-    VisibleRowsModule,
+    ViewportSubscriptionModule,
 ]);
 
 // the parent keys of each subscribed row, which are the route to the store that holds it
@@ -36,8 +36,8 @@ const subscribed = new Map<string, string[]>();
 const pendingRequests = new Map<number, IServerSideGetRowsParams<PortfolioRow>>();
 let nextRequestId = 0;
 let updatesSent = 0;
-let stopSubscription: (() => void) | undefined;
-let socket: FakeSocket;
+let streaming = true;
+const socket = new FakeSocket();
 
 let gridApi: GridApi<PortfolioRow>;
 
@@ -53,15 +53,27 @@ const gridOptions: GridOptions<PortfolioRow> = {
     cacheBlockSize: 50,
     // the id is the row's path, so it is unique across levels
     getRowId: (params: GetRowIdParams<PortfolioRow>) => params.data.id,
+    viewportSubscription: {
+        onSubscribe: (rows) => {
+            rows.forEach((row) => subscribed.set(row.id, row.parentKeys));
+            socket.send({ type: 'subscribe', ids: rows.map((row) => row.id) });
+            console.log(`subscribe ${rows.length}`);
+            renderCount();
+        },
+        onUnsubscribe: (rows) => {
+            rows.forEach((row) => subscribed.delete(row.id));
+            socket.send({ type: 'unsubscribe', ids: rows.map((row) => row.id) });
+            console.log(`unsubscribe ${rows.length}`);
+            renderCount();
+        },
+    },
     onGridReady: (params) => {
-        socket = new FakeSocket();
         socket.onmessage = (message) => onServerMessage(params.api, message);
-        params.api.setGridOption('serverSideDatasource', createDatasource(socket));
-        startSubscription(params.api, socket);
+        params.api.setGridOption('serverSideDatasource', createDatasource());
     },
 };
 
-function createDatasource(socket: FakeSocket): IServerSideDatasource<PortfolioRow> {
+function createDatasource(): IServerSideDatasource<PortfolioRow> {
     return {
         getRows: (params) => {
             const requestId = nextRequestId++;
@@ -100,36 +112,19 @@ function onServerMessage(api: GridApi<PortfolioRow>, message: ServerMessage) {
     renderCount();
 }
 
-function startSubscription(api: GridApi<PortfolioRow>, socket: FakeSocket) {
-    stopSubscription = api.subscribeToVisibleRows({
-        onSubscribe: (rows) => {
-            rows.forEach((row) => subscribed.set(row.id, row.parentKeys));
-            socket.send({ type: 'subscribe', ids: rows.map((row) => row.id) });
-            console.log(`subscribe ${rows.length}`);
-            renderCount();
-        },
-        onUnsubscribe: (rows) => {
-            rows.forEach((row) => subscribed.delete(row.id));
-            socket.send({ type: 'unsubscribe', ids: rows.map((row) => row.id) });
-            console.log(`unsubscribe ${rows.length}`);
-            renderCount();
-        },
-    });
-}
-
 function purge() {
     gridApi.refreshServerSide({ purge: true });
 }
 
 function toggleStream() {
-    if (stopSubscription) {
-        // unsubscribing every row also stops the server streaming, while rows still load over the socket
-        stopSubscription();
-        stopSubscription = undefined;
+    // unsubscribing every row also stops the server streaming, while rows still load over the socket
+    if (streaming) {
+        gridApi.unsubscribeFromViewport();
     } else {
-        startSubscription(gridApi, socket);
+        gridApi.subscribeToViewport();
     }
-    document.querySelector('#toggleStream')!.textContent = stopSubscription ? 'Stop' : 'Start';
+    streaming = !streaming;
+    document.querySelector('#toggleStream')!.textContent = streaming ? 'Stop' : 'Start';
 }
 
 // setup the grid after the page has finished loading

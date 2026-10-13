@@ -1,9 +1,8 @@
 export interface Stock {
     id: string;
-    sector: string;
+    symbol: string;
     exchange: string;
     country: string;
-    symbol: string;
     price: number;
     change: number;
     volume: number;
@@ -13,35 +12,32 @@ export type ClientMessage = { type: 'subscribe' | 'unsubscribe'; ids: string[] }
 export type ServerMessage = { type: 'update'; rows: Stock[] };
 
 const LATENCY_MS = 150;
-const UPDATE_INTERVAL_MS = 1000;
-const SECTORS = ['Energy', 'Finance', 'Healthcare', 'Industrials', 'Technology'];
+const MIN_UPDATE_INTERVAL_MS = 300;
+const MAX_UPDATE_INTERVAL_MS = 1200;
+// the chance that a subscribed stock changes price on each tick
+const UPDATE_CHANCE = 0.4;
 const EXCHANGES = ['NYSE', 'NASDAQ', 'LSE'];
 const COUNTRIES = ['United States', 'United Kingdom', 'Germany', 'Japan'];
 
 // the server's copy of the stocks, keyed by id
 const stocks = new Map<string, Stock>();
-let dataVersion = 0;
 
-/** Replaces the server's stocks with a new set with new ids, and returns them as a snapshot request would. */
+/** Returns the stocks, as a snapshot request would. */
 export function fetchStocks(): Stock[] {
-    dataVersion++;
-    stocks.clear();
-    SECTORS.forEach((sector) => {
-        for (let i = 0; i < 20; i++) {
-            const id = `${dataVersion}-${stocks.size}`;
-            const symbol = `${sector.slice(0, 3).toUpperCase()}${String(i).padStart(2, '0')}`;
+    if (!stocks.size) {
+        for (let i = 0; i < 200; i++) {
+            const id = String(i);
             stocks.set(id, {
                 id,
-                sector,
+                symbol: `STK${String(i).padStart(3, '0')}`,
                 exchange: EXCHANGES[i % EXCHANGES.length],
                 country: COUNTRIES[(i * 7) % COUNTRIES.length],
-                symbol,
                 price: Math.round((1 + Math.random() * 99) * 100) / 100,
                 change: 0,
                 volume: Math.round(Math.random() * 100000),
             });
         }
-    });
+    }
     return copy([...stocks.values()]);
 }
 
@@ -53,7 +49,7 @@ function copy<T>(value: T): T {
 /** Streams price updates for the subscribed stocks only. */
 class FakeServer {
     private readonly subscribedIds = new Set<string>();
-    private timer: ReturnType<typeof setInterval> | undefined;
+    private timer: ReturnType<typeof setTimeout> | undefined;
 
     constructor(private readonly send: (message: ServerMessage) => void) {}
 
@@ -62,20 +58,28 @@ class FakeServer {
 
         // only stream while something is subscribed
         if (this.subscribedIds.size && !this.timer) {
-            this.timer = setInterval(() => this.sendUpdates(), UPDATE_INTERVAL_MS);
+            this.scheduleUpdates();
         } else if (!this.subscribedIds.size) {
-            clearInterval(this.timer);
+            clearTimeout(this.timer);
             this.timer = undefined;
         }
+    }
+
+    private scheduleUpdates(): void {
+        const delay = MIN_UPDATE_INTERVAL_MS + Math.random() * (MAX_UPDATE_INTERVAL_MS - MIN_UPDATE_INTERVAL_MS);
+        this.timer = setTimeout(() => {
+            this.sendUpdates();
+            this.scheduleUpdates();
+        }, delay);
     }
 
     private sendUpdates(): void {
         const rows: Stock[] = [];
         for (const id of this.subscribedIds) {
-            // group rows have no stock, so get no updates
             const stock = stocks.get(id);
-            if (stock) {
-                const price = Math.max(0.01, Math.round((stock.price + Math.random() - 0.5) * 100) / 100);
+            if (stock && Math.random() < UPDATE_CHANCE) {
+                // a move of up to 2% either way
+                const price = Math.max(0.01, Math.round(stock.price * (1 + (Math.random() - 0.5) * 0.04) * 100) / 100);
                 stock.change = Math.round(((price - stock.price) / stock.price) * 10000) / 100;
                 stock.price = price;
                 stock.volume += Math.round(Math.random() * 1000);

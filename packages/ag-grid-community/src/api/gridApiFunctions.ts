@@ -55,7 +55,7 @@ import type {
     _UndoRedoGridApi,
     _ValueApi,
     _ValueCacheApi,
-    _VisibleRowsGridApi,
+    _ViewportSubscriptionGridApi,
 } from './gridApi';
 
 const mod = <TGridApi extends Partial<GridApi>>(
@@ -445,8 +445,9 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
         resetRowHeights: 0,
     }),
 
-    ...mod<_VisibleRowsGridApi<any>>('VisibleRows', {
-        subscribeToVisibleRows: 0,
+    ...mod<_ViewportSubscriptionGridApi>('ViewportSubscription', {
+        subscribeToViewport: 0,
+        unsubscribeFromViewport: 0,
     }),
 
     ...mod<_SideBarGridApi<any>>('SideBar', {

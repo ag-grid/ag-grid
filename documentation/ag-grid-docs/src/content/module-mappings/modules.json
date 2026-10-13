@@ -557,9 +557,9 @@
                     "path": "grid-api/#reference-data"
                 },
                 {
-                    "moduleName": "VisibleRowsModule",
-                    "name": "Visible Rows",
-                    "path": "data-update-visible-rows"
+                    "moduleName": "ViewportSubscriptionModule",
+                    "name": "Viewport Subscription",
+                    "path": "data-update-viewport-subscription"
                 },
                 {
                     "moduleName": "ServerSideRowModelApiModule",

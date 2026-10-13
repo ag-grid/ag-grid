@@ -249,6 +249,7 @@ import type {
     UndoStartedEvent,
     UseGroupTotalRow,
     ViewportChangedEvent,
+    ViewportSubscriptionOptions,
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
 } from 'ag-grid-community';
@@ -1646,6 +1647,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ClientSideRowModelModule` / `InfiniteRowModelModule` / `ServerSideRowModelModule` / `ViewportRowModelModule`
      */
     @Input() public rowModelType: RowModelType | undefined = undefined;
+    /** Tells the application which rows to subscribe to and unsubscribe from as loaded rows enter and leave the view,
+     * so that a server stream only sends updates for rows the user can see.
+     * The grid subscribes to the rows in view when it is ready. Every row passed to `onSubscribe` is later passed
+     * to `onUnsubscribe` exactly once, including when the option changes, `api.unsubscribeFromViewport()` is called,
+     * or the grid is destroyed. Changing the option unsubscribes every row, then subscribes again with the new option.
+     * Requires `getRowId`. Supported by the Client-Side and Server-Side Row Models.
+     * @agModule `ViewportSubscriptionModule`
+     */
+    @Input() public viewportSubscription: ViewportSubscriptionOptions<TData> | undefined = undefined;
     /** Set the data to be displayed as rows in the grid.
      * @agModule `ClientSideRowModelModule`
      */
@@ -2595,6 +2605,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         ModelUpdatedEvent<TData>
     >();
     /** A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row.
+     * A rendered row is not always in view, as the grid also renders rows in the row buffer. To subscribe to updates for the rows in view only, use `viewportSubscription`.
      */
     @Output() public virtualRowRemoved: EventEmitter<VirtualRowRemovedEvent<TData>> = new EventEmitter<
         VirtualRowRemovedEvent<TData>

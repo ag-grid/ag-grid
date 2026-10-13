@@ -224,10 +224,16 @@
         "meta": {
             "displayName": "Row Displayed"
         },
-        "subscribeToVisibleRows": {
+        "subscribeToViewport": {
             "more": {
-                "name": "Visible Rows",
-                "url": "./data-update-visible-rows/"
+                "name": "Viewport Subscription",
+                "url": "./data-update-viewport-subscription/"
+            }
+        },
+        "unsubscribeFromViewport": {
+            "more": {
+                "name": "Viewport Subscription",
+                "url": "./data-update-viewport-subscription/"
             }
         },
         "getDisplayedRowAtIndex": {

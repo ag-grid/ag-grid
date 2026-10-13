@@ -2,7 +2,7 @@ import { expect, scrollGridRelative, test, waitForGridContent } from '@utils/gri
 
 test.agExample(import.meta, () => {
     test.eachFramework(
-        'Visible rows are subscribed on load, scroll and start, and unsubscribed on purge and stop',
+        'Rows in view are subscribed on load, scroll and start, and unsubscribed on purge and stop',
         async ({ page }) => {
             await waitForGridContent(page);
 

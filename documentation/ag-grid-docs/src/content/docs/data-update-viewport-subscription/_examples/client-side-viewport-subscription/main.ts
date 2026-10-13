@@ -6,7 +6,7 @@ import {
     ModuleRegistry,
     NumberFilterModule,
     TextFilterModule,
-    VisibleRowsModule,
+    ViewportSubscriptionModule,
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
@@ -28,13 +28,13 @@ ModuleRegistry.registerModules([
     NumberFilterModule,
     RowGroupingModule,
     TextFilterModule,
-    VisibleRowsModule,
+    ViewportSubscriptionModule,
 ]);
 
 const subscribed = new Set<string>();
 let updatesSent = 0;
-let stopSubscription: (() => void) | undefined;
-let socket: FakeSocket;
+let streaming = true;
+const socket = new FakeSocket();
 
 let gridApi: GridApi<Stock>;
 
@@ -53,11 +53,25 @@ const gridOptions: GridOptions<Stock> = {
     groupDefaultExpanded: 1,
     sideBar: 'columns',
     getRowId: (params: GetRowIdParams<Stock>) => params.data.id,
+    viewportSubscription: {
+        onSubscribe: (rows) => {
+            const ids = rows.map((row) => row.id);
+            ids.forEach((id) => subscribed.add(id));
+            socket.send({ type: 'subscribe', ids });
+            console.log(`subscribe ${rows.length}`);
+            renderCount();
+        },
+        onUnsubscribe: (rows) => {
+            const ids = rows.map((row) => row.id);
+            ids.forEach((id) => subscribed.delete(id));
+            socket.send({ type: 'unsubscribe', ids });
+            console.log(`unsubscribe ${rows.length}`);
+            renderCount();
+        },
+    },
     onGridReady: (params) => {
-        params.api.setGridOption('rowData', fetchStocks());
-        socket = new FakeSocket();
         socket.onmessage = (message) => onServerMessage(params.api, message);
-        startSubscription(params.api, socket);
+        params.api.setGridOption('rowData', fetchStocks());
     },
 };
 
@@ -81,52 +95,33 @@ function onServerMessage(api: GridApi<Stock>, message: ServerMessage) {
     renderCount();
 }
 
-function startSubscription(api: GridApi<Stock>, socket: FakeSocket) {
-    stopSubscription = api.subscribeToVisibleRows(
-        {
-            onSubscribe: (rows) => {
-                const ids = rows.map((row) => row.id);
-                ids.forEach((id) => subscribed.add(id));
-                socket.send({ type: 'subscribe', ids });
-                console.log(`subscribe ${rows.length}`);
-                renderCount();
-            },
-            onUnsubscribe: (rows) => {
-                const ids = rows.map((row) => row.id);
-                ids.forEach((id) => subscribed.delete(id));
-                socket.send({ type: 'unsubscribe', ids });
-                console.log(`unsubscribe ${rows.length}`);
-                renderCount();
-            },
-        },
-        {
-            includeBuffer: document.querySelector<HTMLInputElement>('#includeBuffer')?.checked ?? false,
-            includeGroups: document.querySelector<HTMLInputElement>('#includeGroups')?.checked ?? true,
-        }
-    );
-}
-
 function resetData() {
     gridApi.setGridOption('rowData', fetchStocks());
 }
 
+function setStreaming(value: boolean) {
+    streaming = value;
+    document.querySelector('#toggleStream')!.textContent = streaming ? 'Stop' : 'Start';
+}
+
 function toggleStream() {
-    if (stopSubscription) {
-        // unsubscribing every row also stops the server streaming
-        stopSubscription();
-        stopSubscription = undefined;
+    // unsubscribing every row also stops the server streaming
+    if (streaming) {
+        gridApi.unsubscribeFromViewport();
     } else {
-        startSubscription(gridApi, socket);
+        gridApi.subscribeToViewport();
     }
-    document.querySelector('#toggleStream')!.textContent = stopSubscription ? 'Stop' : 'Start';
+    setStreaming(!streaming);
 }
 
 function onOptionsChanged() {
-    // the options are fixed for a subscription, so subscribe again to apply them
-    if (stopSubscription) {
-        stopSubscription();
-        startSubscription(gridApi, socket);
-    }
+    // changing the option unsubscribes every row, then subscribes again with the new option
+    gridApi.setGridOption('viewportSubscription', {
+        ...gridApi.getGridOption('viewportSubscription')!,
+        includeBuffer: document.querySelector<HTMLInputElement>('#includeBuffer')!.checked,
+        includeGroups: document.querySelector<HTMLInputElement>('#includeGroups')!.checked,
+    });
+    setStreaming(true);
 }
 
 // setup the grid after the page has finished loading

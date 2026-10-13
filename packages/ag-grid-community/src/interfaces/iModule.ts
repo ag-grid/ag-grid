@@ -211,7 +211,7 @@ export type CommunityModuleName =
     | 'Validation'
     | 'ValueCache'
     | 'CellSpan'
-    | 'VisibleRows';
+    | 'ViewportSubscription';
 
 export type EnterpriseModuleName =
     | 'AdvancedFilter'
@@ -307,7 +307,7 @@ export type AgModuleName =
     | 'ValidationModule'
     | 'ValueCacheModule'
     | 'CellSpanModule'
-    | 'VisibleRowsModule'
+    | 'ViewportSubscriptionModule'
     // Enterprise
     | 'AdvancedFilterModule'
     | 'AllEnterpriseModule'

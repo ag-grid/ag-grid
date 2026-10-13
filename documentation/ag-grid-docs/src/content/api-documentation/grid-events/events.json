@@ -520,7 +520,12 @@
                 "url": "./grid-size/"
             }
         },
-        "virtualRowRemoved": {},
+        "virtualRowRemoved": {
+            "more": {
+                "name": "Viewport Subscription",
+                "url": "./data-update-viewport-subscription/"
+            }
+        },
         "viewportChanged": {},
         "bodyScroll": {},
         "bodyScrollEnd": {}

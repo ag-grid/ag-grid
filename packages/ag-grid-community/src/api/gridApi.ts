@@ -76,7 +76,6 @@ import type { SideBarDef } from '../interfaces/iSideBar';
 import type { IStatusPanel } from '../interfaces/iStatusPanel';
 import type { IToolPanel } from '../interfaces/iToolPanel';
 import type { IToolbarItem } from '../interfaces/iToolbar';
-import type { VisibleRowsHandlers, VisibleRowsOptions } from '../interfaces/iVisibleRows';
 import type { DetailGridInfo } from '../interfaces/masterDetail';
 import type { GetNoteParams, Note, RefreshNotesParams, SetNoteParams } from '../interfaces/notes';
 import type { RowDataTransaction } from '../interfaces/rowDataTransaction';
@@ -1754,18 +1753,19 @@ export interface _ServerSideRowModelGridApi<TData> extends _RowModelSharedApi {
     getServerSideGroupLevelState(): ServerSideGroupLevelState[];
 }
 
-export interface _VisibleRowsGridApi<TData> {
+export interface _ViewportSubscriptionGridApi {
     /**
-     * Tells the application which rows to subscribe to and unsubscribe from as loaded rows enter and leave the view,
-     * so that a server stream only sends updates for rows the user can see.
-     * `onSubscribe` is called straight away with the rows already visible. Every row passed to `onSubscribe` is later
-     * passed to `onUnsubscribe` exactly once, including when the returned function is called or the grid is destroyed.
-     * Loading rows, rows that failed to load, pinned rows, detail rows, full-width rows and total rows are not included.
-     * Requires `getRowId`.
-     * Returns a function that stops the subscription.
-     * @agModule `VisibleRowsModule`
+     * Starts the `viewportSubscription` again: unsubscribes every subscribed row, then subscribes to the rows in view.
+     * The grid subscribes when it is ready and when `viewportSubscription` changes, so this is only needed after `unsubscribeFromViewport`.
+     * @agModule `ViewportSubscriptionModule`
      */
-    subscribeToVisibleRows(handlers: VisibleRowsHandlers<TData>, options?: VisibleRowsOptions): () => void;
+    subscribeToViewport(): void;
+    /**
+     * Unsubscribes every row subscribed through `viewportSubscription` and stops calling its handlers,
+     * until `subscribeToViewport` is called or `viewportSubscription` changes.
+     * @agModule `ViewportSubscriptionModule`
+     */
+    unsubscribeFromViewport(): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -2086,7 +2086,7 @@ export interface GridApi<TData = any>
         _PivotGridApi<TData>,
         _CellSelectionGridApi,
         _ServerSideRowModelGridApi<TData>,
-        _VisibleRowsGridApi<TData>,
+        _ViewportSubscriptionGridApi,
         _ContextMenuGridApi,
         _ColumnChooserGridApi,
         _MasterDetailGridApi,

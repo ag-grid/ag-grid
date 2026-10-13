@@ -17,7 +17,10 @@ export type ServerMessage =
     | { type: 'update'; rows: PortfolioRow[] };
 
 const LATENCY_MS = 150;
-const UPDATE_INTERVAL_MS = 1000;
+const MIN_UPDATE_INTERVAL_MS = 300;
+const MAX_UPDATE_INTERVAL_MS = 1200;
+// the chance that a subscribed stock changes price on each tick
+const UPDATE_CHANCE = 0.4;
 const REGIONS = ['Americas', 'Asia Pacific', 'Europe'];
 const SECTORS = ['Energy', 'Finance', 'Healthcare', 'Technology'];
 
@@ -46,7 +49,7 @@ class FakeServer {
     private readonly children = new Map<string, PortfolioRow[]>();
     private readonly stocks = new Map<string, PortfolioRow>();
     private readonly subscribedIds = new Set<string>();
-    private timer: ReturnType<typeof setInterval> | undefined;
+    private timer: ReturnType<typeof setTimeout> | undefined;
 
     constructor(private readonly send: (message: ServerMessage) => void) {
         for (const region of REGIONS) {
@@ -74,11 +77,19 @@ class FakeServer {
 
         // only stream while something is subscribed
         if (this.subscribedIds.size && !this.timer) {
-            this.timer = setInterval(() => this.sendUpdates(), UPDATE_INTERVAL_MS);
+            this.scheduleUpdates();
         } else if (!this.subscribedIds.size) {
-            clearInterval(this.timer);
+            clearTimeout(this.timer);
             this.timer = undefined;
         }
+    }
+
+    private scheduleUpdates(): void {
+        const delay = MIN_UPDATE_INTERVAL_MS + Math.random() * (MAX_UPDATE_INTERVAL_MS - MIN_UPDATE_INTERVAL_MS);
+        this.timer = setTimeout(() => {
+            this.sendUpdates();
+            this.scheduleUpdates();
+        }, delay);
     }
 
     private addRow(parentId: string, name: string, group: boolean): PortfolioRow {
@@ -99,8 +110,9 @@ class FakeServer {
         for (const id of this.subscribedIds) {
             // regions and sectors are not stocks, so get no updates
             const stock = this.stocks.get(id);
-            if (stock) {
-                stock.price = Math.round((stock.price! + Math.random() - 0.5) * 100) / 100;
+            if (stock && Math.random() < UPDATE_CHANCE) {
+                // a move of up to 2% either way
+                stock.price = Math.max(0.01, Math.round(stock.price! * (1 + (Math.random() - 0.5) * 0.04) * 100) / 100);
                 rows.push(stock);
             }
         }

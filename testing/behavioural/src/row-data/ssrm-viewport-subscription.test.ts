@@ -10,17 +10,17 @@ import {
 } from 'ag-test-utils';
 
 import type { GridApi, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
-import { ScrollApiModule, VisibleRowsModule } from 'ag-grid-community';
+import { ScrollApiModule, ViewportSubscriptionModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-import { createRecorder, range } from './visibleRowsTestUtils';
+import { createRecorder, range, subscribe } from './viewportSubscriptionTestUtils';
 
-describe('SSRM subscribeToVisibleRows', () => {
+describe('SSRM viewportSubscription', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ServerSideRowModelModule,
             ServerSideRowModelApiModule,
-            VisibleRowsModule,
+            ViewportSubscriptionModule,
             ScrollApiModule,
             RowGroupingModule,
         ],
@@ -69,25 +69,25 @@ describe('SSRM subscribeToVisibleRows', () => {
         return api;
     }
 
-    test('first call lists the visible loaded rows straight away', async () => {
+    test('setting the option subscribes to the loaded rows already in view straight away', async () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();
 
-        api.subscribeToVisibleRows(recorder.handlers);
+        subscribe(api, recorder);
 
         expect(recorder.calls).toEqual([{ type: 'subscribe', ids: range(0, 5) }]);
         expect(recorder.subscribed.get('2')).toEqual({
+            type: 'leaf',
             id: '2',
             parentKeys: [],
             level: 0,
-            group: false,
             data: { id: '2', value: 2 },
         });
     });
 
-    test('first call is made with no rows before anything loads, then loaded rows arrive', async () => {
+    test('the grid makes the first call with no rows when it is ready, before anything loads, then loaded rows arrive', async () => {
         const recorder = createRecorder();
-        const api = gridsManager.createGrid('myGrid', {
+        gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'value' }],
             rowModelType: 'serverSide',
             rowBuffer: 5,
@@ -96,9 +96,9 @@ describe('SSRM subscribeToVisibleRows', () => {
             serverSideDatasource: createFlatDatasource(
                 Array.from({ length: 50 }, (_, i) => ({ id: String(i), value: i }))
             ),
+            viewportSubscription: recorder.handlers,
         });
 
-        api.subscribeToVisibleRows(recorder.handlers);
         expect(recorder.calls).toEqual([{ type: 'subscribe', ids: [] }]);
 
         await waitFor(() => expect(recorder.ids()).toEqual(range(0, 5)));
@@ -109,7 +109,7 @@ describe('SSRM subscribeToVisibleRows', () => {
     test('scrolling unsubscribes rows that leave the view before subscribing rows that enter it', async () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();
-        api.subscribeToVisibleRows(recorder.handlers);
+        subscribe(api, recorder);
 
         api.ensureIndexVisible(300, 'top');
         await waitForNoLoadingRows(api);
@@ -126,7 +126,7 @@ describe('SSRM subscribeToVisibleRows', () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();
 
-        api.subscribeToVisibleRows(recorder.handlers, { includeBuffer: true });
+        subscribe(api, recorder, { includeBuffer: true });
 
         const first = api.getFirstDisplayedRowIndex();
         const last = api.getLastDisplayedRowIndex();
@@ -139,7 +139,7 @@ describe('SSRM subscribeToVisibleRows', () => {
         try {
             const api = await createFlatGrid({ suppressRowVirtualisation: true }, 100);
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers);
+            subscribe(api, recorder);
             expect(recorder.ids()).toEqual(range(0, 5));
 
             mockGridLayout.gridHeight = 600;
@@ -154,25 +154,26 @@ describe('SSRM subscribeToVisibleRows', () => {
         }
     });
 
-    test('throttleMs still delivers the final state', async () => {
+    test('debounceMs delivers only the final state of a burst of scrolling', async () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();
-        api.subscribeToVisibleRows(recorder.handlers, { throttleMs: 20 });
+        subscribe(api, recorder, { debounceMs: 20 });
 
         api.ensureIndexVisible(150, 'top');
         api.ensureIndexVisible(300, 'top');
 
         await waitFor(() => expect(recorder.ids()).toEqual(range(300, 305)));
+        expect(recorder.batches('subscribe').slice(1).flat()).not.toContain('150');
         expect(recorder.violations).toEqual([]);
     });
 
-    test('the stop function unsubscribes every row and stops further calls', async () => {
+    test('unsubscribeFromViewport unsubscribes every row and stops further calls, and subscribeToViewport starts again', async () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();
-        const stop = api.subscribeToVisibleRows(recorder.handlers);
+        subscribe(api, recorder);
 
-        stop();
-        stop();
+        api.unsubscribeFromViewport();
+        api.unsubscribeFromViewport();
 
         expect(recorder.calls).toEqual([
             { type: 'subscribe', ids: range(0, 5) },
@@ -183,13 +184,33 @@ describe('SSRM subscribeToVisibleRows', () => {
         await waitForNoLoadingRows(api);
         await nextAnimationFrame();
         expect(recorder.calls).toHaveLength(2);
+
+        api.subscribeToViewport();
+
+        expect(recorder.calls.slice(2)).toEqual([{ type: 'subscribe', ids: range(300, 305) }]);
+        expect(recorder.violations).toEqual([]);
     });
 
-    test('destroying the grid unsubscribes every row while the api is still usable', async () => {
+    test('changing the option unsubscribes every row from the old handlers, then subscribes them with the new ones', async () => {
+        const api = await createFlatGrid();
+        const oldRecorder = createRecorder();
+        const newRecorder = createRecorder();
+        subscribe(api, oldRecorder);
+
+        subscribe(api, newRecorder, { includeBuffer: true });
+
+        expect(oldRecorder.calls).toEqual([
+            { type: 'subscribe', ids: range(0, 5) },
+            { type: 'unsubscribe', ids: range(0, 5) },
+        ]);
+        expect(newRecorder.ids()).toEqual(range(api.getFirstDisplayedRowIndex(), api.getLastDisplayedRowIndex()));
+    });
+
+    test('destroying the grid unsubscribes every row once, while the api is still usable', async () => {
         const api = await createFlatGrid();
         let destroyedDuringStop: boolean | undefined;
         const recorder = createRecorder();
-        api.subscribeToVisibleRows({
+        api.setGridOption('viewportSubscription', {
             onSubscribe: recorder.handlers.onSubscribe,
             onUnsubscribe: (rows, params) => {
                 destroyedDuringStop = params.api.isDestroyed();
@@ -209,15 +230,14 @@ describe('SSRM subscribeToVisibleRows', () => {
         expect(recorder.calls).toHaveLength(2);
     });
 
-    test('stopping inside onUnsubscribe skips the rest of the batch', async () => {
+    test('unsubscribeFromViewport inside onUnsubscribe skips the rest of the batch', async () => {
         const api = await createFlatGrid();
-        let stop: () => void = () => {};
         const recorder = createRecorder((call) => {
             if (call.type === 'unsubscribe') {
-                stop();
+                api.unsubscribeFromViewport();
             }
         });
-        stop = api.subscribeToVisibleRows(recorder.handlers);
+        subscribe(api, recorder);
 
         api.ensureIndexVisible(300, 'top');
         await waitFor(() => expect(recorder.calls.some((c) => c.type === 'unsubscribe')).toBe(true));
@@ -229,16 +249,16 @@ describe('SSRM subscribeToVisibleRows', () => {
         expect(recorder.violations).toEqual([]);
     });
 
-    test('stopping inside onSubscribe unsubscribes the rows just passed', async () => {
+    test('unsubscribeFromViewport inside onSubscribe unsubscribes the rows just passed', async () => {
         const api = await createFlatGrid();
-        const subscription: { stop?: () => void } = {};
+        let started = false;
         const recorder = createRecorder((call) => {
-            // The initial call is made before `subscription.stop` is set, so only later calls stop.
-            if (call.type === 'subscribe') {
-                subscription.stop?.();
+            if (call.type === 'subscribe' && started) {
+                api.unsubscribeFromViewport();
             }
         });
-        subscription.stop = api.subscribeToVisibleRows(recorder.handlers);
+        subscribe(api, recorder);
+        started = true;
 
         api.ensureIndexVisible(300, 'top');
         await waitFor(() => expect(recorder.batches('subscribe')).toHaveLength(2));
@@ -248,24 +268,10 @@ describe('SSRM subscribeToVisibleRows', () => {
         expect(recorder.violations).toEqual([]);
     });
 
-    test('several listeners each track their own rows', async () => {
-        const api = await createFlatGrid();
-        const unbuffered = createRecorder();
-        const buffered = createRecorder();
-        api.subscribeToVisibleRows(unbuffered.handlers);
-        const stopBuffered = api.subscribeToVisibleRows(buffered.handlers, { includeBuffer: true });
-
-        stopBuffered();
-
-        expect(unbuffered.ids()).toEqual(range(0, 5));
-        expect(unbuffered.calls).toHaveLength(1);
-        expect(buffered.subscribed.size).toBe(0);
-    });
-
     test('a purge unsubscribes the dropped rows, then subscribes the reloaded rows', async () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();
-        api.subscribeToVisibleRows(recorder.handlers);
+        subscribe(api, recorder);
 
         api.refreshServerSide({ purge: true });
 
@@ -277,7 +283,7 @@ describe('SSRM subscribeToVisibleRows', () => {
     test('a sort that reloads rows unsubscribes and subscribes them again', async () => {
         const api = await createFlatGrid({ columnDefs: [{ field: 'value', sortable: true }] });
         const recorder = createRecorder();
-        api.subscribeToVisibleRows(recorder.handlers);
+        subscribe(api, recorder);
 
         api.applyColumnState({ state: [{ colId: 'value', sort: 'desc' }] });
 
@@ -292,7 +298,7 @@ describe('SSRM subscribeToVisibleRows', () => {
             20
         );
         const recorder = createRecorder();
-        api.subscribeToVisibleRows(recorder.handlers);
+        subscribe(api, recorder);
 
         api.applyColumnState({ state: [{ colId: 'value', sort: 'desc' }] });
 
@@ -307,7 +313,7 @@ describe('SSRM subscribeToVisibleRows', () => {
     test('a transaction that removes a visible row unsubscribes it', async () => {
         const api = await createFlatGrid();
         const recorder = createRecorder();
-        api.subscribeToVisibleRows(recorder.handlers);
+        subscribe(api, recorder);
 
         api.applyServerSideTransaction({ remove: [{ id: '2' }] });
 
@@ -325,7 +331,7 @@ describe('SSRM subscribeToVisibleRows', () => {
                 api.refreshServerSide({ purge: true });
             }
         });
-        api.subscribeToVisibleRows(recorder.handlers);
+        subscribe(api, recorder);
 
         api.ensureIndexVisible(50, 'top');
 
@@ -345,7 +351,7 @@ describe('SSRM subscribeToVisibleRows', () => {
                 api.ensureIndexVisible(80, 'top');
             }
         });
-        api.subscribeToVisibleRows(recorder.handlers);
+        subscribe(api, recorder);
 
         api.ensureIndexVisible(50, 'top');
 
@@ -369,7 +375,7 @@ describe('SSRM subscribeToVisibleRows', () => {
         });
         await waitForNoLoadingRows(api);
         const recorder = createRecorder();
-        api.subscribeToVisibleRows(recorder.handlers);
+        subscribe(api, recorder);
         expect(recorder.ids()).toEqual(range(0, 5));
 
         rows = rows.map((row) => (row.id === '1' ? { id: 'x1', value: 100 } : row));
@@ -394,10 +400,11 @@ describe('SSRM subscribeToVisibleRows', () => {
     });
 
     test('without getRowId it warns and never calls the handlers', async () => {
-        const api = await createFlatGrid({ getRowId: undefined });
         const recorder = createRecorder();
 
-        expect(() => api.subscribeToVisibleRows(recorder.handlers)).toThrow('warning #188');
+        await expect(createFlatGrid({ getRowId: undefined, viewportSubscription: recorder.handlers })).rejects.toThrow(
+            'warning #188'
+        );
         expect(recorder.calls).toEqual([]);
     });
 
@@ -429,14 +436,14 @@ describe('SSRM subscribeToVisibleRows', () => {
             const api = createGroupedGrid();
             await waitForNoLoadingRows(api);
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers);
+            subscribe(api, recorder);
 
             expect(recorder.subscribed.get('Ireland')).toEqual({
+                type: 'group',
                 id: 'Ireland',
                 route: ['Ireland'],
                 parentKeys: [],
                 level: 0,
-                group: true,
                 data: { country: 'Ireland' },
             });
 
@@ -444,10 +451,13 @@ describe('SSRM subscribeToVisibleRows', () => {
             await waitForNoLoadingRows(api);
 
             await waitFor(() => expect(recorder.subscribed.has('Ireland/Ireland-0')).toBe(true));
-            const leaf = recorder.subscribed.get('Ireland/Ireland-0')!;
-            expect(leaf.route).toBeUndefined();
-            expect(leaf.parentKeys).toEqual(['Ireland']);
-            expect(leaf.level).toBe(1);
+            expect(recorder.subscribed.get('Ireland/Ireland-0')).toEqual({
+                type: 'leaf',
+                id: 'Ireland/Ireland-0',
+                parentKeys: ['Ireland'],
+                level: 1,
+                data: { id: 'Ireland-0', country: 'Ireland', value: 0 },
+            });
             expect(recorder.violations).toEqual([]);
         });
 
@@ -455,7 +465,7 @@ describe('SSRM subscribeToVisibleRows', () => {
             const api = createGroupedGrid();
             await waitForNoLoadingRows(api);
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers);
+            subscribe(api, recorder);
 
             api.setRowNodeExpanded(api.getRowNode('Ireland')!, true);
             await waitFor(() => expect(recorder.ids()).toContain('Ireland/Ireland-4'));
@@ -473,7 +483,7 @@ describe('SSRM subscribeToVisibleRows', () => {
             await waitForNoLoadingRows(api);
 
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers, { includeGroups: false });
+            subscribe(api, recorder, { includeGroups: false });
 
             expect(recorder.ids()).toEqual(range(0, 4).map((i) => `Ireland/Ireland-${i}`));
         });
@@ -484,7 +494,7 @@ describe('SSRM subscribeToVisibleRows', () => {
             api.setRowNodeExpanded(api.getRowNode('Ireland')!, true);
             await waitForNoLoadingRows(api);
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers);
+            subscribe(api, recorder);
             expect(recorder.ids()).toEqual(['Ireland', ...range(0, 4).map((i) => `Ireland/Ireland-${i}`)]);
 
             api.applyServerSideTransaction({ remove: [{ country: 'Ireland' }] });
@@ -502,7 +512,7 @@ describe('SSRM subscribeToVisibleRows', () => {
             api.setRowNodeExpanded(api.getRowNode('Spain')!, true);
             await waitForNoLoadingRows(api);
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers);
+            subscribe(api, recorder);
             const spainRows = range(0, 3).map((i) => `Spain/Spain-${i}`);
             expect(recorder.ids()).toEqual(['Ireland', 'Spain', ...spainRows]);
 
@@ -533,7 +543,7 @@ describe('SSRM subscribeToVisibleRows', () => {
             });
             await waitForNoLoadingRows(api);
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers);
+            subscribe(api, recorder);
             expect(recorder.ids()).toHaveLength(6);
 
             api.ensureIndexVisible(15, 'top');
@@ -559,7 +569,7 @@ describe('SSRM subscribeToVisibleRows', () => {
                 api.setRowNodeExpanded(api.getRowNode('Ireland')!, true);
                 await waitForNoLoadingRows(api);
                 const recorder = createRecorder();
-                api.subscribeToVisibleRows(recorder.handlers);
+                subscribe(api, recorder);
                 expect(recorder.ids()).toEqual(['Ireland', ...irelandRows]);
                 return { api, recorder };
             }
@@ -608,7 +618,7 @@ describe('SSRM subscribeToVisibleRows', () => {
             await waitForNoLoadingRows(api);
 
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers, { includeBuffer: true });
+            subscribe(api, recorder, { includeBuffer: true });
 
             expect(recorder.ids()).toContain('Spain');
             expect(recorder.ids().filter((id) => id.startsWith('rowGroupFooter_'))).toEqual([]);

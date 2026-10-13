@@ -14,24 +14,27 @@ import {
     PinnedRowModule,
     RowSelectionModule,
     ScrollApiModule,
-    VisibleRowsModule,
+    ViewportSubscriptionModule,
 } from 'ag-grid-community';
 import {
     MasterDetailModule,
+    PivotModule,
     RowGroupingModule,
     ServerSideRowModelApiModule,
     ServerSideRowModelModule,
     TreeDataModule,
 } from 'ag-grid-enterprise';
 
-import { createRecorder, range } from './visibleRowsTestUtils';
+import { createFakeServer, createServerSideDatasource } from '../columnToolPanel/deferredPivotModeFakeServer';
+import type { Recorder } from './viewportSubscriptionTestUtils';
+import { createRecorder, range, subscribe } from './viewportSubscriptionTestUtils';
 
-describe('SSRM subscribeToVisibleRows integration', () => {
+describe('SSRM viewportSubscription integration', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ServerSideRowModelModule,
             ServerSideRowModelApiModule,
-            VisibleRowsModule,
+            ViewportSubscriptionModule,
             ScrollApiModule,
             NumberFilterModule,
             PaginationModule,
@@ -40,6 +43,7 @@ describe('SSRM subscribeToVisibleRows integration', () => {
             RowGroupingModule,
             TreeDataModule,
             MasterDetailModule,
+            PivotModule,
         ],
     });
 
@@ -137,22 +141,32 @@ describe('SSRM subscribeToVisibleRows integration', () => {
             const api = createTreeGrid();
             await waitForNoLoadingRows(api);
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers);
+            subscribe(api, recorder);
             expect(recorder.ids()).toEqual(['A', 'B', 'C']);
 
             api.setRowNodeExpanded(api.getRowNode('A')!, true);
 
             await waitFor(() => expect(recorder.ids()).toEqual(['A', 'A1', 'A2', 'B', 'C']));
             expect(recorder.calls.slice(1)).toEqual([{ type: 'subscribe', ids: ['A1', 'A2'] }]);
-            expect(recorder.subscribed.get('A1')).toMatchObject({ route: ['A', 'A1'], parentKeys: ['A'], level: 1 });
-            expect(recorder.subscribed.get('A2')).toMatchObject({ parentKeys: ['A'], level: 1, group: false });
+            expect(recorder.subscribed.get('A1')).toMatchObject({
+                type: 'tree',
+                route: ['A', 'A1'],
+                parentKeys: ['A'],
+                level: 1,
+                hasChildren: true,
+            });
+            expect(recorder.subscribed.get('A2')).toMatchObject({
+                type: 'tree',
+                parentKeys: ['A'],
+                level: 1,
+                hasChildren: false,
+            });
             expect(recorder.violations).toEqual([]);
         });
 
         test('groups opened by isServerSideGroupOpenByDefault subscribe their children as they load, without unsubscribing anything', async () => {
             const recorder = createRecorder();
-            const api = createTreeGrid({ isServerSideGroupOpenByDefault: () => true });
-            api.subscribeToVisibleRows(recorder.handlers);
+            createTreeGrid({ isServerSideGroupOpenByDefault: () => true, viewportSubscription: recorder.handlers });
 
             await waitFor(() => expect(recorder.ids()).toEqual(['A', 'A1', 'A1x', 'A2', 'B', 'C']));
             expect(recorder.calls[0]).toEqual({ type: 'subscribe', ids: [] });
@@ -166,7 +180,7 @@ describe('SSRM subscribeToVisibleRows integration', () => {
             await waitForNoLoadingRows(api);
             await nextAnimationFrame();
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers);
+            subscribe(api, recorder);
             expect(recorder.ids()).toEqual(['A', 'A1', 'A1x', 'A2', 'B', 'C']);
 
             api.setRowNodeExpanded(api.getRowNode('A')!, false);
@@ -180,7 +194,7 @@ describe('SSRM subscribeToVisibleRows integration', () => {
         });
     });
 
-    describe('tree data group flag and route', () => {
+    describe('tree data type and route', () => {
         function createTreeGrid(): GridApi {
             return gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'id' }],
@@ -201,16 +215,30 @@ describe('SSRM subscribeToVisibleRows integration', () => {
             });
         }
 
-        test('expandable tree rows are passed with group true, and leaf rows, which have no key, without a route', async () => {
+        test('tree rows are passed with type tree; expandable rows have children and a route, and leaf rows, which have no key, have no route', async () => {
             const api = createTreeGrid();
             await waitForNoLoadingRows(api);
             const recorder = createRecorder();
 
-            api.subscribeToVisibleRows(recorder.handlers);
+            subscribe(api, recorder);
 
-            expect(recorder.subscribed.get('A')).toMatchObject({ group: true, route: ['A'] });
-            expect(recorder.subscribed.get('B')).toMatchObject({ group: false });
-            expect(recorder.subscribed.get('B')!.route).toBeUndefined();
+            expect(recorder.subscribed.get('A')).toEqual({
+                type: 'tree',
+                id: 'A',
+                route: ['A'],
+                parentKeys: [],
+                level: 0,
+                hasChildren: true,
+                data: { id: 'A', group: true },
+            });
+            expect(recorder.subscribed.get('B')).toEqual({
+                type: 'tree',
+                id: 'B',
+                parentKeys: [],
+                level: 0,
+                hasChildren: false,
+                data: { id: 'B', group: false },
+            });
         });
 
         test('includeGroups false leaves out the expandable tree rows', async () => {
@@ -218,7 +246,7 @@ describe('SSRM subscribeToVisibleRows integration', () => {
             await waitForNoLoadingRows(api);
             const recorder = createRecorder();
 
-            api.subscribeToVisibleRows(recorder.handlers, { includeGroups: false });
+            subscribe(api, recorder, { includeGroups: false });
 
             expect(recorder.ids()).toEqual(['B']);
         });
@@ -256,7 +284,7 @@ describe('SSRM subscribeToVisibleRows integration', () => {
             const api = createGroupedGrid();
             await waitForNoLoadingRows(api);
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers);
+            subscribe(api, recorder);
 
             api.expandAll();
 
@@ -271,7 +299,7 @@ describe('SSRM subscribeToVisibleRows integration', () => {
             const api = createGroupedGrid();
             await waitForNoLoadingRows(api);
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers);
+            subscribe(api, recorder);
             expect(recorder.ids()).toEqual(['France', 'Ireland', 'Spain']);
 
             api.applyColumnState({
@@ -290,6 +318,183 @@ describe('SSRM subscribeToVisibleRows integration', () => {
         });
     });
 
+    describe('pivot mode', () => {
+        const olympicRows = ['USA', 'Russia'].flatMap((country) =>
+            [2000, 2004].flatMap((year) =>
+                ['Swimming', 'Rowing'].map((sport) => ({
+                    athlete: `${country}-${year}-${sport}`,
+                    age: 20,
+                    country,
+                    year,
+                    date: '',
+                    sport,
+                    gold: 1,
+                    silver: sport === 'Swimming' ? 1 : 0,
+                    bronze: 0,
+                    total: 1,
+                }))
+            )
+        );
+
+        function createPivotGrid(recorder: Recorder, options: GridOptions = {}) {
+            const getRowIdData: any[] = [];
+            const server = createFakeServer(olympicRows);
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'year', rowGroup: true, hide: true },
+                    { field: 'sport', pivot: true, hide: true },
+                    { field: 'silver', hide: true },
+                    { field: 'gold', aggFunc: 'sum', hide: true },
+                ],
+                pivotMode: true,
+                rowModelType: 'serverSide',
+                rowBuffer: 5,
+                suppressRowVirtualisation: false,
+                getRowId: ({ data, parentKeys = [] }) => {
+                    getRowIdData.push(data);
+                    return [...parentKeys, data.athlete ?? (parentKeys.length ? data.year : data.country)].join('/');
+                },
+                // The grid sends the pivot columns outside pivot mode too, so they are dropped then.
+                serverSideDatasource: createServerSideDatasource({
+                    getData: (request) => server.getData(request.pivotMode ? request : { ...request, pivotCols: [] }),
+                }),
+                viewportSubscription: recorder.handlers,
+                ...options,
+            });
+            return { api, getRowIdData };
+        }
+
+        /**
+         * Waits until the subscribed rows are the given ones, and no further batch arrives.
+         * Blocks of open groups out of view never load, so this cannot wait for no loading rows.
+         */
+        async function waitForIds(recorder: Recorder, ids: string[]): Promise<void> {
+            await waitFor(() => expect(recorder.ids()).toEqual(ids));
+            await nextAnimationFrame();
+            await nextAnimationFrame();
+            expect(recorder.ids()).toEqual(ids);
+        }
+
+        test('subscribes the group rows the server returns, with the pivoted data and the id from getRowId', async () => {
+            const recorder = createRecorder();
+            const { getRowIdData } = createPivotGrid(recorder);
+
+            await waitForIds(recorder, ['Russia', 'USA']);
+
+            expect(recorder.calls).toEqual([
+                { type: 'subscribe', ids: [] },
+                { type: 'subscribe', ids: ['Russia', 'USA'] },
+            ]);
+            expect(recorder.subscribed.get('USA')).toEqual({
+                type: 'group',
+                id: 'USA',
+                route: ['USA'],
+                parentKeys: [],
+                level: 0,
+                data: { country: 'USA', childCount: 4, Rowing_gold: 2, Swimming_gold: 2 },
+            });
+            // Unlike the Client-Side Row Model, getRowId gives the group rows their ids.
+            expect(getRowIdData.every((data) => data.country && !data.athlete)).toBe(true);
+        });
+
+        test('expanding and collapsing a group subscribes and unsubscribes its child groups', async () => {
+            const recorder = createRecorder();
+            const { api } = createPivotGrid(recorder);
+            await waitForIds(recorder, ['Russia', 'USA']);
+
+            api.setRowNodeExpanded(api.getRowNode('USA')!, true);
+            await waitForIds(recorder, ['Russia', 'USA', 'USA/2000', 'USA/2004']);
+            expect(recorder.subscribed.get('USA/2000')).toEqual({
+                type: 'group',
+                id: 'USA/2000',
+                route: ['USA', '2000'],
+                parentKeys: ['USA'],
+                level: 1,
+                data: { year: '2000', childCount: 2, Rowing_gold: 1, Swimming_gold: 1 },
+            });
+
+            api.setRowNodeExpanded(api.getRowNode('USA')!, false);
+            await waitForIds(recorder, ['Russia', 'USA']);
+
+            expect(recorder.calls.slice(2)).toEqual([
+                { type: 'subscribe', ids: ['USA/2000', 'USA/2004'] },
+                { type: 'unsubscribe', ids: ['USA/2000', 'USA/2004'] },
+            ]);
+            expect(recorder.unsubscribedRefs).toEqual([
+                { type: 'group', id: 'USA/2000', route: ['USA', '2000'], parentKeys: ['USA'], level: 1 },
+                { type: 'group', id: 'USA/2004', route: ['USA', '2004'], parentKeys: ['USA'], level: 1 },
+            ]);
+            expect(recorder.violations).toEqual([]);
+        });
+
+        test('turning pivot mode off and on reloads the rows, so unsubscribes every row and subscribes the reloaded rows in view', async () => {
+            const recorder = createRecorder();
+            const { api } = createPivotGrid(recorder, { isServerSideGroupOpenByDefault: () => true });
+            // Rows 0-4 are in view: the pivot result columns take two header rows.
+            const pivotRowsInView = ['Russia', 'Russia/2000', 'Russia/2004', 'USA', 'USA/2000'];
+            await waitForIds(recorder, pivotRowsInView);
+            const callsInPivotMode = recorder.calls.length;
+
+            api.setGridOption('pivotMode', false);
+
+            // Rows 0-5 are in view, now with leaf rows under the expanded year groups.
+            await waitForIds(recorder, [
+                'Russia',
+                'Russia/2000',
+                'Russia/2000/Russia-2000-Rowing',
+                'Russia/2000/Russia-2000-Swimming',
+                'Russia/2004',
+                'Russia/2004/Russia-2004-Swimming',
+            ]);
+            expect(recorder.calls[callsInPivotMode].type).toBe('unsubscribe');
+            expect([...recorder.calls[callsInPivotMode].ids].sort()).toEqual(pivotRowsInView);
+            expect(recorder.subscribed.get('Russia/2000/Russia-2000-Swimming')).toMatchObject({
+                type: 'leaf',
+                parentKeys: ['Russia', '2000'],
+                level: 2,
+            });
+
+            api.setGridOption('pivotMode', true);
+
+            await waitForIds(recorder, pivotRowsInView);
+            expect(recorder.subscribed.get('Russia')!.data).toEqual({
+                country: 'Russia',
+                childCount: 4,
+                Rowing_gold: 2,
+                Swimming_gold: 2,
+            });
+            expect(recorder.violations).toEqual([]);
+        });
+
+        test('changing the pivot columns reloads the rows, so unsubscribes every row and subscribes the reloaded rows with their new data', async () => {
+            const recorder = createRecorder();
+            const { api } = createPivotGrid(recorder);
+            await waitForIds(recorder, ['Russia', 'USA']);
+
+            api.setPivotColumns(['silver']);
+
+            await waitFor(() => expect(recorder.subscribed.get('USA')?.data).toHaveProperty('1_gold', 2));
+            await nextAnimationFrame();
+            await nextAnimationFrame();
+            expect(recorder.calls.slice(2)).toEqual([
+                { type: 'unsubscribe', ids: ['Russia', 'USA'] },
+                { type: 'subscribe', ids: ['Russia', 'USA'] },
+            ]);
+
+            api.setPivotColumns([]);
+
+            await waitFor(() => expect(recorder.subscribed.get('USA')?.data).not.toHaveProperty('1_gold'));
+            await nextAnimationFrame();
+            await nextAnimationFrame();
+            expect(recorder.calls.slice(4)).toEqual([
+                { type: 'unsubscribe', ids: ['Russia', 'USA'] },
+                { type: 'subscribe', ids: ['Russia', 'USA'] },
+            ]);
+            expect(recorder.violations).toEqual([]);
+        });
+    });
+
     describe('master/detail', () => {
         test('expanding a master row never reports its detail row, and scrolls the rows it pushes out of view', async () => {
             const api = await createFlatGrid({
@@ -298,7 +503,7 @@ describe('SSRM subscribeToVisibleRows integration', () => {
                 detailRowHeight: 100,
             });
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers);
+            subscribe(api, recorder);
 
             api.setRowNodeExpanded(api.getRowNode('1')!, true);
 
@@ -323,7 +528,7 @@ describe('SSRM subscribeToVisibleRows integration', () => {
                 serverSideDatasource: createFlatDatasource(() => all.filter((row) => row.value > min)),
             });
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers);
+            subscribe(api, recorder);
 
             min = 2;
             await api.setColumnFilterModel('value', { filterType: 'number', type: 'greaterThan', filter: 2 });
@@ -344,7 +549,7 @@ describe('SSRM subscribeToVisibleRows integration', () => {
                 serverSideDatasource: createFlatDatasource(() => (empty ? [] : all)),
             });
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers);
+            subscribe(api, recorder);
 
             empty = true;
             await api.setColumnFilterModel('value', { filterType: 'number', type: 'greaterThan', filter: 5000 });
@@ -363,7 +568,7 @@ describe('SSRM subscribeToVisibleRows integration', () => {
             });
             const recorder = createRecorder();
 
-            api.subscribeToVisibleRows(recorder.handlers, { includeBuffer: true });
+            subscribe(api, recorder, { includeBuffer: true });
 
             expect(recorder.ids()).not.toContain('top');
             expect(recorder.ids()).not.toContain('bottom');
@@ -375,7 +580,7 @@ describe('SSRM subscribeToVisibleRows integration', () => {
         test('paging unsubscribes the old page and subscribes the new one once it loads', async () => {
             const api = await createFlatGrid({ pagination: true, paginationPageSize: 20 });
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers);
+            subscribe(api, recorder);
 
             api.paginationGoToPage(10);
 
@@ -400,7 +605,7 @@ describe('SSRM subscribeToVisibleRows integration', () => {
                 },
             });
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers);
+            subscribe(api, recorder);
 
             defer = true;
             api.ensureIndexVisible(500, 'top');
@@ -429,8 +634,8 @@ describe('SSRM subscribeToVisibleRows integration', () => {
                 serverSideDatasource: {
                     getRows: (params) => (fail ? params.fail() : respond(params, rows)),
                 },
+                viewportSubscription: recorder.handlers,
             });
-            api.subscribeToVisibleRows(recorder.handlers);
             await waitFor(() => expect(api.getDisplayedRowAtIndex(0)?.failedLoad).toBe(true));
             // Failed rows stay stubs, so waitForNoLoadingRows would never return.
             await nextAnimationFrame();
@@ -450,7 +655,7 @@ describe('SSRM subscribeToVisibleRows integration', () => {
         test('refreshing without a purge keeps unchanged rows subscribed', async () => {
             const api = await createFlatGrid();
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers);
+            subscribe(api, recorder);
 
             api.refreshServerSide({ purge: false });
             await settle(api);
@@ -462,7 +667,7 @@ describe('SSRM subscribeToVisibleRows integration', () => {
         test('a transaction adding a row at the top subscribes it and scrolls out the row it pushes down', async () => {
             const api = await createFlatGrid();
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers);
+            subscribe(api, recorder);
 
             api.applyServerSideTransaction({ add: [{ id: 'new', value: -1 }], addIndex: 0 });
 
@@ -477,7 +682,7 @@ describe('SSRM subscribeToVisibleRows integration', () => {
         test('async transactions are reported once they are flushed', async () => {
             const api = await createFlatGrid();
             const recorder = createRecorder();
-            api.subscribeToVisibleRows(recorder.handlers);
+            subscribe(api, recorder);
 
             api.applyServerSideTransactionAsync({ remove: [{ id: '1' }] });
             api.applyServerSideTransactionAsync({ update: [{ id: '2', value: 200 }] });
@@ -498,7 +703,7 @@ describe('SSRM subscribeToVisibleRows integration', () => {
     test('selecting rows does not resubscribe them', async () => {
         const api = await createFlatGrid({ rowSelection: { mode: 'multiRow' } });
         const recorder = createRecorder();
-        api.subscribeToVisibleRows(recorder.handlers);
+        subscribe(api, recorder);
 
         api.setNodesSelected({ nodes: [api.getRowNode('1')!, api.getRowNode('2')!], newValue: true });
         await waitFor(() => expect(api.getSelectedNodes()).toHaveLength(2));
