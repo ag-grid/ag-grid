@@ -6,6 +6,7 @@ import { isFrameworkLandingHub } from '@constants';
 import { getFrameworkDisplayText } from '@utils/framework';
 import { useSyncFrameworkStoreState } from '@utils/hooks/useSyncFrameworkStoreState';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
 import type { FunctionComponent } from 'react';
 
 import styles from './Header.module.scss';
@@ -80,10 +81,13 @@ export const Header: FunctionComponent<Props> = ({
                 </div>
 
                 {isEnterprise && (
-                    <span className={styles.enterpriseLabel}>
+                    <a
+                        className={styles.enterpriseLabel}
+                        href={urlWithPrefix({ url: './community-vs-enterprise', framework })}
+                    >
                         Enterprise
                         <Icon name="enterprise" />
-                    </span>
+                    </a>
                 )}
             </div>
         </header>
