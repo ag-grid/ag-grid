@@ -200,6 +200,8 @@ body > #highlighter {
 .example-controls input[type='radio'] {
     border: 1px solid var(--button-border);
     cursor: pointer;
+    /* Lowercase text sits below the centre of its line box, so a control centred beside it looks high */
+    translate: 0 1px;
 }
 
 .example-controls input[type='radio'] {
