@@ -21,6 +21,8 @@ import type { ScrollVisibleService } from './scrollVisibleService';
 
 const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
 const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
+const CSS_CLASS_COLUMN_WIDTH_ANIMATION = 'ag-animate-autosize';
+const COLUMN_WIDTH_ANIMATION_MS = 200;
 
 export interface PinnedSectionState {
     height: number;
@@ -78,6 +80,9 @@ export class GridBodyCtrl extends BeanStub {
     private scrollableAreaWidth: number | null = null;
 
     public scrollFeature: GridBodyScrollFeature;
+
+    private columnWidthAnimationDepth = 0;
+    private columnWidthAnimationTimeout: number | undefined;
 
     public setComp(
         comp: IGridBodyComp,
@@ -429,6 +434,34 @@ export class GridBodyCtrl extends BeanStub {
     // used by ColumnAnimationService
     public setColumnMovingCss(moving: boolean): void {
         this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_MOVING, moving);
+    }
+
+    /** Animates the column widths and positions laid out until the matching `finishColumnWidthAnimation`; nestable. */
+    public startColumnWidthAnimation(): void {
+        this.columnWidthAnimationDepth++;
+        const gos = this.gos;
+        if (!gos.get('animateColumnResizing') || gos.get('enableRtl')) {
+            return;
+        }
+        window.clearTimeout(this.columnWidthAnimationTimeout);
+        this.columnWidthAnimationTimeout = undefined;
+        this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_WIDTH_ANIMATION, true);
+    }
+
+    public finishColumnWidthAnimation(): void {
+        const depth = Math.max(0, this.columnWidthAnimationDepth - 1);
+        this.columnWidthAnimationDepth = depth;
+        if (depth > 0 || !this.eGridBody.classList.contains(CSS_CLASS_COLUMN_WIDTH_ANIMATION)) {
+            return;
+        }
+        // The class must outlive the width writes: a transition only starts if a style recalc sees it.
+        window.clearTimeout(this.columnWidthAnimationTimeout);
+        this.columnWidthAnimationTimeout = window.setTimeout(() => {
+            this.columnWidthAnimationTimeout = undefined;
+            if (this.isAlive()) {
+                this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_WIDTH_ANIMATION, false);
+            }
+        }, COLUMN_WIDTH_ANIMATION_MS);
     }
 
     public setCellTextSelection(selectable: boolean = false): void {
