@@ -525,7 +525,7 @@ export interface Props<TData> {
          * @agModule `ColumnAutoSizeModule`
          */
     autoSizeStrategy?: AutoSizeStrategy<TData>,
-    /** Set to `true` to animate changes to column width from auto-sizing, flex, showing or hiding columns, and expanding or collapsing column groups.
+    /** Set to `true` to animate changes to column width from auto-sizing, flex, showing or hiding columns, expanding or collapsing column groups, and applying column state or column definitions.
          * @default false
          */
     animateColumnResizing?: boolean,
