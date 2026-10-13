@@ -792,4 +792,17 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
             expect(params.sourceColumn).toBe(api.getColumn('ag-Grid-AutoColumn'));
         }
     });
+
+    test('without a callback the dialog title of a restored column inherits defaultColDef.headerName', async () => {
+        const api = gridWithUserColumn('pcd-default-header', 'calc', '[a] * 2', undefined, {
+            defaultColDef: { headerName: 'Inherited' },
+        });
+        await waitForColumn(api, 'calc');
+
+        api.showColumnMenu('calc');
+        await clickMenuOption('Edit Calculated Column');
+        await waitFor(() => getDialog());
+
+        expect(getDialog().querySelector<HTMLInputElement>('input')!.value).toBe('Inherited');
+    });
 });

@@ -1203,9 +1203,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     private getDraftHeaderName(column: AgColumn): string {
-        const storedColDef = this.dynamicColumns.get(column.colId)?.colDef;
-        if (storedColDef) {
-            return column.headerNameOverride ?? storedColDef.headerName ?? column.colId;
+        if (this.dynamicColumns.has(column.colId)) {
+            return column.headerNameOverride ?? this.getAuthoredColDef(column).headerName ?? column.colId;
         }
         return (
             this.beans.colNames.getDisplayNameForColumn(column, 'header') || (column.colDef.headerName ?? column.colId)
