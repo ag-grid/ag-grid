@@ -197,7 +197,10 @@ function validateCalculatedColumnsOptions(options: CalculatedColumnsOptions): Va
         }
     }
     const { dataTypes, expressionPickers, applyMode } = options;
-    if (dataTypes != null && (!Array.isArray(dataTypes) || dataTypes.some((dataType) => typeof dataType !== 'string'))) {
+    if (
+        dataTypes != null &&
+        (!Array.isArray(dataTypes) || dataTypes.some((dataType) => typeof dataType !== 'string'))
+    ) {
         return _createValidationWarning(321, {
             property: 'calculatedColumns.dataTypes',
             expected: 'an array of strings',
