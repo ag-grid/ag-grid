@@ -701,9 +701,9 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         setTitle('Margin');
         clickDialogButton('Apply');
 
-        await waitFor(() => expect(propertiesOf(api.getState(), 'calc')?.headerName).toBe('Margin'));
-        expect(changed).toHaveBeenCalledTimes(1);
+        await waitFor(() => expect(changed).toHaveBeenCalledTimes(1));
         expect(changed.mock.calls[0][0].changes).toEqual({ headerName: { oldValue: 'Profit', newValue: 'Margin' } });
+        expect(propertiesOf(api.getState(), 'calc')?.headerName).toBe('Margin');
         expect(headerOf(api, 'calc')).toBe('Report');
     });
 
