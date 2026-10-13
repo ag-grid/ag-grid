@@ -6,5 +6,6 @@ export const gettingStarted: Schema<Config, Render> = {
     render: component('../../external/ag-website-shared/src/components/getting-started/GettingStarted'),
     attributes: {
         library: { type: String, required: true },
+        framework: { type: String, required: true },
     },
 };
