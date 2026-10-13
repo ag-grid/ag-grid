@@ -21,6 +21,9 @@ import type { ScrollVisibleService } from './scrollVisibleService';
 
 const CSS_CLASS_CELL_SELECTABLE = 'ag-selectable';
 const CSS_CLASS_COLUMN_MOVING = 'ag-column-moving';
+const CSS_CLASS_COLUMN_WIDTH_ANIMATION = 'ag-animate-autosize';
+/** The 0.2s width transition plus a few frames, as a transition starts at the first style recalc after the writes. */
+const COLUMN_WIDTH_ANIMATION_MS = 250;
 
 export interface PinnedSectionState {
     height: number;
@@ -81,6 +84,9 @@ export class GridBodyCtrl extends BeanStub {
     private pinnedRightWidth = -1;
 
     public scrollFeature: GridBodyScrollFeature;
+
+    private columnWidthAnimationDepth = 0;
+    private columnWidthAnimationTimeout: number | undefined;
 
     public setComp(
         comp: IGridBodyComp,
@@ -434,6 +440,53 @@ export class GridBodyCtrl extends BeanStub {
     // used by ColumnAnimationService
     public setColumnMovingCss(moving: boolean): void {
         this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_MOVING, moving);
+    }
+
+    /** Animates the column widths and positions laid out until the matching `finishColumnWidthAnimation`; nestable. */
+    public startColumnWidthAnimation(): void {
+        this.columnWidthAnimationDepth++;
+        const gos = this.gos;
+        if (!gos.get('animateColumnResizing') || gos.get('enableRtl')) {
+            return;
+        }
+        window.clearTimeout(this.columnWidthAnimationTimeout);
+        this.columnWidthAnimationTimeout = undefined;
+        this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_WIDTH_ANIMATION, true);
+    }
+
+    /**
+     * `skipTransition` removes the class before any style recalc sees it, so nothing laid out since animates. It does
+     * so even while an outer window, such as a pending async auto-size, is still open.
+     */
+    public finishColumnWidthAnimation(skipTransition?: boolean): void {
+        const depth = Math.max(0, this.columnWidthAnimationDepth - 1);
+        this.columnWidthAnimationDepth = depth;
+        if (skipTransition) {
+            this.removeColumnWidthAnimation();
+            return;
+        }
+        if (depth > 0 || !this.eGridBody.classList.contains(CSS_CLASS_COLUMN_WIDTH_ANIMATION)) {
+            return;
+        }
+        window.clearTimeout(this.columnWidthAnimationTimeout);
+        // The class must outlive the width writes: a transition only starts if a style recalc sees it.
+        this.columnWidthAnimationTimeout = window.setTimeout(() => {
+            this.columnWidthAnimationTimeout = undefined;
+            if (this.isAlive()) {
+                this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_WIDTH_ANIMATION, false);
+            }
+        }, COLUMN_WIDTH_ANIMATION_MS);
+    }
+
+    /** Ends any open or lingering animation window so widths written next apply immediately. */
+    public cancelColumnWidthAnimation(): void {
+        this.removeColumnWidthAnimation();
+    }
+
+    private removeColumnWidthAnimation(): void {
+        window.clearTimeout(this.columnWidthAnimationTimeout);
+        this.columnWidthAnimationTimeout = undefined;
+        this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_WIDTH_ANIMATION, false);
     }
 
     public setCellTextSelection(selectable: boolean = false): void {

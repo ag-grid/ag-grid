@@ -766,7 +766,7 @@ describe('Column Autosize', () => {
                 api.autoSizeColumns(['a']);
 
                 await waitFor(() => expect(rejections).toEqual([new Error('widthChanged listener failed')]));
-                expect(document.querySelector('.ag-animate-autosize')).toBeNull();
+                await waitFor(() => expect(document.querySelector('.ag-animate-autosize')).toBeNull());
             } finally {
                 process.off('unhandledRejection', onRejection);
             }

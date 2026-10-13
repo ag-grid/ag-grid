@@ -95,6 +95,7 @@ export class ViewportSizeFeature extends BeanStub {
             const newWidth = gridBodyCtrl.getReportedCenterWidth();
 
             if (colFlex && newWidth !== colFlex.flexViewportWidth) {
+                gridBodyCtrl.cancelColumnWidthAnimation();
                 colFlex.refreshFlexedColumns({
                     viewportWidth: newWidth,
                     updateBodyWidths: true,
