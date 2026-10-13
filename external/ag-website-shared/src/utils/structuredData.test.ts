@@ -567,4 +567,42 @@ describe('buildAgGridOrganization', () => {
         });
         expect(result.contactPoint).toHaveLength(2);
     });
+
+    // SE-71: the Wikidata link, founder and company facts
+    test('emits the company facts, the founder tied to Wikidata, and the company registry identifiers', () => {
+        const result = buildAgGridOrganization();
+
+        expect(result).toMatchObject({
+            foundingDate: '2010-07-19',
+            founder: {
+                '@type': 'Person',
+                name: 'Niall Crosby',
+                sameAs: ['https://www.wikidata.org/wiki/Q114758691'],
+            },
+            address: {
+                '@type': 'PostalAddress',
+                streetAddress: '70 Wilson Street',
+                addressLocality: 'London',
+                postalCode: 'EC2A 2DB',
+                addressCountry: 'GB',
+            },
+            identifier: [
+                { '@type': 'PropertyValue', propertyID: 'Companies House', value: '07318192' },
+                { '@type': 'PropertyValue', propertyID: 'VAT', value: 'GB998360167' },
+            ],
+        });
+    });
+
+    test('every sameAs, logo and contact URL is absolute https', () => {
+        const result = buildAgGridOrganization();
+        const urls = [
+            result.logo,
+            ...(result.sameAs as string[]),
+            ...(result.contactPoint as { url: string }[]).map((point) => point.url),
+        ];
+
+        for (const url of urls) {
+            expect(url).toMatch(/^https:\/\/[^/]+\//);
+        }
+    });
 });
