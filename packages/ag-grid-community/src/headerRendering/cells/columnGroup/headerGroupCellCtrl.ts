@@ -506,7 +506,19 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             beans.rangeSvc?.handleColumnSelection(column, e);
         } else if (expandable) {
             const newExpandedValue = !column.isExpanded();
-            _setColGroupOpen(beans, column.getProvidedColumnGroup(), newExpandedValue, 'uiColumnExpanded');
+            const providedColumnGroup = column.getProvidedColumnGroup();
+            _setColGroupOpen(beans, providedColumnGroup, newExpandedValue, 'uiColumnExpanded');
+
+            if (!column.isEmptyGroup()) {
+                return;
+            }
+
+            const nextGroup = providedColumnGroup.displayInstances?.find((group) => !group.isEmptyGroup());
+            if (nextGroup) {
+                beans.focusSvc.focusHeaderPosition({
+                    headerPosition: { headerRowIndex: providedColumnGroup.getLevel(), column: nextGroup },
+                });
+            }
         }
     }
 
