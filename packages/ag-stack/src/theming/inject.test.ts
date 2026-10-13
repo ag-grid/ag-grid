@@ -51,7 +51,7 @@ describe('style injection', () => {
         _injectGlobalCSS('.a { color: red; }', container, 'feature-a', 'ag grid.base', 0, undefined);
 
         // Should escape space, not period
-        expect(injectedCssTexts(container)[0]).toBe('@layer ag\\ grid.base { .a { color: red; } }');
+        expect(injectedCssTexts(container)[0]).toBe(String.raw`@layer ag\ grid.base { .a { color: red; } }`);
     });
 
     it('AG-17001: does not remove @layer wrapped styles when still in use', () => {

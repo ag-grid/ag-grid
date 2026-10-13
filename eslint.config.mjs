@@ -66,6 +66,7 @@ export const sonarjsConfig = [
             'unicorn/prefer-single-call': 'error',
             'unicorn/prefer-math-trunc': 0,
             'unicorn/prefer-at': 0,
+            'unicorn/prefer-string-raw': 'error',
             'unicorn/prefer-includes': 0,
             'unicorn/no-zero-fractions': 0,
             'unicorn/no-useless-fallback-in-spread': 'error',

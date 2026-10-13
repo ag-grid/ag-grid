@@ -135,7 +135,7 @@ const buildSimpleFilterSchema = (filterKey: string, params: SimpleFilterSchemaPa
         return buildScalarFilterSchema('number', 'Number', (description) => s.number(description), params);
     } else if (filterKey === BigIntFilterKey) {
         // The model holds a bigint as its decimal text.
-        const value = (description: string) => s.string({ pattern: '^-?\\d+$', description });
+        const value = (description: string) => s.string({ pattern: String.raw`^-?\d+$`, description });
         return buildScalarFilterSchema('bigint', 'BigInt', value, params);
     } else {
         return buildTextFilterSchema(params);
@@ -219,8 +219,8 @@ const buildDateFilterSchema = (params: SimpleFilterSchemaParams) => {
     ];
 
     const pattern = params.useIsoSeparator
-        ? '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$'
-        : '^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$';
+        ? String.raw`^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$`
+        : String.raw`^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$`;
 
     const schema = s.object({
         filterType: s.literal('date', 'Filter type identifier for date filters'),

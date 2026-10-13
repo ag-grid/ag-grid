@@ -50,16 +50,16 @@ const EXPORT_TYPE_CLIPBOARD = 'clipboard';
 
 // Skips a tag's attributes, including quoted values that contain `>`.
 const HTML_TAG_ATTRIBUTES = `(?:[^>"']|"[^"]*"|'[^']*')*`;
-const HTML_TAG_SOURCE = `<(\\/?)([a-z][\\w:-]*)${HTML_TAG_ATTRIBUTES}>`;
+const HTML_TAG_SOURCE = String.raw`<(\/?)([a-z][\w:-]*)${HTML_TAG_ATTRIBUTES}>`;
 
 function htmlElementRegex(name: string): RegExp {
-    return new RegExp(`<${name}\\b${HTML_TAG_ATTRIBUTES}>([\\s\\S]*?)<\\/${name}\\s*>`, 'i');
+    return new RegExp(String.raw`<${name}\b${HTML_TAG_ATTRIBUTES}>([\s\S]*?)<\/${name}\s*>`, 'i');
 }
 
 const HTML_BODY_REGEX = htmlElementRegex('body');
 const HTML_TABLE_REGEX = htmlElementRegex('table');
 // An empty table cell may contain a paragraph with only a line break.
-const HTML_EMPTY_PARAGRAPH_REGEX = new RegExp(`^<p\\b${HTML_TAG_ATTRIBUTES}>\\s*<br\\s*\\/?>\\s*<\\/p\\s*>$`, 'i');
+const HTML_EMPTY_PARAGRAPH_REGEX = new RegExp(String.raw`^<p\b${HTML_TAG_ATTRIBUTES}>\s*<br\s*\/?>\s*<\/p\s*>$`, 'i');
 
 function isBlankLine(line: string[] | undefined): boolean {
     return line?.length === 1 && line[0] === '';
