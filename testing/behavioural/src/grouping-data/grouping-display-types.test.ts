@@ -1,11 +1,19 @@
+import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, cachedJSONObjects } from 'ag-test-utils';
 
-import { ClientSideRowModelModule, GRAND_TOTAL_ROW_ID, GROUP_TOTAL_ROW_ID_PREFIX } from 'ag-grid-community';
+import type { ColumnPinnedType, GridApi } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    GRAND_TOTAL_ROW_ID,
+    GROUP_TOTAL_ROW_ID_PREFIX,
+    getGridElement,
+} from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('ag-grid grouping display types and footers', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule],
+        modules: [ClientSideRowModelModule, ColumnApiModule, RowGroupingModule],
     });
 
     beforeEach(() => {
@@ -59,6 +67,44 @@ describe('ag-grid grouping display types and footers', () => {
             ├── sport "Sport" width:200
             └── gold "Gold" width:200 aggFunc:sum
         `);
+    });
+
+    test('an embedded group row shows its label in the pinned section at the start of the row, else in the centre', async () => {
+        const labelSections = (api: GridApi) =>
+            Array.from(getGridElement(api)!.querySelectorAll('.ag-row[row-index="0"] .ag-group-value'))
+                .filter((label) => label.textContent)
+                .map((label) => label.closest('[class*="-cells"]')!.classList[0]);
+
+        for (const enableRtl of [false, true]) {
+            const api = gridsManager.createGrid(enableRtl ? 'rtlGrid' : 'ltrGrid', {
+                enableRtl,
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'athlete' },
+                    { field: 'sport' },
+                ],
+                rowData: [{ country: 'Ireland', athlete: 'John Smith', sport: 'Sailing' }],
+                groupDisplayType: 'groupRows',
+                embedFullWidthRows: true,
+            });
+            const start = enableRtl ? 'right' : 'left';
+            const end = enableRtl ? 'left' : 'right';
+            const cases: [ColumnPinnedType, ColumnPinnedType, string][] = [
+                [null, null, 'ag-grid-scrolling-cells'],
+                [end, null, 'ag-grid-scrolling-cells'],
+                [start, null, `ag-grid-pinned-${start}-cells`],
+                [end, start, `ag-grid-pinned-${start}-cells`],
+            ];
+            for (const [athletePinned, sportPinned, labelSection] of cases) {
+                api.applyColumnState({
+                    state: [
+                        { colId: 'athlete', pinned: athletePinned },
+                        { colId: 'sport', pinned: sportPinned },
+                    ],
+                });
+                await waitFor(() => expect(labelSections(api)).toEqual([labelSection]));
+            }
+        }
     });
 
     test('grouping with custom display type', async () => {
