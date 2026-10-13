@@ -60,13 +60,13 @@ export function extractBorderColor(value?: string): string | undefined {
     }
 
     const trimmed = value.trim();
-    const functionalColorMatch = trimmed.match(/(var\([^)]+\)|(?:rgb|hsl)a?\([^)]+\)|color\([^)]+\))\s*$/i);
+    const functionalColorMatch = /(var\([^)]+\)|(?:rgb|hsl)a?\([^)]+\)|color\([^)]+\))\s*$/i.exec(trimmed);
 
     if (functionalColorMatch) {
         return functionalColorMatch[1];
     }
 
-    const tokenColorMatch = trimmed.match(/(#[0-9a-fA-F]{3,8}|[a-zA-Z]+)\s*$/);
+    const tokenColorMatch = /(#[0-9a-fA-F]{3,8}|[a-zA-Z]+)\s*$/.exec(trimmed);
     if (!tokenColorMatch) {
         return undefined;
     }
