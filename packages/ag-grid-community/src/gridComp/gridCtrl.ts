@@ -78,6 +78,7 @@ export class GridCtrl extends BeanStub {
         // enableContentVisibilityAuto takes precedence; the deprecated suppressContentVisibilityAuto
         // is only consulted when the former is unset (suppress=false is equivalent to enable=true).
         const contentVisibilityAutoEnabled =
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- a grid option can hold any value at runtime, so only an explicit literal counts
             this.gos.get('enableContentVisibilityAuto') ?? this.gos.get('suppressContentVisibilityAuto') === false;
         if (contentVisibilityAutoEnabled) {
             const [removeListener] = this.addManagedEventListeners({

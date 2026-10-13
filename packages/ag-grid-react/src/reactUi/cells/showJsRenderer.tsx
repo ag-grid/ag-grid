@@ -64,7 +64,7 @@ const useJsCellRenderer = (
         if (jsCellRendererRef.current) {
             // attempt refresh if refresh method exists
             const comp = jsCellRendererRef.current;
-            const attemptRefresh = comp.refresh != null && showDetails!.force == false;
+            const attemptRefresh = comp.refresh != null && showDetails!.force === false;
             const refreshResult = attemptRefresh ? comp.refresh(compDetails!.params) : false;
             const refreshWorked = refreshResult === true || refreshResult === undefined;
 

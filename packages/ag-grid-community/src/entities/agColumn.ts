@@ -736,6 +736,7 @@ export class AgColumn<TValue = any>
     }
 
     public setVisible(visible: boolean, source: ColumnEventType): void {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- user code can return or pass any value at runtime, so only an explicit literal counts
         const newValue = visible === true;
         if (this.visible !== newValue) {
             this.visible = newValue;

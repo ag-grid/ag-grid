@@ -1006,7 +1006,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         // normal cells fill the height of the row. autoHeight cells have no height to let them
         // fit the height of content.
 
-        const autoHeight = this.column.isAutoHeight() == true;
+        const autoHeight = this.column.isAutoHeight();
         comp.toggleCss(CSS_AUTO_HEIGHT, autoHeight);
         comp.toggleCss(CSS_NORMAL_HEIGHT, !autoHeight);
         this.setCalculatedColumnCss();
@@ -1035,7 +1035,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     }
 
     private setWrapText(): void {
-        const value = this.column.colDef.wrapText == true;
+        const value = this.column.colDef.wrapText === true;
 
         this.comp.toggleCss(CSS_CELL_WRAP_TEXT, value);
     }

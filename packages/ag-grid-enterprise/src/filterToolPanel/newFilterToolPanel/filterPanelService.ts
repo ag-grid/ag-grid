@@ -211,6 +211,7 @@ export class FilterPanelService
             return;
         }
         const state = stateWrapper.state;
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- user code can return or pass any value at runtime, so only an explicit literal counts
         if (state.expanded === false) {
             return;
         }

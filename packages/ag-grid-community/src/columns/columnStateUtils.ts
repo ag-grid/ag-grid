@@ -147,6 +147,7 @@ export function _setColsVisible(
     filterLockedColumns = false
 ): void {
     const colModel = beans.colModel;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- user code can return or pass any value at runtime, so only an explicit literal counts
     const newVisible = visible === true;
     let changed: AgColumn[] | null = null;
     colModel.beginColUpdate();

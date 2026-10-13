@@ -218,6 +218,7 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
             }
 
             if (row.isExpandable()) {
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- a grid option can hold any value at runtime, so only an explicit literal counts
                 if (suppressGroupsSticky === true) {
                     return false;
                 }

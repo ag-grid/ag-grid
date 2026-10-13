@@ -411,11 +411,13 @@ export function _shouldUpdateColVisibilityAfterGroup(gos: GridOptionsService, is
     }
 
     const legacySuppressOnGroup = gos.get('suppressRowGroupHidesColumns');
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- a grid option can hold any value at runtime, so only an explicit literal counts
     if (isGrouped && legacySuppressOnGroup === true) {
         return false;
     }
 
     const legacySuppressOnUngroup = gos.get('suppressMakeColumnVisibleAfterUnGroup');
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- a grid option can hold any value at runtime, so only an explicit literal counts
     if (!isGrouped && legacySuppressOnUngroup === true) {
         return false;
     }

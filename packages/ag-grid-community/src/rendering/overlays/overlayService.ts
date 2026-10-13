@@ -53,6 +53,7 @@ const LoadingOverlayDef: OverlayDef = {
     paramsKey: 'loadingOverlayComponentParams',
     isSuppressed: (gos: GridOptionsService) => {
         const isLoading = gos.get('loading');
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- a grid option can hold any value at runtime, so only an explicit literal counts
         return isLoading === false || (gos.get('suppressLoadingOverlay') === true && !isLoading);
     },
 } as const;

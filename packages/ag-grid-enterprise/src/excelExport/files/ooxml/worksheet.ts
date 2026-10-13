@@ -585,6 +585,7 @@ const addSheetViews = (rtl: boolean = false, xSplit?: number, ySplit?: number) =
                     name: 'sheetView',
                     properties: {
                         rawMap: {
+                            // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- user code can return or pass any value at runtime, so only an explicit literal counts
                             rightToLeft: rtl === true ? '1' : '0',
                             workbookViewId: '0',
                         },

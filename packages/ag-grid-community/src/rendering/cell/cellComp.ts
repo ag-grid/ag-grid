@@ -377,6 +377,7 @@ export class CellComp extends Component {
         // returned nothing, if the method existed, we assumed it refreshed. so for
         // backwards compatibility, we assume if method exists and returns nothing,
         // that it was successful.
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- user code can return or pass any value at runtime, so only an explicit literal counts
         return result === true || result === undefined;
     }
 

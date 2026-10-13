@@ -47,7 +47,9 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         const { gos } = this;
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- a grid option can hold any value at runtime, so only an explicit literal counts
         this.horizontalScrollShowing = gos.get('alwaysShowHorizontalScroll') === true;
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- a grid option can hold any value at runtime, so only an explicit literal counts
         this.verticalScrollShowing = gos.get('alwaysShowVerticalScroll') === true;
 
         this.ctrlsSvc.whenReady(this, () => this.measureScrollbar());

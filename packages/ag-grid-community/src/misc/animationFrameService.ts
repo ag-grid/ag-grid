@@ -63,6 +63,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     // frames. this stops bugs - where some code is asking for a frame to be executed
     // when it should not.
     private verify(): void {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- `active` is unset until postConstruct, when this must not warn
         if (this.active === false) {
             this.warn(92);
         }
