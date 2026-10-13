@@ -87,6 +87,7 @@ The renderer receives either `column` or `columnGroup`, together with the resolv
 {% note %}
 Column search, tooltips, drag labels and accessibility announcements continue to use `displayName`, rather than text extracted from the renderer. Column selection rows have a fixed height, so renderer content should remain inline and fit within the configured list item height. Clicking the rendered label retains the normal selection behaviour; interactive elements should stop event propagation when they should not toggle the column.
 {% /note %}
+
 ## Expand / Collapse Column Groups
 
 Call `expandColumnGroups()` and `collapseColumnGroups()` on the [Columns Tool Panel instance](./tool-panel-columns-configuration/#columns-tool-panel-instance) to expand or collapse all of its column groups, or pass `groupId`s to target individual groups; see [Expand / Collapse API](#expand--collapse-api). To start with all column groups collapsed, set `contractColumnSelection` in `toolPanelParams` instead.
