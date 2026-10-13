@@ -23,11 +23,13 @@ const frameworkLinks = FRAMEWORKS.map((framework) => ({
     <FrameworkRedirectPage redirectPageName={content.redirectPageName}>
         <h1>Redirecting to AG Grid Install License page...</h1>
         <ul>
-            {frameworkLinks.map(({ href, text }) => (
-                <li>
-                    <a href={href}>{text}</a>
-                </li>
-            ))}
+            {
+                frameworkLinks.map(({ href, text }) => (
+                    <li>
+                        <a href={href}>{text}</a>
+                    </li>
+                ))
+            }
         </ul>
     </FrameworkRedirectPage>
 </Layout>
