@@ -1,4 +1,4 @@
-import { waitFor } from '@testing-library/dom';
+import { waitFor, within } from '@testing-library/dom';
 import { ALL_SEVERITIES, GridColumns, GridRows, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
@@ -559,6 +559,67 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         api.applyColumnState({ state: columnState, applyOrder: true });
         await waitForColumn(api, 'calc');
         expect(api.getColumn('calc')!.getColDef().headerClass).toBe('e3');
+        expect(cellValue(api, 'calc')).toBe(20);
+    });
+
+    test.each([true, false])('equivalent options do not rebuild columns (callback: %s)', async (withCallback) => {
+        const processColDef = vi.fn<ProcessColDef>((params) => params.colDef);
+        const columnsLoaded = vi.fn();
+        const callback = withCallback ? processColDef : undefined;
+        const api = gridWithUserColumn('pcd-equivalent-options', 'calc', '[a] * 2', callback, {
+            onNewColumnsLoaded: columnsLoaded,
+        });
+        await asyncSetTimeout(0);
+        processColDef.mockClear();
+        columnsLoaded.mockClear();
+
+        api.setGridOption('calculatedColumns', { processColDef: callback });
+        api.setGridOption('calculatedColumns', { processColDef: callback });
+        await asyncSetTimeout(0);
+
+        expect(processColDef).not.toHaveBeenCalled();
+        expect(columnsLoaded).not.toHaveBeenCalled();
+        expect(cellValue(api, 'calc')).toBe(20);
+    });
+
+    test('dialog settings update without rebuilding columns or re-running the callback', async () => {
+        const processColDef = vi.fn<ProcessColDef>((params) => params.colDef);
+        const columnsLoaded = vi.fn();
+        const api = gridWithUserColumn('pcd-dialog-options', 'calc', '[a] * 2', processColDef, {
+            onNewColumnsLoaded: columnsLoaded,
+        });
+        await asyncSetTimeout(0);
+        processColDef.mockClear();
+        columnsLoaded.mockClear();
+
+        api.setGridOption('calculatedColumns', {
+            processColDef,
+            applyMode: 'deferred',
+            expressionPickers: [],
+        });
+        await asyncSetTimeout(0);
+        expect(processColDef).not.toHaveBeenCalled();
+        expect(columnsLoaded).not.toHaveBeenCalled();
+
+        api.showColumnMenu('calc');
+        await clickMenuOption('Edit Calculated Column');
+        await waitFor(() => getDialog());
+        const dialog = within(getDialog());
+        expect(dialog.getByRole('button', { name: 'Apply', exact: true })).toBeEnabled();
+        expect(dialog.queryByRole('button', { name: /^(Columns|Functions|Operators)$/ })).toBeNull();
+    });
+
+    test.each([true, {}] as const)('removing the callback restores authored settings (%j)', async (options) => {
+        const processColDef = vi.fn<ProcessColDef>((params) => ({ ...params.colDef, headerClass: 'processed' }));
+        const api = gridWithUserColumn('pcd-remove-callback', 'calc', '[a] * 2', processColDef);
+        await waitForColumn(api, 'calc');
+        expect(api.getColumn('calc')!.getColDef().headerClass).toBe('processed');
+        processColDef.mockClear();
+
+        api.setGridOption('calculatedColumns', options);
+
+        expect(api.getColumn('calc')!.getColDef().headerClass).toBeUndefined();
+        expect(processColDef).not.toHaveBeenCalled();
         expect(cellValue(api, 'calc')).toBe(20);
     });
 

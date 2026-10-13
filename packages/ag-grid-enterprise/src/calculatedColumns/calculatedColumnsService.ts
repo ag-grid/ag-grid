@@ -178,15 +178,29 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 this.checkValidationStates(event.source);
             },
         });
-        this.addManagedPropertyListener('calculatedColumns', () => {
-            if (!this.isEnabled()) {
-                this.clearDynamicColumnInstances();
-            } else {
-                this.adoptUserColumns();
+        this.addManagedPropertyListener('calculatedColumns', ({ previousValue, currentValue }) => {
+            const enabled = _isCalculatedColumnsEnabled(currentValue);
+            const enablementChanged = enabled !== _isCalculatedColumnsEnabled(previousValue);
+            const previousOptions = typeof previousValue === 'object' ? previousValue : undefined;
+            const options = typeof currentValue === 'object' ? currentValue : undefined;
+            const rebuild = enablementChanged || (enabled && previousOptions?.processColDef !== options?.processColDef);
+
+            if (rebuild) {
+                if (enabled) {
+                    this.adoptUserColumns();
+                } else {
+                    this.clearDynamicColumnInstances();
+                }
+                this.refreshDynamicColumns('gridOptionsChanged');
+                this.checkValidationStates('gridOptionsChanged');
             }
-            this.refreshDynamicColumns('gridOptionsChanged');
-            this.checkValidationStates('gridOptionsChanged');
-            this.refreshOpenDialogHighlights();
+            if (
+                rebuild ||
+                (previousOptions?.suppressColumnHighlighting === true) !==
+                    (options?.suppressColumnHighlighting === true)
+            ) {
+                this.refreshOpenDialogHighlights();
+            }
         });
     }
 

@@ -116,6 +116,7 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
      *
      * The returned definition is not shown in the dialog and is not saved in grid state. Stateful properties
      * such as `width`, `sort` and `hide` apply when the column is created; prefer the `initial*` forms.
+     * Replacing this callback rebuilds the columns; replacing only the containing options object does not.
      * Do not call column APIs from this callback.
      */
     processColDef?: (params: CalculatedColumnProcessColDefParams<TData, TContext>) => ColDef<TData> | undefined;

@@ -300,12 +300,6 @@ In the example, the **Profit** column is restored from Grid State as if a user h
 The callback runs each time the column is built, including on every dialog edit and on restore from [Grid State](./grid-state/). It does not run for calculated columns declared in `columnDefs`. The dialog and Grid State keep the user's values, not the callback's. `colId`, `editable`, `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor` and `cellEditorSelector` are always overridden. Prefer `initial*` properties, such as `initialWidth`, to stateful ones.
 {% /note %}
 
-{% if isFramework("react") %}
-{% note %}
-Wrap the `calculatedColumns` option in `useMemo`. It is compared by reference, so an inline object rebuilds the calculated columns on every render.
-{% /note %}
-{% /if %}
-
 ## Advanced Calculated Columns
 
 Calculated columns can use the same [Mathematical Operators](./formula-reference/#mathematical-operators) and [Provided Functions](./formula-reference/#provided-functions) as [formulas](./formulas/), and can reference other calculated columns in the same row. This allows chained derived values such as profit, margin and status.
