@@ -484,7 +484,14 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     private isGroupingAndLocked(): boolean {
-        return this.isGroupingZone() && isRowGroupColLocked(this.column, this.beans);
+        return (
+            this.isGroupingZone() &&
+            isRowGroupColLocked(
+                this.column,
+                this.beans,
+                this.beans.columnStateUpdateStrategy.getRowGroupColumns(this.deferApply)
+            )
+        );
     }
 
     private isAggregationZone() {

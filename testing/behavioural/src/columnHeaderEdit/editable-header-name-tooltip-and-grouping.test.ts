@@ -618,9 +618,18 @@ describe('Editable header name — labels follow a rename made in the UI', () =>
         });
         const autoHeaders = () => texts('.ag-header-cell[col-id^="ag-Grid-AutoColumn"] .ag-header-cell-text');
         await waitFor(() => expect(autoHeaders()).toBe('Athlete | Country'));
+        // each keystroke renames the column and the group column it redefines in one update, told once both hold the name
+        const namesWhenTold: string[] = [];
+        api.getColumn('athlete')!.addEventListener('headerNameChanged', () => {
+            const name = api.getDisplayNameForColumn(api.getColumn('athlete')!, 'header');
+            const autoName = api.getColumn('ag-Grid-AutoColumn-athlete')!.getColDef().headerName;
+            namesWhenTold.push(name === autoName ? name : `${name} vs ${autoName}`);
+        });
 
         await renameFromHeaderMenu(api, 'athlete', 'Competitor');
         await waitFor(() => expect(autoHeaders()).toBe('Competitor | Country'));
+        expect(namesWhenTold.at(-1)).toBe('Competitor');
+        expect(namesWhenTold.filter((entry) => entry.includes(' vs '))).toEqual([]);
     });
 
     describe('floating filter aria-labels', () => {

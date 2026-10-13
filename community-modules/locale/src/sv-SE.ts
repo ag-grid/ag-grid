@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_SV_SE = {
     enabled: 'Aktiverad',
 
     // Menu
+    moveLeft: 'Flytta åt vänster',
+    moveRight: 'Flytta åt höger',
+    moveUp: 'Flytta upp',
+    moveDown: 'Flytta ned',
     pinColumn: 'Fäst Kolumn',
     pinLeft: 'Fäst Vänster',
     pinRight: 'Fäst Höger',
@@ -896,9 +900,11 @@ export const AG_GRID_LOCALE_SV_SE = {
     columnHeaderEditCancel: 'Avbryt',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Inga lämpliga kolumner hittades.',
     calculatedColumn: 'Beräknad kolumn',
     calculatedColumnAdd: 'Lägg till beräknad kolumn',
     calculatedColumnEdit: 'Redigera beräknad kolumn',
+    calculatedColumnView: 'Visa beräknad kolumn',
     calculatedColumnRemove: 'Ta bort beräknad kolumn',
     calculatedColumnTitle: 'Titel',
     calculatedColumnType: 'Typ',

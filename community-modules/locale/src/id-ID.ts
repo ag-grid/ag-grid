@@ -341,6 +341,10 @@ export const AG_GRID_LOCALE_ID_ID = {
     enabled: 'Diaktifkan',
 
     // Menu
+    moveLeft: 'Pindahkan ke Kiri',
+    moveRight: 'Pindahkan ke Kanan',
+    moveUp: 'Pindahkan ke Atas',
+    moveDown: 'Pindahkan ke Bawah',
     pinColumn: 'Sematkan Kolom',
     pinLeft: 'Sematkan Kiri',
     pinRight: 'Sematkan Kanan',
@@ -916,9 +920,11 @@ export const AG_GRID_LOCALE_ID_ID = {
     columnHeaderEditCancel: 'Batal',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Tidak ditemukan kolom yang memenuhi syarat.',
     calculatedColumn: 'Kolom Terhitung',
     calculatedColumnAdd: 'Tambah Kolom Terhitung',
     calculatedColumnEdit: 'Sunting Kolom Terhitung',
+    calculatedColumnView: 'Lihat Kolom Terhitung',
     calculatedColumnRemove: 'Hapus Kolom Terhitung',
     calculatedColumnTitle: 'Judul',
     calculatedColumnType: 'Tipe',

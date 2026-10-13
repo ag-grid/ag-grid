@@ -340,6 +340,10 @@ export const AG_GRID_LOCALE_PL_PL = {
     enabled: 'Włączone',
 
     // Menu
+    moveLeft: 'Przenieś w lewo',
+    moveRight: 'Przenieś w prawo',
+    moveUp: 'Przenieś w górę',
+    moveDown: 'Przenieś w dół',
     pinColumn: 'Przypnij Kolumnę',
     pinLeft: 'Przypnij po Lewej',
     pinRight: 'Przypnij po Prawej',
@@ -897,9 +901,11 @@ export const AG_GRID_LOCALE_PL_PL = {
     columnHeaderEditCancel: 'Anuluj',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nie znaleziono odpowiednich kolumn.',
     calculatedColumn: 'Kolumna obliczana',
     calculatedColumnAdd: 'Dodaj kolumnę obliczaną',
     calculatedColumnEdit: 'Edytuj kolumnę obliczaną',
+    calculatedColumnView: 'Wyświetl kolumnę obliczaną',
     calculatedColumnRemove: 'Usuń kolumnę obliczaną',
     calculatedColumnTitle: 'Tytuł',
     calculatedColumnType: 'Typ',

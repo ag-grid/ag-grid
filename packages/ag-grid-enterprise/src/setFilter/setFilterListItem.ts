@@ -31,6 +31,7 @@ import {
     Component,
     ComponentInstanceGuard,
     _addGridCommonParams,
+    _createElement,
     _createIcon,
     _getCellRendererDetails,
     _getShouldDisplayTooltip,
@@ -137,6 +138,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private rendererClaim?: ComponentInstanceClaim;
     private pendingCellRendererClaim?: ComponentInstanceClaim;
     private formattedValue: string | null = null;
+    private labelContent: HTMLElement | string | undefined;
 
     constructor(params: SetFilterListItemParams<V>) {
         super(params.isGroup ? SetFilterGroupElement : SetFilterElement, [AgCheckboxSelector]);
@@ -333,7 +335,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         _setAriaDescribedBy(ariaEl, this.eCheckbox.getInputElement().id);
     }
 
-    /** The class and the label; the default tooltip reads `isMissing` when it is reset. */
+    /** The class and the aria label; the default tooltip reads `isMissing` when it is reset. */
     private applyMissing(): void {
         const isMissing = this.isMissing;
         this.toggleCss('ag-set-filter-item-missing', isMissing);
@@ -377,6 +379,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         if (missingChanged) {
             this.isMissing = isMissing;
             this.applyMissing();
+            this.refreshCheckboxLabel();
         }
         // setExpanded checks if value has changed, setSelected does not
         if (isSelected !== this.isSelected) {
@@ -469,10 +472,12 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         if (resetTooltip) {
             this.rendererSetTooltip = false;
             if (this.hasDefaultTooltip()) {
-                this.shouldDisplayTooltip = _getShouldDisplayTooltip(
-                    gos,
-                    () => this.eCheckbox.getGui().querySelector('.ag-label') as HTMLElement | undefined
-                );
+                // With a label after it, the value truncates in its own span rather than the whole label.
+                this.shouldDisplayTooltip = _getShouldDisplayTooltip(gos, () => {
+                    const eGui = this.eCheckbox.getGui();
+                    return (eGui.querySelector('.ag-set-filter-item-missing-value') ??
+                        eGui.querySelector('.ag-label')) as HTMLElement | undefined;
+                });
                 this.tooltipFeature?.setTooltipAndRefresh(this.getDefaultTooltipText(value, formattedValue));
             } else {
                 this.shouldDisplayTooltip = undefined;
@@ -537,7 +542,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
                     return;
                 }
                 this.cellRendererComponent = component;
-                this.eCheckbox.setLabel(component.getGui());
+                this.setCheckboxLabel(component.getGui());
                 this.destroyCellRendererComponent = () => this.destroyBean(component);
             }
         });
@@ -551,8 +556,35 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
             valueToRender = '';
         }
 
-        this.eCheckbox.setLabel(valueToRender);
+        this.setCheckboxLabel(valueToRender);
         this.setupFixedAriaLabels(valueToRender);
+    }
+
+    private setCheckboxLabel(content: HTMLElement | string): void {
+        this.labelContent = content;
+        this.refreshCheckboxLabel();
+    }
+
+    private refreshCheckboxLabel(): void {
+        const content = this.labelContent;
+        if (content === undefined) {
+            return;
+        }
+        const missingLabel = this.isMissing ? this.params.preservePreviousValuesLabel : undefined;
+        if (!missingLabel) {
+            this.eCheckbox.setLabel(content);
+            return;
+        }
+        // Only the value is truncated, so a long one never hides the label.
+        const eValue = _createElement({ tag: 'span', cls: 'ag-set-filter-item-missing-value' });
+        eValue.append(content);
+        const eLabel = _createElement({ tag: 'span', cls: 'ag-set-filter-item-missing-content' });
+        eLabel.append(
+            eValue,
+            ' ',
+            _createElement({ tag: 'span', cls: 'ag-set-filter-item-missing-label', children: missingLabel })
+        );
+        this.eCheckbox.setLabel(eLabel);
     }
 
     public override destroy(): void {

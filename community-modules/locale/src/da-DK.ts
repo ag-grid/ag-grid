@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_DA_DK = {
     enabled: 'Aktiveret',
 
     // Menu
+    moveLeft: 'Flyt til venstre',
+    moveRight: 'Flyt til højre',
+    moveUp: 'Flyt op',
+    moveDown: 'Flyt ned',
     pinColumn: 'Fastgør Kolonne',
     pinLeft: 'Fastgør Venstre',
     pinRight: 'Fastgør Højre',
@@ -895,9 +899,11 @@ export const AG_GRID_LOCALE_DA_DK = {
     columnHeaderEditCancel: 'Annuller',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Ingen egnede kolonner fundet.',
     calculatedColumn: 'Beregnet kolonne',
     calculatedColumnAdd: 'Tilføj beregnet kolonne',
     calculatedColumnEdit: 'Rediger beregnet kolonne',
+    calculatedColumnView: 'Vis beregnet kolonne',
     calculatedColumnRemove: 'Fjern beregnet kolonne',
     calculatedColumnTitle: 'Titel',
     calculatedColumnType: 'Type',

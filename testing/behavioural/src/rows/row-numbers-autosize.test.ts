@@ -217,8 +217,14 @@ describe('Row numbers column autosize', () => {
         api.setColumnWidths([{ key: ROW_NUMBERS_COLUMN_ID, newWidth: 70 }], true, 'uiColumnResized');
 
         expect(rowNumberHeaderWidth(api)).toBe('70px');
+        const rowNumberCol = api.getColumn(ROW_NUMBERS_COLUMN_ID)!;
+        const told: string[] = [];
+        rowNumberCol.addEventListener('widthChanged', (event) =>
+            told.push(`${rowNumberCol.getActualWidth()}:${event.source}`)
+        );
 
         api.resetColumnState();
+        expect(told).toEqual(['60:api']);
         expect(rowNumberWidth(api)).toBe(60);
         expect(rowNumberHeaderWidth(api)).toBe('60px');
 

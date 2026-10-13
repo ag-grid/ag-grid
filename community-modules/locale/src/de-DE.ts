@@ -341,6 +341,10 @@ export const AG_GRID_LOCALE_DE_DE = {
     enabled: 'Aktiviert',
 
     // Menu
+    moveLeft: 'Nach links verschieben',
+    moveRight: 'Nach rechts verschieben',
+    moveUp: 'Nach oben verschieben',
+    moveDown: 'Nach unten verschieben',
     pinColumn: 'Spalte anheften',
     pinLeft: 'Links anheften',
     pinRight: 'Rechts anheften',
@@ -900,9 +904,11 @@ export const AG_GRID_LOCALE_DE_DE = {
     columnHeaderEditCancel: 'Abbrechen',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Keine geeigneten Spalten gefunden.',
     calculatedColumn: 'Berechnete Spalte',
     calculatedColumnAdd: 'Berechnete Spalte hinzufügen',
     calculatedColumnEdit: 'Berechnete Spalte bearbeiten',
+    calculatedColumnView: 'Berechnete Spalte anzeigen',
     calculatedColumnRemove: 'Berechnete Spalte entfernen',
     calculatedColumnTitle: 'Titel',
     calculatedColumnType: 'Typ',

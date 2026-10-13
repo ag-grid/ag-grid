@@ -124,14 +124,14 @@ export const updateSomeColumnState = (
     if (sortSvc) {
         sortSvc.updateColSort(column, sort, source);
         if (sortIndex !== undefined) {
-            sortSvc.setColSortIndex(column, sortIndex);
+            sortSvc.setColSortIndex(column, sortIndex, source);
         }
     }
     if (pinned !== undefined) {
-        pinnedCols?.setColPinned(column, pinned);
+        pinnedCols?.setColPinned(column, pinned, source);
     }
     if (flex !== undefined) {
-        colFlex?.setColFlex(column, flex);
+        colFlex?.setColFlex(column, flex, source);
     }
 };
 
@@ -148,29 +148,34 @@ export function _setColsVisible(
     const colModel = beans.colModel;
     const newVisible = visible === true;
     let changed: AgColumn[] | null = null;
-    for (let i = 0, len = keys.length; i < len; ++i) {
-        const key = keys[i];
-        const col = typeof key === 'string' ? colModel.getCol(key) : key;
-        if (col === undefined || (filterLockedColumns && col.colDef.lockVisible)) {
-            continue;
+    colModel.beginColUpdate();
+    try {
+        for (let i = 0, len = keys.length; i < len; ++i) {
+            const key = keys[i];
+            const col = typeof key === 'string' ? colModel.getCol(key) : key;
+            if (col === undefined || (filterLockedColumns && col.colDef.lockVisible)) {
+                continue;
+            }
+            if (col.visible !== newVisible) {
+                col.setVisible(newVisible, source);
+                changed ??= [];
+                changed.push(col);
+            }
         }
-        if (col.visible !== newVisible) {
-            col.setVisible(newVisible, source);
-            changed ??= [];
-            changed.push(col);
+        if (changed) {
+            const { colAnimation, eventSvc } = beans;
+            colAnimation?.start();
+            try {
+                colModel.refreshColsDerivedState();
+                beans.visibleCols.refresh(source, false);
+                eventSvc.dispatchEvent({ type: 'columnEverythingChanged', source });
+                dispatchColumnVisibleEvent(eventSvc, changed, source);
+            } finally {
+                colAnimation?.finish();
+            }
         }
-    }
-    if (changed) {
-        const { colAnimation, eventSvc } = beans;
-        colAnimation?.start();
-        try {
-            colModel.refreshColsDerivedState();
-            beans.visibleCols.refresh(source, false);
-            eventSvc.dispatchEvent({ type: 'columnEverythingChanged', source });
-            dispatchColumnVisibleEvent(eventSvc, changed, source);
-        } finally {
-            colAnimation?.finish();
-        }
+    } finally {
+        colModel.endColUpdate();
     }
 }
 
@@ -182,6 +187,16 @@ export function _applyColumnState(
     params: ApplyColumnStateParams,
     source: ColumnEventType
 ): boolean {
+    const colModel = beans.colModel;
+    colModel.beginColUpdate();
+    try {
+        return applyColumnState(beans, params, source);
+    } finally {
+        colModel.endColUpdate();
+    }
+}
+
+function applyColumnState(beans: BeanCollection, params: ApplyColumnStateParams, source: ColumnEventType): boolean {
     const { colModel, colAnimation, calculatedColsSvc } = beans;
     const state = params.state;
     if (state && !Array.isArray(state)) {
@@ -387,7 +402,7 @@ function applyFieldState(
 
     const headerName = orDefault(stateItem?.headerName, defaultState?.headerName);
     if (headerName !== undefined) {
-        column.setHeaderNameOverride(headerName);
+        column.setHeaderNameOverride(headerName, source);
     }
 
     // No flex → fall back to width.
@@ -426,13 +441,24 @@ function applyFieldState(
  *  order, and fire `columnsReset`.
  *  @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _resetColumnState(beans: BeanCollection, source: ColumnEventType): void {
+    const colModel = beans.colModel;
+    colModel.beginColUpdate();
+    try {
+        resetColumnState(beans, source);
+    } finally {
+        colModel.endColUpdate();
+    }
+}
+
+function resetColumnState(beans: BeanCollection, source: ColumnEventType): void {
     const { colModel, autoColSvc, selectionColSvc, eventSvc, gos, colAnimation, calculatedColsSvc } = beans;
 
     // Park API/dialog-added calc cols and revert edits/removals of declared ones, so the reset below runs
     // against the original set — via the calc svc, so the rebuild emits no calc lifecycle/validation events.
+    // Parking snapshots validation metadata from the user-column entries, so it must run before `clear()`.
+    const dynamicColsReset = calculatedColsSvc?.resetDynamicColumnDefs(true) ?? false;
     const userColumnsCleared = beans.userColumnSvc?.clear() ?? false;
     if (calculatedColsSvc) {
-        const dynamicColsReset = calculatedColsSvc.resetDynamicColumnDefs(true);
         if (dynamicColsReset || userColumnsCleared) {
             calculatedColsSvc.refreshDynamicColumns(source);
         }
@@ -444,7 +470,7 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
         return;
     }
 
-    // Reset state per colDef, tracking max explicit rowGroup/pivot index so boolean-only cols get fallback
+    // Reset state per colDef, tracking max explicit group/pivot/value index so unindexed cols get fallback
     // indexes after them. `colDefList` is `colDefTree`'s flat leaf set (same count), sizing the array exactly.
     const selectionCol = selectionColSvc?.column ?? null;
     const initialAutoCols = autoColSvc?.columns;
@@ -453,14 +479,18 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
     let stateIdx = 0;
     let maxRowGroupIndex = -1;
     let maxPivotIndex = -1;
+    let maxValueIndex = -1;
     const addColState = (col: AgColumn) => {
         const stateItem = getColumnStateFromColDef(beans, col);
-        const { rowGroupIndex, pivotIndex } = stateItem;
+        const { rowGroupIndex, pivotIndex, valueIndex } = stateItem;
         if (rowGroupIndex != null && rowGroupIndex > maxRowGroupIndex) {
             maxRowGroupIndex = rowGroupIndex;
         }
         if (pivotIndex != null && pivotIndex > maxPivotIndex) {
             maxPivotIndex = pivotIndex;
+        }
+        if (valueIndex != null && valueIndex > maxValueIndex) {
+            maxValueIndex = valueIndex;
         }
         columnStates[stateIdx++] = stateItem;
     };
@@ -476,7 +506,7 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
     // Leaves in colDef declaration order (stable; colDefList can be permuted by a tool-panel reorder).
     forEachColTreeLeaf(colModel.colDefTree, addColState);
 
-    // Second pass: assign fallback indexes to boolean-only group/pivot cols (after the max above).
+    // Second pass: assign fallback indexes to unindexed group/pivot/value cols (after the max above).
     for (let i = 0, len = columnStates.length; i < len; ++i) {
         const stateItem = columnStates[i];
         if (stateItem.rowGroup && stateItem.rowGroupIndex == null) {
@@ -484,6 +514,9 @@ export function _resetColumnState(beans: BeanCollection, source: ColumnEventType
         }
         if (stateItem.pivot && stateItem.pivotIndex == null) {
             stateItem.pivotIndex = ++maxPivotIndex;
+        }
+        if (stateItem.aggFunc && stateItem.valueIndex == null) {
+            stateItem.valueIndex = ++maxValueIndex;
         }
     }
 
@@ -875,6 +908,7 @@ export function getColumnStateFromColDef(beans: BeanCollection, column: AgColumn
         pivotIndex,
         pivotSort: _resolvePivotSortFromColDef(colDef),
         aggFunc: colDef.aggFunc ?? colDef.initialAggFunc ?? null,
+        valueIndex: colDef.valueIndex ?? colDef.initialValueIndex ?? null,
         showValuesAs: beans.showValuesAsSvc?.colDefSelection(colDef) ?? null,
         headerName: null,
     };

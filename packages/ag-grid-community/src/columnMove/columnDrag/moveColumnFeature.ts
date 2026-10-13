@@ -687,11 +687,11 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
 }
 
 function setColumnHighlighted(column: AgColumn, highlighted: ColumnHighlightPosition | null): void {
-    if (column.highlighted === highlighted) {
+    if (column.getHighlighted() === highlighted) {
         return;
     }
 
-    column.highlighted = highlighted;
+    column.setHighlighted(highlighted);
     column.dispatchColEvent('headerHighlightChanged', 'uiColumnMoved');
 }
 

@@ -74,6 +74,12 @@
                 "url": "./column-menu/#customising-the-menu-items"
             }
         },
+        "getColumnDropZoneMenuItems": {
+            "more": {
+                "name": "Drop Zone Menus",
+                "url": "./tool-panel-columns-customising/#drop-zone-menus"
+            }
+        },
         "columnMenu": {
             "more": {
                 "name": "Column Menu",
@@ -1320,7 +1326,7 @@
         "functionsReadOnly": {
             "more": {
                 "name": "Read Only Functions",
-                "url": "./tool-panel-columns/#read-only-functions"
+                "url": "./tool-panel-columns-configuration/#read-only-functions"
             }
         },
         "removePivotHeaderRowWhenSingleValueColumn": {

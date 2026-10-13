@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_SR_RS = {
     enabled: 'Омогућено',
 
     // Menu
+    moveLeft: 'Помери улево',
+    moveRight: 'Помери удесно',
+    moveUp: 'Помери нагоре',
+    moveDown: 'Помери надоле',
     pinColumn: 'Закачи колону',
     pinLeft: 'Закачи лево',
     pinRight: 'Закачи десно',
@@ -913,9 +917,11 @@ export const AG_GRID_LOCALE_SR_RS = {
     columnHeaderEditCancel: 'Откажи',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Нису пронађене одговарајуће колоне.',
     calculatedColumn: 'Израчуната колона',
     calculatedColumnAdd: 'Додај израчунату колону',
     calculatedColumnEdit: 'Измени израчунату колону',
+    calculatedColumnView: 'Прикажи израчунату колону',
     calculatedColumnRemove: 'Уклони израчунату колону',
     calculatedColumnTitle: 'Наслов',
     calculatedColumnType: 'Тип',

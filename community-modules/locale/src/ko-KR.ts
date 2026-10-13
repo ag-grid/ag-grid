@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_KO_KR = {
     enabled: '사용 중',
 
     // Menu
+    moveLeft: '왼쪽으로 이동',
+    moveRight: '오른쪽으로 이동',
+    moveUp: '위로 이동',
+    moveDown: '아래로 이동',
     pinColumn: '열 고정',
     pinLeft: '왼쪽에 고정',
     pinRight: '오른쪽에 고정',
@@ -892,9 +896,11 @@ export const AG_GRID_LOCALE_KO_KR = {
     columnHeaderEditCancel: '취소',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: '사용 가능한 열을 찾을 수 없습니다.',
     calculatedColumn: '계산된 열',
     calculatedColumnAdd: '계산된 열 추가',
     calculatedColumnEdit: '계산된 열 편집',
+    calculatedColumnView: '계산된 열 보기',
     calculatedColumnRemove: '계산된 열 제거',
     calculatedColumnTitle: '제목',
     calculatedColumnType: '유형',

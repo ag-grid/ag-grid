@@ -253,12 +253,20 @@ describe('showValuesAs column menu', () => {
             ],
         });
 
-        expect(api.getColumn('amount')!.isValueActive()).toBe(false);
+        const amount = api.getColumn('amount')!;
+        expect(amount.isValueActive()).toBe(false);
+        const promotedWhenTold: boolean[] = [];
+        amount.addEventListener('columnStateUpdated', (event) => {
+            if ('key' in event && event.key === 'showValuesAs') {
+                promotedWhenTold.push(amount.isValueActive());
+            }
+        });
 
         await openShowValuesAsSubmenu(api, 'amount');
         (await openMenuOption('% of Grand Total')).click();
         // `amount` had no aggFunc before the click, so this cannot pass before the promotion lands.
-        await waitFor(() => expect(api.getColumn('amount')!.isValueActive()).toBe(true));
+        await waitFor(() => expect(amount.isValueActive()).toBe(true));
+        expect(promotedWhenTold).toEqual([true]);
 
         // Promoted to a value column (default sum), showing the grand-total percentage.
         expect(api.getCellValue({ rowNode: leaf(api, '1'), colKey: 'amount', transformValues: true })).toBeCloseTo(0.3);

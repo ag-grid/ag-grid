@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_RO_RO = {
     enabled: 'Activat',
 
     // Menu
+    moveLeft: 'Mută la stânga',
+    moveRight: 'Mută la dreapta',
+    moveUp: 'Mută în sus',
+    moveDown: 'Mută în jos',
     pinColumn: 'Fixează Coloana',
     pinLeft: 'Fixează la Stânga',
     pinRight: 'Fixează la Dreapta',
@@ -897,9 +901,11 @@ export const AG_GRID_LOCALE_RO_RO = {
     columnHeaderEditCancel: 'Anulează',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nu au fost găsite coloane eligibile.',
     calculatedColumn: 'Coloană calculată',
     calculatedColumnAdd: 'Adăugare coloană calculată',
     calculatedColumnEdit: 'Editare coloană calculată',
+    calculatedColumnView: 'Vizualizare coloană calculată',
     calculatedColumnRemove: 'Eliminare coloană calculată',
     calculatedColumnTitle: 'Titlu',
     calculatedColumnType: 'Tip',

@@ -3,17 +3,19 @@ import { defineConfig } from 'vitest/config';
 
 import packageJson from '../../package.json';
 
-// The website package that hosts this subrepo, per container repository. `@utils`/`@constants` and
-// friends resolve into it, so a shared module that imports a product alias is testable in whichever
-// repo the tests are run from.
+// The website package that hosts this subrepo, keyed by the container's root package name.
+// `@utils`/`@constants` and friends resolve into it, so a shared module that imports a product
+// alias is testable in whichever repo the tests are run from.
 const WEBSITE_PATH_PREFIX = {
     'ag-grid': '../../documentation/ag-grid-docs',
     'ag-charts': '../../packages/ag-charts-website',
-    'ag-studio': '../../packages/ag-studio-docs',
+    'ag-studio-workspace-root': '../../packages/ag-studio-docs',
 };
 
-// An unrecognised container is treated as ag-charts, so the aliases below still resolve.
-const CONTAINER_REPO = packageJson.name in WEBSITE_PATH_PREFIX ? packageJson.name : 'ag-charts';
+const CONTAINER_REPO = packageJson.name;
+if (!(CONTAINER_REPO in WEBSITE_PATH_PREFIX)) {
+    throw new Error(`ag-website-shared: no website path mapped for container package "${CONTAINER_REPO}"`);
+}
 
 function resolvePath(srcPath) {
     return path.resolve(__dirname, WEBSITE_PATH_PREFIX[CONTAINER_REPO], srcPath);

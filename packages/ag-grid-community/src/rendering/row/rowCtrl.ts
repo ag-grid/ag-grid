@@ -28,6 +28,7 @@ import type {
 } from '../../events';
 import {
     _addGridCommonParams,
+    _getGrandTotalRow,
     _getRowHeightForNode,
     _isAnimateRows,
     _isClientSideLoadingRow,
@@ -1002,8 +1003,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         const classes: string[] = [];
 
-        classes.push('ag-row');
-        classes.push(this.rowFocused ? 'ag-row-focus' : 'ag-row-no-focus');
+        classes.push('ag-row', this.rowFocused ? 'ag-row-focus' : 'ag-row-no-focus');
 
         if (this.fadeInAnimation) {
             classes.push('ag-opacity-zero');
@@ -1029,6 +1029,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (rowNode.footer) {
             classes.push('ag-row-footer');
+            if (rowNode.level === -1) {
+                classes.push('ag-row-grand-total');
+                // the border goes on the side facing the data rows
+                const position = rowNode.rowPinned ?? _getGrandTotalRow(this.gos);
+                const atTop = position === 'top' || position === 'pinnedTop';
+                classes.push(`ag-row-grand-total-border-${atTop ? 'bottom' : 'top'}`);
+            }
         }
 
         classes.push('ag-row-level-' + this.rowLevel);

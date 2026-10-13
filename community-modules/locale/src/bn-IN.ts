@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_BN_IN = {
     enabled: 'সক্রিয়',
 
     // Menu
+    moveLeft: 'বামে সরান',
+    moveRight: 'ডানে সরান',
+    moveUp: 'উপরে সরান',
+    moveDown: 'নিচে সরান',
     pinColumn: 'কলাম পিন করুন',
     pinLeft: 'বামে পিন করুন',
     pinRight: 'ডানে পিন করুন',
@@ -913,9 +917,11 @@ export const AG_GRID_LOCALE_BN_IN = {
     columnHeaderEditCancel: 'বাতিল করুন',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'কোনও উপযুক্ত কলাম পাওয়া যায়নি।',
     calculatedColumn: 'গণনাকৃত কলাম',
     calculatedColumnAdd: 'গণনাকৃত কলাম যোগ করুন',
     calculatedColumnEdit: 'গণনাকৃত কলাম সম্পাদনা করুন',
+    calculatedColumnView: 'গণনাকৃত কলাম দেখুন',
     calculatedColumnRemove: 'গণনাকৃত কলাম সরান',
     calculatedColumnTitle: 'শিরোনাম',
     calculatedColumnType: 'ধরণ',

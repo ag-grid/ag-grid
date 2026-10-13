@@ -336,6 +336,10 @@ export const AG_GRID_LOCALE_AR_EG = {
     enabled: 'مُمكّن',
 
     // Menu
+    moveLeft: 'نقل إلى اليسار',
+    moveRight: 'نقل إلى اليمين',
+    moveUp: 'نقل إلى الأعلى',
+    moveDown: 'نقل إلى الأسفل',
     pinColumn: 'تثبيت العمود',
     pinLeft: 'تثبيت لليسار',
     pinRight: 'تثبيت لليمين',
@@ -891,9 +895,11 @@ export const AG_GRID_LOCALE_AR_EG = {
     columnHeaderEditCancel: 'إلغاء',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'لم يتم العثور على أعمدة مؤهلة.',
     calculatedColumn: 'عمود محسوب',
     calculatedColumnAdd: 'إضافة عمود محسوب',
     calculatedColumnEdit: 'تعديل عمود محسوب',
+    calculatedColumnView: 'عرض عمود محسوب',
     calculatedColumnRemove: 'إزالة عمود محسوب',
     calculatedColumnTitle: 'العنوان',
     calculatedColumnType: 'النوع',

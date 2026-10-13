@@ -202,7 +202,7 @@ jobs:
             count=10
             affected="ag-grid-community ag-grid-enterprise ag-stack @ag-grid-community/locale ag-behavioural-testing"
           else
-            affected="$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | tr '\n' ' ')"
+            affected="$(yarn nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test | tr '\n' ' ')"
             count=$(echo $affected | wc -w)
           fi
           echo "test_count=${count}" >> $GITHUB_OUTPUT
@@ -221,7 +221,7 @@ jobs:
           if [[ "${{ github.event.inputs.nx_command || 'affected' }}" == "run-many" ]] ; then
             e2e_count=10
           else
-            e2e_count=$(yarn -s nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e --exclude 'tag:module-size' --exclude all | wc -l)
+            e2e_count=$(yarn nx show projects --affected --base ${{ steps.setup.outputs.base }} -t test:e2e --exclude 'tag:module-size' --exclude all | wc -l)
           fi
 
           # not enough non-bundle size e2e tests to shard atm

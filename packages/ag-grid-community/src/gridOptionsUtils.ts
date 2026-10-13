@@ -214,7 +214,7 @@ export function _getRowHeightAsNumber(beans: BeanCollection): number {
     return environment.getDefaultRowHeight();
 }
 
-// returns the dom data, or undefined if not found
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getDomData(gos: GridOptionsService, element: Node | null, key: string): any {
     const domData = (element as any)[gos.getDomDataKey()];
 

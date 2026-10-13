@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_HI_IN = {
     enabled: 'सक्षम',
 
     // Menu
+    moveLeft: 'बाएँ ले जाएँ',
+    moveRight: 'दाएँ ले जाएँ',
+    moveUp: 'ऊपर ले जाएँ',
+    moveDown: 'नीचे ले जाएँ',
     pinColumn: 'कॉलम पिन करें',
     pinLeft: 'बाएं पिन करें',
     pinRight: 'दाएं पिन करें',
@@ -915,9 +919,11 @@ export const AG_GRID_LOCALE_HI_IN = {
     columnHeaderEditCancel: 'रद्द करें',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'कोई उपयुक्त कॉलम नहीं मिला।',
     calculatedColumn: 'गणना किया गया कॉलम',
     calculatedColumnAdd: 'गणना किया गया कॉलम जोड़ें',
     calculatedColumnEdit: 'गणना किया गया कॉलम संपादित करें',
+    calculatedColumnView: 'गणना किया गया कॉलम देखें',
     calculatedColumnRemove: 'गणना किया गया कॉलम हटाएं',
     calculatedColumnTitle: 'शीर्षक',
     calculatedColumnType: 'प्रकार',

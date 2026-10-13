@@ -212,31 +212,34 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     }
 
     private moveFocusedItem(isPrevious: boolean): void {
-        const currentItemIndex = this.getFocusedItem();
+        const comp = this.childPillComponents[this.getFocusedItem()];
+        if (comp) {
+            this.moveItem(comp, isPrevious);
+        }
+    }
 
-        if (currentItemIndex === -1) {
+    protected getItemMoveIndex(comp: TPill, isPrevious: boolean): number | null {
+        const items = this.getExistingItems();
+        const index = items.indexOf(comp.getItem());
+        const target = index + (isPrevious ? -1 : 1);
+        const minimumIndex = this.minimumAllowedNewInsertIndex();
+        return comp.isAlive() &&
+            index >= minimumIndex &&
+            comp.isMovable() &&
+            target >= minimumIndex &&
+            target < items.length
+            ? target
+            : null;
+    }
+
+    protected moveItem(comp: TPill, isPrevious: boolean): void {
+        const index = this.getItemMoveIndex(comp, isPrevious);
+        if (index === null) {
             return;
         }
-
-        const diff = isPrevious ? -1 : 1;
-        const changed = this.normalizeAndUpdateInsertIndex(currentItemIndex, currentItemIndex + diff);
-
-        if (!changed) {
-            return;
-        }
-
-        const comp = this.childPillComponents[currentItemIndex];
-
-        if (!comp.isMovable()) {
-            return;
-        }
-
-        const currentItem = comp.getItem();
-
-        // this will focus the target position before we call rearrangeItems
-        // rearrange items will then call refresh which will refocus the target index.
-        this.focusItemAtIndex(this.insertIndex);
-        this.rearrangeItems([currentItem], true);
+        this.insertIndex = index;
+        this.rearrangeItems([comp.getItem()], true);
+        this.focusItemAtIndex(index);
     }
 
     protected addElementClasses(el: Element, suffix?: string) {
@@ -640,7 +643,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         }
     }
 
-    private createItemComponent(item: TItem, ghost: boolean): TPill {
+    protected createItemComponent(item: TItem, ghost: boolean): TPill {
         const itemComponent = this.createPillComponent(item, this.dropTarget, ghost, this.horizontal);
         itemComponent.addEventListener('columnRemove', this.removeItems.bind(this, [item]));
 

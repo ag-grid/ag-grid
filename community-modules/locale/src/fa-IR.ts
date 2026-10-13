@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_FA_IR = {
     enabled: 'فعال',
 
     // Menu
+    moveLeft: 'انتقال به چپ',
+    moveRight: 'انتقال به راست',
+    moveUp: 'انتقال به بالا',
+    moveDown: 'انتقال به پایین',
     pinColumn: 'سنجاق کردن ستون',
     pinLeft: 'سنجاق کردن به چپ',
     pinRight: 'سنجاق کردن به راست',
@@ -894,9 +898,11 @@ export const AG_GRID_LOCALE_FA_IR = {
     columnHeaderEditCancel: 'لغو',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'هیچ ستون واجد شرایطی یافت نشد.',
     calculatedColumn: 'ستون محاسبه‌شده',
     calculatedColumnAdd: 'افزودن ستون محاسبه‌شده',
     calculatedColumnEdit: 'ویرایش ستون محاسبه‌شده',
+    calculatedColumnView: 'نمایش ستون محاسبه‌شده',
     calculatedColumnRemove: 'حذف ستون محاسبه‌شده',
     calculatedColumnTitle: 'عنوان',
     calculatedColumnType: 'نوع',

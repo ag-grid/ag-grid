@@ -1,6 +1,72 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-BABELPLUGINTRANSFORMMODULESSYSTEMJS-16624576:
+    - ag-grid-react@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.785Z
+  SNYK-JS-AGGRIDENTERPRISE-7414158:
+    - ag-grid-enterprise@* > *:
+        reason: >-
+            Local workspace package (0.0.0-use.local) - matched against advisories for old published versions
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.783Z
+  SNYK-JS-AGGRIDCOMMUNITY-7414157:
+    - ag-grid-react@* > *:
+        reason: >-
+            Local workspace package (0.0.0-use.local) - matched against advisories for old published versions
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.784Z
+    - ag-grid-enterprise@* > *:
+        reason: >-
+            Local workspace package (0.0.0-use.local) - matched against advisories for old published versions
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.781Z
+    - ag-grid-community@* > *:
+        reason: >-
+            Local workspace package (0.0.0-use.local) - matched against advisories for old published versions
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.781Z
+  SNYK-JS-BRACEEXPANSION-20244952:
+    - npm-run-all@4.1.5 > minimatch@3.1.2 > brace-expansion@1.1.18:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:31:45.135Z
+    - typescript-eslint@8.70.1 > @typescript-eslint/eslint-plugin@8.70.1 > @typescript-eslint/type-utils@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:31:44.734Z
+    - eslint@10.11.0 > @eslint/config-array@0.23.5 > minimatch@10.2.5 > brace-expansion@5.0.9:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:31:44.661Z
+  SNYK-JS-BRACEEXPANSION-20244948:
+    - npm-run-all@4.1.5 > minimatch@3.1.2 > brace-expansion@1.1.18:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:30:45.971Z
+    - typescript-eslint@8.70.1 > @typescript-eslint/eslint-plugin@8.70.1 > @typescript-eslint/type-utils@8.70.1 > @typescript-eslint/typescript-estree@8.70.1 > minimatch@10.2.5 > brace-expansion@5.0.9:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:30:45.543Z
+    - eslint@10.11.0 > @eslint/config-array@0.23.5 > minimatch@10.2.5 > brace-expansion@5.0.9:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:30:45.521Z
+  SNYK-JS-SHELLQUOTE-20250993:
+    - npm-run-all@4.1.5 > shell-quote@1.10.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:23:41.846Z
   SNYK-JS-URIJS-19963963:
     - eslint@10.11.0 > ajv@6.15.0 > uri-js@4.4.1:
         reason: >-

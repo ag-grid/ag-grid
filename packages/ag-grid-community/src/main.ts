@@ -303,6 +303,7 @@ export type { ContainerType, IAfterGuiAttachedParams } from './interfaces/iAfter
 export type {
     CalculatedColumnDef,
     CalculatedColumnExpressionPicker,
+    CalculatedColumnProperty,
     CalculatedColumnsGridOption,
     CalculatedColumnsOptions,
     CalculatedColumnUpdate,
@@ -698,6 +699,7 @@ export type { GridOptionsService, PropertyChangedEvent, PropertyValueChangedEven
 export type {
     AggregationColumnState,
     AggregationState,
+    CalculatedUserColumnState,
     CellSelectionCellState,
     CellSelectionState,
     ColumnGroupHeaderNameState,
@@ -903,6 +905,7 @@ export type {
     FillHandleOptions,
     GetChartMenuItems,
     GetChartToolbarItems,
+    GetColumnDropZoneMenuItems,
     GetColumnMenuItems,
     GetContextMenuItems,
     GetDataPath,
@@ -971,6 +974,7 @@ export type {
     GetChartMenuItemsParams,
     GetChartToolbarItemsParams,
     GetChildCount,
+    GetColumnDropZoneMenuItemsParams,
     GetColumnMenuItemsParams,
     GetContextMenuItemsParams,
     GetGroupAggFilteringParams,
@@ -1064,6 +1068,7 @@ export type {
 export type {
     BaseMenuItem,
     BaseMenuItemParams,
+    DefaultColumnDropZoneMenuItem,
     DefaultColumnMenuItem,
     DefaultMenuItem,
     DefaultToolPanelItem,
@@ -1206,6 +1211,7 @@ export type {
     LengthValue,
     Part,
     ScaleValue,
+    ScrollbarWidthValue,
     ShadowValue,
     ShadowValueParams,
     Theme,

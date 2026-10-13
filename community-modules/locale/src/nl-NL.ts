@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_NL_NL = {
     enabled: 'Ingeschakeld',
 
     // Menu
+    moveLeft: 'Naar links verplaatsen',
+    moveRight: 'Naar rechts verplaatsen',
+    moveUp: 'Omhoog verplaatsen',
+    moveDown: 'Omlaag verplaatsen',
     pinColumn: 'Kolom vastzetten',
     pinLeft: 'Links vastzetten',
     pinRight: 'Rechts vastzetten',
@@ -895,9 +899,11 @@ export const AG_GRID_LOCALE_NL_NL = {
     columnHeaderEditCancel: 'Annuleren',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Geen geschikte kolommen gevonden.',
     calculatedColumn: 'Berekende kolom',
     calculatedColumnAdd: 'Berekende kolom toevoegen',
     calculatedColumnEdit: 'Berekende kolom bewerken',
+    calculatedColumnView: 'Berekende kolom bekijken',
     calculatedColumnRemove: 'Berekende kolom verwijderen',
     calculatedColumnTitle: 'Titel',
     calculatedColumnType: 'Type',

@@ -1,3 +1,4 @@
+import type { AgEvent } from 'ag-stack';
 import { _areEqual } from 'ag-stack';
 
 import { placeLockedColumns } from '../columnMove/columnMoveUtils';
@@ -7,10 +8,9 @@ import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
 import type { ColDef, ColGroupDef, ColKey } from '../entities/colDef';
 import type { GridOptions } from '../entities/gridOptions';
-import type { ColumnEventType } from '../events';
+import type { ColumnEventType, ColumnStateUpdatedEvent } from '../events';
 import type { PropertyChangedEvent, PropertyValueChangedEvent } from '../gridOptionsService';
 import { _shouldMaintainColumnOrder } from '../gridOptionsUtils';
-import type { ColumnTreeBuild } from './buildColumnTree';
 import { _buildColumnTree, finalizeColumnTree } from './buildColumnTree';
 import { applyPrevColumnsOrder } from './colsApplyPrevOrder';
 import { ColWrapperCache } from './columnGroups/colWrapperCache';
@@ -21,11 +21,17 @@ import { _convertColumnEventSourceType, _destroyColumnTreeAll, _destroyColumnTre
 //   colDefList / colDefTree  — PRIMARY cols (user-defined leaves + hierarchy virtuals).
 //   colsList   / colsTree    — DISPLAY cols: [serviceCols, ...colDefList] (or pivot result).
 
-/** What a {@link ColumnModel.flushColChanges} call must do:
- *  - `'dispatch'`: dispatch staged service changes only, no rebuild (batch close, `setColumnAggFunc`).
- *  - `'membership'`: a role add/remove/set — rebuild, raise the legacy `columnEverythingChanged`, animate the reflow.
- *  - `'reorder'`: a same-set move — rebuild and animate, but keep the set so skip the legacy event. */
+/** What a {@link ColumnModel.stageColChanges} call must do: `'dispatch'` only dispatches the staged service changes;
+ *  `'membership'` (a role add/remove/set) rebuilds, animates and raises the legacy `columnEverythingChanged`;
+ *  `'reorder'` (a same-set move) rebuilds and animates, but keeps the set so skips the legacy event. */
 type ColChangeKind = 'dispatch' | 'membership' | 'reorder';
+/** A column or provided column group whose events a column update queues. */
+export interface QueuedEventOwner {
+    /** Its last entry in the queue, or a stale index into an emptied one; never negative, to read in bounds. */
+    lastQueuedEventAt: number;
+    raiseQueuedEvent(event: AgEvent<string>): void;
+}
+type QueuedColEvents = (QueuedEventOwner | AgEvent<string> | number)[];
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class ColumnModel extends BeanStub implements NamedBean {
@@ -37,22 +43,30 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public changeEventsDispatching = false;
     public showingPivotResult = false;
 
-    /** >0 inside a {@link beginColBatch}/{@link endColBatch} pair: cols services defer their flush to the outermost close. */
-    private colBatchDepth = 0;
     /** Set when a staged change needs a display rebuild; consumed (cleared) once by {@link performRefresh}. */
     private pendingRefresh = false;
-    /** A batched `buildFromColDefs` already raised `columnEverythingChanged`; stops the batch flush re-raising it. */
-    private everythingChangedInBatch = false;
-    /** Accumulated across a batch: a change that must raise the legacy `columnEverythingChanged` (anything but a lone reorder). */
+    /** A `buildFromColDefs` inside an enclosing update already raised `columnEverythingChanged`; stops that update's
+     *  flush re-raising it. */
+    private everythingChangedInUpdate = false;
+    /** Accumulated across an update: a change that must raise the legacy `columnEverythingChanged` (anything but a lone reorder). */
     private pendingRaiseEverything = false;
+    /** The source of the first change staged in an update, which its flush reports. */
+    private pendingChangesSource: ColumnEventType | null = null;
     public colsList: AgColumn[] = [];
     public colsTree: (AgColumn | AgProvidedColumnGroup)[] = [];
     public colsTreeDepth = 0;
     public colDefList: AgColumn[] = [];
     /** Invalidation key for anything memoised off the colDefs. Mutating a live colDef in place doesn't register. */
     public colDefsVersion = 0;
-    /** Columns redefined by the tree build in progress, told once every column holds its new definition. */
-    public colDefChangedInBuild: AgColumn[] | null = null;
+    /** >0 between {@link beginColUpdate} and {@link endColUpdate}, queueing the column events raised and deferring the
+     *  role changes staged. */
+    public colUpdateDepth = 0;
+    /** Each queued column or group, its event and the index of its previous entry (`-1` for none): nothing allocated
+     *  per event. */
+    private readonly queuedColEvents: QueuedColEvents = [];
+    /** While the queue is raised, the index past the event being raised, so a change to an owner already told queues
+     *  anew. */
+    private colEventsRaisingAt = 0;
     public colDefTree: (AgColumn | AgProvidedColumnGroup)[] = [];
     public colDefTreeDepth = 0;
     private colDefHasMarryChildren = false;
@@ -203,11 +217,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const oldTree = this.colDefTree;
         const oldAllGroups = this.colDefAllGroups;
 
-        const colDefChanged: AgColumn[] = [];
-        this.colDefChangedInBuild = colDefChanged;
-        let builder: ColumnTreeBuild;
+        this.beginColUpdate();
         try {
-            builder = _buildColumnTree(
+            const builder = _buildColumnTree(
                 beans,
                 /* defs */ colDefs,
                 /* primaryColumns */ true,
@@ -222,124 +234,221 @@ export class ColumnModel extends BeanStub implements NamedBean {
             groupHierarchyColSvc?.contributeTo(builder);
             calculatedColsSvc?.contributeTo(builder);
             finalizeColumnTree(builder);
-        } finally {
-            this.colDefChangedInBuild = null;
-        }
 
-        const tree = builder.columnTree;
-        const cols = builder.columns;
-        this.colDefTree = tree;
-        this.colDefTreeDepth = builder.treeDepth;
-        this.colDefList = cols;
-        ++this.colDefsVersion;
-        this.colDefHasMarryChildren = builder.marryChildren;
-        this.colDefGroupsById = builder.groupsById;
-        this.colDefColsByKey = builder.colsByKey;
-        this.colDefAllGroups = builder.allGroups;
+            const tree = builder.columnTree;
+            const cols = builder.columns;
+            this.colDefTree = tree;
+            this.colDefTreeDepth = builder.treeDepth;
+            this.colDefList = cols;
+            ++this.colDefsVersion;
+            this.colDefHasMarryChildren = builder.marryChildren;
+            this.colDefGroupsById = builder.groupsById;
+            this.colDefColsByKey = builder.colsByKey;
+            this.colDefAllGroups = builder.allGroups;
 
-        // Seed colsById from the finalized primary cols (user leaves + hierarchy virtuals + calc cols).
-        const colsById: { [id: string]: AgColumn } = Object.create(null);
-        for (let i = 0, len = cols.length; i < len; ++i) {
-            colsById[cols[i].colId] = cols[i];
-        }
-        this.colsById = colsById;
+            // Seed colsById from the finalized primary cols (user leaves + hierarchy virtuals + calc cols).
+            const colsById: { [id: string]: AgColumn } = Object.create(null);
+            for (let i = 0, len = cols.length; i < len; ++i) {
+                colsById[cols[i].colId] = cols[i];
+            }
+            this.colsById = colsById;
 
-        if (oldTree !== tree) {
-            // Skip sweep when the tree ref is unchanged (group reuse + unchanged colDefs short-circuit).
-            _destroyColumnTreeUnused(oldCols, oldAllGroups, builder.buildToken);
-        }
+            if (oldTree !== tree) {
+                // Skip sweep when the tree ref is unchanged (group reuse + unchanged colDefs short-circuit).
+                _destroyColumnTreeUnused(oldCols, oldAllGroups, builder.buildToken);
+            }
 
-        this.invalidateColsDerivedState();
+            this.invalidateColsDerivedState();
 
-        // Single shared scan: each service classifies independently, bucketing lazily until commit.
-        const oldProvidedSet = oldCols.length > 0 ? new Set(oldCols) : null;
-        for (let i = 0, len = cols.length; i < len; ++i) {
-            const col = cols[i];
-            const colIsNew = !oldProvidedSet?.has(col);
-            rowGroupColsSvc?.extractCol(col, colIsNew);
-            pivotColsSvc?.extractCol(col, colIsNew);
-            valueColsSvc?.extractCol(col, colIsNew);
-        }
-        rowGroupColsSvc?.commitExtract(source);
-        pivotColsSvc?.commitExtract(source);
-        valueColsSvc?.commitExtract(source);
+            // Single shared scan: each service classifies independently, bucketing lazily until commit.
+            const oldProvidedSet = oldCols.length > 0 ? new Set(oldCols) : null;
+            for (let i = 0, len = cols.length; i < len; ++i) {
+                const col = cols[i];
+                const colIsNew = !oldProvidedSet?.has(col);
+                rowGroupColsSvc?.extractCol(col, colIsNew, source);
+                pivotColsSvc?.extractCol(col, colIsNew, source);
+                valueColsSvc?.extractCol(col, colIsNew, source);
+            }
+            rowGroupColsSvc?.commitExtract(source);
+            pivotColsSvc?.commitExtract(source);
+            valueColsSvc?.commitExtract(source);
 
-        this.ready = true;
-        this.changeEventsDispatching = true;
-        try {
-            this.refreshCols(newColDefs, source);
-        } finally {
-            this.changeEventsDispatching = false;
-        }
-        // after refreshCols, so the listeners can look up the pivot result and service columns too
-        for (let i = 0, len = colDefChanged.length; i < len; ++i) {
-            colDefChanged[i].dispatchColEvent('colDefChanged', source);
-        }
-
-        visibleCols.refresh(source, false);
-
-        // unused by AG Grid but kept for backwards compatibility
-        eventSvc.dispatchEvent({ type: 'columnEverythingChanged', source });
-        if (this.colBatchDepth > 0) {
-            this.everythingChangedInBatch = true; // batch flush must not re-raise it
-        }
-
-        if (stateChanges) {
+            this.ready = true;
             this.changeEventsDispatching = true;
             try {
-                dispatchColStateChanges(beans, source, stateChanges);
+                this.refreshCols(newColDefs, source);
             } finally {
                 this.changeEventsDispatching = false;
             }
+
+            visibleCols.refresh(source, false);
+
+            // unused by AG Grid but kept for backwards compatibility
+            eventSvc.dispatchEvent({ type: 'columnEverythingChanged', source });
+            if (this.colUpdateDepth > 1) {
+                this.everythingChangedInUpdate = true; // the enclosing update's flush must not re-raise it
+            }
+
+            if (stateChanges) {
+                this.changeEventsDispatching = true;
+                try {
+                    dispatchColStateChanges(beans, source, stateChanges);
+                } finally {
+                    this.changeEventsDispatching = false;
+                }
+            }
+
+            eventSvc.dispatchEvent({ type: 'newColumnsLoaded', source });
+
+            if (source === 'gridInitializing') {
+                colAutosize?.applyAutosizeStrategy();
+            }
+        } finally {
+            this.endColUpdate();
         }
+    }
 
-        eventSvc.dispatchEvent({ type: 'newColumnsLoaded', source });
+    /** Queues the column events raised, and defers the role changes staged, until the matching {@link endColUpdate},
+     *  so an update's listeners see every column it changes final. Nests: the outermost end runs them all. Active-col
+     *  indexes (`*ActiveIndex`) are re-stamped only then, so they read stale inside an update that changes a role. */
+    public beginColUpdate(): void {
+        ++this.colUpdateDepth;
+    }
 
-        if (source === 'gridInitializing') {
-            colAutosize?.applyAutosizeStrategy();
+    /** Call from a `finally`, so a throw cannot leave the events queued for good. The outermost end runs the role changes
+     *  staged and their grid events, then raises the column events queued, until no listener stages more; then the
+     *  layout events. A throw skips none of these steps, and the first is rethrown once they have run. */
+    public endColUpdate(): void {
+        const depth = this.colUpdateDepth;
+        if (depth > 1) {
+            this.colUpdateDepth = depth - 1;
+            return;
+        }
+        // held at 1 while it ends, so what a listener changes joins this update; an unmatched close still runs it
+        this.colUpdateDepth = 1;
+        let threw = false;
+        let error: unknown;
+        do {
+            try {
+                this.runColChanges();
+                this.flushColEvents();
+            } catch (e) {
+                error = threw ? error : e;
+                threw = true;
+            }
+        } while (this.queuedColEvents.length !== 0 || this.hasColChangesStaged());
+        this.colUpdateDepth = 0;
+        this.everythingChangedInUpdate = false;
+        try {
+            this.beans.visibleCols.raiseDeferredLayoutEvents();
+        } catch (e) {
+            error = threw ? error : e;
+            threw = true;
+        }
+        if (threw) {
+            throw error;
         }
     }
 
-    /** Open a column-change batch; mutations until the {@link endColBatch} share one flush. Active-col indexes
-     *  (`*ActiveIndex`) are re-stamped only at the flush, so they read stale inside an open batch. */
-    public beginColBatch(): void {
-        this.colBatchDepth++;
+    /** Once raised, an owner's second event of a type (and state key) would report what its first does, so it replaces
+     *  it: the owner is told once, in the first one's place, with the latest payload. */
+    public queueColEvent(owner: QueuedEventOwner, event: AgEvent<string>): void {
+        const queue = this.queuedColEvents;
+        let prev = owner.lastQueuedEventAt;
+        // a stale index from an emptied queue never lands on this owner: queuing it here would have moved the index
+        if (prev < queue.length && queue[prev] === owner) {
+            const type = event.type;
+            for (let i = prev, told = this.colEventsRaisingAt; i >= told; i = queue[i + 2] as number) {
+                const queued = queue[i + 1] as AgEvent<string>;
+                if (
+                    queued.type === type &&
+                    (type !== 'columnStateUpdated' ||
+                        (queued as ColumnStateUpdatedEvent).key === (event as ColumnStateUpdatedEvent).key)
+                ) {
+                    queue[i + 1] = event;
+                    return;
+                }
+            }
+        } else {
+            prev = -1;
+        }
+        owner.lastQueuedEventAt = queue.length;
+        queue.push(owner, event, prev);
     }
 
-    /** Close a {@link beginColBatch}; the outermost close flushes once (one source for the whole action). */
-    public endColBatch(source: ColumnEventType): void {
-        this.colBatchDepth = Math.max(0, this.colBatchDepth - 1);
-        this.flushColChanges(source, 'dispatch'); // flushes whatever the batch accumulated (refresh, animate, raise)
+    /** Raises the queued events in order. A listener's update joins it, so an owner it changes again before being told
+     *  is told once; a listener throwing stops none of the others, and its error follows them. */
+    private flushColEvents(): void {
+        const queue = this.queuedColEvents;
+        if (queue.length === 0) {
+            return;
+        }
+        let threw = false;
+        let error: unknown;
+        // `length` re-read: a listener's update appends to the queue being raised
+        for (let i = 0; i < queue.length;) {
+            try {
+                // a role change a listener made, even one that then threw, runs before the next owner is told
+                if (this.hasColChangesStaged()) {
+                    this.runColChanges();
+                } else {
+                    const at = i;
+                    i += 3;
+                    this.colEventsRaisingAt = i;
+                    (queue[at] as QueuedEventOwner).raiseQueuedEvent(queue[at + 1] as AgEvent<string>);
+                }
+            } catch (e) {
+                error = threw ? error : e;
+                threw = true;
+            }
+        }
+        this.colEventsRaisingAt = 0;
+        queue.length = 0;
+        if (threw) {
+            throw error;
+        }
     }
 
-    /** Refresh once (if needed) + dispatch each touched service. Fires immediately, or defers to {@link endColBatch}
-     *  when batched. {@link ColChangeKind} selects the work: rebuild, legacy `columnEverythingChanged`, and/or a
-     *  move animation. */
-    public flushColChanges(source: ColumnEventType, kind: ColChangeKind): void {
-        const refresh = kind !== 'dispatch';
-        if (refresh) {
+    /** Call inside a column update: records the refresh and dispatch a role change needs, which the outermost
+     *  {@link endColUpdate} runs once for the whole update. {@link ColChangeKind} selects the work: rebuild, legacy
+     *  `columnEverythingChanged`, and/or a move animation. */
+    public stageColChanges(source: ColumnEventType, kind: ColChangeKind): void {
+        if (kind !== 'dispatch') {
             this.pendingRefresh = true;
+            // a lone reorder keeps the set, so it alone skips the legacy event
+            if (kind !== 'reorder') {
+                this.pendingRaiseEverything = true;
+            }
         }
-        // Accumulate the intent so a batched flush (endColBatch passes 'dispatch') still skips the legacy event
-        // for a batch of lone reorders, exactly as the unbatched path does.
-        if (refresh && kind !== 'reorder') {
-            this.pendingRaiseEverything = true;
-        }
-        if (this.colBatchDepth > 0) {
-            return; // inside a batch: endColBatch will flush
+        this.pendingChangesSource ??= source;
+    }
+
+    private hasColChangesStaged(): boolean {
+        const { rowGroupColsSvc, pivotColsSvc, valueColsSvc } = this.beans;
+        return (
+            this.pendingRefresh ||
+            !!rowGroupColsSvc?.pendingChanged ||
+            !!pivotColsSvc?.pendingChanged ||
+            !!valueColsSvc?.pendingChanged
+        );
+    }
+
+    /** Refresh once (if needed) + dispatch each touched service; run by the outermost {@link endColUpdate}. */
+    private runColChanges(): void {
+        // cleared even when nothing is staged, so a listener's follow-up update does not inherit it
+        const everythingRaised = this.everythingChangedInUpdate;
+        this.everythingChangedInUpdate = false;
+        if (!this.hasColChangesStaged()) {
+            this.pendingChangesSource = null;
+            return;
         }
         const { rowGroupColsSvc, pivotColsSvc, valueColsSvc } = this.beans;
+        const source = this.pendingChangesSource ?? 'api';
         const pendingRefresh = this.pendingRefresh;
-        const raiseEverything = this.pendingRaiseEverything;
-        // A batched `buildFromColDefs` may already have raised it; consume the flag either way.
-        const everythingAlreadyRaised = this.everythingChangedInBatch;
-        this.everythingChangedInBatch = false;
+        // an enclosed `buildFromColDefs` may already have raised it
+        const raiseEverything = this.pendingRaiseEverything && !everythingRaised;
+        this.pendingChangesSource = null;
         this.pendingRaiseEverything = false;
-        const nothingStaged =
-            !rowGroupColsSvc?.pendingChanged && !pivotColsSvc?.pendingChanged && !valueColsSvc?.pendingChanged;
-        if (nothingStaged && !pendingRefresh) {
-            return; // no staged dispatch and no deferred refresh
-        }
         // A rebuild slides its reflow (snapshot the pre-rebuild layout so cols animate from their old spots); when
         // nothing actually moves the animation is inert.
         const colAnimation = pendingRefresh ? this.beans.colAnimation : undefined;
@@ -351,8 +460,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             valueColsSvc?.flushReindex();
             if (pendingRefresh) {
                 this.performRefresh(source); // clears pendingRefresh
-                // Legacy compat: a role membership change (add/remove/set) raised this; a lone reorder keeps the set, so skip it.
-                if (raiseEverything && !everythingAlreadyRaised) {
+                if (raiseEverything) {
                     this.eventSvc.dispatchEvent({ type: 'columnEverythingChanged', source });
                 }
             }
@@ -370,6 +478,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         }
         const beans = this.beans;
         const gos = this.gos;
+        const formula = beans.formula;
         // Pivot-sort reorders existing columns, so reuse the column-move animation to slide them.
         const animatePivotSort = this.isPivotSortReorder();
         if (animatePivotSort) {
@@ -394,7 +503,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.colsGroupsById = pivotResultCols ? pivotResultCols.pivotGroupsById : this.colDefGroupsById;
             this.colsAllGroups = pivotResultCols ? pivotResultCols.pivotAllGroups : this.colDefAllGroups;
             // Service refresh runs in dependency order; formulas operate on the primary cols (colDefList).
-            beans.formula?.setFormulasActive(colDefList);
+            formula?.setFormulasActive(colDefList);
             const autoCols = beans.autoColSvc?.refreshCols(source);
             const selectionCol = beans.selectionColSvc?.refreshCols();
             const rowNumberCol = beans.rowNumbersSvc?.refreshCols();
@@ -505,6 +614,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.colsById = colsById;
             this.invalidateColsDerivedState();
             this.refreshColsDerivedState();
+            formula?.onColsRefreshed();
             if (colsListChanged) {
                 beans.rowSpanSvc?.refreshCols();
                 // Last: the purge dispatches synchronously, so a listener must not see a half-rebuilt model.
@@ -537,13 +647,14 @@ export class ColumnModel extends BeanStub implements NamedBean {
         beans.colViewport.clear();
     }
 
-    /** Full refresh (rebuild cols + recompute visible); immediate, or deferred to {@link endColBatch} when batched. */
+    /** Full refresh (rebuild cols + recompute visible); immediate, or deferred to the outermost {@link endColUpdate}. */
     public refreshAll(source: ColumnEventType): void {
         if (!this.ready) {
             return;
         }
-        if (this.colBatchDepth > 0) {
-            this.pendingRefresh = true; // defer; the flush at endColBatch performs it
+        if (this.colUpdateDepth > 0) {
+            this.pendingRefresh = true;
+            this.pendingChangesSource ??= source;
             return;
         }
         this.performRefresh(source);
@@ -551,9 +662,16 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     private performRefresh(source: ColumnEventType): void {
         this.pendingRefresh = false; // consumed: this refresh satisfies the pending request
-        if (this.ready) {
+        if (!this.ready) {
+            return;
+        }
+        // one update, so the auto columns it redefines are told once laid out
+        this.beginColUpdate();
+        try {
             this.refreshCols(false, source);
             this.beans.visibleCols.refresh(source, false);
+        } finally {
+            this.endColUpdate();
         }
     }
 
@@ -574,17 +692,27 @@ export class ColumnModel extends BeanStub implements NamedBean {
         if (this.ready) {
             // Refresh in case the auto-group col must be added/removed: with `groupDisplayType: 'custom'`
             // it's only used in pivot mode (where it's mandatory).
-            this.refreshCols(false, source);
-            this.beans.visibleCols.refresh(source, false);
-            this.eventSvc.dispatchEvent({ type: 'columnPivotModeChanged' });
+            this.beginColUpdate();
+            try {
+                this.refreshCols(false, source);
+                this.beans.visibleCols.refresh(source, false);
+                this.eventSvc.dispatchEvent({ type: 'columnPivotModeChanged' });
+            } finally {
+                this.endColUpdate();
+            }
         }
     }
 
     public recreateColumnDefs(e: PropertyChangedEvent | PropertyValueChangedEvent<keyof GridOptions>): void {
         if (this.ready) {
-            // Auto cols aren't in `colDefs`, so refresh their derived defs before the rebuild re-reads user colDefs.
-            this.beans.autoColSvc?.updateColumns(e);
-            this.buildFromColDefs(_convertColumnEventSourceType(e.source), true);
+            this.beginColUpdate();
+            try {
+                // Auto cols aren't in `colDefs`, so refresh their derived defs before the rebuild re-reads user colDefs.
+                this.beans.autoColSvc?.updateColumns(e);
+                this.buildFromColDefs(_convertColumnEventSourceType(e.source), true);
+            } finally {
+                this.endColUpdate();
+            }
         }
     }
 

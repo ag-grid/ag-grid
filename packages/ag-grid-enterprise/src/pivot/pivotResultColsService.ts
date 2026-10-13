@@ -150,24 +150,30 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
         if (!colModel.ready) {
             return;
         }
-        if (colDefs) {
-            this.processPivotResultColDef(colDefs);
-            if (appSupplied) {
-                this.suppliedColDefs = colDefs;
-                this.applyPivotResultColDefs(this.orderColDefs(colDefs), source);
-            } else {
-                // Generated colDefs arrive already ordered (row totals included), and own the order from here.
-                this.suppliedColDefs = null;
-                this.applyPivotResultColDefs(colDefs, source);
-            }
-        } else if (this.pivotCols != null) {
-            this.suppliedColDefs = null;
-            this.clearPivotResultCols(source);
-        } else {
+        if (!colDefs && this.pivotCols == null) {
             this.suppliedColDefs = null;
             return;
         }
-        this.visibleCols.refresh(source, false);
+        colModel.beginColUpdate();
+        try {
+            if (colDefs) {
+                this.processPivotResultColDef(colDefs);
+                if (appSupplied) {
+                    this.suppliedColDefs = colDefs;
+                    this.applyPivotResultColDefs(this.orderColDefs(colDefs), source);
+                } else {
+                    // Generated colDefs arrive already ordered (row totals included), and own the order from here.
+                    this.suppliedColDefs = null;
+                    this.applyPivotResultColDefs(colDefs, source);
+                }
+            } else {
+                this.suppliedColDefs = null;
+                this.clearPivotResultCols(source);
+            }
+            this.visibleCols.refresh(source, false);
+        } finally {
+            colModel.endColUpdate();
+        }
     }
 
     /** Re-order the applied pivot result columns for the pivot columns' current `pivotSort`. Lets pill sorting
@@ -178,9 +184,15 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
             return;
         }
         this.aggOrderedList = undefined;
-        // Always re-derived from the supplied order, so "no sort" resolves to it rather than to the last direction.
-        this.applyPivotResultColDefs(this.orderColDefs(suppliedColDefs), source);
-        this.visibleCols.refresh(source, false);
+        const colModel = this.colModel;
+        colModel.beginColUpdate();
+        try {
+            // Always re-derived from the supplied order, so "no sort" resolves to it rather than to the last direction.
+            this.applyPivotResultColDefs(this.orderColDefs(suppliedColDefs), source);
+            this.visibleCols.refresh(source, false);
+        } finally {
+            colModel.endColUpdate();
+        }
     }
 
     private orderColDefs(colDefs: (ColDef | ColGroupDef)[]): (ColDef | ColGroupDef)[] {

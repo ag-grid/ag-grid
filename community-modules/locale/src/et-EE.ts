@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_ET_EE = {
     enabled: 'Lubatud',
 
     // Menu
+    moveLeft: 'Liiguta vasakule',
+    moveRight: 'Liiguta paremale',
+    moveUp: 'Liiguta üles',
+    moveDown: 'Liiguta alla',
     pinColumn: 'Kinnita veerg',
     pinLeft: 'Kinnita vasakule',
     pinRight: 'Kinnita paremale',
@@ -913,9 +917,11 @@ export const AG_GRID_LOCALE_ET_EE = {
     columnHeaderEditCancel: 'Loobu',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Sobivaid veerge ei leitud.',
     calculatedColumn: 'Arvutatud veerg',
     calculatedColumnAdd: 'Lisa arvutatud veerg',
     calculatedColumnEdit: 'Muuda arvutatud veergu',
+    calculatedColumnView: 'Vaata arvutatud veergu',
     calculatedColumnRemove: 'Eemalda arvutatud veerg',
     calculatedColumnTitle: 'Pealkiri',
     calculatedColumnType: 'Tüüp',

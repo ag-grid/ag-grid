@@ -409,7 +409,7 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
         expect(checked).toEqual(['Jamaica']);
     });
 
-    test('with preservePreviousValues the picker keeps a condition value whose rows are gone, muted', async () => {
+    test('with preservePreviousValues the picker keeps a condition value whose rows are gone, in its sorted place', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             ...DEFAULT_OPTIONS,
             columnDefs: [
@@ -433,7 +433,9 @@ describe('Advanced Filter - Set Filter Builder round trip', () => {
         expect(items.filter((el) => el.classList.contains('ag-set-filter-item-missing')).map(label)).toEqual([
             'Jamaica',
         ]);
-        expect(label(items[items.length - 1])).toBe('Jamaica');
+        const countries = items.map(label).filter((text) => text !== '(Select All)');
+        expect(countries).toContain('Jamaica');
+        expect(countries).toEqual([...countries].sort());
     });
 
     test('with preservePreviousValues from filterParams as objects or functions, a value leaving before first use is kept, on a Set Filter or a Multi Filter child', async () => {

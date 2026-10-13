@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_UR_PK = {
     enabled: 'فعال',
 
     // Menu
+    moveLeft: 'بائیں منتقل کریں',
+    moveRight: 'دائیں منتقل کریں',
+    moveUp: 'اوپر منتقل کریں',
+    moveDown: 'نیچے منتقل کریں',
     pinColumn: 'کالم کو پن کریں',
     pinLeft: 'بائیں پن کریں',
     pinRight: 'دائیں پن کریں',
@@ -892,9 +896,11 @@ export const AG_GRID_LOCALE_UR_PK = {
     columnHeaderEditCancel: 'منسوخ کریں',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'کوئی موزوں کالم نہیں ملا۔',
     calculatedColumn: 'محسوب کالم',
     calculatedColumnAdd: 'محسوب کالم شامل کریں',
     calculatedColumnEdit: 'محسوب کالم میں ترمیم کریں',
+    calculatedColumnView: 'محسوب کالم دیکھیں',
     calculatedColumnRemove: 'محسوب کالم ہٹائیں',
     calculatedColumnTitle: 'عنوان',
     calculatedColumnType: 'قسم',

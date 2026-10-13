@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_BG_BG = {
     enabled: 'Активиран',
 
     // Menu
+    moveLeft: 'Преместване наляво',
+    moveRight: 'Преместване надясно',
+    moveUp: 'Преместване нагоре',
+    moveDown: 'Преместване надолу',
     pinColumn: 'Закрепване на колоната',
     pinLeft: 'Закрепване наляво',
     pinRight: 'Закрепване надясно',
@@ -898,9 +902,11 @@ export const AG_GRID_LOCALE_BG_BG = {
     columnHeaderEditCancel: 'Отказ',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Не са намерени подходящи колони.',
     calculatedColumn: 'Изчислена колона',
     calculatedColumnAdd: 'Добавяне на изчислена колона',
     calculatedColumnEdit: 'Редактиране на изчислена колона',
+    calculatedColumnView: 'Преглед на изчислена колона',
     calculatedColumnRemove: 'Премахване на изчислена колона',
     calculatedColumnTitle: 'Заглавие',
     calculatedColumnType: 'Тип',

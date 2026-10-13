@@ -127,6 +127,43 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         return proposedColumnOrder;
     }
 
+    public isMovingSuppressed(columns: AgColumn[]): boolean {
+        return (
+            !columns.length ||
+            this.gos.get('suppressMovableColumns') ||
+            columns.some((column) => column.colDef.suppressMovable || column.colDef.lockPosition)
+        );
+    }
+
+    public getColumnMoveTarget(
+        columns: AgColumn[],
+        targetColumns: AgColumn[],
+        before: boolean,
+        order = this.beans.colModel.colsList
+    ): { columns: AgColumn[]; toIndex: number } | null {
+        if (this.isMovingSuppressed(columns) || targetColumns.some((column) => columns.includes(column))) {
+            return null;
+        }
+
+        const moving = order.filter((column) => columns.includes(column));
+        const targets = order.filter((column) => targetColumns.includes(column));
+        if (moving.length !== columns.length || !targets.length) {
+            return null;
+        }
+
+        const targetIndex = order.indexOf(before ? targets[0] : targets.at(-1)!) + (before ? 0 : 1);
+        const toIndex = targetIndex - order.slice(0, targetIndex).filter((column) => moving.includes(column)).length;
+        const proposedOrder = order.slice();
+        _moveInArray(proposedOrder, moving, toIndex);
+        if (
+            proposedOrder.every((column, index) => column === order[index]) ||
+            !this.doesOrderPassRules(proposedOrder)
+        ) {
+            return null;
+        }
+        return { columns: moving, toIndex };
+    }
+
     public createBodyDropTarget(dropContainer: HTMLElement): BodyDropTarget {
         return new BodyDropTarget(dropContainer);
     }

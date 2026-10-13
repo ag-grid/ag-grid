@@ -183,7 +183,7 @@ export abstract class AgPickerField<
         }
     }
 
-    private onLabelOrWrapperMouseDown(e?: MouseEvent): void {
+    protected onLabelOrWrapperMouseDown(e?: MouseEvent): void {
         if (e) {
             const focusableEl = this.getFocusableElement();
             // if the focusableEl is not the wrapper and the mousedown

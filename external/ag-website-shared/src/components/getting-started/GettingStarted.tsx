@@ -1,4 +1,4 @@
-import type { Library } from '@ag-grid-types';
+import type { Framework, Library } from '@ag-grid-types';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import type { FunctionComponent } from 'react';
@@ -9,10 +9,14 @@ import { FEATURE_MAP } from './gettingStartedData';
 
 interface Props {
     library: Library;
+    // Markdoc renders this at build time with no client hydration, so the page passes its framework; the
+    // client-side search modal omits it and reads the selected framework from the store
+    framework?: Framework;
 }
 
-const GettingStarted: FunctionComponent<Props> = ({ library }) => {
-    const framework = useFrameworkFromStore();
+const GettingStarted: FunctionComponent<Props> = ({ library, framework: pageFramework }) => {
+    const storeFramework = useFrameworkFromStore();
+    const framework = pageFramework ?? storeFramework;
 
     const features = FEATURE_MAP[library] || [];
 

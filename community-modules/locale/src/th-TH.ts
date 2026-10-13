@@ -338,6 +338,10 @@ export const AG_GRID_LOCALE_TH_TH = {
     enabled: 'เปิดใช้งาน',
 
     // Menu
+    moveLeft: 'ย้ายไปทางซ้าย',
+    moveRight: 'ย้ายไปทางขวา',
+    moveUp: 'ย้ายขึ้น',
+    moveDown: 'ย้ายลง',
     pinColumn: 'ปักหมุดคอลัมน์',
     pinLeft: 'ปักหมุดซ้าย',
     pinRight: 'ปักหมุดขวา',
@@ -912,9 +916,11 @@ export const AG_GRID_LOCALE_TH_TH = {
     columnHeaderEditCancel: 'ยกเลิก',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'ไม่พบคอลัมน์ที่ใช้ได้',
     calculatedColumn: 'คอลัมน์คำนวณ',
     calculatedColumnAdd: 'เพิ่มคอลัมน์คำนวณ',
     calculatedColumnEdit: 'แก้ไขคอลัมน์คำนวณ',
+    calculatedColumnView: 'ดูคอลัมน์คำนวณ',
     calculatedColumnRemove: 'ลบคอลัมน์คำนวณ',
     calculatedColumnTitle: 'ชื่อเรื่อง',
     calculatedColumnType: 'ชนิด',

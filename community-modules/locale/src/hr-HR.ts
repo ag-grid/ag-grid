@@ -338,6 +338,10 @@ export const AG_GRID_LOCALE_HR_HR = {
     enabled: 'Omogućeno',
 
     // Menu
+    moveLeft: 'Pomakni lijevo',
+    moveRight: 'Pomakni desno',
+    moveUp: 'Pomakni gore',
+    moveDown: 'Pomakni dolje',
     pinColumn: 'Prikvači stupac',
     pinLeft: 'Prikvači lijevo',
     pinRight: 'Prikvači desno',
@@ -895,9 +899,11 @@ export const AG_GRID_LOCALE_HR_HR = {
     columnHeaderEditCancel: 'Odustani',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nisu pronađeni odgovarajući stupci.',
     calculatedColumn: 'Izračunati stupac',
     calculatedColumnAdd: 'Dodaj izračunati stupac',
     calculatedColumnEdit: 'Uredi izračunati stupac',
+    calculatedColumnView: 'Prikaži izračunati stupac',
     calculatedColumnRemove: 'Ukloni izračunati stupac',
     calculatedColumnTitle: 'Naslov',
     calculatedColumnType: 'Vrsta',

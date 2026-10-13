@@ -56,6 +56,12 @@ const gridOptions = {
 }
 ```
 
+## Reordering Columns
+
+Right-click a column pill and choose **Move Left** or **Move Right** to reorder it without dragging. In the vertical Columns Tool Panel, the options are **Move Up** and **Move Down**. With a pill focused, **Shift+F10** or the context-menu key opens the same menu. Unavailable directions are disabled. Move items are hidden for pills locked by `groupLockGroupColumns`, when `functionsReadOnly` or `suppressMovable` is enabled, or when the Columns Tool Panel has `suppressSyncLayoutWithGrid` enabled. Unlocked groups can still be reordered without crossing locked groups. `suppressMovableColumns` and `lockPosition` do not suppress panel reordering.
+
+Use `getColumnDropZoneMenuItems` to customise or suppress these menus. The callback receives `source: 'rowGroup'` for this panel, including when displayed in the toolbar. See [Drop Zone Menus](./tool-panel-columns-customising/#drop-zone-menus) for configuration, translations and icons.
+
 ## Prevent User Grouping from Hiding Columns
 
 After a user applies row grouping to a column, the column is hidden. If the user removes the row grouping, the column is made visible again.

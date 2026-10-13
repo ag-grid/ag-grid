@@ -116,7 +116,7 @@ describe('Grid body width push', () => {
         expect(pushedWidths()).toEqual(expected(1800, 1800));
 
         // The case the dropped `columnResized` trigger actually rests on: width moves between two columns
-        // in one section, so `updateBodyWidths` early-returns and no width event is dispatched at all.
+        // in one section, so `layoutBodyWidths` early-returns and no grid width event is dispatched at all.
         // Every container has to stay on the width it already holds.
         api.setColumnWidths([
             { key: 'c0', newWidth: 200 },
@@ -238,8 +238,6 @@ describe('Grid body width push', () => {
         expect(pushedWidths()).toEqual(expected(1500, 1500));
     });
 
-    // Published for application CSS, and nothing in the grid reads it back, so this is the only thing that
-    // would notice it going missing. `stylesChanged` is its sole refresh path, so that is asserted too.
     test('sets the pinned row border width variable on every row container, and again on stylesChanged', async () => {
         const api = gridsManager.createGrid('myGrid', { columnDefs: buildCols(3), rowData: [{ c0: 1 }] });
         await asyncSetTimeout(0);

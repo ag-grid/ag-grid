@@ -49,6 +49,28 @@ describe('Value Column Order (valueIndex)', () => {
         await waitFor(() => expect(valueColIdsInOrder(api)).toEqual(['silver', 'gold']));
     });
 
+    test.each(['valueIndex', 'initialValueIndex'] as const)(
+        'reset restores %s before unindexed value columns',
+        (indexProperty) => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'gold', aggFunc: 'sum' },
+                    { field: 'silver', aggFunc: 'sum', [indexProperty]: 0 },
+                    { field: 'bronze', aggFunc: 'sum', [indexProperty]: 3 },
+                ],
+                rowData: [{ gold: 1, silver: 2, bronze: 3 }],
+            });
+            expect(valueColIdsInOrder(api)).toEqual(['silver', 'bronze', 'gold']);
+
+            api.setValueColumns(['gold', 'bronze', 'silver']);
+            expect(valueColIdsInOrder(api)).toEqual(['gold', 'bronze', 'silver']);
+            api.resetColumnState();
+
+            expect(valueColIdsInOrder(api)).toEqual(['silver', 'bronze', 'gold']);
+            expect(valueOrderFromState(api.getColumnState())).toEqual(['silver', 'bronze', 'gold']);
+        }
+    );
+
     test('value column order is captured in and restored from column state', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [

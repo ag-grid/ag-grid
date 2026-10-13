@@ -31,7 +31,7 @@ const HIGH_PERF_PSEUDOS = new Set([
     '::-webkit-slider-runnable-track',
     '::-webkit-slider-thumb',
     '::-moz-range-track',
-    '::-moz-ag-range-thumb',
+    '::-moz-range-thumb',
     '::placeholder',
     ':disabled',
     ':invalid',

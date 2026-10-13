@@ -336,6 +336,10 @@ export const AG_GRID_LOCALE_ZH_TW = {
     enabled: '已啟用',
 
     // Menu
+    moveLeft: '向左移動',
+    moveRight: '向右移動',
+    moveUp: '向上移動',
+    moveDown: '向下移動',
     pinColumn: '固定欄位',
     pinLeft: '固定在左側',
     pinRight: '固定在右側',
@@ -891,9 +895,11 @@ export const AG_GRID_LOCALE_ZH_TW = {
     columnHeaderEditCancel: '取消',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: '找不到符合條件的欄。',
     calculatedColumn: '計算欄位',
     calculatedColumnAdd: '新增計算欄位',
     calculatedColumnEdit: '編輯計算欄位',
+    calculatedColumnView: '檢視計算欄位',
     calculatedColumnRemove: '移除計算欄位',
     calculatedColumnTitle: '標題',
     calculatedColumnType: '類型',

@@ -340,6 +340,10 @@ export const AG_GRID_LOCALE_RU_RU = {
     enabled: 'Включено',
 
     // Menu
+    moveLeft: 'Переместить влево',
+    moveRight: 'Переместить вправо',
+    moveUp: 'Переместить вверх',
+    moveDown: 'Переместить вниз',
     pinColumn: 'Закрепить столбец',
     pinLeft: 'Закрепить слева',
     pinRight: 'Закрепить справа',
@@ -917,9 +921,11 @@ export const AG_GRID_LOCALE_RU_RU = {
     columnHeaderEditCancel: 'Отмена',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Подходящие столбцы не найдены.',
     calculatedColumn: 'Вычисляемый столбец',
     calculatedColumnAdd: 'Добавить вычисляемый столбец',
     calculatedColumnEdit: 'Редактировать вычисляемый столбец',
+    calculatedColumnView: 'Просмотреть вычисляемый столбец',
     calculatedColumnRemove: 'Удалить вычисляемый столбец',
     calculatedColumnTitle: 'Заголовок',
     calculatedColumnType: 'Тип',

@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_SK_SK = {
     enabled: 'Povolené',
 
     // Menu
+    moveLeft: 'Presunúť doľava',
+    moveRight: 'Presunúť doprava',
+    moveUp: 'Presunúť nahor',
+    moveDown: 'Presunúť nadol',
     pinColumn: 'Pripnúť stĺpec',
     pinLeft: 'Pripnúť vľavo',
     pinRight: 'Pripnúť vpravo',
@@ -893,9 +897,11 @@ export const AG_GRID_LOCALE_SK_SK = {
     columnHeaderEditCancel: 'Zrušiť',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nenašli sa žiadne vhodné stĺpce.',
     calculatedColumn: 'Vypočítaný stĺpec',
     calculatedColumnAdd: 'Pridať vypočítaný stĺpec',
     calculatedColumnEdit: 'Upraviť vypočítaný stĺpec',
+    calculatedColumnView: 'Zobraziť vypočítaný stĺpec',
     calculatedColumnRemove: 'Odstrániť vypočítaný stĺpec',
     calculatedColumnTitle: 'Názov',
     calculatedColumnType: 'Typ',

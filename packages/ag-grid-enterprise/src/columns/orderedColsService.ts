@@ -28,7 +28,7 @@ export abstract class OrderedColsService extends BaseColsService implements IOrd
             return false;
         }
         col.dispatchColEvent(this.eventName, source);
-        col.dispatchStateUpdatedEvent(this.enableProp);
+        col.dispatchStateUpdatedEvent(this.enableProp, source);
         return true;
     }
 

@@ -336,6 +336,10 @@ export const AG_GRID_LOCALE_ZH_CN = {
     enabled: '启用',
 
     // Menu
+    moveLeft: '向左移动',
+    moveRight: '向右移动',
+    moveUp: '向上移动',
+    moveDown: '向下移动',
     pinColumn: '固定列',
     pinLeft: '固定在左侧',
     pinRight: '固定在右侧',
@@ -891,9 +895,11 @@ export const AG_GRID_LOCALE_ZH_CN = {
     columnHeaderEditCancel: '取消',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: '未找到符合条件的列。',
     calculatedColumn: '计算列',
     calculatedColumnAdd: '添加计算列',
     calculatedColumnEdit: '编辑计算列',
+    calculatedColumnView: '查看计算列',
     calculatedColumnRemove: '删除计算列',
     calculatedColumnTitle: '标题',
     calculatedColumnType: '类型',

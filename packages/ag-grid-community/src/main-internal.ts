@@ -99,8 +99,8 @@ export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { RowsDrop as _RowsDrop } from './dragAndDrop/rowDragTypes';
 export {
     _defaultPivotSort,
-    _getAvailableSortTypes,
     _getDisplaySortForColumn,
+    _isSortTypeAvailable,
     _normalizeSortType,
     _resolvePivotColumnForRow,
     _resolvePivotSort,
@@ -215,6 +215,7 @@ export {
     _getCallbackForEvent,
     _getCheckboxes,
     _getCheckboxLocation,
+    _getDomData,
     _getEnableColumnSelection,
     _getFillHandle,
     _getGrandTotalPinnedFloat,
@@ -483,7 +484,6 @@ export { TabGuardComp } from './widgets/tabGuardComp';
 export { AgAbstractInputField } from './agWidgets/agAbstractInputField';
 export { AgAbstractLabel } from './agWidgets/agAbstractLabel';
 export { AgCheckbox, AgCheckboxSelector } from './agWidgets/agCheckbox';
-export { AgContentEditableField, AgContentEditableFieldSelector } from './agWidgets/agContentEditableField';
 export { AgFieldSet, AgFieldSetSelector } from './agWidgets/agFieldSet';
 export type {
     AgCheckboxParams,

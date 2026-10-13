@@ -336,6 +336,10 @@ export const AG_GRID_LOCALE_JA_JP = {
     enabled: '有効',
 
     // Menu
+    moveLeft: '左に移動',
+    moveRight: '右に移動',
+    moveUp: '上に移動',
+    moveDown: '下に移動',
     pinColumn: '列の固定',
     pinLeft: '左に固定',
     pinRight: '右に固定',
@@ -892,9 +896,11 @@ export const AG_GRID_LOCALE_JA_JP = {
     columnHeaderEditCancel: 'キャンセル',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: '使用可能な列が見つかりません。',
     calculatedColumn: '計算列',
     calculatedColumnAdd: '計算列を追加',
     calculatedColumnEdit: '計算列を編集',
+    calculatedColumnView: '計算列を表示',
     calculatedColumnRemove: '計算列を削除',
     calculatedColumnTitle: 'タイトル',
     calculatedColumnType: '種類',

@@ -158,7 +158,7 @@ export class FullWidthRowTooltips extends BeanStub {
                             return { resolved: true, value };
                         }
                         const containsDots = groupCol
-                            ? groupCol.tooltipFieldContainsDots
+                            ? groupCol.isTooltipFieldContainsDots()
                             : !gos.get('suppressFieldDotNotation') && tooltipField.includes('.');
                         return {
                             resolved: true,

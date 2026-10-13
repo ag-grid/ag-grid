@@ -1,7 +1,6 @@
 import type { GridApi } from 'ag-grid-community';
 
 const BASE_URL = '{{EXAMPLE_ENV:AI_API_URL}}';
-const AI_API_TOKEN = '{{EXAMPLE_ENV:AI_API_TOKEN}}';
 
 const ajv = new ajv7({
     validateSchema: true, // Validate schemas against meta-schema
@@ -107,7 +106,6 @@ async function generateObject(options: any): Promise<any> {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            ...(AI_API_TOKEN ? { Authorization: `Bearer ${AI_API_TOKEN}` } : {}),
         },
         body: JSON.stringify(requestBody),
     });

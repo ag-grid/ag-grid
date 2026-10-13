@@ -342,6 +342,10 @@ export const AG_GRID_LOCALE_HU_HU = {
     enabled: 'Engedélyezve',
 
     // Menu
+    moveLeft: 'Mozgatás balra',
+    moveRight: 'Mozgatás jobbra',
+    moveUp: 'Mozgatás felfelé',
+    moveDown: 'Mozgatás lefelé',
     pinColumn: 'Oszlop rögzítése',
     pinLeft: 'Rögzítés balra',
     pinRight: 'Rögzítés jobbra',
@@ -900,9 +904,11 @@ export const AG_GRID_LOCALE_HU_HU = {
     columnHeaderEditCancel: 'Mégse',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nem találhatók megfelelő oszlopok.',
     calculatedColumn: 'Számított oszlop',
     calculatedColumnAdd: 'Számított oszlop hozzáadása',
     calculatedColumnEdit: 'Számított oszlop szerkesztése',
+    calculatedColumnView: 'Számított oszlop megtekintése',
     calculatedColumnRemove: 'Számított oszlop eltávolítása',
     calculatedColumnTitle: 'Cím',
     calculatedColumnType: 'Típus',

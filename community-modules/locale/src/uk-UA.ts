@@ -338,6 +338,10 @@ export const AG_GRID_LOCALE_UK_UA = {
     enabled: 'Увімкнено',
 
     // Menu
+    moveLeft: 'Перемістити ліворуч',
+    moveRight: 'Перемістити праворуч',
+    moveUp: 'Перемістити вгору',
+    moveDown: 'Перемістити вниз',
     pinColumn: 'Закріпити Стовпець',
     pinLeft: 'Закріпити Ліворуч',
     pinRight: 'Закріпити Праворуч',
@@ -895,9 +899,11 @@ export const AG_GRID_LOCALE_UK_UA = {
     columnHeaderEditCancel: 'Скасувати',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Відповідних стовпців не знайдено.',
     calculatedColumn: 'Обчислюваний стовпець',
     calculatedColumnAdd: 'Додати обчислюваний стовпець',
     calculatedColumnEdit: 'Редагувати обчислюваний стовпець',
+    calculatedColumnView: 'Переглянути обчислюваний стовпець',
     calculatedColumnRemove: 'Видалити обчислюваний стовпець',
     calculatedColumnTitle: 'Назва',
     calculatedColumnType: 'Тип',
