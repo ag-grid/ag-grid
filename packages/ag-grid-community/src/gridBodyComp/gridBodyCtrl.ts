@@ -449,19 +449,21 @@ export class GridBodyCtrl extends BeanStub {
         this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_WIDTH_ANIMATION, true);
     }
 
-    /** `skipTransition` removes the class before any style recalc sees it, so nothing laid out since animates. */
+    /**
+     * `skipTransition` removes the class before any style recalc sees it, so nothing laid out since animates. It does
+     * so even while an outer window, such as a pending async auto-size, is still open.
+     */
     public finishColumnWidthAnimation(skipTransition?: boolean): void {
         const depth = Math.max(0, this.columnWidthAnimationDepth - 1);
         this.columnWidthAnimationDepth = depth;
+        if (skipTransition) {
+            this.removeColumnWidthAnimation();
+            return;
+        }
         if (depth > 0 || !this.eGridBody.classList.contains(CSS_CLASS_COLUMN_WIDTH_ANIMATION)) {
             return;
         }
         window.clearTimeout(this.columnWidthAnimationTimeout);
-        this.columnWidthAnimationTimeout = undefined;
-        if (skipTransition) {
-            this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_WIDTH_ANIMATION, false);
-            return;
-        }
         // The class must outlive the width writes: a transition only starts if a style recalc sees it.
         this.columnWidthAnimationTimeout = window.setTimeout(() => {
             this.columnWidthAnimationTimeout = undefined;
@@ -471,11 +473,12 @@ export class GridBodyCtrl extends BeanStub {
         }, COLUMN_WIDTH_ANIMATION_MS);
     }
 
-    /** Ends a lingering animation window early so widths written next apply immediately; no-op mid-operation. */
+    /** Ends any open or lingering animation window so widths written next apply immediately. */
     public cancelColumnWidthAnimation(): void {
-        if (this.columnWidthAnimationDepth > 0 || this.columnWidthAnimationTimeout === undefined) {
-            return;
-        }
+        this.removeColumnWidthAnimation();
+    }
+
+    private removeColumnWidthAnimation(): void {
         window.clearTimeout(this.columnWidthAnimationTimeout);
         this.columnWidthAnimationTimeout = undefined;
         this.comp.setColumnMovingCss(CSS_CLASS_COLUMN_WIDTH_ANIMATION, false);
