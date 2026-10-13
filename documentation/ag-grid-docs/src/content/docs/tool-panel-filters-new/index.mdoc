@@ -73,16 +73,7 @@ The filter cards shown in the tool panel are part of the [Side Bar](./side-bar/)
 
 To remove cards from the tool panel programmatically, see [Choosing Filter Cards](#choosing-filter-cards).
 
-A saved layout can be restored by setting the `sideBar` state to a previously captured one. `setState` resets any part of the grid state it is not given, so spread the current state to keep everything else (e.g. sorting) unchanged. Replace the `filter` state too to restore each card's values as well as the cards themselves. See [Grid State](./grid-state/) for the full `getState` and `setState` semantics.
-
-The example below demonstrates these operations:
-
-- **Clear Filter Values** calls `api.setFilterModel(null)`. The rows are unfiltered, but the cards remain.
-- **Restore Initial State** sets the Side Bar state back to the state the grid was created with.
-- **Save State** captures the current grid state with `api.getState()`.
-- **Restore Saved State** applies the saved `filter` and `sideBar` state, restoring both the cards and their values.
-
-{% gridExampleRunner title="New Filters Tool Panel State" name="state" /%}
+A saved layout can be restored by passing a previously captured `sideBar` state to `api.setState`. Pass the `filter` state too to restore each card's values as well as the cards themselves. See [Grid State](./grid-state/) for the full `getState` and `setState` semantics.
 
 ## Expand / Collapse Filter Cards
 
@@ -96,8 +87,6 @@ api.getToolPanelInstance('filters-new').expandFilterCards(['age', 'country']);
 ```
 
 Only filters which already have a card in the tool panel are affected.
-
-{% gridExampleRunner title="Expand / Collapse Filter Cards" name="expand-collapse-filters" /%}
 
 ## Choosing Filter Cards
 
@@ -114,34 +103,20 @@ api.getToolPanelInstance('filters-new').setFilterCards(['athlete', 'country', 'y
 - Cards that already exist keep their expanded state. Cards that are added are collapsed, unlike when added using **Add Filter** in the tool panel, which adds them expanded.
 - Column IDs that do not match a column in the grid are skipped, and a warning is logged in development.
 
-### Removing Only Inactive Cards
+## Example: Managing Filter Cards
 
-To remove only the cards that have no active filter, use `getState` to get the current cards and pass back those that have a filter:
+The example below starts with filters on Age and Country, and an inactive Athlete card:
 
-```{% frameworkTransform=true %}
-const toolPanel = api.getToolPanelInstance('filters-new');
-const colIds = (toolPanel.getState().filters ?? []).map(({ colId }) => colId);
-toolPanel.setFilterCards(colIds.filter((colId) => api.getColumnFilterModel(colId) != null));
-```
+- **Show Athlete, Country, Year** calls `setFilterCards(['athlete', 'country', 'year'])`. The Age card is removed and its filter is cleared. Country keeps its filter and expanded state, and Year is added collapsed.
+- **Expand All** and **Collapse All** call `expandFilterCards()` and `collapseFilterCards()`.
+- **Clear Filter Values** calls `api.setFilterModel(null)`. The rows are unfiltered, but the cards remain.
+- **Remove Inactive** uses `getState` to find the current cards, and passes the ones with a filter to `setFilterCards`.
+- **Remove All** calls `setFilterCards([])`. Every card is removed and the rows are unfiltered.
+- **Save State** captures the current grid state with `api.getState()`.
+- **Restore Saved State** applies the saved `filter` and `sideBar` state, restoring both the cards and their values.
+- **Restore Initial State** applies the state the grid was created with.
 
-When [Using Buttons](#using-buttons), a card can also have changes that have not been applied yet. To keep those cards too, also check the unapplied model:
-
-```{% frameworkTransform=true %}
-toolPanel.setFilterCards(
-    colIds.filter((colId) => api.getColumnFilterModel(colId) != null || api.getColumnFilterModel(colId, true) != null)
-);
-```
-
-Both checks are needed, because a card whose applied filter has been cleared but not yet applied still filters the rows.
-
-The example below demonstrates choosing filter cards. It starts with filters on Age and Country:
-
-- **Show Athlete, Country, Year** calls `setFilterCards(['athlete', 'country', 'year'])`. The Age card is removed and its filter is cleared. Country keeps its filter.
-- **Reverse Order** reverses the order of the current cards.
-- **Remove Inactive Cards** removes the cards that have no filter, keeping Country (and Age, if still shown).
-- **Remove All Cards** calls `setFilterCards([])`. Every card is removed and the rows are unfiltered.
-
-{% gridExampleRunner title="Choosing Filter Cards" name="set-filter-cards" /%}
+{% gridExampleRunner title="Managing Filter Cards" name="managing-filter-cards" /%}
 
 ## Filter Instances
 
