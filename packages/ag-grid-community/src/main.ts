@@ -987,6 +987,8 @@ export type {
     GetMainMenuItemsParams,
     GetRowHeight,
     GetRowIdParams,
+    GetServerSideGroupAggData,
+    GetServerSideGroupAggDataParams,
     GetServerSideGroupLevelParams,
     GetServerSideGroupLevelParamsParams,
     GridContainerName,

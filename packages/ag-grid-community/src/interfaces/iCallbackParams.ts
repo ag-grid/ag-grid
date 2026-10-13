@@ -295,6 +295,16 @@ export interface IsServerSideGroupOpenByDefaultParams<TData = any, TContext = an
     rowNode: IRowNode<TData>;
 }
 
+export type GetServerSideGroupAggData<TData = any, TContext = any> = (
+    params: GetServerSideGroupAggDataParams<TData, TContext>
+) => { [colId: string]: any } | null | undefined;
+export interface GetServerSideGroupAggDataParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The group row data as returned by the server. */
+    data: TData;
+    /** The group row node. */
+    node: IRowNode<TData>;
+}
+
 export interface IsApplyServerSideTransactionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The transaction getting applied. */
     transaction: ServerSideTransaction;

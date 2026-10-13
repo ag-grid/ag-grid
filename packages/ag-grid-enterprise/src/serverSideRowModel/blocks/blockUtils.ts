@@ -16,6 +16,7 @@ import {
     _getRowHeightForNode,
 } from 'ag-grid-community';
 
+import { setAggDataWithSiblings } from '../../aggregation/aggDataUtils';
 import { _createRowNodeFooter, _destroyRowNodeFooter } from '../../aggregation/footerUtils';
 import type { NodeManager } from '../nodeManager';
 import type { ServerSideRowModel } from '../serverSideRowModel';
@@ -158,6 +159,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         } else if (rowNode.group) {
             this.setChildCountIntoRowNode(rowNode);
             this.updateRowFooter(rowNode);
+            this.setGroupAggDataIntoRowNode(rowNode);
             // it's not possible for a node to change whether it's a group or not
             // when doing row grouping (as only rows at certain levels are groups),
             // so nothing to do here
@@ -217,6 +219,11 @@ export class BlockUtils extends BeanStub implements NamedBean {
             this.setChildCountIntoRowNode(rowNode);
         }
 
+        if (!treeData && group) {
+            // after the key and groupData are read, as both read the grouped column through aggData
+            this.setGroupAggDataIntoRowNode(rowNode);
+        }
+
         this.beans.selectionSvc?.updateRowSelectable(rowNode);
 
         // this needs to be done AFTER setGroupDataIntoRowNode(), as the height can depend on the group data
@@ -224,6 +231,15 @@ export class BlockUtils extends BeanStub implements NamedBean {
         if (_exists(data)) {
             rowNode.setRowHeight(_getRowHeightForNode(this.beans, rowNode, false, cachedRowHeight).height);
         }
+    }
+
+    private setGroupAggDataIntoRowNode(rowNode: RowNode): void {
+        const getGroupAggData = this.gos.get('getServerSideGroupAggData');
+        if (!getGroupAggData) {
+            return;
+        }
+        const aggData = getGroupAggData(this.gos.addCommon({ data: rowNode.data, node: rowNode }));
+        setAggDataWithSiblings(rowNode, aggData ?? null, this.beans.colModel);
     }
 
     private setChildCountIntoRowNode(rowNode: RowNode): void {

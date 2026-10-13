@@ -134,6 +134,7 @@ import type {
     GetRowHeight,
     GetRowIdFunc,
     GetRowStyle,
+    GetServerSideGroupAggData,
     GetServerSideGroupKey,
     GetServerSideGroupLevelParams,
     GridColumnsChangedEvent,
@@ -2203,6 +2204,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ServerSideRowModelModule`
      */
     @Input() public getServerSideGroupKey: GetServerSideGroupKey | undefined = undefined;
+    /** SSRM Row Grouping: Allows providing the aggregated values of a group row, keyed by column ID.
+     * Use this when a column is both grouped and aggregated, so the server can return the group key and the aggregate under different fields.
+     * Column IDs missing from the result are read from the row data. Not called for the grand total row or for tree data.
+     * @agModule `ServerSideRowModelModule`
+     */
+    @Input() public getServerSideGroupAggData: GetServerSideGroupAggData<TData> | undefined = undefined;
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-business-key='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
      */

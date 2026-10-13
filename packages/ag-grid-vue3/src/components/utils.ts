@@ -49,6 +49,7 @@ import type {
     GetRowHeight,
     GetRowIdFunc,
     GetRowStyle,
+    GetServerSideGroupAggData,
     GetServerSideGroupKey,
     GetServerSideGroupLevelParams,
     GridState,
@@ -2030,6 +2031,12 @@ export interface Props<TData> {
          * @agModule `ServerSideRowModelModule`
          */
     getServerSideGroupKey?: GetServerSideGroupKey,
+    /** SSRM Row Grouping: Allows providing the aggregated values of a group row, keyed by column ID.
+         * Use this when a column is both grouped and aggregated, so the server can return the group key and the aggregate under different fields.
+         * Column IDs missing from the result are read from the row data. Not called for the grand total row or for tree data.
+         * @agModule `ServerSideRowModelModule`
+         */
+    getServerSideGroupAggData?: GetServerSideGroupAggData<TData>,
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-business-key='abc'` where `abc` is what you return as the business key.
          * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
          */
@@ -2572,6 +2579,7 @@ export function getProps() {
         isApplyServerSideTransaction: undefined,
         isServerSideGroup: undefined,
         getServerSideGroupKey: undefined,
+        getServerSideGroupAggData: undefined,
         getBusinessKeyForNode: undefined,
         getRowId: undefined,
         resetRowDataOnUpdate: undefined,
