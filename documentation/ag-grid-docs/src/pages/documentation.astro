@@ -1,7 +1,19 @@
 ---
+import { getEntry } from 'astro:content';
 import Layout from '@layouts/Layout.astro';
 import { DOCS_FRAMEWORK_REDIRECT_PAGE } from '@components/docs/constants';
 import FrameworkRedirectPage from '@ag-website-shared/components/framework-redirect-page/FrameworkRedirectPage.astro';
+import { FRAMEWORKS } from '@constants';
+import { getFrameworkDisplayText } from '@utils/framework';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
+
+// Static links to every framework version of the redirect target, so crawlers landing on the
+// framework-agnostic redirect page can discover and pass link equity to the real pages.
+const { title } = (await getEntry('docs', DOCS_FRAMEWORK_REDIRECT_PAGE))!.data;
+const frameworkLinks = FRAMEWORKS.map((framework) => ({
+    href: urlWithPrefix({ framework, url: `./${DOCS_FRAMEWORK_REDIRECT_PAGE}` }),
+    text: `${getFrameworkDisplayText(framework)} Data Grid: ${title}`,
+}));
 ---
 
 <Layout
@@ -12,5 +24,12 @@ import FrameworkRedirectPage from '@ag-website-shared/components/framework-redir
 >
     <FrameworkRedirectPage redirectPageName={DOCS_FRAMEWORK_REDIRECT_PAGE}>
         <h1>Redirecting to AG Grid Documentation...</h1>
+        <ul>
+            {frameworkLinks.map(({ href, text }) => (
+                <li>
+                    <a href={href}>{text}</a>
+                </li>
+            ))}
+        </ul>
     </FrameworkRedirectPage>
 </Layout>
