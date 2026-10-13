@@ -1017,6 +1017,20 @@ describe('Column Flex with animateColumnResizing', () => {
         await waitFor(() => expect(isAnimating(animated)).toBe(false));
     });
 
+    test('a reordering applyColumnState does not animate when suppressColumnMoveAnimation is set', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs,
+            defaultColDef: { flex: 1 },
+            animateColumnResizing: true,
+            suppressColumnMoveAnimation: true,
+        });
+
+        api.applyColumnState({ state: [{ colId: 'c' }, { colId: 'a', hide: true }], applyOrder: true });
+
+        expect(api.getColumn('a')!.isVisible()).toBe(false);
+        expect(isAnimating(api)).toBe(false);
+    });
+
     test('a viewport resize straight after an animated change re-flexes without animation', async () => {
         const originalGridWidth = mockGridLayout.gridWidth;
         let uninstallResizeObserver: (() => void) | undefined;

@@ -219,8 +219,11 @@ function applyColumnState(beans: BeanCollection, params: ApplyColumnStateParams,
         return false;
     }
 
+    const animateWidths = !(params.applyOrder && beans.gos.get('suppressColumnMoveAnimation'));
     colAnimation?.start();
-    _setColumnWidthAnimation(beans, true);
+    if (animateWidths) {
+        _setColumnWidthAnimation(beans, true);
+    }
     try {
         // Capture once, before any mutation: the single dispatch below diffs the whole operation.
         const stateChanges = captureColumnStateChanges(beans);
@@ -239,7 +242,9 @@ function applyColumnState(beans: BeanCollection, params: ApplyColumnStateParams,
 
         return unmatched === null; // true ⇒ every provided state matched a column
     } finally {
-        _setColumnWidthAnimation(beans, false);
+        if (animateWidths) {
+            _setColumnWidthAnimation(beans, false);
+        }
         colAnimation?.finish();
     }
 }
@@ -525,8 +530,12 @@ function resetColumnState(beans: BeanCollection, source: ColumnEventType): void 
         }
     }
 
+    // the width transition also slides cells, so it must not bring back the reorder animation
+    const animateWidths = !beans.gos.get('suppressColumnMoveAnimation');
     colAnimation?.start();
-    _setColumnWidthAnimation(beans, true);
+    if (animateWidths) {
+        _setColumnWidthAnimation(beans, true);
+    }
     try {
         // Single capture before any mutation — the lone finalize dispatch diffs the whole reset.
         const stateChanges = captureColumnStateChanges(beans);
@@ -575,7 +584,9 @@ function resetColumnState(beans: BeanCollection, source: ColumnEventType): void 
         // Re-order + refresh + dispatch once, over the final (ordered) structure.
         finalizeChange(beans, { state: orderState, applyOrder: true }, source, stateChanges);
     } finally {
-        _setColumnWidthAnimation(beans, false);
+        if (animateWidths) {
+            _setColumnWidthAnimation(beans, false);
+        }
         colAnimation?.finish();
     }
 
