@@ -20,4 +20,26 @@ describe('_splitBracketed', () => {
     ])('does not let a segment span a line break when asked: %j', (input, expected) => {
         expect(_splitBracketed(input, true)).toEqual(expected);
     });
+
+    it('splits generated inputs exactly as the regexes it replaces', () => {
+        // Seeded so that a failing input reproduces.
+        let seed = 1;
+        const random = () => {
+            seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+            return seed / 4294967296;
+        };
+        const alphabet = ['[', ']', 'a', '$', '\n', '\u2028'];
+
+        for (let i = 0; i < 5000; ++i) {
+            let input = '';
+            for (let j = 0, len = Math.floor(random() * 12); j < len; ++j) {
+                input += alphabet[Math.floor(random() * alphabet.length)];
+            }
+
+            // eslint-disable-next-line sonarjs/super-linear-regex -- the reference the scanner must match
+            expect(_splitBracketed(input)).toEqual(input.split(/(\[[^\]]*\])/));
+            // eslint-disable-next-line sonarjs/super-linear-regex -- the reference the scanner must match
+            expect(_splitBracketed(input, true)).toEqual(input.split(/(\[.*?\])/));
+        }
+    });
 });
