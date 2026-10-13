@@ -53,13 +53,11 @@ export function shouldStartEditing(
 }
 
 function deriveClickCount(gos: GridOptionsService, colDef?: ColDef): number {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- a grid option can hold any value at runtime, so only an explicit literal counts
-    if (gos.get('suppressClickEdit') === true) {
+    if (gos.get('suppressClickEdit')) {
         return 0;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- a grid option can hold any value at runtime, so only an explicit literal counts
-    if (gos.get('singleClickEdit') === true) {
+    if (gos.get('singleClickEdit')) {
         return 1;
     }
 
