@@ -4,6 +4,7 @@ import type { AgColumn, RowHeightCallbackParams, XmlElement } from 'ag-grid-comm
 
 import { INCH_TO_EMU } from './excelConstants';
 import type { ExcelCalculatedImage } from './excelInterfaces';
+import type { XmlFactoryElement } from './xmlFactory';
 import { createXml, createXmlHeader } from './xmlFactory';
 
 const pointsToPixel = (points: number): number => {
@@ -99,7 +100,7 @@ export const setExcelImageTotalHeight = (
     }
 };
 
-export const createXmlPart = (body: XmlElement, skipHeader?: boolean): string => {
+export const createXmlPart = (body: XmlFactoryElement, skipHeader?: boolean): string => {
     const header = createXmlHeader({
         encoding: 'UTF-8',
         standalone: 'yes',
@@ -162,9 +163,7 @@ export const replaceInvisibleCharacters = (str: string | null): string | null =>
     return newString;
 };
 
-export const buildSharedString = (strMap: Map<string, number>): XmlElement[] => {
-    const ret: XmlElement[] = [];
-
+export function* buildSharedString(strMap: Map<string, number>): Iterable<XmlElement> {
     for (const key of strMap.keys()) {
         const textNode = key.toString();
 
@@ -183,11 +182,9 @@ export const buildSharedString = (strMap: Map<string, number>): XmlElement[] => 
                 },
             };
         }
-        ret.push({
+        yield {
             name: 'si',
             children: [child],
-        });
+        };
     }
-
-    return ret;
-};
+}

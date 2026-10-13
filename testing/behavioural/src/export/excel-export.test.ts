@@ -36,6 +36,49 @@ describe('Excel export', () => {
         return Number(/<pane\b[^>]*xSplit="(\d+)"/.exec(sheetXml)?.[1] ?? 0);
     };
 
+    test.each([false, true])('reuses image bytes but preserves each placement (compressed: %s)', async (compressed) => {
+        const api = gridsManager.createGrid('excel-repeated-images', {
+            columnDefs: [{ field: 'country' }],
+            rowData: [{ country: 'UK' }, { country: 'UK' }, { country: 'UK' }],
+        });
+        const params: ExcelExportParams = {
+            addImageToCell: (_row, _column, value) => ({
+                image: {
+                    id: value,
+                    base64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aVZsAAAAASUVORK5CYII=',
+                    imageType: 'png',
+                    width: 20,
+                    height: 12,
+                },
+                value,
+            }),
+        };
+        let blob: Blob | string | undefined;
+        if (compressed) {
+            api.exportDataAsExcel(params);
+            blob = await objectUrls.pullBlob();
+        } else {
+            blob = api.getDataAsExcel(params);
+        }
+        expect(blob).toBeInstanceOf(Blob);
+        if (!(blob instanceof Blob)) {
+            throw new Error('Expected an Excel workbook');
+        }
+        const zip = XLSX.CFB.read(new Uint8Array(await blob.arrayBuffer()), { type: 'array' });
+        const drawingXml = new TextDecoder().decode(XLSX.CFB.find(zip, '/xl/drawings/drawing1.xml').content);
+        const drawing = new DOMParser().parseFromString(drawingXml, 'application/xml');
+        const anchors = Array.from(drawing.getElementsByTagName('xdr:twoCellAnchor'));
+
+        expect(zip.FullPaths.filter((path: string) => path.endsWith('.png'))).toHaveLength(1);
+        expect(anchors).toHaveLength(3);
+        expect(anchors.map((anchor) => anchor.getElementsByTagName('xdr:row')[0].textContent)).toEqual(['1', '2', '3']);
+        expect(anchors.map((anchor) => anchor.getElementsByTagName('a:blip')[0].getAttribute('r:embed'))).toEqual([
+            'rId1',
+            'rId1',
+            'rId1',
+        ]);
+    });
+
     test('freezeColumns counts the frozen columns once, whatever the body cells span', async () => {
         const api = gridsManager.createGrid('excel-freeze-col-span', {
             columnDefs: [
