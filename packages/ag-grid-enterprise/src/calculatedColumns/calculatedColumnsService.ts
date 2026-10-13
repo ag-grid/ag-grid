@@ -9,7 +9,6 @@ import {
 
 import type {
     AgColumn,
-    CalculatedColumnDef,
     CalculatedColumnExpressionPicker,
     CalculatedColumnUpdate,
     CalculatedColumnValidationReason,
@@ -64,8 +63,10 @@ import {
     USER_OWNED_PROPERTIES,
     clearStaleDataTypeProperties,
     getCalculatedColumnChanges,
+    getIgnoredCalculatedColDefProperties,
     pickUserOwnedProperties,
     replaceBracketReferences,
+    toCalculatedColDef,
     toFormulaString,
 } from './calculatedColumnUtils';
 
@@ -77,18 +78,6 @@ interface DialogExpressionValidation {
 
 // bounds the parse-error memo; dialog keystrokes feed it one entry per expression variant.
 const FORMULA_ERROR_CACHE_LIMIT = 256;
-
-/** Column properties that conflict with `calculatedExpression`, always forced to these values on calculated columns. */
-const PROTECTED_COL_DEF_VALUES = {
-    editable: false,
-    suppressPaste: true,
-    field: undefined,
-    valueGetter: undefined,
-    valueSetter: undefined,
-    cellEditor: undefined,
-    cellEditorSelector: undefined,
-} as const satisfies ColDef;
-const PROTECTED_COL_DEF_KEYS = Object.keys(PROTECTED_COL_DEF_VALUES) as (keyof typeof PROTECTED_COL_DEF_VALUES)[];
 
 function getParentGroupId(column: AgColumn | null | undefined): string | null {
     return column?.getFirstRealParent()?.groupId ?? null;
@@ -120,9 +109,8 @@ type CalculatedColumnDialogRestoreFocusParams = {
 
 type DynamicCalculatedColumn = {
     colDef: ColDef;
-    /** `colDef` merged with defaults and types, captured by each build while `processColDef` is set, when the
-     *  built column's own colDef holds the callback's output. See {@link CalculatedColumnsService.getAuthoredColDef}. */
-    authoredColDef?: ColDef;
+    /** Authored definition merged with defaults and types, excluding `processColDef` output. */
+    resolvedAuthoredColDef?: ColDef;
     /** Source col, or `null`. Tree placement (leaf anchor); non-leaf anchors (e.g. auto-group col)
      *  also seat in display order via `anchoredToColId`. */
     anchorColId: string | null;
@@ -208,14 +196,16 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
     public getExpressionError(column: AgColumn): CalculatedExpressionError | undefined {
         const error = this.userColumnSvc.getEntry(column.colId)?.calculatedExpressionError;
-        return error && error.expression === this.getAuthoredColDef(column).calculatedExpression ? error : undefined;
+        return error && error.expression === this.getResolvedAuthoredColDef(column).calculatedExpression
+            ? error
+            : undefined;
     }
 
     /** The column's definition as the user authored it. The dialog, the reference mapper, saved validation errors and
      *  the created/changed/removed events all read this, so `processColDef` output never shows as, or hides, a user
      *  edit. Validation state events read the built expression instead, as that is the one the grid evaluates. */
-    private getAuthoredColDef(column: AgColumn): ColDef {
-        return this.dynamicColumns.get(column.colId)?.authoredColDef ?? column.colDef;
+    private getResolvedAuthoredColDef(column: AgColumn): ColDef {
+        return this.dynamicColumns.get(column.colId)?.resolvedAuthoredColDef ?? column.colDef;
     }
 
     public isHighlightedColumn(column: AgColumn | null): boolean {
@@ -262,7 +252,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         if (!targetColumn?.isCalculatedCol || targetColumn.colDef.calculatedColumnReadOnly) {
             return;
         }
-        const current = this.getAuthoredColDef(targetColumn);
+        const current = this.getResolvedAuthoredColDef(targetColumn);
         const oldColDef = pickUserOwnedProperties(current);
         const safeColDef: CalculatedColumnUpdate = { ...colDef };
         // the dialog shows a resolved title/type; do not persist these defaults on unrelated edits.
@@ -303,7 +293,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         this.dispatchChangedEvents(
             nextColumn,
             oldColDef,
-            pickUserOwnedProperties(this.getAuthoredColDef(nextColumn)),
+            pickUserOwnedProperties(this.getResolvedAuthoredColDef(nextColumn)),
             source
         );
         this.refreshCalculatedColumn(targetColId);
@@ -445,7 +435,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             return;
         }
         const source: ColumnEventType = 'calculatedColumn';
-        const expression = this.getAuthoredColDef(column).calculatedExpression ?? '';
+        const expression = this.getResolvedAuthoredColDef(column).calculatedExpression ?? '';
         const colId = column.colId;
         this.closeCalculatedColumnDialog(colId);
         const wasDynamic = this.dynamicColumns.delete(colId);
@@ -661,7 +651,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             if (!entry.created || properties?.calculatedExpression == null) {
                 return;
             }
-            const colDef = this.toCalculatedColDef({ ...properties, calculatedColumnReadOnly: false }, colId);
+            const colDef = toCalculatedColDef({ ...properties, calculatedColumnReadOnly: false }, colId);
             const existing = dynamicColumns.get(colId);
             if (existing) {
                 if (!_mergedEqual(colDef, existing.colDef)) {
@@ -764,7 +754,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     ): AgColumn {
         const beans = this.beans;
         const colDef = processDynamicColDef ? processDynamicColDef(dc, colId) : dc.colDef;
-        dc.authoredColDef = processDynamicColDef ? _addColumnDefaultAndTypes(beans, dc.colDef, colId) : undefined;
+        dc.resolvedAuthoredColDef = processDynamicColDef
+            ? _addColumnDefaultAndTypes(beans, dc.colDef, colId)
+            : undefined;
         const existing = dc.instance;
         if (existing !== null) {
             // Reuse the owned instance (always alive: contributed/stamped every refresh, nulled when
@@ -802,18 +794,12 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         if (result == null) {
             return storedColDef;
         }
-        const ignored: string[] = PROTECTED_COL_DEF_KEYS.filter(
-            (key) => result[key] !== undefined && result[key] !== PROTECTED_COL_DEF_VALUES[key]
-        );
-        // The colId is assigned when the column is added and keys its saved state and other columns' expressions.
-        if (result.colId !== undefined && result.colId !== colId) {
-            ignored.push('colId');
-        }
+        const ignored = getIgnoredCalculatedColDefProperties(result, colId);
         if (ignored.length) {
             this.warn(336, { colId, properties: ignored });
         }
         // An omitted expression would silently stop the column being calculated, so keep the user's.
-        return this.toCalculatedColDef(
+        return toCalculatedColDef(
             { ...result, calculatedExpression: result.calculatedExpression ?? storedColDef.calculatedExpression },
             colId
         );
@@ -870,7 +856,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         };
         nextColDef.calculatedExpression ??= baseColDef.calculatedExpression;
 
-        return this.toCalculatedColDef(nextColDef, colId);
+        return toCalculatedColDef(nextColDef, colId);
     }
 
     private createReferenceMapper(
@@ -882,7 +868,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         const originalError = calculatedColumn && this.getExpressionError(calculatedColumn);
         return createCalculatedColumnReferenceMapper(beans, beans.colModel.colDefList, colId, {
             originalExpression: calculatedColumn
-                ? (this.getAuthoredColDef(calculatedColumn).calculatedExpression ?? '')
+                ? (this.getResolvedAuthoredColDef(calculatedColumn).calculatedExpression ?? '')
                 : undefined,
             originalError:
                 originalError?.reason === 'restrictedReference'
@@ -931,7 +917,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             errors = getValidationErrors(
                 _addGridCommonParams(this.gos, {
                     colDef: {
-                        ...(column && this.getAuthoredColDef(column)),
+                        ...(column && this.getResolvedAuthoredColDef(column)),
                         ...this.toColDef(draft),
                         calculatedExpression: expression,
                     },
@@ -1221,7 +1207,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     private toDraft(column: AgColumn, mapper: CalculatedColumnReferenceMapper): CalculatedColumnDraft {
-        const colDef = this.getAuthoredColDef(column);
+        const colDef = this.getResolvedAuthoredColDef(column);
         return {
             colId: column.colId,
             headerName: this.getDraftHeaderName(column),
@@ -1233,9 +1219,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     /** With `processColDef` set, the authored title, so the callback's headerName is never shown or saved back.
      *  Otherwise the header's display name, as before the callback existed. */
     private getDraftHeaderName(column: AgColumn): string {
-        const authoredColDef = this.dynamicColumns.get(column.colId)?.authoredColDef;
-        if (authoredColDef) {
-            return column.headerNameOverride ?? authoredColDef.headerName ?? column.colId;
+        const resolvedAuthoredColDef = this.dynamicColumns.get(column.colId)?.resolvedAuthoredColDef;
+        if (resolvedAuthoredColDef) {
+            return column.headerNameOverride ?? resolvedAuthoredColDef.headerName ?? column.colId;
         }
         return (
             this.beans.colNames.getDisplayNameForColumn(column, 'header') || (column.colDef.headerName ?? column.colId)
@@ -1260,16 +1246,6 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             cellDataType: draft.cellDataType,
             editable: false,
             suppressPaste: true,
-        };
-    }
-
-    private toCalculatedColDef(colDef: CalculatedColumnDef | ColDef, colId: string): ColDef {
-        // strip fields that conflict with calculatedExpression invariants (see colDefValidations.ts).
-        return {
-            ...colDef,
-            colId,
-            calculatedExpression: _normaliseCalculatedExpression(colDef.calculatedExpression),
-            ...PROTECTED_COL_DEF_VALUES,
         };
     }
 
@@ -1303,7 +1279,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         const shouldDispatch = this.lifecycleInitialised && this.suppressValidationChecks === 0;
 
         this.forEachCalculatedColumn((column, colId) => {
-            nextColumns.set(colId, { column, colDef: pickUserOwnedProperties(this.getAuthoredColDef(column)) });
+            nextColumns.set(colId, { column, colDef: pickUserOwnedProperties(this.getResolvedAuthoredColDef(column)) });
         });
         // establish the baseline before dispatch, including silent state-restoration rebuilds.
         this.knownCalculatedColumns = nextColumns;
