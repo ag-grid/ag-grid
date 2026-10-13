@@ -761,7 +761,7 @@ export class AgPositionableFeature<
     }
 
     public isResizable(): boolean {
-        return Object.values(this.resizable).some((value) => value);
+        return Object.values(this.resizable).some(Boolean);
     }
 
     private onResize(e: MouseEvent) {

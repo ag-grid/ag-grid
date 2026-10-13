@@ -41,7 +41,7 @@ export class AgPillContainer<TValue> extends Component {
 
     public init(params: PillRendererParams<TValue>) {
         this.params = params;
-        this.getKey = params.valueFormatter ?? ((v: TValue) => String(v));
+        this.getKey = params.valueFormatter ?? String;
         this.refresh();
     }
 
@@ -59,7 +59,7 @@ export class AgPillContainer<TValue> extends Component {
             values = [values];
         }
 
-        const valueFormatter = params.valueFormatter ?? ((v: TValue) => String(v));
+        const valueFormatter = params.valueFormatter ?? String;
         const len = values.length;
 
         _setAriaRole(this.getGui(), len === 0 ? 'presentation' : 'listbox');

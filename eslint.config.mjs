@@ -67,6 +67,7 @@ export const sonarjsConfig = [
             // 'unicorn/no-array-for-each': 1,
             'unicorn/no-typeof-undefined': 'error',
             'unicorn/prefer-export-from': 0,
+            'unicorn/prefer-native-coercion-functions': 'error',
             'unicorn/prefer-dom-node-remove': 1,
             'unicorn/prefer-single-call': 'error',
             'unicorn/prefer-math-trunc': 0,
