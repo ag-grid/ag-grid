@@ -243,8 +243,8 @@ describe.each([
         const fn = createService().getAggFunc(name);
         const valid = new Date(2008, 7, 24);
 
-        expect(fn(createParams([new Date(NaN), valid, new Date('foo')], column))).toBe(valid);
-        expect(fn(createParams([new Date(NaN)], column))).toBeNull();
+        expect(fn(createParams([new Date(Number.NaN), valid, new Date('foo')], column))).toBe(valid);
+        expect(fn(createParams([new Date(Number.NaN)], column))).toBeNull();
     });
 
     it('returns the numeric result when numbers and dates are mixed', () => {

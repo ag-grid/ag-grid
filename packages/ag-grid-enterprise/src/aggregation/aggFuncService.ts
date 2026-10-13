@@ -208,12 +208,12 @@ function aggMinMax(
             if (!dateStringParser) {
                 continue;
             }
-            time = dateStringParser(value)?.getTime() ?? NaN;
+            time = dateStringParser(value)?.getTime() ?? Number.NaN;
         } else {
             continue;
         }
 
-        if (!isNaN(time) && (dateResult === null || (isMax ? dateResultTime < time : dateResultTime > time))) {
+        if (!Number.isNaN(time) && (dateResult === null || (isMax ? dateResultTime < time : dateResultTime > time))) {
             dateResult = value;
             dateResultTime = time;
         }
