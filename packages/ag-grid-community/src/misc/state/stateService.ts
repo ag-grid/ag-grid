@@ -968,9 +968,9 @@ export class StateService extends BeanStub implements NamedBean {
         const noSelections =
             !selectionState ||
             (!Array.isArray(selectionState) &&
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- user code can return or pass any value at runtime, so only an explicit literal counts
-                ((selectionState as ServerSideRowSelectionState).selectAll === false ||
-                    (selectionState as ServerSideRowGroupSelectionState).selectAllChildren === false) &&
+                ('selectAll' in selectionState
+                    ? !selectionState.selectAll
+                    : selectionState.selectAllChildren === false) &&
                 !selectionState?.toggledNodes?.length);
         return noSelections ? undefined : selectionState;
     }

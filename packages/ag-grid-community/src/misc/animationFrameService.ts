@@ -31,7 +31,8 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     // important.
     private readonly destroyTasks: (() => void)[] = [];
     private ticking = false;
-    public active: boolean;
+    /** Unset until postConstruct, so `verify` must not warn before then. */
+    public active?: boolean;
     private batchFrameworkComps: boolean;
 
     // we need to know direction of scroll, to build up rows in the direction of
@@ -63,7 +64,6 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     // frames. this stops bugs - where some code is asking for a frame to be executed
     // when it should not.
     private verify(): void {
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- `active` is unset until postConstruct, when this must not warn
         if (this.active === false) {
             this.warn(92);
         }
