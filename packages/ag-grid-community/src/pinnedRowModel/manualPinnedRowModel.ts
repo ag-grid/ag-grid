@@ -51,6 +51,7 @@ export class ManualPinnedRowModel extends BeanStub implements IPinnedRowModel {
         _addRowHeightChangedListener(this, () => {
             estimateRowHeights(this.top);
             estimateRowHeights(this.bottom);
+            this.ensureRowHeightsValid();
         });
 
         this.addManagedEventListeners({
@@ -446,10 +447,10 @@ const ensureRowHeightsValid = (beans: BeanCollection, container: PinnedRows): bo
         const node = order[i];
         if (node.rowHeightEstimated) {
             const rowHeight = _getRowHeightForNode(beans, node).height;
+            changed ||= node.rowTop !== rowTop || node.rowHeight !== rowHeight;
             node.setRowTop(rowTop);
             node.setRowHeight(rowHeight);
             rowTop += rowHeight;
-            changed = true;
         }
     }
     return changed;

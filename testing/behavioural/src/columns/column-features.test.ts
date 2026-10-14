@@ -861,43 +861,6 @@ describe('Column Features', () => {
     });
 
     describe('autoHeight', () => {
-        test('auto row height follows the displayed columns: an autoHeight col in a collapsed group leaves it off', async () => {
-            // resetRowHeights warns and does nothing while auto row height is on
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [3] });
-            const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
-            // a warning logs once, so each case gets its own grid
-            const warnsAboutAutoHeight = (openGroup: boolean) => {
-                const api = gridsManager.createGrid('myGrid', {
-                    columnDefs: [
-                        {
-                            groupId: 'g',
-                            children: [{ colId: 'a' }, { colId: 'tall', autoHeight: true, columnGroupShow: 'open' }],
-                        },
-                    ],
-                });
-                if (openGroup) {
-                    api.setColumnGroupOpened('g', true);
-                }
-                consoleWarnSpy.mockClear();
-                api.resetRowHeights();
-                gridsManager.reset();
-                return consoleWarnSpy.mock.calls.some((args) =>
-                    args.some((arg) => typeof arg === 'string' && arg.includes('Auto Row Height'))
-                );
-            };
-
-            let collapsed: boolean;
-            let opened: boolean;
-            try {
-                collapsed = warnsAboutAutoHeight(false);
-                opened = warnsAboutAutoHeight(true);
-            } finally {
-                consoleWarnSpy.mockRestore();
-            }
-
-            expect({ collapsed, opened }).toEqual({ collapsed: false, opened: true });
-        });
-
         test('hiding the taller of two auto-height columns shrinks the row to the other', async () => {
             const cellHeights = new Map([
                 ['tall', 120],

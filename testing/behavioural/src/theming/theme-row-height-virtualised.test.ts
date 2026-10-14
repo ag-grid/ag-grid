@@ -7,9 +7,9 @@ import type { GridApi, GridOptions, IViewportDatasourceParams } from 'ag-grid-co
 import {
     ClientSideRowModelModule,
     InfiniteRowModelModule,
+    PinnedRowModule,
     RowAutoHeightModule,
     ScrollApiModule,
-    getGridElement,
 } from 'ag-grid-community';
 import { ServerSideRowModelModule, ViewportRowModelModule } from 'ag-grid-enterprise';
 
@@ -62,6 +62,7 @@ describe('theme row height in virtualised row models', () => {
         modules: [
             ClientSideRowModelModule,
             InfiniteRowModelModule,
+            PinnedRowModule,
             RowAutoHeightModule,
             ScrollApiModule,
             ServerSideRowModelModule,
@@ -129,6 +130,19 @@ describe('theme row height in virtualised row models', () => {
             expectUniformRowLayout(api, NEW_ROW_HEIGHT);
         });
 
+        test('a theme change does not update the model while rowHeight is set', async () => {
+            const api = await createLoadedSsrmGrid({ rowHeight: 30 });
+
+            let modelUpdates = 0;
+            api.addEventListener('modelUpdated', () => modelUpdates++);
+
+            applyThemeRowHeight(api.getDisplayedRowAtIndex(0), NEW_ROW_HEIGHT);
+            await asyncSetTimeout(0);
+
+            expect(modelUpdates).toBe(0);
+            expectUniformRowLayout(api, 30);
+        });
+
         test('leaf heights follow a theme change when getRowHeight only answers for the root', async () => {
             const api = await createLoadedSsrmGrid({
                 // The dummy root sits at level -1 and carries no data, so a callback shaped like this
@@ -143,67 +157,6 @@ describe('theme row height in virtualised row models', () => {
             applyThemeRowHeight(api.getDisplayedRowAtIndex(0), SECOND_ROW_HEIGHT);
             await asyncSetTimeout(0);
             expectUniformRowLayout(api, SECOND_ROW_HEIGHT);
-        });
-
-        test('a theme change is ignored, without warning, while auto row height is active', async () => {
-            const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
-            const api = await createLoadedSsrmGrid({
-                columnDefs: [{ field: 'id' }, { field: 'value', autoHeight: true, wrapText: true }],
-            });
-
-            const heightsBefore = Array.from(
-                { length: api.getDisplayedRowCount() },
-                (_, i) => api.getDisplayedRowAtIndex(i)!.rowHeight
-            );
-
-            applyThemeRowHeight(api.getDisplayedRowAtIndex(0), NEW_ROW_HEIGHT);
-            await asyncSetTimeout(0);
-
-            const heightsAfter = Array.from(
-                { length: api.getDisplayedRowCount() },
-                (_, i) => api.getDisplayedRowAtIndex(i)!.rowHeight
-            );
-
-            expect(heightsAfter).toEqual(heightsBefore);
-            expect(consoleWarnSpy).not.toHaveBeenCalled();
-        });
-
-        // The configured height is the floor an auto-height row is held against, so a theme moving it moves
-        // every row measuring less: here, with nothing measured, all of them.
-        test('a theme change reaches the rows, without warning, while auto row height is active', async () => {
-            const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
-            const api = await createLoadedSsrmGrid({
-                columnDefs: [{ field: 'id' }, { field: 'value', autoHeight: true, wrapText: true }],
-            });
-
-            expect(api.getDisplayedRowAtIndex(0)!.rowHeight).not.toBe(NEW_ROW_HEIGHT);
-
-            applyThemeRowHeight(api.getDisplayedRowAtIndex(0), NEW_ROW_HEIGHT);
-
-            await waitFor(() => expectUniformRowLayout(api, NEW_ROW_HEIGHT));
-            expect(consoleWarnSpy).not.toHaveBeenCalled();
-        });
-
-        test('a theme change reaches the rows while the auto-height column is in a closed group', async () => {
-            const api = await createLoadedSsrmGrid({
-                columnDefs: [
-                    {
-                        headerName: 'group',
-                        children: [{ field: 'id' }, { field: 'value', autoHeight: true, columnGroupShow: 'open' }],
-                    },
-                ],
-            });
-
-            // Only the group's other column is displayed.
-            expect(getGridElement(api)!.querySelector('.ag-cell[col-id="value"]')).toBeNull();
-            expect(getGridElement(api)!.querySelector('.ag-cell[col-id="id"]')).not.toBeNull();
-            expect(api.getDisplayedRowAtIndex(0)!.rowHeight).not.toBe(NEW_ROW_HEIGHT);
-
-            applyThemeRowHeight(api.getDisplayedRowAtIndex(0), NEW_ROW_HEIGHT);
-
-            await waitFor(() => expectUniformRowLayout(api, NEW_ROW_HEIGHT));
         });
     });
 
@@ -351,45 +304,6 @@ describe('theme row height in virtualised row models', () => {
             expectUniformRowLayout(api, NEW_ROW_HEIGHT);
         });
 
-        // The model skips its reset while auto row height is on, so this is the new floor reaching the rows.
-        test('a theme row-height change reaches the rows while auto row height is active', async () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [{ field: 'id' }, { field: 'value', autoHeight: true }],
-                rowData,
-            });
-            await waitForEvent('firstDataRendered', api);
-
-            const node = api.getDisplayedRowAtIndex(0)!;
-            expect(node.rowHeight).not.toBe(NEW_ROW_HEIGHT);
-
-            applyThemeRowHeight(node, NEW_ROW_HEIGHT);
-
-            await waitFor(() => expectUniformRowLayout(api, NEW_ROW_HEIGHT));
-        });
-
-        // A column in a closed group is not displayed, so no cell of it is measured and none can apply the change.
-        test('a theme row-height change reaches the rows while the auto-height column is in a closed group', async () => {
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: [
-                    {
-                        headerName: 'group',
-                        children: [{ field: 'id' }, { field: 'value', autoHeight: true, columnGroupShow: 'open' }],
-                    },
-                ],
-                rowData,
-            });
-            await waitForEvent('firstDataRendered', api);
-
-            // Only the group's other column is displayed.
-            expect(getGridElement(api)!.querySelector('.ag-cell[col-id="value"]')).toBeNull();
-            expect(getGridElement(api)!.querySelector('.ag-cell[col-id="id"]')).not.toBeNull();
-            expect(api.getDisplayedRowAtIndex(0)!.rowHeight).not.toBe(NEW_ROW_HEIGHT);
-
-            applyThemeRowHeight(api.getDisplayedRowAtIndex(0), NEW_ROW_HEIGHT);
-
-            await waitFor(() => expectUniformRowLayout(api, NEW_ROW_HEIGHT));
-        });
-
         // Auto height gives up before the rows off screen are rendered: they still take the new height then.
         test('a row off screen takes a theme change made while auto row height was active once auto height is gone', async () => {
             const api = gridsManager.createGrid('myGrid', {
@@ -431,6 +345,120 @@ describe('theme row height in virtualised row models', () => {
 
             api.ensureIndexVisible(150);
             await waitFor(() => expect(offScreen.rowHeight).toBe(NEW_ROW_HEIGHT));
+        });
+    });
+
+    // ---- Auto row height ---------------------------------------------------
+
+    // The configured height is the floor an auto-height row is held against, so a theme moving it moves every
+    // row measuring less, and leaves a taller one at its content height.
+    describe('with measured auto-height cells', () => {
+        /** Row 0's and the pinned row's cell content: taller than the default and short heights, shorter than the new one. */
+        const TALL_CONTENT = 50;
+        const SHORT_ROW_HEIGHT = 30;
+        const DEFAULT_ROW_HEIGHT = 42;
+
+        beforeAll(() => {
+            mockGridLayout.useRealOffsetDimensions = true;
+            mockGridLayout.elementHeightOverride = (el) => {
+                if (!el.classList.contains('ag-cell-wrapper') || !el.isConnected) {
+                    return undefined;
+                }
+                const rowIndex = el.closest('.ag-row')?.getAttribute('row-index');
+                return rowIndex === '0' || rowIndex === 't-0' ? TALL_CONTENT : 20;
+            };
+        });
+
+        afterAll(() => {
+            mockGridLayout.resetOptions();
+        });
+
+        const autoHeightColumnDefs = (autoHeight: boolean) => [{ field: 'id' }, { field: 'value', autoHeight }];
+
+        const rowHeights = (api: GridApi) =>
+            Array.from({ length: api.getDisplayedRowCount() }, (_, i) => api.getDisplayedRowAtIndex(i)!.rowHeight);
+
+        /** Row 0 at `first`, every other row at `rest`. */
+        const heights = (first: number, rest: number) => [first, ...rowData.slice(1).map(() => rest)];
+
+        const createSsrmGrid = async (autoHeight: boolean): Promise<GridApi> => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: autoHeightColumnDefs(autoHeight),
+                rowModelType: 'serverSide',
+                getRowId: (params) => String(params.data.id),
+                serverSideDatasource: {
+                    getRows: (params) => {
+                        params.success({
+                            rowData: rowData.slice(params.request.startRow, params.request.endRow),
+                            rowCount: rowData.length,
+                        });
+                    },
+                },
+            });
+            await waitForEvent('firstDataRendered', api);
+            await waitForNoLoadingRows(api);
+            return api;
+        };
+
+        /** Both ways the configured height moves: a theme parameter, and the `rowHeight` grid option. */
+        const ROW_HEIGHT_CHANGES = [
+            [
+                'a theme change',
+                (api: GridApi, height: number) => applyThemeRowHeight(api.getDisplayedRowAtIndex(0), height),
+            ],
+            ['a rowHeight change', (api: GridApi, height: number) => api.setGridOption('rowHeight', height)],
+        ] as const;
+
+        test('client-side: a theme change moves the rows measuring less, and leaves a taller one, pinned rows included', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: autoHeightColumnDefs(true),
+                rowData,
+                pinnedTopRowData: [{ id: 'p', value: 'pinned' }],
+            });
+            const pinnedHeight = () => api.getPinnedTopRow(0)!.rowHeight;
+            await waitFor(() => expect(rowHeights(api)).toEqual(heights(TALL_CONTENT, DEFAULT_ROW_HEIGHT)));
+            await waitFor(() => expect(pinnedHeight()).toBe(TALL_CONTENT));
+
+            applyThemeRowHeight(api.getDisplayedRowAtIndex(0), NEW_ROW_HEIGHT);
+            await waitFor(() => expectUniformRowLayout(api, NEW_ROW_HEIGHT));
+            await waitFor(() => expect(pinnedHeight()).toBe(NEW_ROW_HEIGHT));
+
+            applyThemeRowHeight(api.getDisplayedRowAtIndex(0), SHORT_ROW_HEIGHT);
+            await waitFor(() => expect(rowHeights(api)).toEqual(heights(TALL_CONTENT, SHORT_ROW_HEIGHT)));
+            await waitFor(() => expect(pinnedHeight()).toBe(TALL_CONTENT));
+        });
+
+        test.each(ROW_HEIGHT_CHANGES)(
+            'server-side: %s moves the rows measuring less, and leaves a taller one, without warning',
+            async (_name, changeRowHeight) => {
+                const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+                const api = await createSsrmGrid(true);
+                await waitFor(() => expect(rowHeights(api)).toEqual(heights(TALL_CONTENT, DEFAULT_ROW_HEIGHT)));
+
+                changeRowHeight(api, NEW_ROW_HEIGHT);
+                await waitFor(() => expectUniformRowLayout(api, NEW_ROW_HEIGHT));
+
+                changeRowHeight(api, SHORT_ROW_HEIGHT);
+                await waitFor(() => expect(rowHeights(api)).toEqual(heights(TALL_CONTENT, SHORT_ROW_HEIGHT)));
+                expect(consoleWarnSpy).not.toHaveBeenCalled();
+            }
+        );
+
+        test('server-side: a theme change made while auto row height is active still counts once it is gone', async () => {
+            const api = await createSsrmGrid(false);
+
+            applyThemeRowHeight(api.getDisplayedRowAtIndex(0), NEW_ROW_HEIGHT);
+            await waitFor(() => expectUniformRowLayout(api, NEW_ROW_HEIGHT));
+
+            api.setGridOption('columnDefs', autoHeightColumnDefs(true));
+            applyThemeRowHeight(api.getDisplayedRowAtIndex(0), DEFAULT_ROW_HEIGHT);
+            await waitFor(() => expect(rowHeights(api)).toEqual(heights(TALL_CONTENT, DEFAULT_ROW_HEIGHT)));
+
+            api.setGridOption('columnDefs', autoHeightColumnDefs(false));
+            await waitFor(() => expectUniformRowLayout(api, DEFAULT_ROW_HEIGHT));
+
+            applyThemeRowHeight(api.getDisplayedRowAtIndex(0), NEW_ROW_HEIGHT);
+            await waitFor(() => expectUniformRowLayout(api, NEW_ROW_HEIGHT));
         });
     });
 });

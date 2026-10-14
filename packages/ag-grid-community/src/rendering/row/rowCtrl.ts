@@ -29,8 +29,8 @@ import type {
 } from '../../events';
 import {
     _addGridCommonParams,
+    _getConfiguredRowHeight,
     _getGrandTotalRow,
-    _getRowHeightForNode,
     _isAnimateRows,
     _isClientSideLoadingRow,
     _isDomLayout,
@@ -1202,7 +1202,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
 
         const defaultRowHeight = this.beans.environment.getDefaultRowHeight();
         const isHeightFromFunc = _isGetRowHeightFunction(this.gos) && !this.isClientSideLoadingRow();
-        const heightFromFunc = isHeightFromFunc ? _getRowHeightForNode(this.beans, this.rowNode).height : undefined;
+        const heightFromFunc = isHeightFromFunc ? _getConfiguredRowHeight(this.beans, this.rowNode).height : undefined;
         const lineHeight = heightFromFunc ? `${Math.min(defaultRowHeight, heightFromFunc) - 2}px` : undefined;
 
         this.rowGui?.element.style.setProperty('height', `${rowHeight}px`);

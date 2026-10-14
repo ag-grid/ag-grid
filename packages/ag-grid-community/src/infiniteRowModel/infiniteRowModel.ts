@@ -83,7 +83,6 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
 
         this.addManagedPropertyListener('datasource', () => this.setDatasource(this.gos.get('datasource')));
         this.addManagedPropertyListener('cacheBlockSize', () => this.resetCache());
-        this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeight());
     }
 
     private refreshRowHeight(): void {

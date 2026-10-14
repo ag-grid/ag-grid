@@ -28,7 +28,10 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
         this.setPinnedRowData(gos.get('pinnedBottomRowData'), 'bottom');
         this.addManagedPropertyListener('pinnedTopRowData', (e) => this.setPinnedRowData(e.currentValue, 'top'));
         this.addManagedPropertyListener('pinnedBottomRowData', (e) => this.setPinnedRowData(e.currentValue, 'bottom'));
-        _addRowHeightChangedListener(this, () => this.estimateRowHeights());
+        _addRowHeightChangedListener(this, () => {
+            this.estimateRowHeights();
+            this.ensureRowHeightsValid();
+        });
     }
 
     public reset(): void {
@@ -64,8 +67,9 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
         let rowTop = 0;
         const updateRowHeight = (rowNode: RowNode) => {
             if (rowNode.rowHeightEstimated) {
-                rowNode.setRowHeight(_getRowHeightForNode(this.beans, rowNode).height);
-                anyChange = true;
+                const rowHeight = _getRowHeightForNode(this.beans, rowNode).height;
+                anyChange ||= rowHeight !== rowNode.rowHeight;
+                rowNode.setRowHeight(rowHeight);
             }
             // Re-stack rowTop whenever the accumulated offset drifts from the stored value.
             // Row heights can grow via column autoHeight without ever flipping rowHeightEstimated,
