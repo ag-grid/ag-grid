@@ -378,8 +378,7 @@ export class LazyCache extends BeanStub {
         if (isLastRowIndexKnown != null) {
             this.isLastRowKnown = isLastRowIndexKnown;
 
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- user code can return or pass any value at runtime, so only an explicit literal counts
-            if (isLastRowIndexKnown === false) {
+            if (!isLastRowIndexKnown) {
                 this.numberOfRows += 1;
             }
         }
