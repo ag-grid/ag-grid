@@ -116,6 +116,8 @@ const OBJECT_GRID_OPTIONS: KeysLike<object | HTMLElement>[] = [
     'initialState',
     'autoSizeStrategy',
     'selectionColumnDef',
+    'transposeRecordColumnDef',
+    'transposeFieldColumnDef',
     'findOptions',
     'filterHandlers',
     'groupHierarchyConfig',

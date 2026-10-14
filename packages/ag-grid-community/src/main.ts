@@ -955,6 +955,8 @@ export type {
     RowStyle,
     SelectAllMode,
     SelectionColumnDef,
+    TransposeFieldColumnDef,
+    TransposeRecordColumnDef,
     SingleRowSelectionOptions,
     TreeDataDisplayType,
     UseGroupFooter,

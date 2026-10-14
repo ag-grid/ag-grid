@@ -33,3 +33,8 @@
 .rating-cell {
     font-weight: 600;
 }
+
+.inactive-record {
+    color: var(--ag-subtle-text-color, #999);
+    font-style: italic;
+}

@@ -6,14 +6,10 @@ import type {
     ITransposeService,
     NamedBean,
     RowNode,
+    TransposeFieldColumnDef,
+    TransposeRecordColumnDef,
 } from 'ag-grid-community';
-import {
-    AgColumn,
-    BeanStub,
-    RowNode as RowNodeClass,
-    _addColumnDefaultAndTypes,
-    _isClientSideRowModel,
-} from 'ag-grid-community';
+import { AgColumn, BeanStub, RowNode as RowNodeClass, _isClientSideRowModel, _warnOnce } from 'ag-grid-community';
 
 export const TRANSPOSE_FIELD_COL_ID = 'ag-Grid-TransposeField';
 const RECORD_COL_ID_PREFIX = 'ag-Grid-TransposeRecord-';
@@ -22,6 +18,43 @@ const FIELD_GROUP_ROW_ID_PREFIX = 'ag-Grid-TransposeFieldGroup-';
 const RECORD_CELL_CLASS_RULES: CellClassRules = {
     'ag-transpose-record-selected': (params) => !!params.node?.isSelected(),
 };
+
+const RECORD_COL_KEYS: readonly (keyof TransposeRecordColumnDef)[] = [
+    'width',
+    'initialWidth',
+    'minWidth',
+    'maxWidth',
+    'flex',
+    'initialFlex',
+    'resizable',
+    'suppressSizeToFit',
+    'suppressAutoSize',
+    'suppressMovable',
+    'lockPinned',
+    'suppressNavigable',
+    'headerClass',
+    'headerStyle',
+    'headerTooltip',
+    'headerTooltipValueGetter',
+    'headerComponent',
+    'headerComponentParams',
+    'cellClass',
+    'cellClassRules',
+    'cellStyle',
+    'contextMenuItems',
+    'onCellClicked',
+    'onCellDoubleClicked',
+    'onCellContextMenu',
+    'context',
+];
+const FIELD_COL_KEYS: readonly (keyof TransposeFieldColumnDef)[] = [
+    ...RECORD_COL_KEYS,
+    'headerName',
+    'pinned',
+    'tooltipValueGetter',
+    'wrapText',
+    'autoHeight',
+];
 
 /** Field group rows are the transposed form of column groups, so they collapse like row groups. */
 interface FieldGroupInfo {
@@ -49,13 +82,18 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
     /** Header text by record id, valid while the record's data object is unchanged. */
     private readonly headerCache: Map<string, CachedHeader> = new Map();
     private refreshToken = 0;
+    /** The base colDef for record columns, rebuilt when the options change. */
+    private recordColDefBase: ColDef | null = null;
 
     private readonly fieldRows: Map<string, RowNode> = new Map();
     private readonly fieldGroups: Map<RowNode, FieldGroupInfo> = new Map();
     private readonly collapsedGroupIds: Set<string> = new Set();
 
     public postConstruct(): void {
-        this.addManagedPropertyListeners(['transpose', 'transposeHeaderColId'], () => this.onTransposeChanged());
+        this.addManagedPropertyListeners(
+            ['transpose', 'transposeHeaderColId', 'transposeRecordColumnDef', 'transposeFieldColumnDef'],
+            () => this.onTransposeChanged()
+        );
         this.addManagedEventListeners({
             cellValueChanged: (event) => this.onCellValueChanged(event),
             rowSelected: (event) => this.refreshRecordCells(event.node.id),
@@ -128,6 +166,7 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
     }
 
     private onTransposeChanged(): void {
+        this.recordColDefBase = null;
         this.clearCols();
         this.refreshRowModel();
     }
@@ -236,25 +275,57 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         }
     }
 
+    /** `defaultColDef` is deliberately not applied: it configures the user's columns, which become field rows. */
     private createCol(colDef: ColDef): AgColumn {
-        const colId = colDef.colId!;
-        const merged = _addColumnDefaultAndTypes(this.beans, colDef, colId);
-        const col = new AgColumn(merged, colDef, colId, false, 'user');
+        const col = new AgColumn(colDef, colDef, colDef.colId!, false, 'user');
         this.beans.context.createBean(col);
         return col;
     }
 
     private createRecordColDef(recordId: string, header: string): ColDef {
+        this.recordColDefBase ??= this.createRecordColDefBase();
+        return { ...this.recordColDefBase, colId: RECORD_COL_ID_PREFIX + recordId, headerName: header };
+    }
+
+    private createRecordColDefBase(): ColDef {
+        const user = this.pickAllowed('transposeRecordColumnDef', RECORD_COL_KEYS);
         return {
-            colId: RECORD_COL_ID_PREFIX + recordId,
-            headerName: header,
+            headerComponent: 'agTransposeRecordHeader',
+            ...user,
             sortable: false,
             filter: false,
             editable: false,
             suppressHeaderMenuButton: true,
-            headerComponent: 'agTransposeRecordHeader',
-            cellClassRules: RECORD_CELL_CLASS_RULES,
+            cellClassRules: user.cellClassRules
+                ? { ...RECORD_CELL_CLASS_RULES, ...user.cellClassRules }
+                : RECORD_CELL_CLASS_RULES,
         };
+    }
+
+    /** Copies the supported settings from a column option; unsupported ones are dropped, with a dev-only warning. */
+    private pickAllowed(
+        option: 'transposeRecordColumnDef' | 'transposeFieldColumnDef',
+        allowedKeys: readonly (keyof ColDef)[]
+    ): ColDef {
+        const def = this.gos.get(option) as Record<string, unknown> | undefined;
+        if (!def) {
+            return {};
+        }
+        const picked: Record<string, unknown> = {};
+        const ignored: string[] = [];
+        for (const key of Object.keys(def)) {
+            if ((allowedKeys as readonly string[]).includes(key)) {
+                picked[key] = def[key];
+            } else {
+                ignored.push(key);
+            }
+        }
+        if (ignored.length && this.beans.validation) {
+            _warnOnce(
+                `\`${option}\` ignores ${ignored.join(', ')}. In the transposed view, cell values, formatting and editing come from the original column.`
+            );
+        }
+        return picked;
     }
 
     private clearCols(): void {
@@ -303,17 +374,18 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
     private createFieldNameColDef(headerCol: AgColumn | null): ColDef {
         const colNames = this.beans.colNames;
         return {
-            colId: TRANSPOSE_FIELD_COL_ID,
             width: 200,
             headerName: headerCol ? (colNames.getDisplayNameForColumn(headerCol, 'header') ?? '') : '',
             pinned: this.gos.get('enableRtl') ? 'right' : 'left',
             lockPinned: true,
             suppressMovable: true,
+            headerComponent: 'agTransposeFieldHeader',
+            ...this.pickAllowed('transposeFieldColumnDef', FIELD_COL_KEYS),
+            colId: TRANSPOSE_FIELD_COL_ID,
             sortable: false,
             filter: false,
             editable: false,
             suppressHeaderMenuButton: true,
-            headerComponent: 'agTransposeFieldHeader',
             cellRenderer: 'agTransposeFieldCellRenderer',
             valueGetter: (params) => (params.node as RowNode | null)?.key ?? null,
         };

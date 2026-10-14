@@ -20,6 +20,7 @@ import {
     RowSelectionModule,
     TextEditorModule,
     TextFilterModule,
+    TooltipModule,
     ValidationModule,
     createGrid,
     enableDevValidations,
@@ -48,6 +49,7 @@ ModuleRegistry.registerModules([
     TextFilterModule,
     DateFilterModule,
     RowSelectionModule,
+    TooltipModule,
     ValidationModule,
 ]);
 
@@ -67,10 +69,14 @@ const columnDefs: (ColDef<CompanyRecord> | ColGroupDef<CompanyRecord>)[] = [
                 cellEditor: 'agRichSelectCellEditor',
                 cellEditorParams: { values: ['EMEA', 'Americas', 'APAC'] },
             },
-            { field: 'sector' },
+            { field: 'sector', wrapText: true },
             { field: 'listed', cellDataType: 'date' },
             { field: 'active', cellDataType: 'boolean' },
-            { field: 'rating', cellClass: 'rating-cell' },
+            {
+                field: 'rating',
+                cellClass: 'rating-cell',
+                tooltipValueGetter: (params) => `Credit rating: ${params.value}`,
+            },
         ],
     },
     {
@@ -122,6 +128,13 @@ const gridOptions: GridOptions<CompanyRecord> = {
     rowData: getData(),
     transpose: true,
     transposeHeaderColId: 'name',
+    transposeRecordColumnDef: {
+        width: 140,
+        minWidth: 100,
+        resizable: true,
+        cellClassRules: { 'inactive-record': (params) => params.data?.active === false },
+    },
+    transposeFieldColumnDef: { width: 220 },
     rowSelection: { mode: 'multiRow' },
     onSelectionChanged: () => {
         const names = gridApi.getSelectedRows().map((row) => row.name);

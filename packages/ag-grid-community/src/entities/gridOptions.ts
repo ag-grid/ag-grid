@@ -1225,6 +1225,17 @@ export interface GridOptions<TData = any> {
      * @agModule `TransposeModule`
      */
     transposeHeaderColId?: string;
+    /**
+     * Customises every record column in the transposed view. Cell values, formatting and editing always come from
+     * the original field. Prototype only.
+     * @agModule `TransposeModule`
+     */
+    transposeRecordColumnDef?: TransposeRecordColumnDef;
+    /**
+     * Customises the pinned column listing the field names in the transposed view. Prototype only.
+     * @agModule `TransposeModule`
+     */
+    transposeFieldColumnDef?: TransposeFieldColumnDef;
 
     // *** Pivot and Aggregation *** //
     /**
@@ -3486,6 +3497,44 @@ export interface MultiRowSelectionOptions<TData = any, TValue = any, TContext = 
 
 /** Configuration for the `autoGroupColumnDef` property. Equivalent to `ColDef` but without the `colId` as this is defined by the grid. */
 export type AutoGroupColumnDef<TData = any, TValue = any> = Omit<ColDef<TData, TValue>, 'colId'>;
+
+/** Column settings shared by the transposed view's generated columns. */
+type TransposeColumnSizingAndHeader =
+    | 'width'
+    | 'initialWidth'
+    | 'minWidth'
+    | 'maxWidth'
+    | 'flex'
+    | 'initialFlex'
+    | 'resizable'
+    | 'suppressSizeToFit'
+    | 'suppressAutoSize'
+    | 'suppressMovable'
+    | 'lockPinned'
+    | 'suppressNavigable'
+    | 'headerClass'
+    | 'headerStyle'
+    | 'headerTooltip'
+    | 'headerTooltipValueGetter'
+    | 'headerComponent'
+    | 'headerComponentParams'
+    | 'cellClass'
+    | 'cellClassRules'
+    | 'cellStyle'
+    | 'contextMenuItems'
+    | 'onCellClicked'
+    | 'onCellDoubleClicked'
+    | 'onCellContextMenu'
+    | 'context';
+
+/** Subset of ColDef customising the transposed view's record columns. Cell styles layer on top of the field's. */
+export type TransposeRecordColumnDef = Pick<ColDef, TransposeColumnSizingAndHeader>;
+
+/** Subset of ColDef customising the transposed view's field-name column. */
+export type TransposeFieldColumnDef = Pick<
+    ColDef,
+    TransposeColumnSizingAndHeader | 'headerName' | 'pinned' | 'tooltipValueGetter' | 'wrapText' | 'autoHeight'
+>;
 
 /** Subset of ColDef allowing for customisation of the Selection column, currently used for checkbox selection */
 export type SelectionColumnDef = Pick<

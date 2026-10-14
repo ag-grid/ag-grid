@@ -1,4 +1,5 @@
 import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
 import type { CellClassParams, CellStyle, ColDef } from '../entities/colDef';
 import { _addGridCommonParams } from '../gridOptionsUtils';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
@@ -27,16 +28,15 @@ export function _applyCellClassRules(beans: BeanCollection, cellCtrl: CellCtrl):
     );
     cellCtrl.customStyleClassRules = cellClassRules;
 
-    const displayedCol = cellCtrl.column;
-    if (displayedCol.transposeRecord !== undefined) {
-        const recordColDef = displayedCol.colDef;
+    const recordColDef = getRecordColDef(cellCtrl);
+    if (recordColDef) {
         const recordRules = recordColDef.cellClassRules;
         const previousRecordRules = cellCtrl.customStyleRecordClassRules;
         processClassRules(
             beans.expressionSvc,
             recordRules === previousRecordRules ? undefined : previousRecordRules,
             recordRules,
-            { ...cellClassParams, colDef: recordColDef, column: displayedCol },
+            getCellClassParams(beans, cellCtrl, recordColDef, cellCtrl.column),
             (className) => comp.toggleCss(className, true),
             (className) => comp.toggleCss(className, false)
         );
@@ -45,7 +45,14 @@ export function _applyCellClassRules(beans: BeanCollection, cellCtrl: CellCtrl):
 }
 
 export function _applyCellUserStyles(beans: BeanCollection, cellCtrl: CellCtrl): void {
-    const colDef = cellCtrl.getConfigCell().column.colDef;
+    applyUserStyles(beans, cellCtrl, cellCtrl.getConfigCell().column.colDef);
+    const recordColDef = getRecordColDef(cellCtrl);
+    if (recordColDef) {
+        applyUserStyles(beans, cellCtrl, recordColDef, cellCtrl.column);
+    }
+}
+
+function applyUserStyles(beans: BeanCollection, cellCtrl: CellCtrl, colDef: ColDef, column?: AgColumn): void {
     const cellStyle = colDef.cellStyle;
 
     if (!cellStyle) {
@@ -55,7 +62,7 @@ export function _applyCellUserStyles(beans: BeanCollection, cellCtrl: CellCtrl):
     let styles: CellStyle | null | undefined;
 
     if (typeof cellStyle === 'function') {
-        styles = cellStyle(getCellClassParams(beans, cellCtrl, colDef));
+        styles = cellStyle(getCellClassParams(beans, cellCtrl, colDef, column));
     } else {
         styles = cellStyle;
     }
@@ -63,6 +70,12 @@ export function _applyCellUserStyles(beans: BeanCollection, cellCtrl: CellCtrl):
     if (styles) {
         cellCtrl.comp.setUserStyles(styles);
     }
+}
+
+/** Transposed view only: the record column's own colDef, whose styling layers on top of the field's. */
+function getRecordColDef(cellCtrl: CellCtrl): ColDef | undefined {
+    const displayedCol = cellCtrl.column;
+    return displayedCol.transposeRecord === undefined ? undefined : displayedCol.colDef;
 }
 
 export function _applyCellClassesFromColDef(beans: BeanCollection, cellCtrl: CellCtrl): void {
@@ -77,7 +90,12 @@ export function _applyCellClassesFromColDef(beans: BeanCollection, cellCtrl: Cel
         }
     }
 
-    const newStaticClasses = beans.cellStyles!.getStaticCellClasses(colDef, cellClassParams);
+    let newStaticClasses = beans.cellStyles!.getStaticCellClasses(colDef, cellClassParams);
+    const recordColDef = getRecordColDef(cellCtrl);
+    if (recordColDef) {
+        const recordParams = getCellClassParams(beans, cellCtrl, recordColDef, cellCtrl.column);
+        newStaticClasses = newStaticClasses.concat(beans.cellStyles!.getStaticCellClasses(recordColDef, recordParams));
+    }
     cellCtrl.customStyleStaticClasses = newStaticClasses;
 
     for (const className of newStaticClasses) {
@@ -85,7 +103,12 @@ export function _applyCellClassesFromColDef(beans: BeanCollection, cellCtrl: Cel
     }
 }
 
-function getCellClassParams(beans: BeanCollection, cellCtrl: CellCtrl, colDef: ColDef): CellClassParams {
+function getCellClassParams(
+    beans: BeanCollection,
+    cellCtrl: CellCtrl,
+    colDef: ColDef,
+    columnOverride?: AgColumn
+): CellClassParams {
     const value = cellCtrl.value;
     const { rowNode, column } = cellCtrl.getConfigCell();
     return _addGridCommonParams(beans.gos, {
@@ -93,7 +116,7 @@ function getCellClassParams(beans: BeanCollection, cellCtrl: CellCtrl, colDef: C
         data: rowNode.data,
         node: rowNode,
         colDef,
-        column,
+        column: columnOverride ?? column,
         rowIndex: rowNode.rowIndex!,
     });
 }
