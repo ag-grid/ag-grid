@@ -101,15 +101,13 @@ Group total rows can also be used with `groupDisplayType='multipleColumns'`, as 
 
 ## Grouping and Aggregating the Same Column
 
-When a column is both grouped and aggregated, its group rows need two values for it: the group key, shown in the group
-column, and the aggregate, shown in the column itself. For example, the **Gold** `4` group needs the key `4` and the
-`sum(gold)` of `12`.
-
-Have the server return the aggregate under a separate field, such as `{ gold: 4, sum_gold: 12 }`, and use
-`getServerSideGroupAggData` to tell the grid which field holds each column's aggregate:
+To group by a column and also aggregate it, each group row needs two values for that column: the group key and the
+aggregate. Have the server return the aggregate under a separate field, and use `getServerSideGroupAggData` to tell the
+grid which field holds it:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
+    // the server returns { gold: 4, sum_gold: 12 } for the group row
     getServerSideGroupAggData: (params) => ({ gold: params.data.sum_gold }),
 }
 ```
