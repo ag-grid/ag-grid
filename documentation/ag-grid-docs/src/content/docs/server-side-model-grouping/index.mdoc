@@ -101,40 +101,35 @@ Group total rows can also be used with `groupDisplayType='multipleColumns'`, as 
 
 ## Grouping and Aggregating the Same Column
 
-A group row reads both its key and its aggregated values from its data, using each column's `field`. When a column is both
-grouped and aggregated, a single field cannot hold both the group key and the aggregate. For example, the group for
-**Gold** `4` needs `gold: 4` as its key and `sum(gold)` of `12` as its value.
+When a column is both grouped and aggregated, its group rows need two values for it: the group key, shown in the group
+column, and the aggregate, shown in the column itself. For example, the **Gold** `4` group needs the key `4` and the
+`sum(gold)` of `12`.
 
-To support this, have the server return the aggregate under a separate field, and map it to the column ID with
-`getServerSideGroupAggData`:
+Have the server return the aggregate under a separate field, such as `{ gold: 4, sum_gold: 12 }`, and use
+`getServerSideGroupAggData` to tell the grid which field holds each column's aggregate:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    // the server returns { gold: 4, sum_gold: 12 } for the group row
     getServerSideGroupAggData: (params) => ({ gold: params.data.sum_gold }),
 }
 ```
 
 {% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["getServerSideGroupAggData"] /%}
 
-- The callback is called for each group row when its data is loaded or updated, and its values are also shown in the
-  group's total row.
-- Columns not returned by the callback keep reading from the row data.
-- The grand total row (`grandTotalData`) and [Tree Data](./server-side-model-tree-data/) need no callback, as their keys
-  and aggregates never share a field.
-- When the sorted column is both grouped and aggregated, by default the sort model does not say whether the group column or the
-  value column was sorted, so the server decides whether that group level is sorted by its key or by its aggregate.
-- Grouping a column from the UI hides it by default, so show it again in the Columns Tool Panel to see its aggregate.
+- Columns not returned by the callback show the value from the row data, as usual.
+- The aggregates are also shown in the group's total row.
+- The callback is not called for the grand total row or for [Tree Data](./server-side-model-tree-data/).
+- By default, sorting the group column and sorting the aggregated column send the same request, so the server decides whether that
+  group level is ordered by its key or by its aggregate.
+- Grouping a column hides it by default. To keep it visible, see
+  [Prevent User Grouping from Hiding Columns](./grouping-group-panel/#prevent-user-grouping-from-hiding-columns).
 
 The example below groups by **Gold** and aggregates it with `sum`. Note the following:
 
-- The server returns the group key as `gold` and `sum(gold)` as `sum_gold`, and sorts the **Gold** group level by its
-  key.
-- `getServerSideGroupAggData` reads the aggregate of the row's `rowGroupColumn` from `<aggFunc>_<colId>`, so the
-  **Gold** column shows the sum while the group column shows the key. This works for any column grouped and aggregated
-  from the Columns Tool Panel, with any built-in aggregation function.
-- **Gold** has `enableRowGroup` and `enableValue` set, and appears in both Row Groups and Values in the Columns Tool
-  Panel.
+- The server returns each aggregate of a grouped column as `<aggFunc>_<colId>`, such as `sum_gold`.
+- The callback uses `params.node.rowGroupColumn` to find the column the row is grouped by, so it also works when a
+  different column is grouped and aggregated from the Columns Tool Panel.
+- **Gold** appears in both Row Groups and Values in the Columns Tool Panel.
 
 {% gridExampleRunner title="Grouping and Aggregating the Same Column" name="group-agg-same-column" exampleHeight=590 /%}
 
