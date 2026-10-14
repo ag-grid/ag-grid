@@ -16,7 +16,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'country', enableRowGroup: true },
         { field: 'sport', enableRowGroup: true },
-        { field: 'gold', rowGroup: true, aggFunc: 'sum', enableRowGroup: true, enableValue: true },
+        { field: 'gold', rowGroup: true, aggFunc: 'sum', sort: 'asc', enableRowGroup: true, enableValue: true },
         { field: 'silver', aggFunc: 'sum', enableValue: true },
         { field: 'bronze', aggFunc: 'sum', enableValue: true },
     ],
@@ -75,8 +75,8 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then((response) => response.json())
         .then(function (data) {
-            // setup the fake server with entire dataset
-            const fakeServer = new FakeServer(data);
+            // athletes without a gold medal are left out, so no group has a sum of 0
+            const fakeServer = new FakeServer(data.filter((row: IOlympicData) => row.gold > 0));
 
             // create datasource with a reference to the fake server
             const datasource = getServerSideDatasource(fakeServer);

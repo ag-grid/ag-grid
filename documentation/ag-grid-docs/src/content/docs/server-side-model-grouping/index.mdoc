@@ -114,15 +114,20 @@ const gridOptions = {
 
 {% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["getServerSideGroupAggData"] /%}
 
-- Columns not returned by the callback show the value from the row data, as usual.
-- The aggregates are also shown in the group's total row.
-- The callback is not called for the grand total row or for [Tree Data](./server-side-model-tree-data/).
-- By default, sorting the group column and sorting the aggregated column send the same request, so the server decides whether that
-  group level is ordered by its key or by its aggregate.
-- Grouping a column hides it by default. To keep it visible, see
+With `getServerSideGroupAggData` set:
+
+- Columns the callback doesn't return show the value from the row data, as usual.
+- The aggregates also show in the group's total row.
+- The grand total row and [Tree Data](./server-side-model-tree-data/) don't call it.
+
+When the same column is grouped and aggregated:
+
+- By default, sorting the group column or the aggregated column sends the same request, so the server chooses whether
+  that group level is ordered by key or by aggregate.
+- Grouping the column hides it by default. To keep it visible, see
   [Prevent User Grouping from Hiding Columns](./grouping-group-panel/#prevent-user-grouping-from-hiding-columns).
 
-The example below groups by **Gold** and aggregates it with `sum`. Note the following:
+The example below groups by **Gold**, aggregates it with `sum` and sorts it ascending. Note the following:
 
 - The server returns each aggregate of a grouped column as `<aggFunc>_<colId>`, such as `sum_gold`.
 - The callback uses `params.node.rowGroupColumn` to find the column the row is grouped by, so it also works when a

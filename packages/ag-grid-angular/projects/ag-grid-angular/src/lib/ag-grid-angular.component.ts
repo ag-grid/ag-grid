@@ -2204,7 +2204,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ServerSideRowModelModule`
      */
     @Input() public getServerSideGroupKey: GetServerSideGroupKey | undefined = undefined;
-    /** SSRM Row Grouping: Allows providing the aggregated values of a group row, keyed by column ID.
+    /** Allows providing the aggregated values of a group row, keyed by column ID.
      * Use this when a column is both grouped and aggregated, so the server can return the group key and the aggregate under different fields.
      * Column IDs missing from the result are read from the row data. Not called for the grand total row or for tree data.
      * @agModule `ServerSideRowModelModule`
