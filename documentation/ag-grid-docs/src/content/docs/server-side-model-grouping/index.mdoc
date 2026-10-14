@@ -114,8 +114,8 @@ const gridOptions = {
 
 {% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["getServerSideGroupAggData"] /%}
 
-Columns the callback doesn't return show the value from the row data. The aggregates also show in the group's total
-row, but the callback isn't called for the grand total row or for [Tree Data](./server-side-model-tree-data/).
+Any column left out of the callback's result shows its value from the row data. The aggregates also show in the
+group's total row, but the callback isn't called for the grand total row or for [Tree Data](./server-side-model-tree-data/).
 
 By default, sorting the group column and sorting the aggregated column send the same request, so the server chooses
 whether that group level is ordered by its key or by its aggregate. Grouping a column also hides it by default. To keep
