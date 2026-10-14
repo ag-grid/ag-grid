@@ -11,8 +11,13 @@ if (process.env.NODE_ENV !== 'production') {
 
 ModuleRegistry.registerModules([ColumnsToolPanelModule, RowGroupingModule, ServerSideRowModelModule]);
 
-let gridApi: GridApi<IOlympicData>;
-const gridOptions: GridOptions<IOlympicData> = {
+// group rows also hold the aggregate of the grouped column, e.g. `sum_gold`
+interface OlympicGroupData extends IOlympicData {
+    [aggField: string]: string | number;
+}
+
+let gridApi: GridApi<OlympicGroupData>;
+const gridOptions: GridOptions<OlympicGroupData> = {
     columnDefs: [
         { field: 'country', enableRowGroup: true },
         { field: 'sport', enableRowGroup: true },
@@ -31,8 +36,11 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     sideBar: 'columns',
 
-    // the server returns the group key as `gold` and the aggregate as `sum_gold`
-    getServerSideGroupAggData: (params) => ({ gold: params.data.sum_gold }),
+    // the server returns the group key as `gold` and the aggregate as `<aggFunc>_gold`, e.g. `sum_gold`
+    getServerSideGroupAggData: (params) => {
+        const aggFunc = params.api.getColumn('gold')!.getAggFunc();
+        return { gold: params.data[`${aggFunc}_gold`] };
+    },
 
     rowModelType: 'serverSide',
 };

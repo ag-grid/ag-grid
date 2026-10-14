@@ -128,9 +128,11 @@ const gridOptions = {
 
 The example below groups by **Gold** and aggregates it with `sum`. Note the following:
 
-- The server returns the group key as `gold` and `sum(gold)` as `sum_gold`.
+- The server returns the group key as `gold` and `sum(gold)` as `sum_gold`, and sorts the **Gold** group level by
+  `sum_gold`.
 - `getServerSideGroupAggData` returns `{ gold: params.data.sum_gold }`, so the **Gold** column shows the sum while the
-  group column shows the key.
+  group column shows the key. It reads the field for the current aggregation function, so changing it in the Columns
+  Tool Panel keeps working.
 - **Gold** has `enableRowGroup` and `enableValue` set, and appears in both Row Groups and Values in the Columns Tool
   Panel.
 
