@@ -114,10 +114,6 @@ const gridOptions = {
 
 {% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["getServerSideGroupAggData"] /%}
 
-Any column left out of the callback's result shows its value from the row data. The callback only needs to return
-columns that are both grouped and aggregated. In the snippet above it returns only **Gold**, so other aggregated
-columns, such as **Silver**, still read their aggregates from the `silver` field of the group row.
-
 The aggregates also show in the group's total row, but the callback isn't called for the grand total row or for [Tree Data](./server-side-model-tree-data/).
 
 By default, sorting the group column and sorting the aggregated column send the same request, so the server chooses
