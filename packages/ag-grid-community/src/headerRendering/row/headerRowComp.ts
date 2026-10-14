@@ -87,6 +87,7 @@ export class HeaderRowComp extends Component {
             setWidth: (width) => (this.getGui().style.width = width),
             setRowIndex: (rowIndex) => this.setRowIndex(rowIndex),
             setTabIndex: (tabIndex) => _addOrRemoveAttribute(this.getGui(), 'tabindex', tabIndex),
+            setAriaHidden: (hidden) => _addOrRemoveAttribute(this.getGui(), 'aria-hidden', hidden ? 'true' : null),
         };
 
         this.ctrl.setComp(compProxy, undefined);
