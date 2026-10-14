@@ -9,12 +9,12 @@ import type {
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
 } from 'ag-grid-community';
-import { GROUP_TOTAL_ROW_ID_PREFIX } from 'ag-grid-community';
+import { GROUP_TOTAL_ROW_ID_PREFIX, ValueCacheModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 describe('SSRM grouping and aggregating the same column', () => {
     const gridManager = new TestGridsManager({
-        modules: [RowGroupingModule, ServerSideRowModelModule, ServerSideRowModelApiModule],
+        modules: [RowGroupingModule, ServerSideRowModelModule, ServerSideRowModelApiModule, ValueCacheModule],
     });
 
     afterEach(() => {
@@ -193,6 +193,37 @@ describe('SSRM grouping and aggregating the same column', () => {
         expect(goldGroupRow(api)).toBe(groupRow);
         expect(groupRow.key).toBe(4);
         expect(getServerSideGroupAggData.mock.calls.length).toBeGreaterThan(callsBeforeRefresh);
+    });
+
+    test('refreshing the group rows updates values that depend on the aggregate', async () => {
+        let goldMultiplier = 1;
+        const api = gridManager.createGrid(null, {
+            columnDefs: [
+                { field: 'athlete' },
+                { field: 'gold', rowGroup: true, aggFunc: 'sum' },
+                { colId: 'doubleGold', valueGetter: ({ getValue }) => getValue('gold') * 2 },
+            ],
+            rowModelType: 'serverSide',
+            serverSideDatasource: {
+                getRows: (params) => createDatasource([], goldMultiplier).getRows(params),
+            },
+            getRowId,
+            valueCache: true,
+            getServerSideGroupAggData: ({ data }) => ({ gold: data.sum_gold }),
+        });
+        await waitFor(() => expect(goldGroupRow(api)).toBeDefined());
+        const groupRow = goldGroupRow(api);
+        expect(api.getCellValue({ rowNode: groupRow, colKey: 'doubleGold' })).toBe(16);
+        const renderedCell = (colId: string) =>
+            document.querySelector(`.ag-row[row-id="4"] .ag-cell[col-id="${colId}"]`)?.textContent;
+        expect(renderedCell('doubleGold')).toBe('16');
+
+        goldMultiplier = 10;
+        api.refreshServerSide({ purge: false });
+
+        await waitFor(() => expect(renderedCell('gold')).toBe('80'));
+        expect(renderedCell('doubleGold')).toBe('160');
+        expect(api.getCellValue({ rowNode: groupRow, colKey: 'doubleGold' })).toBe(160);
     });
 
     test('grouping and aggregating the same column through the API', async () => {

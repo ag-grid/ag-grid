@@ -150,16 +150,21 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
+        const treeData = this.gos.get('treeData');
+        if (!treeData && rowNode.group) {
+            // before updateData, so the cells it refreshes and the value cache it resets see the new aggregates
+            this.setGroupAggDataIntoRowNode(rowNode, data);
+        }
+
         rowNode.updateData(data);
 
-        if (this.gos.get('treeData')) {
+        if (treeData) {
             this.setTreeGroupInfo(rowNode);
             this.setChildCountIntoRowNode(rowNode);
             this.updateRowFooter(rowNode);
         } else if (rowNode.group) {
             this.setChildCountIntoRowNode(rowNode);
             this.updateRowFooter(rowNode);
-            this.setGroupAggDataIntoRowNode(rowNode);
             // it's not possible for a node to change whether it's a group or not
             // when doing row grouping (as only rows at certain levels are groups),
             // so nothing to do here
@@ -221,7 +226,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
         if (!treeData && group) {
             // after the key and groupData are read, as both read the grouped column through aggData
-            this.setGroupAggDataIntoRowNode(rowNode);
+            this.setGroupAggDataIntoRowNode(rowNode, rowNode.data);
         }
 
         this.beans.selectionSvc?.updateRowSelectable(rowNode);
@@ -233,12 +238,12 @@ export class BlockUtils extends BeanStub implements NamedBean {
         }
     }
 
-    private setGroupAggDataIntoRowNode(rowNode: RowNode): void {
+    private setGroupAggDataIntoRowNode(rowNode: RowNode, data: any): void {
         const getGroupAggData = this.gos.get('getServerSideGroupAggData');
         if (!getGroupAggData) {
             return;
         }
-        const aggData = getGroupAggData(this.gos.addCommon({ data: rowNode.data, node: rowNode }));
+        const aggData = getGroupAggData(this.gos.addCommon({ data, node: rowNode }));
         setAggDataWithSiblings(rowNode, aggData ?? null, this.beans.colModel);
     }
 
