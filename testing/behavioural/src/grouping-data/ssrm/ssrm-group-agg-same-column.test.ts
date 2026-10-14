@@ -40,6 +40,13 @@ describe('SSRM grouping and aggregating the same column', () => {
         { id: 'a3', athlete: 'Carla', country: 'Spain', gold: 2 },
     ];
 
+    const compareKeys = (a: string | number, b: string | number): number => {
+        if (a === b) {
+            return 0;
+        }
+        return a < b ? -1 : 1;
+    };
+
     /**
      * Group rows carry the key under the grouped field and each aggregate under `${aggFunc}_${field}`.
      * Supports a `greaterThan` filter on gold, and sorts a group level by its key.
@@ -62,7 +69,8 @@ describe('SSRM grouping and aggregating the same column', () => {
                 const keys = [...new Set(matching.map((row) => row[field]))];
                 const sort = sortModel.find((item) => item.colId === field)?.sort;
                 if (sort) {
-                    keys.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0) * (sort === 'asc' ? 1 : -1));
+                    const direction = sort === 'asc' ? 1 : -1;
+                    keys.sort((a, b) => compareKeys(a, b) * direction);
                 }
                 rowData = keys.map((key) => {
                     const children = matching.filter((row) => row[field] === key);
@@ -240,6 +248,30 @@ describe('SSRM grouping and aggregating the same column', () => {
         await waitFor(() => expect(renderedCell('gold')).toBe('80'));
         expect(renderedCell('doubleGold')).toBe('160');
         expect(api.getCellValue({ rowNode: groupRow, colKey: 'doubleGold' })).toBe(160);
+    });
+
+    test('refreshing the group rows fires cell changed events once the row data is also new', async () => {
+        let goldMultiplier = 1;
+        const api = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'athlete' }, { field: 'gold', rowGroup: true, aggFunc: 'sum' }],
+            rowModelType: 'serverSide',
+            serverSideDatasource: {
+                getRows: (params) => createDatasource([], goldMultiplier).getRows(params),
+            },
+            getRowId,
+            getServerSideGroupAggData: ({ data }) => ({ gold: data.sum_gold }),
+        });
+        await waitFor(() => expect(goldGroupRow(api)).toBeDefined());
+        const groupRow = goldGroupRow(api);
+        const events: { colId: string; oldValue: any; newValue: any; sumGoldInData: number }[] = [];
+        groupRow.addEventListener('cellChanged', ({ column, oldValue, newValue, node }) => {
+            events.push({ colId: column.getColId(), oldValue, newValue, sumGoldInData: node.data.sum_gold });
+        });
+
+        goldMultiplier = 10;
+        api.refreshServerSide({ purge: false });
+
+        await waitFor(() => expect(events).toEqual([{ colId: 'gold', oldValue: 8, newValue: 80, sumGoldInData: 80 }]));
     });
 
     test('a transaction updating the group row calls the callback with the new data', async () => {

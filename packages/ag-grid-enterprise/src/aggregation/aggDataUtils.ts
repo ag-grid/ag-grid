@@ -74,17 +74,42 @@ export const setAggDataWithSiblings = (
     }
 };
 
-/** Sets aggData on a row node and all its siblings (footer + pinned) without firing cell-changed events. */
-export const setAggDataWithoutEvents = (rowNode: RowNode, newAggData: Record<string, any> | null): void => {
-    rowNode.aggData = newAggData;
+/**
+ * Sets aggData on a row node and its siblings (footer + pinned) around `updateData`, which replaces the row data.
+ * The cells `updateData` refreshes and the value cache it resets see the new aggData, and cell-changed events
+ * fire afterwards, so listeners see the new data and aggData together.
+ */
+export const setAggDataAroundDataUpdate = (
+    rowNode: RowNode,
+    newAggData: Record<string, any> | null,
+    colModel: ColumnModel,
+    updateData: () => void
+): void => {
+    const oldAggData = rowNode.aggData;
+    forEachAggDataNode(rowNode, function assignAggData(node) {
+        node.aggData = newAggData;
+    });
+    updateData();
+    if (oldAggData === newAggData) {
+        return;
+    }
+    forEachAggDataNode(rowNode, function fireAggDataEvents(node) {
+        if (node.__localEventService) {
+            fireAggDataChangedEvents(node, oldAggData, newAggData, colModel, undefined);
+        }
+    });
+};
+
+const forEachAggDataNode = (rowNode: RowNode, callback: (node: RowNode) => void): void => {
+    callback(rowNode);
     const { pinnedSibling, sibling } = rowNode;
     if (pinnedSibling) {
-        pinnedSibling.aggData = newAggData;
+        callback(pinnedSibling);
     }
     if (sibling) {
-        sibling.aggData = newAggData;
+        callback(sibling);
         if (sibling.pinnedSibling) {
-            sibling.pinnedSibling.aggData = newAggData;
+            callback(sibling.pinnedSibling);
         }
     }
 };

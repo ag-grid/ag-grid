@@ -11,13 +11,8 @@ if (process.env.NODE_ENV !== 'production') {
 
 ModuleRegistry.registerModules([ColumnsToolPanelModule, RowGroupingModule, ServerSideRowModelModule]);
 
-// group rows also hold the aggregate of the grouped column, e.g. `sum_gold`
-interface OlympicGroupData extends IOlympicData {
-    [aggField: string]: string | number;
-}
-
-let gridApi: GridApi<OlympicGroupData>;
-const gridOptions: GridOptions<OlympicGroupData> = {
+let gridApi: GridApi<IOlympicData>;
+const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'country', enableRowGroup: true },
         { field: 'sport', enableRowGroup: true },

@@ -16,7 +16,7 @@ import {
     _getRowHeightForNode,
 } from 'ag-grid-community';
 
-import { setAggDataWithSiblings, setAggDataWithoutEvents } from '../../aggregation/aggDataUtils';
+import { setAggDataAroundDataUpdate, setAggDataWithSiblings } from '../../aggregation/aggDataUtils';
 import { _createRowNodeFooter, _destroyRowNodeFooter } from '../../aggregation/footerUtils';
 import type { NodeManager } from '../nodeManager';
 import type { ServerSideRowModel } from '../serverSideRowModel';
@@ -151,16 +151,12 @@ export class BlockUtils extends BeanStub implements NamedBean {
 
     public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
         const treeData = this.gos.get('treeData');
-        if (!treeData && rowNode.group) {
-            // set before updateData, so the cells it refreshes and the value cache it resets see the new aggregates.
-            // No cell events, as updateData refreshes every cell once the row data is also new.
-            const aggData = this.getGroupAggData(rowNode, data);
-            if (aggData !== undefined) {
-                setAggDataWithoutEvents(rowNode, aggData);
-            }
+        const aggData = !treeData && rowNode.group ? this.getGroupAggData(rowNode, data) : undefined;
+        if (aggData === undefined) {
+            rowNode.updateData(data);
+        } else {
+            setAggDataAroundDataUpdate(rowNode, aggData, this.beans.colModel, () => rowNode.updateData(data));
         }
-
-        rowNode.updateData(data);
 
         if (treeData) {
             this.setTreeGroupInfo(rowNode);
@@ -251,6 +247,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         if (!getGroupAggData) {
             return undefined;
         }
+        // `null`, not `undefined`, so a callback returning nothing still clears aggData set by an earlier load
         return getGroupAggData(this.gos.addCommon({ data, node: rowNode })) ?? null;
     }
 
