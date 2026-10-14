@@ -76,10 +76,14 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
     public readonly allGroups: AgProvidedColumnGroup[] = [];
 
     private fieldNameCol: AgColumn | null = null;
-    /** Record columns by record id, kept across refreshes so sort, filter and edits reuse them. */
+    /** Record columns by record id, kept while the record exists, including while a filter hides it. */
     private readonly recordCols: Map<string, AgColumn> = new Map();
     /** Header text by record id, valid while the record's data object is unchanged. */
     private readonly headerCache: Map<string, CachedHeader> = new Map();
+    /** Each record's data object at the last refresh, to spot transaction and `rowData` updates. */
+    private readonly recordData: Map<string, unknown> = new Map();
+    private readonly changedRecordColIds: string[] = [];
+    private rebuildCols = false;
     private refreshToken = 0;
     /** The base colDef for record columns, rebuilt when the options change. */
     private recordColDefBase: ColDef | null = null;
@@ -95,7 +99,8 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         );
         this.addManagedEventListeners({
             cellValueChanged: (event) => this.onCellValueChanged(event),
-            rowSelected: (event) => this.refreshRecordCells(event.node.id),
+            selectionChanged: () => this.refreshAllRecordCells(),
+            modelUpdated: () => this.refreshChangedRecordCells(),
         });
     }
 
@@ -164,9 +169,30 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         }
     }
 
+    private refreshAllRecordCells(): void {
+        const cols = this.cols;
+        if (cols) {
+            this.beans.rowRenderer.refreshCells({ columns: cols.slice(1) });
+        }
+    }
+
+    /** Field rows are reused across refreshes, so cells showing records whose data object changed are refreshed here. */
+    private refreshChangedRecordCells(): void {
+        const changed = this.changedRecordColIds;
+        if (changed.length) {
+            this.beans.rowRenderer.refreshCells({ columns: changed.splice(0) });
+        }
+    }
+
     private onTransposeChanged(): void {
         this.recordColDefBase = null;
-        this.clearCols();
+        if (!this.isActive()) {
+            // Rows before columns, so the user's columns never render against data-less field rows.
+            this.refreshRowModel();
+            this.clearCols();
+            return;
+        }
+        this.rebuildCols = true;
         this.refreshRowModel();
     }
 
@@ -178,16 +204,18 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
     }
 
     /**
-     * Reuses each record's column, creating columns only for new records and destroying them only for removed
-     * ones; the column model is refreshed only when the displayed set or order of columns changes.
+     * Reuses each record's column, creating columns only for new records and destroying them only for removed ones;
+     * the column model is refreshed only when the displayed set or order of columns changes.
      */
     private refreshRecordCols(records: RowNode[]): void {
+        const retired = this.rebuildCols ? this.retireGeneratedCols() : null;
         const headerCol = this.getHeaderCol();
         const token = ++this.refreshToken;
         const prevCols = this.cols;
         const recordCount = records.length;
         let setChanged = prevCols?.length !== recordCount + 1;
         let orderChanged = false;
+        const { recordData, changedRecordColIds } = this;
 
         this.fieldNameCol ??= this.createCol(this.createFieldNameColDef(headerCol));
         const nextCols = new Array<AgColumn>(recordCount + 1);
@@ -208,6 +236,13 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
             }
             col.transposeRecord = record;
             col.buildToken = token;
+            const data = record.data;
+            if (recordData.get(recordId) !== data) {
+                if (recordData.has(recordId)) {
+                    changedRecordColIds.push(col.colId);
+                }
+                recordData.set(recordId, data);
+            }
             if (!setChanged && !orderChanged && prevCols![i + 1] !== col) {
                 orderChanged = true;
             }
@@ -215,17 +250,37 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         }
 
         if (recordCols.size > recordCount) {
-            this.destroyStaleRecordCols(token);
+            this.destroyRemovedRecordCols(token);
+        }
+        if (orderChanged && !setChanged && !sameMembers(prevCols!, nextCols)) {
             setChanged = true;
         }
-        if (!setChanged && !orderChanged) {
-            return;
+        if (setChanged || orderChanged) {
+            this.cols = nextCols;
+            this.tree = nextCols;
+            if (setChanged || !this.reorderColModel(nextCols)) {
+                this.refreshColModel();
+            }
         }
-        this.cols = nextCols;
-        this.tree = nextCols;
-        if (setChanged || !this.reorderColModel(nextCols)) {
-            this.refreshColModel();
+        if (retired) {
+            for (let i = 0, len = retired.length; i < len; ++i) {
+                retired[i].destroy();
+            }
         }
+    }
+
+    /** Detaches every generated column so new ones are built, and returns the old ones to destroy once replaced. */
+    private retireGeneratedCols(): AgColumn[] {
+        this.rebuildCols = false;
+        const retired: AgColumn[] = [];
+        this.recordCols.forEach((col) => retired.push(col));
+        if (this.fieldNameCol) {
+            retired.push(this.fieldNameCol);
+        }
+        this.recordCols.clear();
+        this.headerCache.clear();
+        this.fieldNameCol = null;
+        return retired;
     }
 
     /**
@@ -252,13 +307,16 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         return true;
     }
 
-    private destroyStaleRecordCols(token: number): void {
-        const { recordCols, headerCache } = this;
+    /** A record hidden by a filter keeps its column (and its width); only records that no longer exist lose theirs. */
+    private destroyRemovedRecordCols(token: number): void {
+        const { recordCols, headerCache, recordData } = this;
+        const rowModel = this.beans.rowModel;
         recordCols.forEach((col, recordId) => {
-            if (col.buildToken !== token) {
+            if (col.buildToken !== token && !rowModel.getRowNode(recordId)) {
                 col.destroy();
                 recordCols.delete(recordId);
                 headerCache.delete(recordId);
+                recordData.delete(recordId);
             }
         });
     }
@@ -340,6 +398,8 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         this.recordCols.forEach((col) => col.destroy());
         this.recordCols.clear();
         this.headerCache.clear();
+        this.recordData.clear();
+        this.changedRecordColIds.length = 0;
         this.fieldNameCol?.destroy();
         this.fieldNameCol = null;
     }
@@ -450,6 +510,7 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         if (!rowNode) {
             rowNode = new RowNodeClass(this.beans);
             rowNode.id = id;
+            rowNode.selectable = false;
             fieldRows.set(id, rowNode);
         }
         return rowNode;
@@ -462,4 +523,14 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         this.fieldGroups.clear();
         super.destroy();
     }
+}
+
+function sameMembers(prev: AgColumn[], next: AgColumn[]): boolean {
+    const prevSet = new Set(prev);
+    for (let i = 0, len = next.length; i < len; ++i) {
+        if (!prevSet.has(next[i])) {
+            return false;
+        }
+    }
+    return true;
 }

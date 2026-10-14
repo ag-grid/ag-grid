@@ -7,7 +7,9 @@ import {
     CsvExportModule,
     ModuleRegistry,
     NumberEditorModule,
+    NumberFilterModule,
     RowApiModule,
+    RowSelectionModule,
     TextEditorModule,
     UndoRedoEditModule,
     ValidationModule,
@@ -33,6 +35,8 @@ ModuleRegistry.registerModules([
     NumberEditorModule,
     UndoRedoEditModule,
     RowApiModule,
+    RowSelectionModule,
+    NumberFilterModule,
     CsvExportModule,
     ExcelExportModule,
     ClipboardModule,
@@ -51,6 +55,12 @@ const columnDefs: (ColDef<CompanyRecord> | ColGroupDef<CompanyRecord>)[] = [
         children: [
             { field: 'revenue', valueFormatter: currency },
             { field: 'costOfSales', headerName: 'Cost of Sales', valueFormatter: currency },
+            {
+                colId: 'grossProfit',
+                headerName: 'Gross Profit',
+                valueGetter: (params) => params.data!.revenue - params.data!.costOfSales,
+                valueFormatter: currency,
+            },
         ],
     },
 ];
@@ -58,10 +68,13 @@ const columnDefs: (ColDef<CompanyRecord> | ColGroupDef<CompanyRecord>)[] = [
 let gridApi: GridApi<CompanyRecord>;
 let lastClipboard: string | null = null;
 let fakeClipboardText = '';
+let uncaughtErrors = 0;
+window.addEventListener('error', () => uncaughtErrors++);
 
 const gridOptions: GridOptions<CompanyRecord> = {
     columnDefs,
-    defaultColDef: { width: 130, editable: true },
+    defaultColDef: { width: 130, editable: true, filter: true },
+    rowSelection: { mode: 'multiRow', checkboxes: false, enableClickSelection: true },
     getRowId: (params) => params.data.id,
     rowData: getData(),
     transpose: true,
@@ -181,6 +194,62 @@ async function runChecks() {
         const detail = `before ${before}, edited ${edited}, undo stack ${undoSize}, after undo ${undone}, after redo ${redone}`;
         expect(Number(edited) === 111 && undone === before && Number(redone) === 111, detail);
         return detail;
+    });
+
+    await check('Transaction update refreshes the transposed cell', async () => {
+        gridApi.setGridOption('rowData', getData());
+        await wait(100);
+        const updated = { ...record('rec-1'), revenue: 4321 };
+        gridApi.applyTransaction({ update: [updated] });
+        await wait(200);
+        const cell = document.querySelector(
+            `.ag-row[row-id="ag-Grid-TransposeField-revenue"] .ag-cell[col-id="${recordCol('rec-1')}"]`
+        );
+        const text = cell?.textContent ?? '';
+        expect(text.includes('4,321'), `cell shows ${JSON.stringify(text)}`);
+        return `cell shows ${text}`;
+    });
+
+    await check('Space on a transposed cell does not select a field row', async () => {
+        gridApi.deselectAll();
+        gridApi.setFocusedCell(revenueRow, recordCol('rec-0'));
+        await wait(50);
+        const focused = document.querySelector<HTMLElement>('.ag-cell-focus');
+        focused?.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true }));
+        await wait(100);
+        const selected = gridApi.getSelectedNodes().map((node) => node.id);
+        expect(
+            selected.every((id) => !id?.startsWith('ag-Grid-Transpose')),
+            `selected ${JSON.stringify(selected)}`
+        );
+        return `selected ${JSON.stringify(selected)}`;
+    });
+
+    await check('A record hidden by a filter keeps its column width', async () => {
+        gridApi.setColumnWidths([{ key: recordCol('rec-0'), newWidth: 222 }]);
+        await gridApi.setColumnFilterModel('revenue', { type: 'greaterThan', filter: 500 });
+        gridApi.onFilterChanged();
+        await wait(150);
+        const hidden = !gridApi.getAllDisplayedColumns().some((col) => col.getColId() === recordCol('rec-0'));
+        await gridApi.setColumnFilterModel('revenue', null);
+        gridApi.onFilterChanged();
+        await wait(150);
+        const width = gridApi.getColumn(recordCol('rec-0'))?.getActualWidth();
+        expect(hidden && width === 222, `hidden while filtered: ${hidden}, width after clearing: ${width}`);
+        return `hidden while filtered, width after clearing ${width}`;
+    });
+
+    await check('Toggling transpose never renders user columns against field rows', async () => {
+        const errorsBefore = uncaughtErrors;
+        gridApi.setGridOption('transpose', false);
+        await wait(200);
+        gridApi.setGridOption('transpose', true);
+        await wait(200);
+        gridApi.setGridOption('transposeRecordColumnDef', { width: 140 });
+        await wait(200);
+        const errors = uncaughtErrors - errorsBefore;
+        expect(errors === 0, `${errors} uncaught errors (Gross Profit's valueGetter reads params.data)`);
+        return 'no errors from a valueGetter that reads params.data';
     });
 }
 

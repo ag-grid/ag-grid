@@ -1319,15 +1319,15 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
         }
 
+        if (!formula?.active) {
+            this.formulaRows = formula?.isEvaluationActive() ? rowsToDisplay : [];
+        }
         const transposeSvc = beans.transposeSvc;
         if (transposeSvc?.isActive()) {
             rowsToDisplay = transposeSvc.transposeRows(rowsToDisplay);
         }
 
         this.rowsToDisplay = rowsToDisplay;
-        if (!formula?.active) {
-            this.formulaRows = formula?.isEvaluationActive() ? rowsToDisplay : [];
-        }
         if (!this.loadingRows) {
             this.rowsToRender = rowsToDisplay;
         }
