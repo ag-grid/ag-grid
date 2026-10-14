@@ -74,7 +74,7 @@ export function _setupEditors(
 
         if (!curCellCtrl) {
             if (cellRowNode && cellColumn) {
-                const oldValue = valueSvc.getValueFromData(cellColumn as AgColumn, cellRowNode);
+                const oldValue = valueSvc.getCellValueFromData(cellColumn as AgColumn, cellRowNode);
                 const isNewValueCell = position?.rowNode === cellRowNode && position?.column === cellColumn;
                 const cellStartValue = (isNewValueCell && key) || undefined;
 
@@ -654,7 +654,7 @@ function syncFromEditorValue(
         // sourceValue not set means sync called without corresponding startEdit - from API call
         const pendingValue = edit ? getNormalisedFormula(beans, edit.editorValue, false, column) : UNEDITED;
         const editValue: Partial<EditValue> = {
-            sourceValue: valueSvc.getValueFromData(column as AgColumn, rowNode),
+            sourceValue: valueSvc.getCellValueFromData(column as AgColumn, rowNode),
             pendingValue,
         };
 

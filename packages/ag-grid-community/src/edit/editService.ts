@@ -1606,7 +1606,7 @@ export class EditService extends BeanStub implements NamedBean {
         }
 
         // fallback to getting value from ValueService
-        return this.valueSvc.getValueFromData(position.column as AgColumn, position.rowNode);
+        return this.valueSvc.getCellValueFromData(position.column as AgColumn, position.rowNode);
     }
 
     public addStopEditingWhenGridLosesFocus(viewports: HTMLElement[]): void {
@@ -1811,7 +1811,7 @@ export class EditService extends BeanStub implements NamedBean {
                 const existingEdit = editModelSvc?.getEdit(position);
                 if (existingEdit?.sourceValue === undefined) {
                     editModelSvc?.setEdit(position, {
-                        sourceValue: valueSvc.getValueFromData(column as AgColumn, rowNode),
+                        sourceValue: valueSvc.getCellValueFromData(column as AgColumn, rowNode),
                     });
                 }
                 editModelSvc?.setEdit(position, { pendingValue: newValue });
@@ -2052,7 +2052,7 @@ export class EditService extends BeanStub implements NamedBean {
             }
 
             if (this.isCellEditable({ rowNode, column }, 'api')) {
-                const sourceValue = valueSvc.getValueFromData(column, rowNode, true);
+                const sourceValue = valueSvc.getCellValueFromData(column, rowNode, true);
                 let pendingValue = valueSvc.parseValue(column, rowNode, valueForColumn, sourceValue);
 
                 if (Number.isNaN(pendingValue)) {
@@ -2107,7 +2107,7 @@ export class EditService extends BeanStub implements NamedBean {
             if (!rowNode) {
                 continue;
             }
-            const sourceValue = valueSvc.getValueFromData(col as AgColumn, rowNode, true);
+            const sourceValue = valueSvc.getCellValueFromData(col as AgColumn, rowNode, true);
 
             if (
                 !params?.forceRefreshOfEditCellsOnly &&

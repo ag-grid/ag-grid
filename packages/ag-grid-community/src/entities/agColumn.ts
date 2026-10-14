@@ -174,8 +174,6 @@ export class AgColumn<TValue = any>
     public allowFormula: boolean = false;
     public showRowGroup: string | boolean | undefined = undefined;
     public pivotValueColumn: AgColumn | null | undefined = undefined;
-    /** Transposed view only: the record this generated column shows. */
-    public transposeRecord: RowNode | undefined = undefined;
     public valueFormatter: string | ValueFormatterFunc<any, TValue> | undefined = undefined;
     public refData: RefData | undefined = undefined;
     public enableCellChangeFlash: boolean | undefined = undefined;
@@ -184,6 +182,8 @@ export class AgColumn<TValue = any>
     public rowSpan: RowSpanFunc<any, TValue> | undefined = undefined;
     /** Read per cell on calculated columns (`formulaService.ensureCellFormula`/`fetchRawValue`). */
     public calculatedExpression: string | undefined = undefined;
+    /** Transposed view only: the record this generated column shows; checked per cell by `valueService.getValue`. */
+    public transposeRecord: RowNode | undefined = undefined;
 
     // ── Layout / display ── read during rendering and header layout (per column, per refresh).
     /** Current rendered width in px. Writes must go through `setActualWidth` for min/max clamping and flex ownership. */
