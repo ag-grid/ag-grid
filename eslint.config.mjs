@@ -17,7 +17,6 @@ export const sonarjsConfig = [
             // Too noisy in this codebase's style: doesn't trust a `!` non-null assertion, a prior
             // typeof/guard narrowing, or a type predicate, so it flags hundreds of already-safe sites.
             'sonarjs/null-dereference': 0,
-            'sonarjs/super-linear-regex': 0,
             'sonarjs/todo-tag': 0,
             'sonarjs/fixme-tag': 0,
             'sonarjs/no-redeclare': 0,

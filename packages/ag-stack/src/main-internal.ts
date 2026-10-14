@@ -267,6 +267,7 @@ export {
     _escapeString,
     _isExpressionString,
     _isStringLargerThan,
+    _splitBracketed,
     _toString,
 } from './utils/string';
 export { _getValueUsingDotField } from './utils/value';

@@ -1,4 +1,4 @@
-import { _exists } from 'ag-stack';
+import { _exists, _splitBracketed } from 'ag-stack';
 
 import { _logPreInitWarn } from 'ag-grid-community';
 
@@ -310,8 +310,12 @@ export class LicenseManager {
             return ['legacy', false, undefined];
         }
 
-        const matches = licenseKey.match(/\[(.*?)\]/g)!.map((match) => match.replace('[', '').replace(']', ''));
-        if (!matches || matches.length === 0) {
+        const segments = _splitBracketed(licenseKey, true);
+        const matches: string[] = [];
+        for (let i = 1, len = segments.length; i < len; i += 2) {
+            matches.push(segments[i].slice(1, -1));
+        }
+        if (matches.length === 0) {
             return ['legacy', false, undefined];
         }
 

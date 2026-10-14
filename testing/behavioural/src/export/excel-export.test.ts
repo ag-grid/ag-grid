@@ -2,11 +2,13 @@ import { TestGridsManager, objectUrls } from 'ag-test-utils';
 import * as XLSX from 'xlsx';
 
 import type { ExcelExportParams, GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import { CellStyleModule, ClientSideRowModelModule } from 'ag-grid-community';
 import { ExcelExportModule } from 'ag-grid-enterprise';
 
 describe('Excel export', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, ExcelExportModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [CellStyleModule, ClientSideRowModelModule, ExcelExportModule],
+    });
 
     beforeEach(() => {
         objectUrls.init();
@@ -77,6 +79,29 @@ describe('Excel export', () => {
             'rId1',
             'rId1',
         ]);
+    });
+
+    test('number formats quote `$` only outside square-bracket sections', async () => {
+        const api = gridsManager.createGrid('excel-number-format-brackets', {
+            columnDefs: [
+                { field: 'a', cellClass: 'bracketed' },
+                { field: 'b', cellClass: 'unclosed' },
+            ],
+            rowData: [{ a: 1, b: 2 }],
+            excelStyles: [
+                { id: 'bracketed', numberFormat: { format: '[Red]$#,##0;[$€-407]0' } },
+                { id: 'unclosed', numberFormat: { format: '0$[$' } },
+            ],
+        });
+
+        api.exportDataAsExcel();
+        const zip = XLSX.CFB.read(new Uint8Array(await (await objectUrls.pullBlob()).arrayBuffer()), { type: 'array' });
+        const stylesXml = new TextDecoder().decode(XLSX.CFB.find(zip, '/xl/styles.xml').content);
+        const formatCodes = [...stylesXml.matchAll(/<numFmt\b[^>]*formatCode="([^"]*)"/g)].map((match) => match[1]);
+
+        expect(formatCodes).toEqual(
+            expect.arrayContaining(['[Red]&quot;$&quot;#,##0;[$€-407]0', '0&quot;$&quot;[&quot;$&quot;'])
+        );
     });
 
     test('freezeColumns counts the frozen columns once, whatever the body cells span', async () => {
