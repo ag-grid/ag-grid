@@ -127,6 +127,8 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     // per-cell custom-style diffing state, owned by the cellStyles functions (styling/cellCustomStyleFeature)
     public customStyleStaticClasses?: string[];
     public customStyleClassRules?: CellClassRules;
+    /** Transposed view only: the record column's own class rules, applied on top of the field's. */
+    public customStyleRecordClassRules?: CellClassRules;
 
     public lastIPadMouseClickEvent = 0;
 

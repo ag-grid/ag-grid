@@ -26,6 +26,22 @@ export function _applyCellClassRules(beans: BeanCollection, cellCtrl: CellCtrl):
         (className) => comp.toggleCss(className, false)
     );
     cellCtrl.customStyleClassRules = cellClassRules;
+
+    const displayedCol = cellCtrl.column;
+    if (displayedCol.transposeRecord !== undefined) {
+        const recordColDef = displayedCol.colDef;
+        const recordRules = recordColDef.cellClassRules;
+        const previousRecordRules = cellCtrl.customStyleRecordClassRules;
+        processClassRules(
+            beans.expressionSvc,
+            recordRules === previousRecordRules ? undefined : previousRecordRules,
+            recordRules,
+            { ...cellClassParams, colDef: recordColDef, column: displayedCol },
+            (className) => comp.toggleCss(className, true),
+            (className) => comp.toggleCss(className, false)
+        );
+        cellCtrl.customStyleRecordClassRules = recordRules;
+    }
 }
 
 export function _applyCellUserStyles(beans: BeanCollection, cellCtrl: CellCtrl): void {
