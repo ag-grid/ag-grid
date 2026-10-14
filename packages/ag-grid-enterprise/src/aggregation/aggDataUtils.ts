@@ -75,42 +75,56 @@ export const setAggDataWithSiblings = (
 };
 
 /**
- * Sets aggData on a row node and its siblings (footer + pinned) around `updateData`, which replaces the row data.
- * The cells `updateData` refreshes and the value cache it resets see the new aggData, and cell-changed events
- * fire afterwards, so listeners see the new data and aggData together.
+ * Updates a row node's data and sets aggData on it and its siblings (footer + pinned). aggData is set before
+ * `updateData`, so the cells it refreshes see it, and cell-changed events fire after, so listeners see both.
  */
-export const setAggDataAroundDataUpdate = (
+export const updateDataWithAggData = (
     rowNode: RowNode,
+    data: any,
     newAggData: Record<string, any> | null,
-    colModel: ColumnModel,
-    updateData: () => void
+    colModel: ColumnModel
 ): void => {
     const oldAggData = rowNode.aggData;
-    forEachAggDataNode(rowNode, function assignAggData(node) {
-        node.aggData = newAggData;
-    });
-    updateData();
+    const pinnedSibling = rowNode.pinnedSibling;
+    const sibling = rowNode.sibling;
+    const siblingPinnedSibling = sibling?.pinnedSibling;
+
+    rowNode.aggData = newAggData;
+    if (pinnedSibling) {
+        pinnedSibling.aggData = newAggData;
+    }
+    if (sibling) {
+        sibling.aggData = newAggData;
+    }
+    if (siblingPinnedSibling) {
+        siblingPinnedSibling.aggData = newAggData;
+    }
+
+    rowNode.updateData(data);
+
     if (oldAggData === newAggData) {
         return;
     }
-    forEachAggDataNode(rowNode, function fireAggDataEvents(node) {
-        if (node.__localEventService) {
-            fireAggDataChangedEvents(node, oldAggData, newAggData, colModel, undefined);
-        }
-    });
-};
-
-const forEachAggDataNode = (rowNode: RowNode, callback: (node: RowNode) => void): void => {
-    callback(rowNode);
-    const { pinnedSibling, sibling } = rowNode;
+    fireAggDataChangedEventsIfListened(rowNode, oldAggData, newAggData, colModel);
     if (pinnedSibling) {
-        callback(pinnedSibling);
+        fireAggDataChangedEventsIfListened(pinnedSibling, oldAggData, newAggData, colModel);
     }
     if (sibling) {
-        callback(sibling);
-        if (sibling.pinnedSibling) {
-            callback(sibling.pinnedSibling);
-        }
+        fireAggDataChangedEventsIfListened(sibling, oldAggData, newAggData, colModel);
+    }
+    if (siblingPinnedSibling) {
+        fireAggDataChangedEventsIfListened(siblingPinnedSibling, oldAggData, newAggData, colModel);
+    }
+};
+
+const fireAggDataChangedEventsIfListened = (
+    rowNode: RowNode,
+    oldAggData: Record<string, any> | null | undefined,
+    newAggData: Record<string, any> | null,
+    colModel: ColumnModel
+): void => {
+    if (rowNode.__localEventService) {
+        fireAggDataChangedEvents(rowNode, oldAggData, newAggData, colModel, undefined);
     }
 };
 

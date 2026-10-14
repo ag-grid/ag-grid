@@ -16,7 +16,7 @@ import {
     _getRowHeightForNode,
 } from 'ag-grid-community';
 
-import { setAggDataAroundDataUpdate, setAggDataWithSiblings } from '../../aggregation/aggDataUtils';
+import { setAggDataWithSiblings, updateDataWithAggData } from '../../aggregation/aggDataUtils';
 import { _createRowNodeFooter, _destroyRowNodeFooter } from '../../aggregation/footerUtils';
 import type { NodeManager } from '../nodeManager';
 import type { ServerSideRowModel } from '../serverSideRowModel';
@@ -155,7 +155,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
         if (aggData === undefined) {
             rowNode.updateData(data);
         } else {
-            setAggDataAroundDataUpdate(rowNode, aggData, this.beans.colModel, () => rowNode.updateData(data));
+            updateDataWithAggData(rowNode, data, aggData, this.beans.colModel);
         }
 
         if (treeData) {
@@ -241,14 +241,23 @@ export class BlockUtils extends BeanStub implements NamedBean {
         }
     }
 
-    /** The group's aggData from `getServerSideGroupAggData`, or `undefined` when the callback is not set. */
+    /**
+     * The group's aggData from `getServerSideGroupAggData`. Without the callback, the aggregate of the grouped
+     * column is read from the `<aggFunc>_<colId>` field when present. `undefined` leaves aggData unchanged.
+     */
     private getGroupAggData(rowNode: RowNode, data: any): Record<string, any> | null | undefined {
         const getGroupAggData = this.gos.get('getServerSideGroupAggData');
-        if (!getGroupAggData) {
-            return undefined;
+        if (getGroupAggData) {
+            // `null`, not `undefined`, so a callback returning nothing still clears aggData set by an earlier load
+            return getGroupAggData(this.gos.addCommon({ data, node: rowNode })) ?? null;
         }
-        // `null`, not `undefined`, so a callback returning nothing still clears aggData set by an earlier load
-        return getGroupAggData(this.gos.addCommon({ data, node: rowNode })) ?? null;
+        const column = rowNode.rowGroupColumn;
+        const aggFunc = column?.getAggFunc();
+        if (data && column?.isValueActive() && typeof aggFunc === 'string' && `${aggFunc}_${column.colId}` in data) {
+            return { [column.colId]: data[`${aggFunc}_${column.colId}`] };
+        }
+        // only clears aggData an earlier load set, so groups without the field never get aggData
+        return rowNode.aggData ? null : undefined;
     }
 
     private setChildCountIntoRowNode(rowNode: RowNode): void {
