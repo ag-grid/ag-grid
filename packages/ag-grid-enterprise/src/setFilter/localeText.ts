@@ -5,7 +5,7 @@ export const DEFAULT_LOCALE_TEXT = {
     selectAll: '(Select All)',
     selectAllSearchResults: '(Select All Search Results)',
     addCurrentSelectionToFilter: 'Add current selection to filter',
-    noMatches: 'No matches.',
+    noMatches: 'No matches',
     ariaSearchFilterValues: 'Search filter values',
     ariaFilterList: 'Filter List',
     ariaNotInCurrentData: 'not in current data',
