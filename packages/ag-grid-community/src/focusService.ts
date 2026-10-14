@@ -381,6 +381,7 @@ export class FocusService extends BeanStub implements NamedBean {
                         event,
                     };
                     const userResult = userFunc(params);
+                    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- only null means stay; JS callbacks may return undefined
                     headerPosition = userResult === null ? currentPosition : userResult;
                 }
             }

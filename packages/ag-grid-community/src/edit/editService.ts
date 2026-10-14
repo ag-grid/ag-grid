@@ -488,7 +488,7 @@ export class EditService extends BeanStub implements NamedBean {
             forceCancel = false,
             forceStop = false,
             commit = false,
-        } = params || {};
+        } = params ?? {};
 
         if (STOP_EDIT_SOURCE_TRANSFORM_KEYS.has(source) && this.batch) {
             // if we are in batch editing, we do not stop editing on paste

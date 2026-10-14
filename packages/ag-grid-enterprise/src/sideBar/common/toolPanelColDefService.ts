@@ -14,6 +14,7 @@ export function toolPanelCreateColumnTree(
         if (isColGroupDef(abstractColDef)) {
             // creating 'dummy' group which is not associated with grid column group
             const groupDef = abstractColDef;
+            // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- a user-supplied null groupId is kept, not replaced
             const groupId = groupDef.groupId !== undefined ? groupDef.groupId : groupDef.headerName;
             const group = new AgProvidedColumnGroup(groupDef, groupId!, false, depth);
             const children: (AgColumn | AgProvidedColumnGroup)[] = [];

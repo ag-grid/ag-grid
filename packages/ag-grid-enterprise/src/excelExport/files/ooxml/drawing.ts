@@ -92,7 +92,7 @@ const getNvPicPr = (image: ExcelImage, index: number) => ({
                 rawMap: {
                     id: index,
                     name: image.id,
-                    descr: image.altText != null ? image.altText : undefined,
+                    descr: image.altText ?? undefined,
                 },
             },
             children: [getExt(image)],
@@ -188,9 +188,7 @@ const getBlipFill = (image: ExcelImage, index: number) => {
     }
 
     if (image.recolor) {
-        if (!blipChildren) {
-            blipChildren = [];
-        }
+        blipChildren ??= [];
         switch (image.recolor.toLocaleLowerCase()) {
             case 'grayscale':
                 blipChildren.push({ name: 'a:grayscl' });

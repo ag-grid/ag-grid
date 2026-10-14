@@ -713,7 +713,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         source: SelectionEventSourceType,
         clearSelection?: boolean
     ): void {
-        state ||= [];
+        state ??= [];
         if (!Array.isArray(state)) {
             this.error(103);
             return;

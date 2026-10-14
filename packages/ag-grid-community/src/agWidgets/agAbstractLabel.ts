@@ -47,7 +47,7 @@ export abstract class AgAbstractLabel<
     ) {
         super(template, components);
 
-        this.config = config || ({} as any);
+        this.config = config ?? ({} as any);
         this.registerCSS(agAbstractLabelCSS);
     }
 

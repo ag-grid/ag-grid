@@ -153,14 +153,14 @@ export class AgGroupComponent<
         } = params;
 
         this.cssIdentifier = params.cssIdentifier || 'default';
-        this.enabled = enabled != null ? enabled : true;
-        this.items = items || [];
+        this.enabled = enabled ?? true;
+        this.items = items ?? [];
         this.useToggle = toggleMode ?? false;
 
         this.alignItems = params.alignItems || 'center';
 
         // expanded by default
-        this.expanded = expanded == null ? true : expanded;
+        this.expanded = expanded ?? true;
 
         if (suppressEnabledCheckbox != null) {
             this.suppressEnabledCheckbox = suppressEnabledCheckbox;
@@ -239,7 +239,7 @@ export class AgGroupComponent<
             expanded = true;
             silent = true;
         } else {
-            expanded = expanded != null ? expanded : !this.expanded;
+            expanded = expanded ?? !this.expanded;
 
             if (this.expanded === expanded) {
                 return this;

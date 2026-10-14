@@ -63,17 +63,13 @@ export function _registerModule(module: Module, gridId: string | undefined): voi
     let moduleStore: ModuleStore;
     if (gridId !== undefined) {
         areGridScopedModules = true;
-        if (gridModulesMap[gridId] === undefined) {
-            gridModulesMap[gridId] = {};
-        }
+        gridModulesMap[gridId] ??= {};
         moduleStore = gridModulesMap[gridId];
     } else {
         moduleStore = globalModulesMap;
     }
     for (const rowModel of rowModels) {
-        if (moduleStore[rowModel] === undefined) {
-            moduleStore[rowModel] = {};
-        }
+        moduleStore[rowModel] ??= {};
         moduleStore[rowModel]![module.moduleName] = module;
     }
 

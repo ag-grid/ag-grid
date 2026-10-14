@@ -1776,7 +1776,7 @@ export class ColumnFilterService
                         return;
                     }
 
-                    (filter.setModel(newModel) || AgPromise.resolve()).then(() => resolve());
+                    (filter.setModel(newModel) ?? AgPromise.resolve()).then(() => resolve());
                 });
                 return;
             }

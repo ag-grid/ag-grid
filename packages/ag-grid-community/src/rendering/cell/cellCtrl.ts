@@ -838,7 +838,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         if (this.isClientSideLoadingCell()) {
             return;
         }
-        const { forceBrowserFocus = false, preventScrollOnBrowserFocus = false, sourceEvent } = params || {};
+        const { forceBrowserFocus = false, preventScrollOnBrowserFocus = false, sourceEvent } = params ?? {};
         const allowedTarget = this.editSvc?.allowedFocusTargetOnValidation(this);
         // if allowedTarget is set, then edit mode is active (with potential validation failures) and we should check if we can service the focus request
         if (allowedTarget && allowedTarget !== this) {

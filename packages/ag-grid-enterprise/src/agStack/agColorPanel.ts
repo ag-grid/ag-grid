@@ -368,7 +368,7 @@ export class AgColorPanel<
      * @param brightness In the [0, 1] interval.
      */
     public setSpectrumValue(saturation: number, brightness: number, suppressColorInputUpdate?: boolean) {
-        const valRect = this.spectrumValRect || this.refreshSpectrumRect();
+        const valRect = this.spectrumValRect ?? this.refreshSpectrumRect();
 
         if (valRect == null) {
             return;
@@ -423,8 +423,8 @@ export class AgColorPanel<
         this.H = (Number.isNaN(h) ? 0 : h) / 360;
         this.A = color.a;
 
-        const spectrumHueRect = this.spectrumHueRect || this.refreshHueRect();
-        const spectrumAlphaRect = this.spectrumAlphaRect || this.refreshAlphaRect();
+        const spectrumHueRect = this.spectrumHueRect ?? this.refreshHueRect();
+        const spectrumAlphaRect = this.spectrumAlphaRect ?? this.refreshAlphaRect();
 
         this.spectrumHueSlider.style.left = `${(this.H - 1) * -spectrumHueRect.width - this.spectrumHueSlider.getBoundingClientRect().width / 2}px`;
         this.spectrumAlphaSlider.style.left = `${this.A * spectrumAlphaRect.width - this.spectrumAlphaSlider.getBoundingClientRect().width / 2}px`;

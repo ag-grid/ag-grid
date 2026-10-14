@@ -145,9 +145,7 @@ export function _getConfiguredRowHeight(
     defaultRowHeight?: number
 ): { height: number; estimated: boolean } {
     const { gos, environment } = beans;
-    if (defaultRowHeight == null) {
-        defaultRowHeight = environment.getDefaultRowHeight();
-    }
+    defaultRowHeight ??= environment.getDefaultRowHeight();
 
     // check the function first, in case use set both function and
     // number, when using virtual pagination then function can be

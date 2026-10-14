@@ -107,7 +107,7 @@ export class FormatPanel extends Component {
 
     private getFormatPanelDef() {
         const userProvidedFormatPanelDef = this.gos.get('chartToolPanelsDef')?.formatPanel;
-        return userProvidedFormatPanelDef ? userProvidedFormatPanelDef : DefaultFormatPanelDef;
+        return userProvidedFormatPanelDef ?? DefaultFormatPanelDef;
     }
 
     private isGroupPanelShownInSeries(group: ChartFormatPanelGroup, seriesType: ChartSeriesType): boolean {

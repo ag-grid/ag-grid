@@ -614,7 +614,7 @@ export const _syncFromEditorComp = (
     const { editorValue, editorValueExists, isCancelAfterEnd } = _valueFromEditor(beans, editor, params, knownInvalid);
 
     if (isCancelAfterEnd) {
-        const { cellStartedEditing, cellStoppedEditing } = beans.editModelSvc?.getEdit(position)?.editorState || {};
+        const { cellStartedEditing, cellStoppedEditing } = beans.editModelSvc?.getEdit(position)?.editorState ?? {};
         beans.editModelSvc?.setEdit(position, {
             editorState: { isCancelAfterEnd, cellStartedEditing, cellStoppedEditing },
         });
@@ -885,8 +885,8 @@ function dispatchEditingStopped(
     const { editSvc, editModelSvc } = beans;
 
     const latest = editModelSvc?.getEdit(position);
-    const { editorState } = latest || {};
-    const { isCancelBeforeStart, cellStartedEditing, cellStoppedEditing } = editorState || {};
+    const { editorState } = latest ?? {};
+    const { isCancelBeforeStart, cellStartedEditing, cellStoppedEditing } = editorState ?? {};
 
     // Only dispatch cellEditingStopped if cellEditingStarted was previously fired for this cell
     // and cellEditingStopped has not already been dispatched (at-most-once guarantee).
@@ -935,7 +935,7 @@ export function _populateModelValidationErrors(
         (ctrl, editor, errorMessages) => {
             const { rowNode, column } = ctrl;
             const isInvalid = errorMessages.length > 0;
-            const el = editor.getValidationElement?.(false) || (!editor.isPopup?.() && ctrl.eGui);
+            const el = editor.getValidationElement?.(false) ?? (!editor.isPopup?.() && ctrl.eGui);
 
             if (el) {
                 const invalidMessage = isInvalid ? _formatValidationMessages(errorMessages, translate, 'inline') : '';

@@ -920,7 +920,7 @@ export function getColumnStateFromColDef(beans: BeanCollection, column: AgColumn
     };
 }
 
-const orDefault = <T>(stateValue: T | undefined, defaultValue: T | undefined): T | undefined =>
+const orDefault = <T>(stateValue: T | null | undefined, defaultValue: T | undefined): T | null | undefined =>
     stateValue !== undefined ? stateValue : defaultValue;
 
 /** Invoke `cb` for each leaf column of a built col tree, in declaration order. */
