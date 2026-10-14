@@ -69,7 +69,8 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         mouseEvent: MouseEvent | Touch,
         containerType: ContainerType,
         onClosedCallback?: () => void,
-        filtersOnly?: boolean
+        filtersOnly?: boolean,
+        getEventSource?: () => HTMLElement
     ): void {
         const { column, columnGroup } = this.splitColumnOrGroup(columnOrGroup);
         const defaultTab = filtersOnly ? 'filterMenuTab' : undefined;
@@ -97,7 +98,9 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             defaultTab,
             undefined,
             mouseEvent.target as HTMLElement,
-            onClosedCallback
+            onClosedCallback,
+            undefined,
+            getEventSource
         );
     }
 
@@ -170,7 +173,8 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             restrictToTabs,
             eventSource,
             onClosedCallback,
-            options?.suppressCloseOnEventSource
+            options?.suppressCloseOnEventSource,
+            options?.getEventSource
         );
     }
 
@@ -183,14 +187,16 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         restrictToTabs?: ColumnMenuTab[],
         eventSource?: HTMLElement,
         onClosedCallback?: (event?: Event) => void,
-        suppressCloseOnEventSource?: boolean
+        suppressCloseOnEventSource?: boolean,
+        getEventSource?: () => HTMLElement
     ): boolean {
-        const menuParams = this.getMenuParams(column, columnGroup, restrictToTabs, eventSource);
+        const resolveEventSource = getEventSource ?? (eventSource ? () => eventSource : undefined);
+        const menuParams = this.getMenuParams(column, columnGroup, restrictToTabs, eventSource, resolveEventSource);
         if (!menuParams) {
             // can't create menu
             return false;
         }
-        const { menu, eMenuGui, anchorToElement, restoreFocusParams } = menuParams;
+        const { menu, eMenuGui, restoreFocusParams } = menuParams;
         const closedFuncs: ((e?: Event) => void)[] = [];
         const { menuUtils, popupSvc } = this.beans;
 
@@ -199,7 +205,8 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             this.destroyBean(menu);
             if (column) {
                 _setColMenuVisible(column, false, 'contextMenu');
-                // if we don't have a column, then the menu wasn't launched via keyboard navigation
+            }
+            if (column || columnGroup) {
                 (menuUtils as MenuUtils).restoreFocusOnClose(restoreFocusParams, eComp, e);
             }
             onClosedCallback?.(e);
@@ -224,7 +231,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             // if defaultTab is not present, positionCallback will be called
             // after `showTabBasedOnPreviousSelection` is called.
             positionCallback: defaultTab ? () => positionCallback(menu) : undefined,
-            eventSourceToIgnore: suppressCloseOnEventSource ? eventSource : undefined,
+            eventSourceToIgnore: suppressCloseOnEventSource ? resolveEventSource : undefined,
             ariaLabel: translate('ariaLabelColumnMenu', 'Column Menu'),
         });
 
@@ -239,7 +246,10 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
             // if user starts showing / hiding columns, or otherwise move the underlying column
             // for this menu, we want to stop tracking the menu with the column position. otherwise
             // the menu would move as the user is using the columns tab inside the menu.
-            const stopAnchoringPromise = popupSvc!.setPopupPositionRelatedToElement(eMenuGui, anchorToElement);
+            const stopAnchoringPromise = popupSvc!.setPopupPositionRelatedToElement(
+                eMenuGui,
+                resolveEventSource ?? this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody
+            );
 
             if (stopAnchoringPromise && column) {
                 this.addStopAnchoring(stopAnchoringPromise, column, closedFuncs);
@@ -286,21 +296,21 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
         column?: AgColumn,
         columnGroup?: AgProvidedColumnGroup,
         restrictToTabs?: ColumnMenuTab[],
-        eventSource?: HTMLElement
+        eventSource?: HTMLElement,
+        getEventSource?: () => HTMLElement
     ) {
-        const { focusSvc, ctrlsSvc } = this.beans;
-        const restoreFocusParams = {
+        const focusSvc = this.beans.focusSvc;
+        const restoreFocusParams: MenuRestoreFocusParams = {
             column,
             headerPosition: focusSvc.focusedHeader,
             columnIndex: column?.allColsIndex ?? -1,
-            eventSource,
+            getEventSource,
         };
         const menu = this.createMenu(column, columnGroup, restoreFocusParams, restrictToTabs, eventSource);
         return menu
             ? {
                   menu,
                   eMenuGui: menu.getGui(),
-                  anchorToElement: eventSource || ctrlsSvc.getGridBodyCtrl().eGridBody,
                   restoreFocusParams,
               }
             : undefined;
@@ -315,7 +325,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
     ): (EnterpriseColumnMenu & IEventEmitter<TabbedColumnMenuEvent | ComponentEvent>) | undefined {
         if (_isLegacyMenuEnabled(this.gos)) {
             return this.createBean(
-                new TabbedColumnMenu(column, restoreFocusParams, this.lastSelectedTab, restrictToTabs, eventSource)
+                new TabbedColumnMenu(column, restoreFocusParams, this.lastSelectedTab, restrictToTabs)
             );
         } else {
             const menuItems = (this.beans.colMenuFactory as ColumnMenuFactory).getMenuItems(
@@ -324,9 +334,7 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
                 eventSource
             );
             return menuItems.length
-                ? this.createBean(
-                      new ColumnContextMenu(menuItems, column, columnGroup, restoreFocusParams, eventSource)
-                  )
+                ? this.createBean(new ColumnContextMenu(menuItems, column, columnGroup, restoreFocusParams))
                 : undefined;
         }
     }
@@ -364,14 +372,15 @@ export class EnterpriseMenuFactory extends BeanStub implements NamedBean, IMenuF
     public showMenuAfterContextMenuEvent(
         column: AgColumn | AgProvidedColumnGroup | undefined,
         mouseEvent?: MouseEvent | null,
-        touchEvent?: TouchEvent | null
+        touchEvent?: TouchEvent | null,
+        getEventSource?: () => HTMLElement
     ): void {
         (this.beans.menuUtils as MenuUtils).onContextMenu({
             mouseEvent,
             touchEvent,
             source: 'ui',
             showMenuCallback: (eventOrTouch) => {
-                this.showMenuAfterMouseEvent(column, eventOrTouch, 'columnMenu');
+                this.showMenuAfterMouseEvent(column, eventOrTouch, 'columnMenu', undefined, undefined, getEventSource);
                 return true;
             },
         });
@@ -397,8 +406,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
         private readonly column: AgColumn | undefined,
         private readonly restoreFocusParams: MenuRestoreFocusParams,
         private readonly initialSelection: string,
-        private readonly restrictTo?: ColumnMenuTab[],
-        private readonly sourceElement?: HTMLElement
+        private readonly restrictTo?: ColumnMenuTab[]
     ) {
         super();
         const { tabFactories, includeChecks } = this;
@@ -516,7 +524,7 @@ class TabbedColumnMenu extends BeanStub<TabbedColumnMenuEvent> implements Enterp
             this,
             colMenuFactory.getMenuItems(column),
             this.column,
-            () => this.sourceElement ?? this.getGui()
+            () => this.restoreFocusParams.getEventSource?.() ?? this.getGui()
         );
         this.mainMenuList = mainMenuList;
         mainMenuList.addEventListener('closeMenu', this.onHidePopup.bind(this));
@@ -619,8 +627,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
         private readonly menuItems: (DefaultMenuItem | DefaultToolPanelItem | MenuItemDef)[],
         private readonly column: AgColumn | undefined,
         private readonly columnGroup: AgProvidedColumnGroup | undefined,
-        private readonly restoreFocusParams: MenuRestoreFocusParams,
-        private readonly sourceElement?: HTMLElement
+        private readonly restoreFocusParams: MenuRestoreFocusParams
     ) {
         super({ tag: 'div', ref: 'eColumnMenu', cls: 'ag-menu ag-column-menu', role: 'presentation' });
     }
@@ -630,7 +637,7 @@ class ColumnContextMenu extends Component implements EnterpriseColumnMenu {
             this,
             this.menuItems,
             this.column,
-            () => this.sourceElement ?? this.getGui(),
+            () => this.restoreFocusParams.getEventSource?.() ?? this.getGui(),
             this.columnGroup
         );
         this.mainMenuList = mainMenuList;

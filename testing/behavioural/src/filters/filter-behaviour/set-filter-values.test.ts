@@ -1300,12 +1300,11 @@ describe('Set Filter — a column definition change that changes the keys (AG-18
             rowData: COUNTRY_ROWS,
         });
         await filterCountries(api, ['France']);
-        await ColumnFilterHarness.open(api, 'country');
+        const filter = await ColumnFilterHarness.open(api, 'country');
 
         api.setGridOption('columnDefs', [{ field: 'athlete' }, countryByCode]);
         await asyncSetTimeout(0);
 
-        const filter = await ColumnFilterHarness.open(api, 'country');
         await new FilterDom(api, 'reset selection', { colId: 'country' }).checkFilterDom(`
             COLUMN FILTER (set)
             mini-filter: ""

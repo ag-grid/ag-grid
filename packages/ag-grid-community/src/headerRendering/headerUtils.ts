@@ -1,8 +1,11 @@
 import type { ColumnModel } from '../columns/columnModel';
 import type { VisibleColsService } from '../columns/visibleColsService';
 import type { BeanCollection } from '../context/context';
+import type { AgColumn } from '../entities/agColumn';
+import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { HeaderPosition } from '../interfaces/iHeaderPosition';
 import type { AbstractHeaderCellCtrl } from './cells/abstractCell/abstractHeaderCellCtrl';
+import type { HeaderCellCtrl } from './cells/column/headerCellCtrl';
 import type { HeaderRowCtrl } from './row/headerRowCtrl';
 
 // + gridPanel -> for resizing the body and setting top margin
@@ -17,6 +20,35 @@ export function getHeaderRowCount(colModel: ColumnModel): number {
 
 export function getFocusHeaderRowCount(beans: BeanCollection): number {
     return beans.ctrlsSvc.getHeaderRowContainerCtrl()?.getRowCount() ?? 0;
+}
+
+/** Finds the column's current menu anchor, surviving header refreshes that replace the header cell. */
+export function getColumnHeaderMenuAnchor(
+    beans: BeanCollection,
+    column: AgColumn,
+    isFilter?: boolean
+): HTMLElement | undefined {
+    const headerCellCtrl = beans.ctrlsSvc.getHeaderRowContainerCtrl()?.getHeaderCtrlForColumn(column) as
+        HeaderCellCtrl | undefined;
+    return headerCellCtrl?.getAnchorElementForMenu(isFilter);
+}
+
+export function createHeaderMenuSource(
+    beans: BeanCollection,
+    column: AgColumn | AgColumnGroup,
+    source: HTMLElement
+): () => HTMLElement {
+    return () =>
+        source.isConnected
+            ? source
+            : (beans.ctrlsSvc.getHeaderRowContainerCtrl()?.getHtmlElementForColumnHeader(column) ?? source);
+}
+
+export function getFloatingFilterMenuAnchor(beans: BeanCollection, column: AgColumn): HTMLElement | undefined {
+    return beans.ctrlsSvc
+        .getHeaderRowContainerCtrl()
+        ?.getFloatingFilterCtrlForColumn(column)
+        ?.getAnchorElementForMenu();
 }
 
 export function getAriaHeaderRowCount(beans: BeanCollection): number {

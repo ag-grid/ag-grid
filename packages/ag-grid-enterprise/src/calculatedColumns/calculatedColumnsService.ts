@@ -1099,7 +1099,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         event: MouseEvent | TouchEvent | KeyboardEvent | undefined,
         params: CalculatedColumnDialogRestoreFocusParams | undefined
     ): void {
-        if (!params?.eventSource) {
+        const eventSource = params?.eventSource;
+        if (!eventSource) {
             return;
         }
 
@@ -1107,7 +1108,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             column,
             columnIndex: column.allColsIndex,
             headerPosition: params.headerPosition,
-            eventSource: params.eventSource,
+            getEventSource: () => eventSource,
         };
 
         (this.beans.menuUtils as MenuUtils | undefined)?.restoreFocusOnClose(restoreFocusParams, eComp, event, true);

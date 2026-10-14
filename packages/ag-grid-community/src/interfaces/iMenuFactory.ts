@@ -8,6 +8,7 @@ type MenuColumn = AgColumn | AgProvidedColumnGroup | undefined;
 export interface ShowMenuAfterButtonClickOptions {
     filtersOnly?: boolean;
     suppressCloseOnEventSource?: boolean;
+    getEventSource?: () => HTMLElement;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -24,12 +25,14 @@ export interface IMenuFactory {
         mouseEvent: MouseEvent | Touch,
         containerType: ContainerType,
         onClosedCallback?: () => void,
-        filtersOnly?: boolean
+        filtersOnly?: boolean,
+        getEventSource?: () => HTMLElement
     ): void;
     showMenuAfterContextMenuEvent(
         column: MenuColumn,
         mouseEvent?: MouseEvent | null,
-        touchEvent?: TouchEvent | null
+        touchEvent?: TouchEvent | null,
+        getEventSource?: () => HTMLElement
     ): void;
     isMenuEnabled(column: AgColumn): boolean;
     hideActiveMenu(): void;

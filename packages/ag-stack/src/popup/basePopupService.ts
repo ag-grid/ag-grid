@@ -461,16 +461,7 @@ export abstract class BasePopupService<
         const beans = this.beans;
         const eDocument = _getDocument(beans);
 
-        const {
-            wrapperEl,
-            eChild: popupEl,
-            closedCallback,
-            afterGuiAttached,
-            closeOnEsc,
-            modal,
-            ariaOwns,
-            eventSourceToIgnore,
-        } = params;
+        const { wrapperEl, eChild: popupEl, closedCallback, afterGuiAttached, closeOnEsc, modal, ariaOwns } = params;
 
         let popupHidden = false;
 
@@ -490,6 +481,10 @@ export abstract class BasePopupService<
         const hidePopupOnTouchEvent = (event: TouchEvent) => removeListeners({ touchEvent: event });
 
         const removeListeners = (popupParams: PopupEventParams = {}) => {
+            const eventSourceToIgnore =
+                typeof params.eventSourceToIgnore === 'function'
+                    ? params.eventSourceToIgnore()
+                    : params.eventSourceToIgnore;
             const { mouseEvent, touchEvent, keyboardEvent, forceHide } = popupParams;
             const pointerEvent = mouseEvent ?? touchEvent;
             const isSourceDismissalEvent =
@@ -553,7 +548,7 @@ export abstract class BasePopupService<
     private addPopupToPopupList(
         element: HTMLElement,
         removeListeners: (popupParams?: PopupEventParams) => void,
-        anchorToElement?: HTMLElement
+        anchorToElement?: HTMLElement | (() => HTMLElement)
     ): void {
         this.popupList.push({
             element: element,
@@ -575,7 +570,7 @@ export abstract class BasePopupService<
 
     public setPopupPositionRelatedToElement(
         popupEl: HTMLElement,
-        relativeElement?: HTMLElement | null
+        relativeElement?: HTMLElement | (() => HTMLElement) | null
     ): AgPromise<() => void> | undefined {
         const popupIndex = this.getPopupIndex(popupEl);
 
@@ -623,7 +618,7 @@ export abstract class BasePopupService<
 
     private keepPopupPositionedRelativeTo(params: {
         ePopup: HTMLElement;
-        element: HTMLElement;
+        element: HTMLElement | (() => HTMLElement);
         hidePopup: (params?: PopupEventParams) => void;
     }): AgPromise<() => void> {
         const eParent = this.getPopupParent();
@@ -631,7 +626,8 @@ export abstract class BasePopupService<
 
         const { element, ePopup } = params;
 
-        const sourceRect = element.getBoundingClientRect();
+        const getElement = typeof element === 'function' ? element : () => element;
+        const sourceRect = getElement().getBoundingClientRect();
 
         const extractFromPixelValue = (pxSize: string) => Number.parseInt(pxSize.substring(0, pxSize.length - 1), 10);
         const createPosition = (prop: 'top' | 'left', direction: Direction) => {
@@ -653,7 +649,7 @@ export abstract class BasePopupService<
             fwOverrides.wrapIncoming(() => {
                 _wrapInterval(() => {
                     const pRect = eParent.getBoundingClientRect();
-                    const sRect = element.getBoundingClientRect();
+                    const sRect = getElement().getBoundingClientRect();
 
                     const elementNotInDom = sRect.top == 0 && sRect.left == 0 && sRect.height == 0 && sRect.width == 0;
                     if (elementNotInDom) {

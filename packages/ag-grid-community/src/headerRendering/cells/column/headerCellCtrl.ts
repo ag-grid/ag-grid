@@ -21,7 +21,12 @@ import { CSS_COLUMN_HEADER_EDIT_HIGHLIGHTED } from '../../../styling/columnHeade
 import type { ComponentTooltip } from '../../../tooltip/headerTooltipSource';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
-import { getColumnHeaderRowHeight, getGroupRowsHeight } from '../../headerUtils';
+import {
+    createHeaderMenuSource,
+    getColumnHeaderMenuAnchor,
+    getColumnHeaderRowHeight,
+    getGroupRowsHeight,
+} from '../../headerUtils';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef, _refreshCssClasses } from '../cssClassApplier';
@@ -210,7 +215,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     }
 
     private createParams(componentClaim: ComponentInstanceClaim): IHeaderParams {
-        const { menuSvc, sortSvc, colFilter, gos } = this.beans;
+        const { beans, column } = this;
+        const { menuSvc, sortSvc, colFilter, gos } = beans;
         const params: IHeaderParams = _addGridCommonParams(gos, {
             column: this.column,
             displayName: this.displayName!,
@@ -222,6 +228,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
                 menuSvc?.showColumnMenu({
                     column: this.column,
                     buttonElement,
+                    getButtonElement: () => getColumnHeaderMenuAnchor(beans, column),
                     positionBy: 'button',
                     onClosedCallback,
                 });
@@ -230,6 +237,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
                 menuSvc?.showColumnMenu({
                     column: this.column,
                     mouseEvent,
+                    getEventSource: createHeaderMenuSource(beans, column, mouseEvent.target as HTMLElement),
                     positionBy: 'mouse',
                     onClosedCallback,
                 });
@@ -238,6 +246,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
                 menuSvc?.showFilterMenu({
                     column: this.column,
                     buttonElement: buttonElement,
+                    getButtonElement: () => getColumnHeaderMenuAnchor(beans, column, true),
                     containerType: 'columnFilter',
                     positionBy: 'button',
                 });

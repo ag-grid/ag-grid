@@ -28,6 +28,7 @@ import {
     isRightAnchored,
 } from '../../../rendering/features/horizontalPositionUtils';
 import { _isHeaderFocusSuppressed } from '../../../utils/gridFocus';
+import { createHeaderMenuSource } from '../../headerUtils';
 import type { HeaderRowCtrl } from '../../row/headerRowCtrl';
 import { refreshFirstAndLastStyles } from '../cssClassApplier';
 
@@ -475,7 +476,12 @@ export abstract class AbstractHeaderCellCtrl<
             event.preventDefault();
         }
         if (menuSvc?.isHeaderContextMenuEnabled(column)) {
-            menuSvc.showHeaderContextMenu(column, mouseEvent, touchEvent);
+            menuSvc.showHeaderContextMenu(
+                column,
+                mouseEvent,
+                touchEvent,
+                createHeaderMenuSource(this.beans, this.column, event.target as HTMLElement)
+            );
         }
 
         this.dispatchColumnMouseEvent('columnHeaderContextMenu', column);
