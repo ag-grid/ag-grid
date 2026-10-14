@@ -41,9 +41,9 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             // not supported
             return;
         }
-        this.showPopup(
+        this.showPopup({
             column,
-            (eMenu) => {
+            positionCallback: (eMenu) => {
                 this.popupSvc?.positionPopupUnderMouseEvent({
                     additionalParams: { column },
                     type: containerType,
@@ -52,12 +52,11 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
                 });
             },
             containerType,
-            mouseEvent.target as HTMLElement,
-            _isLegacyMenuEnabled(this.gos),
+            eventSource: mouseEvent.target as HTMLElement,
+            isLegacyMenuEnabled: _isLegacyMenuEnabled(this.gos),
             onClosedCallback,
-            undefined,
-            getEventSource
-        );
+            getEventSource,
+        });
     }
 
     public showMenuAfterButtonClick(
@@ -82,9 +81,9 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         const nudgeX = isLegacyMenuEnabled ? undefined : 4 * multiplier;
         const nudgeY = isLegacyMenuEnabled ? undefined : 4;
 
-        return this.showPopup(
+        return this.showPopup({
             column,
-            (eMenu) => {
+            positionCallback: (eMenu) => {
                 this.popupSvc?.positionPopupByComponent({
                     type: containerType,
                     eventSource: options?.getEventSource?.() ?? eventSource,
@@ -101,21 +100,30 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             eventSource,
             isLegacyMenuEnabled,
             onClosedCallback,
-            options?.suppressCloseOnEventSource,
-            options?.getEventSource
-        );
+            suppressCloseOnEventSource: options?.suppressCloseOnEventSource,
+            getEventSource: options?.getEventSource,
+        });
     }
 
-    private showPopup(
-        column: AgColumn | undefined,
-        positionCallback: (eMenu: HTMLElement) => void,
-        containerType: ContainerType,
-        eventSource: HTMLElement,
-        isLegacyMenuEnabled: boolean,
-        onClosedCallback?: (event?: Event) => void,
-        suppressCloseOnEventSource?: boolean,
-        getEventSource?: () => HTMLElement
-    ): boolean {
+    private showPopup({
+        column,
+        positionCallback,
+        containerType,
+        eventSource,
+        isLegacyMenuEnabled,
+        onClosedCallback,
+        suppressCloseOnEventSource,
+        getEventSource,
+    }: {
+        column: AgColumn | undefined;
+        positionCallback: (eMenu: HTMLElement) => void;
+        containerType: ContainerType;
+        eventSource: HTMLElement;
+        isLegacyMenuEnabled: boolean;
+        onClosedCallback?: (event?: Event) => void;
+        suppressCloseOnEventSource?: boolean;
+        getEventSource?: () => HTMLElement;
+    }): boolean {
         const comp = column ? this.createBean(new FilterComp(column, 'COLUMN_MENU')) : undefined;
         if (!comp?.hasFilter() || !column) {
             this.destroyBean(comp);
