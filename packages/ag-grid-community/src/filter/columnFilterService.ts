@@ -1563,7 +1563,7 @@ export class ColumnFilterService
         getFilterUiFromWrapper(filterWrapper, wasHandler)?.then((filter) => {
             const shouldRefreshFilter = filter?.refresh ? filter.refresh(newFilterParams) : true;
             // framework wrapper always implements optional methods, but returns null if no underlying method
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- typed `boolean`, but framework wrappers return null
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- typed `boolean`, but no-return implementations give undefined and framework wrappers give null; only an explicit false destroys
             if (shouldRefreshFilter === false) {
                 this.destroyFilterUi(filterWrapper, column, compDetails, createFilterUi);
             } else {
