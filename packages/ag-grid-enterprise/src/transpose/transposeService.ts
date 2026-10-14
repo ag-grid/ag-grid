@@ -148,7 +148,8 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         const token = ++this.refreshToken;
         const prevCols = this.cols;
         const recordCount = records.length;
-        let changed = prevCols == null || prevCols.length !== recordCount + 1;
+        let setChanged = prevCols == null || prevCols.length !== recordCount + 1;
+        let orderChanged = false;
 
         this.fieldNameCol ??= this.createCol(this.createFieldNameColDef(headerCol));
         const nextCols = new Array<AgColumn>(recordCount + 1);
@@ -163,26 +164,54 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
             if (col === undefined) {
                 col = this.createCol(this.createRecordColDef(recordId, header));
                 recordCols.set(recordId, col);
+                setChanged = true;
             } else if (col.colDef.headerName !== header) {
                 col.setColDef({ ...col.colDef, headerName: header }, null, 'api');
             }
             col.transposeRecord = record;
             col.buildToken = token;
-            if (!changed && prevCols![i + 1] !== col) {
-                changed = true;
+            if (!setChanged && !orderChanged && prevCols![i + 1] !== col) {
+                orderChanged = true;
             }
             nextCols[i + 1] = col;
         }
 
         if (recordCols.size > recordCount) {
             this.destroyStaleRecordCols(token);
+            setChanged = true;
         }
-        if (!changed) {
+        if (!setChanged && !orderChanged) {
             return;
         }
         this.cols = nextCols;
         this.tree = nextCols;
-        this.refreshColModel();
+        if (setChanged || !this.reorderColModel(nextCols)) {
+            this.refreshColModel();
+        }
+    }
+
+    /**
+     * Same columns in a new order (sort): reorders the column model in place the way a column move does,
+     * skipping the full column refresh. Returns `false` when the model doesn't hold exactly these columns.
+     */
+    private reorderColModel(nextCols: AgColumn[]): boolean {
+        const { colModel, visibleCols } = this.beans;
+        const colsList = colModel.colsList;
+        const len = nextCols.length;
+        if (colsList.length !== len) {
+            return false;
+        }
+        for (let i = 0; i < len; ++i) {
+            colsList[i] = nextCols[i];
+        }
+        colModel.markColsListIndexDirty();
+        colModel.beginColUpdate();
+        try {
+            visibleCols.refresh('api', false);
+        } finally {
+            colModel.endColUpdate();
+        }
+        return true;
     }
 
     private destroyStaleRecordCols(token: number): void {
