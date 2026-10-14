@@ -257,6 +257,55 @@ test.describe('native tab navigation in provided filters', () => {
         await expect(input).toHaveAttribute('tabindex', '3');
     });
 
+    test('unchecked custom radio groups are a single Tab stop when wrapping in either direction', async ({ page }) => {
+        const { withApi } = await mountGrid(page, {
+            enterprise: true,
+            options: () => {
+                class RadioFilter {
+                    private readonly gui = document.createElement('div');
+                    init() {
+                        this.gui.innerHTML =
+                            '<input aria-label="Filter value">' +
+                            '<input type="radio" name="mode" value="a" tabindex="0">' +
+                            '<input type="radio" name="mode" value="b" tabindex="0">';
+                    }
+                    getGui() {
+                        return this.gui;
+                    }
+                    getModel() {
+                        return null;
+                    }
+                    setModel() {}
+                    isFilterActive() {
+                        return false;
+                    }
+                    doesFilterPass() {
+                        return true;
+                    }
+                }
+                return {
+                    columnDefs: [{ field: 'value', filter: RadioFilter }],
+                    rowData: [],
+                };
+            },
+        });
+        await withApi((api) => api.showColumnFilter('value'));
+        const menu = page.locator('.ag-filter-menu');
+        const input = menu.getByRole('textbox', { name: 'Filter value' });
+        for (const backwards of [false, true]) {
+            if (backwards) {
+                await input.evaluate((element) => element.parentElement!.appendChild(element));
+            }
+            await input.focus();
+            const key = backwards ? 'Shift+Tab' : 'Tab';
+            await page.keyboard.press(key);
+            await expect(menu.locator('input[type="radio"]:focus')).toHaveCount(1);
+            await page.keyboard.press(key);
+            await expect(input).toBeFocused();
+            await expect(menu.locator('input[type="radio"]:checked')).toHaveCount(0);
+        }
+    });
+
     test('Set Filter keeps managed list navigation, Space selection and Enter to apply', async ({ page }) => {
         const { withApi } = await mountGrid(page, {
             enterprise: true,
