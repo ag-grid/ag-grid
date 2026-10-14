@@ -248,7 +248,7 @@ describe('EditModelService', () => {
         // findNextCellToFocusOn suspends the model while it may initialise editors (see singleCellEditStrategy),
         // so start() can run for a row that already has editing entries while suspended.
         it('keeps existing editing entries and editingCount in sync when suspended', () => {
-            editModelService['beans'] = { valueSvc: { getValueFromData: () => 'src' } } as any;
+            editModelService['beans'] = { valueSvc: { getValueFromData: () => 'src', getCellValueFromData: () => 'src' } } as any;
 
             editModelService.setEdit(position1, { state: 'editing' }); // rowNode1 / column1
             editModelService.suspend(true);
