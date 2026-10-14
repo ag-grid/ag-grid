@@ -225,10 +225,11 @@ export class AgTabGuardCtrl<
         }
     }
 
-    private getTabOrderedElements(root: HTMLElement): HTMLElement[] {
+    private getTabOrderedElements(root: HTMLElement, activeEl?: Element | null): HTMLElement[] {
         return _removeNonTabStopRadios(
             root,
-            _findFocusableElements(root).filter((element) => element.tabIndex >= 0)
+            _findFocusableElements(root).filter((element) => element.tabIndex >= 0),
+            activeEl
         ).sort((a, b) => (a.tabIndex || Number.MAX_SAFE_INTEGER) - (b.tabIndex || Number.MAX_SAFE_INTEGER));
     }
 
@@ -237,7 +238,7 @@ export class AgTabGuardCtrl<
         const fromBottom = e.target === this.eBottomGuard;
         const previous = e.relatedTarget as HTMLElement | null;
         // Ancestor guards reactivate on focusout; do not re-enter the container we are leaving.
-        const elements = this.getTabOrderedElements(root).filter(
+        const elements = this.getTabOrderedElements(root, previous).filter(
             (element) =>
                 !this.isTabGuard(element) &&
                 (element === previous ||

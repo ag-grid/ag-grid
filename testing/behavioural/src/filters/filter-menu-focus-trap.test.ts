@@ -132,6 +132,32 @@ describe('Filter menu focus trap', () => {
         expect(input).toHaveFocus();
     });
 
+    test.each([false, true])('wraps past an unchecked radio group as one stop (backwards: %s)', async (backwards) => {
+        const api = await gridsManager.createGridAndWait('uncheckedRadioFilter', {
+            columnDefs: [{ field: 'a', filter: RadioGroupFirstFilter }],
+            rowData: [{ a: 1 }],
+        });
+        api.showColumnFilter('a');
+        const input = await waitFor(() => {
+            const input = document.querySelector<HTMLInputElement>('.ag-filter-menu .test-filter-input');
+            expect(input).not.toBeNull();
+            return input!;
+        });
+        const radios = input.parentElement!.querySelectorAll<HTMLInputElement>('input[type="radio"]');
+        radios[1].checked = false;
+        if (!backwards) {
+            input.parentElement!.prepend(input);
+        }
+        const user = userEvent.setup();
+        input.focus();
+        await user.tab({ shift: backwards });
+        expect(radios[backwards ? 1 : 0]).toHaveFocus();
+        await user.tab({ shift: backwards });
+        expect(input).toHaveFocus();
+        expect(radios[0]).not.toBeChecked();
+        expect(radios[1]).not.toBeChecked();
+    });
+
     test('popup preserves custom tab order when controls are inserted, updated and removed', async () => {
         const api = await gridsManager.createGridAndWait('localFilterTabOrder', {
             columnDefs: [{ field: 'a', filter: PositiveTabIndexFilter }],
