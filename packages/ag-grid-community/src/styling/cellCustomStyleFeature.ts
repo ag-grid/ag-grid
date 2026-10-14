@@ -11,8 +11,8 @@ export function _setupCellCustomStyle(beans: BeanCollection, cellCtrl: CellCtrl)
 }
 
 export function _applyCellClassRules(beans: BeanCollection, cellCtrl: CellCtrl): void {
-    const { column, comp } = cellCtrl;
-    const colDef = column.colDef;
+    const comp = cellCtrl.comp;
+    const colDef = cellCtrl.getConfigCell().column.colDef;
     const cellClassRules = colDef.cellClassRules;
     const cellClassParams = getCellClassParams(beans, cellCtrl, colDef);
 
@@ -29,7 +29,7 @@ export function _applyCellClassRules(beans: BeanCollection, cellCtrl: CellCtrl):
 }
 
 export function _applyCellUserStyles(beans: BeanCollection, cellCtrl: CellCtrl): void {
-    const colDef = cellCtrl.column.colDef;
+    const colDef = cellCtrl.getConfigCell().column.colDef;
     const cellStyle = colDef.cellStyle;
 
     if (!cellStyle) {
@@ -50,8 +50,8 @@ export function _applyCellUserStyles(beans: BeanCollection, cellCtrl: CellCtrl):
 }
 
 export function _applyCellClassesFromColDef(beans: BeanCollection, cellCtrl: CellCtrl): void {
-    const { column, comp } = cellCtrl;
-    const colDef = column.colDef;
+    const comp = cellCtrl.comp;
+    const colDef = cellCtrl.getConfigCell().column.colDef;
     const cellClassParams = getCellClassParams(beans, cellCtrl, colDef);
 
     const prevClasses = cellCtrl.customStyleStaticClasses;
@@ -70,7 +70,8 @@ export function _applyCellClassesFromColDef(beans: BeanCollection, cellCtrl: Cel
 }
 
 function getCellClassParams(beans: BeanCollection, cellCtrl: CellCtrl, colDef: ColDef): CellClassParams {
-    const { value, rowNode, column } = cellCtrl;
+    const value = cellCtrl.value;
+    const { rowNode, column } = cellCtrl.getConfigCell();
     return _addGridCommonParams(beans.gos, {
         value,
         data: rowNode.data,

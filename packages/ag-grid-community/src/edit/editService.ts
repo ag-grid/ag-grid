@@ -4,6 +4,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import { _getTransposedCell } from '../entities/agColumn';
 import { _getRowNode } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
 import type { AgEventType } from '../eventTypes';
@@ -1146,6 +1147,10 @@ export class EditService extends BeanStub implements NamedBean {
 
     public isCellEditable(position: Required<EditPosition>, source: 'api' | 'ui' = 'ui'): boolean {
         const { gos, beans } = this;
+        const transposed = _getTransposedCell(position.column as AgColumn, position.rowNode);
+        if (transposed) {
+            return this.isCellEditable(transposed, source);
+        }
 
         const rowNode = position.rowNode;
         if (rowNode.group && position.column.getColDef().groupRowEditable == null) {

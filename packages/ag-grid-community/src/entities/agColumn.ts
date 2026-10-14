@@ -49,6 +49,7 @@ import type {
     ShowValuesAsResolved,
     ShowValuesAsResult,
 } from './colDef-showValuesAs';
+import type { RowNode } from './rowNode';
 
 let instanceIdSequence = 0;
 export function getNextColInstanceId(): ColumnInstanceId {
@@ -72,6 +73,20 @@ export const _resolvePivotColumnForRow = (column: AgColumn, rowNode: IRowNode): 
         }
     }
     return column;
+};
+
+/**
+ * In the transposed view, maps a displayed cell (field row × record column) to the original record and field
+ * column whose data and config it shows; `undefined` for every other cell.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export const _getTransposedCell = (
+    column: AgColumn,
+    rowNode: IRowNode
+): { column: AgColumn; rowNode: RowNode } | undefined => {
+    const record = column.transposeRecord;
+    const fieldCol = record === undefined ? undefined : (rowNode as RowNode).transposeFieldCol;
+    return fieldCol === undefined ? undefined : { column: fieldCol, rowNode: record! };
 };
 
 const DEFAULT_SORTING_ORDER: SortDirection[] = ['asc', 'desc', null];
@@ -159,6 +174,8 @@ export class AgColumn<TValue = any>
     public allowFormula: boolean = false;
     public showRowGroup: string | boolean | undefined = undefined;
     public pivotValueColumn: AgColumn | null | undefined = undefined;
+    /** Transposed view only: the record this generated column shows. */
+    public transposeRecord: RowNode | undefined = undefined;
     public valueFormatter: string | ValueFormatterFunc<any, TValue> | undefined = undefined;
     public refData: RefData | undefined = undefined;
     public enableCellChangeFlash: boolean | undefined = undefined;

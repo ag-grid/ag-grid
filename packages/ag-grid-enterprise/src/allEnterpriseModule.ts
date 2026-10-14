@@ -33,6 +33,7 @@ import { SideBarModule } from './sideBar/sideBarModule';
 import { SparklinesModule } from './sparkline/sparklinesModule';
 import { StatusBarModule } from './statusBar/statusBarModule';
 import { ToolbarModule } from './toolbar/toolbarModule';
+import { TransposeModule } from './transpose/transposeModule';
 import { TreeDataModule } from './treeData/treeDataModule';
 import { VERSION } from './version';
 import { ViewportRowModelModule } from './viewportRowModel/viewportRowModelModule';
@@ -53,6 +54,7 @@ const dependsOn = [
     CellSelectionModule,
     RichSelectModule,
     RowNumbersModule,
+    TransposeModule,
     RowGroupingModule,
     RowGroupingPanelModule,
     GroupFilterModule,

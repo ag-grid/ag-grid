@@ -18,6 +18,7 @@ import type { BeanCollection } from '../../context/context';
 import type { RowDragComp } from '../../dragAndDrop/rowDragComp';
 import type { EditService } from '../../edit/editService';
 import type { AgColumn } from '../../entities/agColumn';
+import { _getTransposedCell } from '../../entities/agColumn';
 import type { CellClassRules, CellStyle, CheckboxSelectionCallback, ColDef } from '../../entities/colDef';
 import type { RowNode } from '../../entities/rowNode';
 import type { AgEventType } from '../../eventTypes';
@@ -367,8 +368,13 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         return this.column.colDef.cellAriaRole ?? 'gridcell';
     }
 
+    /** The column and row whose config this cell uses: in the transposed view, the original field and record. */
+    public getConfigCell(): { column: AgColumn; rowNode: RowNode } {
+        return _getTransposedCell(this.column, this.rowNode) ?? this;
+    }
+
     public isCellRenderer(): boolean {
-        const colDef = this.column.colDef;
+        const colDef = this.getConfigCell().column.colDef;
         return colDef.cellRenderer != null || colDef.cellRendererSelector != null;
     }
 
@@ -423,7 +429,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
 
         // if node is stub, and no group data for this node (groupSelectsChildren can populate group data)
         const isLoading = rowNode.stub && rowNode.groupData?.[column.getId()] == null;
-        const colDef = column.colDef;
+        const colDef = this.getConfigCell().column.colDef;
 
         if (isLoading || this.isCellRenderer()) {
             const params = this.createCellRendererParams();
@@ -558,6 +564,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
             eGui,
             beans: { valueSvc, gos, editSvc },
         } = this;
+        const configCell = this.getConfigCell();
         const res: ICellRendererParams = _addGridCommonParams(gos, {
             value: value,
             valueFormatted: valueFormatted,
@@ -565,11 +572,11 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
             setValue: (value: any) =>
                 editSvc?.setDataValue({ rowNode, column }, value) || rowNode.setDataValue(column, value),
             formatValue: this.formatValue.bind(this),
-            data: rowNode.data,
-            node: rowNode,
+            data: configCell.rowNode.data,
+            node: configCell.rowNode,
             pinned: column.getPinned() as any,
-            colDef: column.colDef,
-            column,
+            colDef: configCell.column.colDef,
+            column: configCell.column,
             refreshCell: this.refreshCell.bind(this),
             eGridCell: eGui,
             eParentOfValue: comp.getParentOfValue()!,

@@ -1199,6 +1199,17 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `PaginationModule`
      */
     @Input() public paginationPanels: PaginationPanel[] | undefined = undefined;
+    /** Set to `true` to show the transposed view: each record is shown as a column and each field as a row.
+     * Prototype only.
+     * @default false
+     * @agModule `TransposeModule`
+     */
+    @Input({ transform: booleanAttribute }) public transpose: boolean | undefined = undefined;
+    /** The `colId` of the column whose values head each record column in the transposed view.
+     * That column is not shown as a field row. Prototype only.
+     * @agModule `TransposeModule`
+     */
+    @Input() public transposeHeaderColId: string | undefined = undefined;
     /** Set to `true` to enable pivot mode.
      * @default false
      * @agModule `PivotModule`

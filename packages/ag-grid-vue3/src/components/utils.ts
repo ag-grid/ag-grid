@@ -1029,6 +1029,17 @@ export interface Props<TData> {
          * @agModule `PaginationModule`
          */
     paginationPanels?: PaginationPanel[],
+    /** Set to `true` to show the transposed view: each record is shown as a column and each field as a row.
+         * Prototype only.
+         * @default false
+         * @agModule `TransposeModule`
+         */
+    transpose?: boolean,
+    /** The `colId` of the column whose values head each record column in the transposed view.
+         * That column is not shown as a field row. Prototype only.
+         * @agModule `TransposeModule`
+         */
+    transposeHeaderColId?: string,
     /** Set to `true` to enable pivot mode.
          * @default false
          * @agModule `PivotModule`
@@ -2376,6 +2387,8 @@ export function getProps() {
         paginateChildRows: undefined,
         suppressPaginationPanel: undefined,
         paginationPanels: undefined,
+        transpose: undefined,
+        transposeHeaderColId: undefined,
         pivotMode: undefined,
         pivotPanelShow: undefined,
         pivotMaxGeneratedColumns: undefined,

@@ -173,6 +173,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     refreshAfterGroupEdit: ['RowGrouping', 'TreeData'],
     rowGroupPanelShow: 'RowGroupingPanel',
     rowNumbers: 'RowNumbers',
+    transpose: 'Transpose',
     rowSelection: (_options, gridOptions) =>
         gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'RowSelection',
     rowStyle: 'RowStyle',

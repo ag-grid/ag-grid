@@ -1319,6 +1319,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
         }
 
+        const transposeSvc = beans.transposeSvc;
+        if (transposeSvc?.isActive()) {
+            rowsToDisplay = transposeSvc.transposeRows(rowsToDisplay);
+        }
+
         this.rowsToDisplay = rowsToDisplay;
         if (!formula?.active) {
             this.formulaRows = formula?.isEvaluationActive() ? rowsToDisplay : [];

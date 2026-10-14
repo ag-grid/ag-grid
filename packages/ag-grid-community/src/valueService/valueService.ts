@@ -8,7 +8,7 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { EditService } from '../edit/editService';
 import type { AgColumn } from '../entities/agColumn';
-import { _resolvePivotColumnForRow } from '../entities/agColumn';
+import { _getTransposedCell, _resolvePivotColumnForRow } from '../entities/agColumn';
 import type {
     ColDef,
     ColKey,
@@ -280,6 +280,10 @@ export class ValueService extends BeanStub implements NamedBean {
     // aggregation) must pre-resolve via `_resolvePivotColumnForRow`. Run the getValue benchmark to verify.
     // This does NOT resolve pending edit values (edit or batch). `_getFilterValueSource` mirrors its precedence.
     public getValueFromData(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean = false): any {
+        if (column.transposeRecord !== undefined) {
+            const transposed = _getTransposedCell(column, rowNode);
+            return transposed && this.getValueFromData(transposed.column, transposed.rowNode, ignoreAggData);
+        }
         // An actively-aggregating calc col aggregates its per-leaf results, so group rows read aggData
         // instead of re-evaluating the formula (gated on the active state, not just a defined aggFunc).
         const evaluateFormula = column.isCalculatedCol && !(column.aggregationActive && rowNode.group);
@@ -452,6 +456,10 @@ export class ValueService extends BeanStub implements NamedBean {
         newValue: TValueNew,
         oldValue: TValueOld
     ): TValue {
+        const transposed = rowNode && _getTransposedCell(column, rowNode);
+        if (transposed) {
+            return this.parseValue(transposed.column, transposed.rowNode, newValue, oldValue);
+        }
         const colDef = column.colDef;
         // we do not allow parsing of formulas
         if (column.allowFormula && this.formula?.isFormula(newValue)) {
@@ -492,6 +500,16 @@ export class ValueService extends BeanStub implements NamedBean {
         suppliedFormatter?: (value: any) => string,
         useFormatterFromColumn = true
     ): string | null {
+        const transposed = node && _getTransposedCell(column, node);
+        if (transposed) {
+            return this.formatValue(
+                transposed.column,
+                transposed.rowNode,
+                value,
+                suppliedFormatter,
+                useFormatterFromColumn
+            );
+        }
         let result: string | null = null;
         // supplied formatter wins (e.g. set filter items have their own); otherwise use the column's
         const formatter = suppliedFormatter ?? (useFormatterFromColumn ? column.valueFormatter : undefined);
@@ -552,6 +570,10 @@ export class ValueService extends BeanStub implements NamedBean {
      * @returns `true` if the value has been updated, otherwise `false`.
      */
     public setValue(rowNode: IRowNode, column: AgColumn, newValue: any, eventSource?: string): boolean {
+        const transposed = _getTransposedCell(column, rowNode);
+        if (transposed) {
+            return this.setValue(transposed.rowNode, transposed.column, newValue, eventSource);
+        }
         const colDef = column.colDef;
 
         if (!rowNode.data && canCreateRowNodeData(rowNode, colDef)) {

@@ -1211,6 +1211,21 @@ export interface GridOptions<TData = any> {
      */
     paginationPanels?: PaginationPanel[];
 
+    // *** Transpose *** //
+    /**
+     * Set to `true` to show the transposed view: each record is shown as a column and each field as a row.
+     * Prototype only.
+     * @default false
+     * @agModule `TransposeModule`
+     */
+    transpose?: boolean;
+    /**
+     * The `colId` of the column whose values head each record column in the transposed view.
+     * That column is not shown as a field row. Prototype only.
+     * @agModule `TransposeModule`
+     */
+    transposeHeaderColId?: string;
+
     // *** Pivot and Aggregation *** //
     /**
      * Set to `true` to enable pivot mode.
