@@ -23,6 +23,7 @@ export const USER_COMP_MODULES: Record<UserComponentName, ValidationModuleName> 
     agLoadingCellRenderer: 'LoadingCellRenderer',
     agTransposeFieldCellRenderer: 'Transpose',
     agTransposeRecordHeader: 'Transpose',
+    agTransposeFieldHeader: 'Transpose',
     agSkeletonCellRenderer: 'SkeletonCellRenderer',
     agCheckboxCellRenderer: 'CheckboxCellRenderer',
     agLoadingOverlay: 'Overlay',

@@ -214,6 +214,7 @@ export type UserComponentName =
     | 'agLoadingCellRenderer'
     | 'agTransposeFieldCellRenderer'
     | 'agTransposeRecordHeader'
+    | 'agTransposeFieldHeader'
     | 'agSkeletonCellRenderer'
     | 'agCheckboxCellRenderer'
     | 'agLoadingOverlay'

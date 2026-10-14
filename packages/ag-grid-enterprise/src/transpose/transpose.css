@@ -40,3 +40,7 @@
 .ag-transpose-record-header-selected {
     font-weight: 600;
 }
+
+.ag-transpose-record-selected {
+    background-color: var(--ag-selected-row-background-color);
+}

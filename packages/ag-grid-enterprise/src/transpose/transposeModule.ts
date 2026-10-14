@@ -4,6 +4,7 @@ import { EnterpriseCoreModule } from '../agGridEnterpriseModule';
 import { VERSION } from '../version';
 import transposeCSS from './transpose.css';
 import { TransposeFieldCellRenderer } from './transposeFieldCellRenderer';
+import { TransposeFieldHeader } from './transposeFieldHeader';
 import { TransposeRecordHeader } from './transposeRecordHeader';
 import { TransposeService } from './transposeService';
 
@@ -19,6 +20,7 @@ export const TransposeModule: _ModuleWithoutApi = {
     userComponents: {
         agTransposeFieldCellRenderer: TransposeFieldCellRenderer,
         agTransposeRecordHeader: TransposeRecordHeader,
+        agTransposeFieldHeader: TransposeFieldHeader,
     },
     icons: {
         groupExpanded: 'tree-open',

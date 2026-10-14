@@ -1,5 +1,6 @@
 import type {
     AgProvidedColumnGroup,
+    CellClassRules,
     CellValueChangedEvent,
     ColDef,
     ITransposeService,
@@ -18,6 +19,9 @@ export const TRANSPOSE_FIELD_COL_ID = 'ag-Grid-TransposeField';
 const RECORD_COL_ID_PREFIX = 'ag-Grid-TransposeRecord-';
 const FIELD_ROW_ID_PREFIX = 'ag-Grid-TransposeField-';
 const FIELD_GROUP_ROW_ID_PREFIX = 'ag-Grid-TransposeFieldGroup-';
+const RECORD_CELL_CLASS_RULES: CellClassRules = {
+    'ag-transpose-record-selected': (params) => !!params.node?.isSelected(),
+};
 
 /** Field group rows are the transposed form of column groups, so they collapse like row groups. */
 interface FieldGroupInfo {
@@ -54,6 +58,7 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         this.addManagedPropertyListeners(['transpose', 'transposeHeaderColId'], () => this.onTransposeChanged());
         this.addManagedEventListeners({
             cellValueChanged: (event) => this.onCellValueChanged(event),
+            rowSelected: (event) => this.refreshRecordCells(event.node.id),
         });
     }
 
@@ -113,7 +118,13 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
             this.refreshRowModel();
             return;
         }
-        this.beans.rowRenderer.refreshCells({ columns: [RECORD_COL_ID_PREFIX + recordId] });
+        this.refreshRecordCells(recordId);
+    }
+
+    private refreshRecordCells(recordId: string | undefined): void {
+        if (this.cols && recordId != null) {
+            this.beans.rowRenderer.refreshCells({ columns: [RECORD_COL_ID_PREFIX + recordId] });
+        }
     }
 
     private onTransposeChanged(): void {
@@ -213,6 +224,7 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
             editable: false,
             suppressHeaderMenuButton: true,
             headerComponent: 'agTransposeRecordHeader',
+            cellClassRules: RECORD_CELL_CLASS_RULES,
         };
     }
 
@@ -272,6 +284,7 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
             filter: false,
             editable: false,
             suppressHeaderMenuButton: true,
+            headerComponent: 'agTransposeFieldHeader',
             cellRenderer: 'agTransposeFieldCellRenderer',
             valueGetter: (params) => (params.node as RowNode | null)?.key ?? null,
         };
