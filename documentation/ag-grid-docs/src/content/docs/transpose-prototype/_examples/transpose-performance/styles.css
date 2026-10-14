@@ -1,0 +1,35 @@
+:root {
+    --negative-colour: #c0392b;
+}
+
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 8px;
+}
+
+.example-header {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.grid {
+    flex: 1 1 auto;
+}
+
+.event-log {
+    height: 160px;
+    overflow: auto;
+    margin: 0;
+    font-size: 12px;
+}
+
+.negative-value {
+    color: var(--negative-colour);
+}
+
+.rating-cell {
+    font-weight: 600;
+}
