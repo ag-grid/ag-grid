@@ -14,15 +14,17 @@ ModuleRegistry.registerModules([ColumnsToolPanelModule, RowGroupingModule, Serve
 let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
-        { field: 'country', enableRowGroup: true },
-        { field: 'sport', enableRowGroup: true },
-        { field: 'gold', rowGroup: true, aggFunc: 'sum', sort: 'asc', enableRowGroup: true, enableValue: true },
-        { field: 'silver', aggFunc: 'sum', enableValue: true },
-        { field: 'bronze', aggFunc: 'sum', enableValue: true },
+        { field: 'gold', rowGroup: true, aggFunc: 'sum', sort: 'asc' },
+        { field: 'silver', aggFunc: 'sum' },
+        { field: 'bronze', aggFunc: 'sum' },
+        { field: 'country' },
+        { field: 'sport' },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 120,
+        enableRowGroup: true,
+        enableValue: true,
     },
     autoGroupColumnDef: {
         flex: 1,
