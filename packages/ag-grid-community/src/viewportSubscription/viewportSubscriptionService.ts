@@ -39,6 +39,8 @@ export class ViewportSubscriptionService extends BeanStub implements NamedBean {
     beanName = 'viewportSubSvc' as const;
 
     private sub: ActiveSubscription | undefined;
+    /** Bumped by every start and stop, so a restart can tell whether its `onUnsubscribe` handler started or stopped again. */
+    private generation = 0;
 
     public postConstruct(): void {
         const markDirty = () => this.markPending();
@@ -74,9 +76,10 @@ export class ViewportSubscriptionService extends BeanStub implements NamedBean {
 
     /** Unsubscribes any current rows, then subscribes to the rows in view with the `viewportSubscription` grid option. */
     public start(fromApi: boolean): void {
-        this.stop();
-        // The `onUnsubscribe` handler can have destroyed the grid, or changed the option, which has already restarted.
-        if (this.sub || !this.isAlive()) {
+        const generation = ++this.generation;
+        this.release();
+        // The `onUnsubscribe` handler can have destroyed the grid, stopped, or changed the option, which has already restarted.
+        if (generation !== this.generation || !this.isAlive()) {
             return;
         }
         const { gos, beans } = this;
@@ -113,6 +116,11 @@ export class ViewportSubscriptionService extends BeanStub implements NamedBean {
 
     /** Unsubscribes every subscribed row and detaches the handlers. */
     public stop(): void {
+        ++this.generation;
+        this.release();
+    }
+
+    private release(): void {
         const sub = this.sub;
         if (!sub) {
             return;

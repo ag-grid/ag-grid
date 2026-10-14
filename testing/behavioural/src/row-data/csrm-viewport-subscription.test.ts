@@ -341,6 +341,49 @@ describe('CSRM viewportSubscription', () => {
             expect(recorder.calls.filter((c) => c.type === 'subscribe')).toHaveLength(1);
             expect(recorder.violations).toEqual([]);
         });
+
+        test('unsubscribeFromViewport inside onUnsubscribe while restarting stays unsubscribed', async () => {
+            const recorder = createRecorder((call) => {
+                if (call.type === 'unsubscribe') {
+                    api.unsubscribeFromViewport();
+                }
+            });
+            const api = await createFlatGrid({ viewportSubscription: recorder.handlers });
+
+            api.subscribeToViewport();
+            api.ensureIndexVisible(50, 'top');
+            await nextAnimationFrame();
+            await nextAnimationFrame();
+
+            expect(recorder.calls).toEqual([
+                { type: 'subscribe', ids: range(0, 5) },
+                { type: 'unsubscribe', ids: range(0, 5) },
+            ]);
+            expect(recorder.subscribed.size).toBe(0);
+        });
+
+        test('subscribeToViewport inside onUnsubscribe on gridPreDestroyed is unsubscribed when the grid is destroyed', async () => {
+            const recorder = createRecorder((call) => {
+                // The api is unusable by the final stop.
+                if (call.type === 'unsubscribe' && !api.isDestroyed()) {
+                    api.subscribeToViewport();
+                }
+            });
+            const api = await createFlatGrid({ viewportSubscription: recorder.handlers });
+
+            api.destroy();
+            await nextAnimationFrame();
+            await nextAnimationFrame();
+
+            expect(recorder.calls).toEqual([
+                { type: 'subscribe', ids: range(0, 5) },
+                { type: 'unsubscribe', ids: range(0, 5) },
+                { type: 'subscribe', ids: range(0, 5) },
+                { type: 'unsubscribe', ids: range(0, 5) },
+            ]);
+            expect(recorder.subscribed.size).toBe(0);
+            expect(recorder.violations).toEqual([]);
+        });
     });
 
     test('a sort moves rows out of and into the view', async () => {
