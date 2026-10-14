@@ -84,8 +84,11 @@ export class NotesDataService extends BeanStub implements INotesDataService, Nam
     private isFullWidthDataSource(
         dataSource?: NotesDataSource | FullWidthNotesDataSource
     ): dataSource is FullWidthNotesDataSource {
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- user code can return or pass any value at runtime, so only an explicit literal counts
-        return !!dataSource && 'supportsFullWidthRows' in dataSource && dataSource.supportsFullWidthRows === true;
+        if (!dataSource || !('supportsFullWidthRows' in dataSource)) {
+            return false;
+        }
+        const supportsFullWidthRows: unknown = dataSource.supportsFullWidthRows;
+        return supportsFullWidthRows === true;
     }
 
     public override destroy(): void {

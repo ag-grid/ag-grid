@@ -63,8 +63,7 @@ export function getDisplayedColBefore(beans: BeanCollection, col: Column): Colum
     return beans.visibleCols.getColBefore(col as AgColumn);
 }
 
-export function setColumnsVisible(beans: BeanCollection, keys: (string | Column)[], visible: boolean): void {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare -- user code can pass any value at runtime, so only an explicit literal counts
+export function setColumnsVisible(beans: BeanCollection, keys: (string | Column)[], visible: unknown): void {
     _setColsVisible(beans, keys as (string | AgColumn)[], visible === true, 'api');
 }
 
