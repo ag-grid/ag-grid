@@ -84,10 +84,63 @@ test.describe('native tab navigation in provided filters', () => {
         }
     }
 
-    test('simple filters use one Tab stop for AND/OR and still trap focus in the popup', async ({ page }) => {
+    for (const includeTime of [false, true]) {
+        test(`column filter: last ${includeTime ? 'date-time' : 'date'} input keeps native Tab navigation with a positive grid tabIndex`, async ({
+            page,
+        }) => {
+            const { headerCell } = await mountGrid(page, {
+                enterprise: true,
+                options: () => ({
+                    tabIndex: 3,
+                    columnDefs: [
+                        { field: 'athlete', filter: 'agTextColumnFilter' },
+                        { field: 'date', filter: 'agDateColumnFilter' },
+                    ],
+                    rowData: [],
+                }),
+            });
+            await page.evaluate(
+                (includeTime) => window.gridApi.setGridOption('defaultColDef', { filterParams: { includeTime } }),
+                includeTime
+            );
+            await headerCell('date').locator('.ag-header-cell-filter-button').click();
+            const filter = page.locator('.ag-filter-body-wrapper');
+            for (const addCondition of [false, true]) {
+                if (addCondition) {
+                    await filter
+                        .locator('input')
+                        .first()
+                        .fill(includeTime ? '2026-10-12T12:34:56' : '2026-10-12');
+                    await expect(filter.getByRole('radio', { name: 'AND', exact: true })).toBeVisible();
+                }
+                const input = filter.locator('input:visible').last();
+                await input.evaluate((element: HTMLInputElement) => {
+                    document.querySelector('#native-date')?.remove();
+                    document.querySelector('#native-after')?.remove();
+                    const reference = document.createElement('input');
+                    reference.id = 'native-date';
+                    reference.type = element.type;
+                    reference.step = element.step;
+                    reference.value = element.value;
+                    const after = document.createElement('button');
+                    after.id = 'native-after';
+                    document.body.append(reference, after);
+                });
+                const reference = page.locator('#native-date');
+                await reference.focus();
+                const expected = await tabOutOfInput(page, reference);
+                await input.focus();
+                expect(await tabOutOfInput(page, input)).toEqual(expected);
+                await expect(filter.getByRole('combobox').first()).toBeFocused();
+            }
+        });
+    }
+
+    test('simple filters trap native tab navigation with a positive grid tabIndex', async ({ page }) => {
         const { withApi } = await mountGrid(page, {
             enterprise: true,
             options: () => ({
+                tabIndex: 3,
                 columnDefs: [{ field: 'country', filter: 'agTextColumnFilter' }],
                 suppressInputClearButton: true,
                 rowData: [],
@@ -96,6 +149,12 @@ test.describe('native tab navigation in provided filters', () => {
         await withApi((api) => api.showColumnFilter('country'));
         const filter = page.locator('.ag-filter-body-wrapper');
         const inputs = filter.getByRole('textbox');
+        await expect(inputs.first()).toHaveAttribute('tabindex', '3');
+        await filter.getByRole('combobox').first().focus();
+        await page.keyboard.press('Shift+Tab');
+        await expect(inputs.first()).toBeFocused();
+        await page.keyboard.press('Tab');
+        await expect(filter.getByRole('combobox').first()).toBeFocused();
         await inputs.first().fill('France');
         const and = filter.getByRole('radio', { name: 'AND', exact: true });
         const or = filter.getByRole('radio', { name: 'OR', exact: true });
@@ -120,10 +179,89 @@ test.describe('native tab navigation in provided filters', () => {
         await expect(filter).toHaveCount(0);
     });
 
+    test('custom filter wraps native controls independently of a positive grid tabIndex', async ({ page }) => {
+        const { withApi } = await mountGrid(page, {
+            enterprise: true,
+            options: () => {
+                class NativeFilter {
+                    private readonly gui = document.createElement('div');
+                    init() {
+                        this.gui.innerHTML = '<input aria-label="Filter value"><button tabindex="0">Action</button>';
+                    }
+                    getGui() {
+                        return this.gui;
+                    }
+                    getModel() {
+                        return null;
+                    }
+                    setModel() {}
+                    isFilterActive() {
+                        return false;
+                    }
+                    doesFilterPass() {
+                        return true;
+                    }
+                }
+                return {
+                    tabIndex: 3,
+                    columnDefs: [{ field: 'value', filter: NativeFilter }],
+                    rowData: [],
+                };
+            },
+        });
+        await withApi((api) => api.showColumnFilter('value'));
+        const menu = page.locator('.ag-filter-menu');
+        const input = menu.getByRole('textbox', { name: 'Filter value' });
+        const button = menu.getByRole('button', { name: 'Action' });
+        await input.focus();
+        await page.keyboard.press('Tab');
+        await expect(button).toBeFocused();
+        await page.keyboard.press('Tab');
+        await expect(input).toBeFocused();
+        await page.keyboard.press('Shift+Tab');
+        await expect(button).toBeFocused();
+        await page.keyboard.press('Shift+Tab');
+        await expect(input).toBeFocused();
+
+        await input.evaluate((element) => {
+            element.tabIndex = 3;
+            const later = document.createElement('input');
+            later.setAttribute('aria-label', 'Later control');
+            later.tabIndex = 5;
+            element.parentElement!.appendChild(later);
+        });
+        const later = menu.getByRole('textbox', { name: 'Later control' });
+        await page.keyboard.press('Tab');
+        await expect(later).toBeFocused();
+        await page.keyboard.press('Tab');
+        await expect(button).toBeFocused();
+        await page.keyboard.press('Tab');
+        await expect(input).toBeFocused();
+        await page.keyboard.press('Shift+Tab');
+        await expect(button).toBeFocused();
+        await page.keyboard.press('Shift+Tab');
+        await expect(later).toBeFocused();
+
+        await later.evaluate((element) => {
+            element.tabIndex = 1;
+        });
+        await page.keyboard.press('Tab');
+        await expect(input).toBeFocused();
+        await page.keyboard.press('Shift+Tab');
+        await expect(later).toBeFocused();
+        await page.keyboard.press('Shift+Tab');
+        await expect(button).toBeFocused();
+        await later.evaluate((element) => element.remove());
+        await page.keyboard.press('Tab');
+        await expect(input).toBeFocused();
+        await expect(input).toHaveAttribute('tabindex', '3');
+    });
+
     test('Set Filter keeps managed list navigation, Space selection and Enter to apply', async ({ page }) => {
         const { withApi } = await mountGrid(page, {
             enterprise: true,
             options: () => ({
+                tabIndex: 3,
                 columnDefs: [{ field: 'country', filter: 'agSetColumnFilter', filterParams: { excelMode: 'windows' } }],
                 rowData: [{ country: 'France' }, { country: 'Spain' }],
             }),
@@ -134,7 +272,13 @@ test.describe('native tab navigation in provided filters', () => {
         await page.keyboard.press('Tab');
         const options = filter.getByRole('option');
         await expect(options.first()).toBeFocused();
-        await page.keyboard.press('ArrowDown');
+        await page.keyboard.press('Tab');
+        await expect(page.getByRole('button', { name: 'Apply', exact: true })).toBeFocused();
+        // The virtual list finishes leaving its managed focus state asynchronously.
+        await page.evaluate(() => new Promise<void>((resolve) => requestAnimationFrame(() => resolve())));
+        await page.keyboard.press('Shift+Tab');
+        await expect(options.last()).toBeFocused();
+        await page.keyboard.press('ArrowUp');
         await expect(options.nth(1)).toBeFocused();
         await page.keyboard.press('Space');
         await expect(options.nth(1)).toHaveAttribute('aria-checked', 'false');
@@ -145,5 +289,43 @@ test.describe('native tab navigation in provided filters', () => {
                 filterType: 'set',
                 values: ['Spain'],
             });
+    });
+
+    test('Multi Filter wraps through its nested managed Set Filter without losing focus', async ({ page }) => {
+        const { withApi } = await mountGrid(page, {
+            enterprise: true,
+            options: () => ({
+                tabIndex: 3,
+                columnDefs: [
+                    {
+                        field: 'country',
+                        filter: 'agMultiColumnFilter',
+                        filterParams: {
+                            filters: [
+                                { filter: 'agTextColumnFilter' },
+                                { filter: 'agSetColumnFilter', display: 'inline' },
+                            ],
+                        },
+                    },
+                ],
+                rowData: [{ country: 'France' }, { country: 'Spain' }],
+            }),
+        });
+        await withApi((api) => api.showColumnFilter('country'));
+        const menu = page.locator('.ag-filter-menu');
+        const select = menu.getByRole('combobox').first();
+        const options = menu.getByRole('option');
+        await select.focus();
+        await page.keyboard.press('Shift+Tab');
+        await expect(options.last()).toBeFocused();
+        await page.keyboard.press('Tab');
+        await expect(select).toBeFocused();
+
+        const miniFilter = menu.locator('.ag-mini-filter input');
+        await miniFilter.focus();
+        await page.keyboard.press('Tab');
+        await expect(options.first()).toBeFocused();
+        await page.keyboard.press('Shift+Tab');
+        await expect(miniFilter).toBeFocused();
     });
 });

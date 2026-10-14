@@ -31,8 +31,9 @@ export interface AgTabGuardParams {
     isEmpty?: () => boolean;
     /**
      * Set to true to create a circular focus pattern when keyboard tabbing.
+     * Use 'native' to preserve tab indices and browser navigation within controls.
      */
-    focusTrapActive?: boolean;
+    focusTrapActive?: boolean | 'native';
     /**
      * Set to true to find a focusable element outside of the TabGuards to focus
      */
