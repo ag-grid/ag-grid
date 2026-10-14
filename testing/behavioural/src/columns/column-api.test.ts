@@ -789,6 +789,29 @@ describe('Column API', () => {
                 └── b width:200
             `);
         });
+
+        // Cells are matched to columns by column instance, so a move has to re-order the existing
+        // cells rather than rebuild them: a rebuilt cell loses its editor, focus and DOM identity.
+        test('moveColumnByIndex reuses the existing cells rather than recreating them', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                rowData: [{ a: 1, b: 2, c: 3 }],
+            });
+            await asyncSetTimeout(0);
+
+            const cellFor = (colId: string) =>
+                TestGridsManager.getHTMLElement(api)?.querySelector(
+                    `.ag-row[row-index="0"] .ag-cell[col-id="${colId}"]`
+                );
+
+            const before = [cellFor('a'), cellFor('b'), cellFor('c')];
+            expect(before.every((cell) => cell != null)).toBe(true);
+
+            api.moveColumnByIndex(2, 0);
+            await asyncSetTimeout(0);
+
+            expect([cellFor('a'), cellFor('b'), cellFor('c')]).toEqual(before);
+        });
     });
 
     describe('row group columns API', () => {

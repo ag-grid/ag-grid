@@ -1202,6 +1202,56 @@ describe('Column Mutations - applyColumnState', () => {
 
             expect(api.getColumnState().map((s) => `${s.colId}:${s.width}`)).toEqual(['a:200', 'b:80']);
         });
+
+        test('a width applied before a columnDefs update is still kept over the width of the inferred column type', async () => {
+            const api = gridsManager.createGrid('appliedThenColDefs', {
+                columnTypes: { narrow: { width: 80 } },
+                dataTypeDefinitions: {
+                    narrowNumber: {
+                        baseDataType: 'number',
+                        extendsDataType: 'number',
+                        columnTypes: ['narrow'],
+                        dataTypeMatcher: (value: any) => typeof value === 'number',
+                    } as any,
+                },
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+            });
+            await asyncSetTimeout(0);
+
+            api.applyColumnState({ state: [{ colId: 'a', width: 150 }] });
+            api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }]);
+            api.setGridOption('rowData', [{ a: 1, b: 'x' }]);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnState().map((s) => `${s.colId}:${s.width}`)).toEqual(['a:150', 'b:200']);
+        });
+
+        test('a width set through setColumnWidths before inference is kept, even back at its start, and the cols the resize re-flexes take theirs', async () => {
+            const api = gridsManager.createGrid('setWidthsBeforeInference', {
+                columnTypes: { narrow: { width: 80 } },
+                dataTypeDefinitions: {
+                    narrowNumber: {
+                        baseDataType: 'number',
+                        extendsDataType: 'number',
+                        columnTypes: ['narrow'],
+                        dataTypeMatcher: (value: any) => typeof value === 'number',
+                    } as any,
+                },
+                columnDefs: [{ field: 'a' }, { field: 'b' }, { field: 'f', flex: 1 }],
+            });
+            await asyncSetTimeout(0);
+
+            api.setColumnWidths([{ key: 'b', newWidth: 150 }]);
+            // set back to where it started, as much the app's width as any other
+            api.setColumnWidths([{ key: 'a', newWidth: 300 }]);
+            api.setColumnWidths([{ key: 'a', newWidth: 200 }]);
+            // a columnDefs update, which infers again, keeps both
+            api.setGridOption('columnDefs', [{ field: 'a' }, { field: 'b' }, { field: 'f', flex: 1 }]);
+            api.setGridOption('rowData', [{ a: 1, b: 2, f: 'x' }]);
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnState().map((s) => `${s.colId}:${s.width}`)).toEqual(['a:200', 'b:150', 'f:650']);
+        });
     });
 
     describe('rowGroupIndex null clears the prior flag', () => {
