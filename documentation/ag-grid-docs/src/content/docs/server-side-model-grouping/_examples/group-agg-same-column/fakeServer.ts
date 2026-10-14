@@ -45,7 +45,9 @@ export function FakeServer(allData) {
             const colsToSelect = [rowGroupCol.id];
 
             valueCols.forEach(function (valueCol) {
-                colsToSelect.push(valueCol.aggFunc + '(' + valueCol.id + ') AS ' + aggAlias(request, valueCol));
+                // the grouped column already holds the group key, so its aggregate is returned under a separate field
+                const alias = valueCol.id === rowGroupCol.id ? valueCol.aggFunc + '_' + valueCol.id : valueCol.id;
+                colsToSelect.push(valueCol.aggFunc + '(' + valueCol.id + ') AS ' + alias);
             });
 
             return 'SELECT ' + colsToSelect.join(', ');
@@ -93,14 +95,7 @@ export function FakeServer(allData) {
         if (sortModel.length === 0) return '';
 
         const sorts = sortModel.map(function (s) {
-            // sort a column that is both grouped and aggregated by its aggregate, as the Client-Side Row Model does
-            const valueCol = isDoingGrouping(request.rowGroupCols, request.groupKeys)
-                ? request.valueCols.find(function (valueCol) {
-                      return valueCol.id === s.colId;
-                  })
-                : undefined;
-            const field = valueCol ? aggAlias(request, valueCol) : s.colId;
-            return field + ' ' + s.sort.toUpperCase();
+            return s.colId + ' ' + s.sort.toUpperCase();
         });
 
         return ' ORDER BY ' + sorts.join(', ');
@@ -113,12 +108,6 @@ export function FakeServer(allData) {
 
         const blockSize = request.endRow - request.startRow;
         return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
-    }
-
-    function aggAlias(request, valueCol) {
-        const rowGroupCol = request.rowGroupCols[request.groupKeys.length];
-        // the grouped column already holds the group key, so its aggregate is returned under a separate field
-        return valueCol.id === rowGroupCol.id ? valueCol.aggFunc + '_' + valueCol.id : valueCol.id;
     }
 
     function isDoingGrouping(rowGroupCols, groupKeys) {

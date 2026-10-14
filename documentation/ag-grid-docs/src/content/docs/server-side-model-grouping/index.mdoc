@@ -122,14 +122,14 @@ const gridOptions = {
 - Columns not returned by the callback keep reading from the row data.
 - The grand total row (`grandTotalData`) and [Tree Data](./server-side-model-tree-data/) need no callback, as their keys
   and aggregates never share a field.
-- When the sorted column is both grouped and aggregated, the server decides how the group levels are sorted. To match
-  the Client-Side Row Model, we recommend sorting group levels by the aggregate.
+- When the sorted column is both grouped and aggregated, by default the sort model does not say whether the group column or the
+  value column was sorted, so the server decides whether that group level is sorted by its key or by its aggregate.
 - Grouping a column from the UI hides it by default, so show it again in the Columns Tool Panel to see its aggregate.
 
 The example below groups by **Gold** and aggregates it with `sum`. Note the following:
 
-- The server returns the group key as `gold` and `sum(gold)` as `sum_gold`, and sorts the **Gold** group level by
-  `sum_gold`.
+- The server returns the group key as `gold` and `sum(gold)` as `sum_gold`, and sorts the **Gold** group level by its
+  key.
 - `getServerSideGroupAggData` returns `{ gold: params.data.sum_gold }`, so the **Gold** column shows the sum while the
   group column shows the key. It reads the field for the current aggregation function, so changing it in the Columns
   Tool Panel keeps working.
