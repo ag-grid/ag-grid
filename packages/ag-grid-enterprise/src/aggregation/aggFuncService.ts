@@ -41,12 +41,27 @@ export class AggFuncService extends BeanStub implements NamedBean, IAggFuncServi
         funcMap.set('sum', aggSum);
         funcMap.set('first', aggFirst);
         funcMap.set('last', aggLast);
-        funcMap.set('min', aggMin);
-        funcMap.set('max', aggMax);
+        const getDateStringParser = this.getDateStringParser.bind(this);
+        funcMap.set('min', (params: IAggFuncParams) => aggMinMax(params, false, getDateStringParser));
+        funcMap.set('max', (params: IAggFuncParams) => aggMinMax(params, true, getDateStringParser));
         funcMap.set('count', aggCount);
         funcMap.set('avg', aggAvg);
         this.initialised = true;
         this.updateOrderedFuncNames();
+    }
+
+    /** Returns the column's date parser when it holds date strings, otherwise `null` so strings are ignored. */
+    private getDateStringParser({ column }: IAggFuncParams): DateStringParser | null {
+        const dataTypeSvc = this.beans.dataTypeSvc;
+        const agColumn = column as AgColumn | undefined;
+        if (!dataTypeSvc || !agColumn) {
+            return null;
+        }
+        const baseDataType = dataTypeSvc.getBaseDataType(agColumn);
+        if (baseDataType !== 'dateString' && baseDataType !== 'dateTimeString') {
+            return null;
+        }
+        return dataTypeSvc.getDateParserFunction(agColumn);
     }
 
     public getDefaultFuncLabel(fctName: DefaultAggFuncName): string {
@@ -148,36 +163,63 @@ function aggLast(params: IAggFuncParams): any {
     return params.values.length > 0 ? _last(params.values) : null;
 }
 
-function aggMin(params: IAggFuncParams): number | bigint | null {
+type DateStringParser = (value: string | undefined) => Date | undefined;
+
+/**
+ * Shared implementation of `min` and `max`. Supports numbers and bigints, `Date` objects, and date strings when the
+ * column's base data type is `dateString` or `dateTimeString`. Numeric values take precedence: if any are present, the
+ * numeric result is returned. Otherwise, the earliest/latest valid date is returned as the original value (never a new
+ * instance), so the result keeps the column's type and identity across re-aggregation.
+ */
+function aggMinMax(
+    params: IAggFuncParams,
+    isMax: boolean,
+    getDateStringParser: (params: IAggFuncParams) => DateStringParser | null
+): number | bigint | Date | string | null {
     const { values } = params;
-    let result: number | bigint | null = null;
+    let numberResult: number | bigint | null = null;
+    let dateResult: Date | string | null = null;
+    let dateResultTime = 0;
+    let dateStringParser: DateStringParser | null | undefined;
 
     // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
     for (let i = 0; i < values.length; i++) {
         const value = values[i];
 
-        if ((typeof value === 'number' || typeof value === 'bigint') && (result === null || result > value)) {
-            result = value;
+        if (typeof value === 'number' || typeof value === 'bigint') {
+            if (numberResult === null || (isMax ? numberResult < value : numberResult > value)) {
+                numberResult = value;
+            }
+            continue;
+        }
+
+        if (numberResult !== null) {
+            continue;
+        }
+
+        let time: number;
+        if (value instanceof Date) {
+            time = value.getTime();
+        } else if (typeof value === 'string') {
+            // resolved lazily, so columns without string values never pay for the data type lookup
+            if (dateStringParser === undefined) {
+                dateStringParser = getDateStringParser(params);
+            }
+            if (!dateStringParser) {
+                continue;
+            }
+            time = dateStringParser(value)?.getTime() ?? Number.NaN;
+        } else {
+            continue;
+        }
+
+        if (!Number.isNaN(time) && (dateResult === null || (isMax ? dateResultTime < time : dateResultTime > time))) {
+            dateResult = value;
+            dateResultTime = time;
         }
     }
 
-    return result;
-}
-
-function aggMax(params: IAggFuncParams): number | bigint | null {
-    const { values } = params;
-    let result: number | bigint | null = null;
-
-    // for optimum performance, we use a for loop here rather than calling any helper methods or using functional code
-    for (let i = 0; i < values.length; i++) {
-        const value = values[i];
-
-        if ((typeof value === 'number' || typeof value === 'bigint') && (result === null || result < value)) {
-            result = value;
-        }
-    }
-
-    return result;
+    return numberResult ?? dateResult;
 }
 
 // Proto used to reduce memory impact from repeat function instantiation

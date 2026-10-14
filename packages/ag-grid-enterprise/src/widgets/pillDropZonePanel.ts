@@ -90,7 +90,10 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     protected abstract getItems(dragItem: DragItem<TItem>): TItem[];
     protected abstract isInterestedIn(type: DragSourceType, sourceElement: Element): boolean;
 
-    constructor(protected readonly horizontal: boolean) {
+    constructor(
+        protected readonly horizontal: boolean,
+        protected readonly eWrapperPanel?: HTMLElement
+    ) {
         super(PillDropZonePanelElement);
         this.addElementClasses(this.getGui());
         this.ePillDropList = _createElement({ tag: 'div' });
@@ -509,10 +512,10 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const focusedIndex = this.getFocusedItem();
 
         const beans = this.beans;
-        const { eGridDiv: rootNode } = beans;
         const isKeyboardMode = _isKeyboardMode();
         let alternateElement: HTMLElement | null = null;
         if (isKeyboardMode) {
+            const rootNode = this.eWrapperPanel ?? beans.eGridDiv;
             alternateElement =
                 _findNextFocusableElement({ beans, rootNode }) ??
                 _findNextFocusableElement({ beans, rootNode, backwards: true });
@@ -537,7 +540,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         // otherwise mouse clicks will cause containers to scroll
         // without no apparent reason.
         if (isKeyboardMode) {
-            this.restoreFocus(focusedIndex, alternateElement!);
+            this.restoreFocus(focusedIndex, alternateElement);
         }
     }
 
@@ -566,7 +569,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         item.focus({ preventScroll: true });
     }
 
-    private restoreFocus(index: number, alternateElement: HTMLElement): void {
+    private restoreFocus(index: number, alternateElement: HTMLElement | null): void {
         const eGui = this.getGui();
         const items = Array.from(eGui.querySelectorAll('.ag-column-drop-cell'));
 
@@ -575,7 +578,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         }
 
         if (items.length === 0) {
-            alternateElement.focus();
+            alternateElement?.focus();
         }
 
         const indexToFocus = Math.min(items.length - 1, index);

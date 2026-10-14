@@ -914,7 +914,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     enableValue?: boolean;
     /**
-     * Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function.
+     * Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. `min` and `max` support `number`, `bigint` and date values (`date`, `dateTime`, `dateString` and `dateTimeString` cell data types). Also accepts a custom aggregation name or an aggregation function.
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     aggFunc?: string | IAggFunc<TData, TValue> | null;

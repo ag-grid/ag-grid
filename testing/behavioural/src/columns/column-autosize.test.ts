@@ -15,13 +15,19 @@
  * Not exercised here:
  *   - DOM event handlers (`addColumnAutosizeListeners`, `addColumnGroupResize`) — driven by
  *     `dblclick` on header-cell handles, covered by header-rendering tests elsewhere.
- *   - `sizeColumnsToFitGridBody` retry timeouts (100 ms / 500 ms) — would need fake timers.
  */
 import { waitFor } from '@testing-library/dom';
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, mockGridLayout } from 'ag-test-utils';
+import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    mockGridLayout,
+} from 'ag-test-utils';
 
-import type { GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnAutoSizeModule } from 'ag-grid-community';
+import type { ColDef, GridApi } from 'ag-grid-community';
+import { ClientSideRowModelModule, ColumnAutoSizeModule, enableDevValidations } from 'ag-grid-community';
 import { RowNumbersModule, RowSelectionModule } from 'ag-grid-enterprise';
 
 describe('Column Autosize', () => {
@@ -285,6 +291,144 @@ describe('Column Autosize', () => {
                 └── b width:600
             `);
             expect(api.getAllGridColumns().map((c) => c.getColId())).toEqual(['a', 'b']);
+        });
+
+        test('a fit weighs each column by its initial width held within its limits, a limit keyed by column too', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'a', width: 400 },
+                    { colId: 'b', width: 100 },
+                    { colId: 'c', width: 10, minWidth: 50 },
+                    { colId: 'hidden', hide: true },
+                ],
+            });
+            const widths = () => api.getAllDisplayedColumns().map((col) => col.getActualWidth());
+
+            // weighed 300:200:50, then `a` is held at its 300 and the rest share 700 as 200:50; of two limits naming
+            // `b` the last holds, and one naming a hidden or an unknown column holds nothing
+            api.sizeColumnsToFit({
+                columnLimits: [
+                    { key: api.getColumn('a')!, maxWidth: 300 },
+                    { key: 'b', minWidth: 999 },
+                    { key: 'b', minWidth: 200 },
+                    { key: 'hidden', maxWidth: 1 },
+                    { key: 'unknown', maxWidth: 1 },
+                ],
+            });
+            expect(widths()).toEqual([300, 560, 140]);
+
+            // a later fit holds only what it limits: `a` is no longer held at 300
+            api.sizeColumnsToFit({ columnLimits: [{ key: 'b', minWidth: 600 }] });
+            expect(widths()).toEqual([350, 600, 50]);
+        });
+
+        test('an auto-size sizes the columns that sizing the rendered ones brings into view', async () => {
+            const measured = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (
+                this: HTMLElement
+            ) {
+                return this.tagName === 'FORM' ? 50 : 0;
+            });
+            try {
+                const columnDefs: ColDef[] = [];
+                for (let i = 0; i < 20; ++i) {
+                    columnDefs.push({ colId: `c${i}` });
+                }
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    autoSizePadding: 0,
+                    rowData: [{}],
+                    suppressColumnVirtualisation: false,
+                });
+                const widths = () => api.getAllDisplayedColumns().map((col) => col.getActualWidth());
+                // at 200px each only the first few are rendered, so measurable
+                expect(api.getAllDisplayedVirtualColumns().length).toBeLessThan(20);
+
+                api.autoSizeAllColumns();
+
+                await waitFor(() => expect(widths()).toEqual(columnDefs.map(() => 50)));
+            } finally {
+                measured.mockRestore();
+            }
+        });
+
+        test('an auto-size widens a group whose header is wider than the columns it sized', async () => {
+            const measured = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (
+                this: HTMLElement
+            ) {
+                if (this.tagName !== 'FORM') {
+                    return 0;
+                }
+                return this.querySelector('.ag-header-group-cell') ? 300 : 50;
+            });
+            try {
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs: [{ headerName: 'G', children: [{ colId: 'a' }, { colId: 'b' }] }],
+                    autoSizePadding: 0,
+                    rowData: [{}],
+                });
+                const widths = () => api.getAllDisplayedColumns().map((col) => col.getActualWidth());
+
+                api.autoSizeAllColumns();
+
+                // sized to 50 each, then the group's 300px header shares itself between them
+                await waitFor(() => expect(widths()).toEqual([150, 150]));
+            } finally {
+                measured.mockRestore();
+            }
+        });
+
+        test('an auto-size that scales up to the grid leaves columns its contents made wider than the grid', async () => {
+            const measured = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (
+                this: HTMLElement
+            ) {
+                return this.tagName === 'FORM' ? 600 : 0;
+            });
+            try {
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+                    autoSizePadding: 0,
+                    rowData: [{}],
+                });
+                // the scale-up measures the body's computed width, which happy-dom takes from the inline style
+                api.getGridElement()!.querySelector<HTMLElement>('.ag-root')!.style.width = '600px';
+                api.autoSizeAllColumns({ scaleUpToFitGridWidth: true });
+                await waitFor(() =>
+                    expect(api.getAllDisplayedColumns().map((col) => col.getActualWidth())).toEqual([600, 600])
+                );
+            } finally {
+                measured.mockRestore();
+            }
+        });
+
+        test('a fit to a grid with no width retries until it has one, and warns once it gives up', async () => {
+            // Asserts warning #29 (the grid has no width to fit to).
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [29] });
+            const api = gridsManager.createGrid('myGrid', { columnDefs: [{ colId: 'a' }, { colId: 'b' }] });
+            const gridWidth = mockGridLayout.gridWidth;
+            mockGridLayout.gridWidth = 0;
+            const widths = () => api.getAllDisplayedColumns().map((col) => col.getActualWidth());
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            vi.useFakeTimers({ toFake: ['setTimeout'] });
+            try {
+                // the retries run 0ms, 100ms and 600ms after the call
+                api.sizeColumnsToFit();
+                await vi.advanceTimersByTimeAsync(550);
+                mockGridLayout.gridWidth = 600;
+                await vi.advanceTimersByTimeAsync(100);
+                expect(widths()).toEqual([300, 300]);
+
+                mockGridLayout.gridWidth = 0;
+                api.sizeColumnsToFit();
+                await vi.advanceTimersByTimeAsync(550);
+                expect(warn).not.toHaveBeenCalled();
+                await vi.advanceTimersByTimeAsync(100);
+                expect(warn).toHaveBeenCalledTimes(1);
+                expect(warn.mock.calls[0][0]).toContain('warning #29');
+            } finally {
+                vi.useRealTimers();
+                warn.mockRestore();
+                mockGridLayout.gridWidth = gridWidth;
+            }
         });
     });
 
@@ -1065,6 +1209,19 @@ describe('Column Autosize', () => {
             await new GridRows(api, `fitGridWidth runs on first render without throwing final state`).check(`
                 ROOT id:ROOT_NODE_ID
             `);
+        });
+
+        test('fitGridWidth holds a column within the strategy limit that names it', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }],
+                autoSizeStrategy: { type: 'fitGridWidth', columnLimits: [{ colId: 'a', maxWidth: 150 }] },
+                rowData: [{}],
+            });
+            // the fit measures the body's computed width, which happy-dom takes from the inline style
+            api.getGridElement()!.querySelector<HTMLElement>('.ag-root')!.style.width = '600px';
+
+            const widths = () => api.getAllDisplayedColumns().map((col) => col.getActualWidth());
+            await waitFor(() => expect(widths()).toEqual([150, 450]));
         });
 
         test('fitCellContents runs after first data render', async () => {

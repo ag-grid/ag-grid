@@ -1,14 +1,23 @@
+import { waitFor } from '@testing-library/dom';
 import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, mockGridLayout } from 'ag-test-utils';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
-import { ClientSideRowModelModule, PinnedRowModule, enableDevValidations, getGridElement } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    PinnedRowModule,
+    RowAutoHeightModule,
+    enableDevValidations,
+    getGridElement,
+} from 'ag-grid-community';
 import type { ColDef, GridApi, IRowNode, RowPinnedType } from 'ag-grid-community';
 
 import { VERSION } from '../version';
 
 describe('Pinned rows', () => {
-    const gridsManager = new TestGridsManager({ modules: [PinnedRowModule, ClientSideRowModelModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [PinnedRowModule, ClientSideRowModelModule, RowAutoHeightModule],
+    });
 
     const columnDefs = [{ field: 'athlete' }, { field: 'sport' }, { field: 'age' }];
     const topData = [{ athlete: 'Top Athlete', sport: 'Top Sport', age: 11 }];
@@ -324,6 +333,23 @@ describe('Pinned rows', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 athlete:"body" sport:"body" age:0
             `);
+        });
+
+        // A pinned row is measured by the same auto-height pass as a body row, which reaches it among the
+        // rendered rows rather than through the pinned models.
+        test('a pinned row with an auto-height column is measured', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'athlete' }, { field: 'sport', autoHeight: true }],
+                rowData: [{ athlete: 'body', sport: 'body', age: 0 }],
+                pinnedTopRowData: [{ athlete: 'A', sport: 'SA', age: 1 }],
+            });
+            const gridEl = getGridElement(api)!;
+            const pinnedCell = gridEl.querySelector('.ag-grid-pinned-top-rows-container [col-id="sport"]')!;
+            expect(pinnedCell).not.toBeNull();
+            // happy-dom lays nothing out, so the height a measurement would find has to be supplied.
+            Object.defineProperty(pinnedCell.firstElementChild, 'offsetHeight', { value: 90, configurable: true });
+
+            await waitFor(() => expect(getPinnedRowLayout(api, 'top').heights[0]).toBeGreaterThanOrEqual(90));
         });
 
         // The only pinned row keeps its top at zero however tall it grows, so nothing but the section

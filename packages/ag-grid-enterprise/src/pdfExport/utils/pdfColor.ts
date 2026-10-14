@@ -238,7 +238,7 @@ function parseColor(value: string): PdfRgba | null | undefined {
         return null;
     }
 
-    const srgbMatch = /^color\(\s*srgb\s+(.+)\)$/.exec(normalised);
+    const srgbMatch = /^color\(\s*srgb(\s+\S.*|\s+(?![\n\r\u2028\u2029])\s)\)$/.exec(normalised);
     if (srgbMatch) {
         // support css color() syntax with optional slash alpha channel.
         const raw = srgbMatch[1].trim();

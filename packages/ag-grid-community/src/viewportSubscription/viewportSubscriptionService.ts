@@ -89,7 +89,7 @@ export class ViewportSubscriptionService extends BeanStub implements NamedBean {
         const options = gos.get('viewportSubscription');
         if (!options) {
             if (fromApi) {
-                this.warn(336);
+                this.warn(337);
             }
             return;
         }

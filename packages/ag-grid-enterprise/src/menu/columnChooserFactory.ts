@@ -113,7 +113,12 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
                     this.dispatchVisibleChangedEvent(false, column);
                     if (restoreColumn || openerEl) {
                         (menuUtils as MenuUtils).restoreFocusOnClose(
-                            { column: restoreColumn, headerPosition, columnIndex, eventSource: openerEl },
+                            {
+                                column: restoreColumn,
+                                headerPosition,
+                                columnIndex,
+                                getEventSource: openerEl ? () => openerEl : undefined,
+                            },
                             eComp,
                             event,
                             true

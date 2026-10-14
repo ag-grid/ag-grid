@@ -303,6 +303,7 @@ export type { ContainerType, IAfterGuiAttachedParams } from './interfaces/iAfter
 export type {
     CalculatedColumnDef,
     CalculatedColumnExpressionPicker,
+    CalculatedColumnProcessColDefParams,
     CalculatedColumnProperty,
     CalculatedColumnsGridOption,
     CalculatedColumnsOptions,

@@ -1123,7 +1123,7 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
             });
             await api.setColumnFilterModel('name', model);
             api.onFilterChanged();
-            await ColumnFilterHarness.open(api, 'name');
+            const filter = await ColumnFilterHarness.open(api, 'name');
 
             api.setGridOption('columnDefs', colDefsWith([TEXT_CHILD, setChild(true)]));
             await asyncSetTimeout(0);
@@ -1134,7 +1134,6 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
                 └── LEAF id:2 name:"bob"
             `);
             // the text child leaves only bob, under his initial
-            const filter = await ColumnFilterHarness.open(api, 'name');
             expect(filter.setFilterItemLabels()).toEqual(['(Select All)', 'b']);
         });
 

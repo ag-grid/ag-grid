@@ -193,6 +193,32 @@ describe('column header drag reorder', () => {
         expect(seen).toEqual(['g1:ag-header-highlight-before', 'g2:ag-header-cell-moving', 'g1:', 'g2:']);
     });
 
+    test('a drag whose column is removed mid-drag moves nothing, leaving the removed column out', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: ['a', 'b', 'c', 'd'].map((field) => ({ field, width: 100 })),
+            rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
+        });
+        const source = el(api, '.ag-header-cell[col-id="b"]');
+        const viewport = el(api, '.ag-grid-viewport');
+        const dispatcher = new DragEventDispatcher('mouse', null, false);
+        try {
+            await dispatcher.startDrag(source, 150, 100);
+            await dispatcher.movePointer(viewport, 150, 100);
+            await dispatcher.movePointer(viewport, 250, 100);
+            expect(source.classList.contains('ag-header-cell-moving')).toBe(true);
+            api.setGridOption(
+                'columnDefs',
+                ['a', 'c', 'd'].map((field) => ({ field, width: 100 }))
+            );
+            await dispatcher.movePointer(viewport, 350, 100);
+            await dispatcher.finishDrag(viewport);
+        } finally {
+            dispatcher.reset();
+        }
+
+        expect(colOrder(api)).toEqual(['a', 'c', 'd']);
+    });
+
     test('dragging a header left to the front, hidden col preserved', async () => {
         const api = await createGrid();
         expect(colOrder(api)).toEqual(['a', 'b', 'c', 'd']);
