@@ -25,7 +25,7 @@ import {
     toolPanelCreateColumnTree,
 } from '../sideBar/common/toolPanelColDefService';
 import { createLayoutGroupRenameNotifier } from '../sideBar/common/toolPanelGroupUtils';
-import { ToolPanelNoMatchesComp } from '../sideBar/common/toolPanelNoMatchesComp';
+import { NoMatchesComp } from '../widgets/noMatchesComp';
 import { VirtualList } from '../widgets/virtualList';
 import { ExpandState } from './agPrimaryColsHeader';
 import { ColumnModelItem } from './columnModelItem';
@@ -68,7 +68,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private groupsExist: boolean;
 
     private virtualList: VirtualList;
-    private noMatchesComp: ToolPanelNoMatchesComp;
+    private noMatchesComp: NoMatchesComp;
 
     private allColsTree: ColumnModelItem[];
     private displayedColsList: ColumnModelItem[];
@@ -136,7 +136,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
 
         this.isPreventMove = !!suppressColumnMove || !!suppressSyncLayoutWithGrid;
 
-        this.noMatchesComp = this.createManagedBean(new ToolPanelNoMatchesComp('ag-column-select-no-matches'));
+        this.noMatchesComp = this.createManagedBean(new NoMatchesComp('ag-column-select-no-matches'));
         this.appendChild(this.noMatchesComp);
 
         const virtualList = this.createManagedBean(

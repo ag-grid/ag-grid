@@ -1,6 +1,6 @@
 import { Component } from 'ag-grid-community';
 
-export class ToolPanelNoMatchesComp extends Component {
+export class NoMatchesComp extends Component {
     constructor(cssClass: string) {
         super({ tag: 'div', cls: cssClass });
     }
@@ -12,7 +12,7 @@ export class ToolPanelNoMatchesComp extends Component {
 
     public setNoMatches(noMatches: boolean): void {
         if (noMatches && !this.isDisplayed()) {
-            this.beans.ariaAnnounce.announceValue(this.getGui().textContent ?? '', 'toolPanelNoMatches');
+            this.beans.ariaAnnounce.announceValue(this.getGui().textContent ?? '', 'noMatches');
         }
         this.setDisplayed(noMatches);
     }

@@ -27,6 +27,7 @@ import {
 } from 'ag-grid-community';
 
 import type { VirtualListModel } from '../agStack/iVirtualList';
+import { NoMatchesComp } from '../widgets/noMatchesComp';
 import { VirtualList } from '../widgets/virtualList';
 import { FlatSetDisplayValueModel } from './flatSetDisplayValueModel';
 import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
@@ -58,7 +59,6 @@ export class SetFilter<V = string>
     private readonly eFilterLoading: HTMLElement = RefPlaceholder;
     private readonly eFilterLoadingIcon: HTMLElement = RefPlaceholder;
     private readonly eSetFilterList: HTMLElement = RefPlaceholder;
-    private readonly eFilterNoMatches: HTMLElement = RefPlaceholder;
 
     private virtualList: VirtualList<SetFilterListItem<V | string | null>, SetFilterModelTreeItem | string | null>;
 
@@ -72,7 +72,7 @@ export class SetFilter<V = string>
     private displayValueModel: ISetDisplayValueModel<V>;
 
     private miniFilterText: string | null = null;
-    private showingNoMatches = false;
+    private noMatchesComp: NoMatchesComp;
 
     /** When true, in excelMode = 'windows', it adds previously selected filter items to newly checked filter selection */
     private addCurrentSelectionToFilter: boolean = false;
@@ -242,12 +242,6 @@ export class SetFilter<V = string>
                     ],
                 },
                 { tag: 'ag-input-text-field', ref: 'eMiniFilter', cls: 'ag-mini-filter' },
-                {
-                    tag: 'div',
-                    ref: 'eFilterNoMatches',
-                    cls: 'ag-filter-no-matches ag-hidden',
-                    children: translateForSetFilter(this, 'noMatches'),
-                },
                 { tag: 'div', ref: 'eSetFilterList', cls: 'ag-set-filter-list', role: 'presentation' },
             ],
         };
@@ -258,6 +252,8 @@ export class SetFilter<V = string>
 
     public override postConstruct(): void {
         super.postConstruct();
+        this.noMatchesComp = this.createManagedBean(new NoMatchesComp('ag-filter-no-matches'));
+        this.eSetFilterList.insertAdjacentElement('beforebegin', this.noMatchesComp.getGui());
         this.createManagedBean(
             new ManagedFocusFeature(this.getFocusableElement(), {
                 handleKeyDown: this.handleKeyDown.bind(this),
@@ -795,13 +791,8 @@ export class SetFilter<V = string>
     private showOrHideResults(): void {
         const hideResults = this.miniFilterText != null && this.displayValueModel.getDisplayedValueCount() < 1;
 
-        _setDisplayed(this.eFilterNoMatches, hideResults);
+        this.noMatchesComp.setNoMatches(hideResults);
         _setDisplayed(this.eSetFilterList, !hideResults);
-
-        if (hideResults && !this.showingNoMatches) {
-            this.beans.ariaAnnounce.announceValue(translateForSetFilter(this, 'noMatches'), 'setFilter');
-        }
-        this.showingNoMatches = hideResults;
     }
 
     private resetMiniFilter(): void {

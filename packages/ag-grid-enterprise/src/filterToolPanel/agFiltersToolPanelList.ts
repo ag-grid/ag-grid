@@ -12,7 +12,7 @@ import type {
 import { Component, _addGridCommonParams, _mergeDeep, isProvidedColumnGroup } from 'ag-grid-community';
 
 import { syncLayoutWithGrid, toolPanelCreateColumnTree } from '../sideBar/common/toolPanelColDefService';
-import { ToolPanelNoMatchesComp } from '../sideBar/common/toolPanelNoMatchesComp';
+import { NoMatchesComp } from '../widgets/noMatchesComp';
 import { EXPAND_STATE } from './agFiltersToolPanelHeader';
 import type { ToolPanelFiltersCompParams } from './filtersToolPanel';
 import { ToolPanelFilterComp } from './toolPanelFilterComp';
@@ -34,7 +34,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
 
     private params: ToolPanelFiltersCompParams;
     private filterGroupComps: ToolPanelFilterGroupComp[] = [];
-    private noMatchesComp: ToolPanelNoMatchesComp;
+    private noMatchesComp: NoMatchesComp;
 
     // null is used to check if we should search filters when new cols are loaded
     private searchFilterText: string | null;
@@ -48,7 +48,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
     }
 
     public postConstruct(): void {
-        this.noMatchesComp = this.createManagedBean(new ToolPanelNoMatchesComp('ag-filter-toolpanel-no-matches'));
+        this.noMatchesComp = this.createManagedBean(new NoMatchesComp('ag-filter-toolpanel-no-matches'));
         this.appendChild(this.noMatchesComp);
     }
 
