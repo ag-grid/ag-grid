@@ -84,7 +84,7 @@ All the cell data types set the following (unless specified):
 - A [Value Formatter](./value-formatters/) to convert from the relevant data type to `string` (except for `'text'`).
 - A [Key Creator](./grouping-data/#grouping-on-object-data) which uses the Value Formatter to allow Row Grouping to work (only for `'date'`, `'dateString'`, `'dateTime'`, `'dateTimeString'` and `'object'`).
 
-Note that when using cell data types, the Value Formatter will not run for values in group columns (as they have already been formatted), or for aggregated values where the data type can differ. To apply custom formatting in these cases, cell data types will need to be disabled for the underlying columns.
+Note that when using cell data types, the Value Formatter will not run for values in group columns (as they have already been formatted), or for aggregated values where the data type can differ (the `first` and `last` aggregations, and `min` and `max` of dates, are still formatted as their values keep the column's data type). To apply custom formatting in these cases, cell data types will need to be disabled for the underlying columns.
 
 ### Text
 
