@@ -36,15 +36,16 @@ const gridOptions: GridOptions<OlympicGroupData> = {
     },
     sideBar: 'columns',
 
-    // the server returns the group key as `gold` and the aggregate as `<aggFunc>_gold`, e.g. `sum_gold`
-    getServerSideGroupAggData: (params) => {
-        const gold = params.api.getColumn('gold')!;
-        const aggFunc = gold.getAggFunc();
-        if (!gold.isValueActive() || typeof aggFunc !== 'string') {
-            // Gold is not aggregated, so it reads the group key from the row data
+    // the server returns the aggregate of the grouped column as `<aggFunc>_<colId>`, e.g. `sum_gold`
+    getServerSideGroupAggData: ({ node, data }) => {
+        const column = node.rowGroupColumn;
+        const aggFunc = column?.getAggFunc();
+        if (!column?.isValueActive() || typeof aggFunc !== 'string') {
+            // the grouped column is not aggregated, so it shows the group key from the row data
             return undefined;
         }
-        return { gold: params.data[`${aggFunc}_gold`] };
+        const colId = column.getColId();
+        return { [colId]: data[`${aggFunc}_${colId}`] };
     },
 
     rowModelType: 'serverSide',

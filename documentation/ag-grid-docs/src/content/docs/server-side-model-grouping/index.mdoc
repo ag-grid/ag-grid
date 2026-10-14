@@ -130,9 +130,9 @@ The example below groups by **Gold** and aggregates it with `sum`. Note the foll
 
 - The server returns the group key as `gold` and `sum(gold)` as `sum_gold`, and sorts the **Gold** group level by its
   key.
-- `getServerSideGroupAggData` returns `{ gold: params.data.sum_gold }`, so the **Gold** column shows the sum while the
-  group column shows the key. It reads the field for the current aggregation function, so changing it in the Columns
-  Tool Panel keeps working.
+- `getServerSideGroupAggData` reads the aggregate of the row's `rowGroupColumn` from `<aggFunc>_<colId>`, so the
+  **Gold** column shows the sum while the group column shows the key. This works for any column grouped and aggregated
+  from the Columns Tool Panel, with any built-in aggregation function.
 - **Gold** has `enableRowGroup` and `enableValue` set, and appears in both Row Groups and Values in the Columns Tool
   Panel.
 
