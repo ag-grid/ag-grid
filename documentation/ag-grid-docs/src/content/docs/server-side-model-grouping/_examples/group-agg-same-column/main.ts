@@ -47,7 +47,7 @@ const gridOptions: GridOptions<IOlympicData> = {
                 ? { [colId]: params.data[`${aggFunc}_${colId}`] }
                 : undefined;
         if (colId === 'gold' || colId === 'silver' || colId === 'bronze') {
-            console.log(`getServerSideGroupAggData: ${colId} group ${params.node.key} returns`, aggData, params);
+            console.log(`getServerSideGroupAggData: ${colId} group ${params.node.key}`, { params, returning: aggData });
         }
         return aggData;
     },
