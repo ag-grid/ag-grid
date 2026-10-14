@@ -59,6 +59,15 @@ const gridOptions = {
                 }
             });
         },
+        onUnsubscribe: (rows) => {
+            rows.forEach((row) => {
+                if (row.type === 'group') {
+                    stream.unsubscribeFromGroup(row.route);
+                } else {
+                    stream.unsubscribe(row.id);
+                }
+            });
+        },
     },
 };
 ```
