@@ -75,7 +75,7 @@ const columnDefs: (ColDef<CompanyRecord> | ColGroupDef<CompanyRecord>)[] = [
             {
                 field: 'rating',
                 cellClass: 'rating-cell',
-                tooltipValueGetter: (params) => `Credit rating: ${params.value}`,
+                tooltip: (params) => `Credit rating: ${params.value}`,
             },
         ],
     },

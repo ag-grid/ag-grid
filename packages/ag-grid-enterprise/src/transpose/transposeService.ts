@@ -35,7 +35,6 @@ const RECORD_COL_KEYS: readonly (keyof TransposeRecordColumnDef)[] = [
     'headerClass',
     'headerStyle',
     'headerTooltip',
-    'headerTooltipValueGetter',
     'headerComponent',
     'headerComponentParams',
     'cellClass',
@@ -51,7 +50,7 @@ const FIELD_COL_KEYS: readonly (keyof TransposeFieldColumnDef)[] = [
     ...RECORD_COL_KEYS,
     'headerName',
     'pinned',
-    'tooltipValueGetter',
+    'tooltip',
     'wrapText',
     'autoHeight',
 ];

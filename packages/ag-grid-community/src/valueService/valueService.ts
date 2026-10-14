@@ -280,10 +280,6 @@ export class ValueService extends BeanStub implements NamedBean {
     // aggregation) must pre-resolve via `_resolvePivotColumnForRow`. Run the getValue benchmark to verify.
     // This does NOT resolve pending edit values (edit or batch). `_getFilterValueSource` mirrors its precedence.
     public getValueFromData(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean = false): any {
-        if (column.transposeRecord !== undefined) {
-            const transposed = _getTransposedCell(column, rowNode);
-            return transposed && this.getValueFromData(transposed.column, transposed.rowNode, ignoreAggData);
-        }
         // An actively-aggregating calc col aggregates its per-leaf results, so group rows read aggData
         // instead of re-evaluating the formula (gated on the active state, not just a defined aggFunc).
         const evaluateFormula = column.isCalculatedCol && !(column.aggregationActive && rowNode.group);
@@ -323,7 +319,21 @@ export class ValueService extends BeanStub implements NamedBean {
                 return pending;
             }
         }
+        if (column.transposeRecord !== undefined) {
+            return this.getCellValueFromData(column, rowNode, ignoreAggData);
+        }
         return this.getValueFromData(column, rowNode, ignoreAggData);
+    }
+
+    /**
+     * Committed data for a displayed cell: like {@link getValueFromData}, but a transposed-view cell reads its original
+     * record and field. Kept off the hot read path, which only ever sees original columns.
+     */
+    public getCellValueFromData(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean = false): any {
+        const transposed = _getTransposedCell(column, rowNode);
+        return transposed
+            ? this.getValueFromData(transposed.column, transposed.rowNode, ignoreAggData)
+            : this.getValueFromData(column, rowNode, ignoreAggData);
     }
 
     /** Whether to ignore aggregation data for display. Callers must pass a group node (guard on `node.group`). */

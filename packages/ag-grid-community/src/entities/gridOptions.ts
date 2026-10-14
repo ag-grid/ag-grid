@@ -3515,7 +3515,6 @@ type TransposeColumnSizingAndHeader =
     | 'headerClass'
     | 'headerStyle'
     | 'headerTooltip'
-    | 'headerTooltipValueGetter'
     | 'headerComponent'
     | 'headerComponentParams'
     | 'cellClass'
@@ -3533,7 +3532,7 @@ export type TransposeRecordColumnDef = Pick<ColDef, TransposeColumnSizingAndHead
 /** Subset of ColDef customising the transposed view's field-name column. */
 export type TransposeFieldColumnDef = Pick<
     ColDef,
-    TransposeColumnSizingAndHeader | 'headerName' | 'pinned' | 'tooltipValueGetter' | 'wrapText' | 'autoHeight'
+    TransposeColumnSizingAndHeader | 'headerName' | 'pinned' | 'tooltip' | 'wrapText' | 'autoHeight'
 >;
 
 /** Subset of ColDef allowing for customisation of the Selection column, currently used for checkbox selection */
