@@ -213,6 +213,7 @@ export type UserComponentName =
     | 'agAnimateSlideCellRenderer'
     | 'agLoadingCellRenderer'
     | 'agTransposeFieldCellRenderer'
+    | 'agTransposeRecordHeader'
     | 'agSkeletonCellRenderer'
     | 'agCheckboxCellRenderer'
     | 'agLoadingOverlay'

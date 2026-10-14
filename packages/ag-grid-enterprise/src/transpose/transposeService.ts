@@ -146,6 +146,7 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
                 filter: false,
                 editable: false,
                 suppressHeaderMenuButton: true,
+                headerComponent: 'agTransposeRecordHeader',
             });
         }
         this.applyColDefs(colDefs, records);

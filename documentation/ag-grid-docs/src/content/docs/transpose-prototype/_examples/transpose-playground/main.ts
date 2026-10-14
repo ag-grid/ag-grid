@@ -13,10 +13,13 @@ import {
     ClientSideRowModelModule,
     ColumnApiModule,
     DateEditorModule,
+    DateFilterModule,
     ModuleRegistry,
     NumberEditorModule,
     NumberFilterModule,
+    RowSelectionModule,
     TextEditorModule,
+    TextFilterModule,
     ValidationModule,
     createGrid,
     enableDevValidations,
@@ -42,6 +45,9 @@ ModuleRegistry.registerModules([
     DateEditorModule,
     RichSelectModule,
     NumberFilterModule,
+    TextFilterModule,
+    DateFilterModule,
+    RowSelectionModule,
     ValidationModule,
 ]);
 
@@ -116,6 +122,11 @@ const gridOptions: GridOptions<CompanyRecord> = {
     rowData: getData(),
     transpose: true,
     transposeHeaderColId: 'name',
+    rowSelection: { mode: 'multiRow' },
+    onSelectionChanged: () => {
+        const names = gridApi.getSelectedRows().map((row) => row.name);
+        log(`selectionChanged: ${names.join(', ') || '(none)'}`);
+    },
     onCellValueChanged: (event) => {
         log(
             `cellValueChanged: ${event.data.name} / ${event.colDef.field ?? event.column.getColId()} → ${event.newValue}`
