@@ -33,7 +33,9 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         column: AgColumn | AgProvidedColumnGroup | undefined,
         mouseEvent: MouseEvent | Touch,
         containerType: ContainerType,
-        onClosedCallback?: () => void
+        onClosedCallback?: () => void,
+        _filtersOnly?: boolean,
+        getEventSource?: () => HTMLElement
     ): void {
         if (column && !column.isColumn) {
             // not supported
@@ -52,7 +54,9 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             containerType,
             mouseEvent.target as HTMLElement,
             _isLegacyMenuEnabled(this.gos),
-            onClosedCallback
+            onClosedCallback,
+            undefined,
+            getEventSource
         );
     }
 
@@ -83,7 +87,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             (eMenu) => {
                 this.popupSvc?.positionPopupByComponent({
                     type: containerType,
-                    eventSource,
+                    eventSource: options?.getEventSource?.() ?? eventSource,
                     ePopup: eMenu,
                     nudgeX,
                     nudgeY,
@@ -97,7 +101,8 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             eventSource,
             isLegacyMenuEnabled,
             onClosedCallback,
-            options?.suppressCloseOnEventSource
+            options?.suppressCloseOnEventSource,
+            options?.getEventSource
         );
     }
 
@@ -108,7 +113,8 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         eventSource: HTMLElement,
         isLegacyMenuEnabled: boolean,
         onClosedCallback?: (event?: Event) => void,
-        suppressCloseOnEventSource?: boolean
+        suppressCloseOnEventSource?: boolean,
+        getEventSource?: () => HTMLElement
     ): boolean {
         const comp = column ? this.createBean(new FilterComp(column, 'COLUMN_MENU')) : undefined;
         if (!comp?.hasFilter() || !column) {
@@ -133,8 +139,9 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
 
         const afterGuiDetached = () => comp?.afterGuiDetached();
 
+        const resolveEventSource = getEventSource ?? (eventSource ? () => eventSource : undefined);
         const anchorToElement = _isColumnMenuAnchoringEnabled(this.gos)
-            ? (eventSource ?? this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody)
+            ? (resolveEventSource ?? this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody)
             : undefined;
         const closedCallback = (e: MouseEvent | TouchEvent | KeyboardEvent) => {
             _setColMenuVisible(column, false, 'contextMenu');
@@ -142,8 +149,9 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
 
             destroyTabListener();
 
-            if (isKeyboardEvent && eventSource && _isVisible(eventSource)) {
-                const focusableEl = _findTabbableParent(eventSource);
+            const focusSource = isKeyboardEvent ? resolveEventSource?.() : undefined;
+            if (focusSource && _isVisible(focusSource)) {
+                const focusableEl = _findTabbableParent(focusSource);
                 focusableEl?.focus({ preventScroll: true });
             }
             afterGuiDetached();
@@ -170,7 +178,7 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             closedCallback,
             positionCallback: () => positionCallback(eMenu),
             anchorToElement,
-            eventSourceToIgnore: suppressCloseOnEventSource ? eventSource : undefined,
+            eventSourceToIgnore: suppressCloseOnEventSource ? resolveEventSource : undefined,
             ariaLabel,
         });
 

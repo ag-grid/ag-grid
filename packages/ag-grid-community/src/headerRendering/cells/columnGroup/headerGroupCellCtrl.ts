@@ -18,6 +18,7 @@ import { CSS_COLUMN_HEADER_EDIT_HIGHLIGHTED } from '../../../styling/columnHeade
 import type { ComponentTooltip } from '../../../tooltip/headerTooltipSource';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
+import { createHeaderMenuSource } from '../../headerUtils';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef } from '../cssClassApplier';
@@ -264,7 +265,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     }
 
     private createUserCompParams(): IHeaderGroupParams {
-        const { gos, enterpriseMenuFactory } = this.beans;
+        const beans = this.beans;
+        const { gos, enterpriseMenuFactory } = beans;
         const columnGroup = this.column;
         const providedColumnGroup = columnGroup.getProvidedColumnGroup();
         const componentClaim = this.headerCompGuard.provisionalClaim();
@@ -285,14 +287,17 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
                     providedColumnGroup,
                     buttonElement,
                     'columnMenu',
-                    onClosedCallback
+                    onClosedCallback,
+                    { getEventSource: createHeaderMenuSource(beans, columnGroup, buttonElement) }
                 ),
             showColumnMenuAfterMouseClick: (mouseEvent, onClosedCallback) =>
                 enterpriseMenuFactory?.showMenuAfterMouseEvent(
                     providedColumnGroup,
                     mouseEvent,
                     'columnMenu',
-                    onClosedCallback
+                    onClosedCallback,
+                    undefined,
+                    createHeaderMenuSource(beans, columnGroup, mouseEvent.target as HTMLElement)
                 ),
             eGridHeader: this.eGui,
         });

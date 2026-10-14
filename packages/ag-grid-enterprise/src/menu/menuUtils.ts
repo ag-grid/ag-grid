@@ -9,7 +9,8 @@ export interface MenuRestoreFocusParams {
     column: AgColumn | undefined;
     headerPosition: HeaderPosition | null;
     columnIndex: number;
-    eventSource?: HTMLElement;
+    /** Resolves the current event source, which may replace the original (eg a refreshed header). */
+    getEventSource?: () => HTMLElement;
 }
 
 export class MenuUtils extends BeanStub implements NamedBean {
@@ -21,7 +22,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
         e?: Event,
         restoreIfMouseEvent?: boolean
     ): void {
-        const { eventSource } = restoreFocusParams;
+        const eventSource = restoreFocusParams.getEventSource?.();
         const isKeyboardEvent = e instanceof KeyboardEvent;
         if ((!restoreIfMouseEvent && !isKeyboardEvent) || !eventSource) {
             return;
@@ -113,7 +114,7 @@ export class MenuUtils extends BeanStub implements NamedBean {
 
     // make this async for react
     private async focusEventSourceOrHeaderCell(restoreFocusParams: MenuRestoreFocusParams): Promise<void> {
-        const { column, columnIndex, headerPosition, eventSource } = restoreFocusParams;
+        const { column, columnIndex, headerPosition, getEventSource } = restoreFocusParams;
         const { visibleCols, headerNavigation, focusSvc } = this.beans;
 
         // DO NOT REMOVE `await` from the statement below
@@ -123,6 +124,8 @@ export class MenuUtils extends BeanStub implements NamedBean {
         if (!this.isAlive()) {
             return;
         }
+
+        const eventSource = getEventSource?.();
 
         if (eventSource && _isVisible(eventSource)) {
             const focusableEl = _findTabbableParent(eventSource);

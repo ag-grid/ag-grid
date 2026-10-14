@@ -20,6 +20,7 @@ import { _getCalculatedColumnCssClasses } from '../../../styling/calculatedColum
 import { _stopPropagationForAgGrid } from '../../../utils/gridEvent';
 import { _createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
+import { getFloatingFilterMenuAnchor } from '../../headerUtils';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _refreshCssClasses } from '../cssClassApplier';
 import { _addPopupToggleButtonListeners } from '../popupToggleButton';
@@ -294,21 +295,28 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.comp.setCompDetails(compDetails);
     }
 
+    public getAnchorElementForMenu(): HTMLElement {
+        return this.suppressFilterButton ? this.eFloatingFilterBody : this.eButtonShowMainFilter;
+    }
+
     private showParentFilter() {
-        const eventSource = this.suppressFilterButton ? this.eFloatingFilterBody : this.eButtonShowMainFilter;
-        this.beans.menuSvc?.showFilterMenu({
-            column: this.column,
-            buttonElement: eventSource,
+        const { beans, column } = this;
+        beans.menuSvc?.showFilterMenu({
+            column,
+            buttonElement: this.getAnchorElementForMenu(),
+            getButtonElement: () => getFloatingFilterMenuAnchor(beans, column),
             containerType: 'floatingFilter',
             positionBy: 'button',
         });
     }
 
     private toggleParentFilter(): PopupToggleResult {
+        const { beans, column } = this;
         return (
-            this.beans.menuSvc?.toggleFilterMenu({
-                column: this.column,
+            beans.menuSvc?.toggleFilterMenu({
+                column,
                 buttonElement: this.eButtonShowMainFilter,
+                getButtonElement: () => getFloatingFilterMenuAnchor(beans, column),
                 containerType: 'floatingFilter',
                 positionBy: 'button',
             }) ?? 'declined'
