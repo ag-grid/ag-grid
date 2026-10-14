@@ -11,6 +11,7 @@ import { navigate } from 'astro:transitions/client';
 import { useMemo } from 'react';
 
 import styles from './FrameworkSelectorInsideDocs.module.scss';
+import { getFrameworkVersionLinks, isPageInFramework } from './frameworkVersionLinks';
 
 interface Props {
     path: string;
@@ -36,6 +37,13 @@ export const FrameworkSelectorInsideDocs = ({ path, currentFramework, menuItems 
         [frameworkOptions, currentFramework]
     );
 
+    // Plain links beside the picker: its options only mount once it is opened, so without these the
+    // server-rendered page has nothing for a crawler to follow to the other framework versions.
+    const frameworkVersionLinks = useMemo(
+        () => getFrameworkVersionLinks({ path, currentFramework, menuItems }),
+        [path, currentFramework, menuItems]
+    );
+
     const handleFrameworkChange = (selectedFramework: Framework) => {
         const pageName = getPageNameFromPath(path);
         const menuItem = menuItems && getMenuItemFromPageName({ menuItems, pageName });
@@ -49,18 +57,14 @@ export const FrameworkSelectorInsideDocs = ({ path, currentFramework, menuItems 
             }) + window.location.search;
 
         // Redirect to default page if page does not exist in framework
-        if (menuItem?.frameworks) {
-            const withinFrameworks = menuItem?.frameworks?.includes(selectedFramework);
-
-            if (!withinFrameworks) {
-                const relativeUrl = DOCS_FRAMEWORK_REDIRECT_PAGE.startsWith('./')
-                    ? DOCS_FRAMEWORK_REDIRECT_PAGE
-                    : `./${DOCS_FRAMEWORK_REDIRECT_PAGE}`;
-                newUrl = urlWithPrefix({
-                    framework: selectedFramework,
-                    url: relativeUrl,
-                });
-            }
+        if (!isPageInFramework(menuItem, selectedFramework)) {
+            const relativeUrl = DOCS_FRAMEWORK_REDIRECT_PAGE.startsWith('./')
+                ? DOCS_FRAMEWORK_REDIRECT_PAGE
+                : `./${DOCS_FRAMEWORK_REDIRECT_PAGE}`;
+            newUrl = urlWithPrefix({
+                framework: selectedFramework,
+                url: relativeUrl,
+            });
         }
 
         navigate(newUrl);
@@ -85,6 +89,17 @@ export const FrameworkSelectorInsideDocs = ({ path, currentFramework, menuItems 
                         );
                     }}
                 />
+                {frameworkVersionLinks.length > 0 && (
+                    <nav className={styles.frameworkVersionLinks} aria-label="Other framework versions of this page">
+                        <ul>
+                            {frameworkVersionLinks.map(({ framework, label, href }) => (
+                                <li key={framework}>
+                                    <a href={href}>{label}</a>
+                                </li>
+                            ))}
+                        </ul>
+                    </nav>
+                )}
             </div>
         )
     );
