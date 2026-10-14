@@ -28,21 +28,27 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     autoGroupColumnDef: {
         flex: 1,
-        minWidth: 240,
+        minWidth: 120,
         field: 'athlete',
     },
     sideBar: 'columns',
 
     // the server returns the aggregate of the grouped column as `<aggFunc>_<colId>`, e.g. `sum_gold`
-    getServerSideGroupAggData: ({ node, data }) => {
-        const column = node.rowGroupColumn;
-        const aggFunc = column?.getAggFunc();
-        if (!column?.isValueActive() || typeof aggFunc !== 'string') {
-            // the grouped column is not aggregated, so it shows the group key from the row data
+    getServerSideGroupAggData: (params) => {
+        const column = params.node.rowGroupColumn;
+        if (!column) {
             return undefined;
         }
         const colId = column.getColId();
-        return { [colId]: data[`${aggFunc}_${colId}`] };
+        if (colId === 'gold' || colId === 'silver' || colId === 'bronze') {
+            console.log(`getServerSideGroupAggData: ${colId}`, params);
+        }
+        const aggFunc = column.getAggFunc();
+        if (!column.isValueActive() || typeof aggFunc !== 'string') {
+            // the grouped column is not aggregated, so it shows the group key from the row data
+            return undefined;
+        }
+        return { [colId]: params.data[`${aggFunc}_${colId}`] };
     },
 
     rowModelType: 'serverSide',
