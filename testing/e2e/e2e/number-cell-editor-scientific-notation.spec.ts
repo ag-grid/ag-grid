@@ -85,7 +85,7 @@ test.describe('agNumberCellEditor with precision, scientific-notation input', ()
                 // Tab moves the edit on to the next cell, so only the edited cell is checked.
                 await expect(cell(0, column)).not.toHaveClass(/ag-cell-inline-editing/);
                 const committed = await page.evaluate(
-                    (colId) => (window as any).gridApi.getDisplayedRowAtIndex(0).data[colId],
+                    (colId) => window.gridApi.getDisplayedRowAtIndex(0)!.data[colId],
                     column
                 );
                 expect(committed).toBe(expected);

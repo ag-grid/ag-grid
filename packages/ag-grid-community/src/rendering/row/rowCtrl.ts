@@ -299,6 +299,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
         // Cells apply their own edit styles on creation; rows otherwise only pick theirs up from
         // postProcessCss, which never runs for a row that renders once and never changes index.
         this.beans.editSvc?.applyRowEditStyles(this);
+        if (this.beans.rowDropHighlightSvc?.row === this.rowNode) {
+            this.onRowNodeHighlightChanged();
+        }
         this.executeSlideAndFadeAnimations();
 
         if (this.rowNode.isExpandable()) {
