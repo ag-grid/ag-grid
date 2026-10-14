@@ -170,11 +170,6 @@
     height: calc(var(--ag-list-item-height) * 6);
 }
 
-.ag-filter-no-matches {
-    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
-    text-align: center;
-}
-
 .ag-set-filter-tree-list {
     height: calc(var(--ag-list-item-height) * 10);
 }

@@ -1,11 +1,6 @@
 @use 'ag';
 
 @mixin output {
-    .ag-filter-toolpanel-no-matches {
-        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
-        text-align: center;
-    }
-
     .ag-filter-toolpanel-header {
         height: calc(var(--ag-grid-size) * 6);
     }

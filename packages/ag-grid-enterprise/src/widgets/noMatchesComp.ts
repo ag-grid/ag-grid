@@ -1,10 +1,13 @@
 import { Component } from 'ag-grid-community';
 
+import noMatchesCompCSS from './noMatchesComp.css';
+
 export class NoMatchesComp extends Component {
     private announced = false;
 
     constructor(cssClass: string) {
-        super({ tag: 'div', cls: cssClass });
+        super({ tag: 'div', cls: `ag-no-matches ${cssClass}` });
+        this.registerCSS(noMatchesCompCSS);
     }
 
     public postConstruct(): void {

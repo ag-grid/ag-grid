@@ -1,11 +1,6 @@
 @use 'ag';
 
 @mixin output {
-    .ag-column-select-no-matches {
-        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
-        text-align: center;
-    }
-
     .ag-pivot-mode-panel {
         min-height: var(--ag-header-height);
         height: var(--ag-header-height);

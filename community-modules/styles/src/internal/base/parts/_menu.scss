@@ -281,11 +281,6 @@
         min-width: calc(var(--ag-menu-min-width) - 2px);
     }
 
-    .ag-filter-no-matches {
-        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
-        text-align: center;
-    }
-
     .ag-multi-filter-menu-item {
         margin: var(--ag-grid-size) 0;
     }

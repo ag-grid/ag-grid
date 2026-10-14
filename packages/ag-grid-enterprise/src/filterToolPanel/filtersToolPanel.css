@@ -77,8 +77,3 @@
 .ag-filter-toolpanel-group-level-0 {
     border-top: none;
 }
-
-.ag-filter-toolpanel-no-matches {
-    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
-    text-align: center;
-}
