@@ -38,7 +38,12 @@ const gridOptions: GridOptions<OlympicGroupData> = {
 
     // the server returns the group key as `gold` and the aggregate as `<aggFunc>_gold`, e.g. `sum_gold`
     getServerSideGroupAggData: (params) => {
-        const aggFunc = params.api.getColumn('gold')!.getAggFunc();
+        const gold = params.api.getColumn('gold')!;
+        const aggFunc = gold.getAggFunc();
+        if (!gold.isValueActive() || typeof aggFunc !== 'string') {
+            // Gold is not aggregated, so it reads the group key from the row data
+            return undefined;
+        }
         return { gold: params.data[`${aggFunc}_gold`] };
     },
 

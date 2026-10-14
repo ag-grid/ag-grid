@@ -299,7 +299,7 @@ export type GetServerSideGroupAggData<TData = any, TContext = any> = (
     params: GetServerSideGroupAggDataParams<TData, TContext>
 ) => { [colId: string]: any } | null | undefined;
 export interface GetServerSideGroupAggDataParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /** The group row data as returned by the server. */
+    /** The group row data as returned by the server. When the row is updated, `node.data` still holds the previous data. */
     data: TData;
     /** The group row node. */
     node: IRowNode<TData>;

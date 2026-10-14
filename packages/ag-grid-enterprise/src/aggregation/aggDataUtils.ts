@@ -74,6 +74,21 @@ export const setAggDataWithSiblings = (
     }
 };
 
+/** Sets aggData on a row node and all its siblings (footer + pinned) without firing cell-changed events. */
+export const setAggDataWithoutEvents = (rowNode: RowNode, newAggData: Record<string, any> | null): void => {
+    rowNode.aggData = newAggData;
+    const { pinnedSibling, sibling } = rowNode;
+    if (pinnedSibling) {
+        pinnedSibling.aggData = newAggData;
+    }
+    if (sibling) {
+        sibling.aggData = newAggData;
+        if (sibling.pinnedSibling) {
+            sibling.pinnedSibling.aggData = newAggData;
+        }
+    }
+};
+
 /** Cold path: dispatches cell-changed events for changed/added/removed agg values. */
 const fireAggDataChangedEvents = (
     rowNode: RowNode,
