@@ -13,3 +13,30 @@
 .ag-transpose-field-group {
     font-weight: 600;
 }
+
+.ag-transpose-field-label {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ag-transpose-field-button {
+    display: inline-flex;
+    cursor: pointer;
+    opacity: 0.4;
+}
+
+.ag-transpose-field-button-active {
+    opacity: 1;
+}
+
+.ag-transpose-record-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow: hidden;
+}
+
+.ag-transpose-record-header-selected {
+    font-weight: 600;
+}
