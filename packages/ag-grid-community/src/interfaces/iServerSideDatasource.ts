@@ -1,10 +1,9 @@
 // we pass a VO of the column and not the column itself,
 // so the data is read to be be converted to JSON and thrown
 // over the wire
-import type { AdvancedFilterModel } from './advancedFilterModel';
+import type { JoinAdvancedFilterModel, ColumnAdvancedFilterModel } from './advancedFilterModel';
 import type { ColumnVO } from './iColumnVO';
 import type { AgGridCommon } from './iCommon';
-import type { FilterModel } from './iFilter';
 import type { IRowNode } from './iRowNode';
 import type { LoadSuccessParams } from './iServerSideRowModel';
 import type { SortModelItem } from './iSortModelItem';
@@ -26,10 +25,10 @@ export interface IServerSideGetRowsRequest {
     groupKeys: string[];
     /**
      * If filtering, what the filter model is.
-     * If Advanced Filter is enabled, will be of type `AdvancedFilterModel | null`.
-     * If Advanced Filter is disabled, will be of type `FilterModel`.
+     * If Advanced Filter is enabled, will be of type `JoinAdvancedFilterModel | null`.
+     * If Advanced Filter is disabled, will be of type `Record<string, ColumnAdvancedFilterModel>`.
      */
-    filterModel: FilterModel | AdvancedFilterModel | null;
+    filterModel: Record<string, ColumnAdvancedFilterModel> | JoinAdvancedFilterModel | null;
     /** If sorting, what the sort model is.  */
     sortModel: SortModelItem[];
 }
