@@ -115,6 +115,7 @@ describe('Edit API', () => {
             valueSvc: {
                 getValue: vi.fn(resolveMockValue),
                 getValueFromData: vi.fn(resolveMockValue),
+                getCellValueFromData: vi.fn(resolveMockValue),
             } as unknown as ValueService,
             registry: {
                 createDynamicBean: vi.fn(),

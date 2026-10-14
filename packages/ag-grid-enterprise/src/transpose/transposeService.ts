@@ -11,7 +11,7 @@ import type {
 } from 'ag-grid-community';
 import { AgColumn, BeanStub, RowNode as RowNodeClass, _isClientSideRowModel, _warnOnce } from 'ag-grid-community';
 
-export const TRANSPOSE_FIELD_COL_ID = 'ag-Grid-TransposeField';
+const TRANSPOSE_FIELD_COL_ID = 'ag-Grid-TransposeField';
 const RECORD_COL_ID_PREFIX = 'ag-Grid-TransposeRecord-';
 const FIELD_ROW_ID_PREFIX = 'ag-Grid-TransposeField-';
 const FIELD_GROUP_ROW_ID_PREFIX = 'ag-Grid-TransposeFieldGroup-';
@@ -186,7 +186,7 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         const token = ++this.refreshToken;
         const prevCols = this.cols;
         const recordCount = records.length;
-        let setChanged = prevCols == null || prevCols.length !== recordCount + 1;
+        let setChanged = prevCols?.length !== recordCount + 1;
         let orderChanged = false;
 
         this.fieldNameCol ??= this.createCol(this.createFieldNameColDef(headerCol));
