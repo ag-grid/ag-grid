@@ -48,6 +48,9 @@ import {
 } from './setFilterUtils';
 import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 
+/** `'state'` only syncs the UI to a model update; only `'ui'` (typing) announces. */
+type MiniFilterInputSource = 'ui' | 'api' | 'state';
+
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string>
     extends ProvidedFilter<SetFilterModel, V, ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>>
@@ -743,11 +746,11 @@ export class SetFilter<V = string>
         // we don't warn here because the multi filter can call this
     }
 
-    private onMiniFilterInput(forceImmediate = false, silent?: boolean, announce = true) {
+    private onMiniFilterInput(forceImmediate = false, source: MiniFilterInputSource = 'ui') {
         if (!this.doSetMiniFilter(this.eMiniFilter.getValue())) {
             return;
         }
-        if (silent) {
+        if (source === 'state') {
             // update UI state only
             this.showOrHideResults();
             return;
@@ -763,7 +766,7 @@ export class SetFilter<V = string>
                   ? 'debounce'
                   : undefined;
 
-        this.updateUiAfterMiniFilterChange(updateSelections, apply, announce);
+        this.updateUiAfterMiniFilterChange(updateSelections, apply, source === 'ui');
     }
 
     private updateUiAfterMiniFilterChange(
@@ -906,7 +909,7 @@ export class SetFilter<V = string>
     public setMiniFilter(newMiniFilter: string | null, silent?: boolean): void {
         // Field event suppressed so the change is handled here as API input, not as typing.
         this.eMiniFilter.setValue(newMiniFilter, true);
-        this.onMiniFilterInput(false, silent, false);
+        this.onMiniFilterInput(false, silent ? 'state' : 'api');
     }
 
     /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */
