@@ -65,3 +65,13 @@ export function subscribe(
 export function range(from: number, to: number): string[] {
     return Array.from({ length: to - from + 1 }, (_, i) => String(from + i));
 }
+
+/** Calls the api, returning the warning it throws once the grid is destroyed. */
+export function tryApi(call: () => void): string | undefined {
+    try {
+        call();
+        return undefined;
+    } catch (e) {
+        return (e as Error).message;
+    }
+}

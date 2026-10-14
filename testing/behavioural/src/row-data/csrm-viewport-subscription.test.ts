@@ -13,7 +13,7 @@ import {
 } from 'ag-grid-community';
 import { RowGroupingModule, TreeDataModule } from 'ag-grid-enterprise';
 
-import { createRecorder, range, subscribe } from './viewportSubscriptionTestUtils';
+import { createRecorder, range, subscribe, tryApi } from './viewportSubscriptionTestUtils';
 
 describe('CSRM viewportSubscription', () => {
     const gridsManager = new TestGridsManager({
@@ -363,16 +363,6 @@ describe('CSRM viewportSubscription', () => {
         });
 
         describe('restarting while the grid is destroyed', () => {
-            /** Calls the api, returning the warning it throws once the grid is destroyed. */
-            function tryApi(call: () => void): string | undefined {
-                try {
-                    call();
-                    return undefined;
-                } catch (e) {
-                    return (e as Error).message;
-                }
-            }
-
             test('subscribeToViewport inside every onUnsubscribe leaves no row subscribed', async () => {
                 const warnings: (string | undefined)[] = [];
                 const recorder = createRecorder((call) => {
