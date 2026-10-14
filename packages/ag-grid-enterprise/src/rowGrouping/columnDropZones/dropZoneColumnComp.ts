@@ -23,8 +23,8 @@ import {
     _resolvePivotSort,
 } from 'ag-grid-community';
 
+import type { ColumnToolPanelChildParams } from '../../columnToolPanel/columnToolPanel';
 import { isDeferredMode, refreshDeferredToolPanelUi } from '../../columnToolPanel/toolPanelDeferredUiUtils';
-import type { ColumnStateUpdateParams } from '../../columnToolPanel/updates/columnStateUpdateTypes';
 import { PillDragComp } from '../../widgets/pillDragComp';
 import { VirtualList } from '../../widgets/virtualList';
 import { isRowGroupColLocked } from '../rowGroupingUtils';
@@ -43,7 +43,7 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
         ghost: boolean,
         private readonly dropZonePurpose: TDropZone,
         horizontal: boolean,
-        private readonly updateParams?: ColumnStateUpdateParams
+        private readonly updateParams?: ColumnToolPanelChildParams
     ) {
         super(dragSourceDropTarget, ghost, horizontal);
         this.deferApply = isDeferredMode(updateParams);
