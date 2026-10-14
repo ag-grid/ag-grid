@@ -7,7 +7,8 @@ import { getSitemapConfig } from './sitemap';
 const INPUT = {
     siteRoot: 'https://www.ag-grid.com/',
     majorVersion: 34,
-    gridDocsPrefix: 'javascript-data-grid',
+    gridDocsPrefix: 'react-data-grid',
+    chartsDocsPrefix: 'react',
 };
 
 describe('buildLlmsTxt', () => {
@@ -22,17 +23,27 @@ describe('buildLlmsTxt', () => {
     });
 
     test('links the products, docs, MCP server and sitemap (acceptance criteria)', () => {
-        expect(txt).toContain('- [Data Grid](https://www.ag-grid.com/javascript-data-grid/getting-started/):');
+        expect(txt).toContain('- [Data Grid](https://www.ag-grid.com/react-data-grid/getting-started/):');
         expect(txt).toContain('(https://www.ag-grid.com/charts/)');
         expect(txt).toContain('(https://www.ag-grid.com/studio/)');
-        expect(txt).toContain('(https://www.ag-grid.com/javascript-data-grid/getting-started/)');
-        expect(txt).toContain('(https://www.ag-grid.com/javascript-data-grid/mcp-server/)');
+        expect(txt).toContain('(https://www.ag-grid.com/react-data-grid/getting-started/)');
+        expect(txt).toContain('(https://www.ag-grid.com/react-data-grid/mcp-server/)');
         expect(txt).toContain('(https://www.ag-grid.com/sitemap-index.xml)');
+    });
+
+    // SE-206: agents are sent to the same framework as the header's Docs and API links.
+    test('links the docs for the given framework and states how to reach the others', () => {
+        expect(txt).toContain('- [Data Grid API reference](https://www.ag-grid.com/react-data-grid/reference/):');
+        expect(txt).toContain('- [Charts docs](https://www.ag-grid.com/charts/react/quick-start/):');
+        expect(txt).toContain(
+            'replace `react-data-grid` with `<framework>-data-grid` (`javascript`, `angular` or `vue`) for another framework'
+        );
+        expect(txt).not.toContain('javascript-data-grid/');
     });
 
     test('advertises the markdown (.md) convention as a site-wide rule, not a page list', () => {
         expect(txt).toContain('.md');
-        expect(txt).toContain('https://www.ag-grid.com/javascript-data-grid/getting-started.md');
+        expect(txt).toContain('https://www.ag-grid.com/react-data-grid/getting-started.md');
         // Every page in the sitemap has a twin, so llms.txt states the rule. Enumerating
         // pages here would drift the moment one is added (see markdownPages.test.ts).
         expect(txt).toContain('append `.md` to any page URL listed in the sitemap');
@@ -70,7 +81,12 @@ describe('buildLlmsTxt', () => {
             },
         ];
         const SITE_INDEX = [{ title: 'General', links: [{ title: 'About', url: 'https://www.ag-grid.com/about/' }] }];
-        const indexed = buildLlmsTxt({ ...INPUT, docsIndex: DOCS_INDEX, siteIndex: SITE_INDEX });
+        const indexed = buildLlmsTxt({
+            ...INPUT,
+            docsIndex: DOCS_INDEX,
+            siteIndex: SITE_INDEX,
+            indexDocsPrefix: 'javascript-data-grid',
+        });
 
         test('publishes the docs under their navigation groups, in the order given', () => {
             expect(indexed).toContain('## Documentation');
@@ -84,7 +100,9 @@ describe('buildLlmsTxt', () => {
         });
 
         test('states the framework substitution instead of repeating the docs four times', () => {
-            expect(indexed).toContain('replace `javascript-data-grid` with `<framework>-data-grid`');
+            expect(indexed).toContain(
+                'replace `javascript-data-grid` with `<framework>-data-grid` (`react`, `angular` or `vue`) for the framework-specific page'
+            );
             expect(indexed).not.toContain('react-data-grid/cell-editing');
         });
 
@@ -117,17 +135,26 @@ describe('buildAgentsMd', () => {
     test('states the major version and points at the MCP server and llms.txt', () => {
         expect(md).toContain('v34');
         expect(md).toContain('npx ag-mcp');
-        expect(md).toContain('https://www.ag-grid.com/javascript-data-grid/mcp-server/');
+        expect(md).toContain('https://www.ag-grid.com/react-data-grid/mcp-server/');
         expect(md).toContain('https://www.ag-grid.com/llms.txt');
     });
 
     test('advertises the markdown (.md) versions as a site-wide rule', () => {
         expect(md).toContain('Markdown for LLMs');
-        expect(md).toContain('https://www.ag-grid.com/javascript-data-grid/getting-started.md');
+        expect(md).toContain('https://www.ag-grid.com/react-data-grid/getting-started.md');
         // Every page in the sitemap has a twin, so point at the sitemap rather than
         // listing pages that would drift (see markdownPages.test.ts for the guarantee).
         expect(md).toContain('append `.md` to any page URL listed in the');
         expect(md).toContain('[sitemap](https://www.ag-grid.com/sitemap-index.xml)');
+    });
+
+    test('links the docs for the given framework and states how to reach the others', () => {
+        expect(md).toContain('[Data Grid docs](https://www.ag-grid.com/react-data-grid/getting-started/)');
+        expect(md).toContain('[API reference](https://www.ag-grid.com/react-data-grid/reference/)');
+        expect(md).toContain(
+            'replace `react-data-grid` with `<framework>-data-grid` (`javascript`, `angular` or `vue`) for another framework'
+        );
+        expect(md).not.toContain('javascript-data-grid/');
     });
 
     test('points at index.md for the homepage, whose twin is not a `.md` suffix', () => {
