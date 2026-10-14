@@ -17,8 +17,12 @@ export class NoMatchesComp extends Component {
 
     /** Only announce when user input caused the change, so data or column updates don't speak while the UI is closed. */
     public setNoMatches(noMatches: boolean, announce: boolean): void {
+        const { ariaAnnounce } = this.beans;
         if (noMatches && announce && !this.announced) {
-            this.beans.ariaAnnounce.announceValue(this.getGui().textContent ?? '', 'noMatches');
+            ariaAnnounce.announceValue(this.getGui().textContent ?? '', 'noMatches');
+        } else if (!noMatches && this.announced) {
+            // An empty same-key value supersedes one still waiting out the announcement delay.
+            ariaAnnounce.announceValue('', 'noMatches');
         }
         this.announced = noMatches && (announce || this.announced);
         this.setDisplayed(noMatches);

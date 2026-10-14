@@ -9,6 +9,7 @@ import {
 } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
+import type { ISetFilter } from 'ag-grid-enterprise';
 import { FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import { FILTERS_SIDEBAR, openFiltersPanel } from './toolPanelHarness';
@@ -179,6 +180,42 @@ describe('Filters Tool Panel', () => {
 
         api.setGridOption('rowData', [{ country: 'France' }]);
         await waitFor(() => expect(panel.isNoMatchesShown('Country')).toBe(true));
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        expect(panel.announcement()).not.toContain('No matches');
+    });
+
+    test('setMiniFilter through the API shows "No matches" without announcing it', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agSetColumnFilter' }],
+            rowData: [{ country: 'Ireland' }, { country: 'France' }],
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+        await panel.expandGroup('Country');
+        const setFilter = await api.getColumnFilterInstance<ISetFilter>('country');
+
+        setFilter!.setMiniFilter('zz');
+        await waitFor(() => expect(panel.isNoMatchesShown('Country')).toBe(true));
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        expect(panel.announcement()).not.toContain('No matches');
+    });
+
+    test('a mini-filter corrected before "No matches" is announced does not announce it', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agSetColumnFilter' }],
+            rowData: [{ country: 'Ireland' }, { country: 'France' }],
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+        await panel.expandGroup('Country');
+
+        // Not awaited: the correction must land before the announcement's timers run.
+        const typingNoMatch = panel.setMiniFilter('Country', 'zz');
+        await panel.setMiniFilter('Country', 'Ire');
+        await typingNoMatch;
+        expect(panel.isNoMatchesShown('Country')).toBe(false);
         await asyncSetTimeout(0);
         await asyncSetTimeout(0);
         expect(panel.announcement()).not.toContain('No matches');

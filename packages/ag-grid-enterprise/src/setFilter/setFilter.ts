@@ -743,7 +743,7 @@ export class SetFilter<V = string>
         // we don't warn here because the multi filter can call this
     }
 
-    private onMiniFilterInput(forceImmediate = false, silent?: boolean) {
+    private onMiniFilterInput(forceImmediate = false, silent?: boolean, announce = true) {
         if (!this.doSetMiniFilter(this.eMiniFilter.getValue())) {
             return;
         }
@@ -763,10 +763,14 @@ export class SetFilter<V = string>
                   ? 'debounce'
                   : undefined;
 
-        this.updateUiAfterMiniFilterChange(updateSelections, apply);
+        this.updateUiAfterMiniFilterChange(updateSelections, apply, announce);
     }
 
-    private updateUiAfterMiniFilterChange(updateSelections: boolean, apply?: 'immediately' | 'debounce'): void {
+    private updateUiAfterMiniFilterChange(
+        updateSelections: boolean,
+        apply?: 'immediately' | 'debounce',
+        announce = true
+    ): void {
         let effectiveApply = apply;
         if (updateSelections) {
             const { excelMode, readOnly, model } = this.params;
@@ -785,13 +789,13 @@ export class SetFilter<V = string>
         this.checkAndRefreshVirtualList();
         this.onUiChanged(updateSelections ? effectiveApply : 'prevent');
 
-        this.showOrHideResults(true);
+        this.showOrHideResults(announce);
     }
 
-    private showOrHideResults(fromMiniFilterInput = false): void {
+    private showOrHideResults(announce = false): void {
         const hideResults = this.miniFilterText != null && this.displayValueModel.getDisplayedValueCount() < 1;
 
-        this.noMatchesComp.setNoMatches(hideResults, fromMiniFilterInput);
+        this.noMatchesComp.setNoMatches(hideResults, announce);
         _setDisplayed(this.eSetFilterList, !hideResults);
     }
 
@@ -900,8 +904,9 @@ export class SetFilter<V = string>
     }
 
     public setMiniFilter(newMiniFilter: string | null, silent?: boolean): void {
-        this.eMiniFilter.setValue(newMiniFilter, silent);
-        this.onMiniFilterInput(false, silent);
+        // Field event suppressed so the change is handled here as API input, not as typing.
+        this.eMiniFilter.setValue(newMiniFilter, true);
+        this.onMiniFilterInput(false, silent, false);
     }
 
     /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */
