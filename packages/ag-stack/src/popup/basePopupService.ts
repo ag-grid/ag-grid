@@ -227,8 +227,14 @@ export abstract class BasePopupService<
         parentRect: DOMRect,
         nudgeY: number
     ): 'under' | 'above' {
-        const spaceAvailableUnder = this.getParentBottomForUnderOrAbove(parentRect) - targetCompRect.bottom;
-        const spaceAvailableAbove = targetCompRect.top - parentRect.top;
+        const popupParent = this.getPopupParent();
+        const { documentElement, body } = popupParent.ownerDocument;
+        // <html> can end above the page content (html { height: 100% }), so a body parent is bounded by the viewport
+        const isBody = popupParent === body;
+        const bottom = isBody ? documentElement.clientHeight : parentRect.bottom;
+        const top = isBody ? 0 : parentRect.top;
+        const spaceAvailableUnder = bottom - targetCompRect.bottom;
+        const spaceAvailableAbove = targetCompRect.top - top;
         const spaceRequired = ePopup.offsetHeight + nudgeY;
 
         if (spaceAvailableUnder > spaceRequired) {
@@ -240,20 +246,6 @@ export abstract class BasePopupService<
         }
 
         return 'under';
-    }
-
-    private getParentBottomForUnderOrAbove(parentRect: DOMRect): number {
-        const eDocument = _getDocument(this.beans);
-
-        if (this.getPopupParent() !== eDocument.body) {
-            return parentRect.bottom;
-        }
-
-        // <html> can be shorter than the page (e.g. html { height: 100% }), so measure up to where keepXYWithinBounds clamps
-        const docElement = eDocument.documentElement;
-        const clampBottom = parentRect.top + this.getBodyParentSize(Direction.Vertical);
-
-        return Math.max(parentRect.bottom, Math.min(parentRect.top + docElement.scrollHeight, clampBottom));
     }
 
     protected setAlignedStyles(ePopup: HTMLElement, positioned: 'right' | 'left' | 'over' | 'above' | 'under' | null) {
@@ -379,37 +371,32 @@ export abstract class BasePopupService<
     protected keepXYWithinBounds(ePopup: HTMLElement, position: number, direction: Direction): number {
         const isVertical = direction === Direction.Vertical;
         const sizeProperty = isVertical ? 'clientHeight' : 'clientWidth';
+        const anchorProperty = isVertical ? 'top' : 'left';
         const offsetProperty = isVertical ? 'height' : 'width';
+        const scrollPositionProperty = isVertical ? 'scrollTop' : 'scrollLeft';
 
         const eDocument = _getDocument(this.beans);
+        const docElement = eDocument.documentElement;
         const popupParent = this.getPopupParent();
         const popupRect = ePopup.getBoundingClientRect();
+        const parentRect = popupParent.getBoundingClientRect();
+        const documentRect = eDocument.documentElement.getBoundingClientRect();
+        const isBody = popupParent === eDocument.body;
 
         const offsetSize = Math.ceil(popupRect[offsetProperty]);
-        const sizeOfParent =
-            popupParent === eDocument.body ? this.getBodyParentSize(direction) : popupParent[sizeProperty];
+        const getSize = isVertical ? _getAbsoluteHeight : _getAbsoluteWidth;
+
+        let sizeOfParent = isBody
+            ? getSize(docElement) + docElement[scrollPositionProperty]
+            : popupParent[sizeProperty];
+
+        if (isBody) {
+            sizeOfParent -= Math.abs(documentRect[anchorProperty] - parentRect[anchorProperty]);
+        }
 
         const max = sizeOfParent - offsetSize;
 
         return Math.min(Math.max(position, 0), Math.max(max, 0));
-    }
-
-    private getBodyParentSize(direction: Direction): number {
-        const isVertical = direction === Direction.Vertical;
-        const anchorProperty = isVertical ? 'top' : 'left';
-        const scrollPositionProperty = isVertical ? 'scrollTop' : 'scrollLeft';
-        const getSize = isVertical ? _getAbsoluteHeight : _getAbsoluteWidth;
-
-        const eDocument = _getDocument(this.beans);
-        const docElement = eDocument.documentElement;
-        const bodyRect = eDocument.body.getBoundingClientRect();
-        const documentRect = docElement.getBoundingClientRect();
-
-        return (
-            getSize(docElement) +
-            docElement[scrollPositionProperty] -
-            Math.abs(documentRect[anchorProperty] - bodyRect[anchorProperty])
-        );
     }
 
     public addPopup<TContainerType extends string>(params: AddPopupParams<TContainerType>): AddPopupResult {

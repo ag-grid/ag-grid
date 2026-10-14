@@ -7,7 +7,7 @@ const SPACER_HEIGHT = 1500;
 
 // The reported page: html and body are height: 100% and the grid sits mid-page, so <html> is one viewport tall
 // while the document scrolls past it.
-async function mountGridMidPage(page: Page) {
+async function mountGridMidPage(page: Page, htmlHeight: string) {
     const mounted = await mountGrid(page, {
         enterprise: true,
         height: 300,
@@ -21,25 +21,28 @@ async function mountGridMidPage(page: Page) {
         }),
     });
 
-    await page.evaluate((spacerHeight) => {
-        const style = document.createElement('style');
-        style.textContent = 'html, body { height: 100%; }';
-        document.head.appendChild(style);
+    await page.evaluate(
+        ({ spacerHeight, htmlHeight }) => {
+            const style = document.createElement('style');
+            style.textContent = `html, body { height: ${htmlHeight}; }`;
+            document.head.appendChild(style);
 
-        const grid = document.querySelector('#myGrid')!;
-        for (const position of ['beforebegin', 'afterend'] as const) {
-            const spacer = document.createElement('div');
-            spacer.style.height = `${spacerHeight}px`;
-            grid.insertAdjacentElement(position, spacer);
-        }
-    }, SPACER_HEIGHT);
+            const grid = document.querySelector('#myGrid')!;
+            for (const position of ['beforebegin', 'afterend'] as const) {
+                const spacer = document.createElement('div');
+                spacer.style.height = `${spacerHeight}px`;
+                grid.insertAdjacentElement(position, spacer);
+            }
+        },
+        { spacerHeight: SPACER_HEIGHT, htmlHeight }
+    );
 
     return mounted;
 }
 
 // The column menu is positioned against its header menu button.
-async function openColumnMenuWithHeaderAt(page: Page, headerTop: number) {
-    const { headerCell } = await mountGridMidPage(page);
+async function openColumnMenuWithHeaderAt(page: Page, headerTop: number, htmlHeight = '100%') {
+    const { headerCell } = await mountGridMidPage(page, htmlHeight);
     await page.evaluate((scrollY) => window.scrollTo(0, scrollY), SPACER_HEIGHT - headerTop);
 
     const header = headerCell('a');
@@ -57,7 +60,7 @@ async function openColumnMenuWithHeaderAt(page: Page, headerTop: number) {
     };
 }
 
-test.describe('column menu position when html and body are height: 100%', () => {
+test.describe('column menu position when popupParent is body', () => {
     test('opens downwards when the scrolled page has room below the header', async ({ page }) => {
         const { buttonBox, menuBox, viewportHeight } = await openColumnMenuWithHeaderAt(page, 50);
 
@@ -68,6 +71,14 @@ test.describe('column menu position when html and body are height: 100%', () => 
     test('opens upwards when the header sits near the bottom of the viewport', async ({ page }) => {
         const viewportHeight = page.viewportSize()!.height;
         const { buttonBox, menuBox } = await openColumnMenuWithHeaderAt(page, viewportHeight - 100);
+
+        expect(menuBox.y + menuBox.height).toBeLessThanOrEqual(buttonBox.y);
+        expect(menuBox.y).toBeGreaterThanOrEqual(0);
+    });
+
+    test('opens upwards near the bottom of the viewport when html is auto height', async ({ page }) => {
+        const viewportHeight = page.viewportSize()!.height;
+        const { buttonBox, menuBox } = await openColumnMenuWithHeaderAt(page, viewportHeight - 100, 'auto');
 
         expect(menuBox.y + menuBox.height).toBeLessThanOrEqual(buttonBox.y);
         expect(menuBox.y).toBeGreaterThanOrEqual(0);

@@ -3,7 +3,7 @@ import { BasePopupService } from './basePopupService';
 // Concrete subclass for testing
 class TestPopupService extends BasePopupService<any, any, any, any, any, any> {
     protected getDefaultPopupParent(): HTMLElement {
-        return document.body;
+        return document.createElement('div');
     }
     protected isStopPropagation(): boolean {
         return false;
@@ -65,7 +65,6 @@ function createService(
         get: vi.fn((key: string) => (key === 'enableRtl' ? enableRtl : undefined)),
         getCallback: vi.fn(() => undefined),
     };
-    (svc as any).beans = { gos: (svc as any).gos };
 
     return svc;
 }
@@ -282,31 +281,17 @@ describe('BasePopupService', () => {
                 htmlHeight: number,
                 headerSource: Partial<DOMRect>
             ): { x: number; y: number } {
-                const docElement = document.documentElement;
-                docElement.style.height = `${htmlHeight}px`;
-                const rect = (height: number) =>
-                    ({
-                        top: -1000,
-                        left: 0,
-                        right: 1280,
-                        bottom: height - 1000,
-                        width: 1280,
-                        height,
-                        x: 0,
-                        y: -1000,
-                        toJSON() {},
-                    }) as DOMRect;
-                vi.spyOn(docElement, 'getBoundingClientRect').mockReturnValue(rect(htmlHeight));
-                vi.spyOn(document.body, 'getBoundingClientRect').mockReturnValue(rect(3000));
-                vi.spyOn(docElement, 'clientHeight', 'get').mockReturnValue(800);
-                vi.spyOn(docElement, 'scrollHeight', 'get').mockReturnValue(3000);
-                vi.spyOn(docElement, 'scrollTop', 'get').mockReturnValue(1000);
+                vi.spyOn(document.documentElement, 'clientHeight', 'get').mockReturnValue(800);
 
                 const svc = Object.create(TestPopupService.prototype) as TestPopupService;
-                const gos = { get: vi.fn((key: string) => (key === 'popupParent' ? document.body : undefined)) };
                 (svc as any).popupList = [];
-                (svc as any).gos = gos;
-                (svc as any).beans = { gos };
+                (svc as any).gos = { get: vi.fn((key: string) => (key === 'popupParent' ? document.body : undefined)) };
+                vi.spyOn(svc, 'getParentRect').mockReturnValue({
+                    top: -1000,
+                    left: 0,
+                    right: 1280,
+                    bottom: htmlHeight - 1000,
+                });
 
                 const eventSource = createMockElement(headerSource);
                 const ePopup = createMockElement({}, { offsetWidth: 250, offsetHeight: 320 });
@@ -316,10 +301,6 @@ describe('BasePopupService', () => {
 
                 return spy.mock.calls[0][0].updatePosition!();
             }
-
-            afterEach(() => {
-                document.documentElement.style.height = '';
-            });
 
             it('opens under the source when the viewport has room below it', () => {
                 const pos = getBodyParentedPosition(800, { top: 51, left: 0, right: 200, bottom: 99 });
@@ -333,9 +314,9 @@ describe('BasePopupService', () => {
                 expect(pos.y).toBe(1380);
             });
 
-            it('opens under the source near the viewport bottom when an auto-height html has room below it', () => {
+            it('opens above the source near the viewport bottom even when an auto-height html extends below it', () => {
                 const pos = getBodyParentedPosition(3000, { top: 700, left: 0, right: 200, bottom: 748 });
-                expect(pos.y).toBe(1748);
+                expect(pos.y).toBe(1380);
             });
         });
     });
