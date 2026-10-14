@@ -1,8 +1,6 @@
-import type { Framework, MenuItem } from '@ag-grid-types';
-import { getPageNameFromPath } from '@components/docs/utils/urlPaths';
+import type { Framework } from '@ag-grid-types';
 import { FRAMEWORKS } from '@constants';
 import { getFrameworkDisplayText, getNewFrameworkPath } from '@utils/framework';
-import { getMenuItemFromPageName } from '@utils/getMenuItemFromPageName';
 
 export interface FrameworkVersionLink {
     framework: Framework;
@@ -11,29 +9,22 @@ export interface FrameworkVersionLink {
 }
 
 /**
- * A page with no `frameworks` restriction exists in every framework.
- */
-export const isPageInFramework = (menuItem: MenuItem | undefined, framework: Framework): boolean =>
-    !menuItem?.frameworks || menuItem.frameworks.includes(framework);
-
-/**
- * Links to the same page in each of the other frameworks, skipping any framework the page does not exist in.
+ * Links to the same page in each of the other frameworks.
  *
- * Without `menuItems` there is nothing to check against, so every other framework is linked.
+ * `pageFrameworks` is the page's own `frameworks` frontmatter, which is what decides which routes get built. A page
+ * without it exists in every framework.
  */
 export function getFrameworkVersionLinks({
     path,
     currentFramework,
-    menuItems,
+    pageFrameworks,
 }: {
     path: string;
     currentFramework: Framework;
-    menuItems?: MenuItem[];
+    pageFrameworks?: Framework[];
 }): FrameworkVersionLink[] {
-    const menuItem = menuItems && getMenuItemFromPageName({ menuItems, pageName: getPageNameFromPath(path) });
-
     return FRAMEWORKS.filter(
-        (framework) => framework !== currentFramework && isPageInFramework(menuItem, framework)
+        (framework) => framework !== currentFramework && (!pageFrameworks || pageFrameworks.includes(framework))
     ).map((framework) => ({
         framework,
         label: `${getFrameworkDisplayText(framework)} Data Grid`,
