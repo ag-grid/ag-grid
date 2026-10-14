@@ -27,6 +27,7 @@ import {
     AlignedGridsModule,
     CellStyleModule,
     ClientSideRowModelModule,
+    ColumnApiModule,
     ColumnHoverModule,
     DragAndDropModule,
     RenderApiModule,
@@ -55,6 +56,7 @@ describe('Column Features', () => {
             AlignedGridsModule,
             CellStyleModule,
             ClientSideRowModelModule,
+            ColumnApiModule,
             DragAndDropModule,
             RenderApiModule,
             RowAutoHeightModule,
@@ -486,6 +488,128 @@ describe('Column Features', () => {
                 └── c width:200
             `);
         });
+
+        test('the other grid takes a resized width but re-flexes its own flex columns to its own space', () => {
+            const api1 = gridsManager.createGrid('grid1', {
+                columnDefs: [
+                    { colId: 'a', width: 200 },
+                    { colId: 'b', flex: 1 },
+                ],
+            });
+            const api2 = gridsManager.createGrid('grid2', {
+                columnDefs: [
+                    { colId: 'a', width: 200 },
+                    { colId: 'z', width: 100 },
+                    { colId: 'b', flex: 1 },
+                ],
+            });
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+            const width = (api: GridApi, colId: string) => api.getColumn(colId)!.getActualWidth();
+
+            api1.setColumnWidths([{ key: 'a', newWidth: 300 }]);
+
+            expect([width(api1, 'a'), width(api1, 'b')]).toEqual([300, 700]);
+            // `z` takes 100 of grid2's space, so its `b` flexes to 600, not to grid1's 700
+            expect([width(api2, 'a'), width(api2, 'b')]).toEqual([300, 600]);
+        });
+
+        test('a grid destroyed by another aligned grid replaying a change is not sent it', () => {
+            const gridOptions = { columnDefs: ['a', 'b'].map((colId) => ({ colId, width: 100 })) };
+            const api1 = gridsManager.createGrid('grid1', gridOptions);
+            const api2 = gridsManager.createGrid('grid2', gridOptions);
+            const api3 = gridsManager.createGrid('grid3', gridOptions);
+            api1.setGridOption('alignedGrids', [{ api: api2 }, { api: api3 }]);
+            api2.getColumn('a')!.addEventListener('widthChanged', () => api3.destroy());
+
+            api1.setColumnWidths([{ key: 'a', newWidth: 150 }]);
+
+            expect([api2.getColumn('a')!.getActualWidth(), api3.isDestroyed()]).toEqual([150, true]);
+        });
+
+        test("colResizeDefault 'shift': the other grid takes the widths a shift resize sets, adjacent column included", () => {
+            const columnDefs = ['a', 'b', 'c', 'd'].map((colId) => ({ colId, width: 100 }));
+            const api1 = gridsManager.createGrid('grid1', { columnDefs, colResizeDefault: 'shift' });
+            // a replay takes nothing from a neighbour, so grid2 changes only the widths it is sent
+            const api2 = gridsManager.createGrid('grid2', { columnDefs });
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+            api2.setGridOption('alignedGrids', [{ api: api1 }]);
+            const widths = (api: GridApi) => api.getAllDisplayedColumns().map((col) => col.getActualWidth());
+
+            api1.setColumnWidths([{ key: 'a', newWidth: 150 }]);
+
+            expect([widths(api1), widths(api2)]).toEqual([
+                [150, 50, 100, 100],
+                [150, 50, 100, 100],
+            ]);
+        });
+
+        test("a grid taking another's column change gives it its vertical scrollbar", () => {
+            const columnDefs = ['a', 'b'].map((colId) => ({ colId, width: 100 }));
+            const api1 = gridsManager.createGrid('grid1', { columnDefs });
+            const api2 = gridsManager.createGrid('grid2', { columnDefs, alwaysShowVerticalScroll: true });
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+            api2.setGridOption('alignedGrids', [{ api: api1 }]);
+
+            api1.setColumnWidths([{ key: 'a', newWidth: 150 }]);
+            expect(api1.getGridOption('alwaysShowVerticalScroll')).toBe(true);
+
+            // already given, so a second change leaves it
+            api1.setColumnWidths([{ key: 'a', newWidth: 160 }]);
+            expect(api1.getGridOption('alwaysShowVerticalScroll')).toBe(true);
+        });
+
+        test('a grid aligned through a callback of refs follows column changes and horizontal scrolls', async () => {
+            const columnDefs = Array.from({ length: 10 }, (_, i) => ({ colId: `c${i}`, width: 200 }));
+            const api1 = gridsManager.createGrid('grid1', { columnDefs, rowData: [{}] });
+            const api2 = gridsManager.createGrid('grid2', { columnDefs, rowData: [{}] });
+            const destroyed = gridsManager.createGrid('grid3', { columnDefs, rowData: [{}] });
+            destroyed.destroy();
+            // an unset ref and a destroyed grid are skipped, and a grid with no aligned grids of its own tells none back
+            api1.setGridOption('alignedGrids', () => [{ current: { api: api2 } }, { current: null }, destroyed]);
+            await asyncSetTimeout(0);
+
+            api1.setColumnWidths([{ key: 'c0', newWidth: 300 }]);
+            expect(api2.getColumn('c0')!.getActualWidth()).toBe(300);
+
+            // only a destroyed grid left: nothing to tell
+            api1.setGridOption('alignedGrids', [destroyed]);
+            api1.setColumnWidths([{ key: 'c0', newWidth: 250 }]);
+            expect(api2.getColumn('c0')!.getActualWidth()).toBe(300);
+            api1.setGridOption('alignedGrids', () => [{ current: { api: api2 } }]);
+
+            const viewport = (api: GridApi) =>
+                TestGridsManager.getHTMLElement(api)!.querySelector<HTMLElement>('.ag-grid-viewport')!;
+            viewport(api1).scrollLeft = 400;
+            viewport(api1).dispatchEvent(new Event('scroll'));
+            await waitFor(() => expect(viewport(api2).scrollLeft).toBe(400));
+        });
+
+        test('an aligned grid entry with no grid is reported, and the others are still told', () => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [18, 19, 20] });
+            const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
+            try {
+                const columnDefs = [{ colId: 'a', width: 100 }];
+                const api1 = gridsManager.createGrid('grid1', { columnDefs });
+                const api2 = gridsManager.createGrid('grid2', { columnDefs });
+                const reported = (): string[] =>
+                    errors.mock.calls.flatMap((args) => String(args.join(' ')).match(/#(18|19|20)\b/g) ?? []);
+
+                // from a callback, an empty entry is only reported as one
+                api1.setGridOption('alignedGrids', () => [null, { api: api2 }]);
+                api1.setColumnWidths([{ key: 'a', newWidth: 150 }]);
+                expect(api2.getColumn('a')!.getActualWidth()).toBe(150);
+                expect(reported()).toEqual(['#18']);
+
+                // each message is logged once, so #18 is not repeated
+                errors.mockClear();
+                api1.setGridOption('alignedGrids', [null, { api: null }, { api: api2 }]);
+                api1.setColumnWidths([{ key: 'a', newWidth: 160 }]);
+                expect(api2.getColumn('a')!.getActualWidth()).toBe(160);
+                expect(reported()).toEqual(['#20', '#19']);
+            } finally {
+                errors.mockRestore();
+            }
+        });
     });
 
     describe('value getters and formatters', () => {
@@ -511,6 +635,39 @@ describe('Column Features', () => {
     });
 
     describe('suppressMovable and lockPosition', () => {
+        test('Shift+Arrow on a focused header moves its column, without Alt, which resizes', async () => {
+            const api = gridsManager.createGrid('keyboardMove', {
+                columnDefs: ['a', 'b', 'c'].map((colId) => ({ colId, width: 100 })),
+                rowData: [{}],
+            });
+            await asyncSetTimeout(0);
+            const order = () => api.getAllDisplayedColumns().map((col) => col.getColId());
+            const press = (key: string): void => {
+                api.setFocusedHeader('b');
+                const header = document.activeElement as HTMLElement;
+                // the mock layout puts every header at 0; the move aims past the header's own rect
+                const left = api.getColumn('b')!.getLeft()!;
+                const rect = vi.spyOn(header, 'getBoundingClientRect').mockReturnValue({
+                    left,
+                    right: left + 100,
+                    top: 0,
+                    bottom: 20,
+                    width: 100,
+                    height: 20,
+                    x: left,
+                    y: 0,
+                } as DOMRect);
+                header.dispatchEvent(new KeyboardEvent('keydown', { key, shiftKey: true, bubbles: true }));
+                rect.mockRestore();
+            };
+
+            press('ArrowRight');
+            expect(order()).toEqual(['a', 'c', 'b']);
+            press('ArrowLeft');
+            expect(order()).toEqual(['a', 'b', 'c']);
+            expect(api.getColumn('b')!.getActualWidth()).toBe(100);
+        });
+
         test('suppressMovable prevents column movement', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ colId: 'fixed', suppressMovable: true }, { colId: 'movable' }],
@@ -1389,6 +1546,10 @@ describe('Column Features', () => {
             return cell ? laneOfCell(cell) : undefined;
         };
 
+        const browserFocusedColId = (): string | null =>
+            (document.activeElement as HTMLElement | null)?.closest<HTMLElement>('.ag-cell')?.getAttribute('col-id') ??
+            null;
+
         /** Every rendered cell of every row, judged on the element itself so a second row cannot hide. */
         const expectLanesConsistent = (api: GridApi) => {
             const cells = renderedCells(api);
@@ -1929,9 +2090,45 @@ describe('Column Features', () => {
             expect(rendererCount - rendererCountPinned).toBe(1);
         });
 
+        // A retained cell is re-ordered inside its own container, which is still a DOM move, so this is the
+        // control for the lane case below: same lane, same element, focus expected to survive.
+        test('a focused cell keeps browser focus when a scroll retains it in its own lane', async () => {
+            const api = createVirtualisedGrid();
+            await asyncSetTimeout(0);
+
+            api.setFocusedCell(0, 'c2');
+            await asyncSetTimeout(0);
+            expect(browserFocusedColId()).toBe('c2');
+
+            api.ensureColumnVisible('c40');
+            await asyncSetTimeout(0);
+
+            expect(laneOfRenderedCell(api, 'c2')).toBeNull();
+            expect(api.getFocusedCell()?.column.getColId()).toBe('c2');
+            expect(browserFocusedColId()).toBe('c2');
+        });
+
+        // A lane change cannot keep the element, because the lanes are separate containers, so the cell is
+        // destroyed and rebuilt. Browser focus has to come back with it rather than falling to the body.
+        test('a focused cell keeps browser focus when its column changes lane', async () => {
+            const api = createVirtualisedGrid();
+            await asyncSetTimeout(0);
+
+            api.setFocusedCell(0, 'c2');
+            await asyncSetTimeout(0);
+            expect(browserFocusedColId()).toBe('c2');
+
+            api.setColumnsPinned(['c2'], 'left');
+            await asyncSetTimeout(0);
+
+            expect(laneOfRenderedCell(api, 'c2')).toBe('left');
+            expect(api.getFocusedCell()?.column.getColId()).toBe('c2');
+            expect(browserFocusedColId()).toBe('c2');
+        });
+
         // Full-row editing makes every cell of the row worth retaining, so a scroll that takes them all out
         // of the viewport retains the whole row at once.
-        test('a full-row edit retains every cell across a scroll', async () => {
+        test('a full-row edit retains every cell in order across a scroll', async () => {
             const api = gridsManager.createGrid('fullRowRetention', {
                 columnDefs: virtualisedCols(120),
                 rowData: [virtualisedRow(120)],
@@ -1955,6 +2152,10 @@ describe('Column Features', () => {
                 expect(rendered).toContain(colId);
             }
             expect(rendered).toContain('c60');
+
+            // The retained cells are placed by position, not appended in the order they were retained.
+            const lefts = rendered.map((colId) => api.getColumn(colId)!.getLeft()!);
+            expect(lefts.slice().sort((a, b) => a - b)).toEqual(lefts);
             expectLanesConsistent(api);
         });
     });

@@ -13,7 +13,7 @@
  * moving first — proof the sizing pass actually ran — and only then assert the protected width.
  */
 import { waitFor } from '@testing-library/dom';
-import { DragEventDispatcher, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { DragEventDispatcher, TestGridsManager, asyncSetTimeout, mockGridLayout } from 'ag-test-utils';
 
 import type { AgEvent, AutoSizeColumnsTriggerParams, ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -764,6 +764,27 @@ describe('Continuous Column Autosize', () => {
             await waitFor(() => expect(seen.length).toBeGreaterThan(0));
 
             expect(seen[seen.length - 1]).toEqual(['eligible']);
+        });
+
+        test('a re-size that finds the grid with no width runs again once it has one', async () => {
+            const gridWidth = mockGridLayout.gridWidth;
+            mockGridLayout.gridWidth = 0;
+            try {
+                const api = createGrid({
+                    columnDefs: [
+                        { colId: 'eligible', field: 'eligible', initialWidth: START_WIDTH, minWidth: MEASURED_WIDTH },
+                    ],
+                });
+                api.setGridOption('rowData', [{ eligible: 'a' }]);
+                await flushScheduledResize();
+                expect(widthOf(api, 'eligible')).toBe(START_WIDTH);
+
+                // the grid is shown before the retries run out
+                mockGridLayout.gridWidth = 1000;
+                await expectWidth(api, 'eligible', MEASURED_WIDTH);
+            } finally {
+                mockGridLayout.gridWidth = gridWidth;
+            }
         });
 
         test('`colIds` restricts sizing to the listed columns', async () => {

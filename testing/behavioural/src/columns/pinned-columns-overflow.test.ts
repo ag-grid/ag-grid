@@ -1,4 +1,13 @@
-import { DragEventDispatcher, TestGridsManager, asyncSetTimeout, dispatchGridSizeChanged } from 'ag-test-utils';
+import {
+    DragEventDispatcher,
+    TestGridsManager,
+    asyncSetTimeout,
+    dispatchGridSizeChanged,
+    installMockResizeObserver,
+    nextAnimationFrame,
+    polyfillOffsetParent,
+    triggerResizeObservers,
+} from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 
@@ -41,6 +50,30 @@ describe('Pinned columns wider than the viewport', () => {
     afterEach(() => {
         mockGridLayout.gridWidth = 600;
         gridsManager.reset();
+    });
+
+    test('unpins the pinned columns that do not fit, from the right and the left in turn, until the rest do', async () => {
+        const restoreOffsetParent = polyfillOffsetParent();
+        const uninstallResizeObserver = installMockResizeObserver();
+        try {
+            const api = gridsManager.createGrid('myGrid', { columnDefs: overflowingColumnDefs, rowData });
+            // the viewport reports its size, which the pinned columns are kept narrower than
+            triggerResizeObservers();
+            await nextAnimationFrame();
+
+            expect(api.getColumns()!.map((col) => `${col.getColId()}:${col.getPinned() ?? ''}`)).toEqual([
+                'a:',
+                'b:',
+                'c:',
+                'd:',
+                'e:',
+                'f:left',
+                'g:',
+            ]);
+        } finally {
+            uninstallResizeObserver();
+            restoreOffsetParent();
+        }
     });
 
     test('clips mixed pinned sections without creating a horizontal scroll range', async () => {
