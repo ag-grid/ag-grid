@@ -144,6 +144,46 @@ describe('Filters Tool Panel', () => {
         await waitFor(() => expect(panel.announcement()).toBe('No matches'));
     });
 
+    test('a column change that leaves a search with no matches shows "No matches" without announcing it', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'name', filter: 'agTextColumnFilter' },
+                { field: 'age', filter: 'agNumberColumnFilter' },
+            ],
+            rowData: [{ name: 'Alice', age: 30 }],
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+        await panel.search('nam');
+
+        api.setGridOption('columnDefs', [{ field: 'age', filter: 'agNumberColumnFilter' }]);
+        await waitFor(() => expect(panel.isSearchNoMatchesShown()).toBe(true));
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        expect(panel.announcement()).not.toContain('No matches');
+
+        await panel.search('namx');
+        await waitFor(() => expect(panel.announcement()).toBe('No matches'));
+    });
+
+    test('a data change that leaves a set filter mini-filter with no matches does not announce it', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agSetColumnFilter' }],
+            rowData: [{ country: 'Ireland' }, { country: 'France' }],
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+        await panel.expandGroup('Country');
+        await panel.setMiniFilter('Country', 'Ire');
+        expect(panel.isNoMatchesShown('Country')).toBe(false);
+
+        api.setGridOption('rowData', [{ country: 'France' }]);
+        await waitFor(() => expect(panel.isNoMatchesShown('Country')).toBe(true));
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        expect(panel.announcement()).not.toContain('No matches');
+    });
+
     test('expand-all / collapse-all toggles column-group expansion', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
