@@ -11,7 +11,7 @@ import { navigate } from 'astro:transitions/client';
 import { useMemo } from 'react';
 
 import styles from './FrameworkSelectorInsideDocs.module.scss';
-import { getFrameworkVersionLinks, isPageInFramework } from './frameworkVersionLinks';
+import { getFrameworkVersionLinks } from './frameworkVersionLinks';
 
 interface Props {
     path: string;
@@ -22,9 +22,14 @@ interface Props {
      * checks.
      */
     menuItems?: MenuItem[];
+    /**
+     * The frameworks the page exists in, from its `frameworks` frontmatter, used to only link to
+     * versions of the page that exist. If not provided, the page is linked in every framework.
+     */
+    pageFrameworks?: Framework[];
 }
 
-export const FrameworkSelectorInsideDocs = ({ path, currentFramework, menuItems }: Props) => {
+export const FrameworkSelectorInsideDocs = ({ path, currentFramework, menuItems, pageFrameworks }: Props) => {
     const frameworkOptions = useMemo(() => {
         return FRAMEWORKS.map((framework) => ({
             label: getFrameworkDisplayText(framework),
@@ -40,8 +45,8 @@ export const FrameworkSelectorInsideDocs = ({ path, currentFramework, menuItems 
     // Plain links beside the picker: its options only mount once it is opened, so without these the
     // server-rendered page has nothing for a crawler to follow to the other framework versions.
     const frameworkVersionLinks = useMemo(
-        () => getFrameworkVersionLinks({ path, currentFramework, menuItems }),
-        [path, currentFramework, menuItems]
+        () => getFrameworkVersionLinks({ path, currentFramework, pageFrameworks }),
+        [path, currentFramework, pageFrameworks]
     );
 
     const handleFrameworkChange = (selectedFramework: Framework) => {
@@ -57,14 +62,18 @@ export const FrameworkSelectorInsideDocs = ({ path, currentFramework, menuItems 
             }) + window.location.search;
 
         // Redirect to default page if page does not exist in framework
-        if (!isPageInFramework(menuItem, selectedFramework)) {
-            const relativeUrl = DOCS_FRAMEWORK_REDIRECT_PAGE.startsWith('./')
-                ? DOCS_FRAMEWORK_REDIRECT_PAGE
-                : `./${DOCS_FRAMEWORK_REDIRECT_PAGE}`;
-            newUrl = urlWithPrefix({
-                framework: selectedFramework,
-                url: relativeUrl,
-            });
+        if (menuItem?.frameworks) {
+            const withinFrameworks = menuItem?.frameworks?.includes(selectedFramework);
+
+            if (!withinFrameworks) {
+                const relativeUrl = DOCS_FRAMEWORK_REDIRECT_PAGE.startsWith('./')
+                    ? DOCS_FRAMEWORK_REDIRECT_PAGE
+                    : `./${DOCS_FRAMEWORK_REDIRECT_PAGE}`;
+                newUrl = urlWithPrefix({
+                    framework: selectedFramework,
+                    url: relativeUrl,
+                });
+            }
         }
 
         navigate(newUrl);
@@ -94,7 +103,10 @@ export const FrameworkSelectorInsideDocs = ({ path, currentFramework, menuItems 
                         <ul>
                             {frameworkVersionLinks.map(({ framework, label, href }) => (
                                 <li key={framework}>
-                                    <a href={href}>{label}</a>
+                                    {/* Clipped from view, so not a keyboard stop: the picker is the keyboard route. */}
+                                    <a href={href} tabIndex={-1}>
+                                        {label}
+                                    </a>
                                 </li>
                             ))}
                         </ul>
