@@ -119,9 +119,6 @@ With `getServerSideGroupAggData` set:
 - Columns the callback doesn't return show the value from the row data.
 - The aggregates also show in the group's total row, but the grand total row and
   [Tree Data](./server-side-model-tree-data/) don't call the callback.
-
-When the same column is grouped and aggregated:
-
 - By default, sorting the group column or the aggregated column sends the same request, so the server chooses whether
   that group level is ordered by key or by aggregate.
 - Grouping the column hides it by default. To keep it visible, see
