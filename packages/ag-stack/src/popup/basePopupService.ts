@@ -227,8 +227,14 @@ export abstract class BasePopupService<
         parentRect: DOMRect,
         nudgeY: number
     ): 'under' | 'above' {
-        const spaceAvailableUnder = parentRect.bottom - targetCompRect.bottom;
-        const spaceAvailableAbove = targetCompRect.top - parentRect.top;
+        const popupParent = this.getPopupParent();
+        const { documentElement, body } = popupParent.ownerDocument;
+        // <html> can end above the page content (html { height: 100% }), so a body parent is bounded by the viewport
+        const isBody = popupParent === body;
+        const bottom = isBody ? documentElement.clientHeight : parentRect.bottom;
+        const top = isBody ? 0 : parentRect.top;
+        const spaceAvailableUnder = bottom - targetCompRect.bottom;
+        const spaceAvailableAbove = targetCompRect.top - top;
         const spaceRequired = ePopup.offsetHeight + nudgeY;
 
         if (spaceAvailableUnder > spaceRequired) {
