@@ -43,6 +43,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
     /** Suppresses row model refreshes during batch column state dispatching. */
     public changeEventsDispatching = false;
     public showingPivotResult = false;
+    /** Showing generated transposed columns; the user's columns are parked in `colsById`, as when pivoting. */
+    public showingTranspose = false;
 
     /** Set when a staged change needs a display rebuild; consumed (cleared) once by {@link performRefresh}. */
     private pendingRefresh = false;
@@ -164,7 +166,8 @@ export class ColumnModel extends BeanStub implements NamedBean {
         if (!allCols) {
             // While pivoting, pivot result cols are the full set (primaries are parked); `??` keeps an empty result.
             const pivotAllCols = this.showingPivotResult ? this.beans.pivotResultCols?.buildAllCols() : undefined;
-            allCols = pivotAllCols ?? this.colsList;
+            const transposeAllCols = this.showingTranspose ? this.colsList.concat(this.colDefList) : undefined;
+            allCols = pivotAllCols ?? transposeAllCols ?? this.colsList;
             this.cachedAllCols = allCols;
         }
         return allCols;
@@ -174,12 +177,15 @@ export class ColumnModel extends BeanStub implements NamedBean {
     public getColGroup(groupId: string): AgProvidedColumnGroup | undefined {
         return (
             this.colsGroupsById.get(groupId) ??
-            (this.showingPivotResult ? this.colDefGroupsById.get(groupId) : undefined)
+            (this.showingPivotResult || this.showingTranspose ? this.colDefGroupsById.get(groupId) : undefined)
         );
     }
 
     /** Columns in column-state order: hidden pivot primaries first, then `colsList`. Must not be mutated. */
     public getColsInStateOrder(): AgColumn[] {
+        if (this.showingTranspose) {
+            return this.colDefList;
+        }
         // Only pivot has hidden primaries (built enterprise-side); cached on colsList.
         if (!this.showingPivotResult) {
             return this.colsList;
@@ -492,28 +498,42 @@ export class ColumnModel extends BeanStub implements NamedBean {
             const colDefList = this.colDefList;
             const prevColTree = this.colsTree;
             const prevWasPivot = this.showingPivotResult;
-            const resultColsSvc = this.pivotMode ? beans.pivotResultCols : null;
+            const prevWasTranspose = this.showingTranspose;
+            const transposeSvc = beans.transposeSvc;
+            const transposedCols = transposeSvc?.cols ?? null;
+            const showingTranspose = transposedCols != null;
+            this.showingTranspose = showingTranspose;
+            const resultColsSvc = this.pivotMode && !showingTranspose ? beans.pivotResultCols : null;
             const pivotCols = resultColsSvc?.pivotCols ?? null;
             const pivotResultCols = pivotCols != null ? resultColsSvc : null;
             const showingPivotResult = !!pivotResultCols;
             this.showingPivotResult = showingPivotResult;
-            const sourceList = pivotCols ?? colDefList;
-            const sourceTree = pivotResultCols ? pivotResultCols.pivotTree : this.colDefTree;
-            const sourceTreeDepth = pivotResultCols ? pivotResultCols.pivotTreeDepth : this.colDefTreeDepth;
-            this.colsTreeDepth = sourceTreeDepth;
+            let sourceList = pivotCols ?? colDefList;
+            let sourceTree = pivotResultCols ? pivotResultCols.pivotTree : this.colDefTree;
+            let sourceTreeDepth = pivotResultCols ? pivotResultCols.pivotTreeDepth : this.colDefTreeDepth;
             this.hasMarryChildren = pivotResultCols
                 ? pivotResultCols.pivotHasMarryChildren
                 : this.colDefHasMarryChildren;
             this.colsGroupsById = pivotResultCols ? pivotResultCols.pivotGroupsById : this.colDefGroupsById;
             this.colsAllGroups = pivotResultCols ? pivotResultCols.pivotAllGroups : this.colDefAllGroups;
+            if (showingTranspose) {
+                sourceList = transposedCols;
+                sourceTree = transposeSvc!.tree;
+                sourceTreeDepth = transposeSvc!.treeDepth;
+                this.hasMarryChildren = false;
+                this.colsGroupsById = transposeSvc!.groupsById;
+                this.colsAllGroups = transposeSvc!.allGroups;
+            }
+            this.colsTreeDepth = sourceTreeDepth;
             // Service refresh runs in dependency order; formulas operate on the primary cols (colDefList).
             formula?.setFormulasActive(colDefList);
-            const autoCols = beans.autoColSvc?.refreshCols(source);
-            const selectionCol = beans.selectionColSvc?.refreshCols();
-            const rowNumberCol = beans.rowNumbersSvc?.refreshCols();
+            // The transposed view supplies its own field-name column, so the service columns are left out.
+            const autoCols = showingTranspose ? null : beans.autoColSvc?.refreshCols(source);
+            const selectionCol = showingTranspose ? null : beans.selectionColSvc?.refreshCols();
+            const rowNumberCol = showingTranspose ? null : beans.rowNumbersSvc?.refreshCols();
             // Snapshot prior colsList colIds into the mode's lastOrder so the next refresh restores user moves.
             const oldColsList = this.colsList;
-            if (oldColsList.length > 0) {
+            if (oldColsList.length > 0 && !prevWasTranspose) {
                 if (prevWasPivot) {
                     // A strict pivot order (comparator/pivotSort) isn't a user arrangement to preserve - skip it so
                     // clearing pivotSort restores the prior non-strict order rather than the transient asc/desc one.
@@ -567,6 +587,13 @@ export class ColumnModel extends BeanStub implements NamedBean {
                 }
             }
 
+            if (showingTranspose) {
+                for (let i = 0, len = colDefList.length; i < len; ++i) {
+                    const col = colDefList[i];
+                    colsById[col.colId] = col;
+                    col.inColsList = false;
+                }
+            }
             // In pivot mode, sourceList = pivotCols; primaries (colDefList) need colsById entries for lookups
             // but are parked out of colsList (`inColsList = false`). Non-pivot covers them via the next loop.
             if (pivotResultCols) {
@@ -600,7 +627,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
             // An active interactive pivotSort forces strict pivot column order, overriding sticky-order preservation.
             const restoreOrder = !newColDefs || _shouldMaintainColumnOrder(gos, showingPivotResult);
             const lastOrder = showingPivotResult ? this.lastPivotOrder : this.lastOrder;
-            let prevOrder = restoreOrder ? lastOrder : null;
+            let prevOrder = restoreOrder && !showingTranspose ? lastOrder : null;
             // pivotSort reorders the groups but keeps the user's within-group order and widths: re-rank the
             // preserved order by the freshly-sorted group order rather than discarding it.
             const pivotColsSvc = beans.pivotColsSvc;
@@ -819,7 +846,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const map = new Map<ColKey, AgColumn>();
         addColsToDefMap(map, this.colsList);
         // In pivot mode colDefList cols are in colsById but not colsList — include them too
-        if (this.showingPivotResult) {
+        if (this.showingPivotResult || this.showingTranspose) {
             addColsToDefMap(map, this.colDefList);
         }
         this.cachedColsByDef = map;

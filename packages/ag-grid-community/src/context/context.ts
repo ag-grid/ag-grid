@@ -112,6 +112,7 @@ import type { ISideBarService } from '../interfaces/iSideBar';
 import type { IStickyRowService } from '../interfaces/iStickyRows';
 import type { ITestIdService } from '../interfaces/iTestIdService';
 import type { IToolbarService } from '../interfaces/iToolbar';
+import type { ITransposeService } from '../interfaces/iTransposeService';
 import type { IWatermark } from '../interfaces/iWatermark';
 import type { IMasterDetailService } from '../interfaces/masterDetail';
 import type { INotesDataService, INotesService } from '../interfaces/notes';
@@ -211,6 +212,7 @@ export type UserComponentName =
     | 'agAnimateShowChangeCellRenderer'
     | 'agAnimateSlideCellRenderer'
     | 'agLoadingCellRenderer'
+    | 'agTransposeFieldCellRenderer'
     | 'agSkeletonCellRenderer'
     | 'agCheckboxCellRenderer'
     | 'agLoadingOverlay'
@@ -333,6 +335,7 @@ interface CoreBeanCollection extends AgCoreBeanCollection<
     autoColSvc?: IAutoColService;
     selectionColSvc?: SelectionColService;
     rowNumbersSvc?: IRowNumbersService;
+    transposeSvc?: ITransposeService;
     colDefFactory?: ColumnDefFactory;
     colAutosize?: ColumnAutosizeService;
     rowGroupColsSvc?: IRowGroupColsService;

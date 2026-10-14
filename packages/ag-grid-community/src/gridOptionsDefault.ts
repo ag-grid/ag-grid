@@ -88,6 +88,7 @@ export const GRID_OPTION_DEFAULTS = {
     paginateChildRows: false,
     suppressPaginationPanel: false,
     pivotMode: false,
+    transpose: false,
     pivotPanelShow: 'never',
     pivotDefaultExpanded: 0,
     pivotSuppressAutoColumn: false,

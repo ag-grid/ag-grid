@@ -175,6 +175,8 @@ export class RowNode<TData = any>
 
     /** The row group column used for this group, e.g. the Country column instance. */
     public rowGroupColumn: AgColumn | null = null;
+    /** Transposed view only: the original column this synthetic field row shows. */
+    public transposeFieldCol: AgColumn | undefined = undefined;
 
     /** The key for the group eg Ireland, UK, USA */
     public key: string | null = null;

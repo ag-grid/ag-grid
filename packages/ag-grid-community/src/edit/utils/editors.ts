@@ -4,6 +4,7 @@ import { _unwrapUserComp } from '../../components/framework/unwrapUserComp';
 import { _getCellEditorDetails } from '../../components/framework/userCompUtils';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
+import { _getTransposedCell } from '../../entities/agColumn';
 import type { CellEditingStoppedEvent } from '../../events';
 import { _addGridCommonParams } from '../../gridOptionsUtils';
 import type {
@@ -167,7 +168,7 @@ export function _setupEditor(
         return;
     }
 
-    const colDef = position.column.getColDef();
+    const colDef = editorParams.colDef;
     const compDetails = _getCellEditorDetails(userCompFactory, colDef, editorParams);
 
     if (!compDetails) {
@@ -295,14 +296,17 @@ function _createEditorParams(
         paramsValue = beans.formula?.normaliseFormula(paramsValue, true) ?? paramsValue;
     }
 
+    const configCell = _getTransposedCell(agColumn, rowNode);
+    const configColumn = configCell?.column ?? column;
+    const configNode = configCell?.rowNode ?? rowNode;
     return _addGridCommonParams(gos, {
         value: paramsValue,
         eventKey: key ?? null,
-        column,
-        colDef: column.getColDef(),
+        column: configColumn,
+        colDef: configColumn.getColDef(),
         rowIndex,
-        node: rowNode,
-        data: rowNode.data,
+        node: configNode,
+        data: configNode.data,
         cellStartedEdit: !!cellStartedEdit,
         onKeyDown: cellCtrl?.onKeyDown.bind(cellCtrl),
         stopEditing: (suppressNavigateAfterEdit: boolean, event?: KeyboardEvent) => {
@@ -381,9 +385,8 @@ export function _refreshEditorOnColDefChanged(beans: BeanCollection, cellCtrl: C
     }
 
     const { eventKey, cellStartedEdit } = cellCtrl.editCompDetails!.params;
-    const { column } = cellCtrl;
     const editorParams = _createEditorParams(beans, cellCtrl, eventKey, cellStartedEdit);
-    const colDef = column.getColDef();
+    const colDef = editorParams.colDef;
     const compDetails = _getCellEditorDetails(beans.userCompFactory, colDef, editorParams);
 
     editor.refresh(checkAndPreventDefault(compDetails!.params, eventKey));

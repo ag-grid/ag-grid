@@ -27,6 +27,7 @@ export const ENTERPRISE_MODULE_NAMES: Record<EnterpriseModuleName, 1> = {
     RangeSelection: 1,
     RichSelect: 1,
     RowNumbers: 1,
+    Transpose: 1,
     RowGrouping: 1,
     RowGroupingEdit: 1,
     RowGroupingPanel: 1,

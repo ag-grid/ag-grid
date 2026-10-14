@@ -103,6 +103,7 @@ export {
     _isSortTypeAvailable,
     _normalizeSortType,
     _resolvePivotColumnForRow,
+    _getTransposedCell,
     _resolvePivotSort,
     AgColumn,
 } from './entities/agColumn';
@@ -368,6 +369,7 @@ export type { IWatermark } from './interfaces/iWatermark';
 export type { HeaderElement, PrefixedXmlAttributes, XmlAttributes, XmlElement } from './interfaces/iXmlFactory';
 export type { IRenderStatusService } from './interfaces/renderStatusService';
 export type { IRowNumbersService } from './interfaces/rowNumbers';
+export type { ITransposeService } from './interfaces/iTransposeService';
 export type { AnimationFrameService } from './misc/animationFrameService';
 export { LocaleService } from './misc/locale/localeService';
 export { _setColMenuVisible } from './misc/menu/menuService';

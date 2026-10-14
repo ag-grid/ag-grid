@@ -1,0 +1,15 @@
+.ag-transpose-field {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ag-transpose-field-expand {
+    display: inline-flex;
+    min-width: 16px;
+    cursor: pointer;
+}
+
+.ag-transpose-field-group {
+    font-weight: 600;
+}

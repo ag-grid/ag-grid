@@ -21,6 +21,7 @@ export const USER_COMP_MODULES: Record<UserComponentName, ValidationModuleName> 
     agAnimateShowChangeCellRenderer: 'HighlightChanges',
     agAnimateSlideCellRenderer: 'HighlightChanges',
     agLoadingCellRenderer: 'LoadingCellRenderer',
+    agTransposeFieldCellRenderer: 'Transpose',
     agSkeletonCellRenderer: 'SkeletonCellRenderer',
     agCheckboxCellRenderer: 'CheckboxCellRenderer',
     agLoadingOverlay: 'Overlay',

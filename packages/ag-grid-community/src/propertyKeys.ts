@@ -36,6 +36,7 @@ type FunctionKeys = Exclude<KeysLike<(...args: any[]) => any>, CallbackKeys>;
  */
 // only used internally
 const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
+    'transposeHeaderColId',
     'overlayLoadingTemplate',
     'overlayNoRowsTemplate',
     'gridId',
@@ -248,6 +249,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'copyHeadersToClipboard',
     'copyGroupHeadersToClipboard',
     'pivotMode',
+    'transpose',
     'suppressAggFuncInHeader',
     'suppressColumnVirtualisation',
     'alwaysAggregateAtRootLevel',
