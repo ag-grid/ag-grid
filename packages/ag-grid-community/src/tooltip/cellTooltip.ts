@@ -52,7 +52,7 @@ const getTruncationCheck = (beans: BeanCollection, ctrl: CellCtrl): (() => boole
         return _isElementOverflowingCallback(() => getOverflowTarget(ctrl));
     }
 
-    const colDef = ctrl.column.colDef;
+    const colDef = ctrl.getConfigCell().column.colDef;
     const isGroupRenderer = !!colDef.showRowGroup || colDef.cellRenderer === 'agGroupCellRenderer';
     if (!isGroupRenderer) {
         return ctrl.hasActiveCellRenderer() ? undefined : _isElementOverflowingCallback(() => getOverflowTarget(ctrl));
@@ -76,7 +76,7 @@ const shouldDisplayCellTooltip = (beans: BeanCollection, ctrl: CellCtrl, configu
     if (!truncationCheck) {
         return true;
     }
-    return (!configuredOnly || ctrl.column.isTooltipEnabled()) && truncationCheck();
+    return (!configuredOnly || ctrl.getConfigCell().column.isTooltipEnabled()) && truncationCheck();
 };
 
 const resolveLegacyFieldValue = (
@@ -128,7 +128,7 @@ const resolveCellTooltip = (
     ctrl: CellCtrl,
     translate: LocaleTextFunc
 ): ResolvedCellTooltip | null => {
-    const { column, rowNode } = ctrl;
+    const { column, rowNode } = ctrl.getConfigCell();
     const { editSvc, formula } = beans;
 
     if ((column.allowFormula && formula?.active) || (column.isCalculatedCol && formula)) {
@@ -201,14 +201,17 @@ export function _createCellTooltipSource(beans: BeanCollection, ctrl: CellCtrl):
             const current = resolved ?? resolve();
             return !!current && (current.shouldDisplay?.() ?? true);
         },
-        getAdditionalParams: () => ({
-            column: ctrl.column,
-            colDef: ctrl.column.colDef,
-            rowIndex: ctrl.cellPosition.rowIndex,
-            node: ctrl.rowNode,
-            data: ctrl.rowNode.data,
-            valueFormatted: ctrl.valueFormatted,
-        }),
+        getAdditionalParams: () => {
+            const { column, rowNode } = ctrl.getConfigCell();
+            return {
+                column,
+                colDef: column.colDef,
+                rowIndex: ctrl.cellPosition.rowIndex,
+                node: rowNode,
+                data: rowNode.data,
+                valueFormatted: ctrl.valueFormatted,
+            };
+        },
     };
 }
 
@@ -225,7 +228,7 @@ export function _createCellEditorTooltipSource(
     const translate = _getLocaleTextFunc(beans.localeSvc);
     return {
         getGui: () => eGui,
-        getTooltipComponentDefinition: () => cellCtrl.column.colDef,
+        getTooltipComponentDefinition: () => cellCtrl.getConfigCell().column.colDef,
         getTooltipValue: () => getEditErrors(beans, cellCtrl, translate),
         getLocation: () => 'cellEditor',
         shouldDisplayTooltip: () => {
@@ -233,12 +236,15 @@ export function _createCellEditorTooltipSource(
             const cellErrors = beans.editModelSvc?.getCellValidationModel()?.getCellValidationMap();
             return !!rowErrors?.size || !!cellErrors?.size;
         },
-        getAdditionalParams: () => ({
-            column: cellCtrl.column,
-            colDef: cellCtrl.column.colDef,
-            rowIndex: cellCtrl.cellPosition.rowIndex,
-            node: cellCtrl.rowNode,
-            data: cellCtrl.rowNode.data,
-        }),
+        getAdditionalParams: () => {
+            const { column, rowNode } = cellCtrl.getConfigCell();
+            return {
+                column,
+                colDef: column.colDef,
+                rowIndex: cellCtrl.cellPosition.rowIndex,
+                node: rowNode,
+                data: rowNode.data,
+            };
+        },
     };
 }

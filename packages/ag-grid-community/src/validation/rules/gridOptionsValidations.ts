@@ -174,6 +174,8 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     rowGroupPanelShow: 'RowGroupingPanel',
     rowNumbers: 'RowNumbers',
     transpose: 'Transpose',
+    transposeRecordColumnDef: 'Transpose',
+    transposeFieldColumnDef: 'Transpose',
     rowSelection: (_options, gridOptions) =>
         gridOptions.rowModelType === 'serverSide' ? 'ServerSideRowModel' : 'RowSelection',
     rowStyle: 'RowStyle',

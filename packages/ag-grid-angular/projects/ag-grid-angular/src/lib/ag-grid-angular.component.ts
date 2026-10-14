@@ -246,6 +246,8 @@ import type {
     Toolbar,
     TooltipHideEvent,
     TooltipShowEvent,
+    TransposeFieldColumnDef,
+    TransposeRecordColumnDef,
     TreeDataDisplayType,
     UndoEndedEvent,
     UndoStartedEvent,
@@ -1210,6 +1212,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `TransposeModule`
      */
     @Input() public transposeHeaderColId: string | undefined = undefined;
+    /** Customises every record column in the transposed view. Cell values, formatting and editing always come from
+     * the original field. Prototype only.
+     * @agModule `TransposeModule`
+     */
+    @Input() public transposeRecordColumnDef: TransposeRecordColumnDef | undefined = undefined;
+    /** Customises the pinned column listing the field names in the transposed view. Prototype only.
+     * @agModule `TransposeModule`
+     */
+    @Input() public transposeFieldColumnDef: TransposeFieldColumnDef | undefined = undefined;
     /** Set to `true` to enable pivot mode.
      * @default false
      * @agModule `PivotModule`

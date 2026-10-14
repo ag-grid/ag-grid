@@ -367,7 +367,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     }
 
     public getCellAriaRole(): string {
-        return this.column.colDef.cellAriaRole ?? 'gridcell';
+        return this.getConfigCell().column.colDef.cellAriaRole ?? 'gridcell';
     }
 
     /** The column and row whose config this cell uses: in the transposed view, the original field and record. */
@@ -650,7 +650,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
             return;
         }
 
-        const enableCellChangeFlash = column.enableCellChangeFlash;
+        const enableCellChangeFlash = this.getConfigCell().column.enableCellChangeFlash;
         // we always refresh if cell has no value - this can happen when user provides Cell Renderer and the
         // cell renderer doesn't rely on a value, instead it could be looking directly at the data, or maybe
         // printing the current time (which would be silly)???. Generally speaking
@@ -1044,7 +1044,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     }
 
     private setWrapText(): void {
-        const value = this.column.colDef.wrapText === true;
+        const value = this.getConfigCell().column.colDef.wrapText === true;
 
         this.comp.toggleCss(CSS_CELL_WRAP_TEXT, value);
     }

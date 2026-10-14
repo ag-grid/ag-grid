@@ -120,6 +120,8 @@ import type {
     TabToNextHeader,
     Theme,
     Toolbar,
+    TransposeFieldColumnDef,
+    TransposeRecordColumnDef,
     TreeDataDisplayType,
     UseGroupTotalRow
 } from 'ag-grid-community';
@@ -1040,6 +1042,15 @@ export interface Props<TData> {
          * @agModule `TransposeModule`
          */
     transposeHeaderColId?: string,
+    /** Customises every record column in the transposed view. Cell values, formatting and editing always come from
+         * the original field. Prototype only.
+         * @agModule `TransposeModule`
+         */
+    transposeRecordColumnDef?: TransposeRecordColumnDef,
+    /** Customises the pinned column listing the field names in the transposed view. Prototype only.
+         * @agModule `TransposeModule`
+         */
+    transposeFieldColumnDef?: TransposeFieldColumnDef,
     /** Set to `true` to enable pivot mode.
          * @default false
          * @agModule `PivotModule`
@@ -2389,6 +2400,8 @@ export function getProps() {
         paginationPanels: undefined,
         transpose: undefined,
         transposeHeaderColId: undefined,
+        transposeRecordColumnDef: undefined,
+        transposeFieldColumnDef: undefined,
         pivotMode: undefined,
         pivotPanelShow: undefined,
         pivotMaxGeneratedColumns: undefined,
