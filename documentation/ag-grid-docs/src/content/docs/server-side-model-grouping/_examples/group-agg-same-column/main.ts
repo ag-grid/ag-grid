@@ -40,15 +40,16 @@ const gridOptions: GridOptions<IOlympicData> = {
             return undefined;
         }
         const colId = column.getColId();
-        if (colId === 'gold' || colId === 'silver' || colId === 'bronze') {
-            console.log(`getServerSideGroupAggData: ${colId}`, params);
-        }
         const aggFunc = column.getAggFunc();
-        if (!column.isValueActive() || typeof aggFunc !== 'string') {
-            // the grouped column is not aggregated, so it shows the group key from the row data
-            return undefined;
+        // when the grouped column is not aggregated, it shows the group key from the row data
+        const aggData =
+            column.isValueActive() && typeof aggFunc === 'string'
+                ? { [colId]: params.data[`${aggFunc}_${colId}`] }
+                : undefined;
+        if (colId === 'gold' || colId === 'silver' || colId === 'bronze') {
+            console.log(`getServerSideGroupAggData: ${colId} group ${params.node.key} returns`, aggData, params);
         }
-        return { [colId]: params.data[`${aggFunc}_${colId}`] };
+        return aggData;
     },
 
     rowModelType: 'serverSide',
