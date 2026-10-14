@@ -1,6 +1,8 @@
 import { Component } from 'ag-grid-community';
 
 export class NoMatchesComp extends Component {
+    private announced = false;
+
     constructor(cssClass: string) {
         super({ tag: 'div', cls: cssClass });
     }
@@ -10,10 +12,12 @@ export class NoMatchesComp extends Component {
         this.setDisplayed(false);
     }
 
-    public setNoMatches(noMatches: boolean): void {
-        if (noMatches && !this.isDisplayed()) {
+    /** Only announce when user input caused the change, so data or column updates don't speak while the UI is closed. */
+    public setNoMatches(noMatches: boolean, announce: boolean): void {
+        if (noMatches && announce && !this.announced) {
             this.beans.ariaAnnounce.announceValue(this.getGui().textContent ?? '', 'noMatches');
         }
+        this.announced = noMatches && (announce || this.announced);
         this.setDisplayed(noMatches);
     }
 }

@@ -785,13 +785,13 @@ export class SetFilter<V = string>
         this.checkAndRefreshVirtualList();
         this.onUiChanged(updateSelections ? effectiveApply : 'prevent');
 
-        this.showOrHideResults();
+        this.showOrHideResults(true);
     }
 
-    private showOrHideResults(): void {
+    private showOrHideResults(fromMiniFilterInput = false): void {
         const hideResults = this.miniFilterText != null && this.displayValueModel.getDisplayedValueCount() < 1;
 
-        this.noMatchesComp.setNoMatches(hideResults);
+        this.noMatchesComp.setNoMatches(hideResults, fromMiniFilterInput);
         _setDisplayed(this.eSetFilterList, !hideResults);
     }
 

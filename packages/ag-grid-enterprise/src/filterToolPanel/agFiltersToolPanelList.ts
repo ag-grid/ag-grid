@@ -155,7 +155,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         if (_exists(searchFilterText)) {
             this.searchFilters(searchFilterText);
         } else {
-            this.noMatchesComp.setNoMatches(false);
+            this.noMatchesComp.setNoMatches(false, false);
         }
 
         // notify header of expand
@@ -461,10 +461,10 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
 
     public performFilterSearch(searchText: string) {
         this.searchFilterText = _exists(searchText) ? searchText.toLowerCase() : null;
-        this.searchFilters(this.searchFilterText);
+        this.searchFilters(this.searchFilterText, true);
     }
 
-    private searchFilters(searchFilter: string | null) {
+    private searchFilters(searchFilter: string | null, fromSearchInput = false) {
         const passesFilter = (groupName: string) => {
             return !_exists(searchFilter) || groupName.toLowerCase().indexOf(searchFilter) !== -1;
         };
@@ -524,7 +524,7 @@ export class AgFiltersToolPanelList extends Component<AgFiltersToolPanelListEven
         });
 
         this.setFirstAndLastVisible(firstVisible, lastVisible);
-        this.noMatchesComp.setNoMatches(searchFilter != null && firstVisible === undefined);
+        this.noMatchesComp.setNoMatches(searchFilter != null && firstVisible === undefined, fromSearchInput);
         this.refreshAriaLabel();
     }
 

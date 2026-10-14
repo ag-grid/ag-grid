@@ -516,7 +516,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         this.flattenAndFilterModel();
     }
 
-    private flattenAndFilterModel(): void {
+    private flattenAndFilterModel(fromSearchInput = false): void {
         this.displayedColsList = [];
 
         const recursiveFunc = (item: ColumnModelItem) => {
@@ -540,7 +540,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         virtualList.setModel(new UIColumnModel(this.displayedColsList));
 
         const noMatches = this.filterText != null && this.displayedColsList.length === 0;
-        this.noMatchesComp.setNoMatches(noMatches);
+        this.noMatchesComp.setNoMatches(noMatches, fromSearchInput);
         virtualList.setDisplayed(!noMatches);
 
         let focusedRow: number | null = null;
@@ -727,7 +727,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     public setFilterText(filterText: string) {
         this.filterText = _exists(filterText) ? filterText.toLowerCase() : null;
         this.markFilteredColumns();
-        this.flattenAndFilterModel();
+        this.flattenAndFilterModel(true);
     }
 
     private markFilteredColumns(): void {
