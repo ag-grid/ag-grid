@@ -73,9 +73,11 @@ const gridOptions: GridOptions<Row> = {
     defaultColDef: { width: 120, editable: true, filter: true },
     getRowId: (params) => params.data.id,
     rowData: [],
-    transpose: true,
+    transpose: !new URLSearchParams(location.search).has('untransposed'),
     transposeHeaderColId: 'name',
     suppressColumnVirtualisation: new URLSearchParams(location.search).has('novirt'),
+    suppressRowVirtualisation: new URLSearchParams(location.search).has('norowvirt'),
+    suppressMaxRenderedRowRestriction: new URLSearchParams(location.search).has('nomaxrows'),
 };
 
 const nextFrame = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));

@@ -1,20 +1,16 @@
-import { _areEqual } from 'ag-stack';
-
 import type {
-    AgColumn,
     AgProvidedColumnGroup,
+    CellValueChangedEvent,
     ColDef,
-    ColGroupDef,
     ITransposeService,
     NamedBean,
     RowNode,
 } from 'ag-grid-community';
 import {
+    AgColumn,
     BeanStub,
     RowNode as RowNodeClass,
-    _buildColumnTree,
-    _destroyColumnTreeAll,
-    _destroyColumnTreeUnused,
+    _addColumnDefaultAndTypes,
     _isClientSideRowModel,
 } from 'ag-grid-community';
 
@@ -29,18 +25,26 @@ interface FieldGroupInfo {
     hasChildren: boolean;
 }
 
+interface CachedHeader {
+    data: unknown;
+    header: string;
+}
+
 export class TransposeService extends BeanStub implements NamedBean, ITransposeService {
     beanName = 'transposeSvc' as const;
 
     public cols: AgColumn[] | null = null;
     public tree: (AgColumn | AgProvidedColumnGroup)[] = [];
-    public treeDepth = 0;
-    public groupsById: Map<string, AgProvidedColumnGroup> = new Map();
-    public allGroups: AgProvidedColumnGroup[] = [];
+    public readonly treeDepth = 0;
+    public readonly groupsById: Map<string, AgProvidedColumnGroup> = new Map();
+    public readonly allGroups: AgProvidedColumnGroup[] = [];
 
-    private colsByKey: Map<string | ColDef, AgColumn> = new Map();
-    private recordColIds: string[] = [];
-    private recordHeaders: string[] = [];
+    private fieldNameCol: AgColumn | null = null;
+    /** Record columns by record id, kept across refreshes so sort, filter and edits reuse them. */
+    private readonly recordCols: Map<string, AgColumn> = new Map();
+    /** Header text by record id, valid while the record's data object is unchanged. */
+    private readonly headerCache: Map<string, CachedHeader> = new Map();
+    private refreshToken = 0;
 
     private readonly fieldRows: Map<string, RowNode> = new Map();
     private readonly fieldGroups: Map<RowNode, FieldGroupInfo> = new Map();
@@ -49,16 +53,8 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
     public postConstruct(): void {
         this.addManagedPropertyListeners(['transpose', 'transposeHeaderColId'], () => this.onTransposeChanged());
         this.addManagedEventListeners({
-            cellValueChanged: (event) => this.refreshRecordCol(event.node.id),
+            cellValueChanged: (event) => this.onCellValueChanged(event),
         });
-    }
-
-    /** Edits change the original record, whose cells are not the ones displayed, so refresh its column here. */
-    private refreshRecordCol(recordId: string | undefined): void {
-        if (!this.cols || recordId == null) {
-            return;
-        }
-        this.beans.rowRenderer.refreshCells({ columns: [RECORD_COL_ID_PREFIX + recordId] });
     }
 
     public isActive(): boolean {
@@ -106,10 +102,22 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         return this.buildFieldRows();
     }
 
-    private onTransposeChanged(): void {
-        if (!this.isActive()) {
-            this.clearCols();
+    /** Edits change the original record, whose cells are not the ones displayed, so refresh its column here. */
+    private onCellValueChanged(event: CellValueChangedEvent): void {
+        const recordId = event.node.id;
+        if (!this.cols || recordId == null) {
+            return;
         }
+        if (event.column.getColId() === this.gos.get('transposeHeaderColId')) {
+            this.headerCache.delete(recordId);
+            this.refreshRowModel();
+            return;
+        }
+        this.beans.rowRenderer.refreshCells({ columns: [RECORD_COL_ID_PREFIX + recordId] });
+    }
+
+    private onTransposeChanged(): void {
+        this.clearCols();
         this.refreshRowModel();
     }
 
@@ -120,107 +128,109 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         }
     }
 
+    /**
+     * Reuses each record's column, creating columns only for new records and destroying them only for removed
+     * ones; the column model is refreshed only when the displayed set or order of columns changes.
+     */
     private refreshRecordCols(records: RowNode[]): void {
         const headerCol = this.getHeaderCol();
-        const recordColIds: string[] = [];
-        const recordHeaders: string[] = [];
-        for (let i = 0, len = records.length; i < len; ++i) {
+        const token = ++this.refreshToken;
+        const prevCols = this.cols;
+        const recordCount = records.length;
+        let changed = prevCols == null || prevCols.length !== recordCount + 1;
+
+        this.fieldNameCol ??= this.createCol(this.createFieldNameColDef(headerCol));
+        const nextCols = new Array<AgColumn>(recordCount + 1);
+        nextCols[0] = this.fieldNameCol;
+
+        const recordCols = this.recordCols;
+        for (let i = 0; i < recordCount; ++i) {
             const record = records[i];
-            recordColIds.push(RECORD_COL_ID_PREFIX + record.id);
-            recordHeaders.push(this.getRecordHeader(headerCol, record, i));
+            const recordId = record.id!;
+            const header = this.getRecordHeader(headerCol, record, i);
+            let col = recordCols.get(recordId);
+            if (col === undefined) {
+                col = this.createCol(this.createRecordColDef(recordId, header));
+                recordCols.set(recordId, col);
+            } else if (col.colDef.headerName !== header) {
+                col.setColDef({ ...col.colDef, headerName: header }, null, 'api');
+            }
+            col.transposeRecord = record;
+            col.buildToken = token;
+            if (!changed && prevCols![i + 1] !== col) {
+                changed = true;
+            }
+            nextCols[i + 1] = col;
         }
 
-        if (this.cols && _areEqual(recordColIds, this.recordColIds) && _areEqual(recordHeaders, this.recordHeaders)) {
-            this.assignRecords(records);
+        if (recordCols.size > recordCount) {
+            this.destroyStaleRecordCols(token);
+        }
+        if (!changed) {
             return;
         }
-        this.recordColIds = recordColIds;
-        this.recordHeaders = recordHeaders;
-
-        const colDefs: (ColDef | ColGroupDef)[] = [this.createFieldNameColDef(headerCol)];
-        for (let i = 0, len = records.length; i < len; ++i) {
-            colDefs.push({
-                colId: recordColIds[i],
-                headerName: recordHeaders[i],
-                sortable: false,
-                filter: false,
-                editable: false,
-                suppressHeaderMenuButton: true,
-                headerComponent: 'agTransposeRecordHeader',
-            });
-        }
-        this.applyColDefs(colDefs, records);
+        this.cols = nextCols;
+        this.tree = nextCols;
+        this.refreshColModel();
     }
 
-    private applyColDefs(colDefs: (ColDef | ColGroupDef)[], records: RowNode[]): void {
-        const beans = this.beans;
-        const colModel = beans.colModel;
-        const previousCols = this.cols;
-        const previousAllGroups = this.allGroups;
-        const buildToken = colModel.nextBuildToken();
-        const built = _buildColumnTree(
-            beans,
-            colDefs,
-            false,
-            this.groupsById,
-            this.colsByKey,
-            colModel.colsById,
-            'api',
-            true,
-            buildToken,
-            null
-        );
-        if (previousCols) {
-            _destroyColumnTreeUnused(previousCols, previousAllGroups, buildToken);
-        }
-        this.cols = built.columns;
-        this.tree = built.columnTree;
-        this.treeDepth = built.treeDepth;
-        this.groupsById = built.groupsById;
-        this.allGroups = built.allGroups;
-        this.colsByKey = built.colsByKey;
-        this.assignRecords(records);
+    private destroyStaleRecordCols(token: number): void {
+        const { recordCols, headerCache } = this;
+        recordCols.forEach((col, recordId) => {
+            if (col.buildToken !== token) {
+                col.destroy();
+                recordCols.delete(recordId);
+                headerCache.delete(recordId);
+            }
+        });
+    }
 
+    private refreshColModel(): void {
+        const { colModel, visibleCols } = this.beans;
         colModel.beginColUpdate();
         try {
             colModel.refreshCols(true, 'api');
-            beans.visibleCols.refresh('api', false);
+            visibleCols.refresh('api', false);
         } finally {
             colModel.endColUpdate();
         }
     }
 
-    /** Record nodes can be replaced while their ids (and so their columns) stay the same. */
-    private assignRecords(records: RowNode[]): void {
-        const cols = this.cols!;
-        // cols[0] is the field-name column; record columns follow in record order.
-        for (let i = 0, len = records.length; i < len; ++i) {
-            cols[i + 1].transposeRecord = records[i];
-        }
+    private createCol(colDef: ColDef): AgColumn {
+        const colId = colDef.colId!;
+        const merged = _addColumnDefaultAndTypes(this.beans, colDef, colId);
+        const col = new AgColumn(merged, colDef, colId, false, 'user');
+        this.beans.context.createBean(col);
+        return col;
+    }
+
+    private createRecordColDef(recordId: string, header: string): ColDef {
+        return {
+            colId: RECORD_COL_ID_PREFIX + recordId,
+            headerName: header,
+            sortable: false,
+            filter: false,
+            editable: false,
+            suppressHeaderMenuButton: true,
+            headerComponent: 'agTransposeRecordHeader',
+        };
     }
 
     private clearCols(): void {
-        const cols = this.cols;
-        if (!cols) {
-            return;
+        if (this.cols) {
+            this.cols = null;
+            this.tree = [];
+            this.refreshColModel();
         }
-        this.cols = null;
-        this.tree = [];
-        this.treeDepth = 0;
-        this.recordColIds = [];
-        this.recordHeaders = [];
-        const colModel = this.beans.colModel;
-        colModel.beginColUpdate();
-        try {
-            colModel.refreshCols(false, 'api');
-            this.beans.visibleCols.refresh('api', false);
-        } finally {
-            colModel.endColUpdate();
-        }
-        _destroyColumnTreeAll(cols, this.allGroups);
-        this.allGroups = [];
-        this.groupsById = new Map();
-        this.colsByKey = new Map();
+        this.destroyGeneratedCols();
+    }
+
+    private destroyGeneratedCols(): void {
+        this.recordCols.forEach((col) => col.destroy());
+        this.recordCols.clear();
+        this.headerCache.clear();
+        this.fieldNameCol?.destroy();
+        this.fieldNameCol = null;
     }
 
     private getHeaderCol(): AgColumn | null {
@@ -232,13 +242,21 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         if (!headerCol) {
             return String(index + 1);
         }
+        const recordId = record.id!;
+        const data = record.data;
+        const cached = this.headerCache.get(recordId);
+        if (cached !== undefined && cached.data === data) {
+            return cached.header;
+        }
         const { value, valueFormatted } = this.beans.valueSvc.getValueForDisplay({
             column: headerCol,
             node: record,
             includeValueFormatted: true,
             from: 'data',
         });
-        return String(valueFormatted ?? value ?? '');
+        const header = String(valueFormatted ?? value ?? '');
+        this.headerCache.set(recordId, { data, header });
+        return header;
     }
 
     private createFieldNameColDef(headerCol: AgColumn | null): ColDef {
@@ -325,11 +343,8 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
     }
 
     public override destroy(): void {
-        const cols = this.cols;
-        if (cols) {
-            _destroyColumnTreeAll(cols, this.allGroups);
-        }
         this.cols = null;
+        this.destroyGeneratedCols();
         this.fieldRows.clear();
         this.fieldGroups.clear();
         super.destroy();
