@@ -130,7 +130,7 @@ describe('Filters Tool Panel', () => {
         expect(panel.isSearchNoMatchesShown()).toBe(false);
     });
 
-    test('a set filter mini-filter matching no values announces "No matches."', async () => {
+    test('a set filter mini-filter matching no values announces "No matches"', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'country', filter: 'agSetColumnFilter' }],
             rowData: [{ country: 'Ireland' }, { country: 'France' }],
@@ -141,7 +141,7 @@ describe('Filters Tool Panel', () => {
 
         await panel.setMiniFilter('Country', 'zz');
         expect(panel.isNoMatchesShown('Country')).toBe(true);
-        await waitFor(() => expect(panel.announcement()).toBe('No matches.'));
+        await waitFor(() => expect(panel.announcement()).toBe('No matches'));
     });
 
     test('expand-all / collapse-all toggles column-group expansion', async () => {
