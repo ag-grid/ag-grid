@@ -82,6 +82,7 @@ export class GridHeaderCtrl extends BeanStub {
 
         this.addManagedEventListeners({
             headerRowsChanged: listener,
+            displayedColumnsChanged: listener,
             columnHeaderHeightChanged: listener,
             // Deferred to a frame to avoid a feedback loop.
             columnGroupHeaderHeightChanged: this.throttleToFrame(listener),

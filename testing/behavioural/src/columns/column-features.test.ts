@@ -50,6 +50,16 @@ function getHeaderRowHeight(api: GridApi): number {
     return parseFloat(headerRow!.style.height);
 }
 
+function getGroupRowHeights(api: GridApi): number[] {
+    const groupRows = TestGridsManager.getHTMLElement(api)!.querySelectorAll<HTMLElement>('.ag-header-row-group');
+    return Array.from(groupRows, (row) => parseFloat(row.style.height));
+}
+
+function getHeaderHeight(api: GridApi): number {
+    const header = TestGridsManager.getHTMLElement(api)!.querySelector('.ag-header') as HTMLElement;
+    return parseFloat(header.style.height);
+}
+
 describe('Column Features', () => {
     const gridsManager = new TestGridsManager({
         modules: [
@@ -1190,12 +1200,22 @@ describe('Column Features', () => {
             }
         });
 
-        test('autoHeaderHeight: measured height is retained when the still-auto column is hidden', async () => {
+        test('autoHeaderHeight: a hidden column stops sizing the header, keeping its measured height for when it is shown', async () => {
             mockGridLayout.useRealOffsetDimensions = true;
             try {
+                // The auto column sits a group level above its neighbour, so the grid pads it with a group.
                 const api = gridsManager.createGrid('autoHeaderHeight', {
                     headerHeight: 10,
-                    columnDefs: [{ colId: 'auto', autoHeaderHeight: true, headerName: 'Auto' }, { colId: 'normal' }],
+                    groupHeaderHeight: 10,
+                    columnDefs: [
+                        {
+                            groupId: 'tall',
+                            headerName: 'Tall',
+                            autoHeaderHeight: true,
+                            children: [{ colId: 'auto', autoHeaderHeight: true, headerName: 'Auto' }],
+                        },
+                        { groupId: 'outer', children: [{ groupId: 'inner', children: [{ colId: 'normal' }] }] },
+                    ],
                     rowData: [{ auto: 1, normal: 2 }],
                 });
 
@@ -1205,21 +1225,30 @@ describe('Column Features', () => {
                     expect(height).not.toBeNull();
                     return height!;
                 });
+                expect(measured).toBeGreaterThan(10);
                 expect(getHeaderRowHeight(api)).toBe(measured);
+                await waitFor(() => expect(getGroupRowHeights(api)[0]).toBeGreaterThan(10));
+                const groupRowHeightsWithAuto = getGroupRowHeights(api);
+                const headerHeightWithAuto = getHeaderHeight(api);
 
-                // Hiding tears down the header cell but the column is still auto-height, so
-                // the measured height must be kept and the rendered header must not contract.
                 api.setColumnsVisible(['auto'], false);
-                // Negative assertion (the height must NOT be cleared), so there is no positive signal to
-                // poll for: hold open the animation-frame window in which a stale clear would land.
+                await waitFor(() => expect(getHeaderRowHeight(api)).toBe(10));
+                await waitFor(() => expect(getGroupRowHeights(api)).toEqual([10, 10]));
+                expect(getHeaderHeight(api)).toBe(
+                    headerHeightWithAuto - (measured - 10) - (groupRowHeightsWithAuto[0] - 10)
+                );
+                // The column is still auto-height: its measured height stays for when it is shown again.
                 for (let i = 0; i < 8; ++i) {
                     // eslint-disable-next-line no-restricted-syntax -- drains the animation-frame window in which an (incorrect) auto-header-height clear would land after hiding the column
                     await asyncSetTimeout(20);
                 }
-
                 expect(autoCol.isAutoHeaderHeight()).toBe(true);
                 expect(autoCol.getAutoHeaderHeight()).toBe(measured);
-                expect(getHeaderRowHeight(api)).toBe(measured);
+
+                api.setColumnsVisible(['auto'], true);
+                await waitFor(() => expect(getHeaderRowHeight(api)).toBe(measured));
+                await waitFor(() => expect(getGroupRowHeights(api)).toEqual(groupRowHeightsWithAuto));
+                await waitFor(() => expect(getHeaderHeight(api)).toBe(headerHeightWithAuto));
             } finally {
                 mockGridLayout.useRealOffsetDimensions = false;
             }

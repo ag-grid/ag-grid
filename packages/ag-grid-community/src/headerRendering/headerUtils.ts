@@ -101,9 +101,9 @@ function getColumnGroupHeaderRowHeight(beans: BeanCollection, headerRowCtrl: Hea
 export function getColumnHeaderRowHeight(beans: BeanCollection): number {
     const defaultHeight = beans.colModel.pivotMode ? getPivotHeaderHeight(beans) : getHeaderHeight(beans);
     let maxDisplayedHeight = defaultHeight;
-    const allCols = beans.colModel.getAllCols();
-    for (let i = 0, len = allCols.length; i < len; ++i) {
-        const col = allCols[i];
+    const displayedCols = beans.visibleCols.allCols;
+    for (let i = 0, len = displayedCols.length; i < len; ++i) {
+        const col = displayedCols[i];
         const height = col.autoHeaderHeight;
         if (height != null && height > maxDisplayedHeight && col.isAutoHeaderHeight()) {
             maxDisplayedHeight = height;
