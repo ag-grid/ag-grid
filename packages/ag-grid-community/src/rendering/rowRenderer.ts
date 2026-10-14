@@ -1378,6 +1378,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
             newLast = -1; // setting to -1 means nothing in range
         } else if (this.printLayout) {
             this.beans.environment.refreshRowHeightVariable();
+            // Print layout renders the whole page, so every row in it has its height worked out first.
+            this.ensureAllRowsInRangeHaveHeightsCalculated(0, Infinity);
             newFirst = pageBounds.getFirstRow();
             newLast = pageBounds.getLastRow();
         } else {

@@ -242,7 +242,6 @@ export const AG_GRID_ERRORS = {
     1: () => '`rowData` must be an array' as const,
     2: ({ nodeId }: { nodeId: string | undefined }) =>
         `Duplicate node id \`${nodeId}\` detected from \`getRowId\` callback, this could cause issues in your grid.` as const,
-    3: () => 'Calling `gridApi.resetRowHeights()` makes no sense when using Auto Row Height.' as const,
     4: ({ id }: { id: string }) => `Could not find row \`id=${id}\`, data item was not found for this id` as const,
     5: ({ data }: { data: any }) =>
         [

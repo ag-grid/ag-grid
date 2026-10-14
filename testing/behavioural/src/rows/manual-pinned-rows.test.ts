@@ -111,6 +111,22 @@ describe('Manual pinned rows', () => {
         expect(pinnedRugby.rowTop).toBe(30);
     });
 
+    test('a rowHeight change reaches a grand total row pinned after the grid started', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'sport', rowGroup: true, hide: true },
+                { colId: 'count', field: 'sport', aggFunc: 'count' },
+            ],
+            rowData,
+        });
+        api.setGridOption('grandTotalRow', 'pinnedBottom');
+        await waitFor(() => expect(getPinnedRows(api, 'bottom')).toHaveLength(1));
+
+        api.setGridOption('rowHeight', 80);
+
+        expect(getPinnedRows(api, 'bottom')[0].rowHeight).toBe(80);
+    });
+
     test('exports manually pinned rows and optionally omits their body duplicates', async () => {
         const api = await gridsManager.createGridAndWait('myGrid', {
             columnDefs,
