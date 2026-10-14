@@ -80,7 +80,7 @@ describe('Excel export', () => {
             'rId1',
         ]);
     });
-    
+
     test('number formats quote `$` only outside square-bracket sections', async () => {
         const api = gridsManager.createGrid('excel-number-format-brackets', {
             columnDefs: [
