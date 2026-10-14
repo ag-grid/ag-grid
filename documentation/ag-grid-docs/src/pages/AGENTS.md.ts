@@ -1,7 +1,7 @@
 import { parseVersion } from '@ag-website-shared/utils/parseVersion';
 import { siteRootUrl } from '@ag-website-shared/utils/structuredData';
 import { getFrameworkPath } from '@components/docs/utils/urlPaths';
-import { DISABLE_MARKDOWN_DOCS, agGridVersion } from '@constants';
+import { DEFAULT_FRAMEWORK, DISABLE_MARKDOWN_DOCS, agGridVersion } from '@constants';
 import { buildAgentsMd } from '@utils/agentReadinessFiles';
 import { type CollectionEntry, getEntry } from 'astro:content';
 
@@ -13,7 +13,9 @@ export async function GET() {
     const output = buildAgentsMd({
         siteRoot: siteRootUrl(metadata.canonicalUrlBase),
         majorVersion: parseVersion(agGridVersion).major,
-        gridDocsPrefix: getFrameworkPath('javascript'),
+        // The header's Docs and API links use the default framework, so these links do too.
+        gridDocsPrefix: getFrameworkPath(DEFAULT_FRAMEWORK),
+        chartsDocsPrefix: DEFAULT_FRAMEWORK,
         includeMarkdownDocs: !DISABLE_MARKDOWN_DOCS,
     });
 
