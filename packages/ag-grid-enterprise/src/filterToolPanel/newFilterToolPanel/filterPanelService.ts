@@ -211,7 +211,7 @@ export class FilterPanelService
             return;
         }
         const state = stateWrapper.state;
-        if (state.expanded === false) {
+        if (!state.expanded) {
             return;
         }
         const filterDefs = state.filterDefs;

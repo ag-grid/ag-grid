@@ -78,7 +78,7 @@ export class GridCtrl extends BeanStub {
         // enableContentVisibilityAuto takes precedence; the deprecated suppressContentVisibilityAuto
         // is only consulted when the former is unset (suppress=false is equivalent to enable=true).
         const contentVisibilityAutoEnabled =
-            this.gos.get('enableContentVisibilityAuto') ?? this.gos.get('suppressContentVisibilityAuto') === false;
+            this.gos.get('enableContentVisibilityAuto') ?? !this.gos.get('suppressContentVisibilityAuto');
         if (contentVisibilityAutoEnabled) {
             const [removeListener] = this.addManagedEventListeners({
                 firstDataRendered: () => {

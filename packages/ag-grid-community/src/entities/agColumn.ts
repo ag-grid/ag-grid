@@ -736,9 +736,8 @@ export class AgColumn<TValue = any>
     }
 
     public setVisible(visible: boolean, source: ColumnEventType): void {
-        const newValue = visible === true;
-        if (this.visible !== newValue) {
-            this.visible = newValue;
+        if (this.visible !== visible) {
+            this.visible = visible;
             let group = this.originalParent;
             while (group) {
                 if (!group.setExpandable()) {

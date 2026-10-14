@@ -371,7 +371,7 @@ export class CellComp extends Component {
         }
 
         // take any custom params off of the user
-        const result = this.cellRenderer.refresh(compClassAndParams.params);
+        const result: unknown = this.cellRenderer.refresh(compClassAndParams.params);
 
         // NOTE on undefined: previous version of the cellRenderer.refresh() interface
         // returned nothing, if the method existed, we assumed it refreshed. so for

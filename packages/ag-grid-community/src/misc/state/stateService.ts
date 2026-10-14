@@ -968,8 +968,9 @@ export class StateService extends BeanStub implements NamedBean {
         const noSelections =
             !selectionState ||
             (!Array.isArray(selectionState) &&
-                ((selectionState as ServerSideRowSelectionState).selectAll === false ||
-                    (selectionState as ServerSideRowGroupSelectionState).selectAllChildren === false) &&
+                ('selectAll' in selectionState
+                    ? !selectionState.selectAll
+                    : selectionState.selectAllChildren === false) &&
                 !selectionState?.toggledNodes?.length);
         return noSelections ? undefined : selectionState;
     }

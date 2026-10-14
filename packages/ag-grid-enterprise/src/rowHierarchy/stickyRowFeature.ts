@@ -218,7 +218,7 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
             }
 
             if (row.isExpandable()) {
-                if (suppressGroupsSticky === true) {
+                if (suppressGroupsSticky) {
                     return false;
                 }
                 if (container === 'bottom') {

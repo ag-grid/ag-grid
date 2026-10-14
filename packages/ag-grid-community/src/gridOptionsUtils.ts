@@ -411,12 +411,12 @@ export function _shouldUpdateColVisibilityAfterGroup(gos: GridOptionsService, is
     }
 
     const legacySuppressOnGroup = gos.get('suppressRowGroupHidesColumns');
-    if (isGrouped && legacySuppressOnGroup === true) {
+    if (isGrouped && legacySuppressOnGroup) {
         return false;
     }
 
     const legacySuppressOnUngroup = gos.get('suppressMakeColumnVisibleAfterUnGroup');
-    if (!isGrouped && legacySuppressOnUngroup === true) {
+    if (!isGrouped && legacySuppressOnUngroup) {
         return false;
     }
 

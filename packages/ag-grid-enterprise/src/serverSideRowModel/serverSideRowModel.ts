@@ -679,7 +679,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
 
     public refreshStore(params: RefreshServerSideParams = {}): void {
         const route = params.route ? params.route : [];
-        this.executeOnStore(route, (store) => store.refreshStore(params.purge == true));
+        this.executeOnStore(route, (store) => store.refreshStore(params.purge === true));
     }
 
     public getStoreState(): ServerSideGroupLevelState[] {
