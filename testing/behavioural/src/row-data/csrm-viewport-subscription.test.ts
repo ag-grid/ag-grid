@@ -362,27 +362,95 @@ describe('CSRM viewportSubscription', () => {
             expect(recorder.subscribed.size).toBe(0);
         });
 
-        test('subscribeToViewport inside onUnsubscribe on gridPreDestroyed is unsubscribed when the grid is destroyed', async () => {
-            const recorder = createRecorder((call) => {
-                // The api is unusable by the final stop.
-                if (call.type === 'unsubscribe' && !api.isDestroyed()) {
-                    api.subscribeToViewport();
+        describe('restarting while the grid is destroyed', () => {
+            /** Calls the api, returning the warning it throws once the grid is destroyed. */
+            function tryApi(call: () => void): string | undefined {
+                try {
+                    call();
+                    return undefined;
+                } catch (e) {
+                    return (e as Error).message;
                 }
+            }
+
+            test('subscribeToViewport inside every onUnsubscribe leaves no row subscribed', async () => {
+                const warnings: (string | undefined)[] = [];
+                const recorder = createRecorder((call) => {
+                    if (call.type === 'unsubscribe') {
+                        warnings.push(tryApi(() => api.subscribeToViewport()));
+                    }
+                });
+                const api = await createFlatGrid({ viewportSubscription: recorder.handlers });
+
+                api.destroy();
+                await nextAnimationFrame();
+                await nextAnimationFrame();
+
+                // The restart from the gridPreDestroyed stop is unsubscribed by the final stop, where the api is unusable.
+                expect(recorder.calls).toEqual([
+                    { type: 'subscribe', ids: range(0, 5) },
+                    { type: 'unsubscribe', ids: range(0, 5) },
+                    { type: 'subscribe', ids: range(0, 5) },
+                    { type: 'unsubscribe', ids: range(0, 5) },
+                ]);
+                expect(warnings).toEqual([undefined, expect.stringContaining('warning #26')]);
+                expect(recorder.subscribed.size).toBe(0);
+                expect(recorder.violations).toEqual([]);
             });
-            const api = await createFlatGrid({ viewportSubscription: recorder.handlers });
 
-            api.destroy();
-            await nextAnimationFrame();
-            await nextAnimationFrame();
+            test('changing the option inside every onUnsubscribe leaves no row subscribed', async () => {
+                const warnings: (string | undefined)[] = [];
+                const newRecorder = createRecorder((call) => {
+                    if (call.type === 'unsubscribe') {
+                        warnings.push(tryApi(() => subscribe(api, oldRecorder)));
+                    }
+                });
+                const oldRecorder = createRecorder((call) => {
+                    if (call.type === 'unsubscribe') {
+                        warnings.push(tryApi(() => subscribe(api, newRecorder)));
+                    }
+                });
+                const api = await createFlatGrid({ viewportSubscription: oldRecorder.handlers });
 
-            expect(recorder.calls).toEqual([
-                { type: 'subscribe', ids: range(0, 5) },
-                { type: 'unsubscribe', ids: range(0, 5) },
-                { type: 'subscribe', ids: range(0, 5) },
-                { type: 'unsubscribe', ids: range(0, 5) },
-            ]);
-            expect(recorder.subscribed.size).toBe(0);
-            expect(recorder.violations).toEqual([]);
+                api.destroy();
+                await nextAnimationFrame();
+                await nextAnimationFrame();
+
+                expect(oldRecorder.calls).toEqual([
+                    { type: 'subscribe', ids: range(0, 5) },
+                    { type: 'unsubscribe', ids: range(0, 5) },
+                ]);
+                expect(newRecorder.calls).toEqual([
+                    { type: 'subscribe', ids: range(0, 5) },
+                    { type: 'unsubscribe', ids: range(0, 5) },
+                ]);
+                expect(warnings).toEqual([undefined, expect.stringContaining('warning #26')]);
+                expect(oldRecorder.subscribed.size).toBe(0);
+                expect(newRecorder.subscribed.size).toBe(0);
+                expect(oldRecorder.violations).toEqual([]);
+                expect(newRecorder.violations).toEqual([]);
+            });
+
+            test('subscribeToViewport from onGridPreDestroyed leaves no row subscribed', async () => {
+                const recorder = createRecorder();
+                const api = await createFlatGrid({
+                    viewportSubscription: recorder.handlers,
+                    onGridPreDestroyed: () => api.subscribeToViewport(),
+                });
+
+                api.destroy();
+                await nextAnimationFrame();
+                await nextAnimationFrame();
+
+                expect(recorder.calls).toEqual([
+                    { type: 'subscribe', ids: range(0, 5) },
+                    { type: 'unsubscribe', ids: range(0, 5) },
+                    { type: 'subscribe', ids: range(0, 5) },
+                    { type: 'unsubscribe', ids: range(0, 5) },
+                ]);
+                expect(recorder.subscribed.size).toBe(0);
+                expect(recorder.violations).toEqual([]);
+            });
         });
     });
 
