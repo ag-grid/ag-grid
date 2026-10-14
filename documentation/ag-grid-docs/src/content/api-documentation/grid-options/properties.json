@@ -1800,6 +1800,12 @@
                 "name": "Row IDs",
                 "url": "./row-ids/"
             }
+        },
+        "viewportSubscription": {
+            "more": {
+                "name": "Viewport Subscription",
+                "url": "./data-update-viewport-subscription/"
+            }
         }
     },
     "clientRowModel": {

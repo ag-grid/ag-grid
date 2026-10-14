@@ -1753,6 +1753,21 @@ export interface _ServerSideRowModelGridApi<TData> extends _RowModelSharedApi {
     getServerSideGroupLevelState(): ServerSideGroupLevelState[];
 }
 
+export interface _ViewportSubscriptionGridApi {
+    /**
+     * Starts the `viewportSubscription` again: unsubscribes every subscribed row, then subscribes to the rows in view.
+     * The grid subscribes when it is ready and when `viewportSubscription` changes, so this is only needed after `unsubscribeFromViewport`.
+     * @agModule `ViewportSubscriptionModule`
+     */
+    subscribeToViewport(): void;
+    /**
+     * Unsubscribes every row subscribed through `viewportSubscription` and stops calling its handlers,
+     * until `subscribeToViewport` is called or `viewportSubscription` changes.
+     * @agModule `ViewportSubscriptionModule`
+     */
+    unsubscribeFromViewport(): void;
+}
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _ContextMenuGridApi {
     /**
@@ -2071,6 +2086,7 @@ export interface GridApi<TData = any>
         _PivotGridApi<TData>,
         _CellSelectionGridApi,
         _ServerSideRowModelGridApi<TData>,
+        _ViewportSubscriptionGridApi,
         _ContextMenuGridApi,
         _ColumnChooserGridApi,
         _MasterDetailGridApi,
