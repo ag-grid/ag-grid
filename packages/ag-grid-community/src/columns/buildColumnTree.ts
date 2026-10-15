@@ -53,7 +53,7 @@ export function _buildColumnTree(
     buildToken: number,
     wrapperCache: ColWrapperCache | null
 ): ColumnTreeBuild {
-    const { context, dataTypeSvc, gos, userColumnSvc } = beans;
+    const { context, gos, userColumnSvc } = beans;
     const defaultColGroupDef = gos.get('defaultColGroupDef');
     // Stateless padded groups share one colGroupDef ref; the cast is safe (padding owns its own `children`).
     const paddingDef = (defaultColGroupDef ?? null) as ColGroupDef | null;
@@ -249,7 +249,6 @@ export function _buildColumnTree(
                 newColsByKey.set(userField, column);
             }
         }
-        dataTypeSvc?.addColumnListeners(column);
         return column;
     };
 

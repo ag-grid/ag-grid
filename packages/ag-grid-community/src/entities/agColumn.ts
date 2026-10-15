@@ -4,7 +4,7 @@ import { LocalEventService, _escapeString } from 'ag-stack';
 import { _addColumnDefaultAndTypes } from '../columns/colDefUtils';
 import type { QueuedEventOwner } from '../columns/columnModel';
 import { updateSomeColumnState } from '../columns/columnStateUtils';
-import type { ColumnState } from '../columns/columnStateUtils';
+import type { ColumnStateParams } from '../columns/columnStateUtils';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { ColumnEvent, ColumnEventType, ColumnStateUpdatedEvent } from '../events';
@@ -126,6 +126,8 @@ const COL_FLAG_HIGHLIGHT_BEFORE = 0x00004000;
 const COL_FLAG_HIGHLIGHT_AFTER = 0x00008000;
 /** Its width was set since the last layout report, changed or not: the `width` state update follows, as for every other key. */
 const COL_FLAG_WIDTH_SET = 0x00010000;
+/** Redefined since its filter, if any, last derived its params. */
+const COL_FLAG_FILTER_REDEFINED = 0x00020000;
 
 // Runtime wrapper around a (logic-free) column definition, holding all runtime state plus logic.
 // Child of either the original or the displayed tree; each group class implements only its own tree's interface.
@@ -314,19 +316,27 @@ export class AgColumn<TValue = any>
             this.initCalculatedColumnState(colDef);
             return false;
         }
-        ++this.beans.colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
+        const { colModel, pivotResultCols, rowSpanSvc, showValuesAsSvc } = this.beans;
+        ++colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
         this.colFlags &= ~COL_FLAG_SORT_TYPES_CACHED; // sort/initialSort/sortingOrder may have changed
         this.sortCycleIndex = undefined;
         this.initColDefHotFields();
-        this.beans.showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only
+        showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only
         this.initMinAndMaxWidths();
         this.initDotNotation();
         this.initTooltip();
         if (colDef.spanRows !== oldColDef.spanRows) {
-            this.beans.rowSpanSvc?.columnRowSpanChanged(this);
+            rowSpanSvc?.columnRowSpanChanged(this);
         }
-        this.dispatchColEvent('colDefChanged', source);
-        this.beans.pivotResultCols?.recreateColDefsForSource(this, source);
+        this.colFlags |= COL_FLAG_FILTER_REDEFINED;
+        // an update of its own when none is open, so the filter re-derives its params once the columns are final
+        colModel.beginColUpdate();
+        try {
+            this.dispatchColEvent('colDefChanged', source);
+            pivotResultCols?.recreateColDefsForSource(this, source);
+        } finally {
+            colModel.endColUpdate();
+        }
         return true;
     }
 
@@ -696,6 +706,13 @@ export class AgColumn<TValue = any>
         this.colFlags = active ? this.colFlags | COL_FLAG_FILTER_ACTIVE : this.colFlags & ~COL_FLAG_FILTER_ACTIVE;
     }
 
+    /** Whether its filter must re-derive its params, which it is then taken to do. */
+    public takeFilterRedefined(): boolean {
+        const flags = this.colFlags;
+        this.colFlags = flags & ~COL_FLAG_FILTER_REDEFINED;
+        return (flags & COL_FLAG_FILTER_REDEFINED) !== 0;
+    }
+
     /** @deprecated v33 Use `api.isColumnHovered(column)` instead. */
     public isHovered(): boolean {
         this.warn(261);
@@ -1004,7 +1021,11 @@ export class AgColumn<TValue = any>
     }
 
     /** `key` names the `ColumnState` property updated. */
-    public dispatchStateUpdatedEvent(key: keyof ColumnState, source: ColumnEventType): void {
+    public dispatchStateUpdatedEvent(key: keyof ColumnStateParams, source: ColumnEventType): void {
+        const dataTypeSvc = this.beans.dataTypeSvc;
+        if (dataTypeSvc?.isPendingInference) {
+            dataTypeSvc.columnStateUpdated(this, key);
+        }
         const colEventSvc = this.colEventSvc;
         if (colEventSvc?.hasListeners('columnStateUpdated')) {
             this.raise(
