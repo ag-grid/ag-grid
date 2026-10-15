@@ -22,9 +22,9 @@ describe('getFrameworkVersionLinks', () => {
     test('links nothing when the page exists only in the current framework', () => {
         expect(
             getFrameworkVersionLinks({
-                path: '/vue-data-grid/vue3-script-setup/',
-                currentFramework: 'vue',
-                pageFrameworks: ['vue'],
+                path: '/react-data-grid/react-hooks/',
+                currentFramework: 'react',
+                pageFrameworks: ['react'],
             })
         ).toEqual([]);
     });
