@@ -270,7 +270,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         const { chartType, chartContainer } = params;
 
         const createChartContainerFunc = this.gos.getCallback('createChartContainer');
-        const insideDialog = !(chartContainer || createChartContainerFunc);
+        const insideDialog = !(chartContainer ?? createChartContainerFunc);
 
         const gridChartParams: GridChartParams = {
             ...params,

@@ -270,6 +270,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     ): string | string[] | undefined {
         let { cellDataType } = userColDef;
 
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- an explicit null from the user means infer, not inherit
         if (cellDataType === undefined) {
             cellDataType = colDef.cellDataType;
         }

@@ -353,9 +353,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             const grandTotalRow = _getGrandTotalRow(this.gos);
             let grandTotalNode = this.getGrandTotalNode();
             if (grandTotalRow && this.grandTotalData) {
-                if (!grandTotalNode) {
-                    grandTotalNode = this.cache.createOrUpdateGrandTotalNode(this.grandTotalData);
-                }
+                grandTotalNode ??= this.cache.createOrUpdateGrandTotalNode(this.grandTotalData);
             } else if (grandTotalNode) {
                 this.destroyGrandTotalRow();
                 grandTotalNode = undefined;

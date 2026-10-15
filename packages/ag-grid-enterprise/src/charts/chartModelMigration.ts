@@ -11,10 +11,8 @@ const DEBUG = false;
 
 export function upgradeChartModel(model: ChartModel): ChartModel {
     const originalVersion = model.version;
-    if (model.version == null) {
-        // Try to guess the version so we can apply the right subset of migrations.
-        model.version = heuristicVersionDetection(model);
-    }
+    // Try to guess the version so we can apply the right subset of migrations.
+    model.version ??= heuristicVersionDetection(model);
 
     model = migrateIfBefore('23.0.0', model, migrateV23);
     model = migrateIfBefore('24.0.0', model, migrateV24);
@@ -491,9 +489,7 @@ function jsonDeleteDefault(path: string | string[], defaultValue: any, json: any
 
 function jsonBackfill(path: string | string[], defaultValue: any, json: any): any {
     return jsonMutateProperty(path, false, json, (parent, prop) => {
-        if (parent[prop] == null) {
-            parent[prop] = defaultValue;
-        }
+        parent[prop] ??= defaultValue;
     });
 }
 

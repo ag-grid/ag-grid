@@ -46,7 +46,7 @@ export interface AgPanelOptions<
 function getTemplate<TComponentSelectorType extends string>(
     cssIdentifier?: string | null
 ): AgElementParams<TComponentSelectorType> {
-    cssIdentifier ??= cssIdentifier || 'default';
+    cssIdentifier ??= 'default';
     return {
         tag: 'div',
         cls: `ag-panel ag-${cssIdentifier}-panel`,
@@ -163,7 +163,7 @@ export class AgPanel<
             if (title) {
                 this.setTitle(title);
             }
-            this.setClosable(closable != null ? closable : this.closable);
+            this.setClosable(closable ?? this.closable);
         } else {
             _setDisplayed(this.eTitleBar, false);
         }
@@ -271,9 +271,7 @@ export class AgPanel<
         const buttons = eTitleBarButtons.children;
         const len = buttons.length;
 
-        if (position == null) {
-            position = len;
-        }
+        position ??= len;
 
         position = _clamp(position, 0, len);
 

@@ -316,7 +316,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     public setCurrentList(list: TValue[] | undefined): void {
         const newState = getListStateBasedOnResults<TValue>(list);
         this.setLoadingState(newState);
-        list ||= [];
+        list ??= [];
         this.currentList = list;
 
         this.setModel({

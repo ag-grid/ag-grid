@@ -103,7 +103,7 @@ export class AgVirtualList<
         super(getVirtualListTemplate(params?.cssIdentifier || 'default'));
         this.registerCSS(agVirtualListCSS);
 
-        const { cssIdentifier = 'default', ariaRole = 'listbox', listName, moveItemCallback } = params || {};
+        const { cssIdentifier = 'default', ariaRole = 'listbox', listName, moveItemCallback } = params ?? {};
 
         this.cssIdentifier = cssIdentifier;
         this.ariaRole = ariaRole;

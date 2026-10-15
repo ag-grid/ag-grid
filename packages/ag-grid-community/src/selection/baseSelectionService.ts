@@ -284,7 +284,7 @@ export abstract class BaseSelectionService extends BeanStub {
 
         this.eventSvc.dispatchEvent({
             ..._createGlobalRowEvent(rowNode, this.gos, 'rowSelected'),
-            event: e || null,
+            event: e ?? null,
             source,
         });
 

@@ -190,7 +190,7 @@ export class LicenseManager {
     }
 
     private getHostname(): string {
-        const win = this.document.defaultView || window;
+        const win = this.document.defaultView ?? window;
         const loc = win.location;
         const { hostname = '' } = loc;
 
@@ -198,7 +198,7 @@ export class LicenseManager {
     }
 
     private isForceWatermark(): boolean {
-        const win = this.document.defaultView || window;
+        const win = this.document.defaultView ?? window;
         const loc = win.location;
         const { pathname } = loc;
 

@@ -135,7 +135,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     }
 
     private getRowNodes(draggingEvent: RowDraggingEvent): RowNode[] {
-        const nodes = (draggingEvent.dragItem.rowNodes || []) as RowNode[];
+        const nodes = (draggingEvent.dragItem.rowNodes ?? []) as RowNode[];
         if (!this.isFromThisGrid(draggingEvent) || nodes.length <= 1) {
             return nodes;
         }
@@ -266,8 +266,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         const suppressMoveWhenRowDragging = gos.get('suppressMoveWhenRowDragging');
         const sameGrid = this.isFromThisGrid(draggingEvent);
         let { rowNode: source, rowNodes: rows } = draggingEvent.dragItem;
-        rows ||= source ? [source] : [];
-        source ||= rows[0];
+        rows ??= source ? [source] : [];
+        source ??= rows[0];
         if (!source || !rootNode) {
             return null;
         }

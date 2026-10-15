@@ -13,7 +13,7 @@ import type { RowNode } from './rowNode';
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _createCellId(cellPosition: CellPosition): string {
     const { rowIndex, rowPinned, column } = cellPosition;
-    return `${rowIndex}.${rowPinned == null ? 'null' : rowPinned}.${column.getId()}`;
+    return `${rowIndex}.${rowPinned ?? 'null'}.${column.getId()}`;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
