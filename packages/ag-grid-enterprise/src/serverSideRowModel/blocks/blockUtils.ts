@@ -241,11 +241,12 @@ export class BlockUtils extends BeanStub implements NamedBean {
         }
     }
 
-    /** The group's aggData from `getServerSideGroupAggValue`, or `undefined` when the callback is not set. */
+    /** The group's aggData from `getServerSideGroupAggValue`, or `undefined` when there is none to set or clear. */
     private getGroupAggData(rowNode: RowNode, data: any): Record<string, any> | null | undefined {
         const getGroupAggValue = this.gos.get('getServerSideGroupAggValue');
         if (!getGroupAggValue) {
-            return undefined;
+            // clears aggData installed before the callback was removed
+            return rowNode.aggData == null ? undefined : null;
         }
         // `null`, not `undefined`, so a group with no aggregate still clears aggData set by an earlier load
         const column = rowNode.rowGroupColumn;

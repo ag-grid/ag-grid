@@ -322,6 +322,25 @@ describe('SSRM grouping and aggregating the same column', () => {
         expect(api.getCellValue({ rowNode: groupRow, colKey: 'gold' })).toBe(4);
     });
 
+    test('removing the callback clears the aggregate on the next refresh', async () => {
+        const api = gridManager.createGrid(null, {
+            columnDefs: [{ field: 'athlete' }, { field: 'gold', rowGroup: true, aggFunc: 'sum' }],
+            rowModelType: 'serverSide',
+            serverSideDatasource: createDatasource([]),
+            getRowId,
+            getServerSideGroupAggValue: ({ data }) => data.sum_gold,
+        });
+        await waitFor(() => expect(goldGroupRow(api)).toBeDefined());
+        const groupRow = goldGroupRow(api);
+        expect(api.getCellValue({ rowNode: groupRow, colKey: 'gold' })).toBe(8);
+
+        api.setGridOption('getServerSideGroupAggValue', undefined);
+        api.refreshServerSide({ purge: false });
+
+        await waitFor(() => expect(groupRow.aggData).toBeNull());
+        expect(api.getCellValue({ rowNode: groupRow, colKey: 'gold' })).toBe(4);
+    });
+
     test('a grouped and aggregated column below another group expands by its key', async () => {
         const requests: IServerSideGetRowsRequest[] = [];
         const getServerSideGroupAggValue = vi.fn(({ data }: GetServerSideGroupAggValueParams) => data.sum_gold);
