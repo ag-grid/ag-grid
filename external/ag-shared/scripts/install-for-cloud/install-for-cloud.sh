@@ -463,11 +463,9 @@ fi
 # ---------------------------------------------------------------------------
 
 if command -v yarn &>/dev/null && [[ -d node_modules ]]; then
-    # Verify lockfile hasn't changed since last install. Yarn 1 wrote
-    # node_modules/.yarn-integrity embedding a lockfile hash, checked via
-    # `yarn check --integrity`; under Yarn 4 (Berry) `yarn install --immutable`
-    # is the equivalent read-only-in-practice probe — verified to fail fast,
-    # before touching node_modules, when the lockfile would need to change.
+    # Yarn 4 has no "yarn check --integrity" probe; "yarn install --immutable"
+    # both verifies and (if needed) fixes node_modules in one step, and is a
+    # ~12ms no-op when nothing needs to change.
     if yarn install --immutable &>/dev/null; then
         log_info "yarn and node_modules present and valid, skipping bootstrap"
         exit 0

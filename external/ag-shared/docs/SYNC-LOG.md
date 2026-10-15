@@ -240,27 +240,6 @@ The first squash of a long-lived branch rewrites the whole thing, so that push i
 ### Migration Actions
 
 - [ ] None. The env contract and the workflow step are unchanged; sync the script.
-## 2026-08-13 -- CSP violations from post-deploy verification report to their owning channel instead of failing the run
-
-**Branch:** `AS-246-csp-violations-report`
-
-### Changes
-
-- **[scripts/slack]** `notify-csp-violations.mjs`: new. Reads a CSP violation report produced by a post-deploy page-verification run, annotates the CI run with one `::warning` per enforced violation, appends a job summary, and posts the enforced set to a Slack channel. Posts only when the enforced set differs from the previous run's report, so a policy left broken for a week does not repeat itself on every deploy; a cleared set posts once as resolved. Exits non-zero only when Slack rejects the message, so violations never gate a build. Driven entirely by env vars (`CSP_REPORT_FILE`, `PREVIOUS_CSP_REPORT_FILE`, `SLACK_CHANNEL`, `SLACK_BOT_OAUTH_TOKEN`, `PROJECT_TITLE`, `SITE_URL`, `RUN_URL`, `COMMIT_SHA`, `DRY_RUN`), so each repo supplies its own channel and report path.
-
-### Migration Actions
-
-- [ ] Invite the CI Slack bot to the target channel before wiring this up. `chat.postMessage` returns `not_in_channel` otherwise, and the reporting job goes red.
-- [ ] To adopt in ag-grid / ag-charts: have the page-verification suite write a report in the shape this script expects (`{ baseUrl, violations: [{ key, directive, blockedUri, disposition, suggestedHashes, sourceFiles, pages, tests }] }`), upload it as its own artifact, then copy ag-studio's `csp-report` job from `.github/workflows/post-deploy-verification.yml`. That job downloads the current report, pulls the previous run's copy of the same artifact for comparison, and runs this script.
-- [ ] Check the script with `DRY_RUN=true` against a real report before letting it post; it prints the message it would send and exits 0.
-- [ ] Run `./external/ag-shared/scripts/setup-prompts/setup-prompts.sh`
-- [ ] Run `./external/ag-shared/scripts/setup-prompts/verify-rulesync.sh`
-
-### Notes
-
-The report shape is the contract between a repo's Playwright reporter and this script; ag-studio's reporter (`packages/ag-studio-docs/scripts/csp/cspViolationReporter.ts`) stays repo-local until a second consumer needs it.
-
-`key` carries the suggested hash, so an edited Google Tag Manager tag that changes which hash the policy needs counts as a new violation and posts again, rather than hiding behind the previous run's entry.
 
 ## 2026-08-25 -- Bump GitHub Actions off the deprecated Node.js 20 runtime
 
@@ -282,6 +261,28 @@ The report shape is the contract between a repo's Playwright reporter and this s
 ### Notes
 
 `SamhammerAG/last-successful-build-action` (used directly in ag-charts' own `ci.yml`, not in `ag-shared`) stays pinned to `v4`: its latest release (`v7`) still ships on the deprecated Node 20 runtime, so there is no upstream fix to adopt yet.
+
+## 2026-08-13 -- CSP violations from post-deploy verification report to their owning channel instead of failing the run
+
+**Branch:** `AS-246-csp-violations-report`
+
+### Changes
+
+- **[scripts/slack]** `notify-csp-violations.mjs`: new. Reads a CSP violation report produced by a post-deploy page-verification run, annotates the CI run with one `::warning` per enforced violation, appends a job summary, and posts the enforced set to a Slack channel. Posts only when the enforced set differs from the previous run's report, so a policy left broken for a week does not repeat itself on every deploy; a cleared set posts once as resolved. Exits non-zero only when Slack rejects the message, so violations never gate a build. Driven entirely by env vars (`CSP_REPORT_FILE`, `PREVIOUS_CSP_REPORT_FILE`, `SLACK_CHANNEL`, `SLACK_BOT_OAUTH_TOKEN`, `PROJECT_TITLE`, `SITE_URL`, `RUN_URL`, `COMMIT_SHA`, `DRY_RUN`), so each repo supplies its own channel and report path.
+
+### Migration Actions
+
+- [ ] Invite the CI Slack bot to the target channel before wiring this up. `chat.postMessage` returns `not_in_channel` otherwise, and the reporting job goes red.
+- [ ] To adopt in ag-grid / ag-charts: have the page-verification suite write a report in the shape this script expects (`{ baseUrl, violations: [{ key, directive, blockedUri, disposition, suggestedHashes, sourceFiles, pages, tests }] }`), upload it as its own artifact, then copy ag-studio's `csp-report` job from `.github/workflows/post-deploy-verification.yml`. That job downloads the current report, pulls the previous run's copy of the same artifact for comparison, and runs this script.
+- [ ] Check the script with `DRY_RUN=true` against a real report before letting it post; it prints the message it would send and exits 0.
+- [ ] Run `./external/ag-shared/scripts/setup-prompts/setup-prompts.sh`
+- [ ] Run `./external/ag-shared/scripts/setup-prompts/verify-rulesync.sh`
+
+### Notes
+
+The report shape is the contract between a repo's Playwright reporter and this script; ag-studio's reporter (`packages/ag-studio-docs/scripts/csp/cspViolationReporter.ts`) stays repo-local until a second consumer needs it.
+
+`key` carries the suggested hash, so an edited Google Tag Manager tag that changes which hash the policy needs counts as a new violation and posts again, rather than hiding behind the previous run's entry.
 
 ## 2026-08-11 -- PR preview publishing works on any branch, not just the Pages one
 
@@ -867,6 +868,7 @@ No new symlinks or skills to register. The `.claude-settings.json` changes are p
 Insert after the "Pre-Commit Requirements" section (or equivalent build/test commands section):
 
 ```markdown
+
 ## Tooling Health Check
 
 On the **first response** of a conversation, verify that project skills are available by checking the system-reminder skill list. If **any** of the canary skills are missing, display a one-time warning before doing anything else. Do not repeat the warning on subsequent responses.
@@ -916,6 +918,7 @@ Continue assisting the user after displaying the warning.
 ### Section to add
 
 ```markdown
+
 ## Ambiguity and confidence
 
 **NEVER guess:** This is the number one rule; if requirements, facts or details are ambiguous it is much better to admit this and ask for guidance (with context on why the ambiguity where possible) or do more research to ground things out, than to guess with a risk of being wrong.
