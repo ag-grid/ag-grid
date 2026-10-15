@@ -1,13 +1,14 @@
 import type { GeneratedContents } from '@components/example-generator/types';
 import { describe, expect, it } from 'vitest';
 
-import { getExampleViewerFiles, pruneExampleFiles } from './exampleViewerFiles';
+import { getExampleViewerFiles, pruneExampleFiles, pruneExportFiles } from './exampleViewerFiles';
 
 const files = {
     'main.ts': 'const gridOptions = {};\n',
     'interfaces.ts': 'export interface IRow {}\n',
     'index.html': '<div id="myGrid"></div>\n',
     'styles.css': '.red { color: red; }\n',
+    'ag-example-styles.css': '.example-controls { display: flex; }\n',
     'example.spec.ts': "test('grid', () => {});\n",
     'main.test.ts': "test('grid', () => {});\n",
 };
@@ -27,6 +28,21 @@ describe('pruneExampleFiles', () => {
         expect(Object.keys(pruneExampleFiles(files, 'typescript'))).toContain('interfaces.ts');
         expect(Object.keys(pruneExampleFiles(files, 'reactFunctionalTs'))).toContain('interfaces.ts');
         expect(Object.keys(pruneExampleFiles(files, 'angular'))).toContain('interfaces.ts');
+    });
+
+    it('hides the shared example-controls stylesheet for every framework', () => {
+        for (const internalFramework of ['vanilla', 'typescript', 'reactFunctionalTs', 'angular', 'vue3'] as const) {
+            expect(Object.keys(pruneExampleFiles(files, internalFramework)), internalFramework).not.toContain(
+                'ag-example-styles.css'
+            );
+        }
+    });
+
+    it('keeps the shared example-controls stylesheet for exports, but drops specs', () => {
+        const exported = Object.keys(pruneExportFiles(files, 'vanilla'));
+        expect(exported).toContain('ag-example-styles.css');
+        expect(exported).not.toContain('example.spec.ts');
+        expect(exported).not.toContain('interfaces.ts');
     });
 
     it('hides the HTML shell for React and Vue, whose markup lives in the component', () => {

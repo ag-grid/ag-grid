@@ -7,8 +7,6 @@ import { AgGridAngular } from 'ag-grid-angular';
 import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -21,11 +19,13 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
     imports: [AgGridAngular, NgStyle],
     selector: 'my-app',
     template: `
-        <div style="height: 100%; display: flex; flex-direction: column;">
-            <div style="margin-bottom: 5px;">
-                <button (click)="fillLarge()">Fill 100%</button>
-                <button (click)="fillMedium()">Fill 60%</button>
-                <button (click)="fillExact()">Exactly 400 x 400 pixels</button>
+        <div class="example-wrapper">
+            <div class="example-controls">
+                <div class="controls-row">
+                    <button (click)="fillLarge()">Fill 100%</button>
+                    <button (click)="fillMedium()">Fill 60%</button>
+                    <button (click)="fillExact()">Exactly 400 x 400 pixels</button>
+                </div>
             </div>
             <div [ngStyle]="style">
                 <ag-grid-angular

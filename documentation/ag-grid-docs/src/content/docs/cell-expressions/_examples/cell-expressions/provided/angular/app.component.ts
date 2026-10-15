@@ -12,8 +12,6 @@ import {
     enableDevValidations,
 } from 'ag-grid-community';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -54,9 +52,11 @@ const rowDataRight: RightData[] = [
     imports: [AgGridAngular],
     selector: 'my-app',
     template: /* html */ ` <div class="example-wrapper">
-        <div class="item-header">
-            Enter a number to analyse:
-            <input type="text" (input)="onNewNumber($any($event.target).value)" />
+        <div class="item-header example-controls">
+            <div class="controls-row">
+                Enter a number to analyse:
+                <input type="text" (input)="onNewNumber($any($event.target).value)" />
+            </div>
         </div>
         <div class="item-header">Edit data on RHS, table updates on LHS</div>
         <ag-grid-angular

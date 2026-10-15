@@ -7,8 +7,6 @@ import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-communit
 import { ColumnMenuModule, ContextMenuModule, IntegratedChartsModule, RowGroupingModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -91,7 +89,9 @@ const GridExample = () => {
                                         <h2 className="chart-wrapper-title">
                                             Chart created at {new Date().toLocaleString()}
                                         </h2>
-                                        <button onClick={() => updateChartParams(undefined)}>Destroy Chart</button>
+                                        <div className="example-controls">
+                                            <button onClick={() => updateChartParams(undefined)}>Destroy Chart</button>
+                                        </div>
                                     </div>
                                 </div>
                             ) : (

@@ -27,8 +27,6 @@ import {
 import { IntegratedChartsModule, RowGroupingModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -161,17 +159,19 @@ const GridExample = () => {
 
     return (
         <AgGridProvider modules={modules}>
-            <div id="myApp" className="wrapper">
-                <div style={{ paddingBottom: '4px' }}>
-                    <span>
-                        <button onClick={onStopMessages}>&#9632; Stop</button>
-                        <button onClick={onStartLoad}>&#9658; Start</button>
-                    </span>
-                    <span style={{ marginLeft: '30px' }}>
-                        <button onClick={() => updateChart('stackedColumn')}>Stacked Column Chart</button>
-                        <button onClick={() => updateChart('groupedColumn')}>Grouped Column Chart</button>
-                        <button onClick={() => updateChart('line')}>Line Chart</button>
-                    </span>
+            <div id="myApp" className="example-wrapper">
+                <div className="example-controls">
+                    <div className="controls-row">
+                        <span>
+                            <button onClick={onStopMessages}>&#9632; Stop</button>
+                            <button onClick={onStartLoad}>&#9658; Start</button>
+                        </span>
+                        <span className="gap-left">
+                            <button onClick={() => updateChart('stackedColumn')}>Stacked Column Chart</button>
+                            <button onClick={() => updateChart('groupedColumn')}>Grouped Column Chart</button>
+                            <button onClick={() => updateChart('line')}>Line Chart</button>
+                        </span>
+                    </div>
                 </div>
                 <div className="my-grid">
                     <AgGridReact

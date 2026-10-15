@@ -25,7 +25,6 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 import CountryCellRenderer from './countryCellRenderer';
 import { COUNTRY_CODES, LANGUAGES, createRowData } from './data';
 import type { LanguageConfig } from './data';
-import './styles.css';
 
 /** PROVIDED EXAMPLE DARK INTEGRATED **/
 
@@ -474,13 +473,15 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div className="example-wrapper">
-                <div style={{ marginBottom: '0.5rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                    <label htmlFor="language">Language:</label>
-                    <select id="language" value={language} onChange={onLanguageChange}>
-                        <option value="arabic">العربية (Arabic)</option>
-                        <option value="hebrew">עברית (Hebrew)</option>
-                        <option value="english">English</option>
-                    </select>
+                <div className="example-controls" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <div className="controls-row">
+                        <label htmlFor="language">Language:</label>
+                        <select id="language" value={language} onChange={onLanguageChange}>
+                            <option value="arabic">العربية (Arabic)</option>
+                            <option value="hebrew">עברית (Hebrew)</option>
+                            <option value="english">English</option>
+                        </select>
+                    </div>
                 </div>
                 <div className="grid-wrapper">
                     {gridVisible && (

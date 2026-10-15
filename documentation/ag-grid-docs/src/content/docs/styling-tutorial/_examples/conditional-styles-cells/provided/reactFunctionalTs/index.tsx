@@ -17,7 +17,6 @@ import { AgGridReact } from 'ag-grid-react';
 
 import type { IProduct } from './data';
 import { getData } from './data';
-import './styles.css';
 
 type ThemeMode = 'light' | 'dark';
 
@@ -114,12 +113,14 @@ const GridExample = () => {
     };
 
     return (
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <p style={{ flex: '0 1 0%' }}>
-                <button className="ag-toggleButton" onClick={toggleThemeMode}>
-                    {themeMode === 'dark' ? 'Enable Light Mode' : 'Enable Dark Mode'}
-                </button>
-            </p>
+        <div className="example-wrapper">
+            <div className="example-controls">
+                <div className="controls-row">
+                    <button onClick={toggleThemeMode}>
+                        {themeMode === 'dark' ? 'Enable Light Mode' : 'Enable Dark Mode'}
+                    </button>
+                </div>
+            </div>
             <div style={{ flex: '1 1 0%' }}>
                 <AgGridReact
                     theme={myTheme}

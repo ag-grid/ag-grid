@@ -25,7 +25,6 @@ import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { CountryCellRenderer } from './country-cell-renderer.component';
 import { COUNTRY_CODES, LANGUAGES, createRowData } from './data';
 import type { LanguageConfig } from './data';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -403,13 +402,15 @@ function languageCellRenderer(params: ICellRendererParams) {
     selector: 'my-app',
     template: `
         <div class="example-wrapper">
-            <div style="margin-bottom: 0.5rem; display: flex; gap: 0.5rem; align-items: center">
-                <label for="language">Language:</label>
-                <select id="language" [ngModel]="language" (ngModelChange)="onLanguageChange($event)">
-                    <option value="arabic">العربية (Arabic)</option>
-                    <option value="hebrew">עברית (Hebrew)</option>
-                    <option value="english">English</option>
-                </select>
+            <div class="example-controls" style="display: flex; gap: 0.5rem; align-items: center">
+                <div class="controls-row">
+                    <label for="language">Language:</label>
+                    <select id="language" [ngModel]="language" (ngModelChange)="onLanguageChange($event)">
+                        <option value="arabic">العربية (Arabic)</option>
+                        <option value="hebrew">עברית (Hebrew)</option>
+                        <option value="english">English</option>
+                    </select>
+                </div>
             </div>
             @if (gridVisible()) {
                 <ag-grid-angular

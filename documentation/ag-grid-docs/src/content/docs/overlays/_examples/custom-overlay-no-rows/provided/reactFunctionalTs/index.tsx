@@ -6,7 +6,6 @@ import { ClientSideRowModelModule, TextEditorModule, TextFilterModule, enableDev
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import CustomNoRowsOverlay from './customNoRowsOverlay';
-import './styles.css';
 
 interface IAthlete {
     athlete: string;
@@ -44,11 +43,13 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div className="example-wrapper">
-                <div>
-                    <button onClick={() => setRowData([])}>Clear rowData</button>
-                    <button onClick={() => setRowData([{ athlete: 'Michael Phelps', country: 'US' }])}>
-                        Set rowData
-                    </button>
+                <div className="example-controls">
+                    <div className="controls-row">
+                        <button onClick={() => setRowData([])}>Clear rowData</button>
+                        <button onClick={() => setRowData([{ athlete: 'Michael Phelps', country: 'US' }])}>
+                            Set rowData
+                        </button>
+                    </div>
                 </div>
 
                 <div style={{ height: '100%' }}>

@@ -13,8 +13,6 @@ import {
 } from 'ag-grid-community';
 import { AgGridVue } from 'ag-grid-vue3';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -48,18 +46,20 @@ function createLeftRowData() {
 
 const VueExample = defineComponent({
     /* html */
-    template: `<div class="example-wrapper">        
+    template: `<div class="example-wrapper example-wrapper--row">        
             <div class="inner-col">
-                <div class="toolbar">
-                    <button class="factory factory-red" data-color="Red" data-side="left" @click="onFactoryButtonClick($event)">
-                        <i class="far fa-plus-square"></i>Add Red
-                    </button>
-                    <button class="factory factory-green" data-color="Green" data-side="left" @click="onFactoryButtonClick($event)">
-                        <i class="far fa-plus-square"></i>Add Green
-                    </button>
-                    <button class="factory factory-blue" data-color="Blue" data-side="left" @click="onFactoryButtonClick($event)">
-                        <i class="far fa-plus-square"></i>Add Blue
-                    </button>
+                <div class="toolbar example-controls">
+                    <div class="controls-row">
+                        <button class="factory factory-red" data-color="Red" data-side="left" @click="onFactoryButtonClick($event)">
+                            <i class="far fa-plus-square"></i>Add Red
+                        </button>
+                        <button class="factory factory-green" data-color="Green" data-side="left" @click="onFactoryButtonClick($event)">
+                            <i class="far fa-plus-square"></i>Add Green
+                        </button>
+                        <button class="factory factory-blue" data-color="Blue" data-side="left" @click="onFactoryButtonClick($event)">
+                            <i class="far fa-plus-square"></i>Add Blue
+                        </button>
+                    </div>
                 </div>
                 <div style="height: 100%;" class="inner-col" ref="eLeftGrid">
                     <ag-grid-vue
@@ -84,16 +84,18 @@ const VueExample = defineComponent({
             </div>
 
             <div class="inner-col">
-                <div class="toolbar">
-                    <button class="factory factory-red" data-color="Red" data-side="right" @click="onFactoryButtonClick($event)">
-                        <i class="far fa-plus-square"></i>Add Red
-                    </button>
-                    <button class="factory factory-green" data-color="Green" data-side="right" @click="onFactoryButtonClick($event)">
-                        <i class="far fa-plus-square"></i>Add Green
-                    </button>
-                    <button class="factory factory-blue" data-color="Blue" data-side="right" @click="onFactoryButtonClick($event)">
-                        <i class="far fa-plus-square"></i>Add Blue
-                    </button>
+                <div class="toolbar example-controls">
+                    <div class="controls-row">
+                        <button class="factory factory-red" data-color="Red" data-side="right" @click="onFactoryButtonClick($event)">
+                            <i class="far fa-plus-square"></i>Add Red
+                        </button>
+                        <button class="factory factory-green" data-color="Green" data-side="right" @click="onFactoryButtonClick($event)">
+                            <i class="far fa-plus-square"></i>Add Green
+                        </button>
+                        <button class="factory factory-blue" data-color="Blue" data-side="right" @click="onFactoryButtonClick($event)">
+                            <i class="far fa-plus-square"></i>Add Blue
+                        </button>
+                    </div>
                 </div>
                 <div style="height: 100%;" class="inner-col" ref="eRightGrid">
                     <ag-grid-vue

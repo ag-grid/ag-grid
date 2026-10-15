@@ -13,8 +13,6 @@ import {
 } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -196,7 +194,11 @@ const GridExample = () => {
 
     const getInnerGridCol = (side: string) => (
         <div className="inner-col">
-            <div className="toolbar">{['Red', 'Green', 'Blue'].map((color) => getAddRecordButton(side, color))}</div>
+            <div className="toolbar example-controls">
+                <div className="controls-row">
+                    {['Red', 'Green', 'Blue'].map((color) => getAddRecordButton(side, color))}
+                </div>
+            </div>
             <div style={{ height: '100%' }} className="inner-col" ref={side === 'Left' ? eLeftGrid : eRightGrid}>
                 <AgGridReact
                     defaultColDef={defaultColDef}
@@ -214,7 +216,7 @@ const GridExample = () => {
 
     return (
         <AgGridProvider modules={modules}>
-            <div className="example-wrapper">
+            <div className="example-wrapper example-wrapper--row">
                 {getInnerGridCol('Left')}
                 <div className="inner-col vertical-toolbar">
                     <span className="bin" ref={eBin}>

@@ -18,8 +18,6 @@ import {
     SetFilterModule,
 } from 'ag-grid-enterprise';
 
-import './styles.css';
-
 const sharedModules = [ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule];
 const leftModules = [SetFilterModule, ClipboardModule, CsvExportModule];
 const rightModules = [TextFilterModule, NumberFilterModule, CsvExportModule, ExcelExportModule];
@@ -37,7 +35,7 @@ ModuleRegistry.registerModules(sharedModules);
     standalone: true,
     imports: [AgGridAngular],
     template: `
-        <div class="example-wrapper">
+        <div class="example-wrapper example-wrapper--row">
             <div class="inner-col">
                 <ag-grid-angular
                     [gridId]="'Left'"

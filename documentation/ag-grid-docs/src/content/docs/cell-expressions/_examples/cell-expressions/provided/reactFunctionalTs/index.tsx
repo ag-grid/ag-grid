@@ -12,8 +12,6 @@ import {
 } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -102,9 +100,11 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div className="example-wrapper">
-                <div className="item-header">
-                    Enter a number to analyse:
-                    <input type="text" onInput={(e) => onNewNumber(e.currentTarget.value)} />
+                <div className="item-header example-controls">
+                    <div className="controls-row">
+                        Enter a number to analyse:
+                        <input type="text" onInput={(e) => onNewNumber(e.currentTarget.value)} />
+                    </div>
                 </div>
                 <div className="item-header">Edit data on RHS, table updates on LHS</div>
                 <div className="grid-wrapper">

@@ -1,18 +1,20 @@
 <div class="example-wrapper">
-    <div class="example-header">
-        <label>
-            <span>Group selects:</span>
-            <select id="input-group-selection-mode" onchange="onSelectionModeChange()">
-                <option value="self">self</option>
-                <option value="descendants">descendants</option>
-                <option value="filteredDescendants">filteredDescendants</option>
-            </select>
-        </label>
+    <div class="example-header example-controls">
+        <div class="controls-row">
+            <label>
+                <span>Group selects:</span>
+                <select id="input-group-selection-mode" onchange="onSelectionModeChange()">
+                    <option value="self">self</option>
+                    <option value="descendants">descendants</option>
+                    <option value="filteredDescendants">filteredDescendants</option>
+                </select>
+            </label>
 
-        <label>
-            <span>Quick Filter:</span>
-            <input type="text" id="input-quick-filter" oninput="onQuickFilterChanged()" />
-        </label>
+            <label>
+                <span>Quick Filter:</span>
+                <input type="text" id="input-quick-filter" oninput="onQuickFilterChanged()" />
+            </label>
+        </div>
     </div>
     <div id="myGrid" style="height: 100%"></div>
 </div>

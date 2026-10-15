@@ -13,7 +13,6 @@ import { AgGridProvider, AgGridReact, getInstance } from 'ag-grid-react';
 
 import { getData } from './data';
 import PartialMatchFilter from './partialMatchFilter';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -68,9 +67,13 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <button style={{ marginBottom: '5px' }} onClick={onClicked} className="btn btn-primary">
-                        Invoke Filter Instance Method
-                    </button>
+                    <div className="example-controls">
+                        <div className="controls-row">
+                            <button onClick={onClicked} className="btn btn-primary">
+                                Invoke Filter Instance Method
+                            </button>
+                        </div>
+                    </div>
 
                     <div style={gridStyle}>
                         <AgGridReact

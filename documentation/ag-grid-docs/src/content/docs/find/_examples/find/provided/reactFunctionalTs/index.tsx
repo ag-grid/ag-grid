@@ -14,8 +14,6 @@ import {
 import { FindModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -92,17 +90,17 @@ const GridExample = () => {
     return (
         <div style={containerStyle}>
             <div className="example-wrapper">
-                <div className="example-header">
-                    <div className="example-controls">
-                        <span>Find:</span>
-                        <input type="text" onInput={onInput} onKeyDown={onKeyDown} />
+                <div className="example-header example-controls">
+                    <div className="controls-row">
+                        <label htmlFor="find-text-box">Find:</label>
+                        <input type="text" id="find-text-box" onInput={onInput} onKeyDown={onKeyDown} />
                         <button onClick={previous}>Previous</button>
                         <button onClick={next}>Next</button>
                         <span>{activeMatchNum}</span>
                     </div>
-                    <div className="example-controls">
-                        <span>Go to match:</span>
-                        <input type="number" min="1" ref={goToRef} />
+                    <div className="controls-row">
+                        <label htmlFor="find-goto">Go to match:</label>
+                        <input type="number" id="find-goto" min="1" ref={goToRef} />
                         <button onClick={goToFind}>Go To</button>
                     </div>
                 </div>

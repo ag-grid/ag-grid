@@ -20,8 +20,6 @@ import {
 import type { CustomCellRendererProps } from 'ag-grid-react';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -184,26 +182,19 @@ const GridExample = () => {
     };
 
     const getTopToolBar = () => (
-        <div className="example-toolbar panel panel-default">
-            <div className="panel-body">
-                <div onChange={onRadioChange}>
-                    <input type="radio" id="move" name="radio" value="0" checked={radioChecked === 0} />{' '}
+        <div className="example-controls">
+            <div className="controls-row">
+                <div className="button-group" role="group" aria-label="Drag behaviour" onChange={onRadioChange}>
+                    <input type="radio" id="move" name="radio" value="0" checked={radioChecked === 0} />
                     <label htmlFor="move">Remove Source Rows</label>
-                    <input type="radio" id="deselect" name="radio" value="1" checked={radioChecked === 1} />{' '}
+                    <input type="radio" id="deselect" name="radio" value="1" checked={radioChecked === 1} />
                     <label htmlFor="deselect">Only Deselect Source Rows</label>
-                    <input type="radio" id="none" name="radio" value="2" checked={radioChecked === 2} />{' '}
+                    <input type="radio" id="none" name="radio" value="2" checked={radioChecked === 2} />
                     <label htmlFor="none">None</label>
                 </div>
-                <span className="input-group-button">
-                    <button
-                        type="button"
-                        className="btn btn-default reset"
-                        style={{ marginLeft: '5px' }}
-                        onClick={reset}
-                    >
-                        <i className="fas fa-redo" style={{ marginRight: '5px' }}></i>Reset
-                    </button>
-                </span>
+                <button type="button" className="reset" onClick={reset}>
+                    <i className="fas fa-redo" style={{ marginRight: '5px' }}></i>Reset
+                </button>
             </div>
         </div>
     );
@@ -229,7 +220,7 @@ const GridExample = () => {
 
     return (
         <AgGridProvider modules={modules}>
-            <div className="top-container">
+            <div className="example-wrapper">
                 {getTopToolBar()}
                 <div className="grid-wrapper">
                     {getGridWrapper(0)}

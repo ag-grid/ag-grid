@@ -7,8 +7,6 @@ import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import type { IOverlayParams } from 'ag-grid-community';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -36,14 +34,20 @@ interface Athlete {
     standalone: true,
     imports: [AgGridAngular, FormsModule],
     template: `<div class="example-wrapper">
-        <div class="button-row">
-            <label class="toggle loading-toggle"
-                ><input type="checkbox" [checked]="loadingToggle()" (change)="loadingToggle.set(!loadingToggle())" />
-                Loading</label
-            >
-            <button type="button" (click)="showNoRowsOverlay()">activeOverlay = agNoRowsOverlay</button>
-            <button type="button" (click)="showCustomOverlay()">activeOverlay = CustomOverlay</button>
-            <button type="button" (click)="clearOverlay()">Hide activeOverlay</button>
+        <div class="button-row example-controls">
+            <div class="controls-row">
+                <label class="toggle loading-toggle"
+                    ><input
+                        type="checkbox"
+                        [checked]="loadingToggle()"
+                        (change)="loadingToggle.set(!loadingToggle())"
+                    />
+                    Loading</label
+                >
+                <button type="button" (click)="showNoRowsOverlay()">activeOverlay = agNoRowsOverlay</button>
+                <button type="button" (click)="showCustomOverlay()">activeOverlay = CustomOverlay</button>
+                <button type="button" (click)="clearOverlay()">Hide activeOverlay</button>
+            </div>
         </div>
         <div class="grid-wrapper">
             <ag-grid-angular

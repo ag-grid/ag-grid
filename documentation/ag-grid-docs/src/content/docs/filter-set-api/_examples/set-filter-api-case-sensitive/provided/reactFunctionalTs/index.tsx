@@ -8,7 +8,6 @@ import type { CustomCellRendererProps } from 'ag-grid-react';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import { getData } from './data';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -122,21 +121,25 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <div className="example-header">
-                        <div>
+                    <div className="example-header example-controls">
+                        <div className="controls-row">
                             Case Insensitive:
                             <button onClick={() => setModel('insensitive')}>API: setModel() - mismatching case</button>
                             <button onClick={() => getModel('insensitive')}>API: getModel()</button>
+                        </div>
+                        <div className="controls-row">
                             <button onClick={() => setFilterValues('insensitive')}>
                                 API: setFilterValues() - mismatching case
                             </button>
                             <button onClick={() => getValues('insensitive')}>API: getFilterValues()</button>
                             <button onClick={() => reset('insensitive')}>Reset</button>
                         </div>
-                        <div style={{ paddingTop: '10px' }}>
+                        <div className="controls-row" style={{ paddingTop: '10px' }}>
                             Case Sensitive:
                             <button onClick={() => setModel('sensitive')}>API: setModel() - mismatching case</button>
                             <button onClick={() => getModel('sensitive')}>API: getModel()</button>
+                        </div>
+                        <div className="controls-row">
                             <button onClick={() => setFilterValues('sensitive')}>
                                 API: setFilterValues() - mismatching case
                             </button>

@@ -6,7 +6,6 @@ import type { ColDef } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import CustomLoadingOverlay from './customLoadingOverlay';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -49,11 +48,13 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div className="example-wrapper">
-                <div>
-                    <label className="checkbox">
-                        <input type="checkbox" onChange={(e) => setLoading(e.target.checked)} checked={loading} />
-                        loading
-                    </label>
+                <div className="example-controls">
+                    <div className="controls-row">
+                        <label>
+                            <input type="checkbox" onChange={(e) => setLoading(e.target.checked)} checked={loading} />
+                            loading
+                        </label>
+                    </div>
                 </div>
 
                 <div style={{ height: '100%', width: '100%' }}>

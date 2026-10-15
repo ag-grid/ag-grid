@@ -7,7 +7,6 @@ import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import type { CustomParams } from './customOverlay';
 import { CustomOverlay } from './customOverlay';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -40,12 +39,14 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div className="example-wrapper">
-                <div className="button-row">
-                    <button onClick={() => setActiveOverlay(() => CustomOverlay)}>Show custom overlay</button>
-                    <button onClick={() => setActiveOverlay(undefined)}>Hide custom overlay</button>
-                    <button onClick={() => setActiveOverlayParams((prev) => ({ count: prev.count + 1 }))}>
-                        Increment Param
-                    </button>
+                <div className="button-row example-controls">
+                    <div className="controls-row">
+                        <button onClick={() => setActiveOverlay(() => CustomOverlay)}>Show custom overlay</button>
+                        <button onClick={() => setActiveOverlay(undefined)}>Hide custom overlay</button>
+                        <button onClick={() => setActiveOverlayParams((prev) => ({ count: prev.count + 1 }))}>
+                            Increment Param
+                        </button>
+                    </div>
                 </div>
 
                 <div className="grid-wrapper">

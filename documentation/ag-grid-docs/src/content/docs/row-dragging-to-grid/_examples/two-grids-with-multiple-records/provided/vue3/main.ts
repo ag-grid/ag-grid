@@ -20,8 +20,6 @@ import {
 } from 'ag-grid-community';
 import { AgGridVue } from 'ag-grid-vue3';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -46,20 +44,20 @@ const SportRenderer = defineComponent({
 
 const VueExample = defineComponent({
     template: /* html */ `
-        <div class="top-container">
-            <div class="example-toolbar panel panel-default">
-                <div class="panel-body">
-                    <input type="radio" id="move" name="radio" checked ref="eMoveRadio">
-                    <label for="move">Remove Source Rows</label>
-                    <input type="radio" id="deselect" name="radio" ref="eDeselectRadio">
-                    <label for="deselect">Only Deselect Source Rows</label>
-                    <input type="radio" id="none" name="radio">
-                    <label for="none">None</label>
-                    <span class="input-group-button">
-                        <button type="button" class="btn btn-default reset" style="margin-left: 5px;" @click="reset()">
-                            <i class="fas fa-redo" style="margin-right: 5px;"></i>Reset
-                        </button>
-                    </span>
+        <div class="example-wrapper">
+            <div class="example-controls">
+                <div class="controls-row">
+                    <div class="button-group" role="group" aria-label="Drag behaviour">
+                        <input type="radio" id="move" name="radio" checked ref="eMoveRadio">
+                        <label for="move">Remove Source Rows</label>
+                        <input type="radio" id="deselect" name="radio" ref="eDeselectRadio">
+                        <label for="deselect">Only Deselect Source Rows</label>
+                        <input type="radio" id="none" name="radio">
+                        <label for="none">None</label>
+                    </div>
+                    <button type="button" class="reset" @click="reset()">
+                        <i class="fas fa-redo" style="margin-right: 5px;"></i>Reset
+                    </button>
                 </div>
             </div>
             <div class="grid-wrapper">

@@ -27,8 +27,6 @@ import {
 import { IntegratedChartsModule, RowGroupingModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -58,17 +56,19 @@ function numberCellFormatter(params: ValueFormatterParams) {
 
 const VueExample = defineComponent({
     template: `
-    <div id="myApp" class="wrapper">
-        <div style="padding-bottom: 4px">
-            <span>
-                <button v-on:click="onStopMessages()">&#9632; Stop</button>
-                <button v-on:click="onStartLoad()">&#9658; Start</button>
-            </span>
-            <span style="margin-left: 30px">
-                <button v-on:click="updateChart('stackedColumn')">Stacked Column Chart</button>
-                <button v-on:click="updateChart('groupedColumn')">Grouped Column Chart</button>
-                <button v-on:click="updateChart('line')">Line Chart</button>
-            </span>
+    <div id="myApp" class="example-wrapper">
+        <div class="example-controls">
+            <div class="controls-row">
+                <span>
+                    <button v-on:click="onStopMessages()">&#9632; Stop</button>
+                    <button v-on:click="onStartLoad()">&#9658; Start</button>
+                </span>
+                <span class="gap-left">
+                    <button v-on:click="updateChart('stackedColumn')">Stacked Column Chart</button>
+                    <button v-on:click="updateChart('groupedColumn')">Grouped Column Chart</button>
+                    <button v-on:click="updateChart('line')">Line Chart</button>
+                </span>
+            </div>
         </div>
         <ag-grid-vue
             class="my-grid"

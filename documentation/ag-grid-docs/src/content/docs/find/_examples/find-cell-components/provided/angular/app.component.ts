@@ -14,7 +14,6 @@ import {
 import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import { FindRenderer } from './find-renderer.component';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

@@ -21,8 +21,6 @@ import {
 import { RowGroupingModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -407,8 +405,10 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <div style={{ marginBottom: '5px' }}>
-                        <button onClick={updateData}>Update</button>
+                    <div className="example-controls">
+                        <div className="controls-row">
+                            <button onClick={updateData}>Update</button>
+                        </div>
                     </div>
 
                     <div style={gridStyle}>

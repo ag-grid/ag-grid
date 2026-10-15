@@ -16,7 +16,6 @@ import { AgGridVue } from 'ag-grid-vue3';
 
 import type { IProduct } from './data';
 import { getData } from './data';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -68,12 +67,14 @@ const statusCellClassRules: CellClassRules = {
 
 const VueExample = defineComponent({
     template: `
-        <div style="height: 100%; display: flex; flex-direction: column">
-            <p style="flex: 0 1 0%">
-                <button class="ag-toggleButton" @click="setThemeMode()">
-                    {{ themeMode === 'dark' ? 'Enable Light Mode' : 'Enable Dark Mode' }}
-                </button>
-            </p>
+        <div class="example-wrapper">
+            <div class="example-controls">
+                <div class="controls-row">
+                    <button @click="setThemeMode()">
+                        {{ themeMode === 'dark' ? 'Enable Light Mode' : 'Enable Dark Mode' }}
+                    </button>
+                </div>
+            </div>
             <div style="flex: 1 1 0%">
                 <ag-grid-vue
                     style="height: 100%;"

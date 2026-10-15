@@ -6,19 +6,11 @@
     width: 100%;
 }
 
-button {
-    height: unset !important;
-}
-
 .example-button-row {
     display: flex;
     gap: 5px;
     align-items: baseline;
     margin: 0;
-}
-
-.grid-wrapper {
-    flex: 1 1 0px;
 }
 
 #myGrid {

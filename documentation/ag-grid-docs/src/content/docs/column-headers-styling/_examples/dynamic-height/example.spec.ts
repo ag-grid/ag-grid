@@ -40,11 +40,15 @@ test.agExample(import.meta, () => {
         await waitForGridContent(page);
 
         // Pivot-only controls are hidden until pivot mode is on.
-        await expect(page.locator('#requiresPivot')).not.toBeVisible();
+        const pivotRows = page.locator('.requires-pivot');
+        await expect(pivotRows).toHaveCount(2);
+        await expect(pivotRows.first()).not.toBeVisible();
+        await expect(pivotRows.last()).not.toBeVisible();
 
         await page.getByRole('button', { name: 'on', exact: true }).click();
         await expect(page.locator('#pivot')).toHaveText('on');
-        await expect(page.locator('#requiresPivot')).toBeVisible();
+        await expect(pivotRows.first()).toBeVisible();
+        await expect(pivotRows.last()).toBeVisible();
         await expect(page.locator('#requiresNotPivot')).not.toBeVisible();
     });
 });

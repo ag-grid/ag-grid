@@ -12,7 +12,6 @@ import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, MasterDeta
 import { AgGridVue } from 'ag-grid-vue3';
 
 import DetailCellRenderer from './detailCellRendererVue';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -33,9 +32,11 @@ const VueExample = defineComponent({
     template: `
         <div style="height: 100%">
             <div class="example-wrapper">
-                <div style="margin-bottom: 5px;">
-                    <button v-on:click="printDetailGridInfo()">Print Detail Grid Info</button>
-                    <button v-on:click="expandCollapseAll()">Toggle Expand / Collapse</button>
+                <div class="example-controls">
+                    <div class="controls-row">
+                        <button v-on:click="printDetailGridInfo()">Print Detail Grid Info</button>
+                        <button v-on:click="expandCollapseAll()">Toggle Expand / Collapse</button>
+                    </div>
                 </div>
                 <ag-grid-vue
                         style="width: 100%; height: 100%;"

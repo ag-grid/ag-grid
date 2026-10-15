@@ -12,7 +12,6 @@ import { ColumnMenuModule, ContextMenuModule, ExcelExportModule } from 'ag-grid-
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import type { IOlympicData } from './interfaces';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -101,76 +100,75 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
-                <div className="container">
-                    <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => onFormSubmit(e)}>
-                        <div className="columns">
-                            <div className="column">
-                                <label className="option" htmlFor="pageOrientation">
-                                    Page Orientation =
-                                    <select id="pageOrientation">
-                                        <option value="Portrait">Portrait</option>
-                                        <option value="Landscape">Landscape</option>
-                                    </select>
-                                </label>
-                                <label className="option" htmlFor="pageSize">
-                                    Page Size =
-                                    <select id="pageSize">
-                                        <option value="Letter">Letter</option>
-                                        <option value="Letter Small">Letter Small</option>
-                                        <option value="Tabloid">Tabloid</option>
-                                        <option value="Ledger">Ledger</option>
-                                        <option value="Legal">Legal</option>
-                                        <option value="Statement">Statement</option>
-                                        <option value="Executive">Executive</option>
-                                        <option value="A3">A3</option>
-                                        <option value="A4">A4</option>
-                                        <option value="A4 Small">A4 Small</option>
-                                        <option value="A5">A5</option>
-                                        <option value="A6">A6</option>
-                                        <option value="B4">B4</option>
-                                        <option value="B5">B5</option>
-                                        <option value="Folio">Folio</option>
-                                        <option value="Envelope">Envelope</option>
-                                        <option value="Envelope DL">Envelope DL</option>
-                                        <option value="Envelope C5">Envelope C5</option>
-                                        <option value="Envelope B5">Envelope B5</option>
-                                        <option value="Envelope C3">Envelope C3</option>
-                                        <option value="Envelope C4">Envelope C4</option>
-                                        <option value="Envelope C6">Envelope C6</option>
-                                        <option value="Envelope Monarch">Envelope Monarch</option>
-                                        <option value="Japanese Postcard">Japanese Postcard</option>
-                                        <option value="Japanese Double Postcard">Japanese Double Postcard</option>
-                                    </select>
-                                </label>
-                            </div>
-                            <fieldset className="column margin-container">
-                                <legend>Margins</legend>
-                                <label htmlFor="top">
-                                    Top = <input type="number" id="top" defaultValue="0.75" min="0" step="0.05" />
-                                </label>
-                                <label htmlFor="right">
-                                    Right = <input type="number" id="right" defaultValue="0.7" min="0" step="0.05" />
-                                </label>
-                                <label htmlFor="bottom">
-                                    Bottom = <input type="number" id="bottom" defaultValue="0.75" min="0" step="0.05" />
-                                </label>
-                                <label htmlFor="left">
-                                    Left = <input type="number" id="left" defaultValue="0.7" min="0" step="0.05" />
-                                </label>
-                                <label htmlFor="header">
-                                    Header = <input type="number" id="header" defaultValue="0.3" min="0" step="0.05" />
-                                </label>
-                                <label htmlFor="footer">
-                                    Footer = <input type="number" id="footer" defaultValue="0.3" min="0" step="0.05" />
-                                </label>
-                            </fieldset>
+                <div className="example-wrapper">
+                    <form
+                        className="example-controls"
+                        onSubmit={(e: React.FormEvent<HTMLFormElement>) => onFormSubmit(e)}
+                    >
+                        <div className="controls-row">
+                            <label htmlFor="pageOrientation">
+                                Page Orientation
+                                <select id="pageOrientation">
+                                    <option value="Portrait">Portrait</option>
+                                    <option value="Landscape">Landscape</option>
+                                </select>
+                            </label>
+                            <label htmlFor="pageSize">
+                                Page Size
+                                <select id="pageSize">
+                                    <option value="Letter">Letter</option>
+                                    <option value="Letter Small">Letter Small</option>
+                                    <option value="Tabloid">Tabloid</option>
+                                    <option value="Ledger">Ledger</option>
+                                    <option value="Legal">Legal</option>
+                                    <option value="Statement">Statement</option>
+                                    <option value="Executive">Executive</option>
+                                    <option value="A3">A3</option>
+                                    <option value="A4">A4</option>
+                                    <option value="A4 Small">A4 Small</option>
+                                    <option value="A5">A5</option>
+                                    <option value="A6">A6</option>
+                                    <option value="B4">B4</option>
+                                    <option value="B5">B5</option>
+                                    <option value="Folio">Folio</option>
+                                    <option value="Envelope">Envelope</option>
+                                    <option value="Envelope DL">Envelope DL</option>
+                                    <option value="Envelope C5">Envelope C5</option>
+                                    <option value="Envelope B5">Envelope B5</option>
+                                    <option value="Envelope C3">Envelope C3</option>
+                                    <option value="Envelope C4">Envelope C4</option>
+                                    <option value="Envelope C6">Envelope C6</option>
+                                    <option value="Envelope Monarch">Envelope Monarch</option>
+                                    <option value="Japanese Postcard">Japanese Postcard</option>
+                                    <option value="Japanese Double Postcard">Japanese Double Postcard</option>
+                                </select>
+                            </label>
                         </div>
-                        <div>
-                            <input
-                                type="submit"
-                                style={{ margin: '5px 0px', fontWeight: 'bold' }}
-                                value="Export to Excel"
-                            />
+                        <div className="controls-row">
+                            <span className="gap-right">Margins</span>
+                            <label htmlFor="top">
+                                Top <input type="number" id="top" defaultValue="0.75" min="0" step="0.05" />
+                            </label>
+                            <label htmlFor="right">
+                                Right <input type="number" id="right" defaultValue="0.7" min="0" step="0.05" />
+                            </label>
+                            <label htmlFor="bottom">
+                                Bottom <input type="number" id="bottom" defaultValue="0.75" min="0" step="0.05" />
+                            </label>
+                            <label htmlFor="left">
+                                Left <input type="number" id="left" defaultValue="0.7" min="0" step="0.05" />
+                            </label>
+                        </div>
+                        <div className="controls-row">
+                            <label htmlFor="header">
+                                Header <input type="number" id="header" defaultValue="0.3" min="0" step="0.05" />
+                            </label>
+                            <label htmlFor="footer">
+                                Footer <input type="number" id="footer" defaultValue="0.3" min="0" step="0.05" />
+                            </label>
+                        </div>
+                        <div className="controls-row">
+                            <input type="submit" className="primary" value="Export to Excel" />
                         </div>
                     </form>
                     <div className="grid-wrapper">

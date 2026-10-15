@@ -6,10 +6,10 @@ html[data-color-scheme='dark'] body {
 .test-header {
     display: flex;
     gap: 16px;
-    padding: 5px;
+    padding: 5px 5px 0;
     font-size: 13px;
 
-    margin-bottom: 1rem;
+    margin-bottom: 8px;
 }
 
 .test-header label {

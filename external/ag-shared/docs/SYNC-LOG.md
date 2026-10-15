@@ -31,6 +31,36 @@ Yarn Berry records every local workspace at version `0.0.0-use.local`, and `snyk
 
 - Adding a rule for a project with no `.snyk` file creates one, as the existing ignore actions do (ag-grid: `testing/public-recipes/e2e/.snyk`).
 
+## 2026-10-02 -- Example page layout moves into the shared controls stylesheet
+
+**Branch:** `AG-18581-example-controls-styles`
+
+### Changes
+
+- **[ag-website-shared: src/components/example-runner/styles/example-controls.css]** New `--controls-gap` token (8px, the gap the Charts examples already use) and a page layout contract for `.example-wrapper`: a full-height flex column with that gap, in which `.example-controls` and `.example-header` keep their natural height and every other direct child grows to fill what is left. Examples used to spell this out in their own stylesheet, which had drifted into dozens of spellings of the same three rules. The grow rule keys off `:not(.example-controls, .example-header)` rather than naming the example's own element, because that element differs per framework -- a plain `div` in vanilla and React, `ag-grid-angular` in Angular, `ag-grid-vue` in Vue -- and a few examples put a second controls block underneath the grid. The grow rule is wrapped in `:where()` so it has zero specificity: an example that sizes one of those children itself, by class or even by tag, keeps that size.
+
+- **[ag-website-shared: src/components/example-runner/styles/example-controls.css]** The shared control box padding goes from `5px 14px 7px` to `6px 14px`. The uneven pair sat the text one pixel above the centre of the 36px box, which was invisible between two controls that both have a box but showed as a step the moment a control with no box of its own -- a checkbox and its label -- sat next to a button in the same `.controls-row`, since that row centres the boxes on each other. Button height is unchanged (fixed at 36px with `border-box`), and `textarea` and `select` keep their own padding overrides.
+
+- **[ag-website-shared: src/components/example-runner/styles/example-controls.css]** New `--label-gap` token (4px), used for the gap inside `.example-controls label` in place of `--row-gap`. At the shared 6px a label that wraps its own control sat exactly as far from its own text as that text sat from the next control along, so the pair did not read as one control -- on AG Grid's active-overlay switcher a "Loading" checkbox leads a row of three buttons, and its text looked equally attached to the first button. Only a label that wraps its control has more than one flex item, so nothing else moves: a label written beside its control, and a `.button-group` segment, each hold text alone and ignore the gap.
+
+### Migration Actions
+
+- [ ] Nothing to do for the padding change -- it is a one-pixel shift of the text inside every control, with no change to any box size.
+- [ ] Eyeball the label gap where it lands. It reaches only a label that wraps its own control, which is six labels across five examples in the other two repos: AG Charts has `high-performance-charts/bubble-scatter` (a span and a range slider) and the three `zoom-data-change-test` examples (text and a select), and AG Studio has two checkboxes in `scale-factor-test/scale-factor-memory`. Each tightens by 2px, which is the intended fix rather than a regression, so this is a look rather than a change.
+- [ ] Check whether the repo already uses `.example-wrapper` for something that is not a controls-above-example column. The class now carries `display: flex`, `height: 100%` and a gap, so a wrapper that relied on the previous `display: block` default will change. A wrapper that sets its own `display` (AG Grid has a few laying themselves out with CSS Grid) still wins and is unaffected.
+- [ ] Add `.example-wrapper--row` to any wrapper that is a horizontal split rather than a column -- two grids side by side, or a grid beside a panel. The modifier both turns the layout into a row and takes the grow rule out of the match, so the children are sized by the example's own `flex` values alone rather than growing equally wherever the example sets none. AG Grid had three such examples.
+- [ ] Put `.example-header` on any direct child of the wrapper that must keep its natural height rather than grow. It is the name for any such block, not only a heading -- it is sometimes a wrapper around the controls and sometimes a line of prose, which is why it cannot be folded into `.example-controls`.
+
+### Notes
+
+On the AG Grid side this replaced the scaffolding in 354 per-example stylesheets, 133 of which held nothing else and were deleted. Five other names for the same wrapper (`.container`, `.test-container`, `.outer-div`, `.page-wrapper`, `.grid-container`) were converged onto `.example-wrapper` across 103 examples so the contract reaches them, and four examples that had no wrapper at all -- they sized the grid as a percentage of the page and so overflowed once the controls block grew taller than the bare buttons it replaced -- were given one.
+
+The consuming repos were audited against this branch so the work waiting for each is known up front. Both held a byte-identical copy of `example-controls.css` when this was written, so the audit below is the whole delta.
+
+**AG Charts** has the one unavoidable change, and it is the reset split recorded under 2026-09-21 rather than anything in this entry: charts has no example-page reset of its own -- there is no `ExampleStyle.astro`, and `framework-templates/lib/Styles.astro` only emits `<link>` tags -- so it depends entirely on the reset that used to travel inside `example-controls.css`. It must add `example-page-reset.css` to `EXAMPLE_STYLES_FILE_PATHS` in `plugins/ag-charts-generate-example-files/src/executors/generate/generator/utils/getStyleFiles.ts`, which is already a list, or every example page loses its height and its global `box-sizing`. Beyond that charts needs no structural work: all 12 of its `.example-wrapper` examples set `display: grid` themselves and so are unaffected by the new flex contract, and none is a row split. Two things are worth a look rather than a change -- `gallery/_examples/simple-bullet`, the only one of the 12 that sets no `gap` of its own and so newly inherits the shared 8px, and the four examples whose labels wrap their control and so pick up the tighter label gap.
+
+**AG Studio** is not forced. It already resets its example pages from `packages/ag-studio-docs/src/components/example-runner/framework-templates/lib/ExampleStyle.astro`, so it can keep linking the controls stylesheet alone as AG Grid does. The judgement call is `box-sizing`: studio's own reset sets `border-box` on `:root, body` only, while the shared sheet used to set it globally, and after the split only `.example-controls` and its descendants keep it. If any studio example relies on `border-box` outside the controls, it should take `example-page-reset.css` too -- note that `EXAMPLE_STYLES_FILE_PATH` in `plugins/ag-studio-generate-example-files/src/executors/generate/generator/utils/getAuxiliaryFiles.ts` is a single string and would have to become a list first. Studio has no `.example-wrapper` usage at all, so the layout contract is inert for it; the only other thing this entry reaches is the pair of wrapping checkbox labels in `scale-factor-test/scale-factor-memory`.
+
 ## 2026-10-02 -- Post-deploy verification Slack message is quieter: failures only, capped ranges, capped pings
 
 **Branch:** `AG-3390-quieter-post-deploy-notification` (ag-grid, ag-charts) / `AS-246-quieter-post-deploy-notification` (ag-studio)
@@ -126,6 +156,28 @@ The hollowing relies on yarn v1 internals (an entry counts as cached when `.yarn
 
 - [ ] Run `./external/ag-shared/scripts/setup-prompts/setup-prompts.sh` (or `yarn install`) to re-render `.claude/settings.json`, and commit the result
 - [ ] Restart Claude Code so the newly enabled plugin installs
+
+## 2026-09-21 -- Example page reset split out of the controls stylesheet; controls recognise both dark-mode attributes
+
+**Branch:** `AG-18581-example-controls-styles`
+
+### Changes
+
+- **[ag-website-shared: src/components/example-runner/styles/example-page-reset.css]** New file, holding the page-level reset `example-controls.css` used to carry: the global `box-sizing: border-box` and `:root, body { height: 100%; width: 100%; margin: 0; overflow: hidden }`.
+- **[ag-website-shared: src/components/example-runner/styles/example-controls.css]** Those reset rules are gone from this file. `box-sizing: border-box` is re-applied scoped to `.example-controls` and its descendants — the controls size themselves with fixed heights and padding, so that is all they need — which lets a site that already resets its example pages link the controls stylesheet on its own. The dark palette now also triggers on `:root[data-color-scheme='dark']` alongside `:root[data-dark-mode='true']`: AG Charts sets the latter from its init script, AG Grid's example runner sets the former.
+- **[ag-website-shared: src/components/codeSandbox/utils/codeSandbox.ts]** Every `.css` file now maps to `public/`, not only `ag-example-styles.css`. The stylesheets are linked from `public/index.html`, so a sheet left at the sandbox root 404s. `EXAMPLE_STYLE_FILE_NAME` is no longer imported here.
+
+### Migration Actions
+
+- [ ] **AG Charts: link `example-page-reset.css` alongside `example-controls.css`** wherever the controls stylesheet is linked today. Without it those example pages silently lose the global `box-sizing` and the `:root, body` sizing, because those rules no longer travel with the controls sheet. Tracked as a follow-up ticket on the charts side.
+- [ ] **AG Studio: decide whether to link `example-page-reset.css`.** Studio resets its example pages itself, so it is only needed if a studio example relies on the global `box-sizing` -- see the AG Studio note under 2026-10-02.
+- [ ] Sync `codeSandbox.ts` together with its test — the test asserts the new `public/` mapping.
+
+### Notes
+
+AG Grid deliberately links only `example-controls.css`. Its example runner already emits a page reset from `ExampleStyle.astro`, and the charts reset would fight it: `overflow: hidden` clips example pages that are meant to scroll, and the global `box-sizing` reaches grid markup rather than just the controls.
+
+`.example-controls .button-group` in the controls stylesheet means a joined row of radio segments. The name is load-bearing now that the sheet is linked from every example — AG Grid had ~26 examples using it for a plain span of buttons, which had to be renamed.
 
 ## 2026-09-18 -- l10n review script accepts script-subtag and three-letter locale file names
 

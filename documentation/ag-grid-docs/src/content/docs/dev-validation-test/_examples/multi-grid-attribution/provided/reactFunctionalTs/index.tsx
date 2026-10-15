@@ -5,8 +5,6 @@ import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
-
 // Opt into dev-only validation diagnostics, surfaced in an overlay over each grid.
 if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
@@ -58,18 +56,22 @@ const GridExample = () => {
                 <div className="grid-section">
                     <div className="controls">
                         <span className="grid-label">Grid A</span>
-                        <button type="button" onClick={() => triggerWarning('a')}>
-                            Trigger warning
-                        </button>
-                        <button type="button" onClick={() => triggerError('a')}>
-                            Trigger error
-                        </button>
-                        <button type="button" onClick={() => triggerAsyncWarning('a')}>
-                            Trigger async warning
-                        </button>
-                        <button type="button" onClick={() => destroyThenCallApi('a')}>
-                            Destroy grid, then call API
-                        </button>
+                        <div className="example-controls">
+                            <div className="controls-row">
+                                <button type="button" onClick={() => triggerWarning('a')}>
+                                    Trigger warning
+                                </button>
+                                <button type="button" onClick={() => triggerError('a')}>
+                                    Trigger error
+                                </button>
+                                <button type="button" onClick={() => triggerAsyncWarning('a')}>
+                                    Trigger async warning
+                                </button>
+                                <button type="button" onClick={() => destroyThenCallApi('a')}>
+                                    Destroy grid, then call API
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div className="grid">
                         <AgGridReact ref={gridA} columnDefs={columnDefs} rowData={rowData} getRowId={getRowId} />
@@ -79,15 +81,19 @@ const GridExample = () => {
                 <div className="grid-section">
                     <div className="controls">
                         <span className="grid-label">Grid B</span>
-                        <button type="button" onClick={() => triggerWarning('b')}>
-                            Trigger warning
-                        </button>
-                        <button type="button" onClick={() => triggerError('b')}>
-                            Trigger error
-                        </button>
-                        <button type="button" onClick={() => triggerAsyncWarning('b')}>
-                            Trigger async warning
-                        </button>
+                        <div className="example-controls">
+                            <div className="controls-row">
+                                <button type="button" onClick={() => triggerWarning('b')}>
+                                    Trigger warning
+                                </button>
+                                <button type="button" onClick={() => triggerError('b')}>
+                                    Trigger error
+                                </button>
+                                <button type="button" onClick={() => triggerAsyncWarning('b')}>
+                                    Trigger async warning
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div className="grid">
                         <AgGridReact ref={gridB} columnDefs={columnDefs} rowData={rowData} getRowId={getRowId} />

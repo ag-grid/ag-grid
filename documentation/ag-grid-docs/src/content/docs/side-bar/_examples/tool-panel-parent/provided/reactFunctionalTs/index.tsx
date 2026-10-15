@@ -15,7 +15,6 @@ import {
 } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
 import { useFetchJson } from './useFetchJson';
 
 if (process.env.NODE_ENV !== 'production') {
@@ -119,9 +118,11 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div id="wrapper" className="example-wrapper">
-                    <div className="example-header">
-                        <button onClick={openPopup}>Open Columns Tool Panel</button>
-                        <button onClick={openDrawer}>Open Filters Tool Panel</button>
+                    <div className="example-header example-controls">
+                        <div className="controls-row">
+                            <button onClick={openPopup}>Open Columns Tool Panel</button>
+                            <button onClick={openDrawer}>Open Filters Tool Panel</button>
+                        </div>
                     </div>
 
                     <div style={gridStyle}>
@@ -141,8 +142,10 @@ const GridExample = () => {
 
                 <div id="popup" ref={popupRef}>
                     <div className="inner">
-                        <div>
-                            <button onClick={closePopup}>Close</button>
+                        <div className="example-controls">
+                            <div className="controls-row">
+                                <button onClick={closePopup}>Close</button>
+                            </div>
                         </div>
                         <div className="content" ref={popupContentRef}></div>
                     </div>
@@ -150,8 +153,10 @@ const GridExample = () => {
 
                 <div id="drawer" ref={drawerRef}>
                     <div className="inner">
-                        <div>
-                            <button onClick={closeDrawer}>Close</button>
+                        <div className="example-controls">
+                            <div className="controls-row">
+                                <button onClick={closeDrawer}>Close</button>
+                            </div>
                         </div>
                         <div className="content" ref={drawerContentRef}></div>
                     </div>

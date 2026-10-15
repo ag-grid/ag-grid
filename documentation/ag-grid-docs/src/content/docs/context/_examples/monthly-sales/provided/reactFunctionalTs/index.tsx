@@ -15,8 +15,6 @@ import { FiltersToolPanelModule, RowGroupingModule, SetFilterModule } from 'ag-g
 import type { CustomCellRendererProps } from 'ag-grid-react';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -196,18 +194,18 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
-                <div className="test-container">
-                    <div className="test-header">
-                        <input
-                            type="text"
-                            id="filter-text-box"
-                            style={{ width: '100px' }}
-                            onChange={(e) => onQuickFilterChanged(e.target.value)}
-                            placeholder="Filter..."
-                        />
+                <div className="example-wrapper">
+                    <div className="example-controls">
+                        <div className="controls-row">
+                            <input
+                                type="text"
+                                id="filter-text-box"
+                                style={{ width: '100px' }}
+                                onChange={(e) => onQuickFilterChanged(e.target.value)}
+                                placeholder="Filter..."
+                            />
 
-                        <span style={{ paddingLeft: '20px' }}>
-                            <b>Period:</b>
+                            <span className="gap-left">Period:</span>
                             <button onClick={() => onChangeMonth(-1)}>
                                 <i className="fa fa-chevron-left"></i>
                             </button>
@@ -217,13 +215,14 @@ const GridExample = () => {
                             <span id="monthName" style={{ width: '100px', display: 'inline-block' }}>
                                 Year to Jan
                             </span>
-                        </span>
 
-                        <span style={{ paddingLeft: '20px' }}>
-                            <b>Legend:</b>&nbsp;&nbsp;
-                            <div className="cell-bud legend-box"></div> Actual&nbsp;&nbsp;
-                            <div className="cell-act legend-box"></div> Budget
-                        </span>
+                            <span className="legend-item gap-left">
+                                <span className="legend-swatch cell-bud"></span>Actual
+                            </span>
+                            <span className="legend-item">
+                                <span className="legend-swatch cell-act"></span>Budget
+                            </span>
+                        </div>
                     </div>
 
                     <div style={gridStyle}>

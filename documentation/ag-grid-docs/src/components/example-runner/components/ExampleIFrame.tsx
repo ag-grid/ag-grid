@@ -92,7 +92,7 @@ export const ExampleIFrame: FunctionComponent<Props> = ({
         if (!iFrameRef.current) {
             return;
         }
-        applyExampleStyleChanges(iFrameRef.current.contentDocument!, suppressDarkMode ? null : darkMode);
+        applyExampleStyleChanges(iFrameRef.current.contentDocument!, darkMode, suppressDarkMode);
     }, [darkMode, suppressDarkMode]);
 
     const handleOnLoad = useCallback(() => {
@@ -100,7 +100,7 @@ export const ExampleIFrame: FunctionComponent<Props> = ({
         if (!iFrameRef.current) {
             return;
         }
-        applyExampleStyleChanges(iFrameRef.current.contentDocument!, suppressDarkMode ? null : darkMode);
+        applyExampleStyleChanges(iFrameRef.current.contentDocument!, darkMode, suppressDarkMode);
     }, [darkMode, suppressDarkMode]);
 
     return (
@@ -122,15 +122,22 @@ export const ExampleIFrame: FunctionComponent<Props> = ({
     );
 };
 
-const applyExampleStyleChanges = (document: Document, darkMode: boolean | null) => {
+const applyExampleStyleChanges = (document: Document, darkMode: boolean | undefined, suppressDarkMode?: boolean) => {
+    const root = document.documentElement;
     if (darkMode != null) {
-        document.documentElement.dataset.colorScheme = darkMode ? 'dark' : 'light';
-        document.documentElement.dataset.agThemeMode = darkMode ? 'dark-blue' : 'light';
+        // The controls sit on the site's background, so they follow the site even when the example's
+        // theme is pinned. The loading logo also sets this marker but never clears it.
+        root.dataset.darkMode = String(darkMode);
+    }
+    const exampleDarkMode = suppressDarkMode ? null : darkMode;
+    if (exampleDarkMode != null) {
+        root.dataset.colorScheme = exampleDarkMode ? 'dark' : 'light';
+        root.dataset.agThemeMode = exampleDarkMode ? 'dark-blue' : 'light';
     }
     injectStylesheet(document);
 
     // dispatch 'color-scheme-change' event for Integrated Charts to update dark mode theme
-    document.dispatchEvent(new CustomEvent('color-scheme-change', { detail: { darkMode } }));
+    document.dispatchEvent(new CustomEvent('color-scheme-change', { detail: { darkMode: exampleDarkMode } }));
 };
 
 const injectStylesheet = (document: Document) => {

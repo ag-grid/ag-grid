@@ -13,7 +13,6 @@ import { CellSelectionModule, StatusBarModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact, getInstance } from 'ag-grid-react';
 
 import ClickableStatusBarComponent from './clickableStatusBarComponent';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -40,8 +39,6 @@ const rowSelection: RowSelectionOptions = {
 
 const GridExample = () => {
     const gridRef = useRef<AgGridReact>(null);
-    const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);
-    const gridStyle = useMemo(() => ({ height: '90%', width: '100%' }), []);
     const [rowData, setRowData] = useState<any[]>([
         { row: 'Row 1', name: 'Michael Phelps' },
         { row: 'Row 2', name: 'Natalie Coughlin' },
@@ -104,12 +101,14 @@ const GridExample = () => {
 
     return (
         <AgGridProvider modules={modules}>
-            <div style={containerStyle}>
-                <button onClick={toggleStatusBarComp} style={{ marginBottom: '10px' }}>
-                    Toggle Status Bar Component
-                </button>
+            <div className="example-wrapper">
+                <div className="example-controls">
+                    <div className="controls-row">
+                        <button onClick={toggleStatusBarComp}>Toggle Status Bar Component</button>
+                    </div>
+                </div>
 
-                <div style={gridStyle}>
+                <div className="grid-wrapper">
                     <AgGridReact
                         ref={gridRef}
                         rowData={rowData}

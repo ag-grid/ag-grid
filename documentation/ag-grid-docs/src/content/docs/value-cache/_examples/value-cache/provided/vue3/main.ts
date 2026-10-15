@@ -13,7 +13,6 @@ import { RowGroupingModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
 import { getData } from './data';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -38,10 +37,16 @@ const VueExample = defineComponent({
     template: `
         <div style="height: 100%">
             <div class="example-wrapper">
-                <div class="example-header">
-                    Value Cache:
-                    <input type="radio" id="valueCacheOn" name="valueCache" :checked="valueCacheOn" @change="onValueCache(true)"><label for="valueCacheOn">On</label>
-                    <input type="radio" id="valueCacheOff" name="valueCache" :checked="!valueCacheOn" @change="onValueCache(false)"><label for="valueCacheOff">Off</label>
+                <div class="example-header example-controls">
+                    <div class="controls-row">
+                        <span>Value Cache:</span>
+                        <div class="button-group" role="group" aria-label="Value Cache">
+                            <input type="radio" id="valueCacheOn" name="valueCache" :checked="valueCacheOn" @change="onValueCache(true)">
+                            <label for="valueCacheOn">On</label>
+                            <input type="radio" id="valueCacheOff" name="valueCache" :checked="!valueCacheOn" @change="onValueCache(false)">
+                            <label for="valueCacheOff">Off</label>
+                        </div>
+                    </div>
                 </div>
                 <ag-grid-vue
                     v-if="isVisible"

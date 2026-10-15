@@ -14,8 +14,6 @@ import {
     enableDevValidations,
 } from 'ag-grid-community';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -35,31 +33,35 @@ ModuleRegistry.registerModules([
     standalone: true,
     imports: [AgGridAngular],
     template: `
-        <div class="test-header" style="height: 5%">
-            <label><input type="checkbox" checked (change)="onCbAthlete($event.target.checked)" />Athlete</label>
-            <label><input type="checkbox" checked (change)="onCbAge($event.target.checked)" />Age</label>
-            <label><input type="checkbox" checked (change)="onCbCountry($event.target.checked)" />Country</label>
+        <div class="example-wrapper">
+            <div class="example-controls">
+                <div class="controls-row">
+                    <label
+                        ><input type="checkbox" checked (change)="onCbAthlete($event.target.checked)" />Athlete</label
+                    >
+                    <label><input type="checkbox" checked (change)="onCbAge($event.target.checked)" />Age</label>
+                    <label
+                        ><input type="checkbox" checked (change)="onCbCountry($event.target.checked)" />Country</label
+                    >
+                </div>
+            </div>
+
+            <ag-grid-angular
+                #topGrid
+                [rowData]="rowData"
+                [gridOptions]="topOptions"
+                [alignedGrids]="[bottomGrid]"
+                [columnDefs]="columnDefs"
+            />
+
+            <ag-grid-angular
+                #bottomGrid
+                [rowData]="rowData"
+                [gridOptions]="bottomOptions"
+                [alignedGrids]="[topGrid]"
+                [columnDefs]="columnDefs"
+            />
         </div>
-
-        <ag-grid-angular
-            style="width: 100%; height: 45%"
-            #topGrid
-            [rowData]="rowData"
-            [gridOptions]="topOptions"
-            [alignedGrids]="[bottomGrid]"
-            [columnDefs]="columnDefs"
-        />
-
-        <div style="height: 5%"></div>
-
-        <ag-grid-angular
-            style="width: 100%; height: 45%"
-            #bottomGrid
-            [rowData]="rowData"
-            [gridOptions]="bottomOptions"
-            [alignedGrids]="[topGrid]"
-            [columnDefs]="columnDefs"
-        />
     `,
 })
 export class AppComponent {

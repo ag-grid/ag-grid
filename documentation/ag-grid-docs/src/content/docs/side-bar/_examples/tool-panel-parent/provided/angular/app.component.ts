@@ -13,7 +13,6 @@ import {
 import { ColumnsToolPanelModule, NewFiltersToolPanelModule, PivotModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import { IOlympicData } from './interfaces';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
@@ -35,9 +34,11 @@ ModuleRegistry.registerModules([
     standalone: true,
     imports: [AgGridAngular],
     template: `<div id="wrapper" class="example-wrapper">
-            <div class="example-header">
-                <button (click)="openPopup()">Open Columns Tool Panel</button>
-                <button (click)="openDrawer()">Open Filters Tool Panel</button>
+            <div class="example-header example-controls">
+                <div class="controls-row">
+                    <button (click)="openPopup()">Open Columns Tool Panel</button>
+                    <button (click)="openDrawer()">Open Filters Tool Panel</button>
+                </div>
             </div>
             <ag-grid-angular
                 style="width: 100%; height: 100%;"
@@ -54,14 +55,18 @@ ModuleRegistry.registerModules([
 
         <div id="popup" #popup>
             <div class="inner">
-                <div><button (click)="closePopup()">Close</button></div>
+                <div class="example-controls">
+                    <div class="controls-row"><button (click)="closePopup()">Close</button></div>
+                </div>
                 <div class="content" #popupContent></div>
             </div>
         </div>
 
         <div id="drawer" #drawer>
             <div class="inner">
-                <div><button (click)="closeDrawer()">Close</button></div>
+                <div class="example-controls">
+                    <div class="controls-row"><button (click)="closeDrawer()">Close</button></div>
+                </div>
                 <div class="content" #drawerContent></div>
             </div>
         </div> `,

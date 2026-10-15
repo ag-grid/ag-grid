@@ -5,8 +5,6 @@ import type { ColDef } from 'ag-grid-community';
 import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -61,10 +59,12 @@ const GridExample = () => {
     return (
         <AgGridProvider modules={modules}>
             <div className="example-wrapper">
-                <div style={{ marginBottom: '5px' }}>
-                    <button onClick={() => fillLarge()}>Fill 100%</button>
-                    <button onClick={() => fillMedium()}>Fill 60%</button>
-                    <button onClick={() => fillExact()}>Exactly 400 x 400 pixels</button>
+                <div className="example-controls">
+                    <div className="controls-row">
+                        <button onClick={() => fillLarge()}>Fill 100%</button>
+                        <button onClick={() => fillMedium()}>Fill 60%</button>
+                        <button onClick={() => fillExact()}>Exactly 400 x 400 pixels</button>
+                    </div>
                 </div>
                 <div className="grid-wrapper">
                     <div style={style}>

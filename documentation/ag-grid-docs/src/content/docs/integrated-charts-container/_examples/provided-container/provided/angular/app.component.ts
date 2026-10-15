@@ -8,8 +8,6 @@ import type { ChartRef, ColDef, GridReadyEvent } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { ColumnMenuModule, ContextMenuModule, IntegratedChartsModule, RowGroupingModule } from 'ag-grid-enterprise';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -43,7 +41,7 @@ ModuleRegistry.registerModules([
             @if (chartRef()) {
                 <div class="chart-wrapper-top">
                     <h2 class="chart-wrapper-title">Chart created at {{ createdTime() }}</h2>
-                    <button (click)="updateChart()">Destroy Chart</button>
+                    <div class="example-controls"><button (click)="updateChart()">Destroy Chart</button></div>
                 </div>
             } @else {
                 <div class="chart-placeholder">Chart will be displayed here.</div>

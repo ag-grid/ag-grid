@@ -20,12 +20,14 @@ const VueExample = defineComponent({
     template: `
         <div style="height: 100%; display: flex; flex-direction: column; gap: 1rem;">
             <div style="flex: 1 1 0; min-height: 0; display: flex; flex-direction: column;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 13px;">
-                    <span style="font-weight: bold;">Grid A</span>
-                    <button type="button" @click="triggerWarning('a')">Trigger warning</button>
-                    <button type="button" @click="triggerError('a')">Trigger error</button>
-                    <button type="button" @click="triggerAsyncWarning('a')">Trigger async warning</button>
-                    <button type="button" @click="destroyThenCallApi('a')">Destroy grid, then call API</button>
+                <div class="example-controls" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 13px;">
+                    <div class="controls-row">
+                        <span style="font-weight: bold;">Grid A</span>
+                        <button type="button" @click="triggerWarning('a')">Trigger warning</button>
+                        <button type="button" @click="triggerError('a')">Trigger error</button>
+                        <button type="button" @click="triggerAsyncWarning('a')">Trigger async warning</button>
+                        <button type="button" @click="destroyThenCallApi('a')">Destroy grid, then call API</button>
+                    </div>
                 </div>
                 <ag-grid-vue style="flex: 1 1 auto;"
                              :columnDefs="columnDefs"
@@ -35,11 +37,13 @@ const VueExample = defineComponent({
                 </ag-grid-vue>
             </div>
             <div style="flex: 1 1 0; min-height: 0; display: flex; flex-direction: column;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 13px;">
-                    <span style="font-weight: bold;">Grid B</span>
-                    <button type="button" @click="triggerWarning('b')">Trigger warning</button>
-                    <button type="button" @click="triggerError('b')">Trigger error</button>
-                    <button type="button" @click="triggerAsyncWarning('b')">Trigger async warning</button>
+                <div class="example-controls" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-family: Verdana, Geneva, Tahoma, sans-serif; font-size: 13px;">
+                    <div class="controls-row">
+                        <span style="font-weight: bold;">Grid B</span>
+                        <button type="button" @click="triggerWarning('b')">Trigger warning</button>
+                        <button type="button" @click="triggerError('b')">Trigger error</button>
+                        <button type="button" @click="triggerAsyncWarning('b')">Trigger async warning</button>
+                    </div>
                 </div>
                 <ag-grid-vue style="flex: 1 1 auto;"
                              :columnDefs="columnDefs"

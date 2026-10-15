@@ -38,33 +38,3 @@
     width: 100%;
     height: 100%;
 }
-
-.example-wrapper {
-    display: grid;
-    grid-template-rows: auto 1fr;
-    height: 100%;
-    width: 100%;
-}
-
-button {
-    height: unset !important;
-}
-
-.example-button-row {
-    display: inline;
-    gap: 5px;
-    padding-right: 8px;
-}
-
-.example-buttons {
-    padding-bottom: 8px;
-}
-
-.grid-wrapper {
-    flex: 1 1 0px;
-}
-
-#myGrid {
-    height: 100%;
-    width: 100%;
-}

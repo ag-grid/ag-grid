@@ -22,8 +22,6 @@ import { ExcelExportModule, exportMultipleSheetsAsExcel } from 'ag-grid-enterpri
 import type { CustomCellRendererProps } from 'ag-grid-react';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -192,13 +190,15 @@ const GridExample = () => {
     };
 
     const getTopToolBar = () => (
-        <div>
-            <button type="button" className="btn btn-default excel" style={{ marginRight: 5 }} onClick={onExcelExport}>
-                <i className="far fa-file-excel" style={{ marginRight: 5, color: 'green' }}></i>Export to Excel
-            </button>
-            <button type="button" className="btn btn-default reset" onClick={reset}>
-                <i className="fas fa-redo" style={{ marginRight: 5 }}></i>Reset
-            </button>
+        <div className="example-controls">
+            <div className="controls-row">
+                <button type="button" className="excel" onClick={onExcelExport}>
+                    <i className="far fa-file-excel" style={{ marginRight: 5, color: 'green' }}></i>Export to Excel
+                </button>
+                <button type="button" className="reset" onClick={reset}>
+                    <i className="fas fa-redo" style={{ marginRight: 5 }}></i>Reset
+                </button>
+            </div>
         </div>
     );
 
@@ -223,7 +223,7 @@ const GridExample = () => {
 
     return (
         <AgGridProvider modules={modules}>
-            <div className="top-container">
+            <div className="example-wrapper">
                 {getTopToolBar()}
                 <div className="grid-wrapper">
                     {getGridWrapper(0)}
