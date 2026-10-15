@@ -118,6 +118,10 @@ By default, sorting the group column and sorting the aggregated column send the 
 whether that group level is ordered by its key or by its aggregate. Grouping a column also hides it by default. To keep
 it visible, see [Prevent User Grouping from Hiding Columns](./grouping-group-panel/#prevent-user-grouping-from-hiding-columns).
 
+The grid calls `getServerSideGroupAggValue` when group rows are loaded, refreshed or updated with a
+[Transaction](./server-side-model-updating-transactions/). Updating a group row with `rowNode.updateData` or
+`rowNode.setData` keeps the previous aggregate, so use a transaction instead.
+
 The example below groups by **Gold**, aggregates it with `sum` and sorts it ascending. Note the following:
 
 - The server returns each aggregate of a grouped column as `<aggFunc>_<colId>`, such as `sum_gold`.
