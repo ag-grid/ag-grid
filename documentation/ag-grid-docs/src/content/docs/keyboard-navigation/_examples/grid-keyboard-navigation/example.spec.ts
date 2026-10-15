@@ -184,13 +184,22 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework('Tab from last column header enters floating filter row', async ({ agIdFor, page }) => {
-        // Clicking the spanned year header would start navigation from the group row, so arrive on the column row.
+        // Arriving on year by keyboard keeps navigation on the column row.
         await agIdFor.headerCell('total').click();
         await page.keyboard.press('ArrowRight');
         await expect(agIdFor.headerCell('year')).toBeFocused();
 
         await page.keyboard.press('Tab');
         await expect(agIdFor.floatingFilter('ag-Grid-SelectionColumn')).toBeFocused();
+    });
+
+    test.eachFramework('Tab from clicked spanned last header enters column header row', async ({ agIdFor, page }) => {
+        // Clicking a header that spans the group row starts navigation from the group row.
+        await agIdFor.headerCell('year').click();
+        await expect(agIdFor.headerCell('year')).toBeFocused();
+
+        await page.keyboard.press('Tab');
+        await expect(agIdFor.headerCell('ag-Grid-SelectionColumn')).toBeFocused();
     });
 
     test.eachFramework('Enter on floating filter focuses filter input, Escape exits', async ({ agIdFor, page }) => {
