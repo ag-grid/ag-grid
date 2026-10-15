@@ -237,7 +237,7 @@ describe('completing a stored palette', () => {
         neutral: { fill: '#888', stroke: '#555' },
     };
 
-    it('supplies the financial colours a record was written without', () => {
+    it('supplies the semantic colours a record was written without', () => {
         // A palette with none of the three is an indexed palette to AG Charts,
         // which then draws rising candles hollow - so the outline is the whole
         // candle, and switching it off empties the chart.
