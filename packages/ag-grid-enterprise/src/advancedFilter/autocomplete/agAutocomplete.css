@@ -41,10 +41,6 @@
     }
 }
 
-.ag-autocomplete-virtual-list-item:hover {
-    background-color: var(--ag-row-hover-color);
-}
-
 .ag-autocomplete-row {
     display: flex;
     flex: 1 1 auto;
@@ -60,7 +56,8 @@
 }
 
 .ag-autocomplete-row-selected {
-    background-color: var(--ag-selected-row-background-color);
+    background-color: var(--ag-list-item-highlight-background-color);
+    color: var(--ag-list-item-highlight-text-color);
 
     @media (forced-colors: active) {
         background-color: SelectedItem;

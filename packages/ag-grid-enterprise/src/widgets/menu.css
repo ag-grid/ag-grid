@@ -56,7 +56,8 @@
 
 .ag-menu-option-active,
 .ag-compact-menu-option-active {
-    background-color: var(--ag-row-hover-color);
+    background-color: var(--ag-list-item-highlight-background-color);
+    color: var(--ag-list-item-highlight-text-color);
 }
 
 :where(.ag-menu-list-no-focus-ring) .ag-menu-option:focus-visible,

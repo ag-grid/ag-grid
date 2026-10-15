@@ -7,7 +7,8 @@
     text-overflow: ellipsis;
 
     &.ag-active-item {
-        background-color: var(--ag-row-hover-color);
+        background-color: var(--ag-list-item-highlight-background-color);
+        color: var(--ag-list-item-highlight-text-color);
 
         @media (forced-colors: active) {
             background-color: SelectedItem;

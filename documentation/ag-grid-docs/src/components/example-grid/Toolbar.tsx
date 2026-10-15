@@ -40,6 +40,7 @@ const options: Record<string, string> = {
     balham: 'Balham',
     material: 'Material',
     alpine: 'Alpine',
+    'high-contrast': 'High Contrast',
 };
 
 export const Toolbar = ({

@@ -1235,6 +1235,9 @@ export {
     colorSchemeDark,
     colorSchemeDarkBlue,
     colorSchemeDarkWarm,
+    colorSchemeHighContrastDark,
+    colorSchemeHighContrastLight,
+    colorSchemeHighContrastVariable,
     colorSchemeLight,
     colorSchemeLightCold,
     colorSchemeLightWarm,
@@ -1261,7 +1264,14 @@ export {
     tabStyleRolodex,
 } from './theming/parts/tab-style/tab-styles';
 export type { TabStyleParams } from './theming/parts/tab-style/tab-styles';
-export { styleMaterial, themeAlpine, themeBalham, themeMaterial, themeQuartz } from './theming/parts/theme/themes';
+export {
+    styleMaterial,
+    themeAlpine,
+    themeBalham,
+    themeHighContrast,
+    themeMaterial,
+    themeQuartz,
+} from './theming/parts/theme/themes';
 export type { StyleMaterialParams, ThemeDefaultParams } from './theming/parts/theme/themes';
 export type { IconName, Icons } from './utils/icon';
 

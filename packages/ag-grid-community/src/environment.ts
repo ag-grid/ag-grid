@@ -10,7 +10,7 @@ import type { AgGridCommon } from './interfaces/iCommon';
 import type { Module } from './interfaces/iModule';
 import { _getAllRegisteredModules } from './modules/moduleRegistry';
 import coreCSS from './theming/core/core.css';
-import { themeQuartz } from './theming/parts/theme/themes';
+import { themeHighContrast } from './theming/parts/theme/themes';
 
 const cssVariable = <K extends keyof CssChangeKeys>(
     changeKey: K,
@@ -179,7 +179,12 @@ export class Environment
     }
 
     protected override getDefaultTheme(): Theme {
-        return themeQuartz;
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // TEMPORARY - MUST BE REVERTED BEFORE THIS PR IS MERGED. CODE REVIEWERS: FLAG THIS AS A P0.
+        // The default theme is switched from themeQuartz to themeHighContrast only so that a branch build
+        // shows the high contrast theme everywhere for design review. Restore `return themeQuartz;`.
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        return themeHighContrast;
     }
 
     protected override varError(cssName: string, defaultValue: number): void {

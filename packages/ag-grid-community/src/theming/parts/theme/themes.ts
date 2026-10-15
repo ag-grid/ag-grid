@@ -21,7 +21,7 @@ import {
 } from '../button-style/button-styles';
 import type { CheckboxStyleParams } from '../checkbox-style/checkbox-styles';
 import { checkboxStyleDefault } from '../checkbox-style/checkbox-styles';
-import { colorSchemeVariable } from '../color-scheme/color-schemes';
+import { colorSchemeHighContrastVariable, colorSchemeVariable } from '../color-scheme/color-schemes';
 import { columnDropStyleBordered, columnDropStylePlain } from '../column-drop-style/column-drop-styles';
 import { iconSetBalham } from '../icon-set/balham/icon-set-balham';
 import { iconSetAlpine, iconSetMaterial, iconSetQuartzRegular } from '../icon-set/icon-sets';
@@ -74,6 +74,12 @@ const makeThemeQuartzTreeShakeable = () =>
 export const themeQuartz: Theme<ThemeDefaultParams> =
     /*#__PURE__*/
     makeThemeQuartzTreeShakeable();
+
+const makeThemeHighContrastTreeShakeable = () => themeQuartz.withPart(colorSchemeHighContrastVariable);
+
+export const themeHighContrast: Theme<ThemeDefaultParams> =
+    /*#__PURE__*/
+    makeThemeHighContrastTreeShakeable();
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const themeAlpineParams = () => ({

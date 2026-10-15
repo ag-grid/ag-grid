@@ -15,7 +15,14 @@ import type {
     Theme,
     Toolbar as ToolbarConfig,
 } from 'ag-grid-community';
-import { AllCommunityModule, themeAlpine, themeBalham, themeMaterial, themeQuartz } from 'ag-grid-community';
+import {
+    AllCommunityModule,
+    themeAlpine,
+    themeBalham,
+    themeHighContrast,
+    themeMaterial,
+    themeQuartz,
+} from 'ag-grid-community';
 import {
     CellSelectionModule,
     ClipboardModule,
@@ -76,6 +83,7 @@ const themeMap: Record<string, Theme> = {
     balham: themeBalham,
     material: themeMaterial,
     quartz: themeQuartz,
+    'high-contrast': themeHighContrast,
 };
 
 const modules = [
@@ -526,8 +534,13 @@ const ExampleInner = ({
 
 const Example = () => {
     const [darkMode] = useDarkmode();
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // TEMPORARY - MUST BE REVERTED BEFORE THIS PR IS MERGED. CODE REVIEWERS: FLAG THIS AS A P0.
+    // The default is 'high-contrast' only so that a branch build shows that theme for design review.
+    // Restore both defaults below to 'quartz'.
+    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     const [gridThemeStr] = useState<string>(() =>
-        IS_SSR ? 'quartz' : (new URLSearchParams(window.location.search).get('theme') ?? 'quartz')
+        IS_SSR ? 'high-contrast' : (new URLSearchParams(window.location.search).get('theme') ?? 'high-contrast')
     );
     const [dataSizeStr] = useState<string | undefined>(() =>
         IS_SSR ? undefined : (new URLSearchParams(window.location.search).get('dataSize') ?? undefined)

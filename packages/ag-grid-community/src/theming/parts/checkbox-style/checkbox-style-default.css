@@ -105,3 +105,9 @@
         }
     }
 }
+
+.ag-row-selected {
+    --ag-checkbox-checked-background-color: var(--ag-selected-row-checkbox-checked-background-color);
+    --ag-checkbox-checked-border-color: var(--ag-selected-row-checkbox-checked-border-color);
+    --ag-checkbox-checked-shape-color: var(--ag-selected-row-checkbox-checked-shape-color);
+}

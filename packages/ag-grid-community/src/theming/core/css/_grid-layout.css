@@ -422,6 +422,13 @@
 
 .ag-row.ag-row-selected {
     --ag-internal-row-overlay-color: var(--ag-selected-row-background-color);
+    --ag-cell-text-color: var(--ag-selected-row-text-color);
+    --ag-range-selection-border-color: var(--ag-selected-row-range-selection-border-color);
+    --ag-row-drag-indicator-color: var(--ag-selected-row-drag-indicator-color);
+    --ag-drag-handle-color: var(--ag-selected-row-drag-handle-color);
+    --ag-cell-editing-border: var(--ag-selected-row-cell-editing-border);
+    --ag-value-change-delta-up-color: var(--ag-value-change-delta-up-selected-color);
+    --ag-value-change-delta-down-color: var(--ag-value-change-delta-down-selected-color);
 }
 
 .ag-row-hover:not(.ag-full-width-row),

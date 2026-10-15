@@ -120,17 +120,14 @@
 .ag-chart-settings-card-item {
     cursor: pointer;
     position: relative;
-    background-color: var(--ag-foreground-color);
+    background-color: var(--ag-chart-menu-palette-dot-color);
+    border: var(--ag-chart-menu-palette-dot-border);
     width: 8px;
     height: 8px;
     border-radius: 4px;
 
-    &.ag-not-selected {
-        opacity: 0.2;
-    }
-
     &.ag-selected {
-        background-color: var(--ag-accent-color);
+        background-color: var(--ag-chart-menu-palette-dot-selected-color);
     }
 }
 
@@ -450,7 +447,7 @@
 }
 
 .ag-chart-settings-card-item.ag-not-selected:hover {
-    opacity: 0.35;
+    background-color: var(--ag-chart-menu-palette-dot-hover-color);
 }
 
 :where(.ag-dragging-range-handle) .ag-dialog,

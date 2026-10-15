@@ -55,12 +55,16 @@
 }
 
 .ag-rich-select-row-selected {
-    background-color: var(--ag-selected-row-background-color);
+    background-color: var(--ag-list-item-selected-background-color);
+    color: var(--ag-list-item-selected-text-color);
 }
 
-.ag-rich-select-row:hover,
 .ag-rich-select-row-highlighted {
-    background-image: linear-gradient(var(--ag-row-hover-color), var(--ag-row-hover-color));
+    background-image: linear-gradient(
+        var(--ag-list-item-highlight-background-color),
+        var(--ag-list-item-highlight-background-color)
+    );
+    color: var(--ag-list-item-highlight-text-color);
 
     /* gradients are discarded entirely, so this needs a plain fill */
     @media (forced-colors: active) {

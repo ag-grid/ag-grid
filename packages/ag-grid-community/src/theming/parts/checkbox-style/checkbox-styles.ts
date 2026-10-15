@@ -68,6 +68,21 @@ export type CheckboxStyleParams = {
      * An image defining the shape of the mark on checked radio buttons
      */
     radioCheckedShapeImage: ImageValue;
+
+    /**
+     * Background color of a checked checkbox within selected grid rows
+     */
+    selectedRowCheckboxCheckedBackgroundColor: ColorValue;
+
+    /**
+     * Border color of a checked checkbox within selected grid rows
+     */
+    selectedRowCheckboxCheckedBorderColor: ColorValue;
+
+    /**
+     * The color of the check mark on checked checkboxes within selected grid rows
+     */
+    selectedRowCheckboxCheckedShapeColor: ColorValue;
 };
 
 const makeCheckboxStyleDefaultTreeShakeable = () =>
@@ -95,6 +110,9 @@ const makeCheckboxStyleDefaultTreeShakeable = () =>
             radioCheckedShapeImage: {
                 svg: '<svg xmlns="http://www.w3.org/2000/svg" width="6" height="6" fill="none"><circle cx="3" cy="3" r="3" fill="#000"/></svg>',
             },
+            selectedRowCheckboxCheckedBackgroundColor: { ref: 'checkboxCheckedBackgroundColor' },
+            selectedRowCheckboxCheckedBorderColor: { ref: 'checkboxCheckedBorderColor' },
+            selectedRowCheckboxCheckedShapeColor: { ref: 'checkboxCheckedShapeColor' },
         },
         css: checkboxStyleDefaultCSS,
     });

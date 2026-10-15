@@ -99,6 +99,26 @@ export interface CoreParams extends SharedThemeParams {
     chartMenuPanelWidth: LengthValue;
 
     /**
+     * Color of the dots used to page between chart palettes in the chart settings panel, for palettes other than the one shown
+     */
+    chartMenuPaletteDotColor: ColorValue;
+
+    /**
+     * Color of the dots used to page between chart palettes in the chart settings panel when hovered, for palettes other than the one shown
+     */
+    chartMenuPaletteDotHoverColor: ColorValue;
+
+    /**
+     * Border of the dots used to page between chart palettes in the chart settings panel
+     */
+    chartMenuPaletteDotBorder: BorderValue;
+
+    /**
+     * Color of the dot representing the palette currently shown in the chart settings panel
+     */
+    chartMenuPaletteDotSelectedColor: ColorValue;
+
+    /**
      * Vertical borders between columns within the grid only, excluding headers.
      */
     columnBorder: BorderValue;
@@ -344,6 +364,26 @@ export interface CoreParams extends SharedThemeParams {
     iconButtonActiveIndicatorColor: ColorValue;
 
     /**
+     * Background color of the highlighted item in lists and menus, which is the item under the mouse or reached with the arrow keys
+     */
+    listItemHighlightBackgroundColor: ColorValue;
+
+    /**
+     * Text color of the highlighted item in lists and menus, which is the item under the mouse or reached with the arrow keys
+     */
+    listItemHighlightTextColor: ColorValue;
+
+    /**
+     * Background color of the selected item in lists, such as the current value in the rich select editor's list
+     */
+    listItemSelectedBackgroundColor: ColorValue;
+
+    /**
+     * Text color of the selected item in lists, such as the current value in the rich select editor's list
+     */
+    listItemSelectedTextColor: ColorValue;
+
+    /**
      * Background color of the overlay shown over the grid e.g. a data loading indicator.
      */
     modalOverlayBackgroundColor: ColorValue;
@@ -539,6 +579,31 @@ export interface CoreParams extends SharedThemeParams {
     selectedRowBackgroundColor: ColorValue;
 
     /**
+     * Text color of selected rows in the grid
+     */
+    selectedRowTextColor: ColorValue;
+
+    /**
+     * Color used for borders around range selections and the focused cell within selected rows. Change this if `selectedRowBackgroundColor` is too close to `rangeSelectionBorderColor` for the border to be visible.
+     */
+    selectedRowRangeSelectionBorderColor: ColorValue;
+
+    /**
+     * Color of the row drag indicator line within selected rows. Change this if `selectedRowBackgroundColor` is too close to `rowDragIndicatorColor` for the line to be visible.
+     */
+    selectedRowDragIndicatorColor: ColorValue;
+
+    /**
+     * Color of the drag handle on draggable rows within selected rows. Change this if `selectedRowBackgroundColor` is too close to `dragHandleColor` for the handle to be visible.
+     */
+    selectedRowDragHandleColor: ColorValue;
+
+    /**
+     * Border around cells being edited within selected rows. Change this if `selectedRowBackgroundColor` is too close to the color of `cellEditingBorder` for the border to be visible.
+     */
+    selectedRowCellEditingBorder: BorderValue;
+
+    /**
      * Amount of indentation for each level of child items in the Set Filter list when filtering tree data.
      */
     setFilterIndentSize: LengthValue;
@@ -674,6 +739,16 @@ export interface CoreParams extends SharedThemeParams {
      * Color to temporarily apply to cell data when its value increases in an agAnimateShowChangeCellRenderer cell
      */
     valueChangeDeltaUpColor: ColorValue;
+
+    /**
+     * Color to temporarily apply to cell data within selected rows when its value decreases in an agAnimateShowChangeCellRenderer cell
+     */
+    valueChangeDeltaDownSelectedColor: ColorValue;
+
+    /**
+     * Color to temporarily apply to cell data within selected rows when its value increases in an agAnimateShowChangeCellRenderer cell
+     */
+    valueChangeDeltaUpSelectedColor: ColorValue;
 
     /**
      * Background color to apply when a cell value changes and enableCellChangeFlash is enabled
@@ -937,6 +1012,15 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     rowNumbersSelectedColor: accentMix(0.5),
     columnHoverColor: accentMix(0.05),
     selectedRowBackgroundColor: accentMix(0.12),
+    selectedRowTextColor: { ref: 'cellTextColor' },
+    selectedRowRangeSelectionBorderColor: { ref: 'rangeSelectionBorderColor' },
+    selectedRowDragIndicatorColor: { ref: 'rowDragIndicatorColor' },
+    selectedRowDragHandleColor: { ref: 'dragHandleColor' },
+    selectedRowCellEditingBorder: { ref: 'cellEditingBorder' },
+    listItemHighlightBackgroundColor: { ref: 'rowHoverColor' },
+    listItemHighlightTextColor: 'inherit',
+    listItemSelectedBackgroundColor: { ref: 'selectedRowBackgroundColor' },
+    listItemSelectedTextColor: 'inherit',
     modalOverlayBackgroundColor: {
         ref: 'backgroundColor',
         mix: 0.66,
@@ -959,6 +1043,8 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     },
     valueChangeDeltaUpColor: '#43a047',
     valueChangeDeltaDownColor: '#e53935',
+    valueChangeDeltaUpSelectedColor: { ref: 'valueChangeDeltaUpColor' },
+    valueChangeDeltaDownSelectedColor: { ref: 'valueChangeDeltaDownColor' },
     valueChangeValueHighlightBackgroundColor: '#16a08580',
     rowHeight: {
         calc: 'max(iconSize, cellFontSize) + spacing * 3.25 * rowVerticalPaddingScale',
@@ -987,6 +1073,10 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     },
     chartMenuPanelWidth: 260,
     chartMenuLabelColor: foregroundMix(0.8),
+    chartMenuPaletteDotColor: foregroundMix(0.2),
+    chartMenuPaletteDotHoverColor: foregroundMix(0.35),
+    chartMenuPaletteDotBorder: false,
+    chartMenuPaletteDotSelectedColor: accentColor,
     cellEditingBorder: {
         color: accentColor,
     },
