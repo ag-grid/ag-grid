@@ -112,7 +112,11 @@ test.describe('column movement menus', () => {
         });
     }
 
-    test('moving a column beyond the viewport scrolls its header into view', async ({ page }) => {
+    test('moving a column beyond the viewport scrolls its header into view', async ({ page, browserName }) => {
+        test.fixme(
+            browserName === 'webkit',
+            'AG-18945: WebKit focus scroll targets the header before it finishes moving'
+        );
         const { headerCell, withApi } = await mountGrid(page, {
             enterprise: true,
             width: 400,
