@@ -1776,26 +1776,28 @@ export class ColumnFilterService
 
             const uiPromise = getFilterUiFromWrapper<IFilterComp>(filterWrapper);
             if (uiPromise) {
-                uiPromise.then((filter) => {
-                    if (typeof filter?.setModel !== 'function') {
-                        this.warn(65);
-                        resolve();
-                        return;
-                    }
-
-                    const modelApplied: unknown = filter.setModel(newModel);
-                    if (modelApplied != null && _isPromise(modelApplied)) {
-                        void modelApplied.then(() => resolve());
-                    } else {
-                        resolve();
-                    }
-                });
+                uiPromise.then((filter) => this.setModelOnFilterComp(filter, newModel, resolve));
                 return;
             }
 
             // no handler and no filter comp
             resolve();
         });
+    }
+
+    /** Calls `applied` once the filter has the model, after the promise its `setModel` may return. */
+    private setModelOnFilterComp(filter: IFilterComp | null, newModel: any, applied: () => void): void {
+        if (typeof filter?.setModel !== 'function') {
+            this.warn(65);
+            applied();
+            return;
+        }
+        const modelApplied: unknown = filter.setModel(newModel);
+        if (modelApplied != null && _isPromise(modelApplied)) {
+            void modelApplied.then(() => applied());
+        } else {
+            applied();
+        }
     }
 
     /** for handlers only */

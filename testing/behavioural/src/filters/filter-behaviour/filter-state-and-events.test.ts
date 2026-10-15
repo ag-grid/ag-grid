@@ -256,6 +256,53 @@ describe('Filter State & Events', () => {
         expect([api.getFilterModel(), api.getDisplayedRowCount()]).toEqual([{ country: 'Russia' }, 1]);
     });
 
+    test('setColumnFilterModel resolves once the promise a custom filter setModel returns has settled', async () => {
+        let applyModel = () => {};
+        class CountryFilter implements IFilterComp {
+            private model: string | null = null;
+            private readonly eGui = document.createElement('div');
+            public init(): void {}
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public isFilterActive(): boolean {
+                return this.model != null;
+            }
+            public doesFilterPass({ data }: IDoesFilterPassParams<Athlete>): boolean {
+                return data.country === this.model;
+            }
+            public getModel(): string | null {
+                return this.model;
+            }
+            // @ts-expect-error -- framework filters may return a native promise, not the declared `AgPromise<void>`
+            public setModel(model: string | null): Promise<void> {
+                return new Promise((resolve) => {
+                    applyModel = () => {
+                        this.model = model;
+                        resolve();
+                    };
+                });
+            }
+        }
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'athlete' }, { field: 'country', filter: CountryFilter }],
+            rowData: ATHLETES,
+        });
+
+        let settled = false;
+        const modelSet = api.setColumnFilterModel('country', 'Russia').then(() => {
+            settled = true;
+        });
+        await asyncSetTimeout(0);
+        expect(settled).toBe(false);
+
+        applyModel();
+        await modelSet;
+        api.onFilterChanged();
+
+        expect([api.getFilterModel(), api.getDisplayedRowCount()]).toEqual([{ country: 'Russia' }, 1]);
+    });
+
     // ===== STATE: getState() -> initialState round-trip (recreate grid) =====
 
     test('text filter set via UI is captured by getState and restored into a fresh grid via initialState', async () => {
