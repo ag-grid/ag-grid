@@ -198,4 +198,59 @@ test.describe('community grid in a real browser', () => {
         await expect(grid).toBeHidden();
         expect(framesRequestedWhileHidden).toBe(0);
     });
+
+    for (const animating of [false, true]) {
+        test(`a header focused through the API is scrolled into view on the page, as columns animate=${animating}`, async ({
+            page,
+        }) => {
+            const { headerCell, withApi } = await mountGrid(page, {
+                css: 'body{padding-top:2000px}',
+                options: () => ({
+                    columnDefs: [{ field: 'make' }, { field: 'model' }],
+                    rowData: [{ make: 'Toyota', model: 'Celica' }],
+                }),
+            });
+            await expect(headerCell('make')).not.toBeInViewport();
+
+            // `withApi` serialises the function, so each variant is its own literal
+            const moving = await withApi(
+                animating
+                    ? (api) => {
+                          api.applyColumnState({ state: [{ colId: 'model' }, { colId: 'make' }], applyOrder: true });
+                          api.setFocusedHeader('make');
+                          return document.querySelector('.ag-column-moving') !== null;
+                      }
+                    : (api) => {
+                          api.setFocusedHeader('make');
+                          return false;
+                      }
+            );
+
+            expect(moving).toBe(animating);
+            await expect(headerCell('make')).toBeFocused();
+            await expect(headerCell('make')).toBeInViewport({ ratio: 1 });
+        });
+    }
+
+    test('a header focused as grid state moves its column stays scrolled into view', async ({ page }) => {
+        const { headerCell, withApi } = await mountGrid(page, {
+            width: 400,
+            options: () => ({
+                columnDefs: [{ field: 'a' }, ...Array.from({ length: 12 }, (_, i) => ({ field: `b${i}` }))],
+                defaultColDef: { width: 100 },
+                rowData: [{}],
+                suppressColumnVirtualisation: true,
+            }),
+        });
+
+        await withApi((api) => {
+            const order = api.getColumnState().map(({ colId }) => colId);
+            api.setState({ columnOrder: { orderedColIds: [...order.slice(1), order[0]] } }, ['scroll']);
+            api.setFocusedHeader('a');
+        });
+
+        await expect(headerCell('a')).toBeFocused();
+        await expect(headerCell('a')).toHaveCSS('left', '1200px');
+        await expect(headerCell('a')).toBeInViewport({ ratio: 1 });
+    });
 });

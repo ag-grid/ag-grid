@@ -9,7 +9,15 @@ import {
     waitFor,
 } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
-import { TestGridsManager, polyfillOffsetParent } from 'ag-test-utils';
+import {
+    TestGridsManager,
+    dispatchGridSizeChanged,
+    getRevealedElements,
+    installFocusScroll,
+    mockGridLayout,
+    polyfillOffsetParent,
+} from 'ag-test-utils';
+import { onTestFinished } from 'vitest';
 
 import type { ColDef, ColGroupDef, GridApi, GridOptions, IColumnToolPanel } from 'ag-grid-community';
 import { ClientSideRowModelModule, getGridElement } from 'ag-grid-community';
@@ -229,6 +237,62 @@ describe('column movement menu actions', () => {
         ).not.toBeNull();
         await userEvent.click(getByText(grid, 'Move Left'));
         expect(order(api)).toEqual(enableRtl ? ['a', 'c', 'b', 'd'] : ['b', 'a', 'c', 'd']);
+    });
+
+    test.each([false, true])('a header moved past the viewport stays scrolled into view, group=%s', async (group) => {
+        onTestFinished(installFocusScroll());
+        const a: ColDef = { field: 'a', width: 100 };
+        const married: ColGroupDef = {
+            headerName: 'Married',
+            marryChildren: true,
+            children: Array.from({ length: 12 }, (_, i) => ({ field: `b${i}`, width: 100 })),
+        };
+        const api = await create({
+            columnDefs: [group ? { headerName: 'Group', children: [a] } : a, married],
+            suppressColumnVirtualisation: false,
+            ensureDomOrder: false,
+        });
+        onTestFinished(mockGridLayout.resetOptions);
+        // narrow enough that the move takes the header out of the rendered columns, so it is drawn anew
+        dispatchGridSizeChanged(api, 400);
+        const grid = await open('header', api, group ? 'Group' : 'A', group);
+        await userEvent.click(getByText(grid, 'Move Right'));
+        expect(order(api).at(-1)).toBe('a');
+        const left = api.getColumn('a')!.getLeft()!;
+        const expectInView = () => {
+            const range = api.getHorizontalPixelRange();
+            expect(range.left).toBeLessThanOrEqual(left);
+            expect(range.right).toBeGreaterThanOrEqual(left + 100);
+        };
+        expectInView();
+        const focused = document.activeElement!.closest(group ? '.ag-header-group-cell' : '.ag-header-cell')!;
+        expect(focused.textContent!.trim()).toBe(group ? 'Group' : 'A');
+        await waitFor(() => expect(getRevealedElements().at(-1)).toBe(focused));
+        expectInView();
+    });
+
+    test('a header the menu returns focus to after Reset Columns is scrolled into view once it slides back', async () => {
+        onTestFinished(installFocusScroll());
+        const api = await create({
+            columnDefs: [{ field: 'a' }, ...Array.from({ length: 12 }, (_, i) => ({ field: `b${i}` }))],
+            defaultColDef: { width: 100 },
+            ensureDomOrder: false,
+        });
+        onTestFinished(mockGridLayout.resetOptions);
+        dispatchGridSizeChanged(api, 400);
+        api.moveColumns(['a'], 12);
+        api.ensureColumnVisible('a');
+        const grid = await open('header', api, 'A');
+        const header = grid.querySelector('.ag-header-cell[col-id="a"]');
+        const revealedBefore = getRevealedElements().length;
+
+        await userEvent.click(getByText(grid, 'Reset Columns'));
+        expect(order(api)[0]).toBe('a');
+        await waitFor(() => expect(document.activeElement).toBe(header));
+        expect(grid.querySelector('.ag-column-moving')).not.toBeNull();
+        expect(getRevealedElements().slice(revealedBefore)).not.toContain(header);
+        await waitFor(() => expect(getRevealedElements().at(-1)).toBe(header));
+        expect(api.getHorizontalPixelRange().left).toBe(0);
     });
 
     test('keeps header movement within its pinned section', async () => {
