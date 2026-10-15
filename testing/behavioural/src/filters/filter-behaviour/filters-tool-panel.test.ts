@@ -221,6 +221,24 @@ describe('Filters Tool Panel', () => {
         expect(panel.announcement()).not.toContain('No matches');
     });
 
+    test('a mini-filter collapsed before "No matches" is announced does not announce it', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agSetColumnFilter' }],
+            rowData: [{ country: 'Ireland' }, { country: 'France' }],
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+        await panel.expandGroup('Country');
+
+        // Not awaited: the collapse must land before the announcement's timers run.
+        const typingNoMatch = panel.setMiniFilter('Country', 'zz');
+        await panel.collapseGroup('Country');
+        await typingNoMatch;
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        expect(panel.announcement()).not.toContain('No matches');
+    });
+
     test('expand-all / collapse-all toggles column-group expansion', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [

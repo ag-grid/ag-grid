@@ -680,6 +680,7 @@ export class SetFilter<V = string>
 
     public override afterGuiDetached(): void {
         super.afterGuiDetached();
+        this.noMatchesComp.cancelAnnouncement();
 
         const { column, excelMode, model, onStateChange } = this.params;
 
