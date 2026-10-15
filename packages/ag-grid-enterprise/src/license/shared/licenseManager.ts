@@ -11,6 +11,13 @@ const LICENSE_TYPES = {
 };
 const LICENSING_HELP_URL = 'https://www.ag-grid.com/licensing/';
 
+function getLicensedProductNames(licenseType: string): string {
+    if (licenseType === 'BOTH') {
+        return 'Grid and AG Charts';
+    }
+    return licenseType === 'GRID' ? 'Grid' : 'Charts';
+}
+
 export interface ILicenseManager {
     setLicenseKey: (key?: string, gridContext?: boolean) => void;
 }
@@ -42,7 +49,7 @@ export class LicenseManager {
         const suppliedLicenseName =
             licenseDetails.suppliedLicenseType === undefined
                 ? ''
-                : `AG ${licenseDetails.suppliedLicenseType === 'BOTH' ? 'Grid and AG Charts' : licenseDetails.suppliedLicenseType === 'GRID' ? 'Grid' : 'Charts'} Enterprise`;
+                : `AG ${getLicensedProductNames(licenseDetails.suppliedLicenseType)} Enterprise`;
 
         if (licenseDetails.missing) {
             if (!this.isWebsiteUrl() || this.isForceWatermark()) {

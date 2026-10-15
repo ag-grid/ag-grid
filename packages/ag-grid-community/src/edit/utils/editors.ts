@@ -283,11 +283,7 @@ function _createEditorParams(
 
     const cellDataValue = editSvc?.getCellDataValue(position);
     const initialNewValue =
-        cellDataValue === undefined
-            ? editor
-                ? _valueFromEditor(beans, editor)?.editorValue
-                : undefined
-            : cellDataValue;
+        cellDataValue === undefined && editor ? _valueFromEditor(beans, editor)?.editorValue : cellDataValue;
 
     const value =
         initialNewValue === UNEDITED ? valueSvc.getDisplayValue(agColumn, rowNode, 'edit', false) : initialNewValue;

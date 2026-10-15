@@ -248,8 +248,10 @@ export class AgColorPanel<
             e.preventDefault();
 
             const { x: currentX, y: currentY } = this.getSpectrumValue();
-            x = currentX + (isHorizontal ? (isLeft ? -5 : 5) : 0);
-            y = currentY + (isVertical ? (isUp ? -5 : 5) : 0);
+            const stepX = isLeft ? -5 : 5;
+            const stepY = isUp ? -5 : 5;
+            x = currentX + (isHorizontal ? stepX : 0);
+            y = currentY + (isVertical ? stepY : 0);
         }
 
         x = Math.max(x, 0);
