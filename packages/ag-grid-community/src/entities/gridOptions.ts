@@ -159,7 +159,7 @@ import type {
     GetMainMenuItemsParams,
     GetRowHeight,
     GetRowIdParams,
-    GetServerSideGroupAggData,
+    GetServerSideGroupAggValue,
     GetServerSideGroupLevelParams,
     InitialGroupOrderComparator,
     IsApplyServerSideTransactionParams,
@@ -2523,12 +2523,12 @@ export interface GridOptions<TData = any> {
      */
     getServerSideGroupKey?: GetServerSideGroupKey;
     /**
-     * Allows providing the aggregated values of a group row, keyed by column ID.
-     * Use this when a column is both grouped and aggregated, so the server can return the group key and the aggregate under different fields.
-     * Column IDs missing from the result are read from the row data. Not called for the grand total row or for tree data.
+     * Allows providing the aggregate of the column a group row is grouped by, when that column is also aggregated.
+     * Use this so the server can return the group key and the aggregate under different fields.
+     * Returning `undefined` shows the value from the row data. Other columns are always read from the row data. Not called for tree data.
      * @agModule `ServerSideRowModelModule`
      */
-    getServerSideGroupAggData?: GetServerSideGroupAggData<TData>;
+    getServerSideGroupAggValue?: GetServerSideGroupAggValue<TData>;
 
     // *** Rows *** //
     /**

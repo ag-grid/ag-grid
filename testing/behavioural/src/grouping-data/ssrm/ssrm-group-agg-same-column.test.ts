@@ -3,7 +3,7 @@ import { GridRows, TestGridsManager, waitForNoLoadingRows } from 'ag-test-utils'
 
 import type {
     GetRowIdParams,
-    GetServerSideGroupAggDataParams,
+    GetServerSideGroupAggValueParams,
     GridApi,
     IServerSideDatasource,
     IServerSideGetRowsParams,
@@ -94,15 +94,13 @@ describe('SSRM grouping and aggregating the same column', () => {
 
     test('group row shows the key in the group column and the aggregate in the value column', async () => {
         const requests: IServerSideGetRowsRequest[] = [];
-        const getServerSideGroupAggData = vi.fn(({ data }: GetServerSideGroupAggDataParams) => ({
-            gold: data.sum_gold,
-        }));
+        const getServerSideGroupAggValue = vi.fn(({ data }: GetServerSideGroupAggValueParams) => data.sum_gold);
         const api = gridManager.createGrid(null, {
             columnDefs: [{ field: 'athlete' }, { field: 'gold', rowGroup: true, aggFunc: 'sum' }],
             rowModelType: 'serverSide',
             serverSideDatasource: createDatasource(requests),
             getRowId,
-            getServerSideGroupAggData,
+            getServerSideGroupAggValue,
         });
         await waitFor(() => expect(goldGroupRow(api)).toBeDefined());
 
@@ -111,11 +109,11 @@ describe('SSRM grouping and aggregating the same column', () => {
         expect(api.getCellValue({ rowNode: groupRow, colKey: 'ag-Grid-AutoColumn' })).toBe(4);
         expect(api.getCellValue({ rowNode: groupRow, colKey: 'gold' })).toBe(8);
         expect(groupRow.groupData).toEqual({ 'ag-Grid-AutoColumn': 4 });
-        expect(getServerSideGroupAggData).toHaveBeenCalledWith(
+        expect(getServerSideGroupAggValue).toHaveBeenCalledWith(
             expect.objectContaining({
                 data: { gold: 4, sum_gold: 8, count_country: 2 },
                 node: groupRow,
-                rowGroupColumn: api.getColumn('gold'),
+                column: api.getColumn('gold'),
                 api,
             })
         );
@@ -134,7 +132,7 @@ describe('SSRM grouping and aggregating the same column', () => {
         `);
     });
 
-    test('a column missing from the callback result is read from the row data', async () => {
+    test('other value columns are read from the row data', async () => {
         const api = gridManager.createGrid(null, {
             columnDefs: [
                 { field: 'athlete' },
@@ -144,7 +142,7 @@ describe('SSRM grouping and aggregating the same column', () => {
             rowModelType: 'serverSide',
             serverSideDatasource: createDatasource([]),
             getRowId: ({ data, parentKeys }) => data.id ?? [...(parentKeys ?? []), data.country].join('|'),
-            getServerSideGroupAggData: ({ data }) => ({ country: data.count_country }),
+            getServerSideGroupAggValue: ({ data }) => data.count_country,
         });
         await waitFor(() => expect(api.getRowNode('Italy')).toBeDefined());
 
@@ -161,7 +159,7 @@ describe('SSRM grouping and aggregating the same column', () => {
             serverSideDatasource: createDatasource([]),
             getRowId,
             groupTotalRow: 'bottom',
-            getServerSideGroupAggData: ({ data }) => ({ gold: data.sum_gold }),
+            getServerSideGroupAggValue: ({ data }) => data.sum_gold,
         });
         await waitFor(() => expect(goldGroupRow(api)).toBeDefined());
 
@@ -199,9 +197,7 @@ describe('SSRM grouping and aggregating the same column', () => {
 
     test('refreshing the group rows calls the callback again', async () => {
         let goldMultiplier = 1;
-        const getServerSideGroupAggData = vi.fn(({ data }: GetServerSideGroupAggDataParams) => ({
-            gold: data.sum_gold,
-        }));
+        const getServerSideGroupAggValue = vi.fn(({ data }: GetServerSideGroupAggValueParams) => data.sum_gold);
         const api = gridManager.createGrid(null, {
             columnDefs: [{ field: 'athlete' }, { field: 'gold', rowGroup: true, aggFunc: 'sum' }],
             rowModelType: 'serverSide',
@@ -209,11 +205,11 @@ describe('SSRM grouping and aggregating the same column', () => {
                 getRows: (params) => createDatasource([], goldMultiplier).getRows(params),
             },
             getRowId,
-            getServerSideGroupAggData,
+            getServerSideGroupAggValue,
         });
         await waitFor(() => expect(goldGroupRow(api)).toBeDefined());
         const groupRow = goldGroupRow(api);
-        const callsBeforeRefresh = getServerSideGroupAggData.mock.calls.length;
+        const callsBeforeRefresh = getServerSideGroupAggValue.mock.calls.length;
 
         goldMultiplier = 10;
         api.refreshServerSide({ purge: false });
@@ -221,7 +217,7 @@ describe('SSRM grouping and aggregating the same column', () => {
         await waitFor(() => expect(api.getCellValue({ rowNode: groupRow, colKey: 'gold' })).toBe(80));
         expect(goldGroupRow(api)).toBe(groupRow);
         expect(groupRow.key).toBe(4);
-        expect(getServerSideGroupAggData.mock.calls.length).toBeGreaterThan(callsBeforeRefresh);
+        expect(getServerSideGroupAggValue.mock.calls.length).toBeGreaterThan(callsBeforeRefresh);
     });
 
     test('refreshing the group rows updates values that depend on the aggregate', async () => {
@@ -238,7 +234,7 @@ describe('SSRM grouping and aggregating the same column', () => {
             },
             getRowId,
             valueCache: true,
-            getServerSideGroupAggData: ({ data }) => ({ gold: data.sum_gold }),
+            getServerSideGroupAggValue: ({ data }) => data.sum_gold,
         });
         await waitFor(() => expect(goldGroupRow(api)).toBeDefined());
         const groupRow = goldGroupRow(api);
@@ -264,7 +260,7 @@ describe('SSRM grouping and aggregating the same column', () => {
                 getRows: (params) => createDatasource([], goldMultiplier).getRows(params),
             },
             getRowId,
-            getServerSideGroupAggData: ({ data }) => ({ gold: data.sum_gold }),
+            getServerSideGroupAggValue: ({ data }) => data.sum_gold,
         });
         await waitFor(() => expect(goldGroupRow(api)).toBeDefined());
         const groupRow = goldGroupRow(api);
@@ -280,15 +276,13 @@ describe('SSRM grouping and aggregating the same column', () => {
     });
 
     test('a transaction updating the group row calls the callback with the new data', async () => {
-        const getServerSideGroupAggData = vi.fn(({ data }: GetServerSideGroupAggDataParams) => ({
-            gold: data.sum_gold,
-        }));
+        const getServerSideGroupAggValue = vi.fn(({ data }: GetServerSideGroupAggValueParams) => data.sum_gold);
         const api = gridManager.createGrid(null, {
             columnDefs: [{ field: 'athlete' }, { field: 'gold', rowGroup: true, aggFunc: 'sum' }],
             rowModelType: 'serverSide',
             serverSideDatasource: createDatasource([]),
             getRowId,
-            getServerSideGroupAggData,
+            getServerSideGroupAggValue,
         });
         await waitFor(() => expect(goldGroupRow(api)).toBeDefined());
         const groupRow = goldGroupRow(api);
@@ -296,7 +290,7 @@ describe('SSRM grouping and aggregating the same column', () => {
         const newData = { gold: 4, sum_gold: 50, count_country: 2 };
         api.applyServerSideTransaction({ route: [], update: [newData] });
 
-        expect(getServerSideGroupAggData).toHaveBeenLastCalledWith(
+        expect(getServerSideGroupAggValue).toHaveBeenLastCalledWith(
             expect.objectContaining({ data: newData, node: groupRow })
         );
         expect(goldGroupRow(api)).toBe(groupRow);
@@ -305,14 +299,14 @@ describe('SSRM grouping and aggregating the same column', () => {
         expect(api.getCellValue({ rowNode: groupRow, colKey: 'gold' })).toBe(50);
     });
 
-    test('a callback returning null reads the row data, and clears aggregates set before', async () => {
-        let returnNull = false;
+    test('a callback returning undefined reads the row data, and clears aggregates set before', async () => {
+        let returnUndefined = false;
         const api = gridManager.createGrid(null, {
             columnDefs: [{ field: 'athlete' }, { field: 'gold', rowGroup: true, aggFunc: 'sum' }],
             rowModelType: 'serverSide',
             serverSideDatasource: createDatasource([]),
             getRowId,
-            getServerSideGroupAggData: ({ data }) => (returnNull || data.gold === 2 ? null : { gold: data.sum_gold }),
+            getServerSideGroupAggValue: ({ data }) => (returnUndefined || data.gold === 2 ? undefined : data.sum_gold),
         });
         await waitFor(() => expect(goldGroupRow(api)).toBeDefined());
         const groupRow = goldGroupRow(api);
@@ -321,7 +315,7 @@ describe('SSRM grouping and aggregating the same column', () => {
         expect(api.getCellValue({ rowNode: gold2, colKey: 'gold' })).toBe(2);
         expect(api.getCellValue({ rowNode: groupRow, colKey: 'gold' })).toBe(8);
 
-        returnNull = true;
+        returnUndefined = true;
         api.refreshServerSide({ purge: false });
 
         await waitFor(() => expect(groupRow.aggData).toBeNull());
@@ -330,6 +324,7 @@ describe('SSRM grouping and aggregating the same column', () => {
 
     test('a grouped and aggregated column below another group expands by its key', async () => {
         const requests: IServerSideGetRowsRequest[] = [];
+        const getServerSideGroupAggValue = vi.fn(({ data }: GetServerSideGroupAggValueParams) => data.sum_gold);
         const api = gridManager.createGrid(null, {
             columnDefs: [
                 { field: 'athlete' },
@@ -340,15 +335,25 @@ describe('SSRM grouping and aggregating the same column', () => {
             serverSideDatasource: createDatasource(requests),
             getRowId: ({ data, parentKeys }) =>
                 data.id ?? [...(parentKeys ?? []), parentKeys?.length ? data.gold : data.country].join('|'),
-            getServerSideGroupAggData: ({ data }) => (data.country === undefined ? { gold: data.sum_gold } : null),
+            getServerSideGroupAggValue,
         });
         await waitFor(() => expect(api.getRowNode('Italy')).toBeDefined());
+        const italy = api.getRowNode('Italy')!;
+        expect(getServerSideGroupAggValue).not.toHaveBeenCalled();
+        expect(italy.aggData).toBeNull();
+        expect(api.getCellValue({ rowNode: italy, colKey: 'gold' })).toBe(8);
 
-        api.getRowNode('Italy')!.setExpanded(true);
+        italy.setExpanded(true);
         await waitFor(() => expect(api.getRowNode('Italy|4')).toBeDefined());
         const italyGold4 = api.getRowNode('Italy|4')!;
         expect(italyGold4.key).toBe(4);
         expect(api.getCellValue({ rowNode: italyGold4, colKey: 'gold' })).toBe(8);
+        expect(getServerSideGroupAggValue).toHaveBeenCalledWith(
+            expect.objectContaining({ node: italyGold4, column: api.getColumn('gold') })
+        );
+        expect(getServerSideGroupAggValue.mock.calls.every(([params]) => params.column.getColId() === 'gold')).toBe(
+            true
+        );
 
         italyGold4.setExpanded(true);
         await waitFor(() => expect(api.getRowNode('a1')).toBeDefined());
@@ -362,7 +367,7 @@ describe('SSRM grouping and aggregating the same column', () => {
             rowModelType: 'serverSide',
             serverSideDatasource: createDatasource(requests),
             getRowId,
-            getServerSideGroupAggData: ({ data }) => ({ gold: data.sum_gold }),
+            getServerSideGroupAggValue: ({ data }) => data.sum_gold,
         });
         await waitFor(() => expect(goldGroupRow(api)).toBeDefined());
 
@@ -391,7 +396,7 @@ describe('SSRM grouping and aggregating the same column', () => {
             rowModelType: 'serverSide',
             serverSideDatasource: createDatasource(requests),
             getRowId,
-            getServerSideGroupAggData: ({ data }) => ({ gold: data.sum_gold }),
+            getServerSideGroupAggValue: ({ data }) => data.sum_gold,
         });
         await waitFor(() => expect(goldGroupRow(api)).toBeDefined());
 
@@ -417,7 +422,7 @@ describe('SSRM grouping and aggregating the same column', () => {
             rowModelType: 'serverSide',
             serverSideDatasource: createDatasource(requests),
             getRowId,
-            getServerSideGroupAggData: ({ data }) => ({ gold: data.sum_gold }),
+            getServerSideGroupAggValue: ({ data }) => data.sum_gold,
         });
         await waitFor(() => expect(api.getRowNode('a1')).toBeDefined());
 

@@ -34,16 +34,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     sideBar: 'columns',
 
     // the server returns the aggregate of the grouped column as `<aggFunc>_<colId>`, e.g. `sum_gold`
-    getServerSideGroupAggData: (params) => {
-        const column = params.rowGroupColumn;
-        const aggFunc = column?.getAggFunc();
-        // when the grouped column is not aggregated, it shows the group key from the row data
-        if (!column?.isValueActive() || typeof aggFunc !== 'string') {
-            return undefined;
-        }
-        const colId = column.getColId();
-        return { [colId]: params.data[`${aggFunc}_${colId}`] };
-    },
+    getServerSideGroupAggValue: ({ data, column }) => data[`${column.getAggFunc()}_${column.getColId()}`],
 
     rowModelType: 'serverSide',
 };

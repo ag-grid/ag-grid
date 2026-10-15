@@ -241,15 +241,19 @@ export class BlockUtils extends BeanStub implements NamedBean {
         }
     }
 
-    /** The group's aggData from `getServerSideGroupAggData`, or `undefined` when the callback is not set. */
+    /** The group's aggData from `getServerSideGroupAggValue`, or `undefined` when the callback is not set. */
     private getGroupAggData(rowNode: RowNode, data: any): Record<string, any> | null | undefined {
-        const getGroupAggData = this.gos.get('getServerSideGroupAggData');
-        if (!getGroupAggData) {
+        const getGroupAggValue = this.gos.get('getServerSideGroupAggValue');
+        if (!getGroupAggValue) {
             return undefined;
         }
-        // `null`, not `undefined`, so a callback returning nothing still clears aggData set by an earlier load
-        const { rowGroupColumn } = rowNode;
-        return getGroupAggData(this.gos.addCommon({ data, node: rowNode, rowGroupColumn })) ?? null;
+        // `null`, not `undefined`, so a group with no aggregate still clears aggData set by an earlier load
+        const column = rowNode.rowGroupColumn;
+        if (!column?.isValueActive()) {
+            return null;
+        }
+        const value = getGroupAggValue(this.gos.addCommon({ data, node: rowNode, column }));
+        return value === undefined ? null : { [column.getColId()]: value };
     }
 
     private setChildCountIntoRowNode(rowNode: RowNode): void {

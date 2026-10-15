@@ -102,17 +102,17 @@ Group total rows can also be used with `groupDisplayType='multipleColumns'`, as 
 ## Grouping and Aggregating the Same Column
 
 To group by a column and also aggregate it, each group row needs two values for that column: the group key and the
-aggregate. Have the server return the aggregate under a separate field, and use `getServerSideGroupAggData` to tell the
-grid which field holds it:
+aggregate. Have the server return the aggregate under a separate field, and return it from `getServerSideGroupAggValue`.
+The grid only calls it when the column a group row is grouped by is also aggregated:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     // the server returns { gold: 4, sum_gold: 12 } for the group row
-    getServerSideGroupAggData: (params) => ({ gold: params.data.sum_gold }),
+    getServerSideGroupAggValue: (params) => params.data.sum_gold,
 }
 ```
 
-{% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["getServerSideGroupAggData"] /%}
+{% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["getServerSideGroupAggValue"] /%}
 
 By default, sorting the group column and sorting the aggregated column send the same request, so the server chooses
 whether that group level is ordered by its key or by its aggregate. Grouping a column also hides it by default. To keep
@@ -121,8 +121,8 @@ it visible, see [Prevent User Grouping from Hiding Columns](./grouping-group-pan
 The example below groups by **Gold**, aggregates it with `sum` and sorts it ascending. Note the following:
 
 - The server returns each aggregate of a grouped column as `<aggFunc>_<colId>`, such as `sum_gold`.
-- The callback uses `params.rowGroupColumn` to find the column the row is grouped by, so it also works when a
-  different column is grouped and aggregated from the Columns Tool Panel.
+- The callback uses `params.column` to find the column the row is grouped by, so it also works when a different
+  column is grouped and aggregated from the Columns Tool Panel.
 - **Gold** appears in both Row Groups and Values in the Columns Tool Panel.
 
 {% gridExampleRunner title="Grouping and Aggregating the Same Column" name="group-agg-same-column" exampleHeight=590 /%}
