@@ -31,6 +31,9 @@
   "keywords": [],
   "author": "AG Grid <info@ag-grid.com>",
   "license": "MIT",
+  "installConfig": {
+    "hoistingLimits": "workspaces"
+  },
   "devDependencies": {
     "@nx/devkit": "^20.8.4",
     "@swc/helpers": "0.5.23",

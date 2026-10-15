@@ -216,7 +216,8 @@ export class ColumnFilterService
     beanName: BeanName = 'colFilter';
 
     private readonly allColumnFilters = new Map<string, FilterWrapper>();
-    private readonly allColumnListeners = new Map<string, (() => null) | undefined>();
+    /** The `colDefsVersion` the filters last re-derived their params for. */
+    private paramsColDefsVersion = 0;
     private activeAggregateFilters: DoesFilterPassWrapper[] = [];
     private activeColumnFilters: DoesFilterPassWrapper[] = [];
 
@@ -1194,7 +1195,7 @@ export class ColumnFilterService
         const disposals: AgPromise<boolean>[] = [];
         const { filterManager, groupFilter } = this.beans;
 
-        this.allColumnFilters.forEach((wrapper, colId) => {
+        this.allColumnFilters.forEach((wrapper) => {
             // group columns can be recreated with the same colId
             if (this.isCurrentColumn(wrapper.column)) {
                 return;
@@ -1202,7 +1203,6 @@ export class ColumnFilterService
 
             columns.push(wrapper.column);
             disposals.push(this.disposeFilterWrapper(wrapper, 'columnChanged'));
-            this.disposeColumnListener(colId);
         });
 
         const allFiltersAreGroupFilters = groupFilter && columns.every((col) => groupFilter.isGroupFilter(col));
@@ -1340,8 +1340,6 @@ export class ColumnFilterService
         const colId = column.getColId();
         const filterWrapper = this.allColumnFilters.get(colId);
 
-        this.disposeColumnListener(colId);
-
         delete this.initialModel[colId];
 
         if (filterWrapper) {
@@ -1357,15 +1355,6 @@ export class ColumnFilterService
                 }
                 this.beans.setFilterSvc?.createPreservingFilters(column);
             });
-        }
-    }
-
-    private disposeColumnListener(colId: string): void {
-        const columnListener = this.allColumnListeners.get(colId);
-
-        if (columnListener) {
-            this.allColumnListeners.delete(colId);
-            columnListener();
         }
     }
 
@@ -1492,6 +1481,27 @@ export class ColumnFilterService
             });
         }
         return true;
+    }
+
+    /** Whether a column was redefined since the filters last re-derived their params. */
+    public hasRedefinedFilters(): boolean {
+        return this.paramsColDefsVersion !== this.beans.colModel.colDefsVersion;
+    }
+
+    /** Re-derives the params of the filters redefined so far, running their user callbacks. Only called after a
+     *  layout: by `VisibleColsService.refresh` before its layout events, and at the start of each outermost
+     *  `endColUpdate` pass, so the re-filter that follows a column definitions change reads the new params. */
+    public refreshRedefinedFilters(): void {
+        const version = this.beans.colModel.colDefsVersion;
+        if (version === this.paramsColDefsVersion) {
+            return;
+        }
+        this.allColumnFilters.forEach((wrapper, colId) => {
+            if (wrapper.column.takeFilterRedefined()) {
+                this.filterParamsChanged(colId);
+            }
+        });
+        this.paramsColDefsVersion = version;
     }
 
     public filterParamsChanged(colId: string, source: FilterChangedEventSourceType = 'api'): void {
@@ -1625,10 +1635,7 @@ export class ColumnFilterService
     private setColumnFilterWrapper(column: AgColumn, filterWrapper: FilterWrapper): void {
         const colId = column.getColId();
         this.allColumnFilters.set(colId, filterWrapper);
-        this.allColumnListeners.set(
-            colId,
-            this.addManagedListeners(column, { colDefChanged: () => this.filterParamsChanged(colId) })[0]
-        );
+        column.takeFilterRedefined(); // the new filter derives its params from the definition the column holds now
     }
 
     public areFilterCompsDifferent(
@@ -1769,26 +1776,28 @@ export class ColumnFilterService
 
             const uiPromise = getFilterUiFromWrapper<IFilterComp>(filterWrapper);
             if (uiPromise) {
-                uiPromise.then((filter) => {
-                    if (typeof filter?.setModel !== 'function') {
-                        this.warn(65);
-                        resolve();
-                        return;
-                    }
-
-                    const modelApplied: unknown = filter.setModel(newModel);
-                    if (modelApplied != null && _isPromise(modelApplied)) {
-                        void modelApplied.then(() => resolve());
-                    } else {
-                        resolve();
-                    }
-                });
+                uiPromise.then((filter) => this.setModelOnFilterComp(filter, newModel, resolve));
                 return;
             }
 
             // no handler and no filter comp
             resolve();
         });
+    }
+
+    /** Calls `applied` once the filter has the model, after the promise its `setModel` may return. */
+    private setModelOnFilterComp(filter: IFilterComp | null, newModel: any, applied: () => void): void {
+        if (typeof filter?.setModel !== 'function') {
+            this.warn(65);
+            applied();
+            return;
+        }
+        const modelApplied: unknown = filter.setModel(newModel);
+        if (modelApplied != null && _isPromise(modelApplied)) {
+            void modelApplied.then(() => applied());
+        } else {
+            applied();
+        }
     }
 
     /** for handlers only */
@@ -2006,8 +2015,6 @@ export class ColumnFilterService
     public override destroy() {
         super.destroy();
         this.allColumnFilters.forEach((filterWrapper) => this.disposeFilterWrapper(filterWrapper, 'gridDestroyed'));
-        // don't need to destroy the listeners as they are managed listeners
-        this.allColumnListeners.clear();
         this.state.clear();
         this.activeFilterComps.clear();
     }
