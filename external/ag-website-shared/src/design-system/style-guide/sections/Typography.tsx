@@ -4,7 +4,7 @@ import type { FunctionComponent } from 'react';
 import styles from '../StyleGuide.module.scss';
 import { useStyleGuide, useTokens } from '../StyleGuideContext';
 import { CopyButton } from '../chrome/CopyButton';
-import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
+import { Block, Guidance, Section } from '../chrome/Section';
 import { Specimen, Variant } from '../chrome/Specimen';
 import { TokenTable } from '../chrome/TokenTable';
 
@@ -207,26 +207,19 @@ li + li                 margin-bottom: $spacing-size-2   (8px)`}
                 </Specimen>
             </Block>
 
-            <Gotcha>
-                Never skip a heading level to get a size - pick the tag for the document outline and correct the size
-                with a <code>.text-*</code> class. The size and line-height of a step are tuned together, so don&rsquo;t
-                mix one step&rsquo;s size with another&rsquo;s line height.
-            </Gotcha>
-
-            <KnownIssue>
-                <p>
-                    Two line heights are out of pattern with their neighbours. <code>--text-lh-2xl</code> is 1.5 while
-                    every other heading-sized step is between 1.1 and 1.2, so <code>h1</code> sits on a noticeably
-                    looser line than the smaller headings or the larger <code>3xl</code> display size. And{' '}
-                    <code>--text-lh-xs</code> is 1.6666 against 1.4 for <code>sm</code> and <code>base</code>, making
-                    the smallest body step the loosest one.
-                </p>
-                <p>
-                    In <code>_typography.scss</code> the heading and <code>b</code>/<code>strong</code> selectors are
-                    repeated in all three weight rules, so the first two declarations are dead - only{' '}
-                    <code>--text-bold</code> ever applies to a bare heading.
-                </p>
-            </KnownIssue>
+            <Block title="Usage">
+                <Guidance
+                    dos={[
+                        <>
+                            Choose the heading tag for the outline, then set the size with a <code>.text-*</code> class.
+                        </>,
+                    ]}
+                    donts={[
+                        <>Don&rsquo;t skip a heading level to get a size.</>,
+                        <>Don&rsquo;t pair one step&rsquo;s size with another step&rsquo;s line height.</>,
+                    ]}
+                />
+            </Block>
         </Section>
     );
 };

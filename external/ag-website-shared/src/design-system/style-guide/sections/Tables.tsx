@@ -1,7 +1,7 @@
 import type { FunctionComponent } from 'react';
 
 import styles from '../StyleGuide.module.scss';
-import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
+import { Block, Guidance, Section } from '../chrome/Section';
 import { Specimen } from '../chrome/Specimen';
 
 const ROWS = [
@@ -118,24 +118,23 @@ export const Tables: FunctionComponent = () => (
             />
         </Block>
 
-        <Gotcha>
-            Don&rsquo;t put <code>role=&quot;grid&quot;</code> on a static table - that role is for interactive grid
-            widgets and changes how screen readers navigate it. <code>scope</code> is only valid on{' '}
-            <code>&lt;th&gt;</code>, so <code>&lt;td scope=&quot;row&quot;&gt;</code> does nothing. Wrap a wide table in{' '}
-            <code>overflow-x: auto</code> with <code>tabindex=&quot;0&quot;</code> so it can be scrolled by keyboard.
-        </Gotcha>
-
-        <KnownIssue>
-            <p>
-                The previous version of this guide documented a <code>.no-zebra</code> class. No such class exists
-                anywhere in the design system, and there is no zebra striping to turn off - the markup was carried
-                forward from an earlier iteration of the table styles. It has been dropped here rather than reproduced.
-            </p>
-            <p>
-                It also put <code>role=&quot;grid&quot;</code> on every example table and{' '}
-                <code>scope=&quot;row&quot;</code> on <code>&lt;td&gt;</code> elements. Both are incorrect, and a style
-                guide is the worst place to have incorrect markup, since it is copied.
-            </p>
-        </KnownIssue>
+        <Block title="Usage">
+            <Guidance
+                dos={[
+                    <>
+                        Mark header cells with <code>&lt;th scope&gt;</code>.
+                    </>,
+                    <>
+                        Wrap a wide table in a scrolling container with <code>tabindex=&quot;0&quot;</code>, so it can
+                        be scrolled by keyboard.
+                    </>,
+                ]}
+                donts={[
+                    <>
+                        Don&rsquo;t put <code>role=&quot;grid&quot;</code> on a static table.
+                    </>,
+                ]}
+            />
+        </Block>
     </Section>
 );

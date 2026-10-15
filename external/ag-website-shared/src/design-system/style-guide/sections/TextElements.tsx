@@ -2,7 +2,7 @@ import { Icon } from '@ag-website-shared/components/icon/Icon';
 import type { FunctionComponent, ReactNode } from 'react';
 
 import styles from '../StyleGuide.module.scss';
-import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
+import { Block, Guidance, Section } from '../chrome/Section';
 import { Specimen, Variant } from '../chrome/Specimen';
 
 /**
@@ -157,12 +157,21 @@ export const TextElements: FunctionComponent = () => (
             </Specimen>
         </Block>
 
-        <Gotcha>
-            <code>b</code>/<code>i</code> render identically to <code>strong</code>/<code>em</code> here but do not mean
-            the same thing, so pick by meaning. Avoid <code>u</code> entirely - underlined text that is not a link is a
-            usability problem and the system gives no visual distinction between the two. The Mac variant of{' '}
-            <code>kbd</code> is handled for you by the <code>.kbd-mac</code> / <code>.kbd-default</code> pair.
-        </Gotcha>
+        <Block title="Usage">
+            <Guidance
+                dos={[
+                    <>
+                        Pick <code>strong</code> or <code>em</code> by meaning, not by look.
+                    </>,
+                ]}
+                donts={[
+                    <>
+                        Don&rsquo;t use <code>b</code> or <code>i</code> for emphasis.
+                    </>,
+                    <>Don&rsquo;t underline text that is not a link.</>,
+                ]}
+            />
+        </Block>
     </Section>
 );
 
@@ -245,18 +254,19 @@ export const Links: FunctionComponent = () => (
             </div>
         </Block>
 
-        <Gotcha>
-            An <code>&lt;a&gt;</code> with no <code>href</code> is not focusable or keyboard-operable, so never use one
-            for an action. Colour and weight together distinguish a link, which means inside a heading or other bold
-            text it is left carrying colour alone - check it still reads.
-        </Gotcha>
-
-        <KnownIssue>
-            <p>
-                Link colours are still marked <code>// TODO, review &amp; replace color</code>. In light mode{' '}
-                <code>--color-link</code> is <code>--color-brand-500</code>; check its contrast row in the colour
-                section before using it on anything other than <code>--color-bg-primary</code>.
-            </p>
-        </KnownIssue>
+        <Block title="Usage">
+            <Guidance
+                dos={[
+                    <>
+                        Check that a link inside a heading or bold text still reads. It is marked by colour alone there.
+                    </>,
+                ]}
+                donts={[
+                    <>
+                        Don&rsquo;t use an <code>&lt;a&gt;</code> without <code>href</code> for an action.
+                    </>,
+                ]}
+            />
+        </Block>
     </Section>
 );

@@ -2,7 +2,7 @@ import type { FunctionComponent } from 'react';
 
 import styles from '../StyleGuide.module.scss';
 import { CopyButton } from '../chrome/CopyButton';
-import { Block, Gotcha, Guidance, KnownIssue, Section } from '../chrome/Section';
+import { Block, Guidance, Section } from '../chrome/Section';
 import { Specimen } from '../chrome/Specimen';
 
 /**
@@ -182,70 +182,35 @@ centered?: boolean`}
             </Specimen>
         </Block>
 
-        <Guidance
-            dos={[
-                <>
-                    Write <code>alt</code> as what the reader would miss - &ldquo;rows grouped by country, with the
-                    group column pinned left&rdquo;, not &ldquo;screenshot of the grid&rdquo;.
-                </>,
-                <>
-                    Set <code>maxWidth</code> on anything wider than the text measure, so a full-resolution screenshot
-                    does not dominate the page.
-                </>,
-                <>
-                    Prefer a real <code>-dark</code> asset over <code>enableDarkModeFilter</code> for anything
-                    containing a screenshot of the grid - the filter inverts the data too.
-                </>,
-            ]}
-            donts={[
-                <>
-                    Don&rsquo;t use a video where an image would do. It costs more to load, cannot be read by a screen
-                    reader, and loops in the reader&rsquo;s peripheral vision while they read the surrounding prose.
-                </>,
-                <>
-                    Don&rsquo;t put text in an image. It does not scale, translate, or survive dark mode, and it is
-                    invisible to search.
-                </>,
-                <>
-                    Don&rsquo;t leave the caption body empty just to get <code>centered</code> or the dark-mode swap -
-                    the component renders the caption container unconditionally, so an empty body leaves an empty
-                    element and its spacing behind.
-                </>,
-            ]}
-        />
-
-        <Gotcha>
-            <code>imagePath</code> resolves relative to the markdoc page&rsquo;s own folder, not to a shared image
-            directory - so moving a page moves its images with it, and two pages showing the same screenshot each need
-            their own copy unless one of them passes <code>pageName</code> to point at the other&rsquo;s folder.
-        </Gotcha>
-
-        <KnownIssue>
-            <p>
-                <code>Video</code> renders <strong>both</strong> the play and the pause button at all times and hides
-                one with <code>opacity: 0</code>. Opacity removes neither from the accessibility tree nor from hit
-                testing, so a screen reader announces &ldquo;Play video&rdquo; and &ldquo;Pause video&rdquo; whatever
-                the state, both are in the tab order, and because the two are absolutely positioned on top of each other
-                the pause button takes every click. It happens to work - both handlers call the same toggle - but the
-                control that looks pressable is not the one receiving the press.
-            </p>
-            <p>
-                The state classes are inverted relative to their names: <code>styles.isPaused</code> is applied while
-                the video <em>is playing</em>, and <code>styles.isPlaying</code> while it is paused. The rendering is
-                correct - <code>.isPaused .pauseButton</code> reveals the pause control, which is what you want during
-                playback - but anyone reading either file alone will conclude it is broken.
-            </p>
-            <p>
-                Neither image component uses <code>&lt;figure&gt;</code>/<code>&lt;figcaption&gt;</code>, which is the
-                markup this pattern exists for. <code>ImageCaption.astro</code> emits a <code>&lt;div&gt;</code>
-                wrapping an <code>&lt;img&gt;</code> and a second <code>&lt;div&gt;</code> for the caption, so the
-                association between the two is visual only and is not conveyed to assistive technology.
-            </p>
-            <p>
-                <code>touchimage.ts</code> exports a <code>touchImage</code> tag that no <code>markdoc.config.ts</code>{' '}
-                in this repo registers, so <code>TouchImage.astro</code> is unreachable from grid documentation. It may
-                still be wired up in the Charts or Studio sites, which keep their own tag registries.
-            </p>
-        </KnownIssue>
+        <Block title="Usage">
+            <Guidance
+                dos={[
+                    <>
+                        Write <code>alt</code> as what the reader would miss - &ldquo;rows grouped by country, with the
+                        group column pinned left&rdquo;, not &ldquo;screenshot of the grid&rdquo;.
+                    </>,
+                    <>
+                        Set <code>maxWidth</code> on anything wider than the text measure, so a full-resolution
+                        screenshot does not dominate the page.
+                    </>,
+                    <>
+                        Prefer a real <code>-dark</code> asset over <code>enableDarkModeFilter</code> for anything
+                        containing a screenshot of the grid - the filter inverts the data too.
+                    </>,
+                ]}
+                donts={[
+                    <>
+                        Don&rsquo;t use a video where an image would do. It costs more to load, cannot be read by a
+                        screen reader, and loops in the reader&rsquo;s peripheral vision while they read the surrounding
+                        prose.
+                    </>,
+                    <>
+                        Don&rsquo;t put text in an image. It does not scale, translate, or survive dark mode, and it is
+                        invisible to search.
+                    </>,
+                    <>Don&rsquo;t add an empty caption just to centre an image.</>,
+                ]}
+            />
+        </Block>
     </Section>
 );

@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 import styles from '../StyleGuide.module.scss';
 import { CopyButton } from '../chrome/CopyButton';
-import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
+import { Block, Guidance, Section } from '../chrome/Section';
 import { Specimen } from '../chrome/Specimen';
 
 interface FrameworkOption {
@@ -434,37 +434,20 @@ contentClassName?: string     // on the dropdown, e.g. to match the trigger widt
             </p>
         </Block>
 
-        <Gotcha>
-            <code>.input-error</code> and <code>.req</code> are visual only - pair them with <code>aria-invalid</code>,{' '}
-            <code>aria-describedby</code> and <code>required</code> so the state is actually announced. Never use a
-            placeholder as the label: it disappears on input. And don&rsquo;t restyle the focus ring, since{' '}
-            <code>outline</code> is cleared and the ring is the only indicator these controls have.
-        </Gotcha>
-
-        <KnownIssue>
-            <p>
-                <code>--color-input-error</code> is the bare keyword <code>red</code> rather than a palette token, so it
-                is the same value in both themes and sits outside the colour system entirely. Its contrast against the
-                dark background is poor.
-            </p>
-            <p>
-                <code>Select</code> defaults <code>triggerAriaLabel</code> to the string{' '}
-                <code>&quot;Framework selector&quot;</code>. Every caller that does not pass one - and the prop is
-                optional, so it is easy to miss - announces itself as a framework selector regardless of what it
-                actually selects.
-            </p>
-            <p>
-                <code>Select</code> wraps <code>getOptionContent</code> in a <code>useCallback</code> with an empty
-                dependency array while it closes over the <code>getKey</code>, <code>getLabel</code> and{' '}
-                <code>renderItem</code> props. A caller that passes an inline arrow - the normal way to pass these -
-                gets the first render&rsquo;s version pinned for the component&rsquo;s lifetime, so an option renderer
-                that depends on anything outside <code>options</code> silently goes stale.
-            </p>
-            <p>
-                Disabled text inputs set <code>cursor: pointer</code> alongside <code>pointer-events: none</code> in{' '}
-                <code>elements/_form-elements.scss</code>, which reads as a copy-paste slip - a disabled control should
-                not suggest it is clickable.
-            </p>
-        </KnownIssue>
+        <Block title="Usage">
+            <Guidance
+                dos={[
+                    <>Give every control a visible label.</>,
+                    <>
+                        Pair <code>.input-error</code> and <code>.req</code> with <code>aria-invalid</code>,{' '}
+                        <code>aria-describedby</code> and <code>required</code>, so the state is announced.
+                    </>,
+                ]}
+                donts={[
+                    <>Don&rsquo;t use a placeholder as the label. It disappears as soon as the reader types.</>,
+                    <>Don&rsquo;t restyle the focus ring. It is the only focus indicator these controls have.</>,
+                ]}
+            />
+        </Block>
     </Section>
 );
