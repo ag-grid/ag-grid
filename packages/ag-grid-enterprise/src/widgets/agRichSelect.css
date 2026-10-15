@@ -58,6 +58,7 @@
     background-color: var(--ag-selected-row-background-color);
 
     @media (forced-colors: active) {
+        /* no need for a corresponding color:SelectedItemText, the browser draws a backplate behind the text to keep it readable */
         background-color: SelectedItem;
     }
 }

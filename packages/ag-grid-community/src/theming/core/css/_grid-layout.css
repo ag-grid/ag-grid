@@ -228,7 +228,7 @@
     @media (forced-colors: active) {
         border-color: Canvas;
 
-        /* Mark stands out from both Canvas and the SelectedItem fill of selected cells */
+        /* no need for a corresponding color:MarkText, the browser draws a backplate behind the text to keep it readable */
         --ag-value-change-value-highlight-background-color: Mark;
         --ag-range-selection-highlight-color: Mark;
     }
