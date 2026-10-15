@@ -32,6 +32,7 @@ import {
     _registerModule,
     _unRegisterGridModules,
 } from './modules/moduleRegistry';
+import { _getGridMountTarget } from './utils/hostStyleIsolation';
 import { _isDebugLoggingEnabled } from './utils/log';
 import { _errorWithoutAttribution, _logPreInitErr, _renderBootstrapPanel } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
@@ -85,7 +86,7 @@ export function createGrid<TData>(
         return {} as GridApi;
     }
     const [outer, inner] = _createStyledRootElements();
-    eGridDiv.appendChild(outer);
+    _getGridMountTarget(eGridDiv, gridOptions, params).appendChild(outer);
     const api = new GridCoreCreator().create(
         outer,
         inner,
