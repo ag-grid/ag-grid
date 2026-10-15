@@ -5,7 +5,7 @@ import type { FunctionComponent } from 'react';
 import styles from '../StyleGuide.module.scss';
 import { useStyleGuide, useTokens } from '../StyleGuideContext';
 import { CopyButton } from '../chrome/CopyButton';
-import { Block, Guidance, KnownIssue, Section } from '../chrome/Section';
+import { Block, Guidance, Section } from '../chrome/Section';
 import { Specimen } from '../chrome/Specimen';
 import { TokenTable } from '../chrome/TokenTable';
 import { parseSassVariables, pxVariables, resolveSassAliases } from '../lib/sassSource';
@@ -138,14 +138,6 @@ export const LayoutSection: FunctionComponent = () => {
                     ]}
                 />
             </Block>
-
-            <KnownIssue>
-                <p>
-                    <code>--layout-horizontal-margins</code> goes <em>down</em> from 24px to 20px above 920px, so page
-                    gutters get narrower as the viewport gets wider. That is the opposite of what the token name
-                    suggests and of what most layouts want.
-                </p>
-            </KnownIssue>
         </Section>
     );
 };
@@ -244,30 +236,14 @@ export const Breakpoints: FunctionComponent = () => {
             lede={
                 <>
                     <p>
-                        Breakpoints are Sass variables, because a custom property cannot be used in a{' '}
-                        <code>@media</code> or <code>@container</code> condition. They are exposed with a{' '}
-                        <code>$breakpoint-</code> prefix, so <code>$site-header-small</code> in{' '}
-                        <code>core/_breakpoints.scss</code> is written <code>$breakpoint-site-header-small</code> at the
-                        call site.
-                    </p>
-                    <p>
-                        <strong>There is no global breakpoint scale.</strong> Almost every value belongs to one
-                        component and is named after it. That is a deliberate trade - components reflow when their own
-                        content stops fitting rather than at shared device widths - but it means the site as a whole
-                        reflows at {all.length} distinct widths.
+                        Breakpoints are Sass variables with a <code>$breakpoint-</code> prefix. There is no global
+                        scale: each value belongs to one component and is named after it, so a component reflows when
+                        its own content stops fitting rather than at a shared device width.
                     </p>
                 </>
             }
         >
-            <Block
-                title="Where the site reflows"
-                note={
-                    <p>
-                        Every breakpoint plotted on one axis. The clustering is the point: several groups sit within a
-                        few pixels of each other and could almost certainly share a value.
-                    </p>
-                }
-            >
+            <Block title="Where the site reflows" note={<p>Every breakpoint, plotted on one axis.</p>}>
                 <div className={styles.ruler}>
                     {all.map((entry) => (
                         <span
@@ -287,18 +263,10 @@ export const Breakpoints: FunctionComponent = () => {
             <Block
                 title="Site header"
                 note={
-                    <>
-                        <p>
-                            The header is the one component that does not follow the pattern above, in three ways worth
-                            knowing before you touch it. It is <strong>container-queried</strong> rather than
-                            media-queried, four of its thresholds are <strong>tunable per repo</strong>, and its most
-                            important threshold is <strong>not the one named after it</strong>.
-                        </p>
-                        <p>
-                            Values below are the ones in force on this site, resolved through Sass - so where this repo
-                            overrides a shared default, you are seeing the override.
-                        </p>
-                    </>
+                    <p>
+                        The header responds to its own width rather than the viewport&rsquo;s. Values are the ones in
+                        force on this site.
+                    </p>
                 }
             >
                 <div className={styles.tableScroll}>
@@ -334,149 +302,8 @@ export const Breakpoints: FunctionComponent = () => {
             </Block>
 
             <Block
-                title="The header’s naming trap"
-                note={
-                    <p>
-                        <code>$breakpoint-site-header-small</code> sounds like the threshold that collapses the header,
-                        and it is not. That is <code>$nav-collapse</code>, which lives in a different file and is a
-                        different number on this site.
-                    </p>
-                }
-            >
-                <Specimen
-                    code={`// core/_breakpoints.scss — shared by several unrelated components
-$site-header-small: 960px;   // announcement banner, campaign pages,
-                             // automated examples … and NOT the nav collapse
-
-// design-system/_site-header-tokens.scss — header-exclusive, per-repo
-$nav-collapse: 960px !default;   // the actual hamburger threshold`}
-                >
-                    <p>
-                        The split is deliberate. <code>$nav-collapse</code> has to differ per product because nav item
-                        counts differ, and moving <code>$site-header-small</code> to achieve that would drag the
-                        announcement banner, the campaign pages and the automated examples along with it. They are the
-                        same number in the shared defaults, which is exactly why the two get conflated.
-                    </p>
-                </Specimen>
-            </Block>
-
-            <Block
-                title="Container queries, and the two deliberate exceptions"
-                note={
-                    <p>
-                        <code>.header</code> declares itself a container, so the header responds to{' '}
-                        <em>its own width</em> rather than the viewport&rsquo;s - which is why it behaves correctly
-                        wherever it is placed. Two thresholds cannot work that way, and both are <code>@media</code> on
-                        purpose rather than by oversight.
-                    </p>
-                }
-            >
-                <Specimen
-                    code={`.header {
-    container-type: inline-size;
-    container-name: site-header;
-}
-
-// The rule: everything queries the header's own width
-@container site-header (min-width: #{$nav-collapse}) { … }
-
-// Exception 1 — the header's own sticky behaviour.
-// A container cannot query its own size, so this can only
-// approximate $nav-collapse: it lands a scrollbar width later.
-@media screen and (min-width: $sticky-at) { position: sticky; }
-
-// Exception 2 — the mobile nav button's hide threshold.
-// Must agree to the pixel with DocsNav's own @media query, and a
-// container query here would measure the viewport minus scrollbar.
-@media screen and (min-width: $docs-button-hide-at) { … }`}
-                >
-                    <p>
-                        Exception 1 leaves a sliver a scrollbar wide where the header has gone sticky but the hamburger
-                        is still showing. An open mobile menu is roughly as tall as the page, so in that sliver it could
-                        never be scrolled out of view - <code>SiteHeader.module.scss</code> covers it by dropping back
-                        to <code>position: relative</code> via{' '}
-                        <code>&amp;:has(.mobileMenuButton[aria-expanded=&apos;true&apos;])</code>. If you change{' '}
-                        <code>$sticky-at</code> or <code>$nav-collapse</code>, check that case still holds.
-                    </p>
-                </Specimen>
-            </Block>
-
-            <Block
-                title="Tuning the header for a repo"
-                note={
-                    <p>
-                        The four tunable thresholds are declared <code>!default</code> so a repo can configure some and
-                        inherit the rest. The override works through Sass load-path ordering rather than an import: the
-                        repo&rsquo;s own <code>_site-header-tokens.scss</code> sits ahead of the shared package in{' '}
-                        <code>astro.config.mjs</code>, so it wins the bare <code>site-header-tokens</code> specifier.
-                    </p>
-                }
-            >
-                <Specimen
-                    code={`// documentation/ag-grid-docs/src/styles/header-tokens/_site-header-tokens.scss
-//
-// Grid's top nav carries more than the shared defaults were tuned for
-// (Products switcher + 7 links), so both thresholds are raised.
-@forward '…/design-system/site-header-tokens' with (
-    $nav-collapse: 1120px,        // shared default 960px
-    $docs-search-inline: 1300px   // shared default 1180px
-);`}
-                >
-                    <p>
-                        Anything not listed in <code>with (...)</code> keeps the shared default - which is why{' '}
-                        <code>$switcher-popup-at</code> and <code>$search-box-cap-at</code> still read{' '}
-                        {headerTokens['header-switcher-popup-at']} and {headerTokens['header-search-box-cap-at']} in the
-                        table above. Reach for this only when the value genuinely has to differ by product; the rest of
-                        the header&rsquo;s breakpoints are shared for a reason.
-                    </p>
-                </Specimen>
-            </Block>
-
-            <Block
-                title="The homepage header shares :root"
-                note={
-                    <p>
-                        One easily-missed consequence of how <code>_root.scss</code> is written: the token block is
-                        applied to two selectors, not one.
-                    </p>
-                }
-            >
-                <Specimen
-                    code={`:root,
-[data-is-homepage='true'] .site-header:not(.header-scrolled) {
-    --layout-gap: 32px;
-    /* …every other token… */
-}`}
-                >
-                    <p>
-                        The unscrolled homepage header re-declares the entire root token block on itself. That is what
-                        lets it render against the hero rather than the page background, but it also means a token you
-                        add to <code>:root</code> is declared twice, and that overriding one on a homepage-header
-                        descendant will not behave as you expect. Check the homepage header specifically after changing
-                        a layout or colour token.
-                    </p>
-                </Specimen>
-            </Block>
-
-            <KnownIssue>
-                <p>
-                    <code>documentation/ag-grid-docs/src/styles/header-tokens/README.md</code> states that the override
-                    file there is &ldquo;currently a no-op, since ag-grid has no reason to diverge from the shared
-                    defaults yet&rdquo;. It is not - the file raises <code>$nav-collapse</code> to 1120px and{' '}
-                    <code>$docs-search-inline</code> to 1300px, which is what the table above reports. Anyone trusting
-                    that README would conclude this site runs the shared 960px/1180px defaults.
-                </p>
-            </KnownIssue>
-
-            <Block
                 title="All breakpoints"
-                note={
-                    <p>
-                        Sorted by width; the name tells you which component owns the value. The last column is the gap
-                        to the previous breakpoint - a <code>0px</code> or single-digit gap is a pair that could almost
-                        certainly be one value.
-                    </p>
-                }
+                note={<p>Sorted by width. The name tells you which component owns the value.</p>}
             >
                 {visible.length === 0 ? (
                     <p className={styles.emptyState}>No breakpoints match the current filter.</p>
@@ -526,7 +353,7 @@ $nav-collapse: 960px !default;   // the actual hamburger threshold`}
                 )}
             </Block>
 
-            <Block title="Adding a breakpoint">
+            <Block title="Usage">
                 <Guidance
                     dos={[
                         <>
@@ -554,15 +381,6 @@ $nav-collapse: 960px !default;   // the actual hamburger threshold`}
                     ]}
                 />
             </Block>
-
-            <KnownIssue>
-                <p>
-                    There are {all.length} breakpoints for a site with roughly four meaningful layout widths. Values
-                    cluster tightly - 480/500/520, 605/620/630/640, 900/920/940 - and several are duplicates under
-                    different names. Consolidating them is a worthwhile piece of work, and this table is the inventory
-                    for it.
-                </p>
-            </KnownIssue>
         </Section>
     );
 };
