@@ -4,7 +4,7 @@ import type { FunctionComponent } from 'react';
 
 import styles from '../StyleGuide.module.scss';
 import { CopyButton } from '../chrome/CopyButton';
-import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
+import { Block, Guidance, Section } from '../chrome/Section';
 import { Specimen } from '../chrome/Specimen';
 import { parseSassVariables } from '../lib/sassSource';
 
@@ -122,38 +122,26 @@ export const Motion: FunctionComponent = () => {
                 </div>
             </Block>
 
-            <Block
-                title="View transitions"
-                note={
-                    <p>
-                        <code>_interactions.scss</code> suppresses the default root cross-fade, so only named view
-                        transitions animate. Without it the root and <code>&lt;main&gt;</code> fade together and every
-                        navigation double-fades - so give a new transition a name and animate that, rather than
-                        re-enabling the root.
-                    </p>
-                }
-            >
-                <Specimen
-                    code={`::view-transition-old(root),
-::view-transition-new(root) {
-    animation: none;
-}`}
+            <Block title="Usage">
+                <Guidance
+                    dos={[
+                        <>Name the properties you transition.</>,
+                        <>
+                            Animate <code>transform</code> and <code>opacity</code>.
+                        </>,
+                        <>Give a page transition a name and animate that.</>,
+                    ]}
+                    donts={[
+                        <>
+                            Don&rsquo;t transition <code>all</code>. Later layout changes start animating.
+                        </>,
+                        <>
+                            Don&rsquo;t animate <code>height</code>, <code>width</code> or <code>top</code>.
+                        </>,
+                        <>Don&rsquo;t re-enable the root view transition. Every navigation double-fades.</>,
+                    ]}
                 />
             </Block>
-
-            <Gotcha>
-                List the properties you transition rather than using <code>all</code>, which makes later layout changes
-                animate unexpectedly. Prefer <code>transform</code> over <code>height</code>, <code>width</code> or{' '}
-                <code>top</code> - those force layout on every frame.
-            </Gotcha>
-
-            <KnownIssue>
-                <p>
-                    No global <code>prefers-reduced-motion</code> handling. Individual components honour it, but nothing
-                    in <code>_interactions.scss</code> or <code>_base.scss</code> does, so every new animated component
-                    has to remember on its own.
-                </p>
-            </KnownIssue>
         </Section>
     );
 };

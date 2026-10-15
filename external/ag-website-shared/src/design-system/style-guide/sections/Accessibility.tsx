@@ -49,39 +49,6 @@ const AUDITED: { token: string; against: string; large: boolean }[] = [
     { token: '--color-input-bg-checked', against: '--color-bg-primary', large: true },
 ];
 
-/**
- * Pairings deliberately left out of the audit, shown to the reader with the reason.
- *
- * Listing the exclusions matters as much as listing the failures - it is what stops the audit
- * being read as "these are the only colours anyone checked".
- */
-const EXCLUDED = [
-    {
-        tokens: '--color-fg-white, --color-button-*-fg',
-        reason: 'Designed for a coloured or dark surface, never for the page background. Audited against their own backgrounds where that pairing is fixed.',
-    },
-    {
-        tokens: '--color-border-secondary, --color-border-tertiary',
-        reason: 'Decorative dividers. WCAG 1.4.11 applies to indicators that convey state or bound a control, not to visual separation.',
-    },
-    {
-        tokens: '--color-fg-disabled, --color-fg-placeholder, --color-*-disabled-*',
-        reason: 'Inactive controls, exempt from 1.4.3 and 1.4.11.',
-    },
-    {
-        tokens: '--color-fg-quinary',
-        reason: 'Subtle decorative marks only. Not used for text or for anything conveying state.',
-    },
-    {
-        tokens: '--color-*-shadow-focus',
-        reason: 'Focus rings sit against the control they surround, not the page, and are paired with a border change. Judge them visually in the focus specimen below.',
-    },
-    {
-        tokens: '--color-code-*',
-        reason: 'Syntax highlighting, audited against --color-code-background in the code section instead.',
-    },
-];
-
 interface Measurement {
     token: string;
     against: string;
@@ -151,8 +118,8 @@ export const Accessibility: FunctionComponent = () => {
             source={['_root.scss', 'elements/_button.scss', 'elements/_form-elements.scss']}
             lede={
                 <p>
-                    The design system gives you focus rings and correct semantics for free. It does not check contrast,
-                    manage focus order or provide accessible names - see the table below for the split.
+                    Every interactive element has a visible focus ring. Contrast, focus order and accessible names are
+                    yours to check.
                 </p>
             }
         >
@@ -241,37 +208,6 @@ export const Accessibility: FunctionComponent = () => {
             </Block>
 
             <Block
-                title="Deliberately not audited"
-                note={
-                    <p>
-                        These are left out because the threshold does not apply, not because they were overlooked. If
-                        you use one of them for something the exemption does not cover, check it yourself.
-                    </p>
-                }
-            >
-                <div className={styles.tableScroll}>
-                    <table className={styles.tokenTable}>
-                        <thead>
-                            <tr>
-                                <th scope="col">Tokens</th>
-                                <th scope="col">Why</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {EXCLUDED.map(({ tokens: names, reason }) => (
-                                <tr key={names}>
-                                    <td data-column="Tokens">
-                                        <code>{names}</code>
-                                    </td>
-                                    <td data-column="Why">{reason}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </Block>
-
-            <Block
                 title="Focus indication"
                 note={
                     <p>
@@ -289,83 +225,6 @@ export const Accessibility: FunctionComponent = () => {
                     <code>--color-input-shadow-focus</code>. It is a tint of the control&rsquo;s own colour rather than
                     a single system-wide focus colour, which keeps it visible on both light and dark buttons.
                 </p>
-            </Block>
-
-            <Block title="What the system handles, and what it does not">
-                <div className={styles.tableScroll}>
-                    <table className={styles.tokenTable}>
-                        <thead>
-                            <tr>
-                                <th scope="col">Concern</th>
-                                <th scope="col">Handled by the design system</th>
-                                <th scope="col">Yours to handle</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td data-column="Concern">Focus visibility</td>
-                                <td data-column="Handled by the design system">
-                                    Ring on all buttons, inputs, selects, checkboxes, radios and ranges, via{' '}
-                                    <code>:focus-visible</code>.
-                                </td>
-                                <td data-column="Yours to handle">
-                                    Custom interactive elements, and anything where you override <code>box-shadow</code>
-                                    .
-                                </td>
-                            </tr>
-                            <tr>
-                                <td data-column="Concern">Colour contrast</td>
-                                <td data-column="Handled by the design system">
-                                    Nothing. Tokens are not validated against any threshold.
-                                </td>
-                                <td data-column="Yours to handle">
-                                    Every pairing you introduce. Use the tables in the colour section.
-                                </td>
-                            </tr>
-                            <tr>
-                                <td data-column="Concern">Reduced motion</td>
-                                <td data-column="Handled by the design system">
-                                    Nothing globally. <code>.no-transitions</code> exists but is for suppressing
-                                    transitions during theme and layout changes, not for the user preference.
-                                </td>
-                                <td data-column="Yours to handle">
-                                    A <code>prefers-reduced-motion</code> block for anything that moves.
-                                </td>
-                            </tr>
-                            <tr>
-                                <td data-column="Concern">Accessible names</td>
-                                <td data-column="Handled by the design system">
-                                    Nothing. Icons render as bare SVG with no title.
-                                </td>
-                                <td data-column="Yours to handle">
-                                    <code>aria-label</code> on icon-only controls, <code>&lt;label for&gt;</code> on
-                                    every field.
-                                </td>
-                            </tr>
-                            <tr>
-                                <td data-column="Concern">Dark mode</td>
-                                <td data-column="Handled by the design system">
-                                    Every semantic and component token re-points automatically.
-                                </td>
-                                <td data-column="Yours to handle">
-                                    Any literal colour you write, and any contrast that only works in one theme.
-                                </td>
-                            </tr>
-                            <tr>
-                                <td data-column="Concern">Grid style isolation</td>
-                                <td data-column="Handled by the design system">
-                                    Global element selectors are guarded with{' '}
-                                    <code>:where(:not([class^=ag]):not([class^=b-]))</code> so site styles cannot leak
-                                    into an embedded grid.
-                                </td>
-                                <td data-column="Yours to handle">
-                                    New global element selectors - add the same guard or they will restyle live
-                                    examples.
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
             </Block>
 
             <Block title="Practices">

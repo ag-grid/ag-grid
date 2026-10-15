@@ -2,7 +2,7 @@ import type { FunctionComponent } from 'react';
 
 import styles from '../StyleGuide.module.scss';
 import { useStyleGuide, useTokens } from '../StyleGuideContext';
-import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
+import { Block, Guidance, Section } from '../chrome/Section';
 import { SwatchLegend } from '../chrome/Swatch';
 import { ScaleStrip, TokenTable } from '../chrome/TokenTable';
 
@@ -159,14 +159,7 @@ export const Colour: FunctionComponent = () => {
                 <TokenTable tokens={utilities} />
             </Block>
 
-            <Block
-                title="Code syntax"
-                note={
-                    <p>
-                        Consumed by the Prism token classes in <code>components/_code.scss</code>.
-                    </p>
-                }
-            >
+            <Block title="Code syntax" note={<p>Syntax highlighting colours. See the code section for them in use.</p>}>
                 <TokenTable tokens={code} contrastAgainst={bgSecondary} />
             </Block>
 
@@ -177,28 +170,29 @@ export const Colour: FunctionComponent = () => {
                 <TokenTable tokens={logo.concat(status)} contrastAgainst={bgPrimary} />
             </Block>
 
-            <Gotcha>
-                Pick by role: a surface is <code>--color-bg-*</code>, a mark <code>--color-fg-*</code>, running text{' '}
-                <code>--color-text-*</code>, an outline <code>--color-border-*</code>. Never reach for{' '}
-                <code>--color-gray-*</code> directly - the semantic token already picks the right step per theme. Need
-                an in-between value? <code>color-mix()</code> against a token, so the result still follows the theme.
-            </Gotcha>
-
-            <KnownIssue>
-                <p>
-                    A number of tokens are still marked <code>// TODO, review &amp; replace color</code> in{' '}
-                    <code>_root.scss</code>: the link colours, <code>--color-bg-mobile-nav</code>,{' '}
-                    <code>--color-input-error</code> and <code>--color-enterprise-icon</code>.{' '}
-                    <code>--color-input-error</code> is the bare CSS keyword <code>red</code> rather than a palette
-                    value, so it does not shift for dark mode and is the one colour in the system with no theme handling
-                    at all.
-                </p>
-                <p>
-                    Code backgrounds are also split across two namespaces - <code>--color-bg-code</code> and{' '}
-                    <code>--color-code-background</code> - which resolve to different values and are used by different
-                    components.
-                </p>
-            </KnownIssue>
+            <Block title="Usage">
+                <Guidance
+                    dos={[
+                        <>
+                            Pick by role: <code>--color-bg-*</code> for a surface, <code>--color-fg-*</code> for a mark,{' '}
+                            <code>--color-text-*</code> for running text, <code>--color-border-*</code> for an outline.
+                        </>,
+                        <>
+                            Mix an in-between value from a token with <code>color-mix()</code>, so it still follows the
+                            theme.
+                        </>,
+                        <>Check a new pairing&rsquo;s contrast in both themes.</>,
+                    ]}
+                    donts={[
+                        <>
+                            Don&rsquo;t use <code>--color-gray-*</code> or another abstract scale directly - the
+                            semantic token already picks the right step for each theme.
+                        </>,
+                        <>Don&rsquo;t write a literal hex value. It follows neither the theme nor a palette change.</>,
+                        <>Don&rsquo;t re-colour a logo for dark mode.</>,
+                    ]}
+                />
+            </Block>
         </Section>
     );
 };

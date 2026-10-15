@@ -7,7 +7,7 @@ import type { CSSProperties, FunctionComponent } from 'react';
 import styles from '../StyleGuide.module.scss';
 import { useStyleGuide, useTokens } from '../StyleGuideContext';
 import { CopyButton } from '../chrome/CopyButton';
-import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
+import { Block, Guidance, Section } from '../chrome/Section';
 import { Specimen, Variant } from '../chrome/Specimen';
 import { TokenTable } from '../chrome/TokenTable';
 
@@ -194,26 +194,27 @@ Row grouping {% enterpriseIcon /%} requires an Enterprise licence.`}
                 </p>
             </Block>
 
-            <Gotcha>
-                The SVG carries no accessible name, so an icon-only control needs an <code>aria-label</code>. Change
-                colour through <code>--icon-color</code> rather than targeting the <code>svg</code>, or hover states
-                stop following. Don&rsquo;t recolour a third-party brand mark - use the monochrome variant where one
-                exists, such as <code>stackoverflowMonochrome</code>.
-            </Gotcha>
-
-            <KnownIssue>
-                <p>
-                    Every <code>LinkIcon</code> on a page has the same <code>aria-label</code>, the literal string{' '}
-                    <code>&quot;Heading link&quot;</code>. A screen-reader user listing a documentation page&rsquo;s
-                    links hears it once per heading with nothing to distinguish them, when the heading text it sits
-                    inside is right there to use.
-                </p>
-                <p>
-                    Its tooltip is revealed on <code>:hover</code> and while <code>.active</code>, but not on{' '}
-                    <code>:focus-visible</code> - which the icon itself is. A keyboard user sees the control appear and
-                    can activate it, but never sees the label that says what activating it does.
-                </p>
-            </KnownIssue>
+            <Block title="Usage">
+                <Guidance
+                    dos={[
+                        <>
+                            Give an icon-only control an <code>aria-label</code>.
+                        </>,
+                        <>
+                            Change an icon&rsquo;s colour through <code>--icon-color</code>.
+                        </>,
+                    ]}
+                    donts={[
+                        <>
+                            Don&rsquo;t style the <code>svg</code> directly. Hover colours stop following.
+                        </>,
+                        <>
+                            Don&rsquo;t recolour a third-party brand mark. Use its monochrome variant, such as{' '}
+                            <code>stackoverflowMonochrome</code>.
+                        </>,
+                    ]}
+                />
+            </Block>
         </Section>
     );
 };

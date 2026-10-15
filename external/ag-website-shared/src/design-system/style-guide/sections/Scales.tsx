@@ -5,7 +5,7 @@ import type { FunctionComponent } from 'react';
 import styles from '../StyleGuide.module.scss';
 import { useStyleGuide, useTokens } from '../StyleGuideContext';
 import { CopyButton } from '../chrome/CopyButton';
-import { Block, Gotcha, KnownIssue, Section } from '../chrome/Section';
+import { Block, Guidance, Section } from '../chrome/Section';
 import { Specimen, Variant } from '../chrome/Specimen';
 import { parseSassVariables, pxVariables } from '../lib/sassSource';
 
@@ -116,11 +116,17 @@ export const Spacing: FunctionComponent = () => {
                 )}
             </Block>
 
-            <Gotcha>
-                Layout gutters use <code>var(--layout-gap)</code>, not a spacing step - column widths subtract that
-                exact value. Prose spacing is already applied by <code>_typography.scss</code>; adding margins there
-                double-spaces the page.
-            </Gotcha>
+            <Block title="Usage">
+                <Guidance
+                    dos={[
+                        <>
+                            Use <code>var(--layout-gap)</code> for the gutter between layout columns.
+                        </>,
+                        <>Use a spacing step for space inside a component.</>,
+                    ]}
+                    donts={[<>Don&rsquo;t add margins to prose. Headings, paragraphs and lists are spaced already.</>]}
+                />
+            </Block>
         </Section>
     );
 };
@@ -160,15 +166,6 @@ export const Radii: FunctionComponent = () => {
                     </div>
                 )}
             </Block>
-
-            <KnownIssue>
-                <p>
-                    <code>--radius-full</code> is <code>100%</code>, not a large px value. On a non-square element that
-                    produces an ellipse rather than a pill, so it only behaves as &ldquo;fully rounded&rdquo; on
-                    equal-sided elements such as radio inputs. For a pill, use a large step or <code>9999px</code>{' '}
-                    directly.
-                </p>
-            </KnownIssue>
         </Section>
     );
 };
@@ -235,10 +232,12 @@ export const Shadows: FunctionComponent = () => {
                 )}
             </Block>
 
-            <Gotcha>
-                Shadows are translucent and identical in both themes, so they are close to invisible on the dark
-                background. Anything that must read as a distinct surface needs a border too.
-            </Gotcha>
+            <Block title="Usage">
+                <Guidance
+                    dos={[<>Pair a shadow with a border on anything that must read as a separate surface.</>]}
+                    donts={[<>Don&rsquo;t rely on a shadow alone. It is close to invisible in dark mode.</>]}
+                />
+            </Block>
         </Section>
     );
 };

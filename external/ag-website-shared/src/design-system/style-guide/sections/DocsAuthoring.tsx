@@ -3,7 +3,7 @@ import type { FunctionComponent } from 'react';
 
 import styles from '../StyleGuide.module.scss';
 import { CopyButton } from '../chrome/CopyButton';
-import { Block, Gotcha, Guidance, KnownIssue, Section } from '../chrome/Section';
+import { Block, Guidance, Section } from '../chrome/Section';
 import { Specimen } from '../chrome/Specimen';
 
 /**
@@ -67,15 +67,7 @@ export const DocsAuthoring: FunctionComponent = () => (
     >
         <Block
             title="Tag inventory"
-            note={
-                <p>
-                    Every tag <code>ag-website-shared</code> exports. <strong>Registered</strong> is whether this
-                    repo&rsquo;s <code>markdoc.config.ts</code> wires it up - the grid docs also register a dozen
-                    grid-only tags (<code>gridExampleRunner</code>, <code>apiDocumentation</code>,{' '}
-                    <code>matrixTable</code>, <code>flex</code>, <code>gif</code> and others) that are not shared and so
-                    are out of scope here.
-                </p>
-            }
+            note={<p>Every shared tag, and whether this site has it registered. Site-only tags are not listed.</p>}
         >
             <div className={styles.tableScroll}>
                 <table className={styles.tokenTable}>
@@ -113,9 +105,8 @@ export const DocsAuthoring: FunctionComponent = () => (
             title="Number heading"
             note={
                 <p>
-                    A numbered step with a rule connecting it to the next one - used for sequential instructions where
-                    the order is the content. It is a real heading underneath, so it gets an id, a copy link, and an
-                    entry in the page&rsquo;s side navigation.
+                    A numbered step with a rule connecting it to the next one, for instructions where the order is the
+                    content. It appears in the page&rsquo;s side navigation like any other heading.
                 </p>
             }
         >
@@ -126,15 +117,10 @@ Content for the step.
             >
                 <div className={styles.numberHeadingDemo}>
                     <NumberHeading number="1" title="Install the package" level="h3">
-                        <p>
-                            The heading id is slugged from the title, so the anchor is stable as long as the title is.
-                        </p>
+                        <p>Run the install command for your package manager.</p>
                     </NumberHeading>
                     <NumberHeading number="2" title="Register a licence key" level="h3">
-                        <p>
-                            <code>level</code> defaults to <code>h2</code> and controls the heading tag only - the size
-                            comes from the component, so changing it for outline reasons will not change the appearance.
-                        </p>
+                        <p>Set the key before the grid is created.</p>
                     </NumberHeading>
                 </div>
             </Specimen>
@@ -145,8 +131,7 @@ Content for the step.
             note={
                 <p>
                     Lists the released versions within one major, linking each to its migration guide or its archived
-                    documentation. The rows are derived from the site&rsquo;s versions collection rather than authored,
-                    so the table cannot go stale.
+                    documentation.
                 </p>
             }
         >
@@ -161,14 +146,7 @@ Content for the step.
 
         <Block
             title="Keyboard shortcuts"
-            note={
-                <p>
-                    Both tags render the Mac and non-Mac label at build time and let{' '}
-                    <code>html[data-os=&apos;mac&apos;]</code> decide which is visible, because a statically generated
-                    page cannot know the visitor&rsquo;s OS. The non-Mac label is the one that shows with JavaScript
-                    disabled.
-                </p>
-            }
+            note={<p>Readers on a Mac see the Mac keys; everyone else sees the Windows and Linux keys.</p>}
         >
             <Specimen
                 label="A single key, and a whole combination"
@@ -196,56 +174,24 @@ Copy with {% kbdShortcut default="^ Ctrl+C" mac="⌘ Command+C" /%}`}
             </Specimen>
         </Block>
 
-        <Guidance
-            dos={[
-                <>
-                    Use <code>{'{% kbd %}'}</code> with the <code>&ldquo;^ Ctrl&rdquo;</code> label exactly - it is the
-                    one string the Mac swap table matches, so any other spelling renders identically on every platform.
-                </>,
-                <>
-                    Prefer <code>{'{% kbdShortcut %}'}</code> for a combination. Writing three{' '}
-                    <code>{'{% kbd %}'}</code> tags and typing the <code>+</code> between them produces the same markup
-                    but no platform swap.
-                </>,
-                <>
-                    Add a shared tag to <code>markdoc.config.ts</code> in every site that needs it. A tag that exists in{' '}
-                    <code>ag-website-shared</code> but is unregistered fails at build time as an unknown tag.
-                </>,
-            ]}
-            donts={[
-                <>
-                    Don&rsquo;t reach for <code>{'{% br %}'}</code> for spacing. It exists for addresses and verse, not
-                    for pushing content apart - a paragraph break or the component&rsquo;s own margin is the fix.
-                </>,
-                <>
-                    Don&rsquo;t hand-write HTML in a markdoc page where a tag exists. The tag picks up dark mode, the
-                    responsive bounds and the anchor handling; a raw <code>&lt;img&gt;</code> picks up none of them.
-                </>,
-                <>
-                    Don&rsquo;t number a <code>{'{% numberHeading %}'}</code> sequence by hand across pages - the number
-                    is a string you supply, so a step inserted in the middle silently renumbers nothing.
-                </>,
-            ]}
-        />
-
-        <Gotcha>
-            The <code>heading</code> node override is what puts the copy link on every documentation heading: it spreads
-            markdoc&rsquo;s default heading schema - which is where the slug comes from - and swaps only the renderer
-            for <code>Heading.astro</code>. Replacing rather than spreading it silently removes every anchor on the
-            site, so the spread is load-bearing, not tidiness.
-        </Gotcha>
-
-        <KnownIssue>
-            <p>
-                <code>NumberHeading</code> imports <code>github-slugger</code>, which is not declared as a dependency of{' '}
-                <code>ag-website-shared</code> or of any consuming site - it resolves only because something else in the
-                tree hoists it to the root <code>node_modules</code>. It will break the moment that transitive
-                dependency changes.
-            </p>
-            <p>
-                <code>MajorTable.astro</code> accepts a <code>suppressChangelog</code> prop that the{' '}
-                <code>majorTable</code> tag does not expose, so it is unreachable from a documentation page.
-            </p>
-        </KnownIssue>
+        <Block title="Usage">
+            <Guidance
+                dos={[
+                    <>
+                        Use <code>{'{% kbdShortcut %}'}</code> for a key combination, so Mac readers see their own keys.
+                    </>,
+                    <>
+                        Write the Ctrl key as <code>&ldquo;^ Ctrl&rdquo;</code> exactly, so it swaps on a Mac.
+                    </>,
+                    <>Use a number heading only where the order of the steps is the content.</>,
+                ]}
+                donts={[
+                    <>
+                        Don&rsquo;t use <code>{'{% br %}'}</code> for spacing.
+                    </>,
+                    <>Don&rsquo;t hand-write HTML in a page where a tag exists.</>,
+                ]}
+            />
+        </Block>
     </Section>
 );

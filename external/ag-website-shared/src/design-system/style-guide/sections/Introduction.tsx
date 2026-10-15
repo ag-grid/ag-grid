@@ -1,7 +1,7 @@
 import type { FunctionComponent } from 'react';
 
 import styles from '../StyleGuide.module.scss';
-import { Block, Gotcha, Section } from '../chrome/Section';
+import { Block, Section } from '../chrome/Section';
 import { Specimen } from '../chrome/Specimen';
 
 const LAYERS = [
@@ -103,11 +103,5 @@ $breakpoint-*     viewport thresholds  (Sass only - cannot be used in a media qu
 $selector-*       selector fragments for theme and third-party escaping`}
             />
         </Block>
-
-        <Gotcha>
-            Anything used inside a <code>@media</code> or <code>@container</code> condition has to be a Sass variable -
-            custom properties are not valid there. Everything else is a custom property so it can be re-pointed per
-            theme. Never hardcode a colour: a literal hex follows neither the theme nor a palette change.
-        </Gotcha>
     </Section>
 );

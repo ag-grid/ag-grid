@@ -293,67 +293,6 @@
     }
 }
 
-// Deliberately light: a rule on the left, no panel, no heading. It has to be cheap enough to skip
-// that it does not compete with the specimen beside it.
-.gotcha {
-    max-width: 76ch;
-    margin-top: $spacing-size-4;
-    padding-left: $spacing-size-3;
-    border-left: 2px solid var(--color-util-brand-300);
-    font-size: var(--text-fs-sm);
-    color: var(--color-text-primary);
-
-    // Both callouts own only a top margin, which collides with a following block's heading when
-    // they appear mid-section. Matched to `.block`'s own bottom margin so the rhythm is the same
-    // whether a block or a callout precedes the next heading.
-    &:not(:last-child) {
-        margin-bottom: $spacing-size-10;
-    }
-}
-
-.knownIssue {
-    display: flex;
-    flex-wrap: wrap;
-    gap: $spacing-size-3;
-    margin-top: $spacing-size-6;
-    padding: $spacing-size-4;
-
-    // See the note on `.gotcha` - a mid-section callout needs a bottom margin or the next
-    // block's heading sits flush against its border.
-    &:not(:last-child) {
-        margin-bottom: $spacing-size-10;
-    }
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-util-warning-300);
-    background-color: var(--color-util-warning-50);
-
-    > div {
-        flex: 1 1 400px;
-    }
-
-    p {
-        font-size: var(--text-fs-sm);
-        color: var(--color-text-secondary);
-
-        &:not(:last-child) {
-            margin-bottom: $spacing-size-2;
-        }
-    }
-}
-
-.knownIssueTag {
-    flex: 0 0 auto;
-    align-self: flex-start;
-    padding: 2px $spacing-size-2;
-    border-radius: var(--radius-xs);
-    font-size: var(--text-fs-2xs);
-    font-weight: var(--text-bold);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    background-color: var(--color-util-warning-500);
-    color: var(--color-white);
-}
-
 // Copy control
 // ===============================================
 .copyButton {

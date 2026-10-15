@@ -5,7 +5,6 @@ import { Buttons } from './sections/Buttons';
 import { Code } from './sections/Code';
 import { Colour } from './sections/Colour';
 import { Alerts, Containers, Pills } from './sections/Components';
-import { Contributing } from './sections/Contributing';
 import { Disclosure } from './sections/Disclosure';
 import { DocsAuthoring } from './sections/DocsAuthoring';
 import { Forms } from './sections/Forms';
@@ -64,7 +63,6 @@ export const SECTIONS: SectionEntry[] = [
 
     { id: 'docs-authoring', label: 'Docs authoring tags', group: 'Practice', Component: DocsAuthoring },
     { id: 'accessibility', label: 'Accessibility', group: 'Practice', Component: Accessibility },
-    { id: 'contributing', label: 'Extending the system', group: 'Practice', Component: Contributing },
 ];
 
 /** Section ids grouped in page order, for the sidebar. */
