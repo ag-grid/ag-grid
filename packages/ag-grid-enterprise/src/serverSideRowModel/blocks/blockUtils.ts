@@ -248,8 +248,8 @@ export class BlockUtils extends BeanStub implements NamedBean {
             return undefined;
         }
         // `null`, not `undefined`, so a callback returning nothing still clears aggData set by an earlier load
-        const params = this.gos.addCommon({ data, node: rowNode, rowGroupColumn: rowNode.rowGroupColumn });
-        return getGroupAggData(params) ?? null;
+        const { rowGroupColumn } = rowNode;
+        return getGroupAggData(this.gos.addCommon({ data, node: rowNode, rowGroupColumn })) ?? null;
     }
 
     private setChildCountIntoRowNode(rowNode: RowNode): void {
