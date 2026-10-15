@@ -115,6 +115,8 @@
         "rowLoadingSkeletonEffectColor": {},
         "valueChangeDeltaDownColor": {},
         "valueChangeDeltaUpColor": {},
+        "valueChangeDeltaDownSelectedColor": {},
+        "valueChangeDeltaUpSelectedColor": {},
         "valueChangeValueHighlightBackgroundColor": {},
         "pinnedRowBackgroundColor": {},
         "pinnedRowBorder": {},
@@ -141,6 +143,7 @@
         "cellHorizontalPadding": {},
         "cellHorizontalPaddingScale": {},
         "cellEditingBorder": {},
+        "selectedRowCellEditingBorder": {},
         "cellEditingShadow": {},
         "cellBatchEditBackgroundColor": {},
         "cellBatchEditTextColor": {}
@@ -250,6 +253,9 @@
         "checkboxCheckedBorderColor": {},
         "checkboxCheckedShapeColor": {},
         "checkboxCheckedShapeImage": {},
+        "selectedRowCheckboxCheckedBackgroundColor": {},
+        "selectedRowCheckboxCheckedBorderColor": {},
+        "selectedRowCheckboxCheckedShapeColor": {},
         "checkboxIndeterminateBackgroundColor": {},
         "checkboxIndeterminateBorderColor": {},
         "checkboxIndeterminateShapeColor": {},
@@ -285,6 +291,10 @@
         "menuBorder": {},
         "menuSeparatorColor": {},
         "menuShadow": {},
+        "listItemHighlightBackgroundColor": {},
+        "listItemHighlightTextColor": {},
+        "listItemSelectedBackgroundColor": {},
+        "listItemSelectedTextColor": {},
         "cardShadow": {},
         "dropdownShadow": {},
         "popupShadow": {},
@@ -318,13 +328,15 @@
         },
         "rowDragIndicatorColor": {},
         "rowDragIndicatorWidth": {},
+        "selectedRowDragIndicatorColor": {},
         "columnDragIndicatorColor": {},
         "columnDragIndicatorWidth": {},
         "dragAndDropImageBackgroundColor": {},
         "dragAndDropImageBorder": {},
         "dragAndDropImageShadow": {},
         "dragAndDropImageNotAllowedBorder": {},
-        "dragHandleColor": {}
+        "dragHandleColor": {},
+        "selectedRowDragHandleColor": {}
     },
     "tooltips": {
         "meta": {
@@ -425,9 +437,11 @@
             "description": "Style [Cell Selection](./cell-selection/) and [Row Selection](./row-selection/), see also [Theming: Customising Selections](./theming-selections/)"
         },
         "selectedRowBackgroundColor": {},
+        "selectedRowTextColor": {},
         "rowNumbersSelectedColor": {},
         "rangeSelectionBackgroundColor": {},
         "rangeSelectionBorderColor": {},
+        "selectedRowRangeSelectionBorderColor": {},
         "rangeSelectionBorderStyle": {},
         "rangeSelectionHighlightColor": {},
         "rangeHeaderHighlightColor": {},
@@ -474,7 +488,11 @@
             }
         },
         "chartMenuLabelColor": {},
-        "chartMenuPanelWidth": {}
+        "chartMenuPanelWidth": {},
+        "chartMenuPaletteDotColor": {},
+        "chartMenuPaletteDotHoverColor": {},
+        "chartMenuPaletteDotBorder": {},
+        "chartMenuPaletteDotSelectedColor": {}
     },
     "columnPanel": {
         "meta": {
