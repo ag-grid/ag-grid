@@ -12,7 +12,7 @@
 #
 #   - The environment's setup script has a ~5 minute cap, and a full install of
 #     this monorepo needs ~9 minutes on a cloud VM. So it installs with
-#     --ignore-scripts and marks the cache `unscripted`; the remaining work —
+#     YARN_ENABLE_SCRIPTS=false and marks the cache `unscripted`; the remaining work —
 #     patches, allow-scripts, the nx plugin build — has to happen in a session.
 #   - The SessionStart hook cannot do it. Claude Code waits for hooks before the
 #     first message (a blocking install froze one session for 9+ minutes), and a

@@ -277,7 +277,7 @@ restore_node_modules_from_cache() {
 # ---------------------------------------------------------------------------
 # The repo's gitignored Claude Code config — .claude/rules and the repo's own
 # .claude/skills. postinstall generates them; a clone carries only
-# .claude/settings.json, and cloud-setup.sh installs with --ignore-scripts, so a
+# .claude/settings.json, and cloud-setup.sh installs with YARN_ENABLE_SCRIPTS=false, so a
 # session can arrive with node_modules in place and none of them present.
 #
 # Generation needs node_modules but not the network, and measures ~3s, which is
@@ -444,7 +444,7 @@ if [[ "${CLAUDE_CODE_REMOTE:-}" == "true" ]] || [[ "${AG_CLOUD_INSTALL:-}" == "1
         generate_claude_config_if_missing
         # Whatever node_modules the session ended up with — restored just now, or
         # inherited from the environment snapshot. A tree built with
-        # --ignore-scripts passes the integrity check but has no patches applied,
+        # YARN_ENABLE_SCRIPTS=false passes the integrity check but has no patches applied,
         # so the fast path below would otherwise call it ready.
         if [[ -d node_modules ]]; then
             if [[ -f "$AG_CLOUD_CACHE_DIR/unscripted" ]]; then

@@ -24,7 +24,7 @@ The advisory translation-review comment still ran on `claude-opus-4-8`. The foot
 
 ## 2026-10-12 -- Snyk viewer: Workspace Packages section for `0.0.0-use.local` paths
 
-**Branch:** `AG-3390-snyk-oct-12` (ag-grid) / `AG-3390-snyk-viewer-workspace-packages` (ag-charts)
+**Branch:** `AG-3390-snyk-oct-12` (ag-grid) / `AG-3390-snyk-viewer-workspace-packages` (ag-charts) / `AS-246-snyk-viewer-workspace-packages` (ag-studio)
 
 ### Why
 
@@ -217,6 +217,27 @@ The first squash of a long-lived branch rewrites the whole thing, so that push i
 ### Migration Actions
 
 - [ ] None. The env contract and the workflow step are unchanged; sync the script.
+## 2026-08-13 -- CSP violations from post-deploy verification report to their owning channel instead of failing the run
+
+**Branch:** `AS-246-csp-violations-report`
+
+### Changes
+
+- **[scripts/slack]** `notify-csp-violations.mjs`: new. Reads a CSP violation report produced by a post-deploy page-verification run, annotates the CI run with one `::warning` per enforced violation, appends a job summary, and posts the enforced set to a Slack channel. Posts only when the enforced set differs from the previous run's report, so a policy left broken for a week does not repeat itself on every deploy; a cleared set posts once as resolved. Exits non-zero only when Slack rejects the message, so violations never gate a build. Driven entirely by env vars (`CSP_REPORT_FILE`, `PREVIOUS_CSP_REPORT_FILE`, `SLACK_CHANNEL`, `SLACK_BOT_OAUTH_TOKEN`, `PROJECT_TITLE`, `SITE_URL`, `RUN_URL`, `COMMIT_SHA`, `DRY_RUN`), so each repo supplies its own channel and report path.
+
+### Migration Actions
+
+- [ ] Invite the CI Slack bot to the target channel before wiring this up. `chat.postMessage` returns `not_in_channel` otherwise, and the reporting job goes red.
+- [ ] To adopt in ag-grid / ag-charts: have the page-verification suite write a report in the shape this script expects (`{ baseUrl, violations: [{ key, directive, blockedUri, disposition, suggestedHashes, sourceFiles, pages, tests }] }`), upload it as its own artifact, then copy ag-studio's `csp-report` job from `.github/workflows/post-deploy-verification.yml`. That job downloads the current report, pulls the previous run's copy of the same artifact for comparison, and runs this script.
+- [ ] Check the script with `DRY_RUN=true` against a real report before letting it post; it prints the message it would send and exits 0.
+- [ ] Run `./external/ag-shared/scripts/setup-prompts/setup-prompts.sh`
+- [ ] Run `./external/ag-shared/scripts/setup-prompts/verify-rulesync.sh`
+
+### Notes
+
+The report shape is the contract between a repo's Playwright reporter and this script; ag-studio's reporter (`packages/ag-studio-docs/scripts/csp/cspViolationReporter.ts`) stays repo-local until a second consumer needs it.
+
+`key` carries the suggested hash, so an edited Google Tag Manager tag that changes which hash the policy needs counts as a new violation and posts again, rather than hiding behind the previous run's entry.
 
 ## 2026-08-25 -- Bump GitHub Actions off the deprecated Node.js 20 runtime
 
