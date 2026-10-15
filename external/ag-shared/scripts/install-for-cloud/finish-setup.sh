@@ -104,7 +104,9 @@ EOF
         nx_version="$(node -p "require('$REPO_ROOT/package.json').devDependencies.nx" 2>/dev/null)"
         if [[ -n "$nx_version" && "$nx_version" != "undefined" ]]; then
             log "nx is missing; installing nx@${nx_version} globally"
-            yarn global add "nx@${nx_version}" >/dev/null 2>&1 ||
+            # Yarn 4 removed `yarn global add`; npm's global installer is the
+            # replacement for a persistent global binary.
+            npm install -g "nx@${nx_version}" >/dev/null 2>&1 ||
                 log "nx@${nx_version} global install failed (yarn nx still works)"
         fi
     fi

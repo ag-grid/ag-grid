@@ -99,6 +99,18 @@ One broken staging deploy on 2026-10-01 produced four full notifications in five
 
 Every author in the range is pinged on a failure, deliberately. `getChangesData` downgrades to plain names above 10 changes from multiple authors so as not to ping a long list of people, but a verification failure is something each of those authors has to act on. Anchoring the range on the last passing run is what keeps the list short.
 
+## 2026-09-30 -- Drop a retired skill from the cloud-sessions doc
+
+**Branch:** `at/optimise-agent-context`
+
+### Changes
+
+- **[docs]** `claude-code-cloud-sessions.md`: the warm-session observation no longer names `animation-test-migration`, which ag-charts has removed. `technology-stack` is still cited, so the finding it supports (hook-generated skills are usable in the same session) is unchanged.
+
+### Migration Actions
+
+- [ ] None
+
 ## 2026-09-28 -- Keep `-glibc` native packages when hollowing the yarn cache
 
 **Branch:** `ag-3390/sync-ag-shared-hollow-yarn-cache`
