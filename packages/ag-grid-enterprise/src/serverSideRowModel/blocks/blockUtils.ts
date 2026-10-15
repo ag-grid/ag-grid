@@ -241,23 +241,15 @@ export class BlockUtils extends BeanStub implements NamedBean {
         }
     }
 
-    /**
-     * The group's aggData from `getServerSideGroupAggData`. Without the callback, the aggregate of the grouped
-     * column is read from the `<aggFunc>_<colId>` field when present. `undefined` leaves aggData unchanged.
-     */
+    /** The group's aggData from `getServerSideGroupAggData`, or `undefined` when the callback is not set. */
     private getGroupAggData(rowNode: RowNode, data: any): Record<string, any> | null | undefined {
         const getGroupAggData = this.gos.get('getServerSideGroupAggData');
-        if (getGroupAggData) {
-            // `null`, not `undefined`, so a callback returning nothing still clears aggData set by an earlier load
-            return getGroupAggData(this.gos.addCommon({ data, node: rowNode })) ?? null;
+        if (!getGroupAggData) {
+            return undefined;
         }
-        const column = rowNode.rowGroupColumn;
-        const aggFunc = column?.getAggFunc();
-        if (data && column?.isValueActive() && typeof aggFunc === 'string' && `${aggFunc}_${column.colId}` in data) {
-            return { [column.colId]: data[`${aggFunc}_${column.colId}`] };
-        }
-        // only clears aggData an earlier load set, so groups without the field never get aggData
-        return rowNode.aggData ? null : undefined;
+        // `null`, not `undefined`, so a callback returning nothing still clears aggData set by an earlier load
+        const params = this.gos.addCommon({ data, node: rowNode, rowGroupColumn: rowNode.rowGroupColumn });
+        return getGroupAggData(params) ?? null;
     }
 
     private setChildCountIntoRowNode(rowNode: RowNode): void {

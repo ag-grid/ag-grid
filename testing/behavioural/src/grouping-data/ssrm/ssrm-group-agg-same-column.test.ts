@@ -112,7 +112,12 @@ describe('SSRM grouping and aggregating the same column', () => {
         expect(api.getCellValue({ rowNode: groupRow, colKey: 'gold' })).toBe(8);
         expect(groupRow.groupData).toEqual({ 'ag-Grid-AutoColumn': 4 });
         expect(getServerSideGroupAggData).toHaveBeenCalledWith(
-            expect.objectContaining({ data: { gold: 4, sum_gold: 8, count_country: 2 }, node: groupRow, api })
+            expect.objectContaining({
+                data: { gold: 4, sum_gold: 8, count_country: 2 },
+                node: groupRow,
+                rowGroupColumn: api.getColumn('gold'),
+                api,
+            })
         );
 
         groupRow.setExpanded(true);
@@ -177,25 +182,9 @@ describe('SSRM grouping and aggregating the same column', () => {
         `);
     });
 
-    test('without the callback the grouped column reads its aggregate from the aggFunc_colId field', async () => {
+    test('without the callback the value column reads the grouped field', async () => {
         const api = gridManager.createGrid(null, {
             columnDefs: [{ field: 'athlete' }, { field: 'gold', rowGroup: true, aggFunc: 'sum' }],
-            rowModelType: 'serverSide',
-            serverSideDatasource: createDatasource([]),
-            getRowId,
-        });
-        await waitFor(() => expect(goldGroupRow(api)).toBeDefined());
-
-        const groupRow = goldGroupRow(api);
-        expect(groupRow.aggData).toEqual({ gold: 8 });
-        expect(groupRow.key).toBe(4);
-        expect(api.getCellValue({ rowNode: groupRow, colKey: 'ag-Grid-AutoColumn' })).toBe(4);
-        expect(api.getCellValue({ rowNode: groupRow, colKey: 'gold' })).toBe(8);
-    });
-
-    test('without the callback a grouped column that is not aggregated reads the grouped field', async () => {
-        const api = gridManager.createGrid(null, {
-            columnDefs: [{ field: 'athlete' }, { field: 'gold', rowGroup: true }],
             rowModelType: 'serverSide',
             serverSideDatasource: createDatasource([]),
             getRowId,
@@ -204,75 +193,8 @@ describe('SSRM grouping and aggregating the same column', () => {
 
         const groupRow = goldGroupRow(api);
         expect(groupRow.aggData).toBeUndefined();
+        expect(groupRow.key).toBe(4);
         expect(api.getCellValue({ rowNode: groupRow, colKey: 'gold' })).toBe(4);
-    });
-
-    test('without the callback only the grouped column reads the aggFunc_colId field', async () => {
-        const api = gridManager.createGrid(null, {
-            columnDefs: [{ field: 'athlete' }, { field: 'country', rowGroup: true }, { field: 'gold', aggFunc: 'sum' }],
-            rowModelType: 'serverSide',
-            serverSideDatasource: {
-                getRows: (params) =>
-                    createDatasource([]).getRows({
-                        ...params,
-                        success: ({ rowData, rowCount }) =>
-                            params.success({
-                                rowData: rowData.map((row) => ({ ...row, sum_gold: -1 })),
-                                rowCount,
-                            }),
-                    }),
-            },
-            getRowId: ({ data, parentKeys }) => data.id ?? [...(parentKeys ?? []), data.country].join('|'),
-        });
-        await waitFor(() => expect(api.getRowNode('Italy')).toBeDefined());
-
-        const italy = api.getRowNode('Italy')!;
-        expect(italy.aggData).toBeUndefined();
-        expect(api.getCellValue({ rowNode: italy, colKey: 'gold' })).toBe(8);
-    });
-
-    test('without the callback a group missing the aggFunc_colId field reads the grouped field', async () => {
-        let omitSumGold = false;
-        const api = gridManager.createGrid(null, {
-            columnDefs: [{ field: 'athlete' }, { field: 'gold', rowGroup: true, aggFunc: 'sum' }],
-            rowModelType: 'serverSide',
-            serverSideDatasource: {
-                getRows: (params) =>
-                    createDatasource([]).getRows({
-                        ...params,
-                        success: ({ rowData, rowCount }) =>
-                            params.success({
-                                rowData: omitSumGold
-                                    ? rowData.map((row) => ({ gold: row.gold, count_country: row.count_country }))
-                                    : rowData,
-                                rowCount,
-                            }),
-                    }),
-            },
-            getRowId,
-        });
-        await waitFor(() => expect(goldGroupRow(api)).toBeDefined());
-        const groupRow = goldGroupRow(api);
-        expect(api.getCellValue({ rowNode: groupRow, colKey: 'gold' })).toBe(8);
-
-        omitSumGold = true;
-        api.refreshServerSide({ purge: false });
-
-        await waitFor(() => expect(groupRow.aggData).toBeNull());
-        expect(api.getCellValue({ rowNode: groupRow, colKey: 'gold' })).toBe(4);
-    });
-
-    test('the callback replaces the default field lookup', async () => {
-        const api = gridManager.createGrid(null, {
-            columnDefs: [{ field: 'athlete' }, { field: 'gold', rowGroup: true, aggFunc: 'sum' }],
-            rowModelType: 'serverSide',
-            serverSideDatasource: createDatasource([]),
-            getRowId,
-            getServerSideGroupAggData: ({ data }) => ({ gold: data.count_country }),
-        });
-        await waitFor(() => expect(goldGroupRow(api)).toBeDefined());
-
-        expect(api.getCellValue({ rowNode: goldGroupRow(api), colKey: 'gold' })).toBe(2);
     });
 
     test('refreshing the group rows calls the callback again', async () => {

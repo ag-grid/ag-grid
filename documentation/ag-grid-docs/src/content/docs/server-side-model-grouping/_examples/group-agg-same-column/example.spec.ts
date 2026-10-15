@@ -10,7 +10,7 @@ test.agExample(import.meta, () => {
                 .filter({ has: page.locator('.ag-group-value', { hasText: new RegExp(`^${name}$`) }) })
                 .first();
 
-        // The group key comes from `gold`, the aggregate from `sum_gold`.
+        // The group key comes from `gold`, the aggregate from `sum_gold` via getServerSideGroupAggData.
         const gold4 = groupRow('4');
         await expect(gold4.locator('[col-id="ag-Grid-AutoColumn"]')).toContainText('4', { useInnerText: true });
         await expect(gold4.locator('.ag-cell[col-id="gold"]')).toContainText('12');

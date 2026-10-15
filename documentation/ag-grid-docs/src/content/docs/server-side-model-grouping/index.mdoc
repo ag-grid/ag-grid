@@ -102,11 +102,8 @@ Group total rows can also be used with `groupDisplayType='multipleColumns'`, as 
 ## Grouping and Aggregating the Same Column
 
 To group by a column and also aggregate it, each group row needs two values for that column: the group key and the
-aggregate. Have the server return the group key under the column's field and the aggregate under
-`<aggFunc>_<colId>`, such as `{ gold: 4, sum_gold: 12 }`. The grid reads the aggregate of the grouped column from that
-field when the group row data has it.
-
-To override this lookup, use `getServerSideGroupAggData`:
+aggregate. Have the server return the aggregate under a separate field, and use `getServerSideGroupAggData` to tell the
+grid which field holds it:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -124,7 +121,8 @@ it visible, see [Prevent User Grouping from Hiding Columns](./grouping-group-pan
 The example below groups by **Gold**, aggregates it with `sum` and sorts it ascending. Note the following:
 
 - The server returns each aggregate of a grouped column as `<aggFunc>_<colId>`, such as `sum_gold`.
-- Group and aggregate a different column from the Columns Tool Panel to see the same behaviour for that column.
+- The callback uses `params.rowGroupColumn` to find the column the row is grouped by, so it also works when a
+  different column is grouped and aggregated from the Columns Tool Panel.
 - **Gold** appears in both Row Groups and Values in the Columns Tool Panel.
 
 {% gridExampleRunner title="Grouping and Aggregating the Same Column" name="group-agg-same-column" exampleHeight=590 /%}

@@ -303,6 +303,8 @@ export interface GetServerSideGroupAggDataParams<TData = any, TContext = any> ex
     data: any;
     /** The group row node. */
     node: IRowNode<TData>;
+    /** The column the group row is grouped by. */
+    rowGroupColumn: Column | null;
 }
 
 export interface IsApplyServerSideTransactionParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

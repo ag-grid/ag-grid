@@ -2526,7 +2526,6 @@ export interface GridOptions<TData = any> {
      * Allows providing the aggregated values of a group row, keyed by column ID.
      * Use this when a column is both grouped and aggregated, so the server can return the group key and the aggregate under different fields.
      * Column IDs missing from the result are read from the row data. Not called for the grand total row or for tree data.
-     * When not set, the aggregate of the grouped column is read from the `<aggFunc>_<colId>` field, e.g. `sum_gold`, when the group row data has it.
      * @agModule `ServerSideRowModelModule`
      */
     getServerSideGroupAggData?: GetServerSideGroupAggData<TData>;
