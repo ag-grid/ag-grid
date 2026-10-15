@@ -102,6 +102,13 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
      */
     applyMode?: CalculatedColumnApplyMode;
     /**
+     * Quiet period in milliseconds before live dialog edits update the column and raise change events.
+     * Must be a non-negative integer. `0` applies on the next animation frame.
+     * Closing the dialog applies any pending edit immediately. Ignored in `'deferred'` apply mode.
+     * @default 0
+     */
+    applyDebounce?: number;
+    /**
      * Customise the Column Definition of calculated columns created in the Calculated Column dialog, for example
      * to add a filter, enable aggregation or set a value formatter. Not called for calculated columns defined in
      * `columnDefs`.
