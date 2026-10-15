@@ -43,6 +43,7 @@ async function callAnthropic(apiKey, system, userText) {
         model: MODEL,
         max_tokens: 16000,
         thinking: { type: 'adaptive' },
+        output_config: { effort: 'high' },
         system,
         messages: [{ role: 'user', content: userText }],
     };

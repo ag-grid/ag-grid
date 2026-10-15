@@ -39,7 +39,7 @@ The advisory translation-review comment still ran on `claude-opus-4-8`. The foot
 
 ### Changes
 
-- **[scripts]** `l10n/review-translations.mjs`: `MODEL` is now `claude-opus-5-5`, and the report footer names the script's real path, `external/ag-shared/scripts/l10n/review-translations.mjs`.
+- **[scripts]** `l10n/review-translations.mjs`: `MODEL` is now `claude-opus-5-5`, and the report footer names the script's real path, `external/ag-shared/scripts/l10n/review-translations.mjs`. The request now sets `output_config: { effort: 'high' }`, because Opus 5.5 defaults to `medium` and the review used to run at `high` on Opus 4.8.
 
 ### Migration Actions
 
