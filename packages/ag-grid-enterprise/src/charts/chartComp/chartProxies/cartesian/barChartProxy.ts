@@ -18,10 +18,6 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
                 position: this.isHorizontal() ? 'bottom' : 'left',
             },
         };
-        // Add a default label formatter to show '%' for normalized charts if none is provided
-        if (this.isNormalised()) {
-            axes.y.label = { ...axes.y.label, formatter: (params) => Math.round(params.value) + '%' };
-        }
 
         return axes;
     }
@@ -69,7 +65,7 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
         return allSeries;
     }
 
-    private isNormalised() {
+    protected override isNormalised() {
         const normalisedCharts = ['normalizedColumn', 'normalizedBar'];
         return !this.crossFiltering && normalisedCharts.includes(this.chartType);
     }

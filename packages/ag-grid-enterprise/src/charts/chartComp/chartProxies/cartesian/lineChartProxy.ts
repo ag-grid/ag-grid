@@ -16,11 +16,6 @@ export class LineChartProxy extends CartesianChartProxy<'line'> {
             },
         };
 
-        // Add a default label formatter to show '%' for normalized charts if none is provided
-        if (this.isNormalised()) {
-            axes.y.label = { ...axes.y.label, formatter: (params) => Math.round(params.value) + '%' };
-        }
-
         return axes;
     }
 
@@ -44,7 +39,7 @@ export class LineChartProxy extends CartesianChartProxy<'line'> {
         return this.crossFiltering ? this.extractLineAreaCrossFilterSeries(series, params) : series;
     }
 
-    private isNormalised() {
+    protected override isNormalised() {
         const normalisedCharts = ['normalizedLine'];
         return !this.crossFiltering && normalisedCharts.includes(this.chartType);
     }
