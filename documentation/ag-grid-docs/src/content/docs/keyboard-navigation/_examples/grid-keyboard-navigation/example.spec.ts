@@ -184,7 +184,9 @@ test.agExample(import.meta, () => {
     });
 
     test.eachFramework('Tab from last column header enters floating filter row', async ({ agIdFor, page }) => {
-        await agIdFor.headerCell('year').click();
+        // Clicking the spanned year header would start navigation from the group row, so arrive on the column row.
+        await agIdFor.headerCell('total').click();
+        await page.keyboard.press('ArrowRight');
         await expect(agIdFor.headerCell('year')).toBeFocused();
 
         await page.keyboard.press('Tab');
