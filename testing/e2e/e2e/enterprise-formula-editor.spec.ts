@@ -3,9 +3,10 @@ import { expect, test } from '@playwright/test';
 
 import { mountGrid } from '../src/mountGrid';
 
-async function mountFormulaEditor(page: Page) {
+async function mountFormulaEditor(page: Page, shadowDom = false) {
     const grid = await mountGrid(page, {
         enterprise: true,
+        shadowDom,
         options: () => ({
             cellSelection: true,
             rowNumbers: false,
@@ -81,6 +82,12 @@ test.describe('formula editor with a native textarea', () => {
         await page.keyboard.insertText('A1:B1)');
         await input.press('Enter');
         await expect(cell(0, 'total')).toHaveText('9');
+    });
+
+    test('function autocomplete opens when the grid is in a shadow root', async ({ page }) => {
+        const { input } = await mountFormulaEditor(page, true);
+        await input.fill('=SU');
+        await expect(page.locator('.ag-autocomplete-list-popup')).toBeVisible();
     });
 
     test('a blocked commit does not insert a newline into the formula', async ({ page }) => {

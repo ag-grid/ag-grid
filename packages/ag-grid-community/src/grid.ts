@@ -32,6 +32,7 @@ import {
     _registerModule,
     _unRegisterGridModules,
 } from './modules/moduleRegistry';
+import { _createIsolationHost } from './utils/hostStyleIsolation';
 import { _isDebugLoggingEnabled } from './utils/log';
 import { _errorWithoutAttribution, _logPreInitErr, _renderBootstrapPanel } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
@@ -85,7 +86,8 @@ export function createGrid<TData>(
         return {} as GridApi;
     }
     const [outer, inner] = _createStyledRootElements();
-    eGridDiv.appendChild(outer);
+    const isolationHost = _createIsolationHost(eGridDiv, gridOptions, params);
+    (isolationHost?.shadowRoot ?? eGridDiv).appendChild(outer);
     const api = new GridCoreCreator().create(
         outer,
         inner,
@@ -96,8 +98,19 @@ export function createGrid<TData>(
         },
         undefined,
         params,
-        () => outer.remove()
+        () => {
+            outer.remove();
+            if (isolationHost) {
+                _gridApiCache.delete(isolationHost);
+                isolationHost.remove();
+            }
+        }
     );
+    if (isolationHost && api) {
+        // `getGridApi` finds the container's first child and the `grid-id` attribute, both now outside the grid's root
+        _gridApiCache.set(isolationHost, api);
+        isolationHost.setAttribute('grid-id', api.getGridId());
+    }
 
     return api;
 }
