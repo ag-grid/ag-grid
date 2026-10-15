@@ -1,5 +1,5 @@
 import type { AgEvent, AgPropertyValueChangedEvent } from 'ag-stack';
-import { AgPromise, _exists, _jsonEquals, _removeAllFromArray } from 'ag-stack';
+import { AgPromise, _exists, _isPromise, _jsonEquals, _removeAllFromArray } from 'ag-stack';
 
 import { _unwrapUserComp } from '../components/framework/unwrapUserComp';
 import {
@@ -1776,7 +1776,12 @@ export class ColumnFilterService
                         return;
                     }
 
-                    (filter.setModel(newModel) ?? AgPromise.resolve()).then(() => resolve());
+                    const modelApplied: unknown = filter.setModel(newModel);
+                    if (modelApplied != null && _isPromise(modelApplied)) {
+                        void modelApplied.then(() => resolve());
+                    } else {
+                        resolve();
+                    }
                 });
                 return;
             }

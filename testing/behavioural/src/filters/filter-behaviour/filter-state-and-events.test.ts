@@ -118,6 +118,40 @@ describe('Filter State & Events', () => {
         expect([api.getFilterModel(), api.getDisplayedRowCount()]).toEqual([{}, ATHLETES.length]);
     });
 
+    test('setColumnFilterModel applies to a custom filter whose setModel returns false instead of a promise', async () => {
+        class CountryFilter implements IFilterComp {
+            private model: string | null = null;
+            private readonly eGui = document.createElement('div');
+            public init(): void {}
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public isFilterActive(): boolean {
+                return this.model != null;
+            }
+            public doesFilterPass({ data }: IDoesFilterPassParams<Athlete>): boolean {
+                return data.country === this.model;
+            }
+            public getModel(): string | null {
+                return this.model;
+            }
+            // @ts-expect-error -- vanilla-JS filters are not held to the declared `void | AgPromise<void>` return type
+            public setModel(model: string | null): boolean {
+                this.model = model;
+                return false;
+            }
+        }
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'athlete' }, { field: 'country', filter: CountryFilter }],
+            rowData: ATHLETES,
+        });
+
+        await api.setColumnFilterModel('country', 'Russia');
+        api.onFilterChanged();
+
+        expect([api.getFilterModel(), api.getDisplayedRowCount()]).toEqual([{ country: 'Russia' }, 1]);
+    });
+
     // ===== STATE: getState() -> initialState round-trip (recreate grid) =====
 
     test('text filter set via UI is captured by getState and restored into a fresh grid via initialState', async () => {
