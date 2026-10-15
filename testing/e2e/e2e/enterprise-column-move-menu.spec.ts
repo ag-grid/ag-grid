@@ -66,7 +66,8 @@ test.describe('column movement menus', () => {
         await page.keyboard.press('Shift+ArrowDown');
         expect(await withApi((api) => api.getColumnState().map(({ colId }) => colId))).toEqual(['a', 'c', 'b']);
         await expect(item).toBeFocused();
-        await page.keyboard.press('Shift+F10');
+        // Only Chromium turns a synthesised Shift+F10 into a contextmenu event
+        await item.click({ button: 'right' });
         const moveUp = page.getByRole('menuitem', { name: 'Move Up', exact: true });
         await moveUp.focus();
         await page.keyboard.press('Enter');

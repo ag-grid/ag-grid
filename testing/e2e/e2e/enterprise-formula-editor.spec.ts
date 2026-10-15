@@ -183,7 +183,8 @@ test.describe('formula editor with a native textarea', () => {
         const expression = `=${Array.from({ length: 40 }, () => 'A1*B1').join('+')}`;
         await input.fill(expression);
         await input.press('End');
-        await page.keyboard.insertText('+2');
+        // WebKit only scrolls the caret into view for real key presses, not for inserted text
+        await page.keyboard.type('+2');
         await expect.poll(() => input.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
         await expect(async () => {
             const scroll = await input.evaluate((element) => element.scrollLeft);
