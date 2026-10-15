@@ -18,6 +18,7 @@ import {
     ColumnsToolPanelModule,
     ContextMenuModule,
     FiltersToolPanelModule,
+    FindModule,
     IntegratedChartsModule,
     PivotModule,
     RichSelectModule,
@@ -26,6 +27,7 @@ import {
     RowNumbersModule,
     SetFilterModule,
     StatusBarModule,
+    ToolbarModule,
 } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -51,6 +53,8 @@ ModuleRegistry.registerModules([
     StatusBarModule,
     PivotModule,
     RowNumbersModule,
+    FindModule,
+    ToolbarModule,
 ]);
 
 const GridPreview = () => {
