@@ -291,7 +291,10 @@ EOF
         nx_version="$(node -p "require('$REPO_ROOT/package.json').devDependencies.nx" 2>/dev/null)"
         if [[ -n "$nx_version" && "$nx_version" != "undefined" ]]; then
             if slice="$(budgeted 120)"; then
-                with_timeout "$slice" yarn global add "nx@${nx_version}" >/dev/null 2>&1 ||
+                # Yarn 4 removed `yarn global add`; npm's global installer is the
+                # replacement for a persistent global binary (yarn itself is installed
+                # the same way elsewhere — see docs/claude-code-cloud-sessions.md).
+                with_timeout "$slice" npm install -g "nx@${nx_version}" >/dev/null 2>&1 ||
                     log_warn "nx@${nx_version} global install failed (yarn nx still works)"
             else
                 log_warn "no budget left to install nx (yarn nx still works)"
