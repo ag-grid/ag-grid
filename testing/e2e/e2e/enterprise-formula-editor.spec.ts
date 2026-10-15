@@ -181,14 +181,22 @@ test.describe('formula editor with a native textarea', () => {
     test('horizontal scrolling keeps the mirror at the native input scroll position', async ({ page }) => {
         const { input, mirror } = await mountFormulaEditor(page);
         const expression = `=${Array.from({ length: 40 }, () => 'A1*B1').join('+')}`;
+        await expect(input).toHaveAttribute('wrap', 'off');
         await input.fill(expression);
-        await input.press('End');
-        await page.keyboard.insertText('+2');
+        await input.evaluate((element: HTMLTextAreaElement) => {
+            element.scrollLeft = element.scrollWidth;
+        });
         await expect.poll(() => input.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
         await expect(async () => {
             const scroll = await input.evaluate((element) => element.scrollLeft);
             expect(await mirror.evaluate((element) => element.scrollLeft)).toBeCloseTo(scroll, 0);
         }).toPass();
-        await expect(input).toHaveValue(`${expression}+2`);
+        await input.evaluate((element: HTMLTextAreaElement) => {
+            element.scrollLeft = 0;
+        });
+        await expect.poll(() => input.evaluate((element) => element.scrollLeft)).toBe(0);
+        await expect.poll(() => mirror.evaluate((element) => element.scrollLeft)).toBe(0);
+        await expect(input).toHaveValue(expression);
+        await expect(mirror).toHaveText(expression);
     });
 });
