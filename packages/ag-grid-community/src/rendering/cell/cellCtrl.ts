@@ -867,12 +867,8 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         }
 
         const focus = () => {
-            if (!this.isAlive()) {
-                return;
-            }
-            const focusableElement = comp.getFocusableElement();
-            if (this.isCellFocused()) {
-                focusableElement.focus({ preventScroll: true });
+            if (this.isAlive() && this.isCellFocused() && focusSvc.isFocusFreeForGrid()) {
+                comp.getFocusableElement().focus({ preventScroll: true });
             }
         };
 
@@ -935,7 +931,10 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     private setupFocus() {
         // when cell is created, if it should be focus the grid should take focus from the focused cell
         this.restoreFocus(true);
-        this.onCellFocused(this.focusEventWhileNotReady ?? undefined);
+        // only the focused cell uses the event, so only it pays to check the event is still current
+        this.onCellFocused(
+            this.checkCellFocused() ? this.beans.focusSvc.currentDeferredFocus(this.focusEventWhileNotReady) : undefined
+        );
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
@@ -949,6 +948,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
             // preserve event for when cell renders.
             if (event) {
                 this.focusEventWhileNotReady = event;
+                beans.focusSvc.deferFocus(event);
             }
             return;
         }

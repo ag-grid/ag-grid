@@ -2,6 +2,7 @@ import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
 
 import type { GridApi, GridState, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
+import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 describe('StateService - Grid State Management', () => {
@@ -29,6 +30,30 @@ describe('StateService - Grid State Management', () => {
 
     // ===== COLUMN STATE TESTS =====
     describe('Column State', () => {
+        test('column order applied through state does not animate the columns, unlike a column move', async () => {
+            let initialised!: () => void;
+            const initialState = new Promise<void>((resolve) => (initialised = resolve));
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: defaultColumnDefs,
+                rowData: defaultRowData,
+                onStateUpdated: ({ sources }) => {
+                    if (sources.includes('gridInitializing')) {
+                        initialised();
+                    }
+                },
+            });
+            await initialState;
+            const animating = () => !!getGridElement(api)!.querySelector('.ag-column-moving');
+            api.moveColumns(['id'], 1);
+            expect(animating()).toBe(true);
+            await waitFor(() => expect(animating()).toBe(false));
+
+            api.setState({ columnOrder: { orderedColIds: ['sport', 'age', 'name', 'id'] } });
+
+            expect(animating()).toBe(false);
+            expect(api.getColumnState().map(({ colId }) => colId)).toEqual(['sport', 'age', 'name', 'id']);
+        });
+
         test('should capture column order state', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: defaultColumnDefs,

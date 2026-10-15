@@ -1,6 +1,7 @@
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
+import { asyncSetTimeout } from 'ag-test-utils';
 import React from 'react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, onTestFinished } from 'vitest';
 
 import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 import { AllCommunityModule } from 'ag-grid-community';
@@ -77,6 +78,108 @@ describe('React header cell reuse', () => {
         await waitFor(() => expect(highlighted()).toEqual([]));
         act(() => apiRef.current!.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['c1', 'c3'] }));
         await waitFor(() => expect(highlighted()).toEqual(['c1', 'c3']));
+    });
+
+    it('a header asked for focus before it mounts takes it, also from an input, unless focus has since moved out of the grid', async () => {
+        const apiRef: { current?: GridApi } = {};
+        render(
+            <React.StrictMode>
+                <AgGridReact
+                    rowData={rowData}
+                    columnDefs={columnDefs}
+                    modules={[AllCommunityModule]}
+                    onGridReady={(e: GridReadyEvent) => {
+                        apiRef.current = e.api;
+                    }}
+                />
+            </React.StrictMode>
+        );
+        const header = () => document.querySelector('.ag-header-cell[col-id="c2"]');
+        await waitFor(() => expect(screen.queryAllByRole('columnheader').length).toBe(ids.length));
+        const input = document.body.appendChild(document.createElement('input'));
+        onTestFinished(() => input.remove());
+
+        act(() => apiRef.current!.setColumnsVisible(['c2'], false));
+        await waitFor(() => expect(header()).toBeNull());
+        act(() => {
+            apiRef.current!.setColumnsVisible(['c2'], true);
+            apiRef.current!.setFocusedHeader('c2');
+        });
+        await waitFor(() => expect(document.activeElement).toBe(header()));
+
+        act(() => apiRef.current!.setColumnsVisible(['c2'], false));
+        await waitFor(() => expect(header()).toBeNull());
+        act(() => {
+            apiRef.current!.setColumnsVisible(['c2'], true);
+            apiRef.current!.setFocusedHeader('c2');
+            input.focus();
+        });
+        await waitFor(() => expect(header()).not.toBeNull());
+        await act(async () => {
+            await asyncSetTimeout(0);
+        });
+        expect(document.activeElement).toBe(input);
+
+        act(() => apiRef.current!.setColumnsVisible(['c2'], false));
+        await waitFor(() => expect(header()).toBeNull());
+        input.blur();
+        act(() => {
+            apiRef.current!.setColumnsVisible(['c2'], true);
+            apiRef.current!.setFocusedHeader('c2');
+            input.focus();
+            apiRef.current!.setFocusedHeader('c2');
+        });
+        await waitFor(() => expect(document.activeElement).toBe(header()));
+    });
+
+    it('of headers and cells asked for focus before they mount, the one asked last takes it', async () => {
+        const apiRef: { current?: GridApi } = {};
+        render(
+            <React.StrictMode>
+                <AgGridReact
+                    rowData={rowData}
+                    columnDefs={columnDefs}
+                    modules={[AllCommunityModule]}
+                    onGridReady={(e: GridReadyEvent) => {
+                        apiRef.current = e.api;
+                    }}
+                />
+            </React.StrictMode>
+        );
+        const header = (colId: string) => () => document.querySelector(`.ag-header-cell[col-id="${colId}"]`);
+        const cell = () => document.querySelector('.ag-cell[col-id="c2"]');
+        await waitFor(() => expect(screen.queryAllByRole('columnheader').length).toBe(ids.length));
+        const expectLastAskedFocused = async (askBoth: (api: GridApi) => void, focused: () => Element | null) => {
+            act(() => apiRef.current!.setColumnsVisible(['c2', 'c3'], false));
+            await waitFor(() => expect(header('c3')()).toBeNull());
+            (document.activeElement as HTMLElement).blur();
+            act(() => {
+                apiRef.current!.setColumnsVisible(['c2', 'c3'], true);
+                askBoth(apiRef.current!);
+            });
+            await waitFor(() => expect(cell()).not.toBeNull());
+            await act(async () => {
+                await asyncSetTimeout(0);
+            });
+            expect(document.activeElement).toBe(focused());
+        };
+
+        await expectLastAskedFocused((api) => {
+            api.setFocusedHeader('c2');
+            api.setFocusedCell(0, 'c2');
+        }, cell);
+        await expectLastAskedFocused((api) => {
+            api.setFocusedCell(0, 'c2');
+            api.setFocusedHeader('c2');
+        }, header('c2'));
+        await expectLastAskedFocused((api) => {
+            api.setFocusedHeader('c2');
+            api.setFocusedHeader('c3');
+        }, header('c3'));
+        await expectLastAskedFocused((api) => {
+            api.setFocusedHeader('c3');
+            api.setFocusedHeader('c2');
+        }, header('c2'));
     });
 
     it('a header cell shows its column filtered, also one told while it is remounted in another lane', async () => {
