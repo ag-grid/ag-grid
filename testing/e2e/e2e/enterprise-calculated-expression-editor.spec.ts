@@ -85,8 +85,7 @@ test.describe('calculated expression editor in a real browser', () => {
         }).toPass();
     });
 
-    test('horizontal scrolling keeps the error aligned in an unwrapped expression', async ({ page, browserName }) => {
-        test.fixme(browserName === 'chromium', 'AG-18946: Chromium lays textarea text out narrower than the mirror');
+    test('horizontal scrolling keeps the error aligned in an unwrapped expression', async ({ page }) => {
         const input = page.locator('.ag-calculated-column-form textarea');
         const mirror = page.locator('.ag-calculated-column-expression-mirror');
         await input.evaluate((element: HTMLTextAreaElement) => {
