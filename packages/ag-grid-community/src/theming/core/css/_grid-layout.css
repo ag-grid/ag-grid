@@ -30,16 +30,21 @@
     border-radius: 1px;
     padding-left: 1px;
     padding-right: 1px;
-    transition: background-color 1s;
+    transition: background-color 1s var(--ag-internal-accessible-color-transition-mode);
 }
 
 .ag-value-change-value-highlight {
     background-color: var(--ag-value-change-value-highlight-background-color);
-    transition: background-color 0.1s;
+    transition: background-color 0.1s var(--ag-internal-accessible-color-transition-mode);
+
+    @media (forced-colors: active) {
+        background-color: Mark;
+        color: MarkText;
+    }
 }
 
 .ag-cell-data-changed {
-    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
+    /* stylelint-disable-next-line declaration-no-important -- !important required to override inline styles and prevent them from breaking the value change highlight feature */
     background-color: var(--ag-value-change-value-highlight-background-color) !important;
 }
 
@@ -222,6 +227,10 @@
     /* forced colors paints transparent borders, doubling the column and row borders */
     @media (forced-colors: active) {
         border-color: Canvas;
+
+        /* Mark stands out from both Canvas and the SelectedItem fill of selected cells */
+        --ag-value-change-value-highlight-background-color: Mark;
+        --ag-range-selection-highlight-color: Mark;
     }
 }
 
