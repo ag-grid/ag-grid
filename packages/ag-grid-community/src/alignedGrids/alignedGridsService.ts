@@ -217,15 +217,31 @@ export class AlignedGridsService extends BeanStub implements NamedBean {
                 const masterColumns = colEvent.columns as AgColumn[];
                 // a bounded resize or a flex pass sets `flexColumns`; for anything else, re-flex them all here
                 const isResize = flexColumns != null;
+                // the other grid lists the cols its pass re-flexed last; any before them it resized itself
+                const resizedCount = isResize ? masterColumns.length - flexColumns.length : 0;
                 const columns: AgColumn[] = [];
                 const widths: number[] = [];
                 // the cols the other grid resized bound this grid's flex pass as they bounded its own
                 let resizingCols: AgColumn[] | undefined = isResize ? columns : undefined;
                 for (let i = 0, len = masterColumns.length; i < len; ++i) {
                     const column = masterColumns[i];
-                    const flexed = isCenterFlex(column);
+                    const flexedThere = isCenterFlex(column);
+                    // resized there yet still flexing, so it kept its width
+                    const held = flexedThere && i < resizedCount;
+                    const flexed = flexedThere && !held;
                     const col = column === masterColumn ? otherColumn : colModel.getNonPivotCol(column.colId);
-                    if (!col || isFlexedHere(column, col, flexed, isResize)) {
+                    if (!col) {
+                        continue;
+                    }
+                    if (held && isCenterFlex(col)) {
+                        // here too it keeps its width and flex, and bounds the pass as it bounded the other grid's
+                        if (resizingCols === columns) {
+                            resizingCols = columns.slice();
+                        }
+                        resizingCols!.push(col);
+                        continue;
+                    }
+                    if (isFlexedHere(column, col, flexed, isResize)) {
                         continue;
                     }
                     // ownership travels with the width, else auto-sizing here undoes the other grid's user resize

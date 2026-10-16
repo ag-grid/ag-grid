@@ -14,6 +14,7 @@
 import { waitFor } from '@testing-library/dom';
 import {
     ALL_SEVERITIES,
+    DragEventDispatcher,
     GridColumns,
     GridRows,
     TestGridsManager,
@@ -992,6 +993,42 @@ describe('Column Features', () => {
             } finally {
                 measured.mockRestore();
             }
+        });
+
+        test('a group drag in one grid that leaves a flex column on its bound lands the same widths in the other', async () => {
+            const gridOptions = () => ({
+                columnDefs: [
+                    {
+                        headerName: 'g',
+                        groupId: 'g',
+                        children: [
+                            { colId: 'a', field: 'a', width: 100 },
+                            { colId: 'b', field: 'b', flex: 1, maxWidth: 450 },
+                        ],
+                    },
+                    { colId: 'e', flex: 1 },
+                ],
+            });
+            const api1 = gridsManager.createGrid('grid1', gridOptions());
+            const api2 = gridsManager.createGrid('grid2', gridOptions());
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+            const widths = (api: GridApi) => ['a', 'b', 'e'].map((id) => api.getColumn(id)!.getActualWidth());
+            expect(widths(api1)).toEqual([100, 450, 450]);
+            const bar = TestGridsManager.getHTMLElement(api1)!.querySelector<HTMLElement>(
+                '.ag-header-group-cell .ag-header-cell-resize'
+            )!;
+
+            // `b` is on its maxWidth, so `a` takes the 100px and `b` keeps flexing at its width, bounding the pass
+            const dispatcher = new DragEventDispatcher('mouse');
+            await dispatcher.startDrag(bar, 500, 10);
+            await dispatcher.movePointer(bar, 600, 10);
+            await dispatcher.finishDrag();
+            await asyncSetTimeout(0);
+
+            expect([widths(api1), widths(api2)]).toEqual([
+                [200, 450, 350],
+                [200, 450, 350],
+            ]);
         });
 
         test('a column flexed again in one grid passes its width to the other grid, where it no longer flexes', () => {
