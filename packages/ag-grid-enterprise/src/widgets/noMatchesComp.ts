@@ -13,17 +13,23 @@ export class NoMatchesComp extends Component {
     public postConstruct(): void {
         this.getGui().textContent = this.getLocaleTextFunc()('noMatches', 'No matches');
         this.setDisplayed(false);
+
+        const cancelIfHidden = this.cancelIfHidden.bind(this);
+        this.addManagedEventListeners({
+            toolPanelVisibleChanged: cancelIfHidden,
+            sideBarUpdated: cancelIfHidden,
+        });
     }
 
     /** Only announce when user input caused the change, so data or column updates don't speak while the UI is closed. */
     public setNoMatches(noMatches: boolean, announce: boolean): void {
-        if (noMatches && announce && !this.announced) {
-            this.beans.ariaAnnounce.announceValue(this.getGui().textContent ?? '', 'noMatches');
-        } else if (!noMatches) {
-            this.cancelAnnouncement();
-        }
-        this.announced = noMatches && (announce || this.announced);
         this.setDisplayed(noMatches);
+        if (!noMatches) {
+            this.cancelAnnouncement();
+        } else if (announce && !this.announced && this.isShown()) {
+            this.beans.ariaAnnounce.announceValue(this.getGui().textContent ?? '', 'noMatches');
+            this.announced = true;
+        }
     }
 
     /** Drops a "No matches" still waiting out the announcement delay, e.g. when its search UI is hidden. */
@@ -34,6 +40,19 @@ export class NoMatchesComp extends Component {
         // An empty same-key value supersedes the pending one, and is never spoken itself.
         this.beans.ariaAnnounce.announceValue('', 'noMatches');
         this.announced = false;
+    }
+
+    /** A debounced search can land after its panel or popup has closed. */
+    private isShown(): boolean {
+        const eGui = this.getGui();
+        return eGui.isConnected && !eGui.closest('.ag-hidden');
+    }
+
+    private cancelIfHidden(): void {
+        if (this.isShown()) {
+            return;
+        }
+        this.cancelAnnouncement();
     }
 
     public override destroy(): void {

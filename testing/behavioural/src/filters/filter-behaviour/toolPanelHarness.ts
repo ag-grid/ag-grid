@@ -234,6 +234,12 @@ export class ToolPanelHarness {
         return this;
     }
 
+    /** Types into the column-list search, leaving its 300ms debounce still pending. */
+    public startSearch(text: string): this {
+        setNativeInputValue(this.searchInput(), text);
+        return this;
+    }
+
     private expandAllButton(): HTMLElement | null {
         const button = this.panel.querySelector<HTMLElement>(
             '.ag-filter-toolpanel-search > .ag-filter-toolpanel-expand'
