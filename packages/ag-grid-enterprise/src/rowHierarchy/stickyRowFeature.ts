@@ -182,7 +182,7 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
                         return false;
                     }
                 }
-                if (row.level === -1 && pinnedRowModel?.getGrandTotalPinned()) {
+                if (row.level === -1 && pinnedRowModel?.getUserGrandTotalPinned()) {
                     return false;
                 }
                 if (container === 'bottom') {
