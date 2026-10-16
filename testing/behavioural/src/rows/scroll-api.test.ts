@@ -1,12 +1,14 @@
 import { waitFor } from '@testing-library/dom';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
+import { installMockResizeObserver, triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserver';
 
-import type { ColDef, GridApi } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     CellSpanModule,
     ClientSideRowModelModule,
     GridStateModule,
+    PinnedRowModule,
     RowApiModule,
     RowAutoHeightModule,
     ScrollApiModule,
@@ -26,12 +28,17 @@ describe('scroll API', () => {
 
     describe('fake scrollbars', () => {
         // the viewport's one scroll event serves both axes, so scrolling one axis must not take over the other
-        const createScrollGrid = () => {
+        const createScrollGrid = (options?: GridOptions) => {
             // wider than the grid, so it scrolls both ways
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: Array.from({ length: 10 }, (_, i) => ({ colId: `c${i}`, width: 300 })),
-                rowData: Array.from({ length: 200 }, () => ({})),
-            });
+            const api = gridsManager.createGrid(
+                'myGrid',
+                {
+                    columnDefs: Array.from({ length: 10 }, (_, i) => ({ colId: `c${i}`, width: 300 })),
+                    rowData: Array.from({ length: 200 }, () => ({})),
+                    ...options,
+                },
+                { modules: [PinnedRowModule] }
+            );
             const root = TestGridsManager.getHTMLElement(api)!;
             const scroll = (selector: string, axis: 'scrollTop' | 'scrollLeft', value: number) => {
                 const element = root.querySelector<HTMLElement>(selector)!;
@@ -47,7 +54,7 @@ describe('scroll API', () => {
             expect(viewport.scrollTop).toBe(100);
         });
 
-        test('synchronising a hidden scrollbar does not start a visibility polling timer', () => {
+        test('a hidden grid keeps its vertical scrollbar at the latest position, without a polling timer', () => {
             const { root, scroll } = createScrollGrid();
             root.style.display = 'none';
             const scrollbar = root.querySelector<HTMLElement>('.ag-body-vertical-scroll-viewport')!;
@@ -60,6 +67,46 @@ describe('scroll API', () => {
             } finally {
                 intervals.mockRestore();
             }
+            root.style.display = '';
+            expect(scrollbar.scrollTop).toBe(200);
+        });
+
+        test('with a debounced vertical scrollbar, a pinned row update while its scroll is pending keeps the scroll', async () => {
+            const { api, viewport, scroll } = createScrollGrid({
+                debounceVerticalScrollbar: true,
+                pinnedBottomRowData: [{}],
+            });
+            scroll('.ag-body-vertical-scroll-viewport', 'scrollTop', 300);
+            api.setGridOption('pinnedBottomRowData', [{}, {}]);
+            await waitFor(() => expect(viewport.scrollTop).toBe(300));
+        });
+
+        test('a resize of the viewport brings a vertical scrollbar that fell out of step back to the viewport', async () => {
+            const uninstall = installMockResizeObserver();
+            try {
+                const { root, viewport, scroll } = createScrollGrid();
+                scroll('.ag-grid-viewport', 'scrollTop', 100);
+                const fakeVertical = root.querySelector<HTMLElement>('.ag-body-vertical-scroll-viewport')!;
+                // as a scroller shown again after `display: none` reports
+                fakeVertical.scrollTop = 0;
+
+                triggerResizeObservers(viewport);
+
+                await waitFor(() => expect(fakeVertical.scrollTop).toBe(100));
+            } finally {
+                uninstall();
+            }
+        });
+
+        test('a change in row height brings a vertical scrollbar that fell out of step back to the viewport', () => {
+            const { api, root, scroll } = createScrollGrid();
+            scroll('.ag-grid-viewport', 'scrollTop', 100);
+            const fakeVertical = root.querySelector<HTMLElement>('.ag-body-vertical-scroll-viewport')!;
+            fakeVertical.scrollTop = 0;
+
+            api.setGridOption('rowHeight', 50);
+
+            expect(fakeVertical.scrollTop).toBe(100);
         });
 
         test('the vertical scrollbar scrolls the rows straight after a horizontal scroll of the viewport', () => {

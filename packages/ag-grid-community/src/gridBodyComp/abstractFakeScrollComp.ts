@@ -20,8 +20,6 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
     private invisibleScrollbarListenersAdded = false;
 
     protected abstract setScrollVisible(): void;
-    public abstract getScrollPosition(): number;
-    public abstract setScrollPosition(value: number): void;
     private readonly queueSetScrollVisible = this.throttleToFrame(() => this.setScrollVisible());
 
     constructor(

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
-import { _batchCall } from './function';
+import { _batchCall, _waitUntil } from './function';
 
 describe('_batchCall', () => {
     beforeEach(() => {
@@ -71,5 +71,59 @@ describe('_batchCall', () => {
         vi.runAllTimers();
 
         expect(afterThrow).toHaveBeenCalledTimes(1);
+    });
+});
+
+describe('_waitUntil', () => {
+    beforeEach(() => {
+        vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
+    const createBean = () => {
+        const destroyFuncs: (() => void)[] = [];
+        let alive = true;
+        return {
+            destroyFuncs,
+            isAlive: () => alive,
+            addDestroyFunc: (func: () => void) => destroyFuncs.push(func),
+            destroy: () => {
+                alive = false;
+                for (const func of destroyFuncs) {
+                    func();
+                }
+            },
+        };
+    };
+
+    test('a finished wait leaves nothing registered on its bean, however often it waits', () => {
+        const bean = createBean();
+        let ready = false;
+        const callback = vi.fn();
+        for (let i = 0; i < 3; ++i) {
+            _waitUntil(bean, () => ready, callback);
+        }
+        _waitUntil(bean, () => true, callback);
+        ready = true;
+        vi.advanceTimersByTime(10);
+
+        expect(callback).toHaveBeenCalledTimes(4);
+        expect(bean.destroyFuncs).toEqual([]);
+        expect(vi.getTimerCount()).toBe(0);
+    });
+
+    test('stops once its bean is destroyed, without calling back', () => {
+        const bean = createBean();
+        const callback = vi.fn();
+        _waitUntil(bean, () => false, callback, 1000);
+        vi.advanceTimersByTime(50);
+        bean.destroy();
+        vi.advanceTimersByTime(2000);
+
+        expect(callback).not.toHaveBeenCalled();
+        expect(vi.getTimerCount()).toBe(0);
     });
 });

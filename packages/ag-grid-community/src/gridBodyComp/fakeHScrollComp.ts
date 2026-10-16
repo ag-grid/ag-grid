@@ -1,4 +1,4 @@
-import { RefPlaceholder, _getScrollLeft, _setFixedHeight, _setFixedWidth, _setScrollLeft } from 'ag-stack';
+import { RefPlaceholder, _getScrollLeft, _setFixedHeight, _setFixedWidth } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
 import type { ElementParams } from '../utils/element';
@@ -151,15 +151,13 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         return _getScrollLeft(this.eViewport, this.enableRtl);
     }
 
+    /** Showing the scrollbar can leave it behind the viewport, which may have moved while it was hidden. */
     private syncScrollPosition(): void {
         const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
         if (gridBodyCtrl) {
-            this.setScrollPosition(_getScrollLeft(gridBodyCtrl.eGridViewport, this.enableRtl));
+            // same direction on both elements, so the raw value carries over without RTL conversion
+            this.eViewport.scrollLeft = gridBodyCtrl.eGridViewport.scrollLeft;
         }
-    }
-
-    public setScrollPosition(value: number): void {
-        _setScrollLeft(this.eViewport, value, this.enableRtl);
     }
 }
 

@@ -21,6 +21,7 @@ export function GridExample() {
             <div style={{ height: '100%' }}>
                 <button
                     onClick={() => {
+                        // scrolling a hidden grid must leave nothing running once the grid is destroyed
                         setVisibility('hidden');
                         const scroller = document.querySelector('.ag-grid-viewport')!;
                         scroller.scrollTop += 50;

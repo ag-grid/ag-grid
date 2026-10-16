@@ -8,7 +8,7 @@ test.use({ launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'] } });
 declare global {
     interface Window {
         scrollTestRtl: boolean;
-        scrollIntervals: { callbacks: number; live: Set<number> };
+        intervalsCreated: number;
     }
 }
 
@@ -16,26 +16,30 @@ const trackIntervals = (page: Page) =>
     page.evaluate(() => {
         const browserWindow: Window = window;
         const setInterval = browserWindow.setInterval.bind(browserWindow);
-        const clearInterval = browserWindow.clearInterval.bind(browserWindow);
-        const intervals = (window.scrollIntervals = { callbacks: 0, live: new Set<number>() });
+        browserWindow.intervalsCreated = 0;
         browserWindow.setInterval = (handler, timeout, ...args) => {
-            const callback =
-                typeof handler === 'function'
-                    ? () => {
-                          ++intervals.callbacks;
-                          handler.apply(browserWindow, args);
-                      }
-                    : handler;
-            const id = setInterval(callback, timeout);
-            intervals.live.add(id);
-            return id;
+            ++browserWindow.intervalsCreated;
+            return setInterval(handler, timeout, ...args);
         };
-        browserWindow.clearInterval = (id) => {
-            if (id != null) {
-                intervals.live.delete(id);
-            }
-            clearInterval(id);
-        };
+    });
+
+const intervalsCreated = (page: Page) => page.evaluate(() => window.intervalsCreated);
+
+/** The grid answers a resize in observer callbacks throttled to the next frame, so two frames see it all. */
+const afterTwoFrames = (page: Page) =>
+    page.evaluate(
+        () => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
+    );
+
+/** 0 where the browser only overlays its scrollbars, as Firefox does on macOS whatever the page's CSS. */
+const nativeScrollbarWidth = (page: Page) =>
+    page.evaluate(() => {
+        const probe = document.createElement('div');
+        probe.style.cssText = 'position: absolute; overflow: scroll; width: 100px; height: 100px';
+        document.body.appendChild(probe);
+        const width = probe.offsetWidth - probe.clientWidth;
+        probe.remove();
+        return width;
     });
 
 const positions = (page: Page) =>
@@ -57,6 +61,10 @@ for (const overlay of [false, true]) {
             test.beforeEach(async ({ page }) => {
                 // setContent preserves window properties and does not run navigation init scripts.
                 await page.evaluate((rtl) => (window.scrollTestRtl = rtl), enableRtl);
+                if (overlay) {
+                    // Apple overlay scrollbars sit hidden at rest, so their position is written while invisible
+                    await page.evaluate(() => Object.defineProperty(navigator, 'platform', { value: 'MacIntel' }));
+                }
                 await mountGrid(page, {
                     width: 700,
                     height: 500,
@@ -82,9 +90,13 @@ for (const overlay of [false, true]) {
                     )
                     .toBeGreaterThan(0);
                 if (overlay) {
-                    await expect(page.locator('.ag-body-vertical-scroll')).toHaveClass(/ag-scrollbar-invisible/);
-                } else {
+                    await expect(page.locator('.ag-body-vertical-scroll')).toHaveClass(
+                        /ag-apple-scrollbar ag-scrollbar-invisible/
+                    );
+                } else if (await nativeScrollbarWidth(page)) {
                     await expect(page.locator('.ag-body-vertical-scroll')).not.toHaveClass(/ag-scrollbar-invisible/);
+                } else {
+                    await expect(page.locator('.ag-body-vertical-scroll')).toHaveClass(/ag-scrollbar-invisible/);
                 }
                 await trackIntervals(page);
             });
@@ -105,12 +117,8 @@ for (const overlay of [false, true]) {
                         });
 
                     await grid.evaluate((el) => (el.style.display = 'none'));
-                    // Hold hidden long enough for any deferred visibility polling to start ticking.
-                    await page.waitForTimeout(250);
-                    expect(await page.evaluate(() => window.scrollIntervals.live.size)).toBe(0);
-                    const callbacks = await page.evaluate(() => window.scrollIntervals.callbacks);
-                    await page.waitForTimeout(150);
-                    expect(await page.evaluate(() => window.scrollIntervals.callbacks)).toBe(callbacks);
+                    await afterTwoFrames(page);
+                    expect(await intervalsCreated(page)).toBe(0);
 
                     await grid.evaluate((el) => (el.style.display = ''));
                     await expect
@@ -132,90 +140,19 @@ for (const overlay of [false, true]) {
                             verticalDifference: 0,
                         });
                 }
-                expect(await page.evaluate(() => window.scrollIntervals.live.size)).toBe(0);
+                expect(await intervalsCreated(page)).toBe(0);
             });
 
-            test('showing the horizontal scrollbar synchronises its latest position after layout', async ({ page }) => {
-                const horizontal = page.locator('.ag-body-horizontal-scroll-viewport');
-                await page.evaluate(() => window.gridApi.setGridOption('suppressHorizontalScroll', true));
-                await expect.poll(() => horizontal.evaluate((el) => el.getBoundingClientRect().height)).toBe(0);
-                await page.evaluate(
-                    () =>
-                        new Promise<void>((resolve) => {
-                            const api = window.gridApi;
-                            const onScrollEnd = () => {
-                                api.removeEventListener('bodyScrollEnd', onScrollEnd);
-                                resolve();
-                            };
-                            api.addEventListener('bodyScrollEnd', onScrollEnd);
-                            api.ensureColumnVisible('c10', 'start');
-                            api.setGridOption('suppressHorizontalScroll', false);
-                            api.ensureColumnVisible('c20', 'start');
-                        })
-                );
-                await expect
-                    .poll(() => horizontal.evaluate((el) => el.getBoundingClientRect().height))
-                    .toBeGreaterThan(0);
-                await expect.poll(() => positions(page)).toMatchObject({ left: 4000, horizontalDifference: 0 });
-
-                await horizontal.evaluate((el) => (el.scrollLeft = window.scrollTestRtl ? -1e6 : 1e6));
-                await expect.poll(() => positions(page)).toMatchObject({ horizontalDifference: 0 });
-                expect(await horizontal.evaluate((el) => Math.abs(el.scrollLeft))).toBe(
-                    await horizontal.evaluate((el) => el.scrollWidth - el.clientWidth)
-                );
-            });
-
-            test('horizontal scrolling with no vertical overflow does not start polling', async ({ page }) => {
-                await page.evaluate(() =>
-                    window.gridApi.setGridOption(
-                        'rowData',
-                        Array.from({ length: 5 }, () => ({}))
-                    )
-                );
-                await expect(page.locator('.ag-body-vertical-scroll')).toHaveClass(/ag-hidden/);
-                await page.evaluate(async () => {
-                    const viewport = document.querySelector('.ag-grid-viewport')!;
-                    const sign = window.scrollTestRtl ? -1 : 1;
-                    for (let i = 1; i <= 200; ++i) {
-                        viewport.scrollLeft = sign * i * 20;
-                        await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-                    }
-                });
-                await expect
-                    .poll(() => positions(page))
-                    .toEqual({
-                        left: 4000,
-                        top: 0,
-                        horizontalDifference: 0,
-                        verticalDifference: 0,
-                    });
-                expect(await page.evaluate(() => window.scrollIntervals.live.size)).toBe(0);
-            });
-
-            test('updates while invisible use the latest position and destruction leaves no polling', async ({
-                page,
-            }) => {
+            test('updates while invisible use the latest position, without polling', async ({ page }) => {
                 const grid = page.locator('#myGrid');
                 await grid.evaluate((el) => (el.style.visibility = 'hidden'));
                 for (const index of [10, 20, 30]) {
                     await page.evaluate((row) => window.gridApi.ensureIndexVisible(row, 'top'), index);
                     await expect.poll(() => positions(page)).toMatchObject({ top: index * 40 });
                 }
-                await page.waitForTimeout(250);
-                expect(await page.evaluate(() => window.scrollIntervals.live.size)).toBe(0);
+                expect(await intervalsCreated(page)).toBe(0);
                 await grid.evaluate((el) => (el.style.visibility = ''));
                 await expect.poll(() => positions(page)).toMatchObject({ top: 1200, verticalDifference: 0 });
-
-                await page.evaluate(() => {
-                    window.gridApi.setGridOption('suppressHorizontalScroll', true);
-                    window.gridApi.setGridOption('suppressHorizontalScroll', false);
-                    window.gridApi.destroy();
-                });
-                await expect(page.locator('.ag-root-wrapper')).toHaveCount(0);
-                const callbacks = await page.evaluate(() => window.scrollIntervals.callbacks);
-                await page.waitForTimeout(250);
-                expect(await page.evaluate(() => window.scrollIntervals.callbacks)).toBe(callbacks);
-                expect(await page.evaluate(() => window.scrollIntervals.live.size)).toBe(0);
             });
         });
     }

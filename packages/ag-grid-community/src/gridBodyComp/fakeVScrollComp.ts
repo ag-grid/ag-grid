@@ -1,4 +1,4 @@
-import { RefPlaceholder, _observeResize, _setFixedWidth } from 'ag-stack';
+import { RefPlaceholder, _setFixedWidth } from 'ag-stack';
 
 import type { ElementParams } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';
@@ -38,10 +38,6 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         ctrlsSvc.register('fakeVScrollComp', this);
 
         const queueContainerHeightSync = this.queueContainerHeightSync;
-        // bodyHeightChanged repeats pinned-row notifications; observe viewport-only geometry changes here.
-        ctrlsSvc.whenReady(this, ({ gridBodyCtrl }) => {
-            this.addDestroyFunc(_observeResize(this.beans, gridBodyCtrl.eGridViewport, queueContainerHeightSync));
-        });
         this.addManagedEventListeners({
             rowContainerHeightChanged: this.syncContainerHeight.bind(this),
             headerHeightChanged: this.onScrollVisibilityChanged.bind(this),
@@ -93,7 +89,10 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         const fakeVScrollHeight = this.eViewport.clientHeight;
         const diff = gridHeight - fakeVScrollHeight;
         this.eContainer.style.height = `${Math.max(1, gridScrollHeight - diff)}px`;
-        this.setScrollPosition(gridBodyCtrl.eGridViewport.scrollTop);
+        // `display: none` resets the position, so take the viewport's back, unless this scrollbar is moving it
+        if (!gridBodyCtrl.scrollFeature.isFakeVScrollLeading()) {
+            this.setScrollPosition(gridBodyCtrl.eGridViewport.scrollTop);
+        }
     }
 
     public getScrollPosition(): number {

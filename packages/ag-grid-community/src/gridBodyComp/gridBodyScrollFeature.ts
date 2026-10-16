@@ -169,12 +169,26 @@ export class GridBodyScrollFeature extends BeanStub {
         const onVScroll = isDebounce
             ? _debounce(this, this.onVScroll.bind(this, VIEWPORT), SCROLL_DEBOUNCE_TIMEOUT)
             : this.onVScroll.bind(this, VIEWPORT);
-        const onFakeVScroll = isDebounce
-            ? _debounce(this, this.onVScroll.bind(this, FAKE_V_SCROLLBAR), SCROLL_DEBOUNCE_TIMEOUT)
-            : this.onVScroll.bind(this, FAKE_V_SCROLLBAR);
+        const onFakeVScroll = this.onVScroll.bind(this, FAKE_V_SCROLLBAR);
 
         this.addManagedElementListeners(this.eGridViewport, { scroll: onVScroll });
-        this.fakeVScrollComp.onScrollCallback(onFakeVScroll);
+        this.fakeVScrollComp.onScrollCallback(isDebounce ? this.debounceFakeVScroll(onFakeVScroll) : onFakeVScroll);
+    }
+
+    /** The scrollbar leads the viewport until the debounce runs, so it takes the axis on its own first move. */
+    private debounceFakeVScroll(onFakeVScroll: () => void): () => void {
+        const debouncedFakeVScroll = _debounce(this, onFakeVScroll, SCROLL_DEBOUNCE_TIMEOUT);
+        return () => {
+            // the grid's own writes echo back at the position it already holds
+            if (
+                this.fakeVScrollComp.getScrollPosition() === this.nextScrollTop ||
+                !this.isControllingVScroll(FAKE_V_SCROLLBAR)
+            ) {
+                return;
+            }
+            this.resetLastVScrollDebounced();
+            debouncedFakeVScroll();
+        };
     }
 
     private onDisplayedColumnsWidthChanged(): void {
@@ -409,6 +423,10 @@ export class GridBodyScrollFeature extends BeanStub {
         if (hasHorizontalScrollersOutOfSync) {
             this.onHScroll(VIEWPORT);
         }
+    }
+
+    public isFakeVScrollLeading(): boolean {
+        return this.lastScrollSource[Direction.Vertical] === FAKE_V_SCROLLBAR;
     }
 
     public scrollGridIfNeeded(suppressedAnimationFrame: boolean = false): boolean {
