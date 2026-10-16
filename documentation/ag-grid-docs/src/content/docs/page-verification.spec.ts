@@ -437,9 +437,15 @@ test.describe('Page Verification', () => {
         // Reload rather than just resize: the open nav leaves inline heights on the collapsible.
         await page.setViewportSize({ width: 1250, height: 900 });
         await visit(page, '/react-data-grid/getting-started/');
+        // visit() returns at commit, before the button exists, so toBeHidden() alone passes on a
+        // page still too short to scroll; the scroll then lands at 0 and the header reads as
+        // offset by the announcement banner. Wait for the header, and retry until the scroll takes.
+        await expect(header).toBeVisible();
         await expect(menuButton).toBeHidden();
-        await page.evaluate(() => window.scrollTo(0, 1200));
-        expect((await boxOf(header)).y, 'inline header stays pinned to the top').toBe(0);
+        await expect(async () => {
+            await page.evaluate(() => window.scrollTo(0, 1200));
+            expect((await boxOf(header)).y, 'inline header stays pinned to the top').toBe(0);
+        }).toPass();
     });
 
     // Sense-check the standalone example runner across frameworks by loading a couple of
