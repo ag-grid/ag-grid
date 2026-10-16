@@ -43,20 +43,20 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
         const totalSpace = this.flexViewportWidth;
 
         const { visibleCols, colDelayRenderSvc } = this.beans;
+        const lastFlexIndex = visibleCols.lastFlexIndex;
 
         // most grids flex nothing, and an unmeasured grid has no space: settled before an item is made per column
-        if (!visibleCols.flexActive || !totalSpace) {
+        if (lastFlexIndex < 0 || !totalSpace) {
             this.revealColumns(colDelayRenderSvc);
             return [];
         }
         const visibleCenterCols = visibleCols.centerCols;
+        const centerStart = visibleCenterCols[0].allColsIndex;
 
         // the last resizing centre col, as only cols after this one are affected by the resizing
         let flexAfterDisplayIndex = -1;
         const resizingCols = params.resizingCols;
-        const firstCenterCol = visibleCenterCols[0];
-        if (resizingCols && firstCenterCol) {
-            const centerStart = firstCenterCol.allColsIndex;
+        if (resizingCols) {
             for (let i = 0, len = resizingCols.length; i < len; ++i) {
                 const col = resizingCols[i];
                 const index = col.allColsIndex - centerStart;
@@ -64,6 +64,11 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
                     continue;
                 }
                 flexAfterDisplayIndex = index;
+            }
+            // no flex col after the resizing ones, as when resizing past the last
+            if (centerStart + flexAfterDisplayIndex >= lastFlexIndex) {
+                this.revealColumns(colDelayRenderSvc);
+                return [];
             }
         }
 
@@ -79,12 +84,12 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
         for (let i = 0; i < itemCount; ++i) {
             const col = visibleCenterCols[i];
             const flex = col.flex;
-            const isFlex = flex != null && flex > 0 && i > flexAfterDisplayIndex;
-            const itemFlex = Math.max(0, flex ?? 0);
+            const itemFlex = flex != null && flex > 0 ? flex : 0;
+            const isFlex = itemFlex > 0 && i > flexAfterDisplayIndex;
             if (isFlex) {
                 flexedColumns.push(col);
+                unfrozenFlex += itemFlex;
             }
-            unfrozenFlex += itemFlex;
             items.push({
                 col,
                 isFlex,
@@ -105,7 +110,7 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
         colDelayRenderSvc?.hideColumns('colFlex');
         this.columnsHidden = true;
 
-        let unfrozenItemCount = itemCount;
+        let unfrozenItemCount = flexedColumns.length;
         let unfrozenSpace = totalSpace;
 
         // Freeze inflexible columns
@@ -115,8 +120,6 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
                 continue;
             }
             unfrozenSpace -= freeze(item, item.initialSize, source);
-            unfrozenFlex -= item.flex;
-            --unfrozenItemCount;
         }
 
         // a. Check for flexible items. If all the flex items on the line are

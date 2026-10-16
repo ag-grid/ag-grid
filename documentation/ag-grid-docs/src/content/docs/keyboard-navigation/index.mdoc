@@ -249,9 +249,10 @@ The example below demonstrates suppressing the following keyboard events:
     - Navigation is blocked from the left to right using arrows but is allowed using {% kbd "⇥ Tab" /%}.
     - Moving or resizing the column with the arrow keys is blocked too.
     - Navigation up and down is allowed. This is the only header that allows navigation from the header to the grid cells.
-    - {% kbd "↵ Enter" /%} is blocked. This is the only header that blocks sorting / opening menu via keyboard.
+    - {% kbd "↵ Enter" /%} is blocked. This is the only header that blocks sorting via keyboard.
 - On all headers (excluding country):
     - Navigation is blocked up and down, but navigation left / right is allowed using arrows and {% kbd "⇥ Tab" /%}.
+    - Opening the menu with {% kbd "⌥ Alt" /%} + {% kbd "↓" /%} is blocked.
 
 {% gridExampleRunner title="Suppress Keys" name="suppress-keys" /%}
 

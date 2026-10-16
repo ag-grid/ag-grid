@@ -114,6 +114,24 @@ test.agExample(import.meta, () => {
     );
 
     test.eachFramework(
+        'Alt+ArrowRight resizes the Athlete column but not the Country column, nor Shift+ArrowRight moves it (suppressed)',
+        async ({ agIdFor, page }) => {
+            const box = async (colId: string) => (await agIdFor.headerCell(colId).boundingBox())!;
+
+            await agIdFor.headerCell('athlete').click();
+            const athleteWidth = (await box('athlete')).width;
+            await page.keyboard.press('Alt+ArrowRight');
+            await expect.poll(async () => (await box('athlete')).width).toBeGreaterThan(athleteWidth);
+
+            await agIdFor.headerCell('country').click();
+            const country = await box('country');
+            await page.keyboard.press('Alt+ArrowRight');
+            await page.keyboard.press('Shift+ArrowRight');
+            expect(await box('country')).toEqual(country);
+        }
+    );
+
+    test.eachFramework(
         'ArrowDown from Country header navigates to first Country cell (not suppressed)',
         async ({ agIdFor, page }) => {
             await agIdFor.headerCell('country').click();

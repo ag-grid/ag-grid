@@ -3,7 +3,7 @@ import { isRowNumberCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
-import { _laneOfPinned, isColumn } from '../entities/agColumn';
+import { _laneOfPinned, getShiftPair, isColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { getColGroupAfter } from '../entities/agColumnGroup';
 import type { ColKey } from '../entities/colDef';
@@ -17,6 +17,8 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 
 /** Minimum center viewport width (in px) reserved when pinned columns are present. */
 export const MIN_CENTER_VIEWPORT_WIDTH = 50;
+
+const USER_AUTOSIZE_SOURCES = new Set<ColumnEventType>(['uiColumnResized', 'columnMenu', 'contextMenu', 'toolPanelUi']);
 
 export class PinnedColumnService extends BeanStub implements NamedBean {
     beanName = 'pinnedCols' as const;
@@ -154,31 +156,52 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         column.dispatchStateUpdatedEvent('pinned', source);
     }
 
-    /** Whether a resize of `column` taking from the column or group after it stays within its pinned section. */
-    public isResizeWithinPinnedSection(column: AgColumn | AgColumnGroup, takeFromAdjacent: boolean): boolean {
-        if (!takeFromAdjacent) {
-            return false;
+    /**
+     * `change` to a user resize of `column`, held to the pinned room: a pinned column grows, or a centre one shrinks into
+     * a pinned neighbour, only as far as the room left, counting as free what `resized`, the change so far, took.
+     */
+    public limitResize(
+        column: AgColumn | AgColumnGroup,
+        takeFromAdjacent: boolean,
+        change: number,
+        resized = 0
+    ): number {
+        if (column.pinnedLane === 1) {
+            return change < 0 && takeFromAdjacent && this.isNextPinned(column)
+                ? Math.max(change, -this.getPinnedRoom(-resized))
+                : change;
         }
+        // taking from a pinned neighbour keeps the pinned total
+        return change > 0 && !(takeFromAdjacent && this.isNextPinned(column))
+            ? Math.min(change, this.getPinnedRoom(resized))
+            : change;
+    }
+
+    /** Whether an auto-size from `source` stops at the pinned room: a resize handle's or a menu's does, the API's not. */
+    public limitsAutoSize(source: ColumnEventType): boolean {
+        return USER_AUTOSIZE_SOURCES.has(source);
+    }
+
+    /** How much wider the pinned columns can grow before the centre narrows below its minimum, `freed` px of them not
+     *  counted. Reads the observed viewport width, not the layout, so a drag can ask on every move. */
+    public getPinnedRoom(freed = 0): number {
+        const gridBodyCtrl = this.gridBodyCtrl;
+        const viewportWidth = gridBodyCtrl
+            ? gridBodyCtrl.getViewportWidthWithoutScrollbar(gridBodyCtrl.getReportedViewportWidth())
+            : 0;
+        const room = viewportWidth - MIN_CENTER_VIEWPORT_WIDTH - this.leftWidth - this.rightWidth + freed;
+        return room > 0 ? room : 0;
+    }
+
+    private isNextPinned(column: AgColumn | AgColumnGroup): boolean {
         const visibleCols = this.beans.visibleCols;
         if (isColumn(column)) {
-            return visibleCols.getColAfter(column)?.pinnedLane === column.pinnedLane;
+            const next = getShiftPair(visibleCols, column);
+            return !!next && next.pinnedLane !== 1;
         }
         // a next group with no resizable column gives nothing, so the group resizes alone
         const next = getColGroupAfter(visibleCols, column);
-        return !!next && next.pinnedLane === column.pinnedLane && next.isResizable();
-    }
-
-    public getHeaderResizeDiff(diff: number, column: AgColumn | AgColumnGroup, takeFromAdjacent: boolean): number {
-        if (diff <= 0 || column.pinnedLane === 1 || this.isResizeWithinPinnedSection(column, takeFromAdjacent)) {
-            return diff;
-        }
-        const { leftWidth, rightWidth } = this;
-        const bodyWidth = this.getAvailableViewportWidth() - MIN_CENTER_VIEWPORT_WIDTH;
-        if (leftWidth + rightWidth + diff <= bodyWidth) {
-            return diff;
-        }
-        // allow body width to ignore resize multiplier and fill space for last tick
-        return bodyWidth > leftWidth + rightWidth ? bodyWidth - leftWidth - rightWidth : 0;
+        return !!next && next.pinnedLane !== 1 && next.isResizable();
     }
 
     private getAvailableViewportWidth(): number {

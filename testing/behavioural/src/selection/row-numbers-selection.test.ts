@@ -784,6 +784,24 @@ describe('Row Numbers Keyboard Navigation', () => {
         expect(api.getCellRanges() ?? []).toEqual([]);
     });
 
+    test('a rebuilt row number header leaves its old element without listeners, so a click there selects nothing', async () => {
+        const api = await createGrid({ columnDefs, rowData, cellSelection: true, rowNumbers: true });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const oldHeader = getByTestId(gridDiv, agTestIdFor.headerCell(ROW_NUMBERS_COLUMN_ID));
+
+        api.refreshHeader();
+        await asyncSetTimeout(0);
+        oldHeader.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        await asyncSetTimeout(0);
+        const afterOld = api.getCellRanges()?.length ?? 0;
+        getByTestId(gridDiv, agTestIdFor.headerCell(ROW_NUMBERS_COLUMN_ID)).dispatchEvent(
+            new MouseEvent('click', { bubbles: true })
+        );
+        await asyncSetTimeout(0);
+
+        expect([afterOld, api.getCellRanges()?.length ?? 0]).toEqual([0, 1]);
+    });
+
     test('Enter on row number header selects all cells', async () => {
         const api = await createGrid({
             columnDefs,

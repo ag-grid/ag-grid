@@ -206,7 +206,8 @@ export class RowNumbersService
             return;
         }
         _setAriaLabel(eGridHeader, 'Row Number');
-        this.addManagedElementListeners(eGridHeader, {
+        // on the header comp, so a rebuilt header takes its listeners with it
+        comp.addManagedElementListeners(eGridHeader, {
             click: this.onHeaderClick.bind(this),
             focus: this.onHeaderFocus.bind(this),
         });

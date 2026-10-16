@@ -5,6 +5,7 @@ import { _addColumnDefaultAndTypes } from '../columns/colDefUtils';
 import type { QueuedEventOwner } from '../columns/columnModel';
 import { updateSomeColumnState } from '../columns/columnStateUtils';
 import type { ColumnStateParams } from '../columns/columnStateUtils';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { ColumnEvent, ColumnEventType, ColumnStateUpdatedEvent } from '../events';
@@ -1205,6 +1206,10 @@ export const _laneOfPinned = (pinned: ColumnPinnedType): ColumnLane => {
     }
     return pinned === 'left' || pinned === true ? 0 : 1;
 };
+
+/** The column a shift resize of `col` takes from: a hidden one has none, though `getColAfter` answers the first. */
+export const getShiftPair = (visibleCols: VisibleColsService, col: AgColumn): AgColumn | null =>
+    col.allColsIndex >= 0 ? visibleCols.getColAfter(col) : null;
 
 /** -1 where dragging left grows the column: under RTL unless pinned left, or pinned right under LTR. */
 export const getDragSign = (isRtl: boolean, lane: ColumnLane): number => {

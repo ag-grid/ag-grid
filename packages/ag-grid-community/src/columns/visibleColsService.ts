@@ -32,8 +32,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     private colFilter?: ColumnFilterService;
     private rowRenderer: RowRenderer;
     private rowAutoHeight?: RowAutoHeightService;
-    /** False only when no displayed centre col has `flex > 0`, counted per layout. */
-    public flexActive = false;
+    /** The `allColsIndex` of the last displayed centre col with `flex > 0`, -1 when none, counted per layout. */
+    public lastFlexIndex = -1;
 
     // tree of columns to be displayed for each section
     public treeLeft: (AgColumn | AgColumnGroup)[] = [];
@@ -139,7 +139,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
 
         // Run flex sizing when a flex col exists OR cols await a flex-then-reveal pass
         // (a "had flex" → "no flex" transition still needs the reveal).
-        const runFlex = this.flexActive || colFlex?.columnsHidden;
+        const runFlex = this.lastFlexIndex >= 0 || colFlex?.columnsHidden;
         if (runFlex) {
             // colFlex's cached viewport width only updates on DOM resize, but pinning changes centre
             // width without one — so derive centre width from the just-set section totals.
@@ -410,6 +410,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.rightCols = [];
         this.centerCols = [];
         this.allCols = [];
+        this.lastFlexIndex = -1;
         ++this.displayedColsVersion;
         this.autoHeightCols.length = 0;
         this.colSpanColCount = 0;
@@ -453,8 +454,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.autoHeightCols.length = 0;
         this.colSpanColCount = 0;
         this.rowSpanCols.length = 0;
-        // `layoutSection` accumulates `flexActive` / `headerGroupRowCount` across its three calls — reset them first.
-        this.flexActive = false;
+        // `layoutSection` accumulates `lastFlexIndex` / `headerGroupRowCount` across its three calls — reset them first.
+        this.lastFlexIndex = -1;
         const hidePaddedHeaderRows = !!this.gos.get('hidePaddedHeaderRows');
         this.headerGroupRowCount = hidePaddedHeaderRows ? 0 : this.colModel.colsTreeDepth;
 
@@ -477,7 +478,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     /** Lays one section's cols into `all`: stamps `allColsIndex` + section-relative `left`, folding in the
-     *  per-column lists and `flexActive`/`headerGroupRowCount`. A method not a closure, so it allocates nothing. */
+     *  per-column lists and `lastFlexIndex`/`headerGroupRowCount`. A method not a closure, so it allocates nothing. */
     private layoutSection(cols: AgColumn[], all: AgColumn[], hidePaddedHeaderRows: boolean): number {
         const { autoHeightCols, rowSpanCols } = this;
         let left = 0;
@@ -502,10 +503,10 @@ export class VisibleColsService extends BeanStub implements NamedBean {
             if (col.rowSpan != null) {
                 rowSpanCols.push(col);
             }
-            if (!this.flexActive && col.pinned == null) {
+            if (col.pinned == null) {
                 const flex = col.flex;
                 if (flex != null && flex > 0) {
-                    this.flexActive = true;
+                    this.lastFlexIndex = col.allColsIndex;
                 }
             }
             if (hidePaddedHeaderRows) {

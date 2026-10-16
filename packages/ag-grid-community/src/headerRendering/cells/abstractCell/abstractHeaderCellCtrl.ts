@@ -396,8 +396,8 @@ export abstract class AbstractHeaderCellCtrl<
         const column = this.column;
         const sign = getDragSign(this.gos.get('enableRtl'), column.pinnedLane);
         const diff = (e.key === KeyCode.RIGHT ? sign : -sign) * this.resizeMultiplier;
-        const pinnedCols = this.beans.pinnedCols;
-        return pinnedCols ? pinnedCols.getHeaderResizeDiff(diff, column, takeFromAdjacent) : diff;
+        // the last step fills the room left, whatever the multiplier
+        return this.beans.pinnedCols?.limitResize(column, takeFromAdjacent, diff) ?? diff;
     }
 
     private onGuiKeyUp(): void {

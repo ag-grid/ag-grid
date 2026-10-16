@@ -674,7 +674,7 @@ describe('Column Flex', () => {
         }
     });
 
-    test('pinned col with flex does not flex centre cols (flexActive considers only centre)', async () => {
+    test('pinned col with flex does not flex centre cols (lastFlexIndex counts only centre)', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { colId: 'a', pinned: 'left', width: 150, flex: 1 },

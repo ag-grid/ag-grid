@@ -1144,7 +1144,11 @@ export interface ColumnStateUpdatedEvent<TData = any, TContext = any> extends Co
 export interface ColumnResizedEvent<TData = any, TContext = any> extends ColumnEvent<'columnResized', TData, TContext> {
     /** Set to true for last event in a sequence of move events */
     finished: boolean;
-    /** Any columns resized due to flex */
+    /**
+     * Any columns resized due to flex.
+     * `null` when the change re-flexed every flex column rather than only those after the resized columns, as an
+     * auto-size or a group's header fit does; the columns it resized are then in `columns`.
+     */
     flexColumns: Column[] | null;
 }
 

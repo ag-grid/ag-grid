@@ -367,20 +367,11 @@ export const getColGroupAtLevel = (column: AgColumn, level: number): AgColumnGro
     return groupPointer;
 };
 
-/** Scan leaf-by-leaf from `columnGroup`'s trailing edge to the adjacent displayed group at the same level. */
+/** The displayed group at `columnGroup`'s level just after it, or null. */
 export const getColGroupAfter = (visibleCols: VisibleColsService, columnGroup: AgColumnGroup): AgColumnGroup | null => {
-    const requiredLevel = columnGroup.providedColumnGroup.level + columnGroup.getPaddingLevel();
-    let col = edgeLeafColumn(columnGroup, true, true);
-    while (col) {
-        const column = visibleCols.getColAfter(col);
-        if (!column) {
-            return null;
-        }
-        const groupPointer = getColGroupAtLevel(column, requiredLevel);
-        if (groupPointer !== columnGroup) {
-            return groupPointer;
-        }
-        col = column;
-    }
-    return null;
+    const last = edgeLeafColumn(columnGroup, true, true);
+    // a group's displayed leaves are contiguous, so the col after its last is outside it
+    const next = last && visibleCols.getColAfter(last);
+    const level = columnGroup.providedColumnGroup.level + columnGroup.getPaddingLevel();
+    return next ? getColGroupAtLevel(next, level) : null;
 };

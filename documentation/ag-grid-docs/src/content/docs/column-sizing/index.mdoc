@@ -52,8 +52,8 @@ into account.
 {% /note %}
 
 {% note %}
-Resizing a column by dragging its resize handle, with the keyboard or through the API turns off its flex,
-and the flex of the column a [shift resize](#shift-resizing) takes space from.
+Resizing a column, whether by dragging its resize handle, with the keyboard or through the API, turns off its flex
+and that of the column a [shift resize](#shift-resizing) takes space from.
 {% /note %}
 
 The example below shows flex in action. Things to note are as follows:
@@ -184,7 +184,7 @@ This can also be performed on demand via the following API methods:
 
 {% apiDocumentation source="grid-api/api.json" section="columnSizing" names=["autoSizeColumns", "autoSizeAllColumns"] /%}
 
-[Column Groups](./column-groups/) are never considered when calculating the column widths.
+These methods also widen the columns of a [Column Group](./column-groups/) whose header needs more room than its columns have, unless headers are skipped with `skipHeader` or the `skipHeaderOnAutoSize` grid option.
 
 Just like Excel, each column can also be auto-resized by double clicking the right side of the header rather than dragging it. When you do this, the grid will work out the best width to fit the contents of the cells in the column.
 

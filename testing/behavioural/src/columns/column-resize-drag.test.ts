@@ -289,17 +289,17 @@ describe('header resize drag direction', () => {
 
         api.setFocusedHeader('c');
         const columnResizing = holdAltArrowRight();
-        const columnResized = resized;
         api.setFocusedHeader('g');
         const groupResizing = holdAltArrowRight();
+        // columnResized reaches listeners asynchronously
         await asyncSetTimeout(0);
 
         expect({
             columnResizing,
             groupResizing,
-            columnResized,
+            resized,
             widths: ['a', 'c'].map((id) => api.getColumn(id)!.getActualWidth()),
-        }).toEqual({ columnResizing: false, groupResizing: false, columnResized: 0, widths: [100, 100] });
+        }).toEqual({ columnResizing: false, groupResizing: false, resized: 0, widths: [100, 100] });
     });
 
     test('a shift resize, by drag or key, stops where the column it takes from reaches its minWidth or maxWidth', async () => {
@@ -885,6 +885,79 @@ describe('group resize distribution', () => {
         ]);
     });
 
+    test('an auto-size during a held keyboard group resize keeps the group resizing', async () => {
+        const measured = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (
+            this: HTMLElement
+        ) {
+            return this.tagName === 'FORM' ? 300 : 0;
+        });
+        try {
+            const api = createGroups(
+                {
+                    g: [
+                        { colId: 'a', width: 100, suppressAutoSize: true },
+                        { colId: 'b', width: 100, suppressAutoSize: true },
+                    ],
+                },
+                { autoSizePadding: 0 }
+            );
+            api.setFocusedHeader('g');
+            const header = document.activeElement!;
+            header.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', altKey: true, bubbles: true }));
+
+            // the group fit widens the group to its 300px header while the key is still down
+            api.autoSizeColumns(['a', 'b']);
+            await asyncSetTimeout(0);
+
+            expect([widths(api, ['a', 'b']), header.classList.contains('ag-column-resizing')]).toEqual([
+                [150, 150],
+                true,
+            ]);
+        } finally {
+            measured.mockRestore();
+        }
+    });
+
+    test('a drag widens a group whose resizable columns are all 0px wide, sharing the width equally', async () => {
+        const api = createGroups({
+            g: [
+                { colId: 'a', width: 0, minWidth: 0 },
+                { colId: 'b', width: 0, minWidth: 0 },
+            ],
+        });
+
+        await dragFirstGroupTo(api, 660);
+
+        expect(widths(api, ['a', 'b'])).toEqual([30, 30]);
+    });
+
+    test('a group drag past the maxWidth of its only sized column shares the rest equally among its 0px columns', async () => {
+        const api = createGroups({
+            g: [
+                { colId: 'a', width: 100, maxWidth: 120 },
+                { colId: 'b', width: 0, minWidth: 0 },
+                { colId: 'c', width: 0, minWidth: 0 },
+            ],
+        });
+
+        await dragFirstGroupTo(api, 800);
+
+        expect(widths(api, ['a', 'b', 'c'])).toEqual([120, 90, 90]);
+    });
+
+    test('a group drag lands its whole width when a column has its minWidth above its maxWidth, which then wins', async () => {
+        const api = createGroups({
+            g: [
+                { colId: 'a', width: 100, minWidth: 200, maxWidth: 100 },
+                { colId: 'b', width: 100 },
+            ],
+        });
+
+        await dragFirstGroupTo(api, 700);
+
+        expect(widths(api, ['a', 'b'])).toEqual([100, 200]);
+    });
+
     test('a keyboard group resize stops on the summed maxWidth', async () => {
         const api = createGroups({
             g: [
@@ -988,8 +1061,8 @@ describe('group resize distribution', () => {
         expect(widths(api, ['a', 'b', 'd', 'e'])).toEqual([101, 101, 99, 299]);
     });
 
-    test('a group shift-drag where no width fits both groups changes neither, and still ends', async () => {
-        // `d`'s minWidth above its maxWidth leaves the next group nothing it can give or take
+    test('a group shift-drag against a column whose minWidth is above its maxWidth stops there, as its maxWidth wins, and still ends', async () => {
+        // `d` can only be its maxWidth, so the next group has nothing it can give or take
         const api = createGroups({
             g: [
                 { colId: 'a', width: 100 },
@@ -1012,7 +1085,7 @@ describe('group resize distribution', () => {
         await asyncSetTimeout(0);
 
         expect(widths(api, ['a', 'b', 'd'])).toEqual([100, 100, 120]);
-        expect(resized).toEqual([[['a', 'b'], true]]);
+        expect(resized).toEqual([[['a', 'b', 'd'], true]]);
     });
 
     test('a group resize lands its whole width when one pass takes columns past their max and another under its min', async () => {
@@ -1076,6 +1149,40 @@ describe('group resize distribution', () => {
         }
     });
 
+    test('a double-click group fit counts the width of its fixed columns in what the header needs', async () => {
+        const measured = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (
+            this: HTMLElement
+        ) {
+            return this.tagName === 'FORM' ? 300 : 0;
+        });
+        try {
+            const api = gridsManager.createGrid('groupFitFixed', {
+                columnDefs: [
+                    {
+                        headerName: 'g',
+                        groupId: 'g',
+                        children: [
+                            { colId: 'a', field: 'a', width: 100, resizable: false, suppressAutoSize: true },
+                            { colId: 'b', field: 'b', width: 50, suppressAutoSize: true },
+                        ],
+                    },
+                ],
+                autoSizePadding: 0,
+                rowData: [{}],
+            });
+            const bar = TestGridsManager.getHTMLElement(api)!.querySelector<HTMLElement>(
+                '.ag-header-group-cell .ag-header-cell-resize'
+            )!;
+
+            bar.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+            await asyncSetTimeout(0);
+
+            expect(widths(api, ['a', 'b'])).toEqual([100, 200]);
+        } finally {
+            measured.mockRestore();
+        }
+    });
+
     test('a double-click group fit re-flexes the flex columns before the group too, as a column auto-size does', async () => {
         const measured = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (
             this: HTMLElement
@@ -1098,11 +1205,15 @@ describe('group resize distribution', () => {
             });
             const root = TestGridsManager.getHTMLElement(api)!;
             const bar = root.querySelector<HTMLElement>('.ag-header-group-cell .ag-header-cell-resize')!;
+            const flexColumns: unknown[] = [];
+            api.addEventListener('columnResized', (e) => flexColumns.push(e.flexColumns));
 
             bar.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
             await asyncSetTimeout(0);
 
             expect(widths(api, ['x', 'a', 'y'])).toEqual([350, 300, 350]);
+            // as a column auto-size's: every flex column re-flexed, none bounded by the resized ones
+            expect(flexColumns).toEqual([null]);
         } finally {
             measured.mockRestore();
         }
@@ -1230,7 +1341,38 @@ describe('setColumnWidths', () => {
         ]);
     });
 
-    test('one refused column set refuses the whole call, including the adjacent column shift takes from', () => {
+    test("under colResizeDefault 'shift', adjacent columns a call names keep their widths, in any order, and the column after them takes their whole change", async () => {
+        const api = gridsManager.createGrid('apiShiftAdjacent', {
+            columnDefs: ['a', 'b', 'c', 'd'].map((colId) => ({ colId, field: colId, width: 100, minWidth: 10 })),
+            colResizeDefault: 'shift',
+        });
+        const events: string[][] = [];
+        api.addEventListener('columnResized', (e) => events.push(e.columns!.map((col) => col.getColId())));
+        const widthsNow = () => ['a', 'b', 'c', 'd'].map((id) => api.getColumn(id)!.getActualWidth());
+
+        api.setColumnWidths([
+            { key: 'a', newWidth: 150 },
+            { key: 'b', newWidth: 120 },
+        ]);
+        const inOrder = widthsNow();
+        api.setColumnWidths([
+            { key: 'b', newWidth: 100 },
+            { key: 'a', newWidth: 100 },
+        ]);
+
+        expect([inOrder, widthsNow()]).toEqual([
+            [150, 120, 30, 100],
+            [100, 100, 100, 100],
+        ]);
+        await waitFor(() =>
+            expect(events).toEqual([
+                ['a', 'b', 'c'],
+                ['a', 'b', 'c'],
+            ])
+        );
+    });
+
+    test('one refused column set refuses the whole call, including the adjacent column shift takes from, and reports them all', async () => {
         const api = gridsManager.createGrid('boundsShift', {
             columnDefs: [
                 { colId: 'a', width: 100 },
@@ -1238,11 +1380,30 @@ describe('setColumnWidths', () => {
             ],
             colResizeDefault: 'shift',
         });
+        const events: string[][] = [];
+        api.addEventListener('columnResized', (e) => events.push(e.columns!.map((col) => col.getColId())));
 
         // `b` would have to give 30px and drop to 70, under its 80.
         api.setColumnWidths([{ key: 'a', newWidth: 130 }]);
 
         expect(['a', 'b'].map((id) => api.getColumn(id)!.getActualWidth())).toEqual([100, 100]);
+        await waitFor(() => expect(events).toEqual([['a', 'b']]));
+    });
+
+    test('a column whose minWidth is above its maxWidth takes its maxWidth, as it is laid out, without refusing the call', () => {
+        const api = gridsManager.createGrid('minAboveMax', {
+            columnDefs: [
+                { colId: 'a', width: 100, minWidth: 200, maxWidth: 100 },
+                { colId: 'b', width: 100 },
+            ],
+        });
+
+        api.setColumnWidths([
+            { key: 'a', newWidth: 100 },
+            { key: 'b', newWidth: 150 },
+        ]);
+
+        expect(['a', 'b'].map((id) => api.getColumn(id)!.getActualWidth())).toEqual([100, 150]);
     });
 });
 

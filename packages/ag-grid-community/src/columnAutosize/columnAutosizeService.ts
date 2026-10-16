@@ -228,7 +228,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             // the LHS sized, but RHS no. so we keep looping through the visible columns until
             // no more cols are available (rendered) to be resized
 
-            const { animationFrameSvc, renderStatus, colModel, autoWidthCalc, visibleCols } = this.beans;
+            const { animationFrameSvc, renderStatus, colModel, autoWidthCalc, visibleCols, pinnedCols } = this.beans;
 
             // we autosize after animation frames finish in case any cell renderers need to complete first. this can
             // happen eg if client code is calling api.autoSizeAllColumns() straight after grid is initialised, but grid
@@ -262,6 +262,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             );
             const shouldSkipHeader = skipHeader ?? this.gos.get('skipHeaderOnAutoSize');
             const shouldSkipHeaderGroups = skipHeaderGroups ?? shouldSkipHeader;
+            const limitPinned = !!pinnedCols && pinnedCols.limitsAutoSize(source);
+            // tracked here, as the pinned widths update only once the columns refresh
+            let pinnedRoom = limitPinned ? pinnedCols.getPinnedRoom() : Infinity;
 
             while (changesThisTimeAround !== 0) {
                 changesThisTimeAround = 0;
@@ -270,6 +273,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                 let widthsChanged = false;
 
                 const updatedColumns: AgColumn[] = [];
+                // growing pinned columns wait for the room every shrinking one frees, wherever it sits
+                const growingCols: AgColumn[] = [];
+                const growingWidths: number[] = [];
 
                 for (const key of colKeys) {
                     if (!key) {
@@ -294,13 +300,30 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                         columnLimit.minWidth ??= defaultMinWidth;
                         columnLimit.maxWidth ??= defaultMaxWidth;
                         const newWidth = normaliseColumnWidth(column, preferredWidth, columnLimit);
-                        widthsChanged ||= newWidth !== column.actualWidth;
-                        column.setActualWidth(newWidth, source);
+                        const growth = newWidth - column.actualWidth;
+                        const limited = limitPinned && column.pinnedLane !== 1;
+                        if (limited && growth > 0) {
+                            growingCols.push(column);
+                            growingWidths.push(newWidth);
+                        } else {
+                            pinnedRoom -= limited ? growth : 0;
+                            widthsChanged ||= growth !== 0;
+                            column.setActualWidth(newWidth, source);
+                        }
                         columnsAutoSized.add(column);
                         changesThisTimeAround++;
                     }
 
                     updatedColumns.push(column);
+                }
+
+                for (let i = 0, len = growingCols.length; i < len; ++i) {
+                    const column = growingCols[i];
+                    const actualWidth = column.actualWidth;
+                    const growth = Math.min(growingWidths[i] - actualWidth, pinnedRoom);
+                    pinnedRoom -= growth;
+                    widthsChanged ||= growth !== 0;
+                    column.setActualWidth(actualWidth + growth, source);
                 }
 
                 if (updatedColumns.length && widthsChanged) {

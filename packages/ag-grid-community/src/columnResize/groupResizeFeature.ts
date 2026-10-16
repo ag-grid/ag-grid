@@ -9,6 +9,8 @@ import type { GroupResizePlan } from './columnResizeService';
 
 export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private dragPlan: GroupResizePlan | null = null;
+    private dragTakeFromAdjacent = false;
+    private dragGroupWidth = 0;
     private dragSign = 1;
 
     constructor(
@@ -47,20 +49,28 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     }
 
     private onResizeStart(shiftKey: boolean): void {
-        const colResize = this.beans.colResize!;
-        this.dragPlan = colResize.planGroupResize(this.columnGroup, colResize.takesFromAdjacent(shiftKey));
-        this.dragSign = getDragSign(this.gos.get('enableRtl'), this.columnGroup.pinnedLane);
-        _cancelColumnWidthAnimation(this.beans);
+        const { columnGroup, beans } = this;
+        const colResize = beans.colResize!;
+        const takeFromAdjacent = colResize.takesFromAdjacent(shiftKey);
+        this.dragPlan = colResize.planGroupResize(columnGroup, takeFromAdjacent);
+        this.dragTakeFromAdjacent = takeFromAdjacent;
+        this.dragGroupWidth = columnGroup.getActualWidth();
+        this.dragSign = getDragSign(this.gos.get('enableRtl'), columnGroup.pinnedLane);
+        _cancelColumnWidthAnimation(beans);
         this.toggleColumnResizing(true);
     }
 
-    private onResizing(finished: boolean, resizeAmount: number): void {
+    private onResizing(finished: boolean, amount: number): void {
         const plan = this.dragPlan;
         if (!plan) {
             return;
         }
-        const width = plan.group.startWidth + resizeAmount * this.dragSign;
-        this.beans.colResize!.resizeGroup(plan, width, finished, 'uiColumnResized');
+        const { columnGroup, beans } = this;
+        const change = amount * this.dragSign;
+        // per move, as the viewport or another pinned column can change mid-drag
+        const resized = columnGroup.getActualWidth() - this.dragGroupWidth;
+        const held = beans.pinnedCols?.limitResize(columnGroup, this.dragTakeFromAdjacent, change, resized) ?? change;
+        beans.colResize!.resizeGroup(plan, plan.group.startWidth + held, finished, 'uiColumnResized');
         if (finished) {
             this.dragPlan = null;
             this.toggleColumnResizing(false);
@@ -75,14 +85,15 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     }
 
     public resizeLeafColumnsToFit(source: ColumnEventType): void {
-        const { autoWidthCalc, colResize } = this.beans;
-        const preferredSize = autoWidthCalc!.getPreferredWidthForColumnGroup(this.columnGroup);
-        const plan = colResize!.planGroupResize(this.columnGroup, false);
-        if (preferredSize <= plan.group.startWidth) {
+        const { autoWidthCalc, colResize, pinnedCols } = this.beans;
+        const columnGroup = this.columnGroup;
+        const growth = autoWidthCalc!.getPreferredWidthForColumnGroup(columnGroup) - columnGroup.getActualWidth();
+        const held = pinnedCols?.limitsAutoSize(source) ? pinnedCols.limitResize(columnGroup, false, growth) : growth;
+        if (held <= 0) {
             return;
         }
-        colResize!.resizeGroup(plan, preferredSize, true, source, true);
-        this.toggleColumnResizing(false);
+        const plan = colResize!.planGroupResize(columnGroup, false);
+        colResize!.resizeGroup(plan, plan.group.startWidth + held, true, source, true);
     }
 
     public toggleColumnResizing(resizing: boolean): void {

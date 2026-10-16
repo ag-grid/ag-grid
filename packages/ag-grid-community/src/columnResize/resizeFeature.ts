@@ -9,7 +9,6 @@ import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/c
 
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private resizeStartWidth = 0;
-    private resizeStartPinnedWidth = 0;
     private takeFromAdjacent = false;
     private dragSign = 1;
 
@@ -75,28 +74,14 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         this.ctrl.setRefreshFunction('resize', refresh);
     }
 
-    private onResizing(finished: boolean, resizeAmount: number): void {
-        const { column: key, resizeStartWidth, beans } = this;
-        const { pinnedCols, ctrlsSvc, colResize } = beans;
-
-        let newWidth = resizeStartWidth + resizeAmount * this.dragSign;
-        // measured from the applied width, which the pinned room below caps
-        const actualWidth = key.actualWidth;
-        const growth = newWidth - actualWidth;
-
-        if (
-            growth > 0 &&
-            key.pinnedLane !== 1 &&
-            !pinnedCols?.isResizeWithinPinnedSection(key, this.takeFromAdjacent)
-        ) {
-            const bodyWidth = ctrlsSvc.getGridBodyCtrl().getViewportWidthWithoutScrollbar() - 50;
-            // pinned columns that overflowed when the drag started can grow back to their starting width
-            const room = Math.max(bodyWidth, this.resizeStartPinnedWidth) - this.getPinnedWidth();
-            // fill the remaining space; still set the width so a finished drag completes
-            newWidth = actualWidth + Math.min(growth, Math.max(room, 0));
-        }
-
-        colResize?.resizeColumn(key, newWidth, this.takeFromAdjacent, finished);
+    private onResizing(finished: boolean, amount: number): void {
+        const { column, resizeStartWidth: startWidth, takeFromAdjacent, beans } = this;
+        const change = amount * this.dragSign;
+        // per move, as the viewport or another pinned column can change mid-drag
+        const resized = column.actualWidth - startWidth;
+        const held = beans.pinnedCols?.limitResize(column, takeFromAdjacent, change, resized) ?? change;
+        // set even when capped, so a finished drag completes
+        beans.colResize?.resizeColumn(column, startWidth + held, takeFromAdjacent, finished);
 
         if (finished) {
             this.toggleColumnResizing(false);
@@ -104,18 +89,13 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     }
 
     private onResizeStart(shiftKey: boolean): void {
-        this.resizeStartWidth = this.column.actualWidth;
-        this.resizeStartPinnedWidth = this.getPinnedWidth();
-        this.takeFromAdjacent = this.beans.colResize!.takesFromAdjacent(shiftKey);
-        this.dragSign = getDragSign(this.gos.get('enableRtl'), this.column.pinnedLane);
+        const { column, beans } = this;
+        this.resizeStartWidth = column.actualWidth;
+        this.takeFromAdjacent = beans.colResize!.takesFromAdjacent(shiftKey);
+        this.dragSign = getDragSign(this.gos.get('enableRtl'), column.pinnedLane);
 
-        _cancelColumnWidthAnimation(this.beans);
+        _cancelColumnWidthAnimation(beans);
         this.toggleColumnResizing(true);
-    }
-
-    private getPinnedWidth(): number {
-        const { pinnedCols } = this.beans;
-        return (pinnedCols?.leftWidth ?? 0) + (pinnedCols?.rightWidth ?? 0);
     }
 
     public toggleColumnResizing(resizing: boolean): void {
