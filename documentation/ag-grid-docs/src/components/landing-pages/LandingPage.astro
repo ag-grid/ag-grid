@@ -48,6 +48,7 @@ import { Finance } from '@components/demos/examples/finance';
 import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
 import Showcase from '@components/showcase/Showcase';
 import Customers from '@components/customers/Customers';
+import { FrameworkLinks } from '@components/framework-links/FrameworkLinks';
 import FeaturesWithExamples from './sections/features-with-examples/FeaturesWithExamples.astro';
 import ComparisonTable from './sections/comparison/ComparisonTable';
 
@@ -302,4 +303,5 @@ const themeBuilderVideo = isEnterprise
                 return null;
         }
     })}
+    {isEnterprise && <FrameworkLinks client:idle pageName="community-vs-enterprise" />}
 </Layout>
