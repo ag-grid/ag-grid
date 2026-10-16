@@ -369,7 +369,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 // Live apply adds the column up front, then opens the dialog over it.
                 const newColumn = this.addDynamicCalculatedColumn(draft, column);
                 if (newColumn) {
-                    this.showDialog(draft, () => null, true, newColumn, focus, undefined, restoreFocusParams, column);
+                    const mapper = this.createReferenceMapper(colId, newColumn, column ?? null);
+                    this.showDialog(draft, () => null, true, newColumn, focus, mapper, restoreFocusParams, column);
                 }
                 return;
             }
@@ -384,7 +385,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 false,
                 undefined,
                 focus,
-                undefined,
+                this.createReferenceMapper(colId, null, column ?? null),
                 restoreFocusParams,
                 column
             );
@@ -877,7 +878,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
     private createReferenceMapper(
         colId: string,
-        calculatedColumn: AgColumn | null = null
+        calculatedColumn: AgColumn | null = null,
+        sourceColumn: AgColumn | null = null
     ): CalculatedColumnReferenceMapper {
         const beans = this.beans;
         const isColumnReferenceable = this.getOptions()?.isColumnReferenceable;
@@ -897,6 +899,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                               column,
                               colDef: column.colDef,
                               calculatedColumn,
+                              sourceColumn,
                           })
                       )
                 : undefined,
