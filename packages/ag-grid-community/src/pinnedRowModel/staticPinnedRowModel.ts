@@ -228,12 +228,16 @@ export class StaticPinnedRowModel extends BeanStub implements IPinnedRowModel {
         // Not implemented for static pinned row model
     }
 
-    public getGrandTotalPinned(): RowPinnedType {
+    public getUserGrandTotalPinned(): RowPinnedType {
         // Not implemented for static pinned row model
         return;
     }
 
-    public setGrandTotalPinned(): void {
+    public setGrandTotalNode(): void {
+        // Not implemented for static pinned row model
+    }
+
+    public resetGrandTotalPin(): void {
         // Not implemented for static pinned row model
     }
 }

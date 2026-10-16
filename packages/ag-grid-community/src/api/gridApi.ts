@@ -240,7 +240,7 @@ export interface _RowGridApi<TData> {
      *
      * Special IDs for built-in row types (import constants from `ag-grid-community`):
      * - `ROOT_NODE_ID` — the invisible root node (level -1, always a group)
-     * - `GRAND_TOTAL_ROW_ID` — the grand total footer row (when `grandTotalRow` is enabled)
+     * - `GRAND_TOTAL_ROW_ID` — the grand total footer row, when `grandTotalRow` is enabled and the grid shows rows; the Client-Side Row Model keeps it, not displayed, once its rows are removed or filtered out
      * - `GROUP_TOTAL_ROW_ID_PREFIX + groupId` — a group total footer row for the group with the given ID
      * - `DETAIL_ROW_ID_PREFIX + masterRowId` — the detail row for the master row with the given ID
      * @agModule `RowApiModule`
