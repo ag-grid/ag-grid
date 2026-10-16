@@ -1081,7 +1081,7 @@ export interface _ColumnFilterGridApi {
 
     /**
      * Gets the current filter model for the specified column.
-     * Will return `null` if no active filter.
+     * Will return `null` if the column has no filter model.
      * @param useUnapplied If `enableFilterHandlers = true` and value is `true`, will return the unapplied filter model.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
@@ -1091,6 +1091,8 @@ export interface _ColumnFilterGridApi {
      * Sets the filter model for the specified column.
      * Setting a `model` of `null` will reset the filter (make inactive).
      * Must wait on the response before calling `api.onFilterChanged()`.
+     * If inferring cell data types, and row data is initially empty or yet to be set,
+     * the filter model will be applied asynchronously after row data is added.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     setColumnFilterModel<TModel>(column: string | Column, model: TModel | null): Promise<void>;

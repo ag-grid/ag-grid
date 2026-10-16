@@ -203,6 +203,24 @@ const getAuthorHandler = (
     return typeof filter === 'string' ? filter : undefined;
 };
 
+type QueuedModelUpdate =
+    | { model: FilterModel | null; source: FilterChangedEventSourceType; resolve?: undefined }
+    | { key: string | AgColumn; model: any; resolve: () => void };
+
+const decideQueuedModel = (result: FilterModel, decided: Set<string>, column: AgColumn | undefined, model: any) => {
+    if (!column?.isFilterAllowed()) {
+        return;
+    }
+    const colId = column.colId;
+    if (decided.has(colId)) {
+        return;
+    }
+    decided.add(colId);
+    if (model != null) {
+        result[colId] = model;
+    }
+};
+
 export class ColumnFilterService
     extends BeanStub<
         | 'filterParamsChanged'
@@ -228,9 +246,8 @@ export class ColumnFilterService
     // 100,000 rows and group by country. then do some filtering. all the cells flash, which is silly.
     private processingFilterChange = false;
 
-    // when we're waiting for cell data types to be inferred, we need to defer filter model updates
-    private modelUpdates: { model: FilterModel | null; source: FilterChangedEventSourceType }[] = [];
-    private columnModelUpdates: { key: string | AgColumn; model: any; resolve: () => void }[] = [];
+    /** Model updates deferred until cell data types are inferred, in call order. */
+    private modelUpdates: QueuedModelUpdate[] = [];
 
     public initialModel: FilterModel;
     /** This may not contain the model for non-handler columns */
@@ -347,6 +364,11 @@ export class ColumnFilterService
         });
     }
 
+    /** The model the API reads: the applied one, or the one the queued updates will apply. */
+    public getLatestModel(): FilterModel {
+        return this.modelUpdates.length ? this.getQueuedModel() : this.getModel();
+    }
+
     public getModel(excludeInitialState?: boolean): FilterModel {
         const result: FilterModel = {};
 
@@ -373,6 +395,42 @@ export class ColumnFilterService
             }
         }
 
+        return result;
+    }
+
+    /** The model once the queued updates apply, read newest first: a column's latest update decides it. */
+    private getQueuedModel(): FilterModel {
+        const colModel = this.beans.colModel;
+        const updates = this.modelUpdates;
+        const result: FilterModel = {};
+        const decided = new Set<string>();
+        for (let i = updates.length - 1; i >= 0; --i) {
+            const update = updates[i];
+            if (update.resolve) {
+                decideQueuedModel(result, decided, colModel.getNonPivotCol(update.key), update.model);
+                continue;
+            }
+            // A whole model replaces every column older updates set, so they and the applied model are not read.
+            const model = update.model;
+            if (!model) {
+                return result;
+            }
+            const colsById = colModel.colsById;
+            const colIds = Object.keys(model);
+            for (let j = 0, colCount = colIds.length; j < colCount; ++j) {
+                const colId = colIds[j];
+                decideQueuedModel(result, decided, colsById[colId], model[colId]);
+            }
+            return result;
+        }
+        const applied = this.getModel();
+        const appliedColIds = Object.keys(applied);
+        for (let i = 0, len = appliedColIds.length; i < len; ++i) {
+            const colId = appliedColIds[i];
+            if (!decided.has(colId)) {
+                result[colId] = applied[colId];
+            }
+        }
         return result;
     }
 
@@ -440,6 +498,11 @@ export class ColumnFilterService
 
     public disableFilters(): boolean {
         this.initialModel = {};
+        const updates = this.modelUpdates;
+        this.modelUpdates = [];
+        for (let i = 0, len = updates.length; i < len; ++i) {
+            updates[i].resolve?.();
+        }
         const { allColumnFilters } = this;
         if (allColumnFilters.size) {
             allColumnFilters.forEach((filterWrapper) =>
@@ -1682,12 +1745,33 @@ export class ColumnFilterService
     }
 
     private processFilterModelUpdateQueue(): void {
-        this.modelUpdates.forEach(({ model, source }) => this.setModel(model, source));
+        const updates = this.modelUpdates;
         this.modelUpdates = [];
-        this.columnModelUpdates.forEach(({ key, model, resolve }) => {
-            void this.setModelForColumn(key, model).then(resolve);
-        });
-        this.columnModelUpdates = [];
+        for (let i = 0, len = updates.length; i < len; ++i) {
+            const update = updates[i];
+            if (update.resolve) {
+                void this.setModelForColumn(update.key, update.model).then(update.resolve);
+            } else {
+                this.setModel(update.model, update.source);
+            }
+        }
+    }
+
+    public getLatestModelForColumn(column: AgColumn, useUnapplied?: boolean): any {
+        const updates = this.modelUpdates;
+        if (updates.length && column.isFilterAllowed()) {
+            const colModel = this.beans.colModel;
+            for (let i = updates.length - 1; i >= 0; --i) {
+                const update = updates[i];
+                if (!update.resolve) {
+                    return update.model?.[column.colId] ?? null;
+                }
+                if (colModel.getNonPivotCol(update.key) === column) {
+                    return update.model ?? null;
+                }
+            }
+        }
+        return this.getModelForColumn(column, useUnapplied);
     }
 
     public getModelForColumn(column: AgColumn, useUnapplied?: boolean): any {
@@ -1706,12 +1790,9 @@ export class ColumnFilterService
 
     public setModelForColumn(key: string | AgColumn, model: any): Promise<void> {
         if (this.beans.dataTypeSvc?.isPendingInference) {
-            let resolve: () => void = () => {};
-            const promise = new Promise<void>((res) => {
-                resolve = res;
+            return new Promise<void>((resolve) => {
+                this.modelUpdates.push({ key, model, resolve });
             });
-            this.columnModelUpdates.push({ key, model, resolve });
-            return promise;
         }
         return new Promise((resolve) => {
             this.setModelForColumnLegacy(key, model).then((result) => resolve(result!));

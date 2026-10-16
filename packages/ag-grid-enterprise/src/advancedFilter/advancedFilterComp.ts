@@ -204,7 +204,7 @@ export class AdvancedFilterComp extends Component {
                 this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
                 break;
             case 'cancel':
-                this.advancedFilter.setModel(this.advancedFilter.getModel());
+                this.advancedFilter.restoreAppliedExpression();
                 this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
                 break;
             case 'clear':
