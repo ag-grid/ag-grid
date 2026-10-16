@@ -40,8 +40,13 @@ export interface IsColumnReferenceableParams<TData = any, TContext = any> extend
     column: Column;
     /** The candidate source column's definition. */
     colDef: ColDef<TData>;
-    /** The column being edited, or `null` when adding a column in either apply mode. */
+    /** The column being edited, including a newly created column in live mode. `null` when adding in deferred mode. */
     calculatedColumn: Column | null;
+    /**
+     * The column whose menu initiated Add Calculated Column. Only provided while adding a column, in either apply
+     * mode. `null` when editing an existing column or when there is no source column.
+     */
+    sourceColumn: Column | null;
 }
 
 export interface CalculatedColumnValidationParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

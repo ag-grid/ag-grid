@@ -3,7 +3,7 @@ import '@testing-library/jest-dom/vitest';
 import { GridColumns, GridRows, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
-import type { ColGroupDef } from 'ag-grid-community';
+import type { ColGroupDef, IsColumnReferenceableParams } from 'ag-grid-community';
 
 import {
     clickDialogButton,
@@ -327,14 +327,17 @@ describe('ag-grid calculated columns', () => {
     );
 
     test.each(['live', 'deferred'] as const)(
-        'a new %s column callback receives no calculated column',
+        'the %s reference callback receives the current column and a creation-only source column',
         async (applyMode) => {
-            const referenceable = vi.fn(() => true);
+            const referenceable = vi.fn(
+                ({ column, sourceColumn, calculatedColumn }: IsColumnReferenceableParams) =>
+                    column === sourceColumn || calculatedColumn?.getColId() === 'calculated_1'
+            );
             const api = createGrid('calculated-reference-callback-context', {
                 calculatedColumns: { applyMode, isColumnReferenceable: referenceable },
                 context: { key: 'context' },
-                columnDefs: [{ field: 'revenue' }],
-                rowData: [{ id: 'r1', revenue: 10 }],
+                columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+                rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             });
             showColumnMenu(api, 'revenue');
             await clickMenuOption('Add Calculated Column');
@@ -344,9 +347,28 @@ describe('ag-grid calculated columns', () => {
                     context: { key: 'context' },
                     colDef: expect.objectContaining({ field: 'revenue' }),
                     column: api.getColumn('revenue'),
-                    calculatedColumn: null,
                 })
             );
+            const params = referenceable.mock.calls[0][0];
+            expect(params.calculatedColumn?.getColId() ?? null).toBe(applyMode === 'live' ? 'calculated_1' : null);
+            expect(params.sourceColumn).toBe(api.getColumn('revenue'));
+            clickDialogButton('Columns');
+            expect(getSuggestionLabels()).toEqual(applyMode === 'live' ? ['Revenue', 'Cost'] : ['Revenue']);
+
+            setExpression('[Revenue]');
+            if (applyMode === 'deferred') {
+                clickDialogButton('Apply');
+            } else {
+                document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+            }
+            referenceable.mockClear();
+            await openEditDialogViaMenu(api, 'calculated_1');
+            for (const [params] of referenceable.mock.calls) {
+                expect(params.calculatedColumn).toBe(api.getColumn('calculated_1'));
+                expect(params.sourceColumn).toBeNull();
+            }
+            clickDialogButton('Columns');
+            expect(getSuggestionLabels()).toEqual(['Revenue', 'Cost']);
         }
     );
 
