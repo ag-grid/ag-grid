@@ -80,7 +80,7 @@
             "year": "2016",
             "icon": "rocket",
             "title": "Commercial launch",
-            "description": "<a href=\"/react-data-grid/community-vs-enterprise/\">AG Grid Enterprise</a> is launched to widespread adoption within the developer community."
+            "description": "<a href=\"/react-data-grid/community-vs-enterprise/\" data-framework-link>AG Grid Enterprise</a> is launched to widespread adoption within the developer community."
         },
         {
             "year": "2017",
@@ -122,7 +122,7 @@
             "year": "2023",
             "icon": "donutAccelerating",
             "title": "AG Chart Enterprise",
-            "description": "<a href=\"https://www.ag-grid.com/charts/react/community-vs-enterprise/\">AG Chart Enterprise</a> is launched in response to strong user demand."
+            "description": "<a href=\"https://www.ag-grid.com/charts/react/community-vs-enterprise/\" data-framework-link>AG Chart Enterprise</a> is launched in response to strong user demand."
         },
         {
             "year": "2024",
