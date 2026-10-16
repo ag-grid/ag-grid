@@ -111,7 +111,8 @@
         overflow: hidden;
     }
 
-    li a {
+    li a,
+    li .linkButton {
         text-decoration: underline;
         display: inline-block;
         min-width: $spacing-size-12;
@@ -214,7 +215,8 @@
         position: relative;
     }
 
-    a {
+    a,
+    .linkButton {
         color: var(--color-text-secondary);
         font-weight: var(--text-regular);
 
