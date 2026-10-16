@@ -5,6 +5,7 @@ import Layout from '@layouts/Layout.astro';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
 import type { IconName } from '@ag-website-shared/components/icon/Icon';
 import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
+import { FrameworkLinks } from '@components/framework-links/FrameworkLinks';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { ContactForm } from '@ag-website-shared/components/contact-form/ContactForm';
 import { DISABLE_MARKDOWN_DOCS } from '@constants';
@@ -322,4 +323,5 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/about.m
 
         <script is:inline src={urlWithBaseUrl('/scripts/about-carousel.js')}></script>
     </div>
+    <FrameworkLinks client:idle pageName="community-vs-enterprise" />
 </Layout>
