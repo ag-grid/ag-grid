@@ -49,9 +49,9 @@ import type {
     GetRowHeight,
     GetRowIdFunc,
     GetRowStyle,
-    GetServerSideGroupAggValue,
     GetServerSideGroupKey,
     GetServerSideGroupLevelParams,
+    GetServerSideRowGroupKey,
     GridState,
     GroupHierarchyConfig,
     IAdvancedFilterBuilderParams,
@@ -2031,12 +2031,12 @@ export interface Props<TData> {
          * @agModule `ServerSideRowModelModule`
          */
     getServerSideGroupKey?: GetServerSideGroupKey,
-    /** Allows providing the aggregate of the column a group row is grouped by, when that column is also aggregated.
-         * Use this so the server can return the group key and the aggregate under different fields.
-         * Returning `undefined` shows the value from the row data. Other columns are always read from the row data. Not called for tree data.
+    /** SSRM Row Grouping: Allows specifying group keys, so the server can return them under a different field from the grouped column.
+         * Use this to group by and aggregate the same column, with the aggregate returned under the column's field.
+         * Returning `undefined` reads the key from the row data. Not called for tree data, which uses `getServerSideGroupKey`.
          * @agModule `ServerSideRowModelModule`
          */
-    getServerSideGroupAggValue?: GetServerSideGroupAggValue<TData>,
+    getServerSideRowGroupKey?: GetServerSideRowGroupKey<TData>,
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-business-key='abc'` where `abc` is what you return as the business key.
          * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
          */
@@ -2579,7 +2579,7 @@ export function getProps() {
         isApplyServerSideTransaction: undefined,
         isServerSideGroup: undefined,
         getServerSideGroupKey: undefined,
-        getServerSideGroupAggValue: undefined,
+        getServerSideRowGroupKey: undefined,
         getBusinessKeyForNode: undefined,
         getRowId: undefined,
         resetRowDataOnUpdate: undefined,

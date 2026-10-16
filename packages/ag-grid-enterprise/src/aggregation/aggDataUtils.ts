@@ -74,60 +74,6 @@ export const setAggDataWithSiblings = (
     }
 };
 
-/**
- * Updates a row node's data and sets aggData on it and its siblings (footer + pinned). aggData is set before
- * `updateData`, so the cells it refreshes see it, and cell-changed events fire after, so listeners see both.
- */
-export const updateDataWithAggData = (
-    rowNode: RowNode,
-    data: any,
-    newAggData: Record<string, any> | null,
-    colModel: ColumnModel
-): void => {
-    const oldAggData = rowNode.aggData;
-    const pinnedSibling = rowNode.pinnedSibling;
-    const sibling = rowNode.sibling;
-    const siblingPinnedSibling = sibling?.pinnedSibling;
-
-    rowNode.aggData = newAggData;
-    if (pinnedSibling) {
-        pinnedSibling.aggData = newAggData;
-    }
-    if (sibling) {
-        sibling.aggData = newAggData;
-    }
-    if (siblingPinnedSibling) {
-        siblingPinnedSibling.aggData = newAggData;
-    }
-
-    rowNode.updateData(data);
-
-    if (oldAggData === newAggData) {
-        return;
-    }
-    fireAggDataChangedEventsIfListened(rowNode, oldAggData, newAggData, colModel);
-    if (pinnedSibling) {
-        fireAggDataChangedEventsIfListened(pinnedSibling, oldAggData, newAggData, colModel);
-    }
-    if (sibling) {
-        fireAggDataChangedEventsIfListened(sibling, oldAggData, newAggData, colModel);
-    }
-    if (siblingPinnedSibling) {
-        fireAggDataChangedEventsIfListened(siblingPinnedSibling, oldAggData, newAggData, colModel);
-    }
-};
-
-const fireAggDataChangedEventsIfListened = (
-    rowNode: RowNode,
-    oldAggData: Record<string, any> | null | undefined,
-    newAggData: Record<string, any> | null,
-    colModel: ColumnModel
-): void => {
-    if (rowNode.__localEventService) {
-        fireAggDataChangedEvents(rowNode, oldAggData, newAggData, colModel, undefined);
-    }
-};
-
 /** Cold path: dispatches cell-changed events for changed/added/removed agg values. */
 const fireAggDataChangedEvents = (
     rowNode: RowNode,

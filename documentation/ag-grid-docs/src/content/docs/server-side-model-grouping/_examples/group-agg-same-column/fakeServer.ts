@@ -42,12 +42,11 @@ export function FakeServer(allData) {
 
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
             const rowGroupCol = rowGroupCols[groupKeys.length];
-            const colsToSelect = [rowGroupCol.id];
+            // the group key is returned under `groupKey`, so the grouped column can hold its aggregate
+            const colsToSelect = [rowGroupCol.id + ' AS groupKey'];
 
             valueCols.forEach(function (valueCol) {
-                // the grouped column already holds the group key, so its aggregate is returned under a separate field
-                const alias = valueCol.id === rowGroupCol.id ? valueCol.aggFunc + '_' + valueCol.id : valueCol.id;
-                colsToSelect.push(valueCol.aggFunc + '(' + valueCol.id + ') AS ' + alias);
+                colsToSelect.push(valueCol.aggFunc + '(' + valueCol.id + ') AS ' + valueCol.id);
             });
 
             return 'SELECT ' + colsToSelect.join(', ');
@@ -94,8 +93,13 @@ export function FakeServer(allData) {
 
         if (sortModel.length === 0) return '';
 
+        const rowGroupCol = isDoingGrouping(request.rowGroupCols, request.groupKeys)
+            ? request.rowGroupCols[request.groupKeys.length]
+            : undefined;
         const sorts = sortModel.map(function (s) {
-            return s.colId + ' ' + s.sort.toUpperCase();
+            // a group level sorted by its own column is ordered by key
+            const sortBy = rowGroupCol && s.colId === rowGroupCol.id ? 'groupKey' : s.colId;
+            return sortBy + ' ' + s.sort.toUpperCase();
         });
 
         return ' ORDER BY ' + sorts.join(', ');

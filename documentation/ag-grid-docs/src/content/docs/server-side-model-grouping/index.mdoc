@@ -102,31 +102,31 @@ Group total rows can also be used with `groupDisplayType='multipleColumns'`, as 
 ## Grouping and Aggregating the Same Column
 
 To group by a column and also aggregate it, each group row needs two values for that column: the group key and the
-aggregate. Have the server return the aggregate under a separate field, and return it from `getServerSideGroupAggValue`.
-The grid only calls it when the column a group row is grouped by is also aggregated:
+aggregate. Have the server return the aggregate under the column's field, as for any other aggregated column, and the
+group key under a separate field. Return the key from `getServerSideRowGroupKey`:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
-    // the server returns { gold: 4, sum_gold: 12 } for the group row
-    getServerSideGroupAggValue: (params) => params.data.sum_gold,
+    // the server returns { groupKey: 4, gold: 12 } for the group row
+    getServerSideRowGroupKey: (params) => params.data.groupKey,
 }
 ```
 
-{% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["getServerSideGroupAggValue"] /%}
+{% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["getServerSideRowGroupKey"] /%}
+
+The grid calls `getServerSideRowGroupKey` for every group row when it is loaded, at every group level, and uses the
+returned key in the group column and in the `groupKeys` of later requests. Returning `undefined` reads the key from the
+row data as usual.
 
 By default, sorting the group column and sorting the aggregated column send the same request, so the server chooses
 whether that group level is ordered by its key or by its aggregate. Grouping a column also hides it by default. To keep
 it visible, see [Prevent User Grouping from Hiding Columns](./grouping-group-panel/#prevent-user-grouping-from-hiding-columns).
 
-The grid calls `getServerSideGroupAggValue` when group rows are loaded, refreshed or updated with a
-[Transaction](./server-side-model-updating-transactions/). Updating a group row with `rowNode.updateData` or
-`rowNode.setData` keeps the previous aggregate, so use a transaction instead.
-
 The example below groups by **Gold**, aggregates it with `sum` and sorts it ascending. Note the following:
 
-- The server returns each aggregate of a grouped column as `<aggFunc>_<colId>`, such as `sum_gold`.
-- The callback uses `params.column` to find the column the row is grouped by, so it also works when a different
-  column is grouped and aggregated from the Columns Tool Panel.
+- The server returns the key of every group row as `groupKey`, whichever column the level is grouped by, so the
+  callback also works when other columns are grouped and aggregated from the Columns Tool Panel.
+- The server orders a group level sorted by its own column by key.
 - **Gold** appears in both Row Groups and Values in the Columns Tool Panel.
 
 {% gridExampleRunner title="Grouping and Aggregating the Same Column" name="group-agg-same-column" exampleHeight=590 /%}

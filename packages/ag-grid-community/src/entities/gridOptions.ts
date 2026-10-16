@@ -159,8 +159,8 @@ import type {
     GetMainMenuItemsParams,
     GetRowHeight,
     GetRowIdParams,
-    GetServerSideGroupAggValue,
     GetServerSideGroupLevelParams,
+    GetServerSideRowGroupKey,
     InitialGroupOrderComparator,
     IsApplyServerSideTransactionParams,
     IsExternalFilterPresent,
@@ -2523,12 +2523,12 @@ export interface GridOptions<TData = any> {
      */
     getServerSideGroupKey?: GetServerSideGroupKey;
     /**
-     * Allows providing the aggregate of the column a group row is grouped by, when that column is also aggregated.
-     * Use this so the server can return the group key and the aggregate under different fields.
-     * Returning `undefined` shows the value from the row data. Other columns are always read from the row data. Not called for tree data.
+     * SSRM Row Grouping: Allows specifying group keys, so the server can return them under a different field from the grouped column.
+     * Use this to group by and aggregate the same column, with the aggregate returned under the column's field.
+     * Returning `undefined` reads the key from the row data. Not called for tree data, which uses `getServerSideGroupKey`.
      * @agModule `ServerSideRowModelModule`
      */
-    getServerSideGroupAggValue?: GetServerSideGroupAggValue<TData>;
+    getServerSideRowGroupKey?: GetServerSideRowGroupKey<TData>;
 
     // *** Rows *** //
     /**

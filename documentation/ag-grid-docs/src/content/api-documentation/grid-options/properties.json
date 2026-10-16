@@ -1937,7 +1937,7 @@
                 "url": "./server-side-model-tree-data/"
             }
         },
-        "getServerSideGroupAggValue": {
+        "getServerSideRowGroupKey": {
             "more": {
                 "name": "Grouping and Aggregating the Same Column",
                 "url": "./server-side-model-grouping/#grouping-and-aggregating-the-same-column"

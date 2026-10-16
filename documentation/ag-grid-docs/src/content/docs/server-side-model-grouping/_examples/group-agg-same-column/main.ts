@@ -33,8 +33,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     sideBar: 'columns',
 
-    // the server returns the aggregate of the grouped column as `<aggFunc>_<colId>`, e.g. `sum_gold`
-    getServerSideGroupAggValue: ({ data, column }) => data[`${column.getAggFunc()}_${column.getColId()}`],
+    // the server returns the group key under `groupKey`, and aggregates under their column's field
+    getServerSideRowGroupKey: ({ data }) => data.groupKey,
 
     rowModelType: 'serverSide',
 };
