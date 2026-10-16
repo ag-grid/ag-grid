@@ -68,6 +68,7 @@ export class GridBodyScrollFeature extends BeanStub {
     private scrollLeft = 0;
     private nextScrollTop = 0;
     private scrollTop = 0;
+    private pendingFakeVScrollTop: number | null = null;
 
     // Used to provide approximate values of scrollTop and offsetHeight
     // without forcing the browser to recalculate styles.
@@ -169,12 +170,37 @@ export class GridBodyScrollFeature extends BeanStub {
         const onVScroll = isDebounce
             ? _debounce(this, this.onVScroll.bind(this, VIEWPORT), SCROLL_DEBOUNCE_TIMEOUT)
             : this.onVScroll.bind(this, VIEWPORT);
-        const onFakeVScroll = isDebounce
-            ? _debounce(this, this.onVScroll.bind(this, FAKE_V_SCROLLBAR), SCROLL_DEBOUNCE_TIMEOUT)
-            : this.onVScroll.bind(this, FAKE_V_SCROLLBAR);
+        const onFakeVScroll = isDebounce ? this.debounceFakeVScroll() : this.onVScroll.bind(this, FAKE_V_SCROLLBAR);
 
         this.addManagedElementListeners(this.eGridViewport, { scroll: onVScroll });
         this.fakeVScrollComp.onScrollCallback(onFakeVScroll);
+    }
+
+    private debounceFakeVScroll(): () => void {
+        const onScroll = _debounce(
+            this,
+            () => {
+                if (
+                    this.pendingFakeVScrollTop == null &&
+                    this.fakeVScrollComp.getScrollPosition() !== this.eGridViewport.scrollTop
+                ) {
+                    return;
+                }
+                this.pendingFakeVScrollTop = null;
+                this.onVScroll(FAKE_V_SCROLLBAR);
+            },
+            SCROLL_DEBOUNCE_TIMEOUT
+        );
+        return () => {
+            const scrollTop = this.fakeVScrollComp.getScrollPosition();
+            // Matching positions may still need processing, but do not need protection from a height sync.
+            this.pendingFakeVScrollTop = scrollTop === this.eGridViewport.scrollTop ? null : scrollTop;
+            onScroll();
+        };
+    }
+
+    public getVerticalScrollPositionForSync(): number {
+        return this.pendingFakeVScrollTop ?? this.eGridViewport.scrollTop;
     }
 
     private onDisplayedColumnsWidthChanged(): void {

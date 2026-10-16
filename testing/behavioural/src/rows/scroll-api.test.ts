@@ -1,12 +1,13 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 
-import type { ColDef, GridApi } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     CellSpanModule,
     ClientSideRowModelModule,
     GridStateModule,
+    PinnedRowModule,
     RowApiModule,
     RowAutoHeightModule,
     ScrollApiModule,
@@ -26,12 +27,17 @@ describe('scroll API', () => {
 
     describe('fake scrollbars', () => {
         // the viewport's one scroll event serves both axes, so scrolling one axis must not take over the other
-        const createScrollGrid = () => {
+        const createScrollGrid = (options?: GridOptions) => {
             // wider than the grid, so it scrolls both ways
-            const api = gridsManager.createGrid('myGrid', {
-                columnDefs: Array.from({ length: 10 }, (_, i) => ({ colId: `c${i}`, width: 300 })),
-                rowData: Array.from({ length: 200 }, () => ({})),
-            });
+            const api = gridsManager.createGrid(
+                'myGrid',
+                {
+                    columnDefs: Array.from({ length: 10 }, (_, i) => ({ colId: `c${i}`, width: 300 })),
+                    rowData: Array.from({ length: 200 }, () => ({})),
+                    ...options,
+                },
+                { modules: [PinnedRowModule] }
+            );
             const root = TestGridsManager.getHTMLElement(api)!;
             const scroll = (selector: string, axis: 'scrollTop' | 'scrollLeft', value: number) => {
                 const element = root.querySelector<HTMLElement>(selector)!;
@@ -46,6 +52,89 @@ describe('scroll API', () => {
             scroll('.ag-body-vertical-scroll-viewport', 'scrollTop', 100);
             expect(viewport.scrollTop).toBe(100);
         });
+
+        test('a pinned row update preserves a pending debounced scrollbar position', async () => {
+            const { api, root, viewport, scroll } = createScrollGrid({
+                debounceVerticalScrollbar: true,
+                pinnedBottomRowData: [{}],
+            });
+            scroll('.ag-body-vertical-scroll-viewport', 'scrollTop', 300);
+            api.setGridOption('pinnedBottomRowData', [{}, {}]);
+
+            await waitFor(() => expect(viewport.scrollTop).toBe(300));
+            expect(root.querySelector('.ag-body-vertical-scroll-viewport')!.scrollTop).toBe(300);
+        });
+
+        test('a height-sync echo does not take over a pending viewport scroll', async () => {
+            const { api, root, viewport, scroll } = createScrollGrid({
+                debounceVerticalScrollbar: true,
+                pinnedBottomRowData: [{}],
+            });
+            const scrollbar = root.querySelector('.ag-body-vertical-scroll-viewport')!;
+            scroll('.ag-grid-viewport', 'scrollTop', 300);
+            api.setGridOption('pinnedBottomRowData', [{}, {}]);
+            await waitFor(() => expect(scrollbar.scrollTop).toBe(300));
+            scrollbar.dispatchEvent(new Event('scroll'));
+            scroll('.ag-grid-viewport', 'scrollTop', 600);
+
+            await waitFor(() => expect(scrollbar.scrollTop).toBe(600));
+            expect(viewport.scrollTop).toBe(600);
+        });
+
+        test('a debounced scrollbar drag waits for viewport ownership to expire', async () => {
+            const { root, viewport, scroll } = createScrollGrid({ debounceVerticalScrollbar: true });
+            await nextAnimationFrame();
+            await nextAnimationFrame();
+            vi.useFakeTimers();
+            try {
+                scroll('.ag-grid-viewport', 'scrollTop', 400);
+                await vi.advanceTimersByTimeAsync(100);
+                expect(root.querySelector('.ag-body-vertical-scroll-viewport')!.scrollTop).toBe(400);
+
+                await vi.advanceTimersByTimeAsync(90);
+                scroll('.ag-body-vertical-scroll-viewport', 'scrollTop', 900);
+                expect(viewport.scrollTop).toBe(400);
+                await vi.advanceTimersByTimeAsync(100);
+
+                expect(viewport.scrollTop).toBe(900);
+                expect(root.querySelector('.ag-body-vertical-scroll-viewport')!.scrollTop).toBe(900);
+            } finally {
+                gridsManager.reset();
+                vi.useRealTimers();
+            }
+        });
+
+        test.each([false, true])(
+            'matching scroll positions still update rows and events (debounce=%s)',
+            async (debounceVerticalScrollbar) => {
+                const { api, root, scroll } = createScrollGrid({ debounceVerticalScrollbar, rowHeight: 40 });
+                await nextAnimationFrame();
+                await nextAnimationFrame();
+                const scrollTops: number[] = [];
+                api.addEventListener('bodyScroll', ({ direction, top }) => {
+                    if (direction === 'vertical') {
+                        scrollTops.push(top);
+                    }
+                });
+                vi.useFakeTimers();
+                try {
+                    scroll('.ag-body-vertical-scroll-viewport', 'scrollTop', 900);
+                    await vi.advanceTimersByTimeAsync(120);
+                    expect(scrollTops).toEqual([900]);
+
+                    scroll('.ag-grid-viewport', 'scrollTop', 2000);
+                    await vi.advanceTimersByTimeAsync(50);
+                    scroll('.ag-body-vertical-scroll-viewport', 'scrollTop', 2000);
+                    await vi.advanceTimersByTimeAsync(300);
+
+                    expect(scrollTops).toEqual([900, 2000]);
+                    expect(root.querySelector('.ag-row[row-index="50"]')).not.toBeNull();
+                } finally {
+                    gridsManager.reset();
+                    vi.useRealTimers();
+                }
+            }
+        );
 
         test('synchronising a hidden scrollbar does not start a visibility polling timer', () => {
             const { root, scroll } = createScrollGrid();

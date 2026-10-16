@@ -93,7 +93,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         const fakeVScrollHeight = this.eViewport.clientHeight;
         const diff = gridHeight - fakeVScrollHeight;
         this.eContainer.style.height = `${Math.max(1, gridScrollHeight - diff)}px`;
-        this.setScrollPosition(gridBodyCtrl.eGridViewport.scrollTop);
+        this.setScrollPosition(gridBodyCtrl.scrollFeature.getVerticalScrollPositionForSync());
     }
 
     public getScrollPosition(): number {

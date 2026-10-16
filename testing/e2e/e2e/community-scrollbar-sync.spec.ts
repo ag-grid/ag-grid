@@ -9,6 +9,7 @@ declare global {
     interface Window {
         scrollTestRtl: boolean;
         scrollIntervals: { callbacks: number; live: Set<number> };
+        scrollTestVerticalEvents: number[];
     }
 }
 
@@ -50,6 +51,184 @@ const positions = (page: Page) =>
             verticalDifference: vertical.scrollTop - viewport.scrollTop,
         };
     });
+
+for (const overlay of [false, true]) {
+    test.describe(`debounced vertical scrollbar (overlay=${overlay})`, () => {
+        test.beforeEach(async ({ page }) => {
+            await mountGrid(page, {
+                width: 700,
+                height: 500,
+                css: overlay
+                    ? '* { scrollbar-width: none; } ::-webkit-scrollbar { width: 0; height: 0; }'
+                    : '::-webkit-scrollbar { width: 15px; height: 15px; }',
+                options: () => ({
+                    debounceVerticalScrollbar: true,
+                    rowHeight: 40,
+                    columnDefs: Array.from({ length: 10 }, (_, i) => ({ field: `c${i}`, width: 200 })),
+                    rowData: Array.from({ length: 100 }, () => ({})),
+                    pinnedBottomRowData: [{}],
+                }),
+            });
+            await expect(page.locator('.ag-row-pinned')).toHaveCount(1);
+            await page.evaluate(
+                () =>
+                    new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
+            );
+        });
+
+        for (const update of ['pinned rows', 'viewport resize', 'row height']) {
+            test(`${update} preserves a pending scrollbar drag`, async ({ page }) => {
+                await page.evaluate(
+                    (change) =>
+                        new Promise<void>((resolve) => {
+                            const scrollbar = document.querySelector('.ag-body-vertical-scroll-viewport')!;
+                            scrollbar.addEventListener(
+                                'scroll',
+                                () => {
+                                    if (change === 'pinned rows') {
+                                        window.gridApi.setGridOption('pinnedBottomRowData', [{}, {}]);
+                                    } else if (change === 'viewport resize') {
+                                        document.querySelector<HTMLElement>('#myGrid')!.style.height = '400px';
+                                    } else {
+                                        window.gridApi.setGridOption('rowHeight', 50);
+                                    }
+                                    resolve();
+                                },
+                                { once: true }
+                            );
+                            scrollbar.scrollTop = 900;
+                        }),
+                    update
+                );
+                await expect.poll(() => positions(page)).toMatchObject({ top: 900, verticalDifference: 0 });
+            });
+        }
+
+        test('a scrollbar drag is processed after viewport ownership expires', async ({ page }) => {
+            await page.evaluate(
+                () =>
+                    new Promise<void>((resolve) => {
+                        const api = window.gridApi;
+                        const onScroll = () => {
+                            api.removeEventListener('bodyScroll', onScroll);
+                            // Input arrives inside the 150 ms ownership window, but its debounce finishes outside it.
+                            setTimeout(() => {
+                                document.querySelector('.ag-body-vertical-scroll-viewport')!.scrollTop = 900;
+                                resolve();
+                            }, 90);
+                        };
+                        api.addEventListener('bodyScroll', onScroll);
+                        document.querySelector('.ag-grid-viewport')!.scrollTop = 400;
+                    })
+            );
+            await expect.poll(() => positions(page)).toMatchObject({ top: 900, verticalDifference: 0 });
+        });
+
+        test('a height-sync echo does not interrupt a viewport scroll', async ({ page }) => {
+            await page.evaluate(
+                () =>
+                    new Promise<void>((resolve) => {
+                        const viewport = document.querySelector('.ag-grid-viewport')!;
+                        document.querySelector('.ag-body-vertical-scroll-viewport')!.addEventListener(
+                            'scroll',
+                            () => {
+                                viewport.scrollTop = 600;
+                                resolve();
+                            },
+                            { once: true }
+                        );
+                        viewport.scrollTop = 300;
+                        window.gridApi.setGridOption('pinnedBottomRowData', [{}, {}]);
+                    })
+            );
+            await expect.poll(() => positions(page)).toMatchObject({ top: 600, verticalDifference: 0 });
+        });
+
+        test('matching scroll positions still update rows and events', async ({ page }) => {
+            await page.clock.install({ time: new Date('2026-01-01T00:00:00Z') });
+            await page.clock.pauseAt(new Date('2026-01-01T00:00:01Z'));
+            await page.evaluate(() => {
+                window.scrollTestVerticalEvents = [];
+                window.gridApi.addEventListener('bodyScroll', ({ direction, top }) => {
+                    if (direction === 'vertical') {
+                        window.scrollTestVerticalEvents.push(top);
+                    }
+                });
+            });
+            const scroll = (selector: string, top: number) =>
+                page.locator(selector).evaluate(
+                    (el, scrollTop) =>
+                        new Promise<void>((resolve) => {
+                            el.addEventListener('scroll', () => resolve(), { once: true });
+                            el.scrollTop = scrollTop;
+                        }),
+                    top
+                );
+
+            await scroll('.ag-body-vertical-scroll-viewport', 900);
+            await page.clock.runFor(120);
+            expect(await page.evaluate(() => window.scrollTestVerticalEvents)).toEqual([900]);
+
+            // The viewport debounce finishes inside scrollbar ownership; the matching scrollbar event finishes after it.
+            await scroll('.ag-grid-viewport', 2000);
+            await page.clock.runFor(50);
+            await scroll('.ag-body-vertical-scroll-viewport', 2000);
+            await page.clock.runFor(300);
+
+            expect(await page.evaluate(() => window.scrollTestVerticalEvents)).toEqual([900, 2000]);
+            await expect(page.locator('.ag-row[row-index="50"] [col-id="c0"]')).toBeInViewport();
+            expect(await positions(page)).toMatchObject({ top: 2000, verticalDifference: 0 });
+        });
+
+        test('hiding and revealing a debounced grid preserves its position', async ({ page }) => {
+            await page.evaluate(
+                () =>
+                    new Promise<void>((resolve) => {
+                        const api = window.gridApi;
+                        const onScrollEnd = () => {
+                            api.removeEventListener('bodyScrollEnd', onScrollEnd);
+                            resolve();
+                        };
+                        api.addEventListener('bodyScrollEnd', onScrollEnd);
+                        api.ensureIndexVisible(20, 'top');
+                    })
+            );
+            const grid = page.locator('#myGrid');
+            await grid.evaluate((el) => (el.style.display = 'none'));
+            // Observe any scroll events and debounced callbacks caused by hiding the scroll boxes.
+            await page.waitForTimeout(250);
+            await grid.evaluate((el) => (el.style.display = ''));
+            await expect.poll(() => positions(page)).toMatchObject({ top: 800, verticalDifference: 0 });
+        });
+
+        test('a pending drag is clamped when the row count shrinks', async ({ page }) => {
+            await page.evaluate(
+                () =>
+                    new Promise<void>((resolve) => {
+                        const scrollbar = document.querySelector('.ag-body-vertical-scroll-viewport')!;
+                        scrollbar.addEventListener(
+                            'scroll',
+                            () => {
+                                window.gridApi.setGridOption(
+                                    'rowData',
+                                    Array.from({ length: 20 }, () => ({}))
+                                );
+                                resolve();
+                            },
+                            { once: true }
+                        );
+                        scrollbar.scrollTop = 900;
+                    })
+            );
+            await expect
+                .poll(() =>
+                    page.locator('.ag-grid-viewport').evaluate((el) => el.scrollHeight - el.clientHeight - el.scrollTop)
+                )
+                .toBe(0);
+            await expect.poll(() => positions(page)).toMatchObject({ verticalDifference: 0 });
+        });
+    });
+}
 
 for (const overlay of [false, true]) {
     for (const enableRtl of [false, true]) {
