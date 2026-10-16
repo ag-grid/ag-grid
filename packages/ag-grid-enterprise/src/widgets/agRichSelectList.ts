@@ -37,7 +37,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     private readonly selectedItems: Set<TValue> = new Set<TValue>();
     private loadingLabel: string;
     private noMatchesLabel: string;
-    private loadingState = STATE_READY_FOR_INPUT;
+    private loadingState: AgRichSelectListState = STATE_READY_FOR_INPUT;
     private eStateCompLabel: HTMLElement;
     private eLoadingIcon: Element | undefined;
     private loadMoreRowsCallback?: (direction?: VerticalDirection) => void;
@@ -117,14 +117,14 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
     private setLoadingState(state: AgRichSelectListState): void {
         const hasChanged = this.loadingState !== state;
+        const previousAnnouncement = this.getStateAnnouncementText(this.loadingState);
+        const stateAnnouncement = this.getStateAnnouncementText(state);
         this.loadingState = state;
         this.toggleStateComp();
         this.toggleVisibility();
-        if (hasChanged) {
-            const stateAnnouncement = this.getStateAnnouncementText(state);
-            if (stateAnnouncement) {
-                this.stateAnnouncementCallback?.(stateAnnouncement);
-            }
+        if (hasChanged && (stateAnnouncement || previousAnnouncement)) {
+            // An empty value supersedes the previous state's announcement if still pending, and is never spoken.
+            this.stateAnnouncementCallback?.(stateAnnouncement ?? '');
         }
     }
 

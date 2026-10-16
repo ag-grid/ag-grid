@@ -261,7 +261,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
             new AgRichSelectList<TValue>(this.config, this.getFocusableElement(), () => this.searchString)
         );
         this.listComponent.setLoadMoreRowsCallback(this.loadMoreRowsCallback, this.loadMoreRowsThreshold);
-        this.listComponent.setStateAnnouncementCallback((value: string) => this.announceAriaValue(value));
+        // Own key, so clearing a stale state announcement can't drop a pending selection one.
+        this.listComponent.setStateAnnouncementCallback((value: string) =>
+            this.ariaAnnounce?.announceValue(value, 'richSelectState')
+        );
         this.listComponent.setParentComponent(this);
         // Gate `aria-controls` on the expand state — the list is only in the DOM while the picker is shown.
         this.setAriaControlsId(this.listComponent.getAriaElement().id);
