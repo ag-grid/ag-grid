@@ -350,6 +350,14 @@ export abstract class AgBeanStub<
         }
     }
 
+    /** Unregisters a func `addDestroyFunc` took, for a resource released before the bean is. */
+    public removeDestroyFunc(func: () => void): void {
+        const destroyFunctions = this.destroyFunctions;
+        if (destroyFunctions) {
+            _removeFromArray(destroyFunctions, func);
+        }
+    }
+
     /** doesn't throw an error if `bean` is undefined */
     public createOptionalManagedBean<T extends AgBaseBean<TBeanCollection> | null | undefined>(
         bean: T,

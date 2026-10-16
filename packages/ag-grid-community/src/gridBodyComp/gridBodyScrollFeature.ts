@@ -179,9 +179,9 @@ export class GridBodyScrollFeature extends BeanStub {
     private debounceFakeVScroll(onFakeVScroll: () => void): () => void {
         const debouncedFakeVScroll = _debounce(this, onFakeVScroll, SCROLL_DEBOUNCE_TIMEOUT);
         return () => {
-            // the grid's own writes echo back at the position it already holds
+            // the grid's own writes copy the viewport, so they echo back at its position
             if (
-                this.fakeVScrollComp.getScrollPosition() === this.nextScrollTop ||
+                this.fakeVScrollComp.getScrollPosition() === this.eGridViewport.scrollTop ||
                 !this.isControllingVScroll(FAKE_V_SCROLLBAR)
             ) {
                 return;
@@ -310,7 +310,7 @@ export class GridBodyScrollFeature extends BeanStub {
         }
 
         if (source === VIEWPORT) {
-            this.fakeVScrollComp.setScrollPosition(scrollTop);
+            fakeVScrollComp.setScrollPosition(scrollTop);
         } else {
             this.eGridViewport.scrollTop = requestedScrollTop;
             // resolve to the browser-applied value in case assignment is clamped.
@@ -320,7 +320,7 @@ export class GridBodyScrollFeature extends BeanStub {
             this.invalidateVerticalScroll();
 
             if (scrollTop !== requestedScrollTop) {
-                this.fakeVScrollComp.setScrollPosition(scrollTop);
+                fakeVScrollComp.setScrollPosition(scrollTop);
             }
         }
 

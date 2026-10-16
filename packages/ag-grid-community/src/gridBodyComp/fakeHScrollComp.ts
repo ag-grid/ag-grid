@@ -4,6 +4,7 @@ import type { BeanCollection } from '../context/context';
 import type { ElementParams } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';
 import { AbstractFakeScrollComp, INVISIBLE_SCROLLBAR_SIZE } from './abstractFakeScrollComp';
+import type { GridBodyCtrl } from './gridBodyCtrl';
 import type { ScrollVisibleService } from './scrollVisibleService';
 
 const FakeHScrollElement: ElementParams = {
@@ -107,7 +108,8 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
             _setFixedHeight(this.eViewport, scrollContainerSize);
             _setFixedHeight(this.eContainer, scrollContainerSize);
             _setFixedHeight(this.eEndSpacer, scrollContainerSize);
-            const verticalScrollbarWidth = this.getVerticalSpacerWidth();
+            const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
+            const verticalScrollbarWidth = this.getVerticalSpacerWidth(gridBodyCtrl);
             _setFixedWidth(this.eEndSpacer, verticalScrollbarWidth);
             this.eEndSpacer.style.display = verticalScrollbarWidth > 0 ? '' : 'none';
             this.eViewport.style.width =
@@ -119,7 +121,10 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
                 this.eContainer.style.setProperty('min-height', '1px');
             }
             this.setVisible(hScrollShowing, { skipAriaHidden: true });
-            this.syncScrollPosition();
+            // the viewport may have moved while this was hidden; one direction on both, so no RTL conversion
+            if (gridBodyCtrl) {
+                this.eViewport.scrollLeft = gridBodyCtrl.eGridViewport.scrollLeft;
+            }
         };
         window.clearTimeout(this.setScrollVisibleDebounce);
         if (!hScrollShowing) {
@@ -129,8 +134,7 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
         }
     }
 
-    private getVerticalSpacerWidth(): number {
-        const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
+    private getVerticalSpacerWidth(gridBodyCtrl: GridBodyCtrl): number {
         if (gridBodyCtrl) {
             return gridBodyCtrl.getVerticalScrollbarWidth();
         }
@@ -149,15 +153,6 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
     public getScrollPosition(): number {
         return _getScrollLeft(this.eViewport, this.enableRtl);
-    }
-
-    /** Showing the scrollbar can leave it behind the viewport, which may have moved while it was hidden. */
-    private syncScrollPosition(): void {
-        const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
-        if (gridBodyCtrl) {
-            // same direction on both elements, so the raw value carries over without RTL conversion
-            this.eViewport.scrollLeft = gridBodyCtrl.eGridViewport.scrollLeft;
-        }
     }
 }
 

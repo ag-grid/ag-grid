@@ -84,17 +84,18 @@ describe('_waitUntil', () => {
     });
 
     const createBean = () => {
-        const destroyFuncs: (() => void)[] = [];
-        let alive = true;
+        let destroyFuncs: (() => void)[] = [];
         return {
-            destroyFuncs,
-            isAlive: () => alive,
+            getDestroyFuncs: () => destroyFuncs,
             addDestroyFunc: (func: () => void) => destroyFuncs.push(func),
+            removeDestroyFunc: (func: () => void) => {
+                destroyFuncs = destroyFuncs.filter((f) => f !== func);
+            },
             destroy: () => {
-                alive = false;
                 for (const func of destroyFuncs) {
                     func();
                 }
+                destroyFuncs = [];
             },
         };
     };
@@ -111,19 +112,19 @@ describe('_waitUntil', () => {
         vi.advanceTimersByTime(10);
 
         expect(callback).toHaveBeenCalledTimes(4);
-        expect(bean.destroyFuncs).toEqual([]);
+        expect(bean.getDestroyFuncs()).toEqual([]);
         expect(vi.getTimerCount()).toBe(0);
     });
 
-    test('stops once its bean is destroyed, without calling back', () => {
+    test('stops as its bean is destroyed, without calling back', () => {
         const bean = createBean();
         const callback = vi.fn();
         _waitUntil(bean, () => false, callback, 1000);
         vi.advanceTimersByTime(50);
         bean.destroy();
-        vi.advanceTimersByTime(2000);
 
-        expect(callback).not.toHaveBeenCalled();
         expect(vi.getTimerCount()).toBe(0);
+        vi.advanceTimersByTime(2000);
+        expect(callback).not.toHaveBeenCalled();
     });
 });

@@ -34,8 +34,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
     public override postConstruct(): void {
         super.postConstruct();
 
-        const { ctrlsSvc } = this.beans;
-        ctrlsSvc.register('fakeVScrollComp', this);
+        this.beans.ctrlsSvc.register('fakeVScrollComp', this);
 
         const queueContainerHeightSync = this.queueContainerHeightSync;
         this.addManagedEventListeners({
@@ -89,7 +88,7 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         const fakeVScrollHeight = this.eViewport.clientHeight;
         const diff = gridHeight - fakeVScrollHeight;
         this.eContainer.style.height = `${Math.max(1, gridScrollHeight - diff)}px`;
-        // `display: none` resets the position, so take the viewport's back, unless this scrollbar is moving it
+        // a height change can clamp the position, so take the viewport's back, unless this scrollbar is moving it
         if (!gridBodyCtrl.scrollFeature.isFakeVScrollLeading()) {
             this.setScrollPosition(gridBodyCtrl.eGridViewport.scrollTop);
         }

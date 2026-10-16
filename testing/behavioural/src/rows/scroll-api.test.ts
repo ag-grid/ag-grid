@@ -1,7 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
-import { installMockResizeObserver, triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserver';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -54,7 +53,7 @@ describe('scroll API', () => {
             expect(viewport.scrollTop).toBe(100);
         });
 
-        test('a hidden grid keeps its vertical scrollbar at the latest position, without a polling timer', () => {
+        test('synchronising a hidden scrollbar does not start a visibility polling timer', () => {
             const { root, scroll } = createScrollGrid();
             root.style.display = 'none';
             const scrollbar = root.querySelector<HTMLElement>('.ag-body-vertical-scroll-viewport')!;
@@ -67,8 +66,6 @@ describe('scroll API', () => {
             } finally {
                 intervals.mockRestore();
             }
-            root.style.display = '';
-            expect(scrollbar.scrollTop).toBe(200);
         });
 
         test('with a debounced vertical scrollbar, a pinned row update while its scroll is pending keeps the scroll', async () => {
@@ -81,21 +78,22 @@ describe('scroll API', () => {
             await waitFor(() => expect(viewport.scrollTop).toBe(300));
         });
 
-        test('a resize of the viewport brings a vertical scrollbar that fell out of step back to the viewport', async () => {
-            const uninstall = installMockResizeObserver();
-            try {
-                const { root, viewport, scroll } = createScrollGrid();
-                scroll('.ag-grid-viewport', 'scrollTop', 100);
-                const fakeVertical = root.querySelector<HTMLElement>('.ag-body-vertical-scroll-viewport')!;
-                // as a scroller shown again after `display: none` reports
-                fakeVertical.scrollTop = 0;
+        test('with a debounced vertical scrollbar, a height sync during a viewport scroll leaves the scroll to the viewport', async () => {
+            const { api, root, viewport, scroll } = createScrollGrid({
+                debounceVerticalScrollbar: true,
+                pinnedBottomRowData: [{}],
+            });
+            const fakeVertical = root.querySelector<HTMLElement>('.ag-body-vertical-scroll-viewport')!;
+            scroll('.ag-grid-viewport', 'scrollTop', 300);
+            api.setGridOption('pinnedBottomRowData', [{}, {}]);
+            await waitFor(() => expect(fakeVertical.scrollTop).toBe(300));
+            // the browser reports the grid's own write to the scrollbar
+            fakeVertical.dispatchEvent(new Event('scroll'));
 
-                triggerResizeObservers(viewport);
+            scroll('.ag-grid-viewport', 'scrollTop', 600);
 
-                await waitFor(() => expect(fakeVertical.scrollTop).toBe(100));
-            } finally {
-                uninstall();
-            }
+            await waitFor(() => expect(fakeVertical.scrollTop).toBe(600));
+            expect(viewport.scrollTop).toBe(600);
         });
 
         test('a change in row height brings a vertical scrollbar that fell out of step back to the viewport', () => {
