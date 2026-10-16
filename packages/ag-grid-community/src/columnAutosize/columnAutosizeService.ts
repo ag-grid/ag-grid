@@ -898,7 +898,6 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 }
 
-/** returns the width we can set to this col, taking into consideration min and max widths */
 /** Sets the auto-sized widths, true when one changed; with `pinnedLimit`, pinned columns grow only into the room left
  *  once the shrinking ones have freed theirs, as the pinned widths update only when the columns refresh. */
 function setAutoSizedWidths(
@@ -911,14 +910,15 @@ function setAutoSizedWidths(
     let freed = 0;
     for (let i = 0, len = columns.length; i < len; ++i) {
         const column = columns[i];
-        const growth = widths[i] - column.actualWidth;
+        const width = widths[i];
+        const growth = width - column.actualWidth;
         const limited = pinnedLimit !== undefined && column.pinnedLane !== 1;
         if (limited && growth > 0) {
             continue;
         }
         freed -= limited ? growth : 0;
         changed ||= growth !== 0;
-        column.setActualWidth(widths[i], source);
+        column.setActualWidth(width, source);
     }
     if (!pinnedLimit) {
         return changed;
@@ -940,6 +940,7 @@ function setAutoSizedWidths(
     return changed;
 }
 
+/** returns the width we can set to this col, taking into consideration min and max widths */
 function normaliseColumnWidth(
     column: AgColumn,
     newWidth: number,
