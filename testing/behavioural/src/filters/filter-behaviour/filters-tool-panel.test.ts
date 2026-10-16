@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import {
     FilterDom,
     GridRows,
@@ -8,6 +9,7 @@ import {
 } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, NumberFilterModule, TextFilterModule, setupAgTestIds } from 'ag-grid-community';
+import type { ISetFilter } from 'ag-grid-enterprise';
 import { FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
 
 import { FILTERS_SIDEBAR, openFiltersPanel } from './toolPanelHarness';
@@ -105,6 +107,136 @@ describe('Filters Tool Panel', () => {
 
         await panel.search('');
         expect(panel.columnTitles()).toEqual(['Name', 'Age', 'Country']);
+    });
+
+    test('a search matching no columns shows and announces "No matches", and clearing it hides the message', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'name', filter: 'agTextColumnFilter' },
+                { field: 'age', filter: 'agNumberColumnFilter' },
+            ],
+            rowData: [{ name: 'Alice', age: 30 }],
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+        expect(panel.isSearchNoMatchesShown()).toBe(false);
+
+        await panel.search('zzz');
+        expect(panel.columnTitles()).toEqual([]);
+        expect(panel.isSearchNoMatchesShown()).toBe(true);
+        await waitFor(() => expect(panel.announcement()).toBe('No matches'));
+
+        await panel.search('');
+        expect(panel.columnTitles()).toEqual(['Name', 'Age']);
+        expect(panel.isSearchNoMatchesShown()).toBe(false);
+    });
+
+    test('a set filter mini-filter matching no values announces "No matches"', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agSetColumnFilter' }],
+            rowData: [{ country: 'Ireland' }, { country: 'France' }],
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+        await panel.expandGroup('Country');
+
+        await panel.setMiniFilter('Country', 'zz');
+        expect(panel.isNoMatchesShown('Country')).toBe(true);
+        await waitFor(() => expect(panel.announcement()).toBe('No matches'));
+    });
+
+    test('a column change that leaves a search with no matches shows "No matches" without announcing it', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'name', filter: 'agTextColumnFilter' },
+                { field: 'age', filter: 'agNumberColumnFilter' },
+            ],
+            rowData: [{ name: 'Alice', age: 30 }],
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+        await panel.search('nam');
+
+        api.setGridOption('columnDefs', [{ field: 'age', filter: 'agNumberColumnFilter' }]);
+        await waitFor(() => expect(panel.isSearchNoMatchesShown()).toBe(true));
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        expect(panel.announcement()).not.toContain('No matches');
+
+        await panel.search('namx');
+        await waitFor(() => expect(panel.announcement()).toBe('No matches'));
+    });
+
+    test('a data change that leaves a set filter mini-filter with no matches does not announce it', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agSetColumnFilter' }],
+            rowData: [{ country: 'Ireland' }, { country: 'France' }],
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+        await panel.expandGroup('Country');
+        await panel.setMiniFilter('Country', 'Ire');
+        expect(panel.isNoMatchesShown('Country')).toBe(false);
+
+        api.setGridOption('rowData', [{ country: 'France' }]);
+        await waitFor(() => expect(panel.isNoMatchesShown('Country')).toBe(true));
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        expect(panel.announcement()).not.toContain('No matches');
+    });
+
+    test('setMiniFilter through the API shows "No matches" without announcing it', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agSetColumnFilter' }],
+            rowData: [{ country: 'Ireland' }, { country: 'France' }],
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+        await panel.expandGroup('Country');
+        const setFilter = await api.getColumnFilterInstance<ISetFilter>('country');
+
+        setFilter!.setMiniFilter('zz');
+        await waitFor(() => expect(panel.isNoMatchesShown('Country')).toBe(true));
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        expect(panel.announcement()).not.toContain('No matches');
+    });
+
+    test('a mini-filter corrected before "No matches" is announced does not announce it', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agSetColumnFilter' }],
+            rowData: [{ country: 'Ireland' }, { country: 'France' }],
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+        await panel.expandGroup('Country');
+
+        // Not awaited: the correction must land before the announcement's timers run.
+        const typingNoMatch = panel.setMiniFilter('Country', 'zz');
+        await panel.setMiniFilter('Country', 'Ire');
+        await typingNoMatch;
+        expect(panel.isNoMatchesShown('Country')).toBe(false);
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        expect(panel.announcement()).not.toContain('No matches');
+    });
+
+    test('a mini-filter collapsed before "No matches" is announced does not announce it', async () => {
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agSetColumnFilter' }],
+            rowData: [{ country: 'Ireland' }, { country: 'France' }],
+            sideBar: FILTERS_SIDEBAR,
+        });
+        const panel = await openFiltersPanel(api);
+        await panel.expandGroup('Country');
+
+        // Not awaited: the collapse must land before the announcement's timers run.
+        const typingNoMatch = panel.setMiniFilter('Country', 'zz');
+        await panel.collapseGroup('Country');
+        await typingNoMatch;
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+        expect(panel.announcement()).not.toContain('No matches');
     });
 
     test('expand-all / collapse-all toggles column-group expansion', async () => {
