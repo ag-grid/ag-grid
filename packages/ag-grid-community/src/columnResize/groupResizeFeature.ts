@@ -93,7 +93,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
             return;
         }
         const plan = colResize!.planGroupResize(columnGroup, false);
-        colResize!.resizeGroup(plan, plan.group.startWidth + held, true, source, columnGroup);
+        colResize!.resizeGroup(plan, plan.group.startWidth + held, true, source, true);
     }
 
     public toggleColumnResizing(resizing: boolean): void {

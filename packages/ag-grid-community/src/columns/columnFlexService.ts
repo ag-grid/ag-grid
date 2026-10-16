@@ -26,7 +26,6 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
     public refreshFlexedColumns(
         params: {
             resizingCols?: AgColumn[];
-            reflexAll?: boolean;
             skipSetLeft?: boolean;
             viewportWidth?: number;
             source?: ColumnEventType;
@@ -54,26 +53,20 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
         const centerCount = visibleCenterCols.length;
         const centerStart = visibleCenterCols[0].allColsIndex;
 
-        // the centre cols keeping their widths: up to the last resizing one, or with `reflexAll` only the run of the
-        // resizing ones, so the flex cols before them re-flex too
-        let frozenFrom = 0;
-        let frozenTo = -1;
+        // the last resizing centre col, as only cols after this one are affected by the resizing
+        let flexAfterDisplayIndex = -1;
         const resizingCols = params.resizingCols;
         if (resizingCols) {
-            let first = centerCount;
             for (let i = 0, len = resizingCols.length; i < len; ++i) {
                 const col = resizingCols[i];
                 const index = col.allColsIndex - centerStart;
-                if (index < 0 || visibleCenterCols[index] !== col) {
+                if (index <= flexAfterDisplayIndex || visibleCenterCols[index] !== col) {
                     continue;
                 }
-                first = Math.min(first, index);
-                frozenTo = Math.max(frozenTo, index);
+                flexAfterDisplayIndex = index;
             }
-            if (params.reflexAll) {
-                frozenFrom = first;
-            } else if (centerStart + frozenTo >= lastFlexIndex) {
-                // no flex col after the resizing ones, as when resizing past the last
+            // no flex col after the resizing ones, as when resizing past the last
+            if (centerStart + flexAfterDisplayIndex >= lastFlexIndex) {
                 this.revealColumns(colDelayRenderSvc);
                 return [];
             }
@@ -88,10 +81,10 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
         let unfrozenFlex = 0;
         // an item only for the cols this pass flexes: the rest are frozen below without one
         const items: FlexItem[] = [];
-        for (let i = 0; i < centerCount; ++i) {
+        for (let i = flexAfterDisplayIndex + 1; i < centerCount; ++i) {
             const col = visibleCenterCols[i];
             const flex = col.flex;
-            if ((i >= frozenFrom && i <= frozenTo) || flex == null || flex <= 0) {
+            if (flex == null || flex <= 0) {
                 continue;
             }
             flexedColumns.push(col);
@@ -123,7 +116,7 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
         for (let i = 0; i < centerCount; ++i) {
             const col = visibleCenterCols[i];
             const flex = col.flex;
-            if ((i < frozenFrom || i > frozenTo) && flex != null && flex > 0) {
+            if (i > flexAfterDisplayIndex && flex != null && flex > 0) {
                 continue;
             }
             const width = col.actualWidth;

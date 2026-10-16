@@ -950,6 +950,50 @@ describe('Column Features', () => {
             }
         });
 
+        test('a group fit in one grid lands the same widths in the other, its flex columns re-flexing in both', async () => {
+            const measured = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (
+                this: HTMLElement
+            ) {
+                return this.tagName === 'FORM' ? 600 : 0;
+            });
+            try {
+                const gridOptions = () => ({
+                    columnDefs: [
+                        {
+                            headerName: 'g',
+                            groupId: 'g',
+                            children: [
+                                { colId: 'a', field: 'a', width: 100, suppressAutoSize: true },
+                                { colId: 'b', field: 'b', flex: 1, resizable: false, suppressAutoSize: true },
+                            ],
+                        },
+                        { colId: 'e', flex: 1 },
+                    ],
+                    autoSizePadding: 0,
+                    rowData: [{}],
+                });
+                const modules = { modules: [ColumnAutoSizeModule] };
+                const api1 = gridsManager.createGrid('grid1', gridOptions(), modules);
+                const api2 = gridsManager.createGrid('grid2', gridOptions(), modules);
+                api1.setGridOption('alignedGrids', [{ api: api2 }]);
+                const widths = (api: GridApi) => ['a', 'b', 'e'].map((id) => api.getColumn(id)!.getActualWidth());
+                const bar = TestGridsManager.getHTMLElement(api1)!.querySelector<HTMLElement>(
+                    '.ag-header-group-cell .ag-header-cell-resize'
+                )!;
+
+                bar.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+                await asyncSetTimeout(0);
+
+                // `a` takes the fit's 50px; `b`, left at its width, keeps its flex and shares the rest with `e`
+                expect([widths(api1), widths(api2)]).toEqual([
+                    [150, 425, 425],
+                    [150, 425, 425],
+                ]);
+            } finally {
+                measured.mockRestore();
+            }
+        });
+
         test('a column flexed again in one grid passes its width to the other grid, where it no longer flexes', () => {
             const gridOptions = {
                 columnDefs: [

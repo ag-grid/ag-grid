@@ -1219,7 +1219,7 @@ describe('group resize distribution', () => {
         }
     });
 
-    test('a double-click group fit holds every column of the group, re-flexing only the flex columns outside it', async () => {
+    test('a double-click group fit turns off flex only on the columns whose width it changes, re-flexing the rest', async () => {
         const measured = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (
             this: HTMLElement
         ) {
@@ -1250,11 +1250,11 @@ describe('group resize distribution', () => {
             const resized: string[][] = [];
             api.addEventListener('columnResized', (e) => resized.push(e.columns!.map((col) => col.getColId())));
 
-            // the 1px goes to `a`; `b` and the fixed-size `d` keep their widths, which a re-flex would take back
+            // the 1px goes to `a`, which stops flexing; `b` and `d`, left at their widths, re-flex with `e`
             bar.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
             await asyncSetTimeout(0);
 
-            expect(widths(api, ['a', 'b', 'd', 'e'])).toEqual([101, 100, 100, 99]);
+            expect(widths(api, ['a', 'b', 'd', 'e'])).toEqual([101, 100, 99, 100]);
             expect(api.getColumnState().map(({ colId, flex }) => [colId, flex])).toEqual([
                 ['c', null],
                 ['a', null],
@@ -1262,6 +1262,46 @@ describe('group resize distribution', () => {
                 ['d', 1],
                 ['e', 1],
             ]);
+            expect(resized).toEqual([['a', 'b', 'd', 'e']]);
+        } finally {
+            measured.mockRestore();
+        }
+    });
+
+    test('a double-click fit of a pinned group lists the flex column it leaves at its width, which nothing re-flexes', async () => {
+        const measured = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (
+            this: HTMLElement
+        ) {
+            return this.tagName === 'FORM' ? 350 : 0;
+        });
+        try {
+            const api = gridsManager.createGrid('pinnedGroupFitFlex', {
+                columnDefs: [
+                    {
+                        headerName: 'g',
+                        groupId: 'g',
+                        children: [
+                            { colId: 'a', field: 'a', width: 100, pinned: 'left', suppressAutoSize: true },
+                            { colId: 'b', field: 'b', flex: 1, maxWidth: 200, pinned: 'left', suppressAutoSize: true },
+                        ],
+                    },
+                    { colId: 'e', flex: 1 },
+                ],
+                autoSizePadding: 0,
+                rowData: [{}],
+            });
+            expect(widths(api, ['a', 'b'])).toEqual([100, 200]);
+            const bar = TestGridsManager.getHTMLElement(api)!.querySelector<HTMLElement>(
+                '.ag-header-group-cell .ag-header-cell-resize'
+            )!;
+            const resized: string[][] = [];
+            api.addEventListener('columnResized', (e) => resized.push(e.columns!.map((col) => col.getColId())));
+
+            bar.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+            await asyncSetTimeout(0);
+
+            // `b` is on its maxWidth, so `a` takes the fit; pinned, `b` keeps its flex and flexes nowhere
+            expect(widths(api, ['a', 'b'])).toEqual([150, 200]);
             expect(resized).toEqual([['a', 'b', 'e']]);
         } finally {
             measured.mockRestore();
