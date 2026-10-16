@@ -27,6 +27,7 @@ import type {
     SizeColumnsToContentColumnLimits,
     SizeColumnsToContentStrategy,
 } from '../interfaces/autoSize';
+import type { PinnedColumnService } from '../pinnedColumns/pinnedColumnService';
 import { MIN_CENTER_VIEWPORT_WIDTH } from '../pinnedColumns/pinnedColumnService';
 import { _clamp } from '../utils/number';
 import { TouchListener } from '../widgets/touchListener';
@@ -262,20 +263,12 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             );
             const shouldSkipHeader = skipHeader ?? this.gos.get('skipHeaderOnAutoSize');
             const shouldSkipHeaderGroups = skipHeaderGroups ?? shouldSkipHeader;
-            const limitPinned = !!pinnedCols && pinnedCols.limitsAutoSize(source);
-            // tracked here, as the pinned widths update only once the columns refresh
-            let pinnedRoom = limitPinned ? pinnedCols.getPinnedRoom() : Infinity;
+            const pinnedLimit = pinnedCols?.limitsAutoSize(source) ? pinnedCols : undefined;
 
             while (changesThisTimeAround !== 0) {
                 changesThisTimeAround = 0;
-                // only a real width change may refresh, else the events it dispatches re-trigger
-                // continuous auto-sizing indefinitely
-                let widthsChanged = false;
-
-                const updatedColumns: AgColumn[] = [];
-                // growing pinned columns wait for the room every shrinking one frees, wherever it sits
-                const growingCols: AgColumn[] = [];
-                const growingWidths: number[] = [];
+                const sizedCols: AgColumn[] = [];
+                const sizedWidths: number[] = [];
 
                 for (const key of colKeys) {
                     if (!key) {
@@ -299,34 +292,16 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                         const columnLimit = columnLimitsIndex[column.colId] ?? {};
                         columnLimit.minWidth ??= defaultMinWidth;
                         columnLimit.maxWidth ??= defaultMaxWidth;
-                        const newWidth = normaliseColumnWidth(column, preferredWidth, columnLimit);
-                        const growth = newWidth - column.actualWidth;
-                        const limited = limitPinned && column.pinnedLane !== 1;
-                        if (limited && growth > 0) {
-                            growingCols.push(column);
-                            growingWidths.push(newWidth);
-                        } else {
-                            pinnedRoom -= limited ? growth : 0;
-                            widthsChanged ||= growth !== 0;
-                            column.setActualWidth(newWidth, source);
-                        }
+                        sizedCols.push(column);
+                        sizedWidths.push(normaliseColumnWidth(column, preferredWidth, columnLimit));
                         columnsAutoSized.add(column);
                         changesThisTimeAround++;
                     }
-
-                    updatedColumns.push(column);
                 }
 
-                for (let i = 0, len = growingCols.length; i < len; ++i) {
-                    const column = growingCols[i];
-                    const actualWidth = column.actualWidth;
-                    const growth = Math.min(growingWidths[i] - actualWidth, pinnedRoom);
-                    pinnedRoom -= growth;
-                    widthsChanged ||= growth !== 0;
-                    column.setActualWidth(actualWidth + growth, source);
-                }
-
-                if (updatedColumns.length && widthsChanged) {
+                // only a real width change may refresh, else the events it dispatches re-trigger
+                // continuous auto-sizing indefinitely
+                if (setAutoSizedWidths(sizedCols, sizedWidths, source, pinnedLimit)) {
                     // skipTreeBuild=true: autosize only changes widths, leaving liveCols/pins/visibility — and
                     // thus the section/group trees — unchanged.
                     visibleCols.refresh(source, true);
@@ -924,6 +899,47 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 }
 
 /** returns the width we can set to this col, taking into consideration min and max widths */
+/** Sets the auto-sized widths, true when one changed; with `pinnedLimit`, pinned columns grow only into the room left
+ *  once the shrinking ones have freed theirs, as the pinned widths update only when the columns refresh. */
+function setAutoSizedWidths(
+    columns: AgColumn[],
+    widths: number[],
+    source: ColumnEventType,
+    pinnedLimit: PinnedColumnService | undefined
+): boolean {
+    let changed = false;
+    let freed = 0;
+    for (let i = 0, len = columns.length; i < len; ++i) {
+        const column = columns[i];
+        const growth = widths[i] - column.actualWidth;
+        const limited = pinnedLimit !== undefined && column.pinnedLane !== 1;
+        if (limited && growth > 0) {
+            continue;
+        }
+        freed -= limited ? growth : 0;
+        changed ||= growth !== 0;
+        column.setActualWidth(widths[i], source);
+    }
+    if (!pinnedLimit) {
+        return changed;
+    }
+    // clamped after crediting what was freed, so the freed width first pays off any overflow
+    let room = pinnedLimit.getPinnedRoom(freed);
+    for (let i = 0, len = columns.length; i < len; ++i) {
+        const column = columns[i];
+        const actualWidth = column.actualWidth;
+        const width = widths[i];
+        if (column.pinnedLane === 1 || width <= actualWidth) {
+            continue;
+        }
+        const growth = Math.min(width - actualWidth, room);
+        room -= growth;
+        changed ||= growth !== 0;
+        column.setActualWidth(actualWidth + growth, source);
+    }
+    return changed;
+}
+
 function normaliseColumnWidth(
     column: AgColumn,
     newWidth: number,

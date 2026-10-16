@@ -189,8 +189,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         const viewportWidth = gridBodyCtrl
             ? gridBodyCtrl.getViewportWidthWithoutScrollbar(gridBodyCtrl.getReportedViewportWidth())
             : 0;
-        const room = viewportWidth - MIN_CENTER_VIEWPORT_WIDTH - this.leftWidth - this.rightWidth + freed;
-        return room > 0 ? room : 0;
+        return Math.max(viewportWidth - MIN_CENTER_VIEWPORT_WIDTH - this.leftWidth - this.rightWidth + freed, 0);
     }
 
     private isNextPinned(column: AgColumn | AgColumnGroup): boolean {

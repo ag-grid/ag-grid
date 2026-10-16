@@ -850,6 +850,36 @@ describe('Resizing pinned columns wider than the viewport', () => {
             expect(width(api, 'a')).toBe(500);
         });
 
+        test('a menu auto-size of overflowing pinned columns grows them only by what the shrinking ones free past the limit', async () => {
+            const menuGridsManager = new TestGridsManager({
+                modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, ColumnMenuModule],
+            });
+            const restoreOffsetParent = polyfillOffsetParent();
+            try {
+                const api = menuGridsManager.createGrid('myGrid', {
+                    columnDefs: [
+                        { field: 'a', width: 500 },
+                        { field: 'b', width: 500 },
+                    ],
+                    defaultColDef: { pinned: 'left', resizable: true },
+                    rowData: [{ a: 'a', b: 'b' }],
+                    processUnpinnedColumns: () => [],
+                });
+                await asyncSetTimeout(0);
+
+                // 1000px pinned is 50px past the 950px limit, so of the 100px `a` frees `b` gets 50
+                mockAutosizeContentWidth(780, { a: 380 });
+                api.showColumnMenu('a');
+                await userEvent.click(await openMenuOption('Autosize All Columns'));
+                await asyncSetTimeout(0);
+
+                expect([width(api, 'a'), width(api, 'b')]).toEqual([400, 550]);
+            } finally {
+                restoreOffsetParent();
+                menuGridsManager.reset();
+            }
+        });
+
         test('every menu auto-size action shrinks pinned columns but grows them only into the room left', async () => {
             const menuGridsManager = new TestGridsManager({
                 modules: [
