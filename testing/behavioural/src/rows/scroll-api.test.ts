@@ -47,6 +47,21 @@ describe('scroll API', () => {
             expect(viewport.scrollTop).toBe(100);
         });
 
+        test('synchronising a hidden scrollbar does not start a visibility polling timer', () => {
+            const { root, scroll } = createScrollGrid();
+            root.style.display = 'none';
+            const scrollbar = root.querySelector<HTMLElement>('.ag-body-vertical-scroll-viewport')!;
+            expect(scrollbar.checkVisibility({ checkVisibilityCSS: true })).toBe(false);
+            const intervals = vi.spyOn(window, 'setInterval');
+            try {
+                scroll('.ag-grid-viewport', 'scrollTop', 100);
+                scroll('.ag-grid-viewport', 'scrollTop', 200);
+                expect(intervals).not.toHaveBeenCalled();
+            } finally {
+                intervals.mockRestore();
+            }
+        });
+
         test('the vertical scrollbar scrolls the rows straight after a horizontal scroll of the viewport', () => {
             const { viewport, scroll } = createScrollGrid();
             scroll('.ag-grid-viewport', 'scrollLeft', 30);

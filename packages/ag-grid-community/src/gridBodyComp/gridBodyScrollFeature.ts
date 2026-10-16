@@ -39,7 +39,7 @@ export interface ScrollPartner {
 
 interface VerticalScrollComp extends ScrollPartner {
     getScrollPosition(): number;
-    setScrollPosition(value: number, force?: boolean): void;
+    setScrollPosition(value: number): void;
 }
 
 interface HorizontalScrollComp extends ScrollPartner {
@@ -306,7 +306,7 @@ export class GridBodyScrollFeature extends BeanStub {
             this.invalidateVerticalScroll();
 
             if (scrollTop !== requestedScrollTop) {
-                this.fakeVScrollComp.setScrollPosition(scrollTop, true);
+                this.fakeVScrollComp.setScrollPosition(scrollTop);
             }
         }
 
