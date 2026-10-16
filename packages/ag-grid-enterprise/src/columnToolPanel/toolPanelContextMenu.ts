@@ -49,7 +49,7 @@ export class ToolPanelContextMenu extends Component {
 
     constructor(
         private readonly column: AgColumn | AgProvidedColumnGroup,
-        private readonly mouseEventOrTouch: MouseEvent | Touch,
+        private readonly trigger: MouseEvent | Touch | KeyboardEvent,
         private readonly parentEl: HTMLElement,
         private readonly params: ColumnStateUpdateParams,
         private readonly eventType: ColumnEventType,
@@ -119,9 +119,9 @@ export class ToolPanelContextMenu extends Component {
         // column does not suppress it, matching how the grid only blocks the browser menu when it has items.
         const handled = menuItemsMapped.length > 0 || colOrGroupDef?.columnMenuItems != null;
         if (handled) {
-            const mouseEventOrTouch = this.mouseEventOrTouch;
-            if ('preventDefault' in mouseEventOrTouch) {
-                mouseEventOrTouch.preventDefault();
+            const trigger = this.trigger;
+            if ('preventDefault' in trigger) {
+                trigger.preventDefault();
             }
         }
 
@@ -353,7 +353,7 @@ export class ToolPanelContextMenu extends Component {
             menuItems: menuItemsMapped,
             menuContext: { column, columnGroup, node: null, value: null },
             ePopup: this.getGui(),
-            positionBy: this.mouseEventOrTouch,
+            positionBy: this.trigger instanceof KeyboardEvent ? this.parentEl : this.trigger,
             restoreFocus: () => this.parentEl.focus(),
         });
     }
