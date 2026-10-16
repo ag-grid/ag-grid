@@ -143,6 +143,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
                 /**
                  * Following properties omitted as they are likely to come with undesired  side effects.
                  * 'getRowId', 'isRowMaster', 'getRowHeight', 'isServerSideGroup', 'getServerSideGroupKey',
+                 * 'getServerSideRowGroupKey',
                  * */
                 'masterDetail',
                 'treeData',

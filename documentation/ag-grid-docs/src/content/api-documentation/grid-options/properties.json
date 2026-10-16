@@ -1937,6 +1937,12 @@
                 "url": "./server-side-model-tree-data/"
             }
         },
+        "getServerSideRowGroupKey": {
+            "more": {
+                "name": "Grouping and Aggregating the Same Column",
+                "url": "./server-side-model-grouping/#grouping-and-aggregating-the-same-column"
+            }
+        },
         "stickyRowsMaxViewportRatio": {
             "restrictModule": ["ServerSideRowModelModule"]
         }
