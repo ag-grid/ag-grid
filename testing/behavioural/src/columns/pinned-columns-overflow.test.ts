@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import {
     DragEventDispatcher,
@@ -874,6 +875,63 @@ describe('Resizing pinned columns wider than the viewport', () => {
                 await asyncSetTimeout(0);
 
                 expect([width(api, 'a'), width(api, 'b')]).toEqual([400, 550]);
+            } finally {
+                restoreOffsetParent();
+                menuGridsManager.reset();
+            }
+        });
+
+        test('a menu auto-size credits only the width a shrinking pinned column gives up within its own minWidth', async () => {
+            const menuGridsManager = new TestGridsManager({
+                modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, ColumnMenuModule],
+            });
+            const restoreOffsetParent = polyfillOffsetParent();
+            try {
+                mockAutosizeContentWidth(530);
+                const api = menuGridsManager.createGrid('myGrid', {
+                    columnDefs: [{ field: 'a', minWidth: 450 }, { field: 'b' }],
+                    defaultColDef: { pinned: 'left', resizable: true },
+                    rowData: [{ a: 'a', b: 'b' }],
+                    processUnpinnedColumns: () => [],
+                    autoSizeStrategy: { type: 'fitCellContents', applyToUiActions: true, defaultMinWidth: 100 },
+                });
+                await waitFor(() => expect([width(api, 'a'), width(api, 'b')]).toEqual([550, 550]));
+
+                // `a` asks for 100 but stops at its minWidth, freeing 100 of the 150px overflow: nothing left for `b`
+                mockAutosizeContentWidth(780, { a: 80 });
+                api.showColumnMenu('a');
+                await userEvent.click(await openMenuOption('Autosize All Columns'));
+                await asyncSetTimeout(0);
+
+                expect([width(api, 'a'), width(api, 'b')]).toEqual([450, 550]);
+            } finally {
+                restoreOffsetParent();
+                menuGridsManager.reset();
+            }
+        });
+
+        test('a menu auto-size leaves the room a growing pinned column cannot take past its own maxWidth to the next', async () => {
+            const menuGridsManager = new TestGridsManager({
+                modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, ColumnMenuModule],
+            });
+            const restoreOffsetParent = polyfillOffsetParent();
+            try {
+                mockAutosizeContentWidth(280);
+                const api = menuGridsManager.createGrid('myGrid', {
+                    columnDefs: [{ field: 'a', maxWidth: 450 }, { field: 'b' }],
+                    defaultColDef: { pinned: 'left', resizable: true },
+                    rowData: [{ a: 'a', b: 'b' }],
+                    autoSizeStrategy: { type: 'fitCellContents', applyToUiActions: true, defaultMaxWidth: 1000 },
+                });
+                await waitFor(() => expect([width(api, 'a'), width(api, 'b')]).toEqual([300, 300]));
+
+                // of the 350px room `a` takes 150, stopping at its maxWidth, so `b` gets the other 200
+                mockAutosizeContentWidth(780);
+                api.showColumnMenu('a');
+                await userEvent.click(await openMenuOption('Autosize All Columns'));
+                await asyncSetTimeout(0);
+
+                expect([width(api, 'a'), width(api, 'b')]).toEqual([450, 500]);
             } finally {
                 restoreOffsetParent();
                 menuGridsManager.reset();

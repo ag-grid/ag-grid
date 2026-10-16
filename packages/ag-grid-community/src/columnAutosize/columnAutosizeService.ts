@@ -910,15 +910,16 @@ function setAutoSizedWidths(
     let freed = 0;
     for (let i = 0, len = columns.length; i < len; ++i) {
         const column = columns[i];
+        const actualWidth = column.actualWidth;
         const width = widths[i];
-        const growth = width - column.actualWidth;
         const limited = pinnedLimit !== undefined && column.pinnedLane !== 1;
-        if (limited && growth > 0) {
+        if (limited && width > actualWidth) {
             continue;
         }
-        freed -= limited ? growth : 0;
-        changed ||= growth !== 0;
+        changed ||= width !== actualWidth;
         column.setActualWidth(width, source);
+        // the width taken, not asked: the column's own bounds win over the auto-size limits
+        freed += limited ? actualWidth - column.actualWidth : 0;
     }
     if (!pinnedLimit) {
         return changed;
@@ -933,9 +934,9 @@ function setAutoSizedWidths(
             continue;
         }
         const growth = Math.min(width - actualWidth, room);
-        room -= growth;
         changed ||= growth !== 0;
         column.setActualWidth(actualWidth + growth, source);
+        room -= column.actualWidth - actualWidth;
     }
     return changed;
 }
