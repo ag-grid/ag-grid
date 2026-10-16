@@ -1,4 +1,4 @@
-import { findByText, queryByText, waitFor } from '@testing-library/dom';
+import { findByText, fireEvent, queryByText, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
@@ -142,6 +142,22 @@ describe('ToolPanelContextMenu', () => {
             await clickMenuItem(gridDiv, 'Add Age to values');
 
             await waitFor(() => expect(gridApi.getValueColumns().map((c) => c.getColId())).toStrictEqual(['age']));
+        });
+
+        // happy-dom, like WebKit, does not turn these keys into a contextmenu event, so the grid must handle them.
+        test.each([
+            ['Shift+F10', { key: 'F10', shiftKey: true }],
+            ['the context menu key', { key: 'ContextMenu' }],
+        ])('%s opens the menu and Escape restores focus', async (_name, keyInit) => {
+            const entry = await getColumnEntry(toolPanel, gridDiv, 'Athlete');
+            entry.focus();
+
+            expect(fireEvent.keyDown(entry, keyInit)).toBe(false);
+            await findByText(gridDiv, 'Group by Athlete');
+
+            await userEvent.keyboard('{Escape}');
+            expect(queryByText(gridDiv, 'Group by Athlete')).toBeNull();
+            expect(document.activeElement).toBe(entry);
         });
     });
 
@@ -395,6 +411,19 @@ describe('ToolPanelContextMenu', () => {
             const { columnGroup } = getColumnMenuItems.mock.calls[0][0];
             expect(columnGroup?.getGroupId()).toBe('details');
             expect(action).toHaveBeenCalledWith(expect.objectContaining({ column: null, columnGroup }));
+        });
+
+        test('Shift+F10 opens the menu for a column group', async () => {
+            const { gridDiv, toolPanel } = await createGrid(
+                [{ headerName: 'Athlete Details', groupId: 'details', children: [{ field: 'athlete' }] }],
+                { getColumnMenuItems: () => [{ name: 'Highlight group' }] }
+            );
+
+            const entry = await getColumnEntry(toolPanel, gridDiv, 'Athlete Details');
+            entry.focus();
+            fireEvent.keyDown(entry, { key: 'F10', shiftKey: true });
+
+            await findByText(gridDiv, 'Highlight group');
         });
 
         test('custom sub menu item actions receive the column the menu was opened for', async () => {

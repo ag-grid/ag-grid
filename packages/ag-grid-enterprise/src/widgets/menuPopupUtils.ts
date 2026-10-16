@@ -15,6 +15,11 @@ interface ShowMenuListPopupParams {
     onClosed?: () => void;
 }
 
+/** Whether a keydown is the keyboard equivalent of a right-click (the context-menu key or Shift+F10). */
+export function _isContextMenuKey(event: KeyboardEvent): boolean {
+    return event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10');
+}
+
 /** Shows `menuItems` as a modal column context menu popup and returns the function that hides it. */
 export function _showMenuListPopup(
     parent: Component<any>,

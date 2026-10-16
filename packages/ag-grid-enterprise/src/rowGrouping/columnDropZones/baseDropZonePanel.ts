@@ -12,7 +12,7 @@ import { DragSourceType, _createIconNoSpan, _shouldUpdateColVisibilityAfterGroup
 import type { ColumnToolPanelChildParams } from '../../columnToolPanel/columnToolPanel';
 import { isDeferredMode } from '../../columnToolPanel/toolPanelDeferredUiUtils';
 import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from '../../menu/menuSeparators';
-import { _showMenuListPopup } from '../../widgets/menuPopupUtils';
+import { _isContextMenuKey, _showMenuListPopup } from '../../widgets/menuPopupUtils';
 import type { PillDropZonePanelParams } from '../../widgets/pillDropZonePanel';
 import { PillDropZonePanel } from '../../widgets/pillDropZonePanel';
 import { DropZoneColumnComp } from './dropZoneColumnComp';
@@ -92,7 +92,7 @@ export abstract class BaseDropZonePanel extends PillDropZonePanel<DropZoneColumn
             }
             comp.addGuiEventListener('contextmenu', (event: MouseEvent) => this.showMoveMenu(comp, event));
             comp.addGuiEventListener('keydown', (event: KeyboardEvent) => {
-                if (event.key === 'ContextMenu' || (event.shiftKey && event.key === 'F10')) {
+                if (_isContextMenuKey(event)) {
                     this.showMoveMenu(comp, event);
                 }
             });

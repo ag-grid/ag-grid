@@ -32,6 +32,7 @@ import {
 } from 'ag-grid-community';
 
 import { getGridColumnGroup } from '../columns/providedColumnGroupUtils';
+import { _isContextMenuKey } from '../widgets/menuPopupUtils';
 import type { ColumnModelItem } from './columnModelItem';
 import type { ToolPanelColumnMove } from './columnMoveUtils';
 import {
@@ -229,6 +230,10 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
+        if (_isContextMenuKey(e)) {
+            this.onContextMenu(e);
+            return;
+        }
         switch (e.key) {
             case KeyCode.LEFT:
                 e.preventDefault();
@@ -247,7 +252,7 @@ export class ToolPanelColumnGroupComp extends Component {
         }
     }
 
-    private onContextMenu(e: MouseEvent | Touch): void {
+    private onContextMenu(e: MouseEvent | Touch | KeyboardEvent): void {
         const contextMenu = this.createBean(
             new ToolPanelContextMenu(
                 this.columnGroup,
