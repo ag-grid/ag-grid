@@ -7,7 +7,7 @@ export function showContextMenu(beans: BeanCollection, params?: IContextMenuPara
     if (!contextMenuSvc) {
         return;
     }
-    const { rowNode, column, value, x, y } = params || {};
+    const { rowNode, column, value, x, y } = params ?? {};
     let { x: clientX, y: clientY } = contextMenuSvc.getContextMenuPosition(rowNode as RowNode, column as AgColumn);
 
     if (x != null) {

@@ -165,9 +165,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     protected override updateValuesOnMove(e: MouseEvent) {
         super.updateValuesOnMove(e);
 
-        if (!this.initialXY) {
-            this.initialXY = _getNormalisedMousePosition(this.beans, e);
-        }
+        this.initialXY ??= _getNormalisedMousePosition(this.beans, e);
 
         const { x, y } = this.initialXY;
         const { x: newX, y: newY } = _getNormalisedMousePosition(this.beans, e);

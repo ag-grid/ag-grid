@@ -1,4 +1,5 @@
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { onTestFinished } from 'vitest';
 
 import type { ColDef, GridApi } from 'ag-grid-community';
 import {
@@ -185,5 +186,32 @@ describe('cell ctrl lifecycle', () => {
 
         expect(api.getFocusedCell()?.column.getColId()).toBe('c0');
         expect(cellFor(api, 0, 'c0')).not.toBeNull();
+    });
+
+    test('a focused cell or full-width row rebuilt by a redraw takes focus back, unless focus has since moved out of the grid', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData: ROW_DATA,
+            isFullWidthRow: (params) => params.rowNode.data?.id === 'r2',
+            fullWidthCellRenderer: () => 'full width',
+        });
+        const input = document.body.appendChild(document.createElement('input'));
+        onTestFinished(() => input.remove());
+        const expectFocusTakenBackUnlessMoved = async (rowIndex: number, focused: () => Element | null | undefined) => {
+            api.setFocusedCell(rowIndex, 'a');
+            api.redrawRows();
+            await asyncSetTimeout(0);
+            expect(document.activeElement).toBe(focused());
+
+            api.redrawRows();
+            input.focus();
+            await asyncSetTimeout(0);
+            expect(document.activeElement).toBe(input);
+        };
+
+        await expectFocusTakenBackUnlessMoved(0, () => cellFor(api, 0, 'a'));
+        await expectFocusTakenBackUnlessMoved(1, () =>
+            TestGridsManager.getHTMLElement(api)?.querySelector('.ag-full-width-row[row-index="1"]')
+        );
     });
 });

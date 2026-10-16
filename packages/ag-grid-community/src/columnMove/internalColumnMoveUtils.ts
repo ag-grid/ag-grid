@@ -197,7 +197,7 @@ export function getBestColumnMoveIndexFromXPosition(
 export function attemptMoveColumns(
     params: ColumnMoveParams & { finished: boolean }
 ): { columns: AgColumn[]; toIndex: number } | null | undefined {
-    const { columns, toIndex } = getBestColumnMoveIndexFromXPosition(params) || {};
+    const { columns, toIndex } = getBestColumnMoveIndexFromXPosition(params) ?? {};
     const { finished, colMoves } = params;
 
     if (!columns || toIndex == null) {

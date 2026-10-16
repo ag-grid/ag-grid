@@ -195,9 +195,7 @@ export class GridBodyScrollFeature extends BeanStub {
             return;
         }
 
-        if (scrollLeft === undefined) {
-            scrollLeft = _getScrollLeft(this.eGridViewport, this.enableRtl);
-        }
+        scrollLeft ??= _getScrollLeft(this.eGridViewport, this.enableRtl);
 
         this.setScrollLeftForAllContainersExceptCurrent(Math.abs(scrollLeft));
     }

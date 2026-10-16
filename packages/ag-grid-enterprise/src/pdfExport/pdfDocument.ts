@@ -333,9 +333,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
                 availableHeight = Math.max(cursorY - currentLayout.margin.bottom, 0);
                 fragment = measureRowFragment(row, state, availableHeight);
             }
-            if (!fragment) {
-                fragment = measureClampedRowFragment(row, state, availableHeight);
-            }
+            fragment ??= measureClampedRowFragment(row, state, availableHeight);
 
             const previousPartCount = pageParts.length;
             cursorY = renderRowFragment(fragment, cursorY, currentLayout, pageParts, pageAnnotations, fontRegistry);

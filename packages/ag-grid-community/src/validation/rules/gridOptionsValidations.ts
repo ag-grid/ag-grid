@@ -197,7 +197,7 @@ function validateCalculatedColumnsOptions(options: CalculatedColumnsOptions): Va
             return _createValidationWarning(321, { property: `calculatedColumns.${key}`, expected: 'a function' });
         }
     }
-    const { dataTypes, expressionPickers, applyMode } = options;
+    const { dataTypes, expressionPickers, applyMode, applyDebounce } = options;
     if (
         dataTypes != null &&
         (!Array.isArray(dataTypes) || dataTypes.some((dataType) => typeof dataType !== 'string'))
@@ -218,6 +218,12 @@ function validateCalculatedColumnsOptions(options: CalculatedColumnsOptions): Va
         return _createValidationWarning(320, {
             property: 'calculatedColumns.applyMode',
             allowed: ['live', 'deferred'],
+        });
+    }
+    if (applyDebounce !== undefined && (!Number.isInteger(applyDebounce) || applyDebounce < 0)) {
+        return _createValidationWarning(321, {
+            property: 'calculatedColumns.applyDebounce',
+            expected: 'a non-negative integer',
         });
     }
     return null;

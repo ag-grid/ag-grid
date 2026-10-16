@@ -17,7 +17,7 @@ export function mapValuesFromDateFilterModel(
     // NOTE: The conversion of string to date also removes the timezone - i.e. when user picks
     //       a date from the UI, it will have timezone info in it. This is lost when creating
     //       the model. When we recreate the date again here, it's without a timezone.
-    const { dateFrom, dateTo, type } = filterModel || {};
+    const { dateFrom, dateTo, type } = filterModel ?? {};
     return [
         (dateFrom && _parseDateTimeFromString(dateFrom, undefined, true)) || null,
         (dateTo && _parseDateTimeFromString(dateTo, undefined, true)) || null,

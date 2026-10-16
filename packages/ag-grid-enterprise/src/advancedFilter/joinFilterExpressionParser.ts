@@ -134,15 +134,11 @@ class OperatorParser {
             const displayValue = joinOperators[parsedValue];
             if (this.activeOperator) {
                 if (parsedValue !== this.parsedOperator) {
-                    if (!this.validationError) {
-                        this.validationError = {
-                            message: this.params.advFilterExpSvc.translate(
-                                'advancedFilterValidationJoinOperatorMismatch'
-                            ),
-                            startPosition: endPosition - operator.length + 1,
-                            endPosition,
-                        };
-                    }
+                    this.validationError ??= {
+                        message: this.params.advFilterExpSvc.translate('advancedFilterValidationJoinOperatorMismatch'),
+                        startPosition: endPosition - operator.length + 1,
+                        endPosition,
+                    };
                     return false;
                 }
             } else {
@@ -158,13 +154,11 @@ class OperatorParser {
             return false;
         } else {
             // no match
-            if (!this.validationError) {
-                this.validationError = {
-                    message: this.params.advFilterExpSvc.translate('advancedFilterValidationInvalidJoinOperator'),
-                    startPosition: endPosition - operator.length + 1,
-                    endPosition,
-                };
-            }
+            this.validationError ??= {
+                message: this.params.advFilterExpSvc.translate('advancedFilterValidationInvalidJoinOperator'),
+                startPosition: endPosition - operator.length + 1,
+                endPosition,
+            };
             return true;
         }
     }

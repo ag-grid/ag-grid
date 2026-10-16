@@ -99,7 +99,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
 
         const headerRowContainerCtrl = ctrlsSvc.getHeaderRowContainerCtrl();
         const allCtrls = headerRowContainerCtrl?.getAllCtrls();
-        const isFloatingFilterVisible = _last(allCtrls || []).type === 'filter';
+        const isFloatingFilterVisible = _last(allCtrls ?? []).type === 'filter';
         const headerRowCount = getFocusHeaderRowCount(this.beans) - 1;
 
         let row = -1;

@@ -183,7 +183,7 @@ export class AgPillContainer<TValue> extends Component {
     private deletePill(p: AgPill, restoreFocusToIndex?: number): void {
         const { getKey, pills, params } = this;
         const pillKey = (pills[restoreFocusToIndex ?? -1] ?? pills.find(({ pill }) => pill === p))?.key;
-        const values = (params.getValue() || []).filter((val) => getKey(val) !== pillKey);
+        const values = (params.getValue() ?? []).filter((val) => getKey(val) !== pillKey);
         params.setValue(values);
 
         if (!values.length) {

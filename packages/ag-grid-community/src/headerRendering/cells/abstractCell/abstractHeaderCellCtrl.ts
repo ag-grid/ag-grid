@@ -121,7 +121,9 @@ export abstract class AbstractHeaderCellCtrl<
         // Actions that need to be done after the component is setup and all the features and listeners are wired
         if (this.reAttemptToFocus) {
             this.reAttemptToFocus = false;
-            this.focus(this.lastFocusEvent ?? undefined);
+            if (this.beans.focusSvc.isDeferredFocusCurrent(this)) {
+                this.focus(this.lastFocusEvent ?? undefined);
+            }
         }
     }
 
@@ -446,9 +448,10 @@ export abstract class AbstractHeaderCellCtrl<
 
         if (!eGui) {
             this.reAttemptToFocus = true;
+            this.beans.focusSvc.deferFocus(this);
         } else {
-            this.lastFocusEvent = event || null;
-            eGui.focus();
+            this.lastFocusEvent = event ?? null;
+            this.beans.focusSvc.focusGridElement(eGui);
         }
 
         return true;

@@ -48,7 +48,7 @@ export abstract class BaseExpansionService extends BeanStub {
 
         rowNode.dispatchRowEvent('expandedChanged');
 
-        const event = { ..._createGlobalRowEvent(rowNode, this.gos, 'rowGroupOpened'), expanded, event: e || null };
+        const event = { ..._createGlobalRowEvent(rowNode, this.gos, 'rowGroupOpened'), expanded, event: e ?? null };
 
         this.dispatchExpandedEvent(event, forceSync);
     }

@@ -158,10 +158,10 @@ export class PdfCreator
             gos,
             log,
             resolveColor,
-            processCellCallback: processCellCallback || undefined,
-            processHeaderCallback: processHeaderCallback || undefined,
-            processGroupHeaderCallback: processGroupHeaderCallback || undefined,
-            processRowGroupCallback: processRowGroupCallback || undefined,
+            processCellCallback: processCellCallback ?? undefined,
+            processHeaderCallback: processHeaderCallback ?? undefined,
+            processGroupHeaderCallback: processGroupHeaderCallback ?? undefined,
+            processRowGroupCallback: processRowGroupCallback ?? undefined,
         });
     }
 

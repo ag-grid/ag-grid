@@ -6,6 +6,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { edgeLeafColumn, isColumnGroup } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
+import type { ColumnFilterService } from '../filter/columnFilterService';
 import { _isGroupHideColumnsUntilExpanded, _isRowNumbers } from '../gridOptionsUtils';
 import type { RowAutoHeightService } from '../rendering/row/rowAutoHeightService';
 import type { RowRenderer } from '../rendering/rowRenderer';
@@ -28,6 +29,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     private colViewport: ColumnViewportService;
     private ctrlsSvc: CtrlsService;
     private colFlex?: ColumnFlexService;
+    private colFilter?: ColumnFilterService;
     private rowRenderer: RowRenderer;
     private rowAutoHeight?: RowAutoHeightService;
     /** True iff any centre col has `flex > 0` — lets the flex pass be skipped when nothing flexes. */
@@ -85,6 +87,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         this.colViewport = beans.colViewport;
         this.ctrlsSvc = beans.ctrlsSvc;
         this.colFlex = beans.colFlex;
+        this.colFilter = beans.colFilter;
         this.rowRenderer = beans.rowRenderer;
         this.rowAutoHeight = beans.rowAutoHeight;
     }
@@ -155,6 +158,7 @@ export class VisibleColsService extends BeanStub implements NamedBean {
         colViewport.checkViewportColumns(false);
 
         this.rowAutoHeight?.requestCheckAutoHeight();
+        this.colFilter?.refreshRedefinedFilters();
         this.dispatchLayoutEvents(source);
         this.eventSvc.dispatchEvent({ type: 'displayedColumnsChanged', source });
     }

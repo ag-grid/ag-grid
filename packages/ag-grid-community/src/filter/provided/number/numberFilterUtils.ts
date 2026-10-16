@@ -52,7 +52,7 @@ export function mapValuesFromNumberFilterModel(
     filterModel: NumberFilterModel | null,
     optionsFactory: OptionsFactory
 ): Tuple<number> {
-    const { filter, filterTo, type } = filterModel || {};
+    const { filter, filterTo, type } = filterModel ?? {};
     return [processNumberFilterValue(filter), processNumberFilterValue(filterTo)].slice(
         0,
         getNumberOfInputs(type, optionsFactory)

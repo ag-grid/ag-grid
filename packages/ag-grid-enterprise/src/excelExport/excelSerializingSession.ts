@@ -143,7 +143,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                         return this.createCell(
                             excelStyleId,
                             this.getDataTypeForValue(image.value),
-                            image.value == null ? '' : image.value,
+                            image.value ?? '',
                             undefined,
                             cell.note
                         );
@@ -507,7 +507,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
                     this.createCell(
                         excelStyleId,
                         this.getDataTypeForValue(addedImage.value),
-                        addedImage.value == null ? '' : addedImage.value,
+                        addedImage.value ?? '',
                         undefined,
                         note
                     )
@@ -707,7 +707,7 @@ export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow
         note?: ExcelNote
     ): ExcelCell {
         const actualStyle = this.getStyleById(styleId);
-        const valueToUse = value == null ? '' : value;
+        const valueToUse = value ?? '';
         const processedType = this.getTypeFromStyle(actualStyle, valueToUse) || type;
         const { type: processedCellType, value: processedValue } = this.getCellValue(processedType, valueToUse);
 

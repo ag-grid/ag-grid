@@ -3345,6 +3345,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
         to: '/angular-data-grid/theming-v32-upgrading-to-v28-sass/',
     },
     { from: '/vue-data-grid/vue2/', to: '/vue-data-grid/getting-started/' },
+    { from: '/vue-data-grid/vue3-script-setup/', to: '/vue-data-grid/components/' },
     { from: '/v31.3/javascript-data-grid/archive-31-3/', to: '/documentation-archive/' },
     // Forum landing pages 301 to the successor /community/ hub (preserve link equity);
     // individual forum threads have no equivalent and stay 410. Anchored patterns are used

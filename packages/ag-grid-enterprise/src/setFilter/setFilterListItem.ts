@@ -507,7 +507,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     }
 
     private getDefaultTooltipText(value: V | null | (() => string), formattedValue: string | null): string | null {
-        const text = formattedValue != null ? formattedValue : _toStringOrNull(value);
+        const text = formattedValue ?? _toStringOrNull(value);
         return this.isMissing ? `${text ?? ''}${this.getMissingSuffix()}` : text;
     }
 
@@ -550,7 +550,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
 
     private renderCellWithoutCellRenderer(): void {
         const { valueFormatted, value } = this.cellRendererParams;
-        let valueToRender = valueFormatted == null ? value : valueFormatted;
+        let valueToRender = valueFormatted ?? value;
         if (typeof valueToRender !== 'string') {
             this.beans.log.warn(208);
             valueToRender = '';

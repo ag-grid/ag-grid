@@ -165,7 +165,7 @@ export class UndoRedoService extends BeanStub implements NamedBean {
         );
 
         if (undoRedoAction instanceof RangeUndoRedoAction) {
-            this.processRange(undoRedoAction.ranges || [undoRedoAction[rangeProperty]]);
+            this.processRange(undoRedoAction.ranges ?? [undoRedoAction[rangeProperty]]);
         } else {
             this.processCell(undoRedoAction.cellValueChanges);
         }
