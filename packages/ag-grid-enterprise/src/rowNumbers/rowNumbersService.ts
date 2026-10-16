@@ -192,7 +192,6 @@ export class RowNumbersService
             return;
         }
         column.resetActualWidth(source);
-        column.resetWidthOwnership();
         this.autoSizedTextLength = 0;
     }
 
@@ -207,9 +206,9 @@ export class RowNumbersService
             return;
         }
         _setAriaLabel(eGridHeader, 'Row Number');
-        this.addManagedElementListeners(eGridHeader, {
+        // on the header comp, so a rebuilt header takes its listeners with it
+        comp.addManagedElementListeners(eGridHeader, {
             click: this.onHeaderClick.bind(this),
-            keydown: this.onHeaderKeyDown.bind(this),
             focus: this.onHeaderFocus.bind(this),
         });
     }
@@ -292,8 +291,12 @@ export class RowNumbersService
         this.ariaAnnounce?.announceValue(message, 'ariaSelectAllCells');
     }
 
-    private onHeaderKeyDown(e: KeyboardEvent): void {
-        if (!this.isIntegratedWithSelection || (e.key !== KeyCode.SPACE && e.key !== KeyCode.ENTER)) {
+    public handleKeyDownOnHeader(column: AgColumn, e: KeyboardEvent): void {
+        if (
+            !this.isIntegratedWithSelection ||
+            (e.key !== KeyCode.SPACE && e.key !== KeyCode.ENTER) ||
+            !isRowNumberCol(column)
+        ) {
             return;
         }
         e.preventDefault();
@@ -344,10 +347,18 @@ export class RowNumbersService
             return;
         }
         this.autoSizedTextLength = text.length;
-        const width = this.beans.autoWidthCalc?.getPreferredWidthForElements([this.createDummyElement(text)], 2);
-        if (width != null) {
-            this.beans.colResize?.setColumnWidths([{ key: column, newWidth: width }], false, true, 'rowNumbersService');
+        const measured = this.beans.autoWidthCalc?.getPreferredWidthForElements([this.createDummyElement(text)], 2);
+        if (measured == null) {
+            return;
         }
+        // never narrower than a configured width; maxWidth wins over minWidth, as in `setActualWidth`
+        const fitted = Math.max(measured, column.minWidth, this.rowNumberOverrides?.width ?? 0);
+        const newWidth = Math.min(fitted, column.maxWidth);
+        if (newWidth === column.actualWidth) {
+            return;
+        }
+        const columns = [column];
+        this.beans.colResize?.setClampedColumnWidths(columns, [newWidth], true, 'rowNumbersService', columns);
     }
 
     private getLargestRowNumberText(column: AgColumn): string {

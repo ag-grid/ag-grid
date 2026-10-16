@@ -28,7 +28,7 @@ test.agExample(import.meta, () => {
 
         await dragGroupHeader(page, 'Everything Resizes', 150);
 
-        // The extra room is shared equally among all three columns, so each one grows.
+        // The extra room is shared among all three columns by their widths, so each one grows.
         expect(await getWidth(agIdFor.headerCell('athlete'))).toBeGreaterThan(athleteBefore);
         expect(await getWidth(agIdFor.headerCell('age'))).toBeGreaterThan(ageBefore);
         expect(await getWidth(agIdFor.headerCell('country'))).toBeGreaterThan(countryBefore);

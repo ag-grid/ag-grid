@@ -539,12 +539,14 @@ function resetColumnState(beans: BeanCollection, source: ColumnEventType): void 
         for (let i = 0, len = primaryCols.length; i < len; ++i) {
             const col = primaryCols[i];
             col.pivotSort = _resolvePivotSortFromColDef(col.colDef);
-            // the state above carries the colDef width, which `applyFieldState` would otherwise read as a
-            // deliberate resize
-            col.resetWidthOwnership();
         }
         // the row numbers column is a service column outside the state above
         beans.rowNumbersSvc?.resetColumnState(source);
+        // every column returns to its column definition, so no width stays the user's (`applyFieldState` claims them)
+        const allCols = colModel.getAllCols();
+        for (let i = 0, len = allCols.length; i < len; ++i) {
+            allCols[i].resetWidthOwnership();
+        }
 
         // Order from the now-current service cols: auto cols may have been recreated above (their colIds change
         // with the row-group set), so use the post-apply instances, not the pre-apply ids in `columnStates`.

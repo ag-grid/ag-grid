@@ -302,7 +302,6 @@ export const AG_GRID_ERRORS = {
             toIndex,
             'remember that you should not count the moving columns when calculating the new index',
         ] as const,
-    31: () => 'infinite loop in `resizeColumnSets`' as const,
     32: () =>
         '`applyColumnState()` - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.' as const,
     33: () =>

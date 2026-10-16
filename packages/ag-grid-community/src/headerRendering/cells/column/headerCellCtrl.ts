@@ -138,7 +138,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         });
 
         const listener = () => this.checkDisplayName();
-        const colId = column.getColId();
+        const colId = column.colId;
         compBean.addManagedEventListeners({
             columnValueChanged: listener,
             columnRowGroupChanged: listener,
@@ -178,8 +178,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         });
     }
 
-    protected resizeHeader(delta: number, shiftKey: boolean): void {
-        this.beans.colResize?.resizeHeader(this.column, delta, shiftKey);
+    protected resizeHeader(delta: number, takeFromAdjacent: boolean): void {
+        const column = this.column;
+        this.beans.colResize?.resizeColumn(column, column.actualWidth + delta, takeFromAdjacent, true);
     }
 
     protected getHeaderClassParams(): HeaderClassParams {
@@ -210,7 +211,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private lookupUserCompDetails(): UserCompDetails | undefined {
         const componentClaim = this.headerCompGuard.provisionalClaim();
         const params = this.createParams(componentClaim);
-        const colDef = this.column.getColDef();
+        const colDef = this.column.colDef;
         return _getHeaderCompDetails(this.beans.userCompFactory, colDef, params)!;
     }
 
@@ -303,6 +304,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             this.onEnterKeyDown(e);
         } else if (e.key === KeyCode.DOWN && e.altKey) {
             this.showMenuOnKeyPress(e, false);
+        }
+        const rowNumbersSvc = this.beans.rowNumbersSvc;
+        if (rowNumbersSvc && this.getWrapperHasFocus()) {
+            rowNumbersSvc.handleKeyDownOnHeader(this.column, e);
         }
     }
 
@@ -552,7 +557,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
 
     private setupWrapTextClass() {
         const listener = () => {
-            const wrapText = !!this.column.getColDef().wrapHeaderText;
+            const wrapText = !!this.column.colDef.wrapHeaderText;
             this.comp.toggleCss('ag-header-cell-wrap-text', wrapText);
         };
         listener();
