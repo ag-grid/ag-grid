@@ -6,6 +6,7 @@ import { Quotes } from '@components/quotes/Quotes';
 import { quotesData } from '@components/quotes/quotesData';
 import { LandingPageFWSelector } from '@ag-website-shared/components/landing-pages/LandingPageFWSelector';
 import { FrameworkCtaLink } from '@components/landing-pages/FrameworkCtaLink';
+import { FrameworkLinks } from '@components/framework-links/FrameworkLinks';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { Version } from '@ag-website-shared/components/whats-new/components/Version';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
@@ -246,6 +247,7 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/index.m
     <LandingPageSection client:load {...sectionProps('faq-section')}>
         <LandingPageFAQ client:load FAQData={renderedFaqData} />
     </LandingPageSection>
+    <FrameworkLinks client:idle />
 </Layout>
 
 <script>
