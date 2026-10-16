@@ -29,6 +29,16 @@ describe('hrefForFramework', () => {
         );
     });
 
+    it('moves a Charts page link to the given framework, staying in Charts', () => {
+        expect(
+            hrefForFramework({
+                href: 'https://www.ag-grid.com/charts/react/community-vs-enterprise/',
+                pageName,
+                framework: 'vue',
+            })
+        ).toBe('https://www.ag-grid.com/charts/vue/community-vs-enterprise/');
+    });
+
     it('leaves links to other pages alone', () => {
         expect(hrefForFramework({ href: '/react-data-grid/getting-started/', pageName, framework: 'vue' })).toBe(
             '/react-data-grid/getting-started/'
