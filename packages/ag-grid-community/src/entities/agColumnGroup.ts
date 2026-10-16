@@ -1,5 +1,6 @@
 import { _escapeString } from 'ag-stack';
 
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type {
     AgColumnGroupEvent,
@@ -364,4 +365,22 @@ export const getColGroupAtLevel = (column: AgColumn, level: number): AgColumnGro
         }
     }
     return groupPointer;
+};
+
+/** Scan leaf-by-leaf from `columnGroup`'s trailing edge to the adjacent displayed group at the same level. */
+export const getColGroupAfter = (visibleCols: VisibleColsService, columnGroup: AgColumnGroup): AgColumnGroup | null => {
+    const requiredLevel = columnGroup.providedColumnGroup.level + columnGroup.getPaddingLevel();
+    let col = edgeLeafColumn(columnGroup, true, true);
+    while (col) {
+        const column = visibleCols.getColAfter(col);
+        if (!column) {
+            return null;
+        }
+        const groupPointer = getColGroupAtLevel(column, requiredLevel);
+        if (groupPointer !== columnGroup) {
+            return groupPointer;
+        }
+        col = column;
+    }
+    return null;
 };

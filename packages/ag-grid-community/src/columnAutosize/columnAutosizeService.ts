@@ -294,7 +294,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                         columnLimit.minWidth ??= defaultMinWidth;
                         columnLimit.maxWidth ??= defaultMaxWidth;
                         const newWidth = normaliseColumnWidth(column, preferredWidth, columnLimit);
-                        widthsChanged ||= newWidth !== column.getActualWidth();
+                        widthsChanged ||= newWidth !== column.actualWidth;
                         column.setActualWidth(newWidth, source);
                         columnsAutoSized.add(column);
                         changesThisTimeAround++;
@@ -870,7 +870,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             if (measuresContent ? colDef.suppressAutoSize : colDef.suppressSizeToFit) {
                 continue;
             }
-            const flex = col.getFlex();
+            const flex = col.flex;
             if (flex != null && flex > 0) {
                 continue;
             }
@@ -906,13 +906,13 @@ function normaliseColumnWidth(
     newWidth: number,
     limits: { minWidth?: number; maxWidth?: number } = {}
 ): number {
-    const minWidth = limits.minWidth ?? column.getMinWidth();
+    const minWidth = limits.minWidth ?? column.minWidth;
 
     if (newWidth < minWidth) {
         newWidth = minWidth;
     }
 
-    const maxWidth = limits.maxWidth ?? column.getMaxWidth();
+    const maxWidth = limits.maxWidth ?? column.maxWidth;
     if (newWidth > maxWidth) {
         newWidth = maxWidth;
     }
@@ -947,10 +947,10 @@ function allColumnsWithinLimits(
         if (column.colDef.suppressSizeToFit) {
             return true;
         }
-        const widthOverride = limitsMap?.[column.getId()];
+        const widthOverride = limitsMap?.[column.colId];
         const minWidth = widthOverride?.minWidth ?? params?.defaultMinWidth;
         const maxWidth = widthOverride?.maxWidth ?? params?.defaultMaxWidth;
-        const colWidth = column.getActualWidth();
+        const colWidth = column.actualWidth;
         return (minWidth == null || colWidth >= minWidth) && (maxWidth == null || colWidth <= maxWidth);
     });
 }
@@ -972,15 +972,15 @@ function resetColumnWidths(
         if (params?.onlyScaleUp) {
             // When `onlyScaleUp`, we store the current widths to act as a true minimum because we don't
             // want any columns to get smaller
-            currentWidths[column.colId] = column.getActualWidth();
+            currentWidths[column.colId] = column.actualWidth;
         }
         column.resetActualWidth(source);
 
-        const widthOverride = limitsMap?.[column.getId()];
+        const widthOverride = limitsMap?.[column.colId];
         const minOverride = widthOverride?.minWidth ?? params?.defaultMinWidth ?? -Infinity;
         const maxOverride = widthOverride?.maxWidth ?? params?.defaultMaxWidth ?? Infinity;
 
-        const colWidth = column.getActualWidth();
+        const colWidth = column.actualWidth;
         const targetWidth = _clamp(colWidth, minOverride, maxOverride);
 
         if (targetWidth != colWidth) {
@@ -1028,7 +1028,7 @@ function spreadColumnWidthsPass(
     if (availablePixels <= 0) {
         // no width, set everything to minimum
         for (const column of colsToSpread) {
-            const newWidth = limitsMap?.[column.getId()]?.minWidth ?? params?.defaultMinWidth ?? column.minWidth;
+            const newWidth = limitsMap?.[column.colId]?.minWidth ?? params?.defaultMinWidth ?? column.minWidth;
             column.setActualWidth(newWidth, source);
         }
         return true;
@@ -1053,9 +1053,9 @@ function spreadColumnWidthsPass(
         const widthOverride = limitsMap?.[id];
         const minOverride = widthOverride?.minWidth ?? params?.defaultMinWidth ?? prevWidth;
         const maxOverride = widthOverride?.maxWidth ?? params?.defaultMaxWidth;
-        const minWidth = Math.max(minOverride ?? -Infinity, column.getMinWidth());
-        const maxWidth = Math.min(maxOverride ?? Infinity, column.getMaxWidth());
-        let newWidth = Math.round(column.getActualWidth() * scale);
+        const minWidth = Math.max(minOverride ?? -Infinity, column.minWidth);
+        const maxWidth = Math.min(maxOverride ?? Infinity, column.maxWidth);
+        let newWidth = Math.round(column.actualWidth * scale);
 
         if (newWidth < minWidth) {
             newWidth = minWidth;

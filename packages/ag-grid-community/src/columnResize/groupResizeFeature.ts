@@ -1,30 +1,15 @@
 import { _cancelColumnWidthAnimation } from '../columns/columnWidthAnimation';
-import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
-import type { AgColumn } from '../entities/agColumn';
+import { getDragSign } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
-import { edgeLeafColumn, getColGroupAtLevel } from '../entities/agColumnGroup';
 import type { ColumnEventType } from '../events';
 import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { IHeaderGroupCellComp } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
-import type { ColumnResizeSet } from './columnResizeService';
+import type { GroupResizePlan } from './columnResizeService';
 
-interface ColumnSizeAndRatios {
-    columnsToResize: AgColumn[];
-    resizeStartWidth: number;
-    resizeRatios: number[];
-    groupAfterColumns?: AgColumn[];
-    groupAfterStartWidth?: number;
-    groupAfterRatios?: number[];
-}
 export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature {
-    private resizeCols?: AgColumn[];
-    private resizeStartWidth: number;
-    private resizeRatios?: number[];
-
-    private resizeTakeFromCols?: AgColumn[];
-    private resizeTakeFromStartWidth?: number;
-    private resizeTakeFromRatios?: number[];
+    private dragPlan: GroupResizePlan | null = null;
+    private dragSign = 1;
 
     constructor(
         private readonly comp: IHeaderGroupCellComp,
@@ -62,197 +47,51 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
     }
 
     private onResizeStart(shiftKey: boolean): void {
-        const {
-            columnsToResize,
-            resizeStartWidth,
-            resizeRatios,
-            groupAfterColumns,
-            groupAfterStartWidth,
-            groupAfterRatios,
-        } = this.getInitialValues(shiftKey);
-
-        this.resizeCols = columnsToResize;
-        this.resizeStartWidth = resizeStartWidth;
-        this.resizeRatios = resizeRatios;
-
-        this.resizeTakeFromCols = groupAfterColumns;
-        this.resizeTakeFromStartWidth = groupAfterStartWidth;
-        this.resizeTakeFromRatios = groupAfterRatios;
-
+        const colResize = this.beans.colResize!;
+        this.dragPlan = colResize.planGroupResize(this.columnGroup, colResize.takesFromAdjacent(shiftKey));
+        this.dragSign = getDragSign(this.gos.get('enableRtl'), this.columnGroup.pinnedLane);
         _cancelColumnWidthAnimation(this.beans);
         this.toggleColumnResizing(true);
     }
 
-    public onResizing(finished: boolean, resizeAmount: any, source: ColumnEventType = 'uiColumnResized'): void {
-        const resizeAmountNormalised = this.normaliseDragChange(resizeAmount);
-        const width = this.resizeStartWidth + resizeAmountNormalised;
-
-        this.resizeColumnsFromLocalValues(width, source, finished);
+    private onResizing(finished: boolean, resizeAmount: number): void {
+        const plan = this.dragPlan;
+        if (!plan) {
+            return;
+        }
+        const width = plan.group.startWidth + resizeAmount * this.dragSign;
+        this.beans.colResize!.resizeGroup(plan, width, finished, 'uiColumnResized');
+        if (finished) {
+            this.dragPlan = null;
+            this.toggleColumnResizing(false);
+        }
     }
 
-    public getInitialValues(shiftKey?: boolean): ColumnSizeAndRatios {
-        const getInitialSizeOfColumns = (columns: AgColumn[]) =>
-            columns.reduce((totalWidth: number, column: AgColumn) => totalWidth + column.getActualWidth(), 0);
-        const getSizeRatiosOfColumns = (columns: AgColumn[], initialSizeOfColumns: number) =>
-            columns.map((column) => column.getActualWidth() / initialSizeOfColumns);
-
-        const columnsToResize = this.getColumnsToResize();
-        const resizeStartWidth = getInitialSizeOfColumns(columnsToResize);
-        const resizeRatios = getSizeRatiosOfColumns(columnsToResize, resizeStartWidth);
-
-        const columnSizeAndRatios: ColumnSizeAndRatios = {
-            columnsToResize,
-            resizeStartWidth,
-            resizeRatios,
-        };
-
-        let groupAfter: AgColumnGroup | null = null;
-
-        if (shiftKey) {
-            groupAfter = getColGroupAfter(this.beans.visibleCols, this.columnGroup);
-        }
-
-        if (groupAfter) {
-            const takeFromLeafCols = groupAfter.getDisplayedLeafColumns();
-            const groupAfterColumns = (columnSizeAndRatios.groupAfterColumns = takeFromLeafCols.filter((col) =>
-                col.isResizable()
-            ));
-            const groupAfterStartWidth = (columnSizeAndRatios.groupAfterStartWidth =
-                getInitialSizeOfColumns(groupAfterColumns));
-            columnSizeAndRatios.groupAfterRatios = getSizeRatiosOfColumns(groupAfterColumns, groupAfterStartWidth);
-        } else {
-            columnSizeAndRatios.groupAfterColumns = undefined;
-            columnSizeAndRatios.groupAfterStartWidth = undefined;
-            columnSizeAndRatios.groupAfterRatios = undefined;
-        }
-
-        return columnSizeAndRatios;
+    /** One keyboard step: each press plans afresh, so a held key steps from the widths the last press left. */
+    public resizeByKey(delta: number, takeFromAdjacent: boolean): void {
+        const colResize = this.beans.colResize!;
+        const plan = colResize.planGroupResize(this.columnGroup, takeFromAdjacent);
+        colResize.resizeGroup(plan, plan.group.startWidth + delta, true, 'uiColumnResized');
     }
 
     public resizeLeafColumnsToFit(source: ColumnEventType): void {
-        const preferredSize = this.beans.autoWidthCalc!.getPreferredWidthForColumnGroup(this.columnGroup);
-        const initialValues = this.getInitialValues();
-
-        if (preferredSize > initialValues.resizeStartWidth) {
-            this.resizeColumns(initialValues, preferredSize, source, true);
-        }
-    }
-
-    private resizeColumnsFromLocalValues(totalWidth: number, source: ColumnEventType, finished: boolean = true): void {
-        if (!this.resizeCols || !this.resizeRatios) {
+        const { autoWidthCalc, colResize } = this.beans;
+        const preferredSize = autoWidthCalc!.getPreferredWidthForColumnGroup(this.columnGroup);
+        const plan = colResize!.planGroupResize(this.columnGroup, false);
+        if (preferredSize <= plan.group.startWidth) {
             return;
         }
-
-        const initialValues: ColumnSizeAndRatios = {
-            columnsToResize: this.resizeCols,
-            resizeStartWidth: this.resizeStartWidth,
-            resizeRatios: this.resizeRatios,
-            groupAfterColumns: this.resizeTakeFromCols,
-            groupAfterStartWidth: this.resizeTakeFromStartWidth,
-            groupAfterRatios: this.resizeTakeFromRatios,
-        };
-
-        this.resizeColumns(initialValues, totalWidth, source, finished);
-    }
-
-    public resizeColumns(
-        initialValues: ColumnSizeAndRatios,
-        totalWidth: number,
-        source: ColumnEventType,
-        finished: boolean = true
-    ): void {
-        const {
-            columnsToResize,
-            resizeStartWidth,
-            resizeRatios,
-            groupAfterColumns,
-            groupAfterStartWidth,
-            groupAfterRatios,
-        } = initialValues;
-
-        const resizeSets: ColumnResizeSet[] = [];
-
-        resizeSets.push({
-            columns: columnsToResize,
-            ratios: resizeRatios,
-            width: totalWidth,
-        });
-
-        if (groupAfterColumns) {
-            const diff = totalWidth - resizeStartWidth;
-            resizeSets.push({
-                columns: groupAfterColumns,
-                ratios: groupAfterRatios!,
-                width: groupAfterStartWidth! - diff,
-            });
-        }
-
-        this.beans.colResize?.resizeColumnSets({
-            resizeSets,
-            finished,
-            source: source,
-        });
-
-        if (finished) {
-            this.toggleColumnResizing(false);
-        }
+        colResize!.resizeGroup(plan, preferredSize, true, source, true);
+        this.toggleColumnResizing(false);
     }
 
     public toggleColumnResizing(resizing: boolean): void {
         this.comp.toggleCss('ag-column-resizing', resizing);
     }
 
-    private getColumnsToResize(): AgColumn[] {
-        const leafCols = this.columnGroup.getDisplayedLeafColumns();
-        return leafCols.filter((col) => col.isResizable());
-    }
-
-    // optionally inverts the drag, depending on pinned and RTL
-    // note - this method is duplicated in RenderedHeaderCell - should refactor out?
-    private normaliseDragChange(dragChange: number): number {
-        let result = dragChange;
-        const { columnGroup } = this;
-        const firstDisplayedLeafCol = edgeLeafColumn(columnGroup, true, false);
-        const lane = firstDisplayedLeafCol ? firstDisplayedLeafCol.pinnedLane : columnGroup.pinnedLane;
-
-        if (this.gos.get('enableRtl')) {
-            // for RTL, dragging left makes the col bigger, except when pinning left
-            if (lane !== 0) {
-                result *= -1;
-            }
-        } else if (lane === 2) {
-            // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
-            result *= -1;
-        }
-
-        return result;
-    }
-
     public override destroy(): void {
         super.destroy();
 
-        this.resizeCols = undefined;
-        this.resizeRatios = undefined;
-
-        this.resizeTakeFromCols = undefined;
-        this.resizeTakeFromRatios = undefined;
+        this.dragPlan = null;
     }
 }
-
-/** Scan leaf-by-leaf from `columnGroup`'s trailing edge to the adjacent displayed group at the same level. */
-const getColGroupAfter = (visibleCols: VisibleColsService, columnGroup: AgColumnGroup): AgColumnGroup | null => {
-    const requiredLevel = columnGroup.providedColumnGroup.level + columnGroup.getPaddingLevel();
-    let col = edgeLeafColumn(columnGroup, true, true);
-    while (col) {
-        const column = visibleCols.getColAfter(col);
-        if (!column) {
-            return null;
-        }
-        const groupPointer = getColGroupAtLevel(column, requiredLevel);
-        if (groupPointer !== columnGroup) {
-            return groupPointer;
-        }
-        col = column;
-    }
-    return null;
-};

@@ -10,11 +10,12 @@ import {
 } from 'ag-test-utils';
 import type { MockInstance } from 'vitest';
 
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { GridApi, GridOptions, IHeaderComp } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     KeyCode,
     ROW_NUMBERS_COLUMN_ID,
+    RenderApiModule,
     ScrollApiModule,
     TooltipModule,
     agTestIdFor,
@@ -440,7 +441,14 @@ describe('Row Numbers Keyboard Navigation', () => {
     let consoleWarnSpy: MockInstance;
 
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, CellSelectionModule, RowNumbersModule, ScrollApiModule, TooltipModule],
+        modules: [
+            ClientSideRowModelModule,
+            CellSelectionModule,
+            RowNumbersModule,
+            RenderApiModule,
+            ScrollApiModule,
+            TooltipModule,
+        ],
     });
 
     async function createGrid(go: GridOptions): Promise<GridApi> {
@@ -756,6 +764,26 @@ describe('Row Numbers Keyboard Navigation', () => {
         `);
     });
 
+    test('suppressHeaderKeyboardEvent on the row number header stops Space and Enter selecting all cells', async () => {
+        const api = await createGrid({
+            columnDefs,
+            rowData,
+            cellSelection: true,
+            rowNumbers: { suppressHeaderKeyboardEvent: () => true },
+        });
+
+        api.setFocusedHeader(ROW_NUMBERS_COLUMN_ID);
+        await asyncSetTimeout(0);
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const rowNumberHeader = getByTestId(gridDiv, agTestIdFor.headerCell(ROW_NUMBERS_COLUMN_ID));
+        pressKey(rowNumberHeader, KeyCode.SPACE);
+        pressKey(rowNumberHeader, KeyCode.ENTER);
+        await asyncSetTimeout(0);
+
+        expect(api.getCellRanges() ?? []).toEqual([]);
+    });
+
     test('Enter on row number header selects all cells', async () => {
         const api = await createGrid({
             columnDefs,
@@ -781,6 +809,125 @@ describe('Row Numbers Keyboard Navigation', () => {
             ├── LEAF id:2 row-number:"3" sport:"tennis" year:2018 amount:235 day:"thursday"
             └── LEAF id:3 row-number:"4" sport:"cricket" year:2003 amount:11 day:"friday"
         `);
+    });
+
+    test('Space and Enter on a custom row number header component select all cells, but not from an element inside it', async () => {
+        class CustomRowNumberHeader implements IHeaderComp {
+            private readonly eGui = document.createElement('span');
+            public init(): void {
+                this.eGui.appendChild(document.createElement('button'));
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                return true;
+            }
+        }
+        const api = await createGrid({
+            columnDefs,
+            rowData,
+            cellSelection: true,
+            rowNumbers: { headerComponent: CustomRowNumberHeader },
+        });
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const rowNumberHeader = getByTestId(gridDiv, agTestIdFor.headerCell(ROW_NUMBERS_COLUMN_ID));
+        const button = rowNumberHeader.querySelector('button')!;
+        button.focus();
+        pressKey(button, KeyCode.SPACE);
+        pressKey(button, KeyCode.ENTER);
+        await asyncSetTimeout(0);
+        expect(api.getCellRanges()).toEqual([]);
+
+        rowNumberHeader.focus();
+        const allCells = [{ rowStartIndex: 0, rowEndIndex: 3, columns: dataColumns }];
+        pressKey(rowNumberHeader, KeyCode.SPACE);
+        await asyncSetTimeout(0);
+        assertSelectedCellRanges(allCells, api);
+
+        api.clearCellSelection();
+        pressKey(rowNumberHeader, KeyCode.ENTER);
+        await asyncSetTimeout(0);
+        assertSelectedCellRanges(allCells, api);
+    });
+
+    test('Enter on row number header with column selection selects all cells in one selection change', async () => {
+        const api = await createGrid({
+            columnDefs,
+            rowData,
+            cellSelection: { enableColumnSelection: true },
+            rowNumbers: true,
+        });
+        const selections: string[][] = [];
+        api.addEventListener('cellSelectionChanged', () => {
+            const ranges = api.getCellRanges() ?? [];
+            selections.push(ranges.flatMap((range) => range.columns.map((col) => col.getColId())));
+        });
+
+        api.setFocusedHeader(ROW_NUMBERS_COLUMN_ID);
+        await asyncSetTimeout(0);
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        pressKey(getByTestId(gridDiv, agTestIdFor.headerCell(ROW_NUMBERS_COLUMN_ID)), KeyCode.ENTER);
+        await asyncSetTimeout(0);
+
+        expect(selections).toEqual([dataColumns]);
+        assertSelectedCellRanges([{ rowStartIndex: 0, rowEndIndex: 3, columns: dataColumns }], api);
+    });
+
+    test('Enter on row number header with column selection starts the column range Shift+Enter extends', async () => {
+        const api = await createGrid({
+            columnDefs,
+            rowData: rowData.slice(0, 2),
+            cellSelection: { enableColumnSelection: true },
+            rowNumbers: true,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const press = (colId: string, shiftKey: boolean) => {
+            api.setFocusedHeader(colId);
+            getByTestId(gridDiv, agTestIdFor.headerCell(colId)).dispatchEvent(
+                new KeyboardEvent('keydown', { key: KeyCode.ENTER, shiftKey, bubbles: true })
+            );
+        };
+
+        press(ROW_NUMBERS_COLUMN_ID, false);
+        await asyncSetTimeout(0);
+        press('year', true);
+        await asyncSetTimeout(0);
+
+        assertSelectedCellRanges(
+            [
+                { rowStartIndex: 0, rowEndIndex: 1, columns: dataColumns },
+                { rowStartIndex: 0, rowEndIndex: 1, columns: ['sport', 'year'] },
+            ],
+            api
+        );
+    });
+
+    test('a row number header click selects all cells after a keyboard resize whose header was rebuilt mid-press', async () => {
+        const api = await createGrid({
+            columnDefs,
+            rowData,
+            cellSelection: true,
+            rowNumbers: { resizable: true },
+        });
+
+        // held: no keyup reaches the header the refresh replaces
+        api.setFocusedHeader(ROW_NUMBERS_COLUMN_ID);
+        document.activeElement!.dispatchEvent(
+            new KeyboardEvent('keydown', { key: 'ArrowRight', altKey: true, bubbles: true })
+        );
+        api.refreshHeader();
+
+        // past the click guard that follows any resize
+        const now = Date.now() + 1000;
+        const clock = vitest.spyOn(Date, 'now').mockReturnValue(now);
+        getGridElement(api)!
+            .querySelector(`.ag-header-cell[col-id="${ROW_NUMBERS_COLUMN_ID}"]`)!
+            .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        clock.mockRestore();
+
+        assertSelectedCellRanges([{ rowStartIndex: 0, rowEndIndex: 3, columns: dataColumns }], api);
     });
 
     test('Space on row number cell does not select cells in that row', async () => {

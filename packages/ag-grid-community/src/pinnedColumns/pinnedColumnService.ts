@@ -5,6 +5,7 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import { _laneOfPinned, isColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
+import { getColGroupAfter } from '../entities/agColumnGroup';
 import type { ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
@@ -153,36 +154,31 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         column.dispatchStateUpdatedEvent('pinned', source);
     }
 
-    /**
-     * A shift resize hands the width change to the next column (see `ColumnResizeService.setColumnWidths`),
-     * so when that column is in the same pinned section the section's total width does not change.
-     */
-    public isShiftResizeWithinPinnedSection(column: AgColumn, shiftKey: boolean): boolean {
-        const takeFromAdjacent = shiftKey !== (this.gos.get('colResizeDefault') === 'shift');
-        return takeFromAdjacent && this.beans.visibleCols.getColAfter(column)?.pinnedLane === column.pinnedLane;
+    /** Whether a resize of `column` taking from the column or group after it stays within its pinned section. */
+    public isResizeWithinPinnedSection(column: AgColumn | AgColumnGroup, takeFromAdjacent: boolean): boolean {
+        if (!takeFromAdjacent) {
+            return false;
+        }
+        const visibleCols = this.beans.visibleCols;
+        if (isColumn(column)) {
+            return visibleCols.getColAfter(column)?.pinnedLane === column.pinnedLane;
+        }
+        // a next group with no resizable column gives nothing, so the group resizes alone
+        const next = getColGroupAfter(visibleCols, column);
+        return !!next && next.pinnedLane === column.pinnedLane && next.isResizable();
     }
 
-    public getHeaderResizeDiff(diff: number, column: AgColumn | AgColumnGroup, shiftKey: boolean): number {
-        if (isColumn(column) && this.isShiftResizeWithinPinnedSection(column, shiftKey)) {
+    public getHeaderResizeDiff(diff: number, column: AgColumn | AgColumnGroup, takeFromAdjacent: boolean): number {
+        if (diff <= 0 || column.pinnedLane === 1 || this.isResizeWithinPinnedSection(column, takeFromAdjacent)) {
             return diff;
         }
-
-        if (diff > 0 && column.pinnedLane !== 1) {
-            const { leftWidth, rightWidth } = this;
-
-            const bodyWidth = this.getAvailableViewportWidth() - MIN_CENTER_VIEWPORT_WIDTH;
-
-            if (leftWidth + rightWidth + diff > bodyWidth) {
-                if (bodyWidth > leftWidth + rightWidth) {
-                    // allow body width to ignore resize multiplier and fill space for last tick
-                    diff = bodyWidth - leftWidth - rightWidth;
-                } else {
-                    return 0;
-                }
-            }
+        const { leftWidth, rightWidth } = this;
+        const bodyWidth = this.getAvailableViewportWidth() - MIN_CENTER_VIEWPORT_WIDTH;
+        if (leftWidth + rightWidth + diff <= bodyWidth) {
+            return diff;
         }
-
-        return diff;
+        // allow body width to ignore resize multiplier and fill space for last tick
+        return bodyWidth > leftWidth + rightWidth ? bodyWidth - leftWidth - rightWidth : 0;
     }
 
     private getAvailableViewportWidth(): number {
@@ -221,7 +217,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
                     hasLockedPinned = true;
                     continue;
                 }
-                spaceNecessary -= currentColumn.getActualWidth();
+                spaceNecessary -= currentColumn.actualWidth;
                 columnsToRemove.push(currentColumn);
             }
 
@@ -231,7 +227,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
                     hasLockedPinned = true;
                     continue;
                 }
-                spaceNecessary -= currentColumn.getActualWidth();
+                spaceNecessary -= currentColumn.actualWidth;
                 columnsToRemove.push(currentColumn);
             }
         }

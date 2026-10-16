@@ -247,16 +247,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.comp.toggleCss('ag-hidden', width === 0);
     }
 
-    protected resizeHeader(delta: number, shiftKey: boolean): void {
-        const { resizeFeature } = this;
-        // check to avoid throwing when a component has not been setup yet (React 18)
-        if (!resizeFeature) {
-            return;
-        }
-
-        const initialValues = resizeFeature.getInitialValues(shiftKey);
-
-        resizeFeature.resizeColumns(initialValues, initialValues.resizeStartWidth + delta, 'uiColumnResized', true);
+    protected resizeHeader(delta: number, takeFromAdjacent: boolean): void {
+        this.resizeFeature?.resizeByKey(delta, takeFromAdjacent); // optional: a component not set up yet has none (React 18)
     }
 
     public resizeLeafColumnsToFit(source: ColumnEventType): void {

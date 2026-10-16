@@ -32,8 +32,8 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     private colFilter?: ColumnFilterService;
     private rowRenderer: RowRenderer;
     private rowAutoHeight?: RowAutoHeightService;
-    /** True iff any centre col has `flex > 0` — lets the flex pass be skipped when nothing flexes. */
-    private flexActive = false;
+    /** False only when no displayed centre col has `flex > 0`, counted per layout. */
+    public flexActive = false;
 
     // tree of columns to be displayed for each section
     public treeLeft: (AgColumn | AgColumnGroup)[] = [];

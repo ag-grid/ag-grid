@@ -3,13 +3,15 @@ import { _setDisplayed } from 'ag-stack';
 import { _cancelColumnWidthAnimation } from '../columns/columnWidthAnimation';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
+import { getDragSign } from '../entities/agColumn';
 import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
 
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
-    private resizeStartWidth: number;
-    private resizeStartPinnedWidth: number;
-    private resizeWithShiftKey: boolean;
+    private resizeStartWidth = 0;
+    private resizeStartPinnedWidth = 0;
+    private takeFromAdjacent = false;
+    private dragSign = 1;
 
     constructor(
         private readonly column: AgColumn,
@@ -77,15 +79,15 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         const { column: key, resizeStartWidth, beans } = this;
         const { pinnedCols, ctrlsSvc, colResize } = beans;
 
-        let newWidth = resizeStartWidth + this.normaliseResizeAmount(resizeAmount);
-        // measured from the applied width, as a width outside min/max is never applied
-        const actualWidth = key.getActualWidth();
+        let newWidth = resizeStartWidth + resizeAmount * this.dragSign;
+        // measured from the applied width, which the pinned room below caps
+        const actualWidth = key.actualWidth;
         const growth = newWidth - actualWidth;
 
         if (
             growth > 0 &&
             key.pinnedLane !== 1 &&
-            !pinnedCols?.isShiftResizeWithinPinnedSection(key, this.resizeWithShiftKey)
+            !pinnedCols?.isResizeWithinPinnedSection(key, this.takeFromAdjacent)
         ) {
             const bodyWidth = ctrlsSvc.getGridBodyCtrl().getViewportWidthWithoutScrollbar() - 50;
             // pinned columns that overflowed when the drag started can grow back to their starting width
@@ -94,7 +96,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
             newWidth = actualWidth + Math.min(growth, Math.max(room, 0));
         }
 
-        colResize?.setColumnWidths([{ key, newWidth }], this.resizeWithShiftKey, finished, 'uiColumnResized');
+        colResize?.resizeColumn(key, newWidth, this.takeFromAdjacent, finished);
 
         if (finished) {
             this.toggleColumnResizing(false);
@@ -102,9 +104,10 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     }
 
     private onResizeStart(shiftKey: boolean): void {
-        this.resizeStartWidth = this.column.getActualWidth();
+        this.resizeStartWidth = this.column.actualWidth;
         this.resizeStartPinnedWidth = this.getPinnedWidth();
-        this.resizeWithShiftKey = shiftKey;
+        this.takeFromAdjacent = this.beans.colResize!.takesFromAdjacent(shiftKey);
+        this.dragSign = getDragSign(this.gos.get('enableRtl'), this.column.pinnedLane);
 
         _cancelColumnWidthAnimation(this.beans);
         this.toggleColumnResizing(true);
@@ -118,28 +121,5 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     public toggleColumnResizing(resizing: boolean): void {
         this.column.setResizing(resizing);
         this.comp.toggleCss('ag-column-resizing', resizing);
-    }
-
-    // optionally inverts the drag, depending on pinned and RTL
-    // note - this method is duplicated in RenderedHeaderGroupCell - should refactor out?
-    private normaliseResizeAmount(dragChange: number): number {
-        let result = dragChange;
-
-        const lane = this.column.pinnedLane;
-        const notPinningLeft = lane !== 0;
-        const pinningRight = lane === 2;
-
-        if (this.gos.get('enableRtl')) {
-            // for RTL, dragging left makes the col bigger, except when pinning left
-            if (notPinningLeft) {
-                result *= -1;
-            }
-        }
-        // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
-        else if (pinningRight) {
-            result *= -1;
-        }
-
-        return result;
     }
 }

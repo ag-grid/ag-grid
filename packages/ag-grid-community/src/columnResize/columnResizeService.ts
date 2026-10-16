@@ -1,8 +1,10 @@
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
+import { getColGroupAfter } from '../entities/agColumnGroup';
 import type { ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
@@ -11,10 +13,18 @@ import { _clamp } from '../utils/number';
 import { GroupResizeFeature } from './groupResizeFeature';
 import { ResizeFeature } from './resizeFeature';
 
-export interface ColumnResizeSet {
+/** A group resize's columns and bounds, made as it starts and reused by every move of a drag. */
+export interface GroupResizePlan {
+    /** The group's resizable leaves, then, when the next group gives or takes the difference, that group's. */
     columns: AgColumn[];
+    /** Each column's share of its own group's start width. */
     ratios: number[];
-    width: number;
+    group: ColumnRun;
+    next: ColumnRun | null;
+    /** Each column's width as the last move dealt it, reused by every move. */
+    widths: number[];
+    /** Each column's `distributeWidth` state, reused by every move. */
+    states: ShareState[];
 }
 
 export class ColumnResizeService extends BeanStub implements NamedBean {
@@ -25,13 +35,14 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
             key: ColKey; // @key - the column who's size we want to change
             newWidth: number; // @newWidth - width in pixels
         }[],
-        shiftKey: boolean, // @takeFromAdjacent - if user has 'shift' pressed, then pixels are taken from adjacent column
         finished: boolean, // @finished - ends up in the event, tells the user if more events are to come
         source: ColumnEventType
     ): void {
-        const sets: ColumnResizeSet[] = [];
+        const { colModel, visibleCols } = this.beans;
+        const takeFromAdjacent = this.takesFromAdjacent(false);
 
-        const { colModel, gos, visibleCols } = this.beans;
+        const columns: AgColumn[] = [];
+        const widths: number[] = [];
 
         for (const columnWidth of columnWidths) {
             const col = colModel.getCol(columnWidth.key);
@@ -40,217 +51,183 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
                 continue;
             }
 
-            sets.push({
-                width: columnWidth.newWidth,
-                ratios: [1],
-                columns: [col],
-            });
+            const newWidth = columnWidth.newWidth;
+            columns.push(col);
+            widths.push(newWidth);
 
-            // if user wants to do shift resize by default, then we invert the shift operation
-            const defaultIsShift = gos.get('colResizeDefault') === 'shift';
-
-            if (defaultIsShift) {
-                shiftKey = !shiftKey;
-            }
-
-            if (shiftKey) {
-                const otherCol = visibleCols.getColAfter(col);
-                if (!otherCol) {
-                    continue;
-                }
-
-                const widthDiff = col.getActualWidth() - columnWidth.newWidth;
-                const otherColWidth = otherCol.getActualWidth() + widthDiff;
-
-                sets.push({
-                    width: otherColWidth,
-                    ratios: [1],
-                    columns: [otherCol],
-                });
-            }
-        }
-
-        if (sets.length === 0) {
-            return;
-        }
-
-        this.resizeColumnSets({
-            resizeSets: sets,
-            finished,
-            source,
-        });
-    }
-
-    // method takes sets of columns and resizes them. either all sets will be resized, or nothing
-    // be resized. this is used for example when user tries to resize a group and holds shift key,
-    // then both the current group (grows), and the adjacent group (shrinks), will get resized,
-    // so that's two sets for this method.
-    public resizeColumnSets(params: {
-        resizeSets: ColumnResizeSet[];
-        finished: boolean;
-        source: ColumnEventType;
-    }): void {
-        const { resizeSets, finished, source } = params;
-
-        for (let i = 0, len = resizeSets.length; i < len; ++i) {
-            if (checkMinAndMaxWidthsForSet(resizeSets[i])) {
+            const otherCol = takeFromAdjacent ? getShiftPair(visibleCols, col) : null;
+            if (!otherCol) {
                 continue;
             }
-            // Not resizing past min/max, but a finished drag still owes its event.
-            if (finished) {
-                dispatchColumnResizedEvent(this.eventSvc, resizeSets[0].columns, finished, source);
+            columns.push(otherCol);
+            widths.push(otherCol.actualWidth + (col.actualWidth - newWidth));
+        }
+
+        for (let i = 0, count = columns.length; i < count; ++i) {
+            const col = columns[i];
+            const width = widths[i];
+            // NaN fails both
+            if (width >= col.minWidth && width <= col.maxWidth) {
+                continue;
             }
+            // one width out of bounds refuses them all; a finished one still reports, as a resize (`[]`) for aligned grids
+            if (!finished) {
+                return;
+            }
+            dispatchColumnResizedEvent(this.eventSvc, [columns[0]], finished, source, []);
             return;
         }
 
-        const allResizedCols: AgColumn[] = [];
+        this.applyColumnWidths(columns, widths, finished, source, columns, false);
+    }
+
+    /** Sets widths decided elsewhere, each held within its column's bounds in `widths`, none taken from another. */
+    public setClampedColumnWidths(
+        columns: AgColumn[],
+        widths: number[],
+        finished: boolean,
+        source: ColumnEventType,
+        resizingCols: AgColumn[] | undefined
+    ): void {
+        for (let i = 0, count = columns.length; i < count; ++i) {
+            const col = columns[i];
+            // held first, so a width this column cannot take reads as unchanged rather than re-laid out
+            widths[i] = Math.min(Math.max(widths[i], col.minWidth), col.maxWidth);
+        }
+        this.applyColumnWidths(columns, widths, finished, source, resizingCols, false);
+    }
+
+    /** Whether a resize takes from the column or group after it: Shift does, `colResizeDefault: 'shift'` inverting. */
+    public takesFromAdjacent(shiftKey: boolean): boolean {
+        return shiftKey !== (this.gos.get('colResizeDefault') === 'shift');
+    }
+
+    /** A user's resize of one column, which stops on its bounds and its shift pair's instead of being refused. */
+    public resizeColumn(key: ColKey, newWidth: number, takeFromAdjacent: boolean, finished: boolean): void {
+        const { colModel, visibleCols } = this.beans;
+        const column = colModel.getCol(key);
+        if (!column) {
+            return;
+        }
+        const source = 'uiColumnResized';
+        const otherCol = takeFromAdjacent ? getShiftPair(visibleCols, column) : null;
+        const total = otherCol ? column.actualWidth + otherCol.actualWidth : 0;
+        const width = fitWidth(newWidth, column, otherCol, total);
+        if (Number.isNaN(width)) {
+            if (!finished) {
+                return;
+            }
+            dispatchColumnResizedEvent(this.eventSvc, [column], finished, source, []);
+            return;
+        }
+        // the shift pair keeps the total, so it moves only with the column: mid-drag, nothing to lay out or report
+        if (!finished && width === column.actualWidth) {
+            return;
+        }
+        const columns = otherCol ? [column, otherCol] : [column];
+        const widths = otherCol ? [width, total - width] : [width];
+        this.applyColumnWidths(columns, widths, finished, source, columns, false);
+    }
+
+    /** Plans a group resize, with the next group's resizable leaves when it takes from that group. */
+    public planGroupResize(columnGroup: AgColumnGroup, takeFromAdjacent: boolean): GroupResizePlan {
+        const columns: AgColumn[] = [];
+        pushResizableLeaves(columnGroup, columns);
+        const split = columns.length;
+        pushResizableLeaves(takeFromAdjacent ? getColGroupAfter(this.beans.visibleCols, columnGroup) : null, columns);
+        const count = columns.length;
+        const ratios: number[] = [];
+        const group = measureRun(columns, 0, split, ratios);
+        // a next group with no resizable leaf gives nothing, so the group resizes alone
+        const next = count > split ? measureRun(columns, split, count, ratios) : null;
+        const widths: number[] = [];
+        const states: ShareState[] = [];
+        for (let i = 0; i < count; ++i) {
+            widths.push(0);
+            states.push(FREE);
+        }
+        return { columns, ratios, group, next, widths, states };
+    }
+
+    /**
+     * Resizes a group to the width nearest `width` its and the next group's bounds allow; none fitting, nothing.
+     * `reflexAll` re-flexes every flex column, as an auto-size does, instead of only those after the group.
+     */
+    public resizeGroup(
+        plan: GroupResizePlan,
+        width: number,
+        finished: boolean,
+        source: ColumnEventType,
+        reflexAll = false
+    ): void {
+        const { group, next } = plan;
+        const total = next ? group.startWidth + next.startWidth : 0;
+        const fitted = fitWidth(width, group, next, total);
+        if (Number.isNaN(fitted)) {
+            // Not resizing past min/max, but a finished drag still owes its event.
+            if (!finished) {
+                return;
+            }
+            dispatchColumnResizedEvent(this.eventSvc, plan.columns.slice(0, group.to), finished, source, []);
+            return;
+        }
+        distributeWidth(plan, group, fitted);
+        distributeWidth(plan, next, total - fitted);
+        const columns = plan.columns;
+        this.applyColumnWidths(columns, plan.widths, finished, source, reflexAll ? undefined : columns, true);
+    }
+
+    /** Applies `widths`, re-flexes the flex cols after `resizingCols` (all when absent), lays out and reports, with
+     *  `flexColumns` only when `resizingCols` bounded the flex pass, so an aligned grid re-flexes as this one did. */
+    private applyColumnWidths(
+        columns: AgColumn[],
+        widths: number[],
+        finished: boolean,
+        source: ColumnEventType,
+        resizingCols: AgColumn[] | undefined,
+        // the caller uses `columns` again, so listeners get a copy
+        columnsReused: boolean
+    ): void {
         let atLeastOneColChanged = false;
         let pinnedColChanged = false;
 
-        // Indexed by slot in `columns`, parallel to `ratios`: keying by id lets a frozen col shift the rest
-        // onto each other's ratio. Reused across sets; only `finishedCols` needs clearing, widths precede reads.
-        const newWidths: number[] = [];
-        const finishedCols: boolean[] = [];
-        const subsetIndexes: number[] = [];
+        for (let i = 0, len = columns.length; i < len; ++i) {
+            const col = columns[i];
+            const newWidth = widths[i];
 
-        for (let s = 0, setCount = resizeSets.length; s < setCount; ++s) {
-            const { width, columns, ratios } = resizeSets[s];
-            const colCount = columns.length;
-
-            finishedCols.length = colCount;
-            finishedCols.fill(false);
-
-            for (let i = 0; i < colCount; ++i) {
-                allResizedCols.push(columns[i]);
-            }
-
-            // the loop below goes through each col. if a col exceeds it's min/max width,
-            // it then gets set to its min/max width and the column is removed marked as 'finished'
-            // and the calculation is done again leaving this column out. take for example columns
-            // {A, width: 50, maxWidth: 100}
-            // {B, width: 50}
-            // {C, width: 50}
-            // and then the set is set to width 600 - on the first pass the grid tries to set each column
-            // to 200. it checks A and sees 200 > 100 and so sets the width to 100. col A is then marked
-            // as 'finished' and the calculation is done again with the remaining cols B and C, which end up
-            // splitting the remaining 500 pixels.
-            let finishedColsGrew = true;
-            let loopCount = 0;
-
-            while (finishedColsGrew) {
-                loopCount++;
-                if (loopCount > 1000) {
-                    // this should never happen, but in the future, someone might introduce a bug here,
-                    // so we stop the browser from hanging and report bug properly
-                    this.error(31);
-                    break;
-                }
-
-                finishedColsGrew = false;
-
-                subsetIndexes.length = 0;
-                let subsetRatioTotal = 0;
-                let pixelsToDistribute = width;
-
-                for (let i = 0; i < colCount; ++i) {
-                    if (finishedCols[i]) {
-                        pixelsToDistribute -= newWidths[i];
-                    } else {
-                        subsetIndexes.push(i);
-                        subsetRatioTotal += ratios[i];
-                    }
-                }
-
-                // because we are not using all of the ratios (cols can be missing),
-                // we scale the ratio. if all columns are included, then subsetRatioTotal=1,
-                // and so the ratioScale will be 1.
-                const ratioScale = 1 / subsetRatioTotal;
-                // What the unfrozen cols share. Scaling the full width instead would hand them the frozen
-                // cols' pixels too, so crossing a bound would shrink a col while the group grows.
-                const distributable = pixelsToDistribute;
-
-                for (let i = 0, len = subsetIndexes.length; i < len; ++i) {
-                    const index = subsetIndexes[i];
-                    let colNewWidth: number;
-
-                    if (i === len - 1) {
-                        colNewWidth = pixelsToDistribute;
-                    } else {
-                        colNewWidth = Math.round(ratios[index] * distributable * ratioScale);
-                        pixelsToDistribute -= colNewWidth;
-                    }
-
-                    const col = columns[index];
-                    const minWidth = col.getMinWidth();
-                    const maxWidth = col.getMaxWidth();
-
-                    if (colNewWidth < minWidth) {
-                        colNewWidth = minWidth;
-                        finishedCols[index] = true;
-                        finishedColsGrew = true;
-                    } else if (maxWidth > 0 && colNewWidth > maxWidth) {
-                        colNewWidth = maxWidth;
-                        finishedCols[index] = true;
-                        finishedColsGrew = true;
-                    }
-
-                    newWidths[index] = colNewWidth;
-                }
-            }
-
-            for (let i = 0; i < colCount; ++i) {
-                const col = columns[i];
-                const newWidth = newWidths[i];
-                const actualWidth = col.getActualWidth();
-
-                if (actualWidth !== newWidth) {
-                    col.setActualWidth(newWidth, source);
-                    atLeastOneColChanged = true;
-                    pinnedColChanged ||= col.pinnedLane !== 1;
-                }
+            if (col.actualWidth !== newWidth) {
+                col.setActualWidth(newWidth, source);
+                atLeastOneColChanged = true;
+                pinnedColChanged ||= col.pinnedLane !== 1;
             }
         }
 
-        let flexedCols: AgColumn[] = [];
+        let flexedCols: AgColumn[] | undefined;
 
-        // if no cols changed, then no need to update more or send event.
         if (atLeastOneColChanged) {
             const { colFlex, visibleCols, colViewport, ctrlsSvc } = this.beans;
-            flexedCols =
-                colFlex?.refreshFlexedColumns({
-                    resizingCols: allResizedCols,
-                    skipSetLeft: true,
-                    // A pinned resize moves the centre boundary with no DOM resize; 0 is "not laid out yet".
-                    viewportWidth:
-                        (pinnedColChanged && ctrlsSvc.get('gridBodyCtrl')?.getReportedCenterWidth()) || undefined,
-                }) ?? [];
+            flexedCols = colFlex?.refreshFlexedColumns({
+                resizingCols,
+                skipSetLeft: true,
+                // A pinned resize moves the centre boundary with no DOM resize; 0 is "not laid out yet".
+                viewportWidth:
+                    (pinnedColChanged && ctrlsSvc.get('gridBodyCtrl')?.getReportedCenterWidth()) || undefined,
+            });
             visibleCols.updateBodyWidths(source, visibleCols.setLeftValues());
             colViewport.checkViewportColumns();
         }
 
-        // check for change first, to avoid unnecessary firing of events
-        // however we always dispatch 'finished' events. this is important
-        // when groups are resized, as if the group is changing slowly,
-        // eg 1 pixel at a time, then each change will dispatch change events
-        // in all the columns in the group, but only one with get the pixel.
+        // a finished resize always reports, changed or not, so a stream of moves is always seen to end
         if (atLeastOneColChanged || finished) {
-            const colsForEvent = flexedCols.length ? allResizedCols.concat(flexedCols) : allResizedCols;
-            dispatchColumnResizedEvent(this.eventSvc, colsForEvent, finished, source, flexedCols);
+            let colsForEvent = columns;
+            if (flexedCols?.length) {
+                colsForEvent = columns.concat(flexedCols);
+            } else if (columnsReused) {
+                colsForEvent = columns.slice();
+            }
+            const flexColumns = resizingCols ? (flexedCols ?? []) : null;
+            dispatchColumnResizedEvent(this.eventSvc, colsForEvent, finished, source, flexColumns);
         }
-    }
-
-    public resizeHeader(column: AgColumn, delta: number, shiftKey: boolean): void {
-        if (!column.isResizable()) {
-            return;
-        }
-
-        const actualWidth = column.getActualWidth();
-        const minWidth = column.getMinWidth();
-        const maxWidth = column.getMaxWidth();
-
-        const newWidth = _clamp(actualWidth + delta, minWidth, maxWidth);
-
-        this.setColumnWidths([{ key: column, newWidth }], shiftKey, true, 'uiColumnResized');
     }
 
     public createResizeFeature(
@@ -271,30 +248,143 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
     }
 }
 
-function checkMinAndMaxWidthsForSet(columnResizeSet: ColumnResizeSet): boolean {
-    const { columns, width } = columnResizeSet;
+/** The column a shift resize of `col` takes from: a hidden one has none, though `getColAfter` answers the first. */
+function getShiftPair(visibleCols: VisibleColsService, col: AgColumn): AgColumn | null {
+    return col.allColsIndex >= 0 ? visibleCols.getColAfter(col) : null;
+}
 
-    // every col has a min width, so sum them all up and see if we have enough room
-    // for all the min widths
-    let minWidthAccumulated = 0;
-    let maxWidthAccumulated = 0;
-    let maxWidthActive = true;
+const FREE = 0;
+const HELD_AT_MIN = 1;
+const HELD_AT_MAX = 2;
+const FROZEN = 3;
 
-    for (let i = 0, len = columns.length; i < len; ++i) {
-        const col = columns[i];
-        minWidthAccumulated += col.getMinWidth() || 0;
+/** A column's state in `distributeWidth`: free, held on its min or max by this pass, or frozen on it for the rest. */
+type ShareState = typeof FREE | typeof HELD_AT_MIN | typeof HELD_AT_MAX | typeof FROZEN;
 
-        const maxWidth = col.getMaxWidth();
-        if (maxWidth > 0) {
-            maxWidthAccumulated += maxWidth;
-        } else {
-            // one column with no max width means the whole set has none: it can absorb any width
-            maxWidthActive = false;
+/** Splits `width` over `run` by ratio into the plan's `widths`, freezing on their bounds as CSS flex does. */
+function distributeWidth(plan: GroupResizePlan, run: ColumnRun | null, width: number): void {
+    if (!run) {
+        return;
+    }
+    const { columns, ratios, widths: out, states } = plan;
+    const { from, to } = run;
+    states.fill(FREE, from, to);
+    // the first pass shares the whole width among every column, as the plan summed them
+    let remaining = width;
+    let ratioTotal = run.ratioTotal;
+    let last = to - 1;
+
+    for (let pass = from; pass <= to; ++pass) {
+        // only what the unfrozen cols share: scaling the whole width would also hand them the frozen cols' pixels
+        const distributable = remaining;
+        const ratioScale = 1 / ratioTotal;
+        // under a min adds, over a max takes away: what the held cols add to the split
+        let violation = 0;
+
+        for (let i = from; i <= last; ++i) {
+            if (states[i] === FROZEN) {
+                continue;
+            }
+            let colWidth: number;
+            if (i === last) {
+                colWidth = remaining;
+            } else {
+                colWidth = Math.round(ratios[i] * distributable * ratioScale);
+                remaining -= colWidth;
+            }
+
+            const col = columns[i];
+            const minWidth = col.minWidth;
+            const maxWidth = col.maxWidth;
+            let state: ShareState = FREE;
+            if (colWidth < minWidth) {
+                violation += minWidth - colWidth;
+                colWidth = minWidth;
+                state = HELD_AT_MIN;
+            } else if (colWidth > maxWidth) {
+                violation -= colWidth - maxWidth;
+                colWidth = maxWidth;
+                state = HELD_AT_MAX;
+            }
+            states[i] = state;
+            out[i] = colWidth;
+        }
+
+        // none held, or the holds cancel out: the widths sum to the set's width
+        if (violation === 0) {
+            return;
+        }
+        // the held cols on the side the overshoot leaned to freeze; the rest share what they leave
+        const freezing = violation > 0 ? HELD_AT_MIN : HELD_AT_MAX;
+        remaining = width;
+        ratioTotal = 0;
+        last = -1;
+        for (let i = from; i < to; ++i) {
+            const state = states[i];
+            if (state === FROZEN || state === freezing) {
+                states[i] = FROZEN;
+                remaining -= out[i];
+            } else {
+                ratioTotal += ratios[i];
+                last = i;
+            }
         }
     }
+}
 
-    const minWidthPasses = width >= minWidthAccumulated;
-    const maxWidthPasses = !maxWidthActive || width <= maxWidthAccumulated;
+/** Pushes `group`'s displayed resizable leaves onto `out` in display order: one walk, no leaf list to filter. */
+function pushResizableLeaves(group: AgColumnGroup | null, out: AgColumn[]): void {
+    const children = group?.displayedChildren;
+    if (children) {
+        for (let i = 0, len = children.length; i < len; ++i) {
+            const child = children[i];
+            if (!child.isColumn) {
+                pushResizableLeaves(child, out);
+            } else if (child.isResizable()) {
+                out.push(child);
+            }
+        }
+    }
+}
 
-    return minWidthPasses && maxWidthPasses;
+/** A run of a group plan's columns, with their start widths, bounds and ratios summed. */
+interface ColumnRun {
+    from: number;
+    to: number;
+    startWidth: number;
+    minWidth: number;
+    maxWidth: number;
+    ratioTotal: number;
+}
+
+/** Measures `columns` from `from` to `to`, pushing each one's share of their start width onto `ratios`. */
+function measureRun(columns: AgColumn[], from: number, to: number, ratios: number[]): ColumnRun {
+    let startWidth = 0;
+    let minWidth = 0;
+    let maxWidth = 0;
+    for (let i = from; i < to; ++i) {
+        const col = columns[i];
+        startWidth += col.actualWidth;
+        minWidth += col.minWidth;
+        maxWidth += col.maxWidth;
+    }
+    let ratioTotal = 0;
+    for (let i = from; i < to; ++i) {
+        const ratio = columns[i].actualWidth / startWidth;
+        ratios.push(ratio);
+        ratioTotal += ratio;
+    }
+    return { from, to, startWidth, minWidth, maxWidth, ratioTotal };
+}
+
+/** The width nearest `width` in `own` leaving the shift `pair` within its range of `total`; NaN when none fits. */
+function fitWidth(width: number, own: ColumnRun | AgColumn, pair: ColumnRun | AgColumn | null, total: number): number {
+    let { minWidth: min, maxWidth: max } = own;
+    if (pair) {
+        min = Math.max(min, total - pair.maxWidth);
+        max = Math.min(max, total - pair.minWidth);
+    }
+    const fitted = _clamp(width, min, max);
+    // over max only when no width fits, or for NaN
+    return fitted <= max ? fitted : Number.NaN;
 }

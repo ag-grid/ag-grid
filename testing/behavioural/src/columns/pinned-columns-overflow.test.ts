@@ -260,6 +260,86 @@ describe('Resizing pinned columns wider than the viewport', () => {
         expect(width(api, 'b')).toBeLessThan(200);
     });
 
+    test('a drag held where the pinned columns stop growing ends with a finished columnResized and no resizing class, left and right', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { colId: 'rowNum', valueGetter: 'node.id', width: 80, pinned: 'left' },
+                { field: 'athlete', width: 150, pinned: 'left' },
+                { field: 'age', width: 90, pinned: 'left' },
+                { field: 'country', width: 150 },
+                { field: 'sport', width: 150 },
+                { field: 'total', width: 100, pinned: 'right' },
+            ],
+            rowData: [{ athlete: 'a', age: 20, country: 'c', sport: 's', total: 1 }],
+        });
+        await asyncSetTimeout(0);
+        const events: string[] = [];
+        api.addEventListener('columnResized', (event) => {
+            events.push(
+                `${event.column?.getColId()}:${event.column?.getActualWidth()}:${event.finished}:${event.source}`
+            );
+        });
+        const dragPastCap = async (colId: string, dx: number): Promise<void> => {
+            const bar = query<HTMLElement>(`.ag-header-cell[col-id="${colId}"] .ag-header-cell-resize`);
+            const dispatcher = new DragEventDispatcher('mouse');
+            await dispatcher.startDrag(bar, 1000, 10);
+            await dispatcher.movePointer(bar, 1000 + dx, 10);
+            await dispatcher.movePointer(bar, 1000 + 2 * dx, 10);
+            await dispatcher.finishDrag();
+            await asyncSetTimeout(0);
+        };
+        const isResizing = (colId: string): boolean =>
+            query<HTMLElement>(`.ag-header-cell[col-id="${colId}"]`).classList.contains('ag-column-resizing');
+
+        // 320px pinned left and 100px right leave 130px before the 600px grid's 50px margin
+        await dragPastCap('age', 500);
+        expect(width(api, 'age')).toBe(220);
+        expect(events.at(-1)).toBe('age:220:true:uiColumnResized');
+        expect(isResizing('age')).toBe(false);
+
+        // right-pinned columns grow leftwards, and no room is left: only the finished event
+        events.length = 0;
+        await dragPastCap('total', -500);
+        expect(width(api, 'total')).toBe(100);
+        expect(events).toEqual(['total:100:true:uiColumnResized']);
+        expect(isResizing('total')).toBe(false);
+    });
+
+    test('a pinned column group drag ends with a finished columnResized and no resizing class', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                {
+                    headerName: 'Group',
+                    children: [
+                        { field: 'a', width: 200, pinned: 'left' },
+                        { field: 'b', width: 200, pinned: 'left' },
+                    ],
+                },
+                { field: 'c', width: 200 },
+            ],
+            defaultColDef: { resizable: true },
+            rowData: [{ a: 'a', b: 'b', c: 'c' }],
+        });
+        await asyncSetTimeout(0);
+        const finished: string[] = [];
+        api.addEventListener('columnResized', (event) => {
+            if (event.finished) {
+                finished.push(event.columns!.map((col) => col.getColId()).join());
+            }
+        });
+        const groupCell = query<HTMLElement>('.ag-header-group-cell');
+        const bar = groupCell.querySelector<HTMLElement>('.ag-header-cell-resize')!;
+        const dispatcher = new DragEventDispatcher('mouse');
+
+        await dispatcher.startDrag(bar, 1000, 10);
+        await dispatcher.movePointer(bar, 1500, 10);
+        await dispatcher.finishDrag();
+        await asyncSetTimeout(0);
+
+        expect(finished).toEqual(['a,b']);
+        expect(groupCell.classList.contains('ag-column-resizing')).toBe(false);
+    });
+
     test('overflowing pinned columns can be shrunk but not grown, by mouse and keyboard', async () => {
         const api = await createGrid(5);
         expect(query<HTMLElement>('.ag-grid-viewport').classList.contains('ag-pinned-columns-overflow')).toBe(true);
@@ -301,14 +381,14 @@ describe('Resizing pinned columns wider than the viewport', () => {
         expect(query<HTMLElement>('.ag-header-cell[col-id="a"]').classList.contains('ag-column-resizing')).toBe(false);
     });
 
-    test('an overflowing pinned column can shrink after a drag past its min width is reversed', async () => {
+    test('an overflowing pinned column dragged past its min width stops on it and can grow back', async () => {
         const api = await createGrid(5, 'left', { defaultColDef: { pinned: 'left', resizable: true, minWidth: 50 } });
         const bar = query<HTMLElement>('.ag-header-cell[col-id="a"] .ag-header-cell-resize');
         const dispatcher = new DragEventDispatcher('mouse');
 
         await dispatcher.startDrag(bar, 200, 10);
         await dispatcher.movePointer(bar, 20, 10);
-        expect(width(api, 'a')).toBe(200);
+        expect(width(api, 'a')).toBe(50);
         await dispatcher.movePointer(bar, 100, 10);
         expect(width(api, 'a')).toBe(100);
         await dispatcher.finishDrag();

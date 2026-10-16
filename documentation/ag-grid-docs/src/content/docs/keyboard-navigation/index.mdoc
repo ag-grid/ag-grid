@@ -49,7 +49,7 @@ The grid header supports full keyboard navigation, however the behaviour may dif
 Column Headers can be:
 
 - Moved by pressing {% kbd "⇧ Shift" /%} + {% kbd "←" /%} / {% kbd "→" /%}.
-- Resized by pressing {% kbd "⌥ Alt" /%} + {% kbd "←" /%} / {% kbd "→" /%}.
+- Resized by pressing {% kbd "⌥ Alt" /%} + {% kbd "←" /%} / {% kbd "→" /%}. Add {% kbd "⇧ Shift" /%} for a [shift resize](./column-sizing/#shift-resizing).
 
 ### Column Group Headers
 
@@ -210,7 +210,7 @@ The example below shows processing grid cell keyboard events. The following can 
 
 ## Suppress Keyboard Events
 
-It is possible to stop the grid acting on particular events. To do this implement `colDef.suppressHeaderKeyboardEvent` and/or `colDef.suppressKeyboardEvent` callback. The callback should return `true` if the grid should suppress the events, or `false` to continue as normal.
+It is possible to stop the grid acting on particular events. To do this implement `colDef.suppressHeaderKeyboardEvent` and/or `colDef.suppressKeyboardEvent` callback. The callback should return `true` if the grid should suppress the events, or `false` to continue as normal. The browser's default action for a suppressed key still runs.
 
 ### suppressHeaderKeyboardEvent
 
@@ -247,6 +247,7 @@ The example below demonstrates suppressing the following keyboard events:
     - {% kbd "⇥ Tab" /%} will not be handled by the grid.
 - On the Country header only:
     - Navigation is blocked from the left to right using arrows but is allowed using {% kbd "⇥ Tab" /%}.
+    - Moving or resizing the column with the arrow keys is blocked too.
     - Navigation up and down is allowed. This is the only header that allows navigation from the header to the grid cells.
     - {% kbd "↵ Enter" /%} is blocked. This is the only header that blocks sorting / opening menu via keyboard.
 - On all headers (excluding country):

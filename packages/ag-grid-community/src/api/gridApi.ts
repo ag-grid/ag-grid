@@ -657,7 +657,7 @@ export interface _ColumnAutosizeApi {
 }
 
 export interface _ColumnResizeApi {
-    /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnResized` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
+    /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event, which a finished call naming a column raises even when no width changes. The finished flag is intended for dragging, where a dragging action will produce many `columnResized` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. A width outside its column's `minWidth` and `maxWidth` leaves every width unchanged. With `colResizeDefault: 'shift'`, each column takes its change from the column after it (the last column, or a hidden one, changes alone), and a change that column cannot take within its own `minWidth` and `maxWidth` also leaves every width unchanged. */
     setColumnWidths(
         columnWidths: { key: ColKey; newWidth: number }[],
         finished?: boolean,
