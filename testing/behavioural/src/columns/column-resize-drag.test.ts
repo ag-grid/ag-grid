@@ -343,7 +343,7 @@ describe('header resize drag direction', () => {
         expect(widths()).toEqual([120, 80]);
     });
 
-    test('a shift-drag where the column, or the one it takes from, has its minWidth above its maxWidth changes neither, and still ends', async () => {
+    test('a shift-drag where the column, or the one it takes from, has its minWidth above its maxWidth changes neither, and ends reporting both', async () => {
         const noFit = { minWidth: 150, maxWidth: 120 };
         const results: [number[], [string[], boolean][]][] = [];
         for (const [colA, colB] of [
@@ -374,8 +374,8 @@ describe('header resize drag direction', () => {
         }
 
         expect(results).toEqual([
-            [[120, 100], [[['a'], true]]],
-            [[100, 120], [[['a'], true]]],
+            [[120, 100], [[['a', 'b'], true]]],
+            [[100, 120], [[['a', 'b'], true]]],
         ]);
     });
 
@@ -1214,6 +1214,55 @@ describe('group resize distribution', () => {
             expect(widths(api, ['x', 'a', 'y'])).toEqual([350, 300, 350]);
             // as a column auto-size's: every flex column re-flexed, none bounded by the resized ones
             expect(flexColumns).toEqual([null]);
+        } finally {
+            measured.mockRestore();
+        }
+    });
+
+    test('a double-click group fit holds every column of the group, re-flexing only the flex columns outside it', async () => {
+        const measured = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (
+            this: HTMLElement
+        ) {
+            return this.tagName === 'FORM' ? 301 : 0;
+        });
+        try {
+            const api = gridsManager.createGrid('groupFitFlexLeaves', {
+                columnDefs: [
+                    { colId: 'c', width: 600 },
+                    {
+                        headerName: 'g',
+                        groupId: 'g',
+                        children: [
+                            { colId: 'a', field: 'a', flex: 1, suppressAutoSize: true },
+                            { colId: 'b', field: 'b', flex: 1, suppressAutoSize: true },
+                            { colId: 'd', field: 'd', flex: 1, resizable: false, suppressAutoSize: true },
+                        ],
+                    },
+                    { colId: 'e', flex: 1 },
+                ],
+                autoSizePadding: 0,
+                rowData: [{}],
+            });
+            expect(widths(api, ['a', 'b', 'd', 'e'])).toEqual([100, 100, 100, 100]);
+            const bar = TestGridsManager.getHTMLElement(api)!.querySelector<HTMLElement>(
+                '.ag-header-group-cell .ag-header-cell-resize'
+            )!;
+            const resized: string[][] = [];
+            api.addEventListener('columnResized', (e) => resized.push(e.columns!.map((col) => col.getColId())));
+
+            // the 1px goes to `a`; `b` and the fixed-size `d` keep their widths, which a re-flex would take back
+            bar.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+            await asyncSetTimeout(0);
+
+            expect(widths(api, ['a', 'b', 'd', 'e'])).toEqual([101, 100, 100, 99]);
+            expect(api.getColumnState().map(({ colId, flex }) => [colId, flex])).toEqual([
+                ['c', null],
+                ['a', null],
+                ['b', 1],
+                ['d', 1],
+                ['e', 1],
+            ]);
+            expect(resized).toEqual([['a', 'b', 'e']]);
         } finally {
             measured.mockRestore();
         }

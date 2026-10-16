@@ -116,18 +116,23 @@ test.agExample(import.meta, () => {
     test.eachFramework(
         'Alt+ArrowRight resizes the Athlete column but not the Country column, nor Shift+ArrowRight moves it (suppressed)',
         async ({ agIdFor, page }) => {
-            const box = async (colId: string) => (await agIdFor.headerCell(colId).boundingBox())!;
+            const width = async (colId: string) => (await agIdFor.headerCell(colId).boundingBox())!.width;
+            const country = agIdFor.headerCell('country');
 
-            await agIdFor.headerCell('athlete').click();
-            const athleteWidth = (await box('athlete')).width;
-            await page.keyboard.press('Alt+ArrowRight');
-            await expect.poll(async () => (await box('athlete')).width).toBeGreaterThan(athleteWidth);
-
-            await agIdFor.headerCell('country').click();
-            const country = await box('country');
+            await country.click();
+            const countryWidth = await width('country');
+            const countryIndex = await country.getAttribute('aria-colindex');
             await page.keyboard.press('Alt+ArrowRight');
             await page.keyboard.press('Shift+ArrowRight');
-            expect(await box('country')).toEqual(country);
+
+            // pressed after Country's keys, so once its resize shows, theirs would have shown too
+            await agIdFor.headerCell('athlete').click();
+            const athleteWidth = await width('athlete');
+            await page.keyboard.press('Alt+ArrowRight');
+            await expect.poll(() => width('athlete')).toBeGreaterThan(athleteWidth);
+
+            expect(await width('country')).toBe(countryWidth);
+            await expect(country).toHaveAttribute('aria-colindex', countryIndex!);
         }
     );
 

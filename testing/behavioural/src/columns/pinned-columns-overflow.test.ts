@@ -881,6 +881,64 @@ describe('Resizing pinned columns wider than the viewport', () => {
             }
         });
 
+        test('a menu auto-size gives a growing pinned column none of the width a centre column frees', async () => {
+            const menuGridsManager = new TestGridsManager({
+                modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, ColumnMenuModule],
+            });
+            const restoreOffsetParent = polyfillOffsetParent();
+            try {
+                const api = menuGridsManager.createGrid('myGrid', {
+                    columnDefs: [
+                        { field: 'a', width: 500, pinned: 'left' },
+                        { field: 'c', width: 300 },
+                    ],
+                    defaultColDef: { resizable: true },
+                    rowData: [{ a: 'a', c: 'c' }],
+                });
+                await asyncSetTimeout(0);
+
+                // `c` shrinking widens the centre, not the 450px the pinned section has left
+                mockAutosizeContentWidth(980, { c: 80 });
+                api.showColumnMenu('a');
+                await userEvent.click(await openMenuOption('Autosize All Columns'));
+                await asyncSetTimeout(0);
+
+                expect([width(api, 'a'), width(api, 'c')]).toEqual([950, 100]);
+            } finally {
+                restoreOffsetParent();
+                menuGridsManager.reset();
+            }
+        });
+
+        test('a menu auto-size in print layout, which pins nothing, grows pinned columns past the limit', async () => {
+            const menuGridsManager = new TestGridsManager({
+                modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, ColumnMenuModule],
+            });
+            const restoreOffsetParent = polyfillOffsetParent();
+            try {
+                const api = menuGridsManager.createGrid('myGrid', {
+                    columnDefs: [
+                        { field: 'a', width: 400 },
+                        { field: 'b', width: 400 },
+                    ],
+                    defaultColDef: { pinned: 'left', resizable: true },
+                    rowData: [{ a: 'a', b: 'b' }],
+                    domLayout: 'print',
+                });
+                await asyncSetTimeout(0);
+
+                mockAutosizeContentWidth(980);
+                api.showColumnMenu('a');
+                await userEvent.click(await openMenuOption('Autosize All Columns'));
+                await asyncSetTimeout(0);
+
+                expect([width(api, 'a'), width(api, 'b')]).toEqual([1000, 1000]);
+            } finally {
+                restoreOffsetParent();
+                menuGridsManager.reset();
+            }
+        });
+
         test('a menu auto-size credits only the width a shrinking pinned column gives up within its own minWidth', async () => {
             const menuGridsManager = new TestGridsManager({
                 modules: [ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, ColumnMenuModule],

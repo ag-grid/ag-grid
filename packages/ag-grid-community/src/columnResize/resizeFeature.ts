@@ -77,9 +77,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private onResizing(finished: boolean, amount: number): void {
         const { column, resizeStartWidth: startWidth, takeFromAdjacent, beans } = this;
         const change = amount * this.dragSign;
-        // per move, as the viewport or another pinned column can change mid-drag
-        const resized = column.actualWidth - startWidth;
-        const held = beans.pinnedCols?.limitResize(column, takeFromAdjacent, change, resized) ?? change;
+        const held = beans.pinnedCols?.limitResize(column, takeFromAdjacent, change, startWidth) ?? change;
         // set even when capped, so a finished drag completes
         beans.colResize?.resizeColumn(column, startWidth + held, takeFromAdjacent, finished);
 

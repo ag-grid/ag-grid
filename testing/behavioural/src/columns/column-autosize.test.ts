@@ -705,6 +705,22 @@ describe('Column Autosize', () => {
             expect(api.getColumn('b')!.getActualWidth()).toBe(50);
         });
 
+        test('a column its own maxWidth keeps from the auto-size limit lays out nothing again', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a', width: 200, maxWidth: 200 }],
+            });
+            await asyncSetTimeout(0);
+            let laidOut = 0;
+            api.addEventListener('displayedColumnsChanged', () => ++laidOut);
+
+            // asked for 300, but the column's own maxWidth holds it where it is
+            api.autoSizeColumns({ colIds: ['a'], defaultMinWidth: 300, defaultMaxWidth: 1000 });
+            await asyncSetTimeout(0);
+
+            expect(api.getColumn('a')!.getActualWidth()).toBe(200);
+            expect(laidOut).toBe(0);
+        });
+
         test('defaultMinWidth / defaultMaxWidth apply when per-col limits absent', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [

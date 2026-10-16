@@ -4,7 +4,7 @@ import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import { getShiftPair } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
-import { getColGroupAfter } from '../entities/agColumnGroup';
+import { edgeLeafColumn, getColGroupAfter } from '../entities/agColumnGroup';
 import type { ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
@@ -97,7 +97,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
             return;
         }
 
-        this.applyColumnWidths(columns, widths, finished, source, columns, false);
+        this.applyColumnWidths(columns, widths, finished, source, columns, false, false);
     }
 
     /** Sets widths decided elsewhere, each held within its column's bounds in `widths`, none taken from another. */
@@ -113,7 +113,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
             // held first, so a width this column cannot take reads as unchanged rather than re-laid out
             widths[i] = Math.min(Math.max(widths[i], col.minWidth), col.maxWidth);
         }
-        this.applyColumnWidths(columns, widths, finished, source, resizingCols, false);
+        this.applyColumnWidths(columns, widths, finished, source, resizingCols, false, false);
     }
 
     /** Whether a resize takes from the column or group after it: Shift does, `colResizeDefault: 'shift'` inverting. */
@@ -144,7 +144,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
         }
         const columns = otherCol ? [column, otherCol] : [column];
         const widths = otherCol ? [width, total - width] : [width];
-        this.applyColumnWidths(columns, widths, finished, 'uiColumnResized', columns, false);
+        this.applyColumnWidths(columns, widths, finished, 'uiColumnResized', columns, false, false);
     }
 
     /** Plans a group resize, with the next group's resizable leaves when it takes from that group. */
@@ -169,14 +169,15 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
 
     /**
      * Resizes a group to the width nearest `width` its and the next group's bounds allow; none fitting, nothing.
-     * `reflexAll` re-flexes every flex column, as an auto-size does, instead of only those after the group.
+     * A fit of `fitGroup` holds all its columns and re-flexes every flex column outside it, as an auto-size does,
+     * instead of only those after it.
      */
     public resizeGroup(
         plan: GroupResizePlan,
         width: number,
         finished: boolean,
         source: ColumnEventType,
-        reflexAll = false
+        fitGroup?: AgColumnGroup
     ): void {
         const { group, next } = plan;
         const total = next ? group.startWidth + next.startWidth : 0;
@@ -195,11 +196,18 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
             distributeWidth(plan, next, total - fitted);
         }
         const columns = plan.columns;
-        this.applyColumnWidths(columns, plan.widths, finished, source, reflexAll ? undefined : columns, true);
+        if (!fitGroup) {
+            this.applyColumnWidths(columns, plan.widths, finished, source, columns, true, false);
+            return;
+        }
+        // its first and last leaves bound the run the flex pass holds, the `resizable: false` ones included
+        const held = [edgeLeafColumn(fitGroup, true, false)!, edgeLeafColumn(fitGroup, true, true)!];
+        this.applyColumnWidths(columns, plan.widths, finished, source, held, true, true);
     }
 
-    /** Applies `widths`, re-flexes the flex cols after `resizingCols` (all when absent), lays out and reports, with
-     *  `flexColumns` only when `resizingCols` bounded the flex pass, so an aligned grid re-flexes as this one did. */
+    /** Applies `widths`, re-flexes the flex cols after `resizingCols` (all when absent; with `reflexAll` all but them),
+     *  lays out and reports, with `flexColumns` only when the pass stopped at `resizingCols`, so an aligned grid
+     *  re-flexes as this one did. */
     private applyColumnWidths(
         columns: AgColumn[],
         widths: number[],
@@ -207,7 +215,8 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
         source: ColumnEventType,
         resizingCols: AgColumn[] | undefined,
         // the caller uses `columns` again, so listeners get a copy
-        columnsReused: boolean
+        columnsReused: boolean,
+        reflexAll: boolean
     ): void {
         let atLeastOneColChanged = false;
         let pinnedColChanged = false;
@@ -229,6 +238,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
             const { colFlex, visibleCols, colViewport, ctrlsSvc } = this.beans;
             flexedCols = colFlex?.refreshFlexedColumns({
                 resizingCols,
+                reflexAll,
                 skipSetLeft: true,
                 // A pinned resize moves the centre boundary with no DOM resize; 0 is "not laid out yet".
                 viewportWidth:
@@ -246,7 +256,7 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
             } else if (columnsReused) {
                 colsForEvent = columns.slice();
             }
-            const flexColumns = resizingCols ? (flexedCols ?? []) : null;
+            const flexColumns = resizingCols && !reflexAll ? (flexedCols ?? []) : null;
             dispatchColumnResizedEvent(this.eventSvc, colsForEvent, finished, source, flexColumns);
         }
     }
@@ -358,14 +368,15 @@ function distributeWidth(plan: GroupResizePlan, run: ColumnRun | null, width: nu
 /** Pushes `group`'s displayed resizable leaves onto `out` in display order: one walk, no leaf list to filter. */
 function pushResizableLeaves(group: AgColumnGroup | null, out: AgColumn[]): void {
     const children = group?.displayedChildren;
-    if (children) {
-        for (let i = 0, len = children.length; i < len; ++i) {
-            const child = children[i];
-            if (!child.isColumn) {
-                pushResizableLeaves(child, out);
-            } else if (child.isResizable()) {
-                out.push(child);
-            }
+    if (!children) {
+        return;
+    }
+    for (let i = 0, len = children.length; i < len; ++i) {
+        const child = children[i];
+        if (!child.isColumn) {
+            pushResizableLeaves(child, out);
+        } else if (child.isResizable()) {
+            out.push(child);
         }
     }
 }
@@ -403,10 +414,13 @@ function measureRun(columns: AgColumn[], from: number, to: number, ratios: numbe
 
 /** The width nearest `width` in `own` leaving the shift `pair` within its range of `total`; NaN when none fits. */
 function fitWidth(width: number, own: ColumnRun | AgColumn, pair: ColumnRun | AgColumn | null, total: number): number {
-    let { minWidth: min, maxWidth: max } = own;
+    // max wins over a min above it, as in `setActualWidth`; a run's summed bounds already hold it
+    let max = own.maxWidth;
+    let min = Math.min(own.minWidth, max);
     if (pair) {
-        min = Math.max(min, total - pair.maxWidth);
-        max = Math.min(max, total - pair.minWidth);
+        const pairMax = pair.maxWidth;
+        min = Math.max(min, total - pairMax);
+        max = Math.min(max, total - Math.min(pair.minWidth, pairMax));
     }
     const fitted = _clamp(width, min, max);
     // over max only when no width fits, or for NaN

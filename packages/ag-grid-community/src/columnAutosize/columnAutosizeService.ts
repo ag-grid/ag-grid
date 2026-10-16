@@ -916,10 +916,11 @@ function setAutoSizedWidths(
         if (limited && width > actualWidth) {
             continue;
         }
-        changed ||= width !== actualWidth;
         column.setActualWidth(width, source);
         // the width taken, not asked: the column's own bounds win over the auto-size limits
-        freed += limited ? actualWidth - column.actualWidth : 0;
+        const taken = column.actualWidth - actualWidth;
+        changed ||= taken !== 0;
+        freed -= limited ? taken : 0;
     }
     if (!pinnedLimit) {
         return changed;
@@ -933,10 +934,10 @@ function setAutoSizedWidths(
         if (column.pinnedLane === 1 || width <= actualWidth) {
             continue;
         }
-        const growth = Math.min(width - actualWidth, room);
-        changed ||= growth !== 0;
-        column.setActualWidth(actualWidth + growth, source);
-        room -= column.actualWidth - actualWidth;
+        column.setActualWidth(actualWidth + Math.min(width - actualWidth, room), source);
+        const taken = column.actualWidth - actualWidth;
+        changed ||= taken !== 0;
+        room -= taken;
     }
     return changed;
 }

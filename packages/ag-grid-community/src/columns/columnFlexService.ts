@@ -7,7 +7,6 @@ import { dispatchColumnResizedEvent } from './columnEventUtils';
 
 type FlexItem = {
     col: AgColumn;
-    isFlex: boolean;
     flex: number;
     min: number;
     max: number;
@@ -27,6 +26,7 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
     public refreshFlexedColumns(
         params: {
             resizingCols?: AgColumn[];
+            reflexAll?: boolean;
             skipSetLeft?: boolean;
             viewportWidth?: number;
             source?: ColumnEventType;
@@ -51,22 +51,29 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
             return [];
         }
         const visibleCenterCols = visibleCols.centerCols;
+        const centerCount = visibleCenterCols.length;
         const centerStart = visibleCenterCols[0].allColsIndex;
 
-        // the last resizing centre col, as only cols after this one are affected by the resizing
-        let flexAfterDisplayIndex = -1;
+        // the centre cols keeping their widths: up to the last resizing one, or with `reflexAll` only the run of the
+        // resizing ones, so the flex cols before them re-flex too
+        let frozenFrom = 0;
+        let frozenTo = -1;
         const resizingCols = params.resizingCols;
         if (resizingCols) {
+            let first = centerCount;
             for (let i = 0, len = resizingCols.length; i < len; ++i) {
                 const col = resizingCols[i];
                 const index = col.allColsIndex - centerStart;
-                if (index <= flexAfterDisplayIndex || visibleCenterCols[index] !== col) {
+                if (index < 0 || visibleCenterCols[index] !== col) {
                     continue;
                 }
-                flexAfterDisplayIndex = index;
+                first = Math.min(first, index);
+                frozenTo = Math.max(frozenTo, index);
             }
-            // no flex col after the resizing ones, as when resizing past the last
-            if (centerStart + flexAfterDisplayIndex >= lastFlexIndex) {
+            if (params.reflexAll) {
+                frozenFrom = first;
+            } else if (centerStart + frozenTo >= lastFlexIndex) {
+                // no flex col after the resizing ones, as when resizing past the last
                 this.revealColumns(colDelayRenderSvc);
                 return [];
             }
@@ -79,21 +86,19 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
         // every col this pass sizes, those held on a bound too, so a resize reports each width it changed
         const flexedColumns: AgColumn[] = [];
         let unfrozenFlex = 0;
-        const itemCount = visibleCenterCols.length;
+        // an item only for the cols this pass flexes: the rest are frozen below without one
         const items: FlexItem[] = [];
-        for (let i = 0; i < itemCount; ++i) {
+        for (let i = 0; i < centerCount; ++i) {
             const col = visibleCenterCols[i];
             const flex = col.flex;
-            const itemFlex = flex != null && flex > 0 ? flex : 0;
-            const isFlex = itemFlex > 0 && i > flexAfterDisplayIndex;
-            if (isFlex) {
-                flexedColumns.push(col);
-                unfrozenFlex += itemFlex;
+            if ((i >= frozenFrom && i <= frozenTo) || flex == null || flex <= 0) {
+                continue;
             }
+            flexedColumns.push(col);
+            unfrozenFlex += flex;
             items.push({
                 col,
-                isFlex,
-                flex: itemFlex,
+                flex,
                 initialSize: col.actualWidth,
                 min: col.minWidth,
                 max: col.maxWidth,
@@ -102,7 +107,8 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
                 violationType: undefined,
             });
         }
-        if (!flexedColumns.length) {
+        const itemCount = items.length;
+        if (!itemCount) {
             this.revealColumns(colDelayRenderSvc);
             return flexedColumns;
         }
@@ -110,16 +116,19 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
         colDelayRenderSvc?.hideColumns('colFlex');
         this.columnsHidden = true;
 
-        let unfrozenItemCount = flexedColumns.length;
+        let unfrozenItemCount = itemCount;
         let unfrozenSpace = totalSpace;
 
         // Freeze inflexible columns
-        for (let i = 0; i < itemCount; ++i) {
-            const item = items[i];
-            if (item.isFlex) {
+        for (let i = 0; i < centerCount; ++i) {
+            const col = visibleCenterCols[i];
+            const flex = col.flex;
+            if ((i < frozenFrom || i > frozenTo) && flex != null && flex > 0) {
                 continue;
             }
-            unfrozenSpace -= freeze(item, item.initialSize, source);
+            const width = col.actualWidth;
+            col.setActualWidth(width, source);
+            unfrozenSpace -= width;
         }
 
         // a. Check for flexible items. If all the flex items on the line are
@@ -193,7 +202,10 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
                 if (item.frozenSize != null || (freezeType !== 'all' && item.violationType !== freezeType)) {
                     continue;
                 }
-                unfrozenSpace -= freeze(item, item.targetSize, source);
+                const width = item.targetSize;
+                item.frozenSize = width;
+                item.col.setActualWidth(width, source);
+                unfrozenSpace -= width;
                 unfrozenFlex -= item.flex;
                 --unfrozenItemCount;
             }
@@ -206,18 +218,14 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
 
         if (params.fireResizedEvent) {
             const changedColumns: AgColumn[] = [];
-            const flexingColumns: AgColumn[] = [];
             for (let i = 0; i < itemCount; ++i) {
                 const item = items[i];
                 if (item.initialSize !== item.frozenSize) {
                     changedColumns.push(item.col);
                 }
-                if (item.flex) {
-                    flexingColumns.push(item.col);
-                }
             }
 
-            dispatchColumnResizedEvent(this.eventSvc, changedColumns, true, source, flexingColumns);
+            dispatchColumnResizedEvent(this.eventSvc, changedColumns, true, source, flexedColumns);
         }
 
         this.revealColumns(colDelayRenderSvc);
@@ -247,10 +255,4 @@ export class ColumnFlexService extends BeanStub implements NamedBean {
         column.flex = flex ?? null;
         column.dispatchStateUpdatedEvent('flex', source);
     }
-}
-
-function freeze(item: FlexItem, width: number, source: ColumnEventType): number {
-    item.frozenSize = width;
-    item.col.setActualWidth(width, source);
-    return width;
 }

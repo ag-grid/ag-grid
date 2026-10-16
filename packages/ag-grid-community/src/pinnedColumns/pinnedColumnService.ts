@@ -64,7 +64,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
             return;
         }
 
-        const bodyWidth = this.getAvailableViewportWidth();
+        const bodyWidth = this.gridBodyCtrl.getViewportWidthWithoutScrollbar();
 
         if (bodyWidth <= MIN_CENTER_VIEWPORT_WIDTH) {
             return;
@@ -158,23 +158,25 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
 
     /**
      * `change` to a user resize of `column`, held to the pinned room: a pinned column grows, or a centre one shrinks into
-     * a pinned neighbour, only as far as the room left, counting as free what `resized`, the change so far, took.
+     * a pinned neighbour, only as far as the room left, counting as free what the resize took since `startWidth`.
      */
     public limitResize(
         column: AgColumn | AgColumnGroup,
         takeFromAdjacent: boolean,
         change: number,
-        resized = 0
+        startWidth?: number
     ): number {
-        if (column.pinnedLane === 1) {
-            return change < 0 && takeFromAdjacent && this.isNextPinned(column)
-                ? Math.max(change, -this.getPinnedRoom(-resized))
-                : change;
-        }
+        const centre = column.pinnedLane === 1;
         // taking from a pinned neighbour keeps the pinned total
-        return change > 0 && !(takeFromAdjacent && this.isNextPinned(column))
-            ? Math.min(change, this.getPinnedRoom(resized))
-            : change;
+        const limited = centre
+            ? change < 0 && takeFromAdjacent && this.isNextPinned(column)
+            : change > 0 && !(takeFromAdjacent && this.isNextPinned(column));
+        if (!limited) {
+            return change;
+        }
+        // read per move, as the viewport or another pinned column can change mid-drag
+        const resized = startWidth === undefined ? 0 : column.getActualWidth() - startWidth;
+        return centre ? Math.max(change, -this.getPinnedRoom(-resized)) : Math.min(change, this.getPinnedRoom(resized));
     }
 
     /** Whether an auto-size from `source` stops at the pinned room: a resize handle's or a menu's does, the API's not. */
@@ -184,7 +186,11 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
 
     /** How much wider the pinned columns can grow before the centre narrows below its minimum, `freed` px of them not
      *  counted. Reads the observed viewport width, not the layout, so a drag can ask on every move. */
-    public getPinnedRoom(freed = 0): number {
+    public getPinnedRoom(freed: number): number {
+        // print layout lays every column out in the centre, so nothing pinned can crowd it
+        if (_isDomLayout(this.gos, 'print')) {
+            return Infinity;
+        }
         const gridBodyCtrl = this.gridBodyCtrl;
         const viewportWidth = gridBodyCtrl
             ? gridBodyCtrl.getViewportWidthWithoutScrollbar(gridBodyCtrl.getReportedViewportWidth())
@@ -201,10 +207,6 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         // a next group with no resizable column gives nothing, so the group resizes alone
         const next = getColGroupAfter(visibleCols, column);
         return !!next && next.pinnedLane !== 1 && next.isResizable();
-    }
-
-    private getAvailableViewportWidth(): number {
-        return this.gridBodyCtrl?.getViewportWidthWithoutScrollbar() ?? 0;
     }
 
     private getPinnedColumnsOverflowingViewport(viewportWidth: number): {

@@ -67,9 +67,9 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
         }
         const { columnGroup, beans } = this;
         const change = amount * this.dragSign;
-        // per move, as the viewport or another pinned column can change mid-drag
-        const resized = columnGroup.getActualWidth() - this.dragGroupWidth;
-        const held = beans.pinnedCols?.limitResize(columnGroup, this.dragTakeFromAdjacent, change, resized) ?? change;
+        const held =
+            beans.pinnedCols?.limitResize(columnGroup, this.dragTakeFromAdjacent, change, this.dragGroupWidth) ??
+            change;
         beans.colResize!.resizeGroup(plan, plan.group.startWidth + held, finished, 'uiColumnResized');
         if (finished) {
             this.dragPlan = null;
@@ -93,7 +93,7 @@ export class GroupResizeFeature extends BeanStub implements IHeaderResizeFeature
             return;
         }
         const plan = colResize!.planGroupResize(columnGroup, false);
-        colResize!.resizeGroup(plan, plan.group.startWidth + held, true, source, true);
+        colResize!.resizeGroup(plan, plan.group.startWidth + held, true, source, columnGroup);
     }
 
     public toggleColumnResizing(resizing: boolean): void {
