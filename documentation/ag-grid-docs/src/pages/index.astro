@@ -247,7 +247,7 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/index.m
     <LandingPageSection client:load {...sectionProps('faq-section')}>
         <LandingPageFAQ client:load FAQData={renderedFaqData} />
     </LandingPageSection>
-    <FrameworkLinks client:idle pageNames={['community-vs-enterprise', 'getting-started']} />
+    <FrameworkLinks client:idle />
 </Layout>
 
 <script>
