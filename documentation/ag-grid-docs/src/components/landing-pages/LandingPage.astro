@@ -317,5 +317,5 @@ const themeBuilderVideo = isEnterprise
     })}
 
     {technicalReviewer && <TechnicalReviewCredit reviewer={technicalReviewer} standalone />}
-    {isEnterprise && <FrameworkLinks client:idle pageName="community-vs-enterprise" />}
+    {isEnterprise && <FrameworkLinks client:idle pageNames={['community-vs-enterprise', 'getting-started']} />}
 </Layout>
