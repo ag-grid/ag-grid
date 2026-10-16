@@ -18,7 +18,7 @@ import { mapFormattedKeys, setFilterNullIfBlank, treeDataOrGroupingComparator } 
 
 type SetValueModelEvent = 'availableValuesChanged' | 'loadingStart' | 'loadingEnd' | 'destroyed';
 
-const DEFAULT_MAX_PRESERVED_VALUES = 100;
+const DEFAULT_MAX_PRESERVED_VALUES = 1000;
 
 enum SetFilterModelValuesType {
     PROVIDED_LIST,

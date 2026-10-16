@@ -148,10 +148,10 @@ Selected values are always kept. Unselected values that are no longer in the dat
 
 | `preservePreviousValuesLimit` | Unselected values kept once they leave the data                                                  |
 | ----------------------------- | ------------------------------------------------------------------------------------------------ |
-| not set                       | up to 100                                                                                        |
+| not set                       | up to 1,000                                                                                      |
 | a number, for example `500`   | up to that number                                                                                |
 | `0`                           | none: only selected values are kept, so the list shows the current values plus the selected ones |
-| `-1`                          | all of them, with no limit                                                                       |
+| `-1`                          | all of them, with no limit, so memory use is unbounded                                           |
 
 When the limit is exceeded, the value that left the data first is discarded first. Discarding an unselected value does not change which rows pass the applied filter: it is not in the model, so if its rows return it is added back as a new, unselected value and its rows stay filtered out, exactly as if it had been kept. The limit only decides which of these values stay listed, and in memory, while their rows are away.
 

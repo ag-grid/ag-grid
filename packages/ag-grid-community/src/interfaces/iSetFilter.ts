@@ -273,8 +273,9 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
     /**
      * Requires `preservePreviousValues = true`. The most values not in the filter model to keep once they are no
      * longer in the data; the first to leave is discarded first. Values in the filter model, or named by an applied
-     * Advanced Filter expression, are always kept and not counted. Set to `0` to keep only those, or `-1` for no limit.
-     * @default 100
+     * Advanced Filter expression, are always kept and not counted. Set to `0` to keep only those, or `-1` for no limit,
+     * so memory use is unbounded.
+     * @default 1000
      */
     preservePreviousValuesLimit?: number;
     /**
