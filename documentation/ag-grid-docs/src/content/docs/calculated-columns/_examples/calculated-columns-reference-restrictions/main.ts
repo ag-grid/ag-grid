@@ -28,8 +28,12 @@ const gridOptions: GridOptions<Employee> = {
         { employee: 'Jamie Lee', salary: 55000, sales: 110000 },
     ],
     calculatedColumns: {
-        isColumnReferenceable: ({ colDef, calculatedColumn }) =>
-            colDef.field !== 'salary' || calculatedColumn?.getColId() === 'bonus',
+        isColumnReferenceable: ({ colDef, calculatedColumn }) => {
+            if (colDef.field === 'salary') {
+                return calculatedColumn?.getColId() === 'bonus';
+            }
+            return true;
+        },
     },
     defaultColDef: { flex: 1, minWidth: 120 },
 };
