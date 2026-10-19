@@ -152,6 +152,9 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             for (let i = 0; i < endRow - startRow; i++) {
                 loadingNodes.delete(startRow + i);
             }
+            if (loadingNodes.size === 0) {
+                cache.store.onLoadsSettled();
+            }
         };
 
         const addNodesToLoadingMap = () => {
@@ -162,7 +165,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
         const success = (params: LoadSuccessParams) => {
             this.onLoadComplete();
-            cache.onLoadSuccess(startRow, endRow - startRow, params, dataVersionGeneration);
+            cache.onLoadSuccess(startRow, endRow - startRow, params, dataVersionGeneration, dataVersion);
             removeNodesFromLoadingMap();
         };
 
@@ -276,6 +279,10 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
                   cache: lazyCache,
                   index: lazyCache.getBlockStartIndex(lazyIndex),
               };
+    }
+
+    public isCacheLoading(cache: LazyCache): boolean {
+        return (this.cacheLoadingNodesMap.get(cache)?.size ?? 0) > 0;
     }
 
     public isRowLoading(cache: LazyCache, index: number) {

@@ -95,7 +95,7 @@ The example below demonstrates loading rows using a simple SSRM Datasource. Note
 
 Each block of rows is fetched with a separate `getRows` call, so when the data changes on the server between calls, blocks of the same level can be read from different states of the data and rows can be repeated or skipped where the blocks meet. If the server can read from a fixed version of the data, such as a snapshot ID or a cursor, return it as `dataVersion` with the block. The grid pins the first version returned for a level and passes it back as `request.dataVersion` on every later `getRows` request for that level.
 
-Pinning a version is snapshot behaviour: it suits paging through a dataset that does not change underneath the reader, so every block of a level shows the data as it was when the level was first read. When the grid should show data that changes continuously, return the latest rows and do not return `dataVersion`. Reconciling live updates against a data version is not supported yet.
+Pinning a version is snapshot behaviour: it suits paging through a dataset that does not change underneath the reader, so every block of a level shows the data as it was when the level was first read. This is the default `'snapshot'` mode of the `serverSideDataVersionMode` grid option. When the grid should show data that changes continuously, set `serverSideDataVersionMode` to `'stream'`, return the version of the rows with each block and send each change as a transaction with a `version`, so the grid can skip stale changes and apply changes that arrive while blocks are loading. See [Versioned Transactions](./server-side-model-updating-transactions/#versioned-transactions).
 
 ```js
 const datasource = {
@@ -115,9 +115,9 @@ Note the following:
 
 - Each level pins its own version: a group's children are read independently of their parent level.
 - The pinned version is dropped when the level is [refreshed](./server-side-model-updating-refresh/) with `refreshServerSide`, purged or not, and when the level is reset, for example after a sort or filter change. The next response pins a new version. A versioned response to a request sent before the refresh is discarded, and its block is loaded again.
-- The version is kept when blocks are evicted from the cache and loaded again, when failed loads are retried, when transactions are applied and when a group is collapsed.
+- The version is kept when blocks are evicted from the cache and loaded again, when failed loads are retried, when transactions are applied and when a group is collapsed. In `'stream'` mode, a newer version returned with a block or a newer [versioned transaction](./server-side-model-updating-transactions/#versioned-transactions) moves the pinned version forward.
 - Blocks requested before the first versioned response arrives (up to `maxConcurrentDatasourceRequests`) are sent without a version.
-- A different version returned for a level that already has one is ignored, and the grid logs a warning. If the server can no longer read from the pinned version, call `refreshServerSide` to drop it.
+- A different version returned for a level that already has one is ignored, and the grid logs a warning. In `'stream'` mode, only a version older than the one requested logs a warning. If the server can no longer read from the pinned version, call `refreshServerSide` to drop it.
 - Two numeric versions are compared numerically, and any other versions are only checked for equality. To decide when two versions are the same, for example versions that differ only in case, provide the `compareServerSideDataVersions` grid option. It returns a negative number when the first version is older than the second, a positive number when it is newer, and `0` when they are the same version.
 - A version supplied through `applyServerSideRowData` pins the level in the same way.
 - The pinned version of each level is returned by `getServerSideGroupLevelState()`.

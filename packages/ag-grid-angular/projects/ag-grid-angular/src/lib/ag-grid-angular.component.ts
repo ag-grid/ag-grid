@@ -232,6 +232,7 @@ import type {
     SelectionChangedEvent,
     SelectionColumnDef,
     SendToClipboard,
+    ServerSideDataVersionMode,
     SideBarDef,
     SortChangedEvent,
     SortDirection,
@@ -2210,6 +2211,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ServerSideRowModelModule`
      */
     @Input() public compareServerSideDataVersions: CompareServerSideDataVersions | undefined = undefined;
+    /** How the grid treats the data versions returned in `LoadSuccessParams.dataVersion` and sent in `ServerSideTransaction.version`.
+     * - `'snapshot'`: each level reads every block from the first version returned for it, and a different version returned for the level logs a warning.
+     * - `'stream'`: the level's version moves forward to a newer version returned with a block, or to the version of a newer transaction applied to the level, so later blocks are read from the latest version the grid has. A version older than the one requested logs a warning.
+     * @default 'snapshot'
+     * @agModule `ServerSideRowModelModule`
+     */
+    @Input() public serverSideDataVersionMode: ServerSideDataVersionMode | undefined = undefined;
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-business-key='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
      */

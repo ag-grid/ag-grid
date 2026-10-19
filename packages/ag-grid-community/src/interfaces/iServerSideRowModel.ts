@@ -76,7 +76,7 @@ export interface LoadSuccessParams<TData = any> {
      * The first version returned for a level is pinned and passed back in `request.dataVersion` on every later
      * `getRows` request for that level, until the level is refreshed or reset.
      * Numbers are compared numerically; provide `compareServerSideDataVersions` to compare other versions.
-     * For data that changes continuously, return the latest rows and leave this unset.
+     * For data that changes continuously, set `serverSideDataVersionMode` to `'stream'` and send each change as a transaction with a `version`, so the grid can reconcile them.
      */
     dataVersion?: string | number;
 }

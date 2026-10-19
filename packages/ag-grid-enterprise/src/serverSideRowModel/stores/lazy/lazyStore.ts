@@ -30,6 +30,7 @@ import { _createRowNodeFooter, _destroyRowNodeFooter } from '../../../aggregatio
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { SSRMParams } from '../../serverSideRowModel';
 import type { StoreUtils } from '../storeUtils';
+import { compareDataVersions } from './dataVersion';
 import { LazyCache } from './lazyCache';
 
 export class LazyStore extends BeanStub implements IServerSideStore {
@@ -65,6 +66,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     private readonly idSequence = { value: 0 };
     private cache: LazyCache;
+    /** Versioned transactions that arrived while blocks of this level were loading. */
+    private heldTransactions: ServerSideTransaction[] = [];
     private readonly info: any;
 
     /** Raw data for the grand total row, kept even when grandTotalRow option is not set. */
@@ -170,31 +173,51 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         }
 
+        // The loading blocks may have been read before this transaction, so it is applied to them again when they load
+        if (transaction.version != null && this.cache.isLoading()) {
+            this.heldTransactions.push(transaction);
+        }
+
+        return this.applyTransactionToCache(transaction);
+    }
+
+    private applyTransactionToCache(transaction: ServerSideTransaction): ServerSideTransactionResult {
+        const { version } = transaction;
+        const unapplied: any[] = [];
+        const update = this.cache.filterStaleRows(transaction.update, version, unapplied);
+        const add = this.cache.filterStaleRows(transaction.add, version, unapplied);
+        const remove = this.cache.filterStaleRows(transaction.remove, version, unapplied);
+
         // needs checked before transactions are applied, as rows won't be contiguous immediately
         // after
         const allRowsLoaded = this.cache.isStoreFullyLoaded();
 
         let updatedNodes: RowNode[] | undefined = undefined;
-        if (transaction.update?.length) {
-            updatedNodes = this.cache.updateRowNodes(transaction.update);
+        if (update?.length) {
+            updatedNodes = this.cache.updateRowNodes(update, version);
         }
 
         let insertedNodes: RowNode[] | undefined = undefined;
-        if (transaction.add?.length) {
+        if (add?.length) {
             let addIndex = transaction.addIndex;
             if (addIndex != null && addIndex < 0) {
                 addIndex = undefined;
             }
-            insertedNodes = this.cache.insertRowNodes(transaction.add, addIndex);
+            insertedNodes = this.cache.insertRowNodes(add, addIndex, version);
         }
 
         let removedNodes: RowNode[] | undefined = undefined;
-        if (transaction.remove?.length) {
-            const allIdsToRemove = transaction.remove.map((data) =>
+        if (remove?.length) {
+            const idFunc = _getRowIdCallback(this.beans)!;
+            const allIdsToRemove = remove.map((data) =>
                 idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data })
             );
             const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
             removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, transaction.rowCount);
+        }
+
+        if (version != null) {
+            this.cache.advanceDataVersion(version);
         }
 
         const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
@@ -212,7 +235,34 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             update: updatedNodes,
             add: insertedNodes,
             remove: removedNodes,
+            unapplied: unapplied.length ? unapplied : undefined,
         };
+    }
+
+    /**
+     * Applies the held transactions newer than a block's version to the rows the block loaded, in arrival order.
+     * Adds are not repeated: a row the block loaded already has the added row's ID.
+     */
+    public replayHeldTransactions(loadedIds: Set<string>, blockVersion: string | number | undefined): void {
+        if (blockVersion == null || !this.heldTransactions.length) {
+            return;
+        }
+        const comparator = this.gos.get('compareServerSideDataVersions');
+        const inBlock = (rows?: any[]) => rows?.filter((data) => loadedIds.has(this.cache.getRowId(data)!));
+        for (const transaction of this.heldTransactions) {
+            if (compareDataVersions(transaction.version!, blockVersion, comparator) > 0) {
+                this.applyTransactionToCache({
+                    version: transaction.version,
+                    update: inBlock(transaction.update),
+                    remove: inBlock(transaction.remove),
+                });
+            }
+        }
+    }
+
+    /** Called once no block of this level is loading, so no block can have been read before a held transaction. */
+    public onLoadsSettled(): void {
+        this.heldTransactions = [];
     }
 
     private updateSelectionAfterTransaction(updatedNodes?: RowNode[], removedNodes?: RowNode[]) {
