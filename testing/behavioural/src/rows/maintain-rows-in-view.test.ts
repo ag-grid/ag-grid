@@ -4,7 +4,12 @@ import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelApiModule, ClientSideRowModelModule, ScrollApiModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelApiModule,
+    ClientSideRowModelModule,
+    ExternalFilterModule,
+    ScrollApiModule,
+} from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 interface Row {
@@ -28,6 +33,7 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             ServerSideRowModelModule,
             ServerSideRowModelApiModule,
             ScrollApiModule,
+            ExternalFilterModule,
             RowGroupingModule,
         ],
     });
@@ -196,18 +202,17 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             }
         );
 
-        test('does not follow the top row in view when an update sorts it elsewhere', () => {
+        test('does not scroll when an update sorts the top row in view elsewhere', () => {
             const api = createGrid({ columnDefs: [{ field: 'value', sort: 'asc' }] });
             scrollTo(api, SCROLL_TOP);
 
             api.applyTransaction({ update: [{ id: 'r20', value: 1000 }] });
 
             expect(api.getDisplayedRowAtIndex(199)!.id).toBe('r20');
-            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP - ROW_HEIGHT);
-            expect(offsetInView(api, 'r21')).toBe(ROW_HEIGHT);
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
         });
 
-        test('does not follow the rows in view when an update sorts them all elsewhere', () => {
+        test('does not scroll when an update sorts the rows in view elsewhere', () => {
             const api = createGrid({ columnDefs: [{ field: 'value', sort: 'asc' }] });
             scrollTo(api, SCROLL_TOP);
             const update = createRows('r', 200)
@@ -220,20 +225,20 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
         });
 
-        test('keeps rows in view when the same update adds rows above and sorts a row above them elsewhere', () => {
+        test('does not scroll when an update sorts the rows above the rows in view elsewhere', () => {
             const api = createGrid({ columnDefs: [{ field: 'value', sort: 'asc' }] });
             scrollTo(api, SCROLL_TOP);
+            const update = createRows('r', 200)
+                .slice(0, 100)
+                .map((row) => ({ ...row, value: row.value + 1000 }));
 
-            api.applyTransaction({
-                add: createRows('new', 3).map((row) => ({ ...row, value: -1 })),
-                update: [{ id: 'r19', value: 1000 }],
-            });
+            api.applyTransaction({ update });
 
-            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + 2 * ROW_HEIGHT);
-            expect(offsetInView(api, 'r20')).toBe(0);
+            expect(api.getDisplayedRowAtIndex(0)!.id).toBe('r100');
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
         });
 
-        test('does not follow the rows in view when an update re-sorts them among themselves', () => {
+        test('does not scroll when an update re-sorts the rows in view among themselves', () => {
             const api = createGrid({ columnDefs: [{ field: 'value', sort: 'asc' }] });
             scrollTo(api, SCROLL_TOP);
             const update = createRows('r', 200)
@@ -243,6 +248,37 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             api.applyTransaction({ update });
 
             expect(api.getDisplayedRowAtIndex(29)!.id).toBe('r20');
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
+        });
+
+        test('does not scroll when updated row data re-sorts rows above the rows in view', () => {
+            const api = createGrid({ columnDefs: [{ field: 'value', sort: 'asc' }] });
+            scrollTo(api, SCROLL_TOP);
+
+            api.setGridOption(
+                'rowData',
+                createRows('r', 200).map((row) => (row.value < 5 ? { ...row, value: row.value + 1000 } : row))
+            );
+
+            expect(api.getDisplayedRowAtIndex(0)!.id).toBe('r5');
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
+        });
+
+        test('does not scroll when an update filters out rows above the rows in view', () => {
+            const api = createGrid({
+                isExternalFilterPresent: () => true,
+                doesExternalFilterPass: ({ data }) => data!.value < 1000,
+            });
+            scrollTo(api, SCROLL_TOP);
+
+            api.applyTransaction({
+                update: [
+                    { id: 'r0', value: 1000 },
+                    { id: 'r1', value: 1001 },
+                ],
+            });
+
+            expect(api.getDisplayedRowAtIndex(0)!.id).toBe('r2');
             expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
         });
 
@@ -256,45 +292,20 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             expect(offsetInView(api, 'r20')).toBe(0);
         });
 
-        test('does not follow rows in view that an update swaps with each other', () => {
+        test('scrolls only for the rows added when the same update sorts rows above the rows in view elsewhere', () => {
             const api = createGrid({ columnDefs: [{ field: 'value', sort: 'asc' }] });
             scrollTo(api, SCROLL_TOP);
 
             api.applyTransaction({
-                update: [
-                    { id: 'r20', value: 23.5 },
-                    { id: 'r21', value: 23.6 },
-                ],
-            });
-
-            expect(api.getDisplayedRowAtIndex(20)!.id).toBe('r22');
-            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
-        });
-
-        test('keeps rows in view when several rows above them are sorted elsewhere', () => {
-            const api = createGrid({ columnDefs: [{ field: 'value', sort: 'asc' }] });
-            scrollTo(api, SCROLL_TOP);
-
-            api.applyTransaction({
-                add: [{ id: 'new', value: -1 }],
+                add: createRows('new', 3).map((row) => ({ ...row, value: -1 })),
                 update: [
                     { id: 'r18', value: 1000 },
                     { id: 'r19', value: 1001 },
                 ],
             });
 
-            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP - ROW_HEIGHT);
-            expect(offsetInView(api, 'r20')).toBe(0);
-        });
-
-        test('keeps rows in view when a distant row is sorted above them', () => {
-            const api = createGrid({ columnDefs: [{ field: 'value', sort: 'asc' }] });
-            scrollTo(api, SCROLL_TOP);
-
-            api.applyTransaction({ add: [{ id: 'new', value: -1 }], update: [{ id: 'r158', value: -2 }] });
-
-            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + 2 * ROW_HEIGHT);
-            expect(offsetInView(api, 'r20')).toBe(0);
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + 3 * ROW_HEIGHT);
+            expect(offsetInView(api, 'r20')).toBe(-2 * ROW_HEIGHT);
         });
 
         test('uses a scroll position whose scroll event has not fired yet', () => {

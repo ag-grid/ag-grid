@@ -1,23 +1,28 @@
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
+import { _getNextRowNodeObjectId } from '../entities/rowNode';
 
-interface SampledRow {
+interface CapturedRow {
     rowNode: RowNode;
-    /** The row's top relative to the current page before the update. Only set on the rows in view. */
-    pageTop?: number;
+    /** The row's height before the update, as a removed row can lose it. */
+    rowHeight: number;
 }
 
 /** The rows in view before a data update, used to keep them in view after it. */
 export interface RowsInViewAnchor {
     /** The page pixel at the top of the viewport before the update. */
     viewportTop: number;
-    /** In display order: the rows in view, and rows sampled above and below them. */
-    rows: SampledRow[];
+    /** Rows created from here on were added by the update. */
+    firstNewObjectId: number;
+    /** In display order, the rows on the page from its first row to the last row in view. */
+    rows: CapturedRow[];
+    /** The position in `rows` of the first row in view. */
+    firstRowInView: number;
 }
 
 /**
- * Records the rows in view, or returns `null` when there is nothing to keep in view. A grid scrolled to the top is
- * not anchored, so rows added at the top come into view.
+ * Records the rows in view and the rows above them, or returns `null` when there is nothing to keep in view. A grid
+ * scrolled to the top is not anchored, so rows added at the top come into view.
  */
 export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | null {
     const { ctrlsSvc, pageBounds, rowContainerHeight, rowModel } = beans;
@@ -32,141 +37,79 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
 
     const pixelOffset = pageBounds.getPixelOffset();
     const viewportTop = top + rowContainerHeight.divStretchOffset;
-    const viewportBottom = bottom + rowContainerHeight.divStretchOffset;
+    const viewportBottom = bottom + rowContainerHeight.divStretchOffset + pixelOffset;
     // rows under the sticky rows are hidden, so cannot be kept in view
-    const firstVisiblePixel = viewportTop + ctrlsSvc.getGridBodyCtrl().stickyTopHeight;
+    const firstVisiblePixel = viewportTop + ctrlsSvc.getGridBodyCtrl().stickyTopHeight + pixelOffset;
     const pageFirstRow = pageBounds.getFirstRow();
     const pageLastRow = pageBounds.getLastRow();
-    const firstRow = Math.max(rowModel.getRowIndexAtPixel(firstVisiblePixel + pixelOffset), pageFirstRow);
-    const rowsInView: SampledRow[] = [];
-    let belowRow = pageLastRow + 1;
-    for (let i = firstRow; i <= pageLastRow; ++i) {
+    const firstRowInView = Math.max(rowModel.getRowIndexAtPixel(firstVisiblePixel), pageFirstRow);
+    const rows: CapturedRow[] = [];
+    let firstInView = -1;
+    for (let i = pageFirstRow; i <= pageLastRow; ++i) {
         const rowNode = rowModel.getRow(i);
-        if (rowNode?.rowTop == null) {
+        if (rowNode?.rowTop == null || rowNode.rowHeight == null) {
             continue;
         }
-        const pageTop = rowNode.rowTop - pixelOffset;
-        if (rowsInView.length && pageTop >= viewportBottom) {
-            belowRow = i;
-            break;
+        if (i >= firstRowInView) {
+            if (firstInView >= 0 && rowNode.rowTop >= viewportBottom) {
+                break;
+            }
+            if (firstInView < 0) {
+                firstInView = rows.length;
+            }
         }
-        rowsInView.push({ rowNode, pageTop });
+        rows.push({ rowNode, rowHeight: rowNode.rowHeight });
     }
-    if (!rowsInView.length) {
+    if (firstInView < 0) {
         return null;
     }
-
-    // twice as many rows either side as are in view, so rows in view re-sorted together, with any rows that were next
-    // to them, have to outnumber the rows they leave behind to be followed
-    const window = 2 * rowsInView.length;
-    const rowsAbove = sampleRows(beans, firstRow - 1, pageFirstRow, -1, window);
-    const rowsBelow = sampleRows(beans, belowRow, pageLastRow, 1, window);
-    return { viewportTop, rows: [...rowsAbove.reverse(), ...rowsInView, ...rowsBelow] };
+    return { viewportTop, firstNewObjectId: _getNextRowNodeObjectId(), rows, firstRowInView: firstInView };
 }
 
-/**
- * Samples every row for `window` rows from `start`, then rows at doubling distances, going in `direction` up to and
- * including `end`.
- */
-function sampleRows(
-    beans: BeanCollection,
-    start: number,
-    end: number,
-    direction: 1 | -1,
-    window: number
-): SampledRow[] {
-    const rows: SampledRow[] = [];
-    const count = (end - start) * direction + 1;
-    for (let distance = 0; distance < count; distance = distance < window ? distance + 1 : distance * 2) {
-        const rowNode = beans.rowModel.getRow(start + distance * direction);
-        if (rowNode) {
-            rows.push({ rowNode });
-        }
-    }
-    return rows;
-}
-
-/** The row's index if it is still displayed, as a row that was removed can keep a stale one. */
-function getDisplayedIndex(beans: BeanCollection, rowNode: RowNode): number | null {
+/** The row's index if it is still displayed on the page, as a row that was removed can keep a stale one. */
+function getIndexOnPage(beans: BeanCollection, rowNode: RowNode): number | null {
+    const { pageBounds, rowModel } = beans;
     const rowIndex = rowNode.rowIndex;
-    return rowIndex != null && rowNode.rowTop != null && beans.rowModel.getRow(rowIndex) === rowNode ? rowIndex : null;
-}
-
-/**
- * Whether each row is in every largest set of rows still in their previous order, given their indexes now in their
- * previous order.
- */
-function getAlwaysOrderedRows(indexes: number[]): boolean[] {
-    const len = indexes.length;
-    const ranks = new Map([...indexes].sort((a, b) => a - b).map((index, rank) => [index, rank]));
-    // the longest ordered sets ending at, and starting from, each row
-    const ending = getLongestOrderedEnding(indexes.map((index) => ranks.get(index)!));
-    const starting = getLongestOrderedEnding(indexes.map((index) => len - 1 - ranks.get(index)!).reverse()).reverse();
-    const longest = Math.max(...ending);
-    const inLongest = ending.map((length, i) => length + starting[i] - 1 === longest);
-    // a row is in every largest set when no other row in one can take its place in the set
-    const rowsAtPlace = new Array<number>(longest + 1).fill(0);
-    for (let i = 0; i < len; ++i) {
-        if (inLongest[i]) {
-            ++rowsAtPlace[ending[i]];
-        }
+    if (rowIndex == null || rowNode.rowTop == null || rowModel.getRow(rowIndex) !== rowNode) {
+        return null;
     }
-    return inLongest.map((inSet, i) => inSet && rowsAtPlace[ending[i]] === 1);
-}
-
-/** The length of the longest increasing run of ranks ending at each rank, in O(n log n) with a max Fenwick tree. */
-function getLongestOrderedEnding(ranks: number[]): number[] {
-    const tree = new Array<number>(ranks.length + 1).fill(0);
-    return ranks.map((rank) => {
-        let before = 0;
-        for (let i = rank; i > 0; i -= i & -i) {
-            before = Math.max(before, tree[i]);
-        }
-        const length = before + 1;
-        for (let i = rank + 1; i < tree.length; i += i & -i) {
-            tree[i] = Math.max(tree[i], length);
-        }
-        return length;
-    });
+    return rowIndex >= pageBounds.getFirstRow() && rowIndex <= pageBounds.getLastRow() ? rowIndex : null;
 }
 
 /**
- * Scrolls by however far the rows in view have moved, so they stay where they were in the viewport, then anchors to
- * the row it followed where that row is now. Returns `true` if the grid scrolled.
- *
- * Rows only move together, keeping their order, when rows are added or removed above them, while rows an update
- * re-sorts change their order. So the largest set of sampled rows still in their previous order is taken as the rows
- * that did not move on their own, and the first row in view that is in every such set is followed.
+ * Scrolls by the height of the rows added above the first row in view still displayed, less the height of the rows
+ * removed above it, so the rows in view stay where they were. Rows that only moved, such as rows an update re-sorts
+ * or filters, do not scroll the grid. Returns `true` if the grid scrolled.
  */
 export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnchor): boolean {
-    const { ctrlsSvc, pageBounds, rowContainerHeight } = beans;
-    const firstRow = pageBounds.getFirstRow();
-    const lastRow = pageBounds.getLastRow();
-    const rows: SampledRow[] = [];
-    const indexes: number[] = [];
-    for (const row of anchor.rows) {
-        const rowIndex = getDisplayedIndex(beans, row.rowNode);
-        // skips rows removed or moved off the page
-        if (rowIndex != null && rowIndex >= firstRow && rowIndex <= lastRow) {
-            rows.push(row);
-            indexes.push(rowIndex);
-        }
+    const { ctrlsSvc, pageBounds, rowContainerHeight, rowModel } = beans;
+    const { rows, firstRowInView, firstNewObjectId } = anchor;
+    let anchorPosition = -1;
+    let anchorIndex: number | null = null;
+    for (let i = firstRowInView; i < rows.length && anchorIndex == null; ++i) {
+        anchorIndex = rows[i].rowNode.destroyed ? null : getIndexOnPage(beans, rows[i].rowNode);
+        anchorPosition = i;
     }
-    if (!rows.length) {
-        return false;
-    }
-    const alwaysOrdered = getAlwaysOrderedRows(indexes);
-    const followed = rows.find(({ pageTop }, i) => pageTop != null && alwaysOrdered[i]);
-    if (!followed) {
+    if (anchorIndex == null) {
         return false;
     }
 
-    const newPageTop = followed.rowNode.rowTop! - pageBounds.getPixelOffset();
-    anchor.viewportTop += newPageTop - followed.pageTop!;
-    anchor.rows = [{ ...followed, pageTop: newPageTop }];
-    // compared even when the row did not move, as a change in height scaling can move it on screen
+    let shift = 0;
+    for (let i = 0; i < anchorPosition; ++i) {
+        if (rows[i].rowNode.destroyed) {
+            shift -= rows[i].rowHeight;
+        }
+    }
+    for (let i = pageBounds.getFirstRow(); i < anchorIndex; ++i) {
+        const rowNode = rowModel.getRow(i);
+        if (rowNode && rowNode.__objectId >= firstNewObjectId) {
+            shift += rowNode.rowHeight ?? 0;
+        }
+    }
+
+    // compared even when nothing was added or removed, as a change in height scaling can move the rows on screen
     const scrollFeature = ctrlsSvc.getScrollFeature();
-    const scrollTop = rowContainerHeight.getScrollPositionForPixel(anchor.viewportTop);
+    const scrollTop = rowContainerHeight.getScrollPositionForPixel(anchor.viewportTop + shift);
     // the capture read the viewport, and setting the position invalidates the cache, so the cache is current here
     const previousScrollTop = scrollFeature.getVScrollPosition().top;
     if (scrollTop === previousScrollTop) {

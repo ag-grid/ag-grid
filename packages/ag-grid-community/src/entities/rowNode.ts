@@ -31,6 +31,11 @@ export const ROW_ID_PREFIX_BOTTOM_PINNED = 'b-';
 
 let OBJECT_ID_SEQUENCE = 0;
 
+/** The `__objectId` the next row node created will have, so rows created after this call have it or a later one. */
+export function _getNextRowNodeObjectId(): number {
+    return OBJECT_ID_SEQUENCE;
+}
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowNode<TData = any>
     implements IEventEmitter<RowNodeEventType>, IAgEventEmitter<RowNodeEventType>, IRowNode<TData>
