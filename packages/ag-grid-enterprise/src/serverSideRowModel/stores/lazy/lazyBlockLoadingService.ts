@@ -18,11 +18,8 @@ import type { ServerSideRowModel } from '../../serverSideRowModel';
 import type { LazyCache } from './lazyCache';
 import type { LazyStore } from './lazyStore';
 
-/**
- * A block whose loads have been superseded this many times in a row keeps its next in-flight
- * request through a soft refresh, so refreshes faster than the datasource still complete. That
- * response may predate the latest refresh, as every in-flight response did before supersession.
- */
+// a block's next load is kept after this many superseded in a row, so refreshes faster than the
+// datasource still complete (possibly with data predating the latest refresh)
 const MAX_CONSECUTIVE_SUPERSEDED_LOADS = 3;
 
 export class LazyBlockLoadingService extends BeanStub implements NamedBean {
@@ -67,10 +64,8 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     }
 
     /**
-     * Supersedes the cache's in-flight requests covering rows awaiting refresh: their responses
-     * are dropped and their rows become eligible to be requested again. Each superseded request
-     * keeps its concurrent request slot until the datasource settles it. A request is kept once
-     * its block reaches MAX_CONSECUTIVE_SUPERSEDED_LOADS, so its response completes the refresh.
+     * Drops the responses of in-flight requests covering rows awaiting refresh, so the rows are requested
+     * again; a superseded request keeps its concurrent request slot until the datasource settles it.
      */
     public invalidateLoads(cache: LazyCache) {
         const loadingNodes = this.cacheLoadingNodesMap.get(cache);
