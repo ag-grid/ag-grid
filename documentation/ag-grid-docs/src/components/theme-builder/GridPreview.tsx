@@ -134,7 +134,10 @@ const GridPreview = () => {
                                     rebuiltGridRef.current = undefined;
                                     if (rebuilt?.previewKey === previewKey) {
                                         api.setState(rebuilt.state);
-                                        rebuilt.chartModels.forEach((chartModel) => api.restoreChart(chartModel));
+                                        // A saved palette would override the newly configured one.
+                                        rebuilt.chartModels.forEach((chartModel) =>
+                                            api.restoreChart({ ...chartModel, chartPalette: undefined })
+                                        );
                                     } else if (config.showIntegratedChartPopup) {
                                         api.createRangeChart({
                                             cellRange: {

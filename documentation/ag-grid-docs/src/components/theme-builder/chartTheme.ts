@@ -49,7 +49,7 @@ const resolveParam = (param: string, type: 'color' | 'fontFamily') =>
 
 const resolveColor = (param: string) => {
     const value = resolveParam(param, 'color');
-    return value ? RGBAColor.parseCss(value)?.toCSSHex() : undefined;
+    return value ? RGBAColor.reinterpretCss(value)?.toCSSHex() : undefined;
 };
 
 type ChartFontFamily = NonNullable<AgChartThemeParams['fontFamily']>;
