@@ -172,6 +172,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         }
 
         const rowCountBefore = this.cache.getRowCount();
+        // the transaction's own row count counts every remove it makes, while the count before it may be an estimate
+        const countedRemoves =
+            transaction.rowCount == null
+                ? undefined
+                : (this.cache.filterStaleRows(transaction.remove, transaction.version, [])?.length ?? 0);
         const result = this.applyTransactionToCache(transaction);
 
         // The loading blocks may have been read before this transaction, so it is applied to them again when they load
@@ -181,7 +186,10 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 transaction,
                 addedIds: ids(result.add),
                 removedIds: ids(result.remove),
-                rowCountDelta: this.cache.getRowCount() - rowCountBefore,
+                rowCountDelta:
+                    countedRemoves == null
+                        ? this.cache.getRowCount() - rowCountBefore
+                        : (result.add?.length ?? 0) - countedRemoves,
             });
         }
         return result;

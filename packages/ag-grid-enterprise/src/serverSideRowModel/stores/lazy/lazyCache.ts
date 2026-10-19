@@ -927,13 +927,27 @@ export class LazyCache extends BeanStub {
      * includes them.
      */
     public restoreAddedRows({ transaction, addedIds }: HeldTransaction, overwrittenIds: Set<string>): void {
+        // the surviving rows are taken out and inserted again with their nodes, keeping their data and state
         const survivors = [...addedIds].filter((id) => this.isNodeInCache(id));
+        for (const node of this.removeRowNodes(survivors, undefined, true)) {
+            this.removedNodeCache.set(node.id!, node);
+        }
         const restoredIds = new Set([...survivors, ...overwrittenIds]);
-        const rows = transaction.add!.filter((data) => restoredIds.has(this.getRowId(data)!));
-        this.removeRowNodes(survivors);
+        const rows = transaction
+            .add!.map((data) => this.getRowId(data)!)
+            .filter((id) => restoredIds.has(id))
+            .map(
+                (id) =>
+                    this.removedNodeCache.get(id)?.data ?? transaction.add!.find((data) => this.getRowId(data) === id)
+            );
         const addIndex = transaction.addIndex != null && transaction.addIndex >= 0 ? transaction.addIndex : undefined;
-        this.insertRowNodes(rows, addIndex, transaction.version);
-        this.numberOfRows -= rows.length - survivors.length;
+        const insertedNodes = this.insertRowNodes(rows, addIndex);
+        for (const node of insertedNodes) {
+            if (overwrittenIds.has(node.id!)) {
+                this.setRowDataVersion(node, transaction.version);
+            }
+        }
+        this.numberOfRows -= insertedNodes.length - survivors.length;
     }
 
     /** Adds back rows removed again by a replayed transaction, which the row count already excludes. */
@@ -1141,16 +1155,16 @@ export class LazyCache extends BeanStub {
             }
         }
 
+        // After the row count is set, so replayed removes reduce it, and before rows past the end are deleted
+        if (newerTransactions.length) {
+            const overwrittenIds = new Set(heldAddedIdsInCache.filter((id) => !this.isNodeInCache(id)));
+            this.store.replayTransactions(newerTransactions, loadedIds, overwrittenIds);
+        }
+
         if (this.isLastRowKnown) {
             // delete any rows after the last index
             const lazyNodesAfterStoreEnd = this.nodeMap.filter((lazyNode) => lazyNode.index >= this.numberOfRows);
             lazyNodesAfterStoreEnd.forEach((lazyNode) => this.destroyRowAtIndex(lazyNode.index));
-        }
-
-        // After the row count is set, so replayed removes reduce it
-        if (newerTransactions.length) {
-            const overwrittenIds = new Set(heldAddedIdsInCache.filter((id) => !this.isNodeInCache(id)));
-            this.store.replayTransactions(newerTransactions, loadedIds, overwrittenIds);
         }
 
         // Sort here — before fireStoreUpdatedEvent — so the grid sees sorted data in a single
@@ -1461,7 +1475,8 @@ export class LazyCache extends BeanStub {
         });
     }
 
-    public removeRowNodes(idsToRemove: string[], newRowCount?: number): RowNode[] {
+    /** @param keepNodes take the rows out without destroying their nodes, so they can be inserted again */
+    public removeRowNodes(idsToRemove: string[], newRowCount?: number, keepNodes?: boolean): RowNode[] {
         const removedNodes: RowNode[] = [];
         const nodesToVerify: RowNode[] = [];
 
@@ -1487,7 +1502,11 @@ export class LazyCache extends BeanStub {
             if (idsToRemoveSet.has(node.id)) {
                 idsToRemoveSet.delete(node.id);
 
-                this.destroyRowAtIndex(Number(stringIndex));
+                if (keepNodes) {
+                    this.nodeMap.delete(node);
+                } else {
+                    this.destroyRowAtIndex(Number(stringIndex));
+                }
                 removedNodes.push(node.node);
                 deletedNodeCount += 1;
                 continue;
