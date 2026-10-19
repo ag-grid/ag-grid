@@ -45,8 +45,21 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     // the last block whose datasource called success() or fail() before getRows returned
     private syncLoadedBlock?: BlockToLoad = undefined;
 
+    // onGridReady is delivered from the async event queue, so a microtask load would call getRows before it
+    private isGridReadyDelivered = false;
+
     public postConstruct() {
         this.maxOutboundRequests = _getMaxConcurrentDatasourceRequests(this.gos);
+
+        const onGridReady = () => {
+            this.isGridReadyDelivered = true;
+            if (this.isCheckQueued) {
+                this.isCheckQueued = false;
+                this.queueLoadCheck();
+            }
+        };
+        this.eventSvc.addListener('gridReady', onGridReady, true);
+        this.addDestroyFunc(() => this.eventSvc.removeListener('gridReady', onGridReady, true));
     }
 
     public subscribe(cache: LazyCache) {
@@ -58,14 +71,17 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     }
 
     /**
-     * Queues a microtask to check if any blocks need to be loaded. A microtask runs after the current render
-     * but before the browser paints, so stubs filled by a synchronous datasource are never painted.
+     * Queues a microtask to check if any blocks need to be loaded, so a synchronous datasource fills the stubs
+     * rendered in this task before the browser paints them.
      */
     public queueLoadCheck() {
         if (this.isCheckQueued) {
             return;
         }
         this.isCheckQueued = true;
+        if (!this.isGridReadyDelivered) {
+            return;
+        }
         queueMicrotask(() => {
             if (!this.isAlive()) {
                 return;
@@ -79,8 +95,9 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             if (!nextBlockToLoad) {
                 return;
             }
-            if (isSameBlock(nextBlockToLoad, syncLoadedBlock)) {
-                // the block did not fill its stubs, so retrying in a microtask would never yield to the browser
+            if (syncLoadedBlock && (!nextBlockToLoad.inViewport || isSameBlock(nextBlockToLoad, syncLoadedBlock))) {
+                // only rendered rows need filling before paint; chaining further synchronous loads in microtasks
+                // would never yield to the browser
                 window.setTimeout(() => this.queueLoadCheck());
                 return;
             }
@@ -209,7 +226,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         getRowsReturned = true;
     }
 
-    private getBlockToLoad() {
+    private getBlockToLoad(): (BlockToLoad & { inViewport: boolean }) | undefined {
         const firstRowInViewport = this.rowRenderer.firstRenderedRow;
         const lastRowInViewport = this.rowRenderer.lastRenderedRow;
 
@@ -240,6 +257,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
                 return {
                     cache: cache,
                     index: cache.getBlockStartIndex(lazyNode.index),
+                    inViewport: true,
                 };
             }
         }
@@ -295,6 +313,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             : {
                   cache: lazyCache,
                   index: lazyCache.getBlockStartIndex(lazyIndex),
+                  inViewport: false,
               };
     }
 

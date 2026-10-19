@@ -1023,17 +1023,12 @@ describe('Row Selection Grid API', () => {
                         ├── year "Year" width:200
                         └── date "Date" width:200
                     `);
-                await new GridRows(api, `group selection state updated after add and remove transaction setup`).check(`
-                    ROOT id:<no-id>
-                    ├── GROUP-leafGroup collapsed id:':{"country":"United States"}' ag-Grid-AutoColumn:"United States" country:"United States"
-                    ├── GROUP-leafGroup collapsed id:':{"country":"Russia"}' ag-Grid-AutoColumn:"Russia" country:"Russia"
-                    ├── GROUP-leafGroup collapsed id:':{"country":"Australia"}' ag-Grid-AutoColumn:"Australia" country:"Australia"
-                    ├── GROUP-leafGroup collapsed id:':{"country":"Canada"}' ag-Grid-AutoColumn:"Canada" country:"Canada"
-                    ├── GROUP-leafGroup collapsed id:':{"country":"Norway"}' ag-Grid-AutoColumn:"Norway" country:"Norway"
-                    ├── GROUP-leafGroup collapsed id:':{"country":"China"}' ag-Grid-AutoColumn:"China" country:"China"
-                    ├── GROUP-leafGroup collapsed id:':{"country":"Zimbabwe"}' ag-Grid-AutoColumn:"Zimbabwe" country:"Zimbabwe"
-                    └── GROUP-leafGroup collapsed id:':{"country":"Netherlands"}' ag-Grid-AutoColumn:"Netherlands" country:"Netherlands"
-                `);
+                await new GridRows(api, `group selection state updated after add and remove transaction setup`).check(
+                    `
+                        ROOT id:<no-id>
+                        └── LEAF_GROUP collapsed id:rowIndex:0
+                    `
+                );
 
                 await waitForEvent('firstDataRendered', api);
 

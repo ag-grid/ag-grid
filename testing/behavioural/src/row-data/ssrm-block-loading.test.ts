@@ -136,6 +136,65 @@ describe('SSRM block loading', () => {
         expect({ stub: loaded.stub, data: loaded.data }).toEqual({ stub: false, data: rowData[1500] });
     });
 
+    test('the first request waits for onGridReady', async () => {
+        const calls: string[] = [];
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }],
+            rowModelType: 'serverSide',
+            onGridReady: () => calls.push('onGridReady'),
+            serverSideDatasource: {
+                getRows: (params) => {
+                    calls.push('getRows');
+                    params.success({ rowData: [{ id: 0 }], rowCount: 1 });
+                },
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        expect(calls).toEqual(['onGridReady', 'getRows']);
+    });
+
+    test('a synchronous datasource refreshes one block per task after the rendered rows', async () => {
+        const rowData = Array.from({ length: 30 }, (_, i) => ({ id: i }));
+        const requests: [number, number][] = [];
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }],
+            rowModelType: 'serverSide',
+            cacheBlockSize: 10,
+            getRowId: (params) => String(params.data.id),
+            serverSideDatasource: {
+                getRows: (params) => {
+                    const { startRow = 0, endRow = rowData.length } = params.request;
+                    requests.push([startRow, endRow]);
+                    params.success({ rowData: rowData.slice(startRow, endRow), rowCount: rowData.length });
+                },
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+        // pull every block into the cache
+        for (let i = 0; i < rowData.length; i++) {
+            api.getDisplayedRowAtIndex(i);
+        }
+        await waitFor(() => expect(requests).toHaveLength(3));
+
+        requests.length = 0;
+        const refreshed = waitForEvent('storeRefreshed', api);
+        api.refreshServerSide({ purge: false });
+        for (let i = 0; i < 10; i++) {
+            await Promise.resolve();
+        }
+        expect(requests).toEqual([[0, 10]]);
+
+        await refreshed;
+        expect(requests).toHaveLength(3);
+        expect(requests).toEqual(
+            expect.arrayContaining([
+                [10, 20],
+                [20, 30],
+            ])
+        );
+    });
+
     test('maxBlocksInCache evicts the least-recently-used block once the cap is exceeded', async () => {
         const totalRows = 500;
         const rowData = Array.from({ length: totalRows }, (_, i) => ({ id: i, value: `Row ${i}` }));
