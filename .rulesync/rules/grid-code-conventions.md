@@ -72,3 +72,15 @@ setTimeout(() => {
 ```
 
 Only needed when the callback reaches back into the component or grid — self-contained deferred work does not need the guard.
+
+## Self-check before review
+
+Run through this list before opening a PR or asking for review. Each item is a class of finding that automated review kept raising across several PRs.
+
+- **Existing setups keep working.** With no new option set and no new field returned, behaviour matches `latest`: event order and count, `getRows` calls and request shape, scroll position, timing. New behaviour sits behind an opt-in or activates only when the new input is present. Deprecated options keep working.
+- **Late async results.** A response, timer or callback can arrive after a refresh, purge, eviction or destroy. Tag each request with a generation or version and drop results that no longer match. A late result must never re-create state that was removed.
+- **Grid lifecycle order.** Deferred work must not run before `onGridReady` or after the component is destroyed (see *Guard deferred work against teardown*).
+- **Row kinds.** Check the change against pinned rows, sticky rows, group rows and footers, grand totals, detail rows, server-side stub rows, and duplicate IDs within one call.
+- **Bounded work.** No unbounded retry or reload loops (cap them), no scans over every row on each update, no chain of loads in a single task.
+- **Results don't alias input.** Never return the caller's own array or object as part of a result.
+- **Stop when the edge cases narrow.** If two review rounds in a row find ever-narrower combinations of the same mechanism, the design is the problem. Stop patching and propose a simpler one.
