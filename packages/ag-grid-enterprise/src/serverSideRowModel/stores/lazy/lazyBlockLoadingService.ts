@@ -55,6 +55,16 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     }
 
     /**
+     * Supersedes every in-flight request for the cache: their responses are dropped and
+     * their rows become eligible to be requested again.
+     */
+    public invalidateLoads(cache: LazyCache) {
+        if (this.cacheLoadingNodesMap.has(cache)) {
+            this.cacheLoadingNodesMap.set(cache, new Set());
+        }
+    }
+
+    /**
      * Queues a microtask to check if any blocks need to be loaded.
      */
     public queueLoadCheck() {
@@ -143,29 +153,30 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         };
 
         const loadingNodes = this.cacheLoadingNodesMap.get(cache)!;
-        const removeNodesFromLoadingMap = () => {
-            for (let i = 0; i < endRow - startRow; i++) {
-                loadingNodes.delete(startRow + i);
+        for (let i = startRow; i < endRow; i++) {
+            loadingNodes.add(i);
+        }
+
+        let settled = false;
+        const settle = (applyResult: () => void) => {
+            if (settled) {
+                return;
+            }
+            settled = true;
+            this.onLoadComplete();
+            // a refresh or destroy replaces the cache's loading set, superseding this request
+            if (this.cacheLoadingNodesMap.get(cache) !== loadingNodes) {
+                return;
+            }
+            applyResult();
+            for (let i = startRow; i < endRow; i++) {
+                loadingNodes.delete(i);
             }
         };
 
-        const addNodesToLoadingMap = () => {
-            for (let i = 0; i < endRow - startRow; i++) {
-                loadingNodes.add(startRow + i);
-            }
-        };
-
-        const success = (params: LoadSuccessParams) => {
-            this.onLoadComplete();
-            cache.onLoadSuccess(startRow, endRow - startRow, params);
-            removeNodesFromLoadingMap();
-        };
-
-        const fail = () => {
-            this.onLoadComplete();
-            cache.onLoadFailed(startRow, endRow - startRow);
-            removeNodesFromLoadingMap();
-        };
+        const success = (params: LoadSuccessParams) =>
+            settle(() => cache.onLoadSuccess(startRow, endRow - startRow, params));
+        const fail = () => settle(() => cache.onLoadFailed(startRow, endRow - startRow));
 
         const isRootStore = parentNode.level === -1;
         const store = isRootStore ? cache.store : undefined;
@@ -179,7 +190,6 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             needsGrandTotal,
         });
 
-        addNodesToLoadingMap();
         this.outboundRequests += 1;
         cache.getSsrmParams().datasource?.getRows(params);
     }

@@ -616,7 +616,7 @@ export class LazyCache extends BeanStub {
         const results: { [key: string]: any } = {};
         for (const blockStart of Object.keys(blockStates)) {
             const sortedStates = [...blockStates[blockStart]].sort(
-                (a, b) => (statePriorityMap[a] ?? 0) - (statePriorityMap[b] ?? 0)
+                (a, b) => (statePriorityMap[b] ?? 0) - (statePriorityMap[a] ?? 0)
             );
             const priorityState = sortedStates[0];
 
@@ -786,7 +786,9 @@ export class LazyCache extends BeanStub {
             const rowBlockStart = this.getBlockStartIndex(index);
             const rowBlockInViewport = rowBlockStart >= firstRowBlockStart && rowBlockStart <= lastRowBlockStart;
 
-            return !rowBlockInViewport && !this.isNodeCached(node);
+            return (
+                !rowBlockInViewport && !this.isNodeCached(node) && !this.lazyBlockLoadingSvc.isRowLoading(this, index)
+            );
         });
 
         if (disposableNodes.length === 0) {
@@ -1062,6 +1064,8 @@ export class LazyCache extends BeanStub {
             }
             this.nodesToRefresh.add(lazyNode.node);
         });
+        // responses already in flight were fetched before the refresh, so must not complete it
+        this.lazyBlockLoadingSvc.invalidateLoads(this);
         this.lazyBlockLoadingSvc.queueLoadCheck();
 
         if (this.isLastRowKnown && this.numberOfRows === 0) {
