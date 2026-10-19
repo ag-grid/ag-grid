@@ -86,5 +86,5 @@ Run through this list before opening a PR or asking for review. Each item is a c
 - **Read the effective config.** Use the merged value (defaults, column types, grid options, theme chain) through the core services, not one source.
 - **Applied, not requested, sizes.** Use widths and heights after min, max and pinned caps.
 - **Bounded work.** No unbounded retry or reload loops (cap them), no scans over every row on each update, no chain of loads in a single task.
-- **Results don't alias input.** Never return the caller's own array or object as part of a result.
+- **Result containers are fresh.** When a returned array or map is the caller's to mutate, build a new one rather than handing back an input container or internal state. Application row-data objects are the exception: keep their identity, as `getSelectedRows()` and transactions rely on it.
 - **Stop when the edge cases narrow.** If two review rounds in a row find ever-narrower combinations of the same mechanism, the design is the problem. Stop patching and propose a simpler one.
