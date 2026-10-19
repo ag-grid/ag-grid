@@ -210,12 +210,13 @@ describe('SSRM versioned transactions', () => {
     test('a row removed inside one of two loading blocks stays removed from the row count', async () => {
         const { api, pending, settle } = await createGrid(1, { maxConcurrentDatasourceRequests: -1 });
         api.ensureIndexVisible(35);
-        await waitFor(() => expect(pending.filter((p) => p.request.startRow >= 20).length).toBeGreaterThan(1));
+        await waitFor(() => expect(pending.filter((p) => p.request.startRow! >= 20).length).toBeGreaterThan(1));
         const blocks = pending.splice(0);
 
         const before = serverRows;
-        serverRows = serverRows.filter((row) => row.id !== String(blocks[0].request.startRow + 1));
-        api.applyServerSideTransaction({ version: 2, remove: [before[blocks[0].request.startRow + 1]] });
+        const removed = before[blocks[0].request.startRow! + 1];
+        serverRows = serverRows.filter((row) => row !== removed);
+        api.applyServerSideTransaction({ version: 2, remove: [removed] });
 
         for (const params of blocks) {
             respond(params, 1, before);
