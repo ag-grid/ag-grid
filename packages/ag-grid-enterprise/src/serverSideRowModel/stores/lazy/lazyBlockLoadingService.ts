@@ -42,7 +42,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     private nextBlockToLoad?: BlockToLoad = undefined;
     private loaderTimeout?: number;
 
-    // the last block whose datasource called success() or fail() in the task that requested it
+    // the last block whose success() or fail() was called while isInLoadTask was set
     private syncLoadedBlock?: BlockToLoad = undefined;
     // true from a request until the next macrotask, so later loads and completions in that task can be told apart
     private isInLoadTask = false;
@@ -77,7 +77,8 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
     /**
      * Queues a microtask to check if any blocks need to be loaded, so a synchronous datasource fills the stubs
-     * rendered in this task before the browser paints them.
+     * rendered in this task before the browser paints them. Until onGridReady has been delivered it only marks the
+     * check as queued, and the gridReady listener runs it.
      */
     public queueLoadCheck() {
         if (this.isCheckQueued) {
