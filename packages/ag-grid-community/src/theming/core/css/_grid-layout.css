@@ -540,7 +540,17 @@
     width: 100%;
     height: 1em;
     border-radius: 0.25rem;
-    animation: ag-skeleton-loading 1.5s ease-in-out 0.5s infinite;
+
+    @media (prefers-reduced-motion: no-preference) {
+        animation: ag-skeleton-loading 1.5s ease-in-out 0.5s infinite;
+    }
+
+    /* forced colors overrides non-system background colors, so dim a system color with opacity instead */
+    @media (forced-colors: active) {
+        background-color: CanvasText;
+        opacity: 0.3;
+        animation-name: ag-skeleton-loading-forced-colors;
+    }
 }
 
 .ag-right-aligned-cell .ag-skeleton-effect {
@@ -558,6 +568,20 @@
 
     100% {
         background-color: var(--ag-row-loading-skeleton-effect-color);
+    }
+}
+
+@keyframes ag-skeleton-loading-forced-colors {
+    0% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 0.12;
+    }
+
+    100% {
+        opacity: 0.3;
     }
 }
 
