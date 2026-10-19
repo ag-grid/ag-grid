@@ -4,21 +4,18 @@ export class CustomLoadingCellRenderer implements ILoadingCellRendererComp {
     eGui!: HTMLElement;
 
     init(params: ILoadingCellRendererParams & { loadingMessage: string }) {
-        this.eGui = document.createElement('div');
+        const wrapper = (this.eGui = document.createElement('div'));
+        wrapper.classList.add('ag-custom-loading-cell');
         if (params.node.failedLoad) {
-            this.eGui.innerHTML = `
-                <div class="ag-custom-loading-cell" style="padding-left: 10px; line-height: 25px;">
-                    <i class="fas fa-times"></i>
-                    <span>Data failed to load</span>
-                </div>
+            wrapper.innerHTML = `
+                <i class="fas fa-times"></i>
+                <span>Data failed to load</span>
             `;
             return;
         }
-        this.eGui.innerHTML = `
-            <div class="ag-custom-loading-cell" style="padding-left: 10px; line-height: 25px;">  
-                <i class="fas fa-spinner fa-pulse"></i> 
-                <span>${params.loadingMessage} </span>
-            </div>
+        wrapper.innerHTML = `
+            <i class="fas fa-spinner fa-pulse"></i> 
+            <span>${params.loadingMessage} </span>
         `;
     }
 
