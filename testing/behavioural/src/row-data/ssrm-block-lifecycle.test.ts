@@ -40,7 +40,7 @@ describe('SSRM block lifecycle', () => {
             columnDefs: [{ field: 'id' }, { field: 'value' }],
             rowModelType: 'serverSide',
             cacheBlockSize: 100,
-            maxBlocksInCache: 2,
+            maxBlocksInCache: 1,
             rowBuffer: 0,
             suppressRowVirtualisation: false,
             getRowId: (params) => String(params.data.id),
@@ -66,10 +66,12 @@ describe('SSRM block lifecycle', () => {
         await waitFor(() => expect(!!api.getRowNode('150')).toBe(true));
         expect(blockStatus(api, 9)).toBe('loading');
 
+        // Once its response lands, the out-of-view block is no longer protected and is evicted.
         respond(pending[0], rowData);
         await flush();
-        expect(Object.keys(api.getCacheBlockState()).length).toBeLessThanOrEqual(2);
+        expect(Object.keys(api.getCacheBlockState())).toEqual(['1']);
         expect(!!api.getRowNode('150')).toBe(true);
+        expect(api.getRowNode('950')).toBeUndefined();
     });
 
     test('a block in flight when a soft refresh starts is requested again, and its stale response does not finish the refresh', async () => {

@@ -56,7 +56,8 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
     /**
      * Supersedes every in-flight request for the cache: their responses are dropped and
-     * their rows become eligible to be requested again.
+     * their rows become eligible to be requested again. Each superseded request keeps its
+     * concurrent request slot until the datasource settles it.
      */
     public invalidateLoads(cache: LazyCache) {
         if (this.cacheLoadingNodesMap.has(cache)) {
@@ -168,10 +169,11 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             if (this.cacheLoadingNodesMap.get(cache) !== loadingNodes) {
                 return;
             }
-            applyResult();
+            // cleared first so the store update fired by the result can evict these rows
             for (let i = startRow; i < endRow; i++) {
                 loadingNodes.delete(i);
             }
+            applyResult();
         };
 
         const success = (params: LoadSuccessParams) =>
