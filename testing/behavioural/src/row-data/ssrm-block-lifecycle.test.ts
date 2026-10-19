@@ -147,8 +147,10 @@ describe('SSRM block lifecycle', () => {
             await flush();
         }
 
-        expect(refreshFinishedCount).toBeGreaterThan(0);
-        expect(api.getRowNode('0')?.data.value).not.toBe('v1 Row 0');
+        // The loads answered at ticks 3-5 are superseded; the fourth load is kept and answered at tick 6.
+        // Its block then starts counting again, so ticks 7-10 do not finish another refresh.
+        expect(refreshFinishedCount).toBe(1);
+        expect(api.getRowNode('0')?.data.value).toBe('v6 Row 0');
     });
 
     test('a soft refresh does not supersede the first load of a block', async () => {

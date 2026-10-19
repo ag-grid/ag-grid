@@ -20,7 +20,8 @@ import type { LazyStore } from './lazyStore';
 
 /**
  * A block whose loads have been superseded this many times in a row keeps its next in-flight
- * request through a soft refresh, so refreshes faster than the datasource still complete.
+ * request through a soft refresh, so refreshes faster than the datasource still complete. That
+ * response may predate the latest refresh, as every in-flight response did before supersession.
  */
 const MAX_CONSECUTIVE_SUPERSEDED_LOADS = 3;
 
