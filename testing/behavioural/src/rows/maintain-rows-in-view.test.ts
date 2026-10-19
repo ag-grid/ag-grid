@@ -8,6 +8,7 @@ import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     ExternalFilterModule,
+    PaginationModule,
     ScrollApiModule,
 } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
@@ -34,6 +35,7 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             ServerSideRowModelApiModule,
             ScrollApiModule,
             ExternalFilterModule,
+            PaginationModule,
             RowGroupingModule,
         ],
     });
@@ -111,6 +113,33 @@ describe('maintainRowsInViewOnDataUpdate', () => {
 
             expect(getViewport(api).scrollTop).toBe(SCROLL_TOP - 2 * ROW_HEIGHT);
             expect(offsetInView(api, 'r21')).toBe(ROW_HEIGHT);
+        });
+
+        test('keeps the rows after the rows in view in view when every row in view is removed', () => {
+            const api = createGrid();
+            scrollTo(api, SCROLL_TOP + 10);
+
+            api.applyTransaction({ remove: createRows('r', 40) });
+
+            expect(getViewport(api).scrollTop).toBe(0);
+            expect(api.getDisplayedRowAtIndex(0)!.id).toBe('r40');
+        });
+
+        test.each([
+            ['added', (api: GridApi) => api.applyTransaction({ add: createRows('new', 2), addIndex: 0 }), 2],
+            ['removed', (api: GridApi) => api.applyTransaction({ remove: [{ id: 'r0' }] as Row[] }), -1],
+        ])('keeps rows in view when rows are %s before the page', (_, update, rowsAdded) => {
+            const api = createGrid({ pagination: true, paginationPageSize: 100, paginationPageSizeSelector: false });
+            api.paginationGoToPage(1);
+            scrollTo(api, SCROLL_TOP);
+            const offsetInPage = (id: string) =>
+                api.getRowNode(id)!.rowTop! - api.getDisplayedRowAtIndex(100)!.rowTop! - getViewport(api).scrollTop;
+            expect(offsetInPage('r120')).toBe(0);
+
+            update(api);
+
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + rowsAdded * ROW_HEIGHT);
+            expect(offsetInPage('r120')).toBe(0);
         });
 
         test('does not scroll when rows are added below the rows in view', () => {
