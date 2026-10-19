@@ -6,6 +6,7 @@ import {
     FakeHScrollComp,
     FakeVScrollComp,
     GridBodyCtrl,
+    _getLayoutCssClass,
     _isCellSelectionEnabled,
     _isMultiRowSelection,
 } from 'ag-grid-community';
@@ -32,12 +33,14 @@ const GridBodyComp = () => {
     const [preventRowAnimationClass, setPreventRowAnimationClass] = useState<string | null>(null);
     const [pinnedColumnsOverflowing, setPinnedColumnsOverflowing] = useState(false);
 
-    // we initialise layoutClass to 'ag-layout-normal', because if we don't, the comp will initially
-    // render with no width (as ag-layout-normal sets width to 0, which is needed for flex) which
-    // gives the grid a massive width, which then renders a massive amount of columns. this problem
-    // is due to React been async, for the non-async version (ie when not using React) this is not a
-    // problem as the UI will finish initialising before we set data.
-    const [layoutClass, setLayoutClass] = useState<string>('ag-layout-normal');
+    // we initialise layoutClass from domLayout, because if we don't, the comp will initially render
+    // without its layout constraints. Without ag-layout-normal (which sets width to 0, needed for flex)
+    // the grid gets a massive width and renders a massive amount of columns; without
+    // ag-layout-auto-height the autoHeightMaxBodyHeight cap is not applied, so the viewport measures
+    // the full content height and every row is rendered. this problem is due to React been async, for
+    // the non-async version (ie when not using React) this is not a problem as the UI will finish
+    // initialising before we set data.
+    const [layoutClass, setLayoutClass] = useState<string>(() => _getLayoutCssClass(gos.get('domLayout')));
 
     const cssManager = useRef<CssClassManager>();
     if (!cssManager.current) {
