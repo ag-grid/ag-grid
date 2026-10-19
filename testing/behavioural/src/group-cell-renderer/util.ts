@@ -79,7 +79,7 @@ const generateTestsRecursively = (
     }
 
     if (idx === tests.length - 1) {
-        test.each(values)(`${property}=%s`, async (value) => {
+        test.each(values)(`${property}=%s`, (value) => {
             if ('setter' in nextTest) {
                 nextTest.setter(gridOptions, value);
             } else {
@@ -90,7 +90,7 @@ const generateTestsRecursively = (
             // and we want to wait for all of them to finish
             vi.useFakeTimers();
             const api = gridManager.createGrid(div, gridOptions);
-            await vi.runAllTimersAsync();
+            vi.runAllTimers();
             vi.useRealTimers();
             const snapshot = getSnapshot(div, api);
             expect(snapshot).toMatchSnapshot();
@@ -106,12 +106,12 @@ const generateTestsRecursively = (
         }
         // if no more tests after this, we need to make a test instead of describe.
         if (!generateTestsRecursively(gridManager, getSnapshot, tests, gridOptions, idx + 1)) {
-            test('snapshot', async () => {
+            test('snapshot', () => {
                 // use fake timers when creating the grid; as the grid uses a lot of setTimeout
                 // and we want to wait for all of them to finish
                 vi.useFakeTimers();
                 const api = gridManager.createGrid(div, gridOptions);
-                await vi.runAllTimersAsync();
+                vi.runAllTimers();
                 vi.useRealTimers();
                 const snapshot = getSnapshot(div, api);
                 expect(snapshot).toMatchSnapshot();

@@ -47,18 +47,20 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     // true from a request until the next macrotask, so later loads and completions in that task can be told apart
     private isInLoadTask = false;
 
-    // onGridReady is delivered from the async event queue, so a microtask load would call getRows before it
+    // onGridReady is delivered from the async event queue, and framework wrappers can re-emit it in a microtask
+    // after that, so the first load waits for the next task to keep getRows after it
     private isGridReadyDelivered = false;
 
     public postConstruct() {
         this.maxOutboundRequests = _getMaxConcurrentDatasourceRequests(this.gos);
 
         const onGridReady = () => {
-            this.isGridReadyDelivered = true;
-            if (this.isCheckQueued) {
-                this.isCheckQueued = false;
-                this.queueLoadCheck();
-            }
+            window.setTimeout(() => {
+                this.isGridReadyDelivered = true;
+                if (this.isCheckQueued) {
+                    this.runLoadCheck();
+                }
+            });
         };
         this.eventSvc.addListener('gridReady', onGridReady, true);
         this.addDestroyFunc(() => this.eventSvc.removeListener('gridReady', onGridReady, true));
@@ -81,14 +83,17 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             return;
         }
         this.isCheckQueued = true;
-        if (!this.isGridReadyDelivered) {
-            return;
+        if (this.isGridReadyDelivered) {
+            queueMicrotask(() => this.runLoadCheck());
         }
-        queueMicrotask(() => {
-            if (!this.isAlive()) {
-                return;
-            }
+    }
+
+    // Timers call this directly, and it loops while loads complete synchronously, so a run of fake timers loads
+    // every rendered block without needing microtasks flushed.
+    private runLoadCheck() {
+        while (this.isAlive()) {
             // reading rows queues a check per visible stub; keep the flag set so those are absorbed
+            this.isCheckQueued = true;
             const nextBlockToLoad = this.getBlockToLoad();
             this.isCheckQueued = false;
 
@@ -99,13 +104,16 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             }
             const isOffViewportAfterLoad = !nextBlockToLoad.inViewport && this.isInLoadTask;
             if (isOffViewportAfterLoad || isSameBlock(nextBlockToLoad, syncLoadedBlock)) {
-                // only rendered rows need filling before paint; chaining further loads in microtasks would never
-                // yield to the browser
-                window.setTimeout(() => this.queueLoadCheck());
+                // only rendered rows need filling before paint; chaining further loads would never yield to the browser
+                window.setTimeout(() => this.runLoadCheck());
                 return;
             }
             this.queueLoadAction(nextBlockToLoad);
-        });
+            if (!this.syncLoadedBlock) {
+                // the load is pending, and its completion queues the next check
+                return;
+            }
+        }
     }
 
     private onLoadComplete(): void {

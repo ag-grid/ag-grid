@@ -136,12 +136,16 @@ describe('SSRM block loading', () => {
         expect({ stub: loaded.stub, data: loaded.data }).toEqual({ stub: false, data: rowData[1500] });
     });
 
-    test('the first request waits for onGridReady', async () => {
+    test('the first request waits for onGridReady, including a framework re-emitting it in a microtask', async () => {
         const calls: string[] = [];
         const api = gridsManager.createGrid(null, {
             columnDefs: [{ field: 'id' }],
             rowModelType: 'serverSide',
-            onGridReady: () => calls.push('onGridReady'),
+            onGridReady: () => {
+                calls.push('onGridReady');
+                // framework wrappers such as Angular's emit their gridReady output from a promise callback
+                void Promise.resolve().then(() => calls.push('re-emitted onGridReady'));
+            },
             serverSideDatasource: {
                 getRows: (params) => {
                     calls.push('getRows');
@@ -151,7 +155,37 @@ describe('SSRM block loading', () => {
         });
         await waitForEvent('firstDataRendered', api);
 
-        expect(calls).toEqual(['onGridReady', 'getRows']);
+        expect(calls).toEqual(['onGridReady', 're-emitted onGridReady', 'getRows']);
+    });
+
+    test('running fake timers synchronously loads every rendered block from a synchronous datasource', () => {
+        const rowData = Array.from({ length: 30 }, (_, i) => ({ id: i }));
+        const requests: [number, number][] = [];
+        vi.useFakeTimers();
+        try {
+            const api = gridsManager.createGrid(null, {
+                columnDefs: [{ field: 'id' }],
+                rowModelType: 'serverSide',
+                cacheBlockSize: 10,
+                serverSideDatasource: {
+                    getRows: (params) => {
+                        const { startRow = 0, endRow = rowData.length } = params.request;
+                        requests.push([startRow, endRow]);
+                        params.success({ rowData: rowData.slice(startRow, endRow), rowCount: rowData.length });
+                    },
+                },
+            });
+            vi.runAllTimers();
+
+            expect(requests).toEqual([
+                [0, 10],
+                [10, 20],
+                [20, 30],
+            ]);
+            expect(api.getDisplayedRowAtIndex(25)?.data).toEqual({ id: 25 });
+        } finally {
+            vi.useRealTimers();
+        }
     });
 
     test.each([
