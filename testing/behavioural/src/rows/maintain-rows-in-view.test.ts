@@ -282,6 +282,16 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             expect(offsetInView(api, 'r20')).toBe(0);
         });
 
+        test('keeps rows in view when a distant row is sorted above them', () => {
+            const api = createGrid({ columnDefs: [{ field: 'value', sort: 'asc' }] });
+            scrollTo(api, SCROLL_TOP);
+
+            api.applyTransaction({ add: [{ id: 'new', value: -1 }], update: [{ id: 'r158', value: -2 }] });
+
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + 2 * ROW_HEIGHT);
+            expect(offsetInView(api, 'r20')).toBe(0);
+        });
+
         test('uses a scroll position whose scroll event has not fired yet', () => {
             const api = createGrid();
             mockGridLayout.asyncScrollEvents = true;

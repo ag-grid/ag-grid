@@ -3,8 +3,6 @@ import type { RowNode } from '../entities/rowNode';
 
 interface SampledRow {
     rowNode: RowNode;
-    /** How many rows this row stands for when working out which rows kept their order. */
-    weight: number;
     /** The row's top relative to the current page before the update. Only set on the rows in view. */
     pageTop?: number;
 }
@@ -13,10 +11,7 @@ interface SampledRow {
 export interface RowsInViewAnchor {
     /** The page pixel at the top of the viewport before the update. */
     viewportTop: number;
-    /**
-     * In display order: the rows in view, and rows at doubling distances above and below them, each standing for the
-     * rows between it and the previous sample.
-     */
+    /** In display order: the rows in view, and rows sampled above and below them. */
     rows: SampledRow[];
 }
 
@@ -55,31 +50,38 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
             belowRow = i;
             break;
         }
-        rowsInView.push({ rowNode, weight: 1, pageTop });
+        rowsInView.push({ rowNode, pageTop });
     }
     if (!rowsInView.length) {
         return null;
     }
 
-    const rowsAbove = sampleRows(beans, firstRow - 1, pageFirstRow, -1);
-    const rowsBelow = sampleRows(beans, belowRow, pageLastRow, 1);
+    // twice as many rows either side as are in view, so rows in view re-sorted together, with any rows that were next
+    // to them, have to outnumber the rows they leave behind to be followed
+    const window = 2 * rowsInView.length;
+    const rowsAbove = sampleRows(beans, firstRow - 1, pageFirstRow, -1, window);
+    const rowsBelow = sampleRows(beans, belowRow, pageLastRow, 1, window);
     return { viewportTop, rows: [...rowsAbove.reverse(), ...rowsInView, ...rowsBelow] };
 }
 
-/** Samples rows at doubling distances from `start`, going in `direction` up to and including `end`. */
-function sampleRows(beans: BeanCollection, start: number, end: number, direction: 1 | -1): SampledRow[] {
+/**
+ * Samples every row for `window` rows from `start`, then rows at doubling distances, going in `direction` up to and
+ * including `end`.
+ */
+function sampleRows(
+    beans: BeanCollection,
+    start: number,
+    end: number,
+    direction: 1 | -1,
+    window: number
+): SampledRow[] {
     const rows: SampledRow[] = [];
     const count = (end - start) * direction + 1;
-    let sampled = 0;
-    for (let distance = 0; distance < count; distance = distance * 2 || 1) {
+    for (let distance = 0; distance < count; distance = distance < window ? distance + 1 : distance * 2) {
         const rowNode = beans.rowModel.getRow(start + distance * direction);
         if (rowNode) {
-            rows.push({ rowNode, weight: distance + 1 - sampled });
-            sampled = distance + 1;
+            rows.push({ rowNode });
         }
-    }
-    if (rows.length) {
-        rows[rows.length - 1].weight += count - sampled; // the farthest sample also stands for the rest of the page
     }
     return rows;
 }
@@ -91,44 +93,41 @@ function getDisplayedIndex(beans: BeanCollection, rowNode: RowNode): number | nu
 }
 
 /**
- * The heaviest set of rows that are still in their previous order, as weights ending at and starting from each row.
- * `excluded` leaves one row out.
+ * Whether each row is in every largest set of rows still in their previous order, given their indexes now in their
+ * previous order.
  */
-function getHeaviestOrderedRows(
-    indexes: number[],
-    weights: number[],
-    excluded = -1
-): { ending: number[]; starting: number[]; best: number } {
+function getAlwaysOrderedRows(indexes: number[]): boolean[] {
     const len = indexes.length;
-    const ending: number[] = new Array(len).fill(0);
-    const starting: number[] = new Array(len).fill(0);
-    let best = 0;
+    const ranks = new Map([...indexes].sort((a, b) => a - b).map((index, rank) => [index, rank]));
+    // the longest ordered sets ending at, and starting from, each row
+    const ending = getLongestOrderedEnding(indexes.map((index) => ranks.get(index)!));
+    const starting = getLongestOrderedEnding(indexes.map((index) => len - 1 - ranks.get(index)!).reverse()).reverse();
+    const longest = Math.max(...ending);
+    const inLongest = ending.map((length, i) => length + starting[i] - 1 === longest);
+    // a row is in every largest set when no other row in one can take its place in the set
+    const rowsAtPlace = new Array<number>(longest + 1).fill(0);
     for (let i = 0; i < len; ++i) {
-        if (i === excluded) {
-            continue;
+        if (inLongest[i]) {
+            ++rowsAtPlace[ending[i]];
         }
+    }
+    return inLongest.map((inSet, i) => inSet && rowsAtPlace[ending[i]] === 1);
+}
+
+/** The length of the longest increasing run of ranks ending at each rank, in O(n log n) with a max Fenwick tree. */
+function getLongestOrderedEnding(ranks: number[]): number[] {
+    const tree = new Array<number>(ranks.length + 1).fill(0);
+    return ranks.map((rank) => {
         let before = 0;
-        for (let j = 0; j < i; ++j) {
-            if (j !== excluded && indexes[j] < indexes[i]) {
-                before = Math.max(before, ending[j]);
-            }
+        for (let i = rank; i > 0; i -= i & -i) {
+            before = Math.max(before, tree[i]);
         }
-        ending[i] = before + weights[i];
-        best = Math.max(best, ending[i]);
-    }
-    for (let i = len - 1; i >= 0; --i) {
-        if (i === excluded) {
-            continue;
+        const length = before + 1;
+        for (let i = rank + 1; i < tree.length; i += i & -i) {
+            tree[i] = Math.max(tree[i], length);
         }
-        let after = 0;
-        for (let j = i + 1; j < len; ++j) {
-            if (j !== excluded && indexes[j] > indexes[i]) {
-                after = Math.max(after, starting[j]);
-            }
-        }
-        starting[i] = after + weights[i];
-    }
-    return { ending, starting, best };
+        return length;
+    });
 }
 
 /**
@@ -136,8 +135,8 @@ function getHeaviestOrderedRows(
  * the row it followed where that row is now. Returns `true` if the grid scrolled.
  *
  * Rows only move together, keeping their order, when rows are added or removed above them, while rows an update
- * re-sorts change their order. So the heaviest set of sampled rows still in their previous order is taken as the
- * rows that did not move on their own, and the first row in view that is in every such set is followed.
+ * re-sorts change their order. So the largest set of sampled rows still in their previous order is taken as the rows
+ * that did not move on their own, and the first row in view that is in every such set is followed.
  */
 export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnchor): boolean {
     const { ctrlsSvc, pageBounds, rowContainerHeight } = beans;
@@ -153,14 +152,11 @@ export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnch
             indexes.push(rowIndex);
         }
     }
-    const weights = rows.map((row) => row.weight);
-    const { ending, starting, best } = getHeaviestOrderedRows(indexes, weights);
-    const followed = rows.find(
-        ({ pageTop, weight }, i) =>
-            pageTop != null &&
-            ending[i] + starting[i] - weight === best &&
-            getHeaviestOrderedRows(indexes, weights, i).best < best
-    );
+    if (!rows.length) {
+        return false;
+    }
+    const alwaysOrdered = getAlwaysOrderedRows(indexes);
+    const followed = rows.find(({ pageTop }, i) => pageTop != null && alwaysOrdered[i]);
     if (!followed) {
         return false;
     }
