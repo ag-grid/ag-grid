@@ -18,8 +18,8 @@ export interface RowsInViewAnchor {
 }
 
 /**
- * Records where the viewport is, or returns `null` when there is nothing to keep in view. A grid scrolled to the top
- * is not anchored, so rows added at the top come into view.
+ * Records where the viewport is, or returns `null` when there is nothing to keep in view. A grid scrolled to its top,
+ * at the top of the first page, is not anchored, so rows added at the top come into view.
  */
 export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | null {
     const { ctrlsSvc, pageBounds, rowContainerHeight, rowModel } = beans;
@@ -27,12 +27,12 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
     // read the viewport itself, as the cached position can lag behind a scroll whose event has not fired yet
     scrollFeature.invalidateVerticalScroll();
     const { top, bottom } = scrollFeature.getVScrollPosition();
-    if (top <= 0 || !rowModel.isRowsToRender()) {
+    const pixelOffset = pageBounds.getPixelOffset();
+    if ((top <= 0 && pixelOffset === 0) || !rowModel.isRowsToRender()) {
         return null;
     }
     rowContainerHeight.updateOffset(); // the height scaling offset follows the scroll position just read
 
-    const pixelOffset = pageBounds.getPixelOffset();
     const viewportTop = top + rowContainerHeight.divStretchOffset;
     // rows under the sticky rows are hidden, so rows added or removed there move the rows the user can see
     const firstVisiblePixel = viewportTop + ctrlsSvc.getGridBodyCtrl().stickyTopHeight + pixelOffset;

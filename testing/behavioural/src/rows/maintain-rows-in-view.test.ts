@@ -85,6 +85,11 @@ describe('maintainRowsInViewOnDataUpdate', () => {
 
             expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
             expect(offsetInView(api, 'r20')).toBe(3 * ROW_HEIGHT);
+
+            api.setGridOption('rowData', [...createRows('row', 2), ...createRows('new', 3), ...createRows('r', 200)]);
+
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
+            expect(offsetInView(api, 'r20')).toBe(5 * ROW_HEIGHT);
         });
 
         test('keeps rows in view when a transaction adds rows above them', () => {
@@ -142,6 +147,18 @@ describe('maintainRowsInViewOnDataUpdate', () => {
 
             expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + rowsAdded * ROW_HEIGHT);
             expect(offsetInPage('r120')).toBe(0);
+        });
+
+        test('keeps rows in view at the top of a later page when rows are added on an earlier page', () => {
+            const api = createGrid({ pagination: true, paginationPageSize: 100, paginationPageSizeSelector: false });
+            api.paginationGoToPage(1);
+            expect(getViewport(api).scrollTop).toBe(0);
+            expect(api.getDisplayedRowAtIndex(100)!.id).toBe('r100');
+
+            api.applyTransaction({ add: createRows('new', 2), addIndex: 0 });
+
+            expect(getViewport(api).scrollTop).toBe(2 * ROW_HEIGHT);
+            expect(api.getRowNode('r100')!.rowTop! - api.getDisplayedRowAtIndex(100)!.rowTop!).toBe(2 * ROW_HEIGHT);
         });
 
         test('does not scroll when row data without row IDs replaces every row', () => {
@@ -367,14 +384,21 @@ describe('maintainRowsInViewOnDataUpdate', () => {
 
             api.applyTransaction({
                 add: createRows('new', 3).map((row) => ({ ...row, value: -1 })),
-                update: [
-                    { id: 'r18', value: 1000 },
-                    { id: 'r19', value: 1001 },
-                ],
+                update: [{ id: 'r19', value: 1000 }],
             });
 
             expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + 3 * ROW_HEIGHT);
-            expect(offsetInView(api, 'r20')).toBe(-2 * ROW_HEIGHT);
+            expect(offsetInView(api, 'r20')).toBe(-ROW_HEIGHT);
+        });
+
+        test('scrolls only for the rows added when the same update sorts a row below them above them', () => {
+            const api = createGrid({ columnDefs: [{ field: 'value', sort: 'asc' }] });
+            scrollTo(api, SCROLL_TOP);
+
+            api.applyTransaction({ add: [{ id: 'new', value: -1 }], update: [{ id: 'r158', value: -2 }] });
+
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + ROW_HEIGHT);
+            expect(offsetInView(api, 'r20')).toBe(ROW_HEIGHT);
         });
 
         test('uses a scroll position whose scroll event has not fired yet', () => {
