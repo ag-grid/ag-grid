@@ -18,6 +18,12 @@ import type { ServerSideRowModel } from '../../serverSideRowModel';
 import type { LazyCache } from './lazyCache';
 import type { LazyStore } from './lazyStore';
 
+/**
+ * A block whose loads have been superseded this many times in a row keeps its next in-flight
+ * request through a soft refresh, so refreshes faster than the datasource still complete.
+ */
+const MAX_CONSECUTIVE_SUPERSEDED_LOADS = 3;
+
 export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     beanName = 'lazyBlockLoadingSvc' as const;
 
@@ -35,6 +41,9 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     // a map of caches to loading nodes, each keyed to the request loading it
     private readonly cacheLoadingNodesMap: Map<LazyCache, Map<number, IServerSideGetRowsRequest>> = new Map();
 
+    // a map of caches to how many loads of each block, by start row, were superseded in a row
+    private readonly cacheSupersededCountsMap: Map<LazyCache, Map<number, number>> = new Map();
+
     // if a check is queued to happen this cycle
     private isCheckQueued = false;
 
@@ -48,35 +57,46 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
     public subscribe(cache: LazyCache) {
         this.cacheLoadingNodesMap.set(cache, new Map());
+        this.cacheSupersededCountsMap.set(cache, new Map());
     }
 
     public unsubscribe(cache: LazyCache) {
         this.cacheLoadingNodesMap.delete(cache);
+        this.cacheSupersededCountsMap.delete(cache);
     }
 
     /**
      * Supersedes the cache's in-flight requests covering rows awaiting refresh: their responses
      * are dropped and their rows become eligible to be requested again. Each superseded request
-     * keeps its concurrent request slot until the datasource settles it.
+     * keeps its concurrent request slot until the datasource settles it. A request is kept once
+     * its block reaches MAX_CONSECUTIVE_SUPERSEDED_LOADS, so its response completes the refresh.
      */
     public invalidateLoads(cache: LazyCache) {
         const loadingNodes = this.cacheLoadingNodesMap.get(cache);
-        if (!loadingNodes) {
+        const supersededCounts = this.cacheSupersededCountsMap.get(cache);
+        if (!loadingNodes || !supersededCounts) {
             return;
         }
         const nodes = cache.getNodes();
-        const supersededRequests = new Set<IServerSideGetRowsRequest>();
+        const supersededBlocks = new Map<IServerSideGetRowsRequest, number>();
         cache.getNodesToRefresh().forEach((node) => {
             const index = nodes.getBy('node', node)?.index;
             const request = index == null ? undefined : loadingNodes.get(index);
-            if (request) {
-                supersededRequests.add(request);
+            if (index == null || !request) {
+                return;
+            }
+            const blockStart = cache.getBlockStartIndex(index);
+            if ((supersededCounts.get(blockStart) ?? 0) < MAX_CONSECUTIVE_SUPERSEDED_LOADS) {
+                supersededBlocks.set(request, blockStart);
             }
         });
         for (const [index, request] of loadingNodes) {
-            if (supersededRequests.has(request)) {
+            if (supersededBlocks.has(request)) {
                 loadingNodes.delete(index);
             }
+        }
+        for (const blockStart of supersededBlocks.values()) {
+            supersededCounts.set(blockStart, (supersededCounts.get(blockStart) ?? 0) + 1);
         }
     }
 
@@ -188,6 +208,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             for (let i = startRow; i < endRow; i++) {
                 loadingNodes.delete(i);
             }
+            this.cacheSupersededCountsMap.get(cache)?.delete(startRow);
             applyResult();
         };
 

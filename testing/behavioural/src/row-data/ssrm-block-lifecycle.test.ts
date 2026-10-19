@@ -118,6 +118,39 @@ describe('SSRM block lifecycle', () => {
         expect(api.getRowNode('0')?.data.value).toBe('v3 Row 0');
     });
 
+    test('soft refreshes issued faster than the datasource responds still finish a refresh', async () => {
+        const pending: IServerSideGetRowsParams[] = [];
+        let refreshFinishedCount = 0;
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            cacheBlockSize: 100,
+            getRowId: (params) => String(params.data.id),
+            serverSideDatasource: {
+                getRows: (params) => pending.push(params),
+            },
+            onStoreRefreshed: () => refreshFinishedCount++,
+        };
+
+        const api = gridsManager.createGrid(null, gridOptions);
+        await waitFor(() => expect(pending.length).toBe(1));
+        respond(pending.shift()!, makeRows(10));
+
+        // Each response arrives only after the next refresh has started.
+        for (let tick = 2; tick <= 10; ++tick) {
+            const inFlight = pending.splice(0);
+            api.refreshServerSide({ purge: false });
+            await flush();
+            for (const params of inFlight) {
+                respond(params, makeRows(10, tick));
+            }
+            await flush();
+        }
+
+        expect(refreshFinishedCount).toBeGreaterThan(0);
+        expect(api.getRowNode('0')?.data.value).not.toBe('v1 Row 0');
+    });
+
     test('a soft refresh does not supersede the first load of a block', async () => {
         const rowData = makeRows(10);
         const pending: IServerSideGetRowsParams[] = [];
