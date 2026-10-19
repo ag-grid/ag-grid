@@ -263,6 +263,67 @@ describe('SSRM data version', () => {
         expect(api.getDisplayedRowAtIndex(25)!.data).toEqual(rowData[25]);
     });
 
+    test('a response without a version to a request sent with the dropped version is discarded', async () => {
+        const pending: IServerSideGetRowsParams[] = [];
+        const api = gridsManager.createGrid(
+            null,
+            flatGridOptions((params) => pending.push(params))
+        );
+        await waitFor(() => expect(pending.length).toBe(1));
+        respond(pending.shift()!, 'v1');
+        await waitForEvent('firstDataRendered', api);
+
+        api.ensureIndexVisible(25);
+        await waitFor(() => expect(pending.length).toBeGreaterThan(0));
+        const beforeRefresh = pending.splice(0);
+        expect(beforeRefresh.every((p) => p.request.dataVersion === 'v1')).toBe(true);
+
+        api.refreshServerSide({ purge: false });
+        for (const params of beforeRefresh) {
+            respond(params);
+        }
+        expect(api.getDisplayedRowAtIndex(25)!.stub).toBe(true);
+
+        await waitFor(() => expect(pending.some((p) => p.request.startRow === 20)).toBe(true));
+        expect(pending.every((p) => !('dataVersion' in p.request))).toBe(true);
+    });
+
+    test('a block requested before the level was pinned and read from another version is loaded again with the pinned version', async () => {
+        const pending: IServerSideGetRowsParams[] = [];
+        let autoRespond = false;
+        const api = gridsManager.createGrid(
+            null,
+            flatGridOptions((params) =>
+                autoRespond ? respond(params, params.request.dataVersion) : pending.push(params)
+            )
+        );
+        await waitFor(() => expect(pending.length).toBe(1));
+        respond(pending.shift()!);
+        await waitForEvent('firstDataRendered', api);
+
+        api.ensureIndexVisible(25);
+        await waitFor(() => expect(pending.length).toBe(2));
+        expect(pending.every((p) => !('dataVersion' in p.request))).toBe(true);
+        const [pinning, otherVersion] = pending.splice(0);
+        const { startRow } = otherVersion.request;
+
+        respond(pinning, 'v1');
+        respond(otherVersion, 'v2');
+        expect(rootVersion(api)).toBe('v1');
+        expect(api.getDisplayedRowAtIndex(startRow!)!.stub).toBe(true);
+
+        await waitFor(() => expect(pending.some((p) => p.request.startRow === startRow)).toBe(true));
+        expect(pending.every((p) => p.request.dataVersion === 'v1')).toBe(true);
+        autoRespond = true;
+        while (pending.length > 0) {
+            const params = pending.shift()!;
+            respond(params, params.request.dataVersion);
+        }
+        await waitForNoLoadingRows(api);
+        expect(rootVersion(api)).toBe('v1');
+        expect(api.getDisplayedRowAtIndex(startRow!)!.data).toEqual(rowData[startRow!]);
+    });
+
     test('each group level pins its own version', async () => {
         const requests: IServerSideGetRowsRequest[] = [];
         const api = gridsManager.createGrid(null, {

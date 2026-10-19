@@ -145,7 +145,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         if (dataVersion != null) {
             request.dataVersion = dataVersion;
         }
-        const dataVersionGeneration = cache.getDataVersionGeneration();
+        const dataVersionRequest = { dataVersion, generation: cache.getDataVersionGeneration() };
 
         const loadingNodes = this.cacheLoadingNodesMap.get(cache)!;
         const removeNodesFromLoadingMap = () => {
@@ -162,7 +162,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
         const success = (params: LoadSuccessParams) => {
             this.onLoadComplete();
-            cache.onLoadSuccess(startRow, endRow - startRow, params, dataVersionGeneration);
+            cache.onLoadSuccess(startRow, endRow - startRow, params, dataVersionRequest);
             removeNodesFromLoadingMap();
         };
 

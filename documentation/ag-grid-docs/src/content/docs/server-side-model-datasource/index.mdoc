@@ -114,10 +114,10 @@ const datasource = {
 Note the following:
 
 - Each level pins its own version: a group's children are read independently of their parent level.
-- The pinned version is dropped when the level is [refreshed](./server-side-model-updating-refresh/) with `refreshServerSide`, purged or not, and when the level is reset, for example after a sort or filter change. The next response pins a new version. A versioned response to a request sent before the refresh is discarded, and its block is loaded again.
+- The pinned version is dropped when the level is [refreshed](./server-side-model-updating-refresh/) with `refreshServerSide`, purged or not, and when the level is reset, for example after a sort or filter change. The next response pins a new version. A response to a request sent before the refresh is discarded when the request or the response has a version, and its block is loaded again.
 - The version is kept when blocks are evicted from the cache and loaded again, when failed loads are retried, when transactions are applied and when a group is collapsed.
-- Blocks requested before the first versioned response arrives (up to `maxConcurrentDatasourceRequests`) are sent without a version.
-- A different version returned for a level that already has one is ignored, and the grid logs a warning. If the server can no longer read from the pinned version, call `refreshServerSide` to drop it.
+- Blocks requested before the first versioned response arrives (up to `maxConcurrentDatasourceRequests`) are sent without a version. If one of them returns a different version from the one pinned in the meantime, its rows are discarded and the block is loaded again with the pinned version.
+- Otherwise, a different version returned for a level that already has one is ignored, and the grid logs a warning. If the server can no longer read from the pinned version, call `refreshServerSide` to drop it.
 - Two numeric versions are compared numerically, and any other versions are only checked for equality. To decide when two versions are the same, for example versions that differ only in case, provide the `compareServerSideDataVersions` grid option. It returns a negative number when the first version is older than the second, a positive number when it is newer, and `0` when they are the same version.
 - A version supplied through `applyServerSideRowData` pins the level in the same way.
 - The pinned version of each level is returned by `getServerSideGroupLevelState()`.

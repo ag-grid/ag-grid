@@ -38,6 +38,12 @@ interface LazyStoreNode {
 
 const DEFAULT_BLOCK_SIZE = 100;
 
+/** The pinned data version a block request was sent with, and the generation of the level's pin at the time. */
+interface DataVersionRequest {
+    dataVersion: string | number | undefined;
+    generation: number;
+}
+
 export class LazyCache extends BeanStub {
     private rowRenderer: RowRenderer;
     private blockUtils: BlockUtils;
@@ -876,19 +882,32 @@ export class LazyCache extends BeanStub {
         return this.rowDataVersions.get(node);
     }
 
+    private isReadFromOtherVersion(request: DataVersionRequest, received: string | number | undefined): boolean {
+        // The level dropped its pinned version after the request was sent.
+        if (request.generation !== this.dataVersionGeneration) {
+            return request.dataVersion != null || received != null;
+        }
+        // The request was sent before the level was pinned, and was read from a different version than the pinned one.
+        return (
+            request.dataVersion == null &&
+            received != null &&
+            this.dataVersion != null &&
+            compareDataVersions(received, this.dataVersion, this.gos.get('compareServerSideDataVersions')) !== 0
+        );
+    }
+
     public onLoadSuccess(
         firstRowIndex: number,
         numberOfRowsExpected: number,
         response: LoadSuccessParams,
-        dataVersionGeneration = this.dataVersionGeneration
+        request?: DataVersionRequest
     ) {
         if (!this.live) {
             return;
         }
 
-        // The request was sent before the level dropped its pinned version, so the rows were read from a
-        // version the level no longer uses. Discard them, so the rows stay eligible for loading at the new version.
-        if (response.dataVersion != null && dataVersionGeneration !== this.dataVersionGeneration) {
+        // Discard rows read from a version the level does not use, so they stay eligible for loading at its version.
+        if (request && this.isReadFromOtherVersion(request, response.dataVersion)) {
             return;
         }
 
