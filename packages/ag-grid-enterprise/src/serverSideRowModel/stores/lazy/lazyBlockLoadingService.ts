@@ -46,6 +46,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     private syncLoadedBlock?: BlockToLoad = undefined;
     // true from a request until the next macrotask, so later loads and completions in that task can be told apart
     private isInLoadTask = false;
+    private yieldTimeout?: number;
 
     // onGridReady is delivered from the async event queue, and framework wrappers can re-emit it in a microtask
     // after that, so the first load waits for the next task to keep getRows after it
@@ -105,7 +106,10 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             const isOffViewportAfterLoad = !nextBlockToLoad.inViewport && this.isInLoadTask;
             if (isOffViewportAfterLoad || isSameBlock(nextBlockToLoad, syncLoadedBlock)) {
                 // only rendered rows need filling before paint; chaining further loads would never yield to the browser
-                window.setTimeout(() => this.runLoadCheck());
+                this.yieldTimeout ??= window.setTimeout(() => {
+                    this.yieldTimeout = undefined;
+                    this.runLoadCheck();
+                });
                 return;
             }
             this.queueLoadAction(nextBlockToLoad);
