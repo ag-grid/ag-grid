@@ -137,39 +137,3 @@ export function _throttle(func: (...args: any[]) => void, wait: number): (...arg
         func.apply(context, args);
     };
 }
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _waitUntil(
-    bean: { addDestroyFunc(func: () => void): void },
-    condition: () => boolean,
-    callback: () => void,
-    timeout: number = 100
-) {
-    const timeStamp = Date.now();
-
-    let interval: number | null = null;
-    let executed: boolean = false;
-
-    const clearWait = () => {
-        if (interval != null) {
-            window.clearInterval(interval);
-            interval = null;
-        }
-    };
-    bean.addDestroyFunc(clearWait);
-
-    const internalCallback = () => {
-        const reachedTimeout = Date.now() - timeStamp > timeout;
-        if (condition() || reachedTimeout) {
-            callback();
-            executed = true;
-            clearWait();
-        }
-    };
-
-    internalCallback();
-
-    if (!executed) {
-        interval = window.setInterval(internalCallback, 10);
-    }
-}

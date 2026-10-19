@@ -247,7 +247,7 @@ export {
     _registerKeyboardFocusEvents,
     _scrollHorizontallyToShow,
 } from './utils/focus';
-export { _batchCall, _debounce, _doOnce, _throttle, _waitUntil } from './utils/function';
+export { _batchCall, _debounce, _doOnce, _throttle } from './utils/function';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export {
     _defaultComparator,
