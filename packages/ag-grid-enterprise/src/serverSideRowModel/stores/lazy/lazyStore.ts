@@ -271,11 +271,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      */
     public replayTransactions(
         heldTransactions: HeldTransaction[],
-        loadedIds: Set<string>,
+        loadedIds: Map<string, number>,
         overwrittenIds: Set<string>
     ): void {
         const { cache } = this;
-        const inScope = new Set([...loadedIds, ...overwrittenIds]);
+        const inScope = new Set([...loadedIds.keys(), ...overwrittenIds]);
         const idOf = (data: any) => cache.getRowId(data)!;
         const inBlock = (rows?: any[]) => rows?.filter((data) => inScope.has(idOf(data)));
         heldTransactions.forEach((held, i) => {
@@ -284,7 +284,6 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 cache.restoreAddedRows(held, overwrittenIds, heldTransactions.slice(i + 1));
             }
             const remove = inBlock(transaction.remove);
-            const indexes = new Map(remove?.map((data) => [idOf(data), cache.getStoreIndex(idOf(data))!]));
             const result = this.applyTransactionToCache({
                 version: transaction.version,
                 update: inBlock(transaction.update),
@@ -298,8 +297,12 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             held.rowCountDelta -= (result.remove?.length ?? 0) - removedAgain.length;
             for (const { id } of result.remove ?? []) {
                 if (!removedIds.has(id!)) {
-                    // the remove now moves the rows after it, for the other blocks read before the transaction
-                    held.removedIndexes.push(indexes.get(id!)!);
+                    // the remove now moves the rows after it, for the other blocks read before the transaction, so
+                    // record where the row was before the transaction
+                    const blockIndex = loadedIds.get(id!);
+                    if (blockIndex != null) {
+                        held.removedIndexes.push(cache.moveIndexPast(heldTransactions.slice(0, i), blockIndex));
+                    }
                     removedIds.add(id!);
                 }
             }

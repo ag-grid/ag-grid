@@ -529,6 +529,27 @@ describe('SSRM versioned transactions', () => {
         expectRowsInServerOrder(api);
     });
 
+    test('a remove found on replay moves later blocks by its position before later transactions', async () => {
+        const { api, pending, settle } = await createGrid(1, { maxConcurrentDatasourceRequests: -1 });
+        api.ensureIndexVisible(35);
+        await waitFor(() => expect(pending.filter((p) => p.request.startRow! >= 20).length).toBeGreaterThan(1));
+        const blocks = pending.splice(0).sort((a, b) => a.request.startRow! - b.request.startRow!);
+
+        const before = serverRows;
+        const removed = before[blocks[0].request.startRow! + 9];
+        const added = { id: 'x', value: -1 };
+        serverRows = [added, ...serverRows.filter((row) => row !== removed)];
+        api.applyServerSideTransaction({ version: 2, remove: [removed] });
+        api.applyServerSideTransaction({ version: 3, addIndex: 0, add: [added] });
+
+        for (const params of blocks) {
+            respond(params, 1, before);
+        }
+        expectRowsInServerOrder(api);
+        await settle();
+        expectRowsInServerOrder(api);
+    });
+
     test('a load discarded by a purge does not drop transactions held for the blocks loading after it', async () => {
         const { api, pending } = await createGrid(1, { maxConcurrentDatasourceRequests: -1 });
         const discarded = await requestBlockOf(api, pending, 25);

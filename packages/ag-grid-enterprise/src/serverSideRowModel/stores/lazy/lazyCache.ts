@@ -970,7 +970,7 @@ export class LazyCache extends BeanStub {
     }
 
     /** Where a row at `index` before the held transactions is after them. */
-    private moveIndexPast(heldTransactions: HeldTransaction[], index: number): number {
+    public moveIndexPast(heldTransactions: HeldTransaction[], index: number): number {
         let movedIndex = index;
         for (const { removedIndexes, addedIndexes } of heldTransactions) {
             movedIndex -= removedIndexes.filter((removedIndex) => removedIndex < movedIndex).length;
@@ -1152,13 +1152,14 @@ export class LazyCache extends BeanStub {
         // Adjust for grand total rows extracted from the response
         const dataRowCount = response.rowData.length - skippedRowCount;
 
-        const loadedIds = new Set<string>();
+        // the index of each row the block loaded, at the block's version
+        const loadedIds = new Map<string, number>();
         for (let rowIndex = blockStart; rowIndex < blockStart + dataRowCount; rowIndex++) {
             const node = this.nodeMap.getBy('index', rowIndex)?.node;
             if (!node) {
                 continue;
             }
-            loadedIds.add(node.id!);
+            loadedIds.set(node.id!, rowIndex - blockStart + firstRowIndex);
             if (dataVersion == null) {
                 this.rowDataVersions.delete(node);
             } else {
