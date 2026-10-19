@@ -19,6 +19,7 @@ export { AgSlider as _AgSlider, AgSliderSelector as _AgSliderSelector } from './
 export type { AgSliderParams as _AgSliderParams } from './agStack/agSlider';
 export { AgInputRange as _AgInputRange, AgInputRangeSelector as _AgInputRangeSelector } from './agStack/agInputRange';
 export type { AgInputRangeParams as _AgInputRangeParams } from './agStack/agInputRange';
+export { AgColor as _AgColor } from './agStack/agColor';
 export {
     AgColorPicker as _AgColorPicker,
     AgColorPickerSelector as _AgColorPickerSelector,
