@@ -419,7 +419,6 @@ export function _getMaxConcurrentDatasourceRequests(gos: GridOptionsService): nu
     return res > 0 ? res : undefined;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getServerSideLoadingRowType(gos: GridOptionsService): ServerSideLoadingRowType {
     if (!gos.exists('serverSideLoadingRowType') && gos.get('suppressServerSideFullWidthLoadingRow')) {
         return 'cell';
