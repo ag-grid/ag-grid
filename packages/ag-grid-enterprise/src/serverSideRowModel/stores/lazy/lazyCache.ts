@@ -78,7 +78,10 @@ export class LazyCache extends BeanStub {
     private dataVersion: string | number | undefined;
     /** The version each row was loaded or last updated with, kept per row so it follows the row when it moves. */
     private readonly rowDataVersions = new WeakMap<RowNode, string | number>();
-    /** The version each row was removed at by a versioned transaction, so older changes to it are skipped. */
+    /**
+     * The version each row was removed at by a versioned transaction, so older changes to it are skipped. Kept until the
+     * row count is set from that version or a newer one, which then skips older adds of the row.
+     */
     private readonly removedRowVersions = new Map<string, string | number>();
     /** The version the grand total row was last loaded, updated or removed with, as it is not kept in the node map. */
     private grandTotalDataVersion: string | number | undefined;
@@ -918,26 +921,56 @@ export class LazyCache extends BeanStub {
         return node ? this.rowDataVersions.get(node) : this.removedRowVersions.get(id);
     }
 
-    /** Whether the row count was set from a version newer than `version`, so it already counts that version's changes. */
-    public isRowCountNewerThan(version: string | number | undefined): boolean {
+    /** Whether the row count was set from `version` or a newer one, so it already counts that version's changes. */
+    public isRowCountFrom(version: string | number | undefined): boolean {
         return (
             version != null &&
             this.rowCountVersion != null &&
-            compareDataVersions(this.rowCountVersion, version, this.gos.get('compareServerSideDataVersions')) > 0
+            compareDataVersions(this.rowCountVersion, version, this.gos.get('compareServerSideDataVersions')) >= 0
         );
     }
 
-    public setRowCountVersion(version: string | number): void {
+    /** Records the version the row count was set from, and forgets removes it already counts. */
+    private setRowCountVersion(version: string | number | undefined): void {
         this.rowCountVersion = version;
+        if (version == null) {
+            return;
+        }
+        const comparator = this.gos.get('compareServerSideDataVersions');
+        for (const [id, removedVersion] of this.removedRowVersions) {
+            if (compareDataVersions(removedVersion, version, comparator) <= 0) {
+                this.removedRowVersions.delete(id);
+            }
+        }
     }
 
-    /** Sets back a row count that already counted a transaction's adds and removes, dropping rows past the end. */
-    public restoreRowCount(rowCount: number): void {
-        this.numberOfRows = rowCount;
-        if (this.isLastRowKnown) {
-            const lazyNodesAfterStoreEnd = this.nodeMap.filter((lazyNode) => lazyNode.index >= rowCount);
-            lazyNodesAfterStoreEnd.forEach((lazyNode) => this.destroyRowAtIndex(lazyNode.index));
+    /**
+     * Returns the adds or removes that a row count set from `version` or a newer one already counts, other than the
+     * grand total, and pushes the others into `unapplied`. Blocks read from that version already place their rows
+     * around these changes, so a loaded row they change is loaded again rather than moving those blocks' rows twice.
+     */
+    public filterCountedRows(rows: any[] | undefined, version: string | number | undefined, unapplied: any[]) {
+        if (!rows?.length || !this.isRowCountFrom(version)) {
+            return rows;
         }
+        let needsLoad = false;
+        const uncounted = rows.filter((data) => {
+            const id = this.getRowId(data);
+            if (id === GRAND_TOTAL_ROW_ID) {
+                return true;
+            }
+            const node = id == null ? undefined : this.nodeMap.getBy('id', id)?.node;
+            if (node) {
+                node.__needsRefreshWhenVisible = true;
+                needsLoad = true;
+            }
+            unapplied.push(data);
+            return false;
+        });
+        if (needsLoad) {
+            this.lazyBlockLoadingSvc.queueLoadCheck();
+        }
+        return uncounted;
     }
 
     private setRowDataVersion(node: RowNode, version: string | number | undefined): void {
@@ -1119,12 +1152,13 @@ export class LazyCache extends BeanStub {
         if (response.rowCount != undefined && response.rowCount !== -1) {
             // if the rowCount has been provided, set the row count
             this.numberOfRows = response.rowCount;
-            this.rowCountVersion = dataVersion;
+            this.setRowCountVersion(dataVersion);
             this.isLastRowKnown = true;
             this.isLastRowInferred = false;
         } else if (numberOfRowsExpected > dataRowCount) {
             // infer the last row as the response came back short
             this.numberOfRows = firstRowIndex + dataRowCount;
+            this.setRowCountVersion(dataVersion);
             this.isLastRowKnown = true;
             this.isLastRowInferred = true;
         } else if (!this.isLastRowKnown) {
@@ -1525,6 +1559,7 @@ export class LazyCache extends BeanStub {
          */
         if (isNewRowCountValid) {
             this.numberOfRows = newRowCount;
+            this.setRowCountVersion(version);
             this.isLastRowKnown = true;
             this.isLastRowInferred = false;
         } else {

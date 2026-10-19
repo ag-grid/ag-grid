@@ -37,7 +37,8 @@ export interface ServerSideTransactionResult<TData = any> {
     update?: IRowNode<TData>[];
     /**
      * If any rows were not added, updated or removed, the row data for those rows. This happens when the transaction
-     * has a `version` and the row is loaded or updated at a newer version.
+     * has a `version` and the row is loaded, updated or removed at a newer version, or, for added and removed rows,
+     * the row count was set from this version or a newer one, which already counts them.
      * The status is still `Applied`, as the rest of the transaction was applied.
      */
     unapplied?: TData[];
