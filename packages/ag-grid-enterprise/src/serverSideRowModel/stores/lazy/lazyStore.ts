@@ -176,11 +176,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         const { version } = transaction;
         const unapplied: any[] = [];
         const update = cache.filterStaleRows(transaction.update, version, unapplied);
-        let { add, remove } = transaction;
-        if ((add?.length || remove?.length) && cache.discardsStructuralChange(version)) {
-            unapplied.push(...(add ?? []), ...(remove ?? []));
-            add = remove = undefined;
-        }
+        const { add, remove } = cache.filterIncludedChanges(transaction, version, unapplied);
 
         // needs checked before transactions are applied, as rows won't be contiguous immediately
         // after

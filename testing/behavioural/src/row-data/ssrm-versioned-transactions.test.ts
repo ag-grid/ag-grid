@@ -146,6 +146,10 @@ describe('SSRM versioned transactions', () => {
         expect(api.getDisplayedRowCount()).toBe(50);
         await settle();
         expect(requests.slice(sent).filter((r) => r.startRow === 0)).toEqual([]);
+
+        // the row count is still known, so a later add without an index is appended
+        expect(api.getServerSideGroupLevelState()[0].lastRowIndexKnown).toBe(true);
+        expect(api.applyServerSideTransaction({ add: [add] })!.add!.map((node) => node.id)).toEqual(['50']);
     });
 
     describe("'stream' adds and removes at or before the level's version", () => {
@@ -212,6 +216,20 @@ describe('SSRM versioned transactions', () => {
 
             await settleReload(api, settle);
             expect(api.getRowNode('1')).toBeUndefined();
+        });
+
+        test('a delayed remove reloads a block whose rows were all updated at newer versions since it loaded', async () => {
+            const { api, settle } = await createGrid(5, { serverSideDataVersionMode: 'stream' });
+            const updates = serverRows.slice(0, 10).map((row) => ({ ...row, value: row.value + 900 }));
+            api.applyServerSideTransaction({ version: 9, update: updates });
+            serverRows = serverRows.map((row) => updates.find((u) => u.id === row.id) ?? row).slice(1);
+
+            const remove = { id: '0', value: 900 };
+            expect(api.applyServerSideTransaction({ version: 6, remove: [remove] })!.unapplied).toEqual([remove]);
+
+            await settleReload(api, settle);
+            expect(api.getRowNode('0')).toBeUndefined();
+            expect(value(api, '1')).toBe(901);
         });
 
         test('a delayed add finds the row count again from responses without a row count', async () => {
@@ -301,6 +319,13 @@ describe('SSRM versioned transactions', () => {
         const older = { id: GRAND_TOTAL_ROW_ID, value: 60 };
         expect(api.applyServerSideTransaction({ version: 6, update: [older] })!.unapplied).toEqual([older]);
         expect(value(api, GRAND_TOTAL_ROW_ID)).toBe(70);
+
+        // the level's version includes the remove, but the grand total is checked against its own version
+        api.setGridOption('serverSideDataVersionMode', 'stream');
+        api.applyServerSideTransaction({ version: 9, update: [{ id: '0', value: 900 }] });
+        const removeTotal = api.applyServerSideTransaction({ version: 8, remove: [{ id: GRAND_TOTAL_ROW_ID }] })!;
+        expect(removeTotal.unapplied).toBeUndefined();
+        expect(value(api, GRAND_TOTAL_ROW_ID)).toBeUndefined();
     });
 
     test('without versions, transactions behave as before', async () => {

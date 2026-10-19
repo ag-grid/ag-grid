@@ -1,6 +1,7 @@
 import type {
     BeanCollection,
     ColumnModel,
+    CompareServerSideDataVersions,
     FocusService,
     GetRowIdParams,
     IRowNode,
@@ -9,6 +10,7 @@ import type {
     RowNodeSorter,
     RowRenderer,
     ServerSideGroupLevelParams,
+    ServerSideTransaction,
     SortService,
     WithoutGridCommon,
 } from 'ag-grid-community';
@@ -78,6 +80,8 @@ export class LazyCache extends BeanStub {
     private dataVersion: string | number | undefined;
     /** The version each row was loaded or last updated with, kept per row so it follows the row when it moves. */
     private readonly rowDataVersions = new WeakMap<RowNode, string | number>();
+    /** The version of the block each row was loaded with, whose adds and removes its position includes. */
+    private readonly rowLoadVersions = new WeakMap<RowNode, string | number>();
     /** The version the grand total row was last loaded, updated or removed with, as it is not kept in the node map. */
     private grandTotalDataVersion: string | number | undefined;
     /** Bumped whenever the pinned data version is dropped, so versioned responses to older requests are discarded. */
@@ -914,33 +918,59 @@ export class LazyCache extends BeanStub {
     }
 
     /**
-     * Returns `true` when the adds and removes of a transaction at `version` are discarded, as the level's version
-     * already includes them. Loaded rows read from an older version do not, so they are loaded again at the level's
-     * version, and the row count, which may also be older, is found again from the responses.
+     * Returns the adds and removes of a transaction at `version` that the level's version does not already include,
+     * and pushes the others into `unapplied`. Rows read from an older version do not include them, so they are loaded
+     * again. The grand total is not positioned among the rows, so it is checked against its own version instead.
      */
-    public discardsStructuralChange(version: string | number | undefined): boolean {
+    public filterIncludedChanges(
+        changes: Pick<ServerSideTransaction, 'add' | 'remove'>,
+        version: string | number | undefined,
+        unapplied: any[]
+    ): Pick<ServerSideTransaction, 'add' | 'remove'> {
         const pinned = this.dataVersion;
-        const comparator = this.gos.get('compareServerSideDataVersions');
-        const isLoaded = version != null && pinned != null && compareDataVersions(pinned, version, comparator) >= 0;
-        if (!isLoaded) {
-            return false;
+        if (version == null || pinned == null) {
+            return changes;
         }
+        const comparator = this.gos.get('compareServerSideDataVersions');
+        const isIncluded = compareDataVersions(pinned, version, comparator) >= 0;
+        if (!isIncluded) {
+            return changes;
+        }
+        let isSkipped = false;
+        const filter = (rows: any[] | undefined) => {
+            const grandTotal = rows?.filter((data) => {
+                if (this.getRowId(data) === GRAND_TOTAL_ROW_ID) {
+                    return true;
+                }
+                unapplied.push(data);
+                isSkipped = true;
+                return false;
+            });
+            return this.filterStaleRows(grandTotal, version, unapplied);
+        };
+        const add = filter(changes.add);
+        const remove = filter(changes.remove);
+        if (isSkipped) {
+            this.loadRowsOlderThan(version, comparator);
+        }
+        return { add, remove };
+    }
+
+    /** Loads again the rows read from a version older than `version`, and finds the row count again if there are any. */
+    private loadRowsOlderThan(version: string | number, comparator?: CompareServerSideDataVersions): void {
+        let isLoading = false;
         this.nodeMap.forEach(({ node }) => {
-            const rowVersion = this.rowDataVersions.get(node);
-            if (!node.stub && (rowVersion == null || compareDataVersions(rowVersion, version, comparator) < 0)) {
+            const loadVersion = this.rowLoadVersions.get(node);
+            if (!node.stub && loadVersion != null && compareDataVersions(loadVersion, version, comparator) < 0) {
                 this.nodesToRefresh.add(node);
+                isLoading = true;
             }
         });
-        this.lazyBlockLoadingSvc.queueLoadCheck();
-        if (this.isLastRowKnown) {
-            // keep the displayed count until responses replace it, but load a row of an empty level to find it
+        if (isLoading) {
+            this.lazyBlockLoadingSvc.queueLoadCheck();
+            // the row count may be as old as those rows: keep showing it until the responses replace it
             this.isLastRowKnown = false;
-            if (this.numberOfRows === 0) {
-                this.numberOfRows = 1;
-                this.fireStoreUpdatedEvent();
-            }
         }
-        return true;
     }
 
     private setRowDataVersion(node: RowNode, version: string | number | undefined): void {
@@ -1114,8 +1144,10 @@ export class LazyCache extends BeanStub {
             }
             if (dataVersion == null) {
                 this.rowDataVersions.delete(node);
+                this.rowLoadVersions.delete(node);
             } else {
                 this.rowDataVersions.set(node, dataVersion);
+                this.rowLoadVersions.set(node, dataVersion);
             }
         }
 
