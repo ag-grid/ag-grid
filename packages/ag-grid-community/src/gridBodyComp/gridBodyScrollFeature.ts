@@ -145,7 +145,8 @@ export class GridBodyScrollFeature extends BeanStub {
         this.isHorizontalPositionInvalidated = true;
     }
 
-    private invalidateVerticalScroll(): void {
+    /** Makes the next `getVScrollPosition` read the viewport, in case it scrolled since its last scroll event. */
+    public invalidateVerticalScroll(): void {
         this.isVerticalPositionInvalidated = true;
     }
 

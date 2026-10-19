@@ -187,6 +187,28 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             expect(isRowAnimationPrevented()).toBe(false);
         });
 
+        test('does not follow the top row in view when an update sorts it elsewhere', () => {
+            const api = createGrid({ columnDefs: [{ field: 'value', sort: 'asc' }] });
+            scrollTo(api, SCROLL_TOP);
+
+            api.applyTransaction({ update: [{ id: 'r20', value: 1000 }] });
+
+            expect(api.getDisplayedRowAtIndex(199)!.id).toBe('r20');
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP - ROW_HEIGHT);
+            expect(offsetInView(api, 'r21')).toBe(ROW_HEIGHT);
+        });
+
+        test('uses a scroll position whose scroll event has not fired yet', () => {
+            const api = createGrid();
+            mockGridLayout.asyncScrollEvents = true;
+            getViewport(api).scrollTop = SCROLL_TOP;
+
+            api.applyTransaction({ add: createRows('new', 3), addIndex: 0 });
+
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + 3 * ROW_HEIGHT);
+            expect(offsetInView(api, 'r20')).toBe(0);
+        });
+
         test('does not scroll on sorting', () => {
             const api = createGrid({ columnDefs: [{ field: 'value', sortable: true }] });
             scrollTo(api, SCROLL_TOP);

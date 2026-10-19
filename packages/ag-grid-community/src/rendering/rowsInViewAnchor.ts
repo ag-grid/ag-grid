@@ -1,5 +1,6 @@
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
+import type { VerticalScrollPosition } from '../interfaces/iRowNode';
 
 interface AnchorRow {
     rowNode: RowNode;
@@ -9,9 +10,14 @@ interface AnchorRow {
 
 /** The rows in view before a data update, in display order, used to keep them in view after it. */
 export interface RowsInViewAnchor {
-    /** The page pixel at the top of the viewport before the update. */
-    viewportTop: number;
     rows: AnchorRow[];
+}
+
+/** Reads the viewport itself, as a cached position can lag behind a scroll whose event has not fired yet. */
+function getLiveVScrollPosition(beans: BeanCollection): VerticalScrollPosition {
+    const scrollFeature = beans.ctrlsSvc.getScrollFeature();
+    scrollFeature.invalidateVerticalScroll();
+    return scrollFeature.getVScrollPosition();
 }
 
 /**
@@ -19,8 +25,8 @@ export interface RowsInViewAnchor {
  * not anchored, so rows added at the top come into view.
  */
 export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | null {
-    const { ctrlsSvc, pageBounds, rowContainerHeight, rowModel } = beans;
-    const { top, bottom } = ctrlsSvc.getScrollFeature().getVScrollPosition();
+    const { pageBounds, rowContainerHeight, rowModel } = beans;
+    const { top, bottom } = getLiveVScrollPosition(beans);
     if (top <= 0 || !rowModel.isRowsToRender()) {
         return null;
     }
@@ -42,34 +48,41 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
         }
         rows.push({ rowNode, pageTop });
     }
-    return rows.length ? { viewportTop, rows } : null;
+    return rows.length ? { rows } : null;
 }
 
 /**
- * Scrolls by however far the first anchored row still displayed on the page has moved, so it stays where it was in
- * the viewport, then anchors to that row where it is now. Returns `true` if the grid scrolled.
+ * Scrolls by however far the rows in view have moved, so they stay where they were in the viewport, then anchors to
+ * the row it followed where that row is now. Returns `true` if the grid scrolled.
+ *
+ * Follows the first row still on the page that moved as far as the next one, as rows only move together when rows
+ * were added or removed above them; a row that moved on its own, such as one re-sorted by an update, is not followed.
  */
 export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnchor): boolean {
     const { ctrlsSvc, pageBounds, rowContainerHeight, rowModel } = beans;
     const firstRow = pageBounds.getFirstRow();
     const lastRow = pageBounds.getLastRow();
+    const pixelOffset = pageBounds.getPixelOffset();
+    const movedRows: { rowNode: RowNode; pageTop: number; shift: number }[] = [];
     for (const { rowNode, pageTop } of anchor.rows) {
         const { rowIndex, rowTop } = rowNode;
         const displayed = rowIndex != null && rowTop != null && rowModel.getRow(rowIndex) === rowNode;
-        if (!displayed || rowIndex < firstRow || rowIndex > lastRow) {
-            continue; // Removed, or moved off the page
+        if (displayed && rowIndex >= firstRow && rowIndex <= lastRow) {
+            const newPageTop = rowTop - pixelOffset;
+            movedRows.push({ rowNode, pageTop: newPageTop, shift: newPageTop - pageTop });
         }
-        const newPageTop = rowTop - pageBounds.getPixelOffset();
-        const shift = newPageTop - pageTop;
-        anchor.rows = [{ rowNode, pageTop: newPageTop }];
-        if (shift === 0) {
-            return false;
-        }
-        anchor.viewportTop += shift;
-        ctrlsSvc
-            .getScrollFeature()
-            .setVerticalScrollPosition(rowContainerHeight.getScrollPositionForPixel(anchor.viewportTop));
-        return true;
     }
-    return false;
+    if (!movedRows.length) {
+        return false; // Removed, or moved off the page
+    }
+
+    const followed = movedRows.find((row, i) => row.shift === movedRows[i + 1]?.shift) ?? movedRows[0];
+    anchor.rows = [{ rowNode: followed.rowNode, pageTop: followed.pageTop }];
+    if (followed.shift === 0) {
+        return false;
+    }
+    const { top } = getLiveVScrollPosition(beans);
+    const viewportTop = top + rowContainerHeight.divStretchOffset + followed.shift;
+    ctrlsSvc.getScrollFeature().setVerticalScrollPosition(rowContainerHeight.getScrollPositionForPixel(viewportTop));
+    return true;
 }
