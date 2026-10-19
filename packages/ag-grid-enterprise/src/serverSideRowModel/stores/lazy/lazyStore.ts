@@ -66,6 +66,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     private readonly idSequence = { value: 0 };
     private cache: LazyCache;
     private readonly info: any;
+    /** Set when the level was reloaded because a block was read from a version other than its pinned one. */
+    private reloadedForDataVersion = false;
 
     /** Raw data for the grand total row, kept even when grandTotalRow option is not set. */
     public grandTotalData: any;
@@ -170,31 +172,44 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         }
 
+        const { version } = transaction;
+        const unapplied: any[] = [];
+        const update = this.cache.filterStaleRows(transaction.update, version, unapplied);
+        const add = this.cache.filterStaleRows(transaction.add, version, unapplied);
+        const remove = this.cache.filterStaleRows(transaction.remove, version, unapplied);
+
         // needs checked before transactions are applied, as rows won't be contiguous immediately
         // after
         const allRowsLoaded = this.cache.isStoreFullyLoaded();
 
         let updatedNodes: RowNode[] | undefined = undefined;
-        if (transaction.update?.length) {
-            updatedNodes = this.cache.updateRowNodes(transaction.update);
+        if (update?.length) {
+            updatedNodes = this.cache.updateRowNodes(update, version);
         }
 
         let insertedNodes: RowNode[] | undefined = undefined;
-        if (transaction.add?.length) {
+        if (add?.length) {
             let addIndex = transaction.addIndex;
             if (addIndex != null && addIndex < 0) {
                 addIndex = undefined;
             }
-            insertedNodes = this.cache.insertRowNodes(transaction.add, addIndex);
+            insertedNodes = this.cache.insertRowNodes(add, addIndex, version);
         }
 
         let removedNodes: RowNode[] | undefined = undefined;
-        if (transaction.remove?.length) {
-            const allIdsToRemove = transaction.remove.map((data) =>
+        if (remove?.length) {
+            const allIdsToRemove = remove.map((data) =>
                 idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data })
             );
             const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
-            removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, transaction.rowCount);
+            // a row count given with the transaction does not account for the stale removes skipped
+            const staleRemoves = (transaction.remove?.length ?? 0) - remove.length;
+            const rowCount = transaction.rowCount == null ? undefined : transaction.rowCount + staleRemoves;
+            removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, rowCount);
+        }
+
+        if (version != null) {
+            this.cache.advanceDataVersion(version);
         }
 
         const isClientSideSortingEnabled = this.gos.get('serverSideEnableClientSideSort');
@@ -212,6 +227,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             update: updatedNodes,
             add: insertedNodes,
             remove: removedNodes,
+            unapplied: unapplied.length ? unapplied : undefined,
         };
     }
 
@@ -691,6 +707,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 const oldCount = this.cache.getRowCount();
                 const lastKnown = this.cache.isLastRowIndexKnown();
                 const lastInferred = this.cache.isLastRowIndexInferred();
+                this.reloadedForDataVersion = false;
                 this.destroyBean(this.cache);
                 this.cache = this.createManagedBean(
                     new LazyCache(this, oldCount, lastKnown, this.storeParams, lastInferred)
@@ -736,6 +753,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * @param purge whether to remove all nodes and data in favour of stub nodes
      */
     refreshStore(purge: boolean) {
+        this.reloadedForDataVersion = false;
         if (purge) {
             this.grandTotalData = undefined;
             this.destroyGrandTotalRow();
@@ -746,6 +764,22 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         }
 
         this.cache.markNodesForRefresh();
+    }
+
+    /**
+     * Reloads the level, as a purge refresh does, after a block was read from a version other than the level's
+     * pinned version, so the level pins the version the server now reads. Only reloads once until the level is
+     * refreshed or reset, so a server that cannot keep a version does not reload the level indefinitely.
+     *
+     * @returns whether the level was reloaded
+     */
+    reloadForDataVersion(): boolean {
+        if (this.reloadedForDataVersion) {
+            return false;
+        }
+        this.refreshStore(true);
+        this.reloadedForDataVersion = true;
+        return true;
     }
 
     /**

@@ -105,6 +105,37 @@ In the example below, note the following:
 
 {% gridExampleRunner title="Asynchronous Example" name="transactions-async"  exampleHeight=615 /%}
 
+## Versioned Transactions
+
+When the grid is fed by a stream of changes, such as a WebSocket, a change can arrive after the grid has loaded newer data, and changes can arrive while the rows they change are still loading. To let the grid reconcile them, set the `serverSideDataVersionMode` grid option to `'stream'`, return the version of the data with each block in `LoadSuccessParams.dataVersion`, and send the version of the data after each change as the `version` of its transaction.
+
+```{% frameworkTransform=true %}
+socket.onmessage = (event) => {
+    const { version, trade } = JSON.parse(event.data);
+    api.applyServerSideTransactionAsync({
+        route: [trade.portfolio],
+        version,
+        update: [trade],
+    });
+};
+```
+
+The grid keeps the version each row was loaded or last changed with, and the newest version each level has seen:
+
+- A change to a row with a newer version is skipped. The skipped rows are returned in the `unapplied` property of the transaction result, and the status stays `Applied`.
+- A newer version returned with a block, or a newer transaction applied to the level, moves the level's version forward, so later blocks of the level are requested with `request.dataVersion` set to the newest version the grid has. Read the block at that version, or at a newer one.
+- A block returned with a version older than the level's version is discarded and requested again with the level's version. This includes a block that was loading when a newer transaction arrived, so the block shows the transaction's changes once it loads. A transaction does not change rows of blocks that are still loading. If a block is still older after three more requests, the grid keeps its rows and logs a warning.
+- `'stream'` mode needs versions that can be ordered: numbers, or other versions with `compareServerSideDataVersions`. A change whose version cannot be compared with the row's, such as two different strings without a comparator, is applied without a version check. Transactions without a version are applied without a version check.
+- In the default `'snapshot'` mode, stale changes are skipped in the same way, but the level's version does not move, so every block of a level is read from the first version returned for it and does not show changes from later transactions. Use `'stream'` mode when the level receives versioned transactions.
+
+In the example below, note the following:
+
+- The server changes the value of a random trade every 100 milliseconds, and sends each change with the server's new version. Each message takes up to 2 seconds to arrive, so messages for the same trade can arrive out of order.
+- Each group takes 200 milliseconds to load, so changes can arrive while it is loading. A group read from a version older than a change that arrived while it loaded is loaded again.
+- The **Version** column shows the version at which each trade last changed. A message older than the version shown is skipped, and the count of skipped updates is shown above the grid.
+
+{% gridExampleRunner title="Versioned Transactions" name="transactions-versioned" exampleHeight=615 /%}
+
 ## Showcase Example
 
 The following demonstrates a more complex example of transactions, it shows subscribing to a source of updates to provide the changes, while using dynamic row grouping, aggregation, and child counts. All of which react to the changes caused by the transactions.

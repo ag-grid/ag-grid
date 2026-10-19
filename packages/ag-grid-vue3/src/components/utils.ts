@@ -113,6 +113,7 @@ import type {
     RowStyle,
     SelectionColumnDef,
     SendToClipboard,
+    ServerSideDataVersionMode,
     SideBarDef,
     SortDirection,
     StatusBar,
@@ -2037,6 +2038,13 @@ export interface Props<TData> {
          * @agModule `ServerSideRowModelModule`
          */
     compareServerSideDataVersions?: CompareServerSideDataVersions,
+    /** How the grid treats the data versions returned in `LoadSuccessParams.dataVersion` and sent in `ServerSideTransaction.version`.
+         * - `'snapshot'`: each level reads every block from the first version returned for it. A block read from another version reloads the level once, and if that happens again the grid logs a warning.
+         * - `'stream'`: the level's version moves forward to a newer version returned with a block, or to the version of a newer transaction applied to the level, so later blocks are read from the latest version the grid has. A block read from an older version is loaded again.
+         * @default 'snapshot'
+         * @agModule `ServerSideRowModelModule`
+         */
+    serverSideDataVersionMode?: ServerSideDataVersionMode,
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-business-key='abc'` where `abc` is what you return as the business key.
          * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
          */
@@ -2580,6 +2588,7 @@ export function getProps() {
         isServerSideGroup: undefined,
         getServerSideGroupKey: undefined,
         compareServerSideDataVersions: undefined,
+        serverSideDataVersionMode: undefined,
         getBusinessKeyForNode: undefined,
         getRowId: undefined,
         resetRowDataOnUpdate: undefined,

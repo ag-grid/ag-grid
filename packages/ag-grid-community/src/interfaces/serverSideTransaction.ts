@@ -17,6 +17,13 @@ export interface ServerSideTransaction<TData = any> {
     update?: TData[];
     /** Optional new total row count. Use this when a transaction deletes rows that are not currently in cache. */
     rowCount?: number;
+    /**
+     * The version of the data after this transaction, in the same form as `LoadSuccessParams.dataVersion`.
+     * Changes to rows loaded or updated at a newer version are skipped and returned in `unapplied`.
+     * When `serverSideDataVersionMode` is `'stream'`, a block of the level read from a version older than this transaction is loaded again, so rows of blocks still loading are not changed by it.
+     * Numbers are compared numerically; provide `compareServerSideDataVersions` to compare other versions.
+     */
+    version?: string | number;
 }
 
 export interface ServerSideTransactionResult<TData = any> {
@@ -28,6 +35,12 @@ export interface ServerSideTransactionResult<TData = any> {
     remove?: IRowNode<TData>[];
     /** If rows were updated, the updated Row Nodes. */
     update?: IRowNode<TData>[];
+    /**
+     * If any rows were not added, updated or removed, the row data for those rows. This happens when the transaction
+     * has a `version` and the row is loaded or updated at a newer version.
+     * The status is still `Applied`, as the rest of the transaction was applied.
+     */
+    unapplied?: TData[];
 }
 
 export enum ServerSideTransactionResultStatus {

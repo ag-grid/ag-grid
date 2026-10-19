@@ -106,25 +106,127 @@ describe('SSRM data version', () => {
         expect(rootVersion(api)).toBe('v1');
     });
 
-    test('the datasource returning a different version for a pinned level warns, and the level keeps its version', async () => {
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [338] });
-        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-        try {
-            let responseCount = 0;
-            const api = gridsManager.createGrid(
-                null,
-                flatGridOptions((params) => respond(params, `v${++responseCount}`))
-            );
-            await waitForEvent('firstDataRendered', api);
-            await scrollTo(api, 25);
-
-            expect(rootVersion(api)).toBe('v1');
-            expect(warnSpy.mock.calls.map((call) => String(call[0]))).toContainEqual(
-                expect.stringContaining('warning #338')
-            );
-        } finally {
-            warnSpy.mockRestore();
+    describe('a block read from a version other than the pinned one', () => {
+        /** Spies on console warnings, returning the data version mismatch warnings logged so far. */
+        function spyOnVersionWarnings() {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [338] });
+            const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            const versionWarnings = () =>
+                warnSpy.mock.calls.map((call) => String(call[0])).filter((message) => message.includes('warning #338'));
+            return { warnSpy, versionWarnings };
         }
+
+        test('reloads the level once, which then pins the version the server now reads', async () => {
+            const { warnSpy, versionWarnings } = spyOnVersionWarnings();
+            try {
+                const requests: IServerSideGetRowsRequest[] = [];
+                let serverVersion = 'v1';
+                const api = gridsManager.createGrid(
+                    null,
+                    flatGridOptions((params) => {
+                        requests.push(params.request);
+                        respond(params, serverVersion);
+                    })
+                );
+                await waitForEvent('firstDataRendered', api);
+                expect(rootVersion(api)).toBe('v1');
+
+                // the server can no longer read v1
+                serverVersion = 'v2';
+                await scrollTo(api, 25);
+                await waitFor(() => expect(rootVersion(api)).toBe('v2'));
+                await scrollTo(api, 25);
+
+                expect(requests.filter((r) => !('dataVersion' in r)).length).toBe(2);
+                expect(requests.at(-1)!.dataVersion).toBe('v2');
+                expect(api.getRowNode('25')?.data.value).toBe(25);
+                expect(versionWarnings()).toEqual([]);
+            } finally {
+                warnSpy.mockRestore();
+            }
+        });
+
+        test('keeps the rows and warns once when it happens again after the reload, without reloading again', async () => {
+            const { warnSpy, versionWarnings } = spyOnVersionWarnings();
+            try {
+                const requests: IServerSideGetRowsRequest[] = [];
+                let responseCount = 0;
+                const api = gridsManager.createGrid(
+                    null,
+                    flatGridOptions((params) => {
+                        requests.push(params.request);
+                        // a server that never reads the same version twice
+                        respond(params, `v${++responseCount}`);
+                    })
+                );
+                await waitForEvent('firstDataRendered', api);
+                await scrollTo(api, 25);
+                await waitFor(() => expect(rootVersion(api)).toBe('v3'));
+
+                await scrollTo(api, 25);
+                expect(!!api.getRowNode('25')).toBe(true);
+                await scrollTo(api, 45);
+                expect(!!api.getRowNode('45')).toBe(true);
+
+                expect(rootVersion(api)).toBe('v3');
+                expect(requests.filter((r) => !('dataVersion' in r)).length).toBe(2);
+                expect(versionWarnings()).toHaveLength(1);
+            } finally {
+                warnSpy.mockRestore();
+            }
+        });
+
+        test('reloads the level again after it is refreshed', async () => {
+            const { warnSpy } = spyOnVersionWarnings();
+            try {
+                const requests: IServerSideGetRowsRequest[] = [];
+                // a server that reads the pinned version as another version
+                const api = gridsManager.createGrid(
+                    null,
+                    flatGridOptions((params) => {
+                        requests.push(params.request);
+                        respond(params, params.request.dataVersion == null ? 'v1' : 'v2');
+                    })
+                );
+                await waitForEvent('firstDataRendered', api);
+                const unversionedRequests = () => requests.filter((r) => !('dataVersion' in r)).length;
+
+                await scrollTo(api, 25);
+                await scrollTo(api, 0);
+                await scrollTo(api, 45);
+                expect(unversionedRequests()).toBe(2);
+
+                api.refreshServerSide({ purge: true });
+                await scrollTo(api, 0);
+                await scrollTo(api, 25);
+                await scrollTo(api, 0);
+                await scrollTo(api, 45);
+                expect(unversionedRequests()).toBe(4);
+                expect(rootVersion(api)).toBe('v1');
+            } finally {
+                warnSpy.mockRestore();
+            }
+        });
+
+        test('a different version supplied through applyServerSideRowData warns, and the level keeps its version', async () => {
+            const { warnSpy, versionWarnings } = spyOnVersionWarnings();
+            try {
+                const api = gridsManager.createGrid(
+                    null,
+                    flatGridOptions((params) => respond(params, 'v1'))
+                );
+                await waitForEvent('firstDataRendered', api);
+
+                api.applyServerSideRowData({
+                    successParams: { rowData: rowData.slice(0, 10), rowCount: totalRows, dataVersion: 'v2' },
+                });
+
+                expect(rootVersion(api)).toBe('v1');
+                expect(versionWarnings()).toHaveLength(1);
+            } finally {
+                warnSpy.mockRestore();
+            }
+        });
     });
 
     describe('comparing versions', () => {

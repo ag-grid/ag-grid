@@ -58,6 +58,7 @@ const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'tooltipTrigger',
     'noteTrigger',
     'serverSidePivotResultFieldSeparator',
+    'serverSideDataVersionMode',
     'columnMenu',
     'tooltipShowMode',
     'invalidEditValueMode',

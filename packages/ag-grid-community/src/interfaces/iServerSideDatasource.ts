@@ -35,7 +35,7 @@ export interface IServerSideGetRowsRequest {
     /**
      * The data version pinned for this level, as returned by an earlier `success` call in `LoadSuccessParams.dataVersion`.
      * Read every block of the level from this snapshot, so that the blocks are consistent with each other.
-     * Not present until a version has been pinned. Dropped when the level is refreshed or reset.
+     * Not present until a version has been pinned. Moved forward to newer versions when `serverSideDataVersionMode` is `'stream'`. Dropped when the level is refreshed or reset.
      */
     dataVersion?: string | number;
 }

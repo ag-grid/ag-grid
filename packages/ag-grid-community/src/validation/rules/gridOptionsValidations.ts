@@ -648,6 +648,9 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                           expected: 'a function',
                       }),
         },
+        serverSideDataVersionMode: {
+            supportedRowModels: ['serverSide'],
+        },
         serverSideDatasource: {
             supportedRowModels: ['serverSide'],
         },

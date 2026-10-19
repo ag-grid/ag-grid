@@ -140,6 +140,7 @@ export const GRID_OPTION_DEFAULTS = {
     cacheOverflowSize: 1,
     infiniteInitialRowCount: 1,
     serverSideInitialRowCount: 1,
+    serverSideDataVersionMode: 'snapshot',
     cacheBlockSize: 100,
     maxBlocksInCache: -1,
     maxConcurrentDatasourceRequests: 2,
