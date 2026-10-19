@@ -1091,6 +1091,7 @@ export class LazyCache extends BeanStub {
             newerTransactions.flatMap(({ addedIds }) => [...addedIds]).filter((id) => this.isNodeInCache(id))
         );
         const heldAddedIndexes = new Set([...heldAddedIds].map((id) => this.getStoreIndex(id)));
+        const heldRemovedIds = new Set(newerTransactions.flatMap(({ removedIds }) => [...removedIds]));
 
         const wasRefreshing = this.nodesToRefresh.size > 0;
         let skippedRowCount = 0;
@@ -1110,9 +1111,12 @@ export class LazyCache extends BeanStub {
                 continue;
             }
 
-            // a newer transaction added the row again after the block was read, so the added row is kept
-            if (id != null && heldAddedIds.has(id)) {
-                heldAddedRowCount++;
+            // a newer transaction removed the row, or added it again, after the block was read, so the block's row is
+            // skipped. The row count counts a row added again twice, unless its remove is counted too.
+            if (id != null && (heldAddedIds.has(id) || heldRemovedIds.has(id))) {
+                if (!heldRemovedIds.has(id)) {
+                    heldAddedRowCount++;
+                }
                 continue;
             }
 

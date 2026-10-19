@@ -616,6 +616,53 @@ describe('SSRM versioned transactions', () => {
         ]);
     });
 
+    test('a loaded row removed while its block reloads does not move the rows after the block twice', async () => {
+        const { api, pending, settle } = await createGrid(1, { maxConcurrentDatasourceRequests: -1 });
+        respond(await requestBlockOf(api, pending, 25), 1);
+        for (const params of pending.splice(0)) {
+            respond(params, 1);
+        }
+        api.refreshServerSide({ purge: false });
+        await waitFor(() => expect(pending.some((p) => p.request.startRow === 0)).toBe(true));
+        const reload = pending.splice(
+            pending.findIndex((p) => p.request.startRow === 0),
+            1
+        )[0];
+
+        const before = serverRows;
+        serverRows = serverRows.filter((row) => row.id !== '5');
+        api.applyServerSideTransaction({ version: 2, remove: [{ id: '5', value: 5 }] });
+
+        respond(reload, 1, before);
+        expect(api.getDisplayedRowCount()).toBe(49);
+        expectRowsInServerOrder(api);
+        await settle();
+        expectRowsInServerOrder(api);
+    });
+
+    test('a loaded row removed and added again while its block reloads is counted once', async () => {
+        const { api, pending, settle } = await createGrid(1, { maxConcurrentDatasourceRequests: -1 });
+        api.refreshServerSide({ purge: false });
+        await waitFor(() => expect(pending.some((p) => p.request.startRow === 0)).toBe(true));
+        const reload = pending.splice(
+            pending.findIndex((p) => p.request.startRow === 0),
+            1
+        )[0];
+
+        const before = serverRows;
+        serverRows = serverRows.map((row) => (row.id === '5' ? { id: '5', value: -5 } : row));
+        api.applyServerSideTransaction({ version: 2, remove: [{ id: '5', value: 5 }] });
+        api.applyServerSideTransaction({ version: 3, addIndex: 5, add: [{ id: '5', value: -5 }] });
+
+        respond(reload, 1, before);
+        expect(api.getDisplayedRowCount()).toBe(50);
+        expect(value(api, '5')).toBe(-5);
+        expectRowsInServerOrder(api);
+        await settle();
+        expect(api.getDisplayedRowCount()).toBe(50);
+        expectRowsInServerOrder(api);
+    });
+
     test('a load discarded by a purge does not drop transactions held for the blocks loading after it', async () => {
         const { api, pending } = await createGrid(1, { maxConcurrentDatasourceRequests: -1 });
         const discarded = await requestBlockOf(api, pending, 25);
