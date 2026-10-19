@@ -79,14 +79,14 @@ Pick the input that *separates* the two behaviours. A test that passes against b
 
 **Then refactor, on green.** The third step is not optional and it is where tidying belongs: simplifying the fix, extracting a harness, merging same-setup tests, adding the `GridRows`/`GridColumns`/`FilterDom` snapshots. The test suite is what makes that safe, so it must stay green *and unchanged* throughout — if an assertion has to be edited to keep passing, that is a behaviour change wearing a refactor's clothes, and it needs its own red step.
 
-**Targeted runs: include the tests that guard the change's surface.** A targeted `./behave.sh` filter misses package tests outside its pattern. Pass extra file filters as separate arguments, e.g. `./behave.sh tooltip main-internal react`: `main-internal` whenever an export or `AG_GRID_INTERNAL` annotation changes (it matches `main-internal.test.ts`), and `react` whenever rendering or load timing changes (it matches the behavioural `*-react.test.tsx` files).
-
 ## Commands
 
 - `./behave.sh` — the whole unit suite (package + behavioural) as one multi-project Vitest run.
 - `./benches.sh` — behavioural benchmarks in headless Chromium.
 - `./docs-e2e.sh` — Playwright E2E against the docs site. The Nx target is `test:e2e`; there is **no** `e2e` target.
 - `./grid-e2e.sh` — real-browser Playwright specs in `testing/e2e`, chromium by default; `--all-browsers` runs chromium, firefox and webkit, `--project=<name>` one of them, `--url <site>` runs against a dev server or deployed site instead of the local build.
+
+**Targeted runs: include the tests that guard the change's surface.** A targeted `./behave.sh` filter misses package tests outside its pattern. Pass extra file filters as separate arguments, e.g. `./behave.sh tooltip main-internal react.test`: `main-internal` whenever an export or `AG_GRID_INTERNAL` annotation changes (it matches `main-internal.test.ts`), and `react.test` whenever rendering or load timing changes (it matches the behavioural `*-react.test.tsx` files).
 
 ### Never block on a gate; read its log afterwards
 
