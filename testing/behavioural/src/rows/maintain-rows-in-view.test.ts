@@ -122,6 +122,16 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             expect(offsetInView(api, 'r21')).toBe(ROW_HEIGHT);
         });
 
+        test('keeps the row after the rows in view removed in view', () => {
+            const api = createGrid();
+            scrollTo(api, SCROLL_TOP);
+
+            api.applyTransaction({ remove: [{ id: 'r0' }, { id: 'r20' }, { id: 'r21' }] as Row[] });
+
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP - 2 * ROW_HEIGHT);
+            expect(offsetInView(api, 'r22')).toBe(ROW_HEIGHT);
+        });
+
         test('keeps the rows after the rows in view in view when every row in view is removed', () => {
             const api = createGrid();
             scrollTo(api, SCROLL_TOP + 10);
@@ -530,6 +540,16 @@ describe('maintainRowsInViewOnDataUpdate', () => {
 
             expect(getViewport(api).scrollTop).toBe(SCROLL_TOP - 2 * ROW_HEIGHT);
             expect(offsetInView(api, 'r20')).toBe(0);
+        });
+
+        test('keeps the row after the rows in view removed in view, as with client-side rows', async () => {
+            const api = await createGrid();
+            scrollTo(api, SCROLL_TOP);
+
+            api.applyServerSideTransaction({ remove: [{ id: 'r0' }, { id: 'r20' }, { id: 'r21' }] as Row[] });
+
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP - 2 * ROW_HEIGHT);
+            expect(offsetInView(api, 'r22')).toBe(ROW_HEIGHT);
         });
 
         test('keeps rows in view when async transactions add rows above them', async () => {
