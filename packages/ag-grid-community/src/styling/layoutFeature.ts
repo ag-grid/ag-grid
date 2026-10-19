@@ -21,11 +21,13 @@ export interface UpdateLayoutClassesParams {
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _getLayoutCssClass(domLayout: DomLayoutType | undefined): string {
-    return domLayout === 'autoHeight'
-        ? LayoutCssClasses.AUTO_HEIGHT
-        : domLayout === 'print'
-          ? LayoutCssClasses.PRINT
-          : LayoutCssClasses.NORMAL;
+    if (domLayout === 'autoHeight') {
+        return LayoutCssClasses.AUTO_HEIGHT;
+    }
+    if (domLayout === 'print') {
+        return LayoutCssClasses.PRINT;
+    }
+    return LayoutCssClasses.NORMAL;
 }
 
 export class LayoutFeature extends BeanStub {
