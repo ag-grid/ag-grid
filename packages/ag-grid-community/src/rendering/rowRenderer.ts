@@ -694,7 +694,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
             }
         }
 
-        if (keptRowsInView && animateRows) {
+        // checks animateRows itself, as the CSS transitions move the rows even when this redraw does not animate
+        if (keptRowsInView && _isAnimateRows(gos)) {
             // rows kept in view by scrolling must not animate from where they were before the scroll
             this.gridBodyCtrl.pauseRowAnimation();
         }

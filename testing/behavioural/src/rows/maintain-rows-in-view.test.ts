@@ -171,25 +171,30 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             expect(offsetInView(api, 'r40')).toBe(offset);
         });
 
-        test('keeps rows in view without animating them when animateRows is enabled', async () => {
-            const api = createGrid({ animateRows: true, ensureDomOrder: false });
-            const root = TestGridsManager.getHTMLElement(api)!;
-            await nextAnimationFrame();
-            scrollTo(api, SCROLL_TOP);
-            const isRowAnimationPrevented = () => !!root.querySelector('.ag-prevent-animation');
+        test.each([false, true])(
+            'keeps rows in view without animating them when animateRows is enabled (suppressAnimationFrame=%s)',
+            async (suppressAnimationFrame) => {
+                const api = createGrid({ animateRows: true, ensureDomOrder: false, suppressAnimationFrame });
+                const root = TestGridsManager.getHTMLElement(api)!;
+                await nextAnimationFrame();
+                scrollTo(api, SCROLL_TOP);
+                const isRowAnimationPrevented = () => !!root.querySelector('.ag-prevent-animation');
+                // as in a browser, so the scroll the grid makes while drawing rows is handled after it has finished
+                mockGridLayout.asyncScrollEvents = true;
 
-            api.applyTransaction({ add: createRows('new', 3), addIndex: 0 });
+                api.applyTransaction({ add: createRows('new', 3), addIndex: 0 });
 
-            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + 3 * ROW_HEIGHT);
-            expect(root.querySelector<HTMLElement>('[row-id="r20"]')!.style.transform).toBe(
-                `translateY(${SCROLL_TOP + 3 * ROW_HEIGHT}px)`
-            );
-            expect(isRowAnimationPrevented()).toBe(true);
+                expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + 3 * ROW_HEIGHT);
+                expect(root.querySelector<HTMLElement>('[row-id="r20"]')!.style.transform).toBe(
+                    `translateY(${SCROLL_TOP + 3 * ROW_HEIGHT}px)`
+                );
+                expect(isRowAnimationPrevented()).toBe(true);
 
-            await nextAnimationFrame();
-            await nextAnimationFrame();
-            expect(isRowAnimationPrevented()).toBe(false);
-        });
+                await nextAnimationFrame();
+                await nextAnimationFrame();
+                expect(isRowAnimationPrevented()).toBe(false);
+            }
+        );
 
         test('does not follow the top row in view when an update sorts it elsewhere', () => {
             const api = createGrid({ columnDefs: [{ field: 'value', sort: 'asc' }] });

@@ -169,7 +169,7 @@ export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnch
     const scrollTop = rowContainerHeight.getScrollPositionForPixel(anchor.viewportTop);
     // the capture read the viewport, and setting the position invalidates the cache, so the cache is current here
     const previousScrollTop = scrollFeature.getVScrollPosition().top;
-    if (Math.abs(scrollTop - previousScrollTop) < 1) {
+    if (scrollTop === previousScrollTop) {
         return false;
     }
     scrollFeature.setVerticalScrollPosition(scrollTop);
