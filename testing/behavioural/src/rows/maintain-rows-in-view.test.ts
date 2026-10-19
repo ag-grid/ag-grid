@@ -336,6 +336,21 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
         });
 
+        test('does not scroll for rows added below the rows in view when the same update filters out rows above', () => {
+            const api = createGrid({
+                columnDefs: [{ field: 'value', sort: 'asc' }],
+                isExternalFilterPresent: () => true,
+                doesExternalFilterPass: ({ data }) => data!.value < 1000,
+            });
+            scrollTo(api, SCROLL_TOP);
+            const update = createRows('r', 10).map((row) => ({ ...row, value: row.value + 1000 }));
+
+            api.applyTransaction({ add: [{ id: 'new', value: 24.5 }], update });
+
+            expect(api.getDisplayedRowAtIndex(0)!.id).toBe('r10');
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
+        });
+
         test('keeps the top row in view when rows in view are removed between others', () => {
             const api = createGrid();
             scrollTo(api, SCROLL_TOP);

@@ -9,6 +9,8 @@ export interface RowsInViewAnchor {
     firstVisiblePixel: number;
     /** The page's pixel offset before the update. */
     pixelOffset: number;
+    /** In display order, the rows the user could see before the update. */
+    rowsInView: RowNode[];
     /** The rows the update created. */
     added: RowNode[];
     /** The height of the rows the update removed from above the first visible pixel. */
@@ -24,7 +26,7 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
     const scrollFeature = ctrlsSvc.getScrollFeature();
     // read the viewport itself, as the cached position can lag behind a scroll whose event has not fired yet
     scrollFeature.invalidateVerticalScroll();
-    const top = scrollFeature.getVScrollPosition().top;
+    const { top, bottom } = scrollFeature.getVScrollPosition();
     if (top <= 0 || !rowModel.isRowsToRender()) {
         return null;
     }
@@ -34,7 +36,24 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
     const viewportTop = top + rowContainerHeight.divStretchOffset;
     // rows under the sticky rows are hidden, so rows added or removed there move the rows the user can see
     const firstVisiblePixel = viewportTop + ctrlsSvc.getGridBodyCtrl().stickyTopHeight + pixelOffset;
-    return { viewportTop, firstVisiblePixel, pixelOffset, added: [], removedHeight: 0 };
+    const viewportBottom = bottom + rowContainerHeight.divStretchOffset + pixelOffset;
+    const rowsInView: RowNode[] = [];
+    const lastRow = pageBounds.getLastRow();
+    for (
+        let i = Math.max(rowModel.getRowIndexAtPixel(firstVisiblePixel), pageBounds.getFirstRow());
+        i <= lastRow;
+        ++i
+    ) {
+        const rowNode = rowModel.getRow(i);
+        if (rowNode?.rowTop == null) {
+            continue;
+        }
+        if (rowsInView.length && rowNode.rowTop >= viewportBottom) {
+            break;
+        }
+        rowsInView.push(rowNode);
+    }
+    return { viewportTop, firstVisiblePixel, pixelOffset, rowsInView, added: [], removedHeight: 0 };
 }
 
 /**
@@ -69,11 +88,14 @@ export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnch
     const { firstVisiblePixel, removedHeight } = anchor;
     const added = anchor.added.filter((rowNode) => isDisplayed(beans, rowNode));
     added.sort((a, b) => a.rowIndex! - b.rowIndex!);
-    // an added row is above the rows the user could see when the rows that were already above them are all above it
+    // added rows are above the rows the user could see when they come before the first of those rows still displayed,
+    // so rows that other rows moved past, by sorting or filtering, do not change which added rows count
+    const firstRowInView = anchor.rowsInView.find((rowNode) => isDisplayed(beans, rowNode));
+    // with every row in view removed, they are above it when the rows that were above those rows are all above them
     const keptHeight = firstVisiblePixel - removedHeight;
     let addedHeight = 0;
-    for (const { rowTop, rowHeight } of added) {
-        if (rowTop! > keptHeight + addedHeight) {
+    for (const { rowIndex, rowTop, rowHeight } of added) {
+        if (firstRowInView ? rowIndex! > firstRowInView.rowIndex! : rowTop! > keptHeight + addedHeight) {
             break;
         }
         addedHeight += rowHeight!;
