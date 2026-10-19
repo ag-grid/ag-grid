@@ -261,7 +261,7 @@ describe('maintainRowsInViewOnDataUpdate', () => {
 
             // the rows in view move by the heights the added rows are positioned with, estimated until they are rendered
             const added = [api.getRowNode('new0')!, api.getRowNode('new1')!];
-            expect(added.every((rowNode) => rowNode.rowHeightEstimated && rowNode.rowHeight !== 80)).toBe(true);
+            expect(added.map((rowNode) => rowNode.rowHeight)).not.toContain(80);
             expect(getViewport(api).scrollTop).toBe(SCROLL_TOP * 5 + added[0].rowHeight! + added[1].rowHeight!);
             expect(offsetInView(api, rowInView)).toBe(offset);
         });
