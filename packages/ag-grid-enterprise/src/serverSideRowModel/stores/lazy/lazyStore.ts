@@ -18,7 +18,6 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    GRAND_TOTAL_ROW_ID,
     ServerSideTransactionResultStatus,
     _getGrandTotalPinnedFloat,
     _getGrandTotalRow,
@@ -188,7 +187,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
             insertedNodes = this.cache.insertRowNodes(transaction.add, addIndex);
         }
-        const unapplied = this.getUnappliedAdds(idFunc, transaction.add, insertedNodes);
+        const unapplied = this.getUnappliedAdds(transaction.add, insertedNodes);
 
         let removedNodes: RowNode[] | undefined = undefined;
         if (transaction.remove?.length) {
@@ -218,21 +217,17 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         };
     }
 
-    /** Returns the row data of adds the cache skipped, e.g. no known insert position or an ID already loaded. */
-    private getUnappliedAdds(
-        idFunc: NonNullable<ReturnType<typeof _getRowIdCallback>>,
-        adds: any[] | null | undefined,
-        insertedNodes: RowNode[] | undefined
-    ): any[] | undefined {
+    /**
+     * Returns the row data of adds the cache skipped, e.g. no known insert position, an ID already loaded,
+     * or an earlier duplicate within the same add list. Compared by reference, as the cache keeps the data given.
+     */
+    private getUnappliedAdds(adds: any[] | null | undefined, insertedNodes: RowNode[] | undefined): any[] | undefined {
         if (!adds?.length) {
             return undefined;
         }
-        const insertedIds = new Set(insertedNodes?.map((node) => node.id));
-        const parentKeys = this.parentRowNode.getRoute() ?? [];
-        const unapplied = adds.filter((data) => {
-            const id = idFunc({ level: this.level, parentKeys, data });
-            return id !== GRAND_TOTAL_ROW_ID && !insertedIds.has(id);
-        });
+        const appliedData = new Set(insertedNodes?.map((node) => node.data));
+        appliedData.add(this.grandTotalData);
+        const unapplied = adds.filter((data) => !appliedData.has(data));
         return unapplied.length ? unapplied : undefined;
     }
 

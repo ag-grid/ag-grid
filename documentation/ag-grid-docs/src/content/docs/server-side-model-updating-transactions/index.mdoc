@@ -20,7 +20,7 @@ When the server-side store has a known last row index, remove transactions only 
 {% /note %}
 
 {% note %}
-Rows to add that the grid cannot place are skipped: when no `addIndex` is provided while the store's row count is unknown, when `addIndex` is past the end of the store, or when a row with the same ID is already loaded. These rows are returned in the `unapplied` property of the transaction result, and the status stays `Applied`.
+Rows to add that the grid cannot place are skipped: when no `addIndex` is provided while the store's row count is unknown, when `addIndex` is past the end of the store, when a row with the same ID is already loaded, or when an earlier row in `add` shares its ID with a later one. These rows are returned in the `unapplied` property of the transaction result, and the status stays `Applied`.
 {% /note %}
 
 These operations are shown in the snippet below:

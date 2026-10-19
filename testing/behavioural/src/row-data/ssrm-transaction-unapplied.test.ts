@@ -7,6 +7,7 @@ import type {
     ServerSideTransaction,
     ServerSideTransactionResult,
 } from 'ag-grid-community';
+import { GRAND_TOTAL_ROW_ID } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 describe('SSRM transaction result unapplied adds', () => {
@@ -98,6 +99,38 @@ describe('SSRM transaction result unapplied adds', () => {
             expect(result?.add?.map((node) => node.id)).toEqual(['1000']);
             expect(result?.unapplied).toEqual([duplicate]);
             expect(api.getRowNode('5')?.data.value).toBe('Row 5');
+        });
+
+        test('an earlier add sharing its ID with a later add is reported as unapplied', async () => {
+            const api = await createGrid(true);
+            const first = { id: 1000, value: 'First' };
+            const second = { id: 1000, value: 'Second' };
+
+            const result = api.applyServerSideTransaction({ add: [first, second] });
+
+            expect(result?.status).toBe('Applied');
+            expect(result?.add?.map((node) => node.id)).toEqual(['1000']);
+            expect(result?.unapplied).toEqual([first]);
+            expect(api.getRowNode('1000')?.data.value).toBe('Second');
+        });
+
+        test('a grand total add is not reported as unapplied when the insert position is known', async () => {
+            const api = await createGrid(true);
+
+            const result = api.applyServerSideTransaction({ add: [{ id: GRAND_TOTAL_ROW_ID, value: 'Total' }] });
+
+            expect(result?.status).toBe('Applied');
+            expect(result?.unapplied).toBeUndefined();
+        });
+
+        test('a grand total add is reported as unapplied when the row count is unknown', async () => {
+            const api = await createGrid(false);
+            const grandTotal = { id: GRAND_TOTAL_ROW_ID, value: 'Total' };
+
+            const result = api.applyServerSideTransaction({ add: [grandTotal] });
+
+            expect(result?.status).toBe('Applied');
+            expect(result?.unapplied).toEqual([grandTotal]);
         });
     });
 
