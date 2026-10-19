@@ -20,7 +20,7 @@ export interface ServerSideTransaction<TData = any> {
     /**
      * The version of the data after this transaction, in the same form as `LoadSuccessParams.dataVersion`.
      * Updates to rows loaded or updated at a newer version are skipped and returned in `unapplied`.
-     * When the level's data version is this version or a newer one, its blocks already include the transaction's adds and removes, so they are skipped and returned in `unapplied`. When `serverSideDataVersionMode` is `'stream'`, the loaded rows are then loaded again at the level's version, as blocks read from older versions may be cached alongside.
+     * When the level's data version is this version or a newer one, its blocks already include the transaction's adds and removes, so they are skipped and returned in `unapplied`. Loaded rows read from a version older than this transaction are then loaded again at the level's version.
      * When `serverSideDataVersionMode` is `'stream'`, a block of the level read from a version older than this transaction is loaded again, so rows of blocks still loading are not changed by it.
      * Numbers are compared numerically; provide `compareServerSideDataVersions` to compare other versions.
      */

@@ -915,19 +915,24 @@ export class LazyCache extends BeanStub {
 
     /**
      * Returns `true` when the adds and removes of a transaction at `version` are discarded, as the level's version
-     * already includes them. When streaming, blocks read from older versions may be cached alongside, so the loaded
-     * rows are loaded again at the level's version.
+     * already includes them. Loaded rows read from an older version do not, so they are loaded again at the level's
+     * version.
      */
     public discardsStructuralChange(version: string | number | undefined): boolean {
         const pinned = this.dataVersion;
-        const isLoaded =
-            version != null &&
-            pinned != null &&
-            compareDataVersions(pinned, version, this.gos.get('compareServerSideDataVersions')) >= 0;
-        if (isLoaded && this.isStreamingVersions()) {
-            this.markNodesForRefresh(true);
+        const comparator = this.gos.get('compareServerSideDataVersions');
+        const isLoaded = version != null && pinned != null && compareDataVersions(pinned, version, comparator) >= 0;
+        if (!isLoaded) {
+            return false;
         }
-        return isLoaded;
+        this.nodeMap.forEach(({ node }) => {
+            const rowVersion = this.rowDataVersions.get(node);
+            if (!node.stub && (rowVersion == null || compareDataVersions(rowVersion, version, comparator) < 0)) {
+                this.nodesToRefresh.add(node);
+            }
+        });
+        this.lazyBlockLoadingSvc.queueLoadCheck();
+        return true;
     }
 
     private setRowDataVersion(node: RowNode, version: string | number | undefined): void {
@@ -1232,14 +1237,11 @@ export class LazyCache extends BeanStub {
         this.fireStoreUpdatedEvent();
     }
 
-    /** @param keepDataVersion whether the rows are loaded again at the level's pinned data version */
-    public markNodesForRefresh(keepDataVersion = false) {
-        if (!keepDataVersion) {
-            this.dataVersion = undefined;
-            this.dataVersionGeneration++;
-            this.staleBlockRetries.clear();
-            this.dataVersionWarned = false;
-        }
+    public markNodesForRefresh() {
+        this.dataVersion = undefined;
+        this.dataVersionGeneration++;
+        this.staleBlockRetries.clear();
+        this.dataVersionWarned = false;
         this.nodeMap.forEach((lazyNode) => {
             if (lazyNode.node.stub && !lazyNode.node.failedLoad) {
                 return;

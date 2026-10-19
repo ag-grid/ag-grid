@@ -161,7 +161,7 @@ describe('SSRM versioned transactions', () => {
             await settle();
         }
 
-        test('a delayed remove is skipped, and the loaded rows are loaded again at the level version', async () => {
+        test('a delayed remove is skipped, and rows of older blocks are loaded again at the level version', async () => {
             const { api, pending, requests, settle } = await createGrid(5, { serverSideDataVersionMode: 'stream' });
             serverRows = serverRows.filter((row) => row.id !== '1');
             await loadNewerBlock(api, pending);
@@ -178,11 +178,13 @@ describe('SSRM versioned transactions', () => {
             expect(requests.slice(sent).filter((r) => r.startRow === 0)).toEqual([
                 expect.objectContaining({ dataVersion: 7 }),
             ]);
+            // the block read from version 7 already includes the remove
+            expect(requests.slice(sent).filter((r) => r.startRow === 20)).toEqual([]);
             expect(api.getDisplayedRowCount()).toBe(49);
             expect(api.getRowNode('1')).toBeUndefined();
         });
 
-        test('a delayed add is skipped, and the loaded rows are loaded again at the level version', async () => {
+        test('a delayed add is skipped, and rows of older blocks are loaded again at the level version', async () => {
             const { api, pending, settle } = await createGrid(5, { serverSideDataVersionMode: 'stream' });
             const add = { id: '50', value: 50 };
             serverRows = [add, ...serverRows];
@@ -210,7 +212,7 @@ describe('SSRM versioned transactions', () => {
             expect(api.getRowNode('1')).toBeUndefined();
         });
 
-        test('a burst of delayed adds and removes in one flush loads the rows again once', async () => {
+        test('a burst of delayed removes in one flush loads each older block again once', async () => {
             const { api, requests, settle } = await createGrid(5, { serverSideDataVersionMode: 'stream' });
             api.applyServerSideTransaction({ version: 9, update: [{ id: '5', value: 5 }] });
             serverRows = serverRows.filter((row) => !['1', '2', '3'].includes(row.id));
