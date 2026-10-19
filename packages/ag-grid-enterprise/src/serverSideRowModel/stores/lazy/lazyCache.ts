@@ -1209,7 +1209,7 @@ export class LazyCache extends BeanStub {
 
         // can't insert nodes past the end of the store
         if (addIndex == null || realRowCount < addIndex) {
-            return { inserted: [], skipped: inserts };
+            return { inserted: [], skipped: inserts.slice() };
         }
 
         const uniqueInsertsMap: { [id: string]: any } = {};

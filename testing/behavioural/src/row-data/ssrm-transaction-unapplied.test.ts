@@ -79,6 +79,16 @@ describe('SSRM transaction result unapplied adds', () => {
             expect(api.getRowNode('1000')).toBeUndefined();
         });
 
+        test('unapplied rows are returned in a new array, not the transaction add array', async () => {
+            const api = await createGrid(false);
+            const add = [{ id: 1000, value: 'Added' }];
+
+            const result = api.applyServerSideTransaction({ add });
+
+            expect(result?.unapplied).toEqual(add);
+            expect(result?.unapplied).not.toBe(add);
+        });
+
         test('an add with addIndex 0 while the row count is unknown has no unapplied rows', async () => {
             const api = await createGrid(false);
 
