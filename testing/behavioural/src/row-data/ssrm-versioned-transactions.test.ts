@@ -125,114 +125,128 @@ describe('SSRM versioned transactions', () => {
         expect(value(api, '1')).toBe(700);
     });
 
-    test('an add or update older than a newer remove of the row is skipped', async () => {
-        const { api } = await createGrid(5);
-
-        api.applyServerSideTransaction({ version: 7, remove: [{ id: '1', value: 1 }] });
-        const add = { id: '1', value: 600 };
-        const update = { id: '1', value: 601 };
-        const delayed = api.applyServerSideTransaction({ version: 6, add: [add], update: [update] })!;
-
-        expect(delayed.unapplied).toEqual([update, add]);
-        expect(delayed.add).toBeUndefined();
-        expect(api.getRowNode('1')).toBeUndefined();
-        expect(api.getDisplayedRowCount()).toBe(49);
-
-        const newer = api.applyServerSideTransaction({ version: 8, add: [{ id: '1', value: 800 }] })!;
-        expect(newer.add!.map((node) => node.id)).toEqual(['1']);
-        expect(value(api, '1')).toBe(800);
-    });
-
-    test('a row count given with a transaction is raised once for a stale remove listed twice', async () => {
-        const { api } = await createGrid(5);
-        api.applyServerSideTransaction({ version: 7, update: [{ id: '2', value: 200 }] });
-
-        const stale = { id: '2', value: 2 };
-        const result = api.applyServerSideTransaction({
-            version: 6,
-            remove: [stale, stale, { id: '3', value: 3 }],
-            rowCount: 48,
-        })!;
-
-        expect(result.remove!.map((node) => node.id)).toEqual(['3']);
-        expect(result.unapplied).toEqual([stale, stale]);
-        expect(api.getDisplayedRowCount()).toBe(49);
-    });
-
-    test('a row count given with a transaction is not raised for a stale remove of a row already removed', async () => {
-        const { api } = await createGrid(5);
-        api.applyServerSideTransaction({ version: 7, remove: [{ id: '2', value: 2 }] });
-        expect(api.getDisplayedRowCount()).toBe(49);
-
-        const result = api.applyServerSideTransaction({
-            version: 6,
-            remove: [
-                { id: '2', value: 2 },
-                { id: '3', value: 3 },
-            ],
-            rowCount: 48,
-        })!;
-
-        expect(result.remove!.map((node) => node.id)).toEqual(['3']);
-        expect(api.getDisplayedRowCount()).toBe(48);
-    });
-
-    test('an older transaction does not replace a row count set by a newer one, and its removed row is loaded again', async () => {
-        const { api, settle } = await createGrid(5);
-        serverRows = serverRows.filter((row) => row.id !== '1' && row.id !== '2');
-
-        api.applyServerSideTransaction({ version: 7, remove: [{ id: '1', value: 1 }], rowCount: 48 });
-        expect(api.getDisplayedRowCount()).toBe(48);
-
-        // the count at version 7 already excludes the row removed at version 6
-        const remove = { id: '2', value: 2 };
-        const result = api.applyServerSideTransaction({ version: 6, remove: [remove], rowCount: 49 })!;
-        expect(result.unapplied).toEqual([remove]);
-        expect(api.getDisplayedRowCount()).toBe(48);
-
-        await settle();
-        expect(api.getRowNode('2')).toBeUndefined();
-        expectRowsInServerOrder(api);
-    });
-
-    test("'stream' does not move rows of a newer block for a delayed remove it already reflects", async () => {
-        const { api, pending, settle } = await createGrid(5, { serverSideDataVersionMode: 'stream' });
-
-        // the server removes row 1 at version 6, and a block is read at version 7 before the change arrives
-        serverRows = serverRows.filter((row) => row.id !== '1');
-        respond(await requestBlockOf(api, pending, 25), 7);
-        expect(api.getDisplayedRowAtIndex(20)!.id).toBe('21');
-
-        api.applyServerSideTransaction({ version: 6, remove: [{ id: '1', value: 1 }] });
-        expect(api.getDisplayedRowAtIndex(20)!.id).toBe('21');
-
-        await settle();
-        expect(api.getDisplayedRowCount()).toBe(49);
-        expectRowsInServerOrder(api);
-    });
-
-    test('an add older than the row count is skipped, as the row count and its blocks already include it', async () => {
-        const { api } = await createGrid(5);
-        api.applyServerSideTransaction({ version: 7, remove: [{ id: '1', value: 1 }], rowCount: 49 });
+    test("'snapshot' skips adds and removes at or before the level's version without loading rows again", async () => {
+        const { api, requests, settle } = await createGrid(5);
+        const sent = requests.length;
 
         const add = { id: '50', value: 50 };
-        const result = api.applyServerSideTransaction({ version: 6, add: [add], addIndex: 0 })!;
+        const remove = { id: '1', value: 1 };
+        const result = api.applyServerSideTransaction({ version: 5, add: [add], remove: [remove], rowCount: 50 })!;
 
         expect(result.add).toBeUndefined();
-        expect(result.unapplied).toEqual([add]);
-        expect(api.getDisplayedRowCount()).toBe(49);
-        expect(api.getDisplayedRowAtIndex(0)!.id).toBe('0');
+        expect(result.remove).toBeUndefined();
+        expect(result.unapplied).toEqual([add, remove]);
+        expect(api.getDisplayedRowCount()).toBe(50);
+        await settle();
+        expect(requests.slice(sent).filter((r) => r.startRow === 0)).toEqual([]);
     });
 
-    test('a row count is only versioned when a transaction sets it', async () => {
-        const { api } = await createGrid(5);
+    describe("'stream' adds and removes at or before the level's version", () => {
+        /** Loads the block of row 25 at version 7, after the server changed at version 6, leaving block 0 at version 5. */
+        async function loadNewerBlock(api: GridApi, pending: IServerSideGetRowsParams[], withRowCount = true) {
+            const block = await requestBlockOf(api, pending, 25);
+            const { startRow, endRow } = block.request;
+            block.success({
+                rowData: serverRows.slice(startRow, endRow),
+                rowCount: withRowCount ? serverRows.length : undefined,
+                dataVersion: 7,
+            });
+            expect(api.getServerSideGroupLevelState()[0].dataVersion).toBe(7);
+        }
 
-        // an update-only transaction does not set the row count
-        api.applyServerSideTransaction({ version: 8, update: [{ id: '5', value: 500 }], rowCount: 10 });
-        expect(api.getDisplayedRowCount()).toBe(50);
+        /** Answers every request, and waits for the loaded rows to be loaded again from the server's rows. */
+        async function settleReload(api: GridApi, settle: () => Promise<void>) {
+            await settle();
+            await waitFor(() => expectRowsInServerOrder(api));
+            await settle();
+        }
 
-        api.applyServerSideTransaction({ version: 7, remove: [{ id: '1', value: 1 }], rowCount: 49 });
-        expect(api.getDisplayedRowCount()).toBe(49);
+        test('a delayed remove is skipped, and the loaded rows are loaded again at the level version', async () => {
+            const { api, pending, requests, settle } = await createGrid(5, { serverSideDataVersionMode: 'stream' });
+            serverRows = serverRows.filter((row) => row.id !== '1');
+            await loadNewerBlock(api, pending);
+            expect(api.getDisplayedRowAtIndex(20)!.id).toBe('21');
+
+            const remove = { id: '1', value: 1 };
+            const result = api.applyServerSideTransaction({ version: 6, remove: [remove] })!;
+            expect(result.remove).toBeUndefined();
+            expect(result.unapplied).toEqual([remove]);
+            expect(api.getDisplayedRowAtIndex(20)!.id).toBe('21');
+
+            const sent = requests.length;
+            await settleReload(api, settle);
+            expect(requests.slice(sent).filter((r) => r.startRow === 0)).toEqual([
+                expect.objectContaining({ dataVersion: 7 }),
+            ]);
+            expect(api.getDisplayedRowCount()).toBe(49);
+            expect(api.getRowNode('1')).toBeUndefined();
+        });
+
+        test('a delayed add is skipped, and the loaded rows are loaded again at the level version', async () => {
+            const { api, pending, settle } = await createGrid(5, { serverSideDataVersionMode: 'stream' });
+            const add = { id: '50', value: 50 };
+            serverRows = [add, ...serverRows];
+            await loadNewerBlock(api, pending);
+
+            const result = api.applyServerSideTransaction({ version: 6, add: [add], addIndex: 0 })!;
+            expect(result.add).toBeUndefined();
+            expect(result.unapplied).toEqual([add]);
+
+            await settleReload(api, settle);
+            expect(api.getDisplayedRowCount()).toBe(51);
+            expect(api.getDisplayedRowAtIndex(0)!.id).toBe('50');
+        });
+
+        test('a delayed remove does not move rows of a newer block returned without a row count', async () => {
+            const { api, pending, settle } = await createGrid(5, { serverSideDataVersionMode: 'stream' });
+            serverRows = serverRows.filter((row) => row.id !== '1');
+            await loadNewerBlock(api, pending, false);
+
+            const result = api.applyServerSideTransaction({ version: 6, remove: [{ id: '1', value: 1 }] })!;
+            expect(result.remove).toBeUndefined();
+            expect(api.getDisplayedRowAtIndex(20)!.id).toBe('21');
+
+            await settleReload(api, settle);
+            expect(api.getRowNode('1')).toBeUndefined();
+        });
+
+        test('a burst of delayed adds and removes in one flush loads the rows again once', async () => {
+            const { api, requests, settle } = await createGrid(5, { serverSideDataVersionMode: 'stream' });
+            api.applyServerSideTransaction({ version: 9, update: [{ id: '5', value: 5 }] });
+            serverRows = serverRows.filter((row) => !['1', '2', '3'].includes(row.id));
+
+            const results: ServerSideTransactionResult[] = [];
+            api.applyServerSideTransactionAsync({ version: 6, remove: [{ id: '1', value: 1 }] }, (r) =>
+                results.push(r)
+            );
+            api.applyServerSideTransactionAsync({ version: 7, remove: [{ id: '2', value: 2 }] }, (r) =>
+                results.push(r)
+            );
+            api.applyServerSideTransactionAsync({ version: 8, remove: [{ id: '3', value: 3 }] }, (r) =>
+                results.push(r)
+            );
+            api.flushServerSideAsyncTransactions();
+            await waitFor(() => expect(results.length).toBe(3));
+            expect(results.every((r) => r.unapplied?.length === 1)).toBe(true);
+
+            const sent = requests.length;
+            await settleReload(api, settle);
+            expect(requests.slice(sent).filter((r) => r.startRow === 0)).toHaveLength(1);
+            expect(api.getDisplayedRowCount()).toBe(47);
+        });
+
+        test('a newer remove is applied by position', async () => {
+            const { api, settle } = await createGrid(5, { serverSideDataVersionMode: 'stream' });
+            serverRows = serverRows.filter((row) => row.id !== '1');
+
+            const result = api.applyServerSideTransaction({ version: 6, remove: [{ id: '1', value: 1 }] })!;
+            expect(result.remove!.map((node) => node.id)).toEqual(['1']);
+            expect(result.unapplied).toBeUndefined();
+            expect(api.getDisplayedRowCount()).toBe(49);
+
+            await settle();
+            expectRowsInServerOrder(api);
+        });
     });
 
     test('a change to the grand total older than its version is skipped', async () => {
@@ -263,7 +277,7 @@ describe('SSRM versioned transactions', () => {
 
         api.applyServerSideTransaction({ version: 7, update: [{ id: GRAND_TOTAL_ROW_ID, value: 70 }] });
         const older = { id: GRAND_TOTAL_ROW_ID, value: 60 };
-        expect(api.applyServerSideTransaction({ version: 6, remove: [older] })!.unapplied).toEqual([older]);
+        expect(api.applyServerSideTransaction({ version: 6, update: [older] })!.unapplied).toEqual([older]);
         expect(value(api, GRAND_TOTAL_ROW_ID)).toBe(70);
     });
 
@@ -286,6 +300,30 @@ describe('SSRM versioned transactions', () => {
         expect(value(api, '25')).toBe(25);
         expect(api.getServerSideGroupLevelState()[0].dataVersion).toBe(5);
         expect(requests.slice(1).every((r) => r.dataVersion === 5)).toBe(true);
+    });
+
+    test('without data versions or transaction versions, transactions behave as before', async () => {
+        const { api, requests, settle } = await createGrid(undefined);
+
+        const add = { id: '50', value: 50 };
+        const result = api.applyServerSideTransaction({
+            add: [add],
+            addIndex: 0,
+            remove: [{ id: '1', value: 1 }],
+            update: [{ id: '2', value: 200 }],
+            rowCount: 50,
+        })!;
+        expect(result.unapplied).toBeUndefined();
+        expect(result.add!.map((node) => node.id)).toEqual(['50']);
+        expect(result.remove!.map((node) => node.id)).toEqual(['1']);
+        expect(api.getDisplayedRowAtIndex(0)!.id).toBe('50');
+        expect(api.getRowNode('1')).toBeUndefined();
+        expect(value(api, '2')).toBe(200);
+        expect(api.getDisplayedRowCount()).toBe(50);
+
+        await settle();
+        expect(requests.every((r) => !('dataVersion' in r))).toBe(true);
+        expect(api.getServerSideGroupLevelState()[0].dataVersion).toBeUndefined();
     });
 
     test('compareServerSideDataVersions orders string versions', async () => {

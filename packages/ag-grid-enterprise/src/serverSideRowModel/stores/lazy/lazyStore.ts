@@ -176,20 +176,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         const { version } = transaction;
         const unapplied: any[] = [];
         const update = cache.filterStaleRows(transaction.update, version, unapplied);
-        // a row count from this version or a newer one already counts the transaction's adds and removes
-        const isCounted = cache.isRowCountFrom(version);
-        const add = cache.filterCountedRows(
-            cache.filterStaleRows(transaction.add, version, unapplied),
-            version,
-            unapplied
-        );
-        const staleRemoves: any[] = [];
-        const remove = cache.filterCountedRows(
-            cache.filterStaleRows(transaction.remove, version, staleRemoves),
-            version,
-            unapplied
-        );
-        unapplied.push(...staleRemoves);
+        let { add, remove } = transaction;
+        if ((add?.length || remove?.length) && cache.discardsStructuralChange(version)) {
+            unapplied.push(...(add ?? []), ...(remove ?? []));
+            add = remove = undefined;
+        }
 
         // needs checked before transactions are applied, as rows won't be contiguous immediately
         // after
@@ -215,13 +206,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data })
             );
             const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
-            // a row count given with the transaction does not account for the loaded rows its stale removes skipped
-            const staleRemoveCount = new Set(
-                staleRemoves.map((data) => this.cache.getRowId(data)!).filter((id) => this.cache.isNodeInCache(id))
-            ).size;
-            const rowCount =
-                transaction.rowCount == null || isCounted ? undefined : transaction.rowCount + staleRemoveCount;
-            removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, rowCount, version);
+            removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, transaction.rowCount, version);
         }
 
         if (version != null) {
