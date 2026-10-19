@@ -346,27 +346,45 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const params: RefreshModelParams = { step: 'nothing', changedProps };
         if (newRowData) {
-            const immutable =
-                !extractData &&
-                !!this.rootNode?._leafs?.length &&
-                newRowData.length > 0 &&
-                gos.exists('getRowId') &&
-                // backward compatibility - for who want old behaviour of Row IDs but NOT Immutable Data.
-                !gos.get('resetRowDataOnUpdate');
-            this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
-            if (immutable) {
-                params.keepRenderedRows = true;
-                params.animate = !gos.get('suppressAnimationFrame');
-                params.changedRowNodes = new ChangedRowNodes();
-                nodeManager.setImmutableRowData(params, newRowData);
-            } else {
-                params.rowDataUpdated = true;
-                params.newData = true;
-                nodeManager.setNewRowData(newRowData);
-                this.rowNodesCountReady = true;
-            }
+            beans.rowRenderer.maintainRowsInView(() =>
+                this.setRowData(nodeManager, params, newRowData, !!extractData, properties)
+            );
+            return;
         }
+        this.refreshChangedStage(params, properties);
+    }
 
+    private setRowData(
+        nodeManager: ClientSideNodeManager<any>,
+        params: RefreshModelParams,
+        newRowData: any[],
+        extractData: boolean,
+        properties: (keyof GridOptions)[]
+    ): void {
+        const gos = this.gos;
+        const immutable =
+            !extractData &&
+            !!this.rootNode?._leafs?.length &&
+            newRowData.length > 0 &&
+            gos.exists('getRowId') &&
+            // backward compatibility - for who want old behaviour of Row IDs but NOT Immutable Data.
+            !gos.get('resetRowDataOnUpdate');
+        this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
+        if (immutable) {
+            params.keepRenderedRows = true;
+            params.animate = !gos.get('suppressAnimationFrame');
+            params.changedRowNodes = new ChangedRowNodes();
+            nodeManager.setImmutableRowData(params, newRowData);
+        } else {
+            params.rowDataUpdated = true;
+            params.newData = true;
+            nodeManager.setNewRowData(newRowData);
+            this.rowNodesCountReady = true;
+        }
+        this.refreshChangedStage(params, properties);
+    }
+
+    private refreshChangedStage(params: RefreshModelParams, properties: (keyof GridOptions)[]): void {
         const step = params.rowDataUpdated ? 'group' : this.getRefreshedStage(properties);
         if (step) {
             params.step = step;
@@ -1234,16 +1252,18 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         const callbackFuncsBound: ((...args: any[]) => any)[] = [];
         const changedRowNodes = new ChangedRowNodes();
         const animate = !this.gos.get('suppressAnimationFrame');
-        for (const { rowDataTransaction, callback } of asyncTransactions ?? []) {
-            this.rowNodesCountReady = true;
-            this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
-            const rowNodeTransaction = nodeManager.updateRowData(rowDataTransaction, changedRowNodes, animate);
-            rowNodeTrans.push(rowNodeTransaction);
-            if (callback) {
-                callbackFuncsBound.push(callback.bind(null, rowNodeTransaction));
+        beans.rowRenderer.maintainRowsInView(() => {
+            for (const { rowDataTransaction, callback } of asyncTransactions ?? []) {
+                this.rowNodesCountReady = true;
+                this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
+                const rowNodeTransaction = nodeManager.updateRowData(rowDataTransaction, changedRowNodes, animate);
+                rowNodeTrans.push(rowNodeTransaction);
+                if (callback) {
+                    callbackFuncsBound.push(callback.bind(null, rowNodeTransaction));
+                }
             }
-        }
-        this.commitTransactions(changedRowNodes, animate);
+            this.commitTransactions(changedRowNodes, animate);
+        });
 
         // do callbacks in next VM turn so it's async
         if (callbackFuncsBound.length > 0) {

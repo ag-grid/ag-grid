@@ -2043,6 +2043,12 @@
             }
         },
         "suppressScrollOnNewData": {},
+        "maintainRowsInViewOnDataUpdate": {
+            "more": {
+                "name": "Maintaining Rows in View",
+                "url": "./data-update-maintain-rows-in-view/"
+            }
+        },
         "suppressScrollWhenPopupsAreOpen": {},
         "suppressAnimationFrame": {},
         "suppressMiddleClickScrolls": {},

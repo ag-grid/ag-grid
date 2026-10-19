@@ -1,4 +1,11 @@
-import { _debounce, _getInnerWidth, _getScrollLeft, _isElementChildOfClass, _setScrollLeft } from 'ag-stack';
+import {
+    _debounce,
+    _getInnerWidth,
+    _getScrollLeft,
+    _isElementChildOfClass,
+    _requestAnimationFrame,
+    _setScrollLeft,
+} from 'ag-stack';
 
 import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
@@ -86,6 +93,8 @@ export class GridBodyCtrl extends BeanStub {
     public scrollFeature: GridBodyScrollFeature;
 
     private columnWidthAnimationDepth = 0;
+    private rowResizing = false;
+    private rowAnimationPaused = false;
     private columnWidthAnimationTimeout: number | undefined;
 
     public setComp(
@@ -199,8 +208,30 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private toggleRowResizeStyles(params: RowResizeStartedEvent | RowResizeEndedEvent) {
-        const isResizingRow = params.type === 'rowResizeStarted';
-        this.comp.setPreventRowAnimationCssOnContainers(isResizingRow);
+        this.rowResizing = params.type === 'rowResizeStarted';
+        this.updatePreventRowAnimation();
+    }
+
+    /** Stops rows animating to their new positions until they have been painted there. */
+    public pauseRowAnimation(): void {
+        if (this.rowAnimationPaused) {
+            return;
+        }
+        this.rowAnimationPaused = true;
+        this.updatePreventRowAnimation();
+        // two frames, so the browser has applied the new positions before the transitions come back
+        _requestAnimationFrame(this.beans, () =>
+            _requestAnimationFrame(this.beans, () => {
+                if (this.isAlive()) {
+                    this.rowAnimationPaused = false;
+                    this.updatePreventRowAnimation();
+                }
+            })
+        );
+    }
+
+    private updatePreventRowAnimation(): void {
+        this.comp.setPreventRowAnimationCssOnContainers(this.rowResizing || this.rowAnimationPaused);
     }
 
     private onGridColumnsChanged(): void {

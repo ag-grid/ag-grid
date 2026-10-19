@@ -1775,6 +1775,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @default false
      */
     @Input({ transform: booleanAttribute }) public suppressScrollOnNewData: boolean | undefined = undefined;
+    /** When `true`, the grid keeps the same rows in view when rows are added or removed above them by a row data update or a transaction, instead of letting them shift down or up. Has no effect while the grid is scrolled to the top, so new rows added at the top come into view.
+     * @default false
+     */
+    @Input({ transform: booleanAttribute }) public maintainRowsInViewOnDataUpdate: boolean | undefined = undefined;
     /** When `true`, the grid will not allow mousewheel / touchpad scroll when popup elements are present.
      * @default false
      */

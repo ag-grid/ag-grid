@@ -37,6 +37,8 @@ import { _refreshCellPosition } from './cell/cellPositionFeature';
 import type { RowCtrlInstanceId } from './row/rowCtrl';
 import { RowCtrl, getRowTypeForNode } from './row/rowCtrl';
 import type { RowContainerHeightService } from './rowContainerHeightService';
+import type { RowsInViewAnchor } from './rowsInViewAnchor';
+import { _captureRowsInView, _restoreRowsInView } from './rowsInViewAnchor';
 
 type RowCtrlIdMap = Record<RowCtrlInstanceId, RowCtrl>;
 type RowCtrlByRowIndex = Record<number, RowCtrl>;
@@ -109,6 +111,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private stickyRowFeature?: IStickyRowFeature;
 
     private dataFirstRenderedFired = false;
+
+    /** Set while a data update runs inside `maintainRowsInView`, until the redraw it causes restores it. */
+    private rowsInViewAnchor: RowsInViewAnchor | null = null;
 
     public postConstruct(): void {
         this.ctrlsSvc.whenReady(this, (p) => {
@@ -651,11 +656,15 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         this.updateContainerHeights();
         this.scrollToTopIfNewData(params);
+        const rowsInViewAnchor = this.rowsInViewAnchor;
+        // later redraws in the same update start from the restored position
+        this.rowsInViewAnchor = null;
+        let keptRowsInView = !!rowsInViewAnchor && _restoreRowsInView(this.beans, rowsInViewAnchor);
 
         // never recycle rows on layout change as rows could change from normal DOM layout
         // back to the grid's row positioning.
         const recycleRows = !params.domLayoutChanged && !!params.recycleRows;
-        const animate = params.animate && _isAnimateRows(this.gos);
+        const animateRows = params.animate && _isAnimateRows(this.gos);
 
         // after modelUpdate, row indexes can change, so we clear out the rowsByIndex map,
         // however we can reuse the rows, so we keep them but index by rowNode.id
@@ -663,10 +672,15 @@ export class RowRenderer extends BeanStub implements NamedBean {
         if (!recycleRows) {
             // Forward !animate so the destroy path skips the fade-out when the
             // redraw itself is non-animating; otherwise rapid replaces flicker via opacity:0.
-            this.removeAllRowComps(!animate);
+            this.removeAllRowComps(!animateRows || keptRowsInView);
         }
 
         this.workOutFirstAndLastRowsToRender();
+        // working out the heights of the rows to render can move the rows kept in view again
+        while (rowsInViewAnchor && _restoreRowsInView(this.beans, rowsInViewAnchor)) {
+            keptRowsInView = true;
+            this.workOutFirstAndLastRowsToRender();
+        }
 
         const { stickyRowFeature, gos } = this;
         if (stickyRowFeature) {
@@ -680,7 +694,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
             }
         }
 
-        this.recycleRows(rowsToRecycle, animate);
+        if (keptRowsInView && animateRows) {
+            // rows kept in view by scrolling must not animate from where they were before the scroll
+            this.gridBodyCtrl.pauseRowAnimation();
+        }
+        this.recycleRows(rowsToRecycle, animateRows && !keptRowsInView);
 
         this.gridBodyCtrl.updateRowCount();
 
@@ -709,6 +727,24 @@ export class RowRenderer extends BeanStub implements NamedBean {
         if (scrollToTop && !suppressScrollToTop) {
             this.gridBodyCtrl.scrollFeature.scrollToTop();
             this.stickyRowFeature?.resetOffsets();
+            this.rowsInViewAnchor = null;
+        }
+    }
+
+    /**
+     * Runs a row data update, keeping the rows in view where they are when `maintainRowsInViewOnDataUpdate` is
+     * set and rows are added or removed above them. The update must redraw synchronously.
+     */
+    public maintainRowsInView<T>(update: () => T): T {
+        const { gos, gridBodyCtrl, printLayout, rowsInViewAnchor } = this;
+        if (rowsInViewAnchor || printLayout || !gridBodyCtrl || !gos.get('maintainRowsInViewOnDataUpdate')) {
+            return update();
+        }
+        this.rowsInViewAnchor = _captureRowsInView(this.beans);
+        try {
+            return update();
+        } finally {
+            this.rowsInViewAnchor = null;
         }
     }
 

@@ -1,0 +1,36 @@
+---
+title: "Maintaining Rows in View"
+---
+
+Keep the rows the user is looking at in place when rows are added or removed above them by a background update.
+
+By default, when rows are added above the rows in view, the rows in view move down, and when rows above them are removed, they move up. This can make it hard to read a grid that is receiving a stream of updates, as the rows keep moving away while the user reads them.
+
+Set `maintainRowsInViewOnDataUpdate=true` to make the grid scroll by the height of the rows added or removed above, so the rows in view stay where they are:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    maintainRowsInViewOnDataUpdate: true,
+};
+```
+
+{% apiDocumentation source="grid-options/properties.json" section="scrolling" names=["maintainRowsInViewOnDataUpdate"] /%}
+
+The rows are kept in view when the update comes from:
+
+- [Updating Row Data](./data-update-row-data/), when the rows have [Row IDs](./row-ids/).
+- [Transactions](./data-update-transactions/) and [Async Transactions](./data-update-high-frequency/).
+- [Server-Side Transactions](./server-side-model-updating-transactions/), synchronous and asynchronous, when using the Server-Side Row Model.
+
+The grid does not scroll while it is scrolled to the top, so rows added at the top come into view. Changes the user makes, such as sorting, filtering or expanding groups, do not keep the rows in view.
+
+Rows with [different heights](./row-height/) are supported. When `animateRows` is enabled, the rows in view do not animate as the grid scrolls to keep them in place.
+
+The example below adds and removes rows at the top of the grid. Note the following:
+
+- Scroll down the grid, then click **Add 5 Rows at the Top**. The rows in view stay in place and the vertical scrollbar moves.
+- Click **Remove 5 Rows at the Top**. The rows in view stay in place.
+- Clear **Maintain Rows in View** and repeat. The rows in view move down when rows are added, and up when rows are removed.
+- Scroll to the top and click **Add 5 Rows at the Top**. The new rows come into view.
+
+{% gridExampleRunner title="Maintain Rows in View" name="maintain-rows-in-view" exampleHeight=590 /%}
