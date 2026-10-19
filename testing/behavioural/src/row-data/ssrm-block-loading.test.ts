@@ -154,7 +154,10 @@ describe('SSRM block loading', () => {
         expect(calls).toEqual(['onGridReady', 'getRows']);
     });
 
-    test('a synchronous datasource refreshes one block per task after the rendered rows', async () => {
+    test.each([
+        ['synchronous', (callback: () => void) => callback()],
+        ['microtask', (callback: () => void) => queueMicrotask(callback)],
+    ])('a %s datasource refreshes one block per task after the rendered rows', async (_, respond) => {
         const rowData = Array.from({ length: 30 }, (_, i) => ({ id: i }));
         const requests: [number, number][] = [];
         const api = gridsManager.createGrid(null, {
@@ -166,7 +169,9 @@ describe('SSRM block loading', () => {
                 getRows: (params) => {
                     const { startRow = 0, endRow = rowData.length } = params.request;
                     requests.push([startRow, endRow]);
-                    params.success({ rowData: rowData.slice(startRow, endRow), rowCount: rowData.length });
+                    respond(() =>
+                        params.success({ rowData: rowData.slice(startRow, endRow), rowCount: rowData.length })
+                    );
                 },
             },
         });

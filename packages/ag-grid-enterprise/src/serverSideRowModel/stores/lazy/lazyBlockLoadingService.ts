@@ -42,8 +42,10 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     private nextBlockToLoad?: BlockToLoad = undefined;
     private loaderTimeout?: number;
 
-    // the last block whose datasource called success() or fail() before getRows returned
+    // the last block whose datasource called success() or fail() in the task that requested it
     private syncLoadedBlock?: BlockToLoad = undefined;
+    // true from a request until the next macrotask, so completions in the requesting task can be told apart
+    private isInLoadTask = false;
 
     // onGridReady is delivered from the async event queue, so a microtask load would call getRows before it
     private isGridReadyDelivered = false;
@@ -188,9 +190,8 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             }
         };
 
-        let getRowsReturned = false;
         const onLoadComplete = () => {
-            if (!getRowsReturned) {
+            if (this.isInLoadTask) {
                 this.syncLoadedBlock = { cache, index: startRow };
             }
             this.onLoadComplete();
@@ -222,8 +223,11 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
         addNodesToLoadingMap();
         this.outboundRequests += 1;
+        if (!this.isInLoadTask) {
+            this.isInLoadTask = true;
+            window.setTimeout(() => (this.isInLoadTask = false));
+        }
         cache.getSsrmParams().datasource?.getRows(params);
-        getRowsReturned = true;
     }
 
     private getBlockToLoad(): (BlockToLoad & { inViewport: boolean }) | undefined {
