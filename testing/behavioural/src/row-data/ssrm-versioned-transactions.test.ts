@@ -550,6 +550,55 @@ describe('SSRM versioned transactions', () => {
         expectRowsInServerOrder(api);
     });
 
+    test('a row removed and added again while a block loads keeps the added row', async () => {
+        const { api, pending, settle } = await createGrid(1);
+        const block = await requestBlockOf(api, pending, 25);
+
+        const before = serverRows;
+        serverRows = serverRows.map((row) => (row.id === '25' ? { id: '25', value: -25 } : row));
+        api.applyServerSideTransaction({ version: 2, remove: [{ id: '25', value: 25 }] });
+        api.applyServerSideTransaction({ version: 3, addIndex: 25, add: [{ id: '25', value: -25 }] });
+
+        respond(block, 1, before);
+        expect(value(api, '25')).toBe(-25);
+        expect(api.getDisplayedRowCount()).toBe(50);
+        expectRowsInServerOrder(api);
+        await settle();
+        expectRowsInServerOrder(api);
+    });
+
+    test('a row added with a remove above it in one transaction keeps its place when the block loads', async () => {
+        const { api, pending, settle } = await createGrid(1);
+        const block = await requestBlockOf(api, pending, 25);
+
+        const before = serverRows;
+        const added = { id: 'new', value: -1 };
+        serverRows = [...serverRows.slice(0, 25), added, ...serverRows.slice(25)].filter((row) => row.id !== '5');
+        api.applyServerSideTransaction({ version: 2, addIndex: 25, add: [added], remove: [{ id: '5', value: 5 }] });
+
+        respond(block, 1, before);
+        expectRowsInServerOrder(api);
+        await settle();
+        expectRowsInServerOrder(api);
+    });
+
+    test('rows added at the same index by two transactions keep their order when the block loads', async () => {
+        const { api, pending, settle } = await createGrid(1);
+        const block = await requestBlockOf(api, pending, 25);
+
+        const before = serverRows;
+        const a = { id: 'a', value: -1 };
+        const b = { id: 'b', value: -2 };
+        serverRows = [...serverRows.slice(0, 25), b, a, ...serverRows.slice(25)];
+        api.applyServerSideTransaction({ version: 2, addIndex: 25, add: [a] });
+        api.applyServerSideTransaction({ version: 3, addIndex: 25, add: [b] });
+
+        respond(block, 1, before);
+        expectRowsInServerOrder(api);
+        await settle();
+        expectRowsInServerOrder(api);
+    });
+
     test('a load discarded by a purge does not drop transactions held for the blocks loading after it', async () => {
         const { api, pending } = await createGrid(1, { maxConcurrentDatasourceRequests: -1 });
         const discarded = await requestBlockOf(api, pending, 25);

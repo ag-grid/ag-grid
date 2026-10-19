@@ -881,6 +881,20 @@ export class LazyCache extends BeanStub {
         return [...duplicates];
     }
 
+    private loadRowAtIndex(rowIndex: number, data: any): RowNode {
+        const nodeFromCache = this.nodeMap.getBy('index', rowIndex);
+
+        // node already exists, and same as node at designated position, update data
+        if (nodeFromCache && this.doesNodeMatch(data, nodeFromCache.node)) {
+            this.blockUtils.updateDataIntoRowNode(nodeFromCache.node, data);
+            this.nodesToRefresh.delete(nodeFromCache.node);
+            nodeFromCache.node.__needsRefreshWhenVisible = false;
+            return nodeFromCache.node;
+        }
+        // stubs are overwritten, and create row will handle deleting any other overwritten row
+        return this.createRowAtIndex(rowIndex, data);
+    }
+
     public getDataVersion(): string | number | undefined {
         return this.dataVersion;
     }
@@ -922,42 +936,6 @@ export class LazyCache extends BeanStub {
 
     public holdTransaction(held: Omit<HeldTransaction, 'pendingLoads'>): void {
         this.heldTransactions.push({ ...held, pendingLoads: new Set(this.loadsInFlight) });
-    }
-
-    /**
-     * Restores the rows a held transaction added, after a block read before it overwrote some of them. The surviving
-     * rows are inserted again with them, so the rows keep the order they were added in. The row count already
-     * includes them.
-     */
-    public restoreAddedRows(
-        { transaction, addedIds }: HeldTransaction,
-        overwrittenIds: Set<string>,
-        laterTransactions: HeldTransaction[]
-    ): void {
-        // the surviving rows are taken out and inserted again with their nodes, keeping their data and state
-        const survivors = [...addedIds].filter((id) => this.isNodeInCache(id));
-        for (const node of this.removeRowNodes(survivors, undefined, true)) {
-            this.removedNodeCache.set(node.id!, node);
-        }
-        const restoredIds = new Set([...survivors, ...overwrittenIds]);
-        const rows = transaction
-            .add!.map((data) => this.getRowId(data)!)
-            .filter((id) => restoredIds.has(id))
-            .map(
-                (id) =>
-                    this.removedNodeCache.get(id)?.data ?? transaction.add!.find((data) => this.getRowId(data) === id)
-            );
-        const addIndex =
-            transaction.addIndex != null && transaction.addIndex >= 0
-                ? this.moveIndexPast(laterTransactions, transaction.addIndex)
-                : undefined;
-        const insertedNodes = this.insertRowNodes(rows, addIndex);
-        for (const node of insertedNodes) {
-            if (overwrittenIds.has(node.id!)) {
-                this.setRowDataVersion(node, transaction.version);
-            }
-        }
-        this.numberOfRows -= insertedNodes.length - survivors.length;
     }
 
     /** Adds back rows removed again by a replayed transaction, which the row count already excludes. */
@@ -1102,40 +1080,47 @@ export class LazyCache extends BeanStub {
         const newerTransactions = this.getTransactionsNewerThan(dataVersion, loadId);
         // rows added or removed before the block since it was read move it
         const blockStart = this.moveIndexPast(newerTransactions, firstRowIndex);
-        const heldAddedIds = newerTransactions.flatMap(({ addedIds }) => [...addedIds]);
-        const heldAddedIdsInCache = heldAddedIds.filter((id) => this.isNodeInCache(id));
+        // rows the held transactions added keep their places, and the block's rows are placed around them
+        const heldAddedIds = new Set(
+            newerTransactions.flatMap(({ addedIds }) => [...addedIds]).filter((id) => this.isNodeInCache(id))
+        );
+        const heldAddedIndexes = new Set([...heldAddedIds].map((id) => this.getStoreIndex(id)));
 
         const wasRefreshing = this.nodesToRefresh.size > 0;
         let skippedRowCount = 0;
+        let heldAddedRowCount = 0;
         let grandTotalData: any = undefined;
+        let rowIndex = blockStart;
+        // the index of each row the block loaded, at the block's version
+        const loadedIds = new Map<string, number>();
         for (let responseRowIndex = 0; responseRowIndex < response.rowData.length; responseRowIndex++) {
             const data = response.rowData[responseRowIndex];
+            const id = this.getRowId(data);
 
             // Grand total rows are not regular store rows — collect and process after the loop
-            if (grandTotalId != null && this.getRowId(data) === grandTotalId) {
+            if (grandTotalId != null && id === grandTotalId) {
                 grandTotalData = data;
                 skippedRowCount++;
                 continue;
             }
 
-            const rowIndex = blockStart + responseRowIndex - skippedRowCount;
-            const nodeFromCache = this.nodeMap.getBy('index', rowIndex);
-
-            // if stub, overwrite
-            if (nodeFromCache?.node?.stub) {
-                this.createRowAtIndex(rowIndex, data);
+            // a newer transaction added the row again after the block was read, so the added row is kept
+            if (id != null && heldAddedIds.has(id)) {
+                heldAddedRowCount++;
                 continue;
             }
 
-            // node already exists, and same as node at designated position, update data
-            if (nodeFromCache && this.doesNodeMatch(data, nodeFromCache.node)) {
-                this.blockUtils.updateDataIntoRowNode(nodeFromCache.node, data);
-                this.nodesToRefresh.delete(nodeFromCache.node);
-                nodeFromCache.node.__needsRefreshWhenVisible = false;
-                continue;
+            while (heldAddedIndexes.has(rowIndex)) {
+                rowIndex++;
             }
-            // create row will handle deleting the overwritten row
-            this.createRowAtIndex(rowIndex, data);
+            const node = this.loadRowAtIndex(rowIndex, data);
+            loadedIds.set(node.id!, firstRowIndex + responseRowIndex - skippedRowCount);
+            if (dataVersion == null) {
+                this.rowDataVersions.delete(node);
+            } else {
+                this.rowDataVersions.set(node, dataVersion);
+            }
+            rowIndex++;
         }
 
         // grandTotalData field takes priority over in-array detection.
@@ -1152,23 +1137,9 @@ export class LazyCache extends BeanStub {
         // Adjust for grand total rows extracted from the response
         const dataRowCount = response.rowData.length - skippedRowCount;
 
-        // the index of each row the block loaded, at the block's version
-        const loadedIds = new Map<string, number>();
-        for (let rowIndex = blockStart; rowIndex < blockStart + dataRowCount; rowIndex++) {
-            const node = this.nodeMap.getBy('index', rowIndex)?.node;
-            if (!node) {
-                continue;
-            }
-            loadedIds.set(node.id!, rowIndex - blockStart + firstRowIndex);
-            if (dataVersion == null) {
-                this.rowDataVersions.delete(node);
-            } else {
-                this.rowDataVersions.set(node, dataVersion);
-            }
-        }
-
         // the block was read before the held transactions, so its row count is out by the rows they added or removed
-        const heldRowCountDelta = newerTransactions.reduce((delta, { rowCountDelta }) => delta + rowCountDelta, 0);
+        const heldRowCountDelta =
+            newerTransactions.reduce((delta, { rowCountDelta }) => delta + rowCountDelta, 0) - heldAddedRowCount;
         if (response.rowCount != undefined && response.rowCount !== -1) {
             // if the rowCount has been provided, set the row count
             this.numberOfRows = response.rowCount + heldRowCountDelta;
@@ -1181,7 +1152,7 @@ export class LazyCache extends BeanStub {
             this.isLastRowInferred = true;
         } else if (!this.isLastRowKnown) {
             // add 1 for loading row, as we don't know the last row
-            const lastInferredRow = blockStart + dataRowCount + 1;
+            const lastInferredRow = rowIndex + 1;
             if (lastInferredRow > this.numberOfRows) {
                 this.numberOfRows = lastInferredRow;
             }
@@ -1189,8 +1160,7 @@ export class LazyCache extends BeanStub {
 
         // After the row count is set, so replayed removes reduce it, and before rows past the end are deleted
         if (newerTransactions.length) {
-            const overwrittenIds = new Set(heldAddedIdsInCache.filter((id) => !this.isNodeInCache(id)));
-            this.store.replayTransactions(newerTransactions, loadedIds, overwrittenIds);
+            this.store.replayTransactions(newerTransactions, loadedIds);
         }
 
         if (this.isLastRowKnown) {
@@ -1507,8 +1477,7 @@ export class LazyCache extends BeanStub {
         });
     }
 
-    /** @param keepNodes take the rows out without destroying their nodes, so they can be inserted again */
-    public removeRowNodes(idsToRemove: string[], newRowCount?: number, keepNodes?: boolean): RowNode[] {
+    public removeRowNodes(idsToRemove: string[], newRowCount?: number): RowNode[] {
         const removedNodes: RowNode[] = [];
         const nodesToVerify: RowNode[] = [];
 
@@ -1534,11 +1503,7 @@ export class LazyCache extends BeanStub {
             if (idsToRemoveSet.has(node.id)) {
                 idsToRemoveSet.delete(node.id);
 
-                if (keepNodes) {
-                    this.nodeMap.delete(node);
-                } else {
-                    this.destroyRowAtIndex(Number(stringIndex));
-                }
+                this.destroyRowAtIndex(Number(stringIndex));
                 removedNodes.push(node.node);
                 deletedNodeCount += 1;
                 continue;

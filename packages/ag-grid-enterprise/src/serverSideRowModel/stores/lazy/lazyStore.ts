@@ -265,24 +265,16 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     }
 
     /**
-     * Applies held transactions to a block read before them, in arrival order: updates and removes to the rows the
-     * block loaded, and the rows they added that the block overwrote. The row count already includes the changes
-     * each transaction made when it arrived, so only removes it did not count then change the row count.
+     * Applies the updates and removes of held transactions to the rows a block read before them loaded, in arrival
+     * order. The row count already includes the changes each transaction made when it arrived, so only removes it did
+     * not count then change the row count.
      */
-    public replayTransactions(
-        heldTransactions: HeldTransaction[],
-        loadedIds: Map<string, number>,
-        overwrittenIds: Set<string>
-    ): void {
+    public replayTransactions(heldTransactions: HeldTransaction[], loadedIds: Map<string, number>): void {
         const { cache } = this;
-        const inScope = new Set([...loadedIds.keys(), ...overwrittenIds]);
         const idOf = (data: any) => cache.getRowId(data)!;
-        const inBlock = (rows?: any[]) => rows?.filter((data) => inScope.has(idOf(data)));
+        const inBlock = (rows?: any[]) => rows?.filter((data) => loadedIds.has(idOf(data)));
         heldTransactions.forEach((held, i) => {
-            const { transaction, addedIds, removedIds } = held;
-            if ([...addedIds].some((id) => overwrittenIds.has(id))) {
-                cache.restoreAddedRows(held, overwrittenIds, heldTransactions.slice(i + 1));
-            }
+            const { transaction, removedIds } = held;
             const remove = inBlock(transaction.remove);
             const result = this.applyTransactionToCache({
                 version: transaction.version,
