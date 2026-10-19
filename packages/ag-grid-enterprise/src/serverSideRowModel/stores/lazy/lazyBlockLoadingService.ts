@@ -42,15 +42,13 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     private nextBlockToLoad?: BlockToLoad = undefined;
     private loaderTimeout?: number;
 
-    // true from a request until the next macrotask, so later loads and completions in that task can be told apart
+    // set from a request until the next macrotask, so completions in that window are known to be synchronous
     private isInLoadTask = false;
-    // the blocks whose success() or fail() was called while isInLoadTask was set
     private syncLoadedBlocks: BlockToLoad[] = [];
     private yieldTimeout?: number;
     private requestCount = 0;
 
-    // onGridReady is delivered from the async event queue, and framework wrappers can re-emit it in a microtask
-    // after that, so the first load waits for the next task to keep getRows after it
+    // framework wrappers can re-emit onGridReady in a microtask, so the first load waits a task to stay after it
     private isGridReadyDelivered = false;
 
     public postConstruct() {
@@ -76,11 +74,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         this.cacheLoadingNodesMap.delete(cache);
     }
 
-    /**
-     * Queues a microtask to check if any blocks need to be loaded, so a synchronous datasource fills the stubs
-     * rendered in this task before the browser paints them. Until onGridReady has been delivered it only marks the
-     * check as queued, and the gridReady listener runs it.
-     */
+    /** Queues a microtask to check for blocks to load, so a synchronous datasource fills stubs before paint. */
     public queueLoadCheck() {
         if (this.isCheckQueued) {
             return;
@@ -91,12 +85,9 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         }
     }
 
-    /**
-     * Loads blocks until one is pending or debounced, or the browser should get a turn. Timers call this directly
-     * rather than through a microtask, so a run of fake timers still loads synchronously.
-     */
+    // timers call this directly rather than through a microtask, so flushing fake timers still loads synchronously
     private runLoadCheck(debouncedBlock?: BlockToLoad) {
-        // checks queued while this runs, such as by reading stub rows or a synchronous completion, are made by the loop
+        // this loop does the work of any check queued while it runs
         this.isCheckQueued = true;
         try {
             if (debouncedBlock && !this.loadsBlock(() => this.attemptLoad(debouncedBlock))) {
@@ -110,7 +101,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
                 const isOffViewportAfterLoad = !nextBlockToLoad.inViewport && this.isInLoadTask;
                 const isLoadedThisTask = this.syncLoadedBlocks.some((block) => isSameBlock(nextBlockToLoad, block));
                 if (isOffViewportAfterLoad || isLoadedThisTask) {
-                    // only rendered rows need filling before paint; chaining further loads would never yield to the browser
+                    // only rendered rows must fill before paint, so yield to the browser between other loads
                     this.yieldTimeout ??= window.setTimeout(() => {
                         this.yieldTimeout = undefined;
                         this.runLoadCheck();
@@ -118,7 +109,6 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
                     return;
                 }
                 if (!this.loadsBlock(() => this.queueLoadAction(nextBlockToLoad))) {
-                    // debounced or out of bandwidth: the debounce timer or a completion runs the next check
                     return;
                 }
             }
@@ -170,7 +160,6 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         }, debounceMillis);
     }
 
-    // runLoadCheck keeps looking for blocks after a request, so up to maxConcurrentDatasourceRequests load at once
     private attemptLoad({ cache, index: startRow }: BlockToLoad) {
         // too many loads already, ignore the request as a successful request will requeue itself anyway
         if (!cache.isAlive() || !this.hasAvailableLoadBandwidth()) {
