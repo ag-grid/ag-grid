@@ -87,4 +87,5 @@ Apply this list while writing grid source, and check the diff against it before 
 - **Applied, not requested, sizes.** Use widths and heights after min, max and pinned caps.
 - **Bounded work.** No unbounded retry or reload loops (cap them), no new full-row scan on a per-cell or per-transaction path, no chain of loads in a single task.
 - **Result containers are fresh.** When a returned array or map is the caller's to mutate, build a new one rather than handing back an input container or internal state. Application row-data objects are the exception: keep their identity, as `getSelectedRows()` and transactions rely on it.
+- **Targeted runs cover the surface.** Add `main-internal` to a targeted `./behave.sh` run when an export or `AG_GRID_INTERNAL` annotation changes, and `react.test` when rendering or load timing changes (see *Targeted runs* in the testing rules).
 - **Stop when the edge cases narrow.** If two review rounds in a row find ever-narrower combinations of the same mechanism, the design is the problem. Stop patching and propose a simpler one.
