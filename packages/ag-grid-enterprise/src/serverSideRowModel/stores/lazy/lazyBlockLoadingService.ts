@@ -153,7 +153,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
                 loadingNodes.delete(startRow + i);
             }
             if (loadingNodes.size === 0) {
-                cache.store.onLoadsSettled();
+                cache.onLoadsSettled();
             }
         };
 

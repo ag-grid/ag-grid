@@ -36,9 +36,8 @@ export interface ServerSideTransactionResult<TData = any> {
     /** If rows were updated, the updated Row Nodes. */
     update?: IRowNode<TData>[];
     /**
-     * If any rows to add were not added, the row data for those rows. This happens when no `addIndex`
-     * is provided while the store's row count is unknown, when `addIndex` is past the end of the store,
-     * or when a row with the same ID is already loaded.
+     * If any rows were not added, updated or removed, the row data for those rows. This happens when the transaction
+     * has a `version` and the row is loaded or updated at a newer version.
      * The status is still `Applied`, as the rest of the transaction was applied.
      */
     unapplied?: TData[];

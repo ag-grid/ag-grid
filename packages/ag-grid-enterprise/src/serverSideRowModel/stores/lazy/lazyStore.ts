@@ -30,7 +30,7 @@ import { _createRowNodeFooter, _destroyRowNodeFooter } from '../../../aggregatio
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { SSRMParams } from '../../serverSideRowModel';
 import type { StoreUtils } from '../storeUtils';
-import { compareDataVersions } from './dataVersion';
+import type { HeldTransaction } from './lazyCache';
 import { LazyCache } from './lazyCache';
 
 export class LazyStore extends BeanStub implements IServerSideStore {
@@ -66,8 +66,6 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     private readonly idSequence = { value: 0 };
     private cache: LazyCache;
-    /** Versioned transactions that arrived while blocks of this level were loading. */
-    private heldTransactions: ServerSideTransaction[] = [];
     private readonly info: any;
 
     /** Raw data for the grand total row, kept even when grandTotalRow option is not set. */
@@ -173,12 +171,13 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         }
 
+        const result = this.applyTransactionToCache(transaction);
+
         // The loading blocks may have been read before this transaction, so it is applied to them again when they load
         if (transaction.version != null && this.cache.isLoading()) {
-            this.heldTransactions.push(transaction);
+            this.cache.holdTransaction(transaction, new Set(result.add?.map((node) => node.id!)));
         }
-
-        return this.applyTransactionToCache(transaction);
+        return result;
     }
 
     private applyTransactionToCache(transaction: ServerSideTransaction): ServerSideTransactionResult {
@@ -240,29 +239,29 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     }
 
     /**
-     * Applies the held transactions newer than a block's version to the rows the block loaded, in arrival order.
-     * Adds are not repeated: a row the block loaded already has the added row's ID.
+     * Applies held transactions to a block read before them, in arrival order: updates and removes to the rows the
+     * block loaded, and the rows they added that the block overwrote.
      */
-    public replayHeldTransactions(loadedIds: Set<string>, blockVersion: string | number | undefined): void {
-        if (blockVersion == null || !this.heldTransactions.length) {
-            return;
-        }
-        const comparator = this.gos.get('compareServerSideDataVersions');
-        const inBlock = (rows?: any[]) => rows?.filter((data) => loadedIds.has(this.cache.getRowId(data)!));
-        for (const transaction of this.heldTransactions) {
-            if (compareDataVersions(transaction.version!, blockVersion, comparator) > 0) {
-                this.applyTransactionToCache({
-                    version: transaction.version,
-                    update: inBlock(transaction.update),
-                    remove: inBlock(transaction.remove),
-                });
+    public replayTransactions(heldTransactions: HeldTransaction[], loadedIds: Set<string>): void {
+        const { cache } = this;
+        const inBlock = (rows?: any[]) => rows?.filter((data) => loadedIds.has(cache.getRowId(data)!));
+        for (const { transaction, addedIds } of heldTransactions) {
+            const { version } = transaction;
+            this.applyTransactionToCache({
+                version,
+                update: inBlock(transaction.update),
+                remove: inBlock(transaction.remove),
+            });
+            const overwritten = transaction.add?.filter((data) => {
+                const id = cache.getRowId(data)!;
+                return addedIds.has(id) && !cache.isNodeInCache(id);
+            });
+            if (overwritten?.length) {
+                const addIndex =
+                    transaction.addIndex != null && transaction.addIndex >= 0 ? transaction.addIndex : undefined;
+                cache.reinsertRowNodes(overwritten, addIndex, version);
             }
         }
-    }
-
-    /** Called once no block of this level is loading, so no block can have been read before a held transaction. */
-    public onLoadsSettled(): void {
-        this.heldTransactions = [];
     }
 
     private updateSelectionAfterTransaction(updatedNodes?: RowNode[], removedNodes?: RowNode[]) {

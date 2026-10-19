@@ -9,6 +9,7 @@ import type {
     RowNodeSorter,
     RowRenderer,
     ServerSideGroupLevelParams,
+    ServerSideTransaction,
     SortService,
     WithoutGridCommon,
 } from 'ag-grid-community';
@@ -37,6 +38,11 @@ interface LazyStoreNode {
 }
 
 const DEFAULT_BLOCK_SIZE = 100;
+
+export interface HeldTransaction {
+    transaction: ServerSideTransaction;
+    addedIds: Set<string>;
+}
 
 export class LazyCache extends BeanStub {
     private rowRenderer: RowRenderer;
@@ -72,6 +78,11 @@ export class LazyCache extends BeanStub {
     private readonly rowDataVersions = new WeakMap<RowNode, string | number>();
     /** Bumped whenever the pinned data version is dropped, so versioned responses to older requests are discarded. */
     private dataVersionGeneration = 0;
+    /**
+     * Versioned transactions that arrived while blocks of this level were loading, with the IDs of the rows each added,
+     * so they can be applied to the blocks read before them.
+     */
+    private heldTransactions: HeldTransaction[] = [];
 
     /**
      * A node map indexed by the node's id, index, and node.
@@ -886,6 +897,33 @@ export class LazyCache extends BeanStub {
         return this.lazyBlockLoadingSvc.isCacheLoading(this);
     }
 
+    public holdTransaction(transaction: ServerSideTransaction, addedIds: Set<string>): void {
+        this.heldTransactions.push({ transaction, addedIds });
+    }
+
+    /** Inserts rows that were already counted when they were first added, so the row count is unchanged. */
+    public reinsertRowNodes(inserts: any[], indexToAdd: number | undefined, version: string | number | undefined) {
+        const insertedNodes = this.insertRowNodes(inserts, indexToAdd, version);
+        this.numberOfRows -= insertedNodes.length;
+        return insertedNodes;
+    }
+
+    /** Called once no block of this level is loading, so no block can have been read before a held transaction. */
+    public onLoadsSettled(): void {
+        this.heldTransactions = [];
+    }
+
+    /** The held transactions newer than a block's version, which the block was read before. */
+    private getTransactionsNewerThan(blockVersion: string | number | undefined) {
+        if (blockVersion == null) {
+            return [];
+        }
+        const comparator = this.gos.get('compareServerSideDataVersions');
+        return this.heldTransactions.filter(
+            ({ transaction }) => compareDataVersions(transaction.version!, blockVersion, comparator) > 0
+        );
+    }
+
     /**
      * Returns the rows whose loaded row is not newer than `version`, and pushes the others into `stale`.
      * Rows without a loaded version, and versions that cannot be compared, are kept.
@@ -1053,7 +1091,10 @@ export class LazyCache extends BeanStub {
             }
         }
 
-        if (response.rowCount != undefined && response.rowCount !== -1) {
+        const newerTransactions = this.getTransactionsNewerThan(dataVersion);
+        if (newerTransactions.length && this.isLastRowKnown) {
+            // The block was read before transactions the level has applied, so its row count is out of date
+        } else if (response.rowCount != undefined && response.rowCount !== -1) {
             // if the rowCount has been provided, set the row count
             this.numberOfRows = response.rowCount;
             this.isLastRowKnown = true;
@@ -1078,7 +1119,9 @@ export class LazyCache extends BeanStub {
         }
 
         // After the row count is set, so replayed removes reduce it
-        this.store.replayHeldTransactions(loadedIds, dataVersion);
+        if (newerTransactions.length) {
+            this.store.replayTransactions(newerTransactions, loadedIds);
+        }
 
         // Sort here — before fireStoreUpdatedEvent — so the grid sees sorted data in a single
         // update. Other sort entry points (transactions in lazyStore.applyServerSideTransaction,
