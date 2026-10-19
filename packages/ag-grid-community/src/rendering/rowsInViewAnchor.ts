@@ -1,6 +1,5 @@
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
-import type { VerticalScrollPosition } from '../interfaces/iRowNode';
 
 interface AnchorRow {
     rowNode: RowNode;
@@ -15,20 +14,16 @@ export interface RowsInViewAnchor {
     rows: AnchorRow[];
 }
 
-/** Reads the viewport itself, as a cached position can lag behind a scroll whose event has not fired yet. */
-function getLiveVScrollPosition(beans: BeanCollection): VerticalScrollPosition {
-    const scrollFeature = beans.ctrlsSvc.getScrollFeature();
-    scrollFeature.invalidateVerticalScroll();
-    return scrollFeature.getVScrollPosition();
-}
-
 /**
  * Records the rows in view, or returns `null` when there is nothing to keep in view. A grid scrolled to the top is
  * not anchored, so rows added at the top come into view.
  */
 export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | null {
     const { ctrlsSvc, pageBounds, rowContainerHeight, rowModel } = beans;
-    const { top, bottom } = getLiveVScrollPosition(beans);
+    const scrollFeature = ctrlsSvc.getScrollFeature();
+    // read the viewport itself, as the cached position can lag behind a scroll whose event has not fired yet
+    scrollFeature.invalidateVerticalScroll();
+    const { top, bottom } = scrollFeature.getVScrollPosition();
     if (top <= 0 || !rowModel.isRowsToRender()) {
         return null;
     }
@@ -84,12 +79,15 @@ export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnch
     anchor.rows = [{ rowNode: followed.rowNode, pageTop: followed.pageTop }];
     anchor.viewportTop += followed.shift;
     // compared even when the row did not move, as a change in height scaling can move it on screen
+    const scrollFeature = ctrlsSvc.getScrollFeature();
     const scrollTop = rowContainerHeight.getScrollPositionForPixel(anchor.viewportTop);
-    const previousScrollTop = getLiveVScrollPosition(beans).top;
+    // the capture read the viewport, and setting the position invalidates the cache, so the cache is current here
+    const previousScrollTop = scrollFeature.getVScrollPosition().top;
     if (Math.abs(scrollTop - previousScrollTop) < 1) {
         return false;
     }
-    ctrlsSvc.getScrollFeature().setVerticalScrollPosition(scrollTop);
-    // false when the viewport cannot scroll that far, so the caller stops retrying
-    return getLiveVScrollPosition(beans).top !== previousScrollTop;
+    scrollFeature.setVerticalScrollPosition(scrollTop);
+    // false when the viewport cannot scroll that far, so the caller stops retrying. This read is the one rendering
+    // the rows would make anyway.
+    return scrollFeature.getVScrollPosition().top !== previousScrollTop;
 }
