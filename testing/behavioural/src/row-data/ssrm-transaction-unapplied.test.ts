@@ -116,6 +116,26 @@ describe('SSRM transaction result unapplied adds', () => {
             expect(api.getRowNode('1000')?.data.value).toBe('Second');
         });
 
+        test('the same object added twice reports the earlier entry as unapplied', async () => {
+            const api = await createGrid(true);
+            const added = { id: 1000, value: 'Added' };
+
+            const result = api.applyServerSideTransaction({ add: [added, added] });
+
+            expect(result?.add?.map((node) => node.id)).toEqual(['1000']);
+            expect(result?.unapplied).toEqual([added]);
+        });
+
+        test('an earlier grand total add sharing its ID with a later one is reported as unapplied', async () => {
+            const api = await createGrid(true);
+            const first = { id: GRAND_TOTAL_ROW_ID, value: 'First' };
+            const second = { id: GRAND_TOTAL_ROW_ID, value: 'Second' };
+
+            const result = api.applyServerSideTransaction({ add: [first, second] });
+
+            expect(result?.unapplied).toEqual([first]);
+        });
+
         test('a grand total add is not reported as unapplied when the insert position is known', async () => {
             const api = await createGrid(true);
 

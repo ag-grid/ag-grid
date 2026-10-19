@@ -227,8 +227,14 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         }
         const appliedData = new Set(insertedNodes?.map((node) => node.data));
         appliedData.add(this.grandTotalData);
-        const unapplied = adds.filter((data) => !appliedData.has(data));
-        return unapplied.length ? unapplied : undefined;
+        // the cache keeps the last of any duplicates, so walk backwards and match each applied object once
+        const unapplied: any[] = [];
+        for (let i = adds.length - 1; i >= 0; i--) {
+            if (!appliedData.delete(adds[i])) {
+                unapplied.push(adds[i]);
+            }
+        }
+        return unapplied.length ? unapplied.reverse() : undefined;
     }
 
     private updateSelectionAfterTransaction(updatedNodes?: RowNode[], removedNodes?: RowNode[]) {
