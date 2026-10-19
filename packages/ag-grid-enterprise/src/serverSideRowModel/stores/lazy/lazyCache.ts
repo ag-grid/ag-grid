@@ -45,8 +45,9 @@ export interface HeldTransaction {
     addedIds: Set<string>;
     removedIds: Set<string>;
     rowCountDelta: number;
-    /** Where the transaction added (`delta: 1`) or removed (`delta: -1`) loaded rows, moving the rows after them. */
-    indexChanges: { index: number; delta: number }[];
+    /** Where the transaction removed loaded rows, before it, and added rows, after it, moving the rows after them. */
+    removedIndexes: number[];
+    addedIndexes: number[];
     /** The loads in flight when the transaction arrived, whose blocks may have been read before it. */
     pendingLoads: Set<number>;
 }
@@ -928,7 +929,11 @@ export class LazyCache extends BeanStub {
      * rows are inserted again with them, so the rows keep the order they were added in. The row count already
      * includes them.
      */
-    public restoreAddedRows({ transaction, addedIds }: HeldTransaction, overwrittenIds: Set<string>): void {
+    public restoreAddedRows(
+        { transaction, addedIds }: HeldTransaction,
+        overwrittenIds: Set<string>,
+        laterTransactions: HeldTransaction[]
+    ): void {
         // the surviving rows are taken out and inserted again with their nodes, keeping their data and state
         const survivors = [...addedIds].filter((id) => this.isNodeInCache(id));
         for (const node of this.removeRowNodes(survivors, undefined, true)) {
@@ -942,7 +947,10 @@ export class LazyCache extends BeanStub {
                 (id) =>
                     this.removedNodeCache.get(id)?.data ?? transaction.add!.find((data) => this.getRowId(data) === id)
             );
-        const addIndex = transaction.addIndex != null && transaction.addIndex >= 0 ? transaction.addIndex : undefined;
+        const addIndex =
+            transaction.addIndex != null && transaction.addIndex >= 0
+                ? this.moveIndexPast(laterTransactions, transaction.addIndex)
+                : undefined;
         const insertedNodes = this.insertRowNodes(rows, addIndex);
         for (const node of insertedNodes) {
             if (overwrittenIds.has(node.id!)) {
@@ -961,17 +969,19 @@ export class LazyCache extends BeanStub {
         return this.nodeMap.getBy('id', id)?.index;
     }
 
-    private getIndexShift(heldTransactions: HeldTransaction[], blockStart: number): number {
-        let shift = 0;
-        for (const { indexChanges } of heldTransactions) {
-            for (const { index, delta } of indexChanges) {
-                // a row added at the block's first index moves the block, a row removed there is in the block
-                if (delta > 0 ? index <= blockStart + shift : index < blockStart + shift) {
-                    shift += delta;
+    /** Where a row at `index` before the held transactions is after them. */
+    private moveIndexPast(heldTransactions: HeldTransaction[], index: number): number {
+        let movedIndex = index;
+        for (const { removedIndexes, addedIndexes } of heldTransactions) {
+            movedIndex -= removedIndexes.filter((removedIndex) => removedIndex < movedIndex).length;
+            for (const addedIndex of [...addedIndexes].sort((a, b) => a - b)) {
+                // a row added at the row's index moves the row down
+                if (addedIndex <= movedIndex) {
+                    movedIndex++;
                 }
             }
         }
-        return shift;
+        return movedIndex;
     }
 
     /** The held transactions that were in flight with a block's load and are newer than the block's version. */
@@ -1091,7 +1101,7 @@ export class LazyCache extends BeanStub {
 
         const newerTransactions = this.getTransactionsNewerThan(dataVersion, loadId);
         // rows added or removed before the block since it was read move it
-        const blockStart = firstRowIndex + this.getIndexShift(newerTransactions, firstRowIndex);
+        const blockStart = this.moveIndexPast(newerTransactions, firstRowIndex);
         const heldAddedIds = newerTransactions.flatMap(({ addedIds }) => [...addedIds]);
         const heldAddedIdsInCache = heldAddedIds.filter((id) => this.isNodeInCache(id));
 

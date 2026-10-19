@@ -492,6 +492,43 @@ describe('SSRM versioned transactions', () => {
         expect(blockIds()).toEqual(expected);
     });
 
+    test('a block read before several rows were removed above it in one transaction is placed after them', async () => {
+        const { api, pending, settle } = await createGrid(1);
+        const block = await requestBlockOf(api, pending, 15);
+
+        const before = serverRows;
+        serverRows = serverRows.filter((row) => row.id !== '8' && row.id !== '9');
+        api.applyServerSideTransaction({
+            version: 2,
+            remove: [
+                { id: '8', value: 8 },
+                { id: '9', value: 9 },
+            ],
+        });
+
+        respond(block, 1, before);
+        expectRowsInServerOrder(api);
+        await settle();
+        expectRowsInServerOrder(api);
+    });
+
+    test('a row added inside a loading block is restored where later transactions moved it', async () => {
+        const { api, pending, settle } = await createGrid(1);
+        const block = await requestBlockOf(api, pending, 25);
+
+        const before = serverRows;
+        const added = { id: 'new', value: -1 };
+        serverRows = [...serverRows.slice(0, 25), added, ...serverRows.slice(25)].filter((row) => row.id !== '5');
+        api.applyServerSideTransaction({ version: 2, addIndex: 25, add: [added] });
+        api.applyServerSideTransaction({ version: 3, remove: [{ id: '5', value: 5 }] });
+
+        respond(block, 1, before);
+        expect(api.getDisplayedRowAtIndex(24)!.id).toBe('new');
+        expectRowsInServerOrder(api);
+        await settle();
+        expectRowsInServerOrder(api);
+    });
+
     test('a load discarded by a purge does not drop transactions held for the blocks loading after it', async () => {
         const { api, pending } = await createGrid(1, { maxConcurrentDatasourceRequests: -1 });
         const discarded = await requestBlockOf(api, pending, 25);
