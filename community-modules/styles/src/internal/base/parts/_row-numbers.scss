@@ -9,6 +9,11 @@
         font-variant-numeric: tabular-nums;
     }
 
+    // a background-image overlays the hover color on top of the header and range background colors
+    :where(.ag-row-hover:not(.ag-full-width-row)) .ag-row-number-cell {
+        background-image: linear-gradient(var(--ag-row-header-hover-color), var(--ag-row-header-hover-color));
+    }
+
     .ag-row-number-header.ag-row-number-selection-enabled {
         cursor: cell;
     }
