@@ -145,6 +145,16 @@ describe('SSRM transaction result unapplied adds', () => {
             expect(result?.unapplied).toBeUndefined();
         });
 
+        test('a re-added grand total object is reported as unapplied when addIndex is past the end', async () => {
+            const api = await createGrid(true);
+            const grandTotal = { id: GRAND_TOTAL_ROW_ID, value: 'Total' };
+            api.applyServerSideTransaction({ add: [grandTotal] });
+
+            const result = api.applyServerSideTransaction({ add: [grandTotal], addIndex: 1000 });
+
+            expect(result?.unapplied).toEqual([grandTotal]);
+        });
+
         test('a grand total add is reported as unapplied when the row count is unknown', async () => {
             const api = await createGrid(false);
             const grandTotal = { id: GRAND_TOTAL_ROW_ID, value: 'Total' };

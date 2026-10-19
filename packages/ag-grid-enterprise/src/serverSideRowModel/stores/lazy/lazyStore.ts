@@ -180,14 +180,16 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         }
 
         let insertedNodes: RowNode[] | undefined = undefined;
+        let unapplied: any[] | undefined = undefined;
         if (transaction.add?.length) {
             let addIndex = transaction.addIndex;
             if (addIndex != null && addIndex < 0) {
                 addIndex = undefined;
             }
+            const canInsert = this.canInsertAt(addIndex);
             insertedNodes = this.cache.insertRowNodes(transaction.add, addIndex);
+            unapplied = canInsert ? this.getUnappliedAdds(transaction.add, insertedNodes) : transaction.add;
         }
-        const unapplied = this.getUnappliedAdds(transaction.add, insertedNodes);
 
         let removedNodes: RowNode[] | undefined = undefined;
         if (transaction.remove?.length) {
@@ -217,15 +219,19 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         };
     }
 
+    /** Mirrors the cache's insert position guard, which skips the whole add list when it fails. */
+    private canInsertAt(addIndex: number | undefined): boolean {
+        const rowCount = this.cache.getRowCount();
+        const insertIndex = addIndex ?? (this.cache.isLastRowIndexKnown() ? rowCount : undefined);
+        return insertIndex != null && insertIndex <= rowCount;
+    }
+
     /**
-     * Returns the row data of adds the cache skipped, e.g. no known insert position, an ID already loaded,
-     * or an earlier duplicate within the same add list. Compared by reference, as the cache keeps the data given.
+     * Returns the row data of adds the cache skipped at a valid insert position: an ID already loaded, or an
+     * earlier duplicate within the same add list. Compared by reference, as the cache keeps the data given.
      */
-    private getUnappliedAdds(adds: any[] | null | undefined, insertedNodes: RowNode[] | undefined): any[] | undefined {
-        if (!adds?.length) {
-            return undefined;
-        }
-        const appliedData = new Set(insertedNodes?.map((node) => node.data));
+    private getUnappliedAdds(adds: any[], insertedNodes: RowNode[]): any[] | undefined {
+        const appliedData = new Set(insertedNodes.map((node) => node.data));
         appliedData.add(this.grandTotalData);
         // the cache keeps the last of any duplicates, so walk backwards and match each applied object once
         const unapplied: any[] = [];
