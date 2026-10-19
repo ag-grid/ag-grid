@@ -176,7 +176,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         const unapplied: any[] = [];
         const update = this.cache.filterStaleRows(transaction.update, version, unapplied);
         const add = this.cache.filterStaleRows(transaction.add, version, unapplied);
-        const remove = this.cache.filterStaleRows(transaction.remove, version, unapplied);
+        const staleRemoves: any[] = [];
+        const remove = this.cache.filterStaleRows(transaction.remove, version, staleRemoves);
+        unapplied.push(...staleRemoves);
 
         // needs checked before transactions are applied, as rows won't be contiguous immediately
         // after
@@ -203,9 +205,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             );
             const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
             // a row count given with the transaction does not account for the stale removes skipped
-            const staleRemoves = (transaction.remove?.length ?? 0) - remove.length;
-            const rowCount = transaction.rowCount == null ? undefined : transaction.rowCount + staleRemoves;
-            removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, rowCount);
+            const staleRemoveCount = new Set(staleRemoves.map((data) => this.cache.getRowId(data))).size;
+            const rowCount = transaction.rowCount == null ? undefined : transaction.rowCount + staleRemoveCount;
+            removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, rowCount, version);
         }
 
         if (version != null) {

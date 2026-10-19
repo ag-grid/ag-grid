@@ -76,8 +76,10 @@ export class LazyCache extends BeanStub {
 
     /** The version every block of this level is read from, pinned from the first versioned response. */
     private dataVersion: string | number | undefined;
-    /** The version each row was loaded with, kept per row so it follows the row through moves and evictions. */
+    /** The version each row was loaded or last updated with, kept per row so it follows the row when it moves. */
     private readonly rowDataVersions = new WeakMap<RowNode, string | number>();
+    /** The version each row was removed at by a versioned transaction, so older changes to it are skipped. */
+    private readonly removedRowVersions = new Map<string, string | number>();
     /** Bumped whenever the pinned data version is dropped, so versioned responses to older requests are discarded. */
     private dataVersionGeneration = 0;
     /** How many times each block, by its first row index, has been loaded again after being read from an older version. */
@@ -883,14 +885,10 @@ export class LazyCache extends BeanStub {
         return this.dataVersionGeneration;
     }
 
-    /** The data version the row was last loaded or updated with, if its block's response or transaction had one. */
-    public getRowDataVersion(node: RowNode): string | number | undefined {
-        return this.rowDataVersions.get(node);
-    }
-
     /**
-     * Returns the rows whose loaded row is not newer than `version`, and pushes the others into `stale`.
-     * Rows without a loaded version, and versions that cannot be compared, are kept.
+     * Returns the rows whose loaded row is not newer than `version`, and pushes the others into `stale`. A row that is
+     * no longer loaded is compared with the version it was removed at. Rows without a version, and versions that cannot
+     * be compared, are kept.
      */
     public filterStaleRows(rows: any[] | undefined, version: string | number | undefined, stale: any[]) {
         if (version == null || !rows?.length) {
@@ -898,8 +896,12 @@ export class LazyCache extends BeanStub {
         }
         const comparator = this.gos.get('compareServerSideDataVersions');
         return rows.filter((data) => {
-            const node = this.nodeMap.getBy('id', this.getRowId(data))?.node;
-            const rowVersion = node && this.rowDataVersions.get(node);
+            const id = this.getRowId(data);
+            if (id == null) {
+                return true;
+            }
+            const node = this.nodeMap.getBy('id', id)?.node;
+            const rowVersion = node ? this.rowDataVersions.get(node) : this.removedRowVersions.get(id);
             if (rowVersion != null && compareDataVersions(rowVersion, version, comparator) > 0) {
                 stale.push(data);
                 return false;
@@ -1213,6 +1215,7 @@ export class LazyCache extends BeanStub {
         this.dataVersion = undefined;
         this.dataVersionGeneration++;
         this.staleBlockRetries.clear();
+        this.removedRowVersions.clear();
         this.dataVersionWarned = false;
         this.nodeMap.forEach((lazyNode) => {
             if (lazyNode.node.stub && !lazyNode.node.failedLoad) {
@@ -1413,11 +1416,17 @@ export class LazyCache extends BeanStub {
         return uniqueInserts.map((data, uniqueInsertOffset) => {
             const node = this.createRowAtIndex(addIndex + uniqueInsertOffset, data);
             this.setRowDataVersion(node, version);
+            this.removedRowVersions.delete(node.id!);
             return node;
         });
     }
 
-    public removeRowNodes(idsToRemove: string[], newRowCount?: number): RowNode[] {
+    public removeRowNodes(idsToRemove: string[], newRowCount?: number, version?: string | number): RowNode[] {
+        if (version != null) {
+            for (const id of idsToRemove) {
+                this.removedRowVersions.set(id, version);
+            }
+        }
         const removedNodes: RowNode[] = [];
         const nodesToVerify: RowNode[] = [];
 

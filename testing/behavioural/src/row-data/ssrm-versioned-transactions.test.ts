@@ -125,6 +125,40 @@ describe('SSRM versioned transactions', () => {
         expect(value(api, '1')).toBe(700);
     });
 
+    test('an add or update older than a newer remove of the row is skipped', async () => {
+        const { api } = await createGrid(5);
+
+        api.applyServerSideTransaction({ version: 7, remove: [{ id: '1', value: 1 }] });
+        const add = { id: '1', value: 600 };
+        const update = { id: '1', value: 601 };
+        const delayed = api.applyServerSideTransaction({ version: 6, add: [add], update: [update] })!;
+
+        expect(delayed.unapplied).toEqual([update, add]);
+        expect(delayed.add).toBeUndefined();
+        expect(api.getRowNode('1')).toBeUndefined();
+        expect(api.getDisplayedRowCount()).toBe(49);
+
+        const newer = api.applyServerSideTransaction({ version: 8, add: [{ id: '1', value: 800 }] })!;
+        expect(newer.add!.map((node) => node.id)).toEqual(['1']);
+        expect(value(api, '1')).toBe(800);
+    });
+
+    test('a row count given with a transaction is raised once for a stale remove listed twice', async () => {
+        const { api } = await createGrid(5);
+        api.applyServerSideTransaction({ version: 7, update: [{ id: '2', value: 200 }] });
+
+        const stale = { id: '2', value: 2 };
+        const result = api.applyServerSideTransaction({
+            version: 6,
+            remove: [stale, stale, { id: '3', value: 3 }],
+            rowCount: 48,
+        })!;
+
+        expect(result.remove!.map((node) => node.id)).toEqual(['3']);
+        expect(result.unapplied).toEqual([stale, stale]);
+        expect(api.getDisplayedRowCount()).toBe(49);
+    });
+
     test('without versions, transactions behave as before', async () => {
         const { api, pending, requests, settle } = await createGrid(5);
         const block = await requestBlockOf(api, pending, 25);
