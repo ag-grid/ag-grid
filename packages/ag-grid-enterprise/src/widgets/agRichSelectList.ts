@@ -43,7 +43,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     private loadMoreRowsCallback?: (direction?: VerticalDirection) => void;
     private contentWidthCallback?: (width: number) => boolean;
     private loadMoreRowsThreshold = 10;
-    private stateAnnouncementCallback?: (value: string) => void;
+    private stateAnnouncementCallback?: (value: string | undefined) => void;
     private readonly valueFormatter: (value: TValue | TValue[] | null | undefined) => string;
 
     constructor(
@@ -123,8 +123,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         this.toggleStateComp();
         this.toggleVisibility();
         if (hasChanged && (stateAnnouncement || previousAnnouncement)) {
-            // An empty value supersedes the previous state's announcement if still pending, and is never spoken.
-            this.stateAnnouncementCallback?.(stateAnnouncement ?? '');
+            this.stateAnnouncementCallback?.(stateAnnouncement);
         }
     }
 
@@ -175,7 +174,8 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         this.maybeRequestMoreRows();
     }
 
-    public setStateAnnouncementCallback(callback?: (value: string) => void): void {
+    /** Called with `undefined` when the new state has nothing to say, to drop the previous state's pending one. */
+    public setStateAnnouncementCallback(callback?: (value: string | undefined) => void): void {
         this.stateAnnouncementCallback = callback;
     }
 

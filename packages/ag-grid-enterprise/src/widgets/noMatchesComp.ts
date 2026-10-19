@@ -37,8 +37,7 @@ export class NoMatchesComp extends Component {
         if (!this.announced) {
             return;
         }
-        // An empty same-key value supersedes the pending one, and is never spoken itself.
-        this.beans.ariaAnnounce.announceValue('', 'noMatches');
+        this.beans.ariaAnnounce.cancelAnnouncement('noMatches');
         this.announced = false;
     }
 

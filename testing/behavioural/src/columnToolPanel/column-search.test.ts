@@ -56,6 +56,28 @@ describe('columns tool panel search', () => {
         expect(isListShown(gridElement)).toBe(true);
     });
 
+    test('a search that finds no matches again after being cleared announces "No matches" again', async () => {
+        const api: GridApi = await gridMgr.createGridAndWait('columns-tool-panel-search', {
+            columnDefs: [{ field: 'athlete' }, { field: 'age' }],
+            rowData: [{ athlete: 'Michael Phelps', age: 23 }],
+            sideBar: { toolPanels: ['columns'], defaultToolPanel: 'columns' },
+        });
+        const gridElement = getGridElement(api)!;
+        await waitFor(() =>
+            expect(gridElement.querySelector('.ag-column-select-header-filter-wrapper')).not.toBeNull()
+        );
+        const announcement = () => gridElement.querySelector('.ag-aria-description-container')?.textContent;
+
+        await search(gridElement, 'zzz');
+        await waitFor(() => expect(announcement()).toBe('No matches'));
+        await search(gridElement, '');
+        await waitFor(() => expect(isNoMatchesShown(gridElement)).toBe(false));
+
+        await search(gridElement, 'zzz');
+        // A repeat of the same text only reaches screen readers with the service's zero-width-space suffix.
+        await waitFor(() => expect(announcement()).toBe('No matches\u200B'));
+    });
+
     test('a search that finds no matches after the tool panel closes does not announce it', async () => {
         const api: GridApi = await gridMgr.createGridAndWait('columns-tool-panel-search', {
             columnDefs: [{ field: 'athlete' }, { field: 'age' }],

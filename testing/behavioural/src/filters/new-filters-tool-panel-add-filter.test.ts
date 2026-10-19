@@ -77,4 +77,41 @@ describe('new filters tool panel add filter picker', () => {
             'No matches to show'
         );
     });
+
+    test('a search that finds no matches again after results return announces "No matches to show" again', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'athlete' }, { field: 'country' }],
+            defaultColDef: { filter: true },
+            rowData: [{ athlete: 'Michael Phelps', country: 'United States' }],
+            sideBar: { toolPanels: ['filters-new'], defaultToolPanel: 'filters-new' },
+            enableFilterHandlers: true,
+        });
+        const gridElement = getGridElement(api)!;
+        const addButton = await waitFor(() => {
+            const button = gridElement.querySelector<HTMLElement>('.ag-filter-add-button');
+            expect(button).not.toBeNull();
+            return button!;
+        });
+
+        await userEvent.click(addButton);
+        const input = await waitFor(() => {
+            const el = gridElement.querySelector<HTMLInputElement>('.ag-filter-add-select input');
+            expect(el).not.toBeNull();
+            return el!;
+        });
+        const announcement = () => gridElement.querySelector('.ag-aria-description-container')?.textContent;
+
+        setNativeInputValue(input, 'zzz');
+        await waitFor(() => expect(announcement()).toBe('No matches to show'));
+        setNativeInputValue(input, 'cou');
+        await waitFor(() =>
+            expect(gridElement.querySelector('.ag-rich-select-list')?.textContent).toContain('Country')
+        );
+        await asyncSetTimeout(0);
+        await asyncSetTimeout(0);
+
+        setNativeInputValue(input, 'zzz');
+        // A repeat of the same text only reaches screen readers with the service's zero-width-space suffix.
+        await waitFor(() => expect(announcement()).toBe('No matches to show\u200B'));
+    });
 });
