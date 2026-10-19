@@ -118,6 +118,32 @@ describe('SSRM block lifecycle', () => {
         expect(api.getRowNode('0')?.data.value).toBe('v3 Row 0');
     });
 
+    test('a soft refresh does not supersede the first load of a block', async () => {
+        const rowData = makeRows(10);
+        const pending: IServerSideGetRowsParams[] = [];
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            cacheBlockSize: 100,
+            getRowId: (params) => String(params.data.id),
+            serverSideDatasource: {
+                getRows: (params) => pending.push(params),
+            },
+        };
+
+        const api = gridsManager.createGrid(null, gridOptions);
+        await waitFor(() => expect(pending.length).toBe(1));
+
+        api.refreshServerSide({ purge: false });
+        await flush();
+        expect(pending.length).toBe(1);
+
+        respond(pending.shift()!, rowData);
+        await flush();
+        expect(api.getRowNode('0')?.data.value).toBe('v1 Row 0');
+        expect(pending.length).toBe(0);
+    });
+
     test('getCacheBlockState reports the highest-priority row state of a block', async () => {
         const rowData = makeRows(10);
         const pending: IServerSideGetRowsParams[] = [];
