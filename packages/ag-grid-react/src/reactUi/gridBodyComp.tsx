@@ -33,13 +33,8 @@ const GridBodyComp = () => {
     const [preventRowAnimationClass, setPreventRowAnimationClass] = useState<string | null>(null);
     const [pinnedColumnsOverflowing, setPinnedColumnsOverflowing] = useState(false);
 
-    // we initialise layoutClass from domLayout, because if we don't, the comp will initially render
-    // without its layout constraints. Without ag-layout-normal (which sets width to 0, needed for flex)
-    // the grid gets a massive width and renders a massive amount of columns; without
-    // ag-layout-auto-height the autoHeightMaxBodyHeight cap is not applied, so the viewport measures
-    // the full content height and every row is rendered. this problem is due to React been async, for
-    // the non-async version (ie when not using React) this is not a problem as the UI will finish
-    // initialising before we set data.
+    // React commits this before LayoutFeature runs, so the first render must already carry the layout
+    // constraints (flex width, auto-height cap) or every column / row gets rendered.
     const [layoutClass, setLayoutClass] = useState<string>(() => _getLayoutCssClass(gos.get('domLayout')));
 
     const cssManager = useRef<CssClassManager>();

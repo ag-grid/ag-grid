@@ -53,9 +53,7 @@ function observeBodyRootClasses(container: HTMLElement): { classes: Set<string>;
     return { classes, disconnect: () => observer.disconnect() };
 }
 
-// React commits GridBodyComp before LayoutFeature sets the layout class, so the first commit must already
-// carry the right one: with autoHeight, a body briefly laid out as normal skips the autoHeightMaxBodyHeight
-// cap, measures the full content height and renders every row.
+// A body briefly laid out as normal skips the autoHeightMaxBodyHeight cap and renders every row.
 describe('initial layout class in React', () => {
     beforeAll(() => {
         ModuleRegistry.registerModules([ClientSideRowModelModule]);
