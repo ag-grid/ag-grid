@@ -177,15 +177,26 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             transaction.rowCount == null
                 ? undefined
                 : (this.cache.filterStaleRows(transaction.remove, transaction.version, [])?.length ?? 0);
+        const removedIndexes = new Map(
+            transaction.remove?.map((data) => {
+                const id = this.cache.getRowId(data)!;
+                return [id, this.cache.getStoreIndex(id)];
+            })
+        );
         const result = this.applyTransactionToCache(transaction);
 
         // The loading blocks may have been read before this transaction, so it is applied to them again when they load
         if (transaction.version != null && this.cache.isLoading()) {
             const ids = (nodes?: IRowNode[]) => new Set(nodes?.map((node) => node.id!));
+            const indexChanges = [
+                ...(result.add ?? []).map((node) => ({ index: this.cache.getStoreIndex(node.id!)!, delta: 1 })),
+                ...(result.remove ?? []).map((node) => ({ index: removedIndexes.get(node.id!)!, delta: -1 })),
+            ];
             this.cache.holdTransaction({
                 transaction,
                 addedIds: ids(result.add),
                 removedIds: ids(result.remove),
+                indexChanges,
                 rowCountDelta:
                     countedRemoves == null
                         ? this.cache.getRowCount() - rowCountBefore

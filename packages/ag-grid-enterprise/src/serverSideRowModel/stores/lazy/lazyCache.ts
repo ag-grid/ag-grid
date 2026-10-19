@@ -45,6 +45,8 @@ export interface HeldTransaction {
     addedIds: Set<string>;
     removedIds: Set<string>;
     rowCountDelta: number;
+    /** Where the transaction added (`delta: 1`) or removed (`delta: -1`) loaded rows, moving the rows after them. */
+    indexChanges: { index: number; delta: number }[];
     /** The loads in flight when the transaction arrived, whose blocks may have been read before it. */
     pendingLoads: Set<number>;
 }
@@ -955,6 +957,23 @@ export class LazyCache extends BeanStub {
         this.numberOfRows += rowsRemovedAgain;
     }
 
+    public getStoreIndex(id: string): number | undefined {
+        return this.nodeMap.getBy('id', id)?.index;
+    }
+
+    private getIndexShift(heldTransactions: HeldTransaction[], blockStart: number): number {
+        let shift = 0;
+        for (const { indexChanges } of heldTransactions) {
+            for (const { index, delta } of indexChanges) {
+                // a row added at the block's first index moves the block, a row removed there is in the block
+                if (delta > 0 ? index <= blockStart + shift : index < blockStart + shift) {
+                    shift += delta;
+                }
+            }
+        }
+        return shift;
+    }
+
     /** The held transactions newer than a block's version, which were in flight with its load. */
     private getTransactionsNewerThan(blockVersion: string | number | undefined, loadId: number | undefined) {
         if (blockVersion == null || loadId == null) {
@@ -1071,6 +1090,8 @@ export class LazyCache extends BeanStub {
         }
 
         const newerTransactions = this.getTransactionsNewerThan(dataVersion, loadId);
+        // rows added or removed before the block since it was read move it
+        const blockStart = firstRowIndex + this.getIndexShift(newerTransactions, firstRowIndex);
         const heldAddedIds = newerTransactions.flatMap(({ addedIds }) => [...addedIds]);
         const heldAddedIdsInCache = heldAddedIds.filter((id) => this.isNodeInCache(id));
 
@@ -1087,7 +1108,7 @@ export class LazyCache extends BeanStub {
                 continue;
             }
 
-            const rowIndex = firstRowIndex + responseRowIndex - skippedRowCount;
+            const rowIndex = blockStart + responseRowIndex - skippedRowCount;
             const nodeFromCache = this.nodeMap.getBy('index', rowIndex);
 
             // if stub, overwrite
@@ -1122,7 +1143,7 @@ export class LazyCache extends BeanStub {
         const dataRowCount = response.rowData.length - skippedRowCount;
 
         const loadedIds = new Set<string>();
-        for (let rowIndex = firstRowIndex; rowIndex < firstRowIndex + dataRowCount; rowIndex++) {
+        for (let rowIndex = blockStart; rowIndex < blockStart + dataRowCount; rowIndex++) {
             const node = this.nodeMap.getBy('index', rowIndex)?.node;
             if (!node) {
                 continue;
@@ -1149,7 +1170,7 @@ export class LazyCache extends BeanStub {
             this.isLastRowInferred = true;
         } else if (!this.isLastRowKnown) {
             // add 1 for loading row, as we don't know the last row
-            const lastInferredRow = firstRowIndex + dataRowCount + 1;
+            const lastInferredRow = blockStart + dataRowCount + 1;
             if (lastInferredRow > this.numberOfRows) {
                 this.numberOfRows = lastInferredRow;
             }

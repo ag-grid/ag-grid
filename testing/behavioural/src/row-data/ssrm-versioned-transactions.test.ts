@@ -444,6 +444,32 @@ describe('SSRM versioned transactions', () => {
         expect(api.getDisplayedRowCount()).toBe(49);
     });
 
+    test.each([
+        ['added', 21],
+        ['removed', 19],
+    ])('a block read before a row was %s above it is placed where its rows now are', async (change, blockStart) => {
+        const { api, pending, settle } = await createGrid(1);
+        const block = await requestBlockOf(api, pending, 25);
+
+        const before = serverRows;
+        if (change === 'added') {
+            const added = { id: 'new', value: -1 };
+            serverRows = [added, ...serverRows];
+            api.applyServerSideTransaction({ version: 2, addIndex: 0, add: [added] });
+        } else {
+            serverRows = serverRows.filter((row) => row.id !== '3');
+            api.applyServerSideTransaction({ version: 2, remove: [{ id: '3', value: 3 }] });
+        }
+
+        respond(block, 1, before);
+        const blockIds = () => Array.from({ length: 10 }, (_, i) => api.getDisplayedRowAtIndex(blockStart + i)?.id);
+        const expected = Array.from({ length: 10 }, (_, i) => String(20 + i));
+        expect(blockIds()).toEqual(expected);
+
+        await settle();
+        expect(blockIds()).toEqual(expected);
+    });
+
     test('a load discarded by a purge does not drop transactions held for the blocks loading after it', async () => {
         const { api, pending } = await createGrid(1, { maxConcurrentDatasourceRequests: -1 });
         const discarded = await requestBlockOf(api, pending, 25);
