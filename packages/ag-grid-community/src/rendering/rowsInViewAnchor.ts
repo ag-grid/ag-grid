@@ -21,6 +21,17 @@ export interface RowsInViewAnchor {
 }
 
 /** The row's index if it is still displayed, as a row that was removed can keep a stale one. */
+function getDisplayedIndexes(beans: BeanCollection, rowNodes: RowNode[]): number[] {
+    const indexes: number[] = [];
+    for (const rowNode of rowNodes) {
+        const rowIndex = getDisplayedIndex(beans, rowNode);
+        if (rowIndex != null) {
+            indexes.push(rowIndex);
+        }
+    }
+    return indexes;
+}
+
 function getDisplayedIndex(beans: BeanCollection, rowNode: RowNode): number | null {
     const rowIndex = rowNode.rowIndex;
     return rowIndex != null && rowNode.rowTop != null && beans.rowModel.getRow(rowIndex) === rowNode ? rowIndex : null;
@@ -86,43 +97,35 @@ function pushRow(rows: RowNode[], rowNode: RowNode | undefined): void {
  * Scrolls by however far the rows in view have moved, so they stay where they were in the viewport, then anchors to
  * the row it followed where that row is now. Returns `true` if the grid scrolled.
  *
- * Follows the first row still on the page that moved as far as the next one and is still between the rows that were
- * above and below the rows in view. Rows only move together, and keep those rows either side of them, when rows were
- * added or removed above them; rows that moved because an update re-sorted them are not followed.
+ * Follows the first row still on the page that moved as far as the next one and has not crossed more than one of the
+ * rows sampled above and below the rows in view. Rows only move together, and keep those rows either side of them,
+ * when rows were added or removed above them; rows that moved because an update re-sorted them are not followed.
  */
 export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnchor): boolean {
     const { ctrlsSvc, pageBounds, rowContainerHeight } = beans;
     const firstRow = pageBounds.getFirstRow();
     const lastRow = pageBounds.getLastRow();
     const pixelOffset = pageBounds.getPixelOffset();
-    let aboveIndex = -1;
-    for (const rowNode of anchor.rowsAbove) {
-        aboveIndex = Math.max(aboveIndex, getDisplayedIndex(beans, rowNode) ?? -1);
-    }
-    let belowIndex = Infinity;
-    for (const rowNode of anchor.rowsBelow) {
-        belowIndex = Math.min(belowIndex, getDisplayedIndex(beans, rowNode) ?? Infinity);
-    }
+    const aboveIndexes = getDisplayedIndexes(beans, anchor.rowsAbove);
+    const belowIndexes = getDisplayedIndexes(beans, anchor.rowsBelow);
+    // a row that crossed one of those rows may be the one that re-sorted; crossing several, the row in view did
+    const isResorted = (rowIndex: number) =>
+        aboveIndexes.filter((i) => i > rowIndex).length + belowIndexes.filter((i) => i < rowIndex).length > 1;
     const movedRows: { rowNode: RowNode; pageTop: number; shift: number }[] = [];
     for (const { rowNode, pageTop } of anchor.rows) {
         const rowIndex = getDisplayedIndex(beans, rowNode);
-        // skips rows removed, moved off the page, or re-sorted past the rows either side of the rows in view
-        if (
-            rowIndex != null &&
-            rowIndex >= firstRow &&
-            rowIndex <= lastRow &&
-            rowIndex > aboveIndex &&
-            rowIndex < belowIndex
-        ) {
+        // skips rows removed, moved off the page, or re-sorted
+        if (rowIndex != null && rowIndex >= firstRow && rowIndex <= lastRow && !isResorted(rowIndex)) {
             const newPageTop = rowNode.rowTop! - pixelOffset;
             movedRows.push({ rowNode, pageTop: newPageTop, shift: newPageTop - pageTop });
         }
     }
-    if (!movedRows.length) {
+    // rows in view that moved by different amounts, with none moving together, were re-sorted among themselves
+    const followed =
+        movedRows.length === 1 ? movedRows[0] : movedRows.find((row, i) => row.shift === movedRows[i + 1]?.shift);
+    if (!followed) {
         return false;
     }
-
-    const followed = movedRows.find((row, i) => row.shift === movedRows[i + 1]?.shift) ?? movedRows[0];
     anchor.rows = [{ rowNode: followed.rowNode, pageTop: followed.pageTop }];
     anchor.viewportTop += followed.shift;
     // compared even when the row did not move, as a change in height scaling can move it on screen
