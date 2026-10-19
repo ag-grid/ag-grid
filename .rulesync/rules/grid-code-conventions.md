@@ -77,7 +77,7 @@ Only needed when the callback reaches back into the component or grid — self-c
 
 Run through this list before opening a PR or asking for review. Each item is a class of finding that automated review kept raising across several PRs.
 
-- **Existing setups keep working.** With no new option set and no new field returned, behaviour matches `latest`: event order and count, `getRows` calls and request shape, scroll position, timing. New behaviour sits behind an opt-in or activates only when the new input is present. Deprecated options keep working.
+- **Existing setups keep working.** Apart from the bug being fixed, behaviour with no new option set and no new field returned matches `latest`: event order and count, `getRows` calls and request shape, scroll position, timing. A new feature sits behind an opt-in or activates only when its new input is present. Deprecated options keep working.
 - **Late async results.** A response, timer or callback can arrive after a refresh, purge, eviction or destroy. Tag each request with a generation or version and drop results that no longer match. A late result must never re-create state that was removed.
 - **Grid lifecycle order.** Deferred work must not run before `onGridReady` or after the component is destroyed (see *Guard deferred work against teardown*).
 - **Row and column kinds.** Check the change against pinned rows, sticky rows, group rows and footers, grand totals, detail rows, server-side stub rows and duplicate IDs within one call; and against auto-group, selection, row-number and pinned columns.

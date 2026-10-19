@@ -79,9 +79,7 @@ Pick the input that *separates* the two behaviours. A test that passes against b
 
 **Then refactor, on green.** The third step is not optional and it is where tidying belongs: simplifying the fix, extracting a harness, merging same-setup tests, adding the `GridRows`/`GridColumns`/`FilterDom` snapshots. The test suite is what makes that safe, so it must stay green *and unchanged* throughout — if an assertion has to be edited to keep passing, that is a behaviour change wearing a refactor's clothes, and it needs its own red step.
 
-**Check the test against `latest` first.** A regression test must fail on the unfixed code by asserting the observable effect; a test that would pass without the fix is the most common review finding on test changes.
-
-**Targeted runs: include the tests that guard the change's surface.** A targeted `./behave.sh` filter misses package tests outside its pattern. Add `main-internal` whenever an export or `AG_GRID_INTERNAL` annotation changes, and the framework suites (React at least) whenever rendering or load timing changes.
+**Targeted runs: include the tests that guard the change's surface.** A targeted `./behave.sh` filter misses package tests outside its pattern. Add `main-internal` to the pattern whenever an export or `AG_GRID_INTERNAL` annotation changes (it matches `main-internal.test.ts`), and `react` whenever rendering or load timing changes (it matches the behavioural `*-react.test.tsx` files).
 
 ## Commands
 
