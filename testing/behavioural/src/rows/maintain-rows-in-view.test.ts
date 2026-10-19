@@ -241,6 +241,47 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
         });
 
+        test('keeps the top row in view when rows in view are removed between others', () => {
+            const api = createGrid();
+            scrollTo(api, SCROLL_TOP);
+
+            api.applyTransaction({ remove: [{ id: 'r0' }, { id: 'r21' }, { id: 'r23' }] as Row[] });
+
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP - ROW_HEIGHT);
+            expect(offsetInView(api, 'r20')).toBe(0);
+        });
+
+        test('does not follow rows in view that an update swaps with each other', () => {
+            const api = createGrid({ columnDefs: [{ field: 'value', sort: 'asc' }] });
+            scrollTo(api, SCROLL_TOP);
+
+            api.applyTransaction({
+                update: [
+                    { id: 'r20', value: 23.5 },
+                    { id: 'r21', value: 23.6 },
+                ],
+            });
+
+            expect(api.getDisplayedRowAtIndex(20)!.id).toBe('r22');
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
+        });
+
+        test('keeps rows in view when several rows above them are sorted elsewhere', () => {
+            const api = createGrid({ columnDefs: [{ field: 'value', sort: 'asc' }] });
+            scrollTo(api, SCROLL_TOP);
+
+            api.applyTransaction({
+                add: [{ id: 'new', value: -1 }],
+                update: [
+                    { id: 'r18', value: 1000 },
+                    { id: 'r19', value: 1001 },
+                ],
+            });
+
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP - ROW_HEIGHT);
+            expect(offsetInView(api, 'r20')).toBe(0);
+        });
+
         test('uses a scroll position whose scroll event has not fired yet', () => {
             const api = createGrid();
             mockGridLayout.asyncScrollEvents = true;
