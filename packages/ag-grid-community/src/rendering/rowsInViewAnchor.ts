@@ -39,11 +39,11 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
 
 /**
  * Records a row the update removed, before it loses its position. A row starting at the first visible pixel counts
- * as above it, so the rows after it stay where they were.
+ * as above it, so the rows after it stay where they were. Pinned rows are positioned in their own containers.
  */
 export function _recordRemovedRow(anchor: RowsInViewAnchor, rowNode: RowNode): void {
     const { rowTop, rowHeight } = rowNode;
-    if (rowTop != null && rowHeight != null && rowTop <= anchor.firstVisiblePixel) {
+    if (!rowNode.rowPinned && rowTop != null && rowHeight != null && rowTop <= anchor.firstVisiblePixel) {
         anchor.removedHeight += rowHeight;
     }
 }

@@ -9,6 +9,7 @@ import {
     ClientSideRowModelModule,
     ExternalFilterModule,
     PaginationModule,
+    PinnedRowModule,
     ScrollApiModule,
 } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
@@ -36,6 +37,7 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             ScrollApiModule,
             ExternalFilterModule,
             PaginationModule,
+            PinnedRowModule,
             RowGroupingModule,
         ],
     });
@@ -140,6 +142,29 @@ describe('maintainRowsInViewOnDataUpdate', () => {
 
             expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + rowsAdded * ROW_HEIGHT);
             expect(offsetInPage('r120')).toBe(0);
+        });
+
+        test('does not scroll when row data without row IDs replaces every row', () => {
+            const api = createGrid({ getRowId: undefined, suppressScrollOnNewData: true });
+            scrollTo(api, SCROLL_TOP);
+
+            api.setGridOption('rowData', createRows('r', 200));
+
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
+        });
+
+        test('does not scroll when a row pinned from below the rows in view is removed', async () => {
+            const api = createGrid({
+                enableRowPinning: true,
+                isRowPinned: (node) => (node.data?.id === 'r150' ? 'top' : null),
+            });
+            await waitFor(() => expect(api.getPinnedTopRowCount()).toBe(1));
+            scrollTo(api, SCROLL_TOP);
+
+            api.applyTransaction({ remove: [{ id: 'r150' }] as Row[] });
+
+            expect(api.getPinnedTopRowCount()).toBe(0);
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
         });
 
         test('does not scroll when rows are added below the rows in view', () => {
