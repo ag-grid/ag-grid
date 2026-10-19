@@ -928,49 +928,45 @@ export class LazyCache extends BeanStub {
         unapplied: any[]
     ): Pick<ServerSideTransaction, 'add' | 'remove'> {
         const pinned = this.dataVersion;
-        if (version == null || pinned == null) {
-            return changes;
-        }
         const comparator = this.gos.get('compareServerSideDataVersions');
-        const isIncluded = compareDataVersions(pinned, version, comparator) >= 0;
-        if (!isIncluded) {
-            return changes;
-        }
+        const isIncluded = version != null && pinned != null && compareDataVersions(pinned, version, comparator) >= 0;
         let isSkipped = false;
-        const filter = (rows: any[] | undefined) => {
-            const grandTotal = rows?.filter((data) => {
+        const { grandTotalDataVersion } = this;
+        const filter = (rows: any[] | undefined) =>
+            rows?.filter((data) => {
                 if (this.getRowId(data) === GRAND_TOTAL_ROW_ID) {
-                    return true;
+                    const isStale =
+                        version != null &&
+                        grandTotalDataVersion != null &&
+                        compareDataVersions(grandTotalDataVersion, version, comparator) > 0;
+                    if (isStale) {
+                        unapplied.push(data);
+                    }
+                    return !isStale;
                 }
-                unapplied.push(data);
-                isSkipped = true;
-                return false;
+                if (isIncluded) {
+                    unapplied.push(data);
+                    isSkipped = true;
+                }
+                return !isIncluded;
             });
-            return this.filterStaleRows(grandTotal, version, unapplied);
-        };
         const add = filter(changes.add);
         const remove = filter(changes.remove);
         if (isSkipped) {
-            this.loadRowsOlderThan(version, comparator);
+            this.loadRowsOlderThan(version!, comparator);
         }
         return { add, remove };
     }
 
-    /** Loads again the rows read from a version older than `version`, and finds the row count again if there are any. */
+    /** Loads again the rows whose position was read from a version older than `version`. */
     private loadRowsOlderThan(version: string | number, comparator?: CompareServerSideDataVersions): void {
-        let isLoading = false;
         this.nodeMap.forEach(({ node }) => {
             const loadVersion = this.rowLoadVersions.get(node);
             if (!node.stub && loadVersion != null && compareDataVersions(loadVersion, version, comparator) < 0) {
                 this.nodesToRefresh.add(node);
-                isLoading = true;
             }
         });
-        if (isLoading) {
-            this.lazyBlockLoadingSvc.queueLoadCheck();
-            // the row count may be as old as those rows: keep showing it until the responses replace it
-            this.isLastRowKnown = false;
-        }
+        this.lazyBlockLoadingSvc.queueLoadCheck();
     }
 
     private setRowDataVersion(node: RowNode, version: string | number | undefined): void {
@@ -1483,6 +1479,9 @@ export class LazyCache extends BeanStub {
         return uniqueInserts.map((data, uniqueInsertOffset) => {
             const node = this.createRowAtIndex(addIndex + uniqueInsertOffset, data);
             this.setRowDataVersion(node, version);
+            if (version != null) {
+                this.rowLoadVersions.set(node, version);
+            }
             return node;
         });
     }

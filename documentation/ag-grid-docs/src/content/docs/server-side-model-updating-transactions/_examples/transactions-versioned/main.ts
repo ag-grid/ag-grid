@@ -40,9 +40,9 @@ let gridApi: GridApi;
 
 const datasource: IServerSideDatasource = {
     getRows: (params) => {
-        const response = server.getRows(params.request);
         // responses take a while, so changes can arrive while groups are loading
         setTimeout(() => {
+            const response = server.getRows(params.request);
             params.success({ rowData: response.rows, rowCount: response.rowCount, dataVersion: response.version });
         }, 200);
     },

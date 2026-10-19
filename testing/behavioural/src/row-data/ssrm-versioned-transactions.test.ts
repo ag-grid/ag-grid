@@ -232,22 +232,29 @@ describe('SSRM versioned transactions', () => {
             expect(value(api, '1')).toBe(901);
         });
 
-        test('a delayed add finds the row count again from responses without a row count', async () => {
-            const { api, pending, settle } = await createGrid(5, { serverSideDataVersionMode: 'stream' });
-            serverRows = [{ id: '50', value: 50 }, ...serverRows];
-            sendRowCount = false;
-            await loadNewerBlock(api, pending);
+        test('a delayed remove reloads rows inserted by an older transaction', async () => {
+            serverRows = [];
+            const api = gridsManager.createGrid(null, {
+                columnDefs: [{ field: 'id' }, { field: 'value' }],
+                rowModelType: 'serverSide',
+                serverSideDataVersionMode: 'stream',
+                getRowId: (params) => params.data.id,
+                serverSideDatasource: { getRows: (params) => respond(params, params.request.dataVersion ?? 1) },
+            });
+            const settle = () => waitForNoLoadingRows(api);
+            await settle();
+            expect(api.getServerSideGroupLevelState()[0].dataVersion).toBe(1);
+            const rowA = { id: 'A', value: 1 };
+            const rowB = { id: 'B', value: 2 };
+            api.applyServerSideTransaction({ version: 2, add: [rowA, rowB] });
+            api.applyServerSideTransaction({ version: 4, update: [{ id: 'B', value: 4 }] });
+            serverRows = [{ id: 'B', value: 4 }];
 
-            api.applyServerSideTransaction({ version: 6, add: [{ id: '50', value: 50 }], addIndex: 0 });
+            expect(api.applyServerSideTransaction({ version: 3, remove: [rowA] })!.unapplied).toEqual([rowA]);
+
             await settleReload(api, settle);
-            for (let i = 0; i < 3; i++) {
-                api.ensureIndexVisible(api.getDisplayedRowCount() - 1);
-                await settle();
-            }
-
-            expect(api.getDisplayedRowCount()).toBe(51);
-            expect(api.getDisplayedRowAtIndex(50)!.id).toBe('49');
-            expectRowsInServerOrder(api);
+            expect(api.getRowNode('A')).toBeUndefined();
+            expect(api.getDisplayedRowCount()).toBe(1);
         });
 
         test('a burst of delayed removes in one flush loads each older block again once', async () => {
@@ -318,6 +325,10 @@ describe('SSRM versioned transactions', () => {
         api.applyServerSideTransaction({ version: 7, update: [{ id: GRAND_TOTAL_ROW_ID, value: 70 }] });
         const older = { id: GRAND_TOTAL_ROW_ID, value: 60 };
         expect(api.applyServerSideTransaction({ version: 6, update: [older] })!.unapplied).toEqual([older]);
+        expect(value(api, GRAND_TOTAL_ROW_ID)).toBe(70);
+        // checked against the grand total's own version even when the level's version is older
+        const staleRemove = { id: GRAND_TOTAL_ROW_ID };
+        expect(api.applyServerSideTransaction({ version: 6, remove: [staleRemove] })!.unapplied).toEqual([staleRemove]);
         expect(value(api, GRAND_TOTAL_ROW_ID)).toBe(70);
 
         // the level's version includes the remove, but the grand total is checked against its own version

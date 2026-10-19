@@ -967,7 +967,7 @@ export const AG_GRID_ERRORS = {
     337: ({ colId }: { colId: string }) =>
         `\`setFilterCards\` on the New Filters Tool Panel was passed \`${colId}\`, which is not a column in the grid, so no card is shown for it.` as const,
     338: ({ pinned, received }: { pinned: string | number; received: string | number }) =>
-        `The server-side datasource returned data version \`${received}\` for a level pinned to version \`${pinned}\`. The level keeps version \`${pinned}\`; read every block of the level from \`request.dataVersion\`, or call \`refreshServerSide\` to drop the pinned version.` as const,
+        `The server-side datasource returned data version \`${received}\` for a level pinned to version \`${pinned}\`. The level keeps version \`${pinned}\` and the block's rows; read every block of the level from \`request.dataVersion\` (or a newer version when \`serverSideDataVersionMode\` is \`'stream'\`), or call \`refreshServerSide\` to drop the pinned version.` as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 

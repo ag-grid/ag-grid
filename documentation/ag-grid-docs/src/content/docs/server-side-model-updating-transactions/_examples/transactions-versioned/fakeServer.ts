@@ -17,30 +17,24 @@ export interface TradeChange {
 const portfolios = ['Aggressive', 'Hybrid', 'Income'];
 const products = ['Aluminium', 'Copper', 'Gold', 'Nickel', 'Silver', 'Tin', 'Zinc', 'Lead'];
 
-const versionsKept = 100;
-
 /**
- * A server that keeps recent versions of its trades, so that a request can read the version the grid has
- * already caught up to, passed in `request.dataVersion`.
+ * A server that always reads its latest version, which is never older than the version the grid has caught up to,
+ * passed in `request.dataVersion`.
  */
 export class FakeServer {
     private version = 1;
-    private readonly snapshots = new Map<number, Trade[]>();
+    private trades: Trade[] = [];
 
     constructor() {
-        const trades: Trade[] = [];
         for (const portfolio of portfolios) {
             for (const product of products) {
-                trades.push({ tradeId: trades.length, portfolio, product, current: 1000, version: 1 });
+                this.trades.push({ tradeId: this.trades.length, portfolio, product, current: 1000, version: 1 });
             }
         }
-        this.snapshots.set(this.version, trades);
     }
 
     public getRows(request: IServerSideGetRowsRequest): { rows: any[]; rowCount: number; version: number } {
-        const requested = request.dataVersion as number | undefined;
-        const version = requested != null && this.snapshots.has(requested) ? requested : this.version;
-        const trades = this.snapshots.get(version)!;
+        const { trades, version } = this;
 
         const rows =
             request.groupKeys.length === 0
@@ -56,13 +50,10 @@ export class FakeServer {
 
     /** Changes the value of a random trade, creating a new version. */
     public changeRandomTrade(): TradeChange {
-        const trades = [...this.snapshots.get(this.version)!];
-        const index = Math.floor(Math.random() * trades.length);
+        const index = Math.floor(Math.random() * this.trades.length);
         const version = ++this.version;
-        const trade = { ...trades[index], current: Math.floor(Math.random() * 100000), version };
-        trades[index] = trade;
-        this.snapshots.set(version, trades);
-        this.snapshots.delete(version - versionsKept);
+        const trade = { ...this.trades[index], current: Math.floor(Math.random() * 100000), version };
+        this.trades[index] = trade;
         return { version, trade };
     }
 }
