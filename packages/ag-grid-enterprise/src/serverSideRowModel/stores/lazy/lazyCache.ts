@@ -974,7 +974,7 @@ export class LazyCache extends BeanStub {
         return shift;
     }
 
-    /** The held transactions newer than a block's version, which were in flight with its load. */
+    /** The held transactions that were in flight with a block's load and are newer than the block's version. */
     private getTransactionsNewerThan(blockVersion: string | number | undefined, loadId: number | undefined) {
         if (blockVersion == null || loadId == null) {
             return [];

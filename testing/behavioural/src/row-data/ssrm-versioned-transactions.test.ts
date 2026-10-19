@@ -82,6 +82,16 @@ describe('SSRM versioned transactions', () => {
         return pending.splice(index, 1)[0];
     }
 
+    /** Every loaded row is at the index of its row on the server. */
+    function expectRowsInServerOrder(api: GridApi) {
+        for (let index = 0; index < api.getDisplayedRowCount(); index++) {
+            const node = api.getDisplayedRowAtIndex(index)!;
+            if (!node.stub) {
+                expect([index, node.id]).toEqual([index, serverRows[index].id]);
+            }
+        }
+    }
+
     function value(api: GridApi, id: string) {
         return api.getRowNode(id)?.data.value;
     }
@@ -211,7 +221,7 @@ describe('SSRM versioned transactions', () => {
         const { api, pending, settle } = await createGrid(1, { maxConcurrentDatasourceRequests: -1 });
         api.ensureIndexVisible(35);
         await waitFor(() => expect(pending.filter((p) => p.request.startRow! >= 20).length).toBeGreaterThan(1));
-        const blocks = pending.splice(0);
+        const blocks = pending.splice(0).sort((a, b) => a.request.startRow! - b.request.startRow!);
 
         const before = serverRows;
         const removed = before[blocks[0].request.startRow! + 1];
@@ -222,9 +232,21 @@ describe('SSRM versioned transactions', () => {
             respond(params, 1, before);
         }
         expect(api.getDisplayedRowCount()).toBe(49);
+        expectRowsInServerOrder(api);
 
         await settle();
         expect(api.getDisplayedRowCount()).toBe(49);
+        expectRowsInServerOrder(api);
+    });
+
+    test('a transaction whose version cannot be compared with the block is not applied to it again', async () => {
+        const { api, pending } = await createGrid('r10');
+        const block = await requestBlockOf(api, pending, 25);
+
+        api.applyServerSideTransaction({ version: 'r11', update: [{ id: '25', value: 2500 }] });
+
+        respond(block, 'r10');
+        expect(value(api, '25')).toBe(25);
     });
 
     test('a loaded row removed while its block reloads is removed once from the row count', async () => {

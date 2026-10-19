@@ -286,20 +286,25 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             if ([...addedIds].some((id) => overwrittenIds.has(id))) {
                 cache.restoreAddedRows(held, overwrittenIds);
             }
+            const remove = inBlock(transaction.remove);
+            const indexes = new Map(remove?.map((data) => [idOf(data), cache.getStoreIndex(idOf(data))!]));
             const result = this.applyTransactionToCache({
                 version: transaction.version,
                 update: inBlock(transaction.update),
-                remove: inBlock(transaction.remove),
+                remove,
             });
 
             // A remove of a row that was not loaded is only counted when the transaction gave the row count
             const removedAgain =
                 result.remove?.filter((node) => removedIds.has(node.id!) || transaction.rowCount != null) ?? [];
             cache.restoreRowCount(removedAgain.length);
-            const newlyRemoved = (result.remove?.length ?? 0) - removedAgain.length;
-            held.rowCountDelta -= newlyRemoved;
-            for (const node of result.remove ?? []) {
-                removedIds.add(node.id!);
+            held.rowCountDelta -= (result.remove?.length ?? 0) - removedAgain.length;
+            for (const { id } of result.remove ?? []) {
+                if (!removedIds.has(id!)) {
+                    // the remove now moves the rows after it, for the other blocks read before the transaction
+                    held.indexChanges.push({ index: indexes.get(id!)!, delta: -1 });
+                    removedIds.add(id!);
+                }
             }
         }
     }
