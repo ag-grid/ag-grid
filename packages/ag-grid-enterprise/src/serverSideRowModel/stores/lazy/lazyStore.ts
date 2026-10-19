@@ -186,9 +186,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             if (addIndex != null && addIndex < 0) {
                 addIndex = undefined;
             }
-            const canInsert = this.canInsertAt(addIndex);
-            insertedNodes = this.cache.insertRowNodes(transaction.add, addIndex);
-            unapplied = canInsert ? this.getUnappliedAdds(transaction.add, insertedNodes) : transaction.add;
+            const { inserted, skipped } = this.cache.insertRowNodes(transaction.add, addIndex);
+            insertedNodes = inserted;
+            unapplied = skipped.length ? skipped : undefined;
         }
 
         let removedNodes: RowNode[] | undefined = undefined;
@@ -217,30 +217,6 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             remove: removedNodes,
             unapplied,
         };
-    }
-
-    /** Mirrors the cache's insert position guard, which skips the whole add list when it fails. */
-    private canInsertAt(addIndex: number | undefined): boolean {
-        const rowCount = this.cache.getRowCount();
-        const insertIndex = addIndex ?? (this.cache.isLastRowIndexKnown() ? rowCount : undefined);
-        return insertIndex != null && insertIndex <= rowCount;
-    }
-
-    /**
-     * Returns the row data of adds the cache skipped at a valid insert position: an ID already loaded, or an
-     * earlier duplicate within the same add list. Compared by reference, as the cache keeps the data given.
-     */
-    private getUnappliedAdds(adds: any[], insertedNodes: RowNode[]): any[] | undefined {
-        const appliedData = new Set(insertedNodes.map((node) => node.data));
-        appliedData.add(this.grandTotalData);
-        // the cache keeps the last of any duplicates, so walk backwards and match each applied object once
-        const unapplied: any[] = [];
-        for (let i = adds.length - 1; i >= 0; i--) {
-            if (!appliedData.delete(adds[i])) {
-                unapplied.push(adds[i]);
-            }
-        }
-        return unapplied.length ? unapplied.reverse() : undefined;
     }
 
     private updateSelectionAfterTransaction(updatedNodes?: RowNode[], removedNodes?: RowNode[]) {
