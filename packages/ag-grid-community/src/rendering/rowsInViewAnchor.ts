@@ -89,7 +89,9 @@ export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnch
     const added = anchor.added.filter((rowNode) => isDisplayed(beans, rowNode));
     added.sort((a, b) => a.rowIndex! - b.rowIndex!);
     // added rows are above the rows the user could see when they come before the first of those rows still displayed,
-    // so rows that other rows moved past, by sorting or filtering, do not change which added rows count
+    // so rows that other rows moved past, by sorting or filtering, do not change which added rows count. When the same
+    // update sorts that row elsewhere, it stays the boundary at its new position: rows moved by sorting are not
+    // followed, by design, so the boundary is never chosen by guessing which rows kept their order.
     const firstRowInView = anchor.rowsInView.find((rowNode) => isDisplayed(beans, rowNode));
     // with every row in view removed, they are above it when the rows that were above those rows are all above them
     const keptHeight = firstVisiblePixel - removedHeight;
@@ -98,6 +100,9 @@ export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnch
         if (firstRowInView ? rowIndex! > firstRowInView.rowIndex! : rowTop! > keptHeight + addedHeight) {
             break;
         }
+        // the height the row model positioned the row with, which may be an estimate for `getRowHeight`. The rows in
+        // view moved down by exactly that height, and they move again, and are restored again by the caller, only when
+        // the height is resolved while rendering.
         addedHeight += rowHeight!;
     }
     // with pagination, rows added or removed before the page also move where the page starts

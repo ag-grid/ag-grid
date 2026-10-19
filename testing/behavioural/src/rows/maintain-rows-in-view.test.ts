@@ -248,6 +248,24 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             expect(offsetInView(api, 'r40')).toBe(offset);
         });
 
+        test('keeps rows in view when rows added far above them are positioned with estimated heights', () => {
+            const api = createGrid({
+                getRowHeight: ({ data }) => (data?.id.startsWith('new') ? 80 : ROW_HEIGHT),
+                suppressRowVirtualisation: false, // rows that are not rendered keep their estimated heights
+            });
+            scrollTo(api, SCROLL_TOP * 5);
+            const rowInView = api.getDisplayedRowAtIndex(api.getFirstDisplayedRowIndex())!.id!;
+            const offset = offsetInView(api, rowInView);
+
+            api.applyTransaction({ add: createRows('new', 2), addIndex: 0 });
+
+            // the rows in view move by the heights the added rows are positioned with, estimated until they are rendered
+            const added = [api.getRowNode('new0')!, api.getRowNode('new1')!];
+            expect(added.every((rowNode) => rowNode.rowHeightEstimated && rowNode.rowHeight !== 80)).toBe(true);
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP * 5 + added[0].rowHeight! + added[1].rowHeight!);
+            expect(offsetInView(api, rowInView)).toBe(offset);
+        });
+
         test.each([false, true])(
             'keeps rows in view without animating them when animateRows is enabled (suppressAnimationFrame=%s)',
             async (suppressAnimationFrame) => {
@@ -389,6 +407,18 @@ describe('maintainRowsInViewOnDataUpdate', () => {
 
             expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + 3 * ROW_HEIGHT);
             expect(offsetInView(api, 'r20')).toBe(-ROW_HEIGHT);
+        });
+
+        test('counts rows added before the new position of the top row in view when the same update sorts it elsewhere', () => {
+            const api = createGrid({ columnDefs: [{ field: 'value', sort: 'asc' }] });
+            scrollTo(api, SCROLL_TOP);
+
+            // rows moved by sorting are not followed, so the top row in view stays the boundary at its new position
+            api.applyTransaction({ add: [{ id: 'new', value: 150.5 }], update: [{ id: 'r20', value: 1000 }] });
+
+            expect(api.getDisplayedRowAtIndex(200)!.id).toBe('r20');
+            expect(api.getRowNode('new')!.rowIndex).toBeLessThan(200);
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + ROW_HEIGHT);
         });
 
         test('scrolls only for the rows added when the same update sorts a row below them above them', () => {
