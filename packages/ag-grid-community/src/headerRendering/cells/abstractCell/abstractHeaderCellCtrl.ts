@@ -86,6 +86,7 @@ export abstract class AbstractHeaderCellCtrl<
     private drawnRightAnchored = false;
     /** The column `left` the cell was last placed for, so an animated move does not undo a later layout. */
     private targetLeft: number | null = null;
+    private userStyleKeys: string[] | undefined;
 
     protected abstract resizeHeader(delta: number, takeFromAdjacent: boolean): void;
     protected abstract getHeaderClassParams(): HeaderClassParams;
@@ -200,9 +201,29 @@ export abstract class AbstractHeaderCellCtrl<
             styles = headerStyle;
         }
 
+        styles = this.addHeaderStyleCleanup(styles);
         if (styles) {
             this.comp.setUserStyles(styles);
         }
+    }
+
+    private addHeaderStyleCleanup(styles: HeaderStyle | null | undefined): HeaderStyle | null | undefined {
+        const previousStyleKeys = this.userStyleKeys;
+        const styleKeys = styles ? Object.keys(styles) : [];
+        this.userStyleKeys = styleKeys;
+
+        if (!previousStyleKeys?.length) {
+            return styles;
+        }
+
+        const removedStyles: HeaderStyle = {};
+        for (const key of previousStyleKeys) {
+            if (!styleKeys.includes(key)) {
+                removedStyles[key] = '';
+            }
+        }
+        // clear removed properties first, so a longhand cannot erase a newly applied shorthand.
+        return { ...removedStyles, ...styles };
     }
 
     private onGuiFocus(): void {
@@ -604,7 +625,8 @@ export abstract class AbstractHeaderCellCtrl<
 
     protected clearComponent(): void {
         this.removeDragSource();
-        (this.resizeFeature as any) = null;
+        this.userStyleKeys = undefined;
+        this.resizeFeature = null;
         (this.comp as any) = null;
         (this.eGui as any) = null;
     }

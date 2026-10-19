@@ -143,6 +143,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
             columnValueChanged: listener,
             columnRowGroupChanged: listener,
             columnPivotChanged: listener,
+            columnPinned: ({ columns }) => {
+                if (!columns?.includes(column)) {
+                    return;
+                }
+
+                this.refreshHeaderStyles();
+                this.refreshFunctions.headerClasses?.();
+            },
             headerHeightChanged: this.onHeaderHeightChanged.bind(this),
             // Toggle the edit highlight in place (no header component recreation).
             columnHeaderEditHighlightChanged: (event) => {
