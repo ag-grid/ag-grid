@@ -74,25 +74,38 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             return;
         }
         const nodes = cache.getNodes();
-        const supersededBlocks = new Map<IServerSideGetRowsRequest, number>();
+        const refreshingBlocks = new Set<number>();
+        const supersededRequests = new Map<IServerSideGetRowsRequest, number>();
         cache.getNodesToRefresh().forEach((node) => {
             const index = nodes.getBy('node', node)?.index;
-            const request = index == null ? undefined : loadingNodes.get(index);
-            if (index == null || !request) {
+            if (index == null) {
                 return;
             }
             const blockStart = cache.getBlockStartIndex(index);
-            if ((supersededCounts.get(blockStart) ?? 0) < MAX_CONSECUTIVE_SUPERSEDED_LOADS) {
-                supersededBlocks.set(request, blockStart);
+            refreshingBlocks.add(blockStart);
+            const request = loadingNodes.get(index);
+            if (request && (supersededCounts.get(blockStart) ?? 0) < MAX_CONSECUTIVE_SUPERSEDED_LOADS) {
+                supersededRequests.set(request, blockStart);
             }
         });
-        for (const [index, request] of loadingNodes) {
-            if (supersededBlocks.has(request)) {
-                loadingNodes.delete(index);
+
+        // counts of blocks purged or removed since are dropped, so they cannot carry over
+        const nextCounts = new Map<number, number>();
+        for (const blockStart of refreshingBlocks) {
+            const count = supersededCounts.get(blockStart);
+            if (count != null) {
+                nextCounts.set(blockStart, count);
             }
         }
-        for (const blockStart of supersededBlocks.values()) {
-            supersededCounts.set(blockStart, (supersededCounts.get(blockStart) ?? 0) + 1);
+        for (const blockStart of supersededRequests.values()) {
+            nextCounts.set(blockStart, (nextCounts.get(blockStart) ?? 0) + 1);
+        }
+        this.cacheSupersededCountsMap.set(cache, nextCounts);
+
+        for (const [index, request] of loadingNodes) {
+            if (supersededRequests.has(request)) {
+                loadingNodes.delete(index);
+            }
         }
     }
 
