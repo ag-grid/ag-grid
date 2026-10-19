@@ -249,6 +249,79 @@ describe('SSRM versioned transactions', () => {
         expect(api.getDisplayedRowCount()).toBe(49);
     });
 
+    test('a row added inside a loading block and then updated keeps the update', async () => {
+        const { api, pending, settle } = await createGrid(1);
+        const block = await requestBlockOf(api, pending, 25);
+
+        const before = serverRows;
+        serverRows = [...serverRows.slice(0, 25), { id: 'new', value: -3 }, ...serverRows.slice(25)];
+        api.applyServerSideTransaction({ version: 2, addIndex: 25, add: [{ id: 'new', value: -2 }] });
+        api.applyServerSideTransaction({ version: 3, update: [{ id: 'new', value: -3 }] });
+
+        respond(block, 1, before);
+        expect(value(api, 'new')).toBe(-3);
+        expect(api.getDisplayedRowCount()).toBe(51);
+
+        await settle();
+        expect(value(api, 'new')).toBe(-3);
+    });
+
+    test('a row added and then removed while a block loads is not restored', async () => {
+        const { api, pending, settle } = await createGrid(1);
+        const block = await requestBlockOf(api, pending, 25);
+
+        const added = { id: 'new', value: -1 };
+        api.applyServerSideTransaction({ version: 2, add: [added] });
+        api.applyServerSideTransaction({ version: 3, remove: [added] });
+
+        respond(block, 1);
+        expect(api.getRowNode('new')).toBeUndefined();
+        expect(api.getDisplayedRowCount()).toBe(50);
+
+        await settle();
+        expect(api.getRowNode('new')).toBeUndefined();
+        expect(api.getDisplayedRowCount()).toBe(50);
+    });
+
+    test('a remove with rowCount inside a loading block is counted once', async () => {
+        const { api, pending, settle } = await createGrid(1);
+        const block = await requestBlockOf(api, pending, 25);
+
+        const before = serverRows;
+        serverRows = serverRows.filter((row) => row.id !== '25');
+        api.applyServerSideTransaction({ version: 2, remove: [{ id: '25', value: 25 }], rowCount: 49 });
+        expect(api.getDisplayedRowCount()).toBe(49);
+
+        respond(block, 1, before);
+        expect(api.getRowNode('25')).toBeUndefined();
+        expect(api.getDisplayedRowCount()).toBe(49);
+
+        await settle();
+        expect(api.getDisplayedRowCount()).toBe(49);
+    });
+
+    test('a row added while the first block loads is kept in the row count the block returns', async () => {
+        const pending: IServerSideGetRowsParams[] = [];
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            cacheBlockSize: 100,
+            getRowId: (params) => params.data.id,
+            serverSideDatasource: { getRows: (params) => pending.push(params) },
+        });
+        await waitFor(() => expect(pending.length).toBe(1));
+
+        const before = serverRows;
+        const added = { id: 'new', value: -1 };
+        serverRows = [added, ...serverRows];
+        api.applyServerSideTransaction({ version: 2, addIndex: 0, add: [added] });
+
+        respond(pending.shift()!, 1, before);
+        await waitForNoLoadingRows(api);
+        expect(api.getDisplayedRowAtIndex(0)!.id).toBe('new');
+        expect(api.getDisplayedRowCount()).toBe(51);
+    });
+
     test('a load discarded by a purge does not drop transactions held for the blocks loading after it', async () => {
         const { api, pending } = await createGrid(1, { maxConcurrentDatasourceRequests: -1 });
         const discarded = await requestBlockOf(api, pending, 25);

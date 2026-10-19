@@ -41,9 +41,10 @@ const DEFAULT_BLOCK_SIZE = 100;
 
 export interface HeldTransaction {
     transaction: ServerSideTransaction;
-    /** The rows the transaction added and removed when it arrived, which the row count already includes. */
+    /** The rows the transaction added and removed when it arrived, and the change it made to the row count. */
     addedIds: Set<string>;
     removedIds: Set<string>;
+    rowCountDelta: number;
     /** The loads in flight when the transaction arrived, whose blocks may have been read before it. */
     pendingLoads: Set<number>;
 }
@@ -916,8 +917,8 @@ export class LazyCache extends BeanStub {
         });
     }
 
-    public holdTransaction(transaction: ServerSideTransaction, addedIds: Set<string>, removedIds: Set<string>): void {
-        this.heldTransactions.push({ transaction, addedIds, removedIds, pendingLoads: new Set(this.loadsInFlight) });
+    public holdTransaction(held: Omit<HeldTransaction, 'pendingLoads'>): void {
+        this.heldTransactions.push({ ...held, pendingLoads: new Set(this.loadsInFlight) });
     }
 
     /** Changes the row count by rows a replayed transaction added or removed again, which it already includes. */
@@ -1044,6 +1045,10 @@ export class LazyCache extends BeanStub {
             this.serverSideRowModel.generateSecondaryColumns(response.pivotResultFields);
         }
 
+        const newerTransactions = this.getTransactionsNewerThan(dataVersion, loadId);
+        const heldAddedIds = newerTransactions.flatMap(({ addedIds }) => [...addedIds]);
+        const heldAddedIdsInCache = heldAddedIds.filter((id) => this.isNodeInCache(id));
+
         const wasRefreshing = this.nodesToRefresh.size > 0;
         let skippedRowCount = 0;
         let grandTotalData: any = undefined;
@@ -1105,12 +1110,14 @@ export class LazyCache extends BeanStub {
             }
         }
 
-        const newerTransactions = this.getTransactionsNewerThan(dataVersion, loadId);
         if (newerTransactions.length && this.isLastRowKnown) {
             // The block was read before transactions the level has applied, so its row count is out of date
         } else if (response.rowCount != undefined && response.rowCount !== -1) {
-            // if the rowCount has been provided, set the row count
-            this.numberOfRows = response.rowCount;
+            // if the rowCount has been provided, set the row count, with the rows added or removed since it was read
+            this.numberOfRows = newerTransactions.reduce(
+                (count, { rowCountDelta }) => count + rowCountDelta,
+                response.rowCount
+            );
             this.isLastRowKnown = true;
             this.isLastRowInferred = false;
         } else if (numberOfRowsExpected > dataRowCount) {
@@ -1134,7 +1141,8 @@ export class LazyCache extends BeanStub {
 
         // After the row count is set, so replayed removes reduce it
         if (newerTransactions.length) {
-            this.store.replayTransactions(newerTransactions, loadedIds);
+            const overwrittenIds = new Set(heldAddedIdsInCache.filter((id) => !this.isNodeInCache(id)));
+            this.store.replayTransactions(newerTransactions, loadedIds, overwrittenIds);
         }
 
         // Sort here — before fireStoreUpdatedEvent — so the grid sees sorted data in a single

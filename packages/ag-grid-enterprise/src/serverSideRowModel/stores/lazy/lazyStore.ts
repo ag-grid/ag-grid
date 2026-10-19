@@ -171,12 +171,18 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         }
 
+        const rowCountBefore = this.cache.getRowCount();
         const result = this.applyTransactionToCache(transaction);
 
         // The loading blocks may have been read before this transaction, so it is applied to them again when they load
         if (transaction.version != null && this.cache.isLoading()) {
             const ids = (nodes?: IRowNode[]) => new Set(nodes?.map((node) => node.id!));
-            this.cache.holdTransaction(transaction, ids(result.add), ids(result.remove));
+            this.cache.holdTransaction({
+                transaction,
+                addedIds: ids(result.add),
+                removedIds: ids(result.remove),
+                rowCountDelta: this.cache.getRowCount() - rowCountBefore,
+            });
         }
         return result;
     }
@@ -241,25 +247,31 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     /**
      * Applies held transactions to a block read before them, in arrival order: updates and removes to the rows the
-     * block loaded, and the rows they added that the block overwrote.
+     * block loaded, and the rows they added that the block overwrote. The row count already includes the rows the
+     * transactions added and removed when they arrived, so only removes the row count missed change it.
      */
-    public replayTransactions(heldTransactions: HeldTransaction[], loadedIds: Set<string>): void {
+    public replayTransactions(
+        heldTransactions: HeldTransaction[],
+        loadedIds: Set<string>,
+        overwrittenIds: Set<string>
+    ): void {
         const { cache } = this;
-        const inBlock = (rows?: any[]) => rows?.filter((data) => loadedIds.has(cache.getRowId(data)!));
-        for (const { transaction, addedIds, removedIds } of heldTransactions) {
-            const overwritten = transaction.add?.filter((data) => {
-                const id = cache.getRowId(data)!;
-                return addedIds.has(id) && !cache.isNodeInCache(id);
-            });
+        const inScope = new Set([...loadedIds, ...overwrittenIds]);
+        const idOf = (data: any) => cache.getRowId(data)!;
+        const inBlock = (rows?: any[]) => rows?.filter((data) => inScope.has(idOf(data)));
+        for (const { transaction, removedIds } of heldTransactions) {
             const result = this.applyTransactionToCache({
                 version: transaction.version,
                 addIndex: transaction.addIndex,
-                add: overwritten,
+                add: transaction.add?.filter((data) => overwrittenIds.has(idOf(data))),
                 update: inBlock(transaction.update),
                 remove: inBlock(transaction.remove),
             });
-            const removedAgain = result.remove?.filter((node) => removedIds.has(node.id!)).length ?? 0;
-            cache.uncountReplayedRows((result.add?.length ?? 0) - removedAgain);
+            const countedRemoves =
+                transaction.rowCount != null
+                    ? (result.remove?.length ?? 0)
+                    : (result.remove?.filter((node) => removedIds.has(node.id!)).length ?? 0);
+            cache.uncountReplayedRows((result.add?.length ?? 0) - countedRemoves);
         }
     }
 
