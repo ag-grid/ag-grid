@@ -476,6 +476,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             // is doing transaction updates, the pinned rows are not getting constantly
             // trashed - or editing cells in pinned rows are not refreshed and put into read mode
             onlyBody: true,
+            keepRowsInView: true,
         };
         this.redrawAfterModelUpdate(params);
     }
@@ -656,9 +657,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         this.updateContainerHeights();
         this.scrollToTopIfNewData(params);
-        const rowsInViewAnchor = this.rowsInViewAnchor;
-        // later redraws in the same update start from the restored position
-        this.rowsInViewAnchor = null;
+        // other redraws, such as for pinned rows, can run during the update before the rows have moved
+        const rowsInViewAnchor = params.keepRowsInView ? this.rowsInViewAnchor : null;
+        if (rowsInViewAnchor) {
+            this.rowsInViewAnchor = null; // later redraws in the same update start from the restored position
+        }
         let keptRowsInView = !!rowsInViewAnchor && _restoreRowsInView(this.beans, rowsInViewAnchor);
 
         // never recycle rows on layout change as rows could change from normal DOM layout
@@ -1781,6 +1784,8 @@ interface RefreshViewParams {
     newData?: boolean;
     newPage?: boolean;
     domLayoutChanged?: boolean;
+    /** Set when the rows moved, so a data update run in `maintainRowsInView` restores the rows in view. */
+    keepRowsInView?: boolean;
 }
 
 export function mapRowNodes(

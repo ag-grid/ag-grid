@@ -194,6 +194,22 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
         });
 
+        test('keeps rows in view when rows removed above them include a pinned row', async () => {
+            const api = createGrid({
+                enableRowPinning: true,
+                isRowPinned: (node) => (node.data?.id === 'r0' ? 'top' : null),
+            });
+            await waitFor(() => expect(api.getPinnedTopRowCount()).toBe(1));
+            scrollTo(api, SCROLL_TOP);
+            const offset = offsetInView(api, 'r20');
+
+            api.applyTransaction({ remove: createRows('r', 5) });
+
+            expect(api.getPinnedTopRowCount()).toBe(0);
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP - 5 * ROW_HEIGHT);
+            expect(offsetInView(api, 'r20')).toBe(offset);
+        });
+
         test('does not scroll when rows are added below the rows in view', () => {
             const api = createGrid();
             scrollTo(api, SCROLL_TOP);

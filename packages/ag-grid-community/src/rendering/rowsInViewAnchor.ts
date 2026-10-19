@@ -16,6 +16,8 @@ export interface RowsInViewAnchor {
     rowTopsInView: number[];
     /** The rows the update created. */
     added: RowNode[];
+    /** The rows in `added` that are displayed, in display order, worked out once as the restore can be repeated. */
+    displayedAdded?: RowNode[];
     /** The height of the rows the update removed from above the first visible pixel. */
     removedHeight: number;
 }
@@ -87,8 +89,9 @@ function isDisplayed(beans: BeanCollection, rowNode: RowNode): boolean {
 /** The height of the rows the update added above the rows the user could see. */
 function getAddedHeightAbove(beans: BeanCollection, anchor: RowsInViewAnchor): number {
     const firstRowInView = anchor.rowsInView.find((rowNode) => isDisplayed(beans, rowNode));
-    const added = anchor.added.filter((rowNode) => isDisplayed(beans, rowNode));
-    added.sort((a, b) => a.rowIndex! - b.rowIndex!);
+    const added = (anchor.displayedAdded ??= anchor.added
+        .filter((rowNode) => isDisplayed(beans, rowNode))
+        .sort((a, b) => a.rowIndex! - b.rowIndex!));
     // with every row in view removed, they are above it when the rows that were above those rows are all above them
     const keptHeight = anchor.firstVisiblePixel - anchor.removedHeight;
     let addedHeight = 0;
