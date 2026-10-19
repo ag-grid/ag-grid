@@ -412,6 +412,22 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             expect(offsetInView(api, 'r20')).toBe(0);
         });
 
+        test('keeps rows in view when removing a row removes its group above them', () => {
+            const api = createGrid({
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'value' }],
+                rowData: createRows('r', 200).map((row) => ({ ...row, country: row.id === 'r0' ? 'A' : 'B' })),
+                groupDefaultExpanded: -1,
+                suppressGroupRowsSticky: true,
+            });
+            scrollTo(api, SCROLL_TOP);
+            const offset = offsetInView(api, 'r20');
+
+            api.applyTransaction({ remove: [{ id: 'r0' }] as Row[] });
+
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP - 2 * ROW_HEIGHT);
+            expect(offsetInView(api, 'r20')).toBe(offset);
+        });
+
         test('keeps the rows below the sticky group rows in view', async () => {
             const api = createGrid({
                 columnDefs: [

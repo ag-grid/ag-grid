@@ -753,8 +753,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
     }
 
-    /** Called as each row node is created, so a data update kept in view knows the rows it added. */
-    public onRowNodeCreated(rowNode: RowNode): void {
+    /** Called as each row node is created, or taken back after its removal, so a data update kept in view knows the rows it added. */
+    public onRowNodeAdded(rowNode: RowNode): void {
         this.rowsInViewAnchor?.added.push(rowNode);
     }
 
