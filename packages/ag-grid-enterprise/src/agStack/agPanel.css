@@ -43,6 +43,7 @@
 
 .ag-panel-title-bar-buttons {
     display: flex;
+
     /* leaves a visible gap between icon button backgrounds, which extend beyond each button by the spread */
     gap: calc(var(--ag-spacing) * 0.5 + var(--ag-icon-button-background-spread) * 2);
     margin-inline-start: calc(var(--ag-spacing) * 2);
