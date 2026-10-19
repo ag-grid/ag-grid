@@ -296,6 +296,19 @@ describe('SSRM data version', () => {
         }
     });
 
+    test('serverSideDataVersionMode only accepts snapshot or stream', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [320] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        try {
+            gridsManager.createGrid(null, flatGridOptions(respond, { serverSideDataVersionMode: 'streaming' as any }));
+            expect(warnSpy.mock.calls.map((call) => String(call[0]))).toContainEqual(
+                expect.stringContaining('warning #320')
+            );
+        } finally {
+            warnSpy.mockRestore();
+        }
+    });
+
     test('a purge refresh and a sort change drop the pinned version', async () => {
         const requests: IServerSideGetRowsRequest[] = [];
         let responseCount = 0;

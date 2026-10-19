@@ -80,6 +80,10 @@ export class LazyCache extends BeanStub {
     private readonly rowDataVersions = new WeakMap<RowNode, string | number>();
     /** The version each row was removed at by a versioned transaction, so older changes to it are skipped. */
     private readonly removedRowVersions = new Map<string, string | number>();
+    /** The version the grand total row was last loaded, updated or removed with, as it is not kept in the node map. */
+    private grandTotalDataVersion: string | number | undefined;
+    /** The version of the data the row count was last set from, by a block or a transaction's `rowCount`. */
+    private rowCountVersion: string | number | undefined;
     /** Bumped whenever the pinned data version is dropped, so versioned responses to older requests are discarded. */
     private dataVersionGeneration = 0;
     /** How many times each block, by its first row index, has been loaded again after being read from an older version. */
@@ -897,17 +901,43 @@ export class LazyCache extends BeanStub {
         const comparator = this.gos.get('compareServerSideDataVersions');
         return rows.filter((data) => {
             const id = this.getRowId(data);
-            if (id == null) {
-                return true;
-            }
-            const node = this.nodeMap.getBy('id', id)?.node;
-            const rowVersion = node ? this.rowDataVersions.get(node) : this.removedRowVersions.get(id);
+            const rowVersion = id == null ? undefined : this.getRowVersion(id);
             if (rowVersion != null && compareDataVersions(rowVersion, version, comparator) > 0) {
                 stale.push(data);
                 return false;
             }
             return true;
         });
+    }
+
+    private getRowVersion(id: string): string | number | undefined {
+        if (id === GRAND_TOTAL_ROW_ID) {
+            return this.grandTotalDataVersion;
+        }
+        const node = this.nodeMap.getBy('id', id)?.node;
+        return node ? this.rowDataVersions.get(node) : this.removedRowVersions.get(id);
+    }
+
+    /** Whether the row count was set from a version newer than `version`, so it already counts that version's changes. */
+    public isRowCountNewerThan(version: string | number | undefined): boolean {
+        return (
+            version != null &&
+            this.rowCountVersion != null &&
+            compareDataVersions(this.rowCountVersion, version, this.gos.get('compareServerSideDataVersions')) > 0
+        );
+    }
+
+    public setRowCountVersion(version: string | number): void {
+        this.rowCountVersion = version;
+    }
+
+    /** Sets back a row count that already counted a transaction's adds and removes, dropping rows past the end. */
+    public restoreRowCount(rowCount: number): void {
+        this.numberOfRows = rowCount;
+        if (this.isLastRowKnown) {
+            const lazyNodesAfterStoreEnd = this.nodeMap.filter((lazyNode) => lazyNode.index >= rowCount);
+            lazyNodesAfterStoreEnd.forEach((lazyNode) => this.destroyRowAtIndex(lazyNode.index));
+        }
     }
 
     private setRowDataVersion(node: RowNode, version: string | number | undefined): void {
@@ -1067,6 +1097,7 @@ export class LazyCache extends BeanStub {
             }
             if (grandTotalData !== undefined) {
                 this.setGrandTotalData(grandTotalData);
+                this.grandTotalDataVersion = dataVersion;
             }
         }
 
@@ -1088,6 +1119,7 @@ export class LazyCache extends BeanStub {
         if (response.rowCount != undefined && response.rowCount !== -1) {
             // if the rowCount has been provided, set the row count
             this.numberOfRows = response.rowCount;
+            this.rowCountVersion = dataVersion;
             this.isLastRowKnown = true;
             this.isLastRowInferred = false;
         } else if (numberOfRowsExpected > dataRowCount) {
@@ -1346,6 +1378,7 @@ export class LazyCache extends BeanStub {
         for (const data of updates) {
             const id = this.getRowId(data);
             if (id === GRAND_TOTAL_ROW_ID) {
+                this.grandTotalDataVersion = version ?? this.grandTotalDataVersion;
                 const grandTotalNode = this.setGrandTotalData(data);
                 if (grandTotalNode) {
                     updatedNodes.push(grandTotalNode);
@@ -1380,6 +1413,7 @@ export class LazyCache extends BeanStub {
             // Grand total is not a regular store row — store the data and let
             // setDisplayIndexes create the footer node on next render.
             if (dataId === GRAND_TOTAL_ROW_ID) {
+                this.grandTotalDataVersion = version ?? this.grandTotalDataVersion;
                 this.setGrandTotalData(data);
                 return;
             }
@@ -1437,6 +1471,7 @@ export class LazyCache extends BeanStub {
         // grand total as part of an async refresh without triggering another request per block.
         const idsToRemoveSet = new Set(idsToRemove);
         if (idsToRemoveSet.delete(GRAND_TOTAL_ROW_ID)) {
+            this.grandTotalDataVersion = version ?? this.grandTotalDataVersion;
             this.setGrandTotalData(null);
         }
 

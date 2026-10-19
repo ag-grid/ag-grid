@@ -650,6 +650,13 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
         },
         serverSideDataVersionMode: {
             supportedRowModels: ['serverSide'],
+            validate: ({ serverSideDataVersionMode }) =>
+                serverSideDataVersionMode === 'snapshot' || serverSideDataVersionMode === 'stream'
+                    ? null
+                    : _createValidationWarning(320, {
+                          property: 'serverSideDataVersionMode',
+                          allowed: ['snapshot', 'stream'],
+                      }),
         },
         serverSideDatasource: {
             supportedRowModels: ['serverSide'],

@@ -9,8 +9,8 @@ import type {
     IServerSideGetRowsRequest,
     ServerSideTransactionResult,
 } from 'ag-grid-community';
-import { ScrollApiModule, enableDevValidations } from 'ag-grid-community';
-import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import { GRAND_TOTAL_ROW_ID, ScrollApiModule, enableDevValidations } from 'ag-grid-community';
+import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 describe('SSRM versioned transactions', () => {
     const gridsManager = new TestGridsManager({
@@ -157,6 +157,68 @@ describe('SSRM versioned transactions', () => {
         expect(result.remove!.map((node) => node.id)).toEqual(['3']);
         expect(result.unapplied).toEqual([stale, stale]);
         expect(api.getDisplayedRowCount()).toBe(49);
+    });
+
+    test('a row count given with a transaction is not raised for a stale remove of a row already removed', async () => {
+        const { api } = await createGrid(5);
+        api.applyServerSideTransaction({ version: 7, remove: [{ id: '2', value: 2 }] });
+        expect(api.getDisplayedRowCount()).toBe(49);
+
+        const result = api.applyServerSideTransaction({
+            version: 6,
+            remove: [
+                { id: '2', value: 2 },
+                { id: '3', value: 3 },
+            ],
+            rowCount: 48,
+        })!;
+
+        expect(result.remove!.map((node) => node.id)).toEqual(['3']);
+        expect(api.getDisplayedRowCount()).toBe(48);
+    });
+
+    test('an older transaction does not replace a row count set by a newer one', async () => {
+        const { api } = await createGrid(5);
+
+        api.applyServerSideTransaction({ version: 7, remove: [{ id: '1', value: 1 }], rowCount: 48 });
+        expect(api.getDisplayedRowCount()).toBe(48);
+
+        // the count at version 7 already excludes the row removed at version 6
+        api.applyServerSideTransaction({ version: 6, remove: [{ id: '2', value: 2 }], rowCount: 49 });
+        expect(api.getRowNode('2')).toBeUndefined();
+        expect(api.getDisplayedRowCount()).toBe(48);
+    });
+
+    test('a change to the grand total older than its version is skipped', async () => {
+        const api = gridsManager.createGrid(
+            null,
+            {
+                columnDefs: [{ field: 'id' }, { field: 'value' }],
+                rowModelType: 'serverSide',
+                grandTotalRow: 'bottom',
+                getRowId: (params) => params.data.id,
+                serverSideDatasource: {
+                    getRows: (params) => {
+                        const rowData: any[] = serverRows.slice(0, 5);
+                        if (params.needsGrandTotal) {
+                            rowData.push({ id: GRAND_TOTAL_ROW_ID, value: 50 });
+                        }
+                        params.success({ rowData, rowCount: 5, dataVersion: 5 });
+                    },
+                },
+            },
+            { modules: [RowGroupingModule] }
+        );
+        await waitForEvent('firstDataRendered', api);
+        await waitFor(() => expect(value(api, GRAND_TOTAL_ROW_ID)).toBe(50));
+
+        const stale = { id: GRAND_TOTAL_ROW_ID, value: 40 };
+        expect(api.applyServerSideTransaction({ version: 4, update: [stale] })!.unapplied).toEqual([stale]);
+
+        api.applyServerSideTransaction({ version: 7, update: [{ id: GRAND_TOTAL_ROW_ID, value: 70 }] });
+        const older = { id: GRAND_TOTAL_ROW_ID, value: 60 };
+        expect(api.applyServerSideTransaction({ version: 6, remove: [older] })!.unapplied).toEqual([older]);
+        expect(value(api, GRAND_TOTAL_ROW_ID)).toBe(70);
     });
 
     test('without versions, transactions behave as before', async () => {

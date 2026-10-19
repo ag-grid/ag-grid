@@ -183,6 +183,9 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         // needs checked before transactions are applied, as rows won't be contiguous immediately
         // after
         const allRowsLoaded = this.cache.isStoreFullyLoaded();
+        // a row count from a newer version already counts this transaction's adds and removes
+        const rowCountIsNewer = this.cache.isRowCountNewerThan(version);
+        const rowCountBefore = this.cache.getRowCount();
 
         let updatedNodes: RowNode[] | undefined = undefined;
         if (update?.length) {
@@ -204,10 +207,19 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data })
             );
             const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
-            // a row count given with the transaction does not account for the stale removes skipped
-            const staleRemoveCount = new Set(staleRemoves.map((data) => this.cache.getRowId(data))).size;
-            const rowCount = transaction.rowCount == null ? undefined : transaction.rowCount + staleRemoveCount;
+            // a row count given with the transaction does not account for the loaded rows its stale removes skipped
+            const staleRemoveCount = new Set(
+                staleRemoves.map((data) => this.cache.getRowId(data)!).filter((id) => this.cache.isNodeInCache(id))
+            ).size;
+            const rowCount =
+                transaction.rowCount == null || rowCountIsNewer ? undefined : transaction.rowCount + staleRemoveCount;
             removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, rowCount, version);
+        }
+
+        if (rowCountIsNewer) {
+            this.cache.restoreRowCount(rowCountBefore);
+        } else if (version != null && transaction.rowCount != null) {
+            this.cache.setRowCountVersion(version);
         }
 
         if (version != null) {
