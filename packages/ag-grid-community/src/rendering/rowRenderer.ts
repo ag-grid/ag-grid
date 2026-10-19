@@ -726,9 +726,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private scrollToTopIfNewData(params: RefreshViewParams): void {
-        if (params.newData) {
-            this.rowsInViewAnchor = null; // new data replaces every row, so there are no rows to keep in view
-        }
         const scrollToTop = params.newData || params.newPage;
         const suppressScrollToTop = this.gos.get('suppressScrollOnNewData');
 

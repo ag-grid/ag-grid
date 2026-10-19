@@ -346,36 +346,26 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
         const params: RefreshModelParams = { step: 'nothing', changedProps };
         if (newRowData) {
-            beans.rowRenderer.maintainRowsInView(() =>
-                this.setRowData(nodeManager, params, newRowData, !!extractData, properties)
-            );
-            return;
-        }
-        this.refreshChangedStage(params, properties);
-    }
-
-    private setRowData(
-        nodeManager: ClientSideNodeManager<any>,
-        params: RefreshModelParams,
-        newRowData: any[],
-        extractData: boolean,
-        properties: (keyof GridOptions)[]
-    ): void {
-        const gos = this.gos;
-        const immutable =
-            !extractData &&
-            !!this.rootNode?._leafs?.length &&
-            newRowData.length > 0 &&
-            gos.exists('getRowId') &&
-            // backward compatibility - for who want old behaviour of Row IDs but NOT Immutable Data.
-            !gos.get('resetRowDataOnUpdate');
-        this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
-        if (immutable) {
-            params.keepRenderedRows = true;
-            params.animate = !gos.get('suppressAnimationFrame');
-            params.changedRowNodes = new ChangedRowNodes();
-            nodeManager.setImmutableRowData(params, newRowData);
-        } else {
+            const immutable =
+                !extractData &&
+                !!this.rootNode?._leafs?.length &&
+                newRowData.length > 0 &&
+                gos.exists('getRowId') &&
+                // backward compatibility - for who want old behaviour of Row IDs but NOT Immutable Data.
+                !gos.get('resetRowDataOnUpdate');
+            if (immutable) {
+                // new row data replaces every row, so only an update has rows to keep in view
+                beans.rowRenderer.maintainRowsInView(() => {
+                    this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
+                    params.keepRenderedRows = true;
+                    params.animate = !gos.get('suppressAnimationFrame');
+                    params.changedRowNodes = new ChangedRowNodes();
+                    nodeManager.setImmutableRowData(params, newRowData);
+                    this.refreshChangedStage(params, properties);
+                });
+                return;
+            }
+            this.refreshingData = true; // indicate row data update in progress, this flag will be reset when refreshModel completes
             params.rowDataUpdated = true;
             params.newData = true;
             nodeManager.setNewRowData(newRowData);
