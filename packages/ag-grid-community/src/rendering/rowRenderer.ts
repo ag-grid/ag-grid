@@ -38,7 +38,7 @@ import type { RowCtrlInstanceId } from './row/rowCtrl';
 import { RowCtrl, getRowTypeForNode } from './row/rowCtrl';
 import type { RowContainerHeightService } from './rowContainerHeightService';
 import type { RowsInViewAnchor } from './rowsInViewAnchor';
-import { _captureRowsInView, _restoreRowsInView } from './rowsInViewAnchor';
+import { _captureRowsInView, _recordRemovedRow, _restoreRowsInView } from './rowsInViewAnchor';
 
 type RowCtrlIdMap = Record<RowCtrlInstanceId, RowCtrl>;
 type RowCtrlByRowIndex = Record<number, RowCtrl>;
@@ -677,7 +677,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         this.workOutFirstAndLastRowsToRender();
         // working out the heights of the rows to render can move the rows kept in view again
-        while (rowsInViewAnchor && _restoreRowsInView(this.beans, rowsInViewAnchor)) {
+        // capped, in case the heights keep changing as the rows are drawn
+        for (let pass = 0; pass < 3 && rowsInViewAnchor && _restoreRowsInView(this.beans, rowsInViewAnchor); ++pass) {
             keptRowsInView = true;
             this.workOutFirstAndLastRowsToRender();
         }
@@ -746,6 +747,19 @@ export class RowRenderer extends BeanStub implements NamedBean {
             return update();
         } finally {
             this.rowsInViewAnchor = null;
+        }
+    }
+
+    /** Called as each row node is created, so a data update kept in view knows the rows it added. */
+    public onRowNodeCreated(rowNode: RowNode): void {
+        this.rowsInViewAnchor?.added.push(rowNode);
+    }
+
+    /** Called as each row node is destroyed, before it loses its position, so a data update kept in view knows the rows it removed. */
+    public onRowNodeDestroyed(rowNode: RowNode): void {
+        const rowsInViewAnchor = this.rowsInViewAnchor;
+        if (rowsInViewAnchor) {
+            _recordRemovedRow(rowsInViewAnchor, rowNode);
         }
     }
 

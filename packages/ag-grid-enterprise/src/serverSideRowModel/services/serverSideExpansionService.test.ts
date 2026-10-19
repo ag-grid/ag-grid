@@ -12,7 +12,12 @@ describe('ServerSideExpansionService', () => {
     beforeEach(() => {
         ssrmExpandAllAffectsAllRows = true;
         beans = {
-            rowRenderer: { refreshCells: vi.fn(), refreshRowByNode: vi.fn() },
+            rowRenderer: {
+                refreshCells: vi.fn(),
+                refreshRowByNode: vi.fn(),
+                onRowNodeCreated: vi.fn(),
+                onRowNodeDestroyed: vi.fn(),
+            },
             eventSvc: { dispatchEvent: vitest.fn() },
             gos: {
                 get: (key: string) => {
