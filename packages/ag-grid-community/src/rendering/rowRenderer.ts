@@ -758,8 +758,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.rowsInViewAnchor?.added.push(rowNode);
     }
 
-    /** Called as each row node is destroyed, before it loses its position, so a data update kept in view knows the rows it removed. */
-    public onRowNodeDestroyed(rowNode: RowNode): void {
+    /** Called as each row node is removed, before it loses its position, so a data update kept in view knows the rows it removed. */
+    public onRowNodeRemoved(rowNode: RowNode): void {
         const rowsInViewAnchor = this.rowsInViewAnchor;
         if (rowsInViewAnchor) {
             _recordRemovedRow(rowsInViewAnchor, rowNode);

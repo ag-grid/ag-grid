@@ -16,7 +16,7 @@ describe('ServerSideExpansionService', () => {
                 refreshCells: vi.fn(),
                 refreshRowByNode: vi.fn(),
                 onRowNodeCreated: vi.fn(),
-                onRowNodeDestroyed: vi.fn(),
+                onRowNodeRemoved: vi.fn(),
             },
             eventSvc: { dispatchEvent: vitest.fn() },
             gos: {
