@@ -1872,10 +1872,10 @@
             },
             "restrictModule": ["ServerSideRowModelModule"]
         },
-        "suppressServerSideFullWidthLoadingRow": {
+        "serverSideLoadingRowType": {
             "more": {
-                "name": "Cell Loading",
-                "url": "./server-side-model-loading-rows/#skeleton-loading"
+                "name": "SSRM Loading Rows",
+                "url": "./server-side-model-loading-rows/"
             }
         },
         "purgeClosedRowNodes": {

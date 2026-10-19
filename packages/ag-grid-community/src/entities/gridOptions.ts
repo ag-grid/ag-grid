@@ -1823,8 +1823,18 @@ export interface GridOptions<TData = any> {
     serverSideInitialRowCount?: number;
 
     /**
+     * How the Server-side Row Model displays rows that are still loading.
+     * - `'fullWidth'`: Displays a single full width loading row, using the grid option `loadingCellRenderer`.
+     * - `'cell'`: Displays a loading indicator in each cell, using the colDef `loadingCellRenderer` (a skeleton by default).
+     * @default 'fullWidth'
+     * @agModule `ServerSideRowModelModule`
+     */
+    serverSideLoadingRowType?: ServerSideLoadingRowType;
+
+    /**
      * When `true`, the Server-side Row Model will not use a full width loading renderer, instead using the colDef `loadingCellRenderer` if present.
      * @agModule `ServerSideRowModelModule`
+     * @deprecated v36.3 Use `serverSideLoadingRowType: 'cell'` instead.
      */
     suppressServerSideFullWidthLoadingRow?: boolean;
 
@@ -3316,6 +3326,8 @@ export interface LoadingRowsOptions {
 }
 
 export type DomLayoutType = 'normal' | 'autoHeight' | 'print';
+
+export type ServerSideLoadingRowType = 'fullWidth' | 'cell';
 
 /** Cell selection options */
 export interface CellSelectionOptions<TData = any, TContext = any> {
