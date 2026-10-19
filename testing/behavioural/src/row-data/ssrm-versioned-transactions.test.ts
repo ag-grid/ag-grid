@@ -599,6 +599,23 @@ describe('SSRM versioned transactions', () => {
         expectRowsInServerOrder(api);
     });
 
+    test('a row updated at a newer version keeps its data when an older block loads it', async () => {
+        const { api, pending } = await createGrid(5, { maxConcurrentDatasourceRequests: -1 });
+        api.applyServerSideTransaction({ version: 8, update: [{ id: '1', value: -8 }] });
+
+        api.refreshServerSide({ purge: false });
+        await waitFor(() => expect(pending.some((p) => p.request.startRow === 0)).toBe(true));
+        respond(
+            pending.find((p) => p.request.startRow === 0)!,
+            6
+        );
+
+        expect(value(api, '1')).toBe(-8);
+        expect(api.applyServerSideTransaction({ version: 7, update: [{ id: '1', value: -7 }] })!.unapplied).toEqual([
+            { id: '1', value: -7 },
+        ]);
+    });
+
     test('a load discarded by a purge does not drop transactions held for the blocks loading after it', async () => {
         const { api, pending } = await createGrid(1, { maxConcurrentDatasourceRequests: -1 });
         const discarded = await requestBlockOf(api, pending, 25);

@@ -45,7 +45,7 @@ export interface HeldTransaction {
     addedIds: Set<string>;
     removedIds: Set<string>;
     rowCountDelta: number;
-    /** Where the transaction removed loaded rows, before it, and added rows, after it, moving the rows after them. */
+    /** Where the transaction removed loaded rows, before it, and added rows, after it and sorted. */
     removedIndexes: number[];
     addedIndexes: number[];
     /** The loads in flight when the transaction arrived, whose blocks may have been read before it. */
@@ -950,11 +950,17 @@ export class LazyCache extends BeanStub {
     /** Where a row at `index` before the held transactions is after them. */
     public moveIndexPast(heldTransactions: HeldTransaction[], index: number): number {
         let movedIndex = index;
-        for (const { removedIndexes, addedIndexes } of heldTransactions) {
-            movedIndex -= removedIndexes.filter((removedIndex) => removedIndex < movedIndex).length;
-            for (const addedIndex of [...addedIndexes].sort((a, b) => a - b)) {
-                // a row added at the row's index moves the row down
-                if (addedIndex <= movedIndex) {
+        for (let i = 0, len = heldTransactions.length; i < len; ++i) {
+            const { removedIndexes, addedIndexes } = heldTransactions[i];
+            const indexBefore = movedIndex;
+            for (let j = 0, removedLen = removedIndexes.length; j < removedLen; ++j) {
+                if (removedIndexes[j] < indexBefore) {
+                    movedIndex--;
+                }
+            }
+            // added indexes are sorted; a row added at the row's index moves the row down
+            for (let j = 0, addedLen = addedIndexes.length; j < addedLen; ++j) {
+                if (addedIndexes[j] <= movedIndex) {
                     movedIndex++;
                 }
             }
@@ -1113,9 +1119,20 @@ export class LazyCache extends BeanStub {
             while (heldAddedIndexes.has(rowIndex)) {
                 rowIndex++;
             }
-            const node = this.loadRowAtIndex(rowIndex, data);
-            loadedIds.set(node.id!, firstRowIndex + responseRowIndex - skippedRowCount);
-            if (dataVersion == null) {
+            // a row changed at a newer version than the block keeps its data and version
+            const existingNode = id == null ? undefined : this.nodeMap.getBy('id', id)?.node;
+            const existingVersion = existingNode && this.rowDataVersions.get(existingNode);
+            const isNewer =
+                dataVersion != null &&
+                existingVersion != null &&
+                compareDataVersions(existingVersion, dataVersion, this.gos.get('compareServerSideDataVersions')) > 0;
+            const node = this.loadRowAtIndex(rowIndex, isNewer ? existingNode!.data : data);
+            if (newerTransactions.length) {
+                loadedIds.set(node.id!, firstRowIndex + responseRowIndex - skippedRowCount);
+            }
+            if (isNewer) {
+                this.rowDataVersions.set(node, existingVersion!);
+            } else if (dataVersion == null) {
                 this.rowDataVersions.delete(node);
             } else {
                 this.rowDataVersions.set(node, dataVersion);

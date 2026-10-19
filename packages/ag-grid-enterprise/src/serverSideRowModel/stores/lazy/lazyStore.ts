@@ -171,35 +171,41 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             }
         }
 
-        const rowCountBefore = this.cache.getRowCount();
+        if (transaction.version == null || !this.cache.isLoading()) {
+            return this.applyTransactionToCache(transaction);
+        }
+        // The loading blocks may have been read before this transaction, so it is applied to them again when they load
+        return this.applyAndHoldTransaction(transaction);
+    }
+
+    private applyAndHoldTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult {
+        const { cache } = this;
+        const rowCountBefore = cache.getRowCount();
         // the transaction's own row count counts every remove it makes, while the count before it may be an estimate
         const countedRemoves =
             transaction.rowCount == null
                 ? undefined
-                : (this.cache.filterStaleRows(transaction.remove, transaction.version, [])?.length ?? 0);
-        const removedIndexes = new Map(
-            transaction.remove?.map((data) => {
-                const id = this.cache.getRowId(data)!;
-                return [id, this.cache.getStoreIndex(id)];
-            })
-        );
+                : (cache.filterStaleRows(transaction.remove, transaction.version, [])?.length ?? 0);
+        const indexesBefore = new Map<string, number | undefined>();
+        const removes = transaction.remove ?? [];
+        for (let i = 0, len = removes.length; i < len; ++i) {
+            const id = cache.getRowId(removes[i])!;
+            indexesBefore.set(id, cache.getStoreIndex(id));
+        }
+
         const result = this.applyTransactionToCache(transaction);
 
-        // The loading blocks may have been read before this transaction, so it is applied to them again when they load
-        if (transaction.version != null && this.cache.isLoading()) {
-            const ids = (nodes?: IRowNode[]) => new Set(nodes?.map((node) => node.id!));
-            this.cache.holdTransaction({
-                transaction,
-                addedIds: ids(result.add),
-                removedIds: ids(result.remove),
-                removedIndexes: (result.remove ?? []).map((node) => removedIndexes.get(node.id!)!),
-                addedIndexes: (result.add ?? []).map((node) => this.cache.getStoreIndex(node.id!)!),
-                rowCountDelta:
-                    countedRemoves == null
-                        ? this.cache.getRowCount() - rowCountBefore
-                        : (result.add?.length ?? 0) - countedRemoves,
-            });
-        }
+        const addedNodes = result.add ?? [];
+        const removedNodes = result.remove ?? [];
+        cache.holdTransaction({
+            transaction,
+            addedIds: new Set(addedNodes.map((node) => node.id!)),
+            removedIds: new Set(removedNodes.map((node) => node.id!)),
+            removedIndexes: removedNodes.map((node) => indexesBefore.get(node.id!)!),
+            addedIndexes: addedNodes.map((node) => cache.getStoreIndex(node.id!)!).sort((a, b) => a - b),
+            rowCountDelta:
+                countedRemoves == null ? cache.getRowCount() - rowCountBefore : addedNodes.length - countedRemoves,
+        });
         return result;
     }
 
@@ -271,34 +277,37 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      */
     public replayTransactions(heldTransactions: HeldTransaction[], loadedIds: Map<string, number>): void {
         const { cache } = this;
-        const idOf = (data: any) => cache.getRowId(data)!;
-        const inBlock = (rows?: any[]) => rows?.filter((data) => loadedIds.has(idOf(data)));
-        heldTransactions.forEach((held, i) => {
+        const inBlock = (rows?: any[]) => rows?.filter((data) => loadedIds.has(cache.getRowId(data)!));
+        for (let i = 0, len = heldTransactions.length; i < len; ++i) {
+            const held = heldTransactions[i];
             const { transaction, removedIds } = held;
-            const remove = inBlock(transaction.remove);
             const result = this.applyTransactionToCache({
                 version: transaction.version,
                 update: inBlock(transaction.update),
-                remove,
+                remove: inBlock(transaction.remove),
             });
 
             // A remove of a row that was not loaded is only counted when the transaction gave the row count
-            const removedAgain =
-                result.remove?.filter((node) => removedIds.has(node.id!) || transaction.rowCount != null) ?? [];
-            cache.restoreRowCount(removedAgain.length);
-            held.rowCountDelta -= (result.remove?.length ?? 0) - removedAgain.length;
-            for (const { id } of result.remove ?? []) {
-                if (!removedIds.has(id!)) {
+            const removedNodes = result.remove ?? [];
+            let removedAgain = 0;
+            for (let j = 0, removedLen = removedNodes.length; j < removedLen; ++j) {
+                const id = removedNodes[j].id!;
+                if (removedIds.has(id) || transaction.rowCount != null) {
+                    removedAgain++;
+                }
+                if (!removedIds.has(id)) {
                     // the remove now moves the rows after it, for the other blocks read before the transaction, so
                     // record where the row was before the transaction
-                    const blockIndex = loadedIds.get(id!);
+                    const blockIndex = loadedIds.get(id);
                     if (blockIndex != null) {
                         held.removedIndexes.push(cache.moveIndexPast(heldTransactions.slice(0, i), blockIndex));
                     }
-                    removedIds.add(id!);
+                    removedIds.add(id);
                 }
             }
-        });
+            cache.restoreRowCount(removedAgain);
+            held.rowCountDelta -= removedNodes.length - removedAgain;
+        }
     }
 
     private updateSelectionAfterTransaction(updatedNodes?: RowNode[], removedNodes?: RowNode[]) {
