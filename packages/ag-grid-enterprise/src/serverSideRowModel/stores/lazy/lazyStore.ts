@@ -219,7 +219,10 @@ export class LazyStore extends BeanStub implements IServerSideStore {
                 idFunc({ level: this.level, parentKeys: this.parentRowNode.getRoute() ?? [], data })
             );
             const allUniqueIdsToRemove = [...new Set(allIdsToRemove)];
-            removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, transaction.rowCount);
+            // a row count given with the transaction does not account for the stale removes skipped
+            const staleRemoves = (transaction.remove?.length ?? 0) - remove.length;
+            const rowCount = transaction.rowCount == null ? undefined : transaction.rowCount + staleRemoves;
+            removedNodes = this.cache.removeRowNodes(allUniqueIdsToRemove, rowCount);
         }
 
         if (version != null) {
@@ -247,8 +250,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     /**
      * Applies held transactions to a block read before them, in arrival order: updates and removes to the rows the
-     * block loaded, and the rows they added that the block overwrote. The row count already includes the rows the
-     * transactions added and removed when they arrived, so only removes the row count missed change it.
+     * block loaded, and the rows they added that the block overwrote. The row count already includes the changes
+     * each transaction made when it arrived, so only removes it did not count then change the row count.
      */
     public replayTransactions(
         heldTransactions: HeldTransaction[],
@@ -259,19 +262,26 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         const inScope = new Set([...loadedIds, ...overwrittenIds]);
         const idOf = (data: any) => cache.getRowId(data)!;
         const inBlock = (rows?: any[]) => rows?.filter((data) => inScope.has(idOf(data)));
-        for (const { transaction, removedIds } of heldTransactions) {
+        for (const held of heldTransactions) {
+            const { transaction, addedIds, removedIds } = held;
+            if ([...addedIds].some((id) => overwrittenIds.has(id))) {
+                cache.restoreAddedRows(held, overwrittenIds);
+            }
             const result = this.applyTransactionToCache({
                 version: transaction.version,
-                addIndex: transaction.addIndex,
-                add: transaction.add?.filter((data) => overwrittenIds.has(idOf(data))),
                 update: inBlock(transaction.update),
                 remove: inBlock(transaction.remove),
             });
-            const countedRemoves =
-                transaction.rowCount != null
-                    ? (result.remove?.length ?? 0)
-                    : (result.remove?.filter((node) => removedIds.has(node.id!)).length ?? 0);
-            cache.uncountReplayedRows((result.add?.length ?? 0) - countedRemoves);
+
+            // A remove of a row that was not loaded is only counted when the transaction gave the row count
+            const removedAgain =
+                result.remove?.filter((node) => removedIds.has(node.id!) || transaction.rowCount != null) ?? [];
+            cache.restoreRowCount(removedAgain.length);
+            const newlyRemoved = (result.remove?.length ?? 0) - removedAgain.length;
+            held.rowCountDelta -= newlyRemoved;
+            for (const node of result.remove ?? []) {
+                removedIds.add(node.id!);
+            }
         }
     }
 

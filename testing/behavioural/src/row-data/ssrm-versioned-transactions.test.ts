@@ -322,6 +322,84 @@ describe('SSRM versioned transactions', () => {
         expect(api.getDisplayedRowCount()).toBe(51);
     });
 
+    test('rows added across the end of a loading block keep their order when the block overwrites some', async () => {
+        const { api, pending, settle } = await createGrid(1);
+        const block = await requestBlockOf(api, pending, 25);
+
+        const before = serverRows;
+        const added = [
+            { id: 'a', value: -1 },
+            { id: 'b', value: -2 },
+        ];
+        serverRows = [...serverRows.slice(0, 29), ...added, ...serverRows.slice(29)];
+        api.applyServerSideTransaction({ version: 2, addIndex: 29, add: added });
+
+        respond(block, 1, before);
+        const idsFrom29 = () => [29, 30, 31].map((index) => api.getDisplayedRowAtIndex(index)?.id);
+        expect(idsFrom29()).toEqual(['a', 'b', '29']);
+        expect(api.getDisplayedRowCount()).toBe(52);
+
+        await settle();
+        expect(idsFrom29()).toEqual(['a', 'b', '29']);
+    });
+
+    test('a row count returned with a block is used, with the changes of transactions held for it', async () => {
+        const { api, pending, settle } = await createGrid(1, { serverSideDataVersionMode: 'stream' });
+
+        // a remove of a row that is not loaded, without a row count, leaves the row count as it is
+        serverRows = serverRows.filter((row) => row.id !== '45');
+        api.applyServerSideTransaction({ version: 2, remove: [{ id: '45', value: 45 }] });
+        expect(api.getDisplayedRowCount()).toBe(50);
+
+        const block = await requestBlockOf(api, pending, 25);
+        expect(block.request.dataVersion).toBe(2);
+        api.applyServerSideTransaction({ version: 3, update: [{ id: '25', value: 2500 }] });
+
+        respond(block, 2);
+        expect(api.getDisplayedRowCount()).toBe(49);
+        expect(value(api, '25')).toBe(2500);
+        await settle();
+        expect(api.getDisplayedRowCount()).toBe(49);
+    });
+
+    test('a row count given with a transaction is not reduced by removes skipped as stale', async () => {
+        const { api } = await createGrid(5);
+        api.applyServerSideTransaction({ version: 10, update: [{ id: '1', value: 100 }] });
+
+        const result = api.applyServerSideTransaction({
+            version: 6,
+            remove: [
+                { id: '1', value: 100 },
+                { id: '2', value: 2 },
+            ],
+            rowCount: 48,
+        })!;
+
+        expect(result.unapplied).toEqual([{ id: '1', value: 100 }]);
+        expect(api.getRowNode('2')).toBeUndefined();
+        expect(api.getDisplayedRowCount()).toBe(49);
+    });
+
+    test('a row added while the first block loads is kept in the row count inferred from a short block', async () => {
+        const pending: IServerSideGetRowsParams[] = [];
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            cacheBlockSize: 100,
+            getRowId: (params) => params.data.id,
+            serverSideDatasource: { getRows: (params) => pending.push(params) },
+        });
+        await waitFor(() => expect(pending.length).toBe(1));
+
+        const added = { id: 'new', value: -1 };
+        api.applyServerSideTransaction({ version: 2, addIndex: 0, add: [added] });
+
+        pending.shift()!.success({ rowData: serverRows, dataVersion: 1 });
+        await waitForNoLoadingRows(api);
+        expect(api.getDisplayedRowAtIndex(0)!.id).toBe('new');
+        expect(api.getDisplayedRowCount()).toBe(51);
+    });
+
     test('a load discarded by a purge does not drop transactions held for the blocks loading after it', async () => {
         const { api, pending } = await createGrid(1, { maxConcurrentDatasourceRequests: -1 });
         const discarded = await requestBlockOf(api, pending, 25);

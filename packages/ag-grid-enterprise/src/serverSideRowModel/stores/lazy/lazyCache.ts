@@ -921,9 +921,24 @@ export class LazyCache extends BeanStub {
         this.heldTransactions.push({ ...held, pendingLoads: new Set(this.loadsInFlight) });
     }
 
-    /** Changes the row count by rows a replayed transaction added or removed again, which it already includes. */
-    public uncountReplayedRows(rowCountChange: number): void {
-        this.numberOfRows -= rowCountChange;
+    /**
+     * Restores the rows a held transaction added, after a block read before it overwrote some of them. The surviving
+     * rows are inserted again with them, so the rows keep the order they were added in. The row count already
+     * includes them.
+     */
+    public restoreAddedRows({ transaction, addedIds }: HeldTransaction, overwrittenIds: Set<string>): void {
+        const survivors = [...addedIds].filter((id) => this.isNodeInCache(id));
+        const restoredIds = new Set([...survivors, ...overwrittenIds]);
+        const rows = transaction.add!.filter((data) => restoredIds.has(this.getRowId(data)!));
+        this.removeRowNodes(survivors);
+        const addIndex = transaction.addIndex != null && transaction.addIndex >= 0 ? transaction.addIndex : undefined;
+        this.insertRowNodes(rows, addIndex, transaction.version);
+        this.numberOfRows -= rows.length - survivors.length;
+    }
+
+    /** Adds back rows removed again by a replayed transaction, which the row count already excludes. */
+    public restoreRowCount(rowsRemovedAgain: number): void {
+        this.numberOfRows += rowsRemovedAgain;
     }
 
     /** The held transactions newer than a block's version, which were in flight with its load. */
@@ -1106,19 +1121,16 @@ export class LazyCache extends BeanStub {
             }
         }
 
-        if (newerTransactions.length && this.isLastRowKnown) {
-            // The block was read before transactions the level has applied, so its row count is out of date
-        } else if (response.rowCount != undefined && response.rowCount !== -1) {
-            // if the rowCount has been provided, set the row count, with the rows added or removed since it was read
-            this.numberOfRows = newerTransactions.reduce(
-                (count, { rowCountDelta }) => count + rowCountDelta,
-                response.rowCount
-            );
+        // the block was read before the held transactions, so its row count is out by the rows they added or removed
+        const heldRowCountDelta = newerTransactions.reduce((delta, { rowCountDelta }) => delta + rowCountDelta, 0);
+        if (response.rowCount != undefined && response.rowCount !== -1) {
+            // if the rowCount has been provided, set the row count
+            this.numberOfRows = response.rowCount + heldRowCountDelta;
             this.isLastRowKnown = true;
             this.isLastRowInferred = false;
         } else if (numberOfRowsExpected > dataRowCount) {
             // infer the last row as the response came back short
-            this.numberOfRows = firstRowIndex + dataRowCount;
+            this.numberOfRows = firstRowIndex + dataRowCount + heldRowCountDelta;
             this.isLastRowKnown = true;
             this.isLastRowInferred = true;
         } else if (!this.isLastRowKnown) {
