@@ -10,6 +10,8 @@ interface AnchorRow {
 
 /** The rows in view before a data update, in display order, used to keep them in view after it. */
 export interface RowsInViewAnchor {
+    /** The page pixel at the top of the viewport before the update. */
+    viewportTop: number;
     rows: AnchorRow[];
 }
 
@@ -25,7 +27,7 @@ function getLiveVScrollPosition(beans: BeanCollection): VerticalScrollPosition {
  * not anchored, so rows added at the top come into view.
  */
 export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | null {
-    const { pageBounds, rowContainerHeight, rowModel } = beans;
+    const { ctrlsSvc, pageBounds, rowContainerHeight, rowModel } = beans;
     const { top, bottom } = getLiveVScrollPosition(beans);
     if (top <= 0 || !rowModel.isRowsToRender()) {
         return null;
@@ -34,7 +36,9 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
     const pixelOffset = pageBounds.getPixelOffset();
     const viewportTop = top + rowContainerHeight.divStretchOffset;
     const viewportBottom = bottom + rowContainerHeight.divStretchOffset;
-    const firstRow = Math.max(rowModel.getRowIndexAtPixel(viewportTop + pixelOffset), pageBounds.getFirstRow());
+    // rows under the sticky rows are hidden, so cannot be kept in view
+    const firstVisiblePixel = viewportTop + ctrlsSvc.getGridBodyCtrl().stickyTopHeight;
+    const firstRow = Math.max(rowModel.getRowIndexAtPixel(firstVisiblePixel + pixelOffset), pageBounds.getFirstRow());
     const lastRow = pageBounds.getLastRow();
     const rows: AnchorRow[] = [];
     for (let i = firstRow; i <= lastRow; ++i) {
@@ -48,7 +52,7 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
         }
         rows.push({ rowNode, pageTop });
     }
-    return rows.length ? { rows } : null;
+    return rows.length ? { viewportTop, rows } : null;
 }
 
 /**
@@ -78,11 +82,14 @@ export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnch
 
     const followed = movedRows.find((row, i) => row.shift === movedRows[i + 1]?.shift) ?? movedRows[0];
     anchor.rows = [{ rowNode: followed.rowNode, pageTop: followed.pageTop }];
-    if (followed.shift === 0) {
+    anchor.viewportTop += followed.shift;
+    // compared even when the row did not move, as a change in height scaling can move it on screen
+    const scrollTop = rowContainerHeight.getScrollPositionForPixel(anchor.viewportTop);
+    const previousScrollTop = getLiveVScrollPosition(beans).top;
+    if (Math.abs(scrollTop - previousScrollTop) < 1) {
         return false;
     }
-    const { top } = getLiveVScrollPosition(beans);
-    const viewportTop = top + rowContainerHeight.divStretchOffset + followed.shift;
-    ctrlsSvc.getScrollFeature().setVerticalScrollPosition(rowContainerHeight.getScrollPositionForPixel(viewportTop));
-    return true;
+    ctrlsSvc.getScrollFeature().setVerticalScrollPosition(scrollTop);
+    // false when the viewport cannot scroll that far, so the caller stops retrying
+    return getLiveVScrollPosition(beans).top !== previousScrollTop;
 }

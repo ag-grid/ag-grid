@@ -1,14 +1,17 @@
+import { waitFor } from '@testing-library/dom';
 import { TestGridsManager, nextAnimationFrame, waitForEvent } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelApiModule, ClientSideRowModelModule, ScrollApiModule } from 'ag-grid-community';
-import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 interface Row {
     id: string;
     value: number;
+    country?: string;
+    city?: string;
 }
 
 const ROW_HEIGHT = 50;
@@ -25,6 +28,7 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             ServerSideRowModelModule,
             ServerSideRowModelApiModule,
             ScrollApiModule,
+            RowGroupingModule,
         ],
     });
 
@@ -207,6 +211,31 @@ describe('maintainRowsInViewOnDataUpdate', () => {
 
             expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + 3 * ROW_HEIGHT);
             expect(offsetInView(api, 'r20')).toBe(0);
+        });
+
+        test('keeps the rows below the sticky group rows in view', async () => {
+            const api = createGrid({
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'city', rowGroup: true, hide: true },
+                    { field: 'value' },
+                ],
+                rowData: createRows('r', 200).map((row) => ({ ...row, country: 'A', city: 'B' })),
+                groupDefaultExpanded: -1,
+            });
+            scrollTo(api, SCROLL_TOP);
+            // the two group rows are sticky over r18 and r19, so r20 is the first row the user can see
+            expect(api.getDisplayedRowAtIndex(20)!.id).toBe('r18');
+            const root = TestGridsManager.getHTMLElement(api)!;
+            await waitFor(() =>
+                expect(root.querySelectorAll('.ag-grid-sticky-top-rows-container .ag-row')).toHaveLength(2)
+            );
+            const offset = offsetInView(api, 'r20');
+
+            api.applyTransaction({ add: [{ id: 'new', value: -1, country: 'A', city: 'B' }], addIndex: 20 });
+
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + ROW_HEIGHT);
+            expect(offsetInView(api, 'r20')).toBe(offset);
         });
 
         test('does not scroll on sorting', () => {
