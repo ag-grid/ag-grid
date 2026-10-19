@@ -199,7 +199,9 @@ describe('ag-grid overlays state', () => {
             └── filler id:rowIndex:0
         `);
 
+        // the rows loaded after clearing the filter stay on screen while the soft refresh reloads them
         api.refreshServerSide({ route: [] });
+        expect(hasLoadingIcon()).toBe(false);
 
         await loadPromise;
         expect(hasLoadingIcon()).toBe(false);

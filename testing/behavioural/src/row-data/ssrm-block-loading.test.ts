@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { ALL_SEVERITIES, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridRows, TestGridsManager, waitForEvent, waitForNoLoadingRows } from 'ag-test-utils';
 
 import type { ColDef, GridOptions, IServerSideGetRowsRequest } from 'ag-grid-community';
 import { PaginationModule, RowAutoHeightModule, ScrollApiModule, enableDevValidations } from 'ag-grid-community';
@@ -157,6 +157,7 @@ describe('SSRM block loading', () => {
     test.each([
         ['synchronous', (callback: () => void) => callback()],
         ['microtask', (callback: () => void) => queueMicrotask(callback)],
+        ['asynchronous', (callback: () => void) => setTimeout(callback)],
     ])('a %s datasource refreshes one block per task after the rendered rows', async (_, respond) => {
         const rowData = Array.from({ length: 30 }, (_, i) => ({ id: i }));
         const requests: [number, number][] = [];
@@ -164,6 +165,7 @@ describe('SSRM block loading', () => {
             columnDefs: [{ field: 'id' }],
             rowModelType: 'serverSide',
             cacheBlockSize: 10,
+            maxConcurrentDatasourceRequests: -1,
             getRowId: (params) => String(params.data.id),
             serverSideDatasource: {
                 getRows: (params) => {
@@ -181,6 +183,9 @@ describe('SSRM block loading', () => {
             api.getDisplayedRowAtIndex(i);
         }
         await waitFor(() => expect(requests).toHaveLength(3));
+        await waitForNoLoadingRows(api);
+        // start the refresh in a fresh task, as a user action would
+        await new Promise((resolve) => setTimeout(resolve));
 
         requests.length = 0;
         const refreshed = waitForEvent('storeRefreshed', api);
