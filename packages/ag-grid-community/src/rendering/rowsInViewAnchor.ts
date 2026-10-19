@@ -1,5 +1,6 @@
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
+import { _isClientSideRowModel } from '../gridOptionsUtils';
 
 /** Where the viewport was before a data update, and the rows the update adds and removes, to keep the rows in view. */
 export interface RowsInViewAnchor {
@@ -11,6 +12,8 @@ export interface RowsInViewAnchor {
     pixelOffset: number;
     /** In display order, the rows the user could see before the update. */
     rowsInView: RowNode[];
+    /** The `rowTop` of each of `rowsInView` before the update. */
+    rowTopsInView: number[];
     /** The rows the update created. */
     added: RowNode[];
     /** The height of the rows the update removed from above the first visible pixel. */
@@ -38,6 +41,7 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
     const firstVisiblePixel = viewportTop + ctrlsSvc.getGridBodyCtrl().stickyTopHeight + pixelOffset;
     const viewportBottom = bottom + rowContainerHeight.divStretchOffset + pixelOffset;
     const rowsInView: RowNode[] = [];
+    const rowTopsInView: number[] = [];
     const lastRow = pageBounds.getLastRow();
     for (
         let i = Math.max(rowModel.getRowIndexAtPixel(firstVisiblePixel), pageBounds.getFirstRow());
@@ -52,8 +56,9 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
             break;
         }
         rowsInView.push(rowNode);
+        rowTopsInView.push(rowNode.rowTop);
     }
-    return { viewportTop, firstVisiblePixel, pixelOffset, rowsInView, added: [], removedHeight: 0 };
+    return { viewportTop, firstVisiblePixel, pixelOffset, rowsInView, rowTopsInView, added: [], removedHeight: 0 };
 }
 
 /**
@@ -79,30 +84,41 @@ function isDisplayed(beans: BeanCollection, rowNode: RowNode): boolean {
     );
 }
 
-/**
- * Scrolls by the height of the rows the update added above the rows the user could see, less the height of the rows
- * it removed from above them, so the rows in view stay where they were. Rows that only moved, such as rows an update
- * re-sorts or filters, do not scroll the grid. Returns `true` if the grid scrolled.
- */
-export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnchor): boolean {
-    const { firstVisiblePixel, removedHeight } = anchor;
+/** The height of the rows the update added above the rows the user could see. */
+function getAddedHeightAbove(beans: BeanCollection, anchor: RowsInViewAnchor, firstRowInView?: RowNode): number {
     const added = anchor.added.filter((rowNode) => isDisplayed(beans, rowNode));
     added.sort((a, b) => a.rowIndex! - b.rowIndex!);
-    // the boundary is the first row in view still displayed, at its new position even when the update sorted it there
-    const firstRowInView = anchor.rowsInView.find((rowNode) => isDisplayed(beans, rowNode));
     // with every row in view removed, they are above it when the rows that were above those rows are all above them
-    const keptHeight = firstVisiblePixel - removedHeight;
+    const keptHeight = anchor.firstVisiblePixel - anchor.removedHeight;
     let addedHeight = 0;
     for (const { rowIndex, rowTop, rowHeight } of added) {
+        // the boundary is the first row in view still displayed, at its new position even when the update sorted it there
         if (firstRowInView ? rowIndex! > firstRowInView.rowIndex! : rowTop! > keptHeight + addedHeight) {
             break;
         }
         // possibly an estimate, but the rows in view moved by this height; the caller restores again if it resolves
         addedHeight += rowHeight!;
     }
+    return addedHeight;
+}
+
+/**
+ * Scrolls by the height of the rows the update added above the rows the user could see, less the height of the rows
+ * it removed from above them, so the rows in view stay where they were. Rows that only moved, such as rows an update
+ * re-sorts or filters, do not scroll the grid. Returns `true` if the grid scrolled.
+ */
+export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnchor): boolean {
+    const inViewIndex = anchor.rowsInView.findIndex((rowNode) => isDisplayed(beans, rowNode));
+    const firstRowInView = anchor.rowsInView[inViewIndex];
+    // server-side rows are never re-sorted on the client, so the row moved by exactly the rows added or removed above
+    // it, including rows that are not loaded or that the cache evicted
+    const rowsInViewMoved =
+        firstRowInView && !_isClientSideRowModel(beans.gos)
+            ? firstRowInView.rowTop! - anchor.rowTopsInView[inViewIndex]
+            : getAddedHeightAbove(beans, anchor, firstRowInView) - anchor.removedHeight;
     // with pagination, rows added or removed before the page also move where the page starts
     const pixelOffsetChange = beans.pageBounds.getPixelOffset() - anchor.pixelOffset;
-    const viewportTop = anchor.viewportTop + addedHeight - removedHeight - pixelOffsetChange;
+    const viewportTop = anchor.viewportTop + rowsInViewMoved - pixelOffsetChange;
 
     // compared even when nothing was added or removed, as a change in height scaling can move the rows on screen
     const scrollFeature = beans.ctrlsSvc.getScrollFeature();

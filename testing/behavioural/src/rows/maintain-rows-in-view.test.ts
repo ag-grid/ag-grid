@@ -542,5 +542,67 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + 2 * ROW_HEIGHT);
             expect(offsetInView(api, 'r20')).toBe(0);
         });
+
+        test('keeps rows in view when a row added above them is evicted from the cache', async () => {
+            const rowData = createRows('r', 200);
+            const api = gridsManager.createGrid<Row>('myGrid', {
+                columnDefs: [{ field: 'value' }],
+                rowModelType: 'serverSide',
+                getRowId: ({ data }) => data.id,
+                rowHeight: ROW_HEIGHT,
+                maintainRowsInViewOnDataUpdate: true,
+                suppressRowVirtualisation: false,
+                cacheBlockSize: 50,
+                maxBlocksInCache: 1,
+                serverSideDatasource: {
+                    getRows: ({ request, success }) =>
+                        success({ rowData: rowData.slice(request.startRow, request.endRow), rowCount: rowData.length }),
+                },
+            });
+            await waitForEvent('firstDataRendered', api);
+            scrollTo(api, 60 * ROW_HEIGHT);
+            await waitForNoLoadingRows(api);
+            expect(api.getRowNode('r0')).toBeUndefined(); // the first block is evicted
+
+            api.applyServerSideTransaction({ add: [{ id: 'new', value: -1 }], addIndex: 0 });
+
+            expect(getViewport(api).scrollTop).toBe(61 * ROW_HEIGHT);
+            expect(offsetInView(api, 'r60')).toBe(0);
+        });
+
+        test('keeps rows in view when a transaction removes an expanded group whose rows are not all loaded', async () => {
+            const leaves = (country: string) =>
+                Array.from({ length: 1000 }, (_, i) => ({ id: `${country}${i}`, value: i, country }));
+            const groups: Record<string, Row[]> = { A: leaves('A'), B: leaves('B') };
+            const api = gridsManager.createGrid<Row>('myGrid', {
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'value' }],
+                rowModelType: 'serverSide',
+                getRowId: ({ data }) => data.id ?? data.country!,
+                rowHeight: ROW_HEIGHT,
+                maintainRowsInViewOnDataUpdate: true,
+                suppressRowVirtualisation: false,
+                cacheBlockSize: 100,
+                isServerSideGroupOpenByDefault: () => true,
+                serverSideDatasource: {
+                    getRows: ({ request, success }) => {
+                        const [country] = request.groupKeys;
+                        const rows = country ? groups[country] : Object.keys(groups).map((key) => ({ country: key }));
+                        success({ rowData: rows.slice(request.startRow, request.endRow), rowCount: rows.length });
+                    },
+                },
+            });
+            await waitForEvent('firstDataRendered', api);
+            // in group B, with most of group A never loaded
+            const scrollTop = 1050 * ROW_HEIGHT;
+            scrollTo(api, scrollTop);
+            await waitForNoLoadingRows(api);
+            expect(api.getRowNode('A500')).toBeUndefined();
+            const offset = offsetInView(api, 'B50');
+
+            api.applyServerSideTransaction({ route: [], remove: [{ country: 'A' }] as Row[] });
+
+            expect(getViewport(api).scrollTop).toBe(scrollTop - 1001 * ROW_HEIGHT);
+            expect(offsetInView(api, 'B50')).toBe(offset);
+        });
     });
 });
