@@ -12,6 +12,18 @@ export interface RowsInViewAnchor {
     /** The page pixel at the top of the viewport before the update. */
     viewportTop: number;
     rows: AnchorRow[];
+    /**
+     * Rows above and below the rows in view, at doubling distances from them. They stay either side of the rows in
+     * view unless those rows were re-sorted past them.
+     */
+    rowsAbove: RowNode[];
+    rowsBelow: RowNode[];
+}
+
+/** The row's index if it is still displayed, as a row that was removed can keep a stale one. */
+function getDisplayedIndex(beans: BeanCollection, rowNode: RowNode): number | null {
+    const rowIndex = rowNode.rowIndex;
+    return rowIndex != null && rowNode.rowTop != null && beans.rowModel.getRow(rowIndex) === rowNode ? rowIndex : null;
 }
 
 /**
@@ -27,6 +39,7 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
     if (top <= 0 || !rowModel.isRowsToRender()) {
         return null;
     }
+    rowContainerHeight.updateOffset(); // the height scaling offset follows the scroll position just read
 
     const pixelOffset = pageBounds.getPixelOffset();
     const viewportTop = top + rowContainerHeight.divStretchOffset;
@@ -36,6 +49,7 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
     const firstRow = Math.max(rowModel.getRowIndexAtPixel(firstVisiblePixel + pixelOffset), pageBounds.getFirstRow());
     const lastRow = pageBounds.getLastRow();
     const rows: AnchorRow[] = [];
+    let belowRow = lastRow + 1;
     for (let i = firstRow; i <= lastRow; ++i) {
         const rowNode = rowModel.getRow(i);
         if (rowNode?.rowTop == null) {
@@ -43,36 +57,69 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
         }
         const pageTop = rowNode.rowTop - pixelOffset;
         if (rows.length && pageTop >= viewportBottom) {
+            belowRow = i;
             break;
         }
         rows.push({ rowNode, pageTop });
     }
-    return rows.length ? { viewportTop, rows } : null;
+    if (!rows.length) {
+        return null;
+    }
+    const rowsAbove: RowNode[] = [];
+    const rowsBelow: RowNode[] = [];
+    for (let distance = 1; firstRow - distance >= pageBounds.getFirstRow(); distance *= 2) {
+        pushRow(rowsAbove, rowModel.getRow(firstRow - distance));
+    }
+    for (let distance = 0; belowRow + distance <= lastRow; distance = distance * 2 || 1) {
+        pushRow(rowsBelow, rowModel.getRow(belowRow + distance));
+    }
+    return { viewportTop, rows, rowsAbove, rowsBelow };
+}
+
+function pushRow(rows: RowNode[], rowNode: RowNode | undefined): void {
+    if (rowNode) {
+        rows.push(rowNode);
+    }
 }
 
 /**
  * Scrolls by however far the rows in view have moved, so they stay where they were in the viewport, then anchors to
  * the row it followed where that row is now. Returns `true` if the grid scrolled.
  *
- * Follows the first row still on the page that moved as far as the next one, as rows only move together when rows
- * were added or removed above them; a row that moved on its own, such as one re-sorted by an update, is not followed.
+ * Follows the first row still on the page that moved as far as the next one and is still between the rows that were
+ * above and below the rows in view. Rows only move together, and keep those rows either side of them, when rows were
+ * added or removed above them; rows that moved because an update re-sorted them are not followed.
  */
 export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnchor): boolean {
-    const { ctrlsSvc, pageBounds, rowContainerHeight, rowModel } = beans;
+    const { ctrlsSvc, pageBounds, rowContainerHeight } = beans;
     const firstRow = pageBounds.getFirstRow();
     const lastRow = pageBounds.getLastRow();
     const pixelOffset = pageBounds.getPixelOffset();
+    let aboveIndex = -1;
+    for (const rowNode of anchor.rowsAbove) {
+        aboveIndex = Math.max(aboveIndex, getDisplayedIndex(beans, rowNode) ?? -1);
+    }
+    let belowIndex = Infinity;
+    for (const rowNode of anchor.rowsBelow) {
+        belowIndex = Math.min(belowIndex, getDisplayedIndex(beans, rowNode) ?? Infinity);
+    }
     const movedRows: { rowNode: RowNode; pageTop: number; shift: number }[] = [];
     for (const { rowNode, pageTop } of anchor.rows) {
-        const { rowIndex, rowTop } = rowNode;
-        const displayed = rowIndex != null && rowTop != null && rowModel.getRow(rowIndex) === rowNode;
-        if (displayed && rowIndex >= firstRow && rowIndex <= lastRow) {
-            const newPageTop = rowTop - pixelOffset;
+        const rowIndex = getDisplayedIndex(beans, rowNode);
+        // skips rows removed, moved off the page, or re-sorted past the rows either side of the rows in view
+        if (
+            rowIndex != null &&
+            rowIndex >= firstRow &&
+            rowIndex <= lastRow &&
+            rowIndex > aboveIndex &&
+            rowIndex < belowIndex
+        ) {
+            const newPageTop = rowNode.rowTop! - pixelOffset;
             movedRows.push({ rowNode, pageTop: newPageTop, shift: newPageTop - pageTop });
         }
     }
     if (!movedRows.length) {
-        return false; // Removed, or moved off the page
+        return false;
     }
 
     const followed = movedRows.find((row, i) => row.shift === movedRows[i + 1]?.shift) ?? movedRows[0];

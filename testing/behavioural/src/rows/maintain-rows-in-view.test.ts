@@ -202,6 +202,19 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             expect(offsetInView(api, 'r21')).toBe(ROW_HEIGHT);
         });
 
+        test('does not follow the rows in view when an update sorts them all elsewhere', () => {
+            const api = createGrid({ columnDefs: [{ field: 'value', sort: 'asc' }] });
+            scrollTo(api, SCROLL_TOP);
+            const update = createRows('r', 200)
+                .slice(20, 40)
+                .map((row) => ({ ...row, value: row.value + 1000 }));
+
+            api.applyTransaction({ update });
+
+            expect(api.getDisplayedRowAtIndex(180)!.id).toBe('r20');
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
+        });
+
         test('uses a scroll position whose scroll event has not fired yet', () => {
             const api = createGrid();
             mockGridLayout.asyncScrollEvents = true;
