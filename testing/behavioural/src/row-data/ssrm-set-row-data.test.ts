@@ -101,7 +101,7 @@ describe('SSRM bulk row-data setting (characterisation)', () => {
             },
         });
 
-        // Pin: displayed count follows the supplied rowCount, remaining rows are fillers.
+        // Pin: straight after the call, the displayed count follows the supplied rowCount.
         expect(api.getDisplayedRowCount()).toBe(8);
         expect(api.getDisplayedRowAtIndex(0)?.data.id).toBe(200);
         expect(api.getDisplayedRowAtIndex(1)?.data.id).toBe(201);
@@ -111,7 +111,9 @@ describe('SSRM bulk row-data setting (characterisation)', () => {
         expect(api.getDisplayedRowAtIndex(2)?.data.id).toBe(2);
         expect(api.getDisplayedRowAtIndex(2)?.data.value).toBe('Row 2');
 
+        // The fillers are then loaded from the datasource, whose rowCount replaces the supplied one.
         await new GridRows(api, 'applyServerSideRowData higher rowCount').check(`skip-snapshot`);
+        expect(api.getDisplayedRowCount()).toBe(5);
     });
 
     test("applyServerSideRowData with a route sets only that group's children", async () => {
@@ -199,13 +201,16 @@ describe('SSRM bulk row-data setting (characterisation)', () => {
 
         api.setRowCount(12);
 
+        // Straight after the call:
         expect(api.getDisplayedRowCount()).toBe(12);
         // Existing loaded rows are preserved.
         expect(api.getDisplayedRowAtIndex(0)?.data.id).toBe(0);
         // Extra rows beyond the loaded block are fillers.
         expect(!!api.getDisplayedRowAtIndex(11)?.data).toBe(false);
 
+        // The fillers are then loaded from the datasource, whose rowCount replaces the raised one.
         await new GridRows(api, 'setRowCount raise').check(`skip-snapshot`);
+        expect(api.getDisplayedRowCount()).toBe(5);
     });
 
     test('setRowCount below the loaded count truncates the displayed rows', async () => {

@@ -158,35 +158,39 @@ describe('SSRM block loading', () => {
         expect(calls).toEqual(['onGridReady', 're-emitted onGridReady', 'getRows']);
     });
 
-    test('running fake timers synchronously loads every rendered block from a synchronous datasource', () => {
-        const rowData = Array.from({ length: 30 }, (_, i) => ({ id: i }));
-        const requests: [number, number][] = [];
-        vi.useFakeTimers();
-        try {
-            const api = gridsManager.createGrid(null, {
-                columnDefs: [{ field: 'id' }],
-                rowModelType: 'serverSide',
-                cacheBlockSize: 10,
-                serverSideDatasource: {
-                    getRows: (params) => {
-                        const { startRow = 0, endRow = rowData.length } = params.request;
-                        requests.push([startRow, endRow]);
-                        params.success({ rowData: rowData.slice(startRow, endRow), rowCount: rowData.length });
+    test.each([0, 10])(
+        'running fake timers synchronously loads every rendered block from a synchronous datasource (debounce %s)',
+        (blockLoadDebounceMillis) => {
+            const rowData = Array.from({ length: 30 }, (_, i) => ({ id: i }));
+            const requests: [number, number][] = [];
+            vi.useFakeTimers();
+            try {
+                const api = gridsManager.createGrid(null, {
+                    columnDefs: [{ field: 'id' }],
+                    rowModelType: 'serverSide',
+                    cacheBlockSize: 10,
+                    blockLoadDebounceMillis,
+                    serverSideDatasource: {
+                        getRows: (params) => {
+                            const { startRow = 0, endRow = rowData.length } = params.request;
+                            requests.push([startRow, endRow]);
+                            params.success({ rowData: rowData.slice(startRow, endRow), rowCount: rowData.length });
+                        },
                     },
-                },
-            });
-            vi.runAllTimers();
+                });
+                vi.runAllTimers();
 
-            expect(requests).toEqual([
-                [0, 10],
-                [10, 20],
-                [20, 30],
-            ]);
-            expect(api.getDisplayedRowAtIndex(25)?.data).toEqual({ id: 25 });
-        } finally {
-            vi.useRealTimers();
+                expect(requests).toEqual([
+                    [0, 10],
+                    [10, 20],
+                    [20, 30],
+                ]);
+                expect(api.getDisplayedRowAtIndex(25)?.data).toEqual({ id: 25 });
+            } finally {
+                vi.useRealTimers();
+            }
         }
-    });
+    );
 
     test.each([
         ['synchronous', (callback: () => void) => callback()],
@@ -237,6 +241,28 @@ describe('SSRM block loading', () => {
                 [20, 30],
             ])
         );
+    });
+
+    test('a synchronous datasource that leaves rendered rows as stubs is retried once per task', async () => {
+        let requestCount = 0;
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }],
+            rowModelType: 'serverSide',
+            cacheBlockSize: 10,
+            serverSideDatasource: {
+                getRows: (params) => {
+                    requestCount++;
+                    // declares more rows than it returns, so the rest of the block stays as stubs
+                    params.success({ rowData: [{ id: 0 }], rowCount: 5 });
+                },
+            },
+        });
+        await waitFor(() => expect(requestCount).toBeGreaterThan(0));
+
+        const before = requestCount;
+        await new Promise((resolve) => setTimeout(resolve));
+        expect(requestCount - before).toBeLessThanOrEqual(2);
+        api.setGridOption('serverSideDatasource', undefined);
     });
 
     test('maxBlocksInCache evicts the least-recently-used block once the cap is exceeded', async () => {
