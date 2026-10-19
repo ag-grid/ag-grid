@@ -958,10 +958,7 @@ export class LazyCache extends BeanStub {
         });
     }
 
-    /**
-     * Whether this level follows a stream of versions, rather than reading every block from one snapshot.
-     * Resolved per level, so that the mode can later be inferred for each level.
-     */
+    /** Whether this level follows a stream of versions, rather than reading every block from one snapshot. */
     private isStreamingVersions(): boolean {
         return this.gos.get('serverSideDataVersionMode') === 'stream';
     }
@@ -990,13 +987,12 @@ export class LazyCache extends BeanStub {
         }
 
         // A transaction can move the pin forward while a request is out, so check the response against the request
-        const expected = requested ?? this.dataVersion;
-        if (expected == null) {
+        if (this.dataVersion == null) {
             this.dataVersion = received;
-        } else if (compareDataVersions(received, expected, comparator) >= 0) {
+        } else if (requested == null || compareDataVersions(received, requested, comparator) >= 0) {
             this.advanceDataVersion(received);
         } else {
-            this.warn(338, { pinned: expected, received });
+            this.warn(338, { pinned: requested, received });
         }
     }
 

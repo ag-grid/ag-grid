@@ -507,6 +507,29 @@ describe('SSRM versioned transactions', () => {
             }
         });
 
+        test("'stream' does not warn about an older version for a block requested without a version", async () => {
+            const { warnSpy, versionWarnings } = spyOnWarnings();
+            try {
+                const { api, pending } = await createGrid(undefined, {
+                    serverSideDataVersionMode: 'stream',
+                    maxConcurrentDatasourceRequests: -1,
+                });
+                api.ensureIndexVisible(35);
+                await waitFor(() => expect(pending.length).toBeGreaterThan(1));
+                const [first, second] = pending.splice(0);
+                expect('dataVersion' in second.request).toBe(false);
+
+                respond(first, 5);
+                api.applyServerSideTransaction({ version: 8, update: [{ id: '1', value: 800 }] });
+                respond(second, 6);
+
+                expect(versionWarnings()).toEqual([]);
+                expect(rootVersion(api)).toBe(8);
+            } finally {
+                warnSpy.mockRestore();
+            }
+        });
+
         test("'stream' warns when a block returns a version older than the one requested", async () => {
             const { warnSpy, versionWarnings } = spyOnWarnings();
             try {

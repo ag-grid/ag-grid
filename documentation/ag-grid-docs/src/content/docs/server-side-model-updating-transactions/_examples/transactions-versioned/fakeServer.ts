@@ -37,10 +37,6 @@ export class FakeServer {
         this.snapshots.set(this.version, trades);
     }
 
-    public getVersion(): number {
-        return this.version;
-    }
-
     public getRows(request: IServerSideGetRowsRequest): { rows: any[]; rowCount: number; version: number } {
         const requested = request.dataVersion as number | undefined;
         const version = requested != null && this.snapshots.has(requested) ? requested : this.version;
