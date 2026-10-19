@@ -916,7 +916,7 @@ export class LazyCache extends BeanStub {
     /**
      * Returns `true` when the adds and removes of a transaction at `version` are discarded, as the level's version
      * already includes them. Loaded rows read from an older version do not, so they are loaded again at the level's
-     * version.
+     * version, and the row count, which may also be older, is found again from the responses.
      */
     public discardsStructuralChange(version: string | number | undefined): boolean {
         const pinned = this.dataVersion;
@@ -932,6 +932,14 @@ export class LazyCache extends BeanStub {
             }
         });
         this.lazyBlockLoadingSvc.queueLoadCheck();
+        if (this.isLastRowKnown) {
+            // keep the displayed count until responses replace it, but load a row of an empty level to find it
+            this.isLastRowKnown = false;
+            if (this.numberOfRows === 0) {
+                this.numberOfRows = 1;
+                this.fireStoreUpdatedEvent();
+            }
+        }
         return true;
     }
 

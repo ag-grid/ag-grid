@@ -19,16 +19,23 @@ describe('SSRM versioned transactions', () => {
 
     /** The server's latest rows; tests change them alongside the transactions they send. */
     let serverRows: { id: string; value: number }[];
+    /** Whether responses include the row count. */
+    let sendRowCount: boolean;
 
     beforeEach(() => {
         serverRows = Array.from({ length: 50 }, (_, i) => ({ id: String(i), value: i }));
+        sendRowCount = true;
     });
 
     afterEach(() => gridsManager.reset());
 
     function respond(params: IServerSideGetRowsParams, dataVersion?: string | number, rows = serverRows) {
         const { startRow, endRow } = params.request;
-        params.success({ rowData: rows.slice(startRow, endRow), rowCount: rows.length, dataVersion });
+        params.success({
+            rowData: rows.slice(startRow, endRow),
+            rowCount: sendRowCount ? rows.length : undefined,
+            dataVersion,
+        });
     }
 
     function setServerValue(id: string, value: number) {
@@ -143,14 +150,8 @@ describe('SSRM versioned transactions', () => {
 
     describe("'stream' adds and removes at or before the level's version", () => {
         /** Loads the block of row 25 at version 7, after the server changed at version 6, leaving block 0 at version 5. */
-        async function loadNewerBlock(api: GridApi, pending: IServerSideGetRowsParams[], withRowCount = true) {
-            const block = await requestBlockOf(api, pending, 25);
-            const { startRow, endRow } = block.request;
-            block.success({
-                rowData: serverRows.slice(startRow, endRow),
-                rowCount: withRowCount ? serverRows.length : undefined,
-                dataVersion: 7,
-            });
+        async function loadNewerBlock(api: GridApi, pending: IServerSideGetRowsParams[]) {
+            respond(await requestBlockOf(api, pending, 25), 7);
             expect(api.getServerSideGroupLevelState()[0].dataVersion).toBe(7);
         }
 
@@ -202,7 +203,8 @@ describe('SSRM versioned transactions', () => {
         test('a delayed remove does not move rows of a newer block returned without a row count', async () => {
             const { api, pending, settle } = await createGrid(5, { serverSideDataVersionMode: 'stream' });
             serverRows = serverRows.filter((row) => row.id !== '1');
-            await loadNewerBlock(api, pending, false);
+            sendRowCount = false;
+            await loadNewerBlock(api, pending);
 
             const result = api.applyServerSideTransaction({ version: 6, remove: [{ id: '1', value: 1 }] })!;
             expect(result.remove).toBeUndefined();
@@ -210,6 +212,24 @@ describe('SSRM versioned transactions', () => {
 
             await settleReload(api, settle);
             expect(api.getRowNode('1')).toBeUndefined();
+        });
+
+        test('a delayed add finds the row count again from responses without a row count', async () => {
+            const { api, pending, settle } = await createGrid(5, { serverSideDataVersionMode: 'stream' });
+            serverRows = [{ id: '50', value: 50 }, ...serverRows];
+            sendRowCount = false;
+            await loadNewerBlock(api, pending);
+
+            api.applyServerSideTransaction({ version: 6, add: [{ id: '50', value: 50 }], addIndex: 0 });
+            await settleReload(api, settle);
+            for (let i = 0; i < 3; i++) {
+                api.ensureIndexVisible(api.getDisplayedRowCount() - 1);
+                await settle();
+            }
+
+            expect(api.getDisplayedRowCount()).toBe(51);
+            expect(api.getDisplayedRowAtIndex(50)!.id).toBe('49');
+            expectRowsInServerOrder(api);
         });
 
         test('a burst of delayed removes in one flush loads each older block again once', async () => {
