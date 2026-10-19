@@ -75,16 +75,16 @@ Only needed when the callback reaches back into the component or grid — self-c
 
 ## Self-check before review
 
-Run through this list before opening a PR or asking for review. Each item is a class of finding that automated review kept raising across several PRs.
+Apply this list while writing grid source, and check the diff against it before asking for review. Each item is a class of finding that automated review kept raising across several PRs.
 
 - **Existing setups keep working.** Apart from the bug being fixed, behaviour with no new option set and no new field returned matches `latest`: event order and count, `getRows` calls and request shape, scroll position, timing. A new feature sits behind an opt-in or activates only when its new input is present. Deprecated options keep working.
 - **Late async results.** A response, timer or callback can arrive after a refresh, purge, eviction or destroy. Tag each request with a generation or version and drop results that no longer match. A late result must never re-create state that was removed.
-- **Grid lifecycle order.** Deferred work must not run before `onGridReady` or after the component is destroyed (see *Guard deferred work against teardown*).
+- **Grid lifecycle order.** Deferred work that calls application callbacks or expects the API to be wired must not run before the grid is ready, and no deferred work may run after destroy (see *Guard deferred work against teardown*).
 - **Row and column kinds.** Check the change against pinned rows, sticky rows, group rows and footers, grand totals, detail rows, server-side stub rows and duplicate IDs within one call; and against auto-group, selection, row-number and pinned columns.
 - **Every entry path.** A fix reached through one path usually has siblings: API and user action, keyboard variants, header and body, menus and submenus. Fix and test each.
 - **Derived state stays fresh.** Every cached or derived value is invalidated by every input that can change it.
 - **Read the effective config.** Use the merged value (defaults, column types, grid options, theme chain) through the core services, not one source.
 - **Applied, not requested, sizes.** Use widths and heights after min, max and pinned caps.
-- **Bounded work.** No unbounded retry or reload loops (cap them), no scans over every row on each update, no chain of loads in a single task.
+- **Bounded work.** No unbounded retry or reload loops (cap them), no new full-row scan on a per-cell or per-transaction path, no chain of loads in a single task.
 - **Result containers are fresh.** When a returned array or map is the caller's to mutate, build a new one rather than handing back an input container or internal state. Application row-data objects are the exception: keep their identity, as `getSelectedRows()` and transactions rely on it.
 - **Stop when the edge cases narrow.** If two review rounds in a row find ever-narrower combinations of the same mechanism, the design is the problem. Stop patching and propose a simpler one.
