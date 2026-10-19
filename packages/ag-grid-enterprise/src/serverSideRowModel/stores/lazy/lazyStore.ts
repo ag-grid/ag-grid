@@ -795,6 +795,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             rowCount: this.getRowCount(),
             lastRowIndexKnown: this.isLastRowIndexKnown(),
             info: this.info,
+            dataVersion: this.cache.getDataVersion(),
             maxBlocksInCache: this.storeParams.maxBlocksInCache,
             cacheBlockSize: this.storeParams.cacheBlockSize,
         });

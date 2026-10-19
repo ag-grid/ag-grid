@@ -32,6 +32,12 @@ export interface IServerSideGetRowsRequest {
     filterModel: FilterModel | AdvancedFilterModel | null;
     /** If sorting, what the sort model is.  */
     sortModel: SortModelItem[];
+    /**
+     * The data version pinned for this level, as returned by an earlier `success` call in `LoadSuccessParams.dataVersion`.
+     * Read every block of the level from this version so that the blocks are consistent with each other.
+     * Not present until a version has been pinned. Dropped when the level is refreshed or reset.
+     */
+    dataVersion?: string | number;
 }
 
 export interface IServerSideGetRowsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

@@ -70,4 +70,10 @@ export interface LoadSuccessParams<TData = any> {
      * Only the fields you want to display need to be provided; the grid assigns the row ID automatically.
      */
     grandTotalData?: Partial<TData> | null;
+    /**
+     * The version of the data this block was read from, such as a cursor or snapshot ID.
+     * The first version returned for a level is pinned and passed back in `request.dataVersion` on every later
+     * `getRows` request for that level, until the level is refreshed or reset.
+     */
+    dataVersion?: string | number;
 }

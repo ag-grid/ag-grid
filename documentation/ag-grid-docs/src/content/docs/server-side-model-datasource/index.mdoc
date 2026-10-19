@@ -90,3 +90,31 @@ The example below demonstrates loading rows using a simple SSRM Datasource. Note
 - See the console below the example to view the request data sent by the grid for rows.
 
 {% gridExampleRunner title="Simple Server-Side Datasource" name="simple" /%}
+
+## Reading Every Block From One Data Version
+
+Each block of rows is fetched with a separate `getRows` call, so when the data changes on the server between calls, blocks of the same level can be read from different states of the data and rows can be repeated or skipped where the blocks meet. If the server can read from a fixed version of the data, such as a snapshot ID or a cursor, return it as `dataVersion` with the block. The grid pins the first version returned for a level and passes it back as `request.dataVersion` on every later `getRows` request for that level.
+
+```js
+const datasource = {
+    getRows: params => {
+        // request.dataVersion is undefined until the level has a pinned version
+        const response = server.getData(params.request);
+        params.success({
+            rowData: response.rows,
+            rowCount: response.lastRow,
+            dataVersion: response.snapshotId,
+        });
+    }
+};
+```
+
+Note the following:
+
+- Each level pins its own version: a group's children are read independently of their parent level.
+- The pinned version is dropped when the level is [refreshed](./server-side-model-updating-refresh/) with `refreshServerSide`, purged or not, and when the level is reset, for example after a sort or filter change. The next response pins a new version.
+- The version is kept when blocks are evicted from the cache and loaded again, when failed loads are retried, when transactions are applied and when a group is collapsed.
+- Blocks requested before the first versioned response arrives (up to `maxConcurrentDatasourceRequests`) are sent without a version.
+- A different version returned for a level that already has one is ignored. If the server can no longer read from the pinned version, call `refreshServerSide` to drop it.
+- A version supplied through `applyServerSideRowData` pins the level in the same way.
+- The pinned version of each level is returned by `getServerSideGroupLevelState()`.

@@ -65,6 +65,10 @@ export class LazyCache extends BeanStub {
      */
     private live = true;
 
+    private dataVersion: string | number | undefined;
+    /** Bumped whenever the pinned data version is dropped, so responses to older requests cannot re-pin it. */
+    private dataVersionGeneration = 0;
+
     /**
      * A node map indexed by the node's id, index, and node.
      */
@@ -855,7 +859,20 @@ export class LazyCache extends BeanStub {
         return [...duplicates];
     }
 
-    public onLoadSuccess(firstRowIndex: number, numberOfRowsExpected: number, response: LoadSuccessParams) {
+    public getDataVersion(): string | number | undefined {
+        return this.dataVersion;
+    }
+
+    public getDataVersionGeneration(): number {
+        return this.dataVersionGeneration;
+    }
+
+    public onLoadSuccess(
+        firstRowIndex: number,
+        numberOfRowsExpected: number,
+        response: LoadSuccessParams,
+        dataVersionGeneration = this.dataVersionGeneration
+    ) {
         if (!this.live) {
             return;
         }
@@ -876,6 +893,14 @@ export class LazyCache extends BeanStub {
                 this.onLoadFailed(firstRowIndex, numberOfRowsExpected);
                 return;
             }
+        }
+
+        if (
+            response.dataVersion != null &&
+            this.dataVersion == null &&
+            dataVersionGeneration === this.dataVersionGeneration
+        ) {
+            this.dataVersion = response.dataVersion;
         }
 
         if (response.pivotResultFields) {
@@ -1056,6 +1081,8 @@ export class LazyCache extends BeanStub {
     }
 
     public markNodesForRefresh() {
+        this.dataVersion = undefined;
+        this.dataVersionGeneration++;
         this.nodeMap.forEach((lazyNode) => {
             if (lazyNode.node.stub && !lazyNode.node.failedLoad) {
                 return;
