@@ -150,6 +150,33 @@ describe('SSRM block lifecycle', () => {
         expect(blockStatus(api, 0)).toBe('needsLoading');
     });
 
+    test('getCacheBlockState reports a block with failed and loaded rows as failed', async () => {
+        const pending: IServerSideGetRowsParams[] = [];
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            cacheBlockSize: 100,
+            getRowId: (params) => String(params.data.id),
+            serverSideDatasource: {
+                getRows: (params) => pending.push(params),
+            },
+        };
+
+        const api = gridsManager.createGrid(null, gridOptions);
+        await waitFor(() => expect(pending.length).toBe(1));
+        respond(pending.shift()!, makeRows(10));
+
+        api.refreshServerSide({ purge: false });
+        await waitFor(() => expect(pending.length).toBe(1));
+        pending.shift()!.fail();
+        await flush();
+        expect(blockStatus(api, 0)).toBe('failed');
+
+        api.applyServerSideTransaction({ add: [{ id: 10, value: 'added' }] });
+        expect(api.getRowNode('10')?.data.value).toBe('added');
+        expect(blockStatus(api, 0)).toBe('failed');
+    });
+
     test('retryServerSideLoads updates the model once', async () => {
         const rowData = makeRows(3);
         const pending: IServerSideGetRowsParams[] = [];
