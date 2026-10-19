@@ -41,7 +41,11 @@ const DEFAULT_BLOCK_SIZE = 100;
 
 export interface HeldTransaction {
     transaction: ServerSideTransaction;
+    /** The rows the transaction added and removed when it arrived, which the row count already includes. */
     addedIds: Set<string>;
+    removedIds: Set<string>;
+    /** The loads in flight when the transaction arrived, whose blocks may have been read before it. */
+    pendingLoads: Set<number>;
 }
 
 export class LazyCache extends BeanStub {
@@ -78,11 +82,10 @@ export class LazyCache extends BeanStub {
     private readonly rowDataVersions = new WeakMap<RowNode, string | number>();
     /** Bumped whenever the pinned data version is dropped, so versioned responses to older requests are discarded. */
     private dataVersionGeneration = 0;
-    /**
-     * Versioned transactions that arrived while blocks of this level were loading, with the IDs of the rows each added,
-     * so they can be applied to the blocks read before them.
-     */
+    /** Versioned transactions that arrived while blocks of this level were loading, to apply to those blocks. */
     private heldTransactions: HeldTransaction[] = [];
+    private readonly loadsInFlight = new Set<number>();
+    private nextLoadId = 0;
 
     /**
      * A node map indexed by the node's id, index, and node.
@@ -894,33 +897,43 @@ export class LazyCache extends BeanStub {
     }
 
     public isLoading(): boolean {
-        return this.lazyBlockLoadingSvc.isCacheLoading(this);
+        return this.loadsInFlight.size > 0;
     }
 
-    public holdTransaction(transaction: ServerSideTransaction, addedIds: Set<string>): void {
-        this.heldTransactions.push({ transaction, addedIds });
+    /** Returns an ID for a block load, passed back to `onLoadSuccess` and `onLoadFinished`. */
+    public onLoadStarted(): number {
+        const loadId = this.nextLoadId++;
+        this.loadsInFlight.add(loadId);
+        return loadId;
     }
 
-    /** Inserts rows that were already counted when they were first added, so the row count is unchanged. */
-    public reinsertRowNodes(inserts: any[], indexToAdd: number | undefined, version: string | number | undefined) {
-        const insertedNodes = this.insertRowNodes(inserts, indexToAdd, version);
-        this.numberOfRows -= insertedNodes.length;
-        return insertedNodes;
+    /** Releases the held transactions that no other load in flight can have been read before. */
+    public onLoadFinished(loadId: number): void {
+        this.loadsInFlight.delete(loadId);
+        this.heldTransactions = this.heldTransactions.filter(({ pendingLoads }) => {
+            pendingLoads.delete(loadId);
+            return pendingLoads.size > 0;
+        });
     }
 
-    /** Called once no block of this level is loading, so no block can have been read before a held transaction. */
-    public onLoadsSettled(): void {
-        this.heldTransactions = [];
+    public holdTransaction(transaction: ServerSideTransaction, addedIds: Set<string>, removedIds: Set<string>): void {
+        this.heldTransactions.push({ transaction, addedIds, removedIds, pendingLoads: new Set(this.loadsInFlight) });
     }
 
-    /** The held transactions newer than a block's version, which the block was read before. */
-    private getTransactionsNewerThan(blockVersion: string | number | undefined) {
-        if (blockVersion == null) {
+    /** Changes the row count by rows a replayed transaction added or removed again, which it already includes. */
+    public uncountReplayedRows(rowCountChange: number): void {
+        this.numberOfRows -= rowCountChange;
+    }
+
+    /** The held transactions newer than a block's version, which were in flight with its load. */
+    private getTransactionsNewerThan(blockVersion: string | number | undefined, loadId: number | undefined) {
+        if (blockVersion == null || loadId == null) {
             return [];
         }
         const comparator = this.gos.get('compareServerSideDataVersions');
         return this.heldTransactions.filter(
-            ({ transaction }) => compareDataVersions(transaction.version!, blockVersion, comparator) > 0
+            ({ transaction, pendingLoads }) =>
+                pendingLoads.has(loadId) && compareDataVersions(transaction.version!, blockVersion, comparator) > 0
         );
     }
 
@@ -991,7 +1004,8 @@ export class LazyCache extends BeanStub {
         numberOfRowsExpected: number,
         response: LoadSuccessParams,
         dataVersionGeneration = this.dataVersionGeneration,
-        requestedDataVersion?: string | number
+        requestedDataVersion?: string | number,
+        loadId?: number
     ) {
         if (!this.live) {
             return;
@@ -1091,7 +1105,7 @@ export class LazyCache extends BeanStub {
             }
         }
 
-        const newerTransactions = this.getTransactionsNewerThan(dataVersion);
+        const newerTransactions = this.getTransactionsNewerThan(dataVersion, loadId);
         if (newerTransactions.length && this.isLastRowKnown) {
             // The block was read before transactions the level has applied, so its row count is out of date
         } else if (response.rowCount != undefined && response.rowCount !== -1) {

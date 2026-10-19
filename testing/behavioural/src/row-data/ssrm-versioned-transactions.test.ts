@@ -227,6 +227,28 @@ describe('SSRM versioned transactions', () => {
         expect(api.getDisplayedRowCount()).toBe(49);
     });
 
+    test('a loaded row removed while its block reloads is removed once from the row count', async () => {
+        const { api, pending, settle } = await createGrid(1, { maxConcurrentDatasourceRequests: -1 });
+        api.refreshServerSide({ purge: false });
+        await waitFor(() => expect(pending.some((p) => p.request.startRow === 0)).toBe(true));
+        const reload = pending.splice(
+            pending.findIndex((p) => p.request.startRow === 0),
+            1
+        )[0];
+
+        const before = serverRows;
+        serverRows = serverRows.filter((row) => row.id !== '5');
+        api.applyServerSideTransaction({ version: 2, remove: [{ id: '5', value: 5 }] });
+        expect(api.getDisplayedRowCount()).toBe(49);
+
+        respond(reload, 1, before);
+        expect(api.getRowNode('5')).toBeUndefined();
+        expect(api.getDisplayedRowCount()).toBe(49);
+
+        await settle();
+        expect(api.getDisplayedRowCount()).toBe(49);
+    });
+
     test('a load discarded by a purge does not drop transactions held for the blocks loading after it', async () => {
         const { api, pending } = await createGrid(1, { maxConcurrentDatasourceRequests: -1 });
         const discarded = await requestBlockOf(api, pending, 25);

@@ -17,8 +17,10 @@ export interface TradeChange {
 const portfolios = ['Aggressive', 'Hybrid', 'Income'];
 const products = ['Aluminium', 'Copper', 'Gold', 'Nickel', 'Silver', 'Tin', 'Zinc', 'Lead'];
 
+const versionsKept = 100;
+
 /**
- * A server that keeps every version of its trades, so that a request can read the version the grid has
+ * A server that keeps recent versions of its trades, so that a request can read the version the grid has
  * already caught up to, passed in `request.dataVersion`.
  */
 export class FakeServer {
@@ -64,6 +66,7 @@ export class FakeServer {
         const trade = { ...trades[index], current: Math.floor(Math.random() * 100000), version };
         trades[index] = trade;
         this.snapshots.set(version, trades);
+        this.snapshots.delete(version - versionsKept);
         return { version, trade };
     }
 }

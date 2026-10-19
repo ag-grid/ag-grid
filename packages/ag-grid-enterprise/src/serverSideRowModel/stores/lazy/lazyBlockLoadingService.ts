@@ -152,9 +152,6 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             for (let i = 0; i < endRow - startRow; i++) {
                 loadingNodes.delete(startRow + i);
             }
-            if (loadingNodes.size === 0) {
-                cache.onLoadsSettled();
-            }
         };
 
         const addNodesToLoadingMap = () => {
@@ -165,14 +162,16 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
         const success = (params: LoadSuccessParams) => {
             this.onLoadComplete();
-            cache.onLoadSuccess(startRow, endRow - startRow, params, dataVersionGeneration, dataVersion);
+            cache.onLoadSuccess(startRow, endRow - startRow, params, dataVersionGeneration, dataVersion, loadId);
             removeNodesFromLoadingMap();
+            cache.onLoadFinished(loadId);
         };
 
         const fail = () => {
             this.onLoadComplete();
             cache.onLoadFailed(startRow, endRow - startRow);
             removeNodesFromLoadingMap();
+            cache.onLoadFinished(loadId);
         };
 
         const isRootStore = parentNode.level === -1;
@@ -188,6 +187,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         });
 
         addNodesToLoadingMap();
+        const loadId = cache.onLoadStarted();
         this.outboundRequests += 1;
         cache.getSsrmParams().datasource?.getRows(params);
     }
@@ -279,10 +279,6 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
                   cache: lazyCache,
                   index: lazyCache.getBlockStartIndex(lazyIndex),
               };
-    }
-
-    public isCacheLoading(cache: LazyCache): boolean {
-        return (this.cacheLoadingNodesMap.get(cache)?.size ?? 0) > 0;
     }
 
     public isRowLoading(cache: LazyCache, index: number) {

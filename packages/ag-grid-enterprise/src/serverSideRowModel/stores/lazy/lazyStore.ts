@@ -175,7 +175,8 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
         // The loading blocks may have been read before this transaction, so it is applied to them again when they load
         if (transaction.version != null && this.cache.isLoading()) {
-            this.cache.holdTransaction(transaction, new Set(result.add?.map((node) => node.id!)));
+            const ids = (nodes?: IRowNode[]) => new Set(nodes?.map((node) => node.id!));
+            this.cache.holdTransaction(transaction, ids(result.add), ids(result.remove));
         }
         return result;
     }
@@ -245,22 +246,20 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     public replayTransactions(heldTransactions: HeldTransaction[], loadedIds: Set<string>): void {
         const { cache } = this;
         const inBlock = (rows?: any[]) => rows?.filter((data) => loadedIds.has(cache.getRowId(data)!));
-        for (const { transaction, addedIds } of heldTransactions) {
-            const { version } = transaction;
-            this.applyTransactionToCache({
-                version,
-                update: inBlock(transaction.update),
-                remove: inBlock(transaction.remove),
-            });
+        for (const { transaction, addedIds, removedIds } of heldTransactions) {
             const overwritten = transaction.add?.filter((data) => {
                 const id = cache.getRowId(data)!;
                 return addedIds.has(id) && !cache.isNodeInCache(id);
             });
-            if (overwritten?.length) {
-                const addIndex =
-                    transaction.addIndex != null && transaction.addIndex >= 0 ? transaction.addIndex : undefined;
-                cache.reinsertRowNodes(overwritten, addIndex, version);
-            }
+            const result = this.applyTransactionToCache({
+                version: transaction.version,
+                addIndex: transaction.addIndex,
+                add: overwritten,
+                update: inBlock(transaction.update),
+                remove: inBlock(transaction.remove),
+            });
+            const removedAgain = result.remove?.filter((node) => removedIds.has(node.id!)).length ?? 0;
+            cache.uncountReplayedRows((result.add?.length ?? 0) - removedAgain);
         }
     }
 
