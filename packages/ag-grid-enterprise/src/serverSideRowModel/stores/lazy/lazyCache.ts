@@ -25,6 +25,7 @@ import { setRowNodeGroupValue } from '../../../rowGrouping/rowGroupingUtils';
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { NodeManager } from '../../nodeManager';
 import type { ServerSideRowModel } from '../../serverSideRowModel';
+import { compareDataVersions } from './dataVersion';
 import type { LazyBlockLoadingService } from './lazyBlockLoadingService';
 import type { LazyStore } from './lazyStore';
 import { MultiIndexMap } from './multiIndexMap';
@@ -65,8 +66,11 @@ export class LazyCache extends BeanStub {
      */
     private live = true;
 
+    /** The version every block of this level is read from, pinned from the first versioned response. */
     private dataVersion: string | number | undefined;
-    /** Bumped whenever the pinned data version is dropped, so responses to older requests cannot re-pin it. */
+    /** The version each row was loaded with, kept per row so it follows the row through moves and evictions. */
+    private readonly rowDataVersions = new WeakMap<RowNode, string | number>();
+    /** Bumped whenever the pinned data version is dropped, so versioned responses to older requests are discarded. */
     private dataVersionGeneration = 0;
 
     /**
@@ -867,6 +871,11 @@ export class LazyCache extends BeanStub {
         return this.dataVersionGeneration;
     }
 
+    /** The data version the row was last loaded with, if its block's response returned one. */
+    public getRowDataVersion(node: RowNode): string | number | undefined {
+        return this.rowDataVersions.get(node);
+    }
+
     public onLoadSuccess(
         firstRowIndex: number,
         numberOfRowsExpected: number,
@@ -874,6 +883,12 @@ export class LazyCache extends BeanStub {
         dataVersionGeneration = this.dataVersionGeneration
     ) {
         if (!this.live) {
+            return;
+        }
+
+        // The request was sent before the level dropped its pinned version, so the rows were read from a
+        // version the level no longer uses. Discard them, so the rows stay eligible for loading at the new version.
+        if (response.dataVersion != null && dataVersionGeneration !== this.dataVersionGeneration) {
             return;
         }
 
@@ -895,12 +910,15 @@ export class LazyCache extends BeanStub {
             }
         }
 
-        if (
-            response.dataVersion != null &&
-            this.dataVersion == null &&
-            dataVersionGeneration === this.dataVersionGeneration
-        ) {
-            this.dataVersion = response.dataVersion;
+        const { dataVersion } = response;
+        if (dataVersion != null) {
+            if (this.dataVersion == null) {
+                this.dataVersion = dataVersion;
+            } else if (
+                compareDataVersions(dataVersion, this.dataVersion, this.gos.get('compareServerSideDataVersions')) !== 0
+            ) {
+                this.warn(338, { pinned: this.dataVersion, received: dataVersion });
+            }
         }
 
         if (response.pivotResultFields) {
@@ -953,6 +971,18 @@ export class LazyCache extends BeanStub {
 
         // Adjust for grand total rows extracted from the response
         const dataRowCount = response.rowData.length - skippedRowCount;
+
+        for (let rowIndex = firstRowIndex; rowIndex < firstRowIndex + dataRowCount; rowIndex++) {
+            const node = this.nodeMap.getBy('index', rowIndex)?.node;
+            if (!node) {
+                continue;
+            }
+            if (dataVersion == null) {
+                this.rowDataVersions.delete(node);
+            } else {
+                this.rowDataVersions.set(node, dataVersion);
+            }
+        }
 
         if (response.rowCount != undefined && response.rowCount !== -1) {
             // if the rowCount has been provided, set the row count

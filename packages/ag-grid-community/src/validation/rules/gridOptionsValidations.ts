@@ -638,6 +638,16 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
+        compareServerSideDataVersions: {
+            supportedRowModels: ['serverSide'],
+            validate: ({ compareServerSideDataVersions }) =>
+                typeof compareServerSideDataVersions === 'function'
+                    ? null
+                    : _createValidationWarning(321, {
+                          property: 'compareServerSideDataVersions',
+                          expected: 'a function',
+                      }),
+        },
         serverSideDatasource: {
             supportedRowModels: ['serverSide'],
         },

@@ -899,6 +899,7 @@ export type {
     ChartRef,
     ChartRefParams,
     CheckboxLocation,
+    CompareServerSideDataVersions,
     Components,
     CreateChartContainer,
     CustomChartThemes,

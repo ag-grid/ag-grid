@@ -13,6 +13,7 @@ import type {
     ColGroupDef,
     ColTypeDefs,
     ColumnHeaderEditOptions,
+    CompareServerSideDataVersions,
     Components,
     CreateChartContainer,
     CsvExportParams,
@@ -2030,6 +2031,12 @@ export interface Props<TData> {
          * @agModule `ServerSideRowModelModule`
          */
     getServerSideGroupKey?: GetServerSideGroupKey,
+    /** Compares two data versions returned in `LoadSuccessParams.dataVersion`.
+         * Return a negative number when `a` is older than `b`, a positive number when `a` is newer, and `0` when they are the same version.
+         * When not provided, two numbers are compared numerically, and any other versions are only checked for equality.
+         * @agModule `ServerSideRowModelModule`
+         */
+    compareServerSideDataVersions?: CompareServerSideDataVersions,
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-business-key='abc'` where `abc` is what you return as the business key.
          * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
          */
@@ -2572,6 +2579,7 @@ export function getProps() {
         isApplyServerSideTransaction: undefined,
         isServerSideGroup: undefined,
         getServerSideGroupKey: undefined,
+        compareServerSideDataVersions: undefined,
         getBusinessKeyForNode: undefined,
         getRowId: undefined,
         resetRowDataOnUpdate: undefined,

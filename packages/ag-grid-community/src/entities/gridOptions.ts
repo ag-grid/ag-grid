@@ -2521,6 +2521,13 @@ export interface GridOptions<TData = any> {
      * @agModule `ServerSideRowModelModule`
      */
     getServerSideGroupKey?: GetServerSideGroupKey;
+    /**
+     * Compares two data versions returned in `LoadSuccessParams.dataVersion`.
+     * Return a negative number when `a` is older than `b`, a positive number when `a` is newer, and `0` when they are the same version.
+     * When not provided, two numbers are compared numerically, and any other versions are only checked for equality.
+     * @agModule `ServerSideRowModelModule`
+     */
+    compareServerSideDataVersions?: CompareServerSideDataVersions;
 
     // *** Rows *** //
     /**
@@ -3190,6 +3197,7 @@ export type IsApplyServerSideTransaction<TData = any, TContext = any> = (
     params: IsApplyServerSideTransactionParams<TData, TContext>
 ) => boolean;
 export type GetServerSideGroupKey = (dataItem: any) => string;
+export type CompareServerSideDataVersions = (a: string | number, b: string | number) => number;
 
 export type IsRowMaster<TData = any> = (dataItem: TData) => boolean;
 

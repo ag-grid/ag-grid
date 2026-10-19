@@ -71,9 +71,12 @@ export interface LoadSuccessParams<TData = any> {
      */
     grandTotalData?: Partial<TData> | null;
     /**
-     * The version of the data this block was read from, such as a cursor or snapshot ID.
+     * The version of the data this block was read from, such as a snapshot ID or a cursor.
+     * Use it to page through a snapshot: a dataset that does not change underneath the reader.
      * The first version returned for a level is pinned and passed back in `request.dataVersion` on every later
      * `getRows` request for that level, until the level is refreshed or reset.
+     * Numbers are compared numerically; provide `compareServerSideDataVersions` to compare other versions.
+     * For data that changes continuously, return the latest rows and leave this unset.
      */
     dataVersion?: string | number;
 }
