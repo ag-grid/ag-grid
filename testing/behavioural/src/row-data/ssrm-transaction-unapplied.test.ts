@@ -43,15 +43,17 @@ describe('SSRM transaction result unapplied adds', () => {
     async function applyAsync(
         api: GridApi,
         transaction: ServerSideTransaction
-    ): Promise<{ callbackResult?: ServerSideTransactionResult; eventResults: ServerSideTransactionResult[] }> {
-        let callbackResult: ServerSideTransactionResult | undefined;
+    ): Promise<{ callbackResult: ServerSideTransactionResult; eventResults: ServerSideTransactionResult[] }> {
         const flushed = new Promise<AsyncTransactionsFlushedEvent>((resolve) => {
             api.addEventListener('asyncTransactionsFlushed', resolve);
         });
-        api.applyServerSideTransactionAsync(transaction, (result) => (callbackResult = result));
+        // callbacks run on a later timer than the flushed event, so both are awaited
+        const callbackResult = new Promise<ServerSideTransactionResult>((resolve) => {
+            api.applyServerSideTransactionAsync(transaction, resolve);
+        });
         api.flushServerSideAsyncTransactions();
-        const event = await flushed;
-        return { callbackResult, eventResults: event.results as ServerSideTransactionResult[] };
+        const [event, result] = await Promise.all([flushed, callbackResult]);
+        return { callbackResult: result, eventResults: event.results as ServerSideTransactionResult[] };
     }
 
     describe('sync', () => {
@@ -140,8 +142,8 @@ describe('SSRM transaction result unapplied adds', () => {
 
             const { callbackResult, eventResults } = await applyAsync(api, { add: [{ id: 1000, value: 'Added' }] });
 
-            expect(callbackResult?.status).toBe('Applied');
-            expect(callbackResult?.unapplied).toBeUndefined();
+            expect(callbackResult.status).toBe('Applied');
+            expect(callbackResult.unapplied).toBeUndefined();
             expect(eventResults).toHaveLength(1);
             expect(eventResults[0].unapplied).toBeUndefined();
         });
@@ -152,8 +154,8 @@ describe('SSRM transaction result unapplied adds', () => {
 
             const { callbackResult, eventResults } = await applyAsync(api, { add: [added] });
 
-            expect(callbackResult?.status).toBe('Applied');
-            expect(callbackResult?.unapplied).toEqual([added]);
+            expect(callbackResult.status).toBe('Applied');
+            expect(callbackResult.unapplied).toEqual([added]);
             expect(eventResults).toHaveLength(1);
             expect(eventResults[0].unapplied).toEqual([added]);
         });
@@ -164,8 +166,8 @@ describe('SSRM transaction result unapplied adds', () => {
 
             const { callbackResult, eventResults } = await applyAsync(api, { add: [duplicate] });
 
-            expect(callbackResult?.status).toBe('Applied');
-            expect(callbackResult?.unapplied).toEqual([duplicate]);
+            expect(callbackResult.status).toBe('Applied');
+            expect(callbackResult.unapplied).toEqual([duplicate]);
             expect(eventResults).toHaveLength(1);
             expect(eventResults[0].unapplied).toEqual([duplicate]);
         });
