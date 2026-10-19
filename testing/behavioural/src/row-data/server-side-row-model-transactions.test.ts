@@ -31,14 +31,14 @@ describe('Server Side Row Model Transactions', () => {
         };
 
         const api = gridsManager.createGrid(null, gridOptions);
+        await new GridRows(api, `repeated remove transaction does not remove unrelated rows setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
         await new GridColumns(api, `repeated remove transaction does not remove unrelated rows setup`).checkColumns(`
             CENTER
             ├── id "Id" width:200
             └── value "Value" width:200
-        `);
-        await new GridRows(api, `repeated remove transaction does not remove unrelated rows setup`).check(`
-            ROOT id:<no-id>
-            └── filler id:rowIndex:0
         `);
 
         await waitForEvent('firstDataRendered', api);
@@ -81,14 +81,14 @@ describe('Server Side Row Model Transactions', () => {
         };
 
         const api = gridsManager.createGrid(null, gridOptions);
+        await new GridRows(api, `remove transaction honours supplied rowCount setup`).check(`
+            ROOT id:<no-id>
+            └── filler id:rowIndex:0
+        `);
         await new GridColumns(api, `remove transaction honours supplied rowCount setup`).checkColumns(`
             CENTER
             ├── id "Id" width:200
             └── value "Value" width:200
-        `);
-        await new GridRows(api, `remove transaction honours supplied rowCount setup`).check(`
-            ROOT id:<no-id>
-            └── filler id:rowIndex:0
         `);
 
         await waitForEvent('firstDataRendered', api);
@@ -122,18 +122,18 @@ describe('Server Side Row Model Transactions', () => {
         };
 
         const api = gridsManager.createGrid(null, gridOptions);
-        await new GridColumns(api, `removing cached and uncached rows marks non-contiguous rows for refresh setup`)
-            .checkColumns(`
-                CENTER
-                ├── id "Id" width:200
-                └── value "Value" width:200
-            `);
         await new GridRows(api, `removing cached and uncached rows marks non-contiguous rows for refresh setup`).check(
             `
                 ROOT id:<no-id>
                 └── filler id:rowIndex:0
             `
         );
+        await new GridColumns(api, `removing cached and uncached rows marks non-contiguous rows for refresh setup`)
+            .checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                └── value "Value" width:200
+            `);
 
         await waitForEvent('firstDataRendered', api);
 
@@ -171,13 +171,13 @@ describe('Server Side Row Model Transactions', () => {
         };
 
         const api = gridsManager.createGrid(null, gridOptions);
-        await new GridColumns(api, `getRowNode does not throw when passed a numeric id setup`).checkColumns(`
-            CENTER
-            └── value "Value" width:200
-        `);
         await new GridRows(api, `getRowNode does not throw when passed a numeric id setup`).check(`
             ROOT id:<no-id>
             └── filler id:rowIndex:0
+        `);
+        await new GridColumns(api, `getRowNode does not throw when passed a numeric id setup`).checkColumns(`
+            CENTER
+            └── value "Value" width:200
         `);
         await waitForEvent('firstDataRendered', api);
 

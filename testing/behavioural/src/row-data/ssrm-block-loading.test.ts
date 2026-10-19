@@ -105,6 +105,37 @@ describe('SSRM block loading', () => {
         ]);
     });
 
+    test('a synchronous datasource fills newly rendered rows before the browser can paint their skeletons', async () => {
+        const totalRows = 2000;
+        const rowData = Array.from({ length: totalRows }, (_, i) => ({ id: i, value: `Row ${i}` }));
+
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            cacheBlockSize: 100,
+            pagination: true,
+            paginationPageSize: 100,
+            getRowId: (params) => String(params.data.id),
+            serverSideDatasource: {
+                getRows: (params) => {
+                    const slice = rowData.slice(params.request.startRow, params.request.endRow);
+                    params.success({ rowData: slice, rowCount: totalRows });
+                },
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        api.paginationGoToPage(15);
+        const rendered = api.getDisplayedRowAtIndex(1500)!;
+        expect({ stub: rendered.stub, data: rendered.data }).toEqual({ stub: true, data: undefined });
+
+        // a zero-delay timeout only runs once the microtask queue is drained, the point at which the browser may paint
+        await new Promise((resolve) => setTimeout(resolve));
+
+        const loaded = api.getDisplayedRowAtIndex(1500)!;
+        expect({ stub: loaded.stub, data: loaded.data }).toEqual({ stub: false, data: rowData[1500] });
+    });
+
     test('maxBlocksInCache evicts the least-recently-used block once the cap is exceeded', async () => {
         const totalRows = 500;
         const rowData = Array.from({ length: totalRows }, (_, i) => ({ id: i, value: `Row ${i}` }));

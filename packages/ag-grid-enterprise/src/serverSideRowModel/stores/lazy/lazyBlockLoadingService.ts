@@ -39,8 +39,11 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     private isCheckQueued = false;
 
     // this is cached for blockLoadDebounce
-    private nextBlockToLoad?: { cache: LazyCache; index: number } = undefined;
+    private nextBlockToLoad?: BlockToLoad = undefined;
     private loaderTimeout?: number;
+
+    // the last block whose datasource called success() or fail() before getRows returned
+    private syncLoadedBlock?: BlockToLoad = undefined;
 
     public postConstruct() {
         this.maxOutboundRequests = _getMaxConcurrentDatasourceRequests(this.gos);
@@ -55,16 +58,33 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     }
 
     /**
-     * Queues a microtask to check if any blocks need to be loaded.
+     * Queues a microtask to check if any blocks need to be loaded. A microtask runs after the current render
+     * but before the browser paints, so stubs filled by a synchronous datasource are never painted.
      */
     public queueLoadCheck() {
         if (this.isCheckQueued) {
             return;
         }
         this.isCheckQueued = true;
-        setTimeout(() => {
-            this.queueLoadAction();
+        queueMicrotask(() => {
+            if (!this.isAlive()) {
+                return;
+            }
+            // reading rows queues a check per visible stub; keep the flag set so those are absorbed
+            const nextBlockToLoad = this.getBlockToLoad();
             this.isCheckQueued = false;
+
+            const syncLoadedBlock = this.syncLoadedBlock;
+            this.syncLoadedBlock = undefined;
+            if (!nextBlockToLoad) {
+                return;
+            }
+            if (isSameBlock(nextBlockToLoad, syncLoadedBlock)) {
+                // the block did not fill its stubs, so retrying in a microtask would never yield to the browser
+                window.setTimeout(() => this.queueLoadCheck());
+                return;
+            }
+            this.queueLoadAction(nextBlockToLoad);
         });
     }
 
@@ -80,37 +100,33 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         return this.outboundRequests < this.maxOutboundRequests;
     }
 
-    private queueLoadAction() {
-        const nextBlockToLoad = this.getBlockToLoad();
-        if (!nextBlockToLoad) {
-            return;
-        }
-
+    private queueLoadAction(nextBlockToLoad: BlockToLoad) {
         // for blockLoadDebounceMillis, if the next block to load is the same as the last block to load, ignore
         // otherwise cancel existing timeout and requeue
-        const isSameBlock =
-            this.nextBlockToLoad?.cache === nextBlockToLoad.cache &&
-            this.nextBlockToLoad.index === nextBlockToLoad.index;
-        if (isSameBlock) {
+        if (isSameBlock(nextBlockToLoad, this.nextBlockToLoad)) {
             return;
         }
 
-        if (!this.nextBlockToLoad || !isSameBlock) {
-            this.nextBlockToLoad = nextBlockToLoad;
-            window.clearTimeout(this.loaderTimeout);
+        window.clearTimeout(this.loaderTimeout);
+        this.loaderTimeout = undefined;
 
-            const startRow = Number(this.nextBlockToLoad.index);
-            const cache = this.nextBlockToLoad.cache;
-            const endRow = nextBlockToLoad.index + nextBlockToLoad.cache.getBlockSize();
-            this.loaderTimeout = window.setTimeout(() => {
-                if (!cache.isAlive()) {
-                    return;
-                }
-                this.loaderTimeout = undefined;
-                this.attemptLoad(cache, startRow, endRow);
-                this.nextBlockToLoad = undefined;
-            }, this.gos.get('blockLoadDebounceMillis'));
+        const { cache, index: startRow } = nextBlockToLoad;
+        const endRow = startRow + cache.getBlockSize();
+        const debounceMillis = this.gos.get('blockLoadDebounceMillis');
+        if (!debounceMillis) {
+            this.nextBlockToLoad = undefined;
+            this.attemptLoad(cache, startRow, endRow);
+            return;
         }
+
+        this.nextBlockToLoad = nextBlockToLoad;
+        this.loaderTimeout = window.setTimeout(() => {
+            this.loaderTimeout = undefined;
+            this.nextBlockToLoad = undefined;
+            if (cache.isAlive()) {
+                this.attemptLoad(cache, startRow, endRow);
+            }
+        }, debounceMillis);
     }
 
     private attemptLoad(cache: LazyCache, start: number, end: number) {
@@ -155,14 +171,22 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             }
         };
 
-        const success = (params: LoadSuccessParams) => {
+        let getRowsReturned = false;
+        const onLoadComplete = () => {
+            if (!getRowsReturned) {
+                this.syncLoadedBlock = { cache, index: startRow };
+            }
             this.onLoadComplete();
+        };
+
+        const success = (params: LoadSuccessParams) => {
+            onLoadComplete();
             cache.onLoadSuccess(startRow, endRow - startRow, params);
             removeNodesFromLoadingMap();
         };
 
         const fail = () => {
-            this.onLoadComplete();
+            onLoadComplete();
             cache.onLoadFailed(startRow, endRow - startRow);
             removeNodesFromLoadingMap();
         };
@@ -182,6 +206,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         addNodesToLoadingMap();
         this.outboundRequests += 1;
         cache.getSsrmParams().datasource?.getRows(params);
+        getRowsReturned = true;
     }
 
     private getBlockToLoad() {
@@ -226,12 +251,6 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         for (const cache of this.cacheLoadingNodesMap.keys()) {
             const nodesToRefresh = cache.getNodesToRefresh();
             nodesToRefresh.forEach((node) => {
-                if (node.rowIndex == null) {
-                    nodeToRefresh = node;
-                    cacheToRefresh = cache;
-                    return;
-                }
-
                 const lazyNode = cache.getNodes().getBy('node', node);
                 if (!lazyNode) {
                     return;
@@ -239,6 +258,12 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
                 const loadingNodes = this.cacheLoadingNodesMap.get(cache);
                 if (loadingNodes?.has(lazyNode.index)) {
+                    return;
+                }
+
+                if (node.rowIndex == null) {
+                    nodeToRefresh = node;
+                    cacheToRefresh = cache;
                     return;
                 }
 
@@ -277,3 +302,8 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         return this.cacheLoadingNodesMap.get(cache)?.has(index) ?? false;
     }
 }
+
+type BlockToLoad = { cache: LazyCache; index: number };
+
+const isSameBlock = (a: BlockToLoad, b: BlockToLoad | undefined): boolean =>
+    a.cache === b?.cache && a.index === b.index;

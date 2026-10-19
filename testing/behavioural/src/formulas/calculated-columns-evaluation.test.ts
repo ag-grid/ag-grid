@@ -831,7 +831,7 @@ describe('ag-grid calculated columns', () => {
         );
         await new GridRows(api, `server-side store updates invalidate calculated column caches setup`).check(`
             ROOT id:<no-id>
-            └── filler id:rowIndex:0
+            └── LEAF id:r1 revenue:10 cost:3 profit:7
         `);
         await waitForFirstRow(api);
 

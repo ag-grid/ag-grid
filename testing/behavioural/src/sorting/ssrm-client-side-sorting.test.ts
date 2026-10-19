@@ -171,7 +171,9 @@ describe('SSRM Client-Side Sorting', () => {
             `purge refresh re-sorts rows client-side when serverSideEnableClientSideSort is e setup`
         ).check(`
             ROOT id:<no-id>
-            └── filler id:rowIndex:0
+            ├── LEAF id:1 id:"1" name:"Charlie" value:3
+            ├── LEAF id:2 id:"2" name:"Alice" value:1
+            └── LEAF id:3 id:"3" name:"Bob" value:2
         `);
         await waitForEvent('firstDataRendered', api);
 
@@ -233,7 +235,9 @@ describe('SSRM Client-Side Sorting', () => {
         `);
         await new GridRows(api, `purge refresh re-sorts rows with descending sort setup`).check(`
             ROOT id:<no-id>
-            └── filler id:rowIndex:0
+            ├── LEAF id:1 id:"1" name:"Alice" value:1
+            ├── LEAF id:2 id:"2" name:"Bob" value:2
+            └── LEAF id:3 id:"3" name:"Charlie" value:3
         `);
         await waitForEvent('firstDataRendered', api);
 
@@ -289,7 +293,9 @@ describe('SSRM Client-Side Sorting', () => {
         await new GridRows(api, `purge refresh does not sort when serverSideEnableClientSideSort is disabled setup`)
             .check(`
                 ROOT id:<no-id>
-                └── filler id:rowIndex:0
+                ├── LEAF id:1 id:"1" name:"Charlie" value:3
+                ├── LEAF id:2 id:"2" name:"Alice" value:1
+                └── LEAF id:3 id:"3" name:"Bob" value:2
             `);
         await waitForEvent('firstDataRendered', api);
 
@@ -308,9 +314,9 @@ describe('SSRM Client-Side Sorting', () => {
             `purge refresh does not sort when serverSideEnableClientSideSort is disabled after applyColumnState`
         ).check(`
             ROOT id:<no-id>
-            ├── filler id:rowIndex:0
-            ├── filler id:rowIndex:1
-            └── filler id:rowIndex:2
+            ├── LEAF id:1 id:"1" name:"Charlie" value:3
+            ├── LEAF id:2 id:"2" name:"Alice" value:1
+            └── LEAF id:3 id:"3" name:"Bob" value:2
         `);
         await waitForNoLoadingRows(api);
 
@@ -348,7 +354,9 @@ describe('SSRM Client-Side Sorting', () => {
             `);
         await new GridRows(api, `initial load sorts rows client-side when sort is pre-configured setup`).check(`
             ROOT id:<no-id>
-            └── filler id:rowIndex:0
+            ├── LEAF id:2 id:"2" name:"Alice" value:1
+            ├── LEAF id:3 id:"3" name:"Bob" value:2
+            └── LEAF id:1 id:"1" name:"Charlie" value:3
         `);
         await waitForEvent('firstDataRendered', api);
 
@@ -538,7 +546,9 @@ describe('SSRM Client-Side Sorting', () => {
         `);
         await new GridRows(api, `non-purge refresh re-sorts rows client-side setup`).check(`
             ROOT id:<no-id>
-            └── filler id:rowIndex:0
+            ├── LEAF id:1 id:"1" name:"Charlie" value:3
+            ├── LEAF id:2 id:"2" name:"Alice" value:1
+            └── LEAF id:3 id:"3" name:"Bob" value:2
         `);
         await waitForEvent('firstDataRendered', api);
 
@@ -666,7 +676,9 @@ describe('SSRM Client-Side Sorting', () => {
         await new GridRows(api, `non-purge refresh re-sorts when server returns rows in different order setup`).check(
             `
                 ROOT id:<no-id>
-                └── filler id:rowIndex:0
+                ├── LEAF id:1 id:"1" name:"Charlie" value:3
+                ├── LEAF id:2 id:"2" name:"Alice" value:1
+                └── LEAF id:3 id:"3" name:"Bob" value:2
             `
         );
         await waitForEvent('firstDataRendered', api);
@@ -743,7 +755,9 @@ describe('SSRM Client-Side Sorting', () => {
         `);
         await new GridRows(api, `non-purge refresh re-sorts when row values change setup`).check(`
             ROOT id:<no-id>
-            └── filler id:rowIndex:0
+            ├── LEAF id:1 id:"1" name:"Charlie" value:3
+            ├── LEAF id:2 id:"2" name:"Alice" value:1
+            └── LEAF id:3 id:"3" name:"Bob" value:2
         `);
         await waitForEvent('firstDataRendered', api);
 
@@ -800,7 +814,9 @@ describe('SSRM Client-Side Sorting', () => {
         `);
         await new GridRows(api, `purge refresh without getRowId re-sorts rows setup`).check(`
             ROOT id:<no-id>
-            └── filler id:rowIndex:0
+            ├── LEAF id:0 name:"Charlie" value:3
+            ├── LEAF id:1 name:"Alice" value:1
+            └── LEAF id:2 name:"Bob" value:2
         `);
         await waitForEvent('firstDataRendered', api);
 
@@ -856,7 +872,10 @@ describe('SSRM Client-Side Sorting', () => {
         `);
         await new GridRows(api, `purge refresh with multi-column sort re-sorts correctly setup`).check(`
             ROOT id:<no-id>
-            └── filler id:rowIndex:0
+            ├── LEAF id:1 id:"1" name:"Alice" category:"B" value:2
+            ├── LEAF id:2 id:"2" name:"Bob" category:"A" value:1
+            ├── LEAF id:3 id:"3" name:"Charlie" category:"A" value:3
+            └── LEAF id:4 id:"4" name:"Diana" category:"B" value:1
         `);
         await waitForEvent('firstDataRendered', api);
 
@@ -923,7 +942,9 @@ describe('SSRM Client-Side Sorting', () => {
         `);
         await new GridRows(api, `purge refresh with no active sort does not re-order rows setup`).check(`
             ROOT id:<no-id>
-            └── filler id:rowIndex:0
+            ├── LEAF id:1 id:"1" name:"Charlie" value:3
+            ├── LEAF id:2 id:"2" name:"Alice" value:1
+            └── LEAF id:3 id:"3" name:"Bob" value:2
         `);
         await waitForEvent('firstDataRendered', api);
 
@@ -1002,7 +1023,11 @@ describe('SSRM Client-Side Sorting', () => {
         await new GridRows(api, `purge refresh with paginated loading sorts only after all blocks load setup`).check(
             `
                 ROOT id:<no-id>
-                └── filler id:rowIndex:0
+                ├── LEAF id:1 id:"1" name:"Charlie" value:5
+                ├── LEAF id:2 id:"2" name:"Alice" value:1
+                ├── LEAF id:3 id:"3" name:"Bob" value:3
+                ├── LEAF id:4 id:"4" name:"Diana" value:2
+                └── filler id:rowIndex:4
             `
         );
         await waitForEvent('firstDataRendered', api);
@@ -1221,7 +1246,10 @@ describe('SSRM Client-Side Sorting', () => {
         await new GridRows(api, `grand total row: non-purge refresh re-sorts leaves and preserves grand total setup`)
             .check(`
                 ROOT id:<no-id>
-                └── filler id:rowIndex:0
+                ├── LEAF id:1 id:"1" name:"Charlie" value:3
+                ├── LEAF id:2 id:"2" name:"Alice" value:1
+                ├── LEAF id:3 id:"3" name:"Bob" value:2
+                └─ footer id:rowGroupFooter_ROOT_NODE_ID id:"grand" name:"Total" value:6
             `);
         await waitForEvent('firstDataRendered', api);
 
@@ -1289,7 +1317,9 @@ describe('SSRM Client-Side Sorting', () => {
         await new GridRows(api, `changing sort column between refreshes updates ordering to latest sort setup`).check(
             `
                 ROOT id:<no-id>
-                └── filler id:rowIndex:0
+                ├── LEAF id:1 id:"1" a:3 b:10
+                ├── LEAF id:2 id:"2" a:1 b:30
+                └── LEAF id:3 id:"3" a:2 b:20
             `
         );
         await waitForEvent('firstDataRendered', api);
@@ -1445,7 +1475,9 @@ describe('SSRM Client-Side Sorting', () => {
             `);
         await new GridRows(api, `transaction add: out-of-order row is placed at its sorted position setup`).check(`
             ROOT id:<no-id>
-            └── filler id:rowIndex:0
+            ├── LEAF id:1 id:"1" name:"Alice" value:1
+            ├── LEAF id:2 id:"2" name:"Bob" value:3
+            └── LEAF id:3 id:"3" name:"Charlie" value:5
         `);
         await waitForEvent('firstDataRendered', api);
 

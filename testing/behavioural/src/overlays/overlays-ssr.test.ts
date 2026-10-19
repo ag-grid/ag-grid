@@ -190,6 +190,7 @@ describe('ag-grid overlays state', () => {
 
         responseRowData = [{ athlete: 'Michael Phelps' }, { athlete: 'Usain Bolt' }];
         api.setFilterModel(null);
+        expect(hasLoadingIcon()).toBe(true);
         await new GridRows(
             api,
             `should show no rows and no matching rows when applying a filter after setFilterModel #2`
@@ -199,7 +200,6 @@ describe('ag-grid overlays state', () => {
         `);
 
         api.refreshServerSide({ route: [] });
-        expect(hasLoadingIcon()).toBe(true);
 
         await loadPromise;
         expect(hasLoadingIcon()).toBe(false);

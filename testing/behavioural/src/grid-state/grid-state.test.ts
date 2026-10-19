@@ -717,7 +717,8 @@ describe('StateService - Grid State Management', () => {
                 `);
             await new GridRows(api, `SSRM: getState captures rowGroupExpansion, setState restores it setup`).check(`
                 ROOT id:<no-id>
-                └── LEAF_GROUP collapsed id:rowIndex:0
+                ├── GROUP-leafGroup collapsed id:ie ag-Grid-AutoColumn:"Ireland" country:"Ireland"
+                └── GROUP-leafGroup collapsed id:fr ag-Grid-AutoColumn:"France" country:"France"
             `);
 
             await waitForNoLoadingRows(api);
@@ -946,7 +947,8 @@ describe('StateService - Grid State Management', () => {
                 `SSRM expandAll strategy: getState captures RowGroupBulkExpansionState, setState  setup`
             ).check(`
                 ROOT id:<no-id>
-                └── LEAF_GROUP collapsed id:rowIndex:0
+                ├── GROUP-leafGroup collapsed id:ie ag-Grid-AutoColumn:"Ireland" country:"Ireland"
+                └── GROUP-leafGroup collapsed id:fr ag-Grid-AutoColumn:"France" country:"France"
             `);
             await waitForNoLoadingRows(api);
 
@@ -1051,7 +1053,9 @@ describe('StateService - Grid State Management', () => {
                 `SSRM expandAll strategy: initialState with ssrmRowGroupExpansion restores on gri setup`
             ).check(`
                 ROOT id:<no-id>
-                └── LEAF_GROUP collapsed id:rowIndex:0
+                ├─┬ GROUP-leafGroup id:ie ag-Grid-AutoColumn:"Ireland" country:"Ireland"
+                │ └── LEAF id:Ireland-leaf country:"Ireland" medals:1
+                └── GROUP-leafGroup collapsed id:fr ag-Grid-AutoColumn:"France" country:"France"
             `);
             await waitForNoLoadingRows(api);
 
