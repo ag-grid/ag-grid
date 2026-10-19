@@ -30,8 +30,6 @@
 }
 
 .ag-panel-title-bar-button {
-    margin-left: calc(var(--ag-spacing) * 2);
-    margin-right: var(--ag-spacing);
     cursor: pointer;
 
     :where(.ag-icon) {
@@ -45,6 +43,9 @@
 
 .ag-panel-title-bar-buttons {
     display: flex;
+    /* leaves a visible gap between icon button backgrounds, which extend beyond each button by the spread */
+    gap: calc(var(--ag-spacing) * 0.5 + var(--ag-icon-button-background-spread) * 2);
+    margin-inline-start: calc(var(--ag-spacing) * 2);
 }
 
 .ag-panel-content-wrapper {

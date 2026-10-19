@@ -557,11 +557,11 @@
         opacity: 0.35;
     }
 
-    .ag-panel-title-bar-button {
+    .ag-panel-title-bar-buttons {
+        gap: calc(var(--ag-grid-size) * 1.5);
         @include ag.theme-rtl(
             (
                 margin-left: calc(var(--ag-grid-size) * 2),
-                margin-right: var(--ag-grid-size),
             )
         );
     }
