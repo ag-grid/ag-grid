@@ -53,6 +53,42 @@ describe('React header cell reuse', () => {
         }
     });
 
+    it('refreshes group header styles when pinning, splitting and merging groups', async () => {
+        const apiRef: { current?: GridApi } = {};
+        const { container } = render(
+            <AgGridReact
+                rowData={rowData}
+                columnDefs={[{ groupId: 'group', children: columnDefs.slice(0, 2) }]}
+                defaultColGroupDef={{
+                    headerStyle: ({ columnGroup }) =>
+                        columnGroup!.getPinned() === 'left' ? { backgroundColor: 'orange' } : undefined,
+                }}
+                modules={[AllCommunityModule]}
+                onGridReady={(e: GridReadyEvent) => {
+                    apiRef.current = e.api;
+                }}
+            />
+        );
+        const backgrounds = () =>
+            Array.from(
+                container.querySelectorAll<HTMLElement>('.ag-header-group-cell[col-id]'),
+                (header) => header.style.backgroundColor
+            ).sort();
+        await waitFor(() => expect(backgrounds()).toEqual(['']));
+
+        for (const pinned of ['left', 'right', null] as const) {
+            act(() => apiRef.current!.setColumnsPinned(['c0'], pinned));
+            await waitFor(() => {
+                const expected = pinned === 'left' ? ['', 'orange'] : ['', ''];
+                expect(backgrounds()).toEqual(pinned ? expected : ['']);
+            });
+        }
+        act(() => apiRef.current!.setColumnsPinned(['c0', 'c1'], 'left'));
+        await waitFor(() => expect(backgrounds()).toEqual(['orange']));
+        act(() => apiRef.current!.setColumnsPinned(['c0', 'c1'], null));
+        await waitFor(() => expect(backgrounds()).toEqual(['']));
+    });
+
     it('hide-all then show-all renders correct headers (pooled-ctrl remount is safe)', async () => {
         const apiRef: { current?: GridApi } = {};
         render(

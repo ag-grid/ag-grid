@@ -90,6 +90,103 @@ describe('header cell reuse', () => {
         }
     );
 
+    test.each(['setColumnsPinned', 'applyColumnState'] as const)(
+        '%s refreshes expandable group header styles without recreating headers',
+        async (method) => {
+            const styleCalls: string[] = [];
+            const api = await gridsManager.createGridAndWait('reuse', {
+                defaultColGroupDef: {
+                    headerStyle: ({ columnGroup }) => {
+                        const pinned = columnGroup!.getPinned();
+                        styleCalls.push(`${columnGroup!.getGroupId()}:${pinned}`);
+                        return { backgroundColor: pinned === 'left' ? 'orange' : 'unset' };
+                    },
+                },
+                columnDefs: [
+                    { groupId: 'name', children: [{ field: 'athlete' }, { field: 'country' }] },
+                    {
+                        groupId: 'sports',
+                        children: [
+                            { columnGroupShow: 'closed', field: 'total' },
+                            { columnGroupShow: 'open', field: 'gold' },
+                            { columnGroupShow: 'open', field: 'silver' },
+                            { columnGroupShow: 'open', field: 'bronze' },
+                        ],
+                    },
+                ],
+                rowData: [{ athlete: 'A', country: 'B', total: 3, gold: 1, silver: 1, bronze: 1 }],
+            });
+            const root = document.getElementById('reuse')!;
+            const header = root.querySelector<HTMLElement>('.ag-header-group-cell[col-id="sports_0"]')!;
+            const colIds = ['total', 'gold', 'silver', 'bronze'];
+
+            for (const expanded of [false, true]) {
+                api.setColumnGroupOpened('sports', expanded);
+                for (const pinned of ['left', null, 'right', 'left', null] as const) {
+                    styleCalls.length = 0;
+                    if (method === 'setColumnsPinned') {
+                        api.setColumnsPinned(colIds, pinned);
+                    } else {
+                        api.applyColumnState({ state: colIds.map((colId) => ({ colId, pinned })) });
+                    }
+
+                    expect(styleCalls).toEqual([`sports:${pinned}`]);
+                    expect(root.contains(header)).toBe(true);
+                    expect(header.style.backgroundColor).toBe(pinned === 'left' ? 'orange' : 'unset');
+                }
+            }
+        }
+    );
+
+    test('refreshes nested group styles and removes stale keys when pinned groups split and merge', async () => {
+        const api = await gridsManager.createGridAndWait('reuse', {
+            defaultColGroupDef: {
+                headerStyle: ({ columnGroup }) => {
+                    const pinned = columnGroup!.getPinned();
+                    return pinned ? { backgroundColor: pinned === 'left' ? 'orange' : 'green' } : undefined;
+                },
+            },
+            columnDefs: [
+                {
+                    groupId: 'outer',
+                    children: [
+                        {
+                            groupId: 'inner',
+                            children: [{ field: 'a', pinned: 'left' }, { field: 'b', pinned: 'right' }, { field: 'c' }],
+                        },
+                    ],
+                },
+            ],
+            rowData: [{ a: 'A', b: 'B', c: 'C' }],
+        });
+        const root = document.getElementById('reuse')!;
+        const expectGroupStyles = (backgrounds: string[]) => {
+            for (const groupId of ['outer', 'inner']) {
+                const headers = root.querySelectorAll<HTMLElement>(`.ag-header-group-cell[col-id^="${groupId}_"]`);
+                expect(headers).toHaveLength(backgrounds.length);
+                for (const [index, background] of backgrounds.entries()) {
+                    const header = root.querySelector<HTMLElement>(
+                        `.ag-header-group-cell[col-id="${groupId}_${index}"]`
+                    );
+                    expect(header?.style.backgroundColor).toBe(background);
+                }
+            }
+        };
+
+        expectGroupStyles(['orange', 'green', '']);
+        // Removing the left fragment reuses its header for the unchanged right-pinned column.
+        api.setColumnsPinned(['a'], null);
+        expectGroupStyles(['green', '']);
+        api.setColumnsPinned(['b'], null);
+        expectGroupStyles(['']);
+        api.setColumnsPinned(['c'], 'left');
+        expectGroupStyles(['orange', '']);
+        api.setColumnsPinned(['a', 'b'], 'left');
+        expectGroupStyles(['orange']);
+        api.setColumnsPinned(['a', 'b', 'c'], null);
+        expectGroupStyles(['']);
+    });
+
     test.each<HeaderStyle | null | undefined>([undefined, null, {}, { color: 'green' }])(
         'removes stale header styles when unpinning returns %j',
         async (unpinnedStyle) => {
