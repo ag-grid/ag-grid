@@ -63,9 +63,10 @@ export class AgMenuList<
     constructor(
         private readonly level = 0,
         private readonly menuActionParams: WithoutCommon<TCommon, TMenuActionParams>,
-        private readonly callbacks: AgMenuItemCallbacks<TBeanCollection, TMenuActionParams, TCommon>
+        private readonly callbacks: AgMenuItemCallbacks<TBeanCollection, TMenuActionParams, TCommon>,
+        role: 'menu' | 'presentation' = 'menu'
     ) {
-        super({ tag: 'div', cls: 'ag-menu-list', role: 'menu' });
+        super({ tag: 'div', cls: 'ag-menu-list', role });
     }
 
     public postConstruct() {
