@@ -717,5 +717,35 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + 3 * ROW_HEIGHT);
             expect(offsetInView(api, 'r20')).toBe(-ROW_HEIGHT);
         });
+
+        test('keeps rows in view when an update sorted on the client adds an unbalanced group above them', async () => {
+            const groups = Array.from({ length: 200 }, (_, i) => ({ country: `c${String(i).padStart(3, '0')}` }));
+            const api = gridsManager.createGrid<Row>('myGrid', {
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true, sort: 'asc' }, { field: 'value' }],
+                rowModelType: 'serverSide',
+                getRowId: ({ data }) => data.id ?? data.country!,
+                rowHeight: ROW_HEIGHT,
+                maintainRowsInViewOnDataUpdate: true,
+                serverSideEnableClientSideSort: true,
+                groupAllowUnbalanced: true,
+                cacheBlockSize: groups.length,
+                serverSideDatasource: {
+                    getRows: ({ request, success }) => {
+                        const rows = request.groupKeys.length ? [{ id: 'leaf', value: 0, country: '' }] : groups;
+                        success({ rowData: rows.slice(request.startRow, request.endRow), rowCount: rows.length });
+                    },
+                },
+            });
+            await waitForEvent('firstDataRendered', api);
+            await waitForNoLoadingRows(api);
+            scrollTo(api, SCROLL_TOP);
+
+            // the unbalanced group is hidden, and its one row is not loaded yet
+            api.applyServerSideTransaction({ route: [], add: [{ country: '' }] as Row[] });
+
+            expect(api.getDisplayedRowAtIndex(0)!.stub).toBe(true);
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + ROW_HEIGHT);
+            expect(offsetInView(api, 'c020')).toBe(0);
+        });
     });
 });

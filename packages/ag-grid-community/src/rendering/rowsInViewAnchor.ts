@@ -16,8 +16,6 @@ export interface RowsInViewAnchor {
     rowTopsInView: number[];
     /** The rows the update created. */
     added: RowNode[];
-    /** The rows in `added` that are displayed, in display order, worked out once as the restore can be repeated. */
-    displayedAdded?: RowNode[];
     /** The pixel ranges of the rows the update removed from above the first visible pixel, which can overlap. */
     removed: [top: number, bottom: number][];
     /** The height `removed` covers, worked out once as the restore can be repeated. */
@@ -72,31 +70,52 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
  * as above it, so the rows after it stay where they were. Pinned rows are positioned in their own containers.
  */
 export function _recordRemovedRow(anchor: RowsInViewAnchor, rowNode: RowNode): void {
-    const { rowTop, rowHeight, childStore } = rowNode;
+    const { rowTop, rowHeight } = rowNode;
     const { firstVisiblePixel, removed } = anchor;
-    if (rowNode.rowPinned || rowTop == null || rowHeight == null || rowTop > firstVisiblePixel) {
+    if (rowNode.rowPinned) {
         return;
     }
-    removed.push([rowTop, rowTop + rowHeight]);
-    if (childStore && rowNode.expanded) {
-        // the rows of a server-side group that are not loaded have no row nodes, so its store's range stands in for them
-        const { topPx, heightPx } = childStore.getStoreBounds();
-        removed.push([topPx, Math.min(topPx + heightPx, firstVisiblePixel)]);
+    if (rowTop != null && rowHeight != null && rowTop <= firstVisiblePixel) {
+        removed.push([rowTop, rowTop + rowHeight]);
+    }
+    const storeRange = getStoreRange(rowNode);
+    if (storeRange && storeRange[0] < firstVisiblePixel) {
+        removed.push([storeRange[0], Math.min(storeRange[1], firstVisiblePixel)]);
     }
 }
 
-/** The height of the rows the update removed from above the first visible pixel, counting overlapping ranges once. */
-function getRemovedHeight(anchor: RowsInViewAnchor): number {
-    if (anchor.removedHeight == null) {
-        let removedHeight = 0;
-        let removedBottom = -Infinity;
-        for (const [top, bottom] of anchor.removed.sort((a, b) => a[0] - b[0])) {
-            removedHeight += Math.max(0, bottom - Math.max(top, removedBottom));
-            removedBottom = Math.max(removedBottom, bottom);
-        }
-        anchor.removedHeight = removedHeight;
+/**
+ * The pixel range of the rows of a server-side group, which counts its rows that are not loaded, as they have no row
+ * nodes. Its rows can be displayed while the group itself is hidden, such as an unbalanced group.
+ */
+function getStoreRange({ childStore }: RowNode): [top: number, bottom: number] | null {
+    if (childStore?.getDisplayIndexStart() == null) {
+        return null;
     }
-    return anchor.removedHeight;
+    const { topPx, heightPx } = childStore.getStoreBounds();
+    return [topPx, topPx + heightPx];
+}
+
+/**
+ * The height the pixel ranges cover, counting overlapping ranges once. With `getBottom`, stops at the first range
+ * starting below the pixel it returns for the height covered so far.
+ */
+function getCoveredHeight(ranges: [top: number, bottom: number][], getBottom?: (height: number) => number): number {
+    let height = 0;
+    let coveredBottom = -Infinity;
+    for (const [top, bottom] of ranges.sort((a, b) => a[0] - b[0])) {
+        if (getBottom && top > getBottom(height)) {
+            break;
+        }
+        height += Math.max(0, bottom - Math.max(top, coveredBottom));
+        coveredBottom = Math.max(coveredBottom, bottom);
+    }
+    return height;
+}
+
+/** The height of the rows the update removed from above the first visible pixel. */
+function getRemovedHeight(anchor: RowsInViewAnchor): number {
+    return (anchor.removedHeight ??= getCoveredHeight(anchor.removed));
 }
 
 function isDisplayed(beans: BeanCollection, rowNode: RowNode): boolean {
@@ -111,24 +130,37 @@ function isDisplayed(beans: BeanCollection, rowNode: RowNode): boolean {
     );
 }
 
+/**
+ * The pixel ranges of the rows the update added, read again on each restore, as working out the rows to render can
+ * resolve their heights.
+ */
+function getAddedRanges(beans: BeanCollection, anchor: RowsInViewAnchor): [top: number, bottom: number][] {
+    const ranges: [top: number, bottom: number][] = [];
+    for (const rowNode of anchor.added) {
+        if (isDisplayed(beans, rowNode)) {
+            // possibly an estimate, but the rows in view moved by this height; the caller restores again if it resolves
+            ranges.push([rowNode.rowTop!, rowNode.rowTop! + rowNode.rowHeight!]);
+        }
+        const storeRange = !rowNode.destroyed && getStoreRange(rowNode);
+        if (storeRange) {
+            ranges.push(storeRange);
+        }
+    }
+    return ranges;
+}
+
 /** The height of the rows the update added above the rows the user could see. */
 function getAddedHeightAbove(beans: BeanCollection, anchor: RowsInViewAnchor): number {
     const firstRowInView = anchor.rowsInView.find((rowNode) => isDisplayed(beans, rowNode));
-    const added = (anchor.displayedAdded ??= anchor.added
-        .filter((rowNode) => isDisplayed(beans, rowNode))
-        .sort((a, b) => a.rowIndex! - b.rowIndex!));
+    const added = getAddedRanges(beans, anchor);
+    if (firstRowInView) {
+        // the boundary is the first row in view still displayed, at its new position even when the update sorted it there
+        const boundary = firstRowInView.rowTop!;
+        return getCoveredHeight(added.filter(([top]) => top < boundary));
+    }
     // with every row in view removed, they are above it when the rows that were above those rows are all above them
     const keptHeight = anchor.firstVisiblePixel - getRemovedHeight(anchor);
-    let addedHeight = 0;
-    for (const { rowIndex, rowTop, rowHeight } of added) {
-        // the boundary is the first row in view still displayed, at its new position even when the update sorted it there
-        if (firstRowInView ? rowIndex! > firstRowInView.rowIndex! : rowTop! > keptHeight + addedHeight) {
-            break;
-        }
-        // possibly an estimate, but the rows in view moved by this height; the caller restores again if it resolves
-        addedHeight += rowHeight!;
-    }
-    return addedHeight;
+    return getCoveredHeight(added, (addedHeight) => keptHeight + addedHeight);
 }
 
 /**
@@ -157,7 +189,8 @@ function getFirstRowInViewMoved(beans: BeanCollection, anchor: RowsInViewAnchor)
  * re-sorts or filters, do not scroll the grid. Returns `true` if the grid scrolled.
  */
 export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnchor): boolean {
-    // server-side rows sorted on the client are all loaded, so are counted as client-side rows are
+    // server-side rows sorted on the client are loaded, or in the stores of the groups added or removed, so are counted
+    // as client-side rows are
     const rowsInViewMoved =
         _isClientSideRowModel(beans.gos) || anchor.sorted
             ? getAddedHeightAbove(beans, anchor) - getRemovedHeight(anchor)
