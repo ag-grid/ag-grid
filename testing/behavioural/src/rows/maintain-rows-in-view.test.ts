@@ -646,6 +646,21 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             expect(getViewport(api).scrollTop).toBe(scrollTop);
         });
 
+        test.each([0, 1, 2])(
+            'keeps the rows after the rows in view in view when every row in view and the next %i rows are removed',
+            (removedBelow) => {
+                const api = createGrid();
+                scrollTo(api, SCROLL_TOP);
+                const firstAfterView = Math.ceil(api.getVerticalPixelRange().bottom / ROW_HEIGHT);
+
+                api.applyTransaction({ remove: createRows('r', firstAfterView + removedBelow).slice(20) });
+
+                // the top row in view counts as above the rows after it, as when only it is removed
+                expect(getViewport(api).scrollTop).toBe(SCROLL_TOP - ROW_HEIGHT);
+                expect(offsetInView(api, `r${firstAfterView + removedBelow}`)).toBe(ROW_HEIGHT);
+            }
+        );
+
         test('keeps the top row in view when a row is added just below it', () => {
             const api = createGrid();
             scrollTo(api, SCROLL_TOP);
