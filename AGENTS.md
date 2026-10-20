@@ -69,7 +69,7 @@ Glob-scoped rules load automatically when you touch matching files; the skills b
 | Examples, validation, path mappings | `.rulesync/rules/examples.md` |
 | Documentation pages | `.rulesync/rules/docs-pages.md` |
 | Grid source conventions | `.rulesync/rules/grid-code-conventions.md` |
-| Shared code quality practices | `.rulesync/rules/code-quality.md` |
+| Shared code quality practices | `code-quality` rule from the ag-dev-prompts plugins (staged into `.rulesync/rules/` by `yarn`; absent in CI checkouts) |
 | Benchmarks | `.rulesync/rules/benchmarks.md` |
 | Technology stack and constraints | `/technology-stack` skill |
 | Dev server and build watch | `/ag-eng:dev-server` skill |
