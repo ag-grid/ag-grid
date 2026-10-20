@@ -10,6 +10,7 @@ import {
 import type {
     AgColumn,
     CalculatedColumnExpressionPicker,
+    CalculatedColumnExpressionValidation,
     CalculatedColumnUpdate,
     CalculatedColumnValidationReason,
     CalculatedColumnValidationState,
@@ -1300,6 +1301,15 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         return this.getFormulaExpressionError(expression) == null ? 'valid' : 'invalidExpression';
     }
 
+    private getExpressionValidation(column: AgColumn, expression: string): CalculatedColumnExpressionValidation {
+        const error = this.getExpressionError(column);
+        if (error) {
+            return { valid: false, reason: error.reason };
+        }
+        const state = this.getExpressionValidationState(expression);
+        return state === 'valid' ? { valid: true } : { valid: false, reason: state };
+    }
+
     private forEachCalculatedColumn(callback: (column: AgColumn, colId: string, expression: string) => void): void {
         const cols = this.beans.colModel.colDefList;
         for (let i = 0, len = cols.length; i < len; ++i) {
@@ -1370,7 +1380,12 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             return;
         }
         const commonParams = this.getEventCommonParams(column, colDef.calculatedExpression ?? '', source);
-        this.eventSvc.dispatchEvent({ type: 'calculatedColumnChanged', ...commonParams, changes });
+        this.eventSvc.dispatchEvent({
+            type: 'calculatedColumnChanged',
+            ...commonParams,
+            changes,
+            expressionValidation: this.getExpressionValidation(column, commonParams.expression),
+        });
         if (changes.calculatedExpression) {
             this.dispatchExpressionChangedEvent(commonParams, oldColDef.calculatedExpression ?? '');
         }
