@@ -307,7 +307,7 @@
 
     /* every border collapses to CanvasText, so only an outline can mark the focused cell */
     @media (forced-colors: active) {
-        outline: 2px solid Highlight;
+        outline: 2px solid var(--ag-internal-forced-colors-cell-focus-outline-color, Highlight);
         outline-offset: -2px;
     }
 }
