@@ -175,8 +175,8 @@ function getKeptInOrder(values: number[]): number[] {
  * How far the rows in view moved, or `null` when the update kept none of the rows captured. The top row in view that
  * kept its order, among the rows in view and the rows just outside them, is followed, so rows an update sorts
  * elsewhere, or reorders among themselves, count as having left the view, and rows added below it move only the rows
- * below them. With no row in view kept in order, the nearest row kept below the view is followed, then the nearest
- * above it. Rows in view that left from below the first visible pixel, removed or moved below the followed row, are
+ * below them. With no row in view kept in order, the nearest row below the view that kept its order among all the
+ * rows kept is followed, then the nearest above it. Rows in view that left from below the first visible pixel, removed or moved below the followed row, are
  * left for the rows after them to fill.
  */
 function getRowsInViewMoved(beans: BeanCollection, anchor: RowsInViewAnchor): number | null {
@@ -188,12 +188,16 @@ function getRowsInViewMoved(beans: BeanCollection, anchor: RowsInViewAnchor): nu
             !destroyed && rowIndex != null && rowTop != null && rowModel.getRow(rowIndex) === rows[i]
     );
     const kept = rows.flatMap((_, i) => (isKept[i] ? [i] : []));
+    const keptInOrder = (candidates: number[]) =>
+        getKeptInOrder(candidates.map((i) => rows[i].rowIndex!)).map((i) => candidates[i]);
+    // the rows far from the view take no part in the order of the rows in view, as a view sorted elsewhere as a whole
+    // would be as long as the rows below it
     const near = kept.filter((i) => i >= firstInView - 1 && i <= afterView);
-    const inOrder = getKeptInOrder(near.map((i) => rows[i].rowIndex!)).map((i) => near[i]);
+    const outside = keptInOrder(kept).filter((i) => i < firstInView || i >= afterView);
     const followed =
-        inOrder.find((i) => i >= firstInView && i < afterView) ??
-        kept.find((i) => i >= afterView) ??
-        kept.filter((i) => i < firstInView).pop();
+        keptInOrder(near).find((i) => i >= firstInView && i < afterView) ??
+        outside.find((i) => i >= afterView) ??
+        outside.pop();
     if (followed == null) {
         return null;
     }

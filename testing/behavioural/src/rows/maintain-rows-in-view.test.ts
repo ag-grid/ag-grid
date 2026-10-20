@@ -661,6 +661,20 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             }
         );
 
+        test('does not follow the row below the view when the update that removes every row in view sorts it elsewhere', () => {
+            const api = createGrid({ columnDefs: [{ field: 'value', sort: 'asc' }] });
+            scrollTo(api, SCROLL_TOP);
+            const firstAfterView = Math.ceil(api.getVerticalPixelRange().bottom / ROW_HEIGHT);
+
+            api.applyTransaction({
+                remove: createRows('r', firstAfterView).slice(20),
+                update: [{ id: `r${firstAfterView}`, value: 1000 }],
+            });
+
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP - ROW_HEIGHT);
+            expect(offsetInView(api, `r${firstAfterView + 1}`)).toBe(ROW_HEIGHT);
+        });
+
         test('keeps the top row in view when a row is added just below it', () => {
             const api = createGrid();
             scrollTo(api, SCROLL_TOP);
