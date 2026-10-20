@@ -18,8 +18,12 @@ export interface RowsInViewAnchor {
     added: RowNode[];
     /** The rows in `added` that are displayed, in display order, worked out once as the restore can be repeated. */
     displayedAdded?: RowNode[];
-    /** The height of the rows the update removed from above the first visible pixel. */
-    removedHeight: number;
+    /** The pixel ranges of the rows the update removed from above the first visible pixel, which can overlap. */
+    removed: [top: number, bottom: number][];
+    /** The height `removed` covers, worked out once as the restore can be repeated. */
+    removedHeight?: number;
+    /** Set when the update sorted server-side rows on the client, which moves rows without adding or removing them. */
+    sorted?: boolean;
 }
 
 /**
@@ -60,7 +64,7 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
         rowsInView.push(rowNode);
         rowTopsInView.push(rowNode.rowTop);
     }
-    return { viewportTop, firstVisiblePixel, pixelOffset, rowsInView, rowTopsInView, added: [], removedHeight: 0 };
+    return { viewportTop, firstVisiblePixel, pixelOffset, rowsInView, rowTopsInView, added: [], removed: [] };
 }
 
 /**
@@ -68,10 +72,31 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
  * as above it, so the rows after it stay where they were. Pinned rows are positioned in their own containers.
  */
 export function _recordRemovedRow(anchor: RowsInViewAnchor, rowNode: RowNode): void {
-    const { rowTop, rowHeight } = rowNode;
-    if (!rowNode.rowPinned && rowTop != null && rowHeight != null && rowTop <= anchor.firstVisiblePixel) {
-        anchor.removedHeight += rowHeight;
+    const { rowTop, rowHeight, childStore } = rowNode;
+    const { firstVisiblePixel, removed } = anchor;
+    if (rowNode.rowPinned || rowTop == null || rowHeight == null || rowTop > firstVisiblePixel) {
+        return;
     }
+    removed.push([rowTop, rowTop + rowHeight]);
+    if (childStore && rowNode.expanded) {
+        // the rows of a server-side group that are not loaded have no row nodes, so its store's range stands in for them
+        const { topPx, heightPx } = childStore.getStoreBounds();
+        removed.push([topPx, Math.min(topPx + heightPx, firstVisiblePixel)]);
+    }
+}
+
+/** The height of the rows the update removed from above the first visible pixel, counting overlapping ranges once. */
+function getRemovedHeight(anchor: RowsInViewAnchor): number {
+    if (anchor.removedHeight == null) {
+        let removedHeight = 0;
+        let removedBottom = -Infinity;
+        for (const [top, bottom] of anchor.removed.sort((a, b) => a[0] - b[0])) {
+            removedHeight += Math.max(0, bottom - Math.max(top, removedBottom));
+            removedBottom = Math.max(removedBottom, bottom);
+        }
+        anchor.removedHeight = removedHeight;
+    }
+    return anchor.removedHeight;
 }
 
 function isDisplayed(beans: BeanCollection, rowNode: RowNode): boolean {
@@ -93,7 +118,7 @@ function getAddedHeightAbove(beans: BeanCollection, anchor: RowsInViewAnchor): n
         .filter((rowNode) => isDisplayed(beans, rowNode))
         .sort((a, b) => a.rowIndex! - b.rowIndex!));
     // with every row in view removed, they are above it when the rows that were above those rows are all above them
-    const keptHeight = anchor.firstVisiblePixel - anchor.removedHeight;
+    const keptHeight = anchor.firstVisiblePixel - getRemovedHeight(anchor);
     let addedHeight = 0;
     for (const { rowIndex, rowTop, rowHeight } of added) {
         // the boundary is the first row in view still displayed, at its new position even when the update sorted it there
@@ -108,8 +133,8 @@ function getAddedHeightAbove(beans: BeanCollection, anchor: RowsInViewAnchor): n
 
 /**
  * How far the first row in view the update kept moved, less the rows in view it removed from below the first visible
- * pixel, which are left for the rows after them to fill. Server-side rows are never re-sorted on the client, so this
- * counts every row added or removed above, including rows that are not loaded or that the cache evicted.
+ * pixel, which are left for the rows after them to fill. For server-side rows the update did not sort on the client,
+ * this counts every row added or removed above, including rows that are not loaded or that the cache evicted.
  */
 function getFirstRowInViewMoved(beans: BeanCollection, anchor: RowsInViewAnchor): number {
     const { rowsInView, rowTopsInView, firstVisiblePixel } = anchor;
@@ -119,7 +144,7 @@ function getFirstRowInViewMoved(beans: BeanCollection, anchor: RowsInViewAnchor)
             !rowNode.destroyed && rowNode.rowIndex != null && beans.rowModel.getRow(rowNode.rowIndex) === rowNode
     );
     if (keptIndex === -1) {
-        return getAddedHeightAbove(beans, anchor) - anchor.removedHeight;
+        return getAddedHeightAbove(beans, anchor) - getRemovedHeight(anchor);
     }
     const keptTop = rowTopsInView[keptIndex];
     const removedInViewTop = rowTopsInView.slice(0, keptIndex).find((rowTop) => rowTop > firstVisiblePixel);
@@ -132,9 +157,11 @@ function getFirstRowInViewMoved(beans: BeanCollection, anchor: RowsInViewAnchor)
  * re-sorts or filters, do not scroll the grid. Returns `true` if the grid scrolled.
  */
 export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnchor): boolean {
-    const rowsInViewMoved = _isClientSideRowModel(beans.gos)
-        ? getAddedHeightAbove(beans, anchor) - anchor.removedHeight
-        : getFirstRowInViewMoved(beans, anchor);
+    // server-side rows sorted on the client are all loaded, so are counted as client-side rows are
+    const rowsInViewMoved =
+        _isClientSideRowModel(beans.gos) || anchor.sorted
+            ? getAddedHeightAbove(beans, anchor) - getRemovedHeight(anchor)
+            : getFirstRowInViewMoved(beans, anchor);
     // with pagination, rows added or removed before the page also move where the page starts
     const pixelOffsetChange = beans.pageBounds.getPixelOffset() - anchor.pixelOffset;
     const viewportTop = anchor.viewportTop + rowsInViewMoved - pixelOffsetChange;

@@ -766,6 +766,14 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
     }
 
+    /** Called when server-side rows are sorted on the client, so a data update kept in view does not follow the rows it moved. */
+    public onRowsSorted(): void {
+        const rowsInViewAnchor = this.rowsInViewAnchor;
+        if (rowsInViewAnchor) {
+            rowsInViewAnchor.sorted = true;
+        }
+    }
+
     private updateContainerHeights(additionalHeight = 0): void {
         const { rowContainerHeight } = this;
         // when doing print layout, we don't explicitly set height on the containers

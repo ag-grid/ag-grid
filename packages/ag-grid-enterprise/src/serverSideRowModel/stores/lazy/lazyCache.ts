@@ -1172,6 +1172,7 @@ export class LazyCache extends BeanStub {
         nodesMap.forEach((lazyNode) => (allNodes[lazyNode.index] = lazyNode.node));
         nodesMap.clear();
 
+        this.rowRenderer.onRowsSorted();
         const sortedNodes = rowNodeSorter.doFullSortInPlace(allNodes, sortOptions);
         for (let i = 0, len = sortedNodes.length; i < len; ++i) {
             const node = sortedNodes[i];

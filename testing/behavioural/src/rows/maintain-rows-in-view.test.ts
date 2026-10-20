@@ -538,6 +538,27 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             return api;
         };
 
+        /** A grid whose rows are all loaded, so it sorts them on the client after a transaction. */
+        const createClientSortedGrid = async () => {
+            const rowData = createRows('r', 200);
+            const api = gridsManager.createGrid<Row>('myGrid', {
+                columnDefs: [{ field: 'value', sort: 'asc' }],
+                rowModelType: 'serverSide',
+                getRowId: ({ data }) => data.id,
+                rowHeight: ROW_HEIGHT,
+                maintainRowsInViewOnDataUpdate: true,
+                serverSideEnableClientSideSort: true,
+                cacheBlockSize: rowData.length,
+                serverSideDatasource: {
+                    getRows: ({ request, success }) =>
+                        success({ rowData: rowData.slice(request.startRow, request.endRow), rowCount: rowData.length }),
+                },
+            });
+            await waitForEvent('firstDataRendered', api);
+            await waitForNoLoadingRows(api);
+            return api;
+        };
+
         test('keeps rows in view when a transaction adds rows above them', async () => {
             const api = await createGrid();
             scrollTo(api, SCROLL_TOP);
@@ -639,6 +660,62 @@ describe('maintainRowsInViewOnDataUpdate', () => {
 
             expect(getViewport(api).scrollTop).toBe(scrollTop - 1001 * ROW_HEIGHT);
             expect(offsetInView(api, 'B50')).toBe(offset);
+        });
+
+        test('keeps the rows after a removed group in view when the group contains every row in view', async () => {
+            const leaves = (country: string) =>
+                Array.from({ length: 1000 }, (_, i) => ({ id: `${country}${i}`, value: i, country }));
+            const groups: Record<string, Row[]> = { A: leaves('A'), B: leaves('B') };
+            const api = gridsManager.createGrid<Row>('myGrid', {
+                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'value' }],
+                rowModelType: 'serverSide',
+                getRowId: ({ data }) => data.id ?? data.country!,
+                rowHeight: ROW_HEIGHT,
+                maintainRowsInViewOnDataUpdate: true,
+                suppressRowVirtualisation: false,
+                cacheBlockSize: 100,
+                isServerSideGroupOpenByDefault: () => true,
+                serverSideDatasource: {
+                    getRows: ({ request, success }) => {
+                        const [country] = request.groupKeys;
+                        const rows = country ? groups[country] : Object.keys(groups).map((key) => ({ country: key }));
+                        success({ rowData: rows.slice(request.startRow, request.endRow), rowCount: rows.length });
+                    },
+                },
+            });
+            await waitForEvent('firstDataRendered', api);
+            // halfway through group A, with most of it never loaded
+            scrollTo(api, 500 * ROW_HEIGHT);
+            await waitForNoLoadingRows(api);
+            expect(api.getRowNode('A800')).toBeUndefined();
+
+            api.applyServerSideTransaction({ route: [], remove: [{ country: 'A' }] as Row[] });
+
+            expect(getViewport(api).scrollTop).toBe(0);
+            expect(api.getDisplayedRowAtIndex(0)!.id).toBe('B');
+        });
+
+        test('does not scroll when an update sorts the top row in view elsewhere on the client', async () => {
+            const api = await createClientSortedGrid();
+            scrollTo(api, SCROLL_TOP);
+
+            api.applyServerSideTransaction({ update: [{ id: 'r20', value: 1000 }] });
+
+            expect(api.getDisplayedRowAtIndex(199)!.id).toBe('r20');
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
+        });
+
+        test('scrolls only for the rows added when the same update sorts rows above the rows in view elsewhere on the client', async () => {
+            const api = await createClientSortedGrid();
+            scrollTo(api, SCROLL_TOP);
+
+            api.applyServerSideTransaction({
+                add: createRows('new', 3).map((row) => ({ ...row, value: -1 })),
+                update: [{ id: 'r19', value: 1000 }],
+            });
+
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + 3 * ROW_HEIGHT);
+            expect(offsetInView(api, 'r20')).toBe(-ROW_HEIGHT);
         });
     });
 });
