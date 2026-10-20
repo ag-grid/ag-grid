@@ -21,7 +21,7 @@ In this example:
 - The page has `button:not(#toolbar button)` and `input:not(#toolbar input)` rules. The ID gives them enough weight to outrank the grid's styles, so they restyle the floating filter inputs and pagination buttons.
 - Check `enableShadowDom` to recreate the grid in a shadow root, and the inputs and buttons go back to the grid's own styling. `enableShadowDom` is an initial property, so changing it needs a new grid.
 
-Page CSS that refers to the grid's elements, such as rules for the classes set by `cellClass`, `rowClass` or a cell component, does not reach a grid in a shadow root. [Theme parameters](./theming-parameters/), CSS variables, [theme modes](./theming-colors/#theme-modes) set on `<html>` or `<body>`, and the inline styles from `cellStyle` and `getRowStyle` still apply.
+Page CSS that refers to the grid's elements, such as rules for the classes set by `cellClass`, `rowClass` or a cell component, does not reach a grid in a shadow root. [Theme parameters](./theming-parameters/), CSS variables, [theme modes](./theming-colors/#theme-modes) set on `<html>` or `<body>`, and the inline styles from `cellStyle` and `getRowStyle` still apply. If the grid is created before its container is added to the page, or is moved afterwards, theme mode changes may not apply.
 
 {% note %}
 `enableShadowDom` does not apply when using a legacy theme, `themeStyleContainer` or `popupParent`. These put the grid's styles or popups in the page, where they would not work with the grid in a shadow root. With [development validations](./dev-validation/) enabled, the grid logs a warning when `enableShadowDom: true` is ignored.
