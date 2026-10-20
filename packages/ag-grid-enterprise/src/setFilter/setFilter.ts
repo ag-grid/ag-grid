@@ -772,8 +772,8 @@ export class SetFilter<V = string>
 
     private updateUiAfterMiniFilterChange(
         updateSelections: boolean,
-        apply?: 'immediately' | 'debounce',
-        announce = true
+        apply: 'immediately' | 'debounce' | undefined,
+        announce: boolean
     ): void {
         let effectiveApply = apply;
         if (updateSelections) {
@@ -811,7 +811,7 @@ export class SetFilter<V = string>
     private onMiniFilterKeyDown(e: KeyboardEvent): void {
         const { excelMode, readOnly } = this.params;
         if (e.key === KeyCode.ENTER && !excelMode && !readOnly) {
-            this.updateUiAfterMiniFilterChange(true, 'immediately');
+            this.updateUiAfterMiniFilterChange(true, 'immediately', true);
         }
     }
 
