@@ -47,11 +47,8 @@ printf '%s' "$CMD" | grep -Eq 'commit-tree|--dry-run' && allow
 ROOT=$(git -C "${CWD:-.}" rev-parse --show-toplevel 2>/dev/null) || allow
 cd "$ROOT" || allow
 
-# Gate only commits in the project that registered this hook, as track-edit.sh and
-# format-tracked.sh already scope to CLAUDE_PROJECT_DIR. A session can work in
-# another repository (a sibling repo, a scratch clone), and that repository's
-# commits follow its own formatting rules, not this project's. Worktrees of the
-# project share its git common dir, so they stay gated.
+# Gate only the registering project and its worktrees (same git common dir), as the
+# sibling hooks scope to CLAUDE_PROJECT_DIR: other repos follow their own rules.
 if [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
     common_dir() { git -C "$1" rev-parse --path-format=absolute --git-common-dir 2>/dev/null; }
     PROJECT_COMMON=$(common_dir "$CLAUDE_PROJECT_DIR") || allow
