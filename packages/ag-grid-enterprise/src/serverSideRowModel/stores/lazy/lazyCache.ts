@@ -514,7 +514,6 @@ export class LazyCache extends BeanStub {
                 // Restore the position destroyRowAtIndex cleared, so the node is displayed again and
                 // the move to its new index animates from where the row was rather than fading in.
                 deletedNode.setRowTop(deletedNode.oldRowTop);
-                this.rowRenderer.onRowNodeAdded(deletedNode); // as its removal was reported
                 this.blockUtils.updateDataIntoRowNode(deletedNode, data);
                 this.nodeMap.set({
                     id: deletedNode.id!,
@@ -1172,7 +1171,6 @@ export class LazyCache extends BeanStub {
         nodesMap.forEach((lazyNode) => (allNodes[lazyNode.index] = lazyNode.node));
         nodesMap.clear();
 
-        this.rowRenderer.onRowsSorted();
         const sortedNodes = rowNodeSorter.doFullSortInPlace(allNodes, sortOptions);
         for (let i = 0, len = sortedNodes.length; i < len; ++i) {
             const node = sortedNodes[i];

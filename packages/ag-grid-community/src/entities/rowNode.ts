@@ -340,7 +340,6 @@ export class RowNode<TData = any>
 
     constructor(beans: BeanCollection) {
         this.beans = beans;
-        beans.rowRenderer?.onRowNodeAdded(this);
     }
 
     /**

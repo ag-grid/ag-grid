@@ -738,7 +738,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     /**
      * Runs a row data update, keeping the rows in view where they are when `maintainRowsInViewOnDataUpdate` is
-     * set and rows are added or removed above them. The update must redraw synchronously.
+     * set, however the update moves them. The update must redraw synchronously.
      */
     public maintainRowsInView<T>(update: () => T): T {
         const { gos, gridBodyCtrl, printLayout, rowsInViewAnchor } = this;
@@ -753,24 +753,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
         }
     }
 
-    /** Called as each row node is created, or taken back after its removal, so a data update kept in view knows the rows it added. */
-    public onRowNodeAdded(rowNode: RowNode): void {
-        this.rowsInViewAnchor?.added.push(rowNode);
-    }
-
     /** Called as each row node is removed, before it loses its position, so a data update kept in view knows the rows it removed. */
     public onRowNodeRemoved(rowNode: RowNode): void {
         const rowsInViewAnchor = this.rowsInViewAnchor;
         if (rowsInViewAnchor) {
             _recordRemovedRow(rowsInViewAnchor, rowNode);
-        }
-    }
-
-    /** Called when server-side rows are sorted on the client, so a data update kept in view does not follow the rows it moved. */
-    public onRowsSorted(): void {
-        const rowsInViewAnchor = this.rowsInViewAnchor;
-        if (rowsInViewAnchor) {
-            rowsInViewAnchor.sorted = true;
         }
     }
 

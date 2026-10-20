@@ -2,11 +2,11 @@
 title: "Maintaining Rows in View"
 ---
 
-Keep the rows the user is looking at in place when rows are added or removed above them by a background update.
+Keep the rows the user is looking at in place when a background update moves them.
 
 By default, when rows are added above the rows in view, the rows in view move down, and when rows above them are removed, they move up. This can make it hard to read a grid that is receiving a stream of updates, as the rows keep moving away while the user reads them.
 
-Set `maintainRowsInViewOnDataUpdate=true` to make the grid scroll by the height of the rows added or removed above, so the rows in view stay where they are:
+Set `maintainRowsInViewOnDataUpdate=true` to make the grid scroll with the rows in view, so they stay where they are:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -22,7 +22,9 @@ The rows are kept in view when the update comes from:
 - [Transactions](./data-update-transactions/) and [Async Transactions](./data-update-high-frequency/).
 - [Server-Side Transactions](./server-side-model-updating-transactions/), synchronous and asynchronous, when using the Server-Side Row Model.
 
-The grid does not scroll while it is scrolled to the top of the grid, so rows added at the top come into view. Changes the user makes, such as sorting, filtering or expanding groups, do not keep the rows in view. Only rows added or removed are compensated for: when an update moves rows by sorting or filtering them, the grid does not scroll. Rows added in the same update are counted from where the top row in view is after the update, so when the update also sorts that row elsewhere, rows added before its new position are compensated for.
+The grid follows the rows in view however the update moves them: adding or removing rows above them, sorting or filtering rows above them, or sorting the rows in view themselves elsewhere. Rows in view that the update removes, or sorts elsewhere on their own, leave the view, and the rows after them take their place. Rows added between the rows in view push down only the rows below them.
+
+The grid does not scroll while it is scrolled to the top of the grid, so rows added at the top come into view. Changes the user makes, such as sorting, filtering or expanding groups, do not keep the rows in view.
 
 Rows with [different heights](./row-height/) are supported. When `animateRows` is enabled, the rows in view do not animate as the grid scrolls to keep them in place.
 
