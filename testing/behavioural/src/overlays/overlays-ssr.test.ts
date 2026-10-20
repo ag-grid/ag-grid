@@ -1,4 +1,4 @@
-import { GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from 'ag-test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, isAgHtmlElementVisible } from 'ag-test-utils';
 
 import {
     ServerSideRowModelApiModule,
@@ -205,5 +205,21 @@ describe('ag-grid overlays state', () => {
         expect(hasLoadingIcon()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(false);
         expect(hasNoMatchingRowsOverlay()).toBe(false);
+    });
+
+    test('fires rowCountReady once across datasource resets', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'athlete' }],
+            rowModelType: 'serverSide',
+        });
+
+        let rowCountReady = 0;
+        // rowCountReady is an internal event, so it is not on the public addEventListener type
+        api.addEventListener('rowCountReady' as any, () => rowCountReady++);
+        api.setGridOption('serverSideDatasource', { getRows: () => {} });
+        api.setGridOption('serverSideDatasource', { getRows: () => {} });
+        await asyncSetTimeout(0);
+
+        expect(rowCountReady).toBe(1);
     });
 });
