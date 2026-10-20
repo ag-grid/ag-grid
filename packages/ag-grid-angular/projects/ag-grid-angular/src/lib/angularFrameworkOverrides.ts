@@ -15,8 +15,13 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
 
     private readonly runOutside: <T>(callback: () => T, source?: FrameworkOverridesIncomingSource) => T;
 
+    /** False when zoneless (`NoopNgZone` or no zone): nothing is ever wrapped, so no listener needs tracking. */
+    private readonly hasZone: boolean;
+
     constructor(private readonly _ngZone: NgZone) {
         super('angular');
+
+        this.hasZone = this._ngZone instanceof NgZone;
 
         this.isRunningWithinTestZone =
             (window as any)?.AG_GRID_UNDER_TEST ?? !!(window as any)?.Zone?.AsyncTestZoneSpec;
@@ -68,17 +73,14 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
         existingFrameworkEventListenerService: IFrameworkEventListenerService<any, any> | undefined,
         localEventService: LocalEventService<any>
     ): IFrameworkEventListenerService<any, any> | undefined {
-        if (this.shouldWrapOutgoing) {
-            return (
-                existingFrameworkEventListenerService ??
-                (() => {
-                    localEventService.setFrameworkOverrides(this);
-                    return new AngularFrameworkEventListenerService(this);
-                })()
-            );
+        if (!this.hasZone) {
+            return existingFrameworkEventListenerService;
         }
-
-        return undefined;
+        // on every in-zone add: a RowNode replaces its LocalEventService once its last listener is removed
+        if (this.shouldWrapOutgoing) {
+            localEventService.setFrameworkOverrides(this);
+        }
+        return existingFrameworkEventListenerService ?? new AngularFrameworkEventListenerService(this);
     }
 
     public createGlobalEventListenerWrapper(): IFrameworkEventListenerService<any, any> {

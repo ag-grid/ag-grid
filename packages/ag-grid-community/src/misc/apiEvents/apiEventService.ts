@@ -10,7 +10,6 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
 
     private readonly syncListeners: Map<AgEventType, Set<AgEventListener>> = new Map();
     private readonly asyncListeners: Map<AgEventType, Set<AgEventListener>> = new Map();
-    private readonly syncGlobalListeners: Set<AgGlobalEventListener> = new Set();
     private readonly globalListenerPairs = new Map<
         AgGlobalEventListener,
         { syncListener: AgGlobalEventListener; asyncListener: AgGlobalEventListener }
@@ -44,9 +43,13 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
     }
 
     public addGlobalListener(userListener: AgGlobalEventListener): void {
+        const globalListenerPairs = this.globalListenerPairs;
+        if (globalListenerPairs.has(userListener)) {
+            return;
+        }
         const listener = this.wrapSvc?.wrapGlobal(userListener) ?? userListener;
 
-        // if async then need to setup the global listener for sync to handle alwaysSyncGlobalEvents
+        // a sync and an async listener, so ALWAYS_SYNC_GLOBAL_EVENTS reach the user synchronously
         const syncListener: AgGlobalEventListener = (eventType, event) => {
             if (ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType)) {
                 listener(eventType, event);
@@ -57,26 +60,19 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
                 listener(eventType, event);
             }
         };
-        this.globalListenerPairs.set(userListener, { syncListener, asyncListener });
+        globalListenerPairs.set(userListener, { syncListener, asyncListener });
         const eventSvc = this.eventSvc;
         eventSvc.addGlobalListener(syncListener, false);
         eventSvc.addGlobalListener(asyncListener, true);
     }
 
     public removeGlobalListener(userListener: AgGlobalEventListener): void {
-        const { eventSvc, wrapSvc, globalListenerPairs } = this;
-        const listener = wrapSvc?.unwrapGlobal(userListener) ?? userListener;
-
-        const hasAsync = globalListenerPairs.has(listener);
-        if (hasAsync) {
-            // If it was async also remove the always sync listener we added
-            const { syncListener, asyncListener } = globalListenerPairs.get(listener)!;
-            eventSvc.removeGlobalListener(syncListener, false);
-            eventSvc.removeGlobalListener(asyncListener, true);
+        const { eventSvc, globalListenerPairs } = this;
+        const pair = globalListenerPairs.get(userListener);
+        if (pair) {
+            eventSvc.removeGlobalListener(pair.syncListener, false);
+            eventSvc.removeGlobalListener(pair.asyncListener, true);
             globalListenerPairs.delete(userListener);
-        } else {
-            this.syncGlobalListeners.delete(listener);
-            eventSvc.removeGlobalListener(listener, false);
         }
     }
 
@@ -88,19 +84,11 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
         map.clear();
     }
 
-    private destroyGlobalListeners(set: Set<AgGlobalEventListener>, async: boolean): void {
-        for (const listener of set) {
-            this.eventSvc.removeGlobalListener(listener, async);
-        }
-        set.clear();
-    }
-
     public override destroy(): void {
         super.destroy();
 
         this.destroyEventListeners(this.syncListeners, false);
         this.destroyEventListeners(this.asyncListeners, true);
-        this.destroyGlobalListeners(this.syncGlobalListeners, false);
         const { globalListenerPairs, eventSvc } = this;
         globalListenerPairs.forEach(({ syncListener, asyncListener }) => {
             eventSvc.removeGlobalListener(syncListener, false);

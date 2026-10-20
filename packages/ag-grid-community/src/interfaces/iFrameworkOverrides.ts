@@ -4,7 +4,10 @@ import type { IFrameworkEventListenerService } from './iFrameworkEventListenerSe
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface IFrameworkOverrides extends AgFrameworkOverrides {
-    /** Used for Angular event listener wrapping */
+    /**
+     * Used for Angular event listener wrapping: the service to wrap a row node or column listener with, or `undefined`
+     * when listeners are not wrapped; may also set the framework overrides on `localEventService`.
+     */
     createLocalEventListenerWrapper?(
         existingFrameworkEventListenerService: IFrameworkEventListenerService<any, any> | undefined,
         localEventService: LocalEventService<any>
