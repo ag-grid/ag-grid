@@ -75,6 +75,79 @@ describe('sort priority announcements', () => {
         expect(document.activeElement?.getAttribute('aria-sort')).toBe('descending');
     });
 
+    test('announces priority changes from Shift+Enter without moving focus', async () => {
+        const api = await grids.createGridAndWait('sort-keyboard-aria', {
+            columnDefs: [{ field: 'gold', sort: 'desc' }, { field: 'total' }],
+            rowData,
+        });
+
+        api.setFocusedHeader('total');
+        await expectAnnouncement(api, shortcuts);
+        const header = document.activeElement;
+
+        await userEvent.keyboard('{Shift>}{Enter}{/Shift}');
+        await expectAnnouncement(api, `Sort priority 2 of 2. ${shortcuts}`);
+        expect(document.activeElement).toBe(header);
+        expect(header?.getAttribute('aria-sort')).toBe('ascending');
+
+        await userEvent.keyboard('{Shift>}{Enter}{Enter}{/Shift}');
+        await expectAnnouncement(api, shortcuts);
+        expect(document.activeElement).toBe(header);
+        expect(header?.getAttribute('aria-sort')).toBe('none');
+    });
+
+    test('announces API priority changes without moving focus', async () => {
+        const api = await grids.createGridAndWait('sort-focused-state-aria', {
+            columnDefs: [
+                { field: 'gold', sort: 'desc', sortIndex: 0 },
+                { field: 'total', sort: 'asc', sortIndex: 1 },
+            ],
+            rowData,
+        });
+
+        api.setFocusedHeader('gold');
+        await expectAnnouncement(api, `Sort priority 1 of 2. ${shortcuts}`);
+        const header = document.activeElement;
+
+        api.applyColumnState({
+            state: [
+                { colId: 'gold', sortIndex: 1 },
+                { colId: 'total', sortIndex: 0 },
+            ],
+        });
+        await expectAnnouncement(api, `Sort priority 2 of 2. ${shortcuts}`);
+        expect(document.activeElement).toBe(header);
+
+        api.applyColumnState({ state: [{ colId: 'total', sort: null }] });
+        await expectAnnouncement(api, shortcuts);
+        expect(document.activeElement).toBe(header);
+    });
+
+    test.each(['initial', 'API'] as const)('announces %s sort priorities on non-sortable columns', async (source) => {
+        const api = await grids.createGridAndWait('sort-fixed-aria', {
+            columnDefs: [
+                { field: 'gold', sort: source === 'initial' ? 'desc' : undefined },
+                { field: 'total', sort: source === 'initial' ? 'asc' : undefined },
+            ],
+            defaultColDef: { sortable: false },
+            rowData,
+        });
+
+        if (source === 'API') {
+            api.applyColumnState({
+                state: [
+                    { colId: 'gold', sort: 'desc', sortIndex: 0 },
+                    { colId: 'total', sort: 'asc', sortIndex: 1 },
+                ],
+            });
+        }
+
+        api.setFocusedHeader('gold');
+        await expectAnnouncement(api, 'Sort priority 1 of 2. Press ALT DOWN to open column menu');
+        await userEvent.keyboard('{ArrowRight}');
+        await expectAnnouncement(api, 'Sort priority 2 of 2. Press ALT DOWN to open column menu');
+    });
+
     test('supports reordered locale placeholders and the column-selection sort shortcut', async () => {
         const api = await grids.createGridAndWait('sort-locale-aria', {
             columnDefs: [
