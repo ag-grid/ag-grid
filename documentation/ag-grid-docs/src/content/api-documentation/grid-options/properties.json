@@ -2233,12 +2233,7 @@
             }
         },
         "themeStyleContainer": {},
-        "enableShadowDom": {
-            "more": {
-                "name": "Shadow DOM",
-                "url": "./shadow-dom/"
-            }
-        },
+        "enableShadowDom": {},
         "themeCssLayer": {
             "more": {
                 "name": "CSS Layers",
