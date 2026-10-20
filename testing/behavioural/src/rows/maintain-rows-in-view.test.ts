@@ -529,6 +529,63 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             expect(offsetInView(api, 'r20')).toBe(offset);
         });
 
+        test('keeps the top row in view when a row is added just below it', () => {
+            const api = createGrid();
+            scrollTo(api, SCROLL_TOP);
+
+            api.applyTransaction({ add: [{ id: 'new', value: 20.5 }], addIndex: 21 });
+
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
+            expect(offsetInView(api, 'r20')).toBe(0);
+            expect(offsetInView(api, 'new')).toBe(ROW_HEIGHT);
+        });
+
+        test('does not scroll when an update re-sorts every row in view among themselves', () => {
+            const api = createGrid({ columnDefs: [{ field: 'value', sort: 'asc' }] });
+            scrollTo(api, SCROLL_TOP);
+            const { bottom } = api.getVerticalPixelRange();
+            const lastInView = Math.ceil(bottom / ROW_HEIGHT) - 1;
+            const update = createRows('r', 200)
+                .slice(20, lastInView + 1)
+                .map((row) => ({ ...row, value: 20 + lastInView - row.value }));
+
+            api.applyTransaction({ update });
+
+            expect(api.getDisplayedRowAtIndex(lastInView)!.id).toBe('r20');
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP);
+        });
+
+        test('keeps the rows after the rows in view in view when an update filters out every row in view', () => {
+            const api = createGrid({
+                isExternalFilterPresent: () => true,
+                doesExternalFilterPass: ({ data }) => data!.value < 1000,
+            });
+            scrollTo(api, SCROLL_TOP + 10);
+
+            api.applyTransaction({ update: createRows('r', 40).map((row) => ({ ...row, value: row.value + 1000 })) });
+
+            expect(getViewport(api).scrollTop).toBe(0);
+            expect(api.getDisplayedRowAtIndex(0)!.id).toBe('r40');
+        });
+
+        test('counts rows added above the rows in view when the same update removes every row in view', () => {
+            const api = createGrid();
+            scrollTo(api, SCROLL_TOP);
+            const { bottom } = api.getVerticalPixelRange();
+            const firstAfterView = Math.ceil(bottom / ROW_HEIGHT);
+            const offset = offsetInView(api, `r${firstAfterView}`);
+
+            api.applyTransaction({
+                add: createRows('new', 3),
+                addIndex: 0,
+                remove: createRows('r', firstAfterView).slice(20),
+            });
+
+            // as when only the rows in view are removed, the top row in view counts as above them
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + 3 * ROW_HEIGHT - ROW_HEIGHT);
+            expect(offsetInView(api, `r${firstAfterView}`)).toBe(offset - (firstAfterView - 21) * ROW_HEIGHT);
+        });
+
         test('does not scroll on sorting', () => {
             const api = createGrid({ columnDefs: [{ field: 'value', sortable: true }] });
             scrollTo(api, SCROLL_TOP);

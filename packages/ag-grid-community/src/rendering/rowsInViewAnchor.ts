@@ -9,12 +9,19 @@ export interface RowsInViewAnchor {
     firstVisiblePixel: number;
     /** The page's pixel offset before the update. */
     pixelOffset: number;
-    /** In display order, the rows the user could see before the update. */
-    rowsInView: RowNode[];
-    /** The `rowTop` of each of `rowsInView` before the update. */
-    rowTopsInView: number[];
-    /** The `rowHeight` of each of `rowsInView` before the update. */
-    rowHeightsInView: number[];
+    /**
+     * In display order, the rows displayed before the update from a view's height above the rows the user could see to
+     * a view's height below them.
+     */
+    rows: RowNode[];
+    /** The `rowTop` of each of `rows` before the update. */
+    rowTops: number[];
+    /** The `rowHeight` of each of `rows` before the update. */
+    rowHeights: number[];
+    /** The index in `rows` of the first row the user could see. */
+    firstInView: number;
+    /** The index in `rows` after the last row the user could see. */
+    afterView: number;
     /** The pixel ranges of the rows the update removed from above the first visible pixel, which can overlap. */
     removed: [top: number, bottom: number][];
     /** The height `removed` covers, worked out once as the restore can be repeated. */
@@ -41,27 +48,49 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
     // rows under the sticky rows are hidden, so rows added or removed there move the rows the user can see
     const firstVisiblePixel = viewportTop + ctrlsSvc.getGridBodyCtrl().stickyTopHeight + pixelOffset;
     const viewportBottom = bottom + rowContainerHeight.divStretchOffset + pixelOffset;
-    const rowsInView: RowNode[] = [];
-    const rowTopsInView: number[] = [];
-    const rowHeightsInView: number[] = [];
+    const rows: RowNode[] = [];
+    const rowTops: number[] = [];
+    const rowHeights: number[] = [];
+    const firstRow = pageBounds.getFirstRow();
     const lastRow = pageBounds.getLastRow();
-    for (
-        let i = Math.max(rowModel.getRowIndexAtPixel(firstVisiblePixel), pageBounds.getFirstRow());
-        i <= lastRow;
-        ++i
-    ) {
+    // the rows outside the view are followed when the update removes or reorders every row in view
+    const viewHeight = viewportBottom - firstVisiblePixel;
+    const firstIndexInView = Math.max(rowModel.getRowIndexAtPixel(firstVisiblePixel), firstRow);
+    let firstInView = 0;
+    let afterView = -1;
+    for (let i = Math.max(rowModel.getRowIndexAtPixel(firstVisiblePixel - viewHeight), firstRow); i <= lastRow; ++i) {
         const rowNode = rowModel.getRow(i);
         if (rowNode?.rowTop == null || rowNode.rowHeight == null) {
             continue;
         }
-        if (rowsInView.length && rowNode.rowTop >= viewportBottom) {
-            break;
+        if (i < firstIndexInView) {
+            firstInView = rows.length + 1;
+        } else if (rows.length > firstInView) {
+            if (rowNode.rowTop >= viewportBottom + viewHeight) {
+                break;
+            }
+            if (afterView === -1 && rowNode.rowTop >= viewportBottom) {
+                afterView = rows.length;
+            }
         }
-        rowsInView.push(rowNode);
-        rowTopsInView.push(rowNode.rowTop);
-        rowHeightsInView.push(rowNode.rowHeight);
+        rows.push(rowNode);
+        rowTops.push(rowNode.rowTop);
+        rowHeights.push(rowNode.rowHeight);
     }
-    return { viewportTop, firstVisiblePixel, pixelOffset, rowsInView, rowTopsInView, rowHeightsInView, removed: [] };
+    if (afterView === -1) {
+        afterView = rows.length;
+    }
+    return {
+        viewportTop,
+        firstVisiblePixel,
+        pixelOffset,
+        rows,
+        rowTops,
+        rowHeights,
+        firstInView,
+        afterView,
+        removed: [],
+    };
 }
 
 /**
@@ -109,64 +138,73 @@ function getRemovedHeight(anchor: RowsInViewAnchor): number {
     return anchor.removedHeight;
 }
 
-/** The indexes of the longest sequence of `values`, not necessarily adjacent, that is in increasing order. */
-function getLongestIncreasing(values: number[]): number[] {
-    const lengths: number[] = [];
-    const previous: number[] = [];
-    let last = -1;
+/**
+ * The indexes of the `values` in every longest sequence of them, not necessarily adjacent, that is in increasing order.
+ * These are the values that kept their order, leaving out values that could swap places with others in the sequence.
+ */
+function getKeptInOrder(values: number[]): number[] {
+    const longestEndingAt = values.map(() => 1);
+    const longestStartingAt = values.map(() => 1);
     for (let i = 0; i < values.length; ++i) {
-        lengths.push(1);
-        previous.push(-1);
         for (let j = 0; j < i; ++j) {
-            if (values[j] < values[i] && lengths[j] + 1 > lengths[i]) {
-                lengths[i] = lengths[j] + 1;
-                previous[i] = j;
+            if (values[j] < values[i]) {
+                longestEndingAt[i] = Math.max(longestEndingAt[i], longestEndingAt[j] + 1);
             }
         }
-        if (last === -1 || lengths[i] > lengths[last]) {
-            last = i;
+    }
+    for (let i = values.length - 1; i >= 0; --i) {
+        for (let j = i + 1; j < values.length; ++j) {
+            if (values[i] < values[j]) {
+                longestStartingAt[i] = Math.max(longestStartingAt[i], longestStartingAt[j] + 1);
+            }
         }
     }
-    const indexes: number[] = [];
-    for (let i = last; i !== -1; i = previous[i]) {
-        indexes.push(i);
+    const longest = Math.max(0, ...longestEndingAt);
+    const inLongest = values.flatMap((_, i) => (longestEndingAt[i] + longestStartingAt[i] - 1 === longest ? [i] : []));
+    // a value is in every longest sequence when no other value can take its place in one
+    const countAtPlace = new Map<number, number>();
+    for (const i of inLongest) {
+        countAtPlace.set(longestEndingAt[i], (countAtPlace.get(longestEndingAt[i]) ?? 0) + 1);
     }
-    return indexes.reverse();
+    return inLongest.filter((i) => countAtPlace.get(longestEndingAt[i]) === 1);
 }
 
 /**
- * How far the rows in view moved, or `null` when the update kept none of them. Only the rows that kept their order
- * are followed, so rows an update sorts elsewhere count as having left the view. Rows in view that left from below
- * the first visible pixel, removed or moved below a row, are left for the rows after them to fill, and rows added
- * between rows in view move only the rows below them, so the first rows that moved together are followed.
+ * How far the rows in view moved, or `null` when the update kept none of the rows captured. The top row in view that
+ * kept its order, among the rows in view and the rows just outside them, is followed, so rows an update sorts
+ * elsewhere, or reorders among themselves, count as having left the view, and rows added below it move only the rows
+ * below them. With no row in view kept in order, the row just below the view is followed, then the row just above,
+ * then, as when the update removed them all, the nearest row kept below them, then above them. Rows in view that left
+ * from below the first visible pixel, removed or moved below the followed row, are left for the rows after them to fill.
  */
 function getRowsInViewMoved(beans: BeanCollection, anchor: RowsInViewAnchor): number | null {
-    const { rowsInView, rowTopsInView, rowHeightsInView, firstVisiblePixel } = anchor;
+    const { rows, rowTops, rowHeights, firstInView, afterView, firstVisiblePixel } = anchor;
     const { rowModel } = beans;
-    // a loading row in view counts as kept, as it is still there
-    const isKept = rowsInView.map(
+    // a loading row counts as kept, as it is still there
+    const isKept = rows.map(
         ({ destroyed, rowIndex, rowTop }, i) =>
-            !destroyed && rowIndex != null && rowTop != null && rowModel.getRow(rowIndex) === rowsInView[i]
+            !destroyed && rowIndex != null && rowTop != null && rowModel.getRow(rowIndex) === rows[i]
     );
-    const kept = rowsInView.flatMap((_, i) => (isKept[i] ? [i] : []));
-    const inOrder = getLongestIncreasing(kept.map((i) => rowsInView[i].rowIndex!)).map((i) => kept[i]);
-    const moves = inOrder.map((i) => {
-        const rowTop = rowsInView[i].rowTop!;
-        let move = rowTop - rowTopsInView[i];
-        for (let j = 0; j < i; ++j) {
-            const leftAbove = !isKept[j] || rowsInView[j].rowTop! >= rowTop;
-            if (leftAbove && rowTopsInView[j] > firstVisiblePixel) {
-                move += rowHeightsInView[j];
-            }
-        }
-        return move;
-    });
-    if (!moves.length) {
+    const kept = rows.flatMap((_, i) => (isKept[i] ? [i] : []));
+    const near = kept.filter((i) => i >= firstInView - 1 && i <= afterView);
+    const inOrder = getKeptInOrder(near.map((i) => rows[i].rowIndex!)).map((i) => near[i]);
+    const followed =
+        inOrder.find((i) => i >= firstInView) ??
+        inOrder[0] ??
+        kept.find((i) => i > afterView) ??
+        kept.filter((i) => i < firstInView).pop();
+    if (followed == null) {
         return null;
     }
-    // with no rows moving together, such as when the rows in view resolve their heights, the top row is followed
-    const firstMovedTogether = moves.findIndex((move, i) => move === moves[i + 1]);
-    return moves[Math.max(firstMovedTogether, 0)];
+    const rowTop = rows[followed].rowTop!;
+    let moved = rowTop - rowTops[followed];
+    for (let i = 0; i < followed; ++i) {
+        const leftAbove = !isKept[i] || rows[i].rowTop! >= rowTop;
+        if (leftAbove && rowTops[i] > firstVisiblePixel) {
+            moved += rowHeights[i];
+        }
+    }
+    return moved;
 }
 
 /**
