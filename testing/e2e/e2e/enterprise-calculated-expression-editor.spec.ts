@@ -85,3 +85,34 @@ test.describe('calculated expression editor in a real browser', () => {
         }).toPass();
     });
 });
+
+for (const shadowDom of [false, true]) {
+    test(`the expression field points at the highlighted suggestion with the grid ${shadowDom ? 'inside' : 'outside'} a shadow root`, async ({
+        page,
+    }) => {
+        const { headerCell } = await mountGrid(page, {
+            enterprise: true,
+            shadowDom,
+            options: () => ({
+                calculatedColumns: { applyMode: 'deferred' },
+                columnDefs: [
+                    { field: 'revenue' },
+                    { field: 'cost' },
+                    { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+                ],
+                rowData: [{ revenue: 10, cost: 3 }],
+            }),
+        });
+        const header = headerCell('profit');
+        await header.hover();
+        await header.locator('.ag-header-cell-menu-button').click();
+        await page.locator('.ag-menu-option-text', { hasText: 'Edit Calculated Column' }).click();
+
+        const input = page.locator('.ag-calculated-column-form textarea');
+        await input.fill('[Rev');
+        await input.press('ArrowDown');
+        const activeId = await input.getAttribute('aria-activedescendant');
+        expect(activeId).toBeTruthy();
+        await expect(page.locator(`[id="${activeId}"]`)).toHaveAttribute('role', 'option');
+    });
+}
