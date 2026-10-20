@@ -65,6 +65,7 @@ When inspecting the DOM you'll notice the following roles and properties have be
     - **aria-rowindex** - announces the visible index of the row.
     - **aria-selected** - only present if the row is selectable, it announces the selection state.
     - **aria-expanded** - present on expandable group and master rows, it announces the expansion state.
+    - **aria-level** - present on data rows inside a `treegrid`, it exposes the row's hierarchy depth, starting at 1. Hiding open parents preserves depth; removing groups and promoting their children reduces it.
 - **role="columnheader"** - element containing a column header.
     - **aria-colindex** - announces the index of the column among all columns, hidden columns included.
     - **aria-colspan** - only present if the header spans across multiple columns, hidden columns included, it helps guide screen readers.

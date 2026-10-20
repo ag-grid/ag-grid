@@ -85,7 +85,7 @@ export function _setAriaInvalid(element: Element, invalid: boolean) {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _setAriaLevel(element: Element, level: number): void {
+export function _setAriaLevel(element: Element, level?: number): void {
     _toggleAriaAttribute(element, 'level', level);
 }
 

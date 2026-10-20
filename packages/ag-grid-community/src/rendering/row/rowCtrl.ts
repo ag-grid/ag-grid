@@ -8,6 +8,7 @@ import {
     _isVisible,
     _makeNull,
     _setAriaExpanded,
+    _setAriaLevel,
     _setAriaRowIndex,
 } from 'ag-stack';
 
@@ -29,6 +30,7 @@ import type {
 } from '../../events';
 import {
     _addGridCommonParams,
+    _canSkipShowingRowGroup,
     _getConfiguredRowHeight,
     _getGrandTotalRow,
     _isAnimateRows,
@@ -37,6 +39,7 @@ import {
     _isFullWidthGroupRow,
     _isGetRowHeightFunction,
     _isRowSelection,
+    _isServerSideRowModel,
     _setDomData,
 } from '../../gridOptionsUtils';
 import type { PinnedSectionWidths } from '../../headerRendering/headerUtils';
@@ -307,6 +310,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
         if (this.rowNode.isExpandable()) {
             _setAriaExpanded(element, !!this.rowNode.expanded);
         }
+        this.refreshAriaLevel();
 
         this.setRowCompRowId();
         this.setRowCompRowBusinessKey();
@@ -640,6 +644,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
             cellEditValuesChanged: releaseAfterEdit,
             paginationChanged: this.onPaginationChanged.bind(this),
             modelUpdated: () => {
+                this.refreshAriaLevel();
                 // Pinned bottom rows depend on displayed row count for absolute aria row index.
                 if (this.rowNode.rowPinned === 'bottom') {
                     this.updateRowIndexes();
@@ -903,6 +908,32 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
 
     public setupDetailRowAutoHeight(eDetailGui: HTMLElement): void {
         this.rowModeFeature.setupDetailRowAutoHeight?.(eDetailGui);
+    }
+
+    public refreshAriaLevel(): void {
+        const { rowGui, rowNode, beans, gos } = this;
+        if (!rowGui) {
+            return;
+        }
+
+        let level: number | undefined;
+        if (beans.ctrlsSvc.get('gridBodyCtrl')?.isTreeGrid) {
+            level = 1;
+            if (!rowNode.rowPinned) {
+                level = Math.max(1, calculateRowLevel(rowNode) + 1);
+                const hideUnbalancedGroups = _isServerSideRowModel(gos) && gos.get('groupAllowUnbalanced');
+                // Only child promotion changes depth; hiding an open parent does not.
+                for (let parent = rowNode.parent; parent && parent.level >= 0; parent = parent.parent) {
+                    if (
+                        (parent.childrenAfterGroup?.length === 1 && _canSkipShowingRowGroup(gos, parent)) ||
+                        (hideUnbalancedGroups && parent.group && parent.key === '')
+                    ) {
+                        --level;
+                    }
+                }
+            }
+        }
+        _setAriaLevel(rowGui.element, level);
     }
 
     private onUiLevelChanged(): void {
