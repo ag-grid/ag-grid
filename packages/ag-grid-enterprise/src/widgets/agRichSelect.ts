@@ -568,6 +568,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
     }
 
+    protected override beforeHidePicker(): void {
+        super.beforeHidePicker();
+        this.listComponent?.cancelStateAnnouncement();
+    }
+
     private createOrUpdatePillContainer(container: HTMLElement): void {
         if (!this.pillContainer) {
             const pillContainer = (this.pillContainer = this.createBean(new AgPillContainer<TValue>()));

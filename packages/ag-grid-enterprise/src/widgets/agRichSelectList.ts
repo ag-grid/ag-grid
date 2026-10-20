@@ -179,6 +179,13 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         this.stateAnnouncementCallback = callback;
     }
 
+    /** Drops this list's pending state announcement, e.g. when its picker closes before it is spoken. */
+    public cancelStateAnnouncement(): void {
+        if (this.getStateAnnouncementText(this.loadingState)) {
+            this.stateAnnouncementCallback?.(undefined);
+        }
+    }
+
     public override navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): number | null {
         const newIndex = super.navigateToPage(key, this.lastRowHovered);
 
@@ -607,6 +614,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     }
 
     public override destroy(): void {
+        this.cancelStateAnnouncement();
         super.destroy();
         this.eStateComp = undefined;
     }
