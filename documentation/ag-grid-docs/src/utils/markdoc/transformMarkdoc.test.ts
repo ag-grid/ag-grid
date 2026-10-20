@@ -1,3 +1,5 @@
+import Markdoc from '@markdoc/markdoc';
+
 import { transformMarkdoc } from './transformMarkdoc';
 
 describe('transformMarkdoc', () => {
@@ -122,5 +124,18 @@ describe('transformMarkdoc', () => {
             hello
           </React.Fragment>
         `);
+    });
+
+    it('marks framework-relative links in inline content, so they can follow the visitor framework', () => {
+        const markdocContent =
+            '[Enterprise](./community-vs-enterprise/), [Vue](/vue-data-grid/getting-started/) and [AG Grid](https://www.ag-grid.com/)';
+        const { renderTree, partialRenderTree } = transformMarkdoc({ framework: 'react', markdocContent });
+
+        expect(Markdoc.renderers.html(partialRenderTree)).toBe(
+            '<a href="/react-data-grid/community-vs-enterprise/" data-framework-link="true">Enterprise</a>, ' +
+                '<a href="/vue-data-grid/getting-started/">Vue</a> and <a href="https://www.ag-grid.com/">AG Grid</a>'
+        );
+        // Full documents are rendered for a page that already has its framework in the URL
+        expect(Markdoc.renderers.html(renderTree)).not.toContain('data-framework-link');
     });
 });
