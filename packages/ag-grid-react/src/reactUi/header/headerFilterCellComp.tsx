@@ -61,10 +61,6 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
         }
         compBean.current = context.createBean(new _EmptyBean());
 
-        userCompPromise.current = new AgPromise<IFloatingFilter>((resolve) => {
-            userCompResolve.current = resolve;
-        });
-
         const compProxy: IHeaderFilterCellComp = {
             toggleCss: (name, on) => setCssClasses((prev) => prev.setClass(name, on)),
             setUserStyles: (styles: HeaderStyle) => setUserStyles(styles),
@@ -78,7 +74,15 @@ const HeaderFilterCellComp = ({ ctrl }: { ctrl: HeaderFilterCellCtrl }) => {
                     eGui.current.style.width = width;
                 }
             },
-            setCompDetails: (compDetails) => setUserCompDetails(compDetails),
+            setCompDetails: (compDetails) => {
+                // syncs wait for the comp these details build, not the one it replaces
+                userCompPromise.current = compDetails
+                    ? new AgPromise<IFloatingFilter>((resolve) => {
+                          userCompResolve.current = resolve;
+                      })
+                    : undefined;
+                setUserCompDetails(compDetails);
+            },
             getFloatingFilterComp: () => (userCompPromise.current ? userCompPromise.current : null),
             setMenuIcon: (eIcon) => eButtonShowMainFilter.current?.appendChild(eIcon),
         };

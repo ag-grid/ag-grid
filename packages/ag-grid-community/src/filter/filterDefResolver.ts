@@ -38,8 +38,7 @@ export function _resolveFilter(
 ): ResolvedFilter {
     const choice = beans.selectableFilter?.getFilterDef(column, filterDef);
     const def = withRegisteredFilter(beans, withoutHandlerForm(beans, column, choice ?? filterDef));
-    const filter = def.filter;
-    const component = typeof filter === 'object' && filter != null ? filter.component : filter;
+    const component = getComponent(def);
     let key: string | undefined;
     if (component === true) {
         key = defaultFilter;
@@ -56,6 +55,33 @@ export function _resolveFilter(
         key,
         filterValueGetter,
     };
+}
+
+/**
+ * Whether the column's data type decides its filter: what `true` builds, as the column's filter or its Selectable
+ * Filter choice, or default Multi Filter children or choices.
+ */
+export function _isFilterFromDataType(beans: BeanCollection, column: AgColumn): boolean {
+    const colDef = column.colDef;
+    const def = withRegisteredFilter(beans, withoutHandlerForm(beans, column, colDef));
+    const component = getComponent(def);
+    const filterParams = def.filterParams;
+    if (
+        (component === 'agMultiColumnFilter' || component === 'agSelectableColumnFilter') &&
+        (typeof filterParams === 'function' || !filterParams?.filters?.length)
+    ) {
+        return true;
+    }
+    const choice = beans.selectableFilter?.getFilterDef(column, colDef);
+    const filter = choice
+        ? getComponent(withRegisteredFilter(beans, withoutHandlerForm(beans, column, choice)))
+        : component;
+    return filter === true && !_isSetFilterByDefault(beans.gos);
+}
+
+function getComponent(def: FilterDefWithGetter) {
+    const filter = def.filter;
+    return typeof filter === 'object' && filter != null ? filter.component : filter;
 }
 
 /** Without filter handlers, the `{ component }` form builds its component, or what `true` does when it gives logic. */

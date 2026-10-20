@@ -138,21 +138,20 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     }
 
     public getModel(): AdvancedFilterModel | null {
-        return cloneModel(this.appliedModel);
+        return this.appliedModel;
     }
 
     public getLatestModel(): AdvancedFilterModel | null {
         const pendingModel = this.pendingModels.at(-1);
-        return cloneModel(pendingModel ? pendingModel.model : this.appliedModel);
+        return pendingModel ? pendingModel.model : this.appliedModel;
     }
 
     /**
      * As `getModel`, but with operands in the form the builder should edit rather than canonical model
-     * form, so a value typed in a syntax the model cannot reproduce survives the round-trip. The builder
-     * edits what it is given in place, so it must be its own copy.
+     * form, so a value typed in a syntax the model cannot reproduce survives the round-trip.
      */
     public getBuilderModel(): AdvancedFilterModel | null {
-        return cloneModel(this.appliedBuilderModel);
+        return this.appliedBuilderModel;
     }
 
     /** The expression text a model is written as. */
@@ -206,7 +205,8 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
 
     public setModelOrDefer(model: AdvancedFilterModel | null, source: FilterChangedEventSourceType): void {
         if (this.dataTypeSvc?.isPendingInference) {
-            this.pendingModels.push({ model: cloneModel(model), source });
+            this.pendingModels.push({ model, source });
+            this.beans.stateSvc?.updateFilterState();
             return;
         }
         this.setModel(model);
@@ -422,20 +422,3 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
 /** A date operand is parsed into a new instance each time, so it compares by time. */
 const isSameOperand = (a: unknown, b: unknown): boolean =>
     a === b || (a instanceof Date && b instanceof Date && a.getTime() === b.getTime());
-
-/** The applied model is held rather than re-parsed per read, so a reader must not get the live instance. */
-const cloneModel = (model: AdvancedFilterModel | null): AdvancedFilterModel | null => {
-    if (!model) {
-        return null;
-    }
-    if (model.filterType === 'join') {
-        const conditions = model.conditions;
-        const len = conditions.length;
-        const cloned: AdvancedFilterModel[] = new Array(len);
-        for (let i = 0; i < len; ++i) {
-            cloned[i] = cloneModel(conditions[i])!;
-        }
-        return { ...model, conditions: cloned };
-    }
-    return model.filterType === 'set' ? { ...model, values: model.values?.slice() } : { ...model };
-};

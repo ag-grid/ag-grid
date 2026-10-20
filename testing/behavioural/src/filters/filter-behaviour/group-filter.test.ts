@@ -90,6 +90,34 @@ describe('Group Column Filter — agGroupColumnFilter', () => {
     afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
 
+    test('a model set for a grouped column before the rows arrive shows on the group column at once', async () => {
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true, filter: 'agSetColumnFilter' },
+                { field: 'sport' },
+            ],
+            autoGroupColumnDef: { filter: 'agGroupColumnFilter' },
+            groupDefaultExpanded: -1,
+            rowData: [],
+        });
+        await asyncSetTimeout(0);
+        api.setFilterModel({ country: { filterType: 'set', values: ['Italy'] } });
+        expect(isHeaderFiltered(api, AUTO_COL)).toBe(true);
+        api.setFilterModel({ country: { filterType: 'set', values: ['Italy'] } });
+        expect(isHeaderFiltered(api, AUTO_COL)).toBe(true);
+        api.setGridOption('columnDefs', [
+            { field: 'country', rowGroup: true, hide: true, filter: 'agSetColumnFilter' },
+            { field: 'sport' },
+            { field: 'year' },
+        ]);
+        await asyncSetTimeout(0);
+        expect(isHeaderFiltered(api, AUTO_COL)).toBe(true);
+
+        api.setGridOption('rowData', ROW_DATA);
+        await asyncSetTimeout(0);
+        expect(isHeaderFiltered(api, AUTO_COL)).toBe(true);
+    });
+
     test('single group level: delegates to the underlying set filter and filtering a group value filters grouped rows', async () => {
         const api: GridApi = await gridsManager.createGridAndWait<Row>('grid1', {
             columnDefs: [
@@ -538,5 +566,33 @@ describe('Group Column Filter — agGroupColumnFilter', () => {
                     - "Italy"
                   filterType: "set"
             `);
+    });
+});
+
+describe('Group Column Filter over a column whose filter type the rows decide', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, RowGroupingModule, GroupFilterModule, NumberFilterModule, TextFilterModule],
+    });
+
+    afterEach(() => gridsManager.reset());
+
+    test('its floating filter shows a model set before the rows arrive at once', async () => {
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [{ field: 'year', rowGroup: true, hide: true, filter: true }, { field: 'sport' }],
+            autoGroupColumnDef: { filter: 'agGroupColumnFilter', floatingFilter: true },
+            groupDefaultExpanded: -1,
+            rowData: [],
+        });
+        const floatingInput = () =>
+            getGridElement(api)!.querySelector<HTMLInputElement>(`.ag-floating-filter[col-id="${AUTO_COL}"] input`);
+        await asyncSetTimeout(0);
+        api.setFilterModel({ year: { filterType: 'number', type: 'equals', filter: 2021 } });
+        await asyncSetTimeout(0);
+        expect(floatingInput()!.value).toBe('2021');
+
+        api.setGridOption('rowData', ROW_DATA);
+        await asyncSetTimeout(0);
+        expect(isHeaderFiltered(api, AUTO_COL)).toBe(true);
+        expect(api.getFilterModel()).toEqual({ year: { filterType: 'number', type: 'equals', filter: 2021 } });
     });
 });

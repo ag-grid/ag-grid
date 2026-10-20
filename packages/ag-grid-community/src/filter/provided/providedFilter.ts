@@ -230,7 +230,11 @@ export abstract class ProvidedFilter<
             return false;
         }
 
-        const changed = !this.areModelsEqual(params.model, model);
+        // a floating filter edits the model it shows, which can be one held for the column rather than the filter's
+        const shown = additionalEventAttributes?.afterFloatingFilter
+            ? this.beans.colFilter!.getModelForColumn(params.column as AgColumn)
+            : params.model;
+        const changed = !this.areModelsEqual(shown, model);
         if (changed) {
             params.onAction('apply', additionalEventAttributes);
         }

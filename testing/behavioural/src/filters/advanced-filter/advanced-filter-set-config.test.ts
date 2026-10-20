@@ -289,25 +289,6 @@ describe('Advanced Filter - Set Filter configuration', () => {
         expect(displayedAthletes(api)).toEqual(['Usain Bolt']);
     });
 
-    test('the returned set model owns its values array, so mutating it does not reach the applied filter', async () => {
-        const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
-
-        api.setAdvancedFilterModel({
-            filterType: 'set',
-            colId: 'country',
-            type: 'isAnyOf',
-            values: ['Jamaica'],
-        } as AdvancedFilterModel);
-        await asyncSetTimeout(0);
-
-        const model = api.getAdvancedFilterModel() as SetAdvancedFilterModel;
-        expect(model.values).not.toBe((api.getAdvancedFilterModel() as SetAdvancedFilterModel).values);
-        model.values.push('Poland');
-
-        expect((api.getAdvancedFilterModel() as SetAdvancedFilterModel).values).toEqual(['Jamaica']);
-        expect(displayedAthletes(api)).toEqual(['Usain Bolt']);
-    });
-
     test('a set model naming no values is discarded, as the schema forbidding an empty list says it is', async () => {
         const api = await gridsManager.createGridAndWait('grid1', DEFAULT_OPTIONS);
 

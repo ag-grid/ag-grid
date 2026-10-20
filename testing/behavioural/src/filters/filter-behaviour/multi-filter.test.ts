@@ -286,6 +286,56 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
         `);
     });
 
+    test('an open popup shows the models set before the rows arrive', async () => {
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: { filters: [{ filter: 'agTextColumnFilter' }] },
+                },
+            ],
+            rowData: [],
+        });
+        await asyncSetTimeout(0);
+        const popup = await ColumnFilterHarness.open(api, 'name');
+        void api.setColumnFilterModel('name', {
+            filterType: 'multi',
+            filterModels: [{ filterType: 'text', type: 'contains', filter: 'mich' }],
+        });
+        await asyncSetTimeout(0);
+        expect(popup.input('text').value).toBe('mich');
+
+        api.setFilterModel(null);
+        await asyncSetTimeout(0);
+        expect(popup.input('text').value).toBe('');
+    });
+
+    test('a model set before the rows arrive and cleared after is not what the rebuilt filter starts with', async () => {
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: { filters: [{ filter: 'agTextColumnFilter' }] },
+                },
+            ],
+            rowData: [],
+        });
+        await asyncSetTimeout(0);
+        void api.setColumnFilterModel('name', {
+            filterType: 'multi',
+            filterModels: [{ filterType: 'text', type: 'contains', filter: 'mich' }],
+        });
+        api.setGridOption('rowData', ROWS);
+        await asyncSetTimeout(0);
+        await api.setColumnFilterModel('name', null);
+        api.onFilterChanged();
+        api.destroyFilter('name');
+        await asyncSetTimeout(0);
+        expect((await api.getColumnFilterInstance('name'))!.getModel()).toBeNull();
+    });
+
     test('setColumnFilterModel round-trips a combined model into both sub-filters', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [

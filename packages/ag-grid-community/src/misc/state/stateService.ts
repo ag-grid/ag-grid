@@ -70,7 +70,8 @@ export class StateService extends BeanStub implements NamedBean {
     private columnGroupStates?: { groupId: string; open: boolean; headerName?: string | null }[];
     /** Filter state held back until firstDataRendered, when pivot result columns exist. */
     private deferredFilterState?: FilterState;
-    /** The initial filter state until applied, when the row count is ready or before a filter set through the API. */
+    /** The initial filter state until applied: as columns load while their types wait for rows, else when the row
+     *  count is ready or before a filter set through the API. */
     private initialFilterState?: FilterState;
     private readonly staleStateKeys: Set<keyof GridState> = new Set();
 
@@ -108,6 +109,10 @@ export class StateService extends BeanStub implements NamedBean {
                         newColumnsLoadedDestroyFunc();
                         suppressEventsAndDispatchInitEvent(() => {
                             this.setupStateOnColumnsInitialised(initialState, !!partialColumnState);
+                            // before rows load the filters hold it at once, so a change made until they do wins
+                            if (this.beans.dataTypeSvc?.isPendingInference) {
+                                this.applyInitialFilterState();
+                            }
                             colDelayRenderSvc?.revealColumns('columnState');
                         });
                     }
@@ -334,7 +339,7 @@ export class StateService extends BeanStub implements NamedBean {
             this.updateRowGroupExpansionStateTimer = 0;
             this.updateGroupExpansionState();
         };
-        const updateFilterState = () => updateCachedState('filter', this.getFilterState());
+        const updateFilterState = this.updateFilterState.bind(this);
         // A case-only edit (`abc` -> `ABC`) parses to the same filter, so it dispatches no `filterChanged`.
         this.addManagedPropertyListener('quickFilterText', () =>
             updateCachedState('quickFilter', this.getQuickFilterState())
@@ -707,6 +712,11 @@ export class StateService extends BeanStub implements NamedBean {
             this.columnGroupStates = stateItems;
         }
         _setColGroupState(this.beans, stateItems, source);
+    }
+
+    /** Reads the filter state again, as after a model set before rows load, which tells no `filterChanged` until they do. */
+    public updateFilterState(): void {
+        this.updateCachedState('filter', this.getFilterState());
     }
 
     private getFilterState(): FilterState | undefined {
