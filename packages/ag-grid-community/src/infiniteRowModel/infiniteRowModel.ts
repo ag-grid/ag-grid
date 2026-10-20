@@ -23,6 +23,7 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
     private datasource: IDatasource | null | undefined;
     private rowHeight: number;
     private cacheParams: InfiniteCacheParams;
+    private rowCountReady = false;
 
     public getRowBounds(index: number): RowBounds {
         return {
@@ -221,9 +222,10 @@ export class InfiniteRowModel extends BeanStub implements NamedBean, IRowModel {
 
         this.infiniteCache = this.createBean(new InfiniteCache(this.cacheParams));
 
-        eventSvc.dispatchEventOnce({
-            type: 'rowCountReady',
-        });
+        if (!this.rowCountReady) {
+            this.rowCountReady = true;
+            eventSvc.dispatchEvent({ type: 'rowCountReady' });
+        }
 
         this.dispatchModelUpdatedEvent();
     }

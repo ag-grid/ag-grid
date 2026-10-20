@@ -28,7 +28,7 @@ import {
 
 import { _createRowNodeFooter, _destroyRowNodeFooter } from '../../../aggregation/footerUtils';
 import type { BlockUtils } from '../../blocks/blockUtils';
-import type { SSRMParams } from '../../serverSideRowModel';
+import type { SSRMParams, ServerSideRowModel } from '../../serverSideRowModel';
 import type { StoreUtils } from '../storeUtils';
 import { LazyCache } from './lazyCache';
 
@@ -87,10 +87,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         let numberOfRows = 1;
         if (this.level === 0) {
             numberOfRows = this.storeUtils.getServerSideInitialRowCount() ?? 1;
-
-            this.eventSvc.dispatchEventOnce({
-                type: 'rowCountReady',
-            });
+            (this.beans.rowModel as ServerSideRowModel).onRootStoreCreated();
         }
         this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, false, this.storeParams));
 

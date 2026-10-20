@@ -15,9 +15,6 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
     private asyncFunctionsQueue: (() => void)[] = [];
     private scheduled = false;
 
-    // using an object performs better than a Set for the number of different events we have
-    private firedEvents: { [key in TEventType]?: boolean } = {};
-
     public setFrameworkOverrides(frameworkOverrides: AgFrameworkOverrides): void {
         this.frameworkOverrides = frameworkOverrides;
     }
@@ -90,14 +87,6 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
     public dispatchEvent<TEvent extends AgEvent<TEventType>>(event: TEvent): void {
         this.dispatchToListeners(event, true);
         this.dispatchToListeners(event, false);
-
-        this.firedEvents[event.type] = true;
-    }
-
-    public dispatchEventOnce(event: AgEvent<TEventType>): void {
-        if (!this.firedEvents[event.type]) {
-            this.dispatchEvent(event);
-        }
     }
 
     private dispatchToListeners(event: AgEvent<TEventType>, async: boolean) {
