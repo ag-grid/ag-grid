@@ -161,7 +161,11 @@ export class BaseDragService<
         );
     }
 
-    private initDrag(drag: Dragging, ...handlers: TempEventHandler[]): void {
+    private initDrag(
+        drag: Dragging,
+        trackingHandlers: [type: string, listener: TempEventHandler[2], options?: TempEventHandler[3]][],
+        ...handlers: TempEventHandler[]
+    ): void {
         this.drag = drag;
         const beans = this.beans;
         const onScroll = (event: Event) => this.onScroll(event);
@@ -177,6 +181,15 @@ export class BaseDragService<
             [eDocument.defaultView || window, 'scroll', onScroll],
             ...handlers
         );
+
+        // Root listeners handle internal events first; the document receives events outside a shadow root.
+        for (const handler of trackingHandlers) {
+            const [type, listener, options] = handler;
+            addTempEventHandlers(drag.handlers, [rootEl, type, listener, options]);
+            if (rootEl !== eDocument) {
+                addTempEventHandlers(drag.handlers, [eDocument, type, listener, options]);
+            }
+        }
     }
 
     private destroyDrag(): void {
@@ -258,9 +271,11 @@ export class BaseDragService<
 
         this.initDrag(
             pointerDrag,
-            [rootEl, 'pointerup', onUp],
-            [rootEl, 'pointercancel', onCancel],
-            [rootEl, 'pointermove', onPointerMove, PASSIVE_FALSE],
+            [
+                ['pointerup', onUp],
+                ['pointercancel', onCancel],
+                ['pointermove', onPointerMove, PASSIVE_FALSE],
+            ],
             [rootEl, 'touchmove', dragPreventEventDefault, PASSIVE_FALSE],
             [eElement, 'mousemove', dragPreventEventDefault, PASSIVE_FALSE]
         );
@@ -314,6 +329,7 @@ export class BaseDragService<
         const target = touchEvent.target ?? params.eElement;
         this.initDrag(
             touchDrag,
+            [],
             [target, 'touchmove', touchMoveEvent, PASSIVE_TRUE],
             [target, 'touchend', touchEndEvent, PASSIVE_TRUE],
             [target, 'touchcancel', touchCancelEvent, PASSIVE_TRUE],
@@ -354,13 +370,16 @@ export class BaseDragService<
         const beans = this.beans;
         this.destroyDrag();
 
-        const mouseDrag = new Dragging(_getRootNode(beans), params, mouseEvent);
+        const rootEl = _getRootNode(beans);
+        const mouseDrag = new Dragging(rootEl, params, mouseEvent);
 
         const mouseMoveEvent = (event: MouseEvent) => this.onMouseOrPointerMove(event);
         const mouseUpEvent = (event: MouseEvent) => this.onMouseOrPointerUp(event);
 
-        const target = _getRootNode(beans);
-        this.initDrag(mouseDrag, [target, 'mousemove', mouseMoveEvent], [target, 'mouseup', mouseUpEvent]);
+        this.initDrag(mouseDrag, [
+            ['mousemove', mouseMoveEvent],
+            ['mouseup', mouseUpEvent],
+        ]);
 
         //see if we want to start dragging straight away
         if (params.dragStartPixels === 0) {

@@ -42,6 +42,8 @@ export interface MountGridParams {
     css?: string;
     /** Classes for the grid's container element, such as a legacy theme's `ag-theme-*` class. */
     className?: string;
+    /** Create the grid inside an open shadow root. */
+    shadowDom?: boolean;
     /**
      * Builds the grid options inside the page. It is serialised with `toString()`, so it must be
      * self-contained: it cannot close over variables from the spec.
@@ -66,6 +68,7 @@ export async function mountGrid(
         height = 500,
         css,
         className = '',
+        shadowDom = false,
         options,
     }: MountGridParams
 ): Promise<MountedGrid> {
@@ -81,12 +84,20 @@ export async function mountGrid(
     }
     await page.addScriptTag(gridBundle(enterprise ? 'ag-grid-enterprise' : 'ag-grid-community'));
     await page.evaluate(
-        ({ optionsSource, selector }) => {
+        ({ optionsSource, selector, shadowDom, width, height }) => {
             const gridOptions = new Function(`return (${optionsSource})()`)();
             const gridDiv = document.querySelector<HTMLElement>(selector)!;
+            if (shadowDom) {
+                const host = document.createElement('div');
+                host.id = 'shadow-host';
+                gridDiv.before(host);
+                host.attachShadow({ mode: 'open' }).appendChild(gridDiv);
+                gridDiv.style.width = `${width}px`;
+                gridDiv.style.height = `${height}px`;
+            }
             window.gridApi = (window as any).agGrid.createGrid(gridDiv, gridOptions);
         },
-        { optionsSource: options.toString(), selector: GRID_SELECTOR }
+        { optionsSource: options.toString(), selector: GRID_SELECTOR, shadowDom, width, height }
     );
 
     const grid = page.locator(GRID_SELECTOR);
