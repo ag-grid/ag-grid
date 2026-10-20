@@ -111,4 +111,61 @@ test.describe('host style isolation', () => {
         expect(await isInShadowRoot(page)).toBe(false);
         expect(await measureControls(page)).not.toEqual(unstyled);
     });
+
+    test('in a shadow root, the grid follows the theme mode set on the page', async ({ page }) => {
+        const readBackground = () =>
+            page.locator('#myGrid .ag-root-wrapper').evaluate((el) => getComputedStyle(el).backgroundColor);
+        const setThemeMode = (mode: string | null) =>
+            page.evaluate((mode) => {
+                if (mode == null) {
+                    delete document.documentElement.dataset.agThemeMode;
+                } else {
+                    document.documentElement.dataset.agThemeMode = mode;
+                }
+            }, mode);
+
+        await mountGrid(page, { enterprise: true, options });
+        const light = await readBackground();
+        await setThemeMode('dark');
+        const dark = await readBackground();
+        expect(dark).not.toEqual(light);
+
+        await mountGrid(page, { enterprise: true, wrapperId: 'vis-container', css: CLAUDE_VISUALISER_CSS, options });
+        expect(await isInShadowRoot(page)).toBe(true);
+        await setThemeMode('dark');
+        expect(await readBackground()).toEqual(dark);
+        await setThemeMode(null);
+        expect(await readBackground()).toEqual(light);
+    });
+
+    test('inside the claude.ai visualiser, enableShadowDom: false keeps the grid in the light DOM', async ({
+        page,
+    }) => {
+        await mountGrid(page, {
+            enterprise: true,
+            wrapperId: 'vis-container',
+            css: CLAUDE_VISUALISER_CSS,
+            options: () => ({ enableShadowDom: false, columnDefs: [{ field: 'country' }], rowData: [] }),
+        });
+        expect(await isInShadowRoot(page)).toBe(false);
+    });
+
+    test('on any page, enableShadowDom: true renders the grid in a shadow root the page rules cannot reach', async ({
+        page,
+    }) => {
+        await mountGrid(page, { enterprise: true, options });
+        const expected = await measureControls(page);
+
+        await mountGrid(page, {
+            enterprise: true,
+            css: CLAUDE_VISUALISER_CSS,
+            options: () => ({
+                enableShadowDom: true,
+                columnDefs: [{ field: 'country', filter: 'agSetColumnFilter', floatingFilter: true }],
+                rowData: [{ country: 'France' }, { country: 'Spain' }],
+            }),
+        });
+        expect(await isInShadowRoot(page)).toBe(true);
+        expect(await measureControls(page)).toEqual(expected);
+    });
 });

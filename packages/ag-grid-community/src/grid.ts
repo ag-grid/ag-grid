@@ -87,7 +87,7 @@ export function createGrid<TData>(
     }
     const [outer, inner] = _createStyledRootElements();
     const isolationHost = _createIsolationHost(eGridDiv, gridOptions, params);
-    (isolationHost?.shadowRoot ?? eGridDiv).appendChild(outer);
+    (isolationHost?.mount ?? eGridDiv).appendChild(outer);
     const api = new GridCoreCreator().create(
         outer,
         inner,
@@ -101,15 +101,15 @@ export function createGrid<TData>(
         () => {
             outer.remove();
             if (isolationHost) {
-                _gridApiCache.delete(isolationHost);
-                isolationHost.remove();
+                _gridApiCache.delete(isolationHost.host);
+                isolationHost.destroy();
             }
         }
     );
     if (isolationHost && api) {
         // `getGridApi` finds the container's first child and the `grid-id` attribute, both now outside the grid's root
-        _gridApiCache.set(isolationHost, api);
-        isolationHost.setAttribute('grid-id', api.getGridId());
+        _gridApiCache.set(isolationHost.host, api);
+        isolationHost.host.setAttribute('grid-id', api.getGridId());
     }
 
     return api;

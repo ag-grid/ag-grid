@@ -326,6 +326,16 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 rowDragEntireRow: { required: [false, undefined] },
             },
         },
+        enableShadowDom: {
+            validate({ enableShadowDom }, gridOptions, beans) {
+                const isInShadowRoot =
+                    typeof ShadowRoot !== 'undefined' && beans.eGridDiv.getRootNode() instanceof ShadowRoot;
+                if (enableShadowDom && !isInShadowRoot) {
+                    return '`enableShadowDom` has no effect in framework wrappers, or with a legacy theme, `themeStyleContainer` or `popupParent`. The grid is rendered in the page DOM.';
+                }
+                return null;
+            },
+        },
         enableRowPinning: {
             supportedRowModels: ['clientSide'],
             validate({ enableRowPinning, pinnedTopRowData, pinnedBottomRowData }) {

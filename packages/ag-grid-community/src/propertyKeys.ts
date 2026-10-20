@@ -259,6 +259,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'groupRemoveLowestSingleChildren',
     'enableRtl',
     'enableCellSpan',
+    'enableShadowDom',
     'suppressClickEdit',
     'rowDragEntireRow',
     'rowDragManaged',

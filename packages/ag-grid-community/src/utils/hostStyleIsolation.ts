@@ -2,10 +2,20 @@ import type { GridOptions } from '../entities/gridOptions';
 import { _getGlobalGridOption } from '../globalGridOptions';
 import type { Params } from '../grid';
 
+const THEME_MODE_ATTRIBUTE = 'data-ag-theme-mode';
+
+export interface IsolationHost {
+    /** The child of `eGridDiv` that holds the shadow root. */
+    readonly host: HTMLElement;
+    /** The element in the shadow root that the grid mounts into. */
+    readonly mount: HTMLElement;
+    destroy(): void;
+}
+
 /**
  * Some host pages style every `input` and `button` with selectors that outrank the grid's single-class rules.
- * Inside a known host of that kind, returns a new element in `eGridDiv` whose shadow root the grid renders into,
- * so document-level rules cannot reach it. The caller removes it with the grid.
+ * When `enableShadowDom` asks for it, or by default inside a known host of that kind, adds an element to
+ * `eGridDiv` whose shadow root the grid renders into, so document-level rules cannot reach it.
  * Page CSS for classes the application adds (`cellClass`, `rowClass`, renderers) is cut off too; inline styles and
  * theme params still apply.
  */
@@ -13,16 +23,58 @@ export function _createIsolationHost(
     eGridDiv: HTMLElement,
     gridOptions: GridOptions,
     params: Params | undefined
-): HTMLElement | undefined {
-    if (hasFrameworkOverrides(params) || rendersOutsideGrid(gridOptions) || !isInHostWithLeakingStyles(eGridDiv)) {
+): IsolationHost | undefined {
+    if (!shouldIsolate(eGridDiv, gridOptions, params)) {
         return undefined;
     }
-    const host = eGridDiv.ownerDocument.createElement('div');
-    // `display: contents` keeps the host out of layout, so the grid sizes against `eGridDiv` as before.
+    const doc = eGridDiv.ownerDocument;
+    // `display: contents` keeps both elements out of layout, so the grid sizes against `eGridDiv` as before.
+    const host = doc.createElement('div');
     host.style.display = 'contents';
-    host.attachShadow({ mode: 'open' });
+    const mount = doc.createElement('div');
+    mount.style.display = 'contents';
+    mount.classList.add('ag-theme-mode');
+    host.attachShadow({ mode: 'open' }).appendChild(mount);
     eGridDiv.appendChild(host);
-    return host;
+
+    const themeModeObserver = mirrorThemeMode(doc, mount);
+    return {
+        host,
+        mount,
+        destroy: () => {
+            themeModeObserver.disconnect();
+            host.remove();
+        },
+    };
+}
+
+/** Theme CSS reads the mode from `html` and `body`, which selectors inside the shadow root cannot see. */
+function mirrorThemeMode(doc: Document, mount: HTMLElement): MutationObserver {
+    const { documentElement, body } = doc;
+    const sync = () => {
+        const mode = body?.getAttribute(THEME_MODE_ATTRIBUTE) ?? documentElement.getAttribute(THEME_MODE_ATTRIBUTE);
+        if (mode == null) {
+            mount.removeAttribute(THEME_MODE_ATTRIBUTE);
+        } else {
+            mount.setAttribute(THEME_MODE_ATTRIBUTE, mode);
+        }
+    };
+    sync();
+    const observer = new MutationObserver(sync);
+    const observed: MutationObserverInit = { attributeFilter: [THEME_MODE_ATTRIBUTE] };
+    observer.observe(documentElement, observed);
+    if (body) {
+        observer.observe(body, observed);
+    }
+    return observer;
+}
+
+function shouldIsolate(eGridDiv: HTMLElement, gridOptions: GridOptions, params: Params | undefined): boolean {
+    if (hasFrameworkOverrides(params) || rendersOutsideGrid(gridOptions)) {
+        return false;
+    }
+    const enableShadowDom = gridOptions.enableShadowDom ?? _getGlobalGridOption('enableShadowDom');
+    return enableShadowDom ?? isInHostWithLeakingStyles(eGridDiv);
 }
 
 /** Framework components are styled from the document, which cannot reach into a shadow root. */
