@@ -838,7 +838,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         if (this.isClientSideLoadingCell()) {
             return;
         }
-        const { forceBrowserFocus = false, preventScrollOnBrowserFocus = false, sourceEvent } = params || {};
+        const { forceBrowserFocus = false, preventScrollOnBrowserFocus = false, sourceEvent } = params ?? {};
         const allowedTarget = this.editSvc?.allowedFocusTargetOnValidation(this);
         // if allowedTarget is set, then edit mode is active (with potential validation failures) and we should check if we can service the focus request
         if (allowedTarget && allowedTarget !== this) {
@@ -867,12 +867,8 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         }
 
         const focus = () => {
-            if (!this.isAlive()) {
-                return;
-            }
-            const focusableElement = comp.getFocusableElement();
-            if (this.isCellFocused()) {
-                focusableElement.focus({ preventScroll: true });
+            if (this.isAlive() && this.isCellFocused() && focusSvc.isFocusFreeForGrid()) {
+                comp.getFocusableElement().focus({ preventScroll: true });
             }
         };
 
@@ -935,7 +931,10 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     private setupFocus() {
         // when cell is created, if it should be focus the grid should take focus from the focused cell
         this.restoreFocus(true);
-        this.onCellFocused(this.focusEventWhileNotReady ?? undefined);
+        // only the focused cell uses the event, so only it pays to check the event is still current
+        this.onCellFocused(
+            this.checkCellFocused() ? this.beans.focusSvc.currentDeferredFocus(this.focusEventWhileNotReady) : undefined
+        );
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
@@ -949,6 +948,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
             // preserve event for when cell renders.
             if (event) {
                 this.focusEventWhileNotReady = event;
+                beans.focusSvc.deferFocus(event);
             }
             return;
         }
@@ -1006,7 +1006,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         // normal cells fill the height of the row. autoHeight cells have no height to let them
         // fit the height of content.
 
-        const autoHeight = this.column.isAutoHeight() == true;
+        const autoHeight = this.column.isAutoHeight();
         comp.toggleCss(CSS_AUTO_HEIGHT, autoHeight);
         comp.toggleCss(CSS_NORMAL_HEIGHT, !autoHeight);
         this.setCalculatedColumnCss();
@@ -1035,7 +1035,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     }
 
     private setWrapText(): void {
-        const value = this.column.colDef.wrapText == true;
+        const value = this.column.colDef.wrapText === true;
 
         this.comp.toggleCss(CSS_CELL_WRAP_TEXT, value);
     }

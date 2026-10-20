@@ -37,6 +37,8 @@ export default [
             '@typescript-eslint/no-for-in-array': 'error',
             '@typescript-eslint/no-floating-promises': 'error',
             '@typescript-eslint/prefer-regexp-exec': 'error',
+            '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'error',
+            '@typescript-eslint/prefer-nullish-coalescing': ['error', { ignorePrimitives: true }],
             'no-restricted-syntax': [
                 'error',
                 'ForInStatement',

@@ -202,7 +202,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private initialiseCache(): void {
         if (this.gos.get('keepDetailRows')) {
             const countProp = this.getKeepDetailRowsCount();
-            const count = countProp != null ? countProp : 3;
+            const count = countProp ?? 3;
             this.cachedRowCtrls = new RowCtrlCache(count);
         }
     }
@@ -1055,7 +1055,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // only try to refocus cells shifting in and out of sticky container
         // if the browser supports focus ({ preventScroll })
         if (stickyRowFeature) {
-            cellFocused = focusSvc?.getFocusCellToUseAfterRefresh() || undefined;
+            cellFocused = focusSvc?.getFocusCellToUseAfterRefresh() ?? undefined;
         }
 
         const oldFirstRow = this.firstRenderedRow;
@@ -1290,9 +1290,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         if (creatingNewRowCtrl) {
             // create a new one
-            if (!rowNode) {
-                rowNode = this.rowModel.getRow(rowIndex);
-            }
+            rowNode ??= this.rowModel.getRow(rowIndex);
 
             if (_exists(rowNode)) {
                 rowCtrl = this.createRowCon(rowNode, animate, afterScroll);
@@ -1378,6 +1376,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
             newLast = -1; // setting to -1 means nothing in range
         } else if (this.printLayout) {
             this.beans.environment.refreshRowHeightVariable();
+            // Print layout renders the whole page, so every row in it has its height worked out first.
+            this.ensureAllRowsInRangeHaveHeightsCalculated(0, Infinity);
             newFirst = pageBounds.getFirstRow();
             newLast = pageBounds.getLastRow();
         } else {
@@ -1622,15 +1622,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 rowCtrl = this.bottomRowCtrls[rowIndex];
                 break;
             default:
-                rowCtrl = this.rowCtrlsByRowIndex[rowIndex];
-                if (!rowCtrl) {
-                    rowCtrl = this.getStickyTopRowCtrls().find((ctrl) => ctrl.rowNode.rowIndex === rowIndex) || null;
-
-                    if (!rowCtrl) {
-                        rowCtrl =
-                            this.getStickyBottomRowCtrls().find((ctrl) => ctrl.rowNode.rowIndex === rowIndex) || null;
-                    }
-                }
+                rowCtrl =
+                    this.rowCtrlsByRowIndex[rowIndex] ??
+                    this.getStickyTopRowCtrls().find((ctrl) => ctrl.rowNode.rowIndex === rowIndex) ??
+                    this.getStickyBottomRowCtrls().find((ctrl) => ctrl.rowNode.rowIndex === rowIndex) ??
+                    null;
                 break;
         }
 

@@ -355,7 +355,7 @@ bryntumDemoInit('gantt', 'live-gantt-demo', function (api) {
         tbar: { type: 'gantttoolbar' },
         startDate: startDate,
         endDate: endDate,
-        resourceImagePath: '//bryntum.com/dist/gantt-next/examples/_shared/images/users/',
+        resourceImagePath: '//bryntum.com/dist/gantt-next/examples/_shared/images/transparent-users/',
         columns: [
             { type: 'wbs' },
             { type: 'name', width: 250 },

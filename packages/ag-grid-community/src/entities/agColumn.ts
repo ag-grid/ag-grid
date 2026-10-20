@@ -4,7 +4,8 @@ import { LocalEventService, _escapeString } from 'ag-stack';
 import { _addColumnDefaultAndTypes } from '../columns/colDefUtils';
 import type { QueuedEventOwner } from '../columns/columnModel';
 import { updateSomeColumnState } from '../columns/columnStateUtils';
-import type { ColumnState } from '../columns/columnStateUtils';
+import type { ColumnStateParams } from '../columns/columnStateUtils';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { ColumnEvent, ColumnEventType, ColumnStateUpdatedEvent } from '../events';
@@ -126,6 +127,8 @@ const COL_FLAG_HIGHLIGHT_BEFORE = 0x00004000;
 const COL_FLAG_HIGHLIGHT_AFTER = 0x00008000;
 /** Its width was set since the last layout report, changed or not: the `width` state update follows, as for every other key. */
 const COL_FLAG_WIDTH_SET = 0x00010000;
+/** Redefined since its filter, if any, last derived its params. */
+const COL_FLAG_FILTER_REDEFINED = 0x00020000;
 
 // Runtime wrapper around a (logic-free) column definition, holding all runtime state plus logic.
 // Child of either the original or the displayed tree; each group class implements only its own tree's interface.
@@ -174,7 +177,7 @@ export class AgColumn<TValue = any>
     /** The `actualWidth` its last `widthChanged` reported. */
     private reportedWidth: number = 0;
     public minWidth: number = 0;
-    private maxWidth: number = 0;
+    public maxWidth: number = 0;
     public flex: number | null = null;
     public pinned: ColumnPinnedType = null;
     /** `pinned` resolved to a lane; written wherever `pinned` is. */
@@ -314,19 +317,27 @@ export class AgColumn<TValue = any>
             this.initCalculatedColumnState(colDef);
             return false;
         }
-        ++this.beans.colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
+        const { colModel, pivotResultCols, rowSpanSvc, showValuesAsSvc } = this.beans;
+        ++colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
         this.colFlags &= ~COL_FLAG_SORT_TYPES_CACHED; // sort/initialSort/sortingOrder may have changed
         this.sortCycleIndex = undefined;
         this.initColDefHotFields();
-        this.beans.showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only
+        showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only
         this.initMinAndMaxWidths();
         this.initDotNotation();
         this.initTooltip();
         if (colDef.spanRows !== oldColDef.spanRows) {
-            this.beans.rowSpanSvc?.columnRowSpanChanged(this);
+            rowSpanSvc?.columnRowSpanChanged(this);
         }
-        this.dispatchColEvent('colDefChanged', source);
-        this.beans.pivotResultCols?.recreateColDefsForSource(this, source);
+        this.colFlags |= COL_FLAG_FILTER_REDEFINED;
+        // an update of its own when none is open, so the filter re-derives its params once the columns are final
+        colModel.beginColUpdate();
+        try {
+            this.dispatchColEvent('colDefChanged', source);
+            pivotResultCols?.recreateColDefsForSource(this, source);
+        } finally {
+            colModel.endColUpdate();
+        }
         return true;
     }
 
@@ -696,6 +707,13 @@ export class AgColumn<TValue = any>
         this.colFlags = active ? this.colFlags | COL_FLAG_FILTER_ACTIVE : this.colFlags & ~COL_FLAG_FILTER_ACTIVE;
     }
 
+    /** Whether its filter must re-derive its params, which it is then taken to do. */
+    public takeFilterRedefined(): boolean {
+        const flags = this.colFlags;
+        this.colFlags = flags & ~COL_FLAG_FILTER_REDEFINED;
+        return (flags & COL_FLAG_FILTER_REDEFINED) !== 0;
+    }
+
     /** @deprecated v33 Use `api.isColumnHovered(column)` instead. */
     public isHovered(): boolean {
         this.warn(261);
@@ -736,9 +754,8 @@ export class AgColumn<TValue = any>
     }
 
     public setVisible(visible: boolean, source: ColumnEventType): void {
-        const newValue = visible === true;
-        if (this.visible !== newValue) {
-            this.visible = newValue;
+        if (this.visible !== visible) {
+            this.visible = visible;
             let group = this.originalParent;
             while (group) {
                 if (!group.setExpandable()) {
@@ -1005,7 +1022,11 @@ export class AgColumn<TValue = any>
     }
 
     /** `key` names the `ColumnState` property updated. */
-    public dispatchStateUpdatedEvent(key: keyof ColumnState, source: ColumnEventType): void {
+    public dispatchStateUpdatedEvent(key: keyof ColumnStateParams, source: ColumnEventType): void {
+        const dataTypeSvc = this.beans.dataTypeSvc;
+        if (dataTypeSvc?.isPendingInference) {
+            dataTypeSvc.columnStateUpdated(this, key);
+        }
         const colEventSvc = this.colEventSvc;
         if (colEventSvc?.hasListeners('columnStateUpdated')) {
             this.raise(
@@ -1184,4 +1205,14 @@ export const _laneOfPinned = (pinned: ColumnPinnedType): ColumnLane => {
         return 2;
     }
     return pinned === 'left' || pinned === true ? 0 : 1;
+};
+
+/** The column a shift resize of `col` takes from: a hidden one has none, though `getColAfter` answers the first. */
+export const getShiftPair = (visibleCols: VisibleColsService, col: AgColumn): AgColumn | null =>
+    col.allColsIndex >= 0 ? visibleCols.getColAfter(col) : null;
+
+/** -1 where dragging left grows the column: under RTL unless pinned left, or pinned right under LTR. */
+export const getDragSign = (isRtl: boolean, lane: ColumnLane): number => {
+    const inverted = isRtl ? lane !== 0 : lane === 2;
+    return inverted ? -1 : 1;
 };

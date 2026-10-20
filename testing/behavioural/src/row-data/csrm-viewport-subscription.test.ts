@@ -207,7 +207,7 @@ describe('CSRM viewportSubscription', () => {
         test('subscribeToViewport without the option warns and does nothing', async () => {
             const api = await createFlatGrid();
 
-            expect(() => api.subscribeToViewport()).toThrow('warning #337');
+            expect(() => api.subscribeToViewport()).toThrow('warning #338');
         });
 
         test('changing the option unsubscribes every row from the old handlers, then subscribes them with the new ones', async () => {

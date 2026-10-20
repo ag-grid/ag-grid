@@ -127,7 +127,7 @@ export abstract class ChartProxy<
         const { chart } = this;
         const rawChart = deproxy(chart);
         const imageFileName = fileName || rawChart.title.node.getPlainText();
-        const { width, height } = dimensions || {};
+        const { width, height } = dimensions ?? {};
 
         void chart.download({ width, height, fileName: imageFileName, fileFormat });
     }

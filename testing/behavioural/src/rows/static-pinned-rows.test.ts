@@ -376,6 +376,19 @@ describe('Pinned rows', () => {
             expect(getPinnedRowLayout(api, 'top').tops).toEqual([0]);
             expect(Number.parseFloat(container.style.height)).toBe(containerHeight + 40);
         });
+
+        test('a rowHeight change reaches the pinned rows of a grid with no body rows', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [],
+                pinnedTopRowData: [...topData, ...topData],
+            });
+            await waitFor(() => expect(getPinnedRowLayout(api, 'top').heights).toEqual([42, 42]));
+
+            api.setGridOption('rowHeight', 80);
+
+            expect(getPinnedRowLayout(api, 'top')).toEqual({ tops: [0, 80], heights: [80, 80] });
+        });
     });
 
     describe('bottom', () => {

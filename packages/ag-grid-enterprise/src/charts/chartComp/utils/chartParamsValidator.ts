@@ -276,7 +276,7 @@ function validateProperties<T extends object>(
             }
             // If the validation function returned a 'fix' value, we need to return an updated property set.
             // First we clone the input set if there has not been a 'fix' encountered in a previous iteration:
-            validatedProperties = validatedProperties || { ...params };
+            validatedProperties = validatedProperties ?? { ...params };
             /// Then we update the cloned object with the 'fixed' value
             validatedProperties[property] = validationResult;
             if (warnIfFixed) {

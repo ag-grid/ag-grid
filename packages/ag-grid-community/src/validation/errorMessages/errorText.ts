@@ -242,7 +242,6 @@ export const AG_GRID_ERRORS = {
     1: () => '`rowData` must be an array' as const,
     2: ({ nodeId }: { nodeId: string | undefined }) =>
         `Duplicate node id \`${nodeId}\` detected from \`getRowId\` callback, this could cause issues in your grid.` as const,
-    3: () => 'Calling `gridApi.resetRowHeights()` makes no sense when using Auto Row Height.' as const,
     4: ({ id }: { id: string }) => `Could not find row \`id=${id}\`, data item was not found for this id` as const,
     5: ({ data }: { data: any }) =>
         [
@@ -303,7 +302,6 @@ export const AG_GRID_ERRORS = {
             toIndex,
             'remember that you should not count the moving columns when calculating the new index',
         ] as const,
-    31: () => 'infinite loop in `resizeColumnSets`' as const,
     32: () =>
         '`applyColumnState()` - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.' as const,
     33: () =>
@@ -966,7 +964,9 @@ export const AG_GRID_ERRORS = {
         `Column \`${colId}\` sets \`filter.handler\` or \`filter.doesFilterPass\`, which need \`enableFilterHandlers\`, so the default filter is used, as \`filter: true\` does.` as const,
     336: ({ colId, properties }: { colId: string; properties: string[] }) =>
         `\`calculatedColumns.processColDef\` returned \`${(properties ?? []).join('`, `')}\` for calculated column \`${colId}\`. These properties are always overridden for calculated columns and have been ignored.` as const,
-    337: () => '`api.subscribeToViewport` needs the `viewportSubscription` grid option to be set.' as const,
+    337: ({ colId }: { colId: string }) =>
+        `\`setFilterCards\` on the New Filters Tool Panel was passed \`${colId}\`, which is not a column in the grid, so no card is shown for it.` as const,
+    338: () => '`api.subscribeToViewport` needs the `viewportSubscription` grid option to be set.' as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -982,7 +982,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 337;
+export const MAX_ERROR_ID = 338;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

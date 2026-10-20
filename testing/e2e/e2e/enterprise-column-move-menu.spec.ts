@@ -111,13 +111,68 @@ test.describe('column movement menus', () => {
         });
     }
 
-    test('moving a column beyond the viewport scrolls its header into view', async ({ page }) => {
+    // a slide slower than the grid's animation window outlasts it, as an application's CSS can make it
+    for (const slide of ['default', 'slow']) {
+        test(`moving a column beyond the viewport scrolls its header into view, ${slide} slide`, async ({ page }) => {
+            const { headerCell, withApi } = await mountGrid(page, {
+                enterprise: true,
+                width: 400,
+                css: slide === 'slow' ? '.ag-column-moving .ag-header-cell{transition:left 1s}' : undefined,
+                options: () => ({
+                    columnDefs: [
+                        { field: 'a', width: 100 },
+                        {
+                            headerName: 'Married',
+                            marryChildren: true,
+                            children: Array.from({ length: 12 }, (_, i) => ({ field: `b${i}`, width: 100 })),
+                        },
+                    ],
+                    rowData: [{}],
+                }),
+            });
+            await expect(headerCell('b11')).toHaveCount(0);
+            await headerCell('a').click({ button: 'right' });
+            await page.getByRole('menuitem', { name: 'Move Right', exact: true }).click();
+            expect(await withApi((api) => api.getColumnState().at(-1)!.colId)).toBe('a');
+            const left = await withApi((api) => api.getColumn('a')!.getLeft());
+            await expect(headerCell('a')).toHaveCSS('left', `${left}px`);
+            await expect(headerCell('a')).toBeInViewport({ ratio: 1 });
+            await expect(headerCell('a')).toBeFocused();
+            await expect(headerCell('b0')).toHaveCount(0);
+        });
+    }
+
+    test('resetting columns from the menu of a header that slides back keeps it in view', async ({ page }) => {
         const { headerCell, withApi } = await mountGrid(page, {
             enterprise: true,
             width: 400,
             options: () => ({
+                columnDefs: [{ field: 'a' }, ...Array.from({ length: 12 }, (_, i) => ({ field: `b${i}` }))],
+                defaultColDef: { width: 100 },
+                rowData: [{}],
+                suppressColumnVirtualisation: true,
+            }),
+        });
+        await withApi((api) => {
+            api.moveColumns(['a'], 12);
+            api.ensureColumnVisible('a');
+        });
+        await expect(headerCell('a')).toHaveCSS('left', '1200px');
+        await headerCell('a').click({ button: 'right' });
+        await page.getByRole('menuitem', { name: 'Reset Columns' }).click();
+        expect(await withApi((api) => api.getColumnState()[0].colId)).toBe('a');
+        await expect(headerCell('a')).toHaveCSS('left', '0px');
+        await expect(headerCell('a')).toBeInViewport({ ratio: 1 });
+        await expect(headerCell('a')).toBeFocused();
+    });
+
+    test('moving a group beyond the viewport scrolls its header into view', async ({ page }) => {
+        const { grid, headerCell, withApi } = await mountGrid(page, {
+            enterprise: true,
+            width: 400,
+            options: () => ({
                 columnDefs: [
-                    { field: 'a', width: 100 },
+                    { headerName: 'Group', children: [{ field: 'a', width: 100 }] },
                     {
                         headerName: 'Married',
                         marryChildren: true,
@@ -127,12 +182,15 @@ test.describe('column movement menus', () => {
                 rowData: [{}],
             }),
         });
+        const groupHeader = grid.locator('.ag-header-group-cell').filter({ hasText: 'Group' });
         await expect(headerCell('b11')).toHaveCount(0);
-        await headerCell('a').click({ button: 'right' });
+        await groupHeader.click({ button: 'right' });
         await page.getByRole('menuitem', { name: 'Move Right', exact: true }).click();
         expect(await withApi((api) => api.getColumnState().at(-1)!.colId)).toBe('a');
-        await expect(headerCell('a')).toBeVisible();
-        await expect(headerCell('a')).toBeFocused();
+        const left = await withApi((api) => api.getColumn('a')!.getLeft());
+        await expect(groupHeader).toHaveCSS('left', `${left}px`);
+        await expect(groupHeader).toBeInViewport({ ratio: 1 });
+        await expect(groupHeader).toBeFocused();
         await expect(headerCell('b0')).toHaveCount(0);
     });
 });

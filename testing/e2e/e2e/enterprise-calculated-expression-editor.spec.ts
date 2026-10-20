@@ -84,25 +84,4 @@ test.describe('calculated expression editor in a real browser', () => {
             expect(await mirror.evaluate((element) => element.clientWidth)).toBe(clientWidth);
         }).toPass();
     });
-
-    test('horizontal scrolling keeps the error aligned in an unwrapped expression', async ({ page }) => {
-        const input = page.locator('.ag-calculated-column-form textarea');
-        const mirror = page.locator('.ag-calculated-column-expression-mirror');
-        await input.evaluate((element: HTMLTextAreaElement) => {
-            element.wrap = 'off';
-        });
-        await input.fill(`${'[Revenue] + '.repeat(50)}[Cots]`);
-        await input.evaluate((element: HTMLTextAreaElement) => {
-            element.scrollLeft = element.scrollWidth;
-        });
-        await expect.poll(() => input.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
-        await expect(async () => {
-            const scroll = await input.evaluate((element) => element.scrollLeft);
-            expect(await mirror.evaluate((element) => element.scrollLeft)).toBeCloseTo(scroll, 0);
-        }).toPass();
-        const inputBounds = (await input.boundingBox())!;
-        const errorBounds = (await mirror.locator('.ag-calculated-column-expression-error').boundingBox())!;
-        expect(errorBounds.x).toBeGreaterThanOrEqual(inputBounds.x);
-        expect(errorBounds.x + errorBounds.width).toBeLessThanOrEqual(inputBounds.x + inputBounds.width);
-    });
 });

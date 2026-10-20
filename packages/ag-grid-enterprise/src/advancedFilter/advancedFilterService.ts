@@ -3,6 +3,7 @@ import type {
     BeanCollection,
     ColumnModel,
     DataTypeService,
+    FilterChangedEventSourceType,
     FilterManager,
     FilterValueService,
     IAdvancedFilterService,
@@ -64,6 +65,8 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     private appliedTextUnresolved = false;
     /** The value displayed in the input, which may be invalid */
     private expression: string | null = null;
+    /** Models set through the API before cell data types are inferred, which parsing them needs, in call order. */
+    private pendingModels: { model: AdvancedFilterModel | null; source: FilterChangedEventSourceType }[] = [];
     private expressionFunction: FilterExpressionFunction | null;
     private expressionParams: FilterExpressionFunctionParams | null;
 
@@ -81,10 +84,8 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
 
         this.addManagedPropertyListener('enableAdvancedFilter', (event) => this.setEnabled(!!event.currentValue));
         this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', () => this.revalidateAndApply());
-        // Until data types are inferred, columns default to text, so a number/date expression built while
-        // waiting for row data parses as invalid - re-parse it once real types are known.
         this.addManagedEventListeners({
-            dataTypesInferred: () => this.revalidateAndApply(),
+            dataTypesInferred: () => this.onDataTypesInferred(),
         });
         this.addManagedListeners(this.advFilterSetSvc, {
             valuesChanged: () => this.refreshAppliedExpressionText(),
@@ -103,6 +104,19 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
                 },
             });
         }
+    }
+
+    private onDataTypesInferred(): void {
+        const pendingModels = this.pendingModels;
+        this.pendingModels = [];
+        for (let i = 0, len = pendingModels.length; i < len; ++i) {
+            const { model, source } = pendingModels[i];
+            this.applyModel(model);
+            this.filterManager?.onFilterChanged({ source });
+        }
+        // Until data types are inferred, columns default to text, so a number/date expression built while
+        // waiting for row data parses as invalid - re-parse it once real types are known.
+        this.revalidateAndApply();
     }
 
     private revalidateAndApply(): void {
@@ -125,6 +139,11 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
 
     public getModel(): AdvancedFilterModel | null {
         return cloneModel(this.appliedModel);
+    }
+
+    public getLatestModel(): AdvancedFilterModel | null {
+        const pendingModel = this.pendingModels.at(-1);
+        return cloneModel(pendingModel ? pendingModel.model : this.appliedModel);
     }
 
     /**
@@ -185,12 +204,31 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         this.ctrl.refreshComp();
     }
 
+    public setModelOrDefer(model: AdvancedFilterModel | null, source: FilterChangedEventSourceType): void {
+        if (this.dataTypeSvc?.isPendingInference) {
+            this.pendingModels.push({ model: cloneModel(model), source });
+            return;
+        }
+        this.setModel(model);
+        this.filterManager?.onFilterChanged({ source });
+    }
+
     public setModel(model: AdvancedFilterModel | null): void {
+        this.pendingModels.length = 0;
+        this.applyModel(model);
+    }
+
+    /** Puts the applied expression back in the input, keeping any model held for data types. */
+    public restoreAppliedExpression(): void {
+        this.applyModel(this.appliedModel);
+    }
+
+    private applyModel(model: AdvancedFilterModel | null): void {
         const expression = this.writeExpression(model);
         const unresolved = this.appliedTextUnresolved;
 
         this.setExpressionDisplayValue(expression);
-        this.applyExpression();
+        this.applyText();
         // Applying clears the flag, since text normally comes from the input; here it came from `model`.
         this.appliedTextUnresolved = unresolved;
         this.ctrl.refreshComp();
@@ -209,6 +247,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     }
 
     public submitExpression(): void {
+        this.pendingModels.length = 0;
         this.expressionConfirmed = true;
     }
 
@@ -262,6 +301,7 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
         if (!isEnabled) {
             this.expressionConfirmed = false;
             this.requestedExpression = null;
+            this.pendingModels.length = 0;
         }
         if (!silent && isEnabled !== previousValue) {
             this.eventSvc.dispatchEvent({
@@ -272,6 +312,11 @@ export class AdvancedFilterService extends BeanStub implements NamedBean, IAdvan
     }
 
     public applyExpression(): void {
+        this.pendingModels.length = 0;
+        this.applyText();
+    }
+
+    private applyText(): void {
         const expression = this.expression;
         this.expressionConfirmed = true;
         this.applyExpressionFromParser(this.parseExpression(expression), expression);
@@ -392,5 +437,5 @@ const cloneModel = (model: AdvancedFilterModel | null): AdvancedFilterModel | nu
         }
         return { ...model, conditions: cloned };
     }
-    return model.filterType === 'set' ? { ...model, values: [...model.values] } : { ...model };
+    return model.filterType === 'set' ? { ...model, values: model.values?.slice() } : { ...model };
 };

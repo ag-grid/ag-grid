@@ -71,6 +71,11 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         const colDefChanged = () => this.onColDefChanged(compBean);
         compBean.addManagedListeners(this.column, { colDefChanged });
         compBean.addManagedEventListeners({
+            columnPinned: ({ columns }) => {
+                if (columns?.includes(this.column)) {
+                    this.refreshHeaderStyles();
+                }
+            },
             filterSwitched: ({ column }) => {
                 if (column === this.column) {
                     colDefChanged();

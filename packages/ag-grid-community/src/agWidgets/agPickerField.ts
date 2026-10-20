@@ -111,7 +111,7 @@ export abstract class AgPickerField<
     private readonly eIcon: HTMLButtonElement = RefPlaceholder;
 
     constructor(config?: TConfig) {
-        super(config, config?.template || AgPickerFieldElement, config?.agComponents || [], config?.className);
+        super(config, config?.template ?? AgPickerFieldElement, config?.agComponents ?? [], config?.className);
         this.registerCSS(agPickerFieldCSS);
 
         this.ariaRole = config?.ariaRole;
@@ -239,9 +239,7 @@ export abstract class AgPickerField<
     public showPicker() {
         this.isPickerDisplayed = true;
 
-        if (!this.pickerComponent) {
-            this.pickerComponent = this.createPickerComponent();
-        }
+        this.pickerComponent ??= this.createPickerComponent();
 
         const pickerGui = this.pickerComponent.getGui();
         pickerGui.addEventListener('focusin', this.onPickerFocusIn);
@@ -429,7 +427,7 @@ export abstract class AgPickerField<
         if (typeof width === 'number') {
             width = `${width}px`;
         }
-        this.minPickerWidth = width == null ? undefined : width;
+        this.minPickerWidth = width ?? undefined;
         return this;
     }
 
@@ -437,7 +435,7 @@ export abstract class AgPickerField<
         if (typeof width === 'number') {
             width = `${width}px`;
         }
-        this.maxPickerWidth = width == null ? undefined : width;
+        this.maxPickerWidth = width ?? undefined;
         return this;
     }
 
@@ -446,7 +444,7 @@ export abstract class AgPickerField<
             height = `${height}px`;
         }
 
-        this.maxPickerHeight = height == null ? undefined : height;
+        this.maxPickerHeight = height ?? undefined;
         return this;
     }
 

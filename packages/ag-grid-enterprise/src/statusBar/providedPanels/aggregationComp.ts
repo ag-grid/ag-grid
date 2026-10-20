@@ -319,15 +319,24 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         const useBigintAggregation = hasBigInt && !seenNonInteger;
 
         let avg: bigint | number;
+        let total: bigint | number;
+        let lowest: bigint | number | null;
+        let highest: bigint | number | null;
         if (useBigintAggregation) {
             avg = sumBigint / BigInt(numericCount);
+            total = sumBigint;
+            lowest = minBigint;
+            highest = maxBigint;
         } else {
             avg = sum / numericCount;
+            total = sum;
+            lowest = min;
+            highest = max;
         }
 
-        const sumValue = moreThanOneNum ? (useBigintAggregation ? sumBigint : sum) : null;
-        const minValue = moreThanOneNum ? (useBigintAggregation ? minBigint : min) : null;
-        const maxValue = moreThanOneNum ? (useBigintAggregation ? maxBigint : max) : null;
+        const sumValue = moreThanOneNum ? total : null;
+        const minValue = moreThanOneNum ? lowest : null;
+        const maxValue = moreThanOneNum ? highest : null;
         const avgValue = moreThanOneNum ? avg : null;
         const showAvg = moreThanOneNum;
 

@@ -1,6 +1,5 @@
-import { RefPlaceholder, _isVisible, _setFixedWidth } from 'ag-stack';
+import { RefPlaceholder, _observeResize, _setFixedWidth } from 'ag-stack';
 
-import type { CtrlsService } from '../ctrlsService';
 import type { ElementParams } from '../utils/element';
 import type { ComponentSelector } from '../widgets/component';
 import { AbstractFakeScrollComp, INVISIBLE_SCROLLBAR_SIZE } from './abstractFakeScrollComp';
@@ -39,8 +38,12 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         ctrlsSvc.register('fakeVScrollComp', this);
 
         const queueContainerHeightSync = this.queueContainerHeightSync;
+        // bodyHeightChanged repeats pinned-row notifications; observe viewport-only geometry changes here.
+        ctrlsSvc.whenReady(this, ({ gridBodyCtrl }) => {
+            this.addDestroyFunc(_observeResize(this.beans, gridBodyCtrl.eGridViewport, queueContainerHeightSync));
+        });
         this.addManagedEventListeners({
-            rowContainerHeightChanged: this.onRowContainerHeightChanged.bind(this, ctrlsSvc),
+            rowContainerHeightChanged: this.syncContainerHeight.bind(this),
             headerHeightChanged: this.onScrollVisibilityChanged.bind(this),
             pinnedRowsChanged: queueContainerHeightSync,
             pinnedHeightChanged: queueContainerHeightSync,
@@ -79,23 +82,6 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         this.queueContainerHeightSync();
     }
 
-    private onRowContainerHeightChanged(ctrlsSvc: CtrlsService): void {
-        const gridBodyCtrl = ctrlsSvc.getGridBodyCtrl();
-        if (!gridBodyCtrl) {
-            return;
-        }
-        const gridBodyViewportEl = gridBodyCtrl.eGridViewport;
-
-        this.syncContainerHeight();
-
-        const eViewportScrollTop = this.getScrollPosition();
-        const gridBodyViewportScrollTop = gridBodyViewportEl.scrollTop;
-
-        if (eViewportScrollTop != gridBodyViewportScrollTop) {
-            this.setScrollPosition(gridBodyViewportScrollTop, true);
-        }
-    }
-
     private syncContainerHeight(): void {
         const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
         if (!gridBodyCtrl) {
@@ -107,16 +93,14 @@ export class FakeVScrollComp extends AbstractFakeScrollComp {
         const fakeVScrollHeight = this.eViewport.clientHeight;
         const diff = gridHeight - fakeVScrollHeight;
         this.eContainer.style.height = `${Math.max(1, gridScrollHeight - diff)}px`;
+        this.setScrollPosition(gridBodyCtrl.scrollFeature.getVerticalScrollPositionForSync());
     }
 
     public getScrollPosition(): number {
         return this.eViewport.scrollTop;
     }
 
-    public setScrollPosition(value: number, force?: boolean): void {
-        if (!force && !_isVisible(this.eViewport)) {
-            this.attemptSettingScrollPosition(value);
-        }
+    public setScrollPosition(value: number): void {
         this.eViewport.scrollTop = value;
     }
 }

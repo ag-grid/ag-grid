@@ -257,10 +257,17 @@ export class GridSerializer extends BeanStub implements NamedBean {
                 // other pages.
                 // onlySelectedNonStandardModel: if user wants selected in non standard row model
                 // (eg viewport) then again RowModel cannot be used, so need to use selected instead.
-                // the root carries no values, and must resolve before sorting to land at its displayed position
-                const selectedNodes = (this.beans.selectionSvc?.getSelectedNodes() ?? []).map((node) =>
-                    node.level === -1 && node.sibling?.footer ? node.sibling : node
-                );
+                // the root carries no values, and must resolve before sorting to land at its displayed position;
+                // a grand total shown only pinned is exported with its pinned copy
+                const selected = this.beans.selectionSvc?.getSelectedNodes() ?? [];
+                const selectedNodes: RowNode[] = [];
+                for (let i = 0, len = selected.length; i < len; ++i) {
+                    const node = selected[i];
+                    const row = node.level === -1 && node.sibling?.footer ? node.sibling : node;
+                    if (!row.pinnedSibling || row.displayed || row.level !== -1) {
+                        selectedNodes.push(row);
+                    }
+                }
                 this.replicateSortedOrder(selectedNodes);
                 selectedNodes.forEach(processBodyRow);
             }

@@ -340,9 +340,7 @@ export class AgFormulaInputField extends AgAbstractInputField<
             }
         }
 
-        if (!token) {
-            token = matches.find((match) => match.ref === ref);
-        }
+        token ??= matches.find((match) => match.ref === ref);
 
         if (!token) {
             return false;
@@ -546,9 +544,7 @@ export class AgFormulaInputField extends AgAbstractInputField<
             token = matches.find((match) => match.index === tokenIndex && match.ref === previousRef);
         }
 
-        if (!token) {
-            token = matches.find((match) => match.ref === previousRef);
-        }
+        token ??= matches.find((match) => match.ref === previousRef);
 
         if (!token) {
             return null;

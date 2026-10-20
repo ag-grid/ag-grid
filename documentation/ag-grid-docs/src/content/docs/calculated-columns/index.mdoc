@@ -190,28 +190,28 @@ This only controls the expression picker buttons. Use an empty array or `null` t
 
 ### isColumnReferenceable
 
-Use `isColumnReferenceable` to control which source columns can be referenced in the dialog. Return `false` to hide a column from the Columns picker and inline autocomplete, and reject manually entered references to it:
+Return `false` from `isColumnReferenceable` to exclude a column from the Columns picker, inline autocomplete and newly entered references. Use `calculatedColumn` to identify the column being edited, or `sourceColumn` for the column whose menu initiated Add Calculated Column. `sourceColumn` is only provided when adding a column; it is `null` when editing an existing column.
+
+This example allows Salary references only when editing Bonus:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     calculatedColumns: {
-        isColumnReferenceable: ({ colDef, calculatedColumn }) =>
-            colDef.field !== 'salary' || calculatedColumn?.getColId() === 'bonus',
+        isColumnReferenceable: ({ colDef, calculatedColumn }) => {
+            if (colDef.field === 'salary') {
+                return calculatedColumn?.getColId() === 'bonus';
+            }
+            return true;
+        },
     },
 };
 ```
 
-The callback runs when the dialog opens. It receives the source `column` and `colDef`, the `calculatedColumn` being edited, and the usual `api` and `context` parameters. `calculatedColumn` is `null` when adding a new column in either apply mode. Changes to application state take effect the next time the dialog opens; they do not update an already-open picker.
+{% interfaceDocumentation interfaceName="IsColumnReferenceableParams" /%}
 
-An existing expression that was not blocked by the dialog can be kept unchanged even if it references a restricted column. Users can apply it in deferred mode or change its title and type in either mode. Once the expression text differs from the text displayed when the dialog opened, restricted references are blocked, including edits to casing, whitespace or arithmetic. Restoring the original permitted expression text clears the restriction error.
+The callback runs when the dialog opens. Existing permitted expressions can remain unchanged, and programmatic expressions are unrestricted. This is a UI restriction, not a security boundary.
 
-In deferred mode, a blocked reference disables Apply. In live mode, the full expression is saved with its restriction error, and cells display `#REF!` instead of evaluating it. Closing and reopening the dialog preserves the full expression and error so the user can correct it. Changing the title or type does not clear the restriction. Grid State also preserves the blocked status.
-
-Programmatic `calculatedExpression` values remain unrestricted. Restoring state preserves whether an expression was permitted or blocked; it does not apply new restrictions to previously permitted expressions. This is an editor restriction, not a data-security boundary.
-
-Visibility does not affect eligibility: hidden columns can be offered, and visible columns can be restricted. The picker uses primary columns in and out of pivot mode, excludes generated service columns, and keeps reference names stable when other columns are restricted.
-
-The following example permits Salary references when editing Bonus but excludes them when editing Sales Target or adding a new calculated column.
+Restricted edits disable Apply in deferred mode. In live mode, they are saved but display `#REF!` until corrected; reopening the dialog or restoring Grid State preserves the error.
 
 {% gridExampleRunner title="Dialog Reference Restrictions" name="calculated-columns-reference-restrictions" /%}
 
@@ -274,6 +274,20 @@ const gridOptions = {
 
 {% gridExampleRunner title="Deferred Apply Mode" name="calculated-columns-apply-mode" /%}
 
+### applyDebounce
+
+Set `applyDebounce` to wait for a quiet period before applying live dialog edits. This delays both the cell repaint and calculated-column change events:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: {
+        applyDebounce: 400,
+    },
+};
+```
+
+The default is `0`, which applies on the next animation frame. Closing the dialog applies any pending edit immediately; removing the column cancels it. State and column-definition APIs report the last applied values while an edit is pending. This option has no effect in deferred mode.
+
 ### processColDef
 
 Use `processColDef` to customise calculated columns that users create in the dialog, for example to add a filter or allow aggregation. It receives the column's own definition, as set in the dialog, and returns the definition to use. The returned definition takes precedence over `defaultColDef` and column types:
@@ -297,7 +311,7 @@ In the example, the **Profit** column is restored from Grid State as if a user h
 {% interfaceDocumentation interfaceName="CalculatedColumnProcessColDefParams" /%}
 
 {% note %}
-The callback runs each time the column is built, including on every dialog edit and on restore from [Grid State](./grid-state/). It does not run for calculated columns declared in `columnDefs`. The dialog and Grid State keep the user's values, not the callback's. `colId`, `editable`, `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor` and `cellEditorSelector` are always overridden. Prefer `initial*` properties, such as `initialWidth`, to stateful ones.
+The callback runs each time the column is built, including when dialog edits are applied and on restore from [Grid State](./grid-state/). It does not run for calculated columns declared in `columnDefs`. The dialog and Grid State keep the user's values, not the callback's. `colId`, `editable`, `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor` and `cellEditorSelector` are always overridden. Prefer `initial*` properties, such as `initialWidth`, to stateful ones.
 {% /note %}
 
 ## Advanced Calculated Columns

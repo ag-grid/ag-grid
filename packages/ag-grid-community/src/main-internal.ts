@@ -402,6 +402,7 @@ export type { RowNodeSorter } from './sort/rowNodeSorter';
 export type { SortService } from './sort/sortService';
 export { _getSortModel } from './sort/sortService';
 export type { CellStyleService } from './styling/cellStyleService';
+export { _getLayoutCssClass } from './styling/layoutFeature';
 export { coreDefaults as _coreThemeDefaults } from './theming/core/core-css';
 export {
     themeAlpineParams as _themeAlpineParams,

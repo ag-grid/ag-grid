@@ -141,6 +141,12 @@ type KnownCalculatedColumn = {
     colDef: ColDef;
 };
 
+type PendingLiveApplyUpdate = {
+    colDef: CalculatedColumnUpdate;
+    expressionError?: CalculatedExpressionError;
+    timeout?: number;
+};
+
 export class CalculatedColumnsService extends BeanStub implements NamedBean, ICalculatedColumnsService {
     public readonly beanName = 'calculatedColsSvc' as const;
 
@@ -159,11 +165,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     // dispatch is skipped — the imperative caller emits its own events; declarative loads run with it at 0.
     private suppressValidationChecks = 0;
     private readonly openDialogsByColId = new Map<string, OpenCalculatedColumnDialog>();
-    private readonly scheduledLiveApplyColIds = new Set<string>();
-    private readonly pendingLiveApplyUpdatesByColId = new Map<
-        string,
-        { colDef: CalculatedColumnUpdate; expressionError?: CalculatedExpressionError }
-    >();
+    private readonly pendingLiveApplyUpdatesByColId = new Map<string, PendingLiveApplyUpdate>();
     // Memoised parse results keyed by expression; see getFormulaError.
     private readonly formulaErrorsByExpression = new Map<string, FormulaError | null>();
     // Guaranteed present: registered by CalculatedColumnsModule alongside this service.
@@ -367,7 +369,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 // Live apply adds the column up front, then opens the dialog over it.
                 const newColumn = this.addDynamicCalculatedColumn(draft, column);
                 if (newColumn) {
-                    this.showDialog(draft, () => null, true, newColumn, focus, undefined, restoreFocusParams, column);
+                    const mapper = this.createReferenceMapper(colId, newColumn, column ?? null);
+                    this.showDialog(draft, () => null, true, newColumn, focus, mapper, restoreFocusParams, column);
                 }
                 return;
             }
@@ -382,7 +385,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 false,
                 undefined,
                 focus,
-                undefined,
+                this.createReferenceMapper(colId, null, column ?? null),
                 restoreFocusParams,
                 column
             );
@@ -875,7 +878,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
     private createReferenceMapper(
         colId: string,
-        calculatedColumn: AgColumn | null = null
+        calculatedColumn: AgColumn | null = null,
+        sourceColumn: AgColumn | null = null
     ): CalculatedColumnReferenceMapper {
         const beans = this.beans;
         const isColumnReferenceable = this.getOptions()?.isColumnReferenceable;
@@ -895,6 +899,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                               column,
                               colDef: column.colDef,
                               calculatedColumn,
+                              sourceColumn,
                           })
                       )
                 : undefined,
@@ -1124,14 +1129,28 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         const colId = draft.colId;
         const { expression, errors, expressionError } = this.validateDialogDraft(draft, mapper, true);
         const { colId: _, ...update } = this.toColDef({ ...draft, calculatedExpression: expression });
-        this.pendingLiveApplyUpdatesByColId.set(colId, { colDef: update, expressionError });
-        if (!this.scheduledLiveApplyColIds.has(colId)) {
-            // coalesce keystrokes into one column rebuild per frame
-            this.scheduledLiveApplyColIds.add(colId);
-            _requestAnimationFrame(this.beans, () => {
-                this.scheduledLiveApplyColIds.delete(colId);
+        const configuredDelay = this.getOptions()?.applyDebounce ?? 0;
+        const delay = Number.isInteger(configuredDelay) && configuredDelay >= 0 ? configuredDelay : 0;
+        const previous = this.pendingLiveApplyUpdatesByColId.get(colId);
+        if (delay === 0 && previous && previous.timeout === undefined) {
+            previous.colDef = update;
+            previous.expressionError = expressionError;
+            return errors;
+        }
+
+        this.cancelLiveApplyUpdate(colId);
+        const pending: PendingLiveApplyUpdate = { colDef: update, expressionError };
+        this.pendingLiveApplyUpdatesByColId.set(colId, pending);
+        const apply = () => {
+            // a cancelled frame must not flush an edit from a later dialog or schedule
+            if (this.isAlive() && this.pendingLiveApplyUpdatesByColId.get(colId) === pending) {
                 this.flushLiveApplyUpdate(colId);
-            });
+            }
+        };
+        if (delay > 0) {
+            pending.timeout = window.setTimeout(apply, delay);
+        } else {
+            _requestAnimationFrame(this.beans, apply);
         }
         return errors;
     }
@@ -1142,11 +1161,15 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             return;
         }
 
-        this.pendingLiveApplyUpdatesByColId.delete(colId);
+        this.cancelLiveApplyUpdate(colId);
         this.updateCalculatedColumn(colId, pending.colDef, pending.expressionError);
     }
 
     private cancelLiveApplyUpdate(colId: string): void {
+        const pending = this.pendingLiveApplyUpdatesByColId.get(colId);
+        if (pending?.timeout !== undefined) {
+            window.clearTimeout(pending.timeout);
+        }
         this.pendingLiveApplyUpdatesByColId.delete(colId);
     }
 

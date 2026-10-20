@@ -408,7 +408,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     }
 
     public getThemeNames(): string[] {
-        return this.gos.get('chartThemes') || DEFAULT_THEMES;
+        return this.gos.get('chartThemes') ?? DEFAULT_THEMES;
     }
 
     public getPalettes(): AgChartThemePalette[] {
@@ -598,8 +598,8 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     private getCellRangeParams(): CellRangeParams {
         const cellRanges = this.getCellRanges();
         const firstCellRange = cellRanges[0];
-        const startRow = firstCellRange?.startRow || null;
-        const endRow = firstCellRange?.endRow || null;
+        const startRow = firstCellRange?.startRow ?? null;
+        const endRow = firstCellRange?.endRow ?? null;
 
         return {
             rowStartIndex: startRow?.rowIndex ?? null,

@@ -53,7 +53,7 @@ const LoadingOverlayDef: OverlayDef = {
     paramsKey: 'loadingOverlayComponentParams',
     isSuppressed: (gos: GridOptionsService) => {
         const isLoading = gos.get('loading');
-        return isLoading === false || (gos.get('suppressLoadingOverlay') === true && !isLoading);
+        return isLoading === false || (!!gos.get('suppressLoadingOverlay') && !isLoading);
     },
 } as const;
 

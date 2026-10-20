@@ -1,4 +1,4 @@
-import { RefPlaceholder, _isIOSUserAgent, _isMacOsUserAgent, _isVisible, _waitUntil } from 'ag-stack';
+import { RefPlaceholder, _isIOSUserAgent, _isMacOsUserAgent } from 'ag-stack';
 
 import type { BodyScrollEvent } from '../events';
 import type { ElementParams } from '../utils/element';
@@ -100,16 +100,6 @@ export abstract class AbstractFakeScrollComp extends Component implements Scroll
                 }, 400);
             },
         });
-    }
-
-    protected attemptSettingScrollPosition(value: number) {
-        const viewport = this.eViewport;
-        _waitUntil(
-            this,
-            () => _isVisible(viewport),
-            () => this.setScrollPosition(value),
-            100
-        );
     }
 
     public onScrollCallback(fn: () => void): void {

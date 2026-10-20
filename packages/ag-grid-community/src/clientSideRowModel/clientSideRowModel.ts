@@ -213,13 +213,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
         });
 
-        this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
-        _addRowHeightChangedListener(this, () => {
-            if (this.beans.rowAutoHeight?.active) {
-                return;
-            }
-            this.resetRowHeights();
-        });
+        _addRowHeightChangedListener(this, () => this.resetRowHeights());
         this.addManagedPropertyListeners(['loading', 'loadingRows'], () => this.onLoadingRowsChanged());
     }
 

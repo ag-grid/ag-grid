@@ -88,8 +88,11 @@ export function _findFocusableElements(
 }
 
 /** Named radios are one Tab stop, the focused or checked radio, as managed Tab handling bypasses the browser. */
-export function _removeNonTabStopRadios(rootNode: HTMLElement, elements: HTMLElement[]): HTMLElement[] {
-    const activeEl = (rootNode.getRootNode() as Document | ShadowRoot).activeElement;
+export function _removeNonTabStopRadios(
+    rootNode: HTMLElement,
+    elements: HTMLElement[],
+    activeEl: Element | null = (rootNode.getRootNode() as Document | ShadowRoot).activeElement
+): HTMLElement[] {
     const groups = new Map<HTMLFormElement | null, Map<string, HTMLInputElement>>();
 
     for (let i = 0, len = elements.length; i < len; ++i) {

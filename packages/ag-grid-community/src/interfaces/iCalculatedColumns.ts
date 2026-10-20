@@ -40,8 +40,13 @@ export interface IsColumnReferenceableParams<TData = any, TContext = any> extend
     column: Column;
     /** The candidate source column's definition. */
     colDef: ColDef<TData>;
-    /** The column being edited, or `null` when adding a column in either apply mode. */
+    /** The column being edited, including a newly created column in live mode. `null` when adding in deferred mode. */
     calculatedColumn: Column | null;
+    /**
+     * The column whose menu initiated Add Calculated Column. Only provided while adding a column, in either apply
+     * mode. `null` when editing an existing column or when there is no source column.
+     */
+    sourceColumn: Column | null;
 }
 
 export interface CalculatedColumnValidationParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -101,6 +106,13 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
      * @default 'live'
      */
     applyMode?: CalculatedColumnApplyMode;
+    /**
+     * Quiet period in milliseconds before live dialog edits update the column and raise change events.
+     * Must be a non-negative integer. `0` applies on the next animation frame.
+     * Closing the dialog applies any pending edit immediately. Ignored in `'deferred'` apply mode.
+     * @default 0
+     */
+    applyDebounce?: number;
     /**
      * Customise the Column Definition of calculated columns created in the Calculated Column dialog, for example
      * to add a filter, enable aggregation or set a value formatter. Not called for calculated columns defined in

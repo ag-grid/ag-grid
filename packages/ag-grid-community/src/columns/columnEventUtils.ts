@@ -40,7 +40,7 @@ export function dispatchColumnPinnedEvent(
     eventSvc.dispatchEvent({
         type: 'columnPinned',
         // mistake in typing, 'undefined' should be allowed, as 'null' means 'not pinned'
-        pinned: pinned != null ? pinned : null,
+        pinned: pinned ?? null,
         columns: changedColumns,
         column,
         source,

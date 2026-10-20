@@ -26,6 +26,7 @@ import {
     _resolveHeaderTooltipValue,
 } from 'ag-grid-community';
 
+import { _isContextMenuKey } from '../widgets/menuPopupUtils';
 import type { ColumnModelItem } from './columnModelItem';
 import type { ToolPanelColumnMove } from './columnMoveUtils';
 import {
@@ -189,7 +190,7 @@ export class ToolPanelColumnComp extends Component {
         this.addManagedEventListeners({ newColumnsLoaded: refresh });
     }
 
-    private onContextMenu(e: MouseEvent | Touch): void {
+    private onContextMenu(e: MouseEvent | Touch | KeyboardEvent): void {
         const contextMenu = this.createBean(
             new ToolPanelContextMenu(
                 this.column,
@@ -209,7 +210,9 @@ export class ToolPanelColumnComp extends Component {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        if (e.key === KeyCode.SPACE) {
+        if (_isContextMenuKey(e)) {
+            this.onContextMenu(e);
+        } else if (e.key === KeyCode.SPACE) {
             e.preventDefault();
             if (this.isSelectable()) {
                 this.onSelectAllChanged(!this.isSelected());

@@ -290,6 +290,26 @@ describe('Column Flex', () => {
         expect(api.getColumn('b')!.getActualWidth()).toBe(700);
     });
 
+    test('a shift resize disables flex on the column it takes from too', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            colResizeDefault: 'shift',
+            columnDefs: [
+                { colId: 'a', flex: 1 },
+                { colId: 'b', flex: 1 },
+                { colId: 'c', flex: 1 },
+            ],
+        });
+
+        api.setColumnWidths([{ key: 'a', newWidth: 383 }]);
+
+        await new GridColumns(api, 'a shift resize disables flex on the column it takes from too').checkColumns(`
+            CENTER
+            ├── a width:383
+            ├── b width:284
+            └── c width:333 flex:1
+        `);
+    });
+
     test('unpinning the last pinned col re-flexes the centre to the whole width', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
@@ -350,6 +370,29 @@ describe('Column Flex', () => {
         // the event names the cols the resize re-flexed with the one it resized
         await waitFor(() => expect(resized).toEqual([{ columns: ['b', 'c'], flexColumns: ['c'] }]));
     });
+
+    test.each([false, true])(
+        'with enableRtl %s and pinned cols on both sides, resizing a centre col re-flexes only the flex cols after it',
+        (enableRtl) => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { colId: 'l1', width: 100, pinned: 'left' },
+                    { colId: 'l2', width: 100, pinned: 'left' },
+                    { colId: 'r', width: 100, pinned: 'right' },
+                    ...['a', 'b', 'c'].map((colId) => ({ colId, flex: 1 })),
+                ],
+                enableRtl,
+            });
+
+            api.setColumnWidths([{ key: 'b', newWidth: 200 }]);
+
+            expect(
+                ['a', 'b', 'c'].map(
+                    (id) => `${id}:${api.getColumn(id)!.getActualWidth()}:${api.getColumn(id)!.getFlex()}`
+                )
+            ).toEqual(['a:233:1', 'b:200:null', 'c:267:1']);
+        }
+    );
 
     test('a flex given by applyColumnState or new colDefs is re-flexed by the next resize', async () => {
         const api = gridsManager.createGrid('myGrid', {
@@ -631,7 +674,7 @@ describe('Column Flex', () => {
         }
     });
 
-    test('pinned col with flex does not flex centre cols (flexActive considers only centre)', async () => {
+    test('pinned col with flex does not flex centre cols (lastFlexIndex counts only centre)', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [
                 { colId: 'a', pinned: 'left', width: 150, flex: 1 },

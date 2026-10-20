@@ -326,9 +326,7 @@ export function _reportMissingModule(params: MissingModuleReportParams): void {
     }
 
     pendingMissingModules.push(params);
-    if (missingModuleFlushHandle === undefined) {
-        missingModuleFlushHandle = setTimeout(flushMissingModules, MISSING_MODULE_DEBOUNCE_MS);
-    }
+    missingModuleFlushHandle ??= setTimeout(flushMissingModules, MISSING_MODULE_DEBOUNCE_MS);
 }
 
 /** Flushes the pending missing-module reports as one combined error per grid. Run by the debounce timer. */
@@ -471,7 +469,7 @@ export function _getDiagnosticMessage(diagnostic: CapturedDiagnostic): string {
  * Formats a string, or the literal `null`/`undefined`, into a human-readable string.
  */
 export function toStringWithNullUndefined(str: string | null | undefined) {
-    return str === undefined ? 'undefined' : str === null ? 'null' : str;
+    return str === undefined ? 'undefined' : (str ?? 'null');
 }
 
 function getParamsUrl(baseUrl: string, params: URLSearchParams) {

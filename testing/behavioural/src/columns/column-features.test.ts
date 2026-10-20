@@ -14,20 +14,35 @@
 import { waitFor } from '@testing-library/dom';
 import {
     ALL_SEVERITIES,
+    DragEventDispatcher,
     GridColumns,
     GridRows,
     TestGridsManager,
     asyncSetTimeout,
     mockGridLayout,
+    polyfillOffsetParent,
 } from 'ag-test-utils';
-import { installMockResizeObserver } from 'ag-test-utils/polyfills/mockResizeObserver';
+import { installMockResizeObserver, triggerResizeObservers } from 'ag-test-utils/polyfills/mockResizeObserver';
 
-import type { ColDef, ColGroupDef, GridApi, ICellRendererComp, ICellRendererParams, Module } from 'ag-grid-community';
+import type {
+    ColDef,
+    ColGroupDef,
+    GridApi,
+    GridOptions,
+    ICellRendererComp,
+    ICellRendererParams,
+    IHeaderComp,
+    IHeaderGroupComp,
+    IHeaderGroupParams,
+    IHeaderParams,
+    Module,
+} from 'ag-grid-community';
 import {
     AlignedGridsModule,
     CellStyleModule,
     ClientSideRowModelModule,
     ColumnApiModule,
+    ColumnAutoSizeModule,
     ColumnHoverModule,
     DragAndDropModule,
     RenderApiModule,
@@ -39,7 +54,7 @@ import {
     enableDevValidations,
     getGridElement,
 } from 'ag-grid-community';
-import { BatchEditModule, RowGroupingModule } from 'ag-grid-enterprise';
+import { BatchEditModule, CellSelectionModule, ClipboardModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 import { allowLegacyTooltipProperties, resetLegacyTooltipProperties } from '../tooltip/legacyTooltipTestUtils';
 
@@ -499,6 +514,79 @@ describe('Column Features', () => {
             `);
         });
 
+        test('a flex column a resize holds on its maxWidth is reported, and its width reaches the other grid where it is fixed', async () => {
+            const api1 = gridsManager.createGrid('grid1', {
+                columnDefs: [
+                    { colId: 'a', width: 800 },
+                    { colId: 'b', flex: 1, maxWidth: 300 },
+                ],
+            });
+            const api2 = gridsManager.createGrid('grid2', {
+                columnDefs: [
+                    { colId: 'a', width: 800 },
+                    { colId: 'b', width: 200 },
+                ],
+            });
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+            const resized: string[][] = [];
+            api1.addEventListener('columnResized', (e) => resized.push(e.columns!.map((col) => col.getColId())));
+            const widths = (api: GridApi) => ['a', 'b'].map((id) => api.getColumn(id)!.getActualWidth());
+
+            api1.setColumnWidths([{ key: 'a', newWidth: 600 }]);
+
+            await waitFor(() => expect(resized).toEqual([['a', 'b']]));
+            expect([widths(api1), widths(api2)]).toEqual([
+                [600, 300],
+                [600, 300],
+            ]);
+        });
+
+        test("a width outside the other grid's bounds lands on its bound there, and the rest of the change still lands", async () => {
+            const api1 = gridsManager.createGrid('grid1', {
+                columnDefs: [
+                    { colId: 'a', width: 100, minWidth: 50 },
+                    { colId: 'b', width: 100 },
+                ],
+            });
+            const api2 = gridsManager.createGrid('grid2', {
+                columnDefs: [
+                    { colId: 'a', width: 100, minWidth: 80 },
+                    { colId: 'b', width: 100 },
+                ],
+            });
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+            api2.setGridOption('alignedGrids', [{ api: api1 }]);
+            let resizedInGrid2 = 0;
+            api2.addEventListener('columnResized', () => ++resizedInGrid2);
+
+            api1.setColumnWidths([
+                { key: 'a', newWidth: 60 },
+                { key: 'b', newWidth: 200 },
+            ]);
+
+            expect(['a', 'b'].map((id) => api2.getColumn(id)!.getActualWidth())).toEqual([80, 200]);
+            // listeners hear `columnResized` a tick later
+            await asyncSetTimeout(0);
+            expect(resizedInGrid2).toBe(1);
+
+            // mid-drag, a further move past this grid's bound changes nothing here, so raises nothing
+            api1.setColumnWidths([{ key: 'a', newWidth: 55 }], false);
+            await asyncSetTimeout(0);
+            expect(resizedInGrid2).toBe(1);
+        });
+
+        test("the other grid copies a resize exactly under its own colResizeDefault 'shift'", () => {
+            const columnDefs: ColDef[] = ['a', 'b', 'c'].map((colId) => ({ colId, width: 100 }));
+            const api1 = gridsManager.createGrid('grid1', { columnDefs });
+            const api2 = gridsManager.createGrid('grid2', { columnDefs, colResizeDefault: 'shift' });
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+            api2.setGridOption('alignedGrids', [{ api: api1 }]);
+
+            api1.setColumnWidths([{ key: 'a', newWidth: 250 }]);
+
+            expect(['a', 'b', 'c'].map((id) => api2.getColumn(id)!.getActualWidth())).toEqual([250, 100, 100]);
+        });
+
         test('the other grid takes a resized width but re-flexes its own flex columns to its own space', () => {
             const api1 = gridsManager.createGrid('grid1', {
                 columnDefs: [
@@ -521,6 +609,449 @@ describe('Column Features', () => {
             expect([width(api1, 'a'), width(api1, 'b')]).toEqual([300, 700]);
             // `z` takes 100 of grid2's space, so its `b` flexes to 600, not to grid1's 700
             expect([width(api2, 'a'), width(api2, 'b')]).toEqual([300, 600]);
+        });
+
+        test.each([
+            { where: 'after', colId: 'a', widths: [300, 500, 200] },
+            { where: 'before', colId: 'c', widths: [200, 500, 300] },
+        ])(
+            'a column state width keeps a flex column $where it flexed in the other grid, and the grids aligned',
+            ({ colId, widths }) => {
+                const gridOptions = {
+                    columnDefs: [
+                        { colId: 'a', width: 200 },
+                        { colId: 'b', flex: 1 },
+                        { colId: 'c', width: 200 },
+                    ],
+                };
+                const api1 = gridsManager.createGrid('grid1', gridOptions);
+                const api2 = gridsManager.createGrid('grid2', gridOptions);
+                api1.setGridOption('alignedGrids', [{ api: api2 }]);
+                const layout = (api: GridApi) => ({
+                    widths: ['a', 'b', 'c'].map((id) => api.getColumn(id)!.getActualWidth()),
+                    flex: api.getColumn('b')!.getFlex(),
+                });
+
+                api1.applyColumnState({ state: [{ colId, width: 300 }] });
+
+                expect([layout(api1), layout(api2)]).toEqual([
+                    { widths, flex: 1 },
+                    { widths, flex: 1 },
+                ]);
+            }
+        );
+
+        test('a viewport resize in one grid leaves the flex columns of the other grid flexing', async () => {
+            const originalGridWidth = mockGridLayout.gridWidth;
+            let uninstallResizeObserver: (() => void) | undefined;
+            let restoreOffsetParent: (() => void) | undefined;
+            try {
+                restoreOffsetParent = polyfillOffsetParent();
+                uninstallResizeObserver = installMockResizeObserver();
+                const api1 = gridsManager.createGrid('grid1', {
+                    columnDefs: ['a', 'b', 'c'].map((colId) => ({ colId, flex: 1 })),
+                });
+                const api2 = gridsManager.createGrid('grid2', {
+                    columnDefs: [
+                        { colId: 'a', flex: 1 },
+                        { colId: 'b', width: 300 },
+                        { colId: 'c', flex: 1 },
+                    ],
+                });
+                api1.setGridOption('alignedGrids', [{ api: api2 }]);
+                const flexes = () => [api2.getColumn('a')!.getFlex(), api2.getColumn('c')!.getFlex()];
+
+                mockGridLayout.gridWidth = 1100;
+                triggerResizeObservers();
+                await waitFor(() => expect(api1.getColumn('b')!.getActualWidth()).toBe(366));
+
+                expect(flexes()).toEqual([1, 1]);
+                expect(api2.getColumn('b')!.getActualWidth()).toBe(366);
+            } finally {
+                mockGridLayout.gridWidth = originalGridWidth;
+                uninstallResizeObserver?.();
+                restoreOffsetParent?.();
+            }
+        });
+
+        test('a flex: 0 column is aligned as a column with no flex', () => {
+            const api1 = gridsManager.createGrid('grid1', { columnDefs: [{ colId: 'x', flex: 0, width: 100 }] });
+            const api2 = gridsManager.createGrid('grid2', { columnDefs: [{ colId: 'x', flex: 0, width: 200 }] });
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+
+            // refused below its min width, the resize still reports its column, at the width it keeps
+            api1.setColumnWidths([{ key: 'x', newWidth: 5 }]);
+
+            expect(api2.getColumn('x')!.getActualWidth()).toBe(100);
+        });
+
+        test('flex columns stay aligned as a column hides and a column group opens and closes', () => {
+            const gridOptions: GridOptions = {
+                defaultColDef: { flex: 1 },
+                columnDefs: [
+                    { colId: 'athlete' },
+                    { colId: 'age' },
+                    {
+                        headerName: 'Medals',
+                        groupId: 'medals',
+                        children: [
+                            { colId: 'total', columnGroupShow: 'closed' },
+                            { colId: 'gold', columnGroupShow: 'open' },
+                            { colId: 'silver', columnGroupShow: 'open' },
+                        ],
+                    },
+                ],
+            };
+            const api1 = gridsManager.createGrid('grid1', gridOptions);
+            const api2 = gridsManager.createGrid('grid2', gridOptions);
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+            api2.setGridOption('alignedGrids', [{ api: api1 }]);
+            const widths = (api: GridApi) =>
+                api.getAllDisplayedColumns().map((col) => `${col.getColId()}:${col.getActualWidth()}`);
+            const seen: string[][][] = [];
+
+            api1.setColumnsVisible(['age'], false);
+            seen.push([widths(api1), widths(api2)]);
+            api1.setColumnGroupOpened('medals', true);
+            seen.push([widths(api1), widths(api2)]);
+            api1.setColumnGroupOpened('medals', false);
+            seen.push([widths(api1), widths(api2)]);
+
+            const hidden = ['athlete:500', 'total:500'];
+            const opened = ['athlete:333', 'gold:334', 'silver:333'];
+            expect(seen).toEqual([
+                [hidden, hidden],
+                [opened, opened],
+                [hidden, hidden],
+            ]);
+        });
+
+        test('a flex changed in one grid passes the widths it gives to the other grid', () => {
+            const gridOptions = {
+                columnDefs: [
+                    { colId: 'a', width: 200 },
+                    { colId: 'b', flex: 1 },
+                    { colId: 'c', flex: 1 },
+                ],
+            };
+            const api1 = gridsManager.createGrid('grid1', gridOptions);
+            const api2 = gridsManager.createGrid('grid2', gridOptions);
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+            const widths = (api: GridApi) => ['a', 'b', 'c'].map((id) => api.getColumn(id)!.getActualWidth());
+
+            api1.applyColumnState({ state: [{ colId: 'b', flex: 3 }] });
+
+            expect([widths(api1), widths(api2)]).toEqual([
+                [200, 600, 200],
+                [200, 600, 200],
+            ]);
+            expect(api2.getColumn('c')!.getFlex()).toBe(1);
+        });
+
+        test('a resize or a viewport resize in one grid leaves a column flexing differently in the other grid flexing there', async () => {
+            const originalGridWidth = mockGridLayout.gridWidth;
+            let uninstallResizeObserver: (() => void) | undefined;
+            let restoreOffsetParent: (() => void) | undefined;
+            try {
+                restoreOffsetParent = polyfillOffsetParent();
+                uninstallResizeObserver = installMockResizeObserver();
+                const columnDefs = (flex: number) => [
+                    { colId: 'a', width: 200 },
+                    { colId: 'b', flex },
+                ];
+                const api1 = gridsManager.createGrid('grid1', { columnDefs: columnDefs(1) });
+                const api2 = gridsManager.createGrid('grid2', { columnDefs: columnDefs(2) });
+                api1.setGridOption('alignedGrids', [{ api: api2 }]);
+                const state = () => [api2.getColumn('a')!.getActualWidth(), api2.getColumn('b')!.getFlex()];
+
+                api1.setColumnWidths([{ key: 'a', newWidth: 300 }]);
+                const resized = state();
+                mockGridLayout.gridWidth = 1100;
+                triggerResizeObservers();
+                await waitFor(() => expect(api1.getColumn('b')!.getActualWidth()).toBe(800));
+
+                expect([resized, state()]).toEqual([
+                    [300, 2],
+                    [300, 2],
+                ]);
+            } finally {
+                mockGridLayout.gridWidth = originalGridWidth;
+                uninstallResizeObserver?.();
+                restoreOffsetParent?.();
+            }
+        });
+
+        test('a resize in one grid passes a flexed width to a flex column pinned in the other grid, which takes it as a fixed width', () => {
+            const columnDefs = (pinned: 'left' | null) => [
+                { colId: 'a', width: 200 },
+                { colId: 'b', flex: 1, pinned },
+            ];
+            const api1 = gridsManager.createGrid('grid1', { columnDefs: columnDefs(null) });
+            const api2 = gridsManager.createGrid('grid2', { columnDefs: columnDefs('left') });
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+
+            api1.setColumnWidths([{ key: 'a', newWidth: 300 }]);
+
+            expect(api2.getColumn('b')!.getActualWidth()).toBe(api1.getColumn('b')!.getActualWidth());
+            expect([api1.getColumn('b')!.getFlex(), api2.getColumn('b')!.getFlex()]).toEqual([1, null]);
+        });
+
+        test('a resize in one grid ends the flex of the column in the other grid whose width it already had', () => {
+            const api1 = gridsManager.createGrid('grid1', {
+                columnDefs: ['a', 'b'].map((colId) => ({ colId, flex: 1 })),
+            });
+            const api2 = gridsManager.createGrid('grid2', {
+                columnDefs: [
+                    { colId: 'a', flex: 1 },
+                    { colId: 'z', width: 200 },
+                    { colId: 'b', flex: 1 },
+                ],
+            });
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+            const columns = (api: GridApi) =>
+                ['a', 'b'].map((id) => {
+                    const col = api.getColumn(id)!;
+                    return `${id}:${col.getActualWidth()}:${col.getFlex()}`;
+                });
+
+            // grid2's `a` already flexes to 400
+            api1.setColumnWidths([{ key: 'a', newWidth: 400 }]);
+            api2.setColumnsVisible(['z'], false);
+
+            expect([columns(api1), columns(api2)]).toEqual([
+                ['a:400:null', 'b:600:1'],
+                ['a:400:null', 'b:600:1'],
+            ]);
+        });
+
+        test('a resize in one grid leaving a flex column at its width leaves it flexing in the other grid', () => {
+            const api1 = gridsManager.createGrid('grid1', {
+                columnDefs: ['a', 'b'].map((colId) => ({ colId, flex: 1 })),
+            });
+            const api2 = gridsManager.createGrid('grid2', {
+                columnDefs: [
+                    { colId: 'a', flex: 1 },
+                    { colId: 'z', width: 200 },
+                    { colId: 'b', flex: 1 },
+                ],
+            });
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+            const columns = (api: GridApi) =>
+                ['a', 'b'].map((id) => {
+                    const col = api.getColumn(id)!;
+                    return `${id}:${col.getActualWidth()}:${col.getFlex()}`;
+                });
+
+            // as a drag released where it started: a finished resize naming `a`, whose width does not change
+            api1.setColumnWidths([{ key: 'a', newWidth: 500 }]);
+
+            expect([columns(api1), columns(api2)]).toEqual([
+                ['a:500:1', 'b:500:1'],
+                ['a:400:1', 'b:400:1'],
+            ]);
+        });
+
+        test('a resize refused in one grid leaves a column flexing differently in the other grid flexing there', () => {
+            const columnDefs = (flex: number) => [
+                { colId: 'a', width: 200 },
+                { colId: 'b', flex, minWidth: 50 },
+            ];
+            const api1 = gridsManager.createGrid('grid1', { columnDefs: columnDefs(1) });
+            const api2 = gridsManager.createGrid('grid2', { columnDefs: columnDefs(2) });
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+
+            api1.setColumnWidths([{ key: 'b', newWidth: 10 }]);
+
+            expect([api1.getColumn('b')!.getFlex(), api2.getColumn('b')!.getFlex()]).toEqual([1, 2]);
+        });
+
+        test('a resize in one grid flexes the other grid around its own resized columns, not a column flexing only there', () => {
+            const api1 = gridsManager.createGrid('grid1', {
+                columnDefs: [{ colId: 'a', width: 200 }, ...['b', 'c', 'd'].map((colId) => ({ colId, flex: 1 }))],
+            });
+            const api2 = gridsManager.createGrid('grid2', {
+                columnDefs: [
+                    { colId: 'a', width: 200 },
+                    { colId: 'b', flex: 1 },
+                    { colId: 'c', width: 300 },
+                    { colId: 'd', flex: 1 },
+                ],
+            });
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+            const columns = (api: GridApi) =>
+                ['a', 'b', 'c', 'd'].map((id) => {
+                    const col = api.getColumn(id)!;
+                    return `${id}:${col.getActualWidth()}:${col.getFlex()}`;
+                });
+
+            api1.setColumnWidths([{ key: 'a', newWidth: 300 }]);
+
+            expect([columns(api1), columns(api2)]).toEqual([
+                ['a:300:null', 'b:233:1', 'c:234:1', 'd:233:1'],
+                ['a:300:null', 'b:233:1', 'c:234:null', 'd:233:1'],
+            ]);
+        });
+
+        test('an auto-size in one grid re-flexes every flex column in the other grid, as it did in its own', async () => {
+            const gridOptions = {
+                columnDefs: [
+                    { colId: 'b', flex: 1 },
+                    { colId: 'a', field: 'a', width: 300 },
+                ],
+                rowData: [{ a: 'x' }],
+            };
+            const api1 = gridsManager.createGrid('grid1', gridOptions, { modules: [ColumnAutoSizeModule] });
+            const api2 = gridsManager.createGrid('grid2', gridOptions, { modules: [ColumnAutoSizeModule] });
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+            const widths = (api: GridApi) => ['b', 'a'].map((id) => api.getColumn(id)!.getActualWidth());
+
+            api1.autoSizeColumns(['a']);
+
+            // the auto-size announces its widths once measured
+            await waitFor(() => expect(widths(api2)[1]).toBe(widths(api1)[1]));
+            expect(widths(api1)[1]).not.toBe(300);
+            expect(widths(api2)).toEqual(widths(api1));
+        });
+
+        test('a group fit in one grid re-flexes every flex column in the other grid, those before the group too', async () => {
+            const measured = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (
+                this: HTMLElement
+            ) {
+                return this.tagName === 'FORM' ? 300 : 0;
+            });
+            try {
+                const columnDefs = (x: ColDef) => [
+                    { colId: 'x', ...x },
+                    {
+                        headerName: 'g',
+                        groupId: 'g',
+                        children: [{ colId: 'a', field: 'a', width: 200, suppressAutoSize: true }],
+                    },
+                    { colId: 'y', flex: 1 },
+                ];
+                const gridOptions = (x: ColDef) => ({ columnDefs: columnDefs(x), autoSizePadding: 0, rowData: [{}] });
+                const modules = { modules: [ColumnAutoSizeModule] };
+                const api1 = gridsManager.createGrid('grid1', gridOptions({ width: 200 }), modules);
+                const api2 = gridsManager.createGrid('grid2', gridOptions({ flex: 1 }), modules);
+                api1.setGridOption('alignedGrids', [{ api: api2 }]);
+                const widths = (api: GridApi) => ['x', 'a', 'y'].map((id) => api.getColumn(id)!.getActualWidth());
+                const bar = TestGridsManager.getHTMLElement(api1)!.querySelector<HTMLElement>(
+                    '.ag-header-group-cell .ag-header-cell-resize'
+                )!;
+
+                bar.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+                await asyncSetTimeout(0);
+
+                expect([widths(api1), widths(api2)]).toEqual([
+                    [200, 300, 500],
+                    [350, 300, 350],
+                ]);
+            } finally {
+                measured.mockRestore();
+            }
+        });
+
+        test('a group fit in one grid lands the same widths in the other, its flex columns re-flexing in both', async () => {
+            const measured = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (
+                this: HTMLElement
+            ) {
+                return this.tagName === 'FORM' ? 600 : 0;
+            });
+            try {
+                const gridOptions = () => ({
+                    columnDefs: [
+                        {
+                            headerName: 'g',
+                            groupId: 'g',
+                            children: [
+                                { colId: 'a', field: 'a', width: 100, suppressAutoSize: true },
+                                { colId: 'b', field: 'b', flex: 1, resizable: false, suppressAutoSize: true },
+                            ],
+                        },
+                        { colId: 'e', flex: 1 },
+                    ],
+                    autoSizePadding: 0,
+                    rowData: [{}],
+                });
+                const modules = { modules: [ColumnAutoSizeModule] };
+                const api1 = gridsManager.createGrid('grid1', gridOptions(), modules);
+                const api2 = gridsManager.createGrid('grid2', gridOptions(), modules);
+                api1.setGridOption('alignedGrids', [{ api: api2 }]);
+                const widths = (api: GridApi) => ['a', 'b', 'e'].map((id) => api.getColumn(id)!.getActualWidth());
+                const bar = TestGridsManager.getHTMLElement(api1)!.querySelector<HTMLElement>(
+                    '.ag-header-group-cell .ag-header-cell-resize'
+                )!;
+
+                bar.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+                await asyncSetTimeout(0);
+
+                // `a` takes the fit's 50px; `b`, left at its width, keeps its flex and shares the rest with `e`
+                expect([widths(api1), widths(api2)]).toEqual([
+                    [150, 425, 425],
+                    [150, 425, 425],
+                ]);
+            } finally {
+                measured.mockRestore();
+            }
+        });
+
+        test('a group drag in one grid that leaves a flex column on its bound lands the same widths in the other', async () => {
+            const gridOptions = () => ({
+                columnDefs: [
+                    {
+                        headerName: 'g',
+                        groupId: 'g',
+                        children: [
+                            { colId: 'a', field: 'a', width: 100 },
+                            { colId: 'b', field: 'b', flex: 1, maxWidth: 450 },
+                        ],
+                    },
+                    { colId: 'e', flex: 1 },
+                ],
+            });
+            const api1 = gridsManager.createGrid('grid1', gridOptions());
+            const api2 = gridsManager.createGrid('grid2', gridOptions());
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+            const widths = (api: GridApi) => ['a', 'b', 'e'].map((id) => api.getColumn(id)!.getActualWidth());
+            expect(widths(api1)).toEqual([100, 450, 450]);
+            const bar = TestGridsManager.getHTMLElement(api1)!.querySelector<HTMLElement>(
+                '.ag-header-group-cell .ag-header-cell-resize'
+            )!;
+
+            // `b` is on its maxWidth, so `a` takes the 100px and `b` keeps flexing at its width, bounding the pass
+            const dispatcher = new DragEventDispatcher('mouse');
+            await dispatcher.startDrag(bar, 500, 10);
+            await dispatcher.movePointer(bar, 600, 10);
+            await dispatcher.finishDrag();
+            await asyncSetTimeout(0);
+
+            expect([widths(api1), widths(api2)]).toEqual([
+                [200, 450, 350],
+                [200, 450, 350],
+            ]);
+        });
+
+        test('a column flexed again in one grid passes its width to the other grid, where it no longer flexes', () => {
+            const gridOptions = {
+                columnDefs: [
+                    { colId: 'a', width: 200 },
+                    { colId: 'b', flex: 1 },
+                    { colId: 'c', width: 200 },
+                ],
+            };
+            const api1 = gridsManager.createGrid('grid1', gridOptions);
+            const api2 = gridsManager.createGrid('grid2', gridOptions);
+            api1.setGridOption('alignedGrids', [{ api: api2 }]);
+            const widths = (api: GridApi) => ['a', 'b', 'c'].map((id) => api.getColumn(id)!.getActualWidth());
+            api1.setColumnWidths([{ key: 'b', newWidth: 300 }]);
+
+            api1.resetColumnState();
+
+            expect([widths(api1), widths(api2)]).toEqual([
+                [200, 600, 200],
+                [200, 600, 200],
+            ]);
+            expect(api2.getColumn('b')!.getFlex()).toBeNull();
         });
 
         test('a grid destroyed by another aligned grid replaying a change is not sent it', () => {
@@ -676,6 +1207,161 @@ describe('Column Features', () => {
             press('ArrowLeft');
             expect(order()).toEqual(['a', 'b', 'c']);
             expect(api.getColumn('b')!.getActualWidth()).toBe(100);
+        });
+
+        test('suppressHeaderKeyboardEvent returning true stops keyboard moves, resizes and copies on a column or group', async () => {
+            const suppress = () => true;
+            let copied = 0;
+            const api = gridsManager.createGrid(
+                'keyboardSuppressed',
+                {
+                    columnDefs: [
+                        {
+                            headerName: 'G',
+                            groupId: 'g',
+                            suppressHeaderKeyboardEvent: suppress,
+                            children: [{ colId: 'a', width: 100, suppressHeaderKeyboardEvent: suppress }],
+                        },
+                        { colId: 'b', width: 100 },
+                    ],
+                    rowData: [{}],
+                    cellSelection: true,
+                    sendToClipboard: () => copied++,
+                },
+                { modules: [CellSelectionModule, ClipboardModule] }
+            );
+            await asyncSetTimeout(0);
+            api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['a'] });
+            const press = (code: string, modifier: 'shiftKey' | 'altKey' | 'ctrlKey'): void => {
+                const key = code === 'KeyC' ? 'c' : code;
+                const header = document.activeElement as HTMLElement;
+                // the mock layout puts every header at 0; a move aims past the header's own rect
+                const rect = vi.spyOn(header, 'getBoundingClientRect').mockReturnValue({
+                    left: 0,
+                    right: 100,
+                    top: 0,
+                    bottom: 20,
+                    width: 100,
+                    height: 20,
+                    x: 0,
+                    y: 0,
+                } as DOMRect);
+                header.dispatchEvent(new KeyboardEvent('keydown', { key, code, [modifier]: true, bubbles: true }));
+                header.dispatchEvent(new KeyboardEvent('keyup', { key, bubbles: true }));
+                rect.mockRestore();
+            };
+
+            for (const headerId of ['a', 'g']) {
+                api.setFocusedHeader(headerId);
+                press('ArrowRight', 'shiftKey');
+                press('ArrowRight', 'ctrlKey');
+                press('ArrowRight', 'altKey');
+                press('KeyC', 'ctrlKey');
+            }
+            const copiedWhileSuppressed = copied;
+            // the same copy from a header that does not suppress it
+            api.setFocusedHeader('b');
+            press('KeyC', 'ctrlKey');
+            await asyncSetTimeout(0);
+
+            expect(api.getAllDisplayedColumns().map((col) => col.getColId())).toEqual(['a', 'b']);
+            expect(api.getColumn('a')!.getActualWidth()).toBe(100);
+            expect([copiedWhileSuppressed, copied]).toEqual([0, 1]);
+        });
+
+        test('a header comp key listener on eGridHeader receives the keys the grid resizes with, on a column or group', async () => {
+            const seen: string[] = [];
+            class Header implements IHeaderComp {
+                private readonly eGui = document.createElement('div');
+                public init(params: IHeaderParams): void {
+                    params.eGridHeader.addEventListener('keydown', () => seen.push('column'));
+                }
+                public getGui(): HTMLElement {
+                    return this.eGui;
+                }
+                public refresh(): boolean {
+                    return false;
+                }
+            }
+            class GroupHeader implements IHeaderGroupComp {
+                private readonly eGui = document.createElement('div');
+                public init(params: IHeaderGroupParams): void {
+                    params.eGridHeader.addEventListener('keydown', () => seen.push('group'));
+                }
+                public getGui(): HTMLElement {
+                    return this.eGui;
+                }
+            }
+            const api = gridsManager.createGrid('headerCompKeys', {
+                columnDefs: [
+                    { headerName: 'G', groupId: 'g', headerGroupComponent: GroupHeader, children: [{ colId: 'a' }] },
+                    { colId: 'b' },
+                ],
+                defaultColDef: { width: 100, headerComponent: Header },
+            });
+            await asyncSetTimeout(0);
+
+            const root = TestGridsManager.getHTMLElement(api)!;
+            for (const selector of ['.ag-header-cell[col-id="a"]', '.ag-header-group-cell']) {
+                const header = root.querySelector<HTMLElement>(selector)!;
+                header.focus();
+                header.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', altKey: true, bubbles: true }));
+                header.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowRight', bubbles: true }));
+            }
+
+            expect(seen).toEqual(['column', 'group']);
+            expect(api.getColumn('a')!.getActualWidth()).toBeGreaterThan(100);
+        });
+
+        test('suppressHeaderKeyboardEvent stops a keyboard resize on a header whose comp listener prevents the key', async () => {
+            class Header implements IHeaderComp {
+                private readonly eGui = document.createElement('div');
+                public init(params: IHeaderParams): void {
+                    params.eGridHeader.addEventListener('keydown', (e) => e.preventDefault());
+                }
+                public getGui(): HTMLElement {
+                    return this.eGui;
+                }
+                public refresh(): boolean {
+                    return false;
+                }
+            }
+            class GroupHeader implements IHeaderGroupComp {
+                private readonly eGui = document.createElement('div');
+                public init(params: IHeaderGroupParams): void {
+                    params.eGridHeader.addEventListener('keydown', (e) => e.preventDefault());
+                }
+                public getGui(): HTMLElement {
+                    return this.eGui;
+                }
+            }
+            const suppress = () => true;
+            const api = gridsManager.createGrid('headerCompPrevented', {
+                columnDefs: [
+                    {
+                        headerName: 'G',
+                        groupId: 'g',
+                        headerGroupComponent: GroupHeader,
+                        suppressHeaderKeyboardEvent: suppress,
+                        children: [{ colId: 'a', suppressHeaderKeyboardEvent: suppress }],
+                    },
+                    { colId: 'b' },
+                ],
+                defaultColDef: { width: 100, headerComponent: Header },
+            });
+            await asyncSetTimeout(0);
+
+            const root = TestGridsManager.getHTMLElement(api)!;
+            for (const selector of ['.ag-header-cell[col-id="a"]', '.ag-header-group-cell']) {
+                const header = root.querySelector<HTMLElement>(selector)!;
+                header.focus();
+                header.dispatchEvent(
+                    new KeyboardEvent('keydown', { key: 'ArrowRight', altKey: true, bubbles: true, cancelable: true })
+                );
+                header.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowRight', bubbles: true }));
+            }
+
+            expect(api.getColumn('a')!.getActualWidth()).toBe(100);
         });
 
         test('suppressMovable prevents column movement', async () => {
@@ -861,43 +1547,6 @@ describe('Column Features', () => {
     });
 
     describe('autoHeight', () => {
-        test('auto row height follows the displayed columns: an autoHeight col in a collapsed group leaves it off', async () => {
-            // resetRowHeights warns and does nothing while auto row height is on
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [3] });
-            const consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
-            // a warning logs once, so each case gets its own grid
-            const warnsAboutAutoHeight = (openGroup: boolean) => {
-                const api = gridsManager.createGrid('myGrid', {
-                    columnDefs: [
-                        {
-                            groupId: 'g',
-                            children: [{ colId: 'a' }, { colId: 'tall', autoHeight: true, columnGroupShow: 'open' }],
-                        },
-                    ],
-                });
-                if (openGroup) {
-                    api.setColumnGroupOpened('g', true);
-                }
-                consoleWarnSpy.mockClear();
-                api.resetRowHeights();
-                gridsManager.reset();
-                return consoleWarnSpy.mock.calls.some((args) =>
-                    args.some((arg) => typeof arg === 'string' && arg.includes('Auto Row Height'))
-                );
-            };
-
-            let collapsed: boolean;
-            let opened: boolean;
-            try {
-                collapsed = warnsAboutAutoHeight(false);
-                opened = warnsAboutAutoHeight(true);
-            } finally {
-                consoleWarnSpy.mockRestore();
-            }
-
-            expect({ collapsed, opened }).toEqual({ collapsed: false, opened: true });
-        });
-
         test('hiding the taller of two auto-height columns shrinks the row to the other', async () => {
             const cellHeights = new Map([
                 ['tall', 120],

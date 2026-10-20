@@ -36,9 +36,6 @@ export class FilterManager extends BeanStub implements NamedBean {
 
     private aggFiltering: boolean;
 
-    // when we're waiting for cell data types to be inferred, we need to defer filter model updates
-    private advFilterModelUpdateQueue: (AdvancedFilterModel | null | undefined)[] = [];
-
     private alwaysPassFilter?: (rowNode: IRowNode) => boolean;
 
     public postConstruct(): void {
@@ -51,7 +48,6 @@ export class FilterManager extends BeanStub implements NamedBean {
             newColumnsLoaded: updateAdvFilterColumns,
             columnVisible: updateAdvFilterColumns,
             advancedFilterEnabledChanged: ({ enabled }) => this.onAdvFilterEnabledChanged(enabled),
-            dataTypesInferred: this.processFilterModelUpdateQueue.bind(this),
         });
 
         this.externalFilterPresent = this.isExternalFilterPresentCallback();
@@ -108,6 +104,7 @@ export class FilterManager extends BeanStub implements NamedBean {
         source: FilterChangedEventSourceType = 'api',
         skipWarning?: boolean
     ): void {
+        this.beans.stateSvc?.applyInitialFilterState();
         if (this.isAdvFilterEnabled()) {
             if (!skipWarning) {
                 this.warnAdvFilters();
@@ -119,7 +116,7 @@ export class FilterManager extends BeanStub implements NamedBean {
     }
 
     public getFilterModel(): FilterModel {
-        return this.colFilter?.getModel() ?? {};
+        return this.colFilter?.getLatestModel() ?? {};
     }
 
     public getFilterState(): ColumnFilterState | undefined {
@@ -297,7 +294,7 @@ export class FilterManager extends BeanStub implements NamedBean {
     }
 
     public getAdvFilterModel(): AdvancedFilterModel | null {
-        return this.isAdvFilterEnabled() ? this.advancedFilter.getModel() : null;
+        return this.isAdvFilterEnabled() ? this.advancedFilter.getLatestModel() : null;
     }
 
     public setAdvFilterModel(
@@ -307,12 +304,8 @@ export class FilterManager extends BeanStub implements NamedBean {
         if (!this.isAdvFilterEnabled()) {
             return;
         }
-        if (this.beans.dataTypeSvc?.isPendingInference) {
-            this.advFilterModelUpdateQueue.push(expression);
-            return;
-        }
-        this.advancedFilter.setModel(expression ?? null);
-        this.onFilterChanged({ source });
+        this.beans.stateSvc?.applyInitialFilterState();
+        this.advancedFilter.setModelOrDefer(expression ?? null, source);
     }
 
     public toggleAdvFilterBuilder(show: boolean, source: 'api' | 'ui'): void {
@@ -365,14 +358,8 @@ export class FilterManager extends BeanStub implements NamedBean {
         return this.isAdvFilterHeaderActive() ? this.advancedFilter.getCtrl().getHeaderHeight() : 0;
     }
 
-    private processFilterModelUpdateQueue(): void {
-        for (const model of this.advFilterModelUpdateQueue) {
-            this.setAdvFilterModel(model);
-        }
-        this.advFilterModelUpdateQueue = [];
-    }
-
     public setColumnFilterModel(key: string | AgColumn, model: any): Promise<void> {
+        this.beans.stateSvc?.applyInitialFilterState();
         if (this.isAdvFilterEnabled()) {
             this.warnAdvFilters();
             return Promise.resolve();

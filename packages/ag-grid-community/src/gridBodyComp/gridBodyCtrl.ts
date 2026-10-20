@@ -627,11 +627,11 @@ export class GridBodyCtrl extends BeanStub {
         }
 
         if (this.gos.get('preventDefaultOnContextMenu')) {
-            const event = (mouseEvent || touchEvent)!;
+            const event = (mouseEvent ?? touchEvent)!;
             event.preventDefault();
         }
 
-        const target = (mouseEvent || touch)?.target;
+        const target = (mouseEvent ?? touch)?.target;
         const eTarget = target instanceof Element ? target : null;
         const isOnGridViewport =
             eTarget != null && (eTarget === this.eGridViewport || this.eGridViewport.contains(eTarget));

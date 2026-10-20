@@ -47,8 +47,8 @@ export class ScrollVisibleService extends BeanStub implements NamedBean {
 
     public postConstruct(): void {
         const { gos } = this;
-        this.horizontalScrollShowing = gos.get('alwaysShowHorizontalScroll') === true;
-        this.verticalScrollShowing = gos.get('alwaysShowVerticalScroll') === true;
+        this.horizontalScrollShowing = !!gos.get('alwaysShowHorizontalScroll');
+        this.verticalScrollShowing = !!gos.get('alwaysShowVerticalScroll');
 
         this.ctrlsSvc.whenReady(this, () => this.measureScrollbar());
 

@@ -1,6 +1,8 @@
+import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
 
-import { FindModule } from 'ag-grid-enterprise';
+import { PinnedRowModule, TextFilterModule } from 'ag-grid-community';
+import { FindModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 /**
  * Tests for find navigation functionality (next, previous, goTo).
@@ -8,11 +10,40 @@ import { FindModule } from 'ag-grid-enterprise';
 describe('Find Navigation', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
-        modules: [FindModule],
+        modules: [FindModule, PinnedRowModule, RowGroupingModule, TextFilterModule],
     });
 
     afterEach(() => {
         gridMgr.reset();
+    });
+
+    test('a pinned grand total is one match, on its pinned row', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'value', aggFunc: 'sum' }],
+            rowData: [{ value: 1 }, { value: 2 }],
+            grandTotalRow: 'pinnedBottom',
+        });
+        api.setGridOption('findSearchValue', '3');
+        await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
+
+        api.findNext();
+        expect(api.findGetActiveMatch()?.node.rowPinned).toBe('bottom');
+    });
+
+    test('an inline grand total is no match while a filter leaves no rows', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true, filter: 'agTextColumnFilter' },
+                { field: 'value', aggFunc: 'sum' },
+            ],
+            rowData: [{ country: 'Ireland', value: 1 }],
+            grandTotalRow: 'bottom',
+        });
+        api.setGridOption('findSearchValue', 'Total');
+        await waitFor(() => expect(api.findGetTotalMatches()).toBe(1));
+
+        api.setFilterModel({ country: { type: 'equals', filter: 'France' } });
+        await waitFor(() => expect(api.findGetTotalMatches()).toBe(0));
     });
 
     test('findNext navigates through matches in order', async () => {

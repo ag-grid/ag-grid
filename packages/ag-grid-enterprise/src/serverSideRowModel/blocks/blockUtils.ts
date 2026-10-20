@@ -55,7 +55,7 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }): RowNode {
         const rowNode = new RowNode(this.beans);
 
-        const rowHeight = params.rowHeight != null ? params.rowHeight : _getRowHeightAsNumber(this.beans);
+        const rowHeight = params.rowHeight ?? _getRowHeightAsNumber(this.beans);
         rowNode.setRowHeight(rowHeight);
 
         rowNode.group = params.group;

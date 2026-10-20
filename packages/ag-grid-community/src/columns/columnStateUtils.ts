@@ -147,7 +147,6 @@ export function _setColsVisible(
     filterLockedColumns = false
 ): void {
     const colModel = beans.colModel;
-    const newVisible = visible === true;
     let changed: AgColumn[] | null = null;
     colModel.beginColUpdate();
     try {
@@ -157,8 +156,8 @@ export function _setColsVisible(
             if (col === undefined || (filterLockedColumns && col.colDef.lockVisible)) {
                 continue;
             }
-            if (col.visible !== newVisible) {
-                col.setVisible(newVisible, source);
+            if (col.visible !== visible) {
+                col.setVisible(visible, source);
                 changed ??= [];
                 changed.push(col);
             }
@@ -540,12 +539,14 @@ function resetColumnState(beans: BeanCollection, source: ColumnEventType): void 
         for (let i = 0, len = primaryCols.length; i < len; ++i) {
             const col = primaryCols[i];
             col.pivotSort = _resolvePivotSortFromColDef(col.colDef);
-            // the state above carries the colDef width, which `applyFieldState` would otherwise read as a
-            // deliberate resize
-            col.resetWidthOwnership();
         }
         // the row numbers column is a service column outside the state above
         beans.rowNumbersSvc?.resetColumnState(source);
+        // every column returns to its column definition, so no width stays the user's (`applyFieldState` claims them)
+        const allCols = colModel.getAllCols();
+        for (let i = 0, len = allCols.length; i < len; ++i) {
+            allCols[i].resetWidthOwnership();
+        }
 
         // Order from the now-current service cols: auto cols may have been recreated above (their colIds change
         // with the row-group set), so use the post-apply instances, not the pre-apply ids in `columnStates`.
@@ -921,7 +922,7 @@ export function getColumnStateFromColDef(beans: BeanCollection, column: AgColumn
     };
 }
 
-const orDefault = <T>(stateValue: T | undefined, defaultValue: T | undefined): T | undefined =>
+const orDefault = <T>(stateValue: T | null | undefined, defaultValue: T | undefined): T | null | undefined =>
     stateValue !== undefined ? stateValue : defaultValue;
 
 /** Invoke `cb` for each leaf column of a built col tree, in declaration order. */

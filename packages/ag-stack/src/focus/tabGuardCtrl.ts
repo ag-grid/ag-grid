@@ -26,7 +26,7 @@ export interface TabGuardCtrlParams {
     eTopGuard: HTMLElement;
     eBottomGuard: HTMLElement;
     eFocusableElement: HTMLElement;
-    focusTrapActive?: boolean;
+    focusTrapActive?: boolean | 'native';
     forceFocusOutWhenTabGuardsAreEmpty?: boolean;
     isFocusableContainer?: boolean;
     focusInnerElement?: (fromBottom: boolean) => boolean;
@@ -52,7 +52,7 @@ export class AgTabGuardCtrl<
     private readonly eBottomGuard: HTMLElement;
 
     private readonly eFocusableElement: HTMLElement;
-    private readonly focusTrapActive: boolean;
+    private readonly focusTrapActive: boolean | 'native';
     private readonly forceFocusOutWhenTabGuardsAreEmpty: boolean;
     // When true, this prevents the browser from tabbing into and out of the element.
     // Instead, focus must be handled manually
@@ -104,7 +104,7 @@ export class AgTabGuardCtrl<
         this.eBottomGuard = eBottomGuard;
         this.providedFocusInnerElement = focusInnerElement;
         this.eFocusableElement = eFocusableElement;
-        this.focusTrapActive = !!focusTrapActive;
+        this.focusTrapActive = focusTrapActive ?? false;
         this.forceFocusOutWhenTabGuardsAreEmpty = !!forceFocusOutWhenTabGuardsAreEmpty;
         this.isFocusableContainer = !!isFocusableContainer;
 
@@ -159,7 +159,7 @@ export class AgTabGuardCtrl<
         if (this.forcingFocusOut) {
             return;
         }
-        const tabIndex = this.gos.get('tabIndex')!;
+        const tabIndex = this.focusTrapActive === 'native' ? 0 : this.gos.get('tabIndex')!;
         this.comp.setTabIndex(tabIndex.toString());
     }
 
@@ -209,6 +209,11 @@ export class AgTabGuardCtrl<
             return;
         }
 
+        if (this.focusTrapActive === 'native') {
+            this.focusNextInTrap(e);
+            return;
+        }
+
         const fromBottom = e.target === this.eBottomGuard;
 
         const hasFocusedInnerElement = this.providedFocusInnerElement
@@ -220,20 +225,37 @@ export class AgTabGuardCtrl<
         }
     }
 
-    private findNextElementOutsideAndFocus(up: boolean, excludeElements?: HTMLElement[]): boolean {
-        const eDocument = _getDocument(this.beans);
-        const focusableEls = _removeNonTabStopRadios(
-            eDocument.body,
-            _findFocusableElements(eDocument.body, null, true).filter((element) => element.tabIndex >= 0)
-        )
-            .map((element, domIndex) => ({ element, domIndex }))
-            .sort((a, b) => {
-                const tabIndexA = a.element.tabIndex || Number.MAX_SAFE_INTEGER;
-                const tabIndexB = b.element.tabIndex || Number.MAX_SAFE_INTEGER;
+    private getTabOrderedElements(root: HTMLElement, activeEl?: Element | null): HTMLElement[] {
+        return _removeNonTabStopRadios(
+            root,
+            _findFocusableElements(root).filter((element) => element.tabIndex >= 0),
+            activeEl
+        ).sort((a, b) => (a.tabIndex || Number.MAX_SAFE_INTEGER) - (b.tabIndex || Number.MAX_SAFE_INTEGER));
+    }
 
-                return tabIndexA - tabIndexB || a.domIndex - b.domIndex;
-            })
-            .map(({ element }) => element);
+    private focusNextInTrap(e: FocusEvent): void {
+        const root = this.eFocusableElement;
+        const fromBottom = e.target === this.eBottomGuard;
+        const previous = e.relatedTarget as HTMLElement | null;
+        // Ancestor guards reactivate on focusout; do not re-enter the container we are leaving.
+        const elements = this.getTabOrderedElements(root, previous).filter(
+            (element) =>
+                !this.isTabGuard(element) &&
+                (element === previous ||
+                    !element.classList.contains(TabGuardClassNames.TAB_GUARD) ||
+                    !element.parentElement?.contains(previous))
+        );
+        const backwards = root.contains(previous) ? !fromBottom : fromBottom;
+        const index = previous ? elements.indexOf(previous) : -1;
+        let nextIndex = backwards ? elements.length - 1 : 0;
+        if (index >= 0) {
+            nextIndex = (index + (backwards ? -1 : 1) + elements.length) % elements.length;
+        }
+        elements[nextIndex]?.focus({ preventScroll: true });
+    }
+
+    private findNextElementOutsideAndFocus(up: boolean, excludeElements?: HTMLElement[]): boolean {
+        const focusableEls = this.getTabOrderedElements(_getDocument(this.beans).body);
         const tabGuard = up ? this.eTopGuard : this.eBottomGuard;
         const index = focusableEls.indexOf(tabGuard);
 
@@ -293,6 +315,12 @@ export class AgTabGuardCtrl<
     public onTabKeyDown(e: KeyboardEvent): void {
         if (this.providedOnTabKeyDown) {
             this.providedOnTabKeyDown(e);
+            return;
+        }
+
+        if (this.focusTrapActive === 'native' && !e.defaultPrevented) {
+            // Matching the active control's index keeps both guards in its native tab sequence.
+            this.comp.setTabIndex(Math.max(0, (e.target as HTMLElement).tabIndex).toString());
             return;
         }
 

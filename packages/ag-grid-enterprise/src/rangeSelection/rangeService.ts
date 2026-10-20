@@ -923,9 +923,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             });
         }
 
-        if (!cellRanges) {
-            cellRanges = this.cellRanges;
-        }
+        cellRanges ??= this.cellRanges;
 
         const { valueSvc, editSvc } = beans;
         const batch = !!editSvc?.isBatchEditing();

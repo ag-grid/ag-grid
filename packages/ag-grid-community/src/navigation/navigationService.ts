@@ -578,7 +578,7 @@ export class NavigationService extends BeanStub implements NamedBean {
                     backwards: backwards,
                     editing: startEditing,
                     previousCellPosition: previousPosition,
-                    nextCellPosition: nextPosition ? nextPosition : null,
+                    nextCellPosition: nextPosition ?? null,
                 };
                 const userResult = userFunc(params);
                 if (userResult === true) {
@@ -738,7 +738,7 @@ export class NavigationService extends BeanStub implements NamedBean {
                 const params: WithoutGridCommon<NavigateToNextCellParams> = {
                     key: key,
                     previousCellPosition: currentCell,
-                    nextCellPosition: nextCell ? nextCell : null,
+                    nextCellPosition: nextCell ?? null,
                     event: event,
                 };
                 const userCell = userFunc(params);
@@ -767,7 +767,7 @@ export class NavigationService extends BeanStub implements NamedBean {
                     headerRowIndex: headerLen + nextCell.rowIndex,
                     column: nextCell.column ?? currentCell.column,
                 },
-                event: event || undefined,
+                event: event ?? undefined,
                 fromCell: true,
             });
 
@@ -849,10 +849,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
         this.focusPosition(cellPosition);
 
-        const fromBelow =
-            backwards == null
-                ? currentCellFocused != null && _isRowBefore(cellPosition, currentCellFocused)
-                : backwards;
+        const fromBelow = backwards ?? (currentCellFocused != null && _isRowBefore(cellPosition, currentCellFocused));
 
         eventSvc.dispatchEvent({
             type: 'fullWidthRowFocused',

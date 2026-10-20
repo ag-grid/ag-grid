@@ -31,6 +31,7 @@ export function _createGlobalRowEvent<T extends AgEventType>(
  * of `RowNode`.
  */
 const IGNORED_SIBLING_PROPERTIES = new Set<keyof RowNode | '__localEventService' | '__autoHeights'>([
+    '__autoContentHeight',
     '__autoHeights',
     '__localEventService',
     '__objectId',

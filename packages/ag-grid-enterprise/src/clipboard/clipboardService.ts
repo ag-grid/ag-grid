@@ -1014,13 +1014,9 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         const { gos, focusSvc } = this.beans;
 
         // don't override 'includeHeaders' if it has been explicitly set to 'false'
-        if (includeHeaders == null) {
-            includeHeaders = gos.get('copyHeadersToClipboard');
-        }
+        includeHeaders ??= gos.get('copyHeadersToClipboard');
 
-        if (includeGroupHeaders == null) {
-            includeGroupHeaders = gos.get('copyGroupHeadersToClipboard');
-        }
+        includeGroupHeaders ??= gos.get('copyGroupHeadersToClipboard');
 
         const copyParams = { includeHeaders, includeGroupHeaders };
         const rowSelection = gos.get('rowSelection');
@@ -1342,7 +1338,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         });
 
         this.copyDataToClipboard(data);
-        const rowNodes = this.beans.selectionSvc?.getSelectedNodes() || [];
+        const rowNodes = this.beans.selectionSvc?.getSelectedNodes() ?? [];
         this.dispatchFlashCells(this.getCellsToFlashFromRowNodes(rowNodes));
     }
 
