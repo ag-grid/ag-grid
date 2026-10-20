@@ -176,8 +176,9 @@ function getKeptInOrder(values: number[]): number[] {
  * kept its order, among the rows in view and the rows just outside them, is followed, so rows an update sorts
  * elsewhere, or reorders among themselves, count as having left the view, and rows added below it move only the rows
  * below them. With no row in view kept in order, the nearest row below the view that kept its order among all the
- * rows kept is followed, then the nearest above it. Rows in view that left from below the first visible pixel, removed or moved below the followed row, are
- * left for the rows after them to fill.
+ * rows kept is followed, then the nearest above it. Rows in view that left from below the first visible pixel,
+ * removed or moved below the followed row, are left for the rows after them to fill, and rows that left from between a
+ * followed row above the view and the first visible pixel count as removed above the view.
  */
 function getRowsInViewMoved(beans: BeanCollection, anchor: RowsInViewAnchor): number | null {
     const { rows, rowTops, rowHeights, firstInView, afterView, firstVisiblePixel } = anchor;
@@ -203,10 +204,19 @@ function getRowsInViewMoved(beans: BeanCollection, anchor: RowsInViewAnchor): nu
     }
     const rowTop = rows[followed].rowTop!;
     let moved = rowTop - rowTops[followed];
-    for (let i = 0; i < followed; ++i) {
-        const leftAbove = !isKept[i] || rows[i].rowTop! >= rowTop;
-        if (leftAbove && rowTops[i] > firstVisiblePixel) {
-            moved += rowHeights[i];
+    for (let i = 0; i < rows.length; ++i) {
+        if (i < followed) {
+            // left from between the first visible pixel and the followed row, so filled by the rows after them
+            const left = !isKept[i] || rows[i].rowTop! >= rowTop;
+            if (left && rowTops[i] > firstVisiblePixel) {
+                moved += rowHeights[i];
+            }
+        } else if (i > followed) {
+            // left from between a followed row above the view and the first visible pixel, so removed above the view
+            const left = !isKept[i] || rows[i].rowTop! <= rowTop;
+            if (left && rowTops[i] <= firstVisiblePixel) {
+                moved -= rowHeights[i];
+            }
         }
     }
     return moved;
