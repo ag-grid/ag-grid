@@ -767,6 +767,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaRowSelect: 'Tryk på MELLEMRUM for at vælge denne række',
     ariaRowSelectionDisabled: 'Rækkevalg er deaktiveret for denne række',
     ariaSearch: 'Søg',
+    ariaSortPriority: 'Sorteringsprioritet ${priority} af ${count}',
     ariaSortableColumn: 'Tryk på ENTER for at sortere',
     ariaSortableColumnWithCellSelection: 'Tryk på ALT ENTER for at sortere',
     ariaToggleVisibility: 'Tryk på MELLEMRUM for at skifte synlighed',

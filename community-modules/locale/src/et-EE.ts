@@ -780,6 +780,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaRowSelect: 'Vajuta TÜHIK selle rea valimiseks',
     ariaRowSelectionDisabled: 'Rea valik on selle rea jaoks keelatud',
     ariaSearch: 'Otsi',
+    ariaSortPriority: 'Sortimise prioriteet ${priority}, kokku ${count}',
     ariaSortableColumn: 'Vajuta ENTER sortimiseks',
     ariaSortableColumnWithCellSelection: 'Vajuta ALT ENTER sortimiseks',
     ariaToggleVisibility: 'Vajuta TÜHIK nähtavuse lülitamiseks',

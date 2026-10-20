@@ -769,6 +769,7 @@ export const AG_GRID_LOCALE_PL_PL = {
     ariaRowSelect: 'Naciśnij SPACJĘ, aby zaznaczyć ten wiersz',
     ariaRowSelectionDisabled: 'Zaznaczenie wiersza jest wyłączone dla tego wiersza',
     ariaSearch: 'Szukaj',
+    ariaSortPriority: 'Priorytet sortowania ${priority} z ${count}',
     ariaSortableColumn: 'Naciśnij ENTER, aby sortować',
     ariaSortableColumnWithCellSelection: 'Naciśnij ALT ENTER, aby sortować',
     ariaToggleVisibility: 'Naciśnij SPACJĘ, aby przełączyć widoczność',

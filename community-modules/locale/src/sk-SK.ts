@@ -765,6 +765,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     ariaRowSelect: 'Stlačte SPACE na výber tohto riadku',
     ariaRowSelectionDisabled: 'Výber riadku je pre tento riadok zakázaný',
     ariaSearch: 'Hľadať',
+    ariaSortPriority: 'Priorita zoradenia ${priority} z ${count}',
     ariaSortableColumn: 'Stlačte ENTER na zoradenie',
     ariaSortableColumnWithCellSelection: 'Stlačte ALT ENTER na zoradenie',
     ariaToggleVisibility: 'Stlačte SPACE na prepínanie viditeľnosti',

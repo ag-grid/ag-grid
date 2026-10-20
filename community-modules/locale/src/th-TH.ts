@@ -779,6 +779,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaRowSelect: 'กด SPACE เพื่อเลือกแถวนี้',
     ariaRowSelectionDisabled: 'การเลือกแถวถูกปิดใช้งานสำหรับแถวนี้',
     ariaSearch: 'ค้นหา',
+    ariaSortPriority: 'ลำดับความสำคัญในการเรียง ${priority} จาก ${count}',
     ariaSortableColumn: 'กด ENTER เพื่อเรียงลำดับ',
     ariaSortableColumnWithCellSelection: 'กด ALT ENTER เพื่อเรียงลำดับ',
     ariaToggleVisibility: 'กด SPACE เพื่อสลับการมองเห็น',
