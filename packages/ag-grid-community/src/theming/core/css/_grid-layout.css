@@ -459,6 +459,10 @@
     background-color: var(--ag-column-hover-color);
 }
 
+:where(.ag-header-cell).ag-column-hover {
+    background-color: var(--ag-column-header-hover-color);
+}
+
 .ag-header-range-highlight {
     background-color: var(--ag-range-header-highlight-color);
 }
