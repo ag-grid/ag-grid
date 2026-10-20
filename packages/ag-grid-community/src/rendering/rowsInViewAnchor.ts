@@ -26,6 +26,8 @@ export interface RowsInViewAnchor {
     removed: [top: number, bottom: number][];
     /** The height `removed` covers, worked out once as the restore can be repeated. */
     removedHeight?: number;
+    /** The vertical scroll position the latest restore left the viewport at, to tell a scroll elsewhere apart. */
+    scrollTop?: number;
 }
 
 /**
@@ -223,10 +225,12 @@ export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnch
     const scrollTop = beans.rowContainerHeight.getScrollPositionForPixel(viewportTop);
     // the capture read the viewport, and setting the position invalidates the cache, so the cache is current here
     const previousScrollTop = scrollFeature.getVScrollPosition().top;
+    anchor.scrollTop = previousScrollTop;
     if (scrollTop === previousScrollTop) {
         return false;
     }
     scrollFeature.setVerticalScrollPosition(scrollTop);
+    anchor.scrollTop = scrollFeature.getVScrollPosition().top;
     // false when the viewport cannot scroll that far, so the caller stops retrying
-    return scrollFeature.getVScrollPosition().top !== previousScrollTop;
+    return anchor.scrollTop !== previousScrollTop;
 }

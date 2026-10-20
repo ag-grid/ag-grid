@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, nextAnimationFrame, waitForEvent } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout, nextAnimationFrame, waitForEvent } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
@@ -10,6 +10,7 @@ import {
     ExternalFilterModule,
     PaginationModule,
     PinnedRowModule,
+    RowAutoHeightModule,
     ScrollApiModule,
 } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
@@ -38,6 +39,7 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             ExternalFilterModule,
             PaginationModule,
             PinnedRowModule,
+            RowAutoHeightModule,
             RowGroupingModule,
         ],
     });
@@ -527,6 +529,71 @@ describe('maintainRowsInViewOnDataUpdate', () => {
 
             expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + ROW_HEIGHT);
             expect(offsetInView(api, 'r20')).toBe(offset);
+        });
+
+        test('keeps rows in view without animating them through an update made before the animation resumes', async () => {
+            const api = createGrid({ animateRows: true, ensureDomOrder: false });
+            const root = TestGridsManager.getHTMLElement(api)!;
+            await nextAnimationFrame();
+            scrollTo(api, SCROLL_TOP);
+            const isRowAnimationPrevented = () => !!root.querySelector('.ag-prevent-animation');
+
+            api.applyTransaction({ add: createRows('new', 3), addIndex: 0 });
+            await nextAnimationFrame();
+            api.applyTransaction({ add: createRows('newer', 3), addIndex: 0 });
+
+            // the second update's positions are painted on the next frame, so its rows must not animate until after it
+            await nextAnimationFrame();
+            expect(isRowAnimationPrevented()).toBe(true);
+            await nextAnimationFrame();
+            expect(isRowAnimationPrevented()).toBe(false);
+        });
+
+        test('keeps rows in view when rows added above them are measured by auto height after the update', async () => {
+            const tallRows = new Set<string>();
+            mockGridLayout.elementHeightOverride = (el) => {
+                if (!el.classList.contains('ag-cell-wrapper') || !el.isConnected) {
+                    return undefined;
+                }
+                return tallRows.has(el.closest('.ag-row')?.getAttribute('row-id') ?? '') ? 3 * ROW_HEIGHT : 20;
+            };
+            const api = createGrid({ columnDefs: [{ field: 'value', autoHeight: true }] });
+            await asyncSetTimeout(0);
+            scrollTo(api, SCROLL_TOP);
+            tallRows.add('new0');
+
+            api.applyTransaction({ add: createRows('new', 1), addIndex: 0 });
+            await waitFor(() => expect(api.getRowNode('new0')!.rowHeight).toBe(3 * ROW_HEIGHT));
+            await asyncSetTimeout(0);
+
+            expect(offsetInView(api, 'r20')).toBe(0);
+            expect(getViewport(api).scrollTop).toBe(SCROLL_TOP + 3 * ROW_HEIGHT);
+        });
+
+        test('does not keep the rows of an earlier update in view for auto height once the user has scrolled', async () => {
+            const tallRows = new Set<string>();
+            mockGridLayout.elementHeightOverride = (el) => {
+                if (!el.classList.contains('ag-cell-wrapper') || !el.isConnected) {
+                    return undefined;
+                }
+                return tallRows.has(el.closest('.ag-row')?.getAttribute('row-id') ?? '') ? 3 * ROW_HEIGHT : 20;
+            };
+            const api = createGrid({ columnDefs: [{ field: 'value', autoHeight: true }] });
+            await asyncSetTimeout(0);
+            scrollTo(api, SCROLL_TOP);
+            api.applyTransaction({ add: createRows('new', 1), addIndex: 0 });
+            await asyncSetTimeout(0);
+            scrollTo(api, 2 * SCROLL_TOP);
+            const offset = offsetInView(api, 'r60');
+
+            tallRows.add('r5');
+            api.redrawRows({ rowNodes: [api.getRowNode('r5')!] });
+            await waitFor(() => expect(api.getRowNode('r5')!.rowHeight).toBe(3 * ROW_HEIGHT));
+            await asyncSetTimeout(0);
+
+            // a row growing above the rows in view moves them, as without the option, since no data update moved them
+            expect(getViewport(api).scrollTop).toBe(2 * SCROLL_TOP);
+            expect(offsetInView(api, 'r60')).toBe(offset + 2 * ROW_HEIGHT);
         });
 
         test('keeps the top row in view when a row is added just below it', () => {

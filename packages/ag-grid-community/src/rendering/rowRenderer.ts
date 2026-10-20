@@ -114,6 +114,11 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     /** Set while a data update runs inside `maintainRowsInView`, until the redraw it causes restores it. */
     private rowsInViewAnchor: RowsInViewAnchor | null = null;
+    /**
+     * Kept after a data update while auto height is active, as the update's rows are measured after it, until the user
+     * scrolls or another model update moves the rows.
+     */
+    private rowsInViewAnchorForHeights: RowsInViewAnchor | null = null;
 
     public postConstruct(): void {
         this.ctrlsSvc.whenReady(this, (p) => {
@@ -661,6 +666,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
         const rowsInViewAnchor = params.keepRowsInView ? this.rowsInViewAnchor : null;
         if (rowsInViewAnchor) {
             this.rowsInViewAnchor = null; // later redraws in the same update start from the restored position
+        } else if (params.keepRowsInView) {
+            this.rowsInViewAnchorForHeights = null; // the rows moved for another reason
         }
         let keptRowsInView = !!rowsInViewAnchor && _restoreRowsInView(this.beans, rowsInViewAnchor);
 
@@ -733,6 +740,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.gridBodyCtrl.scrollFeature.scrollToTop();
             this.stickyRowFeature?.resetOffsets();
             this.rowsInViewAnchor = null;
+            this.rowsInViewAnchorForHeights = null;
         }
     }
 
@@ -745,9 +753,32 @@ export class RowRenderer extends BeanStub implements NamedBean {
         if (rowsInViewAnchor || printLayout || !gridBodyCtrl || !gos.get('maintainRowsInViewOnDataUpdate')) {
             return update();
         }
-        this.rowsInViewAnchor = _captureRowsInView(this.beans);
+        const anchor = _captureRowsInView(this.beans);
+        this.rowsInViewAnchor = anchor;
+        this.rowsInViewAnchorForHeights = null;
         try {
             return update();
+        } finally {
+            this.rowsInViewAnchor = null;
+            if (anchor && this.beans.rowAutoHeight?.active) {
+                this.rowsInViewAnchorForHeights = anchor;
+            }
+        }
+    }
+
+    /**
+     * Runs a change of row heights auto height measured, keeping the rows in view where the data update before it
+     * left them, as the rows that update added or changed are measured after it. The change must redraw synchronously.
+     */
+    public maintainRowsInViewForHeights(update: () => void): void {
+        const anchor = this.rowsInViewAnchorForHeights;
+        if (!anchor || this.rowsInViewAnchor) {
+            update();
+            return;
+        }
+        this.rowsInViewAnchor = anchor;
+        try {
+            update();
         } finally {
             this.rowsInViewAnchor = null;
         }
@@ -1087,6 +1118,9 @@ export class RowRenderer extends BeanStub implements NamedBean {
     private onBodyScroll(e: BodyScrollEvent) {
         if (e.direction !== 'vertical') {
             return;
+        }
+        if (e.top !== this.rowsInViewAnchorForHeights?.scrollTop) {
+            this.rowsInViewAnchorForHeights = null; // scrolled elsewhere, so the rows in view are not the ones kept
         }
         this.redraw({ afterScroll: true });
     }
