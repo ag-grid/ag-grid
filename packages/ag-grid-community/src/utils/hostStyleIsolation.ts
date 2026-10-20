@@ -1,8 +1,9 @@
 import type { GridOptions } from '../entities/gridOptions';
-import { _getGlobalGridOption } from '../globalGridOptions';
 import type { Params } from '../grid';
+import { _getGridOption } from '../gridOptionsUtils';
 
 const THEME_MODE_ATTRIBUTE = 'data-ag-theme-mode';
+const THEME_MODE_ANCESTOR = `.ag-theme-mode[${THEME_MODE_ATTRIBUTE}]`;
 
 export interface IsolationHost {
     /** The child of `eGridDiv` that holds the shadow root. */
@@ -37,7 +38,7 @@ export function _createIsolationHost(
     host.attachShadow({ mode: 'open' }).appendChild(mount);
     eGridDiv.appendChild(host);
 
-    const themeModeObserver = mirrorThemeMode(doc, mount);
+    const themeModeObserver = mirrorThemeMode(eGridDiv, mount);
     return {
         host,
         mount,
@@ -48,11 +49,17 @@ export function _createIsolationHost(
     };
 }
 
-/** Theme CSS reads the mode from `html` and `body`, which selectors inside the shadow root cannot see. */
-function mirrorThemeMode(doc: Document, mount: HTMLElement): MutationObserver {
-    const { documentElement, body } = doc;
+/**
+ * Theme CSS reads the mode from `html`, `body` or an `.ag-theme-mode` ancestor, which selectors inside the shadow
+ * root cannot see. The nearest of these wins; where the page sets conflicting modes, CSS order would decide instead.
+ */
+function mirrorThemeMode(eGridDiv: HTMLElement, mount: HTMLElement): MutationObserver {
+    const { documentElement, body } = eGridDiv.ownerDocument;
     const sync = () => {
-        const mode = body?.getAttribute(THEME_MODE_ATTRIBUTE) ?? documentElement.getAttribute(THEME_MODE_ATTRIBUTE);
+        const mode =
+            eGridDiv.closest(THEME_MODE_ANCESTOR)?.getAttribute(THEME_MODE_ATTRIBUTE) ??
+            body?.getAttribute(THEME_MODE_ATTRIBUTE) ??
+            documentElement.getAttribute(THEME_MODE_ATTRIBUTE);
         if (mode == null) {
             mount.removeAttribute(THEME_MODE_ATTRIBUTE);
         } else {
@@ -61,10 +68,9 @@ function mirrorThemeMode(doc: Document, mount: HTMLElement): MutationObserver {
     };
     sync();
     const observer = new MutationObserver(sync);
-    const observed: MutationObserverInit = { attributeFilter: [THEME_MODE_ATTRIBUTE] };
-    observer.observe(documentElement, observed);
-    if (body) {
-        observer.observe(body, observed);
+    const observed: MutationObserverInit = { attributeFilter: ['class', THEME_MODE_ATTRIBUTE] };
+    for (let element: Element | null = eGridDiv; element; element = element.parentElement) {
+        observer.observe(element, observed);
     }
     return observer;
 }
@@ -73,7 +79,7 @@ function shouldIsolate(eGridDiv: HTMLElement, gridOptions: GridOptions, params: 
     if (hasFrameworkOverrides(params) || rendersOutsideGrid(gridOptions)) {
         return false;
     }
-    const enableShadowDom = gridOptions.enableShadowDom ?? _getGlobalGridOption('enableShadowDom');
+    const enableShadowDom = _getGridOption(gridOptions, 'enableShadowDom');
     return enableShadowDom ?? isInHostWithLeakingStyles(eGridDiv);
 }
 
@@ -87,9 +93,9 @@ function hasFrameworkOverrides(params: Params | undefined): boolean {
  * explicit popup parent puts popups there, out of reach of the styles inside it.
  */
 function rendersOutsideGrid(gridOptions: GridOptions): boolean {
-    const theme = gridOptions.theme ?? _getGlobalGridOption('theme');
-    const themeStyleContainer = gridOptions.themeStyleContainer ?? _getGlobalGridOption('themeStyleContainer');
-    const popupParent = gridOptions.popupParent ?? _getGlobalGridOption('popupParent');
+    const theme = _getGridOption(gridOptions, 'theme');
+    const themeStyleContainer = _getGridOption(gridOptions, 'themeStyleContainer');
+    const popupParent = _getGridOption(gridOptions, 'popupParent');
     return theme === 'legacy' || themeStyleContainer != null || popupParent != null;
 }
 

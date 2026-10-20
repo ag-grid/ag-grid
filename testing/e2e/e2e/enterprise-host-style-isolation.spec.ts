@@ -148,6 +148,13 @@ test.describe('host style isolation', () => {
         expect(await readBackground()).toEqual(dark);
         await setThemeMode(null);
         expect(await readBackground()).toEqual(light);
+
+        await page.evaluate(() => {
+            const ancestor = document.getElementById('vis-container')!;
+            ancestor.classList.add('ag-theme-mode');
+            ancestor.dataset.agThemeMode = 'dark';
+        });
+        expect(await readBackground()).toEqual(dark);
     });
 
     test('inside the claude.ai visualiser, enableShadowDom: false keeps the grid in the light DOM', async ({
