@@ -79,6 +79,18 @@ test.describe('host style isolation', () => {
         });
         expect(lookups).toEqual([true, true]);
 
+        // The grid element stays the grid's own root, so callers can still search its content.
+        const gridElement = await page.evaluate(() => {
+            const { getGridApi } = (window as any).agGrid;
+            const element = window.gridApi.getGridElement()!;
+            return {
+                inShadowRoot: element.getRootNode() instanceof ShadowRoot,
+                hasRows: element.querySelector('.ag-row') != null,
+                mapsBackToApi: getGridApi(element) === window.gridApi,
+            };
+        });
+        expect(gridElement).toEqual({ inShadowRoot: true, hasRows: true, mapsBackToApi: true });
+
         await page.evaluate(() => window.gridApi.destroy());
         expect(await page.locator('#myGrid').evaluate((el) => el.childNodes.length)).toBe(0);
     });
