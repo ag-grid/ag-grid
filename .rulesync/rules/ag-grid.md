@@ -56,6 +56,8 @@ Nothing needs to be arranged to read the result afterwards: every local run capt
 
 On the **first response** of a conversation, verify that project skills are available by checking the system-reminder skill list. If **any** of the canary skills are missing, display a one-time warning before doing anything else. Do not repeat the warning on subsequent responses.
 
+Skip this check entirely in non-interactive runs (CI, GitHub Actions, automated PR reviews): those runs load no plugin skills, and nobody is there to act on the warning.
+
 **Canary skills:** `example`, `dev-server`, `debug-trace`, `git-conventions`, `jira`
 
 **Warning to display (if any canary skill is missing):**
