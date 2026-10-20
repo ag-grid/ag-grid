@@ -772,6 +772,7 @@ export const AG_GRID_LOCALE_IT_IT = {
     ariaRowSelect: 'Premi SPAZIO per selezionare questa riga',
     ariaRowSelectionDisabled: 'La selezione della riga è disabilitata per questa riga',
     ariaSearch: 'Cerca',
+    ariaSortPriority: 'Priorità di ordinamento ${priority} di ${count}',
     ariaSortableColumn: 'Premi INVIO per ordinare',
     ariaSortableColumnWithCellSelection: 'Premi ALT INVIO per ordinare',
     ariaToggleVisibility: 'Premi SPAZIO per attivare/disattivare la visibilità',

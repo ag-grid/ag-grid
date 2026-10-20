@@ -774,6 +774,7 @@ export const AG_GRID_LOCALE_FR_FR = {
     ariaRowSelect: 'Appuyez sur ESPACE pour sélectionner cette ligne',
     ariaRowSelectionDisabled: 'La sélection de lignes est désactivée pour cette ligne',
     ariaSearch: 'Rechercher',
+    ariaSortPriority: 'Priorité de tri ${priority} sur ${count}',
     ariaSortableColumn: 'Appuyez sur ENTER pour trier',
     ariaSortableColumnWithCellSelection: 'Appuyez sur ALT ENTER pour trier',
     ariaToggleVisibility: 'Appuyez sur ESPACE pour basculer la visibilité',

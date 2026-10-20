@@ -769,6 +769,7 @@ export const AG_GRID_LOCALE_PT_PT = {
     ariaRowSelect: 'Pressione ESPAÇO para selecionar esta linha',
     ariaRowSelectionDisabled: 'A seleção de linhas está desativada para esta linha',
     ariaSearch: 'Buscar',
+    ariaSortPriority: 'Prioridade de ordenação ${priority} de ${count}',
     ariaSortableColumn: 'Pressione ENTER para ordenar',
     ariaSortableColumnWithCellSelection: 'Pressione ALT ENTER para ordenar',
     ariaToggleVisibility: 'Pressione ESPAÇO para alternar visibilidade',

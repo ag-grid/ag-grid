@@ -763,6 +763,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaRowSelect: 'לחץ על SPACE כדי לבחור שורה זו',
     ariaRowSelectionDisabled: 'בחירת שורות מושבתת עבור שורה זו',
     ariaSearch: 'חיפוש',
+    ariaSortPriority: 'עדיפות מיון ${priority} מתוך ${count}',
     ariaSortableColumn: 'לחץ על ENTER למיון',
     ariaSortableColumnWithCellSelection: 'לחץ על ALT ENTER למיון',
     ariaToggleVisibility: 'לחץ על SPACE כדי להחליף נראות',

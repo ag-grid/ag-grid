@@ -769,6 +769,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     ariaRowSelect: 'Натиснете SPACE, за да изберете този ред',
     ariaRowSelectionDisabled: 'Изборът на редове е деактивиран за този ред',
     ariaSearch: 'Търсене',
+    ariaSortPriority: 'Приоритет на сортиране ${priority} от ${count}',
     ariaSortableColumn: 'Натиснете ENTER, за да сортирате',
     ariaSortableColumnWithCellSelection: 'Натиснете ALT ENTER, за да сортирате',
     ariaToggleVisibility: 'Натиснете SPACE, за да превключите видимостта',

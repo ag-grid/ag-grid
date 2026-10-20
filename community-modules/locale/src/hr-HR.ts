@@ -767,6 +767,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     ariaRowSelect: 'Pritisnite SPACE za odabir ovog retka',
     ariaRowSelectionDisabled: 'Odabir retka je onemogućen za ovaj redak',
     ariaSearch: 'Pretraživanje',
+    ariaSortPriority: 'Prioritet sortiranja ${priority} od ${count}',
     ariaSortableColumn: 'Pritisnite ENTER za sortiranje',
     ariaSortableColumnWithCellSelection: 'Pritisnite ALT ENTER za sortiranje',
     ariaToggleVisibility: 'Pritisnite SPACE za uključivanje/isključivanje vidljivosti',

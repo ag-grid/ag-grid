@@ -765,6 +765,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaRowSelect: 'Stiskněte SPACE pro výběr tohoto řádku',
     ariaRowSelectionDisabled: 'Výběr řádku je pro tento řádek zakázán',
     ariaSearch: 'Hledat',
+    ariaSortPriority: 'Priorita řazení ${priority} z ${count}',
     ariaSortableColumn: 'Stiskněte ENTER pro třídění',
     ariaSortableColumnWithCellSelection: 'Stiskněte ALT ENTER pro třídění',
     ariaToggleVisibility: 'Stiskněte SPACE pro přepnutí viditelnosti',
