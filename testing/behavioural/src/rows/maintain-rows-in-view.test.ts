@@ -596,6 +596,56 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             expect(offsetInView(api, 'r60')).toBe(offset + 2 * ROW_HEIGHT);
         });
 
+        test('does not keep the rows of an earlier update in view for auto height once scrolled, before the scroll is handled', async () => {
+            const tallRows = new Set<string>();
+            mockGridLayout.elementHeightOverride = (el) => {
+                if (!el.classList.contains('ag-cell-wrapper') || !el.isConnected) {
+                    return undefined;
+                }
+                return tallRows.has(el.closest('.ag-row')?.getAttribute('row-id') ?? '') ? 3 * ROW_HEIGHT : 20;
+            };
+            const api = createGrid({
+                columnDefs: [{ field: 'value', autoHeight: true }],
+                debounceVerticalScrollbar: true,
+            });
+            await asyncSetTimeout(0);
+            scrollTo(api, SCROLL_TOP);
+            api.applyTransaction({ add: createRows('new', 1), addIndex: 0 });
+            await asyncSetTimeout(0);
+            // the debounced scroll is not handled until after the height pass below
+            getViewport(api).scrollTop = 2 * SCROLL_TOP;
+
+            tallRows.add('r5');
+            api.redrawRows({ rowNodes: [api.getRowNode('r5')!] });
+            await waitFor(() => expect(api.getRowNode('r5')!.rowHeight).toBe(3 * ROW_HEIGHT));
+
+            expect(getViewport(api).scrollTop).toBe(2 * SCROLL_TOP);
+        });
+
+        test('does not keep the rows of an earlier update in view for auto height once the option is turned off', async () => {
+            const tallRows = new Set<string>();
+            mockGridLayout.elementHeightOverride = (el) => {
+                if (!el.classList.contains('ag-cell-wrapper') || !el.isConnected) {
+                    return undefined;
+                }
+                return tallRows.has(el.closest('.ag-row')?.getAttribute('row-id') ?? '') ? 3 * ROW_HEIGHT : 20;
+            };
+            const api = createGrid({ columnDefs: [{ field: 'value', autoHeight: true }] });
+            await asyncSetTimeout(0);
+            scrollTo(api, SCROLL_TOP);
+            api.applyTransaction({ add: createRows('new', 1), addIndex: 0 });
+            await asyncSetTimeout(0);
+            const scrollTop = getViewport(api).scrollTop;
+            api.setGridOption('maintainRowsInViewOnDataUpdate', false);
+
+            tallRows.add('r5');
+            api.redrawRows({ rowNodes: [api.getRowNode('r5')!] });
+            await waitFor(() => expect(api.getRowNode('r5')!.rowHeight).toBe(3 * ROW_HEIGHT));
+            await asyncSetTimeout(0);
+
+            expect(getViewport(api).scrollTop).toBe(scrollTop);
+        });
+
         test('keeps the top row in view when a row is added just below it', () => {
             const api = createGrid();
             scrollTo(api, SCROLL_TOP);

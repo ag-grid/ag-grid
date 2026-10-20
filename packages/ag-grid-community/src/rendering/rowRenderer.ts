@@ -776,6 +776,17 @@ export class RowRenderer extends BeanStub implements NamedBean {
             update();
             return;
         }
+        // read the viewport itself, as a debounced scroll elsewhere may not have been handled yet
+        const scrollFeature = this.ctrlsSvc.getScrollFeature();
+        scrollFeature.invalidateVerticalScroll();
+        if (
+            !this.gos.get('maintainRowsInViewOnDataUpdate') ||
+            scrollFeature.getVScrollPosition().top !== anchor.scrollTop
+        ) {
+            this.rowsInViewAnchorForHeights = null;
+            update();
+            return;
+        }
         this.rowsInViewAnchor = anchor;
         try {
             update();

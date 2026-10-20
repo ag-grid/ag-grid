@@ -26,7 +26,7 @@ The grid follows the rows in view however the update moves them: adding or remov
 
 The grid does not scroll while it is scrolled to the top of the grid, so rows added at the top come into view. Changes the user makes, such as sorting, filtering or expanding groups, do not keep the rows in view.
 
-Rows with [different heights](./row-height/) are supported, including rows with auto height that are measured after the update. When `animateRows` is enabled, the rows in view do not animate as the grid scrolls to keep them in place.
+Rows with [different heights](./row-height/) are supported, including rows with auto height that are measured after the update. When an update removes or filters out every row near the rows in view, the grid compensates only for the heights of the rows it removed above them. When `animateRows` is enabled, the rows in view do not animate as the grid scrolls to keep them in place.
 
 The example below adds and removes rows at the top of the grid. Note the following:
 
