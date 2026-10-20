@@ -90,13 +90,14 @@ function hasFrameworkOverrides(params: Params | undefined): boolean {
 
 /**
  * CSS file themes and an explicit theme style container put the grid's styles outside the shadow root, and an
- * explicit popup parent puts popups there, out of reach of the styles inside it.
+ * explicit popup parent or chart container puts popups or charts there, out of reach of the styles inside it.
  */
 function rendersOutsideGrid(gridOptions: GridOptions): boolean {
     const theme = _getGridOption(gridOptions, 'theme');
     const themeStyleContainer = _getGridOption(gridOptions, 'themeStyleContainer');
     const popupParent = _getGridOption(gridOptions, 'popupParent');
-    return theme === 'legacy' || themeStyleContainer != null || popupParent != null;
+    const createChartContainer = _getGridOption(gridOptions, 'createChartContainer');
+    return theme === 'legacy' || themeStyleContainer != null || popupParent != null || createChartContainer != null;
 }
 
 function isInHostWithLeakingStyles(eGridDiv: HTMLElement): boolean {

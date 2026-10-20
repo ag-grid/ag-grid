@@ -99,6 +99,7 @@ test.describe('host style isolation', () => {
         ['a legacy theme', 'ag-theme-quartz', () => ({ theme: 'legacy' })],
         ['an explicit theme style container', '', () => ({ themeStyleContainer: document.body })],
         ['an external popup parent', '', () => ({ popupParent: document.body })],
+        ['an external chart container', '', () => ({ createChartContainer: () => {} })],
     ];
     for (const [name, className, gridOptions] of stylesOutsideGrid) {
         test(`inside the claude.ai visualiser, a grid with ${name} stays in the light DOM so its styles still apply`, async ({
