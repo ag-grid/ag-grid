@@ -739,6 +739,17 @@ export type CalculatedColumnChanges = {
     };
 };
 
+export interface CalculatedColumnExpressionValidation {
+    /**
+     * Whether the expression parses, its direct column references resolve, and it has no saved dialog validation
+     * error. Empty expressions pass built-in validation. Does not check row-specific evaluation errors or rerun
+     * application callbacks.
+     */
+    valid: boolean;
+    /** Why the expression is invalid. Only set when `valid` is `false`. */
+    reason?: CalculatedColumnValidationReason | 'restrictedReference' | 'customValidation';
+}
+
 export interface CalculatedColumnChangedEvent<TData = any, TContext = any> extends CalculatedColumnBaseEvent<
     'calculatedColumnChanged',
     TData,
@@ -746,6 +757,8 @@ export interface CalculatedColumnChangedEvent<TData = any, TContext = any> exten
 > {
     /** Changed definition properties and their previous/new values. Never empty; values are snapshots. */
     changes: CalculatedColumnChanges;
+    /** Validation snapshot of `expression` when this event was dispatched, including saved dialog restrictions and custom errors. */
+    expressionValidation: CalculatedColumnExpressionValidation;
 }
 
 export interface CalculatedColumnCreatedEvent<TData = any, TContext = any> extends CalculatedColumnBaseEvent<
