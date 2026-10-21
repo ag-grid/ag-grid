@@ -338,6 +338,12 @@
                 "url": "./formulas/#caching"
             }
         },
+        "refreshCalculatedColumns": {
+            "more": {
+                "name": "Refreshing Calculated Columns",
+                "url": "./calculated-columns/#refreshing-calculated-columns"
+            }
+        },
         "flashCells": {
             "more": {
                 "name": "Flashing Cells",

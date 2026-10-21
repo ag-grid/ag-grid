@@ -204,6 +204,11 @@ export class CalculatedColumnForm extends Component {
         this.closeSuggestionPopup();
     }
 
+    public refreshValidation(validate: (draft: CalculatedColumnDraft) => string[] | null): void {
+        this.hideSuggestions();
+        this.setExpressionError(validate(this.draft));
+    }
+
     private setupFormFields(): void {
         const translate = this.getLocaleTextFunc();
         const showTypePicker = this.eType.showPicker.bind(this.eType);
@@ -428,12 +433,12 @@ export class CalculatedColumnForm extends Component {
     }
 
     private applyFieldError(input: HTMLInputElement | HTMLTextAreaElement, message: string | null): void {
-        const isInvalid = !!message;
+        const isInvalid = message != null;
 
         input.setCustomValidity(message ?? '');
         input.classList.toggle('invalid', isInvalid);
         _setAriaInvalid(input, isInvalid);
-        this.eApply.disabled = !!this.titleValidationMessage || !!this.expressionValidationMessage;
+        this.eApply.disabled = this.titleValidationMessage != null || this.expressionValidationMessage != null;
     }
 
     private createValidationTooltip(

@@ -46,6 +46,7 @@ import type {
 } from '../interfaces/autoSize';
 import type { CsvExportParams } from '../interfaces/exportParams';
 import type { GridState, GridStateKey } from '../interfaces/gridState';
+import type { RefreshCalculatedColumnsParams } from '../interfaces/iCalculatedColumns';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type {
     EditingCellPosition,
@@ -1780,6 +1781,19 @@ export interface _ColumnChooserGridApi {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface _CalculatedColumnsGridApi {
+    /**
+     * Revalidate committed calculated expressions against the current `getValidationErrors` and
+     * `isColumnReferenceable` callbacks, update saved errors and recalculate values and dependants.
+     * Applies to read-only columns too. Does not apply pending dialog edits. Empty expressions are allowed.
+     * Open dialogs revalidate their drafts without restarting pending live updates.
+     * Validation changes raise `calculatedColumnChanged` with `source: 'api'`.
+     * @agModule `CalculatedColumnsModule`
+     */
+    refreshCalculatedColumns(params?: RefreshCalculatedColumnsParams): void;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _FormulaGridApi<TData = any> {
     /**
      * Invalidate the grid's formula cache so the next render re-queries
@@ -2077,6 +2091,7 @@ export interface GridApi<TData = any>
         _ColumnChooserGridApi,
         _MasterDetailGridApi,
         _FormulaGridApi<TData>,
+        _CalculatedColumnsGridApi,
         _ExcelExportGridApi,
         _PdfExportGridApi,
         _ClipboardGridApi,

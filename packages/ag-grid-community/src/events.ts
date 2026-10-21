@@ -755,7 +755,7 @@ export interface CalculatedColumnChangedEvent<TData = any, TContext = any> exten
     TData,
     TContext
 > {
-    /** Changed definition properties and their previous/new values. Never empty; values are snapshots. */
+    /** Changed definition properties and their previous/new values. Empty when only expression validation changed; values are snapshots. */
     changes: CalculatedColumnChanges;
     /** Validation snapshot of `expression` when this event was dispatched, including saved dialog restrictions and custom errors. */
     expressionValidation: CalculatedColumnExpressionValidation;
