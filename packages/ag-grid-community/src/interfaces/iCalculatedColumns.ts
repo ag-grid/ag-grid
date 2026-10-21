@@ -26,7 +26,7 @@ export interface CalculatedColumnProcessColDefParams<TData = any, TContext = any
      * from no column, or when that column is gone. A column restored from Grid State is not tied to the column it was
      * added from: it gets the last column of its group, or `null` if it is not in a group.
      */
-    sourceColumn: Column<TData> | null;
+    sourceColumn: Column | null;
     /**
      * Validation of `colDef.calculatedExpression`, including syntax, direct column references and saved dialog
      * rejections from `getValidationErrors` or `isColumnReferenceable`. Does not rerun application callbacks or
