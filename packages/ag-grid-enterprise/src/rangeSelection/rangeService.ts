@@ -1,6 +1,7 @@
 import {
     AutoScrollService,
     _areEqual,
+    _defaultComparator,
     _exists,
     _last,
     _makeNull,
@@ -922,9 +923,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
             });
         }
 
-        if (!cellRanges) {
-            cellRanges = this.cellRanges;
-        }
+        cellRanges ??= this.cellRanges;
 
         const { valueSvc, editSvc } = beans;
         const batch = !!editSvc?.isBatchEditing();
@@ -1080,7 +1079,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         let columnsString: string | undefined;
 
         for (const val of rowToColumnMap.values()) {
-            const currentValString = val.sort().join();
+            const currentValString = val.sort(_defaultComparator).join();
             if (columnsString === undefined) {
                 columnsString = currentValString;
                 continue;

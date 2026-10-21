@@ -204,7 +204,7 @@ export class AdvancedFilterComp extends Component {
                 this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
                 break;
             case 'cancel':
-                this.advancedFilter.setModel(this.advancedFilter.getModel());
+                this.advancedFilter.restoreAppliedExpression();
                 this.filterManager?.onFilterChanged({ source: 'advancedFilter' });
                 break;
             case 'clear':
@@ -322,7 +322,7 @@ export class AdvancedFilterComp extends Component {
     }
 
     private forceLastSelection({ key, displayValue }: AutocompleteEntry, searchString: string): boolean {
-        return !!searchString.toLocaleLowerCase().match(`^${(displayValue ?? key).toLocaleLowerCase()}\\s*$`);
+        return !!searchString.toLocaleLowerCase().match(String.raw`^${(displayValue ?? key).toLocaleLowerCase()}\s*$`);
     }
 
     private openBuilder(): void {

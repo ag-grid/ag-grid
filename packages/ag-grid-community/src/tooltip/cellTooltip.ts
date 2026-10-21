@@ -61,8 +61,8 @@ const getTruncationCheck = (beans: BeanCollection, ctrl: CellCtrl): (() => boole
     return _isElementOverflowingCallback(() => {
         const eCell = ctrl.eGui;
         return (
-            (eCell.querySelector('.ag-group-value') as HTMLElement | undefined) ||
-            (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined) ||
+            (eCell.querySelector('.ag-group-value') as HTMLElement | undefined) ??
+            (eCell.querySelector('.ag-cell-value') as HTMLElement | undefined) ??
             eCell
         );
     });
@@ -119,7 +119,7 @@ const resolveLegacyFieldValue = (
     }
     return {
         resolved: true,
-        value: _getLegacyTooltipFieldValue(data, tooltipField, column.tooltipFieldContainsDots),
+        value: _getLegacyTooltipFieldValue(data, tooltipField, column.isTooltipFieldContainsDots()),
     };
 };
 
@@ -217,7 +217,7 @@ export function _createCellEditorTooltipSource(
     cellCtrl: CellCtrl,
     editor: ICellEditor
 ): TooltipSource | undefined {
-    const eGui = editor.getValidationElement?.(true) || (!editor.isPopup?.() && cellCtrl.eGui);
+    const eGui = editor.getValidationElement?.(true) ?? (!editor.isPopup?.() && cellCtrl.eGui);
     if (!eGui) {
         return undefined;
     }

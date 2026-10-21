@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_VI_VN = {
     enabled: 'Đã bật',
 
     // Menu
+    moveLeft: 'Di chuyển sang trái',
+    moveRight: 'Di chuyển sang phải',
+    moveUp: 'Di chuyển lên',
+    moveDown: 'Di chuyển xuống',
     pinColumn: 'Ghim Cột',
     pinLeft: 'Ghim Trái',
     pinRight: 'Ghim Phải',
@@ -761,6 +765,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaRowSelect: 'Nhấn SPACE để chọn hàng này',
     ariaRowSelectionDisabled: 'Chọn hàng bị vô hiệu hoá cho hàng này',
     ariaSearch: 'Tìm kiếm',
+    ariaSortPriority: 'Mức ưu tiên sắp xếp ${priority} trên ${count}',
     ariaSortableColumn: 'Nhấn ENTER để sắp xếp',
     ariaSortableColumnWithCellSelection: 'Nhấn ALT ENTER để sắp xếp',
     ariaToggleVisibility: 'Nhấn SPACE để chuyển đổi hiển thị',
@@ -893,9 +898,11 @@ export const AG_GRID_LOCALE_VI_VN = {
     columnHeaderEditCancel: 'Hủy',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Không tìm thấy cột đủ điều kiện.',
     calculatedColumn: 'Cột tính toán',
     calculatedColumnAdd: 'Thêm cột tính toán',
     calculatedColumnEdit: 'Chỉnh sửa cột tính toán',
+    calculatedColumnView: 'Xem cột tính toán',
     calculatedColumnRemove: 'Xóa cột tính toán',
     calculatedColumnTitle: 'Tiêu đề',
     calculatedColumnType: 'Loại',

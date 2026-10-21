@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_FA_IR = {
     enabled: 'فعال',
 
     // Menu
+    moveLeft: 'انتقال به چپ',
+    moveRight: 'انتقال به راست',
+    moveUp: 'انتقال به بالا',
+    moveDown: 'انتقال به پایین',
     pinColumn: 'سنجاق کردن ستون',
     pinLeft: 'سنجاق کردن به چپ',
     pinRight: 'سنجاق کردن به راست',
@@ -762,6 +766,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaRowSelect: 'SPACE را فشار دهید تا این سطر انتخاب شود',
     ariaRowSelectionDisabled: 'انتخاب سطر برای این سطر غیرفعال است',
     ariaSearch: 'جستجو',
+    ariaSortPriority: 'اولویت مرتب‌سازی ${priority} از ${count}',
     ariaSortableColumn: 'ENTER را فشار دهید تا مرتب شود',
     ariaSortableColumnWithCellSelection: 'برای مرتب‌سازی ALT ENTER را فشار دهید',
     ariaToggleVisibility: 'SPACE را فشار دهید تا قابلیت رویت تغییر یابد',
@@ -894,9 +899,11 @@ export const AG_GRID_LOCALE_FA_IR = {
     columnHeaderEditCancel: 'لغو',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'هیچ ستون واجد شرایطی یافت نشد.',
     calculatedColumn: 'ستون محاسبه‌شده',
     calculatedColumnAdd: 'افزودن ستون محاسبه‌شده',
     calculatedColumnEdit: 'ویرایش ستون محاسبه‌شده',
+    calculatedColumnView: 'نمایش ستون محاسبه‌شده',
     calculatedColumnRemove: 'حذف ستون محاسبه‌شده',
     calculatedColumnTitle: 'عنوان',
     calculatedColumnType: 'نوع',

@@ -90,7 +90,10 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     protected abstract getItems(dragItem: DragItem<TItem>): TItem[];
     protected abstract isInterestedIn(type: DragSourceType, sourceElement: Element): boolean;
 
-    constructor(protected readonly horizontal: boolean) {
+    constructor(
+        protected readonly horizontal: boolean,
+        protected readonly eWrapperPanel?: HTMLElement
+    ) {
         super(PillDropZonePanelElement);
         this.addElementClasses(this.getGui());
         this.ePillDropList = _createElement({ tag: 'div' });
@@ -212,31 +215,34 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
     }
 
     private moveFocusedItem(isPrevious: boolean): void {
-        const currentItemIndex = this.getFocusedItem();
+        const comp = this.childPillComponents[this.getFocusedItem()];
+        if (comp) {
+            this.moveItem(comp, isPrevious);
+        }
+    }
 
-        if (currentItemIndex === -1) {
+    protected getItemMoveIndex(comp: TPill, isPrevious: boolean): number | null {
+        const items = this.getExistingItems();
+        const index = items.indexOf(comp.getItem());
+        const target = index + (isPrevious ? -1 : 1);
+        const minimumIndex = this.minimumAllowedNewInsertIndex();
+        return comp.isAlive() &&
+            index >= minimumIndex &&
+            comp.isMovable() &&
+            target >= minimumIndex &&
+            target < items.length
+            ? target
+            : null;
+    }
+
+    protected moveItem(comp: TPill, isPrevious: boolean): void {
+        const index = this.getItemMoveIndex(comp, isPrevious);
+        if (index === null) {
             return;
         }
-
-        const diff = isPrevious ? -1 : 1;
-        const changed = this.normalizeAndUpdateInsertIndex(currentItemIndex, currentItemIndex + diff);
-
-        if (!changed) {
-            return;
-        }
-
-        const comp = this.childPillComponents[currentItemIndex];
-
-        if (!comp.isMovable()) {
-            return;
-        }
-
-        const currentItem = comp.getItem();
-
-        // this will focus the target position before we call rearrangeItems
-        // rearrange items will then call refresh which will refocus the target index.
-        this.focusItemAtIndex(this.insertIndex);
-        this.rearrangeItems([currentItem], true);
+        this.insertIndex = index;
+        this.rearrangeItems([comp.getItem()], true);
+        this.focusItemAtIndex(index);
     }
 
     protected addElementClasses(el: Element, suffix?: string) {
@@ -506,10 +512,10 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         const focusedIndex = this.getFocusedItem();
 
         const beans = this.beans;
-        const { eGridDiv: rootNode } = beans;
         const isKeyboardMode = _isKeyboardMode();
         let alternateElement: HTMLElement | null = null;
         if (isKeyboardMode) {
+            const rootNode = this.eWrapperPanel ?? beans.eGridDiv;
             alternateElement =
                 _findNextFocusableElement({ beans, rootNode }) ??
                 _findNextFocusableElement({ beans, rootNode, backwards: true });
@@ -534,7 +540,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         // otherwise mouse clicks will cause containers to scroll
         // without no apparent reason.
         if (isKeyboardMode) {
-            this.restoreFocus(focusedIndex, alternateElement!);
+            this.restoreFocus(focusedIndex, alternateElement);
         }
     }
 
@@ -563,7 +569,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         item.focus({ preventScroll: true });
     }
 
-    private restoreFocus(index: number, alternateElement: HTMLElement): void {
+    private restoreFocus(index: number, alternateElement: HTMLElement | null): void {
         const eGui = this.getGui();
         const items = Array.from(eGui.querySelectorAll('.ag-column-drop-cell'));
 
@@ -572,7 +578,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         }
 
         if (items.length === 0) {
-            alternateElement.focus();
+            alternateElement?.focus();
         }
 
         const indexToFocus = Math.min(items.length - 1, index);
@@ -640,7 +646,7 @@ export abstract class PillDropZonePanel<TPill extends PillDragComp<TItem>, TItem
         }
     }
 
-    private createItemComponent(item: TItem, ghost: boolean): TPill {
+    protected createItemComponent(item: TItem, ghost: boolean): TPill {
         const itemComponent = this.createPillComponent(item, this.dropTarget, ghost, this.horizontal);
         itemComponent.addEventListener('columnRemove', this.removeItems.bind(this, [item]));
 

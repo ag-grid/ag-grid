@@ -11,7 +11,7 @@ import type {
 import type { RowModelType } from '../../interfaces/iRowModel';
 import type { RowNodeEventType, RowPinnedType } from '../../interfaces/iRowNode';
 import { ENTERPRISE_MODULE_NAMES } from '../enterpriseModuleNames';
-import { baseDocLink, getErrorLink, toStringWithNullUndefined } from '../logging';
+import { getErrorLink, getValidationDocLink, toStringWithNullUndefined } from '../logging';
 import { resolveModuleNames } from '../resolvableModuleNames';
 import { USER_COMP_MODULES } from '../rules/userCompValidations';
 
@@ -72,7 +72,7 @@ const moduleImportMsg = (moduleNames: ModuleName[], usesAgGridProvider?: boolean
     }
     return `${moduleRegistrationSnippet(imports, moduleList, usesAgGridProvider)}
 
-For more info see: ${baseDocLink}/modules/`;
+For more info see: ${getValidationDocLink()}/modules/`;
 };
 
 function convertToUserModuleName(moduleName: ModuleName, inModuleRegistration = false) {
@@ -242,7 +242,6 @@ export const AG_GRID_ERRORS = {
     1: () => '`rowData` must be an array' as const,
     2: ({ nodeId }: { nodeId: string | undefined }) =>
         `Duplicate node id \`${nodeId}\` detected from \`getRowId\` callback, this could cause issues in your grid.` as const,
-    3: () => 'Calling `gridApi.resetRowHeights()` makes no sense when using Auto Row Height.' as const,
     4: ({ id }: { id: string }) => `Could not find row \`id=${id}\`, data item was not found for this id` as const,
     5: ({ data }: { data: any }) =>
         [
@@ -303,7 +302,6 @@ export const AG_GRID_ERRORS = {
             toIndex,
             'remember that you should not count the moving columns when calculating the new index',
         ] as const,
-    31: () => 'infinite loop in `resizeColumnSets`' as const,
     32: () =>
         '`applyColumnState()` - the state attribute should be an array, however an array was not found. Please provide an array of items (one for each col you want to change) for state.' as const,
     33: () =>
@@ -457,7 +455,7 @@ export const AG_GRID_ERRORS = {
         `Numeric value ${value} passed to ${param} param will be interpreted as ${value} seconds. If this is intentional use \`${value}s\` to silence this warning.` as const,
     105: ({ e }: { e: any }) => [`chart rendering failed`, e] as const,
     106: () =>
-        `Theming API and Legacy Themes are both used in the same page. A Theming API theme has been provided to the \`theme\` grid option, but the file (\`ag-grid.css\`) is also included and will cause styling issues. Remove \`ag-grid.css\` from the page. See the migration guide: ${baseDocLink}/theming-migration/` as const,
+        `Theming API and Legacy Themes are both used in the same page. A Theming API theme has been provided to the \`theme\` grid option, but the file (\`ag-grid.css\`) is also included and will cause styling issues. Remove \`ag-grid.css\` from the page. See the migration guide: ${getValidationDocLink()}/theming-migration/` as const,
     107: ({ key, value }: { key: string; value: unknown }) =>
         `Invalid value for theme param ${key} - ${value}` as const,
     108: ({ e }: { e: any }) => ['chart update failed', e] as const,
@@ -651,7 +649,7 @@ export const AG_GRID_ERRORS = {
     208: () =>
         `Set Filter Value Formatter must return string values. Please ensure the Set Filter Value Formatter returns string values for complex objects.` as const,
     209: () =>
-        `Set Filter Key Creator is returning null for provided values and provided values are primitives. Please provide complex objects. See ${baseDocLink}/filter-set-filter-list/#filter-value-types` as const,
+        `Set Filter Key Creator is returning null for provided values and provided values are primitives. Please provide complex objects. See ${getValidationDocLink()}/filter-set-filter-list/#filter-value-types` as const,
     210: () =>
         'Set Filter has a Key Creator, but provided values are primitives. Did you mean to provide complex objects?' as const,
     211: () =>
@@ -754,7 +752,7 @@ export const AG_GRID_ERRORS = {
     264: () =>
         'As of v33, icon key `smallRight` is deprecated. Use `panelDelimiter` for Row Group Panel / Pivot Panel, `subMenuOpen` for sub-menus.' as const,
     265: ({ colId }: { colId: string }) =>
-        `Unable to infer chart data type for column \`${colId}\` if first data entry is null. Please specify \`chartDataType\`, or a \`cellDataType\` in the column definition. For more information, see ${baseDocLink}/integrated-charts-range-chart#coldefchartdatatype .` as const,
+        `Unable to infer chart data type for column \`${colId}\` if first data entry is null. Please specify \`chartDataType\`, or a \`cellDataType\` in the column definition. For more information, see ${getValidationDocLink()}/integrated-charts-range-chart#coldefchartdatatype .` as const,
     266: () =>
         'As of v33.1, using `keyCreator` with the Rich Select Editor has been deprecated. It now requires the `formatValue` callback to convert complex data to strings.' as const,
     267: () =>
@@ -958,12 +956,16 @@ export const AG_GRID_ERRORS = {
     331: ({ rowId }: { rowId: string }) =>
         `Row ID \`${rowId}\` is reserved by AG Grid and should not be returned from \`getRowId\`.` as const,
     332: ({ replacements }: { replacements: string[] }) =>
-        `Legacy theme CSS variables are set on the grid, but the Theming API is in use and ignores them, so they have no effect: ${(replacements ?? []).join(', ')}. Either set the equivalent Theming API variable, or pass the string \`legacy\` to the \`theme\` grid option to keep using v32 style themes. See the migration guide: ${baseDocLink}/theming-migration/` as const,
+        `Legacy theme CSS variables are set on the grid, but the Theming API is in use and ignores them, so they have no effect: ${(replacements ?? []).join(', ')}. Either set the equivalent Theming API variable, or pass the string \`legacy\` to the \`theme\` grid option to keep using v32 style themes. See the migration guide: ${getValidationDocLink()}/theming-migration/` as const,
     333: ({ error }: { error: unknown }) => ['`onIssueRaised` threw:', error],
     334: () =>
         `\`GridChartsModule\` was deprecated in v33 — use \`IntegratedChartsModule\` instead.\n\n${missingChartsWithModule('IntegratedChartsModule')}` as const,
     335: ({ colId }: { colId: string }) =>
-        `Column \`${colId}\` sets \`filter.handler\` or \`filter.doesFilterPass\`, which need \`enableFilterHandlers\`, so they are ignored and \`filter.component\` is used as the filter.` as const,
+        `Column \`${colId}\` sets \`filter.handler\` or \`filter.doesFilterPass\`, which need \`enableFilterHandlers\`, so the default filter is used, as \`filter: true\` does.` as const,
+    336: ({ colId, properties }: { colId: string; properties: string[] }) =>
+        `\`calculatedColumns.processColDef\` returned \`${(properties ?? []).join('`, `')}\` for calculated column \`${colId}\`. These properties are always overridden for calculated columns and have been ignored.` as const,
+    337: ({ colId }: { colId: string }) =>
+        `\`setFilterCards\` on the New Filters Tool Panel was passed \`${colId}\`, which is not a column in the grid, so no card is shown for it.` as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -979,7 +981,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 335;
+export const MAX_ERROR_ID = 337;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

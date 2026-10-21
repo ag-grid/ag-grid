@@ -11,7 +11,7 @@ const MIN_PARAM_LENGTH = 100;
 const VERSION_PARAM_NAME = '_version_';
 
 let getConsoleMessage: (<TId extends ErrorId>(id: TId, args: GetErrorParams<TId>) => any[]) | null = null;
-export let baseDocLink = `${BASE_URL}/javascript-data-grid`;
+let baseDocLink = `${BASE_URL}/javascript-data-grid`;
 /**
  * The ValidationService passes itself in if it has been included.
  * @param logger
@@ -25,6 +25,10 @@ export function provideValidationServiceLogger(
 /** Set by the Framework override to give us accurate links for the framework  */
 export function setValidationDocLink(docLink: string) {
     baseDocLink = docLink;
+}
+
+export function getValidationDocLink(): string {
+    return baseDocLink;
 }
 
 export type Severity = 'error' | 'warning' | 'deprecation';
@@ -322,9 +326,7 @@ export function _reportMissingModule(params: MissingModuleReportParams): void {
     }
 
     pendingMissingModules.push(params);
-    if (missingModuleFlushHandle === undefined) {
-        missingModuleFlushHandle = setTimeout(flushMissingModules, MISSING_MODULE_DEBOUNCE_MS);
-    }
+    missingModuleFlushHandle ??= setTimeout(flushMissingModules, MISSING_MODULE_DEBOUNCE_MS);
 }
 
 /** Flushes the pending missing-module reports as one combined error per grid. Run by the debounce timer. */
@@ -467,7 +469,7 @@ export function _getDiagnosticMessage(diagnostic: CapturedDiagnostic): string {
  * Formats a string, or the literal `null`/`undefined`, into a human-readable string.
  */
 export function toStringWithNullUndefined(str: string | null | undefined) {
-    return str === undefined ? 'undefined' : str === null ? 'null' : str;
+    return str === undefined ? 'undefined' : (str ?? 'null');
 }
 
 function getParamsUrl(baseUrl: string, params: URLSearchParams) {

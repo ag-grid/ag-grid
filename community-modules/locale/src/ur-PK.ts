@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_UR_PK = {
     enabled: 'فعال',
 
     // Menu
+    moveLeft: 'بائیں منتقل کریں',
+    moveRight: 'دائیں منتقل کریں',
+    moveUp: 'اوپر منتقل کریں',
+    moveDown: 'نیچے منتقل کریں',
     pinColumn: 'کالم کو پن کریں',
     pinLeft: 'بائیں پن کریں',
     pinRight: 'دائیں پن کریں',
@@ -760,6 +764,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaRowSelect: 'اس صف کو منتخب کرنے کے لیے SPACE دبائیں',
     ariaRowSelectionDisabled: 'اس صف کا انتخاب غیر فعال ہے',
     ariaSearch: 'تلاش',
+    ariaSortPriority: 'ترتیب دینے کی ترجیح ${count} میں سے ${priority}',
     ariaSortableColumn: 'ترتیب دینے کے لیے ENTER دبائیں',
     ariaSortableColumnWithCellSelection: 'ترتیب دینے کے لیے ALT ENTER دبائیں',
     ariaToggleVisibility: 'مرئیت ٹوگل کرنے کے لیے SPACE دبائیں',
@@ -892,9 +897,11 @@ export const AG_GRID_LOCALE_UR_PK = {
     columnHeaderEditCancel: 'منسوخ کریں',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'کوئی موزوں کالم نہیں ملا۔',
     calculatedColumn: 'محسوب کالم',
     calculatedColumnAdd: 'محسوب کالم شامل کریں',
     calculatedColumnEdit: 'محسوب کالم میں ترمیم کریں',
+    calculatedColumnView: 'محسوب کالم دیکھیں',
     calculatedColumnRemove: 'محسوب کالم ہٹائیں',
     calculatedColumnTitle: 'عنوان',
     calculatedColumnType: 'قسم',

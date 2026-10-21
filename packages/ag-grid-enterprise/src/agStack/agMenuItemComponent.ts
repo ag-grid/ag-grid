@@ -629,7 +629,7 @@ export class AgMenuItemComponent<
         }
 
         const { suppressRootStyles, suppressTooltip, suppressAria, suppressTabIndex, suppressFocus } =
-            configParams || {};
+            configParams ?? {};
         const {
             params: { tooltip, disabled },
         } = this;

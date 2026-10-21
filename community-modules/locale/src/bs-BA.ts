@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_BS_BA = {
     enabled: 'Omogućeno',
 
     // Menu
+    moveLeft: 'Pomjeri lijevo',
+    moveRight: 'Pomjeri desno',
+    moveUp: 'Pomjeri gore',
+    moveDown: 'Pomjeri dolje',
     pinColumn: 'Zakači kolonu',
     pinLeft: 'Zakači lijevo',
     pinRight: 'Zakači desno',
@@ -780,6 +784,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     ariaRowSelect: 'Pritisnite RAZMAK za izbor ovog reda',
     ariaRowSelectionDisabled: 'Izbor reda je onemogućen za ovaj red',
     ariaSearch: 'Pretraga',
+    ariaSortPriority: 'Prioritet sortiranja ${priority} od ${count}',
     ariaSortableColumn: 'Pritisnite ENTER za sortiranje',
     ariaSortableColumnWithCellSelection: 'Pritisnite ALT ENTER za sortiranje',
     ariaToggleVisibility: 'Pritisnite RAZMAK za uključivanje/isključivanje vidljivosti',
@@ -917,9 +922,11 @@ export const AG_GRID_LOCALE_BS_BA = {
     columnHeaderEditCancel: 'Otkaži',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nisu pronađene odgovarajuće kolone.',
     calculatedColumn: 'Izračunata kolona',
     calculatedColumnAdd: 'Dodaj izračunatu kolonu',
     calculatedColumnEdit: 'Uredi izračunatu kolonu',
+    calculatedColumnView: 'Pregledaj izračunatu kolonu',
     calculatedColumnRemove: 'Ukloni izračunatu kolonu',
     calculatedColumnTitle: 'Naslov',
     calculatedColumnType: 'Tip',

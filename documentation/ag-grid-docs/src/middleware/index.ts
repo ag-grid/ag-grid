@@ -17,6 +17,13 @@ const rewriteAstroGeneratedContent = (body: string) => {
                 script.setAttribute('src', new URL(src, env.PUBLIC_SITE_URL).toString());
             }
         });
+
+        // Firefox ignores an import map added after a module starts loading, so load Vite's client after the example's
+        const viteClient = html.querySelector('script[src*="/@vite/client"]');
+        const body = html.querySelector('body');
+        if (viteClient && body) {
+            body.appendChild(viteClient.remove());
+        }
     }
     return html.toString();
 };

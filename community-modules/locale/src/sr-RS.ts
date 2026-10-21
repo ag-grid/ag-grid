@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_SR_RS = {
     enabled: 'Омогућено',
 
     // Menu
+    moveLeft: 'Помери улево',
+    moveRight: 'Помери удесно',
+    moveUp: 'Помери нагоре',
+    moveDown: 'Помери надоле',
     pinColumn: 'Закачи колону',
     pinLeft: 'Закачи лево',
     pinRight: 'Закачи десно',
@@ -776,6 +780,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaRowSelect: 'Притисните SPACE да изаберете овај ред',
     ariaRowSelectionDisabled: 'Избор реда је онемогућен за овај ред',
     ariaSearch: 'Претрага',
+    ariaSortPriority: 'Приоритет сортирања ${priority} од ${count}',
     ariaSortableColumn: 'Притисните ENTER за сортирање',
     ariaSortableColumnWithCellSelection: 'Притисните ALT ENTER за сортирање',
     ariaToggleVisibility: 'Притисните SPACE да промените видљивост',
@@ -913,9 +918,11 @@ export const AG_GRID_LOCALE_SR_RS = {
     columnHeaderEditCancel: 'Откажи',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Нису пронађене одговарајуће колоне.',
     calculatedColumn: 'Израчуната колона',
     calculatedColumnAdd: 'Додај израчунату колону',
     calculatedColumnEdit: 'Измени израчунату колону',
+    calculatedColumnView: 'Прикажи израчунату колону',
     calculatedColumnRemove: 'Уклони израчунату колону',
     calculatedColumnTitle: 'Наслов',
     calculatedColumnType: 'Тип',

@@ -3,8 +3,9 @@ import { isRowNumberCol } from '../columns/columnUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
-import { _laneOfPinned } from '../entities/agColumn';
+import { _laneOfPinned, getShiftPair, isColumn } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
+import { getColGroupAfter } from '../entities/agColumnGroup';
 import type { ColKey } from '../entities/colDef';
 import type { ColumnEventType } from '../events';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
@@ -16,6 +17,8 @@ import type { WithoutGridCommon } from '../interfaces/iCommon';
 
 /** Minimum center viewport width (in px) reserved when pinned columns are present. */
 export const MIN_CENTER_VIEWPORT_WIDTH = 50;
+
+const USER_AUTOSIZE_SOURCES = new Set<ColumnEventType>(['uiColumnResized', 'columnMenu', 'contextMenu', 'toolPanelUi']);
 
 export class PinnedColumnService extends BeanStub implements NamedBean {
     beanName = 'pinnedCols' as const;
@@ -61,7 +64,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
             return;
         }
 
-        const bodyWidth = this.getAvailableViewportWidth();
+        const bodyWidth = this.gridBodyCtrl.getViewportWidthWithoutScrollbar();
 
         if (bodyWidth <= MIN_CENTER_VIEWPORT_WIDTH) {
             return;
@@ -113,86 +116,97 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
             return;
         }
 
-        let actualPinned: ColumnPinnedType;
-        if (pinned === true || pinned === 'left') {
-            actualPinned = 'left';
-        } else if (pinned === 'right') {
-            actualPinned = 'right';
-        } else {
-            actualPinned = null;
-        }
+        const actualPinned = toPinnedSide(pinned);
 
-        const updatedCols: AgColumn[] = [];
-
-        for (const key of keys) {
-            if (!key) {
-                continue;
-            }
-            const column = colModel.getCol(key);
-            if (!column) {
-                continue;
+        let updatedCols: AgColumn[] | null = null;
+        colModel.beginColUpdate();
+        try {
+            for (let i = 0, len = keys.length; i < len; ++i) {
+                const key = keys[i];
+                const column = key ? colModel.getCol(key) : null;
+                if (column && column.pinned !== actualPinned) {
+                    this.setColPinned(column, actualPinned, source);
+                    updatedCols ??= [];
+                    updatedCols.push(column);
+                }
             }
 
-            if (column.getPinned() !== actualPinned) {
-                this.setColPinned(column, actualPinned);
-                updatedCols.push(column);
+            if (updatedCols) {
+                // Slide the pinned/unpinned cols and the gap they leave, rather than jumping.
+                colAnimation?.start();
+                try {
+                    visibleCols.refresh(source, false);
+                    dispatchColumnPinnedEvent(this.eventSvc, updatedCols, source);
+                } finally {
+                    colAnimation?.finish();
+                }
             }
-        }
-
-        if (updatedCols.length) {
-            // Slide the pinned/unpinned cols and the gap they leave, rather than jumping.
-            colAnimation?.start();
-            try {
-                visibleCols.refresh(source, false);
-                dispatchColumnPinnedEvent(this.eventSvc, updatedCols, source);
-            } finally {
-                colAnimation?.finish();
-            }
+        } finally {
+            colModel.endColUpdate();
         }
     }
 
     public initCol(column: AgColumn): void {
         const { pinned, initialPinned } = column.colDef;
-        if (pinned !== undefined) {
-            this.setColPinned(column, pinned);
-        } else {
-            this.setColPinned(column, initialPinned);
-        }
+        writeColPinned(column, pinned !== undefined ? pinned : initialPinned);
     }
 
-    public setColPinned(column: AgColumn, pinned: ColumnPinnedType): void {
-        if (pinned === true || pinned === 'left') {
-            column.pinned = 'left';
-        } else if (pinned === 'right') {
-            column.pinned = 'right';
-        } else {
-            column.pinned = null;
-        }
-        column.pinnedLane = _laneOfPinned(column.pinned);
-        column.dispatchStateUpdatedEvent('pinned');
+    public setColPinned(column: AgColumn, pinned: ColumnPinnedType, source: ColumnEventType): void {
+        writeColPinned(column, pinned);
+        column.dispatchStateUpdatedEvent('pinned', source);
     }
 
-    public getHeaderResizeDiff(diff: number, column: AgColumn | AgColumnGroup): number {
-        if (column.pinnedLane !== 1) {
-            const { leftWidth, rightWidth } = this;
-
-            const bodyWidth = this.getAvailableViewportWidth() - MIN_CENTER_VIEWPORT_WIDTH;
-
-            if (leftWidth + rightWidth + diff > bodyWidth) {
-                if (bodyWidth > leftWidth + rightWidth) {
-                    // allow body width to ignore resize multiplier and fill space for last tick
-                    diff = bodyWidth - leftWidth - rightWidth;
-                } else {
-                    return 0;
-                }
-            }
+    /**
+     * `change` to a user resize of `column`, held to the pinned room: a pinned column grows, or a centre one shrinks into
+     * a pinned neighbour, only as far as the room left, counting as free what the resize took since `startWidth`.
+     */
+    public limitResize(
+        column: AgColumn | AgColumnGroup,
+        takeFromAdjacent: boolean,
+        change: number,
+        startWidth?: number
+    ): number {
+        const centre = column.pinnedLane === 1;
+        // taking from a pinned neighbour keeps the pinned total
+        const limited = centre
+            ? change < 0 && takeFromAdjacent && this.isNextPinned(column)
+            : change > 0 && !(takeFromAdjacent && this.isNextPinned(column));
+        if (!limited) {
+            return change;
         }
-
-        return diff;
+        // read per move, as the viewport or another pinned column can change mid-drag
+        const resized = startWidth === undefined ? 0 : column.getActualWidth() - startWidth;
+        return centre ? Math.max(change, -this.getPinnedRoom(-resized)) : Math.min(change, this.getPinnedRoom(resized));
     }
 
-    private getAvailableViewportWidth(): number {
-        return this.gridBodyCtrl?.getViewportWidthWithoutScrollbar() ?? 0;
+    /** Whether an auto-size from `source` stops at the pinned room: a resize handle's or a menu's does, the API's not. */
+    public limitsAutoSize(source: ColumnEventType): boolean {
+        return USER_AUTOSIZE_SOURCES.has(source);
+    }
+
+    /** How much wider the pinned columns can grow before the centre narrows below its minimum, `freed` px of them not
+     *  counted. Reads the observed viewport width, not the layout, so a drag can ask on every move. */
+    public getPinnedRoom(freed: number): number {
+        // print layout lays every column out in the centre, so nothing pinned can crowd it
+        if (_isDomLayout(this.gos, 'print')) {
+            return Infinity;
+        }
+        const gridBodyCtrl = this.gridBodyCtrl;
+        const viewportWidth = gridBodyCtrl
+            ? gridBodyCtrl.getViewportWidthWithoutScrollbar(gridBodyCtrl.getReportedViewportWidth())
+            : 0;
+        return Math.max(viewportWidth - MIN_CENTER_VIEWPORT_WIDTH - this.leftWidth - this.rightWidth + freed, 0);
+    }
+
+    private isNextPinned(column: AgColumn | AgColumnGroup): boolean {
+        const visibleCols = this.beans.visibleCols;
+        if (isColumn(column)) {
+            const next = getShiftPair(visibleCols, column);
+            return !!next && next.pinnedLane !== 1;
+        }
+        // a next group with no resizable column gives nothing, so the group resizes alone
+        const next = getColGroupAfter(visibleCols, column);
+        return !!next && next.pinnedLane !== 1 && next.isResizable();
     }
 
     private getPinnedColumnsOverflowingViewport(viewportWidth: number): {
@@ -227,7 +241,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
                     hasLockedPinned = true;
                     continue;
                 }
-                spaceNecessary -= currentColumn.getActualWidth();
+                spaceNecessary -= currentColumn.actualWidth;
                 columnsToRemove.push(currentColumn);
             }
 
@@ -237,7 +251,7 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
                     hasLockedPinned = true;
                     continue;
                 }
-                spaceNecessary -= currentColumn.getActualWidth();
+                spaceNecessary -= currentColumn.actualWidth;
                 columnsToRemove.push(currentColumn);
             }
         }
@@ -245,3 +259,16 @@ export class PinnedColumnService extends BeanStub implements NamedBean {
         return { columns: columnsToRemove, hasLockedPinned };
     }
 }
+
+const toPinnedSide = (pinned: ColumnPinnedType): 'left' | 'right' | null => {
+    if (pinned === true || pinned === 'left') {
+        return 'left';
+    }
+    return pinned === 'right' ? 'right' : null;
+};
+
+const writeColPinned = (column: AgColumn, pinned: ColumnPinnedType): void => {
+    const side = toPinnedSide(pinned);
+    column.pinned = side;
+    column.pinnedLane = _laneOfPinned(side);
+};

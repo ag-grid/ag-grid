@@ -10,6 +10,5 @@ export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
     setButtonWrapperDisplayed(displayed: boolean): void;
     setCompDetails(compDetails?: UserCompDetails | null): void;
     getFloatingFilterComp(): AgPromise<IFloatingFilter> | null;
-    setWidth(width: string): void;
     setMenuIcon(icon: HTMLElement): void;
 }

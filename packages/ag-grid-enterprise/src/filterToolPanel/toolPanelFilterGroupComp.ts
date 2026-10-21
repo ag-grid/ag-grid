@@ -239,6 +239,8 @@ export class ToolPanelFilterGroupComp extends Component {
 
         const groupId = columnGroup.getGroupId();
         const notifyLayoutGroupRenamed = createLayoutGroupRenameNotifier(this.beans, columnGroup);
+        // Grid-level, not the grid group's own event: a layout-only copy has no grid group to fire it, and a
+        // child's rename can change the name a group headerValueGetter returns.
         this.addManagedEventListeners({
             columnHeaderNameChanged: (event) => {
                 if (_isHeaderNameChangeForGroup(event, groupId)) {

@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_RO_RO = {
     enabled: 'Activat',
 
     // Menu
+    moveLeft: 'Mută la stânga',
+    moveRight: 'Mută la dreapta',
+    moveUp: 'Mută în sus',
+    moveDown: 'Mută în jos',
     pinColumn: 'Fixează Coloana',
     pinLeft: 'Fixează la Stânga',
     pinRight: 'Fixează la Dreapta',
@@ -765,6 +769,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaRowSelect: 'Apăsați SPACE pentru a selecta acest rând',
     ariaRowSelectionDisabled: 'Selecția rândului este dezactivată pentru acest rând',
     ariaSearch: 'Căutare',
+    ariaSortPriority: 'Prioritate de sortare ${priority} din ${count}',
     ariaSortableColumn: 'Apăsați ENTER pentru a sorta',
     ariaSortableColumnWithCellSelection: 'Apăsați ALT ENTER pentru a sorta',
     ariaToggleVisibility: 'Apăsați SPACE pentru a comuta vizibilitatea',
@@ -897,9 +902,11 @@ export const AG_GRID_LOCALE_RO_RO = {
     columnHeaderEditCancel: 'Anulează',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nu au fost găsite coloane eligibile.',
     calculatedColumn: 'Coloană calculată',
     calculatedColumnAdd: 'Adăugare coloană calculată',
     calculatedColumnEdit: 'Editare coloană calculată',
+    calculatedColumnView: 'Vizualizare coloană calculată',
     calculatedColumnRemove: 'Eliminare coloană calculată',
     calculatedColumnTitle: 'Titlu',
     calculatedColumnType: 'Tip',

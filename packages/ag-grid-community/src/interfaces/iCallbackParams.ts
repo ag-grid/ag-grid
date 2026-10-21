@@ -8,7 +8,7 @@ import type { AgGridCommon } from './iCommon';
 import type { FocusableContainerName } from './iFocusableContainer';
 import type { HeaderPosition } from './iHeaderPosition';
 import type { IRowNode, RowPinnedType } from './iRowNode';
-import type { DefaultColumnMenuItem, DefaultMenuItem } from './menuItem';
+import type { DefaultColumnDropZoneMenuItem, DefaultColumnMenuItem, DefaultMenuItem } from './menuItem';
 import type { GetNoteParams } from './notes';
 import type { ServerSideTransaction } from './serverSideTransaction';
 
@@ -52,6 +52,15 @@ export interface GetColumnMenuItemsParams<TData = any, TContext = any> extends A
     defaultItems: DefaultColumnMenuItem[];
     /** The surface the menu is being shown on. */
     source: ColumnMenuItemsSource;
+}
+
+export interface GetColumnDropZoneMenuItemsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The column represented by the drop-zone pill. */
+    column: Column;
+    /** The function of the drop zone, regardless of its orientation or location. */
+    source: 'rowGroup' | 'pivot' | 'aggregation';
+    /** Default movement tokens, including disabled directions: up/down for vertical panels, left/right for horizontal panels. */
+    defaultItems: DefaultColumnDropZoneMenuItem[];
 }
 
 export interface GetChartMenuItemsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

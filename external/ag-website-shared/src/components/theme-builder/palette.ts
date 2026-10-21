@@ -1,6 +1,6 @@
 /**
  * The series palette: an ordered list of fill/stroke pairs, plus the three
- * financial accents. Host-agnostic, since AG Charts' `AgChartTheme.palette` and
+ * semantic accents. Host-agnostic, since AG Charts' `AgChartTheme.palette` and
  * Studio's numbered theme params both reduce to it, each adapting at its own
  * boundary. Colours are plain strings - `fills` also admits gradients and
  * patterns, which hosts narrow away rather than the editor defending against.
@@ -226,7 +226,7 @@ const toThemeAccent = ({ fill, stroke }: PaletteAccent, strokesEnabled: boolean)
 
 /**
  * A stored palette, with anything it has no opinion on taken from another. The
- * financial accents are why: a palette carrying none of `up`, `down` or
+ * semantic accents are why: a palette carrying none of `up`, `down` or
  * `neutral` is an *indexed* palette to AG Charts, which draws rising candles
  * hollow. Absent, not empty - a cleared colour is an opinion, and stays cleared.
  */

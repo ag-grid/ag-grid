@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import { installMockResizeObserver } from 'ag-test-utils/polyfills/mockResizeObserver';
 
@@ -160,6 +160,159 @@ describe('Legacy colSpan rendering', () => {
             ├── LEAF id:0 a:"a0" b:"b0" c:"c0"
             └── LEAF id:1 a:"a1" b:"b1" c:"c1"
         `);
+    });
+
+    // The spans differ between the two columns, so a row resolving one column's span and reusing it for
+    // the other renders the second run at the wrong width and leaves its last covered column behind.
+    test('two columns spanning different widths on the same row each get their own span', async () => {
+        const api = gridsManager.createGrid(
+            'myGrid',
+            {
+                columnDefs: [
+                    { field: 'a', colId: 'a', width: 100, colSpan: (p) => (p.node!.rowIndex === 0 ? 2 : 1) },
+                    { field: 'b', colId: 'b', width: 100 },
+                    { field: 'c', colId: 'c', width: 100, colSpan: (p) => (p.node!.rowIndex === 0 ? 3 : 1) },
+                    { field: 'd', colId: 'd', width: 100 },
+                    { field: 'e', colId: 'e', width: 100 },
+                ],
+                rowData: [
+                    { a: 'a0', b: 'b0', c: 'c0', d: 'd0', e: 'e0' },
+                    { a: 'a1', b: 'b1', c: 'c1', d: 'd1', e: 'e1' },
+                ],
+            },
+            { modules: [ColumnApiModule] }
+        );
+        await new GridColumns(api, `two spanning columns setup`).checkColumns(`
+            CENTER
+            ├── a "A" width:100
+            ├── b "B" width:100
+            ├── c "C" width:100
+            ├── d "D" width:100
+            └── e "E" width:100
+        `);
+
+        const gridEl = getGridElement(api)!;
+        const row0 = gridEl.querySelector('[row-index="0"]')!;
+        expect((row0.querySelector('[col-id="a"]') as HTMLElement).style.width).toBe('200px');
+        expect((row0.querySelector('[col-id="c"]') as HTMLElement).style.width).toBe('300px');
+        expect(row0.querySelector('[col-id="b"]')).toBeNull();
+        expect(row0.querySelector('[col-id="d"]')).toBeNull();
+        expect(row0.querySelector('[col-id="e"]')).toBeNull();
+
+        const row1 = gridEl.querySelector('[row-index="1"]')!;
+        expect((row1.querySelector('[col-id="a"]') as HTMLElement).style.width).toBe('100px');
+        expect((row1.querySelector('[col-id="c"]') as HTMLElement).style.width).toBe('100px');
+        expect(row1.querySelector('[col-id="e"]')).not.toBeNull();
+    });
+
+    // New colDefs can leave the same columns spanning in the same places while replacing what one of them
+    // returns, which is the case a check on the columns alone would miss.
+    test('replacing the colSpan callback re-resolves the span', async () => {
+        const rowData = [{ a: 'a0', b: 'b0', c: 'c0' }];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'a', colId: 'a', width: 100, colSpan: () => 1 },
+                { field: 'b', colId: 'b', width: 100 },
+                { field: 'c', colId: 'c', width: 100 },
+            ],
+            rowData,
+        });
+        const gridEl = getGridElement(api)!;
+        const cellA = () => gridEl.querySelector('[row-index="0"] [col-id="a"]') as HTMLElement;
+        expect(cellA().style.width).toBe('100px');
+
+        // Same columns, same order, same widths: only the callback differs.
+        api.setGridOption('columnDefs', [
+            { field: 'a', colId: 'a', width: 100, colSpan: () => 3 },
+            { field: 'b', colId: 'b', width: 100 },
+            { field: 'c', colId: 'c', width: 100 },
+        ]);
+        await waitFor(() => expect(cellA().style.width).toBe('300px'));
+        expect(gridEl.querySelector('[row-index="0"] [col-id="b"]')).toBeNull();
+    });
+
+    // An auto-height column a run covers renders no cell, so no height is ever measured for it. Reaching
+    // the auto-height column after it requires passing that one, which is the whole job of the skip.
+    test('a row skips an auto-height column a run covers and measures the rest', async () => {
+        const api = gridsManager.createGrid(
+            'myGrid',
+            {
+                columnDefs: [
+                    { field: 'a', colId: 'a', width: 100, colSpan: (p) => (p.node!.rowIndex === 0 ? 2 : 1) },
+                    { field: 'b', colId: 'b', width: 100, autoHeight: true },
+                    { field: 'c', colId: 'c', width: 100, autoHeight: true },
+                ],
+                rowData: [
+                    { a: 'a0', b: 'b0', c: 'c0' },
+                    { a: 'a1', b: 'b1', c: 'c1' },
+                ],
+            },
+            { modules: [RowAutoHeightModule] }
+        );
+        const gridEl = getGridElement(api)!;
+        // Row 0 covers `b`, so `c` is the only auto-height column it can measure.
+        expect(gridEl.querySelector('[row-index="0"] [col-id="b"]')).toBeNull();
+
+        // happy-dom lays nothing out, so the height a measurement would find has to be supplied.
+        const cellC = gridEl.querySelector('[row-index="0"] [col-id="c"]')!;
+        Object.defineProperty(cellC.firstElementChild, 'offsetHeight', { value: 80, configurable: true });
+
+        await waitFor(() => expect(api.getDisplayedRowAtIndex(0)!.rowHeight).toBeGreaterThanOrEqual(80));
+    });
+
+    // A pinned section is built from its own column list rather than the centre one, so a run there is a
+    // separate path from every case above, which is all centre.
+    test('a run spanning within the left-pinned section covers only that section', async () => {
+        const api = gridsManager.createGrid(
+            'myGrid',
+            {
+                columnDefs: [
+                    {
+                        field: 'a',
+                        colId: 'p1',
+                        width: 100,
+                        pinned: 'left',
+                        colSpan: (p) => (p.node!.rowIndex === 0 ? 2 : 1),
+                    },
+                    { field: 'b', colId: 'p2', width: 100, pinned: 'left' },
+                    {
+                        field: 'c',
+                        colId: 'p3',
+                        width: 100,
+                        pinned: 'left',
+                        colSpan: (p) => (p.node!.rowIndex === 0 ? 3 : 1),
+                    },
+                    { field: 'd', colId: 'p4', width: 100, pinned: 'left' },
+                    { field: 'e', colId: 'p5', width: 100, pinned: 'left' },
+                    { field: 'f', colId: 'c1', width: 100 },
+                ],
+                rowData: [
+                    { a: 'a0', b: 'b0', c: 'c0', d: 'd0', e: 'e0', f: 'f0' },
+                    { a: 'a1', b: 'b1', c: 'c1', d: 'd1', e: 'e1', f: 'f1' },
+                ],
+            },
+            { modules: [ColumnApiModule] }
+        );
+        await new GridColumns(api, `left-pinned spanning setup`).checkColumns(`
+            LEFT
+            ├── p1 "A" width:100
+            ├── p2 "B" width:100
+            ├── p3 "C" width:100
+            ├── p4 "D" width:100
+            └── p5 "E" width:100
+            CENTER
+            └── c1 "F" width:100
+        `);
+
+        const gridEl = getGridElement(api)!;
+        const row0 = gridEl.querySelector('[row-index="0"]')!;
+        expect((row0.querySelector('[col-id="p1"]') as HTMLElement).style.width).toBe('200px');
+        expect((row0.querySelector('[col-id="p3"]') as HTMLElement).style.width).toBe('300px');
+        expect(row0.querySelector('[col-id="p2"]')).toBeNull();
+        expect(row0.querySelector('[col-id="p4"]')).toBeNull();
+        expect(row0.querySelector('[col-id="p5"]')).toBeNull();
+        // The centre column is in a different section, so no run in the pinned one may reach it.
+        expect((row0.querySelector('[col-id="c1"]') as HTMLElement).style.width).toBe('100px');
     });
 });
 
@@ -1024,18 +1177,28 @@ describe('colSpan follows row data updates', () => {
         expect(calls).toEqual([]);
     });
 
-    test('moving a column reads the colSpans again in the new order', async () => {
+    test('moving a column reads the colSpans again in the new order, sized by the columns they now cover', async () => {
         const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [{ ...priceColumnDefs[0], colSpan: () => 2 }, priceColumnDefs[1], priceColumnDefs[2]],
+            columnDefs: [
+                { ...priceColumnDefs[0], colSpan: () => 2 },
+                priceColumnDefs[1],
+                { ...priceColumnDefs[2], width: 150 },
+            ],
             rowData: [{ id: 'r0', price: 1, symbol: 'AAA', group: 'A' }],
             getRowId: (params) => params.data.id,
         });
-        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px group:100px'));
+        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px group:150px'));
+
+        // the same two columns spanned, but no longer the same columns
+        api.moveColumns(['group'], 1);
+        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:250px symbol:100px'));
+        api.moveColumns(['group'], 2);
+        await waitFor(() => expect(renderedRow(api, 0)).toBe('price:200px group:150px'));
 
         api.moveColumns(['price'], 2);
-        await waitFor(() => expect(renderedRow(api, 0)).toBe('symbol:100px group:100px price:100px'));
+        await waitFor(() => expect(renderedRow(api, 0)).toBe('symbol:100px group:150px price:100px'));
         api.moveColumns(['price'], 1);
-        await waitFor(() => expect(renderedRow(api, 0)).toBe('symbol:100px price:200px'));
+        await waitFor(() => expect(renderedRow(api, 0)).toBe('symbol:100px price:250px'));
     });
 
     test('a colSpan callback replaced through autoGroupColumnDef spans the group rows already rendered', async () => {
@@ -1057,7 +1220,7 @@ describe('colSpan follows row data updates', () => {
         expect(renderedRow(api, 1)).toBe('ag-Grid-AutoColumn:100px gold:100px silver:100px');
     });
 
-    test('a focused cell a span grows over asks its colSpan callback once, not again as the grid scrolls', async () => {
+    test('a focused cell a span grows over keeps its own colSpan, asked once per data change, until focus moves on', async () => {
         const calls: string[] = [];
         const columnDefs: ColDef<PriceRow>[] = [
             { field: 'price', width: 120, colSpan: (params) => (params.data ? params.data.price + 1 : 1) },
@@ -1066,7 +1229,7 @@ describe('colSpan follows row data updates', () => {
                 width: 120,
                 colSpan: (params) => {
                     calls.push(params.node!.id!);
-                    return 1;
+                    return params.data!.symbol === 'WIDE' ? 2 : 1;
                 },
             },
         ];
@@ -1079,21 +1242,33 @@ describe('colSpan follows row data updates', () => {
             getRowId: (params) => params.data.id,
             suppressColumnVirtualisation: false,
         });
-        const cell = (colId: string) =>
-            getGridElement(api)!.querySelector<HTMLElement>(`[row-index="0"] [col-id="${colId}"]`);
-        await waitFor(() => expect(cell('symbol')).not.toBeNull());
+        const width = (colId: string) =>
+            getGridElement(api)!.querySelector<HTMLElement>(`[row-index="0"] [col-id="${colId}"]`)?.style.width;
+        await waitFor(() => expect(width('symbol')).toBe('120px'));
 
         api.setFocusedCell(0, 'symbol');
         calls.length = 0;
-        api.getRowNode('r0')!.setDataValue('price', 1);
-        await waitFor(() => expect(cell('price')?.style.width).toBe('240px'));
-        expect(cell('symbol')).not.toBeNull();
+        const rowNode = api.getRowNode('r0')!;
+        rowNode.setDataValue('price', 1);
+        await waitFor(() => expect(width('price')).toBe('240px'));
+        expect(width('symbol')).toBe('120px');
         expect(calls).toEqual(['r0']);
 
         api.ensureColumnVisible('c60');
-        await waitFor(() => expect(cell('c60')).not.toBeNull());
-        expect(cell('symbol')).not.toBeNull();
+        await waitFor(() => expect(width('c60')).toBe('120px'));
+        expect(width('symbol')).toBe('120px');
         expect(calls).toEqual(['r0']);
+
+        // its own colSpan, as no other cell is drawn after it until the viewport
+        rowNode.setDataValue('symbol', 'WIDE');
+        await waitFor(() => expect(width('symbol')).toBe('240px'));
+        expect(calls).toEqual(['r0', 'r0']);
+
+        api.ensureColumnVisible('price');
+        await waitFor(() => expect(width('c60')).toBeUndefined());
+        api.setFocusedCell(0, 'c2');
+        await waitFor(() => expect(width('symbol')).toBeUndefined());
+        expect(width('price')).toBe('240px');
     });
 
     test('RTL spans in the right-pinned and centre lanes each keep their own colSpan', async () => {

@@ -8,7 +8,7 @@ import type {
     SortDirection,
 } from 'ag-grid-community';
 
-export type ColumnStateUpdateParams = { buttons?: ColumnToolPanelAction[] };
+export type ColumnStateUpdateParams = { buttons?: ColumnToolPanelAction[]; suppressSyncLayoutWithGrid?: boolean };
 
 export interface ColumnStateConcreteUpdateStrategy {
     applyColumnState(state: ColumnState[], eventType: ColumnEventType): void;

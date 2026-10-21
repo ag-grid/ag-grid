@@ -1,5 +1,6 @@
 import { _escapeString } from 'ag-stack';
 
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type {
     AgColumnGroupEvent,
@@ -30,13 +31,20 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
     // all children, regardless of open/closed state
     public children: (AgColumn | AgColumnGroup)[] | null = null;
     // only the currently displaying children (depends on open/closed state). Kept as an array (never null at
-    // runtime) so reads — `getDisplayedChildren()`, `checkLeft`, tool-panel membership — match released behaviour.
+    // runtime) so reads — `getDisplayedChildren()`, `setLeftFromChildren`, tool-panel membership — match released behaviour.
     public displayedChildren: (AgColumn | AgColumnGroup)[] | null = [];
+    /** The `displayedChildren` its last `displayedChildrenChanged` reported. */
+    private reportedDisplayedChildren = this.displayedChildren;
+    /** Bumped on each `displayedChildrenChanged`, so a walk a listener's own update interrupted can tell it was told. */
+    private childrenReports = 0;
 
     // measured header height when autoHeaderHeight is enabled
     public autoHeaderHeight: number | null = null;
 
     public left: number | null = null;
+    /** The `left` its last `leftChanged` reported. */
+    private reportedLeft: number | null = null;
+    /** Where the group was before the latest layout moved it; a header drawn by a column move starts here. */
     public oldLeft: number | null = null;
 
     public parent: AgColumnGroup | null = null;
@@ -76,14 +84,14 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
         return getLeafMoving(this.providedColumnGroup) === true;
     }
 
-    public checkLeft(): void {
+    public setLeftFromChildren(): void {
         const displayedChildren = this.displayedChildren;
         let minLeft: number | null = null;
         if (displayedChildren) {
             for (let i = 0, len = displayedChildren.length; i < len; ++i) {
                 const child = displayedChildren[i];
                 if (isColumnGroup(child)) {
-                    child.checkLeft();
+                    child.setLeftFromChildren();
                 }
                 const childLeft = child.left;
                 if (childLeft != null && (minLeft == null || childLeft < minLeft)) {
@@ -91,23 +99,47 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
                 }
             }
         }
-        this.setLeft(minLeft);
+        this.oldLeft = this.reportedLeft;
+        this.left = minLeft;
     }
 
     public getLeft(): number | null {
         return this.left;
     }
 
-    public getOldLeft(): number | null {
-        return this.oldLeft;
-    }
-
-    public setLeft(left: number | null) {
-        this.oldLeft = this.left;
-        if (this.left !== left) {
-            this.left = left;
+    /** Reports its layout changes; returns whether its own or a descendant's displayed children changed. */
+    public dispatchLayoutEvents(): boolean {
+        // a listener's own update may have rebuilt the groups, and reported the new ones
+        if (!this.isAlive()) {
+            return false;
+        }
+        const displayedChildren = this.displayedChildren;
+        let childrenChanged = displayedChildren !== this.reportedDisplayedChildren;
+        this.reportedDisplayedChildren = displayedChildren;
+        const reports = this.childrenReports;
+        const children = this.children;
+        if (children !== null) {
+            for (let i = 0, len = children.length; i < len; ++i) {
+                const child = children[i];
+                if (child.isColumn) {
+                    continue;
+                }
+                if (child.dispatchLayoutEvents()) {
+                    childrenChanged = true;
+                }
+            }
+        }
+        // a descendant's listener may have run a layout that already told this group its final children
+        if (childrenChanged && reports === this.childrenReports) {
+            ++this.childrenReports;
+            this.dispatchLocalEvent({ type: 'displayedChildrenChanged' });
+        }
+        const left = this.left;
+        if (left !== this.reportedLeft) {
+            this.reportedLeft = left;
             this.dispatchLocalEvent({ type: 'leftChanged' });
         }
+        return childrenChanged;
     }
 
     public getPinned(): ColumnPinnedType {
@@ -305,7 +337,7 @@ const getLeafMoving = (group: AgProvidedColumnGroup): boolean | null => {
         const child = children[i];
         if (child.isColumn) {
             hasLeafColumn = true;
-            if (!child.moving) {
+            if (!child.isMoving()) {
                 return false;
             }
             continue;
@@ -333,4 +365,13 @@ export const getColGroupAtLevel = (column: AgColumn, level: number): AgColumnGro
         }
     }
     return groupPointer;
+};
+
+/** The displayed group at `columnGroup`'s level just after it, or null. */
+export const getColGroupAfter = (visibleCols: VisibleColsService, columnGroup: AgColumnGroup): AgColumnGroup | null => {
+    const last = edgeLeafColumn(columnGroup, true, true);
+    // a group's displayed leaves are contiguous, so the col after its last is outside it
+    const next = last && visibleCols.getColAfter(last);
+    const level = columnGroup.providedColumnGroup.level + columnGroup.getPaddingLevel();
+    return next ? getColGroupAtLevel(next, level) : null;
 };

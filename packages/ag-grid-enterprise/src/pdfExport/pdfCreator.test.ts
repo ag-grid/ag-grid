@@ -152,6 +152,16 @@ describe('PdfCreator', () => {
         root.remove();
     });
 
+    it('resolves var() colours through the grid root', () => {
+        const root = document.createElement('div');
+        document.body.appendChild(root);
+        root.style.setProperty('--my-colour', 'rgb(1, 2, 3)');
+
+        expect(resolveThemeColorValue('var(--my-colour)', root)).toBe(getComputedColor(root, 'var(--my-colour)'));
+
+        root.remove();
+    });
+
     it('merges header and footer rules independently', () => {
         const base = {
             all: {

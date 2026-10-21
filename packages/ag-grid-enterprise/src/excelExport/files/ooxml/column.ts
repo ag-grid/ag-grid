@@ -20,7 +20,7 @@ const colFactory: ExcelOOXMLTemplate = {
                 rawMap: {
                     min: min,
                     max: max,
-                    outlineLevel: outlineLevel != null ? outlineLevel : undefined,
+                    outlineLevel: outlineLevel ?? undefined,
                     width: excelWidth,
                     style: s,
                     hidden: hidden ? '1' : '0',

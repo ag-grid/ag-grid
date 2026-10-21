@@ -99,8 +99,8 @@ export type { RowDragService } from './dragAndDrop/rowDragService';
 export type { RowsDrop as _RowsDrop } from './dragAndDrop/rowDragTypes';
 export {
     _defaultPivotSort,
-    _getAvailableSortTypes,
     _getDisplaySortForColumn,
+    _isSortTypeAvailable,
     _normalizeSortType,
     _resolvePivotColumnForRow,
     _resolvePivotSort,
@@ -215,6 +215,7 @@ export {
     _getCallbackForEvent,
     _getCheckboxes,
     _getCheckboxLocation,
+    _getDomData,
     _getEnableColumnSelection,
     _getFillHandle,
     _getGrandTotalPinnedFloat,
@@ -401,6 +402,7 @@ export type { RowNodeSorter } from './sort/rowNodeSorter';
 export type { SortService } from './sort/sortService';
 export { _getSortModel } from './sort/sortService';
 export type { CellStyleService } from './styling/cellStyleService';
+export { _getLayoutCssClass } from './styling/layoutFeature';
 export { coreDefaults as _coreThemeDefaults } from './theming/core/core-css';
 export {
     themeAlpineParams as _themeAlpineParams,
@@ -483,7 +485,6 @@ export { TabGuardComp } from './widgets/tabGuardComp';
 export { AgAbstractInputField } from './agWidgets/agAbstractInputField';
 export { AgAbstractLabel } from './agWidgets/agAbstractLabel';
 export { AgCheckbox, AgCheckboxSelector } from './agWidgets/agCheckbox';
-export { AgContentEditableField, AgContentEditableFieldSelector } from './agWidgets/agContentEditableField';
 export { AgFieldSet, AgFieldSetSelector } from './agWidgets/agFieldSet';
 export type {
     AgCheckboxParams,

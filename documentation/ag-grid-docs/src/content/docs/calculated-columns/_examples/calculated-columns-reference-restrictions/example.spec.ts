@@ -17,7 +17,7 @@ test.agExample(import.meta, () => {
                 await expect(salary).toHaveCount(0);
                 await dialog.locator('textarea').fill('[Salary]');
                 await expect(dialog.locator('textarea')).toHaveAttribute('aria-invalid', 'true');
-                await expect(agIdFor.cell('0', colId)).toContainText('120000');
+                await expect(agIdFor.cell('0', colId)).toHaveClass(/formula-error/);
                 await dialog.locator('textarea').fill('[Sales] * 2');
                 await expect(agIdFor.cell('0', colId)).toContainText('200000');
             } else {

@@ -1,4 +1,4 @@
-import { _setAriaRowIndex } from 'ag-stack';
+import { _addOrRemoveAttribute, _setAriaRowIndex } from 'ag-stack';
 import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import type {
@@ -152,6 +152,11 @@ const HeaderRowComp = ({
                     }
                 },
                 setTabIndex,
+                setAriaHidden: (hidden) => {
+                    if (eGui.current) {
+                        _addOrRemoveAttribute(eGui.current, 'aria-hidden', hidden ? 'true' : null);
+                    }
+                },
             };
 
             ctrl.setComp(compProxy, compBean.current);

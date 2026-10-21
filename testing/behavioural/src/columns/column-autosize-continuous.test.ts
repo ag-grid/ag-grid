@@ -13,7 +13,7 @@
  * moving first — proof the sizing pass actually ran — and only then assert the protected width.
  */
 import { waitFor } from '@testing-library/dom';
-import { DragEventDispatcher, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { DragEventDispatcher, TestGridsManager, asyncSetTimeout, mockGridLayout } from 'ag-test-utils';
 
 import type { AgEvent, AutoSizeColumnsTriggerParams, ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -22,6 +22,7 @@ import {
     ColumnAutoSizeModule,
     PaginationModule,
 } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 /** The width every eligible column lands on once measured: `minWidth` beats the 20px happy-dom measurement. */
 const MEASURED_WIDTH = 120;
@@ -261,6 +262,28 @@ describe('Continuous Column Autosize', () => {
             // the colDef declares `initialWidth`, so the column is eligible again
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
             expect(widthOf(api, 'pinned')).toBe(START_WIDTH);
+        });
+
+        test('resetting column state leaves the group column fitting its contents, its width only a start', async () => {
+            const api = gridsManager.createGrid(
+                'myGrid',
+                {
+                    columnDefs: [
+                        { colId: 'country', field: 'country', rowGroup: true, hide: true },
+                        { colId: 'eligible', field: 'eligible', width: START_WIDTH, minWidth: MEASURED_WIDTH },
+                    ],
+                    autoGroupColumnDef: { width: START_WIDTH, minWidth: MEASURED_WIDTH },
+                    rowData: [{ country: 'x', eligible: 'b' }],
+                    autoSizeStrategy: { type: 'fitCellContents', continuous: true, skipHeader: true },
+                },
+                { modules: [RowGroupingModule] }
+            );
+            await expectWidth(api, 'ag-Grid-AutoColumn', MEASURED_WIDTH);
+
+            api.resetColumnState();
+
+            await expectWidth(api, 'ag-Grid-AutoColumn', MEASURED_WIDTH);
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
         });
     });
 
@@ -766,6 +789,27 @@ describe('Continuous Column Autosize', () => {
             expect(seen[seen.length - 1]).toEqual(['eligible']);
         });
 
+        test('a re-size that finds the grid with no width runs again once it has one', async () => {
+            const gridWidth = mockGridLayout.gridWidth;
+            mockGridLayout.gridWidth = 0;
+            try {
+                const api = createGrid({
+                    columnDefs: [
+                        { colId: 'eligible', field: 'eligible', initialWidth: START_WIDTH, minWidth: MEASURED_WIDTH },
+                    ],
+                });
+                api.setGridOption('rowData', [{ eligible: 'a' }]);
+                await flushScheduledResize();
+                expect(widthOf(api, 'eligible')).toBe(START_WIDTH);
+
+                // the grid is shown before the retries run out
+                mockGridLayout.gridWidth = 1000;
+                await expectWidth(api, 'eligible', MEASURED_WIDTH);
+            } finally {
+                mockGridLayout.gridWidth = gridWidth;
+            }
+        });
+
         test('`colIds` restricts sizing to the listed columns', async () => {
             const api = createGrid({
                 columnDefs: [
@@ -895,23 +939,23 @@ describe('Continuous Column Autosize', () => {
             await expectWidth(api2, 'eligible', MEASURED_WIDTH);
         });
 
-        test('a width this grid rejects leaves the column eligible', async () => {
-            // grid2 caps the column below the width grid1 propagates, so `setColumnWidths` rejects the set
-            const REJECTED_WIDTH = 400;
+        test("a width past this grid's maxWidth lands on it, owned as in the other grid", async () => {
             const { api1, api2 } = createAlignedGrids({ maxWidth: 250 });
             await expectWidth(api1, 'eligible', MEASURED_WIDTH);
             await expectWidth(api2, 'eligible', MEASURED_WIDTH);
 
             // an explicit state width takes ownership in grid1, so ownership is there to be propagated
-            api1.applyColumnState({ state: [{ colId: 'eligible', width: REJECTED_WIDTH }] });
-            await expectWidth(api1, 'eligible', REJECTED_WIDTH);
-            expect(widthOf(api2, 'eligible')).toBe(MEASURED_WIDTH);
+            api1.applyColumnState({ state: [{ colId: 'eligible', width: 400 }] });
+            await expectWidth(api1, 'eligible', 400);
+            expect(widthOf(api2, 'eligible')).toBe(250);
 
-            // widen grid2 without owning it, so its return to 120 proves it is still being auto-sized
-            api2.setColumnWidths([{ key: 'eligible', newWidth: 240 }]);
+            // owned in both, so neither continuous pass sizes it back to what it measures
+            api1.setGridOption('rowData', LONGER_DATA);
             api2.setGridOption('rowData', LONGER_DATA);
+            await flushScheduledResize();
 
-            await expectWidth(api2, 'eligible', MEASURED_WIDTH);
+            expect(widthOf(api1, 'eligible')).toBe(400);
+            expect(widthOf(api2, 'eligible')).toBe(250);
         });
     });
 });

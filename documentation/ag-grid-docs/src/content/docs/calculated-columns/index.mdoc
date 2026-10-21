@@ -40,7 +40,7 @@ Calculated Columns are supported with all row models.
 
 For Server-Side, Infinite and Viewport Row Models, sorting and filtering are datasource or server responsibilities. The grid displays calculated values for loaded rows, but does not client-sort or client-filter remote datasets by calculated results.
 
-Calculated columns are always read-only. They cannot be edited through cell editing, paste, fill handle or delete operations.
+Calculated cell values cannot be changed through cell editing, paste, fill handle or delete operations. Users can still change a calculated column's title, type and expression through its dialog. To prevent these dialog edits and removal through the grid's menus, see [Read-Only Calculated Columns](#read-only-calculated-columns).
 
 ## Row Groups and Tree Data
 
@@ -62,6 +62,8 @@ Register the Column Menu so users can add a calculated column from the header me
 
 The dialog shows references by header name, for example `[Revenue]`. When headers are duplicated under groups, it uses the shortest unique group path, such as `[2025 Q4]` and `[2026 Q4]`. It translates these display references back to `colId` references before updating the column definition.
 
+The expression editor highlights references, functions and operators. In deferred edit dialogs, validation runs as you edit and on Apply, not when the dialog opens. Built-in errors are underlined, explained in a tooltip and announced to assistive technology. Live mode shows reference-restriction and custom validation errors, but does not automatically show syntax errors in the editor; invalid expressions still produce formula errors in grid cells.
+
 In dialog references, a literal `]` in a header name is escaped as `]]`. For example, the header `Revenue [USD]` appears as `[Revenue [USD]]]`. The Columns picker inserts the escaped reference automatically; stored `colId` references are unchanged.
 
 If two columns share the same header _and_ the same group hierarchy, the dialog falls back to appending the `colId`, for example `[2025 Q4 (revenue-q4)]`. This keeps the reference stable when columns are reordered. Give your columns distinct headers or group hierarchies to avoid this.
@@ -73,6 +75,58 @@ The following example has duplicate `Q1`, `Q2`, `Q3` and `Q4` headers under `202
 The dialog manages calculated columns inside the grid without mutating the `columnDefs` array supplied by the application. To persist user-created calculated columns, read the complete current definitions from `api.getColumnDefs()`, or use [Grid State](./grid-state/), which captures them and recreates them on restore.
 
 Grid State also captures user edits to, and removals of, calculated columns declared in `columnDefs`, and re-applies them over the declared definitions on restore — so a stored state takes precedence over a changed declaration.
+
+Use Grid State to preserve dialog validation errors as well. `api.getColumnDefs()` contains the column configuration, not validation errors; restoring definitions alone treats the expressions as programmatic definitions.
+
+## Read-Only Calculated Columns
+
+Set `calculatedColumnReadOnly: true` to prevent users from changing a column's title, type or expression in the dialog. Users can choose **View Calculated Column** to inspect its definition. **Remove Calculated Column** is disabled in the column and cell context menus.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: true,
+    columnDefs: [
+        { field: 'revenue' },
+        { field: 'cost' },
+        {
+            colId: 'grossMargin',
+            calculatedExpression: '([revenue] - [cost]) / [revenue]',
+            cellDataType: 'number',
+            calculatedColumnReadOnly: true,
+        },
+    ],
+};
+```
+
+The example keeps **Gross Margin** read-only, while **Profit** and user-created calculated columns remain editable.
+
+{% gridExampleRunner title="Read-Only Calculated Columns" name="calculated-columns-read-only" /%}
+
+{% note %}
+This setting restricts UI changes only: updating `columnDefs` and restoring [Grid State](./grid-state/) can still change or remove the column. Columns created through the dialog remain editable, even when `defaultColDef.calculatedColumnReadOnly` is `true`.
+{% /note %}
+
+### Hiding Menu Items
+
+The calculated column actions are built-in menu items. To stop users adding, editing or removing calculated columns from the menus, filter them out of the default items with [getColumnMenuItems](./column-menu/#customising-the-menu-items) and [getContextMenuItems](./context-menu/#configuring-the-context-menu):
+
+- `calculatedColumn`: **Add Calculated Column**, in the column menu.
+- `editCalculatedColumn`: **Edit Calculated Column**, or **View Calculated Column** when the column is read-only, in the column menu.
+- `removeCalculatedColumn`: **Remove Calculated Column**, in the column menu and the cell context menu.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: true,
+    getColumnMenuItems: ({ defaultItems }) =>
+        defaultItems.filter(
+            item => item !== 'editCalculatedColumn' && item !== 'removeCalculatedColumn'
+        ),
+    getContextMenuItems: ({ defaultItems }) =>
+        defaultItems?.filter(item => item !== 'removeCalculatedColumn'),
+};
+```
+
+As with [read-only columns](#read-only-calculated-columns), this only removes the menu entries. Updating `columnDefs` and restoring [Grid State](./grid-state/) can still change or remove the column.
 
 ## Dialog Options
 
@@ -136,30 +190,56 @@ This only controls the expression picker buttons. Use an empty array or `null` t
 
 ### isColumnReferenceable
 
-Use `isColumnReferenceable` to control which source columns can be referenced in the dialog. Return `false` to hide a column from the Columns picker and inline autocomplete, and reject manually entered references to it:
+Return `false` from `isColumnReferenceable` to exclude a column from the Columns picker, inline autocomplete and newly entered references. Use `calculatedColumn` to identify the column being edited, or `sourceColumn` for the column whose menu initiated Add Calculated Column. `sourceColumn` is only provided when adding a column; it is `null` when editing an existing column.
+
+This example allows Salary references only when editing Bonus:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
     calculatedColumns: {
-        isColumnReferenceable: ({ colDef, calculatedColumn }) =>
-            colDef.field !== 'salary' || calculatedColumn?.getColId() === 'bonus',
+        isColumnReferenceable: ({ colDef, calculatedColumn }) => {
+            if (colDef.field === 'salary') {
+                return calculatedColumn?.getColId() === 'bonus';
+            }
+            return true;
+        },
     },
 };
 ```
 
-The callback runs when the dialog opens. It receives the source `column` and `colDef`, the `calculatedColumn` being edited, and the usual `api` and `context` parameters. `calculatedColumn` is `null` when adding a new column in either apply mode. Changes to application state take effect the next time the dialog opens; they do not update an already-open picker.
+{% interfaceDocumentation interfaceName="IsColumnReferenceableParams" /%}
 
-An existing expression that was not blocked by the dialog can be kept unchanged even if it references a restricted column. Users can apply it in deferred mode or change its title and type in either mode. Once the expression text differs from the text displayed when the dialog opened, restricted references are blocked, including edits to casing, whitespace or arithmetic. Restoring the original permitted expression text clears the restriction error.
+The callback runs when the dialog opens. Existing permitted expressions can remain unchanged, and programmatic expressions are unrestricted. This is a UI restriction, not a security boundary.
 
-In deferred mode, a blocked reference disables Apply. In live mode, the full expression is saved with its restriction error, and cells display `#REF!` instead of evaluating it. Closing and reopening the dialog preserves the full expression and error so the user can correct it. Changing the title or type does not clear the restriction. The blocked status is also preserved by Grid State and `api.getColumnDefs()`.
-
-Programmatic `calculatedExpression` values remain unrestricted. Restoring state preserves whether an expression was permitted or blocked; it does not apply new restrictions to previously permitted expressions. This is an editor restriction, not a data-security boundary.
-
-Visibility does not affect eligibility: hidden columns can be offered, and visible columns can be restricted. The picker uses primary columns in and out of pivot mode, excludes generated service columns, and keeps reference names stable when other columns are restricted.
-
-The following example permits Salary references when editing Bonus but excludes them when editing Sales Target or adding a new calculated column.
+Restricted edits disable Apply in deferred mode. In live mode, they are saved but display `#REF!` until corrected; reopening the dialog or restoring Grid State preserves the error.
 
 {% gridExampleRunner title="Dialog Reference Restrictions" name="calculated-columns-reference-restrictions" /%}
+
+### getValidationErrors
+
+Use `getValidationErrors` to customise expression validation in either apply mode, including for invalid expressions. The callback receives built-in messages in `internalErrors`. Return the messages to show, or `null` or an empty array to accept the expression. Return `internalErrors` to keep the built-in validation.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: {
+        applyMode: 'deferred',
+        getValidationErrors: ({ referencedColumns, internalErrors }) =>
+            referencedColumns.some(column => column.getColId() === 'salary')
+                ? ['Salary cannot be used in this report.']
+                : internalErrors,
+    },
+};
+```
+
+{% interfaceDocumentation interfaceName="CalculatedColumnValidationParams" /%}
+
+In the example, edit **Sales Bonus** and enter `[Salary]` to see the validation messages and disabled Apply button.
+
+{% gridExampleRunner title="Custom Dialog Validation" name="calculated-columns-custom-validation" /%}
+
+{% note %}
+Validation applies only in the dialog; programmatic definitions are unaffected. Errors block Apply in deferred mode. In live mode, rejected edits are saved but display `#ERROR!` until corrected. Title and type edits also revalidate unchanged expressions. Restrictions set by `isColumnReferenceable` remain enforced.
+{% /note %}
 
 ### suppressColumnHighlighting
 
@@ -180,7 +260,7 @@ const gridOptions = {
 
 By default, dialog edits apply to the column immediately: **Add Calculated Column** creates the column and opens the dialog over it, and title, type and expression changes update the column as you type. Closing the dialog keeps the latest state; remove the column with **Remove Calculated Column**. An empty expression renders blank cells, and invalid or incomplete expressions render formula errors until fixed. Expression edits containing references excluded by `isColumnReferenceable` are saved but blocked from evaluation, preserving the full text for correction.
 
-Set `applyMode: 'deferred'` to hold changes until you click **Apply** instead. In deferred mode the dialog shows Apply and Cancel buttons and validates the expression, so you cannot apply an invalid one:
+Set `applyMode: 'deferred'` to hold changes until you click **Apply** instead. The dialog shows Apply and Cancel buttons and validates edits before applying them:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -193,6 +273,46 @@ const gridOptions = {
 {% interfaceDocumentation interfaceName="CalculatedColumnApplyMode" config={"asCode":true} /%}
 
 {% gridExampleRunner title="Deferred Apply Mode" name="calculated-columns-apply-mode" /%}
+
+### applyDebounce
+
+Set `applyDebounce` to wait for a quiet period before applying live dialog edits. This delays both the cell repaint and calculated-column change events:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: {
+        applyDebounce: 400,
+    },
+};
+```
+
+The default is `0`, which applies on the next animation frame. Closing the dialog applies any pending edit immediately; removing the column cancels it. State and column-definition APIs report the last applied values while an edit is pending. This option has no effect in deferred mode.
+
+### processColDef
+
+Use `processColDef` to customise calculated columns that users create in the dialog, for example to add a filter or allow aggregation. It receives the column's own definition, as set in the dialog, and returns the definition to use. The returned definition takes precedence over `defaultColDef` and column types:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: {
+        processColDef: (params) => ({
+            ...params.colDef,
+            filter: true,
+            enableValue: params.colDef.cellDataType === 'number',
+        }),
+    },
+};
+```
+
+In the example, the **Profit** column is restored from Grid State as if a user had created it, so it has a filter button and can be aggregated from the column menu.
+
+{% gridExampleRunner title="Customising Calculated Column Definitions" name="calculated-columns-process-col-def" /%}
+
+{% interfaceDocumentation interfaceName="CalculatedColumnProcessColDefParams" /%}
+
+{% note %}
+The callback runs each time the column is built, including when dialog edits are applied and on restore from [Grid State](./grid-state/). It does not run for calculated columns declared in `columnDefs`. The dialog and Grid State keep the user's values, not the callback's. `colId`, `editable`, `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor` and `cellEditorSelector` are always overridden. Prefer `initial*` properties, such as `initialWidth`, to stateful ones.
+{% /note %}
 
 ## Advanced Calculated Columns
 
@@ -237,11 +357,9 @@ Manage calculated columns through column definitions, like other columns. Read t
 
 The dialog manages calculated columns inside the grid without mutating the `columnDefs` array supplied by the application. To persist user-created calculated columns, read the complete current definitions from `api.getColumnDefs()`.
 
-The following example adds, edits and removes a Profit Margin column through these APIs, and logs the calculated columns currently in the grid:
+The following example adds, edits and removes a Profit Margin column through these APIs, and logs calculated-column changes:
 
 {% gridExampleRunner title="Calculated Columns API" name="calculated-columns-api" /%}
-
-Calculated Column events also use stored `colId` references in their expression payloads. For example, an event raised from the dialog still reports `[revenue]`, not `[Revenue]`.
 
 ### Column Properties
 
@@ -253,4 +371,31 @@ Calculated Column events also use stored `colId` references in their expression 
 
 ### Events
 
-{% apiDocumentation source="grid-events/events.json" section="calculatedColumns" names=["calculatedColumnCreated", "calculatedColumnExpressionChanged", "calculatedColumnRemoved", "calculatedColumnValidationStateChanged"] /%}
+Use `calculatedColumnChanged` to track changes to `headerName`, `cellDataType`, `calculatedExpression` and `columnGroupShow`. Its `changes` object contains only changed properties, with their previous and new values. Deferred Apply raises one event for all changes; live mode raises an event for each committed update. Initialisation and Grid State restoration do not raise this event.
+
+Check `expressionValidation.valid` before saving an accepted expression. When invalid, `expressionValidation.reason` is `restrictedReference`, `customValidation`, `unknownReference` or `invalidExpression`.
+
+```js
+const gridOptions = {
+    onCalculatedColumnChanged: event => {
+        const { headerName, cellDataType, calculatedExpression } = event.changes;
+        if (headerName) {
+            console.log('Title:', headerName.oldValue, headerName.newValue);
+        }
+        if (cellDataType) {
+            console.log('Type:', cellDataType.oldValue, cellDataType.newValue);
+        }
+        if (calculatedExpression && event.expressionValidation.valid) {
+            console.log('Expression:', calculatedExpression.oldValue, calculatedExpression.newValue);
+        }
+    },
+};
+```
+
+{% note %}
+Live expressions can be incomplete or invalid. Recognised references use stored `colId` values, such as `[revenue]`; references the dialog cannot resolve remain as typed, so they can still contain header names.
+
+`expressionValidation` is a snapshot of syntax, direct reference resolution and saved dialog errors, not row-specific evaluation results. To persist rejected expressions with their blocked status, save [Grid State](./grid-state/); saving only the expression text does not retain that status.
+{% /note %}
+
+{% apiDocumentation source="grid-events/events.json" section="calculatedColumns" names=["calculatedColumnCreated", "calculatedColumnChanged", "calculatedColumnRemoved", "calculatedColumnValidationStateChanged"] /%}

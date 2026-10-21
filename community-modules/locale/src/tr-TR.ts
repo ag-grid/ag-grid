@@ -340,6 +340,10 @@ export const AG_GRID_LOCALE_TR_TR = {
     enabled: 'Etkin',
 
     // Menu
+    moveLeft: 'Sola Taşı',
+    moveRight: 'Sağa Taşı',
+    moveUp: 'Yukarı Taşı',
+    moveDown: 'Aşağı Taşı',
     pinColumn: 'Sütunu Sabitle',
     pinLeft: 'Sola Sabitle',
     pinRight: 'Sağa Sabitle',
@@ -765,6 +769,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaRowSelect: 'Bu satırı seçmek için SPACE tuşuna basın',
     ariaRowSelectionDisabled: 'Bu satır için Satır Seçimi devre dışı bırakılmıştır',
     ariaSearch: 'Ara',
+    ariaSortPriority: 'Sıralama önceliği: ${priority}, toplam ${count}',
     ariaSortableColumn: 'Sıralamak için ENTER tuşuna basın',
     ariaSortableColumnWithCellSelection: 'Sıralamak için ALT ENTER tuşuna basın',
     ariaToggleVisibility: 'Görünürlüğü değiştirmek için SPACE tuşuna basın',
@@ -897,9 +902,11 @@ export const AG_GRID_LOCALE_TR_TR = {
     columnHeaderEditCancel: 'İptal',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Uygun sütun bulunamadı.',
     calculatedColumn: 'Hesaplanan sütun',
     calculatedColumnAdd: 'Hesaplanan sütun ekle',
     calculatedColumnEdit: 'Hesaplanan sütunu düzenle',
+    calculatedColumnView: 'Hesaplanan sütunu görüntüle',
     calculatedColumnRemove: 'Hesaplanan sütunu kaldır',
     calculatedColumnTitle: 'Başlık',
     calculatedColumnType: 'Tür',

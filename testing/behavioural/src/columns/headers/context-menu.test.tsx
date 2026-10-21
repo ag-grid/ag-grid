@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
@@ -66,7 +66,10 @@ describe('React Context menu ', () => {
             const header = screen.getByRole('columnheader', { name: /name/i });
             dispatchTouchStart(header);
 
-            vi.advanceTimersByTime(600);
+            // the grid lays its body out on these timers too, which updates React state
+            act(() => {
+                vi.advanceTimersByTime(600);
+            });
 
             expect(document.querySelectorAll('.ag-popup').length).toBe(popupCountBefore);
         } finally {

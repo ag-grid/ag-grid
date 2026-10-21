@@ -23,6 +23,7 @@ const paramTypes = [
     'fontFamily',
     'fontWeight',
     'duration',
+    'scrollbarWidth',
 ] as const;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -141,6 +142,8 @@ const shadowValueToCss = (value: ShadowValue): string | false => {
 
 const borderStyleValueToCss = literalToCSS;
 
+const scrollbarWidthValueToCss = literalToCSS;
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const fontFamilyValueToCss = (value: FontFamilyValue): string | false => {
     // normally string values are passed through as CSS without modification,
@@ -228,6 +231,7 @@ const paramValidators: Record<
     fontFamily: fontFamilyValueToCss,
     fontWeight: fontWeightValueToCss,
     duration: durationValueToCss,
+    scrollbarWidth: scrollbarWidthValueToCss,
 };
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

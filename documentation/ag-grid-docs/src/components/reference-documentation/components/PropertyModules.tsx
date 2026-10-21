@@ -6,22 +6,41 @@ import { type FunctionComponent, useCallback, useEffect, useId, useRef, useState
 import styles from './PropertyModules.module.scss';
 import { ReferenceIcon } from './ReferenceIcon';
 
+const ENTERPRISE_LINK_LABEL = 'Enterprise: Community vs. Enterprise';
+
 const Module: FunctionComponent<{
     module: object;
     framework: Framework;
 }> = ({ module, framework }) => {
     return (
-        <a
-            tabIndex={0}
-            href={urlWithPrefix({
-                url: './modules',
-                framework,
-            })}
-        >
-            <ReferenceIcon name="module" />
-            <span>{module.name}</span>
-            {module.isEnterprise && <ReferenceIcon name="enterprise" svgClasses={styles.enterpriseIcon} />}
-        </a>
+        <div className={styles.module}>
+            <a
+                tabIndex={0}
+                className={styles.moduleLink}
+                href={urlWithPrefix({
+                    url: './modules',
+                    framework,
+                })}
+            >
+                <ReferenceIcon name="module" />
+                <span>{module.name}</span>
+            </a>
+            {module.isEnterprise && (
+                // A sibling of the module link rather than inside it, as links cannot nest.
+                <a
+                    tabIndex={0}
+                    className={styles.enterpriseLink}
+                    href={urlWithPrefix({
+                        url: './community-vs-enterprise',
+                        framework,
+                    })}
+                    aria-label={ENTERPRISE_LINK_LABEL}
+                    title={ENTERPRISE_LINK_LABEL}
+                >
+                    <ReferenceIcon name="enterprise" svgClasses={styles.enterpriseIcon} />
+                </a>
+            )}
+        </div>
     );
 };
 

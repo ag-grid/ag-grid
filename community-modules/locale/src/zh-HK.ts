@@ -336,6 +336,10 @@ export const AG_GRID_LOCALE_ZH_HK = {
     enabled: '已啟用',
 
     // Menu
+    moveLeft: '向左移動',
+    moveRight: '向右移動',
+    moveUp: '向上移動',
+    moveDown: '向下移動',
     pinColumn: '固定列',
     pinLeft: '固定到左邊',
     pinRight: '固定到右邊',
@@ -759,6 +763,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     ariaRowSelect: '按 SPACE 選擇此行',
     ariaRowSelectionDisabled: '此行的行選擇已禁用',
     ariaSearch: '搜索',
+    ariaSortPriority: '排序優先次序為第 ${priority} 位，共 ${count} 位',
     ariaSortableColumn: '按 ENTER 排序',
     ariaSortableColumnWithCellSelection: '按 ALT ENTER 排序',
     ariaToggleVisibility: '按 SPACE 切換可見性',
@@ -891,9 +896,11 @@ export const AG_GRID_LOCALE_ZH_HK = {
     columnHeaderEditCancel: '取消',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: '找不到符合條件的欄。',
     calculatedColumn: '計算欄',
     calculatedColumnAdd: '新增計算欄',
     calculatedColumnEdit: '編輯計算欄',
+    calculatedColumnView: '檢視計算欄',
     calculatedColumnRemove: '移除計算欄',
     calculatedColumnTitle: '標題',
     calculatedColumnType: '類型',

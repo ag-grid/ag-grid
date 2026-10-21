@@ -336,6 +336,10 @@ export const AG_GRID_LOCALE_HE_IL = {
     enabled: 'מופעל',
 
     // Menu
+    moveLeft: 'העבר שמאלה',
+    moveRight: 'העבר ימינה',
+    moveUp: 'העבר למעלה',
+    moveDown: 'העבר למטה',
     pinColumn: 'נעל עמודה',
     pinLeft: 'נעל לשמאל',
     pinRight: 'נעל לימין',
@@ -759,6 +763,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaRowSelect: 'לחץ על SPACE כדי לבחור שורה זו',
     ariaRowSelectionDisabled: 'בחירת שורות מושבתת עבור שורה זו',
     ariaSearch: 'חיפוש',
+    ariaSortPriority: 'עדיפות מיון ${priority} מתוך ${count}',
     ariaSortableColumn: 'לחץ על ENTER למיון',
     ariaSortableColumnWithCellSelection: 'לחץ על ALT ENTER למיון',
     ariaToggleVisibility: 'לחץ על SPACE כדי להחליף נראות',
@@ -891,9 +896,11 @@ export const AG_GRID_LOCALE_HE_IL = {
     columnHeaderEditCancel: 'בטל',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'לא נמצאו עמודות מתאימות.',
     calculatedColumn: 'עמודה מחושבת',
     calculatedColumnAdd: 'הוספת עמודה מחושבת',
     calculatedColumnEdit: 'עריכת עמודה מחושבת',
+    calculatedColumnView: 'הצג עמודה מחושבת',
     calculatedColumnRemove: 'הסרת עמודה מחושבת',
     calculatedColumnTitle: 'כותרת',
     calculatedColumnType: 'סוג',

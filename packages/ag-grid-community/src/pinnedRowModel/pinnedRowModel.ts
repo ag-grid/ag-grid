@@ -13,28 +13,44 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
     beanName = 'pinnedRowModel' as const;
 
     private inner: IPinnedRowModel;
+    /** Kept here, as the row model may show it before a model swap in the same batch of option changes. */
+    private grandTotalNode: RowNode | undefined;
 
     public postConstruct(): void {
         const { gos } = this;
-        const initialiseRowModel = () => {
+        /** Returns whether it created a model, which starts with the grand total pinned where `grandTotalRow` says. */
+        const initialiseRowModel = (): boolean => {
             const enableRowPinning = gos.get('enableRowPinning');
             const grandTotalRow = _getGrandTotalRow(gos);
             const isGrandTotalRowPinned = grandTotalRow === 'pinnedBottom' || grandTotalRow === 'pinnedTop';
             const useManualPinnedRowModel = !!enableRowPinning || isGrandTotalRowPinned;
+            const inner = this.inner;
             const shouldDestroy = useManualPinnedRowModel
-                ? this.inner instanceof StaticPinnedRowModel
-                : this.inner instanceof ManualPinnedRowModel;
-            if (this.inner && shouldDestroy) {
-                this.destroyBean(this.inner as any);
+                ? inner instanceof StaticPinnedRowModel
+                : inner instanceof ManualPinnedRowModel;
+            if (inner && shouldDestroy) {
+                inner.resetGrandTotalPin(); // unpins the grand total, with its events, before the model goes
+                this.destroyBean(inner as any);
             }
-            if (shouldDestroy || !this.inner) {
-                this.inner = this.createManagedBean(
+            if (shouldDestroy || !inner) {
+                const created = this.createManagedBean(
                     useManualPinnedRowModel ? new ManualPinnedRowModel() : new StaticPinnedRowModel()
                 );
+                this.inner = created;
+                created.setGrandTotalNode(this.grandTotalNode);
+                created.resetGrandTotalPin();
+                return true;
             }
+            return false;
         };
 
-        this.addManagedPropertyListeners(['enableRowPinning', 'grandTotalRow'], initialiseRowModel);
+        this.addManagedPropertyListener('enableRowPinning', initialiseRowModel);
+        // pins here as well as on `modelUpdated`: in a batch of option changes the row model may already have refreshed
+        this.addManagedPropertyListener('grandTotalRow', () => {
+            if (!initialiseRowModel()) {
+                this.inner.resetGrandTotalPin(); // the user pinned it for the previous position
+            }
+        });
 
         initialiseRowModel();
     }
@@ -106,11 +122,16 @@ export class PinnedRowModel extends BeanStub implements NamedBean, IPinnedRowMod
         return this.inner.setPinnedState(state);
     }
 
-    public setGrandTotalPinned(value: RowPinnedType): void {
-        return this.inner.setGrandTotalPinned(value);
+    public getUserGrandTotalPinned(): RowPinnedType {
+        return this.inner.getUserGrandTotalPinned();
     }
 
-    public getGrandTotalPinned(): RowPinnedType {
-        return this.inner.getGrandTotalPinned();
+    public setGrandTotalNode(node: RowNode | undefined): void {
+        this.grandTotalNode = node;
+        return this.inner.setGrandTotalNode(node);
+    }
+
+    public resetGrandTotalPin(): void {
+        return this.inner.resetGrandTotalPin();
     }
 }

@@ -1,12 +1,18 @@
 import { GridColumns, GridRows, TestGridsManager, applyTransactionChecked, cachedJSONObjects } from 'ag-test-utils';
 
 import type { IAggFuncParams } from 'ag-grid-community';
-import { ClientSideRowModelModule, RowSelectionModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    CsvExportModule,
+    GRAND_TOTAL_ROW_ID,
+    PinnedRowModule,
+    RowSelectionModule,
+} from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('ag-grid grouping aggregation', () => {
     const gridsManager = new TestGridsManager({
-        modules: [RowSelectionModule, ClientSideRowModelModule, RowGroupingModule],
+        modules: [RowSelectionModule, ClientSideRowModelModule, RowGroupingModule, PinnedRowModule, CsvExportModule],
     });
 
     beforeEach(() => {
@@ -409,6 +415,76 @@ describe('ag-grid grouping aggregation', () => {
             │ ├── LEAF id:4 category:"B" amount:150 quantity:null active:null
             │ └── LEAF id:5 category:"B" amount:0 quantity:0 active:false
             └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:450 quantity:{"count":3,"value":20} active:{"value":5}
+        `);
+    });
+
+    test('the grand total row leaves an emptied grid and returns with its totals, inline or pinned', async () => {
+        const rowData = [
+            { id: '1', category: 'A', amount: 100 },
+            { id: '2', category: 'B', amount: 50 },
+        ];
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'category', rowGroup: true, hide: true },
+                { field: 'amount', aggFunc: 'sum' },
+            ],
+            rowData,
+            grandTotalRow: 'bottom',
+            getRowId: (params) => params.data.id,
+        });
+        const exported = () => api.getDataAsCsv({ suppressQuotes: true });
+
+        api.setGridOption('rowData', []);
+        await new GridRows(api, 'bottom, emptied').check(`
+            ROOT id:ROOT_NODE_ID amount:null
+        `);
+        expect(exported()).toBe('Group,sum(Amount)');
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)?.displayed).toBe(false);
+        api.setGridOption('rowData', rowData);
+        await new GridRows(api, 'bottom, rows back').check(`
+            ROOT id:ROOT_NODE_ID amount:150
+            ├─┬ LEAF_GROUP collapsed id:row-group-category-A ag-Grid-AutoColumn:"A" amount:100
+            │ └── LEAF hidden id:1 category:"A" amount:100
+            ├─┬ LEAF_GROUP collapsed id:row-group-category-B ag-Grid-AutoColumn:"B" amount:50
+            │ └── LEAF hidden id:2 category:"B" amount:50
+            └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:150
+        `);
+
+        api.setGridOption('grandTotalRow', 'top');
+        api.setGridOption('rowData', []);
+        await new GridRows(api, 'top, emptied').check(`
+            ROOT id:ROOT_NODE_ID amount:null
+        `);
+        expect(exported()).toBe('Group,sum(Amount)');
+        api.setGridOption('rowData', rowData);
+        await new GridRows(api, 'top, rows back').check(`
+            ROOT id:ROOT_NODE_ID amount:150
+            ├─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:150
+            ├─┬ LEAF_GROUP collapsed id:row-group-category-A ag-Grid-AutoColumn:"A" amount:100
+            │ └── LEAF hidden id:1 category:"A" amount:100
+            └─┬ LEAF_GROUP collapsed id:row-group-category-B ag-Grid-AutoColumn:"B" amount:50
+            · └── LEAF hidden id:2 category:"B" amount:50
+        `);
+        // skeleton loading rows show no row, so not the grand total either
+        const shown = exported();
+        api.updateGridOptions({ loadingRows: { rowCount: 2 }, loading: true });
+        expect(exported()).toBe(['Group,sum(Amount)', ' -> A,100', ',100', ' -> B,50', ',50'].join('\r\n'));
+        api.setGridOption('loading', false);
+        expect(exported()).toBe(shown);
+
+        api.setGridOption('grandTotalRow', 'pinnedBottom');
+        api.setGridOption('rowData', []);
+        await new GridRows(api, 'pinnedBottom, emptied').check(`
+            ROOT id:ROOT_NODE_ID amount:null
+        `);
+        api.setGridOption('rowData', rowData);
+        await new GridRows(api, 'pinnedBottom, rows back').check(`
+            ROOT id:ROOT_NODE_ID amount:150
+            ├─┬ LEAF_GROUP collapsed id:row-group-category-A ag-Grid-AutoColumn:"A" amount:100
+            │ └── LEAF hidden id:1 category:"A" amount:100
+            └─┬ LEAF_GROUP collapsed id:row-group-category-B ag-Grid-AutoColumn:"B" amount:50
+            · └── LEAF hidden id:2 category:"B" amount:50
+            PINNED_BOTTOM id:b-bottom-rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " amount:150
         `);
     });
 

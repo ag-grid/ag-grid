@@ -59,10 +59,12 @@ async function expectColumnsToFillGrid(page: Page): Promise<void> {
         const total = await totalColumnWidth(page);
         const available = await availableWidth(page);
         expect(Math.abs(total - available)).toBeLessThanOrEqual(2);
-    }).toPass();
 
-    const overflow = await scrollingContainer(page).evaluate((element) => element.scrollWidth - element.clientWidth);
-    expect(overflow).toBeLessThanOrEqual(1);
+        const overflow = await scrollingContainer(page).evaluate(
+            (element) => element.scrollWidth - element.clientWidth
+        );
+        expect(overflow).toBeLessThanOrEqual(1);
+    }).toPass();
 }
 
 async function expectGridVisible(page: Page): Promise<void> {

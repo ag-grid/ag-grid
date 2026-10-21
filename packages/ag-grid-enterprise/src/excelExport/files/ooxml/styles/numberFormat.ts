@@ -1,11 +1,11 @@
-import { _escapeString } from 'ag-stack';
+import { _escapeString, _splitBracketed } from 'ag-stack';
 
 import type { ExcelOOXMLTemplate } from 'ag-grid-community';
 
 import type { NumberFormat } from '../../../assets/excelInterfaces';
 
 function prepareString(str: string): string {
-    const split = str.split(/(\[[^\]]*\])/);
+    const split = _splitBracketed(str);
 
     for (let i = 0; i < split.length; i++) {
         // excel formulas require symbols to be escaped. Excel also requires $ to be

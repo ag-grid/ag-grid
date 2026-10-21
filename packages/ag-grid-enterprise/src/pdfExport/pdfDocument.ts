@@ -219,8 +219,10 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
         pageAnnotations = [];
         hasPageContent = false;
         if (styleColors.pageBackground) {
-            pageParts.push(`${formatColor(styleColors.pageBackground)} rg`);
-            pageParts.push(`0 0 ${fmt(pageSize.width)} ${fmt(pageSize.height)} re f`);
+            pageParts.push(
+                `${formatColor(styleColors.pageBackground)} rg`,
+                `0 0 ${fmt(pageSize.width)} ${fmt(pageSize.height)} re f`
+            );
         }
         cursorY = pageSize.height - currentLayout.margin.top;
         if (currentPageNumber === 1) {
@@ -331,9 +333,7 @@ export function createPdfDocument(rows: PdfRow[], columnsToExport: AgColumn[], p
                 availableHeight = Math.max(cursorY - currentLayout.margin.bottom, 0);
                 fragment = measureRowFragment(row, state, availableHeight);
             }
-            if (!fragment) {
-                fragment = measureClampedRowFragment(row, state, availableHeight);
-            }
+            fragment ??= measureClampedRowFragment(row, state, availableHeight);
 
             const previousPartCount = pageParts.length;
             cursorY = renderRowFragment(fragment, cursorY, currentLayout, pageParts, pageAnnotations, fontRegistry);

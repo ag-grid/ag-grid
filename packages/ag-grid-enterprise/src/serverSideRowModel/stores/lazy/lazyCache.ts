@@ -378,7 +378,7 @@ export class LazyCache extends BeanStub {
         if (isLastRowIndexKnown != null) {
             this.isLastRowKnown = isLastRowIndexKnown;
 
-            if (isLastRowIndexKnown === false) {
+            if (!isLastRowIndexKnown) {
                 this.numberOfRows += 1;
             }
         }
@@ -1201,8 +1201,7 @@ export class LazyCache extends BeanStub {
     }
 
     public insertRowNodes(inserts: any[], indexToAdd?: number, rowIds?: Map<any, string>): RowNode[] {
-        // adjust row count to allow for footer row
-        const realRowCount = this.store.getRowCount() - (this.store.getParentNode().sibling ? 1 : 0);
+        const realRowCount = this.numberOfRows;
 
         // if missing and we know the last row, we're inserting at the end
         const addIndex = indexToAdd == null && this.isLastRowKnown ? realRowCount : indexToAdd;

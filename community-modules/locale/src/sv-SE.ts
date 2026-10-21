@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_SV_SE = {
     enabled: 'Aktiverad',
 
     // Menu
+    moveLeft: 'Flytta åt vänster',
+    moveRight: 'Flytta åt höger',
+    moveUp: 'Flytta upp',
+    moveDown: 'Flytta ned',
     pinColumn: 'Fäst Kolumn',
     pinLeft: 'Fäst Vänster',
     pinRight: 'Fäst Höger',
@@ -764,6 +768,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaRowSelect: 'Tryck SPACE för att markera denna rad',
     ariaRowSelectionDisabled: 'Radmarkering är inaktiverad för denna rad',
     ariaSearch: 'Sök',
+    ariaSortPriority: 'Sorteringsprioritet ${priority} av ${count}',
     ariaSortableColumn: 'Tryck ENTER för att sortera',
     ariaSortableColumnWithCellSelection: 'Tryck ALT ENTER för att sortera',
     ariaToggleVisibility: 'Tryck SPACE för att växla synlighet',
@@ -896,9 +901,11 @@ export const AG_GRID_LOCALE_SV_SE = {
     columnHeaderEditCancel: 'Avbryt',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Inga lämpliga kolumner hittades.',
     calculatedColumn: 'Beräknad kolumn',
     calculatedColumnAdd: 'Lägg till beräknad kolumn',
     calculatedColumnEdit: 'Redigera beräknad kolumn',
+    calculatedColumnView: 'Visa beräknad kolumn',
     calculatedColumnRemove: 'Ta bort beräknad kolumn',
     calculatedColumnTitle: 'Titel',
     calculatedColumnType: 'Typ',

@@ -237,8 +237,6 @@
         "{workspaceRoot}/plugins/ag-grid-generate-example-files/{dist,src}/**/*",
         { "dependentTasksOutputFiles": "**/gridOptionsTypes.json", "transitive": false },
         "{workspaceRoot}/documentation/ag-grid-docs/public/example-runner/**",
-        { "env": "AG_AI_API_URL" },
-        { "env": "AG_AI_API_DEV_TOKEN" },
         { "env": "AG_EXAMPLE_FORMAT" },
         { "env": "DISABLE_EXAMPLE_GEN_COLLAPSE" },
         { "externalDependencies": ["npm:typescript"] }

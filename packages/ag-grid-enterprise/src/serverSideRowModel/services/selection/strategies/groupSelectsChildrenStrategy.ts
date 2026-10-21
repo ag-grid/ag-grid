@@ -298,7 +298,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
                 if (isStoreSizeKnown) {
                     // have to check greater than, as we may have stale state still, if so all visible rows may not be
                     // toggled
-                    const possibleAllNodesToggled = state.toggledNodes.size >= thisRowStore!.getRowCount();
+                    const possibleAllNodesToggled = state.toggledNodes.size >= thisRowStore!.getChildRowCount();
                     if (possibleAllNodesToggled) {
                         // more complex checks nested for performance
                         for (const childState of state.toggledNodes.entries()) {
@@ -436,7 +436,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
     /** Whether `node` is the only row its parent can hold, so selecting it selects the parent whole. */
     private isOnlyChild(node: RowNode): boolean {
         const store = node.parent?.childStore as LazyStore | undefined;
-        return !!store?.isLastRowIndexKnown() && store.getRowCount() === 1;
+        return !!store?.isLastRowIndexKnown() && store.getChildRowCount() === 1;
     }
 
     public isEmpty(): boolean {

@@ -8,10 +8,12 @@ import {
     _isVisible,
     _makeNull,
     _setAriaExpanded,
+    _setAriaLevel,
     _setAriaRowIndex,
 } from 'ag-stack';
 
-import { setupCompBean } from '../../components/emptyBean';
+import type { CompBeanOwner } from '../../components/emptyBean';
+import { destroyCompBean, setupCompBean } from '../../components/emptyBean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn, ColumnLane } from '../../entities/agColumn';
@@ -28,13 +30,16 @@ import type {
 } from '../../events';
 import {
     _addGridCommonParams,
-    _getRowHeightForNode,
+    _canSkipShowingRowGroup,
+    _getConfiguredRowHeight,
+    _getGrandTotalRow,
     _isAnimateRows,
     _isClientSideLoadingRow,
     _isDomLayout,
     _isFullWidthGroupRow,
     _isGetRowHeightFunction,
     _isRowSelection,
+    _isServerSideRowModel,
     _setDomData,
 } from '../../gridOptionsUtils';
 import type { PinnedSectionWidths } from '../../headerRendering/headerUtils';
@@ -104,7 +109,8 @@ export interface IRowComp {
 export interface RowGui {
     rowComp: IRowComp;
     element: HTMLElement;
-    compBean: BeanStub;
+    /** React's bean for the mounted comp, else the row ctrl itself. */
+    compBean: BeanStub<any>;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -117,7 +123,7 @@ export interface MappedPinnedCellGroupWidths extends PinnedCellGroupWidths {
 
 type RowCtrlEvent = RenderedRowEvent;
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export class RowCtrl extends BeanStub<RowCtrlEvent> {
+export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
     public readonly instanceId: RowCtrlInstanceId;
     /** Scratch for the React list diff, trusted only where the list diffed holds this at that index. */
     public diffIndex = 0;
@@ -128,6 +134,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     private readonly rowType: RowType;
 
     private rowGui: RowGui | undefined;
+    public compBean: BeanStub<any> | undefined = undefined;
     private readonly rowModeFeature: IRowModeFeature;
     private mappedPinnedWidths: MappedPinnedCellGroupWidths | undefined = undefined;
 
@@ -230,10 +237,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
     }
 
     public setComp(rowComp: IRowComp, element: HTMLElement, compBean: BeanStub<any> | undefined): void {
-        const { context, rowRenderer } = this.beans;
-        const rowCompBean = setupCompBean(this, context, compBean);
-
-        const rowGui: RowGui = { rowComp, element, compBean: rowCompBean };
+        const rowRenderer = this.beans.rowRenderer;
+        const rowGui: RowGui = { rowComp, element, compBean: setupCompBean(this, compBean) };
         this.rowGui = rowGui;
 
         this.initialiseRowComp();
@@ -297,11 +302,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         // Cells apply their own edit styles on creation; rows otherwise only pick theirs up from
         // postProcessCss, which never runs for a row that renders once and never changes index.
         this.beans.editSvc?.applyRowEditStyles(this);
+        if (this.beans.rowDropHighlightSvc?.row === this.rowNode) {
+            this.onRowNodeHighlightChanged();
+        }
         this.executeSlideAndFadeAnimations();
 
         if (this.rowNode.isExpandable()) {
             _setAriaExpanded(element, !!this.rowNode.expanded);
         }
+        this.refreshAriaLevel();
 
         this.setRowCompRowId();
         this.setRowCompRowBusinessKey();
@@ -593,7 +602,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             rowSelected: () => this.onRowSelected(),
             rowIndexChanged: this.onRowIndexChanged.bind(this),
             topChanged: this.onTopChanged.bind(this),
-            ...(expansionSvc?.getRowExpandedListeners(this) ?? {}),
+            ...expansionSvc?.getRowExpandedListeners(this),
         });
 
         if (rowNode.detail) {
@@ -635,6 +644,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
             cellEditValuesChanged: releaseAfterEdit,
             paginationChanged: this.onPaginationChanged.bind(this),
             modelUpdated: () => {
+                this.refreshAriaLevel();
                 // Pinned bottom rows depend on displayed row count for absolute aria row index.
                 if (this.rowNode.rowPinned === 'bottom') {
                     this.updateRowIndexes();
@@ -900,6 +910,32 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.rowModeFeature.setupDetailRowAutoHeight?.(eDetailGui);
     }
 
+    public refreshAriaLevel(): void {
+        const { rowGui, rowNode, beans, gos } = this;
+        if (!rowGui) {
+            return;
+        }
+
+        let level: number | undefined;
+        if (beans.ctrlsSvc.get('gridBodyCtrl')?.isTreeGrid) {
+            level = 1;
+            if (!rowNode.rowPinned) {
+                level = Math.max(1, calculateRowLevel(rowNode) + 1);
+                const hideUnbalancedGroups = _isServerSideRowModel(gos) && gos.get('groupAllowUnbalanced');
+                // Only child promotion changes depth; hiding an open parent does not.
+                for (let parent = rowNode.parent; parent && parent.level >= 0; parent = parent.parent) {
+                    if (
+                        (parent.childrenAfterGroup?.length === 1 && _canSkipShowingRowGroup(gos, parent)) ||
+                        (hideUnbalancedGroups && parent.group && parent.key === '')
+                    ) {
+                        --level;
+                    }
+                }
+            }
+        }
+        _setAriaLevel(rowGui.element, level);
+    }
+
     private onUiLevelChanged(): void {
         const newLevel = calculateRowLevel(this.rowNode);
         if (this.rowLevel != newLevel) {
@@ -1002,8 +1038,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         const classes: string[] = [];
 
-        classes.push('ag-row');
-        classes.push(this.rowFocused ? 'ag-row-focus' : 'ag-row-no-focus');
+        classes.push('ag-row', this.rowFocused ? 'ag-row-focus' : 'ag-row-no-focus');
 
         if (this.fadeInAnimation) {
             classes.push('ag-opacity-zero');
@@ -1029,6 +1064,13 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         if (rowNode.footer) {
             classes.push('ag-row-footer');
+            if (rowNode.level === -1) {
+                classes.push('ag-row-grand-total');
+                // the border goes on the side facing the data rows
+                const position = rowNode.rowPinned ?? _getGrandTotalRow(this.gos);
+                const atTop = position === 'top' || position === 'pinnedTop';
+                classes.push(`ag-row-grand-total-border-${atTop ? 'bottom' : 'top'}`);
+            }
         }
 
         classes.push('ag-row-level-' + this.rowLevel);
@@ -1191,7 +1233,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
 
         const defaultRowHeight = this.beans.environment.getDefaultRowHeight();
         const isHeightFromFunc = _isGetRowHeightFunction(this.gos) && !this.isClientSideLoadingRow();
-        const heightFromFunc = isHeightFromFunc ? _getRowHeightForNode(this.beans, this.rowNode).height : undefined;
+        const heightFromFunc = isHeightFromFunc ? _getConfiguredRowHeight(this.beans, this.rowNode).height : undefined;
         const lineHeight = heightFromFunc ? `${Math.min(defaultRowHeight, heightFromFunc) - 2}px` : undefined;
 
         this.rowGui?.element.style.setProperty('height', `${rowHeight}px`);
@@ -1246,6 +1288,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> {
         this.dispatchLocalEvent(event);
         this.beans.eventSvc.dispatchEvent(event);
         this.destroyRowDragComp();
+        destroyCompBean(this);
         super.destroy();
     }
 

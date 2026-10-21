@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, nextAnimationFrame } from 'ag-test-utils';
 
-import type { ColDef, ColGroupDef, GridApi, GridOptions, Module } from 'ag-grid-community';
+import type { CalculatedColumnChanges, ColDef, ColGroupDef, GridApi, GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule, NumberEditorModule, TextEditorModule, ValidationModule } from 'ag-grid-community';
 import {
     CalculatedColumnsModule,
@@ -385,16 +385,15 @@ describe('calculated columns - display ordering', () => {
     // === Rule 2: dialog add lands immediately after the anchor leaf ==============================
 
     test('live apply mode (default) adds immediately and updates expression and title live', async () => {
-        const events: { type: string; expression?: string; oldExpression?: string; newExpression?: string }[] = [];
+        const events: { type: string; expression?: string; changes?: CalculatedColumnChanges }[] = [];
         const api = createGrid('calculated-live-preview-add', {
             rowData: [{ id: 'r1', age: 23 }],
             columnDefs: [{ field: 'age' }],
             onCalculatedColumnCreated: (event) => events.push({ type: event.type, expression: event.expression }),
-            onCalculatedColumnExpressionChanged: (event) =>
+            onCalculatedColumnChanged: (event) =>
                 events.push({
                     type: event.type,
-                    oldExpression: event.oldExpression,
-                    newExpression: event.expression,
+                    changes: event.changes,
                 }),
         });
         const before = new Set(order(api));
@@ -429,11 +428,17 @@ describe('calculated columns - display ordering', () => {
         await waitFor(() => expect(events).toHaveLength(2));
         expect(events).toEqual([
             { type: 'calculatedColumnCreated', expression: '' },
-            { type: 'calculatedColumnExpressionChanged', oldExpression: '', newExpression: '[age] * 2' },
+            {
+                type: 'calculatedColumnChanged',
+                changes: {
+                    headerName: { oldValue: 'Untitled', newValue: 'Double Age' },
+                    calculatedExpression: { oldValue: '', newValue: '[age] * 2' },
+                },
+            },
         ]);
     });
 
-    test('live apply mode commits invalid expressions without marking the editor invalid', async () => {
+    test('live apply mode commits invalid expressions without built-in validation feedback', async () => {
         const api = createGrid('calculated-live-preview-invalid-expression', {
             rowData: [{ id: 'r1', age: 23 }],
             columnDefs: [{ field: 'age' }],
@@ -449,7 +454,8 @@ describe('calculated columns - display ordering', () => {
 
         const input = getExpressionInput();
         expect(input.classList.contains('invalid')).toBe(false);
-        expect(input.getAttribute('aria-invalid')).toBe('false');
+        expect(input.getAttribute('aria-invalid')).not.toBe('true');
+        expect(input.validationMessage).toBe('');
         expect(api.getCellValue({ rowNode: api.getDisplayedRowAtIndex(0)!, colKey: 'calculated_1' })).toBe('#PARSE!');
     });
 

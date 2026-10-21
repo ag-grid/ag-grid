@@ -17,7 +17,7 @@ test.agExample(import.meta, () => {
         await expect(closed).toHaveCount(0);
     };
 
-    test.eachFramework('a value no longer in the data stays in its group, muted', async ({ page }) => {
+    test.eachFramework('a value no longer in the data stays in its group, marked', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
@@ -30,11 +30,11 @@ test.agExample(import.meta, () => {
         await expect(filterItem(page, 'Rome').locator('input')).not.toBeChecked();
         await expect(filterItem(page, 'Italy')).not.toHaveClass(/ag-set-filter-item-missing/);
         await expect(filterItem(page, 'Spain#Madrid')).toHaveClass(/ag-set-filter-item-missing/);
-        await expect(filterItem(page, 'Spain#Madrid')).toHaveClass(/ag-set-filter-indent-0/);
+        await expect(filterItem(page, 'Spain#Madrid')).toHaveClass(/ag-set-filter-add-group-indent/);
         await expect(filterItem(page, 'Spain#Madrid').locator('input')).toBeChecked();
     });
 
-    test.eachFramework('a group is muted once every value under it is gone', async ({ page }) => {
+    test.eachFramework('a group is marked once every value under it is gone', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 

@@ -5,7 +5,6 @@ import type {
     ExcelFont,
     ExcelHeaderFooterConfig,
     ExcelHeaderFooterContent,
-    ExcelOOXMLTemplate,
     ExcelRow,
     ExcelSheetMargin,
     ExcelSheetPageSetup,
@@ -16,6 +15,7 @@ import type {
 
 import type { ExcelDataTable, ExcelHeaderFooterPosition, InternalExcelCell } from '../../assets/excelInterfaces';
 import { getExcelColumnName } from '../../assets/excelUtils';
+import type { XmlFactoryElement } from '../../assets/xmlFactory';
 import type { ExcelGridSerializingParams } from '../../excelSerializingSession';
 import {
     XLSX_WORKSHEET_COMMENTS,
@@ -309,12 +309,18 @@ const registerSheetComments = (currentSheet: number, rows: ExcelRow[]) => {
     }
 };
 
+function* getRowTemplates(rows: ExcelRow[], sheetNumber: number): Iterable<XmlElement> {
+    for (let i = 0, len = rows.length; i < len; ++i) {
+        yield rowFactory.getTemplate(rows[i], i, sheetNumber);
+    }
+}
+
 const addSheetData = (rows: ExcelRow[], sheetNumber: number) => {
     return (params: ComposedWorksheetParams) => {
         if (rows.length) {
             params.children.push({
                 name: 'sheetData',
-                children: rows.map((row, idx) => rowFactory.getTemplate(row, idx, sheetNumber)),
+                children: getRowTemplates(rows, sheetNumber),
             });
         }
         return params;
@@ -579,7 +585,7 @@ const addSheetViews = (rtl: boolean = false, xSplit?: number, ySplit?: number) =
                     name: 'sheetView',
                     properties: {
                         rawMap: {
-                            rightToLeft: rtl === true ? '1' : '0',
+                            rightToLeft: rtl ? '1' : '0',
                             workbookViewId: '0',
                         },
                     },
@@ -642,12 +648,16 @@ const addSheetFormatPr = (rows: ExcelRow[], columns: ExcelColumn[]) => {
 };
 
 interface ComposedWorksheetParams {
-    children: XmlElement[];
+    children: XmlFactoryElement[];
     rIdCounter: number;
 }
 
-const worksheetFactory: ExcelOOXMLTemplate = {
-    getTemplate(params: { worksheet: ExcelWorksheet; currentSheet: number; config: ExcelGridSerializingParams }) {
+const worksheetFactory = {
+    getTemplate(params: {
+        worksheet: ExcelWorksheet;
+        currentSheet: number;
+        config: ExcelGridSerializingParams;
+    }): XmlFactoryElement {
         const { worksheet, currentSheet, config } = params;
         const {
             margins = {},

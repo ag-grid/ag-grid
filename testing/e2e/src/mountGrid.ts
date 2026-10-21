@@ -3,30 +3,47 @@ import path from 'node:path';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 
+declare global {
+    interface Window {
+        /** The API of the grid `mountGrid` created, for code evaluated in the page. */
+        gridApi: GridApi;
+    }
+}
+
 const GRID_SELECTOR = '#myGrid';
-const DIST = path.join(__dirname, '../../../packages');
+const REPO_ROOT = path.join(__dirname, '../../..');
 const LOCAL_HOSTNAMES = ['localhost', '127.0.0.1', '[::1]'];
 
 /**
- * Where the UMD bundle comes from. With `BASE_URL` set it is the site's `/files/<package>/dist/` route, as the vanilla
- * docs examples load it: non-minified from a local dev server, minified from a deployed site. Without it, the local
- * build in each package's dist.
+ * Where a UMD bundle comes from, given its path inside the package without the `.js` extension. With `BASE_URL` set it
+ * is the site's `/files/<package>/` route, as the vanilla docs examples load it: non-minified from a local dev server,
+ * minified from a deployed site. Without it, the local copy under `localDir` (relative to the repository root).
  */
-function bundleSource(packageName: string): { path: string } | { url: string } {
+function bundleSource(localDir: string, packagePath: string): { path: string } | { url: string } {
     const baseUrl = process.env.BASE_URL;
     if (!baseUrl) {
-        return { path: path.join(DIST, `${packageName}/dist/${packageName}.js`) };
+        return { path: path.join(REPO_ROOT, localDir, `${packagePath}.js`) };
     }
     const base = new URL(baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`);
     const minSuffix = LOCAL_HOSTNAMES.includes(base.hostname) ? '' : '.min';
-    return { url: new URL(`files/${packageName}/dist/${packageName}${minSuffix}.js`, base).href };
+    return { url: new URL(`files/${packagePath}${minSuffix}.js`, base).href };
 }
+
+const gridBundle = (packageName: string) => bundleSource('packages', `${packageName}/dist/${packageName}`);
 
 export interface MountGridParams {
     /** Load the enterprise bundle, which registers every enterprise module, instead of the community one. */
     enterprise?: boolean;
+    /** Also load the AG Charts Enterprise bundle, which the enterprise bundle registers integrated charts with. */
+    integratedCharts?: boolean;
     width?: number;
     height?: number;
+    /** Extra CSS for the page, such as an application's style overrides. */
+    css?: string;
+    /** Classes for the grid's container element, such as a legacy theme's `ag-theme-*` class. */
+    className?: string;
+    /** Create the grid inside an open shadow root. */
+    shadowDom?: boolean;
     /**
      * Builds the grid options inside the page. It is serialised with `toString()`, so it must be
      * self-contained: it cannot close over variables from the spec.
@@ -44,20 +61,43 @@ export interface MountedGrid {
 
 export async function mountGrid(
     page: Page,
-    { enterprise = false, width = 800, height = 500, options }: MountGridParams
+    {
+        enterprise = false,
+        integratedCharts = false,
+        width = 800,
+        height = 500,
+        css,
+        className = '',
+        shadowDom = false,
+        options,
+    }: MountGridParams
 ): Promise<MountedGrid> {
     await page.setContent(
         `<!DOCTYPE html><html><head><style>*{margin:0}${GRID_SELECTOR}{width:${width}px;height:${height}px}</style></head>` +
-            `<body><div id="myGrid"></div></body></html>`
+            `<body><div id="myGrid" class="${className}"></div></body></html>`
     );
-    await page.addScriptTag(bundleSource(enterprise ? 'ag-grid-enterprise' : 'ag-grid-community'));
+    if (css) {
+        await page.addStyleTag({ content: css });
+    }
+    if (integratedCharts) {
+        await page.addScriptTag(bundleSource('node_modules', 'ag-charts-enterprise/dist/umd/ag-charts-enterprise'));
+    }
+    await page.addScriptTag(gridBundle(enterprise ? 'ag-grid-enterprise' : 'ag-grid-community'));
     await page.evaluate(
-        ({ optionsSource, selector }) => {
+        ({ optionsSource, selector, shadowDom, width, height }) => {
             const gridOptions = new Function(`return (${optionsSource})()`)();
             const gridDiv = document.querySelector<HTMLElement>(selector)!;
-            (window as any).gridApi = (window as any).agGrid.createGrid(gridDiv, gridOptions);
+            if (shadowDom) {
+                const host = document.createElement('div');
+                host.id = 'shadow-host';
+                gridDiv.before(host);
+                host.attachShadow({ mode: 'open' }).appendChild(gridDiv);
+                gridDiv.style.width = `${width}px`;
+                gridDiv.style.height = `${height}px`;
+            }
+            window.gridApi = (window as any).agGrid.createGrid(gridDiv, gridOptions);
         },
-        { optionsSource: options.toString(), selector: GRID_SELECTOR }
+        { optionsSource: options.toString(), selector: GRID_SELECTOR, shadowDom, width, height }
     );
 
     const grid = page.locator(GRID_SELECTOR);

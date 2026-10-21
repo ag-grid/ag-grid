@@ -127,6 +127,10 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
 
         if (openPanel.contains(activeElement)) {
             nextEl = _findNextFocusableElement({ beans, rootNode: openPanel, backwards: true });
+            // leave navigation to the browser when the next element doesn't require managed focus.
+            if (nextEl && nextEl.tabIndex >= 0) {
+                return;
+            }
         } else if (isTargetUnderManagedComponent(openPanel, target)) {
             nextEl = findFocusableElementBeforeTabGuard(openPanel, target);
         }
@@ -482,7 +486,7 @@ class AgSideBar extends Component implements ISideBar, FocusableContainer {
                     return;
                 }
                 const params = _addGridCommonParams<IToolPanelParams>(this.gos, {
-                    ...(toolPanelDef.toolPanelParams ?? {}),
+                    ...toolPanelDef.toolPanelParams,
                     initialState: sideBarState?.toolPanels?.[id],
                     onStateUpdated: () => this.dispatchSideBarUpdated(),
                 });

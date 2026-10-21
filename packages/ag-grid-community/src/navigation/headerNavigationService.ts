@@ -73,6 +73,12 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
         });
     }
 
+    public onHeaderClicked(column: AgColumn): void {
+        if (column.isSpanHeaderHeight()) {
+            this.currentHeaderRowWithoutSpan = (column.getFirstRealParent()?.getLevel() ?? -1) + 1;
+        }
+    }
+
     public getHeaderPositionForColumn(
         colKey: string | Column | ColumnGroup,
         floatingFilter: boolean
@@ -93,7 +99,7 @@ export class HeaderNavigationService extends BeanStub implements NamedBean {
 
         const headerRowContainerCtrl = ctrlsSvc.getHeaderRowContainerCtrl();
         const allCtrls = headerRowContainerCtrl?.getAllCtrls();
-        const isFloatingFilterVisible = _last(allCtrls || []).type === 'filter';
+        const isFloatingFilterVisible = _last(allCtrls ?? []).type === 'filter';
         const headerRowCount = getFocusHeaderRowCount(this.beans) - 1;
 
         let row = -1;
@@ -373,12 +379,12 @@ function getColumnVisibleParent(
 
         if (nextVisibleParent) {
             if (isSpanningCol) {
-                // if the column is spanning, we want to return the parent at the full tree depth index
-                // not last row, as last row could be filter
+                // keep horizontal navigation on the visible parent's row when skipping padding.
+                const parentRowIndex = nextVisibleParent.getProvidedColumnGroup().getLevel();
                 return {
                     column: nextVisibleParent,
-                    headerRowIndex: nextVisibleParent.getProvidedColumnGroup().getLevel(),
-                    headerRowIndexWithoutSpan: optimisticNextIndex,
+                    headerRowIndex: parentRowIndex,
+                    headerRowIndexWithoutSpan: parentRowIndex,
                 };
             } else {
                 // if not spanning, return the parent at the optimistic next index

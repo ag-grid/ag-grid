@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_KO_KR = {
     enabled: '사용 중',
 
     // Menu
+    moveLeft: '왼쪽으로 이동',
+    moveRight: '오른쪽으로 이동',
+    moveUp: '위로 이동',
+    moveDown: '아래로 이동',
     pinColumn: '열 고정',
     pinLeft: '왼쪽에 고정',
     pinRight: '오른쪽에 고정',
@@ -760,6 +764,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     ariaRowSelect: '이 행을 선택하려면 SPACE를 누르세요',
     ariaRowSelectionDisabled: '이 행의 행 선택이 비활성화되었습니다',
     ariaSearch: '검색',
+    ariaSortPriority: '정렬 우선순위 ${count}개 중 ${priority}번째',
     ariaSortableColumn: '정렬하려면 ENTER를 누르세요',
     ariaSortableColumnWithCellSelection: '정렬하려면 ALT ENTER를 누르세요',
     ariaToggleVisibility: '가시성을 전환하려면 SPACE를 누르세요',
@@ -892,9 +897,11 @@ export const AG_GRID_LOCALE_KO_KR = {
     columnHeaderEditCancel: '취소',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: '사용 가능한 열을 찾을 수 없습니다.',
     calculatedColumn: '계산된 열',
     calculatedColumnAdd: '계산된 열 추가',
     calculatedColumnEdit: '계산된 열 편집',
+    calculatedColumnView: '계산된 열 보기',
     calculatedColumnRemove: '계산된 열 제거',
     calculatedColumnTitle: '제목',
     calculatedColumnType: '유형',

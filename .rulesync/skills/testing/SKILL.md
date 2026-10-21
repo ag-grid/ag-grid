@@ -170,7 +170,7 @@ which is only "as far as we got".
 Colour (off for an agent or a pipe, on for a terminal and CI) and `DEBUG_PRINT_LIMIT` (1000, not testing-library's
 7000, so a failed query prints a slice rather than the whole grid) are set for you by `behave.sh`.
 
-> `./behave.sh` does not type-check (Vitest strips types via esbuild). Before committing, run `yarn nx run ag-behavioural-testing:build:test` to type-check.
+> `./behave.sh` does not type-check (Vitest strips types via esbuild). Before committing, run `./checks.sh`, whose `build:test` target type-checks the specs.
 >
 > `./behave.sh` and `./benches.sh` resolve only from the repository root. From anywhere else call them by path (`../../behave.sh`) — not via `cd "$(git rev-parse --show-toplevel)" &&`, which every agent harness gates on the `cd`, the `&&` and the `$(…)`.
 >

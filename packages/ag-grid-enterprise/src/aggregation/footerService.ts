@@ -1,12 +1,4 @@
-import type {
-    Column,
-    GridOptions,
-    IFooterService,
-    IRowNode,
-    NamedBean,
-    RowNode,
-    VerticalSection,
-} from 'ag-grid-community';
+import type { Column, IFooterService, IRowNode, NamedBean, RowNode, VerticalSection } from 'ag-grid-community';
 import { BeanStub, _addGridCommonParams, _getGrandTotalRow, _getGroupTotalRowCallback } from 'ag-grid-community';
 
 import { _createRowNodeFooter } from './footerUtils';
@@ -25,9 +17,10 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
         let index = startIndex;
 
         if (isRootNode) {
-            const grandTotal = includeFooterNodes && _getGrandTotalRow(this.gos);
-            if (_positionMatchesGrandTotalRow(position, grandTotal)) {
-                callback(_createRowNodeFooter(node, this.beans), index++);
+            // a body row only while the grid shows it inline; a pinned one is a pinned row, not walked here
+            const grandTotal = node.sibling;
+            if (includeFooterNodes && grandTotal?.displayed && _getGrandTotalRow(this.gos) === position) {
+                callback(grandTotal, index++);
             }
             return index;
         }
@@ -111,21 +104,5 @@ export class FooterService extends BeanStub implements NamedBean, IFooterService
 
     public getTotalValue(value: any): string {
         return this.getLocaleTextFunc()('footerTotal', 'Total') + ' ' + (value ?? '');
-    }
-}
-
-function _positionMatchesGrandTotalRow(
-    position: VerticalSection,
-    grandTotalRow: GridOptions['grandTotalRow'] | false
-): boolean {
-    switch (grandTotalRow) {
-        case 'top':
-        case 'pinnedTop':
-            return position === 'top';
-        case 'bottom':
-        case 'pinnedBottom':
-            return position === 'bottom';
-        default:
-            return false;
     }
 }

@@ -1,11 +1,12 @@
-import { cleanup, render } from '@testing-library/react';
-import { ALL_SEVERITIES, waitForMissingModuleReports } from 'ag-test-utils';
+import { cleanup, render, waitFor } from '@testing-library/react';
+import { ALL_SEVERITIES, asyncSetTimeout, waitForMissingModuleReports } from 'ag-test-utils';
 import React from 'react';
 import type { MockInstance } from 'vitest';
 
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    EventApiModule,
     ModuleRegistry,
     RowApiModule,
     ValidationModule,
@@ -16,7 +17,7 @@ import {
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
-describe('ag-grid overlays state', () => {
+describe('grid api object', () => {
     let consoleWarnSpy: MockInstance | undefined;
     let consoleErrorSpy: MockInstance | undefined;
 
@@ -29,7 +30,7 @@ describe('ag-grid overlays state', () => {
     }
 
     beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule, RowApiModule]);
+        ModuleRegistry.registerModules([ClientSideRowModelModule, EventApiModule, ValidationModule, RowApiModule]);
     });
 
     beforeEach(() => {
@@ -241,6 +242,29 @@ describe('ag-grid overlays state', () => {
         expect(getGridApi('#myGrid')).toBeUndefined();
     });
 
+    test('a listener added twice is called once per event and removed by one remove', async () => {
+        const api = createMyGrid({ columnDefs: [{ field: 'a' }] });
+        const calls: string[] = [];
+        const listener = () => calls.push('event');
+        const globalListener = (eventType: string) => eventType === 'rowDataUpdated' && calls.push('global');
+        api.addEventListener('rowDataUpdated', listener);
+        api.addEventListener('rowDataUpdated', listener);
+        api.addGlobalListener(globalListener);
+        api.addGlobalListener(globalListener);
+
+        api.setGridOption('rowData', [{ a: 1 }]);
+        await asyncSetTimeout(0);
+        expect(calls).toEqual(['event', 'global']);
+
+        api.removeEventListener('rowDataUpdated', listener);
+        api.removeGlobalListener(globalListener);
+        api.setGridOption('rowData', [{ a: 2 }]);
+        await asyncSetTimeout(0);
+        expect(calls).toEqual(['event', 'global']);
+
+        api.destroy();
+    });
+
     test('api.getGridElement() returns the correct wrapping DOM element', () => {
         const element = document.getElementById('myGrid')!;
 
@@ -254,6 +278,49 @@ describe('ag-grid overlays state', () => {
         expect(gridElement).toBe(helperElement);
 
         api.destroy();
+    });
+
+    test('an event handler prop dropped on re-render is no longer called, other dropped props keep their value (React)', async () => {
+        cleanup();
+        let gridRef: AgGridReact | null = null;
+        let handlerCalls = 0;
+        let apiListenerCalls = 0;
+        const onRowDataUpdated = () => handlerCalls++;
+        const columnDefs: ColDef[] = [{ field: 'a' }];
+        const ref = (r: AgGridReact | null) => {
+            gridRef = r;
+        };
+
+        const { rerender } = render(
+            <AgGridReact
+                ref={ref}
+                columnDefs={columnDefs}
+                rowData={[{ a: 1 }]}
+                rowHeight={40}
+                onRowDataUpdated={onRowDataUpdated}
+            />
+        );
+        await waitFor(() => expect(handlerCalls).toBe(1));
+        // an api listener is called in the same batch as, and before, the gridOptions handler
+        gridRef!.api.addEventListener('rowDataUpdated', () => apiListenerCalls++);
+
+        rerender(
+            <AgGridReact
+                ref={ref}
+                columnDefs={columnDefs}
+                rowData={[{ a: 2 }]}
+                rowHeight={40}
+                onRowDataUpdated={onRowDataUpdated}
+            />
+        );
+        await waitFor(() => expect(apiListenerCalls).toBe(1));
+        expect(handlerCalls).toBe(2);
+
+        rerender(<AgGridReact ref={ref} columnDefs={columnDefs} rowData={[{ a: 3 }]} />);
+        await waitFor(() => expect(apiListenerCalls).toBe(2));
+        expect(handlerCalls).toBe(2);
+        // only handlers are cleared: a dropped option keeps its value
+        expect(gridRef!.api.getGridOption('rowHeight')).toBe(40);
     });
 
     test('can get gridApi reference from DOM node (React)', () => {

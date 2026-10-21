@@ -338,6 +338,10 @@ export const AG_GRID_LOCALE_NB_NO = {
     enabled: 'Aktivert',
 
     // Menu
+    moveLeft: 'Flytt til venstre',
+    moveRight: 'Flytt til høyre',
+    moveUp: 'Flytt opp',
+    moveDown: 'Flytt ned',
     pinColumn: 'Fest Kolonne',
     pinLeft: 'Fest til Venstre',
     pinRight: 'Fest til Høyre',
@@ -761,6 +765,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaRowSelect: 'Trykk SPACE for å velge denne raden',
     ariaRowSelectionDisabled: 'Radvalg er deaktivert for denne raden',
     ariaSearch: 'Søk',
+    ariaSortPriority: 'Sorteringsprioritet ${priority} av ${count}',
     ariaSortableColumn: 'Trykk ENTER for å sortere',
     ariaSortableColumnWithCellSelection: 'Trykk ALT ENTER for å sortere',
     ariaToggleVisibility: 'Trykk SPACE for å veksle synlighet',
@@ -893,9 +898,11 @@ export const AG_GRID_LOCALE_NB_NO = {
     columnHeaderEditCancel: 'Avbryt',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Ingen egnede kolonner funnet.',
     calculatedColumn: 'Beregnet kolonne',
     calculatedColumnAdd: 'Legg til beregnet kolonne',
     calculatedColumnEdit: 'Rediger beregnet kolonne',
+    calculatedColumnView: 'Vis beregnet kolonne',
     calculatedColumnRemove: 'Fjern beregnet kolonne',
     calculatedColumnTitle: 'Tittel',
     calculatedColumnType: 'Type',

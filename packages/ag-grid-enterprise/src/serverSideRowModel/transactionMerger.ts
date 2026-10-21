@@ -313,7 +313,7 @@ class MergeBatch {
             }
         }
 
-        const hasChanges = merged.update || merged.add || merged.remove;
+        const hasChanges = merged.update ?? merged.add ?? merged.remove;
         const result = hasChanges
             ? target.apply(merged, rowIds)
             : { status: ServerSideTransactionResultStatus.Applied };

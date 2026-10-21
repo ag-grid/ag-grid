@@ -115,17 +115,37 @@ export function _isRowNumbers({ gos, formula }: BeanCollection) {
     return rowNumbers || (!!formula?.active && rowNumbers !== false);
 }
 
+/** A row's height: one measured by auto height (cells, or an auto-height detail row) wins over the configured one. */
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getRowHeightForNode(
+    beans: BeanCollection,
+    rowNode: RowNode,
+    allowEstimate = false,
+    defaultRowHeight?: number
+): { height: number; estimated: boolean } {
+    const measuredHeight = beans.rowAutoHeight?.getMeasuredRowHeight(rowNode);
+    if (measuredHeight != null) {
+        return { height: measuredHeight, estimated: false };
+    }
+    if (rowNode.detail) {
+        const rowHeight = rowNode.rowHeight;
+        const gos = beans.gos;
+        if (rowHeight != null && gos.get('masterDetail') && gos.get('detailRowAutoHeight')) {
+            return { height: rowHeight, estimated: false };
+        }
+    }
+    return _getConfiguredRowHeight(beans, rowNode, allowEstimate, defaultRowHeight);
+}
+
+/** The height configuration gives a row: `getRowHeight`, the detail row settings, the `rowHeight` option or the theme. */
+export function _getConfiguredRowHeight(
     beans: BeanCollection,
     rowNode: IRowNode,
     allowEstimate = false,
     defaultRowHeight?: number
 ): { height: number; estimated: boolean } {
     const { gos, environment } = beans;
-    if (defaultRowHeight == null) {
-        defaultRowHeight = environment.getDefaultRowHeight();
-    }
+    defaultRowHeight ??= environment.getDefaultRowHeight();
 
     // check the function first, in case use set both function and
     // number, when using virtual pagination then function can be
@@ -181,8 +201,8 @@ function getMasterDetailRowHeight(gos: GridOptionsService): { height: number; es
 }
 
 /**
- * Calls `onChange` when the grid styles change the uniform row height, e.g. a theme row-height parameter.
- * Shared so that each row model registers the one listener it needs rather than restating the predicate.
+ * Calls `onChange` when the configured row height may have changed: the `rowHeight` option, or a theme row-height
+ * parameter. Shared so that every row model reacts to both the same way rather than restating the triggers.
  */
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _addRowHeightChangedListener(bean: BeanStub, onChange: () => void): void {
@@ -193,6 +213,7 @@ export function _addRowHeightChangedListener(bean: BeanStub, onChange: () => voi
             }
         },
     });
+    bean.addManagedPropertyListener('rowHeight', onChange);
 }
 
 // we don't allow dynamic row height for virtual paging
@@ -214,7 +235,7 @@ export function _getRowHeightAsNumber(beans: BeanCollection): number {
     return environment.getDefaultRowHeight();
 }
 
-// returns the dom data, or undefined if not found
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getDomData(gos: GridOptionsService, element: Node | null, key: string): any {
     const domData = (element as any)[gos.getDomDataKey()];
 
@@ -411,12 +432,12 @@ export function _shouldUpdateColVisibilityAfterGroup(gos: GridOptionsService, is
     }
 
     const legacySuppressOnGroup = gos.get('suppressRowGroupHidesColumns');
-    if (isGrouped && legacySuppressOnGroup === true) {
+    if (isGrouped && legacySuppressOnGroup) {
         return false;
     }
 
     const legacySuppressOnUngroup = gos.get('suppressMakeColumnVisibleAfterUnGroup');
-    if (!isGrouped && legacySuppressOnUngroup === true) {
+    if (!isGrouped && legacySuppressOnUngroup) {
         return false;
     }
 
@@ -690,7 +711,7 @@ export function _combineAttributesAndGridOptions(
     // Loop through component props, if they are not undefined and a valid gridOption copy to gridOptions
     for (const key of gridOptionsKeys) {
         const value = component[key];
-        if (typeof value !== 'undefined') {
+        if (value !== undefined) {
             mergedOptions[key] = value;
         }
     }

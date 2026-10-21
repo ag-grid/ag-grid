@@ -31,7 +31,8 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     // important.
     private readonly destroyTasks: (() => void)[] = [];
     private ticking = false;
-    public active: boolean;
+    /** Unset until postConstruct, so `verify` must not warn before then. */
+    public active?: boolean;
     private batchFrameworkComps: boolean;
 
     // we need to know direction of scroll, to build up rows in the direction of

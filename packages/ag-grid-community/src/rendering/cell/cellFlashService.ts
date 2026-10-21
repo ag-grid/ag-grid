@@ -109,7 +109,7 @@ export class CellFlashService extends BeanStub implements NamedBean {
                     case 'flash':
                         comp.toggleCss(cssBase, false);
                         comp.toggleCss(cssAnimation, true);
-                        style.transition = `background-color ${fadeEndTime - flashEndTime}ms`;
+                        style.transition = `background-color ${fadeEndTime - flashEndTime}ms var(--ag-internal-accessible-color-transition-mode)`;
                         // transition delay accounts for the fact that the timeout may be late
                         // and allows the animation to delay or start part way through
                         style.transitionDelay = `${flashEndTime - time}ms`;

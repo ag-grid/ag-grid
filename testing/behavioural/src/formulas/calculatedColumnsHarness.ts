@@ -9,6 +9,7 @@ import type { ColDef, ColGroupDef, GridApi, GridOptions, Module } from 'ag-grid-
 import {
     CellSpanModule,
     ClientSideRowModelModule,
+    GridStateModule,
     HighlightChangesModule,
     InfiniteRowModelModule,
     NumberEditorModule,
@@ -37,6 +38,7 @@ let restoreVirtualListSize: (() => void) | undefined;
 const gridsManager = new TestGridsManager({
     modules: [
         ClientSideRowModelModule,
+        GridStateModule,
         CellSpanModule,
         InfiniteRowModelModule,
         ServerSideRowModelModule,

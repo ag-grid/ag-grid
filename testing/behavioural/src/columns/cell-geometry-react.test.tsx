@@ -2,7 +2,7 @@ import { act, cleanup, render, waitFor } from '@testing-library/react';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import React from 'react';
 
-import type { ColDef, GridApi } from 'ag-grid-community';
+import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, ColumnApiModule, ModuleRegistry, getGridElement } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
@@ -37,10 +37,21 @@ describe('cell geometry (React)', () => {
         cleanup();
     });
 
-    const renderGrid = (columnDefs: ColDef[]): Promise<GridApi> =>
-        new Promise<GridApi>((resolve) => {
-            render(<AgGridReact columnDefs={columnDefs} rowData={[{}]} onGridReady={(e) => resolve(e.api)} />);
-        });
+    // `waitFor`, not a bare promise, so React does not warn of the updates the grid makes on its way to ready
+    const renderGrid = async (columnDefs: (ColDef | ColGroupDef)[]): Promise<GridApi> => {
+        let api: GridApi | undefined;
+        render(
+            <AgGridReact
+                columnDefs={columnDefs}
+                rowData={[{}]}
+                onGridReady={(e) => {
+                    api = e.api;
+                }}
+            />
+        );
+        await waitFor(() => expect(api).toBeDefined());
+        return api!;
+    };
 
     test('cells follow resizes, including one that moves width between two columns', async () => {
         const api = await renderGrid([
@@ -114,6 +125,57 @@ describe('cell geometry (React)', () => {
         );
     });
 
+    // a group open and a move refresh the columns outside a column update, so the rows are laid out by that refresh alone
+    test('cells follow a column group opening and closing, and a move across a spanning cell', async () => {
+        const api = await renderGrid([
+            {
+                groupId: 'g',
+                children: [
+                    { colId: 'a', width: 100 },
+                    { colId: 'b', width: 50, columnGroupShow: 'open' },
+                ],
+            },
+            { colId: 'c', width: 100, colSpan: () => 2 },
+            { colId: 'd', width: 100 },
+            { colId: 'e', width: 100 },
+        ]);
+        const cols = ['a', 'b', 'c', 'd', 'e'];
+        await waitFor(() =>
+            expect(cellGeometry(api, cols)).toEqual([
+                'a left:0px 100px #1',
+                'b -',
+                'c left:100px 200px #3',
+                'd -',
+                'e left:300px 100px #5',
+            ])
+        );
+
+        act(() => api.setColumnGroupOpened('g', true));
+        await waitFor(() =>
+            expect(cellGeometry(api, cols)).toEqual([
+                'a left:0px 100px #1',
+                'b left:100px 50px #2',
+                'c left:150px 200px #3',
+                'd -',
+                'e left:350px 100px #5',
+            ])
+        );
+
+        act(() => {
+            api.setColumnGroupOpened('g', false);
+            api.moveColumns(['e'], 1);
+        });
+        await waitFor(() =>
+            expect(cellGeometry(api, cols)).toEqual([
+                'a left:0px 100px #1',
+                'b -',
+                'c left:200px 200px #4',
+                'd -',
+                'e left:100px 100px #2',
+            ])
+        );
+    });
+
     test('a flex cell is resized when hiding or showing its neighbour leaves every left and section total unchanged', async () => {
         const api = await renderGrid([
             { colId: 'x', width: 100 },
@@ -158,5 +220,43 @@ describe('cell geometry (React)', () => {
                 'r2 right:0px 100px first-right #4',
             ])
         );
+    });
+    test('the first, last and pinned edge classes follow the edges', async () => {
+        const api = await renderGrid(['a', 'b', 'c', 'd'].map((colId) => ({ colId })));
+        const edges = (): string =>
+            Array.from(getGridElement(api)!.querySelectorAll<HTMLElement>('.ag-row[row-index="0"] .ag-cell'))
+                .map((cell) => {
+                    const marks = [
+                        ['ag-column-first', 'F'],
+                        ['ag-column-last', 'L'],
+                        ['ag-cell-last-left-pinned', '<'],
+                        ['ag-cell-first-right-pinned', '>'],
+                    ]
+                        .filter(([cls]) => cell.classList.contains(cls))
+                        .map(([, mark]) => mark)
+                        .join('');
+                    return `${cell.getAttribute('col-id')}${marks}`;
+                })
+                .sort()
+                .join(' ');
+        await waitFor(() => expect(edges()).toBe('aF b c dL'));
+
+        act(() => api.setColumnsVisible(['a'], false));
+        await waitFor(() => expect(edges()).toBe('bF c dL'));
+
+        act(() => api.moveColumns(['b'], 2));
+        await waitFor(() => expect(edges()).toBe('b cF dL'));
+
+        act(() => {
+            api.setColumnsPinned(['d'], 'left');
+            api.setColumnsPinned(['c'], 'right');
+        });
+        await waitFor(() => expect(edges()).toBe('b cL> dF<'));
+
+        act(() => {
+            api.setColumnsPinned(['c', 'd'], null);
+            api.setColumnsVisible(['a'], true);
+        });
+        await waitFor(() => expect(edges()).toBe('aF b c dL'));
     });
 });

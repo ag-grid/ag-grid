@@ -928,6 +928,14 @@
     .ag-group-value {
         overflow: hidden;
         text-overflow: ellipsis;
+
+        // Work around a Firefox bug where a text selection drag ending in a scroll container
+        // selects the wrong text range. Use overflow:clip for the same visual effect
+        // without a scroll container.
+        :where(.ag-selectable) & {
+            overflow: clip;
+            min-width: 0;
+        }
     }
 
     .ag-cell-wrapper {
@@ -2408,29 +2416,6 @@
         .ag-column-drop {
             flex: unset;
         }
-    }
-
-    .ag-content-editable-field {
-        display: flex;
-        align-items: center;
-    }
-
-    .ag-content-editable-field-input {
-        cursor: text;
-        display: block;
-        flex: 1 1 auto;
-        outline: none;
-        white-space: nowrap;
-        line-height: normal;
-        overflow: auto;
-        overflow-y: hidden;
-
-        &::-webkit-scrollbar {
-            display: none !important;
-        }
-
-        -ms-overflow-style: none !important;
-        scrollbar-width: none !important;
     }
 
     .ag-ltr {

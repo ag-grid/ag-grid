@@ -10,13 +10,13 @@ export type ColumnChangedEventType = 'columnValueChanged' | 'columnPivotChanged'
 export interface IColsService {
     columns: AgColumn[];
 
-    /** Cols staged since the last flush; non-null = awaiting dispatch. {@link ColumnModel.flushColChanges} */
+    /** Cols staged since the last flush; non-null = awaiting dispatch when the column update ends. */
     readonly pendingChanged: Set<AgColumn> | null;
 
-    /** Dispatch this service's staged change (if any); called by {@link ColumnModel.flushColChanges}. */
+    /** Dispatch this service's staged change (if any); called when the column update that staged it ends. */
     dispatchColChange(source: ColumnEventType): void;
 
-    /** Re-stamp active-col indexes once if a staged change moved the set; called by {@link ColumnModel.flushColChanges}. */
+    /** Re-stamp active-col indexes once if a staged change moved the set; called when the column update ends. */
     flushReindex(): void;
 
     setColumns(colKeys: ColKey[] | undefined, source: ColumnEventType): void;
@@ -24,7 +24,7 @@ export interface IColsService {
     removeColumns(keys: (ColKey | null | undefined)[] | undefined, source: ColumnEventType): void;
 
     /** Recompute active cols with a shared scan: call {@link extractCol} per primary col, then finalise via {@link commitExtract}. */
-    extractCol(col: AgColumn, colIsNew: boolean): void;
+    extractCol(col: AgColumn, colIsNew: boolean, source: ColumnEventType): void;
     commitExtract(source: ColumnEventType): void;
 
     syncColState(
@@ -37,6 +37,8 @@ export interface IColsService {
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.  */
 export interface IOrderedColsService extends IColsService {
+    /** Whether {@link IColsService.extractCol} would make `col` active, without staging it. */
+    willExtractCol(col: AgColumn, colIsNew: boolean): boolean;
     /** Assigns synthetic indexes to `incoming` and adds new entries to `accumulator`; both mutated. */
     restoreColumnOrder(incoming: { [colId: string]: ColumnState }, accumulator: { [colId: string]: ColumnState }): void;
     sortByPendingState(): void;

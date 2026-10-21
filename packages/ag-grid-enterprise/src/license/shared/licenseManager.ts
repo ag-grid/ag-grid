@@ -1,4 +1,4 @@
-import { _exists } from 'ag-stack';
+import { _exists, _splitBracketed } from 'ag-stack';
 
 import { _logPreInitWarn } from 'ag-grid-community';
 
@@ -10,6 +10,13 @@ const LICENSE_TYPES = {
     '0102': 'BOTH',
 };
 const LICENSING_HELP_URL = 'https://www.ag-grid.com/licensing/';
+
+function getLicensedProductNames(licenseType: string): string {
+    if (licenseType === 'BOTH') {
+        return 'Grid and AG Charts';
+    }
+    return licenseType === 'GRID' ? 'Grid' : 'Charts';
+}
 
 export interface ILicenseManager {
     setLicenseKey: (key?: string, gridContext?: boolean) => void;
@@ -42,7 +49,7 @@ export class LicenseManager {
         const suppliedLicenseName =
             licenseDetails.suppliedLicenseType === undefined
                 ? ''
-                : `AG ${licenseDetails.suppliedLicenseType === 'BOTH' ? 'Grid and AG Charts' : licenseDetails.suppliedLicenseType === 'GRID' ? 'Grid' : 'Charts'} Enterprise`;
+                : `AG ${getLicensedProductNames(licenseDetails.suppliedLicenseType)} Enterprise`;
 
         if (licenseDetails.missing) {
             if (!this.isWebsiteUrl() || this.isForceWatermark()) {
@@ -65,7 +72,7 @@ export class LicenseManager {
 
     private static extractExpiry(license: string) {
         const restrictionHashed = license.substring(license.lastIndexOf('_') + 1, license.length);
-        return new Date(parseInt(LicenseManager.decode(restrictionHashed), 10));
+        return new Date(Number.parseInt(LicenseManager.decode(restrictionHashed), 10));
     }
 
     private static extractLicenseComponents(licenseKey: string) {
@@ -115,7 +122,7 @@ export class LicenseManager {
 
         if (valid) {
             expiry = LicenseManager.extractExpiry(license);
-            valid = !isNaN(expiry.getTime());
+            valid = !Number.isNaN(expiry.getTime());
 
             if (valid) {
                 expired = gridReleaseDate > expiry;
@@ -183,7 +190,7 @@ export class LicenseManager {
     }
 
     private getHostname(): string {
-        const win = this.document.defaultView || window;
+        const win = this.document.defaultView ?? window;
         const loc = win.location;
         const { hostname = '' } = loc;
 
@@ -191,7 +198,7 @@ export class LicenseManager {
     }
 
     private isForceWatermark(): boolean {
-        const win = this.document.defaultView || window;
+        const win = this.document.defaultView ?? window;
         const loc = win.location;
         const { pathname } = loc;
 
@@ -200,12 +207,12 @@ export class LicenseManager {
 
     private isWebsiteUrl(): boolean {
         const hostname = this.getHostname();
-        return hostname.match(/^(?:[\w-]+\.)?(ag-grid|bryntum)\.com$/) !== null;
+        return /^(?:[\w-]+\.)?(ag-grid|bryntum)\.com$/.exec(hostname) !== null;
     }
 
     private isLocalhost(): boolean {
         const hostname = this.getHostname();
-        return hostname.match(/^(?:127\.0\.0\.1|localhost)$/) !== null;
+        return /^(?:127\.0\.0\.1|localhost)$/.exec(hostname) !== null;
     }
 
     private static formatDate(date: any): string {
@@ -232,7 +239,7 @@ export class LicenseManager {
     }
 
     private static getGridReleaseDate() {
-        return new Date(parseInt(LicenseManager.decode(LicenseManager.RELEASE_INFORMATION), 10));
+        return new Date(Number.parseInt(LicenseManager.decode(LicenseManager.RELEASE_INFORMATION), 10));
     }
 
     private static decode(input: string): string {
@@ -310,8 +317,12 @@ export class LicenseManager {
             return ['legacy', false, undefined];
         }
 
-        const matches = licenseKey.match(/\[(.*?)\]/g)!.map((match) => match.replace('[', '').replace(']', ''));
-        if (!matches || matches.length === 0) {
+        const segments = _splitBracketed(licenseKey, true);
+        const matches: string[] = [];
+        for (let i = 1, len = segments.length; i < len; i += 2) {
+            matches.push(segments[i].slice(1, -1));
+        }
+        if (matches.length === 0) {
             return ['legacy', false, undefined];
         }
 

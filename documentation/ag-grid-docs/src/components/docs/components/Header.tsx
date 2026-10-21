@@ -6,6 +6,7 @@ import { isFrameworkLandingHub } from '@constants';
 import { getFrameworkDisplayText } from '@utils/framework';
 import { useSyncFrameworkStoreState } from '@utils/hooks/useSyncFrameworkStoreState';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { urlWithPrefix } from '@utils/urlWithPrefix';
 import type { FunctionComponent } from 'react';
 
 import styles from './Header.module.scss';
@@ -17,6 +18,8 @@ interface Props {
     suppressFrameworkHeader?: boolean;
     path: string;
     menuItems: MenuItem[];
+    /** The frameworks the page exists in, from its frontmatter. Omit for a page that exists in all of them. */
+    pageFrameworks?: Framework[];
     version?: string;
     markdownHref?: string;
 }
@@ -28,6 +31,7 @@ export const Header: FunctionComponent<Props> = ({
     suppressFrameworkHeader,
     path,
     menuItems,
+    pageFrameworks,
     version,
     markdownHref,
 }) => {
@@ -74,16 +78,20 @@ export const Header: FunctionComponent<Props> = ({
                                 path={path}
                                 currentFramework={framework}
                                 menuItems={menuItems}
+                                pageFrameworks={pageFrameworks}
                             />
                         </div>
                     </div>
                 </div>
 
                 {isEnterprise && (
-                    <span className={styles.enterpriseLabel}>
+                    <a
+                        className={styles.enterpriseLabel}
+                        href={urlWithPrefix({ url: './community-vs-enterprise', framework })}
+                    >
                         Enterprise
                         <Icon name="enterprise" />
-                    </span>
+                    </a>
                 )}
             </div>
         </header>

@@ -69,6 +69,13 @@ describe('buildHomepageMarkdown', () => {
         expect(output).toContain('### Can I build JavaScript Data Grids for free with AG Grid?');
     });
 
+    it('resolves framework-relative FAQ answer links to framework docs pages', () => {
+        expect(output).toContain(
+            '[AG Grid Enterprise](https://www.ag-grid.com/javascript-data-grid/community-vs-enterprise/)'
+        );
+        expect(output).not.toContain('](./');
+    });
+
     it('ends with a single trailing newline', () => {
         expect(output.endsWith('\n')).toBe(true);
         expect(output.endsWith('\n\n')).toBe(false);

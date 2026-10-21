@@ -1,6 +1,6 @@
-import { waitFor } from '@testing-library/dom';
+import { getByRole, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
-import { TestGridsManager, menuOption, openMenuOption, polyfillOffsetParent } from 'ag-test-utils';
+import { TestGridsManager, clickMenuOption, menuOption, openMenuOption, polyfillOffsetParent } from 'ag-test-utils';
 import type { Mock } from 'vitest';
 
 import type {
@@ -40,6 +40,27 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
         restoreOffsetParent?.();
         restoreOffsetParent = undefined;
         vi.resetAllMocks();
+    });
+
+    test.each(['new', 'legacy'] as const)('%s column menu labels its semantic container', async (columnMenu) => {
+        const api = await gridMgr.createGridAndWait('menu-accessible-name', {
+            columnDefs: [{ field: 'athlete' }],
+            rowData,
+            columnMenu,
+            localeText: { ariaLabelColumnMenu: 'Custom column actions' },
+            getColumnMenuItems: () => [{ name: 'Custom' }],
+        });
+
+        restoreOffsetParent = polyfillOffsetParent();
+        api.showColumnMenu('athlete');
+        await openMenuOption('Custom');
+
+        const menu = getByRole(document.body, columnMenu === 'new' ? 'menu' : 'dialog', {
+            name: 'Custom column actions',
+        });
+        expect(menu.closest('.ag-popup-child')).toBe(menu);
+        const itemContainer = columnMenu === 'new' ? menu : getByRole(menu, 'menu');
+        expect(getByRole(menu, 'menuitem', { name: 'Custom' }).closest('[role="menu"]')).toBe(itemContainer);
     });
 
     test('getColumnMenuItems fires for the column menu with source "columnMenu" and string-token defaults', async () => {
@@ -138,6 +159,29 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
         await openMenuOption('Add Age to values');
 
         expect(menuOption('Add Age to labels')).toBeNull();
+    });
+
+    test('the aggregation sub-menu makes a column a value column with its function, and None removes it', async () => {
+        const api = await gridMgr.createGridAndWait('menu-agg-submenu', {
+            columnDefs: [
+                { field: 'athlete', rowGroup: true },
+                { field: 'age', enableValue: true },
+            ],
+            rowData,
+            getColumnMenuItems: () => ['valueAggSubMenu'],
+        });
+        const valueCols = () => api.getValueColumns().map((column) => `${column.getColId()}:${column.getAggFunc()}`);
+
+        restoreOffsetParent = polyfillOffsetParent();
+        api.showColumnMenu('age');
+        await clickMenuOption('Value Aggregation');
+        await clickMenuOption('Average');
+        expect(valueCols()).toEqual(['age:avg']);
+
+        api.showColumnMenu('age');
+        await clickMenuOption('Value Aggregation');
+        await clickMenuOption('None');
+        expect(valueCols()).toEqual([]);
     });
 });
 

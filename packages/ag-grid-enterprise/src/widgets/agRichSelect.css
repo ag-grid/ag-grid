@@ -56,11 +56,23 @@
 
 .ag-rich-select-row-selected {
     background-color: var(--ag-selected-row-background-color);
+
+    @media (forced-colors: active) {
+        /* no need for a corresponding color:SelectedItemText, the browser draws a backplate behind the text to keep it readable */
+        background-color: SelectedItem;
+    }
 }
 
 .ag-rich-select-row:hover,
 .ag-rich-select-row-highlighted {
+    /* Use a background image so that the hover colour overlays on top of the selected colour */
     background-image: linear-gradient(var(--ag-row-hover-color), var(--ag-row-hover-color));
+
+    /* In forced colour mode, the overlay technique doesn't work, so use an outline to indicate highlight */
+    @media (forced-colors: active) {
+        outline: 2px solid CanvasText;
+        outline-offset: -2px;
+    }
 }
 
 .ag-rich-select-row-text-highlight {

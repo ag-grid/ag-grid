@@ -911,7 +911,7 @@ export abstract class SimpleFilter<
                 return;
             }
 
-            this.setElementValue(element, values[index] != null ? values[index] : null);
+            this.setElementValue(element, values[index] ?? null);
         });
     }
 

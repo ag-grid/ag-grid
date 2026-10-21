@@ -128,10 +128,8 @@ export class AgCheckbox<
 
         this.previousValue = this.isSelected();
 
-        selected = this.selected = typeof selected === 'boolean' ? selected : undefined;
-        const eInput = this.eInput;
-        eInput.checked = selected!;
-        eInput.indeterminate = selected === undefined;
+        this.selected = typeof selected === 'boolean' ? selected : undefined;
+        this.refreshInput();
 
         if (!silent) {
             this.dispatchChange(this.selected, this.previousValue);
@@ -153,13 +151,19 @@ export class AgCheckbox<
     }
 
     private onCheckboxClick(e: MouseEvent) {
-        if (this.passive || this.eInput.disabled) {
-            return;
+        if (!this.passive && !this.eInput.disabled) {
+            const previousValue = this.isSelected();
+            const selected = (this.selected = (e.target as HTMLInputElement).checked);
+            this.refreshSelectedClass(selected);
+            this.dispatchChange(selected, previousValue, e);
         }
-        const previousValue = this.isSelected();
-        const selected = (this.selected = (e.target as HTMLInputElement).checked);
-        this.refreshSelectedClass(selected);
-        this.dispatchChange(selected, previousValue, e);
+        this.refreshInput();
+    }
+
+    private refreshInput(): void {
+        const { eInput, selected } = this;
+        eInput.checked = !!selected;
+        eInput.indeterminate = selected === undefined;
     }
 
     private refreshSelectedClass(value?: boolean | null) {

@@ -335,9 +335,7 @@ export class SetFilterHandler<TValue = string>
             this.valueFormatter
         );
 
-        return (
-            (formattedValue == null ? _toStringOrNull(value) : formattedValue) ?? translateForSetFilter(this, 'blanks')
-        );
+        return formattedValue ?? _toStringOrNull(value) ?? translateForSetFilter(this, 'blanks');
     }
 
     public getModelAsString(model: SetFilterModel | null, source?: 'floating' | 'filterToolPanel'): string {

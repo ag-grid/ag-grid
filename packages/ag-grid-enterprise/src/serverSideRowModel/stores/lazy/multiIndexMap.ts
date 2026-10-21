@@ -63,6 +63,20 @@ export class MultiIndexMap<K, I extends keyof K> {
         }
     }
 
+    public some(callback: (item: K) => boolean): boolean {
+        const iterator = this.getIterator(this.indexes[0]);
+        let pointer: IteratorResult<K, any>;
+        while ((pointer = iterator.next())) {
+            if (pointer.done) {
+                break;
+            }
+            if (callback(pointer.value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public filter(predicate: (item: K) => boolean) {
         const iterator = this.getIterator(this.indexes[0]);
         let pointer: IteratorResult<K, any>;

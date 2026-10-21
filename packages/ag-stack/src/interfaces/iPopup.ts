@@ -2,8 +2,7 @@ import type { AfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type AddPopupParams<TContainerType extends string> =
-    | LabelAddPopupParams<TContainerType>
-    | OwnsAddPopupParams<TContainerType>;
+    LabelAddPopupParams<TContainerType> | OwnsAddPopupParams<TContainerType>;
 interface BaseAddPopupParams<TContainerType extends string> {
     // if true then listens to background checking for clicks, so that when the background is clicked,
     // the child is removed again, giving a model look to popups.
@@ -17,7 +16,7 @@ interface BaseAddPopupParams<TContainerType extends string> {
     // if a clicked caused the popup (eg click a button) then the click that caused it
     click?: MouseEvent | Touch | null;
     // mousedown/touchstart dismissal from this element is handled by the element itself
-    eventSourceToIgnore?: HTMLElement;
+    eventSourceToIgnore?: HTMLElement | (() => HTMLElement | undefined);
     alwaysOnTop?: boolean;
     afterGuiAttached?: (params: AfterGuiAttachedParams<TContainerType>) => void;
     // this gets called after the popup is created. the called could just call positionCallback themselves,
@@ -28,8 +27,9 @@ interface BaseAddPopupParams<TContainerType extends string> {
     // showing, and the whole grid moves (browser is scrolled down) then we want the popup to stay above
     // the cell it appeared on. make sure though if setting, don't anchor to a temporary or moving element,
     // eg if cellComp element is passed, what happens if row moves (sorting, filtering etc)? best anchor against
-    // the grid, not the cell.
-    anchorToElement?: HTMLElement;
+    // the grid, not the cell. a function anchor is re-resolved on every position check, so the popup can
+    // follow a replacement element (eg a refreshed header).
+    anchorToElement?: HTMLElement | (() => HTMLElement);
 }
 
 interface LabelAddPopupParams<TContainerType extends string> extends BaseAddPopupParams<TContainerType> {

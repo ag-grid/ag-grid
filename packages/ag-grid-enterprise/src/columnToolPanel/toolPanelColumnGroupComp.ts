@@ -32,7 +32,9 @@ import {
 } from 'ag-grid-community';
 
 import { getGridColumnGroup } from '../columns/providedColumnGroupUtils';
+import { _isContextMenuKey } from '../widgets/menuPopupUtils';
 import type { ColumnModelItem } from './columnModelItem';
+import type { ToolPanelColumnMove } from './columnMoveUtils';
 import {
     ColumnSelectionLabelRendererFeature,
     isColumnSelectionLabelRendererEnabled,
@@ -83,7 +85,8 @@ export class ToolPanelColumnGroupComp extends Component {
         private readonly eventType: ColumnEventType,
         private readonly focusWrapper: HTMLElement,
         private readonly params: ToolPanelColumnCompParams,
-        private readonly source: ColumnSelectionPanelSource
+        private readonly source: ColumnSelectionPanelSource,
+        private readonly columnMove?: ToolPanelColumnMove
     ) {
         super();
         const { columnGroup, depth } = modelItem;
@@ -174,6 +177,8 @@ export class ToolPanelColumnGroupComp extends Component {
         this.addManagedElementListeners(eLabel, { click: this.onLabelClicked.bind(this) });
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
         this.addManagedListeners(modelItem, { expandedChanged: this.onExpandChanged.bind(this) });
+        // Grid-level, not the grid group's own event: a custom layout keeps this copy while the grid's group is
+        // replaced, and a child's rename can change the name a group headerValueGetter returns.
         this.addManagedEventListeners({ columnHeaderNameChanged: this.onHeaderNameChanged.bind(this) });
 
         const touchListener = new TouchListener(this.getGui(), false);
@@ -225,6 +230,10 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
+        if (_isContextMenuKey(e)) {
+            this.onContextMenu(e);
+            return;
+        }
         switch (e.key) {
             case KeyCode.LEFT:
                 e.preventDefault();
@@ -243,9 +252,17 @@ export class ToolPanelColumnGroupComp extends Component {
         }
     }
 
-    private onContextMenu(e: MouseEvent | Touch): void {
+    private onContextMenu(e: MouseEvent | Touch | KeyboardEvent): void {
         const contextMenu = this.createBean(
-            new ToolPanelContextMenu(this.columnGroup, e, this.focusWrapper, this.params, this.eventType, this.source)
+            new ToolPanelContextMenu(
+                this.columnGroup,
+                e,
+                this.focusWrapper,
+                this.params,
+                this.eventType,
+                this.source,
+                this.columnMove
+            )
         );
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {

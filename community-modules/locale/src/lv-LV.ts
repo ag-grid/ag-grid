@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_LV_LV = {
     enabled: 'Iespējots',
 
     // Menu
+    moveLeft: 'Pārvietot pa kreisi',
+    moveRight: 'Pārvietot pa labi',
+    moveUp: 'Pārvietot uz augšu',
+    moveDown: 'Pārvietot uz leju',
     pinColumn: 'Piespraust kolonnu',
     pinLeft: 'Piespraust pa kreisi',
     pinRight: 'Piespraust pa labi',
@@ -778,6 +782,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaRowSelect: 'Nospiediet ATSTARPI, lai atlasītu šo rindu',
     ariaRowSelectionDisabled: 'Šai rindai rindu atlase ir atspējota',
     ariaSearch: 'Meklēt',
+    ariaSortPriority: 'Kārtošanas prioritāte ${priority} no ${count}',
     ariaSortableColumn: 'Nospiediet ENTER, lai kārtotu',
     ariaSortableColumnWithCellSelection: 'Nospiediet ALT ENTER, lai kārtotu',
     ariaToggleVisibility: 'Nospiediet ATSTARPI, lai pārslēgtu redzamību',
@@ -915,9 +920,11 @@ export const AG_GRID_LOCALE_LV_LV = {
     columnHeaderEditCancel: 'Atcelt',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nav atrasta neviena piemērota kolonna.',
     calculatedColumn: 'Aprēķinātā kolonna',
     calculatedColumnAdd: 'Pievienot aprēķināto kolonnu',
     calculatedColumnEdit: 'Rediģēt aprēķināto kolonnu',
+    calculatedColumnView: 'Skatīt aprēķināto kolonnu',
     calculatedColumnRemove: 'Noņemt aprēķināto kolonnu',
     calculatedColumnTitle: 'Nosaukums',
     calculatedColumnType: 'Tips',

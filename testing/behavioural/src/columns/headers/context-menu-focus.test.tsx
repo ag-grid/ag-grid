@@ -1,15 +1,18 @@
 import { waitFor } from '@testing-library/dom';
-import { act, render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { asyncSetTimeout, getVisibleTooltips, polyfillOffsetParent } from 'ag-test-utils';
 import React from 'react';
 
-import type { GridApi } from 'ag-grid-community';
+import type { GridApi, IHeaderParams } from 'ag-grid-community';
 import {
     AllEnterpriseModule,
     ClientSideRowModelModule,
     ColumnMenuModule,
     ContextMenuModule,
+    RenderApiModule,
+    TextFilterModule,
     TooltipModule,
     ValidationModule,
 } from 'ag-grid-enterprise';
@@ -30,6 +33,10 @@ const CustomMenuItem = ({ name }: CustomMenuItemProps) => {
     useGridMenuItem({ configureDefaults: () => true });
     return <div className="ag-menu-option-text">{name}</div>;
 };
+
+const MouseMenuHeader = (params: IHeaderParams) => (
+    <button onClick={(event) => params.showColumnMenuAfterMouseClick(event.nativeEvent)}>Year menu</button>
+);
 
 describe('React menu initial focus with async framework menu items', () => {
     it('focuses an async framework context menu item without showing its tooltip on mouse opening', async () => {
@@ -94,6 +101,153 @@ describe('React menu initial focus with async framework menu items', () => {
         await waitFor(() => {
             expect(document.activeElement).toBe(menuItem);
         });
+    });
+
+    it.each(['keyboard', 'mouse'])(
+        'keeps the %s-opened column menu focused when React replaces the header',
+        async (opening) => {
+            let api: GridApi;
+            const rectSpy = vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (
+                this: Element
+            ) {
+                return this.isConnected ? new DOMRect(0, 0, 100, 30) : new DOMRect();
+            });
+            vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
+            try {
+                render(
+                    <AgGridReact
+                        columnDefs={[
+                            {
+                                field: 'year',
+                                headerComponent: opening === 'mouse' ? MouseMenuHeader : undefined,
+                            },
+                        ]}
+                        rowData={[{ year: '2004' }]}
+                        onGridReady={(event) => {
+                            api = event.api;
+                        }}
+                        getColumnMenuItems={() => [{ name: 'Custom Item', menuItem: CustomMenuItem }]}
+                        modules={[ValidationModule, ClientSideRowModelModule, ColumnMenuModule, RenderApiModule]}
+                    />
+                );
+                const header = screen.getByRole('columnheader', { name: /year/i });
+                if (opening === 'mouse') {
+                    await userEvent.click(screen.getByRole('button', { name: 'Year menu' }));
+                } else {
+                    header.focus();
+                    await userEvent.keyboard('{Alt>}{ArrowDown}{/Alt}');
+                }
+                const item = await screen.findByRole('menuitem', { name: 'Custom Item' });
+                await waitFor(() => expect(document.activeElement).toBe(item));
+
+                await act(async () => {
+                    api.refreshHeader();
+                });
+                expect(header.isConnected).toBe(false);
+                act(() => {
+                    vi.advanceTimersByTime(600);
+                });
+                expect(item.isConnected).toBe(true);
+                expect(document.activeElement).toBe(item);
+
+                await userEvent.keyboard('{Escape}');
+                await waitFor(() =>
+                    expect(document.activeElement).toBe(screen.getByRole('columnheader', { name: /year/i }))
+                );
+            } finally {
+                rectSpy.mockRestore();
+                vi.useRealTimers();
+            }
+        }
+    );
+
+    it('retains floating-filter menu input and focus across header refreshes', async () => {
+        let api: GridApi;
+        const rectSpy = vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (
+            this: Element
+        ) {
+            return this.isConnected ? new DOMRect(0, 0, 100, 30) : new DOMRect();
+        });
+        vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
+        try {
+            const { container } = render(
+                <AgGridReact
+                    columnDefs={[{ field: 'year', filter: 'agTextColumnFilter', floatingFilter: true }]}
+                    rowData={[{ year: '2004' }]}
+                    onGridReady={(event) => {
+                        api = event.api;
+                    }}
+                    modules={[ValidationModule, ClientSideRowModelModule, TextFilterModule, RenderApiModule]}
+                />
+            );
+            const button = () => container.querySelector<HTMLElement>('.ag-floating-filter-button-button')!;
+            const originalButton = button();
+            await userEvent.click(originalButton);
+            const menu = container.querySelector<HTMLElement>('.ag-filter-menu')!;
+            const input = (await within(menu).findAllByRole('textbox'))[0];
+            await userEvent.type(input, '2004');
+
+            for (let i = 0; i < 2; i++) {
+                await act(async () => {
+                    api.refreshHeader();
+                });
+                act(() => {
+                    vi.advanceTimersByTime(600);
+                });
+                expect(originalButton.isConnected).toBe(false);
+                expect(input).toHaveFocus();
+                expect(input).toHaveValue('2004');
+            }
+            await userEvent.keyboard('{Escape}');
+            expect(menu.isConnected).toBe(false);
+            expect(button()).toHaveFocus();
+        } finally {
+            rectSpy.mockRestore();
+            vi.useRealTimers();
+        }
+    });
+
+    it('toggles the column menu closed from the menu button of a replaced header', async () => {
+        let api: GridApi;
+        const rectSpy = vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (
+            this: Element
+        ) {
+            return this.isConnected ? new DOMRect(0, 0, 100, 30) : new DOMRect();
+        });
+        vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
+        try {
+            const { container } = render(
+                <AgGridReact
+                    columnDefs={[{ field: 'year' }]}
+                    rowData={[{ year: '2004' }]}
+                    onGridReady={(event) => {
+                        api = event.api;
+                    }}
+                    getColumnMenuItems={() => [{ name: 'Custom Item', menuItem: CustomMenuItem }]}
+                    modules={[ValidationModule, ClientSideRowModelModule, ColumnMenuModule, RenderApiModule]}
+                />
+            );
+            const menuButton = () => container.querySelector<HTMLElement>('.ag-header-cell-menu-button')!;
+            const openedButton = menuButton();
+            await userEvent.click(openedButton);
+            await screen.findByRole('menuitem', { name: 'Custom Item' });
+
+            await act(async () => {
+                api.refreshHeader();
+            });
+            expect(openedButton.isConnected).toBe(false);
+            act(() => {
+                vi.advanceTimersByTime(600);
+            });
+            expect(screen.getByRole('menuitem', { name: 'Custom Item' }).isConnected).toBe(true);
+
+            // Clicking the replacement button must toggle the menu closed, not spawn a second menu.
+            await userEvent.click(menuButton());
+            expect(screen.queryByRole('menuitem', { name: 'Custom Item' })).toBeNull();
+        } finally {
+            rectSpy.mockRestore();
+            vi.useRealTimers();
+        }
     });
 
     it('places keyboard focus inside the Columns Tool Panel / Chooser menu once an async framework item has rendered', async () => {

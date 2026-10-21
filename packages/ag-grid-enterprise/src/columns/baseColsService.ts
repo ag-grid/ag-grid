@@ -187,7 +187,6 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         if (colModel.colsList.length === 0) {
             return;
         }
-
         // `before` stays ref-stable: `applyActiveCols` reassigns the order array wholesale.
         const before = this.columns;
 
@@ -205,8 +204,13 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         if (change === 'none') {
             return; // identical membership + order — nothing to refresh or dispatch
         }
-        this.applyActiveCols(before, orderedSet, orderedArr, source, true);
-        colModel.flushColChanges(source, change); // animated refresh; defers when batched
+        colModel.beginColUpdate();
+        try {
+            this.applyActiveCols(before, orderedSet, orderedArr, source, true);
+            colModel.stageColChanges(source, change); // animated refresh, run when the update ends
+        } finally {
+            colModel.endColUpdate();
+        }
     }
 
     /** Seat a col into `res`; base adds just the col, `OrderedColsService` seats its virtuals first.
@@ -232,12 +236,27 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         this.pendingColChangeSet().add(col);
     }
 
-    /** {@link stageColChange} for several cols at once. */
-    protected stageColChanges(changedCols: Iterable<AgColumn>): void {
+    /** Stages, in their order in `before`, the cols a removal moved: the first removed one and every one after it. */
+    protected stageRemovedFrom(before: AgColumn[]): void {
+        const active = this.activeColSet;
+        const len = before.length;
+        let i = 0;
+        while (i < len && active.has(before[i])) {
+            ++i;
+        }
+        this.stageColsFrom(before, i);
+    }
+
+    /** {@link stageColChange} for `cols` from `start` on, in their order. */
+    private stageColsFrom(cols: AgColumn[], start: number): void {
+        const len = cols.length;
+        if (start >= len) {
+            return;
+        }
         this.reindexPending = true;
         const pending = this.pendingColChangeSet();
-        for (const col of changedCols) {
-            pending.add(col);
+        for (let i = start; i < len; ++i) {
+            pending.add(cols[i]);
         }
     }
 
@@ -256,8 +275,8 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         return pending;
     }
 
-    /** Re-stamp active-col indexes once if a staged change moved the set; called by
-     *  {@link ColumnModel.flushColChanges} before refresh/dispatch read the stamped positions. */
+    /** Re-stamp active-col indexes once if a staged change moved the set; called when the column update ends, before
+     *  refresh/dispatch read the stamped positions. */
     public flushReindex(): void {
         if (this.reindexPending) {
             this.reindexPending = false;
@@ -265,7 +284,7 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         }
     }
 
-    /** Dispatch this service's staged change (if any); called by {@link ColumnModel.flushColChanges}. */
+    /** Dispatch this service's staged change (if any); called when the column update that staged it ends. */
     public dispatchColChange(source: ColumnEventType): void {
         // Drain batched side-effects (rowGroup visibility) unconditionally, so they're never stranded.
         this.onColActiveChangesComplete(source);
@@ -290,42 +309,36 @@ export abstract class BaseColsService extends BeanStub implements IColsService {
         }
 
         const colModel = this.colModel;
-        const updatedCols = new Set<AgColumn>();
-        const before = add ? null : this.columns; // order snapshot for the removal shift below
-        let atLeastOne = false;
-
-        for (let i = 0, len = keys.length; i < len; ++i) {
-            const key = keys[i];
-            if (!key) {
-                continue;
-            }
-            const col = colModel.getNonPivotCol(key);
-            if (!col) {
-                continue;
-            }
-            updatedCols.add(col);
-
-            if (this.setColActive(col, add, src, true)) {
-                atLeastOne = true;
-                if (!add) {
-                    // Removed col: subsequent cols shift up — mark them for the event payload.
-                    for (let j = before!.indexOf(col) + 1, blen = before!.length; j < blen; ++j) {
-                        updatedCols.add(before![j]);
-                    }
+        // a removal reports the cols it moves up, so it needs the order before it
+        const before = add ? null : this.columns;
+        const sizeBefore = this.activeColSet.size;
+        colModel.beginColUpdate();
+        try {
+            let changed = false;
+            for (let i = 0, len = keys.length; i < len; ++i) {
+                const key = keys[i];
+                const col = key ? colModel.getNonPivotCol(key) : null;
+                if (col && this.setColActive(col, add, src, true)) {
+                    changed = true;
                 }
             }
+            if (!changed) {
+                return;
+            }
+            if (before === null) {
+                // activating only appends, so the added cols are the tail, in their order
+                this.stageColsFrom(this.columns, sizeBefore);
+            } else {
+                this.stageRemovedFrom(before);
+            }
+            colModel.stageColChanges(src, 'membership'); // add/remove → animated refresh, run when the update ends
+        } finally {
+            colModel.endColUpdate();
         }
-
-        if (!atLeastOne) {
-            return;
-        }
-
-        this.stageColChanges(updatedCols);
-        colModel.flushColChanges(src, 'membership'); // add/remove → animated refresh; defers when batched
     }
 
     /** Bucket one primary col for the pass; no-op if not in this role. `colIsNew` ⇒ `initial*` props apply. */
-    public abstract extractCol(col: AgColumn, colIsNew: boolean): void;
+    public abstract extractCol(col: AgColumn, colIsNew: boolean, source: ColumnEventType): void;
 
     /** Finalise the pass: order the buckets, diff vs the previous active cols (flagging changes), re-seat,
      *  then release the buckets. */

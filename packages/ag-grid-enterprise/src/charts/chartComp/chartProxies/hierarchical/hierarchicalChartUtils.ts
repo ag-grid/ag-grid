@@ -108,9 +108,7 @@ function buildNestedHierarchy<V extends object>(
     ): Tree<V> {
         if (currentDepth === itemDepth) {
             if (currentDepth === 0) {
-                if (!hierarchy.rootValues) {
-                    hierarchy.rootValues = [];
-                }
+                hierarchy.rootValues ??= [];
                 hierarchy.rootValues.push(item);
             } else {
                 hierarchy.value = item;
@@ -124,7 +122,7 @@ function buildNestedHierarchy<V extends object>(
                 itemDepth,
                 getItemGroupKey,
                 currentDepth + 1,
-                existingChildHierarchy || { depth: 0, children: new Map() }
+                existingChildHierarchy ?? { depth: 0, children: new Map() }
             );
             hierarchy.children.set(key, childHierarchy);
             hierarchy.depth = Math.max(1 + childHierarchy.depth, hierarchy.depth);

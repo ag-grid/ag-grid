@@ -247,7 +247,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         }
 
         const suppressChartRangesSupplied =
-            typeof params.suppressChartRanges !== 'undefined' && params.suppressChartRanges !== null;
+            params.suppressChartRanges !== undefined && params.suppressChartRanges !== null;
         const suppressChartRanges = suppressChartRangesSupplied ? params.suppressChartRanges : true;
 
         return this.createChart({
@@ -270,7 +270,7 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         const { chartType, chartContainer } = params;
 
         const createChartContainerFunc = this.gos.getCallback('createChartContainer');
-        const insideDialog = !(chartContainer || createChartContainerFunc);
+        const insideDialog = !(chartContainer ?? createChartContainerFunc);
 
         const gridChartParams: GridChartParams = {
             ...params,

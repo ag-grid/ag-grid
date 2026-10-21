@@ -341,6 +341,10 @@ export const AG_GRID_LOCALE_LT_LT = {
     enabled: 'Įjungta',
 
     // Menu
+    moveLeft: 'Perkelti į kairę',
+    moveRight: 'Perkelti į dešinę',
+    moveUp: 'Perkelti aukštyn',
+    moveDown: 'Perkelti žemyn',
     pinColumn: 'Prisegti stulpelį',
     pinLeft: 'Prisegti kairėje',
     pinRight: 'Prisegti dešinėje',
@@ -780,6 +784,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaRowSelect: 'Spauskite SPACE, kad pažymėtumėte šią eilutę',
     ariaRowSelectionDisabled: 'Eilutės pasirinkimas šioje eilutėje išjungtas',
     ariaSearch: 'Paieška',
+    ariaSortPriority: 'Rikiavimo prioritetas ${priority} iš ${count}',
     ariaSortableColumn: 'Spauskite ENTER, kad rikiuotumėte',
     ariaSortableColumnWithCellSelection: 'Spauskite ALT ENTER, kad rikiuotumėte',
     ariaToggleVisibility: 'Spauskite SPACE, kad perjungtumėte matomumą',
@@ -917,9 +922,11 @@ export const AG_GRID_LOCALE_LT_LT = {
     columnHeaderEditCancel: 'Atšaukti',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Tinkamų stulpelių nerasta.',
     calculatedColumn: 'Skaičiuojamasis stulpelis',
     calculatedColumnAdd: 'Pridėti skaičiuojamąjį stulpelį',
     calculatedColumnEdit: 'Redaguoti skaičiuojamąjį stulpelį',
+    calculatedColumnView: 'Žiūrėti skaičiuojamąjį stulpelį',
     calculatedColumnRemove: 'Pašalinti skaičiuojamąjį stulpelį',
     calculatedColumnTitle: 'Pavadinimas',
     calculatedColumnType: 'Tipas',

@@ -13,6 +13,12 @@
                 "url": "./filter-set-data-updates/#limiting-preserved-values"
             }
         },
+        "preservePreviousValuesLabel": {
+            "more": {
+                "name": "Preserving Previous Values",
+                "url": "./filter-set-data-updates/#preserving-previous-values"
+            }
+        },
         "readOnly": {
             "more": {
                 "url": "./filter-api/#read-only-filter-ui",

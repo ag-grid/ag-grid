@@ -538,7 +538,7 @@ export class PivotColDefService extends BeanStub implements NamedBean, IPivotCol
         }
 
         colDef.headerName = headerName;
-        colDef.colId = this.generateColumnId(pivotKeys || [], valueColumn && !totalColumn ? valueColumn.colId : '');
+        colDef.colId = this.generateColumnId(pivotKeys ?? [], valueColumn && !totalColumn ? valueColumn.colId : '');
 
         // pivot columns repeat over field, so it makes sense to use the unique id instead. For example if you want to
         // assign values to pinned bottom rows using setPinnedBottomRowData the value service will use this colId.

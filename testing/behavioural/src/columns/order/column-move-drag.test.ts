@@ -26,11 +26,8 @@ describe('column header drag reorder', () => {
         return found;
     }
 
-    // Drives a real header drag through DragService -> dragAndDropService -> MoveColumnFeature.
-    // `elementsFromPoint` is pointed at the body viewport (a BodyDropTarget container) so the in-grid
-    // drop target resolves; the mouse Y sits in the body so the container rect-containment check passes.
-    // The drop index is computed from `toClientX` (section-relative, section left is 0 in the layout mock);
-    // `fromClientX` only sets the horizontal drag direction (left vs right).
+    // The pointer sits over the body viewport (a BodyDropTarget); the drop index comes from the section-relative
+    // `toClientX`, while `fromClientX` only sets the drag direction.
     async function dragHeader(
         api: GridApi,
         sourceColId: string,
@@ -49,9 +46,6 @@ describe('column header drag reorder', () => {
         const source = el(api, sourceSelector);
         const viewport = el(api, '.ag-grid-viewport');
         const dispatcher = new DragEventDispatcher('mouse', null, false);
-        const ownerDocument = source.ownerDocument;
-        const original = ownerDocument.elementsFromPoint?.bind(ownerDocument);
-        ownerDocument.elementsFromPoint = () => [viewport];
         const y = 100; // inside the body viewport rect (top = headerHeight)
         try {
             await dispatcher.startDrag(source, fromClientX, y);
@@ -59,7 +53,7 @@ describe('column header drag reorder', () => {
             await dispatcher.movePointer(viewport, toClientX, y);
             await dispatcher.finishDrag(viewport);
         } finally {
-            ownerDocument.elementsFromPoint = original as typeof ownerDocument.elementsFromPoint;
+            dispatcher.reset();
         }
     }
 
@@ -75,8 +69,6 @@ describe('column header drag reorder', () => {
         const source = el(api, sourceSelector);
         const viewport = el(api, '.ag-grid-viewport');
         const ownerDocument = source.ownerDocument;
-        const original = ownerDocument.elementsFromPoint?.bind(ownerDocument);
-        ownerDocument.elementsFromPoint = () => [viewport];
         const dispatcher = new DragEventDispatcher('mouse', null, false);
         const y = 100;
         try {
@@ -93,7 +85,6 @@ describe('column header drag reorder', () => {
             return ghostIcon()!.querySelector('.ag-icon-pin') != null;
         } finally {
             await dispatcher.finishDrag(viewport);
-            ownerDocument.elementsFromPoint = original as typeof ownerDocument.elementsFromPoint;
         }
     }
 
@@ -119,6 +110,113 @@ describe('column header drag reorder', () => {
         await dragHeader(api, 'a', 5, 250);
 
         await waitFor(() => expect(colOrder(api)).toEqual(['b', 'c', 'd', 'a']));
+    });
+
+    test('with moves deferred to the drop, the header the drag would drop beside shows where, and the dragged one is moving, until the drop', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                { field: 'a', width: 100 },
+                { field: 'b', width: 100 },
+                { field: 'd', width: 100 },
+            ],
+            rowData: [{ a: 1, b: 2, d: 4 }],
+            suppressMoveWhenColumnDragging: true,
+        });
+        const highlights = () =>
+            ['a', 'b', 'd'].flatMap((colId) => {
+                const classList = el(api, `.ag-header-cell[col-id="${colId}"]`).classList;
+                return ['before', 'after']
+                    .filter((side) => classList.contains(`ag-header-highlight-${side}`))
+                    .map((side) => `${colId}:${side}`);
+            });
+        const source = el(api, '.ag-header-cell[col-id="a"]');
+        const viewport = el(api, '.ag-grid-viewport');
+        const dispatcher = new DragEventDispatcher('mouse', null, false);
+        try {
+            await dispatcher.startDrag(source, 5, 100);
+            await dispatcher.movePointer(viewport, 5, 100);
+            await dispatcher.movePointer(viewport, 250, 100);
+            expect(highlights()).toEqual(['d:after']);
+            expect(source.classList.contains('ag-header-cell-moving')).toBe(true);
+            expect(colOrder(api)).toEqual(['a', 'b', 'd']);
+            await dispatcher.finishDrag(viewport);
+        } finally {
+            dispatcher.reset();
+        }
+
+        await waitFor(() => expect(colOrder(api)).toEqual(['b', 'd', 'a']));
+        expect(highlights()).toEqual([]);
+        expect(el(api, '.ag-header-cell[col-id="a"]').classList.contains('ag-header-cell-moving')).toBe(false);
+    });
+
+    test('with moves deferred to the drop, a dragged group header is moving, and the group it would drop beside shows where, until the drop', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                {
+                    groupId: 'g1',
+                    children: [
+                        { field: 'a', width: 100 },
+                        { field: 'b', width: 100 },
+                    ],
+                },
+                {
+                    groupId: 'g2',
+                    children: [
+                        { field: 'c', width: 100 },
+                        { field: 'd', width: 100 },
+                    ],
+                },
+            ],
+            rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
+            suppressMoveWhenColumnDragging: true,
+        });
+        const groupState = (groupId: string) => {
+            const classList = el(api, `.ag-header-group-cell[col-id^="${groupId}_"]`).classList;
+            const classes = ['ag-header-cell-moving', 'ag-header-highlight-before', 'ag-header-highlight-after'];
+            return `${groupId}:${classes.filter((cssClass) => classList.contains(cssClass)).join()}`;
+        };
+        const seen: string[] = [];
+        const viewport = el(api, '.ag-grid-viewport');
+        const dispatcher = new DragEventDispatcher('mouse', null, false);
+        try {
+            await dispatcher.startDrag(el(api, '.ag-header-group-cell[col-id^="g2_"]'), 350, 100);
+            await dispatcher.movePointer(viewport, 350, 100);
+            await dispatcher.movePointer(viewport, 5, 100);
+            seen.push(groupState('g1'), groupState('g2'));
+            await dispatcher.finishDrag(viewport);
+        } finally {
+            dispatcher.reset();
+        }
+
+        await waitFor(() => expect(colOrder(api)).toEqual(['c', 'd', 'a', 'b']));
+        seen.push(groupState('g1'), groupState('g2'));
+        expect(seen).toEqual(['g1:ag-header-highlight-before', 'g2:ag-header-cell-moving', 'g1:', 'g2:']);
+    });
+
+    test('a drag whose column is removed mid-drag moves nothing, leaving the removed column out', async () => {
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: ['a', 'b', 'c', 'd'].map((field) => ({ field, width: 100 })),
+            rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
+        });
+        const source = el(api, '.ag-header-cell[col-id="b"]');
+        const viewport = el(api, '.ag-grid-viewport');
+        const dispatcher = new DragEventDispatcher('mouse', null, false);
+        try {
+            await dispatcher.startDrag(source, 150, 100);
+            await dispatcher.movePointer(viewport, 150, 100);
+            await dispatcher.movePointer(viewport, 250, 100);
+            expect(source.classList.contains('ag-header-cell-moving')).toBe(true);
+            api.setGridOption(
+                'columnDefs',
+                ['a', 'c', 'd'].map((field) => ({ field, width: 100 }))
+            );
+            await dispatcher.movePointer(viewport, 350, 100);
+            await dispatcher.finishDrag(viewport);
+        } finally {
+            dispatcher.reset();
+        }
+
+        expect(colOrder(api)).toEqual(['a', 'c', 'd']);
     });
 
     test('dragging a header left to the front, hidden col preserved', async () => {

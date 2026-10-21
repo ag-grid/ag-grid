@@ -1,12 +1,77 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-AGGRIDENTERPRISE-7414158:
+    - ag-grid-enterprise@* > *:
+        reason: >-
+            Local workspace package (0.0.0-use.local) - matched against advisories for old published versions
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.788Z
+  SNYK-JS-AGGRIDCOMMUNITY-7414157:
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package (0.0.0-use.local) - matched against advisories for old published versions
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.788Z
+    - ag-grid-enterprise@* > *:
+        reason: >-
+            Local workspace package (0.0.0-use.local) - matched against advisories for old published versions
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.787Z
+    - ag-grid-community@* > *:
+        reason: >-
+            Local workspace package (0.0.0-use.local) - matched against advisories for old published versions
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.787Z
+  SNYK-JS-BRACEEXPANSION-20244952:
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.789Z
+    - npm-run-all@4.1.5 > minimatch@3.1.2 > brace-expansion@1.1.18:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:31:45.137Z
+  SNYK-JS-BRACEEXPANSION-20244948:
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.789Z
+    - npm-run-all@4.1.5 > minimatch@3.1.2 > brace-expansion@1.1.18:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:30:45.973Z
+  SNYK-JS-SHELLQUOTE-20250993:
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.791Z
+    - npm-run-all@4.1.5 > shell-quote@1.10.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:23:41.854Z
   SNYK-JS-ESBUILD-17750822:
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.790Z
     - vite@6.4.1 > esbuild@0.25.12:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-07-15T10:47:55.980Z
   SNYK-JS-VITE-17353904:
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.792Z
     - vite@6.4.1:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z
@@ -17,6 +82,11 @@ ignore:
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-04-14T15:40:46.089Z
   SNYK-JS-ROLLUP-15340920:
+    - ag-grid-vue3@* > *:
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T10:22:59.791Z
     - vite@6.4.1 > rollup@4.52.5:
         reason: Test dependency - not included in final production build
         expires: 2027-03-02T00:00:00.000Z

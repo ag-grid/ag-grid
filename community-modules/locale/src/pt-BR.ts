@@ -340,6 +340,10 @@ export const AG_GRID_LOCALE_PT_BR = {
     enabled: 'Ativado',
 
     // Menu
+    moveLeft: 'Mover para a esquerda',
+    moveRight: 'Mover para a direita',
+    moveUp: 'Mover para cima',
+    moveDown: 'Mover para baixo',
     pinColumn: 'Fixar Coluna',
     pinLeft: 'Fixar à Esquerda',
     pinRight: 'Fixar à Direita',
@@ -765,6 +769,7 @@ export const AG_GRID_LOCALE_PT_BR = {
     ariaRowSelect: 'Pressione SPACE para selecionar esta linha',
     ariaRowSelectionDisabled: 'A seleção de linha está desativada para esta linha',
     ariaSearch: 'Pesquisar',
+    ariaSortPriority: 'Prioridade de ordenação ${priority} de ${count}',
     ariaSortableColumn: 'Pressione ENTER para classificar',
     ariaSortableColumnWithCellSelection: 'Pressione ALT ENTER para classificar',
     ariaToggleVisibility: 'Pressione SPACE para alternar a visibilidade',
@@ -898,9 +903,11 @@ export const AG_GRID_LOCALE_PT_BR = {
     columnHeaderEditCancel: 'Cancelar',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nenhuma coluna elegível encontrada.',
     calculatedColumn: 'Coluna calculada',
     calculatedColumnAdd: 'Adicionar coluna calculada',
     calculatedColumnEdit: 'Editar coluna calculada',
+    calculatedColumnView: 'Ver coluna calculada',
     calculatedColumnRemove: 'Remover coluna calculada',
     calculatedColumnTitle: 'Título',
     calculatedColumnType: 'Tipo',

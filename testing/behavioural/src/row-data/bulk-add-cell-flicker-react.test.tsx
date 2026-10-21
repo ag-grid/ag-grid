@@ -313,4 +313,53 @@ describe('Eager row content seed (bulk-add flicker regression)', () => {
             await expectEveryRowToShow(['a', 'b', 'c']);
         }
     });
+
+    // The row's cell list is storage the row refills in place, so a view layer that keeps the array it
+    // was handed ends up comparing a snapshot against itself and renders the previous set of cells.
+    // One change cannot show that; it takes successive rebuilds for the reused buffer to come round.
+    test('repeated column visibility toggles keep every row in step with the columns', async () => {
+        const columnDefs: ColDef[] = [{ field: 'a' }, { field: 'b' }, { field: 'c' }];
+        const rowData = Array.from({ length: 5 }, (_, i) => ({ a: `a${i}`, b: `b${i}`, c: `c${i}` }));
+
+        let gridApi: GridApi | undefined;
+        const rendered = render(
+            <div style={{ height: 400, width: 600 }}>
+                <AgGridReact
+                    rowData={rowData}
+                    columnDefs={columnDefs}
+                    onGridReady={(p) => {
+                        gridApi = p.api;
+                    }}
+                />
+            </div>
+        );
+
+        await waitFor(() => expect(rendered.container.querySelectorAll(ROW_SELECTOR).length).toBeGreaterThan(0));
+
+        // every rendered row, an emptied one included, so a row left without its cells fails
+        const expectEveryRowToShow = async (expected: string[]) => {
+            await waitFor(() => {
+                const rows = rendered.container.querySelectorAll(ROW_SELECTOR);
+                expect(rows.length).toBe(rowData.length);
+                for (const row of rows) {
+                    const colIds = Array.from(row.querySelectorAll('[role="gridcell"]'))
+                        .map((cell) => cell.getAttribute('col-id'))
+                        .sort();
+                    expect(colIds).toEqual(expected);
+                }
+            });
+        };
+
+        for (let i = 0; i < 4; ++i) {
+            act(() => {
+                gridApi!.setColumnsVisible(['b'], false);
+            });
+            await expectEveryRowToShow(['a', 'c']);
+
+            act(() => {
+                gridApi!.setColumnsVisible(['b'], true);
+            });
+            await expectEveryRowToShow(['a', 'b', 'c']);
+        }
+    });
 });

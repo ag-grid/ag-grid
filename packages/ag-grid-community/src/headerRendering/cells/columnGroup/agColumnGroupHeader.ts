@@ -260,7 +260,7 @@ export class AgColumnGroupHeader extends Component implements IHeaderGroupComp {
         const { displayName, columnGroup } = params;
         const { innerHeaderGroupComponent, isLoadingInnerComponent } = this;
 
-        const hasInnerComponent = innerHeaderGroupComponent || isLoadingInnerComponent;
+        const hasInnerComponent = innerHeaderGroupComponent ?? isLoadingInnerComponent;
 
         if (_exists(displayName) && !hasInnerComponent) {
             this.agLabel.textContent = _toString(displayName);

@@ -319,6 +319,8 @@ export class RowNode<TData = any>
      * If re-naming this property, you must also update `IGNORED_SIBLING_PROPERTIES`
      */
     public __autoHeights?: { [id: string]: number | undefined };
+    /** The content height auto height last sized this row to, kept while the row is out of view. */
+    public __autoContentHeight?: number;
 
     /** `true` when nodes with the same id are being removed and added as part of the same batch transaction */
     public alreadyRendered = false;

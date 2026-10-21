@@ -147,8 +147,8 @@ export const PaletteEditor = ({ value, onChange, maxSeriesColors }: PaletteEdito
             {/* One group rather than three fields, so the two columns are named
                 once and the three rows read as the set they are. */}
             <FormField
-                label="Financial Colors"
-                docs="Rising, falling and unchanged prices in candlestick and OHLC series. A palette that leaves these unset is treated as an indexed one, and those series fall back to the series colours above."
+                label="Semantic Colors"
+                docs="Rising, falling and unchanged values, such as prices in candlestick, OHLC and HLC series. A palette that leaves these unset is treated as an indexed one, and those series fall back to the series colours above."
             >
                 <Rows>
                     <ColumnHeadings gutter={ACCENT_LABEL_WIDTH} showStrokes={showStrokes} />

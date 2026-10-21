@@ -2,6 +2,7 @@ import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
 
 import type { GridApi, GridState, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
+import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 describe('StateService - Grid State Management', () => {
@@ -29,6 +30,30 @@ describe('StateService - Grid State Management', () => {
 
     // ===== COLUMN STATE TESTS =====
     describe('Column State', () => {
+        test('column order applied through state does not animate the columns, unlike a column move', async () => {
+            let initialised!: () => void;
+            const initialState = new Promise<void>((resolve) => (initialised = resolve));
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: defaultColumnDefs,
+                rowData: defaultRowData,
+                onStateUpdated: ({ sources }) => {
+                    if (sources.includes('gridInitializing')) {
+                        initialised();
+                    }
+                },
+            });
+            await initialState;
+            const animating = () => !!getGridElement(api)!.querySelector('.ag-column-moving');
+            api.moveColumns(['id'], 1);
+            expect(animating()).toBe(true);
+            await waitFor(() => expect(animating()).toBe(false));
+
+            api.setState({ columnOrder: { orderedColIds: ['sport', 'age', 'name', 'id'] } });
+
+            expect(animating()).toBe(false);
+            expect(api.getColumnState().map(({ colId }) => colId)).toEqual(['sport', 'age', 'name', 'id']);
+        });
+
         test('should capture column order state', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: defaultColumnDefs,
@@ -1045,8 +1070,7 @@ describe('StateService - Grid State Management', () => {
         });
 
         test('CSRM: getState reflects new node IDs after group column change via setGridOption', async () => {
-            // columnRowGroupChanged fires while changeEventsDispatching=true (before CSRM re-groups),
-            // so expansion state must be refreshed on newColumnsLoaded instead.
+            // expansion state is cached by node id, which a re-group from new column definitions changes
             const api = gridsManager.createGrid('csrmRegroup', {
                 columnDefs: [
                     { field: 'sport', rowGroup: true, hide: true },
@@ -1136,7 +1160,33 @@ describe('StateService - Grid State Management', () => {
 
             // Cached state must reflect the new name-based IDs, not stale sport-based IDs
             const expansion = api.getState().rowGroupExpansion;
-            expect(expansion?.expandedRowGroupIds).not.toContain('row-group-sport-Football');
+            expect(expansion?.expandedRowGroupIds ?? []).toEqual([]);
+        });
+
+        test('CSRM: getState reports the groups groupDefaultExpanded opens once the row groups change', async () => {
+            const api = gridsManager.createGrid('csrmDefaultExpanded', {
+                columnDefs: [{ field: 'sport', hide: true }, { field: 'name' }],
+                rowData: defaultRowData.slice(0, 3),
+                getRowId: ({ data }) => data.id,
+                groupDefaultExpanded: -1,
+            });
+            expect(api.getState().rowGroupExpansion?.expandedRowGroupIds ?? []).toEqual([]);
+
+            api.setRowGroupColumns(['sport']);
+            await new GridRows(api, 'grouped by sport').check(`
+                ROOT id:ROOT_NODE_ID
+                ├─┬ LEAF_GROUP id:row-group-sport-Football ag-Grid-AutoColumn:"Football"
+                │ └── LEAF id:1 sport:"Football" name:"Alice"
+                ├─┬ LEAF_GROUP id:row-group-sport-Tennis ag-Grid-AutoColumn:"Tennis"
+                │ └── LEAF id:2 sport:"Tennis" name:"Bob"
+                └─┬ LEAF_GROUP id:row-group-sport-Golf ag-Grid-AutoColumn:"Golf"
+                · └── LEAF id:3 sport:"Golf" name:"Charlie"
+            `);
+            expect(api.getState().rowGroupExpansion?.expandedRowGroupIds).toEqual([
+                'row-group-sport-Football',
+                'row-group-sport-Tennis',
+                'row-group-sport-Golf',
+            ]);
         });
 
         test('should capture pagination state', async () => {
@@ -1445,6 +1495,86 @@ describe('StateService - Grid State Management', () => {
             await asyncSetTimeout(10);
 
             expect(sources.every((s) => s === 'columnFilter')).toBe(true);
+        });
+
+        describe('a filter set before row data is first provided lands after the initial state filter', () => {
+            const columnDefs = [
+                { field: 'name', filter: 'agTextColumnFilter' },
+                { field: 'age', filter: 'agNumberColumnFilter' },
+            ];
+            const namesA = { name: { filterType: 'text', type: 'startsWith', filter: 'A' } };
+
+            test('setFilterModel(null) clears it', async () => {
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    initialState: { filter: { filterModel: namesA } },
+                });
+                api.setFilterModel(null);
+                api.setGridOption('rowData', defaultRowData);
+                await new GridRows(api, 'initial state filter cleared').check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 name:"Alice" age:30
+                    ├── LEAF id:1 name:"Bob" age:25
+                    ├── LEAF id:2 name:"Charlie" age:35
+                    ├── LEAF id:3 name:"David" age:28
+                    └── LEAF id:4 name:"Eve" age:32
+                `);
+                expect(api.getFilterModel()).toEqual({});
+            });
+
+            test('setColumnFilterModel adds to it', async () => {
+                const age = { filterType: 'number', type: 'greaterThan', filter: 29 };
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    initialState: { filter: { filterModel: namesA } },
+                });
+                void api.setColumnFilterModel('age', age);
+                api.setGridOption('rowData', [...defaultRowData, { id: '6', name: 'Amy', age: 20, sport: 'Golf' }]);
+                await new GridRows(api, 'initial state and column filters both applied').check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 name:"Alice" age:30
+                `);
+                expect(api.getFilterModel()).toEqual({ ...namesA, age });
+            });
+
+            test('setState replaces it', async () => {
+                const filterModel = { age: { filterType: 'number', type: 'greaterThan', filter: 31 } };
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    initialState: { filter: { filterModel: namesA } },
+                });
+                api.setState({ filter: { filterModel } });
+                api.setGridOption('rowData', defaultRowData);
+                await new GridRows(api, 'restored state applied').check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:2 name:"Charlie" age:35
+                    └── LEAF id:4 name:"Eve" age:32
+                `);
+                expect(api.getFilterModel()).toEqual(filterModel);
+            });
+
+            test('setAdvancedFilterModel(null) clears it', async () => {
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    enableAdvancedFilter: true,
+                    initialState: {
+                        filter: {
+                            advancedFilterModel: { filterType: 'text', colId: 'name', type: 'startsWith', filter: 'A' },
+                        },
+                    },
+                });
+                api.setAdvancedFilterModel(null);
+                api.setGridOption('rowData', defaultRowData);
+                await new GridRows(api, 'initial state advanced filter cleared').check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 name:"Alice" age:30
+                    ├── LEAF id:1 name:"Bob" age:25
+                    ├── LEAF id:2 name:"Charlie" age:35
+                    ├── LEAF id:3 name:"David" age:28
+                    └── LEAF id:4 name:"Eve" age:32
+                `);
+                expect(api.getAdvancedFilterModel()).toBeNull();
+            });
         });
     });
 

@@ -73,7 +73,7 @@ export class TabbedChartMenu extends Component<TabbedChartMenuEvent> {
             bodyPromise: AgPromise.resolve(eWrapperDiv),
             getScrollableContainer: () => {
                 const scrollableContainer = eWrapperDiv.querySelector('.ag-scrollable-container');
-                return (scrollableContainer || eWrapperDiv) as HTMLElement;
+                return (scrollableContainer ?? eWrapperDiv) as HTMLElement;
             },
             name,
         };

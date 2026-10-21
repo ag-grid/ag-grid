@@ -343,6 +343,10 @@ export const AG_GRID_LOCALE_FIL_PH = {
     enabled: 'Naka-enable',
 
     // Menu
+    moveLeft: 'Ilipat pakaliwa',
+    moveRight: 'Ilipat pakanan',
+    moveUp: 'Ilipat pataas',
+    moveDown: 'Ilipat pababa',
     pinColumn: 'I-pin ang Column',
     pinLeft: 'I-pin sa Kaliwa',
     pinRight: 'I-pin sa Kanan',
@@ -784,6 +788,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaRowSelect: 'Pindutin ang SPACE para piliin ang row na ito',
     ariaRowSelectionDisabled: 'Naka-disable ang Pagpili ng Row para sa row na ito',
     ariaSearch: 'Maghanap',
+    ariaSortPriority: 'Priyoridad sa pag-uuri ${priority} sa ${count}',
     ariaSortableColumn: 'Pindutin ang ENTER para mag-sort',
     ariaSortableColumnWithCellSelection: 'Pindutin ang ALT ENTER para mag-sort',
     ariaToggleVisibility: 'Pindutin ang SPACE para i-toggle ang visibility',
@@ -921,9 +926,11 @@ export const AG_GRID_LOCALE_FIL_PH = {
     columnHeaderEditCancel: 'Kanselahin',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Walang nakitang angkop na column.',
     calculatedColumn: 'Kinalkulang Column',
     calculatedColumnAdd: 'Magdagdag ng Kinalkulang Column',
     calculatedColumnEdit: 'I-edit ang Kinalkulang Column',
+    calculatedColumnView: 'Tingnan ang Kinalkulang Column',
     calculatedColumnRemove: 'Alisin ang Kinalkulang Column',
     calculatedColumnTitle: 'Pamagat',
     calculatedColumnType: 'Uri',

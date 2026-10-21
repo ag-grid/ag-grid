@@ -341,6 +341,10 @@ export const AG_GRID_LOCALE_MS_MY = {
     enabled: 'Diaktifkan',
 
     // Menu
+    moveLeft: 'Alih ke Kiri',
+    moveRight: 'Alih ke Kanan',
+    moveUp: 'Alih ke Atas',
+    moveDown: 'Alih ke Bawah',
     pinColumn: 'Sematkan Lajur',
     pinLeft: 'Sematkan Kiri',
     pinRight: 'Sematkan Kanan',
@@ -780,6 +784,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaRowSelect: 'Tekan SPACE untuk memilih baris ini',
     ariaRowSelectionDisabled: 'Pemilihan Baris dilumpuhkan untuk baris ini',
     ariaSearch: 'Cari',
+    ariaSortPriority: 'Keutamaan pengisihan ${priority} daripada ${count}',
     ariaSortableColumn: 'Tekan ENTER untuk isih',
     ariaSortableColumnWithCellSelection: 'Tekan ALT ENTER untuk isih',
     ariaToggleVisibility: 'Tekan SPACE untuk menogol keterlihatan',
@@ -917,9 +922,11 @@ export const AG_GRID_LOCALE_MS_MY = {
     columnHeaderEditCancel: 'Batal',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Tiada lajur yang layak ditemui.',
     calculatedColumn: 'Lajur Dikira',
     calculatedColumnAdd: 'Tambah Lajur Dikira',
     calculatedColumnEdit: 'Sunting Lajur Dikira',
+    calculatedColumnView: 'Lihat Lajur Dikira',
     calculatedColumnRemove: 'Buang Lajur Dikira',
     calculatedColumnTitle: 'Tajuk',
     calculatedColumnType: 'Jenis',

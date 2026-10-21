@@ -603,34 +603,7 @@ describe("a built-in filter given the author's `handler` or `doesFilterPass`", (
         );
     });
 
-    test("the filter named by `component` takes its data type's params, with filter handlers or without", async () => {
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [335] });
-        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-        const dates = await gridsManager.createGridAndWait('grid', {
-            columnDefs: [
-                {
-                    field: 'when',
-                    cellDataType: 'dateString',
-                    filter: { component: 'agDateColumnFilter', doesFilterPass: () => true },
-                    filterParams: { inRangeInclusive: true },
-                },
-            ],
-            rowData: ROWS,
-        });
-        await dates.setColumnFilterModel('when', {
-            filterType: 'date',
-            type: 'inRange',
-            dateFrom: '2008-08-24',
-            dateTo: '2012-08-05',
-        });
-        dates.onFilterChanged();
-        await asyncSetTimeout(0);
-        // the strings compare only through the data type's comparator
-        expect(displayedIds(dates)).toEqual([0, 1, 2]);
-        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #335');
-        warnSpy.mockRestore();
-        gridsManager.reset();
-
+    test("the filter named by `component` takes its data type's params", async () => {
         const labels: Record<string, string[]> = {};
         for (const form of Object.keys(FORMS) as Form[]) {
             const amounts = await gridsManager.createGridAndWait('grid', {
@@ -765,23 +738,41 @@ describe("a built-in filter given the author's `handler` or `doesFilterPass`", (
         expect(displayedIds(api)).toEqual([1]);
     });
 
-    test('without filter handlers, the logic is warned about and the component is the filter', async () => {
+    test('without filter handlers, the logic is warned about and the default filter is built', async () => {
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [335] });
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const init = vi.fn();
+        // the form takes a display component, which reports through `onModelChange` a filter without handlers lacks
+        class DisplayComponent {
+            public init = init;
+            public getGui = () => document.createElement('div');
+        }
         const api = await gridsManager.createGridAndWait('grid', {
+            ...SET_FILTER_NOT_DEFAULT,
             columnDefs: [
-                { field: 'id' },
-                { field: 'country', filter: { component: 'agTextColumnFilter', doesFilterPass: evenIds } },
+                {
+                    field: 'when',
+                    cellDataType: 'dateString',
+                    filter: { component: DisplayComponent, doesFilterPass: evenIds },
+                    filterParams: { inRangeInclusive: true },
+                },
             ],
             rowData: ROWS,
         });
-        await api.setColumnFilterModel('country', { filterType: 'text', type: 'equals', filter: 'Italy' });
+        await api.setColumnFilterModel('when', {
+            filterType: 'date',
+            type: 'inRange',
+            dateFrom: '2008-08-24',
+            dateTo: '2012-08-05',
+        });
         api.onFilterChanged();
         await asyncSetTimeout(0);
-        expect(displayedIds(api)).toEqual([1]);
-        await openPanel(api);
-        expect(document.querySelector('.ag-filter-menu .ag-filter-body input[type="text"]')).not.toBeNull();
+        // the strings compare only through the data type's comparator
+        expect(displayedIds(api)).toEqual([0, 1, 2]);
+        api.showColumnFilter('when');
+        await asyncSetTimeout(0);
+        expect(document.querySelector('.ag-filter-menu .ag-date-filter input')).not.toBeNull();
+        expect(init).not.toHaveBeenCalled();
         expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #335');
-        warnSpy.mockRestore();
     });
 });

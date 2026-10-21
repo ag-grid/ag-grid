@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_HI_IN = {
     enabled: 'सक्षम',
 
     // Menu
+    moveLeft: 'बाएँ ले जाएँ',
+    moveRight: 'दाएँ ले जाएँ',
+    moveUp: 'ऊपर ले जाएँ',
+    moveDown: 'नीचे ले जाएँ',
     pinColumn: 'कॉलम पिन करें',
     pinLeft: 'बाएं पिन करें',
     pinRight: 'दाएं पिन करें',
@@ -778,6 +782,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaRowSelect: 'इस रो को चुनने के लिए SPACE दबाएं',
     ariaRowSelectionDisabled: 'इस रो के लिए रो चयन अक्षम है',
     ariaSearch: 'खोजें',
+    ariaSortPriority: 'क्रमबद्ध करने की प्राथमिकता ${count} में से ${priority}',
     ariaSortableColumn: 'क्रमबद्ध करने के लिए ENTER दबाएं',
     ariaSortableColumnWithCellSelection: 'क्रमबद्ध करने के लिए ALT ENTER दबाएं',
     ariaToggleVisibility: 'दृश्यता टॉगल करने के लिए SPACE दबाएं',
@@ -915,9 +920,11 @@ export const AG_GRID_LOCALE_HI_IN = {
     columnHeaderEditCancel: 'रद्द करें',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'कोई उपयुक्त कॉलम नहीं मिला।',
     calculatedColumn: 'गणना किया गया कॉलम',
     calculatedColumnAdd: 'गणना किया गया कॉलम जोड़ें',
     calculatedColumnEdit: 'गणना किया गया कॉलम संपादित करें',
+    calculatedColumnView: 'गणना किया गया कॉलम देखें',
     calculatedColumnRemove: 'गणना किया गया कॉलम हटाएं',
     calculatedColumnTitle: 'शीर्षक',
     calculatedColumnType: 'प्रकार',

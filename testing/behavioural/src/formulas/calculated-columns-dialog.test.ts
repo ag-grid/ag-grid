@@ -3,7 +3,7 @@ import '@testing-library/jest-dom/vitest';
 import { GridColumns, GridRows, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
-import type { ColGroupDef } from 'ag-grid-community';
+import type { ColGroupDef, IsColumnReferenceableParams } from 'ag-grid-community';
 
 import {
     clickDialogButton,
@@ -327,14 +327,17 @@ describe('ag-grid calculated columns', () => {
     );
 
     test.each(['live', 'deferred'] as const)(
-        'a new %s column callback receives no calculated column',
+        'the %s reference callback receives the current column and a creation-only source column',
         async (applyMode) => {
-            const referenceable = vi.fn(() => true);
+            const referenceable = vi.fn(
+                ({ column, sourceColumn, calculatedColumn }: IsColumnReferenceableParams) =>
+                    column === sourceColumn || calculatedColumn?.getColId() === 'calculated_1'
+            );
             const api = createGrid('calculated-reference-callback-context', {
                 calculatedColumns: { applyMode, isColumnReferenceable: referenceable },
                 context: { key: 'context' },
-                columnDefs: [{ field: 'revenue' }],
-                rowData: [{ id: 'r1', revenue: 10 }],
+                columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+                rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             });
             showColumnMenu(api, 'revenue');
             await clickMenuOption('Add Calculated Column');
@@ -344,9 +347,28 @@ describe('ag-grid calculated columns', () => {
                     context: { key: 'context' },
                     colDef: expect.objectContaining({ field: 'revenue' }),
                     column: api.getColumn('revenue'),
-                    calculatedColumn: null,
                 })
             );
+            const params = referenceable.mock.calls[0][0];
+            expect(params.calculatedColumn?.getColId() ?? null).toBe(applyMode === 'live' ? 'calculated_1' : null);
+            expect(params.sourceColumn).toBe(api.getColumn('revenue'));
+            clickDialogButton('Columns');
+            expect(getSuggestionLabels()).toEqual(applyMode === 'live' ? ['Revenue', 'Cost'] : ['Revenue']);
+
+            setExpression('[Revenue]');
+            if (applyMode === 'deferred') {
+                clickDialogButton('Apply');
+            } else {
+                document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+            }
+            referenceable.mockClear();
+            await openEditDialogViaMenu(api, 'calculated_1');
+            for (const [params] of referenceable.mock.calls) {
+                expect(params.calculatedColumn).toBe(api.getColumn('calculated_1'));
+                expect(params.sourceColumn).toBeNull();
+            }
+            clickDialogButton('Columns');
+            expect(getSuggestionLabels()).toEqual(['Revenue', 'Cost']);
         }
     );
 
@@ -367,7 +389,11 @@ describe('ag-grid calculated columns', () => {
                 { colId: 'bonus', headerName: 'Bonus', calculatedExpression: expression, cellDataType: 'number' },
             ],
             rowData: [{ id: 'r1', salary: 100, revenue: 20 }],
-            onCalculatedColumnExpressionChanged: changed,
+            onCalculatedColumnChanged: (event) => {
+                if (event.changes.calculatedExpression) {
+                    changed(event);
+                }
+            },
         });
         api.setGridOption('calculatedColumns', {
             applyMode,
@@ -453,16 +479,32 @@ describe('ag-grid calculated columns', () => {
         }
     });
 
-    test('an all-restricted Columns picker opens without an active option', async () => {
+    test('an all-restricted Columns picker shows and announces its empty state', async () => {
         const api = createGrid('calculated-empty-suggestions', {
             calculatedColumns: { isColumnReferenceable: () => false },
             columnDefs: [{ field: 'revenue' }, { colId: 'profit', calculatedExpression: '[revenue]' }],
             rowData: [{ id: 'r1', revenue: 10 }],
         });
         await openEditDialogViaMenu(api, 'profit');
-        clickDialogButton('Columns');
         const button = getDialogButton('Columns');
+        button.focus();
+        clickDialogButton('Columns');
         const list = document.getElementById(button.getAttribute('aria-controls')!)!;
+        const message = 'No eligible columns found.';
+        const placeholder = document.querySelector<HTMLElement>('.ag-calculated-column-empty-message')!;
+        expect(placeholder).toBeVisible();
+        expect(placeholder).toHaveTextContent(message);
+        await waitFor(() =>
+            expect(document.querySelector('.ag-root-wrapper > .ag-aria-description-container')).toHaveTextContent(
+                message
+            )
+        );
+        expect(button).toHaveFocus();
+        const mouseDown = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+        placeholder.dispatchEvent(mouseDown);
+        expect(mouseDown.defaultPrevented).toBe(true);
+        placeholder.click();
+        expect(button).toHaveFocus();
         expect(button).toHaveAttribute('aria-expanded', 'true');
         expect(list).toHaveAttribute('role', 'listbox');
         expect(list.querySelectorAll('[role="option"]')).toHaveLength(0);
@@ -473,6 +515,24 @@ describe('ag-grid calculated columns', () => {
         button.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
         expect(button).toHaveAttribute('aria-expanded', 'false');
         expect(getCalculatedColumnDialog()).toBeInTheDocument();
+        for (const picker of ['Functions', 'Operators']) {
+            clickDialogButton(picker);
+            expect(document.querySelector('.ag-calculated-column-empty-message')).toBeNull();
+            expect(document.querySelectorAll('.ag-autocomplete-list [role="option"]').length).toBeGreaterThan(0);
+        }
+    });
+
+    test('the Columns picker shows an empty state when there are no other columns', async () => {
+        const api = createGrid('calculated-no-source-columns', {
+            columnDefs: [{ colId: 'constant', calculatedExpression: '1' }],
+            rowData: [{ id: 'r1' }],
+        });
+        await openEditDialogViaMenu(api, 'constant');
+        clickDialogButton('Columns');
+        expect(document.querySelector('.ag-calculated-column-empty-message')).toHaveTextContent(
+            'No eligible columns found.'
+        );
+        expect(document.querySelectorAll('.ag-autocomplete-list [role="option"]')).toHaveLength(0);
     });
 
     test('reopening reads application state without changing duplicate-header references', async () => {

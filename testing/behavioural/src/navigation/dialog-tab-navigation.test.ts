@@ -176,6 +176,23 @@ describe('Dialog tab navigation', () => {
         await waitFor(() => expect(after).toHaveFocus());
     });
 
+    test('routes the bottom dialog guard to the checked radio of a group after the grid', async () => {
+        const { after, dialog } = await createFocusFixture();
+        const [unchecked, checked] = ['first', 'second'].map((value) => {
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.name = 'after-grid';
+            radio.value = value;
+            return radio;
+        });
+        checked.checked = true;
+        after.before(unchecked, checked);
+
+        dialog.querySelector<HTMLElement>(':scope > .ag-tab-guard-bottom')!.focus();
+
+        await waitFor(() => expect(checked).toHaveFocus());
+    });
+
     test.each([false, true])(
         'routes the last dialog tab stop outside the grid with the default popup parent (pagination: %s)',
         async (pagination) => {

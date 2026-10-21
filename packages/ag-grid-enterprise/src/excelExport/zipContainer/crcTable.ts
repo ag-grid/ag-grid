@@ -4,12 +4,24 @@ const getCrcFromCrc32TableAndByteArray = (content: Uint8Array): number => {
     }
 
     let crc = 0 ^ -1;
+    const length = content.length;
+    let i = 0;
 
-    for (let i = 0; i < content.length; i++) {
-        const j = content[i];
-        const k = (crc ^ j) & 0xff;
-        const l = crcTable[k];
-        crc = (crc >>> 8) ^ l;
+    // Slicing by eight breaks the byte-at-a-time dependency chain for large XML parts.
+    for (; i + 8 <= length; i += 8) {
+        crc ^= content[i] | (content[i + 1] << 8) | (content[i + 2] << 16) | (content[i + 3] << 24);
+        crc =
+            crcTables[0x700 + (crc & 0xff)] ^
+            crcTables[0x600 + ((crc >>> 8) & 0xff)] ^
+            crcTables[0x500 + ((crc >>> 16) & 0xff)] ^
+            crcTables[0x400 + (crc >>> 24)] ^
+            crcTables[0x300 + content[i + 4]] ^
+            crcTables[0x200 + content[i + 5]] ^
+            crcTables[0x100 + content[i + 6]] ^
+            crcTables[content[i + 7]];
+    }
+    for (; i < length; ++i) {
+        crc = (crc >>> 8) ^ crcTable[(crc ^ content[i]) & 0xff];
     }
 
     return crc ^ -1;
@@ -60,3 +72,15 @@ const crcTable = /* #__PURE__ */ new Uint32Array([
     0x24b4a3a6, 0xbad03605, 0xcdd70693, 0x54de5729, 0x23d967bf, 0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94,
     0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d,
 ]);
+
+const crcTables = /* #__PURE__ */ (() => {
+    const tables = new Uint32Array(8 * 256);
+    tables.set(crcTable);
+    for (let table = 1; table < 8; ++table) {
+        for (let i = 0; i < 256; ++i) {
+            const previous = tables[(table - 1) * 256 + i];
+            tables[table * 256 + i] = (previous >>> 8) ^ crcTable[previous & 0xff];
+        }
+    }
+    return tables;
+})();

@@ -64,7 +64,7 @@ function getSnykFiles(dir, found = []) {
 }
 
 // Parse ignore paths from a single .snyk YAML file (regex-based, zero dependencies).
-// Returns: { [vulnId]: Array<{ path: string, reason: string }> }
+// Returns: { [vulnId]: Array<{ path: string, reason: string, expires?: string }> }
 // Handles both quoted and unquoted paths, and inline or block-scalar (>-) reasons.
 function parseSnykIgnorePaths(content) {
     const result = {};
@@ -106,7 +106,10 @@ function parseSnykIgnorePaths(content) {
                 const reasonInline = line.match(/^(\s+)reason:\s+([^>|].+)$/);
                 // Block scalar reason: "    reason: >-"
                 const reasonBlock = line.match(/^(\s+)reason:\s*[>|][+-]?\s*$/);
-                if (reasonInline) {
+                const expiresMatch = line.match(/^\s+expires:\s*['"]?([^'"\s]+)/);
+                if (expiresMatch) {
+                    currentPath.expires = expiresMatch[1];
+                } else if (reasonInline) {
                     currentPath.reason = reasonInline[2].trim().replace(/^['"]|['"]$/g, '');
                 } else if (reasonBlock) {
                     blockReasonIndent = reasonBlock[1].length;
@@ -615,6 +618,24 @@ const server = createServer((req, res) => {
                 addSnykIgnoreEntry(snykFile, vulnId, depPath, reason, expires);
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ ok: true }));
+            } catch (err) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ ok: false, error: err.message }));
+            }
+        });
+        return;
+    }
+
+    // ── add-snyk-ignores endpoint (batch of add-snyk-ignore entries) ──
+    if (req.method === 'POST' && url.pathname === '/add-snyk-ignores') {
+        readBody(req).then(body => {
+            try {
+                const { entries } = JSON.parse(body);
+                for (const { snykFile, vulnId, path: depPath, reason, expires } of (entries || [])) {
+                    addSnykIgnoreEntry(snykFile, vulnId, depPath, reason, expires);
+                }
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ ok: true, added: entries?.length ?? 0 }));
             } catch (err) {
                 res.writeHead(400, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ ok: false, error: err.message }));

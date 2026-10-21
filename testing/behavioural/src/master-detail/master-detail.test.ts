@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import {
     ALL_SEVERITIES,
     GridColumns,
@@ -8,15 +9,22 @@ import {
     setRowDataChecked,
     waitForEvent,
 } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import type { MockInstance } from 'vitest';
 
-import type { GetDetailRowDataParams, GetRowIdParams, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-community';
+import type { GetDetailRowDataParams, GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    RowAutoHeightModule,
+    enableDevValidations,
+    getGridElement,
+} from 'ag-grid-community';
 import { MasterDetailModule } from 'ag-grid-enterprise';
 
 describe('ag-grid master detail', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, MasterDetailModule],
+        modules: [ClientSideRowModelModule, ColumnApiModule, MasterDetailModule, RowAutoHeightModule],
     });
     let consoleErrorSpy: MockInstance | undefined;
     let consoleWarnSpy: MockInstance | undefined;
@@ -450,5 +458,128 @@ describe('ag-grid master detail', () => {
         await asyncSetTimeout(0);
 
         expect(consoleWarnSpy).not.toHaveBeenCalled();
+    });
+    test('a detail row kept while collapsed is shown again sized to the columns as they are now', async () => {
+        const details: HTMLElement[] = [];
+        class Detail {
+            private readonly eGui = document.createElement('div');
+            constructor() {
+                details.push(this.eGui);
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                return true;
+            }
+        }
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'l', pinned: 'left', width: 100 },
+                { field: 'v', width: 200 },
+            ],
+            rowData: [{ id: '1', l: 'x', v: 'y' }],
+            getRowId: (params) => params.data.id,
+            masterDetail: true,
+            isRowMaster: () => true,
+            detailCellRenderer: Detail,
+            keepDetailRows: true,
+            embedFullWidthRows: true,
+        });
+        const sectionWidths = () =>
+            ['ag-grid-pinned-left-cells', 'ag-grid-scrolling-cells', 'ag-grid-pinned-right-cells'].map(
+                (section) =>
+                    getGridElement(api)!.querySelector<HTMLElement>(`.ag-full-width-row .${section}`)?.style.width
+            );
+        const master = api.getRowNode('1')!;
+
+        master.setExpanded(true);
+        await asyncSetTimeout(0);
+        expect(sectionWidths()).toEqual(['0px', '300px', '0px']);
+        const built = details.length;
+
+        master.setExpanded(false);
+        await asyncSetTimeout(0);
+        api.setColumnWidths([{ key: 'l', newWidth: 150 }]);
+        master.setExpanded(true);
+        await asyncSetTimeout(0);
+        expect(sectionWidths()).toEqual(['0px', '350px', '0px']);
+        // the kept row is shown again, not built anew
+        expect(details.length).toBe(built);
+        expect(getGridElement(api)!.querySelector('.ag-full-width-row')!.contains(details[0])).toBe(true);
+
+        // a column refresh lays the hidden row out too
+        master.setExpanded(false);
+        await asyncSetTimeout(0);
+        api.setColumnsVisible(['v'], false);
+        master.setExpanded(true);
+        await asyncSetTimeout(0);
+        expect(sectionWidths()).toEqual(['0px', '150px', '0px']);
+        expect(details.length).toBe(built);
+    });
+
+    // The detail sizes itself to its grid: working the row heights out again must not put it back to its placeholder.
+    describe('an auto-height detail row', () => {
+        const DETAIL_HEIGHT = 150;
+        const TALL_CELL_HEIGHT = 60;
+
+        beforeAll(() => {
+            mockGridLayout.useRealOffsetDimensions = true;
+            mockGridLayout.elementHeightOverride = (el) => {
+                if (el.classList.contains('ag-details-row')) {
+                    return DETAIL_HEIGHT;
+                }
+                return el.classList.contains('ag-cell-wrapper') && el.closest('[col-id="tall"]')
+                    ? TALL_CELL_HEIGHT
+                    : undefined;
+            };
+        });
+
+        afterAll(() => {
+            mockGridLayout.resetOptions();
+        });
+
+        const createAutoHeightDetailGrid = async (columnDefs: GridOptions['columnDefs'] = [{ field: 'k' }]) => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                masterDetail: true,
+                detailRowAutoHeight: true,
+                rowData: [{ k: '1', records: [{ x: 'a' }] }],
+                detailCellRendererParams: {
+                    detailGridOptions: { columnDefs: [{ field: 'x' }] },
+                    getDetailRowData: (params: GetDetailRowDataParams) => params.successCallback(params.data.records),
+                },
+            });
+            api.getDisplayedRowAtIndex(0)!.setExpanded(true);
+            const detailHeight = () => api.getDisplayedRowAtIndex(1)!.rowHeight!;
+            await waitFor(() => expect(detailHeight()).toBeGreaterThanOrEqual(DETAIL_HEIGHT));
+            return { api, detailHeight, measured: detailHeight() };
+        };
+
+        test.each([
+            ['a rowHeight change', (api: GridApi) => api.setGridOption('rowHeight', 30)],
+            ['resetRowHeights', (api: GridApi) => api.resetRowHeights()],
+        ])('keeps its measured height through %s', async (_name, workHeightsOut) => {
+            const { api, detailHeight, measured } = await createAutoHeightDetailGrid();
+
+            workHeightsOut(api);
+            await asyncSetTimeout(0);
+
+            expect(detailHeight()).toBe(measured);
+        });
+
+        test('keeps its measured height when the last auto-height column of the master grid goes', async () => {
+            const { api, detailHeight, measured } = await createAutoHeightDetailGrid([
+                { field: 'k' },
+                { colId: 'tall', autoHeight: true },
+            ]);
+            const masterHeight = () => api.getDisplayedRowAtIndex(0)!.rowHeight;
+            await waitFor(() => expect(masterHeight()).toBe(TALL_CELL_HEIGHT));
+
+            api.setColumnsVisible(['tall'], false);
+            await waitFor(() => expect(masterHeight()).toBe(42));
+
+            expect(detailHeight()).toBe(measured);
+        });
     });
 });

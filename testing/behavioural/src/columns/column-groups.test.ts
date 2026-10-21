@@ -1,4 +1,5 @@
 import { waitFor } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, ColGroupDef, ColumnGroup, GridApi } from 'ag-grid-community';
@@ -94,6 +95,43 @@ describe('Column Groups', () => {
                 ])
             );
         });
+    });
+
+    test("a centre group's label is sticky while the group is scrolled part out, as it scrolls and as it resizes", async () => {
+        const api = gridsManager.createGrid('sticky-label', {
+            columnDefs: [
+                { colId: 'a', width: 200 },
+                { headerName: 'G', children: [{ colId: 'g1' }, { colId: 'g2' }] },
+                { colId: 'z' },
+            ],
+            defaultColDef: { width: 500 },
+            rowData: [{}],
+        });
+        await asyncSetTimeout(0);
+        const sticky = () =>
+            Array.from(document.querySelectorAll('.ag-header-group-text'))
+                .find((text) => text.textContent === 'G')!
+                .closest('.ag-header-group-cell-label')!
+                .classList.contains('ag-sticky-label');
+        const seen: boolean[] = [sticky()];
+
+        api.ensureColumnVisible('z');
+        await asyncSetTimeout(0);
+        seen.push(sticky());
+
+        api.setColumnWidths([{ key: 'a', newWidth: 900 }]);
+        await asyncSetTimeout(0);
+        seen.push(sticky());
+
+        api.setColumnWidths([{ key: 'a', newWidth: 200 }]);
+        await asyncSetTimeout(0);
+        seen.push(sticky());
+
+        api.ensureColumnVisible('a');
+        await asyncSetTimeout(0);
+        seen.push(sticky());
+
+        expect(seen).toEqual([false, true, false, true, false]);
     });
 
     describe('empty groups stay findable (matches released behaviour)', () => {
@@ -1030,6 +1068,48 @@ describe('Column Groups', () => {
     });
 
     describe('groups with pinned columns', () => {
+        test.each([
+            { pinned: 'left', keepPinnedVisible: false },
+            { pinned: 'right', keepPinnedVisible: false },
+            { pinned: 'left', keepPinnedVisible: true },
+            { pinned: 'right', keepPinnedVisible: true },
+        ] as const)(
+            'Enter keeps group focus (pinned=$pinned, keepPinnedVisible=$keepPinnedVisible)',
+            async ({ pinned, keepPinnedVisible }) => {
+                const api = await gridsManager.createGridAndWait('groupFocus', {
+                    columnDefs: [
+                        {
+                            groupId: 'medals',
+                            headerName: 'Medals',
+                            children: [
+                                { field: 'total', columnGroupShow: 'closed', pinned },
+                                { field: 'bronze', columnGroupShow: 'open', width: 100, flex: 0 },
+                                ...(keepPinnedVisible ? [{ field: 'silver', pinned }] : []),
+                            ],
+                        },
+                        { field: 'year' },
+                    ],
+                    rowData: [{ total: 3, bronze: 1, year: 2000 }],
+                });
+                api.setFocusedHeader(api.getColumnGroup('medals')!);
+                const originalHeader = document.activeElement;
+                expect(document.activeElement?.textContent).toContain('Medals');
+                const user = userEvent.setup();
+                for (const expanded of [true, false]) {
+                    await user.keyboard('{Enter}');
+                    expect(api.getColumnGroupState().find((group) => group.groupId === 'medals')?.open).toBe(expanded);
+                    await waitFor(() => {
+                        expect(document.activeElement?.classList.contains('ag-header-group-cell')).toBe(true);
+                        expect(document.activeElement?.textContent).toContain('Medals');
+                        expect(document.activeElement?.getAttribute('aria-expanded')).toBe(String(expanded));
+                        if (keepPinnedVisible) {
+                            expect(document.activeElement).toBe(originalHeader);
+                        }
+                    });
+                }
+            }
+        );
+
         test('group children in left pinned section', async () => {
             const columnDefs: (ColDef | ColGroupDef)[] = [
                 {

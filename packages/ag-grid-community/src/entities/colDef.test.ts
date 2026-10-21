@@ -257,9 +257,8 @@ describe('ColDef.field Types', () => {
                 ? never
                 : TData[TKey] extends any[] | undefined
                   ? (TData[TKey] extends TValue ? `${TKey}` : never) | `${TKey}.${number}`
-                  :
-                        | (TData[TKey] extends TValue ? `${TKey}` : never)
-                        | NestedPath<TData[TKey], `${TKey}`, TValue, [...TDepth, any]>;
+                  : | (TData[TKey] extends TValue ? `${TKey}` : never)
+                    | NestedPath<TData[TKey], `${TKey}`, TValue, [...TDepth, any]>;
         }[StringOrNumKeys<TData>];
 
         type Extends<A, B> = [A] extends [B] ? true : false;

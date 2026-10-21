@@ -10,16 +10,19 @@
 .bundles,
 .charts {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
 
     .label {
+        flex-shrink: 0;
         width: 100px;
         font-weight: var(--text-semibold);
     }
 
     > div {
         display: flex;
-        gap: $spacing-size-8;
+        flex-wrap: wrap;
+        column-gap: $spacing-size-8;
+        row-gap: $spacing-size-2;
         margin-left: $spacing-size-3;
     }
 
@@ -29,9 +32,15 @@
         align-items: center;
         gap: 6px;
     }
+
+    input {
+        flex-shrink: 0;
+    }
 }
 
 .enterpriseIcon {
     --icon-size: var(--text-fs-lg);
     --icon-color: var(--color-enterprise-icon);
+
+    flex-shrink: 0;
 }

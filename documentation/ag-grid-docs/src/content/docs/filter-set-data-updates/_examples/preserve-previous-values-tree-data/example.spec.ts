@@ -17,7 +17,7 @@ test.agExample(import.meta, () => {
         await expect(closed).toHaveCount(0);
     };
 
-    test.eachFramework('a file no longer in the data stays in its folder, muted', async ({ page }) => {
+    test.eachFramework('a file no longer in the data stays in its folder, marked', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
@@ -30,11 +30,11 @@ test.agExample(import.meta, () => {
         await expect(filterItem(page, 'beach.jpg').locator('input')).not.toBeChecked();
         await expect(filterItem(page, 'Pictures')).not.toHaveClass(/ag-set-filter-item-missing/);
         await expect(filterItem(page, 'Archive/old.zip')).toHaveClass(/ag-set-filter-item-missing/);
-        await expect(filterItem(page, 'Archive/old.zip')).toHaveClass(/ag-set-filter-indent-0/);
+        await expect(filterItem(page, 'Archive/old.zip')).toHaveClass(/ag-set-filter-add-group-indent/);
         await expect(filterItem(page, 'Archive/old.zip').locator('input')).toBeChecked();
     });
 
-    test.eachFramework('a folder is muted once every file under it is gone', async ({ page }) => {
+    test.eachFramework('a folder is marked once every file under it is gone', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 

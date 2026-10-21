@@ -341,6 +341,10 @@ export const AG_GRID_LOCALE_ID_ID = {
     enabled: 'Diaktifkan',
 
     // Menu
+    moveLeft: 'Pindahkan ke Kiri',
+    moveRight: 'Pindahkan ke Kanan',
+    moveUp: 'Pindahkan ke Atas',
+    moveDown: 'Pindahkan ke Bawah',
     pinColumn: 'Sematkan Kolom',
     pinLeft: 'Sematkan Kiri',
     pinRight: 'Sematkan Kanan',
@@ -779,6 +783,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaRowSelect: 'Tekan SPASI untuk memilih baris ini',
     ariaRowSelectionDisabled: 'Pemilihan Baris dinonaktifkan untuk baris ini',
     ariaSearch: 'Cari',
+    ariaSortPriority: 'Prioritas pengurutan ${priority} dari ${count}',
     ariaSortableColumn: 'Tekan ENTER untuk mengurutkan',
     ariaSortableColumnWithCellSelection: 'Tekan ALT ENTER untuk mengurutkan',
     ariaToggleVisibility: 'Tekan SPASI untuk mengalihkan visibilitas',
@@ -916,9 +921,11 @@ export const AG_GRID_LOCALE_ID_ID = {
     columnHeaderEditCancel: 'Batal',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Tidak ditemukan kolom yang memenuhi syarat.',
     calculatedColumn: 'Kolom Terhitung',
     calculatedColumnAdd: 'Tambah Kolom Terhitung',
     calculatedColumnEdit: 'Sunting Kolom Terhitung',
+    calculatedColumnView: 'Lihat Kolom Terhitung',
     calculatedColumnRemove: 'Hapus Kolom Terhitung',
     calculatedColumnTitle: 'Judul',
     calculatedColumnType: 'Tipe',

@@ -188,7 +188,7 @@ export class RowDragComp extends Component {
     }
 
     private getDragItemName(draggingEvent: RowDraggingEvent | null | undefined, translate: LocaleTextFunc): string {
-        const dragItem = draggingEvent?.dragItem || this.getDragItem();
+        const dragItem = draggingEvent?.dragItem ?? this.getDragItem();
         const dragItemCount = (draggingEvent?.dropTarget?.rows.length ?? dragItem.rowNodes?.length) || 1;
 
         const rowDragTextGetter = this.column?.getColDef()?.rowDragText ?? this.gos.get('rowDragText');

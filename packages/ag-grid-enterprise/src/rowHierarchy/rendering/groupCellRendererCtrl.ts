@@ -60,7 +60,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         this.comp = comp;
         this.compClass = compClass;
 
-        const { node, column } = params;
+        const { node, column, colDef } = params;
 
         this.node = node as RowNode;
         this.displayedNode = node as RowNode;
@@ -69,6 +69,11 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         const embeddedRowMismatch = this.isEmbeddedRowMismatch();
         if (embeddedRowMismatch) {
             return;
+        }
+
+        if (!colDef || colDef.showRowGroup === true) {
+            // the row's drop indicator starts from this label
+            comp.toggleCss('ag-group-cell-all-levels', true);
         }
 
         if (node.footer) {
@@ -153,7 +158,7 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
         const bodyCell = !pinnedLeftCell && !pinnedRightCell;
 
         if (this.gos.get('enableRtl')) {
-            if (visibleCols.leftCols.length > 0) {
+            if (visibleCols.rightCols.length > 0) {
                 return !pinnedRightCell;
             }
             return !bodyCell;

@@ -163,7 +163,7 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
             this.valueCache?.onDataChanged();
             if (res.remove && this.selectionSvc) {
                 const removedRowIds = res.remove.map((row) => row.id!);
-                this.selectionSvc.deleteSelectionStateFromParent(transaction.route || [], removedRowIds);
+                this.selectionSvc.deleteSelectionStateFromParent(transaction.route ?? [], removedRowIds);
             }
 
             this.eventSvc.dispatchEvent({ type: 'storeUpdated' });

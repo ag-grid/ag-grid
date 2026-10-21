@@ -1,13 +1,14 @@
-import type { IntegratedModule } from 'ag-charts-types';
+import type { AgChartThemePalette, IntegratedModule } from 'ag-charts-types';
 
-/** MAKE SURE TO UPDATE THE SCRIPT scripts/ci/substituteAgChartsTypesScene.sh WHEN CHANGING THIS FILE */
-type ChartTypes = IntegratedModule;
-
+/**
+ * The subset of the AG Charts Integrated module that the grid uses. `_Theme` is only needed to resolve a theme to its
+ * palette, until AG Charts exposes that as plain data (AG-18821).
+ */
 export interface IAgChartsExports {
     readonly beanName: 'agChartsExports';
     isEnterprise: boolean;
-    create: ChartTypes['create'];
-    _Theme: ChartTypes['_Theme'];
-    _Scene: ChartTypes['_Scene'];
-    _Util: ChartTypes['_Util'];
+    create: IntegratedModule['create'];
+    _Theme: {
+        getChartTheme(value: unknown): { palette: AgChartThemePalette };
+    };
 }

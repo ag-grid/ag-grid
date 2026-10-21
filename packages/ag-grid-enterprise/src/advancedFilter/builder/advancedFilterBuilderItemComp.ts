@@ -394,7 +394,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp<AdvancedFilterBu
             return comp;
         }
         const onUpdated = this.onPillUpdated(params.update);
-        if (params.isSelect === true) {
+        if (params.isSelect) {
             const { getEditorParams, pickerAriaLabelKey, pickerAriaLabelValue, displayValue } = params;
             const { pillSelectMinWidth, pillSelectMaxWidth } = this.gos.get('advancedFilterBuilderParams') ?? {};
             const comp = this.createBean(

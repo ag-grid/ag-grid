@@ -109,7 +109,7 @@ export class AgContextMenuService<
                 this.createLoadingIcon(mouseEvent);
             }
 
-            menuItems.then((menuItems) => {
+            const menuShown = menuItems.then((menuItems) => {
                 if (this.lastPromise !== currentPromise) {
                     return;
                 }
@@ -137,6 +137,12 @@ export class AgContextMenuService<
                 }
 
                 this.destroyLoadingSpinner?.();
+            });
+            void menuShown.catch((error: unknown) => {
+                if (this.lastPromise === currentPromise) {
+                    this.destroyLoadingSpinner?.();
+                }
+                throw error;
             });
             return true;
         }
@@ -343,7 +349,7 @@ class ContextMenu<
         private readonly callbacks: AgMenuItemCallbacks<TBeanCollection, TMenuActionParams, TCommon>,
         private readonly suppressInitialTooltip: boolean
     ) {
-        super({ tag: 'div', cls: CSS_MENU, role: 'presentation' });
+        super({ tag: 'div', cls: CSS_MENU, role: 'menu' });
     }
 
     public postConstruct(): void {
@@ -356,7 +362,7 @@ class ContextMenu<
                 TPropertiesService,
                 TComponentSelectorType,
                 TMenuActionParams
-            >(0, this.menuActionParams, this.callbacks)
+            >(0, this.menuActionParams, this.callbacks, 'presentation')
         );
         const menuItemsMapped = this.getMenuItems(() => this.getGui());
 

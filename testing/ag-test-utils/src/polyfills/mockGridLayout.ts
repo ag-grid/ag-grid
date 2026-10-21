@@ -42,6 +42,10 @@ export const mockGridLayout = {
      * undefined falls back to the standard mock. Needs `useRealOffsetDimensions` to reach `offsetHeight`. */
     elementHeightOverride: undefined as ((el: HTMLElement) => number | undefined) | undefined,
 
+    /** Deliver the `scroll` a `scrollTop`/`scrollLeft` write fires in a later task, as a browser does, instead of
+     * synchronously; a grid change then completes before the grid reacts to its own scroll. */
+    asyncScrollEvents: false,
+
     init,
     resetOptions,
 };
@@ -456,7 +460,11 @@ function init(): boolean {
                 const clamped = Math.max(0, value);
                 if (pos[edge] !== clamped) {
                     pos[edge] = clamped;
-                    this.dispatchEvent(new Event('scroll'));
+                    if (mockGridLayout.asyncScrollEvents) {
+                        setTimeout(() => this.dispatchEvent(new Event('scroll')));
+                    } else {
+                        this.dispatchEvent(new Event('scroll'));
+                    }
                 }
             },
         });
