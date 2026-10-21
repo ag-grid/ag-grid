@@ -396,6 +396,7 @@ export type { RowAutoHeightService } from './rendering/row/rowAutoHeightService'
 export type { FullWidthTarget } from './rendering/row/iRowModeFeature';
 export type { IRowComp, PinnedCellGroupWidths, RowCtrl, RowGui } from './rendering/row/rowCtrl';
 export type { RowRenderer } from './rendering/rowRenderer';
+export { _followRow } from './rendering/rowsInViewAnchor';
 export { BaseSelectionService } from './selection/baseSelectionService';
 export type { RowRangeSelectionContext } from './selection/rowRangeSelectionContext';
 export type { RowNodeSorter } from './sort/rowNodeSorter';

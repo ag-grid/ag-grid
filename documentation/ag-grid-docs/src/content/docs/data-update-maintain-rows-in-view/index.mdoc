@@ -28,6 +28,8 @@ The grid does not scroll while it is scrolled to the top of the grid, so rows ad
 
 Rows with [different heights](./row-height/) are supported, including rows with auto height that are measured after the update. When an update removes or filters out every row near the rows in view, the grid compensates only for the heights of the rows it removed above them. When `animateRows` is enabled, the rows in view do not animate as the grid scrolls to keep them in place.
 
+The [focused cell](./keyboard-navigation/) and [cell selection](./cell-selection/) ranges stay on their rows, so they keep the same cells, even while the grid is scrolled to the top. When the update removes the row the focused cell, or the first or last row of a range, is on, it moves to the row that takes its place. A cell being [edited](./cell-editing/) keeps its editor. Moving the focused cell does not fire `cellFocused`, as the same cell keeps focus, while moving a range fires `cellSelectionChanged`. Cells in [pinned rows](./row-pinning/) do not move.
+
 The example below adds and removes rows at the top of the grid. Note the following:
 
 - Scroll down the grid, then click **Add 5 Rows at the Top**. The rows in view stay in place and the vertical scrollbar moves.

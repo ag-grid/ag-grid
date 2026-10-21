@@ -1,5 +1,7 @@
 import type { BeanCollection } from '../context/context';
 import type { RowNode } from '../entities/rowNode';
+import type { IRowModel } from '../interfaces/iRowModel';
+import type { RowPosition } from '../interfaces/iRowPosition';
 
 /** Where the viewport was before a data update, and the rows the user could see, to keep them in view. */
 export interface RowsInViewAnchor {
@@ -184,10 +186,7 @@ function getRowsInViewMoved(beans: BeanCollection, anchor: RowsInViewAnchor): nu
     const { rows, rowTops, rowHeights, firstInView, afterView, firstVisiblePixel } = anchor;
     const { rowModel } = beans;
     // a loading row counts as kept, as it is still there
-    const isKept = rows.map(
-        ({ destroyed, rowIndex, rowTop }, i) =>
-            !destroyed && rowIndex != null && rowTop != null && rowModel.getRow(rowIndex) === rows[i]
-    );
+    const isKept = rows.map((rowNode) => isDisplayed(rowModel, rowNode) && rowNode.rowTop != null);
     const kept = rows.flatMap((_, i) => (isKept[i] ? [i] : []));
     const keptInOrder = (candidates: number[]) =>
         getKeptInOrder(candidates.map((i) => rows[i].rowIndex!)).map((i) => candidates[i]);
@@ -220,6 +219,41 @@ function getRowsInViewMoved(beans: BeanCollection, anchor: RowsInViewAnchor): nu
         }
     }
     return moved;
+}
+
+/** Whether a row recorded before a data update is still displayed after it. */
+function isDisplayed(rowModel: IRowModel, rowNode: RowNode | undefined): rowNode is RowNode & { rowIndex: number } {
+    return !!rowNode && !rowNode.destroyed && rowNode.rowIndex != null && rowModel.getRow(rowNode.rowIndex) === rowNode;
+}
+
+/**
+ * Records the row at a position before a data update, returning how to find the index of that row after the update or,
+ * when the update removed it, of the row that took its place, after the row that was above it. Pinned rows keep their
+ * index, as data updates do not move them.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _followRow(beans: BeanCollection, { rowIndex, rowPinned }: RowPosition): () => number {
+    const { rowModel } = beans;
+    if (rowPinned) {
+        return () => rowIndex;
+    }
+    const rowNode = rowModel.getRow(rowIndex);
+    const rowAbove = rowIndex > 0 ? rowModel.getRow(rowIndex - 1) : null;
+    return () => {
+        if (isDisplayed(rowModel, rowNode)) {
+            return rowNode.rowIndex;
+        }
+        let indexAbove = -1;
+        if (rowAbove !== null) {
+            if (!isDisplayed(rowModel, rowAbove)) {
+                return rowIndex; // nothing left to follow
+            }
+            indexAbove = rowAbove.rowIndex;
+        }
+        // the row that was last was removed, so the row above it is last now
+        const index = indexAbove + 1 < rowModel.getRowCount() ? indexAbove + 1 : indexAbove;
+        return index >= 0 ? index : rowIndex;
+    };
 }
 
 /**

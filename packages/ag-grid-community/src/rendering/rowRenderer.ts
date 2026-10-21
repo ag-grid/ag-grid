@@ -119,6 +119,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
      * scrolls or another model update moves the rows.
      */
     private rowsInViewAnchorForHeights: RowsInViewAnchor | null = null;
+    /** Set while a data update runs inside `maintainRowsInView`, to move the focused cell and cell ranges with their rows. */
+    private followRows: (() => void)[] | null = null;
 
     public postConstruct(): void {
         this.ctrlsSvc.whenReady(this, (p) => {
@@ -656,6 +658,15 @@ export class RowRenderer extends BeanStub implements NamedBean {
     // +) onPinnedRowDataChanged, recycleRows = true
     // +) redrawRows (from Grid API), recycleRows = true/false
     private redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
+        // before the focused cell is restored, and outside the lock, as moving cell ranges dispatches events
+        const followRows = params.keepRowsInView ? this.followRows : null;
+        if (followRows) {
+            for (const followRow of followRows) {
+                followRow();
+            }
+            this.followRows = []; // later redraws in the same update start from the moved positions
+        }
+
         this.getLockOnRefresh();
 
         const focusedCell = this.beans.focusSvc?.getFocusCellToUseAfterRefresh();
@@ -720,6 +731,10 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         this.dispatchDisplayedRowsChanged();
 
+        if (followRows?.length) {
+            this.updateCellFocus(); // rows took their new indexes before the focused cell followed its row
+        }
+
         // if a cell was focused before, ensure focus now.
         if (focusedCell != null) {
             this.restoreFocusedCell(focusedCell);
@@ -746,20 +761,26 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     /**
      * Runs a row data update, keeping the rows in view where they are when `maintainRowsInViewOnDataUpdate` is
-     * set, however the update moves them. The update must redraw synchronously.
+     * set, however the update moves them, and the focused cell and cell ranges on their rows. The update must redraw
+     * synchronously.
      */
     public maintainRowsInView<T>(update: () => T): T {
-        const { gos, gridBodyCtrl, printLayout, rowsInViewAnchor } = this;
-        if (rowsInViewAnchor || printLayout || !gridBodyCtrl || !gos.get('maintainRowsInViewOnDataUpdate')) {
+        const { beans, gos, gridBodyCtrl, printLayout, rowsInViewAnchor, followRows } = this;
+        if (rowsInViewAnchor || followRows || !gridBodyCtrl || !gos.get('maintainRowsInViewOnDataUpdate')) {
             return update();
         }
-        const anchor = _captureRowsInView(this.beans);
+        // the focused cell and cell ranges follow their rows wherever the viewport is
+        this.followRows = [this.focusSvc.followFocusedRow(), beans.rangeSvc?.followCellRanges()].filter(
+            (followRow): followRow is () => void => !!followRow
+        );
+        const anchor = printLayout ? null : _captureRowsInView(beans);
         this.rowsInViewAnchor = anchor;
         this.rowsInViewAnchorForHeights = null;
         try {
             return update();
         } finally {
             this.rowsInViewAnchor = null;
+            this.followRows = null;
             if (anchor && this.beans.rowAutoHeight?.active) {
                 this.rowsInViewAnchorForHeights = anchor;
             }
