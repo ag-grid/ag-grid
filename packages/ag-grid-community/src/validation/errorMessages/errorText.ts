@@ -966,6 +966,8 @@ export const AG_GRID_ERRORS = {
         `\`calculatedColumns.processColDef\` returned \`${(properties ?? []).join('`, `')}\` for calculated column \`${colId}\`. These properties are always overridden for calculated columns and have been ignored.` as const,
     337: ({ colId }: { colId: string }) =>
         `\`setFilterCards\` on the New Filters Tool Panel was passed \`${colId}\`, which is not a column in the grid, so no card is shown for it.` as const,
+    339: ({ pinned, received }: { pinned: string | number; received: string | number }) =>
+        `The server-side datasource returned data version \`${received}\` for a level pinned to version \`${pinned}\`. The level keeps version \`${pinned}\` and the block's rows; read every block of the level from \`request.dataVersion\` (or a newer version when \`serverSideDataVersionMode\` is \`'stream'\`), or call \`refreshServerSide\` to drop the pinned version.` as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -981,7 +983,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 337;
+export const MAX_ERROR_ID = 339;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

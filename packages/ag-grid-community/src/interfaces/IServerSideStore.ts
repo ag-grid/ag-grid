@@ -28,6 +28,8 @@ export interface ServerSideGroupLevelState {
     lastRowIndexKnown?: boolean;
     /** Any extra info provided to the level, when data was loaded. */
     info?: any;
+    /** The data version pinned for this level, if the datasource has returned one. */
+    dataVersion?: string | number;
     /**
      *Infinite Scroll only.
      * Max blocks allowed in the infinite cache.

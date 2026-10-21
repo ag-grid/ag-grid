@@ -17,6 +17,14 @@ export interface ServerSideTransaction<TData = any> {
     update?: TData[];
     /** Optional new total row count. Use this when a transaction deletes rows that are not currently in cache. */
     rowCount?: number;
+    /**
+     * The version of the data after this transaction, in the same form as `LoadSuccessParams.dataVersion`.
+     * Updates to rows loaded or updated at a newer version are skipped and returned in `unapplied`.
+     * When the level's data version is this version or a newer one, its blocks already include the transaction's adds and removes, so they are skipped and returned in `unapplied`. Loaded rows read from a version older than this transaction are then loaded again at the level's version.
+     * When `serverSideDataVersionMode` is `'stream'`, a block of the level read from a version older than this transaction is loaded again, so rows of blocks still loading are not changed by it.
+     * Numbers are compared numerically; provide `compareServerSideDataVersions` to compare other versions.
+     */
+    version?: string | number;
 }
 
 export interface ServerSideTransactionResult<TData = any> {
@@ -28,6 +36,17 @@ export interface ServerSideTransactionResult<TData = any> {
     remove?: IRowNode<TData>[];
     /** If rows were updated, the updated Row Nodes. */
     update?: IRowNode<TData>[];
+    /**
+     * If any rows were not added, updated or removed, the row data for those rows.
+     * Rows to add are not added when no `addIndex` is provided while the store's row count is unknown, when `addIndex`
+     * is past the end of the store, when a row with the same ID is already loaded, or when an earlier row in `add`
+     * shares its ID with a later one.
+     * When the transaction has a `version`, updated rows are skipped when the row is loaded or updated at a newer
+     * version, and added and removed rows are skipped when the level's data version is this version or a newer one,
+     * which already includes them.
+     * The status is still `Applied`, as the rest of the transaction was applied.
+     */
+    unapplied?: TData[];
 }
 
 export enum ServerSideTransactionResultStatus {

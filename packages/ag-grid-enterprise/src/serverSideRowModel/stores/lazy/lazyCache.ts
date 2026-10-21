@@ -1,6 +1,7 @@
 import type {
     BeanCollection,
     ColumnModel,
+    CompareServerSideDataVersions,
     FocusService,
     GetRowIdParams,
     IRowNode,
@@ -9,6 +10,7 @@ import type {
     RowNodeSorter,
     RowRenderer,
     ServerSideGroupLevelParams,
+    ServerSideTransaction,
     SortService,
     WithoutGridCommon,
 } from 'ag-grid-community';
@@ -25,6 +27,7 @@ import { setRowNodeGroupValue } from '../../../rowGrouping/rowGroupingUtils';
 import type { BlockUtils } from '../../blocks/blockUtils';
 import type { NodeManager } from '../../nodeManager';
 import type { ServerSideRowModel } from '../../serverSideRowModel';
+import { compareDataVersions } from './dataVersion';
 import type { LazyBlockLoadingService } from './lazyBlockLoadingService';
 import type { LazyStore } from './lazyStore';
 import { MultiIndexMap } from './multiIndexMap';
@@ -36,6 +39,14 @@ interface LazyStoreNode {
 }
 
 const DEFAULT_BLOCK_SIZE = 100;
+/** How many times a block read from a version older than the level's is loaded again before its rows are kept. */
+const MAX_STALE_BLOCK_RETRIES = 3;
+
+/** The pinned data version a block request was sent with, and the generation of the level's pin at the time. */
+interface DataVersionRequest {
+    dataVersion: string | number | undefined;
+    generation: number;
+}
 
 export class LazyCache extends BeanStub {
     private rowRenderer: RowRenderer;
@@ -64,6 +75,21 @@ export class LazyCache extends BeanStub {
      * Indicates whether this is still the live dataset for this store (used for ignoring old requests after purge)
      */
     private live = true;
+
+    /** The version every block of this level is read from, pinned from the first versioned response. */
+    private dataVersion: string | number | undefined;
+    /** The version each row was loaded or last updated with, kept per row so it follows the row when it moves. */
+    private readonly rowDataVersions = new WeakMap<RowNode, string | number>();
+    /** The version of the block each row was loaded with, whose adds and removes its position includes. */
+    private readonly rowLoadVersions = new WeakMap<RowNode, string | number>();
+    /** The version the grand total row was last loaded, updated or removed with, as it is not kept in the node map. */
+    private grandTotalDataVersion: string | number | undefined;
+    /** Bumped whenever the pinned data version is dropped, so versioned responses to older requests are discarded. */
+    private dataVersionGeneration = 0;
+    /** How many times each block, by its first row index, has been loaded again after being read from an older version. */
+    private readonly staleBlockRetries = new Map<number, number>();
+    /** Whether a block kept from a version other than the level's has been warned about, since the level was reset. */
+    private dataVersionWarned = false;
 
     /**
      * A node map indexed by the node's id, index, and node.
@@ -855,10 +881,185 @@ export class LazyCache extends BeanStub {
         return [...duplicates];
     }
 
-    public onLoadSuccess(firstRowIndex: number, numberOfRowsExpected: number, response: LoadSuccessParams) {
+    public getDataVersion(): string | number | undefined {
+        return this.dataVersion;
+    }
+
+    public getDataVersionGeneration(): number {
+        return this.dataVersionGeneration;
+    }
+
+    /**
+     * Returns the rows whose loaded row is not newer than `version`, and pushes the others into `stale`. Rows without
+     * a version, and versions that cannot be compared, are kept.
+     */
+    public filterStaleRows(rows: any[] | undefined, version: string | number | undefined, stale: any[]) {
+        if (version == null || !rows?.length) {
+            return rows;
+        }
+        const comparator = this.gos.get('compareServerSideDataVersions');
+        return rows.filter((data) => {
+            const id = this.getRowId(data);
+            const rowVersion = id == null ? undefined : this.getRowVersion(id);
+            if (rowVersion != null && compareDataVersions(rowVersion, version, comparator) > 0) {
+                stale.push(data);
+                return false;
+            }
+            return true;
+        });
+    }
+
+    private getRowVersion(id: string): string | number | undefined {
+        if (id === GRAND_TOTAL_ROW_ID) {
+            return this.grandTotalDataVersion;
+        }
+        const node = this.nodeMap.getBy('id', id)?.node;
+        return node && this.rowDataVersions.get(node);
+    }
+
+    /**
+     * Returns the adds and removes of a transaction at `version` that the level's version does not already include,
+     * and pushes the others into `unapplied`. Rows read from an older version do not include them, so they are loaded
+     * again. The grand total is not positioned among the rows, so it is checked against its own version instead.
+     */
+    public filterIncludedChanges(
+        changes: Pick<ServerSideTransaction, 'add' | 'remove'>,
+        version: string | number | undefined,
+        unapplied: any[]
+    ): Pick<ServerSideTransaction, 'add' | 'remove'> {
+        const pinned = this.dataVersion;
+        const comparator = this.gos.get('compareServerSideDataVersions');
+        const isIncluded = version != null && pinned != null && compareDataVersions(pinned, version, comparator) >= 0;
+        let isSkipped = false;
+        const { grandTotalDataVersion } = this;
+        const filter = (rows: any[] | undefined) =>
+            rows?.filter((data) => {
+                if (this.getRowId(data) === GRAND_TOTAL_ROW_ID) {
+                    const isStale =
+                        version != null &&
+                        grandTotalDataVersion != null &&
+                        compareDataVersions(grandTotalDataVersion, version, comparator) > 0;
+                    if (isStale) {
+                        unapplied.push(data);
+                    }
+                    return !isStale;
+                }
+                if (isIncluded) {
+                    unapplied.push(data);
+                    isSkipped = true;
+                }
+                return !isIncluded;
+            });
+        const add = filter(changes.add);
+        const remove = filter(changes.remove);
+        if (isSkipped) {
+            this.loadRowsOlderThan(version!, comparator);
+        }
+        return { add, remove };
+    }
+
+    /** Loads again the rows whose position was read from a version older than `version`. */
+    private loadRowsOlderThan(version: string | number, comparator?: CompareServerSideDataVersions): void {
+        this.nodeMap.forEach(({ node }) => {
+            const loadVersion = this.rowLoadVersions.get(node);
+            if (!node.stub && loadVersion != null && compareDataVersions(loadVersion, version, comparator) < 0) {
+                this.nodesToRefresh.add(node);
+            }
+        });
+        this.lazyBlockLoadingSvc.queueLoadCheck();
+    }
+
+    private setRowDataVersion(node: RowNode, version: string | number | undefined): void {
+        if (version != null) {
+            this.rowDataVersions.set(node, version);
+        }
+    }
+
+    /** Whether this level follows a stream of versions, rather than reading every block from one snapshot. */
+    private isStreamingVersions(): boolean {
+        return this.gos.get('serverSideDataVersionMode') === 'stream';
+    }
+
+    /** When streaming, moves the pinned version forward to a newer version the level now shows. */
+    public advanceDataVersion(version: string | number): void {
+        if (!this.isStreamingVersions()) {
+            return;
+        }
+        const pinned = this.dataVersion;
+        if (pinned == null || compareDataVersions(version, pinned, this.gos.get('compareServerSideDataVersions')) > 0) {
+            this.dataVersion = version;
+        }
+    }
+
+    /**
+     * Pins the level to the version of a block response, or moves the pin forward when streaming. Returns `true` when
+     * the response is discarded, leaving its rows to be loaded again.
+     */
+    private discardsResponseVersion(
+        firstRowIndex: number,
+        request: DataVersionRequest | undefined,
+        received: string | number | undefined
+    ): boolean {
+        // The level dropped its pinned version after the request was sent.
+        if (request && request.generation !== this.dataVersionGeneration) {
+            return request.dataVersion != null || received != null;
+        }
+        const pinned = this.dataVersion;
+        if (pinned == null) {
+            this.dataVersion = received;
+            return false;
+        }
+        if (received == null) {
+            return false;
+        }
+        const comparison = compareDataVersions(received, pinned, this.gos.get('compareServerSideDataVersions'));
+        if (comparison === 0) {
+            return false;
+        }
+
+        if (this.isStreamingVersions()) {
+            if (comparison > 0) {
+                this.dataVersion = received;
+                return false;
+            }
+            // Read from a version older than the newest the level has seen: load it again, at least at that version.
+            const retries = this.staleBlockRetries.get(firstRowIndex) ?? 0;
+            if (request && comparison < 0 && retries < MAX_STALE_BLOCK_RETRIES) {
+                this.staleBlockRetries.set(firstRowIndex, retries + 1);
+                return true;
+            }
+        } else if (request) {
+            // Requested before the level was pinned: load it again with the pinned version.
+            if (request.dataVersion == null) {
+                return true;
+            }
+            // The server no longer reads the pinned version, so the level is read again from the version it now reads.
+            if (this.store.reloadForDataVersion()) {
+                return true;
+            }
+        }
+        if (!this.dataVersionWarned) {
+            this.dataVersionWarned = true;
+            this.warn(339, { pinned, received });
+        }
+        return false;
+    }
+
+    public onLoadSuccess(
+        firstRowIndex: number,
+        numberOfRowsExpected: number,
+        response: LoadSuccessParams,
+        request?: DataVersionRequest
+    ) {
         if (!this.live) {
             return;
         }
+
+        // Discard rows read from a version the level does not use, so they stay eligible for loading at its version.
+        if (this.discardsResponseVersion(firstRowIndex, request, response.dataVersion)) {
+            return;
+        }
+        this.staleBlockRetries.delete(firstRowIndex);
 
         const info = response.groupLevelInfo;
         this.store.setStoreInfo(info);
@@ -877,6 +1078,8 @@ export class LazyCache extends BeanStub {
                 return;
             }
         }
+
+        const { dataVersion } = response;
 
         if (response.pivotResultFields) {
             this.serverSideRowModel.generateSecondaryColumns(response.pivotResultFields);
@@ -923,11 +1126,26 @@ export class LazyCache extends BeanStub {
             }
             if (grandTotalData !== undefined) {
                 this.setGrandTotalData(grandTotalData);
+                this.grandTotalDataVersion = dataVersion;
             }
         }
 
         // Adjust for grand total rows extracted from the response
         const dataRowCount = response.rowData.length - skippedRowCount;
+
+        for (let rowIndex = firstRowIndex; rowIndex < firstRowIndex + dataRowCount; rowIndex++) {
+            const node = this.nodeMap.getBy('index', rowIndex)?.node;
+            if (!node) {
+                continue;
+            }
+            if (dataVersion == null) {
+                this.rowDataVersions.delete(node);
+                this.rowLoadVersions.delete(node);
+            } else {
+                this.rowDataVersions.set(node, dataVersion);
+                this.rowLoadVersions.set(node, dataVersion);
+            }
+        }
 
         if (response.rowCount != undefined && response.rowCount !== -1) {
             // if the rowCount has been provided, set the row count
@@ -1056,6 +1274,10 @@ export class LazyCache extends BeanStub {
     }
 
     public markNodesForRefresh() {
+        this.dataVersion = undefined;
+        this.dataVersionGeneration++;
+        this.staleBlockRetries.clear();
+        this.dataVersionWarned = false;
         this.nodeMap.forEach((lazyNode) => {
             if (lazyNode.node.stub && !lazyNode.node.failedLoad) {
                 return;
@@ -1179,12 +1401,13 @@ export class LazyCache extends BeanStub {
     /**
      * Transaction Support here
      */
-    public updateRowNodes(updates: any[]): RowNode[] {
+    public updateRowNodes(updates: any[], version?: string | number): RowNode[] {
         const updatedNodes: RowNode[] = [];
         const { blockUtils, nodeMap } = this;
         for (const data of updates) {
             const id = this.getRowId(data);
             if (id === GRAND_TOTAL_ROW_ID) {
+                this.grandTotalDataVersion = version ?? this.grandTotalDataVersion;
                 const grandTotalNode = this.setGrandTotalData(data);
                 if (grandTotalNode) {
                     updatedNodes.push(grandTotalNode);
@@ -1194,13 +1417,19 @@ export class LazyCache extends BeanStub {
             const lazyNode = nodeMap.getBy('id', id);
             if (lazyNode) {
                 blockUtils.updateDataIntoRowNode(lazyNode.node, data);
+                this.setRowDataVersion(lazyNode.node, version);
                 updatedNodes.push(lazyNode.node);
             }
         }
         return updatedNodes;
     }
 
-    public insertRowNodes(inserts: any[], indexToAdd?: number): RowNode[] {
+    /** Inserts the rows, returning the new nodes and the row data skipped, in the order given. */
+    public insertRowNodes(
+        inserts: any[],
+        indexToAdd?: number,
+        version?: string | number
+    ): { inserted: RowNode[]; skipped: any[] } {
         const realRowCount = this.numberOfRows;
 
         // if missing and we know the last row, we're inserting at the end
@@ -1208,31 +1437,41 @@ export class LazyCache extends BeanStub {
 
         // can't insert nodes past the end of the store
         if (addIndex == null || realRowCount < addIndex) {
-            return [];
+            return { inserted: [], skipped: inserts.slice() };
         }
 
         const uniqueInsertsMap: { [id: string]: any } = {};
+        const keptIndexById: { [id: string]: number } = {};
+        const skippedIndexes = new Set<number>();
 
-        inserts.forEach((data) => {
+        inserts.forEach((data, index) => {
             const dataId = this.getRowId(data)!;
             // Grand total is not a regular store row — store the data and let
             // setDisplayIndexes create the footer node on next render.
             if (dataId === GRAND_TOTAL_ROW_ID) {
+                this.grandTotalDataVersion = version ?? this.grandTotalDataVersion;
                 this.setGrandTotalData(data);
+            } else if (dataId && this.isNodeInCache(dataId)) {
+                skippedIndexes.add(index);
                 return;
-            }
-            if (dataId && this.isNodeInCache(dataId)) {
-                return;
+            } else {
+                uniqueInsertsMap[dataId] = data;
             }
 
-            uniqueInsertsMap[dataId] = data;
+            // a later row with the same ID replaces an earlier one
+            const replacedIndex = keptIndexById[dataId];
+            if (replacedIndex !== undefined) {
+                skippedIndexes.add(replacedIndex);
+            }
+            keptIndexById[dataId] = index;
         });
 
+        const skipped = inserts.filter((_, index) => skippedIndexes.has(index));
         const uniqueInserts = Object.values(uniqueInsertsMap);
 
         const numberOfInserts = uniqueInserts.length;
         if (numberOfInserts === 0) {
-            return [];
+            return { inserted: [], skipped };
         }
 
         const nodesToMove = this.nodeMap.filter((node) => node.index >= addIndex);
@@ -1251,12 +1490,18 @@ export class LazyCache extends BeanStub {
         this.numberOfRows += numberOfInserts;
 
         // finally insert the new rows
-        return uniqueInserts.map((data, uniqueInsertOffset) =>
-            this.createRowAtIndex(addIndex + uniqueInsertOffset, data)
-        );
+        const inserted = uniqueInserts.map((data, uniqueInsertOffset) => {
+            const node = this.createRowAtIndex(addIndex + uniqueInsertOffset, data);
+            this.setRowDataVersion(node, version);
+            if (version != null) {
+                this.rowLoadVersions.set(node, version);
+            }
+            return node;
+        });
+        return { inserted, skipped };
     }
 
-    public removeRowNodes(idsToRemove: string[], newRowCount?: number): RowNode[] {
+    public removeRowNodes(idsToRemove: string[], newRowCount?: number, version?: string | number): RowNode[] {
         const removedNodes: RowNode[] = [];
         const nodesToVerify: RowNode[] = [];
 
@@ -1267,6 +1512,7 @@ export class LazyCache extends BeanStub {
         // grand total as part of an async refresh without triggering another request per block.
         const idsToRemoveSet = new Set(idsToRemove);
         if (idsToRemoveSet.delete(GRAND_TOTAL_ROW_ID)) {
+            this.grandTotalDataVersion = version ?? this.grandTotalDataVersion;
             this.setGrandTotalData(null);
         }
 

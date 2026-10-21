@@ -638,6 +638,26 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 return null;
             },
         },
+        compareServerSideDataVersions: {
+            supportedRowModels: ['serverSide'],
+            validate: ({ compareServerSideDataVersions }) =>
+                typeof compareServerSideDataVersions === 'function'
+                    ? null
+                    : _createValidationWarning(321, {
+                          property: 'compareServerSideDataVersions',
+                          expected: 'a function',
+                      }),
+        },
+        serverSideDataVersionMode: {
+            supportedRowModels: ['serverSide'],
+            validate: ({ serverSideDataVersionMode }) =>
+                serverSideDataVersionMode === 'snapshot' || serverSideDataVersionMode === 'stream'
+                    ? null
+                    : _createValidationWarning(320, {
+                          property: 'serverSideDataVersionMode',
+                          allowed: ['snapshot', 'stream'],
+                      }),
+        },
         serverSideDatasource: {
             supportedRowModels: ['serverSide'],
         },

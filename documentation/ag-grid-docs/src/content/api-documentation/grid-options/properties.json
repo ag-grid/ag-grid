@@ -1937,6 +1937,18 @@
                 "url": "./server-side-model-tree-data/"
             }
         },
+        "compareServerSideDataVersions": {
+            "more": {
+                "name": "SSRM Data Version",
+                "url": "./server-side-model-datasource/#reading-every-block-from-one-data-version"
+            }
+        },
+        "serverSideDataVersionMode": {
+            "more": {
+                "name": "SSRM Versioned Transactions",
+                "url": "./server-side-model-updating-transactions/#versioned-transactions"
+            }
+        },
         "stickyRowsMaxViewportRatio": {
             "restrictModule": ["ServerSideRowModelModule"]
         }
