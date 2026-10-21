@@ -1,4 +1,4 @@
-import type { AgEvent, IAgEventEmitter } from 'ag-stack';
+import type { AgBeanStubEvent, AgEvent, IAgEventEmitter } from 'ag-stack';
 import { LocalEventService, _escapeString } from 'ag-stack';
 
 import { _addColumnDefaultAndTypes } from '../columns/colDefUtils';
@@ -22,7 +22,6 @@ import type {
     ProvidedColumnGroup,
 } from '../interfaces/iColumn';
 import { ColumnHighlightPosition } from '../interfaces/iColumn';
-import type { IFrameworkEventListenerService } from '../interfaces/iFrameworkEventListenerService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
 import { _mergedEqual } from '../utils/mergeDeep';
@@ -202,9 +201,6 @@ export class AgColumn<TValue = any>
     // ── Cold ── structure, transient interaction state, indices, events.
     /** Position in the resolved `sortingOrder` of the last header-click sort. Internal, not saved. */
     public sortCycleIndex: number | undefined = undefined;
-    private frameworkEventListenerService: IFrameworkEventListenerService<any, any> | undefined = undefined;
-    // Lazy — most columns never get a listener; allocated on first __addEventListener/addEventListener.
-    private colEventSvc: LocalEventService<ColumnEventName> | null = null;
     public lastQueuedEventAt: number = 0;
 
     /** Most recent build token that claimed this col — used to detect "already used in this refresh". */
@@ -272,6 +268,8 @@ export class AgColumn<TValue = any>
     }
 
     public override destroy() {
+        // before super.destroy(): 'destroyed' is not a column event, so no column listener receives it
+        this.localEventService = null;
         super.destroy();
         this.allColsIndex = -1;
         this.colSpanIndex = -1;
@@ -280,8 +278,6 @@ export class AgColumn<TValue = any>
         this.inColsList = false;
         this.colFlags &= ~(COL_FLAG_LAST_LEFT_PINNED | COL_FLAG_FIRST_RIGHT_PINNED);
         this.beans.rowSpanSvc?.deregister(this);
-        // listeners stay until destroy, so a walk its own listener interrupted tells it nothing more
-        this.colEventSvc = null;
     }
 
     public getInstanceId(): ColumnInstanceId {
@@ -487,26 +483,22 @@ export class AgColumn<TValue = any>
         this.colFlags = flags;
     }
 
-    private getColEventSvc(): LocalEventService<ColumnEventName> {
-        let svc = this.colEventSvc;
-        if (!svc) {
-            svc = new LocalEventService();
-            this.colEventSvc = svc;
-        }
-        return svc;
-    }
-
     public __addEventListener<T extends ColumnEventName>(
         eventType: T,
         listener: (params: ColumnEvent<T>) => void
     ): void {
-        this.getColEventSvc().addEventListener(eventType, listener);
+        let localEventService = this.localEventService;
+        if (!localEventService) {
+            localEventService = new LocalEventService();
+            this.localEventService = localEventService;
+        }
+        localEventService.addEventListener(eventType, listener);
     }
     public __removeEventListener<T extends ColumnEventName>(
         eventType: T,
         listener: (params: ColumnEvent<T>) => void
     ): void {
-        this.colEventSvc?.removeEventListener(eventType, listener);
+        this.localEventService?.removeEventListener(eventType, listener);
     }
 
     /**
@@ -516,14 +508,15 @@ export class AgColumn<TValue = any>
         eventType: T,
         userListener: (params: ColumnEvent<T>) => void
     ): void {
-        const colEventSvc = this.getColEventSvc();
-        this.frameworkEventListenerService = this.beans.frameworkOverrides.createLocalEventListenerWrapper?.(
-            this.frameworkEventListenerService,
-            colEventSvc
-        );
-        const listener = this.frameworkEventListenerService?.wrap(eventType, userListener) ?? userListener;
-
-        colEventSvc.addEventListener(eventType, listener);
+        let localEventService = this.localEventService;
+        if (!localEventService) {
+            localEventService = new LocalEventService();
+            this.localEventService = localEventService;
+        }
+        const listener =
+            this.beans.frameworkOverrides.wrapLocalListener?.(localEventService, eventType, userListener) ??
+            userListener;
+        localEventService.addEventListener(eventType, listener);
     }
 
     /**
@@ -533,8 +526,12 @@ export class AgColumn<TValue = any>
         eventType: T,
         userListener: (params: ColumnEvent<T>) => void
     ): void {
-        const listener = this.frameworkEventListenerService?.unwrap(eventType, userListener) ?? userListener;
-        this.colEventSvc?.removeEventListener(eventType, listener);
+        const localEventService = this.localEventService;
+        if (!localEventService) {
+            return;
+        }
+        const listener = localEventService.listenerWrapper?.unwrap(eventType, userListener) ?? userListener;
+        localEventService.removeEventListener(eventType, listener);
     }
 
     public createColumnFunctionCallbackParams(rowNode: IRowNode): ColumnFunctionCallbackParams {
@@ -1006,10 +1003,10 @@ export class AgColumn<TValue = any>
     }
 
     public dispatchColEvent(type: ColumnEventName, source: ColumnEventType, additionalEventAttributes?: any): void {
-        const colEventSvc = this.colEventSvc;
-        if (colEventSvc?.hasListeners(type)) {
+        const localEventService = this.localEventService;
+        if (localEventService?.hasListeners(type)) {
             this.raise(
-                colEventSvc,
+                localEventService,
                 _addGridCommonParams<ColumnEvent>(this.gos, {
                     type,
                     column: this,
@@ -1027,10 +1024,10 @@ export class AgColumn<TValue = any>
         if (dataTypeSvc?.isPendingInference) {
             dataTypeSvc.columnStateUpdated(this, key);
         }
-        const colEventSvc = this.colEventSvc;
-        if (colEventSvc?.hasListeners('columnStateUpdated')) {
+        const localEventService = this.localEventService;
+        if (localEventService?.hasListeners('columnStateUpdated')) {
             this.raise(
-                colEventSvc,
+                localEventService,
                 _addGridCommonParams<ColumnStateUpdatedEvent>(this.gos, {
                     type: 'columnStateUpdated',
                     column: this,
@@ -1042,18 +1039,21 @@ export class AgColumn<TValue = any>
         }
     }
 
-    private raise(colEventSvc: LocalEventService<ColumnEventName>, event: AgEvent<ColumnEventName>): void {
+    private raise(
+        localEventService: LocalEventService<ColumnEventName | AgBeanStubEvent>,
+        event: AgEvent<ColumnEventName>
+    ): void {
         const colModel = this.beans.colModel;
         if (colModel.colUpdateDepth > 0) {
             colModel.queueColEvent(this, event);
         } else {
-            colEventSvc.dispatchEvent(event);
+            localEventService.dispatchEvent(event);
         }
     }
 
     /** A column destroyed since the event was queued has dropped its listeners. */
     public raiseQueuedEvent(event: AgEvent<ColumnEventName>): void {
-        this.colEventSvc?.dispatchEvent(event);
+        this.localEventService?.dispatchEvent(event);
     }
 }
 

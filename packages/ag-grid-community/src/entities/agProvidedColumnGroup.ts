@@ -1,4 +1,5 @@
-import type { AgEvent } from 'ag-stack';
+import type { AgEvent, IAgEventEmitter, IEventListener } from 'ag-stack';
+import { LocalEventService } from 'ag-stack';
 
 import type { QueuedEventOwner } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
@@ -18,7 +19,7 @@ export type AgProvidedColumnGroupEvent = 'expandedChanged' | 'expandableChanged'
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class AgProvidedColumnGroup
     extends BeanStub<AgProvidedColumnGroupEvent>
-    implements ProvidedColumnGroup, QueuedEventOwner
+    implements ProvidedColumnGroup, IAgEventEmitter<AgProvidedColumnGroupEvent>, QueuedEventOwner
 {
     public readonly isColumn = false as const;
 
@@ -175,6 +176,53 @@ export class AgProvidedColumnGroup
         if (this.isAlive()) {
             this.localEventService?.dispatchEvent(event);
         }
+    }
+
+    public __addEventListener<T extends AgProvidedColumnGroupEvent>(eventType: T, listener: IEventListener<T>): void {
+        let localEventService = this.localEventService;
+        if (!localEventService) {
+            localEventService = new LocalEventService();
+            this.localEventService = localEventService;
+        }
+        localEventService.addEventListener(eventType, listener);
+    }
+    public __removeEventListener<T extends AgProvidedColumnGroupEvent>(
+        eventType: T,
+        listener: IEventListener<T>
+    ): void {
+        this.localEventService?.removeEventListener(eventType, listener);
+    }
+
+    /** PUBLIC USE ONLY: grid code uses `__addEventListener` and `__removeEventListener`, which skip the wrapping. */
+    public override addEventListener<T extends AgProvidedColumnGroupEvent>(
+        eventType: T,
+        userListener: IEventListener<T>,
+        async?: boolean
+    ): void {
+        let localEventService = this.localEventService;
+        if (!localEventService) {
+            localEventService = new LocalEventService();
+            this.localEventService = localEventService;
+        }
+        // `beans` is null on a group the grid did not wire (tool panel layout copies)
+        const listener =
+            this.beans?.frameworkOverrides.wrapLocalListener?.(localEventService, eventType, userListener, async) ??
+            userListener;
+        localEventService.addEventListener(eventType, listener, async);
+    }
+
+    /** PUBLIC USE ONLY: grid code uses `__addEventListener` and `__removeEventListener`, which skip the wrapping. */
+    public override removeEventListener<T extends AgProvidedColumnGroupEvent>(
+        eventType: T,
+        userListener: IEventListener<T>,
+        async?: boolean
+    ): void {
+        const localEventService = this.localEventService;
+        if (!localEventService) {
+            return;
+        }
+        const listener = localEventService.listenerWrapper?.unwrap(eventType, userListener, async) ?? userListener;
+        localEventService.removeEventListener(eventType, listener, async);
     }
 }
 

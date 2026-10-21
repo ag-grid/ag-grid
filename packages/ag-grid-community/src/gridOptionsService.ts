@@ -102,6 +102,7 @@ export class GridOptionsService
     // Used to hold user events until the grid is ready
     // Required to support React 19 StrictMode. See IFrameworkOverrides.runWhenReadyAsync but also is likely a good idea that onGridReady is the first event fired.
     private gridReadyFired = false;
+    private gridReadyStarted = false;
     private queueEvents: { eventName: AgPublicEventType; event: any }[] = [];
 
     // This is quicker then having code call gridOptionsService.get('context')
@@ -239,7 +240,7 @@ export class GridOptionsService
     }
 
     // responsible for calling the onXXX functions on gridOptions
-    // It forces events defined in GridOptionsService.alwaysSyncGlobalEvents to be fired synchronously.
+    // It forces events defined in ALWAYS_SYNC_GLOBAL_EVENTS to be fired synchronously.
     // This is required for events such as GridPreDestroyed.
     // Other events can be fired asynchronously or synchronously depending on config.
     private readonly globalEventHandlerFactory = (restrictToSyncOnly?: boolean) => {
@@ -266,10 +267,16 @@ export class GridOptionsService
                 }
             };
 
-            // Queueing a diagnostic would deliver it after `onGridReady`, and drop it if the grid never gets there.
-            if (this.gridReadyFired || eventName === 'issueRaised') {
+            // Queueing a diagnostic would deliver it after `onGridReady`, and drop it if the grid never gets there; a grid
+            // destroyed inside `onGridReady` would drop its preDestroyed the same way. One destroyed before gets neither.
+            if (
+                this.gridReadyFired ||
+                eventName === 'issueRaised' ||
+                (eventName === 'gridPreDestroyed' && this.gridReadyStarted)
+            ) {
                 fireEvent(eventName, event);
             } else if (eventName === 'gridReady') {
+                this.gridReadyStarted = true;
                 fireEvent(eventName, event);
                 this.gridReadyFired = true;
                 for (const q of this.queueEvents) {

@@ -20,8 +20,8 @@ export interface IEventEmitter<TEventType extends string> {
     ): void;
 }
 
-/** Internal version of IEventEmitter so that we can avoid the public api methods on RowNode and Column that need
- * to handle the Angular Zone wrapping of event handlers.
+/** Internal version of IEventEmitter so that we can avoid the public api methods on RowNode, Column and the column
+ * groups that need to handle the Angular Zone wrapping of event handlers.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export interface IAgEventEmitter<TEventType extends string> {
