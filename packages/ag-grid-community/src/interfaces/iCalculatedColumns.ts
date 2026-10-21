@@ -2,8 +2,8 @@ import type { ColumnTreeBuild } from '../columns/buildColumnTree';
 import type { ColumnState } from '../columns/columnStateUtils';
 import type { Bean } from '../context/bean';
 import type { AgColumn } from '../entities/agColumn';
-import type { ColDef } from '../entities/colDef';
-import type { CalculatedColumnValidationState, ColumnEventType } from '../events';
+import type { ColDef, ColKey } from '../entities/colDef';
+import type { CalculatedColumnExpressionValidation, ColumnEventType } from '../events';
 import type { Column } from './iColumn';
 import type { AgGridCommon } from './iCommon';
 import type { HeaderPosition } from './iHeaderPosition';
@@ -28,11 +28,11 @@ export interface CalculatedColumnProcessColDefParams<TData = any, TContext = any
      */
     sourceColumn: Column<TData> | null;
     /**
-     * Whether `colDef.calculatedExpression` is currently valid: `'valid'`, `'unknownReference'` (it references a
-     * column that does not exist) or `'invalidExpression'` (it failed to parse). An empty expression is `'valid'`.
-     * While the Calculated Column dialog is open in `'live'` apply mode, the expression may be incomplete.
+     * Validation of `colDef.calculatedExpression`, including syntax, direct column references and saved dialog
+     * rejections from `getValidationErrors` or `isColumnReferenceable`. Does not rerun application callbacks or
+     * check row-specific evaluation errors. In `'live'` apply mode, the expression may be incomplete.
      */
-    validationState: CalculatedColumnValidationState;
+    expressionValidation: CalculatedColumnExpressionValidation;
 }
 
 export interface IsColumnReferenceableParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -63,6 +63,11 @@ export interface CalculatedColumnValidationParams<TData = any, TContext = any> e
     internalErrors: string[] | null;
     /** The calculated column, or `null` when adding a column in deferred mode. */
     column: Column | null;
+    /**
+     * The column whose menu initiated Add Calculated Column. Only provided while adding a column, in either apply
+     * mode. `null` when editing an existing column or when there is no source column.
+     */
+    sourceColumn: Column | null;
 }
 
 export interface CalculatedColumnsOptions<TData = any, TContext = any> {
@@ -82,6 +87,7 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
      * Called when the dialog opens. Does not restrict programmatic `calculatedExpression` values.
      * Existing expressions can be kept unchanged; expression edits are checked against the restriction.
      * Live edits with restricted references are saved with an error and do not evaluate until corrected.
+     * `api.refreshCalculatedColumns()` explicitly rechecks existing expressions against this rule.
      */
     isColumnReferenceable?: (params: IsColumnReferenceableParams<TData, TContext>) => boolean;
     /**
@@ -92,7 +98,8 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
      * Deferred mode blocks Apply; live mode saves rejected expressions with an error and prevents evaluation.
      * Unlike `isColumnReferenceable`, unchanged expressions are revalidated on title/type edits and deferred Apply.
      * In live mode, a title/type edit can therefore block a previously accepted expression.
-     * Not called during cell evaluation, for programmatic definitions, or when restoring state.
+     * Not called during cell evaluation, when setting definitions, or when restoring state.
+     * Call `api.refreshCalculatedColumns()` to explicitly revalidate committed expressions.
      */
     getValidationErrors?: (params: CalculatedColumnValidationParams<TData, TContext>) => string[] | null;
     /**
@@ -124,7 +131,7 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
      * and `cellEditorSelector` are always overridden for calculated columns.
      *
      * In `'live'` `applyMode` it is also called while the user types in the dialog, so keep it cheap and use
-     * `params.validationState` to tell whether the expression is complete.
+     * `params.expressionValidation` to check the expression's validation status.
      *
      * The returned definition is not shown in the dialog and is not saved in grid state. Stateful properties
      * such as `width`, `sort` and `hide` apply when the column is created; prefer the `initial*` forms.
@@ -136,6 +143,11 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
 
 export type CalculatedColumnsGridOption<TData = any, TContext = any> =
     boolean | CalculatedColumnsOptions<TData, TContext>;
+
+export interface RefreshCalculatedColumnsParams {
+    /** Columns to revalidate. Omit to revalidate all calculated columns. Non-calculated and unknown columns are ignored. */
+    columns?: ColKey[];
+}
 
 /** Grid-managed validation state for a `calculatedExpression`, persisted in Grid State. */
 export type CalculatedExpressionError = {
@@ -167,6 +179,7 @@ export type CalculatedColumnUpdate<TData = any, TValue = any> = Partial<ColDef<T
 };
 
 export interface ICalculatedColumnsService extends Bean {
+    refreshCalculatedColumns(params?: RefreshCalculatedColumnsParams): void;
     removeCalculatedColumn(column: AgColumn | null | undefined): void;
     openCalculatedColumnDialog(
         column: AgColumn | null | undefined,

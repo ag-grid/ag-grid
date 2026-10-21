@@ -617,6 +617,14 @@ export class FormulaService extends BeanStub implements IFormulaService, NamedBe
             : new FormulaError(cell.errorMessage, errorType);
     }
 
+    public isFormulaErrorValue(column: AgColumn, node: RowNode | null, value: unknown): boolean {
+        if (!(column.allowFormula || column.isCalculatedCol) || typeof value !== 'string' || !node) {
+            return false;
+        }
+        const cell = this.cachedResult.get(node)?.get(column);
+        return !!cell && cell.isValueReady() && cell.errorType === value;
+    }
+
     /** Get a registered function by name (used by the evaluator). */
     public getFunction(name: string) {
         const supportedOperations = this.supportedOperations;

@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
-import { clickMenuOption } from 'ag-test-utils';
+import { asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
 import type { CalculatedColumnValidationParams, ColDef, GridState } from 'ag-grid-community';
@@ -90,6 +90,89 @@ describe('calculated columns - custom dialog validation', () => {
     });
 
     test.each(['live', 'deferred'] as const)(
+        'supplies the source column only while adding in %s mode',
+        async (applyMode) => {
+            const getValidationErrors = vi.fn(({ column, sourceColumn, colDef }: CalculatedColumnValidationParams) => {
+                const group = (column ?? sourceColumn)?.getParent()?.getGroupId();
+                return group === 'sales' && colDef.cellDataType !== 'number' ? ['Sales columns must be Number.'] : null;
+            });
+            const api = createGrid('custom-validation-source-column', {
+                columnDefs: [
+                    {
+                        headerName: 'Sales',
+                        groupId: 'sales',
+                        children: [{ field: 'revenue' }, { field: 'cost' }],
+                    },
+                    { headerName: 'People', groupId: 'people', children: [{ field: 'salary' }] },
+                ],
+                rowData: [{ id: 'r1', revenue: 100, cost: 60, salary: 50 }],
+                calculatedColumns: { applyMode, getValidationErrors },
+            });
+            showColumnMenu(api, 'revenue');
+            await clickMenuOption('Add Calculated Column');
+            setExpression('[Revenue] - [Cost]');
+            expect(getValidationErrors.mock.lastCall![0].sourceColumn).toBe(api.getColumn('revenue'));
+            expect(getValidationErrors.mock.lastCall![0].column).toBe(
+                applyMode === 'live' ? api.getColumn('calculated_1') : null
+            );
+            expect(getExpressionInput().validationMessage).toBe('Sales columns must be Number.');
+            if (applyMode === 'deferred') {
+                expect(getDialogButton('Apply')).toBeDisabled();
+                expect(api.getColumn('calculated_1')).toBeNull();
+            }
+
+            await selectDataType('Number');
+            expect(getExpressionInput()).not.toHaveClass('invalid');
+            if (applyMode === 'deferred') {
+                clickDialogButton('Apply');
+                await waitFor(() => expect(document.activeElement?.getAttribute('col-id')).toBe('calculated_1'));
+            } else {
+                closeDialog();
+            }
+            expect(getValidationErrors.mock.lastCall![0].sourceColumn).toBe(api.getColumn('revenue'));
+            expect(api.getColumn('calculated_1')!.getParent()!.getGroupId()).toBe('sales');
+            expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'calculated_1' })).toBe(40);
+
+            await openEditDialogViaMenu(api, 'calculated_1');
+            await selectDataType('Text');
+            expect(getValidationErrors.mock.lastCall![0].sourceColumn).toBeNull();
+            expect(getValidationErrors.mock.lastCall![0].column).toBe(api.getColumn('calculated_1'));
+            expect(getExpressionInput().validationMessage).toBe('Sales columns must be Number.');
+        }
+    );
+
+    test.each([null, []])(
+        'empty error messages block deferred Apply until validation returns %j',
+        async (validResult) => {
+            const api = createGrid('custom-validation-empty-message', {
+                columnDefs,
+                rowData,
+                calculatedColumns: {
+                    applyMode: 'deferred',
+                    getValidationErrors: ({ referencedColumns }) =>
+                        referencedColumns.some((column) => column.getColId() === 'server-salary') ? [''] : validResult,
+                },
+            });
+            await openEditDialogViaMenu(api, 'profit');
+            setExpression('[Salary] * 2');
+            expect(getExpressionInput()).toHaveClass('invalid');
+            expect(getExpressionInput()).toHaveAttribute('aria-invalid', 'true');
+            expect(getExpressionInput()).not.toHaveAttribute('aria-describedby');
+            expect(getExpressionInput().validationMessage).toBe('');
+            expect(getDialogButton('Apply')).toBeDisabled();
+            clickDialogButton('Apply');
+            expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[sales]');
+
+            setExpression('[Sales] * 2');
+            expect(getExpressionInput()).not.toHaveClass('invalid');
+            expect(getExpressionInput()).toHaveAttribute('aria-invalid', 'false');
+            expect(getDialogButton('Apply')).toBeEnabled();
+            clickDialogButton('Apply');
+            expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[sales] * 2');
+        }
+    );
+
+    test.each(['live', 'deferred'] as const)(
         'passes built-in errors to custom validation in %s mode',
         async (applyMode) => {
             const getValidationErrors = vi.fn(({ internalErrors }: CalculatedColumnValidationParams) => internalErrors);
@@ -106,8 +189,13 @@ describe('calculated columns - custom dialog validation', () => {
             getValidationErrors.mockClear();
             for (const expression of ['', ' ', '[Missing]', '[Sales] +', 'NOT_A_FUNC([Sales])', '[Salary]']) {
                 setExpression(expression);
-                expect(getValidationErrors.mock.lastCall![0].internalErrors?.length).toBeGreaterThan(0);
-                expect(getExpressionInput()).toHaveClass('invalid');
+                if (applyMode === 'live' && !expression.trim()) {
+                    expect(getValidationErrors.mock.lastCall![0].internalErrors).toBeNull();
+                    expect(getExpressionInput()).not.toHaveClass('invalid');
+                } else {
+                    expect(getValidationErrors.mock.lastCall![0].internalErrors?.length).toBeGreaterThan(0);
+                    expect(getExpressionInput()).toHaveClass('invalid');
+                }
             }
             expect(getValidationErrors).toHaveBeenCalledTimes(6);
             expect(getExpressionInput().validationMessage).toContain('cannot be used');
@@ -116,6 +204,39 @@ describe('calculated columns - custom dialog validation', () => {
             expect(getValidationErrors.mock.lastCall![0].internalErrors).toBeNull();
         }
     );
+
+    test.each(['', '   '])('clearing a live expression to %j removes saved validation errors', async (expression) => {
+        const getValidationErrors = vi.fn(
+            (params: CalculatedColumnValidationParams) => validate(params) ?? params.internalErrors
+        );
+        const api = createGrid('custom-validation-live-empty', {
+            columnDefs,
+            rowData,
+            calculatedColumns: { getValidationErrors },
+        });
+        await openEditDialogViaMenu(api, 'profit');
+        setExpression('[Sales] + [Salary]');
+        closeDialog();
+        expect(api.getState().userColumns?.find(({ colId }) => colId === 'profit')?.calculatedExpressionError).toEqual({
+            expression: '[sales] + [server-salary]',
+            reason: 'customValidation',
+            messages,
+        });
+
+        await openEditDialogViaMenu(api, 'profit');
+        setExpression(expression);
+        expect(getValidationErrors.mock.lastCall![0].internalErrors).toBeNull();
+        expect(getValidationErrors.mock.lastCall![0].referencedColumns).toEqual([]);
+        expect(getExpressionInput()).not.toHaveClass('invalid');
+        closeDialog();
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe('');
+        expect(
+            api.getState().userColumns?.find(({ colId }) => colId === 'profit')?.calculatedExpressionError
+        ).toBeUndefined();
+
+        await openEditDialogViaMenu(api, 'profit');
+        expect(getExpressionInput()).not.toHaveClass('invalid');
+    });
 
     test.each(['live', 'deferred'] as const)('custom errors override syntax errors in %s mode', async (applyMode) => {
         const getValidationErrors = vi.fn(validate);
@@ -297,6 +418,10 @@ describe('calculated columns - custom dialog validation', () => {
         const read = (colKey: string) => api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey });
         expect(read('profit')).toBe('#ERROR!');
         expect(read('dependent')).toBe('#ERROR!');
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit', useFormatter: true })).toBe(
+            '#ERROR!'
+        );
+        expect(document.querySelector('.ag-row[row-id="r1"] [col-id="profit"]')?.textContent).toBe('#ERROR!');
         expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[sales] + [server-salary] - 1');
         getValidationErrors.mockClear();
         api.refreshFormulas();
@@ -310,6 +435,7 @@ describe('calculated columns - custom dialog validation', () => {
         closeDialog();
         expect(read('profit')).toBe(21);
         expect(read('dependent')).toBe(42);
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit', useFormatter: true })).toBe('21');
     });
 
     test('live validation changes invalidate values even when the final definition is unchanged', async () => {
@@ -387,6 +513,103 @@ describe('calculated columns - custom dialog validation', () => {
         expect(getValidationErrors).not.toHaveBeenCalled();
     });
 
+    test.each([
+        { applyMode: 'live', applyDebounce: 0 },
+        { applyMode: 'live', applyDebounce: 400 },
+        { applyMode: 'deferred', applyDebounce: 0 },
+    ] as const)('accepts a saved rejection without editing in $applyMode mode ($applyDebounce ms)', async (options) => {
+        const changed = vi.fn();
+        const expressionChanged = vi.fn();
+        const getValidationErrors = vi.fn(() => null);
+        const api = createGrid('custom-validation-reaccepted', {
+            columnDefs,
+            rowData,
+            initialState: {
+                userColumns: [
+                    {
+                        colId: 'profit',
+                        properties: [{ property: 'calculatedExpression', value: '[server-salary] * 2' }],
+                        calculatedExpressionError: {
+                            expression: '[server-salary] * 2',
+                            reason: 'customValidation',
+                            messages,
+                        },
+                    },
+                ],
+            },
+            calculatedColumns: { ...options, getValidationErrors },
+            onCalculatedColumnChanged: changed,
+        });
+        api.addEventListener('calculatedColumnExpressionChanged', expressionChanged);
+        const read = (colKey: string) => api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey });
+        expect(read('profit')).toBe('#ERROR!');
+        expect(read('dependent')).toBe('#ERROR!');
+        expect(getValidationErrors).not.toHaveBeenCalled();
+
+        await openEditDialogViaMenu(api, 'profit');
+        expect(getExpressionInput()).not.toHaveClass('invalid');
+        if (options.applyDebounce) {
+            expect(api.getState().userColumns?.[0].calculatedExpressionError).toBeDefined();
+        }
+        if (options.applyMode === 'live') {
+            closeDialog();
+        } else {
+            clickDialogButton('Apply');
+        }
+
+        expect(read('profit')).toBe(200);
+        expect(read('dependent')).toBe(400);
+        expect(document.querySelector('.ag-row[row-id="r1"] [col-id="profit"]')?.textContent).toBe('200');
+        expect(document.querySelector('.ag-row[row-id="r1"] [col-id="dependent"]')?.textContent).toBe('400');
+        expect(
+            api.getState().userColumns?.find(({ colId }) => colId === 'profit')?.calculatedExpressionError
+        ).toBeUndefined();
+        await waitFor(() => expect(changed).toHaveBeenCalledTimes(1));
+        expect(changed.mock.lastCall![0]).toMatchObject({
+            changes: {},
+            expression: '[server-salary] * 2',
+            expressionValidation: { valid: true },
+            source: 'calculatedColumn',
+        });
+        expect(changed.mock.lastCall![0].changes).toEqual({});
+        expect(expressionChanged).not.toHaveBeenCalled();
+
+        await openEditDialogViaMenu(api, 'profit');
+        if (options.applyMode === 'live') {
+            closeDialog();
+        } else {
+            clickDialogButton('Apply');
+        }
+        await asyncSetTimeout(0);
+        expect(changed).toHaveBeenCalledTimes(1);
+    });
+
+    test('viewing a saved rejection does not clear it when the application now accepts it', async () => {
+        const changed = vi.fn();
+        const api = createGrid('custom-validation-read-only-reaccepted', {
+            columnDefs: columnDefs.map((colDef) => ({ ...colDef, calculatedColumnReadOnly: true })),
+            rowData,
+            initialState: {
+                userColumns: [
+                    {
+                        colId: 'profit',
+                        properties: [],
+                        calculatedExpressionError: { expression: '[sales]', reason: 'customValidation', messages },
+                    },
+                ],
+            },
+            calculatedColumns: { getValidationErrors: () => null },
+            onCalculatedColumnChanged: changed,
+        });
+        showColumnMenu(api, 'profit');
+        await clickMenuOption('View Calculated Column');
+        closeDialog();
+        expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe('#ERROR!');
+        expect(api.getState().userColumns?.[0].calculatedExpressionError).toBeDefined();
+        await asyncSetTimeout(0);
+        expect(changed).not.toHaveBeenCalled();
+    });
+
     test('live creation validates empty and incomplete input through the callback', async () => {
         const getValidationErrors = vi.fn(validate);
         const api = createGrid('custom-validation-live-create', {
@@ -396,7 +619,7 @@ describe('calculated columns - custom dialog validation', () => {
         });
         showColumnMenu(api, 'sales');
         await clickMenuOption('Add Calculated Column');
-        expect(getValidationErrors.mock.lastCall![0].internalErrors?.length).toBeGreaterThan(0);
+        expect(getValidationErrors.mock.lastCall![0].internalErrors).toBeNull();
         setExpression('[Salary]');
         expect(getValidationErrors.mock.lastCall![0].column).toBe(api.getColumn('calculated_1'));
         closeDialog();

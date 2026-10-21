@@ -209,7 +209,7 @@ const gridOptions = {
 
 {% interfaceDocumentation interfaceName="IsColumnReferenceableParams" /%}
 
-The callback runs when the dialog opens. Existing permitted expressions can remain unchanged, and programmatic expressions are unrestricted. This is a UI restriction, not a security boundary.
+The callback runs when the dialog opens. Existing permitted expressions can remain unchanged, and programmatic expressions are unrestricted unless explicitly revalidated with [`refreshCalculatedColumns()`](#refreshing-calculated-columns). This is a UI restriction, not a security boundary.
 
 Restricted edits disable Apply in deferred mode. In live mode, they are saved but display `#REF!` until corrected; reopening the dialog or restoring Grid State preserves the error.
 
@@ -217,7 +217,7 @@ Restricted edits disable Apply in deferred mode. In live mode, they are saved bu
 
 ### getValidationErrors
 
-Use `getValidationErrors` to customise expression validation in either apply mode, including for invalid expressions. The callback receives built-in messages in `internalErrors`. Return the messages to show, or `null` or an empty array to accept the expression. Return `internalErrors` to keep the built-in validation.
+Use `getValidationErrors` to customise dialog validation in either apply mode. Return messages to reject an expression, or `null` or `[]` to accept it. Return `internalErrors` to retain built-in messages. The callback runs while typing, so keep it quick. Custom messages are displayed unchanged; supply translated text where needed.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -238,7 +238,11 @@ In the example, edit **Sales Bonus** and enter `[Salary]` to see the validation 
 {% gridExampleRunner title="Custom Dialog Validation" name="calculated-columns-custom-validation" /%}
 
 {% note %}
-Validation applies only in the dialog; programmatic definitions are unaffected. Errors block Apply in deferred mode. In live mode, rejected edits are saved but display `#ERROR!` until corrected. Title and type edits also revalidate unchanged expressions. Restrictions set by `isColumnReferenceable` remain enforced.
+This is a dialog guard, not a security boundary: `columnDefs` and Grid State restores do not run the callback. Restored rejections remain blocked.
+
+Errors block Apply in deferred mode. In live mode, rejected edits are saved and display `#ERROR!`, including when returning non-empty `internalErrors`, rather than the underlying formula error code. `isColumnReferenceable` rejections use `#REF!` instead, even for the same column.
+
+Title and type edits also revalidate unchanged expressions. In live mode, reopening an editable dialog rechecks saved rejections; accepted expressions resume calculating when the update is applied. Restrictions set by `isColumnReferenceable` remain enforced.
 {% /note %}
 
 ### suppressColumnHighlighting
@@ -310,6 +314,8 @@ In the example, the **Profit** column is restored from Grid State as if a user h
 
 {% interfaceDocumentation interfaceName="CalculatedColumnProcessColDefParams" /%}
 
+`expressionValidation` includes syntax and reference errors plus saved dialog rejections from `getValidationErrors` and `isColumnReferenceable`, matching the change event. It does not rerun these callbacks or check row-specific evaluation errors.
+
 {% note %}
 The callback runs each time the column is built, including when dialog edits are applied and on restore from [Grid State](./grid-state/). It does not run for calculated columns declared in `columnDefs`. The dialog and Grid State keep the user's values, not the callback's. `colId`, `editable`, `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor` and `cellEditorSelector` are always overridden. Prefer `initial*` properties, such as `initialWidth`, to stateful ones.
 {% /note %}
@@ -361,6 +367,22 @@ The following example adds, edits and removes a Profit Margin column through the
 
 {% gridExampleRunner title="Calculated Columns API" name="calculated-columns-api" /%}
 
+### Refreshing Calculated Columns
+
+Call `refreshCalculatedColumns()` after application validation rules change to revalidate expressions, update saved errors and recalculate cells and dependants without opening the dialog.
+
+```js
+api.refreshCalculatedColumns({ columns: ['profit'] });
+// Omit columns to refresh all calculated columns.
+api.refreshCalculatedColumns();
+```
+
+{% apiDocumentation source="grid-api/api.json" section="refresh" names=["refreshCalculatedColumns"] /%}
+
+{% note %}
+This explicitly applies the current `getValidationErrors` and `isColumnReferenceable` rules, including to read-only and programmatically defined columns. Committed expressions are checked with `sourceColumn: null`. Removed rules clear their saved rejections. Open dialogs also revalidate their drafts without applying them or restarting the debounce. Validation changes emit `calculatedColumnChanged` with `source: 'api'`.
+{% /note %}
+
 ### Column Properties
 
 {% apiDocumentation source="column-properties/properties.json" section="calculatedColumns" names=["calculatedExpression"] /%}
@@ -371,9 +393,9 @@ The following example adds, edits and removes a Profit Margin column through the
 
 ### Events
 
-Use `calculatedColumnChanged` to track changes to `headerName`, `cellDataType`, `calculatedExpression` and `columnGroupShow`. Its `changes` object contains only changed properties, with their previous and new values. Deferred Apply raises one event for all changes; live mode raises an event for each committed update. Initialisation and Grid State restoration do not raise this event.
+Use `calculatedColumnChanged` to track changes to `headerName`, `cellDataType`, `calculatedExpression` and `columnGroupShow`. Its `changes` object contains only changed properties, with their previous and new values. Deferred Apply raises one event for all changes. Live mode raises one per applied update, with `applyDebounce` combining edits after a pause in typing. Initialisation and Grid State restoration do not raise this event.
 
-Check `expressionValidation.valid` before saving an accepted expression. When invalid, `expressionValidation.reason` is `restrictedReference`, `customValidation`, `unknownReference` or `invalidExpression`.
+Check `expressionValidation.valid` before saving an accepted expression. When invalid, `expressionValidation.reason` is `restrictedReference`, `customValidation`, `unknownReference` or `invalidExpression`. Validation-only updates also raise this event, with an empty `changes` object and the unchanged `expression`.
 
 ```js
 const gridOptions = {

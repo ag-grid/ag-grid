@@ -25,7 +25,7 @@ export interface CalculatedColumnReferenceMapper {
     /** The `expression` is always storable: unresolved references are preserved verbatim. */
     toInternalExpression(
         expression: string,
-        mode?: 'diagnostics'
+        mode?: 'diagnostics' | 'revalidate'
     ): { expression: string; error?: CalculatedColumnReferenceError };
     toDisplayExpression(expression: string): string;
 }
@@ -122,9 +122,10 @@ export function createCalculatedColumnReferenceMapper(
                 searchText: `${reference} ${leafName}`,
                 displayPath: suffix ? [...path.slice(0, -1), `${leafName}${suffix}`] : path,
             })),
-        toInternalExpression(expression: string, mode?: 'diagnostics') {
+        toInternalExpression(expression: string, mode?: 'diagnostics' | 'revalidate') {
             const unchanged = originalExpression !== undefined && expression === originalDisplayExpression;
-            if (unchanged && mode !== 'diagnostics') {
+            const revalidate = mode === 'revalidate';
+            if (unchanged && mode === undefined) {
                 return { expression: originalExpression, error: originalError };
             }
             let error: CalculatedColumnReferenceError | undefined;
@@ -165,17 +166,17 @@ export function createCalculatedColumnReferenceMapper(
                 },
                 true
             );
-            if (!unchanged) {
+            if (!unchanged || revalidate) {
                 restrictedReference ??= getRestrictedFormulaReference(internalExpression);
             }
-            if (!unchanged && restrictedReference !== undefined) {
+            if ((!unchanged || revalidate) && restrictedReference !== undefined) {
                 error = { type: 'restricted', reference: restrictedReference, range: restrictedRange };
             }
             if (unchanged) {
                 // grandfather restrictions, but still diagnose missing columns when reopening a live draft
                 return {
                     expression: originalExpression,
-                    error: originalError ? { ...originalError, range: originalErrorRange } : error,
+                    error: originalError && !revalidate ? { ...originalError, range: originalErrorRange } : error,
                 };
             }
             return { expression: internalExpression, error };

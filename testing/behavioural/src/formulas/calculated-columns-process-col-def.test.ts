@@ -4,6 +4,7 @@ import { vi } from 'vitest';
 
 import type {
     CalculatedColumnProcessColDefParams,
+    CalculatedColumnsOptions,
     ColDef,
     ColGroupDef,
     GridApi,
@@ -126,21 +127,23 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         expect(cellValue(api, calcId)).toBe(20);
     });
 
-    test.each<[string, string, CalculatedColumnProcessColDefParams['validationState']]>([
-        ['a valid expression', '[a] + [b]', 'valid'],
-        ['an empty expression', '', 'valid'],
-        ['a reference to a missing column', '[missing] * 2', 'unknownReference'],
-        ['an expression that fails to parse', '[a] +', 'invalidExpression'],
-    ])('validationState is correct for a restored column with %s', async (name, expression, expected) => {
+    test.each<[string, string, CalculatedColumnProcessColDefParams['expressionValidation']]>([
+        ['a valid expression', '[a] + [b]', { valid: true }],
+        ['an empty expression', '', { valid: true }],
+        ['a reference to a missing column', '[missing] * 2', { valid: false, reason: 'unknownReference' }],
+        ['an expression that fails to parse', '[a] +', { valid: false, reason: 'invalidExpression' }],
+    ])('expressionValidation is correct for a restored column with %s', async (name, expression, expected) => {
         const processColDef = vi.fn<ProcessColDef>((params) => params.colDef);
         const api = gridWithUserColumn(`pcd-valid-${name}`, 'calc', expression, processColDef);
         await waitForColumn(api, 'calc');
 
-        const states = new Set(processColDef.mock.calls.map(([params]) => params.validationState));
-        expect([...states]).toEqual([expected]);
+        expect(processColDef).toHaveBeenCalled();
+        for (const [params] of processColDef.mock.calls) {
+            expect(params.expressionValidation).toEqual(expected);
+        }
     });
 
-    test('validationState follows the expression while typing in the dialog', async () => {
+    test('expressionValidation follows the expression while typing in the dialog', async () => {
         const processColDef = vi.fn<ProcessColDef>((params) => params.colDef);
         const api = createGrid('pcd-valid-dialog', {
             rowData: ROW_DATA,
@@ -150,13 +153,68 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         api.showColumnMenu('a');
         await clickMenuOption('Add Calculated Column');
         await waitFor(() => getDialog());
-        const lastState = () => processColDef.mock.calls.at(-1)![0].validationState;
+        const lastState = () => processColDef.mock.calls.at(-1)![0].expressionValidation;
 
         setExpression('[a] +');
-        await waitFor(() => expect(lastState()).toBe('invalidExpression'));
+        await waitFor(() => expect(lastState()).toEqual({ valid: false, reason: 'invalidExpression' }));
         setExpression('[a] + [b]');
-        await waitFor(() => expect(lastState()).toBe('valid'));
+        await waitFor(() => expect(lastState()).toEqual({ valid: true }));
     });
+
+    test.each(['customValidation', 'restrictedReference'] as const)(
+        'expressionValidation includes %s rejections and restores them without rerunning dialog callbacks',
+        async (reason) => {
+            const processColDef = vi.fn<ProcessColDef>((params) => params.colDef);
+            const changed = vi.fn();
+            const getValidationErrors = vi.fn<NonNullable<CalculatedColumnsOptions['getValidationErrors']>>(
+                ({ referencedColumns }) =>
+                    reason === 'customValidation' && referencedColumns.some((col) => col.getColId() === 'b')
+                        ? ['Not allowed']
+                        : null
+            );
+            const isColumnReferenceable = vi.fn<NonNullable<CalculatedColumnsOptions['isColumnReferenceable']>>(
+                ({ column }) => reason !== 'restrictedReference' || column.getColId() !== 'b'
+            );
+            const calculatedColumns = { processColDef, getValidationErrors, isColumnReferenceable };
+            const api = createGrid(`pcd-rejection-${reason}`, {
+                rowData: ROW_DATA,
+                columnDefs: columnDefs(),
+                calculatedColumns,
+                onCalculatedColumnChanged: changed,
+            });
+            const calcId = await addViaDialog(api, 'a', '[b] * 2');
+            const expected = { valid: false, reason };
+
+            await waitFor(() =>
+                expect(changed).toHaveBeenCalledWith(expect.objectContaining({ expressionValidation: expected }))
+            );
+            expect(processColDef.mock.calls.at(-1)![0].expressionValidation).toEqual(expected);
+            expect(cellValue(api, calcId)).toBe(reason === 'customValidation' ? '#ERROR!' : '#REF!');
+
+            const state = api.getState();
+            getValidationErrors.mockClear();
+            isColumnReferenceable.mockClear();
+            processColDef.mockClear();
+            const restored = createGrid(`pcd-rejection-restored-${reason}`, {
+                rowData: ROW_DATA,
+                columnDefs: columnDefs(),
+                calculatedColumns,
+                initialState: state,
+            });
+            await waitForColumn(restored, calcId);
+            expect(processColDef.mock.calls.at(-1)![0].expressionValidation).toEqual(expected);
+            expect(getValidationErrors).not.toHaveBeenCalled();
+            expect(isColumnReferenceable).not.toHaveBeenCalled();
+
+            api.showColumnMenu(calcId);
+            await clickMenuOption('Edit Calculated Column');
+            await waitFor(() => getDialog());
+            setExpression('[a] * 2');
+            await waitFor(() => expect(cellValue(api, calcId)).toBe(20));
+            expect(processColDef.mock.calls.at(-1)![0].expressionValidation).toEqual({ valid: true });
+            await waitFor(() => expect(changed.mock.calls.at(-1)![0].expressionValidation).toEqual({ valid: true }));
+        }
+    );
 
     test('returning params.colDef is the same as having no callback', async () => {
         const plain = gridWithUserColumn('pcd-b2-plain', 'calc', '[a] * 2', undefined);

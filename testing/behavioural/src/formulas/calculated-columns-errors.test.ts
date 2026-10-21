@@ -2,6 +2,7 @@ import { ALL_SEVERITIES, GridColumns, GridRows, TestGridsManager, waitForMissing
 import type { MockInstance } from 'vitest';
 import { vi } from 'vitest';
 
+import type { ValueFormatterFunc } from 'ag-grid-community';
 import { ClientSideRowModelModule, TextEditorModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { FormulaModule } from 'ag-grid-enterprise';
 
@@ -9,6 +10,31 @@ import { createGrid, gridRowsOpts, setupCalculatedColumnsSuite } from './calcula
 
 describe('ag-grid calculated columns', () => {
     setupCalculatedColumnsSuite();
+
+    test.each([false, true])('preserves calculated errors with a custom formatter: %s', (customFormatter) => {
+        const valueFormatter: ValueFormatterFunc | undefined = customFormatter
+            ? ({ value }) => `formatted ${value}`
+            : undefined;
+        const api = createGrid('calculated-error-formatting', {
+            rowData: [{ id: 'r1', revenue: 10 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { colId: 'invalid', calculatedExpression: '[revenue] +', valueFormatter },
+                { colId: 'divide', calculatedExpression: '[revenue] / 0', valueFormatter },
+                { colId: 'valid', calculatedExpression: '[revenue] * 2', valueFormatter },
+                { colId: 'text', calculatedExpression: '"#ERROR!"', valueFormatter },
+            ],
+            defaultColDef: {
+                cellDataType: 'number',
+            },
+        });
+        const rowNode = api.getRowNode('r1')!;
+        const formatted = (colKey: string) => api.getCellValue({ rowNode, colKey, useFormatter: true });
+        expect(formatted('invalid')).toBe('#PARSE!');
+        expect(formatted('divide')).toBe('#DIV/0!');
+        expect(formatted('valid')).toBe(customFormatter ? 'formatted 20' : '20');
+        expect(formatted('text')).toBe(customFormatter ? 'formatted #ERROR!' : 'Invalid Number');
+    });
 
     test('unknown references, invalid syntax and cycles surface formula errors', async () => {
         const api = createGrid('calculated-errors', {
