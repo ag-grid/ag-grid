@@ -8,5 +8,4 @@ export default [
     'testing/behavioural',
     'documentation/ag-grid-docs',
     'external/ag-website-shared',
-    'eslint-rules',
 ];
