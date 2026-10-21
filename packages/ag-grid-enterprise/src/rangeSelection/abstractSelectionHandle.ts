@@ -1,4 +1,4 @@
-import { _getPageBody, _isVisible, _last, _setDisplayed } from 'ag-stack';
+import { _getOverlayParent, _isVisible, _last, _setDisplayed } from 'ag-stack';
 
 import type { CellCtrl, CellPosition, CellRange, CellSelectionChangedEvent, RowPosition } from 'ag-grid-community';
 import { Component, _areCellsEqual, _getCellPositionForEvent, _isRowBefore } from 'ag-grid-community';
@@ -34,8 +34,8 @@ export abstract class AbstractSelectionHandle extends Component {
                 if (!this.dragging) {
                     startingMove = true;
                     this.dragging = true;
-                    const pageBody = _getPageBody(this.beans) as Partial<HTMLElement>;
-                    pageBody.classList?.add(this.getDraggingCssClass());
+                    const overlayParent = _getOverlayParent(this.beans) as Partial<HTMLElement>;
+                    overlayParent.classList?.add(this.getDraggingCssClass());
                 }
 
                 this.updateValuesOnMove(e);
@@ -110,8 +110,8 @@ export abstract class AbstractSelectionHandle extends Component {
 
         // TODO: this causes a bug where if there are multiple grids in the same page, all of them will
         // be affected by a drag on any. Move it to the root element.
-        const pageBody = _getPageBody(this.beans) as Partial<HTMLElement>;
-        pageBody.classList?.remove(this.getDraggingCssClass());
+        const overlayParent = _getOverlayParent(this.beans) as Partial<HTMLElement>;
+        overlayParent.classList?.remove(this.getDraggingCssClass());
 
         if (this.shouldDestroyOnEndDragging) {
             this.destroy();

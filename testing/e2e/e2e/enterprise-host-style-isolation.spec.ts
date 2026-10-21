@@ -163,6 +163,45 @@ test.describe('host style isolation', () => {
         expect(await readBackground()).toEqual(dark);
     });
 
+    test('in a shadow root, the column drag image follows the page theme mode and the pointer', async ({ page }) => {
+        const dragHeader = async (shadowDom: boolean) => {
+            const { headerCell } = await mountGrid(page, {
+                enterprise: true,
+                options: shadowDom
+                    ? () => ({
+                          enableShadowDom: true,
+                          columnDefs: [{ field: 'country' }, { field: 'year' }],
+                          rowData: [{ country: 'France', year: 2020 }],
+                      })
+                    : () => ({
+                          columnDefs: [{ field: 'country' }, { field: 'year' }],
+                          rowData: [{ country: 'France', year: 2020 }],
+                      }),
+            });
+            expect(await isInShadowRoot(page)).toBe(shadowDom);
+            await page.evaluate(() => {
+                document.documentElement.dataset.agThemeMode = 'dark';
+            });
+            const box = (await headerCell('country').boundingBox())!;
+            const pointer = { x: box.x + 60, y: box.y + 80 };
+            await page.mouse.move(box.x + 10, box.y + box.height / 2);
+            await page.mouse.down();
+            await page.mouse.move(pointer.x, pointer.y, { steps: 5 });
+            const ghost = page.locator('.ag-dnd-ghost');
+            await expect(ghost).toBeVisible();
+            const ghostBox = (await ghost.boundingBox())!;
+            const background = await ghost.evaluate((el) => getComputedStyle(el).backgroundColor);
+            await page.mouse.up();
+            return { background, offset: { x: ghostBox.x - pointer.x, y: ghostBox.y - pointer.y } };
+        };
+
+        const pageDom = await dragHeader(false);
+        const isolated = await dragHeader(true);
+        expect(isolated.background).toEqual(pageDom.background);
+        expect(Math.abs(isolated.offset.x - pageDom.offset.x)).toBeLessThan(2);
+        expect(Math.abs(isolated.offset.y - pageDom.offset.y)).toBeLessThan(2);
+    });
+
     test('inside the claude.ai visualiser, enableShadowDom: false keeps the grid in the light DOM', async ({
         page,
     }) => {

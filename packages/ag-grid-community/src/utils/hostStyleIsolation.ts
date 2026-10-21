@@ -1,3 +1,5 @@
+import { SHADOW_DOM_MOUNT_CLASS } from 'ag-stack';
+
 import type { GridOptions } from '../entities/gridOptions';
 import type { Params } from '../grid';
 import { _getGridOption } from '../gridOptionsUtils';
@@ -34,7 +36,7 @@ export function _createIsolationHost(
     host.style.display = 'contents';
     const mount = doc.createElement('div');
     mount.style.display = 'contents';
-    mount.classList.add('ag-theme-mode');
+    mount.classList.add('ag-theme-mode', SHADOW_DOM_MOUNT_CLASS);
     host.attachShadow({ mode: 'open' }).appendChild(mount);
     eGridDiv.appendChild(host);
 
