@@ -3,6 +3,7 @@ import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
     ModuleRegistry,
+    RowApiModule,
     createGrid,
     enableDevValidations,
 } from 'ag-grid-community';
@@ -12,7 +13,7 @@ if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();
 }
 
-ModuleRegistry.registerModules([ClientSideRowModelApiModule, ClientSideRowModelModule]);
+ModuleRegistry.registerModules([ClientSideRowModelApiModule, ClientSideRowModelModule, RowApiModule]);
 
 interface Trade {
     id: number;
@@ -22,12 +23,13 @@ interface Trade {
 
 const SYMBOLS = ['AAPL', 'AMZN', 'GOOG', 'META', 'MSFT', 'NVDA', 'TSLA'];
 
-let nextId = 0;
-const createTrades = (count: number): Trade[] =>
-    Array.from({ length: count }, () => {
-        const id = nextId++;
-        return { id, symbol: SYMBOLS[id % SYMBOLS.length], price: 100 + ((id * 37) % 400) };
-    });
+const createTrade = (id: number): Trade => ({
+    id,
+    symbol: SYMBOLS[id % SYMBOLS.length],
+    price: 100 + ((id * 37) % 400),
+});
+
+let nextId = 100;
 
 let gridApi: GridApi<Trade>;
 
@@ -36,13 +38,14 @@ const gridOptions: GridOptions<Trade> = {
     defaultColDef: {
         flex: 1,
     },
-    rowData: createTrades(100),
+    rowData: Array.from({ length: 100 }, (_, id) => createTrade(id)),
     getRowId: ({ data }) => String(data.id),
     maintainRowsInViewOnDataUpdate: true,
 };
 
 function onAddRowsAbove() {
-    gridApi!.applyTransaction({ add: createTrades(5), addIndex: 0 });
+    const add = Array.from({ length: 5 }, () => createTrade(nextId++));
+    gridApi!.applyTransaction({ add, addIndex: 0 });
 }
 
 function onRemoveRowsAbove() {
