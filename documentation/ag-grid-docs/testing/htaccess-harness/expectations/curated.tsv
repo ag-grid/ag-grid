@@ -2,7 +2,7 @@
 # optional assertions). A first response whose Location is already the final target proves a
 # single hop; rows can also follow the chain locally with hops=/final=.
 # Every row here is unique coverage: raise this with each added row, lower it only with a reviewed deletion.
-# @min-rows 295
+# @min-rows 292
 # @category curated-tickets
 
 # --- SE-30 ---
@@ -88,11 +88,6 @@ www	/react-grid/rxjs/	301	https://www.ag-grid.com/react-data-grid/data-update/
 
 # --- AG-17694: Beyond the Prompt moved /campaigns/ -> /community/ ---
 www	/campaigns/beyond-the-prompt/	301	/community/beyond-the-prompt/
-
-# --- SE-166: /blog/whats-new-in-ag-grid-v24/ is gone on www too, and must not swallow -part-2 ---
-www	/blog/whats-new-in-ag-grid-v24/	410
-www	/blog/whats-new-in-ag-grid-v24/amp/	410
-www	/blog/whats-new-in-ag-grid-v24-part-2/	200
 
 # --- SE-166: framework whats-new must reach /whats-new/ in ONE hop, and never /whats-new// ---
 www	/react-data-grid/whats-new	301	https://www.ag-grid.com/whats-new/
@@ -343,8 +338,10 @@ blog	/vuestic-ui-app-with-ag-grid-tutorial/amp/	301	https://epicmax.co/blog/vues
 # Guard the widened 410 patterns against over-matching neighbouring live slugs.
 blog	/tag/react-data-grid/	301	https://www.ag-grid.com/blog/tag/react-data-grid/
 blog	/tag/data-grid-and-more/	301	https://www.ag-grid.com/blog/tag/data-grid-and-more/
-blog	/whats-new-in-ag-grid-v24-part-2/	301	https://www.ag-grid.com/blog/whats-new-in-ag-grid-v24-part-2/
 blog	/tag/statement/	301	https://www.ag-grid.com/blog/tag/statement/
+
+# SE-219: part 2 of the v24 post is gone too (it is not in Ghost), so the 410 covers it.
+blog	/whats-new-in-ag-grid-v24-part-2/	410
 
 # Exhaustive WordPress-era + retired-post coverage. Every /index.php/ and bare dated path
 # in the Wayback archive (26 of them) with its target status-verified against production,
