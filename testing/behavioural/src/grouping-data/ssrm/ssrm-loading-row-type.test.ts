@@ -216,6 +216,57 @@ describe('SSRM serverSideLoadingRowType', () => {
         expect(getLoadingRowKinds()).toEqual({ fullWidth: 1, cell: 0 });
     });
 
+    test("switching from 'none' restores the placeholder row of a group awaiting its children", async () => {
+        const childRequests: IServerSideGetRowsParams[] = [];
+        const api = gridManager.createGrid('myGrid', {
+            columnDefs,
+            rowModelType: 'serverSide',
+            serverSideLoadingRowType: 'none',
+            getRowId,
+            serverSideDatasource: createGroupDatasource(childRequests),
+        });
+        await waitFor(() => expect(api.getRowNode('group-UK')).toBeDefined());
+        api.getRowNode('group-UK')!.setExpanded(true);
+        await waitFor(() => expect(childRequests).toHaveLength(1));
+        expect(api.getDisplayedRowCount()).toBe(2);
+
+        api.setGridOption('serverSideLoadingRowType', 'fullWidth');
+
+        expect(api.getDisplayedRowCount()).toBe(3);
+        expect(api.getDisplayedRowAtIndex(1)?.stub).toBe(true);
+        expect(getLoadingRowKinds()).toEqual({ fullWidth: 1, cell: 0 });
+
+        childRequests[0].success({ rowData: [{ id: 'uk-1', country: 'UK', medals: 1 }], rowCount: 1 });
+        await waitFor(() => expect(api.getDisplayedRowAtIndex(1)?.id).toBe('uk-1'));
+        expect(api.getDisplayedRowCount()).toBe(3);
+        expect(childRequests).toHaveLength(1);
+    });
+
+    test("switching to 'none' drops the placeholder row of a group awaiting its children", async () => {
+        const childRequests: IServerSideGetRowsParams[] = [];
+        const api = gridManager.createGrid('myGrid', {
+            columnDefs,
+            rowModelType: 'serverSide',
+            serverSideLoadingRowType: 'cell',
+            getRowId,
+            serverSideDatasource: createGroupDatasource(childRequests),
+        });
+        await waitFor(() => expect(api.getRowNode('group-UK')).toBeDefined());
+        api.getRowNode('group-UK')!.setExpanded(true);
+        await waitFor(() => expect(childRequests).toHaveLength(1));
+        expect(api.getDisplayedRowCount()).toBe(3);
+
+        api.setGridOption('serverSideLoadingRowType', 'none');
+
+        expect(api.getDisplayedRowCount()).toBe(2);
+        expect(document.querySelectorAll('.ag-row-loading')).toHaveLength(0);
+
+        childRequests[0].success({ rowData: [{ id: 'uk-1', country: 'UK', medals: 1 }], rowCount: 1 });
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(3));
+        expect(api.getDisplayedRowAtIndex(1)?.id).toBe('uk-1');
+        expect(childRequests).toHaveLength(1);
+    });
+
     test("deprecated suppressServerSideFullWidthLoadingRow still selects 'cell' when the new option is unset", () => {
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [306] });
         gridManager.createGrid('myGrid', {

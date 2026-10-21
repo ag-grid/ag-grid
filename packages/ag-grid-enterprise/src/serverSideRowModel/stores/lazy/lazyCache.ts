@@ -92,6 +92,8 @@ export class LazyCache extends BeanStub {
      * extent is invalidated by a non-purge refresh - see `markNodesForRefresh`.
      */
     private isLastRowInferred: boolean;
+    /** Whether this level has not yet had a response for its first block. */
+    private awaitingFirstBlock = false;
     /**
      * Whether this level displays no rows until its first block loads, as `serverSideLoadingRowType: 'none'`
      * has no loading row to show in its place. The block is loaded once the parent row is in the viewport.
@@ -153,11 +155,36 @@ export class LazyCache extends BeanStub {
         this.getRowIdFunc = _getRowIdCallback(this.beans);
         this.isMasterDetail = gos.get('masterDetail');
 
-        if (!this.isLastRowKnown && this.numberOfRows <= 1 && this.isInitialLoadingRowHidden()) {
-            this.firstBlockPending = true;
-            this.numberOfRows = 0;
-            this.lazyBlockLoadingSvc.queueLoadCheck();
+        this.awaitingFirstBlock = !this.isLastRowKnown && this.numberOfRows <= 1;
+        this.syncInitialLoadingRow();
+    }
+
+    /**
+     * While the first block is awaited, drops or restores the initial loading row to match the loading row type.
+     * The caller refreshes display indexes.
+     */
+    public syncInitialLoadingRow(): void {
+        const hide = this.isInitialLoadingRowHidden();
+        if (!this.awaitingFirstBlock || hide === this.firstBlockPending) {
+            return;
         }
+
+        if (!hide) {
+            this.firstBlockPending = false;
+            this.numberOfRows = Math.max(this.numberOfRows, 1);
+            return;
+        }
+
+        // only the untouched placeholder can be dropped, not rows added by a transaction or row count
+        const placeholder = this.nodeMap.getBy('index', 0);
+        const placeholderCount = placeholder?.node.stub ? 1 : 0;
+        if (this.numberOfRows > 1 || this.nodeMap.getSize() > placeholderCount) {
+            return;
+        }
+        this.destroyRowAtIndex(0);
+        this.firstBlockPending = true;
+        this.numberOfRows = 0;
+        this.lazyBlockLoadingSvc.queueLoadCheck();
     }
 
     /**
@@ -911,6 +938,7 @@ export class LazyCache extends BeanStub {
                 return;
             }
         }
+        this.awaitingFirstBlock = false;
         this.firstBlockPending = false;
 
         if (response.pivotResultFields) {
@@ -1068,6 +1096,7 @@ export class LazyCache extends BeanStub {
             this.firstBlockPending = false;
             this.numberOfRows = 1;
         }
+        this.awaitingFirstBlock = false;
         const wasRefreshing = this.nodesToRefresh.size > 0;
 
         for (let i = firstRowIndex; i < firstRowIndex + numberOfRowsExpected && i < this.getRowCount(); i++) {
