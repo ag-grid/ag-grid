@@ -10,8 +10,11 @@ import { fileURLToPath } from 'node:url';
 
 import { parseFile } from '../lib/rows.mjs';
 
-/** A concrete path that matches a (simple, anchored) Apache regex. First alternative wins. */
-export function synthFromPattern(pat, { slug = 'sample' } = {}) {
+/**
+ * A concrete path that matches a (simple, anchored) Apache regex. First alternative wins. `used.wild`
+ * is set when a wildcard (`.` or a character class) had to be filled in, so the path is made up.
+ */
+export function synthFromPattern(pat, { slug = 'sample', used = {} } = {}) {
     let p = pat;
     const anchored = p.startsWith('^');
     if (anchored) {
@@ -20,14 +23,21 @@ export function synthFromPattern(pat, { slug = 'sample' } = {}) {
     if (p.endsWith('$')) {
         p = p.slice(0, -1);
     }
-    let out = expand(p, slug);
+    let out = expand(p, slug, used);
     if (!anchored) {
         out = '/documentation' + out;
     }
     return out;
 }
 
-function expand(p, slug) {
+/** True when the sample synthFromPattern makes for `pat` fills in a wildcard: a made-up path. */
+export function synthesises(pat) {
+    const used = { wild: false };
+    synthFromPattern(pat, { used });
+    return used.wild;
+}
+
+function expand(p, slug, used = {}) {
     let out = '';
     let i = 0;
     while (i < p.length) {
@@ -63,7 +73,7 @@ function expand(p, slug) {
             }
             const bar = topLevelBar(inner);
             const alt = bar >= 0 ? inner.slice(0, bar) : inner;
-            out += expand(alt, slug);
+            out += expand(alt, slug, used);
             i = j;
             // a quantifier after a group: include the group once
             if (p[i] === '?' || p[i] === '*' || p[i] === '+') {
@@ -72,6 +82,7 @@ function expand(p, slug) {
             continue;
         }
         if (c === '.') {
+            used.wild = true;
             const next = p[i + 1];
             if (next === '*' || next === '+') {
                 out += slug;
@@ -83,6 +94,7 @@ function expand(p, slug) {
             continue;
         }
         if (c === '[') {
+            used.wild = true;
             let j = i + 1;
             while (j < p.length && p[j] !== ']') {
                 j++;
@@ -174,6 +186,8 @@ export class SampleGaps {
     constructor(label) {
         this.label = label;
         this.gaps = [];
+        /** Rules a curated row covers instead, for the generator's diagnostics. */
+        this.notes = [];
     }
     get curated() {
         this._curated ??= readdirSync(CURATED_DIR)
@@ -186,25 +200,126 @@ export class SampleGaps {
     add(text, matches) {
         const row = this.curated.find((r) => matches(r.path.split('?')[0]));
         if (row) {
-            console.error(`# no sample generated for ${text}; covered by ${row.file}:${row.line}`);
+            this.notes.push(`# no sample generated for ${text}; covered by ${row.file}:${row.line}`);
         } else {
             this.gaps.push(text);
         }
     }
-    /** Exits 1, naming each rule, if any rule is left with neither a sample nor a curated row. */
-    exitIfAny() {
+    /** The refusal for every rule left with neither a sample nor a curated row; empty when none is. */
+    errorLines() {
         if (!this.gaps.length) {
-            return;
+            return [];
         }
-        console.error(
-            `ERROR: ${this.label}: no sample could be generated for ${this.gaps.length} rule(s), and no curated row covers them.`
-        );
-        console.error('Add a row exercising each to curated.tsv or edge.tsv, or teach synthFromPattern the pattern:');
-        for (const text of this.gaps) {
-            console.error(`  ${text}`);
+        return [
+            `ERROR: ${this.label}: no sample could be generated for ${this.gaps.length} rule(s), and no curated row covers them.`,
+            'Add a row exercising each to curated.tsv or edge.tsv, or teach synthFromPattern the pattern:',
+            ...this.gaps.map((text) => `  ${text}`),
+        ];
+    }
+    /** Throws, naming each rule, if any rule is left with neither a sample nor a curated row. */
+    throwIfAny() {
+        const errors = this.errorLines();
+        if (errors.length) {
+            throw new GeneratorError([...this.notes, ...errors]);
         }
+    }
+    /** As throwIfAny, for a CLI: prints the notes, and exits 1 on a gap. */
+    exitIfAny() {
+        this.notes.forEach((note) => console.error(note));
+        const errors = this.errorLines();
+        if (errors.length) {
+            errors.forEach((line) => console.error(line));
+            process.exit(1);
+        }
+    }
+}
+
+/** A generator refusing its input. Each line is reported as it stands. */
+export class GeneratorError extends Error {
+    constructor(lines) {
+        super(lines.join('\n'));
+        this.lines = lines;
+    }
+}
+
+/**
+ * Runs a generator as a CLI: its rows to stdout and its diagnostics to stderr, or, when it refuses
+ * its input, the reasons to stderr and exit code 1.
+ */
+export function runCli(generate) {
+    let result;
+    try {
+        result = generate();
+    } catch (e) {
+        if (!(e instanceof GeneratorError)) {
+            throw e;
+        }
+        e.lines.forEach((line) => console.error(line));
         process.exit(1);
     }
+    result.notes.forEach((note) => console.error(note));
+    process.stdout.write(result.output);
+    console.error(result.summary);
+}
+
+/** True when `metaUrl` is the script node was started with, so a generator can also be imported. */
+export const isMain = (metaUrl) => Boolean(process.argv[1]) && fileURLToPath(metaUrl) === process.argv[1];
+
+/**
+ * Every host a host-matching regex accepts, for the finite patterns the .htaccess files use: escaped
+ * dots, literals, `(?:a|b)` alternation (nested too) and `?` on a group, anchored. Throws on anything
+ * else, so an unexpected pattern cannot quietly yield a short host list.
+ */
+export function expandHosts(pattern) {
+    const alternatives = (s) => {
+        const out = [];
+        let rest = s;
+        for (;;) {
+            const bar = topLevelBar(rest);
+            out.push(bar >= 0 ? rest.slice(0, bar) : rest);
+            if (bar < 0) {
+                return out;
+            }
+            rest = rest.slice(bar + 1);
+        }
+    };
+    const sequence = (s) => {
+        let options = [''];
+        let i = 0;
+        while (i < s.length) {
+            const c = s[i];
+            if (c === '\\' && s[i + 1] === '.') {
+                options = options.map((o) => `${o}.`);
+                i += 2;
+            } else if (c === '(') {
+                let depth = 1;
+                let j = i + 1;
+                for (; depth > 0; j++) {
+                    if (j >= s.length) {
+                        throw new Error(`unbalanced group in host pattern ${pattern}`);
+                    }
+                    depth += s[j] === '(' ? 1 : s[j] === ')' ? -1 : 0;
+                }
+                let alts = alternatives(s.slice(i + 1, j - 1).replace(/^\?:/, '')).flatMap(sequence);
+                i = j;
+                if (s[i] === '?') {
+                    alts = ['', ...alts];
+                    i++;
+                }
+                options = options.flatMap((o) => alts.map((a) => o + a));
+            } else if (/[a-z0-9-]/i.test(c)) {
+                options = options.map((o) => o + c);
+                i++;
+            } else {
+                throw new Error(`unsupported '${c}' in host pattern ${pattern}`);
+            }
+        }
+        return options;
+    };
+    if (!pattern.startsWith('^') || !pattern.endsWith('$')) {
+        throw new Error(`host pattern ${pattern} is not anchored at both ends`);
+    }
+    return [...new Set(alternatives(pattern.slice(1, -1)).flatMap(sequence))];
 }
 
 const isRedirect = (status) => status >= 300 && status < 400 && status !== 304;
