@@ -196,16 +196,19 @@ describe('ag-grid overlays state', () => {
 
         responseRowData = [{ athlete: 'Michael Phelps' }, { athlete: 'Usain Bolt' }];
         api.setFilterModel(null);
+        expect(hasLoadingIcon()).toBe(true);
+        await loadPromise;
         await new GridRows(
             api,
             `should show no rows and no matching rows when applying a filter after setFilterModel #2`
         ).check(`
             ROOT id:<no-id>
-            └── filler id:rowIndex:0
+            ├── LEAF id:2 athlete:"Michael Phelps"
+            └── LEAF id:3 athlete:"Usain Bolt"
         `);
 
         api.refreshServerSide({ route: [] });
-        expect(hasLoadingIcon()).toBe(true);
+        expect(hasLoadingIcon()).toBe(false);
 
         await loadPromise;
         expect(hasLoadingIcon()).toBe(false);
