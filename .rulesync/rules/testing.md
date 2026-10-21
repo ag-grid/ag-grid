@@ -86,6 +86,8 @@ Pick the input that *separates* the two behaviours. A test that passes against b
 - `./docs-e2e.sh` — Playwright E2E against the docs site. The Nx target is `test:e2e`; there is **no** `e2e` target.
 - `./grid-e2e.sh` — real-browser Playwright specs in `testing/e2e`, chromium by default; `--all-browsers` runs chromium, firefox and webkit, `--project=<name>` one of them, `--url <site>` runs against a dev server or deployed site instead of the local build.
 
+**Targeted runs: include the tests that guard the change's surface.** A targeted `./behave.sh` filter misses package tests outside its pattern. Pass extra file filters as separate arguments, e.g. `./behave.sh tooltip main-internal react.test`: `main-internal` whenever an export or `AG_GRID_INTERNAL` annotation changes (it matches `main-internal.test.ts`), and `react.test` whenever rendering or load timing changes (it matches the behavioural `*-react.test.tsx` files).
+
 ### Never block on a gate; read its log afterwards
 
 **Never run `./behave.sh`, `./checks.sh`, `./benches.sh`, `./docs-e2e.sh` or `./grid-e2e.sh` in the foreground** — while a Bash call is in flight the user cannot reach the agent at all. Launch with the harness's background mechanism, which delivers a completion event in a later turn, and do other work meanwhile. (`--async` detaches the script itself and reports back to the terminal it was launched from when it ends — useful to a human, useless to an agent, which cannot be woken that way.)
