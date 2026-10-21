@@ -61,14 +61,16 @@ export class FlattenStage extends BeanStub implements _IRowNodeFlattenStage, Nam
             atLeastOneRowPresent &&
             grandTotalRow;
 
+        // The transposed view shows the grand total as its totals column, so it is neither displayed nor pinned as a row.
+        const transposed = !!beans.transposeSvc?.isActive();
         let footerNode: RowNode | undefined;
         if (includeGrandTotalRow) {
             footerNode = _createRowNodeFooter(rootNode, beans);
-            if (!_getGrandTotalPinnedFloat(grandTotalRow)) {
+            if (!transposed && !_getGrandTotalPinnedFloat(grandTotalRow)) {
                 this.addRowNodeToRowsToDisplay(details, footerNode, result, 0, grandTotalRow === 'top');
             }
         }
-        beans.pinnedRowModel?.setGrandTotalNode(footerNode);
+        beans.pinnedRowModel?.setGrandTotalNode(transposed ? undefined : footerNode);
 
         return result;
     }

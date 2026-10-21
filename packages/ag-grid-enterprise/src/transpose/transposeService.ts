@@ -3,16 +3,25 @@ import type {
     CellClassRules,
     CellValueChangedEvent,
     ColDef,
+    ColumnPinnedType,
     ITransposeService,
     NamedBean,
     RowNode,
     TransposeFieldColumnDef,
     TransposeRecordColumnDef,
 } from 'ag-grid-community';
-import { AgColumn, BeanStub, RowNode as RowNodeClass, _isClientSideRowModel, _warnOnce } from 'ag-grid-community';
+import {
+    AgColumn,
+    BeanStub,
+    RowNode as RowNodeClass,
+    _getGrandTotalRow,
+    _isClientSideRowModel,
+    _warnOnce,
+} from 'ag-grid-community';
 
 const TRANSPOSE_FIELD_COL_ID = 'ag-Grid-TransposeField';
 const RECORD_COL_ID_PREFIX = 'ag-Grid-TransposeRecord-';
+const TOTAL_COL_ID = 'ag-Grid-TransposeTotal';
 const FIELD_ROW_ID_PREFIX = 'ag-Grid-TransposeField-';
 const FIELD_GROUP_ROW_ID_PREFIX = 'ag-Grid-TransposeFieldGroup-';
 const RECORD_CELL_CLASS_RULES: CellClassRules = {
@@ -76,6 +85,8 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
     public readonly allGroups: AgProvidedColumnGroup[] = [];
 
     private fieldNameCol: AgColumn | null = null;
+    /** Shows the grand total row as a column, while `grandTotalRow` is set. */
+    private totalCol: AgColumn | null = null;
     /** Record columns by record id, kept while the record exists, including while a filter hides it. */
     private readonly recordCols: Map<string, AgColumn> = new Map();
     /** Header text by record id, valid while the record's data object is unchanged. */
@@ -145,8 +156,17 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
                 leafRecords.push(record);
             }
         }
-        this.refreshRecordCols(leafRecords);
+        this.refreshRecordCols(leafRecords, this.getGrandTotal(leafRecords.length > 0));
         return this.buildFieldRows();
+    }
+
+    /** The grand total row, shown as the totals column. It exists only while `grandTotalRow` is set and there are records. */
+    private getGrandTotal(hasRecords: boolean): RowNode | null {
+        const rowModel = this.beans.rowModel;
+        if (!hasRecords || !_getGrandTotalRow(this.gos) || !_isClientSideRowModel(this.gos, rowModel)) {
+            return null;
+        }
+        return rowModel.rootNode?.sibling ?? null;
     }
 
     public onFieldOrderChanged(): void {
@@ -213,19 +233,30 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
      * Reuses each record's column, creating columns only for new records and destroying them only for removed ones;
      * the column model is refreshed only when the displayed set or order of columns changes.
      */
-    private refreshRecordCols(records: RowNode[]): void {
+    private refreshRecordCols(records: RowNode[], grandTotal: RowNode | null): void {
         const retired = this.rebuildCols ? this.retireGeneratedCols() : null;
         const headerCol = this.getHeaderCol();
         const token = ++this.refreshToken;
         const prevCols = this.cols;
         const recordCount = records.length;
-        let setChanged = prevCols?.length !== recordCount + 1;
+        const totalCol = this.refreshTotalCol(grandTotal);
+        const totalFirst = totalCol !== null && isTotalFirst(_getGrandTotalRow(this.gos));
+        // Record columns start after the field-name column, and after the totals column when it comes first.
+        const offset = totalFirst ? 2 : 1;
+        const colCount = recordCount + (totalCol ? 2 : 1);
+        let setChanged = prevCols?.length !== colCount;
         let orderChanged = false;
         const { recordData, changedRecordColIds } = this;
 
         this.fieldNameCol ??= this.createCol(this.createFieldNameColDef(headerCol));
-        const nextCols = new Array<AgColumn>(recordCount + 1);
+        const nextCols = new Array<AgColumn>(colCount);
         nextCols[0] = this.fieldNameCol;
+        if (totalCol) {
+            nextCols[totalFirst ? 1 : colCount - 1] = totalCol;
+            if (!setChanged && prevCols![totalFirst ? 1 : colCount - 1] !== totalCol) {
+                setChanged = true;
+            }
+        }
 
         const recordCols = this.recordCols;
         for (let i = 0; i < recordCount; ++i) {
@@ -249,10 +280,10 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
                 }
                 recordData.set(recordId, data);
             }
-            if (!setChanged && !orderChanged && prevCols![i + 1] !== col) {
+            if (!setChanged && !orderChanged && prevCols![i + offset] !== col) {
                 orderChanged = true;
             }
-            nextCols[i + 1] = col;
+            nextCols[i + offset] = col;
         }
 
         if (recordCols.size > recordCount) {
@@ -283,10 +314,51 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         if (this.fieldNameCol) {
             retired.push(this.fieldNameCol);
         }
+        if (this.totalCol) {
+            retired.push(this.totalCol);
+        }
         this.recordCols.clear();
         this.headerCache.clear();
         this.fieldNameCol = null;
+        this.totalCol = null;
         return retired;
+    }
+
+    /**
+     * The totals column takes its values from the grand total row rather than calculating its own, so it shows
+     * whatever the aggregation shows. Pinning the grand total row pins the column, at the same end.
+     */
+    private refreshTotalCol(grandTotal: RowNode | null): AgColumn | null {
+        if (!grandTotal) {
+            this.totalCol?.destroy();
+            this.totalCol = null;
+            return null;
+        }
+        const pinned = getTotalColPinned(_getGrandTotalRow(this.gos), !!this.gos.get('enableRtl'));
+        let col = this.totalCol;
+        if (col === null || col.colDef.pinned !== pinned) {
+            col?.destroy();
+            col = this.createCol(this.createTotalColDef(pinned));
+            this.totalCol = col;
+        }
+        col.transposeRecord = grandTotal;
+        return col;
+    }
+
+    private createTotalColDef(pinned: ColumnPinnedType): ColDef {
+        this.recordColDefBase ??= this.createRecordColDefBase();
+        // The record header shows a selection checkbox, which the grand total cannot use.
+        const { headerComponent: _, ...base } = this.recordColDefBase;
+        return {
+            ...base,
+            colId: TOTAL_COL_ID,
+            headerName: this.getLocaleTextFunc()('footerTotal', 'Total'),
+            headerClass: 'ag-transpose-total-header',
+            cellClass: 'ag-transpose-total-cell',
+            pinned,
+            lockPinned: true,
+            suppressMovable: true,
+        };
     }
 
     /**
@@ -409,6 +481,8 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         this.changedRecordColIds.length = 0;
         this.fieldNameCol?.destroy();
         this.fieldNameCol = null;
+        this.totalCol?.destroy();
+        this.totalCol = null;
     }
 
     private getHeaderCol(): AgColumn | null {
@@ -569,4 +643,20 @@ const createUserOrderSorter = (order: AgColumn[]) => {
     };
     return (items: (AgColumn | AgProvidedColumnGroup)[]) =>
         items.slice().sort((a, b) => getFirstIndex(a) - getFirstIndex(b));
+};
+
+type GrandTotalRow = ReturnType<typeof _getGrandTotalRow>;
+
+const isTotalFirst = (grandTotalRow: GrandTotalRow): boolean =>
+    grandTotalRow === 'top' || grandTotalRow === 'pinnedTop';
+
+/** A pinned grand total row pins the totals column: top to the start, bottom to the end. */
+const getTotalColPinned = (grandTotalRow: GrandTotalRow, rtl: boolean): ColumnPinnedType => {
+    if (grandTotalRow === 'pinnedTop') {
+        return rtl ? 'right' : 'left';
+    }
+    if (grandTotalRow === 'pinnedBottom') {
+        return rtl ? 'left' : 'right';
+    }
+    return null;
 };
