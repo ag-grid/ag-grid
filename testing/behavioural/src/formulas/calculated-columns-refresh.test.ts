@@ -222,6 +222,54 @@ describe('calculated columns - refreshCalculatedColumns', () => {
         ).toBeUndefined();
     });
 
+    test.each([false, true])(
+        'refreshes deferred Add dialogs with existing calculated columns: %s',
+        async (existingColumn) => {
+            let allowSalary = true;
+            const created = vi.fn();
+            const changed = vi.fn();
+            const api = createGrid('refresh-deferred-add', {
+                columnDefs: columnDefs.slice(0, existingColumn ? 3 : 2),
+                rowData,
+                calculatedColumns: {
+                    applyMode: 'deferred',
+                    isColumnReferenceable: ({ column }) => allowSalary || column.getColId() !== 'pay',
+                },
+                onCalculatedColumnCreated: created,
+                onCalculatedColumnChanged: changed,
+            });
+            showColumnMenu(api, 'sales');
+            await clickMenuOption('Add Calculated Column');
+            setExpression('[Salary] * 3');
+            allowSalary = false;
+            api.refreshCalculatedColumns({ columns: [] });
+            expect(getDialogButton('Apply').disabled).toBe(false);
+
+            api.refreshCalculatedColumns();
+            expect(getDialogButton('Apply').disabled).toBe(true);
+            expect(getExpressionInput().getAttribute('aria-invalid')).toBe('true');
+            getDialogButton('Columns').click();
+            expect(getSuggestionLabels()).not.toContain('Salary');
+            getDialogButton('Apply').click();
+            expect(api.getColumn('calculated_1')).toBeNull();
+            await asyncSetTimeout(0);
+            expect(created).not.toHaveBeenCalled();
+            expect(changed.mock.calls.some(([event]) => event.column.getColId() === 'calculated_1')).toBe(false);
+
+            allowSalary = true;
+            api.refreshCalculatedColumns({ columns: ['profit'] });
+            expect(getDialogButton('Apply').disabled).toBe(true);
+            api.refreshCalculatedColumns();
+            expect(getDialogButton('Apply').disabled).toBe(false);
+            expect(getExpressionInput().value).toBe('[Salary] * 3');
+            getDialogButton('Columns').click();
+            expect(getSuggestionLabels()).toContain('Salary');
+            expect(api.getColumn('calculated_1')).toBeNull();
+            getDialogButton('Apply').click();
+            expect(value(api, 'calculated_1')).toBe(300);
+        }
+    );
+
     test('refreshes deferred draft errors without applying the draft', async () => {
         let allowSalary = false;
         const api = createGrid('refresh-deferred-draft', {

@@ -234,9 +234,6 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         const { colModel, formula } = this.beans;
         const columns = params?.columns?.map((key) => colModel.getCol(key)) ?? colModel.colDefList;
         const targets = new Set(columns.filter((column): column is AgColumn => !!column?.isCalculatedCol));
-        if (!targets.size) {
-            return;
-        }
         const updates: { colId: string; colDef: ColDef; validation: CalculatedColumnExpressionValidation }[] = [];
         for (const column of targets) {
             const colId = column.colId;
@@ -268,8 +265,17 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         if (updates.length) {
             this.refreshDynamicColumns('api');
         }
-        for (const column of targets) {
-            this.openDialogsByColId.get(column.colId)?.refreshValidation();
+        if (params?.columns == null) {
+            for (const dialog of this.openDialogsByColId.values()) {
+                dialog.refreshValidation();
+            }
+        } else {
+            for (const column of targets) {
+                this.openDialogsByColId.get(column.colId)?.refreshValidation();
+            }
+        }
+        if (!targets.size) {
+            return;
         }
         // dependencies may be outside the requested columns, so refresh their cached values too
         formula?.refreshFormulas(true);
