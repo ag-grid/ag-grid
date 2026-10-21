@@ -1,5 +1,5 @@
 import type { AgEvent } from '../interfaces/agEvent';
-import type { AgFrameworkOverrides } from '../interfaces/agFrameworkOverrides';
+import type { AgFrameworkOverrides, AgListenerWrapper } from '../interfaces/agFrameworkOverrides';
 import type { IEventEmitter, IEventListener, IGlobalEventListener } from '../interfaces/iEventEmitter';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -10,10 +10,13 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
     private readonly globalSyncListeners = new Set<IGlobalEventListener<TEventType>>();
     private readonly globalAsyncListeners = new Set<IGlobalEventListener<TEventType>>();
 
-    private frameworkOverrides?: AgFrameworkOverrides;
+    private frameworkOverrides: AgFrameworkOverrides | undefined = undefined;
 
     private asyncFunctionsQueue: (() => void)[] = [];
     private scheduled = false;
+
+    /** Set by a framework that may wrap user listeners: maps each user listener to the one registered for it. */
+    public listenerWrapper: AgListenerWrapper | undefined = undefined;
 
     public setFrameworkOverrides(frameworkOverrides: AgFrameworkOverrides): void {
         this.frameworkOverrides = frameworkOverrides;

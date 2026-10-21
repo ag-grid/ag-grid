@@ -1304,6 +1304,41 @@ describe('Column Groups', () => {
             expect(displayedChildrenEvents.length).toBeGreaterThan(0);
         });
 
+        test('group listeners added async run after the change, apart from the same function added sync', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ groupId: 'g', children: [{ colId: 'a' }, { colId: 'b', columnGroupShow: 'open' }] }],
+            });
+            const calls: string[] = [];
+            const asyncListener = () => calls.push('async');
+            const bothWays = () => calls.push('sync');
+            const providedGroup = api.getProvidedColumnGroup('g')!;
+            const group = api.getColumnGroup('g')!;
+            providedGroup.addEventListener('expandedChanged', asyncListener, true);
+            providedGroup.addEventListener('expandedChanged', bothWays);
+            providedGroup.addEventListener('expandedChanged', bothWays, true);
+            providedGroup.removeEventListener('expandedChanged', bothWays, true);
+            group.addEventListener('displayedChildrenChanged', asyncListener, true);
+            group.addEventListener('displayedChildrenChanged', bothWays);
+            group.addEventListener('displayedChildrenChanged', bothWays, true);
+            group.removeEventListener('displayedChildrenChanged', bothWays, true);
+
+            api.setColumnGroupOpened('g', true);
+            expect(calls).toEqual(['sync', 'sync']);
+            await waitFor(() => expect(calls).toEqual(['sync', 'sync', 'async', 'async']));
+        });
+
+        test('a provided group with its children hidden ignores removing a listener never added', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ groupId: 'g', children: [{ colId: 'a', hide: true }] }, { colId: 'b' }],
+            });
+            const providedGroup = api.getProvidedColumnGroup('g')!;
+            providedGroup.removeEventListener('expandedChanged', () => {});
+            const calls: boolean[] = [];
+            providedGroup.addEventListener('expandedChanged', () => calls.push(providedGroup.isExpanded()));
+            api.setColumnGroupOpened('g', true);
+            expect(calls).toEqual([true]);
+        });
+
         test('expand a closed group via setColumnGroupOpened', async () => {
             const columnDefs: (ColDef | ColGroupDef)[] = [
                 {

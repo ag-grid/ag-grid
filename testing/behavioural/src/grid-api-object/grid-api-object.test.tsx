@@ -265,6 +265,53 @@ describe('grid api object', () => {
         api.destroy();
     });
 
+    test('onGridPreDestroyed is called for a grid destroyed in or after onGridReady, and neither for one destroyed before', async () => {
+        const calls: string[] = [];
+        const createNamedGrid = (name: string, onReady?: (api: GridApi) => void) => {
+            const element = document.createElement('div');
+            document.body.appendChild(element);
+            return createMyGrid(
+                {
+                    columnDefs: [{ field: 'a' }],
+                    onGridReady: ({ api }) => {
+                        calls.push(`${name}: ready`);
+                        onReady?.(api);
+                    },
+                    onGridPreDestroyed: () => calls.push(`${name}: preDestroyed`),
+                },
+                element
+            );
+        };
+
+        createNamedGrid('before').destroy();
+        createNamedGrid('in', (api) => api.destroy());
+        const after = createNamedGrid('after');
+        await waitFor(() => expect(calls).toContain('after: ready'));
+        after.destroy();
+
+        expect(calls).toEqual(['in: ready', 'in: preDestroyed', 'after: ready', 'after: preDestroyed']);
+    });
+
+    test('a throwing onGridPreDestroyed handler still lets the grid be destroyed, and its error reaches the caller', async () => {
+        const element = document.getElementById('myGrid')!;
+        let ready = false;
+        const api = createMyGrid({
+            columnDefs: [{ field: 'a' }],
+            onGridReady: () => {
+                ready = true;
+            },
+            onGridPreDestroyed: () => {
+                throw new Error('handler failed');
+            },
+        });
+        await waitFor(() => expect(ready).toBe(true));
+        expect(element.childElementCount).toBe(1);
+
+        expect(() => api.destroy()).toThrow('handler failed');
+        expect(api.isDestroyed()).toBe(true);
+        expect(element.childElementCount).toBe(0);
+    });
+
     test('api.getGridElement() returns the correct wrapping DOM element', () => {
         const element = document.getElementById('myGrid')!;
 
