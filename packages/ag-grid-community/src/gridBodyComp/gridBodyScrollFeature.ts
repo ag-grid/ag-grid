@@ -490,6 +490,12 @@ export class GridBodyScrollFeature extends BeanStub {
         this.eGridViewport.scrollTop = vScrollPosition;
     }
 
+    /** The vertical scroll position with the viewport scrolled as far down as it goes. */
+    public getMaxVScrollPosition(): number {
+        const { scrollHeight, clientHeight } = this.eGridViewport;
+        return Math.max(scrollHeight - clientHeight, 0);
+    }
+
     public getVScrollPosition(): VerticalScrollPosition {
         if (!this.isVerticalPositionInvalidated) {
             const { lastOffsetHeight, lastScrollTop } = this;

@@ -11,6 +11,8 @@ export interface RowsInViewAnchor {
     firstVisiblePixel: number;
     /** The page's pixel offset before the update. */
     pixelOffset: number;
+    /** Whether the viewport was scrolled to the bottom of the rows, to keep it there. */
+    atBottom: boolean;
     /**
      * In display order, the rows displayed before the update from a view's height above the rows the user could see to
      * a view's height below them.
@@ -34,7 +36,8 @@ export interface RowsInViewAnchor {
 
 /**
  * Records where the viewport is, or returns `null` when there is nothing to keep in view. A grid scrolled to its top,
- * at the top of the first page, is not anchored, so rows added at the top come into view.
+ * at the top of the first page, is not anchored, so rows added at the top come into view. A grid scrolled to the bottom
+ * of its rows, and not also at the top, is kept at the bottom, so rows added at the end come into view.
  */
 export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | null {
     const { ctrlsSvc, pageBounds, rowContainerHeight, rowModel } = beans;
@@ -47,6 +50,8 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
         return null;
     }
     rowContainerHeight.updateOffset(); // the height scaling offset follows the scroll position just read
+    // within a pixel, as the scroll position can be fractional when zoomed
+    const atBottom = top > 0 && top >= scrollFeature.getMaxVScrollPosition() - 1;
 
     const viewportTop = top + rowContainerHeight.divStretchOffset;
     // rows under the sticky rows are hidden, so rows added or removed there move the rows the user can see
@@ -88,6 +93,7 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
         viewportTop,
         firstVisiblePixel,
         pixelOffset,
+        atBottom,
         rows,
         rowTops,
         rowHeights,
@@ -256,20 +262,27 @@ export function _followRow(beans: BeanCollection, { rowIndex, rowPinned }: RowPo
     };
 }
 
-/**
- * Scrolls by how far the rows the user could see moved, so they stay where they were, whether the update added,
- * removed, sorted or filtered the rows above them. With every row in view removed, scrolls by the height of the rows
- * removed above them instead. Returns `true` if the grid scrolled.
- */
-export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnchor): boolean {
+/** The vertical scroll position that keeps the rows the user could see where they were. */
+function getScrollTopForRowsInView(beans: BeanCollection, anchor: RowsInViewAnchor): number {
     const rowsInViewMoved = getRowsInViewMoved(beans, anchor) ?? -getRemovedHeight(anchor);
     // with pagination, rows added or removed before the page also move where the page starts
     const pixelOffsetChange = beans.pageBounds.getPixelOffset() - anchor.pixelOffset;
     const viewportTop = anchor.viewportTop + rowsInViewMoved - pixelOffsetChange;
+    return beans.rowContainerHeight.getScrollPositionForPixel(viewportTop);
+}
 
+/**
+ * Scrolls by how far the rows the user could see moved, so they stay where they were, whether the update added,
+ * removed, sorted or filtered the rows above them. With every row in view removed, scrolls by the height of the rows
+ * removed above them instead. A viewport at the bottom of the rows scrolls to their new bottom. Returns `true` if the
+ * grid scrolled.
+ */
+export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnchor): boolean {
     // compared even when nothing was added or removed, as a change in height scaling can move the rows on screen
     const scrollFeature = beans.ctrlsSvc.getScrollFeature();
-    const scrollTop = beans.rowContainerHeight.getScrollPositionForPixel(viewportTop);
+    const scrollTop = anchor.atBottom
+        ? scrollFeature.getMaxVScrollPosition()
+        : getScrollTopForRowsInView(beans, anchor);
     // the capture read the viewport, and setting the position invalidates the cache, so the cache is current here
     const previousScrollTop = scrollFeature.getVScrollPosition().top;
     anchor.scrollTop = previousScrollTop;
