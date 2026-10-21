@@ -116,7 +116,7 @@ export class FilterManager extends BeanStub implements NamedBean {
     }
 
     public getFilterModel(): FilterModel {
-        return this.colFilter?.getLatestModel() ?? {};
+        return this.colFilter?.getModel() ?? {};
     }
 
     public getFilterState(): ColumnFilterState | undefined {

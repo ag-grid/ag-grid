@@ -6,7 +6,11 @@ import { _getRowHandler } from './pairedFilterHandler';
 
 export function isColumnFilterPresent(beans: BeanCollection): boolean {
     const filterManager = beans.filterManager;
-    return !!filterManager?.isColumnFilterPresent() || !!filterManager?.isAggregateFilterPresent();
+    return (
+        !!filterManager?.isColumnFilterPresent() ||
+        !!filterManager?.isAggregateFilterPresent() ||
+        !!beans.colFilter?.hasPendingModel()
+    );
 }
 
 export function getColumnFilterInstance<TFilter = IFilter>(
@@ -44,7 +48,7 @@ export function getColumnFilterModel<TModel>(
         useUnapplied = false;
     }
     const column = colModel.getCol(key);
-    return column ? (colFilter?.getLatestModelForColumn(column, useUnapplied) ?? null) : null;
+    return column ? (colFilter?.getModelForColumn(column, useUnapplied) ?? null) : null;
 }
 
 export function setColumnFilterModel<TModel>(

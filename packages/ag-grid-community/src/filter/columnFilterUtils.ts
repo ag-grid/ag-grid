@@ -68,6 +68,7 @@ interface BaseFilterWrapper<
 export interface LegacyFilterWrapper extends BaseFilterWrapper<IFilterComp, IFilterParams> {
     isHandler: false;
     filter?: IFilterComp;
+    buildModel?: { model: any };
 }
 
 export type HandlerGenerator =

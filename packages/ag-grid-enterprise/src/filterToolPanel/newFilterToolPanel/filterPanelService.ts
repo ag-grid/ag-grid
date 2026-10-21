@@ -72,6 +72,7 @@ export class FilterPanelService
         this.addManagedListeners(this.beans.colFilter!, {
             filterStateChanged: refreshForColumn,
             filterModelAsStringChanged: refreshForColumn,
+            heldFilterModelsChanged: updateFilterStates,
         });
     }
 

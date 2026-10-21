@@ -30,6 +30,40 @@ describe('new filters tool panel requires enableFilterHandlers', () => {
         vi.resetAllMocks();
     });
 
+    test('a model set before the rows arrive shows as a card at once, with nothing to apply', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'name', filter: 'agTextColumnFilter', filterParams: { buttons: ['apply'] } },
+                { field: 'age', filter: 'agNumberColumnFilter', filterParams: { buttons: ['apply'] } },
+            ],
+            rowData: [],
+            enableFilterHandlers: true,
+            sideBar: {
+                toolPanels: [
+                    {
+                        id: 'filters-new',
+                        labelDefault: 'Filters',
+                        labelKey: 'filters',
+                        iconKey: 'filter',
+                        toolPanel: 'agNewFiltersToolPanel',
+                        toolPanelParams: { buttons: ['apply'] },
+                    },
+                ],
+                defaultToolPanel: 'filters-new',
+            },
+        });
+        await waitFor(() => expect(api.getToolPanelInstance('filters-new')).toBeTruthy());
+        const gridDiv = getGridElement(api)!;
+
+        api.setFilterModel({ age: { filterType: 'number', type: 'lessThan', filter: 30 } });
+        await waitFor(() =>
+            expect(Array.from(gridDiv.querySelectorAll('.ag-filter-card-title'), (el) => el.textContent)).toEqual([
+                'Age',
+            ])
+        );
+        expect(gridDiv.querySelector('.ag-filter-panel-buttons button')!.hasAttribute('disabled')).toBe(true);
+    });
+
     test('warns #282 and renders an empty panel when enableFilterHandlers is not set', async () => {
         // This test deliberately omits enableFilterHandlers for the new filters tool panel, which warns #282.
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [282] });
@@ -365,6 +399,62 @@ describe('new filters tool panel filter types', () => {
         await api.setColumnFilterModel('age', { filterType: 'number', type: 'greaterThan', filter: 26 });
         api.onFilterChanged();
         expect(api.getDisplayedRowCount()).toBe(1);
+    });
+
+    test('default choices built before the rows arrive take a model set meanwhile in the type it states', async () => {
+        const under20 = { filterType: 'number', type: 'lessThan', filter: 20 };
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'age', filter: 'agSelectableColumnFilter', floatingFilter: true }],
+            enableFilterHandlers: true,
+            suppressSetFilterByDefault: true,
+        });
+        await waitFor(() => expect(api.getColumnFilterHandler('age')).toBeTruthy());
+        api.setFilterModel({ age: under20 });
+        expect(api.getColumnFilterModel('age')).toEqual(under20);
+
+        api.setGridOption('rowData', [{ age: 10 }, { age: 17 }, { age: 30 }]);
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(2));
+        expect(api.getColumnFilterModel('age')).toEqual(under20);
+    });
+
+    test('a Selectable Filter switched before the rows arrive starts empty, as with rows', async () => {
+        class Display {
+            public init(): void {}
+            public getGui(): HTMLElement {
+                return document.createElement('div');
+            }
+            public refresh(): boolean {
+                return true;
+            }
+        }
+        // each choice its own logic, which would take the other's model
+        const choice = (name: string) => ({
+            filter: {
+                component: Display,
+                doesFilterPass: ({ model, data }: { model: { value: string }; data: { age: number } }) =>
+                    String(data.age).includes(model.value),
+            },
+            name,
+        });
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                {
+                    field: 'age',
+                    filter: 'agSelectableColumnFilter',
+                    filterParams: { filters: [choice('First'), choice('Second')] },
+                },
+            ],
+            rowData: [],
+            enableFilterHandlers: true,
+        });
+        await waitFor(() => expect(api.getColumnFilterHandler('age')).toBeTruthy());
+        void api.setColumnFilterModel('age', { value: '3' });
+        api.setState({ filter: { selectableFilters: { age: 1 } } });
+        expect(api.getColumnFilterModel('age')).toBeNull();
+
+        api.setGridOption('rowData', [{ age: 30 }, { age: 25 }]);
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(2));
+        expect(api.getColumnFilterModel('age')).toBeNull();
     });
 
     test('restoring the choice already active through `setState` keeps the floating filter built from it', async () => {

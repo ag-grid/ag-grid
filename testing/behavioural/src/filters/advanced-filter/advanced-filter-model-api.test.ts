@@ -1180,7 +1180,7 @@ describe('Advanced Filter', () => {
             `);
         });
 
-        test('the returned model is the caller’s own, so mutating it does not reach the applied filter', async () => {
+        test('the returned model is the same object until the filter changes, which leaves it as it was', async () => {
             const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
             await asyncSetTimeout(0);
 
@@ -1195,14 +1195,13 @@ describe('Advanced Filter', () => {
             await asyncSetTimeout(0);
             expect(api.getDisplayedRowCount()).toBe(1);
 
-            const model = api.getAdvancedFilterModel() as AdvancedFilterModel & { conditions: any[] };
-            expect(model).not.toBe(api.getAdvancedFilterModel());
+            const model = api.getAdvancedFilterModel();
+            expect(api.getAdvancedFilterModel()).toBe(model);
 
-            model.type = 'OR';
-            model.conditions[0].filter = 99;
-            model.conditions.push({ filterType: 'text', colId: 'country', type: 'contains', filter: 'zz' });
-
-            expect(api.getAdvancedFilterModel()).toEqual({
+            applyModel(api, { filterType: 'number', colId: 'age', type: 'equals', filter: 23 });
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).not.toBe(model);
+            expect(model).toEqual({
                 filterType: 'join',
                 type: 'AND',
                 conditions: [
@@ -1210,7 +1209,6 @@ describe('Advanced Filter', () => {
                     { filterType: 'text', colId: 'athlete', type: 'contains', filter: 'Phelps' },
                 ],
             });
-            expect(api.getDisplayedRowCount()).toBe(1);
         });
 
         test('compound model round-trip preserves structure', async () => {
@@ -1292,16 +1290,35 @@ describe('Advanced Filter', () => {
         beforeAll(() => installFilterLayoutMock());
         afterAll(() => uninstallFilterLayoutMock());
 
-        test('reads back at once as the caller’s own copy, and applies once rows arrive', async () => {
+        test('with no row data given, an expression applied in the input before rows arrive wins over the initial state', async () => {
+            const api = gridsManager.createGrid('grid1', {
+                columnDefs: COLUMN_DEFS,
+                enableAdvancedFilter: true,
+                initialState: { filter: { advancedFilterModel: UNDER_20 } },
+            });
+            await asyncSetTimeout(0);
+            await AdvancedFilterHarness.get(api).applyExpression('[Athlete] contains "Bolt"');
+            expect(api.getAdvancedFilterModel()).toEqual(BOLT);
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toEqual(BOLT);
+            expect(getDisplayedAthletes(api)).toEqual(['Usain Bolt']);
+        });
+
+        test('shows in the grid state at once', async () => {
+            const api = gridsManager.createGrid('grid1', EMPTY_OPTIONS);
+            await asyncSetTimeout(0);
+            api.setAdvancedFilterModel(UNDER_20);
+            expect(api.getState().filter?.advancedFilterModel).toEqual(UNDER_20);
+        });
+
+        test('reads back at once, and applies once rows arrive', async () => {
             const api = gridsManager.createGrid('grid1', EMPTY_OPTIONS);
             await asyncSetTimeout(0);
 
-            const model: AdvancedFilterModel = { ...UNDER_20 };
-            api.setAdvancedFilterModel(model);
-            model.filter = 99;
-            const retrieved = api.getAdvancedFilterModel();
-            expect(retrieved).toEqual(UNDER_20);
-            expect(retrieved).not.toBe(model);
+            api.setAdvancedFilterModel({ ...UNDER_20 });
+            expect(api.getAdvancedFilterModel()).toEqual(UNDER_20);
 
             api.setGridOption('rowData', []);
             await asyncSetTimeout(0);
@@ -1412,7 +1429,7 @@ describe('Advanced Filter', () => {
         test('an expression confirmed in the input after a model replaces it once rows arrive to make it valid', async () => {
             const api = gridsManager.createGrid('grid1', EMPTY_OPTIONS);
             await asyncSetTimeout(0);
-            api.setAdvancedFilterModel(UNDER_20);
+            api.setAdvancedFilterModel(BOLT);
             const harness = AdvancedFilterHarness.get(api);
             await harness.applyExpression('[Age] > 24');
             await asyncSetTimeout(0);
@@ -1549,6 +1566,26 @@ describe('Advanced Filter', () => {
             expect(getDisplayedAthletes(api)).toEqual(ALL_ATHLETES);
         });
 
+        test('enabling then disabling the advanced filter drops an initial state column model before the rows arrive', async () => {
+            const bolt = { filterType: 'text', type: 'contains', filter: 'Bolt' };
+            const api = gridsManager.createGrid('grid1', {
+                ...EMPTY_OPTIONS,
+                enableAdvancedFilter: false,
+                initialState: { filter: { filterModel: { athlete: bolt } } },
+            });
+            await asyncSetTimeout(0);
+            expect(api.getFilterModel()).toEqual({ athlete: bolt });
+
+            api.setGridOption('enableAdvancedFilter', true);
+            api.setGridOption('enableAdvancedFilter', false);
+            await api.getColumnFilterInstance('athlete');
+            expect(api.getFilterModel()).toEqual({});
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(getDisplayedAthletes(api)).toEqual(ALL_ATHLETES);
+        });
+
         test('enabling the advanced filter drops a column filter model set before the rows arrive', async () => {
             const api = gridsManager.createGrid('grid1', { ...EMPTY_OPTIONS, enableAdvancedFilter: false });
             await asyncSetTimeout(0);
@@ -1559,9 +1596,12 @@ describe('Advanced Filter', () => {
                 type: 'contains',
                 filter: 'Bolt',
             });
+            const filterActive = () => ['athlete', 'age'].map((colId) => api.getColumn(colId)!.isFilterActive());
+            expect(filterActive()).toEqual([true, true]);
             api.setGridOption('enableAdvancedFilter', true);
             await columnModelSettled;
             expect(api.getFilterModel()).toEqual({});
+            expect(filterActive()).toEqual([false, false]);
 
             api.setGridOption('rowData', ROW_DATA);
             await asyncSetTimeout(0);

@@ -63,7 +63,7 @@ import {
 } from './columnFilterUtils';
 import type { FilterComp } from './filterComp';
 import type { ResolvedFilter } from './filterDefResolver';
-import { _resolveFilter, _setColDefPropsForDataType } from './filterDefResolver';
+import { _isFilterFromDataType, _resolveFilter, _setColDefPropsForDataType } from './filterDefResolver';
 import type {
     FloatingFilterDisplayParams,
     IFloatingFilterParams,
@@ -203,22 +203,35 @@ const getAuthorHandler = (
     return typeof filter === 'string' ? filter : undefined;
 };
 
-type QueuedModelUpdate =
-    | { model: FilterModel | null; source: FilterChangedEventSourceType; resolve?: undefined }
-    | { key: string | AgColumn; model: any; resolve: () => void };
+/** A `filterChanged` that a change made before rows load tells once they do. */
+interface HeldFilterChange {
+    colIds: string[];
+    source: FilterChangedEventSourceType;
+    column?: AgColumn;
+    additionalEventAttributes?: any;
+}
 
-const decideQueuedModel = (result: FilterModel, decided: Set<string>, column: AgColumn | undefined, model: any) => {
-    if (!column?.isFilterAllowed()) {
-        return;
+/** The columns whose model differs from `before` to `after`, then `extraColIds`, each once. */
+const getChangedColIds = (before: FilterModel, after: FilterModel, extraColIds: string[]): string[] => {
+    const changed = new Set<string>();
+    const beforeColIds = Object.keys(before);
+    for (let i = 0, len = beforeColIds.length; i < len; ++i) {
+        const colId = beforeColIds[i];
+        if (!_jsonEquals(before[colId] ?? null, after[colId] ?? null)) {
+            changed.add(colId);
+        }
     }
-    const colId = column.colId;
-    if (decided.has(colId)) {
-        return;
+    const afterColIds = Object.keys(after);
+    for (let i = 0, len = afterColIds.length; i < len; ++i) {
+        const colId = afterColIds[i];
+        if (before[colId] == null && after[colId] != null) {
+            changed.add(colId);
+        }
     }
-    decided.add(colId);
-    if (model != null) {
-        result[colId] = model;
+    for (let i = 0, len = extraColIds.length; i < len; ++i) {
+        changed.add(extraColIds[i]);
     }
+    return Array.from(changed);
 };
 
 export class ColumnFilterService
@@ -228,6 +241,7 @@ export class ColumnFilterService
         | 'filterAction'
         | 'filterGlobalButtons'
         | 'filterModelAsStringChanged'
+        | 'heldFilterModelsChanged'
     >
     implements NamedBean
 {
@@ -246,10 +260,20 @@ export class ColumnFilterService
     // 100,000 rows and group by country. then do some filtering. all the cells flash, which is silly.
     private processingFilterChange = false;
 
-    /** Model updates deferred until cell data types are inferred, in call order. */
-    private modelUpdates: QueuedModelUpdate[] = [];
+    /** The `filterChanged` events of changes made through the API before rows load, told in order once they do. */
+    private heldChanges: HeldFilterChange[] = [];
+    /** The promises `setColumnFilterModel` returned before rows load, settled once they do. */
+    private heldResolves: (() => void)[] = [];
+    /** The columns the API set a model for before rows load, which a filter rebuilt or a column re-added keeps. */
+    private readonly apiHeldColIds = new Set<string>();
+    /** Whether a model the API set is being placed before rows load, so what its filter tells of it waits for them. */
+    private holdingEvents = false;
+    /** Whether a column without a filter shows the indicator of a model held for it, cleared once none is. */
+    private pendingFlagsShown = false;
 
-    public initialModel: FilterModel;
+    /** Models no filter holds: the initial state's, a handler's while it is rebuilt, and before rows load those for a
+     *  column missing, unable to filter, or whose filter waits for its type and so holds none. */
+    private pendingModel: FilterModel;
     /** This may not contain the model for non-handler columns */
     public model: FilterModel;
     /** This contains the UI state for handler columns */
@@ -266,20 +290,15 @@ export class ColumnFilterService
             gridColumnsChanged: this.onColumnsChanged.bind(this),
             dataTypesInferred: () => {
                 this.beans.setFilterSvc?.createPreservingFilters();
-                this.processFilterModelUpdateQueue();
+                this.applyHeldModels();
             },
         });
 
         this.addManagedPropertyListener('pivotMode', this.onPivotModeChanged.bind(this));
 
         const gos = this.gos;
-        const initialFilterModel = {
-            ...gos.get('initialState')?.filter?.filterModel,
-        };
-        this.initialModel = initialFilterModel;
-        this.model = {
-            ...initialFilterModel,
-        };
+        this.pendingModel = { ...gos.get('initialState')?.filter?.filterModel };
+        this.model = {};
         if (!gos.get('enableFilterHandlers')) {
             delete this.handlerMap['agMultiColumnFilter'];
         }
@@ -295,29 +314,46 @@ export class ColumnFilterService
         source: FilterChangedEventSourceType = 'api',
         forceUpdateActive?: boolean
     ): void {
-        const { colModel, dataTypeSvc, filterManager } = this.beans;
-        if (dataTypeSvc?.isPendingInference) {
-            this.modelUpdates.push({ model, source });
-            return;
-        }
-
+        const { colModel, filterManager } = this.beans;
+        const { allColumnFilters, apiHeldColIds } = this;
+        const holding = this.isHolding();
         const allPromises: AgPromise<void>[] = [];
-        const previousModel = this.getModel(true);
+        // the initial state's models no filter took were never applied, so replacing them changes nothing
+        if (!apiHeldColIds.size) {
+            this.pendingModel = {};
+        }
+        const previousModel = this.getModel();
+        this.pendingModel = {};
+        // before rows load, the columns the model names that cannot filter yet, which may by the time they do
+        const unplacedColIds: string[] = [];
+        if (holding) {
+            apiHeldColIds.clear();
+        }
 
         if (model) {
             // mark the filters as we set them, so any active filters left over we stop
             const modelKeys = new Set(Object.keys(model));
 
-            this.allColumnFilters.forEach((filterWrapper, colId) => {
-                const newModel = model[colId];
-
-                allPromises.push(this.setModelOnFilterWrapper(filterWrapper, newModel));
+            allColumnFilters.forEach((filterWrapper, colId) => {
+                allPromises.push(
+                    holding
+                        ? this.holdModel(filterWrapper.column, colId, model[colId])
+                        : this.setModelOnFilterWrapper(filterWrapper, model[colId])
+                );
                 modelKeys.delete(colId);
             });
 
             // at this point, processedFields contains data for which we don't have a filter working yet
             modelKeys.forEach((colId) => {
                 const column = colModel.colsById[colId];
+
+                if (holding) {
+                    if (!column?.isFilterAllowed() && model[colId] != null) {
+                        unplacedColIds.push(colId);
+                    }
+                    allPromises.push(this.holdModel(column, colId, model[colId]));
+                    return;
+                }
 
                 if (!column) {
                     this.warn(62, { colId });
@@ -338,13 +374,31 @@ export class ColumnFilterService
             });
         } else {
             this.model = {};
-            this.allColumnFilters.forEach((filterWrapper) => {
-                allPromises.push(this.setModelOnFilterWrapper(filterWrapper, null));
+            allColumnFilters.forEach((filterWrapper, colId) => {
+                allPromises.push(
+                    holding
+                        ? this.holdModel(filterWrapper.column, colId, null)
+                        : this.setModelOnFilterWrapper(filterWrapper, null)
+                );
             });
         }
 
         AgPromise.all(allPromises).then(() => {
-            const currentModel = this.getModel(true);
+            if (!this.isAlive()) {
+                return;
+            }
+            const currentModel = this.getModel();
+            if (holding) {
+                const colIds = getChangedColIds(previousModel, currentModel, unplacedColIds);
+                // told once the rows load, or at once if they have loaded since
+                if (colIds.length && this.isHolding()) {
+                    this.heldChanges.push({ colIds, source });
+                } else if (colIds.length) {
+                    this.tellFilterChanges([{ colIds, source }]);
+                }
+                this.showHeldModels();
+                return;
+            }
 
             const columns: AgColumn[] = [];
             this.allColumnFilters.forEach((filterWrapper, colId) => {
@@ -364,17 +418,12 @@ export class ColumnFilterService
         });
     }
 
-    /** The model the API reads: the applied one, or the one the queued updates will apply. */
-    public getLatestModel(): FilterModel {
-        return this.modelUpdates.length ? this.getQueuedModel() : this.getModel();
-    }
-
-    public getModel(excludeInitialState?: boolean): FilterModel {
+    public getModel(): FilterModel {
         const result: FilterModel = {};
 
         const {
             allColumnFilters,
-            initialModel,
+            pendingModel,
             beans: { colModel },
         } = this;
 
@@ -386,51 +435,14 @@ export class ColumnFilterService
             }
         });
 
-        if (!excludeInitialState) {
-            for (const colId of Object.keys(initialModel)) {
-                const model = initialModel[colId];
-                if (_exists(model) && !allColumnFilters.has(colId) && colModel.colsById[colId]?.colDef.filter) {
-                    result[colId] = model;
-                }
+        for (const colId of Object.keys(pendingModel)) {
+            const column = colModel.colsById[colId];
+            const model = column && !allColumnFilters.has(colId) ? this.getPendingModel(column) : null;
+            if (_exists(model)) {
+                result[colId] = model;
             }
         }
 
-        return result;
-    }
-
-    /** The model once the queued updates apply, read newest first: a column's latest update decides it. */
-    private getQueuedModel(): FilterModel {
-        const colModel = this.beans.colModel;
-        const updates = this.modelUpdates;
-        const result: FilterModel = {};
-        const decided = new Set<string>();
-        for (let i = updates.length - 1; i >= 0; --i) {
-            const update = updates[i];
-            if (update.resolve) {
-                decideQueuedModel(result, decided, colModel.getNonPivotCol(update.key), update.model);
-                continue;
-            }
-            // A whole model replaces every column older updates set, so they and the applied model are not read.
-            const model = update.model;
-            if (!model) {
-                return result;
-            }
-            const colsById = colModel.colsById;
-            const colIds = Object.keys(model);
-            for (let j = 0, colCount = colIds.length; j < colCount; ++j) {
-                const colId = colIds[j];
-                decideQueuedModel(result, decided, colsById[colId], model[colId]);
-            }
-            return result;
-        }
-        const applied = this.getModel();
-        const appliedColIds = Object.keys(applied);
-        for (let i = 0, len = appliedColIds.length; i < len; ++i) {
-            const colId = appliedColIds[i];
-            if (!decided.has(colId)) {
-                result[colId] = applied[colId];
-            }
-        }
         return result;
     }
 
@@ -470,10 +482,13 @@ export class ColumnFilterService
     }
 
     private getModelFromFilterWrapper(filterWrapper: FilterWrapper): any {
-        const column = filterWrapper.column;
-        const colId = column.getColId();
+        return this.getPendingModel(filterWrapper.column) ?? this.getFilterOwnModel(filterWrapper);
+    }
+
+    /** The model the filter itself holds, without one held for its column. */
+    private getFilterOwnModel(filterWrapper: FilterWrapper): any {
         if (filterWrapper.isHandler) {
-            return _getFilterModel(this.model, colId);
+            return _getFilterModel(this.model, filterWrapper.column.colId);
         }
         const filter = filterWrapper.filter;
         if (filter) {
@@ -484,8 +499,15 @@ export class ColumnFilterService
 
             return filter.getModel();
         }
-        // filter still being created. return initial state if it exists and hasn't been applied yet
-        return _getFilterModel(this.initialModel, colId);
+        return filterWrapper.buildModel?.model ?? null;
+    }
+
+    /** The model held for a column whose filter holds none, while the column can filter and the Advanced Filter is off. */
+    private getPendingModel(column: AgColumn): any {
+        const pending = this.pendingModel[column.colId];
+        return pending != null && column.isFilterAllowed() && !this.beans.filterManager?.isAdvFilterEnabled()
+            ? pending
+            : undefined;
     }
 
     public isFilterPresent(): boolean {
@@ -497,12 +519,11 @@ export class ColumnFilterService
     }
 
     public disableFilters(): boolean {
-        this.initialModel = {};
-        const updates = this.modelUpdates;
-        this.modelUpdates = [];
-        for (let i = 0, len = updates.length; i < len; ++i) {
-            updates[i].resolve?.();
-        }
+        this.pendingModel = {};
+        this.apiHeldColIds.clear();
+        this.heldChanges = [];
+        this.settleHeldResolves();
+        this.updatePendingFlags();
         const { allColumnFilters } = this;
         if (allColumnFilters.size) {
             allColumnFilters.forEach((filterWrapper) =>
@@ -587,12 +608,8 @@ export class ColumnFilterService
             if (filterWrapper.isHandler) {
                 promises.push(
                     AgPromise.resolve().then(() => {
-                        this.setColFilterActive(
-                            column,
-                            this.isHandlerActive(column),
-                            source,
-                            additionalEventAttributes
-                        );
+                        const active = this.getPendingModel(column) != null || this.isHandlerActive(column);
+                        this.setColFilterActive(column, active, source, additionalEventAttributes);
                     })
                 );
             } else {
@@ -602,7 +619,7 @@ export class ColumnFilterService
                         promise.then((filter) => {
                             this.setColFilterActive(
                                 column,
-                                filter!.isFilterActive(),
+                                this.getPendingModel(column) != null || filter!.isFilterActive(),
                                 source,
                                 additionalEventAttributes
                             );
@@ -675,6 +692,10 @@ export class ColumnFilterService
         column?: AgColumn;
         columns: AgColumn[];
     }): void {
+        if (this.holdingEvents) {
+            this.heldChanges.push({ ...params, colIds: params.columns.map((column) => column.colId) });
+            return;
+        }
         const { rowRenderer, filterManager } = this.beans;
         const action = () => {
             if (this.isAlive()) {
@@ -779,16 +800,15 @@ export class ColumnFilterService
     }
 
     public isFilterActive(column: AgColumn): boolean {
+        if (this.getPendingModel(column) != null) {
+            return true;
+        }
         const filterWrapper = this.cachedFilter(column);
         if (filterWrapper?.isHandler) {
             return this.isHandlerActive(column);
         }
         const filter = filterWrapper?.filter;
-        if (filter) {
-            return filter.isFilterActive();
-        }
-        // if not created, should only be active if there's a model
-        return _getFilterModel(this.initialModel, column.getColId()) != null;
+        return filter ? filter.isFilterActive() : filterWrapper?.buildModel?.model != null;
     }
 
     private isHandlerActive(column: AgColumn): boolean {
@@ -1046,15 +1066,24 @@ export class ColumnFilterService
     }
 
     private createFilterWrapper(column: AgColumn): FilterWrapper {
+        const colId = column.colId;
+        const { pendingModel, model } = this;
+        // the filter holds its model from here, unless the rows have yet to give the type it is built for
+        const pending = pendingModel[colId];
+        const takenModel = pending != null && !this.waitsForType(column) ? pending : null;
+        if (takenModel != null) {
+            model[colId] = takenModel;
+        }
         const { compDetails, handler, handlerGenerator, handlerParams, createFilterUi } = this.createFilterInstance(
             column,
             _resolveFilter(this.beans, column),
             (params) => params
         );
-        const colId = column.getColId();
+        if (takenModel != null && (handler || createFilterUi)) {
+            delete pendingModel[colId];
+        }
 
         if (handler) {
-            delete this.initialModel[colId];
             handler.init?.({
                 ...handlerParams!,
                 source: 'init',
@@ -1070,6 +1099,10 @@ export class ColumnFilterService
             };
         }
 
+        // a component holds its own model, given as it is built
+        if (takenModel != null) {
+            delete model[colId];
+        }
         if (createFilterUi) {
             const filterWrapper: LegacyFilterWrapper = {
                 column,
@@ -1078,9 +1111,10 @@ export class ColumnFilterService
             } as const;
             filterWrapper.filterUi = this.createFilterUiLegacy(compDetails, createFilterUi as any, (filterComp) => {
                 filterWrapper.filter = filterComp ?? undefined;
-                // the filter holds its model from here, so the initial one must not outlive it
-                delete this.initialModel[colId];
             });
+            if (takenModel != null) {
+                void this.setModelOnFilterWrapper(filterWrapper, takenModel);
+            }
             return filterWrapper;
         }
 
@@ -1258,13 +1292,17 @@ export class ColumnFilterService
         const disposals: AgPromise<boolean>[] = [];
         const { filterManager, groupFilter } = this.beans;
 
-        this.allColumnFilters.forEach((wrapper) => {
+        this.allColumnFilters.forEach((wrapper, colId) => {
             // group columns can be recreated with the same colId
             if (this.isCurrentColumn(wrapper.column)) {
                 return;
             }
-
             columns.push(wrapper.column);
+            // before rows load the column may be back by the time they do, when the model applies and is told
+            const model = this.apiHeldColIds.has(colId) ? this.getModelFromFilterWrapper(wrapper) : null;
+            if (model != null) {
+                this.pendingModel[colId] = model;
+            }
             disposals.push(this.disposeFilterWrapper(wrapper, 'columnChanged'));
         });
 
@@ -1277,14 +1315,30 @@ export class ColumnFilterService
         }
 
         const setFilterSvc = this.beans.setFilterSvc;
-        if (setFilterSvc) {
+        const holding = this.isHolding();
+        if (setFilterSvc || holding) {
             // After disposal, which frees the colId a recreated column shares.
             AgPromise.all(disposals).then(() => {
-                if (this.isAlive()) {
-                    setFilterSvc.createPreservingFilters();
+                if (!this.isAlive()) {
+                    return;
                 }
+                setFilterSvc?.createPreservingFilters();
+                if (!holding) {
+                    return;
+                }
+                // a column back without its filter takes the model the API held for it, if it can now
+                const { pendingModel, allColumnFilters } = this;
+                const colsById = this.beans.colModel.colsById;
+                this.apiHeldColIds.forEach((colId) => {
+                    const model = pendingModel[colId];
+                    if (model != null && !allColumnFilters.has(colId)) {
+                        void this.holdModel(colsById[colId], colId, model);
+                    }
+                });
+                this.showHeldModels();
             });
         }
+        this.updatePendingFlags();
     }
 
     public hasFilter(column: AgColumn): boolean {
@@ -1335,7 +1389,7 @@ export class ColumnFilterService
         const params: IFloatingFilterParams<IFilter> = _addGridCommonParams(gos, {
             column,
             filterParams,
-            currentParentModel: () => this.getCurrentFloatingFilterParentModel(column),
+            currentParentModel: () => this.getModelForColumn(column),
             parentFilterInstance,
             showParentFilter,
         });
@@ -1353,10 +1407,6 @@ export class ColumnFilterService
         return _getFloatingFilterCompDetails(userCompFactory, colDef, params, defaultFloatingFilterType);
     }
 
-    public getCurrentFloatingFilterParentModel(column: AgColumn): any {
-        return this.getModelFromFilterWrapper(this.cachedFilter(column) ?? ({ column } as FilterWrapper));
-    }
-
     private destroyFilterUi(
         filterWrapper: FilterWrapper,
         column: AgColumn,
@@ -1366,7 +1416,6 @@ export class ColumnFilterService
         const source = 'paramsUpdated';
         if (filterWrapper.isHandler) {
             const colId = column.getColId();
-            delete this.initialModel[colId];
             this.state.delete(colId);
             const filterUi = filterWrapper.filterUi;
             // the state just deleted is baked into compDetails, so the replacement must re-derive
@@ -1403,22 +1452,31 @@ export class ColumnFilterService
         const colId = column.getColId();
         const filterWrapper = this.allColumnFilters.get(colId);
 
-        delete this.initialModel[colId];
-
-        if (filterWrapper) {
-            this.disposeFilterWrapper(filterWrapper, source).then((wasActive) => {
-                if (!this.isAlive()) {
-                    return;
-                }
-                if (wasActive) {
-                    this.beans.filterManager?.onFilterChanged({
-                        columns: [column],
-                        source: 'api',
-                    });
-                }
-                this.beans.setFilterSvc?.createPreservingFilters(column);
-            });
+        // a filter rebuilt for new params keeps the model the API set for it, which it takes once built again
+        const keptModel =
+            source === 'paramsUpdated' && filterWrapper && this.apiHeldColIds.has(colId)
+                ? (this.pendingModel[colId] ?? this.getFilterOwnModel(filterWrapper))
+                : null;
+        if (keptModel == null) {
+            this.dropHeldModel(colId);
+        } else {
+            this.pendingModel[colId] = keptModel;
         }
+
+        if (!filterWrapper) {
+            this.showHeldModels();
+            return;
+        }
+        this.disposeFilterWrapper(filterWrapper, source).then((wasActive) => {
+            if (!this.isAlive()) {
+                return;
+            }
+            if (wasActive && keptModel == null) {
+                this.beans.filterManager?.onFilterChanged({ columns: [column], source: 'api' });
+            }
+            this.showHeldModels();
+            this.beans.setFilterSvc?.createPreservingFilters(column);
+        });
     }
 
     private disposeFilterWrapper(
@@ -1471,7 +1529,12 @@ export class ColumnFilterService
         const colId = column.getColId();
         const filterChangedCallback = this.filterChangedCallbackFactory(column);
         return (model, additionalEventAttributes) => {
-            this.updateStoredModel(colId, model);
+            // a floating filter shows a model held for the column, so an edit in it is newer than that model
+            const afterFloating = source === 'floating' || additionalEventAttributes?.afterFloatingFilter;
+            if (afterFloating && (model ?? null) !== (this.pendingModel[colId] ?? null)) {
+                this.dropHeldModel(colId);
+            }
+            this.updateStoredModel(colId, model, additionalEventAttributes?.fromAction);
             this.refreshHandlerAndUi(column, model, source, source === 'floating', additionalEventAttributes).then(() =>
                 filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' })
             );
@@ -1480,6 +1543,14 @@ export class ColumnFilterService
 
     private filterChangedCallbackFactory(column: AgColumn): (additionalEventAttributes?: any) => void {
         return (additionalEventAttributes?: any) => {
+            // a component tells of its own change, newer than a model held for it; a handler's goes through its model
+            if (!this.cachedFilter(column)?.isHandler) {
+                this.dropHeldModel(column.colId);
+            }
+            // until the rows load, the grid state hears of no `filterChanged`, so reads the change here
+            if (this.isHolding()) {
+                this.beans.stateSvc?.updateFilterState();
+            }
             this.callOnFilterChangedOutsideRenderCycle({
                 additionalEventAttributes,
                 columns: [column],
@@ -1559,15 +1630,42 @@ export class ColumnFilterService
         if (version === this.paramsColDefsVersion) {
             return;
         }
+        // a handler rebuilt before rows load, or as their types redefine it, keeps a model the API set for it; a
+        // component keeps its own as it is destroyed
+        const apiHeldColIds = this.apiHeldColIds;
         this.allColumnFilters.forEach((wrapper, colId) => {
-            if (wrapper.column.takeFilterRedefined()) {
-                this.filterParamsChanged(colId);
+            const column = wrapper.column;
+            if (!column.takeFilterRedefined()) {
+                return;
+            }
+            const model =
+                wrapper.isHandler && apiHeldColIds.has(colId) ? this.getModelFromFilterWrapper(wrapper) : null;
+            if (model == null) {
+                this.rebuildFilter(colId);
+                return;
+            }
+            // held while rebuilt, so the rebuild neither drops it nor tells of it
+            this.pendingModel[colId] = model;
+            delete this.model[colId];
+            this.rebuildFilter(colId);
+            if (column.isFilterAllowed() && !this.waitsForType(column)) {
+                void this.holdModel(column, colId, model);
             }
         });
         this.paramsColDefsVersion = version;
+        this.updatePendingFlags();
     }
 
+    /** A filter whose params change of its own accord, as a Selectable Filter switching, starts empty, as with rows. */
     public filterParamsChanged(colId: string, source: FilterChangedEventSourceType = 'api'): void {
+        if (this.pendingModel[colId] != null) {
+            this.dropHeldModel(colId);
+            this.showHeldModels();
+        }
+        this.rebuildFilter(colId, source);
+    }
+
+    private rebuildFilter(colId: string, source: FilterChangedEventSourceType = 'api'): void {
         const filterWrapper = this.allColumnFilters.get(colId);
         if (!filterWrapper) {
             return;
@@ -1744,58 +1842,230 @@ export class ColumnFilterService
         });
     }
 
-    private processFilterModelUpdateQueue(): void {
-        const updates = this.modelUpdates;
-        this.modelUpdates = [];
-        for (let i = 0, len = updates.length; i < len; ++i) {
-            const update = updates[i];
-            if (update.resolve) {
-                void this.setModelForColumn(update.key, update.model).then(update.resolve);
-            } else {
-                this.setModel(update.model, update.source);
+    /** Once the rows give the types, the models no filter could take apply, then what the API changed is told. */
+    private applyHeldModels(): void {
+        const colModel = this.beans.colModel;
+        const { pendingModel, heldChanges, apiHeldColIds } = this;
+        this.heldChanges = [];
+        const applied: AgPromise<void>[] = [];
+        const heldColIds = Array.from(apiHeldColIds);
+        // without an API call the models held are the initial state's, which the grid state or a filter built takes
+        if (apiHeldColIds.size) {
+            const namedColIds = new Set<string>();
+            for (let i = 0, len = heldChanges.length; i < len; ++i) {
+                const colIds = heldChanges[i].colIds;
+                for (let j = 0, colCount = colIds.length; j < colCount; ++j) {
+                    namedColIds.add(colIds[j]);
+                }
+            }
+            const colIds = Object.keys(pendingModel);
+            for (let i = 0, len = colIds.length; i < len; ++i) {
+                const colId = colIds[i];
+                if (!apiHeldColIds.has(colId)) {
+                    continue;
+                }
+                const column = colModel.colsById[colId];
+                if (column?.isFilterAllowed()) {
+                    applied.push(this.setModelForColumnLegacy(column, pendingModel[colId]));
+                    continue;
+                }
+                delete pendingModel[colId];
+                if (namedColIds.has(colId)) {
+                    this.warn(column ? 63 : 62, { colId });
+                }
+            }
+            apiHeldColIds.clear();
+        }
+        AgPromise.all(applied).then(() => {
+            if (!this.isAlive()) {
+                return;
+            }
+            if (applied.length) {
+                this.updateActive('filterChanged');
+            }
+            // a filter given the API's model for a type it was not built for holds none, so tells nothing of it
+            const rejectedColIds = new Set<string>();
+            const colsById = colModel.colsById;
+            for (let i = 0, len = heldColIds.length; i < len; ++i) {
+                const column = colsById[heldColIds[i]];
+                if (column && this.getModelForColumn(column) == null) {
+                    rejectedColIds.add(heldColIds[i]);
+                }
+            }
+            this.tellFilterChanges(heldChanges, rejectedColIds);
+            this.settleHeldResolves();
+        });
+    }
+
+    /** Tells each change for the columns that can filter now, leaving out the API's for a model a filter rejected. */
+    private tellFilterChanges(changes: HeldFilterChange[], rejectedColIds?: Set<string>): void {
+        const { colModel, filterManager } = this.beans;
+        const colsById = colModel.colsById;
+        for (let i = 0, len = changes.length; i < len; ++i) {
+            const { colIds, source, column, additionalEventAttributes } = changes[i];
+            // a filter telling of its own change, its rejection of the model included, is told as it was
+            const rejected = column ? undefined : rejectedColIds;
+            const columns: AgColumn[] = [];
+            for (let j = 0, colCount = colIds.length; j < colCount; ++j) {
+                const changedColumn = colsById[colIds[j]];
+                if (changedColumn?.isFilterAllowed() && !rejected?.has(colIds[j])) {
+                    columns.push(changedColumn);
+                }
+            }
+            if (columns.length || !colIds.length) {
+                filterManager?.onFilterChanged({ columns, source, column, additionalEventAttributes });
             }
         }
     }
 
-    public getLatestModelForColumn(column: AgColumn, useUnapplied?: boolean): any {
-        const updates = this.modelUpdates;
-        if (updates.length && column.isFilterAllowed()) {
-            const colModel = this.beans.colModel;
-            for (let i = updates.length - 1; i >= 0; --i) {
-                const update = updates[i];
-                if (!update.resolve) {
-                    return update.model?.[column.colId] ?? null;
-                }
-                if (colModel.getNonPivotCol(update.key) === column) {
-                    return update.model ?? null;
-                }
+    /**
+     * Before rows load, the column's filter takes the model if its type is known; else the model is held for the
+     * rows, and a filter built for a type they may change holds none.
+     */
+    private holdModel(column: AgColumn | null | undefined, colId: string, model: any): AgPromise<void> {
+        const pendingModel = this.pendingModel;
+        const filterWrapper = this.allColumnFilters.get(colId);
+        if (model != null) {
+            this.apiHeldColIds.add(colId);
+        } else {
+            this.apiHeldColIds.delete(colId);
+        }
+        const wasHoldingEvents = this.holdingEvents;
+        this.holdingEvents = true;
+        try {
+            if (column?.isFilterAllowed() && !this.waitsForType(column)) {
+                delete pendingModel[colId];
+                const target = filterWrapper ?? this.getOrCreateFilterWrapper(column, true);
+                return target ? this.setModelOnFilterWrapper(target, model, !filterWrapper) : AgPromise.resolve();
+            }
+            const reset = filterWrapper ? this.setModelOnFilterWrapper(filterWrapper, null) : AgPromise.resolve<void>();
+            if (model != null) {
+                pendingModel[colId] = model;
+            } else {
+                delete pendingModel[colId];
+            }
+            if (column && !filterWrapper) {
+                // the column tells of the model held for it as a filter taking it would
+                this.setColFilterActive(column, this.getPendingModel(column) != null, 'filterChanged');
+            }
+            return reset;
+        } finally {
+            this.holdingEvents = wasHoldingEvents;
+        }
+    }
+
+    /** A change in the filter is newer than a model held for it, unless it is the filter taking the API's own. */
+    private dropHeldModel(colId: string): void {
+        if (this.holdingEvents) {
+            return;
+        }
+        delete this.pendingModel[colId];
+        this.apiHeldColIds.delete(colId);
+    }
+
+    private settleHeldResolves(): void {
+        const resolves = this.heldResolves;
+        this.heldResolves = [];
+        for (let i = 0, len = resolves.length; i < len; ++i) {
+            resolves[i]();
+        }
+    }
+
+    private isHolding(): boolean {
+        return !!this.beans.dataTypeSvc?.isPendingInference;
+    }
+
+    /** Whether the column's filter is built for a type the rows have yet to give. */
+    private waitsForType(column: AgColumn): boolean {
+        const beans = this.beans;
+        return !!beans.dataTypeSvc?.isColPendingInference(column.colId) && _isFilterFromDataType(beans, column);
+    }
+
+    /** What shows the filters follows the models held before rows load; once they do, a told change does that. */
+    private showHeldModels(): void {
+        if (this.isHolding()) {
+            this.updateActive('filterChanged');
+            this.beans.stateSvc?.updateFilterState();
+            this.dispatchLocalEvent({ type: 'heldFilterModelsChanged' });
+        }
+        this.updatePendingFlags();
+    }
+
+    /** A column whose filter is not built shows whether a model is held for it, unless the Advanced Filter is on. */
+    private updatePendingFlags(): void {
+        const { allColumnFilters, pendingModel, beans } = this;
+        if (!this.pendingFlagsShown && !Object.keys(pendingModel).length) {
+            return;
+        }
+        const groupFilter = beans.groupFilter;
+        const cols = beans.colModel.getCols();
+        let shown = false;
+        for (let i = 0, len = cols.length; i < len; ++i) {
+            const column = cols[i];
+            if (allColumnFilters.has(column.colId) || groupFilter?.isGroupFilter(column)) {
+                continue;
+            }
+            const active = this.getPendingModel(column) != null;
+            if (active !== column.isFilterActive()) {
+                this.setColFilterActive(column, active, 'filterChanged');
+            }
+            shown ||= active;
+        }
+        this.pendingFlagsShown = shown;
+    }
+
+    /** Whether a model is held for a column whose filter does not hold it, unless the Advanced Filter is on. */
+    public hasPendingModel(): boolean {
+        const { pendingModel, beans } = this;
+        if (beans.filterManager?.isAdvFilterEnabled()) {
+            return false;
+        }
+        const colsById = beans.colModel.colsById;
+        const colIds = Object.keys(pendingModel);
+        for (let i = 0, len = colIds.length; i < len; ++i) {
+            const colId = colIds[i];
+            if (pendingModel[colId] != null && colsById[colId]?.isFilterAllowed()) {
+                return true;
             }
         }
-        return this.getModelForColumn(column, useUnapplied);
+        return false;
     }
 
     public getModelForColumn(column: AgColumn, useUnapplied?: boolean): any {
         if (useUnapplied) {
-            const { state, model } = this;
-            const colId = column.getColId();
-            const colState = state.get(colId);
-            if (colState) {
-                return colState.model ?? null;
+            const colId = column.colId;
+            const stored = _getFilterModel(this.model, colId);
+            const colState = this.state.get(colId);
+            const unapplied = colState ? (colState.model ?? null) : stored;
+            // an edit not applied yet is newer than a model held for the column
+            if (unapplied !== stored) {
+                return unapplied;
             }
-            return _getFilterModel(model, colId);
+            return this.getPendingModel(column) ?? stored;
         }
         const filterWrapper = this.cachedFilter(column);
-        return filterWrapper ? this.getModelFromFilterWrapper(filterWrapper) : null;
+        return filterWrapper ? this.getModelFromFilterWrapper(filterWrapper) : (this.getPendingModel(column) ?? null);
     }
 
     public setModelForColumn(key: string | AgColumn, model: any): Promise<void> {
-        if (this.beans.dataTypeSvc?.isPendingInference) {
-            return new Promise<void>((resolve) => {
-                this.modelUpdates.push({ key, model, resolve });
+        if (!this.isHolding()) {
+            return new Promise((resolve) => {
+                this.setModelForColumnLegacy(key, model).then((result) => resolve(result!));
             });
         }
+        // the filter takes the model at once if it can, else it is held for the rows; the promise waits for both
+        const column = this.beans.colModel.getNonPivotCol(key);
+        const colId = column?.colId ?? (typeof key === 'string' ? key : null);
+        const applied = colId == null ? AgPromise.resolve<void>() : this.holdModel(column, colId, model);
+        this.showHeldModels();
         return new Promise((resolve) => {
-            this.setModelForColumnLegacy(key, model).then((result) => resolve(result!));
+            this.heldResolves.push(() => {
+                applied.then(() => {
+                    if (this.isAlive()) {
+                        resolve();
+                    }
+                });
+            });
         });
     }
 
@@ -1809,7 +2079,12 @@ export class ColumnFilterService
 
     public setModelForColumnLegacy(key: string | AgColumn, model: any): AgPromise<void> {
         const column = this.beans.colModel.getNonPivotCol(key);
-        const filterWrapper = column ? this.getOrCreateFilterWrapper(column, true) : null;
+        if (!column) {
+            return AgPromise.resolve();
+        }
+        // a model set on the filter is newer than one held for it, which it must not be built with
+        delete this.pendingModel[column.colId];
+        const filterWrapper = this.getOrCreateFilterWrapper(column, true);
         return filterWrapper ? this.setModelOnFilterWrapper(filterWrapper, model) : AgPromise.resolve();
     }
 
@@ -1857,7 +2132,17 @@ export class ColumnFilterService
 
             const uiPromise = getFilterUiFromWrapper<IFilterComp>(filterWrapper);
             if (uiPromise) {
-                uiPromise.then((filter) => this.setModelOnFilterComp(filter, newModel, resolve));
+                // a component being built takes only the newest model it is given, so an older one resolves at once
+                const buildModel = filterWrapper.filter ? undefined : { model: newModel };
+                filterWrapper.buildModel = buildModel;
+                uiPromise.then((filter) => {
+                    if (filterWrapper.buildModel !== buildModel) {
+                        resolve();
+                        return;
+                    }
+                    filterWrapper.buildModel = undefined;
+                    this.setModelOnFilterComp(filter, newModel, resolve);
+                });
                 return;
             }
 
@@ -1882,7 +2167,11 @@ export class ColumnFilterService
     }
 
     /** for handlers only */
-    private updateStoredModel(colId: string, model: any): void {
+    private updateStoredModel(colId: string, model: any, action?: FilterAction): void {
+        // a change in the filter, or the filter emptied, is newer than a model held for it
+        if ((action && action !== 'apply') || (model ?? null) !== _getFilterModel(this.model, colId)) {
+            this.dropHeldModel(colId);
+        }
         if (_exists(model)) {
             this.model[colId] = model;
         } else {
@@ -1960,7 +2249,7 @@ export class ColumnFilterService
                     getState: () => this.state.get(colId),
                     updateState: (state) => this.updateState(column, state),
                     updateModel: (model) => {
-                        this.updateStoredModel(colId, model);
+                        this.updateStoredModel(colId, model, action);
                         this.dispatchLocalEvent<FilterActionEvent>({
                             type: 'filterAction',
                             column,

@@ -365,7 +365,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
                         this.updateFloatingFilterParams(this.userCompDetails, source);
                         return;
                     }
-                    const parentModel = colFilter?.getCurrentFloatingFilterParentModel(column);
+                    const parentModel = colFilter?.getModelForColumn(column);
                     const filterChangedEvent: FilterChangedEvent | null = event
                         ? {
                               // event can have additional params like `afterDataChange` which need to be passed through

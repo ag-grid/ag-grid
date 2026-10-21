@@ -53,7 +53,7 @@ Because of this, an absent property means "none" rather than "unspecified". Rest
 
 To restore a saved state to a new grid, pass the saved [GridState](#gridstate) to the grid option `initialState`. It is read once on creation, applying filters and groups before any data renders, so there is no flash of unfiltered or ungrouped data.
 
-If cell data types are inferred and the row data is empty or not yet set, the filter state is applied once row data is added. To apply it straight away, set `cellDataType: false` on the default column definition, or provide a cell data type for every column.
+If [cell data types](./cell-data-types/) are inferred and the row data is empty or not yet set, the filters and their indicators show the filter state straight away, but the rows are filtered once row data is added. That is also when the Advanced Filter, and a filter built for the inferred cell data type, take their state. To filter straight away, set `cellDataType: false` on the default column definition, or provide a cell data type for every column.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {

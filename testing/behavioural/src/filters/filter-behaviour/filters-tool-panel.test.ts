@@ -189,6 +189,42 @@ describe('Filters Tool Panel', () => {
         expect(panel.isActive('Person')).toBe(false);
     });
 
+    test('a model set before the rows arrive shows in the active-filter indicators at once', async () => {
+        const api = gridsManager.createGrid('grid1', {
+            columnDefs: [
+                {
+                    headerName: 'Person',
+                    children: [
+                        { field: 'name', filter: 'agTextColumnFilter' },
+                        { field: 'country', filter: true },
+                    ],
+                },
+                { field: 'age', filter: 'agNumberColumnFilter' },
+            ],
+            rowData: [],
+            sideBar: FILTERS_SIDEBAR,
+        });
+        await asyncSetTimeout(0);
+        const panel = await openFiltersPanel(api);
+        const activeIcons = () =>
+            Array.from(document.querySelectorAll('.ag-filter-toolpanel-instance-header-icon:not(.ag-hidden)'), (icon) =>
+                icon.closest('.ag-filter-toolpanel-instance')?.textContent?.trim()
+            );
+
+        void api.setColumnFilterModel('name', { filterType: 'text', type: 'contains', filter: 'A' });
+        void api.setColumnFilterModel('age', { filterType: 'number', type: 'greaterThan', filter: 1 });
+        expect(panel.isActive('Person')).toBe(true);
+        expect(activeIcons()).toEqual(['Name', 'Age']);
+
+        api.setFilterModel(null);
+        expect(panel.isActive('Person')).toBe(false);
+        expect(activeIcons()).toEqual([]);
+
+        api.setFilterModel({ country: { filterType: 'set', values: ['IE'] } });
+        expect(panel.isActive('Person')).toBe(true);
+        expect(activeIcons()).toEqual(['Country']);
+    });
+
     test('group title bars are disclosure buttons wired to the container they expand', async () => {
         const api = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [

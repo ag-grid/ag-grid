@@ -1065,9 +1065,10 @@ export interface _ColumnFilterGridApi {
 
     /**
      * Sets the state of all the column filters. Provide it with what you get from `getFilterModel()` to restore filter state.
-     * If inferring cell data types, and row data is initially empty or yet to be set,
-     * the filter model will be applied asynchronously after row data is added.
-     * To always perform this synchronously, set `cellDataType = false` on the default column definition,
+     * If inferring cell data types, and row data is initially empty or yet to be set, the filters, `getFilterModel()`
+     * and the filter indicators show the model at once, but the rows are filtered and `filterChanged` is raised once
+     * row data is added, which is also when a filter built for the inferred cell data type takes its model.
+     * To filter at once, set `cellDataType = false` on the default column definition,
      * or provide cell data types for every column.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
@@ -1075,6 +1076,7 @@ export interface _ColumnFilterGridApi {
 
     /**
      * Gets the current state of all the column filters. Used for saving filter state.
+     * The models returned are the grid's own and must not be modified: to change a filter, pass a new model.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     getFilterModel(): FilterModel;
@@ -1082,6 +1084,7 @@ export interface _ColumnFilterGridApi {
     /**
      * Gets the current filter model for the specified column.
      * Will return `null` if the column has no filter model.
+     * The model returned is the grid's own and must not be modified: to change the filter, pass a new model.
      * @param useUnapplied If `enableFilterHandlers = true` and value is `true`, will return the unapplied filter model.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
@@ -1091,8 +1094,9 @@ export interface _ColumnFilterGridApi {
      * Sets the filter model for the specified column.
      * Setting a `model` of `null` will reset the filter (make inactive).
      * Must wait on the response before calling `api.onFilterChanged()`.
-     * If inferring cell data types, and row data is initially empty or yet to be set,
-     * the filter model will be applied asynchronously after row data is added.
+     * If inferring cell data types, and row data is initially empty or yet to be set, the filter, `getColumnFilterModel()`
+     * and the filter indicator show the model at once, but the rows are filtered and the response resolves once row
+     * data is added, which is also when a filter built for the inferred cell data type takes the model.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     setColumnFilterModel<TModel>(column: string | Column, model: TModel | null): Promise<void>;
@@ -1222,6 +1226,7 @@ export interface _StateGridApi {
     /**
      * Get the current state of the grid.
      * Can be used in conjunction with the `initialState` grid option or `api.setState()` to save and restore grid state.
+     * The state returned is the grid's own and must not be modified.
      * @agModule `GridStateModule`
      */
     getState(): GridState;
@@ -1990,7 +1995,8 @@ export interface _GridChartsGridApi {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _AdvancedFilterGridApi {
     /**
-     * Get the state of the Advanced Filter. Used for saving Advanced Filter state
+     * Get the state of the Advanced Filter. Used for saving Advanced Filter state.
+     * The model returned is the grid's own and must not be modified: to change the filter, pass a new model.
      * @agModule `AdvancedFilterModule`
      */
     getAdvancedFilterModel(): AdvancedFilterModel | null;

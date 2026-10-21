@@ -28,6 +28,7 @@ export interface IServerSideGetRowsRequest {
      * If filtering, what the filter model is.
      * If Advanced Filter is enabled, will be of type `AdvancedFilterModel | null`.
      * If Advanced Filter is disabled, will be of type `FilterModel`.
+     * The model is the grid's own and must not be modified.
      */
     filterModel: FilterModel | AdvancedFilterModel | null;
     /** If sorting, what the sort model is.  */

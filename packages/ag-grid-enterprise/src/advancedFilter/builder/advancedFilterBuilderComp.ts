@@ -292,7 +292,7 @@ export class AdvancedFilterBuilderComp extends Component<AdvancedFilterBuilderEv
     }
 
     private setupFilterModel(): AdvancedFilterModel {
-        const filterModel = this.formatFilterModel(this.advancedFilter.getBuilderModel());
+        const filterModel = this.formatFilterModel(cloneModel(this.advancedFilter.getBuilderModel()));
         this.stringifiedModel = JSON.stringify(filterModel);
         return filterModel;
     }
@@ -626,4 +626,21 @@ const clearCondition = (filterModel: PartialColumnFilterModel) => {
     delete filterModel.values;
     // `set` is a member the arity chose, so it goes with the option rather than outliving it.
     delete filterModel.filterType;
+};
+
+/** The builder edits its model in place, so it works on a copy deep enough for those edits. */
+const cloneModel = (model: AdvancedFilterModel | null): AdvancedFilterModel | null => {
+    if (!model) {
+        return null;
+    }
+    if (model.filterType === 'join') {
+        const conditions = model.conditions;
+        const len = conditions.length;
+        const cloned: AdvancedFilterModel[] = new Array(len);
+        for (let i = 0; i < len; ++i) {
+            cloned[i] = cloneModel(conditions[i])!;
+        }
+        return { ...model, conditions: cloned };
+    }
+    return model.filterType === 'set' ? { ...model, values: model.values?.slice() } : { ...model };
 };
