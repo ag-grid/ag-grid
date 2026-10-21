@@ -451,10 +451,6 @@ export const SITE_SINGLE_HOP_REWRITES: SimpleRedirectRule[] = [
         from: '/documentation/javascript/server-side-model/',
         to: 'https://www.ag-grid.com/javascript-data-grid/server-side-model/',
     },
-    {
-        from: '/blog/charts/ag-charts-13-release-demos/high-frequency-synced-series',
-        to: 'https://www.ag-grid.com/blog/charts/ag-charts-13-release-demos/high-frequency-synced-series/',
-    },
     { from: '/javascript-charts-overview/', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
     { from: '/javascript-charts/pie-series/', to: 'https://www.ag-grid.com/charts/javascript/quick-start/' },
     { from: '/javascript-grid-rendering-flow/', to: 'https://www.ag-grid.com/javascript-data-grid/cell-content/' },
@@ -3150,7 +3146,8 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/about.php', to: '/about/' },
     { from: '/license-pricing.php', to: '/license-pricing/' },
     { from: '/example.php', to: '/example/' },
-    { from: '/ag-grid-jobs-board.php', to: '/ag-grid-jobs-board' },
+    // SE-219: the jobs board is gone; this redirected to a page that does not exist (404).
+    { from: '/ag-grid-jobs-board.php', gone: true },
 
     // Targets are deliberately slash-less: `Redirect` prefix-matches and appends the remainder,
     // so the slashed request lands on /whats-new/ exactly, while a slashed target yields
@@ -3354,9 +3351,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { fromPattern: '^/community-forums/$', to: '/community/' },
     { fromPattern: '^/forum/.+', gone: true },
     { from: '/testimonials.php', gone: true },
-    // The trailing slash is required: Apache's `Redirect` prefix-matches, so without it this
-    // would also swallow the live /blog/whats-new-in-ag-grid-v24-part-2/.
-    { from: '/blog/whats-new-in-ag-grid-v24/', gone: true },
     { from: '/start-trial.php', to: '/license-pricing/' },
     { from: '/options/series/radial-column/', to: 'https://www.ag-grid.com/charts/options/series/radial-column/' },
     { from: '/options/series/area/', to: 'https://www.ag-grid.com/charts/options/series/area/' },
