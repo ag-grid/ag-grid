@@ -331,7 +331,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                 const isInShadowRoot =
                     typeof ShadowRoot !== 'undefined' && beans.eGridDiv.getRootNode() instanceof ShadowRoot;
                 if (enableShadowDom && !isInShadowRoot) {
-                    return '`enableShadowDom` has no effect in framework wrappers, or with a legacy theme, `themeStyleContainer`, `popupParent` or `createChartContainer`. The grid is rendered in the page DOM.';
+                    return '`enableShadowDom` has no effect in framework wrappers, or with a legacy theme, `themeStyleContainer`, `popupParent`, `createChartContainer` or `advancedFilterParent`. The grid is rendered in the page DOM.';
                 }
                 return null;
             },

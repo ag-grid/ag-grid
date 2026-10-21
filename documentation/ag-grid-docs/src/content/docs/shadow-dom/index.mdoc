@@ -24,7 +24,7 @@ In this example:
 Page CSS that refers to the grid's elements, such as rules for the classes set by `cellClass`, `rowClass` or a cell component, does not reach a grid in a shadow root. [Theme parameters](./theming-parameters/), CSS variables, [theme modes](./theming-colors/#theme-modes) set on `<html>` or `<body>`, and the inline styles from `cellStyle` and `getRowStyle` still apply. If the grid is created before its container is added to the page, or is moved afterwards, theme mode changes may not apply.
 
 {% note %}
-`enableShadowDom` does not apply when using a legacy theme, `themeStyleContainer`, `popupParent` or `createChartContainer`. These put the grid's styles, popups or charts in the page, where they would not work with the grid in a shadow root. Integrated charts created with a `chartContainer` are placed in the page too, so they do not get the grid's styles. With [development validations](./dev-validation/) enabled, the grid logs a warning when `enableShadowDom: true` is ignored.
+`enableShadowDom` does not apply when using a legacy theme, `themeStyleContainer`, `popupParent`, `createChartContainer` or `advancedFilterParent`. These put the grid's styles, popups, charts or Advanced Filter in the page, where they would not work with the grid in a shadow root. Setting `advancedFilterParent` after the grid is created in a shadow root leaves the Advanced Filter without the grid's styles. Integrated charts created with a `chartContainer` are placed in the page too, so they do not get the grid's styles. With [development validations](./dev-validation/) enabled, the grid logs a warning when `enableShadowDom: true` is ignored.
 {% /note %}
 
 ## Automatic Detection
