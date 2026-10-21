@@ -149,6 +149,12 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         return this.buildFieldRows();
     }
 
+    public onFieldOrderChanged(): void {
+        if (this.cols) {
+            this.refreshRowModel();
+        }
+    }
+
     /** Edits change the original record, whose cells are not the ones displayed, so refresh its column here. */
     private onCellValueChanged(event: CellValueChangedEvent): void {
         const recordId = event.node.id;
@@ -325,7 +331,8 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         const { colModel, visibleCols } = this.beans;
         colModel.beginColUpdate();
         try {
-            colModel.refreshCols(true, 'api');
+            // Not new colDefs: leaving the transposed view restores the user's column order.
+            colModel.refreshCols(false, 'api');
             visibleCols.refresh('api', false);
         } finally {
             colModel.endColUpdate();
@@ -457,8 +464,10 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         const rows: RowNode[] = [];
         const fieldGroups = this.fieldGroups;
         fieldGroups.clear();
+        const sortByUserOrder = createUserOrderSorter(colModel.getColsInStateOrder());
 
-        const visit = (items: (AgColumn | AgProvidedColumnGroup)[], level: number, show: boolean): boolean => {
+        const visit = (unsorted: (AgColumn | AgProvidedColumnGroup)[], level: number, show: boolean): boolean => {
+            const items = sortByUserOrder(unsorted);
             let anyVisible = false;
             for (let i = 0, len = items.length; i < len; ++i) {
                 const item = items[i];
@@ -534,3 +543,30 @@ function sameMembers(prev: AgColumn[], next: AgColumn[]): boolean {
     }
     return true;
 }
+
+/**
+ * Sorts column tree items into the user's column order. A group keeps its children together, placed where its
+ * first column is: a column the user moved out of its group stays in the group's field rows.
+ */
+const createUserOrderSorter = (order: AgColumn[]) => {
+    const firstIndex = new Map<AgColumn | AgProvidedColumnGroup, number>();
+    for (let i = 0, len = order.length; i < len; ++i) {
+        firstIndex.set(order[i], i);
+    }
+    const getFirstIndex = (item: AgColumn | AgProvidedColumnGroup): number => {
+        let index = firstIndex.get(item);
+        if (index === undefined) {
+            index = Number.MAX_SAFE_INTEGER;
+            if (!item.isColumn) {
+                const children = item.getChildren();
+                for (let i = 0, len = children.length; i < len; ++i) {
+                    index = Math.min(index, getFirstIndex(children[i]));
+                }
+            }
+            firstIndex.set(item, index);
+        }
+        return index;
+    };
+    return (items: (AgColumn | AgProvidedColumnGroup)[]) =>
+        items.slice().sort((a, b) => getFirstIndex(a) - getFirstIndex(b));
+};

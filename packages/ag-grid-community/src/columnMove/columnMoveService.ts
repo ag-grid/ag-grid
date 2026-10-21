@@ -41,6 +41,10 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         const colAnimation = this.beans.colAnimation;
         const gridColumns = colModel.colsList;
 
+        if (colModel.showingTranspose && this.moveParkedColumns(columnsToMoveKeys, toIndex, source, finished)) {
+            return;
+        }
+
         if (toIndex > gridColumns.length - columnsToMoveKeys.length) {
             // Trying to insert in invalid position
             this.warn(30, { toIndex });
@@ -57,7 +61,8 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
             const movedColumns: AgColumn[] = [];
             for (let i = 0, len = columnsToMoveKeys.length; i < len; ++i) {
                 const col = colModel.getCol(columnsToMoveKeys[i]);
-                if (col) {
+                // Parked pivot primaries are not displayed, so there is nowhere to move them to.
+                if (col?.inColsList) {
                     movedColumns.push(col);
                 }
             }
@@ -78,6 +83,44 @@ export class ColumnMoveService extends BeanStub implements NamedBean {
         } finally {
             colAnimation?.finish();
         }
+    }
+
+    /** While transposed, moving the user's columns reorders the field rows. Returns `false` when the keys are not
+     *  all parked user columns, so the move applies to the displayed columns instead. */
+    private moveParkedColumns(
+        columnsToMoveKeys: ColKey[],
+        toIndex: number,
+        source: ColumnEventType,
+        finished: boolean
+    ): boolean {
+        const colModel = this.beans.colModel;
+        const movedColumns: AgColumn[] = [];
+        for (let i = 0, len = columnsToMoveKeys.length; i < len; ++i) {
+            const col = colModel.getCol(columnsToMoveKeys[i]);
+            if (!col || col.inColsList) {
+                return false;
+            }
+            movedColumns.push(col);
+        }
+        const order = colModel.getColsInStateOrder();
+        if (toIndex > order.length - movedColumns.length) {
+            this.warn(30, { toIndex });
+            return true;
+        }
+        const proposedOrder = order.slice();
+        _moveInArray(proposedOrder, movedColumns, toIndex);
+        if (this.doesOrderPassRules(proposedOrder)) {
+            colModel.setParkedColsOrder(proposedOrder);
+            this.eventSvc.dispatchEvent({
+                type: 'columnMoved',
+                columns: movedColumns,
+                column: movedColumns.length === 1 ? movedColumns[0] : null,
+                toIndex,
+                finished,
+                source,
+            });
+        }
+        return true;
     }
 
     private doesMovePassRules(columnsToMove: AgColumn[], toIndex: number): boolean {

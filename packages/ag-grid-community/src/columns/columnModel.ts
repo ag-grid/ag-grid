@@ -102,7 +102,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
 
     private cachedAllCols: AgColumn[] | null = null;
 
-    /** Cache for getColsInStateOrder (pivot only). Invalidated on `colsList` mutation — ref equality
+    /** Cache for getColsInStateOrder (pivot and transpose only). Invalidated on `colsList` mutation — ref equality
      *  can't substitute, as `moveColumns` reorders in place. */
     private cachedColsInStateOrder: AgColumn[] | null = null;
 
@@ -181,10 +181,11 @@ export class ColumnModel extends BeanStub implements NamedBean {
         );
     }
 
-    /** Columns in column-state order: hidden pivot primaries first, then `colsList`. Must not be mutated. */
+    /** Columns in column-state order: hidden pivot primaries first, then `colsList`; while transposed, the user's
+     *  parked columns in their saved order. Must not be mutated. */
     public getColsInStateOrder(): AgColumn[] {
         if (this.showingTranspose) {
-            return this.colDefList;
+            return (this.cachedColsInStateOrder ??= this.buildParkedColsOrder());
         }
         // Only pivot has hidden primaries (built enterprise-side); cached on colsList.
         if (!this.showingPivotResult) {
@@ -794,6 +795,30 @@ export class ColumnModel extends BeanStub implements NamedBean {
             }
             this.colsListIndexDirty = false;
         }
+    }
+
+    /** While transposed, the user's columns in the order the untransposed view will restore. */
+    private buildParkedColsOrder(): AgColumn[] {
+        const lastOrder = this.lastOrder;
+        return lastOrder == null ? this.colDefList : applyPrevColumnsOrder(this.colDefList, this.colsById, lastOrder);
+    }
+
+    /** While transposed, reorders the parked user columns: the untransposed view restores this order, and the
+     *  field rows follow it. Service-column slots in the saved order are kept, so they reappear where they were. */
+    public setParkedColsOrder(order: AgColumn[]): void {
+        const lastOrder = this.lastOrder ?? [];
+        const parkedIds = new Set<string>();
+        for (let i = 0, len = order.length; i < len; ++i) {
+            parkedIds.add(order[i].colId);
+        }
+        let next = 0;
+        const merged = lastOrder.map((colId) => (parkedIds.has(colId) ? order[next++].colId : colId));
+        for (let len = order.length; next < len; ++next) {
+            merged.push(order[next].colId);
+        }
+        this.lastOrder = merged;
+        this.cachedColsInStateOrder = null;
+        this.beans.transposeSvc?.onFieldOrderChanged();
     }
 
     /** Resolve any key (colId string, AgColumn, or ColDef) to its current AgColumn. Fast path inline:

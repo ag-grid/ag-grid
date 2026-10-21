@@ -606,6 +606,11 @@ function orderLiveColsLikeState(beans: BeanCollection, params: ApplyColumnStateP
         return;
     }
 
+    if (colModel.showingTranspose) {
+        orderParkedColsLikeState(beans, state);
+        return;
+    }
+
     const colsById = colModel.colsById;
     const currentList = colModel.colsList;
     const consumed = new Set<AgColumn>();
@@ -654,6 +659,33 @@ function orderLiveColsLikeState(beans: BeanCollection, params: ApplyColumnStateP
     }
     colModel.colsList = finalOrder;
     colModel.markColsListIndexDirty();
+}
+
+/** While transposed, the user's columns are parked: state-ordered ones first, the rest after in their saved order. */
+function orderParkedColsLikeState(beans: BeanCollection, state: ColumnState[]): void {
+    const colModel = beans.colModel;
+    const colsById = colModel.colsById;
+    const currentOrder = colModel.getColsInStateOrder();
+    const consumed = new Set<AgColumn>();
+    const newOrder: AgColumn[] = [];
+    for (let i = 0, len = state.length; i < len; ++i) {
+        const colId = state[i].colId;
+        const col = colId == null ? undefined : colsById[colId];
+        if (col != null && !col.inColsList && !consumed.has(col)) {
+            newOrder.push(col);
+            consumed.add(col);
+        }
+    }
+    for (let i = 0, len = currentOrder.length; i < len; ++i) {
+        const col = currentOrder[i];
+        if (!consumed.has(col)) {
+            newOrder.push(col);
+        }
+    }
+    const finalOrder = placeLockedColumns(newOrder, beans.gos);
+    if (!_areEqual(finalOrder, currentOrder)) {
+        colModel.setParkedColsOrder(finalOrder);
+    }
 }
 
 /** In place: seat the missed auto-group cols right after `newOrder`'s last auto-group col (at the head

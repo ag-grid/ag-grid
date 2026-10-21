@@ -16,4 +16,7 @@ export interface ITransposeService {
 
     /** Regenerates the record columns from `records` and returns the field rows to display instead. */
     transposeRows(records: RowNode[]): RowNode[];
+
+    /** Rebuilds the field rows after the user's columns are reordered while transposed. */
+    onFieldOrderChanged(): void;
 }
