@@ -65,6 +65,25 @@ test.describe('Shift+Tab into a tool panel from after the grid', () => {
             .toMatchObject({ className: expect.stringContaining('ag-virtual-list-item'), text: 'Total', inView: true });
     });
 
+    test('columns tool panel with no search matches focuses the search clear button', async ({ page }) => {
+        const { grid } = await mountGrid(page, {
+            enterprise: true,
+            height: 300,
+            options: () => ({
+                columnDefs: [{ field: 'athlete' }, { field: 'age' }],
+                sideBar: true,
+                rowData: [],
+            }),
+        });
+        await grid.locator('.ag-column-select-header-filter-wrapper input').fill('no match');
+        await expect(grid.locator('.ag-column-select-virtual-list-item')).toHaveCount(0);
+
+        await shiftTabFromInputAfterGrid(page);
+        await expect
+            .poll(() => describeFocusedElement(page))
+            .toMatchObject({ className: expect.stringContaining('ag-input-field-clear-button'), inView: true });
+    });
+
     test('columns tool panel values drop zone focuses the last pill and scrolls it into view', async ({ page }) => {
         await mountGrid(page, {
             enterprise: true,

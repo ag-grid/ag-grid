@@ -90,6 +90,22 @@ describe('_focusIntoTabbableFirst', () => {
         root.remove();
     });
 
+    test('skips the tab guards of a nested component with nothing to focus', () => {
+        const root = document.createElement('div');
+        root.innerHTML = `
+            <button>Search</button>
+            <div class="ag-list">
+                <div class="ag-tab-guard" tabindex="0"></div>
+                <div class="ag-tab-guard" tabindex="0"></div>
+            </div>
+        `;
+        document.body.appendChild(root);
+
+        expect(_focusIntoTabbableFirst(root, true, true)).toBe(true);
+        expect(document.activeElement).toBe(root.querySelector('button'));
+        root.remove();
+    });
+
     test('does not let a checked radio with tabindex="-1" exclude a tabbable radio', () => {
         const root = document.createElement('div');
         root.innerHTML = `

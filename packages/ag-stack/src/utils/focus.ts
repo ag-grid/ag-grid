@@ -163,7 +163,7 @@ export function _focusIntoTabbableFirst(rootNode: HTMLElement, up = false, exclu
     let candidates = _findFocusableElements(rootNode);
     if (excludeOwnTabGuards) {
         candidates = candidates.filter(
-            (element) => element.parentElement !== rootNode || !element.classList.contains('ag-tab-guard')
+            (element) => !element.classList.contains('ag-tab-guard') || isEnterableNestedTabGuard(element, rootNode)
         );
     }
     const tabbable = candidates.filter((element) => element.tabIndex >= 0);
@@ -184,6 +184,16 @@ export function _focusIntoTabbableFirst(rootNode: HTMLElement, up = false, exclu
     }
 
     return false;
+}
+
+/** A guard of a component nested in `rootNode`, guarding content its component can focus. */
+function isEnterableNestedTabGuard(guard: HTMLElement, rootNode: HTMLElement): boolean {
+    const guardedElement = guard.parentElement;
+    return (
+        guardedElement !== null &&
+        guardedElement !== rootNode &&
+        _findFocusableElements(guardedElement, '.ag-tab-guard').length > 0
+    );
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
