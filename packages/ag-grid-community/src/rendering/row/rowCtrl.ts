@@ -1519,8 +1519,8 @@ export const getRowTypeForNode = (beans: BeanCollection, rowNode: RowNode): RowT
     const stub = rowNode.stub;
     // groupHideOpenParents implicitly disables full width loading
     const groupHideOpenParents = stub && gos.get('groupHideOpenParents');
-    const cellLoading = stub && _getServerSideLoadingRowType(gos) === 'cell';
-    if (stub && !cellLoading && !groupHideOpenParents && beans.rowModel.getType() === 'serverSide') {
+    const suppressFullWidthLoading = stub && _getServerSideLoadingRowType(gos) !== 'fullWidth';
+    if (stub && !suppressFullWidthLoading && !groupHideOpenParents && beans.rowModel.getType() === 'serverSide') {
         return 'FullWidthLoading';
     }
     if (rowNode.detail && gos.get('masterDetail')) {
@@ -1529,9 +1529,9 @@ export const getRowTypeForNode = (beans: BeanCollection, rowNode: RowNode): RowT
     if (isNodeFullWidthCell(beans, rowNode)) {
         return 'FullWidth';
     }
-    // With cell loading, stub group rows (groupDisplayType='groupRows')
-    // fall through to Normal so they render per-cell skeletons, consistent with leaf row stubs.
-    const isSuppressedGroupStub = cellLoading && !groupHideOpenParents;
+    // Without full width loading, stub group rows (groupDisplayType='groupRows')
+    // fall through to Normal so they render per-cell skeletons (or nothing), consistent with leaf row stubs.
+    const isSuppressedGroupStub = suppressFullWidthLoading && !groupHideOpenParents;
     return !isSuppressedGroupStub && _isFullWidthGroupRow(gos, rowNode, beans.colModel.pivotMode)
         ? 'FullWidthGroup'
         : 'Normal';

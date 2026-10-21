@@ -655,7 +655,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             supportedRowModels: ['serverSide'],
             validate: (options) => {
                 const serverSideLoadingRowType = options.serverSideLoadingRowType;
-                const validTypes: ServerSideLoadingRowType[] = ['fullWidth', 'cell'];
+                const validTypes: ServerSideLoadingRowType[] = ['fullWidth', 'cell', 'none'];
                 if (serverSideLoadingRowType && !validTypes.includes(serverSideLoadingRowType)) {
                     return _createValidationWarning(320, {
                         property: 'serverSideLoadingRowType',
