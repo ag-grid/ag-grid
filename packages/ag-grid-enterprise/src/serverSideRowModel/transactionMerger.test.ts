@@ -76,12 +76,18 @@ const row = (id: string, v?: number): Row => (v === undefined ? { id } : { id, v
 const ids = (nodes?: IRowNode[]) => nodes?.map((node) => node.id);
 
 function applySequentially(initial: Row[], transactions: ServerSideTransaction[]): Row[] {
-    const store = new FakeStore(initial);
-    for (const tx of transactions) {
-        store.apply(tx);
-    }
-    return store.snapshot();
+    return applySequentiallyWithResults(initial, transactions).rows;
 }
+
+function applySequentiallyWithResults(initial: Row[], transactions: ServerSideTransaction[]) {
+    const store = new FakeStore(initial);
+    const results = transactions.map((tx) => store.apply(tx));
+    return { results, rows: store.snapshot() };
+}
+
+/** The id and final data of each node a result reports, by op. */
+const reported = (result: ServerSideTransactionResult) =>
+    (['update', 'add', 'remove'] as const).map((op) => (result[op] ?? []).map((node) => [node.id, node.data]));
 
 function applyMerged(initial: Row[], transactions: ServerSideTransaction[]) {
     const store = new FakeStore(initial);
@@ -100,7 +106,11 @@ describe('_applyMergedTransactions', () => {
             [{ add: [row('c', 1)] }, { update: [row('c', 2)] }],
         ],
         ['add + remove', [{ add: [row('c', 1)] }, { remove: [row('c')] }], []],
-        ['update + remove', [{ update: [row('a', 1)] }, { remove: [row('a')] }], [{ remove: [row('a')] }]],
+        [
+            'update + remove',
+            [{ update: [row('a', 1)] }, { remove: [row('a')] }],
+            [{ update: [row('a', 1)], remove: [row('a')] }],
+        ],
         [
             'add of a cached row + update',
             [{ add: [row('a', 1)] }, { update: [row('a', 2)] }],
@@ -171,6 +181,20 @@ describe('_applyMergedTransactions', () => {
         ]);
     });
 
+    it('returns a row updated and then removed with its updated data', () => {
+        const { results } = applyMerged(initial, [
+            { update: [row('a', 1)] },
+            { remove: [row('a')] },
+            { update: [row('b', 2)], remove: [row('b')] },
+        ]);
+
+        expect(results.map((r) => [r.update?.map((n) => n.data), r.remove?.map((n) => n.data)])).toEqual([
+            [[row('a', 1)], undefined],
+            [undefined, [row('a', 1)]],
+            [[row('b', 2)], [row('b', 2)]],
+        ]);
+    });
+
     it('asks isApplyServerSideTransaction once per transaction and leaves rejected ones out', () => {
         const store = new FakeStore(initial);
         const isAccepted = vi.fn((tx: ServerSideTransaction) => tx.update?.[0].v !== 2);
@@ -203,7 +227,11 @@ describe('_applyMergedTransactions', () => {
         );
 
         expect(seen).toEqual([0, 0, undefined, 2]);
-        expect(store.applied).toEqual([{ remove: [row('a')] }, { add: [row('a', 2)] }, { update: [row('a', 3)] }]);
+        expect(store.applied).toEqual([
+            { update: [row('a', 1)], remove: [row('a')] },
+            { add: [row('a', 2)] },
+            { update: [row('a', 3)] },
+        ]);
     });
 
     it('accepts a transaction split out for its mixed removes after applying the batch before it', () => {
@@ -281,7 +309,14 @@ describe('_applyMergedTransactions', () => {
                 transactions.push(tx);
             }
 
-            expect(applyMerged(start, transactions).rows).toEqual(applySequentially(start, transactions));
+            const merged = applyMerged(start, transactions);
+            const sequential = applySequentiallyWithResults(start, transactions);
+            expect(merged.rows).toEqual(sequential.rows);
+            // a row added and removed in one batch is not reported, so only check what is reported is the same
+            merged.results.forEach((result, t) => {
+                const expected = reported(sequential.results[t]);
+                reported(result).forEach((nodes, op) => expect(expected[op]).toEqual(expect.arrayContaining(nodes)));
+            });
         }
     });
 });
@@ -334,6 +369,22 @@ describe('_groupTransactionsByRoute', () => {
             [undefined, [0]],
             [['g'], [1]],
             [undefined, [2]],
+        ]);
+    });
+
+    it('starts a new group when a removed parent is added back after transactions for its child routes', () => {
+        expect(
+            indexes([
+                { remove: [row('g')] },
+                { route: ['g'], add: [row('b')] },
+                { add: [row('g')] },
+                { route: ['g'], add: [row('c')] },
+            ])
+        ).toEqual([
+            [undefined, [0]],
+            [['g'], [1]],
+            [undefined, [2]],
+            [['g'], [3]],
         ]);
     });
 

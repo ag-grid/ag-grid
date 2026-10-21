@@ -234,7 +234,7 @@ class MergeBatch {
                 if (!this.isRowPresent(id, target)) {
                     continue;
                 }
-                updates.delete(id);
+                // a pending update stays, so the removed node carries the latest data
                 removes.set(id, data);
             }
             this.contributions.push({ transactionIndex, op, id, generation: this.getGeneration(id) });
@@ -287,7 +287,7 @@ class MergeBatch {
     }
 
     private isRowPresent(id: string, target: TransactionMergeTarget): boolean {
-        return this.updates.has(id) || (!this.removes.has(id) && target.isRowCached(id));
+        return !this.removes.has(id) && (this.updates.has(id) || target.isRowCached(id));
     }
 
     public apply(
@@ -365,15 +365,16 @@ export interface RouteTransactionGroup {
 
 /**
  * Groups transactions by route, keeping groups in the order their routes first appear. When
- * `canChangeChildStores` holds for a transaction and any of its descendant routes have pending transactions,
- * new groups are started for its route and those descendants, so the earlier child transactions still apply first.
+ * `canChangeChildStores` holds for a transaction, or for an earlier one in its route's group, and any of its
+ * descendant routes have pending transactions, new groups are started for its route and those descendants, so
+ * the earlier child transactions still apply first.
  */
 export function _groupTransactionsByRoute(
     transactions: ServerSideTransaction[],
     canChangeChildStores: (transaction: ServerSideTransaction) => boolean
 ): RouteTransactionGroup[] {
     const groups: RouteTransactionGroup[] = [];
-    const openGroups = new Map<string, { keys: string[]; group: RouteTransactionGroup }>();
+    const openGroups = new Map<string, { keys: string[]; group: RouteTransactionGroup; changesChildStores: boolean }>();
 
     for (let index = 0, len = transactions.length; index < len; ++index) {
         const transaction = transactions[index];
@@ -381,7 +382,8 @@ export function _groupTransactionsByRoute(
         const keys = (route ?? []).map(String);
         const routeKey = JSON.stringify(keys);
 
-        if (canChangeChildStores(transaction)) {
+        const changesChildStores = canChangeChildStores(transaction);
+        if (changesChildStores || openGroups.get(routeKey)?.changesChildStores) {
             let closedDescendant = false;
             for (const [openKey, open] of openGroups) {
                 if (isDescendantRoute(open.keys, keys)) {
@@ -396,10 +398,11 @@ export function _groupTransactionsByRoute(
 
         let open = openGroups.get(routeKey);
         if (!open) {
-            open = { keys, group: { route, indexes: [] } };
+            open = { keys, group: { route, indexes: [] }, changesChildStores: false };
             groups.push(open.group);
             openGroups.set(routeKey, open);
         }
+        open.changesChildStores ||= changesChildStores;
         open.group.indexes.push(index);
     }
 

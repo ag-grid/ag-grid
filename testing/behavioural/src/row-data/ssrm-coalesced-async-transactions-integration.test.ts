@@ -410,6 +410,31 @@ describe('SSRM coalesced async transactions with other grid options', () => {
         `);
     });
 
+    test('a transaction for a removed group still misses its store when a later transaction adds the group back, as in turn', async () => {
+        const coalesced = await compareWithSequential(async (merge) => {
+            const api = await createGroupedGrid(groupedOptions(merge));
+            const { results } = await applyAsync(api, [
+                { remove: [GROUP('UK', 3)] },
+                { route: ['UK'], add: [{ id: 'uk-zed', country: 'UK', athlete: 'Zed', sales: 1 }] },
+                { add: [GROUP('UK', 0)] },
+            ]);
+            await waitForNoLoadingRows(api);
+            return { results, rows: rowsOf(api) };
+        });
+
+        expect(coalesced.results).toEqual([
+            { status: 'Applied', remove: ['group-UK'] },
+            { status: 'StoreNotFound' },
+            { status: 'Applied', add: ['group-UK'] },
+        ]);
+        expect(coalesced.rows).toEqual([
+            ['group-US', GROUP('US', 3)],
+            ['group-UK', GROUP('UK', 0)],
+            ['uk-alice', LEAVES[0]],
+            ['uk-bob', LEAVES[1]],
+        ]);
+    });
+
     test('transactions queued before the row groups change are applied to the new stores as in turn', async () => {
         const coalesced = await compareWithSequential(async (merge) => {
             const api = await createGroupedGrid(groupedOptions(merge));
@@ -444,6 +469,42 @@ describe('SSRM coalesced async transactions with other grid options', () => {
             ['uk-alice', LEAVES[0]],
             ['uk-bob', LEAVES[1]],
             ['us-frank', { ...LEAVES[2], athlete: 'Frank 3' }],
+        ]);
+    });
+
+    test('a row updated and then removed is returned with its updated data, as in turn', async () => {
+        const coalesced = await compareWithSequential(async (merge) => {
+            const api = gridsManager.createGrid(null, flatOptions(merge));
+            await waitForEvent('firstDataRendered', api);
+            const results: ServerSideTransactionResult[] = [];
+            const transactions: ServerSideTransaction[] = [
+                { update: [ROW(1, 'a')] },
+                { remove: [ROW(1, 'Row 1')] },
+                { update: [ROW(2, 'b')], remove: [ROW(2, 'Row 2')] },
+            ];
+            transactions.forEach((transaction, index) =>
+                api.applyServerSideTransactionAsync(transaction, (result) => {
+                    results[index] = result;
+                })
+            );
+            api.flushServerSideAsyncTransactions();
+            await vi.waitFor(() => expect(results.filter(Boolean)).toHaveLength(transactions.length));
+            const dataOf = (result: ServerSideTransactionResult) => ({
+                ...summarise(result),
+                data: [...(result.update ?? []), ...(result.remove ?? [])].map((node) => node.data),
+            });
+            return { results: results.map(dataOf), rows: rowsOf(api) };
+        });
+
+        expect(coalesced.results).toEqual([
+            { status: 'Applied', update: ['1'], data: [ROW(1, 'a')] },
+            { status: 'Applied', remove: ['1'], data: [ROW(1, 'a')] },
+            { status: 'Applied', update: ['2'], remove: ['2'], data: [ROW(2, 'b'), ROW(2, 'b')] },
+        ]);
+        expect(coalesced.rows).toEqual([
+            ['0', ROW(0, 'Row 0')],
+            ['3', ROW(3, 'Row 3')],
+            ['4', ROW(4, 'Row 4')],
         ]);
     });
 
