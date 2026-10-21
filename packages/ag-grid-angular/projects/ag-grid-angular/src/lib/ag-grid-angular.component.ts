@@ -231,6 +231,7 @@ import type {
     SelectionChangedEvent,
     SelectionColumnDef,
     SendToClipboard,
+    ServerSideLoadingRowType,
     SideBarDef,
     SortChangedEvent,
     SortDirection,
@@ -1682,8 +1683,17 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ServerSideRowModelModule`
      */
     @Input() public serverSideInitialRowCount: number | undefined = undefined;
+    /** How the Server-side Row Model displays rows that are still loading.
+     * - `'fullWidth'`: Displays a single full width loading row, using the grid option `loadingCellRenderer`.
+     * - `'cell'`: Displays a loading indicator in each cell, using the colDef `loadingCellRenderer` (a skeleton by default).
+     * - `'none'`: Displays no loading indicator. Rows that are still loading are left empty, and an expanded group shows no rows until its children load.
+     * @default 'fullWidth'
+     * @agModule `ServerSideRowModelModule`
+     */
+    @Input() public serverSideLoadingRowType: ServerSideLoadingRowType | undefined = undefined;
     /** When `true`, the Server-side Row Model will not use a full width loading renderer, instead using the colDef `loadingCellRenderer` if present.
      * @agModule `ServerSideRowModelModule`
+     * @deprecated v36.3 Use `serverSideLoadingRowType: 'cell'` instead.
      */
     @Input({ transform: booleanAttribute }) public suppressServerSideFullWidthLoadingRow: boolean | undefined =
         undefined;

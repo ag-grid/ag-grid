@@ -1,5 +1,5 @@
 import { getSortDefFromInput } from '../../entities/agColumn';
-import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
+import type { DomLayoutType, GridOptions, ServerSideLoadingRowType } from '../../entities/gridOptions';
 import type { CalculatedColumnsOptions } from '../../interfaces/iCalculatedColumns';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
@@ -107,6 +107,10 @@ const GRID_OPTION_DEPRECATIONS = (): Deprecations<GridOptions> => ({
 
     suppressContentVisibilityAuto: { version: '36.1', message: 'Use `enableContentVisibilityAuto` instead.' },
     debug: { version: '36.3', message: 'Use `enableDevValidations({ debug: true })` instead.' },
+    suppressServerSideFullWidthLoadingRow: {
+        version: '36.3',
+        message: 'Use `serverSideLoadingRowType: "cell"` instead.',
+    },
 });
 
 function toConstrainedNum(key: keyof GridOptions, value: any, min: number): string | ValidationWarning | null {
@@ -645,6 +649,21 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
             supportedRowModels: ['serverSide'],
             validate({ serverSideInitialRowCount }) {
                 return toConstrainedNum('serverSideInitialRowCount', serverSideInitialRowCount, 1);
+            },
+        },
+        serverSideLoadingRowType: {
+            supportedRowModels: ['serverSide'],
+            validate: (options) => {
+                const serverSideLoadingRowType = options.serverSideLoadingRowType;
+                const validTypes: ServerSideLoadingRowType[] = ['fullWidth', 'cell', 'none'];
+                if (serverSideLoadingRowType && !validTypes.includes(serverSideLoadingRowType)) {
+                    return _createValidationWarning(320, {
+                        property: 'serverSideLoadingRowType',
+                        allowed: validTypes,
+                        value: serverSideLoadingRowType,
+                    });
+                }
+                return null;
             },
         },
         serverSideOnlyRefreshFilteredGroups: {
