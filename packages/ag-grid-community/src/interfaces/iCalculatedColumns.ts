@@ -132,6 +132,7 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
      *
      * In `'live'` `applyMode` it is also called while the user types in the dialog, so keep it cheap and use
      * `params.expressionValidation` to check the expression's validation status.
+     * `calculatedColumnReadOnly` takes effect after the initial Add dialog closes, including any pending live edit.
      *
      * The returned definition is not shown in the dialog and is not saved in grid state. Stateful properties
      * such as `width`, `sort` and `hide` apply when the column is created; prefer the `initial*` forms.
