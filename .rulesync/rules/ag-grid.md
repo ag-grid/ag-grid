@@ -56,7 +56,7 @@ Nothing needs to be arranged to read the result afterwards: every local run capt
 
 On the **first response** of a conversation, verify that project skills are available by checking the system-reminder skill list. If **any** of the canary skills are missing, display a one-time warning before doing anything else. Do not repeat the warning on subsequent responses.
 
-Skip this check entirely in non-interactive runs (CI, GitHub Actions, automated PR reviews): those runs load no plugin skills, and nobody is there to act on the warning.
+Skip this check in non-interactive runs (CI, GitHub Actions, automated PR reviews): nobody is there to act on the warning.
 
 **Canary skills:** `example`, `dev-server`, `debug-trace`, `git-conventions`, `jira`
 
@@ -76,7 +76,7 @@ Glob-scoped rules load automatically when you touch matching files; the skills b
 | Examples, validation, path mappings | `.rulesync/rules/examples.md` |
 | Documentation pages | `.rulesync/rules/docs-pages.md` |
 | Grid source conventions | `.rulesync/rules/grid-code-conventions.md` |
-| Shared code quality practices | `code-quality` rule from the ag-dev-prompts plugins (staged into `.rulesync/rules/` by `yarn`; absent in CI checkouts) |
+| Shared code quality practices | `code-quality` rule from the ag-dev-prompts plugins (staged into `.rulesync/rules/` by `yarn`, and by the PR Review and AI Workflow jobs; plain CI jobs skip the fetch) |
 | Benchmarks | `.rulesync/rules/benchmarks.md` |
 | Technology stack and constraints | `/technology-stack` skill |
 | Dev server and build watch | `/ag-eng:dev-server` skill |
