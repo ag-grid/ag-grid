@@ -7,6 +7,7 @@ import { _interpretAsRightClick } from '../../gridOptionsUtils';
 import { _isStopPropagationForAgGrid } from '../../utils/gridEvent';
 import { _suppressCellMouseEvent } from '../renderUtils';
 import type { CellCtrl } from './cellCtrl';
+import { _runColDefCellHandler } from './cellEvent';
 
 export function _onCellMouseEvent(
     beans: BeanCollection,
@@ -45,7 +46,7 @@ function onCellClicked(beans: BeanCollection, cellCtrl: CellCtrl, event: MouseEv
         return;
     }
 
-    const { eventSvc, rangeSvc, editSvc, editModelSvc, frameworkOverrides, gos } = beans;
+    const { eventSvc, rangeSvc, editSvc, editModelSvc, gos } = beans;
     const isMultiKey = event.ctrlKey || event.metaKey;
     const { column, cellPosition, rowNode } = cellCtrl;
     const suppressMouseEvent = _suppressCellMouseEvent(gos, column, rowNode, event);
@@ -61,17 +62,7 @@ function onCellClicked(beans: BeanCollection, cellCtrl: CellCtrl, event: MouseEv
     const cellClickedEvent: CellClickedEvent = cellCtrl.createEvent(event, 'cellClicked') as CellClickedEvent;
     cellClickedEvent.isEventHandlingSuppressed = suppressMouseEvent;
     eventSvc.dispatchEvent(cellClickedEvent);
-
-    const colDef = column.colDef;
-
-    if (colDef.onCellClicked) {
-        // to make callback async, do in a timeout
-        window.setTimeout(() => {
-            frameworkOverrides.wrapOutgoing(() => {
-                colDef.onCellClicked!(cellClickedEvent);
-            });
-        }, 0);
-    }
+    _runColDefCellHandler(beans, cellCtrl, 'onCellClicked', cellClickedEvent);
 
     if (suppressMouseEvent) {
         return;
@@ -106,12 +97,10 @@ function onCellClicked(beans: BeanCollection, cellCtrl: CellCtrl, event: MouseEv
 }
 
 export function _onCellDoubleClicked(beans: BeanCollection, cellCtrl: CellCtrl, event: MouseEvent): void {
-    const { eventSvc, frameworkOverrides, editSvc, editModelSvc, gos } = beans;
-    const { column } = cellCtrl;
+    const { eventSvc, editSvc, editModelSvc, gos } = beans;
 
     const suppressMouseEvent = _suppressCellMouseEvent(gos, cellCtrl.column, cellCtrl.rowNode, event);
 
-    const colDef = column.colDef;
     // always dispatch event to eventService
     const cellDoubleClickedEvent: CellDoubleClickedEvent = cellCtrl.createEvent(
         event,
@@ -119,16 +108,7 @@ export function _onCellDoubleClicked(beans: BeanCollection, cellCtrl: CellCtrl, 
     ) as CellDoubleClickedEvent;
     cellDoubleClickedEvent.isEventHandlingSuppressed = suppressMouseEvent;
     eventSvc.dispatchEvent(cellDoubleClickedEvent);
-
-    // check if colDef also wants to handle event
-    if (typeof colDef.onCellDoubleClicked === 'function') {
-        // to make the callback async, do in a timeout
-        window.setTimeout(() => {
-            frameworkOverrides.wrapOutgoing(() => {
-                (colDef.onCellDoubleClicked as any)(cellDoubleClickedEvent);
-            });
-        }, 0);
-    }
+    _runColDefCellHandler(beans, cellCtrl, 'onCellDoubleClicked', cellDoubleClickedEvent);
     if (suppressMouseEvent) {
         return;
     }

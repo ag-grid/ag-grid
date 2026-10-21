@@ -3,6 +3,7 @@ import { KeyCode } from 'ag-stack';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection, BeanName } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
+import { _getTransposedCell } from '../../entities/agColumn';
 import { _getRowNode } from '../../entities/positionUtils';
 import type { RowNode } from '../../entities/rowNode';
 import { _createGlobalRowEvent } from '../../entities/rowNodeUtils';
@@ -260,8 +261,10 @@ export abstract class BaseEditStrategy extends BeanStub {
             ? cellCtrl.value
             : beans.valueSvc.getDisplayValue(position.column as AgColumn, position.rowNode, 'edit', false);
 
+        // A transposed-view cell's events name its original record and field.
+        const eventPosition = _getTransposedCell(position.column as AgColumn, position.rowNode) ?? position;
         this.eventSvc.dispatchEvent({
-            ..._createCellEvent(beans, event ?? null, type as T, position, value),
+            ..._createCellEvent(beans, event ?? null, type as T, eventPosition, value),
             ...payload,
         });
     }

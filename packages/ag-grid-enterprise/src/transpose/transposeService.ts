@@ -1,6 +1,7 @@
 import type {
     AgProvidedColumnGroup,
     CellClassRules,
+    CellPosition,
     CellValueChangedEvent,
     ColDef,
     ColumnPinnedType,
@@ -118,6 +119,19 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
     public isActive(): boolean {
         const gos = this.gos;
         return !!gos.get('transpose') && _isClientSideRowModel(gos);
+    }
+
+    public isFieldRow(rowNode: RowNode): boolean {
+        return this.cols !== null && rowNode.id != null && this.fieldRows.get(rowNode.id) === rowNode;
+    }
+
+    public getDisplayedCell(record: RowNode, fieldCol: AgColumn): CellPosition | null {
+        const fieldRow = this.fieldRows.get(FIELD_ROW_ID_PREFIX + fieldCol.colId);
+        const column = record.id == null ? undefined : this.recordCols.get(record.id);
+        if (!column || !fieldRow?.displayed || fieldRow.rowIndex == null) {
+            return null;
+        }
+        return { rowIndex: fieldRow.rowIndex, rowPinned: null, column };
     }
 
     public isFieldGroupRow(rowNode: RowNode): boolean {

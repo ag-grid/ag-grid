@@ -55,7 +55,7 @@ import { DOM_DATA_KEY_CELL_CTRL } from '../renderUtils';
 import type { RowCtrl } from '../row/rowCtrl';
 import type { CellSpan } from '../spanning/rowSpanCache';
 import type { CellComp } from './cellComp';
-import { _createCellEvent } from './cellEvent';
+import { _createCellEvent, _runColDefCellHandler } from './cellEvent';
 import { _onCellKeyDown, _processCellCharacter } from './cellKeyboardListenerFeature';
 import { _onCellMouseEvent } from './cellMouseListenerFeature';
 import { _initCellPosition } from './cellPositionFeature';
@@ -784,9 +784,8 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     }
 
     public createEvent<T extends AgEventType>(domEvent: Event | null, eventType: T): CellEvent<T> {
-        const { rowNode, column, value, beans } = this;
-
-        return _createCellEvent<T>(beans, domEvent, eventType, { rowNode, column }, value);
+        // A transposed-view cell's events name its original record and field.
+        return _createCellEvent<T>(this.beans, domEvent, eventType, this.configCell, this.value);
     }
 
     public processCharacter(event: KeyboardEvent): void {
@@ -1078,20 +1077,9 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     }
 
     public dispatchCellContextMenuEvent(event: Event | null) {
-        const colDef = this.column.colDef;
         const cellContextMenuEvent: CellContextMenuEvent = this.createEvent(event, 'cellContextMenu');
-
-        const { beans } = this;
-        beans.eventSvc.dispatchEvent(cellContextMenuEvent);
-
-        if (colDef.onCellContextMenu) {
-            // to make the callback async, do in a timeout
-            window.setTimeout(() => {
-                beans.frameworkOverrides.wrapOutgoing(() => {
-                    (colDef.onCellContextMenu as any)(cellContextMenuEvent);
-                });
-            }, 0);
-        }
+        this.beans.eventSvc.dispatchEvent(cellContextMenuEvent);
+        _runColDefCellHandler(this.beans, this, 'onCellContextMenu', cellContextMenuEvent);
     }
 
     public getCellRenderer(): ICellRenderer | null {

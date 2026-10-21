@@ -19,7 +19,7 @@ import type {
 import { ROOT_NODE_ID } from '../interfaces/iRowNode';
 import type { DetailGridInfo } from '../interfaces/masterDetail';
 import type { AgColumn } from './agColumn';
-import { _resolvePivotColumnForRow } from './agColumn';
+import { _getTransposedCell, _resolvePivotColumnForRow } from './agColumn';
 import type { ColKey, IAggFuncResult } from './colDef';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -587,21 +587,20 @@ export class RowNode<TData = any>
         const oldValue = valueSvc.getDisplayValue(column, this, 'data', false);
 
         if (gos.get('readOnlyEdit')) {
-            const {
-                beans: { eventSvc },
-                data,
-                rowIndex,
-                rowPinned,
-            } = this;
-            eventSvc.dispatchEvent({
+            // A transposed-view cell's request names its original record and field, which the app updates.
+            const transposed = _getTransposedCell(column, this);
+            const node = transposed?.rowNode ?? this;
+            const requestColumn = transposed?.column ?? column;
+            const { data, rowIndex, rowPinned } = node;
+            this.beans.eventSvc.dispatchEvent({
                 type: 'cellEditRequest',
                 event: null,
                 rowIndex,
                 rowPinned,
-                column,
-                colDef: column.colDef,
+                column: requestColumn,
+                colDef: requestColumn.colDef,
                 data,
-                node: this,
+                node,
                 oldValue,
                 newValue,
                 value: newValue,

@@ -1,6 +1,8 @@
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
+import type { AgColumn } from '../entities/agColumn';
 import { _areCellsEqual, _getRowNode, _isSameRow } from '../entities/positionUtils';
+import type { RowNode } from '../entities/rowNode';
 import type { BatchEditingStoppedEvent, BulkEditingStoppedEvent, CellValueChangedEvent } from '../events';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import { _isCellSelectionEnabled } from '../gridOptionsUtils';
@@ -83,18 +85,34 @@ export class UndoRedoService extends BeanStub implements NamedBean {
             return;
         }
 
-        const { rowPinned, rowIndex, column, oldValue, value } = event;
+        const { oldValue, value } = event;
+        const position = this.getReplayPosition(event);
+        if (!position) {
+            return;
+        }
 
         const cellValueChange: CellValueChange = {
-            rowPinned,
-            rowIndex: rowIndex!,
-            columnId: column.getColId(),
+            rowPinned: position.rowPinned,
+            rowIndex: position.rowIndex,
+            columnId: position.column.getColId(),
             newValue: value,
             oldValue,
         };
 
         this.cellValueChanges.push(cellValueChange);
     };
+
+    /**
+     * Undo finds cells by position. While transposed, a change names its original record and field, which are not
+     * displayed, so it is replayed through the cell showing it; a change to a cell not shown is not recorded.
+     */
+    private getReplayPosition(event: CellValueChangedEvent): CellPosition | null {
+        const transposeSvc = this.beans.transposeSvc;
+        if (transposeSvc?.cols) {
+            return transposeSvc.getDisplayedCell(event.node as RowNode, event.column as AgColumn);
+        }
+        return { rowIndex: event.rowIndex!, rowPinned: event.rowPinned, column: event.column };
+    }
 
     private readonly clearStacks = () => {
         this.undoStack.clear();

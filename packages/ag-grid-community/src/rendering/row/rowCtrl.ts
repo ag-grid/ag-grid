@@ -60,7 +60,7 @@ import { _clamp } from '../../utils/number';
 import type { Component } from '../../widgets/component';
 import { CellCtrl } from '../cell/cellCtrl';
 import type { ICellRenderer, ICellRendererParams } from '../cellRenderers/iCellRenderer';
-import { DOM_DATA_KEY_ROW_CTRL } from '../renderUtils';
+import { DOM_DATA_KEY_ROW_CTRL, _getCellCtrlForEventTarget } from '../renderUtils';
 import { FullWidthRowFeature } from './fullWidthRowFeature';
 import type { FullWidthTarget, IRowModeFeature } from './iRowModeFeature';
 import { NormalRowFeature } from './normalRowFeature';
@@ -836,8 +836,7 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
         }
     }
 
-    public createRowEvent<T extends AgEventType>(type: T, domEvent?: Event): RowEvent<T> {
-        const { rowNode } = this;
+    public createRowEvent<T extends AgEventType>(type: T, domEvent?: Event, rowNode = this.rowNode): RowEvent<T> {
         return _addGridCommonParams(this.gos, {
             type: type,
             node: rowNode,
@@ -848,8 +847,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
         });
     }
 
-    private createRowEventWithSource<T extends AgEventType>(type: T, domEvent: Event): RowEvent<T> {
-        const event = this.createRowEvent(type, domEvent);
+    private createRowEventWithSource<T extends AgEventType>(type: T, domEvent: Event, rowNode: RowNode): RowEvent<T> {
+        const event = this.createRowEvent(type, domEvent, rowNode);
         // when first developing this, we included the rowComp in the event.
         // this seems very weird. so when introducing the event types, i left the 'source'
         // out of the type, and just include the source in the two places where this event
@@ -865,7 +864,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
             return;
         }
 
-        const rowEvent = this.createRowEventWithSource('rowDoubleClicked', mouseEvent) as RowDoubleClickedEvent;
+        const clickedRow = this.getClickedRow(mouseEvent);
+        if (!clickedRow) {
+            return;
+        }
+        const rowEvent = this.createRowEventWithSource(
+            'rowDoubleClicked',
+            mouseEvent,
+            clickedRow
+        ) as RowDoubleClickedEvent;
         rowEvent.isEventHandlingSuppressed = this.isSuppressMouseEvent(mouseEvent);
         this.beans.eventSvc.dispatchEvent(rowEvent);
     }
@@ -898,10 +905,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
             return;
         }
 
+        const clickedRow = this.getClickedRow(mouseEvent);
+        if (!clickedRow) {
+            return;
+        }
+
         const isSuppressMouseEvent = this.isSuppressMouseEvent(mouseEvent);
 
         const { eventSvc, selectionSvc } = this.beans;
-        const rowEvent = this.createRowEventWithSource('rowClicked', mouseEvent) as RowClickedEvent;
+        const rowEvent = this.createRowEventWithSource('rowClicked', mouseEvent, clickedRow) as RowClickedEvent;
         rowEvent.isEventHandlingSuppressed = isSuppressMouseEvent;
         eventSvc.dispatchEvent(rowEvent);
 
@@ -909,7 +921,19 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
             return;
         }
 
-        selectionSvc?.handleSelectionEvent(mouseEvent, this.rowNode, 'rowClicked');
+        selectionSvc?.handleSelectionEvent(mouseEvent, clickedRow, 'rowClicked');
+    }
+
+    /**
+     * The row a click is about. A field row of the transposed view spans every record, so a click there is about
+     * the record whose column it landed in, and a click on the field-name column is about none.
+     */
+    private getClickedRow(mouseEvent: MouseEvent): RowNode | null {
+        const rowNode = this.rowNode;
+        if (!this.beans.transposeSvc?.isFieldRow(rowNode)) {
+            return rowNode;
+        }
+        return _getCellCtrlForEventTarget(this.gos, mouseEvent.target)?.column.transposeRecord ?? null;
     }
 
     public setupDetailRowAutoHeight(eDetailGui: HTMLElement): void {

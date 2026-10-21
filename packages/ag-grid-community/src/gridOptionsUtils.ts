@@ -151,7 +151,8 @@ export function _getConfiguredRowHeight(
     // number, when using virtual pagination then function can be
     // used for pinned rows and the number for the body rows.
 
-    if (_isGetRowHeightFunction(gos)) {
+    // A field row of the transposed view spans every record, so `getRowHeight`, which describes records, skips it.
+    if (_isGetRowHeightFunction(gos) && !beans.transposeSvc?.isFieldRow(rowNode as RowNode)) {
         if (allowEstimate) {
             return { height: defaultRowHeight, estimated: true };
         }
