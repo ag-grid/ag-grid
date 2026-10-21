@@ -17,7 +17,7 @@ import type { IPopupService } from '../interfaces/iPopupService';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _initStyledRoot } from '../theming/styledRoot';
 import { _setAriaLabel, _setAriaOwns, _setAriaRole } from '../utils/aria';
-import { _getActiveDomElement, _getDocument } from '../utils/document';
+import { _getActiveDomElement, _getDocument, _getRootNode } from '../utils/document';
 import {
     _createAgElement,
     _getAbsoluteHeight,
@@ -729,12 +729,19 @@ export abstract class BasePopupService<
     public isElementWithinCustomPopup(el: HTMLElement): boolean {
         const eDocument = _getDocument(this.beans);
         const eRootDiv = this.beans.eRootDiv;
+        const rootNode = _getRootNode(this.beans);
+        // `contains` does not see into a shadow root, so a popup around a grid in one contains its host instead.
+        const eGridHost = rootNode instanceof ShadowRoot ? rootNode.host : eRootDiv;
         let current: Element | undefined = el;
         while (current && current !== eDocument.body) {
             // Don't flag an element as being inside a custom pop-up if said popup contains this whole grid.
             // Otherwise, if one grid opens a custom popup containing a second grid, then every cell in the
             // second grid would count as being inside a custom popup
-            if (current.classList.contains('ag-custom-component-popup') && !current.contains(eRootDiv)) {
+            if (
+                current.classList.contains('ag-custom-component-popup') &&
+                !current.contains(eRootDiv) &&
+                !current.contains(eGridHost)
+            ) {
                 return true;
             }
             const parentElement: HTMLElement | null = current.parentElement;

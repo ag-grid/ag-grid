@@ -55,9 +55,9 @@ function createContainer(withCustomPopupClass: boolean): HTMLDivElement {
     return appendDiv(document.body, withCustomPopupClass ? CUSTOM_POPUP_CLASS : undefined);
 }
 
-function createShadowRootContainer(): HTMLDivElement {
+function createShadowRootContainer(parent: HTMLElement = document.body): HTMLDivElement {
     const container = document.createElement('div');
-    appendDiv(document.body).attachShadow({ mode: 'open' }).appendChild(container);
+    appendDiv(parent).attachShadow({ mode: 'open' }).appendChild(container);
     return container;
 }
 
@@ -169,6 +169,21 @@ describe('Other popups and editing of a grid inside an ag-custom-component-popup
             const container = createContainer(true);
             const button = appendButton(container);
             const api = await createGridIn(container, {
+                columnDefs: [{ field: 'name', editable: true }],
+                stopEditingWhenCellsLoseFocus: true,
+            });
+            api.startEditingCell({ rowIndex: 0, colKey: 'name' });
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
+
+            moveFocusFromEditorTo(api, button);
+
+            expect(api.getEditingCells()).toHaveLength(0);
+        });
+
+        test('a grid in a shadow root inside the container stops editing when focus moves to a button elsewhere in the container', async () => {
+            const container = createContainer(true);
+            const button = appendButton(container);
+            const api = await createGridIn(createShadowRootContainer(container), {
                 columnDefs: [{ field: 'name', editable: true }],
                 stopEditingWhenCellsLoseFocus: true,
             });
