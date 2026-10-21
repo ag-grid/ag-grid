@@ -18,7 +18,7 @@ export default {
     create(context) {
         const services = context.sourceCode.parserServices;
         if (!services?.program || !services.esTreeNodeToTSNodeMap) {
-            return {};
+            throw new Error('ag/no-mismatched-generic-args needs type information: set parserOptions.project.');
         }
         const checker = services.program.getTypeChecker();
 

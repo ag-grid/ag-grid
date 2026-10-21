@@ -1,5 +1,5 @@
+import noMismatchedGenericArgs from '../../eslint-rules/no-mismatched-generic-args.mjs';
 import rootESLint, { sonarjsConfig } from '../../eslint.config.mjs';
-import noMismatchedGenericArgs from './eslint-rules/no-mismatched-generic-args.mjs';
 
 export default [
     ...rootESLint,
@@ -100,7 +100,6 @@ export default [
             'webpack.config.js',
             'jest.*.js',
             'eslint.config.mjs',
-            'eslint-rules/',
             'e2e/',
             'playwright.config.ts',
             'esbuildBuild.cjs',
