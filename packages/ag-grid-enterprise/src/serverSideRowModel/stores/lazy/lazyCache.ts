@@ -1064,9 +1064,6 @@ export class LazyCache extends BeanStub {
             }
             this.nodesToRefresh.add(lazyNode.node);
         });
-        // in-flight responses for refreshed rows predate this refresh, so must not complete it;
-        // first loads of stub blocks are kept as before, avoiding extra requests at the risk of stale rows
-        this.lazyBlockLoadingSvc.invalidateLoads(this);
         this.lazyBlockLoadingSvc.queueLoadCheck();
 
         if (this.isLastRowKnown && this.numberOfRows === 0) {

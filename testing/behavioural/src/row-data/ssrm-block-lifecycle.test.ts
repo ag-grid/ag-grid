@@ -1,9 +1,9 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { ALL_SEVERITIES, TestGridsManager, waitForEvent } from 'ag-test-utils';
 import { asyncSetTimeout } from 'ag-test-utils/node-utils';
 
 import type { GridApi, GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
-import { ScrollApiModule } from 'ag-grid-community';
+import { ScrollApiModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 describe('SSRM block lifecycle', () => {
@@ -13,6 +13,7 @@ describe('SSRM block lifecycle', () => {
 
     afterEach(() => {
         gridsManager.reset();
+        vi.restoreAllMocks();
     });
 
     async function flush(times = 3): Promise<void> {
@@ -74,111 +75,6 @@ describe('SSRM block lifecycle', () => {
         expect(api.getRowNode('950')).toBeUndefined();
     });
 
-    test('a block in flight when a soft refresh starts is requested again, and its stale response does not finish the refresh', async () => {
-        let rowData = makeRows(10, 1);
-        const pending: IServerSideGetRowsParams[] = [];
-        let refreshFinishedCount = 0;
-        const gridOptions: GridOptions = {
-            columnDefs: [{ field: 'id' }, { field: 'value' }],
-            rowModelType: 'serverSide',
-            cacheBlockSize: 100,
-            getRowId: (params) => String(params.data.id),
-            serverSideDatasource: {
-                getRows: (params) => pending.push(params),
-            },
-            onStoreRefreshed: () => refreshFinishedCount++,
-        };
-
-        const api = gridsManager.createGrid(null, gridOptions);
-        await flush();
-        respond(pending.shift()!, rowData);
-        await flush();
-        expect(api.getRowNode('0')?.data.value).toBe('v1 Row 0');
-
-        rowData = makeRows(10, 2);
-        api.refreshServerSide({ purge: false });
-        await flush();
-        expect(pending.length).toBe(1);
-        const firstRefreshRequest = pending.shift()!;
-
-        rowData = makeRows(10, 3);
-        api.refreshServerSide({ purge: false });
-        await flush();
-        expect(pending.length).toBe(1);
-        const secondRefreshRequest = pending.shift()!;
-
-        respond(firstRefreshRequest, makeRows(10, 2));
-        await flush();
-        expect(refreshFinishedCount).toBe(0);
-        expect(api.getRowNode('0')?.data.value).toBe('v1 Row 0');
-
-        respond(secondRefreshRequest, rowData);
-        await flush();
-        expect(refreshFinishedCount).toBe(1);
-        expect(api.getRowNode('0')?.data.value).toBe('v3 Row 0');
-    });
-
-    test('soft refreshes issued faster than the datasource responds still finish a refresh', async () => {
-        const pending: IServerSideGetRowsParams[] = [];
-        let refreshFinishedCount = 0;
-        const gridOptions: GridOptions = {
-            columnDefs: [{ field: 'id' }, { field: 'value' }],
-            rowModelType: 'serverSide',
-            cacheBlockSize: 100,
-            getRowId: (params) => String(params.data.id),
-            serverSideDatasource: {
-                getRows: (params) => pending.push(params),
-            },
-            onStoreRefreshed: () => refreshFinishedCount++,
-        };
-
-        const api = gridsManager.createGrid(null, gridOptions);
-        await waitFor(() => expect(pending.length).toBe(1));
-        respond(pending.shift()!, makeRows(10));
-
-        // Each response arrives only after the next refresh has started.
-        for (let tick = 2; tick <= 10; ++tick) {
-            const inFlight = pending.splice(0);
-            api.refreshServerSide({ purge: false });
-            await flush();
-            for (const params of inFlight) {
-                respond(params, makeRows(10, tick));
-            }
-            await flush();
-        }
-
-        // The loads answered at ticks 3-5 are superseded; the fourth load is kept and answered at tick 6.
-        // Its block then starts counting again, so ticks 7-10 do not finish another refresh.
-        expect(refreshFinishedCount).toBe(1);
-        expect(api.getRowNode('0')?.data.value).toBe('v6 Row 0');
-    });
-
-    test('a soft refresh does not supersede the first load of a block', async () => {
-        const rowData = makeRows(10);
-        const pending: IServerSideGetRowsParams[] = [];
-        const gridOptions: GridOptions = {
-            columnDefs: [{ field: 'id' }, { field: 'value' }],
-            rowModelType: 'serverSide',
-            cacheBlockSize: 100,
-            getRowId: (params) => String(params.data.id),
-            serverSideDatasource: {
-                getRows: (params) => pending.push(params),
-            },
-        };
-
-        const api = gridsManager.createGrid(null, gridOptions);
-        await waitFor(() => expect(pending.length).toBe(1));
-
-        api.refreshServerSide({ purge: false });
-        await flush();
-        expect(pending.length).toBe(1);
-
-        respond(pending.shift()!, rowData);
-        await flush();
-        expect(api.getRowNode('0')?.data.value).toBe('v1 Row 0');
-        expect(pending.length).toBe(0);
-    });
-
     test('getCacheBlockState reports the highest-priority row state of a block', async () => {
         const rowData = makeRows(10);
         const pending: IServerSideGetRowsParams[] = [];
@@ -186,7 +82,6 @@ describe('SSRM block lifecycle', () => {
             columnDefs: [{ field: 'id' }, { field: 'value' }],
             rowModelType: 'serverSide',
             cacheBlockSize: 100,
-            maxConcurrentDatasourceRequests: 1,
             getRowId: (params) => String(params.data.id),
             serverSideDatasource: {
                 getRows: (params) => pending.push(params),
@@ -198,17 +93,14 @@ describe('SSRM block lifecycle', () => {
         respond(pending.shift()!, rowData);
         expect(blockStatus(api, 0)).toBe('loaded');
 
-        // The superseded first refresh request holds the only slot, so the second refresh cannot load yet.
         api.refreshServerSide({ purge: false });
         await waitFor(() => expect(pending.length).toBe(1));
-        api.refreshServerSide({ purge: false });
-        await flush();
-        expect(pending.length).toBe(1);
+        expect(blockStatus(api, 0)).toBe('loading');
 
         api.applyServerSideTransaction({ add: [{ id: 10, value: 'added' }] });
 
-        // The added row is loaded, the refreshed rows are not, so the block still needs loading.
-        expect(blockStatus(api, 0)).toBe('needsLoading');
+        // The added row is loaded, the refreshed rows are still loading, so the block is loading.
+        expect(blockStatus(api, 0)).toBe('loading');
     });
 
     test('getCacheBlockState reports a block with failed and loaded rows as failed', async () => {
@@ -266,7 +158,10 @@ describe('SSRM block lifecycle', () => {
         expect(api.getRowNode('2')?.data.value).toBe('v1 Row 2');
     });
 
-    test('only the first success or fail call of a request is honoured', async () => {
+    test('only the first success or fail call of a request is honoured, and later calls warn', async () => {
+        // Deliberate: the datasource settles the first request three times, which triggers warning #340.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [340] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const rowData = makeRows(500);
         const pending: IServerSideGetRowsParams[] = [];
         const gridOptions: GridOptions = {
@@ -293,6 +188,11 @@ describe('SSRM block lifecycle', () => {
         await waitForEvent('firstDataRendered', api);
         expect(blockStatus(api, 0)).toBe('loaded');
         expect(api.getRowNode('0')?.data.value).toBe('v1 Row 0');
+        expect(warnSpy).toHaveBeenCalledWith(
+            'AG Grid: warning #340',
+            '`success()` or `fail()` was called more than once for the same Server-Side Row Model request, so the later call was ignored.',
+            expect.any(String)
+        );
 
         // With one request slot, a second block must wait for the first to settle.
         api.ensureIndexVisible(250);
