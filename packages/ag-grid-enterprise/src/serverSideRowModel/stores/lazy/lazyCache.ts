@@ -1040,7 +1040,7 @@ export class LazyCache extends BeanStub {
         }
         if (!this.dataVersionWarned) {
             this.dataVersionWarned = true;
-            this.warn(338, { pinned, received });
+            this.warn(339, { pinned, received });
         }
         return false;
     }
@@ -1424,7 +1424,12 @@ export class LazyCache extends BeanStub {
         return updatedNodes;
     }
 
-    public insertRowNodes(inserts: any[], indexToAdd?: number, version?: string | number): RowNode[] {
+    /** Inserts the rows, returning the new nodes and the row data skipped, in the order given. */
+    public insertRowNodes(
+        inserts: any[],
+        indexToAdd?: number,
+        version?: string | number
+    ): { inserted: RowNode[]; skipped: any[] } {
         const realRowCount = this.numberOfRows;
 
         // if missing and we know the last row, we're inserting at the end
@@ -1432,32 +1437,41 @@ export class LazyCache extends BeanStub {
 
         // can't insert nodes past the end of the store
         if (addIndex == null || realRowCount < addIndex) {
-            return [];
+            return { inserted: [], skipped: inserts.slice() };
         }
 
         const uniqueInsertsMap: { [id: string]: any } = {};
+        const keptIndexById: { [id: string]: number } = {};
+        const skippedIndexes = new Set<number>();
 
-        inserts.forEach((data) => {
+        inserts.forEach((data, index) => {
             const dataId = this.getRowId(data)!;
             // Grand total is not a regular store row — store the data and let
             // setDisplayIndexes create the footer node on next render.
             if (dataId === GRAND_TOTAL_ROW_ID) {
                 this.grandTotalDataVersion = version ?? this.grandTotalDataVersion;
                 this.setGrandTotalData(data);
+            } else if (dataId && this.isNodeInCache(dataId)) {
+                skippedIndexes.add(index);
                 return;
-            }
-            if (dataId && this.isNodeInCache(dataId)) {
-                return;
+            } else {
+                uniqueInsertsMap[dataId] = data;
             }
 
-            uniqueInsertsMap[dataId] = data;
+            // a later row with the same ID replaces an earlier one
+            const replacedIndex = keptIndexById[dataId];
+            if (replacedIndex !== undefined) {
+                skippedIndexes.add(replacedIndex);
+            }
+            keptIndexById[dataId] = index;
         });
 
+        const skipped = inserts.filter((_, index) => skippedIndexes.has(index));
         const uniqueInserts = Object.values(uniqueInsertsMap);
 
         const numberOfInserts = uniqueInserts.length;
         if (numberOfInserts === 0) {
-            return [];
+            return { inserted: [], skipped };
         }
 
         const nodesToMove = this.nodeMap.filter((node) => node.index >= addIndex);
@@ -1476,7 +1490,7 @@ export class LazyCache extends BeanStub {
         this.numberOfRows += numberOfInserts;
 
         // finally insert the new rows
-        return uniqueInserts.map((data, uniqueInsertOffset) => {
+        const inserted = uniqueInserts.map((data, uniqueInsertOffset) => {
             const node = this.createRowAtIndex(addIndex + uniqueInsertOffset, data);
             this.setRowDataVersion(node, version);
             if (version != null) {
@@ -1484,6 +1498,7 @@ export class LazyCache extends BeanStub {
             }
             return node;
         });
+        return { inserted, skipped };
     }
 
     public removeRowNodes(idsToRemove: string[], newRowCount?: number, version?: string | number): RowNode[] {

@@ -412,10 +412,10 @@ describe('SSRM versioned transactions', () => {
 
     describe('serverSideDataVersionMode', () => {
         function spyOnWarnings() {
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [338] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [339] });
             const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
             const versionWarnings = () =>
-                warnSpy.mock.calls.map((call) => String(call[0])).filter((message) => message.includes('#338'));
+                warnSpy.mock.calls.map((call) => String(call[0])).filter((message) => message.includes('#339'));
             return { warnSpy, versionWarnings };
         }
 
