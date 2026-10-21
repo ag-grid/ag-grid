@@ -358,6 +358,14 @@ class MergeBatch {
     }
 }
 
+/**
+ * Whether the transaction can create or destroy the stores of its rows' child routes: an add can create a
+ * group, a removal destroys one, and in tree data an update can turn a group into a leaf or change its key.
+ */
+export function _canChangeChildStores(transaction: ServerSideTransaction, treeData: boolean): boolean {
+    return !!transaction.add?.length || !!transaction.remove?.length || (treeData && !!transaction.update?.length);
+}
+
 export interface RouteTransactionGroup {
     route: string[] | undefined;
     indexes: number[];

@@ -435,6 +435,41 @@ describe('SSRM coalesced async transactions with other grid options', () => {
         ]);
     });
 
+    // the added group has no rows on the server, so only the results show where the child transactions went
+    test.each<[string, ServerSideTransaction[], ResultSummary[]]>([
+        [
+            'a transaction for a missing group still misses its store when a later transaction adds the group, as in turn',
+            [
+                { update: [GROUP('US', 4)] },
+                { route: ['FR'], add: [{ id: 'fr-zoe', country: 'FR', athlete: 'Zoe', sales: 1 }] },
+                { add: [GROUP('FR', 0)] },
+            ],
+            [
+                { status: 'Applied', update: ['group-US'] },
+                { status: 'StoreNotFound' },
+                { status: 'Applied', add: ['group-FR'] },
+            ],
+        ],
+        [
+            'transactions for a group before and after it is added are applied on either side of the add, as in turn',
+            [
+                { route: ['FR'], add: [{ id: 'fr-zoe', country: 'FR', athlete: 'Zoe', sales: 1 }] },
+                { add: [GROUP('FR', 0)] },
+                { route: ['FR'], add: [{ id: 'fr-yan', country: 'FR', athlete: 'Yan', sales: 2 }] },
+            ],
+            [{ status: 'StoreNotFound' }, { status: 'Applied', add: ['group-FR'] }, { status: 'Applied', add: [] }],
+        ],
+    ])('%s', async (_name, transactions, expectedResults) => {
+        const coalesced = await compareWithSequential(async (merge) => {
+            const api = await createGroupedGrid(groupedOptions(merge));
+            const { results } = await applyAsync(api, transactions);
+            await waitForNoLoadingRows(api);
+            return { results, rows: rowsOf(api) };
+        });
+
+        expect(coalesced.results).toEqual(expectedResults);
+    });
+
     test('transactions queued before the row groups change are applied to the new stores as in turn', async () => {
         const coalesced = await compareWithSequential(async (merge) => {
             const api = await createGroupedGrid(groupedOptions(merge));

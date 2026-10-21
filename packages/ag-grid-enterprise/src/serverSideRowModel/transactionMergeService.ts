@@ -2,7 +2,7 @@ import type { NamedBean, ServerSideTransaction, ServerSideTransactionResult } fr
 import { BeanStub, _getRowIdCallback } from 'ag-grid-community';
 
 import type { LazyStore } from './stores/lazy/lazyStore';
-import { _applyMergedTransactions, _groupTransactionsByRoute } from './transactionMerger';
+import { _applyMergedTransactions, _canChangeChildStores, _groupTransactionsByRoute } from './transactionMerger';
 
 export type ApplyOnStore = (
     route: string[] | undefined,
@@ -32,11 +32,9 @@ export class TransactionMergeService extends BeanStub implements NamedBean {
             return undefined;
         }
 
-        // tree data updates can turn a group into a leaf or change its key, which affects its child routes
         const treeData = gos.get('treeData');
-        const groups = _groupTransactionsByRoute(
-            transactions,
-            (transaction) => !!transaction.remove?.length || (treeData && !!transaction.update?.length)
+        const groups = _groupTransactionsByRoute(transactions, (transaction) =>
+            _canChangeChildStores(transaction, treeData)
         );
 
         const results: ServerSideTransactionResult[] = new Array(transactions.length);

@@ -4,7 +4,7 @@ import type { IRowNode, ServerSideTransaction, ServerSideTransactionResult } fro
 import { ServerSideTransactionResultStatus } from 'ag-grid-community';
 
 import type { TransactionMergeTarget } from './transactionMerger';
-import { _applyMergedTransactions, _groupTransactionsByRoute } from './transactionMerger';
+import { _applyMergedTransactions, _canChangeChildStores, _groupTransactionsByRoute } from './transactionMerger';
 
 interface Row {
     id: string;
@@ -325,7 +325,7 @@ describe('_groupTransactionsByRoute', () => {
     const removes = (tx: ServerSideTransaction) => !!tx.remove?.length;
     const indexes = (
         transactions: ServerSideTransaction[],
-        canChangeChildStores: (tx: ServerSideTransaction) => boolean = removes
+        canChangeChildStores: (tx: ServerSideTransaction) => boolean = (tx) => _canChangeChildStores(tx, false)
     ) => _groupTransactionsByRoute(transactions, canChangeChildStores).map((group) => [group.route, group.indexes]);
 
     it('groups interleaved routes in first-seen order', () => {
@@ -386,6 +386,139 @@ describe('_groupTransactionsByRoute', () => {
             [undefined, [2]],
             [['g'], [3]],
         ]);
+    });
+
+    it('starts a new group when a parent is added after a transaction for its child route', () => {
+        expect(indexes([{ update: [row('a')] }, { route: ['g'], add: [row('b')] }, { add: [row('g')] }])).toEqual([
+            [undefined, [0]],
+            [['g'], [1]],
+            [undefined, [2]],
+        ]);
+    });
+
+    it('starts a new child group when a parent is added between transactions for its child route', () => {
+        expect(
+            indexes([{ route: ['g'], add: [row('b')] }, { add: [row('g')] }, { route: ['g'], add: [row('c')] }])
+        ).toEqual([
+            [['g'], [0]],
+            [undefined, [1]],
+            [['g'], [2]],
+        ]);
+    });
+
+    it('keeps updates to existing rows of a route together around child transactions', () => {
+        expect(
+            indexes([{ update: [row('a', 1)] }, { route: ['g'], update: [row('b')] }, { update: [row('a', 2)] }])
+        ).toEqual([
+            [undefined, [0, 2]],
+            [['g'], [1]],
+        ]);
+    });
+
+    it('matches applying the transactions one after the other for random streams over parent and child routes', () => {
+        let seed = 11;
+        // the low bits of this generator repeat quickly, so use the high ones
+        const random = (n: number) => {
+            seed = (seed * 1103515245 + 12345) % 2147483648;
+            return Math.floor(seed / 65536) % n;
+        };
+        const parents = ['g', 'h', 'x'];
+        const children = ['1', 'a', 'b'];
+        const ops = ['add', 'update', 'remove'] as const;
+
+        /** A root store whose rows are parents, each present parent having a child store created on demand. */
+        class FakeTree {
+            public readonly root: FakeStore;
+            public readonly childStores = new Map<string, FakeStore>();
+
+            constructor(start: Row[], startChildren: Map<string, Row[]>) {
+                this.root = new FakeStore(start);
+                for (const [id, rows] of startChildren) {
+                    this.childStores.set(id, new FakeStore(rows));
+                }
+            }
+
+            /** Like StoreUtils.getChildStore: a removed parent's store is destroyed and an added parent gets a new one. */
+            public getStore(route: string[] | undefined): FakeStore | undefined {
+                if (!route?.length) {
+                    return this.root;
+                }
+                const id = route[0];
+                if (!this.root.rows.some((node) => node.id === id)) {
+                    return undefined;
+                }
+                let store = this.childStores.get(id);
+                if (!store) {
+                    store = new FakeStore([]);
+                    this.childStores.set(id, store);
+                }
+                return store;
+            }
+
+            public syncChildStores(): void {
+                for (const id of this.childStores.keys()) {
+                    if (!this.root.rows.some((node) => node.id === id)) {
+                        this.childStores.delete(id);
+                    }
+                }
+            }
+
+            public apply(store: FakeStore, tx: ServerSideTransaction): ServerSideTransactionResult {
+                const result = store.apply(tx);
+                if (store === this.root) {
+                    this.syncChildStores();
+                }
+                return result;
+            }
+
+            public snapshot() {
+                return {
+                    root: this.root.snapshot(),
+                    children: Object.fromEntries([...this.childStores].map(([id, store]) => [id, store.snapshot()])),
+                };
+            }
+        }
+
+        for (let run = 0; run < 300; ++run) {
+            const start = parents.filter(() => random(2) === 0).map((id) => row(id, 0));
+            const startChildren = new Map(
+                start.map(({ id }) => [id, children.filter(() => random(2) === 0).map((child) => row(child, 0))])
+            );
+            const transactions: ServerSideTransaction[] = [];
+            for (let t = 0, count = 1 + random(6); t < count; ++t) {
+                const parent = random(2) === 0 ? undefined : parents[random(2)];
+                const tx: ServerSideTransaction = parent ? { route: [parent] } : {};
+                for (let r = 0, rowCount = 1 + random(2); r < rowCount; ++r) {
+                    const pool = parent ? children : parents;
+                    (tx[ops[random(3)]] ??= []).push(row(pool[random(pool.length)], run * 100 + t * 10 + r));
+                }
+                transactions.push(tx);
+            }
+
+            const sequential = new FakeTree(start, startChildren);
+            const sequentialStatuses = transactions.map((tx) => {
+                const store = sequential.getStore(tx.route);
+                return store ? sequential.apply(store, tx).status : ServerSideTransactionResultStatus.StoreNotFound;
+            });
+
+            const merged = new FakeTree(start, startChildren);
+            const mergedStatuses: string[] = new Array(transactions.length);
+            for (const { route, indexes: groupIndexes } of _groupTransactionsByRoute(transactions, (tx) =>
+                _canChangeChildStores(tx, false)
+            )) {
+                const store = merged.getStore(route);
+                const results = store
+                    ? _applyMergedTransactions(
+                          groupIndexes.map((index) => transactions[index]),
+                          { ...store.target(), apply: (tx) => merged.apply(store, tx) }
+                      )
+                    : groupIndexes.map(() => ({ status: ServerSideTransactionResultStatus.StoreNotFound }));
+                groupIndexes.forEach((index, i) => (mergedStatuses[index] = results[i].status));
+            }
+
+            expect(mergedStatuses).toEqual(sequentialStatuses);
+            expect(merged.snapshot()).toEqual(sequential.snapshot());
+        }
     });
 
     it('keeps grouping when a removal has no pending child routes', () => {
