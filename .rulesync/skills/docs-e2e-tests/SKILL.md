@@ -156,7 +156,7 @@ The only acceptable fixed wait is a deliberate, documented debounce where no obs
 
 ## Test Reference
 
-The core conventions below apply to almost every test — include them when delegating to the subagent. Situational guidance (12 pitfalls + worked patterns) lives in `reference/pitfalls-and-patterns.md`; use the index at the end of this section to pull in only the parts relevant to your example.
+The core conventions below apply to almost every test — include them when delegating to the subagent. Situational guidance (pitfalls + worked patterns) lives in `reference/pitfalls-and-patterns.md`; use the index at the end of this section to pull in only the parts relevant to your example.
 
 ### Imports
 

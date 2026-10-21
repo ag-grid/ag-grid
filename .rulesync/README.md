@@ -41,7 +41,7 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 | ------- | ----------------------- | ---------------------------- | --------------------------------------------------------------- |
 | Skill   | 🔵 `git-bisect`         | `/git-bisect` (user)         | Find the commit that introduced a regression                    |
 | Skill   | 🔵 `batch-lint-cleanup` | `/batch-lint-cleanup` (user) | Auto-fix ESLint violations by rule                              |
-| Command | 🟢 `/docs-e2e-tests`    | `/docs-e2e-tests`            | Write/update Playwright tests for doc examples                  |
+| Skill   | 🟢 `docs-e2e-tests`     | `/docs-e2e-tests`            | Write/update Playwright tests for doc examples                  |
 | Command | 🟢 `/manual-test`       | `/manual-test <url>`         | Create a manual test project from a docs example or plunker URL |
 | Agent   | 🔵 `playwright-expert`  | Auto                         | Playwright test architecture and debugging                      |
 
@@ -82,8 +82,8 @@ Quick-reference for all AI agent commands, skills, sub-agents, and rules availab
 
 | Type  | Name                     | Invoke                            | What it does                                                                                                                 |
 | ----- | ------------------------ | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Skill | 🟢 `docs-review`         | `/ag-prodeng:docs-review`         | Review docs pages for technical accuracy and example consistency (auto-detects ag-grid via `packages/ag-grid-community/src`) |
-| Skill | 🟢 `release-docs-review` | `/ag-prodeng:release-docs-review` | Review all documentation changes between releases                                                                            |
+| Skill | 🟢 `docs-review`         | `/ag-product:docs-review`         | Review docs pages for technical accuracy and example consistency (auto-detects ag-grid via `packages/ag-grid-community/src`) |
+| Skill | 🟢 `release-docs-review` | `/ag-product:release-docs-review` | Review all documentation changes between releases                                                                            |
 
 ## Git and Branch Management
 

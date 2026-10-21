@@ -100,7 +100,6 @@ testing/
 ├── behavioural/       # Grid behaviour verification
 ├── csp/               # Content Security Policy tests
 ├── module-size/       # Bundle size monitoring
-├── performance/       # Performance regression tests
 └── shared/            # Shared test utilities
 ```
 
@@ -452,7 +451,7 @@ await waitFor(() => {
 For behavioural tests, prefer `GridRows` and `GridColumns` snapshots over raw API assertions where practical. They produce inline snapshots that make the grid state visually readable and update automatically.
 
 ```typescript
-import { GridColumns, GridRows } from '../test-utils';
+import { GridColumns, GridRows } from 'ag-test-utils';
 
 // Snapshot grid rows (rendered cell values, grouping, selection state, etc.)
 await new GridRows(api, 'description').check();

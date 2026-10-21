@@ -63,4 +63,4 @@ The core grid logic is framework-agnostic. Framework-specific wrappers (`ag-grid
 ## Documentation
 
 - **Astro**: Static site generation for documentation
-- **MDX/Markdoc**: Documentation content format
+- **Markdoc** (`.mdoc`): Documentation content format
