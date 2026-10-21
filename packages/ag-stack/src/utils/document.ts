@@ -7,6 +7,15 @@ export function _getRootNode(beans: UtilBeanCollection): Document | ShadowRoot {
 }
 
 /**
+ * For an element that may sit outside the grid's root node, e.g. in a popup under `popupParent`.
+ *
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getElementRootNode(element: Node): Document | ShadowRoot {
+    return element.getRootNode() as Document | ShadowRoot;
+}
+
+/**
  * The focused element in the grid's own tree or, while focus is outside it, in the nearest enclosing root holding it,
  * where a component stands as its host: what to test with `contains` against grid elements, which stops at a shadow boundary.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.

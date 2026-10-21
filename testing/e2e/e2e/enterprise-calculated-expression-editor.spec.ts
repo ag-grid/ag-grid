@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import type { GridOptions } from 'ag-grid-community';
+
 import { mountGrid } from '../src/mountGrid';
 
 test.describe('calculated expression editor in a real browser', () => {
@@ -86,23 +88,51 @@ test.describe('calculated expression editor in a real browser', () => {
     });
 });
 
-for (const shadowDom of [false, true]) {
-    test(`the expression field points at the highlighted suggestion with the grid ${shadowDom ? 'inside' : 'outside'} a shadow root`, async ({
-        page,
-    }) => {
-        const { headerCell } = await mountGrid(page, {
-            enterprise: true,
-            shadowDom,
-            options: () => ({
-                calculatedColumns: { applyMode: 'deferred' },
-                columnDefs: [
-                    { field: 'revenue' },
-                    { field: 'cost' },
-                    { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
-                ],
-                rowData: [{ revenue: 10, cost: 3 }],
-            }),
-        });
+const suggestionPlacements: [name: string, shadowDom: boolean, options: () => GridOptions][] = [
+    [
+        'outside a shadow root',
+        false,
+        () => ({
+            calculatedColumns: { applyMode: 'deferred' },
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+            rowData: [{ revenue: 10, cost: 3 }],
+        }),
+    ],
+    [
+        'inside a shadow root',
+        true,
+        () => ({
+            calculatedColumns: { applyMode: 'deferred' },
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+            rowData: [{ revenue: 10, cost: 3 }],
+        }),
+    ],
+    [
+        'inside a shadow root and its popups in the page',
+        true,
+        () => ({
+            calculatedColumns: { applyMode: 'deferred' },
+            columnDefs: [
+                { field: 'revenue' },
+                { field: 'cost' },
+                { colId: 'profit', calculatedExpression: '[revenue] - [cost]' },
+            ],
+            rowData: [{ revenue: 10, cost: 3 }],
+            popupParent: document.body,
+        }),
+    ],
+];
+for (const [name, shadowDom, options] of suggestionPlacements) {
+    test(`the expression field points at the highlighted suggestion with the grid ${name}`, async ({ page }) => {
+        const { headerCell } = await mountGrid(page, { enterprise: true, shadowDom, options });
         const header = headerCell('profit');
         await header.hover();
         await header.locator('.ag-header-cell-menu-button').click();

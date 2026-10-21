@@ -186,6 +186,7 @@ export {
     _getActiveDomElement,
     _getDeepActiveElement,
     _getDocument,
+    _getElementRootNode,
     _getPageBody,
     _getRootNode,
     _getWindow,

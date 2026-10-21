@@ -1,7 +1,6 @@
 import {
     RefPlaceholder,
-    _getActiveDomElement,
-    _getRootNode,
+    _getElementRootNode,
     _setAriaActiveDescendant,
     _setAriaAutoComplete,
     _setAriaControls,
@@ -374,7 +373,8 @@ export class CalculatedColumnForm extends Component {
             },
             focusout: () =>
                 window.setTimeout(() => {
-                    if (this.getGui().contains(_getActiveDomElement(this.beans))) {
+                    const eGui = this.getGui();
+                    if (eGui.contains(_getElementRootNode(eGui).activeElement)) {
                         return;
                     }
                     this.hideSuggestions();
@@ -562,7 +562,9 @@ export class CalculatedColumnForm extends Component {
         const isInline = this.suggestionSourceType === 'inline';
         const activeOptionId = isInline ? this.autocompleteList.getActiveOptionId() : null;
         const renderedActiveOptionId =
-            activeOptionId && _getRootNode(this.beans).getElementById(activeOptionId) ? activeOptionId : null;
+            activeOptionId && _getElementRootNode(expressionInputEl).getElementById(activeOptionId)
+                ? activeOptionId
+                : null;
 
         _setAriaControls(expressionInputEl, isInline ? listId : null);
         _setAriaActiveDescendant(expressionInputEl, renderedActiveOptionId);
