@@ -628,15 +628,15 @@ export class RowNode<TData = any>
     }
 
     public getDataValue<TValue = any>(
-        colKey: ColKey<TValue>,
+        colKey: ColKey<TData, TValue>,
         from: 'value' | 'data-raw' | 'edit' | 'batch' | 'transformed'
     ): TValue | null | undefined;
     public getDataValue<TValue = any>(
-        colKey: ColKey<TValue>,
+        colKey: ColKey<TData, TValue>,
         from?: 'data'
     ): TValue | IAggFuncResult<TValue> | null | undefined;
     public getDataValue<TValue = any>(
-        colKey: ColKey<TValue>,
+        colKey: ColKey<TData, TValue>,
         from: DataValueFrom | undefined
     ): TValue | IAggFuncResult<TValue> | null | undefined {
         // PERFORMANCE CRITICAL
