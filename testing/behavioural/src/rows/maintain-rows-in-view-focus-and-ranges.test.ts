@@ -167,6 +167,56 @@ describe('maintainRowsInViewOnDataUpdate focused cell and cell ranges', () => {
             expect(getFocusedRowId(api)).toBe('r198');
         });
 
+        test('moves the focused cell after the row above that is left when the rows next to its row are removed too', () => {
+            const api = createGrid();
+            scrollTo(api, SCROLL_TOP);
+            api.setFocusedCell(22, 'a');
+
+            api.applyTransaction({ remove: [{ id: 'r0' }, { id: 'r21' }, { id: 'r22' }] as Row[] });
+
+            expect(api.getFocusedCell()!.rowIndex).toBe(20);
+            expect(getFocusedRowId(api)).toBe('r23');
+        });
+
+        test('moves the focused cell to the last row left when the last rows are removed', () => {
+            const api = createGrid();
+            scrollTo(api, SCROLL_TOP);
+            api.setFocusedCell(199, 'a');
+
+            api.applyTransaction({ remove: [{ id: 'r198' }, { id: 'r199' }] as Row[] });
+
+            expect(api.getFocusedCell()!.rowIndex).toBe(197);
+            expect(getFocusedRowId(api)).toBe('r197');
+        });
+
+        test('moves the focused cell to the row below that is left when every row above its row is removed', () => {
+            const api = createGrid({ rowData: createRows('r', 50) });
+            api.setFocusedCell(2, 'a');
+
+            api.applyTransaction({
+                add: createRows('new', 3),
+                addIndex: 0,
+                remove: [{ id: 'r0' }, { id: 'r1' }, { id: 'r2' }] as Row[],
+            });
+
+            expect(getFocusedRowId(api)).toBe('r3');
+        });
+
+        test.each([true, undefined])(
+            'leaves the focused cell and cell ranges where they were when every row is removed, option %s',
+            (maintainRowsInViewOnDataUpdate) => {
+                const api = createGrid({ rowData: createRows('r', 50), maintainRowsInViewOnDataUpdate });
+                api.setFocusedCell(22, 'a');
+                api.addCellRange({ rowStartIndex: 21, rowEndIndex: 24, columns: ['a'] });
+
+                api.applyTransaction({ remove: createRows('r', 50) });
+
+                expect(api.getFocusedCell()!.rowIndex).toBe(22);
+                const { startRow, endRow } = api.getCellRanges()![0];
+                expect([startRow!.rowIndex, endRow!.rowIndex]).toEqual([21, 24]);
+            }
+        );
+
         test('does not move the focused cell of a pinned row', () => {
             const api = createGrid({ pinnedTopRowData: createRows('top', 1) });
             scrollTo(api, SCROLL_TOP);
@@ -246,6 +296,27 @@ describe('maintainRowsInViewOnDataUpdate focused cell and cell ranges', () => {
             api.applyTransaction({ remove: [{ id: 'r0' }, { id: 'r21' }] as Row[] });
 
             expect(getRangeRowIds(api)).toEqual(['r22', 'r24']);
+        });
+
+        test('moves the end of a cell range after the row above that is left when the rows next to it are removed too', () => {
+            const api = createGrid();
+            scrollTo(api, SCROLL_TOP);
+            api.addCellRange({ rowStartIndex: 18, rowEndIndex: 22, columns: ['a'] });
+
+            api.applyTransaction({ remove: [{ id: 'r0' }, { id: 'r21' }, { id: 'r22' }] as Row[] });
+
+            expect(getRangeRowIds(api)).toEqual(['r18', 'r23']);
+        });
+
+        test('keeps the end of a cell range in the rows left when the last rows are removed', () => {
+            const api = createGrid();
+            scrollTo(api, SCROLL_TOP);
+            api.addCellRange({ rowStartIndex: 190, rowEndIndex: 199, columns: ['a'] });
+
+            api.applyTransaction({ remove: [{ id: 'r198' }, { id: 'r199' }] as Row[] });
+
+            expect(api.getCellRanges()![0].endRow!.rowIndex).toBe(197);
+            expect(getRangeRowIds(api)).toEqual(['r190', 'r197']);
         });
     });
 
