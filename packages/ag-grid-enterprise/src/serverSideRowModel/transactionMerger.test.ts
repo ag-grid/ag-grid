@@ -290,9 +290,10 @@ describe('_applyMergedTransactions', () => {
 
     it('matches applying the transactions one after the other for random streams', () => {
         let seed = 7;
+        // the low bits of this generator repeat quickly, so use the high ones
         const random = (n: number) => {
             seed = (seed * 1103515245 + 12345) % 2147483648;
-            return seed % n;
+            return Math.floor(seed / 65536) % n;
         };
         const pool = ['1', '2', '10', 'a', 'b', 'c'];
         const ops = ['add', 'update', 'remove'] as const;
