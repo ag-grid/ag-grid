@@ -28,6 +28,13 @@ export interface ServerSideTransactionResult<TData = any> {
     remove?: IRowNode<TData>[];
     /** If rows were updated, the updated Row Nodes. */
     update?: IRowNode<TData>[];
+    /**
+     * If any rows to add were not added, the row data for those rows. This happens when no `addIndex`
+     * is provided while the store's row count is unknown, when `addIndex` is past the end of the store,
+     * when a row with the same ID is already loaded, or when an earlier row in `add` shares its ID with a later one.
+     * The status is still `Applied`, as the rest of the transaction was applied.
+     */
+    unapplied?: TData[];
 }
 
 export enum ServerSideTransactionResultStatus {
