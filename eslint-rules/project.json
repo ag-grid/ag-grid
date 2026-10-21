@@ -1,0 +1,26 @@
+{
+  "name": "ag-eslint-rules",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "{projectRoot}",
+  "targets": {
+    "test": {
+      "command": "npx vitest run",
+      "outputs": ["{workspaceRoot}/reports/ag-eslint-rules.xml"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "config": "vitest.config.mjs"
+      },
+      "configurations": {
+        "ci": {
+          "outputFile": "../reports/ag-eslint-rules.xml",
+          "reporters": ["junit"]
+        },
+        "watch": {
+          "watch": true
+        }
+      }
+    }
+  },
+  "tags": ["tooling"]
+}

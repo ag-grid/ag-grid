@@ -63,7 +63,20 @@ export default {
             }
         }
 
+        function checkSuperClass(node) {
+            const superClass = node.superClass;
+            if (!superClass) {
+                return;
+            }
+            const name = superClass.type === 'MemberExpression' ? superClass.property : superClass;
+            if (name.type === 'Identifier') {
+                check(name, node.superTypeArguments);
+            }
+        }
+
         return {
+            ClassDeclaration: checkSuperClass,
+            ClassExpression: checkSuperClass,
             TSTypeReference(node) {
                 check(node.typeName, node.typeArguments);
             },
