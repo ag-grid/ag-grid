@@ -1555,6 +1555,12 @@ export interface Props<TData> {
          * @agModule `ServerSideRowModelModule`
          */
     serverSideEnableClientSideSort?: boolean,
+    /** When enabled, async transactions queued within `asyncTransactionWaitMillis` are coalesced so that each row is changed at most once per batch, with the same outcome as applying them one after the other. Ignored when `serverSideEnableClientSideSort` is enabled.
+         * Transactions for different routes can be applied in a different order from the queue.
+         * @default false
+         * @agModule `ServerSideRowModelMergeTransactionsModule`
+         */
+    serverSideMergeAsyncTransactions?: boolean,
     /** When enabled, only refresh groups directly impacted by a filter. This property only applies when there is Row Grouping & filtering is handled on the server.
          * @default false
          * @initial
@@ -2019,6 +2025,7 @@ export interface Props<TData> {
          */
     isServerSideGroupOpenByDefault?: IsServerSideGroupOpenByDefault<TData>,
     /** Allows cancelling transactions.
+         * When `serverSideMergeAsyncTransactions` is enabled, each transaction in a coalesced batch is checked against the grid state from before that batch is applied.
          * @agModule `ServerSideRowModelModule`
          */
     isApplyServerSideTransaction?: IsApplyServerSideTransaction<TData>,
@@ -2474,6 +2481,7 @@ export function getProps() {
         serverSideDatasource: undefined,
         serverSideSortAllLevels: undefined,
         serverSideEnableClientSideSort: undefined,
+        serverSideMergeAsyncTransactions: undefined,
         serverSideOnlyRefreshFilteredGroups: undefined,
         serverSidePivotResultFieldSeparator: undefined,
         viewportDatasource: undefined,

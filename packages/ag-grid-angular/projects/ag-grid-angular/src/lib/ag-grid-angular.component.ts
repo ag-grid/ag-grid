@@ -1728,6 +1728,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @agModule `ServerSideRowModelModule`
      */
     @Input({ transform: booleanAttribute }) public serverSideEnableClientSideSort: boolean | undefined = undefined;
+    /** When enabled, async transactions queued within `asyncTransactionWaitMillis` are coalesced so that each row is changed at most once per batch, with the same outcome as applying them one after the other. Ignored when `serverSideEnableClientSideSort` is enabled.
+     * Transactions for different routes can be applied in a different order from the queue.
+     * @default false
+     * @agModule `ServerSideRowModelMergeTransactionsModule`
+     */
+    @Input({ transform: booleanAttribute }) public serverSideMergeAsyncTransactions: boolean | undefined = undefined;
     /** When enabled, only refresh groups directly impacted by a filter. This property only applies when there is Row Grouping & filtering is handled on the server.
      * @default false
      * @initial
@@ -2192,6 +2198,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public isServerSideGroupOpenByDefault: IsServerSideGroupOpenByDefault<TData> | undefined = undefined;
     /** Allows cancelling transactions.
+     * When `serverSideMergeAsyncTransactions` is enabled, each transaction in a coalesced batch is checked against the grid state from before that batch is applied.
      * @agModule `ServerSideRowModelModule`
      */
     @Input() public isApplyServerSideTransaction: IsApplyServerSideTransaction<TData> | undefined = undefined;

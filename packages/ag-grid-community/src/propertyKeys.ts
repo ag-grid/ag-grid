@@ -321,6 +321,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'detailRowAutoHeight',
     'serverSideSortAllLevels',
     'serverSideEnableClientSideSort',
+    'serverSideMergeAsyncTransactions',
     'serverSideOnlyRefreshFilteredGroups',
     'suppressAggFilteredOnly',
     'showOpenedGroup',
