@@ -316,6 +316,8 @@ In the example, the **Profit** column is restored from Grid State as if a user h
 
 `expressionValidation` includes syntax and reference errors plus saved dialog rejections from `getValidationErrors` and `isColumnReferenceable`, matching the change event. It does not rerun these callbacks or check row-specific evaluation errors.
 
+In live mode, `calculatedColumnReadOnly: true` takes effect after the initial Add dialog closes, so users can finish defining the column.
+
 {% note %}
 The callback runs each time the column is built, including when dialog edits are applied and on restore from [Grid State](./grid-state/). It does not run for calculated columns declared in `columnDefs`. The dialog and Grid State keep the user's values, not the callback's. `colId`, `editable`, `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor` and `cellEditorSelector` are always overridden. Prefer `initial*` properties, such as `initialWidth`, to stateful ones.
 {% /note %}

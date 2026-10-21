@@ -175,6 +175,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     // dispatch is skipped — the imperative caller emits its own events; declarative loads run with it at 0.
     private suppressValidationChecks = 0;
     private readonly openDialogsByColId = new Map<string, OpenCalculatedColumnDialog>();
+    private readonly liveCreationColumnIds = new Set<string>();
     private readonly pendingLiveApplyUpdatesByColId = new Map<string, PendingLiveApplyUpdate>();
     // Memoised parse results keyed by expression; see getFormulaError.
     private readonly formulaErrorsByExpression = new Map<string, FormulaError | null>();
@@ -448,10 +449,13 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             const draft: CalculatedColumnDraft = { colId, headerName, ...this.getDefaultDraft() };
             if (liveApply) {
                 // Live apply adds the column up front, then opens the dialog over it.
+                this.liveCreationColumnIds.add(colId);
                 const newColumn = this.addDynamicCalculatedColumn(draft, column);
                 if (newColumn) {
                     const context = this.createDialogContext(colId, liveApply, column ?? null);
                     this.showDialog(draft, () => null, context, newColumn, focus, restoreFocusParams, column);
+                } else {
+                    this.liveCreationColumnIds.delete(colId);
                 }
                 return;
             }
@@ -898,10 +902,15 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             this.warn(336, { colId, properties: ignored });
         }
         // An omitted expression would silently stop the column being calculated, so keep the user's.
-        return toCalculatedColDef(
+        const colDef = toCalculatedColDef(
             { ...result, calculatedExpression: result.calculatedExpression ?? storedColDef.calculatedExpression },
             colId
         );
+        // only an explicit callback value can lock a created column, after its initial live dialog closes
+        if (this.liveCreationColumnIds.has(colId) || colDef.calculatedColumnReadOnly == null) {
+            colDef.calculatedColumnReadOnly = false;
+        }
+        return colDef;
     }
 
     /** Rebuild the column tree for a calc-col mutation. Suppresses lifecycle/validation dispatch during the
@@ -1207,6 +1216,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 this.openDialogsByColId.delete(colId);
                 this.refreshCalculatedColumnHighlight(columnToHighlight ?? null);
             }
+            this.finishLiveCreation(colId);
         });
         dialog.addEventListener('destroyed', () => this.destroyBean(form));
     }
@@ -1303,6 +1313,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
     }
 
     private closeCalculatedColumnDialog(colId: string): void {
+        this.liveCreationColumnIds.delete(colId);
         const openDialog = this.openDialogsByColId.get(colId);
         if (openDialog === undefined) {
             return;
@@ -1310,6 +1321,18 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
 
         this.cancelLiveApplyUpdate(colId);
         openDialog.dialog.close();
+    }
+
+    private finishLiveCreation(colId: string): void {
+        if (
+            this.liveCreationColumnIds.delete(colId) &&
+            this.isAlive() &&
+            !this.beans.context.isDestroyed() &&
+            this.beans.colModel.getCol(colId)?.isCalculatedCol &&
+            this.getOptions()?.processColDef
+        ) {
+            this.refreshDynamicColumns('calculatedColumn');
+        }
     }
 
     private getDefaultDraft(): Omit<CalculatedColumnDraft, 'colId' | 'headerName'> {

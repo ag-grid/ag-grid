@@ -14,6 +14,7 @@ import {
     getExpressionInput,
     getOpenMenuEntries,
     openEditDialogViaMenu,
+    selectDataType,
     setExpression,
     setupCalculatedColumnsSuite,
     showColumnMenu,
@@ -37,6 +38,166 @@ describe('calculated columns - read-only definitions', () => {
     ];
     const rowData = [{ id: 'r1', revenue: 10, cost: 3 }];
     const closeDialog = () => document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+
+    test.each([
+        { applyMode: 'live', applyDebounce: 0 },
+        { applyMode: 'live', applyDebounce: 400 },
+        { applyMode: 'deferred', applyDebounce: 0 },
+    ] as const)(
+        'processColDef locks a column after creation in $applyMode mode ($applyDebounce ms)',
+        async (options) => {
+            const calculatedColumns = {
+                ...options,
+                processColDef: ({ colDef }: { colDef: ColDef }) => ({ ...colDef, calculatedColumnReadOnly: true }),
+            };
+            const api = createGrid('read-only-after-creation', {
+                columnDefs: columnDefs.slice(0, 2),
+                rowData,
+                calculatedColumns,
+            });
+            showColumnMenu(api, 'revenue');
+            await clickMenuOption('Add Calculated Column');
+            expect(getExpressionInput()).not.toHaveAttribute('readonly');
+            setExpression('[Revenue]');
+            if (options.applyMode === 'live' && options.applyDebounce === 0) {
+                await waitFor(() =>
+                    expect(api.getColumn('calculated_1')!.getColDef().calculatedExpression).toBe('[revenue]')
+                );
+                expect(api.getColumn('calculated_1')!.getColDef().calculatedColumnReadOnly).toBe(false);
+                expect(getExpressionInput()).not.toHaveAttribute('readonly');
+            }
+            const title = getByRole<HTMLInputElement>(getCalculatedColumnDialog(), 'textbox', { name: 'Title' });
+            title.value = 'Double Revenue';
+            title.dispatchEvent(new Event('input', { bubbles: true }));
+            await selectDataType('Number');
+            setExpression('[Revenue] * 2');
+            if (options.applyMode === 'deferred') {
+                clickDialogButton('Apply');
+            } else {
+                closeDialog();
+            }
+            expect(api.getColumn('calculated_1')!.getColDef()).toMatchObject({
+                calculatedColumnReadOnly: true,
+                calculatedExpression: '[revenue] * 2',
+                headerName: 'Double Revenue',
+                cellDataType: 'number',
+            });
+            expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'calculated_1' })).toBe(20);
+            showColumnMenu(api, 'calculated_1');
+            await waitFor(() => expect(getOpenMenuEntries()).toContain('View Calculated Column'));
+            expect(getByRole(document.body, 'menuitem', { name: 'Remove Calculated Column' })).toHaveAttribute(
+                'aria-disabled',
+                'true'
+            );
+            await clickMenuOption('View Calculated Column');
+            expect(getExpressionInput()).toHaveAttribute('readonly');
+            closeDialog();
+
+            const restored = createGrid('read-only-after-creation-restored', {
+                columnDefs: columnDefs.slice(0, 2),
+                rowData,
+                calculatedColumns,
+                initialState: api.getState(),
+            });
+            expect(restored.getColumn('calculated_1')!.getColDef().calculatedColumnReadOnly).toBe(true);
+        }
+    );
+
+    test.each(['live', 'deferred'] as const)(
+        'a fresh processColDef result does not inherit read-only in %s mode',
+        async (applyMode) => {
+            const options = {
+                columnDefs: columnDefs.slice(0, 2),
+                rowData,
+                defaultColDef: { calculatedColumnReadOnly: true },
+                calculatedColumns: {
+                    applyMode,
+                    processColDef: ({ colDef }: { colDef: ColDef }) => ({
+                        headerName: colDef.headerName,
+                        cellDataType: colDef.cellDataType,
+                        calculatedExpression: colDef.calculatedExpression,
+                    }),
+                },
+            };
+            const api = createGrid('read-only-fresh-definition', options);
+            showColumnMenu(api, 'revenue');
+            await clickMenuOption('Add Calculated Column');
+            setExpression('[Revenue] - [Cost]');
+            if (applyMode === 'deferred') {
+                clickDialogButton('Apply');
+            } else {
+                closeDialog();
+            }
+            expect(api.getColumn('calculated_1')!.getColDef().calculatedColumnReadOnly).toBe(false);
+            showColumnMenu(api, 'calculated_1');
+            await waitFor(() => expect(getOpenMenuEntries()).toContain('Edit Calculated Column'));
+            expect(getByRole(document.body, 'menuitem', { name: 'Remove Calculated Column' })).not.toHaveAttribute(
+                'aria-disabled',
+                'true'
+            );
+            await clickMenuOption('Edit Calculated Column');
+            expect(getExpressionInput()).not.toHaveAttribute('readonly');
+            setExpression('[Revenue] * 2');
+            if (applyMode === 'deferred') {
+                clickDialogButton('Apply');
+            } else {
+                closeDialog();
+            }
+            expect(api.getColumn('calculated_1')!.getColDef().calculatedExpression).toBe('[revenue] * 2');
+            const restored = createGrid('read-only-fresh-definition-restored', {
+                ...options,
+                initialState: api.getState(),
+            });
+            expect(restored.getColumn('calculated_1')!.getColDef().calculatedColumnReadOnly).toBe(false);
+        }
+    );
+
+    test('removing a live creation cancels its pending edit without locking or recreating it', async () => {
+        const removed = vi.fn();
+        const api = createGrid('read-only-remove-creation', {
+            columnDefs: columnDefs.slice(0, 2),
+            rowData,
+            calculatedColumns: {
+                applyDebounce: 10000,
+                processColDef: ({ colDef }) => ({ ...colDef, calculatedColumnReadOnly: true }),
+            },
+            onCalculatedColumnRemoved: removed,
+        });
+        showColumnMenu(api, 'revenue');
+        await clickMenuOption('Add Calculated Column');
+        setExpression('[Revenue] * 2');
+        showColumnMenu(api, 'calculated_1');
+        await clickMenuOption('Remove Calculated Column');
+        expect(document.querySelector('.ag-calculated-column-form')).toBeNull();
+        expect(api.getColumn('calculated_1')).toBeNull();
+        await waitFor(() => expect(removed).toHaveBeenCalledTimes(1));
+        expect(api.getState().userColumns).toBeUndefined();
+    });
+
+    test('finishing one live creation does not lock another open creation', async () => {
+        const api = createGrid('read-only-multiple-creations', {
+            columnDefs: columnDefs.slice(0, 2),
+            rowData,
+            calculatedColumns: { processColDef: ({ colDef }) => ({ ...colDef, calculatedColumnReadOnly: true }) },
+        });
+        showColumnMenu(api, 'revenue');
+        await clickMenuOption('Add Calculated Column');
+        showColumnMenu(api, 'cost');
+        await clickMenuOption('Add Calculated Column');
+        const dialogs = document.querySelectorAll<HTMLElement>('.ag-dialog');
+        expect(dialogs).toHaveLength(2);
+        for (let i = 0; i < dialogs.length; ++i) {
+            const input = dialogs[i].querySelector('textarea')!;
+            expect(input).not.toHaveAttribute('readonly');
+            input.value = '[Revenue]';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            dialogs[i].querySelector<HTMLElement>('.ag-panel-title-bar-button')!.click();
+            expect(api.getColumn(`calculated_${i + 1}`)!.getColDef().calculatedColumnReadOnly).toBe(true);
+            if (i === 0) {
+                expect(api.getColumn('calculated_2')!.getColDef().calculatedColumnReadOnly).toBe(false);
+            }
+        }
+    });
 
     test.each(['live', 'deferred'] as const)(
         'shows read-only, event-free definition fields in %s mode',
