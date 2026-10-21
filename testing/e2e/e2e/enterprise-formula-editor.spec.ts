@@ -90,6 +90,27 @@ test.describe('formula editor with a native textarea', () => {
         await expect(page.locator('.ag-autocomplete-list-popup')).toBeVisible();
     });
 
+    test('function autocomplete opens in a popup editor placed in the page when the grid is in a shadow root', async ({
+        page,
+    }) => {
+        const { withApi } = await mountGrid(page, {
+            enterprise: true,
+            shadowDom: true,
+            options: () => ({
+                popupParent: document.body,
+                columnDefs: [
+                    { field: 'total', editable: true, allowFormula: true, cellDataType: false, cellEditorPopup: true },
+                ],
+                rowData: [{ total: '' }],
+            }),
+        });
+        await withApi((api) => api.startEditingCell({ rowIndex: 0, colKey: 'total' }));
+        const input = page.locator('.ag-popup-editor textarea');
+        await input.focus();
+        await input.fill('=SU');
+        await expect(page.locator('.ag-autocomplete-list-popup')).toBeVisible();
+    });
+
     test('a blocked commit does not insert a newline into the formula', async ({ page }) => {
         const { input, cell } = await mountFormulaEditor(page);
         await input.fill('=A1+');
