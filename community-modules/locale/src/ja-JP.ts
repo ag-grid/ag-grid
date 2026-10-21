@@ -764,6 +764,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaRowSelect: 'この行を選択するにはSPACEを押してください',
     ariaRowSelectionDisabled: 'この行の選択は無効です',
     ariaSearch: '検索',
+    ariaSortPriority: '並べ替えの優先順位は${count}項目中${priority}番目',
     ariaSortableColumn: '並べ替えるにはENTERを押してください',
     ariaSortableColumnWithCellSelection: '並べ替えるにはALT ENTERを押してください',
     ariaToggleVisibility: '表示を切り替えるにはSPACEを押してください',

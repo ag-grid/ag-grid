@@ -42,7 +42,7 @@
     "test:e2e": {
       "executor": "nx:run-script",
       "dependsOn": ["^build"],
-      "inputs": ["allOutputs"],
+      "inputs": ["default", "buildOutputExcludes", "allTransitiveOutputs"],
       "options": {
         "script": "test:e2e"
       }

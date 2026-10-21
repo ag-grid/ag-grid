@@ -223,6 +223,107 @@ describe('GridWrapperComponent', () => {
         }, 100);
     });
 
+    it('should remove event listeners added inside the Angular Zone', (done) => {
+        const api = fixture.componentInstance.agGrid.api;
+        const zone = TestBed.inject(NgZone);
+        const rowNode = api.getRowNode('Toyota')!;
+        const column = api.getColumn('make')!;
+
+        const removed = {
+            event: (_event: any) => {},
+            global: (_event: any) => {},
+            row: (_event: any) => {},
+            column: (_event: any) => {},
+            eventAddedOutsideFirst: (_event: any) => {},
+            rowAddedOutsideFirst: (_event: any) => {},
+        };
+        const kept = {
+            event: (_event: any) => {},
+            global: (_event: any) => {},
+            row: (_event: any) => {},
+            column: (_event: any) => {},
+        };
+        for (const name of Object.keys(removed) as (keyof typeof removed)[]) {
+            spyOn(removed, name);
+        }
+        for (const name of Object.keys(kept) as (keyof typeof kept)[]) {
+            spyOn(kept, name);
+        }
+
+        // the first add outside the zone decides: the in-zone re-add below reuses it
+        zone.runOutsideAngular(() => {
+            api.addEventListener('newColumnsLoaded', removed.eventAddedOutsideFirst);
+            rowNode.addEventListener('dataChanged', removed.rowAddedOutsideFirst);
+        });
+        zone.run(() => {
+            api.addEventListener('newColumnsLoaded', removed.event);
+            api.addEventListener('newColumnsLoaded', removed.event);
+            api.addEventListener('newColumnsLoaded', removed.eventAddedOutsideFirst);
+            api.addGlobalListener(removed.global);
+            api.addGlobalListener(removed.global);
+            rowNode.addEventListener('dataChanged', removed.row);
+            rowNode.addEventListener('dataChanged', removed.rowAddedOutsideFirst);
+            column.addEventListener('visibleChanged', removed.column);
+            column.addEventListener('visibleChanged', removed.column);
+            api.addEventListener('newColumnsLoaded', kept.event);
+            api.addGlobalListener(kept.global);
+            column.addEventListener('visibleChanged', kept.column);
+        });
+        // a listener added outside the zone must not lose the in-zone one's wrapper
+        zone.runOutsideAngular(() => rowNode.addEventListener('dataChanged', kept.row));
+        zone.run(() => {
+            api.removeEventListener('newColumnsLoaded', removed.event);
+            api.removeEventListener('newColumnsLoaded', removed.eventAddedOutsideFirst);
+            api.removeGlobalListener(removed.global);
+            rowNode.removeEventListener('dataChanged', removed.row);
+            rowNode.removeEventListener('dataChanged', removed.rowAddedOutsideFirst);
+            column.removeEventListener('visibleChanged', removed.column);
+        });
+
+        rowNode.setData({ make: 'Toyota', model: 'Celica', price: 40000 });
+        api.applyColumnState({ state: [{ colId: 'make', hide: true }] });
+
+        setTimeout(() => {
+            api.updateGridOptions({ columnDefs: [{ field: 'make' }, { field: 'model' }] });
+            fixture.detectChanges();
+
+            // the grid delivers api events in a setTimeout(0) queued before this one
+            setTimeout(() => {
+                for (const [name, listener] of Object.entries(removed)) {
+                    expect(listener).withContext(name).toHaveBeenCalledTimes(0);
+                }
+                for (const [name, listener] of Object.entries(kept)) {
+                    expect(listener).withContext(name).toHaveBeenCalled();
+                }
+
+                done();
+            }, 0);
+        }, 100);
+    });
+
+    it('should run a row listener added outside the zone outside it after the node lost all its listeners', () => {
+        const api = fixture.componentInstance.agGrid.api;
+        const zone = TestBed.inject(NgZone);
+        const rowNode = api.getRowNode('Toyota')!;
+        // filtered out, the row is not rendered, so the listeners added here are its only ones
+        api.setGridOption('quickFilterText', 'no-match');
+        expect(api.getDisplayedRowCount()).toBe(0);
+
+        const first = () => {};
+        zone.run(() => rowNode.addEventListener('dataChanged', first));
+        zone.run(() => rowNode.removeEventListener('dataChanged', first));
+        zone.run(() => rowNode.addEventListener('dataChanged', () => {}));
+        let outsideListenerRanInZone: boolean | undefined;
+        zone.runOutsideAngular(() =>
+            rowNode.addEventListener('dataChanged', () => {
+                outsideListenerRanInZone = NgZone.isInAngularZone();
+            })
+        );
+
+        zone.run(() => rowNode.setData({ make: 'Toyota', model: 'Celica', price: 1 }));
+        expect(outsideListenerRanInZone).toBe(false);
+    });
+
     it('should run in / out Angular Zone Setup Outside', (done) => {
         // Access AG Grid API and check if the row data is updated
         const api = fixture.componentInstance.agGrid.api;

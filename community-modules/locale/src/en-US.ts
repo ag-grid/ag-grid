@@ -769,6 +769,7 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaRowSelect: 'Press SPACE to select this row',
     ariaRowSelectionDisabled: 'Row Selection is disabled for this row',
     ariaSearch: 'Search',
+    ariaSortPriority: 'Sort priority ${priority} of ${count}',
     ariaSortableColumn: 'Press ENTER to sort',
     ariaSortableColumnWithCellSelection: 'Press ALT ENTER to sort',
     ariaToggleVisibility: 'Press SPACE to toggle visibility',

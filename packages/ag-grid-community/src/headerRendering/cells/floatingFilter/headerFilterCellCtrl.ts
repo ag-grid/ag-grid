@@ -7,6 +7,7 @@ import {
     _setAriaLabel,
 } from 'ag-stack';
 
+import { isRowNumberCol } from '../../../columns/columnUtils';
 import { setupCompBean } from '../../../components/emptyBean';
 import type { BeanStub } from '../../../context/beanStub';
 import type { AgColumn } from '../../../entities/agColumn';
@@ -57,6 +58,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
 
         this.refreshHeaderStyles();
         this.setupCalculatedColumnCssClasses();
+        comp.toggleCss('ag-row-number-floating-filter', isRowNumberCol(this.column));
         this.setupPosition();
         this.setupHover(compBean);
         this.setupFocus(compBean);
@@ -71,6 +73,11 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         const colDefChanged = () => this.onColDefChanged(compBean);
         compBean.addManagedListeners(this.column, { colDefChanged });
         compBean.addManagedEventListeners({
+            columnPinned: ({ columns }) => {
+                if (columns?.includes(this.column)) {
+                    this.refreshHeaderStyles();
+                }
+            },
             filterSwitched: ({ column }) => {
                 if (column === this.column) {
                     colDefChanged();

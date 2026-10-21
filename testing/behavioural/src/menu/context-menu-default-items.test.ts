@@ -1,6 +1,13 @@
-import { waitFor } from '@testing-library/dom';
+import { getByRole, waitFor } from '@testing-library/dom';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
-import { TestGridsManager, fireGridPointerDown, openMenuEntries, polyfillOffsetParent } from 'ag-test-utils';
+import {
+    TestGridsManager,
+    clickMenuOption,
+    fireGridPointerDown,
+    openMenuEntries,
+    openMenuOption,
+    polyfillOffsetParent,
+} from 'ag-test-utils';
 
 import type { DefaultMenuItem, GridOptions, Module } from 'ag-grid-community';
 import { ClientSideRowModelModule, CsvExportModule, getGridElement } from 'ag-grid-community';
@@ -86,6 +93,41 @@ describe('Context menu default items', () => {
         await waitFor(() => expect(called).toBe(true));
         return { defaultItems: seen, entries: openMenuEntries };
     }
+
+    test('the context menu popup owns its localised label and menu items', async () => {
+        const api = await enterpriseGrids.createGridAndWait('ctxAccessibleName', {
+            columnDefs,
+            rowData,
+            localeText: { ariaLabelContextMenu: 'Custom context actions' },
+            getContextMenuItems: () => [{ name: 'Custom' }],
+        });
+
+        rightClick(cell(getGridElement(api)! as HTMLElement, 0, 'athlete'));
+        await waitFor(() => expect(openMenuEntries()).toEqual(['Custom']));
+
+        const menu = getByRole(document.body, 'menu', { name: 'Custom context actions' });
+        expect(menu.closest('.ag-popup-child')).toBe(menu);
+        expect(getByRole(menu, 'menuitem', { name: 'Custom' }).closest('[role="menu"]')).toBe(menu);
+    });
+
+    test('context submenu items belong to a separate menu', async () => {
+        const api = await enterpriseGrids.createGridAndWait('ctxSubmenuRole', {
+            columnDefs,
+            rowData,
+            getContextMenuItems: () => [{ name: 'Custom', subMenu: [{ name: 'Nested action' }] }],
+        });
+
+        rightClick(cell(getGridElement(api)! as HTMLElement, 0, 'athlete'));
+        const parentItem = await openMenuOption('Custom');
+        const parentMenu = parentItem.closest('[role="menu"]');
+        expect(parentMenu).not.toBeNull();
+
+        await clickMenuOption('Custom');
+        const childItem = await openMenuOption('Nested action');
+        const submenu = childItem.closest('[role="menu"]');
+        expect(submenu).not.toBeNull();
+        expect(submenu).not.toBe(parentMenu);
+    });
 
     test('a cell offers the clipboard items and export', async () => {
         const { defaultItems, entries } = await defaultItemsFor(enterpriseGrids, 'ctxDefaultsCell', {});

@@ -763,6 +763,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     ariaRowSelect: '按 SPACE 選擇此行',
     ariaRowSelectionDisabled: '此行的行選擇已禁用',
     ariaSearch: '搜索',
+    ariaSortPriority: '排序優先次序為第 ${priority} 位，共 ${count} 位',
     ariaSortableColumn: '按 ENTER 排序',
     ariaSortableColumnWithCellSelection: '按 ALT ENTER 排序',
     ariaToggleVisibility: '按 SPACE 切換可見性',

@@ -285,6 +285,10 @@
         background-color: var(--ag-column-hover-color);
     }
 
+    :where(.ag-header-cell).ag-column-hover {
+        background-color: var(--ag-column-header-hover-color);
+    }
+
     .ag-header-range-highlight {
         background-color: var(--ag-range-header-highlight-color);
     }
@@ -408,7 +412,10 @@
         width: 100%;
         height: 1em;
         border-radius: 0.25rem;
-        animation: ag-skeleton-loading 1.5s ease-in-out 0.5s infinite;
+
+        @media (prefers-reduced-motion: no-preference) {
+            animation: ag-skeleton-loading 1.5s ease-in-out 0.5s infinite;
+        }
     }
 
     @keyframes ag-skeleton-loading {

@@ -63,6 +63,11 @@
     &:where(.ag-input-frameless) {
         border: none;
         background-color: transparent;
+
+        @media (forced-colors: active) {
+            /* stylelint-disable-next-line declaration-property-value-disallowed-list -- the wrapper containing a frameless input draws the focus outline, so unconditionally disabling the outline is correct */
+            outline: none;
+        }
     }
 
     &:where(:disabled) {

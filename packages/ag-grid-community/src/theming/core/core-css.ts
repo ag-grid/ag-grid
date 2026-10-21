@@ -124,9 +124,14 @@ export interface CoreParams extends SharedThemeParams {
     columnDropCellBorder: BorderValue;
 
     /**
-     * Background color when hovering over columns in the grid. This is not visible unless enabled in the grid options.
+     * Background color of the cells in a column when hovering over that column in the grid. This is not visible unless enabled in the grid options. See also `columnHeaderHoverColor`.
      */
     columnHoverColor: ColorValue;
+
+    /**
+     * Background color of the column header when hovering over that column in the grid. This is not visible unless enabled in the grid options. This differs from `headerCellHoverBackgroundColor` which applies when the header cell itself is hovered.
+     */
+    columnHeaderHoverColor: ColorValue;
 
     /**
      * Amount of indentation for each level of children when selecting grouped columns in the column select widget.
@@ -492,6 +497,11 @@ export interface CoreParams extends SharedThemeParams {
      * Background color of the Row Numbers cells when the range selects all cells for that row.
      */
     rowNumbersSelectedColor: ColorValue;
+
+    /**
+     * Background color of the Row Numbers cell when hovering over its row in the grid. Set to `transparent` to disable the hover effect.
+     */
+    rowHeaderHoverColor: ColorValue;
 
     /**
      * Horizontal borders between rows.
@@ -935,7 +945,9 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     calculatedColumnOperatorColor: { ref: 'foregroundColor' },
     calculatedColumnErrorUnderlineColor: { ref: 'invalidColor' },
     rowNumbersSelectedColor: accentMix(0.5),
+    rowHeaderHoverColor: { ref: 'rowHoverColor' },
     columnHoverColor: accentMix(0.05),
+    columnHeaderHoverColor: { ref: 'columnHoverColor' },
     selectedRowBackgroundColor: accentMix(0.12),
     modalOverlayBackgroundColor: {
         ref: 'backgroundColor',

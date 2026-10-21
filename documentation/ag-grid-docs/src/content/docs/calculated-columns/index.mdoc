@@ -373,6 +373,8 @@ The following example adds, edits and removes a Profit Margin column through the
 
 Use `calculatedColumnChanged` to track changes to `headerName`, `cellDataType`, `calculatedExpression` and `columnGroupShow`. Its `changes` object contains only changed properties, with their previous and new values. Deferred Apply raises one event for all changes; live mode raises an event for each committed update. Initialisation and Grid State restoration do not raise this event.
 
+Check `expressionValidation.valid` before saving an accepted expression. When invalid, `expressionValidation.reason` is `restrictedReference`, `customValidation`, `unknownReference` or `invalidExpression`.
+
 ```js
 const gridOptions = {
     onCalculatedColumnChanged: event => {
@@ -383,7 +385,7 @@ const gridOptions = {
         if (cellDataType) {
             console.log('Type:', cellDataType.oldValue, cellDataType.newValue);
         }
-        if (calculatedExpression) {
+        if (calculatedExpression && event.expressionValidation.valid) {
             console.log('Expression:', calculatedExpression.oldValue, calculatedExpression.newValue);
         }
     },
@@ -392,6 +394,8 @@ const gridOptions = {
 
 {% note %}
 Live expressions can be incomplete or invalid. Recognised references use stored `colId` values, such as `[revenue]`; references the dialog cannot resolve remain as typed, so they can still contain header names.
+
+`expressionValidation` is a snapshot of syntax, direct reference resolution and saved dialog errors, not row-specific evaluation results. To persist rejected expressions with their blocked status, save [Grid State](./grid-state/); saving only the expression text does not retain that status.
 {% /note %}
 
 {% apiDocumentation source="grid-events/events.json" section="calculatedColumns" names=["calculatedColumnCreated", "calculatedColumnChanged", "calculatedColumnRemoved", "calculatedColumnValidationStateChanged"] /%}

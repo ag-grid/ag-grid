@@ -54,7 +54,13 @@ import {
     enableDevValidations,
     getGridElement,
 } from 'ag-grid-community';
-import { BatchEditModule, CellSelectionModule, ClipboardModule, RowGroupingModule } from 'ag-grid-enterprise';
+import {
+    BatchEditModule,
+    CellSelectionModule,
+    ClipboardModule,
+    RowGroupingModule,
+    RowNumbersModule,
+} from 'ag-grid-enterprise';
 
 import { allowLegacyTooltipProperties, resetLegacyTooltipProperties } from '../tooltip/legacyTooltipTestUtils';
 
@@ -2840,7 +2846,7 @@ describe('Column Features', () => {
 
     describe('column hover', () => {
         const hoverGridsManager = new TestGridsManager({
-            modules: [ClientSideRowModelModule, ColumnHoverModule, TextFilterModule],
+            modules: [ClientSideRowModelModule, ColumnHoverModule, TextFilterModule, RowNumbersModule],
         });
 
         afterEach(() => {
@@ -2899,6 +2905,35 @@ describe('Column Features', () => {
                 '',
                 '',
             ]);
+        });
+
+        test('hovering a row number cell or header does not mark the row numbers column as hovered', async () => {
+            const api = hoverGridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a' }],
+                defaultColDef: { filter: 'agTextColumnFilter', floatingFilter: true },
+                rowData: [{ a: 'a1' }, { a: 'a2' }],
+                rowNumbers: true,
+                columnHoverHighlight: true,
+            });
+            await asyncSetTimeout(0);
+            const gridElement = TestGridsManager.getHTMLElement(api)!;
+            const rowNumbersCol = api.getColumn('ag-Grid-RowNumbersColumn')!;
+            const hovered = () =>
+                Array.from(
+                    gridElement.querySelectorAll('.ag-column-hover'),
+                    (element) => element.closest('[col-id]')?.getAttribute('col-id') ?? element.getAttribute('col-id')
+                ).join(' ');
+            const rowNumberCell = gridElement.querySelector('.ag-row[row-index="0"] .ag-row-number-cell')!;
+            const rowNumberHeader = gridElement.querySelector('.ag-row-number-header')!;
+
+            rowNumberCell.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+            expect(hovered()).toBe('');
+            expect(api.isColumnHovered(rowNumbersCol)).toBe(false);
+            rowNumberCell.dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
+
+            rowNumberHeader.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+            expect(hovered()).toBe('');
+            expect(api.isColumnHovered(rowNumbersCol)).toBe(false);
         });
     });
 });

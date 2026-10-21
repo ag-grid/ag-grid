@@ -764,6 +764,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaRowSelect: 'اس صف کو منتخب کرنے کے لیے SPACE دبائیں',
     ariaRowSelectionDisabled: 'اس صف کا انتخاب غیر فعال ہے',
     ariaSearch: 'تلاش',
+    ariaSortPriority: 'ترتیب دینے کی ترجیح ${count} میں سے ${priority}',
     ariaSortableColumn: 'ترتیب دینے کے لیے ENTER دبائیں',
     ariaSortableColumnWithCellSelection: 'ترتیب دینے کے لیے ALT ENTER دبائیں',
     ariaToggleVisibility: 'مرئیت ٹوگل کرنے کے لیے SPACE دبائیں',
