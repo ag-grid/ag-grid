@@ -609,8 +609,8 @@ export const AG_GRID_ERRORS = {
             'second instance',
             secondData,
         ] as const,
-    188: (props?: { feature?: string }) =>
-        `\`getRowId\` callback must be provided for Server Side Row Model ${props?.feature || 'selection'} to work correctly.` as const,
+    188: ({ feature }: { feature: string }) =>
+        `\`getRowId\` callback must be provided for ${feature} to work correctly.` as const,
     189: ({ startRow }: { startRow: number }) =>
         `invalid value ${startRow} for startRow, the value should be >= 0` as const,
     190: ({ rowGroupId, data }: { rowGroupId: string | undefined; data: any }) =>
@@ -966,6 +966,7 @@ export const AG_GRID_ERRORS = {
         `\`calculatedColumns.processColDef\` returned \`${(properties ?? []).join('`, `')}\` for calculated column \`${colId}\`. These properties are always overridden for calculated columns and have been ignored.` as const,
     337: ({ colId }: { colId: string }) =>
         `\`setFilterCards\` on the New Filters Tool Panel was passed \`${colId}\`, which is not a column in the grid, so no card is shown for it.` as const,
+    338: () => '`api.subscribeToViewport` needs the `viewportSubscription` grid option to be set.' as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -981,7 +982,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 337;
+export const MAX_ERROR_ID = 338;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

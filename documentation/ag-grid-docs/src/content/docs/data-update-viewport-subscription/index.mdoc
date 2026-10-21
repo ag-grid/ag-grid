@@ -1,0 +1,160 @@
+---
+title: "Viewport Subscription"
+---
+
+When a server streams live updates to the grid, it is wasteful to send updates for rows the user cannot see. The `viewportSubscription` grid option tells your application which rows to subscribe to, and which to unsubscribe from, as rows enter and leave the view.
+
+{% apiDocumentation source="grid-options/properties.json" section="rowModels" names=["viewportSubscription"] /%}
+
+Viewport subscription requires the `ViewportSubscriptionModule` and [Row IDs](./row-ids/), and is supported by the [Client-Side Row Model](./row-models/#client-side) and the [Server-Side Row Model](./server-side-model/) {% enterpriseIcon /%}.
+
+## Handlers
+
+Set `viewportSubscription` to a pair of handlers. The grid calls `onSubscribe` with the rows in view when it is ready, then calls both handlers as rows enter and leave the view.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    getRowId: (params) => params.data.id,
+    viewportSubscription: {
+        onSubscribe: (rows, params) => {
+            stream.subscribe(rows.map((row) => row.id));
+        },
+        onUnsubscribe: (rows, params) => {
+            stream.unsubscribe(rows.map((row) => row.id));
+        },
+    },
+};
+```
+
+- `onSubscribe` receives `ViewportRow` objects, which include the row `data`.
+- `onUnsubscribe` receives `ViewportRowRef` objects, which hold only the `id`, `type`, `parentKeys`, `level` and, for rows that have a key, the `route`. These are captured when the row is subscribed, as the row node may no longer exist when it is unsubscribed.
+- Every subscribed row is unsubscribed exactly once.
+- When rows change, `onUnsubscribe` is called before `onSubscribe`.
+- A row moved to another parent, for example by a transaction that changes its group or data path, is unsubscribed with its old `parentKeys` and `route`, then subscribed with the new ones. A tree data row that gains its first child or loses its last one is also unsubscribed, then subscribed with `hasChildren` updated.
+- New row data keeps the rows whose IDs are still present, so only the dropped rows are unsubscribed.
+
+{% if isFramework("react") %}
+{% note %}
+Memoise the `viewportSubscription` object, for example with `useMemo`. A new object on each render is a changed option, so the grid unsubscribes every row and subscribes them again. See [Object Properties](./react-hooks/#object-properties).
+{% /note %}
+{% /if %}
+
+## Row Types
+
+Each row has a `type`, which tells the kinds of row apart:
+
+- `'group'`: a group row, created by [Row Grouping](./grouping/) or [Pivoting](./pivoting/), or loaded as a group by the Server-Side Row Model. The `route` holds the group keys down to and including this row. `data` is `undefined` for group rows the grid creates.
+- `'tree'`: a row in [Tree Data](./tree-data/). `hasChildren` is `true` for rows with children. The `route` is set for every row in client-side tree data, and for the expandable rows in server-side tree data.
+- `'leaf'`: any other row, such as a row in flat data or a leaf row under groups. It has no `route`.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    viewportSubscription: {
+        onSubscribe: (rows) => {
+            rows.forEach((row) => {
+                if (row.type === 'group') {
+                    stream.subscribeToGroup(row.route);
+                } else {
+                    stream.subscribe(row.id);
+                }
+            });
+        },
+        onUnsubscribe: (rows) => {
+            rows.forEach((row) => {
+                if (row.type === 'group') {
+                    stream.unsubscribeFromGroup(row.route);
+                } else {
+                    stream.unsubscribe(row.id);
+                }
+            });
+        },
+    },
+};
+```
+
+## Subscribing and Unsubscribing
+
+A grid has one subscription, which starts when the grid is ready.
+
+{% apiDocumentation source="grid-api/api.json" section="displayedRows" names=["subscribeToViewport", "unsubscribeFromViewport"] /%}
+
+- `api.unsubscribeFromViewport()` unsubscribes every row. The handlers are not called again until `api.subscribeToViewport()` is called or `viewportSubscription` changes.
+- `api.subscribeToViewport()` unsubscribes every row, then subscribes to the rows in view. Calling it when `viewportSubscription` is not set logs a warning.
+- Changing `viewportSubscription` unsubscribes every row, then subscribes again with the new option. Setting it to `undefined` unsubscribes every row.
+- Destroying the grid unsubscribes every row while the API is still usable.
+
+## Excluded Rows
+
+Only loaded rows in view are passed to the handlers. The following rows are never passed:
+
+- [Loading placeholder rows](./server-side-model-loading-rows/) and [rows that failed to load](./server-side-model-retry/).
+- [Detail Rows](./master-detail/) and [Full Width Rows](./full-width-rows/).
+- [Group total (footer) rows and the grand total row](./aggregation-total-rows/), including when the grand total row is pinned, and the root row shown in [pivot mode](./pivoting/) without row groups, which holds the totals.
+- Rows [provided](./row-pinning/#providing-pinned-row-data) with `pinnedTopRowData` or `pinnedBottomRowData`. These rows are not in the row model, so there is no source row to subscribe to.
+
+Rows [pinned](./row-pinning/) by the user or with `isRowPinned` are always in view, so a pinned row is subscribed even when its place in the grid is scrolled out of view. It is unsubscribed once it is neither pinned nor in view.
+
+## Options
+
+{% interfaceDocumentation interfaceName="ViewportSubscriptionOptions" config={ "description": "" } /%}
+
+- Set `includeBuffer` to `true` to also subscribe to rows rendered in the row buffer, so updates are ready before the rows scroll into view.
+- Set `includeGroups` to `false` if the stream only has updates for leaf rows.
+- Set `debounceMs` to wait until scrolling stops before calling the handlers, so rows that are scrolled past quickly, for example by dragging the scrollbar, are never subscribed. This suits streams where each subscription is costly. Without it, the handlers are called at most once per animation frame.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    viewportSubscription: {
+        onSubscribe: (rows) => stream.subscribe(rows.map((row) => row.id)),
+        onUnsubscribe: (rows) => stream.unsubscribe(rows.map((row) => row.id)),
+        includeBuffer: true,
+        includeGroups: false,
+        debounceMs: 150,
+    },
+};
+```
+
+{% note %}
+Sticky group rows are unsubscribed once their row scrolls above the visible range, even while they stay stuck to the top of the grid. With the Server-Side Row Model, a refresh that does not purge can unsubscribe rows and then subscribe them again.
+{% /note %}
+
+## Pivoting
+
+In [pivot mode](./pivoting/), the rows in view are group rows, so they are passed with `type: 'group'`.
+
+- With the Client-Side Row Model, the grid creates the group rows, so their IDs come from the grid rather than `getRowId`, and their `data` is `undefined`. Changing the pivot columns keeps the same group rows, so no rows are unsubscribed. Turning pivot mode off keeps the group rows subscribed and adds the leaf rows that come into view.
+- With the Server-Side Row Model, group rows are loaded from the server, so `getRowId` is called for them and `data` holds the pivoted values. Turning pivot mode on or off, or changing the pivot columns, reloads the rows, so every row is unsubscribed and the reloaded rows are subscribed as they load.
+
+## Examples
+
+### Flat Data
+
+The example below shows a flat list of stocks. The handlers send the subscribed row IDs over a simulated websocket, which streams price updates for a random selection of the subscribed stocks only. The updates are applied with [Async Transactions](./data-update-high-frequency/).
+
+- The panel shows the number of subscribed rows and the number of updates the server has sent. Each batch is logged to the console with its row count.
+- Scrolling produces subscribe and unsubscribe batches.
+- **Unsubscribe** calls `api.unsubscribeFromViewport()`, which unsubscribes every row and so stops the stream. **Subscribe** calls `api.subscribeToViewport()`, which subscribes the rows in view.
+
+{% gridExampleRunner title="Viewport Subscription with Flat Data" name="flat-viewport-subscription" exampleHeight=615 /%}
+
+### Row Grouping {% enterpriseIcon /%}
+
+The example below [groups](./grouping/) stocks by sector, and streams price updates in the same way.
+
+- Scrolling, sorting and filtering produce subscribe and unsubscribe batches.
+- Changing the grouping in the [Columns Tool Panel](./tool-panel-columns/) moves rows to new parents, so those rows are unsubscribed and subscribed again.
+- **Include buffer** and **Include group rows** update the `includeBuffer` and `includeGroups` options with `api.setGridOption('viewportSubscription', ...)`, which unsubscribes every row and subscribes again.
+- **New Row Data** replaces every stock with a new ID, so the old stocks are unsubscribed and the new stocks subscribed.
+- **Stop** calls `api.unsubscribeFromViewport()` and **Start** calls `api.subscribeToViewport()`.
+
+{% gridExampleRunner title="Viewport Subscription with Row Grouping" name="client-side-viewport-subscription" exampleHeight=615 /%}
+
+### Server-Side Tree Data {% enterpriseIcon /%}
+
+The example below shows a portfolio of regions, sectors and stocks as [Tree Data](./server-side-model-tree-data/). Rows are loaded over a simulated websocket, and the same socket streams price updates for the subscribed stocks only. The updates are applied with [Asynchronous Transactions](./server-side-model-updating-transactions/#asynchronous-updates), using each row's `parentKeys` as the route.
+
+- Scrolling, expanding groups and loading new blocks produce subscribe and unsubscribe batches, logged to the console with their row count.
+- **Purge** reloads all rows. The old rows are unsubscribed, and the new rows subscribed as they load.
+- **Stop** calls `api.unsubscribeFromViewport()`, which stops the stream while rows still load over the socket. **Start** calls `api.subscribeToViewport()`.
+
+{% gridExampleRunner title="Viewport Subscription with Server-Side Tree Data" name="server-side-viewport-subscription" exampleHeight=615 /%}

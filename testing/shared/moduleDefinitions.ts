@@ -52,6 +52,7 @@ export const AllGridCommunityModules: Record<`${CommunityModuleName}Module` | 'F
     UndoRedoEditModule: true,
     ValidationModule: true,
     ValueCacheModule: true,
+    ViewportSubscriptionModule: true,
     FileInputOverlayModule: true,
 };
 export const AllEnterpriseModules: Record<`${EnterpriseModuleName}Module`, true> = {

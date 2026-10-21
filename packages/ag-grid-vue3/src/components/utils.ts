@@ -121,7 +121,8 @@ import type {
     Theme,
     Toolbar,
     TreeDataDisplayType,
-    UseGroupTotalRow
+    UseGroupTotalRow,
+    ViewportSubscriptionOptions
 } from 'ag-grid-community';
 // @END_IMPORTS@
 
@@ -1477,6 +1478,15 @@ export interface Props<TData> {
          * @agModule `ClientSideRowModelModule` / `InfiniteRowModelModule` / `ServerSideRowModelModule` / `ViewportRowModelModule`
          */
     rowModelType?: RowModelType,
+    /** Tells the application which rows to subscribe to and unsubscribe from as loaded rows enter and leave the view,
+         * so that a server stream only sends updates for rows the user can see.
+         * The grid subscribes to the rows in view when it is ready. Every row passed to `onSubscribe` is later passed
+         * to `onUnsubscribe` exactly once, including when the option changes, `api.unsubscribeFromViewport()` is called,
+         * or the grid is destroyed. Changing the option unsubscribes every row, then subscribes again with the new option.
+         * Requires `getRowId`. Supported by the Client-Side and Server-Side Row Models.
+         * @agModule `ViewportSubscriptionModule`
+         */
+    viewportSubscription?: ViewportSubscriptionOptions<TData>,
     /** Set the data to be displayed as rows in the grid.
          * @agModule `ClientSideRowModelModule`
          */
@@ -2458,6 +2468,7 @@ export function getProps() {
         isRowPinnable: undefined,
         isRowPinned: undefined,
         rowModelType: undefined,
+        viewportSubscription: undefined,
         rowData: undefined,
         asyncTransactionWaitMillis: undefined,
         suppressModelUpdateAfterUpdateTransaction: undefined,

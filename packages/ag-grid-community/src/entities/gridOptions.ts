@@ -204,6 +204,7 @@ import type { SortDirection } from '../interfaces/iSort';
 import type { StatusBar } from '../interfaces/iStatusPanel';
 import type { Toolbar } from '../interfaces/iToolbar';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
+import type { ViewportSubscriptionOptions } from '../interfaces/iViewportSubscription';
 import type {
     DefaultColumnDropZoneMenuItem,
     DefaultColumnMenuItem,
@@ -1776,6 +1777,16 @@ export interface GridOptions<TData = any> {
      * @agModule `ClientSideRowModelModule` / `InfiniteRowModelModule` / `ServerSideRowModelModule` / `ViewportRowModelModule`
      */
     rowModelType?: RowModelType;
+    /**
+     * Tells the application which rows to subscribe to and unsubscribe from as loaded rows enter and leave the view,
+     * so that a server stream only sends updates for rows the user can see.
+     * The grid subscribes to the rows in view when it is ready. Every row passed to `onSubscribe` is later passed
+     * to `onUnsubscribe` exactly once, including when the option changes, `api.unsubscribeFromViewport()` is called,
+     * or the grid is destroyed. Changing the option unsubscribes every row, then subscribes again with the new option.
+     * Requires `getRowId`. Supported by the Client-Side and Server-Side Row Models.
+     * @agModule `ViewportSubscriptionModule`
+     */
+    viewportSubscription?: ViewportSubscriptionOptions<TData>;
 
     // *** Row Model: Client-side *** //
     // changeable with impact
@@ -2942,6 +2953,7 @@ export interface GridOptions<TData = any> {
     onModelUpdated?(event: ModelUpdatedEvent<TData>): void;
     /**
      * A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row.
+     * A rendered row is not always in view, as the grid also renders rows in the row buffer. To subscribe to updates for the rows in view only, use `viewportSubscription`.
      */
     onVirtualRowRemoved?(event: VirtualRowRemovedEvent<TData>): void;
     /**
