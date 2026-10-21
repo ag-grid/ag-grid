@@ -147,17 +147,17 @@ describe('maintainRowsInViewOnDataUpdate focused cell and cell ranges', () => {
             expect(getFocusedRowId(api)).toBe('r22');
         });
 
-        test('moves the focused cell to the row that takes the place of its removed row', () => {
+        test('keeps the index of the focused cell when its row is removed, as without the option', () => {
             const api = createGrid();
             scrollTo(api, SCROLL_TOP);
             api.setFocusedCell(22, 'a');
 
             api.applyTransaction({ remove: [{ id: 'r0' }, { id: 'r22' }] as Row[] });
 
-            expect(getFocusedRowId(api)).toBe('r23');
+            expect(api.getFocusedCell()!.rowIndex).toBe(22);
         });
 
-        test('moves the focused cell to the row above when its removed row was the last row', () => {
+        test('keeps the focused cell within the rows when its removed row was the last row', () => {
             const api = createGrid();
             scrollTo(api, SCROLL_TOP);
             api.setFocusedCell(199, 'a');
@@ -167,18 +167,17 @@ describe('maintainRowsInViewOnDataUpdate focused cell and cell ranges', () => {
             expect(getFocusedRowId(api)).toBe('r198');
         });
 
-        test('moves the focused cell after the row above that is left when the rows next to its row are removed too', () => {
+        test('keeps the index of the focused cell when its row and the rows next to it are removed', () => {
             const api = createGrid();
             scrollTo(api, SCROLL_TOP);
             api.setFocusedCell(22, 'a');
 
             api.applyTransaction({ remove: [{ id: 'r0' }, { id: 'r21' }, { id: 'r22' }] as Row[] });
 
-            expect(api.getFocusedCell()!.rowIndex).toBe(20);
-            expect(getFocusedRowId(api)).toBe('r23');
+            expect(api.getFocusedCell()!.rowIndex).toBe(22);
         });
 
-        test('moves the focused cell to the last row left when the last rows are removed', () => {
+        test('keeps the focused cell within the rows when the last rows are removed', () => {
             const api = createGrid();
             scrollTo(api, SCROLL_TOP);
             api.setFocusedCell(199, 'a');
@@ -189,17 +188,14 @@ describe('maintainRowsInViewOnDataUpdate focused cell and cell ranges', () => {
             expect(getFocusedRowId(api)).toBe('r197');
         });
 
-        test('moves the focused cell to the row below that is left when every row above its row is removed', () => {
-            const api = createGrid({ rowData: createRows('r', 50) });
-            api.setFocusedCell(2, 'a');
+        test('keeps the index of the focused cell when the same update removes its row and adds rows above it', () => {
+            const api = createGrid();
+            scrollTo(api, SCROLL_TOP);
+            api.setFocusedCell(22, 'a');
 
-            api.applyTransaction({
-                add: createRows('new', 3),
-                addIndex: 0,
-                remove: [{ id: 'r0' }, { id: 'r1' }, { id: 'r2' }] as Row[],
-            });
+            api.applyTransaction({ add: createRows('new', 3), addIndex: 0, remove: [{ id: 'r22' }] as Row[] });
 
-            expect(getFocusedRowId(api)).toBe('r3');
+            expect(api.getFocusedCell()!.rowIndex).toBe(22);
         });
 
         test.each([true, undefined])(
@@ -288,24 +284,15 @@ describe('maintainRowsInViewOnDataUpdate focused cell and cell ranges', () => {
             expect(getRangeRowIds(api)).toEqual(['r24', 'r21']);
         });
 
-        test('moves the start of a cell range to the row that takes the place of its removed row', () => {
-            const api = createGrid();
-            scrollTo(api, SCROLL_TOP);
-            api.addCellRange({ rowStartIndex: 21, rowEndIndex: 24, columns: ['a'] });
-
-            api.applyTransaction({ remove: [{ id: 'r0' }, { id: 'r21' }] as Row[] });
-
-            expect(getRangeRowIds(api)).toEqual(['r22', 'r24']);
-        });
-
-        test('moves the end of a cell range after the row above that is left when the rows next to it are removed too', () => {
+        test('keeps the index of the end of a cell range when its row and the rows next to it are removed', () => {
             const api = createGrid();
             scrollTo(api, SCROLL_TOP);
             api.addCellRange({ rowStartIndex: 18, rowEndIndex: 22, columns: ['a'] });
 
             api.applyTransaction({ remove: [{ id: 'r0' }, { id: 'r21' }, { id: 'r22' }] as Row[] });
 
-            expect(getRangeRowIds(api)).toEqual(['r18', 'r23']);
+            const { startRow, endRow } = api.getCellRanges()![0];
+            expect([startRow!.rowIndex, endRow!.rowIndex]).toEqual([17, 22]);
         });
 
         test('keeps the end of a cell range in the rows left when the last rows are removed', () => {

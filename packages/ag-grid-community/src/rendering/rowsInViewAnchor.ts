@@ -232,14 +232,10 @@ function isDisplayed(rowModel: IRowModel, rowNode: RowNode | undefined): rowNode
     return !!rowNode && !rowNode.destroyed && rowNode.rowIndex != null && rowModel.getRow(rowNode.rowIndex) === rowNode;
 }
 
-/** How many rows either side of a followed row are recorded, to find the row that takes its place when it is removed. */
-const FOLLOWED_NEIGHBOURS = 100;
-
 /**
- * Records the row at a position before a data update, returning how to find the index of that row after the update or,
- * when the update removed it, of the row that took its place: after the nearest row above it that is left or, with
- * none, at the nearest row below it that is left. Pinned rows keep their index, as data updates do not move them, as
- * does a position with no rows left.
+ * Records the row at a position before a data update, returning how to find the index of that row after the update.
+ * A position whose row the update removed keeps its index, within the rows left, as without following. Pinned rows
+ * keep their index, as data updates do not move them.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _followRow(beans: BeanCollection, { rowIndex, rowPinned }: RowPosition): () => number {
@@ -248,29 +244,12 @@ export function _followRow(beans: BeanCollection, { rowIndex, rowPinned }: RowPo
         return () => rowIndex;
     }
     const rowNode = rowModel.getRow(rowIndex);
-    const rowsAbove: (RowNode | undefined)[] = [];
-    const rowsBelow: (RowNode | undefined)[] = [];
-    const rowCount = rowModel.getRowCount();
-    for (let i = 1; i <= FOLLOWED_NEIGHBOURS; ++i) {
-        if (rowIndex - i >= 0) {
-            rowsAbove.push(rowModel.getRow(rowIndex - i));
-        }
-        if (rowIndex + i < rowCount) {
-            rowsBelow.push(rowModel.getRow(rowIndex + i));
-        }
-    }
     return () => {
         if (isDisplayed(rowModel, rowNode)) {
             return rowNode.rowIndex;
         }
         const lastIndex = rowModel.getRowCount() - 1;
-        if (lastIndex < 0) {
-            return rowIndex; // no rows left, so kept where it was, as without following
-        }
-        const rowAbove = rowsAbove.find((row) => isDisplayed(rowModel, row));
-        const rowBelow = rowsBelow.find((row) => isDisplayed(rowModel, row));
-        const index = rowAbove ? rowAbove.rowIndex! + 1 : rowBelow ? rowBelow.rowIndex! : rowIndex;
-        return Math.min(index, lastIndex);
+        return lastIndex < 0 ? rowIndex : Math.min(rowIndex, lastIndex);
     };
 }
 
