@@ -290,10 +290,11 @@ export function _processCellCharacter(beans: BeanCollection, cellCtrl: CellCtrl,
 
 function onSpaceKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: KeyboardEvent): void {
     const { gos, editSvc } = beans;
-    const { rowNode } = cellCtrl;
 
     if (!editSvc?.isEditing(cellCtrl, { withOpenEditor: true }) && _isRowSelection(gos)) {
-        beans.selectionSvc?.handleSelectionEvent(event, rowNode, 'spaceKey', cellCtrl.column);
+        // In the transposed view, a cell selects the record its column shows, not the synthetic field row.
+        const { rowNode, column } = cellCtrl.getConfigCell();
+        beans.selectionSvc?.handleSelectionEvent(event, rowNode, 'spaceKey', column);
     }
 
     // prevent default as space key, by default, moves browser scroll down

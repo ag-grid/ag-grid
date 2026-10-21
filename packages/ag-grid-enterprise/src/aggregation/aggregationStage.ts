@@ -84,17 +84,21 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
         // A `valueGetter` derives only from an aggregate that exists or was just cleared; Show Values As always does.
         const hadAgg = this.hadAgg || this.aggCleared;
         this.aggCleared = false;
-        const displayed = beans.visibleCols.allCols;
-        let anyDependent = false;
-        for (let i = 0, len = displayed.length; i < len; ++i) {
-            const column = displayed[i];
-            if (column.showValuesAs != null || (hadAgg && column.valueGetter != null)) {
-                anyDependent = true;
-                break;
+        // While transposed, the settings to check are on the field rows, so every rendered cell is checked.
+        const transposed = beans.transposeSvc?.cols != null;
+        if (!transposed) {
+            const displayed = beans.visibleCols.allCols;
+            let anyDependent = false;
+            for (let i = 0, len = displayed.length; i < len; ++i) {
+                const column = displayed[i];
+                if (column.showValuesAs != null || (hadAgg && column.valueGetter != null)) {
+                    anyDependent = true;
+                    break;
+                }
             }
-        }
-        if (!anyDependent) {
-            return;
+            if (!anyDependent) {
+                return;
+            }
         }
 
         const rowCtrls = beans.rowRenderer.getAllRowCtrls();
@@ -107,8 +111,13 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
             const cellCtrls = rowCtrl.getAllCellCtrls();
             for (let c = 0, cLen = cellCtrls.length; c < cLen; ++c) {
                 const cellCtrl = cellCtrls[c];
-                const column = cellCtrl.column;
-                if (column.showValuesAs != null || (hadAgg && column.valueGetter != null)) {
+                // A transposed-view cell answers for its original field; one showing a total row shows aggregates.
+                const { column, rowNode: configNode } = cellCtrl.getConfigCell();
+                if (
+                    column.showValuesAs != null ||
+                    (hadAgg && column.valueGetter != null) ||
+                    (transposed && configNode.footer)
+                ) {
                     cellCtrl.refreshOrDestroyCell(AGG_DEPENDENT_REFRESH_PARAMS);
                 }
             }

@@ -129,6 +129,8 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     public customStyleClassRules?: CellClassRules;
     /** Transposed view only: the record column's own class rules, applied on top of the field's. */
     public customStyleRecordClassRules?: CellClassRules;
+    /** The column and row whose config this cell uses, resolved once: see {@link getConfigCell}. */
+    private readonly configCell: { column: AgColumn; rowNode: RowNode };
 
     public lastIPadMouseClickEvent = 0;
 
@@ -190,6 +192,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         const { colId } = column;
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         this.instanceId = (colId + '-' + instanceIdSequence++) as CellCtrlInstanceId;
+        this.configCell = _getTransposedCell(column, rowNode) ?? this;
 
         this.createCellPosition();
         if (!this.isClientSideLoadingCell()) {
@@ -372,7 +375,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
 
     /** The column and row whose config this cell uses: in the transposed view, the original field and record. */
     public getConfigCell(): { column: AgColumn; rowNode: RowNode } {
-        return _getTransposedCell(this.column, this.rowNode) ?? this;
+        return this.configCell;
     }
 
     public isCellRenderer(): boolean {
@@ -764,12 +767,12 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     }
 
     private shouldUseShowValuesAsValue(): boolean {
-        return this.column.showValuesAs != null && !this.editSvc?.isEditing(this, { withOpenEditor: true });
+        return this.configCell.column.showValuesAs != null && !this.editSvc?.isEditing(this, { withOpenEditor: true });
     }
 
     private valuesAreEqual(val1: any, val2: any): boolean {
         // if the user provided an equals method, use that, otherwise do simple comparison
-        const colDef = this.column.colDef;
+        const colDef = this.configCell.column.colDef;
         return colDef.equals ? colDef.equals(val1, val2) : val1 === val2;
     }
 

@@ -162,37 +162,45 @@ export class ValueService extends BeanStub implements NamedBean {
         const ignoreAggData = isGroup ? this.displayIgnoresAggData(node) : false;
         let value = this.getValue(column, node, params.from, ignoreAggData);
         let valueToFormat = value;
+        // Pending edits are keyed by the displayed cell, read above; a transposed-view cell's formula, Show Values
+        // As and formatting belong to its original field and record.
+        const transposed = _getTransposedCell(column, node);
+        const configCol = transposed?.column ?? column;
+        const configNode = transposed?.rowNode ?? node;
 
         // Read this.formula only for formula-enabled columns — skipped for the common case.
-        if (column.allowFormula) {
+        if (configCol.allowFormula) {
             const formula = this.formula;
             if (formula?.isFormula(value)) {
                 if (params.useRawFormula) {
                     value = formula.normaliseFormula(value, true);
-                    valueToFormat = formula.resolveValue(column, node as RowNode);
+                    valueToFormat = formula.resolveValue(configCol, configNode as RowNode);
                 } else {
-                    value = formula.resolveValue(column, node as RowNode);
+                    value = formula.resolveValue(configCol, configNode as RowNode);
                     valueToFormat = value;
                 }
             }
         }
 
         const format =
-            params.includeValueFormatted && !(params.exporting && column.colDef.useValueFormatterForExport === false);
+            params.includeValueFormatted &&
+            !(params.exporting && configCol.colDef.useValueFormatterForExport === false);
 
         // Show Values As: a dormant mode (selected but not applicable in this view) keeps the raw value, but its
         // formatter still runs with `notApplicable` so the built-in formatters can show `#N/A`.
         if (params.transformValues) {
             const showValuesAsSvc = this.showValuesAsSvc;
-            if (showValuesAsSvc && !ignoreAggData && column.showValuesAs != null) {
-                const applying = showValuesAsSvc.isApplying(column);
+            if (showValuesAsSvc && !ignoreAggData && configCol.showValuesAs != null) {
+                const applying = showValuesAsSvc.isApplying(configCol);
                 // Both paths use `valueToFormat` (formula already resolved) — a dormant mode must show the resolved
                 // raw value, never the unresolved formula string that `value` can hold under `useRawFormula`.
-                const transformed = applying ? showValuesAsSvc.transform(column, node, valueToFormat) : valueToFormat;
+                const transformed = applying
+                    ? showValuesAsSvc.transform(configCol, configNode, valueToFormat)
+                    : valueToFormat;
                 return {
                     value: transformed,
                     valueFormatted: format
-                        ? showValuesAsSvc.formatValue(column, node, transformed, valueToFormat, !applying)
+                        ? showValuesAsSvc.formatValue(configCol, configNode, transformed, valueToFormat, !applying)
                         : null,
                 };
             }
@@ -200,7 +208,7 @@ export class ValueService extends BeanStub implements NamedBean {
 
         return {
             value,
-            valueFormatted: format ? this.formatValue(column, node, valueToFormat) : null,
+            valueFormatted: format ? this.formatValue(configCol, configNode, valueToFormat) : null,
         };
     }
 
@@ -218,6 +226,11 @@ export class ValueService extends BeanStub implements NamedBean {
     /** Resolves a formula/calculated value then applies the Show Values As transform when a mode is applying;
      *  otherwise returns the (formula-resolved) value. Shared by the display + transformed read paths. */
     private resolveTransformed(column: AgColumn, node: IRowNode, value: any, ignoreAggData: boolean): any {
+        // A transposed-view cell's formula and Show Values As belong to its original field and record.
+        const transposed = _getTransposedCell(column, node);
+        if (transposed) {
+            return this.resolveTransformed(transposed.column, transposed.rowNode, value, ignoreAggData);
+        }
         if (column.allowFormula) {
             const formula = this.formula;
             if (formula?.isFormula(value)) {
@@ -265,10 +278,12 @@ export class ValueService extends BeanStub implements NamedBean {
         if (transformValues) {
             return this.resolveTransformed(column, node, value, ignoreAggData);
         }
-        if (column.allowFormula) {
+        const transposed = _getTransposedCell(column, node);
+        const configCol = transposed?.column ?? column;
+        if (configCol.allowFormula) {
             const formula = this.formula;
             if (formula?.isFormula(value)) {
-                return formula.resolveValue(column, node as RowNode);
+                return formula.resolveValue(configCol, (transposed?.rowNode ?? node) as RowNode);
             }
         }
         return value;
@@ -496,7 +511,8 @@ export class ValueService extends BeanStub implements NamedBean {
     }
 
     public getDeleteValue(column: AgColumn, rowNode: IRowNode): any {
-        const valueParser = column.colDef.valueParser;
+        // A transposed-view cell parses through its original field; `parseValue` redirects the call itself.
+        const valueParser = (_getTransposedCell(column, rowNode)?.column ?? column).colDef.valueParser;
         if (valueParser != null && valueParser !== '') {
             return this.parseValue(column, rowNode, '', this.getDisplayValue(column, rowNode, 'edit', false)) ?? null;
         }

@@ -1,4 +1,5 @@
 import type { AgColumn } from '../entities/agColumn';
+import { _getTransposedCell } from '../entities/agColumn';
 import type { SuppressKeyboardEventParams } from '../entities/colDef';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams } from '../gridOptionsUtils';
@@ -20,6 +21,11 @@ export function _isUserSuppressingKeyboardEvent(
     column: AgColumn,
     editing: boolean
 ): boolean {
+    // A transposed-view cell uses its original field's callback, given the original record.
+    const transposed = column && _getTransposedCell(column, rowNode);
+    if (transposed) {
+        return _isUserSuppressingKeyboardEvent(gos, keyboardEvent, transposed.rowNode, transposed.column, editing);
+    }
     const colDefFunc = column ? column.colDef.suppressKeyboardEvent : undefined;
 
     // if no callbacks provided by user, then do nothing
