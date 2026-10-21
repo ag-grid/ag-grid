@@ -68,6 +68,28 @@ describe('_focusIntoTabbableFirst', () => {
         managedAncestor.remove();
     });
 
+    test('skips only its own tab guards, so a nested component is entered through its guard', () => {
+        const root = document.createElement('div');
+        root.innerHTML = `
+            <div class="ag-tab-guard" tabindex="0"></div>
+            <button>Search</button>
+            <div class="ag-list">
+                <div class="ag-tab-guard" tabindex="0"></div>
+                <div tabindex="-1">Item</div>
+                <div class="ag-tab-guard" tabindex="0"></div>
+            </div>
+            <div class="ag-tab-guard" tabindex="0"></div>
+        `;
+        document.body.appendChild(root);
+        const nestedBottomGuard = root.querySelectorAll('.ag-tab-guard')[2];
+
+        expect(_focusIntoTabbableFirst(root, false, true)).toBe(true);
+        expect(document.activeElement).toBe(root.querySelector('button'));
+        expect(_focusIntoTabbableFirst(root, true, true)).toBe(true);
+        expect(document.activeElement).toBe(nestedBottomGuard);
+        root.remove();
+    });
+
     test('does not let a checked radio with tabindex="-1" exclude a tabbable radio', () => {
         const root = document.createElement('div');
         root.innerHTML = `
