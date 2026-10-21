@@ -155,17 +155,22 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             }
         };
 
-        const success = (params: LoadSuccessParams) => {
+        let settled = false;
+        const settle = (applyResult: () => void) => {
+            if (settled) {
+                this.warn(340);
+                return;
+            }
+            settled = true;
             this.onLoadComplete();
-            cache.onLoadSuccess(startRow, endRow - startRow, params);
+            // cleared first so the store update fired by the result can evict these rows
             removeNodesFromLoadingMap();
+            applyResult();
         };
 
-        const fail = () => {
-            this.onLoadComplete();
-            cache.onLoadFailed(startRow, endRow - startRow);
-            removeNodesFromLoadingMap();
-        };
+        const success = (params: LoadSuccessParams) =>
+            settle(() => cache.onLoadSuccess(startRow, endRow - startRow, params));
+        const fail = () => settle(() => cache.onLoadFailed(startRow, endRow - startRow));
 
         const isRootStore = parentNode.level === -1;
         const store = isRootStore ? cache.store : undefined;
