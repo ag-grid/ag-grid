@@ -496,7 +496,7 @@ export interface GridPreDestroyedEvent<TData = any, TContext = any> extends AgGl
     TData,
     TContext
 > {
-    /** Current state of the grid */
+    /** Current state of the grid. This is not a copy: do not modify it. */
     state: GridState;
 }
 
@@ -1629,7 +1629,7 @@ export interface StateUpdatedEvent<TData = any, TContext = any> extends AgGlobal
      * or 'api' when the state has been set via `api.setState`
      */
     sources: (keyof GridState | 'gridInitializing' | 'api')[];
-    /** The updated state */
+    /** The updated state. This is not a copy: do not modify it. */
     state: GridState;
 }
 
