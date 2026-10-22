@@ -60,7 +60,7 @@ export class AgMenuItemRenderer<
 
         const eGui = this.getGui();
 
-        if (checked) {
+        if (checked != null) {
             _setAriaChecked(eGui, checked);
         }
 

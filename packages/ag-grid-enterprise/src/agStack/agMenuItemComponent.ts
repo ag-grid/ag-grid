@@ -44,6 +44,12 @@ export interface AgMenuItemLeafDef<TMenuActionParams extends TCommon, TCommon> {
     action?: (params: TMenuActionParams) => void;
     /** Set to true to provide a check beside the option. */
     checked?: boolean;
+    /**
+     * The aria role for a checkable item. Set to `'menuitemradio'` when the item is one of a set of mutually exclusive choices.
+     * Ignored when `checked` is `undefined`.
+     * @default 'menuitemcheckbox'
+     */
+    menuItemRole?: 'menuitemcheckbox' | 'menuitemradio';
     /** The icon to display, either a DOM element or HTML string. */
     icon?: Element | string;
     /** CSS classes to apply to the menu item. */
@@ -606,11 +612,10 @@ export class AgMenuItemComponent<
 
     private applyAriaProperties(eGui: HTMLElement): void {
         const {
-            params: { checked, subMenu, subMenuRole, disabled },
+            params: { checked, menuItemRole, subMenu, subMenuRole, disabled },
         } = this;
 
-        const hasCheck = checked != null;
-        _setAriaRole(eGui, hasCheck ? 'menuitemcheckbox' : 'menuitem');
+        _setAriaRole(eGui, checked == null ? 'menuitem' : (menuItemRole ?? 'menuitemcheckbox'));
 
         if (subMenu) {
             _setAriaHasPopup(eGui, subMenuRole ?? 'menu');
