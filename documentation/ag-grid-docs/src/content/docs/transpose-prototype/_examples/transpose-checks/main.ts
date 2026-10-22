@@ -67,9 +67,11 @@ const columnDefs: (ColDef<CompanyRecord> | ColGroupDef<CompanyRecord>)[] = [
 
 let gridApi: GridApi<CompanyRecord>;
 let lastClipboard: string | null = null;
+// Read through a function: `sendToClipboard` sets it while a check awaits, which narrowing cannot see.
+const readClipboard = (): string | null => lastClipboard;
 let fakeClipboardText = '';
 let uncaughtErrors = 0;
-window.addEventListener('error', () => uncaughtErrors++);
+let testHooksInstalled = false;
 
 const gridOptions: GridOptions<CompanyRecord> = {
     columnDefs,
@@ -93,9 +95,22 @@ function log(message: string) {
     eLog.textContent += message + '\n';
 }
 
-function fieldRowIndex(colId: string): number {
-    for (let i = 0; i < gridApi.getDisplayedRowCount(); i++) {
-        if (gridApi.getDisplayedRowAtIndex(i)?.id === `ag-Grid-TransposeField-${colId}`) {
+// Installed on first run: the framework example generators drop top-level statements.
+function installTestHooks() {
+    if (testHooksInstalled) {
+        return;
+    }
+    testHooksInstalled = true;
+    window.addEventListener('error', () => uncaughtErrors++);
+    Object.defineProperty(navigator, 'clipboard', {
+        configurable: true,
+        value: { readText: async () => fakeClipboardText, writeText: async () => undefined },
+    });
+}
+
+function fieldRowIndex(api: GridApi<CompanyRecord>, colId: string): number {
+    for (let i = 0; i < api.getDisplayedRowCount(); i++) {
+        if (api.getDisplayedRowAtIndex(i)?.id === `ag-Grid-TransposeField-${colId}`) {
             return i;
         }
     }
@@ -103,7 +118,7 @@ function fieldRowIndex(colId: string): number {
 }
 
 const recordCol = (recordId: string) => `ag-Grid-TransposeRecord-${recordId}`;
-const record = (recordId: string) => gridApi.getRowNode(recordId)!.data!;
+const record = (api: GridApi<CompanyRecord>, recordId: string) => api.getRowNode(recordId)!.data!;
 
 async function check(name: string, run: () => Promise<string> | string) {
     try {
@@ -119,15 +134,20 @@ function expect(condition: boolean, detail: string) {
     }
 }
 
-async function runChecks() {
+function runChecks() {
+    return runAllChecks(gridApi);
+}
+
+async function runAllChecks(api: GridApi<CompanyRecord>) {
+    installTestHooks();
     document.querySelector<HTMLElement>('#eventLog')!.textContent = '';
-    gridApi.setGridOption('rowData', getData());
+    api.setGridOption('rowData', getData());
     await wait(100);
-    const revenueRow = fieldRowIndex('revenue');
-    const costRow = fieldRowIndex('costOfSales');
+    const revenueRow = fieldRowIndex(api, 'revenue');
+    const costRow = fieldRowIndex(api, 'costOfSales');
 
     await check('CSV export', () => {
-        const lines = gridApi.getDataAsCsv()!.split('\n');
+        const lines = api.getDataAsCsv()!.split('\n');
         const revenueLine = lines.find((line) => line.startsWith('"Revenue"')) ?? '';
         expect(
             lines[0].includes('Northwind') && revenueLine.includes('400'),
@@ -137,70 +157,68 @@ async function runChecks() {
     });
 
     await check('Excel export', () => {
-        const blob = gridApi.getDataAsExcel() as Blob | undefined;
+        const blob = api.getDataAsExcel() as Blob | undefined;
         expect(!!blob && blob.size > 0, 'no workbook produced');
         return `${blob!.size} bytes`;
     });
 
     await check('Copy a range of transposed cells', async () => {
         lastClipboard = null;
-        gridApi.clearCellSelection();
-        gridApi.addCellRange({
+        api.clearCellSelection();
+        api.addCellRange({
             rowStartIndex: revenueRow,
             rowEndIndex: costRow,
             columns: [recordCol('rec-0'), recordCol('rec-1')],
         });
-        gridApi.copySelectedRangeToClipboard();
+        api.copySelectedRangeToClipboard();
         await wait(100);
-        expect(
-            !!lastClipboard && lastClipboard.includes('400') && lastClipboard.includes('537'),
-            `got ${JSON.stringify(lastClipboard)}`
-        );
-        return JSON.stringify(lastClipboard);
+        const copied = readClipboard();
+        expect(!!copied && copied.includes('400') && copied.includes('537'), `got ${JSON.stringify(copied)}`);
+        return JSON.stringify(copied);
     });
 
     await check('Paste into transposed cells', async () => {
         fakeClipboardText = '999\t888';
-        gridApi.clearCellSelection();
-        gridApi.setFocusedCell(revenueRow, recordCol('rec-0'));
-        gridApi.addCellRange({ rowStartIndex: revenueRow, rowEndIndex: revenueRow, columns: [recordCol('rec-0')] });
-        gridApi.pasteFromClipboard();
+        api.clearCellSelection();
+        api.setFocusedCell(revenueRow, recordCol('rec-0'));
+        api.addCellRange({ rowStartIndex: revenueRow, rowEndIndex: revenueRow, columns: [recordCol('rec-0')] });
+        api.pasteFromClipboard();
         await wait(300);
-        const got = [record('rec-0').revenue, record('rec-1').revenue];
+        const got = [record(api, 'rec-0').revenue, record(api, 'rec-1').revenue];
         expect(Number(got[0]) === 999 && Number(got[1]) === 888, `records now hold revenue ${JSON.stringify(got)}`);
         return `Northwind revenue ${got[0]}, Contoso revenue ${got[1]}`;
     });
 
     await check('Undo and redo an edit made in the transposed view', async () => {
-        gridApi.setGridOption('rowData', getData());
+        api.setGridOption('rowData', getData());
         await wait(100);
-        const before = record('rec-2').costOfSales;
-        gridApi.startEditingCell({ rowIndex: costRow, colKey: recordCol('rec-2') });
+        const before = record(api, 'rec-2').costOfSales;
+        api.startEditingCell({ rowIndex: costRow, colKey: recordCol('rec-2') });
         await wait(100);
         const input = document.querySelector<HTMLInputElement>('.ag-cell-inline-editing input');
         expect(!!input, 'editor did not open');
         input!.value = '111';
         input!.dispatchEvent(new Event('input', { bubbles: true }));
-        gridApi.stopEditing();
+        api.stopEditing();
         await wait(100);
-        const edited = record('rec-2').costOfSales;
-        const undoSize = gridApi.getCurrentUndoSize();
-        gridApi.undoCellEditing();
+        const edited = record(api, 'rec-2').costOfSales;
+        const undoSize = api.getCurrentUndoSize();
+        api.undoCellEditing();
         await wait(100);
-        const undone = record('rec-2').costOfSales;
-        gridApi.redoCellEditing();
+        const undone = record(api, 'rec-2').costOfSales;
+        api.redoCellEditing();
         await wait(100);
-        const redone = record('rec-2').costOfSales;
+        const redone = record(api, 'rec-2').costOfSales;
         const detail = `before ${before}, edited ${edited}, undo stack ${undoSize}, after undo ${undone}, after redo ${redone}`;
         expect(Number(edited) === 111 && undone === before && Number(redone) === 111, detail);
         return detail;
     });
 
     await check('Transaction update refreshes the transposed cell', async () => {
-        gridApi.setGridOption('rowData', getData());
+        api.setGridOption('rowData', getData());
         await wait(100);
-        const updated = { ...record('rec-1'), revenue: 4321 };
-        gridApi.applyTransaction({ update: [updated] });
+        const updated = { ...record(api, 'rec-1'), revenue: 4321 };
+        api.applyTransaction({ update: [updated] });
         await wait(200);
         const cell = document.querySelector(
             `.ag-row[row-id="ag-Grid-TransposeField-revenue"] .ag-cell[col-id="${recordCol('rec-1')}"]`
@@ -211,13 +229,13 @@ async function runChecks() {
     });
 
     await check('Space on a transposed cell does not select a field row', async () => {
-        gridApi.deselectAll();
-        gridApi.setFocusedCell(revenueRow, recordCol('rec-0'));
+        api.deselectAll();
+        api.setFocusedCell(revenueRow, recordCol('rec-0'));
         await wait(50);
         const focused = document.querySelector<HTMLElement>('.ag-cell-focus');
         focused?.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true }));
         await wait(100);
-        const selected = gridApi.getSelectedNodes().map((node) => node.id);
+        const selected = api.getSelectedNodes().map((node) => node.id);
         expect(
             selected.every((id) => !id?.startsWith('ag-Grid-Transpose')),
             `selected ${JSON.stringify(selected)}`
@@ -226,26 +244,26 @@ async function runChecks() {
     });
 
     await check('A record hidden by a filter keeps its column width', async () => {
-        gridApi.setColumnWidths([{ key: recordCol('rec-0'), newWidth: 222 }]);
-        await gridApi.setColumnFilterModel('revenue', { type: 'greaterThan', filter: 500 });
-        gridApi.onFilterChanged();
+        api.setColumnWidths([{ key: recordCol('rec-0'), newWidth: 222 }]);
+        await api.setColumnFilterModel('revenue', { type: 'greaterThan', filter: 500 });
+        api.onFilterChanged();
         await wait(150);
-        const hidden = !gridApi.getAllDisplayedColumns().some((col) => col.getColId() === recordCol('rec-0'));
-        await gridApi.setColumnFilterModel('revenue', null);
-        gridApi.onFilterChanged();
+        const hidden = !api.getAllDisplayedColumns().some((col) => col.getColId() === recordCol('rec-0'));
+        await api.setColumnFilterModel('revenue', null);
+        api.onFilterChanged();
         await wait(150);
-        const width = gridApi.getColumn(recordCol('rec-0'))?.getActualWidth();
+        const width = api.getColumn(recordCol('rec-0'))?.getActualWidth();
         expect(hidden && width === 222, `hidden while filtered: ${hidden}, width after clearing: ${width}`);
         return `hidden while filtered, width after clearing ${width}`;
     });
 
     await check('Toggling transpose never renders user columns against field rows', async () => {
         const errorsBefore = uncaughtErrors;
-        gridApi.setGridOption('transpose', false);
+        api.setGridOption('transpose', false);
         await wait(200);
-        gridApi.setGridOption('transpose', true);
+        api.setGridOption('transpose', true);
         await wait(200);
-        gridApi.setGridOption('transposeRecordColumnDef', { width: 140 });
+        api.setGridOption('transposeRecordColumnDef', { width: 140 });
         await wait(200);
         const errors = uncaughtErrors - errorsBefore;
         expect(errors === 0, `${errors} uncaught errors (Gross Profit's valueGetter reads params.data)`);
@@ -254,10 +272,6 @@ async function runChecks() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    Object.defineProperty(navigator, 'clipboard', {
-        configurable: true,
-        value: { readText: async () => fakeClipboardText, writeText: async () => undefined },
-    });
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
 });

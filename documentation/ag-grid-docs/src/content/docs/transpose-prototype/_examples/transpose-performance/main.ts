@@ -89,13 +89,23 @@ const nextFrame = () => new Promise<void>((resolve) => requestAnimationFrame(() 
 const idle = () => new Promise<void>((resolve) => requestIdleCallback(() => resolve(), { timeout: 20000 }));
 
 let longestTask = 0;
-new PerformanceObserver((list) => {
-    for (const entry of list.getEntries()) {
-        longestTask = Math.max(longestTask, entry.duration);
-    }
-}).observe({ type: 'longtask', buffered: false });
+let longTaskObserver: PerformanceObserver | undefined;
 
-async function measure(label: string, action: () => void) {
+// Started on first use: the framework example generators drop top-level statements.
+function observeLongTasks() {
+    if (longTaskObserver) {
+        return;
+    }
+    longTaskObserver = new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+            longestTask = Math.max(longestTask, entry.duration);
+        }
+    });
+    longTaskObserver.observe({ type: 'longtask', buffered: false });
+}
+
+async function measure(api: GridApi<Row>, label: string, action: () => void) {
+    observeLongTasks();
     longestTask = 0;
     const start = performance.now();
     action();
@@ -103,10 +113,10 @@ async function measure(label: string, action: () => void) {
     await nextFrame();
     await idle();
     const total = performance.now() - start;
-    const cols = gridApi.getAllDisplayedColumns().length;
+    const cols = api.getAllDisplayedColumns().length;
     log(
         `${label}: sync ${sync.toFixed(0)} ms, until idle ${total.toFixed(0)} ms, longest task ${longestTask.toFixed(0)} ms ` +
-            `(records ${rowCount}, columns ${cols}, transpose ${gridApi.getGridOption('transpose')})`
+            `(records ${rowCount}, columns ${cols}, transpose ${api.getGridOption('transpose')})`
     );
 }
 
@@ -121,19 +131,19 @@ function load(count: number) {
         rows.push(createRow(i));
     }
     rowCount = count;
-    return measure(`Load ${count}`, () => gridApi.setGridOption('rowData', rows));
+    return measure(gridApi, `Load ${count}`, () => gridApi.setGridOption('rowData', rows));
 }
 
 function toggleTranspose() {
     const transpose = !gridApi.getGridOption('transpose');
-    return measure(transpose ? 'Enable transpose' : 'Disable transpose', () =>
+    return measure(gridApi, transpose ? 'Enable transpose' : 'Disable transpose', () =>
         gridApi.setGridOption('transpose', transpose)
     );
 }
 
 function sortField() {
     const current = gridApi.getColumnState().find((state) => state.colId === 'f1_1')?.sort;
-    return measure('Sort', () =>
+    return measure(gridApi, 'Sort', () =>
         gridApi.applyColumnState({
             state: [{ colId: 'f1_1', sort: current === 'desc' ? 'asc' : 'desc' }],
             defaultState: { sort: null },
@@ -144,27 +154,27 @@ function sortField() {
 function updateValue() {
     const row = createRow(0);
     row.f0_0 = Math.round(Math.random() * 1000);
-    return measure('Update one value', () => gridApi.applyTransaction({ update: [row] }));
+    return measure(gridApi, 'Update one value', () => gridApi.applyTransaction({ update: [row] }));
 }
 
 function addRecord() {
     rowCount++;
-    return measure('Add one record', () => gridApi.applyTransaction({ add: [createRow(rowCount + 100000)] }));
+    return measure(gridApi, 'Add one record', () => gridApi.applyTransaction({ add: [createRow(rowCount + 100000)] }));
 }
 
 function scrollToEnd() {
     const cols = gridApi.getAllDisplayedColumns();
-    return measure('Scroll to last column', () => gridApi.ensureColumnVisible(cols[cols.length - 1]));
+    return measure(gridApi, 'Scroll to last column', () => gridApi.ensureColumnVisible(cols[cols.length - 1]));
 }
 
 function renameRecord() {
     const row = createRow(0);
     row.name = `Record 0 (${Math.round(Math.random() * 1000)})`;
-    return measure('Rename one record', () => gridApi.applyTransaction({ update: [row] }));
+    return measure(gridApi, 'Rename one record', () => gridApi.applyTransaction({ update: [row] }));
 }
 
 function autoSizeAll() {
-    return measure('Auto-size all columns', () => gridApi.autoSizeAllColumns());
+    return measure(gridApi, 'Auto-size all columns', () => gridApi.autoSizeAllColumns());
 }
 
 document.addEventListener('DOMContentLoaded', () => {
