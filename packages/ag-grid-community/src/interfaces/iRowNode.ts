@@ -3,7 +3,7 @@ import type { AgEvent } from 'ag-stack';
 import type { ColKey, IAggFuncResult } from '../entities/colDef';
 import type { BuildEventTypeMap } from '../eventTypes';
 import type { SelectionEventSourceType } from '../events';
-import type { Column } from '../interfaces/iColumn';
+import type { Column, ProvidedColumnGroup } from '../interfaces/iColumn';
 import type { CellValueResolveFrom } from './iEditService';
 
 /**
@@ -195,6 +195,12 @@ interface BaseRowNode<TData = any> {
     master: boolean;
     /** `true` if this row is a detail row, part of master / detail (ie child row of an expanded master row). */
     detail: boolean | undefined;
+
+    /**
+     * In the transposed view, the field a field row shows: its original column, or for a field group row, its column
+     * group. Field rows have no `data`, like row groups. `null` for every other row.
+     */
+    readonly transposeField: Column | ProvidedColumnGroup | null;
 }
 
 interface GroupRowNode<TData = any> {

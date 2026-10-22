@@ -20,6 +20,7 @@ import { ROOT_NODE_ID } from '../interfaces/iRowNode';
 import type { DetailGridInfo } from '../interfaces/masterDetail';
 import type { AgColumn } from './agColumn';
 import { _getTransposedCell, _resolvePivotColumnForRow } from './agColumn';
+import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
 import type { ColKey, IAggFuncResult } from './colDef';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -177,6 +178,10 @@ export class RowNode<TData = any>
     public rowGroupColumn: AgColumn | null = null;
     /** Transposed view only: the original column this synthetic field row shows. */
     public transposeFieldCol: AgColumn | undefined = undefined;
+
+    public get transposeField(): AgColumn | AgProvidedColumnGroup | null {
+        return this.transposeFieldCol ?? this.beans.transposeSvc?.getFieldGroup(this) ?? null;
+    }
 
     /** The key for the group eg Ireland, UK, USA */
     public key: string | null = null;

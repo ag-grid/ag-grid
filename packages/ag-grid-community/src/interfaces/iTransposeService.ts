@@ -21,6 +21,9 @@ export interface ITransposeService {
     /** Whether a row is a field row (or field group row) of the transposed view, rather than a record. */
     isFieldRow(rowNode: RowNode): boolean;
 
+    /** The column group a field group row shows, or `null` for any other row. */
+    getFieldGroup(rowNode: RowNode): AgProvidedColumnGroup | null;
+
     /** The displayed cell showing a record's field while transposed, or `null` when it is not shown. */
     getDisplayedCell(record: RowNode, fieldCol: AgColumn): CellPosition | null;
 

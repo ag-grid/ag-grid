@@ -40,7 +40,7 @@ export class RowStyleService extends BeanStub implements NamedBean {
         // part 2 - rowClassFunc
         const rowClassFunc = gos.getCallback('getRowClass');
 
-        if (rowClassFunc && this.isRecordRow(rowNode)) {
+        if (rowClassFunc) {
             const params: WithoutGridCommon<RowClassParams> = {
                 data: rowNode.data,
                 node: rowNode,
@@ -69,9 +69,6 @@ export class RowStyleService extends BeanStub implements NamedBean {
         onApplicableClass: (className: string) => void,
         onNotApplicableClass?: (className: string) => void
     ): void {
-        if (!this.isRecordRow(rowNode)) {
-            return;
-        }
         const { gos, expressionSvc } = this.beans;
         const rowClassParams: RowClassParams = _addGridCommonParams(gos, {
             data: rowNode.data,
@@ -89,14 +86,6 @@ export class RowStyleService extends BeanStub implements NamedBean {
         );
     }
 
-    /**
-     * The row callbacks describe records. A field row of the transposed view spans every record, so it is not
-     * passed to them; record styling there comes from `transposeRecordColumnDef`, field styling from the field.
-     */
-    private isRecordRow(rowNode: RowNode): boolean {
-        return !this.beans.transposeSvc?.isFieldRow(rowNode);
-    }
-
     public processStylesFromGridOptions(rowNode: RowNode): RowStyle | undefined {
         const gos = this.gos;
         // part 1 - rowStyle
@@ -106,7 +95,7 @@ export class RowStyleService extends BeanStub implements NamedBean {
         const rowStyleFunc = gos.getCallback('getRowStyle');
         let rowStyleFuncResult: any;
 
-        if (rowStyleFunc && this.isRecordRow(rowNode)) {
+        if (rowStyleFunc) {
             const params: WithoutGridCommon<RowClassParams> = {
                 data: rowNode.data,
                 node: rowNode,

@@ -62,7 +62,7 @@ describe('transposed view: what callbacks and events receive', () => {
         const api: GridApi<Company> = await gridsManager.createGridAndWait('contracts', {
             columnDefs: [
                 { field: 'name' },
-                { field: 'region' },
+                { headerName: 'Details', groupId: 'details', children: [{ field: 'region' }] },
                 { field: 'revenue', editable: true, cellEditor: 'agNumberCellEditor', ...revenueColDef },
             ],
             rowData: makeRowData(),
@@ -91,6 +91,15 @@ describe('transposed view: what callbacks and events receive', () => {
         });
         await user.clear(input);
         await user.type(input, `${value}{Enter}`);
+    };
+
+    /** The field a row names: a column id, `group:<id>` for a field group row, or `none` for a record. */
+    const fieldOf = (node: IRowNode) => {
+        const field = node.transposeField;
+        if (field == null) {
+            return 'none';
+        }
+        return 'getColId' in field ? field.getColId() : `group:${field.getGroupId()}`;
     };
 
     const REVENUE_OF_B = { node: 'b', data: 'b', column: 'revenue', field: 'revenue' };
@@ -142,21 +151,46 @@ describe('transposed view: what callbacks and events receive', () => {
         await waitFor(() => expect(api.getRowNode('b')!.data!.revenue).toBe(270));
     });
 
-    test('row callbacks are not called for field rows', async () => {
-        const nodes: (string | undefined)[] = [];
-        const record = (params: { node: IRowNode }) => {
-            nodes.push(params.node.id);
+    test('row callbacks receive field rows, which name their field and have no data', async () => {
+        const seen: Record<string, Set<string>> = {};
+        const record = (hook: string) => (params: { node: IRowNode; data?: unknown }) => {
+            const data = params.data === undefined ? 'no data' : 'data';
+            (seen[hook] ??= new Set()).add(`${fieldOf(params.node)}, ${data}`);
             return undefined;
         };
-        const { api } = await create({
-            getRowStyle: record,
-            getRowClass: record,
-            getRowHeight: record,
-            rowClassRules: { 'never-applied': (params) => record(params) ?? false },
+        await create({
+            getRowStyle: record('getRowStyle'),
+            getRowClass: record('getRowClass'),
+            getRowHeight: record('getRowHeight'),
+            rowClassRules: { 'never-applied': (params) => record('rowClassRules')(params) ?? false },
         });
-        expect(nodes).toEqual([]);
-        api.setGridOption('transpose', false);
-        await waitFor(() => expect(nodes).toContain('a'));
+        const fieldRows = ['group:details, no data', 'region, no data', 'revenue, no data'];
+        for (const hook of ['getRowStyle', 'getRowClass', 'getRowHeight', 'rowClassRules']) {
+            expect([hook, Array.from(seen[hook] ?? []).sort()]).toEqual([hook, fieldRows]);
+        }
+    });
+
+    test('a getRowClass rule styles a whole field line, label included', async () => {
+        const { cell } = await create({
+            getRowClass: (params) => (fieldOf(params.node) === 'revenue' ? 'subtotal' : undefined),
+        });
+        const rowOf = (el: HTMLElement) => el.closest('.ag-row')!;
+        expect(rowOf(cell(fieldRow('revenue'), FIELD_NAME_COL)).classList.contains('subtotal')).toBe(true);
+        expect(rowOf(cell(fieldRow('revenue'), recordCol('a'))).classList.contains('subtotal')).toBe(true);
+        expect(rowOf(cell(fieldRow('region'), recordCol('a'))).classList.contains('subtotal')).toBe(false);
+    });
+
+    test('getRowHeight sets the height of a field row', async () => {
+        const { api } = await create({
+            getRowHeight: (params) => (fieldOf(params.node) === 'revenue' ? 80 : undefined),
+        });
+        const heights: Record<string, number | null | undefined> = {};
+        for (let i = 0; i < api.getDisplayedRowCount(); ++i) {
+            const node = api.getDisplayedRowAtIndex(i)!;
+            heights[fieldOf(node)] = node.rowHeight;
+        }
+        expect(heights.revenue).toBe(80);
+        expect(heights.region).not.toBe(80);
     });
 
     test("rowClicked and rowDoubleClicked report the clicked column's record, and not the field-name column", async () => {

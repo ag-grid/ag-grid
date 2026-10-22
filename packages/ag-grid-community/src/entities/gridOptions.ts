@@ -3241,7 +3241,8 @@ export type GetRowClass<TData = any, TContext = any> = (
 ) => string | string[] | undefined;
 export interface RowClassParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /**
-     * The data associated with this row from rowData. Data is `undefined` for row groups.
+     * The data associated with this row from rowData. Data is `undefined` for row groups, and for the field rows of
+     * the transposed view, which name their field in `node.transposeField`.
      */
     data: TData | undefined;
     /**

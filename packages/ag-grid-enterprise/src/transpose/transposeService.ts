@@ -134,6 +134,10 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         return { rowIndex: fieldRow.rowIndex, rowPinned: null, column };
     }
 
+    public getFieldGroup(rowNode: RowNode): AgProvidedColumnGroup | null {
+        return this.fieldGroups.get(rowNode)?.group ?? null;
+    }
+
     public isFieldGroupRow(rowNode: RowNode): boolean {
         return this.fieldGroups.has(rowNode);
     }
