@@ -60,9 +60,7 @@ permissions:
   # read is sufficient: the only actions-scope consumer is `gh run list` for the baseline SHA.
   actions: read
 
-# Every job runs on ubuntu-24.04, not ubuntu-latest: Playwright's WebKit needs Ubuntu 24.04's ICU 74
-# and libxml2.so.2, which ubuntu-26.04 (ubuntu-latest since October 2026) does not ship, so WebKit cannot
-# launch there. The jobs share one browser cache keyed on runner.os, which is Linux on both.
+# Pinned to ubuntu-24.04 because Playwright's WebKit can't launch on ubuntu-26.04 (now ubuntu-latest), which lacks the ICU 74 and libxml2.so.2 libraries it needs.
 jobs:
   resolve:
     runs-on: ubuntu-24.04
