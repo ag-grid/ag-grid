@@ -1076,8 +1076,6 @@ export interface _ColumnFilterGridApi {
 
     /**
      * Gets the current state of all the column filters. Used for saving filter state.
-     * The models returned are not copies: do not modify them. To change a filter, pass a new model to `setFilterModel()`
-     * or `setColumnFilterModel()`.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     getFilterModel(): FilterModel;
@@ -1085,7 +1083,6 @@ export interface _ColumnFilterGridApi {
     /**
      * Gets the current filter model for the specified column.
      * Will return `null` if the column has no filter model.
-     * The model returned is not a copy: do not modify it. To change the filter, pass a new model to `setColumnFilterModel()`.
      * @param useUnapplied If `enableFilterHandlers = true` and value is `true`, will return the unapplied filter model.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
@@ -1226,7 +1223,6 @@ export interface _StateGridApi {
     /**
      * Get the current state of the grid.
      * Can be used in conjunction with the `initialState` grid option or `api.setState()` to save and restore grid state.
-     * The state returned is not a copy: do not modify it.
      * @agModule `GridStateModule`
      */
     getState(): GridState;

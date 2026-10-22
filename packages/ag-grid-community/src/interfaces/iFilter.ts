@@ -17,7 +17,6 @@ export interface DoesFilterPassParams<
     TModel = any,
     TCustomParams = any,
 > extends IDoesFilterPassParams<TData> {
-    /** The applied filter model. This is not a copy: do not modify it. */
     model: TModel;
     /**
      * Utility params that would be passed to the handler, including `getValue` which provides access to the cell values.
@@ -75,7 +74,6 @@ export interface FilterHandlerParams<
     TModel = any,
     TCustomParams = any,
 > extends FilterHandlerBaseParams<TData, TContext, TModel, TCustomParams> {
-    /** The applied filter model. This is not a copy: do not modify it. */
     model: TModel | null;
     source: FilterHandlerSource;
     /**
@@ -110,13 +108,11 @@ export interface FilterHandler<TData = any, TContext = any, TModel = any, TCusto
      * Optional: Used by AG Grid when rendering floating filters and there isn't a floating filter
      * associated for this filter. This will happen if you create a custom filter and NOT a custom floating
      * filter. This is also used by the new filters tool panel to display the summary.
-     * The model given is not a copy: do not modify it.
      */
     getModelAsString?(model: TModel | null, source?: 'floating' | 'filterToolPanel'): string;
     /**
      * Optional: When using an apply button with the filter, this method will be called before the apply happens,
      * The returned model will be applied, allowing for any validation or updates to be performed.
-     * The model given is not a copy: to change it, return a new model rather than modifying it.
      */
     processModelToApply?(model: TModel | null): TModel | null;
     /** Optional: Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */
@@ -409,7 +405,7 @@ export interface IFilterParams<TData = any, TContext = any> extends BaseFilterPa
 }
 
 export interface FilterDisplayState<TModel = any, TState = any> {
-    /** The current filter model to be displayed in the UI. This is not a copy: do not modify it. */
+    /** The current filter model to be displayed in the UI. */
     model: TModel | null;
     /**
      * If there is additional UI state not represented in the filter model,
@@ -428,7 +424,7 @@ export interface FilterDisplayParams<
     TModel = any,
     TState = any,
 > extends SharedFilterParams<TData, TContext> {
-    /** The current applied filter model for the component. This is not a copy: do not modify it. */
+    /** The current applied filter model for the component. */
     model: TModel | null;
     /** The current state to display in the component. */
     state: FilterDisplayState<TModel, TState>;

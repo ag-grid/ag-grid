@@ -32,6 +32,6 @@ export interface IGetRowsParams<TData = any, TContext = any> extends AgGridCommo
     /** If doing server side sorting, contains the sort model */
     sortModel: SortModelItem[];
 
-    /** If doing server side filtering, contains the filter model. This is not a copy: do not modify it. */
+    /** If doing server side filtering, contains the filter model */
     filterModel: any;
 }
