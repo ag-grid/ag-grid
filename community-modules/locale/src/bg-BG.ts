@@ -807,6 +807,8 @@ export const AG_GRID_LOCALE_BG_BG = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: '„абсолютно низходящо“',
     ariaLabelDialog: 'Диалог',
     ariaLabelClose: 'Затвори',
+    ariaLabelMaximize: 'Увеличи',
+    ariaLabelRestore: 'Възстанови',
     ariaLabelColumnMenu: 'Меню на колона',
     ariaLabelColumnFilter: 'Филтър на колона',
     ariaLabelSelectField: 'Избор на поле',

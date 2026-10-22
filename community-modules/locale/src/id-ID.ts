@@ -823,6 +823,10 @@ export const AG_GRID_LOCALE_ID_ID = {
 
     ariaLabelClose: 'Tutup',
 
+    ariaLabelMaximize: 'Maksimalkan',
+
+    ariaLabelRestore: 'Pulihkan',
+
     ariaLabelColumnMenu: 'Menu Kolom',
     ariaLabelColumnFilter: 'Filter Kolom',
 

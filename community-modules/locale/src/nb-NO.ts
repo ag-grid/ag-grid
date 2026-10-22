@@ -803,6 +803,8 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolutt synkende',
     ariaLabelDialog: 'Dialog',
     ariaLabelClose: 'Lukk',
+    ariaLabelMaximize: 'Maksimer',
+    ariaLabelRestore: 'Gjenopprett',
     ariaLabelColumnMenu: 'Kolonnemeny',
     ariaLabelColumnFilter: 'Kolonnefilter',
     ariaLabelSelectField: 'Velg Felt',

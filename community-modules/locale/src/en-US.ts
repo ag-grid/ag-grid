@@ -807,6 +807,9 @@ export const AG_GRID_LOCALE_EN_US = {
 
     ariaLabelDialog: 'Dialog',
     ariaLabelClose: 'Close',
+    // dialog title bar toggle: enlarges the dialog to fill the grid, then returns it to its previous size
+    ariaLabelMaximize: 'Maximize',
+    ariaLabelRestore: 'Restore',
 
     ariaLabelColumnMenu: 'Column Menu',
     ariaLabelColumnFilter: 'Column Filter',

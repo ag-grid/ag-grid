@@ -812,6 +812,8 @@ export const AG_GRID_LOCALE_FR_FR = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'descendant absolu',
     ariaLabelDialog: 'Dialogue',
     ariaLabelClose: 'Fermer',
+    ariaLabelMaximize: 'Agrandir',
+    ariaLabelRestore: 'Restaurer',
     ariaLabelColumnMenu: 'Menu de colonne',
     ariaLabelColumnFilter: 'Filtre de colonne',
     ariaLabelSelectField: 'Champ de sélection',

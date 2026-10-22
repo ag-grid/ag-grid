@@ -801,6 +801,8 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'ירידה מוחלטת',
     ariaLabelDialog: 'דיאלוג',
     ariaLabelClose: 'סגור',
+    ariaLabelMaximize: 'הגדל',
+    ariaLabelRestore: 'שחזר',
     ariaLabelColumnMenu: 'תפריט עמודה',
     ariaLabelColumnFilter: 'מסנן עמודה',
     ariaLabelSelectField: 'שדה בחירה',

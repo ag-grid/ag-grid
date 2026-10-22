@@ -810,6 +810,8 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolut absteigend',
     ariaLabelDialog: 'Dialog',
     ariaLabelClose: 'Schließen',
+    ariaLabelMaximize: 'Maximieren',
+    ariaLabelRestore: 'Wiederherstellen',
     ariaLabelColumnMenu: 'Spaltenmenü',
     ariaLabelColumnFilter: 'Spaltenfilter',
     ariaLabelSelectField: 'Feld auswählen',

@@ -823,6 +823,10 @@ export const AG_GRID_LOCALE_RU_RU = {
 
     ariaLabelClose: 'Закрыть',
 
+    ariaLabelMaximize: 'Развернуть',
+
+    ariaLabelRestore: 'Восстановить',
+
     ariaLabelColumnMenu: 'Меню столбца',
     ariaLabelColumnFilter: 'Фильтр столбца',
 

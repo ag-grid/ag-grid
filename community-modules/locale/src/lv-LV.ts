@@ -822,6 +822,10 @@ export const AG_GRID_LOCALE_LV_LV = {
 
     ariaLabelClose: 'Aizvērt',
 
+    ariaLabelMaximize: 'Maksimizēt',
+
+    ariaLabelRestore: 'Atjaunot',
+
     ariaLabelColumnMenu: 'Kolonnas izvēlne',
     ariaLabelColumnFilter: 'Kolonnas filtrs',
 

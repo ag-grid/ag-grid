@@ -801,6 +801,8 @@ export const AG_GRID_LOCALE_ZH_HK = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: '「絕對降序」',
     ariaLabelDialog: '對話框',
     ariaLabelClose: '關閉',
+    ariaLabelMaximize: '最大化',
+    ariaLabelRestore: '還原',
     ariaLabelColumnMenu: '列選單',
     ariaLabelColumnFilter: '列篩選',
     ariaLabelSelectField: '選擇欄位',

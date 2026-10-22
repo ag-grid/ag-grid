@@ -820,6 +820,10 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
 
     ariaLabelClose: 'Zatvori',
 
+    ariaLabelMaximize: 'Maksimizuj',
+
+    ariaLabelRestore: 'Vrati',
+
     ariaLabelColumnMenu: 'Meni kolone',
     ariaLabelColumnFilter: 'Filter kolone',
 

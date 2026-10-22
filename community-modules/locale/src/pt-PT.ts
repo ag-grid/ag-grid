@@ -807,6 +807,8 @@ export const AG_GRID_LOCALE_PT_PT = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'descendente absoluto',
     ariaLabelDialog: 'Diálogo',
     ariaLabelClose: 'Fechar',
+    ariaLabelMaximize: 'Maximizar',
+    ariaLabelRestore: 'Restaurar',
     ariaLabelColumnMenu: 'Menu da Coluna',
     ariaLabelColumnFilter: 'Filtro da Coluna',
     ariaLabelSelectField: 'Selecionar Campo',

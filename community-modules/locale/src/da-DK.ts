@@ -805,6 +805,8 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolut faldende',
     ariaLabelDialog: 'Dialog',
     ariaLabelClose: 'Luk',
+    ariaLabelMaximize: 'Maksimer',
+    ariaLabelRestore: 'Gendan',
     ariaLabelColumnMenu: 'Kolonnemenu',
     ariaLabelColumnFilter: 'Kolonnefilter',
     ariaLabelSelectField: 'Vælg felt',

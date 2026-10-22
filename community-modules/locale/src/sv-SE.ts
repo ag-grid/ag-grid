@@ -806,6 +806,8 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolut fallande',
     ariaLabelDialog: 'Dialogruta',
     ariaLabelClose: 'Stäng',
+    ariaLabelMaximize: 'Maximera',
+    ariaLabelRestore: 'Återställ',
     ariaLabelColumnMenu: 'Kolumnmeny',
     ariaLabelColumnFilter: 'Kolumnfilter',
     ariaLabelSelectField: 'Välj fält',

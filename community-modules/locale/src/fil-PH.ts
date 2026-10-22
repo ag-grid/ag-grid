@@ -828,6 +828,10 @@ export const AG_GRID_LOCALE_FIL_PH = {
 
     ariaLabelClose: 'Isara',
 
+    ariaLabelMaximize: 'I-maximize',
+
+    ariaLabelRestore: 'Ibalik',
+
     ariaLabelColumnMenu: 'Menu ng Column',
     ariaLabelColumnFilter: 'Filter ng Column',
 

@@ -807,6 +807,8 @@ export const AG_GRID_LOCALE_PL_PL = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'sortowanie absolutne malejąco',
     ariaLabelDialog: 'Dialog',
     ariaLabelClose: 'Zamknij',
+    ariaLabelMaximize: 'Maksymalizuj',
+    ariaLabelRestore: 'Przywróć',
     ariaLabelColumnMenu: 'Menu kolumny',
     ariaLabelColumnFilter: 'Filtr kolumny',
     ariaLabelSelectField: 'Wybierz pole',

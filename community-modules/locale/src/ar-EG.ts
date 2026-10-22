@@ -801,6 +801,8 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'تنازلي مطلق',
     ariaLabelDialog: 'حوار',
     ariaLabelClose: 'إغلاق',
+    ariaLabelMaximize: 'تكبير',
+    ariaLabelRestore: 'استعادة',
     ariaLabelColumnMenu: 'قائمة الأعمدة',
     ariaLabelColumnFilter: 'تصفية العمود',
     ariaLabelSelectField: 'اختيار الحقل',

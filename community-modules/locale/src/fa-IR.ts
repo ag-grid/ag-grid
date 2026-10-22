@@ -804,6 +804,8 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'نزولی مطلق',
     ariaLabelDialog: 'گفتگو',
     ariaLabelClose: 'بستن',
+    ariaLabelMaximize: 'بزرگ کردن',
+    ariaLabelRestore: 'بازگرداندن',
     ariaLabelColumnMenu: 'منوی ستون',
     ariaLabelColumnFilter: 'فیلتر ستون',
     ariaLabelSelectField: 'انتخاب فیلد',

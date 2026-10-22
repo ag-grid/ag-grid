@@ -819,6 +819,10 @@ export const AG_GRID_LOCALE_TH_TH = {
 
     ariaLabelClose: 'ปิด',
 
+    ariaLabelMaximize: 'ขยายใหญ่สุด',
+
+    ariaLabelRestore: 'คืนค่า',
+
     ariaLabelColumnMenu: 'เมนูคอลัมน์',
     ariaLabelColumnFilter: 'ตัวกรองคอลัมน์',
 

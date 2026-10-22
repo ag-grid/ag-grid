@@ -805,6 +805,8 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absoluut aflopend',
     ariaLabelDialog: 'Dialoog',
     ariaLabelClose: 'Sluiten',
+    ariaLabelMaximize: 'Maximaliseren',
+    ariaLabelRestore: 'Herstellen',
     ariaLabelColumnMenu: 'Kolommenu',
     ariaLabelColumnFilter: 'Kolomfilter',
     ariaLabelSelectField: 'Selectievak',

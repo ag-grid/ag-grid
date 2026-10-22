@@ -824,6 +824,10 @@ export const AG_GRID_LOCALE_MS_MY = {
 
     ariaLabelClose: 'Tutup',
 
+    ariaLabelMaximize: 'Maksimumkan',
+
+    ariaLabelRestore: 'Pulihkan',
+
     ariaLabelColumnMenu: 'Menu Lajur',
     ariaLabelColumnFilter: 'Penapis Lajur',
 

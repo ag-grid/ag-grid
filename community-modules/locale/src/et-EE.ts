@@ -820,6 +820,10 @@ export const AG_GRID_LOCALE_ET_EE = {
 
     ariaLabelClose: 'Sulge',
 
+    ariaLabelMaximize: 'Maksimeeri',
+
+    ariaLabelRestore: 'Taasta',
+
     ariaLabelColumnMenu: 'Veeru menüü',
     ariaLabelColumnFilter: 'Veeru filter',
 

@@ -807,6 +807,8 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'mutlak azalan',
     ariaLabelDialog: 'Diyalog',
     ariaLabelClose: 'Kapat',
+    ariaLabelMaximize: 'Büyüt',
+    ariaLabelRestore: 'Geri yükle',
     ariaLabelColumnMenu: 'Sütun Menüsü',
     ariaLabelColumnFilter: 'Sütun Filtresi',
     ariaLabelSelectField: 'Alan Seç',

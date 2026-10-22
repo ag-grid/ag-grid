@@ -803,6 +803,8 @@ export const AG_GRID_LOCALE_SK_SK = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolútne zostupne',
     ariaLabelDialog: 'Dialóg',
     ariaLabelClose: 'Zavrieť',
+    ariaLabelMaximize: 'Maximalizovať',
+    ariaLabelRestore: 'Obnoviť',
     ariaLabelColumnMenu: 'Ponuka stĺpcov',
     ariaLabelColumnFilter: 'Filter stĺpcov',
     ariaLabelSelectField: 'Vyberte pole',

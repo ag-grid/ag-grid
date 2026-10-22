@@ -803,6 +803,8 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'giảm dần tuyệt đối',
     ariaLabelDialog: 'Hộp thoại',
     ariaLabelClose: 'Đóng',
+    ariaLabelMaximize: 'Phóng to',
+    ariaLabelRestore: 'Khôi phục',
     ariaLabelColumnMenu: 'Menu Cột',
     ariaLabelColumnFilter: 'Bộ Lọc Cột',
     ariaLabelSelectField: 'Chọn Trường',
