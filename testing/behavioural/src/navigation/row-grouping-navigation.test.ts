@@ -1,4 +1,6 @@
-import { GridColumns, GridRows, TestGridsManager } from 'ag-test-utils';
+import { waitFor } from '@testing-library/dom';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, GROUP_AUTO_COLUMN_ID, KeyCode, RenderApiModule } from 'ag-grid-community';
@@ -200,5 +202,89 @@ describe('Row Grouping Navigation', () => {
         dispatchKeyDown(KeyCode.TAB);
         expect(getFocusedRowIndex(api)).toBe(1);
         expect(getFocusedColId(api)).toBe(GROUP_AUTO_COLUMN_ID);
+    });
+
+    describe('sticky group rows', () => {
+        interface StickyRowData {
+            id: string;
+            year: string;
+            country: string;
+            value: number;
+        }
+
+        const ROW_HEIGHT = 42;
+
+        beforeAll(() => {
+            // happy-dom offset dimensions are 0 by default, which disables sticky rows entirely.
+            mockGridLayout.useRealOffsetDimensions = true;
+        });
+
+        afterAll(() => {
+            mockGridLayout.useRealOffsetDimensions = false;
+        });
+
+        function stickyTopRowIndexes(api: GridApi<StickyRowData>): string[] {
+            const container = TestGridsManager.getHTMLElement(api)!.querySelector(
+                '.ag-grid-sticky-top-rows-container'
+            )!;
+            return Array.from(container.querySelectorAll('.ag-row')).map((row) => row.getAttribute('row-index') ?? '');
+        }
+
+        // Group rows: 0 = 2008, 1 = A, 5 = B, 9 = C (40 leaves, so scrolling into them sticks 2008 and C).
+        async function createScrolledStickyGrid(): Promise<{ api: GridApi<StickyRowData>; viewport: HTMLElement }> {
+            const stickyRowData: StickyRowData[] = [];
+            const leafCounts: [string, number][] = [
+                ['A', 3],
+                ['B', 3],
+                ['C', 40],
+            ];
+            for (const [country, count] of leafCounts) {
+                for (let i = 0; i < count; i++) {
+                    stickyRowData.push({ id: `${country}-${i}`, year: '2008', country, value: i });
+                }
+            }
+
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { field: 'year', rowGroup: true, hide: true },
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: 'value', colId: 'value' },
+                ],
+                animateRows: false,
+                groupDefaultExpanded: -1,
+                getRowId: (params) => params.data.id,
+                rowData: stickyRowData,
+            } as GridOptions<StickyRowData>);
+            await asyncSetTimeout(0);
+
+            const viewport = TestGridsManager.getHTMLElement(api)!.querySelector<HTMLElement>('.ag-grid-viewport')!;
+            viewport.scrollTop = 15 * ROW_HEIGHT;
+            await waitFor(() => expect(stickyTopRowIndexes(api)).toEqual(['9', '0']));
+
+            return { api, viewport };
+        }
+
+        test('up arrow from a sticky child group row scrolls up to the row above it', async () => {
+            const { api, viewport } = await createScrolledStickyGrid();
+            api.setFocusedCell(9, 'value');
+
+            dispatchKeyDown(KeyCode.UP);
+
+            expect(getFocusedRowIndex(api)).toBe(8);
+            await waitFor(() => expect(viewport.scrollTop).toBeLessThanOrEqual(8 * ROW_HEIGHT));
+        });
+
+        test('down arrow from a sticky parent group row moves to the sticky child group row without scrolling', async () => {
+            const { api, viewport } = await createScrolledStickyGrid();
+            const scrollTop = viewport.scrollTop;
+            api.setFocusedCell(0, 'value');
+
+            dispatchKeyDown(KeyCode.DOWN);
+
+            expect(getFocusedRowIndex(api)).toBe(9);
+            await asyncSetTimeout(0);
+            expect(viewport.scrollTop).toBe(scrollTop);
+            expect(stickyTopRowIndexes(api)).toEqual(['9', '0']);
+        });
     });
 });
