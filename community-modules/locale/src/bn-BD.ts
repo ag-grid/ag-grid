@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_BN_BD = {
     clearFilter: 'পরিষ্কার করুন',
     cancelFilter: 'বাতিল করুন',
     cancelColumnToolPanel: 'বাতিল করুন',
+    resetColumnToolPanel: 'রিসেট করুন',
 
     // Filter Titles
     textFilter: 'টেক্সট ফিল্টার',
@@ -117,6 +118,7 @@ export const AG_GRID_LOCALE_BN_BD = {
     addFilterCard: 'ফিল্টার যোগ করুন',
     agTextColumnFilterDisplayName: 'সাধারণ ফিল্টার',
     agNumberColumnFilterDisplayName: 'সাধারণ ফিল্টার',
+    agBigIntColumnFilterDisplayName: 'সাধারণ ফিল্টার',
     agDateColumnFilterDisplayName: 'সাধারণ ফিল্টার',
     agSetColumnFilterDisplayName: 'নির্বাচন ফিল্টার',
     agMultiColumnFilterDisplayName: 'কম্বো ফিল্টার',
@@ -335,6 +337,10 @@ export const AG_GRID_LOCALE_BN_BD = {
     enabled: 'সক্রিয়',
 
     // Menu
+    moveLeft: 'বামে সরান',
+    moveRight: 'ডানে সরান',
+    moveUp: 'উপরে সরান',
+    moveDown: 'নিচে সরান',
     pinColumn: 'কলাম পিন করুন',
     pinLeft: 'বামে পিন করুন',
     pinRight: 'ডানে পিন করুন',
@@ -750,6 +756,7 @@ export const AG_GRID_LOCALE_BN_BD = {
     ariaFilterList: 'ফিল্টার তালিকা',
     ariaFilterToValue: 'মান পর্যন্ত ফিল্টার করুন',
     ariaFilterValue: 'ফিল্টার মান',
+    ariaNotInCurrentData: 'বর্তমান ডেটায় নেই',
     ariaFilterMenuOpen: 'ফিল্টার মেনু খুলুন',
     ariaFilteringOperator: 'ফিল্টারিং অপারেটর',
     ariaHidden: 'লুকানো',
@@ -771,6 +778,7 @@ export const AG_GRID_LOCALE_BN_BD = {
     ariaRowSelect: 'এই সারি নির্বাচন করতে SPACE চাপুন',
     ariaRowSelectionDisabled: 'এই সারির জন্য সারি নির্বাচন নিষ্ক্রিয় করা আছে',
     ariaSearch: 'অনুসন্ধান করুন',
+    ariaSortPriority: 'সাজানোর অগ্রাধিকার ${count}টির মধ্যে ${priority}',
     ariaSortableColumn: 'সাজাতে ENTER চাপুন',
     ariaSortableColumnWithCellSelection: 'সাজাতে ALT ENTER চাপুন',
     ariaToggleVisibility: 'দৃশ্যমানতা টগল করতে SPACE চাপুন',
@@ -908,9 +916,11 @@ export const AG_GRID_LOCALE_BN_BD = {
     columnHeaderEditCancel: 'বাতিল করুন',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'কোনো উপযুক্ত কলাম পাওয়া যায়নি।',
     calculatedColumn: 'গণনাকৃত কলাম',
     calculatedColumnAdd: 'গণনাকৃত কলাম যোগ করুন',
     calculatedColumnEdit: 'গণনাকৃত কলাম সম্পাদনা করুন',
+    calculatedColumnView: 'গণনাকৃত কলাম দেখুন',
     calculatedColumnRemove: 'গণনাকৃত কলাম সরান',
     calculatedColumnTitle: 'শিরোনাম',
     calculatedColumnType: 'ধরন',
@@ -925,6 +935,7 @@ export const AG_GRID_LOCALE_BN_BD = {
     calculatedColumnExpressionAmbiguousReference:
         'অস্পষ্ট কলাম রেফারেন্স "${variable}"। কলাম তালিকা বা আরও নির্দিষ্ট গ্রুপ পথ ব্যবহার করুন।',
     calculatedColumnExpressionUnknownReference: 'অজানা কলাম রেফারেন্স "${variable}"।',
+    calculatedColumnExpressionRestrictedReference: 'এই এক্সপ্রেশনে "${variable}" কলামটি ব্যবহার করা যাবে না।',
     calculatedColumnExpressionEmpty: 'একটি এক্সপ্রেশন লিখুন',
     calculatedColumnTitleEmpty: 'একটি শিরোনাম লিখুন',
     calculatedColumnApply: 'প্রয়োগ করুন',

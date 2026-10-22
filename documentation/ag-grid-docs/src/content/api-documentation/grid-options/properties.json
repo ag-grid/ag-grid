@@ -74,6 +74,12 @@
                 "url": "./column-menu/#customising-the-menu-items"
             }
         },
+        "getColumnDropZoneMenuItems": {
+            "more": {
+                "name": "Drop Zone Menus",
+                "url": "./tool-panel-columns-customising/#drop-zone-menus"
+            }
+        },
         "columnMenu": {
             "more": {
                 "name": "Column Menu",
@@ -129,7 +135,12 @@
                 "url": "./clipboard/#disabling-cut"
             }
         },
-        "suppressLastEmptyLineOnPaste": {},
+        "suppressLastEmptyLineOnPaste": {
+            "more": {
+                "name": "Trailing Empty Lines",
+                "url": "./clipboard/#trailing-empty-lines"
+            }
+        },
         "suppressClipboardPaste": {
             "more": {
                 "name": "Disabling Paste",
@@ -222,6 +233,7 @@
             }
         },
         "calculatedColumns": {
+            "description": "Enables Calculated Columns. Set to `true` for defaults or provide options to configure the dialog. Disabled when omitted or `false`.",
             "more": {
                 "name": "Calculated Columns",
                 "url": "./calculated-columns/"
@@ -963,8 +975,7 @@
                 "name": "Triggering Value Change Detection",
                 "url": "./change-detection/#triggering-value-change-detection"
             }
-        },
-        "debug": {}
+        }
     },
     "overlays": {
         "meta": {
@@ -1315,7 +1326,7 @@
         "functionsReadOnly": {
             "more": {
                 "name": "Read Only Functions",
-                "url": "./tool-panel-columns/#read-only-functions"
+                "url": "./tool-panel-columns-configuration/#read-only-functions"
             }
         },
         "removePivotHeaderRowWhenSingleValueColumn": {

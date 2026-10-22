@@ -39,7 +39,6 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
 
     // only keep 2 blocks of rows (default is keep all rows)
     maxBlocksInCache: 2,
-    debug: true,
 };
 
 // setup the grid after the page has finished loading

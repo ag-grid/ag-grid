@@ -344,7 +344,7 @@
                 },
                 {
                     "question": "What is the difference between AG Grid Community and Enterprise?",
-                    "answer": "[AG Grid Community](./getting-started/) is free and open-source with powerful core features. [AG Grid Enterprise](/license-pricing/) adds advanced capabilities like Row Grouping, Server-Side Row Model, AI Toolkit, Integrated Charts, Master/Detail, and dedicated support."
+                    "answer": "[AG Grid Community](./getting-started/) is free and open-source with powerful core features. [AG Grid Enterprise](./community-vs-enterprise/) adds advanced capabilities like Row Grouping, Server-Side Row Model, AI Toolkit, Integrated Charts, Master/Detail, and dedicated support."
                 },
                 {
                     "question": "How much does AG Grid Enterprise cost?",

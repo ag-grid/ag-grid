@@ -6,9 +6,7 @@ let isSafari: boolean;
 let isFirefox: boolean;
 let isMacOs: boolean;
 let isIOS: boolean;
-let invisibleScrollbar: boolean;
 let realCssEngine: boolean | undefined;
-let browserScrollbarWidth: number;
 let maxDivHeight: number;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -124,50 +122,4 @@ export function _getMaxDivHeight(): number {
     div.remove();
     maxDivHeight = res;
     return res;
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _getScrollbarWidth(): number | null {
-    if (browserScrollbarWidth == null) {
-        initScrollbarWidthAndVisibility();
-    }
-    return browserScrollbarWidth;
-}
-
-function initScrollbarWidthAndVisibility(): void {
-    const body = document.body;
-    const div = document.createElement('div');
-
-    div.style.width = div.style.height = '100px';
-    div.style.opacity = '0';
-    div.style.overflow = 'scroll';
-    (div.style as any).msOverflowStyle = 'scrollbar'; // needed for WinJS apps
-    div.style.position = 'absolute';
-
-    body.appendChild(div);
-
-    let width: number | null = div.offsetWidth - div.clientWidth;
-
-    // if width is 0 and client width is 0, means the DOM isn't ready
-    if (width === 0 && div.clientWidth === 0) {
-        width = null;
-    }
-
-    // remove div
-    if (div.parentNode) {
-        div.remove();
-    }
-
-    if (width != null) {
-        browserScrollbarWidth = width;
-        invisibleScrollbar = width === 0;
-    }
-}
-
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _isInvisibleScrollbar(): boolean {
-    if (invisibleScrollbar == null) {
-        initScrollbarWidthAndVisibility();
-    }
-    return invisibleScrollbar;
 }

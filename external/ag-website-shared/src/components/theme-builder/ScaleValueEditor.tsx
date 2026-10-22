@@ -1,4 +1,4 @@
-import type { ScaleValue } from 'ag-grid-community';
+import type { ScaleValue } from 'ag-stack';
 
 import { stripFloatingPointErrors } from '../../theming/utils';
 import { FormattedInput } from './FormattedInput';

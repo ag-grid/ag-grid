@@ -1,31 +1,38 @@
 import { _debounce, _getDocument, _getVerticalPaddingAndBorder, _observeResize } from 'ag-stack';
 
+import type { VisibleColsService } from '../../columns/visibleColsService';
 import type { NamedBean } from '../../context/bean';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
 import type { RowNode } from '../../entities/rowNode';
-import { _getRowHeightForNode, _isClientSideLoadingRow } from '../../gridOptionsUtils';
+import { _getConfiguredRowHeight, _getRowHeightForNode, _isClientSideLoadingRow } from '../../gridOptionsUtils';
 import type { IClientSideRowModel } from '../../interfaces/iClientSideRowModel';
 import type { IServerSideRowModel } from '../../interfaces/iServerSideRowModel';
 import type { CellCtrl } from '../cell/cellCtrl';
 import type { RowCtrl } from './rowCtrl';
+import { getRowTypeForNode } from './rowCtrl';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowAutoHeightService extends BeanStub implements NamedBean {
     beanName = 'rowAutoHeight' as const;
 
+    private visibleCols: VisibleColsService;
+
+    public wireBeans(beans: BeanCollection): void {
+        this.visibleCols = beans.visibleCols;
+    }
+
     /** A displayed column has `colDef.autoHeight`. */
     public get active(): boolean {
-        return this.beans.visibleCols.autoHeightCols.length !== 0;
+        return this.visibleCols.autoHeightCols.length !== 0;
     }
-    private wasEverActive = false;
+    /** A cell was measured since the last pass without auto-height columns, so that pass gives rows their height back. */
+    private measured = false;
 
-    /**
-     * If row height has been active, request a refresh of the row heights.
-     */
+    /** Requests a refresh of the row heights once a cell has been measured. */
     public requestCheckAutoHeight(): void {
-        if (!this.wasEverActive) {
+        if (!this.measured) {
             return;
         }
 
@@ -34,17 +41,27 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
 
     private readonly _debouncedCalculateRowHeights = _debounce(this, this.calculateRowHeights.bind(this), 1);
     private calculateRowHeights() {
-        const { visibleCols, rowModel, pinnedRowModel } = this.beans;
-        const displayedAutoHeightCols = visibleCols.autoHeightCols;
+        const displayedAutoHeightCols = this.visibleCols.autoHeightCols;
+        if (displayedAutoHeightCols.length === 0) {
+            this.releaseRowHeights();
+            return;
+        }
 
+        const { rowModel, pinnedRowModel } = this.beans;
         let anyNodeChanged = false;
-        const updateDisplayedRowHeights = (row: RowNode) => {
+        const updateRowHeight = (row: RowNode): void => {
             if (_isClientSideLoadingRow(this.gos, row)) {
                 return;
             }
 
-            const newRowHeight = this.getRowAutoHeight(row, displayedAutoHeightCols);
-            if (newRowHeight == null || newRowHeight === row.rowHeight) {
+            const contentHeight = this.getRowContentHeight(row, displayedAutoHeightCols);
+            if (contentHeight === undefined) {
+                return;
+            }
+            // kept for when the row is out of view; a span's last row takes its share of the span measured above it
+            row.__autoContentHeight = contentHeight;
+            const newRowHeight = Math.max(contentHeight, _getConfiguredRowHeight(this.beans, row).height);
+            if (newRowHeight === row.rowHeight) {
                 return;
             }
 
@@ -52,16 +69,71 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
             anyNodeChanged = true;
         };
 
-        pinnedRowModel?.forEachPinnedRow?.('top', updateDisplayedRowHeights);
-        pinnedRowModel?.forEachPinnedRow?.('bottom', updateDisplayedRowHeights);
-        rowModel.forEachDisplayedNode?.(updateDisplayedRowHeights);
+        pinnedRowModel?.forEachPinnedRow?.('top', updateRowHeight);
+        pinnedRowModel?.forEachPinnedRow?.('bottom', updateRowHeight);
+        rowModel.forEachDisplayedNode?.(updateRowHeight);
 
         if (anyNodeChanged) {
             (rowModel as IClientSideRowModel | IServerSideRowModel).onRowHeightChanged?.();
         }
     }
 
-    private getRowAutoHeight(row: RowNode, displayedAutoHeightCols: AgColumn[]): number | undefined {
+    /** Gives every row auto height sized its configured height back, rows out of view included. */
+    private releaseRowHeights(): void {
+        this.measured = false;
+        const { rowModel, pinnedRowModel } = this.beans;
+        let anyNodeChanged = false;
+        const releaseRowHeight = (row: RowNode | null | undefined): void => {
+            if (row?.__autoContentHeight === undefined) {
+                return;
+            }
+            // so a row reached by more than one walk below is released once
+            row.__autoContentHeight = undefined;
+            const rowHeight = _getRowHeightForNode(this.beans, row).height;
+            if (rowHeight !== row.rowHeight) {
+                row.setRowHeight(rowHeight);
+                anyNodeChanged = true;
+            }
+        };
+        // a row's footer and its pinned copy are walked through it, so they are reached hidden too
+        const releaseNodeRowHeights = (row: RowNode): void => {
+            releaseRowHeight(row);
+            releaseRowHeight(row.sibling);
+            releaseRowHeight(row.pinnedSibling);
+        };
+
+        pinnedRowModel?.forEachPinnedRow?.('top', releaseRowHeight);
+        pinnedRowModel?.forEachPinnedRow?.('bottom', releaseRowHeight);
+        rowModel.forEachDisplayedNode?.(releaseRowHeight);
+        rowModel.forEachNode(releaseNodeRowHeights);
+
+        if (anyNodeChanged) {
+            (rowModel as IClientSideRowModel | IServerSideRowModel).onRowHeightChanged?.();
+        }
+    }
+
+    /**
+     * The height auto height gives `row`, its content height raised to the configured one: measured, or for a row out
+     * of view the one it was last sized to. Undefined with no auto-height column displayed or nothing to go on.
+     */
+    public getMeasuredRowHeight(row: RowNode): number | undefined {
+        const displayedAutoHeightCols = this.visibleCols.autoHeightCols;
+        if (displayedAutoHeightCols.length === 0) {
+            return undefined;
+        }
+        let contentHeight = this.getRowContentHeight(row, displayedAutoHeightCols);
+        if (contentHeight === undefined) {
+            contentHeight = row.__autoContentHeight;
+            // a row since turned full width has no auto-height cells, so the height it was sized to no longer applies
+            if (contentHeight === undefined || getRowTypeForNode(this.beans, row) !== 'Normal') {
+                return undefined;
+            }
+        }
+        return Math.max(contentHeight, _getConfiguredRowHeight(this.beans, row).height);
+    }
+
+    /** The height the auto-height cells of `row` need, undefined while one of them is unmeasured. */
+    private getRowContentHeight(row: RowNode, displayedAutoHeightCols: AgColumn[]): number | undefined {
         const beans = this.beans;
         let cellsHeight = 0;
         for (let i = 0, len = displayedAutoHeightCols.length; i < len; ++i) {
@@ -72,7 +144,10 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
             }
 
             if (cellHeight === undefined) {
-                if (beans.visibleCols.colSpanActive && isColCovered(beans.rowRenderer.getRowCtrlByNode(row), col)) {
+                if (
+                    this.visibleCols.colSpanColCount !== 0 &&
+                    isColCovered(beans.rowRenderer.getRowCtrlByNode(row), col)
+                ) {
                     continue;
                 }
                 return;
@@ -81,8 +156,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
             cellsHeight = Math.max(cellHeight, cellsHeight);
         }
 
-        // last, so a row still to be measured (most of them) never asks `getRowHeight`
-        return Math.max(cellsHeight, _getRowHeightForNode(beans, row).height);
+        return cellsHeight;
     }
 
     /**
@@ -101,13 +175,14 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         if (cellHeight == undefined) {
             delete autoHeights[colId];
             // only column spanning skips a missing measurement, so only then can the row shrink
-            if (previousCellHeight !== undefined && this.beans.visibleCols.colSpanActive) {
+            if (previousCellHeight !== undefined && this.visibleCols.colSpanColCount !== 0) {
                 this.requestCheckAutoHeight();
             }
             return;
         }
 
         autoHeights[colId] = cellHeight;
+        this.measured = true;
         if (previousCellHeight !== cellHeight) {
             this.requestCheckAutoHeight();
         }
@@ -124,8 +199,6 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         if (_isClientSideLoadingRow(this.gos, cellCtrl.rowNode) || !cellCtrl.column.isAutoHeight() || !eCellWrapper) {
             return false;
         }
-
-        this.wasEverActive = true;
 
         const eParentCell = eCellWrapper.parentElement!;
         const { rowNode, column } = cellCtrl;
@@ -203,7 +276,7 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
 
 /** Whether `rowCtrl`'s row is at least as tall as each of its centre auto-height cells. */
 const isRowMeasured = (beans: BeanCollection, rowCtrl: RowCtrl): boolean => {
-    const { autoHeightCols, colSpanActive } = beans.visibleCols;
+    const { autoHeightCols, colSpanColCount } = beans.visibleCols;
     const rowNode = rowCtrl.rowNode;
     const rowHeight = rowNode.rowHeight!;
     for (let i = 0, len = autoHeightCols.length; i < len; ++i) {
@@ -213,7 +286,7 @@ const isRowMeasured = (beans: BeanCollection, rowCtrl: RowCtrl): boolean => {
         }
         const cellHeight = getCellAutoHeight(beans, col, rowNode);
         if (cellHeight === undefined) {
-            if (!colSpanActive || !isColCovered(rowCtrl, col)) {
+            if (colSpanColCount === 0 || !isColCovered(rowCtrl, col)) {
                 return false;
             }
         } else if (cellHeight !== null && rowHeight < cellHeight) {

@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { ALL_SEVERITIES, GridRows, TestGridsManager, waitForEvent } from 'ag-test-utils';
+import { ALL_SEVERITIES, GridRows, TestGridsManager, waitForEvent, waitForNoLoadingRows } from 'ag-test-utils';
 
 import type { ColDef, GridOptions, IServerSideGetRowsRequest } from 'ag-grid-community';
 import { PaginationModule, RowAutoHeightModule, ScrollApiModule, enableDevValidations } from 'ag-grid-community';
@@ -103,6 +103,166 @@ describe('SSRM block loading', () => {
             [0, 100],
             [200, 300],
         ]);
+    });
+
+    test('a synchronous datasource fills newly rendered rows before the browser can paint their skeletons', async () => {
+        const totalRows = 2000;
+        const rowData = Array.from({ length: totalRows }, (_, i) => ({ id: i, value: `Row ${i}` }));
+
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }, { field: 'value' }],
+            rowModelType: 'serverSide',
+            cacheBlockSize: 100,
+            pagination: true,
+            paginationPageSize: 100,
+            getRowId: (params) => String(params.data.id),
+            serverSideDatasource: {
+                getRows: (params) => {
+                    const slice = rowData.slice(params.request.startRow, params.request.endRow);
+                    params.success({ rowData: slice, rowCount: totalRows });
+                },
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        api.paginationGoToPage(15);
+        const rendered = api.getDisplayedRowAtIndex(1500)!;
+        expect({ stub: rendered.stub, data: rendered.data }).toEqual({ stub: true, data: undefined });
+
+        // a zero-delay timeout only runs once the microtask queue is drained, the point at which the browser may paint
+        await new Promise((resolve) => setTimeout(resolve));
+
+        const loaded = api.getDisplayedRowAtIndex(1500)!;
+        expect({ stub: loaded.stub, data: loaded.data }).toEqual({ stub: false, data: rowData[1500] });
+    });
+
+    test('the first request waits for onGridReady, including a framework re-emitting it in a microtask', async () => {
+        const calls: string[] = [];
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }],
+            rowModelType: 'serverSide',
+            onGridReady: () => {
+                calls.push('onGridReady');
+                // framework wrappers such as Angular's emit their gridReady output from a promise callback
+                void Promise.resolve().then(() => calls.push('re-emitted onGridReady'));
+            },
+            serverSideDatasource: {
+                getRows: (params) => {
+                    calls.push('getRows');
+                    params.success({ rowData: [{ id: 0 }], rowCount: 1 });
+                },
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+
+        expect(calls).toEqual(['onGridReady', 're-emitted onGridReady', 'getRows']);
+    });
+
+    test.each([0, 10])(
+        'running fake timers synchronously loads every rendered block from a synchronous datasource (debounce %s)',
+        (blockLoadDebounceMillis) => {
+            const rowData = Array.from({ length: 30 }, (_, i) => ({ id: i }));
+            const requests: [number, number][] = [];
+            vi.useFakeTimers();
+            try {
+                const api = gridsManager.createGrid(null, {
+                    columnDefs: [{ field: 'id' }],
+                    rowModelType: 'serverSide',
+                    cacheBlockSize: 10,
+                    blockLoadDebounceMillis,
+                    serverSideDatasource: {
+                        getRows: (params) => {
+                            const { startRow = 0, endRow = rowData.length } = params.request;
+                            requests.push([startRow, endRow]);
+                            params.success({ rowData: rowData.slice(startRow, endRow), rowCount: rowData.length });
+                        },
+                    },
+                });
+                vi.runAllTimers();
+
+                expect(requests).toEqual([
+                    [0, 10],
+                    [10, 20],
+                    [20, 30],
+                ]);
+                expect(api.getDisplayedRowAtIndex(25)?.data).toEqual({ id: 25 });
+            } finally {
+                vi.useRealTimers();
+            }
+        }
+    );
+
+    test.each([
+        ['synchronous', (callback: () => void) => callback()],
+        ['microtask', (callback: () => void) => queueMicrotask(callback)],
+        ['asynchronous', (callback: () => void) => setTimeout(callback)],
+    ])('a %s datasource refreshes one block per task after the rendered rows', async (_, respond) => {
+        const rowData = Array.from({ length: 30 }, (_, i) => ({ id: i }));
+        const requests: [number, number][] = [];
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }],
+            rowModelType: 'serverSide',
+            cacheBlockSize: 10,
+            maxConcurrentDatasourceRequests: -1,
+            getRowId: (params) => String(params.data.id),
+            serverSideDatasource: {
+                getRows: (params) => {
+                    const { startRow = 0, endRow = rowData.length } = params.request;
+                    requests.push([startRow, endRow]);
+                    respond(() =>
+                        params.success({ rowData: rowData.slice(startRow, endRow), rowCount: rowData.length })
+                    );
+                },
+            },
+        });
+        await waitForEvent('firstDataRendered', api);
+        // pull every block into the cache
+        for (let i = 0; i < rowData.length; i++) {
+            api.getDisplayedRowAtIndex(i);
+        }
+        await waitFor(() => expect(requests).toHaveLength(3));
+        await waitForNoLoadingRows(api);
+        // start the refresh in a fresh task, as a user action would
+        await new Promise((resolve) => setTimeout(resolve));
+
+        requests.length = 0;
+        const refreshed = waitForEvent('storeRefreshed', api);
+        api.refreshServerSide({ purge: false });
+        for (let i = 0; i < 10; i++) {
+            await Promise.resolve();
+        }
+        expect(requests).toEqual([[0, 10]]);
+
+        await refreshed;
+        expect(requests).toHaveLength(3);
+        expect(requests).toEqual(
+            expect.arrayContaining([
+                [10, 20],
+                [20, 30],
+            ])
+        );
+    });
+
+    test('a synchronous datasource that leaves rendered rows as stubs is retried once per task', async () => {
+        let requestCount = 0;
+        const api = gridsManager.createGrid(null, {
+            columnDefs: [{ field: 'id' }],
+            rowModelType: 'serverSide',
+            cacheBlockSize: 10,
+            serverSideDatasource: {
+                getRows: (params) => {
+                    requestCount++;
+                    // declares more rows than it returns, so the rest of the block stays as stubs
+                    params.success({ rowData: [{ id: 0 }], rowCount: 5 });
+                },
+            },
+        });
+        await waitFor(() => expect(requestCount).toBeGreaterThan(0));
+
+        const before = requestCount;
+        await new Promise((resolve) => setTimeout(resolve));
+        expect(requestCount - before).toBeLessThanOrEqual(2);
+        api.setGridOption('serverSideDatasource', undefined);
     });
 
     test('maxBlocksInCache evicts the least-recently-used block once the cap is exceeded', async () => {

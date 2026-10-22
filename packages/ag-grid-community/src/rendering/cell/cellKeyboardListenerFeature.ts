@@ -149,7 +149,7 @@ function onEnterKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: Keyboa
     if (cellEditing || rowEditing) {
         if (isCtrlEnter(event)) {
             // bulk edit, apply currently editing value to all selected cells
-            editSvc?.applyBulkEdit(cellCtrl, beans?.rangeSvc?.getCellRanges() || []);
+            editSvc?.applyBulkEdit(cellCtrl, beans?.rangeSvc?.getCellRanges() ?? []);
             return;
         }
 
@@ -293,7 +293,7 @@ function onSpaceKeyDown(beans: BeanCollection, cellCtrl: CellCtrl, event: Keyboa
     const { rowNode } = cellCtrl;
 
     if (!editSvc?.isEditing(cellCtrl, { withOpenEditor: true }) && _isRowSelection(gos)) {
-        beans.selectionSvc?.handleSelectionEvent(event, rowNode, 'spaceKey');
+        beans.selectionSvc?.handleSelectionEvent(event, rowNode, 'spaceKey', cellCtrl.column);
     }
 
     // prevent default as space key, by default, moves browser scroll down

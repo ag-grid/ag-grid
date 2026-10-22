@@ -1,7 +1,13 @@
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    RowApiModule,
+    ScrollApiModule,
+    TextEditorModule,
+    _processOnChange,
+} from 'ag-grid-community';
 
 interface OrderRow {
     id: string;
@@ -16,7 +22,7 @@ interface OrderRow {
 
 describe('ensureDomOrder', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule],
+        modules: [ClientSideRowModelModule, RowApiModule, ScrollApiModule, TextEditorModule],
     });
 
     afterEach(() => {
@@ -86,6 +92,42 @@ describe('ensureDomOrder', () => {
         });
     });
 
+    // A full row edit keeps every cell whose column scrolls out of the viewport, so a batch of them
+    // has to be merged back among the rendered cells at once. Inserting them one at a time, re-scanning
+    // after each, reversed them relative to each other.
+    test('keeps cells held by a full row edit in column order after scrolling', async () => {
+        const columnDefs: ColDef<OrderRow>[] = Array.from({ length: 50 }, (_, i) => ({
+            colId: `c${i}`,
+            field: 'value',
+            width: 200,
+        }));
+        const api = createGrid(gridsManager, true, {
+            columnDefs,
+            editType: 'fullRow',
+            defaultColDef: { editable: true, cellDataType: false },
+            rowData: [{ id: 'r1', value: 1 }],
+            // TestGridsManager disables virtualisation by default, but columns only leave the
+            // viewport - and so only get kept - when it is on.
+            suppressColumnVirtualisation: false,
+            suppressAnimationFrame: true,
+        });
+        await asyncSetTimeout(0);
+
+        api.startEditingCell({ rowIndex: 0, colKey: 'c0' });
+        await asyncSetTimeout(0);
+
+        api.ensureColumnVisible('c40');
+        await asyncSetTimeout(0);
+
+        const rendered = getCellOrder(api, 'r1').center;
+        const displayedOrder = api.getAllDisplayedColumns().map((col) => col.getColId());
+
+        // the edit holds c0 on, well behind the scrolled viewport, so several cells are merged back
+        expect(rendered).toContain('c0');
+        expect(rendered.length).toBeGreaterThan(2);
+        expect(rendered).toEqual(displayedOrder.filter((colId) => rendered.includes(colId)));
+    });
+
     test('does not reorder existing cell DOM nodes when disabled', async () => {
         const api = createCellOrderGrid(gridsManager, false);
 
@@ -113,6 +155,76 @@ describe('ensureDomOrder', () => {
             center: ['c1', 'c2'],
             right: ['r1', 'r2'],
         });
+    });
+
+    test.each([false, true])(
+        'a renderer redrawing a row as a removed row is destroyed leaves every row drawn (ensureDomOrder %s)',
+        async (ensureDomOrder) => {
+            const api = createGrid(gridsManager, ensureDomOrder, {
+                columnDefs: [{ field: 'value', cellRenderer: RedrawRowAOnDestroy }],
+                rowData: [
+                    { id: 'x', value: 0 },
+                    { id: 'a', value: 1 },
+                    { id: 'b', value: 2 },
+                ],
+            });
+            await asyncSetTimeout(0);
+            expect(getScrollableRowIds(api)).toEqual(['x', 'a', 'b']);
+
+            api.setGridOption('rowData', [
+                { id: 'a', value: 1 },
+                { id: 'b', value: 2 },
+            ]);
+            await asyncSetTimeout(0);
+
+            // without ensureDomOrder a redrawn row is appended, so only which rows are drawn is stated
+            const rowIds = getScrollableRowIds(api);
+            expect(ensureDomOrder ? rowIds : rowIds.sort()).toEqual(['a', 'b']);
+        }
+    );
+
+    test('cells moved while disabled follow the displayed order once a framework prop enables it', async () => {
+        const api = createCellOrderGrid(gridsManager, false);
+
+        api.applyColumnState({
+            applyOrder: true,
+            state: [
+                { colId: 'l2' },
+                { colId: 'l1' },
+                { colId: 'c2' },
+                { colId: 'c1' },
+                { colId: 'r2' },
+                { colId: 'r1' },
+            ],
+        });
+        await asyncSetTimeout(0);
+        expect(getCellOrder(api, 'r1').center).toEqual(['c1', 'c2']);
+
+        // how Angular and Vue pass a changed input on, which reaches the rows of a grid already drawn
+        _processOnChange({ ensureDomOrder: true }, api);
+        await asyncSetTimeout(0);
+
+        expect(getCellOrder(api, 'r1')).toEqual({
+            left: ['l2', 'l1'],
+            center: ['c2', 'c1'],
+            right: ['r2', 'r1'],
+        });
+    });
+
+    test('cells moved without DOM order are drawn in displayed order once print layout turns it on', async () => {
+        const api = createCellOrderGrid(gridsManager, false);
+
+        api.applyColumnState({
+            applyOrder: true,
+            state: [{ colId: 'c2' }, { colId: 'c1' }],
+        });
+        await asyncSetTimeout(0);
+        expect(getCellOrder(api, 'r1').center).toEqual(['c1', 'c2']);
+
+        api.setGridOption('domLayout', 'print');
+        await asyncSetTimeout(0);
+
+        expect(getRowCellColIds(api, 'r1')).toEqual(['l1', 'l2', 'c2', 'c1', 'r1', 'r2']);
     });
 
     // The header buckets its cells by lane and sorts within each lane; that path runs only on a
@@ -184,6 +296,36 @@ function createCellOrderGrid(gridsManager: TestGridsManager, ensureDomOrder: boo
     });
 }
 
+/** Redraws row `a` from inside the destroy of row `x`'s cell, so the row container lays its rows out mid-update. */
+class RedrawRowAOnDestroy implements ICellRendererComp<OrderRow> {
+    private readonly eGui = document.createElement('span');
+    private params: ICellRendererParams<OrderRow> | undefined;
+
+    public init(params: ICellRendererParams<OrderRow>): void {
+        this.params = params;
+        this.eGui.textContent = String(params.value);
+    }
+
+    public getGui(): HTMLElement {
+        return this.eGui;
+    }
+
+    public refresh(): boolean {
+        return false;
+    }
+
+    public destroy(): void {
+        const params = this.params;
+        if (params?.data?.id !== 'x') {
+            return;
+        }
+        const rowA = params.api.getRowNode('a');
+        if (rowA) {
+            params.api.redrawRows({ rowNodes: [rowA] });
+        }
+    }
+}
+
 function createGrid(
     gridsManager: TestGridsManager,
     ensureDomOrder: boolean,
@@ -238,6 +380,11 @@ function getCellOrder(api: GridApi<OrderRow>, rowId: string): { left: string[]; 
         center: getCellColIds(row, '.ag-grid-scrolling-cells'),
         right: getCellColIds(row, '.ag-grid-pinned-right-cells'),
     };
+}
+
+function getRowCellColIds(api: GridApi<OrderRow>, rowId: string): string[] {
+    const row = TestGridsManager.getHTMLElement(api)?.querySelector<HTMLElement>(`.ag-row[row-id="${rowId}"]`);
+    return row ? getCellColIds(row, '') : [];
 }
 
 function getCellColIds(row: HTMLElement, containerSelector: string): string[] {

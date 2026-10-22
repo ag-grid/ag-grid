@@ -1,6 +1,8 @@
 import type {
     AgColumn,
     AgProvidedColumnGroup,
+    ColDef,
+    ColGroupDef,
     ColumnEventType,
     ColumnMenuItemsSource,
     DefaultColumnMenuItem,
@@ -11,12 +13,14 @@ import type {
 } from 'ag-grid-community';
 import { Component, _createIconNoSpan, isProvidedColumnGroup } from 'ag-grid-community';
 
+import { getGridColumnGroup, getProvidedGroupDisplayName } from '../columns/providedColumnGroupUtils';
 import { _resolveColumnMenuItems } from '../menu/columnMenuItemsResolver';
 import { PIVOT_TOKEN, SCROLL_INTO_VIEW_TOKEN, VALUE_TOKEN, columnMenuTokenLabel } from '../menu/columnMenuTokenLabels';
 import type { MenuItemMapper } from '../menu/menuItemMapper';
 import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from '../menu/menuSeparators';
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
-import { MenuList } from '../widgets/menuList';
+import { _showMenuListPopup } from '../widgets/menuPopupUtils';
+import type { ToolPanelColumnMove } from './columnMoveUtils';
 import { isDeferredMode, refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
 
@@ -45,11 +49,12 @@ export class ToolPanelContextMenu extends Component {
 
     constructor(
         private readonly column: AgColumn | AgProvidedColumnGroup,
-        private readonly mouseEventOrTouch: MouseEvent | Touch,
+        private readonly trigger: MouseEvent | Touch | KeyboardEvent,
         private readonly parentEl: HTMLElement,
         private readonly params: ColumnStateUpdateParams,
         private readonly eventType: ColumnEventType,
-        private readonly source: ColumnMenuItemsSource
+        private readonly source: ColumnMenuItemsSource,
+        private readonly columnMove?: ToolPanelColumnMove
     ) {
         super({ tag: 'div', cls: 'ag-menu' });
     }
@@ -67,7 +72,7 @@ export class ToolPanelContextMenu extends Component {
         if (column.isColumn) {
             displayName = colNames.getDisplayNameForColumn(column, 'columnToolPanel');
         } else {
-            displayName = colNames.getDisplayNameForProvidedColumnGroup(null, column, 'columnToolPanel');
+            displayName = getProvidedGroupDisplayName(this.beans, column, 'columnToolPanel');
         }
         this.displayName = displayName;
 
@@ -75,27 +80,30 @@ export class ToolPanelContextMenu extends Component {
 
         let col: AgColumn | null = null;
         let columnGroup: AgProvidedColumnGroup | null = null;
+        let colOrGroupDef: ColDef | ColGroupDef | null;
         if (isProvidedColumnGroup(column)) {
-            columnGroup = column;
+            columnGroup = getGridColumnGroup(this.beans, column);
+            colOrGroupDef = column.getColGroupDef();
         } else {
             col = column;
+            colOrGroupDef = column.colDef;
         }
 
-        // Under functionsReadOnly the state-changing defaults are dropped, but non-mutating items (scroll
-        // into view) remain, so a read-only grid can still be navigated. A user callback can additionally
-        // contribute items. An explicitly-returned state-changing token still renders disabled rather than
-        // being dropped (see resolveToolPanelToken), so read-only cannot be bypassed.
+        // Read-only functions retain navigation but omit movement and grouping actions.
         const functionsReadOnly = gos.get('functionsReadOnly');
-        let defaultItems: DefaultToolPanelItem[];
+        let defaultItems: (DefaultToolPanelItem | 'separator')[];
         if (!this.isActive()) {
             defaultItems = [];
         } else if (functionsReadOnly) {
-            defaultItems = this.getDefaultTokens().filter((token) => !this.menuItemMap.get(token)?.mutatesState);
+            defaultItems = this.getDefaultTokens().filter(
+                (token) => token === MENU_ITEM_SEPARATOR || !this.menuItemMap.get(token)?.mutatesState
+            );
         } else {
             defaultItems = this.getDefaultTokens();
         }
+        _normaliseSeparators(defaultItems, MENU_ITEM_SEPARATOR);
 
-        const resolvedItems = _resolveColumnMenuItems(gos, col, columnGroup, source, defaultItems);
+        const resolvedItems = _resolveColumnMenuItems(gos, col, columnGroup, source, defaultItems, colOrGroupDef);
         const menuItemsMapped = this.mapMenuItems(resolvedItems, col);
 
         if (this.allowEditHeaderName) {
@@ -109,12 +117,11 @@ export class ToolPanelContextMenu extends Component {
         // a per-column/group `columnMenuItems` is explicitly configured (including an empty array, which
         // deliberately shows nothing). A grid-level `getColumnMenuItems` that resolves to nothing for this
         // column does not suppress it, matching how the grid only blocks the browser menu when it has items.
-        const colOrGroupDef = col?.colDef ?? columnGroup?.getColGroupDef();
         const handled = menuItemsMapped.length > 0 || colOrGroupDef?.columnMenuItems != null;
         if (handled) {
-            const mouseEventOrTouch = this.mouseEventOrTouch;
-            if ('preventDefault' in mouseEventOrTouch) {
-                mouseEventOrTouch.preventDefault();
+            const trigger = this.trigger;
+            if ('preventDefault' in trigger) {
+                trigger.preventDefault();
             }
         }
 
@@ -122,7 +129,7 @@ export class ToolPanelContextMenu extends Component {
             return;
         }
 
-        this.displayContextMenu(menuItemsMapped);
+        this.displayContextMenu(menuItemsMapped, col, columnGroup);
     }
 
     private mapMenuItems(
@@ -135,6 +142,23 @@ export class ToolPanelContextMenu extends Component {
         const expanded: (DefaultMenuItem | MenuItemDef | 'separator')[] = [];
         for (let i = 0, len = items.length; i < len; ++i) {
             const item = items[i];
+            if (item === 'moveUp' || item === 'moveDown') {
+                const isUp = item === 'moveUp';
+                if (!this.isMoveSuppressed()) {
+                    const isDisabled = () => this.gos.get('functionsReadOnly') || !this.columnMove?.canMove(isUp);
+                    expanded.push({
+                        name: this.getLocaleTextFunc()(item, isUp ? 'Move Up' : 'Move Down'),
+                        icon: _createIconNoSpan(isUp ? 'menuMoveUp' : 'menuMoveDown', this.beans, column),
+                        disabled: isDisabled(),
+                        action: () => {
+                            if (!isDisabled()) {
+                                this.columnMove?.move(isUp);
+                            }
+                        },
+                    });
+                }
+                continue;
+            }
             if (typeof item === 'string') {
                 const token = item as DefaultToolPanelItem;
                 if (menuItemMap.has(token)) {
@@ -150,7 +174,9 @@ export class ToolPanelContextMenu extends Component {
         // cannot be resolved, so keep the built definitions and drop the tokens.
         const mapped: (MenuItemDef | 'separator')[] = menuItemMapper
             ? menuItemMapper.mapWithStockItems(expanded, column, null, undefined, () => this.getGui(), this.eventType)
-            : expanded.filter((item): item is MenuItemDef => typeof item !== 'string');
+            : expanded.filter(
+                  (item): item is MenuItemDef | 'separator' => typeof item !== 'string' || item === MENU_ITEM_SEPARATOR
+              );
 
         // Collapse duplicate/stranded separators, matching the column menu (ColumnMenuFactory.getMenuItems).
         _normaliseSeparators(mapped, MENU_ITEM_SEPARATOR);
@@ -318,50 +344,23 @@ export class ToolPanelContextMenu extends Component {
         return columnList.filter((col) => !predicate(col) || !toRemove.has(col));
     }
 
-    private displayContextMenu(menuItemsMapped: (MenuItemDef | 'separator')[]): void {
-        const eGui = this.getGui();
-        const menuList = this.createBean(new MenuList());
-        const localeTextFunc = this.getLocaleTextFunc();
-
-        let hideFunc = () => {};
-
-        eGui.appendChild(menuList.getGui());
-        menuList.addMenuItems(menuItemsMapped);
-        menuList.addManagedListeners(menuList, {
-            closeMenu: () => {
-                this.parentEl.focus();
-                hideFunc();
-            },
-        });
-
-        const popupSvc = this.beans.popupSvc!;
-        const addPopupRes = popupSvc.addPopup({
-            modal: true,
-            eChild: eGui,
-            closeOnEsc: true,
-            afterGuiAttached: () => menuList.focusInto(),
-            ariaLabel: localeTextFunc('ariaLabelContextMenu', 'Context Menu'),
-            closedCallback: (e: KeyboardEvent) => {
-                if (e instanceof KeyboardEvent) {
-                    this.parentEl.focus();
-                }
-                this.destroyBean(menuList);
-            },
-        });
-
-        if (addPopupRes) {
-            hideFunc = addPopupRes.hideFunc;
-        }
-
-        popupSvc.positionPopupUnderMouseEvent({
-            type: 'columnContextMenu',
-            mouseEvent: this.mouseEventOrTouch,
-            ePopup: eGui,
+    private displayContextMenu(
+        menuItemsMapped: (MenuItemDef | 'separator')[],
+        column: AgColumn | null,
+        columnGroup: AgProvidedColumnGroup | null
+    ): void {
+        _showMenuListPopup(this, this.beans, {
+            menuItems: menuItemsMapped,
+            menuContext: { column, columnGroup, node: null, value: null },
+            ePopup: this.getGui(),
+            positionBy: this.trigger instanceof KeyboardEvent ? this.parentEl : this.trigger,
+            restoreFocus: () => this.parentEl.focus(),
         });
     }
 
     private isActive(): boolean {
         return (
+            !!this.columnMove ||
             this.allowScrollIntoView ||
             this.allowGrouping ||
             this.allowValues ||
@@ -370,13 +369,26 @@ export class ToolPanelContextMenu extends Component {
         );
     }
 
-    private getDefaultTokens(): DefaultToolPanelItem[] {
-        const tokens: DefaultToolPanelItem[] = [];
+    private isMoveSuppressed(): boolean {
+        const colMoves = this.beans.colMoves;
+        return (
+            this.gos.get('functionsReadOnly') ||
+            !this.columnMove ||
+            !colMoves ||
+            colMoves.isMovingSuppressed(this.columns)
+        );
+    }
+
+    private getDefaultTokens(): (DefaultToolPanelItem | 'separator')[] {
+        const tokens: (DefaultToolPanelItem | 'separator')[] = [];
         const { menuItemMap, columns } = this;
         for (const [key, val] of menuItemMap) {
             if (columns.some((col) => val.allowedFunction(col))) {
                 tokens.push(key);
             }
+        }
+        if (!this.isMoveSuppressed()) {
+            tokens.push(MENU_ITEM_SEPARATOR, 'moveUp', 'moveDown');
         }
         return tokens;
     }

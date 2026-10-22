@@ -176,12 +176,9 @@ export class CartesianAxisPanel extends Component {
             // Optionally update the axis label format when switching between time and non-time axes
             const previousAxisIsTimeAxis = previousAxisType === 'time';
             const updatedAxisIsTimeAxis = value === 'time';
+            const labelFormatForUpdatedAxis = updatedAxisIsTimeAxis ? DEFAULT_TIME_AXIS_FORMAT : undefined;
             const updatedLabelFormat =
-                previousAxisIsTimeAxis !== updatedAxisIsTimeAxis
-                    ? updatedAxisIsTimeAxis
-                        ? DEFAULT_TIME_AXIS_FORMAT
-                        : undefined
-                    : null;
+                previousAxisIsTimeAxis === updatedAxisIsTimeAxis ? null : labelFormatForUpdatedAxis;
             // Update the axis type (and label format if necessary)
             if (updatedLabelFormat === undefined) {
                 // clear before update to avoid validation errors
@@ -221,7 +218,9 @@ export class CartesianAxisPanel extends Component {
             if (!testDatum) {
                 return false;
             }
-            return controller.getSelectedDimensions().every((col) => !isNaN(parseFloat(testDatum[col.colId])));
+            return controller
+                .getSelectedDimensions()
+                .every((col) => !Number.isNaN(Number.parseFloat(testDatum[col.colId])));
         };
         if (
             ['heatmap', 'histogram', 'boxPlot', 'rangeBar', 'scatter', 'bubble'].includes(chartType) ||

@@ -2,7 +2,7 @@ import { findByText, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { AgColumn, ColDef, GridApi } from 'ag-grid-community';
+import type { AgColumn, ColDef, GridApi, HeaderValueGetterParams } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -290,6 +290,47 @@ describe('Editable header name', () => {
         await waitFor(() => expect(input.value).toBe('Renamed'));
     });
 
+    test('a group rename while the editor is open refreshes the input', async () => {
+        const { api, gridDiv, toolPanel } = await createGrid([
+            {
+                groupId: 'athleteGroup',
+                headerName: 'Group',
+                headerNameEditable: true,
+                children: [{ field: 'athlete' }, { field: 'age' }],
+            } as any,
+        ]);
+        const input = await openEditor(toolPanel, gridDiv, 'Group');
+        expect(input.value).toBe('Group');
+
+        api.setState({
+            columnGroup: {
+                openColumnGroupIds: [],
+                headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }],
+            },
+        });
+
+        await waitFor(() => expect(input.value).toBe('Renamed'));
+    });
+
+    test('resetting a renamed group that exists only in a custom layout refreshes the open editor', async () => {
+        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete' }]);
+        toolPanel.setColumnLayout([
+            {
+                groupId: 'layoutOnly',
+                headerName: 'Layout Only',
+                headerNameEditable: true,
+                children: [{ field: 'athlete' }],
+            },
+        ]);
+        const input = await openEditor(toolPanel, gridDiv, 'Layout Only');
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Renamed');
+
+        api.resetColumnState();
+
+        await waitFor(() => expect(input.value).toBe('Layout Only'));
+    });
+
     test('a column header name edit is saved to grid state', async () => {
         const { api } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
 
@@ -429,6 +470,39 @@ describe('Editable header name', () => {
         expect(api.getDisplayNameForColumnGroup(columnGroup, 'header')).toBe('Renamed');
         // The UI-driven rename is persisted to grid state, not just reflected in the display name.
         expect(api.getState().columnGroup?.headerNames).toEqual([{ groupId: 'athleteGroup', headerName: 'Renamed' }]);
+    });
+
+    test('renaming a column group from the editor fires headerNameChanged on that group only', async () => {
+        const { api, gridDiv, toolPanel } = await createGrid(
+            [
+                {
+                    groupId: 'athleteGroup',
+                    headerName: 'Group',
+                    headerNameEditable: true,
+                    children: [{ field: 'athlete' }],
+                },
+                { groupId: 'otherGroup', headerName: 'Other', children: [{ field: 'age' }] },
+            ] as any,
+            { columnHeaderEdit: { applyMode: 'deferred' } }
+        );
+        const countEvents = (groupId: string) => {
+            const counter = { count: 0 };
+            api.getColumnGroup(groupId)!
+                .getProvidedColumnGroup()
+                .addEventListener('headerNameChanged', () => counter.count++);
+            return counter;
+        };
+        const renamed = countEvents('athleteGroup');
+        const other = countEvents('otherGroup');
+
+        const input = await openEditor(toolPanel, gridDiv, 'Group');
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Renamed');
+        pressEnter(input);
+        await waitForEditorClosed();
+
+        expect(renamed.count).toBe(1);
+        expect(other.count).toBe(0);
     });
 
     test('an edited group label survives collapsing and expanding the group in the columns tool panel', async () => {
@@ -701,6 +775,179 @@ describe('Editable group header name', () => {
             ...extra,
         },
     ];
+
+    describe('headerNameChanged on the provided column group', () => {
+        const twoGroupDefs = [
+            ...groupDefs(),
+            { groupId: 'otherGroup', headerName: 'Other', children: [{ field: 'country' }] },
+        ];
+
+        async function createTwoGroupGrid(extraOptions: Record<string, any> = {}) {
+            const api = await gridMgr.createGridAndWait('myGrid', {
+                columnDefs: twoGroupDefs,
+                rowData,
+                ...extraOptions,
+            });
+            const countEvents = (groupId: string) => {
+                const counter = { count: 0 };
+                api.getColumnGroup(groupId)!
+                    .getProvidedColumnGroup()
+                    .addEventListener('headerNameChanged', () => counter.count++);
+                return counter;
+            };
+            return { api, renamed: countEvents('athleteGroup'), other: countEvents('otherGroup') };
+        }
+
+        const renamedState = {
+            columnGroup: {
+                openColumnGroupIds: [],
+                headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }],
+            },
+        };
+
+        test('fires on the renamed group only when grid state is applied', async () => {
+            const { api, renamed, other } = await createTwoGroupGrid();
+
+            api.setState(renamedState);
+
+            await waitFor(() => expect(renamed.count).toBe(1));
+            expect(other.count).toBe(0);
+            expect(api.getDisplayNameForColumnGroup(api.getColumnGroup('athleteGroup')!, 'header')).toBe('Renamed');
+        });
+
+        test('tells each group applied state renames once both hold their new names', async () => {
+            const { api } = await createTwoGroupGrid();
+            const name = (groupId: string) => api.getDisplayNameForColumnGroup(api.getColumnGroup(groupId)!, 'header');
+            const seen: string[] = [];
+            for (const groupId of ['athleteGroup', 'otherGroup']) {
+                api.getColumnGroup(groupId)!
+                    .getProvidedColumnGroup()
+                    .addEventListener('headerNameChanged', () =>
+                        seen.push(`${groupId}: ${name('athleteGroup')}, ${name('otherGroup')}`)
+                    );
+            }
+
+            api.setState({
+                columnGroup: {
+                    openColumnGroupIds: [],
+                    headerNames: [
+                        { groupId: 'athleteGroup', headerName: 'Renamed' },
+                        { groupId: 'otherGroup', headerName: 'Other Renamed' },
+                    ],
+                },
+            });
+            await asyncSetTimeout(0);
+
+            expect(seen).toEqual(['athleteGroup: Renamed, Other Renamed', 'otherGroup: Renamed, Other Renamed']);
+        });
+
+        test('does not fire when applied state leaves the name unchanged', async () => {
+            const { api, renamed } = await createTwoGroupGrid({ initialState: renamedState });
+
+            api.setState(renamedState);
+            await asyncSetTimeout(0);
+
+            expect(renamed.count).toBe(0);
+        });
+
+        test('fires on each renamed group when column state is reset', async () => {
+            const { api, renamed, other } = await createTwoGroupGrid({ initialState: renamedState });
+
+            api.resetColumnState();
+
+            await waitFor(() => expect(renamed.count).toBe(1));
+            expect(other.count).toBe(0);
+            expect(api.getDisplayNameForColumnGroup(api.getColumnGroup('athleteGroup')!, 'header')).toBe('Group');
+        });
+
+        test('fires on each renamed group when column group state is reset', async () => {
+            const { api, renamed, other } = await createTwoGroupGrid({ initialState: renamedState });
+
+            api.resetColumnGroupState();
+
+            await waitFor(() => expect(renamed.count).toBe(1));
+            expect(other.count).toBe(0);
+        });
+
+        test('does not fire when a child column is renamed', async () => {
+            const { api, renamed } = await createTwoGroupGrid();
+
+            api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Renamed Athlete' }] });
+            await waitFor(() =>
+                expect(api.getDisplayNameForColumn(api.getColumn('athlete')!, 'header')).toBe('Renamed Athlete')
+            );
+
+            expect(renamed.count).toBe(0);
+        });
+    });
+
+    test('a rename refreshes the editor opened from the group header menu', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', { columnDefs: groupDefs(), rowData });
+
+        getGridElement(api)!
+            .querySelector('.ag-header-group-cell')!
+            .dispatchEvent(
+                new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 })
+            );
+        await userEvent.click(await findByText(document.body, 'Edit Column Name'));
+        const input = await waitFor(() => {
+            const el = document.querySelector('.ag-column-header-edit-popup-editor input') as HTMLInputElement | null;
+            expect(el?.value).toBe('Group');
+            return el!;
+        });
+
+        api.setState({
+            columnGroup: {
+                openColumnGroupIds: [],
+                headerNames: [{ groupId: 'athleteGroup', headerName: 'Renamed' }],
+            },
+        });
+
+        await waitFor(() => expect(input.value).toBe('Renamed'));
+    });
+
+    test('a group header built from a child column name refreshes when the child is renamed', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: groupDefs({
+                headerValueGetter: (params: HeaderValueGetterParams) =>
+                    `${params.api.getDisplayNameForColumn(params.api.getColumn('athlete')!, 'header')} Group`,
+            }),
+            rowData,
+        });
+        const groupHeaderText = () =>
+            getGridElement(api)!.querySelector('.ag-header-group-cell .ag-header-group-text')?.textContent;
+        await waitFor(() => expect(groupHeaderText()).toBe('Athlete Group'));
+
+        api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Swimmer' }] });
+
+        await waitFor(() => expect(groupHeaderText()).toBe('Swimmer Group'));
+    });
+
+    test('an open group editor refreshes when a child its headerValueGetter reads is renamed', async () => {
+        const api = await gridMgr.createGridAndWait('myGrid', {
+            columnDefs: groupDefs({
+                headerValueGetter: (params: HeaderValueGetterParams) =>
+                    `${params.api.getDisplayNameForColumn(params.api.getColumn('athlete')!, 'header')} Group`,
+            }),
+            rowData,
+        });
+
+        getGridElement(api)!
+            .querySelector('.ag-header-group-cell')!
+            .dispatchEvent(
+                new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 })
+            );
+        await userEvent.click(await findByText(document.body, 'Edit Column Name'));
+        const input = await waitFor(() => {
+            const el = document.querySelector('.ag-column-header-edit-popup-editor input') as HTMLInputElement | null;
+            expect(el?.value).toBe('Athlete Group');
+            return el!;
+        });
+
+        api.applyColumnState({ state: [{ colId: 'athlete', headerName: 'Swimmer' }] });
+
+        await waitFor(() => expect(input.value).toBe('Swimmer Group'));
+    });
 
     test('a group header name from grid state overrides the colGroupDef name', async () => {
         const api = await gridMgr.createGridAndWait('myGrid', {

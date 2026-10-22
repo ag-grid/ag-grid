@@ -277,7 +277,7 @@ restore_node_modules_from_cache() {
 # ---------------------------------------------------------------------------
 # The repo's gitignored Claude Code config — .claude/rules and the repo's own
 # .claude/skills. postinstall generates them; a clone carries only
-# .claude/settings.json, and cloud-setup.sh installs with --ignore-scripts, so a
+# .claude/settings.json, and cloud-setup.sh installs with YARN_ENABLE_SCRIPTS=false, so a
 # session can arrive with node_modules in place and none of them present.
 #
 # Generation needs node_modules but not the network, and measures ~3s, which is
@@ -444,7 +444,7 @@ if [[ "${CLAUDE_CODE_REMOTE:-}" == "true" ]] || [[ "${AG_CLOUD_INSTALL:-}" == "1
         generate_claude_config_if_missing
         # Whatever node_modules the session ended up with — restored just now, or
         # inherited from the environment snapshot. A tree built with
-        # --ignore-scripts passes the integrity check but has no patches applied,
+        # YARN_ENABLE_SCRIPTS=false passes the integrity check but has no patches applied,
         # so the fast path below would otherwise call it ready.
         if [[ -d node_modules ]]; then
             if [[ -f "$AG_CLOUD_CACHE_DIR/unscripted" ]]; then
@@ -463,9 +463,10 @@ fi
 # ---------------------------------------------------------------------------
 
 if command -v yarn &>/dev/null && [[ -d node_modules ]]; then
-    # Verify lockfile hasn't changed since last install — Yarn 1 writes
-    # node_modules/.yarn-integrity which embeds a lockfile hash.
-    if yarn check --integrity &>/dev/null; then
+    # Yarn 4 has no "yarn check --integrity" probe; "yarn install --immutable"
+    # both verifies and (if needed) fixes node_modules in one step, and is a
+    # ~12ms no-op when nothing needs to change.
+    if yarn install --immutable &>/dev/null; then
         log_info "yarn and node_modules present and valid, skipping bootstrap"
         exit 0
     fi
@@ -474,7 +475,7 @@ if command -v yarn &>/dev/null && [[ -d node_modules ]]; then
         announce_deps_not_ready
         exit 0
     fi
-    yarn install --prefer-offline
+    yarn install
     exit $?
 fi
 
@@ -529,7 +530,9 @@ install_nx_if_missing() {
     }
 
     log_info "Installing nx@${nx_version} globally"
-    if ! yarn global add "nx@${nx_version}"; then
+    # Yarn 4 removed `yarn global add`; npm's global installer is the replacement
+    # for a persistent global binary (see the comment on `npm i -g yarn` below).
+    if ! npm install -g "nx@${nx_version}"; then
         log_error "Failed to install nx globally"
         return 2
     fi
@@ -567,7 +570,7 @@ main() {
     # Delegate to yarn install — preinstall-worktree.sh handles COW cloning,
     # symlink fixes, and .nx cache. Postinstall handles patches, plugins, etc.
     log_info "Running yarn install (preinstall hook will handle COW cloning)"
-    if ! yarn install --prefer-offline; then
+    if ! yarn install; then
         log_error "yarn install failed"
         exit 2
     fi

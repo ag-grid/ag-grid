@@ -38,7 +38,24 @@
     min-width: 0;
     overflow: hidden;
     flex: 1 1 auto;
+}
+
+/* Always-present scrollbars need an opaque bg to prevent content being visible under it as it scrolls.
+   Shown-on-demand scrollbars should remain transparent as they appear over the content which should be
+   visible below it */
+:where(.ag-body-horizontal-scroll:not(.ag-scrollbar-invisible)) > .ag-body-horizontal-scroll-viewport,
+:where(.ag-body-vertical-scroll:not(.ag-scrollbar-invisible)) > .ag-body-vertical-scroll-viewport {
     background-color: var(--ag-data-background-color);
+}
+
+:where(.ag-body-horizontal-scroll:not(.ag-scrollbar-invisible)) > .ag-body-horizontal-scroll-viewport,
+:where(.ag-body-horizontal-scroll:not(.ag-scrollbar-invisible)) > .ag-body-horizontal-scroll-end-spacer {
+    border-top: var(--ag-body-scrollbar-border);
+}
+
+:where(.ag-body-vertical-scroll:not(.ag-scrollbar-invisible)) > .ag-body-vertical-scroll-viewport,
+.ag-scrollbar-probe {
+    border-inline-start: var(--ag-body-scrollbar-border);
 }
 
 .ag-viewport {
@@ -52,7 +69,11 @@
     min-height: 0;
     flex: 1 1 auto;
     -webkit-overflow-scrolling: touch;
+
+    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
     -ms-overflow-style: none !important;
+
+    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
     scrollbar-width: none !important;
 }
 
@@ -63,6 +84,7 @@
 }
 
 .ag-grid-viewport::-webkit-scrollbar {
+    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
     display: none !important;
 }
 
@@ -135,7 +157,9 @@
     position: relative;
     display: flex;
     flex: 1 1 auto;
-    flex-direction: row !important; /* we have to state this for rtl, otherwise row-reverse is inherited */
+
+    /* stylelint-disable-next-line declaration-no-important -- we have to state this for rtl, otherwise row-reverse is inherited */
+    flex-direction: row !important;
     min-height: 0;
 }
 
@@ -232,9 +256,11 @@
 }
 
 :where(.ag-row-animation.ag-prevent-animation) .ag-row {
+    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
     transition: none !important;
 
     &:where(.ag-row.ag-after-created) {
+        /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
         transition: none !important;
     }
 }
@@ -362,15 +388,15 @@
     }
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-spanning-container .ag-grid-scrolling-cells {
     /* centre spanned cells must paint above regular centre cells while remaining below pinned sections. */
     z-index: 1;
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-spanning-container .ag-grid-pinned-left-cells,
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-spanning-container .ag-grid-pinned-right-cells {
     /* pinned spanned cells must paint above both centre spans and regular pinned cells. */
     z-index: 3;
@@ -419,7 +445,7 @@
     }
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-spanning-container .ag-cell {
     pointer-events: auto;
 }
@@ -435,11 +461,18 @@
     flex: 1 1 auto;
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
-.ag-cell-value:not(.ag-allow-overflow),
+.ag-cell-value:where(:not(.ag-allow-overflow)),
 .ag-group-value {
     overflow: hidden;
     text-overflow: ellipsis;
+
+    /* Work around a Firefox bug where a text selection drag ending in a scroll container
+     * selects the wrong text range. Use overflow:clip for the same visual effect
+     * without a scroll container. */
+    :where(.ag-selectable) & {
+        overflow: clip;
+        min-width: 0;
+    }
 }
 
 .ag-cell-wrap-text {
@@ -476,6 +509,8 @@
     bottom: 0;
     border-bottom: none;
     white-space: nowrap;
+
+    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
     box-sizing: content-box !important;
 }
 
@@ -509,6 +544,7 @@
 }
 
 .ag-opacity-zero {
+    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
     opacity: 0 !important;
 }
 

@@ -77,9 +77,11 @@ export interface IFormulaService extends Bean {
     isEvaluationActive(): boolean;
     isFormula(value: unknown): value is `=${string}`;
     setFormulasActive(columns: AgColumn[]): void;
+    onColsRefreshed(): void;
     resolveValue(col: AgColumn, row: RowNode): unknown;
     getDataSourceFormula(row: RowNode, col: AgColumn): string | undefined;
     getFormulaError(col: AgColumn, row: RowNode): Error | null;
+    isFormulaErrorValue(col: AgColumn, row: IRowNode | null, value: unknown): boolean;
     normaliseFormula(value: string, shorthand: boolean): string | null;
     validateExpression(expression: string): Error | null;
     getColByRef(ref: string): AgColumn | null;

@@ -1,8 +1,9 @@
+import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, Column, ColumnState } from 'ag-grid-community';
-import { ClientSideRowModelModule } from 'ag-grid-community';
-import { PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
+import { ClientSideRowModelModule, ColumnApiModule, TextFilterModule, TooltipModule } from 'ag-grid-community';
+import { ColumnMenuModule, PivotModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('Column API', () => {
     const gridsManager = new TestGridsManager({
@@ -787,6 +788,29 @@ describe('Column API', () => {
                 ├── a width:200
                 └── b width:200
             `);
+        });
+
+        // Cells are matched to columns by column instance, so a move has to re-order the existing
+        // cells rather than rebuild them: a rebuilt cell loses its editor, focus and DOM identity.
+        test('moveColumnByIndex reuses the existing cells rather than recreating them', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'a' }, { colId: 'b' }, { colId: 'c' }],
+                rowData: [{ a: 1, b: 2, c: 3 }],
+            });
+            await asyncSetTimeout(0);
+
+            const cellFor = (colId: string) =>
+                TestGridsManager.getHTMLElement(api)?.querySelector(
+                    `.ag-row[row-index="0"] .ag-cell[col-id="${colId}"]`
+                );
+
+            const before = [cellFor('a'), cellFor('b'), cellFor('c')];
+            expect(before.every((cell) => cell != null)).toBe(true);
+
+            api.moveColumnByIndex(2, 0);
+            await asyncSetTimeout(0);
+
+            expect([cellFor('a'), cellFor('b'), cellFor('c')]).toEqual(before);
         });
     });
 
@@ -1594,6 +1618,52 @@ describe('Column API', () => {
                 └─┬ GROUP
                   └── pivot_sport__gold width:200 columnGroupShow:open
             `);
+        });
+    });
+});
+
+describe('Column state getters', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ColumnApiModule, ColumnMenuModule, TextFilterModule, TooltipModule],
+    });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    test('each keeps its own value while the others change', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'p', pinned: 'left', filter: true, tooltip: () => 'x' }, { field: 'a' }],
+            rowData: [{ p: 'x', a: 1 }],
+        });
+        const p = api.getColumn('p')!;
+        const state = () => ({
+            lastLeftPinned: p.isLastLeftPinned(),
+            filterActive: p.isFilterActive(),
+            tooltipEnabled: p.isTooltipEnabled(),
+            menuVisible: p.isMenuVisible(),
+        });
+        expect(state()).toEqual({
+            lastLeftPinned: true,
+            filterActive: false,
+            tooltipEnabled: true,
+            menuVisible: false,
+        });
+
+        await api.setColumnFilterModel('p', { type: 'contains', filter: 'x' });
+        api.onFilterChanged();
+        // the menu opens once the header has scrolled into view, a frame later
+        api.showColumnMenu('p');
+        await waitFor(() => expect(p.isMenuVisible()).toBe(true));
+        expect(state()).toEqual({ lastLeftPinned: true, filterActive: true, tooltipEnabled: true, menuVisible: true });
+
+        api.setColumnsPinned(['a'], 'left');
+        api.hidePopupMenu();
+        expect(state()).toEqual({
+            lastLeftPinned: false,
+            filterActive: true,
+            tooltipEnabled: true,
+            menuVisible: false,
         });
     });
 });

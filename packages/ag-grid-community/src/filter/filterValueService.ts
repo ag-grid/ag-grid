@@ -3,22 +3,61 @@ import { BeanStub } from '../context/beanStub';
 import type { BeanName } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { _resolvePivotColumnForRow } from '../entities/agColumn';
-import type { ValueGetterFunc, ValueGetterParams } from '../entities/colDef';
+import type { ColDef, ValueGetterFunc, ValueGetterParams } from '../entities/colDef';
 import type { RowNode } from '../entities/rowNode';
 import type { IRowNode } from '../interfaces/iRowNode';
+
+/**
+ * The input a filter's value is read from, by kind as a field path and a getter expression can be spelled alike.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export interface FilterValueSource {
+    /** In read order: filter value getter, calculated expression, value getter, field; `-1` for none. */
+    readonly kind: number;
+    readonly source: unknown;
+    readonly readsFormula: boolean;
+}
+
+/**
+ * Mirrors the precedence of `getValueWithGetter` and `ValueService.getValueFromData`, which must stay in step.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getFilterValueSource(
+    colDef: ColDef,
+    filterValueGetter: string | ValueGetterFunc | undefined
+): FilterValueSource {
+    // the getters and the field count when truthy, as the reads test them; a calculated expression when defined
+    const sources = [
+        filterValueGetter || undefined,
+        colDef.calculatedExpression,
+        colDef.valueGetter || undefined,
+        colDef.field || undefined,
+    ];
+    const kind = sources.findIndex((source) => source !== undefined);
+    // formulas are read wherever neither a filter value getter nor a calculated expression supplies the value
+    return { kind, source: sources[kind], readsFormula: kind !== 0 && kind !== 1 && !!colDef.allowFormula };
+}
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FilterValueService extends BeanStub implements NamedBean {
     beanName: BeanName = 'filterValueSvc';
 
-    public getValue(column: AgColumn, rowNode: IRowNode, filterValueGetterOverride?: string | ValueGetterFunc) {
+    public getValue(column: AgColumn, rowNode: IRowNode) {
+        return this.getValueWithGetter(
+            column,
+            rowNode,
+            this.beans.selectableFilter?.getFilterValueGetter(column.colId) ?? column.colDef.filterValueGetter
+        );
+    }
+
+    /** Reads through this filter value getter alone, or the column's own value without one; see `_getFilterValueSource`. */
+    public getValueWithGetter(
+        column: AgColumn,
+        rowNode: IRowNode,
+        filterValueGetter: string | ValueGetterFunc | undefined
+    ) {
         const colDef = column.colDef;
         const beans = this.beans;
-        const filterValueGetter =
-            filterValueGetterOverride ??
-            beans.selectableFilter?.getFilterValueGetter(column.colId) ??
-            colDef.filterValueGetter;
-
         const valueSvc = beans.valueSvc;
         if (filterValueGetter) {
             const isFunction = typeof filterValueGetter === 'function';

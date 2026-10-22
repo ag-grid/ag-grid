@@ -3,7 +3,9 @@ import { InfiniteRowModelModule, ModuleRegistry, createGrid, enableDevValidation
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
-    enableDevValidations();
+    enableDevValidations({
+        // debug: true
+    });
 }
 
 ModuleRegistry.registerModules([InfiniteRowModelModule]);
@@ -62,8 +64,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     // pages are never purged. this should be set for large data to stop your browser from getting
     // full of data
     maxBlocksInCache: 10,
-
-    // debug: true,
 };
 
 // setup the grid after the page has finished loading

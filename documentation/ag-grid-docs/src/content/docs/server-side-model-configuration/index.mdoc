@@ -45,8 +45,6 @@ The example below shows how debouncing block loading can be achieved. Note the f
 
 - `blockLoadDebounceMillis = 1000` - loading of blocks is delayed by `1000ms`. This allows for skipping over blocks when scrolling to advanced positions.
 
-- The grid property `debug = true`. This means the browser's dev console will show loading block details.
-
 {% gridExampleRunner title="Block Loading Debounce" name="block-load-debounce" /%}
 
 ## Providing Additional Data
@@ -124,11 +122,11 @@ A grand total row can be displayed at the top or bottom of the grid, even on fla
 
 ## Debug Info
 
-When using the server-side row model it can be helpful to gather the state of each block. This can be gathered by using `api.getCacheBlockState()` or alternatively you can enable `debug: true` in the grid properties to see this output logged to the console whenever blocks are loaded.
+When using the server-side row model it can be helpful to gather the state of each block. This can be gathered by using `api.getCacheBlockState()`.
 
 In the example below, note the following:
 
-- The grid option `debug: true` has been enabled
-- When scrolling through the grid, block information is logged to the console
+- The grid is configured with `maxBlocksInCache = 2`, so only two blocks of rows are kept in the cache.
+- When scrolling through the grid, the datasource logs each block request to the console.
 
 {% gridExampleRunner title="Cache Block State" name="cache-block-state" /%}

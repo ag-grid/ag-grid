@@ -16,6 +16,20 @@ For the full guide — runner flag reference, Vitest patterns, the complete asyn
 
 Search `testing/behavioural` for an existing harness before assuming a behaviour can't be black-box tested (e.g. `DragEventDispatcher` drives real header drags); extend the harness rather than dropping to a unit test.
 
+## Playwright e2e, behavioural test or docs-example spec
+
+Behavioural tests run in happy-dom, which has no layout engine and models native form controls differently from a browser. Pick the layer by what the behaviour depends on:
+
+| Write a... | When | Where |
+| --- | --- | --- |
+| **Behavioural test** (default) | The behaviour is grid logic driven through the public `GridApi` and DOM, and happy-dom models it faithfully. | `testing/behavioural/` |
+| **Playwright e2e spec** | The behaviour depends on real browser input, layout, scrolling or native controls (typed text in an `<input>`, wheel scrolling, column virtualisation, popup positioning), or must hold in Firefox and WebKit. It needs its own grid configuration, community or enterprise. | `testing/e2e/e2e/*.spec.ts` |
+| **Docs-example spec** | The behaviour is what a docs example demonstrates, and the example must keep working in every framework. | `example.spec.ts` beside the example (see `docs-example-specs.md`) |
+
+A Playwright e2e spec builds its grid from `mountGrid(page, { enterprise?, options })` in `testing/e2e/src/mountGrid.ts`, which loads the UMD bundle into a blank page: no docs site and no dev server. By default it loads the local build; `--url <site>` (or `BASE_URL`) loads it from `<site>/files/<package>/dist/` instead, so the same specs run against a local dev server or `https://grid-staging.ag-grid.com`. The enterprise bundle registers every enterprise module, so a spec cannot test a partial module registration. If the behaviour is the same in happy-dom and in Chrome, it belongs in `testing/behavioural/` instead.
+
+The e2e suite is slower than the behavioural one and is **not part of the PR CI**. The `Grid E2E Tests` workflow runs it nightly on Chromium, Firefox and WebKit, writing its run time to the job summary. A failing nightly run notifies Slack and raises a JIRA ticket, so run `./grid-e2e.sh --all-browsers` locally before relying on a new spec.
+
 ## Wait, don't sleep
 
 **Poll async grid updates with `waitFor`** (from `@testing-library/dom`). **Never** `await asyncSetTimeout(<fixed n>)` and then assert — a guessed delay is flaky and slow. A `no-restricted-syntax` ESLint rule in `testing/behavioural/eslint.config.mjs` flags every `asyncSetTimeout(n)` where `n > 0`.
@@ -35,7 +49,27 @@ const flush = async () => { await act(async () => { await asyncSetTimeout(0); })
 
 The skill covers the traps that make a `waitFor` unfalsifiable or a sleep load-bearing — negative assertions, polls that were already true, test IDs landing on a debounce, and sleeps that only look like safety margins — plus how to prove a wait is genuinely necessary. **Load it before converting any timing-dependent test.**
 
+## Does this change need a test?
+
+Decide before writing one. A test earns its place when it guards behaviour a user would notice if it broke: logic, state, events, keyboard and pointer interaction, API contracts.
+
+**Do not add a test for:**
+
+- **Styling-only changes** (padding, margin, colour, font, size, icons, theme parameters). Asserting `getComputedStyle(el).paddingLeft === '12px'` restates the CSS and fails on every design tweak. If the style carries behaviour, such as a layout that decides what is visible, clickable or scrollable, assert that outcome and not the number.
+- **Copy, docs and example text.** A docs-example spec is only for behaviour the example demonstrates (see `docs-example-specs.md`).
+- **Refactors.** The existing tests are the safety net; if they pass unchanged, the refactor is covered.
+- **Type-only and lint-only changes.** The type-check and lint gates cover them.
+- **Behaviour already covered.** Grep `testing/behavioural` and the e2e specs first.
+
+**Size the test to the change.** A regression test is a few lines in the suite that already owns the behaviour (see `test-organisation.md`). A new Playwright e2e spec is not the default for a one-property fix. If the test needs more setup than the fix, reconsider the layer or skip it.
+
+**Brittleness check.** Ask whether a legitimate design or refactor change would break the test without any user-visible regression. If yes, delete it.
+
+When a change gets no test, say so in the summary with the reason (e.g. "No test added: styling-only"). Do not add one by default to look thorough.
+
 ## Regression tests: cover every reproduction path
+
+This applies once a change needs a test, per the section above.
 
 A bug rarely has one trigger. Enumerate the reproduction paths named in the ticket and add a test for each — a programmatic API call, a panel drag and a tool-panel drop are three tests, not one. Test the plural case, not just N=1, and assert the observable end state for every path.
 
@@ -50,10 +84,13 @@ Pick the input that *separates* the two behaviours. A test that passes against b
 - `./behave.sh` — the whole unit suite (package + behavioural) as one multi-project Vitest run.
 - `./benches.sh` — behavioural benchmarks in headless Chromium.
 - `./docs-e2e.sh` — Playwright E2E against the docs site. The Nx target is `test:e2e`; there is **no** `e2e` target.
+- `./grid-e2e.sh` — real-browser Playwright specs in `testing/e2e`, chromium by default; `--all-browsers` runs chromium, firefox and webkit, `--project=<name>` one of them, `--url <site>` runs against a dev server or deployed site instead of the local build.
+
+**Targeted runs: include the tests that guard the change's surface.** A targeted `./behave.sh` filter misses package tests outside its pattern. Pass extra file filters as separate arguments, e.g. `./behave.sh tooltip main-internal react.test`: `main-internal` whenever an export or `AG_GRID_INTERNAL` annotation changes (it matches `main-internal.test.ts`), and `react.test` whenever rendering or load timing changes (it matches the behavioural `*-react.test.tsx` files).
 
 ### Never block on a gate; read its log afterwards
 
-**Never run `./behave.sh`, `./checks.sh`, `./benches.sh` or `./docs-e2e.sh` in the foreground** — while a Bash call is in flight the user cannot reach the agent at all. Launch with the harness's background mechanism, which delivers a completion event in a later turn, and do other work meanwhile. (`--async` detaches the script itself and reports back to the terminal it was launched from when it ends — useful to a human, useless to an agent, which cannot be woken that way.)
+**Never run `./behave.sh`, `./checks.sh`, `./benches.sh`, `./docs-e2e.sh` or `./grid-e2e.sh` in the foreground** — while a Bash call is in flight the user cannot reach the agent at all. Launch with the harness's background mechanism, which delivers a completion event in a later turn, and do other work meanwhile. (`--async` detaches the script itself and reports back to the terminal it was launched from when it ends — useful to a human, useless to an agent, which cannot be woken that way.)
 
 **Never `sleep` to wait for a run.** One you backgrounded wakes the agent by itself; one started elsewhere has `--async-status` (exit 3 = still running) and `--wait`, below. For progress mid-run, grep the log — it is written live.
 
@@ -68,7 +105,7 @@ Pick the input that *separates* the two behaviours. A test that passes against b
 
 **`--quiet` is the one to reach for.** Each gate declares its own `failRe`/`summaryRe`, which is what `--quiet` prints, so hand-writing `--log-grep '×|FAIL|Tests '` is a worse and vitest-only spelling of it. Keep `--log-grep` for what `--quiet` does not show: a probe's `console.log`, or vitest's `Errors  N error` line, which reports a throw from outside a test body and **still exits 0**.
 
-**Every local run captures itself, and prints the log path as its first line** — `▶ tmp/_behave-output/<id>/output.log`, the whole of stdout and stderr with the colour codes stripped. That line is also the only proof a run happened, so treat a missing `▶` as "nothing ran". No redirect has to be arranged in advance and a red run needs no second run: grep that file, during the run or after it, or pass `--bail 1` to make the run stop at the first failure itself. Beside it sit the `command` and a `status`, plus `result.json` (vitest's machine-readable results) for `./behave.sh` only. `latest` symlinks the newest and week-old runs are pruned.
+**Every local run captures itself, and prints the log path as its first line** — `▶ tmp/_behave-output/<id>/output.log`, the whole of stdout and stderr with the colour codes stripped. That line is also the only proof a run happened, so treat a missing `▶` as "nothing ran". No redirect has to be arranged in advance and a red run needs no second run: grep that file, during the run or after it, or pass `--bail 1` to make the run stop at the first failure itself. Beside it sit the `command` and a `status`, plus `result.json` (vitest's machine-readable results) for `./behave.sh` only, kept for the 50 newest runs. `latest` symlinks the newest and week-old runs are pruned.
 
 **Under `CI`, run them in the foreground instead.** Backgrounding is there to keep an interactive session reachable, and a workflow has nobody to block, so take the output directly. The scripts capture nothing under `CI` for the same reason, so there is no log to grep and none is needed.
 
@@ -86,7 +123,7 @@ Pick the input that *separates* the two behaviours. A test that passes against b
 - **Idle** — files ranked by the off-CPU milliseconds themselves, listed above 1s (`AG_WAITING_MIN_MS`). Usually a fixed timer the test out-waited, so usually time a fix gives back — but `eventLoopUtilization` counts every event-loop wait, so worker↔main RPC and inline-snapshot writes land here too and a snapshot-heavy file can rank high with no timer to remove. The ranking is absolute rather than a share of the file, because 3s inside a 10s file is still 3s.
 - **Worker time** — the run's total worker-seconds, the parallel factor against wall clock, and the split between `load` (importing the grid plus building a happy-dom) and `tests`. Load is a per-file constant and flat across them, so it is a budget line rather than a table: it is what makes an extra file cost something, and once the parallel factor sits at core count, wall time only falls by spending fewer worker-seconds. Read the current figure off the run rather than from here — it is actively being optimised, so any number written down is stale.
 
-All four take `--help` and resolve only from the repo root — from elsewhere call them by path (`../../behave.sh`), not via `cd "$(git rev-parse --show-toplevel)" &&`, which agent harnesses gate on. `./behave.sh` does not type-check; run `yarn nx run ag-behavioural-testing:build:test` before committing. Some suites take minutes — allow a five-minute timeout and collect the exit status rather than treating silence as success.
+All four take `--help` and resolve only from the repo root — from elsewhere call them by path (`../../behave.sh`), not via `cd "$(git rev-parse --show-toplevel)" &&`, which agent harnesses gate on. `./behave.sh` does not type-check; `./checks.sh` does (its `build:test` target covers the specs), so run it before committing. Some suites take minutes — allow a five-minute timeout and collect the exit status rather than treating silence as success.
 
 ## Speed
 

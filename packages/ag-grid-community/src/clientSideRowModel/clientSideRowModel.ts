@@ -213,13 +213,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             }
         });
 
-        this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
-        _addRowHeightChangedListener(this, () => {
-            if (this.beans.rowAutoHeight?.active) {
-                return;
-            }
-            this.resetRowHeights();
-        });
+        _addRowHeightChangedListener(this, () => this.resetRowHeights());
         this.addManagedPropertyListeners(['loading', 'loadingRows'], () => this.onLoadingRowsChanged());
     }
 
@@ -1154,7 +1148,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
         if (!this.rowCountReady && this.rowNodesCountReady) {
             this.rowCountReady = true; // only if row data has been set
-            this.eventSvc.dispatchEventOnce({ type: 'rowCountReady' });
+            this.eventSvc.dispatchEvent({ type: 'rowCountReady' });
         }
     }
 

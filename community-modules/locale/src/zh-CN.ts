@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     clearFilter: '清除',
     cancelFilter: '取消',
     cancelColumnToolPanel: '取消',
+    resetColumnToolPanel: '重置',
 
     // Filter Titles
     textFilter: '文本过滤器',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     addFilterCard: '添加过滤器',
     agTextColumnFilterDisplayName: '简单过滤器',
     agNumberColumnFilterDisplayName: '简单过滤器',
+    agBigIntColumnFilterDisplayName: '简单过滤器',
     agDateColumnFilterDisplayName: '简单过滤器',
     agSetColumnFilterDisplayName: '选择过滤器',
     agMultiColumnFilterDisplayName: '组合过滤器',
@@ -334,6 +336,10 @@ export const AG_GRID_LOCALE_ZH_CN = {
     enabled: '启用',
 
     // Menu
+    moveLeft: '向左移动',
+    moveRight: '向右移动',
+    moveUp: '向上移动',
+    moveDown: '向下移动',
     pinColumn: '固定列',
     pinLeft: '固定在左侧',
     pinRight: '固定在右侧',
@@ -735,6 +741,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     ariaFilterList: '过滤器列表',
     ariaFilterToValue: '过滤至值',
     ariaFilterValue: '过滤值',
+    ariaNotInCurrentData: '不在当前数据中',
     ariaFilterMenuOpen: '打开过滤器菜单',
     ariaFilteringOperator: '过滤运算符',
     ariaHidden: '隐藏',
@@ -756,6 +763,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     ariaRowSelect: '按 SPACE 选择此行',
     ariaRowSelectionDisabled: '此行的行选择功能被禁用',
     ariaSearch: '搜索',
+    ariaSortPriority: '排序优先级为第 ${priority} 位，共 ${count} 位',
     ariaSortableColumn: '按 ENTER 排序',
     ariaSortableColumnWithCellSelection: '按 ALT ENTER 排序',
     ariaToggleVisibility: '按 Space 切换可见性',
@@ -888,9 +896,11 @@ export const AG_GRID_LOCALE_ZH_CN = {
     columnHeaderEditCancel: '取消',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: '未找到符合条件的列。',
     calculatedColumn: '计算列',
     calculatedColumnAdd: '添加计算列',
     calculatedColumnEdit: '编辑计算列',
+    calculatedColumnView: '查看计算列',
     calculatedColumnRemove: '删除计算列',
     calculatedColumnTitle: '标题',
     calculatedColumnType: '类型',
@@ -904,6 +914,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     calculatedColumnDefaultTitle: '未命名',
     calculatedColumnExpressionAmbiguousReference: '列引用不明确 "${variable}"。请使用“列”列表或更具体的分组路径。',
     calculatedColumnExpressionUnknownReference: '未知的列引用 "${variable}"。',
+    calculatedColumnExpressionRestrictedReference: '此表达式中不能使用列 "${variable}"。',
     calculatedColumnExpressionEmpty: '请输入表达式',
     calculatedColumnTitleEmpty: '请输入标题',
     calculatedColumnApply: '应用',

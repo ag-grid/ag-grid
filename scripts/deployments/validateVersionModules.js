@@ -223,14 +223,15 @@ function validateLockfile() {
         return;
     }
 
-    // Yarn 1 entry headers are `name@range:` or `"name@range", "name@range2":` on their own line.
+    // Entry headers are `name@range:` or `"name@range", "name@range2":` on their own line. Yarn 4 writes
+    // npm ranges as `name@npm:range`, so normalise those to the `name@range` form checked below.
     const lockedSelectors = new Set();
     for (const line of fs.readFileSync(lockfilePath, 'utf8').split('\n')) {
         if (!/^[^\s#].*:$/.test(line)) {
             continue;
         }
         for (const selector of line.slice(0, -1).split(',')) {
-            lockedSelectors.add(selector.trim().replace(/^"|"$/g, ''));
+            lockedSelectors.add(selector.trim().replace(/^"|"$/g, '').replace('@npm:', '@'));
         }
     }
 

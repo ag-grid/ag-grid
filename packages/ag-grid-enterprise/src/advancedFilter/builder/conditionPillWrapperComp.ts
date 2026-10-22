@@ -15,7 +15,7 @@ import type { AutocompleteEntry } from '../autocomplete/autocompleteParams';
 import type { FilterExpressionOperator, OperandsKind } from '../filterExpressionOperators';
 import { OPERAND_COUNT } from '../filterExpressionOperators';
 import type { ColumnFilterModelOperands, PartialColumnFilterModel } from '../filterExpressionUtils';
-import { OPERAND_KEYS, getConditionValidationMessage, getNumberParser } from '../filterExpressionUtils';
+import { OPERAND_KEYS, getConditionValidationMessage } from '../filterExpressionUtils';
 import type {
     AdvancedFilterBuilderEvents,
     AdvancedFilterBuilderItem,
@@ -304,7 +304,7 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
         // An emptied pill holds nothing to filter on, so the slot goes rather than keeping an empty string.
         const value =
             this.baseCellDataType === 'number' && operand
-                ? (getNumberParser(this.column, this.gos)(operand) ?? '')
+                ? (this.advFilterExpSvc.getNumberParser(this.column)(operand) ?? '')
                 : operand;
         this.setOperandModelValue(index, value === '' ? undefined : value);
         this.validate();
@@ -315,13 +315,13 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
     }
 
     private validate(): void {
+        const filterModel = this.filterModel;
         const validationMessage = getConditionValidationMessage(
             this.advFilterExpSvc,
-            this.gos,
-            this.filterModel,
+            filterModel,
             this.column,
             this.baseCellDataType,
-            this.getExpressionOperator(this.filterModel.type)
+            this.getExpressionOperator(filterModel.type)
         );
 
         this.item.valid = !validationMessage;

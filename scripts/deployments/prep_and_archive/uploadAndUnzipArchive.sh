@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 if [ "$#" -lt 3 ]
   then
     echo "You must supply a grid version, a charts version & a host"
@@ -25,7 +27,7 @@ VERSION=$1
 CHARTS_VERSION=$2
 CURRENT_HOST=$3
 
-export SSH_LOCATION=$SSH_FILE
+export SSH_LOCATION=${SSH_FILE:-}
 
 # a few safety checks
 if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
@@ -48,10 +50,17 @@ fi
 
 ARCHIVE="archive_`date +%Y%m%d`_$VERSION.tar.gz"
 
+# Exempt this release candidate from caching before any of it is served, so no request can
+# pick up the released-archive long cache in the window between unpacking and patching.
+# The in-flight rule matches on path alone, so it can be set before the files exist; if it
+# fails, nothing has been uploaded yet.
+PATCHER="$(dirname "$0")/patchUncachedArchives.sh"
+checkFileExists "$PATCHER"
+"$PATCHER" "$VERSION" "$CHARTS_VERSION" "$CURRENT_HOST" set || exit 1
 
-# delete dir if it exists - can ignore dir not found error
-echo "ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST \"cd $GRID_ROOT_DIR/archive/ && [[ -d $VERSION ]] && rm -r $VERSION\""
-ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "cd $GRID_ROOT_DIR/archive/ && [[ -d $VERSION ]] && rm -r $VERSION"
+# delete dir if it exists (an if, rather than "[[ -d ]] && rm", so a missing dir doesn't fail the ssh)
+echo "ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST \"cd $GRID_ROOT_DIR/archive/ && if [[ -d $VERSION ]]; then rm -r $VERSION; fi\""
+ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "cd $GRID_ROOT_DIR/archive/ && if [[ -d $VERSION ]]; then rm -r $VERSION; fi"
 
 # upload file
 echo "ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST \"mkdir -p $GRID_ROOT_DIR/archive/$VERSION\""
@@ -59,15 +68,13 @@ ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "mkdir -p $GRID_ROOT_DIR/archive
 echo "scp -i $SSH_LOCATION -P $SSH_PORT $ARCHIVE $CURRENT_HOST:$GRID_ROOT_DIR/archive/$VERSION/"
 scp -i $SSH_LOCATION -P $SSH_PORT $ARCHIVE $CURRENT_HOST:$GRID_ROOT_DIR/archive/$VERSION/
 
-# unzip archive
-echo "ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST \"cd $GRID_ROOT_DIR/archive/$VERSION && tar -m -xf $ARCHIVE\""
-ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "cd $GRID_ROOT_DIR/archive/$VERSION && tar -m -xf $ARCHIVE"
+# unzip archive, keeping the mtimes recorded in it. Apache derives ETag and Last-Modified from
+# mtime and this runs once per host, so stamping files with the extraction time (tar -m) gave each
+# host different validators for the same file, and a revalidation routed to the other host missed.
+# Archives already deployed keep their per-host mtimes: they are never re-extracted, and that is accepted.
+echo "ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST \"cd $GRID_ROOT_DIR/archive/$VERSION && tar -xf $ARCHIVE\""
+ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "cd $GRID_ROOT_DIR/archive/$VERSION && tar -xf $ARCHIVE"
 
 #update folder permissions (default is 777 - change to 755)
 echo "ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST \"chmod -R 755 $GRID_ROOT_DIR/archive/$VERSION\""
 ssh -i $SSH_LOCATION -p $SSH_PORT $CURRENT_HOST "chmod -R 755 $GRID_ROOT_DIR/archive/$VERSION"
-
-# Exempt this release candidate from caching until it goes live.
-PATCHER="$(dirname "$0")/patchUncachedArchives.sh"
-checkFileExists "$PATCHER"
-"$PATCHER" "$VERSION" "$CHARTS_VERSION" "$CURRENT_HOST" set || exit 1

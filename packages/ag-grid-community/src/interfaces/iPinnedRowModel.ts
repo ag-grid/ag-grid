@@ -51,15 +51,12 @@ export interface IPinnedRowModel {
     /** Replaces the manually pinned rows with `state`, keeping rows already where it lists them. No-op for static. */
     setPinnedState(state: RowPinningState): void;
 
-    /**
-     * Specific method for flagging the grand total row to be pinned, since the behaviour
-     * is different than for all other pinned rows. Used by `FlattenStage` and `LazyStore` only. End users
-     * and API calls should be routed through `pinRow` like normal.
-     *
-     * This is a no-op for the static pinned row model.
-     */
-    setGrandTotalPinned(value: RowPinnedType): void;
+    /** Where the user pinned the grand total row, which then also stays in the body. Static: `undefined`. */
+    getUserGrandTotalPinned(): RowPinnedType;
 
-    /** Which container should the grand total row be pinned to. This is a no-op for the static pinned row model. */
-    getGrandTotalPinned(): RowPinnedType;
+    /** The grand total row the row model shows on this refresh, `undefined` when none. No-op for static. */
+    setGrandTotalNode(node: RowNode | undefined): void;
+
+    /** Forgets the user's pin and pins the shown grand total row where `grandTotalRow` says, dispatching any change. No-op for static. */
+    resetGrandTotalPin(): void;
 }

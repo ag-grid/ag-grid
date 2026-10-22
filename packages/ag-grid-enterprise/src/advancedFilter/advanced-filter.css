@@ -91,7 +91,7 @@
     padding-right: var(--ag-icon-size);
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 :where(.ag-virtual-list-viewport) .ag-advanced-filter-builder-item-wrapper .ag-tab-guard {
     position: absolute;
 }
@@ -285,7 +285,7 @@
 }
 
 .ag-advanced-filter-builder-virtual-list-viewport {
-    scrollbar-width: thin;
+    scrollbar-width: var(--ag-scrollbar-width, thin);
 }
 
 .ag-advanced-filter-builder-virtual-list-container {

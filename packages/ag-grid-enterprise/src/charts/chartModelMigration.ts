@@ -11,10 +11,8 @@ const DEBUG = false;
 
 export function upgradeChartModel(model: ChartModel): ChartModel {
     const originalVersion = model.version;
-    if (model.version == null) {
-        // Try to guess the version so we can apply the right subset of migrations.
-        model.version = heuristicVersionDetection(model);
-    }
+    // Try to guess the version so we can apply the right subset of migrations.
+    model.version ??= heuristicVersionDetection(model);
 
     model = migrateIfBefore('23.0.0', model, migrateV23);
     model = migrateIfBefore('24.0.0', model, migrateV24);
@@ -165,7 +163,7 @@ function migrateV26_2(model: ChartModel) {
             .map(({ type, ...axisProps }: any) => ({
                 [type]: { ...minimalAxis, ...axisProps },
             }))
-            .reduce(merge, {});
+            .reduce((merged: object, options: object) => merge(merged, options), {});
         for (const v of ALL_AXIS_TYPES.filter((v) => updatedAxes[v] == null)) {
             updatedAxes[v] = { ...minimalAxis };
         }
@@ -180,7 +178,7 @@ function migrateV26_2(model: ChartModel) {
                 ...otherChartOptions,
             },
         }))
-        .reduce(merge, {});
+        .reduce((merged: object, options: object) => merge(merged, options), {});
 
     model = {
         ...otherModelProps,
@@ -462,8 +460,8 @@ function migrateIfBefore(maxVersion: string, model: ChartModel, migration: (m: C
 type VersionParts = { major: number; minor: number; patch: number };
 function versionParts(versionRaw: string): VersionParts {
     const version = versionRaw.includes('-beta') ? versionRaw.replace(/-beta.*/, '') : versionRaw;
-    const split = typeof version === 'string' ? version.split('.').map((v) => Number(v)) : [];
-    if (split.length !== 3 || split.some((v) => isNaN(v))) {
+    const split = typeof version === 'string' ? version.split('.').map(Number) : [];
+    if (split.length !== 3 || split.some((v) => Number.isNaN(v))) {
         throw _errorToThrowWithoutAttribution(253, { version });
     }
 
@@ -491,9 +489,7 @@ function jsonDeleteDefault(path: string | string[], defaultValue: any, json: any
 
 function jsonBackfill(path: string | string[], defaultValue: any, json: any): any {
     return jsonMutateProperty(path, false, json, (parent, prop) => {
-        if (parent[prop] == null) {
-            parent[prop] = defaultValue;
-        }
+        parent[prop] ??= defaultValue;
     });
 }
 

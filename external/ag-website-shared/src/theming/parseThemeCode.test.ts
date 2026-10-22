@@ -1,6 +1,6 @@
+import type { Part } from 'ag-stack';
 import { expect, test } from 'vitest';
 
-import type { Part } from 'ag-grid-community';
 import { iconSetAlpine, iconSetMaterial, tabStyleMaterial } from 'ag-grid-community';
 
 import { type ParseThemeResult, parseThemeCode, validateAndConvertToPreset } from './parseThemeCode';
@@ -19,6 +19,8 @@ const TEST_PARAM_KEYS = new Set([
 
 const TEST_PARTS_BY_EXPORT_NAME: Record<string, Part<any>> = { iconSetAlpine, iconSetMaterial, tabStyleMaterial };
 
+const NO_PARAMS_ERROR = 'No theme parameters found';
+
 function testExtractParts(identifiers: string[]): Part<any>[] {
     const selectedByFeature = new Map<string, Part<any>>();
     for (const identifier of identifiers) {
@@ -35,6 +37,7 @@ function parse(code: string): ParseThemeResult {
     return parseThemeCode(code, {
         isRecognizedParam: (key) => TEST_PARAM_KEYS.has(key),
         extractParts: testExtractParts,
+        noParamsError: () => NO_PARAMS_ERROR,
     });
 }
 
@@ -242,7 +245,11 @@ test('detects parts anywhere in code with last-wins for same feature', () => {
 });
 
 test('parseThemeCode with no extractParts option never returns parts', () => {
-    expect(parseThemeCode(`{ fontSize: 14 }`, { isRecognizedParam: (key) => TEST_PARAM_KEYS.has(key) })).toEqual({
+    const result = parseThemeCode(`{ fontSize: 14 }`, {
+        isRecognizedParam: (key) => TEST_PARAM_KEYS.has(key),
+        noParamsError: () => NO_PARAMS_ERROR,
+    });
+    expect(result).toEqual({
         success: true,
         params: { fontSize: 14 },
         parts: [],

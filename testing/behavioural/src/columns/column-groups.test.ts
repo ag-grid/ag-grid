@@ -1,4 +1,5 @@
 import { waitFor } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, ColGroupDef, ColumnGroup, GridApi } from 'ag-grid-community';
@@ -19,12 +20,125 @@ describe('Column Groups', () => {
     const renderedColumnIds = () =>
         Array.from(document.querySelectorAll('.ag-header-cell'), (cell) => cell.getAttribute('col-id'));
 
+    describe('group header aria-colspan', () => {
+        const groupAria = () => {
+            const cell = document.querySelector<HTMLElement>('.ag-header-group-cell')!;
+            return { colindex: cell.getAttribute('aria-colindex'), colspan: cell.getAttribute('aria-colspan') };
+        };
+
+        test('a hidden child keeps its slot inside the span, and hiding down to one leaf removes it', async () => {
+            const api = gridsManager.createGrid('aria-hide', {
+                columnDefs: [
+                    { groupId: 'g', headerName: 'G', children: [{ field: 'a' }, { field: 'b' }, { field: 'c' }] },
+                ],
+                rowData: [{ a: 1, b: 2, c: 3 }],
+            });
+            await waitFor(() => expect(groupAria()).toEqual({ colindex: '1', colspan: '3' }));
+
+            api.setColumnsVisible(['b'], false);
+            await waitFor(() => expect(document.querySelector('.ag-header-cell[col-id="b"]')).toBeNull());
+            expect(groupAria()).toEqual({ colindex: '1', colspan: '3' });
+
+            api.setColumnsVisible(['c'], false);
+            await waitFor(() => expect(groupAria()).toEqual({ colindex: '1', colspan: null }));
+
+            api.setColumnsVisible(['b', 'c'], true);
+            await waitFor(() => expect(groupAria()).toEqual({ colindex: '1', colspan: '3' }));
+        });
+
+        test('a collapsed group spans the slots of the children it hides', async () => {
+            gridsManager.createGrid('aria-collapsed', {
+                columnDefs: [
+                    {
+                        groupId: 'g',
+                        headerName: 'G',
+                        children: [
+                            { field: 'a' },
+                            { field: 'b', columnGroupShow: 'open' },
+                            { field: 'c', columnGroupShow: 'open' },
+                        ],
+                    },
+                ],
+                rowData: [{ a: 1, b: 2, c: 3 }],
+            });
+            await waitFor(() => expect(groupAria()).toEqual({ colindex: '1', colspan: '3' }));
+        });
+
+        test('a group split by pinning spans each part from its own first leaf, and a hidden first leaf drops out', async () => {
+            const api = gridsManager.createGrid('aria-pinned', {
+                columnDefs: [
+                    {
+                        groupId: 'g',
+                        headerName: 'G',
+                        children: [{ field: 'a', pinned: 'left' }, { field: 'b' }, { field: 'c' }, { field: 'd' }],
+                    },
+                ],
+                rowData: [{ a: 1, b: 2, c: 3, d: 4 }],
+            });
+            const groupParts = () =>
+                Array.from(document.querySelectorAll('.ag-header-group-cell'), (cell) => ({
+                    colindex: cell.getAttribute('aria-colindex'),
+                    colspan: cell.getAttribute('aria-colspan'),
+                }));
+            await waitFor(() =>
+                expect(groupParts()).toEqual([
+                    { colindex: '1', colspan: null },
+                    { colindex: '2', colspan: '3' },
+                ])
+            );
+
+            api.setColumnsVisible(['b'], false);
+            await waitFor(() =>
+                expect(groupParts()).toEqual([
+                    { colindex: '1', colspan: null },
+                    { colindex: '3', colspan: '2' },
+                ])
+            );
+        });
+    });
+
+    test("a centre group's label is sticky while the group is scrolled part out, as it scrolls and as it resizes", async () => {
+        const api = gridsManager.createGrid('sticky-label', {
+            columnDefs: [
+                { colId: 'a', width: 200 },
+                { headerName: 'G', children: [{ colId: 'g1' }, { colId: 'g2' }] },
+                { colId: 'z' },
+            ],
+            defaultColDef: { width: 500 },
+            rowData: [{}],
+        });
+        await asyncSetTimeout(0);
+        const sticky = () =>
+            Array.from(document.querySelectorAll('.ag-header-group-text'))
+                .find((text) => text.textContent === 'G')!
+                .closest('.ag-header-group-cell-label')!
+                .classList.contains('ag-sticky-label');
+        const seen: boolean[] = [sticky()];
+
+        api.ensureColumnVisible('z');
+        await asyncSetTimeout(0);
+        seen.push(sticky());
+
+        api.setColumnWidths([{ key: 'a', newWidth: 900 }]);
+        await asyncSetTimeout(0);
+        seen.push(sticky());
+
+        api.setColumnWidths([{ key: 'a', newWidth: 200 }]);
+        await asyncSetTimeout(0);
+        seen.push(sticky());
+
+        api.ensureColumnVisible('a');
+        await asyncSetTimeout(0);
+        seen.push(sticky());
+
+        expect(seen).toEqual([false, true, false, true, false]);
+    });
+
     describe('empty groups stay findable (matches released behaviour)', () => {
         test('a group declared with no children remains discoverable via the group APIs', async () => {
             const api = gridsManager.createGrid('empty-declared', {
                 columnDefs: [{ field: 'a' }, { headerName: 'Empty', groupId: 'emptyDeclared', children: [] }] as (
-                    | ColDef
-                    | ColGroupDef
+                    ColDef | ColGroupDef
                 )[],
                 rowData: [{ a: 1 }],
             });
@@ -47,16 +161,14 @@ describe('Column Groups', () => {
         test('a group emptied via setColumnDefs stays findable (now empty)', async () => {
             const api = gridsManager.createGrid('empty-runtime', {
                 columnDefs: [{ field: 'a' }, { headerName: 'G', groupId: 'g2', children: [{ field: 'b' }] }] as (
-                    | ColDef
-                    | ColGroupDef
+                    ColDef | ColGroupDef
                 )[],
                 rowData: [{ a: 1, b: 2 }],
             });
             await waitFor(() => expect(api.getProvidedColumnGroup('g2')).not.toBeNull());
 
             api.setGridOption('columnDefs', [{ field: 'a' }, { headerName: 'G', groupId: 'g2', children: [] }] as (
-                | ColDef
-                | ColGroupDef
+                ColDef | ColGroupDef
             )[]);
             await waitFor(() => {
                 const emptied = api.getProvidedColumnGroup('g2') as unknown as { children: unknown[] } | null;
@@ -956,6 +1068,48 @@ describe('Column Groups', () => {
     });
 
     describe('groups with pinned columns', () => {
+        test.each([
+            { pinned: 'left', keepPinnedVisible: false },
+            { pinned: 'right', keepPinnedVisible: false },
+            { pinned: 'left', keepPinnedVisible: true },
+            { pinned: 'right', keepPinnedVisible: true },
+        ] as const)(
+            'Enter keeps group focus (pinned=$pinned, keepPinnedVisible=$keepPinnedVisible)',
+            async ({ pinned, keepPinnedVisible }) => {
+                const api = await gridsManager.createGridAndWait('groupFocus', {
+                    columnDefs: [
+                        {
+                            groupId: 'medals',
+                            headerName: 'Medals',
+                            children: [
+                                { field: 'total', columnGroupShow: 'closed', pinned },
+                                { field: 'bronze', columnGroupShow: 'open', width: 100, flex: 0 },
+                                ...(keepPinnedVisible ? [{ field: 'silver', pinned }] : []),
+                            ],
+                        },
+                        { field: 'year' },
+                    ],
+                    rowData: [{ total: 3, bronze: 1, year: 2000 }],
+                });
+                api.setFocusedHeader(api.getColumnGroup('medals')!);
+                const originalHeader = document.activeElement;
+                expect(document.activeElement?.textContent).toContain('Medals');
+                const user = userEvent.setup();
+                for (const expanded of [true, false]) {
+                    await user.keyboard('{Enter}');
+                    expect(api.getColumnGroupState().find((group) => group.groupId === 'medals')?.open).toBe(expanded);
+                    await waitFor(() => {
+                        expect(document.activeElement?.classList.contains('ag-header-group-cell')).toBe(true);
+                        expect(document.activeElement?.textContent).toContain('Medals');
+                        expect(document.activeElement?.getAttribute('aria-expanded')).toBe(String(expanded));
+                        if (keepPinnedVisible) {
+                            expect(document.activeElement).toBe(originalHeader);
+                        }
+                    });
+                }
+            }
+        );
+
         test('group children in left pinned section', async () => {
             const columnDefs: (ColDef | ColGroupDef)[] = [
                 {
@@ -1148,6 +1302,41 @@ describe('Column Groups', () => {
             expect(expandedEvents.length).toBeGreaterThan(0);
             // The displayed-children set flipped: 'detail' hid, 'summary' showed.
             expect(displayedChildrenEvents.length).toBeGreaterThan(0);
+        });
+
+        test('group listeners added async run after the change, apart from the same function added sync', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ groupId: 'g', children: [{ colId: 'a' }, { colId: 'b', columnGroupShow: 'open' }] }],
+            });
+            const calls: string[] = [];
+            const asyncListener = () => calls.push('async');
+            const bothWays = () => calls.push('sync');
+            const providedGroup = api.getProvidedColumnGroup('g')!;
+            const group = api.getColumnGroup('g')!;
+            providedGroup.addEventListener('expandedChanged', asyncListener, true);
+            providedGroup.addEventListener('expandedChanged', bothWays);
+            providedGroup.addEventListener('expandedChanged', bothWays, true);
+            providedGroup.removeEventListener('expandedChanged', bothWays, true);
+            group.addEventListener('displayedChildrenChanged', asyncListener, true);
+            group.addEventListener('displayedChildrenChanged', bothWays);
+            group.addEventListener('displayedChildrenChanged', bothWays, true);
+            group.removeEventListener('displayedChildrenChanged', bothWays, true);
+
+            api.setColumnGroupOpened('g', true);
+            expect(calls).toEqual(['sync', 'sync']);
+            await waitFor(() => expect(calls).toEqual(['sync', 'sync', 'async', 'async']));
+        });
+
+        test('a provided group with its children hidden ignores removing a listener never added', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ groupId: 'g', children: [{ colId: 'a', hide: true }] }, { colId: 'b' }],
+            });
+            const providedGroup = api.getProvidedColumnGroup('g')!;
+            providedGroup.removeEventListener('expandedChanged', () => {});
+            const calls: boolean[] = [];
+            providedGroup.addEventListener('expandedChanged', () => calls.push(providedGroup.isExpanded()));
+            api.setColumnGroupOpened('g', true);
+            expect(calls).toEqual([true]);
         });
 
         test('expand a closed group via setColumnGroupOpened', async () => {

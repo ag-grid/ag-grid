@@ -70,6 +70,8 @@ export class StateService extends BeanStub implements NamedBean {
     private columnGroupStates?: { groupId: string; open: boolean; headerName?: string | null }[];
     /** Filter state held back until firstDataRendered, when pivot result columns exist. */
     private deferredFilterState?: FilterState;
+    /** The initial filter state until applied, when the row count is ready or before a filter set through the API. */
+    private initialFilterState?: FilterState;
     private readonly staleStateKeys: Set<keyof GridState> = new Set();
 
     public postConstruct(): void {
@@ -80,6 +82,7 @@ export class StateService extends BeanStub implements NamedBean {
         const partialColumnState = initialState.partialColumnState;
         delete initialState.partialColumnState;
         this.cachedState = initialState;
+        this.initialFilterState = initialState.filter;
 
         const suppressEventsAndDispatchInitEvent = this.suppressEventsAndDispatchInitEvent.bind(this);
 
@@ -141,6 +144,7 @@ export class StateService extends BeanStub implements NamedBean {
         this.cachedState = state;
 
         this.startSuppressEvents();
+        this.applyInitialFilterState();
 
         const source = 'api';
 
@@ -322,7 +326,8 @@ export class StateService extends BeanStub implements NamedBean {
     }
 
     private setupStateOnRowCountReady(initialState: GridState): void {
-        this.setRowCountState(initialState, 'gridInitializing');
+        this.applyInitialFilterState();
+        this.setRowCountState({ ...initialState, filter: undefined }, 'gridInitializing');
 
         const updateCachedState = this.updateCachedState.bind(this);
         const updateRowGroupExpansionState = () => {
@@ -768,6 +773,15 @@ export class StateService extends BeanStub implements NamedBean {
         );
     }
 
+    /** Applies the initial filter state once, so a filter set through the API before the rows arrive lands after it. */
+    public applyInitialFilterState(): void {
+        const filterState = this.initialFilterState;
+        if (filterState) {
+            this.initialFilterState = undefined;
+            this.setFilterStateDeferringPivot(filterState, 'gridInitializing');
+        }
+    }
+
     /** Defers to firstDataRendered if any target column is missing (a pivot result column not yet created). */
     private setFilterStateDeferringPivot(state: FilterState | undefined, source: 'gridInitializing' | 'api'): void {
         const { colModel, pivotResultCols } = this.beans;
@@ -915,7 +929,7 @@ export class StateService extends BeanStub implements NamedBean {
             return;
         }
         const { colId, rowIndex, rowPinned } = focusedCellState;
-        focusSvc.setFocusedCell({
+        focusSvc.setFocusedCellOrSpan({
             column: colModel.colsById[colId] ?? null,
             rowIndex,
             rowPinned,
@@ -968,8 +982,9 @@ export class StateService extends BeanStub implements NamedBean {
         const noSelections =
             !selectionState ||
             (!Array.isArray(selectionState) &&
-                ((selectionState as ServerSideRowSelectionState).selectAll === false ||
-                    (selectionState as ServerSideRowGroupSelectionState).selectAllChildren === false) &&
+                ('selectAll' in selectionState
+                    ? !selectionState.selectAll
+                    : selectionState.selectAllChildren === false) &&
                 !selectionState?.toggledNodes?.length);
         return noSelections ? undefined : selectionState;
     }

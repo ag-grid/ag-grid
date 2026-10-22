@@ -12,6 +12,11 @@ export function getFocusedColId(api: GridApi): string | null {
     return api.getFocusedCell()?.column.getColId() ?? null;
 }
 
+/** The column of the cell holding the browser focus, which the focus model alone does not prove. */
+export function getActiveCellColId(): string | null | undefined {
+    return document.activeElement?.closest('.ag-cell')?.getAttribute('col-id');
+}
+
 export function getFocusedRowIndex(api: GridApi): number | null {
     return api.getFocusedCell()?.rowIndex ?? null;
 }

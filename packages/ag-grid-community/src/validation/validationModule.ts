@@ -80,6 +80,7 @@ export const ValidationModule: ValidationModuleType = {
  * production builds.
  *
  * Pass {@link DevValidationOptions} to configure development-time diagnostics, e.g. `{ throwOn: ['error'] }`.
+ * Pass `{ debug: true }` to also log grid debug information to the console.
  */
 export function enableDevValidations(options?: DevValidationOptions): void {
     _registerModule(ValidationModule.with(options), undefined);

@@ -67,6 +67,7 @@
         position: absolute;
         width: 0;
         height: 0;
+        pointer-events: none;
         display: block;
     }
 
@@ -928,6 +929,14 @@
     .ag-group-value {
         overflow: hidden;
         text-overflow: ellipsis;
+
+        // Work around a Firefox bug where a text selection drag ending in a scroll container
+        // selects the wrong text range. Use overflow:clip for the same visual effect
+        // without a scroll container.
+        :where(.ag-selectable) & {
+            overflow: clip;
+            min-width: 0;
+        }
     }
 
     .ag-cell-wrapper {
@@ -1781,13 +1790,18 @@
     .ag-rich-select-field-input {
         flex: 1 1 auto;
         .ag-input-field-input {
-            padding: 0 !important;
+            padding-block: 0 !important;
+            padding-inline-end: 0 !important;
             border: none !important;
             box-shadow: none !important;
             text-overflow: ellipsis;
             &::placeholder {
                 opacity: 0.8;
             }
+        }
+        // a search input keeps the start padding that the search input style gives it
+        &:not(.ag-input-field-search) .ag-input-field-input {
+            padding-inline-start: 0 !important;
         }
     }
 
@@ -2403,29 +2417,6 @@
         .ag-column-drop {
             flex: unset;
         }
-    }
-
-    .ag-content-editable-field {
-        display: flex;
-        align-items: center;
-    }
-
-    .ag-content-editable-field-input {
-        cursor: text;
-        display: block;
-        flex: 1 1 auto;
-        outline: none;
-        white-space: nowrap;
-        line-height: normal;
-        overflow: auto;
-        overflow-y: hidden;
-
-        &::-webkit-scrollbar {
-            display: none !important;
-        }
-
-        -ms-overflow-style: none !important;
-        scrollbar-width: none !important;
     }
 
     .ag-ltr {

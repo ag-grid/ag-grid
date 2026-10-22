@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     clearFilter: 'Rensa',
     cancelFilter: 'Avbryt',
     cancelColumnToolPanel: 'Avbryt',
+    resetColumnToolPanel: 'Återställ',
 
     // Filter Titles
     textFilter: 'Textfilter',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     addFilterCard: 'Lägg till filter',
     agTextColumnFilterDisplayName: 'Enkel filter',
     agNumberColumnFilterDisplayName: 'Enkel filter',
+    agBigIntColumnFilterDisplayName: 'Enkel filter',
     agDateColumnFilterDisplayName: 'Enkel filter',
     agSetColumnFilterDisplayName: 'Valfilter',
     agMultiColumnFilterDisplayName: 'Kombinationsfilter',
@@ -337,6 +339,10 @@ export const AG_GRID_LOCALE_SV_SE = {
     enabled: 'Aktiverad',
 
     // Menu
+    moveLeft: 'Flytta åt vänster',
+    moveRight: 'Flytta åt höger',
+    moveUp: 'Flytta upp',
+    moveDown: 'Flytta ned',
     pinColumn: 'Fäst Kolumn',
     pinLeft: 'Fäst Vänster',
     pinRight: 'Fäst Höger',
@@ -739,6 +745,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaFilterList: 'Filterlista',
     ariaFilterToValue: 'Filtrera till värde',
     ariaFilterValue: 'Filtervärde',
+    ariaNotInCurrentData: 'finns inte i aktuella data',
     ariaFilterMenuOpen: 'Öppna filtermeny',
     ariaFilteringOperator: 'Filtreringsoperator',
     ariaHidden: 'dold',
@@ -761,6 +768,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaRowSelect: 'Tryck SPACE för att markera denna rad',
     ariaRowSelectionDisabled: 'Radmarkering är inaktiverad för denna rad',
     ariaSearch: 'Sök',
+    ariaSortPriority: 'Sorteringsprioritet ${priority} av ${count}',
     ariaSortableColumn: 'Tryck ENTER för att sortera',
     ariaSortableColumnWithCellSelection: 'Tryck ALT ENTER för att sortera',
     ariaToggleVisibility: 'Tryck SPACE för att växla synlighet',
@@ -893,9 +901,11 @@ export const AG_GRID_LOCALE_SV_SE = {
     columnHeaderEditCancel: 'Avbryt',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Inga lämpliga kolumner hittades.',
     calculatedColumn: 'Beräknad kolumn',
     calculatedColumnAdd: 'Lägg till beräknad kolumn',
     calculatedColumnEdit: 'Redigera beräknad kolumn',
+    calculatedColumnView: 'Visa beräknad kolumn',
     calculatedColumnRemove: 'Ta bort beräknad kolumn',
     calculatedColumnTitle: 'Titel',
     calculatedColumnType: 'Typ',
@@ -910,6 +920,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     calculatedColumnExpressionAmbiguousReference:
         'Tvetydig kolumnreferens "${variable}". Använd listan Kolumner eller en mer specifik gruppsökväg.',
     calculatedColumnExpressionUnknownReference: 'Okänd kolumnreferens "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Kolumnen "${variable}" kan inte användas i det här uttrycket.',
     calculatedColumnExpressionEmpty: 'Ange ett uttryck',
     calculatedColumnTitleEmpty: 'Ange en titel',
     calculatedColumnApply: 'Verkställ',

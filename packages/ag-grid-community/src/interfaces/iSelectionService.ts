@@ -48,15 +48,23 @@ export interface ISelectionService {
     selectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void;
     deselectAllRowNodes(params: { source: SelectionEventSourceType; selectAll?: SelectAllMode }): void;
     createCheckboxSelectionComponent(): CheckboxSelectionComponent;
+    registerCheckbox(rowNode: RowNode, checkbox: CheckboxSelectionComponent): void;
+    unregisterCheckbox(rowNode: RowNode, checkbox: CheckboxSelectionComponent): void;
     createSelectAllFeature(column: AgColumn): SelectAllFeature | undefined;
     onRowCtrlSelected(rowCtrl: RowCtrl, hasFocusFunc: () => void): void;
-    announceAriaRowSelection(rowNode: RowNode): void;
+    /** `column` is `undefined` on a full-width row. */
+    announceAriaRowSelection(rowNode: RowNode, column: AgColumn | undefined): void;
     /** Single post-refresh selectable pass (flat + hierarchical), invoked by the client-side row model. */
     updateSelectableAfterGrouping(changedPath: ChangedPath | undefined, changedRowNodes?: ChangedRowNodes): void;
     updateRowSelectable(rowNode: RowNode, suppressSelectionUpdate?: boolean): boolean;
     selectRowNode(rowNode: RowNode, newValue?: boolean, e?: Event, source?: SelectionEventSourceType): boolean;
     createDaemonNode?(rowNode: RowNode): RowNode | undefined;
-    handleSelectionEvent(event: MouseEvent | KeyboardEvent, rowNode: RowNode, source: SelectionEventSourceType): number;
+    handleSelectionEvent(
+        event: MouseEvent | KeyboardEvent,
+        rowNode: RowNode,
+        source: SelectionEventSourceType,
+        column?: AgColumn
+    ): number;
     isCellCheckboxSelection(column: AgColumn, rowNode: IRowNode): boolean;
     refreshMasterNodeState(node: RowNode, e?: Event): void;
     setDetailSelectionState(masterNode: RowNode, option: GridOptions, detailApi: GridApi): void;

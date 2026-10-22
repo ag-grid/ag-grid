@@ -640,6 +640,47 @@ describe('Cell Editing: full-row virtualization (React)', () => {
     // more than once when editing was eventually stopped.
     // React rendering is async (cell editors are attached asynchronously), which makes
     // this scenario more susceptible to duplicate strategy.start() calls.
+    test('a cell scrolled into view during a full-row edit mounts with its editor open', async () => {
+        let readyResolve!: (api: GridApi) => void;
+        const readyPromise = new Promise<GridApi>((resolve) => {
+            readyResolve = resolve;
+        });
+
+        render(
+            <div style={{ width: 1000, height: 800 }}>
+                <AgGridReact
+                    rowData={makeRowData()}
+                    columnDefs={columnDefs}
+                    getRowId={(params) => params.data.id}
+                    defaultColDef={{ editable: true, cellDataType: false }}
+                    editType="fullRow"
+                    suppressColumnVirtualisation={false}
+                    suppressAnimationFrame={true}
+                    modules={[ClientSideRowModelModule, TextEditorModule, ScrollApiModule]}
+                    onGridReady={(params: GridReadyEvent) => readyResolve(params.api)}
+                />
+            </div>
+        );
+
+        const api = await readyPromise;
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const user = userEvent.setup({ skipHover: true });
+        await asyncSetTimeout(0);
+
+        const firstCell = getByTestId(gridDiv, agTestIdFor.cell('0', 'field1'));
+        await user.dblClick(firstCell);
+        await waitForInput(gridDiv, firstCell);
+        expect(hasCell(gridDiv, 0, `field${COL_COUNT}`)).toBe(false);
+
+        await act(async () => {
+            api.ensureColumnVisible(`field${COL_COUNT}`);
+            await asyncSetTimeout(0);
+        });
+
+        const lastCell = gridDiv.querySelector(`.ag-row[row-index="0"] .ag-cell[col-id="field${COL_COUNT}"]`);
+        expect(lastCell?.querySelector('input')).toBeTruthy();
+    });
+
     test('onRowEditingStopped fires exactly once after scrolling during full-row edit', async () => {
         const onRowEditingStopped = vi.fn();
 

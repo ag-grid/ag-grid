@@ -11,7 +11,7 @@ The new **Filters Tool Panel** allows accessing the grid's filters without needi
 
 To use the new Filters Tool Panel, set `enableFilterHandlers = true`, and use the `'filters-new'` [Side Bar Configuration](./side-bar/#configuring-the-side-bar).
 
-If a filter is set from anywhere outside of the tool panel, e.g. from the column menu, the filter will automatically be added to the tool panel. Once a filter appears in the tool panel, it will remain until it's removed from within the tool panel.
+If a filter is set from anywhere outside of the tool panel, e.g. from the column menu, the filter will automatically be added to the tool panel. Once a filter appears in the tool panel, it will remain until it's removed from within the tool panel. Removing a filter from the tool panel also clears that filter.
 
 ## Using Buttons
 
@@ -67,7 +67,56 @@ When the grid initialises, the tool panel only shows active filters provided in 
 
 {% interfaceDocumentation interfaceName="NewFiltersToolPanelState" config={"description": ""} /%}
 
-{% gridExampleRunner title="New Filters Tool Panel State" name="state" /%}
+### Managing Tool Panel State
+
+The filter cards shown in the tool panel are part of the [Side Bar](./side-bar/) state, which is separate from the filter model. Clearing the filter model with `api.setFilterModel(null)` therefore clears the filter values but leaves the (now inactive) cards in place.
+
+To remove cards from the tool panel programmatically, see [Choosing Filter Cards](#choosing-filter-cards).
+
+A saved layout can be restored by passing a previously captured `sideBar` state to `api.setState`. Pass the `filter` state too to restore each card's values as well as the cards themselves. See [Grid State](./grid-state/) for the full `getState` and `setState` semantics.
+
+## Expand / Collapse Filter Cards
+
+The filter cards in the tool panel can be expanded and collapsed by invoking methods on the Filters Tool Panel instance:
+
+{% interfaceDocumentation interfaceName="INewFiltersToolPanel" names=["expandFilterCards","collapseFilterCards"] config={"description":""} /%}
+
+```{% frameworkTransform=true %}
+// expands the 'age' and 'country' filter cards
+api.getToolPanelInstance('filters-new').expandFilterCards(['age', 'country']);
+```
+
+Only filters which already have a card in the tool panel are affected.
+
+## Choosing Filter Cards
+
+`setFilterCards` sets exactly which filter cards are shown in the tool panel, and in what order. **Any column omitted from the list has its card removed, and its filter is cleared.** Passing an empty array (`[]`) removes every card and clears their filters.
+
+{% interfaceDocumentation interfaceName="INewFiltersToolPanel" names=["setFilterCards","getState"] config={"description":""} /%}
+
+```{% frameworkTransform=true %}
+// shows only the 'athlete', 'country' and 'year' cards, in that order
+api.getToolPanelInstance('filters-new').setFilterCards(['athlete', 'country', 'year']);
+```
+
+- Cards are shown in the order given.
+- Cards that already exist keep their expanded state. Cards that are added are collapsed, unlike when added using **Add Filter** in the tool panel, which adds them expanded.
+- Column IDs that do not match a column in the grid are skipped, and a warning is logged in development.
+
+## Example: Managing Filter Cards
+
+The example below starts with filters on Age and Country, and an inactive Athlete card:
+
+- **Show Athlete, Country, Year** calls `setFilterCards(['athlete', 'country', 'year'])`. The Age card is removed and its filter is cleared. Country keeps its filter and expanded state, and Year is added collapsed.
+- **Expand All** and **Collapse All** call `expandFilterCards()` and `collapseFilterCards()`.
+- **Clear Filter Values** calls `api.setFilterModel(null)`. The rows are unfiltered, but the cards remain.
+- **Remove Inactive** uses `getState` to find the current cards, and passes the ones with a filter to `setFilterCards`.
+- **Remove All** calls `setFilterCards([])`. Every card is removed and the rows are unfiltered.
+- **Save State** captures the current grid state with `api.getState()`.
+- **Restore Saved State** applies the saved `filter` and `sideBar` state, restoring both the cards and their values.
+- **Restore Initial State** applies the state the grid was created with.
+
+{% gridExampleRunner title="Managing Filter Cards" name="managing-filter-cards" /%}
 
 ## Filter Instances
 

@@ -551,13 +551,26 @@ export function addRelativeImports(bindings: ParsedBindings, imports: string[], 
     }
 }
 
+const DEV_VALIDATIONS_GUARD_REGEX =
+    /(\/\/[^\n]*\n)?if \(process\.env\.NODE_ENV !== 'production'\) \{\s*(\/\/[^\n]*\n\s*)?(agGrid\.)?enableDevValidations\(([^)]*)\);\s*\}\n?/;
+
+/**
+ * Returns the arguments passed to the NODE_ENV-guarded `enableDevValidations(...)` call,
+ * e.g. `{ debug: true }`, or `''` when the call is bare or there is no guard.
+ */
+export function extractDevValidationsArgs(code: string): string {
+    return code.match(DEV_VALIDATIONS_GUARD_REGEX)?.[4]?.trim() ?? '';
+}
+
+/** Builds the vanilla/UMD preamble that enables dev validations with the given arguments. */
+export function getVanillaDevValidationsPreamble(args: string): string {
+    return `// Enable extended validations only for development\nagGrid.enableDevValidations(${args});`;
+}
+
 export function removeModuleRegistration(code: string) {
-    // Strip the dev-only validations guard (the vanilla/UMD generator re-injects a plain
-    // agGrid.enableDevValidations() call — process.env is not defined in the browser bundle).
-    code = code.replace(
-        /(\/\/[^\n]*\n)?if \(process\.env\.NODE_ENV !== 'production'\) \{\s*(\/\/[^\n]*\n\s*)?(agGrid\.)?enableDevValidations\(\);\s*\}\n?/g,
-        ''
-    );
+    // Strip the dev-only validations guard (the vanilla/UMD generator re-injects an
+    // agGrid.enableDevValidations(...) call — process.env is not defined in the browser bundle).
+    code = code.replace(new RegExp(DEV_VALIDATIONS_GUARD_REGEX.source, 'g'), '');
     return code.replace(/\b(agGrid\.)?ModuleRegistry\.registerModules(.|\n)*?]\)(;)/g, '');
 }
 
@@ -745,6 +758,9 @@ const darkModeTs = `
 
         // update chart themes based on dark mode status
         const updateChartThemes = (isDark: boolean): void => {
+            // the retry timer and colour scheme listener can outlive the grid (e.g. when the example is torn down)
+            if (params.api.isDestroyed()) return;
+
             const themes: string[] = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];            
             const currentThemes = params.api.getGridOption('chartThemes');    
             const customTheme = currentThemes && currentThemes.some(theme => theme.startsWith('my-custom-theme'));
@@ -793,6 +809,9 @@ const darkModeJS = `
         const readThemeMode = () => document.documentElement.dataset.agThemeMode;
 
         const updateChartThemes = (isDark) => { 
+            // the retry timer and colour scheme listener can outlive the grid (e.g. when the example is torn down)
+            if (params.api.isDestroyed()) return;
+
             const themes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];            
             const currentThemes = params.api.getGridOption('chartThemes');                    
             const customTheme = currentThemes && currentThemes.some(theme => theme.startsWith('my-custom-theme'));

@@ -113,6 +113,8 @@ The `grandTotalData` field on the `success` callback params controls the grand t
 - Pass `null` to explicitly remove an existing grand total row.
 - Leave it `undefined` (or omit the field entirely) to keep the grand total unchanged — the grid will continue to show whatever grand total is already cached. This lets paged block requests return data rows without having to re-send the grand total every time.
 
+While the grid has no rows, the grand total row is not shown; it returns with the rows.
+
 The example below shows a grouped grid with aggregations on the medal columns. Note how the grand total is recomputed server-side when filters change (reflecting the filtered totals), and that changing an aggregation function via the column menu triggers a fresh request for both data and grand total:
 
 {% gridExampleRunner title="Grand Total via getRows" name="grand-total-getrows" exampleHeight=590 /%}
@@ -147,6 +149,8 @@ const grandTotalNode = api.getRowNode(GRAND_TOTAL_ROW_ID);
 // Retrieve a group total row node (e.g. for group "Ireland")
 const groupTotalNode = api.getRowNode(GROUP_TOTAL_ROW_ID_PREFIX + groupRowNode.id);
 ```
+
+While the grid has no rows there is no grand total row, so `api.getRowNode(GRAND_TOTAL_ROW_ID)` returns `undefined`.
 
 ### Grand Total Row API Reference
 

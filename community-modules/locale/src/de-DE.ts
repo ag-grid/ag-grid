@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_DE_DE = {
     clearFilter: 'Löschen',
     cancelFilter: 'Abbrechen',
     cancelColumnToolPanel: 'Abbrechen',
+    resetColumnToolPanel: 'Zurücksetzen',
 
     // Filter Titles
     textFilter: 'Textfilter',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_DE_DE = {
     addFilterCard: 'Filter hinzufügen',
     agTextColumnFilterDisplayName: 'Einfacher Filter',
     agNumberColumnFilterDisplayName: 'Einfacher Filter',
+    agBigIntColumnFilterDisplayName: 'Einfacher Filter',
     agDateColumnFilterDisplayName: 'Einfacher Filter',
     agSetColumnFilterDisplayName: 'Auswahlfilter',
     agMultiColumnFilterDisplayName: 'Kombifilter',
@@ -339,6 +341,10 @@ export const AG_GRID_LOCALE_DE_DE = {
     enabled: 'Aktiviert',
 
     // Menu
+    moveLeft: 'Nach links verschieben',
+    moveRight: 'Nach rechts verschieben',
+    moveUp: 'Nach oben verschieben',
+    moveDown: 'Nach unten verschieben',
     pinColumn: 'Spalte anheften',
     pinLeft: 'Links anheften',
     pinRight: 'Rechts anheften',
@@ -742,6 +748,7 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaFilterList: 'Filterliste',
     ariaFilterToValue: 'Filter zum Wert',
     ariaFilterValue: 'Filterwert',
+    ariaNotInCurrentData: 'nicht in den aktuellen Daten',
     ariaFilterMenuOpen: 'Filtermenü öffnen',
     ariaFilteringOperator: 'Filteroperator',
     ariaHidden: 'versteckt',
@@ -765,6 +772,7 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaRowSelect: 'Drücken Sie LEERTASTE, um diese Zeile auszuwählen',
     ariaRowSelectionDisabled: 'Zeilenauswahl ist für diese Zeile deaktiviert',
     ariaSearch: 'Suche',
+    ariaSortPriority: 'Sortierpriorität ${priority} von ${count}',
     ariaSortableColumn: 'Drücken Sie EINGABETASTE, um zu sortieren',
     ariaSortableColumnWithCellSelection: 'Drücken Sie ALT EINGABETASTE, um zu sortieren',
     ariaToggleVisibility: 'Drücken Sie LEERTASTE, um die Sichtbarkeit umzuschalten',
@@ -897,9 +905,11 @@ export const AG_GRID_LOCALE_DE_DE = {
     columnHeaderEditCancel: 'Abbrechen',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Keine geeigneten Spalten gefunden.',
     calculatedColumn: 'Berechnete Spalte',
     calculatedColumnAdd: 'Berechnete Spalte hinzufügen',
     calculatedColumnEdit: 'Berechnete Spalte bearbeiten',
+    calculatedColumnView: 'Berechnete Spalte anzeigen',
     calculatedColumnRemove: 'Berechnete Spalte entfernen',
     calculatedColumnTitle: 'Titel',
     calculatedColumnType: 'Typ',
@@ -914,6 +924,8 @@ export const AG_GRID_LOCALE_DE_DE = {
     calculatedColumnExpressionAmbiguousReference:
         'Mehrdeutiger Spaltenverweis "${variable}". Verwenden Sie die Spaltenliste oder einen spezifischeren Gruppenpfad.',
     calculatedColumnExpressionUnknownReference: 'Unbekannter Spaltenverweis "${variable}".',
+    calculatedColumnExpressionRestrictedReference:
+        'Die Spalte "${variable}" kann in diesem Ausdruck nicht verwendet werden.',
     calculatedColumnExpressionEmpty: 'Geben Sie einen Ausdruck ein',
     calculatedColumnTitleEmpty: 'Geben Sie einen Titel ein',
     calculatedColumnApply: 'Anwenden',

@@ -327,7 +327,7 @@ function decorateCells() {
             return null;
         }
 
-        const cellCtrl: CellCtrl | null = rowCtrl.getCellCtrl(position.column as AgColumn);
+        const cellCtrl: CellCtrl | undefined = rowCtrl.getCellCtrl(position.column as AgColumn);
 
         if (!cellCtrl) {
             return;

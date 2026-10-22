@@ -8,11 +8,6 @@ on:
           type: boolean
           default: false
           required: true
-        force_jira_ticket:
-          description: 'Force create a Jira ticket even if the run is not scheduled'
-          type: boolean
-          default: false
-          required: true
     schedule:
         - cron: '0 0 * * 0' # Weekly at 0
 permissions:
@@ -26,6 +21,8 @@ env:
     REPO_URL: ${{ github.server_url }}/${{ github.repository }}
     SLACK_CHANNEL: '#ci-grid-gate'
     AG_LIBRARY: grid
+    NX_NO_CLOUD: 'true'
+    CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
 
 jobs:
     # TODO: Re-enable rulesync-integrity job once rulesync issues are resolved
@@ -45,7 +42,7 @@ jobs:
     #               cache: 'yarn'
     #
     #         - name: Install dependencies
-    #           run: yarn install --frozen-lockfile
+    #           run: yarn install --immutable
     #
     #         - name: Verify Rulesync Integrity (Claude Code)
     #           id: rulesync-claudecode
@@ -234,18 +231,6 @@ jobs:
               PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
               CURRENT_COMMIT_SHA: ${{ github.sha }}
               IS_SUCCESS: ${{ needs.code-dependency-scan.result != 'failure' && needs.sast-code-scan.result != 'failure' }}
-
-        - name: Create Jira Ticket
-          uses: ./.github/actions/jira-integration
-          continue-on-error: true
-          if: ${{ github.event_name == 'schedule' || inputs.force_jira_ticket }}
-          with:
-            JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
-            JIRA_SUMMARY: "[NR] CI/CD workflow '${{ github.workflow }}' is failing."
-            CTRF_REPORT_FILE: ${{ env.REPORT_FILE }}
-            IS_SUCCESS: ${{ needs.code-dependency-scan.result != 'failure' && needs.sast-code-scan.result != 'failure' }}
-            PREV_COMMIT_SHA: ${{ env.PREV_COMMIT_SHA }}
-            CURRENT_COMMIT_SHA: ${{ github.sha }}
 
         - name: Set commit SHA
           id: set-commit-sha

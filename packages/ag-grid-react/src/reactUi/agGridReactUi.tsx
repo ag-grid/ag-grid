@@ -28,6 +28,7 @@ import {
     BaseComponentWrapper,
     GridCoreCreator,
     VanillaFrameworkOverrides,
+    _PUBLIC_EVENT_HANDLERS_MAP,
     _combineAttributesAndGridOptions,
     _findEnterpriseCoreModule,
     _getGridOption,
@@ -83,6 +84,7 @@ const reactPropsNotGridOptions: ReactCompProps = {
 };
 const excludeReactCompProps = new Set(Object.keys(reactPropsNotGridOptions));
 const deprecatedReactCompProps = new Set(Object.keys(deprecatedProps));
+const eventHandlerProps = new Set<string>(Object.values(_PUBLIC_EVENT_HANDLERS_MAP));
 
 export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) => {
     const modulesFromContext = useContext(ModulesContext);
@@ -236,7 +238,7 @@ export const AgGridReactUi = <TData,>(props: InternalAgGridReactProps<TData>) =>
         return {
             width: '100%',
             height: '100%',
-            ...(props.containerStyle || {}),
+            ...props.containerStyle,
         };
     }, [props.containerStyle]);
 
@@ -297,6 +299,12 @@ function extractGridPropertyChanges(gridId: string | undefined, prevProps: any, 
         const propValue = nextProps[propKey];
         if (prevProps[propKey] !== propValue) {
             changes[propKey] = propValue;
+        }
+    }
+    // a dropped event handler prop must stop being called; other dropped props keep their value
+    for (const propKey of Object.keys(prevProps)) {
+        if (!(propKey in nextProps) && eventHandlerProps.has(propKey)) {
+            changes[propKey] = undefined;
         }
     }
 

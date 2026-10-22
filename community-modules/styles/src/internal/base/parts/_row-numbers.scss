@@ -6,6 +6,12 @@
         color: var(--ag-header-foreground-color);
         font-size: var(--ag-font-size);
         font-family: var(--ag-font-family);
+        font-variant-numeric: tabular-nums;
+    }
+
+    // a background-image overlays the hover color on top of the header and range background colors
+    :where(.ag-row-hover:not(.ag-full-width-row)) .ag-row-number-cell {
+        background-image: linear-gradient(var(--ag-row-header-hover-color), var(--ag-row-header-hover-color));
     }
 
     .ag-row-number-header.ag-row-number-selection-enabled {
@@ -22,6 +28,7 @@
 
     .ag-ltr {
         .ag-row-number-header:not(.ag-header-cell-last-left-pinned),
+        .ag-row-number-floating-filter,
         .ag-cell.ag-row-number-cell:not(.ag-cell-last-left-pinned) {
             border-right: var(--ag-pinned-column-border);
         }
@@ -35,6 +42,7 @@
 
     .ag-rtl {
         .ag-row-number-header:not(.ag-header-cell-first-right-pinned),
+        .ag-row-number-floating-filter,
         .ag-cell.ag-row-number-cell:not(.ag-cell-first-right-pinned) {
             border-left: var(--ag-pinned-column-border);
         }

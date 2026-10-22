@@ -2,6 +2,8 @@ import type { BeanCollection } from '../../context/context';
 import type { AgProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
 import { isProvidedColumnGroup } from '../../entities/agProvidedColumnGroup';
 import type { ColumnEventType } from '../../events';
+import { _dispatchGroupHeaderNameChangedEvent } from '../columnEventUtils';
+import { _setColumnWidthAnimation } from '../columnWidthAnimation';
 
 interface ColGroupState {
     groupId: string;
@@ -32,11 +34,20 @@ export const _setColGroupOpen = (
     _setColGroupState(beans, [{ groupId, open: newValue }], source);
 };
 
-const applyHeaderNameOverride = (overrides: Map<string, string>, stateItem: ColGroupState): boolean => {
-    const { groupId } = stateItem;
-    const headerName = stateItem.headerName ?? null;
-    const current = overrides.get(groupId) ?? null;
-    if (current === headerName) {
+/**
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ * Sets (or with `null`, clears) a group's header name override and fires `headerNameChanged` on the grid's group.
+ * Callers dispatch the grid-level `columnHeaderNameChanged` event, so a batch of renames can share one.
+ * Returns whether the name changed.
+ */
+export const _setColGroupHeaderNameOverride = (
+    beans: BeanCollection,
+    groupId: string,
+    headerName: string | null
+): boolean => {
+    const { colModel } = beans;
+    const overrides = colModel.groupHeaderNameOverrides;
+    if ((overrides.get(groupId) ?? null) === headerName) {
         return false;
     }
     if (headerName == null) {
@@ -44,6 +55,7 @@ const applyHeaderNameOverride = (overrides: Map<string, string>, stateItem: ColG
     } else {
         overrides.set(groupId, headerName);
     }
+    colModel.getColGroup(groupId)?.dispatchGroupEvent('headerNameChanged');
     return true;
 };
 
@@ -59,9 +71,11 @@ export const _setColGroupState = (
         return;
     }
 
-    colAnimation?.start();
+    // one update, so a group is told once every group holds its state and the columns are laid out
+    colModel.beginColUpdate();
     try {
-        const overrides = colModel.groupHeaderNameOverrides;
+        colAnimation?.start();
+        _setColumnWidthAnimation(beans, true);
         let impactedGroups: AgProvidedColumnGroup[] | null = null;
         let renamedGroups: AgProvidedColumnGroup[] | null = null;
         for (let i = 0; i < stateLen; ++i) {
@@ -74,7 +88,10 @@ export const _setColGroupState = (
                 impactedGroups ??= [];
                 impactedGroups.push(group);
             }
-            if ('headerName' in stateItem && applyHeaderNameOverride(overrides, stateItem)) {
+            if (
+                'headerName' in stateItem &&
+                _setColGroupHeaderNameOverride(beans, group.groupId, stateItem.headerName ?? null)
+            ) {
                 renamedGroups ??= [];
                 renamedGroups.push(group);
             }
@@ -82,13 +99,11 @@ export const _setColGroupState = (
 
         if (renamedGroups) {
             // Grid-level event so the state service can refresh the cached group header-name state.
-            eventSvc.dispatchEvent({
-                type: 'columnHeaderNameChanged',
-                column: null,
-                columns: null,
-                columnGroup: renamedGroups.length === 1 ? renamedGroups[0] : null,
-                source,
-            });
+            _dispatchGroupHeaderNameChangedEvent(
+                eventSvc,
+                renamedGroups.length === 1 ? renamedGroups[0] : null,
+                source
+            );
         }
 
         if (impactedGroups) {
@@ -100,7 +115,9 @@ export const _setColGroupState = (
             });
         }
     } finally {
+        _setColumnWidthAnimation(beans, false);
         colAnimation?.finish();
+        colModel.endColUpdate();
     }
 };
 

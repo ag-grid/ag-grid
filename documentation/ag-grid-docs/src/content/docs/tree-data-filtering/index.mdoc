@@ -79,6 +79,8 @@ For further information, refer to the [Tree Filter](./filter-set-tree-list/) doc
 
 The [Set Filter](./filter-set/) can be used with Tree Data to list all unique values across each level of the group hierarchy.
 
+While other filters are active, the list holds the values of the rows they display, so the parents of a matching row are listed with it, and so are its children unless `excludeChildrenWhenTreeDataFiltering` excludes them.
+
 The example below demonstrates the Set Filter on the Size column.
 
 {% gridExampleRunner title="Set List" name="set-list-filtering" /%}

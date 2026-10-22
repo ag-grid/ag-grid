@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     clearFilter: 'Temizle',
     cancelFilter: 'İptal',
     cancelColumnToolPanel: 'İptal',
+    resetColumnToolPanel: 'Sıfırla',
 
     // Filter Titles
     textFilter: 'Metin Filtresi',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     addFilterCard: 'Filtre Ekle',
     agTextColumnFilterDisplayName: 'Basit Filtre',
     agNumberColumnFilterDisplayName: 'Basit Filtre',
+    agBigIntColumnFilterDisplayName: 'Basit Filtre',
     agDateColumnFilterDisplayName: 'Basit Filtre',
     agSetColumnFilterDisplayName: 'Seçim Filtresi',
     agMultiColumnFilterDisplayName: 'Karma Filtre',
@@ -338,6 +340,10 @@ export const AG_GRID_LOCALE_TR_TR = {
     enabled: 'Etkin',
 
     // Menu
+    moveLeft: 'Sola Taşı',
+    moveRight: 'Sağa Taşı',
+    moveUp: 'Yukarı Taşı',
+    moveDown: 'Aşağı Taşı',
     pinColumn: 'Sütunu Sabitle',
     pinLeft: 'Sola Sabitle',
     pinRight: 'Sağa Sabitle',
@@ -740,6 +746,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaFilterList: 'Filtre Listesi',
     ariaFilterToValue: 'Değere filtrele',
     ariaFilterValue: 'Filtre Değeri',
+    ariaNotInCurrentData: 'mevcut verilerde yok',
     ariaFilterMenuOpen: 'Filtre Menüsünü Aç',
     ariaFilteringOperator: 'Filtreleme Operatörü',
     ariaHidden: 'gizli',
@@ -762,6 +769,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaRowSelect: 'Bu satırı seçmek için SPACE tuşuna basın',
     ariaRowSelectionDisabled: 'Bu satır için Satır Seçimi devre dışı bırakılmıştır',
     ariaSearch: 'Ara',
+    ariaSortPriority: 'Sıralama önceliği: ${priority}, toplam ${count}',
     ariaSortableColumn: 'Sıralamak için ENTER tuşuna basın',
     ariaSortableColumnWithCellSelection: 'Sıralamak için ALT ENTER tuşuna basın',
     ariaToggleVisibility: 'Görünürlüğü değiştirmek için SPACE tuşuna basın',
@@ -894,9 +902,11 @@ export const AG_GRID_LOCALE_TR_TR = {
     columnHeaderEditCancel: 'İptal',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Uygun sütun bulunamadı.',
     calculatedColumn: 'Hesaplanan sütun',
     calculatedColumnAdd: 'Hesaplanan sütun ekle',
     calculatedColumnEdit: 'Hesaplanan sütunu düzenle',
+    calculatedColumnView: 'Hesaplanan sütunu görüntüle',
     calculatedColumnRemove: 'Hesaplanan sütunu kaldır',
     calculatedColumnTitle: 'Başlık',
     calculatedColumnType: 'Tür',
@@ -911,6 +921,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     calculatedColumnExpressionAmbiguousReference:
         'Belirsiz sütun başvurusu "${variable}". Sütunlar listesini veya daha belirli bir grup yolunu kullanın.',
     calculatedColumnExpressionUnknownReference: 'Bilinmeyen sütun başvurusu "${variable}".',
+    calculatedColumnExpressionRestrictedReference: '"${variable}" sütunu bu ifadede kullanılamaz.',
     calculatedColumnExpressionEmpty: 'Bir ifade girin',
     calculatedColumnTitleEmpty: 'Bir başlık girin',
     calculatedColumnApply: 'Uygula',

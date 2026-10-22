@@ -286,7 +286,7 @@ export class PaginationService extends BeanStub implements NamedBean {
 
         const currentPage = this.currentPage;
 
-        if (!isFinite(currentPage) || isNaN(currentPage) || currentPage < 0) {
+        if (!Number.isFinite(Number(currentPage)) || Number.isNaN(Number(currentPage)) || currentPage < 0) {
             this.currentPage = 0;
         }
     }

@@ -1,4 +1,5 @@
 import type { Bean } from '../context/bean';
+import type { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
 import type { ColKey } from '../entities/colDef';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
@@ -155,7 +156,7 @@ export interface INotesDataService extends Bean {
 export interface INotesService extends Bean {
     hasDataSource(): boolean;
     onDataSourceChanged(): void;
-    createNotesFeature(ctrl: CellCtrl): INotesFeature | undefined;
+    createNotesFeature(ctrl: CellCtrl, compBean: BeanStub): INotesFeature | undefined;
     createFullWidthNotesFeature(ctrl: RowCtrl): INotesFeature | undefined;
     getNoteAccess(params: GetNoteParams): INoteAccess | undefined;
     getNote(params: GetNoteParams): Note | undefined;

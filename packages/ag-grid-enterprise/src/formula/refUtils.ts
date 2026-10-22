@@ -1,4 +1,4 @@
-const CELL_OR_RANGE_REGEX = /\$?[A-Za-z]+\$?[0-9]+(?::\$?[A-Za-z]+\$?[0-9]+)?/g;
+const CELL_OR_RANGE_REGEX = /\$?(?<![A-Za-z])[A-Za-z]+\$?[0-9]+(?::\$?[A-Za-z]+\$?[0-9]+)?/g;
 const FULL_CELL_OR_RANGE_REGEX = /^(\$?)([A-Za-z]+)(\$?)([0-9]+)(?::(\$?)([A-Za-z]+)(\$?)([0-9]+))?$/;
 const WORD_CHAR_REGEX = /[A-Za-z0-9]/;
 
@@ -20,6 +20,20 @@ export const isValidFunctionName = (name: string): boolean => {
         }
     }
     return true;
+};
+
+/** Zero-based column position for an A1-style label in any case (A → 0, Z → 25, AA → 26); -1 when not a label. */
+export const a1LabelToColIndex = (label: string): number => {
+    const upper = label.toUpperCase();
+    let index = 0;
+    for (let i = 0, len = upper.length; i < len; ++i) {
+        const digit = upper.charCodeAt(i) - 64; // 'A' → 1
+        if (digit < 1 || digit > 26) {
+            return -1;
+        }
+        index = index * 26 + digit;
+    }
+    return index - 1;
 };
 
 type ParsedA1Ref = {

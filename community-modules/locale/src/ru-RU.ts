@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     clearFilter: 'Очистить',
     cancelFilter: 'Отмена',
     cancelColumnToolPanel: 'Отмена',
+    resetColumnToolPanel: 'Сбросить',
 
     // Filter Titles
     textFilter: 'Текстовый фильтр',
@@ -117,6 +118,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     addFilterCard: 'Добавить фильтр',
     agTextColumnFilterDisplayName: 'Простой фильтр',
     agNumberColumnFilterDisplayName: 'Простой фильтр',
+    agBigIntColumnFilterDisplayName: 'Простой фильтр',
     agDateColumnFilterDisplayName: 'Простой фильтр',
     agSetColumnFilterDisplayName: 'Фильтр выбора',
     agMultiColumnFilterDisplayName: 'Комбинированный фильтр',
@@ -338,6 +340,10 @@ export const AG_GRID_LOCALE_RU_RU = {
     enabled: 'Включено',
 
     // Menu
+    moveLeft: 'Переместить влево',
+    moveRight: 'Переместить вправо',
+    moveUp: 'Переместить вверх',
+    moveDown: 'Переместить вниз',
     pinColumn: 'Закрепить столбец',
     pinLeft: 'Закрепить слева',
     pinRight: 'Закрепить справа',
@@ -755,6 +761,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaFilterList: 'Список фильтра',
     ariaFilterToValue: 'Фильтровать до значения',
     ariaFilterValue: 'Значение фильтра',
+    ariaNotInCurrentData: 'нет в текущих данных',
     ariaFilterMenuOpen: 'Открыть меню фильтра',
     ariaFilteringOperator: 'Оператор фильтрации',
     ariaHidden: 'скрыто',
@@ -776,6 +783,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaRowSelect: 'Нажмите ПРОБЕЛ, чтобы выбрать эту строку',
     ariaRowSelectionDisabled: 'Выбор строки отключён для этой строки',
     ariaSearch: 'Поиск',
+    ariaSortPriority: 'Приоритет сортировки ${priority} из ${count}',
     ariaSortableColumn: 'Нажмите ENTER для сортировки',
     ariaSortableColumnWithCellSelection: 'Нажмите ALT ENTER для сортировки',
     ariaToggleVisibility: 'Нажмите ПРОБЕЛ, чтобы переключить видимость',
@@ -914,9 +922,11 @@ export const AG_GRID_LOCALE_RU_RU = {
     columnHeaderEditCancel: 'Отмена',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Подходящие столбцы не найдены.',
     calculatedColumn: 'Вычисляемый столбец',
     calculatedColumnAdd: 'Добавить вычисляемый столбец',
     calculatedColumnEdit: 'Редактировать вычисляемый столбец',
+    calculatedColumnView: 'Просмотреть вычисляемый столбец',
     calculatedColumnRemove: 'Удалить вычисляемый столбец',
     calculatedColumnTitle: 'Заголовок',
     calculatedColumnType: 'Тип',
@@ -931,6 +941,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     calculatedColumnExpressionAmbiguousReference:
         'Неоднозначная ссылка на столбец "${variable}". Используйте список столбцов или более точный путь группы.',
     calculatedColumnExpressionUnknownReference: 'Неизвестная ссылка на столбец "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Столбец "${variable}" нельзя использовать в этом выражении.',
     calculatedColumnExpressionEmpty: 'Введите выражение',
     calculatedColumnTitleEmpty: 'Введите заголовок',
     calculatedColumnApply: 'Применить',

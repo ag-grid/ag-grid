@@ -197,7 +197,7 @@ export function getBestColumnMoveIndexFromXPosition(
 export function attemptMoveColumns(
     params: ColumnMoveParams & { finished: boolean }
 ): { columns: AgColumn[]; toIndex: number } | null | undefined {
-    const { columns, toIndex } = getBestColumnMoveIndexFromXPosition(params) || {};
+    const { columns, toIndex } = getBestColumnMoveIndexFromXPosition(params) ?? {};
     const { finished, colMoves } = params;
 
     if (!columns || toIndex == null) {
@@ -469,7 +469,7 @@ export function normaliseX(params: {
 
 export function setColumnsMoving(columns: AgColumn[], isMoving: boolean): void {
     for (const column of columns) {
-        column.moving = isMoving;
+        column.setMoving(isMoving);
         column.dispatchColEvent('movingChanged', 'uiColumnMoved');
     }
 }

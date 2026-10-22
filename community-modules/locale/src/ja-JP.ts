@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     clearFilter: 'クリア',
     cancelFilter: 'キャンセル',
     cancelColumnToolPanel: 'キャンセル',
+    resetColumnToolPanel: 'リセット',
 
     // Filter Titles
     textFilter: 'テキストフィルター',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     addFilterCard: 'フィルターを追加',
     agTextColumnFilterDisplayName: 'シンプルフィルター',
     agNumberColumnFilterDisplayName: 'シンプルフィルター',
+    agBigIntColumnFilterDisplayName: 'シンプルフィルター',
     agDateColumnFilterDisplayName: 'シンプルフィルター',
     agSetColumnFilterDisplayName: 'セレクションフィルター',
     agMultiColumnFilterDisplayName: 'コンボフィルター',
@@ -334,6 +336,10 @@ export const AG_GRID_LOCALE_JA_JP = {
     enabled: '有効',
 
     // Menu
+    moveLeft: '左に移動',
+    moveRight: '右に移動',
+    moveUp: '上に移動',
+    moveDown: '下に移動',
     pinColumn: '列の固定',
     pinLeft: '左に固定',
     pinRight: '右に固定',
@@ -736,6 +742,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaFilterList: 'フィルターリスト',
     ariaFilterToValue: '値までフィルター',
     ariaFilterValue: 'フィルター値',
+    ariaNotInCurrentData: '現在のデータにありません',
     ariaFilterMenuOpen: 'フィルターメニューを開く',
     ariaFilteringOperator: 'フィルター演算子',
     ariaHidden: '非表示',
@@ -757,6 +764,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaRowSelect: 'この行を選択するにはSPACEを押してください',
     ariaRowSelectionDisabled: 'この行の選択は無効です',
     ariaSearch: '検索',
+    ariaSortPriority: '並べ替えの優先順位は${count}項目中${priority}番目',
     ariaSortableColumn: '並べ替えるにはENTERを押してください',
     ariaSortableColumnWithCellSelection: '並べ替えるにはALT ENTERを押してください',
     ariaToggleVisibility: '表示を切り替えるにはSPACEを押してください',
@@ -889,9 +897,11 @@ export const AG_GRID_LOCALE_JA_JP = {
     columnHeaderEditCancel: 'キャンセル',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: '使用可能な列が見つかりません。',
     calculatedColumn: '計算列',
     calculatedColumnAdd: '計算列を追加',
     calculatedColumnEdit: '計算列を編集',
+    calculatedColumnView: '計算列を表示',
     calculatedColumnRemove: '計算列を削除',
     calculatedColumnTitle: 'タイトル',
     calculatedColumnType: '種類',
@@ -906,6 +916,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     calculatedColumnExpressionAmbiguousReference:
         '列参照があいまいです "${variable}"。列リストを使用するか、より具体的なグループパスを指定してください。',
     calculatedColumnExpressionUnknownReference: '不明な列参照です "${variable}"。',
+    calculatedColumnExpressionRestrictedReference: '列 "${variable}" はこの式では使用できません。',
     calculatedColumnExpressionEmpty: '式を入力してください',
     calculatedColumnTitleEmpty: 'タイトルを入力してください',
     calculatedColumnApply: '適用',

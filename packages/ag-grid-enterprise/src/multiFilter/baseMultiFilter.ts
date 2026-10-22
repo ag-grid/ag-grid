@@ -89,6 +89,15 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
         });
     }
 
+    /** A child replaced after the gui was built shows at once while the gui is showing, else on the next opening. */
+    protected refreshChildGui(): void {
+        const container = this.lastOpenedInContainer;
+        this.lastOpenedInContainer = undefined;
+        if (container && this.getGui().isConnected) {
+            this.afterGuiAttached({ container, hidePopup: this.hidePopup, suppressFocus: true });
+        }
+    }
+
     private destroyChildren() {
         for (const func of this.guiDestroyFuncs) {
             func();
@@ -133,6 +142,7 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
                 childComponent,
                 contextParams: {
                     column: null,
+                    columnGroup: null,
                     node: null,
                     value: null,
                 },
@@ -230,7 +240,7 @@ export abstract class BaseMultiFilter<TFilterWrapper> extends TabGuardComp {
                     const isFirst = index === 0;
                     const notInlineDisplayType = filterDef.display && filterDef.display !== 'inline';
                     const suppressFocusForFilter = suppressFocus || !isFirst || notInlineDisplayType;
-                    const afterGuiAttachedParams = { ...(params ?? {}), suppressFocus: suppressFocusForFilter };
+                    const afterGuiAttachedParams = { ...params, suppressFocus: suppressFocusForFilter };
                     const wrapper = wrappers[index];
                     const filter = wrapper ? this.getFilterFromWrapper(wrapper) : undefined;
                     if (wrapper) {

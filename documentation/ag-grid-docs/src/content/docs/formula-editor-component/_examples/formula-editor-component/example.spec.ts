@@ -14,12 +14,12 @@ test.agExample(import.meta, () => {
         const cell = agIdFor.cell('1', 'total');
         await cell.dblclick();
 
-        // The default editor for a formula column is the Formula Cell Editor (a contenteditable field),
+        // The default editor for a formula column is the Formula Cell Editor (a textarea-based field),
         // not a plain input.
         const formulaEditor = page.locator('.ag-cell-inline-editing .ag-formula-input-field');
         await expect(formulaEditor).toBeVisible();
 
-        const editable = page.locator('.ag-cell-inline-editing [contenteditable]').first();
+        const editable = page.locator('.ag-cell-inline-editing textarea').first();
         await editable.click();
         // Select-all is Meta+A on macOS, so Control+A leaves the existing formula in place.
         await page.keyboard.press('ControlOrMeta+A');

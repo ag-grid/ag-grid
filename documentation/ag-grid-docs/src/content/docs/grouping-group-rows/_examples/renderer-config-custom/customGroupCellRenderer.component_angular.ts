@@ -7,7 +7,7 @@ import type { ICellRendererParams, IRowNode } from 'ag-grid-community';
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
-        <div [style.paddingLeft.px]="paddingLeft()">
+        <div class="custom-group-row" [style.paddingLeft.px]="paddingLeft()">
             @if (isGroup()) {
                 <div
                     [style.transform]="rotation()"
@@ -18,7 +18,6 @@ import type { ICellRendererParams, IRowNode } from 'ag-grid-community';
                     &rarr;
                 </div>
             }
-            &nbsp;
             {{ value() }}
         </div>
     `,

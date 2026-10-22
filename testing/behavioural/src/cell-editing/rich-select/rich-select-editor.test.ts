@@ -1,5 +1,6 @@
 import { fireEvent, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
+import { AgBeanStub } from 'ag-stack';
 import { GridRows, TestGridsManager, asyncSetTimeout, fakeElementAttribute, getAllRows } from 'ag-test-utils';
 
 import { getGridElement } from 'ag-grid-community';
@@ -107,6 +108,37 @@ describe('Rich Select cell editor', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 a:"Gamma"
         `);
+    });
+
+    test('typing to filter registers no teardown on the list per refresh', async () => {
+        const api = await createGrid({
+            columnDefs: [baseColDef({ values: ['Alpha', 'Beta', 'Gamma', 'Gadget'], filterList: true })],
+            rowData: [{ id: '0', a: 'Alpha' }],
+            getRowId: (p) => p.data.id,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const addDestroyFunc = vi.spyOn(AgBeanStub.prototype, 'addDestroyFunc');
+        try {
+            const popup = await openEditor(api, gridDiv, 0, 'a');
+            await waitFor(() => expect(getRowLabels(popup)).toEqual(['Alpha', 'Beta', 'Gamma', 'Gadget']));
+            const list = addDestroyFunc.mock.contexts.find(
+                (bean) => typeof bean === 'object' && bean !== null && 'awaitStable' in bean
+            );
+            expect(list).toBeDefined();
+            const listRegistrations = () => addDestroyFunc.mock.contexts.filter((bean) => bean === list).length;
+            const registered = listRegistrations();
+
+            for (let i = 0; i < 10; ++i) {
+                pressKey(gridDiv, 'G');
+                pressKey(gridDiv, 'Backspace');
+            }
+            pressKey(gridDiv, 'G');
+            await waitFor(() => expect(getRowLabels(popup).sort()).toEqual(['Gadget', 'Gamma']));
+
+            expect(listRegistrations()).toBe(registered);
+        } finally {
+            addDestroyFunc.mockRestore();
+        }
     });
 
     // 2. Keyboard flow: type-to-filter narrows the list, arrows move highlight, Enter commits.

@@ -5,7 +5,13 @@ import React from 'react';
 import { afterEach, beforeAll, describe, expect, test } from 'vitest';
 
 import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnApiModule, ModuleRegistry, RenderApiModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    ModuleRegistry,
+    RenderApiModule,
+    ScrollApiModule,
+} from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 const VIEWPORT_WIDTH = mockGridLayout.gridWidth;
@@ -28,6 +34,17 @@ const containerWidths = (): string[] =>
 const headerRowWidths = (): string[] =>
     Array.from(document.querySelectorAll<HTMLElement>('.ag-header-row'), (row) => row.style.width);
 
+/** The first row's pinned-left, scrolling and pinned-right cell sections, `null` where the row leaves one out. */
+const rowSections = () => {
+    const sectionWidth = (section: string): string | null =>
+        document.querySelector<HTMLElement>(`.ag-row[row-index="0"] > .ag-grid-${section}-cells`)?.style.width ?? null;
+    return {
+        left: sectionWidth('pinned-left'),
+        center: sectionWidth('scrolling'),
+        right: sectionWidth('pinned-right'),
+    };
+};
+
 const buildCols = (count: number): ColDef[] => {
     const cols: ColDef[] = [];
     for (let i = 0; i < count; ++i) {
@@ -47,7 +64,7 @@ describe('Grid body width push (React)', () => {
         });
 
     beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnApiModule, RenderApiModule]);
+        ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnApiModule, RenderApiModule, ScrollApiModule]);
         // No TestGridsManager here, so the layout mock that gives the viewport a width has to be installed.
         mockGridLayout.init();
     });
@@ -141,5 +158,94 @@ describe('Grid body width push (React)', () => {
         // against the old rows.
         expect(Array.from(document.querySelectorAll('.ag-header-row'))).not.toEqual(before);
         expect(headerRowWidths()).toEqual(['1500px']);
+    });
+
+    test('a row sizes its sections, and adds and removes the pinned ones, as the columns change', async () => {
+        const api = await renderGrid({
+            columnDefs: [
+                { field: 'p', width: 100, pinned: 'left' },
+                { field: 'a', width: 100 },
+                { field: 'b', width: 100 },
+                { field: 'r', width: 50, pinned: 'right' },
+            ],
+            rowData: [{ p: 1, a: 2, b: 3, r: 4 }],
+        });
+        await waitFor(() => expect(rowSections()).toEqual({ left: '100px', center: '200px', right: '50px' }));
+
+        act(() => api.setColumnWidths([{ key: 'p', newWidth: 150 }]));
+        await waitFor(() => expect(rowSections()).toEqual({ left: '150px', center: '200px', right: '50px' }));
+
+        act(() => api.setColumnWidths([{ key: 'a', newWidth: 300 }]));
+        await waitFor(() => expect(rowSections()).toEqual({ left: '150px', center: '400px', right: '50px' }));
+
+        act(() => api.setColumnsPinned(['r'], null));
+        await waitFor(() => expect(rowSections()).toEqual({ left: '150px', center: '450px', right: null }));
+
+        act(() => api.setColumnsPinned(['b'], 'right'));
+        await waitFor(() => expect(rowSections()).toEqual({ left: '150px', center: '350px', right: '100px' }));
+    });
+
+    test("a centre group's label is sticky while the group is scrolled part out, as it scrolls and as it resizes", async () => {
+        let ready!: Promise<GridApi>;
+        // the grid body finds the horizontal scrollbar a frame after mounting, before the grid is ready
+        await act(async () => {
+            ready = renderGrid({
+                columnDefs: [
+                    { colId: 'a', width: 200 },
+                    { headerName: 'G', children: [{ colId: 'g1' }, { colId: 'g2' }] },
+                    { colId: 'z' },
+                ],
+                defaultColDef: { width: 500 },
+                rowData: [{}],
+            });
+            await asyncSetTimeout(0);
+        });
+        const api = await ready;
+        const sticky = () =>
+            Array.from(document.querySelectorAll('.ag-header-group-text'))
+                .find((text) => text.textContent === 'G')
+                ?.closest('.ag-header-group-cell-label')
+                ?.classList.contains('ag-sticky-label');
+        await waitFor(() => expect(sticky()).toBe(false));
+
+        act(() => api.ensureColumnVisible('z'));
+        await waitFor(() => expect(sticky()).toBe(true));
+
+        act(() => api.setColumnWidths([{ key: 'a', newWidth: 900 }]));
+        await waitFor(() => expect(sticky()).toBe(false));
+
+        act(() => api.setColumnWidths([{ key: 'a', newWidth: 200 }]));
+        await waitFor(() => expect(sticky()).toBe(true));
+
+        act(() => api.ensureColumnVisible('a'));
+        await waitFor(() => expect(sticky()).toBe(false));
+    });
+
+    test('pushes the pinned widths the sticky group labels are offset by, and again on a resize', async () => {
+        let ready!: Promise<GridApi>;
+        // the pinned columns lay the grid body out again before the grid is ready
+        await act(async () => {
+            ready = renderGrid({
+                columnDefs: [
+                    { colId: 'left', width: 120, pinned: 'left' },
+                    { headerName: 'Group', children: [{ colId: 'a' }, { colId: 'b' }] },
+                    { colId: 'right', width: 150, pinned: 'right' },
+                ],
+                rowData: [{}],
+            });
+            await asyncSetTimeout(0);
+        });
+        const api = await ready;
+        const pinnedWidths = () => {
+            const style = document.querySelector<HTMLElement>('.ag-grid-viewport')!.style;
+            return [
+                style.getPropertyValue('--ag-internal-pinned-left-width'),
+                style.getPropertyValue('--ag-internal-pinned-right-width'),
+            ];
+        };
+        await waitFor(() => expect(pinnedWidths()).toEqual(['120px', '150px']));
+
+        act(() => api.setColumnWidths([{ key: 'right', newWidth: 210 }]));
+        await waitFor(() => expect(pinnedWidths()).toEqual(['120px', '210px']));
     });
 });

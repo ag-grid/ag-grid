@@ -32,6 +32,7 @@ import {
     _registerModule,
     _unRegisterGridModules,
 } from './modules/moduleRegistry';
+import { _isDebugLoggingEnabled } from './utils/log';
 import { _errorWithoutAttribution, _logPreInitErr, _renderBootstrapPanel } from './validation/logging';
 import { VanillaFrameworkOverrides } from './vanillaFrameworkOverrides';
 
@@ -135,7 +136,7 @@ export class GridCoreCreator {
         if (!beanClasses) {
             // Detailed error message will have been printed by createBeansList. The grid root is already
             // in the DOM but no beans (and so no overlay) exist, so render the dev bootstrap panel here.
-            _logVersionIfDebug(gridOptions.debug, registeredModules);
+            _logVersionIfDebug(_isDebugLoggingEnabled(gridOptions.debug), registeredModules);
             _renderBootstrapPanel(eOutermostGridOwned, agVersionsText);
             // Break typing so that the normal return type does not have to handle undefined.
             return undefined as any;
@@ -174,7 +175,7 @@ export class GridCoreCreator {
 
         // Every bean's `postConstruct` has run by now, so this is the first point below the enterprise
         // licence banner, which a bean prints and which buries anything logged above it.
-        _logVersionIfDebug(gridOptions.debug, registeredModules);
+        _logVersionIfDebug(_isDebugLoggingEnabled(gridOptions.debug), registeredModules);
 
         this.registerModuleFeatures(context, registeredModules);
 

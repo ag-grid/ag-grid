@@ -36,6 +36,7 @@ import type {
     GetChartMenuItems,
     GetChartToolbarItems,
     GetChildCount,
+    GetColumnDropZoneMenuItems,
     GetColumnMenuItems,
     GetContextMenuItems,
     GetDataPath,
@@ -134,6 +135,7 @@ import type {
     BodyScrollEvent,
     BulkEditingStartedEvent,
     BulkEditingStoppedEvent,
+    CalculatedColumnChangedEvent,
     CalculatedColumnCreatedEvent,
     CalculatedColumnExpressionChangedEvent,
     CalculatedColumnRemovedEvent,
@@ -381,7 +383,9 @@ export interface Props<TData> {
          * @deprecated v32.2 Use `rowSelection.copySelectedRows` instead.
          */
     suppressCopySingleCellRanges?: boolean,
-    /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard.
+    /** Set to `true` to always remove a trailing empty line from pasted data.
+         * Usually not needed: the grid removes the extra line added by Excel for Windows automatically.
+         * Unlike the automatic handling, this also removes a blank last row that was part of the copied range.
          * @default false
          * @agModule `ClipboardModule`
          */
@@ -423,7 +427,7 @@ export interface Props<TData> {
     /** Enables and configures Calculated Columns.
          * @agModule `CalculatedColumnsModule`
          */
-    calculatedColumns?: CalculatedColumnsGridOption,
+    calculatedColumns?: CalculatedColumnsGridOption<TData>,
     /** Configures editing of column and column group header names via the UI. Requires
          * `headerNameEditable` on the relevant Column or Column Group Definitions.
          * @agModule `ColumnHeaderEditModule`
@@ -521,7 +525,7 @@ export interface Props<TData> {
          * @agModule `ColumnAutoSizeModule`
          */
     autoSizeStrategy?: AutoSizeStrategy<TData>,
-    /** Set to `true` to animate changes to column width when auto-sizing the columns.
+    /** Set to `true` to animate changes to column width from auto-sizing, flex, showing or hiding columns, expanding or collapsing column groups, and applying column state or column definitions.
          * @default false
          */
     animateColumnResizing?: boolean,
@@ -886,9 +890,9 @@ export interface Props<TData> {
          */
     suppressChangeDetection?: boolean,
     /** Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems.
-         * It is also recommended to register the `ValidationModule` to identify any misconfigurations.
          * @default false
          * @initial
+         * @deprecated v36.3 Use `enableDevValidations({ debug: true })` instead.
          */
     debug?: boolean,
     /** Show or hide the loading UI.
@@ -1862,6 +1866,12 @@ export interface Props<TData> {
          * @agModule `ColumnMenuModule` / `ColumnsToolPanelModule`
          */
     getColumnMenuItems?: GetColumnMenuItems<TData>,
+    /** Customise the context menu for pills in Row Group, Pivot and Values drop zones. Return `[]` to hide it.
+         * Called when pills are created to determine menu availability for accessibility, and when opening a menu.
+         * Independent of `columnMenuItems` and `getColumnMenuItems`.
+         * @agModule `RowGroupingPanelModule` / `ColumnsToolPanelModule`
+         */
+    getColumnDropZoneMenuItems?: GetColumnDropZoneMenuItems<TData>,
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
          */
     postProcessPopup?: PostProcessPopup<TData>,
@@ -2097,6 +2107,7 @@ export interface Props<TData> {
    'onPaste-start'?: PasteStartEvent<TData>,
    'onPaste-end'?: PasteEndEvent<TData>,
    'onCalculated-column-created'?: CalculatedColumnCreatedEvent<TData>,
+   'onCalculated-column-changed'?: CalculatedColumnChangedEvent<TData>,
    'onCalculated-column-expression-changed'?: CalculatedColumnExpressionChangedEvent<TData>,
    'onCalculated-column-removed'?: CalculatedColumnRemovedEvent<TData>,
    'onCalculated-column-validation-state-changed'?: CalculatedColumnValidationStateChangedEvent<TData>,
@@ -2525,6 +2536,7 @@ export function getProps() {
         getContextMenuItems: undefined,
         getMainMenuItems: undefined,
         getColumnMenuItems: undefined,
+        getColumnDropZoneMenuItems: undefined,
         postProcessPopup: undefined,
         processUnpinnedColumns: undefined,
         processCellForClipboard: undefined,
@@ -2619,6 +2631,7 @@ export function getProps() {
         'onPaste-start': undefined,
         'onPaste-end': undefined,
         'onCalculated-column-created': undefined,
+        'onCalculated-column-changed': undefined,
         'onCalculated-column-expression-changed': undefined,
         'onCalculated-column-removed': undefined,
         'onCalculated-column-validation-state-changed': undefined,

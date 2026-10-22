@@ -2,6 +2,7 @@ import type { AgPromise } from 'ag-stack';
 
 import type { AgColumn } from '../entities/agColumn';
 import type {
+    AgFilterHandlerBaseParams,
     CreateFilterHandlerFunc,
     DoesFilterPassParams,
     FilterAction,
@@ -9,7 +10,6 @@ import type {
     FilterDisplayParams,
     FilterDisplayState,
     FilterHandler,
-    FilterHandlerBaseParams,
     FilterHandlerParams,
     FilterModel,
     FilterWrapperParams,
@@ -52,8 +52,7 @@ interface UncreatedFilterUi<TComp = IFilterComp, TParams = IFilterParams> extend
 }
 
 export type FilterUi<TComp = IFilterComp, TParams = IFilterParams> =
-    | CreatedFilterUi<TComp, TParams>
-    | UncreatedFilterUi<TComp, TParams>;
+    CreatedFilterUi<TComp, TParams> | UncreatedFilterUi<TComp, TParams>;
 
 interface BaseFilterWrapper<
     TComp extends IFilterComp | FilterDisplayComp = IFilterComp,
@@ -71,12 +70,15 @@ export interface LegacyFilterWrapper extends BaseFilterWrapper<IFilterComp, IFil
     filter?: IFilterComp;
 }
 
+export type HandlerGenerator =
+    CreateFilterHandlerFunc | FilterHandlerName | ((params: DoesFilterPassParams) => boolean);
+
 export interface HandlerFilterWrapper extends BaseFilterWrapper<FilterDisplayComp, FilterDisplayParams> {
     isHandler: true;
     handler: FilterHandler;
     /** This is only used to see whether the handler has changed */
-    handlerGenerator: CreateFilterHandlerFunc | FilterHandlerName | ((params: DoesFilterPassParams) => boolean);
-    handlerParams: FilterHandlerBaseParams;
+    handlerGenerator: HandlerGenerator;
+    handlerParams: AgFilterHandlerBaseParams;
 }
 
 export type FilterWrapper = LegacyFilterWrapper | HandlerFilterWrapper;
@@ -106,7 +108,7 @@ export function getFilterUiFromWrapper<TComp extends IFilterComp | FilterDisplay
 export function _refreshHandlerAndUi(
     getFilterUi: () => AgPromise<{ filter: FilterDisplayComp; filterParams: FilterDisplayParams } | undefined>,
     handler: FilterHandler,
-    handlerParams: FilterHandlerBaseParams,
+    handlerParams: AgFilterHandlerBaseParams,
     model: any,
     state: FilterDisplayState,
     source: 'ui' | 'api' | 'colDef' | 'floating' | 'handler',

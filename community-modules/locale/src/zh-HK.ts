@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     clearFilter: '清除',
     cancelFilter: '取消',
     cancelColumnToolPanel: '取消',
+    resetColumnToolPanel: '重置',
 
     // Filter Titles
     textFilter: '文本篩選',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     addFilterCard: '新增篩選',
     agTextColumnFilterDisplayName: '簡單篩選',
     agNumberColumnFilterDisplayName: '簡單篩選',
+    agBigIntColumnFilterDisplayName: '簡單篩選',
     agDateColumnFilterDisplayName: '簡單篩選',
     agSetColumnFilterDisplayName: '選擇篩選',
     agMultiColumnFilterDisplayName: '組合篩選',
@@ -334,6 +336,10 @@ export const AG_GRID_LOCALE_ZH_HK = {
     enabled: '已啟用',
 
     // Menu
+    moveLeft: '向左移動',
+    moveRight: '向右移動',
+    moveUp: '向上移動',
+    moveDown: '向下移動',
     pinColumn: '固定列',
     pinLeft: '固定到左邊',
     pinRight: '固定到右邊',
@@ -735,6 +741,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     ariaFilterList: '篩選列表',
     ariaFilterToValue: '篩選到值',
     ariaFilterValue: '篩選值',
+    ariaNotInCurrentData: '不在當前數據中',
     ariaFilterMenuOpen: '打開篩選菜單',
     ariaFilteringOperator: '篩選運算符',
     ariaHidden: '已隱藏',
@@ -756,6 +763,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     ariaRowSelect: '按 SPACE 選擇此行',
     ariaRowSelectionDisabled: '此行的行選擇已禁用',
     ariaSearch: '搜索',
+    ariaSortPriority: '排序優先次序為第 ${priority} 位，共 ${count} 位',
     ariaSortableColumn: '按 ENTER 排序',
     ariaSortableColumnWithCellSelection: '按 ALT ENTER 排序',
     ariaToggleVisibility: '按 SPACE 切換可見性',
@@ -888,9 +896,11 @@ export const AG_GRID_LOCALE_ZH_HK = {
     columnHeaderEditCancel: '取消',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: '找不到符合條件的欄。',
     calculatedColumn: '計算欄',
     calculatedColumnAdd: '新增計算欄',
     calculatedColumnEdit: '編輯計算欄',
+    calculatedColumnView: '檢視計算欄',
     calculatedColumnRemove: '移除計算欄',
     calculatedColumnTitle: '標題',
     calculatedColumnType: '類型',
@@ -904,6 +914,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     calculatedColumnDefaultTitle: '未命名',
     calculatedColumnExpressionAmbiguousReference: '欄參照不明確 "${variable}"。請使用「欄」清單或更具體的群組路徑。',
     calculatedColumnExpressionUnknownReference: '未知的欄參照 "${variable}"。',
+    calculatedColumnExpressionRestrictedReference: '此運算式中不能使用欄 "${variable}"。',
     calculatedColumnExpressionEmpty: '請輸入運算式',
     calculatedColumnTitleEmpty: '請輸入標題',
     calculatedColumnApply: '應用',

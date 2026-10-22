@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     clearFilter: 'Очистити',
     cancelFilter: 'Скасувати',
     cancelColumnToolPanel: 'Скасувати',
+    resetColumnToolPanel: 'Скинути',
 
     // Filter Titles
     textFilter: 'Текстовий фільтр',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     addFilterCard: 'Додати фільтр',
     agTextColumnFilterDisplayName: 'Простий фільтр',
     agNumberColumnFilterDisplayName: 'Простий фільтр',
+    agBigIntColumnFilterDisplayName: 'Простий фільтр',
     agDateColumnFilterDisplayName: 'Простий фільтр',
     agSetColumnFilterDisplayName: 'Фільтр вибору',
     agMultiColumnFilterDisplayName: 'Комбінований фільтр',
@@ -336,6 +338,10 @@ export const AG_GRID_LOCALE_UK_UA = {
     enabled: 'Увімкнено',
 
     // Menu
+    moveLeft: 'Перемістити ліворуч',
+    moveRight: 'Перемістити праворуч',
+    moveUp: 'Перемістити вгору',
+    moveDown: 'Перемістити вниз',
     pinColumn: 'Закріпити Стовпець',
     pinLeft: 'Закріпити Ліворуч',
     pinRight: 'Закріпити Праворуч',
@@ -739,6 +745,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     ariaFilterList: 'Список фільтрів',
     ariaFilterToValue: 'Фільтрувати до значення',
     ariaFilterValue: 'Значення фільтру',
+    ariaNotInCurrentData: 'немає в поточних даних',
     ariaFilterMenuOpen: 'Відкрити меню фільтру',
     ariaFilteringOperator: 'Оператор фільтрування',
     ariaHidden: 'приховано',
@@ -760,6 +767,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     ariaRowSelect: 'Натисніть SPACE для вибору цього рядка',
     ariaRowSelectionDisabled: 'Вибір рядка відключено для цього рядка',
     ariaSearch: 'Пошук',
+    ariaSortPriority: 'Пріоритет сортування ${priority} із ${count}',
     ariaSortableColumn: 'Натисніть ENTER для сортування',
     ariaSortableColumnWithCellSelection: 'Натисніть ALT ENTER для сортування',
     ariaToggleVisibility: 'Натисніть SPACE для перемикання видимості',
@@ -892,9 +900,11 @@ export const AG_GRID_LOCALE_UK_UA = {
     columnHeaderEditCancel: 'Скасувати',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Відповідних стовпців не знайдено.',
     calculatedColumn: 'Обчислюваний стовпець',
     calculatedColumnAdd: 'Додати обчислюваний стовпець',
     calculatedColumnEdit: 'Редагувати обчислюваний стовпець',
+    calculatedColumnView: 'Переглянути обчислюваний стовпець',
     calculatedColumnRemove: 'Видалити обчислюваний стовпець',
     calculatedColumnTitle: 'Назва',
     calculatedColumnType: 'Тип',
@@ -909,6 +919,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     calculatedColumnExpressionAmbiguousReference:
         'Неоднозначне посилання на стовпець "${variable}". Скористайтеся списком Стовпці або точнішим шляхом групи.',
     calculatedColumnExpressionUnknownReference: 'Невідоме посилання на стовпець "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Стовпець "${variable}" не можна використовувати в цьому виразі.',
     calculatedColumnExpressionEmpty: 'Введіть вираз',
     calculatedColumnTitleEmpty: 'Введіть назву',
     calculatedColumnApply: 'Застосувати',

@@ -8,7 +8,10 @@ import type { IRowNode } from '../interfaces/iRowNode';
  */
 export function _getDrawnColSpan(cols: AgColumn[], index: number, rowNode: IRowNode): number {
     const col = cols[index];
-    const colSpan = col.allColsIndex < 0 ? 1 : Math.min(col.getColSpan(rowNode), cols.length - index);
+    if (col.colSpanIndex < 0) {
+        return 1;
+    }
+    const colSpan = Math.min(col.getColSpan(rowNode), cols.length - index);
     for (let i = 1; i < colSpan; ++i) {
         const next = cols[index + i];
         if (next.pinnedLane !== col.pinnedLane || next.allColsIndex !== col.allColsIndex + i) {
@@ -21,12 +24,12 @@ export function _getDrawnColSpan(cols: AgColumn[], index: number, rowNode: IRowN
 /**
  * The columns starting a cell in `rowNode`. `filterCallback` is only set for the virtualised centre, where a
  * col-spanned run is kept if ANY col it spans passes.
- * @param colSpans the row's drawn colSpans by `allColsIndex`, 0 where not read yet; filled as the walk reads them
+ * @param colSpans the row's drawn colSpans by `colSpanIndex`, 0 where not read yet; filled as the walk reads them
  */
 export function _getColsForRow(
     rowNode: IRowNode,
     displayedColumns: AgColumn[],
-    colSpans: number[] | null,
+    colSpans: number[] | null | undefined,
     filterCallback: ((column: AgColumn) => boolean) | null,
     emptySpaceBeforeColumn: ((column: AgColumn) => boolean) | null
 ): AgColumn[] {
@@ -59,16 +62,24 @@ export function _getColsForRow(
 }
 
 /** The drawn colSpan of the cell at `index`, read once per row when `colSpans` keeps the row's colSpans. */
-export function _getRowColSpan(rowNode: IRowNode, cols: AgColumn[], index: number, colSpans: number[] | null): number {
-    if (colSpans === null) {
+export function _getRowColSpan(
+    rowNode: IRowNode,
+    cols: AgColumn[],
+    index: number,
+    colSpans: number[] | null | undefined
+): number {
+    const colSpanIndex = cols[index].colSpanIndex;
+    if (colSpanIndex < 0) {
+        return 1;
+    }
+    if (!colSpans) {
         return _getDrawnColSpan(cols, index, rowNode);
     }
-    const allColsIndex = cols[index].allColsIndex;
     // a walk only lands where a cell starts, so a stored 0 always means not read yet
-    let colSpan = colSpans[allColsIndex];
+    let colSpan = colSpans[colSpanIndex];
     if (colSpan === 0) {
         colSpan = _getDrawnColSpan(cols, index, rowNode);
-        colSpans[allColsIndex] = colSpan;
+        colSpans[colSpanIndex] = colSpan;
     }
     return colSpan;
 }

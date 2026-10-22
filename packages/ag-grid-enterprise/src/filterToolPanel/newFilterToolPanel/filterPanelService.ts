@@ -14,7 +14,7 @@ import type {
     NewFiltersToolPanelState,
     SelectableFilterDef,
 } from 'ag-grid-community';
-import { BeanStub, FilterComp } from 'ag-grid-community';
+import { BeanStub, FilterComp, _getDisplayHandler } from 'ag-grid-community';
 
 interface StateWrapper {
     state: FilterPanelFilterState;
@@ -128,6 +128,41 @@ export class FilterPanelService
     }
 
     public remove(id: string): void {
+        const orderedStates = this.orderedStates;
+        const index = orderedStates.indexOf(id);
+        if (index === -1) {
+            return;
+        }
+        this.removeFilter(id);
+        this.dispatchStatesUpdates(orderedStates[index]); // undefined if no elements after
+    }
+
+    public setFilterCards(ids: string[]): void {
+        const { states, orderedStates, beans } = this;
+        const newIds = new Set(ids);
+        for (const id of this.getIds()) {
+            if (!newIds.has(id)) {
+                this.removeFilter(id);
+            }
+        }
+
+        const newStates = new Map<string, StateWrapper>();
+        for (const id of newIds) {
+            const stateWrapper = states.get(id) ?? this.createFilterStateWrapper(id, false);
+            if (stateWrapper) {
+                newStates.set(id, stateWrapper);
+            } else if (!beans.colModel.getNonPivotColById(id)) {
+                beans.log.warn(337, { colId: id });
+            }
+        }
+        states.clear();
+        newStates.forEach((stateWrapper, id) => states.set(id, stateWrapper));
+        orderedStates.length = 0;
+        orderedStates.push(...newStates.keys());
+        this.dispatchStatesUpdates();
+    }
+
+    private removeFilter(id: string): void {
         const {
             states,
             orderedStates,
@@ -139,6 +174,7 @@ export class FilterPanelService
         }
         state.destroy?.();
         const column = state.state.column;
+        // must be removed before `destroyFilter`, otherwise `onFilterDestroyed` recreates it
         states.delete(id);
         selectableFilter?.clearActive(id);
         colFilter?.destroyFilter(column);
@@ -146,10 +182,7 @@ export class FilterPanelService
             type: 'filterSwitched',
             column,
         });
-        const index = orderedStates.indexOf(id);
-        orderedStates.splice(index, 1);
-        const newActiveId = orderedStates[index]; // undefined if no elements after
-        this.dispatchStatesUpdates(newActiveId);
+        orderedStates.splice(orderedStates.indexOf(id), 1);
     }
 
     public getState<S extends FilterPanelFilterState>(id: string): S | undefined {
@@ -195,13 +228,23 @@ export class FilterPanelService
         });
     }
 
+    public setFilterCardsExpanded(expanded: boolean, ids?: string[]): void {
+        const states = this.states;
+        for (const id of ids ?? this.getIds()) {
+            const state = states.get(id)?.state;
+            if (state && state.expanded !== expanded) {
+                this.expand(id, expanded);
+            }
+        }
+    }
+
     public updateType(id: string, filterDef: SelectableFilterDef): void {
         const stateWrapper = this.states.get(id);
         if (!stateWrapper) {
             return;
         }
         const state = stateWrapper.state;
-        if (state.expanded === false) {
+        if (!state.expanded) {
             return;
         }
         const filterDefs = state.filterDefs;
@@ -209,14 +252,9 @@ export class FilterPanelService
             return;
         }
 
-        const { colFilter, selectableFilter } = this.beans;
-        selectableFilter?.setActive(id, filterDefs, filterDef);
-        colFilter!.filterParamsChanged(id, 'columnFilter');
-        const column = state.column;
-        this.eventSvc.dispatchEvent({
-            type: 'filterSwitched',
-            column,
-        });
+        const selectableFilter = this.beans.selectableFilter!;
+        selectableFilter.setActive(id, filterDefs, filterDef);
+        selectableFilter.switchFilter(state.column, 'columnFilter');
         const newStateWrapper = this.states.get(id);
         if (!newStateWrapper) {
             return;
@@ -268,7 +306,7 @@ export class FilterPanelService
         const column = colModel.getNonPivotColById(id);
 
         if (column && !column.colDef.suppressFiltersToolPanel) {
-            const handler = colFilter!.getHandler(column, true);
+            const handler = _getDisplayHandler(colFilter!.getHandler(column, true));
             if (handler) {
                 return this.createFilterState(column, handler, expanded);
             }

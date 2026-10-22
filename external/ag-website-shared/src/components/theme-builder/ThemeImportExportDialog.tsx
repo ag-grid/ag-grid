@@ -2,6 +2,7 @@ import { Alert } from '@ag-website-shared/components/alert/Alert';
 import Code from '@ag-website-shared/components/code/Code';
 import { Tabs } from '@ag-website-shared/components/tabs/Tabs';
 import { loadFile, useFileDropZone } from '@ag-website-shared/components/theme-builder/fileImport';
+import { addChangedModelItem } from '@ag-website-shared/theming/changed-model-items';
 import { useRenderedThemeInfo } from '@ag-website-shared/theming/rendered-theme';
 import { Checkmark, Copy, Upload } from '@carbon/icons-react';
 import styled from '@emotion/styled';
@@ -237,6 +238,8 @@ const ImportTabContentWrapper = ({
         const currentResult = validate(code);
         if ('apply' in currentResult) {
             currentResult.apply(store);
+            // Applying resets the change count, yet an import is the user's own work to protect.
+            addChangedModelItem(store, 'import');
             close();
         }
     };

@@ -79,7 +79,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         enablePivot: true,
         enableValue: true,
     },
-    // debug: true,
     columnDefs: columnDefs,
     onSortChanged: onSortChanged,
     onColumnResized: onColumnResized,

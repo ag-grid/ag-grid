@@ -31,6 +31,7 @@ import {
     Component,
     ComponentInstanceGuard,
     _addGridCommonParams,
+    _createElement,
     _createIcon,
     _getCellRendererDetails,
     _getShouldDisplayTooltip,
@@ -69,6 +70,10 @@ export interface SetFilterListItemParams<V> {
     isGroup?: boolean;
     isExpanded?: boolean;
     hasIndeterminateExpandState?: boolean;
+    /** Kept by `preservePreviousValues` but not in the current values. */
+    isMissing: boolean;
+    /** Known only by its key, so labelled by it rather than handed to a cell renderer. */
+    isKeyOnly: boolean;
 }
 
 type SetFilterListItemEvent = 'selectionChanged' | 'expandedChanged';
@@ -119,7 +124,8 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private item: SetFilterModelTreeItem | string | null;
     private isSelected: boolean | undefined;
     private isExpanded: boolean | undefined;
-    // only used for select all
+    private isMissing: boolean;
+    private readonly isKeyOnly: boolean;
     private valueFunction?: () => string;
 
     private cellRendererParams: ISetFilterCellRendererParams;
@@ -127,10 +133,12 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     private destroyCellRendererComponent?: () => void;
     private tooltipFeature?: TooltipFeature;
     private shouldDisplayTooltip?: () => boolean;
+    private rendererSetTooltip = false;
     private readonly rendererGuard = new ComponentInstanceGuard();
     private rendererClaim?: ComponentInstanceClaim;
     private pendingCellRendererClaim?: ComponentInstanceClaim;
     private formattedValue: string | null = null;
+    private labelContent: HTMLElement | string | undefined;
 
     constructor(params: SetFilterListItemParams<V>) {
         super(params.isGroup ? SetFilterGroupElement : SetFilterElement, [AgCheckboxSelector]);
@@ -147,6 +155,8 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         this.groupsExist = params.groupsExist;
         this.isExpanded = params.isExpanded;
         this.hasIndeterminateExpandState = params.hasIndeterminateExpandState;
+        this.isMissing = params.isMissing;
+        this.isKeyOnly = params.isKeyOnly;
     }
 
     public postConstruct(): void {
@@ -199,6 +209,9 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         }
 
         this.refreshAriaChecked();
+        if (this.isMissing) {
+            this.applyMissing();
+        }
 
         if (this.params.readOnly) {
             // Don't add event listeners if we're read-only.
@@ -318,8 +331,31 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         const translate = this.getLocaleTextFunc();
         const itemLabel = translate('ariaFilterValue', 'Filter Value');
         const ariaEl = this.getAriaElement();
-        _setAriaLabel(ariaEl, `${value} ${itemLabel}`);
+        _setAriaLabel(ariaEl, `${value} ${itemLabel}${this.getMissingSuffix()}`);
         _setAriaDescribedBy(ariaEl, this.eCheckbox.getInputElement().id);
+    }
+
+    /** The class and the aria label; the default tooltip reads `isMissing` when it is reset. */
+    private applyMissing(): void {
+        const isMissing = this.isMissing;
+        this.toggleCss('ag-set-filter-item-missing', isMissing);
+        const ariaEl = this.getAriaElement();
+        if (this.isTree && (isMissing || !this.cellRendererComponent)) {
+            this.setupFixedAriaLabels(this.formattedValue);
+        } else if (this.isTree) {
+            // A tree item drawn by a renderer has no fixed label of its own, only the one saying it is missing.
+            _setAriaLabel(ariaEl, null);
+            _setAriaDescribedBy(ariaEl);
+        } else {
+            _setAriaLabel(
+                ariaEl,
+                isMissing ? this.getDefaultTooltipText(this.cellRendererParams.value, this.formattedValue) : null
+            );
+        }
+    }
+
+    private getMissingSuffix(): string {
+        return this.isMissing ? `, ${this.translate('ariaNotInCurrentData')}` : '';
     }
 
     private refreshAriaChecked(): void {
@@ -335,9 +371,16 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
     public refresh(
         item: SetFilterModelTreeItem | string | null,
         isSelected: boolean | undefined,
-        isExpanded: boolean | undefined
+        isExpanded: boolean | undefined,
+        isMissing: boolean
     ): void {
         this.item = item;
+        const missingChanged = isMissing !== this.isMissing;
+        if (missingChanged) {
+            this.isMissing = isMissing;
+            this.applyMissing();
+            this.refreshCheckboxLabel();
+        }
         // setExpanded checks if value has changed, setSelected does not
         if (isSelected !== this.isSelected) {
             this.setSelected(isSelected, true);
@@ -355,7 +398,12 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         }
         const hasActiveRenderer = !!this.cellRendererComponent;
         const hadPendingRenderer = this.pendingCellRendererClaim != null;
-        this.setTooltipAndCellRendererParams(rendererValue, formattedValue, !hasActiveRenderer);
+        // A tooltip a renderer set is its own, whatever the value's state.
+        this.setTooltipAndCellRendererParams(
+            rendererValue,
+            formattedValue,
+            !hasActiveRenderer || (missingChanged && !this.rendererSetTooltip)
+        );
         if (hadPendingRenderer) {
             this.renderCell();
         }
@@ -422,13 +470,15 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         this.rendererClaim = rendererClaim;
         this.formattedValue = formattedValue;
         if (resetTooltip) {
-            if (this.params.showTooltips && (!_isShowTooltipWhenTruncated(gos) || !this.params.cellRenderer)) {
-                const newTooltipText = formattedValue != null ? formattedValue : _toStringOrNull(value);
-                this.shouldDisplayTooltip = _getShouldDisplayTooltip(
-                    gos,
-                    () => this.eCheckbox.getGui().querySelector('.ag-label') as HTMLElement | undefined
-                );
-                this.tooltipFeature?.setTooltipAndRefresh(newTooltipText);
+            this.rendererSetTooltip = false;
+            if (this.hasDefaultTooltip()) {
+                // With a label after it, the value truncates in its own span rather than the whole label.
+                this.shouldDisplayTooltip = _getShouldDisplayTooltip(gos, () => {
+                    const eGui = this.eCheckbox.getGui();
+                    return (eGui.querySelector('.ag-set-filter-item-missing-value') ??
+                        eGui.querySelector('.ag-label')) as HTMLElement | undefined;
+                });
+                this.tooltipFeature?.setTooltipAndRefresh(this.getDefaultTooltipText(value, formattedValue));
             } else {
                 this.shouldDisplayTooltip = undefined;
                 this.tooltipFeature?.setTooltipAndRefresh(null);
@@ -443,6 +493,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
             setTooltip: (value: string, shouldDisplayTooltip: () => boolean) => {
                 gos.assertModuleRegistered('Tooltip', 3);
                 if (rendererClaim.isCurrent()) {
+                    this.rendererSetTooltip = true;
                     this.shouldDisplayTooltip = shouldDisplayTooltip;
                     this.tooltipFeature?.setTooltipAndRefresh(value);
                 }
@@ -450,15 +501,27 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
         });
     }
 
+    private hasDefaultTooltip(): boolean {
+        const params = this.params;
+        return !!params.showTooltips && (!_isShowTooltipWhenTruncated(this.gos) || !params.cellRenderer);
+    }
+
+    private getDefaultTooltipText(value: V | null | (() => string), formattedValue: string | null): string | null {
+        const text = formattedValue ?? _toStringOrNull(value);
+        return this.isMissing ? `${text ?? ''}${this.getMissingSuffix()}` : text;
+    }
+
     private getFormattedValue(column: AgColumn, value: any) {
         return setFilterFormattedValue(this.beans, column, value, this.valueFormatter);
     }
 
     private renderCell(): void {
-        const compDetails = _getCellRendererDetails<
-            ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>,
-            ISetFilterCellRendererParams
-        >(this.beans.userCompFactory, this.params, this.cellRendererParams);
+        const compDetails = this.isKeyOnly
+            ? undefined
+            : _getCellRendererDetails<
+                  ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>,
+                  ISetFilterCellRendererParams
+              >(this.beans.userCompFactory, this.params, this.cellRendererParams);
         const cellRendererPromise = compDetails?.newAgStackInstance();
         const rendererClaim = this.rendererClaim!;
 
@@ -479,7 +542,7 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
                     return;
                 }
                 this.cellRendererComponent = component;
-                this.eCheckbox.setLabel(component.getGui());
+                this.setCheckboxLabel(component.getGui());
                 this.destroyCellRendererComponent = () => this.destroyBean(component);
             }
         });
@@ -487,14 +550,41 @@ export class SetFilterListItem<V> extends Component<SetFilterListItemEvent> {
 
     private renderCellWithoutCellRenderer(): void {
         const { valueFormatted, value } = this.cellRendererParams;
-        let valueToRender = valueFormatted == null ? value : valueFormatted;
+        let valueToRender = valueFormatted ?? value;
         if (typeof valueToRender !== 'string') {
             this.beans.log.warn(208);
             valueToRender = '';
         }
 
-        this.eCheckbox.setLabel(valueToRender);
+        this.setCheckboxLabel(valueToRender);
         this.setupFixedAriaLabels(valueToRender);
+    }
+
+    private setCheckboxLabel(content: HTMLElement | string): void {
+        this.labelContent = content;
+        this.refreshCheckboxLabel();
+    }
+
+    private refreshCheckboxLabel(): void {
+        const content = this.labelContent;
+        if (content === undefined) {
+            return;
+        }
+        const missingLabel = this.isMissing ? this.params.preservePreviousValuesLabel : undefined;
+        if (!missingLabel) {
+            this.eCheckbox.setLabel(content);
+            return;
+        }
+        // Only the value is truncated, so a long one never hides the label.
+        const eValue = _createElement({ tag: 'span', cls: 'ag-set-filter-item-missing-value' });
+        eValue.append(content);
+        const eLabel = _createElement({ tag: 'span', cls: 'ag-set-filter-item-missing-content' });
+        eLabel.append(
+            eValue,
+            ' ',
+            _createElement({ tag: 'span', cls: 'ag-set-filter-item-missing-label', children: missingLabel })
+        );
+        this.eCheckbox.setLabel(eLabel);
     }
 
     public override destroy(): void {

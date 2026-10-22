@@ -26,6 +26,9 @@ import type { DndSourceComp } from './../dndSourceComp';
 import type { CellCtrl, ICellComp } from './cellCtrl';
 
 export class CellComp extends Component {
+    /** The row's cell pass that last drew this cell. */
+    public drawnInPass = 0;
+
     private readonly eCell: HTMLElement;
     private eCellWrapper: HTMLElement | undefined;
     private eCellValue: HTMLElement | undefined;
@@ -129,8 +132,8 @@ export class CellComp extends Component {
                 this.setRenderDetails(compDetails, valueToDisplay, force),
             setEditDetails: (compDetails, popup, position) => this.setEditDetails(compDetails, popup, position),
 
-            getCellEditor: () => this.cellEditor || null,
-            getCellRenderer: () => this.cellRenderer || null,
+            getCellEditor: () => this.cellEditor ?? null,
+            getCellRenderer: () => this.cellRenderer ?? null,
             getParentOfValue: () => this.getParentOfValue(),
             refreshEditStyles: (editing, isPopup) => this.refreshEditStyles(editing, isPopup),
         };
@@ -191,11 +194,6 @@ export class CellComp extends Component {
         }
 
         this.rowDraggingComp?.refreshVisibility();
-
-        // re-append row resizer if it was cleared from eCell (e.g. when no eCellWrapper exists)
-        if (this.rowResizerElement && !this.rowResizerElement.parentElement) {
-            this.eCell.appendChild(this.rowResizerElement);
-        }
     }
 
     private setEditDetails(
@@ -310,6 +308,16 @@ export class CellComp extends Component {
         if (escapedValue != null) {
             eParent.textContent = escapedValue;
         }
+        this.reattachDecorations(eParent);
+    }
+
+    /** Showing the value clears its parent, which holds the range handle, and without a wrapper the row resizer. */
+    private reattachDecorations(eParent: HTMLElement): void {
+        this.cellCtrl.rangeFeature?.reattachHandle(eParent);
+        const rowResizer = this.rowResizerElement;
+        if (rowResizer && !rowResizer.parentElement) {
+            this.eCell.appendChild(rowResizer);
+        }
     }
 
     private destroyRenderer(resetTooltip = true): void {
@@ -363,7 +371,7 @@ export class CellComp extends Component {
         }
 
         // take any custom params off of the user
-        const result = this.cellRenderer.refresh(compClassAndParams.params);
+        const result: unknown = this.cellRenderer.refresh(compClassAndParams.params);
 
         // NOTE on undefined: previous version of the cellRenderer.refresh() interface
         // returned nothing, if the method existed, we assumed it refreshed. so for
@@ -446,6 +454,7 @@ export class CellComp extends Component {
             const eParent = this.getParentOfValue();
             _clearElement(eParent);
             eParent.appendChild(cellGui);
+            this.reattachDecorations(eParent);
         }
     }
 
@@ -545,8 +554,7 @@ export class CellComp extends Component {
         const useModelPopup = gos.get('stopEditingWhenCellsLoseFocus');
 
         // see if position provided by colDef, if not then check old way of method on cellComp
-        const positionToUse: 'over' | 'under' | undefined =
-            position != null ? position : (cellEditor!.getPopupPosition?.() ?? 'over');
+        const positionToUse: 'over' | 'under' | undefined = position ?? cellEditor!.getPopupPosition?.() ?? 'over';
         const isRtl = gos.get('enableRtl');
 
         const positionParams: AgComponentPopupPositionParams<PopupPositionParams> = {

@@ -334,7 +334,7 @@ describe('deferred column tool panel pivot mode - select all, sorting, and toggl
             `tool panel shows primary columns after disabling pivot mode with user-supplied p after setGridOption pivotMode`
         ).check(`
             ROOT id:<no-id>
-            └── filler collapsed id:rowIndex:0
+            └── GROUP collapsed id:0 ag-Grid-AutoColumn:"United States" athlete:"Michael Phelps" age:23 country:"United States" year:2008 date:"24/08/2008" sport:"Swimming" gold:8 silver:0 bronze:0 total:8
         `);
         await waitForNoLoadingRows(gridApi);
 

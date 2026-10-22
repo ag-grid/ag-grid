@@ -26,8 +26,6 @@ export function createTask(parentProject: string, srcRelativeInputPath: string):
                 '{workspaceRoot}/dist/plugins/ag-grid-generate-example-files/gridOptionsTypes.json',
                 '{workspaceRoot}/plugins/ag-grid-generate-example-files/{dist,src}/**/*',
                 '{workspaceRoot}/documentation/ag-grid-docs/public/example-runner/**',
-                { env: 'AG_AI_API_URL' },
-                { env: 'AG_AI_API_DEV_TOKEN' },
                 { env: 'AG_EXAMPLE_FORMAT' },
             ],
             outputs: ['{options.outputPath}'],

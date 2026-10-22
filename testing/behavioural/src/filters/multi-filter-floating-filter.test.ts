@@ -1,7 +1,7 @@
 import { findByTestId, waitFor } from '@testing-library/dom';
 import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, IMultiFilterDef } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     EventApiModule,
@@ -243,5 +243,42 @@ describe('Multi Filter floating filter keystroke race', () => {
                 └── LEAF id:3 name:"alice"
             `);
         });
+    });
+});
+
+describe("Multi Filter floating filter — a child's params", () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ColumnMenuModule, MultiFilterModule, NumberFilterModule, TextFilterModule],
+    });
+
+    beforeAll(() => setupAgTestIds());
+    afterEach(() => gridsManager.reset());
+
+    test("reach the child's floating filter whether given as an object or a function, and only that child's", async () => {
+        const multi = (colId: string, filters: IMultiFilterDef[]): ColDef => ({
+            colId,
+            field: 'name',
+            filter: 'agMultiColumnFilter',
+            floatingFilter: true,
+            filterParams: { filters },
+        });
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                multi('object', [{ filter: 'agTextColumnFilter', filterParams: { readOnly: true } }]),
+                multi('function', [{ filter: 'agTextColumnFilter', filterParams: () => ({ readOnly: true }) }]),
+                multi('sibling', [
+                    { filter: 'agTextColumnFilter' },
+                    { filter: 'agNumberColumnFilter', filterParams: { readOnly: true } },
+                ]),
+            ],
+            rowData: ROW_DATA,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        // The first child's floating filter is the one shown, before any child is active.
+        const disabled = (colId: string) =>
+            gridDiv.querySelector<HTMLInputElement>(`.ag-header-cell.ag-floating-filter[col-id="${colId}"] input`)!
+                .disabled;
+
+        expect([disabled('object'), disabled('function'), disabled('sibling')]).toEqual([true, true, false]);
     });
 });

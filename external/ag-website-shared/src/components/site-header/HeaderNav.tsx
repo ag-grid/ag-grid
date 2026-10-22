@@ -14,6 +14,7 @@ import type { ReactElement } from 'react';
 
 import { DarkModeToggle } from './DarkModeToggle';
 import styles from './SiteHeader.module.scss';
+import { isPathUnderNavItem } from './isPathUnderNavItem';
 
 /**
  * Title of api header menu
@@ -31,7 +32,7 @@ const getIsActiveNav = ({
     allPaths: MenuItem[];
     apiPaths: string[];
 }): boolean => {
-    const allPathsMatch = allPaths.find((link) => link.path && path.startsWith(link.path));
+    const allPathsMatch = allPaths.find((link) => link.path && isPathUnderNavItem(path, link.path));
     const currentNavItem = allPathsMatch?.title;
 
     const pageName = getPageNameFromPath(path);

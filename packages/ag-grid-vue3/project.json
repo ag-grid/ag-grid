@@ -26,7 +26,11 @@
     },
     "build": {
       "executor": "nx:run-script",
-      "dependsOn": ["ag-grid-community:build:package", "updateGridAndColumnProperties"],
+      "dependsOn": [
+        "ag-grid-community:build:types",
+        "ag-grid-community:build:package",
+        "updateGridAndColumnProperties"
+      ],
       "inputs": [
         "tsDeclarations",
         "{projectRoot}/src/**",
@@ -60,7 +64,7 @@
         "parallel": false,
         "commands": [
           "mkdir -p ../../dist/artifacts/{projectRoot}",
-          "yarn pack -f ../../dist/artifacts/{projectRoot}.tgz",
+          "yarn pack -o ../../dist/artifacts/{projectRoot}.tgz",
           "rm -rf ../../dist/artifacts/{projectRoot}"
         ]
       }

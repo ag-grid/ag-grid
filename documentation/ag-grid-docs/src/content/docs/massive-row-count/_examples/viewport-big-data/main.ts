@@ -4,7 +4,7 @@ import { ViewportRowModelModule } from 'ag-grid-enterprise';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
-    enableDevValidations();
+    enableDevValidations({ debug: true });
 }
 
 ModuleRegistry.registerModules([ViewportRowModelModule]);
@@ -33,7 +33,6 @@ const columnDefs: ColDef[] = [
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-    // debug: true,
     rowHeight: 100,
     columnDefs: columnDefs,
     rowModelType: 'viewport',

@@ -51,7 +51,7 @@ For **each** example, read:
 - `styles.css` (if present) — any relevant custom styling
 - `index.html` — check for external buttons/controls outside the grid
 
-If the example fetches remote data (e.g., from `ag-grid.com/example-assets/`), read the corresponding file from `documentation/ag-grid-docs/public/example-assets/` to understand the data shape and calculate expected values.
+If the example fetches remote data (e.g., from `ag-grid.com/example-assets/`), read the corresponding file from `documentation/ag-grid-docs/public/example-assets/` to understand the data shape and calculate expected values. A run against a deployed site gets the copy published on `www.ag-grid.com`, so an edit to the file reaches it only once released.
 
 **Randomised data is still deterministic — assert explicit values.** An example that builds its rows with `Math.random()` produces the *same* rows on every run and in every framework: the example generator rewrites every `Math.random()` call to the seeded `window.agRandom()` (`plugins/ag-grid-generate-example-files/src/executors/generate/executor.ts`), which the example runner seeds with a fixed seed before the example's own script runs (`documentation/ag-grid-docs/public/example-runner/example-runner.js`). Treat `Math.random()` in an example exactly like a hard-coded dataset. See Pitfall 13.
 
@@ -74,9 +74,9 @@ Create a plan listing each example that needs a test written or updated. For eac
 
 Present this plan to the user before proceeding. Wait for approval.
 
-## STEP 2: Write Tests Using Playwright Expert
+## STEP 2: Write Tests With a Subagent
 
-For each example in the approved plan, use the **playwright-expert** subagent (via the Agent tool) to write the `example.spec.ts` file. Provide the subagent with:
+For each example in the approved plan, use a subagent (via the Agent tool) to write the `example.spec.ts` file. Provide the subagent with:
 
 1.  The core test reference (the "Test Reference" section below) **and** the situational pitfalls/patterns that apply to this example (from `reference/pitfalls-and-patterns.md` — see the index below)
 2.  The example's source code (main.ts, data.ts, etc.)
@@ -100,7 +100,7 @@ Run each spec with the `docs-e2e.sh` helper from the **repository root**:
 **Important:**
 
 - Run from the repo root — `docs-e2e.sh` handles the working directory and Playwright config for you.
-- **The default run already validates every framework.** With no `--framework` flag, `eachFramework` runs the spec against all frameworks (typescript, vanilla, reactFunctionalTs, angular, vue3) in chromium — one command is the full cross-framework check. You do **not** need a separate run per framework.
+- **The default run validates every framework except the production React build.** With no `--framework` flag, `eachFramework` runs the spec in chromium against typescript, vanilla, reactFunctionalTs_Dev, angular and vue3, or only those the example's `exampleConfig.json` lists in `supportedFrameworks`. Add `--all-variants` to include the production `reactFunctionalTs` build (CI always does). You do **not** need a separate run per framework.
 - Use the example folder name as the filter (e.g., `"aggregation-overview"`), NOT a glob pattern with `**/` (Playwright treats `*` as regex).
 - To run a single test by name, append `--grep "<test-name>"`.
 - To narrow to one framework while debugging a failure, use `--framework <name>` (valid: `typescript`, `vanilla`, `reactFunctionalTs`, `reactFunctionalTs_Dev`, `angular`, `vue3`).
@@ -145,7 +145,7 @@ The only acceptable fixed wait is a deliberate, documented debounce where no obs
 ## Definition of Done
 
 - Every targeted example has an `example.spec.ts` with meaningful assertions (no placeholders).
-- All tests pass across every framework (typescript, vanilla, reactFunctionalTs, angular, vue3) in chromium — i.e. a default `./docs-e2e.sh "<example-name>"` run is green.
+- All tests pass across every framework the example has pages for (typescript, vanilla, reactFunctionalTs, angular, vue3, or its `exampleConfig.json` `supportedFrameworks`) in chromium — i.e. a `./docs-e2e.sh "<example-name>" --all-variants` run is green.
 - Assertions cover the behaviours described in the documentation for each example.
 - Every distinct behaviour the example's doc prose calls out has its own test block — not just one interaction (expand/sort/filter/toggle each behaviour the example demonstrates), and never value-only where an interaction is possible (see Pitfall 12).
 - No fixed `page.waitForTimeout(...)` is used to wait for grid state — waits are deterministic (see "Writing Deterministic (Non-Flaky) Tests").
@@ -156,7 +156,7 @@ The only acceptable fixed wait is a deliberate, documented debounce where no obs
 
 ## Test Reference
 
-The core conventions below apply to almost every test — include them when delegating to the playwright-expert subagent. Situational guidance (12 pitfalls + worked patterns) lives in `reference/pitfalls-and-patterns.md`; use the index at the end of this section to pull in only the parts relevant to your example.
+The core conventions below apply to almost every test — include them when delegating to the subagent. Situational guidance (pitfalls + worked patterns) lives in `reference/pitfalls-and-patterns.md`; use the index at the end of this section to pull in only the parts relevant to your example.
 
 ### Imports
 
@@ -175,7 +175,7 @@ Common helpers exported from the same module:
 ```typescript
 test.agExample(import.meta, () => {
     test.eachFramework('Test Name', async ({ agIdFor, page }) => {
-        // Test body - runs against all frameworks
+        // Test body - runs against each framework of the run that the example has pages for
     });
 });
 ```
@@ -221,7 +221,7 @@ Avoid the use of `remoteGrid(page)`. Prefer using `agIdFor` locators and Playwri
 
 ### Pitfalls & Patterns Index
 
-Read the relevant entries from `reference/pitfalls-and-patterns.md` based on what your example does — don't load the whole file if only a couple apply. When delegating to the playwright-expert subagent, pass through just the entries that match.
+Read the relevant entries from `reference/pitfalls-and-patterns.md` based on what your example does — don't load the whole file if only a couple apply. When delegating to the subagent, pass through just the entries that match.
 
 | # | Pitfall | Read when the example… |
 | - | ------- | ---------------------- |

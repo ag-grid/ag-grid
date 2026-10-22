@@ -9,7 +9,7 @@ export default defineComponent({
         };
     },
     template: `
-        <div :style="{ paddingLeft: paddingLeft }">
+        <div class="custom-group-row" :style="{ paddingLeft: paddingLeft }">
             <div
                 v-if="isGroup"
                 :style="{ transform: rotation, cursor: 'pointer', display: 'inline-block' }"

@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     clearFilter: 'مسح',
     cancelFilter: 'إلغاء',
     cancelColumnToolPanel: 'إلغاء',
+    resetColumnToolPanel: 'إعادة تعيين',
 
     // Filter Titles
     textFilter: 'فلتر النص',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     addFilterCard: 'إضافة فلتر',
     agTextColumnFilterDisplayName: 'فلتر بسيط',
     agNumberColumnFilterDisplayName: 'فلتر بسيط',
+    agBigIntColumnFilterDisplayName: 'فلتر بسيط',
     agDateColumnFilterDisplayName: 'فلتر بسيط',
     agSetColumnFilterDisplayName: 'فلتر اختيار',
     agMultiColumnFilterDisplayName: 'فلتر مركب',
@@ -334,6 +336,10 @@ export const AG_GRID_LOCALE_AR_EG = {
     enabled: 'مُمكّن',
 
     // Menu
+    moveLeft: 'نقل إلى اليسار',
+    moveRight: 'نقل إلى اليمين',
+    moveUp: 'نقل إلى الأعلى',
+    moveDown: 'نقل إلى الأسفل',
     pinColumn: 'تثبيت العمود',
     pinLeft: 'تثبيت لليسار',
     pinRight: 'تثبيت لليمين',
@@ -735,6 +741,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaFilterList: 'قائمة الفلترة',
     ariaFilterToValue: 'الفلترة إلى القيمة',
     ariaFilterValue: 'قيمة الفلترة',
+    ariaNotInCurrentData: 'غير موجود في البيانات الحالية',
     ariaFilterMenuOpen: 'فتح قائمة الفلترة',
     ariaFilteringOperator: 'مشغل الفلترة',
     ariaHidden: 'مخفي',
@@ -756,6 +763,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaRowSelect: 'اضغط SPACE لتحديد هذا الصف',
     ariaRowSelectionDisabled: 'تحديد الصف معطل لهذا الصف',
     ariaSearch: 'بحث',
+    ariaSortPriority: 'أولوية الفرز ${priority} من ${count}',
     ariaSortableColumn: 'اضغط ENTER لفرز',
     ariaSortableColumnWithCellSelection: 'اضغط ALT ENTER لفرز',
     ariaToggleVisibility: 'اضغط SPACE لتبديل الرؤية',
@@ -888,9 +896,11 @@ export const AG_GRID_LOCALE_AR_EG = {
     columnHeaderEditCancel: 'إلغاء',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'لم يتم العثور على أعمدة مؤهلة.',
     calculatedColumn: 'عمود محسوب',
     calculatedColumnAdd: 'إضافة عمود محسوب',
     calculatedColumnEdit: 'تعديل عمود محسوب',
+    calculatedColumnView: 'عرض عمود محسوب',
     calculatedColumnRemove: 'إزالة عمود محسوب',
     calculatedColumnTitle: 'العنوان',
     calculatedColumnType: 'النوع',
@@ -905,6 +915,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     calculatedColumnExpressionAmbiguousReference:
         'مرجع عمود غامض "${variable}". استخدم قائمة الأعمدة أو مسار مجموعة أكثر تحديدًا.',
     calculatedColumnExpressionUnknownReference: 'مرجع عمود غير معروف "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'لا يمكن استخدام العمود "${variable}" في هذا التعبير.',
     calculatedColumnExpressionEmpty: 'أدخل تعبيرًا',
     calculatedColumnTitleEmpty: 'أدخل عنوانًا',
     calculatedColumnApply: 'تطبيق',

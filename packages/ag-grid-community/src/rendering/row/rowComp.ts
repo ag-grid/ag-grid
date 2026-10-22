@@ -2,16 +2,16 @@ import { _addStylesToElement, _setDomChildOrder } from 'ag-stack';
 
 import type { BeanCollection } from '../../context/context';
 import type { RowStyle } from '../../entities/gridOptions';
-import type { RowContainerType } from '../../gridBodyComp/rowContainer/rowContainerCtrl';
 import type { ColumnPinnedType } from '../../interfaces/iColumn';
 import type { HorizontalSection, HorizontalSectionMap } from '../../interfaces/iGridSection';
 import type { UserCompDetails } from '../../interfaces/iUserCompDetails';
 import { _createElement } from '../../utils/element';
 import { Component } from '../../widgets/component';
 import { CellComp } from '../cell/cellComp';
-import type { CellCtrl, CellCtrlInstanceId } from '../cell/cellCtrl';
+import type { CellCtrl } from '../cell/cellCtrl';
 import type { ICellRendererComp, ICellRendererParams } from '../cellRenderers/iCellRenderer';
-import type { IRowComp, RowCtrl } from './rowCtrl';
+import { NO_CELLS } from './normalRowFeature';
+import type { IRowComp, MappedPinnedCellGroupWidths, RowCtrl } from './rowCtrl';
 
 const LEAF_RENDERER_TAGS = new Set(['CANVAS', 'IMG', 'SVG', 'VIDEO', 'AUDIO', 'INPUT', 'IFRAME', 'PICTURE']);
 
@@ -34,10 +34,13 @@ const createCellSection = (sectionClass: string, pinned: boolean): { container: 
 };
 
 export class RowComp extends Component {
+    /** The container's row pass that last drew this row. */
+    public drawnInPass = 0;
     private fullWidthCellRenderer: ICellRendererComp | null | undefined;
     private fullWidthCellRendererParams: ICellRendererParams | undefined;
-    private fullWidthCellRenderersBySection: Partial<HorizontalSectionMap<ICellRendererComp | null>> = {};
-    private fullWidthCellRendererParamsBySection: Partial<HorizontalSectionMap<ICellRendererParams>> = {};
+    /** Only an embedded full-width row has sections, so the maps are created on first use. */
+    private fullWidthCellRenderersBySection: Partial<HorizontalSectionMap<ICellRendererComp | null>> | null = null;
+    private fullWidthCellRendererParamsBySection: Partial<HorizontalSectionMap<ICellRendererParams>> | null = null;
 
     private readonly rowCtrl: RowCtrl;
     private readonly ePinnedLeftSection: HTMLElement | undefined;
@@ -47,11 +50,14 @@ export class RowComp extends Component {
     private readonly ePinnedRightCells: HTMLElement | undefined;
 
     private domOrder: boolean;
-    private readonly cellComps: Map<CellCtrlInstanceId, CellComp | null> = new Map();
+    private pinnedWidths: MappedPinnedCellGroupWidths | undefined = undefined;
+    /** The lists last drawn: a row has one row comp at a time, and its feature never mutates a list once given. */
+    private drawnLeft: CellCtrl[] = NO_CELLS;
+    private drawnCenter: CellCtrl[] = NO_CELLS;
+    private drawnRight: CellCtrl[] = NO_CELLS;
+    private cellsPass = 0;
 
-    private readonly laneContainers: (HTMLElement | undefined)[];
-
-    constructor(ctrl: RowCtrl, beans: BeanCollection, containerType: RowContainerType) {
+    constructor(ctrl: RowCtrl, beans: BeanCollection) {
         super();
 
         this.beans = beans;
@@ -73,7 +79,6 @@ export class RowComp extends Component {
             // The centre lane is always present; the pinned lanes are attached on demand.
             rowDiv.append(centerSection.container);
         }
-        this.laneContainers = [this.ePinnedLeftCells, this.eScrollingCells, this.ePinnedRightCells];
         this.setInitialStyle(rowDiv);
         this.setTemplateFromElement(rowDiv);
 
@@ -81,8 +86,8 @@ export class RowComp extends Component {
         this.domOrder = this.rowCtrl.getDomOrder();
 
         const compProxy: IRowComp = {
-            setDomOrder: (domOrder) => (this.domOrder = domOrder),
-            setCellCtrls: (cellCtrls) => this.setCellCtrls(cellCtrls),
+            setDomOrder: (domOrder) => this.setDomOrder(domOrder),
+            setCellCtrls: (left, center, right) => this.setCellCtrls(left, center, right),
             getPinnedLeftRowElement: () => this.ePinnedLeftCells,
             getScrollingRowElement: () => this.eScrollingCells,
             getPinnedRightRowElement: () => this.ePinnedRightCells,
@@ -108,40 +113,24 @@ export class RowComp extends Component {
             refreshEmbeddedFullWidth: (getUpdatedParams) => this.refreshEmbeddedFullWidth(getUpdatedParams),
         };
 
-        ctrl.setComp(compProxy, this.getGui(), containerType, undefined);
+        ctrl.setComp(compProxy, this.getGui(), undefined);
         this.addDestroyFunc(() => {
-            ctrl.unsetComp(containerType);
+            ctrl.unsetComp();
         });
     }
 
     private refreshPinnedSections(): void {
         const widths = this.rowCtrl.getMappedPinnedCellGroupWidths();
+        if (widths === this.pinnedWidths) {
+            return;
+        }
+        this.pinnedWidths = widths;
         const eCenter = this.eScrollingCells;
         if (eCenter) {
             eCenter.style.width = `${widths.centerWidth}px`;
         }
-
-        const refreshPinnedSection = (
-            eSection: HTMLElement | undefined,
-            width: number,
-            shouldRender: boolean,
-            method: 'after' | 'before'
-        ) => {
-            if (!eSection) {
-                return;
-            }
-            if (!shouldRender) {
-                eSection.remove();
-                return;
-            }
-            eSection.style.width = `${width}px`;
-            if (!eSection.parentNode && eCenter) {
-                eCenter[method](eSection);
-            }
-        };
-
-        refreshPinnedSection(this.ePinnedLeftSection, widths.leftWidth, widths.renderLeft, 'before');
-        refreshPinnedSection(this.ePinnedRightSection, widths.rightWidth, widths.renderRight, 'after');
+        refreshPinnedSection(eCenter, this.ePinnedLeftSection, widths.leftWidth, widths.renderLeft, 'before');
+        refreshPinnedSection(eCenter, this.ePinnedRightSection, widths.rightWidth, widths.renderRight, 'after');
     }
 
     private setInitialStyle(container: HTMLElement): void {
@@ -224,42 +213,37 @@ export class RowComp extends Component {
     }
 
     private refreshEmbeddedFullWidth(getUpdatedParams: (pinned: ColumnPinnedType) => ICellRendererParams): boolean {
-        let refreshed = true;
-        const sections: [HorizontalSection, ColumnPinnedType][] = [
-            ['left', 'left'],
-            ['center', null],
-            ['right', 'right'],
-        ];
+        const left = this.refreshEmbeddedSection('left', getUpdatedParams('left'));
+        const center = this.refreshEmbeddedSection('center', getUpdatedParams(null));
+        const right = this.refreshEmbeddedSection('right', getUpdatedParams('right'));
 
-        for (const [section, pinned] of sections) {
-            const params = getUpdatedParams(pinned);
-            this.fullWidthCellRendererParamsBySection[section] = params;
-
-            const renderer = this.fullWidthCellRenderersBySection[section];
-            if (renderer?.refresh && !renderer.refresh(params)) {
-                refreshed = false;
-            }
-        }
-
-        this.fullWidthCellRenderer = this.fullWidthCellRenderersBySection.center ?? null;
-        this.fullWidthCellRendererParams = this.fullWidthCellRendererParamsBySection.center;
-        return refreshed;
+        this.fullWidthCellRenderer = this.fullWidthCellRenderersBySection?.center ?? null;
+        this.fullWidthCellRendererParams = this.fullWidthCellRendererParamsBySection?.center;
+        return left && center && right;
     }
 
-    private getAllFullWidthCellRenderers(): (ICellRendererComp | null | undefined)[] {
-        if (this.rowCtrl.isEmbeddedFullWidth) {
-            const { left, center, right } = this.fullWidthCellRenderersBySection;
-            return [left, center, right].filter((r): r is ICellRendererComp => r != null);
+    private refreshEmbeddedSection(section: HorizontalSection, params: ICellRendererParams): boolean {
+        this.fullWidthCellRendererParamsBySection ??= {};
+        this.fullWidthCellRendererParamsBySection[section] = params;
+        const renderer = this.fullWidthCellRenderersBySection?.[section];
+        return !renderer?.refresh || renderer.refresh(params);
+    }
+
+    private getAllFullWidthCellRenderers(): (ICellRendererComp | null | undefined)[] | undefined {
+        if (!this.rowCtrl.isEmbeddedFullWidth) {
+            const renderer = this.fullWidthCellRenderer;
+            return renderer ? [renderer] : undefined;
         }
-        return this.fullWidthCellRenderer ? [this.fullWidthCellRenderer] : [];
+        const renderers = this.fullWidthCellRenderersBySection;
+        return renderers === null ? undefined : [renderers.left, renderers.center, renderers.right];
     }
 
     private getPrimaryFullWidthCellRendererParams(): ICellRendererParams | undefined {
-        return this.fullWidthCellRendererParams ?? this.fullWidthCellRendererParamsBySection.center;
+        return this.fullWidthCellRendererParams ?? this.fullWidthCellRendererParamsBySection?.center;
     }
 
     private getFullWidthCellRendererParamsForPinned(pinned: ColumnPinnedType): ICellRendererParams | undefined {
-        return this.fullWidthCellRendererParamsBySection[this.getEmbeddedSectionForPinned(pinned)];
+        return this.fullWidthCellRendererParamsBySection?.[this.getEmbeddedSectionForPinned(pinned)];
     }
 
     private getEmbeddedSectionForPinned(pinned: ColumnPinnedType): HorizontalSection {
@@ -272,57 +256,85 @@ export class RowComp extends Component {
         return 'center';
     }
 
-    private setCellCtrls(cellCtrls: CellCtrl[]): void {
-        const cellsToRemove = new Map(this.cellComps);
-
-        for (const cellCtrl of cellCtrls) {
-            const key = cellCtrl.instanceId;
-
-            if (!this.cellComps.has(key)) {
-                this.newCellComp(cellCtrl);
-            } else {
-                cellsToRemove.delete(key);
-            }
-        }
-
-        this.destroyCells(cellsToRemove);
-        this.ensureDomOrder(cellCtrls);
-    }
-
-    private ensureDomOrder(cellCtrls: CellCtrl[]): void {
-        if (!this.domOrder) {
+    // ensureDomOrder is documented as initial, yet rows follow a framework prop change; investigate whether to
+    // make it truly initial, which would let this go with RowCtrl's listener (AG-18759).
+    private setDomOrder(domOrder: boolean): void {
+        const turnedOn = domOrder && !this.domOrder;
+        this.domOrder = domOrder;
+        if (!turnedOn) {
             return;
         }
+        // an unchanged lane is not drawn again, so one drawn unordered is put in order here
+        orderLane(this.ePinnedLeftCells, this.drawnLeft);
+        orderLane(this.eScrollingCells, this.drawnCenter);
+        orderLane(this.ePinnedRightCells, this.drawnRight);
+    }
 
-        const elementsByLane: HTMLElement[][] = [[], [], []];
-        for (const cellCtrl of cellCtrls) {
-            const cellComp = this.cellComps.get(cellCtrl.instanceId);
-            if (cellComp) {
-                elementsByLane[this.rowCtrl.laneFor(cellCtrl.column)].push(cellComp.getGui());
+    private setCellCtrls(left: CellCtrl[], center: CellCtrl[], right: CellCtrl[]): void {
+        const { drawnLeft, drawnCenter, drawnRight } = this;
+        this.drawnLeft = left;
+        this.drawnCenter = center;
+        this.drawnRight = right;
+        this.drawLane(this.ePinnedLeftCells, drawnLeft, left);
+        this.drawLane(this.eScrollingCells, drawnCenter, center);
+        this.drawLane(this.ePinnedRightCells, drawnRight, right);
+    }
+
+    private drawLane(container: HTMLElement | undefined, prevCellCtrls: CellCtrl[], cellCtrls: CellCtrl[]): void {
+        if (prevCellCtrls === cellCtrls || !container) {
+            return;
+        }
+        const pass = ++this.cellsPass;
+        const len = cellCtrls.length;
+        // a new cell goes in before the next one already drawn, so the lane keeps column order without moving a
+        // cell, and a span drawn over a kept cell paints beneath it
+        let nextDrawnIndex = prevCellCtrls.length === 0 ? len : 0;
+        let nextDrawnCell: HTMLElement | null = null;
+        const elements: HTMLElement[] | null = this.domOrder ? [] : null;
+
+        for (let i = 0; i < len; ++i) {
+            const cellCtrl = cellCtrls[i];
+            let cellComp = cellCtrl.drawnComp;
+            if (cellComp !== undefined) {
+                cellComp.drawnInPass = pass;
+            } else {
+                if (nextDrawnIndex <= i) {
+                    nextDrawnCell = null;
+                    for (nextDrawnIndex = i + 1; nextDrawnIndex < len; ++nextDrawnIndex) {
+                        const drawn = cellCtrls[nextDrawnIndex].drawnComp;
+                        if (drawn) {
+                            nextDrawnCell = drawn.getGui();
+                            break;
+                        }
+                    }
+                }
+                cellComp = this.newCellComp(cellCtrl, container, nextDrawnCell, pass);
+            }
+            if (elements !== null) {
+                elements.push(cellComp.getGui());
             }
         }
 
-        const containers = this.laneContainers;
-        for (let lane = 0, len = containers.length; lane < len; ++lane) {
-            const container = containers[lane];
-            if (container) {
-                _setDomChildOrder(container, elementsByLane[lane]);
-            }
+        destroyCells(prevCellCtrls, pass);
+        if (elements !== null) {
+            _setDomChildOrder(container, elements);
         }
     }
 
-    private newCellComp(cellCtrl: CellCtrl): void {
+    private newCellComp(cellCtrl: CellCtrl, eLane: HTMLElement, eBefore: HTMLElement | null, pass: number): CellComp {
         const editing = this.beans.editSvc?.isEditing(cellCtrl, { withOpenEditor: true }) ?? false;
-        const eParent = this.laneContainers[this.rowCtrl.laneFor(cellCtrl.column)] ?? this.getGui();
-        const cellComp = new CellComp(this.beans, cellCtrl, this.rowCtrl.printLayout, eParent, editing);
-        this.cellComps.set(cellCtrl.instanceId, cellComp);
-        eParent.appendChild(cellComp.getGui());
+        const cellComp = new CellComp(this.beans, cellCtrl, this.rowCtrl.printLayout, eLane, editing);
+        cellComp.drawnInPass = pass;
+        cellCtrl.drawnComp = cellComp;
+        eLane.insertBefore(cellComp.getGui(), eBefore);
+        return cellComp;
     }
 
     public override destroy(): void {
         super.destroy();
-        // Destroy all cells
-        this.destroyCells(this.cellComps);
+        destroyCells(this.drawnLeft, -1); // passes count from 1, so no comp is kept
+        destroyCells(this.drawnCenter, -1);
+        destroyCells(this.drawnRight, -1);
     }
 
     private setFullWidthRowComp(fullWidthRowComponent: ICellRendererComp, params: ICellRendererParams): void {
@@ -339,8 +351,12 @@ export class RowComp extends Component {
         fullWidthRowComponent: ICellRendererComp,
         params: ICellRendererParams
     ): void {
-        this.fullWidthCellRenderersBySection[section] = fullWidthRowComponent;
-        this.fullWidthCellRendererParamsBySection[section] = params;
+        this.fullWidthCellRenderersBySection ??= {};
+        this.fullWidthCellRendererParamsBySection ??= {};
+        const renderersBySection = this.fullWidthCellRenderersBySection;
+        const paramsBySection = this.fullWidthCellRendererParamsBySection;
+        renderersBySection[section] = fullWidthRowComponent;
+        paramsBySection[section] = params;
 
         if (section === 'center') {
             this.fullWidthCellRenderer = fullWidthRowComponent;
@@ -348,33 +364,59 @@ export class RowComp extends Component {
         }
 
         this.addDestroyFunc(() => {
-            this.fullWidthCellRenderersBySection[section] = this.beans.context.destroyBean(
-                this.fullWidthCellRenderersBySection[section]
-            );
-            this.fullWidthCellRendererParamsBySection[section] = undefined;
+            renderersBySection[section] = this.beans.context.destroyBean(renderersBySection[section]);
+            paramsBySection[section] = undefined;
             if (section === 'center') {
                 this.fullWidthCellRenderer = null;
                 this.fullWidthCellRendererParams = undefined;
             }
         });
     }
+}
 
-    private destroyCells(cellComps: Map<CellCtrlInstanceId, CellComp | null>): void {
-        for (const cellComp of cellComps.values()) {
-            // could be old reference, ie removed cell
-            if (!cellComp) {
-                continue;
-            }
+const refreshPinnedSection = (
+    eCenter: HTMLElement | undefined,
+    eSection: HTMLElement | undefined,
+    width: number,
+    shouldRender: boolean,
+    method: 'after' | 'before'
+): void => {
+    if (!eSection) {
+        return;
+    }
+    if (!shouldRender) {
+        eSection.remove();
+        return;
+    }
+    eSection.style.width = `${width}px`;
+    if (!eSection.parentNode && eCenter) {
+        eCenter[method](eSection);
+    }
+};
 
-            // check cellComp belongs in this container
-            const instanceId = cellComp.cellCtrl.instanceId;
-            if (this.cellComps.get(instanceId) !== cellComp) {
-                continue;
-            }
-
-            cellComp.detach();
-            cellComp.destroy();
-            this.cellComps.delete(instanceId);
+const orderLane = (container: HTMLElement | undefined, cellCtrls: CellCtrl[]): void => {
+    const len = cellCtrls.length;
+    if (!container || len === 0) {
+        return;
+    }
+    const elements: HTMLElement[] = [];
+    for (let i = 0; i < len; ++i) {
+        const cellComp = cellCtrls[i].drawnComp;
+        if (cellComp !== undefined) {
+            elements.push(cellComp.getGui());
         }
     }
-}
+    _setDomChildOrder(container, elements);
+};
+
+const destroyCells = (cellCtrls: CellCtrl[], keepPass: number): void => {
+    for (let i = 0, len = cellCtrls.length; i < len; ++i) {
+        const cellCtrl = cellCtrls[i];
+        const cellComp = cellCtrl.drawnComp;
+        if (cellComp !== undefined && cellComp.drawnInPass !== keepPass) {
+            cellComp.detach();
+            cellComp.destroy();
+            cellCtrl.drawnComp = undefined;
+        }
+    }
+};

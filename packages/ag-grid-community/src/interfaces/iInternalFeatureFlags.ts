@@ -8,6 +8,10 @@ export interface InternalFeatureFlags {
      * Clicking the row that is the whole selection deselects it rather than re-selecting it.
      */
     clickToggleSelection?: boolean;
+    /**
+     * Space obeys `enableClickSelection` as a click does, except on a cell showing a selection checkbox.
+     */
+    spaceKeyFollowsClickSelection?: boolean;
 }
 
 export type InternalFeatureFlag = keyof InternalFeatureFlags;

@@ -3,14 +3,15 @@ import { getError } from '../errorMessages/errorText';
 import type { CapturedDiagnostic } from '../logging';
 import { getErrorLink } from '../logging';
 
-const DOC_LINK_REGEX = /\s*(See|Visit) https?:\/\/\S+/g;
+// OPTIMIZATION: the leading lookbehinds only start a match at the beginning of a run, keeping these linear-time.
+const DOC_LINK_REGEX = /(?<!\s)\s*(See|Visit) https?:\/\/\S+/g;
 /** The general "For more info see: <url>" convention messages use to point at documentation. */
-const MORE_INFO_LINK_REGEX = /\s*For more info see:\s*(https?:\/\/\S+)/;
+const MORE_INFO_LINK_REGEX = /(?<!\s)\s*For more info see:\s*(https?:\/\/\S+)/;
 const IMPORT_LINE_REGEX = /^\s*import\s/;
 const CODE_LINE_PREFIX_REGEX = /^(import |const |let |function |class |ModuleRegistry|<|>|\}|\))/;
 const URL_REGEX = /https?:\/\/\S+/g;
 /** Trailing punctuation that follows a URL in prose rather than being part of it. */
-const URL_TRAILING_PUNCTUATION_REGEX = /[.,;:)\]]+$/;
+const URL_TRAILING_PUNCTUATION_REGEX = /(?<![.,;:)\]])[.,;:)\]]+$/;
 
 /** Delimiter the error messages use to mark inline code (reasons, module names). See `asCode` in errorText.ts. */
 const CODE_DELIMITER = '`';
@@ -69,7 +70,7 @@ function getRawMessage(diagnostic: CapturedDiagnostic): string {
  * @knipIgnore Used in tests
  */
 export function parseDiagnosticText(raw: string): DiagnosticContent {
-    const docLink = raw.match(MORE_INFO_LINK_REGEX)?.[1];
+    const docLink = MORE_INFO_LINK_REGEX.exec(raw)?.[1];
     const text = raw.replace(DOC_LINK_REGEX, '').replace(MORE_INFO_LINK_REGEX, '').trim();
     return { ...splitCodeSnippet(text), docLink };
 }

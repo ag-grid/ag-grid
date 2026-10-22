@@ -86,11 +86,11 @@ const pasteBlock = async (api: GridApi, block: string, startRow: number): Promis
 let gridSeq = 0;
 
 suite(`cell editing — batch paste (${GRID_ROWS} rows × ${COLS} cols)`, () => {
+    const gridsManager = new BenchGridsManager({ modules });
     // `preloadRows > 0` pre-stages preloadRows×COLS pending edits before measuring, exercising the
     // session-degradation case (on `latest`, per-cell cost scales with total pending edits).
     const benchPaste = (name: string, blockRows: number, batch: boolean, preloadRows = 0): void => {
         const id = `EP${++gridSeq}`;
-        const gridsManager = new BenchGridsManager({ modules });
         const blockA = buildBlock(blockRows, 'A');
         const blockB = buildBlock(blockRows, 'B');
         const preload = preloadRows > 0 ? buildBlock(preloadRows, 'P') : null;
@@ -104,7 +104,7 @@ suite(`cell editing — batch paste (${GRID_ROWS} rows × ${COLS} cols)`, () => 
                 await pasteBlock(api, toggle ? blockA : blockB, 0);
             },
             {
-                ...benchDefaults({ noiseFactor: 2 }),
+                ...benchDefaults(),
                 setup: async () => {
                     await gridsManager.reset();
                     clipboardUtils.init();

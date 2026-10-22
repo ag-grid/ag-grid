@@ -14,7 +14,7 @@ export class CsvCreator
 
     protected getMergedParams(params?: CsvExportParams): CsvExportParams {
         const baseParams = this.gos.get('defaultCsvExportParams');
-        return Object.assign({}, baseParams, params);
+        return { ...baseParams, ...params };
     }
 
     protected export(userParams?: CsvExportParams): void {
@@ -39,7 +39,7 @@ export class CsvCreator
     }
 
     public getDataAsCsv(params?: CsvExportParams, skipDefaultParams = false): string {
-        const mergedParams = skipDefaultParams ? Object.assign({}, params) : this.getMergedParams(params);
+        const mergedParams = skipDefaultParams ? { ...params } : this.getMergedParams(params);
 
         return this.getData(mergedParams);
     }
@@ -67,10 +67,10 @@ export class CsvCreator
             valueSvc,
             gos,
             log,
-            processCellCallback: processCellCallback || undefined,
-            processHeaderCallback: processHeaderCallback || undefined,
-            processGroupHeaderCallback: processGroupHeaderCallback || undefined,
-            processRowGroupCallback: processRowGroupCallback || undefined,
+            processCellCallback: processCellCallback ?? undefined,
+            processHeaderCallback: processHeaderCallback ?? undefined,
+            processGroupHeaderCallback: processGroupHeaderCallback ?? undefined,
+            processRowGroupCallback: processRowGroupCallback ?? undefined,
             suppressQuotes: suppressQuotes || false,
             columnSeparator: columnSeparator || ',',
             rowGroupColsSvc,

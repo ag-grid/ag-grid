@@ -114,7 +114,7 @@ export function buildEditedNote(note: Note | undefined, nextText: string | null 
     }
 
     return {
-        ...(note ?? {}),
+        ...note,
         text,
     };
 }

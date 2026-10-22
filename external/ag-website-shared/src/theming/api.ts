@@ -9,8 +9,9 @@ export type {
     ImageValue,
     LengthValue,
     ScaleValue,
+    ScrollbarWidthValue,
     ShadowValue,
-} from 'ag-grid-community';
+} from 'ag-stack';
 export { getParamType, paramValueToCss } from 'ag-stack';
 
 export type ParamType =
@@ -24,4 +25,5 @@ export type ParamType =
     | 'image'
     | 'fontFamily'
     | 'fontWeight'
-    | 'duration';
+    | 'duration'
+    | 'scrollbarWidth';

@@ -302,9 +302,8 @@ describe('Column destruction', () => {
         }
     });
 
-    // VisibleColsService.clear() keeps `prevLastLeftPinned` / `prevFirstRightPinned` refs across
-    // refreshes for the role-swap optimisation. If the leaf at the pinned edge is removed AND
-    // destroyed between refreshes, the next refresh must not fire events on the dead bean.
+    // VisibleColsService keeps `lastLeftPinnedCol` / `firstRightPinnedCol` across refreshes for the role swap.
+    // If the leaf at the pinned edge is removed AND destroyed between refreshes, the next refresh must not tell it anything.
     test('removing the left-pinned edge col between refreshes does not fire events on the destroyed bean', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ colId: 'a', pinned: 'left' }, { colId: 'b', pinned: 'left' }, { colId: 'c' }],
@@ -534,6 +533,20 @@ describe('Column destruction', () => {
 
         expect(api.getColumn('ag-Grid-HierarchyColumn-date-year')).toBeNull();
         expect((yearAfter as any).isAlive()).toBe(false);
+    });
+
+    test('a column replaced by new columnDefs has listeners removed and added without throwing', () => {
+        const api = gridsManager.createGrid('myGrid', { columnDefs: [{ colId: 'a' }] });
+        const column = api.getColumn('a')!;
+        api.setGridOption('columnDefs', [{ colId: 'b' }]);
+        expect(api.getColumn('a')).toBeNull();
+
+        const listener = () => {};
+        expect(() => {
+            column.removeEventListener('visibleChanged', listener);
+            column.addEventListener('visibleChanged', listener);
+            column.removeEventListener('visibleChanged', listener);
+        }).not.toThrow();
     });
 });
 

@@ -1,28 +1,16 @@
 import type { VisibleColsService } from '../../columns/visibleColsService';
 import type { ColumnLane } from '../../entities/agColumn';
 
-interface HorizontalOffsetParams {
-    left: number | null;
-    lane: ColumnLane;
-    width: number;
-    isPrintLayout: boolean;
-    isRtl: boolean;
-    visibleCols: VisibleColsService;
-}
-
-interface ApplyHorizontalPositionParams {
-    offset: number;
-    lane: ColumnLane;
-    width: number;
-    isPrintLayout: boolean;
-    isRtl: boolean;
-    visibleCols: VisibleColsService;
-}
-
-export function getResolvedHorizontalOffset(params: HorizontalOffsetParams): number | null {
-    const { left, lane, width, isPrintLayout, isRtl, visibleCols } = params;
-    if (left == null || !isPrintLayout) {
-        return left;
+/** Where a column's `left` lands in print layout, which draws every lane in one container. */
+export function getPrintLayoutOffset(
+    left: number | null,
+    lane: ColumnLane,
+    width: number,
+    isRtl: boolean,
+    visibleCols: VisibleColsService
+): number | null {
+    if (left == null) {
+        return null;
     }
 
     let physicalLeft = left;
@@ -50,22 +38,14 @@ export function getResolvedHorizontalOffset(params: HorizontalOffsetParams): num
     return leftWidth + physicalLeft;
 }
 
-export function applyHorizontalPosition(eElement: HTMLElement, params: ApplyHorizontalPositionParams): void {
-    const { offset, lane, width, isPrintLayout, isRtl, visibleCols } = params;
+export const isRightAnchored = (lane: ColumnLane, isRtl: boolean, isPrintLayout: boolean): boolean =>
+    !isPrintLayout && (isRtl ? lane !== 0 : lane === 2);
 
-    const useRightAnchor = !isPrintLayout && (isRtl ? lane !== 0 : lane === 2);
-
-    if (useRightAnchor) {
-        if (isRtl) {
-            eElement.style.right = `${offset}px`;
-        } else {
-            const containerWidth = visibleCols.getRightStickyColumnContainerWidth();
-            eElement.style.right = `${containerWidth - offset - width}px`;
-        }
-        eElement.style.left = '';
-        return;
-    }
-
-    eElement.style.left = `${offset}px`;
-    eElement.style.right = '';
-}
+/** The `right` to write when right-anchored, else the `left`. */
+export const getAnchoredPosition = (
+    offset: number,
+    width: number,
+    rightAnchored: boolean,
+    isRtl: boolean,
+    visibleCols: VisibleColsService
+): number => (rightAnchored && !isRtl ? visibleCols.getRightStickyColumnContainerWidth() - offset - width : offset);

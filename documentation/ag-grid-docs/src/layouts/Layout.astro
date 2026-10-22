@@ -14,18 +14,24 @@ import { DARK_MODE_INIT_SCRIPT, KBD_PLATFORM_INIT_SCRIPT } from '@utils/csp/inli
 import { Footer } from '@ag-website-shared/components/footer/Footer';
 import styles from '@layouts/Layout.module.scss';
 import { getApiPaths } from '@utils/apiMenuPath';
-import { SITE_BASE_URL, PUBLIC_GTM_ID, PUBLIC_GTM_AUTH, PUBLIC_GTM_PREVIEW, agGridVersion } from '@constants';
+import {
+    SITE_BASE_URL,
+    PUBLIC_GTM_ID,
+    PUBLIC_GTM_AUTH,
+    PUBLIC_GTM_PREVIEW,
+    PUBLIC_DASH0_ENDPOINT_URL,
+    PUBLIC_DASH0_AUTH_TOKEN,
+    agGridVersion,
+} from '@constants';
 import GoogleTagManager from '@ag-website-shared/components/google-tag-manager/GoogleTagManager.astro';
 import GoogleTagManagerBody from '@ag-website-shared/components/google-tag-manager/GoogleTagManagerBody.astro';
 import AnnouncementBanner from '@ag-website-shared/components/announcement-banner/AnnouncementBanner.astro';
 import JsonLd from '@ag-website-shared/components/structured-data/JsonLd.astro';
-import {
-    buildAgGridOrganization,
-    buildSoftwareApplication,
-    buildWebSite,
-    siteRootUrl,
-    type JsonLdObject,
-} from '@ag-website-shared/utils/structuredData';
+import WebsiteMonitoring from '@ag-website-shared/components/website-monitoring/WebsiteMonitoring.astro';
+import { type JsonLdObject } from '@ag-website-shared/utils/structuredData';
+import { buildSiteStructuredData } from '@utils/docsStructuredData';
+import { getSocialImageUrl } from '@utils/socialImageUrl';
+import CspZoneNavigation from '@ag-website-shared/components/csp-zone/CspZoneNavigation.astro';
 
 interface Props {
     title: string;
@@ -89,12 +95,10 @@ const {
 } = Astro.props;
 
 const path = Astro.url.pathname;
-const siteRoot = siteRootUrl(metadata.canonicalUrlBase);
-// Open Graph and Twitter crawlers require absolute image URLs, so resolve the social image against the site root.
-const socialImagePathOrUrl = urlWithBaseUrl(overrideSocialImage ?? metadata.socialImage);
-const socialImage = socialImagePathOrUrl.startsWith('http')
-    ? socialImagePathOrUrl
-    : `${siteRoot}${socialImagePathOrUrl.replace(/^\//, '')}`;
+const socialImage = getSocialImageUrl({
+    canonicalUrlBase: metadata.canonicalUrlBase,
+    image: overrideSocialImage ?? metadata.socialImage,
+});
 
 const lightModeCSSUrl = `url("${urlWithBaseUrl('/images/sun.svg')}")`;
 const darkModeCSSUrl = `url("${urlWithBaseUrl('/images/moon.svg')}")`;
@@ -102,30 +106,13 @@ const darkModeCSSUrl = `url("${urlWithBaseUrl('/images/moon.svg')}")`;
 const isHomepage = Astro.url.pathname.replaceAll('/', '') === SITE_BASE_URL.replaceAll('/', '');
 
 const includeStructuredData = !hidePageFromSearchEngines && !isArchive;
-const licensePricingUrl = `${siteRoot}license-pricing/`;
-const softwareApplicationSameAs = ['https://www.npmjs.com/package/ag-grid-community'];
 const structuredData: JsonLdObject[] = includeStructuredData
     ? [
-          buildAgGridOrganization(),
-          buildWebSite({
+          ...buildSiteStructuredData({
               canonicalUrlBase: metadata.canonicalUrlBase,
               name: metadata.title,
               description: metadata.description,
-          }),
-          buildSoftwareApplication({
-              canonicalUrlBase: metadata.canonicalUrlBase,
-              name: 'AG Grid',
-              version: agGridVersion.split('-')[0],
-              sameAs: softwareApplicationSameAs,
-              offers: [
-                  {
-                      '@type': 'Offer',
-                      name: 'AG Grid Community',
-                      price: '0',
-                      priceCurrency: 'USD',
-                      url: licensePricingUrl,
-                  },
-              ],
+              version: agGridVersion,
           }),
           ...(pageStructuredData ?? []),
       ]
@@ -157,9 +144,11 @@ const announcementBannerProps = {
             <link rel="apple-touch-icon" sizes={`${size}x${size}`} href={icon} />
         ))}
         {(!isProduction || isArchive || hidePageFromSearchEngines) && <meta name="robots" content="noindex" />}
+        <slot name="head" />
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
         <ClientRouter />
+        <CspZoneNavigation />
         {!isStaging && <link rel="canonical" href={canonicalUrl} />}
         {markdownUrl && <link rel="alternate" type="text/markdown" href={markdownUrl} />}
         {!isDev && (
@@ -210,6 +199,16 @@ const announcementBannerProps = {
 
         {structuredData.length > 0 && <JsonLd data={structuredData} />}
 
+        {/* Ahead of Google Tag Manager, so CSP violations from its tags are reported */}
+        {!isDev && PUBLIC_DASH0_ENDPOINT_URL && PUBLIC_DASH0_AUTH_TOKEN && (
+            <WebsiteMonitoring
+                serviceName="ag-grid-website"
+                serviceVersion={agGridVersion}
+                environment={isArchive ? 'archive' : isProduction ? 'production' : isStaging ? 'staging' : 'testing'}
+                endpointUrl={PUBLIC_DASH0_ENDPOINT_URL}
+                authToken={PUBLIC_DASH0_AUTH_TOKEN}
+            />
+        )}
         {!isDev && (
             <GoogleTagManager
                 googleTagManagerId={PUBLIC_GTM_ID}

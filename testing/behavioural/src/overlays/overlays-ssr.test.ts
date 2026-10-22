@@ -1,4 +1,4 @@
-import { GridColumns, GridRows, TestGridsManager, isAgHtmlElementVisible } from 'ag-test-utils';
+import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, isAgHtmlElementVisible } from 'ag-test-utils';
 
 import {
     ServerSideRowModelApiModule,
@@ -38,6 +38,9 @@ describe('ag-grid overlays state', () => {
 
     test('should show loading and no rows overlay, also when changing columns', async () => {
         let finishLoadData: () => void;
+        let requestCount = 0;
+        // a refresh requests its rows asynchronously, so wait for that request before finishing it
+        const waitForRequest = (count: number) => vi.waitFor(() => expect(requestCount).toBe(count));
 
         let firstLoad: () => void;
         const firstLoadPromise = new Promise<void>((resolve) => {
@@ -52,6 +55,7 @@ describe('ag-grid overlays state', () => {
             onGridReady: ({ api }) => {
                 api.setGridOption('serverSideDatasource', {
                     getRows: async (p) => {
+                        requestCount++;
                         finishLoadData = () => {
                             api.hideOverlay();
                             response.rowCount = response.rowData.length;
@@ -107,12 +111,14 @@ describe('ag-grid overlays state', () => {
 
         api.refreshServerSide({ route: [] });
         expect(hasLoadingIcon()).toBe(true);
+        await waitForRequest(2);
         finishLoadData!();
         expect(hasLoadingIcon()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(false);
 
         response.rowData = [];
         api.refreshServerSide({ route: [] });
+        await waitForRequest(3);
         finishLoadData!();
         expect(hasLoadingIcon()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(true);
@@ -190,20 +196,39 @@ describe('ag-grid overlays state', () => {
 
         responseRowData = [{ athlete: 'Michael Phelps' }, { athlete: 'Usain Bolt' }];
         api.setFilterModel(null);
+        expect(hasLoadingIcon()).toBe(true);
+        await loadPromise;
         await new GridRows(
             api,
             `should show no rows and no matching rows when applying a filter after setFilterModel #2`
         ).check(`
             ROOT id:<no-id>
-            └── filler id:rowIndex:0
+            ├── LEAF id:2 athlete:"Michael Phelps"
+            └── LEAF id:3 athlete:"Usain Bolt"
         `);
 
         api.refreshServerSide({ route: [] });
-        expect(hasLoadingIcon()).toBe(true);
+        expect(hasLoadingIcon()).toBe(false);
 
         await loadPromise;
         expect(hasLoadingIcon()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(false);
         expect(hasNoMatchingRowsOverlay()).toBe(false);
+    });
+
+    test('fires rowCountReady once across datasource resets', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'athlete' }],
+            rowModelType: 'serverSide',
+        });
+
+        let rowCountReady = 0;
+        // rowCountReady is an internal event, so it is not on the public addEventListener type
+        api.addEventListener('rowCountReady' as any, () => rowCountReady++);
+        api.setGridOption('serverSideDatasource', { getRows: () => {} });
+        api.setGridOption('serverSideDatasource', { getRows: () => {} });
+        await asyncSetTimeout(0);
+
+        expect(rowCountReady).toBe(1);
     });
 });

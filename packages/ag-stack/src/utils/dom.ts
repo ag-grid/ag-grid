@@ -315,7 +315,7 @@ export function _addStylesToElement(
         // changes the key from camelCase into a hyphenated-string
         const parsedKey = _camelCaseToHyphenated(key);
         const valueAsString = value.toString();
-        const parsedValue = valueAsString.replace(/\s*!important/g, '');
+        const parsedValue = valueAsString.replace(/(?<!\s)\s*!important/g, '');
         const priority = parsedValue.length != valueAsString.length ? 'important' : undefined;
 
         eElement.style.setProperty(parsedKey, parsedValue, priority);

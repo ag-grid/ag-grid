@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     clearFilter: 'נקה',
     cancelFilter: 'בטל',
     cancelColumnToolPanel: 'בטל',
+    resetColumnToolPanel: 'אפס',
 
     // Filter Titles
     textFilter: 'מסנן טקסט',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     addFilterCard: 'הוסף מסנן',
     agTextColumnFilterDisplayName: 'מסנן פשוט',
     agNumberColumnFilterDisplayName: 'מסנן פשוט',
+    agBigIntColumnFilterDisplayName: 'מסנן פשוט',
     agDateColumnFilterDisplayName: 'מסנן פשוט',
     agSetColumnFilterDisplayName: 'מסנן בחירה',
     agMultiColumnFilterDisplayName: 'מסנן משולב',
@@ -334,6 +336,10 @@ export const AG_GRID_LOCALE_HE_IL = {
     enabled: 'מופעל',
 
     // Menu
+    moveLeft: 'העבר שמאלה',
+    moveRight: 'העבר ימינה',
+    moveUp: 'העבר למעלה',
+    moveDown: 'העבר למטה',
     pinColumn: 'נעל עמודה',
     pinLeft: 'נעל לשמאל',
     pinRight: 'נעל לימין',
@@ -735,6 +741,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaFilterList: 'רשימת סינון',
     ariaFilterToValue: 'סנן לערך',
     ariaFilterValue: 'ערך סינון',
+    ariaNotInCurrentData: 'לא בנתונים הנוכחיים',
     ariaFilterMenuOpen: 'פתח תפריט סינון',
     ariaFilteringOperator: 'מפעיל סינון',
     ariaHidden: 'נסתר',
@@ -756,6 +763,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaRowSelect: 'לחץ על SPACE כדי לבחור שורה זו',
     ariaRowSelectionDisabled: 'בחירת שורות מושבתת עבור שורה זו',
     ariaSearch: 'חיפוש',
+    ariaSortPriority: 'עדיפות מיון ${priority} מתוך ${count}',
     ariaSortableColumn: 'לחץ על ENTER למיון',
     ariaSortableColumnWithCellSelection: 'לחץ על ALT ENTER למיון',
     ariaToggleVisibility: 'לחץ על SPACE כדי להחליף נראות',
@@ -888,9 +896,11 @@ export const AG_GRID_LOCALE_HE_IL = {
     columnHeaderEditCancel: 'בטל',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'לא נמצאו עמודות מתאימות.',
     calculatedColumn: 'עמודה מחושבת',
     calculatedColumnAdd: 'הוספת עמודה מחושבת',
     calculatedColumnEdit: 'עריכת עמודה מחושבת',
+    calculatedColumnView: 'הצג עמודה מחושבת',
     calculatedColumnRemove: 'הסרת עמודה מחושבת',
     calculatedColumnTitle: 'כותרת',
     calculatedColumnType: 'סוג',
@@ -905,6 +915,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     calculatedColumnExpressionAmbiguousReference:
         'הפניית עמודה דו-משמעית "${variable}". השתמש ברשימת העמודות או בנתיב קבוצה ספציפי יותר.',
     calculatedColumnExpressionUnknownReference: 'הפניית עמודה לא ידועה "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'לא ניתן להשתמש בעמודה "${variable}" בביטוי זה.',
     calculatedColumnExpressionEmpty: 'הזן ביטוי',
     calculatedColumnTitleEmpty: 'הזן כותרת',
     calculatedColumnApply: 'החל',

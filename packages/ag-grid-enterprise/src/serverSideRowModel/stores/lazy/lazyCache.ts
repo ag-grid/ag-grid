@@ -378,7 +378,7 @@ export class LazyCache extends BeanStub {
         if (isLastRowIndexKnown != null) {
             this.isLastRowKnown = isLastRowIndexKnown;
 
-            if (isLastRowIndexKnown === false) {
+            if (!isLastRowIndexKnown) {
                 this.numberOfRows += 1;
             }
         }
@@ -511,6 +511,9 @@ export class LazyCache extends BeanStub {
             const deletedNode = id && this.removedNodeCache?.get(id);
             if (deletedNode) {
                 this.removedNodeCache?.delete(id);
+                // Restore the position destroyRowAtIndex cleared, so the node is displayed again and
+                // the move to its new index animates from where the row was rather than fading in.
+                deletedNode.setRowTop(deletedNode.oldRowTop);
                 this.blockUtils.updateDataIntoRowNode(deletedNode, data);
                 this.nodeMap.set({
                     id: deletedNode.id!,
@@ -613,7 +616,7 @@ export class LazyCache extends BeanStub {
         const results: { [key: string]: any } = {};
         for (const blockStart of Object.keys(blockStates)) {
             const sortedStates = [...blockStates[blockStart]].sort(
-                (a, b) => (statePriorityMap[a] ?? 0) - (statePriorityMap[b] ?? 0)
+                (a, b) => (statePriorityMap[b] ?? 0) - (statePriorityMap[a] ?? 0)
             );
             const priorityState = sortedStates[0];
 
@@ -645,6 +648,11 @@ export class LazyCache extends BeanStub {
             // while refreshing, we retain the group nodes so they can be moved
             // without losing state
             this.removedNodeCache.set(lazyNode.node.id!, lazyNode.node);
+            // A redraw can happen before the refresh completes (each block response fires one), and
+            // RowCtrl repositions a row it destroys while rowTop is set. Clearing it makes that
+            // redraw fade the row out instead; setRowTop keeps the old value in oldRowTop, which
+            // createRowAtIndex restores if a later response re-adopts the node.
+            lazyNode.node.setRowTop(null);
         } else {
             this.blockUtils.destroyRowNode(lazyNode.node);
         }
@@ -778,7 +786,9 @@ export class LazyCache extends BeanStub {
             const rowBlockStart = this.getBlockStartIndex(index);
             const rowBlockInViewport = rowBlockStart >= firstRowBlockStart && rowBlockStart <= lastRowBlockStart;
 
-            return !rowBlockInViewport && !this.isNodeCached(node);
+            return (
+                !rowBlockInViewport && !this.isNodeCached(node) && !this.lazyBlockLoadingSvc.isRowLoading(this, index)
+            );
         });
 
         if (disposableNodes.length === 0) {
@@ -1193,8 +1203,7 @@ export class LazyCache extends BeanStub {
     }
 
     public insertRowNodes(inserts: any[], indexToAdd?: number): RowNode[] {
-        // adjust row count to allow for footer row
-        const realRowCount = this.store.getRowCount() - (this.store.getParentNode().sibling ? 1 : 0);
+        const realRowCount = this.numberOfRows;
 
         // if missing and we know the last row, we're inserting at the end
         const addIndex = indexToAdd == null && this.isLastRowKnown ? realRowCount : indexToAdd;

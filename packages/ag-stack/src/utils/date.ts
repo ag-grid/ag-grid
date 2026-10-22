@@ -10,7 +10,7 @@ const DATE_TIME_SEPARATOR_REGEXP = new RegExp(`[${DATE_TIME_SEPARATOR} ]`);
  * is checked downstream.
  */
 const DATE_TIME_REGEXP = new RegExp(
-    `^\\d{4}-\\d{2}-\\d{2}([${DATE_TIME_SEPARATOR} ]\\d{2}:\\d{2}(:\\d{2})?(\\.\\d+)?(Z|[+-]\\d{2}(:?\\d{2})?)?)?$`
+    String.raw`^\d{4}-\d{2}-\d{2}([${DATE_TIME_SEPARATOR} ]\d{2}:\d{2}(:\d{2})?(\.\d+)?(Z|[+-]\d{2}(:?\d{2})?)?)?$`
 );
 
 function _padStartWidthZeros(value: number, totalStringSize: number): string {
@@ -192,7 +192,7 @@ export function _parseDateTimeFromString(
 
     const fields = dateStr.split('-').map((f) => Number.parseInt(f, 10));
 
-    if (fields.filter((f) => !isNaN(f)).length !== 3) {
+    if (fields.filter((f) => !Number.isNaN(f)).length !== 3) {
         return null;
     }
 

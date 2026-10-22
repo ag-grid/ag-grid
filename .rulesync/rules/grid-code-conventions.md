@@ -1,7 +1,7 @@
 ---
 targets: ['*']
 description: 'AG Grid-specific source code conventions (layered on the shared code-quality guide)'
-globs: ['packages/*/src/**/*.ts', 'community-modules/*/src/**/*.ts', 'enterprise-modules/*/src/**/*.ts']
+globs: ['packages/*/src/**/*.ts', 'community-modules/*/src/**/*.ts']
 ---
 
 # AG Grid Source Conventions
@@ -72,3 +72,20 @@ setTimeout(() => {
 ```
 
 Only needed when the callback reaches back into the component or grid — self-contained deferred work does not need the guard.
+
+## Self-check before review
+
+Apply this list while writing grid source, and check the diff against it before asking for review. Each item is a class of finding that automated review kept raising across several PRs.
+
+- **Existing setups keep working.** Apart from the bug being fixed, behaviour with no new option set and no new field returned matches the base branch: event order and count, `getRows` calls and request shape, scroll position, timing. A new feature sits behind an opt-in or activates only when its new input is present. Deprecated options keep working.
+- **Late async results.** A response, timer or callback can arrive after a refresh, purge, eviction or destroy. Tag each request with a generation or version and drop results that no longer match. A late result must never re-create state that was removed.
+- **Grid lifecycle order.** Deferred work that calls application callbacks or expects the API to be wired must not run before the grid is ready, and no deferred work may run after destroy (see *Guard deferred work against teardown*).
+- **Row and column kinds.** Check the change against pinned rows, sticky rows, group rows and footers, grand totals, detail rows, server-side stub rows and duplicate IDs within one call; and against auto-group, selection, row-number and pinned columns.
+- **Every entry path.** A fix reached through one path usually has siblings: API and user action, keyboard variants, header and body, menus and submenus. Check each one, and fix and test those that share the defect.
+- **Derived state stays fresh.** Every cached or derived value is invalidated by every input that can change it.
+- **Read the effective config.** Use the merged value (defaults, column types, grid options, theme chain) through the core services, not one source.
+- **Applied, not requested, sizes.** Use widths and heights after min, max and pinned caps.
+- **Bounded work.** No unbounded retry or reload loops (cap them), no new full-row scan on a per-cell or per-transaction path, no chain of loads in a single task.
+- **Result containers are fresh.** When a returned array or map is the caller's to mutate, build a new one rather than handing back an input container or internal state. Application row-data objects are the exception: keep their identity, as `getSelectedRows()` and transactions rely on it.
+- **Docs move with the change.** When behaviour changes, grep the docs and the option's JSDoc for the feature and update what describes the old behaviour, including the exceptions the change keeps or adds.
+- **Targeted runs cover the surface.** Add `main-internal` to a targeted `./behave.sh` run when an export or `AG_GRID_INTERNAL` annotation changes, and `react.test` when rendering or load timing changes (see *Targeted runs* in the testing rules).

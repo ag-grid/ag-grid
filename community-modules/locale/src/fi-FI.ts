@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     clearFilter: 'Tyhjennä',
     cancelFilter: 'Peruuta',
     cancelColumnToolPanel: 'Peruuta',
+    resetColumnToolPanel: 'Nollaa',
 
     // Filter Titles
     textFilter: 'Tekstisuodatin',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     addFilterCard: 'Lisää suodatin',
     agTextColumnFilterDisplayName: 'Yksinkertainen suodatin',
     agNumberColumnFilterDisplayName: 'Yksinkertainen suodatin',
+    agBigIntColumnFilterDisplayName: 'Yksinkertainen suodatin',
     agDateColumnFilterDisplayName: 'Yksinkertainen suodatin',
     agSetColumnFilterDisplayName: 'Valintasuodatin',
     agMultiColumnFilterDisplayName: 'Yhdistelmä suodatin',
@@ -339,6 +341,10 @@ export const AG_GRID_LOCALE_FI_FI = {
     enabled: 'Käytössä',
 
     // Menu
+    moveLeft: 'Siirrä vasemmalle',
+    moveRight: 'Siirrä oikealle',
+    moveUp: 'Siirrä ylös',
+    moveDown: 'Siirrä alas',
     pinColumn: 'Kiinnitä sarake',
     pinLeft: 'Kiinnitä vasemmalle',
     pinRight: 'Kiinnitä oikealle',
@@ -741,6 +747,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaFilterList: 'Suodatinlista',
     ariaFilterToValue: 'Suodata arvoon',
     ariaFilterValue: 'Suodattimen arvo',
+    ariaNotInCurrentData: 'ei ole nykyisissä tiedoissa',
     ariaFilterMenuOpen: 'Avaa suodattimen valikko',
     ariaFilteringOperator: 'Suodatuksen operaattori',
     ariaHidden: 'piilotettu',
@@ -762,6 +769,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaRowSelect: 'Paina VÄLILYÖNTI valitaksesi tämän rivin',
     ariaRowSelectionDisabled: 'Rivin valinta on poistettu käytöstä tälle riville',
     ariaSearch: 'Haku',
+    ariaSortPriority: 'Lajittelun prioriteetti ${priority}, yhteensä ${count}',
     ariaSortableColumn: 'Paina ENTER lajitellaksesi',
     ariaSortableColumnWithCellSelection: 'Paina ALT ENTER lajitellaksesi',
     ariaToggleVisibility: 'Paina VÄLILYÖNTI vaihtaaksesi näkyvyyttä',
@@ -894,9 +902,11 @@ export const AG_GRID_LOCALE_FI_FI = {
     columnHeaderEditCancel: 'Peruuta',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Sopivia sarakkeita ei löytynyt.',
     calculatedColumn: 'Laskettu sarake',
     calculatedColumnAdd: 'Lisää laskettu sarake',
     calculatedColumnEdit: 'Muokkaa laskettua saraketta',
+    calculatedColumnView: 'Näytä laskettu sarake',
     calculatedColumnRemove: 'Poista laskettu sarake',
     calculatedColumnTitle: 'Otsikko',
     calculatedColumnType: 'Tyyppi',
@@ -911,6 +921,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     calculatedColumnExpressionAmbiguousReference:
         'Moniselitteinen sarakeviittaus "${variable}". Käytä Sarakkeet-luetteloa tai tarkempaa ryhmäpolkua.',
     calculatedColumnExpressionUnknownReference: 'Tuntematon sarakeviittaus "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Saraketta "${variable}" ei voi käyttää tässä lausekkeessa.',
     calculatedColumnExpressionEmpty: 'Anna lauseke',
     calculatedColumnTitleEmpty: 'Anna otsikko',
     calculatedColumnApply: 'Käytä',

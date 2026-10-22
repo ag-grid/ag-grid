@@ -70,6 +70,7 @@ export const AG_GRID_LOCALE_EN_US = {
     clearFilter: 'Clear',
     cancelFilter: 'Cancel',
     cancelColumnToolPanel: 'Cancel',
+    resetColumnToolPanel: 'Reset',
 
     // Filter Titles
     textFilter: 'Text Filter',
@@ -107,6 +108,7 @@ export const AG_GRID_LOCALE_EN_US = {
     addFilterCard: 'Add Filter',
     agTextColumnFilterDisplayName: 'Simple Filter',
     agNumberColumnFilterDisplayName: 'Simple Filter',
+    agBigIntColumnFilterDisplayName: 'Simple Filter',
     agDateColumnFilterDisplayName: 'Simple Filter',
     agSetColumnFilterDisplayName: 'Selection Filter',
     agMultiColumnFilterDisplayName: 'Combo Filter',
@@ -326,6 +328,10 @@ export const AG_GRID_LOCALE_EN_US = {
     enabled: 'Enabled',
 
     // Menu
+    moveLeft: 'Move Left',
+    moveRight: 'Move Right',
+    moveUp: 'Move Up',
+    moveDown: 'Move Down',
     pinColumn: 'Pin Column',
     pinLeft: 'Pin Left',
     pinRight: 'Pin Right',
@@ -741,6 +747,7 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaFilterList: 'Filter List',
     ariaFilterToValue: 'Filter to value',
     ariaFilterValue: 'Filter Value',
+    ariaNotInCurrentData: 'not in current data',
     ariaFilterMenuOpen: 'Open Filter Menu',
     ariaFilteringOperator: 'Filtering Operator',
     ariaHidden: 'hidden',
@@ -762,6 +769,7 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaRowSelect: 'Press SPACE to select this row',
     ariaRowSelectionDisabled: 'Row Selection is disabled for this row',
     ariaSearch: 'Search',
+    ariaSortPriority: 'Sort priority ${priority} of ${count}',
     ariaSortableColumn: 'Press ENTER to sort',
     ariaSortableColumnWithCellSelection: 'Press ALT ENTER to sort',
     ariaToggleVisibility: 'Press SPACE to toggle visibility',
@@ -899,9 +907,11 @@ export const AG_GRID_LOCALE_EN_US = {
     columnHeaderEditCancel: 'Cancel',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'No eligible columns found.',
     calculatedColumn: 'Calculated Column',
     calculatedColumnAdd: 'Add Calculated Column',
     calculatedColumnEdit: 'Edit Calculated Column',
+    calculatedColumnView: 'View Calculated Column',
     calculatedColumnRemove: 'Remove Calculated Column',
     calculatedColumnTitle: 'Title',
     calculatedColumnType: 'Type',
@@ -916,6 +926,7 @@ export const AG_GRID_LOCALE_EN_US = {
     calculatedColumnExpressionAmbiguousReference:
         'Ambiguous column reference "${variable}". Use the Columns list or a more specific group path.',
     calculatedColumnExpressionUnknownReference: 'Unknown column reference "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Column "${variable}" cannot be used in this expression.',
     calculatedColumnExpressionEmpty: 'Enter an expression',
     calculatedColumnTitleEmpty: 'Enter a title',
     calculatedColumnApply: 'Apply',

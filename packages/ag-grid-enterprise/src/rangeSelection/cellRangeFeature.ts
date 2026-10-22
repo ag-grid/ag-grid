@@ -75,7 +75,7 @@ export class CellRangeFeature implements ICellRangeFeature {
     }
 
     public unsetComp(): void {
-        this.beans.context.destroyBean(this.selectionHandle);
+        this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);
     }
 
     public onCellSelectionChanged(): void {
@@ -142,8 +142,8 @@ export class CellRangeFeature implements ICellRangeFeature {
         );
     }
 
-    public updateRangeBordersIfRangeCount(): void {
-        // we only need to update range borders if we are in a range
+    /** A cell's side borders depend on its displayed neighbours. */
+    public onDisplayedColumnsChanged(): void {
         if (this.rangeCount > 0) {
             this.updateRangeBorders();
             this.refreshRangeStyleAndHandle();
@@ -247,12 +247,22 @@ export class CellRangeFeature implements ICellRangeFeature {
         this.cellComp.toggleCss(CSS_CELL_RANGE_HANDLE, !!this.selectionHandle);
     }
 
+    public reattachHandle(eParent: HTMLElement): void {
+        const handleGui = this.selectionHandle?.getGui();
+        if (handleGui) {
+            eParent.appendChild(handleGui);
+        }
+    }
+
     public scheduleRefreshRangeStyleAndHandle(): void {
         if (this.refreshScheduled) {
             return;
         }
         this.refreshScheduled = true;
         _requestAnimationFrame(this.beans, () => {
+            if (this.cellCtrl.rangeFeature !== this) {
+                return; // destroyed with its cell's mount
+            }
             this.refreshScheduled = false;
             this.refreshRangeStyleAndHandle();
         });

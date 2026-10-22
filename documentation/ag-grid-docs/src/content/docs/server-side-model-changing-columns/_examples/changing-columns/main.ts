@@ -88,7 +88,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
 
     suppressAggFuncInHeader: true,
-    // debug: true,
 };
 
 function getAthletesAsync(params: SetFilterValuesFuncParams) {

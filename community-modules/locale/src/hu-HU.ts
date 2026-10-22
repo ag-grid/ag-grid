@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     clearFilter: 'Törlés',
     cancelFilter: 'Mégse',
     cancelColumnToolPanel: 'Mégse',
+    resetColumnToolPanel: 'Visszaállítás',
 
     // Filter Titles
     textFilter: 'Szövegszűrő',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     addFilterCard: 'Szűrő hozzáadása',
     agTextColumnFilterDisplayName: 'Egyszerű szűrő',
     agNumberColumnFilterDisplayName: 'Egyszerű szűrő',
+    agBigIntColumnFilterDisplayName: 'Egyszerű szűrő',
     agDateColumnFilterDisplayName: 'Egyszerű szűrő',
     agSetColumnFilterDisplayName: 'Kiválasztási szűrő',
     agMultiColumnFilterDisplayName: 'Kombinált szűrő',
@@ -340,6 +342,10 @@ export const AG_GRID_LOCALE_HU_HU = {
     enabled: 'Engedélyezve',
 
     // Menu
+    moveLeft: 'Mozgatás balra',
+    moveRight: 'Mozgatás jobbra',
+    moveUp: 'Mozgatás felfelé',
+    moveDown: 'Mozgatás lefelé',
     pinColumn: 'Oszlop rögzítése',
     pinLeft: 'Rögzítés balra',
     pinRight: 'Rögzítés jobbra',
@@ -742,6 +748,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaFilterList: 'Szűrő lista',
     ariaFilterToValue: 'Szűrés értékig',
     ariaFilterValue: 'Szűrő érték',
+    ariaNotInCurrentData: 'nem szerepel az aktuális adatokban',
     ariaFilterMenuOpen: 'Szűrő menü megnyitása',
     ariaFilteringOperator: 'Szűrő operátor',
     ariaHidden: 'elrejtve',
@@ -765,6 +772,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaRowSelect: 'Nyomja le a SPACE billentyűt ezen sor kiválasztásához',
     ariaRowSelectionDisabled: 'A sor kiválasztása le van tiltva ehhez a sorhoz',
     ariaSearch: 'Keresés',
+    ariaSortPriority: 'Rendezési prioritás: ${priority}, összesen ${count}',
     ariaSortableColumn: 'Nyomja meg az ENTER billentyűt a rendezéshez',
     ariaSortableColumnWithCellSelection: 'Nyomja meg az ALT ENTER billentyűt a rendezéshez',
     ariaToggleVisibility: 'Nyomja meg a SPACE billentyűt a láthatóság váltásához',
@@ -897,9 +905,11 @@ export const AG_GRID_LOCALE_HU_HU = {
     columnHeaderEditCancel: 'Mégse',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nem találhatók megfelelő oszlopok.',
     calculatedColumn: 'Számított oszlop',
     calculatedColumnAdd: 'Számított oszlop hozzáadása',
     calculatedColumnEdit: 'Számított oszlop szerkesztése',
+    calculatedColumnView: 'Számított oszlop megtekintése',
     calculatedColumnRemove: 'Számított oszlop eltávolítása',
     calculatedColumnTitle: 'Cím',
     calculatedColumnType: 'Típus',
@@ -914,6 +924,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     calculatedColumnExpressionAmbiguousReference:
         'Nem egyértelmű oszlophivatkozás: "${variable}". Használja az Oszlopok listát vagy egy konkrétabb csoportútvonalat.',
     calculatedColumnExpressionUnknownReference: 'Ismeretlen oszlophivatkozás: "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'A(z) "${variable}" oszlop nem használható ebben a kifejezésben.',
     calculatedColumnExpressionEmpty: 'Adjon meg egy kifejezést',
     calculatedColumnTitleEmpty: 'Adjon meg egy címet',
     calculatedColumnApply: 'Alkalmaz',

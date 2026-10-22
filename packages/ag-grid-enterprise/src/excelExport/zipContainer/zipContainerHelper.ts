@@ -130,7 +130,7 @@ export const getHeaders = (
     const dt = convertDate(creationDate);
 
     const crcFlag = getCrcFromCrc32Table(rawContent);
-    const zipSize = deflatedSize !== undefined ? deflatedSize : rawSize;
+    const zipSize = deflatedSize ?? rawSize;
 
     const utfPath = _utf8_encode(path);
     const isUTF8 = utfPath !== path;

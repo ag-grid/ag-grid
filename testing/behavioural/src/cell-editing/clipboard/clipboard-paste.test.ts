@@ -654,4 +654,694 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
             └── LEAF id:r0 a:"X0" b:"Y0"
         `);
     });
+
+    test.each([
+        {
+            name: 'Windows Excel CRLF after a filled range',
+            plain: 'a1\tb1\r\na2\tb2\r\n',
+            html: '<html><head><style>tr { color: black }</style></head><body link="blue"><table><col span=2><!--StartFragment--><tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr><!--EndFragment--></table></body></html>',
+            lastRow: { a: 'keep', b: 'keep' },
+            callbackRows: 2,
+        },
+        {
+            name: 'LF after a filled range with a table body',
+            plain: 'a1\tb1\na2\tb2\n',
+            html: '<html><body><table><tbody><tr><td><p>a1</p></td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr></tbody></table></body></html>',
+            lastRow: { a: 'keep', b: 'keep' },
+            callbackRows: 2,
+        },
+        {
+            name: 'Windows Excel with a selected blank third row',
+            plain: 'a1\tb1\r\na2\tb2\r\n',
+            html: '<table><tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr><tr><td></td><td></td></tr></table>',
+            lastRow: { a: null, b: null },
+            callbackRows: 3,
+            lastCallbackRow: ['', ''],
+        },
+        {
+            name: 'Mac Excel with a selected blank third row and no terminal newline',
+            plain: 'a1\tb1\r\na2\tb2',
+            html: '<table><tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr><tr><td></td><td></td></tr></table>',
+            lastRow: { a: null, b: null },
+            callbackRows: 3,
+            lastCallbackRow: ['', ''],
+        },
+        {
+            name: 'a selected blank row represented by empty HTML paragraphs',
+            plain: 'a1\tb1\na2\tb2\n',
+            html: '<html><body><table><tbody><tr><td><p>a1</p></td><td><p>b1</p></td></tr><tr><td><p>a2</p></td><td><p>b2</p></td></tr><tr><td><p class="p2"><br></p></td><td><p class="p2"><br></p></td></tr></tbody></table></body></html>',
+            lastRow: { a: null, b: null },
+            callbackRows: 3,
+            lastCallbackRow: ['', ''],
+        },
+        {
+            name: 'a nonblank cell in an HTML-only row',
+            plain: 'a1\tb1\r\na2\tb2',
+            html: '<table><tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr><tr><td></td><td>content</td></tr></table>',
+            lastRow: { a: 'keep', b: 'keep' },
+            callbackRows: 2,
+        },
+        {
+            name: 'HTML markup inside a missing cell',
+            plain: 'a1\tb1\r\na2\tb2',
+            html: '<table><tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr><tr><td></td><td><br></td></tr></table>',
+            lastRow: { a: 'keep', b: 'keep' },
+            callbackRows: 2,
+        },
+        {
+            name: 'text inside an HTML paragraph in a missing cell',
+            plain: 'a1\tb1\na2\tb2\n',
+            html: '<table><tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr><tr><td></td><td><p>content</p></td></tr></table>',
+            lastRow: { a: null, b: 'keep' },
+            callbackRows: 3,
+        },
+        {
+            name: 'a spanning cell in the HTML table',
+            plain: 'a1\tb1\r\na2\tb2',
+            html: '<table><tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr><tr><td colspan="2"></td></tr></table>',
+            lastRow: { a: 'keep', b: 'keep' },
+            callbackRows: 2,
+        },
+        {
+            name: 'content after a web table',
+            plain: 'a1\tb1\r\na2\tb2\r\n',
+            html: '<table><tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr></table><p><br></p>',
+            lastRow: { a: null, b: 'keep' },
+            callbackRows: 3,
+        },
+        {
+            name: 'another table after the first one',
+            plain: 'a1\tb1\r\na2\tb2\r\n',
+            html: '<table><tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr></table><table><tr><td>other</td></tr></table>',
+            lastRow: { a: null, b: 'keep' },
+            callbackRows: 3,
+        },
+        {
+            name: 'a nested table',
+            plain: 'a1\tb1\r\na2\tb2\r\n',
+            html: '<table><tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td><table><tr><td>b2</td></tr></table></td></tr></table>',
+            lastRow: { a: null, b: 'keep' },
+            callbackRows: 3,
+        },
+        {
+            name: 'an unclosed table row',
+            plain: 'a1\tb1\r\na2\tb2\r\n',
+            html: '<table><tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></table>',
+            lastRow: { a: null, b: 'keep' },
+            callbackRows: 3,
+        },
+        {
+            name: 'a table row with no cells',
+            plain: 'a1\tb1\r\na2\tb2\r\n',
+            html: '<table><tr><td>a1</td><td>b1</td></tr><tr></tr></table>',
+            lastRow: { a: null, b: 'keep' },
+            callbackRows: 3,
+        },
+        {
+            name: 'a row tag in an HTML comment',
+            plain: 'a1\tb1\r\na2\tb2\r\n',
+            html: '<table><!--<tr><td>ignored</td></tr>--><tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr></table>',
+            lastRow: { a: 'keep', b: 'keep' },
+            callbackRows: 2,
+        },
+        {
+            name: 'a row tag inside a quoted attribute',
+            plain: 'a1\tb1\r\na2\tb2\r\n',
+            html: '<table data-label="1 > 0"><tr><td title="<tr></tr>">a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr></table>',
+            lastRow: { a: 'keep', b: 'keep' },
+            callbackRows: 2,
+        },
+    ])(
+        'reconciles the trailing clipboard row for $name',
+        async ({ plain, html, lastRow, callbackRows, lastCallbackRow }) => {
+            let callbackData: string[][] | undefined;
+            const api = await gridMgr.createGridAndWait('htmlTerminalRowPaste', {
+                columnDefs: [
+                    { field: 'a', editable: true },
+                    { field: 'b', editable: true },
+                ],
+                rowData: [
+                    { a: 'old0', b: 'old0' },
+                    { a: 'old1', b: 'old1' },
+                    { a: 'keep', b: 'keep' },
+                ],
+                processDataFromClipboard: ({ data }) => {
+                    callbackData = data.map((row) => [...row]);
+                    return data;
+                },
+            });
+            clipboardUtils.setTextAndHtml(plain, html);
+
+            api.setFocusedCell(0, 'a');
+            const pasted = waitForEvent('pasteEnd', api);
+            api.pasteFromClipboard();
+            await pasted;
+
+            expect(api.getDisplayedRowAtIndex(0)?.data).toMatchObject({ a: 'a1', b: 'b1' });
+            expect(api.getDisplayedRowAtIndex(1)?.data).toMatchObject({ a: 'a2', b: 'b2' });
+            expect(api.getDisplayedRowAtIndex(2)?.data).toMatchObject(lastRow);
+            expect(callbackData).toHaveLength(callbackRows);
+            if (lastCallbackRow) {
+                expect(callbackData?.at(-1)).toEqual(lastCallbackRow);
+            }
+        }
+    );
+
+    const blankCellHtml =
+        '<table><tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr><tr><td></td><td></td></tr></table>';
+    test.each([
+        { name: 'Windows', plain: 'a1\tb1\r\na2\tb2\r\n', html: blankCellHtml },
+        { name: 'Mac', plain: 'a1\tb1\r\na2\tb2', html: blankCellHtml },
+        {
+            name: 'blank HTML paragraphs',
+            plain: 'a1\tb1\na2\tb2\n',
+            html: '<table><tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr><tr><td><p><br></p></td><td><p class="p2"><br></p></td></tr></table>',
+        },
+    ])('restores selected blank cells through legacy paste for $name Excel', async ({ plain, html }) => {
+        const api = await gridMgr.createGridAndWait('htmlLegacyBlankRowPaste', {
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true },
+            ],
+            rowData: [
+                { a: 'old0', b: 'old0' },
+                { a: 'old1', b: 'old1' },
+                { a: 'keep', b: 'keep' },
+            ],
+            suppressClipboardApi: true,
+        });
+        api.setFocusedCell(0, 'a');
+        const pasted = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        const textArea = document.activeElement;
+        if (!(textArea instanceof HTMLTextAreaElement)) {
+            throw new Error('Expected the temporary paste textarea');
+        }
+        const clipboardData = new DataTransfer();
+        clipboardData.setData('text/plain', plain);
+        clipboardData.setData('text/html', html);
+        textArea.value = plain;
+        textArea.dispatchEvent(new ClipboardEvent('paste', { bubbles: true, clipboardData }));
+        await pasted;
+
+        expect(api.getDisplayedRowAtIndex(2)?.data).toMatchObject({ a: null, b: null });
+    });
+
+    test('leaves interior plain-text row widths unchanged', async () => {
+        let callbackData: string[][] | undefined;
+        const api = await gridMgr.createGridAndWait('htmlInteriorRowPaste', {
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true },
+                { field: 'c', editable: true },
+            ],
+            rowData: [
+                { a: 'old0', b: 'old0', c: 'keep' },
+                { a: 'old1', b: 'old1', c: 'keep' },
+                { a: 'old2', b: 'old2', c: 'keep' },
+            ],
+            processDataFromClipboard: ({ data }) => {
+                callbackData = data.map((row) => [...row]);
+                return data;
+            },
+        });
+        clipboardUtils.setTextAndHtml(
+            'a1\tb1\na2\tb2\na3\tb3',
+            '<table><tr><td>a1</td><td>b1</td><td></td></tr><tr><td>a2</td><td>b2</td></tr><tr><td>a3</td><td>b3</td></tr></table>'
+        );
+
+        api.setFocusedCell(0, 'a');
+        const pasted = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await pasted;
+
+        expect(callbackData).toEqual([
+            ['a1', 'b1'],
+            ['a2', 'b2'],
+            ['a3', 'b3'],
+        ]);
+        expect(api.getDisplayedRowAtIndex(0)?.data.c).toBe('keep');
+    });
+
+    test('does not restore HTML columns when clipboardDelimiter is not tab', async () => {
+        const api = await gridMgr.createGridAndWait('htmlCustomDelimiterPaste', {
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true },
+            ],
+            rowData: [{ a: 'old0', b: 'keep' }],
+            clipboardDelimiter: ',',
+        });
+        clipboardUtils.setTextAndHtml('a\t', '<table><tr><td>a</td><td></td></tr></table>');
+
+        api.setFocusedCell(0, 'a');
+        const pasted = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await pasted;
+
+        // The tab is a literal character under a comma delimiter, so the HTML cells cannot
+        // correspond to the plain-text columns and must not clear the adjacent cell.
+        expect(api.getDisplayedRowAtIndex(0)?.data).toMatchObject({ a: 'a\t', b: 'keep' });
+    });
+
+    test.each([
+        { name: 'async clipboard, extra newline', legacy: false, selectedBlankRow: false },
+        { name: 'async clipboard, selected blank row', legacy: false, selectedBlankRow: true },
+        { name: 'legacy paste, extra newline', legacy: true, selectedBlankRow: false },
+        { name: 'legacy paste, selected blank row', legacy: true, selectedBlankRow: true },
+    ])(
+        'uses HTML to distinguish a selected row from a Windows Excel newline with F delimiter: $name',
+        async ({ legacy, selectedBlankRow }) => {
+            let callbackData: string[][] | undefined;
+            const api = await gridMgr.createGridAndWait('htmlCustomDelimiterTerminalRowPaste', {
+                columnDefs: [
+                    { field: 'a', editable: true },
+                    { field: 'b', editable: true },
+                ],
+                rowData: [
+                    { a: 'old0', b: 'keep0' },
+                    { a: 'old1', b: 'keep1' },
+                    { a: 'keep2', b: 'keep2' },
+                ],
+                clipboardDelimiter: 'F',
+                suppressClipboardApi: legacy,
+                processDataFromClipboard: ({ data }) => {
+                    callbackData = data.map((row) => [...row]);
+                    return data;
+                },
+            });
+            const plain = 'a1\tb1\r\na2\tb2\r\n';
+            const html =
+                '<table><tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr>' +
+                (selectedBlankRow ? '<tr><td></td><td></td></tr>' : '') +
+                '</table>';
+            clipboardUtils.setTextAndHtml(plain, html);
+
+            api.setFocusedCell(0, 'a');
+            const pasted = waitForEvent('pasteEnd', api);
+            api.pasteFromClipboard();
+            if (legacy) {
+                const textArea = document.activeElement;
+                if (!(textArea instanceof HTMLTextAreaElement)) {
+                    throw new Error('Expected the temporary paste textarea');
+                }
+                const clipboardData = new DataTransfer();
+                clipboardData.setData('text/plain', plain);
+                clipboardData.setData('text/html', html);
+                textArea.value = plain;
+                textArea.dispatchEvent(new ClipboardEvent('paste', { bubbles: true, clipboardData }));
+            }
+            await pasted;
+
+            expect(callbackData).toEqual(selectedBlankRow ? [['a1\tb1'], ['a2\tb2'], ['']] : [['a1\tb1'], ['a2\tb2']]);
+            expect(api.getDisplayedRowAtIndex(0)?.data).toMatchObject({ a: 'a1\tb1', b: 'keep0' });
+            expect(api.getDisplayedRowAtIndex(1)?.data).toMatchObject({ a: 'a2\tb2', b: 'keep1' });
+            expect(api.getDisplayedRowAtIndex(2)?.data).toMatchObject({
+                a: selectedBlankRow ? null : 'keep2',
+                b: 'keep2',
+            });
+        }
+    );
+
+    test('uses Excel TSV row count when a quoted multiline cell splits into extra F-delimited rows', async () => {
+        let callbackData: string[][] | undefined;
+        const api = await gridMgr.createGridAndWait('htmlCustomDelimiterMultilinePaste', {
+            columnDefs: [{ field: 'a', editable: true }],
+            rowData: [{ a: 'old0' }, { a: 'old1' }, { a: 'old2' }, { a: 'keep3' }],
+            clipboardDelimiter: 'F',
+            processDataFromClipboard: ({ data }) => {
+                callbackData = data.map((row) => [...row]);
+                return data;
+            },
+        });
+        clipboardUtils.setTextAndHtml(
+            'a1\t"b1\nline"\r\na2\tb2\r\n',
+            '<table><tr><td>a1</td><td>b1<br>line</td></tr><tr><td>a2</td><td>b2</td></tr></table>'
+        );
+
+        api.setFocusedCell(0, 'a');
+        const pasted = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await pasted;
+
+        expect(callbackData).toEqual([['a1\t"b1'], ['line"'], ['a2\tb2']]);
+        expect(api.getDisplayedRowAtIndex(2)?.data.a).toBe('a2\tb2');
+        expect(api.getDisplayedRowAtIndex(3)?.data.a).toBe('keep3');
+    });
+
+    test('preserves a terminal custom-delimiter cell when the delimiter is a newline', async () => {
+        let callbackData: string[][] | undefined;
+        const api = await gridMgr.createGridAndWait('htmlNewlineDelimiterPaste', {
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true },
+            ],
+            rowData: [
+                { a: 'old', b: 'old' },
+                { a: 'keep', b: 'keep' },
+            ],
+            clipboardDelimiter: '\n',
+            processDataFromClipboard: ({ data }) => {
+                callbackData = data.map((row) => [...row]);
+                return data;
+            },
+        });
+        clipboardUtils.setTextAndHtml('a\n', '<table><tr><td>a</td></tr></table>');
+
+        api.setFocusedCell(0, 'a');
+        const pasted = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await pasted;
+
+        expect(callbackData).toEqual([['a', '']]);
+        expect(api.getDisplayedRowAtIndex(0)?.data).toMatchObject({ a: 'a', b: null });
+        expect(api.getDisplayedRowAtIndex(1)?.data).toMatchObject({ a: 'keep', b: 'keep' });
+    });
+
+    test.each([false, true])(
+        'restores blank rows and columns missing from single-cell plain text (range: %s)',
+        async (activeRange) => {
+            let callbackData: string[][] | undefined;
+            const api = await gridMgr.createGridAndWait('htmlSingleValueWithBlankSelectionPaste', {
+                columnDefs: [
+                    { field: 'a', editable: true },
+                    { field: 'b', editable: true },
+                ],
+                rowData: [
+                    { a: 'old0', b: 'old0' },
+                    { a: 'old1', b: 'old1' },
+                ],
+                cellSelection: true,
+                processDataFromClipboard: ({ data }) => {
+                    callbackData = data.map((row) => [...row]);
+                    return data;
+                },
+            });
+            clipboardUtils.setTextAndHtml(
+                'a1',
+                '<table><tr><td>a1</td><td></td></tr><tr><td></td><td></td></tr></table>'
+            );
+            const getType = vi.spyOn(clipboardUtils.getItems()[0], 'getType');
+
+            api.setFocusedCell(0, 'a');
+            if (activeRange) {
+                api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['a', 'b'] });
+            }
+            const pasted = waitForEvent('pasteEnd', api);
+            api.pasteFromClipboard();
+            await pasted;
+
+            expect(callbackData).toEqual([
+                ['a1', ''],
+                ['', ''],
+            ]);
+            expect(api.getDisplayedRowAtIndex(0)?.data).toMatchObject({ a: 'a1', b: null });
+            expect(api.getDisplayedRowAtIndex(1)?.data).toMatchObject({ a: null, b: null });
+            expect(getType).toHaveBeenCalledTimes(2);
+            expect(getType).toHaveBeenCalledWith('text/plain');
+            expect(getType).toHaveBeenCalledWith('text/html');
+        }
+    );
+
+    test('preserves literal HTML text inside spreadsheet cells', async () => {
+        const api = await gridMgr.createGridAndWait('htmlCellValuePaste', {
+            columnDefs: [
+                { field: 'cell_name', editable: true },
+                { field: 'code', editable: true },
+            ],
+            rowData: [
+                { cell_name: 'old0', code: 'old0' },
+                { cell_name: 'old1', code: 'old1' },
+                { cell_name: 'keep', code: 'keep' },
+            ],
+        });
+        clipboardUtils.setTextAndHtml(
+            'foo\t<b>bar</b>\r\nbaz\tqux\r\n',
+            '<table><tr><td>foo</td><td>&lt;b&gt;bar&lt;/b&gt;</td></tr><tr><td>baz</td><td>qux</td></tr></table>'
+        );
+
+        api.setFocusedCell(0, 'cell_name');
+        const pasted = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await pasted;
+
+        expect(api.getDisplayedRowAtIndex(0)?.data).toMatchObject({ cell_name: 'foo', code: '<b>bar</b>' });
+        expect(api.getDisplayedRowAtIndex(2)?.data).toMatchObject({ cell_name: 'keep', code: 'keep' });
+    });
+
+    test.each([
+        { name: 'async clipboard, focused cell', legacy: false, activeRange: false },
+        { name: 'async clipboard, active range', legacy: false, activeRange: true },
+        { name: 'legacy paste event, focused cell', legacy: true, activeRange: false },
+    ])('applies existing single-column suppression exactly once for $name', async ({ legacy, activeRange }) => {
+        let callbackData: string[][] | undefined;
+        const api = await gridMgr.createGridAndWait('htmlSingleColumnBlankRowPaste', {
+            columnDefs: [{ field: 'a', editable: true }],
+            rowData: [{ a: 'old0' }, { a: 'keep' }, { a: 'keep2' }],
+            cellSelection: true,
+            suppressClipboardApi: legacy,
+            suppressLastEmptyLineOnPaste: true,
+            processDataFromClipboard: ({ data }) => {
+                callbackData = data.map((row) => [...row]);
+                return data;
+            },
+        });
+        const plain = 'a\r\n\r\n';
+        const html = '<table><tr><td>a</td></tr><tr><td></td></tr></table>';
+        clipboardUtils.setTextAndHtml(plain, html);
+
+        api.setFocusedCell(0, 'a');
+        if (activeRange) {
+            api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['a'] });
+        }
+        const pasted = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        if (legacy) {
+            const textArea = document.activeElement;
+            if (!(textArea instanceof HTMLTextAreaElement)) {
+                throw new Error('Expected the temporary paste textarea');
+            }
+            const clipboardData = new DataTransfer();
+            clipboardData.setData('text/plain', plain);
+            clipboardData.setData('text/html', html);
+            textArea.value = plain;
+            textArea.dispatchEvent(new ClipboardEvent('paste', { bubbles: true, clipboardData }));
+        }
+        await pasted;
+
+        expect(callbackData).toEqual([['a'], [''], ['']]);
+        expect(api.getDisplayedRowAtIndex(0)?.data.a).toBe('a');
+        expect(api.getDisplayedRowAtIndex(1)?.data.a).toBeNull();
+        expect(api.getDisplayedRowAtIndex(2)?.data.a).toBe('keep2');
+    });
+
+    test('suppresses a blank row returned by processDataFromClipboard', async () => {
+        const api = await gridMgr.createGridAndWait('htmlCallbackPaste', {
+            columnDefs: [{ field: 'a', editable: true }],
+            rowData: [{ a: 'old0' }, { a: 'keep' }],
+            suppressLastEmptyLineOnPaste: true,
+            processDataFromClipboard: ({ data }) => [data[0], ['']],
+        });
+        clipboardUtils.setTextAndHtml('a\r\nb\r\n', '<table><tr><td>a</td></tr><tr><td>b</td></tr></table>');
+
+        api.setFocusedCell(0, 'a');
+        const pasted = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await pasted;
+
+        expect(api.getDisplayedRowAtIndex(0)?.data.a).toBe('a');
+        expect(api.getDisplayedRowAtIndex(1)?.data.a).toBe('keep');
+    });
+
+    test('falls back to readText when reading clipboard items fails', async () => {
+        const api = await gridMgr.createGridAndWait('clipboardReadFallback', {
+            columnDefs: [{ field: 'value', editable: true }],
+            rowData: [{ value: 'old' }],
+        });
+        clipboardUtils.setText('new');
+        const read = vi.spyOn(navigator.clipboard, 'read').mockRejectedValueOnce(new Error('read unavailable'));
+
+        try {
+            api.setFocusedCell(0, 'value');
+            const pasted = waitForEvent('pasteEnd', api);
+            api.pasteFromClipboard();
+            await pasted;
+
+            expect(api.getDisplayedRowAtIndex(0)?.data.value).toBe('new');
+        } finally {
+            read.mockRestore();
+        }
+    });
+
+    test('prefers readText over a second read when the clipboard has no plain text item', async () => {
+        const api = await gridMgr.createGridAndWait('clipboardNoPlainTextItem', {
+            columnDefs: [{ field: 'value', editable: true }],
+            rowData: [{ value: 'old' }],
+        });
+        clipboardUtils.setItems('new', [{ types: ['image/png'], getType: async (type) => new Blob([''], { type }) }]);
+        const read = vi.spyOn(navigator.clipboard, 'read');
+        const readText = vi.spyOn(navigator.clipboard, 'readText');
+
+        try {
+            api.setFocusedCell(0, 'value');
+            const pasted = waitForEvent('pasteEnd', api);
+            api.pasteFromClipboard();
+            await pasted;
+
+            expect(read).toHaveBeenCalledTimes(1);
+            expect(readText).toHaveBeenCalledTimes(1);
+            expect(api.getDisplayedRowAtIndex(0)?.data.value).toBe('new');
+        } finally {
+            read.mockRestore();
+            readText.mockRestore();
+        }
+    });
+
+    test('uses a sanitised read when unsanitised HTML is unavailable', async () => {
+        const api = await gridMgr.createGridAndWait('clipboardSanitisedReadFallback', {
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true },
+            ],
+            rowData: [
+                { a: 'old0', b: 'old0' },
+                { a: 'old1', b: 'old1' },
+                { a: 'keep', b: 'keep' },
+            ],
+        });
+        clipboardUtils.setTextAndHtml(
+            'a1\tb1\r\na2\tb2\r\n',
+            '<table><tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr><tr><td></td><td></td></tr></table>'
+        );
+        const originalRead = navigator.clipboard.read.bind(navigator.clipboard);
+        const read = vi
+            .spyOn(navigator.clipboard, 'read')
+            .mockImplementationOnce(async () => {
+                throw new Error('Unsanitised HTML unavailable');
+            })
+            .mockImplementationOnce(originalRead);
+
+        try {
+            api.setFocusedCell(0, 'a');
+            const pasted = waitForEvent('pasteEnd', api);
+            api.pasteFromClipboard();
+            await pasted;
+
+            expect(read).toHaveBeenCalledTimes(2);
+            expect(read).toHaveBeenNthCalledWith(1, { unsanitized: ['text/html'] });
+            expect(read).toHaveBeenNthCalledWith(2);
+            expect(api.getDisplayedRowAtIndex(2)?.data).toMatchObject({ a: null, b: null });
+        } finally {
+            read.mockRestore();
+        }
+    });
+
+    test.each([
+        { name: 'sanitised HTML is available', remainingReadsFail: false, lastRow: { a: null, b: null } },
+        { name: 'remaining reads fail', remainingReadsFail: true, lastRow: { a: null, b: 'keep' } },
+    ])(
+        'preserves plain text when the unsanitised HTML blob fails and $name',
+        async ({ remainingReadsFail, lastRow }) => {
+            const api = await gridMgr.createGridAndWait('clipboardHtmlBlobFallback', {
+                columnDefs: [
+                    { field: 'a', editable: true },
+                    { field: 'b', editable: true },
+                ],
+                rowData: [
+                    { a: 'old0', b: 'old0' },
+                    { a: 'old1', b: 'old1' },
+                    { a: 'keep', b: 'keep' },
+                ],
+            });
+            clipboardUtils.setTextAndHtml(
+                'a1\tb1\r\na2\tb2\r\n',
+                '<table><tr><td>a1</td><td>b1</td></tr><tr><td>a2</td><td>b2</td></tr><tr><td></td><td></td></tr></table>'
+            );
+            const item = clipboardUtils.getItems()[0];
+            const originalGetType = item.getType.bind(item);
+            let failedHtmlRead = false;
+            const getType = vi.spyOn(item, 'getType').mockImplementation(async (type) => {
+                if (type === 'text/html' && !failedHtmlRead) {
+                    failedHtmlRead = true;
+                    throw new Error('Unsanitised HTML blob unavailable');
+                }
+                return originalGetType(type);
+            });
+            const originalRead = navigator.clipboard.read.bind(navigator.clipboard);
+            const read = vi.spyOn(navigator.clipboard, 'read');
+            const readText = vi.spyOn(navigator.clipboard, 'readText');
+            if (remainingReadsFail) {
+                read.mockImplementationOnce(originalRead).mockRejectedValueOnce(
+                    new Error('Sanitised read unavailable')
+                );
+                readText.mockRejectedValueOnce(new Error('Plain read unavailable'));
+            }
+
+            try {
+                api.setFocusedCell(0, 'a');
+                const pasted = waitForEvent('pasteEnd', api);
+                api.pasteFromClipboard();
+                await pasted;
+
+                expect(read).toHaveBeenCalledTimes(2);
+                expect(api.getDisplayedRowAtIndex(0)?.data).toMatchObject({ a: 'a1', b: 'b1' });
+                expect(api.getDisplayedRowAtIndex(1)?.data).toMatchObject({ a: 'a2', b: 'b2' });
+                expect(api.getDisplayedRowAtIndex(2)?.data).toMatchObject(lastRow);
+                if (remainingReadsFail) {
+                    expect(readText).not.toHaveBeenCalled();
+                }
+            } finally {
+                read.mockRestore();
+                readText.mockRestore();
+                getType.mockRestore();
+            }
+        }
+    );
+
+    test.each([
+        { name: 'async clipboard', legacy: false },
+        { name: 'legacy paste event', legacy: true },
+    ])('pastes without DOMParser under a Trusted Types guard for $name', async ({ legacy }) => {
+        const api = await gridMgr.createGridAndWait('clipboardWithoutDomParser', {
+            columnDefs: [
+                { field: 'a', editable: true },
+                { field: 'b', editable: true },
+            ],
+            rowData: [
+                { a: 'old0', b: 'old0' },
+                { a: 'keep', b: 'keep' },
+            ],
+            suppressClipboardApi: legacy,
+        });
+        const plain = 'a1\tb1\r\n';
+        const html = '<table><tr><td>a1</td><td>b1</td></tr></table>';
+        clipboardUtils.setTextAndHtml(plain, html);
+        const parseFromString = vi.spyOn(DOMParser.prototype, 'parseFromString').mockImplementation(() => {
+            throw new TypeError('TrustedHTML required');
+        });
+
+        try {
+            api.setFocusedCell(0, 'a');
+            const pasted = waitForEvent('pasteEnd', api);
+            api.pasteFromClipboard();
+            if (legacy) {
+                const textArea = document.activeElement;
+                if (!(textArea instanceof HTMLTextAreaElement)) {
+                    throw new Error('Expected the temporary paste textarea');
+                }
+                const clipboardData = new DataTransfer();
+                clipboardData.setData('text/plain', plain);
+                clipboardData.setData('text/html', html);
+                textArea.value = plain;
+                textArea.dispatchEvent(new ClipboardEvent('paste', { bubbles: true, clipboardData }));
+            }
+            await pasted;
+
+            expect(parseFromString).not.toHaveBeenCalled();
+            expect(api.getDisplayedRowAtIndex(0)?.data).toMatchObject({ a: 'a1', b: 'b1' });
+            expect(api.getDisplayedRowAtIndex(1)?.data).toMatchObject({ a: 'keep', b: 'keep' });
+        } finally {
+            parseFromString.mockRestore();
+        }
+    });
 });

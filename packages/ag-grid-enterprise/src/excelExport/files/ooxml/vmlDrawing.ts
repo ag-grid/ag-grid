@@ -75,7 +75,7 @@ const getPath = (): XmlElement => ({
 });
 
 const getLock = (params?: { aspectratio?: boolean; rotation?: boolean }): XmlElement => {
-    const { aspectratio, rotation } = params || {};
+    const { aspectratio, rotation } = params ?? {};
     const rawMap: { aspectratio?: 't'; rotation?: 't' } = {};
 
     if (aspectratio) {
@@ -240,7 +240,7 @@ const getShape = (image: ExcelHeaderFooterCalculatedImage, idx: number): XmlElem
 
 const vmlDrawingFactory: ExcelOOXMLTemplate = {
     getTemplate(params: { sheetIndex: number }) {
-        const headerFooterImages = XLSX_WORKSHEET_HEADER_FOOTER_IMAGES.get(params.sheetIndex) || [];
+        const headerFooterImages = XLSX_WORKSHEET_HEADER_FOOTER_IMAGES.get(params.sheetIndex) ?? [];
         const children: XmlElement[] = [
             getShapeLayout(),
             getShapeType(),

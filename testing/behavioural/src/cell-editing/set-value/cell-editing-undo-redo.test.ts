@@ -10,12 +10,21 @@ import {
     waitForInput,
 } from 'ag-test-utils';
 
-import { TextEditorModule, UndoRedoEditModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
-import { BatchEditModule } from 'ag-grid-enterprise';
+import {
+    KeyCode,
+    TextEditorModule,
+    UndoRedoEditModule,
+    agTestIdFor,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
+import { BatchEditModule, CellSelectionModule } from 'ag-grid-enterprise';
+
+import { dispatchKeyDown } from '../../navigation/navigation-test-utils';
 
 describe('Cell Editing: undo/redo', () => {
     const gridMgr = new TestGridsManager({
-        modules: [BatchEditModule, UndoRedoEditModule, TextEditorModule],
+        modules: [BatchEditModule, CellSelectionModule, UndoRedoEditModule, TextEditorModule],
     });
 
     beforeAll(() => {
@@ -303,5 +312,39 @@ describe('Cell Editing: undo/redo', () => {
             redoStarted: 1,
             redoEnded: 1,
         });
+    });
+
+    test('undo and redo of a delete over two ranges restore both ranges', () => {
+        const api = gridMgr.createGrid('undoRedoRanges', {
+            undoRedoCellEditing: true,
+            cellSelection: true,
+            defaultColDef: { editable: true },
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData: [
+                { a: 'a0', b: 'b0' },
+                { a: 'a1', b: 'b1' },
+            ],
+        });
+        const ranges = () =>
+            api.getCellRanges()!.map((range) => ({
+                rows: [range.startRow!.rowIndex, range.endRow!.rowIndex],
+                cols: range.columns.map((col) => col.getColId()),
+            }));
+        const selected = [
+            { rows: [0, 0], cols: ['a'] },
+            { rows: [1, 1], cols: ['b'] },
+        ];
+
+        api.setFocusedCell(1, 'b');
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columnStart: 'a', columnEnd: 'a' });
+        api.addCellRange({ rowStartIndex: 1, rowEndIndex: 1, columnStart: 'b', columnEnd: 'b' });
+        dispatchKeyDown(KeyCode.DELETE);
+
+        api.undoCellEditing();
+        expect(api.getDisplayedRowAtIndex(0)!.data).toEqual({ a: 'a0', b: 'b0' });
+        expect(ranges()).toEqual(selected);
+
+        api.redoCellEditing();
+        expect(ranges()).toEqual(selected);
     });
 });

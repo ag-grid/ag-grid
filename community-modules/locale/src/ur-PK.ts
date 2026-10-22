@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     clearFilter: 'صاف کریں',
     cancelFilter: 'منسوخ کریں',
     cancelColumnToolPanel: 'منسوخ کریں',
+    resetColumnToolPanel: 'ری سیٹ کریں',
 
     // Filter Titles
     textFilter: 'متن فلٹر',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     addFilterCard: 'فلٹر شامل کریں',
     agTextColumnFilterDisplayName: 'سادہ فلٹر',
     agNumberColumnFilterDisplayName: 'سادہ فلٹر',
+    agBigIntColumnFilterDisplayName: 'سادہ فلٹر',
     agDateColumnFilterDisplayName: 'سادہ فلٹر',
     agSetColumnFilterDisplayName: 'انتخابی فلٹر',
     agMultiColumnFilterDisplayName: 'کمبو فلٹر',
@@ -335,6 +337,10 @@ export const AG_GRID_LOCALE_UR_PK = {
     enabled: 'فعال',
 
     // Menu
+    moveLeft: 'بائیں منتقل کریں',
+    moveRight: 'دائیں منتقل کریں',
+    moveUp: 'اوپر منتقل کریں',
+    moveDown: 'نیچے منتقل کریں',
     pinColumn: 'کالم کو پن کریں',
     pinLeft: 'بائیں پن کریں',
     pinRight: 'دائیں پن کریں',
@@ -736,6 +742,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaFilterList: 'فلٹر فہرست',
     ariaFilterToValue: 'قدر تک فلٹر کریں',
     ariaFilterValue: 'فلٹر قدر',
+    ariaNotInCurrentData: 'موجودہ ڈیٹا میں نہیں',
     ariaFilterMenuOpen: 'فلٹر مینو کھولیں',
     ariaFilteringOperator: 'فلٹرنگ اپریٹر',
     ariaHidden: 'چھپا ہوا',
@@ -757,6 +764,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaRowSelect: 'اس صف کو منتخب کرنے کے لیے SPACE دبائیں',
     ariaRowSelectionDisabled: 'اس صف کا انتخاب غیر فعال ہے',
     ariaSearch: 'تلاش',
+    ariaSortPriority: 'ترتیب دینے کی ترجیح ${count} میں سے ${priority}',
     ariaSortableColumn: 'ترتیب دینے کے لیے ENTER دبائیں',
     ariaSortableColumnWithCellSelection: 'ترتیب دینے کے لیے ALT ENTER دبائیں',
     ariaToggleVisibility: 'مرئیت ٹوگل کرنے کے لیے SPACE دبائیں',
@@ -889,9 +897,11 @@ export const AG_GRID_LOCALE_UR_PK = {
     columnHeaderEditCancel: 'منسوخ کریں',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'کوئی موزوں کالم نہیں ملا۔',
     calculatedColumn: 'محسوب کالم',
     calculatedColumnAdd: 'محسوب کالم شامل کریں',
     calculatedColumnEdit: 'محسوب کالم میں ترمیم کریں',
+    calculatedColumnView: 'محسوب کالم دیکھیں',
     calculatedColumnRemove: 'محسوب کالم ہٹائیں',
     calculatedColumnTitle: 'عنوان',
     calculatedColumnType: 'قسم',
@@ -906,6 +916,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     calculatedColumnExpressionAmbiguousReference:
         'مبہم کالم حوالہ "${variable}"۔ کالمز کی فہرست یا زیادہ مخصوص گروپ راستہ استعمال کریں۔',
     calculatedColumnExpressionUnknownReference: 'نامعلوم کالم حوالہ "${variable}"۔',
+    calculatedColumnExpressionRestrictedReference: 'اس اظہار میں کالم "${variable}" استعمال نہیں کیا جا سکتا۔',
     calculatedColumnExpressionEmpty: 'ایک اظہار درج کریں۔',
     calculatedColumnTitleEmpty: 'ایک عنوان درج کریں۔',
     calculatedColumnApply: 'لاگو کریں',

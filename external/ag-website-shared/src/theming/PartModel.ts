@@ -1,68 +1,37 @@
-import { _asThemeImpl } from 'ag-stack';
+import { type Part, _asThemeImpl } from 'ag-stack';
 import { atom, useAtom } from 'jotai';
-
-import type { Part } from 'ag-grid-community';
-import {
-    colorSchemeDark,
-    colorSchemeDarkBlue,
-    colorSchemeDarkWarm,
-    colorSchemeLight,
-    colorSchemeLightCold,
-    colorSchemeLightWarm,
-    colorSchemeVariable,
-    iconSetAlpine,
-    iconSetMaterial,
-    iconSetQuartzBold,
-    iconSetQuartzLight,
-    iconSetQuartzRegular,
-    inputStyleBordered,
-    inputStyleUnderlined,
-    tabStyleAlpine,
-    tabStyleMaterial,
-    tabStyleQuartz,
-    tabStyleRolodex,
-    themeQuartz,
-} from 'ag-grid-community';
 
 import type { PersistentAtom } from './JSONStorage';
 import { atomWithJSONStorage } from './JSONStorage';
+import { getBaseTheme } from './base-theme';
 import { memoize, titleCase } from './utils';
 
-const partDocs: Record<string, string | undefined> = {
-    tabStyle: 'The appearance of tabs in chart settings and legacy column menu',
-    inputStyle: 'The appearance of text input fields',
-};
-
-// Lazy, because reading grid's theme is only correct for a host that uses grid's
-// parts. A host with no swappable parts (`setFeatureModels(() => [])`) must be
-// able to load this module without grid's theming engine being involved at all.
-const getQuartzParts = memoize(() => new Set<Part>(_asThemeImpl(themeQuartz).parts));
+const getBaseThemeParts = memoize(() => new Set<Part>(_asThemeImpl(getBaseTheme()).parts));
 
 export class FeatureModel {
     readonly label: string;
-    readonly docs: string | null;
     readonly parts: PartModel[];
     readonly defaultPart: PartModel;
     readonly selectedPartAtom: PersistentAtom<PartModel>;
 
     constructor(
         readonly featureName: string,
-        parts: Record<string, Part>
+        parts: Record<string, Part>,
+        readonly docs: string | null = null
     ) {
         this.label = titleCase(featureName);
-        this.docs = partDocs[featureName] || null;
         this.parts = Object.entries(parts).map(([variant, part]) => new PartModel(this, variant, part));
-        this.defaultPart = this.parts.find((pm) => getQuartzParts().has(pm.part))!;
+        this.defaultPart = this.parts.find((pm) => getBaseThemeParts().has(pm.part))!;
         if (!this.defaultPart) {
-            throw new Error(`Default part for quartz theme is not one of the options for ${featureName}`);
+            throw new Error(`The base theme's ${featureName} part is not among the options supplied for it`);
         }
         this.selectedPartAtom = createSelectedPartAtom(this);
     }
 
-    static for(featureId: string) {
-        const featureModel = getFeatureModels()[featureId];
+    static for(featureName: string) {
+        const featureModel = allFeatureModels().find((feature) => feature.featureName === featureName);
         if (!featureModel) {
-            throw new Error(`Invalid feature ${featureId}`);
+            throw new Error(`Invalid feature ${featureName}`);
         }
         return featureModel;
     }
@@ -100,51 +69,16 @@ export class PartModel {
     }
 }
 
-const allFeatureNames = ['colorScheme', 'iconSet', 'tabStyle', 'inputStyle'];
-
-let featureModelsSource: () => FeatureModel[] = () => allFeatureNames.map(FeatureModel.for);
+let featureModelsSource: () => FeatureModel[] = () => [];
 
 /**
- * Hosts can supply the set of swappable-part features the builder exposes.
- * Defaults to grid's features (colorScheme/iconSet/tabStyle/inputStyle). Hosts
- * without swappable parts (e.g. Studio) supply `() => []`. Must be called before
- * allFeatureModels() is first evaluated, since that result is memoized.
+ * Hosts supply the swappable-part features the builder exposes; a host whose
+ * theme has no interchangeable parts supplies none. Constructing a FeatureModel
+ * reads the base theme, so this is called lazily - and only once, since the
+ * result is memoized.
  */
 export const setFeatureModels = (source: () => FeatureModel[]) => {
     featureModelsSource = source;
 };
 
 export const allFeatureModels = memoize(() => featureModelsSource());
-
-// Lazy for the same reason as getQuartzParts: constructing these resolves grid's
-// default part for each feature, which a non-grid host must never trigger.
-const getFeatureModels = memoize((): Record<string, FeatureModel | undefined> => {
-    return {
-        colorScheme: new FeatureModel('colorScheme', {
-            lightCold: colorSchemeLightCold,
-            light: colorSchemeLight,
-            lightWarm: colorSchemeLightWarm,
-            darkBlue: colorSchemeDarkBlue,
-            dark: colorSchemeDark,
-            darkWarm: colorSchemeDarkWarm,
-            variable: colorSchemeVariable,
-        }),
-        iconSet: new FeatureModel('iconSet', {
-            alpine: iconSetAlpine,
-            material: iconSetMaterial,
-            quartzLight: iconSetQuartzLight,
-            quartzRegular: iconSetQuartzRegular,
-            quartzBold: iconSetQuartzBold,
-        }),
-        tabStyle: new FeatureModel('tabStyle', {
-            quartz: tabStyleQuartz,
-            alpine: tabStyleAlpine,
-            material: tabStyleMaterial,
-            rolodex: tabStyleRolodex,
-        }),
-        inputStyle: new FeatureModel('inputStyle', {
-            bordered: inputStyleBordered,
-            underlined: inputStyleUnderlined,
-        }),
-    };
-});

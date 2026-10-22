@@ -336,7 +336,7 @@ export class NavigationService extends BeanStub implements NamedBean {
     private getViewportHeight(): number {
         const beans = this.beans;
         const scrollPosition = getVScroll(beans);
-        const scrollbarWidth = this.beans.scrollVisibleSvc.getScrollbarWidth();
+        const scrollbarWidth = this.beans.scrollVisibleSvc.getScrollbarWidth() ?? 0;
         let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
 
         if (beans.scrollVisibleSvc.isHorizontalScrollShowing()) {
@@ -469,7 +469,7 @@ export class NavigationService extends BeanStub implements NamedBean {
             return false;
         }
 
-        let cellOrRow: CellCtrl | RowCtrl | null = _getCellByPosition(beans, focusedCell);
+        let cellOrRow: CellCtrl | RowCtrl | null | undefined = _getCellByPosition(beans, focusedCell);
 
         // if cell is not rendered, means user has scrolled away from the cell
         // or that the focusedCell is a Full Width Row
@@ -578,7 +578,7 @@ export class NavigationService extends BeanStub implements NamedBean {
                     backwards: backwards,
                     editing: startEditing,
                     previousCellPosition: previousPosition,
-                    nextCellPosition: nextPosition ? nextPosition : null,
+                    nextCellPosition: nextPosition ?? null,
                 };
                 const userResult = userFunc(params);
                 if (userResult === true) {
@@ -738,7 +738,7 @@ export class NavigationService extends BeanStub implements NamedBean {
                 const params: WithoutGridCommon<NavigateToNextCellParams> = {
                     key: key,
                     previousCellPosition: currentCell,
-                    nextCellPosition: nextCell ? nextCell : null,
+                    nextCellPosition: nextCell ?? null,
                     event: event,
                 };
                 const userCell = userFunc(params);
@@ -767,7 +767,7 @@ export class NavigationService extends BeanStub implements NamedBean {
                     headerRowIndex: headerLen + nextCell.rowIndex,
                     column: nextCell.column ?? currentCell.column,
                 },
-                event: event || undefined,
+                event: event ?? undefined,
                 fromCell: true,
             });
 
@@ -787,7 +787,7 @@ export class NavigationService extends BeanStub implements NamedBean {
         }
     }
 
-    private setCurrentColumnWithoutSpan(column: Column): void {
+    public setCurrentColumnWithoutSpan(column: Column): void {
         if (!this.hasColumnWithoutSpanListener) {
             const clearCurrentColumnWithoutSpan = () => {
                 this.currentColumnWithoutSpan = null;
@@ -849,10 +849,7 @@ export class NavigationService extends BeanStub implements NamedBean {
 
         this.focusPosition(cellPosition);
 
-        const fromBelow =
-            backwards == null
-                ? currentCellFocused != null && _isRowBefore(cellPosition, currentCellFocused)
-                : backwards;
+        const fromBelow = backwards ?? (currentCellFocused != null && _isRowBefore(cellPosition, currentCellFocused));
 
         eventSvc.dispatchEvent({
             type: 'fullWidthRowFocused',

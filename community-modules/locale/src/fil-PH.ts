@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     clearFilter: 'I-clear',
     cancelFilter: 'Kanselahin',
     cancelColumnToolPanel: 'Kanselahin',
+    resetColumnToolPanel: 'I-reset',
 
     // Filter Titles
     textFilter: 'Filter ng Teksto',
@@ -117,6 +118,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     addFilterCard: 'Magdagdag ng Filter',
     agTextColumnFilterDisplayName: 'Simpleng Filter',
     agNumberColumnFilterDisplayName: 'Simpleng Filter',
+    agBigIntColumnFilterDisplayName: 'Simpleng Filter',
     agDateColumnFilterDisplayName: 'Simpleng Filter',
     agSetColumnFilterDisplayName: 'Filter ng Pagpili',
     agMultiColumnFilterDisplayName: 'Combo Filter',
@@ -341,6 +343,10 @@ export const AG_GRID_LOCALE_FIL_PH = {
     enabled: 'Naka-enable',
 
     // Menu
+    moveLeft: 'Ilipat pakaliwa',
+    moveRight: 'Ilipat pakanan',
+    moveUp: 'Ilipat pataas',
+    moveDown: 'Ilipat pababa',
     pinColumn: 'I-pin ang Column',
     pinLeft: 'I-pin sa Kaliwa',
     pinRight: 'I-pin sa Kanan',
@@ -758,6 +764,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaFilterList: 'Listahan ng Filter',
     ariaFilterToValue: 'I-filter hanggang sa halaga',
     ariaFilterValue: 'Halaga ng Filter',
+    ariaNotInCurrentData: 'wala sa kasalukuyang data',
     ariaFilterMenuOpen: 'Buksan ang Menu ng Filter',
     ariaFilteringOperator: 'Operator ng Pag-filter',
     ariaHidden: 'nakatago',
@@ -781,6 +788,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaRowSelect: 'Pindutin ang SPACE para piliin ang row na ito',
     ariaRowSelectionDisabled: 'Naka-disable ang Pagpili ng Row para sa row na ito',
     ariaSearch: 'Maghanap',
+    ariaSortPriority: 'Priyoridad sa pag-uuri ${priority} sa ${count}',
     ariaSortableColumn: 'Pindutin ang ENTER para mag-sort',
     ariaSortableColumnWithCellSelection: 'Pindutin ang ALT ENTER para mag-sort',
     ariaToggleVisibility: 'Pindutin ang SPACE para i-toggle ang visibility',
@@ -918,9 +926,11 @@ export const AG_GRID_LOCALE_FIL_PH = {
     columnHeaderEditCancel: 'Kanselahin',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Walang nakitang angkop na column.',
     calculatedColumn: 'Kinalkulang Column',
     calculatedColumnAdd: 'Magdagdag ng Kinalkulang Column',
     calculatedColumnEdit: 'I-edit ang Kinalkulang Column',
+    calculatedColumnView: 'Tingnan ang Kinalkulang Column',
     calculatedColumnRemove: 'Alisin ang Kinalkulang Column',
     calculatedColumnTitle: 'Pamagat',
     calculatedColumnType: 'Uri',
@@ -935,6 +945,8 @@ export const AG_GRID_LOCALE_FIL_PH = {
     calculatedColumnExpressionAmbiguousReference:
         'Malabo ang reference ng column "${variable}". Gamitin ang listahan ng Column o mas tiyak na landas ng grupo.',
     calculatedColumnExpressionUnknownReference: 'Hindi kilalang reference ng column "${variable}".',
+    calculatedColumnExpressionRestrictedReference:
+        'Hindi maaaring gamitin ang column na "${variable}" sa expression na ito.',
     calculatedColumnExpressionEmpty: 'Maglagay ng expression',
     calculatedColumnTitleEmpty: 'Maglagay ng pamagat',
     calculatedColumnApply: 'Ilapat',

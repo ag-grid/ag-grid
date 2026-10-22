@@ -152,7 +152,9 @@ describe('ag-grid calculated columns', () => {
             expect(cell!.getAttribute('aria-rowspan')).toBe('2');
             return cell!;
         });
-        const coveredCell = gridEl.querySelector('.ag-center-cols-container [row-index="1"] [col-id="athleteCopy"]');
+        const coveredRow = gridEl.querySelector('.ag-row[row-index="1"]');
+        expect(coveredRow).not.toBeNull();
+        const coveredCell = coveredRow!.querySelector('[col-id="athleteCopy"]');
         const unspannedCell = gridEl.querySelector('[row-index="2"] [col-id="athleteCopy"]');
         expect(spannedCell).not.toBeNull();
         expect(coveredCell).toBeNull();
@@ -188,7 +190,9 @@ describe('ag-grid calculated columns', () => {
             expect(cell!.getAttribute('aria-rowspan')).toBe('2');
             return cell!;
         });
-        const coveredCell = gridEl.querySelector('.ag-center-cols-container [row-index="1"] [col-id="athleteCopy"]');
+        const coveredRow = gridEl.querySelector('.ag-row[row-index="1"]');
+        expect(coveredRow).not.toBeNull();
+        const coveredCell = coveredRow!.querySelector('[col-id="athleteCopy"]');
         const unspannedCell = gridEl.querySelector('[row-index="2"] [col-id="athleteCopy"]');
         expect(spannedCell).not.toBeNull();
         expect(coveredCell).toBeNull();
@@ -218,7 +222,9 @@ describe('ag-grid calculated columns', () => {
             expect(cell!.getAttribute('aria-rowspan')).toBe('3');
             return cell!;
         });
-        const coveredCell = gridEl.querySelector('.ag-center-cols-container [row-index="2"] [col-id="constant"]');
+        const coveredRow = gridEl.querySelector('.ag-row[row-index="2"]');
+        expect(coveredRow).not.toBeNull();
+        const coveredCell = coveredRow!.querySelector('[col-id="constant"]');
         expect(spannedCell).not.toBeNull();
         expect(spannedCell!.textContent).toContain('Same');
         expect(coveredCell).toBeNull();

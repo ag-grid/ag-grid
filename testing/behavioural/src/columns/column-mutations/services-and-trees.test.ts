@@ -597,7 +597,7 @@ describe('Column Mutations', () => {
     });
 
     // Coverage for VisibleColsService.joinCols autoHeight + flex flag paths. The internal
-    // accumulators (autoHeightCols / flexActive) aren't exposed via public API; these tests
+    // accumulators (autoHeightCols / lastFlexIndex) aren't exposed via public API; these tests
     // exercise the loop branches via setup and assert observable downstream behaviour.
     describe('joinCols accumulators', () => {
         test('grid with autoHeight col + flex col renders without errors', async () => {
@@ -616,7 +616,7 @@ describe('Column Mutations', () => {
             `);
         });
 
-        test('flex col pinned does NOT trigger flexActive (joinCols `col.pinned == null` guard)', async () => {
+        test('flex col pinned does NOT set lastFlexIndex (joinCols `col.pinned == null` guard)', async () => {
             // Pinned flex col → the joinCols guard `col.pinned == null` skips the flex check.
             // Without crashing under flex-then-reveal logic the guard is exercised.
             const api = gridsManager.createGrid('flexPinned', {

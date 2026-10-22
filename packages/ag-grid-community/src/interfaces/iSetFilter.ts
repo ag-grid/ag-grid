@@ -41,20 +41,26 @@ export interface ISetFilter<V = string> extends IProvidedFilter {
     /** Returns the full list of unique keys used by the Set Filter. */
     getFilterKeys(): SetFilterModelValue;
 
-    /** Returns the full list of unique values used by the Set Filter. */
+    /**
+     * Returns the full list of unique values used by the Set Filter.
+     * With `preservePreviousValues`, a model value never seen in the data is `null`.
+     */
     getFilterValues(): (V | null)[];
 
-    /** Sets the values used in the Set Filter on the fly. */
+    /**
+     * Sets the values used in the Set Filter on the fly. They stay until `filterParams.values` changes or a
+     * parameter update resets the filter.
+     */
     setFilterValues(values: (V | null)[]): void;
     /**
-     * Refreshes the values shown in the filter from the original source. For example, if a
-     * callback was provided, the callback will be executed again and the filter will refresh using
-     * the values returned.
+     * Refreshes the values shown in the filter from their source: values set with `setFilterValues`, the
+     * rows after `resetFilterValues`, else the provided `values` or the rows. For example, if a callback was
+     * provided, the callback will be executed again and the filter will refresh using the values returned.
      */
     refreshFilterValues(): void;
     /**
      * Resets the Set Filter to use values from the grid, rather than any values that have been
-     * provided directly.
+     * provided directly, until `filterParams.values` changes.
      */
     resetFilterValues(): void;
 
@@ -71,20 +77,26 @@ export interface SetFilterHandler<TValue = string> {
     /** Returns the full list of unique keys used by the Set Filter. */
     getFilterKeys(): SetFilterModelValue;
 
-    /** Returns the full list of unique values used by the Set Filter. */
+    /**
+     * Returns the full list of unique values used by the Set Filter.
+     * With `preservePreviousValues`, a model value never seen in the data is `null`.
+     */
     getFilterValues(): (TValue | null)[];
 
-    /** Sets the values used in the Set Filter on the fly. */
+    /**
+     * Sets the values used in the Set Filter on the fly. They stay until `filterParams.values` changes or a
+     * parameter update resets the filter.
+     */
     setFilterValues(values: (TValue | null)[]): void;
     /**
-     * Refreshes the values shown in the filter from the original source. For example, if a
-     * callback was provided, the callback will be executed again and the filter will refresh using
-     * the values returned.
+     * Refreshes the values shown in the filter from their source: values set with `setFilterValues`, the
+     * rows after `resetFilterValues`, else the provided `values` or the rows. For example, if a callback was
+     * provided, the callback will be executed again and the filter will refresh using the values returned.
      */
     refreshFilterValues(): void;
     /**
      * Resets the Set Filter to use values from the grid, rather than any values that have been
-     * provided directly.
+     * provided directly, until `filterParams.values` changes.
      */
     resetFilterValues(): void;
 }
@@ -246,12 +258,31 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
     /**
      * By default, if using provided filter values and there is an active filter model,
      * when the filter values are refreshed such that every value is in the filter model,
-     * the filter model will be cleared (reset to `null`).
+     * the filter model will be cleared (reset to `null`), unless `preservePreviousValues` is set.
      *
      * To prevent this behaviour, set this property to `true`.
      * This is useful if using SSRM and updating the filter values based on other column filters.
      */
     suppressClearModelOnRefreshValues?: boolean;
+    /**
+     * If `true`, values that leave the data (or the provided values) stay in the Filter List with their selected
+     * state, so they are filtered the same way when they return. Model values not in the data are kept too.
+     * @default false
+     */
+    preservePreviousValues?: boolean;
+    /**
+     * Requires `preservePreviousValues = true`. The most values not in the filter model to keep once they are no
+     * longer in the data; the first to leave is discarded first. Values in the filter model, or named by an applied
+     * Advanced Filter expression, are always kept and not counted. Set to `0` to keep only those, or `-1` for no limit,
+     * so memory use is unbounded.
+     * @default 1000
+     */
+    preservePreviousValuesLimit?: number;
+    /**
+     * Requires `preservePreviousValues = true`. Text shown as given after each value in the Filter List that is no
+     * longer in the data, for example `'(not in rows)'`.
+     */
+    preservePreviousValuesLabel?: string;
 }
 
 /**

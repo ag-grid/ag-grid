@@ -11,7 +11,7 @@
 }
 
 .ag-tool-panel-wrapper.ag-tool-panel-animating {
-    /* !important required to override .ag-hidden to tool panel remains visible while animating */
+    /* stylelint-disable-next-line declaration-no-important -- !important required to override .ag-hidden so tool panel remains visible while animating */
     display: block !important;
     transition: width var(--ag-side-bar-panel-animation-duration) ease-in-out;
 }
@@ -79,7 +79,7 @@
     position: relative;
     padding-top: var(--ag-side-button-bar-top-padding);
     overflow: hidden auto;
-    scrollbar-width: thin;
+    scrollbar-width: var(--ag-scrollbar-width, thin);
 }
 
 .ag-side-button {
@@ -116,6 +116,11 @@
     background-color: var(--ag-side-button-selected-background-color);
     border-top: var(--ag-side-button-selected-border);
     border-bottom: var(--ag-side-button-selected-border);
+
+    /* the accent underline and the selected background both flatten to Canvas */
+    @media (forced-colors: active) {
+        background-color: SelectedItem;
+    }
 }
 
 .ag-side-button.ag-selected::before {

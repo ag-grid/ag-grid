@@ -145,6 +145,15 @@ describe('MultiIndexMap', () => {
             expect(map.find((item) => item.index === 99)).toBeUndefined();
         });
 
+        it('some reports whether any item matches', () => {
+            const map = new MultiIndexMap<Item, 'index'>('index');
+            map.set(createItem(0));
+            map.set(createItem(1));
+
+            expect(map.some((item) => item.index === 1)).toBe(true);
+            expect(map.some((item) => item.index === 99)).toBe(false);
+        });
+
         it('filter collects every matching item', () => {
             const map = new MultiIndexMap<Item, 'index'>('index');
             for (let i = 0, len = 5; i < len; ++i) {

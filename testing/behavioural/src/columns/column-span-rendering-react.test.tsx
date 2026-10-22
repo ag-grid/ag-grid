@@ -6,8 +6,10 @@ import type { ColDef, GridApi } from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
+    ColumnApiModule,
     ModuleRegistry,
     RowApiModule,
+    ScrollApiModule,
     TextEditorModule,
     ValidationModule,
     getGridElement,
@@ -38,6 +40,7 @@ describe('colSpan follows row data updates (React)', () => {
         ModuleRegistry.registerModules([
             ClientSideRowModelApiModule,
             ClientSideRowModelModule,
+            ColumnApiModule,
             RowApiModule,
             TextEditorModule,
             ValidationModule,
@@ -92,12 +95,119 @@ describe('colSpan follows row data updates (React)', () => {
         await waitFor(() => expect(renderedRow(api!, 0)).toBe('price:200px group:100px'));
     });
 
+    test('showing a spanning column over the focused cell draws the span beneath it', async () => {
+        let api: GridApi | undefined;
+        render(
+            <AgGridReact
+                rowData={[{ id: 'r0', price: 1, symbol: 'AAA', group: 'A' }]}
+                columnDefs={[{ ...columnDefs[0], hide: true }, columnDefs[1], columnDefs[2]]}
+                onGridReady={(e) => {
+                    api = e.api;
+                }}
+            />
+        );
+        await waitFor(() => expect(renderedRow(api!, 0)).toBe('symbol:100px group:100px'));
+        act(() => api!.setFocusedCell(0, 'symbol'));
+        await waitFor(() => expect(document.activeElement?.getAttribute('col-id')).toBe('symbol'));
+
+        act(() => api!.setColumnsVisible(['price'], true));
+
+        await waitFor(() => expect(renderedRow(api!, 0)).toBe('price:200px symbol:100px group:100px'));
+        expect(document.activeElement?.getAttribute('col-id')).toBe('symbol');
+    });
+
+    test('a moved column keeps its cell in place, and a span shown over the focused cell still draws beneath it', async () => {
+        let api: GridApi | undefined;
+        render(
+            <AgGridReact
+                rowData={[{ id: 'r0', price: 1, symbol: 'AAA', group: 'A' }]}
+                columnDefs={[
+                    { ...columnDefs[0], hide: true },
+                    columnDefs[1],
+                    columnDefs[2],
+                    { field: 'id', width: 100, hide: true },
+                ]}
+                onGridReady={(e) => {
+                    api = e.api;
+                }}
+            />
+        );
+        const groupCell = () => getGridElement(api!)!.querySelector<HTMLElement>('[row-index="0"] [col-id="group"]');
+        await waitFor(() => expect(renderedRow(api!, 0)).toBe('symbol:100px group:100px'));
+        act(() => api!.moveColumns(['group'], 1));
+        await waitFor(() => expect(groupCell()?.style.left).toBe('0px'));
+        act(() => api!.setFocusedCell(0, 'group'));
+        await waitFor(() => expect(document.activeElement?.getAttribute('col-id')).toBe('group'));
+
+        act(() => api!.setColumnsVisible(['price', 'id'], true));
+
+        await waitFor(() => expect(renderedRow(api!, 0)).toBe('symbol:100px price:200px group:100px id:100px'));
+        expect(document.activeElement?.getAttribute('col-id')).toBe('group');
+    });
+
+    test('cells a scroll to the left adds go in before the cells already drawn, in column order', async () => {
+        let api: GridApi | undefined;
+        const manyColumnDefs: ColDef[] = [];
+        for (let i = 0; i < 40; ++i) {
+            manyColumnDefs.push({ colId: `c${i}`, valueGetter: () => i, width: 120 });
+        }
+        render(
+            <AgGridReact
+                rowData={[{ id: 'r0' }]}
+                columnDefs={manyColumnDefs}
+                suppressColumnVirtualisation={false}
+                modules={[ScrollApiModule]}
+                onGridReady={(e) => {
+                    api = e.api;
+                }}
+            />
+        );
+        const drawn = () =>
+            Array.from(getGridElement(api!)!.querySelectorAll('.ag-row[row-index="0"] .ag-cell'), (cell) =>
+                Number(cell.getAttribute('col-id')!.slice(1))
+            );
+        await waitFor(() => expect(drawn()).toContain(0));
+        act(() => api!.ensureColumnVisible('c38'));
+        await waitFor(() => expect(drawn()).toContain(38));
+        const keptFirst = Math.min(...drawn());
+
+        act(() => api!.ensureColumnVisible('c36'));
+        await waitFor(() => expect(drawn()).toContain(36));
+
+        const cols = drawn();
+        expect(cols).toContain(keptFirst);
+        expect(cols[0]).toBeLessThan(keptFirst);
+        expect(cols).toEqual([...cols].sort((a, b) => a - b));
+    });
+
     test('a row whose data changes before React mounts it spans by the new data', async () => {
         let api: GridApi | undefined;
         render(
             <AgGridReact
                 rowData={[{ id: 'r0', price: 0, symbol: 'AAA', group: 'A' }]}
                 columnDefs={columnDefs}
+                getRowId={(params) => params.data.id}
+                onGridReady={(e) => {
+                    api = e.api;
+                }}
+            />
+        );
+        await waitFor(() => expect(renderedRow(api!, 0)).toBe('price:100px symbol:100px group:100px'));
+
+        act(() => {
+            api!.applyTransaction({ add: [{ id: 'r1', price: 0, symbol: 'BBB', group: 'A' }] });
+            expect(document.querySelector('.ag-row[row-index="1"]')).toBeNull();
+            api!.getRowNode('r1')!.setDataValue('price', 2);
+        });
+        await waitFor(() => expect(renderedRow(api!, 1)).toBe('price:300px'));
+    });
+
+    test('a row whose data changes before React mounts it spans its pinned cells by the new data', async () => {
+        let api: GridApi | undefined;
+        render(
+            <AgGridReact
+                rowData={[{ id: 'r0', price: 0, symbol: 'AAA', group: 'A' }]}
+                columnDefs={columnDefs.map((colDef): ColDef<PriceRow> => ({ ...colDef, pinned: 'left' }))}
                 getRowId={(params) => params.data.id}
                 onGridReady={(e) => {
                     api = e.api;

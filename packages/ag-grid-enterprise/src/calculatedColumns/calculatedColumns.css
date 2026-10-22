@@ -11,6 +11,15 @@
     min-height: 0;
 }
 
+/* use the disabled palette without losing focus, text selection or validation styles */
+.ag-calculated-column-form :where(.ag-input-field-input[readonly]) {
+    --ag-input-background-color: var(--ag-input-disabled-background-color);
+    --ag-input-border: var(--ag-input-disabled-border);
+    --ag-input-text-color: var(--ag-input-disabled-text-color);
+    --ag-input-focus-background-color: var(--ag-input-disabled-background-color);
+    --ag-input-focus-text-color: var(--ag-input-disabled-text-color);
+}
+
 .ag-calculated-column-expression-wrap {
     display: flex;
     flex-direction: column;
@@ -26,14 +35,32 @@
     height: 100%;
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+.ag-calculated-column-token-reference {
+    color: var(--ag-calculated-column-reference-color);
+}
+
+.ag-calculated-column-token-function {
+    color: var(--ag-calculated-column-function-color);
+}
+
+.ag-calculated-column-token-operator {
+    color: var(--ag-calculated-column-operator-color);
+}
+
+.ag-calculated-column-expression-error {
+    text-decoration: underline wavy var(--ag-calculated-column-error-underline-color);
+    text-underline-offset: 0.15em;
+    text-decoration-skip-ink: none;
+}
+
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-calculated-column-expression-wrap .ag-text-area-input {
     height: 100%;
     resize: none;
     padding-top: calc(var(--ag-spacing) / 2);
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-rtl .ag-calculated-column-expression-wrap .ag-text-area-input {
     /* rtl:ignore */
     padding-left: var(--ag-input-padding-start);
@@ -56,7 +83,7 @@
     }
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-standard-button.ag-calculated-column-expression-tool {
     padding: calc(var(--ag-spacing) / 2);
 }
@@ -89,6 +116,22 @@
 
 .ag-calculated-column-picker-list {
     width: var(--ag-calculated-column-suggestion-list-width);
+}
+
+.ag-calculated-column-empty-picker {
+    display: grid;
+}
+
+:where(.ag-calculated-column-empty-picker) > .ag-autocomplete-list {
+    grid-area: 1 / 1;
+}
+
+.ag-calculated-column-empty-message {
+    opacity: 0.5;
+    grid-area: 1 / 1;
+    padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+    overflow-wrap: anywhere;
+    align-self: center;
 }
 
 .ag-calculated-column-actions {

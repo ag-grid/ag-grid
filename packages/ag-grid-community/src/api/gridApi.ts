@@ -46,6 +46,7 @@ import type {
 } from '../interfaces/autoSize';
 import type { CsvExportParams } from '../interfaces/exportParams';
 import type { GridState, GridStateKey } from '../interfaces/gridState';
+import type { RefreshCalculatedColumnsParams } from '../interfaces/iCalculatedColumns';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type {
     EditingCellPosition,
@@ -66,6 +67,7 @@ import type { FilterActionParams, FilterModel, IFilter } from '../interfaces/iFi
 import type { IFiltersToolPanel } from '../interfaces/iFiltersToolPanel';
 import type { FindCellParams, FindCellValueParams, FindMatch, FindPart } from '../interfaces/iFind';
 import type { AgModuleName } from '../interfaces/iModule';
+import type { INewFiltersToolPanel } from '../interfaces/iNewFiltersToolPanel';
 import type { PdfExportParams } from '../interfaces/iPdfCreator';
 import type { RedrawRowsParams } from '../interfaces/iRedrawRowsParams';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
@@ -239,7 +241,7 @@ export interface _RowGridApi<TData> {
      *
      * Special IDs for built-in row types (import constants from `ag-grid-community`):
      * - `ROOT_NODE_ID` — the invisible root node (level -1, always a group)
-     * - `GRAND_TOTAL_ROW_ID` — the grand total footer row (when `grandTotalRow` is enabled)
+     * - `GRAND_TOTAL_ROW_ID` — the grand total footer row, when `grandTotalRow` is enabled and the grid shows rows; the Client-Side Row Model keeps it, not displayed, once its rows are removed or filtered out
      * - `GROUP_TOTAL_ROW_ID_PREFIX + groupId` — a group total footer row for the group with the given ID
      * - `DETAIL_ROW_ID_PREFIX + masterRowId` — the detail row for the master row with the given ID
      * @agModule `RowApiModule`
@@ -356,7 +358,11 @@ export interface _KeyboardNavigationGridApi {
     /** Clears the focused cell. */
     clearFocusedCell(): void;
 
-    /** Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned). */
+    /**
+     * Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned).
+     * A column that a `colSpan` covers focuses the cell spanning it, as keyboard navigation does, even when that
+     * cell is scrolled out of view.
+     */
     setFocusedCell(rowIndex: number, colKey: string | Column, rowPinned?: RowPinnedType): void;
 
     /** Sets the focus to the specified header. If `floatingFilter` is true, the Column's floatingFilter element will be focused. */
@@ -652,7 +658,7 @@ export interface _ColumnAutosizeApi {
 }
 
 export interface _ColumnResizeApi {
-    /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
+    /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event, which a finished call naming a column raises even when no width changes. The finished flag is intended for dragging, where a dragging action will produce many `columnResized` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. A width outside its column's `minWidth` and `maxWidth`, the `maxWidth` winning over a `minWidth` above it, leaves every width unchanged. With `colResizeDefault: 'shift'`, the column after each named column, or after a run of adjacent named columns, takes their change (the last column, or a hidden one, changes alone), and a change that column cannot take within its own `minWidth` and `maxWidth` also leaves every width unchanged. */
     setColumnWidths(
         columnWidths: { key: ColKey; newWidth: number }[],
         finished?: boolean,
@@ -803,7 +809,7 @@ export interface _ColumnGridApi<TData> {
     getAllDisplayedColumns(): Column[];
 
     /**
-     * Same as `getAllGridColumns()`, except only returns rendered columns, i.e. columns that are not within the viewport and therefore not rendered, due to column virtualisation, are not displayed.
+     * Same as `getAllGridColumns()`, except only returns rendered columns, i.e. columns more than 200px outside the viewport are not rendered, due to column virtualisation, and are not returned. Auto-height columns are always rendered.
      * @agModule `ColumnApiModule`
      */
     getAllDisplayedVirtualColumns(): Column[];
@@ -1076,7 +1082,7 @@ export interface _ColumnFilterGridApi {
 
     /**
      * Gets the current filter model for the specified column.
-     * Will return `null` if no active filter.
+     * Will return `null` if the column has no filter model.
      * @param useUnapplied If `enableFilterHandlers = true` and value is `true`, will return the unapplied filter model.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
@@ -1086,6 +1092,8 @@ export interface _ColumnFilterGridApi {
      * Sets the filter model for the specified column.
      * Setting a `model` of `null` will reset the filter (make inactive).
      * Must wait on the response before calling `api.onFilterChanged()`.
+     * If inferring cell data types, and row data is initially empty or yet to be set,
+     * the filter model will be applied asynchronously after row data is added.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     setColumnFilterModel<TModel>(column: string | Column, model: TModel | null): Promise<void>;
@@ -1103,8 +1111,8 @@ export interface _ColumnFilterGridApi {
     hideColumnFilter(): void;
 
     /**
-     * Perform the provided filter action for the column specified, or all columns.
-     * Requires `enableFilterHandlers = true`.
+     * Perform the provided filter action for the columns specified, or all columns.
+     * Requires `enableFilterHandlers = true`, except for the actions clearing the Set Filter's preserved values.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     doFilterAction(params: FilterActionParams): void;
@@ -1441,6 +1449,7 @@ export interface _SideBarGridApi<TData> {
 
     getToolPanelInstance(id: 'columns'): IColumnToolPanel | undefined;
     getToolPanelInstance(id: 'filters'): IFiltersToolPanel | undefined;
+    getToolPanelInstance(id: 'filters-new'): INewFiltersToolPanel | undefined;
     // This override is a duplicate but is required to make the general override public
     getToolPanelInstance<TToolPanel = IToolPanel<TData>>(id: string): TToolPanel | undefined;
     /**
@@ -1561,7 +1570,7 @@ export interface _AggregationGridApi<TData> {
     clearAggFuncs(): void;
 
     /**
-     * Sets the agg function for a column. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function.
+     * Sets the agg function for a column, making it a value column; a blank `aggFunc` stops it aggregating. `aggFunc` can be one of the built-in aggregations or a custom aggregation by name or direct function.
      * @agModule `RowGroupingModule / PivotModule / TreeDataModule`
      */
     setColumnAggFunc<TValue = any>(key: ColKey<TData, TValue>, aggFunc: ColAggFunc<TData, TValue>): void;
@@ -1769,6 +1778,19 @@ export interface _ColumnChooserGridApi {
      * @agModule `ColumnMenuModule`
      */
     hideColumnChooser(): void;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface _CalculatedColumnsGridApi {
+    /**
+     * Revalidate committed calculated expressions against the current `getValidationErrors` and
+     * `isColumnReferenceable` callbacks, update saved errors and recalculate values and dependants.
+     * Applies to read-only columns too. Does not apply pending dialog edits. Empty expressions are allowed.
+     * Open dialogs revalidate their drafts without restarting pending live updates.
+     * Validation changes raise `calculatedColumnChanged` with `source: 'api'`.
+     * @agModule `CalculatedColumnsModule`
+     */
+    refreshCalculatedColumns(params?: RefreshCalculatedColumnsParams): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -2069,6 +2091,7 @@ export interface GridApi<TData = any>
         _ColumnChooserGridApi,
         _MasterDetailGridApi,
         _FormulaGridApi<TData>,
+        _CalculatedColumnsGridApi,
         _ExcelExportGridApi,
         _PdfExportGridApi,
         _ClipboardGridApi,

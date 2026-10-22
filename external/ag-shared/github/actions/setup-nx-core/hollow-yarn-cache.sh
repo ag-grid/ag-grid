@@ -16,11 +16,21 @@
 #
 # Hollow entries are valid only on runners of the same OS and architecture, so the
 # cache key must include both.
+#
+# Yarn 4 (Berry) note: this only understands yarn v1's cache layout (an `npm-*/`
+# directory per entry). Yarn 4 keeps one `*.zip` per package and filters optional
+# dependencies by os/cpu before fetching, so its cache has no foreign-platform
+# bloat to trim and the script exits early on one.
 set -euo pipefail
 
 cache="${1:?usage: hollow-yarn-cache.sh <yarn-cache-dir>}"
 if [[ ! -d "${cache}" ]]; then
     echo "No yarn cache at ${cache}; nothing to hollow"
+    exit 0
+fi
+
+if compgen -G "${cache}"/*.zip > /dev/null; then
+    echo "${cache} holds Yarn 4-style *.zip cache entries, not yarn v1's npm-*/ directories; it is already platform-filtered at fetch time. Nothing to hollow."
     exit 0
 fi
 

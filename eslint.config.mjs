@@ -17,7 +17,6 @@ export const sonarjsConfig = [
             // Too noisy in this codebase's style: doesn't trust a `!` non-null assertion, a prior
             // typeof/guard narrowing, or a type predicate, so it flags hundreds of already-safe sites.
             'sonarjs/null-dereference': 0,
-            'sonarjs/super-linear-regex': 0,
             'sonarjs/todo-tag': 0,
             'sonarjs/fixme-tag': 0,
             'sonarjs/no-redeclare': 0,
@@ -57,16 +56,30 @@ export const sonarjsConfig = [
             'sonarjs/no-misused-promises': 0,
             'sonarjs/no-fallthrough': 0,
 
+            // Core ESLint rules matching SonarCloud issues.
+            'prefer-object-spread': 'error',
+
             // Unicorn rules, as referenced from the SonarCloud documentation.
-            // 'unicorn/prefer-number-properties': 1,
-            // 'unicorn/prefer-modern-dom-apis': 1,
-            // 'unicorn/no-array-for-each': 1,
-            'unicorn/prefer-export-from': 0,
+            'unicorn/no-negation-in-equality-check': 'error',
+            'unicorn/no-typeof-undefined': 'error',
+            'unicorn/no-useless-fallback-in-spread': 'error',
+            'unicorn/prefer-array-some': 'error',
+            'unicorn/prefer-dom-node-dataset': 'error',
+            'unicorn/prefer-native-coercion-functions': 'error',
+            'unicorn/prefer-number-properties': 'error',
+            'unicorn/prefer-single-call': 'error',
+            'unicorn/prefer-string-raw': 'error',
             'unicorn/prefer-dom-node-remove': 1,
-            'unicorn/prefer-math-trunc': 0,
-            'unicorn/prefer-at': 0,
-            'unicorn/prefer-includes': 0,
             'unicorn/no-zero-fractions': 0,
+            'unicorn/prefer-at': 0,
+            'unicorn/prefer-export-from': 0,
+            'unicorn/prefer-includes': 0,
+            'unicorn/prefer-math-trunc': 0,
+            // 'unicorn/no-array-for-each': 1,
+            // 'unicorn/prefer-modern-dom-apis': 1,
+
+            // Import rules, as referenced from the SonarCloud documentation.
+            'import-x/no-mutable-exports': 'error',
         },
     },
 ];

@@ -1,21 +1,19 @@
 import type { Mock } from 'vitest';
 
-import type { BeanCollection, CellCtrl, INoteAccess } from 'ag-grid-community';
+import type { BeanCollection, BeanStub, CellCtrl, INoteAccess } from 'ag-grid-community';
 
 import { AgFullWidthRowNotesFeature, AgNotesFeature } from './agNotesFeature';
-import type { INotesFeatureSupport } from './notesShared';
+import type { INotePopupOwner, INotesFeatureSupport } from './notesShared';
 
 describe('AgNotesFeature', () => {
     let beans: BeanCollection;
-    let ctrl: Pick<
-        CellCtrl,
-        'addManagedElementListeners' | 'column' | 'comp' | 'eGui' | 'isNoteHoverSuppressed' | 'rowNode'
-    >;
-    let otherCtrl: Pick<
-        CellCtrl,
-        'addManagedElementListeners' | 'column' | 'comp' | 'eGui' | 'isNoteHoverSuppressed' | 'rowNode'
-    >;
-    let listeners: Record<string, (event: MouseEvent) => void>;
+    let ctrl: CellCtrl;
+    let otherCtrl: CellCtrl;
+    /** The cell's mount, which owns the listeners the feature adds. */
+    let compBean: BeanStub;
+    let isNoteHoverSuppressed: Mock<() => boolean>;
+    let toggleCss: Mock;
+    let listeners: Record<string, (event: Partial<PointerEvent>) => void>;
     let popup: { hide: Mock; focusEditor: Mock; hasFocus: Mock };
     let context: { createBean: Mock; destroyBean: Mock };
     let access: INoteAccess;
@@ -40,25 +38,28 @@ describe('AgNotesFeature', () => {
             destroyBean: vi.fn(),
         };
 
+        isNoteHoverSuppressed = vi.fn(() => false);
+        toggleCss = vi.fn();
         ctrl = {
             eGui: document.createElement('div'),
-            rowNode: { id: '1', rowIndex: 0, rowPinned: null } as unknown as CellCtrl['rowNode'],
-            column: { getColId: () => 'athlete' } as unknown as CellCtrl['column'],
-            comp: { toggleCss: vi.fn() } as unknown as CellCtrl['comp'],
-            addManagedElementListeners: vi.fn((_element, managedListeners) => {
-                listeners = managedListeners as typeof listeners;
+            rowNode: { id: '1', rowIndex: 0, rowPinned: null },
+            column: { getColId: () => 'athlete' },
+            comp: { toggleCss },
+            isNoteHoverSuppressed,
+        } as unknown as CellCtrl;
+        compBean = {
+            addManagedElementListeners: vi.fn((_element: HTMLElement, managedListeners: typeof listeners) => {
+                listeners = managedListeners;
                 return [];
             }),
-            isNoteHoverSuppressed: vi.fn(() => false),
-        };
+        } as unknown as BeanStub;
         otherCtrl = {
             eGui: document.createElement('div'),
-            rowNode: { id: '2', rowIndex: 1, rowPinned: null } as unknown as CellCtrl['rowNode'],
-            column: { getColId: () => 'country' } as unknown as CellCtrl['column'],
-            comp: { toggleCss: vi.fn() } as unknown as CellCtrl['comp'],
-            addManagedElementListeners: vi.fn(),
+            rowNode: { id: '2', rowIndex: 1, rowPinned: null },
+            column: { getColId: () => 'country' },
+            comp: { toggleCss: vi.fn() },
             isNoteHoverSuppressed: vi.fn(() => false),
-        };
+        } as unknown as CellCtrl;
 
         access = {
             params: { rowNode: ctrl.rowNode, column: ctrl.column },
@@ -110,10 +111,10 @@ describe('AgNotesFeature', () => {
     });
 
     it('uses noteShowDelay before opening a note on hover', () => {
-        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        const feature = new AgNotesFeature(beans, ctrl, compBean, notesSvc);
         feature.initialise();
 
-        listeners.pointerenter?.({ pointerType: 'mouse' } as PointerEvent);
+        listeners.pointerenter?.({ pointerType: 'mouse' });
 
         vi.advanceTimersByTime(24);
         expect(context.createBean).not.toHaveBeenCalled();
@@ -125,10 +126,10 @@ describe('AgNotesFeature', () => {
     it('does not open a note on hover when noteTrigger is click', () => {
         noteTrigger = 'click';
 
-        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        const feature = new AgNotesFeature(beans, ctrl, compBean, notesSvc);
         feature.initialise();
 
-        listeners.pointerenter?.({ pointerType: 'mouse' } as PointerEvent);
+        listeners.pointerenter?.({ pointerType: 'mouse' });
         vi.advanceTimersByTime(25);
 
         expect(context.createBean).not.toHaveBeenCalled();
@@ -137,10 +138,10 @@ describe('AgNotesFeature', () => {
     it('opens a note on left click when noteTrigger is click', () => {
         noteTrigger = 'click';
 
-        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        const feature = new AgNotesFeature(beans, ctrl, compBean, notesSvc);
         feature.initialise();
 
-        listeners.click?.({ button: 0, ctrlKey: false } as MouseEvent);
+        listeners.click?.({ button: 0, ctrlKey: false });
 
         expect(context.createBean).toHaveBeenCalledTimes(1);
     });
@@ -156,10 +157,10 @@ describe('AgNotesFeature', () => {
             canDelete: false,
         };
 
-        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        const feature = new AgNotesFeature(beans, ctrl, compBean, notesSvc);
         feature.initialise();
 
-        listeners.click?.({ button: 0, ctrlKey: false } as MouseEvent);
+        listeners.click?.({ button: 0, ctrlKey: false });
 
         expect(context.createBean).not.toHaveBeenCalled();
     });
@@ -167,10 +168,10 @@ describe('AgNotesFeature', () => {
     it('does not open a note on right click when noteTrigger is click', () => {
         noteTrigger = 'click';
 
-        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        const feature = new AgNotesFeature(beans, ctrl, compBean, notesSvc);
         feature.initialise();
 
-        listeners.click?.({ button: 2, ctrlKey: false } as MouseEvent);
+        listeners.click?.({ button: 2, ctrlKey: false });
 
         expect(context.createBean).not.toHaveBeenCalled();
     });
@@ -178,12 +179,10 @@ describe('AgNotesFeature', () => {
     it('does not open a note on click when propagation is stopped for AG Grid', () => {
         noteTrigger = 'click';
 
-        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        const feature = new AgNotesFeature(beans, ctrl, compBean, notesSvc);
         feature.initialise();
 
-        const event = { button: 0, ctrlKey: false } as MouseEvent & { __ag_Grid_Stop_Propagation?: boolean };
-        event.__ag_Grid_Stop_Propagation = true;
-
+        const event = { button: 0, ctrlKey: false, __ag_Grid_Stop_Propagation: true };
         listeners.click?.(event);
 
         expect(context.createBean).not.toHaveBeenCalled();
@@ -191,22 +190,22 @@ describe('AgNotesFeature', () => {
 
     it('does not open a note on click when note display is suppressed', () => {
         noteTrigger = 'click';
-        (ctrl.isNoteHoverSuppressed as Mock).mockReturnValue(true);
+        isNoteHoverSuppressed.mockReturnValue(true);
 
-        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        const feature = new AgNotesFeature(beans, ctrl, compBean, notesSvc);
         feature.initialise();
 
-        listeners.click?.({ button: 0, ctrlKey: false } as MouseEvent);
+        listeners.click?.({ button: 0, ctrlKey: false });
 
         expect(context.createBean).not.toHaveBeenCalled();
     });
 
     it('uses noteHideDelay before hiding an open note', () => {
-        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        const feature = new AgNotesFeature(beans, ctrl, compBean, notesSvc);
         feature.initialise();
 
         feature.show();
-        listeners.pointerleave?.({ pointerType: 'mouse' } as PointerEvent);
+        listeners.pointerleave?.({ pointerType: 'mouse' });
 
         vi.advanceTimersByTime(39);
         expect(popup.hide).not.toHaveBeenCalled();
@@ -218,11 +217,11 @@ describe('AgNotesFeature', () => {
     it('uses noteHideDelay before hiding a click-opened note', () => {
         noteTrigger = 'click';
 
-        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        const feature = new AgNotesFeature(beans, ctrl, compBean, notesSvc);
         feature.initialise();
 
-        listeners.click?.({ button: 0, ctrlKey: false } as MouseEvent);
-        listeners.pointerleave?.({ pointerType: 'mouse' } as PointerEvent);
+        listeners.click?.({ button: 0, ctrlKey: false });
+        listeners.pointerleave?.({ pointerType: 'mouse' });
 
         vi.advanceTimersByTime(39);
         expect(popup.hide).not.toHaveBeenCalled();
@@ -234,36 +233,36 @@ describe('AgNotesFeature', () => {
     it('does not hide an open note when leaving the owner cell while the popup is focused', () => {
         popup.hasFocus.mockReturnValue(true);
 
-        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        const feature = new AgNotesFeature(beans, ctrl, compBean, notesSvc);
         feature.initialise();
 
         feature.show({ focusEditor: true });
-        listeners.pointerleave?.({ pointerType: 'mouse' } as PointerEvent);
+        listeners.pointerleave?.({ pointerType: 'mouse' });
 
         vi.advanceTimersByTime(40);
         expect(popup.hide).not.toHaveBeenCalled();
     });
 
     it('suppresses hover opens and hides the earmark when note hover is suppressed', () => {
-        (ctrl.isNoteHoverSuppressed as Mock).mockReturnValue(true);
+        isNoteHoverSuppressed.mockReturnValue(true);
 
-        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        const feature = new AgNotesFeature(beans, ctrl, compBean, notesSvc);
         feature.initialise();
 
-        expect(ctrl.comp.toggleCss as Mock).toHaveBeenCalledWith('ag-has-cell-notes', false);
+        expect(toggleCss).toHaveBeenCalledWith('ag-has-cell-notes', false);
 
-        listeners.pointerenter?.({ pointerType: 'mouse' } as PointerEvent);
+        listeners.pointerenter?.({ pointerType: 'mouse' });
         vi.advanceTimersByTime(25);
 
         expect(context.createBean).not.toHaveBeenCalled();
     });
 
     it('cancels pending hover opens when note hover becomes suppressed', () => {
-        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        const feature = new AgNotesFeature(beans, ctrl, compBean, notesSvc);
         feature.initialise();
 
-        listeners.pointerenter?.({ pointerType: 'mouse' } as PointerEvent);
-        (ctrl.isNoteHoverSuppressed as Mock).mockReturnValue(true);
+        listeners.pointerenter?.({ pointerType: 'mouse' });
+        isNoteHoverSuppressed.mockReturnValue(true);
 
         feature.refresh();
         vi.advanceTimersByTime(25);
@@ -272,9 +271,9 @@ describe('AgNotesFeature', () => {
     });
 
     it('still allows explicit note opens when hover is suppressed', () => {
-        (ctrl.isNoteHoverSuppressed as Mock).mockReturnValue(true);
+        isNoteHoverSuppressed.mockReturnValue(true);
 
-        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        const feature = new AgNotesFeature(beans, ctrl, compBean, notesSvc);
         feature.initialise();
         feature.show({ focusEditor: true });
 
@@ -282,7 +281,7 @@ describe('AgNotesFeature', () => {
     });
 
     it('does not discard a draft note during refresh while the cell is still creatable', () => {
-        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        const feature = new AgNotesFeature(beans, ctrl, compBean, notesSvc);
         feature.initialise();
         feature.show({ focusEditor: true });
 
@@ -301,7 +300,7 @@ describe('AgNotesFeature', () => {
     });
 
     it('closes the current popup when another owner opens after a same-owner reopen transition', () => {
-        let activeOwner: unknown;
+        let activeOwner: INotePopupOwner | undefined;
         const createdPopups: { hide: Mock; focusEditor: Mock }[] = [];
 
         context.createBean = vi.fn((popupComp: any) => {
@@ -322,7 +321,7 @@ describe('AgNotesFeature', () => {
                 return undefined;
             }
             activeOwner = owner;
-            return previousOwner as any;
+            return previousOwner;
         });
 
         notesSvc.clearActivePopupOwner = vi.fn((owner) => {
@@ -338,7 +337,7 @@ describe('AgNotesFeature', () => {
             column: 'column' in params ? (params.column as any) : access.column,
         }));
 
-        const feature = new AgNotesFeature(beans, ctrl as CellCtrl, notesSvc);
+        const feature = new AgNotesFeature(beans, ctrl, compBean, notesSvc);
         feature.initialise();
         feature.show({ focusEditor: true });
 
@@ -348,7 +347,8 @@ describe('AgNotesFeature', () => {
 
         feature.show({ focusEditor: true });
 
-        const otherFeature = new AgNotesFeature(beans, otherCtrl as CellCtrl, notesSvc);
+        const otherCompBean = { addManagedElementListeners: vi.fn(() => []) } as unknown as BeanStub;
+        const otherFeature = new AgNotesFeature(beans, otherCtrl, otherCompBean, notesSvc);
         otherFeature.initialise();
         otherFeature.show({ focusEditor: true });
 

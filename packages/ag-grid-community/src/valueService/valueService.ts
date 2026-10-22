@@ -278,7 +278,7 @@ export class ValueService extends BeanStub implements NamedBean {
     // Reads committed data for `column` exactly as given — NO pivot-result-column redirection and no
     // pending-edit lookup. Callers that may hold a pivot result column (pivot edit, API reads, pivot
     // aggregation) must pre-resolve via `_resolvePivotColumnForRow`. Run the getValue benchmark to verify.
-    // This does NOT resolve pending edit values (edit or batch)
+    // This does NOT resolve pending edit values (edit or batch). `_getFilterValueSource` mirrors its precedence.
     public getValueFromData(column: AgColumn, rowNode: IRowNode, ignoreAggData: boolean = false): any {
         // An actively-aggregating calc col aggregates its per-leaf results, so group rows read aggData
         // instead of re-evaluating the formula (gated on the active state, not just a defined aggFunc).
@@ -492,6 +492,10 @@ export class ValueService extends BeanStub implements NamedBean {
         suppliedFormatter?: (value: any) => string,
         useFormatterFromColumn = true
     ): string | null {
+        // preserve evaluated errors; ordinary strings and successful calculations still use the formatter
+        if (this.formula?.isFormulaErrorValue(column, node, value)) {
+            return value;
+        }
         let result: string | null = null;
         // supplied formatter wins (e.g. set filter items have their own); otherwise use the column's
         const formatter = suppliedFormatter ?? (useFormatterFromColumn ? column.valueFormatter : undefined);

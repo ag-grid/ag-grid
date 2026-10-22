@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     clearFilter: 'Tøm',
     cancelFilter: 'Avbryt',
     cancelColumnToolPanel: 'Avbryt',
+    resetColumnToolPanel: 'Tilbakestill',
 
     // Filter Titles
     textFilter: 'Tekstfilter',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     addFilterCard: 'Legg til filter',
     agTextColumnFilterDisplayName: 'Enkel filter',
     agNumberColumnFilterDisplayName: 'Enkel filter',
+    agBigIntColumnFilterDisplayName: 'Enkel filter',
     agDateColumnFilterDisplayName: 'Enkel filter',
     agSetColumnFilterDisplayName: 'Utvalgfilter',
     agMultiColumnFilterDisplayName: 'Kombinasjonsfilter',
@@ -336,6 +338,10 @@ export const AG_GRID_LOCALE_NB_NO = {
     enabled: 'Aktivert',
 
     // Menu
+    moveLeft: 'Flytt til venstre',
+    moveRight: 'Flytt til høyre',
+    moveUp: 'Flytt opp',
+    moveDown: 'Flytt ned',
     pinColumn: 'Fest Kolonne',
     pinLeft: 'Fest til Venstre',
     pinRight: 'Fest til Høyre',
@@ -737,6 +743,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaFilterList: 'Filterliste',
     ariaFilterToValue: 'Filtrer til verdi',
     ariaFilterValue: 'Filterverdi',
+    ariaNotInCurrentData: 'ikke i gjeldende data',
     ariaFilterMenuOpen: 'Åpne filtermeny',
     ariaFilteringOperator: 'Filtreringsoperator',
     ariaHidden: 'skjult',
@@ -758,6 +765,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaRowSelect: 'Trykk SPACE for å velge denne raden',
     ariaRowSelectionDisabled: 'Radvalg er deaktivert for denne raden',
     ariaSearch: 'Søk',
+    ariaSortPriority: 'Sorteringsprioritet ${priority} av ${count}',
     ariaSortableColumn: 'Trykk ENTER for å sortere',
     ariaSortableColumnWithCellSelection: 'Trykk ALT ENTER for å sortere',
     ariaToggleVisibility: 'Trykk SPACE for å veksle synlighet',
@@ -890,9 +898,11 @@ export const AG_GRID_LOCALE_NB_NO = {
     columnHeaderEditCancel: 'Avbryt',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Ingen egnede kolonner funnet.',
     calculatedColumn: 'Beregnet kolonne',
     calculatedColumnAdd: 'Legg til beregnet kolonne',
     calculatedColumnEdit: 'Rediger beregnet kolonne',
+    calculatedColumnView: 'Vis beregnet kolonne',
     calculatedColumnRemove: 'Fjern beregnet kolonne',
     calculatedColumnTitle: 'Tittel',
     calculatedColumnType: 'Type',
@@ -907,6 +917,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     calculatedColumnExpressionAmbiguousReference:
         'Tvetydig kolonnereferanse "${variable}". Bruk Kolonner-listen eller en mer spesifikk gruppebane.',
     calculatedColumnExpressionUnknownReference: 'Ukjent kolonnereferanse "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Kolonnen "${variable}" kan ikke brukes i dette uttrykket.',
     calculatedColumnExpressionEmpty: 'Skriv inn et uttrykk',
     calculatedColumnTitleEmpty: 'Skriv inn en tittel',
     calculatedColumnApply: 'Bruk',

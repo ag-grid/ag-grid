@@ -1,14 +1,16 @@
 import { _setDisplayed } from 'ag-stack';
 
+import { _cancelColumnWidthAnimation } from '../columns/columnWidthAnimation';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
+import { getDragSign } from '../entities/agColumn';
 import type { IHeaderResizeFeature } from '../headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl, IHeaderCellComp } from '../headerRendering/cells/column/headerCellCtrl';
 
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
-    private lastResizeAmount: number;
-    private resizeStartWidth: number;
-    private resizeWithShiftKey: boolean;
+    private resizeStartWidth = 0;
+    private takeFromAdjacent = false;
+    private dragSign = 1;
 
     constructor(
         private readonly column: AgColumn,
@@ -72,29 +74,12 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         this.ctrl.setRefreshFunction('resize', refresh);
     }
 
-    private onResizing(finished: boolean, resizeAmount: number): void {
-        const { column: key, lastResizeAmount, resizeStartWidth, beans } = this;
-
-        const resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
-        const newWidth = resizeStartWidth + resizeAmountNormalised;
-
-        const columnWidths = [{ key, newWidth }];
-
-        const { pinnedCols, ctrlsSvc, colResize } = beans;
-
-        if (this.column.pinnedLane !== 1) {
-            const leftWidth = pinnedCols?.leftWidth ?? 0;
-            const rightWidth = pinnedCols?.rightWidth ?? 0;
-            const bodyWidth = ctrlsSvc.getGridBodyCtrl().getViewportWidthWithoutScrollbar() - 50;
-
-            if (leftWidth + rightWidth + (resizeAmountNormalised - lastResizeAmount) > bodyWidth) {
-                return;
-            }
-        }
-
-        this.lastResizeAmount = resizeAmountNormalised;
-
-        colResize?.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, 'uiColumnResized');
+    private onResizing(finished: boolean, amount: number): void {
+        const { column, resizeStartWidth: startWidth, takeFromAdjacent, beans } = this;
+        const change = amount * this.dragSign;
+        const held = beans.pinnedCols?.limitResize(column, takeFromAdjacent, change, startWidth) ?? change;
+        // set even when capped, so a finished drag completes
+        beans.colResize?.resizeColumn(column, startWidth + held, takeFromAdjacent, finished);
 
         if (finished) {
             this.toggleColumnResizing(false);
@@ -102,38 +87,17 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     }
 
     private onResizeStart(shiftKey: boolean): void {
-        this.resizeStartWidth = this.column.getActualWidth();
-        this.lastResizeAmount = 0;
-        this.resizeWithShiftKey = shiftKey;
+        const { column, beans } = this;
+        this.resizeStartWidth = column.actualWidth;
+        this.takeFromAdjacent = beans.colResize!.takesFromAdjacent(shiftKey);
+        this.dragSign = getDragSign(this.gos.get('enableRtl'), column.pinnedLane);
 
+        _cancelColumnWidthAnimation(beans);
         this.toggleColumnResizing(true);
     }
 
     public toggleColumnResizing(resizing: boolean): void {
-        this.column.resizing = resizing;
+        this.column.setResizing(resizing);
         this.comp.toggleCss('ag-column-resizing', resizing);
-    }
-
-    // optionally inverts the drag, depending on pinned and RTL
-    // note - this method is duplicated in RenderedHeaderGroupCell - should refactor out?
-    private normaliseResizeAmount(dragChange: number): number {
-        let result = dragChange;
-
-        const lane = this.column.pinnedLane;
-        const notPinningLeft = lane !== 0;
-        const pinningRight = lane === 2;
-
-        if (this.gos.get('enableRtl')) {
-            // for RTL, dragging left makes the col bigger, except when pinning left
-            if (notPinningLeft) {
-                result *= -1;
-            }
-        }
-        // for LTR (ie normal), dragging left makes the col smaller, except when pinning right
-        else if (pinningRight) {
-            result *= -1;
-        }
-
-        return result;
     }
 }

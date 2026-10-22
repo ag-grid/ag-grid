@@ -15,14 +15,10 @@ export const ROW_CONTAINER_NAMES = ['scrolling', 'pinnedTop', 'pinnedBottom', 's
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type RowContainerName = (typeof ROW_CONTAINER_NAMES)[number];
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export type RowContainerType = 'center';
-
 type GetRowCtrls = (renderer: RowRenderer) => RowCtrl[];
 type GetSpannedRowCtrls = (renderer: SpannedRowRenderer) => RowCtrl[];
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export type RowContainerOptions = {
-    type: RowContainerType;
     name: string;
     getRowCtrls: GetRowCtrls;
     getSpannedRowCtrls?: GetSpannedRowCtrls;
@@ -40,34 +36,29 @@ const getSpannedBottomRowCtrls: GetSpannedRowCtrls = (r) => r.getCtrls('bottom')
 
 const ContainerCssClasses: Record<RowContainerName, RowContainerOptions> = {
     scrolling: {
-        type: 'center',
         name: 'grid-scrolling',
         getRowCtrls: getCentreRowCtrls,
         getSpannedRowCtrls: getSpannedCenterRowCtrls,
     },
 
     pinnedTop: {
-        type: 'center',
         name: 'grid-pinned-top-rows',
         getRowCtrls: getTopRowCtrls,
         getSpannedRowCtrls: getSpannedTopRowCtrls,
     },
 
     pinnedBottom: {
-        type: 'center',
         name: 'grid-pinned-bottom-rows',
         getRowCtrls: getBottomRowCtrls,
         getSpannedRowCtrls: getSpannedBottomRowCtrls,
     },
 
     stickyTop: {
-        type: 'center',
         name: 'grid-sticky-top-rows',
         getRowCtrls: getStickyTopRowCtrls,
     },
 
     stickyBottom: {
-        type: 'center',
         name: 'grid-sticky-bottom-rows',
         getRowCtrls: getStickyBottomRowCtrls,
     },
@@ -178,7 +169,6 @@ export class RowContainerCtrl extends BeanStub {
         this.registerWithCtrlsService();
     }
 
-    /** Published for application CSS; nothing in the grid reads it. */
     private setPinnedRowBorderWidth(): void {
         this.eContainer.style.setProperty(
             '--ag-pinned-row-border-width',

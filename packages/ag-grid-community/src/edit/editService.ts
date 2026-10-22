@@ -400,9 +400,13 @@ export class EditService extends BeanStub implements NamedBean {
             return;
         }
 
+        const cellCtrl = _getCellCtrl(this.beans, position)!;
+        // A row that left the displayed rows keeps its cells on screen while it animates out; it can't be edited.
+        if (cellCtrl && !cellCtrl.rowCtrl.isAlive()) {
+            return;
+        }
         // because of async in React, the cellComp may not be set yet, if no cellComp then we are
         // yet to initialise the cell, so we re-schedule this operation for when celLComp is attached
-        const cellCtrl = _getCellCtrl(this.beans, position)!;
         if (cellCtrl && !cellCtrl.comp) {
             params.editable = undefined; // So we re-evaluate editable later
             // On the cell, so a second cell asking while this one waits to mount cannot displace it.
@@ -412,7 +416,7 @@ export class EditService extends BeanStub implements NamedBean {
 
         const res = this.shouldStartEditing(position, event, startedEdit, source);
 
-        if (res === false && source !== 'api') {
+        if (!res && source !== 'api') {
             if (this.isEditing(position)) {
                 this.stopEditing();
             }
@@ -484,7 +488,7 @@ export class EditService extends BeanStub implements NamedBean {
             forceCancel = false,
             forceStop = false,
             commit = false,
-        } = params || {};
+        } = params ?? {};
 
         if (STOP_EDIT_SOURCE_TRANSFORM_KEYS.has(source) && this.batch) {
             // if we are in batch editing, we do not stop editing on paste
@@ -1539,7 +1543,7 @@ export class EditService extends BeanStub implements NamedBean {
         // if a cell wasn't found, it's possible that focus was moved to the header
         res = res || !!this.beans.focusSvc.focusedHeader;
 
-        if (res === false && !preventNavigation) {
+        if (!res && !preventNavigation) {
             // not a header and not the table
             this.stopEditing(undefined, undefined, validation?.validationCache);
         }

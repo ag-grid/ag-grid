@@ -45,6 +45,4 @@ export interface AgEventService<TGlobalEvents extends BaseEvents, TCommon> {
     ): void;
 
     dispatchEvent(event: AgRawEvents<TGlobalEvents, TCommon> | BaseEvents[keyof BaseEvents]): void;
-
-    dispatchEventOnce(event: AgRawEvents<TGlobalEvents, TCommon> | BaseEvents[keyof BaseEvents]): void;
 }

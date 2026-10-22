@@ -1,4 +1,6 @@
+import { waitFor } from '@testing-library/dom';
 import {
+    ALL_SEVERITIES,
     ColumnFilterHarness,
     FilterDom,
     GridRows,
@@ -12,8 +14,10 @@ import type { FilterChangedEvent, GridApi, IRowNode } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ExternalFilterModule,
+    GridStateModule,
     NumberFilterModule,
     TextFilterModule,
+    enableDevValidations,
     setupAgTestIds,
 } from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
@@ -46,6 +50,7 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
             NumberFilterModule,
             SetFilterModule,
             ExternalFilterModule,
+            GridStateModule,
             ClientSideRowModelModule,
         ],
     });
@@ -55,7 +60,11 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
         installFilterLayoutMock();
     });
     afterAll(() => uninstallFilterLayoutMock());
-    afterEach(() => gridsManager.reset());
+    afterEach(() => {
+        gridsManager.reset();
+        vi.restoreAllMocks();
+        enableDevValidations({ throwOn: ALL_SEVERITIES });
+    });
 
     const threeFilterCols = [
         { field: 'athlete', filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } },
@@ -341,6 +350,29 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
         `);
     });
 
+    test('doFilterAction resets only the columns it names, given as an array or a single id', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: threeFilterCols,
+            rowData: PEOPLE,
+            enableFilterHandlers: true,
+        });
+        await api.setFilterModel({
+            athlete: { filterType: 'text', type: 'contains', filter: 'a' },
+            age: { filterType: 'number', type: 'greaterThan', filter: 20 },
+            country: { filterType: 'set', values: ['United States'] },
+        });
+        await asyncSetTimeout(0);
+
+        api.doFilterAction({ colId: ['athlete', 'country'], action: 'reset' });
+        await asyncSetTimeout(0);
+
+        expect(api.getFilterModel()).toEqual({ age: { filterType: 'number', type: 'greaterThan', filter: 20 } });
+
+        api.doFilterAction({ colId: 'age', action: 'reset' });
+        await asyncSetTimeout(0);
+        expect(api.getFilterModel()).toEqual({});
+    });
+
     test('setColumnFilterModel / getColumnFilterModel drive one column and round-trip', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: threeFilterCols,
@@ -378,5 +410,313 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
             ├── LEAF id:5 athlete:"Ryan Lochte" age:27 country:"United States"
             └── LEAF id:6 athlete:"Ian Thorpe" age:17 country:"Australia"
         `);
+    });
+
+    test('a model set before the rows arrive to infer data types from reads back at once', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [62, 63] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [{ field: 'country', filter: 'agSetColumnFilter' }, { field: 'athlete' }],
+            rowData: [],
+        });
+        const model = { country: { filterType: 'set', values: ['Russia'] } };
+        const textModel = { filterType: 'text', type: 'contains', filter: 'a' };
+
+        api.setFilterModel({ ...model, athlete: textModel, unknown: textModel });
+        await asyncSetTimeout(0);
+        expect(api.getFilterModel()).toEqual(model);
+        expect(api.getColumnFilterModel('country')).toEqual(model.country);
+        expect(api.getColumnFilterModel('athlete')).toBeNull();
+        expect(api.isColumnFilterPresent()).toBe(false);
+
+        api.applyTransaction({ add: PEOPLE });
+        await asyncSetTimeout(0);
+        const warnings = warnSpy.mock.calls.flat().join(' ');
+        expect(warnings).toContain('warning #62');
+        expect(warnings).toContain('warning #63');
+        expect(api.getFilterModel()).toEqual(model);
+        expect(api.isColumnFilterPresent()).toBe(true);
+        await new GridRows(api, 'model applied once rows arrive').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:2 country:"Russia" athlete:"Aleksey Nemov"
+        `);
+    });
+
+    test('models set for a column and the whole grid before the rows arrive apply in call order', async () => {
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: threeFilterCols,
+            rowData: [],
+        });
+
+        let countryApplied = false;
+        const countryPromise = api
+            .setColumnFilterModel('country', { filterType: 'set', values: ['Russia'] })
+            .then(() => {
+                countryApplied = true;
+            });
+        api.setFilterModel({
+            age: { filterType: 'number', type: 'lessThan', filter: 20 },
+            athlete: { filterType: 'text', type: 'contains', filter: 'Phelps' },
+        });
+        void api.setColumnFilterModel(api.getColumn('athlete')!, {
+            filterType: 'text',
+            type: 'contains',
+            filter: 'Thorpe',
+        });
+        void api.setColumnFilterModel('age', null);
+        await asyncSetTimeout(0);
+        expect(countryApplied).toBe(false);
+        const expected = { athlete: { filterType: 'text', type: 'contains', filter: 'Thorpe' } };
+        expect(api.getFilterModel()).toEqual(expected);
+        expect(api.getColumnFilterModel('country')).toBeNull();
+        api.setFilterModel(null);
+        expect(api.getFilterModel()).toEqual({});
+        api.setFilterModel(expected);
+
+        api.applyTransaction({ add: PEOPLE });
+        await countryPromise;
+        expect(api.getFilterModel()).toEqual(expected);
+        await new GridRows(api, 'models applied in call order').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:6 athlete:"Ian Thorpe" age:17 country:"Australia"
+        `);
+    });
+
+    test('models set before the rows arrive each fire filterChanged as they apply', async () => {
+        const changes: unknown[] = [];
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: threeFilterCols,
+            rowData: [],
+            onFilterChanged: ({ source, columns }) =>
+                changes.push([source, columns.map((column) => column.getColId()), api.getFilterModel()]),
+        });
+        await asyncSetTimeout(0);
+        const russia = { country: { filterType: 'set', values: ['Russia'] } };
+        const under20 = { age: { filterType: 'number', type: 'lessThan', filter: 20 } };
+
+        api.setFilterModel(russia);
+        void api.setColumnFilterModel('athlete', { filterType: 'text', type: 'contains', filter: 'a' });
+        api.setFilterModel(under20);
+        await asyncSetTimeout(0);
+        expect(changes).toEqual([]);
+
+        api.applyTransaction({ add: PEOPLE });
+        await asyncSetTimeout(0);
+        expect(changes).toEqual([
+            ['api', ['country'], under20],
+            ['api', ['country', 'athlete', 'age'], under20],
+        ]);
+        await new GridRows(api, 'last whole-grid model applied').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:4 athlete:"Missy Franklin" age:17 country:"United States"
+            └── LEAF id:6 athlete:"Ian Thorpe" age:17 country:"Australia"
+        `);
+    });
+
+    test('column models set before the rows arrive add to and clear a filter typed in its popup', async () => {
+        const athlete = { filterType: 'text', type: 'contains', filter: 'Thorpe' };
+        const age = { filterType: 'number', type: 'lessThan', filter: 20 };
+        const api: GridApi = gridsManager.createGrid('grid1', { columnDefs: threeFilterCols, rowData: [] });
+        await asyncSetTimeout(0);
+        const popup = await ColumnFilterHarness.open(api, 'athlete');
+        await popup.selectOperator('Contains');
+        await popup.setText('Thorpe');
+        api.hideColumnFilter();
+        await asyncSetTimeout(0);
+        expect(api.getFilterModel()).toEqual({ athlete });
+
+        void api.setColumnFilterModel('age', age);
+        expect(api.getFilterModel()).toEqual({ athlete, age });
+        void api.setColumnFilterModel('athlete', null);
+        expect(api.getFilterModel()).toEqual({ age });
+
+        api.applyTransaction({ add: PEOPLE });
+        await asyncSetTimeout(0);
+        expect(api.getFilterModel()).toEqual({ age });
+        await new GridRows(api, 'instance filter cleared, column model applied').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:4 athlete:"Missy Franklin" age:17 country:"United States"
+            └── LEAF id:6 athlete:"Ian Thorpe" age:17 country:"Australia"
+        `);
+    });
+
+    test('a column model set before the rows arrive adds to the initial state model', async () => {
+        const country = { filterType: 'set', values: ['Australia'] };
+        const age = { filterType: 'number', type: 'lessThan', filter: 20 };
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: threeFilterCols,
+            rowData: [],
+            initialState: { filter: { filterModel: { country } } },
+        });
+        await asyncSetTimeout(0);
+
+        void api.setColumnFilterModel('age', age);
+        expect(api.getFilterModel()).toEqual({ country, age });
+
+        api.applyTransaction({ add: PEOPLE });
+        await asyncSetTimeout(0);
+        expect(api.getFilterModel()).toEqual({ country, age });
+        await new GridRows(api, 'initial state and column model applied').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:6 athlete:"Ian Thorpe" age:17 country:"Australia"
+        `);
+    });
+
+    test('a model restored with setState before the rows arrive reads back at once', async () => {
+        const filterModel = { country: { filterType: 'set', values: ['Russia'] } };
+        const api: GridApi = gridsManager.createGrid('grid1', { columnDefs: threeFilterCols, rowData: [] });
+        await asyncSetTimeout(0);
+
+        api.setState({ filter: { filterModel } });
+        expect(api.getFilterModel()).toEqual(filterModel);
+
+        api.applyTransaction({ add: PEOPLE });
+        await asyncSetTimeout(0);
+        expect(api.getFilterModel()).toEqual(filterModel);
+        await new GridRows(api, 'restored model applied').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:2 athlete:"Aleksey Nemov" age:24 country:"Russia"
+        `);
+    });
+
+    test('with filter handlers, a model set before the rows arrive reads back applied and unapplied', async () => {
+        const age = { filterType: 'number', type: 'lessThan', filter: 20 };
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: threeFilterCols,
+            rowData: [],
+            enableFilterHandlers: true,
+        });
+        await asyncSetTimeout(0);
+
+        api.setFilterModel({ age });
+        expect(api.getFilterModel()).toEqual({ age });
+        expect(api.getColumnFilterModel('age')).toEqual(age);
+        expect(api.getColumnFilterModel('age', true)).toEqual(age);
+
+        api.applyTransaction({ add: PEOPLE });
+        await asyncSetTimeout(0);
+        expect(api.getColumnFilterModel('age', true)).toEqual(age);
+        await new GridRows(api, 'handler model applied').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:4 athlete:"Missy Franklin" age:17 country:"United States"
+            └── LEAF id:6 athlete:"Ian Thorpe" age:17 country:"Australia"
+        `);
+    });
+
+    test('with filter handlers, a column model set before the rows arrive keeps another column’s unapplied edit', async () => {
+        const age = { filterType: 'number', type: 'lessThan', filter: 20 };
+        const edit = { filterType: 'text', type: 'contains', filter: 'Thorpe' };
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [
+                { field: 'athlete', filter: 'agTextColumnFilter', filterParams: { buttons: ['apply'] } },
+                { field: 'age', filter: 'agNumberColumnFilter' },
+            ],
+            rowData: [],
+            enableFilterHandlers: true,
+        });
+        await asyncSetTimeout(0);
+        const popup = await ColumnFilterHarness.open(api, 'athlete');
+        await popup.selectOperator('Contains');
+        await popup.setText('Thorpe');
+        await asyncSetTimeout(0);
+
+        void api.setColumnFilterModel('age', age);
+        expect(api.getColumnFilterModel('athlete', true)).toEqual(edit);
+        expect(api.getColumnFilterModel('athlete')).toBeNull();
+        expect(api.getColumnFilterModel('age', true)).toEqual(age);
+    });
+
+    test('a column model set for no column before the rows arrive changes nothing', async () => {
+        const age = { filterType: 'number', type: 'lessThan', filter: 20 };
+        const api: GridApi = gridsManager.createGrid('grid1', { columnDefs: threeFilterCols, rowData: [] });
+        await asyncSetTimeout(0);
+
+        api.setFilterModel({ age });
+        const ignored = api.setColumnFilterModel(null as unknown as string, {
+            filterType: 'text',
+            type: 'contains',
+            filter: 'Thorpe',
+        });
+        expect(api.getFilterModel()).toEqual({ age });
+
+        api.applyTransaction({ add: PEOPLE });
+        await ignored;
+        expect(api.getFilterModel()).toEqual({ age });
+        await new GridRows(api, 'whole-grid model applied').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:4 athlete:"Missy Franklin" age:17 country:"United States"
+            └── LEAF id:6 athlete:"Ian Thorpe" age:17 country:"Australia"
+        `);
+    });
+
+    test('a column model then an equal whole-grid model set before the rows arrive apply with no filterChanged', async () => {
+        const changes: unknown[] = [];
+        const age = { filterType: 'number', type: 'lessThan', filter: 20 };
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: threeFilterCols,
+            rowData: [],
+            onFilterChanged: ({ source, columns }) =>
+                changes.push([source, columns.map((column) => column.getColId())]),
+        });
+        await asyncSetTimeout(0);
+
+        void api.setColumnFilterModel('age', age);
+        api.setFilterModel({ age });
+        api.applyTransaction({ add: PEOPLE });
+        await asyncSetTimeout(0);
+        expect(changes).toEqual([]);
+        expect(api.getFilterModel()).toEqual({ age });
+        await new GridRows(api, 'column model applied').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── LEAF id:4 athlete:"Missy Franklin" age:17 country:"United States"
+            └── LEAF id:6 athlete:"Ian Thorpe" age:17 country:"Australia"
+        `);
+    });
+
+    test('a model set before the rows arrive for a column then removed reads back and applies without it', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [62] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const athlete = { filterType: 'text', type: 'contains', filter: 'Thorpe' };
+        const age = { filterType: 'number', type: 'lessThan', filter: 20 };
+        const api: GridApi = gridsManager.createGrid('grid1', { columnDefs: threeFilterCols, rowData: [] });
+        await asyncSetTimeout(0);
+
+        api.setFilterModel({ athlete, age });
+        void api.setColumnFilterModel('age', age);
+        api.setGridOption('columnDefs', [threeFilterCols[0], threeFilterCols[2]]);
+        expect(api.getFilterModel()).toEqual({ athlete });
+
+        api.applyTransaction({ add: PEOPLE });
+        await asyncSetTimeout(0);
+        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #62');
+        expect(api.getFilterModel()).toEqual({ athlete });
+        await new GridRows(api, 'model applied without the removed column').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:6 athlete:"Ian Thorpe" country:"Australia"
+        `);
+    });
+});
+
+describe('doFilterAction without the Set Filter module', () => {
+    const gridsManager = new TestGridsManager({ modules: [TextFilterModule, ClientSideRowModelModule] });
+
+    afterEach(() => {
+        gridsManager.reset();
+        vi.restoreAllMocks();
+        enableDevValidations({ throwOn: ALL_SEVERITIES });
+    });
+
+    test('clearing preserved Set Filter values reports the missing module', async () => {
+        // Deliberate: the missing SetFilterModule is what error #200 reports.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [200] });
+        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'athlete', filter: 'agTextColumnFilter' }],
+            rowData: PEOPLE,
+        });
+
+        errorSpy.mockClear();
+        api.doFilterAction({ action: 'clearPreservedValues' });
+        await waitFor(() => expect(errorSpy.mock.calls.flat().join(' ')).toContain('error #200'));
     });
 });

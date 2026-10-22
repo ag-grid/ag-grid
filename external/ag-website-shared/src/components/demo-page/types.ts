@@ -19,6 +19,16 @@ export interface DemoPageCta {
     href: string;
 }
 
+/** A runnable seed project for the current demo, in one framework. */
+export interface DemoPageOpenIn {
+    /** Framework the seed is written in, as shown to the reader (e.g. 'React'). */
+    framework: string;
+    /** Opens the seed project in StackBlitz. */
+    href: string;
+    /** The seed project's source folder on GitHub, at the tag matching the site's version. */
+    sourceHref: string;
+}
+
 /** The consuming site's copy for the demo page hero. */
 export interface DemoPageHero {
     /** Small uppercase label above the title. */
@@ -29,4 +39,10 @@ export interface DemoPageHero {
     description: string;
     primaryCta: DemoPageCta;
     secondaryCta: DemoPageCta;
+    /**
+     * Seed projects for the current demo, one per framework, rendered beneath the CTAs as an
+     * "Open in StackBlitz" and a "See on GitHub" button that each list the frameworks, in this
+     * order. Omitted when the demo has none.
+     */
+    openIn?: DemoPageOpenIn[];
 }

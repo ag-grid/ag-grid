@@ -60,10 +60,12 @@ describe('createCalculatedColumnReferenceMapper', () => {
             ['2026', 'Q4'],
         ]);
         expect(groupedMapper.toInternalExpression('[Q4]')).toEqual({
-            error: { type: 'ambiguous', reference: 'Q4' },
+            expression: '[Q4]',
+            error: { type: 'ambiguous', reference: 'Q4', range: { start: 0, end: 4 } },
         });
         expect(groupedMapper.toInternalExpression('[Missing]')).toEqual({
-            error: { type: 'unknown', reference: 'Missing' },
+            expression: '[Missing]',
+            error: { type: 'unknown', reference: 'Missing', range: { start: 0, end: 9 } },
         });
         expect(groupedMapper.toInternalExpression('[2025 Q4] - [2026 Q4]')).toEqual({
             expression: '[q4-2025] - [q4-2026]',
@@ -109,7 +111,8 @@ describe('createCalculatedColumnReferenceMapper', () => {
 
         expect(mapper.suggestions.map(({ label }) => label)).toEqual(['Revenue']);
         expect(mapper.toInternalExpression('[Selection] + [Row Number]')).toEqual({
-            error: { type: 'unknown', reference: 'Selection' },
+            expression: '[Selection] + [Row Number]',
+            error: { type: 'unknown', reference: 'Selection', range: { start: 0, end: 11 } },
         });
     });
 });

@@ -270,8 +270,8 @@ export type ToolPanelClass<TData = any, TValue = any, TContext = any> =
 /** @knipIgnore Used in tests */
 export type StringOrNumKeys<TObj> = keyof TObj & (string | number);
 /** @knipIgnore Used in tests */
-export type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth extends any[]> = TValue extends object
-    ? `${Prefix}.${TDepth['length'] extends 5 ? any : NestedFieldPaths<TValue, TValueNestedChild, TDepth>}`
+export type NestedPath<TData, Prefix extends string, TValue, TDepth extends any[]> = TData extends object
+    ? `${Prefix}.${TDepth['length'] extends 5 ? any : NestedFieldPaths<TData, TValue, TDepth>}`
     : never;
 
 // This type wrapper is needed for correct handling of union types in ColDefField
@@ -353,10 +353,18 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Expression used to calculate this column's value from other columns in the same row.
      * Use bracket references to read other columns by `colId`, e.g. `[revenue] - [cost]`.
-     * Calculated columns are read-only.
+     * Calculated cells cannot be edited directly.
      * @agModule `CalculatedColumnsModule`
      */
     calculatedExpression?: string;
+    /**
+     * Allow the calculated column's definition to be viewed, but not edited or removed through the grid UI.
+     * Does not prevent changes through `columnDefs` or Grid State restoration.
+     * Dialog-created columns do not inherit this option from `defaultColDef`.
+     * @default false
+     * @agModule `CalculatedColumnsModule`
+     */
+    calculatedColumnReadOnly?: boolean;
     /** Function or expression. Gets the value from your data for display. */
     valueGetter?: string | ValueGetterFunc<TData, TValue>;
     /** A function or expression to format a value, should return a string. */
@@ -906,7 +914,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     enableValue?: boolean;
     /**
-     * Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function.
+     * Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. `min` and `max` support `number`, `bigint` and date values (`date`, `dateTime`, `dateString` and `dateTimeString` cell data types). Also accepts a custom aggregation name or an aggregation function.
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     aggFunc?: string | IAggFunc<TData, TValue> | null;

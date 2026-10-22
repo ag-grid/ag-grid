@@ -241,6 +241,123 @@ $breakpoint-demo-fits: $demo-held-width + $hero-max-width + $demo-column-gap + $
     }
 }
 
+// Seed project links: a StackBlitz and a GitHub button beneath the CTAs, so the "get started" pair
+// keeps its prominence. Placement is provisional pending design review.
+.openIn {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $spacing-size-3;
+    margin: $spacing-size-4 0 0;
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        justify-content: flex-start;
+    }
+}
+
+// Anchors the framework list to its button.
+.openInMenu {
+    position: relative;
+    // Each menu's list is positioned against its own button: without the scope, both buttons share
+    // the one anchor name and the lists would all attach to the last of them.
+    anchor-scope: --open-in;
+}
+
+.openInButton {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-size-2;
+    cursor: pointer;
+    anchor-name: --open-in;
+    // A <summary> otherwise draws a disclosure triangle of its own.
+    list-style: none;
+
+    &::-webkit-details-marker {
+        display: none;
+    }
+
+    :global(.icon) {
+        --icon-size: #{$spacing-size-4};
+    }
+}
+
+.openInChevron {
+    transition: transform 0.15s ease-out;
+
+    details[open] & {
+        transform: rotate(180deg);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        transition: none;
+    }
+}
+
+// Same surface as the site's other dropdown menus (MarkdownActions).
+.openInList {
+    position: absolute;
+    top: calc(100% + #{$spacing-size-1});
+    left: 0;
+    z-index: 10;
+    min-width: 100%;
+    margin: 0;
+    padding: 6px;
+    list-style: none;
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-sm);
+    box-shadow:
+        0px 10px 38px -10px rgba(22, 23, 24, 0.35),
+        0px 10px 20px -15px rgba(22, 23, 24, 0.2);
+
+    #{$selector-darkmode} & {
+        background: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 12%);
+        border: 1px solid color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 22%);
+    }
+
+    // Fixed, so the hero's scrolling and clipping cannot hide it; above the sticky site header and
+    // announcement banner, which a list flipped above its button would otherwise sit under.
+    @supports (position-area: bottom) and (anchor-scope: all) {
+        position: fixed;
+        z-index: 10010;
+        inset: auto;
+        position-anchor: --open-in;
+        position-area: bottom span-right;
+        // Flipped with the placement, so the gap stays between the list and the button.
+        margin-top: $spacing-size-1;
+        min-width: anchor-size(width);
+        max-height: calc(100dvh - #{$spacing-size-4});
+        overflow-y: auto;
+        position-try-fallbacks:
+            flip-block,
+            flip-inline,
+            flip-block flip-inline;
+    }
+}
+
+.openInLink {
+    display: block;
+    padding: $spacing-size-2 12px;
+    border-radius: 3px;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+
+    #{$selector-darkmode} & {
+        color: var(--color-fg-white);
+    }
+
+    &:hover,
+    &:focus-visible {
+        color: var(--color-text-primary);
+        background-color: var(--color-util-brand-50);
+
+        #{$selector-darkmode} & {
+            color: var(--color-fg-white);
+            background-color: color-mix(in srgb, var(--color-bg-primary), var(--color-fg-white) 20%);
+        }
+    }
+}
+
 .demoCard {
     position: relative;
     // The demo has no usable small-screen form: it is held at $demo-held-width, so a phone

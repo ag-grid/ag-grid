@@ -1,3 +1,7 @@
+import type { AgEvent, IAgEventEmitter, IEventListener } from 'ag-stack';
+import { LocalEventService } from 'ag-stack';
+
+import type { QueuedEventOwner } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
 import type { Column, ColumnGroupShowType, ColumnInstanceId, ProvidedColumnGroup } from '../interfaces/iColumn';
 import type { AgColumn } from './agColumn';
@@ -11,9 +15,12 @@ export function isProvidedColumnGroup(
     return col instanceof AgProvidedColumnGroup;
 }
 
-export type AgProvidedColumnGroupEvent = 'expandedChanged' | 'expandableChanged';
+export type AgProvidedColumnGroupEvent = 'expandedChanged' | 'expandableChanged' | 'headerNameChanged';
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> implements ProvidedColumnGroup {
+export class AgProvidedColumnGroup
+    extends BeanStub<AgProvidedColumnGroupEvent>
+    implements ProvidedColumnGroup, IAgEventEmitter<AgProvidedColumnGroupEvent>, QueuedEventOwner
+{
     public readonly isColumn = false as const;
 
     public originalParent: AgProvidedColumnGroup | null;
@@ -31,6 +38,8 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
 
     /** Cache previous `setExpandable` visibility so `AgColumn.setVisible` ancestor walk can stop when unchanged. */
     private lastVisible = false;
+
+    public lastQueuedEventAt = 0;
 
     // stable key for framework (React) rendering and old-vs-new destroy diffing
     public readonly instanceId: ColumnInstanceId = getNextColInstanceId();
@@ -78,7 +87,7 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
             return false;
         }
         this.expanded = expanded;
-        this.dispatchLocalEvent({ type: 'expandedChanged' });
+        this.dispatchGroupEvent('expandedChanged');
         return true;
     }
 
@@ -137,7 +146,7 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
         const expandable = flags === EXPANDABLE_ALL;
         if (this.expandable !== expandable) {
             this.expandable = expandable;
-            this.dispatchLocalEvent({ type: 'expandableChanged' });
+            this.dispatchGroupEvent('expandableChanged');
         }
         const visible = flags !== 0;
         if (this.lastVisible === visible) {
@@ -145,6 +154,75 @@ export class AgProvidedColumnGroup extends BeanStub<AgProvidedColumnGroupEvent> 
         }
         this.lastVisible = visible;
         return true;
+    }
+
+    /** Raises `type`, or inside a column update queues it with the columns' events, until every column and group holds
+     *  its new state. */
+    public dispatchGroupEvent(type: AgProvidedColumnGroupEvent): void {
+        const localEventService = this.localEventService;
+        if (!localEventService?.hasListeners(type)) {
+            return;
+        }
+        const colModel = this.beans.colModel;
+        if (colModel.colUpdateDepth === 0) {
+            localEventService.dispatchEvent({ type });
+        } else {
+            colModel.queueColEvent(this, { type });
+        }
+    }
+
+    /** A group destroyed since the event was queued has dropped its listeners. */
+    public raiseQueuedEvent(event: AgEvent<AgProvidedColumnGroupEvent>): void {
+        if (this.isAlive()) {
+            this.localEventService?.dispatchEvent(event);
+        }
+    }
+
+    public __addEventListener<T extends AgProvidedColumnGroupEvent>(eventType: T, listener: IEventListener<T>): void {
+        let localEventService = this.localEventService;
+        if (!localEventService) {
+            localEventService = new LocalEventService();
+            this.localEventService = localEventService;
+        }
+        localEventService.addEventListener(eventType, listener);
+    }
+    public __removeEventListener<T extends AgProvidedColumnGroupEvent>(
+        eventType: T,
+        listener: IEventListener<T>
+    ): void {
+        this.localEventService?.removeEventListener(eventType, listener);
+    }
+
+    /** PUBLIC USE ONLY: grid code uses `__addEventListener` and `__removeEventListener`, which skip the wrapping. */
+    public override addEventListener<T extends AgProvidedColumnGroupEvent>(
+        eventType: T,
+        userListener: IEventListener<T>,
+        async?: boolean
+    ): void {
+        let localEventService = this.localEventService;
+        if (!localEventService) {
+            localEventService = new LocalEventService();
+            this.localEventService = localEventService;
+        }
+        // `beans` is null on a group the grid did not wire (tool panel layout copies)
+        const listener =
+            this.beans?.frameworkOverrides.wrapLocalListener?.(localEventService, eventType, userListener, async) ??
+            userListener;
+        localEventService.addEventListener(eventType, listener, async);
+    }
+
+    /** PUBLIC USE ONLY: grid code uses `__addEventListener` and `__removeEventListener`, which skip the wrapping. */
+    public override removeEventListener<T extends AgProvidedColumnGroupEvent>(
+        eventType: T,
+        userListener: IEventListener<T>,
+        async?: boolean
+    ): void {
+        const localEventService = this.localEventService;
+        if (!localEventService) {
+            return;
+        }
+        const listener = localEventService.listenerWrapper?.unwrap(eventType, userListener, async) ?? userListener;
+        localEventService.removeEventListener(eventType, listener, async);
     }
 }
 

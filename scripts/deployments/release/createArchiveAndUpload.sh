@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 if [ "$#" -lt 3 ]
   then
     echo "You must supply a grid version, a charts version & a host"

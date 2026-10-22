@@ -190,6 +190,12 @@ The example below will show how to update cell value combining the `Clipboard` w
 
 By default, the grid will use `\t` (tab) as the field delimiter. This is to keep the copy / paste compatible with Excel. If you want another delimiter then you can set the property `gridOptions.clipboardDelimiter` to a value of your choosing.
 
+## Trailing Empty Lines
+
+Some applications, such as Excel for Windows, add an extra line break after the last copied row, which would clear the cell below the pasted range. The grid detects this automatically and removes the extra line when pasting, while keeping blank rows that were part of the copied range. This detection may not be possible for every application the data is copied from.
+
+If pasting still clears the cell below the pasted range, set `suppressLastEmptyLineOnPaste=true` to always remove a trailing empty line. Note this also removes a blank last row that was part of the copied range.
+
 ## Using the Browser's Text Selection
 
 The grid's selection and copy features replace the built-in browser behaviour for selecting and copying text. If you want to use the normal browser behaviour instead, you should set `enableCellTextSelection=true` in the gridOptions. Note the following:

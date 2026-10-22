@@ -71,7 +71,7 @@ runs:
     - name: yarn install (no cache)
       if: inputs.cache-mode == 'off'
       shell: bash
-      run: yarn install --ci
+      run: yarn install --immutable
 
     - name: Build dependencies
       shell: bash

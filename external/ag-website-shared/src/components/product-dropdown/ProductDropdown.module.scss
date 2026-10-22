@@ -1,13 +1,15 @@
 @use 'design-system' as *;
 @use '../site-header/breakpoints' as *;
 
+$popup-width: 800px;
+
 // .customMenu is only ever rendered inside the shared site header (see
 // SiteHeader.astro), so it queries the same "site-header" container as the rest of the
 // header rather than the viewport — see ../site-header/_breakpoints.scss for what
 // $switcher-show and $switcher-popup-at control and why.
 //
 // It must also stay out of the containing-block chain — no `position`, no `transform` —
-// so .customContent anchors to .headerInner and can right-align to the content column.
+// so .customContent anchors to .headerInner and can be kept inside the content column.
 .customMenu {
     display: none;
     // While the header is a wrapping flex row (below $docs-search-inline) this auto
@@ -129,13 +131,17 @@
         // .headerInner is several rows tall in the wrapped states below
         // $docs-search-inline, so clear one row — the token .headerLogo sizes it by.
         top: var(--layout-site-header-height);
-        // Right-aligned to the content column, $spacing-size-2 mirroring .mainNav's
-        // trailing margin: the trigger sits too far right for a popup this wide.
-        left: auto;
-        right: $spacing-size-2;
+        // --switcher-popup-left is the trigger's offset within .headerInner, set by
+        // ProductDropdown.tsx; unset, the fallback resolves to the clamp's upper bound.
+        left: clamp(
+            $spacing-size-2,
+            var(--switcher-popup-left, 100%),
+            calc(100% - #{$popup-width} - #{$spacing-size-2})
+        );
+        right: auto;
         // Fixed width gives each product row enough room for its title and
         // description without truncation.
-        width: 800px;
+        width: $popup-width;
         max-width: calc(100% - #{$spacing-size-2} * 2);
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));

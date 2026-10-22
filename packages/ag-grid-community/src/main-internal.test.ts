@@ -74,7 +74,7 @@ function parseMainInternalExports(): SymbolInfo[] {
 
         if (stmt.exportClause && ts.isNamedExports(stmt.exportClause)) {
             for (const element of stmt.exportClause.elements) {
-                const originalName = (element.propertyName || element.name).text;
+                const originalName = (element.propertyName ?? element.name).text;
                 symbols.push({ originalName, sourceFilePath: resolvedPath, relativeSourcePath: relativePath });
             }
         } else if (!stmt.exportClause) {

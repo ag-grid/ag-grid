@@ -214,3 +214,8 @@ export const ZI_FORM_ID = 'aad0527d-5af6-4263-8dcd-60f3ac998d5d';
 export const PUBLIC_GTM_ID = import.meta.env?.PUBLIC_GTM_ID;
 export const PUBLIC_GTM_AUTH = import.meta.env?.PUBLIC_GTM_AUTH;
 export const PUBLIC_GTM_PREVIEW = import.meta.env?.PUBLIC_GTM_PREVIEW;
+
+// Dash0 website monitoring. The auth token ships in the page by design: it is an ingest-only
+// token scoped to the website dataset
+export const PUBLIC_DASH0_ENDPOINT_URL = import.meta.env?.PUBLIC_DASH0_ENDPOINT_URL;
+export const PUBLIC_DASH0_AUTH_TOKEN = import.meta.env?.PUBLIC_DASH0_AUTH_TOKEN;

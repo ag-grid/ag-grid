@@ -41,12 +41,12 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
         return this.hoverGeneration;
     }
 
-    public createNotesFeature(ctrl: CellCtrl) {
+    public createNotesFeature(ctrl: CellCtrl, compBean: BeanStub) {
         if (!this.hasDataSource()) {
             return undefined;
         }
 
-        const feature = new AgNotesFeature(this.beans, ctrl, this);
+        const feature = new AgNotesFeature(this.beans, ctrl, compBean, this);
         feature.initialise();
         return feature;
     }

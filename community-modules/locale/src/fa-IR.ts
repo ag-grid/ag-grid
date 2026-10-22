@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     clearFilter: 'پاک کردن',
     cancelFilter: 'لغو',
     cancelColumnToolPanel: 'لغو',
+    resetColumnToolPanel: 'بازنشانی',
 
     // Filter Titles
     textFilter: 'فیلتر متنی',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     addFilterCard: 'افزودن فیلتر',
     agTextColumnFilterDisplayName: 'فیلتر ساده',
     agNumberColumnFilterDisplayName: 'فیلتر ساده',
+    agBigIntColumnFilterDisplayName: 'فیلتر ساده',
     agDateColumnFilterDisplayName: 'فیلتر ساده',
     agSetColumnFilterDisplayName: 'فیلتر انتخاب',
     agMultiColumnFilterDisplayName: 'فیلتر ترکیبی',
@@ -335,6 +337,10 @@ export const AG_GRID_LOCALE_FA_IR = {
     enabled: 'فعال',
 
     // Menu
+    moveLeft: 'انتقال به چپ',
+    moveRight: 'انتقال به راست',
+    moveUp: 'انتقال به بالا',
+    moveDown: 'انتقال به پایین',
     pinColumn: 'سنجاق کردن ستون',
     pinLeft: 'سنجاق کردن به چپ',
     pinRight: 'سنجاق کردن به راست',
@@ -737,6 +743,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaFilterList: 'لیست فیلتر',
     ariaFilterToValue: 'فیلتر تا مقدار',
     ariaFilterValue: 'مقدار فیلتر',
+    ariaNotInCurrentData: 'در داده‌های فعلی نیست',
     ariaFilterMenuOpen: 'باز کردن منوی فیلتر',
     ariaFilteringOperator: 'عملگر فیلتر کردن',
     ariaHidden: 'مخفی',
@@ -759,6 +766,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaRowSelect: 'SPACE را فشار دهید تا این سطر انتخاب شود',
     ariaRowSelectionDisabled: 'انتخاب سطر برای این سطر غیرفعال است',
     ariaSearch: 'جستجو',
+    ariaSortPriority: 'اولویت مرتب‌سازی ${priority} از ${count}',
     ariaSortableColumn: 'ENTER را فشار دهید تا مرتب شود',
     ariaSortableColumnWithCellSelection: 'برای مرتب‌سازی ALT ENTER را فشار دهید',
     ariaToggleVisibility: 'SPACE را فشار دهید تا قابلیت رویت تغییر یابد',
@@ -891,9 +899,11 @@ export const AG_GRID_LOCALE_FA_IR = {
     columnHeaderEditCancel: 'لغو',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'هیچ ستون واجد شرایطی یافت نشد.',
     calculatedColumn: 'ستون محاسبه‌شده',
     calculatedColumnAdd: 'افزودن ستون محاسبه‌شده',
     calculatedColumnEdit: 'ویرایش ستون محاسبه‌شده',
+    calculatedColumnView: 'نمایش ستون محاسبه‌شده',
     calculatedColumnRemove: 'حذف ستون محاسبه‌شده',
     calculatedColumnTitle: 'عنوان',
     calculatedColumnType: 'نوع',
@@ -908,6 +918,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     calculatedColumnExpressionAmbiguousReference:
         'ارجاع مبهم ستون "${variable}". از فهرست ستون‌ها یا یک مسیر گروه دقیق‌تر استفاده کنید.',
     calculatedColumnExpressionUnknownReference: 'ارجاع ناشناخته ستون "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'نمی‌توان از ستون "${variable}" در این عبارت استفاده کرد.',
     calculatedColumnExpressionEmpty: 'یک عبارت وارد کنید',
     calculatedColumnTitleEmpty: 'یک عنوان وارد کنید',
     calculatedColumnApply: 'اعمال',

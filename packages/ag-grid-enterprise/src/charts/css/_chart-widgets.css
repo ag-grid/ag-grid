@@ -29,6 +29,10 @@
     margin-top: -4px;
     border-radius: 3px;
     background-color: var(--ag-foreground-color);
+
+    @media (forced-colors: active) {
+        background-color: CanvasText;
+    }
 }
 
 .ag-angle-select-field {

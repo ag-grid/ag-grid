@@ -9,6 +9,7 @@
     font-size: var(--ag-header-font-size);
     font-family: var(--ag-header-font-family);
     font-weight: var(--ag-header-font-weight);
+    font-variant-numeric: tabular-nums;
     border: none;
 }
 
@@ -21,7 +22,7 @@
     cursor: row-resize;
 }
 
-/* stylelint-disable-next-line selector-max-specificity */
+/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
 .ag-grid-pinned-bottom-rows .ag-row-numbers-resizer {
     bottom: unset;
     top: -2px;
@@ -29,6 +30,11 @@
 
 :where(.ag-row-number-header.ag-row-number-selection-enabled) {
     cursor: cell;
+}
+
+/* a background-image overlays the hover color on top of the header and range background colors */
+:where(.ag-row-hover:not(.ag-full-width-row)) .ag-row-number-cell {
+    background-image: linear-gradient(var(--ag-row-header-hover-color), var(--ag-row-header-hover-color));
 }
 
 .ag-row-number-range-highlight {
@@ -41,6 +47,7 @@
 
 :where(.ag-ltr) {
     :where(.ag-row-number-header):not(.ag-header-cell-last-left-pinned),
+    :where(.ag-row-number-floating-filter),
     :where(.ag-cell.ag-row-number-cell):not(.ag-cell-last-left-pinned) {
         /* rtl:ignore */
         border-right: var(--ag-pinned-column-border);
@@ -55,6 +62,7 @@
 
 :where(.ag-rtl) {
     :where(.ag-row-number-header):not(.ag-header-cell-first-right-pinned),
+    :where(.ag-row-number-floating-filter),
     :where(.ag-cell.ag-row-number-cell):not(.ag-cell-first-right-pinned) {
         /* rtl:ignore */
         border-left: var(--ag-pinned-column-border);

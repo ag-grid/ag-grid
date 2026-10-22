@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     clearFilter: 'Wissen',
     cancelFilter: 'Annuleren',
     cancelColumnToolPanel: 'Annuleren',
+    resetColumnToolPanel: 'Resetten',
 
     // Filter Titles
     textFilter: 'Tekstfilter',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     addFilterCard: 'Filter toevoegen',
     agTextColumnFilterDisplayName: 'Eenvoudig Filter',
     agNumberColumnFilterDisplayName: 'Eenvoudig Filter',
+    agBigIntColumnFilterDisplayName: 'Eenvoudig Filter',
     agDateColumnFilterDisplayName: 'Eenvoudig Filter',
     agSetColumnFilterDisplayName: 'Selectie Filter',
     agMultiColumnFilterDisplayName: 'Combinatie Filter',
@@ -335,6 +337,10 @@ export const AG_GRID_LOCALE_NL_NL = {
     enabled: 'Ingeschakeld',
 
     // Menu
+    moveLeft: 'Naar links verplaatsen',
+    moveRight: 'Naar rechts verplaatsen',
+    moveUp: 'Omhoog verplaatsen',
+    moveDown: 'Omlaag verplaatsen',
     pinColumn: 'Kolom vastzetten',
     pinLeft: 'Links vastzetten',
     pinRight: 'Rechts vastzetten',
@@ -738,6 +744,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaFilterList: 'Filter Lijst',
     ariaFilterToValue: 'Filter naar waarde',
     ariaFilterValue: 'Filter Waarde',
+    ariaNotInCurrentData: 'niet in de huidige gegevens',
     ariaFilterMenuOpen: 'Open Filtermenu',
     ariaFilteringOperator: 'Filter Operator',
     ariaHidden: 'verborgen',
@@ -760,6 +767,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaRowSelect: 'Druk op SPATIE om deze rij te selecteren',
     ariaRowSelectionDisabled: 'Rijselectie is uitgeschakeld voor deze rij',
     ariaSearch: 'Zoeken',
+    ariaSortPriority: 'Sorteerprioriteit ${priority} van ${count}',
     ariaSortableColumn: 'Druk op ENTER om te sorteren',
     ariaSortableColumnWithCellSelection: 'Druk op ALT ENTER om te sorteren',
     ariaToggleVisibility: 'Druk op SPATIE om zichtbaarheid te schakelen',
@@ -892,9 +900,11 @@ export const AG_GRID_LOCALE_NL_NL = {
     columnHeaderEditCancel: 'Annuleren',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Geen geschikte kolommen gevonden.',
     calculatedColumn: 'Berekende kolom',
     calculatedColumnAdd: 'Berekende kolom toevoegen',
     calculatedColumnEdit: 'Berekende kolom bewerken',
+    calculatedColumnView: 'Berekende kolom bekijken',
     calculatedColumnRemove: 'Berekende kolom verwijderen',
     calculatedColumnTitle: 'Titel',
     calculatedColumnType: 'Type',
@@ -909,6 +919,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     calculatedColumnExpressionAmbiguousReference:
         'Dubbelzinnige kolomverwijzing "${variable}". Gebruik de lijst Kolommen of een specifieker groepspad.',
     calculatedColumnExpressionUnknownReference: 'Onbekende kolomverwijzing "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Kolom "${variable}" kan niet worden gebruikt in deze expressie.',
     calculatedColumnExpressionEmpty: 'Voer een expressie in',
     calculatedColumnTitleEmpty: 'Voer een titel in',
     calculatedColumnApply: 'Toepassen',

@@ -32,10 +32,11 @@ enableDevValidations({
     showOverlayOn: ['deprecation', 'warning', 'error'],
     throwOn: ['warning', 'error'],
     suppress: [],
+    debug: false,
 });
 ```
 
-If you register the module explicitly (instead of using `enableDevValidations`), then pass the same options via `ValidationModule.with({ showOverlayOn: ['deprecation', 'warning', 'error'], throwOn: ['warning', 'error'], suppress: [] })`
+If you register the module explicitly (instead of using `enableDevValidations`), then pass the same options via `ValidationModule.with({ showOverlayOn: ['deprecation', 'warning', 'error'], throwOn: ['warning', 'error'], suppress: [], debug: false })`
 
 Configuration is global and applies to every grid on the page, with the options from the last call being used.
 
@@ -150,3 +151,23 @@ enableDevValidations({
 ```
 
 The id is the number shown in the console message and the overlay, for example `#310`.
+
+### Debug Logging
+
+Set `debug` to `true` to log extra debug information from the grid to the console, prefixed with `AG Grid:`. This may be useful when diagnosing why the grid is behaving unexpectedly.
+
+```js
+enableDevValidations({ debug: true });
+```
+
+Debug logging includes:
+
+- the versions of the AG packages in use when a grid is created
+- a message when each grid has initialised
+- each grid option update, with its previous and new values
+
+Defaults to `false`. As with the other options, `debug` is global and applies to every grid on the page.
+
+{% if isFramework("react") %}
+Debug logging is also useful for diagnosing unnecessary grid updates on each render, see [React Hooks](./react-hooks/#debug-mode).
+{% /if %}

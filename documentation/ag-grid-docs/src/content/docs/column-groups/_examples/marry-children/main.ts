@@ -37,7 +37,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         width: 160,
     },
-    // debug: true,
     columnDefs: columnDefs,
 };
 

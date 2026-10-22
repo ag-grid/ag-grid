@@ -93,7 +93,6 @@ const gridOptions: GridOptions = {
         // the code is unique, so perfect for the id
         return params.data.code;
     },
-    // debug: true
 };
 
 function numberFormatter(params: ValueFormatterParams) {

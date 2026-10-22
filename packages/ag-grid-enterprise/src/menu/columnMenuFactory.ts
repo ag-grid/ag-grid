@@ -8,16 +8,17 @@ import type {
 } from 'ag-grid-community';
 import {
     BeanStub,
-    _getAvailableSortTypes,
     _getDisplaySortForColumn,
     _getGrandTotalRow,
     _isClientSideRowModel,
     _isLegacyMenuEnabled,
+    _isSortTypeAvailable,
 } from 'ag-grid-community';
 
 import { isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { MenuList } from '../widgets/menuList';
 import { _resolveColumnMenuItems } from './columnMenuItemsResolver';
+import { getColumnMenuHeaderCtrl } from './columnMoveMenuUtils';
 import type { MenuItemMapper } from './menuItemMapper';
 import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from './menuSeparators';
 
@@ -29,14 +30,20 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         menuItems: (DefaultColumnMenuItem | MenuItemDef)[],
         column: AgColumn | undefined,
         sourceElement: () => HTMLElement,
-        columnGroup?: AgProvidedColumnGroup
+        columnGroup?: AgProvidedColumnGroup,
+        role?: 'menu' | 'presentation'
     ): MenuList {
         const menuList = parent.createManagedBean(
-            new MenuList(0, {
-                column: column ?? null,
-                node: null,
-                value: null,
-            })
+            new MenuList(
+                0,
+                {
+                    column: column ?? null,
+                    columnGroup: columnGroup ?? null,
+                    node: null,
+                    value: null,
+                },
+                role
+            )
         );
 
         const menuItemsMapped = (this.beans.menuItemMapper as MenuItemMapper).mapWithStockItems(
@@ -56,9 +63,10 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
     public getMenuItems(
         column: AgColumn | null = null,
-        columnGroup: AgProvidedColumnGroup | null = null
+        columnGroup: AgProvidedColumnGroup | null = null,
+        sourceElement?: HTMLElement
     ): (DefaultColumnMenuItem | MenuItemDef)[] {
-        const defaultItems = this.getDefaultMenuOptions(column, columnGroup);
+        const defaultItems = this.getDefaultMenuOptions(column, columnGroup, sourceElement);
         // Copy so normalising never mutates a user-provided columnMenuItems/mainMenuItems array in place.
         const result = [..._resolveColumnMenuItems(this.gos, column, columnGroup, 'columnMenu', defaultItems)];
 
@@ -71,7 +79,8 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
     private getDefaultMenuOptions(
         column: AgColumn | null,
-        columnGroup: AgProvidedColumnGroup | null = null
+        columnGroup: AgProvidedColumnGroup | null = null,
+        sourceElement?: HTMLElement
     ): DefaultMenuItem[] {
         const result: DefaultMenuItem[] = [];
 
@@ -90,6 +99,12 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         const isLegacyMenuEnabled = _isLegacyMenuEnabled(gos);
 
         const addColumnItems = () => {
+            const headerColumn = getColumnMenuHeaderCtrl(beans, sourceElement)?.column;
+            const group = headerColumn && !headerColumn.isColumn ? headerColumn : columnGroup;
+            const columnsToMove = column ? [column] : group?.getLeafColumns();
+            if (columnsToMove && beans.colMoves && !beans.colMoves.isMovingSuppressed(columnsToMove)) {
+                result.push('moveLeft', 'moveRight', MENU_ITEM_SEPARATOR);
+            }
             if (!isLegacyMenuEnabled && colChooserFactory) {
                 result.push('columnChooser');
             }
@@ -98,8 +113,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
 
         if (!column) {
             if (columnGroup && beans.colHeaderEditSvc?.isEditable(columnGroup)) {
-                result.push('editColumnName');
-                result.push(MENU_ITEM_SEPARATOR);
+                result.push('editColumnName', MENU_ITEM_SEPARATOR);
             }
             addColumnItems();
             return result;
@@ -125,9 +139,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
                 column,
                 beans
             );
-            const allowedSortTypes = _getAvailableSortTypes(gos, column);
-
-            if (allowedSortTypes.has('default')) {
+            if (_isSortTypeAvailable(gos, column, 'default')) {
                 if (!(isAscending && isDefaultSort)) {
                     result.push('sortAscending');
                 }
@@ -135,7 +147,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
                     result.push('sortDescending');
                 }
             }
-            if (allowedSortTypes.has('absolute')) {
+            if (_isSortTypeAvailable(gos, column, 'absolute')) {
                 if (!(isAscending && isAbsoluteSort)) {
                     result.push('sortAbsoluteAscending');
                 }
@@ -150,8 +162,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         }
 
         if (menuSvc?.isFilterMenuItemEnabled(column)) {
-            result.push('columnFilter');
-            result.push(MENU_ITEM_SEPARATOR);
+            result.push('columnFilter', MENU_ITEM_SEPARATOR);
         }
 
         if (allowPinning) {
@@ -173,16 +184,13 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
                 result.push('calculatedColumn');
             }
             if (column?.isCalculatedCol) {
-                result.push('editCalculatedColumn');
-                result.push('removeCalculatedColumn');
+                result.push('editCalculatedColumn', 'removeCalculatedColumn');
             }
             result.push(MENU_ITEM_SEPARATOR);
         }
 
         if (column && beans.colHeaderEditSvc?.isEditable(column)) {
-            result.push(MENU_ITEM_SEPARATOR);
-            result.push('editColumnName');
-            result.push(MENU_ITEM_SEPARATOR);
+            result.push(MENU_ITEM_SEPARATOR, 'editColumnName', MENU_ITEM_SEPARATOR);
         }
 
         if (allowPinning || allowValueAgg) {
@@ -193,8 +201,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             if (!colDef.suppressAutoSize) {
                 result.push('autoSizeThis');
             }
-            result.push('autoSizeAll');
-            result.push(MENU_ITEM_SEPARATOR);
+            result.push('autoSizeAll', MENU_ITEM_SEPARATOR);
         }
 
         if (rowGroupColsSvc && gos.isModuleRegistered('SharedRowGrouping')) {
@@ -229,8 +236,7 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
             (_isClientSideRowModel(gos) || gos.get('ssrmExpandAllAffectsAllRows')) &&
             (treeData || rowGroupCount > (colModel.pivotMode ? 1 : 0))
         ) {
-            result.push('expandAll');
-            result.push('contractAll');
+            result.push('expandAll', 'contractAll');
         }
 
         return result;

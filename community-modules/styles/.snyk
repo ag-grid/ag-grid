@@ -1,6 +1,56 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-BRACEEXPANSION-20244952:
+    - '@vusion/webfonts-generator@0.8.0 > ttf2woff2@4.0.5 > node-gyp@9.4.1 > make-fetch-happen@10.2.1 > cacache@16.1.3 > glob@8.1.0 > minimatch@5.1.6 > brace-expansion@2.1.4':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:31:45.140Z
+    - '@vusion/webfonts-generator@0.8.0 > svgicons2svgfont@10.0.6 > glob@7.2.3 > minimatch@3.1.2 > brace-expansion@1.1.18':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:31:45.138Z
+    - npm-run-all@4.1.5 > minimatch@3.1.2 > brace-expansion@1.1.18:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:31:45.133Z
+  SNYK-JS-BRACEEXPANSION-20244948:
+    - '@vusion/webfonts-generator@0.8.0 > ttf2woff2@4.0.5 > node-gyp@9.4.1 > make-fetch-happen@10.2.1 > cacache@16.1.3 > glob@8.1.0 > minimatch@5.1.6 > brace-expansion@2.1.4':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:30:45.976Z
+    - '@vusion/webfonts-generator@0.8.0 > svgicons2svgfont@10.0.6 > glob@7.2.3 > minimatch@3.1.2 > brace-expansion@1.1.18':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:30:45.975Z
+    - npm-run-all@4.1.5 > minimatch@3.1.2 > brace-expansion@1.1.18:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:30:45.968Z
+  SNYK-JS-SHELLQUOTE-20250993:
+    - npm-run-all@4.1.5 > shell-quote@1.10.0:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:23:41.824Z
+  SNYK-JS-HANDLEBARS-20574183:
+    - '@vusion/webfonts-generator@0.8.0 > handlebars@4.7.8':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:19:57.370Z
+  SNYK-JS-HANDLEBARS-20557395:
+    - '@vusion/webfonts-generator@0.8.0 > handlebars@4.7.8':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:19:29.651Z
   SNYK-JS-HTTPCACHESEMANTICS-19964068:
     - '@vusion/webfonts-generator@0.8.0 > ttf2woff2@4.0.5 > node-gyp@9.4.1 > make-fetch-happen@10.2.1 > http-cache-semantics@4.2.0':
         reason: >-
@@ -14,6 +64,11 @@ ignore:
         expires: '2027-03-02T00:00:00.000Z'
         created: 2026-09-24T09:38:20.442Z
   SNYK-JS-BRACES-19963945:
+    - sass@1.105.0 > @parcel/watcher@2.5.1 > micromatch@4.0.8 > braces@3.0.3:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:41:24.011Z
     - chokidar-cli@3.0.0 > chokidar@3.6.0 > braces@3.0.3:
         reason: >-
             Used in build & dev - not included in final production build
@@ -50,6 +105,11 @@ ignore:
         expires: 2027-03-02T00:00:00.000Z
         created: 2026-03-31T13:30:25.082Z
   SNYK-JS-PICOMATCH-15765511:
+    - sass@1.105.0 > @parcel/watcher@2.5.1 > micromatch@4.0.8 > picomatch@2.3.1:
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-12T09:41:48.469Z
     - chokidar-cli@3.0.0 > chokidar@3.6.0 > readdirp@3.6.0 > picomatch@2.3.1:
         reason: Used in build & dev - not included in final production build
         expires: 2027-03-02T00:00:00.000Z

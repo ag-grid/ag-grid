@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     clearFilter: 'Očisti',
     cancelFilter: 'Odustani',
     cancelColumnToolPanel: 'Odustani',
+    resetColumnToolPanel: 'Poništi',
 
     // Filter Titles
     textFilter: 'Tekstualni filter',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     addFilterCard: 'Dodaj filtriranje',
     agTextColumnFilterDisplayName: 'Jednostavan filter',
     agNumberColumnFilterDisplayName: 'Jednostavan filter',
+    agBigIntColumnFilterDisplayName: 'Jednostavan filter',
     agDateColumnFilterDisplayName: 'Jednostavan filter',
     agSetColumnFilterDisplayName: 'Filter za odabir',
     agMultiColumnFilterDisplayName: 'Kombinirani filter',
@@ -336,6 +338,10 @@ export const AG_GRID_LOCALE_HR_HR = {
     enabled: 'Omogućeno',
 
     // Menu
+    moveLeft: 'Pomakni lijevo',
+    moveRight: 'Pomakni desno',
+    moveUp: 'Pomakni gore',
+    moveDown: 'Pomakni dolje',
     pinColumn: 'Prikvači stupac',
     pinLeft: 'Prikvači lijevo',
     pinRight: 'Prikvači desno',
@@ -739,6 +745,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     ariaFilterList: 'Popis filtera',
     ariaFilterToValue: 'Filtriraj do vrijednosti',
     ariaFilterValue: 'Vrijednost filtera',
+    ariaNotInCurrentData: 'nije u trenutačnim podacima',
     ariaFilterMenuOpen: 'Otvori izbornik filtera',
     ariaFilteringOperator: 'Operator filtriranja',
     ariaHidden: 'skriveno',
@@ -760,6 +767,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     ariaRowSelect: 'Pritisnite SPACE za odabir ovog retka',
     ariaRowSelectionDisabled: 'Odabir retka je onemogućen za ovaj redak',
     ariaSearch: 'Pretraživanje',
+    ariaSortPriority: 'Prioritet sortiranja ${priority} od ${count}',
     ariaSortableColumn: 'Pritisnite ENTER za sortiranje',
     ariaSortableColumnWithCellSelection: 'Pritisnite ALT ENTER za sortiranje',
     ariaToggleVisibility: 'Pritisnite SPACE za uključivanje/isključivanje vidljivosti',
@@ -892,9 +900,11 @@ export const AG_GRID_LOCALE_HR_HR = {
     columnHeaderEditCancel: 'Odustani',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nisu pronađeni odgovarajući stupci.',
     calculatedColumn: 'Izračunati stupac',
     calculatedColumnAdd: 'Dodaj izračunati stupac',
     calculatedColumnEdit: 'Uredi izračunati stupac',
+    calculatedColumnView: 'Prikaži izračunati stupac',
     calculatedColumnRemove: 'Ukloni izračunati stupac',
     calculatedColumnTitle: 'Naslov',
     calculatedColumnType: 'Vrsta',
@@ -909,6 +919,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     calculatedColumnExpressionAmbiguousReference:
         'Dvosmislena referenca stupca "${variable}". Upotrijebite popis Stupci ili određeniju putanju grupe.',
     calculatedColumnExpressionUnknownReference: 'Nepoznata referenca stupca "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Stupac "${variable}" ne može se koristiti u ovom izrazu.',
     calculatedColumnExpressionEmpty: 'Unesite izraz',
     calculatedColumnTitleEmpty: 'Unesite naslov',
     calculatedColumnApply: 'Primijeni',

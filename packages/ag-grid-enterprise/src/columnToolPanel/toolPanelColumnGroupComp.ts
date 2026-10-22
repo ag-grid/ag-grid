@@ -31,7 +31,10 @@ import {
     _resolveHeaderTooltipValue,
 } from 'ag-grid-community';
 
+import { getGridColumnGroup } from '../columns/providedColumnGroupUtils';
+import { _isContextMenuKey } from '../widgets/menuPopupUtils';
 import type { ColumnModelItem } from './columnModelItem';
+import type { ToolPanelColumnMove } from './columnMoveUtils';
 import {
     ColumnSelectionLabelRendererFeature,
     isColumnSelectionLabelRendererEnabled,
@@ -82,7 +85,8 @@ export class ToolPanelColumnGroupComp extends Component {
         private readonly eventType: ColumnEventType,
         private readonly focusWrapper: HTMLElement,
         private readonly params: ToolPanelColumnCompParams,
-        private readonly source: ColumnSelectionPanelSource
+        private readonly source: ColumnSelectionPanelSource,
+        private readonly columnMove?: ToolPanelColumnMove
     ) {
         super();
         const { columnGroup, depth } = modelItem;
@@ -92,6 +96,14 @@ export class ToolPanelColumnGroupComp extends Component {
 
     private get displayName(): string | null {
         return this.modelItem.displayName;
+    }
+
+    /**
+     * The group user callbacks receive. Resolved on read, not cached: a custom layout keeps this comp
+     * across grid column changes, which can add or replace the grid's group.
+     */
+    private get gridColumnGroup(): AgProvidedColumnGroup {
+        return getGridColumnGroup(this.beans, this.columnGroup);
     }
 
     public postConstruct(): void {
@@ -117,7 +129,7 @@ export class ToolPanelColumnGroupComp extends Component {
                     params,
                     source,
                     null,
-                    columnGroup,
+                    this.gridColumnGroup,
                     () => this.displayName
                 )
             );
@@ -142,7 +154,7 @@ export class ToolPanelColumnGroupComp extends Component {
                         _addGridCommonParams<TooltipCallbackParams>(gos, {
                             location: 'columnToolPanelColumnGroup',
                             colDef,
-                            column: columnGroup,
+                            column: this.gridColumnGroup,
                             value: displayName,
                             valueFormatted: displayName,
                         })
@@ -153,7 +165,7 @@ export class ToolPanelColumnGroupComp extends Component {
                     const colDef = columnGroup.getColGroupDef();
                     return {
                         ...(colDef ? { colDef } : {}),
-                        column: columnGroup,
+                        column: this.gridColumnGroup,
                         valueFormatted: this.displayName,
                     };
                 },
@@ -165,6 +177,8 @@ export class ToolPanelColumnGroupComp extends Component {
         this.addManagedElementListeners(eLabel, { click: this.onLabelClicked.bind(this) });
         this.addManagedListeners(cbSelect, { fieldValueChanged: this.onCheckboxChanged.bind(this) });
         this.addManagedListeners(modelItem, { expandedChanged: this.onExpandChanged.bind(this) });
+        // Grid-level, not the grid group's own event: a custom layout keeps this copy while the grid's group is
+        // replaced, and a child's rename can change the name a group headerValueGetter returns.
         this.addManagedEventListeners({ columnHeaderNameChanged: this.onHeaderNameChanged.bind(this) });
 
         const touchListener = new TouchListener(this.getGui(), false);
@@ -186,7 +200,12 @@ export class ToolPanelColumnGroupComp extends Component {
         this.refreshAriaLabel();
         this.setupTooltip();
 
-        const classes = _getToolPanelClassesFromColDef(columnGroup.getColGroupDef(), this.beans, null, columnGroup);
+        const classes = _getToolPanelClassesFromColDef(
+            columnGroup.getColGroupDef(),
+            this.beans,
+            null,
+            this.gridColumnGroup
+        );
         for (const c of classes) {
             this.toggleCss(c, true);
         }
@@ -211,6 +230,10 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
+        if (_isContextMenuKey(e)) {
+            this.onContextMenu(e);
+            return;
+        }
         switch (e.key) {
             case KeyCode.LEFT:
                 e.preventDefault();
@@ -229,9 +252,17 @@ export class ToolPanelColumnGroupComp extends Component {
         }
     }
 
-    private onContextMenu(e: MouseEvent | Touch): void {
+    private onContextMenu(e: MouseEvent | Touch | KeyboardEvent): void {
         const contextMenu = this.createBean(
-            new ToolPanelContextMenu(this.columnGroup, e, this.focusWrapper, this.params, this.eventType, this.source)
+            new ToolPanelContextMenu(
+                this.columnGroup,
+                e,
+                this.focusWrapper,
+                this.params,
+                this.eventType,
+                this.source,
+                this.columnMove
+            )
         );
         this.addDestroyFunc(() => {
             if (contextMenu.isAlive()) {

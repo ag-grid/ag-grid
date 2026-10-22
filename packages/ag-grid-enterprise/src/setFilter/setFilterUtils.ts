@@ -4,14 +4,48 @@ import { _defaultComparator, _last, _toStringOrNull, _translate } from 'ag-stack
 import type {
     AgColumn,
     BeanCollection,
+    ColDef,
+    DataTypeFormatValueFunc,
     ISetFilterParams,
     TextFormatter,
     ValueFormatterParams,
 } from 'ag-grid-community';
 import { _isBlank } from 'ag-grid-community';
 
+import type { SetFilterModelTreeItem, SetFilterTreeListFormatter } from './iSetDisplayValueModel';
 import type { SetFilterLocaleTextKey } from './localeText';
 import { DEFAULT_LOCALE_TEXT } from './localeText';
+
+/** Whether every key under the item, its own and its descendants', is in `keys`. */
+export function areAllTreeKeysIn(item: SetFilterModelTreeItem, keys: ReadonlySet<string | null>): boolean {
+    const itemKeys = item.keys;
+    if (itemKeys) {
+        for (let i = 0, len = itemKeys.length; i < len; ++i) {
+            if (!keys.has(itemKeys[i])) {
+                return false;
+            }
+        }
+    }
+    const children = item.children;
+    if (children) {
+        for (const child of children.values()) {
+            if (!areAllTreeKeysIn(child, keys)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+/** A tree item's label; a key-only leaf is labelled by its key, having no value for the formatter to describe. */
+export function formatTreeKey(
+    item: SetFilterModelTreeItem,
+    treeListFormatter: SetFilterTreeListFormatter | undefined
+): string | null {
+    return treeListFormatter && !item.keyOnly
+        ? treeListFormatter(item.treeKey, item.depth, item.parentTreeKeys)
+        : item.treeKey;
+}
 
 /** What the Mini Filter searches when the column configures no `textFormatter`. */
 export const unformattedSetFilterText: TextFormatter = (value) => value ?? null;
@@ -38,6 +72,12 @@ export function processDataPath(
     return processedDataPath;
 }
 
+/** The key creator a data type gives its columns, which keys each value by its formatted text. */
+export function getDataTypeKeyCreator(beans: BeanCollection, colDef: ColDef): DataTypeFormatValueFunc | undefined {
+    const cellDataType = colDef.cellDataType;
+    return typeof cellDataType === 'string' ? beans.dataTypeSvc?.getFormatValue(cellDataType) : undefined;
+}
+
 /**
  * The Set Filter's missing value. Whitespace counts, so a blank cannot split into several keys the list
  * then renders as separate empty rows.
@@ -45,6 +85,18 @@ export function processDataPath(
 export function setFilterNullIfBlank<T>(value?: T): T | null {
     // `_isBlank` is not a type predicate, so the null test is what narrows `undefined` away, not redundancy.
     return value == null || _isBlank(value) ? null : value;
+}
+
+/** Each key under its case-folded form, so a key named in another case finds the one the values hold. */
+export function mapFormattedKeys(
+    keys: Iterable<string | null>,
+    caseFormat: <T extends string | null>(valueToFormat: T) => T
+): Map<string | null, string | null> {
+    const formattedKeys = new Map<string | null, string | null>();
+    for (const key of keys) {
+        formattedKeys.set(caseFormat(key), key);
+    }
+    return formattedKeys;
 }
 
 /** The Set Filter formats with its own formatter only, never the column's. */
@@ -68,25 +120,15 @@ export function translateForSetFilter(
 export function applyExcelModeOptions<V>(params: ISetFilterParams<any, V>, beans: BeanCollection): void {
     // apply default options to match Excel behaviour, unless they have already been specified
     if (params.excelMode === 'windows') {
-        if (!params.buttons) {
-            params.buttons = ['apply', 'cancel'];
-        }
+        params.buttons ??= ['apply', 'cancel'];
 
-        if (params.closeOnApply == null) {
-            params.closeOnApply = true;
-        }
+        params.closeOnApply ??= true;
     } else if (params.excelMode === 'mac') {
-        if (!params.buttons) {
-            params.buttons = ['reset'];
-        }
+        params.buttons ??= ['reset'];
 
-        if (params.applyMiniFilterWhileTyping == null) {
-            params.applyMiniFilterWhileTyping = true;
-        }
+        params.applyMiniFilterWhileTyping ??= true;
 
-        if (params.debounceMs == null) {
-            params.debounceMs = 500;
-        }
+        params.debounceMs ??= 500;
     }
     if (params.excelMode && params.defaultToNothingSelected) {
         params.defaultToNothingSelected = false;
@@ -94,25 +136,20 @@ export function applyExcelModeOptions<V>(params: ISetFilterParams<any, V>, beans
     }
 }
 
-export function createTreeDataOrGroupingComparator(): (
-    a: [string | null, string[] | null],
-    b: [string | null, string[] | null]
-) => number {
-    return ([_aKey, aValue]: [string | null, string[] | null], [_bKey, bValue]: [string | null, string[] | null]) => {
-        if (aValue == null) {
-            return bValue == null ? 0 : -1;
-        } else if (bValue == null) {
+export function treeDataOrGroupingComparator(aValue: string[] | null, bValue: string[] | null): number {
+    if (aValue == null) {
+        return bValue == null ? 0 : -1;
+    } else if (bValue == null) {
+        return 1;
+    }
+    for (let i = 0; i < aValue.length; i++) {
+        if (i >= bValue.length) {
             return 1;
         }
-        for (let i = 0; i < aValue.length; i++) {
-            if (i >= bValue.length) {
-                return 1;
-            }
-            const diff = _defaultComparator(aValue[i], bValue[i]);
-            if (diff !== 0) {
-                return diff;
-            }
+        const diff = _defaultComparator(aValue[i], bValue[i]);
+        if (diff !== 0) {
+            return diff;
         }
-        return 0;
-    };
+    }
+    return 0;
 }

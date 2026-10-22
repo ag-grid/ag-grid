@@ -390,8 +390,8 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                 )
             );
 
-            pagingPanel.querySelectorAll('.ag-paging-row-summary-panel-number').forEach((panelNumber) => {
-                const dataRef = panelNumber.getAttribute('data-ref');
+            pagingPanel.querySelectorAll<HTMLElement>('.ag-paging-row-summary-panel-number').forEach((panelNumber) => {
+                const dataRef = panelNumber.dataset.ref;
                 switch (dataRef) {
                     case 'lbFirstRowOnPage':
                         setTestId(panelNumber, agTestIdFor.paginationPanelFirstRowOnPage(panelNumber.textContent));
@@ -412,26 +412,32 @@ export class TestIdService extends BeanStub implements NamedBean, ITestIdService
                 );
             });
 
-            pagingPanel.querySelectorAll('.ag-paging-page-summary-panel .ag-paging-number').forEach((pagingNumber) => {
-                const dataRef = pagingNumber.getAttribute('data-ref');
-                switch (dataRef) {
-                    case 'lbCurrentStatic':
-                        setTestId(
-                            pagingNumber,
-                            agTestIdFor.paginationSummaryPanelCurrentPage(pagingNumber.textContent)
-                        );
-                        break;
-                    case 'lbCurrentInput': {
-                        const inputValue =
-                            pagingNumber.querySelector<HTMLInputElement>('input')?.value ?? pagingNumber.textContent;
-                        setTestId(pagingNumber, agTestIdFor.paginationSummaryPanelCurrentPage(inputValue));
-                        break;
+            pagingPanel
+                .querySelectorAll<HTMLElement>('.ag-paging-page-summary-panel .ag-paging-number')
+                .forEach((pagingNumber) => {
+                    const dataRef = pagingNumber.dataset.ref;
+                    switch (dataRef) {
+                        case 'lbCurrentStatic':
+                            setTestId(
+                                pagingNumber,
+                                agTestIdFor.paginationSummaryPanelCurrentPage(pagingNumber.textContent)
+                            );
+                            break;
+                        case 'lbCurrentInput': {
+                            const inputValue =
+                                pagingNumber.querySelector<HTMLInputElement>('input')?.value ??
+                                pagingNumber.textContent;
+                            setTestId(pagingNumber, agTestIdFor.paginationSummaryPanelCurrentPage(inputValue));
+                            break;
+                        }
+                        case 'lbTotal':
+                            setTestId(
+                                pagingNumber,
+                                agTestIdFor.paginationSummaryPanelTotalPage(pagingNumber.textContent)
+                            );
+                            break;
                     }
-                    case 'lbTotal':
-                        setTestId(pagingNumber, agTestIdFor.paginationSummaryPanelTotalPage(pagingNumber.textContent));
-                        break;
-                }
-            });
+                });
 
             pagingPanel.querySelectorAll('.ag-paging-page-number').forEach((pageNumber) => {
                 setTestId(pageNumber, agTestIdFor.paginationPageNumber(pageNumber.textContent));

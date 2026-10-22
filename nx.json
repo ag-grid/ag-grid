@@ -133,7 +133,12 @@
       "cache": true
     },
     "lint": {
-      "inputs": ["default", "{workspaceRoot}/eslint.config.mjs", "{workspaceRoot}/yarn.lock"],
+      "inputs": [
+        "default",
+        "{workspaceRoot}/eslint.config.mjs",
+        "{workspaceRoot}/eslint-rules/**/*",
+        "{workspaceRoot}/yarn.lock"
+      ],
       "cache": true
     },
     "lint:depcruise": {

@@ -1,5 +1,5 @@
 import type { AgEvent } from '../interfaces/agEvent';
-import type { AgFrameworkOverrides } from '../interfaces/agFrameworkOverrides';
+import type { AgFrameworkOverrides, AgListenerWrapper } from '../interfaces/agFrameworkOverrides';
 import type { IEventEmitter, IEventListener, IGlobalEventListener } from '../interfaces/iEventEmitter';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -10,13 +10,13 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
     private readonly globalSyncListeners = new Set<IGlobalEventListener<TEventType>>();
     private readonly globalAsyncListeners = new Set<IGlobalEventListener<TEventType>>();
 
-    private frameworkOverrides?: AgFrameworkOverrides;
+    private frameworkOverrides: AgFrameworkOverrides | undefined = undefined;
 
     private asyncFunctionsQueue: (() => void)[] = [];
     private scheduled = false;
 
-    // using an object performs better than a Set for the number of different events we have
-    private firedEvents: { [key in TEventType]?: boolean } = {};
+    /** Set by a framework that may wrap user listeners: maps each user listener to the one registered for it. */
+    public listenerWrapper: AgListenerWrapper | undefined = undefined;
 
     public setFrameworkOverrides(frameworkOverrides: AgFrameworkOverrides): void {
         this.frameworkOverrides = frameworkOverrides;
@@ -51,6 +51,17 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
         );
     }
 
+    /** Whether dispatching `eventType` would reach a listener, so a caller can skip building the event. A global
+     *  listener receives every type, so on a service with one (the grid's always has) this is always `true`. */
+    public hasListeners(eventType: TEventType): boolean {
+        return (
+            this.allSyncListeners.has(eventType) ||
+            this.allAsyncListeners.has(eventType) ||
+            this.globalSyncListeners.size !== 0 ||
+            this.globalAsyncListeners.size !== 0
+        );
+    }
+
     public addEventListener<T extends TEventType>(eventType: T, listener: IEventListener<T>, async = false): void {
         this.getListeners(eventType, async, true)!.add(listener);
     }
@@ -79,14 +90,6 @@ export class LocalEventService<TEventType extends string> implements IEventEmitt
     public dispatchEvent<TEvent extends AgEvent<TEventType>>(event: TEvent): void {
         this.dispatchToListeners(event, true);
         this.dispatchToListeners(event, false);
-
-        this.firedEvents[event.type] = true;
-    }
-
-    public dispatchEventOnce(event: AgEvent<TEventType>): void {
-        if (!this.firedEvents[event.type]) {
-            this.dispatchEvent(event);
-        }
     }
 
     private dispatchToListeners(event: AgEvent<TEventType>, async: boolean) {

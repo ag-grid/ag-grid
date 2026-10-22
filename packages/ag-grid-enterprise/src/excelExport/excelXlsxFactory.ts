@@ -90,7 +90,7 @@ export function createXlsxExcel(
     addSheetName(worksheet);
     registerStyles(styles, XLSX_SHEET_NAMES.length);
 
-    const newConfig = Object.assign({}, config);
+    const newConfig = { ...config };
 
     // Table export is not compatible with pivot mode nor master/detail features
     if (config.exportAsExcelTable && config.pivotModeActive) {
@@ -199,7 +199,7 @@ export function addXlsxHeaderFooterImageToMap(
         XLSX_WORKSHEET_HEADER_FOOTER_IMAGES.set(sheetIndex, headerFooterImagesForSheet);
     }
 
-    if (!headerFooterImagesForSheet.find((img) => img.id === image.id)) {
+    if (!headerFooterImagesForSheet.some((img) => img.id === image.id)) {
         headerFooterImagesForSheet.push(image as ExcelHeaderFooterCalculatedImage);
     }
 }
@@ -212,19 +212,14 @@ export function addXlsxBodyImageToMap(
     rowHeight?: number | ((params: RowHeightCallbackParams) => number)
 ): void {
     const sheetIndex = XLSX_SHEET_NAMES.length;
-    const { row, column } = image.position || {};
+    const { row, column } = image.position ?? {};
     const calculatedImage = image as ExcelCalculatedImage;
 
     if (columnsToExport) {
         if (rowIndex != null && col != null && (!row || !column)) {
-            if (!image.position) {
-                image.position = {};
-            }
+            image.position ??= {};
 
-            image.position = Object.assign({}, image.position, {
-                row: rowIndex,
-                column: columnsToExport.indexOf(col) + 1,
-            });
+            image.position = { ...image.position, row: rowIndex, column: columnsToExport.indexOf(col) + 1 };
         }
         setExcelImageTotalWidth(calculatedImage, columnsToExport);
         setExcelImageTotalHeight(calculatedImage, rowHeight);
@@ -286,7 +281,7 @@ function addSheetName(worksheet: ExcelWorksheet): void {
         if (append === '') {
             append = '_1';
         } else {
-            const curr = parseInt(append.slice(1), 10);
+            const curr = Number.parseInt(append.slice(1), 10);
             append = `_${curr + 1}`;
         }
     }
@@ -415,7 +410,7 @@ export function createXlsxDrawing(sheetIndex: number) {
 }
 
 export function createXlsxComments(sheetIndex: number, author: string, suppressPrependAuthorToNotes?: boolean) {
-    const comments = XLSX_WORKSHEET_COMMENTS.get(sheetIndex) || [];
+    const comments = XLSX_WORKSHEET_COMMENTS.get(sheetIndex) ?? [];
     const defaultAuthor = author || 'AG Grid';
     const prependAuthor = !suppressPrependAuthorToNotes;
 
@@ -423,7 +418,7 @@ export function createXlsxComments(sheetIndex: number, author: string, suppressP
 }
 
 export function createXlsxDrawingRel(sheetIndex: number) {
-    const worksheetImageIds = XLSX_WORKSHEET_IMAGE_IDS.get(sheetIndex) || [];
+    const worksheetImageIds = XLSX_WORKSHEET_IMAGE_IDS.get(sheetIndex) ?? [];
     const XMLArr: ExcelRelationship[] = [];
 
     for (const [key, value] of worksheetImageIds) {
@@ -448,7 +443,7 @@ export function createXlsxNoteVmlDrawing(sheetIndex: number) {
 }
 
 export function createXlsxVmlDrawingRel(sheetIndex: number) {
-    const worksheetHeaderFooterImages = XLSX_WORKSHEET_HEADER_FOOTER_IMAGES.get(sheetIndex) || [];
+    const worksheetHeaderFooterImages = XLSX_WORKSHEET_HEADER_FOOTER_IMAGES.get(sheetIndex) ?? [];
     const XMLArr: ExcelRelationship[] = [];
 
     for (let i = 0; i < worksheetHeaderFooterImages.length; i++) {

@@ -80,6 +80,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     clearFilter: 'Išvalyti',
     cancelFilter: 'Atšaukti',
     cancelColumnToolPanel: 'Atšaukti',
+    resetColumnToolPanel: 'Atstatyti',
 
     // Filter Titles
     textFilter: 'Teksto filtras',
@@ -117,6 +118,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     addFilterCard: 'Pridėti filtrą',
     agTextColumnFilterDisplayName: 'Paprastas filtras',
     agNumberColumnFilterDisplayName: 'Paprastas filtras',
+    agBigIntColumnFilterDisplayName: 'Paprastas filtras',
     agDateColumnFilterDisplayName: 'Paprastas filtras',
     agSetColumnFilterDisplayName: 'Pasirinkimo filtras',
     agMultiColumnFilterDisplayName: 'Kombinuotas filtras',
@@ -339,6 +341,10 @@ export const AG_GRID_LOCALE_LT_LT = {
     enabled: 'Įjungta',
 
     // Menu
+    moveLeft: 'Perkelti į kairę',
+    moveRight: 'Perkelti į dešinę',
+    moveUp: 'Perkelti aukštyn',
+    moveDown: 'Perkelti žemyn',
     pinColumn: 'Prisegti stulpelį',
     pinLeft: 'Prisegti kairėje',
     pinRight: 'Prisegti dešinėje',
@@ -755,6 +761,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaFilterList: 'Filtrų sąrašas',
     ariaFilterToValue: 'Filtruoti iki reikšmės',
     ariaFilterValue: 'Filtro reikšmė',
+    ariaNotInCurrentData: 'nėra dabartiniuose duomenyse',
     ariaFilterMenuOpen: 'Atidaryti filtro meniu',
     ariaFilteringOperator: 'Filtravimo operatorius',
     ariaHidden: 'paslėpta',
@@ -777,6 +784,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaRowSelect: 'Spauskite SPACE, kad pažymėtumėte šią eilutę',
     ariaRowSelectionDisabled: 'Eilutės pasirinkimas šioje eilutėje išjungtas',
     ariaSearch: 'Paieška',
+    ariaSortPriority: 'Rikiavimo prioritetas ${priority} iš ${count}',
     ariaSortableColumn: 'Spauskite ENTER, kad rikiuotumėte',
     ariaSortableColumnWithCellSelection: 'Spauskite ALT ENTER, kad rikiuotumėte',
     ariaToggleVisibility: 'Spauskite SPACE, kad perjungtumėte matomumą',
@@ -914,9 +922,11 @@ export const AG_GRID_LOCALE_LT_LT = {
     columnHeaderEditCancel: 'Atšaukti',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Tinkamų stulpelių nerasta.',
     calculatedColumn: 'Skaičiuojamasis stulpelis',
     calculatedColumnAdd: 'Pridėti skaičiuojamąjį stulpelį',
     calculatedColumnEdit: 'Redaguoti skaičiuojamąjį stulpelį',
+    calculatedColumnView: 'Žiūrėti skaičiuojamąjį stulpelį',
     calculatedColumnRemove: 'Pašalinti skaičiuojamąjį stulpelį',
     calculatedColumnTitle: 'Pavadinimas',
     calculatedColumnType: 'Tipas',
@@ -931,6 +941,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     calculatedColumnExpressionAmbiguousReference:
         'Nevienareikšmė stulpelio nuoroda "${variable}". Naudokite stulpelių sąrašą arba konkretesnį grupės kelią.',
     calculatedColumnExpressionUnknownReference: 'Nežinoma stulpelio nuoroda "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Stulpelio "${variable}" negalima naudoti šioje išraiškoje.',
     calculatedColumnExpressionEmpty: 'Įveskite išraišką',
     calculatedColumnTitleEmpty: 'Įveskite pavadinimą',
     calculatedColumnApply: 'Taikyti',

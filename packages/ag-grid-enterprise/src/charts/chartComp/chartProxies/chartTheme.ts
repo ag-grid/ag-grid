@@ -22,12 +22,12 @@ export function createAgChartTheme(
     chartThemeDefaults?: AgChartThemeOverrides,
     updatedOverrides?: AgChartThemeOverrides
 ): AgChartTheme {
-    const { chartOptionsToRestore, chartPaletteToRestore, chartThemeToRestore, agChartsExports } = chartProxyParams;
+    const { chartOptionsToRestore, chartPaletteToRestore, chartThemeToRestore } = chartProxyParams;
     const themeName = getSelectedTheme(chartProxyParams);
-    const stockTheme = isStockTheme(themeName, agChartsExports._Theme);
+    const stockTheme = isStockTheme(themeName);
 
     const rootTheme = stockTheme
-        ? { baseTheme: themeName as AgChartThemeName }
+        ? { baseTheme: themeName }
         : (lookupCustomChartTheme(chartProxyParams, themeName) ?? {});
 
     const gridOptionsThemeOverrides = chartProxyParams.getGridOptionsChartThemeOverrides();
@@ -56,7 +56,7 @@ export function createAgChartTheme(
         crossFilteringOverrides,
         gridOptionsThemeOverrides,
         apiThemeOverrides,
-        { ...(chartOptionsToRestore ?? {}) },
+        { ...chartOptionsToRestore },
         updatedOverrides,
     ];
 
@@ -101,8 +101,23 @@ function isIdenticalPalette(paletteA: AgChartThemePalette, paletteB: AgChartThem
     return arrayCompare(paletteA.fills, paletteB.fills) && arrayCompare(paletteA.strokes, paletteB.strokes);
 }
 
-export function isStockTheme(themeName: string, theme: { themes: Record<string, unknown> }): boolean {
-    return Object.keys(theme.themes).includes(themeName);
+const STOCK_THEMES: Record<AgChartThemeName, true> = {
+    'ag-default': true,
+    'ag-default-dark': true,
+    'ag-sheets': true,
+    'ag-sheets-dark': true,
+    'ag-polychroma': true,
+    'ag-polychroma-dark': true,
+    'ag-vivid': true,
+    'ag-vivid-dark': true,
+    'ag-material': true,
+    'ag-material-dark': true,
+    'ag-financial': true,
+    'ag-financial-dark': true,
+};
+
+export function isStockTheme(themeName: string): themeName is AgChartThemeName {
+    return Object.prototype.hasOwnProperty.call(STOCK_THEMES, themeName);
 }
 
 function createCrossFilterThemeOverrides(
@@ -138,7 +153,6 @@ function createCrossFilterThemeOverrides(
                 series: {
                     fills: {
                         $applyCycle: [
-                            { $cacheMax: { $size: { $path: ['./data', { $path: '/data' }] } } },
                             { $palette: 'fills' },
                             {
                                 $if: [
@@ -151,7 +165,6 @@ function createCrossFilterThemeOverrides(
                     },
                     strokes: {
                         $applyCycle: [
-                            { $cacheMax: { $size: { $path: ['./data', { $path: '/data' }] } } },
                             { $palette: 'strokes' },
                             {
                                 $if: [

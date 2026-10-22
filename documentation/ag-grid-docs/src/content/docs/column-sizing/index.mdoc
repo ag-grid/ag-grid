@@ -52,8 +52,8 @@ into account.
 {% /note %}
 
 {% note %}
-If you manually resize a column with flex either via the API or by dragging the resize handle,
-flex will automatically be disabled for that column.
+A resize that changes a column's width, whether by dragging its resize handle, with the keyboard or through the API,
+turns off its flex and that of the column a [shift resize](#shift-resizing) takes space from.
 {% /note %}
 
 The example below shows flex in action. Things to note are as follows:
@@ -63,6 +63,8 @@ The example below shows flex in action. Things to note are as follows:
 - Column C has `flex: 1` so should be half the size of column B, unless column B is being constrained by its `minWidth`/`maxWidth` rules, in which case it should take up the remaining available space.
 
 {% gridExampleRunner title="Column Flex" name="flex-columns" /%}
+
+Set `animateColumnResizing` to animate flex columns to their new widths when columns are shown or hidden, column groups are expanded or collapsed, or column state or column definitions are applied.
 
 ## Auto-Sizing Columns
 
@@ -182,14 +184,14 @@ This can also be performed on demand via the following API methods:
 
 {% apiDocumentation source="grid-api/api.json" section="columnSizing" names=["autoSizeColumns", "autoSizeAllColumns"] /%}
 
-[Column Groups](./column-groups/) are never considered when calculating the column widths.
+These methods also widen the columns of a [Column Group](./column-groups/) whose header needs more room than its columns have, unless headers are skipped with `skipHeader` or the `skipHeaderOnAutoSize` grid option.
 
 Just like Excel, each column can also be auto-resized by double clicking the right side of the header rather than dragging it. When you do this, the grid will work out the best width to fit the contents of the cells in the column.
 
 {% note %}
 
 - The grid works out the best width by considering the virtually rendered rows only. For example, if your grid has 10,000 rows, but only 50 rendered due to virtualisation of rows, then only these 50 will be considered for working out the width to display. The rendered rows are all the rows you can see on the screen through the vertical scroll plus a small buffer (default buffer size is 20). With [Continuous Auto-Sizing](#continuous-auto-sizing) opted into [scroll-driven re-sizes](#scrolling), the width is worked out again from the rows rendered at each new scroll position.
-- The same applies across columns. Column Virtualisation renders only the columns the horizontal scroll position makes visible, so a grid of 1,000 columns may have only 10 rendered, and the grid can measure only what it renders. A one-off auto-size therefore leaves off-screen columns untouched. To size them, either set `suppressColumnVirtualisation=true` so every column is rendered and measured in one go, or keep virtualisation and use [Continuous Auto-Sizing](#continuous-auto-sizing) with [scroll-driven re-sizes](#scrolling), which fits each column as the scroll brings it into view.
+- The same applies across columns. Column Virtualisation renders only the columns the horizontal scroll position makes visible, plus 200px either side, so a grid of 1,000 columns may have only 10 rendered, and the grid can measure only what it renders. A one-off auto-size therefore leaves off-screen columns untouched. To size them, either set `suppressColumnVirtualisation=true` so every column is rendered and measured in one go, or keep virtualisation and use [Continuous Auto-Sizing](#continuous-auto-sizing) with [scroll-driven re-sizes](#scrolling), which fits each column as the scroll brings it into view.
 - Note that [Pinned Columns](./column-pinning), the [Selection Column](./row-selection-multi-row/#customising-the-checkbox-column) and the [Row Numbers](./row-numbers) column will not be scaled up to fill any empty space when using `scaleUpToFitGridWidth`.
 
 {% /note %}
@@ -296,7 +298,9 @@ See [Column Header Navigation](./keyboard-navigation/#column-header-navigation) 
 
 ## Shift Resizing
 
-If you hold the {% kbd "⇧ Shift" /%} key while dragging the resize handle, the column will take space away from the column adjacent to it. This means the total width for all columns will be constant.
+If you hold the {% kbd "⇧ Shift" /%} key while dragging the resize handle, or while resizing with the keyboard, the column takes space from the column after it, so the total width of the columns stays the same. The resize stops where either column reaches its `minWidth` or `maxWidth`. The last column has no column after it, so it resizes alone.
+
+A group takes space from the next group, or from the next column when that column is not in a group, and the resizable columns there share the change. The resize stops once every resizable column on one side has reached its bound. When there is nothing after the group to take from, or nothing there is resizable, the group resizes alone.
 
 You can also change the default behaviour for resizing. Set the grid property `colResizeDefault='shift'` to have shift resizing as the default and normal resizing to happen when the {% kbd "⇧ Shift" /%} key is pressed.
 
@@ -309,7 +313,7 @@ In the example below, note the following:
 
 ## Resizing Groups
 
-When you resize a group, the extra room is distributed across the columns in the group in proportion to their current widths. A column that reaches its `minWidth` or `maxWidth` keeps that width, and the remaining columns share what is left.
+When you resize a group, the extra room is distributed across the columns in the group in proportion to their current widths. A column that reaches its `minWidth` or `maxWidth` keeps that width, and the remaining columns share what is left. Once every resizable column has reached its bound, the group stops growing or shrinking.
 
 In the example below the groups can be resized as follows:
 

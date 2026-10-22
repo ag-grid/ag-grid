@@ -46,7 +46,7 @@
             "status": "shipped",
             "why": "Avoids unnecessary recomputation and server requests when making several changes at once.",
             "desc": "Stage multiple column, group, and pivot changes in the Columns Tool Panel and commit them together with an Apply action.",
-            "link": "./tool-panel-columns/#deferred-updates"
+            "link": "./tool-panel-columns-deferred-updates/#deferred-updates"
         },
         {
             "id": "AG-17395",
@@ -136,7 +136,7 @@
             "status": "shipped",
             "why": "Gives developers the same control over this menu as they already have over the grid's main context menu.",
             "desc": "Customise the items shown in the Columns Tool Panel's right-click context menu.",
-            "link": "./tool-panel-columns/#custom-menu-items"
+            "link": "./tool-panel-columns-customising/#custom-menu-items"
         },
         {
             "id": "AG-8950",

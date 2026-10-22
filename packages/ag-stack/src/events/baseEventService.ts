@@ -67,8 +67,4 @@ export class BaseEventService<
     public dispatchEvent(event: AgRawEvents<TGlobalEvents, TCommon> | BaseEvents[keyof BaseEvents]): void {
         this.globalSvc.dispatchEvent(this.gos.addCommon<any>(event as any));
     }
-
-    public dispatchEventOnce(event: AgRawEvents<TGlobalEvents, TCommon> | BaseEvents[keyof BaseEvents]): void {
-        this.globalSvc.dispatchEventOnce(this.gos.addCommon<any>(event as any));
-    }
 }

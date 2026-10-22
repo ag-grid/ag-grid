@@ -30,6 +30,8 @@ Search `testing/behavioural` for an existing harness before assuming a behaviour
 
 ## Regression Tests: Cover Every Reproduction Path
 
+This applies once a change needs a test. Styling-only changes, copy, refactors with existing coverage and type-only changes do not; the "Does this change need a test?" section of `.rulesync/rules/testing.md` has the full criteria.
+
 A bug rarely has one trigger. The same broken behaviour is usually reachable through several entry points — a programmatic API call, `applyColumnState`, a panel drag, a tool-panel drop — that run **different code paths** to the same end state. A fix that only patches the path in the ticket's first repro step can leave the others broken.
 
 When writing regression tests for a bug fix:
@@ -98,7 +100,6 @@ testing/
 ├── behavioural/       # Grid behaviour verification
 ├── csp/               # Content Security Policy tests
 ├── module-size/       # Bundle size monitoring
-├── performance/       # Performance regression tests
 └── shared/            # Shared test utilities
 ```
 
@@ -115,7 +116,7 @@ packages/ag-grid-community/src/
 
 ## Running Tests
 
-**Background every one of these commands; never call one in the foreground.** `./behave.sh`, `./checks.sh`, `./benches.sh` and `./docs-e2e.sh` all take minutes, and a foreground call holds the session for the whole run — the user cannot interject and no other work happens. Start it with the agent harness's background mechanism (which wakes the agent when it ends) and carry on; do not `sleep` on it. Reading the result needs no preparation: the first line printed is the log path, `tmp/_<name>-output/<id>/output.log`, holding the full stdout and stderr; `./behave.sh` also writes `result.json` beside it. Grep the log *during* the run to abort early on the first failure instead of waiting out a run already known to be red. Under `CI` do the opposite and run in the foreground: backgrounding exists to keep an interactive session reachable, a workflow has nobody to block, and the scripts capture nothing there for the same reason.
+**Background every one of these commands; never call one in the foreground.** `./behave.sh`, `./checks.sh`, `./benches.sh`, `./docs-e2e.sh` and `./grid-e2e.sh` all take minutes, and a foreground call holds the session for the whole run — the user cannot interject and no other work happens. Start it with the agent harness's background mechanism (which wakes the agent when it ends) and carry on; do not `sleep` on it. Reading the result needs no preparation: the first line printed is the log path, `tmp/_<name>-output/<id>/output.log`, holding the full stdout and stderr; `./behave.sh` also writes `result.json` beside it. Grep the log *during* the run to abort early on the first failure instead of waiting out a run already known to be red. Under `CI` do the opposite and run in the foreground: backgrounding exists to keep an interactive session reachable, a workflow has nobody to block, and the scripts capture nothing there for the same reason.
 
 ### The merged unit suite (Vitest) — `./behave.sh`
 
@@ -168,7 +169,7 @@ which is only "as far as we got".
 Colour (off for an agent or a pipe, on for a terminal and CI) and `DEBUG_PRINT_LIMIT` (1000, not testing-library's
 7000, so a failed query prints a slice rather than the whole grid) are set for you by `behave.sh`.
 
-> `./behave.sh` does not type-check (Vitest strips types via esbuild). Before committing, run `yarn nx run ag-behavioural-testing:build:test` to type-check.
+> `./behave.sh` does not type-check (Vitest strips types via esbuild). Before committing, run `./checks.sh`, whose `build:test` target type-checks the specs.
 >
 > `./behave.sh` and `./benches.sh` resolve only from the repository root. From anywhere else call them by path (`../../behave.sh`) — not via `cd "$(git rev-parse --show-toplevel)" &&`, which every agent harness gates on the `cd`, the `&&` and the `$(…)`.
 >
@@ -178,7 +179,7 @@ Colour (off for an agent or a pipe, on for a terminal and CI) and `DEBUG_PRINT_L
 
 ### Benchmarks
 
-Behavioural benchmarks live in `testing/behavioural/` and run via `./benches.sh`. They run in a real headless Chromium (Playwright) by **default**, so layout-dependent work is measured against a real layout engine. Run `./benches.sh --help` for the full usage (it prints vitest's `bench --help` followed by benches.sh's own options).
+Behavioural benchmarks live in `testing/behavioural/` and run via `./benches.sh`. They run in a real headless Chromium (Playwright), so layout-dependent work is measured against a real layout engine. Run `./benches.sh --help` for the full usage (it prints vitest's `bench --help` followed by benches.sh's own options).
 
 ```bash
 # Run all benchmarks
@@ -190,11 +191,11 @@ Behavioural benchmarks live in `testing/behavioural/` and run via `./benches.sh`
 # Run a specific benchmark by name within matching files
 ./benches.sh "tree-data-path" -t "flattening"
 
-# V8 CPU profile (node-only) — writes a .cpuprofile for method-cost analysis
+# CPU profile of each bench's measured run (Chromium, CDP) — one .cpuprofile per bench
 ./benches.sh --profile "tree-data-path"
 ```
 
-For baseline/compare runs, `./benches.sh --bench-compare <base|test|compare|all|backup> [...]` forwards to `bench-compare.mjs` (e.g. `./benches.sh --bench-compare all --runs 3`).
+For baseline/compare runs, `./benches.sh --bench-compare <base|test|compare|all|backup> [...]` forwards to `bench-compare.mjs` (e.g. `./benches.sh --bench-compare all`, which measures this checkout against the sibling `../ag-grid2`, screens every bench and reruns only the unsettled ones in fresh processes).
 
 ### Per-package unit tests (Nx, retrocompat)
 
@@ -231,7 +232,7 @@ E2E tests run via Playwright against the docs site. `./docs-e2e.sh` runs them di
 ./docs-e2e.sh --all-browsers
 
 # Run with a specific framework
-./docs-e2e.sh --framework react
+./docs-e2e.sh --framework reactFunctionalTs
 
 # Open Playwright UI mode
 ./docs-e2e.sh --ui
@@ -242,6 +243,23 @@ The Nx target is still available when needed. Note the target is `test:e2e` — 
 ```bash
 yarn nx test:e2e ag-grid-docs
 ```
+
+### Grid e2e specs (Playwright, own configuration)
+
+`testing/e2e` holds Playwright specs that build a grid from their own configuration instead of a docs example, for behaviour that needs a real browser (see *Playwright e2e, behavioural test or docs-example spec* in `.rulesync/rules/testing.md`). `./grid-e2e.sh` builds the UMD bundles (Nx-cached), installs the browsers it needs and runs Playwright from `testing/e2e`:
+
+```bash
+# chromium only
+./grid-e2e.sh
+
+# chromium, firefox and webkit
+./grid-e2e.sh --all-browsers
+
+# one browser, one spec, one test
+./grid-e2e.sh --project=firefox "enterprise" --grep "row group"
+```
+
+A spec calls `mountGrid(page, { enterprise?, options: () => ({ ... }) })` from `testing/e2e/src/mountGrid.ts`. `options` is serialised into the page, so it cannot close over spec variables. Drive the grid with `page.mouse` and `page.keyboard`, and wait with web-first `expect` assertions (`toPass` for input whose effect lands over several frames, as a wheel scroll does in Firefox). These specs are not in the PR CI: the nightly `Grid E2E Tests` workflow runs them on all three browsers.
 
 **Note:** Vitest does not support `--testPathPattern` or `--testNamePattern`. Use positional arguments for file matching and `-t` for test name filtering.
 
@@ -433,7 +451,7 @@ await waitFor(() => {
 For behavioural tests, prefer `GridRows` and `GridColumns` snapshots over raw API assertions where practical. They produce inline snapshots that make the grid state visually readable and update automatically.
 
 ```typescript
-import { GridColumns, GridRows } from '../test-utils';
+import { GridColumns, GridRows } from 'ag-test-utils';
 
 // Snapshot grid rows (rendered cell values, grouping, selection state, etc.)
 await new GridRows(api, 'description').check();

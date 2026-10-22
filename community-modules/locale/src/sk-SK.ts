@@ -79,6 +79,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     clearFilter: 'Vyčistiť',
     cancelFilter: 'Zrušiť',
     cancelColumnToolPanel: 'Zrušiť',
+    resetColumnToolPanel: 'Resetovať',
 
     // Filter Titles
     textFilter: 'Textový filter',
@@ -116,6 +117,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     addFilterCard: 'Pridať filter',
     agTextColumnFilterDisplayName: 'Jednoduchý filter',
     agNumberColumnFilterDisplayName: 'Jednoduchý filter',
+    agBigIntColumnFilterDisplayName: 'Jednoduchý filter',
     agDateColumnFilterDisplayName: 'Jednoduchý filter',
     agSetColumnFilterDisplayName: 'Filter výberu',
     agMultiColumnFilterDisplayName: 'Kombinovaný filter',
@@ -335,6 +337,10 @@ export const AG_GRID_LOCALE_SK_SK = {
     enabled: 'Povolené',
 
     // Menu
+    moveLeft: 'Presunúť doľava',
+    moveRight: 'Presunúť doprava',
+    moveUp: 'Presunúť nahor',
+    moveDown: 'Presunúť nadol',
     pinColumn: 'Pripnúť stĺpec',
     pinLeft: 'Pripnúť vľavo',
     pinRight: 'Pripnúť vpravo',
@@ -736,6 +742,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     ariaFilterList: 'Zoznam Filtrov',
     ariaFilterToValue: 'Filtrovať do hodnoty',
     ariaFilterValue: 'Hodnota Filtra',
+    ariaNotInCurrentData: 'nie je v aktuálnych údajoch',
     ariaFilterMenuOpen: 'Otvoriť Menu Filtra',
     ariaFilteringOperator: 'Filtračný Operátor',
     ariaHidden: 'skryté',
@@ -758,6 +765,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     ariaRowSelect: 'Stlačte SPACE na výber tohto riadku',
     ariaRowSelectionDisabled: 'Výber riadku je pre tento riadok zakázaný',
     ariaSearch: 'Hľadať',
+    ariaSortPriority: 'Priorita zoradenia ${priority} z ${count}',
     ariaSortableColumn: 'Stlačte ENTER na zoradenie',
     ariaSortableColumnWithCellSelection: 'Stlačte ALT ENTER na zoradenie',
     ariaToggleVisibility: 'Stlačte SPACE na prepínanie viditeľnosti',
@@ -890,9 +898,11 @@ export const AG_GRID_LOCALE_SK_SK = {
     columnHeaderEditCancel: 'Zrušiť',
 
     // Calculated Columns
+    calculatedColumnNoEligibleColumns: 'Nenašli sa žiadne vhodné stĺpce.',
     calculatedColumn: 'Vypočítaný stĺpec',
     calculatedColumnAdd: 'Pridať vypočítaný stĺpec',
     calculatedColumnEdit: 'Upraviť vypočítaný stĺpec',
+    calculatedColumnView: 'Zobraziť vypočítaný stĺpec',
     calculatedColumnRemove: 'Odstrániť vypočítaný stĺpec',
     calculatedColumnTitle: 'Názov',
     calculatedColumnType: 'Typ',
@@ -907,6 +917,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     calculatedColumnExpressionAmbiguousReference:
         'Nejednoznačný odkaz na stĺpec "${variable}". Použite zoznam Stĺpce alebo konkrétnejšiu cestu skupiny.',
     calculatedColumnExpressionUnknownReference: 'Neznámy odkaz na stĺpec "${variable}".',
+    calculatedColumnExpressionRestrictedReference: 'Stĺpec "${variable}" nemožno použiť v tomto výraze.',
     calculatedColumnExpressionEmpty: 'Zadajte výraz',
     calculatedColumnTitleEmpty: 'Zadajte názov',
     calculatedColumnApply: 'Použiť',

@@ -29,6 +29,7 @@
     .ag-grid-scrolling-container,
     .ag-header-row,
     .ag-full-width-anchor {
+        /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
         width: auto !important;
     }
 }
@@ -43,15 +44,13 @@
         .ag-grid-scrolling-container,
         .ag-body-horizontal-scroll-viewport,
         .ag-virtual-list-viewport {
-            /* Need auto height because 100% height elements with overflow hidden
-      cause printing issues in Edge */
+            /* stylelint-disable-next-line declaration-no-important -- force auto height because 100% height elements with overflow hidden cause printing issues in Edge */
             height: auto !important;
 
-            /* Overflow hidden, because otherwise scroll bars print in IE */
+            /* stylelint-disable-next-line declaration-no-important -- force overflow hidden, because otherwise scroll bars print in IE */
             overflow: hidden !important;
 
-            /* flex elements cause printing issues in Firefox
-            https://bugzilla.mozilla.org/show_bug.cgi?id=939897 */
+            /* stylelint-disable-next-line declaration-no-important -- flex elements cause printing issues in Firefox https://bugzilla.mozilla.org/show_bug.cgi?id=939897 */
             display: block !important;
         }
 

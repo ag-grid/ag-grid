@@ -511,6 +511,23 @@ export class GridColumnsDomValidator {
                 );
             }
 
+            // ── aria-colspan attribute ───────────────────────────────────────
+            // Hidden columns keep their slots, so a group spans from its first leaf's index to its last's.
+            const leaves = group.getLeafColumns();
+            const lastLeaf = leaves[leaves.length - 1];
+            const lastIndex = lastLeaf ? expectedAriaColIndex.get(lastLeaf) : undefined;
+            if (expectedIndex !== undefined && lastIndex !== undefined) {
+                const expectedSpan = lastIndex - expectedIndex + 1;
+                const ariaColSpan = headerCell.getAttribute('aria-colspan');
+                const expectedColSpan = expectedSpan > 1 ? String(expectedSpan) : null;
+                if (ariaColSpan !== expectedColSpan) {
+                    groupErrors.add(
+                        `Group header cell aria-colspan is ${ariaColSpan} but expected ${expectedColSpan} ` +
+                            `(its first to last leaf col's positions, hidden cols included).`
+                    );
+                }
+            }
+
             // ── ag-header-cell-wrap-text CSS class ──────────────────────────
             const colGroupDef = group.getColGroupDef();
             const wrapHeaderText = colGroupDef?.wrapHeaderText;

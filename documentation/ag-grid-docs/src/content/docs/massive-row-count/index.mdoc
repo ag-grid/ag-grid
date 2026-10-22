@@ -18,11 +18,11 @@ between different browsers as well as different browser versions. At the time of
 Chrome v118 the maximum height was 32,000,000 pixels.
 
 The grid works out the maximum height of a div by testing the DOM as the grid initialises. To see what
-the grid has determined as the maximum height for a div, set the grid property `debug=true`
-and notice the logging output. One debugger statement will tell the maximum div height
+the grid has determined as the maximum height for a div, enable [debug logging](./dev-validation/#debug-logging)
+with `enableDevValidations({ debug: true })` and notice the logging output. One debug statement will tell the maximum div height
 like the following:
 
-`AG Grid.RowContainerHeightService: maxDivHeight = 32000000`
+`AG Grid: RowContainerHeightService - maxDivHeight = 32000000`
 
 For example assume each row is 100px high, then this means the maximum number of rows the grid
 would be able to cater for with a max div height of 32,000,000 is 320,000.
@@ -38,7 +38,7 @@ we call Stretching.
 
 In the example below, note that the row height is 100px and the max div height is 32,000,000px
 (as per tested, however as previously mentioned different browsers had different max heights which
-can be verified by looking at the grid debug output). This means in theory only 320,000 rows
+can be verified by looking at the grid [debug logging](./dev-validation/#debug-logging) output). This means in theory only 320,000 rows
 can get displayed. The grid below is configured with 1,000,000 rows with each row 100px high to
 show this in practice.
 

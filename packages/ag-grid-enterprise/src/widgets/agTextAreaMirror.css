@@ -1,0 +1,53 @@
+.ag-text-area-mirror-wrapper {
+    position: relative;
+}
+
+.ag-text-area-mirror-input {
+    -webkit-text-fill-color: transparent;
+    caret-color: currentcolor;
+}
+
+:where(.ag-text-area-mirror-input)::placeholder {
+    -webkit-text-fill-color: currentcolor;
+}
+
+:where(.ag-text-area-mirror-input)::selection {
+    background-color: var(--ag-range-selection-background-color);
+}
+
+.ag-text-area-mirror {
+    position: absolute;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+    z-index: 1;
+}
+
+.ag-text-area-mirror-text {
+    box-sizing: border-box;
+    min-height: 100%;
+    width: 100%;
+    margin: 0;
+}
+
+:where(.ag-text-area-mirror-text)::after {
+    content: '\200b';
+}
+
+:where(.ag-text-area-mirror-composing) .ag-text-area-mirror-input {
+    -webkit-text-fill-color: currentcolor;
+}
+
+:where(.ag-text-area-mirror-composing) .ag-text-area-mirror {
+    visibility: hidden;
+}
+
+@media (forced-colors: active) {
+    .ag-text-area-mirror-input {
+        -webkit-text-fill-color: currentcolor;
+    }
+
+    .ag-text-area-mirror {
+        display: none;
+    }
+}

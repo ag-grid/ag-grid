@@ -1,15 +1,20 @@
-import { KeyCode, _findNextFocusableElement, _findTabbableParent, _focusInto, _isVisible } from 'ag-stack';
+import { AgTabGuardFeature, _findTabbableParent, _isVisible } from 'ag-stack';
 
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
+import type { AgEventTypeParams } from '../events';
+import type { GridOptionsWithDefaults } from '../gridOptionsDefault';
+import type { GridOptionsService } from '../gridOptionsService';
 import { _isColumnMenuAnchoringEnabled, _isLegacyMenuEnabled } from '../gridOptionsUtils';
 import type { ContainerType } from '../interfaces/iAfterGuiAttachedParams';
+import type { AgGridCommon } from '../interfaces/iCommon';
 import type { IMenuFactory, ShowMenuAfterButtonClickOptions } from '../interfaces/iMenuFactory';
 import { _setColMenuVisible } from '../misc/menu/menuService';
-import { _createElement } from '../utils/element';
+import { Component } from '../widgets/component';
+import { STOP_PROPAGATION_CALLBACKS } from '../widgets/managedFocusFeature';
 import type { PopupService } from '../widgets/popupService';
 import { FilterComp } from './filterComp';
 
@@ -33,15 +38,17 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         column: AgColumn | AgProvidedColumnGroup | undefined,
         mouseEvent: MouseEvent | Touch,
         containerType: ContainerType,
-        onClosedCallback?: () => void
+        onClosedCallback?: () => void,
+        _filtersOnly?: boolean,
+        getEventSource?: () => HTMLElement
     ): void {
         if (column && !column.isColumn) {
             // not supported
             return;
         }
-        this.showPopup(
+        this.showPopup({
             column,
-            (eMenu) => {
+            positionCallback: (eMenu) => {
                 this.popupSvc?.positionPopupUnderMouseEvent({
                     additionalParams: { column },
                     type: containerType,
@@ -50,10 +57,11 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
                 });
             },
             containerType,
-            mouseEvent.target as HTMLElement,
-            _isLegacyMenuEnabled(this.gos),
-            onClosedCallback
-        );
+            eventSource: mouseEvent.target as HTMLElement,
+            isLegacyMenuEnabled: _isLegacyMenuEnabled(this.gos),
+            onClosedCallback,
+            getEventSource,
+        });
     }
 
     public showMenuAfterButtonClick(
@@ -78,12 +86,12 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
         const nudgeX = isLegacyMenuEnabled ? undefined : 4 * multiplier;
         const nudgeY = isLegacyMenuEnabled ? undefined : 4;
 
-        return this.showPopup(
+        return this.showPopup({
             column,
-            (eMenu) => {
+            positionCallback: (eMenu) => {
                 this.popupSvc?.positionPopupByComponent({
                     type: containerType,
-                    eventSource,
+                    eventSource: options?.getEventSource?.() ?? eventSource,
                     ePopup: eMenu,
                     nudgeX,
                     nudgeY,
@@ -97,19 +105,30 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             eventSource,
             isLegacyMenuEnabled,
             onClosedCallback,
-            options?.suppressCloseOnEventSource
-        );
+            suppressCloseOnEventSource: options?.suppressCloseOnEventSource,
+            getEventSource: options?.getEventSource,
+        });
     }
 
-    private showPopup(
-        column: AgColumn | undefined,
-        positionCallback: (eMenu: HTMLElement) => void,
-        containerType: ContainerType,
-        eventSource: HTMLElement,
-        isLegacyMenuEnabled: boolean,
-        onClosedCallback?: (event?: Event) => void,
-        suppressCloseOnEventSource?: boolean
-    ): boolean {
+    private showPopup({
+        column,
+        positionCallback,
+        containerType,
+        eventSource,
+        isLegacyMenuEnabled,
+        onClosedCallback,
+        suppressCloseOnEventSource,
+        getEventSource,
+    }: {
+        column: AgColumn | undefined;
+        positionCallback: (eMenu: HTMLElement) => void;
+        containerType: ContainerType;
+        eventSource: HTMLElement;
+        isLegacyMenuEnabled: boolean;
+        onClosedCallback?: (event?: Event) => void;
+        suppressCloseOnEventSource?: boolean;
+        getEventSource?: () => HTMLElement;
+    }): boolean {
         const comp = column ? this.createBean(new FilterComp(column, 'COLUMN_MENU')) : undefined;
         if (!comp?.hasFilter() || !column) {
             this.destroyBean(comp);
@@ -117,33 +136,45 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             return false;
         }
 
-        const eMenu = _createElement({
-            tag: 'div',
-            cls: `ag-menu${!isLegacyMenuEnabled ? ' ag-filter-menu' : ''}`,
-            role: 'presentation',
-        });
+        const menu = comp.createManagedBean(
+            new Component({
+                tag: 'div',
+                cls: `ag-menu${!isLegacyMenuEnabled ? ' ag-filter-menu' : ''}`,
+                role: 'presentation',
+            })
+        );
+        const eMenu = menu.getGui();
 
-        const [destroyTabListener] = this.addManagedElementListeners(eMenu, {
-            keydown: (e: KeyboardEvent) => this.trapFocusWithin(e, eMenu),
+        const eFilter = comp.getGui();
+        eMenu.appendChild(eFilter);
+        const tabGuard = menu.createManagedBean(
+            new AgTabGuardFeature<
+                BeanCollection,
+                GridOptionsWithDefaults,
+                AgEventTypeParams,
+                AgGridCommon<any, any>,
+                GridOptionsService
+            >(menu, STOP_PROPAGATION_CALLBACKS)
+        );
+        tabGuard.initialiseTabGuard({
+            focusTrapActive: 'native',
         });
-
-        eMenu.appendChild(comp?.getGui());
 
         let hidePopup: () => void;
 
         const afterGuiDetached = () => comp?.afterGuiDetached();
 
+        const resolveEventSource = getEventSource ?? (eventSource ? () => eventSource : undefined);
         const anchorToElement = _isColumnMenuAnchoringEnabled(this.gos)
-            ? (eventSource ?? this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody)
+            ? (resolveEventSource ?? this.beans.ctrlsSvc.getGridBodyCtrl().eGridBody)
             : undefined;
         const closedCallback = (e: MouseEvent | TouchEvent | KeyboardEvent) => {
             _setColMenuVisible(column, false, 'contextMenu');
             const isKeyboardEvent = e instanceof KeyboardEvent;
 
-            destroyTabListener();
-
-            if (isKeyboardEvent && eventSource && _isVisible(eventSource)) {
-                const focusableEl = _findTabbableParent(eventSource);
+            const focusSource = isKeyboardEvent ? resolveEventSource?.() : undefined;
+            if (focusSource && _isVisible(focusSource)) {
+                const focusableEl = _findTabbableParent(focusSource);
                 focusableEl?.focus({ preventScroll: true });
             }
             afterGuiDetached();
@@ -170,12 +201,11 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
             closedCallback,
             positionCallback: () => positionCallback(eMenu),
             anchorToElement,
-            eventSourceToIgnore: suppressCloseOnEventSource ? eventSource : undefined,
+            eventSourceToIgnore: suppressCloseOnEventSource ? resolveEventSource : undefined,
             ariaLabel,
         });
 
         if (!addPopupRes) {
-            destroyTabListener();
             this.destroyBean(comp);
             return false;
         }
@@ -195,20 +225,6 @@ export class FilterMenuFactory extends BeanStub implements NamedBean, IMenuFacto
 
         this.dispatchVisibleChangedEvent(true, containerType, column);
         return true;
-    }
-
-    private trapFocusWithin(e: KeyboardEvent, menu: HTMLElement) {
-        if (
-            e.key !== KeyCode.TAB ||
-            e.defaultPrevented ||
-            _findNextFocusableElement({ beans: this.beans, rootNode: menu, onlyUnmanaged: true, backwards: e.shiftKey })
-        ) {
-            return;
-        }
-
-        e.preventDefault();
-
-        _focusInto(menu, e.shiftKey, true);
     }
 
     private dispatchVisibleChangedEvent(visible: boolean, containerType: ContainerType, column?: AgColumn): void {

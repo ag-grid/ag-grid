@@ -12,7 +12,7 @@
 #
 #   - The environment's setup script has a ~5 minute cap, and a full install of
 #     this monorepo needs ~9 minutes on a cloud VM. So it installs with
-#     --ignore-scripts and marks the cache `unscripted`; the remaining work —
+#     YARN_ENABLE_SCRIPTS=false and marks the cache `unscripted`; the remaining work —
 #     patches, allow-scripts, the nx plugin build — has to happen in a session.
 #   - The SessionStart hook cannot do it. Claude Code waits for hooks before the
 #     first message (a blocking install froze one session for 9+ minutes), and a
@@ -104,7 +104,9 @@ EOF
         nx_version="$(node -p "require('$REPO_ROOT/package.json').devDependencies.nx" 2>/dev/null)"
         if [[ -n "$nx_version" && "$nx_version" != "undefined" ]]; then
             log "nx is missing; installing nx@${nx_version} globally"
-            yarn global add "nx@${nx_version}" >/dev/null 2>&1 ||
+            # Yarn 4 removed `yarn global add`; npm's global installer is the
+            # replacement for a persistent global binary.
+            npm install -g "nx@${nx_version}" >/dev/null 2>&1 ||
                 log "nx@${nx_version} global install failed (yarn nx still works)"
         fi
     fi
@@ -120,8 +122,8 @@ fi
 # Install
 # ---------------------------------------------------------------------------
 
-log "yarn install --prefer-offline in ${REPO_ROOT} (several minutes)"
-if yarn install --prefer-offline 2>&1 | tee "$STATE/install.log" | tail -5; then
+log "yarn install in ${REPO_ROOT} (several minutes)"
+if yarn install 2>&1 | tee "$STATE/install.log" | tail -5; then
     date +%s >"$STATE/ready"
     log "install finished in $((SECONDS - START_TS))s"
 else

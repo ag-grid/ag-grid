@@ -198,9 +198,14 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         this.eDeselect.classList.add('ag-hidden');
 
         if (allowTyping) {
-            this.eInput.setAutoComplete(false).setInputPlaceholder(placeholder).setSearchIcon(!!searchIcon);
+            this.eInput
+                .setAutoComplete(false)
+                .setInputPlaceholder(placeholder)
+                .setSearchIcon(!!searchIcon)
+                .setFrameless(true);
             if (!multiSelect) {
                 this.eDisplayField.classList.add('ag-hidden');
+                this.eWrapper.classList.add('ag-rich-select-typing-single');
             } else {
                 this.eWrapper.classList.add('ag-rich-select-typing-multi');
                 if (!suppressMultiSelectPillRenderer) {
@@ -530,7 +535,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
      */
     private setValues(values: TValue[] | undefined): void {
         this.values = values;
-        this.searchStrings = this.getSearchStringsFromValues(values || []);
+        this.searchStrings = this.getSearchStringsFromValues(values ?? []);
     }
 
     public override showPicker() {
@@ -707,9 +712,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
     }
 
     public searchTextFromString(str: string | null | undefined): void {
-        if (str == null) {
-            str = '';
-        }
+        str ??= '';
         this.searchString = str;
         if (this.onSearchCallbackDebounced) {
             this.setValueList({ valueList: undefined, refresh: true });
@@ -755,7 +758,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         const { filterList, highlightMatch, searchType = 'fuzzy' } = this.config;
         const shouldFilter = !!(filterList && this.searchString !== '');
 
-        this.filterListModel(shouldFilter ? filteredValues : this.values || []);
+        this.filterListModel(shouldFilter ? filteredValues : (this.values ?? []));
 
         if (!this.highlightEmptyValue()) {
             this.highlightListValue(suggestions, filteredValues, shouldFilter);
@@ -812,7 +815,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<
         }
 
         const { searchType = 'fuzzy', filterList } = this.config;
-        const values = this.values || [];
+        const values = this.values ?? [];
         if (searchType === 'fuzzy') {
             const fuzzySearchResult = _fuzzySuggestions({
                 inputValue: searchValue,

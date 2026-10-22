@@ -165,9 +165,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     protected override updateValuesOnMove(e: MouseEvent) {
         super.updateValuesOnMove(e);
 
-        if (!this.initialXY) {
-            this.initialXY = _getNormalisedMousePosition(this.beans, e);
-        }
+        this.initialXY ??= _getNormalisedMousePosition(this.beans, e);
 
         const { x, y } = this.initialXY;
         const { x: newX, y: newY } = _getNormalisedMousePosition(this.beans, e);
@@ -611,7 +609,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
             if (allNumbers && initialValues.length === 1) {
                 const multiplier = this.isUp || this.isLeft ? -1 : 1;
                 return {
-                    value: parseFloat(valueForFunctions) + 1 * multiplier,
+                    value: Number.parseFloat(valueForFunctions) + 1 * multiplier,
                     fromUserFunction: false,
                 };
             }

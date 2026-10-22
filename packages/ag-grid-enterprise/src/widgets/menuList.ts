@@ -25,10 +25,12 @@ export class MenuList extends AgMenuList<
         level?: number,
         menuActionParams: WithoutGridCommon<IMenuActionParams> = {
             column: null,
+            columnGroup: null,
             node: null,
             value: null,
-        }
+        },
+        role?: 'menu' | 'presentation'
     ) {
-        super(level, menuActionParams, MENU_ITEM_CALLBACKS);
+        super(level, menuActionParams, MENU_ITEM_CALLBACKS, role);
     }
 }

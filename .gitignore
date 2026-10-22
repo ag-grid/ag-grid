@@ -8,6 +8,16 @@ vite.config.mts.timestamp-*.mjs
 
 *.tar.gz
 
+# Yarn 4 (Berry) generated state — the release binary, patches and sdks would be
+# committed if this repo used them, but it doesn't, so ignore the whole folder.
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+
 .DS_Store
 lerna-debug.log
 npm-debug.log

@@ -97,9 +97,9 @@ if [[ -f "$WT_PATH/package.json" ]]; then
         (cd "$WT_PATH" && AG_WORKTREE_FAST_PATH=1 yarn run postinstall 2>&1 | tail -20) >&2 || \
             log "WARNING: fast-path postinstall failed"
     else
-        log "Slow path: running yarn install --offline --frozen-lockfile..."
-        (cd "$WT_PATH" && AG_PREINSTALL_ACTIVE=1 yarn install --offline --frozen-lockfile 2>&1 | tail -20) >&2 || \
-            (cd "$WT_PATH" && AG_PREINSTALL_ACTIVE=1 yarn install --prefer-offline 2>&1 | tail -20) >&2
+        log "Slow path: running yarn install --immutable (offline)..."
+        (cd "$WT_PATH" && AG_PREINSTALL_ACTIVE=1 YARN_ENABLE_NETWORK=false yarn install --immutable 2>&1 | tail -20) >&2 || \
+            (cd "$WT_PATH" && AG_PREINSTALL_ACTIVE=1 yarn install 2>&1 | tail -20) >&2
     fi
 fi
 

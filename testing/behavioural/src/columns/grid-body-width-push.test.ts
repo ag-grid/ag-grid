@@ -43,6 +43,17 @@ const expected = (containerWidth: number, columnsWidth: number, headerRowCount =
     horizontalScrollContainer: `${columnsWidth}px`,
 });
 
+/** The first row's pinned-left, scrolling and pinned-right cell sections, `null` where the row leaves one out. */
+const rowSections = () => {
+    const sectionWidth = (section: string): string | null =>
+        document.querySelector<HTMLElement>(`.ag-row[row-index="0"] > .ag-grid-${section}-cells`)?.style.width ?? null;
+    return {
+        left: sectionWidth('pinned-left'),
+        center: sectionWidth('scrolling'),
+        right: sectionWidth('pinned-right'),
+    };
+};
+
 const buildCols = (count: number): ColDef[] => {
     const cols: ColDef[] = [];
     for (let i = 0; i < count; ++i) {
@@ -105,7 +116,7 @@ describe('Grid body width push', () => {
         expect(pushedWidths()).toEqual(expected(1800, 1800));
 
         // The case the dropped `columnResized` trigger actually rests on: width moves between two columns
-        // in one section, so `updateBodyWidths` early-returns and no width event is dispatched at all.
+        // in one section, so `layoutBodyWidths` early-returns and no grid width event is dispatched at all.
         // Every container has to stay on the width it already holds.
         api.setColumnWidths([
             { key: 'c0', newWidth: 200 },
@@ -227,8 +238,6 @@ describe('Grid body width push', () => {
         expect(pushedWidths()).toEqual(expected(1500, 1500));
     });
 
-    // Published for application CSS, and nothing in the grid reads it back, so this is the only thing that
-    // would notice it going missing. `stylesChanged` is its sole refresh path, so that is asserted too.
     test('sets the pinned row border width variable on every row container, and again on stylesChanged', async () => {
         const api = gridsManager.createGrid('myGrid', { columnDefs: buildCols(3), rowData: [{ c0: 1 }] });
         await asyncSetTimeout(0);
@@ -413,5 +422,73 @@ describe('Grid body width push', () => {
         await asyncSetTimeout(0);
 
         expect(pushedWidths()).toEqual(expected(1500, 1500, 2));
+    });
+
+    test('a row sizes its sections, and adds and removes the pinned ones, as the columns change', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'p', width: 100, pinned: 'left' },
+                { field: 'a', width: 100 },
+                { field: 'b', width: 100 },
+                { field: 'r', width: 50, pinned: 'right' },
+            ],
+            rowData: [{ p: 1, a: 2, b: 3, r: 4 }],
+        });
+        await asyncSetTimeout(0);
+        expect(rowSections()).toEqual({ left: '100px', center: '200px', right: '50px' });
+
+        api.setColumnWidths([{ key: 'p', newWidth: 150 }]);
+        await asyncSetTimeout(0);
+        expect(rowSections()).toEqual({ left: '150px', center: '200px', right: '50px' });
+
+        api.setColumnWidths([{ key: 'a', newWidth: 300 }]);
+        await asyncSetTimeout(0);
+        expect(rowSections()).toEqual({ left: '150px', center: '400px', right: '50px' });
+
+        api.setColumnsPinned(['r'], null);
+        await asyncSetTimeout(0);
+        expect(rowSections()).toEqual({ left: '150px', center: '450px', right: null });
+
+        api.setColumnsPinned(['b'], 'right');
+        await asyncSetTimeout(0);
+        expect(rowSections()).toEqual({ left: '150px', center: '350px', right: '100px' });
+    });
+
+    test('pushes the pinned widths the sticky group labels are offset by, as a pinned column resizes and unpins', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { colId: 'left', width: 120, pinned: 'left' },
+                { headerName: 'Group', children: [{ colId: 'a' }, { colId: 'b' }] },
+                { colId: 'right', width: 150, pinned: 'right' },
+            ],
+            rowData: [{}],
+        });
+        await asyncSetTimeout(0);
+
+        const viewport = query('.ag-grid-viewport');
+        const pinnedWidths = () => [
+            viewport.style.getPropertyValue('--ag-internal-pinned-left-width'),
+            viewport.style.getPropertyValue('--ag-internal-pinned-right-width'),
+        ];
+        expect(pinnedWidths()).toEqual(['120px', '150px']);
+
+        api.setColumnWidths([{ key: 'right', newWidth: 210 }]);
+        await asyncSetTimeout(0);
+        expect(pinnedWidths()).toEqual(['120px', '210px']);
+
+        api.setColumnsPinned(['right'], null);
+        await asyncSetTimeout(0);
+        expect(pinnedWidths()).toEqual(['120px', '0px']);
+    });
+
+    test('pushes zero pinned widths for a grid with none, so a grid nested inside another does not inherit its widths', async () => {
+        gridsManager.createGrid('myGrid', { columnDefs: [{ colId: 'a' }], rowData: [{}] });
+        await asyncSetTimeout(0);
+
+        const style = query('.ag-grid-viewport').style;
+        expect([
+            style.getPropertyValue('--ag-internal-pinned-left-width'),
+            style.getPropertyValue('--ag-internal-pinned-right-width'),
+        ]).toEqual(['0px', '0px']);
     });
 });

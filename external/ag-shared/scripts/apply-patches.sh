@@ -40,10 +40,12 @@ for patch_file in patches/*.patch; do
 done
 
 # Reinstall removed packages without triggering postinstall again
-# --ignore-scripts prevents infinite loop
+# YARN_ENABLE_SCRIPTS=false prevents infinite loop (Yarn 4 has no --ignore-scripts
+# install flag; --check-files was a Yarn 1 node_modules-vs-lockfile verification flag
+# with no Yarn 4 equivalent — a plain install already reconciles the tree)
 echo ""
 echo "Reinstalling packages..."
-yarn install --ignore-scripts --check-files
+YARN_ENABLE_SCRIPTS=false yarn install
 
 # Retry patches - this should now succeed
 echo ""
