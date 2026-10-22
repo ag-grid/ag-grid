@@ -102,6 +102,8 @@ The example keeps **Gross Margin** read-only, while **Profit** and user-created 
 
 {% gridExampleRunner title="Read-Only Calculated Columns" name="calculated-columns-read-only" /%}
 
+If a column becomes read-only while its edit dialog is open, the dialog closes and any pending edits are discarded. Changes already applied are kept.
+
 {% note %}
 This setting restricts UI changes only: updating `columnDefs` and restoring [Grid State](./grid-state/) can still change or remove the column. Columns created through the dialog remain editable, even when `defaultColDef.calculatedColumnReadOnly` is `true`.
 {% /note %}
