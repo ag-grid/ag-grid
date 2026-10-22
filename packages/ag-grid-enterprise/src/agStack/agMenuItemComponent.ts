@@ -47,7 +47,7 @@ export interface AgMenuItemLeafDef<TMenuActionParams extends TCommon, TCommon> {
     /** Set to true to provide a check beside the option. */
     checked?: boolean;
     /**
-     * Set to `'radio'` when the item is one of a set of mutually exclusive choices. Only applies when `checked` is set.
+     * Set to `'radio'` when the item is one of a set of mutually exclusive choices. Ignored when `checked` is `undefined`.
      * @default 'checkbox'
      */
     checkType?: AgMenuItemCheckType;
