@@ -115,9 +115,9 @@ describe('Dialog tab navigation', () => {
         after.focus();
         await user.tab({ shift: true });
 
+        await waitFor(() => expect(document.activeElement).toHaveClass('ag-virtual-list-item'));
         expect(dialog.contains(document.activeElement)).toBe(true);
-        expect(document.activeElement).not.toHaveClass('ag-tab-guard');
-        expect((document.activeElement as HTMLElement).tabIndex).toBeGreaterThanOrEqual(0);
+        expect(document.activeElement).toHaveTextContent('B');
     });
 
     /** Deactivates nested tab guards (e.g. the column chooser's virtual list guards) so entry exercises the dialog's own guard, not an inner one. */
