@@ -25,7 +25,7 @@ import type { ICellRendererComp } from './../cellRenderers/iCellRenderer';
 import type { DndSourceComp } from './../dndSourceComp';
 import type { CellCtrl, ICellComp } from './cellCtrl';
 
-export class CellComp extends Component {
+export class CellComp extends Component implements ICellComp {
     /** The row's cell pass that last drew this cell. */
     public drawnInPass = 0;
 
@@ -118,37 +118,51 @@ export class CellComp extends Component {
 
         this.refreshWrapper(false);
 
-        const compProxy: ICellComp = {
-            toggleCss: (cssClassName, on) => this.cellCssManager.toggleCss(cssClassName, on),
-            setUserStyles: (styles: CellStyle) => _addStylesToElement(cellDiv, styles),
-            getFocusableElement: () => cellDiv,
-
-            setIncludeSelection: (include) => (this.includeSelection = include),
-            setIncludeRowDrag: (include) => (this.includeRowDrag = include),
-            setIncludeDndSource: (include) => (this.includeDndSource = include),
-            setRowResizerElement: (element) => this.setRowResizerElement(element),
-
-            setRenderDetails: (compDetails, valueToDisplay, force) =>
-                this.setRenderDetails(compDetails, valueToDisplay, force),
-            setEditDetails: (compDetails, popup, position) => this.setEditDetails(compDetails, popup, position),
-
-            getCellEditor: () => this.cellEditor ?? null,
-            getCellRenderer: () => this.cellRenderer ?? null,
-            getParentOfValue: () => this.getParentOfValue(),
-            refreshEditStyles: (editing, isPopup) => this.refreshEditStyles(editing, isPopup),
-        };
-
-        cellCtrl.setComp(compProxy, cellDiv, wrapperDiv, this.eCellWrapper, printLayout, editingCell, undefined);
+        // OPTIMIZATION: the comp is its own ICellComp, so no per-cell proxy of closures is allocated
+        cellCtrl.setComp(this, cellDiv, wrapperDiv, this.eCellWrapper, printLayout, editingCell, undefined);
     }
 
-    private getParentOfValue(): HTMLElement {
+    /** Targets the cell, which a spanned cell's gui wraps. */
+    public override toggleCss(cssClassName: string, on: boolean): void {
+        this.cellCssManager.toggleCss(cssClassName, on);
+    }
+
+    public setUserStyles(styles: CellStyle): void {
+        _addStylesToElement(this.eCell, styles);
+    }
+
+    public override getFocusableElement(): HTMLElement {
+        return this.eCell;
+    }
+
+    public setIncludeSelection(include: boolean): void {
+        this.includeSelection = include;
+    }
+
+    public setIncludeRowDrag(include: boolean): void {
+        this.includeRowDrag = include;
+    }
+
+    public setIncludeDndSource(include: boolean): void {
+        this.includeDndSource = include;
+    }
+
+    public getCellEditor(): ICellEditorComp | null {
+        return this.cellEditor ?? null;
+    }
+
+    public getCellRenderer(): ICellRendererComp | null {
+        return this.cellRenderer ?? null;
+    }
+
+    public getParentOfValue(): HTMLElement {
         // if not editing, and using wrapper, then value goes in eCellValue
         // if editing, and using wrapper, value (cell editor) goes in eCellWrapper
         // if editing or rendering, and not using wrapper, value (or comp) is directly inside cell
         return this.eCellValue ?? this.eCellWrapper ?? this.eCell;
     }
 
-    private setRowResizerElement(element: HTMLElement | null): void {
+    public setRowResizerElement(element: HTMLElement | null): void {
         if (this.rowResizerElement) {
             _removeFromParent(this.rowResizerElement);
         }
@@ -158,7 +172,7 @@ export class CellComp extends Component {
         }
     }
 
-    private setRenderDetails(
+    public setRenderDetails(
         compDetails: UserCompDetails | undefined,
         valueToDisplay: any,
         forceNewCellRendererInstance: boolean
@@ -196,7 +210,7 @@ export class CellComp extends Component {
         this.rowDraggingComp?.refreshVisibility();
     }
 
-    private setEditDetails(
+    public setEditDetails(
         compDetails: UserCompDetails | undefined,
         popup?: boolean,
         position?: 'over' | 'under'

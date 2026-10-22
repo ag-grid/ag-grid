@@ -17,6 +17,10 @@ import type { AgFillHandle } from './agFillHandle';
 import type { AgRangeHandle } from './agRangeHandle';
 
 const CSS_CELL_RANGE_SELECTED = 'ag-cell-range-selected';
+const CSS_CELL_RANGE_SELECTED_1 = 'ag-cell-range-selected-1';
+const CSS_CELL_RANGE_SELECTED_2 = 'ag-cell-range-selected-2';
+const CSS_CELL_RANGE_SELECTED_3 = 'ag-cell-range-selected-3';
+const CSS_CELL_RANGE_SELECTED_4 = 'ag-cell-range-selected-4';
 const CSS_CELL_RANGE_CHART = 'ag-cell-range-chart';
 const CSS_CELL_RANGE_SINGLE_CELL = 'ag-cell-range-single-cell';
 const CSS_CELL_RANGE_CHART_CATEGORY = 'ag-cell-range-chart-category';
@@ -93,10 +97,10 @@ export class CellRangeFeature implements ICellRangeFeature {
         this.hasChartRange = hasChartRange;
 
         cellComp.toggleCss(CSS_CELL_RANGE_SELECTED, rangeCount !== 0);
-        cellComp.toggleCss(`${CSS_CELL_RANGE_SELECTED}-1`, rangeCount === 1);
-        cellComp.toggleCss(`${CSS_CELL_RANGE_SELECTED}-2`, rangeCount === 2);
-        cellComp.toggleCss(`${CSS_CELL_RANGE_SELECTED}-3`, rangeCount === 3);
-        cellComp.toggleCss(`${CSS_CELL_RANGE_SELECTED}-4`, rangeCount >= 4);
+        cellComp.toggleCss(CSS_CELL_RANGE_SELECTED_1, rangeCount === 1);
+        cellComp.toggleCss(CSS_CELL_RANGE_SELECTED_2, rangeCount === 2);
+        cellComp.toggleCss(CSS_CELL_RANGE_SELECTED_3, rangeCount === 3);
+        cellComp.toggleCss(CSS_CELL_RANGE_SELECTED_4, rangeCount >= 4);
         cellComp.toggleCss(CSS_CELL_RANGE_CHART, hasChartRange);
 
         _setAriaSelected(eGui, rangeCount > 0 ? true : undefined);

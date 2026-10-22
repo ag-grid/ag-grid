@@ -33,7 +33,7 @@ const createCellSection = (sectionClass: string, pinned: boolean): { container: 
     return { container, wrapper };
 };
 
-export class RowComp extends Component {
+export class RowComp extends Component implements IRowComp {
     /** The container's row pass that last drew this row. */
     public drawnInPass = 0;
     private fullWidthCellRenderer: ICellRendererComp | null | undefined;
@@ -82,44 +82,58 @@ export class RowComp extends Component {
         this.setInitialStyle(rowDiv);
         this.setTemplateFromElement(rowDiv);
 
-        const style = rowDiv.style;
         this.domOrder = this.rowCtrl.getDomOrder();
 
-        const compProxy: IRowComp = {
-            setDomOrder: (domOrder) => this.setDomOrder(domOrder),
-            setCellCtrls: (left, center, right) => this.setCellCtrls(left, center, right),
-            getPinnedLeftRowElement: () => this.ePinnedLeftCells,
-            getScrollingRowElement: () => this.eScrollingCells,
-            getPinnedRightRowElement: () => this.ePinnedRightCells,
-            refreshPinnedSections: () => this.refreshPinnedSections(),
-            showFullWidth: (compDetails) => this.showFullWidth(compDetails),
-            showEmbeddedFullWidth: (compDetails) => this.showEmbeddedFullWidth(compDetails),
-            getFullWidthCellRenderers: () => this.getAllFullWidthCellRenderers(),
-            getFullWidthCellRendererParams: () => this.getPrimaryFullWidthCellRendererParams(),
-            getFullWidthCellRendererParamsForPinned: (pinned: ColumnPinnedType) =>
-                this.getFullWidthCellRendererParamsForPinned(pinned),
-            toggleCss: (name, on) => this.toggleCss(name, on),
-            setUserStyles: (styles: RowStyle | undefined) => _addStylesToElement(rowDiv, styles),
-            setTop: (top) => (style.top = top),
-            setTransform: (transform) => (style.transform = transform),
-            setRowIndex: (rowIndex) => rowDiv.setAttribute('row-index', rowIndex),
-            setRowId: (rowId: string) => rowDiv.setAttribute('row-id', rowId),
-            setRowBusinessKey: (businessKey) => rowDiv.setAttribute('row-business-key', businessKey),
-            refreshFullWidth: (getUpdatedParams) => {
-                const params = getUpdatedParams();
-                this.fullWidthCellRendererParams = params;
-                return this.fullWidthCellRenderer?.refresh?.(params) ?? false;
-            },
-            refreshEmbeddedFullWidth: (getUpdatedParams) => this.refreshEmbeddedFullWidth(getUpdatedParams),
-        };
-
-        ctrl.setComp(compProxy, this.getGui(), undefined);
+        // OPTIMIZATION: the comp is its own IRowComp, so no per-row proxy of closures is allocated
+        ctrl.setComp(this, rowDiv, undefined);
         this.addDestroyFunc(() => {
             ctrl.unsetComp();
         });
     }
 
-    private refreshPinnedSections(): void {
+    public getPinnedLeftRowElement(): HTMLElement | undefined {
+        return this.ePinnedLeftCells;
+    }
+
+    public getScrollingRowElement(): HTMLElement | undefined {
+        return this.eScrollingCells;
+    }
+
+    public getPinnedRightRowElement(): HTMLElement | undefined {
+        return this.ePinnedRightCells;
+    }
+
+    public setUserStyles(styles: RowStyle | undefined): void {
+        _addStylesToElement(this.getGui(), styles);
+    }
+
+    public setTop(top: string): void {
+        this.getGui().style.top = top;
+    }
+
+    public setTransform(transform: string): void {
+        this.getGui().style.transform = transform;
+    }
+
+    public setRowIndex(rowIndex: string): void {
+        this.getGui().setAttribute('row-index', rowIndex);
+    }
+
+    public setRowId(rowId: string): void {
+        this.getGui().setAttribute('row-id', rowId);
+    }
+
+    public setRowBusinessKey(businessKey: string): void {
+        this.getGui().setAttribute('row-business-key', businessKey);
+    }
+
+    public refreshFullWidth(getUpdatedParams: () => ICellRendererParams): boolean {
+        const params = getUpdatedParams();
+        this.fullWidthCellRendererParams = params;
+        return this.fullWidthCellRenderer?.refresh?.(params) ?? false;
+    }
+
+    public refreshPinnedSections(): void {
         const widths = this.rowCtrl.getMappedPinnedCellGroupWidths();
         if (widths === this.pinnedWidths) {
             return;
@@ -146,7 +160,7 @@ export class RowComp extends Component {
         }
     }
 
-    private showFullWidth(compDetails: UserCompDetails): void {
+    public showFullWidth(compDetails: UserCompDetails): void {
         const eRow = this.getGui();
         const eAnchor = _createElement({
             tag: 'div',
@@ -169,7 +183,7 @@ export class RowComp extends Component {
         compDetails.newAgStackInstance().then(callback);
     }
 
-    private showEmbeddedFullWidth(compDetails: HorizontalSectionMap<UserCompDetails>): void {
+    public showEmbeddedFullWidth(compDetails: HorizontalSectionMap<UserCompDetails>): void {
         this.showEmbeddedFullWidthSection('left', compDetails.left, this.ePinnedLeftCells);
         this.showEmbeddedFullWidthSection('center', compDetails.center, this.eScrollingCells);
         this.showEmbeddedFullWidthSection('right', compDetails.right, this.ePinnedRightCells);
@@ -212,7 +226,7 @@ export class RowComp extends Component {
         compDetails.newAgStackInstance().then(callback);
     }
 
-    private refreshEmbeddedFullWidth(getUpdatedParams: (pinned: ColumnPinnedType) => ICellRendererParams): boolean {
+    public refreshEmbeddedFullWidth(getUpdatedParams: (pinned: ColumnPinnedType) => ICellRendererParams): boolean {
         const left = this.refreshEmbeddedSection('left', getUpdatedParams('left'));
         const center = this.refreshEmbeddedSection('center', getUpdatedParams(null));
         const right = this.refreshEmbeddedSection('right', getUpdatedParams('right'));
@@ -229,7 +243,7 @@ export class RowComp extends Component {
         return !renderer?.refresh || renderer.refresh(params);
     }
 
-    private getAllFullWidthCellRenderers(): (ICellRendererComp | null | undefined)[] | undefined {
+    public getFullWidthCellRenderers(): (ICellRendererComp | null | undefined)[] | undefined {
         if (!this.rowCtrl.isEmbeddedFullWidth) {
             const renderer = this.fullWidthCellRenderer;
             return renderer ? [renderer] : undefined;
@@ -238,11 +252,11 @@ export class RowComp extends Component {
         return renderers === null ? undefined : [renderers.left, renderers.center, renderers.right];
     }
 
-    private getPrimaryFullWidthCellRendererParams(): ICellRendererParams | undefined {
+    public getFullWidthCellRendererParams(): ICellRendererParams | undefined {
         return this.fullWidthCellRendererParams ?? this.fullWidthCellRendererParamsBySection?.center;
     }
 
-    private getFullWidthCellRendererParamsForPinned(pinned: ColumnPinnedType): ICellRendererParams | undefined {
+    public getFullWidthCellRendererParamsForPinned(pinned: ColumnPinnedType): ICellRendererParams | undefined {
         return this.fullWidthCellRendererParamsBySection?.[this.getEmbeddedSectionForPinned(pinned)];
     }
 
@@ -258,7 +272,7 @@ export class RowComp extends Component {
 
     // ensureDomOrder is documented as initial, yet rows follow a framework prop change; investigate whether to
     // make it truly initial, which would let this go with RowCtrl's listener (AG-18759).
-    private setDomOrder(domOrder: boolean): void {
+    public setDomOrder(domOrder: boolean): void {
         const turnedOn = domOrder && !this.domOrder;
         this.domOrder = domOrder;
         if (!turnedOn) {
@@ -270,7 +284,7 @@ export class RowComp extends Component {
         orderLane(this.ePinnedRightCells, this.drawnRight);
     }
 
-    private setCellCtrls(left: CellCtrl[], center: CellCtrl[], right: CellCtrl[]): void {
+    public setCellCtrls(left: CellCtrl[], center: CellCtrl[], right: CellCtrl[]): void {
         const { drawnLeft, drawnCenter, drawnRight } = this;
         this.drawnLeft = left;
         this.drawnCenter = center;

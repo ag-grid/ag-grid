@@ -66,15 +66,14 @@ export class AgComponentStub<
     // around as we create a new rowComp instance for the same row node).
     private readonly compId = compIdSequence++;
 
-    private readonly cssManager: CssClassManager;
+    /** Created on the first class change, as many components never toggle one. */
+    private cssManager: CssClassManager | undefined = undefined;
 
     constructor(
         templateOrParams?: string | AgElementParams<TComponentSelectorType>,
         componentSelectors?: AgComponentSelector<TComponentSelectorType, TBeanCollection>[]
     ) {
         super();
-
-        this.cssManager = new CssClassManager(() => this.eGui);
 
         this.componentSelectors = new Map((componentSelectors ?? []).map((comp) => [comp.selector, comp]));
         if (templateOrParams) {
@@ -398,15 +397,24 @@ export class AgComponentStub<
     }
 
     public addCss(className: string): void {
-        this.cssManager.toggleCss(className, true);
+        this.getCssManager().toggleCss(className, true);
     }
 
     public removeCss(className: string): void {
-        this.cssManager.toggleCss(className, false);
+        this.getCssManager().toggleCss(className, false);
     }
 
     public toggleCss(className: string, addOrRemove: boolean): void {
-        this.cssManager.toggleCss(className, addOrRemove);
+        this.getCssManager().toggleCss(className, addOrRemove);
+    }
+
+    private getCssManager(): CssClassManager {
+        let cssManager = this.cssManager;
+        if (!cssManager) {
+            cssManager = new CssClassManager(() => this.eGui);
+            this.cssManager = cssManager;
+        }
+        return cssManager;
     }
 
     protected registerCSS(css: string): void {
