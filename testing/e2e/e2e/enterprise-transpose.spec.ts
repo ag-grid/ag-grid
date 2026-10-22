@@ -50,9 +50,7 @@ test.describe('transposed view in a real browser', () => {
         await expect(revenueRow.locator('.ag-cell[col-id="ag-Grid-TransposeTotal"]')).toHaveText('20100');
 
         // The field names stay pinned and readable after scrolling sideways.
-        const label = grid.locator(
-            '.ag-pinned-left-cols-container .ag-row[row-id="ag-Grid-TransposeField-revenue"] .ag-cell'
-        );
+        const label = revenueRow.locator('.ag-cell[col-id="ag-Grid-TransposeField"]');
         await expect(label).toContainText('Revenue');
         await expect(label).toBeInViewport();
 
@@ -145,8 +143,8 @@ test.describe('transposed view in a real browser', () => {
         const afterDrag = await order();
         await withApi((api) => api.refreshClientSideRowModel());
         const afterRefresh = await order();
-        const notesRow = grid.locator('.ag-center-cols-container .ag-row[row-id="ag-Grid-TransposeField-notes"]');
-        const revenueRow = grid.locator('.ag-center-cols-container .ag-row[row-id="ag-Grid-TransposeField-revenue"]');
+        const notesRow = grid.locator('.ag-row[row-id="ag-Grid-TransposeField-notes"]');
+        const revenueRow = grid.locator('.ag-row[row-id="ag-Grid-TransposeField-revenue"]');
         const heights = {
             notes: (await notesRow.boundingBox())?.height,
             revenue: (await revenueRow.boundingBox())?.height,
