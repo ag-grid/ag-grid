@@ -30,8 +30,6 @@ const ACTIVATION_DELAY = FAST_TEST_TIMINGS ? 0 : 80;
 /** A further pause before an active item opens its submenu, for the same reason. */
 const SUB_MENU_OPEN_DELAY = FAST_TEST_TIMINGS ? 0 : 300;
 
-export type AgMenuItemCheckType = 'checkbox' | 'radio';
-
 export interface AgMenuItemLeafDef<TMenuActionParams extends TCommon, TCommon> {
     /** Name of the menu item. */
     name: string;
@@ -47,10 +45,11 @@ export interface AgMenuItemLeafDef<TMenuActionParams extends TCommon, TCommon> {
     /** Set to true to provide a check beside the option. */
     checked?: boolean;
     /**
-     * Set to `'radio'` when the item is one of a set of mutually exclusive choices. Ignored when `checked` is `undefined`.
-     * @default 'checkbox'
+     * The aria role for a checkable item. Set to `'menuitemradio'` when the item is one of a set of mutually exclusive choices.
+     * Ignored when `checked` is `undefined`.
+     * @default 'menuitemcheckbox'
      */
-    checkType?: AgMenuItemCheckType;
+    menuItemRole?: 'menuitemcheckbox' | 'menuitemradio';
     /** The icon to display, either a DOM element or HTML string. */
     icon?: Element | string;
     /** CSS classes to apply to the menu item. */
@@ -613,11 +612,10 @@ export class AgMenuItemComponent<
 
     private applyAriaProperties(eGui: HTMLElement): void {
         const {
-            params: { checked, checkType, subMenu, subMenuRole, disabled },
+            params: { checked, menuItemRole, subMenu, subMenuRole, disabled },
         } = this;
 
-        const checkableRole = checkType === 'radio' ? 'menuitemradio' : 'menuitemcheckbox';
-        _setAriaRole(eGui, checked == null ? 'menuitem' : checkableRole);
+        _setAriaRole(eGui, checked == null ? 'menuitem' : (menuItemRole ?? 'menuitemcheckbox'));
 
         if (subMenu) {
             _setAriaHasPopup(eGui, subMenuRole ?? 'menu');

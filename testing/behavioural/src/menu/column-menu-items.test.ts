@@ -584,4 +584,31 @@ describe('checkable column menu items aria', () => {
             Plain: 'menuitem null',
         });
     });
+
+    test('custom items with menuItemRole menuitemradio are radio items, unless they are not checkable', async () => {
+        const api = await gridMgr.createGridAndWait('menu-custom-radio-aria', {
+            columnDefs: [{ field: 'athlete' }],
+            rowData,
+            getColumnMenuItems: () => [
+                {
+                    name: 'Size',
+                    subMenu: [
+                        { name: 'Small', checked: true, menuItemRole: 'menuitemradio' },
+                        { name: 'Large', checked: false, menuItemRole: 'menuitemradio' },
+                        { name: 'Plain', menuItemRole: 'menuitemradio' },
+                    ],
+                },
+            ],
+        });
+
+        restoreOffsetParent = polyfillOffsetParent();
+        api.showColumnMenu('athlete');
+        await clickMenuOption('Size');
+        await openMenuOption('Small');
+        expect(menuOptionsAria('Small')).toEqual({
+            Small: 'menuitemradio true',
+            Large: 'menuitemradio false',
+            Plain: 'menuitem null',
+        });
+    });
 });

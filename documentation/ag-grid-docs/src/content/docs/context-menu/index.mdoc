@@ -30,6 +30,24 @@ Note: if you set `checked=true`, then the icon will be ignored - these options a
 
 If you want to turn off the context menu completely, set the grid property `suppressContextMenu=true`.
 
+### Checkable Menu Items
+
+Setting `checked` on a menu item shows a check beside it, and screen readers announce the item as a checkbox. When only one item in a set can be checked, set `menuItemRole: 'menuitemradio'` on each item in the set so screen readers announce them as radio options instead.
+
+Screen readers treat every radio item in a menu as part of one set, and separators do not split them. Put each set of mutually exclusive items in its own sub menu:
+
+```js
+{
+    name: 'Text Size',
+    subMenu: [
+        { name: 'Small', checked: size === 'small', menuItemRole: 'menuitemradio', action: () => setSize('small') },
+        { name: 'Large', checked: size === 'large', menuItemRole: 'menuitemradio', action: () => setSize('large') },
+    ],
+}
+```
+
+The grid's own **Pin Column**, **Value Aggregation** and **Show Values As** sub menus use radio items in this way.
+
 ## Built In Menu Items
 
 The following is a list of all the default built in menu items with the rules about when they are shown.
