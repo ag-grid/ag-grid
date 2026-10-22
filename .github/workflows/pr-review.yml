@@ -55,7 +55,9 @@ env:
 
 jobs:
     review:
-        runs-on: ubuntu-latest
+        # Pinned to ubuntu-24.04: openai/codex-action's drop-sudo can't start on ubuntu-26.04
+        # (now ubuntu-latest), see openai/codex-action#188. Revert once that is fixed upstream.
+        runs-on: ubuntu-24.04
         # Top-level gating — keeps the runner from spinning up at all for
         # events that would only short-circuit at a step-level `if:`:
         # - pull_request: same-repo, non-draft (forks also blocked inside
