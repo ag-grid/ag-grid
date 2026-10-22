@@ -50,9 +50,12 @@ import Showcase from '@components/showcase/Showcase';
 import Customers from '@components/customers/Customers';
 import FeaturesWithExamples from './sections/features-with-examples/FeaturesWithExamples.astro';
 import ComparisonTable from './sections/comparison/ComparisonTable';
+import TechnicalReviewCredit from '@components/technical-review-credit/TechnicalReviewCredit.astro';
+import { buildTechnicalReviewStructuredData, type TechnicalReviewerKey } from '@utils/technicalReviewers';
+import { getEntry, type CollectionEntry } from 'astro:content';
 
 interface Props {
-    content: LandingPageContent;
+    content: LandingPageContent & { technicalReviewer?: TechnicalReviewerKey };
     versions?: Array<{
         version: string;
         landingPageHighlight?: string;
@@ -62,6 +65,14 @@ interface Props {
 }
 
 const { content, versions, hidePageFromSearchEngines } = Astro.props;
+const { technicalReviewer } = content;
+
+const { data: metadata } = (await getEntry('metadata', 'metadata')) as CollectionEntry<'metadata'>;
+// Matches the canonical URL Layout emits, so the WebPage node describes the page being served.
+const pageUrl = new URL(Astro.url.pathname, metadata.canonicalUrlBase).href;
+const pageStructuredData = technicalReviewer
+    ? buildTechnicalReviewStructuredData({ pageUrl, reviewer: technicalReviewer })
+    : undefined;
 const latestVersion = versions?.find((v) => v.landingPageHighlight);
 
 // Determine if this is an enterprise page based on hero variant
@@ -90,6 +101,7 @@ const themeBuilderVideo = isEnterprise
     showDocsNav={false}
     showSearchBar={true}
     hidePageFromSearchEngines={hidePageFromSearchEngines}
+    pageStructuredData={pageStructuredData}
 >
     {
         content.sections.map((section) => {
@@ -310,4 +322,6 @@ const themeBuilderVideo = isEnterprise
             }
         })
     }
+
+    {technicalReviewer && <TechnicalReviewCredit reviewer={technicalReviewer} standalone />}
 </Layout>
