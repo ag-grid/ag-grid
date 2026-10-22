@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-import { TestGridsManager } from 'ag-test-utils';
+import { DragEventDispatcher, TestGridsManager, clipboardUtils, waitForEvent } from 'ag-test-utils';
 
 import type { CellEditRequestEvent, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import {
@@ -14,7 +14,7 @@ import {
     TextEditorModule,
     UndoRedoEditModule,
 } from 'ag-grid-community';
-import { TransposeModule } from 'ag-grid-enterprise';
+import { CellSelectionModule, ClipboardModule, TransposeModule } from 'ag-grid-enterprise';
 
 interface Company {
     id: string;
@@ -233,5 +233,116 @@ describe('transposed view: what callbacks and events receive', () => {
         expect(api.getRowNode('a')!.data!.revenue).toBe(400);
         api.redoCellEditing();
         await waitFor(() => expect(api.getRowNode('b')!.data!.revenue).toBe(260));
+    });
+});
+
+describe('transposed view: the fill handle and paste', () => {
+    interface Account {
+        id: string;
+        name: string;
+        revenue: number;
+        cost: number;
+    }
+
+    const gridsManager = new TestGridsManager({
+        modules: [
+            CellSelectionModule,
+            ClientSideRowModelModule,
+            ClipboardModule,
+            ColumnApiModule,
+            NumberEditorModule,
+            TransposeModule,
+            UndoRedoEditModule,
+        ],
+    });
+
+    beforeEach(() => clipboardUtils.init());
+    afterEach(() => {
+        gridsManager.reset();
+        clipboardUtils.reset();
+    });
+
+    const create = async () => {
+        const api: GridApi<Account> = await gridsManager.createGridAndWait('fill', {
+            columnDefs: [{ field: 'name' }, { field: 'revenue', editable: true }, { field: 'cost', editable: true }],
+            rowData: [
+                { id: 'a', name: 'Northwind', revenue: 400, cost: 180 },
+                { id: 'b', name: 'Contoso', revenue: 250, cost: 120 },
+                { id: 'c', name: 'Fabrikam', revenue: 600, cost: 300 },
+            ],
+            getRowId: (params) => params.data.id,
+            transpose: true,
+            transposeHeaderColId: 'name',
+            suppressColumnVirtualisation: true,
+            cellSelection: { handle: { mode: 'fill' } },
+            undoRedoCellEditing: true,
+        });
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        const cell = (field: string, record: string) =>
+            gridDiv.querySelector<HTMLElement>(`[row-id="${fieldRow(field)}"] [col-id="${recordCol(record)}"]`)!;
+        await waitFor(() => expect(cell('cost', 'c')).toBeTruthy());
+        const rowIndexOf = (field: string) => {
+            for (let i = 0; i < api.getDisplayedRowCount(); i++) {
+                if (api.getDisplayedRowAtIndex(i)?.id === fieldRow(field)) {
+                    return i;
+                }
+            }
+            throw new Error(`no field row for ${field}`);
+        };
+        const dragFill = async (field: string, record: string, toField: string, toRecord: string) => {
+            const rowIndex = rowIndexOf(field);
+            api.setFocusedCell(rowIndex, recordCol(record));
+            api.addCellRange({ rowStartIndex: rowIndex, rowEndIndex: rowIndex, columns: [recordCol(record)] });
+            const fillHandle = await waitFor(() => {
+                const el = gridDiv.querySelector('.ag-fill-handle');
+                if (!el) {
+                    throw new Error('no fill handle');
+                }
+                return el;
+            });
+            const drag = new DragEventDispatcher('pointer', null, false);
+            await drag.startDrag(fillHandle, 0, 0);
+            // The fill direction follows whichever way the pointer moved further.
+            const across = toRecord !== record;
+            await drag.movePointer(cell(toField, toRecord), across ? 150 : 0, across ? 0 : 150);
+            await drag.movePointer(cell(toField, toRecord), across ? 300 : 0, across ? 0 : 300);
+            const fillEnd = waitForEvent('fillEnd', api);
+            await drag.finishDrag();
+            await fillEnd;
+        };
+        const values = (field: keyof Account) => ['a', 'b', 'c'].map((id) => api.getRowNode(id)!.data![field]);
+        return { api, dragFill, rowIndexOf, values };
+    };
+
+    test('filling across records changes each record, and undo and redo replay the fill', async () => {
+        const { api, dragFill, values } = await create();
+        await dragFill('revenue', 'a', 'revenue', 'c');
+        expect(values('revenue')).toEqual([400, 400, 400]);
+        expect(values('cost')).toEqual([180, 120, 300]);
+        api.undoCellEditing();
+        await waitFor(() => expect(values('revenue')).toEqual([400, 250, 600]));
+        api.redoCellEditing();
+        await waitFor(() => expect(values('revenue')).toEqual([400, 400, 400]));
+    });
+
+    test("filling down a record's fields changes only that record, and undo replays the fill", async () => {
+        const { api, dragFill, values } = await create();
+        await dragFill('revenue', 'b', 'cost', 'b');
+        expect(values('cost')).toEqual([180, 250, 300]);
+        expect(values('revenue')).toEqual([400, 250, 600]);
+        api.undoCellEditing();
+        await waitFor(() => expect(values('cost')).toEqual([180, 120, 300]));
+    });
+
+    test('pasting across records changes each record, and undo replays the paste', async () => {
+        const { api, rowIndexOf, values } = await create();
+        api.setFocusedCell(rowIndexOf('revenue'), recordCol('a'));
+        clipboardUtils.setText('999\t888');
+        const pasteEnd = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await pasteEnd;
+        expect(values('revenue')).toEqual([999, 888, 600]);
+        api.undoCellEditing();
+        await waitFor(() => expect(values('revenue')).toEqual([400, 250, 600]));
     });
 });
