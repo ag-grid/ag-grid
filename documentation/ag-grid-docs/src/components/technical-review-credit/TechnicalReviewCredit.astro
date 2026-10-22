@@ -1,0 +1,18 @@
+---
+import { TECHNICAL_REVIEWERS, type TechnicalReviewerKey, getAuthorPageUrl } from '@utils/technicalReviewers';
+
+import styles from './TechnicalReviewCredit.module.scss';
+
+interface Props {
+    reviewer: TechnicalReviewerKey;
+    /** Render as its own centred block at the end of a page, rather than inline under a title. */
+    standalone?: boolean;
+}
+
+const { reviewer, standalone } = Astro.props;
+const { name, jobTitle } = TECHNICAL_REVIEWERS[reviewer];
+---
+
+<p class:list={[styles.credit, standalone && [styles.standalone, 'layout-max-width-small']]}>
+    Technically reviewed by <a href={getAuthorPageUrl(reviewer)}>{name}</a>, {jobTitle}
+</p>

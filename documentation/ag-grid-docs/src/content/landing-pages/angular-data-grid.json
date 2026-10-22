@@ -7,6 +7,7 @@
     "packageName": "ag-grid-angular",
     "docsPath": "angular-data-grid",
     "analyticsPrefix": "angular-data-grid",
+    "technicalReviewer": "james",
 
     "sections": [
         {
