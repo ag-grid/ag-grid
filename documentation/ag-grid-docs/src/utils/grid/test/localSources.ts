@@ -7,8 +7,21 @@ import { fileURLToPath } from 'node:url';
 import { GOOGLE_FONTS_CSS, localFontStylesheet } from './localFonts';
 import { isAbandoned, whileTheRequestMatters } from './routeGuard';
 
+const PUBLIC_SITE_ORIGIN = 'https://www.ag-grid.com';
 const EXAMPLE_ASSETS_URL_PREFIX = '/example-assets/';
-const EXAMPLE_ASSETS_DIR = fileURLToPath(new URL('../../../../public/example-assets/', import.meta.url));
+const PUBLIC_DIR = fileURLToPath(new URL('../../../../public/', import.meta.url));
+
+/** The checkout's copy of a URL path under `dir`, or undefined for one that escapes it or does not decode. */
+function localPathFor(dir: string, urlPath: string): string | undefined {
+    let decoded: string;
+    try {
+        decoded = decodeURIComponent(urlPath);
+    } catch {
+        return undefined;
+    }
+    const filePath = join(dir, decoded);
+    return filePath.startsWith(dir) ? filePath : undefined;
+}
 
 /** Not `access`, which also passes for a directory - `fulfill` would then throw EISDIR and strand the route. */
 const isFile = (path: string): Promise<boolean> =>
@@ -36,27 +49,30 @@ async function waitForTextMeasurable(page: Page): Promise<void> {
         .catch(() => undefined);
 }
 
+/** Holds a data answer until the page's fonts are in: answered from memory or disk, it would beat them. */
+async function fulfillMeasurable(page: Page, route: Route, response: Parameters<Route['fulfill']>[0]): Promise<void> {
+    if (TEXT_MEASURABLE_RESOURCE_TYPES.includes(route.request().resourceType())) {
+        await waitForTextMeasurable(page);
+    }
+    await route.fulfill(response);
+}
+
 /**
- * Examples load their data from `www.ag-grid.com`, so a run otherwise depends on the public site being
- * reachable and fast - under parallel load those requests lose races and tests fail. The same files ship in
- * `public/example-assets`, so serve those from disk and leave anything not shipped to the mirror.
+ * Examples load their data and images from `www.ag-grid.com`. On a local run the checkout is the site under
+ * test, so the same files are read from `public/` on every request, a local edit served at once; anything not
+ * shipped is left to the mirror.
  */
-export async function routeExampleAssetsFromDisk(page: Page): Promise<void> {
+export async function routePublicFilesFromDisk(page: Page): Promise<void> {
     await page.route(
-        `https://www.ag-grid.com${EXAMPLE_ASSETS_URL_PREFIX}**`,
+        (url) => url.origin === PUBLIC_SITE_ORIGIN,
         whileTheRequestMatters(async (route) => {
-            const { pathname } = new URL(route.request().url());
-            const filePath = join(EXAMPLE_ASSETS_DIR, pathname.slice(EXAMPLE_ASSETS_URL_PREFIX.length));
-            const shipped = filePath.startsWith(EXAMPLE_ASSETS_DIR) && (await isFile(filePath));
-            if (!shipped) {
+            const filePath = localPathFor(PUBLIC_DIR, new URL(route.request().url()).pathname);
+            if (!filePath || !(await isFile(filePath))) {
                 await route.fallback();
                 return;
             }
-            if (TEXT_MEASURABLE_RESOURCE_TYPES.includes(route.request().resourceType())) {
-                await waitForTextMeasurable(page);
-            }
             // The page's origin is localhost, so the response needs to allow the cross-origin read.
-            await route.fulfill({ path: filePath, headers: { 'access-control-allow-origin': '*' } });
+            await fulfillMeasurable(page, route, { path: filePath, headers: { 'access-control-allow-origin': '*' } });
         })
     );
 }
@@ -65,11 +81,8 @@ const PDF_FONTS_URL_PREFIX = '/fonts/pdf-export/';
 const PDF_FONTS_DIR = fileURLToPath(new URL('../../../../public/fonts/pdf-export/', import.meta.url));
 
 /**
- * The PDF export examples fetch their fonts with a root-absolute path (`/fonts/pdf-export/...`), which is
- * correct on the real site but 404s on a branch build served under a path prefix - and a font that fails to
- * load leaves the example unable to produce a download at all. The files ship in `public/fonts/pdf-export`,
- * so serve them from disk, exactly as `routeExampleAssetsFromDisk` does for example data: they are static
- * site assets rather than part of the build under test, so this does not weaken what the run verifies.
+ * The PDF export examples fetch their fonts at the site root (`/fonts/pdf-export/...`), which 404s under a path
+ * prefix, and a missing font leaves them unable to export. On a local run they are read from `public/` instead.
  */
 export async function routePdfFontsFromDisk(page: Page, siteOrigin: string): Promise<void> {
     await page.route(
@@ -77,8 +90,8 @@ export async function routePdfFontsFromDisk(page: Page, siteOrigin: string): Pro
         whileTheRequestMatters(async (route) => {
             const { pathname } = new URL(route.request().url());
             const name = pathname.slice(pathname.indexOf(PDF_FONTS_URL_PREFIX) + PDF_FONTS_URL_PREFIX.length);
-            const filePath = join(PDF_FONTS_DIR, name);
-            if (!filePath.startsWith(PDF_FONTS_DIR) || !(await isFile(filePath))) {
+            const filePath = localPathFor(PDF_FONTS_DIR, name);
+            if (!filePath || !(await isFile(filePath))) {
                 await route.fallback();
                 return;
             }
@@ -97,6 +110,18 @@ const META_SEPARATOR = 0x0a;
 type MirrorMeta = { status: number; headers: Record<string, string>; bytes: number; fetchedAt: number };
 type MirrorEntry = { body: Buffer; meta: MirrorMeta };
 
+/**
+ * `getCacheBustingUrl` stamps a bundle URL with its page's build time (`?t=<ms>`), which names the page, not the
+ * bytes: keyed with it, every page would fetch and hold the same bundle again.
+ */
+function withoutBuildStamp(url: string): string {
+    const parsed = new URL(url);
+    if (/^\d+$/.test(parsed.searchParams.get('t') ?? '')) {
+        parsed.searchParams.delete('t');
+    }
+    return parsed.href;
+}
+
 /** What identifies an entry to this run, and where it lives. */
 type MirrorId = { key: string; path: string };
 
@@ -106,7 +131,7 @@ type MirrorId = { key: string; path: string };
  * The digest keeps paths unique; the readable stem is so an entry can be identified and deleted by hand.
  */
 function mirrorIdFor(url: string, userAgent: string): MirrorId {
-    const key = `${userAgent}\n${url}`;
+    const key = `${userAgent}\n${withoutBuildStamp(url)}`;
     const { hostname, pathname } = new URL(url);
     const stem = `${hostname}${pathname}`.replace(/[^a-zA-Z0-9._-]+/g, '-').slice(0, 100);
     const digest = createHash('sha1').update(key).digest('hex').slice(0, 12);
@@ -287,7 +312,11 @@ async function fetchIntoMirror(
                 },
             };
         }
-    } catch {
+    } catch (error) {
+        // A test ending mid-download is not the origin failing: nothing to report, and the copy is still wanted.
+        if (isAbandoned(error)) {
+            throw error;
+        }
         return stored;
     }
     // Persisting is best effort - a full or read-only disk should not cost us a response already in hand.
@@ -314,12 +343,16 @@ async function loadMirrorEntry(route: Route, url: string, id: MirrorId): Promise
         stored && isFresh(stored.meta) ? stored : fetchIntoMirror(route, url, id, stored)
     );
     mirrorEntries.set(id.key, pending);
-    const entry = await pending;
-    // Never memoize a transient failure, or one bad fetch is replayed by every later test in this worker.
-    if (!entry) {
+    // Never memoize a transient failure or an abandoned fetch, or every later test in this worker replays it.
+    const forget = () => {
         mirrorEntries.delete(id.key);
-    }
-    return entry;
+    };
+    void pending.then((entry) => {
+        if (!entry) {
+            forget();
+        }
+    }, forget);
+    return pending;
 }
 
 /** Every test wants the same handful of URLs, so report each one once rather than once per test. */
@@ -415,7 +448,11 @@ export async function routeExternalThroughMirror(page: Page, siteOrigin: string)
                 await route.fallback();
                 return;
             }
-            await route.fulfill({ status: entry.meta.status, headers: entry.meta.headers, body: entry.body });
+            await fulfillMeasurable(page, route, {
+                status: entry.meta.status,
+                headers: entry.meta.headers,
+                body: entry.body,
+            });
         })
     );
 }
@@ -434,9 +471,9 @@ const isSettled = (status: number): boolean => status >= 200 && status < 400;
  */
 const siteResponses = new Map<string, Promise<SiteResponse>>();
 
-async function fetchSiteResponse(route: Route): Promise<SiteResponse> {
+async function fetchSiteResponse(route: Route, url: string): Promise<SiteResponse> {
     // Unfollowed because WebKit cannot fulfil a redirect, and its body would resolve relative imports wrongly.
-    const response = await route.fetch({ headers: forwardedHeaders(route), maxRedirects: 0 });
+    const response = await route.fetch({ url, headers: forwardedHeaders(route), maxRedirects: 0 });
     return {
         status: response.status(),
         headers: withoutHeaders(response.headers(), BODY_FRAMING_HEADERS),
@@ -444,18 +481,12 @@ async function fetchSiteResponse(route: Route): Promise<SiteResponse> {
     };
 }
 
-/** `getCacheBustingUrl` stamps the bundle URL with each page's build time, which names the page, not the bytes. */
-function siteResponseKey(url: string): string {
-    const parsed = new URL(url);
-    parsed.searchParams.delete('t');
-    return parsed.href;
-}
-
 /** Single-flight per worker: the first request for a key fetches it and every later one awaits the same answer. */
-function loadSiteResponse(route: Route, key: string): Promise<SiteResponse> {
+function loadSiteResponse(route: Route, url: string): Promise<SiteResponse> {
+    const key = withoutBuildStamp(url);
     let pending = siteResponses.get(key);
     if (!pending) {
-        pending = fetchSiteResponse(route);
+        pending = fetchSiteResponse(route, url);
         siteResponses.set(key, pending);
         const forget = () => {
             siteResponses.delete(key);
@@ -469,18 +500,28 @@ function loadSiteResponse(route: Route, key: string): Promise<SiteResponse> {
     return pending;
 }
 
+/** The PDF examples ask for their fonts at the site root, which a build under a path prefix serves below it. */
+function deployedUrlFor(url: string, baseURL: string): string {
+    const { pathname } = new URL(url);
+    const at = pathname.indexOf(PDF_FONTS_URL_PREFIX);
+    return at < 0 ? url : new URL(`.${pathname.slice(at)}`, baseURL).href;
+}
+
 /**
  * Staging answers `no-cache` and every test gets a fresh context, so each test would download the bundles again,
- * thousands of requests per job to one origin. Only what every test shares: pages and example files are used
- * once or twice, so holding them would only grow the worker.
+ * thousands of requests per job to one origin. Only what every test shares - the bundles, the runner, the PDF
+ * fonts, the example data when the public site is under test - not pages or example files, used once or twice.
  */
 export async function routeSiteThroughMemo(page: Page, baseURL: string): Promise<void> {
     // Resolved against the base, so a build deployed under a path prefix is matched too.
     const { origin } = new URL(baseURL);
-    const filesPath = new URL('files/', baseURL).pathname;
-    const runnerPath = new URL('example-runner/', baseURL).pathname;
+    const sharedPaths = [new URL('files/', baseURL).pathname, new URL('example-runner/', baseURL).pathname];
     await page.route(
-        (url) => url.origin === origin && (url.pathname.startsWith(filesPath) || url.pathname.startsWith(runnerPath)),
+        (url) =>
+            url.origin === origin &&
+            (sharedPaths.some((path) => url.pathname.startsWith(path)) ||
+                url.pathname.startsWith(EXAMPLE_ASSETS_URL_PREFIX) ||
+                url.pathname.includes(PDF_FONTS_URL_PREFIX)),
         whileTheRequestMatters(async (route) => {
             const request = route.request();
             if (request.method() !== 'GET') {
@@ -489,7 +530,7 @@ export async function routeSiteThroughMemo(page: Page, baseURL: string): Promise
             }
             let response: SiteResponse;
             try {
-                response = await loadSiteResponse(route, siteResponseKey(request.url()));
+                response = await loadSiteResponse(route, deployedUrlFor(request.url(), baseURL));
             } catch (error) {
                 if (isAbandoned(error)) {
                     throw error;
@@ -502,7 +543,7 @@ export async function routeSiteThroughMemo(page: Page, baseURL: string): Promise
                 await route.fallback();
                 return;
             }
-            await route.fulfill(response);
+            await fulfillMeasurable(page, route, response);
         })
     );
 }

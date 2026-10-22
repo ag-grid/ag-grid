@@ -1,15 +1,17 @@
 /* eslint-disable no-empty-pattern */
 import type { Locator, Page, Response, TestType } from '@playwright/test';
 import { test as base, expect as playwrightExpect } from '@playwright/test';
+import { readFileSync } from 'node:fs';
 
 import { type AgModuleName, wrapAgTestIdFor } from 'ag-grid-community';
 
 import { applyCpuThrottle, clearCpuThrottle } from './test/applyCpuThrottle';
 import { focusAuditEnabled, recordFocusShadows, reportFocusShadows } from './test/focusShadow';
+import { isLocalRun } from './test/localRun';
 import {
-    routeExampleAssetsFromDisk,
     routeExternalThroughMirror,
     routePdfFontsFromDisk,
+    routePublicFilesFromDisk,
     routeSiteThroughMemo,
     warnOnNetworkAccess,
 } from './test/localSources';
@@ -71,6 +73,10 @@ const ALL_FRAMEWORKS = [
 type AgFramework = (typeof ALL_FRAMEWORKS)[number];
 
 const PROD_VARIANT_FRAMEWORK = 'reactFunctionalTs';
+
+/** The framework segment of the example URL: both React builds share one page. */
+const urlFrameworkOf = (agFramework: AgFramework): string =>
+    agFramework === reactFunctionalTsDev ? 'reactFunctionalTs' : agFramework;
 
 /**
  * The framework this run is pinned to, or null for a run that covers them all. CI shards the suite by
@@ -144,6 +150,28 @@ function isFrameworkDeclared(agFramework: AgFramework): boolean {
     }
     return PINNED_FRAMEWORK_VARIANTS[PINNED_FRAMEWORK]?.includes(agFramework) ?? false;
 }
+
+/** The frameworks the example being declared has pages for, or undefined for every one. */
+let exampleFrameworks: ReadonlySet<string> | undefined;
+
+/** The site's own rule (`getSupportedFrameworks`): an `exampleConfig.json` listing frameworks generates only those. */
+function readExampleFrameworks(importMeta: ImportMeta): ReadonlySet<string> | undefined {
+    let config: string;
+    try {
+        config = readFileSync(new URL('exampleConfig.json', importMeta.url), 'utf8');
+    } catch (error) {
+        if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+            return undefined;
+        }
+        throw error;
+    }
+    const frameworks: string[] | undefined = JSON.parse(config).supportedFrameworks;
+    return frameworks ? new Set(frameworks) : undefined;
+}
+
+/** A framework the example has no page for would only load the site's 404 page, and its analytics, to skip. */
+const hasExamplePage = (agFramework: AgFramework): boolean =>
+    exampleFrameworks === undefined || exampleFrameworks.has(urlFrameworkOf(agFramework));
 
 // One worker, so a run says once what it is doing rather than once per worker.
 if (process.env.TEST_WORKER_INDEX === '0' && !PINNED_FRAMEWORK) {
@@ -303,7 +331,7 @@ async function loadPage(
     }
 
     const queryParams = new URLSearchParams(queryOptions);
-    const urlFramework = agFramework === reactFunctionalTsDev ? 'reactFunctionalTs' : agFramework;
+    const urlFramework = urlFrameworkOf(agFramework);
 
     // The trailing slash is the canonical form for a deployed example (see urlWithPrefix). Without it
     // both staging and the archive answer 301, so every page load costs an extra round trip.
@@ -370,8 +398,11 @@ export const extended = base.extend<TestFixtures>({
             // served `/example-assets/`.
             await routeExternalThroughMirror(page, siteOrigin);
             await routeSiteThroughMemo(page, baseURL);
-            await routeExampleAssetsFromDisk(page);
-            await routePdfFontsFromDisk(page, siteOrigin);
+            // Only a local run serves the checkout; a deployed build may differ from it, so its files are downloaded.
+            if (isLocalRun(baseURL)) {
+                await routePublicFilesFromDisk(page);
+                await routePdfFontsFromDisk(page, siteOrigin);
+            }
             await use();
         },
         { auto: true },
@@ -419,7 +450,7 @@ const frameworkTest =
         // CI shard pinning applies - not the React variant economy eachFramework is subject to. Declaring
         // a test only to skip it at runtime when the job targets another framework produces a fake
         // "skipped" result and still spins up a browser fixture, so don't declare it at all.
-        if (!isFrameworkDeclared(agFramework)) {
+        if (!isFrameworkDeclared(agFramework) || !hasExamplePage(agFramework)) {
             return;
         }
 
@@ -600,7 +631,9 @@ function setAgExampleUrl(importMeta: ImportMeta): AgExampleUrl {
 
 export const agExample = (importMeta: ImportMeta, callback: () => any) => {
     base.describe(setAgExampleUrl(importMeta), () => {
+        exampleFrameworks = readExampleFrameworks(importMeta);
         callback();
+        exampleFrameworks = undefined;
     });
 };
 
