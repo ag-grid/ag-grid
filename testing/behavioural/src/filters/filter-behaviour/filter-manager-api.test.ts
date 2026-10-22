@@ -10,7 +10,7 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { FilterChangedEvent, GridApi, IRowNode } from 'ag-grid-community';
+import type { FilterChangedEvent, GridApi, IRowNode, IssueRaisedEvent } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ExternalFilterModule,
@@ -405,25 +405,28 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
             returns: undefined,
         },
     ])('$call reports $message and leaves the filters as they were', async ({ message, run, returns }) => {
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [12, 287, 288] });
-        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        // the whole list of issues is asserted instead, as a suppressed id raises none
+        enableDevValidations({ throwOn: [] });
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+        vi.spyOn(console, 'error').mockImplementation(() => {});
+        const issues: string[] = [];
         const age = { filterType: 'number', type: 'lessThan', filter: 20 };
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: threeFilterCols,
             rowData: PEOPLE,
+            onIssueRaised: (event: IssueRaisedEvent) => issues.push(`${event.severity} #${event.id}`),
         });
         api.setFilterModel({ age });
         await asyncSetTimeout(0);
 
         expect(run(api)).toEqual(returns);
         await asyncSetTimeout(0);
-        expect([...warnSpy.mock.calls, ...errorSpy.mock.calls].flat().join(' ')).toContain(message);
         expect({
+            issues,
             model: api.getFilterModel(),
             popupOpen: !!document.querySelector('.ag-filter-menu'),
             displayed: api.getDisplayedRowCount(),
-        }).toEqual({ model: { age }, popupOpen: false, displayed: 2 });
+        }).toEqual({ issues: [message], model: { age }, popupOpen: false, displayed: 2 });
     });
 
     test('doFilterAction resets only the columns it names, given as an array or a single id', async () => {

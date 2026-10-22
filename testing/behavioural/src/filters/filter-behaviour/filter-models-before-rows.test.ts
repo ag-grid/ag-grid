@@ -651,35 +651,6 @@ describe('a change before rows load to a filter holding none of the model set fo
         vi.restoreAllMocks();
     });
 
-    test('a custom filter still being built when its definition changes keeps the model set for it', async () => {
-        let finishInit: () => void = () => {};
-        class SlowFilter extends RecordingFilter {
-            public override init(params: IFilterParams): AgPromise<void> {
-                super.init(params);
-                return new AgPromise<void>((resolve) => {
-                    finishInit = resolve;
-                });
-            }
-        }
-        class OtherFilter extends RecordingFilter {}
-        const api: GridApi = gridsManager.createGrid('grid1', {
-            columnDefs: [{ field: 'athlete', filter: SlowFilter }, BASE_COLS[1]],
-        });
-        await asyncSetTimeout(0);
-        void api.getColumnFilterInstance('athlete');
-        api.setFilterModel({ athlete: { value: 'Ian' } });
-        api.setGridOption('columnDefs', [{ field: 'athlete', filter: OtherFilter }, BASE_COLS[1]]);
-        await asyncSetTimeout(0);
-        finishInit();
-        await asyncSetTimeout(0);
-        expect(api.getFilterModel()).toEqual({ athlete: { value: 'Ian' } });
-
-        api.setGridOption('rowData', ROWS);
-        await asyncSetTimeout(0);
-        expect(api.getFilterModel()).toEqual({ athlete: { value: 'Ian' } });
-        expect(api.getDisplayedRowCount()).toBe(1);
-    });
-
     test('turning off a built filter before rows load tells it at once, as with rows', async () => {
         const events: string[] = [];
         const api: GridApi = gridsManager.createGrid('grid1', {

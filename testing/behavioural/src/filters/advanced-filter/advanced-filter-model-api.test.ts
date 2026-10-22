@@ -1289,22 +1289,27 @@ describe('Advanced Filter', () => {
         },
         { call: 'getColumnFilterInstance', run: (api: GridApi) => api.getColumnFilterInstance('age') },
     ])('$call warns that column filters are off and leaves the advanced filter applied', async (row) => {
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [68] });
+        // the whole list of issues is asserted instead, as a suppressed id raises none
+        enableDevValidations({ throwOn: [] });
         onTestFinished(() => enableDevValidations({ throwOn: ALL_SEVERITIES }));
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-        const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+        onTestFinished(() => warnSpy.mockRestore());
+        const issues: string[] = [];
+        const api = gridsManager.createGrid('grid1', {
+            ...DEFAULT_OPTIONS,
+            onIssueRaised: (event) => issues.push(`${event.severity} #${event.id}`),
+        });
         await asyncSetTimeout(0);
         applyModel(api, { filterType: 'text', colId: 'athlete', type: 'contains', filter: 'Bolt' });
 
         expect(await row.run(api)).toBeUndefined();
         await asyncSetTimeout(0);
-        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #68');
         expect({
+            issues,
             model: api.getFilterModel(),
             columnFilterPresent: api.isColumnFilterPresent(),
             athletes: getDisplayedAthletes(api),
-        }).toEqual({ model: {}, columnFilterPresent: false, athletes: ['Usain Bolt'] });
-        warnSpy.mockRestore();
+        }).toEqual({ issues: ['warning #68'], model: {}, columnFilterPresent: false, athletes: ['Usain Bolt'] });
     });
 
     describe('Model set before the rows arrive to infer data types from', () => {
