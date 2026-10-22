@@ -22,6 +22,9 @@ const stamp = (date) => new Date(date - date.getTimezoneOffset() * 60_000).toISO
 // interpreter start, since the cost is only paid on a child that never starts at all.
 const CLAIM_TRIES = 200;
 
+// How many runs keep their result.json; past it only the log, command and status stay, for the week.
+const RESULTS_KEPT = 50;
+
 // A pid is not an identity - the OS reuses them - so a run records which incarnation was its own. Empty for
 // a pid that is gone, which is what makes a recorded pid verifiable at all.
 function pidStart(pid) {
@@ -198,25 +201,43 @@ export class RunLog {
         );
     }
 
-    // Drops runs over a week old, without waiting for it: the cleanup must never sit between the caller and
-    // the run starting. `isDirectory` leaves the `latest` symlink alone.
+    // Drops week-old runs and the result.json of all but the RESULTS_KEPT newest, which is what fills the disk.
+    // Never awaited, so the cleanup cannot delay the run; `isDirectory` leaves the `latest` symlink alone.
     prune() {
         const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
-        fs.promises
-            .readdir(this.root, { withFileTypes: true })
-            .then((entries) =>
-                Promise.all(
-                    entries
-                        .filter((entry) => entry.isDirectory())
-                        .map(async (entry) => {
-                            const dir = path.join(this.root, entry.name);
-                            if ((await fs.promises.stat(dir)).mtimeMs < cutoff) {
-                                await fs.promises.rm(dir, { recursive: true, force: true });
-                            }
-                        })
-                )
-            )
-            .catch(() => {});
+        const prune = async () => {
+            const entries = await fs.promises.readdir(this.root, { withFileTypes: true });
+            const results = [];
+            await Promise.all(
+                entries
+                    .filter((entry) => entry.isDirectory())
+                    .map(async (entry) => {
+                        const dir = path.join(this.root, entry.name);
+                        // Another run pruning at the same moment may have removed it already.
+                        const stat = await fs.promises.stat(dir).catch(() => null);
+                        if (!stat) {
+                            return;
+                        }
+                        if (stat.mtimeMs < cutoff) {
+                            await fs.promises.rm(dir, { recursive: true, force: true });
+                            return;
+                        }
+                        const written = await fs.promises.stat(path.join(dir, 'result.json')).catch(() => null);
+                        if (written) {
+                            results.push({ dir, stat, mtimeMs: written.mtimeMs });
+                        }
+                    })
+            );
+            results.sort((a, b) => b.mtimeMs - a.mtimeMs);
+            await Promise.all(
+                results.slice(RESULTS_KEPT).map(async ({ dir, stat }) => {
+                    await fs.promises.rm(path.join(dir, 'result.json'), { force: true });
+                    // The removal touches the folder, whose age is the run's: put it back, or the run outlives its week.
+                    await fs.promises.utimes(dir, stat.atime, stat.mtime).catch(() => {});
+                })
+            );
+        };
+        return prune().catch(() => {});
     }
 
     writeStatus(status, dir = this.dir) {
@@ -485,7 +506,7 @@ export class RunLog {
     // runs going the wrong one would be waited on or killed. `isDirectory` leaves the `latest` symlink out.
     #runningId() {
         let found;
-        let entries = [];
+        let entries;
         try {
             entries = fs.readdirSync(this.root, { withFileTypes: true });
         } catch {
