@@ -244,7 +244,7 @@ This is a dialog guard, not a security boundary: `columnDefs` and Grid State res
 
 Errors block Apply in deferred mode. In live mode, rejected edits are saved and display `#ERROR!`, including when returning non-empty `internalErrors`, rather than the underlying formula error code. `isColumnReferenceable` rejections use `#REF!` instead, even for the same column.
 
-Title and type edits also revalidate unchanged expressions. In live mode, reopening an editable dialog rechecks saved rejections; accepted expressions resume calculating when the update is applied. Restrictions set by `isColumnReferenceable` remain enforced.
+Title and type edits also revalidate unchanged expressions. In live mode, opening an editable dialog revalidates the expression and updates cells and saved errors when the update is applied, even without edits. Restrictions set by `isColumnReferenceable` remain enforced.
 {% /note %}
 
 ### suppressColumnHighlighting
