@@ -131,10 +131,11 @@
     position: absolute;
     display: inline-flex;
     align-items: center;
-    color: var(--ag-icon-color);
-    opacity: 0.5;
     pointer-events: none;
     inset-inline-start: var(--ag-spacing);
+
+    /* `.ag-icon` colours itself from this property, so an inherited `color` would not reach the glyph */
+    --ag-icon-color: var(--ag-input-icon-color);
 
     /*
      * The icon precedes the input in the DOM and `.ag-input-wrapper` is itself positioned, so

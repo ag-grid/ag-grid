@@ -1,8 +1,11 @@
 import type { AgCoreBeanCollection, BaseEvents, BaseProperties, IPropertiesService } from 'ag-stack';
-import { AgComponentStub, KeyCode, _clearElement, _isVisible, _last, _setAriaRole } from 'ag-stack';
+import { AgComponentStub, KeyCode, _clearElement, _isKeyboardMode, _isVisible, _last, _setAriaRole } from 'ag-stack';
 
 import agListCSS from './agList.css';
 import { AgListItem } from './agListItem';
+
+/** Marks the list while its highlight is being moved with the keyboard, so the highlight can show a focus outline */
+const KEYBOARD_HIGHLIGHT_CLASS = 'ag-keyboard-highlight';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface ListOption<TValue = string> {
@@ -61,7 +64,10 @@ export class AgList<
 
     public postConstruct(): void {
         const eGui = this.getGui();
-        this.addManagedElementListeners(eGui, { mouseleave: () => this.clearHighlighted() });
+        this.addManagedElementListeners(eGui, {
+            mouseleave: () => this.clearHighlighted(),
+            mousemove: () => this.toggleCss(KEYBOARD_HIGHLIGHT_CLASS, false),
+        });
     }
 
     public handleKeyDown(e: KeyboardEvent): void {
@@ -78,6 +84,7 @@ export class AgList<
             case KeyCode.DOWN:
             case KeyCode.UP:
                 e.preventDefault();
+                this.toggleCss(KEYBOARD_HIGHLIGHT_CLASS, true);
                 this.navigate(key);
                 break;
             case KeyCode.PAGE_DOWN:
@@ -85,6 +92,7 @@ export class AgList<
             case KeyCode.PAGE_HOME:
             case KeyCode.PAGE_END:
                 e.preventDefault();
+                this.toggleCss(KEYBOARD_HIGHLIGHT_CLASS, true);
                 this.navigateToPage(key);
                 break;
         }
@@ -172,6 +180,7 @@ export class AgList<
     }
 
     public refreshHighlighted(): void {
+        this.toggleCss(KEYBOARD_HIGHLIGHT_CLASS, _isKeyboardMode());
         this.clearHighlighted();
         const idx = this.options.findIndex((option) => option.value === this.value);
 

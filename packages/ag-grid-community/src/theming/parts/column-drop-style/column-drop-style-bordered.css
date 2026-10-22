@@ -6,7 +6,8 @@
     align-items: center;
     justify-content: center;
     border: dashed var(--ag-border-width);
-    border-color: var(--ag-border-color);
+    border-color: var(--ag-column-drop-empty-message-border-color);
+    color: var(--ag-column-drop-empty-message-text-color);
     margin: calc(var(--ag-spacing) * 1.5) calc(var(--ag-spacing) * 2);
     padding: calc(var(--ag-spacing) * 2);
 }

@@ -128,6 +128,7 @@
 
     &.ag-selected {
         background-color: var(--ag-chart-menu-palette-dot-selected-color);
+        border-color: var(--ag-chart-menu-palette-dot-selected-color);
     }
 }
 
@@ -200,12 +201,12 @@
 
 .ag-chart-mini-thumbnail {
     cursor: pointer;
-    border: solid var(--ag-border-width) var(--ag-border-color);
+    border: solid var(--ag-border-width) var(--ag-chart-menu-thumbnail-border-color);
     border-radius: 5px;
     padding: 1px;
 
     &.ag-selected {
-        border-color: var(--ag-accent-color);
+        border-color: var(--ag-chart-menu-thumbnail-selected-border-color);
         border-width: calc(var(--ag-border-width) + 1px);
         padding: unset;
     }

@@ -1,6 +1,7 @@
 import type { HighlightTooltipEventType, VerticalDirection } from 'ag-stack';
 import {
     _addOrRemoveAttribute,
+    _isKeyboardMode,
     _requestAnimationFrame,
     _setAriaActiveDescendant,
     _setAriaLabel,
@@ -19,6 +20,8 @@ export type AgRichSelectListEvent = 'fieldPickerValueSelected' | 'richSelectList
 
 const LIST_COMPONENT_NAME = 'ag-rich-select-list';
 const ROW_COMPONENT_NAME = 'ag-rich-select-row';
+/** Marks the list while its highlight is being moved with the keyboard, so the highlight can show a focus outline */
+const KEYBOARD_HIGHLIGHT_CLASS = 'ag-keyboard-highlight';
 
 type AgRichSelectListState = 0 | 1 | 2 | 3;
 const STATE_LOADING = 0;
@@ -252,6 +255,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     }
 
     public onNavigationKeyDown(key: string, announceItem: () => void): void {
+        this.toggleCss(KEYBOARD_HIGHLIGHT_CLASS, true);
         _requestAnimationFrame(this.beans, () => {
             if (!this.currentList || !this.isAlive()) {
                 return;
@@ -274,6 +278,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         const selectedPositions = this.getIndicesForValues(value);
 
         const refresh = selectedPositions.length > 0;
+        this.toggleCss(KEYBOARD_HIGHLIGHT_CLASS, _isKeyboardMode());
 
         if (refresh) {
             // make sure the virtual list has been sized correctly
@@ -507,6 +512,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     }
 
     private onMouseMove(e: MouseEvent): void {
+        this.toggleCss(KEYBOARD_HIGHLIGHT_CLASS, false);
         const row = this.getRowForMouseEvent(e);
 
         if (row !== -1 && row != this.lastRowHovered) {

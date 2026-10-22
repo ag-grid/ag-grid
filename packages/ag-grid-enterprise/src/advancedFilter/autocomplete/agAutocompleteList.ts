@@ -2,6 +2,7 @@ import {
     AgPopupComponent,
     RefPlaceholder,
     _exists,
+    _isKeyboardMode,
     _isVisible,
     _setAriaActiveDescendant,
     _setAriaSelected,
@@ -26,6 +27,9 @@ import type {
     AutocompleteRowComponent,
     AutocompleteRowComponentCreator,
 } from './autocompleteParams';
+
+/** Marks the list while its highlight is being moved with the keyboard, so the highlight can show a focus outline */
+const KEYBOARD_HIGHLIGHT_CLASS = 'ag-keyboard-highlight';
 
 /** The list stands empty while values load, so it shows a loading message rather than reading as an empty result. */
 const getAgAutocompleteListElement = (loading: boolean): ElementParams => ({
@@ -129,6 +133,7 @@ export class AgAutocompleteList extends AgPopupComponent<
             mousedown: selectRowUnderMouse,
         });
 
+        this.toggleCss(KEYBOARD_HIGHLIGHT_CLASS, _isKeyboardMode());
         this.setSelectedValue(0);
         this.updateListHeight();
     }
@@ -158,6 +163,7 @@ export class AgAutocompleteList extends AgPopupComponent<
     public onNavigationKeyDown(event: any, key: string): void {
         // if we don't preventDefault the page body and/or grid scroll will move.
         event.preventDefault();
+        this.toggleCss(KEYBOARD_HIGHLIGHT_CLASS, true);
         if (!this.autocompleteEntries.length) {
             return;
         }
@@ -400,6 +406,7 @@ export class AgAutocompleteList extends AgPopupComponent<
     }
 
     private selectRowUnderMouse(mouseEvent: MouseEvent): void {
+        this.toggleCss(KEYBOARD_HIGHLIGHT_CLASS, false);
         const virtualList = this.virtualList;
         const rect = virtualList.getGui().getBoundingClientRect();
         const scrollTop = virtualList.getScrollTop();

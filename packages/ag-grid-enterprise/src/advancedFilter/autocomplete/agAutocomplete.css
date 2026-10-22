@@ -41,6 +41,10 @@
     }
 }
 
+.ag-autocomplete-virtual-list-item:hover {
+    background-color: var(--ag-row-hover-color);
+}
+
 .ag-autocomplete-row {
     display: flex;
     flex: 1 1 auto;
@@ -56,8 +60,7 @@
 }
 
 .ag-autocomplete-row-selected {
-    background-color: var(--ag-list-item-highlight-background-color);
-    color: var(--ag-list-item-highlight-text-color);
+    background-color: var(--ag-selected-row-background-color);
 
     @media (forced-colors: active) {
         background-color: SelectedItem;
@@ -73,4 +76,10 @@
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+}
+
+/* only while the highlight is being moved with the keyboard */
+:where(.ag-keyboard-highlight) .ag-autocomplete-row-selected {
+    outline: var(--ag-list-item-highlight-outline-width) solid var(--ag-list-item-highlight-outline-color);
+    outline-offset: calc(-1 * var(--ag-list-item-highlight-outline-width));
 }

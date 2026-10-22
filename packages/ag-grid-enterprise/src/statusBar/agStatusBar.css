@@ -6,6 +6,7 @@
     border-top: var(--ag-footer-row-border);
     padding-right: calc(var(--ag-spacing) * 4);
     padding-left: calc(var(--ag-spacing) * 4);
+    font-size: var(--ag-status-bar-font-size);
     line-height: 1.5;
 }
 

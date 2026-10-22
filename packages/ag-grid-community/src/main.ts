@@ -1241,6 +1241,9 @@ export {
     colorSchemeLight,
     colorSchemeLightCold,
     colorSchemeLightWarm,
+    colorSchemeUltraHighContrastDark,
+    colorSchemeUltraHighContrastLight,
+    colorSchemeUltraHighContrastVariable,
     colorSchemeVariable,
 } from './theming/parts/color-scheme/color-schemes';
 export { columnDropStyleBordered, columnDropStylePlain } from './theming/parts/column-drop-style/column-drop-styles';
@@ -1271,6 +1274,7 @@ export {
     themeHighContrast,
     themeMaterial,
     themeQuartz,
+    themeUltraHighContrast,
 } from './theming/parts/theme/themes';
 export type { StyleMaterialParams, ThemeDefaultParams } from './theming/parts/theme/themes';
 export type { IconName, Icons } from './utils/icon';

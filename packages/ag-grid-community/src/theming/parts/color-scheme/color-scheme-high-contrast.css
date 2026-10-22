@@ -1,0 +1,58 @@
+/* clip pinned sections horizontally only, so selected-row lines can cover the row borders as in the scrolling section */
+:where(.ag-row-selected:not(.ag-full-width-row)) > .ag-grid-pinned-left-cells,
+:where(.ag-row-selected:not(.ag-full-width-row)) > .ag-grid-pinned-right-cells {
+    overflow: clip visible;
+}
+
+/* drawn as shadows rather than ::after because cells without a wrapper clip their own content */
+:where(.ag-row-selected:not(.ag-full-width-row) > :is(.ag-grid-pinned-left-cells, .ag-grid-pinned-right-cells))
+    .ag-cell:where(:not(.ag-row-number-cell, .ag-cell-inline-editing)) {
+    box-shadow:
+        0 calc(-1 * var(--ag-internal-row-border-width, 1px)) 0 0 var(--ag-accent-color),
+        0 var(--ag-internal-row-border-width, 1px) 0 0 var(--ag-accent-color);
+}
+
+:where(.ag-row-selected:not(.ag-full-width-row) > :is(.ag-grid-pinned-left-cells, .ag-grid-pinned-right-cells))
+    .ag-cell::after {
+    content: none;
+}
+
+/* the first row has nothing above it to draw over, so its top line goes inside the row */
+:where(
+        .ag-row-first.ag-row-selected:not(.ag-full-width-row)
+            > :is(.ag-grid-pinned-left-cells, .ag-grid-pinned-right-cells)
+    )
+    .ag-cell:where(:not(.ag-row-number-cell, .ag-cell-inline-editing)) {
+    box-shadow: 0 var(--ag-internal-row-border-width, 1px) 0 0 var(--ag-accent-color);
+}
+
+/* on the opaque wrapper rather than the cells, whose 1px border would push an inset line down; row number cells paint over it */
+:where(
+        .ag-row-first.ag-row-selected:not(.ag-full-width-row)
+            > :is(.ag-grid-pinned-left-cells, .ag-grid-pinned-right-cells)
+    )
+    > .ag-grid-container-wrapper {
+    box-shadow: inset 0 var(--ag-internal-row-border-width, 1px) 0 0 var(--ag-accent-color);
+}
+
+/* the mouse moves the highlight, so a separate hover fill would show two highlighted rows */
+.ag-autocomplete-virtual-list-item:hover {
+    background-color: transparent;
+}
+
+.ag-rich-select-row:hover:where(:not(.ag-rich-select-row-highlighted)) {
+    background-image: none;
+}
+
+.ag-autocomplete-row-selected {
+    background-color: var(--ag-list-item-highlight-background-color);
+    color: var(--ag-list-item-highlight-text-color);
+
+    @media (forced-colors: active) {
+        background-color: SelectedItem;
+    }
+}
+
+.ag-toolbar-input-field {
+    font-weight: var(--ag-font-weight);
+}

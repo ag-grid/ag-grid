@@ -293,6 +293,8 @@
         "menuShadow": {},
         "listItemHighlightBackgroundColor": {},
         "listItemHighlightTextColor": {},
+        "listItemHighlightOutlineColor": {},
+        "listItemHighlightOutlineWidth": {},
         "listItemSelectedBackgroundColor": {},
         "listItemSelectedTextColor": {},
         "cardShadow": {},
@@ -438,6 +440,7 @@
         },
         "selectedRowBackgroundColor": {},
         "selectedRowTextColor": {},
+        "selectedRowBorder": {},
         "rowNumbersSelectedColor": {},
         "rangeSelectionBackgroundColor": {},
         "rangeSelectionBorderColor": {},
@@ -463,8 +466,11 @@
         },
         "columnDropCellBackgroundColor": {},
         "columnDropCellTextColor": {},
+        "columnDropEmptyMessageTextColor": {},
+        "columnDropEmptyMessageBorderColor": {},
         "columnDropCellBorder": {},
-        "columnDropCellDragHandleColor": {}
+        "columnDropCellDragHandleColor": {},
+        "columnDropCellButtonColor": {}
     },
     "statusBar": {
         "meta": {
@@ -477,7 +483,8 @@
         "statusBarLabelColor": {},
         "statusBarLabelFontWeight": {},
         "statusBarValueColor": {},
-        "statusBarValueFontWeight": {}
+        "statusBarValueFontWeight": {},
+        "statusBarFontSize": {}
     },
     "charts": {
         "meta": {
@@ -492,6 +499,11 @@
         "chartMenuPaletteDotColor": {},
         "chartMenuPaletteDotHoverColor": {},
         "chartMenuPaletteDotBorder": {},
+        "sliderThumbBorderColor": {},
+        "sliderThumbBorderWidth": {},
+        "sliderTrackColor": {},
+        "chartMenuThumbnailBorderColor": {},
+        "chartMenuThumbnailSelectedBorderColor": {},
         "chartMenuPaletteDotSelectedColor": {}
     },
     "columnPanel": {

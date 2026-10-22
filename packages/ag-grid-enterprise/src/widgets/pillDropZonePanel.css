@@ -74,11 +74,12 @@
     cursor: pointer;
     margin-right: calc(var(--ag-spacing) / 4);
     min-width: 0;
-    opacity: 0.75;
+
+    --ag-icon-color: var(--ag-column-drop-cell-button-color);
 }
 
 .ag-column-drop-cell-button:hover {
-    opacity: 1;
+    --ag-icon-color: inherit;
 }
 
 .ag-column-drop-cell-drag-handle {
@@ -116,6 +117,10 @@
     gap: var(--ag-cell-widget-spacing);
     background-color: var(--ag-header-background-color);
     border-bottom: var(--ag-header-row-border);
+}
+
+.ag-column-drop-horizontal-empty-message {
+    color: var(--ag-column-drop-empty-message-text-color);
 }
 
 .ag-column-drop-horizontal-list {

@@ -89,7 +89,6 @@
     inset-inline-start: var(--ag-spacing);
     display: inline-flex;
     align-items: center;
-    opacity: 0.5;
     pointer-events: none;
 
     /*

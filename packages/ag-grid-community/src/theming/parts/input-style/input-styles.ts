@@ -92,7 +92,7 @@ export type InputStyleParams = {
     inputPlaceholderTextColor: ColorValue;
 
     /**
-     * Color of search icon within search text inputs
+     * Color of icons within text inputs, such as the search icon in search inputs and the toolbar's Quick Filter and Find inputs
      */
     inputIconColor: ColorValue;
 
@@ -202,6 +202,7 @@ const baseParams: InputStyleParams = {
     },
     inputIconColor: {
         ref: 'inputTextColor',
+        mix: 0.5,
     },
     pickerButtonBorder: false,
     pickerButtonBorderRadius: { ref: 'borderRadius' },

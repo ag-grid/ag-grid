@@ -15,3 +15,9 @@
         }
     }
 }
+
+/* only while the highlight is being moved with the keyboard */
+:where(.ag-keyboard-highlight) .ag-list-item.ag-active-item {
+    outline: var(--ag-list-item-highlight-outline-width) solid var(--ag-list-item-highlight-outline-color);
+    outline-offset: calc(-1 * var(--ag-list-item-highlight-outline-width));
+}

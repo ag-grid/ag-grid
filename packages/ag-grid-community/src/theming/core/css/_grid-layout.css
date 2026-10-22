@@ -341,6 +341,44 @@
     pointer-events: none;
 }
 
+/* shares ::after with the row drag highlight, which takes over while active; offset to cover the row borders */
+:where(
+        .ag-row-selected:not(
+            .ag-full-width-row,
+            .ag-row-highlight-above,
+            .ag-row-highlight-below,
+            .ag-row-highlight-inside
+        )
+    )
+    > .ag-grid-scrolling-cells::after,
+.ag-full-width-row:not(.ag-embedded-full-width-row):where(
+        .ag-row-selected:not(.ag-row-highlight-above, .ag-row-highlight-below, .ag-row-highlight-inside)
+    )::after {
+    content: '';
+    inset: calc(-1 * var(--ag-internal-row-border-width, 1px)) 0;
+    height: auto;
+    background-color: transparent;
+    border-radius: 0;
+    border-top: var(--ag-selected-row-border);
+    border-bottom: var(--ag-selected-row-border);
+}
+
+/* the first row has nothing above it to draw over, so its top line goes inside the row */
+:where(
+        .ag-row-first.ag-row-selected:not(
+                .ag-full-width-row,
+                .ag-row-highlight-above,
+                .ag-row-highlight-below,
+                .ag-row-highlight-inside
+            )
+    )
+    > .ag-grid-scrolling-cells::after,
+.ag-full-width-row:not(.ag-embedded-full-width-row):where(
+        .ag-row-first.ag-row-selected:not(.ag-row-highlight-above, .ag-row-highlight-below, .ag-row-highlight-inside)
+    )::after {
+    top: 0;
+}
+
 /* a nested grid must not inherit the highlight of the row hosting it */
 .ag-root-wrapper {
     --ag-internal-row-highlight-content: initial;
@@ -418,6 +456,22 @@
     pointer-events: none;
     background-color: var(--ag-internal-row-overlay-color);
     background-image: var(--ag-internal-row-overlay-image);
+}
+
+/* pinned sections clip, so these lines can't reach the row borders */
+:where(.ag-row-selected:not(.ag-full-width-row) > :is(.ag-grid-pinned-left-cells, .ag-grid-pinned-right-cells))
+    .ag-cell:where(:not(.ag-row-number-cell))::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    pointer-events: none;
+    border-top: var(--ag-selected-row-border);
+    border-bottom: var(--ag-selected-row-border);
+}
+
+.ag-embedded-full-width-row:where(.ag-row-selected)::before {
+    border-top: var(--ag-selected-row-border);
+    border-bottom: var(--ag-selected-row-border);
 }
 
 .ag-row.ag-row-selected {

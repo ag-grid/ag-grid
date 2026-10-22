@@ -114,6 +114,31 @@ export interface CoreParams extends SharedThemeParams {
     chartMenuPaletteDotBorder: BorderValue;
 
     /**
+     * Border color of the draggable handle on slider inputs, such as those in the chart settings panel
+     */
+    sliderThumbBorderColor: ColorValue;
+
+    /**
+     * Border width of the draggable handle on slider inputs, such as those in the chart settings panel
+     */
+    sliderThumbBorderWidth: LengthValue;
+
+    /**
+     * Color of the track of slider inputs, such as those in the chart settings panel
+     */
+    sliderTrackColor: ColorValue;
+
+    /**
+     * Border color of the chart type thumbnails in the chart settings panel
+     */
+    chartMenuThumbnailBorderColor: ColorValue;
+
+    /**
+     * Border color of the selected chart type thumbnail in the chart settings panel
+     */
+    chartMenuThumbnailSelectedBorderColor: ColorValue;
+
+    /**
      * Color of the dot representing the palette currently shown in the chart settings panel
      */
     chartMenuPaletteDotSelectedColor: ColorValue;
@@ -134,9 +159,24 @@ export interface CoreParams extends SharedThemeParams {
     columnDropCellTextColor: ColorValue;
 
     /**
+     * Text color of the message shown in an empty column drop component, e.g. "Drag here to set row groups"
+     */
+    columnDropEmptyMessageTextColor: ColorValue;
+
+    /**
+     * Color of the dashed border around the message shown in an empty column drop component
+     */
+    columnDropEmptyMessageBorderColor: ColorValue;
+
+    /**
      * Color of the drag grip icon in the pill shape representing columns in the column drop component
      */
     columnDropCellDragHandleColor: ColorValue;
+
+    /**
+     * Color of the remove button icon in the pill shape representing columns in the column drop component, when not hovered
+     */
+    columnDropCellButtonColor: ColorValue;
 
     /**
      * Border for the pill shape representing columns in the column drop component
@@ -374,6 +414,16 @@ export interface CoreParams extends SharedThemeParams {
     listItemHighlightTextColor: ColorValue;
 
     /**
+     * Color of the outline drawn inside the highlighted item in lists and menus
+     */
+    listItemHighlightOutlineColor: ColorValue;
+
+    /**
+     * Width of the outline drawn inside the highlighted item in lists and menus
+     */
+    listItemHighlightOutlineWidth: LengthValue;
+
+    /**
      * Background color of the selected item in lists, such as the current value in the rich select editor's list
      */
     listItemSelectedBackgroundColor: ColorValue;
@@ -584,6 +634,11 @@ export interface CoreParams extends SharedThemeParams {
     selectedRowTextColor: ColorValue;
 
     /**
+     * Horizontal borders drawn along the top and bottom of each selected row, over the row borders so that adjacent selected rows share a single line
+     */
+    selectedRowBorder: BorderValue;
+
+    /**
      * Color used for borders around range selections and the focused cell within selected rows. Change this if `selectedRowBackgroundColor` is too close to `rangeSelectionBorderColor` for the border to be visible.
      */
     selectedRowRangeSelectionBorderColor: ColorValue;
@@ -789,6 +844,11 @@ export interface CoreParams extends SharedThemeParams {
      * Font weight for values in the status bar component
      */
     statusBarValueFontWeight: FontWeightValue;
+
+    /**
+     * Font size of text in the status bar component
+     */
+    statusBarFontSize: LengthValue;
 
     /**
      * The color of the 1st formula field token
@@ -1013,12 +1073,15 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     columnHoverColor: accentMix(0.05),
     selectedRowBackgroundColor: accentMix(0.12),
     selectedRowTextColor: { ref: 'cellTextColor' },
+    selectedRowBorder: false,
     selectedRowRangeSelectionBorderColor: { ref: 'rangeSelectionBorderColor' },
     selectedRowDragIndicatorColor: { ref: 'rowDragIndicatorColor' },
     selectedRowDragHandleColor: { ref: 'dragHandleColor' },
     selectedRowCellEditingBorder: { ref: 'cellEditingBorder' },
     listItemHighlightBackgroundColor: { ref: 'rowHoverColor' },
     listItemHighlightTextColor: 'inherit',
+    listItemHighlightOutlineColor: 'transparent',
+    listItemHighlightOutlineWidth: 0,
     listItemSelectedBackgroundColor: { ref: 'selectedRowBackgroundColor' },
     listItemSelectedTextColor: 'inherit',
     modalOverlayBackgroundColor: {
@@ -1076,6 +1139,11 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     chartMenuPaletteDotColor: foregroundMix(0.2),
     chartMenuPaletteDotHoverColor: foregroundMix(0.35),
     chartMenuPaletteDotBorder: false,
+    sliderThumbBorderColor: { ref: 'borderColor' },
+    sliderThumbBorderWidth: { ref: 'borderWidth' },
+    sliderTrackColor: { ref: 'borderColor' },
+    chartMenuThumbnailBorderColor: { ref: 'borderColor' },
+    chartMenuThumbnailSelectedBorderColor: { ref: 'accentColor' },
     chartMenuPaletteDotSelectedColor: accentColor,
     cellEditingBorder: {
         color: accentColor,
@@ -1105,8 +1173,14 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     columnDropCellTextColor: {
         ref: 'textColor',
     },
+    columnDropEmptyMessageTextColor: 'inherit',
+    columnDropEmptyMessageBorderColor: { ref: 'borderColor' },
     columnDropCellDragHandleColor: {
         ref: 'textColor',
+    },
+    columnDropCellButtonColor: {
+        ref: 'columnDropCellTextColor',
+        mix: 0.75,
     },
     columnDropCellBorder: {
         color: foregroundMix(0.13),
@@ -1144,6 +1218,9 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     statusBarLabelFontWeight: 500,
     statusBarValueColor: foregroundColor,
     statusBarValueFontWeight: 500,
+    statusBarFontSize: {
+        ref: 'fontSize',
+    },
     pinnedSourceRowTextColor: {
         ref: 'textColor',
     },
