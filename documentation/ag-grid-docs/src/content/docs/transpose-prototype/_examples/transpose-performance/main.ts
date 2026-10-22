@@ -43,17 +43,22 @@ interface Row {
     [field: string]: string | number;
 }
 
-const columnDefs: (ColDef<Row> | ColGroupDef<Row>)[] = [{ field: 'name' }];
-for (let g = 0; g < FIELD_GROUPS; g++) {
-    const children: ColDef<Row>[] = [];
-    for (let f = 0; f < FIELDS_PER_GROUP; f++) {
-        children.push({
-            field: `f${g}_${f}`,
-            valueFormatter: (params) => (params.value == null ? '' : `£${params.value}m`),
-        });
+function createFieldGroups(): ColGroupDef<Row>[] {
+    const groups: ColGroupDef<Row>[] = [];
+    for (let g = 0; g < FIELD_GROUPS; g++) {
+        const children: ColDef<Row>[] = [];
+        for (let f = 0; f < FIELDS_PER_GROUP; f++) {
+            children.push({
+                field: `f${g}_${f}`,
+                valueFormatter: (params) => (params.value == null ? '' : `£${params.value}m`),
+            });
+        }
+        groups.push({ headerName: `Group ${g + 1}`, children });
     }
-    columnDefs.push({ headerName: `Group ${g + 1}`, children });
+    return groups;
 }
+
+const columnDefs: (ColDef<Row> | ColGroupDef<Row>)[] = [{ field: 'name' }, ...createFieldGroups()];
 
 function createRow(i: number): Row {
     const row: Row = { id: `r${i}`, name: `Record ${i}` };
@@ -110,25 +115,25 @@ function log(message: string) {
     eLog.textContent = message + '\n' + eLog.textContent;
 }
 
-async function load(count: number) {
+function load(count: number) {
     const rows: Row[] = [];
     for (let i = 0; i < count; i++) {
         rows.push(createRow(i));
     }
     rowCount = count;
-    await measure(`Load ${count}`, () => gridApi.setGridOption('rowData', rows));
+    return measure(`Load ${count}`, () => gridApi.setGridOption('rowData', rows));
 }
 
-async function toggleTranspose() {
+function toggleTranspose() {
     const transpose = !gridApi.getGridOption('transpose');
-    await measure(transpose ? 'Enable transpose' : 'Disable transpose', () =>
+    return measure(transpose ? 'Enable transpose' : 'Disable transpose', () =>
         gridApi.setGridOption('transpose', transpose)
     );
 }
 
-async function sortField() {
+function sortField() {
     const current = gridApi.getColumnState().find((state) => state.colId === 'f1_1')?.sort;
-    await measure('Sort', () =>
+    return measure('Sort', () =>
         gridApi.applyColumnState({
             state: [{ colId: 'f1_1', sort: current === 'desc' ? 'asc' : 'desc' }],
             defaultState: { sort: null },
@@ -136,30 +141,30 @@ async function sortField() {
     );
 }
 
-async function updateValue() {
+function updateValue() {
     const row = createRow(0);
     row.f0_0 = Math.round(Math.random() * 1000);
-    await measure('Update one value', () => gridApi.applyTransaction({ update: [row] }));
+    return measure('Update one value', () => gridApi.applyTransaction({ update: [row] }));
 }
 
-async function addRecord() {
+function addRecord() {
     rowCount++;
-    await measure('Add one record', () => gridApi.applyTransaction({ add: [createRow(rowCount + 100000)] }));
+    return measure('Add one record', () => gridApi.applyTransaction({ add: [createRow(rowCount + 100000)] }));
 }
 
-async function scrollToEnd() {
+function scrollToEnd() {
     const cols = gridApi.getAllDisplayedColumns();
-    await measure('Scroll to last column', () => gridApi.ensureColumnVisible(cols[cols.length - 1]));
+    return measure('Scroll to last column', () => gridApi.ensureColumnVisible(cols[cols.length - 1]));
 }
 
-async function renameRecord() {
+function renameRecord() {
     const row = createRow(0);
     row.name = `Record 0 (${Math.round(Math.random() * 1000)})`;
-    await measure('Rename one record', () => gridApi.applyTransaction({ update: [row] }));
+    return measure('Rename one record', () => gridApi.applyTransaction({ update: [row] }));
 }
 
-async function autoSizeAll() {
-    await measure('Auto-size all columns', () => gridApi.autoSizeAllColumns());
+function autoSizeAll() {
+    return measure('Auto-size all columns', () => gridApi.autoSizeAllColumns());
 }
 
 document.addEventListener('DOMContentLoaded', () => {
