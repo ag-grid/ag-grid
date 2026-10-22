@@ -58,6 +58,7 @@ export class TouchService extends BeanStub implements NamedBean {
                 if (!_isEventFromThisInstance(this.beans, touchEvent)) {
                     return;
                 }
+                ctrl.processPendingTouchDown(touchEvent.target);
                 const { cellCtrl } = ctrl.getControlsForEventTarget(touchEvent.target);
                 if (cellCtrl?.column) {
                     cellCtrl.dispatchCellContextMenuEvent(touchEvent);
