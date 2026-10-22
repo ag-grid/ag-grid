@@ -1,4 +1,11 @@
-import { CssClassManager, _setAriaColCount, _setAriaMultiSelectable, _setAriaRole, _setAriaRowCount } from 'ag-stack';
+import {
+    CssClassManager,
+    _addOrRemoveAttribute,
+    _setAriaColCount,
+    _setAriaMultiSelectable,
+    _setAriaRole,
+    _setAriaRowCount,
+} from 'ag-stack';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ComponentSelector, IGridBodyComp, VerticalSection, VerticalSectionMap } from 'ag-grid-community';
@@ -141,6 +148,11 @@ const GridBodyComp = () => {
             setGridRole: (role: 'grid' | 'treegrid') => {
                 if (eGridViewport.current) {
                     _setAriaRole(eGridViewport.current, role);
+                }
+            },
+            setViewportFocusable: (focusable: boolean) => {
+                if (eGridViewport.current) {
+                    _addOrRemoveAttribute(eGridViewport.current, 'tabindex', focusable ? -1 : null);
                 }
             },
         };

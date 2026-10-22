@@ -176,6 +176,14 @@ The example below uses a custom `processDataFromClipboard` function to add new r
 
 {% gridExampleRunner title="Paste New Rows" name="pasting-extra-rows" /%}
 
+### Pasting into an Empty Grid
+
+When the grid has no rows, users can still paste: click the grid and press {% kbd "^ Ctrl" /%}+{% kbd "V" /%}, or right-click it and select 'Paste'. With no cells to paste into, the grid passes the data to `processDataFromClipboard`, which can add it as rows using the [Transaction Update API](./data-update-transactions/#transaction-update-api) and return `null`. `api.getFocusedCell()` returns `null` there.
+
+In the example below, copy some rows, click **Remove All Rows**, then paste into the empty grid.
+
+{% gridExampleRunner title="Paste into an Empty Grid" name="pasting-into-empty-grid" /%}
+
 ### Read Only Edit
 
 When the grid is in [Read Only Edit](./value-setters/#read-only-edit) mode the `Clipboard` will not update the data inside the grid. Instead the grid fires `cellEditRequest` events allowing the application to process the update request.

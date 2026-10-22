@@ -275,13 +275,27 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             }
         };
 
+        const beans = this.beans;
+        const focusedBefore = _getActiveDomElement(beans) as HTMLElement | null;
         this.executeOnTempElement(
             (textArea) => {
                 textArea.addEventListener('paste', handlePasteEvent);
                 textArea.focus({ preventScroll: true });
             },
             (element) => {
+                if (!this.isAlive()) {
+                    return;
+                }
                 const data = element.value;
+                if (_getActiveDomElement(beans) === element) {
+                    // before the paste, so one that adds rows to an empty grid can move focus to them
+                    const gridBodyCtrl = beans.ctrlsSvc.getGridBodyCtrl();
+                    if (focusedBefore === gridBodyCtrl.eGridViewport) {
+                        gridBodyCtrl.refocusViewport();
+                    } else {
+                        focusedBefore?.focus({ preventScroll: true });
+                    }
+                }
                 if (!defaultPrevented) {
                     this.processClipboardData(data, html);
                 } else {
@@ -584,9 +598,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         this.dispatchFlashCells(cellsToFlash);
         this.fireRowChanged(updatedRowNodes);
 
-        // if using the clipboard hack with a temp element, then the focus has been lost,
-        // so need to put it back. otherwise paste operation looses focus on cell and keyboard
-        // navigation stops.
+        // keeps keyboard navigation on the focused cell, wherever the paste was started from
         this.refocusLastFocusedCell();
         eventSvc.dispatchEvent({
             type: 'pasteEnd',

@@ -61,7 +61,7 @@ export class FocusService extends BeanStub implements NamedBean {
         this.overlays = beans.overlays;
     }
 
-    private focusedCell: CellPosition | null;
+    private focusedCell: CellPosition | null = null;
     private previousCellFocusParams: CellFocusedParams | null;
 
     public focusedHeader: HeaderPosition | null;
@@ -708,7 +708,7 @@ export class FocusService extends BeanStub implements NamedBean {
 
         const nextRow = backwards ? _getLastRow(this.beans) : _getFirstRow(this.beans);
         if (nextRow?.rowIndex == null) {
-            if (this.overlays?.isVisible()) {
+            if (this.overlays?.isVisible() || this.beans.ctrlsSvc.get('gridBodyCtrl')?.viewportFocusable) {
                 return null;
             }
 
@@ -836,7 +836,10 @@ export class FocusService extends BeanStub implements NamedBean {
             return true;
         }
 
-        if (canFocusOverlay && this.focusOverlay(backwards)) {
+        if (
+            canFocusOverlay &&
+            (this.focusOverlay(backwards) || this.beans.ctrlsSvc.get('gridBodyCtrl')?.focusEmptyViewport())
+        ) {
             return true;
         }
 

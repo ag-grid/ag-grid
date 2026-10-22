@@ -312,6 +312,19 @@
         min-height: 0;
     }
 
+    // the rows area covers the focused viewport's shadow, so the ring is a sticky overlay as wide as the viewport
+    :where(.ag-grid-viewport:focus-visible > .ag-grid-scrollable-area) > .ag-grid-scrolling-rows::before {
+        content: '';
+        position: sticky;
+        inset-inline-start: 0;
+        z-index: 1;
+        flex: none;
+        width: var(--ag-internal-grid-viewport-width);
+        margin-inline-end: calc(-1 * var(--ag-internal-grid-viewport-width));
+        box-shadow: inset 0 0 0 1px var(--ag-input-focus-border-color);
+        pointer-events: none;
+    }
+
     .ag-body-horizontal-scroll,
     .ag-body-vertical-scroll {
         min-height: 0;
