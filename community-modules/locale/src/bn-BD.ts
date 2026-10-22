@@ -816,6 +816,12 @@ export const AG_GRID_LOCALE_BN_BD = {
 
     ariaLabelDialog: 'ডায়ালগ',
 
+    ariaLabelClose: 'বন্ধ করুন',
+
+    ariaLabelMaximize: 'বড় করুন',
+
+    ariaLabelRestore: 'পুনরুদ্ধার করুন',
+
     ariaLabelColumnMenu: 'কলাম মেনু',
     ariaLabelColumnFilter: 'কলাম ফিল্টার',
 
