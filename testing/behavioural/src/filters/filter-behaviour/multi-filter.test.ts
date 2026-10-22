@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import {
     ALL_SEVERITIES,
     ColumnFilterHarness,
@@ -16,6 +17,7 @@ import {
     NumberFilterModule,
     TextFilterModule,
     enableDevValidations,
+    getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
 import { ColumnMenuModule, FiltersToolPanelModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
@@ -286,6 +288,31 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
         `);
     });
 
+    test('a model set before the rows arrive and cleared after is not what the rebuilt filter starts with', async () => {
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: { filters: [{ filter: 'agTextColumnFilter' }] },
+                },
+            ],
+            rowData: [],
+        });
+        await asyncSetTimeout(0);
+        void api.setColumnFilterModel('name', {
+            filterType: 'multi',
+            filterModels: [{ filterType: 'text', type: 'contains', filter: 'mich' }],
+        });
+        api.setGridOption('rowData', ROWS);
+        await asyncSetTimeout(0);
+        await api.setColumnFilterModel('name', null);
+        api.onFilterChanged();
+        api.destroyFilter('name');
+        await asyncSetTimeout(0);
+        expect((await api.getColumnFilterInstance('name'))!.getModel()).toBeNull();
+    });
+
     test('setColumnFilterModel round-trips a combined model into both sub-filters', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [
@@ -541,6 +568,100 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
             ├── LEAF id:0 name:"michael"
             └── LEAF id:1 name:"michelle"
         `);
+    });
+
+    describe.each([false, true])('display styles, with enableFilterHandlers %s', (enableFilterHandlers) => {
+        const displayStyleCols: ColDef[] = [
+            {
+                field: 'name',
+                filter: 'agMultiColumnFilter',
+                filterParams: {
+                    filters: [
+                        { filter: 'agTextColumnFilter', display: 'subMenu', filterParams: { debounceMs: 0 } },
+                        { filter: 'agSetColumnFilter', display: 'accordion', title: 'Pick names' },
+                    ],
+                },
+            },
+        ];
+        const multiFilterIn = (api: GridApi, container: string) =>
+            getGridElement(api)!.querySelector<HTMLElement>(`${container} .ag-multi-filter`)!;
+
+        test('a sub-menu child shows as a menu item titled by its filter, whose sub-menu holds a filter that filters the rows', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: displayStyleCols,
+                rowData: ROWS,
+            });
+            await ColumnFilterHarness.open(api, 'name');
+            const multiFilter = multiFilterIn(api, '.ag-filter-menu');
+            const menuItem = multiFilter.querySelector<HTMLElement>('.ag-multi-filter-menu-item')!;
+            expect({
+                title: menuItem.textContent!.trim(),
+                inlineTextInputs: multiFilter.querySelectorAll('.ag-filter-body input[type="text"]').length,
+            }).toEqual({ title: 'Text Filter', inlineTextInputs: 0 });
+
+            menuItem.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+            const input = await waitFor(() => {
+                const subMenu = getGridElement(api)!.querySelector('.ag-menu.ag-popup-child:not(.ag-filter-menu)')!;
+                return subMenu.querySelector<HTMLInputElement>('.ag-filter-body input[type="text"]')!;
+            });
+            input.value = 'mich';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+
+            await waitFor(() =>
+                expect(api.getFilterModel()).toEqual({
+                    name: {
+                        filterType: 'multi',
+                        filterModels: [{ filterType: 'text', type: 'contains', filter: 'mich' }, null],
+                    },
+                })
+            );
+            await new GridRows(api, 'text child filtering from its sub-menu').check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 name:"michael"
+                └── LEAF id:1 name:"michelle"
+            `);
+        });
+
+        test('an accordion child shows collapsed under its title until expanded', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: displayStyleCols,
+                rowData: ROWS,
+            });
+            await ColumnFilterHarness.open(api, 'name');
+            const group = multiFilterIn(api, '.ag-filter-menu').querySelector<HTMLElement>('.ag-multi-filter-group')!;
+            const isExpanded = () =>
+                !group.querySelector('.ag-multi-filter-group-container')!.classList.contains('ag-hidden');
+            expect({
+                title: group.querySelector('.ag-multi-filter-group-title')!.textContent,
+                expanded: isExpanded(),
+            }).toEqual({ title: 'Pick names', expanded: false });
+
+            group.querySelector<HTMLElement>('.ag-multi-filter-group-title-bar')!.click();
+            expect(isExpanded()).toBe(true);
+            expect(
+                Array.from(group.querySelectorAll('.ag-set-filter-item .ag-checkbox-label')).map((e) => e.textContent)
+            ).toEqual(['(Select All)', 'alice', 'bob', 'michael', 'michelle']);
+        });
+
+        test('in the filters tool panel, a sub-menu child shows as an accordion', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: displayStyleCols,
+                rowData: ROWS,
+                sideBar: FILTERS_SIDEBAR,
+            });
+            const panel = await openFiltersPanel(api);
+            await panel.expandGroup('Name');
+            const multiFilter = multiFilterIn(api, '.ag-filter-toolpanel');
+            expect({
+                menuItems: multiFilter.querySelectorAll('.ag-multi-filter-menu-item').length,
+                groups: Array.from(multiFilter.querySelectorAll('.ag-multi-filter-group-title')).map(
+                    (e) => e.textContent
+                ),
+            }).toEqual({ menuItems: 0, groups: ['Text Filter', 'Pick names'] });
+        });
     });
 
     // The documented custom-child form (filter-multi/custom-filter): a fresh wrapper object each time the

@@ -1,4 +1,5 @@
 import {
+    ALL_SEVERITIES,
     AdvancedFilterBuilderHarness,
     AdvancedFilterHarness,
     GridColumns,
@@ -8,6 +9,7 @@ import {
     installFilterLayoutMock,
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
+import { onTestFinished } from 'vitest';
 
 import type { AdvancedFilterModel, ColumnAdvancedFilterModel, GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -16,6 +18,7 @@ import {
     GridStateModule,
     NumberFilterModule,
     TextFilterModule,
+    enableDevValidations,
 } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
@@ -1274,6 +1277,41 @@ describe('Advanced Filter', () => {
         expect(sources).toEqual(['api']);
     });
 
+    test.each([
+        {
+            call: 'setFilterModel',
+            run: (api: GridApi) => api.setFilterModel({ age: { filterType: 'number', type: 'lessThan', filter: 20 } }),
+        },
+        {
+            call: 'setColumnFilterModel',
+            run: (api: GridApi) =>
+                api.setColumnFilterModel('age', { filterType: 'number', type: 'lessThan', filter: 20 }),
+        },
+        { call: 'getColumnFilterInstance', run: (api: GridApi) => api.getColumnFilterInstance('age') },
+    ])('$call warns that column filters are off and leaves the advanced filter applied', async (row) => {
+        // the whole list of issues is asserted instead, as a suppressed id raises none
+        enableDevValidations({ throwOn: [] });
+        onTestFinished(() => enableDevValidations({ throwOn: ALL_SEVERITIES }));
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        onTestFinished(() => warnSpy.mockRestore());
+        const issues: string[] = [];
+        const api = gridsManager.createGrid('grid1', {
+            ...DEFAULT_OPTIONS,
+            onIssueRaised: (event) => issues.push(`${event.severity} #${event.id}`),
+        });
+        await asyncSetTimeout(0);
+        applyModel(api, { filterType: 'text', colId: 'athlete', type: 'contains', filter: 'Bolt' });
+
+        expect(await row.run(api)).toBeUndefined();
+        await asyncSetTimeout(0);
+        expect({
+            issues,
+            model: api.getFilterModel(),
+            columnFilterPresent: api.isColumnFilterPresent(),
+            athletes: getDisplayedAthletes(api),
+        }).toEqual({ issues: ['warning #68'], model: {}, columnFilterPresent: false, athletes: ['Usain Bolt'] });
+    });
+
     describe('Model set before the rows arrive to infer data types from', () => {
         const EMPTY_OPTIONS: GridOptions<TestRow> = { ...DEFAULT_OPTIONS, rowData: [] };
         const UNDER_20: AdvancedFilterModel = { filterType: 'number', colId: 'age', type: 'lessThan', filter: 20 };
@@ -1522,6 +1560,7 @@ describe('Advanced Filter', () => {
             api.setAdvancedFilterModel(UNDER_20);
             api.setGridOption('enableAdvancedFilter', false);
             expect(api.getAdvancedFilterModel()).toBeNull();
+            expect(api.getState().filter).toBeUndefined();
 
             api.setGridOption('rowData', ROW_DATA);
             await asyncSetTimeout(0);
@@ -1547,6 +1586,33 @@ describe('Advanced Filter', () => {
             await asyncSetTimeout(0);
             expect(api.getAdvancedFilterModel()).toBeNull();
             expect(getDisplayedAthletes(api)).toEqual(ALL_ATHLETES);
+        });
+
+        test('with the advanced filter off at creation and on before rows load, no column filter is present and the initial advanced filter state applies once they do', async () => {
+            const api = gridsManager.createGrid('grid1', {
+                columnDefs: COLUMN_DEFS,
+                enableAdvancedFilter: false,
+                initialState: { filter: { advancedFilterModel: BOLT } },
+            });
+            await asyncSetTimeout(0);
+            api.setGridOption('enableAdvancedFilter', true);
+            await asyncSetTimeout(0);
+            expect(api.getFilterModel()).toEqual({});
+            expect(api.isColumnFilterPresent()).toBe(false);
+            expect(api.getColumn('athlete')!.isFilterActive()).toBe(false);
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(getDisplayedAthletes(api)).toEqual(['Usain Bolt']);
+        });
+
+        test('with filter handlers and the advanced filter on, a state restore leaves a column filter handler built meanwhile', async () => {
+            const api = gridsManager.createGrid('grid1', { ...DEFAULT_OPTIONS, enableFilterHandlers: true });
+            await asyncSetTimeout(0);
+            const handler = api.getColumnFilterHandler('age');
+            api.setState({ filter: { filterModel: { age: { filterType: 'number', type: 'lessThan', filter: 20 } } } });
+            await asyncSetTimeout(0);
+            expect(api.getColumnFilterHandler('age')).toBe(handler);
         });
 
         test('enabling the advanced filter drops a column filter model set before the rows arrive', async () => {

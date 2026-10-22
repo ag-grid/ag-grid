@@ -1,8 +1,10 @@
 import { fireEvent, getByTestId, waitFor } from '@testing-library/dom';
 import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
+import type { FilterHandler, IDoesFilterPassParams, IFilterComp, IFilterParams } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    CustomFilterModule,
     DateFilterModule,
     NumberFilterModule,
     RenderApiModule,
@@ -21,7 +23,14 @@ function typeIntoFloatingFilter(input: HTMLInputElement, value: string): void {
 
 describe('Floating Filters', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, TextFilterModule, NumberFilterModule, DateFilterModule, RenderApiModule],
+        modules: [
+            ClientSideRowModelModule,
+            TextFilterModule,
+            NumberFilterModule,
+            DateFilterModule,
+            RenderApiModule,
+            CustomFilterModule,
+        ],
     });
 
     beforeAll(() => setupAgTestIds());
@@ -438,4 +447,73 @@ describe('Floating Filters', () => {
         await waitFor(() => expect(rebuilt()).not.toBe(input));
         expect(document.activeElement).toBe(rebuilt().closest('.ag-header-cell'));
     });
+
+    describe.each([false, true])(
+        'a custom filter giving its model as a string, with enableFilterHandlers %s',
+        (enableFilterHandlers) => {
+            const describeModel = (model: number | null) => (model == null ? '' : `>${model}`);
+            const passes = (value: number | null | undefined, model: number | null | undefined) =>
+                model == null || (value != null && value > model);
+
+            class LegacyFilter implements IFilterComp {
+                private model: number | null = null;
+                private params!: IFilterParams;
+                public init(params: IFilterParams): void {
+                    this.params = params;
+                }
+                public getGui(): HTMLElement {
+                    return document.createElement('div');
+                }
+                public isFilterActive(): boolean {
+                    return this.model != null;
+                }
+                public doesFilterPass({ node }: IDoesFilterPassParams): boolean {
+                    return passes(this.params.getValue(node), this.model);
+                }
+                public getModel(): number | null {
+                    return this.model;
+                }
+                public setModel(model: number | null): void {
+                    this.model = model;
+                }
+                public getModelAsString(model: number | null): string {
+                    return describeModel(model);
+                }
+            }
+            class DisplayComp {
+                public getGui(): HTMLElement {
+                    return document.createElement('div');
+                }
+            }
+            const handler = (): FilterHandler<any, any, number> => ({
+                doesFilterPass: ({ node, model, handlerParams }) => passes(handlerParams.getValue(node), model),
+                getModelAsString: describeModel,
+            });
+
+            test('its floating filter is a disabled input showing that string as the model changes', async () => {
+                const api = await gridsManager.createGridAndWait('grid1', {
+                    columnDefs: [
+                        {
+                            field: 'gold',
+                            floatingFilter: true,
+                            filter: enableFilterHandlers ? { component: DisplayComp, handler } : LegacyFilter,
+                        },
+                    ],
+                    enableFilterHandlers,
+                    rowData: [{ gold: 1 }, { gold: 5 }, { gold: 8 }],
+                });
+                const input = () =>
+                    getGridElement(api)!.querySelector<HTMLInputElement>('.ag-floating-filter[col-id="gold"] input')!;
+                expect({ value: input().value, disabled: input().disabled }).toEqual({ value: '', disabled: true });
+
+                api.setFilterModel({ gold: 4 });
+                await waitFor(() => expect(input().value).toBe('>4'));
+                expect(api.getDisplayedRowCount()).toBe(2);
+
+                api.setFilterModel(null);
+                await waitFor(() => expect(input().value).toBe(''));
+                expect(api.getDisplayedRowCount()).toBe(3);
+            });
+        }
+    );
 });
