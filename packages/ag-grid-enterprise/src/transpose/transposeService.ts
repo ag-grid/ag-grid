@@ -629,6 +629,9 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
                 if (!show) {
                     continue;
                 }
+                if (this.beans.validation) {
+                    warnIgnoredSpans(item);
+                }
                 const fieldRow = this.getFieldRow(FIELD_ROW_ID_PREFIX + item.colId);
                 fieldRow.key = colNames.getDisplayNameForColumn(item, 'header');
                 fieldRow.transposeFieldCol = item;
@@ -662,6 +665,17 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         super.destroy();
     }
 }
+
+const SPAN_KEYS = ['colSpan', 'rowSpan', 'spanRows'] as const;
+
+/** Spans run along rows or columns, which the transposed view swaps, so a field's spans are not applied. */
+const warnIgnoredSpans = (col: AgColumn): void => {
+    const colDef = col.colDef;
+    const spans = SPAN_KEYS.filter((key) => colDef[key]);
+    if (spans.length) {
+        _warnOnce(`Column \`${col.colId}\` sets ${spans.join(', ')}, which the transposed view does not apply.`);
+    }
+};
 
 const isRecordColId = (colId: string): boolean => colId.startsWith(RECORD_COL_ID_PREFIX);
 

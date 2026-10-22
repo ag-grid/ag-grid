@@ -284,4 +284,13 @@ describe('transposed cells read their original record and field', () => {
         await waitFor(() => expect(hasNote(cell('a', 'revenue'))).toBe(true));
         expect(api.getNote({ rowNode: api.getRowNode('a')!, column: 'revenue' })?.text).toBe('Hi');
     });
+
+    test("a field's spans are not applied while transposed, with a warning", async () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const { cell } = await create('transposed', [{ field: 'revenue', colSpan: () => 2 }]);
+        await waitFor(() => expect(cell('a', 'revenue')).toBeTruthy());
+        expect(warn.mock.calls.flat().join(' ')).toContain('Column `revenue` sets colSpan');
+        expect(cell('b', 'revenue')).toBeTruthy();
+        warn.mockRestore();
+    });
 });
