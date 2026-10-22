@@ -44,10 +44,13 @@ permissions:
   contents: read
   actions: read
 
+# Every job runs on ubuntu-24.04, not ubuntu-latest: Playwright's WebKit needs Ubuntu 24.04's ICU 74
+# and libxml2.so.2, which ubuntu-26.04 (ubuntu-latest since October 2026) does not ship, so WebKit cannot
+# launch there. The jobs share one browser cache keyed on runner.os, which is Linux on both.
 jobs:
   grid-e2e:
     name: Grid e2e (${{ inputs.browsers || 'all' }} browsers)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
