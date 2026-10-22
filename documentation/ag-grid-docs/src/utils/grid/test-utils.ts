@@ -10,6 +10,7 @@ import {
     routeExampleAssetsFromDisk,
     routeExternalThroughMirror,
     routePdfFontsFromDisk,
+    routeSiteThroughMemo,
     warnOnNetworkAccess,
 } from './test/localSources';
 import { PendingRequests } from './test/pendingRequests';
@@ -368,6 +369,7 @@ export const extended = base.extend<TestFixtures>({
             // mirror to it. Registered together, whichever won the race decided whether disk or the CDN
             // served `/example-assets/`.
             await routeExternalThroughMirror(page, siteOrigin);
+            await routeSiteThroughMemo(page, baseURL);
             await routeExampleAssetsFromDisk(page);
             await routePdfFontsFromDisk(page, siteOrigin);
             await use();

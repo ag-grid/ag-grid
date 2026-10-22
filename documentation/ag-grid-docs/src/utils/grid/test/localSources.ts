@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { GOOGLE_FONTS_CSS, localFontStylesheet } from './localFonts';
-import { whileTheRequestMatters } from './routeGuard';
+import { isAbandoned, whileTheRequestMatters } from './routeGuard';
 
 const EXAMPLE_ASSETS_URL_PREFIX = '/example-assets/';
 const EXAMPLE_ASSETS_DIR = fileURLToPath(new URL('../../../../public/example-assets/', import.meta.url));
@@ -227,6 +227,12 @@ const DECODABLE_ENCODINGS = 'gzip, deflate, br';
 /** The browser's own, which would earn a 304 with no body on a cold fetch. Ours are sent deliberately. */
 const CONDITIONAL_HEADERS = ['if-none-match', 'if-modified-since'];
 
+/** The request's own headers, a fallback's overrides included, asking only for a body `route.fetch` can decode. */
+const forwardedHeaders = (route: Route): Record<string, string> => ({
+    ...withoutHeaders(route.request().headers(), CONDITIONAL_HEADERS),
+    'accept-encoding': DECODABLE_ENCODINGS,
+});
+
 /** Asks the origin "still this?", so a revalidation costs a round trip and no body when nothing changed. */
 function validatorsFor(headers: Record<string, string>): Record<string, string> {
     const etag = headers['etag'];
@@ -255,10 +261,7 @@ async function fetchIntoMirror(
 ): Promise<MirrorEntry | undefined> {
     let entry: MirrorEntry;
     try {
-        const sent = {
-            ...withoutHeaders(route.request().headers(), CONDITIONAL_HEADERS),
-            'accept-encoding': DECODABLE_ENCODINGS,
-        };
+        const sent = forwardedHeaders(route);
         const response = await route.fetch({
             url,
             headers: stored ? { ...sent, ...validatorsFor(stored.meta.headers) } : sent,
@@ -413,6 +416,93 @@ export async function routeExternalThroughMirror(page: Page, siteOrigin: string)
                 return;
             }
             await route.fulfill({ status: entry.meta.status, headers: entry.meta.headers, body: entry.body });
+        })
+    );
+}
+
+/** Exactly what `route.fulfill` takes, so a stored answer replays as the origin gave it. */
+type SiteResponse = { status: number; headers: Record<string, string>; body: Buffer };
+
+const isRedirect = (status: number): boolean => status >= 300 && status < 400;
+
+/** A redirect is kept too, so the browser follows it without a fetch first; an error may be a bad minute. */
+const isSettled = (status: number): boolean => status >= 200 && status < 400;
+
+/**
+ * The build under test, so held in this worker's memory and never written to disk: Playwright starts new
+ * workers for every run, watch and UI mode re-runs included, so a rebuilt site is always fetched afresh.
+ */
+const siteResponses = new Map<string, Promise<SiteResponse>>();
+
+async function fetchSiteResponse(route: Route): Promise<SiteResponse> {
+    // Unfollowed because WebKit cannot fulfil a redirect, and its body would resolve relative imports wrongly.
+    const response = await route.fetch({ headers: forwardedHeaders(route), maxRedirects: 0 });
+    return {
+        status: response.status(),
+        headers: withoutHeaders(response.headers(), BODY_FRAMING_HEADERS),
+        body: await response.body(),
+    };
+}
+
+/** `getCacheBustingUrl` stamps the bundle URL with each page's build time, which names the page, not the bytes. */
+function siteResponseKey(url: string): string {
+    const parsed = new URL(url);
+    parsed.searchParams.delete('t');
+    return parsed.href;
+}
+
+/** Single-flight per worker: the first request for a key fetches it and every later one awaits the same answer. */
+function loadSiteResponse(route: Route, key: string): Promise<SiteResponse> {
+    let pending = siteResponses.get(key);
+    if (!pending) {
+        pending = fetchSiteResponse(route);
+        siteResponses.set(key, pending);
+        const forget = () => {
+            siteResponses.delete(key);
+        };
+        void pending.then((response) => {
+            if (!isSettled(response.status)) {
+                forget();
+            }
+        }, forget);
+    }
+    return pending;
+}
+
+/**
+ * Staging answers `no-cache` and every test gets a fresh context, so each test would download the bundles again,
+ * thousands of requests per job to one origin. Only what every test shares: pages and example files are used
+ * once or twice, so holding them would only grow the worker.
+ */
+export async function routeSiteThroughMemo(page: Page, baseURL: string): Promise<void> {
+    // Resolved against the base, so a build deployed under a path prefix is matched too.
+    const { origin } = new URL(baseURL);
+    const filesPath = new URL('files/', baseURL).pathname;
+    const runnerPath = new URL('example-runner/', baseURL).pathname;
+    await page.route(
+        (url) => url.origin === origin && (url.pathname.startsWith(filesPath) || url.pathname.startsWith(runnerPath)),
+        whileTheRequestMatters(async (route) => {
+            const request = route.request();
+            if (request.method() !== 'GET') {
+                await route.fallback();
+                return;
+            }
+            let response: SiteResponse;
+            try {
+                response = await loadSiteResponse(route, siteResponseKey(request.url()));
+            } catch (error) {
+                if (isAbandoned(error)) {
+                    throw error;
+                }
+                // The browser's own request then fails or succeeds exactly as it would without the memo.
+                await route.fallback();
+                return;
+            }
+            if (isRedirect(response.status)) {
+                await route.fallback();
+                return;
+            }
+            await route.fulfill(response);
         })
     );
 }
