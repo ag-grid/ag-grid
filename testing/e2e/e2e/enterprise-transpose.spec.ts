@@ -148,8 +148,8 @@ test.describe('transposed view in a real browser', () => {
         expect(await records()).toEqual(['b', 'c', 'a']);
     });
 
-    test('observe: wrapped field labels and values', async ({ page }) => {
-        const { grid } = await mountGrid(page, {
+    test('a field with autoHeight sizes its row to the rendered records', async ({ page }) => {
+        const { grid, withApi } = await mountGrid(page, {
             enterprise: true,
             options: () => ({
                 columnDefs: [
@@ -157,30 +157,34 @@ test.describe('transposed view in a real browser', () => {
                     { field: 'notes', wrapText: true, autoHeight: true },
                     { field: 'revenue' },
                 ],
-                rowData: [
-                    {
-                        id: 'a',
-                        name: 'Northwind',
-                        notes: 'A long note that should wrap onto several lines',
-                        revenue: 1,
-                    },
-                    { id: 'b', name: 'Contoso', notes: 'Short', revenue: 2 },
-                ],
+                rowData: Array.from({ length: 200 }, (_, i) => ({
+                    id: `r${i}`,
+                    name: `Company ${i}`,
+                    notes: i === 150 ? 'A long note that wraps onto several lines in a narrow record column' : 'Short',
+                    revenue: i,
+                })),
                 getRowId: (params: { data: { id: string } }) => params.data.id,
                 transpose: true,
                 transposeHeaderColId: 'name',
                 transposeRecordColumnDef: { width: 120 },
             }),
         });
-        const notesRow = grid.locator('.ag-row[row-id="ag-Grid-TransposeField-notes"]');
-        const revenueRow = grid.locator('.ag-row[row-id="ag-Grid-TransposeField-revenue"]');
-        const heights = {
-            notes: (await notesRow.boundingBox())?.height,
-            revenue: (await revenueRow.boundingBox())?.height,
-        };
-        console.log(`OBSERVE ${JSON.stringify({ heights })}`);
-        if (SCREENSHOTS) {
-            await page.screenshot({ path: `${SCREENSHOTS}/wrap.png` });
-        }
+        const rowHeight = (field: string) =>
+            grid
+                .locator(`.ag-row[row-id="ag-Grid-TransposeField-${field}"]`)
+                .first()
+                .evaluate((el) => el.getBoundingClientRect().height);
+        const baseHeight = await rowHeight('revenue');
+
+        // The long note is on a record far off to the right, so no rendered cell needs more room.
+        await expect.poll(() => rowHeight('notes')).toBe(baseHeight);
+
+        await withApi((api) => api.ensureColumnVisible('ag-Grid-TransposeRecord-r150'));
+        await expect.poll(() => rowHeight('notes')).toBeGreaterThan(baseHeight * 1.5);
+
+        await withApi((api) =>
+            api.applyTransaction({ update: [{ id: 'r150', name: 'Company 150', notes: 'Short', revenue: 150 }] })
+        );
+        await expect.poll(() => rowHeight('notes')).toBe(baseHeight);
     });
 });

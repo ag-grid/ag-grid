@@ -23,9 +23,9 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         this.visibleCols = beans.visibleCols;
     }
 
-    /** A displayed column has `colDef.autoHeight`. */
+    /** A displayed column has `colDef.autoHeight`, or a transposed field row's field does. */
     public get active(): boolean {
-        return this.visibleCols.autoHeightCols.length !== 0;
+        return this.visibleCols.autoHeightCols.length !== 0 || !!this.beans.transposeSvc?.hasAutoHeightFields;
     }
     /** A cell was measured since the last pass without auto-height columns, so that pass gives rows their height back. */
     private measured = false;
@@ -41,11 +41,11 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
 
     private readonly _debouncedCalculateRowHeights = _debounce(this, this.calculateRowHeights.bind(this), 1);
     private calculateRowHeights() {
-        const displayedAutoHeightCols = this.visibleCols.autoHeightCols;
-        if (displayedAutoHeightCols.length === 0) {
+        if (!this.active) {
             this.releaseRowHeights();
             return;
         }
+        const displayedAutoHeightCols = this.visibleCols.autoHeightCols;
 
         const { rowModel, pinnedRowModel } = this.beans;
         let anyNodeChanged = false;
@@ -117,11 +117,10 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
      * of view the one it was last sized to. Undefined with no auto-height column displayed or nothing to go on.
      */
     public getMeasuredRowHeight(row: RowNode): number | undefined {
-        const displayedAutoHeightCols = this.visibleCols.autoHeightCols;
-        if (displayedAutoHeightCols.length === 0) {
+        if (!this.active) {
             return undefined;
         }
-        let contentHeight = this.getRowContentHeight(row, displayedAutoHeightCols);
+        let contentHeight = this.getRowContentHeight(row, this.visibleCols.autoHeightCols);
         if (contentHeight === undefined) {
             contentHeight = row.__autoContentHeight;
             // a row since turned full width has no auto-height cells, so the height it was sized to no longer applies
@@ -134,6 +133,9 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
 
     /** The height the auto-height cells of `row` need, undefined while one of them is unmeasured. */
     private getRowContentHeight(row: RowNode, displayedAutoHeightCols: AgColumn[]): number | undefined {
+        if (row.transposeFieldCol?.isAutoHeight()) {
+            return getTallestMeasuredCell(row);
+        }
         const beans = this.beans;
         let cellsHeight = 0;
         for (let i = 0, len = displayedAutoHeightCols.length; i < len; ++i) {
@@ -174,8 +176,11 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
         // if the cell comp has been unmounted, delete the auto height
         if (cellHeight == undefined) {
             delete autoHeights[colId];
-            // only column spanning skips a missing measurement, so only then can the row shrink
-            if (previousCellHeight !== undefined && this.visibleCols.colSpanColCount !== 0) {
+            // only column spanning and auto-height field rows skip a missing measurement, so only then can the row shrink
+            if (
+                previousCellHeight !== undefined &&
+                (this.visibleCols.colSpanColCount !== 0 || rowNode.transposeFieldCol?.isAutoHeight())
+            ) {
                 this.requestCheckAutoHeight();
             }
             return;
@@ -196,7 +201,11 @@ export class RowAutoHeightService extends BeanStub implements NamedBean {
      * @returns whether or not auto height has been set up on this cell
      */
     public setupCellAutoHeight(cellCtrl: CellCtrl, eCellWrapper: HTMLElement | undefined, compBean: BeanStub): boolean {
-        if (_isClientSideLoadingRow(this.gos, cellCtrl.rowNode) || !cellCtrl.column.isAutoHeight() || !eCellWrapper) {
+        if (
+            _isClientSideLoadingRow(this.gos, cellCtrl.rowNode) ||
+            !cellCtrl.getConfigCell().column.isAutoHeight() ||
+            !eCellWrapper
+        ) {
             return false;
         }
 
@@ -279,6 +288,10 @@ const isRowMeasured = (beans: BeanCollection, rowCtrl: RowCtrl): boolean => {
     const { autoHeightCols, colSpanColCount } = beans.visibleCols;
     const rowNode = rowCtrl.rowNode;
     const rowHeight = rowNode.rowHeight!;
+    if (rowNode.transposeFieldCol?.isAutoHeight()) {
+        const contentHeight = getTallestMeasuredCell(rowNode);
+        return contentHeight !== undefined && rowHeight >= contentHeight;
+    }
     for (let i = 0, len = autoHeightCols.length; i < len; ++i) {
         const col = autoHeightCols[i];
         if (col.pinnedLane !== 1) {
@@ -294,6 +307,25 @@ const isRowMeasured = (beans: BeanCollection, rowCtrl: RowCtrl): boolean => {
         }
     }
     return true;
+};
+
+/**
+ * A transposed field row whose field has auto height is as tall as its tallest measured cell. Its cells sit in record
+ * columns, which stay virtualised, so only the records rendered are measured.
+ */
+const getTallestMeasuredCell = (row: RowNode): number | undefined => {
+    const autoHeights = row.__autoHeights;
+    if (!autoHeights) {
+        return undefined;
+    }
+    let tallest: number | undefined;
+    for (const colId of Object.keys(autoHeights)) {
+        const cellHeight = autoHeights[colId];
+        if (cellHeight !== undefined && (tallest === undefined || cellHeight > tallest)) {
+            tallest = cellHeight;
+        }
+    }
+    return tallest;
 };
 
 /** Whether another cell's colSpan covers `col` in the rendered row, so `col` has no cell of its own to measure. */

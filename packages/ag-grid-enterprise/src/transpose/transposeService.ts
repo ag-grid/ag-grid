@@ -85,6 +85,7 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
     public readonly treeDepth = 0;
     public readonly groupsById: Map<string, AgProvidedColumnGroup> = new Map();
     public readonly allGroups: AgProvidedColumnGroup[] = [];
+    public hasAutoHeightFields = false;
 
     private fieldNameCol: AgColumn | null = null;
     /** Shows the grand total row as a column, while `grandTotalRow` is set. */
@@ -519,6 +520,7 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
     }
 
     private clearCols(): void {
+        this.hasAutoHeightFields = false;
         if (this.cols) {
             this.cols = null;
             this.tree = [];
@@ -593,6 +595,7 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
         const fieldGroups = this.fieldGroups;
         fieldGroups.clear();
         const sortByUserOrder = createUserOrderSorter(colModel.getColsInStateOrder());
+        let hasAutoHeightFields = false;
 
         const visit = (unsorted: (AgColumn | AgProvidedColumnGroup)[], level: number, show: boolean): boolean => {
             const items = sortByUserOrder(unsorted);
@@ -637,10 +640,12 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
                 fieldRow.transposeFieldCol = item;
                 fieldRow.setUiLevel(level);
                 rows.push(fieldRow);
+                hasAutoHeightFields ||= item.isAutoHeight();
             }
             return anyVisible;
         };
         visit(colModel.colDefTree, 0, true);
+        this.hasAutoHeightFields = hasAutoHeightFields;
         return rows;
     }
 

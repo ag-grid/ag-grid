@@ -492,7 +492,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
 
     public isForceWrapper(): boolean {
         // text selection requires the value to be wrapped in another element
-        return this.beans.gos.get('enableCellTextSelection') || this.column.isAutoHeight();
+        return this.beans.gos.get('enableCellTextSelection') || this.configCell.column.isAutoHeight();
     }
 
     public getCellValueClass(): string {
@@ -545,7 +545,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         const rowDragChanged = this.includeRowDrag != this.isIncludeControl(colDef.rowDrag);
         const dndSourceChanged = this.includeDndSource != this.isIncludeControl(colDef.dndSource);
         // auto height uses wrappers, so need to destroy
-        const autoHeightChanged = this.isAutoHeight != this.column.isAutoHeight();
+        const autoHeightChanged = this.isAutoHeight != this.configCell.column.isAutoHeight();
 
         return selectionChanged || rowDragChanged || dndSourceChanged || autoHeightChanged;
     }
@@ -1018,7 +1018,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         // normal cells fill the height of the row. autoHeight cells have no height to let them
         // fit the height of content.
 
-        const autoHeight = this.column.isAutoHeight();
+        const autoHeight = this.configCell.column.isAutoHeight();
         comp.toggleCss(CSS_AUTO_HEIGHT, autoHeight);
         comp.toggleCss(CSS_NORMAL_HEIGHT, !autoHeight);
         this.setCalculatedColumnCss();

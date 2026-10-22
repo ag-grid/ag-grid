@@ -12,6 +12,8 @@ export interface ITransposeService {
     readonly treeDepth: number;
     readonly groupsById: Map<string, AgProvidedColumnGroup>;
     readonly allGroups: AgProvidedColumnGroup[];
+    /** A displayed field has `autoHeight`, so its field row is sized to its rendered cells. */
+    readonly hasAutoHeightFields: boolean;
 
     isActive(): boolean;
 
