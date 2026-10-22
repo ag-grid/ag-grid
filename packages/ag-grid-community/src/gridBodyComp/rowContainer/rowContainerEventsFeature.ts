@@ -57,21 +57,25 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        if (!_isEventFromThisInstance(this.beans, mouseEvent) || _isStopPropagationForAgGrid(mouseEvent)) {
+        if (!_isEventFromThisInstance(this.beans, mouseEvent)) {
             return;
         }
 
+        const stoppedForGrid = _isStopPropagationForAgGrid(mouseEvent);
         if (eventName === this.mouseDownEvent) {
-            this.pendingTouchDown = isTouchPress(mouseEvent) ? mouseEvent : null;
+            this.pendingTouchDown = !stoppedForGrid && isTouchPress(mouseEvent) ? mouseEvent : null;
             if (this.pendingTouchDown) {
                 // a touch may turn into a scroll, so the press is only handled once a tap or long press confirms it
                 return;
             }
         } else if (eventName === 'click' || eventName === 'contextmenu') {
+            // controls such as selection checkboxes stop their click reaching the grid, but it still confirms a tap
             this.processPendingTouchDown(mouseEvent.target);
         }
 
-        this.dispatchMouseEvent(eventName, mouseEvent);
+        if (!stoppedForGrid) {
+            this.dispatchMouseEvent(eventName, mouseEvent);
+        }
     }
 
     /** Replays a deferred touch press once a tap or long press lands on the same target; a scroll never does. */

@@ -2,11 +2,13 @@ import { getByTestId, waitFor } from '@testing-library/dom';
 import { TestGridsManager, assertSelectedCellRanges, asyncSetTimeout, initPointerEventPolyfill } from 'ag-test-utils';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, agTestIdFor, setupAgTestIds } from 'ag-grid-community';
-import { CellSelectionModule } from 'ag-grid-enterprise';
+import { ClientSideRowModelModule, RowSelectionModule, agTestIdFor, setupAgTestIds } from 'ag-grid-community';
+import { CellSelectionModule, RowGroupingModule } from 'ag-grid-enterprise';
 
 describe('touch press on a cell', () => {
-    const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule, CellSelectionModule] });
+    const gridMgr = new TestGridsManager({
+        modules: [ClientSideRowModelModule, CellSelectionModule, RowSelectionModule, RowGroupingModule],
+    });
 
     beforeAll(() => {
         initPointerEventPolyfill();
@@ -43,6 +45,19 @@ describe('touch press on a cell', () => {
         const init: PointerEventInit = { bubbles: true, cancelable: true, button: 0, buttons: 1, pointerType };
         target.dispatchEvent(new PointerEvent('pointerdown', init));
         target.dispatchEvent(new PointerEvent('pointerup', { ...init, buttons: 0 }));
+    }
+
+    function tap(target: HTMLElement) {
+        press(target, 'touch');
+        target.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+    }
+
+    function findElement(gridDiv: HTMLElement, selector: string) {
+        return waitFor(() => {
+            const element = gridDiv.querySelector<HTMLElement>(selector);
+            expect(element).not.toBeNull();
+            return element!;
+        });
     }
 
     function getCell(gridDiv: HTMLElement) {
@@ -111,16 +126,34 @@ describe('touch press on a cell', () => {
             isFullWidthRow: () => true,
             fullWidthCellRenderer: () => '<span>full width</span>',
         });
-        const span = await waitFor(() => {
-            const el = gridDiv.querySelector<HTMLElement>('.ag-full-width-row span');
-            expect(el).not.toBeNull();
-            return el!;
-        });
+        const span = await findElement(gridDiv, '.ag-full-width-row span');
 
         press(span, 'touch');
         expect(api.getFocusedCell()).toBeUndefined();
 
         span.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
         expect(api.getFocusedCell()).not.toBeNull();
+    });
+
+    test('a tap on a selection checkbox selects the row and focuses its cell', async () => {
+        const { api, gridDiv } = await createGrid({ rowSelection: { mode: 'multiRow', checkboxes: true } });
+        const checkbox = await findElement(gridDiv, '[row-id="B"] .ag-selection-checkbox input');
+
+        tap(checkbox);
+
+        expect(api.getSelectedNodes().map((node) => node.id)).toEqual(['B']);
+        expect(api.getFocusedCell()?.rowIndex).toBe(1);
+    });
+
+    test('a tap on a group chevron expands the group and focuses its cell', async () => {
+        const { api, gridDiv } = await createGrid({
+            columnDefs: [{ field: 'athlete', rowGroup: true, hide: true }, { field: 'age' }],
+        });
+        const chevron = await findElement(gridDiv, '.ag-group-contracted');
+
+        tap(chevron);
+
+        expect(api.getDisplayedRowAtIndex(0)?.expanded).toBe(true);
+        expect(api.getFocusedCell()?.rowIndex).toBe(0);
     });
 });
