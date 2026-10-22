@@ -83,9 +83,6 @@ const gridOptions: GridOptions<CompanyRecord> = {
     transposeHeaderColId: 'name',
     cellSelection: true,
     undoRedoCellEditing: true,
-    sendToClipboard: (params) => {
-        lastClipboard = params.data;
-    },
 };
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -140,6 +137,10 @@ function runChecks() {
 
 async function runAllChecks(api: GridApi<CompanyRecord>) {
     installTestHooks();
+    // Set here, not in the grid options, so copying works with the real clipboard until the checks run.
+    api.setGridOption('sendToClipboard', (params) => {
+        lastClipboard = params.data;
+    });
     document.querySelector<HTMLElement>('#eventLog')!.textContent = '';
     api.setGridOption('rowData', getData());
     await wait(100);
