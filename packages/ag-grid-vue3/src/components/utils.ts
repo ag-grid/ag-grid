@@ -1602,6 +1602,10 @@ export interface Props<TData> {
          * @default false
          */
     suppressScrollOnNewData?: boolean,
+    /** When `true`, the grid keeps the same rows in view when a row data update or a transaction moves them, such as by adding, removing, sorting or filtering rows above them, instead of letting them shift, and keeps the focused cell and cell selection on the same rows. Does not scroll while the grid is scrolled to the top, so new rows added at the top come into view, and stays scrolled to the bottom while at the bottom, so new rows added at the end come into view.
+         * @default false
+         */
+    maintainRowsInViewOnDataUpdate?: boolean,
     /** When `true`, the grid will not allow mousewheel / touchpad scroll when popup elements are present.
          * @default false
          */
@@ -2484,6 +2488,7 @@ export function getProps() {
         debounceVerticalScrollbar: undefined,
         suppressHorizontalScroll: undefined,
         suppressScrollOnNewData: undefined,
+        maintainRowsInViewOnDataUpdate: undefined,
         suppressScrollWhenPopupsAreOpen: undefined,
         suppressAnimationFrame: undefined,
         suppressMiddleClickScrolls: undefined,

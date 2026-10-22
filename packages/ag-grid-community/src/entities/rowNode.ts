@@ -963,6 +963,7 @@ export class RowNode<TData = any>
         this.destroyed = true;
 
         const beans = this.beans;
+        beans.rowRenderer?.onRowNodeRemoved(this);
         // Before the position is cleared below: the editor stop reads the row where it actually was.
         beans.editSvc?.releaseRowEdits(this);
 

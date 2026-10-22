@@ -155,6 +155,7 @@ export const GRID_OPTION_DEFAULTS = {
     debounceVerticalScrollbar: false,
     suppressHorizontalScroll: false,
     suppressScrollOnNewData: false,
+    maintainRowsInViewOnDataUpdate: false,
     suppressScrollWhenPopupsAreOpen: false,
     suppressAnimationFrame: false,
     suppressMiddleClickScrolls: false,

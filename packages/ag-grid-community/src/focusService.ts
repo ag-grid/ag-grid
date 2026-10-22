@@ -32,6 +32,7 @@ import type { NavigationService } from './navigation/navigationService';
 import type { OverlayService } from './rendering/overlays/overlayService';
 import { DOM_DATA_KEY_CELL_CTRL, DOM_DATA_KEY_ROW_CTRL } from './rendering/renderUtils';
 import type { RowRenderer } from './rendering/rowRenderer';
+import { _followRow } from './rendering/rowsInViewAnchor';
 import {
     _focusNextGridCoreContainer,
     _getDefaultTabTargetForContainer,
@@ -345,6 +346,28 @@ export class FocusService extends BeanStub implements NamedBean {
         });
 
         this.previousCellFocusParams = focusEventParams;
+    }
+
+    /**
+     * Records the row of the focused cell before a data update, returning how to keep the focus on that row after it.
+     * The focused cell is the same, so no event is dispatched, and an editor in it keeps editing.
+     */
+    public followFocusedRow(): (() => void) | undefined {
+        const focusedCell = this.focusedCell;
+        if (!focusedCell) {
+            return undefined;
+        }
+        const getRowIndex = _followRow(this.beans, focusedCell);
+        return () => {
+            if (this.focusedCell !== focusedCell) {
+                return; // focus moved during the update
+            }
+            const rowIndex = getRowIndex();
+            this.focusedCell = { ...focusedCell, rowIndex };
+            if (this.previousCellFocusParams) {
+                this.previousCellFocusParams = { ...this.previousCellFocusParams, rowIndex };
+            }
+        };
     }
 
     public isCellFocused(cellPosition: CellPosition): boolean {
