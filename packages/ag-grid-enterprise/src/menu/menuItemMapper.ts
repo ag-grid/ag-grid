@@ -18,6 +18,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _createIconNoSpan, _getRowNode, _normalizeSortType, _resetColumnState } from 'ag-grid-community';
 
+import type { AgMenuItemCheckType } from '../agStack/agMenuItemComponent';
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import type { ChartMenuItemMapper } from './chartMenuItemMapper';
 import type { ColumnChooserFactory } from './columnChooserFactory';
@@ -48,6 +49,11 @@ const SORT_MENU_ITEM_TO_MENU_ACTION_PARAMS: Record<
         getSortDef: (column: AgColumn) => ({ type: _normalizeSortType(column.getSortDef()?.type), direction: null }),
     },
 };
+
+/** `MenuItemDef` plus the options the grid sets on its own items that are not part of the public API. */
+export interface InternalMenuItemDef extends MenuItemDef {
+    checkType?: AgMenuItemCheckType;
+}
 
 export class MenuItemMapper extends BeanStub implements NamedBean {
     beanName = 'menuItemMapper' as const;
@@ -121,7 +127,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
             column: AgColumn | null,
             sourceElement: () => HTMLElement,
             source: ColumnEventType
-        ): MenuItemDef | 'separator' | null => {
+        ): InternalMenuItemDef | 'separator' | null => {
             validateMenuItem(gos, key);
 
             switch (key) {
@@ -153,6 +159,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               name: localeTextFunc('pinLeft', 'Pin Left'),
                               action: () => pinnedCols.setColsPinned([column], 'left', source),
                               checked: !!column && column.isPinnedLeft(),
+                              checkType: 'radio',
                           }
                         : null;
                 case 'pinRight':
@@ -161,6 +168,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               name: localeTextFunc('pinRight', 'Pin Right'),
                               action: () => pinnedCols.setColsPinned([column], 'right', source),
                               checked: !!column && column.isPinnedRight(),
+                              checkType: 'radio',
                           }
                         : null;
                 case 'clearPinned':
@@ -169,6 +177,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               name: localeTextFunc('noPin', 'No Pin'),
                               action: () => pinnedCols.setColsPinned([column], null, source),
                               checked: !!column && !column.isPinned(),
+                              checkType: 'radio',
                           }
                         : null;
                 case 'pinRowSubMenu': {
@@ -693,7 +702,7 @@ function createAggregationSubMenu(
     aggFuncSvc: IAggFuncService,
     valueColsSvc: IValueColsService,
     localeTextFunc: LocaleTextFunc
-): MenuItemDef[] {
+): InternalMenuItemDef[] {
     let columnToUse: AgColumn | undefined;
     if (column.primary) {
         columnToUse = column;
@@ -702,7 +711,7 @@ function createAggregationSubMenu(
         columnToUse = _exists(pivotValueColumn) ? pivotValueColumn : undefined;
     }
 
-    const result: MenuItemDef[] = [];
+    const result: InternalMenuItemDef[] = [];
     if (columnToUse) {
         const columnIsAlreadyAggValue = columnToUse.isValueActive();
         const funcNames = aggFuncSvc.getFuncNames(columnToUse);
@@ -711,6 +720,7 @@ function createAggregationSubMenu(
             name: localeTextFunc('noAggregation', 'None'),
             action: () => valueColsSvc.removeColumns([columnToUse!], 'contextMenu'),
             checked: !columnIsAlreadyAggValue,
+            checkType: 'radio',
         });
 
         for (const funcName of funcNames) {
@@ -719,6 +729,7 @@ function createAggregationSubMenu(
                 // activates the column too
                 action: () => valueColsSvc.setColumnAggFunc!(columnToUse, funcName, 'contextMenu'),
                 checked: columnIsAlreadyAggValue && columnToUse.aggFunc === funcName,
+                checkType: 'radio',
             });
         }
     }

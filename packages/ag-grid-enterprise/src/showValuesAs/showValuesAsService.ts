@@ -16,7 +16,6 @@ import type {
     IRowNode,
     IShowValuesAsService,
     IValueColsService,
-    MenuItemDef,
     NamedBean,
     RowRenderer,
     ShowValuesAs,
@@ -33,6 +32,7 @@ import type {
 } from 'ag-grid-community';
 import { BeanStub, _addGridCommonParams, _mergeDeep } from 'ag-grid-community';
 
+import type { InternalMenuItemDef } from '../menu/menuItemMapper';
 import { DEFAULT_PRECISION, makeBuiltinShowValuesAsModesDef } from './showValuesAsBuiltInModes';
 import { ShowValuesAsColumnListsImpl, ShowValuesAsMenuParamsImpl } from './showValuesAsMenuParams';
 import { ShowValuesAsTransformParamsImpl } from './showValuesAsTransformParams';
@@ -472,15 +472,16 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
         return baseType === 'number' || baseType === 'bigint';
     }
 
-    public getMenuItems(column: AgColumn, localeTextFunc: LocaleTextFunc): MenuItemDef[] {
+    public getMenuItems(column: AgColumn, localeTextFunc: LocaleTextFunc): InternalMenuItemDef[] {
         // Build the resolved config on demand for an eligible column the colDef didn't pre-configure.
         this.ensureConfig(column);
         const active = column.showValuesAs?.type ?? null;
-        const result: MenuItemDef[] = [
+        const result: InternalMenuItemDef[] = [
             {
                 name: localeTextFunc('showValuesAsNone', 'None'),
                 action: () => this.setColumnShowValuesAs(column, null),
                 checked: active == null,
+                checkType: 'radio',
             },
         ];
         // The candidate columns are shared across the modes' submenus — built on first use.
@@ -507,7 +508,7 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
         mode: ShowValuesAsModeDefResolved,
         active: ShowValuesAsType | null,
         getColumnLists: () => ShowValuesAsColumnListsImpl
-    ): MenuItemDef | null {
+    ): InternalMenuItemDef | null {
         const isActive = active === type;
         const def = mode.def;
         // The mode's `applicability` test (constant/callback) for the current view; `true` by default.
@@ -523,9 +524,10 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
         if (menuState === 'hidden' && !isActive) {
             return null;
         }
-        const item: MenuItemDef = {
+        const item: InternalMenuItemDef = {
             name: modeLabel(def, type),
             checked: isActive,
+            checkType: 'radio',
             tooltip: this.modeTooltip(type, mode),
         };
         const menuFn = def.menu;
