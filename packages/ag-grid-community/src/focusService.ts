@@ -61,10 +61,10 @@ export class FocusService extends BeanStub implements NamedBean {
         this.overlays = beans.overlays;
     }
 
-    private focusedCell: CellPosition | null;
-    private previousCellFocusParams: CellFocusedParams | null;
+    private focusedCell: CellPosition | null = null;
+    private previousCellFocusParams: CellFocusedParams | null = null;
 
-    public focusedHeader: HeaderPosition | null;
+    public focusedHeader: HeaderPosition | null = null;
     private elementToReveal: HTMLElement | null = null;
     /** The latest focus waiting for its element to mount (a cell's event or the header asked), and what had focus then */
     private deferredFocusRequest: CellFocusedEvent | AbstractHeaderCellCtrl | undefined = undefined;

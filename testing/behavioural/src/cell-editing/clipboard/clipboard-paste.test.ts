@@ -1,6 +1,7 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 import {
+    ALL_SEVERITIES,
     EditEventTracker,
     GridColumns,
     GridRows,
@@ -10,7 +11,14 @@ import {
     waitForEvent,
 } from 'ag-test-utils';
 
-import { TextEditorModule, UndoRedoEditModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import {
+    TextEditorModule,
+    UndoRedoEditModule,
+    agTestIdFor,
+    enableDevValidations,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import { BatchEditModule, CellSelectionModule, ClipboardModule } from 'ag-grid-enterprise';
 
 describe('Clipboard Paste Behaviour: paste flows', () => {
@@ -1343,5 +1351,283 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
         } finally {
             parseFromString.mockRestore();
         }
+    });
+
+    test('with suppressClipboardApi, a paste cancelled by processDataFromClipboard keeps focus on the cell', async () => {
+        let pasteCount = 0;
+        const api = await gridMgr.createGridAndWait('legacyCancelledPaste', {
+            columnDefs: [{ field: 'field', editable: true }],
+            rowData: [{ field: 'keep' }],
+            suppressClipboardApi: true,
+            processDataFromClipboard: () => {
+                pasteCount++;
+                return null;
+            },
+        });
+        const user = userEvent.setup({ skipHover: true });
+        const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell[col-id="field"]')!;
+        await user.click(cell);
+
+        await user.keyboard('{Control>}v{/Control}');
+        const textArea = document.activeElement;
+        if (!(textArea instanceof HTMLTextAreaElement)) {
+            throw new Error('Expected the temporary paste textarea');
+        }
+        textArea.value = 'pasted';
+        await waitFor(() => expect(pasteCount).toBe(1));
+
+        expect(document.activeElement).toBe(cell);
+        expect(api.getDisplayedRowAtIndex(0)?.data).toEqual({ field: 'keep' });
+    });
+
+    test('with suppressClipboardApi, focus moved away during a paste is left where it went', async () => {
+        const api = await gridMgr.createGridAndWait('legacyPasteFocusMoved', {
+            columnDefs: [{ field: 'field', editable: true }],
+            rowData: [{ field: 'keep' }],
+            suppressClipboardApi: true,
+        });
+        const user = userEvent.setup({ skipHover: true });
+        await user.click(getGridElement(api)!.querySelector<HTMLElement>('.ag-cell[col-id="field"]')!);
+        const outside = document.body.appendChild(document.createElement('button'));
+        try {
+            await user.keyboard('{Control>}v{/Control}');
+            (document.activeElement as HTMLTextAreaElement).value = 'pasted';
+            outside.focus();
+            await waitFor(() => expect(api.getDisplayedRowAtIndex(0)?.data).toEqual({ field: 'pasted' }));
+            expect(document.activeElement).toBe(outside);
+        } finally {
+            outside.remove();
+        }
+    });
+
+    test('a paste started from a button outside the grid leaves focus on the button', async () => {
+        const api = await gridMgr.createGridAndWait('pasteFromOutsideButton', {
+            columnDefs: [{ field: 'field', editable: true }],
+            rowData: [{ field: 'keep' }],
+        });
+        api.setFocusedCell(0, 'field');
+        const button = document.body.appendChild(document.createElement('button'));
+        try {
+            button.focus();
+            clipboardUtils.setText('pasted');
+            const pasteEnd = waitForEvent('pasteEnd', api);
+            api.pasteFromClipboard();
+            await pasteEnd;
+            expect(api.getDisplayedRowAtIndex(0)?.data).toEqual({ field: 'pasted' });
+            expect(document.activeElement).toBe(button);
+        } finally {
+            button.remove();
+        }
+    });
+
+    test('a paste in a grid inside a shadow root, started from a button outside it, leaves focus on the button', async () => {
+        const host = document.body.appendChild(document.createElement('div'));
+        const gridDiv = host.attachShadow({ mode: 'open' }).appendChild(document.createElement('div'));
+        const button = document.body.appendChild(document.createElement('button'));
+        try {
+            const api = gridMgr.createGrid(gridDiv, {
+                columnDefs: [{ field: 'field', editable: true }],
+                rowData: [{ field: 'keep' }],
+            });
+            api.setFocusedCell(0, 'field');
+            button.focus();
+            clipboardUtils.setText('pasted');
+            const pasteEnd = waitForEvent('pasteEnd', api);
+            api.pasteFromClipboard();
+            await pasteEnd;
+            expect(api.getDisplayedRowAtIndex(0)?.data).toEqual({ field: 'pasted' });
+            expect(document.activeElement).toBe(button);
+        } finally {
+            button.remove();
+            host.remove();
+        }
+    });
+
+    test.each([
+        { name: 'lost', moveFocus: () => (document.activeElement as HTMLElement).blur() },
+        {
+            name: 'on the header',
+            moveFocus: () => document.querySelector<HTMLElement>('.ag-header-cell[col-id="field"]')!.focus(),
+        },
+    ])('a paste with focus $name puts focus back on the focused cell', async ({ moveFocus }) => {
+        const api = await gridMgr.createGridAndWait('pasteRefocusesCell', {
+            columnDefs: [{ field: 'field', editable: true }],
+            rowData: [{ field: 'keep' }],
+        });
+        const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell[col-id="field"]')!;
+        api.setFocusedCell(0, 'field');
+        moveFocus();
+        expect(document.activeElement).not.toBe(cell);
+        clipboardUtils.setText('pasted');
+        const pasteEnd = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await pasteEnd;
+        expect(document.activeElement).toBe(cell);
+    });
+
+    test('with suppressClipboardApi, a paste whose processDataFromClipboard throws still gives focus back', async () => {
+        const api = await gridMgr.createGridAndWait('legacyPasteThrows', {
+            columnDefs: [{ field: 'field', editable: true }],
+            rowData: [{ field: 'keep' }],
+            suppressClipboardApi: true,
+            processDataFromClipboard: () => {
+                throw new Error('paste rejected');
+            },
+        });
+        const user = userEvent.setup({ skipHover: true });
+        const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell[col-id="field"]')!;
+        await user.click(cell);
+
+        vi.useFakeTimers({ toFake: ['setTimeout'] });
+        try {
+            api.pasteFromClipboard();
+            expect(document.activeElement).toBeInstanceOf(HTMLTextAreaElement);
+            expect(() => vi.runAllTimers()).toThrow('paste rejected');
+        } finally {
+            vi.useRealTimers();
+        }
+        expect(document.activeElement).toBe(cell);
+        expect(getGridElement(api)!.querySelector('textarea')).toBeNull();
+    });
+
+    test('with suppressClipboardApi, two overlapping cancelled pastes give focus back to the cell', async () => {
+        const api = await gridMgr.createGridAndWait('legacyPasteOverlap', {
+            columnDefs: [{ field: 'field', editable: true }],
+            rowData: [{ field: 'keep' }],
+            suppressClipboardApi: true,
+            processDataFromClipboard: () => null,
+        });
+        const user = userEvent.setup({ skipHover: true });
+        const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell[col-id="field"]')!;
+        await user.click(cell);
+
+        vi.useFakeTimers({ toFake: ['setTimeout'] });
+        try {
+            api.pasteFromClipboard();
+            vi.advanceTimersByTime(60);
+            api.pasteFromClipboard();
+            vi.runAllTimers();
+        } finally {
+            vi.useRealTimers();
+        }
+        expect(document.activeElement).toBe(cell);
+        expect(getGridElement(api)!.querySelector('textarea')).toBeNull();
+    });
+
+    test('with suppressClipboardApi, a duplicated paste event leaves focus where it moved', async () => {
+        const api = await gridMgr.createGridAndWait('legacyPasteDuplicated', {
+            columnDefs: [{ field: 'field', editable: true }],
+            rowData: [{ field: 'keep' }],
+            suppressClipboardApi: true,
+        });
+        const user = userEvent.setup({ skipHover: true });
+        await user.click(getGridElement(api)!.querySelector<HTMLElement>('.ag-cell[col-id="field"]')!);
+        const outside = document.body.appendChild(document.createElement('button'));
+        try {
+            await user.keyboard('{Control>}v{/Control}');
+            const textArea = document.activeElement!;
+            textArea.dispatchEvent(new Event('paste', { cancelable: true }));
+            textArea.dispatchEvent(new Event('paste', { cancelable: true }));
+            outside.focus();
+            await waitFor(() => expect(textArea.isConnected).toBe(false));
+            expect(document.activeElement).toBe(outside);
+        } finally {
+            outside.remove();
+        }
+    });
+
+    test.each([
+        { name: 'succeeds', execCommand: () => true, warns: false },
+        {
+            name: 'throws',
+            warns: true,
+            execCommand: () => {
+                throw new Error('copy blocked');
+            },
+        },
+    ])(
+        'with suppressClipboardApi, a copy whose execCommand $name keeps focus on the cell',
+        async ({ execCommand, warns }) => {
+            const api = await gridMgr.createGridAndWait('legacyCopyFocus', {
+                columnDefs: [{ field: 'field' }],
+                rowData: [{ field: 'copied' }],
+                cellSelection: true,
+                suppressClipboardApi: true,
+            });
+            const user = userEvent.setup({ skipHover: true });
+            const cell = getGridElement(api)!.querySelector<HTMLElement>('.ag-cell[col-id="field"]')!;
+            await user.click(cell);
+            const command = vi.fn(execCommand);
+            Object.defineProperty(document, 'execCommand', { configurable: true, value: command });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [42] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            try {
+                api.copyToClipboard();
+                expect(command).toHaveBeenCalledWith('copy');
+                expect(document.activeElement).toBe(cell);
+                expect(warn.mock.calls.map((args) => args.join(' ').includes('#42'))).toEqual(warns ? [true] : []);
+            } finally {
+                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [] });
+                warn.mockRestore();
+                Reflect.deleteProperty(document, 'execCommand');
+            }
+        }
+    );
+
+    test('with suppressClipboardApi, a grid destroyed during the paste does not process it', async () => {
+        const processDataFromClipboard = vi.fn(() => null);
+        const api = await gridMgr.createGridAndWait('legacyPasteDestroyed', {
+            columnDefs: [{ field: 'field', editable: true }],
+            rowData: [{ field: 'keep' }],
+            suppressClipboardApi: true,
+            processDataFromClipboard,
+        });
+        api.setFocusedCell(0, 'field');
+
+        vi.useFakeTimers({ toFake: ['setTimeout'] });
+        try {
+            api.pasteFromClipboard();
+            api.destroy();
+            vi.runAllTimers();
+        } finally {
+            vi.useRealTimers();
+        }
+        expect(processDataFromClipboard).not.toHaveBeenCalled();
+    });
+
+    test('a paste or fill-down that changes no cell leaves the undo and redo stacks alone', async () => {
+        const api = await gridMgr.createGridAndWait('pasteNoChangeUndo', {
+            undoRedoCellEditing: true,
+            cellSelection: true,
+            columnDefs: [{ field: 'editable', editable: true }, { field: 'readOnly' }],
+            rowData: [
+                { editable: 'a', readOnly: 'b' },
+                { editable: 'c', readOnly: 'd' },
+            ],
+        });
+        const paste = async (text: string, colKey: string) => {
+            clipboardUtils.setText(text);
+            api.clearCellSelection();
+            api.setFocusedCell(0, colKey);
+            const pasteEnd = waitForEvent('pasteEnd', api);
+            api.pasteFromClipboard();
+            await pasteEnd;
+        };
+
+        await paste('X', 'editable');
+        api.undoCellEditing();
+        expect(api.getDisplayedRowAtIndex(0)?.data).toEqual({ editable: 'a', readOnly: 'b' });
+        expect(api.getCurrentRedoSize()).toBe(1);
+
+        await paste('Y', 'readOnly');
+        expect(api.getCurrentUndoSize()).toBe(0);
+        expect(api.getCurrentRedoSize()).toBe(1);
+
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columnStart: 'readOnly', columnEnd: 'readOnly' });
+        api.copySelectedRangeDown();
+        expect(api.getCurrentUndoSize()).toBe(0);
+        expect(api.getCurrentRedoSize()).toBe(1);
+        api.redoCellEditing();
+        expect(api.getDisplayedRowAtIndex(0)?.data).toEqual({ editable: 'X', readOnly: 'b' });
     });
 });
