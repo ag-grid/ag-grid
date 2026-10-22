@@ -97,7 +97,7 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
      * Return error messages to reject the expression, or `null` / an empty array to accept it.
      * Deferred mode blocks Apply; live mode saves rejected expressions with an error and prevents evaluation.
      * Unlike `isColumnReferenceable`, unchanged expressions are revalidated on title/type edits and deferred Apply.
-     * In live mode, a title/type edit can therefore block a previously accepted expression.
+     * Opening an editable live dialog also revalidates the expression, saving new rejections or clearing resolved ones.
      * Not called during cell evaluation, when setting definitions, or when restoring state.
      * Call `api.refreshCalculatedColumns()` to explicitly revalidate committed expressions.
      */

@@ -1116,8 +1116,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             const result = this.validateDialogDraft(nextDraft, context);
             if (liveApply && !readOnly && columnToHighlight) {
                 const savedError = this.getExpressionError(columnToHighlight);
-                // reconcile a saved rejection when reopening; untouched definitions stay unchanged
-                if (savedError && !_mergedEqual(savedError, result.expressionError)) {
+                // reconcile both new and cleared rejections when reopening
+                if (!_mergedEqual(savedError, result.expressionError)) {
                     this.scheduleLiveApplyUpdate(nextDraft, context, result);
                 }
             }
