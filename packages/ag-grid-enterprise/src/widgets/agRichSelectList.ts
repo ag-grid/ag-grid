@@ -37,13 +37,13 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     private readonly selectedItems: Set<TValue> = new Set<TValue>();
     private loadingLabel: string;
     private noMatchesLabel: string;
-    private loadingState = STATE_READY_FOR_INPUT;
+    private loadingState: AgRichSelectListState = STATE_READY_FOR_INPUT;
     private eStateCompLabel: HTMLElement;
     private eLoadingIcon: Element | undefined;
     private loadMoreRowsCallback?: (direction?: VerticalDirection) => void;
     private contentWidthCallback?: (width: number) => boolean;
     private loadMoreRowsThreshold = 10;
-    private stateAnnouncementCallback?: (value: string) => void;
+    private stateAnnouncementCallback?: (value: string | undefined) => void;
     private readonly valueFormatter: (value: TValue | TValue[] | null | undefined) => string;
 
     constructor(
@@ -117,14 +117,13 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
 
     private setLoadingState(state: AgRichSelectListState): void {
         const hasChanged = this.loadingState !== state;
+        const previousAnnouncement = this.getStateAnnouncementText(this.loadingState);
+        const stateAnnouncement = this.getStateAnnouncementText(state);
         this.loadingState = state;
         this.toggleStateComp();
         this.toggleVisibility();
-        if (hasChanged) {
-            const stateAnnouncement = this.getStateAnnouncementText(state);
-            if (stateAnnouncement) {
-                this.stateAnnouncementCallback?.(stateAnnouncement);
-            }
+        if (hasChanged && (stateAnnouncement || previousAnnouncement)) {
+            this.stateAnnouncementCallback?.(stateAnnouncement);
         }
     }
 
@@ -175,8 +174,16 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         this.maybeRequestMoreRows();
     }
 
-    public setStateAnnouncementCallback(callback?: (value: string) => void): void {
+    /** Called with `undefined` when the new state has nothing to say, to drop the previous state's pending one. */
+    public setStateAnnouncementCallback(callback?: (value: string | undefined) => void): void {
         this.stateAnnouncementCallback = callback;
+    }
+
+    /** Drops this list's pending state announcement, e.g. when its picker closes before it is spoken. */
+    public cancelStateAnnouncement(): void {
+        if (this.getStateAnnouncementText(this.loadingState)) {
+            this.stateAnnouncementCallback?.(undefined);
+        }
     }
 
     public override navigateToPage(key: 'PageUp' | 'PageDown' | 'Home' | 'End'): number | null {
@@ -607,6 +614,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     }
 
     public override destroy(): void {
+        this.cancelStateAnnouncement();
         super.destroy();
         this.eStateComp = undefined;
     }

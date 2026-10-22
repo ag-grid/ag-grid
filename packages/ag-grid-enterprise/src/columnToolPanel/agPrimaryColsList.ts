@@ -25,6 +25,7 @@ import {
     toolPanelCreateColumnTree,
 } from '../sideBar/common/toolPanelColDefService';
 import { createLayoutGroupRenameNotifier } from '../sideBar/common/toolPanelGroupUtils';
+import { NoMatchesComp } from '../widgets/noMatchesComp';
 import { VirtualList } from '../widgets/virtualList';
 import { ExpandState } from './agPrimaryColsHeader';
 import { ColumnModelItem } from './columnModelItem';
@@ -67,6 +68,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     private groupsExist: boolean;
 
     private virtualList: VirtualList;
+    private noMatchesComp: NoMatchesComp;
 
     private allColsTree: ColumnModelItem[];
     private displayedColsList: ColumnModelItem[];
@@ -133,6 +135,9 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         this.expandGroupsByDefault = !contractColumnSelection;
 
         this.isPreventMove = !!suppressColumnMove || !!suppressSyncLayoutWithGrid;
+
+        this.noMatchesComp = this.createManagedBean(new NoMatchesComp('ag-column-select-no-matches'));
+        this.appendChild(this.noMatchesComp);
 
         const virtualList = this.createManagedBean(
             new VirtualList<ToolPanelColumnGroupComp | ToolPanelColumnComp, ColumnModelItem>({
@@ -511,7 +516,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
         this.flattenAndFilterModel();
     }
 
-    private flattenAndFilterModel(): void {
+    private flattenAndFilterModel(fromSearchInput = false): void {
         this.displayedColsList = [];
 
         const recursiveFunc = (item: ColumnModelItem) => {
@@ -533,6 +538,11 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
             recursiveFunc(allColsTree[i]);
         }
         virtualList.setModel(new UIColumnModel(this.displayedColsList));
+
+        const noMatches = this.filterText != null && this.displayedColsList.length === 0;
+        this.noMatchesComp.setNoMatches(noMatches, fromSearchInput);
+        virtualList.setDisplayed(!noMatches);
+
         let focusedRow: number | null = null;
 
         if (!this.skipRefocus) {
@@ -717,7 +727,7 @@ export class AgPrimaryColsList extends Component<AgPrimaryColsListEvent> {
     public setFilterText(filterText: string) {
         this.filterText = _exists(filterText) ? filterText.toLowerCase() : null;
         this.markFilteredColumns();
-        this.flattenAndFilterModel();
+        this.flattenAndFilterModel(true);
     }
 
     private markFilteredColumns(): void {
