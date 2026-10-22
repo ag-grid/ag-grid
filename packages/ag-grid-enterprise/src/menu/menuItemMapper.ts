@@ -464,13 +464,13 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                     }
                 case 'paste':
                     if (clipboardSvc) {
+                        // with no cell, paste is for an empty grid, handing the data to processDataFromClipboard
+                        const isTargetBlocked =
+                            column && node
+                                ? !column.isCellEditable(node) || column.isSuppressPaste(node)
+                                : !ctrlsSvc.getGridBodyCtrl().showsNoRows;
                         const isPasteBlocked =
-                            gos.get('suppressClipboardApi') ||
-                            gos.get('suppressClipboardPaste') ||
-                            !column ||
-                            !node ||
-                            !column.isCellEditable(node) ||
-                            column.isSuppressPaste(node);
+                            gos.get('suppressClipboardApi') || gos.get('suppressClipboardPaste') || isTargetBlocked;
 
                         return {
                             name: localeTextFunc('paste', 'Paste'),

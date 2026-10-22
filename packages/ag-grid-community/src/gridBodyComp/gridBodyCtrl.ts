@@ -1,4 +1,14 @@
-import { _debounce, _getInnerWidth, _getScrollLeft, _isElementChildOfClass, _setScrollLeft } from 'ag-stack';
+import {
+    KeyCode,
+    _debounce,
+    _getActiveDomElement,
+    _getInnerWidth,
+    _getScrollLeft,
+    _isElementChildOfClass,
+    _last,
+    _normaliseQwertyAzerty,
+    _setScrollLeft,
+} from 'ag-stack';
 
 import type { ColumnModel } from '../columns/columnModel';
 import { BeanStub } from '../context/beanStub';
@@ -13,6 +23,7 @@ import type { VerticalSection } from '../interfaces/iGridSection';
 import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
+import { _focusNextGridCoreContainer } from '../utils/gridFocus';
 import type { PopupService } from '../widgets/popupService';
 import { INVISIBLE_SCROLLBAR_SIZE } from './abstractFakeScrollComp';
 import { GridBodyScrollFeature } from './gridBodyScrollFeature';
@@ -44,6 +55,7 @@ export interface IGridBodyComp extends LayoutView {
     setGridScrollableAreaWidth(width: string): void;
     setPinnedColumnsOverflowing(overflowing: boolean): void;
     setGridRole(role: 'grid' | 'treegrid'): void;
+    setViewportFocusable(focusable: boolean): void;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -69,6 +81,10 @@ export class GridBodyCtrl extends BeanStub {
     public eGridViewport: HTMLElement;
     public eScrollingRows: HTMLElement;
     public isTreeGrid = false;
+    /** True when the grid displays no rows, pinned rows included. */
+    public showsNoRows = false;
+    /** The viewport stands in for the missing cells, so an empty grid can be focused and pasted into. */
+    public viewportFocusable = false;
     private eTop: HTMLElement;
     private eTopExtraRows: HTMLElement;
     private eBottom: HTMLElement;
@@ -556,7 +572,8 @@ export class GridBodyCtrl extends BeanStub {
         this.beans.editSvc?.addStopEditingWhenGridLosesFocus([this.eGridViewport, this.eBottom, this.eTop]);
     }
 
-    public updateRowCount(): void {
+    /** Returns `true` when the empty viewport had focus and stopped being focusable, so focus must move on. */
+    public updateRowCount(): boolean {
         const headerCount = getAriaHeaderRowCount(this.beans);
 
         const { rowModel, pinnedRowModel } = this.beans;
@@ -566,6 +583,67 @@ export class GridBodyCtrl extends BeanStub {
         const total = rowCount === -1 ? -1 : headerCount + pinnedTopCount + rowCount + pinnedBottomCount;
 
         this.comp.setRowCount(total);
+        this.showsNoRows = rowCount === 0 && pinnedTopCount === 0 && pinnedBottomCount === 0;
+        return this.refreshViewportFocusable();
+    }
+
+    /** Returns `true` when the viewport stops being focusable while it has focus. */
+    private refreshViewportFocusable(): boolean {
+        const { beans, gos, eGridViewport } = this;
+        const focusable =
+            this.showsNoRows &&
+            !!beans.clipboardSvc &&
+            !gos.get('suppressClipboardPaste') &&
+            !gos.get('suppressCellFocus');
+        if (focusable === this.viewportFocusable) {
+            return false;
+        }
+        this.viewportFocusable = focusable;
+        // read before the tabindex goes, which drops the focus
+        const lostFocus = !focusable && _getActiveDomElement(beans) === eGridViewport;
+        this.comp.setViewportFocusable(focusable);
+        return lostFocus;
+    }
+
+    /** Focuses the viewport of an empty grid, returning whether it took focus. */
+    public focusEmptyViewport(): boolean {
+        const eGridViewport = this.eGridViewport;
+        if (!this.viewportFocusable) {
+            return false;
+        }
+        eGridViewport.focus({ preventScroll: true });
+        return _getActiveDomElement(this.beans) === eGridViewport;
+    }
+
+    /** Gives focus back to the empty viewport, or to the first cell once rows have replaced it. */
+    public refocusViewport(): void {
+        if (this.focusEmptyViewport() || this.showsNoRows) {
+            return;
+        }
+        const { focusSvc, visibleCols } = this.beans;
+        focusSvc.focusGridView({ column: visibleCols.allCols[0] });
+    }
+
+    private onViewportKeyDown(e: KeyboardEvent): void {
+        if (!this.viewportFocusable || e.target !== this.eGridViewport || e.defaultPrevented) {
+            return;
+        }
+        const beans = this.beans;
+        if (e.key === KeyCode.TAB) {
+            const { focusSvc, visibleCols } = beans;
+            const focused = e.shiftKey
+                ? focusSvc.focusGridView({
+                      column: _last(visibleCols.allCols),
+                      backwards: true,
+                      canFocusOverlay: false,
+                  })
+                : focusSvc.focusOverlay() || _focusNextGridCoreContainer(beans, false);
+            if (focused) {
+                e.preventDefault();
+            }
+        } else if ((e.ctrlKey || e.metaKey) && _normaliseQwertyAzerty(e) === KeyCode.V) {
+            beans.clipboardSvc?.pasteFromClipboard();
+        }
     }
 
     private setupRowAnimationCssClass(): void {
@@ -610,7 +688,14 @@ export class GridBodyCtrl extends BeanStub {
 
         this.addManagedElementListeners(eGridViewport, {
             wheel: this.onBodyViewportWheel.bind(this, popupSvc),
+            keydown: this.onViewportKeyDown.bind(this),
+            // the viewport stands in for the missing cells, so none is focused while it has focus
+            focus: () => this.beans.focusSvc.clearFocusedCell(),
         });
+        this.addManagedPropertyListeners(
+            ['suppressClipboardPaste', 'suppressCellFocus'],
+            this.refreshViewportFocusable.bind(this)
+        );
 
         const onStickyWheel = this.onStickyWheel.bind(this);
 

@@ -308,8 +308,10 @@ export class UndoRedoService extends BeanStub implements NamedBean {
                 this.isPasting = true;
             },
             pasteEnd: () => {
-                const action = new UndoRedoAction(this.cellValueChanges);
-                this.pushActionsToUndoStack(action);
+                // a paste that changed nothing must not clear the redo stack
+                if (this.cellValueChanges.length) {
+                    this.pushActionsToUndoStack(new UndoRedoAction(this.cellValueChanges));
+                }
                 this.isPasting = false;
             },
             fillStart: () => {

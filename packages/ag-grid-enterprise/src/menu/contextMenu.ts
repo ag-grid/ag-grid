@@ -1,4 +1,4 @@
-import { _exists, _isPromise } from 'ag-stack';
+import { _exists, _getActiveDomElement, _isNothingFocused, _isPromise } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -79,6 +79,7 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     >;
 
     private focusedCell: CellPosition | null = null;
+    private focusedEmptyViewport = false;
 
     postConstruct(): void {
         this.menu = this.createManagedBean(
@@ -134,6 +135,13 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
                 }
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste', 'separator');
             }
+        } else if (
+            clipboardSvc &&
+            !gos.get('suppressClipboardPaste') &&
+            !gos.get('suppressClipboardApi') &&
+            this.beans.ctrlsSvc.getGridBodyCtrl().showsNoRows
+        ) {
+            defaultMenuOptions.push('paste', 'separator');
         }
 
         if (_exists(node) && isCalculatedColumn) {
@@ -311,6 +319,8 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     }
 
     private beforeMenuOpen(menuActionParams: WithoutGridCommon<IMenuActionParams>): void {
+        const beans = this.beans;
+        this.focusedEmptyViewport = _getActiveDomElement(beans) === beans.ctrlsSvc.getGridBodyCtrl().eGridViewport;
         if (!menuActionParams.column) {
             // the context menu has been opened not on a cell, therefore we don't want to
             // display the previous cell as focused, or return focus there after
@@ -331,6 +341,9 @@ export class ContextMenuService extends BeanStub implements NamedBean, IContextM
     private afterMenuDestroyed(): void {
         const { beans, focusedCell } = this;
         _attemptToRestoreCellFocus(beans, focusedCell);
+        if (this.focusedEmptyViewport && _isNothingFocused(beans)) {
+            beans.ctrlsSvc.getGridBodyCtrl().refocusViewport();
+        }
     }
 
     private dispatchVisibleChangedEvent(visible: boolean, source: 'api' | 'ui'): void {

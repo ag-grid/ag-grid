@@ -14,6 +14,7 @@ import type {
     TabToNextHeaderParams,
 } from 'ag-grid-community';
 import { PaginationModule, getGridElement } from 'ag-grid-community';
+import { ClipboardModule } from 'ag-grid-enterprise';
 
 interface RowData {
     athlete: string;
@@ -173,6 +174,34 @@ describe('Focus Overrides', () => {
                 └── LEAF id:2 athlete:"C" country:"PT" sport:"S3"
             `
         );
+    });
+
+    test('tabToNextGridContainer reports no default target when Shift+Tab lands on the empty viewport', async () => {
+        const seen: TabToNextGridContainerParams<RowData>[] = [];
+        const api = gridsManager.createGrid<RowData>(
+            'tabToEmptyViewport',
+            {
+                columnDefs,
+                rowData: [],
+                suppressNoRowsOverlay: true,
+                pagination: true,
+                paginationPageSizeSelector: false,
+                tabToNextGridContainer: (params) => {
+                    seen.push(params);
+                    return undefined;
+                },
+            },
+            { modules: [PaginationModule, ClipboardModule] }
+        );
+        await asyncSetTimeout(0);
+        const gridElement = getGridElement(api) as HTMLElement;
+
+        gridElement.querySelector<HTMLElement>('.ag-paging-button')!.focus();
+        dispatchKeyDown('Tab', { shiftKey: true });
+
+        await waitForCondition('tabToNextGridContainer callback invocation', () => seen.length > 0);
+        expect(seen[0]).toMatchObject({ backwards: true, nextContainer: 'gridBody', defaultTarget: null });
+        expect(document.activeElement).toBe(gridElement.querySelector('.ag-grid-viewport'));
     });
 
     test('tabToNextCell override reroutes tabbing target', async () => {
