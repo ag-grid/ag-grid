@@ -14,6 +14,7 @@ import { useForm } from 'react-hook-form';
 
 import styles from './ContactForm.module.scss';
 import { RETURN_URLS } from './constants';
+import { useContactFormMonitoring } from './useContactFormMonitoring';
 
 const contactFormData = LIBRARY === 'studio' ? STUDIO_FORM_DATA : CONTACT_FORM_DATA;
 
@@ -43,6 +44,21 @@ const ENQUIRY_TYPE_OPTIONS = [
     'Partnerships',
     'General',
 ] as const;
+
+/**
+ * Field length limits match those of the backend the form submits to
+ */
+const MAX_LENGTHS = {
+    firstName: 40,
+    lastName: 80,
+    company: 255,
+    email: 80,
+} as const;
+
+const maxLengthRule = (value: number) => ({
+    value,
+    message: `Max ${value} characters`,
+});
 
 type FormValues = {
     first_name: string;
@@ -84,10 +100,10 @@ function loadRecaptcha(): Promise<void> {
         script.src = `${RECAPTCHA_URL}?render=explicit&onload=${RECAPTCHA_READY_CALLBACK}`;
         script.async = true;
         script.defer = true;
-        script.onerror = (error) => {
+        script.onerror = () => {
             // Drop the cached promise so a later mount retries the load.
             globals[RECAPTCHA_READY_PROMISE] = undefined;
-            reject(error);
+            reject(new Error(`Failed to load reCAPTCHA from ${RECAPTCHA_URL}`));
         };
         document.head.appendChild(script);
     });
@@ -112,9 +128,19 @@ export const ContactForm: FunctionComponent<Props> = ({
     const [isFranceOrItaly, setIsFranceOrItaly] = useState(false);
 
     const {
+        onFormInteraction,
+        trackInvalidSubmit,
+        trackCaptchaIncomplete,
+        trackSubmit,
+        captchaCallbacks,
+        reportCaptchaLoadError,
+    } = useContactFormMonitoring(formLocation);
+
+    const {
         register,
         handleSubmit,
         setValue,
+        getValues,
         formState: { errors },
     } = useForm<FormValues>({
         // Validate on first blur, then re-validate on every change, so a message
@@ -159,19 +185,22 @@ export const ContactForm: FunctionComponent<Props> = ({
         let unmounted = false;
         let captcha: CaptchaTicker | undefined;
 
-        loadRecaptcha().then(() => {
-            const container = captchaRef.current;
-            if (unmounted || container == null) {
-                return;
-            }
-            captchaWidgetId.current = (globalThis as any).grecaptcha.render(container, {
-                sitekey: captchaSiteKey,
-            });
-            captcha = initCaptcha(container, (ts) => {
-                captchaTimestamp.current = ts;
-            });
-            reapplyCaptchaTimestamp.current = captcha.reapply;
-        });
+        loadRecaptcha()
+            .then(() => {
+                const container = captchaRef.current;
+                if (unmounted || container == null) {
+                    return;
+                }
+                captchaWidgetId.current = (globalThis as any).grecaptcha.render(container, {
+                    sitekey: captchaSiteKey,
+                    ...captchaCallbacks,
+                });
+                captcha = initCaptcha(container, (ts) => {
+                    captchaTimestamp.current = ts;
+                });
+                reapplyCaptchaTimestamp.current = captcha.reapply;
+            })
+            .catch(reportCaptchaLoadError);
 
         return () => {
             unmounted = true;
@@ -188,13 +217,19 @@ export const ContactForm: FunctionComponent<Props> = ({
         const widgetId = captchaWidgetId.current;
         const captchaPassed = widgetId != null && (globalThis as any).grecaptcha.getResponse(widgetId);
         if (captchaPassed) {
+            trackSubmit({
+                captchaTimestamp: captchaTimestamp.current,
+                enquiryType: enquiryTypeId ? getValues(enquiryTypeId) : undefined,
+                isDebug,
+            });
             reapplyCaptchaTimestamp.current?.();
             formRef.current?.submit();
         } else {
+            trackCaptchaIncomplete(widgetId != null);
             setCaptchaError(true);
             setIsDisabled(false);
         }
-    }, []);
+    }, [trackSubmit, trackCaptchaIncomplete, getValues, isDebug]);
 
     return (
         <form
@@ -203,7 +238,8 @@ export const ContactForm: FunctionComponent<Props> = ({
             className={styles.contactForm}
             action={actionUrl}
             method="POST"
-            onSubmit={handleSubmit(onValidSubmit)}
+            onSubmit={handleSubmit(onValidSubmit, trackInvalidSubmit)}
+            onFocus={onFormInteraction}
             noValidate
         >
             <input
@@ -228,28 +264,41 @@ export const ContactForm: FunctionComponent<Props> = ({
                         id="first_name"
                         type="text"
                         placeholder="First Name"
-                        {...register('first_name', { required: 'First name is required', maxLength: 40 })}
+                        {...register('first_name', {
+                            required: 'First name is required',
+                            maxLength: maxLengthRule(MAX_LENGTHS.firstName),
+                        })}
                     />
                     <div className={styles.errorContainer}>
                         {errors.first_name && <p className="error">{errors.first_name.message}</p>}
                     </div>
                 </div>
-                <div className="input-field">
+                <div className={classnames('input-field', { 'input-error': errors.last_name })}>
                     <label htmlFor="last_name">Last Name</label>
                     <input
                         id="last_name"
                         type="text"
                         placeholder="Last Name"
-                        {...register('last_name', { maxLength: 80 })}
+                        {...register('last_name', {
+                            maxLength: maxLengthRule(MAX_LENGTHS.lastName),
+                        })}
                     />
                     <div className={styles.errorContainer}>
                         {errors.last_name && <p className="error">{errors.last_name.message}</p>}
                     </div>
                 </div>
             </div>
-            <div className="input-field">
+            <div className={classnames('input-field', { 'input-error': errors.company })}>
                 <label htmlFor="company">Company</label>
-                <input id="company" type="text" placeholder="Company" {...register('company', { maxLength: 40 })} />
+                <input
+                    id="company"
+                    type="text"
+                    placeholder="Company"
+                    {...register('company', { maxLength: maxLengthRule(MAX_LENGTHS.company) })}
+                />
+                <div className={styles.errorContainer}>
+                    {errors.company && <p className="error">{errors.company.message}</p>}
+                </div>
             </div>
             <div className={classnames('input-field', { 'input-error': errors.email })}>
                 <label htmlFor="email">Work email</label>
@@ -261,7 +310,7 @@ export const ContactForm: FunctionComponent<Props> = ({
                         placeholder="Work email"
                         {...register('email', {
                             required: 'Email is required',
-                            maxLength: 80,
+                            maxLength: maxLengthRule(MAX_LENGTHS.email),
                             pattern: {
                                 value: /^(?:[a-zA-Z0-9_'^&/+%!-]+(?:\.[a-zA-Z0-9_'^&/+%!-]+)*|"(?:[^"\\]|\\.)+")@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/,
                                 message: 'Enter a valid email',

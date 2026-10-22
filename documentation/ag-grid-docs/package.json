@@ -38,6 +38,7 @@
     "@astrojs/react": "5.0.4",
     "@astrojs/sitemap": "^3.7.2",
     "@carbon/icons-react": "^11.33.0",
+    "@dash0/sdk-web": "^0.27.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@floating-ui/react": "^0.26.11",

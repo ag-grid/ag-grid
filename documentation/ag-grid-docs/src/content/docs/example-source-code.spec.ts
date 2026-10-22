@@ -41,6 +41,8 @@ test.describe('Example source embedded for crawlers', () => {
             expect(panelHtml).toContain(' hidden');
             expect(panelHtml).toContain(`<figcaption>${embeddedMainFile}</figcaption>`);
             expect(panelHtml).toContain(`<code data-file-name="${embeddedMainFile}">`);
+            // Only the main file is embedded; the Code button fetches the rest at runtime
+            expect(panelHtml.match(/<figure>/g)).toHaveLength(1);
             // Aggregation overview groups and aggregates the Olympic winners data
             expect(panelHtml).toContain('aggFunc');
             // Test specs and the generator's harness are not part of what the Code button shows
@@ -64,4 +66,17 @@ test.describe('Example source embedded for crawlers', () => {
             await expect(container.locator('pre.code')).toContainText('aggFunc');
         });
     }
+
+    // Each Sparklines Tooltips example has a data.ts of up to ~590KB, which took the page past the 2MB
+    // Googlebot reads when every file was embedded
+    test('leaves data files out of the embedded source', async ({ request, baseURL }) => {
+        const response = await request.get(new URL('javascript-data-grid/sparklines-tooltips/', baseURL).href);
+        expect(response.ok()).toBe(true);
+        const body = await response.body();
+        const html = body.toString();
+
+        expect(html).toContain('<code data-file-name="main.ts">');
+        expect(html).not.toContain('data-file-name="data.ts"');
+        expect(body.byteLength).toBeLessThan(2 * 1024 * 1024);
+    });
 });

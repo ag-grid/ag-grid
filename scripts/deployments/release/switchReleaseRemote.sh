@@ -55,4 +55,4 @@ mv $WWW_ROOT_DIR/public_html_$TIMESTAMP/studio $STUDIO_ROOT_DIR
 cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/ecommerce $GRID_ROOT_DIR/
 cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/support $GRID_ROOT_DIR/
 cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/__shared $GRID_ROOT_DIR/
-cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/blog $GRID_ROOT_DIR/
+cp -R $WWW_ROOT_DIR/public_html_$TIMESTAMP/blog-examples $GRID_ROOT_DIR/

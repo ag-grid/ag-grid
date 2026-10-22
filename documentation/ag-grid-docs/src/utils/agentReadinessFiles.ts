@@ -21,11 +21,13 @@ interface AgentReadinessInput {
     /** Current major version, e.g. `34`. */
     majorVersion: number;
     /**
-     * Framework segment used for the grid doc links, e.g. `javascript-data-grid`.
-     * JavaScript is the framework-agnostic core, so it is the natural canonical
-     * entry point for an LLM-facing guide.
+     * Framework segment used for the curated grid doc links, e.g. `react-data-grid`. This is the
+     * site's default framework, the one the header's Docs and API links point at, so agents and
+     * crawlers are sent to the same entry point as people (SE-206).
      */
     gridDocsPrefix: string;
+    /** Framework segment used for the AG Charts docs link, e.g. `react`. */
+    chartsDocsPrefix: string;
     /**
      * Whether per-page `.md` routes are generated. When false (the
      * `DISABLE_MARKDOWN_DOCS` build flag), the llms.txt must not advertise the
@@ -39,6 +41,12 @@ interface AgentReadinessInput {
      */
     docsIndex?: LlmsTxtSection[];
     siteIndex?: LlmsTxtSection[];
+    /**
+     * Framework segment of the `docsIndex` URLs, e.g. `javascript-data-grid`. The index publishes
+     * the framework-agnostic JavaScript docs once rather than all four frameworks. Defaults to
+     * `gridDocsPrefix`.
+     */
+    indexDocsPrefix?: string;
 }
 
 interface AgentReadinessLinks {
@@ -59,15 +67,19 @@ interface AgentReadinessLinks {
     homepageMarkdown: string;
 }
 
-function buildLinks({ siteRoot, gridDocsPrefix }: AgentReadinessInput): AgentReadinessLinks {
+const FRAMEWORKS = ['javascript', 'react', 'angular', 'vue'];
+
+function buildLinks({ siteRoot, gridDocsPrefix, chartsDocsPrefix }: AgentReadinessInput): AgentReadinessLinks {
     const grid = `${siteRoot}${gridDocsPrefix}/`;
     return {
-        dataGrid: grid,
+        // The docs entry point, as the header's Docs link, rather than the framework docs root,
+        // which for JavaScript is a client-side forwarder with no markdown twin (waf-finding.md §20.3).
+        dataGrid: `${grid}getting-started/`,
         charts: `${siteRoot}charts/`,
         studio: `${siteRoot}studio/`,
         dataGridDocs: `${grid}getting-started/`,
         dataGridReference: `${grid}reference/`,
-        chartsDocs: `${siteRoot}charts/javascript/quick-start/`,
+        chartsDocs: `${siteRoot}charts/${chartsDocsPrefix}/quick-start/`,
         examples: `${siteRoot}example/`,
         mcpServer: `${grid}mcp-server/`,
         pricing: `${siteRoot}license-pricing/`,
@@ -77,6 +89,14 @@ function buildLinks({ siteRoot, gridDocsPrefix }: AgentReadinessInput): AgentRea
         llmsTxt: `${siteRoot}llms.txt`,
         homepageMarkdown: `${siteRoot}index.md`,
     };
+}
+
+/** The instruction for reaching another framework's copy of a docs URL, by swapping its framework segment. */
+function frameworkSubstitution(docsPrefix: string): string {
+    const [framework] = docsPrefix.split('-');
+    const others = FRAMEWORKS.filter((f) => f !== framework).map((f) => `\`${f}\``);
+    const otherList = `${others.slice(0, -1).join(', ')} or ${others[others.length - 1]}`;
+    return `replace \`${docsPrefix}\` with \`${docsPrefix.replace(/^[a-z]+/, '<framework>')}\` (${otherList})`;
 }
 
 /** Render one index group as an `###` heading over its links, or nothing when it is empty. */
@@ -102,14 +122,13 @@ export function buildLlmsTxt(input: AgentReadinessInput): string {
     const siteIndex = renderIndex(input.siteIndex);
     // The docs exist once per framework, so listing all four would quadruple the file for no new
     // information. Publish the framework-agnostic JavaScript URL and state the substitution.
-    const anyFrameworkPrefix = input.gridDocsPrefix.replace(/^[a-z]+/, '<framework>');
+    const indexDocsPrefix = input.indexDocsPrefix ?? input.gridDocsPrefix;
     const docsIndexSection = docsIndex
         ? [
               '',
               '## Documentation',
               'Every documentation page, in navigation order. Each URL is the framework-agnostic' +
-                  ` JavaScript one; replace \`${input.gridDocsPrefix}\` with \`${anyFrameworkPrefix}\`` +
-                  ' (`react`, `angular` or `vue`) for the framework-specific page.',
+                  ` JavaScript one; ${frameworkSubstitution(indexDocsPrefix)} for the framework-specific page.`,
               '',
               `${docsIndex}\n`,
           ].join('\n')
@@ -135,7 +154,8 @@ export function buildLlmsTxt(input: AgentReadinessInput): string {
 - [Data Grid API reference](${l.dataGridReference}): complete grid options and API
 - [Charts docs](${l.chartsDocs}): AG Charts quick start
 - [Examples](${l.examples}): live, runnable demos
-- [MCP server](${l.mcpServer}): ag-mcp - version-aware docs, examples and API for AI coding assistants${markdownLine}
+- [MCP server](${l.mcpServer}): ag-mcp - version-aware docs, examples and API for AI coding assistants
+- Frameworks: the framework-specific docs links above are for the site's default framework; ${frameworkSubstitution(input.gridDocsPrefix)} for another framework's page.${markdownLine}
 
 ## Optional
 - [Pricing](${l.pricing}): Community (free) vs Enterprise
@@ -164,6 +184,7 @@ export function buildAgentsMd(input: AgentReadinessInput): string {
 - **Install:** \`npm i ag-grid-community\` (or \`ag-grid-enterprise\`), plus the framework wrapper - \`ag-grid-react\`, \`ag-grid-angular\` or \`ag-grid-vue3\`. JavaScript needs no wrapper.
 - **MCP server:** \`ag-mcp\` (\`npx ag-mcp\`) returns version-specific docs, examples and API in condensed markdown. Point your assistant at it for current, correct code - see [the MCP server docs](${l.mcpServer}).
 - **Where to look:** [Data Grid docs](${l.dataGridDocs}), [API reference](${l.dataGridReference}), [examples](${l.examples}) and the [changelog](${l.changelog}).
+- **Frameworks:** the framework-specific docs links here are for the site's default framework; ${frameworkSubstitution(input.gridDocsPrefix)} for another framework's page.
 - **Common tasks:** "create a grid", "define column definitions", "enable sorting and filtering", "server-side row model" - each has a canonical example in the docs and via the MCP server.${markdownBullet}
 
 Machine-readable index: [llms.txt](${l.llmsTxt}).

@@ -260,7 +260,7 @@
             {
                 "label": {
                     "name": "Cell Range Selection",
-                    "link": "grid:./range-selection/"
+                    "link": "grid:./cell-selection/"
                 },
                 "community": false,
                 "enterprise": true,
@@ -269,7 +269,7 @@
             {
                 "label": {
                     "name": "Fill Handle",
-                    "link": "grid:./range-selection-fill-handle/"
+                    "link": "grid:./cell-selection-fill-handle/"
                 },
                 "community": false,
                 "enterprise": true,

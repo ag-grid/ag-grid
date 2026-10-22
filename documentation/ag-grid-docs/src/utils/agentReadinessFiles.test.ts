@@ -1,9 +1,14 @@
 import { buildAgentsMd, buildLlmsTxt } from './agentReadinessFiles';
+import { getHtaccessContent } from './htaccess/htaccessRules';
+import { compileHtaccess, route } from './htaccess/htaccessSimulator';
+import { resolveRoute } from './pageRoutes.test-utils';
+import { getSitemapConfig } from './sitemap';
 
 const INPUT = {
     siteRoot: 'https://www.ag-grid.com/',
     majorVersion: 34,
-    gridDocsPrefix: 'javascript-data-grid',
+    gridDocsPrefix: 'react-data-grid',
+    chartsDocsPrefix: 'react',
 };
 
 describe('buildLlmsTxt', () => {
@@ -18,17 +23,27 @@ describe('buildLlmsTxt', () => {
     });
 
     test('links the products, docs, MCP server and sitemap (acceptance criteria)', () => {
-        expect(txt).toContain('(https://www.ag-grid.com/javascript-data-grid/)');
+        expect(txt).toContain('- [Data Grid](https://www.ag-grid.com/react-data-grid/getting-started/):');
         expect(txt).toContain('(https://www.ag-grid.com/charts/)');
         expect(txt).toContain('(https://www.ag-grid.com/studio/)');
-        expect(txt).toContain('(https://www.ag-grid.com/javascript-data-grid/getting-started/)');
-        expect(txt).toContain('(https://www.ag-grid.com/javascript-data-grid/mcp-server/)');
+        expect(txt).toContain('(https://www.ag-grid.com/react-data-grid/getting-started/)');
+        expect(txt).toContain('(https://www.ag-grid.com/react-data-grid/mcp-server/)');
         expect(txt).toContain('(https://www.ag-grid.com/sitemap-index.xml)');
+    });
+
+    // SE-206: agents are sent to the same framework as the header's Docs and API links.
+    test('links the docs for the given framework and states how to reach the others', () => {
+        expect(txt).toContain('- [Data Grid API reference](https://www.ag-grid.com/react-data-grid/reference/):');
+        expect(txt).toContain('- [Charts docs](https://www.ag-grid.com/charts/react/quick-start/):');
+        expect(txt).toContain(
+            'replace `react-data-grid` with `<framework>-data-grid` (`javascript`, `angular` or `vue`) for another framework'
+        );
+        expect(txt).not.toContain('javascript-data-grid/');
     });
 
     test('advertises the markdown (.md) convention as a site-wide rule, not a page list', () => {
         expect(txt).toContain('.md');
-        expect(txt).toContain('https://www.ag-grid.com/javascript-data-grid/getting-started.md');
+        expect(txt).toContain('https://www.ag-grid.com/react-data-grid/getting-started.md');
         // Every page in the sitemap has a twin, so llms.txt states the rule. Enumerating
         // pages here would drift the moment one is added (see markdownPages.test.ts).
         expect(txt).toContain('append `.md` to any page URL listed in the sitemap');
@@ -66,7 +81,12 @@ describe('buildLlmsTxt', () => {
             },
         ];
         const SITE_INDEX = [{ title: 'General', links: [{ title: 'About', url: 'https://www.ag-grid.com/about/' }] }];
-        const indexed = buildLlmsTxt({ ...INPUT, docsIndex: DOCS_INDEX, siteIndex: SITE_INDEX });
+        const indexed = buildLlmsTxt({
+            ...INPUT,
+            docsIndex: DOCS_INDEX,
+            siteIndex: SITE_INDEX,
+            indexDocsPrefix: 'javascript-data-grid',
+        });
 
         test('publishes the docs under their navigation groups, in the order given', () => {
             expect(indexed).toContain('## Documentation');
@@ -80,7 +100,9 @@ describe('buildLlmsTxt', () => {
         });
 
         test('states the framework substitution instead of repeating the docs four times', () => {
-            expect(indexed).toContain('replace `javascript-data-grid` with `<framework>-data-grid`');
+            expect(indexed).toContain(
+                'replace `javascript-data-grid` with `<framework>-data-grid` (`react`, `angular` or `vue`) for the framework-specific page'
+            );
             expect(indexed).not.toContain('react-data-grid/cell-editing');
         });
 
@@ -113,17 +135,26 @@ describe('buildAgentsMd', () => {
     test('states the major version and points at the MCP server and llms.txt', () => {
         expect(md).toContain('v34');
         expect(md).toContain('npx ag-mcp');
-        expect(md).toContain('https://www.ag-grid.com/javascript-data-grid/mcp-server/');
+        expect(md).toContain('https://www.ag-grid.com/react-data-grid/mcp-server/');
         expect(md).toContain('https://www.ag-grid.com/llms.txt');
     });
 
     test('advertises the markdown (.md) versions as a site-wide rule', () => {
         expect(md).toContain('Markdown for LLMs');
-        expect(md).toContain('https://www.ag-grid.com/javascript-data-grid/getting-started.md');
+        expect(md).toContain('https://www.ag-grid.com/react-data-grid/getting-started.md');
         // Every page in the sitemap has a twin, so point at the sitemap rather than
         // listing pages that would drift (see markdownPages.test.ts for the guarantee).
         expect(md).toContain('append `.md` to any page URL listed in the');
         expect(md).toContain('[sitemap](https://www.ag-grid.com/sitemap-index.xml)');
+    });
+
+    test('links the docs for the given framework and states how to reach the others', () => {
+        expect(md).toContain('[Data Grid docs](https://www.ag-grid.com/react-data-grid/getting-started/)');
+        expect(md).toContain('[API reference](https://www.ag-grid.com/react-data-grid/reference/)');
+        expect(md).toContain(
+            'replace `react-data-grid` with `<framework>-data-grid` (`javascript`, `angular` or `vue`) for another framework'
+        );
+        expect(md).not.toContain('javascript-data-grid/');
     });
 
     test('points at index.md for the homepage, whose twin is not a `.md` suffix', () => {
@@ -134,5 +165,90 @@ describe('buildAgentsMd', () => {
         const disabled = buildAgentsMd({ ...INPUT, includeMarkdownDocs: false });
         expect(disabled).not.toContain('.md');
         expect(disabled).not.toContain('Markdown for LLMs');
+    });
+});
+
+// SE-77 / SE-80: an agent follows these links verbatim, so each one must be a URL the grid build
+// emits (waf-finding.md §16 T8). Resolved against the route files and docs content, not a dist.
+describe('curated links in llms.txt and AGENTS.md', () => {
+    const SITE_ROOT = 'https://www.ag-grid.com';
+    // Written by @astrojs/sitemap rather than a route file.
+    const INTEGRATION_OUTPUTS = ['/sitemap-index.xml'];
+    // Charts and studio are separate repos deployed under the same host, so their routes are not
+    // visible here; their own broken agent-facing links are tracked in waf-finding.md §13.
+    const isOtherSite = (pathname: string) => /^\/(charts|studio)(\/|$)/.test(pathname);
+
+    const linkedPaths = (body: string) =>
+        [...new Set(body.match(/https:\/\/www\.ag-grid\.com\/[^\s)\]`]*/g) ?? [])].map(
+            (url) => new URL(url.replace(/[.,]$/, '')).pathname
+        );
+
+    const gridPaths = (body: string) => linkedPaths(body).filter((pathname) => !isOtherSite(pathname));
+    const unindexedPages = (body: string) => {
+        const { filter } = getSitemapConfig({});
+        return gridPaths(body)
+            .filter((pathname) => pathname.endsWith('/'))
+            .filter((pathname) => !filter(`${SITE_ROOT}${pathname}`));
+    };
+    const LLMS_TXT = buildLlmsTxt(INPUT);
+    const AGENTS_MD = buildAgentsMd(INPUT);
+
+    test('the route oracle rejects pages the build does not emit', () => {
+        expect(resolveRoute('/javascript-data-grid/getting-started/')).toBeDefined();
+        expect(resolveRoute('/javascript-data-grid/no-such-page/')).toBeUndefined();
+        expect(resolveRoute('/svelte-data-grid/getting-started/')).toBeUndefined();
+        expect(resolveRoute('/no-such-page/')).toBeUndefined();
+        // The JavaScript root has no landing hub, so no markdown twin.
+        expect(resolveRoute('/react-data-grid.md')).toBeDefined();
+        expect(resolveRoute('/javascript-data-grid.md')).toBeUndefined();
+        // A page restricted by its `frameworks` frontmatter is built for those frameworks only.
+        expect(resolveRoute('/react-data-grid/react-hooks/')).toBeDefined();
+        expect(resolveRoute('/react-data-grid/react-hooks.md')).toBeDefined();
+        expect(resolveRoute('/angular-data-grid/react-hooks/')).toBeUndefined();
+        expect(resolveRoute('/angular-data-grid/react-hooks.md')).toBeUndefined();
+        expect(resolveRoute('/vue-data-grid/vue3-script-setup/')).toBeDefined();
+        expect(resolveRoute('/react-data-grid/vue3-script-setup/')).toBeUndefined();
+    });
+
+    describe.each([
+        ['llms.txt', LLMS_TXT],
+        ['AGENTS.md', AGENTS_MD],
+    ])('%s', (_name, body) => {
+        const paths = gridPaths(body);
+
+        test('links into the grid site, so the checks below are not vacuous', () => {
+            expect(paths.length).toBeGreaterThan(5);
+        });
+
+        test.each(paths)('%s is emitted by the grid build', (pathname) => {
+            expect(INTEGRATION_OUTPUTS.includes(pathname) || resolveRoute(pathname) !== undefined).toBe(true);
+        });
+    });
+
+    // waf-finding.md §20.3: the Data Grid link pointed at the JavaScript docs root, a client-side
+    // forwarder with no sitemap entry and no markdown twin. Every page an agent is pointed at must
+    // be one it can index and read as markdown, served without a redirect.
+    describe.each([
+        ['llms.txt', LLMS_TXT],
+        ['AGENTS.md', AGENTS_MD],
+    ])('%s links only real pages', (_name, body) => {
+        const pages = gridPaths(body).filter((pathname) => pathname.endsWith('/'));
+        const htaccess = [compileHtaccess(getHtaccessContent({ env: 'production' }))];
+
+        test('links pages, so the checks below are not vacuous', () => {
+            expect(pages.length).toBeGreaterThanOrEqual(5);
+        });
+
+        test('each has a sitemap entry, so none is a redirect stub', () => {
+            expect(unindexedPages(body)).toEqual([]);
+        });
+
+        test.each(pages)('%s has a markdown twin', (pathname) => {
+            expect(resolveRoute(pathname === '/' ? '/index.md' : `${pathname.replace(/\/$/, '')}.md`)).toBeDefined();
+        });
+
+        test.each(pages)('%s is served without a redirect', (pathname) => {
+            expect(route(htaccess, { url: `${SITE_ROOT}${pathname}` })).toMatchObject({ type: 'serve' });
+        });
     });
 });
