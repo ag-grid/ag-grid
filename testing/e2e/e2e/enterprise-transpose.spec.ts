@@ -107,8 +107,49 @@ test.describe('transposed view in a real browser', () => {
         await expect(focusedCell).toBeInViewport();
     });
 
-    test('observe: dragging a record column, and wrapped field labels and values', async ({ page }) => {
-        const { grid, headerCell, withApi } = await mountGrid(page, {
+    test('a record column dragged by its header keeps its place through a refresh and a toggle', async ({ page }) => {
+        const { headerCell, withApi } = await mountGrid(page, {
+            enterprise: true,
+            options: () => ({
+                columnDefs: [{ field: 'name', headerName: 'Company' }, { field: 'revenue' }],
+                rowData: [
+                    { id: 'a', name: 'Northwind', revenue: 1 },
+                    { id: 'b', name: 'Contoso', revenue: 2 },
+                    { id: 'c', name: 'Fabrikam', revenue: 3 },
+                ],
+                getRowId: (params: { data: { id: string } }) => params.data.id,
+                transpose: true,
+                transposeHeaderColId: 'name',
+                transposeRecordColumnDef: { width: 120 },
+            }),
+        });
+        const records = () =>
+            withApi((api) =>
+                api
+                    .getAllDisplayedColumns()
+                    .map((col) => col.getColId())
+                    .filter((colId) => colId.startsWith('ag-Grid-TransposeRecord-'))
+                    .map((colId) => colId.slice('ag-Grid-TransposeRecord-'.length))
+            );
+        const from = (await headerCell('ag-Grid-TransposeRecord-a').boundingBox())!;
+        const to = (await headerCell('ag-Grid-TransposeRecord-c').boundingBox())!;
+        await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(to.x + to.width - 5, to.y + to.height / 2, { steps: 20 });
+        await page.mouse.up();
+        await expect.poll(records).toEqual(['b', 'c', 'a']);
+
+        await withApi((api) => api.refreshClientSideRowModel());
+        expect(await records()).toEqual(['b', 'c', 'a']);
+        await withApi((api) => {
+            api.setGridOption('transpose', false);
+            api.setGridOption('transpose', true);
+        });
+        expect(await records()).toEqual(['b', 'c', 'a']);
+    });
+
+    test('observe: wrapped field labels and values', async ({ page }) => {
+        const { grid } = await mountGrid(page, {
             enterprise: true,
             options: () => ({
                 columnDefs: [
@@ -124,7 +165,6 @@ test.describe('transposed view in a real browser', () => {
                         revenue: 1,
                     },
                     { id: 'b', name: 'Contoso', notes: 'Short', revenue: 2 },
-                    { id: 'c', name: 'Fabrikam', notes: 'Short', revenue: 3 },
                 ],
                 getRowId: (params: { data: { id: string } }) => params.data.id,
                 transpose: true,
@@ -132,26 +172,15 @@ test.describe('transposed view in a real browser', () => {
                 transposeRecordColumnDef: { width: 120 },
             }),
         });
-        const order = () => withApi((api) => api.getAllDisplayedColumns().map((col) => col.getColId()));
-        const before = await order();
-        const from = (await headerCell('ag-Grid-TransposeRecord-a').boundingBox())!;
-        const to = (await headerCell('ag-Grid-TransposeRecord-c').boundingBox())!;
-        await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
-        await page.mouse.down();
-        await page.mouse.move(to.x + to.width - 5, to.y + to.height / 2, { steps: 20 });
-        await page.mouse.up();
-        const afterDrag = await order();
-        await withApi((api) => api.refreshClientSideRowModel());
-        const afterRefresh = await order();
         const notesRow = grid.locator('.ag-row[row-id="ag-Grid-TransposeField-notes"]');
         const revenueRow = grid.locator('.ag-row[row-id="ag-Grid-TransposeField-revenue"]');
         const heights = {
             notes: (await notesRow.boundingBox())?.height,
             revenue: (await revenueRow.boundingBox())?.height,
         };
-        console.log(`OBSERVE ${JSON.stringify({ before, afterDrag, afterRefresh, heights })}`);
+        console.log(`OBSERVE ${JSON.stringify({ heights })}`);
         if (SCREENSHOTS) {
-            await page.screenshot({ path: `${SCREENSHOTS}/drag-and-wrap.png` });
+            await page.screenshot({ path: `${SCREENSHOTS}/wrap.png` });
         }
     });
 });

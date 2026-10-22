@@ -4,6 +4,7 @@ import type {
     CellPosition,
     CellValueChangedEvent,
     ColDef,
+    ColumnMovedEvent,
     ColumnPinnedType,
     ITransposeService,
     NamedBean,
@@ -103,6 +104,8 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
     private readonly fieldRows: Map<string, RowNode> = new Map();
     private readonly fieldGroups: Map<RowNode, FieldGroupInfo> = new Map();
     private readonly collapsedGroupIds: Set<string> = new Set();
+    /** Where the user dragged each record, until a sort is applied. Keyed by row node, so new row data starts afresh. */
+    private recordRanks: WeakMap<RowNode, number> | null = null;
 
     public postConstruct(): void {
         this.addManagedPropertyListeners(
@@ -113,6 +116,8 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
             cellValueChanged: (event) => this.onCellValueChanged(event),
             selectionChanged: () => this.refreshAllRecordCells(),
             modelUpdated: () => this.refreshChangedRecordCells(),
+            columnMoved: (event) => this.onColumnMoved(event),
+            sortChanged: () => this.onSortChanged(),
         });
     }
 
@@ -174,7 +179,9 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
                 leafRecords.push(record);
             }
         }
-        this.refreshRecordCols(leafRecords, this.getGrandTotal(leafRecords.length > 0));
+        const ranks = this.recordRanks;
+        const displayedRecords = ranks ? arrangeRecords(leafRecords, ranks) : leafRecords;
+        this.refreshRecordCols(displayedRecords, this.getGrandTotal(displayedRecords.length > 0));
         return this.buildFieldRows();
     }
 
@@ -188,6 +195,35 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
     }
 
     public onFieldOrderChanged(): void {
+        if (this.cols) {
+            this.refreshRowModel();
+        }
+    }
+
+    private onColumnMoved(event: ColumnMovedEvent): void {
+        if (!this.cols || !event.columns?.some((col) => isRecordColId(col.getColId()))) {
+            return;
+        }
+        const colsList = this.beans.colModel.colsList;
+        const ranks = new WeakMap<RowNode, number>();
+        for (let i = 0, len = colsList.length; i < len; ++i) {
+            const col = colsList[i];
+            const record = col.transposeRecord;
+            if (record && isRecordColId(col.colId)) {
+                ranks.set(record, i);
+            }
+        }
+        this.recordRanks = ranks;
+        this.cols = colsList.slice();
+        this.tree = this.cols;
+    }
+
+    /** A sort replaces the user's arrangement of records, as a pivot sort replaces the arrangement of pivot columns. */
+    private onSortChanged(): void {
+        if (!this.recordRanks) {
+            return;
+        }
+        this.recordRanks = null;
         if (this.cols) {
             this.refreshRowModel();
         }
@@ -619,12 +655,34 @@ export class TransposeService extends BeanStub implements NamedBean, ITransposeS
 
     public override destroy(): void {
         this.cols = null;
+        this.recordRanks = null;
         this.destroyGeneratedCols();
         this.fieldRows.clear();
         this.fieldGroups.clear();
         super.destroy();
     }
 }
+
+const isRecordColId = (colId: string): boolean => colId.startsWith(RECORD_COL_ID_PREFIX);
+
+/** Records keep the order the user dragged them into; records added since follow, in row model order. */
+const arrangeRecords = (records: RowNode[], ranks: WeakMap<RowNode, number>): RowNode[] => {
+    const arranged: RowNode[] = [];
+    const added: RowNode[] = [];
+    for (let i = 0, len = records.length; i < len; ++i) {
+        const record = records[i];
+        if (ranks.has(record)) {
+            arranged.push(record);
+        } else {
+            added.push(record);
+        }
+    }
+    arranged.sort((a, b) => ranks.get(a)! - ranks.get(b)!);
+    for (let i = 0, len = added.length; i < len; ++i) {
+        arranged.push(added[i]);
+    }
+    return arranged;
+};
 
 function sameMembers(prev: AgColumn[], next: AgColumn[]): boolean {
     const prevSet = new Set(prev);
