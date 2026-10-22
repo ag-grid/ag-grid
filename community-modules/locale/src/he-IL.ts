@@ -800,6 +800,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'עלייה מוחלטת',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'ירידה מוחלטת',
     ariaLabelDialog: 'דיאלוג',
+    ariaLabelClose: 'סגור',
     ariaLabelColumnMenu: 'תפריט עמודה',
     ariaLabelColumnFilter: 'מסנן עמודה',
     ariaLabelSelectField: 'שדה בחירה',

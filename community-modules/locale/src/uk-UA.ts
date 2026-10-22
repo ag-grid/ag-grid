@@ -804,6 +804,7 @@ export const AG_GRID_LOCALE_UK_UA = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'абсолютне зростання',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'абсолютне спадання',
     ariaLabelDialog: 'Діалог',
+    ariaLabelClose: 'Закрити',
     ariaLabelColumnMenu: 'Меню стовпця',
     ariaLabelColumnFilter: 'Фільтр стовпця',
     ariaLabelSelectField: 'Виберіть поле',

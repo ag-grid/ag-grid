@@ -820,6 +820,8 @@ export const AG_GRID_LOCALE_HI_IN = {
 
     ariaLabelDialog: 'डायलॉग',
 
+    ariaLabelClose: 'बंद करें',
+
     ariaLabelColumnMenu: 'कॉलम मेनू',
     ariaLabelColumnFilter: 'कॉलम फ़िल्टर',
 

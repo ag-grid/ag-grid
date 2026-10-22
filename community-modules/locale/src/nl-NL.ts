@@ -804,6 +804,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absoluut oplopend',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absoluut aflopend',
     ariaLabelDialog: 'Dialoog',
+    ariaLabelClose: 'Sluiten',
     ariaLabelColumnMenu: 'Kolommenu',
     ariaLabelColumnFilter: 'Kolomfilter',
     ariaLabelSelectField: 'Selectievak',

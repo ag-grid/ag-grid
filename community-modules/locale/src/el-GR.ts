@@ -807,6 +807,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'απόλυτη αύξουσα σειρά',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'απόλυτη φθίνουσα σειρά',
     ariaLabelDialog: 'Διαλογή',
+    ariaLabelClose: 'Κλείσιμο',
     ariaLabelColumnMenu: 'Μενού Στήλης',
     ariaLabelColumnFilter: 'Φίλτρο Στήλης',
     ariaLabelSelectField: 'Επιλογή Πεδίου',

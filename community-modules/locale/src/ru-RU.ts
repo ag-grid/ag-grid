@@ -821,6 +821,8 @@ export const AG_GRID_LOCALE_RU_RU = {
 
     ariaLabelDialog: 'Диалог',
 
+    ariaLabelClose: 'Закрыть',
+
     ariaLabelColumnMenu: 'Меню столбца',
     ariaLabelColumnFilter: 'Фильтр столбца',
 

@@ -826,6 +826,8 @@ export const AG_GRID_LOCALE_FIL_PH = {
 
     ariaLabelDialog: 'Dialog',
 
+    ariaLabelClose: 'Isara',
+
     ariaLabelColumnMenu: 'Menu ng Column',
     ariaLabelColumnFilter: 'Filter ng Column',
 

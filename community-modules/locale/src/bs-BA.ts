@@ -822,6 +822,8 @@ export const AG_GRID_LOCALE_BS_BA = {
 
     ariaLabelDialog: 'Dijalog',
 
+    ariaLabelClose: 'Zatvori',
+
     ariaLabelColumnMenu: 'Meni kolone',
     ariaLabelColumnFilter: 'Filter kolone',
 

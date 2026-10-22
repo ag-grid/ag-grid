@@ -806,6 +806,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'ascendent absolut',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'descendent absolut',
     ariaLabelDialog: 'Dialog',
+    ariaLabelClose: 'Închide',
     ariaLabelColumnMenu: 'Meniu Coloană',
     ariaLabelColumnFilter: 'Filtru Coloană',
     ariaLabelSelectField: 'Selectează Câmp',

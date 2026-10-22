@@ -800,6 +800,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: '绝对升序',
     ariaDropZoneColumnComponentSortAbsoluteDescending: '绝对降序',
     ariaLabelDialog: '对话框',
+    ariaLabelClose: '关闭',
     ariaLabelColumnMenu: '列菜单',
     ariaLabelColumnFilter: '列过滤器',
     ariaLabelSelectField: '选择字段',

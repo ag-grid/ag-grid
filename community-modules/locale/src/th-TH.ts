@@ -817,6 +817,8 @@ export const AG_GRID_LOCALE_TH_TH = {
 
     ariaLabelDialog: 'กล่องโต้ตอบ',
 
+    ariaLabelClose: 'ปิด',
+
     ariaLabelColumnMenu: 'เมนูคอลัมน์',
     ariaLabelColumnFilter: 'ตัวกรองคอลัมน์',
 

@@ -801,6 +801,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: '「絶対昇順」',
     ariaDropZoneColumnComponentSortAbsoluteDescending: '「絶対降順」',
     ariaLabelDialog: 'ダイアログ',
+    ariaLabelClose: '閉じる',
     ariaLabelColumnMenu: '列メニュー',
     ariaLabelColumnFilter: '列フィルター',
     ariaLabelSelectField: 'フィールドを選択',

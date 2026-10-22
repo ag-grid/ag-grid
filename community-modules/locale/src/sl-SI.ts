@@ -818,6 +818,8 @@ export const AG_GRID_LOCALE_SL_SI = {
 
     ariaLabelDialog: 'Pogovorno okno',
 
+    ariaLabelClose: 'Zapri',
+
     ariaLabelColumnMenu: 'Meni stolpca',
     ariaLabelColumnFilter: 'Filter stolpca',
 

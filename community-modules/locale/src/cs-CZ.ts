@@ -802,6 +802,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolutně stoupající',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolutně klesající',
     ariaLabelDialog: 'Dialog',
+    ariaLabelClose: 'Zavřít',
     ariaLabelColumnMenu: 'Nabídka sloupců',
     ariaLabelColumnFilter: 'Filtr sloupců',
     ariaLabelSelectField: 'Vyberte pole',

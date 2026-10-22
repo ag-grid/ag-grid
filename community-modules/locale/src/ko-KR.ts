@@ -801,6 +801,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: '절대 오름차순',
     ariaDropZoneColumnComponentSortAbsoluteDescending: '절대 내림차순',
     ariaLabelDialog: '대화상자',
+    ariaLabelClose: '닫기',
     ariaLabelColumnMenu: '컬럼 메뉴',
     ariaLabelColumnFilter: '컬럼 필터',
     ariaLabelSelectField: '필드 선택',

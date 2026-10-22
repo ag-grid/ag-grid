@@ -818,6 +818,8 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
 
     ariaLabelDialog: 'Dijalog',
 
+    ariaLabelClose: 'Zatvori',
+
     ariaLabelColumnMenu: 'Meni kolone',
     ariaLabelColumnFilter: 'Filter kolone',
 

@@ -801,6 +801,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'مکمل اوپر کی طرف',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'مکمل نیچے کی طرف',
     ariaLabelDialog: 'ڈائیلاگ',
+    ariaLabelClose: 'بند کریں',
     ariaLabelColumnMenu: 'کالم مینو',
     ariaLabelColumnFilter: 'کالم فلٹر',
     ariaLabelSelectField: 'فیلڈ منتخب کریں',

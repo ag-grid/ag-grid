@@ -809,6 +809,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'abszolút növekvő',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'abszolút csökkenő',
     ariaLabelDialog: 'Párbeszédpanel',
+    ariaLabelClose: 'Bezárás',
     ariaLabelColumnMenu: 'Oszlop menü',
     ariaLabelColumnFilter: 'Oszlop szűrő',
     ariaLabelSelectField: 'Mező kiválasztása',

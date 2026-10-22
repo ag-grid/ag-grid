@@ -804,6 +804,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'apsolutni uzlazno',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'apsolutni silazno',
     ariaLabelDialog: 'Dijalog',
+    ariaLabelClose: 'Zatvori',
     ariaLabelColumnMenu: 'Izbornik stupca',
     ariaLabelColumnFilter: 'Filtar stupca',
     ariaLabelSelectField: 'Odaberi polje',

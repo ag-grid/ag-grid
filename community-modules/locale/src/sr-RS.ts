@@ -818,6 +818,8 @@ export const AG_GRID_LOCALE_SR_RS = {
 
     ariaLabelDialog: 'Дијалог',
 
+    ariaLabelClose: 'Затвори',
+
     ariaLabelColumnMenu: 'Мени колоне',
     ariaLabelColumnFilter: 'Филтер колоне',
 

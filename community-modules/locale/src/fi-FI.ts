@@ -806,6 +806,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absoluuttinen nouseva',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absoluuttinen laskeva',
     ariaLabelDialog: 'Dialogi',
+    ariaLabelClose: 'Sulje',
     ariaLabelColumnMenu: 'Sarakkeen valikko',
     ariaLabelColumnFilter: 'Sarakkeen suodatin',
     ariaLabelSelectField: 'Valitse kenttä',

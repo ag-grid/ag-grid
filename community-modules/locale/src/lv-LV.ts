@@ -820,6 +820,8 @@ export const AG_GRID_LOCALE_LV_LV = {
 
     ariaLabelDialog: 'Dialogs',
 
+    ariaLabelClose: 'Aizvērt',
+
     ariaLabelColumnMenu: 'Kolonnas izvēlne',
     ariaLabelColumnFilter: 'Kolonnas filtrs',
 

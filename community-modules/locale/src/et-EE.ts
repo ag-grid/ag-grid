@@ -818,6 +818,8 @@ export const AG_GRID_LOCALE_ET_EE = {
 
     ariaLabelDialog: 'Dialoog',
 
+    ariaLabelClose: 'Sulge',
+
     ariaLabelColumnMenu: 'Veeru menüü',
     ariaLabelColumnFilter: 'Veeru filter',
 
