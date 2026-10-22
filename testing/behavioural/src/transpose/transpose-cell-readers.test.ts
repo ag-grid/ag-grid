@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { TestGridsManager } from 'ag-test-utils';
 
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, NotesDataSource } from 'ag-grid-community';
 import {
     CellStyleModule,
     CheckboxEditorModule,
@@ -16,6 +16,7 @@ import {
 import {
     CellSelectionModule,
     FormulaModule,
+    NotesModule,
     RowGroupingModule,
     ShowValuesAsModule,
     StatusBarModule,
@@ -54,6 +55,7 @@ describe('transposed cells read their original record and field', () => {
             ColumnApiModule,
             NumberEditorModule,
             FormulaModule,
+            NotesModule,
             RowApiModule,
             RowGroupingModule,
             RowSelectionModule,
@@ -103,6 +105,28 @@ describe('transposed cells read their original record and field', () => {
         }
         return -1;
     };
+
+    /** Notes stored by record id and field, as an app would store them. */
+    const createNotes = (initial: Record<string, string> = {}) => {
+        const notes = new Map(Object.entries(initial));
+        const key = (params: Parameters<NotesDataSource['getNote']>[0]) =>
+            `${params.rowNode.id}:${params.column.getColId()}`;
+        const notesDataSource: NotesDataSource = {
+            getNote: (params) => {
+                const text = notes.get(key(params));
+                return text == null ? undefined : { text };
+            },
+            setNote: (params) => {
+                if (params.note) {
+                    notes.set(key(params), params.note.text);
+                } else {
+                    notes.delete(key(params));
+                }
+            },
+        };
+        return { notes, notesDataSource };
+    };
+    const hasNote = (el: HTMLElement | null) => !!el?.classList.contains('ag-has-cell-notes');
 
     const pressSpace = (el: HTMLElement) =>
         el.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true, cancelable: true }));
@@ -234,5 +258,30 @@ describe('transposed cells read their original record and field', () => {
         await waitFor(() => expect(cell('c', 'share')?.textContent).toMatch(/^50(\.0+)?%$/));
         api.getRowNode('a')!.setDataValue('share', 2);
         await waitFor(() => expect(cell('c', 'share')?.textContent).toMatch(/^40(\.0+)?%$/));
+    });
+
+    test.each(MODES)('%s: a note on a record and field shows on the cell displaying them', async (mode) => {
+        const { notesDataSource } = createNotes({ 'b:revenue': 'Check' });
+        const { cell } = await create(mode, [{ field: 'revenue' }], { notesDataSource });
+        await waitFor(() => expect(hasNote(cell('b', 'revenue'))).toBe(true));
+        expect(hasNote(cell('a', 'revenue'))).toBe(false);
+    });
+
+    test.each(MODES)('%s: a note set on a displayed cell is stored on its record and field', async (mode) => {
+        const { notes, notesDataSource } = createNotes();
+        const { api, cell, position } = await create(mode, [{ field: 'revenue' }], { notesDataSource });
+        const { rowIndex, colKey } = position('a', 'revenue');
+        api.setNote({ rowNode: api.getDisplayedRowAtIndex(rowIndex)!, column: colKey, note: { text: 'Hi' } });
+        expect([...notes.keys()]).toEqual(['a:revenue']);
+        await waitFor(() => expect(hasNote(cell('a', 'revenue'))).toBe(true));
+    });
+
+    test.each(MODES)('%s: a note set by record and field shows on the cell displaying them', async (mode) => {
+        const { notes, notesDataSource } = createNotes();
+        const { api, cell } = await create(mode, [{ field: 'revenue' }], { notesDataSource });
+        api.setNote({ rowNode: api.getRowNode('a')!, column: 'revenue', note: { text: 'Hi' } });
+        expect([...notes.keys()]).toEqual(['a:revenue']);
+        await waitFor(() => expect(hasNote(cell('a', 'revenue'))).toBe(true));
+        expect(api.getNote({ rowNode: api.getRowNode('a')!, column: 'revenue' })?.text).toBe('Hi');
     });
 });

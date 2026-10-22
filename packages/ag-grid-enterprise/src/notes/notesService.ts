@@ -1,16 +1,19 @@
 import type {
+    AgColumn,
     CellCtrl,
     GetNoteParams,
     INoteAccess,
     INotesService,
+    IRowNode,
     MenuItemDef,
     NamedBean,
     Note,
     RefreshNotesParams,
     RowCtrl,
+    RowNode,
     SetNoteParams,
 } from 'ag-grid-community';
-import { BeanStub } from 'ag-grid-community';
+import { BeanStub, _getTransposedCell } from 'ag-grid-community';
 
 import { AgFullWidthRowNotesFeature, AgNotesFeature } from './agNotesFeature';
 import type { INotePopupOwner, INotesFeatureSupport, InternalSetNoteParams } from './notesShared';
@@ -76,21 +79,27 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
             params = { ...params, pinned: undefined };
         }
 
-        const column = isFullWidthRowNoteParams(params)
+        const displayedColumn = isFullWidthRowNoteParams(params)
             ? this.getColumnForFullWidth(params.pinned)
             : colModel.getCol(params.column);
-        const note = notesDataSvc!.getNote(params);
 
-        if (!column) {
+        if (!displayedColumn) {
             return undefined;
         }
 
-        const isSuppressed = column.isColumnFunc(params.rowNode, column.colDef.suppressNoteActions ?? null);
+        // A transposed cell's note belongs to the record and field it shows.
+        const transposed = isFullWidthRowNoteParams(params)
+            ? undefined
+            : _getTransposedCell(displayedColumn, params.rowNode);
+        const rowNode = transposed?.rowNode ?? params.rowNode;
+        const column = transposed?.column ?? displayedColumn;
+        const note = notesDataSvc!.getNote(transposed ? { rowNode, column } : params);
+        const isSuppressed = column.isColumnFunc(rowNode, column.colDef.suppressNoteActions ?? null);
         const isReadOnly = !!note?.readOnly;
 
         return {
             params,
-            rowNode: params.rowNode,
+            rowNode,
             column,
             note,
             isReadOnly,
@@ -199,7 +208,8 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
             return true;
         }
 
-        const cellCtrl = rowRenderer.getCellCtrls([params.rowNode], [access.column])[0];
+        const displayed = this.getDisplayedCell(access);
+        const cellCtrl = rowRenderer.getCellCtrls([displayed.rowNode], [displayed.column])[0];
 
         if (cellCtrl) {
             cellCtrl.showNote(focusEditor);
@@ -243,11 +253,12 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
                 : { rowNode: access.rowNode, column: access.column, note }
         );
 
-        this.refreshNotes(
-            isFullWidthRowNoteParams(access.params)
-                ? { rowNodes: [params.rowNode] }
-                : { rowNodes: [params.rowNode], columns: [access.column] }
-        );
+        if (isFullWidthRowNoteParams(access.params)) {
+            this.refreshNotes({ rowNodes: [params.rowNode] });
+        } else {
+            const displayed = this.getDisplayedCell(access);
+            this.refreshNotes({ rowNodes: [displayed.rowNode], columns: [displayed.column] });
+        }
     }
 
     public refreshNotes(params: RefreshNotesParams = {}): void {
@@ -270,6 +281,15 @@ export class NotesService extends BeanStub implements INotesService, INotesFeatu
             }
             rowCtrl.refreshRow({ force: true, suppressFlash: true });
         }
+    }
+
+    /** The cell showing a note's record and field: in the transposed view, the field row's cell in the record column. */
+    private getDisplayedCell(access: INoteAccess): { rowNode: IRowNode; column: AgColumn } {
+        const { transposeSvc, rowModel } = this.beans;
+        const { rowNode, column } = access;
+        const position = transposeSvc?.isActive() ? transposeSvc.getDisplayedCell(rowNode as RowNode, column) : null;
+        const displayedRow = position ? rowModel.getRow(position.rowIndex) : undefined;
+        return displayedRow ? { rowNode: displayedRow, column: position!.column as AgColumn } : { rowNode, column };
     }
 
     private getColumnForFullWidth(pinned?: 'left' | 'right') {
