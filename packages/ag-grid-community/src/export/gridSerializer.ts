@@ -6,6 +6,7 @@ import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
+import { _getTransposedCell } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import type { RowNode } from '../entities/rowNode';
 import {
@@ -37,22 +38,31 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
     public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T> = {}): string {
         const { allColumns, columnKeys, skipRowGroups, exportRowNumbers } = params;
-        const columnsToExport = this.getColumnsToExport({
+        let columnsToExport = this.getColumnsToExport({
             allColumns,
             skipRowGroups,
             columnKeys: columnKeys as (string | AgColumn)[] | undefined,
             exportRowNumbers,
         });
+        // While transposed, the displayed columns export the transposed view; `columnKeys` naming the user's own
+        // (parked) columns exports the untransposed view instead.
+        const transposed = this.beans.transposeSvc?.cols != null && columnsToExport.some((col) => col.inColsList);
+        let exportParams = params;
+        if (transposed && params.onlySelected) {
+            // Selected records are columns here, so `onlySelected` picks columns, not rows.
+            columnsToExport = columnsToExport.filter(isSelectedOrNotRecordCol);
+            exportParams = { ...params, onlySelected: false };
+        }
 
         return [
             // first pass, put in the header names of the cols
             this.prepareSession(columnsToExport),
-            this.prependContent(params),
-            this.exportHeaders(params, columnsToExport),
-            this.processPinnedTopRows(params, columnsToExport),
-            this.processRows(params, columnsToExport),
-            this.processPinnedBottomRows(params, columnsToExport),
-            this.appendContent(params),
+            this.prependContent(exportParams),
+            this.exportHeaders(exportParams, columnsToExport),
+            this.processPinnedTopRows(exportParams, columnsToExport),
+            this.processRows(exportParams, columnsToExport, transposed),
+            this.processPinnedBottomRows(exportParams, columnsToExport),
+            this.appendContent(exportParams),
         ]
             .reduce((composed, f) => f(composed), gridSerializingSession)
             .parse();
@@ -97,7 +107,10 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
         const rowAccumulator: RowAccumulator = gridSerializingSession.onNewBodyRow(node);
         for (let i = 0, len = columnsToExport.length; i < len; ++i) {
-            rowAccumulator.onColumn(columnsToExport[i], i, node);
+            const column = columnsToExport[i];
+            // A transposed-view cell exports as its original record and field: value, formatting, styles, callbacks.
+            const transposedCell = _getTransposedCell(column, node);
+            rowAccumulator.onColumn(transposedCell?.column ?? column, i, transposedCell?.rowNode ?? node);
         }
 
         if (params.getCustomContentBelowRow) {
@@ -202,7 +215,8 @@ export class GridSerializer extends BeanStub implements NamedBean {
 
     private processRows<T>(
         params: ExportParams<T>,
-        columnsToExport: AgColumn[]
+        columnsToExport: AgColumn[],
+        transposed: boolean
     ): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
             // when in pivot mode, we always render cols on screen, never 'all columns'
@@ -242,6 +256,15 @@ export class GridSerializer extends BeanStub implements NamedBean {
                     .map((position) => rowModel.getRow(position.rowIndex))
                     .filter((node): node is RowNode => node != null)
                     .forEach(processBodyRow);
+            } else if (transposed) {
+                // The field rows, as displayed: a collapsed field group's fields are left out, as a collapsed column
+                // group's columns are from an untransposed export.
+                for (let i = 0, len = rowModel.getRowCount(); i < len; ++i) {
+                    const row = rowModel.getRow(i);
+                    if (row) {
+                        processBodyRow(row);
+                    }
+                }
             } else if (this.colModel.pivotMode) {
                 if (usingCsrm) {
                     rowModel.forEachPivotNode(processBodyRow, true, exportedRows === 'filteredAndSorted');
@@ -418,3 +441,6 @@ export class GridSerializer extends BeanStub implements NamedBean {
         return { ...cell, collapsibleGroupRanges };
     }
 }
+
+/** While transposed with `onlySelected`, a record column is exported only when its record is selected. */
+const isSelectedOrNotRecordCol = (col: AgColumn): boolean => !col.transposeRecord || !!col.transposeRecord.isSelected();
