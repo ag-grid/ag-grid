@@ -1,11 +1,11 @@
-import type { BrowserContext, Page, Route } from '@playwright/test';
-import { readFile, readdir, rm, utimes, writeFile } from 'node:fs/promises';
+import type { Page, Route } from '@playwright/test';
+import { mkdir, readFile, readdir, rm, utimes, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 
 import {
     routeExternalThroughMirror,
-    routePdfFontsFromDisk,
     routePublicFilesFromDisk,
+    routeSiteSources,
     routeSiteThroughMemo,
 } from './localSources';
 
@@ -17,18 +17,10 @@ const BASE_URL = 'https://grid-staging.ag-grid.com/prefix/';
 type Outcome = { fulfilled: unknown[]; fellBack: number; aborted: unknown[] };
 
 /** The page members the routes use, so a stand-in can be cast to `Page` without `unknown`. */
-type RoutedPage = Pick<Page, 'route' | 'url'> & {
-    context(): Pick<BrowserContext, 'browser'>;
-    evaluate(pageFunction: unknown): Promise<string>;
-};
-
-type StandIn = { userAgent?: string; browser?: ReturnType<BrowserContext['browser']> };
+type RoutedPage = Pick<Page, 'route' | 'url'> & { evaluate(pageFunction: unknown): Promise<void> };
 
 /** Registers a route on a stand-in page and returns what Playwright would see: the predicate and the handler. */
-async function register(
-    routeOn: (page: Page) => Promise<void>,
-    { userAgent = 'test-agent', browser = null }: StandIn = {}
-) {
+async function register(routeOn: (page: Page) => Promise<void>) {
     let matches: (url: URL) => boolean = () => false;
     let evaluations = 0;
     let handler: Parameters<Page['route']>[1] = () => {};
@@ -43,10 +35,8 @@ async function register(
             return { dispose, [Symbol.asyncDispose]: dispose };
         },
         url: () => 'https://grid-staging.ag-grid.com/examples/page/example/vanilla/',
-        context: () => ({ browser: () => browser }),
         evaluate: async () => {
             evaluations++;
-            return userAgent;
         },
     };
     await routeOn(page as Page);
@@ -114,7 +104,8 @@ describe('routeSiteThroughMemo', () => {
 
         expect(match(`${BASE_URL}files/ag-grid-community/dist/package/main.esm.mjs`)).toBe(true);
         expect(match(`${BASE_URL}example-runner/example-runner.js`)).toBe(true);
-        expect(match('https://grid-staging.ag-grid.com/fonts/pdf-export/IBMPlexSansJP-Bold.ttf')).toBe(true);
+        expect(match(`${BASE_URL}fonts/pdf-export/IBMPlexSansJP-Bold.ttf`)).toBe(true);
+        expect(match('https://grid-staging.ag-grid.com/fonts/pdf-export/IBMPlexSansJP-Bold.ttf')).toBe(false);
         expect(match('https://grid-staging.ag-grid.com/example-assets/olympic-winners.json')).toBe(true);
         expect(match(`${BASE_URL}examples/filter-multi/display-style/vanilla/main.js`)).toBe(false);
         expect(match(`${BASE_URL}react-data-grid/filter-multi/`)).toBe(false);
@@ -143,28 +134,31 @@ describe('routeSiteThroughMemo', () => {
         }
     });
 
-    test('shares one fetch between bundle URLs differing only in the page build stamp', async () => {
+    test('shares one fetch between requests in flight together', async () => {
         const { request, fetches, answer } = await registerMemo();
-        const url = `${BASE_URL}files/ag-grid-enterprise/dist/ag-grid-enterprise.min.js`;
-        answer(`${url}?t=1`, { status: 200, body: 'umd' });
+        const url = `${BASE_URL}files/together.js`;
+        answer(url, { status: 200, body: 'export {}' });
 
-        const first = await request(`${url}?t=1`);
-        const second = await request(`${url}?t=2`);
+        const [first, second] = await Promise.all([request(url), request(url)]);
 
-        expect(fetches.map((fetch) => fetch.url)).toEqual([`${url}?t=1`]);
+        expect(fetches).toHaveLength(1);
         expect(second.fulfilled).toEqual(first.fulfilled);
     });
 
-    test('keeps a non-numeric t, which is not the build stamp, in the key', async () => {
+    test('shares one fetch between bundle URLs differing only in a numeric page build stamp, never another t', async () => {
         const { request, fetches, answer } = await registerMemo();
-        const url = `${BASE_URL}files/query.js`;
+        const url = `${BASE_URL}files/ag-grid-enterprise/dist/ag-grid-enterprise.min.js`;
+        answer(`${url}?t=1`, { status: 200, body: 'umd' });
         answer(`${url}?t=a`, { status: 200 });
         answer(`${url}?t=b`, { status: 200 });
 
+        const first = await request(`${url}?t=1`);
+        const second = await request(`${url}?t=2`);
         await request(`${url}?t=a`);
         await request(`${url}?t=b`);
 
-        expect(fetches.map((fetch) => fetch.url)).toEqual([`${url}?t=a`, `${url}?t=b`]);
+        expect(fetches.map((fetch) => fetch.url)).toEqual([`${url}?t=1`, `${url}?t=a`, `${url}?t=b`]);
+        expect(second.fulfilled).toEqual(first.fulfilled);
     });
 
     test('forwards the request headers, a fallback override such as the WAF bypass included, and never follows a redirect', async () => {
@@ -194,30 +188,18 @@ describe('routeSiteThroughMemo', () => {
         expect(fetches).toHaveLength(1);
     });
 
-    test('passes an error status through once and asks the origin again next time', async () => {
+    test('asks the origin again after an error status, passed through, or a failed fetch, handed to the browser', async () => {
         const { request, fetches, answer } = await registerMemo();
-        const url = `${BASE_URL}files/flaky.js`;
-        answer(url, { status: 503, body: 'busy' }, { status: 200, body: 'ok' });
+        const [flaky, reset] = [`${BASE_URL}files/flaky.js`, `${BASE_URL}files/reset.js`];
+        answer(flaky, { status: 503, body: 'busy' }, { status: 200, body: 'ok' });
+        answer(reset, new Error('read ECONNRESET'), { status: 200, body: 'ok' });
 
-        const failed = await request(url);
-        const recovered = await request(url);
-
-        expect(failed.fulfilled).toEqual([{ status: 503, headers: {}, body: Buffer.from('busy') }]);
-        expect(recovered.fulfilled).toEqual([{ status: 200, headers: {}, body: Buffer.from('ok') }]);
-        expect(fetches).toHaveLength(2);
-    });
-
-    test('hands a failed fetch to the browser and does not keep the failure', async () => {
-        const { request, fetches, answer } = await registerMemo();
-        const url = `${BASE_URL}files/reset.js`;
-        answer(url, new Error('read ECONNRESET'), { status: 200, body: 'ok' });
-
-        const failed = await request(url);
-        const recovered = await request(url);
-
-        expect(failed).toEqual({ fulfilled: [], fellBack: 1, aborted: [] });
-        expect(recovered.fulfilled).toEqual([{ status: 200, headers: {}, body: Buffer.from('ok') }]);
-        expect(fetches).toHaveLength(2);
+        expect((await request(flaky)).fulfilled).toEqual([{ status: 503, headers: {}, body: Buffer.from('busy') }]);
+        expect(await request(reset)).toEqual({ fulfilled: [], fellBack: 1, aborted: [] });
+        for (const url of [flaky, reset]) {
+            expect((await request(url)).fulfilled).toEqual([{ status: 200, headers: {}, body: Buffer.from('ok') }]);
+        }
+        expect(fetches).toHaveLength(4);
     });
 
     test('aborts a request whose page closed mid-fetch rather than handing it on', async () => {
@@ -238,18 +220,6 @@ describe('routeSiteThroughMemo', () => {
         });
 
         expect(fetches).toHaveLength(0);
-    });
-
-    test('fetches a PDF font asked for at the site root from below the base, where a prefixed build serves it', async () => {
-        const { request, fetches, answer } = await registerMemo();
-        const deployed = `${BASE_URL}fonts/pdf-export/IBMPlexSansJP-Bold.ttf`;
-        answer(deployed, { status: 200, body: 'ttf' });
-
-        const first = await request('https://grid-staging.ag-grid.com/fonts/pdf-export/IBMPlexSansJP-Bold.ttf');
-        const second = await request(deployed);
-
-        expect(fetches.map((fetch) => fetch.url)).toEqual([deployed]);
-        expect(second.fulfilled).toEqual(first.fulfilled);
     });
 
     test('lets the page finish loading its fonts before answering a data request, never a script', async () => {
@@ -273,12 +243,10 @@ const SITE_ORIGIN = new URL(BASE_URL).origin;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /** A worker's state lives in the module, so a fresh import stands in for the next worker, reading only disk. */
-async function nextWorker(standIn?: StandIn) {
+async function nextWorker() {
     vi.resetModules();
     const worker = await import('./localSources');
-    const onPage = (pageStandIn?: StandIn) =>
-        register((page) => worker.routeExternalThroughMirror(page, SITE_ORIGIN), pageStandIn);
-    return { ...(await onPage(standIn)), worker, onPage };
+    return { ...(await register((page) => worker.routeExternalThroughMirror(page, SITE_ORIGIN))), worker };
 }
 
 const mirrorFiles = async () =>
@@ -457,20 +425,21 @@ describe('routeExternalThroughMirror', () => {
         expect(fetches.map((fetch) => fetch.url)).toEqual([gone, busy, reset, busy, reset]);
     });
 
-    test('names each URL that went to the network once, with the page that asked for it', async () => {
+    test('names each URL that went to the network once, whatever its build stamp, with the page that asked for it', async () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const { request, answer, worker } = await nextWorker();
         const url = mirrorUrl('missing.js');
-        answer(url, { status: 404 });
+        answer(`${url}?t=1`, { status: 404 });
 
-        await request(url);
-        await request(url);
+        await request(`${url}?t=1`);
+        await request(`${url}?t=1`);
+        await request(`${url}?t=2`);
         worker.warnOnNetworkAccess();
         worker.warnOnNetworkAccess();
 
         expect(warn.mock.calls).toEqual([
             [
-                `Not mirrored, so these went to the network:\n - ${url}\n   requested by https://grid-staging.ag-grid.com/examples/page/example/vanilla/`,
+                `Not mirrored, so these went to the network:\n - ${url}?t=1\n   requested by https://grid-staging.ag-grid.com/examples/page/example/vanilla/`,
             ],
         ]);
         warn.mockRestore();
@@ -493,23 +462,18 @@ describe('routeExternalThroughMirror', () => {
         warn.mockRestore();
     });
 
-    test('keys an entry by the browser asking, reading its user agent once per browser', async () => {
+    test('keys an entry by the user agent its request carries, asking the page nothing', async () => {
         const url = mirrorUrl('font.css');
-        const browser = {} as NonNullable<StandIn['browser']>;
-        const chromium = await nextWorker({ userAgent: 'chromium', browser });
-        chromium.answer(url, { status: 200, body: 'for chromium' });
-        await chromium.request(url);
-        await chromium.request(url);
+        const { request, answer, fetches, evaluations } = await nextWorker();
+        answer(url, { status: 200, body: 'for chromium' }, { status: 200, body: 'for firefox' });
 
-        // The same worker, so the stored entry is there to be found if the key ignored the agent.
-        const firefox = await chromium.onPage({ userAgent: 'firefox' });
-        firefox.answer(url, { status: 200, body: 'for firefox' });
+        await request(url, { headers: { 'user-agent': 'chromium' } });
+        await request(url, { headers: { 'user-agent': 'chromium' } });
+        const firefox = await request(url, { headers: { 'user-agent': 'firefox' } });
 
-        expect((await firefox.request(url)).fulfilled).toEqual([
-            { status: 200, headers: {}, body: Buffer.from('for firefox') },
-        ]);
-        expect(chromium.fetches).toHaveLength(1);
-        expect(chromium.evaluations()).toBe(1);
+        expect(firefox.fulfilled).toEqual([{ status: 200, headers: {}, body: Buffer.from('for firefox') }]);
+        expect(fetches).toHaveLength(2);
+        expect(evaluations()).toBe(0);
     });
 
     test('answers a Google Fonts stylesheet for an installed family from the package, without the network', async () => {
@@ -539,17 +503,15 @@ describe('routeExternalThroughMirror', () => {
     });
 
     test('lets the page finish loading its fonts before answering a data request, never a script', async () => {
-        const browser = {} as NonNullable<StandIn['browser']>;
-        const { request, answer, evaluations } = await nextWorker({ browser });
+        const { request, answer, evaluations } = await nextWorker();
         const [script, data] = [mirrorUrl('lib.js'), mirrorUrl('rows.json')];
         answer(script, { status: 200, body: 'export {}' });
         answer(data, { status: 200, body: '[]' });
 
-        // The first request also reads the browser's user agent, once.
         await request(script, { resourceType: 'script' });
-        expect(evaluations()).toBe(1);
+        expect(evaluations()).toBe(0);
         await request(data, { resourceType: 'fetch' });
-        expect(evaluations()).toBe(2);
+        expect(evaluations()).toBe(1);
     });
 
     test('sweeps entries unused for 30 days and temporary files older than an hour, keeping the rest', async () => {
@@ -560,6 +522,7 @@ describe('routeExternalThroughMirror', () => {
             [`${MIRROR_HOST}-orphan.tmp`]: now - 2 * 60 * 60,
             [`${MIRROR_HOST}-writing.tmp`]: now - 60,
         };
+        await mkdir(MIRROR_DIR, { recursive: true });
         for (const [name, time] of Object.entries(planted)) {
             await writeFile(`${MIRROR_DIR}${name}`, '');
             await utimes(`${MIRROR_DIR}${name}`, time, time);
@@ -578,17 +541,12 @@ const PUBLIC_DIR = fileURLToPath(new URL('../../../../public/', import.meta.url)
 describe('routePublicFilesFromDisk', () => {
     const fromDisk = (path: string) => ({ path, headers: { 'access-control-allow-origin': '*' } });
 
-    test('serves a shipped file from the checkout, its percent-encoded name decoded', async () => {
-        const { request } = await register((page) => routePublicFilesFromDisk(page));
-
-        const outcome = await request('https://www.ag-grid.com/example-assets/space-company-logos/rocket%20lab.png');
-
-        expect(outcome.fulfilled).toEqual([fromDisk(`${PUBLIC_DIR}example-assets/space-company-logos/rocket lab.png`)]);
-    });
-
-    test('serves any file shipped in public/, images too, for www.ag-grid.com only', async () => {
+    test('serves any file shipped in public/ for www.ag-grid.com only, a percent-encoded name decoded', async () => {
         const { request, matches } = await register((page) => routePublicFilesFromDisk(page));
 
+        expect(
+            (await request('https://www.ag-grid.com/example-assets/space-company-logos/rocket%20lab.png')).fulfilled
+        ).toEqual([fromDisk(`${PUBLIC_DIR}example-assets/space-company-logos/rocket lab.png`)]);
         expect((await request('https://www.ag-grid.com/images/ag-grid-loading-spinner.svg')).fulfilled).toEqual([
             fromDisk(`${PUBLIC_DIR}images/ag-grid-loading-spinner.svg`),
         ]);
@@ -620,27 +578,26 @@ describe('routePublicFilesFromDisk', () => {
     });
 });
 
-describe('routePdfFontsFromDisk', () => {
-    test('serves a shipped PDF font under any path prefix of the site as a TrueType font', async () => {
-        const { request, matches } = await register((page) => routePdfFontsFromDisk(page, SITE_ORIGIN));
+describe('routeSiteSources', () => {
+    test.each([
+        ['a local run serves them from the checkout first', 'https://localhost:4610/', 2, false],
+        ['a deployed run downloads them through the mirror only', BASE_URL, 1, true],
+    ])('www.ag-grid.com files: %s', async (_, baseURL, routes, mirrorFirst) => {
+        const predicates: ((url: URL) => boolean)[] = [];
+        const page: Pick<Page, 'route'> = {
+            route: async (url) => {
+                predicates.push(url as (url: URL) => boolean);
+                const dispose = async () => {};
+                return { dispose, [Symbol.asyncDispose]: dispose };
+            },
+        };
+        await routeSiteSources(page as Page, baseURL);
 
-        const outcome = await request(`${BASE_URL}fonts/pdf-export/IBMPlexSansJP-Bold.ttf`);
-
-        expect(outcome.fulfilled).toEqual([
-            { path: `${PUBLIC_DIR}fonts/pdf-export/IBMPlexSansJP-Bold.ttf`, contentType: 'font/ttf' },
-        ]);
-        expect(matches('https://www.ag-grid.com/fonts/pdf-export/IBMPlexSansJP-Bold.ttf')).toBe(false);
-    });
-
-    test('leaves a font that is not shipped, or a name escaping the folder, to the network', async () => {
-        const { request } = await register((page) => routePdfFontsFromDisk(page, SITE_ORIGIN));
-
-        for (const name of ['NotShipped.ttf', '..%2f..%2f..%2fpackage.json']) {
-            expect(await request(`${BASE_URL}fonts/pdf-export/${name}`)).toEqual({
-                fulfilled: [],
-                fellBack: 1,
-                aborted: [],
-            });
-        }
+        const matching = (url: string) => predicates.filter((matches) => matches(new URL(url)));
+        const www = matching('https://www.ag-grid.com/example-assets/olympic-winners.json');
+        expect(www).toHaveLength(routes);
+        // Playwright tries the last-registered route first: locally the disk route, which never matches a CDN.
+        expect(www.at(-1)!(new URL('https://cdn.jsdelivr.net/npm/ag-grid-community/dist/main.js'))).toBe(mirrorFirst);
+        expect(matching(`${baseURL}files/ag-grid-community/dist/package/main.esm.mjs`)).toHaveLength(1);
     });
 });
