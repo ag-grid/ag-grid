@@ -3,14 +3,17 @@ import { CollapsibleSection } from '@ag-website-shared/components/theme-builder/
 import { ParamEditor } from '@ag-website-shared/components/theme-builder/ParamEditor';
 import { PartEditor } from '@ag-website-shared/components/theme-builder/PartEditor';
 import {
+    borderWidthIcon,
+    gridColumnsBorderIcon,
+    gridHeaderRowBorderIcon,
+    gridOutlineBorderIcon,
+    gridRowsBorderIcon,
     horizontalSpacingIcon,
     radiusIcon,
     verticalSpacingIcon,
 } from '@ag-website-shared/components/theme-builder/icons';
 import { useCollapsibleSections } from '@ag-website-shared/components/theme-builder/useCollapsibleSections';
 import styled from '@emotion/styled';
-
-import { BordersEditor } from './BordersEditor';
 
 const DEFAULT_OPEN_SECTIONS = ['General', 'All Parameters'];
 
@@ -30,11 +33,17 @@ export const EditorPanel = () => {
                 <ParamEditor param="backgroundColor" />
                 <ParamEditor param="foregroundColor" />
                 <ParamEditor param="accentColor" showDocs />
-            </CollapsibleSection>
-            <CollapsibleSection {...sectionProps('Borders & spacing')}>
-                <ParamEditor param="borderColor" />
-                <BordersEditor />
                 <ParamEditor param="spacing" showDocs icon={verticalSpacingIcon} />
+            </CollapsibleSection>
+            <CollapsibleSection {...sectionProps('Borders')}>
+                <EvenSplitRow>
+                    <ParamEditor param="borderColor" showDocs />
+                    <ParamEditor param="borderWidth" showDocs icon={borderWidthIcon} swipeAdjustmentDivisor={20} />
+                </EvenSplitRow>
+                <ParamEditor param="wrapperBorder" label="Around grid" showDocs icon={gridOutlineBorderIcon} />
+                <ParamEditor param="rowBorder" label="Between rows" showDocs icon={gridRowsBorderIcon} />
+                <ParamEditor param="columnBorder" label="Between columns" showDocs icon={gridColumnsBorderIcon} />
+                <ParamEditor param="headerRowBorder" label="Below header" showDocs icon={gridHeaderRowBorderIcon} />
                 <EvenSplitRow>
                     <ParamEditor
                         param="wrapperBorderRadius"
