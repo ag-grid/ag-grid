@@ -357,8 +357,9 @@ export class CellRangeFeature implements ICellRangeFeature {
         const rangesToRefreshHandle = isRangeSelectionEnabledWhileEditing ? allRanges : [_last(allRanges)];
 
         for (const cellRange of rangesToRefreshHandle) {
-            const { cellPosition, column } = this.cellCtrl;
-            const isFillHandleAvailable = _isFillHandleEnabled(gos) && !column.isSuppressFillHandle();
+            const cellPosition = this.cellCtrl.cellPosition;
+            const isFillHandleAvailable =
+                _isFillHandleEnabled(gos) && !this.cellCtrl.getConfigCell().column.isSuppressFillHandle();
             const isRangeHandleAvailable = _isRangeHandleEnabled(gos);
             const isCellEditing = editSvc?.isEditing(this.cellCtrl, { withOpenEditor: true });
 

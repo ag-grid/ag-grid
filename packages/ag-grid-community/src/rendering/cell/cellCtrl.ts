@@ -349,7 +349,8 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
             return false;
         }
 
-        return !!formula.getFormulaError(this.column, this.rowNode);
+        const { column, rowNode } = this.configCell;
+        return !!formula.getFormulaError(column, rowNode);
     }
 
     private hasCellValidationError(): boolean {
@@ -496,7 +497,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
 
     public getCellValueClass(): string {
         const prefix = 'ag-cell-value';
-        const isCheckboxRenderer = this.column.colDef.cellRenderer === 'agCheckboxCellRenderer';
+        const isCheckboxRenderer = this.configCell.column.colDef.cellRenderer === 'agCheckboxCellRenderer';
         let suffix = '';
 
         if (isCheckboxRenderer) {
@@ -1053,7 +1054,8 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
 
     private setCalculatedColumnCss(): void {
         const calculatedColsSvc = this.beans.calculatedColsSvc;
-        const isCalculatedColumn = calculatedColsSvc != null && this.column.isCalculatedCol;
+        const configColumn = this.configCell.column;
+        const isCalculatedColumn = calculatedColsSvc != null && configColumn.isCalculatedCol;
 
         if (isCalculatedColumn || this.calculatedColumnCssApplied) {
             this.comp.toggleCss(CSS_CALCULATED_COLUMN, isCalculatedColumn);
@@ -1061,7 +1063,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         }
 
         const isHighlightedColumn =
-            calculatedColsSvc != null && isCalculatedColumn && calculatedColsSvc.isHighlightedColumn(this.column);
+            calculatedColsSvc != null && isCalculatedColumn && calculatedColsSvc.isHighlightedColumn(configColumn);
         if (isHighlightedColumn || this.calculatedColumnHighlightedCssApplied) {
             this.comp.toggleCss(CSS_CALCULATED_COLUMN_HIGHLIGHTED, isHighlightedColumn);
             this.calculatedColumnHighlightedCssApplied = isHighlightedColumn;
@@ -1069,7 +1071,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     }
 
     private isCalculatedColumn(): boolean {
-        return this.column.isCalculatedCol;
+        return this.configCell.column.isCalculatedCol;
     }
 
     public refreshCalculatedColumnCss(): void {

@@ -591,6 +591,10 @@ export class AgColumn<TValue = any>
     }
 
     public isSuppressPaste(rowNode: IRowNode): boolean {
+        const transposed = _getTransposedCell(this, rowNode);
+        if (transposed) {
+            return transposed.column.isSuppressPaste(transposed.rowNode);
+        }
         return this.isCalculatedCol || this.isColumnFunc(rowNode, this.colDef.suppressPaste ?? null);
     }
 

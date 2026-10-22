@@ -1,3 +1,5 @@
+import type { AgColumn } from '../entities/agColumn';
+import { _getTransposedCell } from '../entities/agColumn';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _addGridCommonParams, _getDomData } from '../gridOptionsUtils';
 import type { Column } from '../interfaces/iColumn';
@@ -17,6 +19,10 @@ export function _suppressCellMouseEvent(
     node: IRowNode,
     event: MouseEvent
 ): boolean {
+    const transposed = _getTransposedCell(column as AgColumn, node);
+    if (transposed) {
+        return _suppressCellMouseEvent(gos, transposed.column, transposed.rowNode, event);
+    }
     const suppressMouseEventHandling = (column.getColDef().cellRendererParams as EventCellRendererParams)
         ?.suppressMouseEventHandling;
     return suppressMouseEvent(gos, column, node, event, suppressMouseEventHandling);

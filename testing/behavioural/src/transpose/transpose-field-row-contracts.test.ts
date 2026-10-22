@@ -2,7 +2,7 @@ import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 import { DragEventDispatcher, TestGridsManager, clipboardUtils, waitForEvent } from 'ag-test-utils';
 
-import type { CellEditRequestEvent, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
+import type { CellEditRequestEvent, ColDef, GridApi, GridOptions, IRowNode } from 'ag-grid-community';
 import {
     ClientSideRowModelApiModule,
     ClientSideRowModelModule,
@@ -224,6 +224,25 @@ describe('transposed view: what callbacks and events receive', () => {
         await waitFor(() => expect(api.getSelectedNodes().map((node) => node.id)).toEqual(['b']));
     });
 
+    test("a field's suppressMouseEventHandling gets the real record and field, and suppresses the click", async () => {
+        const seen: { node?: string; column?: string }[] = [];
+        const suppressed: (boolean | undefined)[] = [];
+        const { revenueB } = await create(
+            { onCellClicked: (event) => suppressed.push(event.isEventHandlingSuppressed) },
+            {
+                cellRendererParams: {
+                    suppressMouseEventHandling: (params: { node: IRowNode; column?: { getColId(): string } }) => {
+                        seen.push({ node: params.node.id, column: params.column?.getColId() });
+                        return true;
+                    },
+                },
+            }
+        );
+        await userEvent.click(revenueB());
+        expect(seen[0]).toEqual({ node: 'b', column: 'revenue' });
+        expect(suppressed).toEqual([true]);
+    });
+
     test('undo and redo replay a transposed edit on the right record', async () => {
         const { api, revenueB } = await create({ undoRedoCellEditing: true });
         await editTo(revenueB(), '260');
@@ -262,9 +281,13 @@ describe('transposed view: the fill handle and paste', () => {
         clipboardUtils.reset();
     });
 
-    const create = async () => {
+    const create = async (revenueColDef: ColDef<Account> = {}) => {
         const api: GridApi<Account> = await gridsManager.createGridAndWait('fill', {
-            columnDefs: [{ field: 'name' }, { field: 'revenue', editable: true }, { field: 'cost', editable: true }],
+            columnDefs: [
+                { field: 'name' },
+                { field: 'revenue', editable: true, ...revenueColDef },
+                { field: 'cost', editable: true },
+            ],
             rowData: [
                 { id: 'a', name: 'Northwind', revenue: 400, cost: 180 },
                 { id: 'b', name: 'Contoso', revenue: 250, cost: 120 },
@@ -311,7 +334,14 @@ describe('transposed view: the fill handle and paste', () => {
             await fillEnd;
         };
         const values = (field: keyof Account) => ['a', 'b', 'c'].map((id) => api.getRowNode(id)!.data![field]);
-        return { api, dragFill, rowIndexOf, values };
+        const select = (field: string, record: string) => {
+            const rowIndex = rowIndexOf(field);
+            api.clearCellSelection();
+            api.setFocusedCell(rowIndex, recordCol(record));
+            api.addCellRange({ rowStartIndex: rowIndex, rowEndIndex: rowIndex, columns: [recordCol(record)] });
+        };
+        const fillHandleIn = (field: string, record: string) => cell(field, record).querySelector('.ag-fill-handle');
+        return { api, dragFill, rowIndexOf, select, fillHandleIn, gridDiv, values };
     };
 
     test('filling across records changes each record, and undo and redo replay the fill', async () => {
@@ -344,5 +374,24 @@ describe('transposed view: the fill handle and paste', () => {
         expect(values('revenue')).toEqual([999, 888, 600]);
         api.undoCellEditing();
         await waitFor(() => expect(values('revenue')).toEqual([400, 250, 600]));
+    });
+
+    test("a field's suppressPaste stops a paste into it", async () => {
+        const { api, rowIndexOf, values } = await create({ suppressPaste: true });
+        api.setFocusedCell(rowIndexOf('revenue'), recordCol('a'));
+        clipboardUtils.setText('999\t888');
+        const pasteEnd = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await pasteEnd;
+        expect(values('revenue')).toEqual([400, 250, 600]);
+    });
+
+    test("a field's suppressFillHandle hides the fill handle on its cells", async () => {
+        const { select, fillHandleIn, gridDiv } = await create({ suppressFillHandle: true });
+        select('cost', 'a');
+        await waitFor(() => expect(fillHandleIn('cost', 'a')).not.toBeNull());
+        select('revenue', 'a');
+        await waitFor(() => expect(fillHandleIn('cost', 'a')).toBeNull());
+        expect(gridDiv.querySelector('.ag-fill-handle')).toBeNull();
     });
 });
