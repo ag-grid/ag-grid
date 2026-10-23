@@ -1,6 +1,24 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-DOMPURIFY-21460653:
+    - 'dompurify@3.4.16':
+        reason: >-
+            Only used by the example dev toolbar (off unless enabled in local storage) to sanitise links built from the site config - no user-supplied input
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T12:58:56.000Z
+  SNYK-JS-DOMPURIFY-21460657:
+    - 'dompurify@3.4.16':
+        reason: >-
+            Only used by the example dev toolbar (off unless enabled in local storage) to sanitise links built from the site config - no user-supplied input
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T12:58:56.000Z
+  SNYK-JS-MODELCONTEXTPROTOCOLSDK-21460687:
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T12:58:56.000Z
   SNYK-JS-BODYPARSER-21431495:
     - 'ag-grid-angular@* > *':
         reason: >-
