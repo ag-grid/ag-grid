@@ -9,6 +9,7 @@ import {
     initPointerEventPolyfill,
     waitForEvent,
 } from 'ag-test-utils';
+import { onTestFinished } from 'vitest';
 
 import type { CellRangeParams, GridApi, GridOptions, Module } from 'ag-grid-community';
 import {
@@ -1165,5 +1166,63 @@ describe('ag-grid formulas interactive workflows', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:r0 row-number:"1" a:"xyz"
         `);
+    });
+
+    // Inside a shadow root the page's focused element is the host, never the editor, so focus is read through the grid's root.
+    test('typing a function name in a formula cell of a grid inside a shadow root suggests the matching functions', async () => {
+        const host = document.body.appendChild(document.createElement('div'));
+        onTestFinished(() => host.remove());
+        const shadowRoot = host.attachShadow({ mode: 'open' });
+        const api = await gridsManager.createGridAndWait(shadowRoot.appendChild(document.createElement('div')), {
+            defaultColDef: { allowFormula: true, editable: true },
+            rowData: [{ id: 'r1', a: 2, b: null }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await started;
+        const editor = shadowRoot.querySelector<HTMLTextAreaElement>('.ag-formula-input-field textarea')!;
+        await userEvent.type(editor, '=SU');
+
+        await waitFor(() =>
+            expect(
+                Array.from(shadowRoot.querySelectorAll('.ag-autocomplete-row-label'), (label) => label.textContent)
+            ).toContain('SUM')
+        );
+        await userEvent.keyboard('{Enter}');
+        expect(editor.value).toBe('=SUM(');
+    });
+
+    test('returning to a formula editor in a grid inside a shadow root after picking a reference puts the caret at the end', async () => {
+        const host = document.body.appendChild(document.createElement('div'));
+        const outside = document.body.appendChild(document.createElement('button'));
+        onTestFinished(() => {
+            host.remove();
+            outside.remove();
+        });
+        const shadowRoot = host.attachShadow({ mode: 'open' });
+        const api = await gridsManager.createGridAndWait(shadowRoot.appendChild(document.createElement('div')), {
+            defaultColDef: { allowFormula: true, editable: true },
+            cellSelection: true,
+            rowData: [{ id: 'r1', a: 2, b: null }],
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+        });
+
+        const started = waitForEvent('cellEditingStarted', api);
+        api.startEditingCell({ rowIndex: 0, colKey: 'b' });
+        await started;
+        const editor = shadowRoot.querySelector<HTMLTextAreaElement>('.ag-formula-input-field textarea')!;
+        await userEvent.type(editor, '=1+*2');
+        await userEvent.keyboard('{ArrowLeft}{ArrowLeft}');
+
+        api.addCellRange({ rowStartIndex: 0, rowEndIndex: 0, columns: ['a'] });
+        await waitFor(() => expect(editor.value).toBe('=1+A1*2'));
+        await waitFor(() => expect(editor.selectionStart).toBe('=1+A1'.length));
+        await asyncSetTimeout(0);
+
+        outside.focus();
+        editor.focus();
+        expect(editor.selectionStart).toBe('=1+A1*2'.length);
     });
 });

@@ -22,6 +22,32 @@ const ROW_DATA: Row[] = [
     { id: 'r2', a: 'a2', b: 'b2' },
 ];
 
+/** A grid container in the given DOM shape, with the grid's root and where focus outside the grid lives. */
+function mountGridDiv(mode: 'light' | 'open' | 'closed' | 'nested') {
+    const host = document.body.appendChild(document.createElement('div'));
+    onTestFinished(() => host.remove());
+    if (mode === 'light') {
+        const root: Document | ShadowRoot = document;
+        return {
+            gridDiv: host.appendChild(document.createElement('div')),
+            gridRoot: root,
+            outside: document.body,
+            outsideRoot: root,
+        };
+    }
+    const outer = mode === 'nested' ? host.attachShadow({ mode: 'open' }) : null;
+    const gridRoot = (outer ? outer.appendChild(document.createElement('div')) : host).attachShadow({
+        mode: mode === 'closed' ? 'closed' : 'open',
+    });
+    const outsideRoot: Document | ShadowRoot = outer ?? document;
+    return {
+        gridDiv: gridRoot.appendChild(document.createElement('div')),
+        gridRoot,
+        outside: outer ?? document.body,
+        outsideRoot,
+    };
+}
+
 function cellFor(api: GridApi, rowIndex: number, colId: string): HTMLElement | null {
     return (
         TestGridsManager.getHTMLElement(api)?.querySelector<HTMLElement>(
@@ -188,30 +214,33 @@ describe('cell ctrl lifecycle', () => {
         expect(cellFor(api, 0, 'c0')).not.toBeNull();
     });
 
-    test('a focused cell or full-width row rebuilt by a redraw takes focus back, unless focus has since moved out of the grid', async () => {
-        const api = await gridsManager.createGridAndWait('myGrid', {
-            columnDefs: [{ field: 'a' }, { field: 'b' }],
-            rowData: ROW_DATA,
-            isFullWidthRow: (params) => params.rowNode.data?.id === 'r2',
-            fullWidthCellRenderer: () => 'full width',
-        });
-        const input = document.body.appendChild(document.createElement('input'));
-        onTestFinished(() => input.remove());
-        const expectFocusTakenBackUnlessMoved = async (rowIndex: number, focused: () => Element | null | undefined) => {
-            api.setFocusedCell(rowIndex, 'a');
-            api.redrawRows();
+    test.each(['light', 'open', 'closed', 'nested'] as const)(
+        'in a %s grid, a focused cell or full-width row rebuilt by a redraw takes focus back, unless focus has since moved out of the grid',
+        async (mode) => {
+            const { gridDiv, gridRoot, outside, outsideRoot } = mountGridDiv(mode);
+            const api = gridsManager.createGrid(gridDiv, {
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+                rowData: ROW_DATA,
+                isFullWidthRow: (params) => params.rowNode.data?.id === 'r2',
+                fullWidthCellRenderer: () => 'full width',
+            });
             await asyncSetTimeout(0);
-            expect(document.activeElement).toBe(focused());
+            const input = outside.appendChild(document.createElement('input'));
+            onTestFinished(() => input.remove());
+            const expectFocusTakenBackUnlessMoved = async (rowIndex: number, focused: () => Element | null) => {
+                api.setFocusedCell(rowIndex, 'a');
+                api.redrawRows();
+                await asyncSetTimeout(0);
+                expect(gridRoot.activeElement).toBe(focused());
 
-            api.redrawRows();
-            input.focus();
-            await asyncSetTimeout(0);
-            expect(document.activeElement).toBe(input);
-        };
+                api.redrawRows();
+                input.focus();
+                await asyncSetTimeout(0);
+                expect(outsideRoot.activeElement).toBe(input);
+            };
 
-        await expectFocusTakenBackUnlessMoved(0, () => cellFor(api, 0, 'a'));
-        await expectFocusTakenBackUnlessMoved(1, () =>
-            TestGridsManager.getHTMLElement(api)?.querySelector('.ag-full-width-row[row-index="1"]')
-        );
-    });
+            await expectFocusTakenBackUnlessMoved(0, () => cellFor(api, 0, 'a'));
+            await expectFocusTakenBackUnlessMoved(1, () => gridDiv.querySelector('.ag-full-width-row[row-index="1"]'));
+        }
+    );
 });
