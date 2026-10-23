@@ -1,6 +1,564 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-BODYPARSER-21431495:
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-FFLATE-20883305:
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-community@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-react@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-MODELCONTEXTPROTOCOLSDK-21369529:
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-MODELCONTEXTPROTOCOLSDK-21369530:
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-MODELCONTEXTPROTOCOLSDK-21369553:
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-PICOMATCH-21248802:
+    - '@astrojs/check@0.9.10 > @astrojs/language-server@2.17.0 > tinyglobby@0.2.17 > picomatch@4.0.4':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - '@astrojs/markdoc@2.0.9 > @astrojs/internal-helpers@0.11.0 > picomatch@4.0.4':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - '@astrojs/react@7.0.0 > @astrojs/internal-helpers@0.11.0 > picomatch@4.0.4':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - '@astrojs/react@7.0.0 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > tinyglobby@0.2.15 > picomatch@4.0.7':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - '@astrojs/react@7.0.0 > vite@8.3.0 > picomatch@4.0.7':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - '@astrojs/react@7.0.0 > vite@8.3.0 > tinyglobby@0.2.17 > picomatch@4.0.4':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > @astrojs/internal-helpers@0.11.0 > picomatch@4.0.4':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > picomatch@4.0.4':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > tinyglobby@0.2.15 > picomatch@4.0.7':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > unstorage@1.17.5 > anymatch@3.1.3 > picomatch@2.3.1':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > tinyglobby@0.2.15 > picomatch@4.0.7':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > vite@8.3.0 > picomatch@4.0.7':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > vite@8.3.0 > tinyglobby@0.2.17 > picomatch@4.0.4':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > micromatch@4.0.8 > picomatch@2.3.1':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > tinyglobby@0.2.15 > picomatch@4.0.7':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite-plugin-svgr@4.5.0 > @rollup/pluginutils@5.4.0 > picomatch@4.0.7':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-QS-20943482:
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'react-instantsearch@7.50.0 > instantsearch.js@4.118.0 > qs@6.14.1':
+        reason: >-
+            Only exploitable via qs.stringify with arrayFormat 'comma', which instantsearch.js never uses
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-SHARP-21347772:
+    - 'astro@7.3.4 > sharp@0.35.4':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-20954499:
+    - 'astro@7.3.4 > unifont@0.7.5 > undici@8.11.0':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181005:
+    - '@astrojs/react@7.0.0 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > unifont@0.7.5 > undici@8.11.0':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'cheerio@1.2.0 > undici@7.29.0':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite-plugin-mkcert@2.1.0 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181009:
+    - '@astrojs/react@7.0.0 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > unifont@0.7.5 > undici@8.11.0':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'cheerio@1.2.0 > undici@7.29.0':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite-plugin-mkcert@2.1.0 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181011:
+    - '@astrojs/react@7.0.0 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > unifont@0.7.5 > undici@8.11.0':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'cheerio@1.2.0 > undici@7.29.0':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite-plugin-mkcert@2.1.0 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181013:
+    - '@astrojs/react@7.0.0 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > unifont@0.7.5 > undici@8.11.0':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'cheerio@1.2.0 > undici@7.29.0':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite-plugin-mkcert@2.1.0 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181015:
+    - '@astrojs/react@7.0.0 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > unifont@0.7.5 > undici@8.11.0':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'cheerio@1.2.0 > undici@7.29.0':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite-plugin-mkcert@2.1.0 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181017:
+    - '@astrojs/react@7.0.0 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > unifont@0.7.5 > undici@8.11.0':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'cheerio@1.2.0 > undici@7.29.0':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite-plugin-mkcert@2.1.0 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21181019:
+    - '@astrojs/react@7.0.0 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > unifont@0.7.5 > undici@8.11.0':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'cheerio@1.2.0 > undici@7.29.0':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite-plugin-mkcert@2.1.0 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-UNDICI-21185768:
+    - '@astrojs/react@7.0.0 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-enterprise@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > unifont@0.7.5 > undici@8.11.0':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > vite@8.3.0 > fsevents@2.3.3 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'cheerio@1.2.0 > undici@7.29.0':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'sass@1.105.0 > @parcel/watcher@2.5.1 > node-addon-api@7.1.1 > node-gyp@13.0.2 > undici@8.11.2':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'vite-plugin-mkcert@2.1.0 > undici@8.11.2':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+  SNYK-JS-VITE-21282024:
+    - '@astrojs/react@7.0.0 > vite@8.3.0':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-angular@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'ag-grid-vue3@* > *':
+        reason: >-
+            Local workspace package - its dependencies are scanned and triaged in its own project
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
+    - 'astro@7.3.4 > vite@8.3.0':
+        reason: >-
+            Docs website build tooling - the site is built statically, so this runs at build time only
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T10:11:14.000Z
   SNYK-JS-SHARP-20552492:
     - astro@7.3.4 > sharp@0.35.4:
         reason: >-
