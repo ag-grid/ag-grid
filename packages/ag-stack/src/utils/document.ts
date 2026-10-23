@@ -7,6 +7,15 @@ export function _getRootNode(beans: UtilBeanCollection): Document | ShadowRoot {
 }
 
 /**
+ * For an element that may sit outside the grid's root node, e.g. in a popup under `popupParent`.
+ *
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getElementRootNode(element: Node): Document | ShadowRoot {
+    return element.getRootNode() as Document | ShadowRoot;
+}
+
+/**
  * The focused element in the grid's own tree or, while focus is outside it, in the nearest enclosing root holding it,
  * where a component stands as its host: what to test with `contains` against grid elements, which stops at a shadow boundary.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
@@ -101,6 +110,19 @@ export function _getPageBody(beans: UtilBeanCollection): HTMLElement | ShadowRoo
     }
 
     return targetEl;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const SHADOW_DOM_MOUNT_CLASS = 'ag-shadow-dom-mount';
+
+/**
+ * Parent for grid-owned elements that follow the pointer, such as the drag image. In a grid rendered in its own
+ * shadow root this is the element carrying the mirrored theme mode, so they get the same mode as the grid.
+ *
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getOverlayParent(beans: UtilBeanCollection): HTMLElement | ShadowRoot {
+    return beans.eRootDiv.closest<HTMLElement>(`.${SHADOW_DOM_MOUNT_CLASS}`) ?? _getPageBody(beans);
 }
 
 export function _getBodyWidth(beans: UtilBeanCollection): number {
