@@ -17,18 +17,6 @@
     }
 }
 
-// Layout
-// ===============================================
-.layoutExample {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--layout-gap);
-
-    div {
-        background-color: rgba(255, 0, 0, 0.1);
-    }
-}
-
 // Spacing
 // ===============================================
 .spacingItem {
@@ -171,8 +159,7 @@
     gap: var(--layout-gap);
 }
 
-.textInputGroup,
-.textInputGroupStacked {
+.textInputGroup {
     display: flex;
     flex-direction: column;
     gap: $spacing-size-3;
@@ -180,11 +167,6 @@
     code {
         width: fit-content;
     }
-}
-
-.textInputGroupStacked .textInput {
-    flex-direction: column;
-    gap: $spacing-size-3;
 }
 
 .inputsList,
