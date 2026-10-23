@@ -1,6 +1,12 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+  SNYK-JS-MODELCONTEXTPROTOCOLSDK-21460687:
+    - '@angular/cli@20.3.35 > @modelcontextprotocol/sdk@1.30.0':
+        reason: >-
+            Used in build & dev - not included in final production build
+        expires: '2027-03-02T00:00:00.000Z'
+        created: 2026-10-23T12:58:56.000Z
   SNYK-JS-BODYPARSER-21431495:
     - '@angular/cli@20.3.35 > @modelcontextprotocol/sdk@1.30.0 > express@5.2.1 > body-parser@2.3.0':
         reason: >-

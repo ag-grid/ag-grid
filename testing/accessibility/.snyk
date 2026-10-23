@@ -1,6 +1,12 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 ignore:
+    SNYK-JS-MODELCONTEXTPROTOCOLSDK-21460687:
+        - 'ag-grid-angular@* > *':
+              reason: >-
+                  Local workspace package - its dependencies are scanned and triaged in its own project
+              expires: '2027-03-02T00:00:00.000Z'
+              created: 2026-10-23T12:58:56.000Z
     SNYK-JS-ANGULARROUTER-21280762:
         - '@angular/router@20.3.30':
               reason: >-
