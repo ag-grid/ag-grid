@@ -234,3 +234,42 @@ export const withPaletteDefaults = (palette: Palette, defaults: Palette): Palett
 
 export const paletteIsEmpty = (palette: Palette): boolean =>
     palette.fills.length === 0 && palette.strokes.length === 0 && !palette.up && !palette.down && !palette.neutral;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+    typeof value === 'object' && value != null && !Array.isArray(value);
+
+const readColor = (value: unknown): string | undefined => (typeof value === 'string' ? value : undefined);
+
+const readAccent = (value: unknown): PaletteAccent | undefined =>
+    isRecord(value) ? { fill: readColor(value.fill), stroke: readColor(value.stroke) } : undefined;
+
+/**
+ * An AG Charts theme palette in the editor's shape, the inverse of
+ * `toThemePalette`: fills no colour picker can show are dropped with their
+ * strokes, and strokes that all match their fills read back as strokes off.
+ */
+export const fromThemePalette = (themePalette: unknown): Palette | undefined => {
+    if (!isRecord(themePalette)) {
+        return undefined;
+    }
+    const fills = Array.isArray(themePalette.fills) ? themePalette.fills : [];
+    const strokes = Array.isArray(themePalette.strokes) ? themePalette.strokes : [];
+    const colors: SeriesColor[] = [];
+    fills.forEach((fill, index) => {
+        if (typeof fill === 'string') {
+            colors.push({ fill, stroke: readColor(strokes[index]) ?? fill });
+        }
+    });
+    const strokesOff = colors.length > 0 && colors.every(({ fill, stroke }) => fill === stroke);
+    const palette = fromSeriesColors(
+        {
+            ...EMPTY_PALETTE,
+            ...(strokesOff ? { strokesEnabled: false } : {}),
+            up: readAccent(themePalette.up),
+            down: readAccent(themePalette.down),
+            neutral: readAccent(themePalette.neutral),
+        },
+        colors
+    );
+    return paletteIsEmpty(palette) ? undefined : palette;
+};
