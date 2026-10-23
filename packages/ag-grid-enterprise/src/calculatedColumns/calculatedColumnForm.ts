@@ -1,5 +1,6 @@
 import {
     RefPlaceholder,
+    _getActiveDomElement,
     _getElementRootNode,
     _setAriaActiveDescendant,
     _setAriaAutoComplete,
@@ -373,8 +374,7 @@ export class CalculatedColumnForm extends Component {
             },
             focusout: () =>
                 window.setTimeout(() => {
-                    const eGui = this.getGui();
-                    if (eGui.contains(_getElementRootNode(eGui).activeElement)) {
+                    if (this.getGui().contains(_getActiveDomElement(this.beans))) {
                         return;
                     }
                     this.hideSuggestions();

@@ -1,4 +1,4 @@
-import { _getDocument, _getElementRootNode } from 'ag-stack';
+import { _getActiveDomElement, _getDocument } from 'ag-stack';
 
 import type {
     AgComponentSelectorType,
@@ -414,9 +414,8 @@ export class AgFormulaInputField extends AgAbstractInputField<
             if (!this.isAlive()) {
                 return;
             }
-            const contentEl = this.getContentElement();
-            contentEl.focus({ preventScroll: true });
-            if (_getElementRootNode(contentEl).activeElement === contentEl) {
+            this.getContentElement().focus({ preventScroll: true });
+            if (_getActiveDomElement(this.beans) === this.getContentElement()) {
                 this.suppressNextFocusCaretPlacement = false;
             }
             this.getInputElement().setSelectionRange(caret, caret);

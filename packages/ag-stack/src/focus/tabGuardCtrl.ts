@@ -3,7 +3,7 @@ import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import { _getDocument, _getElementRootNode } from '../utils/document';
+import { _getActiveDomElement, _getDocument } from '../utils/document';
 import { _findFocusableElements, _findNextFocusableElement, _removeNonTabStopRadios } from '../utils/focus';
 import type { StopPropagationCallbacks } from './agManagedFocusFeature';
 import { AgManagedFocusFeature } from './agManagedFocusFeature';
@@ -197,7 +197,7 @@ export class AgTabGuardCtrl<
             const fromBottom = e.target === this.eBottomGuard;
             const focusHandled = this.providedOnGuardFocusedFromInside?.(fromBottom);
 
-            if (focusHandled === true && _getElementRootNode(this.eFocusableElement).activeElement === e.target) {
+            if (focusHandled === true && _getActiveDomElement(this.beans) === e.target) {
                 const relatedTarget = e.relatedTarget as HTMLElement;
                 const focusTarget = relatedTarget.classList.contains(TabGuardClassNames.TAB_GUARD)
                     ? this.lastFocusedElementInside
