@@ -1676,10 +1676,7 @@ export class ColumnFilterService
         return _refreshHandlerAndUi(
             () => {
                 // a handler storing another model as it refreshes (a refusal) has refreshed the ui with that one
-                if (this.state.get(colId) !== state) {
-                    return AgPromise.resolve(undefined);
-                }
-                if (filterUi) {
+                if (filterUi && this.state.get(colId) === state) {
                     const { created, filterParams } = filterUi;
                     if (created) {
                         return filterUi.promise.then((filter) => {
