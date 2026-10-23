@@ -1444,6 +1444,70 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
     });
 
     test.each([
+        { name: 'a paste', from: 'a button outside it', processDataFromClipboard: undefined, expected: 'pasted' },
+        {
+            name: 'a cancelled paste',
+            from: 'a button outside it',
+            processDataFromClipboard: () => null,
+            expected: 'keep',
+        },
+        { name: 'a cancelled paste', from: 'its focused cell', processDataFromClipboard: () => null, expected: 'keep' },
+    ])(
+        'with suppressClipboardApi, $name in a grid inside a shadow root, started from $from, leaves focus there',
+        ({ from, processDataFromClipboard, expected }) => {
+            const host = document.body.appendChild(document.createElement('div'));
+            const gridDiv = host.attachShadow({ mode: 'open' }).appendChild(document.createElement('div'));
+            const button = document.body.appendChild(document.createElement('button'));
+            try {
+                const api = gridMgr.createGrid(gridDiv, {
+                    columnDefs: [{ field: 'field', editable: true }],
+                    rowData: [{ field: 'keep' }],
+                    suppressClipboardApi: true,
+                    processDataFromClipboard,
+                });
+                api.setFocusedCell(0, 'field');
+                const cell = gridDiv.querySelector<HTMLElement>('.ag-cell[col-id="field"]')!;
+                const started = from === 'its focused cell' ? cell : button;
+                started.focus();
+                vi.useFakeTimers({ toFake: ['setTimeout'] });
+                api.pasteFromClipboard();
+                gridDiv.querySelector('textarea')!.value = 'pasted';
+                vi.advanceTimersByTime(100);
+                expect(api.getDisplayedRowAtIndex(0)?.data).toEqual({ field: expected });
+                expect((started.getRootNode() as Document | ShadowRoot).activeElement).toBe(started);
+            } finally {
+                vi.useRealTimers();
+                button.remove();
+                host.remove();
+            }
+        }
+    );
+
+    test('with suppressClipboardApi, a copy in a grid inside a shadow root, started from a button outside it, leaves focus on the button', () => {
+        const host = document.body.appendChild(document.createElement('div'));
+        const gridDiv = host.attachShadow({ mode: 'open' }).appendChild(document.createElement('div'));
+        const button = document.body.appendChild(document.createElement('button'));
+        const command = vi.fn(() => true);
+        Object.defineProperty(document, 'execCommand', { configurable: true, value: command });
+        try {
+            const api = gridMgr.createGrid(gridDiv, {
+                columnDefs: [{ field: 'field' }],
+                rowData: [{ field: 'copied' }],
+                suppressClipboardApi: true,
+            });
+            api.setFocusedCell(0, 'field');
+            button.focus();
+            api.copyToClipboard();
+            expect(command).toHaveBeenCalledWith('copy');
+            expect(document.activeElement).toBe(button);
+        } finally {
+            Reflect.deleteProperty(document, 'execCommand');
+            button.remove();
+            host.remove();
+        }
+    });
+
+    test.each([
         { name: 'lost', moveFocus: () => (document.activeElement as HTMLElement).blur() },
         {
             name: 'on the header',

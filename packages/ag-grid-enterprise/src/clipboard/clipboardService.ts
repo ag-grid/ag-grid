@@ -65,6 +65,15 @@ function isBlankLine(line: string[] | undefined): boolean {
     return line?.length === 1 && line[0] === '';
 }
 
+/** The focused element through open shadow roots: a root's own activeElement is null while focus is outside it. */
+function getFocusedElement(eDocument: Document): Element | null {
+    let focused = eDocument.activeElement;
+    for (let inner = focused?.shadowRoot?.activeElement; inner; inner = inner.shadowRoot?.activeElement) {
+        focused = inner;
+    }
+    return focused;
+}
+
 enum CellClearType {
     CellRange,
     SelectedRows,
@@ -1514,7 +1523,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         style.opacity = '0';
 
         const guiRoot = this.gridCtrl.getGui();
-        const focusedBefore = _getActiveDomElement(this.beans) as HTMLElement | null;
+        const focusedBefore = getFocusedElement(_getDocument(this.beans)) as HTMLElement | null;
         const restoreFocus = () => {
             if (focusedBefore == null || _getActiveDomElement(this.beans) !== eTempInput) {
                 return; // focus the user moved elsewhere meanwhile stays there
