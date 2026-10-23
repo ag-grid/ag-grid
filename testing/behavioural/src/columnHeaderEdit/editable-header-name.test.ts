@@ -1,6 +1,7 @@
 import { findByText, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import { onTestFinished } from 'vitest';
 
 import type { AgColumn, ColDef, GridApi, HeaderValueGetterParams } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
@@ -750,6 +751,31 @@ describe('Editable header name', () => {
         // The highlight is toggled synchronously as the editor opens, so no further wait is needed.
         await openEditor(toolPanel, gridDiv, 'Athlete');
         expect(isHighlighted()).toBe(false);
+    });
+
+    test('closing the header name editor with focus on a container around the grid gives focus back to the element that opened it', async () => {
+        const container = document.createElement('div');
+        container.tabIndex = -1;
+        const gridHost = document.createElement('div');
+        gridHost.id = 'myGrid';
+        container.appendChild(gridHost);
+        document.body.appendChild(container);
+        onTestFinished(() => container.remove());
+
+        const { gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }]);
+        const input = await openEditor(toolPanel, gridDiv, 'Athlete');
+        await waitFor(() => expect(document.activeElement).toBe(input));
+        const launcher = [...gridDiv.querySelectorAll<HTMLElement>('.ag-virtual-list-item')].find((item) =>
+            item.textContent?.includes('Athlete')
+        );
+        expect(launcher).toBeInstanceOf(HTMLElement);
+
+        container.focus();
+        expect(document.activeElement).toBe(container);
+        pressEscape(input);
+        await waitForEditorClosed();
+
+        await waitFor(() => expect(document.activeElement).toBe(launcher));
     });
 });
 

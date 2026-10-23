@@ -1,5 +1,6 @@
 import {
     RefPlaceholder,
+    _getActiveDomElement,
     _getDocument,
     _setAriaActiveDescendant,
     _setAriaAutoComplete,
@@ -373,9 +374,10 @@ export class CalculatedColumnForm extends Component {
             },
             focusout: () =>
                 window.setTimeout(() => {
-                    if (!this.getGui().contains(_getDocument(this.beans).activeElement)) {
-                        this.hideSuggestions();
+                    if (this.getGui().contains(_getActiveDomElement(this.beans))) {
+                        return;
                     }
+                    this.hideSuggestions();
                 }, 0),
         });
     }

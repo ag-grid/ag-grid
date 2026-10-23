@@ -308,10 +308,8 @@ export class UndoRedoService extends BeanStub implements NamedBean {
                 this.isPasting = true;
             },
             pasteEnd: () => {
-                // a paste that changed nothing must not clear the redo stack
-                if (this.cellValueChanges.length) {
-                    this.pushActionsToUndoStack(new UndoRedoAction(this.cellValueChanges));
-                }
+                const action = new UndoRedoAction(this.cellValueChanges);
+                this.pushActionsToUndoStack(action);
                 this.isPasting = false;
             },
             fillStart: () => {
@@ -369,13 +367,13 @@ export class UndoRedoService extends BeanStub implements NamedBean {
 
         const action = new UndoRedoAction(changes ?? []);
         this.pushActionsToUndoStack(action);
-        this.cellValueChanges = [];
     }
 
     private pushActionsToUndoStack(action: UndoRedoAction) {
-        this.undoStack.push(action);
-
         this.cellValueChanges = [];
-        this.redoStack.clear();
+        // a no-change action keeps the redo stack; inside a batch a staged edit is empty too, so every action clears it
+        if (this.undoStack.push(action) || this.batchEditing) {
+            this.redoStack.clear();
+        }
     }
 }

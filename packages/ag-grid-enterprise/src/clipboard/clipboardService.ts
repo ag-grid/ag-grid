@@ -1,4 +1,12 @@
-import { _exists, _getActiveDomElement, _getDocument, _last, _removeFromArray } from 'ag-stack';
+import {
+    _exists,
+    _getActiveDomElement,
+    _getDeepActiveElement,
+    _getDocument,
+    _isNothingFocused,
+    _last,
+    _removeFromArray,
+} from 'ag-stack';
 
 import type {
     AgColumn,
@@ -275,33 +283,15 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             }
         };
 
-        const beans = this.beans;
-        const focusedBefore = _getActiveDomElement(beans) as HTMLElement | null;
         this.executeOnTempElement(
             (textArea) => {
                 textArea.addEventListener('paste', handlePasteEvent);
                 textArea.focus({ preventScroll: true });
             },
             (element) => {
-                if (!this.isAlive()) {
-                    return;
-                }
-                const data = element.value;
-                if (_getActiveDomElement(beans) === element) {
-                    // before the paste, so one that adds rows to an empty grid can move focus to them
-                    const gridBodyCtrl = beans.ctrlsSvc.getGridBodyCtrl();
-                    if (focusedBefore === gridBodyCtrl.eGridViewport) {
-                        gridBodyCtrl.refocusViewport();
-                    } else {
-                        focusedBefore?.focus({ preventScroll: true });
-                    }
-                }
                 if (!defaultPrevented) {
-                    this.processClipboardData(data, html);
-                } else {
-                    this.refocusLastFocusedCell();
+                    this.processClipboardData(element.value, html);
                 }
-                element.removeEventListener('paste', handlePasteEvent);
             }
         );
     }
@@ -598,8 +588,11 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         this.dispatchFlashCells(cellsToFlash);
         this.fireRowChanged(updatedRowNodes);
 
-        // keeps keyboard navigation on the focused cell, wherever the paste was started from
-        this.refocusLastFocusedCell();
+        // refocuses the cell unless focus has left the grid
+        const focused = _getActiveDomElement(this.beans);
+        if (_isNothingFocused(this.beans, focused) || this.beans.eRootDiv.contains(focused)) {
+            this.refocusLastFocusedCell();
+        }
         eventSvc.dispatchEvent({
             type: 'pasteEnd',
             source,
@@ -1486,7 +1479,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         // method 3 - if all else fails, the old school hack
         this.executeOnTempElement((element) => {
             const eDocument = _getDocument(this.beans);
-            const focusedElementBefore = _getActiveDomElement(this.beans) as HTMLElement;
 
             element.value = data || ' '; // has to be non-empty value or execCommand will not do anything
             element.select();
@@ -1496,10 +1488,6 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
 
             if (!result) {
                 this.warn(41);
-            }
-
-            if (focusedElementBefore?.focus != null) {
-                focusedElementBefore.focus({ preventScroll: true });
             }
         });
     }
@@ -1529,6 +1517,22 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         style.opacity = '0';
 
         const guiRoot = this.gridCtrl.getGui();
+        const focusedBefore = _getDeepActiveElement(this.beans) as HTMLElement | null;
+        const restoreFocus = () => {
+            if (focusedBefore == null || _getActiveDomElement(this.beans) !== eTempInput) {
+                return; // focus the user moved elsewhere meanwhile stays there
+            }
+            const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
+            if (focusedBefore === gridBodyCtrl.eGridViewport) {
+                // rows may have replaced the empty grid meanwhile, leaving the viewport unfocusable
+                gridBodyCtrl.refocusViewport();
+            } else if (focusedBefore.isConnected) {
+                focusedBefore.focus({ preventScroll: true });
+            } else {
+                // detached meanwhile: a re-rendered cell, or an earlier paste's textarea
+                this.refocusLastFocusedCell();
+            }
+        };
 
         guiRoot.appendChild(eTempInput);
 
@@ -1541,10 +1545,19 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         //It needs 100 otherwise OS X seemed to not always be able to paste... Go figure...
         if (callbackAfter) {
             window.setTimeout(() => {
-                callbackAfter(eTempInput);
-                eTempInput.remove();
+                try {
+                    if (!this.isAlive()) {
+                        return;
+                    }
+                    // before the callback, so one that throws still gives the focus back
+                    restoreFocus();
+                    callbackAfter(eTempInput);
+                } finally {
+                    eTempInput.remove();
+                }
             }, 100);
         } else {
+            restoreFocus();
             eTempInput.remove();
         }
     }

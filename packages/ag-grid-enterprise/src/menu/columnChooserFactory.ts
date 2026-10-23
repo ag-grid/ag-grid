@@ -1,4 +1,4 @@
-import { _findNextFocusableElement, _getActiveDomElement } from 'ag-stack';
+import { _findNextFocusableElement, _getDeepActiveElement } from 'ag-stack';
 
 import type { AgColumn, ColumnChooserParams, HeaderPosition, NamedBean } from 'ag-grid-community';
 import { BeanStub, _addGridCommonParams } from 'ag-grid-community';
@@ -83,7 +83,7 @@ export class ColumnChooserFactory extends BeanStub implements NamedBean {
         const translate = this.getLocaleTextFunc();
         const beans = this.beans;
         const { focusSvc, menuUtils } = beans;
-        const activeElement = _getActiveDomElement(beans);
+        const activeElement = _getDeepActiveElement(beans);
         const openerEl = eventSource ?? (activeElement instanceof HTMLElement ? activeElement : undefined);
         const restoreColumn = column ?? undefined;
         const columnIndex = column?.allColsIndex ?? -1;
