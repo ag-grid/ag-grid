@@ -1,4 +1,12 @@
-import { _exists, _getActiveDomElement, _getDocument, _last, _removeFromArray } from 'ag-stack';
+import {
+    _exists,
+    _getActiveDomElement,
+    _getDeepActiveElement,
+    _getDocument,
+    _isNothingFocused,
+    _last,
+    _removeFromArray,
+} from 'ag-stack';
 
 import type {
     AgColumn,
@@ -63,15 +71,6 @@ const HTML_EMPTY_PARAGRAPH_REGEX = new RegExp(String.raw`^<p\b${HTML_TAG_ATTRIBU
 
 function isBlankLine(line: string[] | undefined): boolean {
     return line?.length === 1 && line[0] === '';
-}
-
-/** The focused element through open shadow roots: a root's own activeElement is null while focus is outside it. */
-function getFocusedElement(eDocument: Document): Element | null {
-    let focused = eDocument.activeElement;
-    for (let inner = focused?.shadowRoot?.activeElement; inner; inner = inner.shadowRoot?.activeElement) {
-        focused = inner;
-    }
-    return focused;
 }
 
 enum CellClearType {
@@ -589,14 +588,9 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         this.dispatchFlashCells(cellsToFlash);
         this.fireRowChanged(updatedRowNodes);
 
-        // gives back focus the paste lost (judged on the page, not a shadow root), never focus moved out of the grid
-        const eDocument = _getDocument(this.beans);
-        const pageFocus = eDocument.activeElement;
-        if (
-            !pageFocus ||
-            pageFocus === eDocument.body ||
-            this.beans.eRootDiv.contains(_getActiveDomElement(this.beans))
-        ) {
+        // refocuses the cell unless focus has left the grid
+        const focused = _getActiveDomElement(this.beans);
+        if (_isNothingFocused(this.beans, focused) || this.beans.eRootDiv.contains(focused)) {
             this.refocusLastFocusedCell();
         }
         eventSvc.dispatchEvent({
@@ -1523,7 +1517,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         style.opacity = '0';
 
         const guiRoot = this.gridCtrl.getGui();
-        const focusedBefore = getFocusedElement(_getDocument(this.beans)) as HTMLElement | null;
+        const focusedBefore = _getDeepActiveElement(this.beans) as HTMLElement | null;
         const restoreFocus = () => {
             if (focusedBefore == null || _getActiveDomElement(this.beans) !== eTempInput) {
                 return; // focus the user moved elsewhere meanwhile stays there

@@ -184,6 +184,7 @@ export {
 } from './utils/date';
 export {
     _getActiveDomElement,
+    _getDeepActiveElement,
     _getDocument,
     _getPageBody,
     _getRootNode,

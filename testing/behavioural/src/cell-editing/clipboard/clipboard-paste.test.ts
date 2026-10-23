@@ -10,6 +10,7 @@ import {
     clipboardUtils,
     waitForEvent,
 } from 'ag-test-utils';
+import { onTestFinished } from 'vitest';
 
 import {
     TextEditorModule,
@@ -1400,50 +1401,64 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
         }
     });
 
-    test('a paste started from a button outside the grid leaves focus on the button', async () => {
-        const api = await gridMgr.createGridAndWait('pasteFromOutsideButton', {
-            columnDefs: [{ field: 'field', editable: true }],
-            rowData: [{ field: 'keep' }],
-        });
-        api.setFocusedCell(0, 'field');
-        const button = document.body.appendChild(document.createElement('button'));
-        try {
-            button.focus();
-            clipboardUtils.setText('pasted');
-            const pasteEnd = waitForEvent('pasteEnd', api);
-            api.pasteFromClipboard();
-            await pasteEnd;
-            expect(api.getDisplayedRowAtIndex(0)?.data).toEqual({ field: 'pasted' });
-            expect(document.activeElement).toBe(button);
-        } finally {
-            button.remove();
-        }
-    });
-
-    test('a paste in a grid inside a shadow root, started from a button outside it, leaves focus on the button', async () => {
-        const host = document.body.appendChild(document.createElement('div'));
-        const gridDiv = host.attachShadow({ mode: 'open' }).appendChild(document.createElement('div'));
-        const button = document.body.appendChild(document.createElement('button'));
-        try {
+    const STARTS = [
+        { action: 'a paste', from: 'a button outside the grid', expected: 'button' },
+        { action: 'a paste', from: 'a focus-trap container around the grid', expected: 'cell' },
+        { action: 'a fill-down', from: 'a button outside the grid', expected: 'button' },
+    ] as const;
+    test.each(
+        (['light', 'open', 'closed', 'nested'] as const).flatMap((mode) => STARTS.map((start) => ({ mode, ...start })))
+    )(
+        'in a $mode grid, $action started from $from leaves focus on the $expected',
+        async ({ mode, action, from, expected }) => {
+            const trap = document.body.appendChild(document.createElement('div'));
+            trap.tabIndex = -1;
+            onTestFinished(() => trap.remove());
+            const outer =
+                mode === 'nested'
+                    ? trap.appendChild(document.createElement('div')).attachShadow({ mode: 'open' })
+                    : null;
+            const gridRoot: Document | ShadowRoot =
+                mode === 'light'
+                    ? document
+                    : (outer ?? trap).appendChild(document.createElement('div')).attachShadow({
+                          mode: mode === 'closed' ? 'closed' : 'open',
+                      });
+            const gridDiv = (mode === 'light' ? trap : gridRoot).appendChild(document.createElement('div'));
+            const button = (outer ?? document.body).appendChild(document.createElement('button'));
+            onTestFinished(() => button.remove());
             const api = gridMgr.createGrid(gridDiv, {
                 columnDefs: [{ field: 'field', editable: true }],
-                rowData: [{ field: 'keep' }],
+                rowData: [{ field: 'keep' }, { field: 'other' }],
+                cellSelection: true,
             });
+            await asyncSetTimeout(0);
             api.setFocusedCell(0, 'field');
-            button.focus();
-            clipboardUtils.setText('pasted');
-            const pasteEnd = waitForEvent('pasteEnd', api);
-            api.pasteFromClipboard();
-            await pasteEnd;
-            expect(api.getDisplayedRowAtIndex(0)?.data).toEqual({ field: 'pasted' });
-            expect(document.activeElement).toBe(button);
-        } finally {
-            button.remove();
-            host.remove();
-        }
-    });
+            const cell = gridDiv.querySelector<HTMLElement>('.ag-row[row-index="0"] .ag-cell[col-id="field"]')!;
+            if (action === 'a fill-down') {
+                api.addCellRange({ rowStartIndex: 0, rowEndIndex: 1, columns: ['field'] });
+            }
+            (from === 'a button outside the grid' ? button : trap).focus();
 
-    test.each([
+            if (action === 'a fill-down') {
+                api.copySelectedRangeDown();
+                expect(api.getDisplayedRowAtIndex(1)?.data).toEqual({ field: 'keep' });
+            } else {
+                clipboardUtils.setText('pasted');
+                const pasteEnd = waitForEvent('pasteEnd', api);
+                api.pasteFromClipboard();
+                await pasteEnd;
+                expect(api.getDisplayedRowAtIndex(0)?.data).toEqual({ field: 'pasted' });
+            }
+            if (expected === 'button') {
+                expect((outer ?? document).activeElement).toBe(button);
+            } else {
+                expect(gridRoot.activeElement).toBe(cell);
+            }
+        }
+    );
+
+    const LEGACY_PASTES = [
         { name: 'a paste', from: 'a button outside it', processDataFromClipboard: undefined, expected: 'pasted' },
         {
             name: 'a cancelled paste',
@@ -1452,60 +1467,94 @@ describe('Clipboard Paste Behaviour: paste flows', () => {
             expected: 'keep',
         },
         { name: 'a cancelled paste', from: 'its focused cell', processDataFromClipboard: () => null, expected: 'keep' },
-    ])(
-        'with suppressClipboardApi, $name in a grid inside a shadow root, started from $from, leaves focus there',
-        ({ from, processDataFromClipboard, expected }) => {
+    ] as const;
+    test.each(
+        (['light', 'open', 'closed', 'nested'] as const).flatMap((mode) =>
+            LEGACY_PASTES.map((paste) => ({ mode, ...paste }))
+        )
+    )(
+        'with suppressClipboardApi, $name in a $mode grid, started from $from, leaves focus there',
+        ({ mode, from, processDataFromClipboard, expected }) => {
             const host = document.body.appendChild(document.createElement('div'));
-            const gridDiv = host.attachShadow({ mode: 'open' }).appendChild(document.createElement('div'));
-            const button = document.body.appendChild(document.createElement('button'));
+            onTestFinished(() => host.remove());
+            const outer = mode === 'nested' ? host.attachShadow({ mode: 'open' }) : null;
+            const gridParent =
+                mode === 'light'
+                    ? host
+                    : (outer ?? host)
+                          .appendChild(document.createElement('div'))
+                          .attachShadow({ mode: mode === 'closed' ? 'closed' : 'open' });
+            const gridDiv = gridParent.appendChild(document.createElement('div'));
+            const button = (outer ?? document.body).appendChild(document.createElement('button'));
+            onTestFinished(() => button.remove());
+            const api = gridMgr.createGrid(gridDiv, {
+                columnDefs: [{ field: 'field', editable: true }],
+                rowData: [{ field: 'keep' }],
+                suppressClipboardApi: true,
+                processDataFromClipboard,
+            });
+            api.setFocusedCell(0, 'field');
+            const cell = gridDiv.querySelector<HTMLElement>('.ag-cell[col-id="field"]')!;
+            const started = from === 'its focused cell' ? cell : button;
+            started.focus();
+            vi.useFakeTimers({ toFake: ['setTimeout'] });
+            onTestFinished(() => {
+                vi.useRealTimers();
+            });
+            api.pasteFromClipboard();
+            gridDiv.querySelector('textarea')!.value = 'pasted';
+            vi.advanceTimersByTime(100);
+            expect(api.getDisplayedRowAtIndex(0)?.data).toEqual({ field: expected });
+            expect((started.getRootNode() as Document | ShadowRoot).activeElement).toBe(started);
+        }
+    );
+
+    test.each([
+        { mode: 'open', from: 'a button outside it' },
+        { mode: 'closed', from: 'its focused cell' },
+        { mode: 'nested', from: 'a button outside it' },
+        { mode: 'light', from: 'a button inside another component' },
+    ] as const)(
+        'with suppressClipboardApi, a copy in a $mode grid, started from $from, leaves focus there',
+        ({ mode, from }) => {
+            const host = document.body.appendChild(document.createElement('div'));
+            const outer = mode === 'nested' ? host.attachShadow({ mode: 'open' }) : null;
+            const gridParent =
+                mode === 'light'
+                    ? host
+                    : (outer ? outer.appendChild(document.createElement('div')) : host).attachShadow({
+                          mode: mode === 'closed' ? 'closed' : 'open',
+                      });
+            const gridDiv = gridParent.appendChild(document.createElement('div'));
+            const widget = document.body.appendChild(document.createElement('div'));
+            const button = (
+                from === 'a button inside another component'
+                    ? widget.attachShadow({ mode: 'open' })
+                    : (outer ?? document.body)
+            ).appendChild(document.createElement('button'));
+            const command = vi.fn(() => true);
+            Object.defineProperty(document, 'execCommand', { configurable: true, value: command });
             try {
                 const api = gridMgr.createGrid(gridDiv, {
-                    columnDefs: [{ field: 'field', editable: true }],
-                    rowData: [{ field: 'keep' }],
+                    columnDefs: [{ field: 'field' }],
+                    rowData: [{ field: 'copied' }],
                     suppressClipboardApi: true,
-                    processDataFromClipboard,
                 });
                 api.setFocusedCell(0, 'field');
                 const cell = gridDiv.querySelector<HTMLElement>('.ag-cell[col-id="field"]')!;
                 const started = from === 'its focused cell' ? cell : button;
                 started.focus();
-                vi.useFakeTimers({ toFake: ['setTimeout'] });
-                api.pasteFromClipboard();
-                gridDiv.querySelector('textarea')!.value = 'pasted';
-                vi.advanceTimersByTime(100);
-                expect(api.getDisplayedRowAtIndex(0)?.data).toEqual({ field: expected });
+                api.copyToClipboard();
+                expect(command).toHaveBeenCalledWith('copy');
                 expect((started.getRootNode() as Document | ShadowRoot).activeElement).toBe(started);
             } finally {
-                vi.useRealTimers();
+                Reflect.deleteProperty(document, 'execCommand');
                 button.remove();
+                widget.remove();
                 host.remove();
             }
         }
     );
-
-    test('with suppressClipboardApi, a copy in a grid inside a shadow root, started from a button outside it, leaves focus on the button', () => {
-        const host = document.body.appendChild(document.createElement('div'));
-        const gridDiv = host.attachShadow({ mode: 'open' }).appendChild(document.createElement('div'));
-        const button = document.body.appendChild(document.createElement('button'));
-        const command = vi.fn(() => true);
-        Object.defineProperty(document, 'execCommand', { configurable: true, value: command });
-        try {
-            const api = gridMgr.createGrid(gridDiv, {
-                columnDefs: [{ field: 'field' }],
-                rowData: [{ field: 'copied' }],
-                suppressClipboardApi: true,
-            });
-            api.setFocusedCell(0, 'field');
-            button.focus();
-            api.copyToClipboard();
-            expect(command).toHaveBeenCalledWith('copy');
-            expect(document.activeElement).toBe(button);
-        } finally {
-            Reflect.deleteProperty(document, 'execCommand');
-            button.remove();
-            host.remove();
-        }
-    });
 
     test.each([
         { name: 'lost', moveFocus: () => (document.activeElement as HTMLElement).blur() },

@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
-import { GridColumns, GridRows, clickMenuOption } from 'ag-test-utils';
-import { vi } from 'vitest';
+import { GridColumns, GridRows, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
+import { onTestFinished, vi } from 'vitest';
 
 import type { ColGroupDef, IsColumnReferenceableParams } from 'ag-grid-community';
 
@@ -1024,5 +1024,47 @@ describe('ag-grid calculated columns', () => {
             expect(document.querySelector('.ag-autocomplete-list-popup')).toBeTruthy();
             expect(document.querySelector('.ag-select-list')).toBeFalsy();
         });
+    });
+
+    test('in a grid inside a shadow root, moving focus within the calculated column form keeps the suggestions open', async () => {
+        const host = document.body.appendChild(document.createElement('div'));
+        onTestFinished(() => host.remove());
+        const shadowRoot = host.attachShadow({ mode: 'open' });
+        const api = createGrid(shadowRoot.appendChild(document.createElement('div')), {
+            calculatedColumns: { applyMode: 'deferred' },
+            columnDefs: [{ field: 'revenue' }],
+            rowData: [{ id: 'r1', revenue: 10 }],
+        });
+
+        showColumnMenu(api, 'revenue');
+        const addOption = await waitFor(() => {
+            const option = Array.from(shadowRoot.querySelectorAll<HTMLElement>('.ag-menu-option-text')).find(
+                (element) => element.textContent?.trim() === 'Add Calculated Column'
+            );
+            expect(option).toBeInstanceOf(HTMLElement);
+            return option!;
+        });
+        addOption.closest<HTMLElement>('.ag-menu-option')!.click();
+        const form = await waitFor(() => {
+            const element = shadowRoot.querySelector<HTMLElement>('.ag-calculated-column-form');
+            expect(element).toBeInstanceOf(HTMLElement);
+            return element!;
+        });
+
+        const expression = form.querySelector('textarea')!;
+        expression.focus();
+        expression.value = 'SU';
+        expression.dispatchEvent(new Event('input', { bubbles: true }));
+        const listId = expression.getAttribute('aria-controls');
+        expect(listId).not.toBeNull();
+        expect(shadowRoot.getElementById(listId!)).toHaveAttribute('role', 'listbox');
+
+        const title = form.querySelector('input')!;
+        title.focus();
+        expect(shadowRoot.activeElement).toBe(title);
+        await asyncSetTimeout(0);
+
+        expect(expression).toHaveAttribute('aria-controls', listId);
+        expect(shadowRoot.getElementById(listId!)).toHaveAttribute('role', 'listbox');
     });
 });

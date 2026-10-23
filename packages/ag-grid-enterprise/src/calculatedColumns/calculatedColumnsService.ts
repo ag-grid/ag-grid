@@ -1,8 +1,7 @@
 import {
     _camelCaseToHumanText,
     _findFocusableElements,
-    _getActiveDomElement,
-    _getDocument,
+    _isNothingFocused,
     _isStringLargerThan,
     _requestAnimationFrame,
 } from 'ag-stack';
@@ -1255,7 +1254,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         };
 
         (this.beans.menuUtils as MenuUtils | undefined)?.restoreFocusOnClose(restoreFocusParams, eComp, event, true);
-        if (_getActiveDomElement(this.beans) === _getDocument(this.beans).body && params.headerPosition) {
+        if (_isNothingFocused(this.beans) && params.headerPosition) {
             this.beans.focusSvc.focusHeaderPosition({ headerPosition: params.headerPosition });
         }
     }
