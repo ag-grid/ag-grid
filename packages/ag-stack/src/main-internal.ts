@@ -183,9 +183,12 @@ export {
     MONTHS,
 } from './utils/date';
 export {
+    SHADOW_DOM_MOUNT_CLASS,
     _getActiveDomElement,
     _getDeepActiveElement,
     _getDocument,
+    _getElementRootNode,
+    _getOverlayParent,
     _getPageBody,
     _getRootNode,
     _getWindow,

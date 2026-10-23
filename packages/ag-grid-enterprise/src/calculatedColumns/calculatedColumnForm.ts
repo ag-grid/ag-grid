@@ -1,7 +1,7 @@
 import {
     RefPlaceholder,
     _getActiveDomElement,
-    _getDocument,
+    _getElementRootNode,
     _setAriaActiveDescendant,
     _setAriaAutoComplete,
     _setAriaControls,
@@ -562,7 +562,9 @@ export class CalculatedColumnForm extends Component {
         const isInline = this.suggestionSourceType === 'inline';
         const activeOptionId = isInline ? this.autocompleteList.getActiveOptionId() : null;
         const renderedActiveOptionId =
-            activeOptionId && _getDocument(this.beans).getElementById(activeOptionId) ? activeOptionId : null;
+            activeOptionId && _getElementRootNode(expressionInputEl).getElementById(activeOptionId)
+                ? activeOptionId
+                : null;
 
         _setAriaControls(expressionInputEl, isInline ? listId : null);
         _setAriaActiveDescendant(expressionInputEl, renderedActiveOptionId);
