@@ -22,7 +22,13 @@ import type {
     SetFilterValuesFuncParams,
     ValueFormatterParams,
 } from 'ag-grid-community';
-import { ClientSideRowModelModule, TooltipModule, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    GridStateModule,
+    TooltipModule,
+    getGridElement,
+    setupAgTestIds,
+} from 'ag-grid-community';
 import { SetFilterModule } from 'ag-grid-enterprise';
 
 /** Set-filter handler (non-deprecated public path). Warns nothing, unlike the ISetFilter instance methods. */
@@ -36,7 +42,7 @@ function handler(api: GridApi, colId: string): SetFilterHandler {
 
 describe('Set Filter — handler value manipulation API', () => {
     const gridsManager = new TestGridsManager({
-        modules: [SetFilterModule, ClientSideRowModelModule, TooltipModule],
+        modules: [SetFilterModule, ClientSideRowModelModule, GridStateModule, TooltipModule],
     });
 
     beforeAll(() => {
@@ -45,6 +51,37 @@ describe('Set Filter — handler value manipulation API', () => {
     });
     afterAll(() => uninstallFilterLayoutMock());
     afterEach(() => gridsManager.reset());
+
+    test.each(
+        ['setColumnFilterModel', 'the initial state'].flatMap((entry) =>
+            [false, true].flatMap((enableFilterHandlers) =>
+                [false, true].map((preservePreviousValues) => ({ entry, enableFilterHandlers, preservePreviousValues }))
+            )
+        )
+    )(
+        'a model without values given through $entry is refused, with enableFilterHandlers $enableFilterHandlers and preservePreviousValues $preservePreviousValues',
+        async ({ entry, enableFilterHandlers, preservePreviousValues }) => {
+            const numberModel = { filterType: 'number', type: 'lessThan', filter: 20 };
+            const fromState = entry === 'the initial state';
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [
+                    { field: 'country', filter: 'agSetColumnFilter', filterParams: { preservePreviousValues } },
+                ],
+                rowData: [{ country: 'Italy' }, { country: 'France' }],
+                enableFilterHandlers,
+                initialState: fromState ? { filter: { filterModel: { country: numberModel } } } : undefined,
+            });
+            if (!fromState) {
+                await api.setColumnFilterModel('country', numberModel);
+                api.onFilterChanged();
+            }
+            await asyncSetTimeout(0);
+            expect({ model: api.getFilterModel(), displayed: api.getDisplayedRowCount() }).toEqual({
+                model: {},
+                displayed: 2,
+            });
+        }
+    );
 
     test('getFilterKeys / getFilterValues expose the derived list', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {

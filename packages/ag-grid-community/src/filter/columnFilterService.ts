@@ -1670,9 +1670,15 @@ export class ColumnFilterService
         }
 
         const { filterUi, handler, handlerParams } = filterWrapper;
+        const colId = column.getColId();
+        const state = this.state.get(colId);
 
         return _refreshHandlerAndUi(
             () => {
+                // a handler storing another model as it refreshes (a refusal) has refreshed the ui with that one
+                if (this.state.get(colId) !== state) {
+                    return AgPromise.resolve(undefined);
+                }
                 if (filterUi) {
                     const { created, filterParams } = filterUi;
                     if (created) {
@@ -1689,7 +1695,7 @@ export class ColumnFilterService
             handler,
             handlerParams,
             model,
-            this.state.get(column.getColId()) ?? { model },
+            state ?? { model },
             source,
             additionalEventAttributes
         );
