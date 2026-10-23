@@ -1,13 +1,23 @@
 import { fireEvent, getByTestId, waitFor } from '@testing-library/dom';
 import { GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { FilterHandler, IDoesFilterPassParams, IFilterComp, IFilterParams } from 'ag-grid-community';
+import type {
+    ColDef,
+    FilterHandler,
+    FloatingFilterDisplayParams,
+    IDoesFilterPassParams,
+    IFilterComp,
+    IFilterParams,
+    IFloatingFilterComp,
+    IFloatingFilterParams,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     CustomFilterModule,
     DateFilterModule,
     NumberFilterModule,
     RenderApiModule,
+    RowApiModule,
     TextFilterModule,
     agTestIdFor,
     getGridElement,
@@ -29,6 +39,7 @@ describe('Floating Filters', () => {
             NumberFilterModule,
             DateFilterModule,
             RenderApiModule,
+            RowApiModule,
             CustomFilterModule,
         ],
     });
@@ -514,6 +525,46 @@ describe('Floating Filters', () => {
                 await waitFor(() => expect(input().value).toBe(''));
                 expect(api.getDisplayedRowCount()).toBe(3);
             });
+        }
+    );
+
+    test.each([false, true])(
+        'with enableFilterHandlers %s, a floating filter replaced by another component shows the model set before',
+        async (enableFilterHandlers) => {
+            class ModelFloatingFilter implements IFloatingFilterComp {
+                private readonly eGui = document.createElement('input');
+                public init(): void {
+                    this.eGui.className = 'model-floating-filter';
+                }
+                public getGui(): HTMLElement {
+                    return this.eGui;
+                }
+                public onParentModelChanged(model: { filter?: string } | null): void {
+                    this.eGui.value = model?.filter ?? '';
+                }
+                public refresh(params: IFloatingFilterParams | FloatingFilterDisplayParams): void {
+                    this.eGui.value = 'model' in params ? (params.model?.filter ?? '') : '';
+                }
+            }
+            const withComponent = (floatingFilterComponent?: typeof ModelFloatingFilter): ColDef[] => [
+                { field: 'athlete', filter: 'agTextColumnFilter', floatingFilter: true, floatingFilterComponent },
+            ];
+            const api = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: withComponent(),
+                rowData: [{ athlete: 'Ian Thorpe' }, { athlete: 'Mark Spitz' }],
+            });
+            await api.setColumnFilterModel('athlete', { filterType: 'text', type: 'contains', filter: 'Thorpe' });
+            api.onFilterChanged();
+
+            api.setGridOption('columnDefs', withComponent(ModelFloatingFilter));
+
+            await waitFor(() =>
+                expect(getGridElement(api)!.querySelector<HTMLInputElement>('.model-floating-filter')?.value).toBe(
+                    'Thorpe'
+                )
+            );
+            expect(api.getDisplayedRowCount()).toBe(1);
         }
     );
 });

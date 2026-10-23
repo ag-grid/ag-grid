@@ -313,6 +313,152 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
         expect((await api.getColumnFilterInstance('name'))!.getModel()).toBeNull();
     });
 
+    test.each([false, true])(
+        'with enableFilterHandlers %s, an open Multi Filter whose Number child is given an option it lacks shows no model, as it applies none',
+        async (enableFilterHandlers) => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: [
+                    {
+                        field: 'age',
+                        filter: 'agMultiColumnFilter',
+                        filterParams: {
+                            filters: [{ filter: 'agNumberColumnFilter' }, { filter: 'agSetColumnFilter' }],
+                        },
+                    },
+                ],
+                rowData: ROWS,
+            });
+            const filter = await ColumnFilterHarness.open(api, 'age');
+
+            await api.setColumnFilterModel('age', {
+                filterType: 'multi',
+                filterModels: [{ filterType: 'number', type: 'banana', filter: 30 }, null],
+            });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            expect({
+                model: api.getColumnFilterModel('age'),
+                displayed: api.getDisplayedRowCount(),
+                input: filter.input('number').value,
+            }).toEqual({ model: null, displayed: 4, input: '' });
+        }
+    );
+
+    describe('a model its children cannot apply', () => {
+        const bob = { filterType: 'text', type: 'equals', filter: 'bob' };
+        const underTwenty = { filterType: 'number', type: 'lessThan', filter: 20 };
+        // the default children: a Text Filter, then a Set Filter
+        const shapes: [string, unknown, unknown, number][] = [
+            ["another filter's model", bob, null, 4],
+            ['null filterModels', { filterType: 'multi', filterModels: null }, null, 4],
+            ['every child model null', { filterType: 'multi', filterModels: [null, null] }, null, 4],
+            [
+                'a Set child model of another shape beside a valid Text one',
+                { filterType: 'multi', filterModels: [bob, underTwenty] },
+                { filterType: 'multi', filterModels: [bob, null] },
+                1,
+            ],
+            ['only a Set child model of another shape', { filterType: 'multi', filterModels: [null, bob] }, null, 4],
+        ];
+        const cases = shapes.flatMap(([shape, model, kept, displayed]) =>
+            ['setColumnFilterModel', 'the initial state'].flatMap((entry) =>
+                [false, true].map((enableFilterHandlers) => ({
+                    shape,
+                    entry,
+                    enableFilterHandlers,
+                    model,
+                    kept,
+                    displayed,
+                }))
+            )
+        );
+
+        test.each(cases)(
+            'given $shape through $entry, with enableFilterHandlers $enableFilterHandlers, keeps only what its children apply',
+            async ({ entry, enableFilterHandlers, model, kept, displayed }) => {
+                const fromState = entry === 'the initial state';
+                const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                    enableFilterHandlers,
+                    columnDefs: [{ field: 'name', filter: 'agMultiColumnFilter', floatingFilter: true }],
+                    rowData: ROWS,
+                    initialState: fromState ? { filter: { filterModel: { name: model } } } : undefined,
+                });
+                if (!fromState) {
+                    await api.setColumnFilterModel('name', model);
+                    api.onFilterChanged();
+                }
+                await asyncSetTimeout(0);
+
+                expect({
+                    model: api.getFilterModel(),
+                    displayed: api.getDisplayedRowCount(),
+                    floating: visibleFloatingKind(),
+                    floatingValue: visibleFloatingChild().querySelector('input')?.value,
+                }).toEqual({
+                    model: kept ? { name: kept } : {},
+                    displayed,
+                    floating: 'text',
+                    floatingValue: kept ? 'bob' : '',
+                });
+            }
+        );
+
+        const orders: [string, unknown, unknown[], unknown[]][] = [
+            ['Text first', undefined, [bob, underTwenty], [bob, null]],
+            [
+                'Set first',
+                { filters: [{ filter: 'agSetColumnFilter' }, { filter: 'agTextColumnFilter' }] },
+                [underTwenty, bob],
+                [null, bob],
+            ],
+        ];
+        const orderCases = orders.flatMap(([order, filterParams, filterModels, keptModels]) =>
+            ['setColumnFilterModel', 'the initial state'].flatMap((entry) =>
+                [false, true].map((enableFilterHandlers) => ({
+                    order,
+                    entry,
+                    enableFilterHandlers,
+                    filterParams,
+                    filterModels,
+                    keptModels,
+                }))
+            )
+        );
+
+        test.each(orderCases)(
+            'with its children $order, a Set child model of another shape given through $entry, with enableFilterHandlers $enableFilterHandlers, leaves the Text model applied and shown',
+            async ({ entry, enableFilterHandlers, filterParams, filterModels, keptModels }) => {
+                const model = { filterType: 'multi', filterModels };
+                const fromState = entry === 'the initial state';
+                const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                    enableFilterHandlers,
+                    columnDefs: [{ field: 'name', filter: 'agMultiColumnFilter', floatingFilter: true, filterParams }],
+                    rowData: ROWS,
+                    initialState: fromState ? { filter: { filterModel: { name: model } } } : undefined,
+                });
+                if (!fromState) {
+                    await api.setColumnFilterModel('name', model);
+                    api.onFilterChanged();
+                }
+                await asyncSetTimeout(0);
+
+                expect({
+                    model: api.getFilterModel(),
+                    displayed: api.getDisplayedRowCount(),
+                    floating: visibleFloatingKind(),
+                    floatingValue: visibleFloatingChild().querySelector('input')?.value,
+                }).toEqual({
+                    model: { name: { filterType: 'multi', filterModels: keptModels } },
+                    displayed: 1,
+                    floating: 'text',
+                    floatingValue: 'bob',
+                });
+            }
+        );
+    });
+
     test('setColumnFilterModel round-trips a combined model into both sub-filters', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [

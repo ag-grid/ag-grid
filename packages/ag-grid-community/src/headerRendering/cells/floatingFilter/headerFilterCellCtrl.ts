@@ -334,56 +334,58 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         if (!this.active) {
             return;
         }
+        const column = this.column;
+        [this.destroySyncListener] = compBean.addManagedListeners(column, {
+            filterChanged: (event: ColumnEvent) => this.syncWithFilter(event),
+        });
+
+        if (this.beans.colFilter?.isFilterActive(column)) {
+            this.syncWithFilter(null);
+        }
+    }
+
+    private syncWithFilter(event: ColumnEvent | null): void {
         const {
             beans: { colFilter },
             column,
             gos,
         } = this;
-
-        const syncWithFilter = (event: ColumnEvent | null) => {
-            if (event?.source === 'filterDestroyed' && (!this.isAlive() || !colFilter?.isAlive())) {
-                return;
-            }
-            const compPromise = this.comp.getFloatingFilterComp();
-
-            if (!compPromise) {
-                return;
-            }
-
-            compPromise.then((comp) => {
-                if (comp) {
-                    if (gos.get('enableFilterHandlers')) {
-                        const eventWithParams = event as FilterChangedEvent | null;
-                        let source = 'filter';
-                        if (eventWithParams?.afterFloatingFilter) {
-                            source = 'ui';
-                        } else if (eventWithParams?.afterDataChange) {
-                            source = 'dataChanged';
-                        } else if (event?.source === 'api') {
-                            source = 'api';
-                        }
-                        this.updateFloatingFilterParams(this.userCompDetails, source);
-                        return;
-                    }
-                    const parentModel = colFilter?.getCurrentFloatingFilterParentModel(column);
-                    const filterChangedEvent: FilterChangedEvent | null = event
-                        ? {
-                              // event can have additional params like `afterDataChange` which need to be passed through
-                              ...event,
-                              columns: event.columns ?? [],
-                              source: event.source === 'api' ? 'api' : 'columnFilter',
-                          }
-                        : null;
-                    comp.onParentModelChanged(parentModel, filterChangedEvent);
-                }
-            });
-        };
-
-        [this.destroySyncListener] = compBean.addManagedListeners(column, { filterChanged: syncWithFilter });
-
-        if (colFilter?.isFilterActive(column)) {
-            syncWithFilter(null);
+        if (event?.source === 'filterDestroyed' && (!this.isAlive() || !colFilter?.isAlive())) {
+            return;
         }
+        const compPromise = this.comp.getFloatingFilterComp();
+
+        if (!compPromise) {
+            return;
+        }
+
+        compPromise.then((comp) => {
+            if (comp) {
+                if (gos.get('enableFilterHandlers')) {
+                    const eventWithParams = event as FilterChangedEvent | null;
+                    let source = 'filter';
+                    if (eventWithParams?.afterFloatingFilter) {
+                        source = 'ui';
+                    } else if (eventWithParams?.afterDataChange) {
+                        source = 'dataChanged';
+                    } else if (event?.source === 'api') {
+                        source = 'api';
+                    }
+                    this.updateFloatingFilterParams(this.userCompDetails, source);
+                    return;
+                }
+                const parentModel = colFilter?.getCurrentFloatingFilterParentModel(column);
+                const filterChangedEvent: FilterChangedEvent | null = event
+                    ? {
+                          // event can have additional params like `afterDataChange` which need to be passed through
+                          ...event,
+                          columns: event.columns ?? [],
+                          source: event.source === 'api' ? 'api' : 'columnFilter',
+                      }
+                    : null;
+                comp.onParentModelChanged(parentModel, filterChangedEvent);
+            }
+        });
     }
 
     private setupFilterChangedListener(compBean: BeanStub): void {
@@ -449,6 +451,9 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         if (becomeActive) {
             this.setupSyncWithFilter(compBean);
             this.setupFilterChangedListener(compBean);
+        } else if (compDetails && this.beans.colFilter?.isFilterActive(this.column)) {
+            // a replacing comp syncs with the filter's current model, as a first one does at setup
+            this.syncWithFilter(null);
         }
     }
 
