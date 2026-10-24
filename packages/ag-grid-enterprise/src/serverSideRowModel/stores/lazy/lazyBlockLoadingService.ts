@@ -199,7 +199,7 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         let settled = false;
         const settle = (applyResult: () => void) => {
             if (settled) {
-                this.warn(340);
+                this.warn(338);
                 return;
             }
             settled = true;
