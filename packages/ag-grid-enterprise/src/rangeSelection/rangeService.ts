@@ -41,6 +41,7 @@ import {
     KeyCode,
     _areCellsEqual,
     _canScrollVertically,
+    _followRow,
     _getAbsoluteRowIndex,
     _getCellCtrlForEventTarget,
     _getEnableColumnSelection,
@@ -346,6 +347,46 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
         if (countBefore > this.cellRanges.length) {
             this.dispatchChangedEvent(false, true);
         }
+    }
+
+    /**
+     * Records the rows of the cell ranges before a data update, returning how to move the ranges with their rows after
+     * it, so they keep the same cells.
+     */
+    public followCellRanges(): (() => void) | undefined {
+        const { beans, cellRanges, newestRangeStartCell } = this;
+        if (!cellRanges.length) {
+            return undefined;
+        }
+        const followRow = <T extends RowPosition>(row: T | undefined): (() => T | undefined) => {
+            const getRowIndex = row && _followRow(beans, row);
+            return () => {
+                const rowIndex = getRowIndex?.();
+                return row && rowIndex !== row.rowIndex ? { ...row, rowIndex } : row;
+            };
+        };
+        const followed = cellRanges.map(
+            (cellRange) => [cellRange, followRow(cellRange.startRow), followRow(cellRange.endRow)] as const
+        );
+        const followStartCell = followRow(newestRangeStartCell);
+        return () => {
+            if (this.newestRangeStartCell === newestRangeStartCell) {
+                this.newestRangeStartCell = followStartCell();
+            }
+            for (const [cellRange, getStartRow, getEndRow] of followed) {
+                const startRow = getStartRow();
+                const endRow = getEndRow();
+                if (
+                    !this.cellRanges.includes(cellRange) ||
+                    (startRow === cellRange.startRow && endRow === cellRange.endRow)
+                ) {
+                    continue;
+                }
+                cellRange.startRow = startRow;
+                cellRange.endRow = endRow;
+                this.dispatchChangedEvent(false, true, cellRange.id);
+            }
+        };
     }
 
     public refreshLastRangeStart(): void {

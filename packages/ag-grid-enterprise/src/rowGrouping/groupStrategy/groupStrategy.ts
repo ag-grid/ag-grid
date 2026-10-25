@@ -362,6 +362,8 @@ export class GroupStrategy extends BeanStub implements IRowGroupingStrategy {
                         continue;
                     }
                     parents.add(parent);
+                    // before removeFromParent clears its position, which the destroy below would report too late
+                    this.beans.rowRenderer.onRowNodeRemoved(pointer);
                     this.removeFromParent(pointer);
                     // filler nodes don't exist on the RowNodeManager, so their selection isn't
                     // cleaned up elsewhere — drop it as we destroy them.
