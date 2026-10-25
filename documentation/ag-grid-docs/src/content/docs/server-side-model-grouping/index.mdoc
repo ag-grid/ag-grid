@@ -99,6 +99,38 @@ Group total rows can also be used with `groupDisplayType='multipleColumns'`, as 
 
 {% gridExampleRunner title="Multiple Group Columns and Footers" name="group-footer-multiple-cols" /%}
 
+## Grouping and Aggregating the Same Column
+
+To group by a column and also aggregate it, each group row needs two values for that column: the group key and the
+aggregate. Have the server return the aggregate under the column's field, as for any other aggregated column, and the
+group key under a separate field. Return the key from `getServerSideRowGroupKey`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    // the server returns { groupKey: 4, gold: 12 } for the group row
+    getServerSideRowGroupKey: (params) => params.data.groupKey,
+}
+```
+
+{% apiDocumentation source="grid-options/properties.json" section="serverSideRowModel" names=["getServerSideRowGroupKey"] /%}
+
+The grid calls `getServerSideRowGroupKey` for every group row when it is loaded, at every group level, and uses the
+returned key in the group column and in the `groupKeys` of later requests. Returning `undefined` reads the key from the
+row data as usual.
+
+By default, sorting the group column and sorting the aggregated column send the same request, so the server chooses
+whether that group level is ordered by its key or by its aggregate. Grouping a column also hides it by default. To keep
+it visible, see [Prevent User Grouping from Hiding Columns](./grouping-group-panel/#prevent-user-grouping-from-hiding-columns).
+
+The example below groups by **Gold**, aggregates it with `sum` and sorts it ascending. Note the following:
+
+- The server returns the key of every group row as `groupKey`, whichever column the level is grouped by, so the
+  callback also works when other columns are grouped and aggregated from the Columns Tool Panel.
+- The server orders a group level sorted by its own column by key.
+- **Gold** appears in both Row Groups and Values in the Columns Tool Panel.
+
+{% gridExampleRunner title="Grouping and Aggregating the Same Column" name="group-agg-same-column" exampleHeight=590 /%}
+
 ## Grand Total Row
 
 To display a grand total row, set the `grandTotalRow` property to `'top'`, `'bottom'`, `'pinnedTop'`, or `'pinnedBottom'`. The grand total row is supported for both flat grids and grids with row grouping.
