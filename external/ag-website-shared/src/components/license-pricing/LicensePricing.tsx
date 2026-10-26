@@ -24,6 +24,7 @@ import {
     ENTERPRISE_TRIAL_PATH,
     FAQS_HEADING,
     FEATURES,
+    INTEGRATED_CHARTS_PATH,
     LIBRARY_PRODUCTS,
     type LibraryProduct,
     ONLINE_PURCHASE,
@@ -228,6 +229,15 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                     <h2 className={styles.productName}>{BUNDLE_LINE.heading}</h2>
                     <h3 className={styles.tierName}>{BUNDLE_LINE.subheading}</h3>
                     <p>{BUNDLE_LINE.body}</p>
+                    <p>
+                        {BUNDLE_LINE.integratedCharts}{' '}
+                        <a
+                            id="bundle-integrated-charts"
+                            href={gridUrlWithPrefix({ framework, url: INTEGRATED_CHARTS_PATH })}
+                        >
+                            {BUNDLE_LINE.integratedChartsLink}
+                        </a>
+                    </p>
                     <div className={styles.bundleActions}>
                         <a id="bundle-contact-sales" className="button" href={CONTACT_HREF}>
                             Contact sales

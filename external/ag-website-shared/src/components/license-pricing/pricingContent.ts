@@ -20,6 +20,9 @@ export const ECOMMERCE_URLS = {
 /** Relative to the Studio site root. */
 export const STUDIO_TRIAL_PATH = '/license-pricing/?tab=trial';
 
+/** Relative to the Grid docs root. */
+export const INTEGRATED_CHARTS_PATH = './integrated-charts/';
+
 /** Relative to the Grid or Charts docs root; both sites host the trial licence request at this anchor. */
 export const ENTERPRISE_TRIAL_PATH = './community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence';
 
@@ -84,6 +87,9 @@ export const BUNDLE_LINE = {
     heading: 'Enterprise bundle',
     subheading: 'Need Grid and Charts?',
     body: 'Buy the Enterprise Bundle online for 1–10 developer licences for internal applications. For larger teams or customer-facing applications, contact sales.',
+    integratedCharts:
+        'The bundle also unlocks Integrated Charts, so your users can create charts straight from the data in AG Grid. Charts stay in sync with the grid as users sort and filter.',
+    integratedChartsLink: 'Explore Integrated Charts',
 };
 
 export const BUYING_ROUTES = {

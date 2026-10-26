@@ -8,6 +8,7 @@ import {
     ENTERPRISE_TRIAL_PATH,
     FAQS_HEADING,
     FEATURES,
+    INTEGRATED_CHARTS_PATH,
     LIBRARY_PRODUCTS,
     type LibraryProduct,
     ONLINE_PURCHASE,
@@ -142,6 +143,7 @@ function renderProducts(siteRoot?: string): string {
         `### ${BUNDLE_LINE.heading}`,
         `**${BUNDLE_LINE.subheading}**`,
         BUNDLE_LINE.body,
+        `${BUNDLE_LINE.integratedCharts} [${BUNDLE_LINE.integratedChartsLink}](${toAbsoluteUrl(gridUrlWithPrefix({ framework: FRAMEWORK, url: INTEGRATED_CHARTS_PATH }), siteRoot)})`,
         `[Contact sales](${contactUrl}) · [Buy the Enterprise Bundle online](${ECOMMERCE_URLS.bundle}) · [Start a 30-Day free trial](${trialUrls.grid})`,
     ].join('\n\n');
 
