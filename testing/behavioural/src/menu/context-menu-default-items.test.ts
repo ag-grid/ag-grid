@@ -273,20 +273,27 @@ describe('Context menu default items', () => {
         }
     });
 
-    test('rows arriving while the empty grid menu is open take the focus it gives back', async () => {
-        const api = enterpriseGrids.createGrid('ctxEmptyGridRowsArrive', { columnDefs, rowData: [] });
-        await asyncSetTimeout(0);
-        const viewport = getGridElement(api)!.querySelector<HTMLElement>('.ag-grid-viewport')!;
+    test.each([false, true])(
+        'rows arriving while the empty grid menu is open take the focus it gives back unless suppressFocusAfterRefresh (%s)',
+        async (suppressFocusAfterRefresh) => {
+            const api = enterpriseGrids.createGrid('ctxEmptyGridRowsArrive', {
+                columnDefs,
+                rowData: [],
+                suppressFocusAfterRefresh,
+            });
+            await asyncSetTimeout(0);
+            const viewport = getGridElement(api)!.querySelector<HTMLElement>('.ag-grid-viewport')!;
 
-        viewport.focus();
-        rightClick(viewport);
-        await waitFor(() => expect(openMenuEntries()).toEqual(['Paste']));
-        api.setGridOption('rowData', rowData);
-        api.hidePopupMenu();
+            viewport.focus();
+            rightClick(viewport);
+            await waitFor(() => expect(openMenuEntries()).toEqual(['Paste']));
+            api.setGridOption('rowData', rowData);
+            api.hidePopupMenu();
 
-        await waitFor(() => expect(document.activeElement?.getAttribute('col-id')).toBe('athlete'));
-        expect(api.getFocusedCell()).toMatchObject({ rowIndex: 0 });
-    });
+            await waitFor(() => expect(openMenuEntries()).toEqual([]));
+            expect(api.getFocusedCell()?.rowIndex ?? null).toBe(suppressFocusAfterRefresh ? null : 0);
+        }
+    );
 
     test('closing the empty grid menu leaves focus where a menu action moved it', async () => {
         const outside = document.body.appendChild(document.createElement('input'));

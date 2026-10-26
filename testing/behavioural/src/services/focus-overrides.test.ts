@@ -176,7 +176,7 @@ describe('Focus Overrides', () => {
         );
     });
 
-    test('tabToNextGridContainer reports no default target when Shift+Tab lands on the empty viewport', async () => {
+    test('tabToNextGridContainer reports the grid body as default target when Shift+Tab lands on the empty viewport', async () => {
         const seen: TabToNextGridContainerParams<RowData>[] = [];
         const api = gridsManager.createGrid<RowData>(
             'tabToEmptyViewport',
@@ -200,7 +200,7 @@ describe('Focus Overrides', () => {
         dispatchKeyDown('Tab', { shiftKey: true });
 
         await waitForCondition('tabToNextGridContainer callback invocation', () => seen.length > 0);
-        expect(seen[0]).toMatchObject({ backwards: true, nextContainer: 'gridBody', defaultTarget: null });
+        expect(seen[0]).toMatchObject({ backwards: true, nextContainer: 'gridBody', defaultTarget: 'gridBody' });
         expect(document.activeElement).toBe(gridElement.querySelector('.ag-grid-viewport'));
     });
 

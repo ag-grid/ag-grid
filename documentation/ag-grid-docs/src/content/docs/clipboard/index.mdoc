@@ -178,7 +178,7 @@ The example below uses a custom `processDataFromClipboard` function to add new r
 
 ### Pasting into an Empty Grid
 
-When the grid has no rows, users can still paste: click the grid and press {% kbd "^ Ctrl" /%}+{% kbd "V" /%}, or right-click it and select 'Paste'. With no cells to paste into, the grid passes the data to `processDataFromClipboard`, which can add it as rows using the [Transaction Update API](./data-update-transactions/#transaction-update-api) and return `null`. `api.getFocusedCell()` returns `null` there.
+When the grid shows no rows, users can still paste: click the grid and press {% kbd "^ Ctrl" /%}+{% kbd "V" /%} (not with `suppressCellFocus`), or right-click it and select 'Paste' (with the [Context Menu](./context-menu/), and not with `suppressClipboardApi`). With no cells to paste into, the grid passes the data to `processDataFromClipboard`, which can add it as rows using the [Transaction Update API](./data-update-transactions/#transaction-update-api) and return `null`. No cell is focused there, unless rows arrived while the clipboard was being read.
 
 In the example below, copy some rows, click **Remove All Rows**, then paste into the empty grid.
 

@@ -693,7 +693,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // if a cell was focused before, ensure focus now.
         if (focusedCell != null) {
             this.restoreFocusedCell(focusedCell);
-        } else if (viewportLostFocus && !gos.get('suppressFocusAfterRefresh')) {
+        } else if (viewportLostFocus) {
             this.gridBodyCtrl.refocusViewport();
         }
 

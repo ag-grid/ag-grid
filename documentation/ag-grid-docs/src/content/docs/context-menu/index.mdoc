@@ -66,7 +66,7 @@ When the Clipboard API is not available, browser security restrictions prevent J
 a paste action (e.g. {% kbd "^ Ctrl" /%}+{% kbd "V" /%} or selecting Paste from the browser menu).
 These restrictions exist to prevent malicious websites from stealing clipboard data.
 
-This paste option will be disabled if suppressClipboardApi={true} or if the target cell is not editable.
+This paste option will be disabled if suppressClipboardApi={true} or if the target cell is not editable. On an empty grid it is not shown by default with suppressClipboardApi={true}.
 {% /note %}
 
 ## Default Context Menu

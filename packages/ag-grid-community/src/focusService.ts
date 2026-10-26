@@ -664,7 +664,7 @@ export class FocusService extends BeanStub implements NamedBean {
         return null;
     }
 
-    private getGridBodyTabTarget(backwards: boolean): CellPosition | HeaderPosition | null {
+    private getGridBodyTabTarget(backwards: boolean): TabToNextGridContainerTarget | null {
         if (backwards) {
             return this.getGridViewTabTarget({ column: _last(this.visibleCols.allCols), backwards: true });
         }
@@ -687,7 +687,7 @@ export class FocusService extends BeanStub implements NamedBean {
     private getGridViewTabTarget(params: {
         column?: AgColumn;
         backwards?: boolean;
-    }): CellPosition | HeaderPosition | null {
+    }): TabToNextGridContainerTarget | null {
         const { backwards = false } = params;
         const column: AgColumn | undefined = params.column ?? (this.focusedHeader?.column as AgColumn | undefined);
 
@@ -711,7 +711,12 @@ export class FocusService extends BeanStub implements NamedBean {
 
         const nextRow = backwards ? _getLastRow(this.beans) : _getFirstRow(this.beans);
         if (nextRow?.rowIndex == null) {
-            if (this.overlays?.isVisible() || this.beans.ctrlsSvc.get('gridBodyCtrl')?.viewportFocusable) {
+            // the empty viewport stands in for the cells, so the body itself is the target
+            if (this.beans.ctrlsSvc.get('gridBodyCtrl')?.viewportFocusable) {
+                return 'gridBody';
+            }
+
+            if (this.overlays?.isVisible()) {
                 return null;
             }
 
@@ -839,18 +844,24 @@ export class FocusService extends BeanStub implements NamedBean {
             return true;
         }
 
-        if (
-            canFocusOverlay &&
-            (this.focusOverlay(backwards) || this.beans.ctrlsSvc.get('gridBodyCtrl')?.focusEmptyViewport())
-        ) {
+        // with no rows, the order is header, empty viewport, overlay, the same both ways
+        const gridBodyCtrl = this.beans.ctrlsSvc.get('gridBodyCtrl');
+        if (!backwards) {
+            if (gridBodyCtrl?.focusEmptyViewport(params.column)) {
+                return true;
+            }
+            return canFocusOverlay && this.focusOverlay();
+        }
+
+        if (canFocusOverlay && this.focusOverlay(true)) {
             return true;
         }
 
-        if (backwards && this.focusLastHeader()) {
+        if (gridBodyCtrl?.focusEmptyViewport(params.column)) {
             return true;
         }
 
-        return false;
+        return this.focusLastHeader();
     }
 
     private focusAdvancedFilter(position: HeaderPosition | null): boolean {
