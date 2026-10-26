@@ -49,10 +49,10 @@ describe('AgRichSelect', () => {
 
         richSelect.createListComponent();
         stateAnnouncementCallback?.('Loading...');
-        stateAnnouncementCallback?.('No matches to show');
+        stateAnnouncementCallback?.('No matches');
 
         expect(announceValue).toHaveBeenNthCalledWith(1, 'Loading...', 'richSelectState');
-        expect(announceValue).toHaveBeenNthCalledWith(2, 'No matches to show', 'richSelectState');
+        expect(announceValue).toHaveBeenNthCalledWith(2, 'No matches', 'richSelectState');
     });
 
     it('preserves explicit null initial values', () => {

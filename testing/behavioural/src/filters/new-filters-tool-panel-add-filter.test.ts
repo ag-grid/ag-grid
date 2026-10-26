@@ -13,7 +13,7 @@ describe('new filters tool panel add filter picker', () => {
         gridsManager.reset();
     });
 
-    test('a search matching no columns shows and announces "No matches to show"', async () => {
+    test('a search matching no columns shows and announces "No matches"', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('myGrid', {
             columnDefs: [{ field: 'athlete' }, { field: 'country' }],
             defaultColDef: { filter: true },
@@ -37,14 +37,16 @@ describe('new filters tool panel add filter picker', () => {
         await userEvent.type(input, 'zzz');
 
         await waitFor(() =>
-            expect(gridElement.querySelector('.ag-rich-select-list')?.textContent).toContain('No matches to show')
+            expect(gridElement.querySelector('.ag-rich-select-loading .ag-loading-text')?.textContent).toBe(
+                'No matches'
+            )
         );
         await waitFor(() =>
-            expect(gridElement.querySelector('.ag-aria-description-container')?.textContent).toBe('No matches to show')
+            expect(gridElement.querySelector('.ag-aria-description-container')?.textContent).toBe('No matches')
         );
     });
 
-    test('a search corrected before "No matches to show" is announced does not announce it', async () => {
+    test('a search corrected before "No matches" is announced does not announce it', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('myGrid', {
             columnDefs: [{ field: 'athlete' }, { field: 'country' }],
             defaultColDef: { filter: true },
@@ -73,12 +75,10 @@ describe('new filters tool panel add filter picker', () => {
         );
         await asyncSetTimeout(0);
         await asyncSetTimeout(0);
-        expect(gridElement.querySelector('.ag-aria-description-container')?.textContent).not.toContain(
-            'No matches to show'
-        );
+        expect(gridElement.querySelector('.ag-aria-description-container')?.textContent).not.toContain('No matches');
     });
 
-    test('a search that finds no matches again after results return announces "No matches to show" again', async () => {
+    test('a search that finds no matches again after results return announces "No matches" again', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('myGrid', {
             columnDefs: [{ field: 'athlete' }, { field: 'country' }],
             defaultColDef: { filter: true },
@@ -102,7 +102,7 @@ describe('new filters tool panel add filter picker', () => {
         const announcement = () => gridElement.querySelector('.ag-aria-description-container')?.textContent;
 
         setNativeInputValue(input, 'zzz');
-        await waitFor(() => expect(announcement()).toBe('No matches to show'));
+        await waitFor(() => expect(announcement()).toBe('No matches'));
         setNativeInputValue(input, 'cou');
         await waitFor(() =>
             expect(gridElement.querySelector('.ag-rich-select-list')?.textContent).toContain('Country')
@@ -112,10 +112,10 @@ describe('new filters tool panel add filter picker', () => {
 
         setNativeInputValue(input, 'zzz');
         // A repeat of the same text only reaches screen readers with the service's zero-width-space suffix.
-        await waitFor(() => expect(announcement()).toBe('No matches to show\u200B'));
+        await waitFor(() => expect(announcement()).toBe('No matches\u200B'));
     });
 
-    test('a search closed with Escape before "No matches to show" is announced does not announce it', async () => {
+    test('a search closed with Escape before "No matches" is announced does not announce it', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('myGrid', {
             columnDefs: [{ field: 'athlete' }, { field: 'country' }],
             defaultColDef: { filter: true },
@@ -137,14 +137,12 @@ describe('new filters tool panel add filter picker', () => {
             return el!;
         });
         setNativeInputValue(input, 'zzz');
-        expect(gridElement.querySelector('.ag-rich-select-list')?.textContent).toContain('No matches to show');
+        expect(gridElement.querySelector('.ag-rich-select-list')?.textContent).toContain('No matches');
         input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
 
         await waitFor(() => expect(gridElement.querySelector('.ag-filter-add-button')).not.toBeNull());
         await asyncSetTimeout(0);
         await asyncSetTimeout(0);
-        expect(gridElement.querySelector('.ag-aria-description-container')?.textContent).not.toContain(
-            'No matches to show'
-        );
+        expect(gridElement.querySelector('.ag-aria-description-container')?.textContent).not.toContain('No matches');
     });
 });

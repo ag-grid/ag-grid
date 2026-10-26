@@ -39,7 +39,7 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
     private noMatchesLabel: string;
     private loadingState: AgRichSelectListState = STATE_READY_FOR_INPUT;
     private eStateCompLabel: HTMLElement;
-    private eLoadingIcon: Element | undefined;
+    private eLoadingIcon: HTMLElement;
     private loadMoreRowsCallback?: (direction?: VerticalDirection) => void;
     private contentWidthCallback?: (width: number) => boolean;
     private loadMoreRowsThreshold = 10;
@@ -62,20 +62,21 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         super.postConstruct();
         const translate = this.getLocaleTextFunc();
         this.loadingLabel = translate('loadingOoo', 'Loading...');
-        this.noMatchesLabel = translate('noMatches', 'No matches to show');
+        this.noMatchesLabel = translate('noMatches', 'No matches');
 
-        this.eLoadingIcon = _createIconNoSpan('richSelectLoading', this.beans, null);
+        const eIcon = _createIconNoSpan('richSelectLoading', this.beans, null);
+        this.eLoadingIcon = _createElement({
+            tag: 'span',
+            cls: 'ag-loading-icon',
+            children: [eIcon ? () => eIcon : undefined],
+        });
         this.eStateCompLabel = _createElement({ tag: 'span', cls: 'ag-loading-text', children: this.loadingLabel });
 
         this.eStateComp = _createElement({
             tag: 'div',
             cls: 'ag-rich-select-loading',
             children: [
-                {
-                    tag: 'span',
-                    cls: 'ag-loading-icon',
-                    children: [this.eLoadingIcon ? () => this.eLoadingIcon! : undefined],
-                },
+                () => this.eLoadingIcon,
                 { tag: 'span', cls: 'ag-loading-text', children: [() => this.eStateCompLabel] },
             ],
         });
@@ -132,23 +133,12 @@ export class AgRichSelectList<TValue, TEventType extends string = AgRichSelectLi
         if (!eStateComp) {
             return;
         }
-        if (loadingState === STATE_LOADING) {
-            eStateCompLabel.textContent = loadingLabel;
-            if (eLoadingIcon) {
-                _setDisplayed(eLoadingIcon, true);
-            }
-            _setDisplayed(eStateComp, true);
-            return;
-        }
-        if (loadingState === STATE_NO_RESULTS && params.allowNoResultsCopy) {
-            eStateCompLabel.textContent = noMatchesLabel;
-            if (eLoadingIcon) {
-                _setDisplayed(eLoadingIcon, false);
-            }
-            _setDisplayed(eStateComp, true);
-            return;
-        }
-        _setDisplayed(eStateComp, false);
+        const isLoading = loadingState === STATE_LOADING;
+        const isNoMatches = loadingState === STATE_NO_RESULTS && !!params.allowNoResultsCopy;
+        eStateCompLabel.textContent = isLoading ? loadingLabel : noMatchesLabel;
+        _setDisplayed(eLoadingIcon, isLoading);
+        eStateComp.classList.toggle('ag-rich-select-no-matches', isNoMatches);
+        _setDisplayed(eStateComp, isLoading || isNoMatches);
     }
 
     private shouldBeVisible() {
