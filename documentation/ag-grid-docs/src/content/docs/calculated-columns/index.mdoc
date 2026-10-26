@@ -62,7 +62,7 @@ Register the Column Menu so users can add a calculated column from the header me
 
 The dialog shows references by header name, for example `[Revenue]`. When headers are duplicated under groups, it uses the shortest unique group path, such as `[2025 Q4]` and `[2026 Q4]`. It translates these display references back to `colId` references before updating the column definition.
 
-The expression editor highlights references, functions and operators. In deferred edit dialogs, validation runs as you edit and on Apply, not when the dialog opens. Built-in errors are underlined, explained in a tooltip and announced to assistive technology. Live mode shows reference-restriction and custom validation errors, but does not automatically show syntax errors in the editor; invalid expressions still produce formula errors in grid cells.
+The expression editor highlights references, functions and operators. Built-in errors have underlines, tooltips and accessible descriptions. Reference checks validate columns, not row availability. In live mode, this feedback does not mark the field invalid or prevent updates; empty expressions remain valid. Custom validation and reference restrictions still apply. In deferred edit dialogs, validation runs as you edit and on Apply, not when the dialog opens.
 
 In dialog references, a literal `]` in a header name is escaped as `]]`. For example, the header `Revenue [USD]` appears as `[Revenue [USD]]]`. The Columns picker inserts the escaped reference automatically; stored `colId` references are unchanged.
 

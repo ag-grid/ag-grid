@@ -1073,8 +1073,8 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         mapper: CalculatedColumnReferenceMapper,
         mode: 'diagnostics' | 'revalidate' = 'diagnostics'
     ): CalculatedColumnExpressionPresentation {
-        const { tokens, error, range } = inspectFormulaExpression(this.beans, expression);
-        const referenceError = mapper.toInternalExpression(expression, mode).error;
+        const { tokens, references, error, range } = inspectFormulaExpression(this.beans, expression);
+        const referenceError = mapper.toInternalExpression(expression, mode, references).error;
         if (referenceError) {
             return {
                 tokens,
@@ -1154,7 +1154,20 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 this.getExpressionPickers(),
                 () => context.mapper.suggestions,
                 () => this.getFunctionSuggestions(),
-                (expression) => this.inspectDialogExpression(expression, context.mapper),
+                (expression, errors) => {
+                    const presentation = this.inspectDialogExpression(expression, context.mapper);
+                    // live diagnostics are informational; custom feedback still controls which errors are shown
+                    const showLiveDiagnostic =
+                        liveApply && !!expression.trim() && !this.getOptions()?.getValidationErrors && !errors?.length;
+                    if (
+                        presentation.diagnostic &&
+                        !showLiveDiagnostic &&
+                        !errors?.includes(presentation.diagnostic.message)
+                    ) {
+                        presentation.diagnostic = undefined;
+                    }
+                    return presentation;
+                },
                 handleValidate,
                 handleApply,
                 handleCancel,

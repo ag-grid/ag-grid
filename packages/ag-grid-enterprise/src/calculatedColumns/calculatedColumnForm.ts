@@ -147,6 +147,7 @@ export class CalculatedColumnForm extends Component {
     private expressionTooltipFeature?: TooltipFeature;
     private titleValidationMessage: string | null = null;
     private expressionValidationMessage: string | null = null;
+    private expressionFeedbackMessage: string | null = null;
     private readonly expressionPickers: ReadonlySet<CalculatedColumnExpressionPicker>;
     /** The open suggestion list, recreated whenever the picker type (column/function/operator) changes. */
     private autocompleteList: AgAutocompleteList | null = null;
@@ -162,7 +163,10 @@ export class CalculatedColumnForm extends Component {
         expressionPickers: readonly CalculatedColumnExpressionPicker[],
         private readonly getColumnSuggestions: () => ColumnSuggestion[],
         private readonly getFunctionSuggestions: () => ColumnSuggestion[],
-        private readonly inspectExpression: (expression: string) => CalculatedColumnExpressionPresentation,
+        private readonly inspectExpression: (
+            expression: string,
+            errors: string[] | null
+        ) => CalculatedColumnExpressionPresentation,
         private readonly onValidate: (draft: CalculatedColumnDraft) => string[] | null,
         private readonly onApply: (draft: CalculatedColumnDraft) => string[] | null,
         private readonly onCancel: () => void,
@@ -409,24 +413,22 @@ export class CalculatedColumnForm extends Component {
             return;
         }
         const expression = this.draft.calculatedExpression;
-        const presentation = this.inspectExpression(expression);
-        // only underline a diagnostic whose message is part of the chosen validation feedback
-        if (!presentation.diagnostic || !errors?.includes(presentation.diagnostic.message)) {
-            presentation.diagnostic = undefined;
-        }
+        const presentation = this.inspectExpression(expression, errors);
         this.expressionEditor.refresh(expression, presentation);
-        const message = errors?.length ? errors.join('\n') : null;
-        if (message !== this.expressionValidationMessage) {
+        const validationMessage = errors?.length ? errors.join('\n') : null;
+        const message = validationMessage ?? presentation.diagnostic?.message ?? null;
+        if (message !== this.expressionFeedbackMessage) {
             this.eExpressionError.textContent = message ?? '';
         }
-        this.expressionValidationMessage = message;
+        this.expressionValidationMessage = validationMessage;
+        this.expressionFeedbackMessage = message;
         const inputEl = this.eExpression.getInputElement();
         _setAriaDescribedBy(inputEl, message ? this.eExpressionError.id : undefined);
-        this.applyFieldError(inputEl, message);
+        this.applyFieldError(inputEl, validationMessage);
         if (message && !this.expressionTooltipFeature) {
             this.expressionTooltipFeature = this.createValidationTooltip(
                 () => this.eExpression.getInputElement(),
-                () => this.expressionValidationMessage
+                () => this.expressionFeedbackMessage
             );
         }
         this.expressionTooltipFeature?.setTooltipAndRefresh(message);
