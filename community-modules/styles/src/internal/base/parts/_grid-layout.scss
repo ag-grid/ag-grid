@@ -281,12 +281,13 @@
         );
     }
 
-    .ag-column-hover {
+    :where(.ag-cell).ag-column-hover {
         background-color: var(--ag-column-hover-color);
     }
 
+    // use a background image to overlay on top of the background-color set by range selections with `enableHeaderHighlight`
     :where(.ag-header-cell).ag-column-hover {
-        background-color: var(--ag-column-header-hover-color);
+        background-image: linear-gradient(var(--ag-column-header-hover-color), var(--ag-column-header-hover-color));
     }
 
     .ag-header-range-highlight {

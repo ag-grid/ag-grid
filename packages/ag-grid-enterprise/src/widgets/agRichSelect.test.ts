@@ -51,8 +51,8 @@ describe('AgRichSelect', () => {
         stateAnnouncementCallback?.('Loading...');
         stateAnnouncementCallback?.('No matches to show');
 
-        expect(announceValue).toHaveBeenNthCalledWith(1, 'Loading...', 'richSelect');
-        expect(announceValue).toHaveBeenNthCalledWith(2, 'No matches to show', 'richSelect');
+        expect(announceValue).toHaveBeenNthCalledWith(1, 'Loading...', 'richSelectState');
+        expect(announceValue).toHaveBeenNthCalledWith(2, 'No matches to show', 'richSelectState');
     });
 
     it('preserves explicit null initial values', () => {

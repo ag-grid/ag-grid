@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/dom';
-import { TestGridsManager } from 'ag-test-utils';
+import { TestGridsManager, asyncSetTimeout, setNativeInputValue } from 'ag-test-utils';
 
 import type { GridApi, NewFiltersToolPanelState } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
@@ -102,5 +102,35 @@ describe('new filters tool panel expandFilterCards / collapseFilterCards', () =>
         await waitForCards(api, { Name: true });
 
         expect(consoleWarnSpy).not.toHaveBeenCalled();
+    });
+
+    describe('set filter mini-filter "No matches"', () => {
+        function announcement(api: GridApi): string {
+            return getGridElement(api)!.querySelector('.ag-aria-description-container')?.textContent ?? '';
+        }
+
+        function miniFilterInput(api: GridApi): HTMLInputElement {
+            return getGridElement(api)!.querySelector<HTMLInputElement>('.ag-filter-card .ag-mini-filter input')!;
+        }
+
+        test('typing a mini-filter matching no values announces "No matches"', async () => {
+            const api = createGrid([{ colId: 'country', expanded: true }]);
+            await waitForCards(api, { Country: true });
+
+            setNativeInputValue(miniFilterInput(api), 'zz');
+            await waitFor(() => expect(announcement(api)).toBe('No matches'));
+        });
+
+        test('a card collapsed before "No matches" is announced does not announce it', async () => {
+            const api = createGrid([{ colId: 'country', expanded: true }]);
+            await waitForCards(api, { Country: true });
+
+            setNativeInputValue(miniFilterInput(api), 'zz');
+            api.getToolPanelInstance('filters-new')!.collapseFilterCards(['country']);
+            expect(getCardExpandedStates(api)).toEqual({ Country: false });
+            await asyncSetTimeout(0);
+            await asyncSetTimeout(0);
+            expect(announcement(api)).not.toContain('No matches');
+        });
     });
 });

@@ -67,7 +67,22 @@ export class MultiFilterHandler
                 source: 'init',
             });
         }
-        this.resetActiveList(params.model);
+        this.refuseModelWithoutChild();
+        this.resetActiveList(this.params.model);
+    }
+
+    /** Clears a model giving no child a model, which filters nothing, as `getUpdatedMultiFilterModel` clears one. */
+    private refuseModelWithoutChild(): boolean {
+        const params = this.params;
+        const model = params.model;
+        const hasChildModel = (wrapper: HandlerWrapper | undefined, i: number) =>
+            !!wrapper && getFilterModelForIndex(model, i) != null;
+        if (model == null || this.handlerWrappers.some(hasChildModel)) {
+            return false;
+        }
+        this.params = { ...params, model: null };
+        params.onModelChange(null, params.additionalEventAttributes);
+        return true;
     }
 
     public refresh(params: AgFilterHandlerParams<any, any, IMultiFilterModel, IMultiFilterParams>): boolean {
@@ -81,6 +96,10 @@ export class MultiFilterHandler
             this.filterDefs = newDefs;
         }
         this.params = params;
+        // the refusal's own refresh has given every child the cleared model; only new definitions still need the loop
+        if (this.refuseModelWithoutChild() && !isColDef) {
+            return true;
+        }
         const { beans, handlerWrappers } = this;
         const colFilter = beans.colFilter!;
         const column = params.column as AgColumn;

@@ -86,6 +86,7 @@
       }
     },
     "lint": {
+      "inputs": ["default", "^default", "eslintConfig"],
       "command": "eslint",
       "options": {
         "cwd": "{projectRoot}"

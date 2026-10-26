@@ -74,6 +74,13 @@ export default [
         },
     },
     {
+        // Test files are exempt from the runtime-focused restrictions above.
+        files: ['**/*.test.ts', '**/*.test.tsx'],
+        rules: {
+            'no-restricted-properties': 'off',
+        },
+    },
+    {
         ignores: [
             'webpack.config.js',
             'jest.*.js',

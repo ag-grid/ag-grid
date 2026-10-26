@@ -111,8 +111,8 @@ Timing:
                                 Quiet below the floors in testing/shared/vitest/timings.ts.
 
 Run capture (local only; CI keeps its own logs). Every run prints an id first and streams stdout+stderr
-to tmp/_behave-output/<id>/output.log, plus result.json for machine reading. tmp/_behave-output/latest
-points at the newest. Nothing extra is needed to inspect a red run — read that log:
+to tmp/_behave-output/<id>/output.log, plus result.json for machine reading (kept for the 50 newest runs).
+tmp/_behave-output/latest points at the newest. Nothing extra is needed to inspect a red run — read that log:
 ${captureUsage({ runner: 'vitest' })}
 
 Output volume, for when a suite fails wholesale and the diffs dwarf the results:

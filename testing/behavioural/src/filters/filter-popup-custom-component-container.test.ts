@@ -55,6 +55,12 @@ function createContainer(withCustomPopupClass: boolean): HTMLDivElement {
     return appendDiv(document.body, withCustomPopupClass ? CUSTOM_POPUP_CLASS : undefined);
 }
 
+function createShadowRootContainer(parent: HTMLElement = document.body): HTMLDivElement {
+    const container = document.createElement('div');
+    appendDiv(parent).attachShadow({ mode: 'open' }).appendChild(container);
+    return container;
+}
+
 async function createGridIn(parent: HTMLElement, options: GridOptions): Promise<GridApi> {
     return gridsManager.createGridAndWait(appendDiv(parent), {
         columnDefs: [{ field: 'name', filter: 'agTextColumnFilter' }],
@@ -70,11 +76,11 @@ function firstCell(api: GridApi): HTMLElement {
 }
 
 function mouseDown(el: HTMLElement): void {
-    el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 }));
+    el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, composed: true, button: 0 }));
 }
 
-async function waitForPopupListeners(): Promise<void> {
-    await waitFor(() => expect(document.querySelector('.ag-popup')).not.toBeNull());
+async function waitForPopupListeners(root: ParentNode = document): Promise<void> {
+    await waitFor(() => expect(root.querySelector('.ag-popup')).not.toBeNull());
     // the popup's outside-click listeners are registered on the next tick
     await asyncSetTimeout(0);
 }
@@ -174,6 +180,36 @@ describe('Other popups and editing of a grid inside an ag-custom-component-popup
             expect(api.getEditingCells()).toHaveLength(0);
         });
 
+        test('a grid in a shadow root inside the container stops editing when focus moves to a button elsewhere in the container', async () => {
+            const container = createContainer(true);
+            const button = appendButton(container);
+            const api = await createGridIn(createShadowRootContainer(container), {
+                columnDefs: [{ field: 'name', editable: true }],
+                stopEditingWhenCellsLoseFocus: true,
+            });
+            api.startEditingCell({ rowIndex: 0, colKey: 'name' });
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
+
+            moveFocusFromEditorTo(api, button);
+
+            expect(api.getEditingCells()).toHaveLength(0);
+        });
+
+        test('a grid inside a shadow root stops editing when focus moves to a button elsewhere in the shadow root', async () => {
+            const container = createShadowRootContainer();
+            const button = appendButton(container);
+            const api = await createGridIn(container, {
+                columnDefs: [{ field: 'name', editable: true }],
+                stopEditingWhenCellsLoseFocus: true,
+            });
+            api.startEditingCell({ rowIndex: 0, colKey: 'name' });
+            await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
+
+            moveFocusFromEditorTo(api, button);
+
+            expect(api.getEditingCells()).toHaveLength(0);
+        });
+
         test('a grid outside the container keeps its popup editor open and keeps editing on clicks in the container', async () => {
             const gridA = await createGridIn(document.body, {
                 columnDefs: [{ field: 'name', editable: true, cellEditorPopup: true }],
@@ -240,7 +276,7 @@ describe('Other popups and editing of a grid inside an ag-custom-component-popup
                 columnDefs: [{ field: 'name', filter: FilterWithFloatingElement }],
             });
             api.showColumnFilter('name');
-            await waitForPopupListeners();
+            await waitForPopupListeners(gridParent);
             await waitFor(() => expect(floating).toBeDefined());
             return floating!;
         }
@@ -260,6 +296,18 @@ describe('Other popups and editing of a grid inside an ag-custom-component-popup
             mouseDown(floating);
 
             expect(document.querySelector('.ag-popup')).not.toBeNull();
+        });
+
+        test('keeps the filter open on mousedown on a floating element inside the same shadow root as the grid', async () => {
+            const container = createShadowRootContainer();
+            const floating = await openCustomFilter(container, container);
+
+            const event = new MouseEvent('mousedown', { bubbles: true, cancelable: true, composed: true, button: 0 });
+            // Browsers report the shadow host as the target to listeners outside the shadow root; happy-dom does not.
+            Object.defineProperty(event, 'target', { value: (container.getRootNode() as ShadowRoot).host });
+            floating.dispatchEvent(event);
+
+            expect(container.querySelector('.ag-popup')).not.toBeNull();
         });
     });
 });

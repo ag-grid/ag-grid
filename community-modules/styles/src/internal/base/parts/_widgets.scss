@@ -1,6 +1,11 @@
 @use 'ag';
 
 @mixin output {
+    .ag-no-matches {
+        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+        text-align: center;
+    }
+
     .ag-checkbox,
     .ag-radio-button {
         .ag-input-wrapper {

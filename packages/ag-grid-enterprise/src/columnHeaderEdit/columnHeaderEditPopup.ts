@@ -1,4 +1,4 @@
-import { RefPlaceholder, _getActiveDomElement, _setDisplayed } from 'ag-stack';
+import { RefPlaceholder, _getActiveDomElement, _isNothingFocused, _setDisplayed } from 'ag-stack';
 
 import type { ElementParams, GridInputTextField } from 'ag-grid-community';
 import { AgInputTextFieldSelector, BeanStub, Component, KeyCode } from 'ag-grid-community';
@@ -200,7 +200,7 @@ export class ColumnHeaderEditPopup extends BeanStub {
             return;
         }
         const activeEl = _getActiveDomElement(this.beans);
-        if (!activeEl || activeEl === activeEl.ownerDocument.body || this.dialog?.getGui().contains(activeEl)) {
+        if (_isNothingFocused(this.beans, activeEl) || this.dialog?.getGui().contains(activeEl)) {
             el.focus();
         }
     }

@@ -188,24 +188,30 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         }
 
         this.parentMultiFilterInstance((parent) => {
-            if (model == null) {
-                this.floatingFilters.forEach((filter, i) => {
+            // a model without child models (another filter's, or `filterModels: null`) shows as none
+            const filterModels = model?.filterModels;
+            const floatingFilters = this.floatingFilters;
+            if (!filterModels) {
+                for (let i = 0, len = floatingFilters.length; i < len; ++i) {
+                    const filter = floatingFilters[i];
                     filter.onParentModelChanged(null, event);
                     _setDisplayed(filter.getGui(), i === 0);
-                });
-            } else {
-                const lastActiveFloatingFilterIndex = parent.getLastActiveFilterIndex();
+                }
+                return;
+            }
 
-                this.floatingFilters.forEach((filter, i) => {
-                    const filterModel = model.filterModels!.length > i ? model.filterModels![i] : null;
+            const lastActiveFloatingFilterIndex = parent.getLastActiveFilterIndex();
 
-                    filter.onParentModelChanged(filterModel, event);
+            for (let i = 0, len = floatingFilters.length; i < len; ++i) {
+                const filter = floatingFilters[i];
+                const filterModel = filterModels.length > i ? filterModels[i] : null;
 
-                    const shouldShow =
-                        lastActiveFloatingFilterIndex == null ? i === 0 : i === lastActiveFloatingFilterIndex;
+                filter.onParentModelChanged(filterModel, event);
 
-                    _setDisplayed(filter.getGui(), shouldShow);
-                });
+                const shouldShow =
+                    lastActiveFloatingFilterIndex == null ? i === 0 : i === lastActiveFloatingFilterIndex;
+
+                _setDisplayed(filter.getGui(), shouldShow);
             }
         });
     }

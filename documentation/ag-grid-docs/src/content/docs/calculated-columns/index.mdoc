@@ -74,6 +74,8 @@ The following example has duplicate `Q1`, `Q2`, `Q3` and `Q4` headers under `202
 
 The dialog manages calculated columns inside the grid without mutating the `columnDefs` array supplied by the application. To persist user-created calculated columns, read the complete current definitions from `api.getColumnDefs()`, or use [Grid State](./grid-state/), which captures them and recreates them on restore.
 
+When [processColDef](#processcoldef) is set, the definitions from `api.getColumnDefs()` include the callback's output. Loading them back as `columnDefs` declares those columns with that output fixed: the callback no longer runs for them, and the dialog shows the callback's `headerName` as the title. Grid State keeps user-created columns with their own values and applies the callback again on restore.
+
 Grid State also captures user edits to, and removals of, calculated columns declared in `columnDefs`, and re-applies them over the declared definitions on restore — so a stored state takes precedence over a changed declaration.
 
 Use Grid State to preserve dialog validation errors as well. `api.getColumnDefs()` contains the column configuration, not validation errors; restoring definitions alone treats the expressions as programmatic definitions.
@@ -102,8 +104,10 @@ The example keeps **Gross Margin** read-only, while **Profit** and user-created 
 
 {% gridExampleRunner title="Read-Only Calculated Columns" name="calculated-columns-read-only" /%}
 
+If a column becomes read-only while its edit dialog is open, the dialog closes and any pending edits are discarded. Changes already applied are kept.
+
 {% note %}
-This setting restricts UI changes only: updating `columnDefs` and restoring [Grid State](./grid-state/) can still change or remove the column. Columns created through the dialog remain editable, even when `defaultColDef.calculatedColumnReadOnly` is `true`.
+This setting restricts UI changes only: updating `columnDefs` and restoring [Grid State](./grid-state/) can still change or remove the column. Dialog-created columns ignore `defaultColDef.calculatedColumnReadOnly`, but [processColDef](#processcoldef) can make them read-only.
 {% /note %}
 
 ### Hiding Menu Items
@@ -242,7 +246,7 @@ This is a dialog guard, not a security boundary: `columnDefs` and Grid State res
 
 Errors block Apply in deferred mode. In live mode, rejected edits are saved and display `#ERROR!`, including when returning non-empty `internalErrors`, rather than the underlying formula error code. `isColumnReferenceable` rejections use `#REF!` instead, even for the same column.
 
-Title and type edits also revalidate unchanged expressions. In live mode, reopening an editable dialog rechecks saved rejections; accepted expressions resume calculating when the update is applied. Restrictions set by `isColumnReferenceable` remain enforced.
+Title and type edits also revalidate unchanged expressions. In live mode, opening an editable dialog revalidates the expression and updates cells and saved errors when the update is applied, even without edits. Restrictions set by `isColumnReferenceable` remain enforced.
 {% /note %}
 
 ### suppressColumnHighlighting
@@ -316,7 +320,7 @@ In the example, the **Profit** column is restored from Grid State as if a user h
 
 `expressionValidation` includes syntax and reference errors plus saved dialog rejections from `getValidationErrors` and `isColumnReferenceable`, matching the change event. It does not rerun these callbacks or check row-specific evaluation errors.
 
-In live mode, `calculatedColumnReadOnly: true` takes effect after the initial Add dialog closes, so users can finish defining the column.
+In live mode, `calculatedColumnReadOnly: true` locks the column when the initial Add dialog closes, even if the expression is empty or invalid. To leave blank columns editable, return the full definition with the flag `true` only when there is an expression: `{ ...params.colDef, calculatedColumnReadOnly: !!params.colDef.calculatedExpression?.trim() }`. A non-empty expression may still be unfinished; use `applyMode: 'deferred'` to require Apply before creating and locking the column.
 
 {% note %}
 The callback runs each time the column is built, including when dialog edits are applied and on restore from [Grid State](./grid-state/). It does not run for calculated columns declared in `columnDefs`. The dialog and Grid State keep the user's values, not the callback's. `colId`, `editable`, `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor` and `cellEditorSelector` are always overridden. Prefer `initial*` properties, such as `initialWidth`, to stateful ones.
@@ -361,9 +365,9 @@ A column added from the header menu appears after the column it was created from
 
 ## API
 
-Manage calculated columns through column definitions, like other columns. Read the current definitions with `api.getColumnDefs()` and write them back with `api.setGridOption('columnDefs', ...)` to add, edit or remove a calculated column. To find the calculated columns in the grid, filter `api.getColumns()` by `calculatedExpression`.
+Manage calculated columns through column definitions, like other columns. Read the current definitions with `api.getColumnDefs()` and write them back with `api.setGridOption('columnDefs', ...)` to add, edit or remove a calculated column. When [processColDef](#processcoldef) is set, these definitions include the callback's output, and writing them back declares the columns with that output fixed, so the callback no longer runs for them. To find the calculated columns in the grid, filter `api.getColumns()` by `calculatedExpression`.
 
-The dialog manages calculated columns inside the grid without mutating the `columnDefs` array supplied by the application. To persist user-created calculated columns, read the complete current definitions from `api.getColumnDefs()`.
+The dialog manages calculated columns inside the grid without mutating the `columnDefs` array supplied by the application. To persist user-created calculated columns, read the complete current definitions from `api.getColumnDefs()`. With `processColDef` set, use [Grid State](./grid-state/) instead to keep user-created columns with their own values.
 
 The following example adds, edits and removes a Profit Margin column through these APIs, and logs calculated-column changes:
 

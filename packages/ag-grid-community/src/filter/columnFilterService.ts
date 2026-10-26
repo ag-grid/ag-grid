@@ -1670,10 +1670,13 @@ export class ColumnFilterService
         }
 
         const { filterUi, handler, handlerParams } = filterWrapper;
+        const colId = column.getColId();
+        const state = this.state.get(colId);
 
         return _refreshHandlerAndUi(
             () => {
-                if (filterUi) {
+                // a handler storing another model as it refreshes (a refusal) has refreshed the ui with that one
+                if (filterUi && this.state.get(colId) === state) {
                     const { created, filterParams } = filterUi;
                     if (created) {
                         return filterUi.promise.then((filter) => {
@@ -1689,7 +1692,7 @@ export class ColumnFilterService
             handler,
             handlerParams,
             model,
-            this.state.get(column.getColId()) ?? { model },
+            state ?? { model },
             source,
             additionalEventAttributes
         );

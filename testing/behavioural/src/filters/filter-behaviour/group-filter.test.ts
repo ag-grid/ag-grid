@@ -540,3 +540,32 @@ describe('Group Column Filter — agGroupColumnFilter', () => {
             `);
     });
 });
+
+describe('Group Column Filter over a column whose filter type the rows decide', () => {
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, RowGroupingModule, GroupFilterModule, NumberFilterModule, TextFilterModule],
+    });
+
+    afterEach(() => gridsManager.reset());
+
+    test('its floating filter shows a model set before the rows arrive once they do', async () => {
+        const api: GridApi = gridsManager.createGrid('grid1', {
+            columnDefs: [{ field: 'year', rowGroup: true, hide: true, filter: true }, { field: 'sport' }],
+            autoGroupColumnDef: { filter: 'agGroupColumnFilter', floatingFilter: true },
+            groupDefaultExpanded: -1,
+            rowData: [],
+        });
+        const floatingInput = () =>
+            getGridElement(api)!.querySelector<HTMLInputElement>(`.ag-floating-filter[col-id="${AUTO_COL}"] input`);
+        await asyncSetTimeout(0);
+        api.setFilterModel({ year: { filterType: 'number', type: 'equals', filter: 2021 } });
+        await asyncSetTimeout(0);
+        expect(floatingInput()!.value).toBe('');
+
+        api.setGridOption('rowData', ROW_DATA);
+        await asyncSetTimeout(0);
+        expect(floatingInput()!.value).toBe('2021');
+        expect(isHeaderFiltered(api, AUTO_COL)).toBe(true);
+        expect(api.getFilterModel()).toEqual({ year: { filterType: 'number', type: 'equals', filter: 2021 } });
+    });
+});

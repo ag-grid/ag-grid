@@ -11,7 +11,7 @@ import {
     AgComponentStub,
     _anchorElementToMouseMoveEvent,
     _createAgElement,
-    _getPageBody,
+    _getOverlayParent,
     _getRootNode,
     _initStyledRoot,
     _isKeyboardMode,
@@ -164,7 +164,7 @@ export class AgContextMenuService<
         wrapperEl.appendChild(loadingIcon);
 
         const rootNode = _getRootNode(beans);
-        const targetEl = _getPageBody(beans);
+        const targetEl = _getOverlayParent(beans);
 
         if (!targetEl) {
             return;

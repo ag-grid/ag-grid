@@ -2,6 +2,7 @@ import { fireEvent, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 import { AgBeanStub } from 'ag-stack';
 import { GridRows, TestGridsManager, asyncSetTimeout, fakeElementAttribute, getAllRows } from 'ag-test-utils';
+import { onTestFinished } from 'vitest';
 
 import { getGridElement } from 'ag-grid-community';
 import type { GridApi, GridOptions } from 'ag-grid-community';
@@ -356,6 +357,48 @@ describe('Rich Select cell editor', () => {
         expect(typingField.querySelector('.ag-input-field-clear-button')).toBeNull();
         expect(gridDiv.querySelector('.ag-rich-select-deselect-button')).not.toBeNull();
     });
+
+    test.each([
+        { mode: 'light', key: 'Delete' },
+        { mode: 'light', key: 'Backspace' },
+        { mode: 'open', key: 'Delete' },
+        { mode: 'open', key: 'Backspace' },
+    ] as const)(
+        'in a $mode grid, $key on a focused pill removes only that pill and focuses the next',
+        async ({ mode, key }) => {
+            const host = document.body.appendChild(document.createElement('div'));
+            onTestFinished(() => host.remove());
+            const gridDiv = (mode === 'light' ? host : host.attachShadow({ mode })).appendChild(
+                document.createElement('div')
+            );
+            const api = await gridMgr.createGridAndWait(gridDiv, {
+                columnDefs: [
+                    {
+                        field: 'a',
+                        editable: true,
+                        cellDataType: false,
+                        cellEditor: 'agRichSelectCellEditor',
+                        cellEditorParams: { values: ['Alpha', 'Beta', 'Gamma'], multiSelect: true },
+                    },
+                ],
+                rowData: [{ id: '0', a: ['Alpha', 'Beta'] }],
+                getRowId: (p) => p.data.id,
+            });
+            const pillTexts = () => Array.from(gridDiv.querySelectorAll('.ag-pill-text'), (el) => el.textContent);
+
+            api.startEditingCell({ rowIndex: 0, colKey: 'a' });
+            await waitFor(() => expect(pillTexts()).toEqual(['Alpha', 'Beta']));
+            const alphaPill = gridDiv.querySelector<HTMLElement>('.ag-pill')!;
+            alphaPill.focus();
+            fireEvent.keyDown(alphaPill, { key });
+
+            expect(pillTexts()).toEqual(['Beta']);
+            const focused = (gridDiv.getRootNode() as Document | ShadowRoot).activeElement;
+            expect(gridDiv.querySelector('.ag-pill')!.contains(focused)).toBe(true);
+            api.stopEditing();
+            await waitFor(() => expect(getAllRows(api)[0].data.a).toEqual(['Beta']));
+        }
+    );
 
     // 8. filterList + searchType 'match' filters on a leading-substring match.
     test('searchType "match" filters rows whose text contains the search string', async () => {

@@ -1136,13 +1136,10 @@ describe('Column filter — a malformed `filterOptions` list', () => {
 
         await api.setColumnFilterModel('country', { filterType: 'text', type: 'startsWithA', filter: 'x' });
         await api.onFilterChanged();
-        // A model naming an option the column does not offer filters nothing, as any other unknown one does.
+        // A model naming an option the column does not offer filters nothing and shows as none, as any other unknown one does.
         await waitFor(() => expect(api.getDisplayedRowCount()).toBe(3));
         await new FilterDom(api, 'a `test`-only option is not offered', { colId: 'country' }).checkFilterDom(`
             COLUMN FILTER
-            operator: "Contains"
-            input: "x"
-            AND
             operator: "Contains"
             input: "" ⟨Filter...⟩
             model: null

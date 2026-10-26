@@ -6,9 +6,45 @@ export function _getRootNode(beans: UtilBeanCollection): Document | ShadowRoot {
     return beans.eRootDiv.getRootNode() as Document | ShadowRoot;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+/**
+ * For an element that may sit outside the grid's root node, e.g. in a popup under `popupParent`.
+ *
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getElementRootNode(element: Node): Document | ShadowRoot {
+    return element.getRootNode() as Document | ShadowRoot;
+}
+
+/**
+ * The focused element in the grid's own tree or, while focus is outside it, in the nearest enclosing root holding it,
+ * where a component stands as its host: what to test with `contains` against grid elements, which stops at a shadow boundary.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
 export function _getActiveDomElement(beans: UtilBeanCollection): Element | null {
-    return _getRootNode(beans).activeElement;
+    let root: Node = _getRootNode(beans);
+    let active = (root as Document | ShadowRoot).activeElement;
+    let host = shadowHostOf(root);
+    while (!active && host) {
+        root = host.getRootNode();
+        active = (root as Document | ShadowRoot).activeElement;
+        host = shadowHostOf(root);
+    }
+    return active ?? null;
+}
+
+/**
+ * The element that holds focus: `_getActiveDomElement` followed into each open shadow root a host stands for. What to
+ * restore focus to or compare by identity; never a `contains` subject, as inside a component it is outside the grid's tree.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getDeepActiveElement(beans: UtilBeanCollection): Element | null {
+    let active = _getActiveDomElement(beans);
+    let inner = active?.shadowRoot?.activeElement;
+    while (inner) {
+        active = inner;
+        inner = inner.shadowRoot?.activeElement;
+    }
+    return active;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -32,10 +68,13 @@ export function _getDocument(beans: UtilBeanCollection): Document {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _isNothingFocused(beans: UtilBeanCollection): boolean {
-    const activeEl = _getActiveDomElement(beans);
-
-    return activeEl === null || activeEl === _getDocument(beans).body;
+export function _isNothingFocused(beans: UtilBeanCollection, activeEl = _getActiveDomElement(beans)): boolean {
+    // nothing, or what encloses the grid (the body, a focus trap's container); contains() stops at a shadow boundary
+    let node: Node | undefined = beans.eRootDiv;
+    while (activeEl && node && !activeEl.contains(node)) {
+        node = shadowHostOf(node.getRootNode());
+    }
+    return !activeEl || node != null;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -73,6 +112,19 @@ export function _getPageBody(beans: UtilBeanCollection): HTMLElement | ShadowRoo
     return targetEl;
 }
 
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export const SHADOW_DOM_MOUNT_CLASS = 'ag-shadow-dom-mount';
+
+/**
+ * Parent for grid-owned elements that follow the pointer, such as the drag image. In a grid rendered in its own
+ * shadow root this is the element carrying the mirrored theme mode, so they get the same mode as the grid.
+ *
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getOverlayParent(beans: UtilBeanCollection): HTMLElement | ShadowRoot {
+    return beans.eRootDiv.closest<HTMLElement>(`.${SHADOW_DOM_MOUNT_CLASS}`) ?? _getPageBody(beans);
+}
+
 export function _getBodyWidth(beans: UtilBeanCollection): number {
     const body = _getPageBody(beans) as HTMLElement;
     return body?.clientWidth ?? (window.innerWidth || -1);
@@ -81,4 +133,9 @@ export function _getBodyWidth(beans: UtilBeanCollection): number {
 export function _getBodyHeight(beans: UtilBeanCollection): number {
     const body = _getPageBody(beans) as HTMLElement;
     return body?.clientHeight ?? (window.innerHeight || -1);
+}
+
+/** A shadow root's host; undefined for a document, a plain fragment or the top of a detached subtree. */
+function shadowHostOf(root: Node): Element | undefined {
+    return root.nodeType === Node.DOCUMENT_FRAGMENT_NODE ? (root as ShadowRoot).host : undefined;
 }
