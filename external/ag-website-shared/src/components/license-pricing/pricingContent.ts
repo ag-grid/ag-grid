@@ -25,6 +25,12 @@ export const ONLINE_PURCHASE = {
     otherwise: 'For larger teams or external customer-facing applications, contact sales.',
 };
 
+export const PRICING_PAGE = {
+    title: 'Pricing: AG Grid, AG Charts and AG Studio',
+    description:
+        'Pricing for AG Grid, AG Charts and AG Studio. Start free with Community, buy Enterprise licences online for a small team, or contact sales for tailored pricing for your application.',
+};
+
 export const PRICING_HERO = {
     eyebrow: 'AG Grid / AG Charts / AG Studio',
     headline: 'Pricing for what you’re building',

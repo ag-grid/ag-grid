@@ -13,6 +13,7 @@ import {
     PRICING_ANCHORS,
     PRICING_FAQS,
     PRICING_HERO,
+    PRICING_PAGE,
     STUDIO_PRODUCT,
     STUDIO_TRIAL_PATH,
 } from '@ag-website-shared/components/license-pricing/pricingContent';
@@ -21,11 +22,11 @@ import gridFeaturesData from '@ag-website-shared/content/license-features/gridFe
 import { markdownTable } from '@ag-website-shared/markdoc/markdownTable';
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
 import { chartsUrlWithPrefix } from '@ag-website-shared/utils/chartsUrlWithPrefix';
+import { gridUrlWithPrefix } from '@ag-website-shared/utils/gridUrlWithPrefix';
 import { resolveSharedUrl } from '@ag-website-shared/utils/resolveSharedUrl';
 import { PRODUCTION_STUDIO_SITE_URL } from '@constants';
-import { urlWithPrefix } from '@utils/urlWithPrefix';
 
-import { buildGridFrontmatter } from './gridFrontmatter';
+import { type SiteFrontmatterFields, buildMarkdownFrontmatter } from './markdownFrontmatter';
 
 // The page is framework-agnostic; resolve its framework-prefixed doc links against a
 // single framework, matching AGENTS.md.ts / llms.txt.ts.
@@ -71,9 +72,7 @@ function featureCell(value: FeatureValue): string {
 }
 
 function featureRow(leaf: FeatureLeaf, siteRoot?: string): string[] {
-    // `resolveSharedUrl` turns the `grid:`/`charts:` prefix into the resolved doc URL
-    // (absolute in a real build, since GRID_URL/CHARTS_URL carry the origin); toAbsoluteUrl
-    // then fills in the origin for any root-relative result.
+    // resolveSharedUrl only yields an absolute URL in a real build, so fill in the origin after.
     const href = toAbsoluteUrl(resolveSharedUrl({ url: leaf.label.link, framework: FRAMEWORK }), siteRoot);
     return [
         `[${leaf.label.name}](${href})`,
@@ -119,7 +118,7 @@ function renderFeatureMatrix(heading: string, sections: FeatureSection[], siteRo
 function renderProducts(siteRoot?: string): string {
     const contactUrl = toAbsoluteUrl(`/license-pricing/#${PRICING_ANCHORS.contact}`, siteRoot);
     const gettingStartedUrls: Record<LibraryProduct['id'], string> = {
-        grid: toAbsoluteUrl(urlWithPrefix({ framework: FRAMEWORK, url: './getting-started/' }), siteRoot),
+        grid: toAbsoluteUrl(gridUrlWithPrefix({ framework: FRAMEWORK, url: './getting-started/' }), siteRoot),
         charts: chartsUrlWithPrefix({ framework: FRAMEWORK, url: './quick-start' }),
     };
     const libraries = LIBRARY_PRODUCTS.map((product) =>
@@ -177,23 +176,26 @@ function renderContact(siteRoot?: string): string {
 }
 
 /**
- * Build the markdown twin of the unified /license-pricing/ page: the AG Grid, AG Charts and
- * AG Studio products, buying routes, the Grid and Charts feature-comparison matrices, FAQs and
- * the sales contact link. The page is React-driven with no Markdoc source, so this reads the
- * same data the page renders (pricingContent.ts + the two feature-matrix JSON files) and
- * serialises it directly.
+ * Build the markdown twin of the /license-pricing/ page: the AG Grid, AG Charts and AG Studio
+ * products, buying routes, the Grid and Charts feature-comparison matrices, FAQs and the sales
+ * contact link. The page is React-driven with no Markdoc source, so this reads the same data the
+ * page renders (pricingContent.ts + the two feature-matrix JSON files) and serialises it directly.
+ *
+ * Product-agnostic: every product site serves the same page and differs only in its frontmatter.
  */
-export function buildLicensePricingMarkdown({ siteRoot }: { siteRoot?: string } = {}): string {
-    const frontmatter = buildGridFrontmatter({
-        pageUrl: '/license-pricing/',
-        siteRoot,
-        title: 'Pricing',
-        description:
-            'Pricing for AG Grid, AG Charts and AG Studio: free Community editions, online purchase for small teams, tailored pricing from sales, and a Community vs Enterprise feature comparison.',
-    });
-
+export function buildLicensePricingMarkdown({
+    siteRoot,
+    siteFrontmatter,
+}: {
+    siteRoot?: string;
+    siteFrontmatter?: SiteFrontmatterFields;
+} = {}): string {
     const document = [
-        frontmatter,
+        buildMarkdownFrontmatter({
+            ...siteFrontmatter,
+            title: PRICING_PAGE.title,
+            description: PRICING_PAGE.description,
+        }),
         `# ${PRICING_HERO.headline}`,
         PRICING_HERO.intro,
         renderProducts(siteRoot),

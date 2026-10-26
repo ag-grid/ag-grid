@@ -1,5 +1,12 @@
 @use '../../design-system' as *;
 
+// In CSS rather than a public/ script, so every product site gets it from this shared file alone.
+@media (prefers-reduced-motion: no-preference) {
+    :global(html):has(.container) {
+        scroll-behavior: smooth;
+    }
+}
+
 .container {
     display: flex;
     flex-direction: column;

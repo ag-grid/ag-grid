@@ -1,4 +1,4 @@
-import { PRICING_FAQS } from '@ag-website-shared/components/license-pricing/pricingContent';
+import { PRICING_FAQS, PRICING_PAGE } from '@ag-website-shared/components/license-pricing/pricingContent';
 import { describe, expect, it } from 'vitest';
 
 import { buildLicensePricingMarkdown } from './buildLicensePricingMarkdown';
@@ -8,7 +8,7 @@ describe('buildLicensePricingMarkdown', () => {
 
     it('emits frontmatter and the page H1', () => {
         expect(output.startsWith('---\n')).toBe(true);
-        expect(output).toContain('title: "Pricing"');
+        expect(output).toContain(`title: "${PRICING_PAGE.title}"`);
         expect(output).toContain('\n# Pricing for what you’re building');
     });
 
