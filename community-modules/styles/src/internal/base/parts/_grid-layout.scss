@@ -281,6 +281,7 @@
         );
     }
 
+    // not overlaid on range selections (see _grid-borders.scss): the Balham and Material light colours are opaque
     :where(.ag-cell).ag-column-hover {
         background-color: var(--ag-column-hover-color);
     }
