@@ -63,6 +63,16 @@ fetch data from the server.
 
 Rows fetched from the server are supplied to the grid via `params.success({ rowData: rows })`.
 
+## Securing your Datasource
+
+The request supplied to `getRows` is built in the browser, so the server should treat every part of it as untrusted input, like any other request from a client:
+
+- Pass values from the request, such as `groupKeys` and the values in `filterModel`, to the database as bound query parameters rather than building them into the query text.
+- Check column IDs (from `rowGroupCols`, `valueCols`, `pivotCols`, `sortModel` and the keys of `filterModel`), sort directions and aggregation function names against the columns and functions the server supports before using them in a query, as they cannot be bound as parameters.
+- Treat `startRow` and `endRow` as whole numbers, and limit how many rows a single request can return.
+
+The fake servers in the Server-Side Row Model examples use [AlaSQL](https://alasql.org/) in the browser to stand in for a real server, and follow these rules.
+
 ## Registering the Datasource
 
 The datasource is registered with the grid via either a) the grid property `serverSideDatasource` or b) the grid API.

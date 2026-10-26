@@ -60,6 +60,10 @@ Notice in the snippet above the `filterModel` object contains a `'text'` and `'n
 For more details on properties and values used in these filters see the sections on
 [Text Filter Model](./filter-text/#text-filter-model) and [Number Filter Model](./filter-number/#number-filter-model).
 
+{% note %}
+The `filterModel` contains text typed by the user and column IDs supplied by the browser. Pass filter values to the database as bound query parameters and check column IDs against the columns the server knows about, as described in [Securing your Datasource](./server-side-model-datasource/#securing-your-datasource).
+{% /note %}
+
 The example below demonstrates filtering using Simple Column Filters, note the following:
 
 - The **Athlete** column has a `'text'` filter defined using `filter: 'agTextColumnFilter'`.

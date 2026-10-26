@@ -1,5 +1,10 @@
+// Request values are bound as `?` parameters, and column names, sort directions and
+// aggregation functions are checked against allow-lists of known values.
 function FakeServer() {
     alasql.options.cache = false;
+
+    const knownColumns = new Set(Object.keys(data[0] ?? {}));
+    const aggFuncs = new Set(['sum', 'min', 'max', 'avg', 'count']);
 
     let intervals = [];
     return {
@@ -19,13 +24,17 @@ function FakeServer() {
             };
         },
         getAggValues: function (groupRow) {
+            const params: any[] = [data];
             const whereClause = Object.entries(groupRow)
-                .map(([field, val]) => `${field} = "${val}"`)
+                .map(([field, val]) => {
+                    params.push(String(val));
+                    return `${column(field)} = ?`;
+                })
                 .join(' AND ');
             const SQL = `
         SELECT SUM(current) as current, SUM(previous) as previous, COUNT(tradeId) as childCount FROM ? WHERE ${whereClause}
       `;
-            return alasql(SQL, [data])[0];
+            return alasql(SQL, params)[0];
         },
     };
 
@@ -50,22 +59,39 @@ function FakeServer() {
     }
 
     function executeRowGroupQuery(request) {
-        const groupByQuery = buildGroupBySql(request);
+        const params: any[] = [data];
+        const groupByQuery = buildGroupBySql(request, params);
 
-        return alasql(groupByQuery, [data]);
+        return alasql(groupByQuery, params);
     }
 
     function executeGroupChildCountsQuery(request, groupId) {
-        const SQL = interpolate('SELECT {0} FROM ? pivot (count({0}) for {0})' + whereSql(request), [groupId]);
+        const params: any[] = [data];
+        const SQL =
+            interpolate('SELECT {0} FROM ? pivot (count({0}) for {0})', [column(groupId)]) + whereSql(request, params);
 
-        return alasql(SQL, [data])[0];
+        return alasql(SQL, params)[0];
     }
 
-    function buildGroupBySql(request) {
+    function column(colId) {
+        if (!knownColumns.has(colId)) {
+            throw new Error('Unknown column: ' + colId);
+        }
+        return colId;
+    }
+
+    function aggFunc(name) {
+        if (!aggFuncs.has(name)) {
+            throw new Error('Unsupported aggregation: ' + name);
+        }
+        return name;
+    }
+
+    function buildGroupBySql(request, params) {
         return (
             selectSql(request) +
             ' FROM ?' +
-            whereSql(request) +
+            whereSql(request, params) +
             groupBySql(request) +
             orderBySql(request) +
             limitSql(request)
@@ -79,10 +105,11 @@ function FakeServer() {
 
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
             const rowGroupCol = rowGroupCols[groupKeys.length];
-            const colsToSelect = [rowGroupCol.id];
+            const colsToSelect = [column(rowGroupCol.id)];
 
             valueCols.forEach(function (valueCol) {
-                colsToSelect.push(valueCol.aggFunc + '(' + valueCol.id + ') AS ' + valueCol.id);
+                const id = column(valueCol.id);
+                colsToSelect.push(aggFunc(valueCol.aggFunc) + '(' + id + ') AS ' + id);
             });
 
             return 'SELECT ' + colsToSelect.join(', ');
@@ -91,16 +118,15 @@ function FakeServer() {
         return 'SELECT *';
     }
 
-    function whereSql(request) {
+    function whereSql(request, params) {
         const rowGroups = request.rowGroupCols;
         const groupKeys = request.groupKeys;
         const whereParts = [];
 
         if (groupKeys) {
             groupKeys.forEach(function (key, i) {
-                const value = typeof key === 'string' ? "'" + key + "'" : key;
-
-                whereParts.push(rowGroups[i].id + ' = ' + value);
+                whereParts.push(column(rowGroups[i].id) + ' = ?');
+                params.push(key);
             });
         }
 
@@ -118,19 +144,22 @@ function FakeServer() {
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
             const rowGroupCol = rowGroupCols[groupKeys.length];
 
-            return ' GROUP BY ' + rowGroupCol.id + ' HAVING count(*) > 0';
+            return ' GROUP BY ' + column(rowGroupCol.id) + ' HAVING count(*) > 0';
         }
 
         return '';
     }
 
     function orderBySql(request) {
-        const sortModel = request.sortModel;
+        // sorts on columns that aren't in the data (e.g. the auto group column) are ignored
+        const sortModel = request.sortModel.filter(function (s) {
+            return knownColumns.has(s.colId);
+        });
 
         if (sortModel.length === 0) return '';
 
         const sorts = sortModel.map(function (s) {
-            return s.colId + ' ' + s.sort.toUpperCase();
+            return column(s.colId) + (s.sort === 'desc' ? ' DESC' : ' ASC');
         });
 
         return ' ORDER BY ' + sorts.join(', ');
@@ -140,9 +169,11 @@ function FakeServer() {
         if (request.endRow == undefined || request.startRow == undefined) {
             return '';
         }
-        const blockSize = request.endRow - request.startRow;
+        // AlaSQL doesn't accept bound parameters here, so only ever write whole numbers
+        const startRow = Math.max(0, Math.floor(Number(request.startRow)) || 0);
+        const blockSize = Math.max(0, Math.floor(Number(request.endRow)) - startRow || 0);
 
-        return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
+        return ' LIMIT ' + blockSize + ' OFFSET ' + startRow;
     }
 
     function isDoingGrouping(rowGroupCols, groupKeys) {

@@ -1,8 +1,12 @@
 // This fake server uses http://alasql.org/ to mimic how a real server
 // might generate sql queries from the Server-Side Row Model request.
 // To keep things simple it does the bare minimum to support the example.
+// Request values are bound as `?` parameters, and column names and sort directions are
+// checked against allow-lists of known values.
 export function FakeServer(allData) {
     alasql.options.cache = false;
+
+    const knownColumns = new Set(Object.keys(allData[0] ?? {}));
 
     return {
         getData: function (request) {
@@ -41,16 +45,31 @@ export function FakeServer(allData) {
             }
         });
 
-        return alasql('SELECT * FROM ?' + orderBySql(request), [results]);
+        return alasql('SELECT * FROM ?' + orderBySql(request, results), [results]);
     }
 
-    function orderBySql(request) {
-        const sortModel = request.sortModel;
+    function column(colId, columns = knownColumns) {
+        if (!columns.has(colId)) {
+            throw new Error('Unknown column: ' + colId);
+        }
+        return colId;
+    }
+
+    function orderBySql(request, results) {
+        // the pivot results hold the group column and pivot result fields, sorts on anything else are ignored
+        const resultColumns = new Set<string>(
+            results.flatMap(function (row) {
+                return Object.keys(row);
+            })
+        );
+        const sortModel = request.sortModel.filter(function (s) {
+            return resultColumns.has(s.colId);
+        });
 
         if (sortModel.length === 0) return '';
 
         const sorts = sortModel.map(function (s) {
-            return '`' + s.colId + '` ' + s.sort.toUpperCase();
+            return '`' + column(s.colId, resultColumns) + '`' + (s.sort === 'desc' ? ' DESC' : ' ASC');
         });
 
         return ' ORDER BY ' + sorts.join(', ');
@@ -61,31 +80,33 @@ export function FakeServer(allData) {
         const groupsToUse = request.rowGroupCols.slice(groupKeys.length, groupKeys.length + 1);
         const selectGroupCols = groupsToUse
             .map(function (groupCol) {
-                return groupCol.id;
+                return column(groupCol.id);
             })
             .join(', ');
 
         const SQL_TEMPLATE = "SELECT {0}, ({1} + '_{2}') AS {1}, {2} FROM ? PIVOT (SUM([{2}]) FOR {1})";
-        const SQL = interpolate(SQL_TEMPLATE, [selectGroupCols, pivotCol.id, valueCol.id]) + whereSql(request);
+        const params = [allData];
+        const SQL =
+            interpolate(SQL_TEMPLATE, [selectGroupCols, column(pivotCol.id), column(valueCol.id)]) +
+            whereSql(request, params);
 
-        console.log('[FakeServer] - about to execute query:', SQL);
+        console.log('[FakeServer] - about to execute query:', SQL, params.slice(1));
 
-        const result = alasql(SQL, [allData]);
+        const result = alasql(SQL, params);
 
         // workaround - 'alasql' doesn't support PIVOT + LIMIT
         return extractRowsForBlock(request, result);
     }
 
-    function whereSql(request) {
+    function whereSql(request, params) {
         const rowGroups = request.rowGroupCols;
         const groupKeys = request.groupKeys;
         const whereParts = [];
 
         if (groupKeys) {
             groupKeys.forEach(function (key, i) {
-                const value = typeof key === 'string' ? "'" + key + "'" : key;
-
-                whereParts.push(rowGroups[i].id + ' = ' + value);
+                whereParts.push(column(rowGroups[i].id) + ' = ?');
+                params.push(key);
             });
         }
 
@@ -108,7 +129,7 @@ export function FakeServer(allData) {
 
         const result = flatten(
             request.valueCols.map(function (valueCol) {
-                const args = [pivotCol.id, valueCol.id];
+                const args = [column(pivotCol.id), column(valueCol.id)];
                 const sql = interpolate(template, args);
 
                 return alasql(sql, [allData]);

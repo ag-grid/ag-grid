@@ -1,8 +1,13 @@
 // This fake server uses http://alasql.org/ to mimic how a real server
 // might generate sql queries from the Server-Side Row Model request.
 // To keep things simple it does the bare minimum to support the example.
+// Request values are bound as `?` parameters, and column names, sort directions and
+// aggregation functions are checked against allow-lists of known values.
 export function FakeServer(allData) {
     alasql.options.cache = false;
+
+    const knownColumns = new Set(Object.keys(allData[0] ?? {}));
+    const aggFuncs = new Set(['sum', 'min', 'max', 'avg', 'count', 'first', 'last']);
 
     return {
         getData: (request) => {
@@ -33,34 +38,56 @@ export function FakeServer(allData) {
             });
         });
 
-        return alasql(`SELECT * FROM ?${orderBySql(request)}`, [results]);
+        return alasql(`SELECT * FROM ?${orderBySql(request, results)}`, [results]);
     }
 
-    function orderBySql({ sortModel }) {
-        if (sortModel.length === 0) return '';
-        const sorts = sortModel.map(({ colId, sort }) => `\`${colId}\` ${sort.toUpperCase()}`);
+    function column(colId, columns = knownColumns) {
+        if (!columns.has(colId)) {
+            throw new Error('Unknown column: ' + colId);
+        }
+        return colId;
+    }
+
+    function aggFunc(name) {
+        if (!aggFuncs.has(name)) {
+            throw new Error('Unsupported aggregation: ' + name);
+        }
+        return name;
+    }
+
+    function orderBySql({ sortModel }, results) {
+        // the pivot results hold the group column and pivot result fields, sorts on anything else are ignored
+        const resultColumns = new Set<string>(results.flatMap((row) => Object.keys(row)));
+        const sorts = sortModel
+            .filter(({ colId }) => resultColumns.has(colId))
+            .map(({ colId, sort }) => `\`${column(colId, resultColumns)}\`${sort === 'desc' ? ' DESC' : ' ASC'}`);
+        if (sorts.length === 0) return '';
         return ` ORDER BY ${sorts.join(', ')}`;
     }
 
     function executePivotQuery(request, pivotCol, valueCol) {
         const { groupKeys, rowGroupCols } = request;
         const groupsToUse = rowGroupCols.slice(groupKeys.length, groupKeys.length + 1);
-        const selectGroupCols = groupsToUse.map((groupCol) => groupCol.id).join(', ');
+        const selectGroupCols = groupsToUse.map((groupCol) => column(groupCol.id)).join(', ');
+        const pivotId = column(pivotCol.id);
+        const valueId = column(valueCol.id);
+        const params = [allData];
 
-        const SQL = `SELECT ${selectGroupCols}, (${pivotCol.id} + '_${
-            valueCol.id
-        }') AS ${pivotCol.id}, ${valueCol.id} FROM ? PIVOT (${valueCol.aggFunc}([${
-            valueCol.id
-        }]) FOR ${pivotCol.id})${whereSql(request)}`;
+        const SQL = `SELECT ${selectGroupCols}, (${pivotId} + '_${valueId}') AS ${pivotId}, ${valueId} FROM ? PIVOT (${aggFunc(
+            valueCol.aggFunc
+        )}([${valueId}]) FOR ${pivotId})${whereSql(request, params)}`;
 
-        console.log('[FakeServer] - about to execute query:', SQL);
+        console.log('[FakeServer] - about to execute query:', SQL, params.slice(1));
 
-        return extractRowsForBlock(request, alasql(SQL, [allData]));
+        return extractRowsForBlock(request, alasql(SQL, params));
     }
 
-    function whereSql({ rowGroupCols, groupKeys }) {
+    function whereSql({ rowGroupCols, groupKeys }, params) {
         const whereParts = groupKeys
-            ? groupKeys.map((key, i) => `${rowGroupCols[i].id} = ${typeof key === 'string' ? `'${key}'` : key}`)
+            ? groupKeys.map((key, i) => {
+                  params.push(key);
+                  return `${column(rowGroupCols[i].id)} = ?`;
+              })
             : [];
         return whereParts.length > 0 ? ` WHERE ${whereParts.join(' AND ')}` : '';
     }
@@ -74,7 +101,8 @@ export function FakeServer(allData) {
         const [pivotCol] = pivotCols;
         const result = flatten(
             valueCols.map((valueCol) => {
-                const sql = `SELECT DISTINCT (${pivotCol.id} + '_${valueCol.id}') AS ${pivotCol.id} FROM ? ORDER BY ${pivotCol.id}`;
+                const pivotId = column(pivotCol.id);
+                const sql = `SELECT DISTINCT (${pivotId} + '_${column(valueCol.id)}') AS ${pivotId} FROM ? ORDER BY ${pivotId}`;
                 return alasql(sql, [allData]);
             })
         );

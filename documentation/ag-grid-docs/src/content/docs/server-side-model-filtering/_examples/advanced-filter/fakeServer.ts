@@ -1,12 +1,16 @@
 // This fake server uses http://alasql.org/ to mimic how a real server
 // might generate sql queries from the Server-Side Row Model request.
 // To keep things simple it does the bare minimum to support the example.
+// Request values are bound as `?` parameters, and column names and sort directions are
+// checked against allow-lists of known values.
 export function FakeServer(allData) {
     alasql.options.cache = false;
 
+    const knownColumns = new Set(Object.keys(allData[0] ?? {}));
+
     return {
         getValues: function (field) {
-            const rows = alasql('SELECT DISTINCT ' + field + ' FROM ? ORDER BY ' + field, [allData]);
+            const rows = alasql('SELECT DISTINCT ' + column(field) + ' FROM ? ORDER BY ' + column(field), [allData]);
 
             return rows.map((row) => String(row[field]));
         },
@@ -23,37 +27,46 @@ export function FakeServer(allData) {
     };
 
     function executeQuery(request) {
-        const sql = buildSql(request);
+        const params = [allData];
+        const sql = buildSql(request, params);
 
-        console.log('[FakeServer] - about to execute query:', sql);
+        console.log('[FakeServer] - about to execute query:', sql, params.slice(1));
 
-        return alasql(sql, [allData]);
+        return alasql(sql, params);
     }
 
-    function buildSql(request) {
-        return 'SELECT * FROM ?' + whereSql(request) + orderBySql(request) + limitSql(request);
+    function buildSql(request, params) {
+        return 'SELECT * FROM ?' + whereSql(request, params) + orderBySql(request) + limitSql(request);
     }
 
-    function whereSql(request) {
+    function column(colId) {
+        if (!knownColumns.has(colId)) {
+            throw new Error('Unknown column: ' + colId);
+        }
+        return colId;
+    }
+
+    function whereSql(request, params) {
         const filterModel = request.filterModel;
 
         if (filterModel) {
-            return ' WHERE ' + createFilterSql(filterModel);
+            return ' WHERE ' + createFilterSql(filterModel, params);
         }
 
         return '';
     }
 
-    function createFilterSql(model) {
+    function createFilterSql(model, params) {
         if (model.filterType === 'join') {
-            return '(' + model.conditions.map((condition) => createFilterSql(condition)).join(` ${model.type} `) + ')';
+            const join = model.type === 'OR' ? ' OR ' : ' AND ';
+            return '(' + model.conditions.map((condition) => createFilterSql(condition, params)).join(join) + ')';
         } else {
             if (model.filterType === 'text') {
-                return textFilterMapper(model.colId, model);
+                return textFilterMapper(column(model.colId), model, params);
             } else if (model.filterType === 'number') {
-                return numberFilterMapper(model.colId, model);
+                return numberFilterMapper(column(model.colId), model, params);
             } else if (model.filterType === 'set') {
-                return setFilterMapper(model.colId, model);
+                return setFilterMapper(column(model.colId), model, params);
             } else {
                 console.log('filter type not implemented: ' + model.filterType);
                 return ' 1 = 1 ';
@@ -61,20 +74,26 @@ export function FakeServer(allData) {
         }
     }
 
-    function textFilterMapper(key, item) {
+    function textFilterMapper(key, item, params) {
         switch (item.type) {
             case 'equals':
-                return key + " = '" + item.filter + "'";
+                params.push(String(item.filter));
+                return key + ' = ?';
             case 'notEqual':
-                return key + " != '" + item.filter + "'";
+                params.push(String(item.filter));
+                return key + ' != ?';
             case 'contains':
-                return key + " LIKE '%" + item.filter + "%'";
+                params.push('%' + item.filter + '%');
+                return key + ' LIKE ?';
             case 'notContains':
-                return key + " NOT LIKE '%" + item.filter + "%'";
+                params.push('%' + item.filter + '%');
+                return key + ' NOT LIKE ?';
             case 'startsWith':
-                return key + " LIKE '" + item.filter + "%'";
+                params.push(item.filter + '%');
+                return key + ' LIKE ?';
             case 'endsWith':
-                return key + " LIKE '%" + item.filter + "'";
+                params.push('%' + item.filter);
+                return key + ' LIKE ?';
             case 'blank':
                 return key + ' IS NULL or ' + key + " = ''";
             case 'notBlank':
@@ -86,29 +105,39 @@ export function FakeServer(allData) {
 
     // `is any of` / `is none of` send the Set Filter keys the written values resolved to, which are strings.
     // A blank is sent as a `null` key, so blank cells and the key are both folded to '' before comparing.
-    function setFilterMapper(key, item) {
-        const values = item.values.map((value) => "'" + (value ?? '').replace(/'/g, "''") + "'").join(', ');
+    function setFilterMapper(key, item, params) {
+        const values = item.values.map((value) => {
+            params.push(value ?? '');
+            return '?';
+        });
         const operator = item.type === 'isNoneOf' ? ' NOT IN (' : ' IN (';
 
-        return 'COALESCE(CAST(' + key + " AS STRING), '')" + operator + values + ')';
+        return 'COALESCE(CAST(' + key + " AS STRING), '')" + operator + values.join(', ') + ')';
     }
 
-    function numberFilterMapper(key, item) {
+    function numberFilterMapper(key, item, params) {
         switch (item.type) {
             case 'equals':
-                return key + ' = ' + item.filter;
+                params.push(item.filter);
+                return key + ' = ?';
             case 'notEqual':
-                return key + ' != ' + item.filter;
+                params.push(item.filter);
+                return key + ' != ?';
             case 'greaterThan':
-                return key + ' > ' + item.filter;
+                params.push(item.filter);
+                return key + ' > ?';
             case 'greaterThanOrEqual':
-                return key + ' >= ' + item.filter;
+                params.push(item.filter);
+                return key + ' >= ?';
             case 'lessThan':
-                return key + ' < ' + item.filter;
+                params.push(item.filter);
+                return key + ' < ?';
             case 'lessThanOrEqual':
-                return key + ' <= ' + item.filter;
+                params.push(item.filter);
+                return key + ' <= ?';
             case 'inRange':
-                return '(' + key + ' >= ' + item.filter + ' and ' + key + ' <= ' + item.filterTo + ')';
+                params.push(item.filter, item.filterTo);
+                return '(' + key + ' >= ? and ' + key + ' <= ?)';
             case 'blank':
                 return key + ' IS NULL';
             case 'notBlank':
@@ -119,12 +148,15 @@ export function FakeServer(allData) {
     }
 
     function orderBySql(request) {
-        const sortModel = request.sortModel;
+        // sorts on columns that aren't in the data (e.g. the auto group column) are ignored
+        const sortModel = request.sortModel.filter(function (s) {
+            return knownColumns.has(s.colId);
+        });
 
         if (sortModel.length === 0) return '';
 
         const sorts = sortModel.map(function (s) {
-            return s.colId + ' ' + s.sort.toUpperCase();
+            return column(s.colId) + (s.sort === 'desc' ? ' DESC' : ' ASC');
         });
 
         return ' ORDER BY ' + sorts.join(', ');
@@ -134,9 +166,11 @@ export function FakeServer(allData) {
         if (request.endRow == undefined || request.startRow == undefined) {
             return '';
         }
-        const blockSize = request.endRow - request.startRow;
+        // AlaSQL doesn't accept bound parameters here, so only ever write whole numbers
+        const startRow = Math.max(0, Math.floor(Number(request.startRow)) || 0);
+        const blockSize = Math.max(0, Math.floor(Number(request.endRow)) - startRow || 0);
 
-        return ' LIMIT ' + blockSize + ' OFFSET ' + request.startRow;
+        return ' LIMIT ' + blockSize + ' OFFSET ' + startRow;
     }
 
     function getLastRowIndex(request) {
