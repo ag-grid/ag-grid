@@ -58,14 +58,67 @@ const EXPORT_TYPE_CLIPBOARD = 'clipboard';
 
 // Skips a tag's attributes, including quoted values that contain `>`.
 const HTML_TAG_ATTRIBUTES = `(?:[^>"']|"[^"]*"|'[^']*')*`;
-const HTML_TAG_SOURCE = String.raw`<(\/?)([a-z][\w:-]*)${HTML_TAG_ATTRIBUTES}>`;
+const HTML_TAG_NAME_REGEX = /<(\/?)([a-z][\w:-]*)/iy;
+const HTML_BODY_OPEN_REGEX = /<body\b/gi;
+const HTML_BODY_CLOSE_REGEX = /<\/body\s*>/gi;
+const HTML_TABLE_OPEN_REGEX = /<table\b/gi;
+const HTML_TABLE_CLOSE_REGEX = /<\/table\s*>/gi;
 
-function htmlElementRegex(name: string): RegExp {
-    return new RegExp(String.raw`<${name}\b${HTML_TAG_ATTRIBUTES}>([\s\S]*?)<\/${name}\s*>`, 'i');
+/** Index just past the `>` ending a tag whose attributes start at `from`, skipping quoted values; -1 when unterminated. */
+function findHtmlTagEnd(html: string, from: number): number {
+    for (let i = from, len = html.length; i < len; ++i) {
+        const ch = html[i];
+        if (ch === '>') {
+            return i + 1;
+        }
+        if (ch === '"' || ch === "'") {
+            i = html.indexOf(ch, i + 1);
+            if (i < 0) {
+                return -1;
+            }
+        }
+    }
+    return -1;
 }
 
-const HTML_BODY_REGEX = htmlElementRegex('body');
-const HTML_TABLE_REGEX = htmlElementRegex('table');
+/**
+ * The first element opened by `openRegex` and closed by the nearest following `closeRegex` match, or null when that
+ * opening tag is malformed or never closed. Scans forward once, so it stays linear on malformed or hostile HTML.
+ */
+function findHtmlElement(
+    html: string,
+    openRegex: RegExp,
+    closeRegex: RegExp
+): { start: number; end: number; content: string } | null {
+    openRegex.lastIndex = 0;
+    const open = openRegex.exec(html);
+    const contentStart = open ? findHtmlTagEnd(html, openRegex.lastIndex) : -1;
+    if (contentStart < 0) {
+        return null;
+    }
+    closeRegex.lastIndex = contentStart;
+    const close = closeRegex.exec(html);
+    if (!close) {
+        return null;
+    }
+    return { start: open!.index, end: closeRegex.lastIndex, content: html.slice(contentStart, close.index) };
+}
+
+/** `html` with every complete `<!-- … -->` comment removed; an unterminated comment is left in place. */
+function removeHtmlComments(html: string): string {
+    let result = '';
+    let from = 0;
+    for (let start = html.indexOf('<!--'); start >= 0; start = html.indexOf('<!--', from)) {
+        const end = html.indexOf('-->', start + 4);
+        if (end < 0) {
+            break;
+        }
+        result += html.slice(from, start);
+        from = end + 3;
+    }
+    return result + html.slice(from);
+}
+
 // An empty table cell may contain a paragraph with only a line break.
 const HTML_EMPTY_PARAGRAPH_REGEX = new RegExp(String.raw`^<p\b${HTML_TAG_ATTRIBUTES}>\s*<br\s*\/?>\s*<\/p\s*>$`, 'i');
 
@@ -431,24 +484,23 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         rowCount: number;
         boundaryRows: { row: number; cellCount: number; hasNonEmptyMissingCell: boolean }[];
     } | null {
-        const body = HTML_BODY_REGEX.exec(html)?.[1] ?? html;
-        const uncommentedBody = body.replace(/<!--[\s\S]*?-->/g, '');
+        const body = findHtmlElement(html, HTML_BODY_OPEN_REGEX, HTML_BODY_CLOSE_REGEX)?.content ?? html;
+        const uncommentedBody = removeHtmlComments(body);
         if (uncommentedBody.includes('<!--')) {
             return null;
         }
-        const table = HTML_TABLE_REGEX.exec(uncommentedBody);
+        const table = findHtmlElement(uncommentedBody, HTML_TABLE_OPEN_REGEX, HTML_TABLE_CLOSE_REGEX);
         if (!table) {
             return null;
         }
 
         // Surrounding content may be an intended line rather than part of the table.
-        const outsideTable =
-            uncommentedBody.slice(0, table.index) + uncommentedBody.slice(table.index + table[0].length);
+        const outsideTable = uncommentedBody.slice(0, table.start) + uncommentedBody.slice(table.end);
         if (outsideTable.trim()) {
             return null;
         }
 
-        const tableContent = table[1];
+        const tableContent = table.content;
         const boundaryRows: { row: number; cellCount: number; hasNonEmptyMissingCell: boolean }[] = [];
         const firstBoundaryRow = parsedData.length - 2;
         let rowCount = 0;
@@ -458,19 +510,26 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
         let cellCount = 0;
         let plainCellCount = 0;
         let hasNonEmptyMissingCell = false;
-        const tagPattern = new RegExp(HTML_TAG_SOURCE, 'gi');
         let endOfPreviousTag = 0;
-        for (let match = tagPattern.exec(tableContent); match; match = tagPattern.exec(tableContent)) {
-            const strayTag = tableContent.indexOf('<', endOfPreviousTag);
-            if (strayTag >= 0 && strayTag < match.index) {
+        for (
+            let tagStart = tableContent.indexOf('<');
+            tagStart >= 0;
+            tagStart = tableContent.indexOf('<', endOfPreviousTag)
+        ) {
+            // every `<` must open a well-formed tag; a stray one means the HTML isn't a plain table
+            HTML_TAG_NAME_REGEX.lastIndex = tagStart;
+            const nameMatch = HTML_TAG_NAME_REGEX.exec(tableContent);
+            const tagEnd = nameMatch ? findHtmlTagEnd(tableContent, HTML_TAG_NAME_REGEX.lastIndex) : -1;
+            if (tagEnd < 0) {
                 return null;
             }
-            if (!cellName && tableContent.slice(endOfPreviousTag, match.index).trim()) {
+            if (!cellName && tableContent.slice(endOfPreviousTag, tagStart).trim()) {
                 return null;
             }
-            endOfPreviousTag = tagPattern.lastIndex;
+            endOfPreviousTag = tagEnd;
 
-            const [tag, closingSlash, tagName] = match;
+            const tag = tableContent.slice(tagStart, tagEnd);
+            const [, closingSlash, tagName] = nameMatch!;
             const isClosingTag = closingSlash === '/';
             const name = tagName.toLowerCase();
             if (
@@ -490,7 +549,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                     if (
                         rowCount >= firstBoundaryRow &&
                         cellCount >= plainCellCount &&
-                        !this.isEmptyHtmlCell(tableContent.slice(cellContentStart, match.index))
+                        !this.isEmptyHtmlCell(tableContent.slice(cellContentStart, tagStart))
                     ) {
                         hasNonEmptyMissingCell = true;
                     }
@@ -501,7 +560,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
                         return null;
                     }
                     cellName = name;
-                    cellContentStart = tagPattern.lastIndex;
+                    cellContentStart = tagEnd;
                 }
                 continue;
             }
