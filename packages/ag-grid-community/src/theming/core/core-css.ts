@@ -124,7 +124,7 @@ export interface CoreParams extends SharedThemeParams {
     columnDropCellBorder: BorderValue;
 
     /**
-     * Background color of the cells in a column when hovering over that column in the grid. This is not visible unless enabled with the `columnHoverHighlight` grid option. See also `columnHeaderHoverColor`.
+     * Background color of the cells in a column when hovering over that column in the grid. This is not visible unless enabled with the `columnHoverHighlight` grid option. Inside a cell selection it is overlaid on top of `rangeSelectionBackgroundColor`, so use a semi-transparent colour to keep the selection visible. See also `columnHeaderHoverColor`.
      */
     columnHoverColor: ColorValue;
 
