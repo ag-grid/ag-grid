@@ -458,7 +458,6 @@
 :where(.ag-cell).ag-column-hover {
     background-color: var(--ag-column-hover-color);
 
-    /* range selection rules own background-color on selected cells, so they layer this image on top instead */
     --ag-internal-column-hover-image: linear-gradient(var(--ag-column-hover-color), var(--ag-column-hover-color));
 }
 
