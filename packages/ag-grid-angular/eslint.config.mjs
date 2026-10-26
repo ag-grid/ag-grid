@@ -18,6 +18,7 @@ export default [
     {
         files: ['projects/ag-grid-angular/src/**'],
         rules: {
+            // Angular dependency injection needs value imports of its tokens (ElementRef, ViewContainerRef).
             '@typescript-eslint/consistent-type-imports': 'off',
         },
     },

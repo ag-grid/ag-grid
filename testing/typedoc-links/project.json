@@ -4,12 +4,7 @@
   "sourceRoot": "testing/typedoc-links",
   "projectType": "library",
   "targets": {
-    "lint": {
-      "command": "eslint",
-      "options": {
-        "cwd": "{projectRoot}"
-      }
-    },
+    "lint": {},
     "test": {
       "command": "npx vitest run",
       "dependsOn": ["ag-grid-community:build:types", "ag-grid-enterprise:build:types"],

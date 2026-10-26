@@ -48,6 +48,17 @@ export default [
         },
     },
     {
+        // TypeScript reports undefined names itself, and no-undef cannot see type-only globals such as `NodeJS`.
+        files: ['**/*.{ts,tsx}'],
+        rules: {
+            'no-undef': 'off',
+        },
+    },
+    {
+        files: ['src/components/example-runner/scripts/sw.js'],
+        languageOptions: { globals: { ...globals.serviceworker, ts: 'readonly' } },
+    },
+    {
         // The helper itself is the one place a raw write belongs.
         ignores: ['src/utils/historyUrl.ts'],
         rules: {

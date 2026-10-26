@@ -84,17 +84,12 @@ export function preventIdleSleep() {
 
 /**
  * Runs a command with all of its output going to one file and none to the console. One fd for both streams,
- * so they interleave by write order exactly as a shell's `>file 2>&1` does. `colour` is for a file that will
- * be printed to a console after all; a file that is only ever read back keeps the escapes out.
+ * so they interleave by write order exactly as a shell's `>file 2>&1` does.
  */
-async function execToFile(command, args, { file, colour = false, env = process.env, ...options }) {
+async function execToFile(command, args, { file, ...options }) {
     const fd = fs.openSync(file, 'a');
     try {
-        return await spawnAwait(command, args, {
-            ...options,
-            env: colour ? env : { ...env, NO_COLOR: '1' },
-            stdio: ['inherit', fd, fd],
-        });
+        return await spawnAwait(command, args, { ...options, stdio: ['inherit', fd, fd] });
     } finally {
         fs.closeSync(fd);
     }
@@ -350,14 +345,16 @@ export class RunLog {
     }
 
     /**
-     * Runs the command, capturing it as `capture` asks. Resolves to the exit code a shell would report.
-     * `file` sends the output to a file of the gate's choosing rather than the run log's - which is how a
-     * gate whose output is never watched live keeps a log to read back even when capture is off.
+     * Runs the command as `capture` asks, resolving to a shell's exit code. `file` sends the output to a gate's own
+     * log, kept even with capture off; `colour` keeps the escapes in a file later printed to a console.
      */
-    async exec(command, args, { cwd = this.rootDir, env = process.env, file, colour } = {}) {
+    async exec(command, args, { cwd = this.rootDir, env: givenEnv = process.env, file, colour } = {}) {
         const target = file ?? (this.capture === 'file' ? this.file : undefined);
+        // Nx gives each task FORCE_COLOR=true unless it is already set, and Node warns wherever that meets NO_COLOR.
+        const env =
+            givenEnv.NO_COLOR || (target && !colour) ? { ...givenEnv, NO_COLOR: '1', FORCE_COLOR: '0' } : givenEnv;
         if (target) {
-            return execToFile(command, args, { cwd, env, file: target, colour });
+            return execToFile(command, args, { cwd, env, file: target });
         }
         if (!this.enabled) {
             return spawnAwait(command, args, { cwd, env, stdio: 'inherit' });
