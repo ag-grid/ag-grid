@@ -99,16 +99,16 @@ export function createCalculatedColumnReferenceMapper(
         checkRestrictions: boolean
     ): CalculatedColumnReferenceError | undefined => {
         let primaryColumns: AgColumn[] | undefined;
-        let unknown: CalculatedColumnReferenceError | undefined;
+        let unknownError: CalculatedColumnReferenceError | undefined;
         for (const { cell, range } of references) {
             // display bracket references are resolved separately by the header mapper
             if (cell.row.current) {
                 continue;
             }
             primaryColumns ??= beans.colModel.colsList.filter((column) => column.primary);
-            const { columns, unknownColumn } = resolveFormulaReferenceColumns(beans, primaryColumns, cell);
-            if (unknownColumn != null) {
-                unknown ??= { type: 'unknown', reference: expression.slice(range.start, range.end), range };
+            const { columns, unknown } = resolveFormulaReferenceColumns(beans, primaryColumns, cell);
+            if (unknown) {
+                unknownError ??= { type: 'unknown', reference: expression.slice(range.start, range.end), range };
             }
             if (checkRestrictions) {
                 const restricted = columns.find((column) => restrictedColIds.has(column.colId));
@@ -121,7 +121,7 @@ export function createCalculatedColumnReferenceMapper(
                 }
             }
         }
-        return unknown;
+        return unknownError;
     };
 
     return {

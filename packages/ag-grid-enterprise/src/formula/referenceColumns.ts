@@ -8,14 +8,11 @@ export function resolveFormulaReferenceColumns(
     beans: BeanCollection,
     primaryColumns: AgColumn[],
     cell: Cell
-): { columns: AgColumn[]; unknownColumn?: string } {
+): { columns: AgColumn[]; unknown?: boolean } {
     const start = resolveColumn(beans, primaryColumns, cell.column);
-    if (!start) {
-        return { columns: [], unknownColumn: cell.column.id };
-    }
-    const end = cell.endColumn ? resolveColumn(beans, primaryColumns, cell.endColumn) : start;
-    if (!end) {
-        return { columns: [], unknownColumn: cell.endColumn!.id };
+    const end = start && (cell.endColumn ? resolveColumn(beans, primaryColumns, cell.endColumn) : start);
+    if (!start || !end) {
+        return { columns: [], unknown: true };
     }
     if (start === end) {
         return { columns: [start] };

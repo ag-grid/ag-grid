@@ -221,7 +221,7 @@ Restricted edits disable Apply in deferred mode. In live mode, they are saved bu
 
 ### getValidationErrors
 
-Use `getValidationErrors` to customise dialog validation in either apply mode. Return messages to reject an expression, or `null` or `[]` to accept it. Return `internalErrors` to retain built-in messages. The callback runs while typing, so keep it quick. Custom messages are displayed unchanged; supply translated text where needed.
+Use `getValidationErrors` to customise dialog validation in either apply mode. Return messages to reject an expression, or `null` or `[]` to accept it. Return `internalErrors` to retain built-in messages. With the callback configured, built-in feedback is shown only when returned through `internalErrors`. Reference restrictions remain enforced. The callback runs while typing, so keep it quick. Custom messages are displayed unchanged; supply translated text where needed.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
