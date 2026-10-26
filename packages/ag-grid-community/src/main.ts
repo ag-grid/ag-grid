@@ -956,6 +956,7 @@ export type {
     RowStyle,
     SelectAllMode,
     SelectionColumnDef,
+    ServerSideLoadingRowType,
     SingleRowSelectionOptions,
     TreeDataDisplayType,
     UseGroupFooter,

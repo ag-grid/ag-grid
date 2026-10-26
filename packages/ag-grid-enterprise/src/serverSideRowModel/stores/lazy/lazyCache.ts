@@ -18,6 +18,7 @@ import {
     _getRowHeightAsNumber,
     _getRowHeightForNode,
     _getRowIdCallback,
+    _getServerSideLoadingRowType,
 } from 'ag-grid-community';
 
 import { _createRowNodeFooter } from '../../../aggregation/footerUtils';
@@ -91,6 +92,13 @@ export class LazyCache extends BeanStub {
      * extent is invalidated by a non-purge refresh - see `markNodesForRefresh`.
      */
     private isLastRowInferred: boolean;
+    /** Whether this level has not yet had a response for its first block. */
+    private awaitingFirstBlock = false;
+    /**
+     * Whether this level displays no rows until its first block loads, as `serverSideLoadingRowType: 'none'`
+     * has no loading row to show in its place. The block is loaded once the parent row is in the viewport.
+     */
+    private firstBlockPending = false;
 
     /**
      * The prefix to use for node ids, this is used to ensure that node ids are unique across stores
@@ -146,6 +154,55 @@ export class LazyCache extends BeanStub {
         this.defaultNodeIdPrefix = blockUtils.createNodeIdPrefix(store.getParentNode());
         this.getRowIdFunc = _getRowIdCallback(this.beans);
         this.isMasterDetail = gos.get('masterDetail');
+
+        this.awaitingFirstBlock = !this.isLastRowKnown && this.numberOfRows <= 1;
+        this.syncInitialLoadingRow();
+    }
+
+    /**
+     * While the first block is awaited, drops or restores the initial loading row to match the loading row type.
+     * The caller refreshes display indexes.
+     */
+    public syncInitialLoadingRow(): void {
+        const hide = this.isInitialLoadingRowHidden();
+        if (!this.awaitingFirstBlock || hide === this.firstBlockPending) {
+            return;
+        }
+
+        if (!hide) {
+            this.firstBlockPending = false;
+            this.numberOfRows = Math.max(this.numberOfRows, 1);
+            return;
+        }
+
+        // only the untouched placeholder can be dropped, not rows added by a transaction or row count
+        const placeholder = this.nodeMap.getBy('index', 0);
+        const placeholderCount = placeholder?.node.stub ? 1 : 0;
+        if (this.numberOfRows > 1 || this.nodeMap.getSize() > placeholderCount) {
+            return;
+        }
+        this.destroyRowAtIndex(0);
+        this.firstBlockPending = true;
+        this.numberOfRows = 0;
+        this.lazyBlockLoadingSvc.queueLoadCheck();
+    }
+
+    /**
+     * Child levels drop their initial loading row. The root level keeps `serverSideInitialRowCount`, and hidden
+     * open parents rely on the first child row to display their group.
+     */
+    private isInitialLoadingRowHidden(): boolean {
+        const { gos } = this;
+        return (
+            this.store.getParentNode().level > -1 &&
+            _getServerSideLoadingRowType(gos) === 'none' &&
+            !gos.get('groupHideOpenParents') &&
+            !gos.get('groupAllowUnbalanced')
+        );
+    }
+
+    public isFirstBlockPending(): boolean {
+        return this.firstBlockPending;
     }
 
     public override destroy() {
@@ -174,7 +231,11 @@ export class LazyCache extends BeanStub {
         const node = this.nodeDisplayIndexMap.get(displayIndex);
         if (node) {
             // if we have the node, check if it needs refreshed when rendered
-            if (node.stub || node.__needsRefreshWhenVisible) {
+            if (
+                node.stub ||
+                node.__needsRefreshWhenVisible ||
+                (node.expanded && (node.childStore as LazyStore | undefined)?.getCache().isFirstBlockPending())
+            ) {
                 this.lazyBlockLoadingSvc.queueLoadCheck();
             }
             return node;
@@ -879,6 +940,8 @@ export class LazyCache extends BeanStub {
                 return;
             }
         }
+        this.awaitingFirstBlock = false;
+        this.firstBlockPending = false;
 
         if (response.pivotResultFields) {
             this.serverSideRowModel.generateSecondaryColumns(response.pivotResultFields);
@@ -1030,6 +1093,12 @@ export class LazyCache extends BeanStub {
         if (!this.live) {
             return;
         }
+        if (this.firstBlockPending) {
+            // restore the initial row so the failed load has a row to retry from
+            this.firstBlockPending = false;
+            this.numberOfRows = 1;
+        }
+        this.awaitingFirstBlock = false;
         const wasRefreshing = this.nodesToRefresh.size > 0;
 
         for (let i = firstRowIndex; i < firstRowIndex + numberOfRowsExpected && i < this.getRowCount(); i++) {

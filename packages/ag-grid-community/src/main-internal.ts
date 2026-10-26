@@ -233,6 +233,7 @@ export {
     _getRowHeightForNode,
     _getRowIdCallback,
     _getRowSelectionMode,
+    _getServerSideLoadingRowType,
     _getSuppressMultiRanges,
     _interpretAsRightClick,
     _isAnimateRows,

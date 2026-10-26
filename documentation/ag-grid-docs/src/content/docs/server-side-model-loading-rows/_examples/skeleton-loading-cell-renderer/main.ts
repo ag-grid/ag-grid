@@ -26,8 +26,8 @@ const gridOptions: GridOptions<IOlympicData> = {
 
     // use the server-side row model
     rowModelType: 'serverSide',
-    // suppress the default full width loading behaviour
-    suppressServerSideFullWidthLoadingRow: true,
+    // display loading indicators in each cell instead of a full width loading row
+    serverSideLoadingRowType: 'cell',
 
     cacheBlockSize: 5,
     maxBlocksInCache: 0,

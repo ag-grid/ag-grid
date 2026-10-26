@@ -66,6 +66,7 @@ const STRING_GRID_OPTIONS: KeysWithType<string>[] = [
     'findSearchValue',
     'styleNonce',
     'renderingMode',
+    'serverSideLoadingRowType',
 ];
 
 // only used internally
