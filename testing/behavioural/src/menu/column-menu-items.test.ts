@@ -585,6 +585,26 @@ describe('checkable column menu items aria', () => {
         });
     });
 
+    test('custom checked items with menuItemRole menuitem are plain items without aria-checked', async () => {
+        const api = await gridMgr.createGridAndWait('menu-custom-plain-aria', {
+            columnDefs: [{ field: 'athlete' }],
+            rowData,
+            getColumnMenuItems: () => [
+                { name: 'Checked', checked: true, menuItemRole: 'menuitem' },
+                { name: 'Unchecked', checked: false, menuItemRole: 'menuitem' },
+            ],
+        });
+
+        restoreOffsetParent = polyfillOffsetParent();
+        api.showColumnMenu('athlete');
+        await openMenuOption('Checked');
+        expect(menuOptionsAria('Checked')).toEqual({
+            Checked: 'menuitem null',
+            Unchecked: 'menuitem null',
+        });
+        expect(menuOption('Checked')!.closest('.ag-menu-option')!.querySelector('.ag-icon-tick')).not.toBeNull();
+    });
+
     test('custom items with menuItemRole menuitemradio are radio items, unless they are not checkable', async () => {
         const api = await gridMgr.createGridAndWait('menu-custom-radio-aria', {
             columnDefs: [{ field: 'athlete' }],

@@ -32,7 +32,7 @@ If you want to turn off the context menu completely, set the grid property `supp
 
 ### Checkable Menu Items
 
-Setting `checked` on a menu item shows a check beside it, and screen readers announce the item as a checkbox. When only one item in a set can be checked, set `menuItemRole: 'menuitemradio'` on each item in the set so screen readers announce them as radio options instead.
+Setting `checked` on a menu item shows a check beside it, and screen readers announce the item as a checkbox. When only one item in a set can be checked, set `menuItemRole: 'menuitemradio'` on each item in the set so screen readers announce them as radio options instead. If an item is not part of a checkable group, set `menuItemRole: 'menuitem'` so screen readers announce it as a plain menu item, while the check is still shown.
 
 Screen readers treat every radio item in a menu as part of one set, and separators do not split them. Put each set of mutually exclusive items in its own sub menu:
 

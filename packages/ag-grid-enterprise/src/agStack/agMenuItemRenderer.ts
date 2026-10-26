@@ -56,11 +56,11 @@ export class AgMenuItemRenderer<
     }
 
     private addAriaAttributes(): void {
-        const { checked, subMenu } = this.params;
+        const { checked, menuItemRole, subMenu } = this.params;
 
         const eGui = this.getGui();
 
-        if (checked != null) {
+        if (checked != null && menuItemRole !== 'menuitem') {
             _setAriaChecked(eGui, checked);
         }
 
