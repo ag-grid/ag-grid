@@ -43,6 +43,20 @@ describe('ag-grid validation warnings', () => {
         expect(consoleWarnSpy).not.toHaveBeenCalled();
     });
 
+    test('warns when enableShadowDom is true but the grid cannot render in a shadow root', () => {
+        const shadowDomWarning = expect.stringContaining('`enableShadowDom` has no effect');
+
+        gridsManager.createGrid('isolated', { columnDefs: [{ field: 'a' }], enableShadowDom: true });
+        expect(consoleWarnSpy).not.toHaveBeenCalledWith(expect.any(String), shadowDomWarning, expect.any(String));
+
+        gridsManager.createGrid('withPopupParent', {
+            columnDefs: [{ field: 'a' }],
+            enableShadowDom: true,
+            popupParent: document.body,
+        });
+        expect(consoleWarnSpy).toHaveBeenCalledWith(expect.any(String), shadowDomWarning, expect.any(String));
+    });
+
     describe('invalid property names', () => {
         test('warns for unknown gridOptions properties', () => {
             gridsManager.createGrid('myGrid', {

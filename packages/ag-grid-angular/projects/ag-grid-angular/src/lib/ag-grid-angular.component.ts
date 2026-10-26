@@ -2023,6 +2023,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * @initial
      */
     @Input() public themeStyleContainer: (HTMLElement | (() => HTMLElement | void)) | undefined = undefined;
+    /** Set to `true` to render the grid in a shadow root of its own, so the page's CSS cannot reach its elements, or `false` to always render it in the page's DOM. If not specified, the grid uses a shadow root only on known pages whose CSS breaks its controls, such as some AI chat visualisations.
+     * <br /><br />
+     * Page CSS that targets the grid's elements, such as rules for `cellClass` or `rowClass`, does not reach the shadow root; theme parameters and CSS variables do. A grid placed in your own shadow DOM does not need this option.
+     * <br /><br />
+     * Applies only to grids created with `createGrid`, and not with a legacy theme, `themeStyleContainer`, `popupParent`, `createChartContainer` or `advancedFilterParent`.
+     * @initial
+     */
+    @Input({ transform: booleanAttribute }) public enableShadowDom: boolean | undefined = undefined;
     /** For customising the context menu.
      * @agModule `ContextMenuModule`
      */

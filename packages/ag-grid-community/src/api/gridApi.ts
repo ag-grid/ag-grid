@@ -117,7 +117,7 @@ export interface _CoreGridApi<TData = any> {
      */
     isModuleRegistered(moduleName: AgModuleName): boolean;
 
-    /** Returns the outermost DOM element created by the grid. This is a direct child of the host element provided by the application. */
+    /** Returns the outermost DOM element created by the grid. This is a direct child of the host element provided by the application, unless the grid renders in a shadow root of its own (see `enableShadowDom`), in which case it is inside that shadow root. */
     getGridElement(): Element | undefined;
 }
 
