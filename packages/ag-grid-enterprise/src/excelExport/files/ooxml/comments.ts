@@ -1,5 +1,3 @@
-import { _escapeString } from 'ag-stack';
-
 import type { ExcelOOXMLTemplate, XmlElement } from 'ag-grid-community';
 
 import type { ExcelComment } from '../../assets/excelInterfaces';
@@ -23,7 +21,7 @@ const boldRunProperties: XmlElement = {
 const buildTextElement = (value: string, preserveSpace: boolean): XmlElement => ({
     name: 't',
     properties: preserveSpace ? { rawMap: { 'xml:space': 'preserve' } } : undefined,
-    textNode: _escapeString(replaceInvisibleCharacters(value) ?? ''),
+    textNode: replaceInvisibleCharacters(value) ?? '',
 });
 
 const buildRichTextRun = (value: string, bold: boolean, preserveSpace: boolean): XmlElement => ({
@@ -85,7 +83,7 @@ const commentsFactory: ExcelOOXMLTemplate = {
                     name: 'authors',
                     children: authors.map((author) => ({
                         name: 'author',
-                        textNode: _escapeString(author),
+                        textNode: author,
                     })),
                 },
                 {

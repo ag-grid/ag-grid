@@ -1,5 +1,3 @@
-import { _escapeString } from 'ag-stack';
-
 import type {
     ExcelColumn,
     ExcelFont,
@@ -184,7 +182,7 @@ const applyHeaderFontStyle = (headerString: string, font?: ExcelFont): string =>
         return headerString;
     }
 
-    headerString += '&amp;&quot;';
+    headerString += '&"';
     headerString += font.fontName || 'Calibri';
 
     if (font.bold !== font.italic) {
@@ -194,19 +192,19 @@ const applyHeaderFontStyle = (headerString: string, font?: ExcelFont): string =>
     } else {
         headerString += ',Regular';
     }
-    headerString += '&quot;';
+    headerString += '"';
 
     if (font.size) {
-        headerString += `&amp;${font.size}`;
+        headerString += `&${font.size}`;
     }
     if (font.strikeThrough) {
-        headerString += '&amp;S';
+        headerString += '&S';
     }
     if (font.underline) {
-        headerString += `&amp;${font.underline === 'Double' ? 'E' : 'U'}`;
+        headerString += `&${font.underline === 'Double' ? 'E' : 'U'}`;
     }
     if (font.color) {
-        headerString += `&amp;K${font.color.replace('#', '').toUpperCase()}`;
+        headerString += `&K${font.color.replace('#', '').toUpperCase()}`;
     }
 
     return headerString;
@@ -219,7 +217,7 @@ const processHeaderFooterContent = (
 ): string =>
     content.reduce((prev, curr, idx) => {
         const pos = getHeaderPosition(curr.position);
-        const output = applyHeaderFontStyle(`${prev}&amp;${pos}`, curr.font);
+        const output = applyHeaderFontStyle(`${prev}&${pos}`, curr.font);
         const PositionMap: ['Left', 'Center', 'Right'] = ['Left', 'Center', 'Right'];
 
         if (!curr.position) {
@@ -232,7 +230,7 @@ const processHeaderFooterContent = (
             addXlsxHeaderFooterImageToMap(image, imagePosition);
         }
 
-        return `${output}${_escapeString(replaceHeaderFooterTokens(curr.value))}`;
+        return `${output}${replaceHeaderFooterTokens(curr.value)}`;
     }, '');
 
 const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElement[] => {

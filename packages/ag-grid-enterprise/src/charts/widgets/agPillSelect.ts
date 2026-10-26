@@ -1,4 +1,4 @@
-import { _escapeString, _getActiveDomElement, _removeFromParent } from 'ag-stack';
+import { _getActiveDomElement, _removeFromParent } from 'ag-stack';
 
 import type {
     DragAndDropIcon,
@@ -49,7 +49,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
         const { selectedValueList, valueFormatter, valueList } = this.config;
         this.selectedValues = selectedValueList ?? [];
         this.valueList = valueList ?? [];
-        this.valueFormatter = valueFormatter ?? ((value) => _escapeString(value as any)!);
+        this.valueFormatter = valueFormatter ?? ((value) => String(value ?? ''));
         this.registerCSS(agPillSelectCSS);
     }
 

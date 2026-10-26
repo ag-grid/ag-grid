@@ -1,3 +1,5 @@
+import { _escapeString } from 'ag-stack';
+
 import type { HeaderElement, XmlElement } from 'ag-grid-community';
 
 const LINE_SEPARATOR = '\r\n';
@@ -19,7 +21,7 @@ function returnAttributeIfPopulated(key: string, value: any, booleanTransformer?
         }
     }
 
-    return ` ${key}="${xmlValue}"`;
+    return ` ${key}="${_escapeString(xmlValue)}"`;
 }
 
 export function createXmlHeader(headerElement: HeaderElement = {}): string {
@@ -78,7 +80,7 @@ class XmlWriter {
         if (!children && textNode == null) {
             this.write(opening + '/>' + LINE_SEPARATOR);
         } else if (textNode != null) {
-            this.write(opening + '>' + textNode + '</' + name + '>' + LINE_SEPARATOR);
+            this.write(opening + '>' + _escapeString(textNode) + '</' + name + '>' + LINE_SEPARATOR);
         } else {
             this.write(opening + '>' + LINE_SEPARATOR);
             if (children) {

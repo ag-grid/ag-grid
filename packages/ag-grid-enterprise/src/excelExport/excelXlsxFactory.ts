@@ -1,5 +1,3 @@
-import { _escapeString } from 'ag-stack';
-
 import type {
     AgColumn,
     ExcelCustomMetadata,
@@ -274,7 +272,7 @@ function buildImageMap(params: {
 }
 
 function addSheetName(worksheet: ExcelWorksheet): void {
-    const name = _escapeString(worksheet.name) || '';
+    const name = worksheet.name || '';
     let append = '';
 
     while (XLSX_SHEET_NAMES.indexOf(`${name}${append}`) !== -1) {

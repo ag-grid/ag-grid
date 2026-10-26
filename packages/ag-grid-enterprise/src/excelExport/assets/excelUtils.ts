@@ -1,5 +1,3 @@
-import { _escapeString } from 'ag-stack';
-
 import type { AgColumn, RowHeightCallbackParams, XmlElement } from 'ag-grid-community';
 
 import { INCH_TO_EMU } from './excelConstants';
@@ -169,7 +167,7 @@ export function* buildSharedString(strMap: Map<string, number>): Iterable<XmlEle
 
         const child: XmlElement = {
             name: 't',
-            textNode: _escapeString(replaceInvisibleCharacters(textNode)),
+            textNode: replaceInvisibleCharacters(textNode),
         };
 
         // if we have leading or trailing spaces, instruct Excel not to trim them

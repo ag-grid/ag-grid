@@ -1,5 +1,3 @@
-import { _escapeString } from 'ag-stack';
-
 import type { ExcelCustomMetadata, ExcelOOXMLTemplate, XmlElement } from 'ag-grid-community';
 
 import { replaceInvisibleCharacters } from '../../assets/excelUtils';
@@ -15,13 +13,13 @@ const buildPropertyElements = (metadata: ExcelCustomMetadata): XmlElement[] => {
             rawMap: {
                 fmtid: DEFAULT_FMTID,
                 pid: (index + 2).toString(),
-                name: _escapeString(name) ?? '',
+                name,
             },
         },
         children: [
             {
                 name: 'vt:lpwstr',
-                textNode: _escapeString(replaceInvisibleCharacters(String(metadata[name]))) ?? '',
+                textNode: replaceInvisibleCharacters(String(metadata[name])),
             },
         ],
     }));

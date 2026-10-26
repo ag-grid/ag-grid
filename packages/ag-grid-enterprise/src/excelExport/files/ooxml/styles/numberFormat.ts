@@ -1,4 +1,4 @@
-import { _escapeString, _splitBracketed } from 'ag-stack';
+import { _splitBracketed } from 'ag-stack';
 
 import type { ExcelOOXMLTemplate } from 'ag-grid-community';
 
@@ -18,7 +18,7 @@ function prepareString(str: string): string {
             currentString = currentString.replace(/\$/g, '"$"');
         }
 
-        split[i] = _escapeString(currentString) as string;
+        split[i] = currentString;
     }
 
     return split.join('');

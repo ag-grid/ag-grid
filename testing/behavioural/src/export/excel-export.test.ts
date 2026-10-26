@@ -81,6 +81,64 @@ describe('Excel export', () => {
         ]);
     });
 
+    test('writes text with XML special characters as well-formed XML in every part', async () => {
+        const special = `A&B <C> "D" 'E'`;
+        const api = gridsManager.createGrid('excel-special-characters', {
+            columnDefs: [{ field: 'value', cellClass: 'styled' }],
+            rowData: [{ value: special }],
+            excelStyles: [{ id: 'styled', font: { fontName: special }, numberFormat: { format: '[<=100]"<"0;0' } }],
+        });
+
+        api.exportDataAsExcel({
+            author: special,
+            sheetName: 'R&D',
+            customMetadata: { [special]: special },
+            headerFooterConfig: { all: { header: [{ value: special, position: 'Center', font: { bold: true } }] } },
+            addImageToCell: (rowIndex, column, value) => ({
+                image: {
+                    id: special,
+                    altText: special,
+                    base64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aVZsAAAAASUVORK5CYII=',
+                    imageType: 'png',
+                    width: 20,
+                    height: 12,
+                },
+                value,
+            }),
+        });
+        const zip = XLSX.CFB.read(new Uint8Array(await (await objectUrls.pullBlob()).arrayBuffer()), { type: 'array' });
+        const parse = (path: string) => {
+            const xml = new TextDecoder().decode(XLSX.CFB.find(zip, path).content);
+            const doc = new DOMParser().parseFromString(xml, 'application/xml');
+            expect(doc.getElementsByTagName('parsererror')).toHaveLength(0);
+            return doc;
+        };
+
+        expect(parse('/docProps/core.xml').getElementsByTagName('dc:creator')[0].textContent).toBe(special);
+        expect(parse('/xl/workbook.xml').getElementsByTagName('sheet')[0].getAttribute('name')).toBe('R&D');
+        const sharedStrings = Array.from(parse('/xl/sharedStrings.xml').getElementsByTagName('t'));
+        expect(sharedStrings.map((el) => el.textContent)).toContain(special);
+
+        const customProperty = parse('/docProps/custom.xml').getElementsByTagName('property')[0];
+        expect(customProperty.getAttribute('name')).toBe(special);
+        expect(customProperty.getElementsByTagName('vt:lpwstr')[0].textContent).toBe(special);
+
+        const styles = parse('/xl/styles.xml');
+        const fontNames = Array.from(styles.getElementsByTagName('name')).map((el) => el.getAttribute('val'));
+        expect(fontNames).toContain(special);
+        const formatCodes = Array.from(styles.getElementsByTagName('numFmt')).map((el) =>
+            el.getAttribute('formatCode')
+        );
+        expect(formatCodes).toContain('[<=100]"<"0;0');
+
+        const sheet = parse('/xl/worksheets/sheet1.xml');
+        expect(sheet.getElementsByTagName('oddHeader')[0].textContent).toBe(`&C&"Calibri,Bold"${special}`);
+
+        const picture = parse('/xl/drawings/drawing1.xml').getElementsByTagName('xdr:cNvPr')[0];
+        expect(picture.getAttribute('name')).toBe(special);
+        expect(picture.getAttribute('descr')).toBe(special);
+    });
+
     test('number formats quote `$` only outside square-bracket sections', async () => {
         const api = gridsManager.createGrid('excel-number-format-brackets', {
             columnDefs: [

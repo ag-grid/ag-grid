@@ -1,5 +1,3 @@
-import { _escapeString } from 'ag-stack';
-
 import type { ExcelCell, ExcelOOXMLTemplate } from 'ag-grid-community';
 
 import { replaceInvisibleCharacters } from '../../assets/excelUtils';
@@ -44,7 +42,7 @@ const cellFactory: ExcelOOXMLTemplate = {
             children = [
                 {
                     name: 'f',
-                    textNode: _escapeString(replaceInvisibleCharacters(value)),
+                    textNode: replaceInvisibleCharacters(value),
                 },
             ];
         } else if (convertedType === 'inlineStr') {
@@ -54,7 +52,7 @@ const cellFactory: ExcelOOXMLTemplate = {
                     children: [
                         {
                             name: 't',
-                            textNode: _escapeString(replaceInvisibleCharacters(value)),
+                            textNode: replaceInvisibleCharacters(value),
                         },
                     ],
                 },

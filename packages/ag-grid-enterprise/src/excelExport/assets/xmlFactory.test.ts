@@ -5,7 +5,7 @@ import { createXml, createXmlHeader } from './xmlFactory';
 describe('Excel XML writer', () => {
     const children: XmlElement[] = [
         { name: 'empty' },
-        { name: 'text', textNode: 'A&amp;B' },
+        { name: 'text', textNode: 'A&B' },
         { name: 'blank', textNode: '' },
         { name: 'children', children: [] },
     ];
@@ -29,6 +29,19 @@ describe('Excel XML writer', () => {
         );
         expect(createXmlHeader({ encoding: 'UTF-8', standalone: 'yes' })).toBe(
             '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>'
+        );
+    });
+
+    test('escapes attribute values and text', () => {
+        expect(
+            createXml({
+                name: 'root',
+                properties: { rawMap: { label: `<a href="x">'b' & c</a>` } },
+                textNode: `<a href="x">'b' & c</a>`,
+            })
+        ).toBe(
+            '<root label="&lt;a href=&quot;x&quot;&gt;&#39;b&#39; &amp; c&lt;/a&gt;">' +
+                '&lt;a href=&quot;x&quot;&gt;&#39;b&#39; &amp; c&lt;/a&gt;</root>\r\n'
         );
     });
 
