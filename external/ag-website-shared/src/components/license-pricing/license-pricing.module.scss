@@ -180,6 +180,12 @@ $product-logo-height: 32px;
     font-size: var(--text-fs-xl);
     font-weight: var(--text-bold);
     color: var(--color-text-secondary);
+
+    @media screen and (max-width: $breakpoint-pricing-small) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spacing-size-1;
+    }
 }
 
 .buyingRoutes,
@@ -285,6 +291,18 @@ $product-logo-height: 32px;
         --pricing-tint-enterprise: color-mix(in oklch, var(--color-bg-primary), var(--color-gray-700) 10%);
         --pricing-tint-bundle: color-mix(in oklch, var(--color-bg-primary), var(--color-gray-700) 20%);
     }
+
+    // The table stacks each label above three equal feature columns (see ComparisonTable), so the
+    // tints move to thirds.
+    @media screen and (max-width: $breakpoint-pricing-medium) {
+        min-width: 0;
+        background: linear-gradient(
+            to right,
+            transparent 0 calc(100% / 3),
+            var(--pricing-tint-enterprise) calc(100% / 3) calc(200% / 3),
+            var(--pricing-tint-bundle) calc(200% / 3)
+        );
+    }
 }
 
 .featureTableHeader {
@@ -308,6 +326,31 @@ $product-logo-height: 32px;
         margin-bottom: $spacing-size-1;
         font-size: var(--text-fs-xl);
         color: var(--color-text-primary);
+    }
+
+    @media screen and (max-width: $breakpoint-pricing-medium) {
+        > div {
+            width: calc(100% / 3);
+            padding: $spacing-size-3 $spacing-size-2 $spacing-size-4;
+            font-size: var(--text-fs-xs);
+            text-align: center;
+
+            &:first-child {
+                display: none;
+            }
+
+            &:nth-child(2) {
+                border-right: none;
+            }
+
+            &:nth-child(3) {
+                border-right: none;
+            }
+        }
+
+        h3 {
+            font-size: var(--text-fs-sm);
+        }
     }
 }
 
