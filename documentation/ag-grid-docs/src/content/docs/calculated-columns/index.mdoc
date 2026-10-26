@@ -312,6 +312,8 @@ const gridOptions = {
 };
 ```
 
+Spread `params.colDef` to preserve the user's settings. Omitted properties use normal column defaults, except `calculatedExpression`, which retains the user's expression.
+
 In the example, the **Profit** column is restored from Grid State as if a user had created it, so it has a filter button and can be aggregated from the column menu.
 
 {% gridExampleRunner title="Customising Calculated Column Definitions" name="calculated-columns-process-col-def" /%}

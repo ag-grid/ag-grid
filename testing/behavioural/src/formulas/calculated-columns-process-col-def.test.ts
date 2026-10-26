@@ -1022,32 +1022,6 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
         }
     );
 
-    test.each([
-        { label: 'without a callback', callback: false, expectedTitle: 'Profit!' },
-        { label: 'with a callback', callback: true, expectedTitle: 'Profit' },
-    ])(
-        'with a defaultColDef.headerValueGetter, the dialog title is $expectedTitle $label',
-        async ({ callback, expectedTitle }) => {
-            const api = createGrid('pcd-header-value-getter', {
-                rowData: ROW_DATA,
-                columnDefs: columnDefs(),
-                defaultColDef: { headerValueGetter: (params) => `${params.colDef?.headerName}!` },
-                calculatedColumns: callback ? { processColDef: (params) => params.colDef } : true,
-                initialState: {
-                    userColumns: userColumnsState('calc', '[a] * 2', [{ property: 'headerName', value: 'Profit' }]),
-                },
-            });
-            await waitForColumn(api, 'calc');
-            expect(headerOf(api, 'calc')).toBe('Profit!');
-
-            api.showColumnMenu('calc');
-            await clickMenuOption('Edit Calculated Column');
-            await waitFor(() => getDialog());
-
-            expect(getDialog().querySelector<HTMLInputElement>('input')!.value).toBe(expectedTitle);
-        }
-    );
-
     test('without a callback the dialog title of a restored column inherits defaultColDef.headerName', async () => {
         const api = gridWithUserColumn('pcd-default-header', 'calc', '[a] * 2', undefined, {
             defaultColDef: { headerName: 'Inherited' },

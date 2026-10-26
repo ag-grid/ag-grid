@@ -126,9 +126,11 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
      * `columnDefs`.
      *
      * Called every time the column is built. Return the full Column Definition to use; returning `params.colDef`
-     * or `undefined` leaves the column unchanged. The returned definition takes precedence over `defaultColDef`
-     * and column types. `colId`, `editable`, `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor`
-     * and `cellEditorSelector` are always overridden for calculated columns.
+     * or `undefined` leaves the column unchanged. Spread `params.colDef` to preserve the user's settings: omitted
+     * properties use normal column defaults, except `calculatedExpression`, which retains the user's expression.
+     * The returned definition takes precedence over `defaultColDef` and column types. `colId`, `editable`,
+     * `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor` and `cellEditorSelector` are always
+     * overridden for calculated columns.
      *
      * In `'live'` `applyMode` it is also called while the user types in the dialog, so keep it cheap and use
      * `params.expressionValidation` to check the expression's validation status.
