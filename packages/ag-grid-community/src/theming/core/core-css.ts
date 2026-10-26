@@ -124,12 +124,12 @@ export interface CoreParams extends SharedThemeParams {
     columnDropCellBorder: BorderValue;
 
     /**
-     * Background color of the cells in a column when hovering over that column in the grid. This is not visible unless enabled in the grid options. See also `columnHeaderHoverColor`.
+     * Background color of the cells in a column when hovering over that column in the grid. This is not visible unless enabled with the `columnHoverHighlight` grid option. See also `columnHeaderHoverColor`.
      */
     columnHoverColor: ColorValue;
 
     /**
-     * Background color of the column header when hovering over that column in the grid. This is not visible unless enabled in the grid options. This differs from `headerCellHoverBackgroundColor` which applies when the header cell itself is hovered.
+     * Background color of the column header when hovering over that column in the grid. This is not visible unless enabled with the `columnHoverHighlight` grid option. Set to `transparent` to disable the hover effect. This differs from `headerCellHoverBackgroundColor` which applies when the header cell itself is hovered.
      */
     columnHeaderHoverColor: ColorValue;
 
