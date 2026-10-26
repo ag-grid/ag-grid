@@ -1405,11 +1405,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         };
     }
 
-    /** The authored title, never the header's display name: a `headerValueGetter` format or a `processColDef`
-     *  headerName shown here would be saved back into the title and formatted again on every edit. */
+    /** The authored title: a `headerValueGetter` or `processColDef` name shown here would be saved back as the title. */
     private getDraftHeaderName(column: AgColumn): string {
-        const { headerName, field } = this.getResolvedAuthoredColDef(column);
-        return column.headerNameOverride ?? headerName ?? (_camelCaseToHumanText(field) || column.colId);
+        return column.headerNameOverride ?? this.getResolvedAuthoredColDef(column).headerName ?? column.colId;
     }
 
     private focusCalculatedColumn(colId: string): void {

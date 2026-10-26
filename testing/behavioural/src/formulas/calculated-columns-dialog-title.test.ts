@@ -1,7 +1,7 @@
 import { waitFor } from '@testing-library/dom';
 import { clickMenuOption } from 'ag-test-utils';
 
-import type { ColDef, GridApi, GridOptions, GridState } from 'ag-grid-community';
+import type { ColDef, GridApi, GridState, HeaderValueGetterParams } from 'ag-grid-community';
 
 import {
     clickDialogButton,
@@ -19,8 +19,10 @@ type Kind = 'declared' | 'restored' | 'dialog-created';
 
 const ROW_DATA = [{ id: 'r1', a: 10, b: 3 }];
 /** Formats calculated column headers only, so `[a]` / `[b]` stay valid references in the expression. */
-const usd: ColDef['headerValueGetter'] = ({ colDef }) =>
-    colDef?.calculatedExpression === undefined ? (colDef as ColDef).field : `${colDef.headerName} (USD)`;
+function usd({ colDef }: HeaderValueGetterParams): string {
+    const { calculatedExpression, field, headerName } = colDef as ColDef;
+    return calculatedExpression === undefined ? (field ?? '') : `${headerName} (USD)`;
+}
 
 function stateFor(kind: Kind, headerName: string | undefined): GridState['userColumns'] {
     if (kind !== 'restored') {
@@ -44,7 +46,6 @@ async function setupGrid(opts: {
     applyMode: ApplyMode;
     callback: boolean;
     headerName?: string;
-    gridOptions?: Partial<GridOptions>;
 }): Promise<{ api: GridApi; colId: string }> {
     const { kind, applyMode, callback, headerName } = opts;
     const declared: ColDef[] =
@@ -61,7 +62,6 @@ async function setupGrid(opts: {
                 : undefined,
         },
         initialState: { userColumns: stateFor(kind, headerName) },
-        ...opts.gridOptions,
     });
     if (kind === 'dialog-created') {
         const before = new Set(api.getAllGridColumns().map((col) => col.getColId()));
