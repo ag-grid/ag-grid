@@ -20,6 +20,9 @@ export const ECOMMERCE_URLS = {
 /** Relative to the Studio site root. */
 export const STUDIO_TRIAL_PATH = '/license-pricing/?tab=trial';
 
+/** Relative to the Grid or Charts docs root; both sites host the trial licence request at this anchor. */
+export const ENTERPRISE_TRIAL_PATH = './community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence';
+
 export const ONLINE_PURCHASE = {
     limit: 'Buy online for 1–10 developer licences for internal applications.',
     otherwise: 'For larger teams or external customer-facing applications, contact sales.',
@@ -47,7 +50,6 @@ export interface LibraryProduct {
     category: string;
     name: string;
     tagline: string;
-    community: Tier;
     enterprise: Tier;
 }
 
@@ -57,10 +59,6 @@ export const LIBRARY_PRODUCTS: LibraryProduct[] = [
         category: 'Data grids',
         name: 'AG Grid',
         tagline: 'Build applications that make complex data easier to work with.',
-        community: {
-            name: 'Community — Free',
-            description: 'Start with essential grid features for your application.',
-        },
         enterprise: { name: 'Enterprise', description: 'Add advanced capabilities for more demanding data workflows.' },
     },
     {
@@ -68,7 +66,6 @@ export const LIBRARY_PRODUCTS: LibraryProduct[] = [
         category: 'Charting',
         name: 'AG Charts',
         tagline: 'Bring interactive charts into your application.',
-        community: { name: 'Community — Free', description: 'Get started with core charting features.' },
         enterprise: { name: 'Enterprise', description: 'Add advanced chart types and interactions.' },
     },
 ];
@@ -84,7 +81,8 @@ export const STUDIO_PRODUCT = {
 };
 
 export const BUNDLE_LINE = {
-    heading: 'Need Grid and Charts?',
+    heading: 'Enterprise bundle',
+    subheading: 'Need Grid and Charts?',
     body: 'Buy the Enterprise Bundle online for 1–10 developer licences for internal applications. For larger teams or customer-facing applications, contact sales.',
 };
 
@@ -158,4 +156,5 @@ export const PRICING_FAQS: { question: string; answer: string }[] = [
 export const CONTACT = {
     heading: 'Tell us what you’re building',
     intro: 'Share a few details about your application. We’ll help you choose the right products and pricing for your requirements.',
+    socialProof: 'Millions use AG Grid every day:',
 };

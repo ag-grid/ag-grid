@@ -5,6 +5,7 @@ import {
     COMMUNITY,
     CONTACT,
     ECOMMERCE_URLS,
+    ENTERPRISE_TRIAL_PATH,
     FAQS_HEADING,
     FEATURES,
     LIBRARY_PRODUCTS,
@@ -117,20 +118,17 @@ function renderFeatureMatrix(heading: string, sections: FeatureSection[], siteRo
 
 function renderProducts(siteRoot?: string): string {
     const contactUrl = toAbsoluteUrl(`/license-pricing/#${PRICING_ANCHORS.contact}`, siteRoot);
-    const gettingStartedUrls: Record<LibraryProduct['id'], string> = {
-        grid: toAbsoluteUrl(gridUrlWithPrefix({ framework: FRAMEWORK, url: './getting-started/' }), siteRoot),
-        charts: chartsUrlWithPrefix({ framework: FRAMEWORK, url: './quick-start' }),
+    const trialUrls: Record<LibraryProduct['id'], string> = {
+        grid: toAbsoluteUrl(gridUrlWithPrefix({ framework: FRAMEWORK, url: ENTERPRISE_TRIAL_PATH }), siteRoot),
+        charts: chartsUrlWithPrefix({ framework: FRAMEWORK, url: ENTERPRISE_TRIAL_PATH }),
     };
     const libraries = LIBRARY_PRODUCTS.map((product) =>
         [
             `### ${product.name}`,
             product.tagline,
-            [
-                `- **${product.community.name}** — ${product.community.description}`,
-                `- **${product.enterprise.name}** — ${product.enterprise.description}`,
-            ].join('\n'),
+            `**${product.enterprise.name}** — ${product.enterprise.description}`,
             `${ONLINE_PURCHASE.limit} ${ONLINE_PURCHASE.otherwise}`,
-            `[Get started free](${gettingStartedUrls[product.id]}) · [Buy Enterprise online](${ECOMMERCE_URLS[product.id]}) · [Contact sales](${contactUrl})`,
+            `[Contact sales](${contactUrl}) · [Buy Enterprise online](${ECOMMERCE_URLS[product.id]}) · [Start a 30-Day free trial](${trialUrls[product.id]})`,
         ].join('\n\n')
     );
     const studio = [
@@ -142,8 +140,9 @@ function renderProducts(siteRoot?: string): string {
     ].join('\n\n');
     const bundle = [
         `### ${BUNDLE_LINE.heading}`,
+        `**${BUNDLE_LINE.subheading}**`,
         BUNDLE_LINE.body,
-        `[Buy the Enterprise Bundle](${ECOMMERCE_URLS.bundle})`,
+        `[Contact sales](${contactUrl}) · [Buy the Enterprise Bundle online](${ECOMMERCE_URLS.bundle}) · [Start a 30-Day free trial](${trialUrls.grid})`,
     ].join('\n\n');
 
     return ['## Products', ...libraries, studio, bundle].join('\n\n');
@@ -152,16 +151,24 @@ function renderProducts(siteRoot?: string): string {
 function renderBuyingRoutes(siteRoot?: string): string {
     const contactUrl = toAbsoluteUrl(`/license-pricing/#${PRICING_ANCHORS.contact}`, siteRoot);
     return [
-        `## ${BUYING_ROUTES.online.heading}`,
-        BUYING_ROUTES.online.body,
-        `[Buy AG Grid](${ECOMMERCE_URLS.grid}) · [Buy AG Charts](${ECOMMERCE_URLS.charts}) · [Buy the bundle](${ECOMMERCE_URLS.bundle})`,
         `## ${BUYING_ROUTES.tailored.heading}`,
         BUYING_ROUTES.tailored.body,
         BUYING_ROUTES.tailored.supporting,
         `[Contact sales](${contactUrl})`,
+        `## ${BUYING_ROUTES.online.heading}`,
+        BUYING_ROUTES.online.body,
+        `[Buy AG Grid](${ECOMMERCE_URLS.grid}) · [Buy AG Charts](${ECOMMERCE_URLS.charts}) · [Buy the bundle](${ECOMMERCE_URLS.bundle})`,
+    ].join('\n\n');
+}
+
+function renderCommunity(siteRoot?: string): string {
+    const gridUrl = toAbsoluteUrl(gridUrlWithPrefix({ framework: FRAMEWORK, url: './getting-started/' }), siteRoot);
+    const chartsUrl = chartsUrlWithPrefix({ framework: FRAMEWORK, url: './quick-start' });
+    return [
         `## ${COMMUNITY.heading}`,
         COMMUNITY.body,
         COMMUNITY.studioNote,
+        `[Get started with AG Grid](${gridUrl}) · [Get started with AG Charts](${chartsUrl})`,
     ].join('\n\n');
 }
 
@@ -176,9 +183,9 @@ function renderContact(siteRoot?: string): string {
 }
 
 /**
- * Build the markdown twin of the /license-pricing/ page: the AG Grid, AG Charts and AG Studio
- * products, buying routes, the Grid and Charts feature-comparison matrices, FAQs and the sales
- * contact link. The page is React-driven with no Markdoc source, so this reads the same data the
+ * Build the markdown twin of the /license-pricing/ page: buying routes, the AG Grid, AG Charts and
+ * AG Studio products, Community, the Grid and Charts feature-comparison matrices, the sales contact
+ * link and FAQs. The page is React-driven with no Markdoc source, so this reads the same data the
  * page renders (pricingContent.ts + the two feature-matrix JSON files) and serialises it directly.
  *
  * Product-agnostic: every product site serves the same page and differs only in its frontmatter.
@@ -198,14 +205,15 @@ export function buildLicensePricingMarkdown({
         }),
         `# ${PRICING_HERO.headline}`,
         PRICING_HERO.intro,
-        renderProducts(siteRoot),
         renderBuyingRoutes(siteRoot),
+        renderProducts(siteRoot),
+        renderCommunity(siteRoot),
         `## ${FEATURES.heading}`,
         FEATURES.intro,
         renderFeatureMatrix('Compare AG Grid features', gridFeaturesData as FeatureSection[], siteRoot),
         renderFeatureMatrix('Compare AG Charts features', chartsFeaturesData as FeatureSection[], siteRoot),
-        renderFaqs(),
         renderContact(siteRoot),
+        renderFaqs(),
     ].join('\n\n');
 
     return `${document.trimEnd()}\n`;

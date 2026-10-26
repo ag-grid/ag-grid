@@ -25,9 +25,10 @@ describe('buildLicensePricingMarkdown', () => {
         expect(output).toContain('[Buy Enterprise online](https://www.ag-grid.com/ecommerce/');
         expect(output).toContain('productType=aggrid');
         expect(output).toContain('productType=agcharts');
-        expect(output).toContain('[Buy the Enterprise Bundle](https://www.ag-grid.com/ecommerce/');
+        expect(output).toContain('[Buy the Enterprise Bundle online](https://www.ag-grid.com/ecommerce/');
         expect(output).toContain('Subscription with tailored pricing.');
         expect(output).toContain('[Start a 45-day free trial](');
+        expect(output).toMatch(/\[Start a 30-Day free trial\]\([^)]*request-a-30-day-enterprise-bundle-trial-licence/);
         expect(output).toContain('[Contact sales](https://www.ag-grid.com/license-pricing/#contact-sales)');
     });
 

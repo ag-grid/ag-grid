@@ -19,11 +19,11 @@ const { defaultSelection } = Astro.props as Props;
 ---
 
 <PageHero eyebrow={PRICING_HERO.eyebrow} headline={PRICING_HERO.headline} subhead={PRICING_HERO.intro}>
-    <a class:list={['button', styles.heroAction]} href={`#${PRICING_ANCHORS.products}`}>
+    <a class:list={['button', styles.iconButton]} href={`#${PRICING_ANCHORS.products}`}>
         <Icon name="arrowDown" />
         Explore products
     </a>
-    <a class:list={['button-secondary', styles.heroAction]} href={`#${PRICING_ANCHORS.contact}`}>
+    <a class:list={['button-secondary', styles.iconButton]} href={`#${PRICING_ANCHORS.contact}`}>
         <Icon name="email" />
         Contact sales
     </a>

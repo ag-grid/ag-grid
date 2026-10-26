@@ -5,6 +5,7 @@ import GridLogoType from '@ag-website-shared/images/inline-svgs/ag-grid-logotype
 import StudioLogoType from '@ag-website-shared/images/inline-svgs/ag-studio-logotype.svg?react';
 import { chartsUrlWithPrefix } from '@ag-website-shared/utils/chartsUrlWithPrefix';
 import { gridUrlWithPrefix } from '@ag-website-shared/utils/gridUrlWithPrefix';
+import { CustomerLogos } from '@components/customer-logos/CustomerLogos';
 import { PRODUCTION_STUDIO_SITE_URL } from '@constants';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import classnames from 'classnames';
@@ -20,6 +21,7 @@ import {
     COMMUNITY,
     CONTACT,
     ECOMMERCE_URLS,
+    ENTERPRISE_TRIAL_PATH,
     FAQS_HEADING,
     FEATURES,
     LIBRARY_PRODUCTS,
@@ -62,9 +64,9 @@ const ProductLogo: FunctionComponent<{ product: ProductLogoId }> = ({ product })
 
 // Children sit directly in the card so its subgrid lines each one up with the same row of the
 // neighbouring cards. A card without a given row renders an empty element in its place.
-const LibraryProductCard: FunctionComponent<{ product: LibraryProduct; gettingStartedUrl: string }> = ({
+const LibraryProductCard: FunctionComponent<{ product: LibraryProduct; trialUrl: string }> = ({
     product,
-    gettingStartedUrl,
+    trialUrl,
 }) => (
     <article id={PRICING_ANCHORS[product.id]} className={styles.productCard}>
         <div className={styles.productLogoRow}>
@@ -74,30 +76,25 @@ const LibraryProductCard: FunctionComponent<{ product: LibraryProduct; gettingSt
         <h2 className={styles.productName}>{product.name}</h2>
         <p className={styles.productTagline}>{product.tagline}</p>
 
-        {[product.community, product.enterprise].map(({ name, description }) => (
-            <div key={name} className={styles.tier}>
-                <h3 className={styles.tierName}>{name}</h3>
-                <p>{description}</p>
-            </div>
-        ))}
+        <div className={styles.tier}>
+            <h3 className={styles.tierName}>{product.enterprise.name}</h3>
+            <p>{product.enterprise.description}</p>
+        </div>
 
         <p className={styles.purchaseNote}>
             {ONLINE_PURCHASE.limit} {ONLINE_PURCHASE.otherwise}
         </p>
 
         <div className={styles.cardActions}>
-            <a id={`${product.id}-buy-online`} className="button" href={ECOMMERCE_URLS[product.id]}>
+            <a id={`${product.id}-contact-sales`} className="button" href={CONTACT_HREF}>
+                Contact sales
+            </a>
+            <a id={`${product.id}-buy-online`} className="button-tertiary" href={ECOMMERCE_URLS[product.id]}>
                 Buy Enterprise online
             </a>
-            <p className={styles.secondaryActions}>
-                <a id={`${product.id}-get-started`} href={gettingStartedUrl}>
-                    Get started free
-                </a>
-                {' / '}
-                <a id={`${product.id}-contact-sales`} href={CONTACT_HREF}>
-                    Contact sales
-                </a>
-            </p>
+            <a id={`${product.id}-start-trial`} className="button-secondary" href={trialUrl}>
+                Start a 30-Day free trial
+            </a>
         </div>
     </article>
 );
@@ -115,7 +112,6 @@ const StudioProductCard: FunctionComponent = () => (
             <h3 className={styles.tierName}>{STUDIO_PRODUCT.pricing}</h3>
             <p>{STUDIO_PRODUCT.description}</p>
         </div>
-        <div />
         <div />
 
         <div className={styles.cardActions}>
@@ -180,36 +176,24 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
         grid: gridUrlWithPrefix({ framework, url: './getting-started' }),
         charts: chartsUrlWithPrefix({ framework, url: './quick-start' }),
     };
+    const trialUrls: Record<LibraryProduct['id'], string> = {
+        grid: gridUrlWithPrefix({ framework, url: ENTERPRISE_TRIAL_PATH }),
+        charts: chartsUrlWithPrefix({ framework, url: ENTERPRISE_TRIAL_PATH }),
+    };
 
     return (
         <div className={classnames('layout-max-width-small', styles.container)}>
-            <section id={PRICING_ANCHORS.products}>
-                <div className={styles.productCards}>
-                    {LIBRARY_PRODUCTS.map((product) => (
-                        <LibraryProductCard
-                            key={product.id}
-                            product={product}
-                            gettingStartedUrl={gettingStartedUrls[product.id]}
-                        />
-                    ))}
-                    <StudioProductCard />
-                </div>
-
-                <div className={styles.bundleLine}>
-                    <div className={styles.bundleLogos}>
-                        <ProductLogo product="grid" />
-                        <span aria-hidden="true">+</span>
-                        <ProductLogo product="charts" />
-                    </div>
-                    <h2 className="text-lg">{BUNDLE_LINE.heading}</h2>
-                    <p>{BUNDLE_LINE.body}</p>
-                    <a id="bundle-buy-online" className="button-secondary" href={ECOMMERCE_URLS.bundle}>
-                        Buy the Enterprise Bundle
-                    </a>
-                </div>
-            </section>
-
             <section className={styles.buyingRoutes}>
+                <div>
+                    <h2 className="text-2xl">{BUYING_ROUTES.tailored.heading}</h2>
+                    <p>{BUYING_ROUTES.tailored.body}</p>
+                    <p>{BUYING_ROUTES.tailored.supporting}</p>
+                    <div className={styles.routeActions}>
+                        <a id="route-contact-sales" className="button" href={CONTACT_HREF}>
+                            Contact sales
+                        </a>
+                    </div>
+                </div>
                 <div>
                     <h2 className="text-2xl">{BUYING_ROUTES.online.heading}</h2>
                     <p>{BUYING_ROUTES.online.body}</p>
@@ -225,31 +209,52 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                         </a>
                     </div>
                 </div>
-                <div>
-                    <h2 className="text-2xl">{BUYING_ROUTES.tailored.heading}</h2>
-                    <p>{BUYING_ROUTES.tailored.body}</p>
-                    <p>{BUYING_ROUTES.tailored.supporting}</p>
-                    <div className={styles.routeActions}>
-                        <a id="route-contact-sales" className="button" href={CONTACT_HREF}>
+            </section>
+
+            <section id={PRICING_ANCHORS.products}>
+                <div className={styles.productCards}>
+                    {LIBRARY_PRODUCTS.map((product) => (
+                        <LibraryProductCard key={product.id} product={product} trialUrl={trialUrls[product.id]} />
+                    ))}
+                    <StudioProductCard />
+                </div>
+
+                <article className={styles.bundleCard}>
+                    <div className={styles.bundleLogos}>
+                        <ProductLogo product="grid" />
+                        <span aria-hidden="true">+</span>
+                        <ProductLogo product="charts" />
+                    </div>
+                    <h2 className={styles.productName}>{BUNDLE_LINE.heading}</h2>
+                    <h3 className={styles.tierName}>{BUNDLE_LINE.subheading}</h3>
+                    <p>{BUNDLE_LINE.body}</p>
+                    <div className={styles.bundleActions}>
+                        <a id="bundle-contact-sales" className="button" href={CONTACT_HREF}>
                             Contact sales
                         </a>
+                        <a id="bundle-buy-online" className="button-tertiary" href={ECOMMERCE_URLS.bundle}>
+                            Buy the Enterprise Bundle online
+                        </a>
+                        {/* The trial licence covers the whole bundle, so keep visitors on the site they came from. */}
+                        <a id="bundle-start-trial" className="button-secondary" href={trialUrls[defaultSelection]}>
+                            Start a 30-Day free trial
+                        </a>
                     </div>
-                </div>
+                </article>
             </section>
 
             <section className={styles.section}>
                 <h2 className="text-2xl">{COMMUNITY.heading}</h2>
                 <p>{COMMUNITY.body}</p>
                 <p className="text-secondary">{COMMUNITY.studioNote}</p>
-                <p className={styles.inlineLinks}>
-                    <a id="community-get-started-grid" href={gettingStartedUrls.grid}>
+                <div className={styles.linkButtons}>
+                    <a id="community-get-started-grid" className="button-tertiary" href={gettingStartedUrls.grid}>
                         Get started with AG Grid
                     </a>
-                    {' / '}
-                    <a id="community-get-started-charts" href={gettingStartedUrls.charts}>
+                    <a id="community-get-started-charts" className="button-tertiary" href={gettingStartedUrls.charts}>
                         Get started with AG Charts
                     </a>
-                </p>
+                </div>
             </section>
 
             <section id={PRICING_ANCHORS.features} className={styles.section}>
@@ -257,11 +262,27 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                 <p>{FEATURES.intro}</p>
                 <FeatureComparison product={LIBRARY_PRODUCTS[0]} data={gridFeaturesData} />
                 <FeatureComparison product={LIBRARY_PRODUCTS[1]} data={chartsFeaturesData} />
-                <p className={styles.inlineLinks}>
-                    <a id="explore-studio" href={`${PRODUCTION_STUDIO_SITE_URL}/`}>
+                <div className={styles.linkButtons}>
+                    <a id="explore-studio" className="button-tertiary" href={`${PRODUCTION_STUDIO_SITE_URL}/`}>
                         Explore AG Studio
                     </a>
-                </p>
+                </div>
+            </section>
+
+            <section id={PRICING_ANCHORS.contact} className={styles.contactSection}>
+                <div className={styles.contactCopy}>
+                    <h2 className="text-2xl">{CONTACT.heading}</h2>
+                    <p>{CONTACT.intro}</p>
+                    <div className={styles.socialProof}>
+                        <p className={styles.socialProofLabel}>{CONTACT.socialProof}</p>
+                        <CustomerLogos />
+                    </div>
+                </div>
+                <div className={classnames(styles.contactForm, 'trial-licence-form')}>
+                    <ContactForm
+                        formLocation={defaultSelection === 'grid' ? 'Grid pricing page' : 'Charts pricing page'}
+                    />
+                </div>
             </section>
 
             <section id={PRICING_ANCHORS.faqs} className={styles.section}>
@@ -272,18 +293,6 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                         <p>{answer}</p>
                     </details>
                 ))}
-            </section>
-
-            <section id={PRICING_ANCHORS.contact} className={styles.contactSection}>
-                <div>
-                    <h2 className="text-2xl">{CONTACT.heading}</h2>
-                    <p>{CONTACT.intro}</p>
-                </div>
-                <div className="trial-licence-form">
-                    <ContactForm
-                        formLocation={defaultSelection === 'grid' ? 'Grid pricing page' : 'Charts pricing page'}
-                    />
-                </div>
             </section>
         </div>
     );

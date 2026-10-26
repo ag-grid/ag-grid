@@ -10,9 +10,10 @@
 .container {
     display: flex;
     flex-direction: column;
-    gap: $spacing-size-16;
+    gap: $spacing-size-20;
+    margin-top: $spacing-size-5;
     padding-top: $spacing-size-8;
-    padding-bottom: $spacing-size-16;
+    padding-bottom: $spacing-size-40 * 2;
 
     p {
         margin: 0;
@@ -35,12 +36,18 @@
 
 $product-logo-height: 32px;
 
-.heroAction {
-    --icon-size: 1.25em;
+.iconButton {
+    --icon-size: 20px;
 
     display: inline-flex;
     align-items: center;
     gap: $spacing-size-2;
+
+    // Flex centring leaves the icon 1.8px above the button's centre, measured in Chrome. 1px of that is
+    // the button's uneven block padding (0.375em above, 0.5em below); the other 0.8px is measured only.
+    :global(.icon) {
+        translate: 0 0.1125em;
+    }
 }
 
 .productCards {
@@ -54,19 +61,22 @@ $product-logo-height: 32px;
     }
 }
 
-.productCard {
+.productCard,
+.bundleCard {
     display: flex;
     flex-direction: column;
     gap: $spacing-size-2;
-    padding: $spacing-size-6;
+    padding: $spacing-size-6 $spacing-size-5;
     border: 1px solid var(--color-border-primary);
     border-radius: var(--radius-md);
     background-color: var(--color-bg-primary);
+}
 
+.productCard {
     // Shares the row tracks of its neighbours, so tier names and buttons line up across cards.
     @media screen and (min-width: $breakpoint-pricing-medium) {
         display: grid;
-        grid-row: span 8;
+        grid-row: span 7;
         grid-template-rows: subgrid;
     }
 
@@ -129,26 +139,37 @@ $product-logo-height: 32px;
 
 .cardActions {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $spacing-size-3;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: $spacing-size-3 $spacing-size-2;
     padding-top: $spacing-size-4;
+
+    // Narrower than the site default so Contact sales and Buy Enterprise online share a line at full page width.
+    :global(.button),
+    :global(.button-secondary),
+    :global(.button-tertiary) {
+        padding-inline: $spacing-size-3;
+    }
+
+    .purchaseNote {
+        flex-basis: 100%;
+    }
 }
 
-.secondaryActions {
-    font-size: var(--text-fs-sm);
-}
-
-.bundleLine {
-    display: flex;
-    flex-direction: column;
+.bundleCard {
     align-items: flex-start;
-    gap: $spacing-size-2;
-    margin-top: $spacing-size-8;
+    margin-top: $spacing-size-6;
 
-    h2 {
+    .tierName {
         margin-bottom: 0;
     }
+}
+
+.bundleActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-size-3;
+    padding-top: $spacing-size-4;
 }
 
 .bundleLogos {
@@ -161,17 +182,18 @@ $product-logo-height: 32px;
     color: var(--color-text-secondary);
 }
 
+.buyingRoutes,
+.contactSection {
+    padding: $spacing-size-8;
+    border: 1px solid var(--color-util-brand-200);
+    border-radius: var(--radius-md);
+    background-color: color-mix(in srgb, var(--color-util-brand-50) 20%, transparent);
+}
+
 .buyingRoutes {
     display: grid;
     grid-template-columns: 1fr;
     gap: $spacing-size-8;
-    padding: $spacing-size-8;
-    border-radius: var(--radius-md);
-    background-color: var(--color-util-brand-50);
-
-    #{$selector-darkmode} & {
-        background-color: var(--color-util-gray-100);
-    }
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
         grid-template-columns: repeat(2, 1fr);
@@ -196,8 +218,11 @@ $product-logo-height: 32px;
     padding-top: $spacing-size-2;
 }
 
-.inlineLinks {
-    font-weight: var(--text-bold);
+.linkButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-size-3;
+    padding-top: $spacing-size-2;
 }
 
 .disclosure {
@@ -301,26 +326,48 @@ $product-logo-height: 32px;
 }
 
 .contactSection {
+    --pricing-page-bg: var(--color-bg-primary);
+
     display: flex;
     flex-direction: column;
     gap: $spacing-size-4 $spacing-size-10;
-    padding: $spacing-size-8;
-    border-radius: var(--radius-md);
-    background-color: var(--color-util-brand-50);
-
-    #{$selector-darkmode} & {
-        background-color: var(--color-util-gray-100);
-    }
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
         flex-direction: row;
-
-        > div {
-            flex: 1;
-        }
     }
+}
+
+.contactCopy {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
 
     h2 {
         margin-bottom: $spacing-size-3;
     }
+}
+
+.socialProof {
+    margin-top: $spacing-size-12;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        margin-top: $spacing-size-24;
+    }
+
+    // CustomerLogos fades its edges into --color-bg-primary; match it to the card's tint over the page.
+    > div {
+        --color-bg-primary: color-mix(in srgb, var(--color-util-brand-50) 20%, var(--pricing-page-bg));
+
+        margin-top: $spacing-size-8;
+        margin-bottom: $spacing-size-4;
+    }
+}
+
+.socialProofLabel {
+    font-weight: var(--text-semibold);
+    opacity: 0.6;
+}
+
+.contactForm {
+    flex: 1;
 }
