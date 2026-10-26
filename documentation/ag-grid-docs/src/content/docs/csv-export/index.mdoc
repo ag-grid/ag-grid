@@ -27,6 +27,16 @@ The CSV export will be enabled by default. If you want to disable it, you can se
 
 When opening CSV files, spreadsheet applications like Excel, Apple Numbers, Google Sheets and others will automatically execute cell values that start with the following symbols as formulas: `+`, `-`, `=`, `@`, `Tab (0x09)` and `Carriage Return (0x0D)`. In order to prevent any malicious content from being exported we recommend using the `callback` methods shown in the [CSV Export Params](./csv-export/#csvexportparams) to modify the exported cell values so that they do NOT start with any of the characters listed above. This way the applications will not execute the cell value directly if it starts with the characters listed above. If you'd like to keep the cell values unchanged when exporting, please allow exporting to Excel only.
 
+Alternatively, set `sanitizeFormulas: true` in the [CSV Export Params](./csv-export/#csvexportparams). The grid then prefixes cell values, header names and `CsvCell` custom content that start with any of the characters listed above with a single quote (`'`), so the applications show them as text. Plain numbers such as `-5` are left unchanged.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    defaultCsvExportParams: {
+        sanitizeFormulas: true,
+    },
+};
+```
+
 {% note %}
 Detailed info regarding CSV Injection can be found in the [OWASP CSV Injection](https://owasp.org/www-community/attacks/CSV_Injection) website.
 {% /note %}

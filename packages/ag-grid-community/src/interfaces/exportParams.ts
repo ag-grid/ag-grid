@@ -165,6 +165,14 @@ export interface CsvExportParams extends ExportParams<CsvCustomContent> {
      * @default false
      */
     suppressQuotes?: boolean;
+    /**
+     * Pass `true` to prefix values that start with `=`, `+`, `-`, `@`, a tab or a carriage return with a single quote (`'`),
+     * so spreadsheet applications show them as text instead of evaluating them as formulas.
+     * Plain numbers such as `-5` or `+1.5` are left unchanged.
+     * Applies to cell values, header names and `CsvCell` custom content; string `prependContent` and `appendContent` are written as given.
+     * @default false
+     */
+    sanitizeFormulas?: boolean;
 }
 
 export interface ShouldRowBeSkippedParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {

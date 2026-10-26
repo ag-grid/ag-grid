@@ -10,10 +10,19 @@ import type {
 import type { CsvCustomContent } from '../interfaces/exportParams';
 
 const LINE_SEPARATOR = '\r\n';
+// Spreadsheet applications evaluate a value starting with any of these characters as a formula
+const FORMULA_START_REGEX = /^[=+\-@\t\r]/;
+const PLAIN_NUMBER_REGEX = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i;
+
+/** Prefixes `'` to a value a spreadsheet application would evaluate as a formula; plain numbers are left unchanged. */
+function prefixFormula(value: string): string {
+    return FORMULA_START_REGEX.test(value) && !PLAIN_NUMBER_REGEX.test(value) ? `'${value}` : value;
+}
 
 interface CsvSerializingParams extends GridSerializingParams {
     suppressQuotes: boolean;
     columnSeparator: string;
+    sanitizeFormulas: boolean;
 }
 
 export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomContent> {
@@ -21,14 +30,16 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
     private result: string = '';
     private readonly suppressQuotes: boolean;
     private readonly columnSeparator: string;
+    private readonly sanitizeFormulas: boolean;
 
     constructor(private readonly config: CsvSerializingParams) {
         super(config);
 
-        const { suppressQuotes, columnSeparator } = config;
+        const { suppressQuotes, columnSeparator, sanitizeFormulas } = config;
 
         this.suppressQuotes = suppressQuotes;
         this.columnSeparator = columnSeparator;
+        this.sanitizeFormulas = sanitizeFormulas;
     }
 
     public addCustomContent(content: CsvCustomContent) {
@@ -118,7 +129,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
 
     private putInQuotes(value: any): string {
         if (this.suppressQuotes) {
-            return value;
+            return this.sanitizeFormulas && typeof value === 'string' ? prefixFormula(value) : value;
         }
 
         if (value === null || value === undefined) {
@@ -135,8 +146,10 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
             stringValue = '';
         }
 
+        const csvValue = this.sanitizeFormulas ? prefixFormula(stringValue) : stringValue;
+
         // replace each " with "" (ie two sets of double quotes is how to do double quotes in csv)
-        const valueEscaped = stringValue.replace(/"/g, '""');
+        const valueEscaped = csvValue.replace(/"/g, '""');
 
         return '"' + valueEscaped + '"';
     }
