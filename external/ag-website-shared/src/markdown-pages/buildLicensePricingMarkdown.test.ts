@@ -21,16 +21,19 @@ describe('buildLicensePricingMarkdown', () => {
         expect(output).toContain('### AG Grid');
         expect(output).toContain('### AG Charts');
         expect(output).toContain('### AG Studio');
-        expect(output).toContain('Buy online for 1–10 developer licences for internal applications.');
+        expect(output).toContain('Online purchase: 1–10 developer licences for internal applications.');
         expect(output).toContain('[Buy Enterprise online](https://www.ag-grid.com/ecommerce/');
         expect(output).toContain('productType=aggrid');
         expect(output).toContain('productType=agcharts');
-        expect(output).toContain('[Buy the Enterprise Bundle online](https://www.ag-grid.com/ecommerce/');
-        expect(output).toContain('Subscription with tailored pricing.');
+        expect(output).toContain('[Buy the bundle online](https://www.ag-grid.com/ecommerce/');
+        expect(output).toContain('Subscription with tailored pricing');
         expect(output).toContain('[Start a 45-day free trial](');
         expect(output).toMatch(/\[Explore Integrated Charts\]\([^)]*integrated-charts\/\)/);
-        expect(output).toMatch(/\[Start a 30-Day free trial\]\([^)]*request-a-30-day-enterprise-bundle-trial-licence/);
+        expect(output).toMatch(/\[Start a 30-day free trial\]\([^)]*request-a-30-day-enterprise-bundle-trial-licence/);
         expect(output).toContain('[Contact sales](https://www.ag-grid.com/license-pricing/#contact-sales)');
+        expect(output).toContain(
+            'Not sure which licence you need? [We can help](https://www.ag-grid.com/license-pricing/#contact-sales).'
+        );
     });
 
     it('never uses internal pricing terminology', () => {

@@ -76,7 +76,7 @@ $product-logo-height: 32px;
     // Shares the row tracks of its neighbours, so tier names and buttons line up across cards.
     @media screen and (min-width: $breakpoint-pricing-medium) {
         display: grid;
-        grid-row: span 7;
+        grid-row: span 6;
         grid-template-rows: subgrid;
     }
 
@@ -106,8 +106,10 @@ $product-logo-height: 32px;
     }
 }
 
+// The card heading: the logo carries the product name, so no separate name heading repeats it.
 .productLogoRow {
-    margin-bottom: $spacing-size-2;
+    display: flex;
+    margin: 0 0 $spacing-size-2;
 }
 
 .productCategory {
@@ -194,6 +196,17 @@ $product-logo-height: 32px;
     border: 1px solid var(--color-util-brand-200);
     border-radius: var(--radius-md);
     background-color: color-mix(in srgb, var(--color-util-brand-50) 20%, transparent);
+}
+
+// Keeps the licence help line directly beneath the buying routes rather than a section gap away.
+.buyingRoutesGroup {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4;
+}
+
+.licenceHelp {
+    text-align: center;
 }
 
 .buyingRoutes {

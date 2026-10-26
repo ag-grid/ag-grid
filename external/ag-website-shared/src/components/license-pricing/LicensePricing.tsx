@@ -26,6 +26,7 @@ import {
     FEATURES,
     INTEGRATED_CHARTS_PATH,
     LIBRARY_PRODUCTS,
+    LICENCE_HELP,
     type LibraryProduct,
     ONLINE_PURCHASE,
     PRICING_ANCHORS,
@@ -53,10 +54,11 @@ const PRODUCT_LOGOTYPES: Record<ProductLogoId, FunctionComponent<SVGProps<SVGSVG
 };
 
 // The same lockup each product site uses in its header: the product logotype followed by the AG mark.
-const ProductLogo: FunctionComponent<{ product: ProductLogoId }> = ({ product }) => {
+// Pass a label when the logo stands in for the product name.
+const ProductLogo: FunctionComponent<{ product: ProductLogoId; label?: string }> = ({ product, label }) => {
     const LogoType = PRODUCT_LOGOTYPES[product];
     return (
-        <span className={styles.productLogo}>
+        <span className={styles.productLogo} role={label ? 'img' : undefined} aria-label={label}>
             <LogoType aria-hidden="true" />
             <LogoMark aria-hidden="true" />
         </span>
@@ -70,11 +72,10 @@ const LibraryProductCard: FunctionComponent<{ product: LibraryProduct; trialUrl:
     trialUrl,
 }) => (
     <article id={PRICING_ANCHORS[product.id]} className={styles.productCard}>
-        <div className={styles.productLogoRow}>
-            <ProductLogo product={product.id} />
-        </div>
+        <h2 className={styles.productLogoRow}>
+            <ProductLogo product={product.id} label={product.name} />
+        </h2>
         <p className={styles.productCategory}>{product.category}</p>
-        <h2 className={styles.productName}>{product.name}</h2>
         <p className={styles.productTagline}>{product.tagline}</p>
 
         <div className={styles.tier}>
@@ -82,9 +83,7 @@ const LibraryProductCard: FunctionComponent<{ product: LibraryProduct; trialUrl:
             <p>{product.enterprise.description}</p>
         </div>
 
-        <p className={styles.purchaseNote}>
-            {ONLINE_PURCHASE.limit} {ONLINE_PURCHASE.otherwise}
-        </p>
+        <p className={styles.purchaseNote}>{ONLINE_PURCHASE}</p>
 
         <div className={styles.cardActions}>
             <a id={`${product.id}-contact-sales`} className="button" href={CONTACT_HREF}>
@@ -94,7 +93,7 @@ const LibraryProductCard: FunctionComponent<{ product: LibraryProduct; trialUrl:
                 Buy Enterprise online
             </a>
             <a id={`${product.id}-start-trial`} className="button-secondary" href={trialUrl}>
-                Start a 30-Day free trial
+                Start a 30-day free trial
             </a>
         </div>
     </article>
@@ -102,11 +101,10 @@ const LibraryProductCard: FunctionComponent<{ product: LibraryProduct; trialUrl:
 
 const StudioProductCard: FunctionComponent = () => (
     <article id={PRICING_ANCHORS.studio} className={styles.productCard}>
-        <div className={styles.productLogoRow}>
-            <ProductLogo product="studio" />
-        </div>
+        <h2 className={styles.productLogoRow}>
+            <ProductLogo product="studio" label={STUDIO_PRODUCT.name} />
+        </h2>
         <p className={styles.productCategory}>{STUDIO_PRODUCT.category}</p>
-        <h2 className={styles.productName}>{STUDIO_PRODUCT.name}</h2>
         <p className={styles.productTagline}>{STUDIO_PRODUCT.tagline}</p>
 
         <div className={styles.tier}>
@@ -122,7 +120,6 @@ const StudioProductCard: FunctionComponent = () => (
             <a id="studio-start-trial" className="button-secondary" href={STUDIO_TRIAL_URL}>
                 Start a 45-day free trial
             </a>
-            <p className={styles.purchaseNote}>{STUDIO_PRODUCT.trialNote}</p>
         </div>
     </article>
 );
@@ -184,33 +181,42 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
 
     return (
         <div className={classnames('layout-max-width-small', styles.container)}>
-            <section className={styles.buyingRoutes}>
-                <div>
-                    <h2 className="text-2xl">{BUYING_ROUTES.tailored.heading}</h2>
-                    <p>{BUYING_ROUTES.tailored.body}</p>
-                    <p>{BUYING_ROUTES.tailored.supporting}</p>
-                    <div className={styles.routeActions}>
-                        <a id="route-contact-sales" className="button" href={CONTACT_HREF}>
-                            Contact sales
-                        </a>
+            <div className={styles.buyingRoutesGroup}>
+                <section className={styles.buyingRoutes}>
+                    <div>
+                        <h2 className="text-2xl">{BUYING_ROUTES.tailored.heading}</h2>
+                        <p>{BUYING_ROUTES.tailored.body}</p>
+                        <div className={styles.routeActions}>
+                            <a id="route-contact-sales" className="button" href={CONTACT_HREF}>
+                                Contact sales
+                            </a>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <h2 className="text-2xl">{BUYING_ROUTES.online.heading}</h2>
-                    <p>{BUYING_ROUTES.online.body}</p>
-                    <div className={styles.routeActions}>
-                        <a id="route-buy-grid" className="button" href={ECOMMERCE_URLS.grid}>
-                            Buy AG Grid
-                        </a>
-                        <a id="route-buy-charts" className="button" href={ECOMMERCE_URLS.charts}>
-                            Buy AG Charts
-                        </a>
-                        <a id="route-buy-bundle" className="button-secondary" href={ECOMMERCE_URLS.bundle}>
-                            Buy the bundle
-                        </a>
+                    <div>
+                        <h2 className="text-2xl">{BUYING_ROUTES.online.heading}</h2>
+                        <p>{BUYING_ROUTES.online.body}</p>
+                        <div className={styles.routeActions}>
+                            <a id="route-buy-grid" className="button" href={ECOMMERCE_URLS.grid}>
+                                Buy AG Grid
+                            </a>
+                            <a id="route-buy-charts" className="button" href={ECOMMERCE_URLS.charts}>
+                                Buy AG Charts
+                            </a>
+                            <a id="route-buy-bundle" className="button-secondary" href={ECOMMERCE_URLS.bundle}>
+                                Buy the bundle
+                            </a>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+
+                <p className={styles.licenceHelp}>
+                    {LICENCE_HELP.prompt}{' '}
+                    <a id="licence-help" href={CONTACT_HREF}>
+                        {LICENCE_HELP.link}
+                    </a>
+                    .
+                </p>
+            </div>
 
             <section id={PRICING_ANCHORS.products}>
                 <div className={styles.productCards}>
@@ -227,7 +233,6 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                         <ProductLogo product="charts" />
                     </div>
                     <h2 className={styles.productName}>{BUNDLE_LINE.heading}</h2>
-                    <h3 className={styles.tierName}>{BUNDLE_LINE.subheading}</h3>
                     <p>{BUNDLE_LINE.body}</p>
                     <p>
                         {BUNDLE_LINE.integratedCharts}{' '}
@@ -238,16 +243,17 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                             {BUNDLE_LINE.integratedChartsLink}
                         </a>
                     </p>
+                    <p className={styles.purchaseNote}>{ONLINE_PURCHASE}</p>
                     <div className={styles.bundleActions}>
                         <a id="bundle-contact-sales" className="button" href={CONTACT_HREF}>
                             Contact sales
                         </a>
                         <a id="bundle-buy-online" className="button-tertiary" href={ECOMMERCE_URLS.bundle}>
-                            Buy the Enterprise Bundle online
+                            Buy the bundle online
                         </a>
                         {/* The trial licence covers the whole bundle, so keep visitors on the site they came from. */}
                         <a id="bundle-start-trial" className="button-secondary" href={trialUrls[defaultSelection]}>
-                            Start a 30-Day free trial
+                            Start a 30-day free trial
                         </a>
                     </div>
                 </article>
@@ -256,7 +262,6 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
             <section className={styles.section}>
                 <h2 className="text-2xl">{COMMUNITY.heading}</h2>
                 <p>{COMMUNITY.body}</p>
-                <p className="text-secondary">{COMMUNITY.studioNote}</p>
                 <div className={styles.linkButtons}>
                     <a id="community-get-started-grid" className="button-tertiary" href={gettingStartedUrls.grid}>
                         Get started with AG Grid

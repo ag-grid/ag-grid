@@ -10,6 +10,7 @@ import {
     FEATURES,
     INTEGRATED_CHARTS_PATH,
     LIBRARY_PRODUCTS,
+    LICENCE_HELP,
     type LibraryProduct,
     ONLINE_PURCHASE,
     PRICING_ANCHORS,
@@ -128,23 +129,22 @@ function renderProducts(siteRoot?: string): string {
             `### ${product.name}`,
             product.tagline,
             `**${product.enterprise.name}** — ${product.enterprise.description}`,
-            `${ONLINE_PURCHASE.limit} ${ONLINE_PURCHASE.otherwise}`,
-            `[Contact sales](${contactUrl}) · [Buy Enterprise online](${ECOMMERCE_URLS[product.id]}) · [Start a 30-Day free trial](${trialUrls[product.id]})`,
+            ONLINE_PURCHASE,
+            `[Contact sales](${contactUrl}) · [Buy Enterprise online](${ECOMMERCE_URLS[product.id]}) · [Start a 30-day free trial](${trialUrls[product.id]})`,
         ].join('\n\n')
     );
     const studio = [
         `### ${STUDIO_PRODUCT.name}`,
         STUDIO_PRODUCT.tagline,
-        `**${STUDIO_PRODUCT.pricing}** ${STUDIO_PRODUCT.description}`,
+        `**${STUDIO_PRODUCT.pricing}** — ${STUDIO_PRODUCT.description}`,
         `[Contact sales](${contactUrl}) · [Start a 45-day free trial](${PRODUCTION_STUDIO_SITE_URL}${STUDIO_TRIAL_PATH})`,
-        STUDIO_PRODUCT.trialNote,
     ].join('\n\n');
     const bundle = [
         `### ${BUNDLE_LINE.heading}`,
-        `**${BUNDLE_LINE.subheading}**`,
         BUNDLE_LINE.body,
         `${BUNDLE_LINE.integratedCharts} [${BUNDLE_LINE.integratedChartsLink}](${toAbsoluteUrl(gridUrlWithPrefix({ framework: FRAMEWORK, url: INTEGRATED_CHARTS_PATH }), siteRoot)})`,
-        `[Contact sales](${contactUrl}) · [Buy the Enterprise Bundle online](${ECOMMERCE_URLS.bundle}) · [Start a 30-Day free trial](${trialUrls.grid})`,
+        ONLINE_PURCHASE,
+        `[Contact sales](${contactUrl}) · [Buy the bundle online](${ECOMMERCE_URLS.bundle}) · [Start a 30-day free trial](${trialUrls.grid})`,
     ].join('\n\n');
 
     return ['## Products', ...libraries, studio, bundle].join('\n\n');
@@ -155,11 +155,11 @@ function renderBuyingRoutes(siteRoot?: string): string {
     return [
         `## ${BUYING_ROUTES.tailored.heading}`,
         BUYING_ROUTES.tailored.body,
-        BUYING_ROUTES.tailored.supporting,
         `[Contact sales](${contactUrl})`,
         `## ${BUYING_ROUTES.online.heading}`,
         BUYING_ROUTES.online.body,
         `[Buy AG Grid](${ECOMMERCE_URLS.grid}) · [Buy AG Charts](${ECOMMERCE_URLS.charts}) · [Buy the bundle](${ECOMMERCE_URLS.bundle})`,
+        `${LICENCE_HELP.prompt} [${LICENCE_HELP.link}](${contactUrl}).`,
     ].join('\n\n');
 }
 
@@ -169,7 +169,6 @@ function renderCommunity(siteRoot?: string): string {
     return [
         `## ${COMMUNITY.heading}`,
         COMMUNITY.body,
-        COMMUNITY.studioNote,
         `[Get started with AG Grid](${gridUrl}) · [Get started with AG Charts](${chartsUrl})`,
     ].join('\n\n');
 }

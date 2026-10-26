@@ -26,21 +26,24 @@ export const INTEGRATED_CHARTS_PATH = './integrated-charts/';
 /** Relative to the Grid or Charts docs root; both sites host the trial licence request at this anchor. */
 export const ENTERPRISE_TRIAL_PATH = './community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence';
 
-export const ONLINE_PURCHASE = {
-    limit: 'Buy online for 1–10 developer licences for internal applications.',
-    otherwise: 'For larger teams or external customer-facing applications, contact sales.',
-};
+/** Shown on every card a visitor can buy online. */
+export const ONLINE_PURCHASE = 'Online purchase: 1–10 developer licences for internal applications.';
 
 export const PRICING_PAGE = {
     title: 'Pricing: AG Grid, AG Charts and AG Studio',
     description:
-        'Pricing for AG Grid, AG Charts and AG Studio. Start free with Community, buy Enterprise licences online for a small team, or contact sales for tailored pricing for your application.',
+        'Pricing for AG Grid, AG Charts and AG Studio. Buy Enterprise licences online or contact sales for tailored pricing for your application.',
 };
 
 export const PRICING_HERO = {
     eyebrow: 'AG Grid / AG Charts / AG Studio',
     headline: 'Pricing for what you’re building',
-    intro: 'Choose AG Grid, AG Charts or AG Studio for your application. Start free with Community, buy Enterprise licences online for a small team, or talk to us about pricing for your requirements.',
+    intro: 'Choose AG Grid, AG Charts or AG Studio for your application. Buy licences online or talk to us about pricing for your requirements.',
+};
+
+export const LICENCE_HELP = {
+    prompt: 'Not sure which licence you need?',
+    link: 'We can help',
 };
 
 export interface Tier {
@@ -62,14 +65,14 @@ export const LIBRARY_PRODUCTS: LibraryProduct[] = [
         category: 'Data grids',
         name: 'AG Grid',
         tagline: 'Build applications that make complex data easier to work with.',
-        enterprise: { name: 'Enterprise', description: 'Add advanced capabilities for more demanding data workflows.' },
+        enterprise: { name: 'Enterprise', description: 'Advanced grid features for demanding data workflows.' },
     },
     {
         id: 'charts',
         category: 'Charting',
         name: 'AG Charts',
         tagline: 'Bring interactive charts into your application.',
-        enterprise: { name: 'Enterprise', description: 'Add advanced chart types and interactions.' },
+        enterprise: { name: 'Enterprise', description: 'Advanced chart types and interactions for your application.' },
     },
 ];
 
@@ -77,16 +80,14 @@ export const STUDIO_PRODUCT = {
     category: 'Embedded analytics',
     name: 'AG Studio',
     tagline: 'Add embedded analytics that feels like part of your application.',
-    pricing: 'Subscription with tailored pricing.',
+    pricing: 'Subscription with tailored pricing',
     description:
-        'From internal dashboards to customer-facing analytics, we’ll help you choose a subscription for your application and its scale.',
-    trialNote: 'Explore the full Enterprise capabilities before choosing a subscription.',
+        'For internal dashboards and customer-facing analytics. Talk to us about a subscription for your application and its scale.',
 };
 
 export const BUNDLE_LINE = {
-    heading: 'Enterprise bundle',
-    subheading: 'Need Grid and Charts?',
-    body: 'Buy the Enterprise Bundle online for 1–10 developer licences for internal applications. For larger teams or customer-facing applications, contact sales.',
+    heading: 'Enterprise Bundle',
+    body: 'Get AG Grid Enterprise and AG Charts Enterprise together in one bundle.',
     integratedCharts:
         'The bundle also unlocks Integrated Charts, so your users can create charts straight from the data in AG Grid. Charts stay in sync with the grid as users sort and filter.',
     integratedChartsLink: 'Explore Integrated Charts',
@@ -94,21 +95,18 @@ export const BUNDLE_LINE = {
 
 export const BUYING_ROUTES = {
     online: {
-        heading: 'Buying for a small team?',
-        body: 'Buy AG Grid Enterprise, AG Charts Enterprise or the Enterprise Bundle online for 1–10 developer licences for internal applications. Choose your product and licence configuration to see your price.',
+        heading: 'Buy online for internal applications',
+        body: 'Buy AG Grid Enterprise, AG Charts Enterprise or the Enterprise Bundle online for 1–10 developer licences for internal applications. Configure your licence to see your price.',
     },
     tailored: {
-        heading: 'Pricing that fits your application',
-        body: 'Building an application for customers or other external users? Need more than 10 developer licences? Talk to us about pricing based on how you’ll use our products and the scale of your application.',
-        supporting:
-            'Tell us what you’re building, who will use it and which products you need. We’ll help you find the right licence or subscription.',
+        heading: 'Pricing tailored to your application',
+        body: 'Contact us for AG Studio subscriptions, external customer-facing applications of any team size, or purchases of more than 10 developer licences. We’ll help you choose pricing based on how you’ll use the products and the scale of your application.',
     },
 };
 
 export const COMMUNITY = {
     heading: 'Start free with Community',
-    body: 'AG Grid Community and AG Charts Community are free and open source under the MIT licence, including for production use. Choose Community when its features meet your needs.',
-    studioNote: 'AG Studio is a commercial subscription product. You can evaluate it with a free 45-day trial.',
+    body: 'AG Grid Community and AG Charts Community are free and open source under the MIT licence, including for production use.',
 };
 
 export const FEATURES = {
