@@ -1,5 +1,6 @@
 ---
 import { LicensePricing } from '@ag-website-shared/components/license-pricing/LicensePricing';
+import { PRICING_ANCHORS, PRICING_HERO } from '@ag-website-shared/components/license-pricing/pricingContent';
 import PageHero from '@ag-website-shared/components/page-hero/PageHero.astro';
 import Layout from '@layouts/Layout.astro';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
@@ -9,20 +10,19 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/license
 ---
 
 <Layout
-    title="AG Grid: Licence and Pricing"
-    description="View licence and pricing details for AG Grid. Compare features in AG Grid Community vs. Enterprise. Purchase AG Grid Bundle for a discount Grid & Charts licences."
+    title="Pricing: AG Grid, AG Charts and AG Studio"
+    description="Pricing for AG Grid, AG Charts and AG Studio. Start free with Community, buy Enterprise licences online for a small team, or contact sales for tailored pricing for your application."
     showSearchBar={true}
     showDocsNav={false}
     showMicrosoftMessage={true}
     markdownUrl={markdownUrl}
 >
-    <PageHero
-        eyebrow="Licensing and Sales"
-        headline="Pricing"
-        subhead="Whether you are a startup, global enterprise or somewhere in between, AG Grid & AG Charts deliver best in class value."
-    >
-        <a class="button" href="#pricing">
-            See our pricing
+    <PageHero eyebrow={PRICING_HERO.eyebrow} headline={PRICING_HERO.headline} subhead={PRICING_HERO.intro}>
+        <a class="button" href={`#${PRICING_ANCHORS.products}`}>
+            Explore products
+        </a>
+        <a class="button-secondary" href={`#${PRICING_ANCHORS.contact}`}>
+            Contact sales
         </a>
     </PageHero>
     <LicensePricing client:load defaultSelection="grid" />

@@ -1,11 +1,28 @@
 import type { Framework } from '@ag-grid-types';
-import { DEV_LICENSE_DATA } from '@ag-website-shared/components/license-pricing/licenseData';
-import { YOUTUBE_LICENSE_PRICING_URL, ZENDESK_URL } from '@ag-website-shared/constants';
+import {
+    BUNDLE_LINE,
+    BUYING_ROUTES,
+    COMMUNITY,
+    CONTACT,
+    ECOMMERCE_URLS,
+    FAQS_HEADING,
+    FEATURES,
+    LIBRARY_PRODUCTS,
+    type LibraryProduct,
+    ONLINE_PURCHASE,
+    PRICING_ANCHORS,
+    PRICING_FAQS,
+    PRICING_HERO,
+    STUDIO_PRODUCT,
+    STUDIO_TRIAL_PATH,
+} from '@ag-website-shared/components/license-pricing/pricingContent';
 import chartsFeaturesData from '@ag-website-shared/content/license-features/chartsFeaturesMatrix.json';
 import gridFeaturesData from '@ag-website-shared/content/license-features/gridFeaturesMatrix.json';
 import { markdownTable } from '@ag-website-shared/markdoc/markdownTable';
 import { toAbsoluteUrl } from '@ag-website-shared/markdoc/toAbsoluteUrl';
+import { chartsUrlWithPrefix } from '@ag-website-shared/utils/chartsUrlWithPrefix';
 import { resolveSharedUrl } from '@ag-website-shared/utils/resolveSharedUrl';
+import { PRODUCTION_STUDIO_SITE_URL } from '@constants';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 
 import { buildGridFrontmatter } from './gridFrontmatter';
@@ -32,8 +49,6 @@ interface FeatureSection {
     group: { name: string };
     items: FeatureItem[];
 }
-
-const FEATURE_HEADERS = ['Feature', 'Community', 'Enterprise', 'Bundle'];
 
 function isSubGroup(item: FeatureItem): item is FeatureSubGroup {
     return (item as FeatureSubGroup).isSubGroup === true;
@@ -75,7 +90,7 @@ function renderItems(items: FeatureItem[], depth: number, siteRoot?: string): st
     let buffer: string[][] = [];
     const flush = () => {
         if (buffer.length) {
-            parts.push(markdownTable(FEATURE_HEADERS, buffer));
+            parts.push(markdownTable(FEATURES.columns, buffer));
             buffer = [];
         }
     };
@@ -101,66 +116,94 @@ function renderFeatureMatrix(heading: string, sections: FeatureSection[], siteRo
     return parts.join('\n\n');
 }
 
-function renderPlans(siteRoot?: string): string {
-    const rows = DEV_LICENSE_DATA.map((plan) => {
-        const suffix = plan.description ? ` (${htmlToText(plan.description)})` : '';
-        const price = plan.priceFullDollars === '0' ? 'Free' : `$${plan.priceFullDollars} USD per developer`;
-        const cta = plan.id === 'community' ? 'Get started' : 'Buy now';
-        const buyLink = toAbsoluteUrl(plan.buyLink, siteRoot);
-        return [`${plan.subHeading}${suffix}`, price, `[${cta}](${buyLink})`];
-    });
-    return `## Plans\n\n${markdownTable(['Plan', 'Price', 'Buy'], rows)}`;
+function renderProducts(siteRoot?: string): string {
+    const contactUrl = toAbsoluteUrl(`/license-pricing/#${PRICING_ANCHORS.contact}`, siteRoot);
+    const gettingStartedUrls: Record<LibraryProduct['id'], string> = {
+        grid: toAbsoluteUrl(urlWithPrefix({ framework: FRAMEWORK, url: './getting-started/' }), siteRoot),
+        charts: chartsUrlWithPrefix({ framework: FRAMEWORK, url: './quick-start' }),
+    };
+    const libraries = LIBRARY_PRODUCTS.map((product) =>
+        [
+            `### ${product.name}`,
+            product.tagline,
+            [
+                `- **${product.community.name}** — ${product.community.description}`,
+                `- **${product.enterprise.name}** — ${product.enterprise.description}`,
+            ].join('\n'),
+            `${ONLINE_PURCHASE.limit} ${ONLINE_PURCHASE.otherwise}`,
+            `[Get started free](${gettingStartedUrls[product.id]}) · [Buy Enterprise online](${ECOMMERCE_URLS[product.id]}) · [Contact sales](${contactUrl})`,
+        ].join('\n\n')
+    );
+    const studio = [
+        `### ${STUDIO_PRODUCT.name}`,
+        STUDIO_PRODUCT.tagline,
+        `**${STUDIO_PRODUCT.pricing}** ${STUDIO_PRODUCT.description}`,
+        `[Contact sales](${contactUrl}) · [Start a 45-day free trial](${PRODUCTION_STUDIO_SITE_URL}${STUDIO_TRIAL_PATH})`,
+        STUDIO_PRODUCT.trialNote,
+    ].join('\n\n');
+    const bundle = [
+        `### ${BUNDLE_LINE.heading}`,
+        BUNDLE_LINE.body,
+        `[Buy the Enterprise Bundle](${ECOMMERCE_URLS.bundle})`,
+    ].join('\n\n');
+
+    return ['## Products', ...libraries, studio, bundle].join('\n\n');
 }
 
-function renderTrial(siteRoot?: string): string {
-    const trialUrl = toAbsoluteUrl(
-        urlWithPrefix({
-            framework: FRAMEWORK,
-            url: './community-vs-enterprise/#request-a-30-day-enterprise-bundle-trial-licence',
-        }),
-        siteRoot
-    );
-    const licenceInstallUrl = toAbsoluteUrl(
-        urlWithPrefix({ framework: FRAMEWORK, url: './license-install/' }),
-        siteRoot
-    );
+function renderBuyingRoutes(siteRoot?: string): string {
+    const contactUrl = toAbsoluteUrl(`/license-pricing/#${PRICING_ANCHORS.contact}`, siteRoot);
     return [
-        '## 30-Day Enterprise Bundle Trial',
-        'Explore the full enterprise capabilities of AG Grid and AG Charts with a free 30-day trial licence — no restrictions, no watermarks.',
-        [
-            '- **Full enterprise features** — access all advanced grid and charts features without console warnings or watermarks.',
-            '- **30 days of access** — enough time to evaluate integration, performance, and fit.',
-            `- **Engineering support** — direct assistance from our developers via [Zendesk](${ZENDESK_URL}) throughout your trial.`,
-        ].join('\n'),
-        `[Get a trial licence](${trialUrl})`,
-        `Already have a licence? See [Installing Your Licence Key](${licenceInstallUrl}).`,
-        `Not sure which licence you need? [Watch our short explainer video](${YOUTUBE_LICENSE_PRICING_URL}).`,
+        `## ${BUYING_ROUTES.online.heading}`,
+        BUYING_ROUTES.online.body,
+        `[Buy AG Grid](${ECOMMERCE_URLS.grid}) · [Buy AG Charts](${ECOMMERCE_URLS.charts}) · [Buy the bundle](${ECOMMERCE_URLS.bundle})`,
+        `## ${BUYING_ROUTES.tailored.heading}`,
+        BUYING_ROUTES.tailored.body,
+        BUYING_ROUTES.tailored.supporting,
+        `[Contact sales](${contactUrl})`,
+        `## ${COMMUNITY.heading}`,
+        COMMUNITY.body,
+        COMMUNITY.studioNote,
     ].join('\n\n');
 }
 
+function renderFaqs(): string {
+    const faqs = PRICING_FAQS.map(({ question, answer }) => `### ${question}\n\n${answer}`);
+    return [`## ${FAQS_HEADING}`, ...faqs].join('\n\n');
+}
+
+function renderContact(siteRoot?: string): string {
+    const contactUrl = toAbsoluteUrl(`/license-pricing/#${PRICING_ANCHORS.contact}`, siteRoot);
+    return [`## ${CONTACT.heading}`, CONTACT.intro, `[Contact sales](${contactUrl})`].join('\n\n');
+}
+
 /**
- * Build the markdown twin of the /license-pricing/ page: plans & prices, the Grid and
- * Charts feature-comparison matrices, and the trial / licence-install links. The page
- * is React-driven with no Markdoc source, so this reads the same data the page renders
- * (DEV_LICENSE_DATA + the two feature-matrix JSON files) and serialises it directly.
+ * Build the markdown twin of the unified /license-pricing/ page: the AG Grid, AG Charts and
+ * AG Studio products, buying routes, the Grid and Charts feature-comparison matrices, FAQs and
+ * the sales contact link. The page is React-driven with no Markdoc source, so this reads the
+ * same data the page renders (pricingContent.ts + the two feature-matrix JSON files) and
+ * serialises it directly.
  */
 export function buildLicensePricingMarkdown({ siteRoot }: { siteRoot?: string } = {}): string {
     const frontmatter = buildGridFrontmatter({
         pageUrl: '/license-pricing/',
         siteRoot,
-        title: 'Licence & Pricing',
+        title: 'Pricing',
         description:
-            'AG Grid and AG Charts licence plans, prices, and a full Community vs Enterprise vs Bundle feature comparison.',
+            'Pricing for AG Grid, AG Charts and AG Studio: free Community editions, online purchase for small teams, tailored pricing from sales, and a Community vs Enterprise feature comparison.',
     });
 
     const document = [
         frontmatter,
-        '# Licence & Pricing',
-        'Licence plans and prices for AG Grid and AG Charts, with a full feature comparison across Community, Enterprise, and the Enterprise Bundle. Prices are per developer.',
-        renderPlans(siteRoot),
-        renderFeatureMatrix('Feature Comparison — AG Grid', gridFeaturesData as FeatureSection[], siteRoot),
-        renderFeatureMatrix('Feature Comparison — AG Charts', chartsFeaturesData as FeatureSection[], siteRoot),
-        renderTrial(siteRoot),
+        `# ${PRICING_HERO.headline}`,
+        PRICING_HERO.intro,
+        renderProducts(siteRoot),
+        renderBuyingRoutes(siteRoot),
+        `## ${FEATURES.heading}`,
+        FEATURES.intro,
+        renderFeatureMatrix('Compare AG Grid features', gridFeaturesData as FeatureSection[], siteRoot),
+        renderFeatureMatrix('Compare AG Charts features', chartsFeaturesData as FeatureSection[], siteRoot),
+        renderFaqs(),
+        renderContact(siteRoot),
     ].join('\n\n');
 
     return `${document.trimEnd()}\n`;
