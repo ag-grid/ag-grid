@@ -57,6 +57,7 @@
       "cache": true
     },
     "eslint": {
+      "inputs": ["default", "^default", "eslintConfig"],
       "command": "eslint",
       "options": {
         "cwd": "{projectRoot}"
@@ -66,7 +67,7 @@
     "stylelint": {
       "executor": "nx:run-commands",
       "dependsOn": ["build:styles"],
-      "inputs": [],
+      "inputs": ["default"],
       "outputs": [],
       "options": {
         "cwd": "{projectRoot}",

@@ -15,12 +15,7 @@
         }
       }
     },
-    "lint": {
-      "command": "eslint",
-      "options": {
-        "cwd": "{projectRoot}"
-      }
-    }
+    "lint": {}
   },
   "tags": []
 }
