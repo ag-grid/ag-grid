@@ -152,13 +152,20 @@ export function _focusInto(
 }
 
 /**
- * Focuses into `rootNode` the way native Tab would: tabbable elements win. Elements with a
- * negative tabindex are only eligible when a managed-focus wrapper inside `rootNode` owns their
- * keyboard handling — bare tabindex="-1" content would otherwise be a keyboard dead end.
+ * Focuses into `rootNode` the way native Tab would: tabbable elements win, and the target is
+ * scrolled into view within `rootNode`. Elements with a negative tabindex are only eligible when a
+ * managed-focus wrapper inside `rootNode` owns their keyboard handling — bare tabindex="-1" content
+ * would otherwise be a keyboard dead end. `excludeOwnTabGuards` skips the guards of `rootNode`
+ * itself, while guards of nested components stay eligible so those components can place focus.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
-export function _focusIntoTabbableFirst(rootNode: HTMLElement, up = false, excludeTabGuards = false): boolean {
-    const candidates = _findFocusableElements(rootNode, excludeTabGuards ? '.ag-tab-guard' : null);
+export function _focusIntoTabbableFirst(rootNode: HTMLElement, up = false, excludeOwnTabGuards = false): boolean {
+    let candidates = _findFocusableElements(rootNode);
+    if (excludeOwnTabGuards) {
+        candidates = candidates.filter(
+            (element) => !element.classList.contains('ag-tab-guard') || isEnterableNestedTabGuard(element, rootNode)
+        );
+    }
     const tabbable = candidates.filter((element) => element.tabIndex >= 0);
     const pool = tabbable.length
         ? tabbable
@@ -170,11 +177,23 @@ export function _focusIntoTabbableFirst(rootNode: HTMLElement, up = false, exclu
     const toFocus = up ? _last(tabStops) : tabStops[0];
 
     if (toFocus) {
+        // Scroll before focusing: a nested tab guard moves focus on, and its component places the new target.
+        _scrollVerticallyToShow(toFocus, rootNode);
         toFocus.focus({ preventScroll: true });
         return true;
     }
 
     return false;
+}
+
+/** A guard of a component nested in `rootNode`, guarding content its component can focus. */
+function isEnterableNestedTabGuard(guard: HTMLElement, rootNode: HTMLElement): boolean {
+    const guardedElement = guard.parentElement;
+    return (
+        guardedElement !== null &&
+        guardedElement !== rootNode &&
+        _findFocusableElements(guardedElement, '.ag-tab-guard').length > 0
+    );
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -249,4 +268,23 @@ export function _scrollHorizontallyToShow(target: HTMLElement): void {
 function _canScrollHorizontally(el: HTMLElement): boolean {
     const overflowX = getComputedStyle(el).overflowX;
     return overflowX === 'auto' || overflowX === 'scroll';
+}
+
+/** Scrolls every vertically scrollable ancestor of `target`, up to and including `root`, to show it. */
+function _scrollVerticallyToShow(target: HTMLElement, root: HTMLElement): void {
+    for (let container = target.parentElement; container; container = container.parentElement) {
+        const overflowY = getComputedStyle(container).overflowY;
+        if (overflowY === 'auto' || overflowY === 'scroll') {
+            const c = container.getBoundingClientRect();
+            const t = target.getBoundingClientRect();
+            if (t.top < c.top) {
+                container.scrollTop -= c.top - t.top;
+            } else if (t.bottom > c.bottom) {
+                container.scrollTop += t.bottom - c.bottom;
+            }
+        }
+        if (container === root) {
+            return;
+        }
+    }
 }

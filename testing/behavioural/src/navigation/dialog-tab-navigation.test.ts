@@ -115,9 +115,9 @@ describe('Dialog tab navigation', () => {
         after.focus();
         await user.tab({ shift: true });
 
+        await waitFor(() => expect(document.activeElement).toHaveClass('ag-virtual-list-item'));
         expect(dialog.contains(document.activeElement)).toBe(true);
-        expect(document.activeElement).not.toHaveClass('ag-tab-guard');
-        expect((document.activeElement as HTMLElement).tabIndex).toBeGreaterThanOrEqual(0);
+        expect(document.activeElement).toHaveTextContent('B');
     });
 
     /** Deactivates nested tab guards (e.g. the column chooser's virtual list guards) so entry exercises the dialog's own guard, not an inner one. */
@@ -260,6 +260,36 @@ describe('Dialog tab navigation', () => {
 
         expect(tabToNextGridContainer).toHaveBeenCalledTimes(1);
         expect(filterInput).toHaveFocus();
+    });
+
+    test('in a grid inside a shadow root, preserves the current dialog focus when requested by tabToNextGridContainer', async () => {
+        const tabToNextGridContainer = vi.fn((_params: TabToNextGridContainerParams<RowData>) => true);
+        const shadowRoot = document.body.appendChild(document.createElement('div')).attachShadow({ mode: 'open' });
+        const grid = shadowRoot.appendChild(document.createElement('div'));
+        const api = await gridsManager.createGridAndWait<RowData>(grid, {
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData: [{ a: 1, b: 2 }],
+            tabToNextGridContainer,
+        });
+        api.showColumnChooser();
+        const dialog = await waitFor(() => {
+            const element = grid.querySelector<HTMLElement>('.ag-dialog');
+            expect(element).not.toBeNull();
+            return element!;
+        });
+        const filterInput = dialog.querySelector<HTMLElement>('.ag-column-select-header-filter-wrapper input');
+        const innerBottomGuard = dialog.querySelector<HTMLElement>('.ag-column-select-list .ag-tab-guard-bottom');
+        expect(filterInput).not.toBeNull();
+        expect(innerBottomGuard).not.toBeNull();
+        filterInput!.focus();
+        innerBottomGuard!.focus();
+
+        const bottomGuard = dialog.querySelector<HTMLElement>(':scope > .ag-tab-guard-bottom');
+        expect(bottomGuard).not.toBeNull();
+        bottomGuard!.focus();
+
+        expect(tabToNextGridContainer).toHaveBeenCalledTimes(1);
+        expect(shadowRoot.activeElement).toBe(filterInput);
     });
 
     test('follows native positive tab index order when leaving the dialog', async () => {

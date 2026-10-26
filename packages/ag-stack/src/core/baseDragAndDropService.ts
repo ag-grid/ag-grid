@@ -12,7 +12,7 @@ import type {
 } from '../interfaces/iDragAndDrop';
 import type { IPropertiesService } from '../interfaces/iProperties';
 import { _initStyledRoot } from '../theming/styledRoot';
-import { _getPageBody, _getRootNode } from '../utils/document';
+import { _getOverlayParent, _getRootNode } from '../utils/document';
 import { _anchorElementToMouseMoveEvent } from '../utils/event';
 import type { AgPromise } from '../utils/promise';
 import { AgBeanStub } from './agBeanStub';
@@ -496,7 +496,7 @@ export abstract class BaseDragAndDropService<
         style.top = '20px';
         style.left = '20px';
 
-        const targetEl = _getPageBody(this.beans);
+        const targetEl = _getOverlayParent(this.beans);
         if (!targetEl) {
             this.warnNoBody();
             return;

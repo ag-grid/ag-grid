@@ -5,7 +5,6 @@ import {
     _batchCall,
     _exists,
     _getActiveDomElement,
-    _getDocument,
     _getVerticalPaddingAndBorder,
     _normaliseQwertyAzerty,
     _observeResize,
@@ -255,8 +254,7 @@ export abstract class AbstractHeaderCellCtrl<
             if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
-                const doc = _getDocument(beans);
-                const notYetInDom = !doc?.contains(wrapperElement);
+                const notYetInDom = !wrapperElement.isConnected;
 
                 // this happens in React, where React hasn't put any content in. we say 'possibly'
                 // as a) may not be React and b) the cell could be empty anyway

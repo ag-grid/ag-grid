@@ -1,9 +1,7 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "plugins": ["./plugins/ag-grid-task-autogen"],
-  "affected": {
-    "defaultBase": "latest"
-  },
+  "defaultBase": "latest",
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "defaultExcludes": [
@@ -15,6 +13,18 @@
       "!{projectRoot}/tsconfig.spec.json"
     ],
     "buildOutputExcludes": ["!{projectRoot}/dist/**"],
+    "eslintConfig": [
+      "{workspaceRoot}/eslint.config.mjs",
+      "{workspaceRoot}/eslint-rules/**/*",
+      "{workspaceRoot}/testing/shared/eslint/**/*",
+      "{workspaceRoot}/external/ag-website-shared/eslint.history-rules.mjs"
+    ],
+    "stylelintConfig": [
+      "{workspaceRoot}/.stylelintrc.js",
+      "{workspaceRoot}/plugins/stylelint-plugin-ag/**/*",
+      "{workspaceRoot}/packages/ag-grid-community/src/theming/**/*",
+      "{workspaceRoot}/packages/ag-stack/src/theming/**/*"
+    ],
     "production": [
       "default",
       "defaultExcludes",
@@ -133,13 +143,13 @@
       "cache": true
     },
     "lint": {
-      "inputs": [
-        "default",
-        "{workspaceRoot}/eslint.config.mjs",
-        "{workspaceRoot}/eslint-rules/**/*",
-        "{workspaceRoot}/yarn.lock"
-      ],
-      "cache": true
+      "executor": "nx:run-commands",
+      "inputs": ["default", "^default", "eslintConfig"],
+      "cache": true,
+      "options": {
+        "command": "eslint",
+        "cwd": "{projectRoot}"
+      }
     },
     "lint:depcruise": {
       "executor": "nx:run-commands",

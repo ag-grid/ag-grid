@@ -324,7 +324,13 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 wrapper.model = modelForFilter;
                 promises.push(
                     _refreshHandlerAndUi(
-                        () => AgPromise.resolve({ filter: filter as any, filterParams: filterParams as any }),
+                        // a child refusing the model has refreshed its ui with the one it stored instead
+                        () =>
+                            AgPromise.resolve(
+                                wrapper.state === newState
+                                    ? { filter: filter as any, filterParams: filterParams as any }
+                                    : undefined
+                            ),
                         handler,
                         handlerParams!,
                         modelForFilter,

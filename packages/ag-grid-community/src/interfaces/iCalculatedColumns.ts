@@ -97,7 +97,7 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
      * Return error messages to reject the expression, or `null` / an empty array to accept it.
      * Deferred mode blocks Apply; live mode saves rejected expressions with an error and prevents evaluation.
      * Unlike `isColumnReferenceable`, unchanged expressions are revalidated on title/type edits and deferred Apply.
-     * In live mode, a title/type edit can therefore block a previously accepted expression.
+     * Opening an editable live dialog also revalidates the expression, saving new rejections or clearing resolved ones.
      * Not called during cell evaluation, when setting definitions, or when restoring state.
      * Call `api.refreshCalculatedColumns()` to explicitly revalidate committed expressions.
      */
@@ -133,6 +133,8 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
      * In `'live'` `applyMode` it is also called while the user types in the dialog, so keep it cheap and use
      * `params.expressionValidation` to check the expression's validation status.
      * `calculatedColumnReadOnly` takes effect after the initial Add dialog closes, including any pending live edit.
+     * In `'live'` `applyMode`, a returned `calculatedColumnReadOnly: true` locks the column when the Add dialog closes,
+     * even if its expression is empty or unfinished.
      *
      * The returned definition is not shown in the dialog and is not saved in grid state. Stateful properties
      * such as `width`, `sort` and `hide` apply when the column is created; prefer the `initial*` forms.

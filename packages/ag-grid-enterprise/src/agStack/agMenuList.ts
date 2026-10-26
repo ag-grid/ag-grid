@@ -255,8 +255,8 @@ export class AgMenuList<
     }
 
     public focusInto(suppressTooltip = false): boolean {
-        // Chrome reports a programmatic focus taken while the document has no focused element as
-        // :focus-visible, which would draw a keyboard focus ring on a mouse-opened menu.
+        // Chrome reports a programmatic focus taken while nothing is focused as :focus-visible, drawing a keyboard
+        // ring on a mouse-opened menu; focus on what encloses the grid counts as nothing here.
         this.getGui().classList.toggle(NO_FOCUS_RING_CLASS, _isNothingFocused(this.beans));
         const focused = this.withFocusTooltipSuppressed(suppressTooltip, () => _focusInto(this.getGui()));
         // Framework menu items render asynchronously and may be absent now; retry once they land,

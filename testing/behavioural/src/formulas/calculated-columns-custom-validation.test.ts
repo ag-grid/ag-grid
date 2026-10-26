@@ -656,23 +656,71 @@ describe('calculated columns - custom dialog validation', () => {
         expect(getValidationErrors).not.toHaveBeenCalled();
     });
 
-    test.each(['live', 'deferred'] as const)(
-        'opening and closing a rejected draft in %s mode does not change an existing column',
-        async (applyMode) => {
+    test.each([
+        { applyMode: 'live', applyDebounce: 0, readOnly: false },
+        { applyMode: 'live', applyDebounce: 400, readOnly: false },
+        { applyMode: 'deferred', applyDebounce: 0, readOnly: false },
+        { applyMode: 'live', applyDebounce: 0, readOnly: true },
+    ] as const)(
+        'reconciles a new rejection on opening in $applyMode mode ($applyDebounce ms, readOnly: $readOnly)',
+        async ({ applyMode, applyDebounce, readOnly }) => {
             const changed = vi.fn();
+            const context = { forbidSales: false };
             const api = createGrid('custom-validation-open', {
-                columnDefs,
+                columnDefs: columnDefs.map((colDef) => ({ ...colDef, calculatedColumnReadOnly: readOnly })),
                 rowData,
-                calculatedColumns: { applyMode, getValidationErrors: () => messages },
+                context,
+                calculatedColumns: {
+                    applyMode,
+                    applyDebounce,
+                    getValidationErrors: ({ referencedColumns, context }) =>
+                        context.forbidSales && referencedColumns.some((column) => column.getColId() === 'sales')
+                            ? messages
+                            : null,
+                },
                 onCalculatedColumnChanged: changed,
             });
-            await openEditDialogViaMenu(api, 'profit');
+            const read = (colKey: string) => api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey });
+            expect(read('profit')).toBe(20);
+            expect(read('dependent')).toBe(40);
+            context.forbidSales = true;
+            showColumnMenu(api, 'profit');
+            await clickMenuOption(readOnly ? 'View Calculated Column' : 'Edit Calculated Column');
             expect(getExpressionInput().validationMessage).toBe(applyMode === 'live' ? messages.join('\n') : '');
+            if (applyDebounce) {
+                expect(api.getState().userColumns).toBeUndefined();
+                expect(read('profit')).toBe(20);
+            }
             closeDialog();
             expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[sales]');
-            expect(api.getState().userColumns).toBeUndefined();
-            expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'profit' })).toBe(20);
-            expect(changed).not.toHaveBeenCalled();
+            if (applyMode === 'live' && !readOnly) {
+                expect(read('profit')).toBe('#ERROR!');
+                expect(read('dependent')).toBe('#ERROR!');
+                expect(document.querySelector('.ag-row[row-id="r1"] [col-id="profit"]')?.textContent).toBe('#ERROR!');
+                expect(api.getState().userColumns?.[0].calculatedExpressionError).toEqual({
+                    expression: '[sales]',
+                    reason: 'customValidation',
+                    messages,
+                });
+                await waitFor(() => expect(changed).toHaveBeenCalledTimes(1));
+                expect(changed.mock.lastCall![0]).toMatchObject({
+                    expression: '[sales]',
+                    expressionValidation: { valid: false, reason: 'customValidation' },
+                    source: 'calculatedColumn',
+                });
+                expect(changed.mock.lastCall![0].changes).toEqual({});
+
+                await openEditDialogViaMenu(api, 'profit');
+                closeDialog();
+                await asyncSetTimeout(0);
+                expect(changed).toHaveBeenCalledTimes(1);
+            } else {
+                expect(api.getState().userColumns).toBeUndefined();
+                expect(read('profit')).toBe(20);
+                expect(read('dependent')).toBe(40);
+                await asyncSetTimeout(0);
+                expect(changed).not.toHaveBeenCalled();
+            }
         }
     );
 

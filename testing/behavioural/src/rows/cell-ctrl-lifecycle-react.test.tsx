@@ -52,41 +52,56 @@ describe('cell ctrl lifecycle (react)', () => {
         await expectFocusTakenBackUnlessMoved(1, fullWidthRow);
     });
 
-    test('a focused cell rebuilt while a focus trap holds focus around the grid takes focus back', async () => {
-        let api: GridApi | undefined;
-        const { container } = render(
-            <React.StrictMode>
-                <div tabIndex={-1} id="trap">
+    test.each(['light', 'open', 'closed', 'nested'] as const)(
+        'in a %s grid, a focused cell rebuilt while a focus trap holds focus around the grid takes focus back',
+        async (mode) => {
+            const trap = document.body.appendChild(document.createElement('div'));
+            trap.tabIndex = -1;
+            onTestFinished(() => trap.remove());
+            const outer =
+                mode === 'nested'
+                    ? trap.appendChild(document.createElement('div')).attachShadow({ mode: 'open' })
+                    : trap;
+            const gridRoot: Document | ShadowRoot =
+                mode === 'light'
+                    ? document
+                    : outer
+                          .appendChild(document.createElement('div'))
+                          .attachShadow({ mode: mode === 'closed' ? 'closed' : 'open' });
+            const container = (mode === 'light' ? trap : gridRoot).appendChild(document.createElement('div'));
+            let api: GridApi | undefined;
+            render(
+                <React.StrictMode>
                     <AgGridReact
                         columnDefs={[{ field: 'a' }]}
                         rowData={[{ a: 'a1' }, { a: 'a2' }]}
                         modules={[ClientSideRowModelModule, RenderApiModule, RowApiModule, RowDragModule]}
                         onGridReady={(e) => (api = e.api)}
                     />
-                </div>
-            </React.StrictMode>
-        );
-        const cell = () => container.querySelector('.ag-row[row-index="0"] .ag-cell[col-id="a"]');
-        await waitFor(() => expect(cell()).not.toBeNull());
-        const trap = container.querySelector<HTMLElement>('#trap')!;
-        const observer = new MutationObserver(() => {
-            if (document.activeElement === document.body) {
-                trap.focus();
-            }
-        });
-        observer.observe(trap, { childList: true, subtree: true });
-        onTestFinished(() => observer.disconnect());
-        act(() => api!.setFocusedCell(0, 'a'));
-        await waitFor(() => expect(document.activeElement).toBe(cell()));
-        const before = cell();
-        act(() => {
-            api!.setGridOption('columnDefs', [{ field: 'a', rowDrag: true }]);
-            api!.refreshCells({ force: true });
-        });
-        await waitFor(() => expect(cell()).not.toBe(before));
-        await act(async () => {
-            await asyncSetTimeout(0);
-        });
-        expect(document.activeElement).toBe(cell());
-    });
+                </React.StrictMode>,
+                { container }
+            );
+            const cell = () => container.querySelector('.ag-row[row-index="0"] .ag-cell[col-id="a"]');
+            await waitFor(() => expect(cell()).not.toBeNull());
+            const observer = new MutationObserver(() => {
+                if (document.activeElement === document.body) {
+                    trap.focus();
+                }
+            });
+            observer.observe(mode === 'light' ? trap : gridRoot, { childList: true, subtree: true });
+            onTestFinished(() => observer.disconnect());
+            act(() => api!.setFocusedCell(0, 'a'));
+            await waitFor(() => expect(gridRoot.activeElement).toBe(cell()));
+            const before = cell();
+            act(() => {
+                api!.setGridOption('columnDefs', [{ field: 'a', rowDrag: true }]);
+                api!.refreshCells({ force: true });
+            });
+            await waitFor(() => expect(cell()).not.toBe(before));
+            await act(async () => {
+                await asyncSetTimeout(0);
+            });
+            expect(gridRoot.activeElement).toBe(cell());
+        }
+    );
 });
