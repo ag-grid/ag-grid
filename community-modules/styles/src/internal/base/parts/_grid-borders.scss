@@ -47,6 +47,7 @@
         }
     }
 
+    // column hover is not overlaid on range colours here: it is opaque in Balham and Material light
     .ag-cell-range-selected-1:not(.ag-cell-focus),
     .ag-cell-range-selected-1.ag-cell-range-chart,
     .ag-cell-range-selected-1.ag-formula-range,

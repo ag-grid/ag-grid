@@ -28,14 +28,26 @@
     background-color: var(--ag-range-selection-background-color);
 }
 
+/* :where() keeps this below the -2/3/4 rules, which include the hover as their top layer */
+:where(
+    .ag-cell-range-selected:not(.ag-cell-focus),
+    .ag-cell-range-selected.ag-cell-range-chart,
+    .ag-grid-viewport:not(.ag-has-focus) .ag-cell-range-single-cell:not(.ag-cell-inline-editing),
+    .ag-cell-range-selected-1.ag-formula-range,
+    .ag-root:not(.ag-context-menu-open)
+        .ag-grid-viewport:not(.ag-has-focus)
+        .ag-cell-range-selected-1:not(.ag-cell-inline-editing)
+).ag-column-hover {
+    background-image: var(--ag-internal-column-hover-image);
+}
+
 .ag-cell-range-selected-2:not(.ag-cell-focus),
 .ag-cell-range-selected-2.ag-cell-range-chart,
 .ag-cell-range-selected-2.ag-formula-range {
     /* use background-image to overlay a semi transparent color over the background-color */
-    background-image: linear-gradient(
-        var(--ag-range-selection-background-color),
-        var(--ag-range-selection-background-color)
-    );
+    background-image:
+        var(--ag-internal-column-hover-image, none),
+        linear-gradient(var(--ag-range-selection-background-color), var(--ag-range-selection-background-color));
 }
 
 .ag-cell-range-selected-3:not(.ag-cell-focus),
@@ -43,6 +55,7 @@
 .ag-cell-range-selected-3.ag-formula-range {
     /* use background-image to overlay 2 layers of a semi transparent color over the background-color */
     background-image:
+        var(--ag-internal-column-hover-image, none),
         linear-gradient(var(--ag-range-selection-background-color), var(--ag-range-selection-background-color)),
         linear-gradient(var(--ag-range-selection-background-color), var(--ag-range-selection-background-color));
 }
@@ -52,6 +65,7 @@
 .ag-cell-range-selected-4.ag-formula-range {
     /* use background-image to overlay 3 layers of a semi transparent color over the background-color */
     background-image:
+        var(--ag-internal-column-hover-image, none),
         linear-gradient(var(--ag-range-selection-background-color), var(--ag-range-selection-background-color)),
         linear-gradient(var(--ag-range-selection-background-color), var(--ag-range-selection-background-color)),
         linear-gradient(var(--ag-range-selection-background-color), var(--ag-range-selection-background-color));
