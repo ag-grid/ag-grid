@@ -105,6 +105,7 @@ export const FEATURES = {
     heading: 'Find the features you need',
     intro: 'Compare Community and Enterprise features for AG Grid and AG Charts.',
     columns: ['Feature', 'Community', 'Enterprise', 'Enterprise Bundle'],
+    bundleIncludes: 'AG Grid Enterprise & AG Charts Enterprise',
 };
 
 export const FAQS_HEADING = 'Pricing questions';

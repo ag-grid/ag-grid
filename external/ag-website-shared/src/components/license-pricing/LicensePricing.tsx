@@ -1,10 +1,14 @@
 import { ContactForm } from '@ag-website-shared/components/contact-form/ContactForm';
+import ChartsLogoType from '@ag-website-shared/images/inline-svgs/ag-charts-logotype.svg?react';
+import LogoMark from '@ag-website-shared/images/inline-svgs/ag-grid-logomark.svg?react';
+import GridLogoType from '@ag-website-shared/images/inline-svgs/ag-grid-logotype.svg?react';
+import StudioLogoType from '@ag-website-shared/images/inline-svgs/ag-studio-logotype.svg?react';
 import { chartsUrlWithPrefix } from '@ag-website-shared/utils/chartsUrlWithPrefix';
 import { gridUrlWithPrefix } from '@ag-website-shared/utils/gridUrlWithPrefix';
 import { PRODUCTION_STUDIO_SITE_URL } from '@constants';
 import { useFrameworkFromStore } from '@utils/hooks/useFrameworkFromStore';
 import classnames from 'classnames';
-import type { FunctionComponent } from 'react';
+import type { FunctionComponent, SVGProps } from 'react';
 
 import chartsFeaturesData from '../../content/license-features/chartsFeaturesMatrix.json';
 import gridFeaturesData from '../../content/license-features/gridFeaturesMatrix.json';
@@ -37,23 +41,45 @@ interface Props {
 const CONTACT_HREF = `#${PRICING_ANCHORS.contact}`;
 const STUDIO_TRIAL_URL = `${PRODUCTION_STUDIO_SITE_URL}${STUDIO_TRIAL_PATH}`;
 
+type ProductLogoId = LibraryProduct['id'] | 'studio';
+
+const PRODUCT_LOGOTYPES: Record<ProductLogoId, FunctionComponent<SVGProps<SVGSVGElement>>> = {
+    grid: GridLogoType,
+    charts: ChartsLogoType,
+    studio: StudioLogoType,
+};
+
+// The same lockup each product site uses in its header: the product logotype followed by the AG mark.
+const ProductLogo: FunctionComponent<{ product: ProductLogoId }> = ({ product }) => {
+    const LogoType = PRODUCT_LOGOTYPES[product];
+    return (
+        <span className={styles.productLogo}>
+            <LogoType aria-hidden="true" />
+            <LogoMark aria-hidden="true" />
+        </span>
+    );
+};
+
+// Children sit directly in the card so its subgrid lines each one up with the same row of the
+// neighbouring cards. A card without a given row renders an empty element in its place.
 const LibraryProductCard: FunctionComponent<{ product: LibraryProduct; gettingStartedUrl: string }> = ({
     product,
     gettingStartedUrl,
 }) => (
     <article id={PRICING_ANCHORS[product.id]} className={styles.productCard}>
+        <div className={styles.productLogoRow}>
+            <ProductLogo product={product.id} />
+        </div>
         <p className={styles.productCategory}>{product.category}</p>
         <h2 className={styles.productName}>{product.name}</h2>
         <p className={styles.productTagline}>{product.tagline}</p>
 
-        <div className={styles.tiers}>
-            {[product.community, product.enterprise].map(({ name, description }) => (
-                <div key={name}>
-                    <h3 className={styles.tierName}>{name}</h3>
-                    <p>{description}</p>
-                </div>
-            ))}
-        </div>
+        {[product.community, product.enterprise].map(({ name, description }) => (
+            <div key={name} className={styles.tier}>
+                <h3 className={styles.tierName}>{name}</h3>
+                <p>{description}</p>
+            </div>
+        ))}
 
         <p className={styles.purchaseNote}>
             {ONLINE_PURCHASE.limit} {ONLINE_PURCHASE.otherwise}
@@ -78,16 +104,19 @@ const LibraryProductCard: FunctionComponent<{ product: LibraryProduct; gettingSt
 
 const StudioProductCard: FunctionComponent = () => (
     <article id={PRICING_ANCHORS.studio} className={styles.productCard}>
+        <div className={styles.productLogoRow}>
+            <ProductLogo product="studio" />
+        </div>
         <p className={styles.productCategory}>{STUDIO_PRODUCT.category}</p>
         <h2 className={styles.productName}>{STUDIO_PRODUCT.name}</h2>
         <p className={styles.productTagline}>{STUDIO_PRODUCT.tagline}</p>
 
-        <div className={styles.tiers}>
-            <div>
-                <h3 className={styles.tierName}>{STUDIO_PRODUCT.pricing}</h3>
-                <p>{STUDIO_PRODUCT.description}</p>
-            </div>
+        <div className={styles.tier}>
+            <h3 className={styles.tierName}>{STUDIO_PRODUCT.pricing}</h3>
+            <p>{STUDIO_PRODUCT.description}</p>
         </div>
+        <div />
+        <div />
 
         <div className={styles.cardActions}>
             <a id="studio-contact-sales" className="button" href={CONTACT_HREF}>
@@ -101,30 +130,46 @@ const StudioProductCard: FunctionComponent = () => (
     </article>
 );
 
-const FeatureComparison: FunctionComponent<{ title: string; data: typeof gridFeaturesData }> = ({ title, data }) => (
+const FEATURE_COLUMNS = { label: '', community: '', enterprise: '', chartsGrid: '' };
+const FEATURE_CELL_RENDERERS = {
+    label: 'label',
+    community: 'feature',
+    enterprise: 'feature',
+    chartsGrid: 'feature',
+} as const;
+
+const FeatureComparison: FunctionComponent<{ product: LibraryProduct; data: typeof gridFeaturesData }> = ({
+    product,
+    data,
+}) => (
     <details className={styles.disclosure}>
-        <summary>{title}</summary>
-        <div className={styles.featureTable}>
-            <div className={styles.featureTableHeader}>
-                {FEATURES.columns.map((column) => (
-                    <span key={column}>{column}</span>
+        <summary>Compare {product.name} features</summary>
+        <div className={styles.featureTableScroller}>
+            <div className={styles.featureTable}>
+                <div className={styles.featureTableHeader}>
+                    <div />
+                    <div>
+                        <h3>{product.name} Community</h3>
+                    </div>
+                    <div>
+                        <h3>{product.name} Enterprise</h3>
+                    </div>
+                    <div>
+                        <h3>Enterprise Bundle</h3>
+                        <p>{FEATURES.bundleIncludes}</p>
+                    </div>
+                </div>
+                {data.map((section) => (
+                    <div key={section.group.name}>
+                        <h4 className={styles.featureGroupName}>{section.group.name}</h4>
+                        <ComparisonTable
+                            data={section.items}
+                            columns={FEATURE_COLUMNS}
+                            cellRenderer={FEATURE_CELL_RENDERERS}
+                        />
+                    </div>
                 ))}
             </div>
-            {data.map((section) => (
-                <div key={section.group.name}>
-                    <h4 className={styles.featureGroupName}>{section.group.name}</h4>
-                    <ComparisonTable
-                        data={section.items}
-                        columns={{ label: '', community: '', enterprise: '', chartsGrid: '' }}
-                        cellRenderer={{
-                            label: 'label',
-                            community: 'feature',
-                            enterprise: 'feature',
-                            chartsGrid: 'feature',
-                        }}
-                    />
-                </div>
-            ))}
         </div>
     </details>
 );
@@ -151,6 +196,11 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                 </div>
 
                 <div className={styles.bundleLine}>
+                    <div className={styles.bundleLogos}>
+                        <ProductLogo product="grid" />
+                        <span aria-hidden="true">+</span>
+                        <ProductLogo product="charts" />
+                    </div>
                     <h2 className="text-lg">{BUNDLE_LINE.heading}</h2>
                     <p>{BUNDLE_LINE.body}</p>
                     <a id="bundle-buy-online" className="button-secondary" href={ECOMMERCE_URLS.bundle}>
@@ -205,8 +255,8 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
             <section id={PRICING_ANCHORS.features} className={styles.section}>
                 <h2 className="text-2xl">{FEATURES.heading}</h2>
                 <p>{FEATURES.intro}</p>
-                <FeatureComparison title="Compare AG Grid features" data={gridFeaturesData} />
-                <FeatureComparison title="Compare AG Charts features" data={chartsFeaturesData} />
+                <FeatureComparison product={LIBRARY_PRODUCTS[0]} data={gridFeaturesData} />
+                <FeatureComparison product={LIBRARY_PRODUCTS[1]} data={chartsFeaturesData} />
                 <p className={styles.inlineLinks}>
                     <a id="explore-studio" href={`${PRODUCTION_STUDIO_SITE_URL}/`}>
                         Explore AG Studio

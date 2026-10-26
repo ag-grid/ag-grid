@@ -26,6 +26,16 @@
     }
 }
 
+$product-logo-height: 32px;
+
+.heroAction {
+    --icon-size: 1.25em;
+
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-size-2;
+}
+
 .productCards {
     display: grid;
     grid-template-columns: 1fr;
@@ -33,6 +43,7 @@
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
         grid-template-columns: repeat(3, 1fr);
+        row-gap: 0;
     }
 }
 
@@ -45,11 +56,41 @@
     border-radius: var(--radius-md);
     background-color: var(--color-bg-primary);
 
+    // Shares the row tracks of its neighbours, so tier names and buttons line up across cards.
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        display: grid;
+        grid-row: span 8;
+        grid-template-rows: subgrid;
+    }
+
     // A visitor arriving on a product anchor (e.g. from the Studio site) lands on that card.
     &:target {
         border-color: var(--color-text-brand-primary);
         box-shadow: 0 0 0 1px var(--color-text-brand-primary);
     }
+}
+
+.productLogo {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-size-2;
+
+    svg {
+        width: auto;
+        height: $product-logo-height;
+    }
+
+    :global(.logotype) * {
+        fill: var(--color-logo-text);
+
+        #{$selector-darkmode} & {
+            fill: var(--color-white);
+        }
+    }
+}
+
+.productLogoRow {
+    margin-bottom: $spacing-size-2;
 }
 
 .productCategory {
@@ -65,14 +106,8 @@
 }
 
 .productTagline {
+    padding-bottom: $spacing-size-2;
     color: var(--color-text-secondary);
-}
-
-.tiers {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-size-3;
-    margin-top: $spacing-size-3;
 }
 
 .tierName {
@@ -90,7 +125,6 @@
     flex-direction: column;
     align-items: flex-start;
     gap: $spacing-size-3;
-    margin-top: auto;
     padding-top: $spacing-size-4;
 }
 
@@ -108,6 +142,16 @@
     h2 {
         margin-bottom: 0;
     }
+}
+
+.bundleLogos {
+    display: flex;
+    align-items: center;
+    gap: $spacing-size-4;
+    margin-bottom: $spacing-size-2;
+    font-size: var(--text-fs-xl);
+    font-weight: var(--text-bold);
+    color: var(--color-text-secondary);
 }
 
 .buyingRoutes {
@@ -185,32 +229,68 @@
     }
 }
 
-.featureTable {
-    padding-bottom: $spacing-size-6;
+.featureTableScroller {
+    margin-bottom: $spacing-size-6;
     overflow-x: auto;
+}
+
+// Header and groups span the same four columns, so one shared gradient is what makes a tint read
+// as a continuous column; its stops are the third and fourth column edges.
+.featureTable {
+    --pricing-tint-enterprise: var(--color-brand-25);
+    --pricing-tint-bundle: var(--color-brand-50);
+
+    min-width: 640px;
+    background: linear-gradient(
+        to right,
+        transparent 0 50%,
+        var(--pricing-tint-enterprise) 50% 75%,
+        var(--pricing-tint-bundle) 75%
+    );
+
+    // Those steps are near-white; the util aliases are the same ramp inverted for a dark page.
+    #{$selector-darkmode} & {
+        --pricing-tint-enterprise: color-mix(in oklch, var(--color-bg-primary), var(--color-gray-700) 10%);
+        --pricing-tint-bundle: color-mix(in oklch, var(--color-bg-primary), var(--color-gray-700) 20%);
+    }
 }
 
 .featureTableHeader {
     display: flex;
-    position: sticky;
-    top: 0;
-    padding: $spacing-size-3 0;
-    font-weight: var(--text-bold);
-    background-color: var(--color-bg-primary);
 
-    span {
+    > div {
         width: 25%;
+        padding: $spacing-size-5 $spacing-size-4 $spacing-size-6;
+        color: var(--color-text-tertiary);
 
-        // Over the tick columns, which centre their marks.
-        &:not(:first-child) {
-            text-align: center;
+        &:not(:last-child) {
+            border-right: 1px solid var(--color-border-secondary);
         }
+
+        &:first-child {
+            border-right: none;
+        }
+    }
+
+    h3 {
+        margin-bottom: $spacing-size-1;
+        font-size: var(--text-fs-xl);
+        color: var(--color-text-primary);
     }
 }
 
 .featureGroupName {
-    margin-top: $spacing-size-6;
+    margin-top: $spacing-size-3;
     margin-bottom: $spacing-size-2;
+    padding: $spacing-size-3;
+    // No radius: the band spans the tinted columns and has to cover them corner to corner.
+    border: 1px solid var(--color-border-secondary);
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-secondary);
+
+    #{$selector-darkmode} & {
+        background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
+    }
 }
 
 .contactSection {
