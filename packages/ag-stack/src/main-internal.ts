@@ -261,6 +261,8 @@ export {
     _exists,
     _getOwn,
     _hasOwn,
+    _isInheritedReservedKey,
+    _isReservedKey,
     _jsonEquals,
     _makeNull,
     _missing,

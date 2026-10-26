@@ -1,4 +1,4 @@
-import { _isExpressionString } from 'ag-stack';
+import { _isExpressionString, _isInheritedReservedKey } from 'ag-stack';
 
 import type { GridApi } from '../api/gridApi';
 import type { ColumnModel } from '../columns/columnModel';
@@ -783,19 +783,27 @@ export class ValueService extends BeanStub implements NamedBean {
         const fieldPath = column.fieldPath;
         let valuesAreSame = false;
         if (fieldPath === null) {
+            if (_isInheritedReservedKey(rowData, field)) {
+                return false;
+            }
             valuesAreSame = rowData[field] === newValue;
             if (!valuesAreSame) {
                 rowData[field] = newValue;
             }
         } else {
-            // deep value — walk the pre-split path (must not mutate the column's cached `fieldPath`)
+            // deep value — walk the pre-split path (must not mutate the column's cached `fieldPath`).
+            // Reserved keys are only followed where the row holds them as its own data.
             let currentObject = rowData;
             const lastIndex = fieldPath.length - 1;
             for (let i = 0; i < lastIndex && currentObject; ++i) {
-                currentObject = currentObject[fieldPath[i]];
+                const key = fieldPath[i];
+                if (_isInheritedReservedKey(currentObject, key)) {
+                    return false;
+                }
+                currentObject = currentObject[key];
             }
-            if (currentObject) {
-                const lastPiece = fieldPath[lastIndex];
+            const lastPiece = fieldPath[lastIndex];
+            if (currentObject && !_isInheritedReservedKey(currentObject, lastPiece)) {
                 valuesAreSame = currentObject[lastPiece] === newValue;
                 if (!valuesAreSame) {
                     currentObject[lastPiece] = newValue;
