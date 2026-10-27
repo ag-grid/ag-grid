@@ -161,7 +161,11 @@ const themeBuilderVideo = isEnterprise
                             : section;
                     return (
                         <FeaturesSection section={featuresSectionWithLogo} pageContent={content}>
-                            <FeaturesWithExamples features={section.items} framework={content.internalFramework} />
+                            <FeaturesWithExamples
+                                features={section.items}
+                                framework={content.internalFramework}
+                                syncFramework={Boolean(isFrameworkLandingPage)}
+                            />
                         </FeaturesSection>
                     );
 
