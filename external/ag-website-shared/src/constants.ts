@@ -23,6 +23,20 @@ export const CONSENT_FIELD_IDS = {
     },
 };
 
+/**
+ * Salesforce field identifiers for the web-to-lead selects shown only on the pricing page form
+ */
+export const PRICING_FORM_FIELD_IDS = {
+    default: {
+        productOfInterestId: '00NS900000OC9oM',
+        applicationAudienceId: '00NS900000OCBQ5',
+    },
+    production: {
+        productOfInterestId: '00NS900000OC9oM',
+        applicationAudienceId: '00NS900000OCBQ5',
+    },
+};
+
 export const CONTACT_FORM_DATA = {
     default: {
         actionUrl: 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00DS9000004CVdh',

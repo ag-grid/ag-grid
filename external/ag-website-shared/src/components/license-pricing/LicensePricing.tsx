@@ -296,6 +296,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                 <div className={classnames(styles.contactForm, 'trial-licence-form')}>
                     <ContactForm
                         formLocation={defaultSelection === 'grid' ? 'Grid pricing page' : 'Charts pricing page'}
+                        showPricingFields
                     />
                 </div>
             </section>
