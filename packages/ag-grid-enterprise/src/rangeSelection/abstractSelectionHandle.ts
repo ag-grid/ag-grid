@@ -34,8 +34,7 @@ export abstract class AbstractSelectionHandle extends Component {
                 if (!this.dragging) {
                     startingMove = true;
                     this.dragging = true;
-                    const pageBody = _getPageBody(this.beans) as Partial<HTMLElement>;
-                    pageBody.classList?.add(this.getDraggingCssClass());
+                    this.toggleDraggingClass(true);
                 }
 
                 this.updateValuesOnMove(e);
@@ -85,8 +84,13 @@ export abstract class AbstractSelectionHandle extends Component {
         return this.lastCellHovered;
     }
 
-    private getDraggingCssClass(): string {
-        return `ag-dragging-${this.type === SelectionHandleType.FILL ? 'fill' : 'range'}-handle`;
+    private toggleDraggingClass(dragging: boolean): void {
+        const cssClass = `ag-dragging-${this.type === SelectionHandleType.FILL ? 'fill' : 'range'}-handle`;
+        const pageBody = _getPageBody(this.beans);
+        // TODO: this causes a bug where if there are multiple grids in the same page, all of them will
+        // be affected by a drag on any. Move it to the root element.
+        const target = pageBody instanceof ShadowRoot ? this.beans.popupSvc?.getPopupParent() : pageBody;
+        target?.classList.toggle(cssClass, dragging);
     }
 
     protected updateValuesOnMove(e: MouseEvent | Touch) {
@@ -108,10 +112,7 @@ export abstract class AbstractSelectionHandle extends Component {
         this.clearValues();
         (this.beans.rangeSvc as RangeService).autoScrollService.ensureCleared();
 
-        // TODO: this causes a bug where if there are multiple grids in the same page, all of them will
-        // be affected by a drag on any. Move it to the root element.
-        const pageBody = _getPageBody(this.beans) as Partial<HTMLElement>;
-        pageBody.classList?.remove(this.getDraggingCssClass());
+        this.toggleDraggingClass(false);
 
         if (this.shouldDestroyOnEndDragging) {
             this.destroy();

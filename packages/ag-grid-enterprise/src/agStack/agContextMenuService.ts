@@ -12,9 +12,8 @@ import {
     AgAbstractComponent,
     _anchorElementToMouseMoveEvent,
     _createAgElement,
-    _getPageBody,
     _getRootNode,
-    _initStyledRoot,
+    _initPointerOverlay,
     _isKeyboardMode,
     _isPromise,
     _isVisible,
@@ -165,13 +164,12 @@ export class AgContextMenuService<
         wrapperEl.appendChild(loadingIcon);
 
         const rootNode = _getRootNode(beans);
-        const targetEl = _getPageBody(beans);
+        const styledRootDisconnect = _initPointerOverlay(beans, wrapperEl);
 
-        if (!targetEl) {
+        if (!styledRootDisconnect) {
             return;
         }
 
-        const styledRootDisconnect = _initStyledRoot(beans.environment, targetEl, wrapperEl);
         beans.ariaAnnounce?.announceValue(
             translate('ariaLabelLoadingContextMenu', 'Loading Context Menu'),
             'contextmenu'
