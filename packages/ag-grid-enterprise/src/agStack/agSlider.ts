@@ -5,7 +5,7 @@ import type {
     BaseProperties,
     IPropertiesService,
 } from 'ag-stack';
-import { RefPlaceholder } from 'ag-stack';
+import { RefPlaceholder, _setAriaLabelledBy } from 'ag-stack';
 
 import type { AgInputNumberField, AgLabelParams, LabelAlignment, _AgWidgetSelectorType } from 'ag-grid-community';
 import { AgAbstractLabel, AgInputNumberFieldSelector } from 'ag-grid-community';
@@ -98,6 +98,21 @@ export class AgSlider<
         if (onValueChange != null) {
             this.onValueChange(onValueChange);
         }
+    }
+
+    public override setLabel(label: HTMLElement | string): this {
+        super.setLabel(label);
+        this.refreshInputsLabelledBy();
+
+        return this;
+    }
+
+    private refreshInputsLabelledBy(): void {
+        const label = this.getLabel();
+        const labelledBy = label === '' ? '' : this.getLabelId();
+
+        _setAriaLabelledBy(this.eSlider.getInputElement(), labelledBy);
+        _setAriaLabelledBy(this.eText.getInputElement(), labelledBy);
     }
 
     public onValueChange(callbackFn: (newValue: number) => void) {
