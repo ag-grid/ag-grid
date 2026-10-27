@@ -4,7 +4,13 @@ import { CONSENT_LABELS } from '@ag-website-shared/components/consent-fields/con
 import type { CaptchaTicker } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { initCaptcha } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { CONSENT_FIELD_IDS, CONTACT_FORM_DATA, RECAPTCHA_URL, STUDIO_FORM_DATA } from '@ag-website-shared/constants';
+import {
+    CONSENT_FIELD_IDS,
+    CONTACT_FORM_DATA,
+    PRICING_FORM_FIELD_IDS,
+    RECAPTCHA_URL,
+    STUDIO_FORM_DATA,
+} from '@ag-website-shared/constants';
 import { LIBRARY } from '@constants';
 import { getIsDev, getIsProduction } from '@utils/env';
 import classnames from 'classnames';
@@ -34,6 +40,10 @@ const { marketingEmailConsentId, emailTrackingConsentId, franceOrItalyId } = get
     ? CONSENT_FIELD_IDS.production
     : CONSENT_FIELD_IDS.default;
 
+const { productOfInterestId, applicationAudienceId } = getIsProduction()
+    ? PRICING_FORM_FIELD_IDS.production
+    : PRICING_FORM_FIELD_IDS.default;
+
 const isDev = getIsDev();
 
 const ENQUIRY_TYPE_OPTIONS = [
@@ -43,6 +53,15 @@ const ENQUIRY_TYPE_OPTIONS = [
     'Press/Media',
     'Partnerships',
     'General',
+] as const;
+
+const PRODUCT_OF_INTEREST_OPTIONS = ['AG Grid', 'AG Charts', 'Enterprise Bundle', 'AG Studio'] as const;
+
+const APPLICATION_AUDIENCE_OPTIONS = [
+    'Internal users',
+    'External customers or other external users',
+    'Both',
+    'Not sure',
 ] as const;
 
 /**
@@ -70,6 +89,7 @@ interface Props {
     formLocation: 'About page' | 'Grid pricing page' | 'Charts pricing page' | 'Contact page';
     hideMessage?: boolean;
     submitLabel?: string;
+    showPricingFields?: boolean;
 }
 
 const RECAPTCHA_READY_CALLBACK = 'agOnRecaptchaReady';
@@ -114,6 +134,7 @@ export const ContactForm: FunctionComponent<Props> = ({
     formLocation = 'About page',
     hideMessage,
     submitLabel,
+    showPricingFields,
 }: Props) => {
     const formRef = useRef<HTMLFormElement>(null);
     const captchaRef = useRef<HTMLDivElement>(null);
@@ -342,6 +363,36 @@ export const ContactForm: FunctionComponent<Props> = ({
                         )}
                     </div>
                 </div>
+            )}
+            {showPricingFields && (
+                <>
+                    <div className="input-field">
+                        <label htmlFor={productOfInterestId}>Product of interest</label>
+                        <select id={productOfInterestId} defaultValue="" {...register(productOfInterestId)}>
+                            <option value="" disabled hidden>
+                                Please select
+                            </option>
+                            {PRODUCT_OF_INTEREST_OPTIONS.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="input-field">
+                        <label htmlFor={applicationAudienceId}>Application audience</label>
+                        <select id={applicationAudienceId} defaultValue="" {...register(applicationAudienceId)}>
+                            <option value="" disabled hidden>
+                                Please select
+                            </option>
+                            {APPLICATION_AUDIENCE_OPTIONS.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </>
             )}
 
             {!hideMessage && (
