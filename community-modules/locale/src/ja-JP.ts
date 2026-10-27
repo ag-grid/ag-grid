@@ -803,7 +803,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaLabelDialog: 'ダイアログ',
     ariaLabelClose: '閉じる',
     ariaLabelMaximize: '最大化',
-    ariaLabelRestore: '元に戻す',
+    ariaLabelRestore: '元のサイズに戻す',
     ariaLabelColumnMenu: '列メニュー',
     ariaLabelColumnFilter: '列フィルター',
     ariaLabelSelectField: 'フィールドを選択',
