@@ -3406,7 +3406,6 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     // is not redirected: it is served as a bare document for the ecommerce site's iframe.
     { from: '/eula/AG-Grid-Enterprise-License-Latest.html', to: '/eula/commercial/' },
     { from: '/eula/AG-Grid-Community-License.html', to: '/eula/community/' },
-    { from: '/eula/AG-Grid-Enterprise-License-v12.0.html', to: '/eula/commercial/' },
 
     // Addresses still being requested (from external links and search results) where a live page exists under another name.
     { from: '/archive/35.2.0/react-data-grid/licensing/', to: '/react-data-grid/community-vs-enterprise/' },

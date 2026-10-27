@@ -2,7 +2,7 @@
 # optional assertions). A first response whose Location is already the final target proves a
 # single hop; rows can also follow the chain locally with hops=/final=.
 # Every row here is unique coverage: raise this with each added row, lower it only with a reviewed deletion.
-# @min-rows 299
+# @min-rows 298
 # @category curated-tickets
 
 # --- SE-30 ---
@@ -441,4 +441,3 @@ www	/javascript-data-grid/license-install/Kind/	301	/javascript-data-grid/licens
 www	/pricing/	301	/license-pricing/
 www	/javascript-data-grid/row-grouping/	301	/javascript-data-grid/grouping/
 www	/react-data-grid/row-grouping/	301	/react-data-grid/grouping/
-www	/eula/AG-Grid-Enterprise-License-v12.0.html	301	/eula/commercial/
