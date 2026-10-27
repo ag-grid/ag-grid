@@ -40,10 +40,6 @@ When the grid detects that it is running in Shadow DOM, `themeStyleContainer` wi
 1. If you have multiple grids in one Shadow DOM, by default each grid creates a separate copy of the grid CSS styles, which adds to startup time and memory use. Setting each grid's `themeStyleContainer` to the same element within the Shadow DOM allows them all to share a single copy of the CSS.
 2. While the grid's automatic detection of Shadow DOM covers most cases, there are edge cases such as when a grid is initialized detached from the DOM, where it can't detect that it's going to be running in a Shadow DOM. Setting `themeStyleContainer` will ensure that styling always works correctly.
 
-{% if isFramework("javascript") %}
-To have the grid create a shadow root of its own, see [Shadow DOM](./shadow-dom/).
-{% /if %}
-
 ### CSS Layers
 
 [Layers](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer) are a CSS feature that allows you to split your CSS into ordered layers so that rules in later layers always override rules in earlier layers, even if the selectors in earlier layers are more [specific](https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity).

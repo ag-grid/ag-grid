@@ -44,8 +44,6 @@ export interface MountGridParams {
     className?: string;
     /** Create the grid inside an open shadow root. */
     shadowDom?: boolean;
-    /** ID of an element wrapping the grid's container, for a host page the grid recognises by its structure. */
-    wrapperId?: string;
     /**
      * Builds the grid options inside the page. It is serialised with `toString()`, so it must be
      * self-contained: it cannot close over variables from the spec.
@@ -71,14 +69,12 @@ export async function mountGrid(
         css,
         className = '',
         shadowDom = false,
-        wrapperId,
         options,
     }: MountGridParams
 ): Promise<MountedGrid> {
-    const gridDiv = `<div id="myGrid" class="${className}"></div>`;
     await page.setContent(
         `<!DOCTYPE html><html><head><style>*{margin:0}${GRID_SELECTOR}{width:${width}px;height:${height}px}</style></head>` +
-            `<body>${wrapperId ? `<div id="${wrapperId}">${gridDiv}</div>` : gridDiv}</body></html>`
+            `<body><div id="myGrid" class="${className}"></div></body></html>`
     );
     if (css) {
         await page.addStyleTag({ content: css });
