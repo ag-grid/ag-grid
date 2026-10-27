@@ -1,4 +1,4 @@
-import { _isExpressionString, _isInheritedReservedKey } from 'ag-stack';
+import { _hasOwn, _isExpressionString, _isInheritedReservedKey } from 'ag-stack';
 
 import type { GridApi } from '../api/gridApi';
 import type { ColumnModel } from '../columns/columnModel';
@@ -792,7 +792,8 @@ export class ValueService extends BeanStub implements NamedBean {
             }
         } else {
             // deep value — walk the pre-split path (must not mutate the column's cached `fieldPath`).
-            // Reserved keys are only followed where the row holds them as its own data.
+            // Reserved keys, and inherited methods such as `toString`, are only followed where the row holds
+            // them as its own data, so a write never lands on a shared prototype or built-in function.
             let currentObject = rowData;
             const lastIndex = fieldPath.length - 1;
             for (let i = 0; i < lastIndex && currentObject; ++i) {
@@ -800,7 +801,11 @@ export class ValueService extends BeanStub implements NamedBean {
                 if (_isInheritedReservedKey(currentObject, key)) {
                     return false;
                 }
-                currentObject = currentObject[key];
+                const nextObject = currentObject[key];
+                if (typeof nextObject === 'function' && !_hasOwn(currentObject, key)) {
+                    return false;
+                }
+                currentObject = nextObject;
             }
             const lastPiece = fieldPath[lastIndex];
             if (currentObject && !_isInheritedReservedKey(currentObject, lastPiece)) {

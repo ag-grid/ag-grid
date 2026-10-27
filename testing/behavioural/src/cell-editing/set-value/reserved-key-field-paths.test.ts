@@ -56,6 +56,8 @@ describe('Reserved key handling in field paths', () => {
         clipboardUtils.reset();
         // Keep a failure in one test from leaking into the others
         delete (Object.prototype as Record<string, unknown>)[KEY];
+        delete (Object.prototype.toString as unknown as Record<string, unknown>)[KEY];
+        delete (Array.prototype.map as unknown as Record<string, unknown>)[KEY];
     });
 
     const createGrid = (options: GridOptions) =>
@@ -195,6 +197,30 @@ describe('Reserved key handling in field paths', () => {
 
             expect(groupNode.setDataValue(PROTO_FIELD, 'group value')).toBe(false);
             expectObjectPrototypeUnchanged();
+        });
+
+        test.each([
+            { field: `toString.${KEY}`, target: () => Object.prototype.toString },
+            { field: `items.map.${KEY}`, target: () => Array.prototype.map },
+        ])('does not write onto an inherited method through $field', async ({ field, target }) => {
+            const api = await createGrid({
+                columnDefs: [{ field: 'id' }, { field }],
+                rowData: [{ id: 'plain', items: [1] }],
+            });
+
+            expect(api.getRowNode('plain')!.setDataValue(field, 'changed')).toBe(false);
+            expect(Object.hasOwn(target(), KEY)).toBe(false);
+        });
+
+        test('writes through a function the row holds as its own data', async () => {
+            const callback = () => undefined;
+            const api = await createGrid({
+                columnDefs: [{ field: 'id' }, { field: `callback.${KEY}` }],
+                rowData: [{ id: 'own', callback }],
+            });
+
+            expect(api.getRowNode('own')!.setDataValue(`callback.${KEY}`, 'changed')).toBe(true);
+            expect((callback as unknown as Record<string, unknown>)[KEY]).toBe('changed');
         });
     });
 
