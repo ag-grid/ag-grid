@@ -11972,10 +11972,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jasmine@npm:~7.0.0":
-  version: 7.0.0
-  resolution: "@types/jasmine@npm:7.0.0"
-  checksum: 10c0/165dd685981ee34a451ab6d16065531fc6b1789af382ce7186bda1fe814fef319c88f757ac9c267272f213771186a518fe59878f936f490cd8591fb602349e66
+"@types/jasmine@npm:~6.0.0":
+  version: 6.0.0
+  resolution: "@types/jasmine@npm:6.0.0"
+  checksum: 10c0/9521bb7bd9c897ba6333478cd1c4acd68f813ea9b2ebf0f61283cc0357a9d7581c44f1798f4733ad662b3d1498449ebbb074a0e8bf96b95d6c72e9651fe7e047
   languageName: node
   linkType: hard
 
@@ -14423,10 +14423,10 @@ __metadata:
     "@angular/forms": "npm:^20.3.34"
     "@angular/platform-browser": "npm:^20.3.34"
     "@angular/platform-browser-dynamic": "npm:^20.3.34"
-    "@types/jasmine": "npm:~7.0.0"
+    "@types/jasmine": "npm:~6.0.0"
     "@types/node": "npm:^24.19.2"
     ag-grid-community: "npm:36.2.0-beta.20261025.2042"
-    jasmine-core: "npm:~7.0.2"
+    jasmine-core: "npm:~5.13.0"
     karma: "npm:~6.4.4"
     karma-chrome-launcher: "npm:~3.2.0"
     karma-coverage: "npm:~2.2.1"
@@ -23421,10 +23421,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jasmine-core@npm:~7.0.2":
-  version: 7.0.2
-  resolution: "jasmine-core@npm:7.0.2"
-  checksum: 10c0/335304a185284bb7cac23810e5f4547211b6b00c783ea1fad02e24bb0ef4a3b8f87d46a72c6650cbaed647bcf325b22a5a0322afc17602565450dc3bd8f24cda
+"jasmine-core@npm:~5.13.0":
+  version: 5.13.0
+  resolution: "jasmine-core@npm:5.13.0"
+  checksum: 10c0/3bbf1dbbde8017f41872a27f22bafd164fe4fcf834347af23d7d5a63e7e35c72c79e1596e6b384dd2906e885518419e13a6c7535ffabf8256b624110d664599d
   languageName: node
   linkType: hard
 
