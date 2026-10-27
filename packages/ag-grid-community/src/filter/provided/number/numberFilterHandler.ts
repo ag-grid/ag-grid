@@ -45,8 +45,15 @@ export class NumberFilterHandler extends ScalarFilterHandler<NumberFilterModel, 
         if (!Number.isFinite(number)) {
             return null;
         }
-        // Read back at the text's own precision; a zero has no digits, and `toPrecision` takes at most 100.
-        const digits = mantissaDigits(text);
+        // Fractional trailing zeros do not add precision; integer zeros must still be checked for rounding.
+        const mantissa = text.replace(/e.*/i, '');
+        let end = mantissa.length;
+        if (mantissa.includes('.')) {
+            while (mantissa[end - 1] === '0') {
+                end--;
+            }
+        }
+        const digits = mantissaDigits(mantissa.slice(0, end));
         const isExact =
             digits === '' || (digits.length <= 100 && mantissaDigits(number.toPrecision(digits.length)) === digits);
         return isExact ? number : null;

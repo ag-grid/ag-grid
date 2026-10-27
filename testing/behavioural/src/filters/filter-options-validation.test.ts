@@ -143,8 +143,9 @@ describe('Column filter — a model saved for another filter type', () => {
         { id: 'b', name: 'Ian Thorpe', age: 23, big: BigInt(23), date: new Date(2000, 9, 1) },
         { id: 'c', name: 'Zoe', age: 5, big: BigInt(5), date: new Date(2012, 6, 27) },
     ];
+    // Initial filters can hide every row, so firstDataRendered is not guaranteed to fire.
     const createGrid = (enableFilterHandlers: boolean, initialFilterModel?: Record<string, unknown>) =>
-        gridsManager.createGridAndWait('grid1', {
+        gridsManager.createGrid<MixedRow>('grid1', {
             columnDefs: [
                 { field: 'name', filter: 'agTextColumnFilter' },
                 { field: 'age', filter: 'agNumberColumnFilter' },
@@ -193,9 +194,24 @@ describe('Column filter — a model saved for another filter type', () => {
             { filterType: 'text', type: 'equals', filter: '9007199254740990.5' },
         ],
         [
+            'a Text Filter model naming a padded decimal a number rounds',
+            'age',
+            { filterType: 'text', type: 'equals', filter: '9007199254740990.50000' },
+        ],
+        [
+            'a Text Filter model naming a padded integer a number rounds',
+            'age',
+            { filterType: 'text', type: 'equals', filter: '1000000000000000100.00000' },
+        ],
+        [
             'a Text Filter model naming a decimal too small for a number',
             'age',
             { filterType: 'text', type: 'equals', filter: '1e-400' },
+        ],
+        [
+            'a Text Filter model naming a padded decimal too small for a number',
+            'age',
+            { filterType: 'text', type: 'equals', filter: '1.00000e-400' },
         ],
         [
             'a Text Filter model naming a decimal of more digits than a number holds',
@@ -239,10 +255,7 @@ describe('Column filter — a model saved for another filter type', () => {
         '$kind on the $colId column, given through $entry with enableFilterHandlers $enableFilterHandlers, is cleared and every row shows',
         async ({ colId, model, entry, enableFilterHandlers }) => {
             const fromState = entry === 'the initial state';
-            const api: GridApi<MixedRow> = await createGrid(
-                enableFilterHandlers,
-                fromState ? { [colId]: model } : undefined
-            );
+            const api: GridApi<MixedRow> = createGrid(enableFilterHandlers, fromState ? { [colId]: model } : undefined);
             if (!fromState) {
                 api.setFilterModel({ [colId]: model });
             }
@@ -262,7 +275,7 @@ describe('Column filter — a model saved for another filter type', () => {
     )(
         'a Date Filter model on the name column, given through $entry with enableFilterHandlers $enableFilterHandlers, is cleared and every row shows',
         async ({ entry, enableFilterHandlers }) => {
-            const api: GridApi<MixedRow> = await createGrid(enableFilterHandlers);
+            const api: GridApi<MixedRow> = createGrid(enableFilterHandlers);
             if (entry === 'setState') {
                 api.setState({ filter: { filterModel: { name: dateEquals } } });
             } else {
@@ -417,6 +430,34 @@ describe('Column filter — a model saved for another filter type', () => {
             ['a', 'c'],
         ],
         [
+            'a Text Filter Less than naming a decimal with trailing fractional zeros',
+            'age',
+            { filterType: 'text', type: 'lessThan', filter: '17.1000000000000000' },
+            { filterType: 'number', type: 'lessThan', filter: 17.1 },
+            ['a', 'c'],
+        ],
+        [
+            'a Text Filter Less than naming a padded decimal with an exponent',
+            'age',
+            { filterType: 'text', type: 'lessThan', filter: '0.171000000000000000e2' },
+            { filterType: 'number', type: 'lessThan', filter: 17.1 },
+            ['a', 'c'],
+        ],
+        [
+            'a Text Filter Equals naming an integer with more than 100 fractional zeros',
+            'age',
+            { filterType: 'text', type: 'equals', filter: `17.${'0'.repeat(101)}` },
+            { filterType: 'number', type: 'equals', filter: 17 },
+            ['a'],
+        ],
+        [
+            'a Text Filter In range with trailing fractional zeros in both bounds',
+            'age',
+            { filterType: 'text', type: 'inRange', filter: '16.9000000000000000', filterTo: '17.1000000000000000' },
+            { filterType: 'number', type: 'inRange', filter: 16.9, filterTo: 17.1 },
+            ['a'],
+        ],
+        [
             'a Text Filter Equals naming an integer',
             'big',
             { filterType: 'text', type: 'equals', filter: '17' },
@@ -490,13 +531,26 @@ describe('Column filter — a model saved for another filter type', () => {
 
     test.each(
         usable.flatMap(([kind, colId, model, applied, shown]) =>
-            [false, true].map((enableFilterHandlers) => ({ kind, colId, model, applied, shown, enableFilterHandlers }))
+            ['the initial state', 'setFilterModel'].flatMap((entry) =>
+                [false, true].map((enableFilterHandlers) => ({
+                    kind,
+                    colId,
+                    model,
+                    applied,
+                    shown,
+                    entry,
+                    enableFilterHandlers,
+                }))
+            )
         )
     )(
-        '$kind on the $colId column, with enableFilterHandlers $enableFilterHandlers, applies as a model of its own type',
-        async ({ colId, model, applied, shown, enableFilterHandlers }) => {
-            const api: GridApi<MixedRow> = await createGrid(enableFilterHandlers);
-            api.setFilterModel({ [colId]: model });
+        '$kind on the $colId column, given through $entry with enableFilterHandlers $enableFilterHandlers, applies as a model of its own type',
+        async ({ colId, model, applied, shown, entry, enableFilterHandlers }) => {
+            const fromState = entry === 'the initial state';
+            const api: GridApi<MixedRow> = createGrid(enableFilterHandlers, fromState ? { [colId]: model } : undefined);
+            if (!fromState) {
+                api.setFilterModel({ [colId]: model });
+            }
             await asyncSetTimeout(0);
 
             expect({ model: api.getFilterModel(), shown: shownIds(api) }).toEqual({
