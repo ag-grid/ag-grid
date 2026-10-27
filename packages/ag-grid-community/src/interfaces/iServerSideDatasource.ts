@@ -59,11 +59,13 @@ export interface IServerSideGetRowsParams<TData = any, TContext = any> extends A
 
     /**
      * Success callback, pass the rows back to the grid that were requested.
+     * Call either `success` or `fail` once per request; later calls are ignored.
      */
     success(params: LoadSuccessParams<TData>): void;
 
     /**
-     * Fail callback, tell the grid the call failed so it can adjust it's state.
+     * Fail callback, tell the grid the call failed so it can adjust its state.
+     * Call either `success` or `fail` once per request; later calls are ignored.
      */
     fail(): void;
 }

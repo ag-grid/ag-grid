@@ -159,8 +159,8 @@ describe('SSRM block lifecycle', () => {
     });
 
     test('only the first success or fail call of a request is honoured, and later calls warn', async () => {
-        // Deliberate: the datasource settles the first request three times, which triggers warning #340.
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [340] });
+        // Deliberate: the datasource settles the first request three times, which triggers warning #338.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [338] });
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const rowData = makeRows(500);
         const pending: IServerSideGetRowsParams[] = [];
@@ -189,7 +189,7 @@ describe('SSRM block lifecycle', () => {
         expect(blockStatus(api, 0)).toBe('loaded');
         expect(api.getRowNode('0')?.data.value).toBe('v1 Row 0');
         expect(warnSpy).toHaveBeenCalledWith(
-            'AG Grid: warning #340',
+            'AG Grid: warning #338',
             '`success()` or `fail()` was called more than once for the same Server-Side Row Model request, so the later call was ignored.',
             expect.any(String)
         );
