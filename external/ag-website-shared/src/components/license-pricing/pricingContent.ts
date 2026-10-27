@@ -18,7 +18,7 @@ export const ECOMMERCE_URLS = {
 } as const;
 
 /** Relative to the Studio site root. */
-export const STUDIO_TRIAL_PATH = '/license-pricing/?tab=trial';
+export const STUDIO_TRIAL_PATH = '/react/enterprise-licence/#request-a-45-day-trial-licence';
 
 /** Relative to the Grid docs root. */
 export const INTEGRATED_CHARTS_PATH = './integrated-charts/';
