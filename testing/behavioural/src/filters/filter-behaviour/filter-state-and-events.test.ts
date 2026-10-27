@@ -23,6 +23,7 @@ import type {
     IFloatingFilterComp,
 } from 'ag-grid-community';
 import {
+    AgPromise,
     ClientSideRowModelModule,
     CustomFilterModule,
     ExternalFilterModule,
@@ -249,6 +250,67 @@ describe('Filter State & Events', () => {
         await asyncSetTimeout(0);
 
         expect(shownByFloatingFilter).toEqual(['Russia']);
+    });
+
+    test('a custom filter given a model while its init is pending filters nothing once destroyFilter is called, its model gone', async () => {
+        const pendingInits: (() => void)[] = [];
+        const destroyedFilterPasses: string[] = [];
+        class SlowCountryFilter implements IFilterComp {
+            private model: string | null = null;
+            private destroyed = false;
+            private readonly eGui = document.createElement('div');
+            public init(): AgPromise<void> {
+                return new AgPromise<void>((resolve) => pendingInits.push(resolve));
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public destroy(): void {
+                this.destroyed = true;
+            }
+            public isFilterActive(): boolean {
+                return this.model != null;
+            }
+            public doesFilterPass(params: IDoesFilterPassParams<Athlete>): boolean {
+                const data = params.data;
+                if (this.destroyed) {
+                    destroyedFilterPasses.push(data.athlete);
+                }
+                return data.country === this.model;
+            }
+            public getModel(): string | null {
+                return this.model;
+            }
+            public setModel(model: string | null): void {
+                this.model = model;
+            }
+        }
+        const resolveInits = async () => {
+            for (const resolve of pendingInits.splice(0)) {
+                resolve();
+            }
+            await asyncSetTimeout(0);
+        };
+        const columnDefs = [{ field: 'athlete' }, { field: 'country', filter: SlowCountryFilter }];
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', { columnDefs, rowData: ATHLETES });
+        api.setFilterModel({ country: 'Russia' });
+        await asyncSetTimeout(0);
+        expect(pendingInits.length).toBe(1);
+
+        api.destroyFilter('country');
+        await asyncSetTimeout(0);
+        // the filters are re-read while the destroyed one is still being built
+        api.setGridOption('rowData', [...ATHLETES]);
+        await asyncSetTimeout(0);
+        await resolveInits();
+        await resolveInits();
+
+        expect({
+            model: api.getFilterModel(),
+            displayed: api.getDisplayedRowCount(),
+            headerActive: api.getColumn('country')!.isFilterActive(),
+            destroyedFilterPasses,
+        }).toEqual({ model: {}, displayed: ATHLETES.length, headerActive: false, destroyedFilterPasses: [] });
     });
 
     test('a custom filter refreshed by new column definitions sees the columns laid out', async () => {

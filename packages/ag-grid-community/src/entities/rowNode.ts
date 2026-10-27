@@ -847,6 +847,9 @@ export class RowNode<TData = any>
      */
     public addEventListener<T extends RowNodeEventType>(eventType: T, userListener: AgRowNodeEventListener<T>): void {
         this.beans.validation?.checkRowEvents(eventType);
+        if (typeof userListener !== 'function') {
+            return; // ignoring non functions for compatibility
+        }
         let localEventService = this.__localEventService;
         if (!localEventService) {
             localEventService = new LocalEventService();

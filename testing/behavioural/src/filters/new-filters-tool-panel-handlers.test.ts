@@ -4,6 +4,7 @@ import {
     ColumnFilterHarness,
     GridRows,
     TestGridsManager,
+    clickSelectOption,
     getSelectOptionLabels,
     installFilterLayoutMock,
     openPicker,
@@ -142,6 +143,35 @@ describe('new filters tool panel filter types', () => {
         expect(getSelectOptionLabels()).toEqual(['Selection Filter', 'Simple Filter']);
         expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #101');
         warnSpy.mockRestore();
+    });
+
+    test('a choice made in the panel shows in the grid state', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                {
+                    field: 'age',
+                    filter: 'agSelectableColumnFilter',
+                    filterParams: { filters: [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }] },
+                },
+            ],
+            rowData: [{ age: 30 }],
+            sideBar: 'filters-new',
+            enableFilterHandlers: true,
+            initialState: {
+                sideBar: {
+                    visible: true,
+                    position: 'right',
+                    openToolPanel: 'filters-new',
+                    toolPanels: { 'filters-new': { filters: [{ colId: 'age', expanded: true }] } },
+                },
+            },
+        });
+        const select = () => getGridElement(api)!.querySelector<HTMLElement>('.ag-filter-type-select');
+        await waitFor(() => expect(select()).not.toBeNull());
+        expect(api.getState().filter?.selectableFilters).toBeUndefined();
+        await openPicker(select()!);
+        await clickSelectOption('Selection Filter');
+        await waitFor(() => expect(api.getState().filter?.selectableFilters).toEqual({ age: 1 }));
     });
 
     test("a selectable column names its data type's simple filter, a bigint one included", async () => {

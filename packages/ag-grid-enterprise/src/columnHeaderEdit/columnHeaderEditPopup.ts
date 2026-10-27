@@ -75,6 +75,10 @@ class ColumnHeaderEditContent extends Component {
         inputEl.select();
     }
 
+    public isEditorElement(element: EventTarget | null): boolean {
+        return element === this.eEditor.getInputElement();
+    }
+
     public getValue(): string {
         return this.eEditor.getValue() ?? '';
     }
@@ -140,6 +144,10 @@ export class ColumnHeaderEditPopup extends BeanStub {
         this.addManagedElementListeners(dialog.getGui(), {
             keydown: (event: KeyboardEvent) => {
                 if (event.key === KeyCode.ENTER) {
+                    // Enter on a button (Close, Apply, Cancel) activates that button rather than committing.
+                    if (!contentComp.isEditorElement(event.target)) {
+                        return;
+                    }
                     event.preventDefault();
                     // Live already applied each change, so Enter just closes keeping it; deferred commits.
                     if (liveApply) {

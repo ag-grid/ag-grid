@@ -22,6 +22,7 @@ import type {
 } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    CustomFilterModule,
     GridStateModule,
     NumberFilterModule,
     TextFilterModule,
@@ -37,6 +38,8 @@ interface Row {
     name?: string | null;
     age?: number;
 }
+
+const TEXT_MICH = { filterType: 'text', type: 'contains', filter: 'mich' };
 
 const ROWS: Row[] = [
     { name: 'michael', age: 30 },
@@ -327,6 +330,135 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
         await asyncSetTimeout(0);
         expect((await api.getColumnFilterInstance('name'))!.getModel()).toBeNull();
     });
+
+    test("without filter handlers, a Multi Filter instance's own model methods set, read and test its column's model", async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: { filters: [{ filter: 'agTextColumnFilter' }] },
+                },
+            ],
+            rowData: ROWS,
+        });
+        const model = {
+            filterType: 'multi',
+            filterModels: [{ filterType: 'text', type: 'contains', filter: 'mich' }],
+        };
+        const instance = (await api.getColumnFilterInstance<IFilterComp>('name'))!;
+        await instance.setModel(model);
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        const nodes = [api.getRowNode('0')!, api.getRowNode('2')!];
+        expect({
+            columnModel: api.getColumnFilterModel('name'),
+            displayed: api.getDisplayedRowCount(),
+            instanceModel: instance.getModel(),
+            active: instance.isFilterActive(),
+            passes: nodes.map((node) => instance.doesFilterPass({ node, data: node.data })),
+        }).toEqual({
+            columnModel: model,
+            displayed: 2,
+            instanceModel: model,
+            active: true,
+            passes: [true, false],
+        });
+    });
+
+    test.each([
+        [
+            "paired with the application's doesFilterPass",
+            {
+                filter: {
+                    component: 'agTextColumnFilter',
+                    doesFilterPass: ({ node, handlerParams }: DoesFilterPassParams) =>
+                        handlerParams.getValue(node) === 'bob',
+                },
+            },
+            [false, true],
+        ],
+        // the child's own value getter, not the column's: every row reads as 'michael'
+        [
+            'with its own filterValueGetter',
+            { filter: 'agTextColumnFilter', filterValueGetter: () => 'michael' },
+            [true, true],
+        ],
+    ])(
+        'with filter handlers, a deprecated doesFilterPass on a Multi Filter child %s tests rows as the grid does',
+        async (_, child, expectedPasses) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [283] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            try {
+                const api: GridApi = await gridsManager.createGridAndWait(
+                    'grid1',
+                    {
+                        enableFilterHandlers: true,
+                        columnDefs: [
+                            { field: 'name', filter: 'agMultiColumnFilter', filterParams: { filters: [child] } },
+                        ],
+                        rowData: ROWS,
+                    },
+                    { modules: [CustomFilterModule] }
+                );
+                await api.setColumnFilterModel('name', { filterType: 'multi', filterModels: [TEXT_MICH] });
+                api.onFilterChanged();
+                await asyncSetTimeout(0);
+                const instance = (await api.getColumnFilterInstance<IMultiFilter>('name'))!.getChildFilterInstance(0)!;
+                const nodes = [api.getRowNode('0')!, api.getRowNode('2')!];
+                expect({
+                    displayed: api.getDisplayedRowCount(),
+                    passes: nodes.map((node) => instance.doesFilterPass({ node, data: node.data })),
+                }).toEqual({
+                    displayed: expectedPasses[0] ? ROWS.length : 1,
+                    passes: expectedPasses,
+                });
+            } finally {
+                warn.mockRestore();
+            }
+        }
+    );
+
+    test.each([false, true])(
+        "with enableFilterHandlers %s, a Multi Filter child's deprecated doesFilterPass tests rows by the child's model, also once the filter is destroyed",
+        async (enableFilterHandlers) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [283] });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            try {
+                const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                    enableFilterHandlers,
+                    columnDefs: [
+                        {
+                            field: 'name',
+                            filter: 'agMultiColumnFilter',
+                            filterParams: {
+                                filters: [{ filter: 'agTextColumnFilter' }, { filter: 'agSetColumnFilter' }],
+                            },
+                        },
+                    ],
+                    rowData: ROWS,
+                });
+                await api.setColumnFilterModel('name', {
+                    filterType: 'multi',
+                    filterModels: [{ filterType: 'text', type: 'equals', filter: 'bob' }, null],
+                });
+                api.onFilterChanged();
+                await asyncSetTimeout(0);
+                const child = (await api.getColumnFilterInstance<IMultiFilter>('name'))!.getChildFilterInstance(0)!;
+                const nodes = [api.getRowNode('0')!, api.getRowNode('2')!];
+                const passes = () => nodes.map((node) => child.doesFilterPass({ node, data: node.data }));
+                const beforeDestroy = passes();
+                api.destroyFilter('name');
+                await asyncSetTimeout(0);
+                expect({ beforeDestroy, afterDestroy: passes() }).toEqual({
+                    beforeDestroy: [false, true],
+                    afterDestroy: [false, true],
+                });
+            } finally {
+                warn.mockRestore();
+            }
+        }
+    );
 
     test.each([false, true])(
         'with enableFilterHandlers %s, an open Multi Filter whose Number child is given an option it lacks shows no model, as it applies none',

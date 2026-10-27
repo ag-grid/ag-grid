@@ -1581,6 +1581,8 @@ describe('Advanced Filter', () => {
             api.setGridOption('enableAdvancedFilter', false);
             api.setGridOption('enableAdvancedFilter', true);
             expect(api.getAdvancedFilterModel()).toBeNull();
+            await asyncSetTimeout(0);
+            expect(AdvancedFilterHarness.get(api).value).toBe('');
 
             api.setGridOption('rowData', ROW_DATA);
             await asyncSetTimeout(0);

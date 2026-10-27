@@ -1,5 +1,5 @@
 import type { AgColorType } from 'ag-charts-types';
-import { _getDocument, _setAriaLabel } from 'ag-stack';
+import { _getDocument, _setAriaLabel, _setAriaPressed, _setAriaRole } from 'ag-stack';
 
 import type { BeanCollection, ChartGroupsDef, ChartType } from 'ag-grid-community';
 import { Component, KeyCode, _createElement } from 'ag-grid-community';
@@ -217,6 +217,9 @@ export class MiniChartsContainer extends Component {
                     suppressKeyboardNavigation: true,
                 })
             );
+            const { eContainer } = groupComponent;
+            _setAriaRole(eContainer, 'group');
+            _setAriaLabel(eContainer, label);
 
             for (const menuItem of items) {
                 const { chartType } = menuItem;
@@ -241,6 +244,7 @@ export class MiniChartsContainer extends Component {
                     },
                 });
 
+                _setAriaLabel(miniWrapper, this.chartTranslation.translate(getFullChartNameTranslationKey(chartType)));
                 this.wrappers.set(chartType, miniWrapper);
 
                 const template = getMiniChartSvgTemplate(chartType, this.isCustomTheme, solidFills, doc);
@@ -267,12 +271,7 @@ export class MiniChartsContainer extends Component {
         this.wrappers.forEach((miniChart, miniChartType) => {
             const selected = miniChartType === selectedChartType;
             miniChart.classList.toggle('ag-selected', selected);
-
-            const chartName = this.chartTranslation.translate(getFullChartNameTranslationKey(miniChartType));
-            const ariaLabel = selected
-                ? `${chartName}. ${this.chartTranslation.translate('ariaChartSelected')}`
-                : chartName;
-            _setAriaLabel(miniChart, ariaLabel);
+            _setAriaPressed(miniChart, selected);
         });
     }
 

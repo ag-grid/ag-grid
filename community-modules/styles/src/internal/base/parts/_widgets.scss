@@ -1007,6 +1007,9 @@
     }
 
     .ag-panel-title-bar-button {
+        border: 0;
+        background-color: unset;
+        padding: 0;
         @include ag.unthemed-rtl(
             (
                 margin-left: var(--ag-grid-size),

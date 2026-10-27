@@ -1,4 +1,4 @@
-import { findByText, waitFor } from '@testing-library/dom';
+import { findByText, getByRole, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { onTestFinished } from 'vitest';
@@ -275,6 +275,28 @@ describe('Editable header name', () => {
         ) as HTMLElement | null;
         expect(closeButton).toBeTruthy();
         await userEvent.click(closeButton!);
+        await waitForEditorClosed();
+
+        expect(events.length).toBe(0);
+        expect(api.getDisplayNameForColumn(column, 'header')).toBe('Athlete');
+    });
+
+    test('deferred mode: Enter on the keyboard-focused Close button cancels the edit', async () => {
+        const { api, gridDiv, toolPanel } = await createGrid([{ field: 'athlete', headerNameEditable: true }], {
+            columnHeaderEdit: { applyMode: 'deferred' },
+        });
+        const column = api.getColumn('athlete') as unknown as AgColumn;
+        const events = captureColumnHeaderNameChanged(column);
+
+        const input = await openEditor(toolPanel, gridDiv, 'Athlete');
+        await userEvent.clear(input);
+        await userEvent.type(input, 'Competitor');
+
+        const closeButton = getByRole(input.closest<HTMLElement>('.ag-dialog')!, 'button', { name: 'Close' });
+        await userEvent.tab({ shift: true });
+        expect(document.activeElement).toBe(closeButton);
+
+        await userEvent.keyboard('{Enter}');
         await waitForEditorClosed();
 
         expect(events.length).toBe(0);

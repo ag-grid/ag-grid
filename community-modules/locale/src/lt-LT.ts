@@ -822,6 +822,12 @@ export const AG_GRID_LOCALE_LT_LT = {
 
     ariaLabelDialog: 'Dialogas',
 
+    ariaLabelClose: 'Uždaryti',
+
+    ariaLabelMaximize: 'Padidinti',
+
+    ariaLabelRestore: 'Atkurti',
+
     ariaLabelColumnMenu: 'Stulpelio meniu',
     ariaLabelColumnFilter: 'Stulpelio filtras',
 

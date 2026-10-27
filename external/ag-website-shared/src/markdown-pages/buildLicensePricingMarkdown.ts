@@ -28,6 +28,7 @@ import { chartsUrlWithPrefix } from '@ag-website-shared/utils/chartsUrlWithPrefi
 import { gridUrlWithPrefix } from '@ag-website-shared/utils/gridUrlWithPrefix';
 import { resolveSharedUrl } from '@ag-website-shared/utils/resolveSharedUrl';
 import { PRODUCTION_STUDIO_SITE_URL } from '@constants';
+import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 
 import { type SiteFrontmatterFields, buildMarkdownFrontmatter } from './markdownFrontmatter';
 
@@ -118,8 +119,12 @@ function renderFeatureMatrix(heading: string, sections: FeatureSection[], siteRo
     return parts.join('\n\n');
 }
 
+function getContactUrl(siteRoot?: string): string {
+    return toAbsoluteUrl(urlWithBaseUrl(`/license-pricing/#${PRICING_ANCHORS.contact}`), siteRoot);
+}
+
 function renderProducts(siteRoot?: string): string {
-    const contactUrl = toAbsoluteUrl(`/license-pricing/#${PRICING_ANCHORS.contact}`, siteRoot);
+    const contactUrl = getContactUrl(siteRoot);
     const trialUrls: Record<LibraryProduct['id'], string> = {
         grid: toAbsoluteUrl(gridUrlWithPrefix({ framework: FRAMEWORK, url: ENTERPRISE_TRIAL_PATH }), siteRoot),
         charts: chartsUrlWithPrefix({ framework: FRAMEWORK, url: ENTERPRISE_TRIAL_PATH }),
@@ -151,7 +156,7 @@ function renderProducts(siteRoot?: string): string {
 }
 
 function renderBuyingRoutes(siteRoot?: string): string {
-    const contactUrl = toAbsoluteUrl(`/license-pricing/#${PRICING_ANCHORS.contact}`, siteRoot);
+    const contactUrl = getContactUrl(siteRoot);
     return [
         `## ${BUYING_ROUTES.tailored.heading}`,
         BUYING_ROUTES.tailored.body,
@@ -179,7 +184,7 @@ function renderFaqs(): string {
 }
 
 function renderContact(siteRoot?: string): string {
-    const contactUrl = toAbsoluteUrl(`/license-pricing/#${PRICING_ANCHORS.contact}`, siteRoot);
+    const contactUrl = getContactUrl(siteRoot);
     return [`## ${CONTACT.heading}`, CONTACT.intro, `[Contact sales](${contactUrl})`].join('\n\n');
 }
 

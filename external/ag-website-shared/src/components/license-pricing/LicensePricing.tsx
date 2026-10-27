@@ -1,4 +1,4 @@
-import { ContactForm } from '@ag-website-shared/components/contact-form/ContactForm';
+import { ContactForm, type ContactFormLocation } from '@ag-website-shared/components/contact-form/ContactForm';
 import ChartsLogoType from '@ag-website-shared/images/inline-svgs/ag-charts-logotype.svg?react';
 import LogoMark from '@ag-website-shared/images/inline-svgs/ag-grid-logomark.svg?react';
 import GridLogoType from '@ag-website-shared/images/inline-svgs/ag-grid-logotype.svg?react';
@@ -35,12 +35,18 @@ import {
     STUDIO_TRIAL_PATH,
 } from './pricingContent';
 
-export type LicenseTab = 'grid' | 'charts';
+export type LicenseTab = 'grid' | 'charts' | 'studio';
 
 interface Props {
     /** The site hosting the page, recorded against contact form submissions. */
     defaultSelection: LicenseTab;
 }
+
+const FORM_LOCATIONS: Record<LicenseTab, ContactFormLocation> = {
+    grid: 'Grid pricing page',
+    charts: 'Charts pricing page',
+    studio: 'Studio pricing page',
+};
 
 const CONTACT_HREF = `#${PRICING_ANCHORS.contact}`;
 const STUDIO_TRIAL_URL = `${PRODUCTION_STUDIO_SITE_URL}${STUDIO_TRIAL_PATH}`;
@@ -251,8 +257,12 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                         <a id="bundle-buy-online" className="button-tertiary" href={ECOMMERCE_URLS.bundle}>
                             Buy the bundle online
                         </a>
-                        {/* The trial licence covers the whole bundle, so keep visitors on the site they came from. */}
-                        <a id="bundle-start-trial" className="button-secondary" href={trialUrls[defaultSelection]}>
+                        {/* The trial licence covers the whole bundle, so Charts visitors stay on Charts; everyone else uses Grid's form. */}
+                        <a
+                            id="bundle-start-trial"
+                            className="button-secondary"
+                            href={defaultSelection === 'charts' ? trialUrls.charts : trialUrls.grid}
+                        >
                             Start a 30-day free trial
                         </a>
                     </div>
@@ -294,10 +304,7 @@ export const LicensePricing: FunctionComponent<Props> = ({ defaultSelection }) =
                     </div>
                 </div>
                 <div className={classnames(styles.contactForm, 'trial-licence-form')}>
-                    <ContactForm
-                        formLocation={defaultSelection === 'grid' ? 'Grid pricing page' : 'Charts pricing page'}
-                        showPricingFields
-                    />
+                    <ContactForm formLocation={FORM_LOCATIONS[defaultSelection]} showPricingFields />
                 </div>
             </section>
 

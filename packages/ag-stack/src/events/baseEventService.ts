@@ -52,9 +52,11 @@ export class BaseEventService<
 
     public addGlobalListener(
         listener: AgEventServiceGlobalListener<keyof TGlobalEvents & string, TGlobalEvents>,
-        async = false
+        async = false,
+        eventTypes?: ReadonlySet<keyof TGlobalEvents & string>,
+        exceptEventTypes?: ReadonlySet<keyof TGlobalEvents & string>
     ): void {
-        this.globalSvc.addGlobalListener(listener, async);
+        this.globalSvc.addGlobalListener(listener, async, eventTypes, exceptEventTypes);
     }
 
     public removeGlobalListener(
