@@ -3,9 +3,12 @@ import { expect, test } from '@playwright/test';
 
 import { mountGrid } from '../src/mountGrid';
 
-type ThemeModeSource = 'none' | 'html' | 'ancestor';
+type ThemeModeSource = 'none' | 'html' | 'body' | 'ancestor';
 
-/** Mounts the grid with dark mode set on `<html>`, or on an `.ag-theme-mode` ancestor in the grid's own root node. */
+/**
+ * Mounts the grid with dark mode set on `<html>`, on `<body>` as an `.ag-theme-mode` element, or on an `.ag-theme-mode`
+ * ancestor in the grid's own root node.
+ */
 async function mountWithThemeMode(page: Page, source: ThemeModeSource, shadowDom: boolean) {
     const mounted = await mountGrid(page, {
         enterprise: true,
@@ -20,6 +23,11 @@ async function mountWithThemeMode(page: Page, source: ThemeModeSource, shadowDom
     if (source === 'html') {
         await page.evaluate(() => {
             document.documentElement.dataset.agThemeMode = 'dark';
+        });
+    } else if (source === 'body') {
+        await page.evaluate(() => {
+            document.body.classList.add('ag-theme-mode');
+            document.body.dataset.agThemeMode = 'dark';
         });
     } else if (source === 'ancestor') {
         await mounted.grid.evaluate((el: HTMLElement) => {
@@ -72,3 +80,21 @@ for (const shadowDom of [false, true]) {
         });
     });
 }
+
+test('the context menu loading icon follows a mode change on a body .ag-theme-mode while it is shown', async ({
+    page,
+}) => {
+    const light = await readLoadingIconColour(page, 'none');
+    const dark = await readLoadingIconColour(page, 'html');
+
+    const { cell } = await mountWithThemeMode(page, 'body', false);
+    await cell(0, 'country').click({ button: 'right' });
+    const icon = page.locator('.ag-context-menu-loading-icon .ag-icon');
+    await expect(icon).toBeVisible();
+    expect(await readStyle(icon, 'color')).toEqual(dark);
+
+    await page.evaluate(() => {
+        delete document.body.dataset.agThemeMode;
+    });
+    expect(await readStyle(icon, 'color')).toEqual(light);
+});

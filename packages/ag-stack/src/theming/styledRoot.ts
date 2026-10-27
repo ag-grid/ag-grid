@@ -28,8 +28,8 @@ export function _initStyledRoot(env: IEnvironment, parent: HTMLElement | ShadowR
 }
 
 /**
- * Appends `child` in a styled root to the page body, for grid-owned elements that follow the pointer. The body is
- * outside the grid's nearest `.ag-theme-mode` ancestor, so that ancestor's theme mode is carried across.
+ * Appends `child` in a styled root to the page body, for grid-owned elements that follow the pointer. When the body
+ * is outside the grid's nearest `.ag-theme-mode` ancestor, that ancestor's theme mode is copied across.
  *
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
@@ -43,7 +43,8 @@ export function _initPointerOverlay(
         return undefined;
     }
     const [element, destroy] = _initDetachedStyledRoot(env, child);
-    const mode = beans.eRootDiv.closest(THEME_MODE_ANCESTOR)?.getAttribute(THEME_MODE_ATTRIBUTE);
+    const ancestor = beans.eRootDiv.closest(THEME_MODE_ANCESTOR);
+    const mode = ancestor?.contains(parent) ? null : ancestor?.getAttribute(THEME_MODE_ATTRIBUTE);
     const overlay = mode == null ? element : wrapInThemeMode(element, mode);
     parent.appendChild(overlay);
     return () => {
