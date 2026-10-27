@@ -332,7 +332,7 @@ test.describe('Page Verification', () => {
         await visit(page, '/license-pricing/#ag-studio');
         const studio = page.locator('#ag-studio');
         await expect(studio).toBeInViewport();
-        await expect(studio.getByText('Subscription with tailored pricing.')).toBeVisible();
+        await expect(studio.getByText('Subscription with tailored pricing')).toBeVisible();
         await expect(studio.getByRole('link', { name: 'Contact sales' })).toBeVisible();
         await expect(studio.getByRole('link', { name: 'Start a 45-day free trial' })).toBeVisible();
 
