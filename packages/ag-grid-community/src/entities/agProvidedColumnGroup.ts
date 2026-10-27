@@ -199,6 +199,9 @@ export class AgProvidedColumnGroup
         userListener: IEventListener<T>,
         async?: boolean
     ): void {
+        if (typeof userListener !== 'function') {
+            return; // ignoring non functions for compatibility
+        }
         let localEventService = this.localEventService;
         if (!localEventService) {
             localEventService = new LocalEventService();
