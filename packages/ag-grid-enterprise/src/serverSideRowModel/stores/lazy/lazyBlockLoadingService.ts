@@ -231,12 +231,6 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         for (const cache of this.cacheLoadingNodesMap.keys()) {
             const nodesToRefresh = cache.getNodesToRefresh();
             nodesToRefresh.forEach((node) => {
-                if (node.rowIndex == null) {
-                    nodeToRefresh = node;
-                    cacheToRefresh = cache;
-                    return;
-                }
-
                 const lazyNode = cache.getNodes().getBy('node', node);
                 if (!lazyNode) {
                     return;
@@ -244,6 +238,12 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
                 const loadingNodes = this.cacheLoadingNodesMap.get(cache);
                 if (loadingNodes?.has(lazyNode.index)) {
+                    return;
+                }
+
+                if (node.rowIndex == null) {
+                    nodeToRefresh = node;
+                    cacheToRefresh = cache;
                     return;
                 }
 
