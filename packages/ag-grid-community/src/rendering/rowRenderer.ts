@@ -682,7 +682,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         this.recycleRows(rowsToRecycle, animate);
 
-        this.gridBodyCtrl.updateRowCount();
+        const viewportLostFocus = this.gridBodyCtrl.updateRowCount();
 
         if (!params.onlyBody) {
             this.refreshPinnedRowComps(gos.get('enableRowPinning') ? recycleRows : undefined);
@@ -693,6 +693,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
         // if a cell was focused before, ensure focus now.
         if (focusedCell != null) {
             this.restoreFocusedCell(focusedCell);
+        } else if (viewportLostFocus) {
+            this.gridBodyCtrl.refocusViewport();
         }
 
         this.releaseLockOnRefresh();

@@ -523,6 +523,24 @@
     --ag-internal-bottom-rows-height: 0px;
 }
 
+/* the rows area covers the focused viewport's shadow, so the ring is a sticky overlay as wide as the viewport */
+:where(.ag-grid-viewport:focus-visible > .ag-grid-scrollable-area) > .ag-grid-scrolling-rows::before {
+    content: '';
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 1;
+    flex: none;
+    width: var(--ag-internal-grid-viewport-width);
+    margin-inline-end: calc(-1 * var(--ag-internal-grid-viewport-width));
+    box-shadow: inset var(--ag-focus-shadow);
+    pointer-events: none;
+
+    @media (forced-colors: active) {
+        outline: 2px solid var(--ag-internal-forced-colors-cell-focus-outline-color, Highlight);
+        outline-offset: -2px;
+    }
+}
+
 .ag-grid-viewport.ag-layout-auto-height {
     max-height: calc(
         var(--ag-auto-height-max-body-height) + var(--ag-internal-header-rows-height) +

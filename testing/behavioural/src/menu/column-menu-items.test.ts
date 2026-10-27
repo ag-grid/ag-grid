@@ -183,6 +183,26 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
         await clickMenuOption('None');
         expect(valueCols()).toEqual([]);
     });
+
+    test('a paste item is enabled only while the grid shows no rows', async () => {
+        const api = gridMgr.createGrid('menu-paste-empty-grid', {
+            columnDefs: [{ field: 'athlete' }],
+            rowData: [],
+            getColumnMenuItems: () => ['paste'],
+        });
+        restoreOffsetParent = polyfillOffsetParent();
+        const isPasteDisabled = async () =>
+            (await openMenuOption('Paste')).closest('.ag-menu-option')!.classList.contains('ag-menu-option-disabled');
+
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(0));
+        api.showColumnMenu('athlete');
+        expect(await isPasteDisabled()).toBe(false);
+        api.hidePopupMenu();
+
+        api.setGridOption('rowData', [{ athlete: 'Michael Phelps' }]);
+        api.showColumnMenu('athlete');
+        expect(await isPasteDisabled()).toBe(true);
+    });
 });
 
 function headerCell(colId: string): HTMLElement {

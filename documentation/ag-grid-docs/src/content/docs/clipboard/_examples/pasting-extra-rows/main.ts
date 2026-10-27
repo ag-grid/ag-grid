@@ -66,9 +66,14 @@ function processDataFromClipboard(params: ProcessDataFromClipboardParams): strin
         data.splice(data.length - 1, 1);
     }
 
-    const lastIndex = params.api!.getDisplayedRowCount() - 1;
     const focusedCell = params.api!.getFocusedCell();
-    const focusedIndex = focusedCell!.rowIndex;
+    // an empty grid has no focused cell to paste from
+    if (!focusedCell) {
+        return data;
+    }
+
+    const lastIndex = params.api!.getDisplayedRowCount() - 1;
+    const focusedIndex = focusedCell.rowIndex;
 
     if (focusedIndex + data.length - 1 > lastIndex) {
         const resultLastIndex = focusedIndex + (data.length - 1);
@@ -81,7 +86,7 @@ function processDataFromClipboard(params: ProcessDataFromClipboardParams): strin
 
             // Create row object
             const rowObject: any = {};
-            let currentColumn: any = focusedCell!.column;
+            let currentColumn: any = focusedCell.column;
             row.forEach((item) => {
                 if (!currentColumn) {
                     return;

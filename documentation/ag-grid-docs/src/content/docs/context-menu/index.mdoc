@@ -43,7 +43,7 @@ Menu items also require the relevant [Module](./modules/) to be loaded in order 
 - `copyWithHeaders`: Copy selected value to clipboard with headers. Shown by default.
 - `copyWithGroupHeaders`: Copy selected value to clipboard with headers and header groups. Shown by default.
 - `cut`: Cut the selected value to clipboard. Not shown by default.
-- `paste`: Paste the clipboard value into the selected cell (see note below). Shown by default.
+- `paste`: Paste the clipboard value into the selected cell (see note below). Shown by default, including on an empty grid (see [Pasting into an Empty Grid](./clipboard/#pasting-into-an-empty-grid)).
 - `note`: Notes actions for the current cell. Expands to `Add Note`, `Edit Note`, `View Note` and `Remove Note` depending on the current cell state. Shown when [Notes](./notes/) is enabled.
 - `removeCalculatedColumn`: Remove the Calculated Column. Shown when the cell is in a [Calculated Column](./calculated-columns/), and disabled when the column is read-only.
 - `resetColumns`: Reset all columns. Not shown by default.
@@ -66,7 +66,7 @@ When the Clipboard API is not available, browser security restrictions prevent J
 a paste action (e.g. {% kbd "^ Ctrl" /%}+{% kbd "V" /%} or selecting Paste from the browser menu).
 These restrictions exist to prevent malicious websites from stealing clipboard data.
 
-This paste option will be disabled if suppressClipboardApi={true} or if the target cell is not editable.
+This paste option will be disabled if suppressClipboardApi={true} or if the target cell is not editable. On an empty grid it is not shown by default with suppressClipboardApi={true}.
 {% /note %}
 
 ## Default Context Menu

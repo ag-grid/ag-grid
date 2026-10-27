@@ -2,7 +2,9 @@ import { getByRole, waitFor } from '@testing-library/dom';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
 import {
     TestGridsManager,
+    asyncSetTimeout,
     clickMenuOption,
+    clipboardUtils,
     fireGridPointerDown,
     openMenuEntries,
     openMenuOption,
@@ -212,6 +214,106 @@ describe('Context menu default items', () => {
         // without cell selection the right-click selects nothing, so there is no range to chart
         const noRange = await defaultItemsFor(enterpriseGrids, 'ctxDefaultsChartsNoRange', { enableCharts: true });
         expect(noRange.defaultItems).toEqual([...CLIPBOARD_ITEMS, 'export']);
+    });
+
+    test('the viewport of an empty grid offers only paste, which hands the clipboard to processDataFromClipboard and keeps focus', async () => {
+        clipboardUtils.init();
+        try {
+            let seen: DefaultMenuItem[] | undefined;
+            const pasted: string[][][] = [];
+            const api = enterpriseGrids.createGrid('ctxDefaultsEmptyGrid', {
+                columnDefs,
+                rowData: [],
+                getContextMenuItems: (params) => {
+                    seen = params.defaultItems;
+                    return params.defaultItems ?? ['paste'];
+                },
+                processDataFromClipboard: ({ data }) => {
+                    pasted.push(data);
+                    return null;
+                },
+            });
+            clipboardUtils.setText('Ann\t30');
+            await asyncSetTimeout(0);
+            const viewport = getGridElement(api)!.querySelector<HTMLElement>('.ag-grid-viewport')!;
+            const isPasteDisabled = async () =>
+                (await openMenuOption('Paste'))
+                    .closest('.ag-menu-option')!
+                    .classList.contains('ag-menu-option-disabled');
+
+            viewport.focus();
+            rightClick(viewport);
+            await waitFor(() => expect(openMenuEntries()).toEqual(['Paste']));
+            expect(seen).toEqual(['paste', 'separator']);
+            expect(await isPasteDisabled()).toBe(false);
+
+            await clickMenuOption('Paste');
+            await waitFor(() => expect(pasted).toEqual([[['Ann', '30']]]));
+            expect(document.activeElement).toBe(viewport);
+
+            api.updateGridOptions({ enableCharts: true, pivotMode: true });
+            rightClick(viewport);
+            await waitFor(() => expect(openMenuEntries()).toEqual(['Paste', 'separator', 'Pivot Chart']));
+            api.updateGridOptions({ enableCharts: false, pivotMode: false });
+
+            // neither a grid showing rows nor one where paste is suppressed or unavailable from a menu offers it
+            for (const options of [
+                { rowData },
+                { rowData: [], suppressClipboardPaste: true },
+                { suppressClipboardPaste: false, suppressClipboardApi: true },
+            ]) {
+                api.updateGridOptions(options);
+                seen = ['cut'];
+                rightClick(viewport);
+                await waitFor(() => expect(seen).toBeUndefined());
+                expect(await isPasteDisabled()).toBe(true);
+            }
+        } finally {
+            clipboardUtils.reset();
+        }
+    });
+
+    test.each([false, true])(
+        'rows arriving while the empty grid menu is open take the focus it gives back unless suppressFocusAfterRefresh (%s)',
+        async (suppressFocusAfterRefresh) => {
+            const api = enterpriseGrids.createGrid('ctxEmptyGridRowsArrive', {
+                columnDefs,
+                rowData: [],
+                suppressFocusAfterRefresh,
+            });
+            await asyncSetTimeout(0);
+            const viewport = getGridElement(api)!.querySelector<HTMLElement>('.ag-grid-viewport')!;
+
+            viewport.focus();
+            rightClick(viewport);
+            await waitFor(() => expect(openMenuEntries()).toEqual(['Paste']));
+            api.setGridOption('rowData', rowData);
+            api.hidePopupMenu();
+
+            await waitFor(() => expect(openMenuEntries()).toEqual([]));
+            expect(api.getFocusedCell()?.rowIndex ?? null).toBe(suppressFocusAfterRefresh ? null : 0);
+        }
+    );
+
+    test('closing the empty grid menu leaves focus where a menu action moved it', async () => {
+        const outside = document.body.appendChild(document.createElement('input'));
+        try {
+            const api = enterpriseGrids.createGrid('ctxEmptyGridFocusMoved', {
+                columnDefs,
+                rowData: [],
+                getContextMenuItems: () => [{ name: 'Edit elsewhere', action: () => outside.focus() }],
+            });
+            await asyncSetTimeout(0);
+            const viewport = getGridElement(api)!.querySelector<HTMLElement>('.ag-grid-viewport')!;
+
+            viewport.focus();
+            rightClick(viewport);
+            await clickMenuOption('Edit elsewhere');
+            await waitFor(() => expect(openMenuEntries()).toEqual([]));
+            expect(document.activeElement).toBe(outside);
+        } finally {
+            outside.remove();
+        }
     });
 
     test('a column-level contextMenuItems array replaces the default items', async () => {

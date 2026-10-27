@@ -1,5 +1,6 @@
 import {
     RefPlaceholder,
+    _addOrRemoveAttribute,
     _setAriaColCount,
     _setAriaMultiSelectable,
     _setAriaRole,
@@ -177,6 +178,8 @@ export class GridBodyComp extends Component implements FocusableContainer {
                 this.eGridViewport.classList.toggle('ag-pinned-columns-overflow', overflowing);
             },
             setGridRole: (role: 'grid' | 'treegrid') => _setAriaRole(this.eGridViewport, role),
+            setViewportFocusable: (focusable) =>
+                _addOrRemoveAttribute(this.eGridViewport, 'tabindex', focusable ? -1 : null),
         };
 
         this.ctrl = this.createManagedBean(new GridBodyCtrl());

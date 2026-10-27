@@ -1522,7 +1522,11 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             if (focusedBefore == null || _getActiveDomElement(this.beans) !== eTempInput) {
                 return; // focus the user moved elsewhere meanwhile stays there
             }
-            if (focusedBefore.isConnected) {
+            const gridBodyCtrl = this.beans.ctrlsSvc.getGridBodyCtrl();
+            if (focusedBefore === gridBodyCtrl.eGridViewport) {
+                // rows may have replaced the empty grid meanwhile, leaving the viewport unfocusable
+                gridBodyCtrl.refocusViewport();
+            } else if (focusedBefore.isConnected) {
                 focusedBefore.focus({ preventScroll: true });
             } else {
                 // detached meanwhile: a re-rendered cell, or an earlier paste's textarea
