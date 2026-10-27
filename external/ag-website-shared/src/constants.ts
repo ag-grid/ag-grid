@@ -39,8 +39,8 @@ export const PRICING_FORM_FIELD_IDS = {
 
 export const CONTACT_FORM_DATA = {
     default: {
-        actionUrl: 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00DS9000004CVdh',
-        orgId: '00DS9000004CVdh',
+        actionUrl: 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00DPu00000FWrNA',
+        orgId: '00DPu00000FWrNA',
         textAreaId: '00NS900000A3S21',
         leadSource: 'AG Grid Contact Form',
         messagePlaceholder: 'Tell us about your interest in AG Grid',
@@ -64,8 +64,8 @@ export const CONTACT_FORM_DATA = {
 
 export const STUDIO_FORM_DATA = {
     default: {
-        actionUrl: 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00DS9000004CVdh',
-        orgId: '00DS9000004CVdh',
+        actionUrl: 'https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00DPu00000FWrNA',
+        orgId: '00DPu00000FWrNA',
         textAreaId: '00NS900000A3S21',
         leadSource: 'Studio Lead',
         messagePlaceholder: 'Tell us about your interest in AG Studio',
