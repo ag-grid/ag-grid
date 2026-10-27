@@ -187,6 +187,21 @@ describe('Column filter — a model saved for another filter type', () => {
             'age',
             { filterType: 'text', type: 'equals', filter: '12345678901234567890.0' },
         ],
+        [
+            'a Text Filter model naming a decimal a number rounds',
+            'age',
+            { filterType: 'text', type: 'equals', filter: '9007199254740990.5' },
+        ],
+        [
+            'a Text Filter model naming a decimal too small for a number',
+            'age',
+            { filterType: 'text', type: 'equals', filter: '1e-400' },
+        ],
+        [
+            'a Text Filter model naming a decimal of more digits than a number holds',
+            'age',
+            { filterType: 'text', type: 'equals', filter: `17.${'0'.repeat(100)}1` },
+        ],
         ['a Text Filter model with no value', 'big', { filterType: 'text', type: 'equals', filter: '' }],
         [
             'a BigInt Filter model past the exact numbers',
