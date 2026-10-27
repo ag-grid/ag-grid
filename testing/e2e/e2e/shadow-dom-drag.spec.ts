@@ -104,3 +104,56 @@ for (const rangeHandle of [false, true]) {
         expect(await ranges()).toEqual(expected);
     });
 }
+
+for (const mode of ['fill', 'range'] as const) {
+    test(`dialogs fade while the ${mode} handle is dragged`, async ({ page }) => {
+        const { cell } = await mountGrid(page, {
+            enterprise: true,
+            integratedCharts: true,
+            shadowDom: true,
+            width: 1000,
+            height: 700,
+            options: () => ({
+                columnDefs: [
+                    { field: 'country', chartDataType: 'category' },
+                    { field: 'gold', chartDataType: 'series' },
+                ],
+                rowData: [
+                    { country: 'Russia', gold: 3 },
+                    { country: 'USA', gold: 4 },
+                    { country: 'China', gold: 2 },
+                ],
+                cellSelection: true,
+            }),
+        });
+        await page.evaluate(async (mode) => {
+            const api = (window as any).gridApi;
+            const chartRef = api.createRangeChart({
+                cellRange: { columns: ['country', 'gold'] },
+                chartType: 'groupedColumn',
+            });
+            await chartRef.chart.waitForUpdate();
+            api.setGridOption('cellSelection', { handle: { mode } });
+        }, mode);
+        const dialog = page.locator('.ag-dialog');
+        // Keep the chart dialog clear of the cells the handle is dragged across.
+        await dialog.evaluate((el: HTMLElement) => {
+            el.style.top = '400px';
+            el.style.left = '400px';
+        });
+        const opacity = () => dialog.evaluate((el) => getComputedStyle(el).opacity);
+
+        await cell(0, 'gold').click();
+        const handleBox = (await page.locator(`.ag-${mode}-handle`).boundingBox())!;
+        const target = (await cell(2, 'gold').boundingBox())!;
+        expect(await opacity()).toBe('1');
+
+        await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(target.x + target.width / 2, target.y + target.height / 2, { steps: 5 });
+        expect(await opacity()).toBe('0.7');
+
+        await page.mouse.up();
+        expect(await opacity()).toBe('1');
+    });
+}

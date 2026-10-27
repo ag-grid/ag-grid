@@ -1,4 +1,4 @@
-import { _getPageBody, _isVisible, _last, _setDisplayed } from 'ag-stack';
+import { _isVisible, _last, _setDisplayed } from 'ag-stack';
 
 import type { CellCtrl, CellPosition, CellRange, CellSelectionChangedEvent, RowPosition } from 'ag-grid-community';
 import { Component, _areCellsEqual, _getCellPositionForEvent, _isRowBefore } from 'ag-grid-community';
@@ -34,8 +34,7 @@ export abstract class AbstractSelectionHandle extends Component {
                 if (!this.dragging) {
                     startingMove = true;
                     this.dragging = true;
-                    const pageBody = _getPageBody(this.beans) as Partial<HTMLElement>;
-                    pageBody.classList?.add(this.getDraggingCssClass());
+                    this.toggleDraggingClass(true);
                 }
 
                 this.updateValuesOnMove(e);
@@ -85,8 +84,10 @@ export abstract class AbstractSelectionHandle extends Component {
         return this.lastCellHovered;
     }
 
-    private getDraggingCssClass(): string {
-        return `ag-dragging-${this.type === SelectionHandleType.FILL ? 'fill' : 'range'}-handle`;
+    private toggleDraggingClass(dragging: boolean): void {
+        const cssClass = `ag-dragging-${this.type === SelectionHandleType.FILL ? 'fill' : 'range'}-handle`;
+        // Must be an ancestor of the dialogs, which live under the popup parent, for the drag to pass over them.
+        this.beans.popupSvc?.getPopupParent().classList.toggle(cssClass, dragging);
     }
 
     protected updateValuesOnMove(e: MouseEvent | Touch) {
@@ -108,10 +109,7 @@ export abstract class AbstractSelectionHandle extends Component {
         this.clearValues();
         (this.beans.rangeSvc as RangeService).autoScrollService.ensureCleared();
 
-        // TODO: this causes a bug where if there are multiple grids in the same page, all of them will
-        // be affected by a drag on any. Move it to the root element.
-        const pageBody = _getPageBody(this.beans) as Partial<HTMLElement>;
-        pageBody.classList?.remove(this.getDraggingCssClass());
+        this.toggleDraggingClass(false);
 
         if (this.shouldDestroyOnEndDragging) {
             this.destroy();

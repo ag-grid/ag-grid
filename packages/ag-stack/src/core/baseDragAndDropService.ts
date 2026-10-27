@@ -11,8 +11,8 @@ import type {
     IDragAndDropService,
 } from '../interfaces/iDragAndDrop';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import { _initStyledRoot } from '../theming/styledRoot';
-import { _getPageBody, _getRootNode } from '../utils/document';
+import { _initPointerOverlay } from '../theming/styledRoot';
+import { _getRootNode } from '../utils/document';
 import { _anchorElementToMouseMoveEvent } from '../utils/event';
 import type { AgPromise } from '../utils/promise';
 import { AgBeanStub } from './agBeanStub';
@@ -496,12 +496,12 @@ export abstract class BaseDragAndDropService<
         style.top = '20px';
         style.left = '20px';
 
-        const targetEl = _getPageBody(this.beans);
-        if (!targetEl) {
+        const disconnect = _initPointerOverlay(this.beans, this.beans.environment, eGui);
+        if (!disconnect) {
             this.warnNoBody();
             return;
         }
-        this.disconnect = _initStyledRoot(this.beans.environment, targetEl, eGui);
+        this.disconnect = disconnect;
     }
 
     private updateDragImageComp(): void {
