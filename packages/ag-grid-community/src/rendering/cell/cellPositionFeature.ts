@@ -42,6 +42,7 @@ export function _setCellColSpan(beans: BeanCollection, cellCtrl: CellCtrl, colSp
     cellCtrl.colsSpanning = visibleCols.allCols.slice(start, start + colSpan);
     cellCtrl.colsSpanningVersion = version;
     _refreshCellPosition(beans, cellCtrl);
+    cellCtrl.refreshAriaColSpan();
 }
 
 /** Writes the cell's width and its `left`, or `right` when anchored right, where either moved. */
