@@ -941,6 +941,7 @@ describe('filter models set before rows load, through the filter manager API', (
         await asyncSetTimeout(0);
         api.setFilterModel({ age });
         api.setGridOption('columnDefs', [threeFilterCols[0], { field: 'age', filter: false }, threeFilterCols[2]]);
+        expect(warnSpy).not.toHaveBeenCalled();
         api.setGridOption('rowData', PEOPLE);
         await asyncSetTimeout(0);
         expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #63');
@@ -1110,19 +1111,33 @@ describe('models set before rows load, with a filter type inferred from them', (
     test.each([false, true])(
         'with enableFilterHandlers %s, an edit before rows load in the Text Filter they replace with a Number Filter goes with it',
         async (enableFilterHandlers) => {
+            const changed: string[][] = [];
             const api: GridApi = gridsManager.createGrid('grid1', {
                 columnDefs: [{ field: 'age', filter: true, floatingFilter: true, filterParams: { debounceMs: 0 } }],
                 rowData: [],
                 enableFilterHandlers,
+                onFilterChanged: (event) => changed.push(event.columns.map((column) => column.getColId())),
             });
+            const filteredHeaders = () =>
+                Array.from(getGridElement(api)!.querySelectorAll('.ag-header-cell-filtered'), (cell) =>
+                    cell.getAttribute('col-id')
+                );
             await asyncSetTimeout(0);
             await userEvent.setup().type(FloatingFilterHarness.get(api, 'age').input(), '2');
             await asyncSetTimeout(0);
-            expect(api.getFilterModel()).toEqual({ age: { filterType: 'text', type: 'contains', filter: '2' } });
+            expect({ model: api.getFilterModel(), headers: filteredHeaders() }).toEqual({
+                model: { age: { filterType: 'text', type: 'contains', filter: '2' } },
+                headers: ['age'],
+            });
+            changed.length = 0;
 
             api.applyTransaction({ add: PEOPLE });
             await asyncSetTimeout(0);
-            expect(api.getFilterModel()).toEqual({});
+            expect({ model: api.getFilterModel(), changed, headers: filteredHeaders() }).toEqual({
+                model: {},
+                changed: [['age']],
+                headers: [],
+            });
             expect(api.getDisplayedRowCount()).toBe(PEOPLE.length);
         }
     );
