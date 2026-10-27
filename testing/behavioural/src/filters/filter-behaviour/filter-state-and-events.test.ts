@@ -1,5 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import {
+    ALL_SEVERITIES,
     ColumnFilterHarness,
     FilterDom,
     GridRows,
@@ -19,6 +20,7 @@ import type {
     IDoesFilterPassParams,
     IFilterComp,
     IFilterParams,
+    IFloatingFilterComp,
 } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
@@ -27,6 +29,7 @@ import {
     GridStateModule,
     NumberFilterModule,
     TextFilterModule,
+    enableDevValidations,
     setupAgTestIds,
 } from 'ag-grid-community';
 import { FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
@@ -79,7 +82,13 @@ describe('Filter State & Events', () => {
         installFilterLayoutMock();
     });
     afterAll(() => uninstallFilterLayoutMock());
-    afterEach(() => gridsManager.reset());
+    afterEach(() => {
+        try {
+            gridsManager.reset();
+        } finally {
+            vi.restoreAllMocks();
+        }
+    });
 
     test("a custom filter's initial model, cleared through the API, stays cleared when its column leaves the grid and comes back", async () => {
         class CountryFilter implements IFilterComp {
@@ -119,6 +128,127 @@ describe('Filter State & Events', () => {
         api.setGridOption('columnDefs', columnDefs);
         await asyncSetTimeout(0);
         expect([api.getFilterModel(), api.getDisplayedRowCount()]).toEqual([{}, ATHLETES.length]);
+    });
+
+    test.each([
+        'a filter change',
+        'adding a floating filter',
+        'destroyFilter',
+        'removing its column',
+        'destroying the grid',
+    ])(
+        'a custom filter without isFilterActive is inactive through %s, reported once, and never throws',
+        async (action) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [67] });
+            const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            class NoActiveStateFilter implements Omit<IFilterComp, 'isFilterActive'> {
+                private readonly eGui = document.createElement('div');
+                public init(): void {}
+                public getGui(): HTMLElement {
+                    return this.eGui;
+                }
+                public doesFilterPass(): boolean {
+                    return false;
+                }
+                public getModel(): null {
+                    return null;
+                }
+                public setModel(): void {}
+            }
+            const country = { field: 'country', filter: NoActiveStateFilter };
+            const columnDefs = [
+                { field: 'athlete' },
+                { ...country, floatingFilter: action !== 'adding a floating filter' },
+            ];
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', { columnDefs, rowData: ATHLETES });
+            await api.getColumnFilterInstance('country');
+
+            const errors: string[] = [];
+            try {
+                if (action === 'a filter change') {
+                    api.onFilterChanged();
+                } else if (action === 'adding a floating filter') {
+                    api.setGridOption('columnDefs', [{ field: 'athlete' }, { ...country, floatingFilter: true }]);
+                } else if (action === 'destroyFilter') {
+                    api.destroyFilter('country');
+                } else if (action === 'removing its column') {
+                    api.setGridOption('columnDefs', columnDefs.slice(0, 1));
+                } else {
+                    api.destroy();
+                }
+                await asyncSetTimeout(0);
+            } catch (e) {
+                errors.push(String(e));
+            }
+
+            const warnings67 = warnSpy.mock.calls.filter((args) => args.join(' ').includes('warning #67')).length;
+            if (action === 'destroying the grid') {
+                expect({ errors, warnings67 }).toEqual({ errors: [], warnings67: 1 });
+                return;
+            }
+            const countryColumn = api.getColumn('country');
+            expect({
+                errors,
+                warnings67,
+                countryActive: countryColumn?.isFilterActive(),
+                shown: api.getDisplayedRowCount(),
+            }).toEqual({
+                errors: [],
+                warnings67: 1,
+                countryActive: action === 'removing its column' ? undefined : false,
+                shown: ATHLETES.length,
+            });
+        }
+    );
+
+    test('a floating filter added to a column whose custom filter is already active shows its model', async () => {
+        class CountryFilter implements IFilterComp {
+            private model: string | null = null;
+            private readonly eGui = document.createElement('div');
+            public init(): void {}
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public isFilterActive(): boolean {
+                return this.model != null;
+            }
+            public doesFilterPass(params: IDoesFilterPassParams<Athlete>): boolean {
+                return params.data.country === this.model;
+            }
+            public getModel(): string | null {
+                return this.model;
+            }
+            public setModel(model: string | null): void {
+                this.model = model;
+            }
+        }
+        const shownByFloatingFilter: (string | null)[] = [];
+        class CountryFloatingFilter implements IFloatingFilterComp {
+            private readonly eGui = document.createElement('div');
+            public init(): void {}
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public onParentModelChanged(parentModel: string | null): void {
+                shownByFloatingFilter.push(parentModel);
+            }
+        }
+        const country = { field: 'country', filter: CountryFilter };
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'athlete' }, country],
+            rowData: ATHLETES,
+        });
+        await api.getColumnFilterInstance('country');
+        api.setFilterModel({ country: 'Russia' });
+        await asyncSetTimeout(0);
+
+        api.setGridOption('columnDefs', [
+            { field: 'athlete' },
+            { ...country, floatingFilter: true, floatingFilterComponent: CountryFloatingFilter },
+        ]);
+        await asyncSetTimeout(0);
+
+        expect(shownByFloatingFilter).toEqual(['Russia']);
     });
 
     test('a custom filter refreshed by new column definitions sees the columns laid out', async () => {

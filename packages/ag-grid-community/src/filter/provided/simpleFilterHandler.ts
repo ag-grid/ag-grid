@@ -17,7 +17,10 @@ import type {
 import { isCombinedFilterModel } from './iSimpleFilter';
 import { OptionsFactory } from './optionsFactory';
 import type { SimpleFilterModelFormatter } from './simpleFilterModelFormatter';
-import { evaluateCustomFilter, getConditionLimit } from './simpleFilterUtils';
+import { evaluateCustomFilter, getConditionLimit, getNumberOfInputs } from './simpleFilterUtils';
+
+/** A condition saved by another filter type, whose values may be of any type. */
+type ForeignSimpleFilterModel = ISimpleFilterModel & { filter?: unknown; filterTo?: unknown };
 
 export abstract class SimpleFilterHandler<
     TModel extends ISimpleFilterModel,
@@ -163,31 +166,33 @@ export abstract class SimpleFilterHandler<
         // A hand-written combined model can omit `conditions`; read as empty so the caller gets back what they set.
         let conditions: TModel[] = (isCombined ? model.conditions : [model]) ?? [];
 
-        // Checked against the list the dropdown is built from, so a malformed option does not count as offered.
-        if (!conditions.every((condition) => this.optionsFactory.hasOption(condition.type))) {
-            this.params = {
-                ...params,
-                model: null,
-            };
-            params.onModelChange(null);
-            return;
-        }
-
-        let needsUpdate = false;
-
         const filterType = this.filterType;
-
-        if (!conditions.every((condition) => condition.filterType === filterType) || model.filterType !== filterType) {
-            // need to add filterType to model
-            conditions = conditions.map((condition) => ({ ...condition, filterType }));
-            needsUpdate = true;
-        }
+        let needsUpdate = model.filterType !== filterType;
 
         const conditionLimit = getConditionLimit(maxNumConditions);
         if (conditionLimit !== null && conditions.length > conditionLimit) {
             conditions = conditions.slice(0, conditionLimit);
             needsUpdate = true;
         }
+
+        const ownConditions: TModel[] = [];
+        for (let i = 0, len = conditions.length; i < len; ++i) {
+            const condition = conditions[i];
+            const ownCondition = this.toOwnCondition(condition, model.filterType);
+            if (ownCondition === null) {
+                this.params = {
+                    ...params,
+                    model: null,
+                };
+                params.onModelChange(null);
+                return;
+            }
+            if (ownCondition !== condition) {
+                needsUpdate = true;
+            }
+            ownConditions.push(ownCondition);
+        }
+        conditions = ownConditions;
 
         if (needsUpdate) {
             let updatedModel: TModel | ICombinedSimpleModel<TModel>;
@@ -208,6 +213,41 @@ export abstract class SimpleFilterHandler<
             params.onModelChange(updatedModel);
         }
     }
+
+    /** The condition as this filter's model holds it, or `null` when this filter cannot apply it. */
+    private toOwnCondition(condition: TModel, modelFilterType: string | undefined): TModel | null {
+        const optionsFactory = this.optionsFactory;
+        const type = condition.type;
+        // Checked against the list the dropdown is built from, so a malformed option does not count as offered.
+        if (!optionsFactory.hasOption(type)) {
+            return null;
+        }
+
+        const filterType = this.filterType;
+        const conditionFilterType = condition.filterType ?? modelFilterType;
+        if (conditionFilterType == null || conditionFilterType === filterType) {
+            return condition.filterType === filterType ? condition : { ...condition, filterType };
+        }
+
+        // Another filter type's values apply only where each input the operator needs converts without loss.
+        const foreignCondition: ForeignSimpleFilterModel = condition;
+        const numberOfInputs = getNumberOfInputs(type, optionsFactory);
+        if (numberOfInputs === 0) {
+            return { ...condition, filterType };
+        }
+        const filter = this.toOwnModelValue(foreignCondition.filter);
+        if (filter === null) {
+            return null;
+        }
+        if (numberOfInputs === 1) {
+            return { ...condition, filterType, filter };
+        }
+        const filterTo = this.toOwnModelValue(foreignCondition.filterTo);
+        return filterTo === null ? null : { ...condition, filterType, filter, filterTo };
+    }
+
+    /** Another filter type's model value as this filter's model holds it, or `null` when it does not convert exactly. */
+    protected abstract toOwnModelValue(value: unknown): string | number | null;
 
     /** returns true if the row passes the said condition */
     private individualConditionPasses(params: IDoesFilterPassParams, filterModel: TModel, cellValue: any) {

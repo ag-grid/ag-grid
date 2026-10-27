@@ -34,4 +34,16 @@ export class NumberFilterHandler extends ScalarFilterHandler<NumberFilterModel, 
     protected override isValid(value: number): boolean {
         return !Number.isNaN(Number(value));
     }
+
+    protected override toOwnModelValue(value: unknown): number | null {
+        if (typeof value !== 'string') {
+            return typeof value === 'number' && Number.isFinite(value) ? value : null;
+        }
+        // BigInt and Text Filter models hold numbers as text: plain decimal only, integers only in the safe range.
+        const text = value.trim();
+        const number = DECIMAL_TEXT.test(text) ? Number(text) : Number.NaN;
+        return Number.isSafeInteger(number) || (Number.isFinite(number) && !Number.isInteger(number)) ? number : null;
+    }
 }
+
+const DECIMAL_TEXT = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i;
