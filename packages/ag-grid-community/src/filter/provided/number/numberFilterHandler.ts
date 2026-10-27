@@ -34,4 +34,26 @@ export class NumberFilterHandler extends ScalarFilterHandler<NumberFilterModel, 
     protected override isValid(value: number): boolean {
         return !Number.isNaN(Number(value));
     }
+
+    protected override toOwnModelValue(value: unknown): number | null {
+        if (typeof value !== 'string') {
+            return typeof value === 'number' && Number.isFinite(value) ? value : null;
+        }
+        // BigInt and Text Filter models hold numbers as text: plain decimal only, and only when no digit is lost.
+        const text = value.trim();
+        const number = DECIMAL_TEXT.test(text) ? Number(text) : Number.NaN;
+        if (!Number.isFinite(number)) {
+            return null;
+        }
+        // Read back at the text's own precision; a zero has no digits, and `toPrecision` takes at most 100.
+        const digits = mantissaDigits(text);
+        const isExact =
+            digits === '' || (digits.length <= 100 && mantissaDigits(number.toPrecision(digits.length)) === digits);
+        return isExact ? number : null;
+    }
 }
+
+const DECIMAL_TEXT = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i;
+
+/** A decimal's mantissa digits from the first non-zero one: `'-017.50'` gives `'1750'`. */
+const mantissaDigits = (decimal: string): string => decimal.replace(/e.*/i, '').replace(/\D/g, '').replace(/^0+/, '');

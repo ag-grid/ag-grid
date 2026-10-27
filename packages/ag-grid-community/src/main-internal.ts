@@ -139,6 +139,7 @@ export { BaseGridSerializingSession } from './export/baseGridSerializingSession'
 
 export {
     _getFilterModel,
+    _isFilterCompActive,
     _refreshFilterUi,
     _refreshHandlerAndUi,
     _updateFilterModel,

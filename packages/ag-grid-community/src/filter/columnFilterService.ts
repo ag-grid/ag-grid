@@ -56,6 +56,7 @@ import {
     FILTER_HANDLERS,
     FILTER_HANDLER_MAP,
     _getFilterModel,
+    _isFilterCompActive,
     _refreshHandlerAndUi,
     _updateFilterModel,
     getAndRefreshFilterUi,
@@ -514,18 +515,8 @@ export class ColumnFilterService
     }
 
     private updateActiveFilters(): AgPromise<void> {
-        const isFilterActive = (filter: IFilter | null) => {
-            if (!filter) {
-                return false;
-            } // this never happens, including to avoid compile error
-            if (!filter.isFilterActive) {
-                this.warn(67);
-                return false;
-            }
-            return filter.isFilterActive();
-        };
-
-        const { colModel, gos } = this.beans;
+        const beans = this.beans;
+        const { colModel, gos } = beans;
         const groupFilterEnabled = !!_getGroupAggFiltering(gos);
 
         const activeAggregateFilters: DoesFilterPassWrapper[] = [];
@@ -561,7 +552,7 @@ export class ColumnFilterService
                 if (promise) {
                     promises.push(
                         promise.then((filter) => {
-                            addFilter(column, isFilterActive(filter), {
+                            addFilter(column, _isFilterCompActive(beans, filter), {
                                 colId,
                                 isHandler: false,
                                 comp: filter!,
@@ -602,7 +593,7 @@ export class ColumnFilterService
                         promise.then((filter) => {
                             this.setColFilterActive(
                                 column,
-                                filter!.isFilterActive(),
+                                _isFilterCompActive(this.beans, filter),
                                 source,
                                 additionalEventAttributes
                             );
@@ -785,7 +776,7 @@ export class ColumnFilterService
         }
         const filter = filterWrapper?.filter;
         if (filter) {
-            return filter.isFilterActive();
+            return _isFilterCompActive(this.beans, filter);
         }
         // if not created, should only be active if there's a model
         return _getFilterModel(this.initialModel, column.getColId()) != null;
@@ -1448,7 +1439,7 @@ export class ColumnFilterService
         if (filterUi) {
             if (filterUi.created) {
                 return filterUi.promise.then((filter) => {
-                    isActive = isHandler ? isActive : !!(filter as IFilterComp)?.isFilterActive();
+                    isActive = isHandler ? isActive : _isFilterCompActive(this.beans, filter as IFilterComp);
 
                     this.destroyBean(filter);
 

@@ -17,13 +17,14 @@ import {
     BigIntFilterModule,
     ClientSideRowModelModule,
     DateFilterModule,
+    GridStateModule,
     LocaleModule,
     NumberFilterModule,
     TextFilterModule,
     enableDevValidations,
     setupAgTestIds,
 } from 'ag-grid-community';
-import { AdvancedFilterModule, ColumnMenuModule, SetFilterModule } from 'ag-grid-enterprise';
+import { AdvancedFilterModule, ColumnMenuModule, MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
 
 /** What a `filterOptions` list offers, and what is reported when it cannot. */
 interface AgeRow {
@@ -113,6 +114,397 @@ describe('Column filter — a model naming an option the column does not offer',
               filter: 5
         `);
     });
+});
+
+describe('Column filter — a model saved for another filter type', () => {
+    interface MixedRow {
+        id: string;
+        name: string;
+        age: number;
+        big: bigint;
+        date: Date;
+    }
+    const gridsManager = new TestGridsManager({
+        modules: [
+            TextFilterModule,
+            NumberFilterModule,
+            BigIntFilterModule,
+            DateFilterModule,
+            GridStateModule,
+            MultiFilterModule,
+            ClientSideRowModelModule,
+        ],
+    });
+
+    afterEach(() => gridsManager.reset());
+
+    const rowData: MixedRow[] = [
+        { id: 'a', name: '17', age: 17, big: BigInt(17), date: new Date(2008, 7, 24) },
+        { id: 'b', name: 'Ian Thorpe', age: 23, big: BigInt(23), date: new Date(2000, 9, 1) },
+        { id: 'c', name: 'Zoe', age: 5, big: BigInt(5), date: new Date(2012, 6, 27) },
+    ];
+    const createGrid = (enableFilterHandlers: boolean, initialFilterModel?: Record<string, unknown>) =>
+        gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'name', filter: 'agTextColumnFilter' },
+                { field: 'age', filter: 'agNumberColumnFilter' },
+                { field: 'big', filter: 'agBigIntColumnFilter' },
+                { field: 'date', filter: 'agDateColumnFilter' },
+            ],
+            rowData,
+            getRowId: (params) => params.data.id,
+            enableFilterHandlers,
+            initialState: initialFilterModel ? { filter: { filterModel: initialFilterModel } } : undefined,
+        });
+    const shownIds = (api: GridApi<MixedRow>) => {
+        const ids: string[] = [];
+        api.forEachNodeAfterFilter((node) => ids.push(node.id!));
+        return ids;
+    };
+
+    const dateEquals = { filterType: 'date', type: 'equals', dateFrom: '2008-08-24 00:00:00' };
+    const unusable: [string, string, unknown][] = [
+        ['a Date Filter model', 'name', dateEquals],
+        ['a Date Filter model', 'age', { filterType: 'date', type: 'lessThan', dateFrom: '2008-08-24 00:00:00' }],
+        ['a Number Filter model', 'date', { filterType: 'number', type: 'equals', filter: 17 }],
+        ['a Text Filter model naming no number', 'age', { filterType: 'text', type: 'equals', filter: 'Ian Thorpe' }],
+        [
+            'a Text Filter model starting with a number',
+            'age',
+            { filterType: 'text', type: 'equals', filter: '17 years' },
+        ],
+        ['a Text Filter model with a decimal comma', 'age', { filterType: 'text', type: 'equals', filter: '17,5' }],
+        ['a Number Filter model with a fraction', 'big', { filterType: 'number', type: 'equals', filter: 17.5 }],
+        [
+            'a Number Filter model past the exact integers',
+            'big',
+            { filterType: 'number', type: 'equals', filter: 1e20 },
+        ],
+        ['a Number Filter model holding NaN', 'name', { filterType: 'number', type: 'equals', filter: Number.NaN }],
+        ['a Text Filter model holding NaN', 'age', { filterType: 'text', type: 'equals', filter: Number.NaN }],
+        [
+            'a Text Filter model naming a decimal past the exact integers',
+            'age',
+            { filterType: 'text', type: 'equals', filter: '12345678901234567890.0' },
+        ],
+        [
+            'a Text Filter model naming a decimal a number rounds',
+            'age',
+            { filterType: 'text', type: 'equals', filter: '9007199254740990.5' },
+        ],
+        [
+            'a Text Filter model naming a decimal too small for a number',
+            'age',
+            { filterType: 'text', type: 'equals', filter: '1e-400' },
+        ],
+        [
+            'a Text Filter model naming a decimal of more digits than a number holds',
+            'age',
+            { filterType: 'text', type: 'equals', filter: `17.${'0'.repeat(100)}1` },
+        ],
+        ['a Text Filter model with no value', 'big', { filterType: 'text', type: 'equals', filter: '' }],
+        [
+            'a BigInt Filter model past the exact numbers',
+            'age',
+            { filterType: 'bigint', type: 'equals', filter: '12345678901234567890' },
+        ],
+        [
+            'a Number Filter In range missing its upper bound',
+            'big',
+            { filterType: 'number', type: 'inRange', filter: 10 },
+        ],
+        [
+            'a combined Date Filter model whose conditions name no type',
+            'name',
+            { filterType: 'date', operator: 'OR', conditions: [{ type: 'equals', dateFrom: '2008-08-24 00:00:00' }] },
+        ],
+        [
+            'a combined model with a Date Filter condition',
+            'name',
+            {
+                filterType: 'text',
+                operator: 'OR',
+                conditions: [{ filterType: 'text', type: 'equals', filter: 'Zoe' }, dateEquals],
+            },
+        ],
+    ];
+
+    test.each(
+        unusable.flatMap(([kind, colId, model]) =>
+            ['the initial state', 'setFilterModel'].flatMap((entry) =>
+                [false, true].map((enableFilterHandlers) => ({ kind, colId, model, entry, enableFilterHandlers }))
+            )
+        )
+    )(
+        '$kind on the $colId column, given through $entry with enableFilterHandlers $enableFilterHandlers, is cleared and every row shows',
+        async ({ colId, model, entry, enableFilterHandlers }) => {
+            const fromState = entry === 'the initial state';
+            const api: GridApi<MixedRow> = await createGrid(
+                enableFilterHandlers,
+                fromState ? { [colId]: model } : undefined
+            );
+            if (!fromState) {
+                api.setFilterModel({ [colId]: model });
+            }
+            await asyncSetTimeout(0);
+
+            expect({ model: api.getFilterModel(), shown: shownIds(api) }).toEqual({
+                model: {},
+                shown: ['a', 'b', 'c'],
+            });
+        }
+    );
+
+    test.each(
+        ['setColumnFilterModel', 'setState'].flatMap((entry) =>
+            [false, true].map((enableFilterHandlers) => ({ entry, enableFilterHandlers }))
+        )
+    )(
+        'a Date Filter model on the name column, given through $entry with enableFilterHandlers $enableFilterHandlers, is cleared and every row shows',
+        async ({ entry, enableFilterHandlers }) => {
+            const api: GridApi<MixedRow> = await createGrid(enableFilterHandlers);
+            if (entry === 'setState') {
+                api.setState({ filter: { filterModel: { name: dateEquals } } });
+            } else {
+                await api.setColumnFilterModel('name', dateEquals);
+                api.onFilterChanged();
+            }
+            await asyncSetTimeout(0);
+
+            expect({ model: api.getFilterModel(), shown: shownIds(api) }).toEqual({
+                model: {},
+                shown: ['a', 'b', 'c'],
+            });
+        }
+    );
+
+    test('a Date Filter model given to a Text Filter inside a Multi Filter is cleared and every row shows', async () => {
+        const api: GridApi<MixedRow> = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: { filters: [{ filter: 'agTextColumnFilter' }] },
+                },
+            ],
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+        api.setFilterModel({ name: { filterType: 'multi', filterModels: [dateEquals] } });
+        await asyncSetTimeout(0);
+
+        expect({ model: api.getFilterModel(), shown: shownIds(api) }).toEqual({
+            model: {},
+            shown: ['a', 'b', 'c'],
+        });
+    });
+
+    test.each([
+        ['a Date Filter condition', dateEquals],
+        ['an operator the Text Filter does not offer', { filterType: 'text', type: 'inRange', filter: 'a' }],
+    ])('%s past maxNumConditions is dropped and the conditions kept apply', async (_kind, dropped) => {
+        const api: GridApi<MixedRow> = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'name', filter: 'agTextColumnFilter', filterParams: { maxNumConditions: 2 } }],
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+        const kept = [
+            { filterType: 'text', type: 'equals', filter: 'Zoe' },
+            { filterType: 'text', type: 'equals', filter: '17' },
+        ];
+        api.setFilterModel({ name: { filterType: 'text', operator: 'OR', conditions: [...kept, dropped] } });
+        await asyncSetTimeout(0);
+
+        expect({ model: api.getFilterModel(), shown: shownIds(api) }).toEqual({
+            model: { name: { filterType: 'text', operator: 'OR', conditions: kept } },
+            shown: ['a', 'c'],
+        });
+    });
+
+    test('a Number Filter model on a Text Filter reaches its textFormatter as text', async () => {
+        const api: GridApi<MixedRow> = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agTextColumnFilter',
+                    filterParams: { textFormatter: (from: string) => from.normalize('NFD') },
+                },
+            ],
+            rowData,
+            getRowId: (params) => params.data.id,
+        });
+        api.setFilterModel({ name: { filterType: 'number', type: 'equals', filter: 17 } });
+        await asyncSetTimeout(0);
+
+        expect({ model: api.getFilterModel(), shown: shownIds(api) }).toEqual({
+            model: { name: { filterType: 'text', type: 'equals', filter: '17' } },
+            shown: ['a'],
+        });
+    });
+
+    test('a Number Filter model on a Text Filter with trimInput applies through the Apply button', async () => {
+        const api: GridApi<MixedRow> = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agTextColumnFilter',
+                    filterParams: { trimInput: true, buttons: ['apply'] },
+                },
+            ],
+            rowData,
+            getRowId: (params) => params.data.id,
+            enableFilterHandlers: true,
+        });
+        api.setFilterModel({ name: { filterType: 'number', type: 'equals', filter: 17 } });
+        await asyncSetTimeout(0);
+        api.doFilterAction({ action: 'apply' });
+        await asyncSetTimeout(0);
+
+        expect({ model: api.getFilterModel(), shown: shownIds(api) }).toEqual({
+            model: { name: { filterType: 'text', type: 'equals', filter: '17' } },
+            shown: ['a'],
+        });
+    });
+
+    const usable: [string, string, unknown, unknown, string[]][] = [
+        [
+            'a Number Filter Equals',
+            'name',
+            { filterType: 'number', type: 'equals', filter: 17 },
+            { filterType: 'text', type: 'equals', filter: '17' },
+            ['a'],
+        ],
+        [
+            'a Number Filter In range',
+            'big',
+            { filterType: 'number', type: 'inRange', filter: 10, filterTo: 20 },
+            { filterType: 'bigint', type: 'inRange', filter: '10', filterTo: '20' },
+            ['a'],
+        ],
+        [
+            'a BigInt Filter Greater than',
+            'age',
+            { filterType: 'bigint', type: 'greaterThan', filter: '10' },
+            { filterType: 'number', type: 'greaterThan', filter: 10 },
+            ['a', 'b'],
+        ],
+        [
+            'a BigInt Filter Equals',
+            'age',
+            { filterType: 'bigint', type: 'equals', filter: '17' },
+            { filterType: 'number', type: 'equals', filter: 17 },
+            ['a'],
+        ],
+        [
+            'a Text Filter Equals naming a number',
+            'age',
+            { filterType: 'text', type: 'equals', filter: '17' },
+            { filterType: 'number', type: 'equals', filter: 17 },
+            ['a'],
+        ],
+        [
+            'a BigInt Filter Equals',
+            'name',
+            { filterType: 'bigint', type: 'equals', filter: '17' },
+            { filterType: 'text', type: 'equals', filter: '17' },
+            ['a'],
+        ],
+        [
+            'a Text Filter Less than naming a decimal',
+            'age',
+            { filterType: 'text', type: 'lessThan', filter: '17.5' },
+            { filterType: 'number', type: 'lessThan', filter: 17.5 },
+            ['a', 'c'],
+        ],
+        [
+            'a Text Filter Equals naming an integer',
+            'big',
+            { filterType: 'text', type: 'equals', filter: '17' },
+            { filterType: 'bigint', type: 'equals', filter: '17' },
+            ['a'],
+        ],
+        [
+            'a Text Filter model holding the number 17',
+            'age',
+            { filterType: 'text', type: 'equals', filter: 17 },
+            { filterType: 'number', type: 'equals', filter: 17 },
+            ['a'],
+        ],
+        [
+            'a combined Text Filter model with a Number Filter condition',
+            'name',
+            {
+                filterType: 'text',
+                operator: 'OR',
+                conditions: [
+                    { filterType: 'text', type: 'equals', filter: 'Zoe' },
+                    { filterType: 'number', type: 'equals', filter: 17 },
+                ],
+            },
+            {
+                filterType: 'text',
+                operator: 'OR',
+                conditions: [
+                    { filterType: 'text', type: 'equals', filter: 'Zoe' },
+                    { filterType: 'text', type: 'equals', filter: '17' },
+                ],
+            },
+            ['a', 'c'],
+        ],
+        [
+            'a Number Filter Equals 0, read as its text',
+            'name',
+            { filterType: 'number', type: 'equals', filter: 0 },
+            { filterType: 'text', type: 'equals', filter: '0' },
+            [],
+        ],
+        [
+            'a combined Number Filter model',
+            'big',
+            {
+                filterType: 'number',
+                operator: 'AND',
+                conditions: [
+                    { filterType: 'number', type: 'greaterThan', filter: 10 },
+                    { filterType: 'number', type: 'lessThan', filter: 20 },
+                ],
+            },
+            {
+                filterType: 'bigint',
+                operator: 'AND',
+                conditions: [
+                    { filterType: 'bigint', type: 'greaterThan', filter: '10' },
+                    { filterType: 'bigint', type: 'lessThan', filter: '20' },
+                ],
+            },
+            ['a'],
+        ],
+        [
+            'a Text Filter Not blank',
+            'date',
+            { filterType: 'text', type: 'notBlank' },
+            { filterType: 'date', type: 'notBlank' },
+            ['a', 'b', 'c'],
+        ],
+    ];
+
+    test.each(
+        usable.flatMap(([kind, colId, model, applied, shown]) =>
+            [false, true].map((enableFilterHandlers) => ({ kind, colId, model, applied, shown, enableFilterHandlers }))
+        )
+    )(
+        '$kind on the $colId column, with enableFilterHandlers $enableFilterHandlers, applies as a model of its own type',
+        async ({ colId, model, applied, shown, enableFilterHandlers }) => {
+            const api: GridApi<MixedRow> = await createGrid(enableFilterHandlers);
+            api.setFilterModel({ [colId]: model });
+            await asyncSetTimeout(0);
+
+            expect({ model: api.getFilterModel(), shown: shownIds(api) }).toEqual({
+                model: { [colId]: applied },
+                shown,
+            });
+        }
+    );
 });
 
 describe('Column filter — an invalid custom option', () => {

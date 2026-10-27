@@ -15,6 +15,7 @@ import type {
     DoesFilterPassParams,
     GridApi,
     GridOptions,
+    IDoesFilterPassParams,
     IFilterComp,
     IFilterParams,
     IMultiFilter,
@@ -103,7 +104,13 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
         installFilterLayoutMock();
     });
     afterAll(() => uninstallFilterLayoutMock());
-    afterEach(() => gridsManager.reset());
+    afterEach(() => {
+        try {
+            gridsManager.reset();
+        } finally {
+            vi.restoreAllMocks();
+        }
+    });
 
     test("a child's buttons are dropped with warning 292, whether its filterParams are an object or a function", async () => {
         // Deliberate: child buttons are dropped with warning #292, asserted below.
@@ -1206,6 +1213,113 @@ describe('Multi Filter — sub-filter combos & combined model (coverage)', () =>
             'the child reads this',
             'red',
         ]);
+    });
+
+    test.each([false, true])(
+        'with enableFilterHandlers %s, a child filter component without isFilterActive filters nothing, is reported, and never throws',
+        async (enableFilterHandlers) => {
+            // with filter handlers, a custom child also reports the column's missing handler (#277)
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: enableFilterHandlers ? [67, 277] : [67] });
+            const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            class NoActiveStateFilter implements Omit<IFilterComp, 'isFilterActive'> {
+                private model: string | null = null;
+                public init(): void {}
+                public getGui(): HTMLElement {
+                    return document.createElement('div');
+                }
+                public doesFilterPass(): boolean {
+                    return false;
+                }
+                public getModel(): string | null {
+                    return this.model;
+                }
+                public setModel(model: string | null): void {
+                    this.model = model;
+                }
+            }
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: [
+                    {
+                        field: 'name',
+                        filter: 'agMultiColumnFilter',
+                        filterParams: { filters: [{ filter: 'agTextColumnFilter' }, { filter: NoActiveStateFilter }] },
+                    },
+                ],
+                rowData: ROWS,
+            });
+            const errors: string[] = [];
+            let filtered: { active: boolean | undefined; displayed: number } | undefined;
+            try {
+                await api.setColumnFilterModel('name', { filterType: 'multi', filterModels: [null, 'x'] });
+                api.onFilterChanged();
+                await asyncSetTimeout(0);
+                filtered = { active: api.getColumn('name')?.isFilterActive(), displayed: api.getDisplayedRowCount() };
+                api.destroyFilter('name');
+                await asyncSetTimeout(0);
+            } catch (e) {
+                errors.push(String(e));
+            }
+
+            // With handlers, the child has no handler (#277): its model is kept and filters nothing.
+            const warning = enableFilterHandlers ? 'warning #277' : 'warning #67';
+            expect({
+                errors,
+                warned: warnSpy.mock.calls.flat().join(' ').includes(warning),
+                filtered,
+            }).toEqual({
+                errors: [],
+                warned: true,
+                filtered: { active: enableFilterHandlers, displayed: ROWS.length },
+            });
+        }
+    );
+
+    test('without filter handlers, an active child filter component filters the rows and reports its model', async () => {
+        class NameFilter implements IFilterComp {
+            private model: string | null = null;
+            public init(): void {}
+            public getGui(): HTMLElement {
+                return document.createElement('div');
+            }
+            public isFilterActive(): boolean {
+                return this.model != null;
+            }
+            public doesFilterPass(params: IDoesFilterPassParams): boolean {
+                return params.data.name === this.model;
+            }
+            public getModel(): string | null {
+                return this.model;
+            }
+            public setModel(model: string | null): void {
+                this.model = model;
+            }
+            public getModelAsString(model: string | null): string {
+                return `named ${model}`;
+            }
+        }
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'name',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: { filters: [{ filter: 'agTextColumnFilter' }, { filter: NameFilter }] },
+                },
+            ],
+            rowData: ROWS,
+        });
+        const model = { filterType: 'multi', filterModels: [null, ROWS[1].name] };
+
+        await api.setColumnFilterModel('name', model);
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+
+        const multiFilter = await api.getColumnFilterInstance<IMultiFilter>('name');
+        expect({
+            model: api.getColumnFilterModel('name'),
+            displayed: api.getDisplayedRowCount(),
+            summary: multiFilter?.getModelAsString?.(model),
+        }).toEqual({ model, displayed: 1, summary: `named ${ROWS[1].name}` });
     });
 
     describe.each([false, true])('filterParams.filters changed (enableFilterHandlers: %s)', (enableFilterHandlers) => {

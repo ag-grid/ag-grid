@@ -152,4 +152,13 @@ export class TextFilterHandler extends SimpleFilterHandler<TextFilterModel, stri
         }
         return model;
     }
+
+    protected override toOwnModelValue(value: unknown): string | null {
+        if (typeof value === 'string') {
+            return value === '' ? null : value;
+        }
+        return (typeof value === 'number' && Number.isFinite(value)) || typeof value === 'bigint'
+            ? String(value)
+            : null;
+    }
 }

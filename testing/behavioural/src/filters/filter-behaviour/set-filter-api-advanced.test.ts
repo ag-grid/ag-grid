@@ -53,7 +53,7 @@ describe('Set Filter — handler value manipulation API', () => {
     afterEach(() => gridsManager.reset());
 
     test.each(
-        ['setColumnFilterModel', 'the initial state'].flatMap((entry) =>
+        ['setColumnFilterModel', 'setFilterModel', 'setState', 'the initial state'].flatMap((entry) =>
             [false, true].flatMap((enableFilterHandlers) =>
                 [false, true].map((preservePreviousValues) => ({ entry, enableFilterHandlers, preservePreviousValues }))
             )
@@ -71,9 +71,13 @@ describe('Set Filter — handler value manipulation API', () => {
                 enableFilterHandlers,
                 initialState: fromState ? { filter: { filterModel: { country: numberModel } } } : undefined,
             });
-            if (!fromState) {
+            if (entry === 'setColumnFilterModel') {
                 await api.setColumnFilterModel('country', numberModel);
                 api.onFilterChanged();
+            } else if (entry === 'setFilterModel') {
+                api.setFilterModel({ country: numberModel });
+            } else if (entry === 'setState') {
+                api.setState({ filter: { filterModel: { country: numberModel } } });
             }
             await asyncSetTimeout(0);
             expect({ model: api.getFilterModel(), displayed: api.getDisplayedRowCount() }).toEqual({
