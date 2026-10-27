@@ -219,43 +219,26 @@ describe('Reserved key handling in field paths', () => {
             { id: 'plain', [PROTO_FIELD]: 'e', [CTOR_FIELD]: 'f' },
         ];
 
-        test('skips reserved keys; dotted keys stay nested paths that refuse reserved segments', async () => {
-            const api = await createGeneratedGrid(
-                { autoGenerateColumnDefs: true, defaultColDef: { editable: true } },
-                generatedRows()
-            );
+        test('skips keys whose path has a reserved segment', async () => {
+            const api = await createGeneratedGrid({ autoGenerateColumnDefs: true }, [
+                ...generatedRows(),
+                { id: 'nested', group: { 'constructor.prototype': { [KEY]: 'g' }, name: 'n' } },
+            ]);
 
-            expect(api.getColumns()!.map((col) => col.getColDef().field)).toEqual(['id', PROTO_FIELD, CTOR_FIELD]);
-
-            const plain = api.getRowNode('plain')!;
-            expect(api.getCellValue({ rowNode: plain, colKey: PROTO_FIELD })).toBeUndefined();
-            expect(api.getCellValue({ rowNode: plain, colKey: CTOR_FIELD })).toBeUndefined();
-
-            expect(plain.setDataValue(PROTO_FIELD, 'changed')).toBe(false);
-            expect(plain.setDataValue(CTOR_FIELD, 'changed')).toBe(false);
-            expect(plain.data).toEqual({ id: 'plain', [PROTO_FIELD]: 'e', [CTOR_FIELD]: 'f' });
-            expectObjectPrototypeUnchanged();
+            expect(api.getColumns()!.map((col) => col.getColDef().field)).toEqual(['id']);
         });
 
-        test('cell editing, paste and undo leave generated reserved paths unchanged', async () => {
-            const api = await createGeneratedGrid(
-                { autoGenerateColumnDefs: true, defaultColDef: { editable: true }, undoRedoCellEditing: true },
-                generatedRows()
-            );
-            const plainData = { id: 'plain', [PROTO_FIELD]: 'e', [CTOR_FIELD]: 'f' };
+        test('keeps dotted keys without reserved segments as nested paths', async () => {
+            const api = await createGeneratedGrid({ autoGenerateColumnDefs: true }, [
+                { id: 'r1', 'user.name': 'Alice', group: { 'a.b': 1, name: 'n' } },
+            ]);
 
-            await editCellViaUi(api, 'plain', PROTO_FIELD, 'edited');
-
-            clipboardUtils.setText('pasted');
-            api.setFocusedCell(api.getRowNode('plain')!.rowIndex!, CTOR_FIELD);
-            const pasteEnd = waitForEvent('pasteEnd', api);
-            api.pasteFromClipboard();
-            await pasteEnd;
-
-            api.undoCellEditing();
-            api.redoCellEditing();
-            expect(api.getRowNode('plain')!.data).toEqual(plainData);
-            expectObjectPrototypeUnchanged();
+            expect(api.getColumns()!.map((col) => col.getColDef().field)).toEqual([
+                'id',
+                'user.name',
+                'group.a.b',
+                'group.name',
+            ]);
         });
 
         test.each(['group', 'flatten'] as const)(

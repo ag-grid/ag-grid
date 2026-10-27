@@ -65,11 +65,12 @@ function _buildColumnDefs(
     const defs: (ColDef | ColGroupDef)[] = [];
     for (let i = 0, len = keys.length; i < len; ++i) {
         const key = keys[i];
-        if (_isReservedKey(key)) {
+        const field = prefix ? `${prefix}.${key}` : key;
+        // a dotted key is a nested path, so skip it when any segment is a reserved key
+        if (field.split('.').some(_isReservedKey)) {
             continue;
         }
         const value = obj[key];
-        const field = prefix ? `${prefix}.${key}` : key;
 
         if (_isPlainObject(value)) {
             if (visited.has(value)) {
