@@ -6,11 +6,11 @@
     "test:e2e": "jest --no-cache"
   },
   "dependencies": {
-    "@angular/common": "^21.0.0",
-    "@angular/compiler": "^21.0.0",
-    "@angular/core": "^21.0.0",
-    "@angular/platform-browser": "^21.0.0",
-    "@angular/platform-browser-dynamic": "^21.0.0",
+    "@angular/common": "^21.2.25",
+    "@angular/compiler": "^21.2.25",
+    "@angular/core": "^21.2.25",
+    "@angular/platform-browser": "^21.2.25",
+    "@angular/platform-browser-dynamic": "^21.2.25",
     "ag-grid-angular": "36.2.0-beta.20261025.2042",
     "ag-grid-community": "36.2.0-beta.20261025.2042",
     "rxjs": "~7.8.2",
@@ -18,11 +18,11 @@
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@angular/compiler-cli": "^21.0.0",
+    "@angular/compiler-cli": "^21.2.25",
     "@types/jest": "^30.0.0",
     "jest": "^30.5.2",
     "jest-environment-jsdom": "^30.5.2",
-    "jest-preset-angular": "^17.0.0",
+    "jest-preset-angular": "^17.0.3",
     "typescript": "~5.8.3"
   }
 }

@@ -10,7 +10,7 @@
     "cheerio": "^1.2.0",
     "glob": "^11.1.0",
     "json5": "2.2.3",
-    "prettier": "3.9.9",
+    "prettier": "3.9.10",
     "sucrase": "^3.35.1",
     "tinypool": "^2.2.0",
     "typescript": "~5.8.3"
