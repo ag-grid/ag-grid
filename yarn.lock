@@ -3176,7 +3176,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^8.0.8":
+"@babel/runtime@npm:^8.0.7":
   version: 8.1.0
   resolution: "@babel/runtime@npm:8.1.0"
   checksum: 10c0/4531254e3a031cb392b5a363eecce35592c944c656fb7a3a7ac619cbcc05007a8ceca56e3f438aabca17a5ef0d1d18ab54957cd6c5d16a0f2d088850b10a1a83
@@ -14778,7 +14778,7 @@ __metadata:
   dependencies:
     "@babel/plugin-proposal-throw-expressions": "npm:^8.0.1"
     "@babel/preset-typescript": "npm:^8.0.7"
-    "@babel/runtime": "npm:^8.0.8"
+    "@babel/runtime": "npm:^8.0.7"
     "@types/react": "npm:~18.3.26"
     "@types/react-dom": "npm:~18.3.7"
     ag-grid-community: "npm:36.3.0"
