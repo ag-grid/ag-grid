@@ -10936,6 +10936,62 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@skia-canvas/darwin-arm64@npm:4.0.0":
+  version: 4.0.0
+  resolution: "@skia-canvas/darwin-arm64@npm:4.0.0"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@skia-canvas/darwin-x64@npm:4.0.0":
+  version: 4.0.0
+  resolution: "@skia-canvas/darwin-x64@npm:4.0.0"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@skia-canvas/linux-arm64-glibc@npm:4.0.0":
+  version: 4.0.0
+  resolution: "@skia-canvas/linux-arm64-glibc@npm:4.0.0"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@skia-canvas/linux-arm64-musl@npm:4.0.0":
+  version: 4.0.0
+  resolution: "@skia-canvas/linux-arm64-musl@npm:4.0.0"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@skia-canvas/linux-x64-glibc@npm:4.0.0":
+  version: 4.0.0
+  resolution: "@skia-canvas/linux-x64-glibc@npm:4.0.0"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@skia-canvas/linux-x64-musl@npm:4.0.0":
+  version: 4.0.0
+  resolution: "@skia-canvas/linux-x64-musl@npm:4.0.0"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@skia-canvas/win32-arm64@npm:4.0.0":
+  version: 4.0.0
+  resolution: "@skia-canvas/win32-arm64@npm:4.0.0"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@skia-canvas/win32-x64@npm:4.0.0":
+  version: 4.0.0
+  resolution: "@skia-canvas/win32-x64@npm:4.0.0"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@socket.io/component-emitter@npm:~3.1.0":
   version: 3.1.2
   resolution: "@socket.io/component-emitter@npm:3.1.2"
@@ -11854,10 +11910,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jasmine@npm:~6.0.0":
-  version: 6.0.0
-  resolution: "@types/jasmine@npm:6.0.0"
-  checksum: 10c0/9521bb7bd9c897ba6333478cd1c4acd68f813ea9b2ebf0f61283cc0357a9d7581c44f1798f4733ad662b3d1498449ebbb074a0e8bf96b95d6c72e9651fe7e047
+"@types/jasmine@npm:~7.0.0":
+  version: 7.0.0
+  resolution: "@types/jasmine@npm:7.0.0"
+  checksum: 10c0/165dd685981ee34a451ab6d16065531fc6b1789af382ce7186bda1fe814fef319c88f757ac9c267272f213771186a518fe59878f936f490cd8591fb602349e66
   languageName: node
   linkType: hard
 
@@ -14192,7 +14248,7 @@ __metadata:
     "@types/node": "npm:^22.20.5"
     ag-grid-community: "npm:36.2.0-beta.20261025.2042"
     ag-grid-enterprise: "npm:36.2.0-beta.20261025.2042"
-    playwright-ctrf-json-reporter: "npm:0.0.29"
+    playwright-ctrf-json-reporter: "npm:0.2.0"
   languageName: unknown
   linkType: soft
 
@@ -14258,10 +14314,10 @@ __metadata:
     "@angular/forms": "npm:^20.3.34"
     "@angular/platform-browser": "npm:^20.3.34"
     "@angular/platform-browser-dynamic": "npm:^20.3.34"
-    "@types/jasmine": "npm:~6.0.0"
+    "@types/jasmine": "npm:~7.0.0"
     "@types/node": "npm:^22.20.5"
     ag-grid-community: "npm:36.2.0-beta.20261025.2042"
-    jasmine-core: "npm:~5.13.0"
+    jasmine-core: "npm:~7.0.2"
     karma: "npm:~6.4.4"
     karma-chrome-launcher: "npm:~3.2.0"
     karma-coverage: "npm:~2.2.1"
@@ -14297,7 +14353,7 @@ __metadata:
     "@playwright/test": "npm:^1.64.1"
     "@types/node": "npm:^22.20.5"
     playwright: "npm:^1.64.1"
-    playwright-ctrf-json-reporter: "npm:0.0.29"
+    playwright-ctrf-json-reporter: "npm:0.2.0"
   languageName: unknown
   linkType: soft
 
@@ -14359,7 +14415,7 @@ __metadata:
     nanostores: "npm:^1.5.5"
     node-html-parser: "npm:^7.1.0"
     playwright: "npm:^1.64.1"
-    playwright-ctrf-json-reporter: "npm:0.0.29"
+    playwright-ctrf-json-reporter: "npm:0.2.0"
     prettier-plugin-astro: "npm:^1.1.2"
     react: "npm:~18.2.0"
     react-animate-height: "npm:^3.2.4"
@@ -14626,7 +14682,7 @@ __metadata:
     fs-extra: "npm:^11.4.1"
     glob: "npm:^11.1.0"
     globals: "npm:^17.13.0"
-    happy-dom: "npm:20.14.6"
+    happy-dom: "npm:21.0.4"
     js-yaml: "npm:^5.5.0"
     knip: "npm:6.43.0"
     node-fetch: "npm:2.7.0"
@@ -14640,7 +14696,7 @@ __metadata:
     prettier: "npm:3.9.10"
     prompts: "npm:^2.4.2"
     rulesync: "npm:^8.2.0"
-    skia-canvas: "npm:3.0.8"
+    skia-canvas: "npm:4.0.0"
     stylelint: "npm:^17.16.0"
     stylelint-config-standard: "npm:^40.0.0"
     ts-node: "npm:10.9.2"
@@ -14806,6 +14862,18 @@ __metadata:
     json-schema-traverse: "npm:^1.0.0"
     require-from-string: "npm:^2.0.2"
   checksum: 10c0/e7517c426173513a07391be951879932bdf3348feaebd2199f5b901c20f99d60db8cd1591502d4d551dc82f594e82a05c4fe1c70139b15b8937f7afeaed9532f
+  languageName: node
+  linkType: hard
+
+"ajv@npm:8.20.0":
+  version: 8.20.0
+  resolution: "ajv@npm:8.20.0"
+  dependencies:
+    fast-deep-equal: "npm:^3.1.3"
+    fast-uri: "npm:^3.0.1"
+    json-schema-traverse: "npm:^1.0.0"
+    require-from-string: "npm:^2.0.2"
+  checksum: 10c0/5df9a1c8f83863cde1bd3a9ddb426f599718f88e3dc9153616c79fb28e0be455335830d7f21d745576519f057b371352daa31047b6a33d7036fe08777d60cf2a
   languageName: node
   linkType: hard
 
@@ -17695,17 +17763,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ctrf@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "ctrf@npm:0.2.0"
+"ctrf@npm:0.5.0":
+  version: 0.5.0
+  resolution: "ctrf@npm:0.5.0"
   dependencies:
-    ajv: "npm:^8.17.1"
-    ajv-formats: "npm:^3.0.1"
-    glob: "npm:^13.0.0"
-    yargs: "npm:^18.0.0"
+    ajv: "npm:8.20.0"
+    ajv-formats: "npm:3.0.1"
+    glob: "npm:13.0.6"
+    yargs: "npm:18.2.0"
   bin:
     ctrf: dist/cli/cli.js
-  checksum: 10c0/f3490377c4d51f5b4be49a1895803b1fda9929df3c51a225d15a70b5098ff29e98d0f38538b2c1ce70a9594f651c4d4688eaabecc9bd8755ae0b6b6aa17f7fe0
+  checksum: 10c0/02de2278dbe1b1d330a428455a8c1b29159b0d6a24d30820a6710e8f2afcdc6c78f826dfe3f92492054ead1c2a88bcfc1b3f33bc6a7be0c582344ad28b83e60e
   languageName: node
   linkType: hard
 
@@ -18123,7 +18191,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"detect-libc@npm:^2.0.0, detect-libc@npm:^2.0.1, detect-libc@npm:^2.0.3, detect-libc@npm:^2.1.1, detect-libc@npm:^2.1.2":
+"detect-libc@npm:^2.0.0, detect-libc@npm:^2.0.1, detect-libc@npm:^2.0.3, detect-libc@npm:^2.1.2":
   version: 2.1.2
   resolution: "detect-libc@npm:2.1.2"
   checksum: 10c0/acc675c29a5649fa1fb6e255f993b8ee829e510b6b56b0910666949c80c364738833417d0edb5f90e4e46be17228b0f2b66a010513984e18b15deeeac49369c4
@@ -20506,7 +20574,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.15.11":
+"follow-redirects@npm:^1.0.0":
   version: 1.15.11
   resolution: "follow-redirects@npm:1.15.11"
   peerDependenciesMeta:
@@ -20523,6 +20591,16 @@ __metadata:
     debug:
       optional: true
   checksum: 10c0/a1e2900163e6f1b4d1ed5c221b607f41decbab65534c63fe7e287e40a5d552a6496e7d9d7d976fa4ba77b4c51c11e5e9f683f10b43011ea11e442ff128d0e181
+  languageName: node
+  linkType: hard
+
+"follow-redirects@npm:^1.16.1":
+  version: 1.16.2
+  resolution: "follow-redirects@npm:1.16.2"
+  peerDependenciesMeta:
+    debug:
+      optional: true
+  checksum: 10c0/ff38c8ceb904e505021057f58d395ea5f2e7c34257032960a76b21df1726395ce753f5678b6ee3b15210a557277c00b2607c67b682ee4dec1f33cb5147e08e90
   languageName: node
   linkType: hard
 
@@ -21132,6 +21210,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"glob@npm:13.0.6, glob@npm:^13.0.0, glob@npm:^13.0.3, glob@npm:^13.0.6":
+  version: 13.0.6
+  resolution: "glob@npm:13.0.6"
+  dependencies:
+    minimatch: "npm:^10.2.2"
+    minipass: "npm:^7.1.3"
+    path-scurry: "npm:^2.0.2"
+  checksum: 10c0/269c236f11a9b50357fe7a8c6aadac667e01deb5242b19c84975628f05f4438d8ee1354bb62c5d6c10f37fd59911b54d7799730633a2786660d8c69f1d18120a
+  languageName: node
+  linkType: hard
+
 "glob@npm:^10.4.1":
   version: 10.5.0
   resolution: "glob@npm:10.5.0"
@@ -21161,17 +21250,6 @@ __metadata:
   bin:
     glob: dist/esm/bin.mjs
   checksum: 10c0/1ceae07f23e316a6fa74581d9a74be6e8c2e590d2f7205034dd5c0435c53f5f7b712c2be00c3b65bf0a49294a1c6f4b98cd84c7637e29453b5aa13b79f1763a2
-  languageName: node
-  linkType: hard
-
-"glob@npm:^13.0.0, glob@npm:^13.0.3, glob@npm:^13.0.6":
-  version: 13.0.6
-  resolution: "glob@npm:13.0.6"
-  dependencies:
-    minimatch: "npm:^10.2.2"
-    minipass: "npm:^7.1.3"
-    path-scurry: "npm:^2.0.2"
-  checksum: 10c0/269c236f11a9b50357fe7a8c6aadac667e01deb5242b19c84975628f05f4438d8ee1354bb62c5d6c10f37fd59911b54d7799730633a2786660d8c69f1d18120a
   languageName: node
   linkType: hard
 
@@ -21444,9 +21522,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"happy-dom@npm:20.14.6":
-  version: 20.14.6
-  resolution: "happy-dom@npm:20.14.6"
+"happy-dom@npm:21.0.4":
+  version: 21.0.4
+  resolution: "happy-dom@npm:21.0.4"
   dependencies:
     "@types/node": "npm:>=20.0.0"
     "@types/whatwg-mimetype": "npm:^3.0.2"
@@ -21455,7 +21533,7 @@ __metadata:
     entities: "npm:^7.0.1"
     whatwg-mimetype: "npm:^3.0.0"
     ws: "npm:^8.21.0"
-  checksum: 10c0/47bdcb7ec7f22c7270b5c1e8b25bb9cd847aa35ee84d6e0870123463db63ad335fa2eb9e6d15a6e3b2ad843586139a0e2fbc6d6dfc120ff0f91f693efea74e4d
+  checksum: 10c0/9368af9739a5ba07776a116368d13d6b2690de81a6525096a1fec36e4cd1270b569151d021e2a56fb314fba73674572de562f1364090b01df6c68e9843b002e8
   languageName: node
   linkType: hard
 
@@ -22020,7 +22098,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"https-proxy-agent@npm:9.1.0":
+"https-proxy-agent@npm:9.1.0, https-proxy-agent@npm:^9.1.0":
   version: 9.1.0
   resolution: "https-proxy-agent@npm:9.1.0"
   dependencies:
@@ -23225,10 +23303,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jasmine-core@npm:~5.13.0":
-  version: 5.13.0
-  resolution: "jasmine-core@npm:5.13.0"
-  checksum: 10c0/3bbf1dbbde8017f41872a27f22bafd164fe4fcf834347af23d7d5a63e7e35c72c79e1596e6b384dd2906e885518419e13a6c7535ffabf8256b624110d664599d
+"jasmine-core@npm:~7.0.2":
+  version: 7.0.2
+  resolution: "jasmine-core@npm:7.0.2"
+  checksum: 10c0/335304a185284bb7cac23810e5f4547211b6b00c783ea1fad02e24bb0ef4a3b8f87d46a72c6650cbaed647bcf325b22a5a0322afc17602565450dc3bd8f24cda
   languageName: node
   linkType: hard
 
@@ -27515,13 +27593,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"parenthesis@npm:^3.1.5":
-  version: 3.1.8
-  resolution: "parenthesis@npm:3.1.8"
-  checksum: 10c0/1c0d5dd8b238b7c703db5ff1ca35f41952a7b2597c2e97cd0d32ab345179062611bc4f8a849787ed7f23508e91140d74fea7c0050b6978c56499f707ff54c99c
-  languageName: node
-  linkType: hard
-
 "parse-data-uri@npm:^0.2.0":
   version: 0.2.0
   resolution: "parse-data-uri@npm:0.2.0"
@@ -28057,12 +28128,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-ctrf-json-reporter@npm:0.0.29":
-  version: 0.0.29
-  resolution: "playwright-ctrf-json-reporter@npm:0.0.29"
+"playwright-ctrf-json-reporter@npm:0.2.0":
+  version: 0.2.0
+  resolution: "playwright-ctrf-json-reporter@npm:0.2.0"
   dependencies:
-    ctrf: "npm:^0.2.0"
-  checksum: 10c0/a9382ed6f7aed24ba50efa2fd419c6a0bd9eece2e65b23e9eae5d4f1a10750c5b25442fb65dc1ef6dbd9c7aa5ffc89aef9ad3b972db8dee87e129fedc92ccc46
+    ctrf: "npm:0.5.0"
+  checksum: 10c0/e3810ff0301c67b8d64bd077e0a2a54412babd4e8165c8d47f6c3bdc53c0d7ab68703b05cb43b55c399a2b16f36e202f73e46e56797d7632266d05cedac2ca1a
   languageName: node
   linkType: hard
 
@@ -31941,15 +32012,39 @@ __metadata:
   languageName: node
   linkType: hard
 
-"skia-canvas@npm:3.0.8":
-  version: 3.0.8
-  resolution: "skia-canvas@npm:3.0.8"
+"skia-canvas@npm:4.0.0":
+  version: 4.0.0
+  resolution: "skia-canvas@npm:4.0.0"
   dependencies:
-    detect-libc: "npm:^2.1.1"
-    follow-redirects: "npm:^1.15.11"
-    https-proxy-agent: "npm:^7.0.6"
-    string-split-by: "npm:^1.0.0"
-  checksum: 10c0/19cfd4371426274c03e146eb68f8add3643a2706582a14d92f898062c4db54ed07d8d90b797c011476b7b1a866c663a3929626f7c48f9fc126814161ad8e2e03
+    "@skia-canvas/darwin-arm64": "npm:4.0.0"
+    "@skia-canvas/darwin-x64": "npm:4.0.0"
+    "@skia-canvas/linux-arm64-glibc": "npm:4.0.0"
+    "@skia-canvas/linux-arm64-musl": "npm:4.0.0"
+    "@skia-canvas/linux-x64-glibc": "npm:4.0.0"
+    "@skia-canvas/linux-x64-musl": "npm:4.0.0"
+    "@skia-canvas/win32-arm64": "npm:4.0.0"
+    "@skia-canvas/win32-x64": "npm:4.0.0"
+    detect-libc: "npm:^2.1.2"
+    follow-redirects: "npm:^1.16.1"
+    https-proxy-agent: "npm:^9.1.0"
+  dependenciesMeta:
+    "@skia-canvas/darwin-arm64":
+      optional: true
+    "@skia-canvas/darwin-x64":
+      optional: true
+    "@skia-canvas/linux-arm64-glibc":
+      optional: true
+    "@skia-canvas/linux-arm64-musl":
+      optional: true
+    "@skia-canvas/linux-x64-glibc":
+      optional: true
+    "@skia-canvas/linux-x64-musl":
+      optional: true
+    "@skia-canvas/win32-arm64":
+      optional: true
+    "@skia-canvas/win32-x64":
+      optional: true
+  checksum: 10c0/c9bd01e7fd08217787768c1bc58d5d70359fd819386c4d84f38cafa12fbd69e8e8c7e0c1de28987713e22fc07533164921c3192d6b1c266205ce2f54dd54c438
   languageName: node
   linkType: hard
 
@@ -32451,15 +32546,6 @@ __metadata:
     char-regex: "npm:^1.0.2"
     strip-ansi: "npm:^6.0.0"
   checksum: 10c0/1cd77409c3d7db7bc59406f6bcc9ef0783671dcbabb23597a1177c166906ef2ee7c8290f78cae73a8aec858768f189d2cb417797df5e15ec4eb5e16b3346340c
-  languageName: node
-  linkType: hard
-
-"string-split-by@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "string-split-by@npm:1.0.0"
-  dependencies:
-    parenthesis: "npm:^3.1.5"
-  checksum: 10c0/7feac22db5eb4fedc418818fe6c9277d2b2bbe8d200877ed4be629eeff6dafb686b04d87f3c49aa0b7ccaedaf5c576e31dd0e756ea82421cc48f362ece48b942
   languageName: node
   linkType: hard
 
@@ -36646,6 +36732,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"yargs@npm:18.2.0, yargs@npm:^18.1.0, yargs@npm:^18.2.0":
+  version: 18.2.0
+  resolution: "yargs@npm:18.2.0"
+  dependencies:
+    cliui: "npm:^9.0.1"
+    escalade: "npm:^3.1.1"
+    get-caller-file: "npm:^2.0.5"
+    string-width: "npm:^8.2.1"
+    y18n: "npm:^5.0.5"
+    yargs-parser: "npm:^22.0.0"
+  checksum: 10c0/7419338c3c00f9143ec6b6ab168335061c6f5342d161642aec23ff119e28cac1c417e0eca1d7dc82fd084f07207cc5d34c7d8315f605c0e3dbf12c350e405f3f
+  languageName: node
+  linkType: hard
+
 "yargs@npm:^13.3.0":
   version: 13.3.2
   resolution: "yargs@npm:13.3.2"
@@ -36691,20 +36791,6 @@ __metadata:
     y18n: "npm:^5.0.5"
     yargs-parser: "npm:^21.1.1"
   checksum: 10c0/ccd7e723e61ad5965fffbb791366db689572b80cca80e0f96aad968dfff4156cd7cd1ad18607afe1046d8241e6fb2d6c08bf7fa7bfb5eaec818735d8feac8f05
-  languageName: node
-  linkType: hard
-
-"yargs@npm:^18.1.0, yargs@npm:^18.2.0":
-  version: 18.2.0
-  resolution: "yargs@npm:18.2.0"
-  dependencies:
-    cliui: "npm:^9.0.1"
-    escalade: "npm:^3.1.1"
-    get-caller-file: "npm:^2.0.5"
-    string-width: "npm:^8.2.1"
-    y18n: "npm:^5.0.5"
-    yargs-parser: "npm:^22.0.0"
-  checksum: 10c0/7419338c3c00f9143ec6b6ab168335061c6f5342d161642aec23ff119e28cac1c417e0eca1d7dc82fd084f07207cc5d34c7d8315f605c0e3dbf12c350e405f3f
   languageName: node
   linkType: hard
 

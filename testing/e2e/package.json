@@ -8,7 +8,7 @@
     "@types/node": "^22.20.5",
     "ag-grid-community": "36.2.0-beta.20261025.2042",
     "ag-grid-enterprise": "36.2.0-beta.20261025.2042",
-    "playwright-ctrf-json-reporter": "0.0.29"
+    "playwright-ctrf-json-reporter": "0.2.0"
   },
   "repository": {
     "type": "git",
