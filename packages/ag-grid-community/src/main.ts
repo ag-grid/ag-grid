@@ -308,6 +308,7 @@ export type {
     CalculatedColumnsGridOption,
     CalculatedColumnsOptions,
     CalculatedColumnUpdate,
+    CalculatedColumnValidationErrors,
     CalculatedColumnValidationParams,
     CalculatedExpressionError,
     ICalculatedColumnsService,

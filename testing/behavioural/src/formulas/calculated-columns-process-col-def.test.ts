@@ -169,7 +169,7 @@ describe('calculated columns - calculatedColumns.processColDef', () => {
             const getValidationErrors = vi.fn<NonNullable<CalculatedColumnsOptions['getValidationErrors']>>(
                 ({ referencedColumns }) =>
                     reason === 'customValidation' && referencedColumns.some((col) => col.getColId() === 'b')
-                        ? ['Not allowed']
+                        ? { calculatedExpression: ['Not allowed'] }
                         : null
             );
             const isColumnReferenceable = vi.fn<NonNullable<CalculatedColumnsOptions['isColumnReferenceable']>>(

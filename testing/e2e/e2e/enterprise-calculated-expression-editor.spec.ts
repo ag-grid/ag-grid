@@ -88,7 +88,7 @@ test.describe('calculated expression editor in a real browser', () => {
     });
 });
 
-test('live diagnostics show a tooltip without invalidating native input or blocking updates', async ({ page }) => {
+test('live diagnostics mark the field invalid without blocking updates', async ({ page }) => {
     const { headerCell, cell } = await mountGrid(page, {
         enterprise: true,
         options: () => ({
@@ -111,21 +111,27 @@ test('live diagnostics show a tooltip without invalidating native input or block
     const error = page.locator('.ag-calculated-column-expression-error');
     await input.fill('[Revenue] - [Cots]');
     await expect(error).toHaveText('[Cots]');
-    await expect(input).toHaveAttribute('aria-invalid', 'false');
-    expect(await input.evaluate((element: HTMLTextAreaElement) => element.validationMessage)).toBe('');
+    await expect(input).toHaveAttribute('aria-invalid', 'true');
+    await expect(input).toHaveClass(/\binvalid\b/);
+    expect(await input.evaluate((element: HTMLTextAreaElement) => element.validationMessage)).toContain(
+        'Unknown column reference "Cots"'
+    );
     await expect(cell(0, 'profit')).toHaveText('#PARSE!');
     await input.hover();
     await expect(page.locator('.ag-tooltip')).toContainText('Unknown column reference "Cots"');
 
     await input.fill('[Revenue] + Z1');
     await expect(error).toHaveText('Z1');
-    await expect(input).toHaveAttribute('aria-invalid', 'false');
+    await expect(input).toHaveAttribute('aria-invalid', 'true');
     await page.locator('.ag-panel-title-bar').hover();
     await input.hover();
     await expect(page.getByRole('tooltip').filter({ hasText: 'Unknown column reference "Z1"' })).toBeVisible();
 
     await input.fill('[Revenue] - [Cost]');
     await expect(error).toHaveCount(0);
+    await expect(input).toHaveAttribute('aria-invalid', 'false');
+    await expect(input).not.toHaveClass(/\binvalid\b/);
+    expect(await input.evaluate((element: HTMLTextAreaElement) => element.validationMessage)).toBe('');
     await expect(cell(0, 'profit')).toHaveText('7');
     await expect(input).toBeFocused();
     await expect(input).not.toHaveAttribute('aria-describedby');

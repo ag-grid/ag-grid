@@ -49,6 +49,13 @@ export interface IsColumnReferenceableParams<TData = any, TContext = any> extend
     sourceColumn: Column | null;
 }
 
+/** Errors for individual Calculated Column dialog fields. Omitted fields and empty arrays are valid. */
+export interface CalculatedColumnValidationErrors {
+    headerName?: string[];
+    cellDataType?: string[];
+    calculatedExpression?: string[];
+}
+
 export interface CalculatedColumnValidationParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** A copy of the draft definition, with recognised references converted to stored `[colId]` references. */
     colDef: CalculatedColumnDef<TData>;
@@ -60,7 +67,7 @@ export interface CalculatedColumnValidationParams<TData = any, TContext = any> e
      */
     referencedColumns: readonly Column[];
     /** Built-in validation errors, or `null`. Include these in the callback result to retain built-in validation. */
-    internalErrors: string[] | null;
+    internalErrors: CalculatedColumnValidationErrors | null;
     /** The calculated column, or `null` when adding a column in deferred mode. */
     column: Column | null;
     /**
@@ -91,17 +98,20 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
      */
     isColumnReferenceable?: (params: IsColumnReferenceableParams<TData, TContext>) => boolean;
     /**
-     * Synchronous validation for expressions entered in the dialog, including expressions with built-in errors.
+     * Synchronous validation for the dialog's title, type and expression, including drafts with built-in errors.
      * Receives `internalErrors`; the returned messages replace built-in validation feedback.
      * Column restrictions from `isColumnReferenceable` remain enforced.
-     * Return error messages to reject the expression, or `null` / an empty array to accept it.
-     * Deferred mode blocks Apply; live mode saves rejected expressions with an error and prevents evaluation.
+     * Return messages keyed by field to reject its value; `null`, omitted fields and empty arrays accept it.
+     * Deferred mode blocks Apply for any error. Live mode retains the committed title/type when rejected,
+     * while accepted fields still apply. Rejected expressions are saved with an error and do not evaluate.
      * Unlike `isColumnReferenceable`, unchanged expressions are revalidated on title/type edits and deferred Apply.
      * Opening an editable live dialog also revalidates the expression, saving new rejections or clearing resolved ones.
      * Not called during cell evaluation, when setting definitions, or when restoring state.
      * Call `api.refreshCalculatedColumns()` to explicitly revalidate committed expressions.
      */
-    getValidationErrors?: (params: CalculatedColumnValidationParams<TData, TContext>) => string[] | null;
+    getValidationErrors?: (
+        params: CalculatedColumnValidationParams<TData, TContext>
+    ) => CalculatedColumnValidationErrors | null;
     /**
      * Suppress highlighting the calculated column currently being edited by the dialog.
      * @default false

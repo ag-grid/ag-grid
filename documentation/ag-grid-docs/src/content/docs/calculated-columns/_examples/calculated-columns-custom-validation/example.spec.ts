@@ -9,6 +9,13 @@ test.agExample(import.meta, () => {
         await page.locator('.ag-menu-option-text', { hasText: 'Edit Calculated Column' }).click();
         const dialog = page.locator('.ag-calculated-column-form');
         const expression = dialog.locator('textarea');
+        const title = dialog.locator('input');
+        await title.fill('A title that is longer than thirty characters');
+        await expect(title).toHaveAttribute('aria-invalid', 'true');
+        await expect(title).toHaveAccessibleDescription('Use a title of at most 30 characters.');
+        await expect(dialog.getByRole('button', { name: 'Apply', exact: true })).toBeDisabled();
+        await title.fill('Sales Bonus');
+        await expect(title).toHaveAttribute('aria-invalid', 'false');
         await expression.fill('[Salary]');
         await expect(expression).toHaveAttribute('aria-invalid', 'true');
         await expect(dialog.getByRole('button', { name: 'Apply', exact: true })).toBeDisabled();

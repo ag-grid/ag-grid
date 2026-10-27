@@ -87,6 +87,33 @@ describe('calculated columns - applyDebounce', () => {
         expect(changed).toHaveBeenCalledTimes(1);
     });
 
+    test.each(['typing', 'refresh'] as const)(
+        'a %s rejection removes the pending title without discarding a valid expression',
+        async (action) => {
+            let reject = false;
+            const api = await openDialog({
+                applyDebounce: 400,
+                getValidationErrors: ({ colDef }) =>
+                    reject || colDef.headerName === 'Forbidden' ? { headerName: ['Title rejected.'] } : null,
+            });
+            setTitle('Pending');
+            setExpression('[A] * 2');
+            await vi.advanceTimersByTimeAsync(200);
+            if (action === 'refresh') {
+                reject = true;
+                api.refreshCalculatedColumns();
+            } else {
+                setTitle('Forbidden');
+            }
+            await vi.advanceTimersByTimeAsync(action === 'refresh' ? 200 : 400);
+            expect(api.getColumn('calc')!.getColDef().headerName).toBe('Calc');
+            expect(cellValue(api, 'calc')).toBe(20);
+            expect(getDialog().querySelector('input')!.value).toBe(action === 'refresh' ? 'Pending' : 'Forbidden');
+            closeDialog();
+            expect(api.getColumn('calc')!.getColDef().headerName).toBe('Calc');
+        }
+    );
+
     test('removal through the cell context menu cancels the pending edit', async () => {
         const changed = vi.fn();
         const removed = vi.fn();
@@ -169,7 +196,10 @@ describe('calculated columns - applyDebounce', () => {
     });
 
     test('validation feedback remains immediate while the column update is pending', async () => {
-        const api = await openDialog({ applyDebounce: 400, getValidationErrors: () => ['Not allowed'] });
+        const api = await openDialog({
+            applyDebounce: 400,
+            getValidationErrors: () => ({ calculatedExpression: ['Not allowed'] }),
+        });
         setExpression('[A] +');
         const input = getDialog().querySelector('textarea')!;
         expect(input.validationMessage).toBe('Not allowed');
