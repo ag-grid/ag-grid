@@ -141,6 +141,7 @@ export {
     _setAriaMultiSelectable,
     _setAriaOrientation,
     _setAriaPosInSet,
+    _setAriaPressed,
     _setAriaReadOnly,
     _setAriaRole,
     _setAriaRowCount,
