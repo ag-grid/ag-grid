@@ -491,9 +491,9 @@ describe('cspRules', () => {
             // only Astro's framework-injected hydration scripts remain, pinned by hash
             // (see ASTRO_HYDRATION_SCRIPT_HASHES). Regenerate these when bumping Astro.
             const scriptSrc = getCspDirectives({ env: 'production', scope: 'site' })['script-src'];
-            expect(scriptSrc).toContain("'sha256-Ya0pUYrC7nM5Cn/056TyVuEiz6dFGrzmkWzgON0pF0U='"); // <astro-island> runtime
-            expect(scriptSrc).toContain("'sha256-QzWFZi+FLIx23tnm9SBU4aEgx4x8DsuASP07mfqol/c='"); // client:load
-            expect(scriptSrc).toContain("'sha256-BF0290pkb3jxQsE7z00xR8Imp8X34FLC88L0lkMnrGw='"); // client:idle
+            expect(scriptSrc).toContain("'sha256-UIrFqcaitjA3OKa9mHKajg3N+0Y7tW9+y0o3QmMFeZQ='"); // <astro-island> runtime
+            expect(scriptSrc).toContain("'sha256-1BvDVWLr3QCC20uHhUDi27eDFVJpk1uMQJGIWKUks2I='"); // client:load
+            expect(scriptSrc).toContain("'sha256-xIb/Pa7FUshAu4ihwjchYcQpyCI8eS8kt40GpOAYCz8='"); // client:idle
         });
 
         it('site scope authorises the GTM-injected ZoomInfo bootstrap by hash', () => {
