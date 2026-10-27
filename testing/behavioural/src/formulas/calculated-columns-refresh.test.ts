@@ -41,7 +41,7 @@ describe('calculated columns - refreshCalculatedColumns', () => {
         const changed = vi.fn();
         const getValidationErrors = vi.fn(({ referencedColumns, context }: CalculatedColumnValidationParams) =>
             !context.allowSalary && referencedColumns.some((column) => column.getColId() === 'pay')
-                ? ['Salary cannot be used.']
+                ? { calculatedExpression: ['Salary cannot be used.'] }
                 : null
         );
         const api = createGrid('refresh-calculated', {
@@ -87,7 +87,7 @@ describe('calculated columns - refreshCalculatedColumns', () => {
     });
 
     test('refreshes all calculated columns, including read-only columns', () => {
-        const getValidationErrors = vi.fn(() => ['Not permitted']);
+        const getValidationErrors = vi.fn(() => ({ calculatedExpression: ['Not permitted'] }));
         const api = createGrid('refresh-all-calculated', {
             columnDefs: columnDefs.map((colDef) => ({ ...colDef, calculatedColumnReadOnly: true })),
             rowData,
@@ -150,7 +150,7 @@ describe('calculated columns - refreshCalculatedColumns', () => {
 
     test('does not validate empty selections or disabled calculated columns', () => {
         enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [319] });
-        const getValidationErrors = vi.fn(() => ['Not permitted']);
+        const getValidationErrors = vi.fn(() => ({ calculatedExpression: ['Not permitted'] }));
         const api = createGrid('refresh-disabled', { columnDefs, rowData, calculatedColumns: { getValidationErrors } });
         api.refreshCalculatedColumns({ columns: [] });
         api.refreshCalculatedColumns({ columns: ['sales', 'missing'] });
@@ -165,7 +165,7 @@ describe('calculated columns - refreshCalculatedColumns', () => {
 
     test('uses committed expressions without flushing a pending dialog edit', async () => {
         const getValidationErrors = vi.fn(({ colDef }: CalculatedColumnValidationParams) =>
-            colDef.calculatedExpression === '[sales]' ? ['Sales is not permitted'] : null
+            colDef.calculatedExpression === '[sales]' ? { calculatedExpression: ['Sales is not permitted'] } : null
         );
         const api = createGrid('refresh-pending', {
             columnDefs,
@@ -283,7 +283,7 @@ describe('calculated columns - refreshCalculatedColumns', () => {
                 applyMode: 'deferred',
                 getValidationErrors: ({ referencedColumns }) =>
                     !allowSalary && referencedColumns.some((column) => column.getColId() === 'pay')
-                        ? ['Blocked']
+                        ? { calculatedExpression: ['Blocked'] }
                         : null,
             },
         });
@@ -309,7 +309,10 @@ describe('calculated columns - refreshCalculatedColumns', () => {
             const api = createGrid('refresh-pending-rule', {
                 columnDefs,
                 rowData,
-                calculatedColumns: { applyDebounce: 400, getValidationErrors: () => (allowed ? null : ['Blocked']) },
+                calculatedColumns: {
+                    applyDebounce: 400,
+                    getValidationErrors: () => (allowed ? null : { calculatedExpression: ['Blocked'] }),
+                },
                 onCalculatedColumnChanged: changed,
             });
             await openEditDialogViaMenu(api, 'profit');
@@ -338,7 +341,10 @@ describe('calculated columns - refreshCalculatedColumns', () => {
             const api = createGrid('refresh-pending-close', {
                 columnDefs,
                 rowData,
-                calculatedColumns: { applyDebounce, getValidationErrors: () => (allowed ? null : ['Blocked']) },
+                calculatedColumns: {
+                    applyDebounce,
+                    getValidationErrors: () => (allowed ? null : { calculatedExpression: ['Blocked'] }),
+                },
             });
             await openEditDialogViaMenu(api, 'profit');
             setExpression('[Salary] * 3');
@@ -356,7 +362,7 @@ describe('calculated columns - refreshCalculatedColumns', () => {
         const api = createGrid('refresh-view-feedback', {
             columnDefs: columnDefs.map((colDef) => ({ ...colDef, calculatedColumnReadOnly: true })),
             rowData,
-            calculatedColumns: { getValidationErrors: () => (allowed ? null : ['Blocked']) },
+            calculatedColumns: { getValidationErrors: () => (allowed ? null : { calculatedExpression: ['Blocked'] }) },
             onCalculatedColumnChanged: changed,
         });
         api.refreshCalculatedColumns({ columns: ['profit'] });
@@ -405,7 +411,10 @@ describe('calculated columns - refreshCalculatedColumns', () => {
                     },
                 ],
             },
-            calculatedColumns: { processColDef, getValidationErrors: () => ['Not permitted'] },
+            calculatedColumns: {
+                processColDef,
+                getValidationErrors: () => ({ calculatedExpression: ['Not permitted'] }),
+            },
         });
         const properties = api.getState().userColumns![0].properties;
         api.refreshCalculatedColumns();

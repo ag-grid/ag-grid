@@ -68,14 +68,9 @@ describe('calculated column expression editor', () => {
             const input = getExpressionInput();
             expect(getUnderlinedText()).toEqual([underline]);
             expect(document.getElementById(input.getAttribute('aria-describedby')!)?.textContent).toContain(message);
-            if (applyMode === 'deferred') {
-                expect(input.validationMessage).toContain(message);
-                expect(input).toHaveAttribute('aria-invalid', 'true');
-            } else {
-                expect(input.validationMessage).toBe('');
-                expect(input).not.toHaveClass('invalid');
-                expect(input).toHaveAttribute('aria-invalid', 'false');
-            }
+            expect(input.validationMessage).toContain(message);
+            expect(input).toHaveClass('invalid');
+            expect(input).toHaveAttribute('aria-invalid', 'true');
             expect(
                 getCalculatedColumnDialog().querySelector('.ag-calculated-column-expression-mirror')
             ).toHaveAttribute('aria-hidden', 'true');
@@ -98,6 +93,8 @@ describe('calculated column expression editor', () => {
 
             setExpression('[Revenue] - [Cost] + 1');
             expect(getUnderlinedText()).toEqual([]);
+            expect(input).not.toHaveClass('invalid');
+            expect(input).toHaveAttribute('aria-invalid', 'false');
             expect(input.validationMessage).toBe('');
             expect(input).not.toHaveAttribute('aria-describedby');
             if (applyMode === 'deferred') {
@@ -201,7 +198,9 @@ describe('calculated column expression editor', () => {
             ]) {
                 setExpression(`[Revenue] + SUM(${reference})`);
                 expect(getUnderlinedText().join('')).toBe(reference);
-                expect(getValidationErrors.mock.lastCall![0].internalErrors?.[0]).toContain('Unknown column reference');
+                expect(getValidationErrors.mock.lastCall![0].internalErrors?.calculatedExpression?.[0]).toContain(
+                    'Unknown column reference'
+                );
                 expect(getExpressionInput()).toHaveAttribute('aria-invalid', 'true');
                 if (applyMode === 'deferred') {
                     expect(getDialogButton('Apply')).toBeDisabled();
@@ -240,7 +239,9 @@ describe('calculated column expression editor', () => {
     });
 
     test('custom validation has no invented range and runs once per draft update', async () => {
-        const getValidationErrors = vi.fn(() => ['Business rule one.', 'Business rule two.']);
+        const getValidationErrors = vi.fn(() => ({
+            calculatedExpression: ['Business rule one.', 'Business rule two.'],
+        }));
         const api = createGrid('expression-custom-diagnostics', {
             calculatedColumns: { applyMode: 'deferred', getValidationErrors },
             columnDefs: [{ field: 'revenue' }, { colId: 'profit', calculatedExpression: '[revenue]' }],
@@ -255,7 +256,7 @@ describe('calculated column expression editor', () => {
         expect(getDialogButton('Apply')).toBeDisabled();
     });
 
-    test('reopening a live draft shows reference diagnostics without marking the field invalid', async () => {
+    test('reopening an invalid live draft shows consistent field and reference feedback', async () => {
         const api = createGrid('expression-live-reopen', {
             columnDefs: [{ field: 'revenue' }, { colId: 'profit', calculatedExpression: '[revenue]' }],
             rowData: [{ id: 'r1', revenue: 10 }],
@@ -266,8 +267,9 @@ describe('calculated column expression editor', () => {
         document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
         await openEditDialogViaMenu(api, 'profit');
         expect(getUnderlinedText()).toEqual(['[Cots]']);
-        expect(getExpressionInput().validationMessage).toBe('');
-        expect(getExpressionInput()).not.toHaveClass('invalid');
+        expect(getExpressionInput().validationMessage).toContain('Unknown column reference "Cots"');
+        expect(getExpressionInput()).toHaveClass('invalid');
+        expect(getExpressionInput()).toHaveAttribute('aria-invalid', 'true');
     });
 
     test.each([0, 400])(
@@ -283,7 +285,7 @@ describe('calculated column expression editor', () => {
             await openEditDialogViaMenu(api, 'profit');
             setExpression('[Revenue] +');
             expect(getUnderlinedText()).toEqual(['+']);
-            expect(getExpressionInput().validationMessage).toBe('');
+            expect(getExpressionInput().validationMessage).toContain("Missing operand for '+'");
             if (applyDebounce) {
                 expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[revenue]');
                 expect(api.getState().userColumns).toBeUndefined();
@@ -316,6 +318,8 @@ describe('calculated column expression editor', () => {
         setExpression('[Revenue] +');
         setExpression(expression);
         expect(getUnderlinedText()).toEqual([]);
+        expect(getExpressionInput()).not.toHaveClass('invalid');
+        expect(getExpressionInput()).toHaveAttribute('aria-invalid', 'false');
         expect(getExpressionInput().validationMessage).toBe('');
         expect(getExpressionInput()).not.toHaveAttribute('aria-describedby');
         document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();

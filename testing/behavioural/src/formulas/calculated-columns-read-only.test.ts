@@ -326,7 +326,14 @@ describe('calculated columns - read-only definitions', () => {
             const api = createGrid(`read-only-custom-validation-${applyMode}`, {
                 columnDefs,
                 rowData,
-                calculatedColumns: { applyMode, getValidationErrors: () => messages },
+                calculatedColumns: {
+                    applyMode,
+                    getValidationErrors: () => ({
+                        headerName: ['Title rejected.'],
+                        cellDataType: ['Type rejected.'],
+                        calculatedExpression: messages,
+                    }),
+                },
                 onCalculatedColumnCreated: onCalculatedEvent,
                 onCalculatedColumnChanged: onCalculatedEvent,
                 onCalculatedColumnRemoved: onCalculatedEvent,
@@ -339,6 +346,10 @@ describe('calculated columns - read-only definitions', () => {
             expect(input).not.toHaveAttribute('aria-autocomplete');
             expect(input).toHaveAttribute('aria-invalid', 'true');
             expect(input).toHaveAccessibleDescription(messages.join('\n'));
+            expect(getCalculatedColumnDialog().querySelector('input')).toHaveAccessibleDescription('Title rejected.');
+            expect(getCalculatedColumnDialog().querySelector('.ag-picker-field-wrapper')).toHaveAccessibleDescription(
+                'Type rejected.'
+            );
             const description = document.getElementById(input.getAttribute('aria-describedby')!);
             expect(description).toHaveAttribute('aria-live', 'polite');
             closeDialog();
