@@ -45,22 +45,24 @@ export class NumberFilterHandler extends ScalarFilterHandler<NumberFilterModel, 
         if (!Number.isFinite(number)) {
             return null;
         }
-        // Fractional trailing zeros do not add precision; integer zeros must still be checked for rounding.
-        const mantissa = text.replace(/e.*/i, '');
-        let end = mantissa.length;
-        if (mantissa.includes('.')) {
-            while (mantissa[end - 1] === '0') {
-                end--;
-            }
-        }
-        const digits = mantissaDigits(mantissa.slice(0, end));
+        const digits = mantissaDigits(text);
         const isExact =
-            digits === '' || (digits.length <= 100 && mantissaDigits(number.toPrecision(digits.length)) === digits);
+            digits === '' ||
+            (digits.length <= 100 && mantissaDigits(number.toPrecision(digits.length), false) === digits);
         return isExact ? number : null;
     }
 }
 
 const DECIMAL_TEXT = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i;
 
-/** A decimal's mantissa digits from the first non-zero one: `'-017.50'` gives `'1750'`. */
-const mantissaDigits = (decimal: string): string => decimal.replace(/e.*/i, '').replace(/\D/g, '').replace(/^0+/, '');
+/** Reads mantissa digits, keeping toPrecision's padding when trimFractionalZeros is false. */
+const mantissaDigits = (decimal: string, trimFractionalZeros = true): string => {
+    const mantissa = decimal.replace(/e.*/i, '');
+    let end = mantissa.length;
+    if (trimFractionalZeros && mantissa.includes('.')) {
+        while (mantissa[end - 1] === '0') {
+            end--;
+        }
+    }
+    return mantissa.slice(0, end).replace(/\D/g, '').replace(/^0+/, '');
+};
