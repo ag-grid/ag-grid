@@ -32,8 +32,8 @@ export const PRICING_FORM_FIELD_IDS = {
         applicationAudienceId: '00NPu00000P90f7',
     },
     production: {
-        productOfInterestId: '00NS900000OC9oM',
-        applicationAudienceId: '00NS900000OCBQ5',
+        productOfInterestId: '00NPz00000ZCPD0',
+        applicationAudienceId: '00NPz00000ZCPCz',
     },
 };
 
