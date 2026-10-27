@@ -377,22 +377,16 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
             return;
         }
 
-        // the row can be destroyed before the batch runs; finishing its entry animation then would
-        // undo the exit animation destroyFirstPass started
         if (this.slideInAnimation) {
             _batchCall(() => {
-                if (this.active) {
-                    this.onTopChanged();
-                }
+                this.onTopChanged();
             });
             this.slideInAnimation = false;
         }
 
         if (this.fadeInAnimation) {
             _batchCall(() => {
-                if (this.active) {
-                    rowGui.rowComp.toggleCss('ag-opacity-zero', false);
-                }
+                rowGui.rowComp.toggleCss('ag-opacity-zero', false);
             });
             this.fadeInAnimation = false;
         }

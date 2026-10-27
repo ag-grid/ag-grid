@@ -39,31 +39,11 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
     private isCheckQueued = false;
 
     // this is cached for blockLoadDebounce
-    private nextBlockToLoad?: BlockToLoad = undefined;
+    private nextBlockToLoad?: { cache: LazyCache; index: number } = undefined;
     private loaderTimeout?: number;
-
-    // set from a request until the next macrotask, so completions in that window are known to be synchronous
-    private isInLoadTask = false;
-    private syncLoadedBlocks: BlockToLoad[] = [];
-    private yieldTimeout?: number;
-    private requestCount = 0;
-
-    // framework wrappers can re-emit onGridReady in a microtask, so the first load waits a task to stay after it
-    private isGridReadyDelivered = false;
 
     public postConstruct() {
         this.maxOutboundRequests = _getMaxConcurrentDatasourceRequests(this.gos);
-
-        const onGridReady = () => {
-            window.setTimeout(() => {
-                this.isGridReadyDelivered = true;
-                if (this.isCheckQueued) {
-                    this.runLoadCheck();
-                }
-            });
-        };
-        this.eventSvc.addListener('gridReady', onGridReady, true);
-        this.addDestroyFunc(() => this.eventSvc.removeListener('gridReady', onGridReady, true));
     }
 
     public subscribe(cache: LazyCache) {
@@ -74,53 +54,18 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         this.cacheLoadingNodesMap.delete(cache);
     }
 
-    /** Queues a microtask to check for blocks to load, so a synchronous datasource fills stubs before paint. */
+    /**
+     * Queues a microtask to check if any blocks need to be loaded.
+     */
     public queueLoadCheck() {
         if (this.isCheckQueued) {
             return;
         }
         this.isCheckQueued = true;
-        if (this.isGridReadyDelivered) {
-            queueMicrotask(() => this.runLoadCheck());
-        }
-    }
-
-    // timers call this directly rather than through a microtask, so flushing fake timers still loads synchronously
-    private runLoadCheck(debouncedBlock?: BlockToLoad) {
-        // this loop does the work of any check queued while it runs
-        this.isCheckQueued = true;
-        try {
-            if (debouncedBlock && !this.loadsBlock(() => this.attemptLoad(debouncedBlock))) {
-                return;
-            }
-            while (this.isAlive()) {
-                const nextBlockToLoad = this.getBlockToLoad();
-                if (!nextBlockToLoad) {
-                    return;
-                }
-                const isOffViewportAfterLoad = !nextBlockToLoad.inViewport && this.isInLoadTask;
-                const isLoadedThisTask = this.syncLoadedBlocks.some((block) => isSameBlock(nextBlockToLoad, block));
-                if (isOffViewportAfterLoad || isLoadedThisTask) {
-                    // only rendered rows must fill before paint, so yield to the browser between other loads
-                    this.yieldTimeout ??= window.setTimeout(() => {
-                        this.yieldTimeout = undefined;
-                        this.runLoadCheck();
-                    });
-                    return;
-                }
-                if (!this.loadsBlock(() => this.queueLoadAction(nextBlockToLoad))) {
-                    return;
-                }
-            }
-        } finally {
+        setTimeout(() => {
+            this.queueLoadAction();
             this.isCheckQueued = false;
-        }
-    }
-
-    private loadsBlock(load: () => void): boolean {
-        const requestCount = this.requestCount;
-        load();
-        return this.requestCount !== requestCount;
+        });
     }
 
     private onLoadComplete(): void {
@@ -135,37 +80,51 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         return this.outboundRequests < this.maxOutboundRequests;
     }
 
-    private queueLoadAction(nextBlockToLoad: BlockToLoad) {
+    private queueLoadAction() {
+        const nextBlockToLoad = this.getBlockToLoad();
+        if (!nextBlockToLoad) {
+            return;
+        }
+
         // for blockLoadDebounceMillis, if the next block to load is the same as the last block to load, ignore
         // otherwise cancel existing timeout and requeue
-        if (isSameBlock(nextBlockToLoad, this.nextBlockToLoad)) {
+        const isSameBlock =
+            this.nextBlockToLoad?.cache === nextBlockToLoad.cache &&
+            this.nextBlockToLoad.index === nextBlockToLoad.index;
+        if (isSameBlock) {
             return;
         }
 
-        window.clearTimeout(this.loaderTimeout);
-        this.loaderTimeout = undefined;
+        if (!this.nextBlockToLoad || !isSameBlock) {
+            this.nextBlockToLoad = nextBlockToLoad;
+            window.clearTimeout(this.loaderTimeout);
 
-        const debounceMillis = this.gos.get('blockLoadDebounceMillis');
-        if (!debounceMillis) {
-            this.nextBlockToLoad = undefined;
-            this.attemptLoad(nextBlockToLoad);
-            return;
+            const startRow = Number(this.nextBlockToLoad.index);
+            const cache = this.nextBlockToLoad.cache;
+            const endRow = nextBlockToLoad.index + nextBlockToLoad.cache.getBlockSize();
+            this.loaderTimeout = window.setTimeout(() => {
+                if (!cache.isAlive()) {
+                    return;
+                }
+                this.loaderTimeout = undefined;
+                this.attemptLoad(cache, startRow, endRow);
+                this.nextBlockToLoad = undefined;
+            }, this.gos.get('blockLoadDebounceMillis'));
         }
-
-        this.nextBlockToLoad = nextBlockToLoad;
-        this.loaderTimeout = window.setTimeout(() => {
-            this.loaderTimeout = undefined;
-            this.nextBlockToLoad = undefined;
-            this.runLoadCheck(nextBlockToLoad);
-        }, debounceMillis);
     }
 
-    private attemptLoad({ cache, index: startRow }: BlockToLoad) {
+    private attemptLoad(cache: LazyCache, start: number, end: number) {
+        const hasBandwidth = this.hasAvailableLoadBandwidth();
         // too many loads already, ignore the request as a successful request will requeue itself anyway
-        if (!cache.isAlive() || !this.hasAvailableLoadBandwidth()) {
+        if (!hasBandwidth) {
             return;
         }
-        this.executeLoad(cache, startRow, startRow + cache.getBlockSize());
+
+        this.executeLoad(cache, start, end);
+
+        // requeue a load action before waiting for a response, this is to enable
+        // more than one block to load simultaneously due to maxConcurrentDatasourceRequests
+        this.queueLoadCheck();
     }
 
     private executeLoad(cache: LazyCache, startRow: number, endRow: number) {
@@ -203,9 +162,6 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
                 return;
             }
             settled = true;
-            if (this.isInLoadTask) {
-                this.syncLoadedBlocks.push({ cache, index: startRow });
-            }
             this.onLoadComplete();
             // cleared first so the store update fired by the result can evict these rows
             removeNodesFromLoadingMap();
@@ -230,18 +186,10 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
         addNodesToLoadingMap();
         this.outboundRequests += 1;
-        this.requestCount += 1;
-        if (!this.isInLoadTask) {
-            this.isInLoadTask = true;
-            window.setTimeout(() => {
-                this.isInLoadTask = false;
-                this.syncLoadedBlocks = [];
-            });
-        }
         cache.getSsrmParams().datasource?.getRows(params);
     }
 
-    private getBlockToLoad(): (BlockToLoad & { inViewport: boolean }) | undefined {
+    private getBlockToLoad() {
         const firstRowInViewport = this.rowRenderer.firstRenderedRow;
         const lastRowInViewport = this.rowRenderer.lastRenderedRow;
 
@@ -272,7 +220,6 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
                 return {
                     cache: cache,
                     index: cache.getBlockStartIndex(lazyNode.index),
-                    inViewport: true,
                 };
             }
         }
@@ -284,6 +231,12 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         for (const cache of this.cacheLoadingNodesMap.keys()) {
             const nodesToRefresh = cache.getNodesToRefresh();
             nodesToRefresh.forEach((node) => {
+                if (node.rowIndex == null) {
+                    nodeToRefresh = node;
+                    cacheToRefresh = cache;
+                    return;
+                }
+
                 const lazyNode = cache.getNodes().getBy('node', node);
                 if (!lazyNode) {
                     return;
@@ -291,12 +244,6 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
 
                 const loadingNodes = this.cacheLoadingNodesMap.get(cache);
                 if (loadingNodes?.has(lazyNode.index)) {
-                    return;
-                }
-
-                if (node.rowIndex == null) {
-                    nodeToRefresh = node;
-                    cacheToRefresh = cache;
                     return;
                 }
 
@@ -328,7 +275,6 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
             : {
                   cache: lazyCache,
                   index: lazyCache.getBlockStartIndex(lazyIndex),
-                  inViewport: false,
               };
     }
 
@@ -336,8 +282,3 @@ export class LazyBlockLoadingService extends BeanStub implements NamedBean {
         return this.cacheLoadingNodesMap.get(cache)?.has(index) ?? false;
     }
 }
-
-type BlockToLoad = { cache: LazyCache; index: number };
-
-const isSameBlock = (a: BlockToLoad, b: BlockToLoad | undefined): boolean =>
-    a.cache === b?.cache && a.index === b.index;
