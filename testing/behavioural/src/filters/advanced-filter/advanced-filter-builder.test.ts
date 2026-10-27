@@ -1,3 +1,6 @@
+import { within } from '@testing-library/dom';
+import '@testing-library/jest-dom/vitest';
+import { userEvent } from '@testing-library/user-event';
 import { AdvancedFilterBuilderHarness, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
@@ -217,6 +220,35 @@ describe('Advanced Filter - Builder UI', () => {
 
             expect(isBuilderOpen()).toBe(false);
             await new GridRows(api, `hideAdvancedFilterBuilder closes the builder dialog final state`).check(`
+                ROOT id:ROOT_NODE_ID
+                ├── LEAF id:0 athlete:"Michael Phelps" age:23 hasGold:true
+                ├── LEAF id:1 athlete:"Emma Thompson" age:30 hasGold:false
+                ├── LEAF id:2 athlete:"Usain Bolt" age:25 hasGold:true
+                └── LEAF id:3 athlete:"Anna Kowalski" age:19 hasGold:false
+            `);
+        });
+
+        test('title bar Maximize/Restore and Close buttons are keyboard operable and labelled', async () => {
+            const api = gridsManager.createGrid('grid1', DEFAULT_OPTIONS);
+            const user = userEvent.setup();
+
+            api.showAdvancedFilterBuilder();
+            await asyncSetTimeout(0);
+            const dialog = document.querySelector<HTMLElement>('.ag-dialog')!;
+            const titleBar = within(dialog.querySelector<HTMLElement>('.ag-panel-title-bar')!);
+
+            const maximizeButton = titleBar.getByRole('button', { name: 'Maximize' });
+            maximizeButton.focus();
+            await user.keyboard('{Enter}');
+            expect(maximizeButton).toHaveAccessibleName('Restore');
+
+            await user.keyboard(' ');
+            expect(maximizeButton).toHaveAccessibleName('Maximize');
+
+            titleBar.getByRole('button', { name: 'Close' }).focus();
+            await user.keyboard('{Enter}');
+            expect(isBuilderOpen()).toBe(false);
+            await new GridRows(api, `title bar buttons final state`).check(`
                 ROOT id:ROOT_NODE_ID
                 ├── LEAF id:0 athlete:"Michael Phelps" age:23 hasGold:true
                 ├── LEAF id:1 athlete:"Emma Thompson" age:30 hasGold:false

@@ -1,4 +1,4 @@
-import { waitFor } from '@testing-library/dom';
+import { waitFor, within } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
 import { TestGridsManager } from 'ag-test-utils';
@@ -213,6 +213,22 @@ describe('Dialog tab navigation', () => {
 
         expect(after).toHaveFocus();
         expect(dialog.contains(document.activeElement)).toBe(false);
+    });
+
+    test('reaches the Close button by reverse tabbing from the dialog content and closes with Enter', async () => {
+        const { dialog } = await createFocusFixture();
+        const user = userEvent.setup();
+        const closeButton = within(dialog).getByRole('button', { name: 'Close' });
+        const content = dialog.querySelector<HTMLElement>('.ag-panel-content-wrapper')!;
+
+        dialog.querySelector<HTMLInputElement>('.ag-column-select-header-filter-wrapper input')!.focus();
+        for (let i = 0; i < 5 && content.contains(document.activeElement); ++i) {
+            await user.tab({ shift: true });
+        }
+        expect(closeButton).toHaveFocus();
+
+        await user.keyboard('{Enter}');
+        expect(dialog.isConnected).toBe(false);
     });
 
     test('removes a closed dialog from reverse logical navigation', async () => {
