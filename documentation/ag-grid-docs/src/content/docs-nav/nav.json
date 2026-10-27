@@ -267,12 +267,6 @@
                         },
                         {
                             "type": "item",
-                            "title": "Shadow DOM",
-                            "path": "shadow-dom",
-                            "frameworks": ["javascript"]
-                        },
-                        {
-                            "type": "item",
                             "title": "Theme Builder",
                             "path": "theming-theme-builder"
                         },

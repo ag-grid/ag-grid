@@ -112,19 +112,6 @@ export function _getPageBody(beans: UtilBeanCollection): HTMLElement | ShadowRoo
     return targetEl;
 }
 
-/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export const SHADOW_DOM_MOUNT_CLASS = 'ag-shadow-dom-mount';
-
-/**
- * Parent for grid-owned elements that follow the pointer, such as the drag image. In a grid rendered in its own
- * shadow root this is the element carrying the mirrored theme mode, so they get the same mode as the grid.
- *
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
-export function _getOverlayParent(beans: UtilBeanCollection): HTMLElement | ShadowRoot {
-    return beans.eRootDiv.closest<HTMLElement>(`.${SHADOW_DOM_MOUNT_CLASS}`) ?? _getPageBody(beans);
-}
-
 export function _getBodyWidth(beans: UtilBeanCollection): number {
     const body = _getPageBody(beans) as HTMLElement;
     return body?.clientWidth ?? (window.innerWidth || -1);

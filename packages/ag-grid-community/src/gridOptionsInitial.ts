@@ -47,7 +47,6 @@ export const INITIAL_GRID_OPTION_KEYS = {
     allowShowChangeAfterFilter: true,
     ensureDomOrder: true,
     enableRtl: true,
-    enableShadowDom: true,
     suppressColumnVirtualisation: true,
     suppressMaxRenderedRowRestriction: true,
     suppressRowVirtualisation: true,
