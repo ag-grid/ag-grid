@@ -2,8 +2,8 @@ import type { Page } from '@playwright/test';
 import { ensureGridReady, expect, test, waitForGridContent } from '@utils/grid/test-utils';
 
 // Opens the chart's settings tool panel (the default panel for these examples) so the
-// selected chart-type thumbnail is visible, then returns its aria-label. The label is
-// suffixed with ". Selected" and reflects the chart's current type live.
+// selected chart-type thumbnail is visible, then returns its aria-label, which names the
+// chart's current type.
 async function openChartSettings(page: Page): Promise<void> {
     await page.locator('.ag-chart-menu-toolbar-button').first().click();
     await page.locator('.ag-chart-mini-thumbnail.ag-selected').first().waitFor();
