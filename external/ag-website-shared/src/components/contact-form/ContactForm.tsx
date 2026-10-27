@@ -85,8 +85,11 @@ type FormValues = {
     email: string;
 } & Record<string, string>;
 
+export type ContactFormLocation =
+    'About page' | 'Grid pricing page' | 'Charts pricing page' | 'Studio pricing page' | 'Contact page';
+
 interface Props {
-    formLocation: 'About page' | 'Grid pricing page' | 'Charts pricing page' | 'Contact page';
+    formLocation: ContactFormLocation;
     hideMessage?: boolean;
     submitLabel?: string;
     showPricingFields?: boolean;
