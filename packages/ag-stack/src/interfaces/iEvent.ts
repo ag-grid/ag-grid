@@ -34,9 +34,12 @@ export interface AgEventService<TGlobalEvents extends BaseEvents, TCommon> {
         async?: boolean
     ): void;
 
+    /** `eventTypes` limits the listener to those types, `exceptEventTypes` keeps those from it. */
     addGlobalListener(
         listener: AgEventServiceGlobalListener<keyof TGlobalEvents & string, TGlobalEvents>,
-        async?: boolean
+        async?: boolean,
+        eventTypes?: ReadonlySet<keyof TGlobalEvents & string>,
+        exceptEventTypes?: ReadonlySet<keyof TGlobalEvents & string>
     ): void;
 
     removeGlobalListener(
