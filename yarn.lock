@@ -14921,7 +14921,7 @@ __metadata:
     postcss-url: "npm:^10.1.4"
     prettier: "npm:3.9.10"
     prompts: "npm:^2.4.2"
-    rulesync: "npm:^8.32.0"
+    rulesync: "npm:^8.2.0"
     skia-canvas: "npm:3.0.8"
     stylelint: "npm:^17.16.0"
     stylelint-config-standard: "npm:^40.0.0"
@@ -31341,7 +31341,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rulesync@npm:^8.32.0":
+"rulesync@npm:^8.2.0":
   version: 8.32.0
   resolution: "rulesync@npm:8.32.0"
   dependencies:
