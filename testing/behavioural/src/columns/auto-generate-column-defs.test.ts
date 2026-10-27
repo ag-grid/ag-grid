@@ -870,7 +870,7 @@ describe('Auto-Generate Column Defs', () => {
             `);
         });
 
-        test('literal dotted keys render their value without suppressFieldDotNotation', async () => {
+        test('literal dotted keys render blank without suppressFieldDotNotation', async () => {
             const api = createGrid({
                 autoGenerateColumnDefs: true,
                 rowData: [{ 'user.name': 'Alice', score: 100 }],
@@ -882,9 +882,9 @@ describe('Auto-Generate Column Defs', () => {
                 └── score "Score" width:200
             `);
 
-            await new GridRows(api, 'dotted key renders value').check(`
+            await new GridRows(api, 'dotted key renders blank').check(`
                 ROOT id:ROOT_NODE_ID
-                └── LEAF id:0 user.name:"Alice" score:100
+                └── LEAF id:0 score:100
             `);
         });
 

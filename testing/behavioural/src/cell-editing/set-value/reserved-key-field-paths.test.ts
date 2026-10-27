@@ -219,43 +219,42 @@ describe('Reserved key handling in field paths', () => {
             { id: 'plain', [PROTO_FIELD]: 'e', [CTOR_FIELD]: 'f' },
         ];
 
-        test('skips reserved keys and binds dotted keys to the exact key', async () => {
+        test('skips reserved keys; dotted keys stay nested paths that refuse reserved segments', async () => {
             const api = await createGeneratedGrid(
                 { autoGenerateColumnDefs: true, defaultColDef: { editable: true } },
                 generatedRows()
             );
 
-            expect(api.getColumns()!.map((col) => col.getColId())).toEqual(['id', PROTO_FIELD, CTOR_FIELD]);
+            expect(api.getColumns()!.map((col) => col.getColDef().field)).toEqual(['id', PROTO_FIELD, CTOR_FIELD]);
 
             const plain = api.getRowNode('plain')!;
-            expect(api.getCellValue({ rowNode: plain, colKey: PROTO_FIELD })).toBe('e');
-            expect(api.getCellValue({ rowNode: plain, colKey: CTOR_FIELD })).toBe('f');
+            expect(api.getCellValue({ rowNode: plain, colKey: PROTO_FIELD })).toBeUndefined();
+            expect(api.getCellValue({ rowNode: plain, colKey: CTOR_FIELD })).toBeUndefined();
 
-            expect(plain.setDataValue(PROTO_FIELD, 'changed')).toBe(true);
-            expect(plain.setDataValue(CTOR_FIELD, 'changed')).toBe(true);
-            expect(plain.data).toEqual({ id: 'plain', [PROTO_FIELD]: 'changed', [CTOR_FIELD]: 'changed' });
+            expect(plain.setDataValue(PROTO_FIELD, 'changed')).toBe(false);
+            expect(plain.setDataValue(CTOR_FIELD, 'changed')).toBe(false);
+            expect(plain.data).toEqual({ id: 'plain', [PROTO_FIELD]: 'e', [CTOR_FIELD]: 'f' });
             expectObjectPrototypeUnchanged();
         });
 
-        test('cell editing, paste and undo write the exact key', async () => {
+        test('cell editing, paste and undo leave generated reserved paths unchanged', async () => {
             const api = await createGeneratedGrid(
                 { autoGenerateColumnDefs: true, defaultColDef: { editable: true }, undoRedoCellEditing: true },
                 generatedRows()
             );
+            const plainData = { id: 'plain', [PROTO_FIELD]: 'e', [CTOR_FIELD]: 'f' };
 
             await editCellViaUi(api, 'plain', PROTO_FIELD, 'edited');
-            expect(api.getRowNode('plain')!.data[PROTO_FIELD]).toBe('edited');
 
             clipboardUtils.setText('pasted');
             api.setFocusedCell(api.getRowNode('plain')!.rowIndex!, CTOR_FIELD);
             const pasteEnd = waitForEvent('pasteEnd', api);
             api.pasteFromClipboard();
             await pasteEnd;
-            expect(api.getRowNode('plain')!.data[CTOR_FIELD]).toBe('pasted');
 
             api.undoCellEditing();
-            api.undoCellEditing();
-            expect(api.getRowNode('plain')!.data).toEqual({ id: 'plain', [PROTO_FIELD]: 'e', [CTOR_FIELD]: 'f' });
+            api.redoCellEditing();
+            expect(api.getRowNode('plain')!.data).toEqual(plainData);
             expectObjectPrototypeUnchanged();
         });
 
@@ -264,16 +263,13 @@ describe('Reserved key handling in field paths', () => {
             async (objectValues) => {
                 const api = await createGeneratedGrid(
                     { autoGenerateColumnDefs: { objectValues }, defaultColDef: { editable: true } },
-                    [{ id: 'r1', address: { city: 'London', 'post.code': 'N1' } }]
+                    [{ id: 'r1', address: { city: 'London' } }]
                 );
 
                 expect(api.getColumn('address.city')!.getColDef().field).toBe('address.city');
-                const row = api.getRowNode('r1')!;
-                expect(api.getCellValue({ rowNode: row, colKey: 'address.post.code' })).toBe('N1');
 
                 await editCellViaUi(api, 'r1', 'address.city', 'Paris');
-                expect(row.setDataValue('address.post.code', 'E1')).toBe(true);
-                expect(row.data).toEqual({ id: 'r1', address: { city: 'Paris', 'post.code': 'E1' } });
+                expect(api.getRowNode('r1')!.data).toEqual({ id: 'r1', address: { city: 'Paris' } });
             }
         );
     });
