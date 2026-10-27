@@ -33,12 +33,6 @@ interface FeaturesWithExamplesContentProps {
     syncFramework?: boolean;
 }
 
-const FrameworkStoreSync: React.FC<{ framework: InternalFramework }> = ({ framework }) => {
-    useSyncFrameworkStoreState(getFrameworkFromInternalFramework(framework));
-
-    return null;
-};
-
 export const FeaturesWithExamplesContent: React.FC<FeaturesWithExamplesContentProps> = ({
     features,
     framework,
@@ -46,6 +40,10 @@ export const FeaturesWithExamplesContent: React.FC<FeaturesWithExamplesContentPr
 }) => {
     const [activeTab, setActiveTab] = useState(0);
     const [contentTarget, setContentTarget] = useState<HTMLElement | null>(null);
+
+    // Ready the framework store for the example runners. Only a framework landing page also makes its framework the
+    // visitor's selection
+    useSyncFrameworkStoreState(syncFramework ? getFrameworkFromInternalFramework(framework) : undefined);
 
     // Find the content target element for the portal
     useEffect(() => {
@@ -129,7 +127,6 @@ export const FeaturesWithExamplesContent: React.FC<FeaturesWithExamplesContentPr
 
     return (
         <>
-            {syncFramework && <FrameworkStoreSync framework={framework} />}
             <div className={styles.tabContainer}>
                 {features.map((feature, index) => (
                     <button
