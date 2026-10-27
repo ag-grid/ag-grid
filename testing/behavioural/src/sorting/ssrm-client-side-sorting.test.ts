@@ -308,9 +308,9 @@ describe('SSRM Client-Side Sorting', () => {
             `purge refresh does not sort when serverSideEnableClientSideSort is disabled after applyColumnState`
         ).check(`
             ROOT id:<no-id>
-            ├── LEAF id:1 id:"1" name:"Charlie" value:3
-            ├── LEAF id:2 id:"2" name:"Alice" value:1
-            └── LEAF id:3 id:"3" name:"Bob" value:2
+            ├── filler id:rowIndex:0
+            ├── filler id:rowIndex:1
+            └── filler id:rowIndex:2
         `);
         await waitForNoLoadingRows(api);
 

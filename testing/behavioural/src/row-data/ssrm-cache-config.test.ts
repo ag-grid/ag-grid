@@ -129,7 +129,7 @@ describe('SSRM cache config', () => {
             rowModelType: 'serverSide',
             cacheBlockSize: 100,
             // The debounce is what this test measures, so it asks for a small one rather than out-waiting the
-            // 200ms a real app would use: an un-debounced load is issued in the same task as the hop, so 60ms separates
+            // 200ms a real app would use: an un-debounced load is issued ~5ms after the hop, so 60ms separates
             // the two outcomes just as well.
             blockLoadDebounceMillis: 60,
             rowBuffer: 0,
@@ -228,7 +228,7 @@ describe('SSRM cache config', () => {
         await waitFor(() => expect(pending.length).toBe(1));
         // Negative assertion: no SECOND request may appear. waitFor cannot express that, so
         // this delay is the observation window in which an over-cap request would surface.
-        // The cap being off puts the next request in the same task as the first, so 15ms is window enough.
+        // The cap being off puts the next request ~2ms behind the first, so 15ms is window enough.
         // eslint-disable-next-line no-restricted-syntax -- observation window for an over-cap concurrent getRows
         await asyncSetTimeout(15);
         expect(pending.length).toBe(1);
