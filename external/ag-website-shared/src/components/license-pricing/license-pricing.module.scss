@@ -1,40 +1,303 @@
 @use '../../design-system' as *;
 
-.container {
-    margin-top: $spacing-size-2;
-}
-
-.topSection {
-    display: flex;
-    flex-wrap: wrap;
-    gap: $spacing-size-8;
-
-    @media screen and (min-width: $breakpoint-pricing-large) {
-        flex-wrap: nowrap;
+// In CSS rather than a public/ script, so every product site gets it from this shared file alone.
+@media (prefers-reduced-motion: no-preference) {
+    :global(html):has(.container) {
+        scroll-behavior: smooth;
     }
 }
 
-.introSection {
-    position: relative;
-    width: 100%;
-    margin: 0 auto;
+.container {
     display: flex;
-    align-items: center;
     flex-direction: column;
-    margin-bottom: $spacing-size-8;
-    padding-top: $spacing-size-2;
-    scroll-margin-top: $spacing-size-8;
+    gap: $spacing-size-20;
+    margin-top: $spacing-size-5;
+    padding-top: $spacing-size-8;
+    padding-bottom: $spacing-size-40 * 2;
 
     p {
-        text-align: center;
-        text-wrap: balance;
+        margin: 0;
+    }
+
+    h2 {
+        margin-bottom: $spacing-size-3;
     }
 }
 
-.intro {
-    // Deepening towards the bundle, palely enough not to compete with the pricing itself.
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-3;
+
+    h2 {
+        margin-bottom: 0;
+    }
+}
+
+$product-logo-height: 32px;
+
+.iconButton {
+    --icon-size: 20px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-size-2;
+
+    // Flex centring leaves the icon 1.8px above the button's centre, measured in Chrome. 1px of that is
+    // the button's uneven block padding (0.375em above, 0.5em below); the other 0.8px is measured only.
+    :global(.icon) {
+        translate: 0 0.1125em;
+    }
+}
+
+.productCards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-size-6;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        grid-template-columns: repeat(3, 1fr);
+        row-gap: 0;
+    }
+}
+
+.productCard,
+.bundleCard {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-2;
+    padding: $spacing-size-6 $spacing-size-5;
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-primary);
+}
+
+.productCard {
+    // Shares the row tracks of its neighbours, so tier names and buttons line up across cards.
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        display: grid;
+        grid-row: span 6;
+        grid-template-rows: subgrid;
+    }
+
+    // A visitor arriving on a product anchor (e.g. from the Studio site) lands on that card.
+    &:target {
+        border-color: var(--color-text-brand-primary);
+        box-shadow: 0 0 0 1px var(--color-text-brand-primary);
+    }
+}
+
+.productLogo {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-size-2;
+
+    svg {
+        width: auto;
+        height: $product-logo-height;
+    }
+
+    :global(.logotype) * {
+        fill: var(--color-logo-text);
+
+        #{$selector-darkmode} & {
+            fill: var(--color-white);
+        }
+    }
+}
+
+// The card heading: the logo carries the product name, so no separate name heading repeats it.
+.productLogoRow {
+    display: flex;
+    margin: 0 0 $spacing-size-2;
+}
+
+.productCategory {
+    font-size: var(--text-fs-xs);
+    font-weight: var(--text-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-text-brand-primary);
+}
+
+.productName {
+    margin-bottom: 0;
+}
+
+.productTagline {
+    padding-bottom: $spacing-size-2;
+    color: var(--color-text-secondary);
+}
+
+.tierName {
+    margin-bottom: $spacing-size-1;
+    font-size: var(--text-fs-base);
+}
+
+.purchaseNote {
+    font-size: var(--text-fs-sm);
+    color: var(--color-text-secondary);
+}
+
+.cardActions {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: $spacing-size-3 $spacing-size-2;
+    padding-top: $spacing-size-4;
+
+    // Narrower than the site default so Contact sales and Buy Enterprise online share a line at full page width.
+    :global(.button),
+    :global(.button-secondary),
+    :global(.button-tertiary) {
+        padding-inline: $spacing-size-3;
+    }
+
+    .purchaseNote {
+        flex-basis: 100%;
+    }
+}
+
+.bundleCard {
+    align-items: flex-start;
+    margin-top: $spacing-size-6;
+
+    .tierName {
+        margin-bottom: 0;
+    }
+}
+
+.bundleActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-size-3;
+    padding-top: $spacing-size-4;
+}
+
+.bundleLogos {
+    display: flex;
+    align-items: center;
+    gap: $spacing-size-4;
+    margin-bottom: $spacing-size-2;
+    font-size: var(--text-fs-xl);
+    font-weight: var(--text-bold);
+    color: var(--color-text-secondary);
+
+    @media screen and (max-width: $breakpoint-pricing-small) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spacing-size-1;
+    }
+}
+
+.buyingRoutes,
+.contactSection {
+    padding: $spacing-size-8;
+    border: 1px solid var(--color-util-brand-200);
+    border-radius: var(--radius-md);
+    background-color: color-mix(in srgb, var(--color-util-brand-50) 20%, transparent);
+}
+
+// Keeps the licence help line directly beneath the buying routes rather than a section gap away.
+.buyingRoutesGroup {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4;
+}
+
+.licenceHelp {
+    text-align: center;
+}
+
+.buyingRoutes {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-size-8;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    > div {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-size-3;
+    }
+
+    h2 {
+        margin-bottom: 0;
+    }
+}
+
+.routeActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-size-3;
+    margin-top: auto;
+    padding-top: $spacing-size-2;
+}
+
+.linkButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-size-3;
+    padding-top: $spacing-size-2;
+}
+
+.disclosure {
+    border-bottom: 1px solid var(--color-border-secondary);
+
+    &:first-of-type {
+        border-top: 1px solid var(--color-border-secondary);
+    }
+
+    summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: $spacing-size-4 0;
+        font-weight: var(--text-bold);
+        cursor: pointer;
+        list-style: none;
+
+        &::-webkit-details-marker {
+            display: none;
+        }
+
+        &::after {
+            content: '+';
+            color: var(--color-text-brand-primary);
+            font-size: var(--text-fs-lg);
+        }
+    }
+
+    &[open] summary::after {
+        content: '−';
+    }
+
+    > p {
+        padding-bottom: $spacing-size-4;
+    }
+}
+
+.featureTableScroller {
+    margin-bottom: $spacing-size-6;
+    overflow-x: auto;
+}
+
+// Header and groups span the same four columns, so one shared gradient is what makes a tint read
+// as a continuous column; its stops are the third and fourth column edges.
+.featureTable {
     --pricing-tint-enterprise: var(--color-brand-25);
     --pricing-tint-bundle: var(--color-brand-50);
+
+    min-width: 640px;
+    background: linear-gradient(
+        to right,
+        transparent 0 50%,
+        var(--pricing-tint-enterprise) 50% 75%,
+        var(--pricing-tint-bundle) 75%
+    );
 
     // Those steps are near-white; the util aliases are the same ramp inverted for a dark page.
     #{$selector-darkmode} & {
@@ -42,933 +305,125 @@
         --pricing-tint-bundle: color-mix(in oklch, var(--color-bg-primary), var(--color-gray-700) 20%);
     }
 
-    width: 100%;
-    margin-bottom: $spacing-size-8;
-
-    p:global(.font-size-large) {
-        max-width: 44rem;
-        margin: 0 auto;
-    }
-}
-
-.salesEmail {
-    margin-top: $spacing-size-4;
-    margin-bottom: $spacing-size-8;
-
-    a {
-        @media screen and (max-width: $breakpoint-pricing-small) {
-            font-size: var(--text-fs-base);
-        }
-    }
-
-    svg {
-        height: 32px;
-        width: 32px;
-    }
-}
-
-.videoPrompt {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-start;
-    text-align: center;
-    gap: $spacing-size-2 $spacing-size-4;
-    margin: 0 auto;
-    margin-top: $spacing-size-12;
-    line-height: var(--text-lh-ratio-tight);
-    max-width: 600px;
-    padding: $spacing-size-3;
-    border: 1px solid var(--color-border-primary);
-    border-radius: var(--radius-md);
-
-    @media screen and (max-width: $breakpoint-pricing-small) {
-        > div {
-            width: 100%;
-        }
-    }
-
-    @media screen and (min-width: $breakpoint-pricing-large) {
-        justify-content: flex-start;
-    }
-
-    h3,
-    p {
-        margin: 0;
-    }
-}
-
-.thumbnail {
-    width: 100%;
-    border-radius: var(--radius-md);
-
-    @media screen and (min-width: $breakpoint-pricing-small) {
-        width: 33.333%;
-        min-width: 160px;
-        max-width: 220px;
-    }
-
-    img {
-        width: 100%;
-        aspect-ratio: 16 / 9;
-        object-fit: cover;
-        border-radius: var(--radius-md);
-    }
-}
-
-.licensesOuter {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    margin-top: $spacing-size-5;
-}
-
-// Cards and feature table are separate blocks spanning the same four columns, so one shared gradient
-// is what makes a tint read as a continuous column; its stops are the third and fourth column edges.
-@media screen and (min-width: $breakpoint-pricing-medium) {
-    .licensesOuter,
-    .desktopTableContainer {
+    // The table stacks each label above three equal feature columns (see ComparisonTable), so the
+    // tints move to thirds.
+    @media screen and (max-width: $breakpoint-pricing-medium) {
+        min-width: 0;
         background: linear-gradient(
             to right,
-            transparent 0 50%,
-            var(--pricing-tint-enterprise) 50% 75%,
-            var(--pricing-tint-bundle) 75%
+            transparent 0 calc(100% / 3),
+            var(--pricing-tint-enterprise) calc(100% / 3) calc(200% / 3),
+            var(--pricing-tint-bundle) calc(200% / 3)
         );
     }
 }
 
-.buyTogether {
-    --card-color: var(--color-bg-primary);
-    --header-tint: 0.95;
-
-    width: 100%;
+.featureTableHeader {
     display: flex;
-    border-radius: 5px;
-    border: 1px solid var(--color-border-primary);
-    background-color: var(--card-color);
 
-    #{$selector-darkmode} & {
-        --card-color: var(--background-100);
+    > div {
+        width: 25%;
+        padding: $spacing-size-5 $spacing-size-4 $spacing-size-6;
+        color: var(--color-text-tertiary);
 
-        border: 2px solid var(--color-brand-500);
-    }
-}
-
-.buyTogetherInner {
-    width: 100%;
-    padding: $spacing-size-4;
-    text-align: center;
-    border-radius: var(--border-radius);
-    background-color: var(--default-background-color);
-    opacity: var(--header-tint);
-
-    @media screen and (min-width: $breakpoint-pricing-medium) {
-        display: grid;
-        grid-template: auto auto / auto auto;
-        padding: $spacing-size-4;
-        text-align: left;
-    }
-
-    p {
-        margin-bottom: 0;
-    }
-}
-
-.left {
-    display: flex;
-    flex-direction: column;
-
-    @media screen and (min-width: $breakpoint-pricing-medium) {
-        width: calc(50% - $spacing-size-4);
-    }
-
-    p {
-        line-height: var(--text-lh-ratio-tight);
-    }
-}
-
-.products {
-    width: 100%;
-    font-size: var(--text-fs-2xl);
-
-    span {
-        margin-left: -$spacing-size-3;
-        margin-right: -$spacing-size-2;
-        color: #00366d;
-
-        #{$selector-darkmode} & {
-            color: var(--color-fg-primary) !important;
+        &:not(:last-child) {
+            border-right: 1px solid var(--color-border-secondary);
         }
-    }
-}
 
-.productLogos svg {
-    height: 54px;
-    width: fit-content;
-
-    #{$selector-darkmode} & {
-        :global(#LogoType) * {
-            fill: var(--color-fg-primary) !important;
+        &:first-child {
+            border-right: none;
         }
-    }
-}
-
-.enterpriseProducts {
-    margin-top: $spacing-size-2;
-    margin-bottom: $spacing-size-6;
-
-    @media screen and (min-width: $breakpoint-pricing-medium) {
-        margin-top: $spacing-size-1;
-        margin-bottom: auto;
-    }
-
-    :global(.icon) {
-        --icon-size: #{$spacing-size-4};
-
-        fill: var(--color-text-secondary);
-
-        margin-top: -1px;
-        margin-left: -1px;
-        opacity: 0.6666;
-    }
-}
-
-.buyTogetherPrice {
-    text-align: center;
-    color: var(--color-fg-primary);
-
-    @media screen and (min-width: $breakpoint-pricing-medium) {
-        text-align: right;
-    }
-
-    p {
-        font-weight: var(--text-bold);
-        line-height: var(--text-lh-ratio-ultra-tight);
-    }
-
-    p:first-child {
-        margin-bottom: $spacing-size-1;
-    }
-
-    p:last-child {
-        margin-top: $spacing-size-1;
-    }
-}
-
-.buyTogetherConfigureButton {
-    width: 100%;
-    margin-top: $spacing-size-6;
-
-    @media screen and (min-width: $breakpoint-pricing-medium) {
-        grid-area: 2 / 1 / 2 / 3;
-        text-align: center;
-    }
-}
-
-.price {
-    font-size: 46px !important; // !important for font-size weirdness
-    line-height: 55px;
-    font-weight: var(--text-bold);
-    letter-spacing: -0.05em;
-}
-
-.configure button:not([class^='ag-']) {
-    width: 100%;
-    height: 100%;
-}
-
-.bulkLicenses,
-.licensesInDetail {
-    margin-bottom: $spacing-size-24;
-}
-
-.bulkLicenses {
-    margin-top: $spacing-size-10;
-    text-align: center;
-
-    p {
-        max-width: 48em;
-        margin: 0 auto $spacing-size-2;
-    }
-}
-
-.licensesInDetail {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    gap: $spacing-size-6;
-
-    @media screen and (min-width: $breakpoint-pricing-large) {
-        flex-direction: row;
-    }
-
-    > h3 {
-        width: 100%;
-        text-align: center;
-        font-weight: var(--text-bold);
-    }
-
-    ul {
-        line-height: var(--text-lh-ratio-tight);
-    }
-
-    li:not(:last-child) {
-        margin-bottom: $spacing-size-1;
-    }
-
-    .singleApplicationLicense {
-        --card-color: #0f5bce;
-        --header-tint: 90%;
-        --content-tint: 96%;
-
-        #{$selector-darkmode} & {
-            --card-color: #16325c;
-            --header-tint: 66%;
-            --content-tint: 88%;
-        }
-    }
-
-    .multipleApplicationsLicense {
-        --card-color: #2aaa33;
-        --header-tint: 91%;
-        --content-tint: 97%;
-
-        #{$selector-darkmode} & {
-            --card-color: #175a1b;
-            --header-tint: 72%;
-            --content-tint: 88%;
-        }
-    }
-
-    .singleApplicationLicense,
-    .multipleApplicationsLicense {
-        @media screen and (min-width: $breakpoint-pricing-large) {
-            width: calc(50% - $spacing-size-6 / 2);
-        }
-    }
-
-    // Needs review after <ul> styling
-    .deploymentLicense ul {
-        @media screen and (min-width: $breakpoint-pricing-large) {
-            columns: 2;
-            gap: $spacing-size-6;
-        }
-    }
-}
-
-.faqSection {
-    text-align: center;
-    margin-top: $spacing-size-20;
-}
-
-.contactSales,
-.licenceKeyDocs {
-    text-align: center;
-    position: relative;
-    background-color: var(--section-background-color);
-
-    &::before,
-    &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 100vw;
-        background-color: var(--section-background-color);
-    }
-
-    &::before {
-        left: -100vw;
-    }
-
-    &::after {
-        right: -100vw;
     }
 
     h3 {
-        margin-bottom: -$spacing-size-6;
-    }
-
-    p {
-        max-width: 800px;
-        margin: $spacing-size-8 auto;
-    }
-
-    p a {
-        text-decoration: underline;
-    }
-}
-
-.contactSales {
-    --section-background-color: #fbfbfc;
-
-    margin-top: $spacing-size-12;
-    padding-top: $spacing-size-24;
-    padding-bottom: $spacing-size-10;
-
-    #{$selector-darkmode} & {
-        --section-background-color: color-mix(in srgb, var(--color-fg-primary), var(--color-bg-primary) 98%);
-    }
-}
-
-.trialLicence {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-size-4 $spacing-size-10;
-    padding-top: $spacing-size-16;
-    padding-bottom: $spacing-size-16;
-
-    > .trialLicenceSeparator {
-        width: 1px;
-        align-self: stretch;
-    }
-
-    @media screen and (min-width: $breakpoint-pricing-medium) {
-        flex-direction: row;
-        align-items: flex-start;
-        padding-top: $spacing-size-24;
-        padding-bottom: $spacing-size-20;
-        border-top: 1px solid var(--color-border-secondary);
-    }
-}
-
-.trialLicenceCopy {
-    flex: 1;
-    padding-top: $spacing-size-4;
-    padding-bottom: $spacing-size-8;
-    justify-content: space-between;
-    display: flex;
-    flex-direction: column;
-
-    h3 svg {
-        --icon-size: 36px;
-
-        margin-right: $spacing-size-2;
-        transform: translateY(-3px);
-    }
-
-    h4 svg {
-        --icon-size: #{$spacing-size-6};
-
-        margin-right: $spacing-size-2;
-        transform: translateY(-2px);
-    }
-
-    > p {
-        margin-bottom: $spacing-size-10;
-    }
-
-    > .trialLicenceSeparator {
-        height: 1px;
-        margin-top: $spacing-size-6;
-        margin-bottom: $spacing-size-6;
-    }
-}
-
-.trialLicenceHeader {
-    line-height: var(--text-lh-ratio-tight);
-}
-
-.trialLicenceCopyItem {
-    --icon-color: var(--color-link);
-
-    display: flex;
-
-    svg {
-        flex-shrink: 0;
-        margin-right: $spacing-size-2;
-        transform: translateY(-$spacing-size-1);
-    }
-
-    b {
-        color: var(--color-fg-primary);
-    }
-}
-
-.customerLogosWrapper {
-    margin-top: $spacing-size-8;
-    margin-bottom: $spacing-size-4;
-}
-
-.salesContactsubHeading {
-    margin-bottom: $spacing-size-24 !important;
-}
-
-.testimonalHeading {
-    font-weight: var(--text-semibold);
-    opacity: 0.6;
-    margin-bottom: 0;
-}
-
-.enterpriseIcon {
-    --icon-color: var(--color-enterprise-icon);
-}
-
-.trialLicenceSeparator {
-    background-color: var(--color-border-secondary);
-}
-
-.trialLicenceForm {
-    flex: 1;
-}
-
-// Sales form variants with same styles as trial licence
-.salesForm {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-size-4 $spacing-size-10;
-    padding-top: $spacing-size-16;
-    padding-bottom: $spacing-size-16;
-
-    > .trialLicenceSeparator {
-        width: 1px;
-        align-self: stretch;
-    }
-
-    @media screen and (min-width: $breakpoint-pricing-medium) {
-        flex-direction: row;
-        padding-top: $spacing-size-24;
-        padding-bottom: $spacing-size-20;
-    }
-}
-
-.salesFormCopy {
-    flex: 1;
-    padding-bottom: $spacing-size-8;
-    display: flex;
-    flex-direction: column;
-
-    h3 svg {
-        --icon-size: 36px;
-
-        margin-right: $spacing-size-2;
-        transform: translateY(-3px);
-    }
-
-    h4 svg {
-        --icon-size: #{$spacing-size-6};
-
-        margin-right: $spacing-size-2;
-        transform: translateY(-2px);
-    }
-
-    > p {
-        margin-bottom: $spacing-size-10;
-    }
-
-    > .trialLicenceSeparator {
-        height: 1px;
-        margin-top: $spacing-size-6;
-        margin-bottom: $spacing-size-6;
-    }
-}
-
-.salesFormForm {
-    flex: 1;
-}
-
-.trialButton {
-    width: fit-content;
-}
-
-.licenceKeyDocs {
-    --section-background-color: var(--color-util-brand-50);
-
-    padding-top: $spacing-size-12;
-    padding-bottom: $spacing-size-6;
-
-    #{$selector-darkmode} & {
-        --section-background-color: var(--color-util-gray-100);
-    }
-}
-
-.chartsPricingOuter,
-.chartsPricingOuter iframe {
-    min-height: calc(8000px - 100vw * 3.5);
-
-    @media screen and (min-width: 1020px) {
-        min-height: calc(8000px - 100vw * 3.2);
-    }
-
-    @media screen and (min-width: $breakpoint-pricing-large) {
-        min-height: 3200px;
-    }
-}
-
-.backgroundPricing {
-    display: flex;
-    justify-content: center;
-    width: 100vw;
-    margin-top: -7px;
-    opacity: 0.15;
-
-    #{$selector-darkmode} & {
-        opacity: 1;
-    }
-}
-
-.fullWidthBar {
-    $bar-height: 100px;
-
-    // How far below the top of the viewport this bar pins: the height of the sticky site
-    // header, which paints above it. That height is not a constant and cannot be derived
-    // in CSS from here — LicensePricing.tsx measures the rendered header and sets
-    // --site-header-offset (see there for why). The fallback below only applies if that
-    // measurement never runs; the bar's visibility is React-controlled too, so in practice
-    // it is never on screen before then.
-    --site-header-offset-fallback: 0px;
-
-    width: 100%;
-    position: fixed;
-    top: var(--site-header-offset, var(--site-header-offset-fallback));
-    border-bottom: 1px solid var(--color-border-secondary);
-    height: $bar-height;
-    padding-top: $spacing-size-4;
-    z-index: 2;
-    background-color: var(--color-bg-primary);
-    box-shadow:
-        0 8px 0 0 var(--color-bg-primary),
-        var(--shadow-xs);
-    opacity: 0;
-    transform: translateY(-$bar-height);
-    transition:
-        transform $transition-default-timing,
-        opacity $transition-default-timing;
-
-    &.active {
-        transform: translateY(0);
-        opacity: 1;
+        margin-bottom: $spacing-size-1;
+        font-size: var(--text-fs-xl);
+        color: var(--color-text-primary);
     }
 
     @media screen and (max-width: $breakpoint-pricing-medium) {
-        display: none;
-    }
+        > div {
+            width: calc(100% / 3);
+            padding: $spacing-size-3 $spacing-size-2 $spacing-size-4;
+            font-size: var(--text-fs-xs);
+            text-align: center;
 
-    @media screen and (min-width: $breakpoint-docs-nav-medium) {
-        --site-header-offset-fallback: var(--layout-site-header-height);
-    }
-}
+            &:first-child {
+                display: none;
+            }
 
-.fullWidthBarContainer {
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    font-weight: bold;
-    padding-top: $spacing-size-1;
-}
+            &:nth-child(2) {
+                border-right: none;
+            }
 
-.fullWidthBarItem {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: $spacing-size-2 $spacing-size-4;
-    padding-left: $spacing-size-4;
-    position: relative;
-
-    &:not(:last-child)::after {
-        content: '';
-        position: absolute;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        width: 1px;
-        background-color: var(--color-border-secondary);
-    }
-
-    div {
-        display: flex;
-        align-items: center;
-        gap: $spacing-size-3;
-        justify-content: center;
-        margin-top: $spacing-size-1;
-    }
-
-    &:first-child {
-        grid-column: 2 / span 1;
-    }
-}
-
-.fwProduct {
-    width: 100%;
-    font-size: var(--text-fs-base) !important;
-    font-weight: 600;
-}
-
-.fwPrice {
-    display: inline-flex;
-    font-weight: var(--text-regular);
-    color: var(--color-gray-950);
-
-    #{$selector-darkmode} & {
-        color: var(--color-gray-25);
-    }
-}
-
-.fwPriceDollars {
-    font-size: var(--text-fs-lg);
-    font-weight: var(--text-bold);
-    letter-spacing: -0.5px;
-}
-
-a.fwAction {
-    align-self: flex-end;
-    padding: 3px $spacing-size-3 4px;
-    font-size: var(--text-fs-sm) !important;
-}
-
-.pricingHeading {
-    margin-bottom: $spacing-size-3;
-}
-
-/* products toggle */
-.toggleCheckbox {
-    display: none;
-}
-
-.toggleContainer {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    width: fit-content;
-    padding: 3px;
-    border: 2px solid var(--color-button-primary-fg);
-    outline: 2px solid var(--color-border-secondary);
-    border-radius: 32px;
-    background: var(--color-bg-primary);
-    font-weight: bold;
-    color: var(--color-button-primary-fg);
-    cursor: pointer;
-    user-select: none;
-    box-shadow: var(--shadow-sm);
-    margin-bottom: $spacing-size-4;
-
-    #{$selector-darkmode} & {
-        border: 2px solid var(--color-bg-primary);
-    }
-}
-
-.toggleContainer::before {
-    content: '';
-    position: absolute;
-    width: 50%;
-    height: 100%;
-    left: 0%;
-    border-radius: 32px;
-    background: var(--color-bg-brand-solid);
-    transition: all 0.2s;
-    transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
-
-    #{$selector-darkmode} & {
-        background: color-mix(in srgb, var(--color-brand-300), var(--color-bg-primary) 80%);
-        color: var(--color-fg-white);
-    }
-}
-
-.toggleContainer div {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 6px;
-    margin-left: 8px;
-    text-align: center;
-    cursor: pointer;
-    z-index: 1;
-
-    &.chartsToggle {
-        padding-right: 18px;
-    }
-}
-
-.toggleCheckbox:checked + .toggleContainer::before {
-    left: 50%;
-}
-
-.toggleCheckbox:checked + .toggleContainer .gridToggle {
-    margin-left: 0;
-    padding-left: 0;
-    border-radius: 32px;
-    color: var(--color-text-secondary);
-    transition: color 0.3s;
-
-    .gridInactive {
-        display: inline;
-    }
-
-    .gridActive {
-        display: none;
-    }
-
-    #{$selector-darkmode} & {
-        .gridInactive {
-            display: none;
+            &:nth-child(3) {
+                border-right: none;
+            }
         }
 
-        .gridActive {
-            display: inline;
+        h3 {
+            font-size: var(--text-fs-sm);
         }
     }
 }
 
-.toggleCheckbox:checked + .toggleContainer .gridToggle:hover {
-    background: color-mix(in srgb, var(--color-bg-tertiary), var(--color-bg-primary) 5%);
-    transition: all 0.3s ease-in;
-}
-
-.toggleCheckbox:checked + .toggleContainer .chartsToggle {
-    border-radius: 32px;
-    color: var(--color-button-primary-fg);
-    transition: color 0.3s;
-
-    .chartsInactive {
-        display: none;
-    }
-
-    .chartsActive {
-        display: inline;
-    }
-}
-.toggleCheckbox + .toggleContainer .gridToggle {
-    margin-left: 0;
-    padding-left: 0;
-    color: var(--color-button-primary-fg);
-    transition: color 0.3s;
-
-    #{$selector-darkmode} & {
-        color: var(--color-text-secondary);
-    }
-    .gridInactive {
-        display: none;
-    }
-
-    .gridActive {
-        display: inline;
-    }
-}
-.toggleCheckbox + .toggleContainer .chartsToggle {
-    border-radius: 32px;
-    color: var(--color-text-secondary);
-    transition: color 0.3s;
-    #{$selector-darkmode} & {
-        color: var(--color-text-secondary);
-    }
-
-    .chartsInactive {
-        display: inline;
-    }
-
-    .chartsActive {
-        display: none;
-    }
-
-    #{$selector-darkmode} & {
-        .chartsInactive {
-            display: none;
-        }
-
-        .chartsActive {
-            display: inline;
-        }
-    }
-}
-
-.toggleCheckbox:not(:checked) + .toggleContainer .chartsToggle:hover {
-    background: color-mix(in srgb, var(--color-bg-tertiary), var(--color-bg-primary) 15%);
-    transition: all 0.3s ease-in;
-}
-
-.switchContainer {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    top: 42px;
-}
-
-.toggleBackground {
-    opacity: 0.7;
-    position: absolute;
-    top: 29px;
-    left: 50%;
-    transform: translate(-50%, -50%);
-
-    #{$selector-darkmode} & {
-        opacity: 0.2;
-    }
-}
-
-.toggleCheckbox {
-    position: relative;
-    z-index: 2;
-}
-
-.horizontalRule {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 100%;
-    border-top: 1px solid #000;
-}
-
-.toggleWrapper {
-    top: 48px;
-    max-height: 70px; // Prevents 1px height change on toggle
-}
-
-.gradient {
-    position: absolute;
-    top: -22px;
-    height: 100px;
-    width: 100%;
-    background: linear-gradient(transparent, var(--color-bg-brand-solid));
-    opacity: 0.05;
-
-    #{$selector-darkmode} & {
-        background: linear-gradient(transparent, var(--color-fg-primary));
-    }
-}
-
-.videoPrompt {
-    margin-bottom: $spacing-size-12;
-}
-
-.categoryTableHeader {
+.featureGroupName {
     margin-top: $spacing-size-3;
     margin-bottom: $spacing-size-2;
-    padding-top: $spacing-size-3;
-    background-color: var(--color-bg-secondary);
-    padding-bottom: $spacing-size-3;
-    padding-left: $spacing-size-3;
+    padding: $spacing-size-3;
     // No radius: the band spans the tinted columns and has to cover them corner to corner.
     border: 1px solid var(--color-border-secondary);
+    background-color: var(--color-bg-secondary);
     color: var(--color-text-secondary);
-    z-index: 1;
-
-    &:first-child {
-        margin-top: 0;
-    }
-
-    .tableContainer:not(:last-child) & {
-        @media screen and (min-width: $breakpoint-pricing-large) {
-            position: sticky;
-            top: 172px;
-        }
-    }
 
     #{$selector-darkmode} & {
         background-color: color-mix(in srgb, var(--color-bg-secondary), var(--color-bg-primary) 55%);
     }
 }
 
-/* mobile breakpoint responsive */
-@media screen and (max-width: $breakpoint-pricing-medium) {
-    .licensesOuter {
-        display: flex;
-        flex-direction: column;
-        gap: $spacing-size-8;
-        padding-top: $spacing-size-3;
+.contactSection {
+    --pricing-page-bg: var(--color-bg-primary);
+
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-size-4 $spacing-size-10;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        flex-direction: row;
+    }
+}
+
+.contactCopy {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+
+    h2 {
+        margin-bottom: $spacing-size-3;
+    }
+}
+
+.socialProof {
+    margin-top: $spacing-size-12;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        margin-top: $spacing-size-24;
     }
 
-    .desktopTableContainer {
-        display: none;
+    // CustomerLogos fades its edges into --color-bg-primary; match it to the card's tint over the page.
+    > div {
+        --color-bg-primary: color-mix(in srgb, var(--color-util-brand-50) 20%, var(--pricing-page-bg));
+
+        margin-top: $spacing-size-8;
+        margin-bottom: $spacing-size-4;
     }
+}
+
+.socialProofLabel {
+    font-weight: var(--text-semibold);
+    opacity: 0.6;
+}
+
+.contactForm {
+    flex: 1;
 }
