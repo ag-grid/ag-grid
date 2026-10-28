@@ -63,7 +63,7 @@ const stockBorder = (property: string, stockParams: any, params: any): BorderVal
     return Object.keys(ownParts).length ? ownParts : true;
 };
 
-export const BorderValueEditor = ({ param, value, onChange }: ValueEditorProps<BorderValue>) => {
+export const BorderValueEditor = ({ param, value, onChange, label: fieldLabel }: ValueEditorProps<BorderValue>) => {
     const params = getThemeDefaultParams(useRenderedTheme());
     if (!borderIsOn(param.property, value, params)) {
         return null;
@@ -71,7 +71,7 @@ export const BorderValueEditor = ({ param, value, onChange }: ValueEditorProps<B
     const parts = borderParts(value, params);
     const inherited = inheritedBorders[param.property];
     const inheritedParts = inherited ? borderParts(params[inherited] as BorderValue | undefined, params) : {};
-    const label = param.label.toLowerCase();
+    const label = (fieldLabel ?? param.label).toLowerCase();
     const setPart = <K extends BorderPart>(part: K, partValue: BorderParts[K] | null) =>
         onChange(withBorderPart(value, part, partValue, params));
 
@@ -92,6 +92,7 @@ export const BorderValueEditor = ({ param, value, onChange }: ValueEditorProps<B
                 <FormField label="Width">
                     <LengthInput
                         value={paramValueToCss('borderWidth', width, null) || ''}
+                        ariaLabel={`${label} width`}
                         min={0}
                         icon={borderWidthIcon}
                         swipeAdjustmentDivisor={20}

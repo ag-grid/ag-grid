@@ -89,6 +89,7 @@ export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
                     param={param}
                     value={editorValue}
                     onChange={onChange}
+                    label={label}
                     icon={labelControl ? undefined : props.icon}
                     swipeAdjustmentDivisor={props.swipeAdjustmentDivisor}
                     min={props.min}
