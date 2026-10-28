@@ -65,9 +65,14 @@ const noUndeclaredToken = (primary, secondaryOptions) => (root, result) => {
         return;
     }
 
+    // The linted file's own declarations count too, as its source on disk can
+    // be stale, e.g. while it is being edited.
     const declared = getDeclaredTokens(secondaryOptions.tokenSources);
+    const declaredLocally = new Set();
+    root.walkDecls(/^--/, (decl) => declaredLocally.add(decl.prop));
+
     walkVarReferences(root, (decl, token) => {
-        if (!isTokenShaped(token) || declared.has(token)) {
+        if (!isTokenShaped(token) || declared.has(token) || declaredLocally.has(token)) {
             return;
         }
         report({

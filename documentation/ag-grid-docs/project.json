@@ -113,7 +113,8 @@
         "{projectRoot}/src/**/*.{scss,css}",
         "{projectRoot}/stylelint.config.mjs",
         "{workspaceRoot}/external/ag-website-shared/src/**/*.{scss,css}",
-        "{workspaceRoot}/external/ag-website-shared/stylelint/**"
+        "{workspaceRoot}/external/ag-website-shared/stylelint/**",
+        { "externalDependencies": ["stylelint", "postcss-scss"] }
       ],
       "options": {
         "cwd": "{projectRoot}"

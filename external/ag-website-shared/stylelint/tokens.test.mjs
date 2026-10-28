@@ -1,3 +1,5 @@
+import { describe, expect, test } from 'vitest';
+
 import { findVarReferences, isMalformedToken, isPaletteToken, isTokenShaped, parseDeclaredTokens } from './tokens.mjs';
 
 describe('parseDeclaredTokens', () => {
