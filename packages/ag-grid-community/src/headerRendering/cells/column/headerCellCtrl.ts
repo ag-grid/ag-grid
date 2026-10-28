@@ -549,7 +549,12 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
         updateSortableCssClass();
 
         this.setRefreshFunction('updateSortable', updateSortableCssClass);
-        compBean.addManagedEventListeners({ sortChanged: this.refreshAriaSort.bind(this) });
+        compBean.addManagedEventListeners({
+            sortChanged: () => {
+                this.refreshAriaSort();
+                this.announceAriaDescription();
+            },
+        });
     }
 
     private setupFilterClass(compBean: BeanStub): void {
@@ -639,15 +644,29 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, AgCo
     private refreshAriaSort(): void {
         let description: string | null = null;
         const { beans, column, comp, sortable, gos } = this;
+        const translate = this.getLocaleTextFunc();
+        const sortSvc = beans.sortSvc;
         if (sortable) {
-            const translate = this.getLocaleTextFunc();
-            const sortDef = beans.sortSvc?.getDisplaySort(column) ?? null;
+            const sortDef = sortSvc?.getDisplaySort(column) ?? null;
             comp.setAriaSort(_getAriaSortState(sortDef));
             description = _getEnableColumnSelection(gos)
                 ? translate('ariaSortableColumnWithCellSelection', 'Press ALT ENTER to sort')
                 : translate('ariaSortableColumn', 'Press ENTER to sort');
         } else {
             comp.setAriaSort();
+        }
+        const sortIndex = sortSvc?.getDisplaySortIndex(column);
+        const sortCount = sortSvc?.getDisplaySortCount() ?? 0;
+        if (sortIndex != null && sortCount > 1) {
+            const priority = String(sortIndex + 1);
+            const count = String(sortCount);
+            const sortPriority = translate('ariaSortPriority', 'Sort priority ${priority} of ${count}', [
+                priority,
+                count,
+            ])
+                .replaceAll('${priority}', priority)
+                .replaceAll('${count}', count);
+            description = description ? `${sortPriority}. ${description}` : sortPriority;
         }
         this.setAriaDescriptionProperty('sort', description);
     }

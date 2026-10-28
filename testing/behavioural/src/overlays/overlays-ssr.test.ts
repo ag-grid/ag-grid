@@ -38,6 +38,9 @@ describe('ag-grid overlays state', () => {
 
     test('should show loading and no rows overlay, also when changing columns', async () => {
         let finishLoadData: () => void;
+        let requestCount = 0;
+        // a refresh requests its rows asynchronously, so wait for that request before finishing it
+        const waitForRequest = (count: number) => vi.waitFor(() => expect(requestCount).toBe(count));
 
         let firstLoad: () => void;
         const firstLoadPromise = new Promise<void>((resolve) => {
@@ -52,6 +55,7 @@ describe('ag-grid overlays state', () => {
             onGridReady: ({ api }) => {
                 api.setGridOption('serverSideDatasource', {
                     getRows: async (p) => {
+                        requestCount++;
                         finishLoadData = () => {
                             api.hideOverlay();
                             response.rowCount = response.rowData.length;
@@ -107,12 +111,14 @@ describe('ag-grid overlays state', () => {
 
         api.refreshServerSide({ route: [] });
         expect(hasLoadingIcon()).toBe(true);
+        await waitForRequest(2);
         finishLoadData!();
         expect(hasLoadingIcon()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(false);
 
         response.rowData = [];
         api.refreshServerSide({ route: [] });
+        await waitForRequest(3);
         finishLoadData!();
         expect(hasLoadingIcon()).toBe(false);
         expect(hasNoRowsOverlay()).toBe(true);

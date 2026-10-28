@@ -1,5 +1,6 @@
 import { AdvancedParamSelector } from '@ag-website-shared/components/theme-builder/AdvancedParamSelector';
 import { CollapsibleSection } from '@ag-website-shared/components/theme-builder/CollapsibleSection';
+import { PaletteEditor } from '@ag-website-shared/components/theme-builder/PaletteEditor';
 import { ParamEditor } from '@ag-website-shared/components/theme-builder/ParamEditor';
 import { PartEditor } from '@ag-website-shared/components/theme-builder/PartEditor';
 import {
@@ -15,10 +16,13 @@ import {
 import { useCollapsibleSections } from '@ag-website-shared/components/theme-builder/useCollapsibleSections';
 import styled from '@emotion/styled';
 
+import { useChartPalette } from './chartTheme';
+
 const DEFAULT_OPEN_SECTIONS = ['General', 'All Parameters'];
 
 export const EditorPanel = () => {
     const sectionProps = useCollapsibleSections(DEFAULT_OPEN_SECTIONS);
+    const [chartPalette, setChartPalette] = useChartPalette();
 
     return (
         <PanelWrapper>
@@ -92,6 +96,9 @@ export const EditorPanel = () => {
             <CollapsibleSection {...sectionProps('Icons')}>
                 <PartEditor featureName="iconSet" />
                 <ParamEditor param="iconSize" label="Size" />
+            </CollapsibleSection>
+            <CollapsibleSection {...sectionProps('Chart palette')}>
+                <PaletteEditor value={chartPalette} onChange={setChartPalette} />
             </CollapsibleSection>
             <CollapsibleSection {...sectionProps('All Parameters')}>
                 <AdvancedParamSelector />

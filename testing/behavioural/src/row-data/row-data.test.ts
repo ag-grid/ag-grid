@@ -20,7 +20,7 @@ import {
     ScrollApiModule,
     TextFilterModule,
 } from 'ag-grid-community';
-import type { GridOptions, IRowNode, ModelUpdatedEvent } from 'ag-grid-community';
+import type { GridOptions, IRowNode, ModelUpdatedEvent, RowNode } from 'ag-grid-community';
 
 describe('ag-grid row data', () => {
     const gridsManager = new TestGridsManager({
@@ -709,6 +709,34 @@ describe('ag-grid row data', () => {
         expect(ten.rowTop).toBeNull();
         expect(ten.rowIndex).toBeNull();
         expect(ten.displayed).toBe(false);
+    });
+
+    test('an unrendered row stops calling a removed listener, and releases its event service with its last one', () => {
+        const api = gridsManager.createGrid('G', {
+            columnDefs: [{ field: 'name' }],
+            rowData: [{ name: 'Alice' }, { name: 'Bob' }],
+            getRowId: ({ data }) => data.name,
+            isExternalFilterPresent: () => true,
+            doesExternalFilterPass: (node) => node.data.name !== 'Bob',
+        });
+        const rowNode = api.getRowNode('Bob') as RowNode;
+        expect(api.getDisplayedRowCount()).toBe(1);
+        rowNode.removeEventListener('dataChanged', () => {});
+
+        const calls: string[] = [];
+        const removed = () => calls.push('removed');
+        const kept = () => calls.push('kept');
+        rowNode.addEventListener('dataChanged', removed);
+        rowNode.addEventListener('dataChanged', kept);
+        rowNode.removeEventListener('dataChanged', removed);
+        rowNode.setData({ name: 'Bob' });
+        expect(calls).toEqual(['kept']);
+
+        rowNode.removeEventListener('dataChanged', kept);
+        expect(rowNode.__localEventService).toBeNull();
+        rowNode.addEventListener('dataChanged', () => calls.push('added after'));
+        rowNode.setData({ name: 'Bob' });
+        expect(calls).toEqual(['kept', 'added after']);
     });
 
     describe('onModelUpdated event flags', () => {

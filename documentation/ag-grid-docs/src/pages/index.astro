@@ -6,6 +6,7 @@ import { Quotes } from '@components/quotes/Quotes';
 import { quotesData } from '@components/quotes/quotesData';
 import { LandingPageFWSelector } from '@ag-website-shared/components/landing-pages/LandingPageFWSelector';
 import { FrameworkCtaLink } from '@components/landing-pages/FrameworkCtaLink';
+import { FrameworkLinks } from '@components/framework-links/FrameworkLinks';
 import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
 import { Version } from '@ag-website-shared/components/whats-new/components/Version';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
@@ -25,7 +26,9 @@ import LogoMark from '@components/logo/LogoMark';
 import { urlWithPrefix } from '@utils/urlWithPrefix';
 import { DEFAULT_FRAMEWORK, DISABLE_MARKDOWN_DOCS } from '@constants';
 import { buildSiteNavigationElement, siteRootUrl } from '@ag-website-shared/utils/structuredData';
+import TechnicalReviewCredit from '@components/technical-review-credit/TechnicalReviewCredit.astro';
 import { buildHomepageFAQPage } from '@utils/docsStructuredData';
+import { buildTechnicalReviewStructuredData } from '@utils/technicalReviewers';
 
 const { data: versionsData } = (await getEntry('versions', 'ag-grid-versions')) as CollectionEntry<'versions'>;
 const { data: faqData } = (await getEntry('faqs', 'homepage')) as CollectionEntry<'faqs'>;
@@ -119,7 +122,11 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/index.m
     }
     showSearchBar={false}
     showDocsNav={false}
-    pageStructuredData={[siteNavigationStructuredData, faqStructuredData]}
+    pageStructuredData={[
+        siteNavigationStructuredData,
+        faqStructuredData,
+        ...buildTechnicalReviewStructuredData({ pageUrl: siteRoot, reviewer: 'stephen' }),
+    ]}
     markdownUrl={markdownUrl}
 >
     <div class={styles.homepageHero}>
@@ -251,6 +258,9 @@ const markdownUrl = DISABLE_MARKDOWN_DOCS ? undefined : urlWithBaseUrl('/index.m
     <LandingPageSection client:load {...sectionProps('faq-section')}>
         <LandingPageFAQ client:load FAQData={renderedFaqData} />
     </LandingPageSection>
+
+    <TechnicalReviewCredit reviewer="stephen" standalone />
+    <FrameworkLinks client:idle />
 </Layout>
 
 <script>

@@ -28,10 +28,16 @@ const gridOptions: GridOptions<Employee> = {
     ],
     calculatedColumns: {
         applyMode: 'deferred',
-        getValidationErrors: ({ referencedColumns, internalErrors }) =>
-            referencedColumns.some((column) => column.getColId() === 'salary')
+        getValidationErrors: ({ colDef, referencedColumns, internalErrors }) => ({
+            ...internalErrors,
+            headerName:
+                (colDef.headerName?.length ?? 0) > 30
+                    ? ['Use a title of at most 30 characters.']
+                    : internalErrors?.headerName,
+            calculatedExpression: referencedColumns.some((column) => column.getColId() === 'salary')
                 ? ['Salary cannot be used in this report.', 'Choose a sales-based expression.']
-                : internalErrors,
+                : internalErrors?.calculatedExpression,
+        }),
     },
     defaultColDef: { flex: 1, minWidth: 120 },
 };

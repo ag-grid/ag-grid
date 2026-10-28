@@ -8,7 +8,7 @@ import type {
     ResizableStructure,
     StopPropagationCallbacks,
 } from 'ag-stack';
-import { AgComponentStub, AgTabGuardFeature, _setDisplayed } from 'ag-stack';
+import { AgComponentStub, AgTabGuardFeature, _setAriaLabel, _setDisplayed } from 'ag-stack';
 
 import type { AgPanelOptions, AgPanelPostProcessPopupParams } from './agPanel';
 import { AgPanel } from './agPanel';
@@ -198,6 +198,12 @@ export class AgDialog<
     private refreshMaximizeIcon() {
         _setDisplayed(this.maximizeIcon!, !this.isMaximized);
         _setDisplayed(this.minimizeIcon!, this.isMaximized);
+
+        const translate = this.getLocaleTextFunc();
+        const label = this.isMaximized
+            ? translate('ariaLabelRestore', 'Restore')
+            : translate('ariaLabelMaximize', 'Maximize');
+        _setAriaLabel(this.maximizeButtonComp!.getGui(), label);
     }
 
     private clearMaximizebleListeners() {
@@ -274,7 +280,13 @@ export class AgDialog<
     private buildMaximizeAndMinimizeElements(): AgComponent<TBeanCollection, TProperties, TGlobalEvents, any> {
         const maximizeButtonComp = (this.maximizeButtonComp = this.createBean<
             AgComponent<TBeanCollection, TProperties, TGlobalEvents, any>
-        >(new AgComponentStub({ tag: 'div', cls: 'ag-dialog-button' })));
+        >(
+            new AgComponentStub({
+                tag: 'button',
+                cls: 'ag-button ag-dialog-button',
+                attrs: { type: 'button' },
+            })
+        ));
 
         const eGui = maximizeButtonComp.getGui();
 

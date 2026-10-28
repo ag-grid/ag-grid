@@ -222,7 +222,7 @@ describe('calculatedColumnChanged', () => {
     ])('reports expression validation for an API edit to "$expression"', async ({ expression, validation }) => {
         const changed = vi.fn<(event: CalculatedColumnChangedEvent) => void>();
         const isColumnReferenceable = vi.fn(() => false);
-        const getValidationErrors = vi.fn(() => ['Dialog edits are not allowed.']);
+        const getValidationErrors = vi.fn(() => ({ calculatedExpression: ['Dialog edits are not allowed.'] }));
         const api = createGrid('changed-validation-api', {
             columnDefs,
             rowData,
@@ -268,7 +268,9 @@ describe('calculatedColumnChanged', () => {
     test('reports custom validation on expression and title edits without invoking the callback again', async () => {
         const changed = vi.fn<(event: CalculatedColumnChangedEvent) => void>();
         const getValidationErrors = vi.fn(({ colDef }: CalculatedColumnValidationParams) =>
-            colDef.calculatedExpression === '[revenue] * 2' ? ['This expression is not allowed.'] : null
+            colDef.calculatedExpression === '[revenue] * 2'
+                ? { calculatedExpression: ['This expression is not allowed.'] }
+                : null
         );
         const api = createGrid('changed-validation-custom', {
             columnDefs,

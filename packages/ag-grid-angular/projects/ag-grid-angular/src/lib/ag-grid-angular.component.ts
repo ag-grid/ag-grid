@@ -1,6 +1,4 @@
 /* eslint-disable no-duplicate-imports */
-// False positive lint error, ElementRef and co can't be type imports
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import {
     AfterViewInit,
     Component,
@@ -2305,7 +2303,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public calculatedColumnCreated: EventEmitter<CalculatedColumnCreatedEvent<TData>> = new EventEmitter<
         CalculatedColumnCreatedEvent<TData>
     >();
-    /** A calculated column's title, data type, expression or group visibility has changed.
+    /** A calculated column's title, data type, expression, group visibility or expression validation has changed.
      * Fires once per committed update, not during initialisation or Grid State restoration.
      * Live updates can contain incomplete or invalid expressions.
      */

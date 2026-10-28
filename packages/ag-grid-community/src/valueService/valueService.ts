@@ -492,6 +492,10 @@ export class ValueService extends BeanStub implements NamedBean {
         suppliedFormatter?: (value: any) => string,
         useFormatterFromColumn = true
     ): string | null {
+        // preserve evaluated errors; ordinary strings and successful calculations still use the formatter
+        if (this.formula?.isFormulaErrorValue(column, node, value)) {
+            return value;
+        }
         let result: string | null = null;
         // supplied formatter wins (e.g. set filter items have their own); otherwise use the column's
         const formatter = suppliedFormatter ?? (useFormatterFromColumn ? column.valueFormatter : undefined);

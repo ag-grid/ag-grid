@@ -428,13 +428,13 @@ describe('AgRichSelectList', () => {
         const announce = vi.fn();
 
         (list as any).loadingLabel = 'Loading...';
-        (list as any).noMatchesLabel = 'No matches to show';
+        (list as any).noMatchesLabel = 'No matches';
         list.setStateAnnouncementCallback(announce);
 
         list.setIsLoading();
         list.setCurrentList([]);
 
         expect(announce).toHaveBeenNthCalledWith(1, 'Loading...');
-        expect(announce).toHaveBeenNthCalledWith(2, 'No matches to show');
+        expect(announce).toHaveBeenNthCalledWith(2, 'No matches');
     });
 });

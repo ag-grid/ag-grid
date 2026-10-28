@@ -5,7 +5,6 @@ import type { BeanCollection } from '../context/context';
 import type { SelectionEventSourceType } from '../events';
 import { _getRowIdCallback } from '../gridOptionsUtils';
 import type { IServerSideStore } from '../interfaces/IServerSideStore';
-import type { IFrameworkEventListenerService } from '../interfaces/iFrameworkEventListenerService';
 import type {
     AgRowNodeEventListener,
     CellChangedEvent,
@@ -334,7 +333,6 @@ export class RowNode<TData = any>
     public __selected: boolean | undefined = false;
     /** If re-naming this property, you must also update `IGNORED_SIBLING_PROPERTIES` */
     public __localEventService: LocalEventService<RowNodeEventType> | null;
-    private frameworkEventListenerService?: IFrameworkEventListenerService<any, any>;
 
     private readonly beans: BeanCollection;
 
@@ -630,15 +628,15 @@ export class RowNode<TData = any>
     }
 
     public getDataValue<TValue = any>(
-        colKey: ColKey<TValue>,
+        colKey: ColKey<TData, TValue>,
         from: 'value' | 'data-raw' | 'edit' | 'batch' | 'transformed'
     ): TValue | null | undefined;
     public getDataValue<TValue = any>(
-        colKey: ColKey<TValue>,
+        colKey: ColKey<TData, TValue>,
         from?: 'data'
     ): TValue | IAggFuncResult<TValue> | null | undefined;
     public getDataValue<TValue = any>(
-        colKey: ColKey<TValue>,
+        colKey: ColKey<TData, TValue>,
         from: DataValueFrom | undefined
     ): TValue | IAggFuncResult<TValue> | null | undefined {
         // PERFORMANCE CRITICAL
@@ -826,12 +824,22 @@ export class RowNode<TData = any>
     }
 
     public __addEventListener<T extends RowNodeEventType>(eventType: T, listener: AgRowNodeEventListener<T>): void {
-        const localEventService = (this.__localEventService ??= new LocalEventService());
+        let localEventService = this.__localEventService;
+        if (!localEventService) {
+            localEventService = new LocalEventService();
+            this.__localEventService = localEventService;
+        }
         localEventService.addEventListener(eventType, listener as any);
     }
 
     public __removeEventListener<T extends RowNodeEventType>(eventType: T, listener: AgRowNodeEventListener<T>): void {
-        this.removeLocalListener(eventType, listener);
+        const localEventService = this.__localEventService;
+        if (localEventService) {
+            localEventService.removeEventListener(eventType, listener as any);
+            if (localEventService.noRegisteredListenersExist()) {
+                this.__localEventService = null;
+            }
+        }
     }
 
     /**
@@ -839,14 +847,18 @@ export class RowNode<TData = any>
      */
     public addEventListener<T extends RowNodeEventType>(eventType: T, userListener: AgRowNodeEventListener<T>): void {
         this.beans.validation?.checkRowEvents(eventType);
-        const localEventService = (this.__localEventService ??= new LocalEventService());
-        this.frameworkEventListenerService = this.beans.frameworkOverrides.createLocalEventListenerWrapper?.(
-            this.frameworkEventListenerService,
-            localEventService
-        );
-
-        const listener = this.frameworkEventListenerService?.wrap(eventType, userListener) ?? userListener;
-        localEventService.addEventListener(eventType, listener);
+        if (typeof userListener !== 'function') {
+            return; // ignoring non functions for compatibility
+        }
+        let localEventService = this.__localEventService;
+        if (!localEventService) {
+            localEventService = new LocalEventService();
+            this.__localEventService = localEventService;
+        }
+        const listener =
+            this.beans.frameworkOverrides.wrapLocalListener?.(localEventService, eventType, userListener) ??
+            userListener;
+        localEventService.addEventListener(eventType, listener as any);
     }
 
     /**
@@ -856,17 +868,14 @@ export class RowNode<TData = any>
         eventType: T,
         userListener: AgRowNodeEventListener<T>
     ): void {
-        const listener = this.frameworkEventListenerService?.unwrap(eventType, userListener) ?? userListener;
-        this.removeLocalListener(eventType, listener);
-    }
-
-    private removeLocalListener<T extends RowNodeEventType>(eventType: T, listener: AgRowNodeEventListener<T>) {
         const localEventService = this.__localEventService;
-        if (localEventService) {
-            localEventService.removeEventListener(eventType, listener as any);
-            if (localEventService.noRegisteredListenersExist()) {
-                this.__localEventService = null;
-            }
+        if (!localEventService) {
+            return;
+        }
+        const listener = localEventService.listenerWrapper?.unwrap(eventType, userListener) ?? userListener;
+        localEventService.removeEventListener(eventType, listener as any);
+        if (localEventService.noRegisteredListenersExist()) {
+            this.__localEventService = null;
         }
     }
 

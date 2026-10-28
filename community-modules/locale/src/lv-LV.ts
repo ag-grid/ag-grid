@@ -782,6 +782,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaRowSelect: 'Nospiediet ATSTARPI, lai atlasītu šo rindu',
     ariaRowSelectionDisabled: 'Šai rindai rindu atlase ir atspējota',
     ariaSearch: 'Meklēt',
+    ariaSortPriority: 'Kārtošanas prioritāte ${priority} no ${count}',
     ariaSortableColumn: 'Nospiediet ENTER, lai kārtotu',
     ariaSortableColumnWithCellSelection: 'Nospiediet ALT ENTER, lai kārtotu',
     ariaToggleVisibility: 'Nospiediet ATSTARPI, lai pārslēgtu redzamību',
@@ -818,6 +819,12 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolūti dilstoša secība',
 
     ariaLabelDialog: 'Dialogs',
+
+    ariaLabelClose: 'Aizvērt',
+
+    ariaLabelMaximize: 'Maksimizēt',
+
+    ariaLabelRestore: 'Atjaunot',
 
     ariaLabelColumnMenu: 'Kolonnas izvēlne',
     ariaLabelColumnFilter: 'Kolonnas filtrs',

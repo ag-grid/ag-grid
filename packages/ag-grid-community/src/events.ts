@@ -81,12 +81,12 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         undoEnded: UndoEndedEvent<TData, TContext>;
         redoStarted: RedoStartedEvent<TData, TContext>;
         redoEnded: RedoEndedEvent<TData, TContext>;
-        cellClicked: CellClickedEvent<TData, TContext>;
-        cellDoubleClicked: CellDoubleClickedEvent<TData, TContext>;
-        cellMouseDown: CellMouseDownEvent<TData, TContext>;
-        cellContextMenu: CellContextMenuEvent<TData, TContext>;
-        cellValueChanged: CellValueChangedEvent<TData, TContext>;
-        cellEditRequest: CellEditRequestEvent<TData, TContext>;
+        cellClicked: CellClickedEvent<TData, any, TContext>;
+        cellDoubleClicked: CellDoubleClickedEvent<TData, any, TContext>;
+        cellMouseDown: CellMouseDownEvent<TData, any, TContext>;
+        cellContextMenu: CellContextMenuEvent<TData, any, TContext>;
+        cellValueChanged: CellValueChangedEvent<TData, any, TContext>;
+        cellEditRequest: CellEditRequestEvent<TData, any, TContext>;
         rowValueChanged: RowValueChangedEvent<TData, TContext>;
         headerFocused: HeaderFocusedEvent<TData, TContext>;
         cellFocused: CellFocusedEvent<TData, TContext>;
@@ -94,9 +94,9 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         selectionChanged: SelectionChangedEvent<TData, TContext>;
         tooltipShow: TooltipShowEvent<TData, TContext>;
         tooltipHide: TooltipHideEvent<TData, TContext>;
-        cellKeyDown: FullWidthCellKeyDownEvent<TData, TContext> | CellKeyDownEvent<TData, TContext>;
-        cellMouseOver: CellMouseOverEvent<TData, TContext>;
-        cellMouseOut: CellMouseOutEvent<TData, TContext>;
+        cellKeyDown: FullWidthCellKeyDownEvent<TData, TContext> | CellKeyDownEvent<TData, any, TContext>;
+        cellMouseOver: CellMouseOverEvent<TData, any, TContext>;
+        cellMouseOut: CellMouseOutEvent<TData, any, TContext>;
         filterChanged: FilterChangedEvent<TData, TContext>;
         filterModified: FilterModifiedEvent<TData, TContext>;
         filterUiChanged: FilterUiChangedEvent<TData, TContext>;
@@ -117,8 +117,8 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         dragCancelled: DragCancelledEvent<TData, TContext>;
         rowEditingStarted: RowEditingStartedEvent<TData, TContext>;
         rowEditingStopped: RowEditingStoppedEvent<TData, TContext>;
-        cellEditingStarted: CellEditingStartedEvent<TData, TContext>;
-        cellEditingStopped: CellEditingStoppedEvent<TData, TContext>;
+        cellEditingStarted: CellEditingStartedEvent<TData, any, TContext>;
+        cellEditingStopped: CellEditingStoppedEvent<TData, any, TContext>;
         bodyScroll: BodyScrollEvent<TData, TContext>;
         bodyScrollEnd: BodyScrollEndEvent<TData, TContext>;
         paginationChanged: PaginationChangedEvent<TData, TContext>;
@@ -189,7 +189,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         overlayExclusiveChanged: AgEvent<'overlayExclusiveChanged'>;
         rowNodeDataChanged: RowNodeDataChangedEvent<TData, TContext>;
         columnsReset: ColumnsResetEvent<TData, TContext>;
-        cellEditValuesChanged: CellEditValuesChangedEvent<TData, TContext>;
+        cellEditValuesChanged: CellEditValuesChangedEvent<TData, any, TContext>;
         filterSwitched: FilterSwitchedEvent<TData, TContext>;
         batchEditingStarted: BatchEditingStartedEvent<TData, TContext>;
         batchEditingStopped: BatchEditingStoppedEvent<TData, TContext>;
@@ -755,7 +755,7 @@ export interface CalculatedColumnChangedEvent<TData = any, TContext = any> exten
     TData,
     TContext
 > {
-    /** Changed definition properties and their previous/new values. Never empty; values are snapshots. */
+    /** Changed definition properties and their previous/new values. Empty when only expression validation changed; values are snapshots. */
     changes: CalculatedColumnChanges;
     /** Validation snapshot of `expression` when this event was dispatched, including saved dialog restrictions and custom errors. */
     expressionValidation: CalculatedColumnExpressionValidation;

@@ -345,7 +345,7 @@ export class AgVirtualList<
             return false;
         }
 
-        const rowTopPixel = index * this.rowHeight;
+        const rowTopPixel = this.eContainer.offsetTop + index * this.rowHeight;
         const rowBottomPixel = rowTopPixel + this.rowHeight;
         const eGui = this.getGui();
 

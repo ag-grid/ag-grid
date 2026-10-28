@@ -15,7 +15,7 @@ import type { BeanCollection } from './context/context';
 import type { ColDef, ColGroupDef } from './entities/colDef';
 import type { GridOptions } from './entities/gridOptions';
 import type { AgEventType, AgPublicEventType } from './eventTypes';
-import { ALWAYS_SYNC_GLOBAL_EVENTS } from './eventTypes';
+import { ALWAYS_SYNC_GLOBAL_EVENTS, _PUBLIC_EVENTS } from './eventTypes';
 import { GlobalGridOptions } from './globalGridOptions';
 import type { GridOptionOrDefault, GridOptionsWithDefaults } from './gridOptionsDefault';
 import { GRID_OPTION_DEFAULTS } from './gridOptionsDefault';
@@ -77,6 +77,10 @@ let gridInstanceSequence = 0;
 // for where this is used.
 const GRID_DOM_KEY = '__ag_grid_instance';
 
+const ASYNC_PUBLIC_EVENTS: ReadonlySet<AgEventType> = new Set(
+    _PUBLIC_EVENTS.filter((eventType) => !ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType))
+);
+
 export class GridOptionsService
     extends BeanStub
     implements NamedBean, IPropertiesService<GridOptionsWithDefaults, AgGridCommon<any, any>>
@@ -102,6 +106,7 @@ export class GridOptionsService
     // Used to hold user events until the grid is ready
     // Required to support React 19 StrictMode. See IFrameworkOverrides.runWhenReadyAsync but also is likely a good idea that onGridReady is the first event fired.
     private gridReadyFired = false;
+    private gridReadyStarted = false;
     private queueEvents: { eventName: AgPublicEventType; event: any }[] = [];
 
     // This is quicker then having code call gridOptionsService.get('context')
@@ -114,8 +119,10 @@ export class GridOptionsService
     public postConstruct(): void {
         this.validateGridOptions(this.gridOptions);
 
-        this.eventSvc.addGlobalListener(this.globalEventHandlerFactory().bind(this), true);
-        this.eventSvc.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
+        const eventSvc = this.eventSvc;
+        const onGlobalEvent = this.onGlobalEvent.bind(this);
+        eventSvc.addGlobalListener(onGlobalEvent, true, ASYNC_PUBLIC_EVENTS);
+        eventSvc.addGlobalListener(onGlobalEvent, false, ALWAYS_SYNC_GLOBAL_EVENTS);
 
         // Ensure the propertyEventService has framework overrides set so that it can fire events outside of angular
         this.propEventSvc.setFrameworkOverrides(this.beans.frameworkOverrides);
@@ -238,49 +245,41 @@ export class GridOptionsService
         this.propEventSvc.removeEventListener(key, listener);
     }
 
-    // responsible for calling the onXXX functions on gridOptions
-    // It forces events defined in GridOptionsService.alwaysSyncGlobalEvents to be fired synchronously.
-    // This is required for events such as GridPreDestroyed.
-    // Other events can be fired asynchronously or synchronously depending on config.
-    private readonly globalEventHandlerFactory = (restrictToSyncOnly?: boolean) => {
-        return (eventName: AgEventType, event?: any) => {
-            // prevent events from being fired _after_ the grid has been destroyed
-            if (!this.isAlive()) {
-                return;
-            }
+    /** Calls the gridOptions `onXxx` handler of a public event, the only events it is registered for. */
+    private onGlobalEvent(eventType: AgEventType, event?: any): void {
+        // prevent events from being fired _after_ the grid has been destroyed
+        if (!this.isAlive()) {
+            return;
+        }
 
-            const alwaysSync = ALWAYS_SYNC_GLOBAL_EVENTS.has(eventName);
-            if ((alwaysSync && !restrictToSyncOnly) || (!alwaysSync && restrictToSyncOnly)) {
-                return;
+        const eventName = eventType as AgPublicEventType;
+        // Queueing a diagnostic would deliver it after `onGridReady`, and drop it if the grid never gets there; a grid
+        // destroyed inside `onGridReady` would drop its preDestroyed the same way. One destroyed before gets neither.
+        if (
+            this.gridReadyFired ||
+            eventName === 'issueRaised' ||
+            (eventName === 'gridPreDestroyed' && this.gridReadyStarted)
+        ) {
+            this.callEventHandler(eventName, event);
+        } else if (eventName === 'gridReady') {
+            this.gridReadyStarted = true;
+            this.callEventHandler(eventName, event);
+            this.gridReadyFired = true;
+            for (const q of this.queueEvents) {
+                this.callEventHandler(q.eventName, q.event);
             }
+            this.queueEvents = [];
+        } else {
+            this.queueEvents.push({ eventName, event });
+        }
+    }
 
-            if (!isPublicEventHandler(eventName)) {
-                return;
-            }
-
-            const fireEvent = (name: AgPublicEventType, e: any) => {
-                const eventHandlerName = _PUBLIC_EVENT_HANDLERS_MAP[name];
-                const eventHandler = this.gridOptions[eventHandlerName];
-                if (typeof eventHandler === 'function') {
-                    this.beans.frameworkOverrides.wrapOutgoing(() => eventHandler(e));
-                }
-            };
-
-            // Queueing a diagnostic would deliver it after `onGridReady`, and drop it if the grid never gets there.
-            if (this.gridReadyFired || eventName === 'issueRaised') {
-                fireEvent(eventName, event);
-            } else if (eventName === 'gridReady') {
-                fireEvent(eventName, event);
-                this.gridReadyFired = true;
-                for (const q of this.queueEvents) {
-                    fireEvent(q.eventName, q.event);
-                }
-                this.queueEvents = [];
-            } else {
-                this.queueEvents.push({ eventName, event });
-            }
-        };
-    };
+    private callEventHandler(eventName: AgPublicEventType, event: any): void {
+        const eventHandler = this.gridOptions[_PUBLIC_EVENT_HANDLERS_MAP[eventName]];
+        if (typeof eventHandler === 'function') {
+            this.beans.frameworkOverrides.wrapOutgoing(() => eventHandler(event));
+        }
+    }
 
     public getDomDataKey(): string {
         return this.domDataKey;
@@ -380,8 +379,4 @@ export class GridOptionsService
         }
         return false;
     }
-}
-
-function isPublicEventHandler(eventName: AgEventType): eventName is AgPublicEventType {
-    return !!_PUBLIC_EVENT_HANDLERS_MAP[eventName as AgPublicEventType];
 }

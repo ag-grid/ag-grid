@@ -135,7 +135,7 @@ Usage: ./checks.sh [options] [extra nx args]
                                 in one Nx invocation so the tasks run in parallel and hit the cache.
   --projects a,b                Narrow to specific projects.
   --targets lint                Override the target list.
-  --fresh                       Bypass the Nx cache.
+  --fresh                       Bypass the Nx cache: results are neither read nor stored.
   --warn                        Print the warnings a passing run produced.
   --verbose                     Print task output even when everything passes.
 

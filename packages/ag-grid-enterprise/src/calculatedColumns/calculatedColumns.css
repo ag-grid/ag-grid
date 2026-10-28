@@ -51,6 +51,19 @@
     text-decoration: underline wavy var(--ag-calculated-column-error-underline-color);
     text-underline-offset: 0.15em;
     text-decoration-skip-ink: none;
+
+    @media (forced-colors: active) {
+        text-decoration-color: CanvasText;
+    }
+}
+
+@media (forced-colors: active) {
+    .ag-calculated-column-expression-mirror {
+        /* keep underlines visible without duplicating the native textarea text */
+        display: block;
+        forced-color-adjust: none;
+        -webkit-text-fill-color: transparent;
+    }
 }
 
 /* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */

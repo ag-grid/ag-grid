@@ -5,7 +5,7 @@ import { CacheProvider } from '@emotion/react';
 import { useMemo } from 'react';
 
 import { RootContainer } from './RootContainer';
-import { darkModePreset, lightModePreset } from './presets';
+import { applyGridPreset, darkModePreset, lightModePreset } from './presets';
 import './registerParamDocs';
 import './registerThemeBuilderConfig';
 
@@ -18,7 +18,10 @@ export const ThemeBuilder = () => {
 
     return (
         <CacheProvider value={emotionCache}>
-            <ThemeBuilderProvider initialPreset={isDarkMode ? darkModePreset : lightModePreset}>
+            <ThemeBuilderProvider
+                initialPreset={isDarkMode ? darkModePreset : lightModePreset}
+                applyInitialPreset={applyGridPreset}
+            >
                 <LoadFontFamilyMenuFonts />
                 <RootContainer />
             </ThemeBuilderProvider>

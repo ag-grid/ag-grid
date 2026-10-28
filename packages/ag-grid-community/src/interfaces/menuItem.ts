@@ -17,6 +17,13 @@ export interface MenuItemLeafDef<TData = any, TContext = any> {
     action?: (params: IMenuActionParams<TData, TContext>) => void;
     /** Set to true to provide a check beside the option. */
     checked?: boolean;
+    /**
+     * The aria role for a checkable item. Set to `'menuitemradio'` when the item is one of a set of mutually exclusive choices,
+     * or `'menuitem'` when the item is not part of a checkable group, so the check is not announced as a checked state.
+     * Ignored when `checked` is `undefined`, as the item is then always a `'menuitem'`.
+     * @default 'menuitemcheckbox'
+     */
+    menuItemRole?: 'menuitem' | 'menuitemcheckbox' | 'menuitemradio';
     /** The icon to display, either a DOM element or HTML string. */
     icon?: Element | string;
     /** CSS classes to apply to the menu item. */

@@ -3,7 +3,7 @@ import type { Part } from 'ag-stack';
 import { allParamModels } from '../../theming/ParamModel';
 import { allFeatureModels } from '../../theming/PartModel';
 import { parseThemeCode, validateAndConvertToPreset } from '../../theming/parseThemeCode';
-import { applyPreset } from '../../theming/preset';
+import { type Preset, applyPreset } from '../../theming/preset';
 import type { RenderedThemeInfo } from '../../theming/rendered-theme';
 import type { Store } from '../../theming/store';
 
@@ -73,14 +73,28 @@ export type ValidationResult =
       }
     | { status: 'error'; validParamCount: 0; error: string };
 
-export function validateThemeCode(code: string): ValidationResult {
+/**
+ * One top-level key a host reads itself, such as its own options exported
+ * beside the theme. Its value is read whole, so its contents are never taken
+ * for theme params.
+ */
+export interface ThemeCodeExtension<T> {
+    key: string;
+    read: (value: unknown) => T | undefined;
+    /** Replaces the plain preset apply. */
+    apply: (store: Store, preset: Preset, value: T | undefined) => void;
+    /** What else was found, appended to the summary. */
+    describe?: (value: T) => string;
+}
+
+export function validateThemeCode<T>(code: string, extension?: ThemeCodeExtension<T>): ValidationResult {
     if (!code.trim()) {
         return { status: 'empty', validParamCount: 0 };
     }
 
     const validParamKeys = new Set<string>(allParamModels().map((m) => m.property));
     const parseResult = parseThemeCode(code, {
-        isRecognizedParam: (key) => validParamKeys.has(key),
+        isRecognizedParam: (key) => validParamKeys.has(key) || key === extension?.key,
         extractParts,
         noParamsError,
     });
@@ -88,7 +102,13 @@ export function validateThemeCode(code: string): ValidationResult {
         return { status: 'error', validParamCount: 0, error: parseResult.error };
     }
 
-    const { preset: parsedPreset, warnings } = validateAndConvertToPreset(parseResult);
+    const params = { ...parseResult.params };
+    let extended: T | undefined;
+    if (extension) {
+        extended = extension.read(params[extension.key]);
+        delete params[extension.key];
+    }
+    const { preset: parsedPreset, warnings } = validateAndConvertToPreset({ ...parseResult, params });
     const validParamCount = Object.keys(parsedPreset.params || {}).length + (parsedPreset.parts?.length || 0);
 
     if (validParamCount === 0) {
@@ -99,13 +119,18 @@ export function validateThemeCode(code: string): ValidationResult {
         };
     }
 
-    const apply = (store: Store) => applyPreset(store, parsedPreset);
+    const apply = (store: Store) =>
+        extension ? extension.apply(store, parsedPreset, extended) : applyPreset(store, parsedPreset);
+    const described = extended !== undefined ? extension?.describe?.(extended) : undefined;
+    const summary = described
+        ? `Found ${validParamCount} theme parameter${validParamCount !== 1 ? 's' : ''} and ${described}`
+        : undefined;
 
     if (warnings.length === 0) {
-        return { status: 'success', validParamCount, apply };
+        return { status: 'success', validParamCount, summary, apply };
     }
 
-    return { status: 'warning', validParamCount, apply, warnings };
+    return { status: 'warning', validParamCount, summary, apply, warnings };
 }
 
 export function renderThemeCodeSample({ overriddenParams, usedParts }: RenderedThemeInfo): string {
