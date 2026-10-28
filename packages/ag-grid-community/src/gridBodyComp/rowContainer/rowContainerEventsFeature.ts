@@ -69,8 +69,9 @@ export class RowContainerEventsFeature extends BeanStub {
                 return;
             }
         } else if (eventName === 'click' || eventName === 'contextmenu') {
-            // controls such as selection checkboxes stop their click reaching the grid, but it still confirms a tap
-            this.processPendingTouchDown(mouseEvent.target);
+            // a click or contextmenu proves the deferred touch press was a tap or long press, so replay it first;
+            // this runs even when a control (checkbox, group chevron) stopped the click reaching the grid
+            this.confirmPendingTouchDown(mouseEvent.target);
         }
 
         if (!stoppedForGrid) {
@@ -78,8 +79,8 @@ export class RowContainerEventsFeature extends BeanStub {
         }
     }
 
-    /** Replays a deferred touch press once a tap or long press lands on the same target; a scroll never does. */
-    public processPendingTouchDown(target: EventTarget | null): void {
+    /** Replays a deferred touch press once a tap or long press confirms it on the same target; a scroll never does. */
+    public confirmPendingTouchDown(target: EventTarget | null): void {
         const touchDown = this.pendingTouchDown;
         this.pendingTouchDown = null;
         if (touchDown?.target === target) {

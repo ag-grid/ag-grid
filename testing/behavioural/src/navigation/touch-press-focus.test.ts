@@ -132,7 +132,7 @@ describe('touch press on a cell', () => {
         expect(api.getFocusedCell()).toBeUndefined();
 
         span.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
-        expect(api.getFocusedCell()).not.toBeNull();
+        expect(api.getFocusedCell()?.rowIndex).toBe(0);
     });
 
     test('a tap on a selection checkbox selects the row and focuses its cell', async () => {
