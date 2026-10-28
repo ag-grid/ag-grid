@@ -7,6 +7,6 @@
 	remote = https://github.com/ag-grid/ag-shared.git
 	branch = latest
 	commit = 2fcd86e4dea04dd001a637e2a985c61b9bec72ec
-	parent = 99936fe04bf531f2bcfd3fdba794bdfb473cfb95
+	parent = 3548fe0dd931b1eed421ead8a1fb6bd1cca4e84b
 	method = rebase
 	cmdver = 0.4.9
