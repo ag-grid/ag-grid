@@ -56,7 +56,7 @@ export class SelectionColService extends BaseSingleColService implements NamedBe
 
         return {
             // overridable properties
-            width: 50,
+            initialWidth: 50,
             resizable: false,
             suppressHeaderMenuButton: true,
             sortable: false,
@@ -66,7 +66,6 @@ export class SelectionColService extends BaseSingleColService implements NamedBe
             editable: false,
             suppressFillHandle: true,
             suppressAutoSize: true,
-            pinned: null,
             // overrides
             ...filteredSelColDef,
             // non-overridable properties

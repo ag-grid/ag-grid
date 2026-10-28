@@ -198,6 +198,11 @@ export class RowNumbersService
         }
     }
 
+    /** `width` is the fit floor: re-sent, or below `minWidth`, it keeps the fitted or dragged width. */
+    protected override keepsColDefWidth(col: AgColumn, width: number, prevWidth: number | undefined): boolean {
+        return width === prevWidth || width < col.minWidth;
+    }
+
     public resetColumnState(source: ColumnEventType): void {
         const column = this.column;
         if (!column) {

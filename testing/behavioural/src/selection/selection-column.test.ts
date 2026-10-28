@@ -146,7 +146,7 @@ describe('Row Selection Grid Options', () => {
         `);
     });
 
-    test('a selectionColumnDef change ends a dropped flex, and keeps a dragged width unless it sets a new width', () => {
+    test('a selectionColumnDef update keeps the flex, pin and sort it leaves out, and null clears them', () => {
         const [api] = createGrid({
             columnDefs,
             rowData,
@@ -154,32 +154,96 @@ describe('Row Selection Grid Options', () => {
             selectionColumnDef: { resizable: true, flex: 1 },
         });
         const col = api.getColumn('ag-Grid-SelectionColumn')!;
+        const flexedWidth = col.getActualWidth();
 
         api.setGridOption('selectionColumnDef', { resizable: true });
-        expect(col.getFlex()).toBeNull();
-        expect(col.getActualWidth()).toBe(50);
-
-        api.setGridOption('selectionColumnDef', { resizable: true, flex: 1, maxWidth: 50 });
         expect(col.getFlex()).toBe(1);
-        api.setGridOption('selectionColumnDef', { resizable: true });
+        expect(col.getActualWidth()).toBe(flexedWidth);
+        api.setGridOption('selectionColumnDef', { resizable: true, width: 70 });
+        expect(col.getFlex()).toBe(1);
+        expect(col.getActualWidth()).toBe(flexedWidth);
+        api.setGridOption('selectionColumnDef', { resizable: true, flex: null });
         expect(col.getFlex()).toBeNull();
+        expect(col.getActualWidth()).toBe(flexedWidth);
+
+        api.setGridOption('selectionColumnDef', { resizable: true, flex: 1, width: 70 });
+        expect(col.getFlex()).toBe(1);
+        api.setGridOption('selectionColumnDef', { resizable: true, flex: null, width: 70 });
+        expect(col.getFlex()).toBeNull();
+        expect(col.getActualWidth()).toBe(70);
+
+        api.setGridOption('selectionColumnDef', { resizable: true, pinned: 'right' });
+        expect(col.getPinned()).toBe('right');
+        api.setGridOption('selectionColumnDef', { resizable: true });
+        expect(col.getPinned()).toBe('right');
+        api.setGridOption('selectionColumnDef', { resizable: true, pinned: null });
+        expect(col.getPinned()).toBeNull();
+
+        api.setGridOption('selectionColumnDef', { resizable: true, sortable: true, sort: 'asc' });
+        expect(col.getSort()).toBe('asc');
+        api.applyColumnState({ state: [{ colId: col.getColId(), sort: 'desc' }] });
+        api.setGridOption('selectionColumnDef', { resizable: true, sortable: true });
+        expect(col.getSort()).toBe('desc');
+        api.setGridOption('selectionColumnDef', { resizable: true, sortable: true, sort: null });
+        expect(col.getSort()).toBeNull();
+    });
+
+    test('a selectionColumnDef width applies on every update setting it, within its bounds; one left out keeps the width', () => {
+        const [api] = createGrid({
+            columnDefs,
+            rowData,
+            rowSelection: { mode: 'multiRow' },
+            selectionColumnDef: { resizable: true, width: 70 },
+        });
+        const col = api.getColumn('ag-Grid-SelectionColumn')!;
+
+        api.setColumnWidths([{ key: col, newWidth: 90 }], true, 'uiColumnResized');
+        api.setGridOption('selectionColumnDef', { resizable: true });
+        expect(col.getActualWidth()).toBe(90);
+
+        api.setGridOption('selectionColumnDef', { resizable: true, width: 70 });
+        expect(col.getActualWidth()).toBe(70);
+        api.setColumnWidths([{ key: col, newWidth: 90 }], true, 'uiColumnResized');
+        api.setGridOption('selectionColumnDef', { resizable: true, width: 70, headerTooltip: 'Select' });
+        expect(col.getActualWidth()).toBe(70);
+
+        api.setGridOption('selectionColumnDef', { resizable: true, width: 40, minWidth: 60 });
+        expect(col.getActualWidth()).toBe(60);
+        api.setGridOption('selectionColumnDef', { resizable: true, width: 40, minWidth: 30 });
+        expect(col.getActualWidth()).toBe(40);
+        api.setGridOption('selectionColumnDef', { resizable: true, width: 70, maxWidth: 50 });
         expect(col.getActualWidth()).toBe(50);
+        api.setGridOption('selectionColumnDef', { resizable: true, width: 70 });
+        expect(col.getActualWidth()).toBe(70);
 
         api.setGridOption('selectionColumnDef', { resizable: true, flex: 1 });
         api.setColumnWidths([{ key: col, newWidth: 120 }], true, 'uiColumnResized');
-        api.setGridOption('selectionColumnDef', { resizable: true });
-        expect(col.getActualWidth()).toBe(120);
-
-        api.setColumnWidths([{ key: col, newWidth: 80 }], true, 'uiColumnResized');
-        api.setGridOption('selectionColumnDef', { resizable: true, pinned: 'right' });
-        expect(col.getActualWidth()).toBe(80);
-
-        api.setGridOption('selectionColumnDef', { resizable: true, width: 70, pinned: 'right' });
-        expect(col.getActualWidth()).toBe(70);
-
-        api.setColumnWidths([{ key: col, newWidth: 90 }], true, 'uiColumnResized');
         api.setGridOption('selectionColumnDef', { resizable: true, width: 70 });
-        expect(col.getActualWidth()).toBe(90);
+        expect(col.getActualWidth()).toBe(70);
+    });
+
+    test('selectionColumnDef initial values apply only when the column is created', () => {
+        const [api] = createGrid({
+            columnDefs,
+            rowData,
+            rowSelection: { mode: 'multiRow' },
+            selectionColumnDef: { sortable: true, initialWidth: 80, initialPinned: 'left', initialSort: 'asc' },
+        });
+        const col = api.getColumn('ag-Grid-SelectionColumn')!;
+
+        expect(col.getActualWidth()).toBe(80);
+        expect(col.getPinned()).toBe('left');
+        expect(col.getSort()).toBe('asc');
+
+        api.applyColumnState({ state: [{ colId: col.getColId(), sort: null }] });
+        api.setGridOption('selectionColumnDef', {
+            sortable: true,
+            initialWidth: 80,
+            initialPinned: 'left',
+            initialSort: 'asc',
+            headerTooltip: 'Select',
+        });
+        expect(col.getSort()).toBeNull();
     });
 
     test('setting an equal selectionColumnDef again changes nothing', async () => {

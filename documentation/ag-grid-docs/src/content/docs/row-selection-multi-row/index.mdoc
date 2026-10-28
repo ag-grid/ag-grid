@@ -125,7 +125,7 @@ See [Row Grouping - Selecting Groups](./grouping-row-selection) for more on this
 
 The checkbox column may be customised in a similar way to any other column, by specifying its column definition in the `selectionColumnDef` grid option.
 
-Updating `selectionColumnDef` keeps a width the user has resized the column to, within its new `minWidth` and `maxWidth`, unless the update sets a different `width` of at least `minWidth`.
+Updating `selectionColumnDef` updates the column as [Updating Column Definitions](./column-updating-definitions/) does for any column: an attribute the update leaves out, such as `width`, `pinned` or `flex`, keeps its current state, `null` clears `pinned` or `flex`, and a `width` applies on every update that sets it unless the column is flexing. To give the column a starting width that the user's resizing keeps, set `initialWidth` instead of `width`.
 
 {% apiDocumentation source="grid-options/properties.json" section="selection" names=["selectionColumnDef"] /%}
 

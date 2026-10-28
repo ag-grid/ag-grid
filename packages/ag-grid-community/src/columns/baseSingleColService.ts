@@ -56,28 +56,32 @@ export abstract class BaseSingleColService extends BeanStub {
         const colModel = beans.colModel;
         colModel.beginColUpdate();
         try {
-            const prevColDef = col.colDef;
+            const prevWidth = col.colDef.width;
             const colDef = this.createColDef();
             if (!col.setColDef(colDef, null, source)) {
                 return;
             }
             const state = _getColumnStateFromColDef(beans, colDef, col.colId);
+            const stateFlex = state.flex;
             const width = state.width;
-            // a dragged width already ended the flex, and stays the user's
-            const flexEnded = col.flex != null && !!prevColDef.flex && !colDef.flex;
-            if (flexEnded) {
-                state.flex = null;
-            }
-            // a colDef width applies when it changes or flex ends, else the width is kept within the new bounds
-            if (width != null && width >= col.minWidth && (width !== prevColDef.width || flexEnded)) {
-                col.resetWidthOwnership();
-            } else {
+            if (((stateFlex === undefined ? col.flex : stateFlex) ?? 0) > 0) {
+                // a flexing column takes no colDef width, as `AgColumn.reapplyColDef`
+                state.width = undefined;
+            } else if (width == null || this.keepsColDefWidth(col, width, prevWidth)) {
                 state.width = Math.max(col.actualWidth, col.minWidth);
+            } else {
+                state.width = Math.max(width, col.minWidth);
+                col.resetWidthOwnership();
             }
             _applyColumnState(beans, { state: [state] }, source, true);
         } finally {
             colModel.endColUpdate();
         }
+    }
+
+    /** Whether an update setting `width` keeps the current width; a column definition's `width` applies on every update. */
+    protected keepsColDefWidth(_col: AgColumn, _width: number, _prevWidth: number | undefined): boolean {
+        return false;
     }
 
     protected destroyColumn(): void {
