@@ -1,19 +1,25 @@
-import { _isInheritedReservedKey } from 'ag-stack';
-
 /**
  * Reads a deep property from `data` following a pre-split dotted path. Hot-path variant of
  * `_getValueUsingDotField` (ag-stack): callers reading the same field per cell cache `field.split('.')` once
- * (on colDef update) and use this, avoiding a split + array allocation per read. Same reserved-key rule.
+ * (on colDef update) and use this, avoiding a split + array allocation per read.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _getValueUsingDotPath(data: any, fields: string[]): any {
     let currentObject = data;
     for (let i = 0, len = fields.length; i < len; i++) {
-        const key = fields[i];
-        if (currentObject == null || _isInheritedReservedKey(currentObject, key)) {
+        if (currentObject == null) {
             return undefined;
         }
-        currentObject = currentObject[key];
+        currentObject = currentObject[fields[i]];
     }
     return currentObject;
+}
+
+/**
+ * True when `field` reaches `__proto__`: as any segment of a dotted path, or as the whole field when dot notation
+ * is off. Such fields are neither read nor written.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _isProtoField(field: string, dotNotation: boolean): boolean {
+    return dotNotation ? field.split('.').includes('__proto__') : field === '__proto__';
 }

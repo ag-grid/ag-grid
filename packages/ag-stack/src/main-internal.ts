@@ -261,8 +261,6 @@ export {
     _exists,
     _getOwn,
     _hasOwn,
-    _isInheritedReservedKey,
-    _isReservedKey,
     _jsonEquals,
     _makeNull,
     _missing,
@@ -279,4 +277,4 @@ export {
     _splitBracketed,
     _toString,
 } from './utils/string';
-export { _getValueUsingDotField, _getValueUsingPlainField } from './utils/value';
+export { _getValueUsingDotField } from './utils/value';

@@ -969,7 +969,9 @@ export const AG_GRID_ERRORS = {
     338: () =>
         '`success()` or `fail()` was called more than once for the same Server-Side Row Model request, so the later call was ignored.' as const,
     339: ({ field, key }: { field: string; key: string }) =>
-        `The value for field \`${field}\` was not set, as \`${key}\` on that path is inherited rather than held by the row data itself. Use a \`valueSetter\` to set this value.` as const,
+        `The value for field \`${field}\` was not set, as \`${key}\` on that path is not an object. Use a \`valueSetter\` to set this value.` as const,
+    340: ({ field }: { field: string }) =>
+        `Field \`${field}\` contains \`__proto__\`, which field paths do not support, so the column shows no value and its edits are refused. Use a \`valueGetter\` and \`valueSetter\` instead.` as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -985,7 +987,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 339;
+export const MAX_ERROR_ID = 340;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

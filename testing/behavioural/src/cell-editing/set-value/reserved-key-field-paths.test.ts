@@ -32,9 +32,22 @@ const expectObjectPrototypeUnchanged = () => {
     expect(({} as Record<string, unknown>)[KEY]).toBeUndefined();
 };
 
-/** A row holding the reserved keys as its own data, as `JSON.parse` produces them. */
+/** A row holding `__proto__` and `constructor` as its own data, as `JSON.parse` produces them. */
 const ownReservedRow = () =>
-    JSON.parse(`{"id":"own","__proto__":{"${KEY}":"own proto"},"constructor":{"prototype":{"${KEY}":"own ctor"}}}`);
+    JSON.parse(
+        `{"id":"own","nested":{},"__proto__":{"${KEY}":"own proto"},"constructor":{"prototype":{"${KEY}":"own ctor"}}}`
+    );
+
+/** Runs `fn` with `console.warn` captured, returning the warnings that mention `#id`. */
+async function captureWarnings(id: number, fn: () => Promise<void>): Promise<string[]> {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+        await fn();
+        return warn.mock.calls.map((args) => args.join(' ')).filter((msg) => msg.includes(`#${id}`));
+    } finally {
+        warn.mockRestore();
+    }
+}
 
 describe('Reserved key handling in field paths', () => {
     const gridMgr = new TestGridsManager({
@@ -57,8 +70,8 @@ describe('Reserved key handling in field paths', () => {
 
     beforeEach(() => {
         clipboardUtils.init();
-        // Refused writes log warning #339, which these tests trigger on purpose
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [339] });
+        // Refused writes log warning #339 and `__proto__` fields #340, which these tests trigger on purpose
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [339, 340] });
     });
 
     afterEach(() => {
@@ -98,66 +111,168 @@ describe('Reserved key handling in field paths', () => {
         await waitFor(() => expect(api.getEditingCells()).toEqual([]));
     }
 
-    describe('field without dot notation', () => {
-        const createPlainFieldGrid = () =>
-            createGrid({
-                columnDefs: [{ field: 'id' }, { field: 'constructor' }],
-                rowData: [{ id: 'own', constructor: 'own ctor' }, { id: 'plain' }],
+    describe('`__proto__` fields', () => {
+        test.each([
+            { position: 'the whole field', field: '__proto__', options: {} },
+            { position: 'the first segment', field: PROTO_FIELD, options: {} },
+            { position: 'the last segment', field: 'nested.__proto__', options: {} },
+            {
+                position: 'the whole field without dot notation',
+                field: '__proto__',
+                options: { suppressFieldDotNotation: true },
+            },
+        ])('are neither read nor written when `__proto__` is $position', async ({ field, options }) => {
+            const api = await createGrid({
+                columnDefs: [{ field: 'id' }, { field }],
+                rowData: [ownReservedRow(), { id: 'plain', nested: {} }],
+                ...options,
             });
 
-        test('reads a reserved key only where the row holds it as own data', async () => {
-            const api = await createPlainFieldGrid();
-
-            expect(api.getCellValue({ rowNode: api.getRowNode('own')!, colKey: 'constructor' })).toBe('own ctor');
-            expect(api.getCellValue({ rowNode: api.getRowNode('plain')!, colKey: 'constructor' })).toBeUndefined();
+            for (const id of ['own', 'plain']) {
+                const row = api.getRowNode(id)!;
+                expect(api.getCellValue({ rowNode: row, colKey: field })).toBeUndefined();
+                expect(row.setDataValue(field, { [KEY]: 'changed' })).toBe(false);
+                expect(Object.getPrototypeOf(row.data)).toBe(Object.prototype);
+                expect(Object.getPrototypeOf(row.data.nested)).toBe(Object.prototype);
+            }
+            expect(Object.getOwnPropertyDescriptor(api.getRowNode('own')!.data, '__proto__')!.value).toEqual({
+                [KEY]: 'own proto',
+            });
+            expectObjectPrototypeUnchanged();
         });
 
-        test('setDataValue on a reserved key', async () => {
-            const api = await createPlainFieldGrid();
-            const own = api.getRowNode('own')!;
-            const plain = api.getRowNode('plain')!;
+        test('warns once per column when the column is set up', async () => {
+            const field = `warned.__proto__.${KEY}`;
+            const warnings = await captureWarnings(340, async () => {
+                const api = await createGrid({
+                    columnDefs: [{ field: 'id' }, { field }],
+                    rowData: [{ id: 'plain' }],
+                });
+                const row = api.getRowNode('plain')!;
+                expect(row.setDataValue(field, 'changed')).toBe(false);
+                expect(row.setDataValue(field, 'changed again')).toBe(false);
+            });
 
-            expect(plain.setDataValue('constructor', 'changed')).toBe(false);
-            expect(plain.data).toEqual({ id: 'plain' });
-
-            expect(own.setDataValue('constructor', 'changed')).toBe(true);
-            expect(api.getCellValue({ rowNode: own, colKey: 'constructor' })).toBe('changed');
+            expect(warnings).toHaveLength(1);
+            expect(warnings[0]).toContain(field);
         });
     });
 
-    describe('field with dot notation', () => {
-        test('reads reserved keys only where the row holds them as own data', async () => {
-            const api = await createFieldGrid();
-
-            expect(api.getCellValue({ rowNode: api.getRowNode('own')!, colKey: PROTO_FIELD })).toBe('own proto');
-            expect(api.getCellValue({ rowNode: api.getRowNode('own')!, colKey: CTOR_FIELD })).toBe('own ctor');
-            expect(api.getCellValue({ rowNode: api.getRowNode('plain')!, colKey: PROTO_FIELD })).toBeUndefined();
-            expect(api.getCellValue({ rowNode: api.getRowNode('plain')!, colKey: CTOR_FIELD })).toBeUndefined();
-        });
-
-        test.each([PROTO_FIELD, CTOR_FIELD])('setDataValue on %s', async (field) => {
+    describe('writing through a field path', () => {
+        test('writes through objects the row holds as its own data, including `constructor`', async () => {
             const api = await createFieldGrid();
             const own = api.getRowNode('own')!;
-            const plain = api.getRowNode('plain')!;
 
-            expect(plain.setDataValue(field, 'changed')).toBe(false);
-            expect(plain.data).toEqual({ id: 'plain' });
-            expectObjectPrototypeUnchanged();
-
-            expect(own.setDataValue(field, 'changed')).toBe(true);
-            expect(api.getCellValue({ rowNode: own, colKey: field })).toBe('changed');
+            expect(api.getCellValue({ rowNode: own, colKey: CTOR_FIELD })).toBe('own ctor');
+            expect(own.setDataValue(CTOR_FIELD, 'changed')).toBe(true);
+            expect(api.getCellValue({ rowNode: own, colKey: CTOR_FIELD })).toBe('changed');
             expectObjectPrototypeUnchanged();
         });
 
-        test.each([PROTO_FIELD, CTOR_FIELD])('cell editing on %s', async (field) => {
+        const callback = () => undefined;
+        test.each([
+            { through: 'an inherited `constructor`', field: CTOR_FIELD, data: {}, target: () => Object.prototype },
+            {
+                through: 'an inherited method',
+                field: `toString.${KEY}`,
+                data: {},
+                target: () => Object.prototype.toString,
+            },
+            {
+                through: 'an array method',
+                field: `items.map.${KEY}`,
+                data: { items: [1] },
+                target: () => Array.prototype.map,
+            },
+            {
+                through: 'a function held as own data',
+                field: `callback.${KEY}`,
+                data: { callback },
+                target: () => callback,
+            },
+            { through: 'a string', field: `label.${KEY}`, data: { label: 'text' }, target: () => String.prototype },
+        ])('refuses a write through $through', async ({ field, data, target }) => {
+            const api = await createGrid({
+                columnDefs: [{ field: 'id' }, { field }],
+                rowData: [{ id: 'r', ...data }],
+            });
+            const row = api.getRowNode('r')!;
+
+            expect(row.setDataValue(field, 'changed')).toBe(false);
+            expect(row.data).toEqual({ id: 'r', ...data });
+            expect(Object.hasOwn(target(), KEY)).toBe(false);
+            expectObjectPrototypeUnchanged();
+        });
+
+        test('warns once per field when a write is refused', async () => {
+            const field = `warnedLabel.${KEY}`;
+            const warnings = await captureWarnings(339, async () => {
+                const api = await createGrid({
+                    columnDefs: [{ field: 'id' }, { field }],
+                    rowData: [{ id: 'r', warnedLabel: 'text' }],
+                });
+                const row = api.getRowNode('r')!;
+                expect(row.setDataValue(field, 'changed')).toBe(false);
+                expect(row.setDataValue(field, 'changed again')).toBe(false);
+            });
+
+            expect(warnings).toHaveLength(1);
+            expect(warnings[0]).toContain(field);
+        });
+
+        test('reads inherited keys from class instance rows', async () => {
+            class Driver {
+                constructor(public id: string) {}
+            }
+            const api = await createGrid({
+                columnDefs: [{ field: 'id' }, { field: 'constructor.name' }],
+                rowData: [new Driver('1')],
+            });
+
+            expect(api.getCellValue({ rowNode: api.getRowNode('1')!, colKey: 'constructor.name' })).toBe('Driver');
+        });
+
+        test('reads and writes through class getters and setters', async () => {
+            class Person {
+                private first = 'Ada';
+                private home = { city: 'London' };
+                constructor(public id: string) {}
+                get name() {
+                    return this.first;
+                }
+                set name(value: string) {
+                    this.first = value;
+                }
+                get address() {
+                    return this.home;
+                }
+            }
+            const api = await createGrid({
+                columnDefs: [{ field: 'id' }, { field: 'name' }, { field: 'address.city' }],
+                rowData: [new Person('1')],
+            });
+            const row = api.getRowNode('1')!;
+
+            expect(row.setDataValue('name', 'Grace')).toBe(true);
+            expect(row.setDataValue('address.city', 'Paris')).toBe(true);
+            expect(api.getCellValue({ rowNode: row, colKey: 'name' })).toBe('Grace');
+            expect(api.getCellValue({ rowNode: row, colKey: 'address.city' })).toBe('Paris');
+        });
+    });
+
+    describe('every write path', () => {
+        test('cell editing', async () => {
             const api = await createFieldGrid();
 
-            await editCellViaUi(api, 'plain', field, 'edited');
+            await editCellViaUi(api, 'plain', PROTO_FIELD, 'edited');
+            await editCellViaUi(api, 'plain', CTOR_FIELD, 'edited');
             expect(api.getRowNode('plain')!.data).toEqual({ id: 'plain' });
-            expectObjectPrototypeUnchanged();
 
-            await editCellViaUi(api, 'own', field, 'edited');
-            expect(api.getCellValue({ rowNode: api.getRowNode('own')!, colKey: field })).toBe('edited');
+            await editCellViaUi(api, 'own', PROTO_FIELD, 'edited');
+            await editCellViaUi(api, 'own', CTOR_FIELD, 'edited');
+            const own = api.getRowNode('own')!;
+            expect(api.getCellValue({ rowNode: own, colKey: PROTO_FIELD })).toBeUndefined();
+            expect(api.getCellValue({ rowNode: own, colKey: CTOR_FIELD })).toBe('edited');
             expectObjectPrototypeUnchanged();
         });
 
@@ -206,24 +321,28 @@ describe('Reserved key handling in field paths', () => {
         test('undo and redo', async () => {
             const api = await createFieldGrid({ undoRedoCellEditing: true });
 
-            await editCellViaUi(api, 'own', PROTO_FIELD, 'edited');
-            await editCellViaUi(api, 'plain', PROTO_FIELD, 'edited');
+            await editCellViaUi(api, 'own', CTOR_FIELD, 'edited');
+            await editCellViaUi(api, 'plain', CTOR_FIELD, 'edited');
             const own = api.getRowNode('own')!;
 
             api.undoCellEditing();
             api.undoCellEditing();
-            expect(api.getCellValue({ rowNode: own, colKey: PROTO_FIELD })).toBe('own proto');
+            expect(api.getCellValue({ rowNode: own, colKey: CTOR_FIELD })).toBe('own ctor');
 
             api.redoCellEditing();
             api.redoCellEditing();
-            expect(api.getCellValue({ rowNode: own, colKey: PROTO_FIELD })).toBe('edited');
+            expect(api.getCellValue({ rowNode: own, colKey: CTOR_FIELD })).toBe('edited');
             expect(api.getRowNode('plain')!.data).toEqual({ id: 'plain' });
             expectObjectPrototypeUnchanged();
         });
 
-        test('group row editing creates no reserved keys', async () => {
+        test('group row editing', async () => {
             const api = await createGrid({
-                columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: PROTO_FIELD }],
+                columnDefs: [
+                    { field: 'country', rowGroup: true, hide: true },
+                    { field: PROTO_FIELD },
+                    { field: CTOR_FIELD },
+                ],
                 defaultColDef: { editable: true },
                 enableGroupEdit: true,
                 groupDefaultExpanded: -1,
@@ -234,53 +353,8 @@ describe('Reserved key handling in field paths', () => {
             expect(groupNode.group).toBe(true);
 
             expect(groupNode.setDataValue(PROTO_FIELD, 'group value')).toBe(false);
+            expect(groupNode.setDataValue(CTOR_FIELD, 'group value')).toBe(false);
             expectObjectPrototypeUnchanged();
-        });
-
-        test.each([
-            { field: `toString.${KEY}`, target: () => Object.prototype.toString },
-            { field: `items.map.${KEY}`, target: () => Array.prototype.map },
-        ])('does not write onto an inherited method through $field', async ({ field, target }) => {
-            const api = await createGrid({
-                columnDefs: [{ field: 'id' }, { field }],
-                rowData: [{ id: 'plain', items: [1] }],
-            });
-
-            expect(api.getRowNode('plain')!.setDataValue(field, 'changed')).toBe(false);
-            expect(Object.hasOwn(target(), KEY)).toBe(false);
-        });
-
-        test('refuses a reserved last segment and warns once per field', async () => {
-            const field = `nested.__proto__`;
-            const api = await createGrid({
-                columnDefs: [{ field: 'id' }, { field }],
-                rowData: [{ id: 'plain', nested: {} }],
-            });
-            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-            try {
-                const row = api.getRowNode('plain')!;
-                expect(row.setDataValue(field, { [KEY]: 'changed' })).toBe(false);
-                expect(row.setDataValue(field, { [KEY]: 'changed again' })).toBe(false);
-
-                expect(Object.getPrototypeOf(row.data.nested)).toBe(Object.prototype);
-                expectObjectPrototypeUnchanged();
-                const warnings = warn.mock.calls.map((args) => args.join(' ')).filter((msg) => msg.includes('#339'));
-                expect(warnings).toHaveLength(1);
-                expect(warnings[0]).toContain('nested.__proto__');
-            } finally {
-                warn.mockRestore();
-            }
-        });
-
-        test('writes through a function the row holds as its own data', async () => {
-            const callback = () => undefined;
-            const api = await createGrid({
-                columnDefs: [{ field: 'id' }, { field: `callback.${KEY}` }],
-                rowData: [{ id: 'own', callback }],
-            });
-
-            expect(api.getRowNode('own')!.setDataValue(`callback.${KEY}`, 'changed')).toBe(true);
-            expect((callback as unknown as Record<string, unknown>)[KEY]).toBe('changed');
         });
     });
 
@@ -298,23 +372,22 @@ describe('Reserved key handling in field paths', () => {
             return api;
         }
 
-        const generatedRows = () => [
-            JSON.parse(
-                `{"id":"own","${PROTO_FIELD}":"a","${CTOR_FIELD}":"b","__proto__":{"${KEY}":"c"},"constructor":{"${KEY}":"d"}}`
-            ),
-            { id: 'plain', [PROTO_FIELD]: 'e', [CTOR_FIELD]: 'f' },
-        ];
-
-        test('skips keys whose path has a reserved segment', async () => {
+        test('skips keys whose path has a `__proto__` segment', async () => {
             const api = await createGeneratedGrid({ autoGenerateColumnDefs: true }, [
-                ...generatedRows(),
-                { id: 'nested', group: { 'constructor.prototype': { [KEY]: 'g' }, name: 'n' } },
+                JSON.parse(
+                    `{"id":"own","__proto__.a":1,"b.__proto__":2,"__proto__":{"c":3},"constructor":{"name":"d"},"prototype":true,"group":{"__proto__.e":4,"name":"n"}}`
+                ),
             ]);
 
-            expect(api.getColumns()!.map((col) => col.getColDef().field)).toEqual(['id']);
+            expect(api.getColumns()!.map((col) => col.getColDef().field)).toEqual([
+                'id',
+                'constructor.name',
+                'prototype',
+                'group.name',
+            ]);
         });
 
-        test('keeps dotted keys without reserved segments as nested paths', async () => {
+        test('keeps other dotted keys as nested paths', async () => {
             const api = await createGeneratedGrid({ autoGenerateColumnDefs: true }, [
                 { id: 'r1', 'user.name': 'Alice', group: { 'a.b': 1, name: 'n' } },
             ]);

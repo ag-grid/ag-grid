@@ -1,4 +1,4 @@
-import { _getValueUsingPlainField, _hasOwn, _isExpressionString, _isInheritedReservedKey } from 'ag-stack';
+import { _isExpressionString } from 'ag-stack';
 
 import type { GridApi } from '../api/gridApi';
 import type { ColumnModel } from '../columns/columnModel';
@@ -387,8 +387,9 @@ export class ValueService extends BeanStub implements NamedBean {
                 } else if (data) {
                     // field read deferred to here — skipped entirely on the valueGetter branch above
                     const field = column.field;
-                    if (field) {
-                        treeValue = readColumnField(data, column, field);
+                    if (field && !column.fieldHasProtoKey) {
+                        const fieldPath = column.fieldPath;
+                        treeValue = fieldPath ? _getValueUsingDotPath(data, fieldPath) : data[field];
                     }
                 }
                 if (treeValue !== undefined) {
@@ -438,10 +439,11 @@ export class ValueService extends BeanStub implements NamedBean {
             return ignoreSsrmAggData ? undefined : this.executeValueGetter(valueGetter, data, column, rowNode);
         }
         const field = column.field;
-        if (!field || !data || ignoreSsrmAggData) {
+        if (!field || !data || ignoreSsrmAggData || column.fieldHasProtoKey) {
             return undefined;
         }
-        return readColumnField(data, column, field);
+        const fieldPath = column.fieldPath;
+        return fieldPath ? _getValueUsingDotPath(data, fieldPath) : data[field];
     }
 
     public parseValue<TValueNew = any, TValueOld = any, TValue = any>(
@@ -775,41 +777,31 @@ export class ValueService extends BeanStub implements NamedBean {
             return this.expressionSvc?.evaluate(valueSetter, setterParams);
         }
 
-        if (!rowData || !field) {
+        if (!rowData || !field || column.fieldHasProtoKey) {
             return false;
         }
         const fieldPath = column.fieldPath;
         let valuesAreSame = false;
         if (fieldPath === null) {
-            if (_isInheritedReservedKey(rowData, field)) {
-                return this.refuseFieldWrite(field, field);
-            }
             valuesAreSame = rowData[field] === newValue;
             if (!valuesAreSame) {
                 rowData[field] = newValue;
             }
         } else {
-            // deep value — walk the pre-split path (must not mutate the column's cached `fieldPath`).
-            // Reserved keys, and inherited methods such as `toString`, are only followed where the row holds
-            // them as its own data, so a write never lands on a shared prototype or built-in function.
+            // deep value — walk the pre-split path (must not mutate the column's cached `fieldPath`). Only objects
+            // are written through, so a write never lands on a function (such as `constructor`) or a primitive.
             let currentObject = rowData;
             const lastIndex = fieldPath.length - 1;
             for (let i = 0; i < lastIndex && currentObject; ++i) {
                 const key = fieldPath[i];
-                if (_isInheritedReservedKey(currentObject, key)) {
-                    return this.refuseFieldWrite(field, key);
-                }
                 const nextObject = currentObject[key];
-                if (typeof nextObject === 'function' && !_hasOwn(currentObject, key)) {
+                if (nextObject != null && typeof nextObject !== 'object') {
                     return this.refuseFieldWrite(field, key);
                 }
                 currentObject = nextObject;
             }
-            const lastPiece = fieldPath[lastIndex];
-            if (currentObject && _isInheritedReservedKey(currentObject, lastPiece)) {
-                return this.refuseFieldWrite(field, lastPiece);
-            }
             if (currentObject) {
+                const lastPiece = fieldPath[lastIndex];
                 valuesAreSame = currentObject[lastPiece] === newValue;
                 if (!valuesAreSame) {
                     currentObject[lastPiece] = newValue;
@@ -960,16 +952,5 @@ const readSsrmFooterGroupValue = (rowNode: IRowNode, data: any, rowGroupColId: s
         return undefined;
     }
     // Read the group's own field (`rowField`); the column's cached `fieldPath` is for the column's `field`.
-    return rowField.includes('.')
-        ? _getValueUsingDotPath(data, rowField.split('.'))
-        : _getValueUsingPlainField(data, rowField);
-};
-
-/** Reads `column`'s field from `data`; only reserved-key fields pay for the own-property check. */
-const readColumnField = (data: any, column: AgColumn, field: string): any => {
-    const fieldPath = column.fieldPath;
-    if (fieldPath) {
-        return _getValueUsingDotPath(data, fieldPath);
-    }
-    return column.fieldIsReservedKey ? _getValueUsingPlainField(data, field) : data[field];
+    return rowField.includes('.') ? _getValueUsingDotPath(data, rowField.split('.')) : data[rowField];
 };

@@ -9,23 +9,6 @@ export function _hasOwn(obj: object, key: PropertyKey): boolean {
 }
 
 /**
- * True for the reserved built-in keys `__proto__`, `constructor` and `prototype`.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
-export function _isReservedKey(key: string): boolean {
-    return key === '__proto__' || key === 'constructor' || key === 'prototype';
-}
-
-/**
- * True when `key` is a reserved built-in key that `obj` does not hold as its own data, so reading or writing it
- * would reach the object's prototype chain instead of row data.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
- */
-export function _isInheritedReservedKey(obj: object, key: string): boolean {
-    return _isReservedKey(key) && !hasOwnProperty.call(obj, key);
-}
-
-/**
  * The value a lookup table holds under a user-supplied key, or `undefined` where it holds none.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */

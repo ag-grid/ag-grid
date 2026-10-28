@@ -1,5 +1,5 @@
 import type { AgBeanStubEvent, AgEvent, IAgEventEmitter } from 'ag-stack';
-import { LocalEventService, _escapeString, _isReservedKey } from 'ag-stack';
+import { LocalEventService, _escapeString } from 'ag-stack';
 
 import { _addColumnDefaultAndTypes } from '../columns/colDefUtils';
 import type { QueuedEventOwner } from '../columns/columnModel';
@@ -26,6 +26,7 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
 import { _mergedEqual } from '../utils/mergeDeep';
 import { _clamp } from '../utils/number';
+import { _isProtoField } from '../utils/value';
 import type { AgColumnGroup } from './agColumnGroup';
 import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
 import type {
@@ -157,8 +158,8 @@ export class AgColumn<TValue = any>
     /** Cached split of a dotted `field` (`field.split('.')`); `null` when not dotted / dot-notation suppressed.
      *  Non-null doubles as the "field contains dots" indicator. Read per cell via `_getValueUsingDotPath`. */
     public fieldPath: string[] | null = null;
-    /** True when `field` is read without dot notation and is a reserved key, so per-cell reads must guard it. */
-    public fieldIsReservedKey = false;
+    /** True when `field` reaches `__proto__`, so the column reads no value and refuses edits. */
+    public fieldHasProtoKey = false;
     public valueGetter: string | ValueGetterFunc<any, TValue> | undefined = undefined;
     public allowFormula: boolean = false;
     public showRowGroup: string | boolean | undefined = undefined;
@@ -407,7 +408,11 @@ export class AgColumn<TValue = any>
                 this.colFlags |= COL_FLAG_TOOLTIP_FIELD_CONTAINS_DOTS;
             }
         }
-        this.fieldIsReservedKey = this.fieldPath === null && typeof field === 'string' && _isReservedKey(field);
+        this.fieldHasProtoKey = false;
+        if (typeof field === 'string' && _isProtoField(field, !suppress)) {
+            this.fieldHasProtoKey = true;
+            this.warn(340, { field });
+        }
     }
 
     private initMinAndMaxWidths(): void {

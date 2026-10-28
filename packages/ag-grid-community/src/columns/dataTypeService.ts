@@ -1,7 +1,6 @@
 import {
     KeyCode,
     _getValueUsingDotField,
-    _getValueUsingPlainField,
     _isValidDate,
     _isValidDateTime,
     _parseBigIntOrNull,
@@ -34,6 +33,7 @@ import type { ColumnEventType } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
+import { _isProtoField } from '../utils/value';
 import type { LogService } from '../validation/logService';
 import { _addColumnDefaultAndTypes } from './colDefUtils';
 import type { ColumnModel } from './columnModel';
@@ -347,12 +347,16 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (!field) {
             return undefined;
         }
-        const fieldContainsDots = field.includes('.') && !this.gos.get('suppressFieldDotNotation');
+        const dotNotation = !this.gos.get('suppressFieldDotNotation');
+        if (_isProtoField(field, dotNotation)) {
+            return undefined;
+        }
+        const fieldContainsDots = dotNotation && field.includes('.');
         const getValue = (data: any) => {
             if (data == null) {
                 return undefined;
             }
-            return fieldContainsDots ? _getValueUsingDotField(data, field) : _getValueUsingPlainField(data, field);
+            return fieldContainsDots ? _getValueUsingDotField(data, field) : data[field];
         };
 
         let value: any;
