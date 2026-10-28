@@ -973,7 +973,13 @@
         },
         "openCalculatedColumnDialog": {
             "more": {
-                "name": "Opening the Calculated Column Dialog",
+                "name": "Calculated Column Dialog",
+                "url": "./calculated-columns/#opening-the-dialog"
+            }
+        },
+        "openAddCalculatedColumnDialog": {
+            "more": {
+                "name": "Calculated Column Dialog",
                 "url": "./calculated-columns/#opening-the-dialog"
             }
         },

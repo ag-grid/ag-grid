@@ -24,40 +24,38 @@ import {
 describe('ag-grid calculated columns', () => {
     setupCalculatedColumnsSuite();
 
-    test.each(['live', 'deferred'] as const)(
-        'the API opens an existing %s dialog without moving focus',
-        async (applyMode) => {
-            const api = createGrid('calculated-api-dialog', {
-                calculatedColumns: { applyMode },
-                columnDefs: [
-                    { field: 'sales' },
-                    { colId: 'profit', headerName: 'Profit', calculatedExpression: '[sales]' },
-                ],
-                rowData: [{ id: 'r1', sales: 10 }],
-            });
-            const trigger = document.createElement('button');
-            document.body.appendChild(trigger);
-            onTestFinished(() => trigger.remove());
-            trigger.focus();
+    test.each(['live', 'deferred'] as const)('the API opens and focuses an existing %s dialog', async (applyMode) => {
+        const api = createGrid('calculated-api-dialog', {
+            calculatedColumns: { applyMode },
+            columnDefs: [
+                { field: 'sales' },
+                { colId: 'profit', headerName: 'Profit', calculatedExpression: '[sales]' },
+            ],
+            rowData: [{ id: 'r1', sales: 10 }],
+        });
+        const trigger = document.createElement('button');
+        document.body.appendChild(trigger);
+        onTestFinished(() => trigger.remove());
+        trigger.focus();
 
-            api.openCalculatedColumnDialog('profit');
-            expect(getExpressionInput()).toHaveValue('[Sales]');
-            expect(document.activeElement).toBe(trigger);
-            const dialog = getCalculatedColumnDialog();
-            api.openCalculatedColumnDialog(api.getColumn('profit')!);
-            api.openCalculatedColumnDialog(api.getColumn('profit')!.getColDef());
-            expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1);
-            expect(getCalculatedColumnDialog()).toBe(dialog);
-            expect(document.activeElement).toBe(trigger);
+        api.openCalculatedColumnDialog('profit');
+        expect(getExpressionInput()).toHaveValue('[Sales]');
+        const dialog = getCalculatedColumnDialog();
+        expect(dialog.closest('.ag-dialog')).toContainElement(document.activeElement as HTMLElement);
+        trigger.focus();
+        api.openCalculatedColumnDialog(api.getColumn('profit')!);
+        api.openCalculatedColumnDialog(api.getColumn('profit')!.getColDef());
+        expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1);
+        expect(getCalculatedColumnDialog()).toBe(dialog);
+        expect(dialog.closest('.ag-dialog')).toContainElement(document.activeElement as HTMLElement);
 
-            setExpression('[Sales] * 2');
-            if (applyMode === 'deferred') {
-                expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[sales]');
-                clickDialogButton('Apply');
-            }
-            await waitFor(() => expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[sales] * 2'));
+        setExpression('[Sales] * 2');
+        if (applyMode === 'deferred') {
+            expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[sales]');
+            clickDialogButton('Apply');
         }
-    );
+        await waitFor(() => expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[sales] * 2'));
+    });
 
     test('the API opens read-only calculated columns in view mode', () => {
         const api = createGrid('calculated-api-view-dialog', {
