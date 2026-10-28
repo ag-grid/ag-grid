@@ -1790,6 +1790,14 @@ export interface _CalculatedColumnsGridApi<TData = any> {
      */
     openCalculatedColumnDialog(column: ColKey<TData>): void;
     /**
+     * Opens the Add Calculated Column dialog, optionally after a source column as with the column menu.
+     * Without a source column, the new column is appended. Unknown source columns are ignored.
+     * Uses the configured apply mode: live creates the column immediately, deferred creates it on Apply.
+     * Does not move focus or open in pivot mode.
+     * @agModule `CalculatedColumnsModule`
+     */
+    openAddCalculatedColumnDialog(sourceColumn?: ColKey<TData>): void;
+    /**
      * Revalidate committed calculated expressions against the current `getValidationErrors` and
      * `isColumnReferenceable` callbacks, update saved errors and recalculate values and dependants.
      * Applies to read-only columns too. Does not apply pending dialog edits. Empty expressions are allowed.

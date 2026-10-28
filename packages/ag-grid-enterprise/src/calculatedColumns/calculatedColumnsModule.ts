@@ -4,7 +4,11 @@ import { ColumnApiModule, TooltipModule, _PopupModule, _UserColumnService } from
 import { FormulaModule } from '../formula/formulaModule';
 import { VERSION } from '../version';
 import calculatedColumnsCSS from './calculatedColumns.css';
-import { openCalculatedColumnDialog, refreshCalculatedColumns } from './calculatedColumnsApi';
+import {
+    openAddCalculatedColumnDialog,
+    openCalculatedColumnDialog,
+    refreshCalculatedColumns,
+} from './calculatedColumnsApi';
 import { CalculatedColumnsService } from './calculatedColumnsService';
 
 /**
@@ -14,7 +18,7 @@ export const CalculatedColumnsModule: _ModuleWithApi<_CalculatedColumnsGridApi> 
     moduleName: 'CalculatedColumns',
     version: VERSION,
     beans: [CalculatedColumnsService, _UserColumnService],
-    apiFunctions: { openCalculatedColumnDialog, refreshCalculatedColumns },
+    apiFunctions: { openAddCalculatedColumnDialog, openCalculatedColumnDialog, refreshCalculatedColumns },
     dependsOn: [FormulaModule, _PopupModule, ColumnApiModule, TooltipModule],
     icons: {
         calculatedColumnsHeader: 'fx',

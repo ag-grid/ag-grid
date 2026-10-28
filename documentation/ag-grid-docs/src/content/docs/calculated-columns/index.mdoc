@@ -379,9 +379,16 @@ The following example adds, edits and removes a Profit Margin column through the
 
 ### Opening the Dialog
 
-Call `api.openCalculatedColumnDialog('profit')` to edit an existing calculated column, or view it if it is read-only. The method does not move focus and reuses an already-open dialog.
+Call `openCalculatedColumnDialog(column)` to edit or view an existing calculated column, reusing its dialog if already open. Call `openAddCalculatedColumnDialog(sourceColumn?)` to add one after a source column, or at the end when omitted. Both methods leave focus unchanged and use the configured apply mode. Adding is unavailable in pivot mode.
 
-{% apiDocumentation source="grid-api/api.json" section="accessories" names=["openCalculatedColumnDialog"] /%}
+```javascript
+// Call from an application button.
+function onAddCalculatedColumn() {
+    gridApi.openAddCalculatedColumnDialog();
+}
+```
+
+{% apiDocumentation source="grid-api/api.json" section="accessories" names=["openCalculatedColumnDialog", "openAddCalculatedColumnDialog"] /%}
 
 ### Refreshing Calculated Columns
 

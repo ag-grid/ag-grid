@@ -388,6 +388,7 @@ export const gridApiFunctionsMap: Record<keyof GridApi, ValidationModuleName> = 
 
     ...mod<_CalculatedColumnsGridApi>('CalculatedColumns', {
         openCalculatedColumnDialog: 0,
+        openAddCalculatedColumnDialog: 0,
         refreshCalculatedColumns: 0,
     }),
 
