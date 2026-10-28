@@ -438,4 +438,6 @@ Live expressions can be incomplete or invalid. Recognised references use stored 
 `expressionValidation` is a snapshot of syntax, direct reference resolution and saved dialog errors, not row-specific evaluation results. To persist rejected expressions with their blocked status, save [Grid State](./grid-state/); saving only the expression text does not retain that status.
 {% /note %}
 
+Calculated values are computed when they are read, not in a separate pass, so there is no event for calculation finishing. In a `calculatedColumnChanged` or `cellValueChanged` handler, `api.getCellValue()` already returns the updated values, including those of calculated columns that depend on the change. An expression that cannot be evaluated returns an [error code](./formula-reference/#error-codes) such as `#PARSE!` or `#REF!` instead of a value.
+
 {% apiDocumentation source="grid-events/events.json" section="calculatedColumns" names=["calculatedColumnCreated", "calculatedColumnChanged", "calculatedColumnRemoved", "calculatedColumnValidationStateChanged"] /%}
