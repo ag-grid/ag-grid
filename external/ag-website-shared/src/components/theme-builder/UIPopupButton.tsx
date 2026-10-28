@@ -32,7 +32,7 @@ export type UIPopupButtonProps = {
 };
 
 /**
- * A version of MUI's menu component that can contain interactive UI in the dropdown. It doesn't close until you click outside the dropdown.
+ * A version of MUI's menu component that can contain interactive UI in the dropdown. It doesn't close until you click outside the dropdown or press Escape.
  */
 export const UIPopupButton = (props: UIPopupButtonProps) => {
     const floatingOptions: Partial<UseFloatingOptions> = {
@@ -72,6 +72,26 @@ export const UIPopupButton = (props: UIPopupButtonProps) => {
     }, [show]);
 
     useClickAwayListener(() => setShow(false), [elements.domReference, elements.floating]);
+
+    useEffect(() => {
+        if (!show) {
+            return;
+        }
+        // A menu inside the popup that closes on Escape marks the event handled, so one press closes one layer.
+        const onKeyDown = (event: KeyboardEvent) => {
+            if (event.key !== 'Escape' || event.defaultPrevented) {
+                return;
+            }
+            event.preventDefault();
+            setShow(false);
+            const button = elements.domReference;
+            if (button instanceof HTMLElement && elements.floating?.contains(document.activeElement)) {
+                button.focus();
+            }
+        };
+        document.addEventListener('keydown', onKeyDown);
+        return () => document.removeEventListener('keydown', onKeyDown);
+    }, [show, elements.domReference, elements.floating]);
 
     return (
         <>

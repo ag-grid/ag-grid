@@ -12,6 +12,7 @@ export type FormattedInputProps = {
     onClear?: () => void;
     onFocus?: () => void;
     onBlur?: () => void;
+    ariaLabel?: string;
     valueToEditingString?: (value: string) => string;
     /**
      * Return the value for an editing string, or null if invalid
@@ -29,6 +30,7 @@ export const FormattedInput = ({
     onClear,
     onFocus,
     onBlur,
+    ariaLabel,
     valueToEditingString = String,
     validateEditingString: editingStringToValue = String,
     valueToDisplayString = String,
@@ -70,6 +72,7 @@ export const FormattedInput = ({
         <Wrapper>
             <Input
                 ref={inputRef}
+                ariaLabel={ariaLabel}
                 className={isValid ? undefined : 'is-error'}
                 value={editorValue}
                 onChange={handleInput}

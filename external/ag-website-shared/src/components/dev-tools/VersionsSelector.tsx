@@ -119,6 +119,7 @@ export const VersionsSelectorInner: FunctionComponent<Props> = ({ framework, exa
         <Select
             isPopper
             placeholder="Archive"
+            triggerAriaLabel="Version selector"
             getKey={getKey}
             getGroupLabel={getGroupLabel}
             options={versions}
