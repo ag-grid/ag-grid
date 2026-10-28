@@ -38,7 +38,7 @@
     "@astrojs/react": "7.1.1",
     "@astrojs/sitemap": "^3.7.4",
     "@carbon/icons-react": "^11.91.0",
-    "@dash0/sdk-web": "^0.27.0",
+    "@dash0/sdk-web": "^0.28.3",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@floating-ui/react": "^0.27.20",
@@ -74,7 +74,7 @@
     "downshift": "^9.4.0",
     "esprima-next": "^6.0.3",
     "gif-frames": "^1.0.1",
-    "he": "^1.2.0",
+    "he": "^2.0.0",
     "history": "^5.3.0",
     "jotai": "^3.0.1",
     "lucide-react": "^1.61.0",
@@ -102,7 +102,7 @@
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/he": "^1.2.3",
     "playwright": "^1.64.1",
-    "playwright-ctrf-json-reporter": "0.0.29",
+    "playwright-ctrf-json-reporter": "0.2.0",
     "prettier-plugin-astro": "^1.1.2",
     "vite-plugin-mkcert": "^2.1.0"
   }

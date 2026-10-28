@@ -118,7 +118,9 @@ async function install(): Promise<boolean> {
         CanvasRenderingContext2D: { prototype: CanvasRenderingContext2D };
     };
     applySkiaPatches(CanvasRenderingContext2D, DOMMatrix);
-    NodeCanvas = ConfiguredCanvasMixin(Canvas);
+    // skia-canvas 4 narrows `toBuffer`'s `format` to its `ExportFormat` union, which `CanvasLike`
+    // still types as `string`. The mixin only forwards its caller's format, and no test exports an image.
+    NodeCanvas = ConfiguredCanvasMixin(Canvas as unknown as Parameters<typeof ConfiguredCanvasMixin>[0]);
 
     const global = globalThis as unknown as Record<string, unknown>;
     originalGlobals = PATCHED_GLOBALS.map((name): [string, PropertyDescriptor | undefined] => [

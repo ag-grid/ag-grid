@@ -22,6 +22,7 @@ testing/module-size/src/App_Src.tsx
 
 # generated file
 packages/ag-grid-vue3/vite.config.d.ts
+packages/ag-grid-vue3/vite.config.d.mts
 
 # vue3 - needs revisiting but as it stands the formatting is removing imports required by vue3 so ignore for now
 packages/ag-grid-vue3/src/components/AgGridVue.vue

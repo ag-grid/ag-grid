@@ -9,6 +9,7 @@ tests/e2e/screenshots/
 .env.*.local
 
 vite.config.d.ts
+vite.config.d.mts
 vitest.config.d.ts
 
 # Log files
