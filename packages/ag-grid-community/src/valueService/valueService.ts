@@ -784,7 +784,7 @@ export class ValueService extends BeanStub implements NamedBean {
         let valuesAreSame = false;
         if (fieldPath === null) {
             if (_isInheritedReservedKey(rowData, field)) {
-                return false;
+                return this.refuseFieldWrite(field, field);
             }
             valuesAreSame = rowData[field] === newValue;
             if (!valuesAreSame) {
@@ -799,16 +799,19 @@ export class ValueService extends BeanStub implements NamedBean {
             for (let i = 0; i < lastIndex && currentObject; ++i) {
                 const key = fieldPath[i];
                 if (_isInheritedReservedKey(currentObject, key)) {
-                    return false;
+                    return this.refuseFieldWrite(field, key);
                 }
                 const nextObject = currentObject[key];
                 if (typeof nextObject === 'function' && !_hasOwn(currentObject, key)) {
-                    return false;
+                    return this.refuseFieldWrite(field, key);
                 }
                 currentObject = nextObject;
             }
             const lastPiece = fieldPath[lastIndex];
-            if (currentObject && !_isInheritedReservedKey(currentObject, lastPiece)) {
+            if (currentObject && _isInheritedReservedKey(currentObject, lastPiece)) {
+                return this.refuseFieldWrite(field, lastPiece);
+            }
+            if (currentObject) {
                 valuesAreSame = currentObject[lastPiece] === newValue;
                 if (!valuesAreSame) {
                     currentObject[lastPiece] = newValue;
@@ -816,6 +819,12 @@ export class ValueService extends BeanStub implements NamedBean {
             }
         }
         return !valuesAreSame;
+    }
+
+    /** Warns (once per field and key) that a write through `field` was refused at `key`, and reports no change. */
+    private refuseFieldWrite(field: string, key: string): false {
+        this.beans.log.warn(339, { field, key });
+        return false;
     }
 
     private dispatchCellValueChangedEvent(

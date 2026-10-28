@@ -968,6 +968,8 @@ export const AG_GRID_ERRORS = {
         `\`setFilterCards\` on the New Filters Tool Panel was passed \`${colId}\`, which is not a column in the grid, so no card is shown for it.` as const,
     338: () =>
         '`success()` or `fail()` was called more than once for the same Server-Side Row Model request, so the later call was ignored.' as const,
+    339: ({ field, key }: { field: string; key: string }) =>
+        `The value for field \`${field}\` was not set, as \`${key}\` on that path is inherited rather than held by the row data itself. Use a \`valueSetter\` to set this value.` as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 
@@ -983,7 +985,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 338;
+export const MAX_ERROR_ID = 339;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

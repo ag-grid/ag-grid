@@ -1,6 +1,13 @@
 import { getByTestId, waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
-import { TestGridsManager, asyncSetTimeout, clipboardUtils, waitForEvent, waitForInput } from 'ag-test-utils';
+import {
+    ALL_SEVERITIES,
+    TestGridsManager,
+    asyncSetTimeout,
+    clipboardUtils,
+    waitForEvent,
+    waitForInput,
+} from 'ag-test-utils';
 
 import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
@@ -9,6 +16,7 @@ import {
     TextEditorModule,
     UndoRedoEditModule,
     agTestIdFor,
+    enableDevValidations,
     getGridElement,
     setupAgTestIds,
 } from 'ag-grid-community';
@@ -49,11 +57,14 @@ describe('Reserved key handling in field paths', () => {
 
     beforeEach(() => {
         clipboardUtils.init();
+        // Refused writes log warning #339, which these tests trigger on purpose
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [339] });
     });
 
     afterEach(() => {
         gridMgr.reset();
         clipboardUtils.reset();
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [] });
         // Keep a failure in one test from leaking into the others
         delete (Object.prototype as Record<string, unknown>)[KEY];
         delete (Object.prototype.toString as unknown as Record<string, unknown>)[KEY];
@@ -212,6 +223,28 @@ describe('Reserved key handling in field paths', () => {
             expect(Object.hasOwn(target(), KEY)).toBe(false);
         });
 
+        test('refuses a reserved last segment and warns once per field', async () => {
+            const field = `nested.__proto__`;
+            const api = await createGrid({
+                columnDefs: [{ field: 'id' }, { field }],
+                rowData: [{ id: 'plain', nested: {} }],
+            });
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            try {
+                const row = api.getRowNode('plain')!;
+                expect(row.setDataValue(field, { [KEY]: 'changed' })).toBe(false);
+                expect(row.setDataValue(field, { [KEY]: 'changed again' })).toBe(false);
+
+                expect(Object.getPrototypeOf(row.data.nested)).toBe(Object.prototype);
+                expectObjectPrototypeUnchanged();
+                const warnings = warn.mock.calls.map((args) => args.join(' ')).filter((msg) => msg.includes('#339'));
+                expect(warnings).toHaveLength(1);
+                expect(warnings[0]).toContain('nested.__proto__');
+            } finally {
+                warn.mockRestore();
+            }
+        });
+
         test('writes through a function the row holds as its own data', async () => {
             const callback = () => undefined;
             const api = await createGrid({
@@ -226,7 +259,7 @@ describe('Reserved key handling in field paths', () => {
 
     describe('autoGenerateColumnDefs', () => {
         // rowData is supplied after creation: generating columns during grid init with an editing module
-        // registered currently fails in EditService.releaseColumnsLeaving, which is tracked separately
+        // registered currently fails in EditService.releaseColumnsLeaving (AG-19085)
         async function createGeneratedGrid(options: GridOptions, rowData: any[]) {
             const api = gridMgr.createGrid('reservedKeyGrid', {
                 getRowId: ({ data }) => data.id,
