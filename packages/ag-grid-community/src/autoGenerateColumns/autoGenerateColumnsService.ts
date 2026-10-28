@@ -67,7 +67,7 @@ function _buildColumnDefs(
     for (let i = 0, len = keys.length; i < len; ++i) {
         const key = keys[i];
         // a dotted key is a nested path, so skip it when any segment is `__proto__`
-        if (_isProtoField(key, true)) {
+        if (_isProtoField(key, key.split('.'))) {
             continue;
         }
         const field = prefix ? `${prefix}.${key}` : key;

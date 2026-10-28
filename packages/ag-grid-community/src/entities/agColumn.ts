@@ -409,7 +409,7 @@ export class AgColumn<TValue = any>
             }
         }
         this.fieldHasProtoKey = false;
-        if (typeof field === 'string' && _isProtoField(field, !suppress)) {
+        if (typeof field === 'string' && _isProtoField(field, this.fieldPath)) {
             this.fieldHasProtoKey = true;
             this.warn(340, { field });
         }
