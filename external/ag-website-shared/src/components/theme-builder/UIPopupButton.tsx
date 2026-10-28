@@ -31,6 +31,9 @@ export type UIPopupButtonProps = {
     onClose?: () => void;
 };
 
+// Open popups, oldest first; Escape closes only the newest.
+const openPopups: object[] = [];
+
 /**
  * A version of MUI's menu component that can contain interactive UI in the dropdown. It doesn't close until you click outside the dropdown or press Escape.
  */
@@ -77,9 +80,11 @@ export const UIPopupButton = (props: UIPopupButtonProps) => {
         if (!show) {
             return;
         }
+        const popup = {};
+        openPopups.push(popup);
         // A menu inside the popup that closes on Escape marks the event handled, so one press closes one layer.
         const onKeyDown = (event: KeyboardEvent) => {
-            if (event.key !== 'Escape' || event.defaultPrevented) {
+            if (event.key !== 'Escape' || event.defaultPrevented || openPopups[openPopups.length - 1] !== popup) {
                 return;
             }
             event.preventDefault();
@@ -90,7 +95,10 @@ export const UIPopupButton = (props: UIPopupButtonProps) => {
             }
         };
         document.addEventListener('keydown', onKeyDown);
-        return () => document.removeEventListener('keydown', onKeyDown);
+        return () => {
+            openPopups.splice(openPopups.indexOf(popup), 1);
+            document.removeEventListener('keydown', onKeyDown);
+        };
     }, [show, elements.domReference, elements.floating]);
 
     return (
