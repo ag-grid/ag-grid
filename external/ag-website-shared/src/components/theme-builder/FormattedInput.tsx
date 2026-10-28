@@ -113,9 +113,12 @@ export const FormattedInput = ({
                     onPointerDown={
                         getIconSwipeAdjustment
                             ? (e) => {
+                                  if (e.button !== 0) {
+                                      return;
+                                  }
                                   e.preventDefault();
-                                  const pointerId = e.pointerId;
                                   const wrapper = e.currentTarget;
+                                  wrapper.setPointerCapture(e.pointerId);
                                   inputRef.current?.blur();
                                   const startX = e.clientX;
                                   const startY = e.clientY;
@@ -127,15 +130,14 @@ export const FormattedInput = ({
                                           Math.abs(movementX) > Math.abs(movementY) ? movementX : movementY;
                                       onChange?.(getIconSwipeAdjustment(value, movement));
                                   };
-                                  const handleUp = () => {
+                                  // Capture ends however the drag does, including a cancel that never sends pointerup.
+                                  const handleEnd = () => {
                                       wrapper.removeEventListener('pointermove', handleMove);
-                                      wrapper.removeEventListener('pointerup', handleUp);
+                                      wrapper.removeEventListener('lostpointercapture', handleEnd);
                                       document.body.classList.remove('force-resize-cursor');
-                                      wrapper.releasePointerCapture(pointerId);
                                   };
                                   wrapper.addEventListener('pointermove', handleMove);
-                                  wrapper.addEventListener('pointerup', handleUp);
-                                  wrapper.setPointerCapture(pointerId);
+                                  wrapper.addEventListener('lostpointercapture', handleEnd);
                               }
                             : undefined
                     }
