@@ -284,5 +284,13 @@ describe('agLinkChecker', () => {
                 'unlabelled-link': ['/about/'],
             });
         });
+
+        it('is created, with its folder, the first time it is written', async () => {
+            const root = siteWithHome('<a href="/missing/">Missing</a>');
+            const baselineFile = join(root, 'testing', 'baseline.json');
+            process.env.UPDATE_LINK_BASELINE = 'true';
+            expect(await checkSite(root, { baselineFile })).toBeUndefined();
+            expect(JSON.parse(readFileSync(baselineFile, 'utf8'))).toEqual({ 'missing-page': ['/missing/'] });
+        });
     });
 });

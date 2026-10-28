@@ -1,7 +1,7 @@
 import junitProcessor from 'ag-shared/processor';
 import type { AstroIntegration } from 'astro';
-import fs, { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import fs, { existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import path from 'path';
 
@@ -479,6 +479,7 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
     const findings = [...found.values()];
 
     if (process.env.UPDATE_LINK_BASELINE === 'true' && baselineFile != null) {
+        mkdirSync(dirname(baselineFile), { recursive: true });
         writeFileSync(baselineFile, serialiseBaseline(findings));
         console.log(`Link checker baseline rewritten with ${findings.length} known issues: ${baselineFile}`);
         return;
