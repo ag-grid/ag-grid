@@ -29,7 +29,9 @@ describe('calculated column dialog APIs', () => {
 
         api.openAddCalculatedColumnDialog();
         expect(getCalculatedColumnDialog()).toBeInTheDocument();
-        expect(document.activeElement).toBe(button);
+        expect(getCalculatedColumnDialog().closest('.ag-dialog')).toContainElement(
+            document.activeElement as HTMLElement
+        );
         expect(!!api.getColumn('calculated_1')).toBe(applyMode === 'live');
         if (applyMode === 'live') {
             expect(api.getCellValue({ rowNode: api.getRowNode('r1')!, colKey: 'calculated_1' })).toBe('');
@@ -88,34 +90,33 @@ describe('calculated column dialog APIs', () => {
         ]);
     });
 
-    test.each(['live', 'deferred'] as const)(
-        'Edit reuses the dialog without moving focus in %s mode',
-        async (applyMode) => {
-            const api = createGrid('calculated-api-edit', {
-                calculatedColumns: { applyMode },
-                columnDefs: [{ field: 'revenue' }, { colId: 'profit', calculatedExpression: '[revenue]' }],
-                rowData: [{ id: 'r1', revenue: 10 }],
-            });
-            const button = document.createElement('button');
-            document.body.appendChild(button);
-            onTestFinished(() => button.remove());
-            button.focus();
-            api.openCalculatedColumnDialog('profit');
-            const dialog = getCalculatedColumnDialog();
-            const column = api.getColumn('profit')!;
-            api.openCalculatedColumnDialog(column);
-            api.openCalculatedColumnDialog(column.getColDef());
-            expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1);
-            expect(getCalculatedColumnDialog()).toBe(dialog);
-            expect(document.activeElement).toBe(button);
-            expect(getExpressionInput().value).toBe('[Revenue]');
-            setExpression('[Revenue] * 2');
-            if (applyMode === 'deferred') {
-                clickDialogButton('Apply');
-            }
-            await waitFor(() => expect(column.getColDef().calculatedExpression).toBe('[revenue] * 2'));
+    test.each(['live', 'deferred'] as const)('Edit focuses and reuses the dialog in %s mode', async (applyMode) => {
+        const api = createGrid('calculated-api-edit', {
+            calculatedColumns: { applyMode },
+            columnDefs: [{ field: 'revenue' }, { colId: 'profit', calculatedExpression: '[revenue]' }],
+            rowData: [{ id: 'r1', revenue: 10 }],
+        });
+        const button = document.createElement('button');
+        document.body.appendChild(button);
+        onTestFinished(() => button.remove());
+        button.focus();
+        api.openCalculatedColumnDialog('profit');
+        const dialog = getCalculatedColumnDialog();
+        expect(dialog.closest('.ag-dialog')).toContainElement(document.activeElement as HTMLElement);
+        button.focus();
+        const column = api.getColumn('profit')!;
+        api.openCalculatedColumnDialog(column);
+        api.openCalculatedColumnDialog(column.getColDef());
+        expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1);
+        expect(getCalculatedColumnDialog()).toBe(dialog);
+        expect(dialog.closest('.ag-dialog')).toContainElement(document.activeElement as HTMLElement);
+        expect(getExpressionInput().value).toBe('[Revenue]');
+        setExpression('[Revenue] * 2');
+        if (applyMode === 'deferred') {
+            clickDialogButton('Apply');
         }
-    );
+        await waitFor(() => expect(column.getColDef().calculatedExpression).toBe('[revenue] * 2'));
+    });
 
     test('Edit opens read-only columns in view mode, including in pivot mode', () => {
         const api = createGrid('calculated-api-view', {
@@ -127,7 +128,47 @@ describe('calculated column dialog APIs', () => {
         });
         api.openCalculatedColumnDialog('profit');
         expect(getExpressionInput()).toHaveAttribute('readonly');
+        expect(getCalculatedColumnDialog().closest('.ag-dialog')).toContainElement(
+            document.activeElement as HTMLElement
+        );
         expect(queryByRole(getCalculatedColumnDialog(), 'button', { name: 'Apply' })).toBeNull();
+    });
+
+    test.each([false, true])('reopening a dialog brings it forward (read-only: %s)', (calculatedColumnReadOnly) => {
+        const api = createGrid('calculated-api-dialog-front', {
+            columnDefs: [
+                { field: 'revenue' },
+                { colId: 'profit', calculatedExpression: '[revenue]', calculatedColumnReadOnly },
+                { colId: 'margin', calculatedExpression: '[revenue] * 2' },
+            ],
+        });
+        api.openCalculatedColumnDialog('profit');
+        const first = getCalculatedColumnDialog().closest('.ag-dialog')!;
+        api.openCalculatedColumnDialog('margin');
+        const second = Array.from(document.querySelectorAll('.ag-dialog')).find((dialog) => dialog !== first)!;
+        expect(second).toContainElement(document.activeElement as HTMLElement);
+        expect(Array.from(document.querySelectorAll('.ag-dialog')).at(-1)).toBe(second);
+
+        api.openCalculatedColumnDialog('profit');
+        expect(document.querySelectorAll('.ag-dialog')).toHaveLength(2);
+        expect(first).toContainElement(document.activeElement as HTMLElement);
+        expect(Array.from(document.querySelectorAll('.ag-dialog')).at(-1)).toBe(first);
+    });
+
+    test.each(['live', 'deferred'] as const)('repeated Add calls focus separate dialogs in %s mode', (applyMode) => {
+        const api = createGrid('calculated-api-multiple-add', {
+            calculatedColumns: { applyMode },
+            columnDefs: [{ field: 'revenue' }],
+        });
+        api.openAddCalculatedColumnDialog();
+        const first = getCalculatedColumnDialog().closest('.ag-dialog')!;
+        api.openAddCalculatedColumnDialog();
+        const dialogs = Array.from(document.querySelectorAll('.ag-dialog'));
+        expect(dialogs).toHaveLength(2);
+        expect(dialogs.find((dialog) => dialog !== first)).toContainElement(document.activeElement as HTMLElement);
+        expect(api.getColumns()!.map((column) => column.getColId())).toEqual(
+            applyMode === 'live' ? ['revenue', 'calculated_1', 'calculated_2'] : ['revenue']
+        );
     });
 
     test.each([true, false])('invalid keys never open Add or Edit (enabled: %s)', (calculatedColumns) => {
@@ -144,6 +185,21 @@ describe('calculated column dialog APIs', () => {
         }
         expect(document.querySelector('.ag-calculated-column-form')).toBeNull();
         expect(api.getColumns()!.map((column) => column.getColId())).toEqual(['revenue']);
+    });
+
+    test('Add ignores non-primary source columns', () => {
+        const api = createGrid('calculated-api-secondary-source', {
+            columnDefs: [{ field: 'revenue' }],
+            rowData: [{ id: 'r1', revenue: 10 }],
+            rowSelection: { mode: 'multiRow', checkboxes: true },
+        });
+        const source = api.getColumn('ag-Grid-SelectionColumn')!;
+        expect(source.isPrimary()).toBe(false);
+        api.openAddCalculatedColumnDialog(source.getColId());
+        api.openAddCalculatedColumnDialog(source);
+        api.openAddCalculatedColumnDialog(source.getColDef());
+        expect(document.querySelector('.ag-calculated-column-form')).toBeNull();
+        expect(api.getColumn('calculated_1')).toBeNull();
     });
 
     test('Add is unavailable in pivot mode with or without a source', () => {

@@ -379,7 +379,7 @@ The following example adds, edits and removes a Profit Margin column through the
 
 ### Opening the Dialog
 
-Call `openCalculatedColumnDialog(column)` to edit or view an existing calculated column, reusing its dialog if already open. Call `openAddCalculatedColumnDialog(sourceColumn?)` to add one after a source column, or at the end when omitted. Both methods leave focus unchanged and use the configured apply mode. Adding is unavailable in pivot mode.
+Call `openCalculatedColumnDialog(column)` to edit or view an existing calculated column, bringing its dialog forward if already open. Call `openAddCalculatedColumnDialog(sourceColumn?)` to add one after a source column, or at the end when omitted. Both methods focus the dialog and use the configured apply mode. Adding is unavailable in pivot mode.
 
 ```javascript
 // Call from an application button.

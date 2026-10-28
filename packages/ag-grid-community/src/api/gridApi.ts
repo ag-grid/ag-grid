@@ -1783,17 +1783,17 @@ export interface _ColumnChooserGridApi {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _CalculatedColumnsGridApi<TData = any> {
     /**
-     * Open the dialog for an existing calculated column without moving focus.
-     * Read-only calculated columns open in view mode. Reuses the dialog if it is already open.
+     * Opens and focuses the dialog for an existing calculated column.
+     * Read-only calculated columns open in view mode. Reuses and brings forward an already-open dialog.
      * Does nothing if Calculated Columns are disabled or the key does not resolve to a calculated column.
      * @agModule `CalculatedColumnsModule`
      */
     openCalculatedColumnDialog(column: ColKey<TData>): void;
     /**
      * Opens the Add Calculated Column dialog, optionally after a source column as with the column menu.
-     * Without a source column, the new column is appended. Unknown source columns are ignored.
+     * Without a source column, the new column is appended. Unknown or non-primary source columns are ignored.
      * Uses the configured apply mode: live creates the column immediately, deferred creates it on Apply.
-     * Does not move focus or open in pivot mode.
+     * Moves focus into the dialog. Does not open in pivot mode.
      * @agModule `CalculatedColumnsModule`
      */
     openAddCalculatedColumnDialog(sourceColumn?: ColKey<TData>): void;
