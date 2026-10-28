@@ -36,7 +36,8 @@
 
 $product-logo-height: 32px;
 
-.iconButton {
+.iconButton,
+button.iconButton {
     --icon-size: 20px;
 
     display: inline-flex;
