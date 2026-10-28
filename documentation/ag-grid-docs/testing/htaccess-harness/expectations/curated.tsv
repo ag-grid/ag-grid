@@ -435,8 +435,8 @@ www	/eula/AG-Grid-Community-License.html	301	/eula/community/
 
 # @category curated-tickets
 # --- Addresses still requested where a live page exists under another name ---
-www	/archive/35.2.0/react-data-grid/licensing/	301	/react-data-grid/community-vs-enterprise/
-www	/ag-studio/	301	/studio/
+www	/archive/35.2.0/react-data-grid/licensing/	301	https://www.ag-grid.com/react-data-grid/community-vs-enterprise/
+www	/ag-studio/	301	https://www.ag-grid.com/studio/
 www	/javascript-data-grid/license-install/Kind/	301	/javascript-data-grid/license-install/
 www	/pricing/	301	/license-pricing/
 www	/javascript-data-grid/row-grouping/	301	/javascript-data-grid/grouping/

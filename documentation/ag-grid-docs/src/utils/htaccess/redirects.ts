@@ -3408,8 +3408,12 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { from: '/eula/AG-Grid-Community-License.html', to: '/eula/community/' },
 
     // Addresses still being requested (from external links and search results) where a live page exists under another name.
-    { from: '/archive/35.2.0/react-data-grid/licensing/', to: '/react-data-grid/community-vs-enterprise/' },
-    { from: '/ag-studio/', to: '/studio/' },
+    // Absolute targets are left out of archive builds, so these two are not copied into other archives.
+    {
+        from: '/archive/35.2.0/react-data-grid/licensing/',
+        to: 'https://www.ag-grid.com/react-data-grid/community-vs-enterprise/',
+    },
+    { from: '/ag-studio/', to: 'https://www.ag-grid.com/studio/' },
     { from: '/javascript-data-grid/license-install/Kind/', to: '/javascript-data-grid/license-install/' },
     { from: '/pricing/', to: '/license-pricing/' },
     { from: '/javascript-data-grid/row-grouping/', to: '/javascript-data-grid/grouping/' },
