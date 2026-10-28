@@ -71,7 +71,7 @@ describe('touch press on a cell (react)', () => {
             await asyncSetTimeout(0);
         });
 
-        expect(getApi().getFocusedCell()).toBeUndefined();
+        expect(getApi().getFocusedCell()).toBeNull();
     });
 
     test('a tap focuses the cell', async () => {

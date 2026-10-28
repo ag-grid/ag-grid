@@ -76,7 +76,7 @@ describe('touch press on a cell', () => {
         press(await getCell(gridDiv), 'touch');
         await asyncSetTimeout(0);
 
-        expect(api.getFocusedCell()).toBeUndefined();
+        expect(api.getFocusedCell()).toBeNull();
         assertSelectedCellRanges([], api);
         expect(events).toEqual([]);
     });
@@ -109,7 +109,7 @@ describe('touch press on a cell', () => {
         press(await getCell(gridDiv), 'touch');
         otherCell.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
 
-        expect(api.getFocusedCell()).toBeUndefined();
+        expect(api.getFocusedCell()).toBeNull();
     });
 
     test('a mouse press focuses and selects the cell straight away', async () => {
@@ -129,7 +129,7 @@ describe('touch press on a cell', () => {
         const span = await findElement(gridDiv, '.ag-full-width-row span');
 
         press(span, 'touch');
-        expect(api.getFocusedCell()).toBeUndefined();
+        expect(api.getFocusedCell()).toBeNull();
 
         span.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
         expect(api.getFocusedCell()?.rowIndex).toBe(0);
