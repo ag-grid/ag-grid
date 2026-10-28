@@ -352,11 +352,11 @@ export class StickyRowFeature extends BeanStub implements IStickyRowFeature {
     /** Replaces the node's sticky row ctrl, built before the old one is destroyed, so a throw leaves it shown. */
     public refreshStickyNode(stickRowNode: RowNode): void {
         let ctrls = this.stickyTopRowCtrls;
-        let index = ctrls.findIndex((ctrl) => ctrl.rowNode === stickRowNode);
+        let index = indexOfRowCtrl(ctrls, stickRowNode);
         const isTop = index >= 0;
         if (!isTop) {
             ctrls = this.stickyBottomRowCtrls;
-            index = ctrls.findIndex((ctrl) => ctrl.rowNode === stickRowNode);
+            index = indexOfRowCtrl(ctrls, stickRowNode);
             // a sticky row whose ctrl is being built has none yet
             if (index < 0) {
                 return;
@@ -576,4 +576,13 @@ function getClientSideLastPixelOfGroup(row: RowNode): number {
     }
     // if not expandable, then this row shouldn't be sticky currently.
     return Number.MAX_SAFE_INTEGER;
+}
+
+function indexOfRowCtrl(rowCtrls: RowCtrl[], rowNode: RowNode): number {
+    const len = rowCtrls.length;
+    let i = 0;
+    while (i < len && rowCtrls[i].rowNode !== rowNode) {
+        ++i;
+    }
+    return i < len ? i : -1;
 }
