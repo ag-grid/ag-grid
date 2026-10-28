@@ -1781,7 +1781,14 @@ export interface _ColumnChooserGridApi {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export interface _CalculatedColumnsGridApi {
+export interface _CalculatedColumnsGridApi<TData = any> {
+    /**
+     * Open the dialog for an existing calculated column without moving focus.
+     * Read-only calculated columns open in view mode. Reuses the dialog if it is already open.
+     * Does nothing if Calculated Columns are disabled or the key does not resolve to a calculated column.
+     * @agModule `CalculatedColumnsModule`
+     */
+    openCalculatedColumnDialog(column: ColKey<TData>): void;
     /**
      * Revalidate committed calculated expressions against the current `getValidationErrors` and
      * `isColumnReferenceable` callbacks, update saved errors and recalculate values and dependants.
@@ -2091,7 +2098,7 @@ export interface GridApi<TData = any>
         _ColumnChooserGridApi,
         _MasterDetailGridApi,
         _FormulaGridApi<TData>,
-        _CalculatedColumnsGridApi,
+        _CalculatedColumnsGridApi<TData>,
         _ExcelExportGridApi,
         _PdfExportGridApi,
         _ClipboardGridApi,

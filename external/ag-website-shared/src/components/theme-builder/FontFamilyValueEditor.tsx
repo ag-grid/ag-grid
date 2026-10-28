@@ -19,7 +19,7 @@ export const setFontFamilyOptions = (options: FontFamilyOption[]) => {
     fontOptions = options;
 };
 
-export const FontFamilyValueEditor = ({ param, value, onChange }: ValueEditorProps<FontFamilyValue>) => {
+export const FontFamilyValueEditor = ({ param, value, onChange, label }: ValueEditorProps<FontFamilyValue>) => {
     const inheritLabel = param.property === 'fontFamily' ? 'Same as application' : 'Unchanged';
     const options: FontFamilyOption[] = [{ label: inheritLabel, value: 'inherit' }, ...fontOptions];
     const selectedOption = options.find((o) => isSameFont(o.value, value)) || options[0];
@@ -30,6 +30,7 @@ export const FontFamilyValueEditor = ({ param, value, onChange }: ValueEditorPro
             value={selectedOption}
             getKey={(option) => option.label}
             onChange={(newValue) => onChange(newValue.value)}
+            triggerAriaLabel={label}
             renderItem={(o) => {
                 const font = paramValueToCss('fontFamily', o.value, null);
                 return (

@@ -13,6 +13,7 @@ import { getGitDiffLinks, getHeader, getStats, parseCtrfReport } from './_utils.
 const ctrfReportFile = process.env.CTRF_REPORT_FILE;
 const workflowName = process.env.WORKFLOW_NAME || '';
 const jobId = process.env.JOB_ID || '';
+const runAttempt = process.env.RUN_ATTEMPT || '';
 const repoUrl = process.env.REPO_URL || 'https://github.com/ag-grid/ag-grid';
 const branchName = process.env.BRANCH_NAME || '';
 const channel = process.env.SLACK_CHANNEL || '';
@@ -34,7 +35,11 @@ const notionApiToken = process.env.NOTION_API_TOKEN || '';
 const notionDataSourceId = process.env.NOTION_DATA_SOURCE_ID || '';
 const notionApiVersion = process.env.NOTION_API_VERSION || undefined;
 
-const jobUrl = `${repoUrl}/actions/runs/${jobId}`;
+// Links the attempt that sent this message: a run's own URL opens on its latest attempt, so after a
+// re-run the link would show that attempt's result rather than the one being reported.
+const jobUrl = runAttempt
+    ? `${repoUrl}/actions/runs/${jobId}/attempts/${runAttempt}`
+    : `${repoUrl}/actions/runs/${jobId}`;
 
 const parsedReport = parseCtrfReport(ctrfReportFile);
 

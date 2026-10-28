@@ -105,7 +105,12 @@ const GridPreview = () => {
             <LoadFontFamilyMenuFonts />
             <GridConfigDropdownButton />
             <ColorPickerWrapper>
-                <ColorPicker value={backgroundColor} onChange={setBackground} preventTransparency />
+                <ColorPicker
+                    value={backgroundColor}
+                    onChange={setBackground}
+                    preventTransparency
+                    ariaLabel="Page background color"
+                />
                 <StyledInfoTooltip title="Page background color - this is not part of your theme" />
             </ColorPickerWrapper>
             <GridSizer>

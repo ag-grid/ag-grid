@@ -71,6 +71,7 @@ runs:
               CTRF_REPORT_FILE: ${{ inputs.CTRF_REPORT_FILE }}
               WORKFLOW_NAME: ${{ github.workflow }}
               JOB_ID: ${{ github.run_id }}
+              RUN_ATTEMPT: ${{ github.run_attempt }}
               CURRENT_COMMIT_SHA: ${{ inputs.CURRENT_COMMIT_SHA }}
               PREV_COMMIT_SHA: ${{ inputs.PREV_COMMIT_SHA }}
               SLACK_FILE: /tmp/slack.json
