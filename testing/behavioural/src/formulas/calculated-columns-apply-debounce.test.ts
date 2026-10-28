@@ -87,6 +87,31 @@ describe('calculated columns - applyDebounce', () => {
         expect(changed).toHaveBeenCalledTimes(1);
     });
 
+    test('validity follows committed edits, not intermediate debounced drafts', async () => {
+        const validity = vi.fn();
+        const api = await openDialog(undefined, { onCalculatedColumnValidationStateChanged: validity });
+        setExpression('[Missing]');
+        await vi.advanceTimersByTimeAsync(200);
+        setExpression('[A] * 2');
+        await vi.advanceTimersByTimeAsync(401);
+        expect(api.getColumn('calc')!.getColDef().calculatedExpression).toBe('[a] * 2');
+        expect(validity).not.toHaveBeenCalled();
+
+        setExpression('[Missing]');
+        await vi.advanceTimersByTimeAsync(399);
+        expect(validity).not.toHaveBeenCalled();
+        await vi.advanceTimersByTimeAsync(2);
+        expect(validity).toHaveBeenCalledTimes(1);
+        expect(validity.mock.lastCall![0]).toMatchObject({ valid: false, reason: 'unknownReference' });
+
+        setExpression('[A]');
+        closeDialog();
+        expect(api.getColumn('calc')!.getColDef().calculatedExpression).toBe('[a]');
+        await vi.advanceTimersByTimeAsync(1000);
+        expect(validity).toHaveBeenCalledTimes(2);
+        expect(validity.mock.lastCall![0]).toMatchObject({ valid: true, reason: undefined });
+    });
+
     test.each(['typing', 'refresh'] as const)(
         'a %s rejection removes the pending title without discarding a valid expression',
         async (action) => {
