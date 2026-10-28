@@ -209,8 +209,9 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
             this.addListeners();
             this.rowModeFeature.prepareInitialCellCtrls?.();
         } catch (e) {
-            this.rowModeFeature.destroyCells();
-            this.destroy();
+            // the row's callbacks have run, so it reports virtualRowRemoved like any row a draw discards
+            this.destroyFirstPass(true);
+            this.destroySecondPass();
             throw e;
         }
     }

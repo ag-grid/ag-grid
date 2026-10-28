@@ -402,7 +402,7 @@ describe('Row rendering after an error while rows are drawn', () => {
         expect(cellText(api, 'row-1')).toBe('row-1');
     });
 
-    test('a row whose cell threw while drawn leaves nothing behind and, never built, reports no virtualRowRemoved: a column change formats each row shown once', async () => {
+    test('a row whose cell threw while drawn leaves nothing behind and reports virtualRowRemoved once: a column change formats each row shown once', async () => {
         const formattedRowIds: string[] = [];
         const removedRowIds: string[] = [];
         let throwFor: string | undefined;
@@ -431,7 +431,7 @@ describe('Row rendering after an error while rows are drawn', () => {
         expect(() => api.setGridOption('rowData', buildRows(2, 'next'))).toThrow('valueFormatter failed');
         api.setGridOption('rowData', buildRows(2, 'next'));
         await waitFor(() => expect(renderedRowIds(api)).toEqual(['next-0', 'next-1']));
-        await waitFor(() => expect(removedRowIds).toEqual(['row-0']));
+        await waitFor(() => expect(removedRowIds.sort()).toEqual(['next-1', 'row-0']));
         formattedRowIds.length = 0;
 
         api.setColumnsVisible(['a'], false);
