@@ -159,7 +159,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
                 state[i] = this.updateOneAutoCol(cols[i], i, source);
             }
             // one state pass lays the auto cols out once, and tells them together
-            _applyColumnState(beans, { state }, source);
+            _applyColumnState(beans, { state }, source, true);
         } finally {
             colModel.endColUpdate();
         }

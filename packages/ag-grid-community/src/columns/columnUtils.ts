@@ -67,7 +67,9 @@ export function _isHeaderNameChangeForGroup(event: ColumnHeaderNameChangedEvent,
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _getColumnStateFromColDef(beans: BeanCollection, colDef: ColDef, colId: string): ColumnState {
-    const sortDef = getSortDefFromColDef(colDef);
+    // the state of an update: `initialSort` applies only at creation (`SortService.initCol`)
+    const sort = colDef.sort;
+    const sortDef = _isSortDefValid(sort) || isSortDirectionValid(sort) ? getSortDefFromInput(sort) : null;
     const showValuesAs = beans.showValuesAsSvc?.colDefSelection(colDef) ?? undefined;
     return sortDef
         ? { ...colDef, colId, sort: sortDef.direction, sortType: sortDef.type, showValuesAs }

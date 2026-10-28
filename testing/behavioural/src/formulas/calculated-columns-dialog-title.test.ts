@@ -80,6 +80,10 @@ async function setupGrid(opts: {
             expect(added && propertiesOf(api.getState(), added)?.calculatedExpression).toBe('[a] - [b]');
             return added!;
         });
+        if (applyMode === 'deferred') {
+            // a deferred add focuses the new header a task later, which would close a picker opened before it
+            await waitFor(() => expect(document.activeElement?.getAttribute('col-id')).toBe(colId));
+        }
         return { api, colId };
     }
     await waitFor(() => expect(api.getColumn('calc')).not.toBeNull());
