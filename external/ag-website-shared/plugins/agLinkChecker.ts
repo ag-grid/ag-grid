@@ -1,11 +1,24 @@
 import junitProcessor from 'ag-shared/processor';
 import type { AstroIntegration } from 'astro';
-import fs, { readdirSync } from 'node:fs';
+import fs, { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import path from 'path';
 
-import { describeInternalLinkShapeIssue, getInternalLinkShapeIssues } from '../src/utils/internalLinkShape';
+import {
+    describeInternalLinkShapeIssue,
+    getCanonicalHostPath,
+    getInternalLinkShapeIssues,
+    isInternalHref,
+} from '../src/utils/internalLinkShape';
+import {
+    type LinkFinding,
+    findingKey,
+    parseBaseline,
+    partitionByBaseline,
+    serialiseBaseline,
+} from '../src/utils/linkBaseline';
+import { LinkLabelTracker } from '../src/utils/linkLabel';
 
 const { TestSuites, TestSuite, TestCase } = junitProcessor;
 
@@ -24,9 +37,39 @@ type Options = {
      * leave this unset and keep the stricter check.
      */
     clientRenderedFragmentPrefixes?: readonly string[];
+    /**
+     * Validates absolute links to the canonical host (`https://www.ag-grid.com/page/`) against the
+     * built pages, the way root-relative links are. Other sites are served from the same host, and
+     * have no pages in this build, so this has to say which paths belong to them. Sites that link
+     * to their siblings absolutely and do not know where they live should leave this unset.
+     */
+    checkCanonicalHostLinks?: { isServedElsewhere: (pathname: string) => boolean };
+    /**
+     * The address a request for `pathname` ends up at after the site's redirects, or undefined when
+     * it is served directly. A link to a page the build lacks is reported as a redirect, naming where
+     * it goes, when the site redirects the address: the old address is the thing to fix. Only
+     * consulted for a link the build cannot resolve, so a redirect that shadows a page that exists is
+     * for the redirect checker to catch.
+     */
+    resolveRedirect?: (request: {
+        pathname: string;
+        fileExists: (urlPath: string) => boolean;
+        dirExists: (urlPath: string) => boolean;
+    }) => string | undefined;
+    /**
+     * A JSON file of the known problems the build tolerates, keyed by rule (see `linkBaseline`). Only
+     * a link that breaks a rule and is not listed fails the build. Rewritten with the current
+     * problems instead of failing when `UPDATE_LINK_BASELINE=true`; run that build with
+     * `--skip-nx-cache`, or the cached build will not run this check at all.
+     */
+    baselineFile?: string;
 };
 
+type FoundFinding = LinkFinding & { filePaths: Set<string> };
+
 const IGNORED_PATHS = ['/archive'];
+/** A letters-only extension marks a file link, which is looked up directly rather than as a page. */
+const FILE_EXTENSION = /\.[a-zA-Z]+$/;
 /**
  * Fragments that a client-side script intercepts rather than scrolling to an element, so
  * the built HTML has no target for them. Every other fragment must resolve to an `id` or
@@ -142,12 +185,22 @@ function outputJunitReport(validationResults: any) {
 const checkLinks = async (dir: string, files: string[], options: Options) => {
     const anchors = new Set<string>();
     const linksToValidate: Record<string, { filePaths: Set<string> }> = {};
-    // Links whose shape alone would cost a redirect (no trailing slash, non-canonical host, ...),
-    // keyed by the offending href. Recorded for every internal link, including the absolute
-    // `https://www.ag-grid.com/...` ones and the client-handled fragment links the existence
-    // checks below leave alone, because the redirect happens before the target is consulted.
-    const shapeIssues: Record<string, { message: string; filePaths: Set<string> }> = {};
-    const { prefix, frameworkRedirect, clientRenderedFragmentPrefixes } = options;
+    // Every rule the links break, keyed by rule and href so that a link repeated across pages is one
+    // finding. Shape issues (no trailing slash, non-canonical host, UTM parameters, ...) are recorded
+    // for every internal link, including the absolute `https://www.ag-grid.com/...` ones and the
+    // client-handled fragment links the existence checks below leave alone, because the redirect
+    // happens before the target is consulted.
+    const found = new Map<string, FoundFinding>();
+    const addFinding = (finding: LinkFinding, filePaths: Iterable<string>) => {
+        const key = findingKey(finding);
+        const entry = found.get(key) ?? { ...finding, filePaths: new Set<string>() };
+        for (const filePath of filePaths) {
+            entry.filePaths.add(filePath);
+        }
+        found.set(key, entry);
+    };
+    const { prefix, frameworkRedirect, clientRenderedFragmentPrefixes, checkCanonicalHostLinks, resolveRedirect } =
+        options;
 
     const fileSet = new Set(files);
     // A page served as `foo.html` rather than `foo/index.html` has no trailing-slash form.
@@ -173,13 +226,9 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
 
         const recordShapeIssues = (href: string) => {
             for (const issue of getInternalLinkShapeIssues(href, { isHtmlFile })) {
-                const key = `${issue.type} ${href}`;
-                const entry = shapeIssues[key] ?? {
-                    message: describeInternalLinkShapeIssue(issue),
-                    filePaths: new Set<string>(),
-                };
-                entry.filePaths.add(filePath);
-                shapeIssues[key] = entry;
+                addFinding({ rule: issue.type, subject: href, message: describeInternalLinkShapeIssue(issue) }, [
+                    filePath,
+                ]);
             }
         };
 
@@ -201,6 +250,21 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
                 }
                 if (clientRenderedFragmentPrefixes?.some((candidate) => fragment.startsWith(candidate))) {
                     return;
+                }
+            }
+            // An absolute link to the canonical host is served by this build at the same path,
+            // so it is validated as the root-relative link it stands for.
+            if (checkCanonicalHostLinks != null) {
+                const canonicalPath = getCanonicalHostPath(href);
+                if (canonicalPath != null) {
+                    const pathname = canonicalPath.split('#')[0];
+                    if (checkCanonicalHostLinks.isServedElsewhere(pathname)) {
+                        return;
+                    }
+                    if (prefix != null && !pathname.startsWith(prefix)) {
+                        return;
+                    }
+                    href = canonicalPath;
                 }
             }
             // Same-page (#foo) links resolve against this page; absolute
@@ -242,13 +306,29 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
             }
         };
 
+        const labelTracker = new LinkLabelTracker((rawHref) => {
+            const href = decodeHtmlEntities(rawHref);
+            if (isInternalHref(href)) {
+                addFinding(
+                    {
+                        rule: 'unlabelled-link',
+                        subject: href,
+                        message: `Link ${href} has no text, image alt text or label; give it one so that assistive technology and crawlers can tell where it goes.`,
+                    },
+                    [filePath]
+                );
+            }
+        });
+
         // Stream the file rather than reading it whole (large files caused OOM
         // crashes). We accumulate one tag at a time, from '<' to '>', and
         // process it the moment it closes. The accumulator state lives outside
         // the chunk loop so a tag straddling a chunk boundary isn't dropped.
+        // The text between tags is only kept while a link is open and still unlabelled.
         const fileStream = fs.createReadStream(join(dir, filePath), { encoding: 'utf8' });
         let inTag = false;
         let tag = '';
+        let textRun = '';
         for await (const chunk of fileStream) {
             const strChunk = chunk as string;
             for (let i = 0, len = strChunk.length; i < len; ++i) {
@@ -257,16 +337,24 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
                     if (chr === '>') {
                         inTag = false;
                         processTag(tag);
+                        labelTracker.tag(tag);
                         tag = '';
                     } else {
                         tag += chr;
                     }
                 } else if (chr === '<') {
+                    if (textRun !== '') {
+                        labelTracker.text(textRun);
+                        textRun = '';
+                    }
                     inTag = true;
                     tag = '';
+                } else if (labelTracker.wantsText) {
+                    textRun += chr;
                 }
             }
         }
+        labelTracker.finish();
     }
 
     const hasAnchor = (link: string) => anchors.has(link) || anchors.has(link.replace('#', '/#'));
@@ -291,7 +379,45 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
     // for junit reporting
     const validationResults = {};
 
-    const errors: string[] = [];
+    const pageExists = (pagePath: string) => {
+        // if this is a file, do direct lookup in files list
+        if (FILE_EXTENSION.test(pagePath)) {
+            return files.includes(pagePath);
+        }
+        // if this is a directory, check for index.html; it might be a html file itself...
+        const dirHtml = `${!pagePath || pagePath.endsWith('/') ? pagePath : `${pagePath}/`}index.html`;
+        return (
+            files.includes(dirHtml) ||
+            files.includes(`${pagePath.endsWith('/') ? pagePath.slice(0, -1) : pagePath}.html`)
+        );
+    };
+
+    const statUrlPath = (urlPath: string) => statSync(join(dir, urlPath), { throwIfNoEntry: false });
+    const redirectTargets = new Map<string, string | undefined>();
+    /**
+     * Where the site's redirects send a request for `pathname`, or undefined when there are none. The
+     * trailing slash is added first, as the missing slash is reported as a shape issue of its own.
+     * The redirects describe the production site root, so a build served under a prefix has none.
+     */
+    const redirectTarget = (pathname: string): string | undefined => {
+        if (resolveRedirect == null || prefix != null) {
+            return undefined;
+        }
+        const isFinalForm = pathname.endsWith('/') || FILE_EXTENSION.test(pathname) || isHtmlFile(pathname);
+        const requested = isFinalForm ? pathname : `${pathname}/`;
+        if (!redirectTargets.has(requested)) {
+            redirectTargets.set(
+                requested,
+                resolveRedirect({
+                    pathname: requested,
+                    fileExists: (urlPath) => statUrlPath(urlPath)?.isFile() ?? false,
+                    dirExists: (urlPath) => statUrlPath(urlPath)?.isDirectory() ?? false,
+                })
+            );
+        }
+        return redirectTargets.get(requested);
+    };
+
     // validate the unchecked links
     Object.entries(linksToValidate).forEach(([link, { filePaths }]) => {
         if (IGNORED_PATHS.includes(link)) return;
@@ -306,61 +432,89 @@ const checkLinks = async (dir: string, files: string[], options: Options) => {
         if (link.startsWith('/')) {
             link = link.slice(1);
         }
-        if (!link.includes('#')) {
-            // if this is a file, do direct lookup in files list
-            const fileExtRegex = /\.[a-zA-Z]+$/;
-            if (fileExtRegex.test(link)) {
-                if (!files.includes(link)) {
-                    const error = `File link to ${link} does not exist.`;
-                    errors.push(error);
 
-                    validationResults[link] = { error };
-                }
-                return;
+        const hashIndex = link.indexOf('#');
+        const pagePath = hashIndex === -1 ? link : link.slice(0, hashIndex);
+
+        // A page the build lacks that the site redirects is a link to an old address: report the
+        // address to link to rather than that the old one is missing. The fragment of a page the
+        // build has is just missing, whatever the site redirects.
+        const reportMissing = (rule: string, message: string, reportKey: string) => {
+            const pathname = `/${pagePath}`;
+            const redirectedTo = pageExists(pagePath) ? undefined : redirectTarget(pathname);
+            addFinding(
+                redirectedTo == null
+                    ? { rule, subject: originalLink, message, reportKey }
+                    : {
+                          rule: 'redirecting-link',
+                          subject: originalLink.split('#')[0],
+                          message: `Link ${pathname} redirects to ${redirectedTo}; link to the final address directly.`,
+                          reportKey,
+                      },
+                filePaths
+            );
+        };
+
+        if (hashIndex === -1) {
+            if (!pageExists(link)) {
+                reportMissing(
+                    'missing-page',
+                    FILE_EXTENSION.test(link)
+                        ? `File link to ${link} does not exist`
+                        : `Link to ${link} could not be resolved`,
+                    link
+                );
             }
-
-            // if this is a directory, check for index.html
-            const dirHtml = `${!link || link.endsWith('/') ? link : `${link}/`}index.html`;
-            if (files.includes(dirHtml)) {
-                return;
-            }
-
-            // might be a html file itself...
-            if (files.includes(`${link.endsWith('/') ? link.slice(0, -1) : link}.html`)) {
-                return;
-            }
-
-            const error = `Link to ${link} could not be resolved (${filePathsString(filePaths, options)}).`;
-            errors.push(error);
-
-            validationResults[link] = { error };
-            return;
         } else {
             // Check if the hash exists in the file, or in the pages a framework redirect
             // page forwards the fragment on to
             const candidates = [linkWithoutPrefix, ...frameworkRedirectLinks(linkWithoutPrefix)];
             if (!candidates.some(hasAnchor)) {
-                errors.push(
-                    `Link to ${originalLink} could not be resolved in (${filePathsString(filePaths, options)}).`
-                );
+                reportMissing('missing-anchor', `Link to ${originalLink} could not be resolved in`, originalLink);
             }
         }
     });
 
-    // A link that resolves but redirects first is still a defect: every visitor and crawler
-    // takes the extra hop, and the redirecting form is a second address for the same page.
-    Object.entries(shapeIssues).forEach(([key, { message, filePaths }]) => {
-        const error = `${message} (${filePathsString(filePaths, options)})`;
-        errors.push(error);
-        validationResults[key] = { error };
+    const { baselineFile } = options;
+    const findings = [...found.values()];
+
+    if (process.env.UPDATE_LINK_BASELINE === 'true' && baselineFile != null) {
+        writeFileSync(baselineFile, serialiseBaseline(findings));
+        console.log(`Link checker baseline rewritten with ${findings.length} known issues: ${baselineFile}`);
+        return;
+    }
+
+    const baseline =
+        baselineFile != null && existsSync(baselineFile)
+            ? parseBaseline(readFileSync(baselineFile, 'utf8'))
+            : new Set<string>();
+    const { fresh, known, stale } = partitionByBaseline(findings, baseline);
+
+    if (known.length) {
+        console.log(`Link checker: ${known.length} known issues tolerated by ${baselineFile}.`);
+    }
+    if (stale.length) {
+        console.warn(
+            `Link checker: ${stale.length} entries in ${baselineFile} no longer occur and can be removed:\n${stale.join('\n')}`
+        );
+    }
+
+    const errors = fresh.map((finding) => {
+        const error = `${finding.message} (${filePathsString(finding.filePaths, options)})`;
+        validationResults[finding.reportKey ?? findingKey(finding)] = { error };
+        return error;
     });
 
     outputJunitReport(validationResults);
 
     if (errors.length) {
+        const baselineHint =
+            baselineFile != null
+                ? `\nA link that has to stay can be listed in ${baselineFile}; UPDATE_LINK_BASELINE=true rewrites it.`
+                : '';
         throw new Error(`
             Invalid links found, please fix the following issues:
-            ${errors.join('\n')}
+            ${errors.join('\n')}${baselineHint}
         `);
     } else {
         console.log('Link checker completed with no issues.');
