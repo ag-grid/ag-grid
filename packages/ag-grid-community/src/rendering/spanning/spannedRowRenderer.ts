@@ -35,7 +35,6 @@ export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implement
         const { rowSpanSvc } = this.beans;
 
         const previousCtrls = this.getCtrlsMap(ctrlsKey);
-        const previousCtrlsSize = previousCtrls.size;
 
         // all currently rendered row ctrls which may have spanned cells
         const rowCtrls = this.getAllRelevantRowControls(ctrlsKey);
@@ -43,43 +42,45 @@ export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implement
         const newRowCtrls = new Map<RowNode, RowCtrl>();
 
         let hasNewSpans = false;
-        for (const ctrl of rowCtrls) {
-            // skip cells that are animating out.
-            if (!ctrl.isAlive()) {
-                continue;
+        // the shown ctrls are replaced only once all are built, so a throw leaves them shown and destroys the new ones
+        try {
+            for (const ctrl of rowCtrls) {
+                // skip cells that are animating out.
+                if (!ctrl.isAlive()) {
+                    continue;
+                }
+                rowSpanSvc?.forEachSpannedColumn(ctrl.rowNode, (col, cellSpan) => {
+                    // if spanned row ctrl already exists
+                    if (newRowCtrls.has(cellSpan.firstNode)) {
+                        return;
+                    }
+
+                    const existingCtrl = previousCtrls.get(cellSpan.firstNode);
+                    if (existingCtrl) {
+                        newRowCtrls.set(cellSpan.firstNode, existingCtrl);
+                        return;
+                    }
+
+                    hasNewSpans = true;
+                    const newCtrl = new SpannedRowCtrl(cellSpan.firstNode, this.beans, false, false, false);
+                    newRowCtrls.set(cellSpan.firstNode, newCtrl);
+                });
             }
-            rowSpanSvc?.forEachSpannedColumn(ctrl.rowNode, (col, cellSpan) => {
-                // if spanned row ctrl already exists
-                if (newRowCtrls.has(cellSpan.firstNode)) {
-                    return;
-                }
-
-                const existingCtrl = previousCtrls.get(cellSpan.firstNode);
-                if (existingCtrl) {
-                    newRowCtrls.set(cellSpan.firstNode, existingCtrl);
-                    previousCtrls.delete(cellSpan.firstNode);
-                    return;
-                }
-
-                hasNewSpans = true;
-                const newCtrl = new SpannedRowCtrl(cellSpan.firstNode, this.beans, false, false, false);
-                newRowCtrls.set(cellSpan.firstNode, newCtrl);
-            });
+        } catch (e) {
+            destroyCtrlsNotIn(newRowCtrls, previousCtrls);
+            throw e;
         }
 
-        // set even if no change, as we've deleted out of previousCtrls
+        // set even if no change, so the spans keep the order of the rows
         this.setCtrlsMap(ctrlsKey, newRowCtrls);
 
         // if no new cells, and size is equal can assume no removals either.
-        const sameCount = newRowCtrls.size === previousCtrlsSize;
+        const sameCount = newRowCtrls.size === previousCtrls.size;
         if (!hasNewSpans && sameCount) {
             return;
         }
 
-        for (const oldCtrl of previousCtrls.values()) {
-            oldCtrl.destroyFirstPass(true);
-            oldCtrl.destroySecondPass();
-        }
+        destroyCtrlsNotIn(previousCtrls, newRowCtrls);
 
         this.dispatchLocalEvent({
             type: `spannedRowsUpdated`,
@@ -176,5 +177,15 @@ export class SpannedRowRenderer extends BeanStub<'spannedRowsUpdated'> implement
         this.destroyRowCtrls('top');
         this.destroyRowCtrls('bottom');
         this.destroyRowCtrls('center');
+    }
+}
+
+function destroyCtrlsNotIn(ctrls: Map<RowNode, RowCtrl>, kept: Map<RowNode, RowCtrl>): void {
+    for (const ctrl of ctrls.values()) {
+        if (kept.get(ctrl.rowNode) === ctrl) {
+            continue;
+        }
+        ctrl.destroyFirstPass(true);
+        ctrl.destroySecondPass();
     }
 }

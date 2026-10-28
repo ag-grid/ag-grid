@@ -205,9 +205,14 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
         this.rowStyles = this.processStylesFromGridOptions();
         this.rowModeFeature = this.createRowModeFeature();
 
-        this.addListeners();
-
-        this.rowModeFeature.prepareInitialCellCtrls?.();
+        try {
+            this.addListeners();
+            this.rowModeFeature.prepareInitialCellCtrls?.();
+        } catch (e) {
+            this.rowModeFeature.destroyCells();
+            this.destroy();
+            throw e;
+        }
     }
 
     private isClientSideLoadingRow(): boolean {

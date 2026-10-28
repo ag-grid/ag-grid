@@ -193,7 +193,7 @@ describe('Cell editing: purging edits on departure', () => {
 
     // Static pinned rows leave their section without being destroyed, so they cannot report their own
     // departure — the one case still resolved by a sweep, on pinnedRowsChanged.
-    test('replacing pinnedTopRowData purges an edit staged on the removed pinned row', async () => {
+    test('replacing or clearing pinnedTopRowData purges an edit staged on a removed pinned row', async () => {
         const api = await gridsManager.createGridAndWait('purge-pinned', {
             columnDefs: [{ field: 'a' }, { field: 'b' }],
             rowData: [{ id: '0', a: 'A0', b: 'B0' }],
@@ -235,6 +235,20 @@ describe('Cell editing: purging edits on departure', () => {
 
         await new GridRows(api, 'pinned row replaced, its staged edit purged').check(`
             PINNED_TOP id:OTHER a:"OTHER-A" b:"OTHER-B"
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 a:"A0" b:"B0"
+        `);
+
+        await stage(api, 'OTHER', 'b', 'EDITED');
+        await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
+
+        api.setGridOption('pinnedTopRowData', undefined);
+
+        await waitFor(() => {
+            expect(api.getEditingCells()).toHaveLength(0);
+            expect(stopped).toHaveLength(2);
+        });
+        await new GridRows(api, 'pinned rows cleared, the staged edit purged').check(`
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 a:"A0" b:"B0"
         `);
