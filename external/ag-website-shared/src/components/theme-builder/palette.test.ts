@@ -5,6 +5,7 @@ import {
     type Palette,
     deriveStroke,
     fromSeriesColors,
+    fromThemePalette,
     paletteIsEmpty,
     strokesAreEnabled,
     toSeriesColors,
@@ -196,6 +197,32 @@ describe('toThemePalette', () => {
             strokes: ['#aaa', '#bbb'],
             up: { fill: '#0f0', stroke: '#0f0' },
         });
+    });
+});
+
+describe('fromThemePalette', () => {
+    it('reads back what toThemePalette wrote', () => {
+        expect(toThemePalette(fromThemePalette(toThemePalette(palette))!)).toEqual(toThemePalette(palette));
+    });
+
+    it('reads strokes matching their fills as strokes off', () => {
+        const read = fromThemePalette(toThemePalette(withStrokesEnabled(palette, false)))!;
+
+        expect(strokesAreEnabled(read)).toBe(false);
+    });
+
+    it('drops a fill no colour picker can show, with its stroke', () => {
+        const gradient = { type: 'gradient', colorStops: [] };
+
+        expect(fromThemePalette({ fills: [gradient, '#bbb'], strokes: ['#111', '#222'] })).toMatchObject({
+            fills: ['#bbb'],
+            strokes: ['#222'],
+        });
+    });
+
+    it('finds nothing in a value that is not a palette', () => {
+        expect(fromThemePalette(undefined)).toBeUndefined();
+        expect(fromThemePalette({ fills: [] })).toBeUndefined();
     });
 });
 
