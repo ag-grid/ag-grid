@@ -971,6 +971,12 @@
         "meta": {
             "displayName": "Accessories"
         },
+        "openCalculatedColumnDialog": {
+            "more": {
+                "name": "Opening the Calculated Column Dialog",
+                "url": "./calculated-columns/#opening-the-dialog"
+            }
+        },
         "showColumnChooser": {
             "more": {
                 "name": "Column Chooser API",

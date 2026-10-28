@@ -377,6 +377,12 @@ The following example adds, edits and removes a Profit Margin column through the
 
 {% gridExampleRunner title="Calculated Columns API" name="calculated-columns-api" /%}
 
+### Opening the Dialog
+
+Call `api.openCalculatedColumnDialog('profit')` to edit an existing calculated column, or view it if it is read-only. The method does not move focus and reuses an already-open dialog.
+
+{% apiDocumentation source="grid-api/api.json" section="accessories" names=["openCalculatedColumnDialog"] /%}
+
 ### Refreshing Calculated Columns
 
 Call `refreshCalculatedColumns()` after application validation rules change to revalidate expressions, update saved errors and recalculate cells and dependants without opening the dialog.
