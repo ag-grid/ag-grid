@@ -1,5 +1,5 @@
 import type { AgBeanStubEvent, AgEvent, IAgEventEmitter } from 'ag-stack';
-import { LocalEventService, _escapeString } from 'ag-stack';
+import { LocalEventService, _escapeString, _isReservedKey } from 'ag-stack';
 
 import { _addColumnDefaultAndTypes } from '../columns/colDefUtils';
 import type { QueuedEventOwner } from '../columns/columnModel';
@@ -157,6 +157,8 @@ export class AgColumn<TValue = any>
     /** Cached split of a dotted `field` (`field.split('.')`); `null` when not dotted / dot-notation suppressed.
      *  Non-null doubles as the "field contains dots" indicator. Read per cell via `_getValueUsingDotPath`. */
     public fieldPath: string[] | null = null;
+    /** True when `field` is read without dot notation and is a reserved key, so per-cell reads must guard it. */
+    public fieldIsReservedKey = false;
     public valueGetter: string | ValueGetterFunc<any, TValue> | undefined = undefined;
     public allowFormula: boolean = false;
     public showRowGroup: string | boolean | undefined = undefined;
@@ -405,6 +407,7 @@ export class AgColumn<TValue = any>
                 this.colFlags |= COL_FLAG_TOOLTIP_FIELD_CONTAINS_DOTS;
             }
         }
+        this.fieldIsReservedKey = this.fieldPath === null && typeof field === 'string' && _isReservedKey(field);
     }
 
     private initMinAndMaxWidths(): void {

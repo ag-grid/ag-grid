@@ -1,6 +1,7 @@
 import {
     KeyCode,
     _getValueUsingDotField,
+    _getValueUsingPlainField,
     _isValidDate,
     _isValidDateTime,
     _parseBigIntOrNull,
@@ -351,7 +352,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             if (data == null) {
                 return undefined;
             }
-            return fieldContainsDots ? _getValueUsingDotField(data, field) : data[field];
+            return fieldContainsDots ? _getValueUsingDotField(data, field) : _getValueUsingPlainField(data, field);
         };
 
         let value: any;

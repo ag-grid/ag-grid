@@ -1,4 +1,4 @@
-import { _exists, _getValueUsingDotField } from 'ag-stack';
+import { _exists, _getValueUsingDotField, _getValueUsingPlainField } from 'ag-stack';
 
 import type { AgColumn } from '../entities/agColumn';
 import type { AbstractColDef, ColDef } from '../entities/colDef';
@@ -102,7 +102,7 @@ export function _getLegacyTooltipFieldValue(data: any, field: string, containsDo
     if (data == null) {
         return undefined;
     }
-    return containsDots ? _getValueUsingDotField(data, field) : (data as Record<string, unknown>)[field];
+    return containsDots ? _getValueUsingDotField(data, field) : _getValueUsingPlainField(data, field);
 }
 
 export function _initColTooltip(column: AgColumn): void {

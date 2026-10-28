@@ -98,6 +98,33 @@ describe('Reserved key handling in field paths', () => {
         await waitFor(() => expect(api.getEditingCells()).toEqual([]));
     }
 
+    describe('field without dot notation', () => {
+        const createPlainFieldGrid = () =>
+            createGrid({
+                columnDefs: [{ field: 'id' }, { field: 'constructor' }],
+                rowData: [{ id: 'own', constructor: 'own ctor' }, { id: 'plain' }],
+            });
+
+        test('reads a reserved key only where the row holds it as own data', async () => {
+            const api = await createPlainFieldGrid();
+
+            expect(api.getCellValue({ rowNode: api.getRowNode('own')!, colKey: 'constructor' })).toBe('own ctor');
+            expect(api.getCellValue({ rowNode: api.getRowNode('plain')!, colKey: 'constructor' })).toBeUndefined();
+        });
+
+        test('setDataValue on a reserved key', async () => {
+            const api = await createPlainFieldGrid();
+            const own = api.getRowNode('own')!;
+            const plain = api.getRowNode('plain')!;
+
+            expect(plain.setDataValue('constructor', 'changed')).toBe(false);
+            expect(plain.data).toEqual({ id: 'plain' });
+
+            expect(own.setDataValue('constructor', 'changed')).toBe(true);
+            expect(api.getCellValue({ rowNode: own, colKey: 'constructor' })).toBe('changed');
+        });
+    });
+
     describe('field with dot notation', () => {
         test('reads reserved keys only where the row holds them as own data', async () => {
             const api = await createFieldGrid();
@@ -259,7 +286,7 @@ describe('Reserved key handling in field paths', () => {
 
     describe('autoGenerateColumnDefs', () => {
         // rowData is supplied after creation: generating columns during grid init with an editing module
-        // registered currently fails in EditService.releaseColumnsLeaving (AG-19085)
+        // registered currently fails in EditService.releaseColumnsLeaving
         async function createGeneratedGrid(options: GridOptions, rowData: any[]) {
             const api = gridMgr.createGrid('reservedKeyGrid', {
                 getRowId: ({ data }) => data.id,

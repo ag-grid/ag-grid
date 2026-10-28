@@ -1,4 +1,4 @@
-import { _hasOwn, _isExpressionString, _isInheritedReservedKey } from 'ag-stack';
+import { _getValueUsingPlainField, _hasOwn, _isExpressionString, _isInheritedReservedKey } from 'ag-stack';
 
 import type { GridApi } from '../api/gridApi';
 import type { ColumnModel } from '../columns/columnModel';
@@ -388,8 +388,7 @@ export class ValueService extends BeanStub implements NamedBean {
                     // field read deferred to here — skipped entirely on the valueGetter branch above
                     const field = column.field;
                     if (field) {
-                        const fieldPath = column.fieldPath;
-                        treeValue = fieldPath ? _getValueUsingDotPath(data, fieldPath) : data[field];
+                        treeValue = readColumnField(data, column, field);
                     }
                 }
                 if (treeValue !== undefined) {
@@ -442,8 +441,7 @@ export class ValueService extends BeanStub implements NamedBean {
         if (!field || !data || ignoreSsrmAggData) {
             return undefined;
         }
-        const fieldPath = column.fieldPath;
-        return fieldPath ? _getValueUsingDotPath(data, fieldPath) : data[field];
+        return readColumnField(data, column, field);
     }
 
     public parseValue<TValueNew = any, TValueOld = any, TValue = any>(
@@ -962,5 +960,16 @@ const readSsrmFooterGroupValue = (rowNode: IRowNode, data: any, rowGroupColId: s
         return undefined;
     }
     // Read the group's own field (`rowField`); the column's cached `fieldPath` is for the column's `field`.
-    return rowField.includes('.') ? _getValueUsingDotPath(data, rowField.split('.')) : data[rowField];
+    return rowField.includes('.')
+        ? _getValueUsingDotPath(data, rowField.split('.'))
+        : _getValueUsingPlainField(data, rowField);
+};
+
+/** Reads `column`'s field from `data`; only reserved-key fields pay for the own-property check. */
+const readColumnField = (data: any, column: AgColumn, field: string): any => {
+    const fieldPath = column.fieldPath;
+    if (fieldPath) {
+        return _getValueUsingDotPath(data, fieldPath);
+    }
+    return column.fieldIsReservedKey ? _getValueUsingPlainField(data, field) : data[field];
 };

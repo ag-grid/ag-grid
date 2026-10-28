@@ -279,4 +279,4 @@ export {
     _splitBracketed,
     _toString,
 } from './utils/string';
-export { _getValueUsingDotField } from './utils/value';
+export { _getValueUsingDotField, _getValueUsingPlainField } from './utils/value';
