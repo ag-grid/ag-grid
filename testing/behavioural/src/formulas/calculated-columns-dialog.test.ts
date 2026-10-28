@@ -24,6 +24,66 @@ import {
 describe('ag-grid calculated columns', () => {
     setupCalculatedColumnsSuite();
 
+    test.each(['live', 'deferred'] as const)(
+        'the API opens an existing %s dialog without moving focus',
+        async (applyMode) => {
+            const api = createGrid('calculated-api-dialog', {
+                calculatedColumns: { applyMode },
+                columnDefs: [
+                    { field: 'sales' },
+                    { colId: 'profit', headerName: 'Profit', calculatedExpression: '[sales]' },
+                ],
+                rowData: [{ id: 'r1', sales: 10 }],
+            });
+            const trigger = document.createElement('button');
+            document.body.appendChild(trigger);
+            onTestFinished(() => trigger.remove());
+            trigger.focus();
+
+            api.openCalculatedColumnDialog('profit');
+            expect(getExpressionInput()).toHaveValue('[Sales]');
+            expect(document.activeElement).toBe(trigger);
+            const dialog = getCalculatedColumnDialog();
+            api.openCalculatedColumnDialog(api.getColumn('profit')!);
+            api.openCalculatedColumnDialog(api.getColumn('profit')!.getColDef());
+            expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1);
+            expect(getCalculatedColumnDialog()).toBe(dialog);
+            expect(document.activeElement).toBe(trigger);
+
+            setExpression('[Sales] * 2');
+            if (applyMode === 'deferred') {
+                expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[sales]');
+                clickDialogButton('Apply');
+            }
+            await waitFor(() => expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[sales] * 2'));
+        }
+    );
+
+    test('the API opens read-only calculated columns in view mode', () => {
+        const api = createGrid('calculated-api-view-dialog', {
+            columnDefs: [
+                { field: 'sales' },
+                { colId: 'profit', calculatedExpression: '[sales]', calculatedColumnReadOnly: true },
+            ],
+            rowData: [{ id: 'r1', sales: 10 }],
+        });
+        api.openCalculatedColumnDialog('profit');
+        expect(getExpressionInput()).toHaveValue('[Sales]');
+        expect(getExpressionInput().readOnly).toBe(true);
+        expect(document.querySelector('.ag-panel-title-bar-title')).toHaveTextContent('View Calculated Column');
+    });
+
+    test.each([true, false])('the API ignores non-calculated columns with calculatedColumns=%s', (enabled) => {
+        const api = createGrid('calculated-api-dialog-noop', {
+            calculatedColumns: enabled,
+            columnDefs: [{ field: 'sales' }],
+            rowData: [{ id: 'r1', sales: 10 }],
+        });
+        api.openCalculatedColumnDialog('sales');
+        api.openCalculatedColumnDialog('missing');
+        expect(document.querySelector('.ag-calculated-column-form')).toBeNull();
+    });
+
     test('a new deferred dialog disables Apply until an expression is entered', async () => {
         const api = createGrid('calculated-initial-validation', {
             calculatedColumns: { applyMode: 'deferred' },
