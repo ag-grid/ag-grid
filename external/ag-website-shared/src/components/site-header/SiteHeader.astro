@@ -27,7 +27,12 @@ const frameworkPaths = FRAMEWORKS.map((framework) => ({
 }));
 // Nav paths are authored without the site base URL, but the path they are matched
 // against is Astro.url.pathname, which carries it.
-const topNavPaths = topNavItems.map((item) => (item.path ? { ...item, path: urlWithBaseUrl(item.path) } : item));
+// `activePath` keeps an item active across a whole section when `path` links to one page in it.
+const getMatchPath = ({ activePath, path }: { activePath?: string; path?: string }) => activePath ?? path;
+const topNavPaths = topNavItems.map((item) => {
+    const matchPath = getMatchPath(item);
+    return matchPath ? { ...item, path: urlWithBaseUrl(matchPath) } : item;
+});
 const allPaths = [
     ...topNavPaths, // NOTE: Prioritise API paths over framework paths - for doc pages which are in
     //  the API section
