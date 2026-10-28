@@ -346,7 +346,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (!field) {
             return undefined;
         }
-        // split once, so the `__proto__` check and every row read share the path
         const fieldPath = field.includes('.') && !this.gos.get('suppressFieldDotNotation') ? field.split('.') : null;
         if (_isProtoField(field, fieldPath)) {
             return undefined;
