@@ -30,6 +30,10 @@ label#{$selector-exclude-grid} {
     &[for*='switch'] {
         cursor: pointer;
     }
+
+    .req {
+        color: var(--color-input-error);
+    }
 }
 
 input#{$selector-exclude-grid} {
@@ -352,6 +356,26 @@ input[type='range']#{$selector-exclude-grid} {
     select {
         align-self: flex-start;
     }
+
+    &.inline {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: $spacing-size-1 $spacing-size-2;
+
+        label {
+            display: inline-block;
+            margin-bottom: 0;
+            font-size: var(--text-fs-base);
+        }
+
+        input[type='text'],
+        input[type='search'],
+        input[type='email'],
+        textarea {
+            min-width: 280px;
+        }
+    }
 }
 
 .input-error {
@@ -375,4 +399,9 @@ input[type='range']#{$selector-exclude-grid} {
 
 .input-error .error {
     opacity: 1;
+}
+
+.extra-info {
+    margin-top: $spacing-size-1;
+    color: var(--color-fg-secondary);
 }

@@ -159,7 +159,8 @@
     gap: var(--layout-gap);
 }
 
-.textInputGroup {
+.textInputGroup,
+.textInputGroupStacked {
     display: flex;
     flex-direction: column;
     gap: $spacing-size-3;
@@ -167,6 +168,11 @@
     code {
         width: fit-content;
     }
+}
+
+.textInputGroupStacked .textInput {
+    flex-direction: column;
+    gap: $spacing-size-3;
 }
 
 .inputsList,
