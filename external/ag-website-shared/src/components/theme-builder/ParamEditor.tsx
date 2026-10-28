@@ -2,11 +2,12 @@ import type { FC, ReactNode } from 'react';
 
 import { ParamModel, useParamAtom } from '../../theming/ParamModel';
 import { useSetAdvancedParamEnabled } from '../../theming/advanced-params';
-import { type ColorValue, type ParamType } from '../../theming/api';
+import { type ParamType } from '../../theming/api';
 import { useRenderedTheme } from '../../theming/rendered-theme';
-import { type ThemeParam, clamp, getThemeDefaultParams } from '../../theming/utils';
+import { type ThemeParam, getThemeDefaultParams } from '../../theming/utils';
 import { BorderStyleValueEditor } from './BorderStyleValueEditor';
-import { BorderValueEditor } from './BorderValueEditor';
+import { BorderSwitch, BorderValueEditor } from './BorderValueEditor';
+import { Checkbox } from './Checkbox';
 import { ColorSchemeValueEditor } from './ColorSchemeValueEditor';
 import { ColorValueEditor } from './ColorValueEditor';
 import { CssValueEditor } from './CssValueEditor';
@@ -19,6 +20,7 @@ import { LengthValueEditor } from './LengthValueEditor';
 import { ScaleValueEditor } from './ScaleValueEditor';
 import { ScrollbarWidthValueEditor } from './ScrollbarWidthValueEditor';
 import type { ValueEditorProps } from './ValueEditorProps';
+import { renderColorValue } from './renderColorValue';
 
 export type ParamEditorProps = {
     param: ThemeParam | ParamModel<unknown>;
@@ -26,12 +28,15 @@ export type ParamEditorProps = {
     showDocs?: boolean;
     /** A footnote under the control - see `FormFieldProps.note`. */
     note?: ReactNode;
+    /** Sits in the input, or beside the heading of a field with a switch. */
     icon?: ReactNode;
     swipeAdjustmentDivisor?: number;
     isAdvancedSection?: boolean;
     // Optional clamp for numeric (length) params; ignored by other editor types.
     min?: number;
     max?: number;
+    /** A switch in place of the field's own, for a host setting that shows the value without changing it. */
+    labelSwitch?: { checked: boolean; onChange: (checked: boolean) => void };
 };
 
 export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
@@ -50,13 +55,24 @@ export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
     }
 
     const ValueEditorComponent = valueEditors[param.type] || CssValueEditor;
+    const LabelControl = labelControls[param.type];
+    const onChange = (v: unknown) => setValue(v ?? undefined);
+    const label = props.label || param.label;
+    const { labelSwitch } = props;
+    const labelControl = labelSwitch ? (
+        <Checkbox checked={labelSwitch.checked} onChange={labelSwitch.onChange} useSwitch ariaLabel={label} />
+    ) : (
+        LabelControl && <LabelControl param={param} value={editorValue} onChange={onChange} label={label} />
+    );
 
     return (
         <FormField
-            label={props.label || param.label}
+            label={label}
             docs={props.showDocs ? param.docs : null}
             docsUrl={props.showDocs ? param.docsUrl : null}
             note={props.note}
+            labelIcon={labelControl && props.icon}
+            labelControl={labelControl}
             onCloseClick={
                 props.isAdvancedSection
                     ? () => {
@@ -68,15 +84,17 @@ export const ParamEditor = withErrorBoundary((props: ParamEditorProps) => {
                     : undefined
             }
         >
-            <ValueEditorComponent
-                param={param}
-                value={editorValue}
-                onChange={(v) => setValue(v ?? undefined)}
-                icon={props.icon}
-                swipeAdjustmentDivisor={props.swipeAdjustmentDivisor}
-                min={props.min}
-                max={props.max}
-            />
+            {labelSwitch?.checked !== false && (
+                <ValueEditorComponent
+                    param={param}
+                    value={editorValue}
+                    onChange={onChange}
+                    icon={labelControl ? undefined : props.icon}
+                    swipeAdjustmentDivisor={props.swipeAdjustmentDivisor}
+                    min={props.min}
+                    max={props.max}
+                />
+            )}
         </FormField>
     );
 });
@@ -96,26 +114,6 @@ const valueEditors: Record<ParamType, FC<ValueEditorProps<any>>> = {
     scrollbarWidth: ScrollbarWidthValueEditor,
 };
 
-function renderColorValue(property: ThemeParam, params: any, stack: Set<ThemeParam>): string {
-    const value: ColorValue = params[property];
-    if (stack.has(property)) {
-        throw new Error(`Circular reference detected resolving default value for ${property}`);
-    }
-    stack.add(property);
-    try {
-        if (!isRef(value)) {
-            return value;
-        }
-        if (!value.mix) {
-            return renderColorValue(value.ref, params, stack);
-        }
-        const colorExpr = renderColorValue(value.ref, params, stack);
-        const backgroundExpr = value.onto ? renderColorValue(value.onto, params, stack) : 'transparent';
-        return `color-mix(in srgb, ${backgroundExpr}, ${colorExpr} ${clamp(value.mix * 100, 0, 100)}%)`;
-    } finally {
-        stack.delete(property);
-    }
-}
-
-const isRef = (value: unknown): value is { ref: string } =>
-    typeof value === 'object' && value != null && 'ref' in value && typeof value.ref === 'string';
+const labelControls: Partial<Record<ParamType, FC<ValueEditorProps<any>>>> = {
+    border: BorderSwitch,
+};

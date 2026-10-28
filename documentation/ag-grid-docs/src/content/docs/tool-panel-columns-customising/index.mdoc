@@ -119,7 +119,15 @@ The following menu items are shown by default based on the column's configuratio
 
 For a column group, `rowGroup`, `value` and `pivot` apply to every child column that individually allows the action; `scrollIntoView` scrolls only the first visible child column into view.
 
-**Move Up** and **Move Down** move groups together and respect the same restrictions as keyboard column reordering. They appear after the other default items, separated by a separator. They are hidden when `suppressMovableColumns`, `suppressMovable`, `lockPosition`, `suppressColumnMove`, `suppressSyncLayoutWithGrid` or `functionsReadOnly` prevents movement. Unavailable directions are disabled, including at the start or end of the list. Both items are disabled in pivot mode. In deferred mode, moves are staged until **Apply**. The same items appear in the [Column Chooser](./column-chooser/). Customise their labels using the `moveUp` and `moveDown` locale keys, and their arrows using the `menuMoveUp` and `menuMoveDown` icons.
+**Move Up** and **Move Down** reorder columns or groups in the tool panel and [Column Chooser](./column-chooser/). They appear at the end of the menu.
+
+- **Hidden** in pivot mode, even with no active pivot columns.
+- **Hidden** when `suppressMovableColumns`, `suppressMovable`, `lockPosition`, `suppressColumnMove` or `suppressSyncLayoutWithGrid` prevents movement.
+- **Disabled** when no move is possible in that direction, including at the list boundaries.
+
+`functionsReadOnly` does not restrict these moves. In deferred mode, changes wait for **Apply**.
+
+Customise labels with `moveUp` / `moveDown` and icons with `menuMoveUp` / `menuMoveDown`.
 
 With [Read Only Functions](./tool-panel-columns-configuration/#read-only-functions), `rowGroup`, `value` and `pivot` are not shown.
 
@@ -138,26 +146,28 @@ The example below shows both the built-in items and this customisation. Note the
 
 ### Drop Zone Menus
 
-Right-click an item in the **Row Groups**, **Values** or **Column Labels** section to reorder it using **Move Up** or **Move Down**. Horizontal Row Group and Pivot Panels offer **Move Left** and **Move Right** instead. These actions reorder items within their panel, rather than moving columns in the grid.
+**Move Up** and **Move Down** reorder pills within **Row Groups**, **Values** and **Column Labels**, not grid columns. Horizontal panels use **Move Left** and **Move Right**.
 
-With an item focused, press **Shift+F10** or the context-menu key to open its menu. Focus returns to the item after moving it. Unavailable directions are disabled, including both directions when the section contains only one item. Move items are hidden when `functionsReadOnly` or `suppressMovable` is enabled, or when the Columns Tool Panel has `suppressSyncLayoutWithGrid` enabled. In the Row Groups panel, items locked by `groupLockGroupColumns` have no move options; unlocked items can still move without crossing the locked groups. Unlike grid column reordering, panel reordering is not suppressed by `suppressMovableColumns` or `lockPosition`. The default drop-zone menu contains only move items, with no separator. Unlike the main column list, drop-zone items can still be reordered in pivot mode. In a deferred Columns Tool Panel, moves are staged until **Apply** and can be discarded with **Cancel**.
+Open the menu by right-clicking a pill or pressing **Shift+F10** while it is focused.
 
-The labels reuse the `moveUp`, `moveDown`, `moveLeft` and `moveRight` locale keys. Their arrow icons are `menuMoveUp`, `menuMoveDown`, `menuMoveLeft` and `menuMoveRight` respectively.
+- **Hidden** unless the column enables the matching function: `enableRowGroup`, `enableValue` or `enablePivot`.
+- **Hidden** when `functionsReadOnly` is enabled, or for row groups locked by `groupLockGroupColumns`.
+- **Disabled** at panel boundaries or when a move would cross locked row groups.
 
-Use `getColumnDropZoneMenuItems` to customise these menus independently of `columnMenuItems` and `getColumnMenuItems`. The callback receives the `column`, the panel's `source` (`'rowGroup'`, `'pivot'` or `'aggregation'`), and `defaultItems` containing the movement tokens for that panel's orientation, including disabled directions.
+Pivot mode and column-layout restrictions do not block pill reordering. Deferred changes wait for **Apply**.
 
-Return a list containing `moveUp`, `moveDown`, `moveLeft`, `moveRight`, `'separator'` or custom `MenuItemDef` entries. Unavailable directions remain disabled even when explicitly requested. Suppressed moves and directions that do not match the panel's orientation are omitted. Return `[]` to suppress the menu. Custom items can still be shown when no movement is available.
+Customise labels with `moveUp`, `moveDown`, `moveLeft`, `moveRight`; icons use `menuMoveUp`, `menuMoveDown`, `menuMoveLeft`, `menuMoveRight`.
+
+Use `getColumnDropZoneMenuItems` to filter `defaultItems`, add custom items or return `[]` to hide a menu. Its `source` is `'rowGroup'`, `'pivot'` or `'aggregation'`. For example, hide the Values menu and keep the others:
 
 ```javascript
 const gridOptions = {
-    getColumnDropZoneMenuItems: ({ source, defaultItems }) => {
-        // Hide the Values drop-zone menu, leaving the other panels unchanged.
-        return source === 'aggregation' ? [] : defaultItems;
-    },
+    getColumnDropZoneMenuItems: ({ source, defaultItems }) =>
+        source === 'aggregation' ? [] : defaultItems,
 };
 ```
 
-The callback is evaluated when pills are created to determine whether screen readers should announce a menu, and again when opening the menu. It should not have side effects. Without this callback, the default move items are shown.
+Keep the callback free of side effects; it may run before the menu opens. Column-menu callbacks do not configure drop-zone menus.
 
 {% apiDocumentation source="grid-options/properties.json" section="accessories" names=["getColumnDropZoneMenuItems"] /%}
 
