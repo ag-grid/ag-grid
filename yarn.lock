@@ -14800,6 +14800,7 @@ __metadata:
     patch-package: "npm:^8.0.1"
     postcss-import: "npm:^17.0.1"
     postcss-rtlcss: "npm:^6.0.0"
+    postcss-scss: "npm:^4.0.9"
     postcss-selector-parser: "npm:^7.1.7"
     postcss-url: "npm:^10.1.4"
     prettier: "npm:3.9.10"
@@ -29006,7 +29007,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-scss@npm:4.0.9":
+"postcss-scss@npm:4.0.9, postcss-scss@npm:^4.0.9":
   version: 4.0.9
   resolution: "postcss-scss@npm:4.0.9"
   peerDependencies:
