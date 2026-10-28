@@ -5,9 +5,9 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
-    "@playwright/test": "^1.63.0",
-    "@types/node": "^22.15.3",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^22.20.5",
     "ag-grid-community": "36.2.0-beta.20261025.2042",
-    "playwright": "^1.63.0"
+    "playwright": "^1.64.1"
   }
 }

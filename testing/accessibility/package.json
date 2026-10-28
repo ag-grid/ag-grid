@@ -10,14 +10,14 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@angular/animations": "^20.3.27",
-    "@angular/common": "^20.3.27",
-    "@angular/compiler": "^20.3.27",
-    "@angular/core": "^20.3.27",
-    "@angular/forms": "^20.3.27",
-    "@angular/platform-browser": "^20.3.27",
-    "@angular/platform-browser-dynamic": "^20.3.27",
-    "@angular/router": "^20.3.27",
+    "@angular/animations": "^20.3.34",
+    "@angular/common": "^20.3.34",
+    "@angular/compiler": "^20.3.34",
+    "@angular/core": "^20.3.34",
+    "@angular/forms": "^20.3.34",
+    "@angular/platform-browser": "^20.3.34",
+    "@angular/platform-browser-dynamic": "^20.3.34",
+    "@angular/router": "^20.3.34",
     "ag-charts-community": "14.2.0-beta.20261025",
     "ag-charts-enterprise": "14.2.0-beta.20261025",
     "ag-grid-angular": "36.2.0-beta.20261025.2042",
@@ -28,7 +28,7 @@
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.63.0",
-    "playwright": "^1.63.0"
+    "@playwright/test": "^1.64.1",
+    "playwright": "^1.64.1"
   }
 }

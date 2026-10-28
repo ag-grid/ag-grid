@@ -159,6 +159,14 @@ export const sonarjsConfig = [
         ignores: ['**/*.{test,spec}.{js,ts,tsx}', '**/test-utils/**'],
         rules: Object.fromEntries(TEST_SONARJS_RULES.map((name) => [`sonarjs/${name}`, 0])),
     },
+    {
+        // sonarjs 4.2.2 widened these to flag many existing tests; not enforced on tests for now.
+        files: ['**/*.test.{ts,tsx}'],
+        rules: {
+            'sonarjs/prefer-specific-assertions': 0,
+            'sonarjs/parameterized-tests': 0,
+        },
+    },
 ];
 
 export default [

@@ -58,9 +58,6 @@ function resetOptions(): void {
     Object.assign(mockGridLayout, DEFAULT_OPTIONS);
 }
 
-/** The computed-style properties {@link init}'s `getComputedStyle` wrapper may write, and must undo first. */
-const OVERRIDDEN_STYLE_PROPS = ['width', 'height', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'];
-
 const POPUP_OR_DIALOG_SELECTOR =
     '.ag-popup,.ag-dialog,.ag-advanced-filter-builder,.ag-tooltip,.ag-rich-select-list,.ag-menu';
 // `.ag-rich-select` on top of the shared list: here the match is by `closest`, so the picker's own wrapper counts.
@@ -79,10 +76,9 @@ function inVirtualList(el: HTMLElement): boolean {
  * a fresh div is built and measured on every call, which is what makes startup slow.
  */
 function isScrollbarProbe(el: HTMLElement): boolean {
-    // `msOverflowStyle` first: happy-dom doesn't know the property, so the grid's assignment leaves a
-    // plain own property and this is a bare lookup, undefined for everything else.
-    const style = el.style as CSSStyleDeclaration & { msOverflowStyle?: string };
-    return style.msOverflowStyle === 'scrollbar' && style.overflow === 'scroll' && style.position === 'absolute';
+    // By class: happy-dom's style proxy drops properties it doesn't know, so the grid's `msOverflowStyle`
+    // marker never lands on the element.
+    return el.classList.contains('ag-scrollbar-probe');
 }
 
 // Precedence order: lowest matching rank wins. One lookup per class the element has, rather than a
@@ -337,44 +333,38 @@ function init(): boolean {
             }
         }
         const style = origGetComputedStyle.call(window, el, pseudoElement);
-        if (cacheable) {
-            styleCache.set(el, { turn: styleTurn, key, style });
+        if (!cacheable) {
+            return style;
         }
-        if (cacheable) {
-            // happy-dom hands back one live declaration per element for that element's lifetime, so
-            // last round's overrides must go first or they read as the implementation's own and pin the
-            // size forever. `delete` restores the prototype accessor; none are own properties natively.
-            for (const prop of OVERRIDDEN_STYLE_PROPS) {
-                delete (style as unknown as Record<string, unknown>)[prop];
-            }
-            const rect = el.getBoundingClientRect();
-            // Keep width/height consistent with getBoundingClientRect, but only where the DOM has no
-            // answer of its own: a computed 0 otherwise suppresses column virtualisation (viewportRight === 0).
-            const origWidth = style.width;
-            const origHeight = style.height;
-            if (rect.width > 0 && (!origWidth || origWidth === '0px' || origWidth === '0')) {
-                Object.defineProperty(style, 'width', {
-                    value: `${rect.width}px`,
-                    writable: true,
-                    configurable: true,
-                });
-            }
-            if (rect.height > 0 && (!origHeight || origHeight === '0px' || origHeight === '0')) {
-                Object.defineProperty(style, 'height', {
-                    value: `${rect.height}px`,
-                    writable: true,
-                    configurable: true,
-                });
-            }
-            // Unset padding computes to '' without layout where a browser says '0px', and callers that
-            // `parseFloat` it (virtual-list drag hit-testing) would get NaN.
-            for (const prop of ['paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'] as const) {
-                if (style[prop] === '') {
-                    Object.defineProperty(style, prop, { value: '0px', writable: true, configurable: true });
-                }
+        // happy-dom hands back one live declaration per element, and its proxy refuses defineProperty for
+        // CSS properties, so serve the overrides from a wrapper rather than writing them onto the original.
+        const overrides: Record<string | symbol, string> = {};
+        const rect = el.getBoundingClientRect();
+        // Keep width/height consistent with getBoundingClientRect, but only where the DOM has no
+        // answer of its own: a computed 0 otherwise suppresses column virtualisation (viewportRight === 0).
+        const origWidth = style.width;
+        const origHeight = style.height;
+        if (rect.width > 0 && (!origWidth || origWidth === '0px' || origWidth === '0')) {
+            overrides.width = `${rect.width}px`;
+        }
+        if (rect.height > 0 && (!origHeight || origHeight === '0px' || origHeight === '0')) {
+            overrides.height = `${rect.height}px`;
+        }
+        // Unset padding computes to '' without layout where a browser says '0px', and callers that
+        // `parseFloat` it (virtual-list drag hit-testing) would get NaN.
+        for (const prop of ['paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft'] as const) {
+            if (style[prop] === '') {
+                overrides[prop] = '0px';
             }
         }
-        return style;
+        const wrapped =
+            Object.keys(overrides).length === 0
+                ? style
+                : new Proxy(style, {
+                      get: (target, prop) => (prop in overrides ? overrides[prop] : Reflect.get(target, prop)),
+                  });
+        styleCache.set(el, { turn: styleTurn, key, style: wrapped });
+        return wrapped;
     };
 
     // These live on HTMLElement.prototype, shadowing any Element.prototype patch, so install there too.
