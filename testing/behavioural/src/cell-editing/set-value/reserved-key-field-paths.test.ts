@@ -156,6 +156,33 @@ describe('Reserved key handling in field paths', () => {
             expect(warnings).toHaveLength(1);
             expect(warnings[0]).toContain(field);
         });
+
+        test('does not warn when the column has its own getter and setter', async () => {
+            const field = `custom.__proto__.${KEY}`;
+            let stored = 'initial';
+            const warnings = await captureWarnings(340, async () => {
+                const api = await createGrid({
+                    columnDefs: [
+                        { field: 'id' },
+                        {
+                            field,
+                            valueGetter: () => stored,
+                            valueSetter: ({ newValue }) => {
+                                stored = newValue;
+                                return true;
+                            },
+                        },
+                    ],
+                    rowData: [{ id: 'plain' }],
+                });
+                const row = api.getRowNode('plain')!;
+                expect(row.setDataValue(field, 'changed')).toBe(true);
+                expect(api.getCellValue({ rowNode: row, colKey: field })).toBe('changed');
+            });
+
+            expect(warnings).toEqual([]);
+            expectObjectPrototypeUnchanged();
+        });
     });
 
     describe('writing through a field path', () => {

@@ -452,7 +452,7 @@ export { _consoleError, _warnOnce } from './utils/log';
 export { _isProtoPollutionKey, _mergeDeep, _mergedEqual } from './utils/mergeDeep';
 export { _clamp, _formatNumberCommas, _isFiniteNumber, _toFiniteNumber } from './utils/number';
 export { _selectAllCells } from './utils/selection';
-export { _getValueUsingDotPath, _isProtoField } from './utils/value';
+export { _getValueUsingDotPath } from './utils/value';
 export type { LogService } from './validation/logService';
 export {
     _errMsg,

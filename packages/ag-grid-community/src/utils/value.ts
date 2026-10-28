@@ -18,7 +18,6 @@ export function _getValueUsingDotPath(data: any, fields: string[]): any {
 /**
  * True when `field` reaches `__proto__`: as any segment of its pre-split `fieldPath`, or as the whole field when it
  * has no path. Such fields are neither read nor written.
- * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _isProtoField(field: string, fieldPath: string[] | null): boolean {
     return fieldPath ? fieldPath.includes('__proto__') : field === '__proto__';

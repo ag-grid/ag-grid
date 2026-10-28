@@ -396,7 +396,7 @@ export class AgColumn<TValue = any>
     }
 
     private initDotNotation(): void {
-        const { field, tooltipField } = this.colDef;
+        const { field, tooltipField, valueGetter, valueSetter } = this.colDef;
         this.field = field;
         const suppress = this.gos.get('suppressFieldDotNotation');
         this.colFlags &= ~COL_FLAG_TOOLTIP_FIELD_CONTAINS_DOTS;
@@ -411,7 +411,9 @@ export class AgColumn<TValue = any>
         this.fieldHasProtoKey = false;
         if (typeof field === 'string' && _isProtoField(field, this.fieldPath)) {
             this.fieldHasProtoKey = true;
-            this.warn(340, { field });
+            if (!valueGetter || !valueSetter) {
+                this.warn(340, { field });
+            }
         }
     }
 
