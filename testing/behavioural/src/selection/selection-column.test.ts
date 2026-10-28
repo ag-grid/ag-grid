@@ -171,6 +171,10 @@ describe('Row Selection Grid Options', () => {
         api.setGridOption('selectionColumnDef', { resizable: true, flex: null, width: 70 });
         expect(col.getFlex()).toBeNull();
         expect(col.getActualWidth()).toBe(70);
+        api.setGridOption('selectionColumnDef', { resizable: true, flex: 1 });
+        api.setGridOption('selectionColumnDef', { resizable: true, flex: 0, width: 100 });
+        expect(col.getFlex()).toBeNull();
+        expect(col.getActualWidth()).toBe(100);
 
         api.setGridOption('selectionColumnDef', { resizable: true, pinned: 'right' });
         expect(col.getPinned()).toBe('right');

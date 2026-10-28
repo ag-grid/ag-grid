@@ -63,6 +63,10 @@ export abstract class BaseSingleColService extends BeanStub {
             }
             const state = _getColumnStateFromColDef(beans, colDef, col.colId);
             const stateFlex = state.flex;
+            if (stateFlex != null && stateFlex <= 0) {
+                // `flex: 0` ends the flex, as on a column definition, so a width applies
+                state.flex = null;
+            }
             const width = state.width;
             if (((stateFlex === undefined ? col.flex : stateFlex) ?? 0) > 0) {
                 // a flexing column takes no colDef width, as `AgColumn.reapplyColDef`
