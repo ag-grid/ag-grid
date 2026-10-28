@@ -514,7 +514,7 @@ describe('drop zone move menus', () => {
                     expect(panel(api, zone).querySelector('.ag-column-drop-cell-text')?.textContent).toBe(
                         zone === 'aggregation' ? 'sum(B)' : 'B'
                     );
-                    await userEvent.click(getByRole(getGridElement(api)!, 'button', { name: 'Apply' }));
+                    await userEvent.click(getByRole(getGridElement(api) as HTMLElement, 'button', { name: 'Apply' }));
                 }
                 expect(order(api, zone)).toEqual(['b', 'a', 'c']);
                 if (zone !== 'aggregation') {
