@@ -395,6 +395,9 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             source,
             oldExpressionValidation
         );
+        if (changed) {
+            this.checkValidationStates(source, true);
+        }
         this.refreshCalculatedColumn(targetColId);
     }
 
@@ -488,7 +491,6 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             (nextDraft) => {
                 const { colId: _, ...update } = this.toColDef(nextDraft);
                 this.updateCalculatedColumn(column.colId, update);
-                this.checkValidationStates('calculatedColumn', true);
             },
             context,
             column,

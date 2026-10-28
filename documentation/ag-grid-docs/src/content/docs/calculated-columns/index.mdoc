@@ -407,6 +407,8 @@ Use `calculatedColumnChanged` to track changes to `headerName`, `cellDataType`, 
 
 Check `expressionValidation.valid` before saving an accepted expression. When invalid, `expressionValidation.reason` is `restrictedReference`, `customValidation`, `unknownReference` or `invalidExpression`. Validation-only updates also raise this event, with an empty `changes` object and the unchanged `expression`.
 
+`calculatedColumnValidationStateChanged` reports changes to built-in validation status after an edit is applied, not while it is pending. Callback rejections are reported through `calculatedColumnChanged.expressionValidation` instead.
+
 ```js
 const gridOptions = {
     onCalculatedColumnChanged: event => {
