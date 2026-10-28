@@ -285,6 +285,75 @@ describe('Continuous Column Autosize', () => {
             await expectWidth(api, 'ag-Grid-AutoColumn', MEASURED_WIDTH);
             await expectWidth(api, 'eligible', MEASURED_WIDTH);
         });
+
+        const createGroupedGrid = (): GridApi =>
+            gridsManager.createGrid(
+                'myGrid',
+                {
+                    columnDefs: [
+                        { colId: 'country', field: 'country', rowGroup: true, hide: true },
+                        { colId: 'eligible', field: 'eligible', initialWidth: START_WIDTH, minWidth: MEASURED_WIDTH },
+                    ],
+                    autoGroupColumnDef: { minWidth: MEASURED_WIDTH },
+                    rowData: [{ country: 'x', eligible: 'b' }],
+                    autoSizeStrategy: { type: 'fitCellContents', continuous: true, skipHeader: true },
+                },
+                { modules: [RowGroupingModule] }
+            );
+        const NEW_GROUPED_DATA = [{ country: 'a much longer country', eligible: 'b much longer value' }];
+
+        test.each([
+            [
+                'autoGroupColumnDef',
+                (api: GridApi) =>
+                    api.setGridOption('autoGroupColumnDef', { minWidth: MEASURED_WIDTH, width: START_WIDTH }),
+            ],
+            ['defaultColDef', (api: GridApi) => api.setGridOption('defaultColDef', { width: START_WIDTH })],
+        ])('a width a new `%s` gives the group column is only a starting width', async (_option, setWidth) => {
+            const api = createGroupedGrid();
+            await expectWidth(api, 'ag-Grid-AutoColumn', MEASURED_WIDTH);
+
+            setWidth(api);
+            expect(widthOf(api, 'ag-Grid-AutoColumn')).toBe(START_WIDTH);
+            api.setGridOption('rowData', NEW_GROUPED_DATA);
+
+            await expectWidth(api, 'ag-Grid-AutoColumn', MEASURED_WIDTH);
+        });
+
+        test('a width the inferred data type gives through its column types is only a starting width', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ colId: 'eligible', field: 'eligible', minWidth: MEASURED_WIDTH }],
+                columnTypes: { wide: { width: START_WIDTH } },
+                dataTypeDefinitions: {
+                    wideText: {
+                        baseDataType: 'text',
+                        extendsDataType: 'text',
+                        columnTypes: ['wide'],
+                        dataTypeMatcher: (value) => typeof value === 'string',
+                    },
+                },
+                autoSizeStrategy: { type: 'fitCellContents', continuous: true, skipHeader: true },
+            });
+
+            api.setGridOption('rowData', [{ eligible: 'b' }]);
+            expect(widthOf(api, 'eligible')).toBe(START_WIDTH);
+
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+        });
+
+        test('a group column the user sized stays theirs at the width a new `autoGroupColumnDef` gives it', async () => {
+            const api = createGroupedGrid();
+            await expectWidth(api, 'ag-Grid-AutoColumn', MEASURED_WIDTH);
+
+            api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', width: 260 }] });
+            api.setGridOption('autoGroupColumnDef', { minWidth: MEASURED_WIDTH, width: START_WIDTH });
+            // widen `eligible` without owning it, so its return to 120 proves the follow-up pass ran
+            api.setColumnWidths([{ key: 'eligible', newWidth: START_WIDTH }]);
+            api.setGridOption('rowData', NEW_GROUPED_DATA);
+            await expectWidth(api, 'eligible', MEASURED_WIDTH);
+
+            expect(widthOf(api, 'ag-Grid-AutoColumn')).toBe(START_WIDTH);
+        });
     });
 
     describe('triggers', () => {

@@ -173,16 +173,28 @@ export class RowNumbersService
 
     public updateColumns(event: PropertyValueChangedEvent<any>): void {
         const source = _convertColumnEventSourceType(event.source);
+        const prevOverrides = this.rowNumberOverrides;
         this.refreshSelectionIntegration();
         const had = this.column !== null;
-        this.autoSizedTextLength = 0;
         const column = this.refreshCols();
-        if (column) {
-            this.refreshColDef(source);
-            // re-applying the colDef width counts as a deliberate resize, but it replaced any user width
-            column.resetWidthOwnership();
-        } else if (had) {
+        // a new column, or a change to what the fit reads, is fitted at once; any other change keeps the widest width
+        if (!column) {
+            if (had) {
+                this.beans.colModel.refreshAll(source);
+            }
+        } else if (!had) {
             this.beans.colModel.refreshAll(source);
+            this.autoSize(column, true);
+        } else {
+            const { minWidth, maxWidth } = column;
+            this.refreshColDef(source);
+            if (
+                column.minWidth !== minWidth ||
+                column.maxWidth !== maxWidth ||
+                fitInputsChanged(prevOverrides, this.rowNumberOverrides)
+            ) {
+                this.autoSize(column, true);
+            }
         }
     }
 
@@ -391,7 +403,7 @@ export class RowNumbersService
         return {
             // overridable properties
             minWidth: 60,
-            width: 60,
+            initialWidth: 60,
             resizable: false,
             valueGetter: this.boundValueGetter,
             // overrides
@@ -531,4 +543,9 @@ export class RowNumbersService
             }
         });
     }
+}
+
+/** Whether the options the row number fit reads beside the column's bounds (its floor and formatter) changed. */
+function fitInputsChanged(prev: RowNumbersOptions | null, next: RowNumbersOptions | null): boolean {
+    return prev?.width !== next?.width || prev?.valueFormatter !== next?.valueFormatter;
 }

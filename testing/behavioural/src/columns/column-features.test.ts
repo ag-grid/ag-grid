@@ -919,6 +919,38 @@ describe('Column Features', () => {
             expect(widths(api2)).toEqual(widths(api1));
         });
 
+        test.each([
+            ['fixed', { width: 150 }],
+            ['flexing with another factor', { flex: 2 }],
+        ])(
+            'an auto-size in one grid gives a column it re-flexed, %s in the other grid, its width, fixed',
+            async (_kind, colDefB) => {
+                const columnDefs = (b: ColDef) => [
+                    { colId: 'b', ...b },
+                    { colId: 'a', field: 'a', width: 300 },
+                ];
+                const rowData = [{ a: 'x' }];
+                const api1 = gridsManager.createGrid(
+                    'grid1',
+                    { columnDefs: columnDefs({ flex: 1 }), rowData },
+                    { modules: [ColumnAutoSizeModule] }
+                );
+                const api2 = gridsManager.createGrid(
+                    'grid2',
+                    { columnDefs: columnDefs(colDefB), rowData },
+                    { modules: [ColumnAutoSizeModule] }
+                );
+                api1.setGridOption('alignedGrids', [{ api: api2 }]);
+                const widths = (api: GridApi) => ['b', 'a'].map((id) => api.getColumn(id)!.getActualWidth());
+
+                api1.autoSizeColumns(['a']);
+
+                await waitFor(() => expect(widths(api2)[1]).not.toBe(300));
+                expect(widths(api2)).toEqual(widths(api1));
+                expect([api1.getColumn('b')!.getFlex(), api2.getColumn('b')!.getFlex()]).toEqual([1, null]);
+            }
+        );
+
         test('a group fit in one grid re-flexes every flex column in the other grid, those before the group too', async () => {
             const measured = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (
                 this: HTMLElement

@@ -46,20 +46,37 @@ export abstract class BaseSingleColService extends BeanStub {
         return existing;
     }
 
-    /** Rebuild the colDef on the existing column and re-apply its state. No-op when the column doesn't exist. */
+    /** Rebuild the colDef on the existing column and re-apply its state, unless the colDef is unchanged. */
     protected refreshColDef(source: ColumnEventType): void {
         const col = this.column;
-        if (col) {
-            const beans = this.beans;
-            const colModel = beans.colModel;
-            colModel.beginColUpdate();
-            try {
-                const colDef = this.createColDef();
-                col.setColDef(colDef, null, source);
-                _applyColumnState(beans, { state: [_getColumnStateFromColDef(beans, colDef, col.colId)] }, source);
-            } finally {
-                colModel.endColUpdate();
+        if (!col) {
+            return;
+        }
+        const beans = this.beans;
+        const colModel = beans.colModel;
+        colModel.beginColUpdate();
+        try {
+            const prevColDef = col.colDef;
+            const colDef = this.createColDef();
+            if (!col.setColDef(colDef, null, source)) {
+                return;
             }
+            const state = _getColumnStateFromColDef(beans, colDef, col.colId);
+            const width = state.width;
+            // a dragged width already ended the flex, and stays the user's
+            const flexEnded = col.flex != null && !!prevColDef.flex && !colDef.flex;
+            if (flexEnded) {
+                state.flex = null;
+            }
+            // a colDef width applies when it changes or flex ends, else the width is kept within the new bounds
+            if (width != null && width >= col.minWidth && (width !== prevColDef.width || flexEnded)) {
+                col.resetWidthOwnership();
+            } else {
+                state.width = Math.max(col.actualWidth, col.minWidth);
+            }
+            _applyColumnState(beans, { state: [state] }, source, true);
+        } finally {
+            colModel.endColUpdate();
         }
     }
 

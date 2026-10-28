@@ -187,18 +187,24 @@ export function _setColsVisible(
 export function _applyColumnState(
     beans: BeanCollection,
     params: ApplyColumnStateParams,
-    source: ColumnEventType
+    source: ColumnEventType,
+    leaveWidthOwnership = false
 ): boolean {
     const colModel = beans.colModel;
     colModel.beginColUpdate();
     try {
-        return applyColumnState(beans, params, source);
+        return applyColumnState(beans, params, source, leaveWidthOwnership);
     } finally {
         colModel.endColUpdate();
     }
 }
 
-function applyColumnState(beans: BeanCollection, params: ApplyColumnStateParams, source: ColumnEventType): boolean {
+function applyColumnState(
+    beans: BeanCollection,
+    params: ApplyColumnStateParams,
+    source: ColumnEventType,
+    leaveWidthOwnership: boolean
+): boolean {
     const { colModel, colAnimation, calculatedColsSvc } = beans;
     const state = params.state;
     if (state && !Array.isArray(state)) {
@@ -225,12 +231,20 @@ function applyColumnState(beans: BeanCollection, params: ApplyColumnStateParams,
         const stateChanges = captureColumnStateChanges(beans);
 
         // Pass 1 — primary cols. Structural: `refreshCols` (re)creates auto/pivot-result/service cols.
-        let unmatched = applyStateToCols(beans, state ?? null, providedCols, params, source, true);
+        let unmatched = applyStateToCols(beans, state ?? null, providedCols, params, source, true, leaveWidthOwnership);
 
         // Pass 2 — leftover states/defaults land on pass 1's pivot-result cols. Non-structural, no `refreshCols`.
         if (unmatched !== null || params.defaultState) {
             const pivotResultColsList = beans.pivotResultCols?.pivotCols;
-            unmatched = applyStateToCols(beans, unmatched, pivotResultColsList, params, source, false);
+            unmatched = applyStateToCols(
+                beans,
+                unmatched,
+                pivotResultColsList,
+                params,
+                source,
+                false,
+                leaveWidthOwnership
+            );
         }
 
         // Finalize once: re-order, single visible-cols refresh, single everything-changed + dispatch.
@@ -251,7 +265,8 @@ function applyStateToCols(
     existingColumns: AgColumn[] | null | undefined,
     params: ApplyColumnStateParams,
     source: ColumnEventType,
-    primaryPass: boolean
+    primaryPass: boolean,
+    leaveWidthOwnership: boolean
 ): ColumnState[] | null {
     const colModel = beans.colModel;
     const defaultState = params.defaultState;
@@ -292,7 +307,7 @@ function applyStateToCols(
                 unmatchedStates ??= [];
                 unmatchedStates.push(state);
             } else {
-                applyFieldState(beans, column, state, defaultState, source);
+                applyFieldState(beans, column, state, defaultState, source, leaveWidthOwnership);
                 matched?.add(column);
             }
         }
@@ -303,14 +318,21 @@ function applyStateToCols(
         for (let i = 0, len = existingColumns.length; i < len; ++i) {
             const col = existingColumns[i];
             if (!matched.has(col)) {
-                applyFieldState(beans, col, null, defaultState, source);
+                applyFieldState(beans, col, null, defaultState, source, leaveWidthOwnership);
             }
         }
     }
 
     // Only the primary pass is structural (rowGroup/pivot membership, service cols, sort/refresh/sync).
     if (primaryPass) {
-        applyStructuralStateChanges(beans, autoColStates, selectionColStates, defaultState, source);
+        applyStructuralStateChanges(
+            beans,
+            autoColStates,
+            selectionColStates,
+            defaultState,
+            source,
+            leaveWidthOwnership
+        );
     }
 
     return unmatchedStates;
@@ -322,7 +344,8 @@ function applyStructuralStateChanges(
     autoColStates: ColumnState[] | null,
     selectionColStates: ColumnState[] | null,
     defaultState: ColumnStateParams | undefined,
-    source: ColumnEventType
+    source: ColumnEventType,
+    leaveWidthOwnership: boolean
 ): void {
     const { autoColSvc, selectionColSvc, rowGroupColsSvc, pivotColsSvc, valueColsSvc } = beans;
 
@@ -335,8 +358,10 @@ function applyStructuralStateChanges(
     beans.colModel.refreshCols(false, source);
 
     const selectionCol = selectionColSvc?.column;
-    syncServiceColumnsWithState(beans, autoColStates, autoColSvc?.columns ?? [], defaultState, source);
-    syncServiceColumnsWithState(beans, selectionColStates, selectionCol ? [selectionCol] : [], defaultState, source);
+    const autoCols = autoColSvc?.columns ?? [];
+    syncServiceColumnsWithState(beans, autoColStates, autoCols, defaultState, source, leaveWidthOwnership);
+    const selectionCols = selectionCol ? [selectionCol] : [];
+    syncServiceColumnsWithState(beans, selectionColStates, selectionCols, defaultState, source, leaveWidthOwnership);
 }
 
 /** Sync service cols (auto/selection) post-refresh: apply each state to its matching `serviceCols` entry,
@@ -346,7 +371,8 @@ function syncServiceColumnsWithState(
     colStates: ColumnState[] | null,
     serviceCols: readonly AgColumn[],
     defaultState: ColumnStateParams | undefined,
-    source: ColumnEventType
+    source: ColumnEventType,
+    leaveWidthOwnership: boolean
 ): void {
     let matched: Set<AgColumn> | null = null;
     if (colStates !== null) {
@@ -358,7 +384,7 @@ function syncServiceColumnsWithState(
                 const sc = serviceCols[i];
                 if (sc.colId === stateColId) {
                     matched.add(sc);
-                    applyFieldState(beans, sc, stateItem, defaultState, source);
+                    applyFieldState(beans, sc, stateItem, defaultState, source, leaveWidthOwnership);
                     break;
                 }
             }
@@ -369,7 +395,7 @@ function syncServiceColumnsWithState(
         for (let i = 0, len = serviceCols.length; i < len; ++i) {
             const c = serviceCols[i];
             if (!matched?.has(c)) {
-                applyFieldState(beans, c, null, defaultState, source);
+                applyFieldState(beans, c, null, defaultState, source, leaveWidthOwnership);
             }
         }
     }
@@ -381,7 +407,8 @@ function applyFieldState(
     column: AgColumn,
     stateItem: ColumnState | null,
     defaultState: ColumnStateParams | undefined,
-    source: ColumnEventType
+    source: ColumnEventType,
+    leaveWidthOwnership: boolean
 ): void {
     // `orDefault` falls back only on `undefined` — an explicit `null` is kept, so state can clear a property.
     const flex = orDefault(stateItem?.flex, defaultState?.flex);
@@ -416,9 +443,10 @@ function applyFieldState(
             // Apply width only if valid (>= min), else keep the old width.
             const minColWidth = column.colDef.minWidth ?? beans.environment.getDefaultColumnMinWidth();
             if (minColWidth != null && width >= minColWidth) {
-                // an explicit valid width is intent, so it takes ownership; an omitted or `null`
-                // width leaves ownership as it was
-                column.setUserSized(true);
+                // a width is the user's, unless the caller applies a column definition's or keeps the column's own
+                if (!leaveWidthOwnership) {
+                    column.setUserSized(true);
+                }
                 column.setActualWidth(width, source);
             }
         }
@@ -531,7 +559,7 @@ function resetColumnState(beans: BeanCollection, source: ColumnEventType): void 
         const stateChanges = captureColumnStateChanges(beans);
 
         // Apply field state; the structural pass (re)creates auto/service cols. No dispatch yet.
-        applyStateToCols(beans, columnStates, colModel.colDefList, {}, source, true);
+        applyStateToCols(beans, columnStates, colModel.colDefList, {}, source, true, true);
 
         // Force `pivotSort` back to its colDef default: `applyFieldState` skips an `undefined` target (so an
         // omitted `pivotSort` in `applyColumnState` leaves it alone), but a reset must clear a user-applied sort.
@@ -542,7 +570,7 @@ function resetColumnState(beans: BeanCollection, source: ColumnEventType): void 
         }
         // the row numbers column is a service column outside the state above
         beans.rowNumbersSvc?.resetColumnState(source);
-        // every column returns to its column definition, so no width stays the user's (`applyFieldState` claims them)
+        // every column returns to its column definition, so no width the user sized stays theirs
         const allCols = colModel.getAllCols();
         for (let i = 0, len = allCols.length; i < len; ++i) {
             allCols[i].resetWidthOwnership();

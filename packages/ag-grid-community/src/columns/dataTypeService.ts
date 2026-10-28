@@ -461,7 +461,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             }
         }
         if (state.length) {
-            _applyColumnState(beans, { state }, 'cellDataTypeInferred');
+            _applyColumnState(beans, { state }, 'cellDataTypeInferred', true);
         }
     }
 

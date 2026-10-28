@@ -88,6 +88,8 @@ Note this example uses `hideDisabledCheckboxes` to hide disabled checkboxes, whi
 
 The checkbox column may be customised in a similar way to any other column, by specifying its column definition in the `selectionColumnDef` grid option.
 
+Updating `selectionColumnDef` keeps a width the user has resized the column to, within its new `minWidth` and `maxWidth`, unless the update sets a different `width` of at least `minWidth`.
+
 {% apiDocumentation source="grid-options/properties.json" section="selection" names=["selectionColumnDef"] /%}
 
 The `SelectionColumnDef` allows for a great deal of customisation, including custom renderers, sorting, tooltips and more.
