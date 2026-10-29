@@ -88,6 +88,28 @@ test.describe('community grid in a real browser', () => {
             expect((await headerCell('a').boundingBox())!.x).toBeLessThan((await headerCell('b').boundingBox())!.x);
             expect((await cell(0, 'a').boundingBox())!.x).toBeCloseTo((await headerCell('a').boundingBox())!.x, 0);
         }).toPass();
+
+        await withApi((api) => {
+            api.setGridOption('domLayout', 'normal');
+            api.setGridOption('suppressMoveWhenColumnDragging', true);
+        });
+        const dropTarget = (await headerCell('a').boundingBox())!;
+        const dragSource = (await headerCell('b').boundingBox())!;
+        await page.mouse.move(dragSource.x + dragSource.width / 2, dragSource.y + dragSource.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(dropTarget.x + 20, dropTarget.y + dropTarget.height / 2, { steps: 15 });
+        await expect(headerCell('a')).toHaveClass(/ag-header-highlight-after/);
+        expect(await withApi((api) => api.getDisplayedLeftColumns().map((col) => col.getColId()))).toEqual(['b', 'a']);
+        await page.mouse.up();
+        await expect
+            .poll(() => withApi((api) => api.getDisplayedLeftColumns().map((col) => col.getColId())))
+            .toEqual(['a', 'b']);
+        await expect(async () => {
+            const first = (await headerCell('a').boundingBox())!;
+            const second = (await headerCell('b').boundingBox())!;
+            expect(second.x + second.width).toBeCloseTo(first.x, 0);
+            expect((await cell(0, 'b').boundingBox())!.x).toBeCloseTo(second.x, 0);
+        }).toPass();
     });
 
     test('typing into the text editor and pressing Tab commits the value and moves focus right', async ({ page }) => {
