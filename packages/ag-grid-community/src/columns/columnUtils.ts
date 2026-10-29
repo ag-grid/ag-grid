@@ -71,9 +71,10 @@ export function _getColumnStateFromColDef(beans: BeanCollection, colDef: ColDef,
     const sort = colDef.sort;
     const sortDef = _isSortDefValid(sort) || isSortDirectionValid(sort) ? getSortDefFromInput(sort) : null;
     const showValuesAs = beans.showValuesAsSvc?.colDefSelection(colDef) ?? undefined;
+    // state `headerName` is a UI rename that outranks `headerValueGetter`, so `colDef.headerName` must not become one
     return sortDef
-        ? { ...colDef, colId, sort: sortDef.direction, sortType: sortDef.type, showValuesAs }
-        : { ...colDef, colId, sort: undefined, showValuesAs };
+        ? { ...colDef, colId, sort: sortDef.direction, sortType: sortDef.type, showValuesAs, headerName: undefined }
+        : { ...colDef, colId, sort: undefined, showValuesAs, headerName: undefined };
 }
 
 export function getSortDefFromColDef(colDef: ColDef) {
