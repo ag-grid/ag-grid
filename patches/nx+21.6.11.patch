@@ -1,5 +1,5 @@
 diff --git a/node_modules/nx/src/command-line/format/format.js b/node_modules/nx/src/command-line/format/format.js
-index af23c46..b808104 100644
+index 27b3fb61497..c04a881337d 100644
 --- a/node_modules/nx/src/command-line/format/format.js
 +++ b/node_modules/nx/src/command-line/format/format.js
 @@ -90,7 +90,7 @@ async function getPatterns(args) {
@@ -11,18 +11,3 @@ index af23c46..b808104 100644
          const patterns = p.files
              .map((f) => path.relative(workspace_root_1.workspaceRoot, f))
              .filter((f) => (0, fileutils_1.fileExists)(f) && supportedExtensions.has(path.extname(f)));
-diff --git a/node_modules/nx/src/tasks-runner/forked-process-task-runner.js b/node_modules/nx/src/tasks-runner/forked-process-task-runner.js
-index 544832d..af3eacc 100644
---- a/node_modules/nx/src/tasks-runner/forked-process-task-runner.js
-+++ b/node_modules/nx/src/tasks-runner/forked-process-task-runner.js
-@@ -380,8 +380,8 @@ exports.ForkedProcessTaskRunner = ForkedProcessTaskRunner;
- const colors = [
-     chalk.green,
-     chalk.greenBright,
--    chalk.red,
--    chalk.redBright,
-+    // chalk.red,
-+    // chalk.redBright,
-     chalk.cyan,
-     chalk.cyanBright,
-     chalk.yellow,
