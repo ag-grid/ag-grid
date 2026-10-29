@@ -414,6 +414,15 @@ describe('Reserved key handling in field paths', () => {
             ]);
         });
 
+        test('keeps dotted `__proto__` keys as literal fields without dot notation', async () => {
+            const api = await createGeneratedGrid({ autoGenerateColumnDefs: true, suppressFieldDotNotation: true }, [
+                JSON.parse(`{"id":"own","metadata.__proto__":"value","__proto__":{"c":3}}`),
+            ]);
+
+            expect(api.getColumns()!.map((col) => col.getColDef().field)).toEqual(['id', 'metadata.__proto__']);
+            expect(api.getCellValue({ rowNode: api.getRowNode('own')!, colKey: 'metadata.__proto__' })).toBe('value');
+        });
+
         test('keeps other dotted keys as nested paths', async () => {
             const api = await createGeneratedGrid({ autoGenerateColumnDefs: true }, [
                 { id: 'r1', 'user.name': 'Alice', group: { 'a.b': 1, name: 'n' } },
