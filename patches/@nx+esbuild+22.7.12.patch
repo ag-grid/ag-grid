@@ -1,8 +1,8 @@
 diff --git a/node_modules/@nx/esbuild/src/executors/esbuild/lib/build-esbuild-options.js b/node_modules/@nx/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
-index 51ecf453877..b1fc894f5ff 100644
+index a421fcaab5c..8c6c41faec8 100644
 --- a/node_modules/@nx/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
 +++ b/node_modules/@nx/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
-@@ -189,22 +189,25 @@ function getProjectEntryPoint(projectPkgJson, projectPath) {
+@@ -190,22 +190,25 @@ function getProjectEntryPoint(projectPkgJson, projectPath) {
      return entryPoint;
  }
  function getOutExtension(format, options, context) {

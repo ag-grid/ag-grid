@@ -46,6 +46,7 @@
       "command": "node ./src/copySrcFilesForGeneration.js",
       "cache": true,
       "inputs": [
+        "{projectRoot}/src/copySrcFilesForGeneration.js",
         "{workspaceRoot}/packages/ag-grid-community/src/propertyKeys.ts",
         "{workspaceRoot}/packages/ag-grid-community/src/eventTypes.ts"
       ],
