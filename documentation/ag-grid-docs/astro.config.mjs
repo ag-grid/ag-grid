@@ -27,6 +27,7 @@ import agDevMarkdownNegotiation from './plugins/agDevMarkdownNegotiation';
 import agHotModuleReload from './plugins/agHotModuleReload';
 import agHtaccessGen from './plugins/agHtaccessGen';
 import agRedirectsChecker from './plugins/agRedirectsChecker';
+import { createLinkRedirectResolver, isServedOutsideBuild } from './src/utils/htaccess/linkRedirects';
 import { getSitemapConfig } from './src/utils/sitemap';
 import { urlWithBaseUrl } from './src/utils/urlWithBaseUrl';
 
@@ -392,7 +393,12 @@ export default defineConfig({
         agRedirectsChecker({
             skip: CHECK_REDIRECTS !== 'true',
         }),
-        agLinkChecker({ include: CHECK_LINKS === 'true' }),
+        agLinkChecker({
+            include: CHECK_LINKS === 'true',
+            checkCanonicalHostLinks: { isServedElsewhere: isServedOutsideBuild },
+            resolveRedirect: createLinkRedirectResolver(),
+            baselineFile: fileURLToPath(new URL('./testing/link-checker-baseline.json', import.meta.url)),
+        }),
         agMkcertPreview({ enabled: httpsEnabled }),
     ],
 });
