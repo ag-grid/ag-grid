@@ -18,7 +18,7 @@ if (shard < 1 || shard > total) {
 }
 
 const showProjectsCmd =
-    command === 'run-many' ? `yarn nx show projects -t ${target}` : `yarn nx show projects --affected -t ${target}`;
+    command === 'run-many' ? `yarn nx show projects -t ${target} --json=false` : `yarn nx show projects --affected -t ${target} --json=false`;
 
 const projects = execSync(showProjectsCmd, { encoding: 'utf-8' })
     .split('\n')

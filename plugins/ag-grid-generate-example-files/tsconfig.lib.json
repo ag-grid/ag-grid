@@ -3,7 +3,13 @@
   "compilerOptions": {
     "declaration": true,
     "types": ["node"],
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    // The built declarations (from the build:types dependency), not the sources: Nx 22 type-checks an
+    // @nx/js:swc build with rootDir set to this project, and core sources sit outside it.
+    "paths": {
+      "ag-grid-community": ["../../packages/ag-grid-community/dist/types/src/main.d.ts"],
+      "ag-stack": ["../../packages/ag-stack/dist/types/src/main.d.ts"]
+    }
   },
   "include": ["src/**/*.ts", "gridOptionsTypes/**/*.ts"],
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"]

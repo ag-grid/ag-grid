@@ -1,11 +1,11 @@
-diff --git a/node_modules/@nx/esbuild/src/executors/esbuild/lib/build-esbuild-options.js b/node_modules/@nx/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
-index c22a874..d653788 100644
---- a/node_modules/@nx/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
-+++ b/node_modules/@nx/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
-@@ -188,22 +188,25 @@ function getProjectEntryPoint(projectPkgJson, projectPath) {
+diff --git a/node_modules/@nx/esbuild/dist/src/executors/esbuild/lib/build-esbuild-options.js b/node_modules/@nx/esbuild/dist/src/executors/esbuild/lib/build-esbuild-options.js
+index c0f9d8ebe87..12bfe899250 100644
+--- a/node_modules/@nx/esbuild/dist/src/executors/esbuild/lib/build-esbuild-options.js
++++ b/node_modules/@nx/esbuild/dist/src/executors/esbuild/lib/build-esbuild-options.js
+@@ -191,25 +191,28 @@ function getProjectEntryPoint(projectPkgJson, projectPath) {
      return entryPoint;
  }
- function getOutExtension(format, options) {
+ function getOutExtension(format, options, context) {
 -    const userDefinedExt = options.userDefinedBuildOptions?.outExtension?.['.js'];
 +    const userDefExts = options.userDefinedBuildOptions?.outExtension ?? {};
 +
@@ -27,14 +27,17 @@ index c22a874..d653788 100644
 +    return defaultExt;
  }
  function getOutfile(format, options, context) {
--    const ext = getOutExtension(format, options);
-     const candidate = (0, devkit_1.joinPathFragments)(context.target.options.outputPath, options.outputFileName);
+-    const ext = getOutExtension(format, options, context);
+     // Use the normalized options rather than `context.target.options`, which
+     // holds the static value from the project configuration and misses any
+     // override, e.g. `--output-path` on the command line.
+     const candidate = (0, devkit_1.joinPathFragments)(options.outputPath, options.outputFileName);
 -    const { dir, name } = path.parse(candidate);
 +    const { dir, name, ext } = path.parse(candidate);
 +    if (!['js', 'mjs', 'cjs'].includes(ext)) {
-+        const defaultExt = getOutExtension(format, options);
++        const defaultExt = getOutExtension(format, options, context);
 +        return `${dir}/${name}${defaultExt}`;
 +    }
      return `${dir}/${name}${ext}`;
  }
- function writeTmpEntryWithRequireOverrides(paths, outExtension, options, context) {
+ function writeTmpEntryWithRequireOverrides(paths, outExtension, options, context, format = 'cjs') {
