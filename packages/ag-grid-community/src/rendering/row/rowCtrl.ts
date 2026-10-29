@@ -205,9 +205,15 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
         this.rowStyles = this.processStylesFromGridOptions();
         this.rowModeFeature = this.createRowModeFeature();
 
-        this.addListeners();
-
-        this.rowModeFeature.prepareInitialCellCtrls?.();
+        try {
+            this.addListeners();
+            this.rowModeFeature.prepareInitialCellCtrls?.();
+        } catch (e) {
+            // the row's callbacks have run, so it reports virtualRowRemoved like any row a draw discards
+            this.destroyFirstPass(true);
+            this.destroySecondPass();
+            throw e;
+        }
     }
 
     private isClientSideLoadingRow(): boolean {

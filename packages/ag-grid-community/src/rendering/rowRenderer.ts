@@ -41,12 +41,20 @@ import type { RowContainerHeightService } from './rowContainerHeightService';
 type RowCtrlIdMap = Record<RowCtrlInstanceId, RowCtrl>;
 type RowCtrlByRowIndex = Record<number, RowCtrl>;
 type RowCtrlByRowNodeIdMap = Record<string, RowCtrl>;
+type RowDrawState = typeof ROWS_DRAWN | typeof ROWS_DRAWING | typeof ROWS_DRAW_INTERRUPTED;
 
-interface RowNodeMap {
-    [id: string]: IRowNode;
+interface RowIdsByPinned {
+    top: Set<string | undefined>;
+    bottom: Set<string | undefined>;
+    normal: Set<string | undefined>;
 }
 
 const ROW_ANIMATION_TIMEOUT = 400;
+
+const ROWS_DRAWN = 0;
+const ROWS_DRAWING = 1;
+/** A draw ended by a throw: the rendered range may not be all drawn, so the next redraw draws it. */
+const ROWS_DRAW_INTERRUPTED = 2;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class RowRenderer extends BeanStub implements NamedBean {
@@ -102,7 +110,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
     // will get messed up. this can happen if the user has a cellRenderer, and inside the
     // renderer they call an API method that results in another pass of the refresh,
     // then it will be trying to draw rows in the middle of a refresh.
-    private refreshInProgress = false;
+    private drawState: RowDrawState = ROWS_DRAWN;
 
     private printLayout: boolean;
     private embedFullWidthRows: boolean;
@@ -182,7 +190,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
             this.stickyRowFeature = stickyRowSvc.createStickyRowFeature(
                 this,
                 this.createRowCon.bind(this),
-                this.destroyRowCtrls.bind(this)
+                (rowCtrls) => this.destroyRowCtrls(rowCtrls, false)
             );
         } else {
             const gridBodyCtrl = this.gridBodyCtrl;
@@ -500,51 +508,50 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.bottomRowCtrls = this.refreshPinnedRows(this.bottomRowCtrls, 'bottom', recycleRows);
     }
 
-    /**
-     * Determines which row controllers need to be destroyed and re-created vs which ones can
-     * be re-used.
-     *
-     * This operation is to pinned rows as `this.recycleRows` is to normal/body rows.
-     *
-     * All `RowCtrl` instances in `rowCtrls` that don't correspond to `RowNode` instances in `rowNodes` are destroyed.
-     * All `RowNode` instances in `rowNodes` that don't correspond to `RowCtrl` instances in `rowCtrls` are created.
-     * All instances in `rowCtrls` must be in the same order as their corresponding nodes in `rowNodes`.
-     *
-     * @param rowCtrls The list of existing row controllers
-     * @param rowNodes The canonical list of row nodes that should have associated controllers
-     */
+    /** Gives each pinned node its `RowCtrl`, the same one when recycling, and destroys the others in `rowCtrls`. */
     private refreshPinnedRows(
         rowCtrls: RowCtrl[],
         pinned: NonNullable<RowPinnedType>,
         recycleRows: boolean
     ): RowCtrl[] {
         const { pinnedRowModel, beans, printLayout } = this;
-        const rowCtrlMap = Object.fromEntries(rowCtrls.map((ctrl) => [ctrl.rowNode.id!, ctrl]));
+        const rowCtrlMap = new Map<RowNode, RowCtrl>();
+        for (let i = 0, len = rowCtrls.length; i < len; ++i) {
+            const rowCtrl = rowCtrls[i];
+            rowCtrlMap.set(rowCtrl.rowNode, rowCtrl);
+        }
 
         // Build a fresh array rather than mutating in place: the React view layer detects changes by
         // array reference, so recycling the same instance would suppress re-renders (e.g. added pinned rows).
         const newRowCtrls: RowCtrl[] = [];
+        const builtRowCtrls: RowCtrl[] = [];
 
-        pinnedRowModel?.forEachPinnedRow(pinned, (node, i) => {
-            const rowCtrl = rowCtrls[i];
-            const rowCtrlDoesNotExist =
-                rowCtrl && pinnedRowModel.getPinnedRowById(rowCtrl.rowNode.id!, pinned) === undefined;
-
-            if (rowCtrlDoesNotExist) {
-                // ctrl not in new nodes list, destroy
+        // the old ctrls are destroyed only once every new one is built, so a throw leaves the shown rows as they were
+        try {
+            pinnedRowModel?.forEachPinnedRow(pinned, (node, i) => {
+                const reusedRowCtrl = recycleRows ? rowCtrlMap.get(node) : undefined;
+                if (reusedRowCtrl) {
+                    newRowCtrls[i] = reusedRowCtrl;
+                    rowCtrlMap.delete(node);
+                } else {
+                    const rowCtrl = new RowCtrl(node, beans, false, false, printLayout);
+                    builtRowCtrls.push(rowCtrl);
+                    newRowCtrls[i] = rowCtrl;
+                }
+            });
+        } catch (e) {
+            for (let i = 0, len = builtRowCtrls.length; i < len; ++i) {
+                const rowCtrl = builtRowCtrls[i];
                 rowCtrl.destroyFirstPass();
                 rowCtrl.destroySecondPass();
             }
+            throw e;
+        }
 
-            if (node.id! in rowCtrlMap && recycleRows) {
-                // ctrl exists already, re-use it
-                newRowCtrls[i] = rowCtrlMap[node.id!];
-                delete rowCtrlMap[node.id!];
-            } else {
-                // ctrl doesn't exist, create it
-                newRowCtrls[i] = new RowCtrl(node, beans, false, false, printLayout);
-            }
-        });
+        for (const rowCtrl of rowCtrlMap.values()) {
+            rowCtrl.destroyFirstPass();
+            rowCtrl.destroySecondPass();
+        }
 
         const rowNodeCount =
             (pinned === 'top' ? pinnedRowModel?.getPinnedTopRowCount() : pinnedRowModel?.getPinnedBottomRowCount()) ??
@@ -570,43 +577,48 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     public redrawRow(rowNode: RowNode, suppressEvent = false) {
-        if (rowNode.sticky) {
-            this.stickyRowFeature?.refreshStickyNode(rowNode);
-        } else if (this.cachedRowCtrls?.has(rowNode)) {
-            // delete row from cache if it needs redrawn
-            // if it's in the cache no updates need fired, as nothing
-            // has been rendered
-            this.cachedRowCtrls.removeRow(rowNode);
-            return;
-        } else {
-            const destroyAndRecreateCtrl = (dataStruct: RowCtrl[] | RowCtrlByRowIndex) => {
-                const ctrl = dataStruct[rowNode.rowIndex!];
-                if (!ctrl) {
-                    return;
-                }
-                if (ctrl.rowNode !== rowNode) {
-                    // if the node is in the wrong place, then the row model is responsible for triggering a full refresh.
-                    return;
-                }
-                ctrl.destroyFirstPass();
-                ctrl.destroySecondPass();
-                dataStruct[rowNode.rowIndex!] = this.createRowCon(rowNode, false, false);
-            };
+        // a throw skips displayedRowsChanged, so the rows replaced before it are shown here
+        try {
+            if (rowNode.sticky) {
+                this.stickyRowFeature?.refreshStickyNode(rowNode);
+            } else if (this.cachedRowCtrls?.removeRow(rowNode)) {
+                // a cached row is hidden, so it is destroyed rather than rebuilt
+                this.updateAllRowCtrls();
+            } else {
+                const destroyAndRecreateCtrl = (dataStruct: RowCtrl[] | RowCtrlByRowIndex) => {
+                    const ctrl = dataStruct[rowNode.rowIndex!];
+                    if (!ctrl) {
+                        return;
+                    }
+                    if (ctrl.rowNode !== rowNode) {
+                        // if the node is in the wrong place, then the row model is responsible for triggering a full refresh.
+                        return;
+                    }
+                    // built before the old one is destroyed, so a throw leaves the shown row as it was
+                    const newCtrl = this.createRowCon(rowNode, false, false);
+                    ctrl.destroyFirstPass();
+                    ctrl.destroySecondPass();
+                    dataStruct[rowNode.rowIndex!] = newCtrl;
+                };
 
-            switch (rowNode.rowPinned) {
-                // replaced, not written into, as a React row container keeps the array it was given
-                case 'top':
-                    this.topRowCtrls = this.topRowCtrls.slice();
-                    destroyAndRecreateCtrl(this.topRowCtrls);
-                    break;
-                case 'bottom':
-                    this.bottomRowCtrls = this.bottomRowCtrls.slice();
-                    destroyAndRecreateCtrl(this.bottomRowCtrls);
-                    break;
-                default:
-                    destroyAndRecreateCtrl(this.rowCtrlsByRowIndex);
-                    this.updateAllRowCtrls();
+                switch (rowNode.rowPinned) {
+                    // replaced, not written into, as a React row container keeps the array it was given
+                    case 'top':
+                        this.topRowCtrls = this.topRowCtrls.slice();
+                        destroyAndRecreateCtrl(this.topRowCtrls);
+                        break;
+                    case 'bottom':
+                        this.bottomRowCtrls = this.bottomRowCtrls.slice();
+                        destroyAndRecreateCtrl(this.bottomRowCtrls);
+                        break;
+                    default:
+                        destroyAndRecreateCtrl(this.rowCtrlsByRowIndex);
+                        this.updateAllRowCtrls();
+                }
             }
+        } catch (e) {
+            this.showDrawnRows();
+            throw e;
         }
 
         if (!suppressEvent) {
@@ -638,67 +650,70 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.redrawAfterModelUpdate();
     }
 
-    // gets called from:
-    // +) initialisation (in registerGridComp) params = null
-    // +) onDomLayoutChanged, params = null
-    // +) onPageLoaded, recycleRows, animate, newData, newPage from event, onlyBody=true
-    // +) onPinnedRowDataChanged, recycleRows = true
-    // +) redrawRows (from Grid API), recycleRows = true/false
     private redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
+        // a draw that threw is redone whole, so an update of the body alone also draws the pinned rows
+        const onlyBody = params.onlyBody && this.drawState !== ROWS_DRAW_INTERRUPTED;
         this.getLockOnRefresh();
+        try {
+            const focusedCell = this.beans.focusSvc?.getFocusCellToUseAfterRefresh();
 
-        const focusedCell = this.beans.focusSvc?.getFocusCellToUseAfterRefresh();
+            this.updateContainerHeights();
+            this.scrollToTopIfNewData(params);
 
-        this.updateContainerHeights();
-        this.scrollToTopIfNewData(params);
+            // never recycle rows on layout change as rows could change from normal DOM layout
+            // back to the grid's row positioning.
+            const recycleRows = !params.domLayoutChanged && !!params.recycleRows;
+            const animate = params.animate && _isAnimateRows(this.gos);
 
-        // never recycle rows on layout change as rows could change from normal DOM layout
-        // back to the grid's row positioning.
-        const recycleRows = !params.domLayoutChanged && !!params.recycleRows;
-        const animate = params.animate && _isAnimateRows(this.gos);
+            // after modelUpdate, row indexes can change, so we clear out the rowsByIndex map,
+            // however we can reuse the rows, so we keep them but index by rowNode.id
+            const rowsToRecycle = recycleRows ? this.getRowsToRecycle() : null;
+            const { stickyRowFeature, gos } = this;
+            // kept rows are in no map until reused, so those not reused are destroyed however drawing ends
+            try {
+                if (!recycleRows) {
+                    // a redraw that does not animate skips the fade-out, else rapid replaces flicker via opacity:0
+                    this.removeAllRowComps(!animate);
+                }
 
-        // after modelUpdate, row indexes can change, so we clear out the rowsByIndex map,
-        // however we can reuse the rows, so we keep them but index by rowNode.id
-        const rowsToRecycle = recycleRows ? this.getRowsToRecycle() : null;
-        if (!recycleRows) {
-            // Forward !animate so the destroy path skips the fade-out when the
-            // redraw itself is non-animating; otherwise rapid replaces flicker via opacity:0.
-            this.removeAllRowComps(!animate);
-        }
+                this.workOutFirstAndLastRowsToRender();
 
-        this.workOutFirstAndLastRowsToRender();
+                if (stickyRowFeature) {
+                    stickyRowFeature.checkStickyRows();
 
-        const { stickyRowFeature, gos } = this;
-        if (stickyRowFeature) {
-            stickyRowFeature.checkStickyRows();
+                    // sticky rows brought in from other pages add to the model height
+                    const extraHeight = stickyRowFeature.extraTopHeight + stickyRowFeature.extraBottomHeight;
+                    if (extraHeight) {
+                        this.updateContainerHeights(extraHeight);
+                    }
+                }
 
-            // this is a hack, if sticky rows brings in rows from other pages
-            // need to update the model height to include them.
-            const extraHeight = stickyRowFeature.extraTopHeight + stickyRowFeature.extraBottomHeight;
-            if (extraHeight) {
-                this.updateContainerHeights(extraHeight);
+                this.recycleRows(rowsToRecycle, animate);
+            } finally {
+                if (rowsToRecycle) {
+                    this.destroyRowCtrls(Object.values(rowsToRecycle), !!animate && !this.printLayout);
+                }
             }
+            this.updateAllRowCtrls();
+
+            this.gridBodyCtrl.updateRowCount();
+
+            if (!onlyBody) {
+                this.refreshPinnedRowComps(gos.get('enableRowPinning') ? recycleRows : undefined);
+            }
+
+            this.dispatchDisplayedRowsChanged();
+
+            // if a cell was focused before, ensure focus now.
+            if (focusedCell != null) {
+                this.restoreFocusedCell(focusedCell);
+            }
+            this.drawState = ROWS_DRAWN;
+        } finally {
+            this.releaseLockOnRefresh();
         }
 
-        this.recycleRows(rowsToRecycle, animate);
-
-        this.gridBodyCtrl.updateRowCount();
-
-        if (!params.onlyBody) {
-            this.refreshPinnedRowComps(gos.get('enableRowPinning') ? recycleRows : undefined);
-        }
-
-        this.dispatchDisplayedRowsChanged();
-
-        // if a cell was focused before, ensure focus now.
-        if (focusedCell != null) {
-            this.restoreFocusedCell(focusedCell);
-        }
-
-        this.releaseLockOnRefresh();
-
-        // Recycled rows keep their old DOM, and changed rows may have rendered before aggregation settled, so
-        // aggregate-dependent cells can be stale after a model update; refresh them.
+        // recycled rows keep their DOM and changed ones may have rendered before aggregation settled
         this.beans.aggStage?.refreshAggregateDependentCells();
     }
 
@@ -726,21 +741,34 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     private getLockOnRefresh(): void {
-        if (this.refreshInProgress) {
+        if (this.drawState === ROWS_DRAWING) {
             throw this.beans.log.errorToThrow(252);
         }
 
-        this.refreshInProgress = true;
+        this.drawState = ROWS_DRAWING;
         this.beans.frameworkOverrides.getLockOnRefresh?.();
     }
 
+    /** Called in `finally`: a draw that has not set `ROWS_DRAWN` by then was ended by a throw. */
     private releaseLockOnRefresh(): void {
-        this.refreshInProgress = false;
+        const interrupted = this.drawState === ROWS_DRAWING;
+        if (interrupted) {
+            this.drawState = ROWS_DRAW_INTERRUPTED;
+        }
+        // released before the rows are shown, so a throw while showing them cannot keep framework updates queued
         this.beans.frameworkOverrides.releaseLockOnRefresh?.();
+        if (interrupted) {
+            this.showDrawnRows();
+        }
+    }
+
+    private showDrawnRows(): void {
+        this.updateAllRowCtrls();
+        this.dispatchDisplayedRowsChanged();
     }
 
     public isRefreshInProgress(): boolean {
-        return this.refreshInProgress;
+        return this.drawState === ROWS_DRAWING;
     }
 
     // sets the focus to the provided cell, if the cell is provided. this way, the user can call refresh without
@@ -958,22 +986,21 @@ export class RowRenderer extends BeanStub implements NamedBean {
     // returns CellCtrl's that match the provided rowNodes and columns. eg if one row node
     // and two columns provided, that identifies 4 cells, so 4 CellCtrl's returned.
     public getCellCtrls(rowNodes?: IRowNode[] | null, columns?: (string | AgColumn)[]): CellCtrl[] {
-        let colIdsMap: any;
+        let cols: Set<AgColumn> | undefined;
         if (_exists(columns)) {
-            colIdsMap = {};
-            columns.forEach((colKey: string | AgColumn) => {
-                const column = this.colModel.getCol(colKey);
-                if (_exists(column)) {
-                    colIdsMap[column.getId()] = true;
+            cols = new Set();
+            for (let i = 0, len = columns.length; i < len; ++i) {
+                const column = this.colModel.getCol(columns[i]);
+                if (column) {
+                    cols.add(column);
                 }
-            });
+            }
         }
 
         const res: CellCtrl[] = [];
         for (const rowCtrl of this.getRowCtrls(rowNodes)) {
             for (const cellCtrl of rowCtrl.getAllCellCtrls()) {
-                const colId: string = cellCtrl.column.getId();
-                const excludeColFromRefresh = colIdsMap && !colIdsMap[colId];
+                const excludeColFromRefresh = cols && !cols.has(cellCtrl.column);
 
                 if (excludeColFromRefresh) {
                     continue;
@@ -1010,7 +1037,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.removeRowCtrls(stubNodeIndexes);
 
         // then clear out rowCompsByIndex, but before that take a copy, but index by id, not rowIndex
-        const ctrlsByIdMap: RowCtrlByRowNodeIdMap = {};
+        const ctrlsByIdMap: RowCtrlByRowNodeIdMap = Object.create(null);
         for (const rowCtrl of Object.values(this.rowCtrlsByRowIndex)) {
             const rowNode = rowCtrl.rowNode;
             ctrlsByIdMap[rowNode.id!] = rowCtrl;
@@ -1047,6 +1074,12 @@ export class RowRenderer extends BeanStub implements NamedBean {
     // 2) grid scrolled to new position
     // 3) ensure index visible (which is a scroll)
     public redraw(params: { afterScroll?: boolean; force?: boolean } = {}) {
+        if (this.drawState === ROWS_DRAW_INTERRUPTED) {
+            // the draw that threw may have stopped before any of its steps, so all of them are redone
+            this.redrawAfterModelUpdate({ recycleRows: true });
+            return;
+        }
+
         const { focusSvc, animationFrameSvc } = this.beans;
         const { afterScroll, force } = params;
         let cellFocused: CellPosition | undefined;
@@ -1060,32 +1093,45 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
         const oldFirstRow = this.firstRenderedRow;
         const oldLastRow = this.lastRenderedRow;
-        this.workOutFirstAndLastRowsToRender();
 
-        let hasStickyRowChanges = false;
+        // a throw outside a locked draw shows the rows drawn, and the next redraw redoes the draw whole
+        try {
+            this.workOutFirstAndLastRowsToRender();
 
-        if (stickyRowFeature) {
-            hasStickyRowChanges = stickyRowFeature.checkStickyRows();
+            let hasStickyRowChanges = false;
+            if (stickyRowFeature) {
+                hasStickyRowChanges = stickyRowFeature.checkStickyRows();
 
-            // this is a hack, if sticky rows brings in rows from other pages
-            // need to update the model height to include them.
-            const extraHeight = stickyRowFeature.extraTopHeight + stickyRowFeature.extraBottomHeight;
-            if (extraHeight) {
-                this.updateContainerHeights(extraHeight);
+                // sticky rows brought in from other pages add to the model height
+                const extraHeight = stickyRowFeature.extraTopHeight + stickyRowFeature.extraBottomHeight;
+                if (extraHeight) {
+                    this.updateContainerHeights(extraHeight);
+                }
             }
+
+            const rangeChanged = this.firstRenderedRow !== oldFirstRow || this.lastRenderedRow !== oldLastRow;
+
+            if (afterScroll && !hasStickyRowChanges && !rangeChanged && !force) {
+                return;
+            }
+
+            this.getLockOnRefresh();
+            try {
+                this.recycleRows(null, false, afterScroll);
+                this.updateAllRowCtrls();
+                this.drawState = ROWS_DRAWN;
+            } finally {
+                this.releaseLockOnRefresh();
+            }
+            // AfterScroll results in flushSync in React but we need to disable flushSync for sticky row group changes to avoid flashing
+            this.dispatchDisplayedRowsChanged(afterScroll && !hasStickyRowChanges);
+        } catch (e) {
+            if (this.drawState === ROWS_DRAWN) {
+                this.drawState = ROWS_DRAW_INTERRUPTED;
+                this.showDrawnRows();
+            }
+            throw e;
         }
-
-        const rangeChanged = this.firstRenderedRow !== oldFirstRow || this.lastRenderedRow !== oldLastRow;
-
-        if (afterScroll && !hasStickyRowChanges && !rangeChanged && !force) {
-            return;
-        }
-
-        this.getLockOnRefresh();
-        this.recycleRows(null, false, afterScroll);
-        this.releaseLockOnRefresh();
-        // AfterScroll results in flushSync in React but we need to disable flushSync for sticky row group changes to avoid flashing
-        this.dispatchDisplayedRowsChanged(afterScroll && !hasStickyRowChanges);
 
         if (cellFocused != null) {
             const newFocusedCell = focusSvc?.getFocusCellToUseAfterRefresh();
@@ -1191,22 +1237,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
         for (const rowIndex of indexesToDraw) {
             this.createOrUpdateRowCtrl(rowIndex, rowsToRecycle, animate, afterScroll);
         }
-
-        if (rowsToRecycle) {
-            const { animationFrameSvc } = this.beans;
-            const useAnimationFrame = animationFrameSvc?.active && afterScroll && !this.printLayout;
-            if (useAnimationFrame) {
-                animationFrameSvc.addDestroyTask(() => {
-                    this.destroyRowCtrls(rowsToRecycle, animate);
-                    this.updateAllRowCtrls();
-                    this.dispatchDisplayedRowsChanged();
-                });
-            } else {
-                this.destroyRowCtrls(rowsToRecycle, animate);
-            }
-        }
-
-        this.updateAllRowCtrls();
     }
 
     private dispatchDisplayedRowsChanged(afterScroll: boolean = false): void {
@@ -1310,31 +1340,30 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.rowCtrlsByRowIndex[rowIndex] = rowCtrl!;
     }
 
-    private destroyRowCtrls(rowCtrlsMap: RowCtrlIdMap | null | undefined, animate: boolean): void {
+    private destroyRowCtrls(rowCtrls: (RowCtrl | null)[], animate: boolean): void {
         const executeInAWhileFuncs: (() => void)[] = [];
-        if (rowCtrlsMap) {
-            for (const rowCtrl of Object.values(rowCtrlsMap)) {
-                // if row was used, then it's null
-                if (!rowCtrl) {
-                    continue;
-                }
+        for (let i = 0, len = rowCtrls.length; i < len; ++i) {
+            const rowCtrl = rowCtrls[i];
+            // if row was used, then it's null
+            if (!rowCtrl) {
+                continue;
+            }
 
-                if (this.cachedRowCtrls && rowCtrl.isCacheable()) {
-                    this.cachedRowCtrls.addRow(rowCtrl);
-                    continue;
-                }
+            if (this.cachedRowCtrls && rowCtrl.isCacheable()) {
+                this.cachedRowCtrls.addRow(rowCtrl);
+                continue;
+            }
 
-                rowCtrl.destroyFirstPass(!animate);
-                if (animate) {
-                    const instanceId = rowCtrl.instanceId;
-                    this.zombieRowCtrls[instanceId] = rowCtrl;
-                    executeInAWhileFuncs.push(() => {
-                        rowCtrl.destroySecondPass();
-                        delete this.zombieRowCtrls[instanceId];
-                    });
-                } else {
+            rowCtrl.destroyFirstPass(!animate);
+            if (animate) {
+                const instanceId = rowCtrl.instanceId;
+                this.zombieRowCtrls[instanceId] = rowCtrl;
+                executeInAWhileFuncs.push(() => {
                     rowCtrl.destroySecondPass();
-                }
+                    delete this.zombieRowCtrls[instanceId];
+                });
+            } else {
+                rowCtrl.destroySecondPass();
             }
         }
         if (animate) {
@@ -1651,8 +1680,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
 }
 
 class RowCtrlCache {
-    // map for fast access
-    private entriesMap: RowCtrlByRowNodeIdMap = {};
+    // keyed by node, as a reloaded row can reuse the id of the node a cached ctrl belongs to
+    private readonly entriesMap = new Map<RowNode, RowCtrl>();
 
     // list for keeping order
     private readonly entriesList: RowCtrl[] = [];
@@ -1664,7 +1693,7 @@ class RowCtrlCache {
     }
 
     public addRow(rowCtrl: RowCtrl): void {
-        this.entriesMap[rowCtrl.rowNode.id!] = rowCtrl;
+        this.entriesMap.set(rowCtrl.rowNode, rowCtrl);
         this.entriesList.push(rowCtrl);
         rowCtrl.setCached(true);
 
@@ -1677,11 +1706,7 @@ class RowCtrlCache {
     }
 
     public getRow(rowNode: RowNode): RowCtrl | null {
-        if (rowNode?.id == null) {
-            return null;
-        }
-
-        const res = this.entriesMap[rowNode.id];
+        const res = this.entriesMap.get(rowNode);
 
         if (!res) {
             return null;
@@ -1690,27 +1715,23 @@ class RowCtrlCache {
         this.removeFromCache(res);
         res.setCached(false);
 
-        // this can happen if user reloads data, and a new RowNode is reusing
-        // the same ID as the old one
-        const rowNodeMismatch = res.rowNode != rowNode;
-
-        return rowNodeMismatch ? null : res;
+        return res;
     }
 
-    public has(rowNode: RowNode): boolean {
-        return this.entriesMap[rowNode.id!] != null;
-    }
-
-    public removeRow(rowNode: RowNode): void {
-        const rowNodeId = rowNode.id!;
-        const ctrl = this.entriesMap[rowNodeId];
-        delete this.entriesMap[rowNodeId];
-        _removeFromArray(this.entriesList, ctrl);
+    /** Destroys the row's cached ctrl, telling whether there was one. */
+    public removeRow(rowNode: RowNode): boolean {
+        const ctrl = this.entriesMap.get(rowNode);
+        if (!ctrl) {
+            return false;
+        }
+        ctrl.destroyFirstPass(true);
+        ctrl.destroySecondPass();
+        this.removeFromCache(ctrl);
+        return true;
     }
 
     public removeFromCache(rowCtrl: RowCtrl): void {
-        const rowNodeId = rowCtrl.rowNode.id!;
-        delete this.entriesMap[rowNodeId];
+        this.entriesMap.delete(rowCtrl.rowNode);
         _removeFromArray(this.entriesList, rowCtrl);
     }
 
@@ -1729,30 +1750,28 @@ interface RefreshViewParams {
     domLayoutChanged?: boolean;
 }
 
-export function mapRowNodes(
-    rowNodes?: IRowNode[] | null
-): { top: RowNodeMap; bottom: RowNodeMap; normal: RowNodeMap } | undefined {
+export function mapRowNodes(rowNodes?: IRowNode[] | null): RowIdsByPinned | undefined {
     if (!rowNodes) {
         return;
     }
 
-    const res: { top: RowNodeMap; bottom: RowNodeMap; normal: RowNodeMap } = {
-        top: {},
-        bottom: {},
-        normal: {},
+    const res: RowIdsByPinned = {
+        top: new Set(),
+        bottom: new Set(),
+        normal: new Set(),
     };
 
     for (const rowNode of rowNodes) {
-        const id = rowNode.id!;
+        const id = rowNode.id;
         switch (rowNode.rowPinned) {
             case 'top':
-                res.top[id] = rowNode;
+                res.top.add(id);
                 break;
             case 'bottom':
-                res.bottom[id] = rowNode;
+                res.bottom.add(id);
                 break;
             default:
-                res.normal[id] = rowNode;
+                res.normal.add(id);
                 break;
         }
     }
@@ -1760,21 +1779,18 @@ export function mapRowNodes(
     return res;
 }
 
-export function isRowInMap(
-    rowNode: RowNode,
-    rowIdsMap: { top: RowNodeMap; bottom: RowNodeMap; normal: RowNodeMap }
-): boolean {
+export function isRowInMap(rowNode: RowNode, rowIdsMap: RowIdsByPinned): boolean {
     // skip this row if it is missing from the provided list
-    const id = rowNode.id!;
+    const id = rowNode.id;
     const pinned = rowNode.rowPinned;
 
     switch (pinned) {
         case 'top':
-            return rowIdsMap.top[id] != null;
+            return rowIdsMap.top.has(id);
         case 'bottom':
-            return rowIdsMap.bottom[id] != null;
+            return rowIdsMap.bottom.has(id);
         default:
-            return rowIdsMap.normal[id] != null;
+            return rowIdsMap.normal.has(id);
     }
 }
 
