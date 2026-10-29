@@ -45,7 +45,7 @@ The rules count differs between local and cloud: a cloud session gets the 13 gen
 Do this once per cloud environment (and once more for an organization-shared environment, if your team uses one).
 
 1. Open `claude.ai/code` and select the cloud icon above the message box, then **Add cloud environment** — or the gear on an existing one.
-2. Leave **Network access** on **Trusted**. The default allowlist covers npm, yarnpkg, nodejs.org and GitHub, which is everything the install needs. Add domains only if you need `registry.ag-grid.com` (staging packages) in the session.
+2. Leave **Network access** on **Trusted**. The default allowlist covers npm, yarnpkg, nodejs.org and GitHub, which is everything the ag-charts install needs. ag-grid and ag-studio pin AG packages to betas that only `registry.ag-grid.com` serves, so for those repos add `registry.ag-grid.com` as an allowed domain. The install scripts take the registry from the repo's `npm run bootstrap` script, the same as a local install.
 3. Paste this into **Setup script**:
 
    ```bash
