@@ -49,7 +49,7 @@ export interface MenuItemDef<TData = any, TContext = any> extends MenuItemLeafDe
     subMenuRole?: 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog';
     /**
      * Provide a custom menu item component.
-     * See [Menu Item Component](https://www.ag-grid.com/javascript-data-grid/component-menu-item/#implementing-a-menu-item-component) for framework specific implementation details.
+     * See [Menu Item Component](https://www.ag-grid.com/javascript-data-grid/component-menu-item/) for framework specific implementation details.
      */
     menuItem?: any;
     /**
