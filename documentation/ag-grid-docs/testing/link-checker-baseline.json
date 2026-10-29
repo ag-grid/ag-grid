@@ -1,18 +1,1 @@
-{
-    "missing-anchor": [
-        "/javascript-data-grid/column-headers/#header-templates",
-        "/javascript-data-grid/component-menu-item/#implementing-a-menu-item-component",
-        "/javascript-data-grid/grid-api/#reference-setRowDropPositionIndicator"
-    ],
-    "unlabelled-link": [
-        "https://www.ag-grid.com/blog/",
-        "https://www.ag-grid.com/blog/newsletter/"
-    ],
-    "utm-parameters": [
-        "/whats-new/?utm_source=ag-grid.com&utm_medium=marketing-campaign-landing-page&utm_campaign=return-to-support-campaign",
-        "https://www.ag-grid.com/blog/whats-new-in-ag-grid-36.0.0/?utm_source=ag-grid.com&utm_medium=marketing-campaign-landing-page&utm_campaign=return-to-support-campaign",
-        "https://www.ag-grid.com/blog/whats-new-in-ag-grid-36.1.0/?utm_source=ag-grid.com&utm_medium=marketing-campaign-landing-page&utm_campaign=return-to-support-campaign",
-        "https://www.ag-grid.com/blog/whats-new-in-ag-grid-36.2.0/?utm_source=ag-grid.com&utm_medium=marketing-campaign-landing-page&utm_campaign=return-to-support-campaign",
-        "https://www.ag-grid.com/charts/gallery/?utm_source=power-of-ag-charts&utm_medium=landing-page&utm_campaign=integrated-enterprise-charts"
-    ]
-}
+{}
