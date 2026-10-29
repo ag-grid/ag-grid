@@ -1,4 +1,4 @@
-import type { CreateDependencies, CreateNodesResult, CreateNodesV2, TargetConfiguration } from '@nx/devkit';
+import type { CreateDependencies, CreateNodes, CreateNodesResult, TargetConfiguration } from '@nx/devkit';
 import { createNodesFromFiles } from '@nx/devkit';
 import { dirname } from 'path';
 
@@ -6,7 +6,7 @@ import * as generateExampleFiles from './generate-example-files';
 
 const PROJECTS = ['ag-grid-docs'];
 const NON_UNIQUE_PATH_ELEMENTS = new Set(['src', 'content', 'docs', '_examples']);
-export const createNodesV2: CreateNodesV2 = [
+export const createNodes: CreateNodes = [
     'documentation/*/src/**/_examples/*/main.ts',
     (configFiles, options, context) => createNodesFromFiles(createExampleProject, configFiles, options, context),
 ];

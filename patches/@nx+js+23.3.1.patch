@@ -1,12 +1,12 @@
 diff --git a/node_modules/@nx/js/executors.json b/node_modules/@nx/js/executors.json
-index 07d1f6cf0b1..70d429abe49 100644
+index 03fd7b578be..6f25ce67110 100644
 --- a/node_modules/@nx/js/executors.json
 +++ b/node_modules/@nx/js/executors.json
 @@ -8,7 +8,6 @@
      },
      "tsc": {
-       "implementation": "./src/executors/tsc/tsc.impl",
--      "batchImplementation": "./src/executors/tsc/tsc.batch-impl",
-       "schema": "./src/executors/tsc/schema.json",
+       "implementation": "./dist/src/executors/tsc/tsc.impl",
+-      "batchImplementation": "./dist/src/executors/tsc/tsc.batch-impl",
+       "schema": "./dist/src/executors/tsc/schema.json",
        "description": "Build a project using TypeScript."
      },
