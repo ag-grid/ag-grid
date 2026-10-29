@@ -19,6 +19,7 @@ export type ParamType =
     | 'color'
     | 'length'
     | 'scale'
+    | 'ratio'
     | 'borderStyle'
     | 'border'
     | 'shadow'
