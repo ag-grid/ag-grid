@@ -381,6 +381,8 @@ The following example adds, edits and removes a Profit Margin column through the
 
 Call `openCalculatedColumnDialog(column)` to edit or view an existing calculated column, bringing its dialog forward if already open. Call `openAddCalculatedColumnDialog(sourceColumn?)` to add one after a source column, or at the end when omitted. Both methods focus the dialog and use the configured apply mode. Adding is unavailable in pivot mode.
 
+Closing returns focus to the calculated column's header, scrolling it into view if needed. If a deferred Add was not applied, focus returns to the source column when supplied. Focus is not moved if you have already focused another element.
+
 ```javascript
 // Call from an application button.
 function onAddCalculatedColumn() {

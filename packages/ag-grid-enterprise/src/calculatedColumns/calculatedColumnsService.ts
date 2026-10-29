@@ -467,7 +467,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 draft,
                 (nextDraft) => {
                     const newColumn = this.addDynamicCalculatedColumn(nextDraft, column);
-                    if (newColumn) {
+                    if (newColumn && restoreFocusParams) {
                         this.focusCalculatedColumn(nextDraft.colId);
                     }
                 },
@@ -1232,8 +1232,11 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
                 modal: false,
                 cssIdentifier: 'calculated-column',
                 closedCallback: (event) => {
-                    if (restoreFocusColumn) {
-                        this.restoreFocusOnDialogClose(restoreFocusColumn, form.getGui(), event, restoreFocusParams);
+                    const column = restoreFocusParams
+                        ? restoreFocusColumn
+                        : (this.beans.colModel.getCol(colId) ?? restoreFocusColumn);
+                    if (focusDialog && column) {
+                        this.restoreFocusOnDialogClose(column, form.getGui(), event, restoreFocusParams);
                     }
                 },
             })
@@ -1294,8 +1297,17 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         event: MouseEvent | TouchEvent | KeyboardEvent | undefined,
         params: CalculatedColumnDialogRestoreFocusParams | undefined
     ): void {
+        if (!this.isAlive() || this.beans.context.isDestroyed()) {
+            return;
+        }
         const eventSource = params?.eventSource;
         if (!eventSource) {
+            if (column.isAlive() && _isNothingFocused(this.beans)) {
+                const headerPosition = this.beans.headerNavigation?.getHeaderPositionForColumn(column, false);
+                if (headerPosition) {
+                    this.beans.focusSvc.focusHeaderPosition({ headerPosition });
+                }
+            }
             return;
         }
 
