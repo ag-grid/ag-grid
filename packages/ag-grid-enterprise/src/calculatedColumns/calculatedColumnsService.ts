@@ -124,6 +124,8 @@ type DynamicCalculatedColumn = {
     /** Source col, or `null`. Tree placement (leaf anchor); non-leaf anchors (e.g. auto-group col)
      *  also seat in display order via `anchoredToColId`. */
     anchorColId: string | null;
+    /** Source pinning applied once on creation, then persisted through normal column state. */
+    initialPinned?: ColDef['pinned'];
     /** Owned AgColumn for stable identity across refreshes; `null` until built. The rebuild sweep destroys it. */
     instance: AgColumn | null;
     /** Group placement captured when `resetColumnState` parks the column (the instance is dropped at that
@@ -515,6 +517,7 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
         this.dynamicColumns.set(colId, {
             colDef: nextColDef,
             anchorColId: anchorColumn?.colId ?? null,
+            initialPinned: anchorColumn?.pinned,
             instance: null,
         });
         this.recordCreatedColumn(colId, nextColDef, getParentGroupId(anchorColumn));
@@ -869,6 +872,10 @@ export class CalculatedColumnsService extends BeanStub implements NamedBean, ICa
             return existing;
         }
         const agCol = _createUserColumn(beans, colDef, colId, true, buildToken);
+        if (dc.initialPinned !== undefined && colDef.pinned === undefined && colDef.initialPinned === undefined) {
+            beans.pinnedCols?.setColPinned(agCol, dc.initialPinned, source);
+        }
+        dc.initialPinned = undefined;
         dc.instance = agCol;
         return agCol;
     }

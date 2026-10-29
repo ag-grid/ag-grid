@@ -18,6 +18,78 @@ const medalsLabelShown = (page: Page) =>
     });
 
 test.describe('community grid in a real browser', () => {
+    test('RTL left-pinned columns keep their visual order through resizing, dragging and scrolling', async ({
+        page,
+    }) => {
+        const { grid, headerCell, cell, withApi } = await mountGrid(page, {
+            width: 800,
+            options: () => ({
+                enableRtl: true,
+                defaultColDef: { width: 100 },
+                columnDefs: [
+                    {
+                        headerName: 'Pinned',
+                        groupId: 'pinned',
+                        children: [
+                            { field: 'a', pinned: 'left' },
+                            { field: 'b', pinned: 'left', width: 150 },
+                        ],
+                    },
+                    { field: 'c', width: 300 },
+                    { field: 'd', width: 300 },
+                    { field: 'e', width: 300 },
+                    { field: 'f', pinned: 'right' },
+                ],
+                rowData: [{ a: 1, b: 2, c: 3, d: 4, e: 5, f: 6 }],
+            }),
+        });
+
+        await expect(async () => {
+            const a = (await headerCell('a').boundingBox())!;
+            const b = (await headerCell('b').boundingBox())!;
+            expect(b.x + b.width).toBeCloseTo(a.x, 0);
+            expect((await cell(0, 'a').boundingBox())!.x).toBeCloseTo(a.x, 0);
+            expect((await cell(0, 'b').boundingBox())!.x).toBeCloseTo(b.x, 0);
+            const group = (await grid.locator('.ag-header-group-cell').filter({ hasText: 'Pinned' }).boundingBox())!;
+            expect(group.x).toBeCloseTo(b.x, 0);
+            expect(group.width).toBeCloseTo(a.width + b.width, 0);
+        }).toPass();
+        expect(await withApi((api) => api.getColumn('a')!.isLastLeftPinned())).toBe(true);
+        expect(await withApi((api) => api.getColumn('b')!.isLastLeftPinned())).toBe(false);
+
+        const handle = (await headerCell('a').locator('.ag-header-cell-resize').boundingBox())!;
+        await page.mouse.move(handle.x + handle.width / 2, handle.y + handle.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(handle.x + handle.width / 2 + 40, handle.y + handle.height / 2, { steps: 10 });
+        await page.mouse.up();
+        await expect.poll(() => withApi((api) => api.getColumn('a')!.getActualWidth())).toBe(140);
+
+        await withApi((api) => api.ensureColumnVisible('e', 'end'));
+        const a = (await headerCell('a').boundingBox())!;
+        const b = (await headerCell('b').boundingBox())!;
+        expect(b.x + b.width).toBeCloseTo(a.x, 0);
+        await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(a.x + a.width - 20, a.y + a.height / 2, { steps: 15 });
+        await page.mouse.up();
+        await expect
+            .poll(() => withApi((api) => api.getDisplayedLeftColumns().map((col) => col.getColId())))
+            .toEqual(['b', 'a']);
+        await expect(async () => {
+            const movedA = (await headerCell('a').boundingBox())!;
+            const movedB = (await headerCell('b').boundingBox())!;
+            expect(movedA.x + movedA.width).toBeCloseTo(movedB.x, 0);
+            expect((await cell(0, 'a').boundingBox())!.x).toBeCloseTo(movedA.x, 0);
+        }).toPass();
+        expect(await withApi((api) => api.getColumn('b')!.isLastLeftPinned())).toBe(true);
+
+        await withApi((api) => api.setGridOption('domLayout', 'print'));
+        await expect(async () => {
+            expect((await headerCell('a').boundingBox())!.x).toBeLessThan((await headerCell('b').boundingBox())!.x);
+            expect((await cell(0, 'a').boundingBox())!.x).toBeCloseTo((await headerCell('a').boundingBox())!.x, 0);
+        }).toPass();
+    });
+
     test('typing into the text editor and pressing Tab commits the value and moves focus right', async ({ page }) => {
         const { cell, withApi } = await mountGrid(page, {
             options: () => ({

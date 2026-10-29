@@ -1401,9 +1401,8 @@ export class GridColumnsValidator {
     // ── Pinned boundary markers ─────────────────────────────────────────────
 
     private validatePinnedBoundaryMarkers(leftCols: Column[], rightCols: Column[], isRtl: boolean): void {
-        // isLastLeftPinned: at most one column, must be the last col in `leftCols` (the boundary
-        // adjacent to the centre body). RTL doesn't change this — `leftCols` is still ordered
-        // start-edge-first in both layouts and the boundary is the trailing entry.
+        // isLastLeftPinned: at most one column, at the boundary adjacent to the centre body.
+        // RTL mirrors the left section, so its first entry is at that boundary.
         if (leftCols.length > 0) {
             const lastLeftPinnedCols = leftCols.filter((c) => c.isLastLeftPinned());
             if (lastLeftPinnedCols.length > 1) {
@@ -1411,9 +1410,10 @@ export class GridColumnsValidator {
                     `${lastLeftPinnedCols.length} columns have isLastLeftPinned()=true, expected at most 1.`
                 );
             }
-            if (lastLeftPinnedCols.length === 1 && lastLeftPinnedCols[0] !== leftCols[leftCols.length - 1]) {
+            const expectedBoundary = isRtl ? leftCols[0] : leftCols[leftCols.length - 1];
+            if (lastLeftPinnedCols.length === 1 && lastLeftPinnedCols[0] !== expectedBoundary) {
                 this.errors.default.add(
-                    `isLastLeftPinned() column "${lastLeftPinnedCols[0].getColId()}" is not the last column in leftCols.`
+                    `isLastLeftPinned() column "${lastLeftPinnedCols[0].getColId()}" is not the ${isRtl ? 'first' : 'last'} column in leftCols.`
                 );
             }
         }

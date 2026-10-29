@@ -262,12 +262,16 @@ export class VisibleColsService extends BeanStub implements NamedBean {
     }
 
     private setPinnedEdges(leftCols: AgColumn[], rightCols: AgColumn[]): void {
+        const isRtl = this.gos.get('enableRtl');
         const leftLen = leftCols.length;
-        const newLastLeft = leftLen ? leftCols[leftLen - 1] : null;
+        let newLastLeft: AgColumn | null = null;
+        if (leftLen) {
+            newLastLeft = isRtl ? leftCols[0] : leftCols[leftLen - 1];
+        }
         let newFirstRight: AgColumn | null = null;
         const rightLen = rightCols.length;
         if (rightLen) {
-            newFirstRight = this.gos.get('enableRtl') ? rightCols[rightLen - 1] : rightCols[0];
+            newFirstRight = isRtl ? rightCols[rightLen - 1] : rightCols[0];
         }
 
         const prevLastLeft = this.lastLeftPinnedCol;

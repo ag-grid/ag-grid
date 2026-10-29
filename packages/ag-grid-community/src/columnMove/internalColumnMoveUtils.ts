@@ -430,12 +430,8 @@ export function clientXToSectionX(clientX: number, pinned: ColumnPinnedType, ctr
     return clientX - eSection.getBoundingClientRect().left;
 }
 
-export const normaliseDirection = (
-    hDirection: HorizontalDirection,
-    isRtl: boolean,
-    pinned: ColumnPinnedType | null
-): HorizontalDirection => {
-    if (isRtl && pinned !== 'left') {
+export const normaliseDirection = (hDirection: HorizontalDirection, isRtl: boolean): HorizontalDirection => {
+    if (isRtl) {
         switch (hDirection) {
             case 'left':
                 return 'right';
@@ -456,7 +452,7 @@ export function normaliseX(params: {
     const { isRtl, ctrlsSvc, pinned } = params;
     let { x } = params;
 
-    if (isRtl && pinned !== 'left') {
+    if (isRtl) {
         const eSection = getSectionElement(pinned ?? null, ctrlsSvc);
         if (!eSection) {
             return 0;
