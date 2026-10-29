@@ -75,29 +75,30 @@ const docPages = getAllDocPages();
 assert(docPages.length > 0, 'Doc pages should not be empty');
 writeResults('docs/menu.json', docPages);
 
-for (let i = 0; i < SUPPORTED_FRAMEWORKS.length; i++) {
-    const framework = SUPPORTED_FRAMEWORKS[i];
-    console.log('Processing framework:', framework);
+await Promise.all(
+    SUPPORTED_FRAMEWORKS.map(async (framework) => {
+        console.log('Processing framework:', framework);
 
-    const pages = docPages.map(prefixPath(framework));
-    const promises = pages.map((page) => parseDocPage(page));
-    const results = await Promise.all(promises);
+        const pages = docPages.map(prefixPath(framework));
+        const promises = pages.map((page) => parseDocPage(page));
+        const results = await Promise.all(promises);
 
-    // If print mode, try to write the results to disk
-    docPages.forEach((page, i) => {
-        const normalizedText = page.path.toLowerCase();
-        const outputName = `docs/${framework}/${normalizedText}.json`;
-        writeResults(outputName, results[i]);
-    });
+        // If print mode, try to write the results to disk
+        docPages.forEach((page, i) => {
+            const normalizedText = page.path.toLowerCase();
+            const outputName = `docs/${framework}/${normalizedText}.json`;
+            writeResults(outputName, results[i]);
+        });
 
-    results.forEach((result) => {
-        if (result) {
-            indices[framework].push(...result);
-        }
-    });
+        results.forEach((result) => {
+            if (result) {
+                indices[framework].push(...result);
+            }
+        });
 
-    indices[framework].push(...campaignRecords);
+        indices[framework].push(...campaignRecords);
 
-    const indexName = `${indexNamePrefix}_${framework}`;
-    await updateAlgolia(indexName, indices[framework]);
-}
+        const indexName = `${indexNamePrefix}_${framework}`;
+        await updateAlgolia(indexName, indices[framework]);
+    })
+);
