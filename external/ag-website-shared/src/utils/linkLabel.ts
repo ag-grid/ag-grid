@@ -54,7 +54,7 @@ const VISIBLE_CHARACTER = /[^\s\u200b-\u200d\u2060\ufeff]/;
  */
 const isBlank = (value: string): boolean => {
     const decoded = value.replace(BLANK_NAMED_ENTITIES, ' ').replace(NUMERIC_ENTITIES, (reference, hex, decimal) => {
-        const codePoint = parseInt(hex ?? decimal, hex != null ? 16 : 10);
+        const codePoint = parseInt(hex ?? decimal, hex == null ? 10 : 16);
         // Lone surrogates and out-of-range values would throw; leave them as they were.
         if (!Number.isInteger(codePoint) || codePoint > 0x10ffff || (codePoint >= 0xd800 && codePoint <= 0xdfff)) {
             return reference;
