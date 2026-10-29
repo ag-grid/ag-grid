@@ -409,7 +409,7 @@ This explicitly applies the current `getValidationErrors` and `isColumnReference
 
 ### Events
 
-Use `calculatedColumnChanged` to track changes to `headerName`, `cellDataType`, `calculatedExpression` and `columnGroupShow`. Its `changes` object contains only changed properties, with their previous and new values. Deferred Apply raises one event for all changes. Live mode raises one per applied update, with `applyDebounce` combining edits after a pause in typing. Initialisation and Grid State restoration do not raise this event.
+Use `calculatedColumnChanged` to track changes to `headerName`, `cellDataType`, `calculatedExpression` and `columnGroupShow`. Its `changes` object contains only changed properties, with their previous and new values. Cell values read in the handler already reflect the change, including in calculated columns that depend on it. Deferred Apply raises one event for all changes. Live mode raises one per applied update, with `applyDebounce` combining edits after a pause in typing. Initialisation and Grid State restoration do not raise this event.
 
 Check `expressionValidation.valid` before saving an accepted expression. When invalid, `expressionValidation.reason` is `restrictedReference`, `customValidation`, `unknownReference` or `invalidExpression`. Validation-only updates also raise this event, with an empty `changes` object and the unchanged `expression`.
 
@@ -437,7 +437,5 @@ Live expressions can be incomplete or invalid. Recognised references use stored 
 
 `expressionValidation` is a snapshot of syntax, direct reference resolution and saved dialog errors, not row-specific evaluation results. To persist rejected expressions with their blocked status, save [Grid State](./grid-state/); saving only the expression text does not retain that status.
 {% /note %}
-
-Calculated values are computed when they are read, not in a separate pass, so there is no event for calculation finishing. In a `calculatedColumnChanged` or `cellValueChanged` handler, `api.getCellValue()` already returns the updated values, including those of calculated columns that depend on the change. An expression that cannot be evaluated returns an [error code](./formula-reference/#error-codes) such as `#PARSE!` or `#REF!` instead of a value.
 
 {% apiDocumentation source="grid-events/events.json" section="calculatedColumns" names=["calculatedColumnCreated", "calculatedColumnChanged", "calculatedColumnRemoved", "calculatedColumnValidationStateChanged"] /%}
