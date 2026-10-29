@@ -25,7 +25,7 @@ export type ExecutorOptions = {
  * The per-example targets still exist for the watch loop and for regenerating a single example by
  * hand; this executor is the bulk path used by `generate-examples`.
  *
- * Output paths must match what `ag-grid-task-autogen`'s `createNodes` computes for the per-example
+ * Output paths must match what `ag-grid-task-autogen`'s `createNodesV2` computes for the per-example
  * tasks, so that both paths write to exactly the same place.
  */
 export function exampleOutputPath({
