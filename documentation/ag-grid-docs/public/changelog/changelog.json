@@ -1,5 +1,19 @@
 [
     {
+        "key": "AG-19041",
+        "issueType": "Task",
+        "manualEntry": true,
+        "summary": "Placeholder for 36.3.0",
+        "versions": ["36.3.0"],
+        "status": "Done",
+        "resolution": "Done",
+        "features": null,
+        "moreInformation": null,
+        "deprecationNotes": null,
+        "breakingChangesNotes": null,
+        "documentationUrl": null
+    },
+    {
         "key": "AG-18465",
         "issueType": "Task",
         "manualEntry": true,
