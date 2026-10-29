@@ -266,15 +266,22 @@ describe('chart settings panel mini chart thumbnails', () => {
             expect(wrapper.querySelector('canvas')).toBeNull();
         });
 
-        test('each chart family is a group named by its heading, holding its thumbnails as buttons', () => {
+        test('each chart family is a group named by its heading, holding its thumbnails as a list of buttons', () => {
             const groups = Array.from(activeWrapper().querySelectorAll<HTMLElement>('.ag-charts-settings-group'));
             expect(groups.length).toBeGreaterThan(0);
             for (const group of groups) {
-                const container = group.querySelector<HTMLElement>('.ag-group-container')!;
-                expect(container.getAttribute('role')).toBe('group');
-                expect(container.getAttribute('aria-label')).toBe(group.querySelector('.ag-group-title')!.textContent);
-                for (const button of Array.from(container.querySelectorAll('.ag-chart-mini-thumbnail'))) {
-                    expect(button.getAttribute('role')).toBe('button');
+                expect(group.getAttribute('role')).toBe('group');
+                expect(group.getAttribute('aria-label')).toBe(group.querySelector('.ag-group-title')!.textContent);
+
+                const list = group.querySelector<HTMLElement>('.ag-group-container')!;
+                expect(list.getAttribute('role')).toBe('list');
+                const listItems = Array.from(list.children);
+                expect(listItems.length).toBeGreaterThan(0);
+                for (const listItem of listItems) {
+                    expect(listItem.getAttribute('role')).toBe('listitem');
+                    expect(listItem.children).toHaveLength(1);
+                    expect(listItem.firstElementChild!.classList.contains('ag-chart-mini-thumbnail')).toBe(true);
+                    expect(listItem.firstElementChild!.getAttribute('role')).toBe('button');
                 }
             }
 
