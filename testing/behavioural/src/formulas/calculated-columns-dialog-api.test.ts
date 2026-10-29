@@ -202,6 +202,68 @@ describe('calculated column dialog APIs', () => {
         expect(api.getColumn('calculated_1')).toBeNull();
     });
 
+    test.each([false, true])('closing Edit/View focuses its header (read-only: %s)', (calculatedColumnReadOnly) => {
+        const api = createGrid('calculated-api-close-focus', {
+            rowData: [{ id: 'r1', revenue: 10 }],
+            columnDefs: [
+                { field: 'revenue' },
+                { colId: 'profit', calculatedExpression: '[revenue]', calculatedColumnReadOnly },
+            ],
+        });
+        api.openCalculatedColumnDialog('profit');
+        document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+        expect(document.querySelector('.ag-header-cell[col-id="profit"]')).toHaveFocus();
+    });
+
+    test.each(['live', 'deferred'] as const)(
+        'closing a created %s column focuses its header, not its source',
+        (applyMode) => {
+            const api = createGrid('calculated-api-add-close-focus', {
+                rowData: [{ id: 'r1', revenue: 10 }],
+                calculatedColumns: { applyMode },
+                columnDefs: [{ field: 'revenue' }],
+            });
+            api.openAddCalculatedColumnDialog('revenue');
+            if (applyMode === 'deferred') {
+                setExpression('[Revenue]');
+                clickDialogButton('Apply');
+            } else {
+                document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+            }
+            expect(document.querySelector('.ag-header-cell[col-id="calculated_1"]')).toHaveFocus();
+        }
+    );
+
+    test('cancelling a deferred Add focuses the source header', () => {
+        const api = createGrid('calculated-api-cancel-focus', {
+            rowData: [{ id: 'r1', revenue: 10 }],
+            calculatedColumns: { applyMode: 'deferred' },
+            columnDefs: [{ field: 'revenue' }],
+        });
+        api.openAddCalculatedColumnDialog('revenue');
+        clickDialogButton('Cancel');
+        expect(api.getColumn('calculated_1')).toBeNull();
+        expect(document.querySelector('.ag-header-cell[col-id="revenue"]')).toHaveFocus();
+    });
+
+    test('closing a dialog does not steal focus from another dialog', () => {
+        const api = createGrid('calculated-api-close-preserves-focus', {
+            columnDefs: [
+                { colId: 'profit', calculatedExpression: '1' },
+                { colId: 'margin', calculatedExpression: '2' },
+            ],
+        });
+        api.openCalculatedColumnDialog('profit');
+        const firstClose = document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!;
+        api.openCalculatedColumnDialog('margin');
+        const focused = document.activeElement;
+        firstClose.click();
+        expect(document.activeElement).toBe(focused);
+        expect(document.querySelectorAll('.ag-dialog')).toHaveLength(1);
+        api.destroy();
+        expect(document.querySelector('.ag-dialog')).toBeNull();
+    });
+
     test('Add is unavailable in pivot mode with or without a source', () => {
         const api = createGrid('calculated-api-pivot', {
             pivotMode: true,
