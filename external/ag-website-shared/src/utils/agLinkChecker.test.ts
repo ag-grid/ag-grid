@@ -218,6 +218,33 @@ describe('agLinkChecker', () => {
             expect(await checkSite(siteWithHome(link))).toBeUndefined();
         });
 
+        it('fails the build when the only text is hidden from assistive technology', async () => {
+            const root = siteWithHome('<a href="/about/"><span aria-hidden="true">About</span></a>');
+            expect(await checkSite(root)).toContain('Link /about/ has no text, image alt text or label');
+        });
+
+        it('accepts an image named by an aria-label', async () => {
+            const root = siteWithHome('<a href="/about/"><img src="/a.svg" aria-label="About"></a>');
+            expect(await checkSite(root)).toBeUndefined();
+        });
+
+        it('accepts an aria-labelledby that names a heading on the page, however far from the link', async () => {
+            const root = siteWithHome(
+                '<a href="/about/" aria-labelledby="team"></a><main><section><h2 id="team"><span>The team</span></h2></section></main>'
+            );
+            expect(await checkSite(root)).toBeUndefined();
+        });
+
+        it('fails the build for an aria-labelledby that points at nothing', async () => {
+            const root = siteWithHome('<a href="/about/" aria-labelledby="nobody"><svg></svg></a>');
+            expect(await checkSite(root)).toContain('Link /about/ has no text, image alt text or label');
+        });
+
+        it('fails the build for an aria-labelledby that points at an empty element', async () => {
+            const root = siteWithHome('<span id="team"></span><a href="/about/" aria-labelledby="team"></a>');
+            expect(await checkSite(root)).toContain('Link /about/ has no text, image alt text or label');
+        });
+
         it('does not police a link to someone else', async () => {
             const root = siteWithHome('<a href="https://example.com/"></a>');
             expect(await checkSite(root)).toBeUndefined();
