@@ -27,6 +27,7 @@ set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="${CLAUDE_PROJECT_DIR:-$(cd "$SCRIPT_DIR/../../../.." && pwd)}"
+. "$SCRIPT_DIR/registry-env.sh"
 if [[ -z "${AG_CLOUD_CACHE_DIR:-}" ]]; then
     if [[ -d /opt/ag-cloud ]]; then
         AG_CLOUD_CACHE_DIR=/opt/ag-cloud

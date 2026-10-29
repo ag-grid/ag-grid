@@ -105,6 +105,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
 if [[ ! -f "$REPO_ROOT/package.json" && -n "${CLAUDE_PROJECT_DIR:-}" ]]; then
     REPO_ROOT="$CLAUDE_PROJECT_DIR"
 fi
+. "$SCRIPT_DIR/registry-env.sh"
 if [[ -f "$REPO_ROOT/package.json" && "$PWD" != "$REPO_ROOT" ]]; then
     log_info "session cwd is ${PWD}; working in ${REPO_ROOT}"
     cd "$REPO_ROOT"

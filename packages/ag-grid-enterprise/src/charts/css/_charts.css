@@ -394,15 +394,15 @@
         border-top: none;
         font-weight: 500;
 
-        :where(.ag-chart-mini-thumbnail:nth-child(3n + 1)) {
+        :where(.ag-charts-settings-group-item:nth-child(3n + 1)) {
             grid-column: 1;
         }
 
-        :where(.ag-chart-mini-thumbnail:nth-child(3n + 2)) {
+        :where(.ag-charts-settings-group-item:nth-child(3n + 2)) {
             grid-column: 3;
         }
 
-        :where(.ag-chart-mini-thumbnail:nth-child(3n + 3)) {
+        :where(.ag-charts-settings-group-item:nth-child(3n + 3)) {
             grid-column: 5;
         }
     }

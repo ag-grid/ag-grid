@@ -217,9 +217,10 @@ export class MiniChartsContainer extends Component {
                     suppressKeyboardNavigation: true,
                 })
             );
-            const { eContainer } = groupComponent;
-            _setAriaRole(eContainer, 'group');
-            _setAriaLabel(eContainer, label);
+            const eGroup = groupComponent.getGui();
+            _setAriaRole(eGroup, 'group');
+            _setAriaLabel(eGroup, label);
+            _setAriaRole(groupComponent.eContainer, 'list');
 
             for (const menuItem of items) {
                 const { chartType } = menuItem;
@@ -257,10 +258,13 @@ export class MiniChartsContainer extends Component {
                         this.chartTranslation.translate(template.tooltip)
                     );
                 }
-                groupComponent.addItem(miniWrapper);
+                const listItem = _createElement({ tag: 'div' });
+                _setAriaRole(listItem, 'listitem');
+                listItem.appendChild(miniWrapper);
+                groupComponent.addItem(listItem);
             }
 
-            eGui.appendChild(groupComponent.getGui());
+            eGui.appendChild(eGroup);
         }
 
         this.updateSelectedMiniChart();

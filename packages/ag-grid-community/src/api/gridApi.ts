@@ -1785,6 +1785,7 @@ export interface _CalculatedColumnsGridApi<TData = any> {
     /**
      * Opens and focuses the dialog for an existing calculated column.
      * Read-only calculated columns open in view mode. Reuses and brings forward an already-open dialog.
+     * On close, returns focus to the column's header, scrolling it into view if needed.
      * Does nothing if Calculated Columns are disabled or the key does not resolve to a calculated column.
      * @agModule `CalculatedColumnsModule`
      */
@@ -1794,6 +1795,7 @@ export interface _CalculatedColumnsGridApi<TData = any> {
      * Without a source column, the new column is appended. Unknown or non-primary source columns are ignored.
      * Uses the configured apply mode: live creates the column immediately, deferred creates it on Apply.
      * Moves focus into the dialog. Does not open in pivot mode.
+     * On close, returns focus to the new column's header, or the source column if no column was created.
      * @agModule `CalculatedColumnsModule`
      */
     openAddCalculatedColumnDialog(sourceColumn?: ColKey<TData>): void;

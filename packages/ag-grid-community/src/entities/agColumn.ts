@@ -26,6 +26,7 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
 import { _mergedEqual } from '../utils/mergeDeep';
 import { _clamp } from '../utils/number';
+import { _isProtoField } from '../utils/value';
 import type { AgColumnGroup } from './agColumnGroup';
 import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
 import type {
@@ -157,6 +158,8 @@ export class AgColumn<TValue = any>
     /** Cached split of a dotted `field` (`field.split('.')`); `null` when not dotted / dot-notation suppressed.
      *  Non-null doubles as the "field contains dots" indicator. Read per cell via `_getValueUsingDotPath`. */
     public fieldPath: string[] | null = null;
+    /** True when `field` reaches `__proto__`, so the column reads no value and refuses edits. */
+    public fieldHasProtoKey = false;
     public valueGetter: string | ValueGetterFunc<any, TValue> | undefined = undefined;
     public allowFormula: boolean = false;
     public showRowGroup: string | boolean | undefined = undefined;
@@ -393,7 +396,7 @@ export class AgColumn<TValue = any>
     }
 
     private initDotNotation(): void {
-        const { field, tooltipField } = this.colDef;
+        const { field, tooltipField, valueGetter, valueSetter } = this.colDef;
         this.field = field;
         const suppress = this.gos.get('suppressFieldDotNotation');
         this.colFlags &= ~COL_FLAG_TOOLTIP_FIELD_CONTAINS_DOTS;
@@ -403,6 +406,13 @@ export class AgColumn<TValue = any>
             this.fieldPath = typeof field === 'string' && field.includes('.') ? field.split('.') : null;
             if (typeof tooltipField === 'string' && tooltipField.includes('.')) {
                 this.colFlags |= COL_FLAG_TOOLTIP_FIELD_CONTAINS_DOTS;
+            }
+        }
+        this.fieldHasProtoKey = false;
+        if (typeof field === 'string' && _isProtoField(field, this.fieldPath)) {
+            this.fieldHasProtoKey = true;
+            if (!valueGetter || !valueSetter) {
+                this.warn(340, { field });
             }
         }
     }
