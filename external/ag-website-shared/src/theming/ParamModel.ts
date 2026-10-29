@@ -20,6 +20,18 @@ export const setNonAdvancedParams = (params: Iterable<string>) => {
     nonAdvancedParams = new Set(params);
 };
 
+type ParamTypeOverride = (property: string) => ParamType | undefined;
+
+let paramTypeOverride: ParamTypeOverride = () => undefined;
+
+/**
+ * Hosts can choose the editor type for params whose names do not carry it, such as a unitless ratio
+ * that the name-based inference would edit as a length. Must be called before any ParamModel is used.
+ */
+export const setParamTypeOverride = (override: ParamTypeOverride) => {
+    paramTypeOverride = override;
+};
+
 type ThemeParamSource = () => Record<string, unknown>;
 
 let themeParamSource: ThemeParamSource = () => getThemeDefaultParams(getBaseTheme());
@@ -69,7 +81,7 @@ export class ParamModel<T> {
     private constructor(readonly property: ThemeParam) {
         this.label = titleCase(property);
         this.valueAtom = atomWithJSONStorage<T | undefined>(`param.${property}`, undefined);
-        this.type = getParamType(property);
+        this.type = paramTypeOverride(property) ?? getParamType(property);
     }
 
     get docs(): string {

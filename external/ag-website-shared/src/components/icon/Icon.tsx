@@ -15,6 +15,7 @@ import EscapeIcon from '@ag-website-shared/images/inline-svgs/escape.svg?react';
 import FigmaIcon from '@ag-website-shared/images/inline-svgs/figma-logo.svg?react';
 import Funnel from '@ag-website-shared/images/inline-svgs/funnel.svg?react';
 import HeadingResult from '@ag-website-shared/images/inline-svgs/heading-result.svg?react';
+import HLC from '@ag-website-shared/images/inline-svgs/hlc.svg?react';
 import maximizeIcon from '@ag-website-shared/images/inline-svgs/maximize.svg?react';
 import minimizeIcon from '@ag-website-shared/images/inline-svgs/minimize.svg?react';
 import moduleIcon from '@ag-website-shared/images/inline-svgs/module.svg?react';
@@ -93,6 +94,7 @@ const CHARTS_ICON_MAP = {
     chartsLinearGauge: CarbonIcon.ChartBullet,
     chartsMap: CarbonIcon.Plan,
     chartsCandlestick: CarbonIcon.ChartCandlestick,
+    chartsHLC: HLC,
     chartsOHLC: CarbonIcon.ChartHighLow,
     chartsOrg: CarbonIcon.ContainerServices,
     chartsQuadrant: CarbonIcon.QuadrantPlot,

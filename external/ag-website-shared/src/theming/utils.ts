@@ -195,6 +195,7 @@ const cssPropertyForParamType = {
     colorScheme: 'colorScheme',
     length: 'paddingLeft',
     scale: 'lineHeight',
+    ratio: 'lineHeight',
     border: 'borderLeft',
     borderStyle: 'borderTopStyle',
     shadow: 'boxShadow',

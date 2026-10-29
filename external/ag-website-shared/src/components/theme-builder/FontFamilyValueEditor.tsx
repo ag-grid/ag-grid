@@ -20,7 +20,7 @@ export const setFontFamilyOptions = (options: FontFamilyOption[]) => {
 };
 
 export const FontFamilyValueEditor = ({ param, value, onChange, label }: ValueEditorProps<FontFamilyValue>) => {
-    const inheritLabel = param.property === 'fontFamily' ? 'Same as application' : 'Unchanged';
+    const inheritLabel = param.property === 'fontFamily' ? 'Match application' : 'Unchanged';
     const options: FontFamilyOption[] = [{ label: inheritLabel, value: 'inherit' }, ...fontOptions];
     const selectedOption = options.find((o) => isSameFont(o.value, value)) || options[0];
 

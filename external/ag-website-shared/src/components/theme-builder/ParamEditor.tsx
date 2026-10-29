@@ -17,6 +17,7 @@ import { FontWeightValueEditor } from './FontWeightValueEditor';
 import { FormField } from './FormField';
 import { ImageValueEditor } from './ImageValueEditor';
 import { LengthValueEditor } from './LengthValueEditor';
+import { RatioValueEditor } from './RatioValueEditor';
 import { ScaleValueEditor } from './ScaleValueEditor';
 import { ScrollbarWidthValueEditor } from './ScrollbarWidthValueEditor';
 import type { ValueEditorProps } from './ValueEditorProps';
@@ -105,6 +106,7 @@ const valueEditors: Record<ParamType, FC<ValueEditorProps<any>>> = {
     colorScheme: ColorSchemeValueEditor,
     length: LengthValueEditor,
     scale: ScaleValueEditor,
+    ratio: RatioValueEditor,
     border: BorderValueEditor,
     borderStyle: BorderStyleValueEditor,
     shadow: CssValueEditor,

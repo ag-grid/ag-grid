@@ -13,7 +13,7 @@ export const ScaleValueEditor = ({
 }: ValueEditorProps<ScaleValue>) => {
     return (
         <FormattedInput
-            value={String(value)}
+            value={value == null ? '' : String(value)}
             onChange={(newValue) => {
                 const parsed = parseFloat(newValue);
                 if (!isNaN(parsed)) {
