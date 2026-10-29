@@ -1,8 +1,8 @@
-diff --git a/node_modules/nx/src/command-line/format/format.js b/node_modules/nx/src/command-line/format/format.js
-index 27b3fb61497..c04a881337d 100644
---- a/node_modules/nx/src/command-line/format/format.js
-+++ b/node_modules/nx/src/command-line/format/format.js
-@@ -90,7 +90,7 @@ async function getPatterns(args) {
+diff --git a/node_modules/nx/dist/src/command-line/format/format.js b/node_modules/nx/dist/src/command-line/format/format.js
+index 75102318ab2..ea5b58c86bc 100644
+--- a/node_modules/nx/dist/src/command-line/format/format.js
++++ b/node_modules/nx/dist/src/command-line/format/format.js
+@@ -97,7 +97,7 @@ async function getPatterns(prettier, args) {
              // Prettier supports ".swcrc" as a file instead of an extension
              // So we add ".swcrc" as a supported extension manually
              // which allows it to be considered for calculating "patterns"
