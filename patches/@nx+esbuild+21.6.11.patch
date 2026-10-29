@@ -1,11 +1,11 @@
 diff --git a/node_modules/@nx/esbuild/src/executors/esbuild/lib/build-esbuild-options.js b/node_modules/@nx/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
-index c22a874..d653788 100644
+index 51ecf453877..b1fc894f5ff 100644
 --- a/node_modules/@nx/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
 +++ b/node_modules/@nx/esbuild/src/executors/esbuild/lib/build-esbuild-options.js
-@@ -188,22 +188,25 @@ function getProjectEntryPoint(projectPkgJson, projectPath) {
+@@ -189,22 +189,25 @@ function getProjectEntryPoint(projectPkgJson, projectPath) {
      return entryPoint;
  }
- function getOutExtension(format, options) {
+ function getOutExtension(format, options, context) {
 -    const userDefinedExt = options.userDefinedBuildOptions?.outExtension?.['.js'];
 +    const userDefExts = options.userDefinedBuildOptions?.outExtension ?? {};
 +
@@ -27,14 +27,14 @@ index c22a874..d653788 100644
 +    return defaultExt;
  }
  function getOutfile(format, options, context) {
--    const ext = getOutExtension(format, options);
+-    const ext = getOutExtension(format, options, context);
      const candidate = (0, devkit_1.joinPathFragments)(context.target.options.outputPath, options.outputFileName);
 -    const { dir, name } = path.parse(candidate);
 +    const { dir, name, ext } = path.parse(candidate);
 +    if (!['js', 'mjs', 'cjs'].includes(ext)) {
-+        const defaultExt = getOutExtension(format, options);
++        const defaultExt = getOutExtension(format, options, context);
 +        return `${dir}/${name}${defaultExt}`;
 +    }
      return `${dir}/${name}${ext}`;
  }
- function writeTmpEntryWithRequireOverrides(paths, outExtension, options, context) {
+ function writeTmpEntryWithRequireOverrides(paths, outExtension, options, context, format = 'cjs') {

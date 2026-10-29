@@ -1,9 +1,9 @@
 diff --git a/node_modules/@nx/js/executors.json b/node_modules/@nx/js/executors.json
-index 248c555..25252e9 100644
+index 07d1f6cf0b1..70d429abe49 100644
 --- a/node_modules/@nx/js/executors.json
 +++ b/node_modules/@nx/js/executors.json
-@@ -3,7 +3,6 @@
-   "executors": {
+@@ -8,7 +8,6 @@
+     },
      "tsc": {
        "implementation": "./src/executors/tsc/tsc.impl",
 -      "batchImplementation": "./src/executors/tsc/tsc.batch-impl",
