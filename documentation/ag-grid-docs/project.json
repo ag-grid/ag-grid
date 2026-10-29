@@ -119,7 +119,7 @@
     "test": {
       "executor": "nx:noop",
       "dependsOn": ["test:vitest", "test:validate-example-specs", "test:validate-example-dev-validations"],
-      "inputs": [],
+      "inputs": ["default", "buildOutputExcludes", "^production", "generators"],
       "outputs": [],
       "options": {
         "cwd": "{projectRoot}"
@@ -160,6 +160,7 @@
     },
     "test:e2e": {
       "command": "npx vitest",
+      "inputs": ["default", "^default", "generators"],
       "outputs": ["{workspaceRoot}/reports/ag-grid-website.xml"],
       "dependsOn": ["^pack", "test:htaccess"],
       "options": {
@@ -341,5 +342,12 @@
     }
   },
   "implicitDependencies": ["ag-grid-community", "ag-grid-enterprise", "ag-grid-react", "ag-grid-angular"],
-  "tags": ["website"]
+  "tags": ["website"],
+  "namedInputs": {
+    "generators": [
+      "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/**/*",
+      "{workspaceRoot}/plugins/ag-grid-generate-code-reference-files/src/**/*",
+      "{workspaceRoot}/plugins/ag-grid-task-autogen/src/**/*"
+    ]
+  }
 }
