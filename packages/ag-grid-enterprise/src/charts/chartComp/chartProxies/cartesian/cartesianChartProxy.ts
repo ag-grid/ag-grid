@@ -52,9 +52,16 @@ export abstract class CartesianChartProxy<
             series: this.getSeries(params),
         };
 
-        return this.isNormalised()
-            ? applyNormalisedFormatting(options, axes.y, this.getThemeFormatter(commonChartOptions))
-            : options;
+        if (!this.isNormalised()) {
+            return options;
+        }
+        const overrides = this.getThemeOverrides(commonChartOptions);
+        return applyNormalisedFormatting(
+            options,
+            axes.y,
+            this.getThemeFormatter(overrides),
+            this.hasThemeValueAxisLabelFormat(overrides, axes.y)
+        );
     }
 
     /** Whether this is a 100% stacked chart, whose value axis shows percentages. */
@@ -62,12 +69,8 @@ export abstract class CartesianChartProxy<
         return false;
     }
 
-    /**
-     * The chart-level formatter set through the chart theme, e.g. `chartThemeOverrides.common.formatter`. Mirrors
-     * AG Charts' theme resolution: outer theme layers win, a series-type formatter wins over a common one, and
-     * formatters keyed by property merge property by property.
-     */
-    private getThemeFormatter(commonChartOptions: AgCartesianChartOptions): AgCartesianChartOptions['formatter'] {
+    /** The overrides of each layer of the chart theme, outermost (highest priority) first. */
+    private getThemeOverrides(commonChartOptions: AgCartesianChartOptions): AgChartThemeOverrides[] {
         const overrides: AgChartThemeOverrides[] = [];
         let theme = commonChartOptions.theme;
         while (typeof theme === 'object') {
@@ -76,11 +79,36 @@ export abstract class CartesianChartProxy<
             }
             theme = theme.baseTheme;
         }
+        return overrides;
+    }
+
+    /**
+     * The chart-level formatter set through the chart theme, e.g. `chartThemeOverrides.common.formatter`. Mirrors
+     * AG Charts' theme resolution: outer theme layers win, a series-type formatter wins over a common one, and
+     * formatters keyed by property merge property by property.
+     */
+    private getThemeFormatter(overrides: AgChartThemeOverrides[]): AgCartesianChartOptions['formatter'] {
         const seriesType = this.standaloneChartType;
         return mergeThemeFormatters([
             ...overrides.map((o) => o[seriesType]?.formatter),
             ...overrides.map((o) => o.common?.formatter),
         ]);
+    }
+
+    /**
+     * Whether the chart theme formats the value axis labels, e.g.
+     * `chartThemeOverrides.common.axes.number.label.formatter`, including through a position-specific axis override.
+     */
+    private hasThemeValueAxisLabelFormat(overrides: AgChartThemeOverrides[], valueAxis: AgCartesianAxisOptions) {
+        const seriesType = this.standaloneChartType;
+        const position = valueAxis.position;
+        return overrides.some((o) =>
+            [o[seriesType]?.axes?.number, o.common?.axes?.number].some((axisTheme) =>
+                [axisTheme?.label, position && axisTheme?.[position]?.label].some(
+                    (label) => label?.formatter != null || label?.format != null
+                )
+            )
+        );
     }
 
     protected getData(params: UpdateParams, axes: Record<string, AgCartesianAxisOptions>): any[] {

@@ -120,6 +120,25 @@ describe('normalized (100% stacked) integrated charts', () => {
         expect(chartRef.chart.getOptions().formatter).toBeUndefined();
     });
 
+    const valueAxisLabel = (params: { value: unknown }) => `v${params.value}`;
+    test.each<[string, GridOptions['chartThemeOverrides'], string]>([
+        ['no theme formatter', { common: { axes: { number: { label: { formatter: valueAxisLabel } } } } }, 'v237438'],
+        [
+            'a theme y format string',
+            {
+                common: { formatter: { y: ',.0f' } },
+                bar: { axes: { number: { left: { label: { formatter: valueAxisLabel } } } } },
+            },
+            '237,438',
+        ],
+    ])('a theme value axis label formatter wins over the percentages with %s', async (_, chartThemeOverrides, tooltip) => {
+        const { chartRef } = await createChart('normalizedColumn', { chartThemeOverrides });
+
+        const { tooltipValues, tickLabels } = getRenderedText(chartRef);
+        expect(tooltipValues).toEqual([tooltip]);
+        expect(tickLabels).toEqual(['v0', 'v20', 'v40', 'v60', 'v80', 'v100']);
+    });
+
     const pounds = (params: { value: unknown }) => `£${params.value}`;
     const quarter = (params: { value: unknown }) => `Q ${params.value}`;
     test.each<[string, GridOptions]>([
