@@ -36,7 +36,7 @@ If a column becomes read-only while its edit dialog is open, the dialog closes a
 This setting restricts UI changes only: updating `columnDefs` and restoring [Grid State](./grid-state/) can still change or remove the column. Dialog-created columns ignore `defaultColDef.calculatedColumnReadOnly`, but [processColDef](./calculated-columns-dialog/#processcoldef) can make them read-only.
 {% /note %}
 
-### Hiding Menu Items
+## Hiding Menu Items
 
 The calculated column actions are built-in menu items. To stop users adding, editing or removing calculated columns from the menus, filter them out of the default items with [getColumnMenuItems](./column-menu/#customising-the-menu-items) and [getContextMenuItems](./context-menu/#configuring-the-context-menu):
 
@@ -85,7 +85,7 @@ const gridOptions = {
 
 This is a UI restriction, not a security boundary.
 
-{% gridExampleRunner title="Dialog Reference Restrictions" name="calculated-columns-reference-restrictions" /%}
+{% gridExampleRunner title="Restricting Column References" name="calculated-columns-reference-restrictions" /%}
 
 In the example, edit Bonus and Sales Target. Only Bonus can reference Salary.
 
@@ -96,7 +96,7 @@ Use `getValidationErrors` to validate the dialog's title, type and expression. R
 - Omitted fields and empty arrays are valid.
 - Return or spread `internalErrors` to retain built-in feedback.
 - The callback runs while typing, so keep it quick.
-- Supply translated messages.
+- Return translated messages; the grid shows them as you supply them.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -114,7 +114,7 @@ const gridOptions = {
 
 In the example, edit Sales Bonus and enter a title longer than 30 characters or an expression using `[Salary]` to see field-specific errors.
 
-{% gridExampleRunner title="Custom Dialog Validation" name="calculated-columns-custom-validation" /%}
+{% gridExampleRunner title="Validating Dialog Fields" name="calculated-columns-custom-validation" /%}
 
 {% interfaceDocumentation interfaceName="CalculatedColumnValidationParams" /%}
 

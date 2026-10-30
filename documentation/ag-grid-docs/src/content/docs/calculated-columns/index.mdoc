@@ -80,7 +80,7 @@ The `currency` and `percentage` types are registered with `dataTypeDefinitions`,
 
 Register the [Column Menu](./column-menu/) so users can add, edit and remove calculated columns from the grid:
 
-- **Add Calculated Column**, in the header menu of any column except in pivot mode, opens the dialog to add a calculated column.
+- **Add Calculated Column**, in the header menu of any column, opens the dialog to add a calculated column. It is not shown in pivot mode.
 - **Edit Calculated Column**, in the header menu of a calculated column, opens the dialog to change its title, type and expression. A read-only column shows **View Calculated Column** instead.
 - **Remove Calculated Column**, in the header menu of a calculated column and the context menu of its cells, removes the column. It is disabled when the column is read-only.
 
@@ -108,7 +108,7 @@ To show a value on group rows, give the calculated column an `aggFunc`. Each lea
 
 In the example, Profit has an `aggFunc` and shows a total on each group row, while Margin stays blank there.
 
-#### Letting Users Choose an Aggregation
+### Letting Users Choose an Aggregation
 
 The dialog has no aggregation field. Setting `enableValue`, for example in `defaultColDef`, lets users choose an aggregation for any calculated column, including one created in the dialog. To allow it only on the columns users create, return `enableValue` from [processColDef](./calculated-columns-dialog/#processcoldef) instead.
 
@@ -125,7 +125,7 @@ const gridOptions = {
 };
 ```
 
-{% gridExampleRunner title="Choosing an Aggregation for a Calculated Column" name="calculated-columns-aggregation" /%}
+{% gridExampleRunner title="Letting Users Choose an Aggregation" name="calculated-columns-aggregation" /%}
 
 In the example, choose **Add Calculated Column** from the Cost header menu and enter `[Revenue] - [Cost]` as the expression. Close the dialog, then open **Value Aggregation** in the new column's header menu. It offers only None, Sum, Average, Min and Max.
 
@@ -146,5 +146,5 @@ Header cells and grid cells for calculated columns include the `ag-calculated-co
 ## Next Steps
 
 - [Dialog & Customisation](./calculated-columns-dialog/): opening the dialog, column references, the expression editor, data types, when edits apply, and customising the columns users create.
-- [Restrictions & Validation](./calculated-columns-validation/): read-only columns, hidden menu items, restricted column references and custom validation.
+- [Restrictions & Validation](./calculated-columns-validation/): read-only columns, hidden menu items, restricted column references, custom validation and refreshing.
 - [API, Events & State](./calculated-columns-api/): managing calculated columns in code, saving and restoring them, events, and the API reference.

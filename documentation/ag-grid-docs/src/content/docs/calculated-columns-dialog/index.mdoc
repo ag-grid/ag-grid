@@ -76,7 +76,7 @@ const gridOptions = {
 
 The following example sets both `expressionPickers: ['columns']` and `suppressColumnHighlighting: true`:
 
-{% gridExampleRunner title="Dialog Expression Pickers and Highlighting" name="calculated-columns-dialog-highlighting" /%}
+{% gridExampleRunner title="Column Highlighting and Expression Pickers" name="calculated-columns-dialog-highlighting" /%}
 
 In the example, edit Profit. The dialog shows only the Columns picker, and the Profit column is not highlighted while the dialog is open. In the other examples on this page, the column being edited is highlighted.
 
@@ -110,12 +110,12 @@ const gridOptions = {
 };
 ```
 
-- Applying the type to your own columns as well means a user who picks Currency in the dialog gets the same formatting as the columns you declared.
+- Give your own columns the same types, as the snippet does for `revenue` and `cost`, so a user who picks Currency in the dialog gets the same formatting.
 - A `valueFormatter` on a column definition cannot be selected in the dialog, so it is not available to users.
 - Built-in types use the grid's locale text, while custom type names are converted to readable labels in the dialog.
 - If a selected value does not match a registered [Cell Data Type](./cell-data-types/), the grid's normal `cellDataType` validation applies when the calculated column is created.
 
-{% gridExampleRunner title="Dialog Data Types" name="calculated-columns-dialog-data-types" /%}
+{% gridExampleRunner title="Data Types" name="calculated-columns-dialog-data-types" /%}
 
 In the example, edit Profit and open the Type dropdown. It lists Currency, Number and Boolean.
 
@@ -123,23 +123,22 @@ In the example, edit Profit and open the Type dropdown. It lists Currency, Numbe
 
 The `applyMode` option sets when dialog edits reach the column. The default is `'live'`:
 
-|                            | Live (default)                                                                                                                       | Deferred (`applyMode: 'deferred'`)                                                          |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
-| Title, type and expression | Update the column as you type                                                                                                        | Held until the user clicks Apply; the dialog shows Apply and Cancel buttons                 |
-| Add Calculated Column      | Creates the column and opens the dialog over it                                                                                      | Creates the column when the user clicks Apply                                               |
-| Invalid expressions        | Still apply: invalid or incomplete expressions render formula errors until fixed. Restricted references are the exception: see below | Validated before applying                                                                   |
-| Rejected edits             | See [How Rejected Edits Behave](./calculated-columns-validation/#how-rejected-edits-behave)                                          | See [How Rejected Edits Behave](./calculated-columns-validation/#how-rejected-edits-behave) |
+|                            | Live (default)                                              | Deferred (`applyMode: 'deferred'`)                                          |
+| -------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Title, type and expression | Update the column as you type                               | Held until the user clicks Apply; the dialog shows Apply and Cancel buttons |
+| Add Calculated Column      | Creates the column and opens the dialog over it             | Creates the column when the user clicks Apply                               |
+| Invalid expressions        | Still apply, and render formula errors in cells until fixed | Validated as you edit and on Apply, and not applied while invalid           |
 
 In live mode:
 
 - Empty expressions remain valid.
-- [Custom validation and reference restrictions](./calculated-columns-validation/) still apply.
+- [Custom validation and reference restrictions](./calculated-columns-validation/#how-rejected-edits-behave) still apply.
 - Closing the dialog keeps the latest state; remove the column with **Remove Calculated Column**.
 - Expression edits containing references excluded by [`isColumnReferenceable`](./calculated-columns-validation/#iscolumnreferenceable) are saved but blocked from evaluation, preserving the full text for correction.
 
 ### Deferred Mode
 
-Set `applyMode: 'deferred'` to hold changes until you click Apply instead. The dialog shows Apply and Cancel buttons and validates edits before applying them:
+Set `applyMode: 'deferred'` to hold changes until the user clicks Apply:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -153,7 +152,7 @@ const gridOptions = {
 
 In deferred edit dialogs, validation runs as you edit and on Apply, not when the dialog opens.
 
-{% gridExampleRunner title="Deferred Apply Mode" name="calculated-columns-apply-mode" /%}
+{% gridExampleRunner title="Deferred Mode" name="calculated-columns-apply-mode" /%}
 
 In the example, edit Profit and change its expression. The cells change only when you click **Apply**.
 
@@ -194,7 +193,7 @@ Spread `params.colDef` to preserve the user's settings. Omitted properties use n
 
 In the example, the Profit column is restored from Grid State as if a user had created it, so it has a filter button and can be aggregated from the column menu.
 
-{% gridExampleRunner title="Customising Calculated Column Definitions" name="calculated-columns-process-col-def" /%}
+{% gridExampleRunner title="Customising User-Created Columns" name="calculated-columns-process-col-def" /%}
 
 {% interfaceDocumentation interfaceName="CalculatedColumnProcessColDefParams" /%}
 
