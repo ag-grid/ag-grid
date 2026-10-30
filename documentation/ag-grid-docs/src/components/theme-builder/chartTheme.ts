@@ -46,7 +46,7 @@ export const useChartPalette = () => {
     return [stored ?? DEFAULT_PALETTE, setPalette] as const;
 };
 
-/** Whether the preview outlines its series. Not part of the palette or the theme: a theme cannot switch strokes on. */
+/** Preview only: kept out of the stored palette and the exported theme. */
 const previewStrokesAtom = atomWithJSONStorage<boolean>('grid-chart-preview-strokes', false);
 
 export const usePreviewStrokes = () => useAtom(previewStrokesAtom);
@@ -64,10 +64,7 @@ const resolveRGBAColor = (param: string) => {
 
 const resolveColor = (param: string) => resolveRGBAColor(param)?.toCSSHex();
 
-/**
- * Linked strokes lighten their fill when the text is lighter than the background, as the stock dark
- * themes' strokes do. Shared by the palette editor and the theme, so the swatches match the output.
- */
+/** Linked strokes lighten their fill on a dark theme, as the stock dark themes' strokes do. */
 const resolveStrokeDirection = (): StrokeDirection => {
     const foreground = resolveRGBAColor('foregroundColor');
     const background = resolveRGBAColor('backgroundColor');
@@ -120,9 +117,8 @@ export const useChartTheme = (): AgChartTheme => {
 };
 
 /**
- * AG Charts draws most series' strokes at zero width unless the chart sets a stroke, so a palette's strokes
- * would not show in the preview. These are the widths AG Charts itself uses once a stroke is set. Series that
- * already outline themselves are left alone, as is waterfall, whose items take the up, down and neutral colours.
+ * AG Charts draws most series' strokes at zero width unless a stroke is set, so these are its widths once one is.
+ * Series that already outline themselves are left out, as is waterfall, which takes the up, down and neutral colours.
  */
 const PREVIEW_STROKE_OVERRIDES = {
     bar: { series: { strokeWidth: 2 } },
