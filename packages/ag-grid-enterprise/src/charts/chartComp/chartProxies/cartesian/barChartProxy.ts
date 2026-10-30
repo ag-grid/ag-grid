@@ -2,7 +2,7 @@ import type { AgBarSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-types
 
 import { isStacked } from '../../utils/seriesTypeMapper';
 import type { UpdateParams } from '../chartProxy';
-import { CartesianChartProxy } from './cartesianChartProxy';
+import { CartesianChartProxy, formatNormalisedValueAxisLabel } from './cartesianChartProxy';
 
 const HORIZONTAL_CHART_TYPES = new Set(['bar', 'groupedBar', 'stackedBar', 'normalizedBar']);
 
@@ -18,9 +18,8 @@ export class BarChartProxy extends CartesianChartProxy<'bar'> {
                 position: this.isHorizontal() ? 'bottom' : 'left',
             },
         };
-        // Add a default label formatter to show '%' for normalized charts if none is provided
         if (this.isNormalised()) {
-            axes.y.label = { ...axes.y.label, formatter: (params) => Math.round(params.value) + '%' };
+            axes.y.label = { ...axes.y.label, formatter: formatNormalisedValueAxisLabel };
         }
 
         return axes;
