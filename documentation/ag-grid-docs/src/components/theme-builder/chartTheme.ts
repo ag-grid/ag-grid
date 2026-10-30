@@ -1,13 +1,18 @@
 import {
     EMPTY_PALETTE,
     type Palette,
+    type StrokeDirection,
     fromThemePalette,
     toThemePalette,
 } from '@ag-website-shared/components/theme-builder/palette';
 import { atomWithJSONStorage } from '@ag-website-shared/theming/JSONStorage';
 import { RGBAColor } from '@ag-website-shared/theming/RGBAColor';
 import { addChangedModelItem } from '@ag-website-shared/theming/changed-model-items';
-import { type RenderedThemeInfo, useRenderedThemeInfo } from '@ag-website-shared/theming/rendered-theme';
+import {
+    type RenderedThemeInfo,
+    useRenderedTheme,
+    useRenderedThemeInfo,
+} from '@ag-website-shared/theming/rendered-theme';
 import type { Store } from '@ag-website-shared/theming/store';
 import { getThemeDefaultParams, paramToVariableName, reinterpretCSSValue } from '@ag-website-shared/theming/utils';
 import { _Theme } from 'ag-charts-community';
@@ -41,23 +46,33 @@ export const useChartPalette = () => {
     return [stored ?? DEFAULT_PALETTE, setPalette] as const;
 };
 
-/**
- * Whether the palette editor shows its stroke colours as previewed. Not part of the palette or the
- * theme; the grid's integrated charts preview has no series outlines for it to switch yet.
- */
-const previewStrokesAtom = atomWithJSONStorage<boolean>('grid-chart-preview-strokes', false);
-
-export const usePreviewStrokes = () => useAtom(previewStrokesAtom);
-
 export const setStoredChartPalette = (store: Store, palette: Palette | undefined) => store.set(paletteAtom, palette);
 
 /** Resolved to literal values, as AG Charts reads a CSS variable once rather than following it. */
 const resolveParam = (param: string, type: 'color' | 'fontFamily') =>
     reinterpretCSSValue(`var(${paramToVariableName(param)})`, type) || undefined;
 
-const resolveColor = (param: string) => {
+const resolveRGBAColor = (param: string) => {
     const value = resolveParam(param, 'color');
-    return value ? RGBAColor.reinterpretCss(value)?.toCSSHex() : undefined;
+    return value ? RGBAColor.reinterpretCss(value) : undefined;
+};
+
+const resolveColor = (param: string) => resolveRGBAColor(param)?.toCSSHex();
+
+/**
+ * Linked strokes lighten their fill when the text is lighter than the background, as the stock dark
+ * themes' strokes do. Shared by the palette editor and the theme, so the swatches match the output.
+ */
+const resolveStrokeDirection = (): StrokeDirection => {
+    const foreground = resolveRGBAColor('foregroundColor');
+    const background = resolveRGBAColor('backgroundColor');
+    return foreground && background && foreground.grayscale() > background.grayscale() ? 'lighten' : 'darken';
+};
+
+export const useStrokeDirection = (): StrokeDirection => {
+    // Subscribed for the re-render on a param edit; the colours are read from the CSS it installs.
+    useRenderedTheme();
+    return resolveStrokeDirection();
 };
 
 type ChartFontFamily = NonNullable<AgChartThemeParams['fontFamily']>;
@@ -87,7 +102,7 @@ const buildChartTheme = (theme: RenderedThemeInfo['theme'], palette: Palette | u
     };
     return {
         baseTheme: BASE_THEME,
-        ...(palette ? { palette: toThemePalette(palette) } : {}),
+        ...(palette ? { palette: toThemePalette(palette, resolveStrokeDirection()) } : {}),
         params: Object.fromEntries(Object.entries(params).filter(([, value]) => value !== undefined)),
     };
 };
