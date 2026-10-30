@@ -48,11 +48,27 @@ fi
 
 MAIN_REPO_ROOT=$(get_main_repo_root)
 
-# Use a path relative to the main repo root so the config is valid for all
-# worktrees (each worktree has the same directory structure).
-HOOKS_RELATIVE="${SCRIPT_DIR#"$MAIN_REPO_ROOT"/}"
+# Use a path relative to the checkout this script lives in, so the config is
+# valid for all worktrees (each worktree has the same directory structure, and
+# git resolves a relative hooksPath against the worktree it runs in). Stripping
+# MAIN_REPO_ROOT instead only worked in the main checkout: run from a worktree
+# outside it, it stored an absolute path into that worktree, and deleting the
+# worktree silently switched the hooks off everywhere.
+HOOKS_RELATIVE="${SCRIPT_DIR#"$REPO_ROOT"/}"
+
+# True for this hooks directory in any checkout, as relative or absolute path.
+is_ag_shared_hooks_dir() {
+    [[ "$1" == "$HOOKS_RELATIVE" || "$1" == */"$HOOKS_RELATIVE" ]]
+}
 
 current_hooks=$(git -C "$MAIN_REPO_ROOT" config core.hooksPath 2>/dev/null || true)
+
+# The absolute-path bug above also saved one worktree's copy of these hooks as
+# the hooks to chain to. Chaining to ourselves is never wanted, so drop it.
+previous_hooks=$(git -C "$MAIN_REPO_ROOT" config core.ag-shared.previousHooksPath 2>/dev/null || true)
+if [[ -n "$previous_hooks" ]] && is_ag_shared_hooks_dir "$previous_hooks"; then
+    git -C "$MAIN_REPO_ROOT" config --unset core.ag-shared.previousHooksPath
+fi
 
 # Already configured to our hooks directory — nothing to do
 if [[ "$current_hooks" == "$HOOKS_RELATIVE" ]]; then
@@ -60,7 +76,7 @@ if [[ "$current_hooks" == "$HOOKS_RELATIVE" ]]; then
 fi
 
 # Preserve any existing hooksPath so _run-hook-chain.sh can dispatch to it
-if [[ -n "$current_hooks" ]]; then
+if [[ -n "$current_hooks" ]] && ! is_ag_shared_hooks_dir "$current_hooks"; then
     git -C "$MAIN_REPO_ROOT" config core.ag-shared.previousHooksPath "$current_hooks"
 fi
 
