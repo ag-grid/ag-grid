@@ -23,17 +23,10 @@ export interface Palette {
     strokes: string[];
     /**
      * Which strokes follow their fill rather than having been chosen, paired by
-     * index with `strokes`. This is about where the *next* value comes from: a
-     * derived slot keeps its hand-picked colour, as a stock theme's palette
-     * does, until the fill it was tuned for changes. Absent means derived.
+     * index with `strokes`. A derived stroke is recomputed from its fill on every
+     * read, so its stored colour is ignored. Absent means derived.
      */
     strokesDerived?: boolean[];
-    /**
-     * Whether the strokes are used at all; absent means enabled. The strokes
-     * themselves are kept while this is off, so switching it back on returns
-     * what the user had.
-     */
-    strokesEnabled?: boolean;
     up?: PaletteAccent;
     down?: PaletteAccent;
     neutral?: PaletteAccent;
@@ -45,6 +38,15 @@ export interface Palette {
  * fill yields a slightly darker stroke instead of collapsing to black.
  */
 const DERIVED_STROKE_LIGHTNESS = 0.6;
+
+/**
+ * How far towards white a derived stroke moves on a dark theme. Fitted against
+ * the hand-tuned `ag-default-dark` strokes, which lighten rather than darken.
+ */
+const DERIVED_DARK_STROKE_LIGHTEN = 0.25;
+
+/** Strokes darken their fill on a light theme and lighten it on a dark one. */
+export type StrokeDirection = 'darken' | 'lighten';
 
 /** Components in 0..1, hue included. */
 const rgbToHsl = (r: number, g: number, b: number): [number, number, number] => {
@@ -85,19 +87,24 @@ const hslToRgb = (hue: number, saturation: number, lightness: number): [number, 
 };
 
 /**
- * The stroke a fill implies: the same colour, darker. An unparseable fill is
- * returned unchanged, which draws a stroke nobody notices rather than a guess.
+ * The stroke a fill implies: the same colour, darker or lighter. An unparseable
+ * fill is returned unchanged, which draws a stroke nobody notices rather than a guess.
  */
-export const deriveStroke = (fill: string): string => {
+export const deriveStroke = (fill: string, direction: StrokeDirection = 'darken'): string => {
     const color = RGBAColor.parseCss(fill);
     if (!color) return fill;
     const [hue, saturation, lightness] = rgbToHsl(color.r, color.g, color.b);
-    const [r, g, b] = hslToRgb(hue, saturation, lightness * DERIVED_STROKE_LIGHTNESS);
+    const strokeLightness =
+        direction === 'darken'
+            ? lightness * DERIVED_STROKE_LIGHTNESS
+            : lightness + (1 - lightness) * DERIVED_DARK_STROKE_LIGHTEN;
+    const [r, g, b] = hslToRgb(hue, saturation, strokeLightness);
     return new RGBAColor(r, g, b, color.a).toCSSHex();
 };
 
 /** No fill to derive from leaves the stroke unset rather than inventing one. */
-const deriveAccentStroke = (fill: string | undefined) => (fill ? deriveStroke(fill) : undefined);
+const deriveAccentStroke = (fill: string | undefined, direction?: StrokeDirection) =>
+    fill ? deriveStroke(fill, direction) : undefined;
 
 /** "No palette of our own" - the host falls back to its base theme's colours. */
 export const EMPTY_PALETTE: Palette = { fills: [], strokes: [] };
@@ -116,20 +123,15 @@ export interface SeriesColor {
 /** Absent means derived - see `Palette.strokesDerived`. */
 export const strokeIsDerived = (derived: boolean | undefined): boolean => derived ?? true;
 
-/** Absent means enabled - see `Palette.strokesEnabled`. */
-export const strokesAreEnabled = (palette: Palette): boolean => palette.strokesEnabled ?? true;
-
-export const withStrokesEnabled = (palette: Palette, enabled: boolean): Palette => ({
-    ...palette,
-    strokesEnabled: enabled,
-});
-
-export const toSeriesColors = ({ fills, strokes, strokesDerived }: Palette): SeriesColor[] =>
-    fills.map((fill, index) => ({
-        fill,
-        stroke: strokes[index] ?? deriveStroke(fill),
-        strokeDerived: strokeIsDerived(strokesDerived?.[index]),
-    }));
+export const toSeriesColors = (
+    { fills, strokes, strokesDerived }: Palette,
+    direction: StrokeDirection = 'darken'
+): SeriesColor[] =>
+    fills.map((fill, index) => {
+        const strokeDerived = strokeIsDerived(strokesDerived?.[index]);
+        const stroke = strokeDerived ? undefined : strokes[index];
+        return { fill, stroke: stroke ?? deriveStroke(fill, direction), strokeDerived };
+    });
 
 export const fromSeriesColors = (palette: Palette, colors: SeriesColor[]): Palette => ({
     ...palette,
@@ -166,6 +168,15 @@ export const withDerivedStroke = (color: SeriesColor, derived: boolean): SeriesC
     stroke: derived ? deriveStroke(color.fill) : color.stroke,
 });
 
+/** An accent pair as shown, its stroke derived from its fill unless chosen. */
+export const resolveAccent = (
+    accent: PaletteAccent | undefined,
+    direction: StrokeDirection = 'darken'
+): PaletteAccent | undefined =>
+    accent && strokeIsDerived(accent.strokeDerived)
+        ? { ...accent, stroke: deriveAccentStroke(accent.fill, direction) }
+        : accent;
+
 /** The same three rules, for an accent pair, whose colours may both be unset. */
 export const withAccentFill = (accent: PaletteAccent | undefined, fill: string | undefined): PaletteAccent => ({
     ...accent,
@@ -196,19 +207,15 @@ export const withAccentColors = (palette: Palette, key: PaletteAccentKey, value:
  * structural subset of `AgChartThemePalette`, so an extra key would ride along
  * unnoticed into the theme a user copies.
  */
-export const toThemePalette = (palette: Palette) => {
-    const { fills, strokes, up, down, neutral } = palette;
-    const enabled = strokesAreEnabled(palette);
+export const toThemePalette = (palette: Palette, direction: StrokeDirection = 'darken') => {
+    const colors = toSeriesColors(palette, direction);
+    const [up, down, neutral] = PALETTE_ACCENT_KEYS.map((key) => resolveAccent(palette[key], direction));
     return {
-        fills,
-        // An AG Charts palette has no way to say "no stroke", and dropping
-        // `strokes` inherits the base theme's, so strokes-off is expressed as a
-        // stroke matching its fill. That also covers the series that outline
-        // themselves whatever the chart asks for.
-        strokes: enabled ? strokes : [...fills],
-        ...(accentHasColour(up) ? { up: toThemeAccent(up, enabled) } : {}),
-        ...(accentHasColour(down) ? { down: toThemeAccent(down, enabled) } : {}),
-        ...(accentHasColour(neutral) ? { neutral: toThemeAccent(neutral, enabled) } : {}),
+        fills: palette.fills,
+        strokes: colors.map(({ stroke }) => stroke),
+        ...(accentHasColour(up) ? { up: toThemeAccent(up) } : {}),
+        ...(accentHasColour(down) ? { down: toThemeAccent(down) } : {}),
+        ...(accentHasColour(neutral) ? { neutral: toThemeAccent(neutral) } : {}),
     };
 };
 
@@ -219,10 +226,7 @@ export const toThemePalette = (palette: Palette) => {
 const accentHasColour = (accent: PaletteAccent | undefined): accent is PaletteAccent =>
     accent != null && (accent.fill != null || accent.stroke != null);
 
-const toThemeAccent = ({ fill, stroke }: PaletteAccent, strokesEnabled: boolean) => ({
-    fill,
-    stroke: strokesEnabled ? stroke : fill,
-});
+const toThemeAccent = ({ fill, stroke }: PaletteAccent) => ({ fill, stroke });
 
 /**
  * A stored palette, with anything it has no opinion on taken from another. The
@@ -240,13 +244,19 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const readColor = (value: unknown): string | undefined => (typeof value === 'string' ? value : undefined);
 
-const readAccent = (value: unknown): PaletteAccent | undefined =>
-    isRecord(value) ? { fill: readColor(value.fill), stroke: readColor(value.stroke) } : undefined;
+const readAccent = (value: unknown): PaletteAccent | undefined => {
+    if (!isRecord(value)) {
+        return undefined;
+    }
+    const stroke = readColor(value.stroke);
+    return { fill: readColor(value.fill), stroke, strokeDerived: stroke == null };
+};
 
 /**
  * An AG Charts theme palette in the editor's shape, the inverse of
  * `toThemePalette`: fills no colour picker can show are dropped with their
- * strokes, and strokes that all match their fills read back as strokes off.
+ * strokes, a stroke the theme names is kept as chosen, and one it leaves out
+ * is derived from its fill.
  */
 export const fromThemePalette = (themePalette: unknown): Palette | undefined => {
     if (!isRecord(themePalette)) {
@@ -257,14 +267,13 @@ export const fromThemePalette = (themePalette: unknown): Palette | undefined => 
     const colors: SeriesColor[] = [];
     fills.forEach((fill, index) => {
         if (typeof fill === 'string') {
-            colors.push({ fill, stroke: readColor(strokes[index]) ?? fill });
+            const stroke = readColor(strokes[index]);
+            colors.push({ fill, stroke: stroke ?? deriveStroke(fill), strokeDerived: stroke == null });
         }
     });
-    const strokesOff = colors.length > 0 && colors.every(({ fill, stroke }) => fill === stroke);
     const palette = fromSeriesColors(
         {
             ...EMPTY_PALETTE,
-            ...(strokesOff ? { strokesEnabled: false } : {}),
             up: readAccent(themePalette.up),
             down: readAccent(themePalette.down),
             neutral: readAccent(themePalette.neutral),

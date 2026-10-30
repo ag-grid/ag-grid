@@ -7,7 +7,6 @@ import {
     fromSeriesColors,
     fromThemePalette,
     paletteIsEmpty,
-    strokesAreEnabled,
     toSeriesColors,
     toThemePalette,
     withAccentColors,
@@ -18,7 +17,6 @@ import {
     withFill,
     withPaletteDefaults,
     withStroke,
-    withStrokesEnabled,
 } from './palette';
 
 const palette: Palette = {
@@ -39,9 +37,15 @@ describe('toSeriesColors', () => {
     it('derives a stroke where one is missing', () => {
         // A host with independent fill and stroke slots can leave the arrays
         // ragged; the editor still has to render a stroke picker for every row.
-        const colors = toSeriesColors({ fills: ['#aaa', '#bbb'], strokes: ['#111'] });
-        expect(colors[0]).toEqual({ fill: '#aaa', stroke: '#111', strokeDerived: true });
-        expect(colors[1]).toEqual({ fill: '#bbb', stroke: deriveStroke('#bbb'), strokeDerived: true });
+        const colors = toSeriesColors({ fills: ['#aaa', '#bbb'], strokes: ['#111'], strokesDerived: [false, false] });
+        expect(colors[0]).toEqual({ fill: '#aaa', stroke: '#111', strokeDerived: false });
+        expect(colors[1]).toEqual({ fill: '#bbb', stroke: deriveStroke('#bbb'), strokeDerived: false });
+    });
+
+    it('derives a linked stroke from its fill, whatever colour is stored', () => {
+        const linked: Palette = { fills: ['#5090dc'], strokes: ['#111111'] };
+        expect(toSeriesColors(linked)[0].stroke).toBe(deriveStroke('#5090dc'));
+        expect(toSeriesColors(linked, 'lighten')[0].stroke).toBe(deriveStroke('#5090dc', 'lighten'));
     });
 
     it('treats a palette that predates the flag as following its fills', () => {
@@ -98,6 +102,13 @@ describe('deriveStroke', () => {
 
     it('has nowhere to go from black, and says so by staying there', () => {
         expect(deriveStroke('#000000')).toBe('#000000');
+    });
+
+    it('lightens instead for a dark theme, landing near the strokes AG Charts ships', () => {
+        // `ag-default-dark` pairs the same blue fill with #74a8e6.
+        const [r, g, b] = channels(deriveStroke('#5090dc', 'lighten'));
+        const [tr, tg, tb] = channels('#74a8e6');
+        expect(Math.abs(r - tr) + Math.abs(g - tg) + Math.abs(b - tb)).toBeLessThan(30);
     });
 });
 
@@ -188,14 +199,12 @@ describe('toThemePalette', () => {
         expect(toThemePalette(cleared)).toEqual({ fills: ['#aaa', '#bbb'], strokes: ['#111', '#222'] });
     });
 
-    it('matches every stroke to its fill once strokes are off', () => {
-        // The only way to say "no outline" in a palette: dropping `strokes`
-        // would inherit the base theme's, which is an outline the user has
-        // switched off in a colour they never chose.
-        expect(toThemePalette(withStrokesEnabled(palette, false))).toEqual({
-            fills: ['#aaa', '#bbb'],
-            strokes: ['#aaa', '#bbb'],
-            up: { fill: '#0f0', stroke: '#0f0' },
+    it('derives linked strokes, lighter for a dark theme', () => {
+        const linked: Palette = { fills: ['#aaaaaa'], strokes: ['#111111'], up: { fill: '#00ff00' } };
+        expect(toThemePalette(linked, 'lighten')).toEqual({
+            fills: ['#aaaaaa'],
+            strokes: [deriveStroke('#aaaaaa', 'lighten')],
+            up: { fill: '#00ff00', stroke: deriveStroke('#00ff00', 'lighten') },
         });
     });
 });
@@ -205,10 +214,12 @@ describe('fromThemePalette', () => {
         expect(toThemePalette(fromThemePalette(toThemePalette(palette))!)).toEqual(toThemePalette(palette));
     });
 
-    it('reads strokes matching their fills as strokes off', () => {
-        const read = fromThemePalette(toThemePalette(withStrokesEnabled(palette, false)))!;
+    it('keeps a stroke the theme names as chosen, and derives one it leaves out', () => {
+        const read = fromThemePalette({ fills: ['#aaa', '#bbb'], strokes: ['#aaa'] })!;
 
-        expect(strokesAreEnabled(read)).toBe(false);
+        expect(read.strokesDerived).toEqual([false, true]);
+        expect(toSeriesColors(read)[0].stroke).toBe('#aaa');
+        expect(toSeriesColors(read)[1].stroke).toBe(deriveStroke('#bbb'));
     });
 
     it('drops a fill no colour picker can show, with its stroke', () => {
@@ -223,21 +234,6 @@ describe('fromThemePalette', () => {
     it('finds nothing in a value that is not a palette', () => {
         expect(fromThemePalette(undefined)).toBeUndefined();
         expect(fromThemePalette({ fills: [] })).toBeUndefined();
-    });
-});
-
-describe('strokes switched off', () => {
-    it('is on for a palette that has never said', () => {
-        expect(strokesAreEnabled(palette)).toBe(true);
-        expect(strokesAreEnabled(withStrokesEnabled(palette, false))).toBe(false);
-    });
-
-    it('keeps the strokes it was given, to hand back when switched on again', () => {
-        // Clearing them would make the checkbox destructive, and there is no
-        // undo in the panel.
-        const off = withStrokesEnabled(palette, false);
-        expect(off.strokes).toEqual(palette.strokes);
-        expect(toThemePalette(withStrokesEnabled(off, true))).toEqual(toThemePalette(palette));
     });
 });
 
