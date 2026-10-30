@@ -84,12 +84,50 @@ export function _findFocusableElements(
             return _isVisible(node);
         }) as HTMLElement[];
     const excludeNodes = new Set(rootNode.querySelectorAll(excludeString));
+    return excludeNodes.size ? nodes.filter((element) => !excludeNodes.has(element)) : nodes;
+}
 
-    if (!excludeNodes.size) {
-        return nodes;
+/** Named radios are one Tab stop, the focused or checked radio, as managed Tab handling bypasses the browser. */
+export function _removeNonTabStopRadios(
+    rootNode: HTMLElement,
+    elements: HTMLElement[],
+    activeEl: Element | null = (rootNode.getRootNode() as Document | ShadowRoot).activeElement
+): HTMLElement[] {
+    const groups = new Map<HTMLFormElement | null, Map<string, HTMLInputElement>>();
+
+    for (let i = 0, len = elements.length; i < len; ++i) {
+        const radio = elements[i];
+        if (!isNamedRadio(radio) || (!radio.checked && radio !== activeEl)) {
+            continue;
+        }
+
+        const { form, name } = radio;
+        let groupsInForm = groups.get(form);
+        if (!groupsInForm) {
+            groupsInForm = new Map();
+            groups.set(form, groupsInForm);
+        }
+
+        if (radio === activeEl || !groupsInForm.has(name)) {
+            groupsInForm.set(name, radio);
+        }
     }
 
-    return nodes.filter((element) => !excludeNodes.has(element));
+    return groups.size
+        ? elements.filter((element) => {
+              const tabStop = isNamedRadio(element) ? groups.get(element.form)?.get(element.name) : null;
+              return !tabStop || tabStop === element;
+          })
+        : elements;
+}
+
+function isNamedRadio(element: HTMLElement): element is HTMLInputElement {
+    // avoid instanceof so radios from another window are recognised too.
+    return (
+        element.tagName === 'INPUT' &&
+        (element as HTMLInputElement).type === 'radio' &&
+        !!(element as HTMLInputElement).name
+    );
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -99,10 +137,9 @@ export function _focusInto(
     onlyUnmanaged = false,
     excludeTabGuards = false
 ): boolean {
-    const focusableElements = _findFocusableElements(
+    const focusableElements = _removeNonTabStopRadios(
         rootNode,
-        excludeTabGuards ? '.ag-tab-guard' : null,
-        onlyUnmanaged
+        _findFocusableElements(rootNode, excludeTabGuards ? '.ag-tab-guard' : null, onlyUnmanaged)
     );
     const toFocus = up ? _last(focusableElements) : focusableElements[0];
 
@@ -115,13 +152,20 @@ export function _focusInto(
 }
 
 /**
- * Focuses into `rootNode` the way native Tab would: tabbable elements win. Elements with a
- * negative tabindex are only eligible when a managed-focus wrapper inside `rootNode` owns their
- * keyboard handling — bare tabindex="-1" content would otherwise be a keyboard dead end.
+ * Focuses into `rootNode` the way native Tab would: tabbable elements win, and the target is
+ * scrolled into view within `rootNode`. Elements with a negative tabindex are only eligible when a
+ * managed-focus wrapper inside `rootNode` owns their keyboard handling — bare tabindex="-1" content
+ * would otherwise be a keyboard dead end. `excludeOwnTabGuards` skips the guards of `rootNode`
+ * itself, while guards of nested components stay eligible so those components can place focus.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
-export function _focusIntoTabbableFirst(rootNode: HTMLElement, up = false, excludeTabGuards = false): boolean {
-    const candidates = _findFocusableElements(rootNode, excludeTabGuards ? '.ag-tab-guard' : null);
+export function _focusIntoTabbableFirst(rootNode: HTMLElement, up = false, excludeOwnTabGuards = false): boolean {
+    let candidates = _findFocusableElements(rootNode);
+    if (excludeOwnTabGuards) {
+        candidates = candidates.filter(
+            (element) => !element.classList.contains('ag-tab-guard') || isEnterableNestedTabGuard(element, rootNode)
+        );
+    }
     const tabbable = candidates.filter((element) => element.tabIndex >= 0);
     const pool = tabbable.length
         ? tabbable
@@ -129,14 +173,27 @@ export function _focusIntoTabbableFirst(rootNode: HTMLElement, up = false, exclu
               const managedRoot = element.closest(`.${FOCUS_MANAGED_CLASS}`);
               return managedRoot !== null && rootNode.contains(managedRoot);
           });
-    const toFocus = up ? _last(pool) : pool[0];
+    const tabStops = _removeNonTabStopRadios(rootNode, pool);
+    const toFocus = up ? _last(tabStops) : tabStops[0];
 
     if (toFocus) {
+        // Scroll before focusing: a nested tab guard moves focus on, and its component places the new target.
+        _scrollVerticallyToShow(toFocus, rootNode);
         toFocus.focus({ preventScroll: true });
         return true;
     }
 
     return false;
+}
+
+/** A guard of a component nested in `rootNode`, guarding content its component can focus. */
+function isEnterableNestedTabGuard(guard: HTMLElement, rootNode: HTMLElement): boolean {
+    const guardedElement = guard.parentElement;
+    return (
+        guardedElement !== null &&
+        guardedElement !== rootNode &&
+        _findFocusableElements(guardedElement, '.ag-tab-guard').length > 0
+    );
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -154,6 +211,7 @@ export function _findNextFocusableElement(params: {
     if (onlyUnmanaged) {
         focusable = focusable.filter((el) => el === activeEl || _getTabIndex(el) !== '-1');
     }
+    focusable = _removeNonTabStopRadios(rootNode, focusable);
 
     const activeIndex = onlyManaged ? focusable.findIndex((el) => el.contains(activeEl)) : focusable.indexOf(activeEl);
 
@@ -210,4 +268,23 @@ export function _scrollHorizontallyToShow(target: HTMLElement): void {
 function _canScrollHorizontally(el: HTMLElement): boolean {
     const overflowX = getComputedStyle(el).overflowX;
     return overflowX === 'auto' || overflowX === 'scroll';
+}
+
+/** Scrolls every vertically scrollable ancestor of `target`, up to and including `root`, to show it. */
+function _scrollVerticallyToShow(target: HTMLElement, root: HTMLElement): void {
+    for (let container = target.parentElement; container; container = container.parentElement) {
+        const overflowY = getComputedStyle(container).overflowY;
+        if (overflowY === 'auto' || overflowY === 'scroll') {
+            const c = container.getBoundingClientRect();
+            const t = target.getBoundingClientRect();
+            if (t.top < c.top) {
+                container.scrollTop -= c.top - t.top;
+            } else if (t.bottom > c.bottom) {
+                container.scrollTop += t.bottom - c.bottom;
+            }
+        }
+        if (container === root) {
+            return;
+        }
+    }
 }

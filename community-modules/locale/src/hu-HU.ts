@@ -342,6 +342,10 @@ export const AG_GRID_LOCALE_HU_HU = {
     enabled: 'Engedélyezve',
 
     // Menu
+    moveLeft: 'Mozgatás balra',
+    moveRight: 'Mozgatás jobbra',
+    moveUp: 'Mozgatás felfelé',
+    moveDown: 'Mozgatás lefelé',
     pinColumn: 'Oszlop rögzítése',
     pinLeft: 'Rögzítés balra',
     pinRight: 'Rögzítés jobbra',
@@ -768,6 +772,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaRowSelect: 'Nyomja le a SPACE billentyűt ezen sor kiválasztásához',
     ariaRowSelectionDisabled: 'A sor kiválasztása le van tiltva ehhez a sorhoz',
     ariaSearch: 'Keresés',
+    ariaSortPriority: 'Rendezési prioritás: ${priority}, összesen ${count}',
     ariaSortableColumn: 'Nyomja meg az ENTER billentyűt a rendezéshez',
     ariaSortableColumnWithCellSelection: 'Nyomja meg az ALT ENTER billentyűt a rendezéshez',
     ariaToggleVisibility: 'Nyomja meg a SPACE billentyűt a láthatóság váltásához',
@@ -804,6 +809,9 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'abszolút növekvő',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'abszolút csökkenő',
     ariaLabelDialog: 'Párbeszédpanel',
+    ariaLabelClose: 'Bezárás',
+    ariaLabelMaximize: 'Teljes méret',
+    ariaLabelRestore: 'Előző méret',
     ariaLabelColumnMenu: 'Oszlop menü',
     ariaLabelColumnFilter: 'Oszlop szűrő',
     ariaLabelSelectField: 'Mező kiválasztása',

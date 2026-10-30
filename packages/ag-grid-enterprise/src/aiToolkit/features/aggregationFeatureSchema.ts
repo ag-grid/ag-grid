@@ -23,7 +23,7 @@ export const buildAggregationFeatureSchema = (beans: BeanCollection) => {
                         aggregatableColumns.map((col) =>
                             s.object({
                                 colId: s.literal(col.colId, 'Column identifier'),
-                                aggFunc: s.enum(beans.aggFuncSvc?.getFuncNames(col) || [], 'Aggregation function'),
+                                aggFunc: s.enum(beans.aggFuncSvc?.getFuncNames(col) ?? [], 'Aggregation function'),
                             })
                         )
                     ),

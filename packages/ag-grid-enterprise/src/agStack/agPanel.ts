@@ -16,6 +16,7 @@ import {
     _getInnerHeight,
     _getInnerWidth,
     _isVisible,
+    _setAriaLabel,
     _setDisplayed,
 } from 'ag-stack';
 
@@ -46,7 +47,7 @@ export interface AgPanelOptions<
 function getTemplate<TComponentSelectorType extends string>(
     cssIdentifier?: string | null
 ): AgElementParams<TComponentSelectorType> {
-    cssIdentifier ??= cssIdentifier || 'default';
+    cssIdentifier ??= 'default';
     return {
         tag: 'div',
         cls: `ag-panel ag-${cssIdentifier}-panel`,
@@ -163,7 +164,7 @@ export class AgPanel<
             if (title) {
                 this.setTitle(title);
             }
-            this.setClosable(closable != null ? closable : this.closable);
+            this.setClosable(closable ?? this.closable);
         } else {
             _setDisplayed(this.eTitleBar, false);
         }
@@ -243,10 +244,15 @@ export class AgPanel<
         }
 
         if (closable) {
-            const closeButtonComp = (this.closeButtonComp = new AgComponentStub({ tag: 'div', cls: 'ag-button' }));
+            const closeButtonComp = (this.closeButtonComp = new AgComponentStub({
+                tag: 'button',
+                cls: 'ag-button',
+                attrs: { type: 'button' },
+            }));
             this.createBean(closeButtonComp);
 
             const eGui = closeButtonComp.getGui();
+            _setAriaLabel(eGui, this.getLocaleTextFunc()('ariaLabelClose', 'Close'));
             const child = this.beans.iconSvc.createIconNoSpan('close', this.beans)!;
             child.classList.add('ag-panel-title-bar-button-icon');
             eGui.appendChild(child);
@@ -271,9 +277,7 @@ export class AgPanel<
         const buttons = eTitleBarButtons.children;
         const len = buttons.length;
 
-        if (position == null) {
-            position = len;
-        }
+        position ??= len;
 
         position = _clamp(position, 0, len);
 

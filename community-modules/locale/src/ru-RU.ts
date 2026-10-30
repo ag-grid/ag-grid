@@ -340,6 +340,10 @@ export const AG_GRID_LOCALE_RU_RU = {
     enabled: 'Включено',
 
     // Menu
+    moveLeft: 'Переместить влево',
+    moveRight: 'Переместить вправо',
+    moveUp: 'Переместить вверх',
+    moveDown: 'Переместить вниз',
     pinColumn: 'Закрепить столбец',
     pinLeft: 'Закрепить слева',
     pinRight: 'Закрепить справа',
@@ -779,6 +783,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaRowSelect: 'Нажмите ПРОБЕЛ, чтобы выбрать эту строку',
     ariaRowSelectionDisabled: 'Выбор строки отключён для этой строки',
     ariaSearch: 'Поиск',
+    ariaSortPriority: 'Приоритет сортировки ${priority} из ${count}',
     ariaSortableColumn: 'Нажмите ENTER для сортировки',
     ariaSortableColumnWithCellSelection: 'Нажмите ALT ENTER для сортировки',
     ariaToggleVisibility: 'Нажмите ПРОБЕЛ, чтобы переключить видимость',
@@ -815,6 +820,12 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'по абсолютному убыванию',
 
     ariaLabelDialog: 'Диалог',
+
+    ariaLabelClose: 'Закрыть',
+
+    ariaLabelMaximize: 'Развернуть',
+
+    ariaLabelRestore: 'Восстановить',
 
     ariaLabelColumnMenu: 'Меню столбца',
     ariaLabelColumnFilter: 'Фильтр столбца',

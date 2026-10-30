@@ -416,7 +416,7 @@ export class EditService extends BeanStub implements NamedBean {
 
         const res = this.shouldStartEditing(position, event, startedEdit, source);
 
-        if (res === false && source !== 'api') {
+        if (!res && source !== 'api') {
             if (this.isEditing(position)) {
                 this.stopEditing();
             }
@@ -488,7 +488,7 @@ export class EditService extends BeanStub implements NamedBean {
             forceCancel = false,
             forceStop = false,
             commit = false,
-        } = params || {};
+        } = params ?? {};
 
         if (STOP_EDIT_SOURCE_TRANSFORM_KEYS.has(source) && this.batch) {
             // if we are in batch editing, we do not stop editing on paste
@@ -1543,7 +1543,7 @@ export class EditService extends BeanStub implements NamedBean {
         // if a cell wasn't found, it's possible that focus was moved to the header
         res = res || !!this.beans.focusSvc.focusedHeader;
 
-        if (res === false && !preventNavigation) {
+        if (!res && !preventNavigation) {
             // not a header and not the table
             this.stopEditing(undefined, undefined, validation?.validationCache);
         }

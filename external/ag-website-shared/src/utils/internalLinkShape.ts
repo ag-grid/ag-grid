@@ -6,6 +6,9 @@
  * retired product subdomain costs another. SE-166 removed those hops from the emitted HTML, and
  * this module is what keeps them out: the link checker runs it over every internal href in the
  * built site and fails the build on any that would redirect.
+ *
+ * It also flags UTM-tagged internal links. They resolve without a hop, but a visitor following one
+ * has their original traffic source overwritten in analytics.
  */
 
 const CANONICAL_HOST = 'www.ag-grid.com';
@@ -33,11 +36,14 @@ const FILE_EXTENSION = /\.[a-zA-Z]+$/;
 
 const NON_HTTP_SCHEMES = ['mailto:', 'tel:', 'javascript:', 'data:', 'sms:'];
 
+const UTM_PARAMETER = /^utm_/i;
+
 export type InternalLinkShapeIssue =
     | { type: 'insecure-scheme'; href: string; host: string }
     | { type: 'redirecting-host'; href: string; host: string }
     | { type: 'double-slash'; href: string; pathname: string }
-    | { type: 'missing-trailing-slash'; href: string; pathname: string };
+    | { type: 'missing-trailing-slash'; href: string; pathname: string }
+    | { type: 'utm-parameters'; href: string; parameters: string[] };
 
 export interface InternalLinkShapeOptions {
     /**
@@ -51,6 +57,8 @@ interface ParsedInternalHref {
     scheme?: 'http' | 'https';
     host?: string;
     pathname: string;
+    /** The names of the query parameters, in order. A `?` after the fragment marker is not a query. */
+    queryParameters: string[];
 }
 
 /**
@@ -68,9 +76,17 @@ function parseInternalHref(href: string): ParsedInternalHref | undefined {
         return undefined;
     }
 
-    const stripSuffix = (path: string) => {
+    const splitSuffix = (path: string) => {
         const suffixIndex = path.search(/[?#]/);
-        return suffixIndex === -1 ? path : path.slice(0, suffixIndex);
+        if (suffixIndex === -1) {
+            return { pathname: path, queryParameters: [] };
+        }
+        const pathname = path.slice(0, suffixIndex);
+        if (path[suffixIndex] === '#') {
+            return { pathname, queryParameters: [] };
+        }
+        const query = path.slice(suffixIndex + 1).split('#')[0];
+        return { pathname, queryParameters: query.split('&').map((pair) => pair.split('=')[0]) };
     };
 
     const absolute = /^(https?):\/\/([^/?#]+)(.*)$/i.exec(trimmed);
@@ -80,7 +96,7 @@ function parseInternalHref(href: string): ParsedInternalHref | undefined {
         if (hostLower !== CANONICAL_HOST && !REDIRECTING_HOSTS.includes(hostLower)) {
             return undefined;
         }
-        return { scheme: scheme.toLowerCase() as 'http' | 'https', host: hostLower, pathname: stripSuffix(rest) };
+        return { scheme: scheme.toLowerCase() as 'http' | 'https', host: hostLower, ...splitSuffix(rest) };
     }
 
     if (trimmed.startsWith('//')) {
@@ -94,11 +110,11 @@ function parseInternalHref(href: string): ParsedInternalHref | undefined {
         if (hostLower !== CANONICAL_HOST && !REDIRECTING_HOSTS.includes(hostLower)) {
             return undefined;
         }
-        return { host: hostLower, pathname: stripSuffix(rest) };
+        return { host: hostLower, ...splitSuffix(rest) };
     }
 
     if (trimmed.startsWith('/')) {
-        return { pathname: stripSuffix(trimmed) };
+        return splitSuffix(trimmed);
     }
 
     return undefined;
@@ -118,7 +134,7 @@ export function getInternalLinkShapeIssues(
     }
 
     const issues: InternalLinkShapeIssue[] = [];
-    const { scheme, host, pathname } = parsed;
+    const { scheme, host, pathname, queryParameters } = parsed;
 
     if (scheme === 'http' && host != null) {
         issues.push({ type: 'insecure-scheme', href, host });
@@ -138,7 +154,34 @@ export function getInternalLinkShapeIssues(
         issues.push({ type: 'missing-trailing-slash', href, pathname });
     }
 
+    const utmParameters = queryParameters.filter((name) => UTM_PARAMETER.test(name));
+    if (utmParameters.length > 0) {
+        issues.push({ type: 'utm-parameters', href, parameters: utmParameters });
+    }
+
     return issues;
+}
+
+/**
+ * Whether `href` is a link to a page of this site: root-relative, on the canonical or a retired
+ * host, or a same-page fragment. Everything else (external hosts, `mailto:`, relative paths) is not.
+ */
+export function isInternalHref(href: string): boolean {
+    const trimmed = href.trim();
+    return trimmed.startsWith('#') || parseInternalHref(trimmed) != null;
+}
+
+/**
+ * The path, query and fragment of an absolute link to the canonical host, which this site serves at
+ * that same path, or undefined for any other link. `https://www.ag-grid.com/charts/#a` gives `/charts/#a`.
+ */
+export function getCanonicalHostPath(href: string): string | undefined {
+    const match = /^(?:https?:)?\/\/([^/?#]+)(.*)$/i.exec(href.trim());
+    if (match == null || match[1].toLowerCase() !== CANONICAL_HOST) {
+        return undefined;
+    }
+    const rest = match[2];
+    return rest.startsWith('/') ? rest : `/${rest}`;
 }
 
 /** One-line, human-readable description of an issue for the link checker's failure output. */
@@ -152,5 +195,7 @@ export function describeInternalLinkShapeIssue(issue: InternalLinkShapeIssue): s
             return `Link ${issue.href} contains a doubled slash in its path (${issue.pathname}), a second address for the same page.`;
         case 'missing-trailing-slash':
             return `Link ${issue.href} is missing its trailing slash and will redirect to ${issue.pathname}/; add the slash.`;
+        case 'utm-parameters':
+            return `Link ${issue.href} carries ${issue.parameters.join(', ')}; UTM parameters on an internal link overwrite the visitor's original traffic source in analytics, so remove them.`;
     }
 }

@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_BG_BG = {
     enabled: 'Активиран',
 
     // Menu
+    moveLeft: 'Преместване наляво',
+    moveRight: 'Преместване надясно',
+    moveUp: 'Преместване нагоре',
+    moveDown: 'Преместване надолу',
     pinColumn: 'Закрепване на колоната',
     pinLeft: 'Закрепване наляво',
     pinRight: 'Закрепване надясно',
@@ -765,6 +769,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     ariaRowSelect: 'Натиснете SPACE, за да изберете този ред',
     ariaRowSelectionDisabled: 'Изборът на редове е деактивиран за този ред',
     ariaSearch: 'Търсене',
+    ariaSortPriority: 'Приоритет на сортиране ${priority} от ${count}',
     ariaSortableColumn: 'Натиснете ENTER, за да сортирате',
     ariaSortableColumnWithCellSelection: 'Натиснете ALT ENTER, за да сортирате',
     ariaToggleVisibility: 'Натиснете SPACE, за да превключите видимостта',
@@ -801,6 +806,9 @@ export const AG_GRID_LOCALE_BG_BG = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: '„абсолютно възходящо“',
     ariaDropZoneColumnComponentSortAbsoluteDescending: '„абсолютно низходящо“',
     ariaLabelDialog: 'Диалог',
+    ariaLabelClose: 'Затвори',
+    ariaLabelMaximize: 'Увеличи',
+    ariaLabelRestore: 'Възстанови',
     ariaLabelColumnMenu: 'Меню на колона',
     ariaLabelColumnFilter: 'Филтър на колона',
     ariaLabelSelectField: 'Избор на поле',

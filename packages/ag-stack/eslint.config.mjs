@@ -1,9 +1,11 @@
+import noMismatchedGenericArgs from '../../eslint-rules/no-mismatched-generic-args.mjs';
 import rootESLint, { sonarjsConfig } from '../../eslint.config.mjs';
 
 export default [
     ...rootESLint,
     ...sonarjsConfig,
     {
+        plugins: { ag: { rules: { 'no-mismatched-generic-args': noMismatchedGenericArgs } } },
         languageOptions: {
             parserOptions: {
                 // NOTE: Loading tsconfig.json references does not work, so
@@ -13,6 +15,7 @@ export default [
             },
         },
         rules: {
+            'ag/no-mismatched-generic-args': 'error',
             'no-fallthrough': 'error',
             'no-case-declarations': 'error',
             'no-prototype-builtins': 'error',
@@ -68,6 +71,13 @@ export default [
             'no-console': 'error',
 
             'unicorn/prefer-modern-dom-apis': 'error',
+        },
+    },
+    {
+        // Test files are exempt from the runtime-focused restrictions above.
+        files: ['**/*.test.ts', '**/*.test.tsx'],
+        rules: {
+            'no-restricted-properties': 'off',
         },
     },
     {

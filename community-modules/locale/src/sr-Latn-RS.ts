@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     enabled: 'Omogućeno',
 
     // Menu
+    moveLeft: 'Pomeri ulevo',
+    moveRight: 'Pomeri udesno',
+    moveUp: 'Pomeri nagore',
+    moveDown: 'Pomeri nadole',
     pinColumn: 'Zakači kolonu',
     pinLeft: 'Zakači levo',
     pinRight: 'Zakači desno',
@@ -776,6 +780,7 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     ariaRowSelect: 'Pritisnite SPACE da izaberete ovaj red',
     ariaRowSelectionDisabled: 'Izbor reda je onemogućen za ovaj red',
     ariaSearch: 'Pretraga',
+    ariaSortPriority: 'Prioritet sortiranja ${priority} od ${count}',
     ariaSortableColumn: 'Pritisnite ENTER za sortiranje',
     ariaSortableColumnWithCellSelection: 'Pritisnite ALT ENTER za sortiranje',
     ariaToggleVisibility: 'Pritisnite SPACE da promenite vidljivost',
@@ -812,6 +817,12 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'apsolutno opadajuće',
 
     ariaLabelDialog: 'Dijalog',
+
+    ariaLabelClose: 'Zatvori',
+
+    ariaLabelMaximize: 'Maksimizuj',
+
+    ariaLabelRestore: 'Vrati',
 
     ariaLabelColumnMenu: 'Meni kolone',
     ariaLabelColumnFilter: 'Filter kolone',

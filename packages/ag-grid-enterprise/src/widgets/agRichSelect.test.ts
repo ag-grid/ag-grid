@@ -49,10 +49,10 @@ describe('AgRichSelect', () => {
 
         richSelect.createListComponent();
         stateAnnouncementCallback?.('Loading...');
-        stateAnnouncementCallback?.('No matches to show');
+        stateAnnouncementCallback?.('No matches');
 
-        expect(announceValue).toHaveBeenNthCalledWith(1, 'Loading...', 'richSelect');
-        expect(announceValue).toHaveBeenNthCalledWith(2, 'No matches to show', 'richSelect');
+        expect(announceValue).toHaveBeenNthCalledWith(1, 'Loading...', 'richSelectState');
+        expect(announceValue).toHaveBeenNthCalledWith(2, 'No matches', 'richSelectState');
     });
 
     it('preserves explicit null initial values', () => {
@@ -152,7 +152,7 @@ describe('AgRichSelect', () => {
     it('clears active option aria attributes when filtered search has no matches', () => {
         const richSelect = createRichSelect<string>({ filterList: true });
         const wrapper = document.createElement('div');
-        wrapper.setAttribute('data-active-option', 'stale-option');
+        wrapper.dataset.activeOption = 'stale-option';
         wrapper.setAttribute('aria-activedescendant', 'stale-option');
 
         richSelect.eWrapper = wrapper;
@@ -164,7 +164,7 @@ describe('AgRichSelect', () => {
 
         richSelect.highlightListValue([], [], true);
 
-        expect(wrapper.hasAttribute('data-active-option')).toBe(false);
+        expect(wrapper.dataset.activeOption).toBeUndefined();
         expect(wrapper.hasAttribute('aria-activedescendant')).toBe(false);
     });
 

@@ -5,13 +5,18 @@ import { test as base, expect as playwrightExpect } from '@playwright/test';
 import { type AgModuleName, wrapAgTestIdFor } from 'ag-grid-community';
 
 import { applyCpuThrottle, clearCpuThrottle } from './test/applyCpuThrottle';
-import { focusAuditEnabled, recordFocusShadows, reportFocusShadows } from './test/focusShadow';
 import {
-    routeExampleAssetsFromDisk,
-    routeExternalThroughMirror,
-    routePdfFontsFromDisk,
-    warnOnNetworkAccess,
-} from './test/localSources';
+    ALL_FRAMEWORKS,
+    type AgFramework,
+    PROD_VARIANT_FRAMEWORK,
+    eachFrameworkList,
+    hasExamplePage,
+    reactFunctionalTsDev,
+    readExampleFrameworks,
+    urlFrameworkOf,
+} from './test/exampleFrameworks';
+import { focusAuditEnabled, recordFocusShadows, reportFocusShadows } from './test/focusShadow';
+import { routeSiteSources, warnOnNetworkAccess } from './test/localSources';
 import { PendingRequests } from './test/pendingRequests';
 import { type AsyncGridApi, type EventLog, createRemoteGridApiProxy } from './test/remoteGridapi';
 import { whileTheRequestMatters } from './test/routeGuard';
@@ -57,20 +62,6 @@ type CacheFixtures = {
 type TestFixtures = PlaywrightFixtures & AgGridFixtures & CacheFixtures;
 
 type AgExampleUrl = `${string}/${string}`;
-const reactFunctionalTsDev = 'reactFunctionalTs_Dev' as const;
-const ALL_FRAMEWORKS = [
-    'typescript',
-    'vanilla',
-    // 'reactFunctional', // These are computed from reactFunctionalTs by Typescript stripping the types so very unlikely to result in different errors to the typescript version
-    'reactFunctionalTs',
-    reactFunctionalTsDev,
-    'angular',
-    'vue3',
-] as const;
-type AgFramework = (typeof ALL_FRAMEWORKS)[number];
-
-const PROD_VARIANT_FRAMEWORK = 'reactFunctionalTs';
-
 /**
  * The framework this run is pinned to, or null for a run that covers them all. CI shards the suite by
  * framework, one job per value, so a pinned run must declare nothing outside its own shard.
@@ -92,50 +83,28 @@ function getPinnedFramework(): AgFramework | null {
 const PINNED_FRAMEWORK = getPinnedFramework();
 
 /**
- * React is the only framework declared twice - once on the production build, once forcing the development
- * one - so running `eachFramework` on both doubles a sixth of the suite for little return. Only one of the
- * two is used: the development build locally, where its warnings are worth the wall clock, and the
- * production build in CI. `ALL_FRAMEWORK_VARIANTS=true` (or `--all-variants`) uses both.
- *
- * This is an economy applied to `eachFramework`. A spec that names a variant outright -
- * `test.reactFunctionalTs` or `test.reactFunctionalTs_Dev` - is asserting that this example behaves
- * differently on that build, so it is always declared and never subject to this. See isFrameworkDeclared.
+ * Whether `eachFramework` runs both React builds, doubling a sixth of the suite: CI does, a local run takes the
+ * development one only. A spec naming a variant outright is never dropped by this (see isFrameworkDeclared).
  */
 const runAllFrameworkVariants = !!process.env.CI || process.env.ALL_FRAMEWORK_VARIANTS === 'true';
 
 /**
- * Frameworks that `eachFramework` never runs, so pinning to one leaves only the handful of specs that name
- * it outright. That makes `--framework reactFunctionalTs_Dev` a quick way to run just those.
- */
-const EACH_FRAMEWORK_EXCLUDES: readonly AgFramework[] = [reactFunctionalTsDev];
-
-/**
- * Variants a pinned run declares alongside the framework itself. A CI job is a shard per *framework*, and
- * the two React builds are variants within one framework rather than two of them - so the React shard owns
- * the development-build tests too, and CI needs no second job to cover them. Only tests naming the variant
- * outright are picked up; `eachFramework` stays on the production build (see getEachFrameworkList), which
- * is what keeps this from doubling a sixth of the suite.
+ * Variants a pinned run declares with its framework: CI shards by framework, so the React shard owns the tests
+ * naming the development build outright, while `eachFramework` stays on one build (see eachFrameworkList).
  */
 const PINNED_FRAMEWORK_VARIANTS: Partial<Record<AgFramework, readonly AgFramework[]>> = {
     [PROD_VARIANT_FRAMEWORK]: [reactFunctionalTsDev],
 };
 
-/** The frameworks `eachFramework` runs. Tests naming a framework outright use isFrameworkDeclared. */
-function getEachFrameworkList(): readonly AgFramework[] {
-    if (PINNED_FRAMEWORK) {
-        return EACH_FRAMEWORK_EXCLUDES.includes(PINNED_FRAMEWORK) ? [] : [PINNED_FRAMEWORK];
-    }
-    if (!runAllFrameworkVariants) {
-        return ALL_FRAMEWORKS.filter((framework) => framework !== PROD_VARIANT_FRAMEWORK);
-    }
-    return ALL_FRAMEWORKS;
-}
-
-const EACH_FRAMEWORK_LIST = getEachFrameworkList();
+const EACH_FRAMEWORK_LIST = eachFrameworkList({
+    archive: !!process.env.PRE_34_VERSION,
+    pinned: PINNED_FRAMEWORK,
+    allVariants: runAllFrameworkVariants,
+});
 
 /**
- * Whether a test naming this framework outright should be declared. Only the CI shard pinning applies -
- * declaring a test just to skip it produces a fake "skipped" result and still spins up a browser fixture.
+ * Whether the CI shard pinning declares a test naming this framework outright - declaring a test just to
+ * skip it produces a fake "skipped" result and still spins up a browser fixture.
  */
 function isFrameworkDeclared(agFramework: AgFramework): boolean {
     if (PINNED_FRAMEWORK === null || agFramework === PINNED_FRAMEWORK) {
@@ -144,11 +113,14 @@ function isFrameworkDeclared(agFramework: AgFramework): boolean {
     return PINNED_FRAMEWORK_VARIANTS[PINNED_FRAMEWORK]?.includes(agFramework) ?? false;
 }
 
+/** The frameworks the example being declared has pages for, or undefined for every one. */
+let exampleFrameworks: ReadonlySet<string> | undefined;
+
 // One worker, so a run says once what it is doing rather than once per worker.
 if (process.env.TEST_WORKER_INDEX === '0' && !PINNED_FRAMEWORK) {
     // eslint-disable-next-line no-console
     console.log(
-        runAllFrameworkVariants
+        runAllFrameworkVariants || process.env.PRE_34_VERSION
             ? `Running eachFramework tests on: ${EACH_FRAMEWORK_LIST.join(', ')}`
             : `Running eachFramework tests on: ${EACH_FRAMEWORK_LIST.join(', ')} - set ALL_FRAMEWORK_VARIANTS=true to add ${PROD_VARIANT_FRAMEWORK}. Tests naming a framework outright always run.`
     );
@@ -302,7 +274,7 @@ async function loadPage(
     }
 
     const queryParams = new URLSearchParams(queryOptions);
-    const urlFramework = agFramework === reactFunctionalTsDev ? 'reactFunctionalTs' : agFramework;
+    const urlFramework = urlFrameworkOf(agFramework);
 
     // The trailing slash is the canonical form for a deployed example (see urlWithPrefix). Without it
     // both staging and the archive answer 301, so every page load costs an extra round trip.
@@ -363,13 +335,7 @@ export const extended = base.extend<TestFixtures>({
                 await use();
                 return;
             }
-            const siteOrigin = new URL(baseURL).origin;
-            // Ordered, not concurrent: the later route matches first, and a shipped asset must beat the
-            // mirror to it. Registered together, whichever won the race decided whether disk or the CDN
-            // served `/example-assets/`.
-            await routeExternalThroughMirror(page, siteOrigin);
-            await routeExampleAssetsFromDisk(page);
-            await routePdfFontsFromDisk(page, siteOrigin);
+            await routeSiteSources(page, baseURL);
             await use();
         },
         { auto: true },
@@ -413,10 +379,6 @@ const frameworkTest =
         testBody: (fixtures: TestFixtures) => Promise<void>,
         opts?: { allowedConsoleMessages?: string[] }
     ): void => {
-        // A single-framework test (test.typescript(...), etc.) names its framework outright, so only the
-        // CI shard pinning applies - not the React variant economy eachFramework is subject to. Declaring
-        // a test only to skip it at runtime when the job targets another framework produces a fake
-        // "skipped" result and still spins up a browser fixture, so don't declare it at all.
         if (!isFrameworkDeclared(agFramework)) {
             return;
         }
@@ -495,7 +457,7 @@ function describeWithTeardown(
 }
 
 /**
- * Run the same test against all frameworks (or filtered frameworks based on FRAMEWORK env var).
+ * Run the same test against each framework the run covers (see eachFrameworkList) that the example has a page for.
  * @param testName Names of this test case. Useful if running multiple tests against the same example.
  * @param testBody The test body function that will be executed for each framework.
  */
@@ -505,7 +467,11 @@ const eachFramework = (
     opts?: { allowedConsoleMessages?: string[] }
 ) => {
     describeWithTeardown(testName, opts, () => {
-        EACH_FRAMEWORK_LIST.forEach((framework) => frameworkTest(framework)(undefined, testBody));
+        for (const framework of EACH_FRAMEWORK_LIST) {
+            if (hasExamplePage(exampleFrameworks, framework)) {
+                frameworkTest(framework)(undefined, testBody);
+            }
+        }
     });
 };
 
@@ -598,7 +564,9 @@ function setAgExampleUrl(importMeta: ImportMeta): AgExampleUrl {
 
 export const agExample = (importMeta: ImportMeta, callback: () => any) => {
     base.describe(setAgExampleUrl(importMeta), () => {
+        exampleFrameworks = readExampleFrameworks(importMeta.url);
         callback();
+        exampleFrameworks = undefined;
     });
 };
 
@@ -613,7 +581,7 @@ const singleFrameworkTests: { [K in AgFramework]: ReturnType<typeof frameworkTes
 } as const;
 
 const agGridTestExtension = {
-    eachFramework: process.env.PRE_34_VERSION ? frameworkTest('vanilla') : eachFramework,
+    eachFramework,
     agExample,
 };
 

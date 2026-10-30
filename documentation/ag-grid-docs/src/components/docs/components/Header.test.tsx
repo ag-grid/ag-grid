@@ -1,7 +1,10 @@
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { Header } from './Header';
+
+// The test environment resolves SVG imports to data URLs, which `Icon` cannot render as a tag.
+vi.mock('@ag-website-shared/components/icon/Icon', () => ({ Icon: () => null }));
 
 type HeaderProps = Parameters<typeof Header>[0];
 
@@ -46,5 +49,15 @@ describe('Header', () => {
 
     it('marks the page title within the h1, as that is how the Algolia indexer finds it', () => {
         expect(getHeadingHtml()).toMatch(/<span[^>]*data-page-title[^>]*>Getting Started<\/span>/);
+    });
+
+    it("links the Enterprise label to the framework's community vs. enterprise page", () => {
+        const html = renderHeader({ isEnterprise: true, framework: 'vue' });
+
+        expect(html).toMatch(/<a[^>]*href="[^"]*\/vue-data-grid\/community-vs-enterprise\/"[^>]*>Enterprise/);
+    });
+
+    it('omits the Enterprise label on community pages', () => {
+        expect(renderHeader()).not.toContain('community-vs-enterprise');
     });
 });

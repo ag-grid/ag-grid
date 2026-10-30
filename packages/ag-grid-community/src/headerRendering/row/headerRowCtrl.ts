@@ -1,4 +1,5 @@
-import { setupCompBean } from '../../components/emptyBean';
+import type { CompBeanOwner } from '../../components/emptyBean';
+import { destroyCompBean, setupCompBean } from '../../components/emptyBean';
 import { BeanStub } from '../../context/beanStub';
 import type { AgColumn, ColumnLane } from '../../entities/agColumn';
 import type { AgColumnGroup } from '../../entities/agColumnGroup';
@@ -27,16 +28,18 @@ export interface IHeaderRowComp {
     setWidth(width: string): void;
     setRowIndex(rowIndex: number): void;
     setTabIndex(tabIndex: number | undefined): void;
+    setAriaHidden(hidden: boolean): void;
 }
 
 let instanceIdSequence = 0;
 export type HeaderRowCtrlInstanceId = BrandedType<number, 'HeaderRowCtrlInstanceId'>;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export class HeaderRowCtrl extends BeanStub {
+export class HeaderRowCtrl extends BeanStub implements CompBeanOwner {
     public readonly instanceId: HeaderRowCtrlInstanceId = instanceIdSequence++ as HeaderRowCtrlInstanceId;
 
     private comp: IHeaderRowComp | null = null;
+    public compBean: BeanStub | undefined = undefined;
     public headerRowClass: string;
 
     // Maintain a map and corresponding array of the header cell ctrls for performance
@@ -91,7 +94,7 @@ export class HeaderRowCtrl extends BeanStub {
      */
     public setComp(comp: IHeaderRowComp, compBean: BeanStub | undefined, initCompState: boolean = true): void {
         this.comp = comp;
-        compBean = setupCompBean(this, this.beans.context, compBean);
+        compBean = setupCompBean(this, compBean);
 
         if (initCompState) {
             this.setRowIndex(this.rowIndex);
@@ -106,12 +109,18 @@ export class HeaderRowCtrl extends BeanStub {
         this.refreshPinnedCellGroupWidths();
 
         this.addEventListeners(compBean);
-        this.refreshTabIndex();
+        this.refreshAccessibility();
     }
 
-    private refreshTabIndex(): void {
-        const { beans, gos } = this;
-        this.comp?.setTabIndex(_isHeaderFocusSuppressed(beans) ? undefined : gos.get('tabIndex'));
+    /** A row without cells, such as padding above spanning headers, is no row to assistive technology. */
+    private refreshAccessibility(): void {
+        const { comp, beans, gos } = this;
+        if (!comp) {
+            return;
+        }
+        const hasCells = this.allCtrls.length > 0;
+        comp.setAriaHidden(!hasCells);
+        comp.setTabIndex(hasCells && !_isHeaderFocusSuppressed(beans) ? gos.get('tabIndex') : undefined);
     }
 
     public getAriaRowIndex(): number {
@@ -121,7 +130,7 @@ export class HeaderRowCtrl extends BeanStub {
     private addEventListeners(compBean: BeanStub): void {
         const onHeightChanged = this.onRowHeightChanged.bind(this);
         const onDisplayedColumnsChanged = this.onDisplayedColumnsChanged.bind(this);
-        const refreshTabIndex = this.refreshTabIndex.bind(this);
+        const refreshAccessibility = this.refreshAccessibility.bind(this);
         const refreshPinnedCellGroupWidths = this.refreshPinnedCellGroupWidths.bind(this);
         compBean.addManagedEventListeners({
             displayedColumnsWidthChanged: refreshPinnedCellGroupWidths,
@@ -133,10 +142,10 @@ export class HeaderRowCtrl extends BeanStub {
             columnHeaderHeightChanged: onHeightChanged,
             stylesChanged: onHeightChanged,
             advancedFilterEnabledChanged: onHeightChanged,
-            overlayExclusiveChanged: refreshTabIndex,
+            overlayExclusiveChanged: refreshAccessibility,
         });
 
-        compBean.addManagedPropertyListeners(['suppressHeaderFocus'], refreshTabIndex);
+        compBean.addManagedPropertyListeners(['suppressHeaderFocus'], refreshAccessibility);
 
         // when print layout changes, it changes what columns are in what section
         compBean.addManagedPropertyListener('domLayout', onDisplayedColumnsChanged);
@@ -242,9 +251,13 @@ export class HeaderRowCtrl extends BeanStub {
         }
         this.renderedHeaderRowsVersion = headerRowsVersion;
 
+        const hadCells = this.allCtrls.length > 0;
         const ctrlsToDisplay = this.getUpdatedHeaderCtrls();
         const forceOrder = this.isEnsureDomOrder || this.isPrintLayout;
         this.comp.setHeaderCtrls(ctrlsToDisplay, forceOrder, afterScroll);
+        if (hadCells !== ctrlsToDisplay.length > 0) {
+            this.refreshAccessibility();
+        }
     }
 
     /**
@@ -396,6 +409,7 @@ export class HeaderRowCtrl extends BeanStub {
         this.allCtrls = this.destroyBeans(this.allCtrls);
         this.ctrlsById = undefined;
         this.comp = null;
+        destroyCompBean(this);
         super.destroy();
     }
 }

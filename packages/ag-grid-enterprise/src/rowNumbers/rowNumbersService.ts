@@ -88,6 +88,8 @@ export class RowNumbersService
 
         this.addManagedPropertyListeners(['rowNumbers', 'cellSelection'], (e: PropertyValueChangedEvent<any>) => {
             this.updateColumns(e);
+            // the cells' range classes read `cellSelection`, and an unchanged colDef refreshes no cell
+            this.refreshCells(true);
         });
 
         this.refreshSelectionIntegration();
@@ -171,17 +173,34 @@ export class RowNumbersService
 
     public updateColumns(event: PropertyValueChangedEvent<any>): void {
         const source = _convertColumnEventSourceType(event.source);
+        const prevOverrides = this.rowNumberOverrides;
         this.refreshSelectionIntegration();
         const had = this.column !== null;
-        this.autoSizedTextLength = 0;
         const column = this.refreshCols();
-        if (column) {
-            this.refreshColDef(source);
-            // re-applying the colDef width counts as a deliberate resize, but it replaced any user width
-            column.resetWidthOwnership();
-        } else if (had) {
+        // a new column, or a change to what the fit reads, is fitted at once; any other change keeps the widest width
+        if (!column) {
+            if (had) {
+                this.beans.colModel.refreshAll(source);
+            }
+        } else if (!had) {
             this.beans.colModel.refreshAll(source);
+            this.autoSize(column, true);
+        } else {
+            const { minWidth, maxWidth } = column;
+            this.refreshColDef(source);
+            if (
+                column.minWidth !== minWidth ||
+                column.maxWidth !== maxWidth ||
+                fitInputsChanged(prevOverrides, this.rowNumberOverrides)
+            ) {
+                this.autoSize(column, true);
+            }
         }
+    }
+
+    /** `width` is the fit floor: re-sent, or below `minWidth`, it keeps the fitted or dragged width. */
+    protected override keepsColDefWidth(col: AgColumn, width: number, prevWidth: number | undefined): boolean {
+        return width === prevWidth || width < col.minWidth;
     }
 
     public resetColumnState(source: ColumnEventType): void {
@@ -190,7 +209,6 @@ export class RowNumbersService
             return;
         }
         column.resetActualWidth(source);
-        column.resetWidthOwnership();
         this.autoSizedTextLength = 0;
     }
 
@@ -205,9 +223,9 @@ export class RowNumbersService
             return;
         }
         _setAriaLabel(eGridHeader, 'Row Number');
-        this.addManagedElementListeners(eGridHeader, {
+        // on the header comp, so a rebuilt header takes its listeners with it
+        comp.addManagedElementListeners(eGridHeader, {
             click: this.onHeaderClick.bind(this),
-            keydown: this.onHeaderKeyDown.bind(this),
             focus: this.onHeaderFocus.bind(this),
         });
     }
@@ -290,8 +308,12 @@ export class RowNumbersService
         this.ariaAnnounce?.announceValue(message, 'ariaSelectAllCells');
     }
 
-    private onHeaderKeyDown(e: KeyboardEvent): void {
-        if (!this.isIntegratedWithSelection || (e.key !== KeyCode.SPACE && e.key !== KeyCode.ENTER)) {
+    public handleKeyDownOnHeader(column: AgColumn, e: KeyboardEvent): void {
+        if (
+            !this.isIntegratedWithSelection ||
+            (e.key !== KeyCode.SPACE && e.key !== KeyCode.ENTER) ||
+            !isRowNumberCol(column)
+        ) {
             return;
         }
         e.preventDefault();
@@ -342,10 +364,18 @@ export class RowNumbersService
             return;
         }
         this.autoSizedTextLength = text.length;
-        const width = this.beans.autoWidthCalc?.getPreferredWidthForElements([this.createDummyElement(text)], 2);
-        if (width != null) {
-            this.beans.colResize?.setColumnWidths([{ key: column, newWidth: width }], false, true, 'rowNumbersService');
+        const measured = this.beans.autoWidthCalc?.getPreferredWidthForElements([this.createDummyElement(text)], 2);
+        if (measured == null) {
+            return;
         }
+        // never narrower than a configured width; maxWidth wins over minWidth, as in `setActualWidth`
+        const fitted = Math.max(measured, column.minWidth, this.rowNumberOverrides?.width ?? 0);
+        const newWidth = Math.min(fitted, column.maxWidth);
+        if (newWidth === column.actualWidth) {
+            return;
+        }
+        const columns = [column];
+        this.beans.colResize?.setClampedColumnWidths(columns, [newWidth], true, 'rowNumbersService', columns);
     }
 
     private getLargestRowNumberText(column: AgColumn): string {
@@ -378,7 +408,7 @@ export class RowNumbersService
         return {
             // overridable properties
             minWidth: 60,
-            width: 60,
+            initialWidth: 60,
             resizable: false,
             valueGetter: this.boundValueGetter,
             // overrides
@@ -518,4 +548,9 @@ export class RowNumbersService
             }
         });
     }
+}
+
+/** Whether the options the row number fit reads beside the column's bounds (its floor and formatter) changed. */
+function fitInputsChanged(prev: RowNumbersOptions | null, next: RowNumbersOptions | null): boolean {
+    return prev?.width !== next?.width || prev?.valueFormatter !== next?.valueFormatter;
 }

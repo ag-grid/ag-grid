@@ -303,14 +303,17 @@ export type { ContainerType, IAfterGuiAttachedParams } from './interfaces/iAfter
 export type {
     CalculatedColumnDef,
     CalculatedColumnExpressionPicker,
+    CalculatedColumnProcessColDefParams,
     CalculatedColumnProperty,
     CalculatedColumnsGridOption,
     CalculatedColumnsOptions,
     CalculatedColumnUpdate,
+    CalculatedColumnValidationErrors,
     CalculatedColumnValidationParams,
     CalculatedExpressionError,
     ICalculatedColumnsService,
     IsColumnReferenceableParams,
+    RefreshCalculatedColumnsParams,
 } from './interfaces/iCalculatedColumns';
 export type { ColumnHeaderEditApplyMode, ColumnHeaderEditOptions } from './interfaces/iColumnHeaderEdit';
 export type {
@@ -905,6 +908,7 @@ export type {
     FillHandleOptions,
     GetChartMenuItems,
     GetChartToolbarItems,
+    GetColumnDropZoneMenuItems,
     GetColumnMenuItems,
     GetContextMenuItems,
     GetDataPath,
@@ -973,6 +977,7 @@ export type {
     GetChartMenuItemsParams,
     GetChartToolbarItemsParams,
     GetChildCount,
+    GetColumnDropZoneMenuItemsParams,
     GetColumnMenuItemsParams,
     GetContextMenuItemsParams,
     GetGroupAggFilteringParams,
@@ -1066,6 +1071,7 @@ export type {
 export type {
     BaseMenuItem,
     BaseMenuItemParams,
+    DefaultColumnDropZoneMenuItem,
     DefaultColumnMenuItem,
     DefaultMenuItem,
     DefaultToolPanelItem,
@@ -1208,6 +1214,7 @@ export type {
     LengthValue,
     Part,
     ScaleValue,
+    ScrollbarWidthValue,
     ShadowValue,
     ShadowValueParams,
     Theme,

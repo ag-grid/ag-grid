@@ -1,4 +1,5 @@
 import { waitFor } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ColDef, ColGroupDef, ColumnGroup, GridApi } from 'ag-grid-community';
@@ -1067,6 +1068,48 @@ describe('Column Groups', () => {
     });
 
     describe('groups with pinned columns', () => {
+        test.each([
+            { pinned: 'left', keepPinnedVisible: false },
+            { pinned: 'right', keepPinnedVisible: false },
+            { pinned: 'left', keepPinnedVisible: true },
+            { pinned: 'right', keepPinnedVisible: true },
+        ] as const)(
+            'Enter keeps group focus (pinned=$pinned, keepPinnedVisible=$keepPinnedVisible)',
+            async ({ pinned, keepPinnedVisible }) => {
+                const api = await gridsManager.createGridAndWait('groupFocus', {
+                    columnDefs: [
+                        {
+                            groupId: 'medals',
+                            headerName: 'Medals',
+                            children: [
+                                { field: 'total', columnGroupShow: 'closed', pinned },
+                                { field: 'bronze', columnGroupShow: 'open', width: 100, flex: 0 },
+                                ...(keepPinnedVisible ? [{ field: 'silver', pinned }] : []),
+                            ],
+                        },
+                        { field: 'year' },
+                    ],
+                    rowData: [{ total: 3, bronze: 1, year: 2000 }],
+                });
+                api.setFocusedHeader(api.getColumnGroup('medals')!);
+                const originalHeader = document.activeElement;
+                expect(document.activeElement?.textContent).toContain('Medals');
+                const user = userEvent.setup();
+                for (const expanded of [true, false]) {
+                    await user.keyboard('{Enter}');
+                    expect(api.getColumnGroupState().find((group) => group.groupId === 'medals')?.open).toBe(expanded);
+                    await waitFor(() => {
+                        expect(document.activeElement?.classList.contains('ag-header-group-cell')).toBe(true);
+                        expect(document.activeElement?.textContent).toContain('Medals');
+                        expect(document.activeElement?.getAttribute('aria-expanded')).toBe(String(expanded));
+                        if (keepPinnedVisible) {
+                            expect(document.activeElement).toBe(originalHeader);
+                        }
+                    });
+                }
+            }
+        );
+
         test('group children in left pinned section', async () => {
             const columnDefs: (ColDef | ColGroupDef)[] = [
                 {
@@ -1259,6 +1302,41 @@ describe('Column Groups', () => {
             expect(expandedEvents.length).toBeGreaterThan(0);
             // The displayed-children set flipped: 'detail' hid, 'summary' showed.
             expect(displayedChildrenEvents.length).toBeGreaterThan(0);
+        });
+
+        test('group listeners added async run after the change, apart from the same function added sync', async () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ groupId: 'g', children: [{ colId: 'a' }, { colId: 'b', columnGroupShow: 'open' }] }],
+            });
+            const calls: string[] = [];
+            const asyncListener = () => calls.push('async');
+            const bothWays = () => calls.push('sync');
+            const providedGroup = api.getProvidedColumnGroup('g')!;
+            const group = api.getColumnGroup('g')!;
+            providedGroup.addEventListener('expandedChanged', asyncListener, true);
+            providedGroup.addEventListener('expandedChanged', bothWays);
+            providedGroup.addEventListener('expandedChanged', bothWays, true);
+            providedGroup.removeEventListener('expandedChanged', bothWays, true);
+            group.addEventListener('displayedChildrenChanged', asyncListener, true);
+            group.addEventListener('displayedChildrenChanged', bothWays);
+            group.addEventListener('displayedChildrenChanged', bothWays, true);
+            group.removeEventListener('displayedChildrenChanged', bothWays, true);
+
+            api.setColumnGroupOpened('g', true);
+            expect(calls).toEqual(['sync', 'sync']);
+            await waitFor(() => expect(calls).toEqual(['sync', 'sync', 'async', 'async']));
+        });
+
+        test('a provided group with its children hidden ignores removing a listener never added', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ groupId: 'g', children: [{ colId: 'a', hide: true }] }, { colId: 'b' }],
+            });
+            const providedGroup = api.getProvidedColumnGroup('g')!;
+            providedGroup.removeEventListener('expandedChanged', () => {});
+            const calls: boolean[] = [];
+            providedGroup.addEventListener('expandedChanged', () => calls.push(providedGroup.isExpanded()));
+            api.setColumnGroupOpened('g', true);
+            expect(calls).toEqual([true]);
         });
 
         test('expand a closed group via setColumnGroupOpened', async () => {

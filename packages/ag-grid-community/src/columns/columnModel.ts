@@ -16,6 +16,7 @@ import { applyPrevColumnsOrder } from './colsApplyPrevOrder';
 import { ColWrapperCache } from './columnGroups/colWrapperCache';
 import { captureColumnStateChanges, dispatchColStateChanges } from './columnStateUtils';
 import { _convertColumnEventSourceType, _destroyColumnTreeAll, _destroyColumnTreeUnused } from './columnUtils';
+import { _startReorderingColumnWidthAnimation } from './columnWidthAnimation';
 
 // Two parallel col representations:
 //   colDefList / colDefTree  — PRIMARY cols (user-defined leaves + hierarchy virtuals).
@@ -218,6 +219,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
         const oldAllGroups = this.colDefAllGroups;
 
         this.beginColUpdate();
+        const finishWidthAnimation = stateChanges ? _startReorderingColumnWidthAnimation(beans) : null;
         try {
             const builder = _buildColumnTree(
                 beans,
@@ -277,11 +279,10 @@ export class ColumnModel extends BeanStub implements NamedBean {
             this.changeEventsDispatching = true;
             try {
                 this.refreshCols(newColDefs, source);
+                visibleCols.refresh(source, false);
             } finally {
                 this.changeEventsDispatching = false;
             }
-
-            visibleCols.refresh(source, false);
 
             // unused by AG Grid but kept for backwards compatibility
             eventSvc.dispatchEvent({ type: 'columnEverythingChanged', source });
@@ -304,6 +305,7 @@ export class ColumnModel extends BeanStub implements NamedBean {
                 colAutosize?.applyAutosizeStrategy();
             }
         } finally {
+            finishWidthAnimation?.();
             this.endColUpdate();
         }
     }
@@ -315,9 +317,9 @@ export class ColumnModel extends BeanStub implements NamedBean {
         ++this.colUpdateDepth;
     }
 
-    /** Call from a `finally`, so a throw cannot leave the events queued for good. The outermost end runs the role changes
-     *  staged and their grid events, then raises the column events queued, until no listener stages more; then the
-     *  layout events. A throw skips none of these steps, and the first is rethrown once they have run. */
+    /** Call from a `finally`, so a throw cannot leave the events queued for good. Each outermost end pass re-derives
+     *  redefined filters' params, runs staged role changes and their grid events, then raises queued column events,
+     *  until no listener stages more; then the layout events. A throw skips no step; the first is rethrown after. */
     public endColUpdate(): void {
         const depth = this.colUpdateDepth;
         if (depth > 1) {
@@ -328,15 +330,17 @@ export class ColumnModel extends BeanStub implements NamedBean {
         this.colUpdateDepth = 1;
         let threw = false;
         let error: unknown;
+        const colFilter = this.beans.colFilter;
         do {
             try {
+                colFilter?.refreshRedefinedFilters();
                 this.runColChanges();
                 this.flushColEvents();
             } catch (e) {
                 error = threw ? error : e;
                 threw = true;
             }
-        } while (this.queuedColEvents.length !== 0 || this.hasColChangesStaged());
+        } while (this.queuedColEvents.length !== 0 || this.hasColChangesStaged() || !!colFilter?.hasRedefinedFilters());
         this.colUpdateDepth = 0;
         this.everythingChangedInUpdate = false;
         try {

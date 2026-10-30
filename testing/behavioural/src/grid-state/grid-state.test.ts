@@ -1,7 +1,15 @@
 import { waitFor } from '@testing-library/dom';
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForNoLoadingRows } from 'ag-test-utils';
+import {
+    ALL_SEVERITIES,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    waitForNoLoadingRows,
+} from 'ag-test-utils';
 
 import type { GridApi, GridState, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
+import { enableDevValidations, getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 describe('StateService - Grid State Management', () => {
@@ -29,6 +37,30 @@ describe('StateService - Grid State Management', () => {
 
     // ===== COLUMN STATE TESTS =====
     describe('Column State', () => {
+        test('column order applied through state does not animate the columns, unlike a column move', async () => {
+            let initialised!: () => void;
+            const initialState = new Promise<void>((resolve) => (initialised = resolve));
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: defaultColumnDefs,
+                rowData: defaultRowData,
+                onStateUpdated: ({ sources }) => {
+                    if (sources.includes('gridInitializing')) {
+                        initialised();
+                    }
+                },
+            });
+            await initialState;
+            const animating = () => !!getGridElement(api)!.querySelector('.ag-column-moving');
+            api.moveColumns(['id'], 1);
+            expect(animating()).toBe(true);
+            await waitFor(() => expect(animating()).toBe(false));
+
+            api.setState({ columnOrder: { orderedColIds: ['sport', 'age', 'name', 'id'] } });
+
+            expect(animating()).toBe(false);
+            expect(api.getColumnState().map(({ colId }) => colId)).toEqual(['sport', 'age', 'name', 'id']);
+        });
+
         test('should capture column order state', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: defaultColumnDefs,
@@ -1471,6 +1503,86 @@ describe('StateService - Grid State Management', () => {
 
             expect(sources.every((s) => s === 'columnFilter')).toBe(true);
         });
+
+        describe('a filter set before row data is first provided lands after the initial state filter', () => {
+            const columnDefs = [
+                { field: 'name', filter: 'agTextColumnFilter' },
+                { field: 'age', filter: 'agNumberColumnFilter' },
+            ];
+            const namesA = { name: { filterType: 'text', type: 'startsWith', filter: 'A' } };
+
+            test('setFilterModel(null) clears it', async () => {
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    initialState: { filter: { filterModel: namesA } },
+                });
+                api.setFilterModel(null);
+                api.setGridOption('rowData', defaultRowData);
+                await new GridRows(api, 'initial state filter cleared').check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 name:"Alice" age:30
+                    ├── LEAF id:1 name:"Bob" age:25
+                    ├── LEAF id:2 name:"Charlie" age:35
+                    ├── LEAF id:3 name:"David" age:28
+                    └── LEAF id:4 name:"Eve" age:32
+                `);
+                expect(api.getFilterModel()).toEqual({});
+            });
+
+            test('setColumnFilterModel adds to it', async () => {
+                const age = { filterType: 'number', type: 'greaterThan', filter: 29 };
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    initialState: { filter: { filterModel: namesA } },
+                });
+                void api.setColumnFilterModel('age', age);
+                api.setGridOption('rowData', [...defaultRowData, { id: '6', name: 'Amy', age: 20, sport: 'Golf' }]);
+                await new GridRows(api, 'initial state and column filters both applied').check(`
+                    ROOT id:ROOT_NODE_ID
+                    └── LEAF id:0 name:"Alice" age:30
+                `);
+                expect(api.getFilterModel()).toEqual({ ...namesA, age });
+            });
+
+            test('setState replaces it', async () => {
+                const filterModel = { age: { filterType: 'number', type: 'greaterThan', filter: 31 } };
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    initialState: { filter: { filterModel: namesA } },
+                });
+                api.setState({ filter: { filterModel } });
+                api.setGridOption('rowData', defaultRowData);
+                await new GridRows(api, 'restored state applied').check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:2 name:"Charlie" age:35
+                    └── LEAF id:4 name:"Eve" age:32
+                `);
+                expect(api.getFilterModel()).toEqual(filterModel);
+            });
+
+            test('setAdvancedFilterModel(null) clears it', async () => {
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    enableAdvancedFilter: true,
+                    initialState: {
+                        filter: {
+                            advancedFilterModel: { filterType: 'text', colId: 'name', type: 'startsWith', filter: 'A' },
+                        },
+                    },
+                });
+                api.setAdvancedFilterModel(null);
+                api.setGridOption('rowData', defaultRowData);
+                await new GridRows(api, 'initial state advanced filter cleared').check(`
+                    ROOT id:ROOT_NODE_ID
+                    ├── LEAF id:0 name:"Alice" age:30
+                    ├── LEAF id:1 name:"Bob" age:25
+                    ├── LEAF id:2 name:"Charlie" age:35
+                    ├── LEAF id:3 name:"David" age:28
+                    └── LEAF id:4 name:"Eve" age:32
+                `);
+                expect(api.getAdvancedFilterModel()).toBeNull();
+            });
+        });
     });
 
     // ===== CELL STATE TESTS =====
@@ -2251,6 +2363,129 @@ describe('StateService - Grid State Management', () => {
                 · └── LEAF hidden id:1 pivot_year_2000_gold:10 pivot_year_2004_gold:10
             `);
         });
+
+        test.each([[[]], [undefined]])(
+            'with row data %j at creation, getState reports an initialState filter on a pivot result column once it is created',
+            async (initialRowData) => {
+                const filterModel = { pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 } };
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    rowData: initialRowData,
+                    initialState: { ...pivotState, filter: { filterModel } } as GridState,
+                });
+                await asyncSetTimeout(0);
+                api.setGridOption('rowData', rowData);
+                await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
+                expect(api.getFilterModel()).toEqual(filterModel);
+                expect(api.getState().filter?.filterModel).toEqual(filterModel);
+            }
+        );
+
+        test('an initialState filter on a pivot result column applies once the rows load, with an initial advanced filter model beside it', async () => {
+            const filterModel = { pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 } };
+            const advancedFilterModel = { filterType: 'number', colId: 'gold', type: 'greaterThan', filter: 0 };
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                initialState: { ...pivotState, filter: { filterModel, advancedFilterModel } } as GridState,
+            });
+            await asyncSetTimeout(0);
+            api.setGridOption('rowData', rowData);
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
+            expect(api.getFilterModel()).toEqual(filterModel);
+        });
+
+        test('with rows at creation, setState ignoring the filter leaves an initialState filter on a pivot result column to apply', async () => {
+            const filterModel = { pivot_year_2000_gold: { filterType: 'number', type: 'equals', filter: 66 } };
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData,
+                initialState: { ...pivotState, filter: { filterModel } } as GridState,
+            });
+            api.setState({ ...pivotState } as GridState, ['filter']);
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(1));
+            expect(api.getFilterModel()).toEqual(filterModel);
+        });
+
+        test.each([
+            ['a pivot result column the rows never create', 'pivot_year_1999_gold', ['year'], false],
+            ['a pivot result column in pivot mode without pivot columns', 'pivot_year_2000_gold', [], false],
+            [
+                'a pivot result column, pivot mode turned off as the grid is created',
+                'pivot_year_2000_gold',
+                ['year'],
+                true,
+            ],
+        ] as const)(
+            'an initialState filter on %s is dropped with a warning, the rows unfiltered',
+            async (_, colId, pivotColIds, pivotTurnedOff) => {
+                enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [62] });
+                const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+                const api = gridsManager.createGrid('myGrid', {
+                    columnDefs,
+                    rowData,
+                    initialState: {
+                        ...pivotState,
+                        pivot: { pivotMode: true, pivotColIds: [...pivotColIds] },
+                        filter: { filterModel: { [colId]: { filterType: 'number', type: 'equals', filter: 66 } } },
+                    } as GridState,
+                });
+                if (pivotTurnedOff) {
+                    api.setGridOption('pivotMode', false);
+                }
+                await asyncSetTimeout(0);
+                await asyncSetTimeout(0);
+                const warnings = warn.mock.calls.flat().join(' ');
+                warn.mockRestore();
+                expect({
+                    model: api.getFilterModel(),
+                    rows: api.getDisplayedRowCount(),
+                    warned: warnings.includes('warning #62'),
+                }).toEqual({ model: {}, rows: 2, warned: true });
+            }
+        );
+
+        test.each(['at creation', 'after creation'])(
+            'with the Server-Side Row Model and a datasource given %s, an initialState filter on a pivot result column applies and reaches the request',
+            async (given) => {
+                const requests: unknown[] = [];
+                const filterModel = {
+                    country: { filterType: 'text', type: 'contains', filter: 'Rus' },
+                    '2000_gold': { filterType: 'number', type: 'equals', filter: 66 },
+                };
+                const serverSideDatasource: IServerSideDatasource = {
+                    getRows: (params: IServerSideGetRowsParams) => {
+                        requests.push(params.request.filterModel);
+                        const rows = params.request.groupKeys.length
+                            ? []
+                            : [
+                                  { country: 'Russia', '2000_gold': 66, '2004_gold': 10 },
+                                  { country: 'USA', '2000_gold': 40, '2004_gold': 20 },
+                              ];
+                        params.success({
+                            rowData: rows,
+                            rowCount: rows.length,
+                            pivotResultFields: ['2000_gold', '2004_gold'],
+                        });
+                    },
+                };
+                const api = gridsManager.createGrid('myGrid', {
+                    rowModelType: 'serverSide',
+                    columnDefs: [
+                        { field: 'country', filter: 'agTextColumnFilter' },
+                        { field: 'year' },
+                        { field: 'gold', filter: 'agNumberColumnFilter' },
+                    ],
+                    initialState: { ...pivotState, filter: { filterModel } } as GridState,
+                    ...(given === 'at creation' ? { serverSideDatasource } : {}),
+                });
+                await asyncSetTimeout(0);
+                if (given === 'after creation') {
+                    api.setGridOption('serverSideDatasource', serverSideDatasource);
+                }
+                await waitFor(() => expect(api.getFilterModel()).toEqual(filterModel));
+                await waitFor(() => expect(requests.at(-1)).toEqual(filterModel));
+            }
+        );
 
         test('initialState restores sort on a pivot result column', async () => {
             const api = gridsManager.createGrid('myGrid', {

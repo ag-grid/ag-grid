@@ -1,4 +1,13 @@
-import { KeyCode, _focusInto, _getActiveDomElement, _last, _makeNull, _registerKeyboardFocusEvents } from 'ag-stack';
+import {
+    KeyCode,
+    _focusInto,
+    _getActiveDomElement,
+    _getDeepActiveElement,
+    _isNothingFocused,
+    _last,
+    _makeNull,
+    _registerKeyboardFocusEvents,
+} from 'ag-stack';
 
 import type { ColumnModel } from './columns/columnModel';
 import { isRowNumberCol } from './columns/columnUtils';
@@ -8,10 +17,13 @@ import { BeanStub } from './context/beanStub';
 import type { BeanCollection } from './context/context';
 import type { AgColumn } from './entities/agColumn';
 import { _areCellsEqual, _getFirstRow, _getLastRow, _getRowNode } from './entities/positionUtils';
-import type { CellFocusedParams, CommonCellFocusParams } from './events';
+import type { CellFocusedEvent, CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
 import { _getDomData, _isClientSideLoadingRow } from './gridOptionsUtils';
-import { DOM_DATA_KEY_HEADER_CTRL } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
+import {
+    AbstractHeaderCellCtrl,
+    DOM_DATA_KEY_HEADER_CTRL,
+} from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl } from './headerRendering/cells/column/headerCellCtrl';
 import { getFocusHeaderRowCount, isHeaderPositionEqual } from './headerRendering/headerUtils';
 import type {
@@ -58,10 +70,14 @@ export class FocusService extends BeanStub implements NamedBean {
         this.overlays = beans.overlays;
     }
 
-    private focusedCell: CellPosition | null;
-    private previousCellFocusParams: CellFocusedParams | null;
+    private focusedCell: CellPosition | null = null;
+    private previousCellFocusParams: CellFocusedParams | null = null;
 
-    public focusedHeader: HeaderPosition | null;
+    public focusedHeader: HeaderPosition | null = null;
+    private elementToReveal: HTMLElement | null = null;
+    /** The latest focus waiting for its element to mount (a cell's event or the header asked), and what had focus then */
+    private deferredFocusRequest: CellFocusedEvent | AbstractHeaderCellCtrl | undefined = undefined;
+    private activeAtDeferredFocus: Element | null = null;
     /** the column that had focus before it moved into the advanced filter */
     private advFilterFocusColumn: AgColumn | undefined;
 
@@ -119,6 +135,32 @@ export class FocusService extends BeanStub implements NamedBean {
         }
 
         return this.doesRowOrCellHaveBrowserFocus();
+    }
+
+    /** Records what has focus while a focus waits for its element to mount: once per cell event, anew per header ask. */
+    public deferFocus(request: CellFocusedEvent | AbstractHeaderCellCtrl): void {
+        if (request !== this.deferredFocusRequest || request instanceof AbstractHeaderCellCtrl) {
+            this.deferredFocusRequest = request;
+            this.activeAtDeferredFocus = _getDeepActiveElement(this.beans);
+        }
+    }
+
+    /** `event` while it is still the focus deferred for a cell or row to mount, so focus moving elsewhere drops it */
+    public currentDeferredFocus(event: CellFocusedEvent | null): CellFocusedEvent | undefined {
+        return event && this.isDeferredFocusCurrent(event) ? event : undefined;
+    }
+
+    /** Whether a deferred focus may still be taken: it is the latest, and focus stayed put or is unclaimed. */
+    public isDeferredFocusCurrent(request: CellFocusedEvent | AbstractHeaderCellCtrl): boolean {
+        return (
+            request === this.deferredFocusRequest &&
+            (_getDeepActiveElement(this.beans) === this.activeAtDeferredFocus || _isNothingFocused(this.beans))
+        );
+    }
+
+    /** Whether the grid can take focus without stealing it: focus is unclaimed, or a grid row or cell has it. */
+    public isFocusFreeForGrid(): boolean {
+        return _isNothingFocused(this.beans) || this.doesRowOrCellHaveBrowserFocus();
     }
 
     public onColumnEverythingChanged(): void {
@@ -331,6 +373,42 @@ export class FocusService extends BeanStub implements NamedBean {
         return column === focusedColumn && headerRowIndex === focusedHeaderRowIndex;
     }
 
+    /** Focuses `element`, scrolling it into view once column animations settle, as it may be drawn where it was. */
+    public focusGridElement(element: HTMLElement): void {
+        const colAnimation = this.beans.colAnimation;
+        if (!colAnimation?.isActive()) {
+            element.focus();
+            return;
+        }
+        element.focus({ preventScroll: true });
+        // the latest element focused wins
+        if (!this.elementToReveal) {
+            colAnimation.executeLaterVMTurn(() => this.revealElement());
+        }
+        this.elementToReveal = element;
+    }
+
+    private revealElement(): void {
+        const element = this.elementToReveal;
+        if (!element || !this.isAlive() || !element.contains(_getActiveDomElement(this.beans))) {
+            this.elementToReveal = null;
+            return;
+        }
+        const colAnimation = this.beans.colAnimation;
+        if (colAnimation?.isActive()) {
+            colAnimation.executeLaterVMTurn(() => this.revealElement());
+            return;
+        }
+        // a header drawn anew starts its slide after the animation window opens, so it can outlast it
+        const slides = element.getAnimations?.().filter(isSlide);
+        if (slides?.length) {
+            void Promise.allSettled(slides.map((slide) => slide.finished)).then(() => this.revealElement());
+            return;
+        }
+        this.elementToReveal = null;
+        element.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    }
+
     public focusHeaderPosition(params: {
         headerPosition: HeaderPosition | null;
         direction?: FocusDirection;
@@ -381,6 +459,7 @@ export class FocusService extends BeanStub implements NamedBean {
                         event,
                     };
                     const userResult = userFunc(params);
+                    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- only null means stay; JS callbacks may return undefined
                     headerPosition = userResult === null ? currentPosition : userResult;
                 }
             }
@@ -792,4 +871,9 @@ export class FocusService extends BeanStub implements NamedBean {
     public clearAdvancedFilterColumn(): void {
         this.advFilterFocusColumn = undefined;
     }
+}
+
+function isSlide(animation: Animation): boolean {
+    const property = 'transitionProperty' in animation ? animation.transitionProperty : null;
+    return property === 'left' || property === 'right' || property === 'width';
 }

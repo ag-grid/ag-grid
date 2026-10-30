@@ -202,7 +202,7 @@ export class FontPanel extends Component {
             'size',
             options,
             size == null ? undefined : `${size}`,
-            (newValue) => this.setFont({ fontSize: parseInt(newValue, 10) })
+            (newValue) => this.setFont({ fontSize: Number.parseInt(newValue, 10) })
         );
     }
 

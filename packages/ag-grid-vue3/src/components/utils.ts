@@ -36,6 +36,7 @@ import type {
     GetChartMenuItems,
     GetChartToolbarItems,
     GetChildCount,
+    GetColumnDropZoneMenuItems,
     GetColumnMenuItems,
     GetContextMenuItems,
     GetDataPath,
@@ -524,7 +525,7 @@ export interface Props<TData> {
          * @agModule `ColumnAutoSizeModule`
          */
     autoSizeStrategy?: AutoSizeStrategy<TData>,
-    /** Set to `true` to animate changes to column width when auto-sizing the columns.
+    /** Set to `true` to animate changes to column width from auto-sizing, flex, showing or hiding columns, expanding or collapsing column groups, and applying column state or column definitions.
          * @default false
          */
     animateColumnResizing?: boolean,
@@ -1865,6 +1866,12 @@ export interface Props<TData> {
          * @agModule `ColumnMenuModule` / `ColumnsToolPanelModule`
          */
     getColumnMenuItems?: GetColumnMenuItems<TData>,
+    /** Customise the context menu for pills in Row Group, Pivot and Values drop zones. Return `[]` to hide it.
+         * Called when pills are created to determine menu availability for accessibility, and when opening a menu.
+         * Independent of `columnMenuItems` and `getColumnMenuItems`.
+         * @agModule `RowGroupingPanelModule` / `ColumnsToolPanelModule`
+         */
+    getColumnDropZoneMenuItems?: GetColumnDropZoneMenuItems<TData>,
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
          */
     postProcessPopup?: PostProcessPopup<TData>,
@@ -2529,6 +2536,7 @@ export function getProps() {
         getContextMenuItems: undefined,
         getMainMenuItems: undefined,
         getColumnMenuItems: undefined,
+        getColumnDropZoneMenuItems: undefined,
         postProcessPopup: undefined,
         processUnpinnedColumns: undefined,
         processCellForClipboard: undefined,

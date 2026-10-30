@@ -1,13 +1,13 @@
 import { PresetButton, PresetScroller } from '@ag-website-shared/components/theme-builder/PresetScroller';
 import { usePresetApply } from '@ag-website-shared/components/theme-builder/usePresetApply';
-import { type Preset, applyPreset } from '@ag-website-shared/theming/preset';
+import type { Preset } from '@ag-website-shared/theming/preset';
 import { useStore } from 'jotai';
 import { type CSSProperties, useMemo } from 'react';
 
 import { type Theme, colorSchemeLight, themeQuartz } from 'ag-grid-community';
 
 import { PresetRender } from './PresetRender';
-import { allPresets } from './presets';
+import { type GridPreset, allPresets, applyGridPreset } from './presets';
 
 export const PresetSelector = () => {
     const store = useStore();
@@ -16,7 +16,7 @@ export const PresetSelector = () => {
     const presetThemes = useMemo(() => allPresets.map(buildPresetTheme), []);
 
     const { selectPreset, resetChangesModal } = usePresetApply({
-        apply: (preset: Preset) => applyPreset(store, preset),
+        apply: (preset: GridPreset) => applyGridPreset(store, preset),
         baselineChanges: 1,
     });
 

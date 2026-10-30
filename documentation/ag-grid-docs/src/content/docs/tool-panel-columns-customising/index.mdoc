@@ -87,6 +87,7 @@ The renderer receives either `column` or `columnGroup`, together with the resolv
 {% note %}
 Column search, tooltips, drag labels and accessibility announcements continue to use `displayName`, rather than text extracted from the renderer. Column selection rows have a fixed height, so renderer content should remain inline and fit within the configured list item height. Clicking the rendered label retains the normal selection behaviour; interactive elements should stop event propagation when they should not toggle the column.
 {% /note %}
+
 ## Expand / Collapse Column Groups
 
 Call `expandColumnGroups()` and `collapseColumnGroups()` on the [Columns Tool Panel instance](./tool-panel-columns-configuration/#columns-tool-panel-instance) to expand or collapse all of its column groups, or pass `groupId`s to target individual groups; see [Expand / Collapse API](#expand--collapse-api). To start with all column groups collapsed, set `contractColumnSelection` in `toolPanelParams` instead.
@@ -103,7 +104,7 @@ The expanded column groups are saved and restored as part of [Grid State](./grid
 
 ## Context Menu
 
-Right-clicking a column or column group label opens a menu with items for grouping, aggregating and pivoting. The menu can be customised, including with custom menu items.
+Right-clicking or long-pressing a column or column group label opens a menu with items for moving, grouping, aggregating and pivoting. The menu can be customised, including with custom menu items.
 
 ### Built-In Menu Items
 
@@ -113,8 +114,16 @@ The following menu items are shown by default based on the column's configuratio
 - `rowGroup`: "Group by _column_" or "Un-Group by _column_". Appears only when the column allows row grouping.
 - `value`: "Add _column_ to values" or "Remove _column_ from values". Adds or removes the column as an aggregated value (the **Values** section). Appears only when the column allows aggregation.
 - `pivot`: "Add _column_ to labels" or "Remove _column_ from labels". Adds or removes the column as a pivot column label (the **Column Labels** section). Appears only in pivot mode when the column allows pivoting.
+- `moveUp`: "Move Up". Moves the column or group one available position up the list.
+- `moveDown`: "Move Down". Moves the column or group one available position down the list.
 
 For a column group, `rowGroup`, `value` and `pivot` apply to every child column that individually allows the action; `scrollIntoView` scrolls only the first visible child column into view.
+
+The move items also appear in the [Column Chooser](./column-chooser/). They are hidden in pivot mode but are unaffected by `functionsReadOnly`.
+
+Movement follows [Column Moving](./column-moving/) and [tool panel reordering](./tool-panel-columns-configuration/#suppress-column-reordering) restrictions. In deferred mode, changes wait for **Apply**.
+
+Customise labels using the `moveUp` / `moveDown` [locale keys](./localisation/) and arrows using the `menuMoveUp` / `menuMoveDown` [icon keys](./custom-icons/).
 
 With [Read Only Functions](./tool-panel-columns-configuration/#read-only-functions), `rowGroup`, `value` and `pivot` are not shown.
 
@@ -130,6 +139,29 @@ The example below shows both the built-in items and this customisation. Note the
 - `colDef.columnMenuItems` applies to every column menu, so the Silver and Bronze changes also apply to their column header menu and Column Chooser menu. Other columns keep their defaults in those menus, as `getColumnMenuItems()` returns `params.defaultItems` for those sources.
 
 {% gridExampleRunner title="Customising the Tool Panel Menu" name="customising-tool-panel-menu" exampleHeight=670 /%}
+
+### Drop Zone Menus
+
+Move Up and Move Down reorder pills within Row Groups, Values and Column Labels, not grid columns. Horizontal panels use Move Left and Move Right.
+
+Right-click a pill to open its menu. With a pill focused, **Shift+F10** or the context-menu key opens the same menu.
+
+Move items follow drag-and-drop eligibility and [group locking](./grouping-group-panel/#prevent-changes-to-group-order). They are hidden with `functionsReadOnly`, but pivot mode and column-layout restrictions do not block them.
+
+Labels use the `moveUp`, `moveDown`, `moveLeft`, `moveRight` [locale keys](./localisation/); arrows use the `menuMoveUp`, `menuMoveDown`, `menuMoveLeft`, `menuMoveRight` [icon keys](./custom-icons/).
+
+Use `getColumnDropZoneMenuItems` to filter `defaultItems`, add custom items or return `[]` to hide a menu. Its `source` is `'rowGroup'`, `'pivot'` or `'aggregation'`. For example, hide the Values menu and keep the others:
+
+```javascript
+const gridOptions = {
+    getColumnDropZoneMenuItems: ({ source, defaultItems }) =>
+        source === 'aggregation' ? [] : defaultItems,
+};
+```
+
+Keep the callback free of side effects; it may run before the menu opens. Column-menu callbacks do not configure drop-zone menus.
+
+{% apiDocumentation source="grid-options/properties.json" section="accessories" names=["getColumnDropZoneMenuItems"] /%}
 
 {% partial file="../shared-partials/_drag-and-drop-image-component.mdoc" /%}
 

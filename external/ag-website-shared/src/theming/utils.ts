@@ -195,6 +195,7 @@ const cssPropertyForParamType = {
     colorScheme: 'colorScheme',
     length: 'paddingLeft',
     scale: 'lineHeight',
+    ratio: 'lineHeight',
     border: 'borderLeft',
     borderStyle: 'borderTopStyle',
     shadow: 'boxShadow',
@@ -202,4 +203,5 @@ const cssPropertyForParamType = {
     fontFamily: 'fontFamily',
     fontWeight: 'fontWeight',
     duration: 'transitionDuration',
+    scrollbarWidth: 'scrollbarWidth',
 } satisfies Record<ParamType, keyof CSSStyleDeclaration>;

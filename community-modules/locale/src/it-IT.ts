@@ -340,6 +340,10 @@ export const AG_GRID_LOCALE_IT_IT = {
     enabled: 'Abilitato',
 
     // Menu
+    moveLeft: 'Sposta a sinistra',
+    moveRight: 'Sposta a destra',
+    moveUp: 'Sposta in alto',
+    moveDown: 'Sposta in basso',
     pinColumn: 'Blocca Colonna',
     pinLeft: 'Blocca a Sinistra',
     pinRight: 'Blocca a Destra',
@@ -768,6 +772,7 @@ export const AG_GRID_LOCALE_IT_IT = {
     ariaRowSelect: 'Premi SPAZIO per selezionare questa riga',
     ariaRowSelectionDisabled: 'La selezione della riga è disabilitata per questa riga',
     ariaSearch: 'Cerca',
+    ariaSortPriority: 'Priorità di ordinamento ${priority} di ${count}',
     ariaSortableColumn: 'Premi INVIO per ordinare',
     ariaSortableColumnWithCellSelection: 'Premi ALT INVIO per ordinare',
     ariaToggleVisibility: 'Premi SPAZIO per attivare/disattivare la visibilità',
@@ -804,6 +809,9 @@ export const AG_GRID_LOCALE_IT_IT = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'crescente assoluto',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'decrescente assoluto',
     ariaLabelDialog: 'Dialogo',
+    ariaLabelClose: 'Chiudi',
+    ariaLabelMaximize: 'Ingrandisci',
+    ariaLabelRestore: 'Ripristina',
     ariaLabelColumnMenu: 'Menù Colonna',
     ariaLabelColumnFilter: 'Filtro Colonna',
     ariaLabelSelectField: 'Seleziona Campo',

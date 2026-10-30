@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_NL_NL = {
     enabled: 'Ingeschakeld',
 
     // Menu
+    moveLeft: 'Naar links verplaatsen',
+    moveRight: 'Naar rechts verplaatsen',
+    moveUp: 'Omhoog verplaatsen',
+    moveDown: 'Omlaag verplaatsen',
     pinColumn: 'Kolom vastzetten',
     pinLeft: 'Links vastzetten',
     pinRight: 'Rechts vastzetten',
@@ -763,6 +767,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaRowSelect: 'Druk op SPATIE om deze rij te selecteren',
     ariaRowSelectionDisabled: 'Rijselectie is uitgeschakeld voor deze rij',
     ariaSearch: 'Zoeken',
+    ariaSortPriority: 'Sorteerprioriteit ${priority} van ${count}',
     ariaSortableColumn: 'Druk op ENTER om te sorteren',
     ariaSortableColumnWithCellSelection: 'Druk op ALT ENTER om te sorteren',
     ariaToggleVisibility: 'Druk op SPATIE om zichtbaarheid te schakelen',
@@ -799,6 +804,9 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absoluut oplopend',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absoluut aflopend',
     ariaLabelDialog: 'Dialoog',
+    ariaLabelClose: 'Sluiten',
+    ariaLabelMaximize: 'Maximaliseren',
+    ariaLabelRestore: 'Herstellen',
     ariaLabelColumnMenu: 'Kolommenu',
     ariaLabelColumnFilter: 'Kolomfilter',
     ariaLabelSelectField: 'Selectievak',

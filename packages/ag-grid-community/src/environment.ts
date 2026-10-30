@@ -112,7 +112,7 @@ export class Environment
         const oldRowHeight = eRootDiv.style.getPropertyValue('--ag-line-height').trim();
         const height = this.gos.get('rowHeight');
 
-        if (height == null || isNaN(height) || !isFinite(height)) {
+        if (height == null || Number.isNaN(Number(height)) || !Number.isFinite(Number(height))) {
             if (oldRowHeight !== null) {
                 eRootDiv.style.setProperty('--ag-line-height', null);
             }

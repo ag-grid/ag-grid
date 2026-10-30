@@ -17,6 +17,13 @@ export interface MenuItemLeafDef<TData = any, TContext = any> {
     action?: (params: IMenuActionParams<TData, TContext>) => void;
     /** Set to true to provide a check beside the option. */
     checked?: boolean;
+    /**
+     * The aria role for a checkable item. Set to `'menuitemradio'` when the item is one of a set of mutually exclusive choices,
+     * or `'menuitem'` when the item is not part of a checkable group, so the check is not announced as a checked state.
+     * Ignored when `checked` is `undefined`, as the item is then always a `'menuitem'`.
+     * @default 'menuitemcheckbox'
+     */
+    menuItemRole?: 'menuitem' | 'menuitemcheckbox' | 'menuitemradio';
     /** The icon to display, either a DOM element or HTML string. */
     icon?: Element | string;
     /** CSS classes to apply to the menu item. */
@@ -42,7 +49,7 @@ export interface MenuItemDef<TData = any, TContext = any> extends MenuItemLeafDe
     subMenuRole?: 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog';
     /**
      * Provide a custom menu item component.
-     * See [Menu Item Component](https://www.ag-grid.com/javascript-data-grid/component-menu-item/#implementing-a-menu-item-component) for framework specific implementation details.
+     * See [Menu Item Component](https://www.ag-grid.com/javascript-data-grid/component-menu-item/) for framework specific implementation details.
      */
     menuItem?: any;
     /**
@@ -150,6 +157,8 @@ export interface IMenuItemComp<TData = any, TContext = any>
     extends IComponent<IMenuItemParams<TData, TContext>>, IMenuItem {}
 
 export type DefaultMenuItem =
+    | 'moveLeft'
+    | 'moveRight'
     | 'pinSubMenu'
     | 'pinLeft'
     | 'pinRight'
@@ -197,7 +206,10 @@ export type DefaultMenuItem =
  * The concrete item shown for a token depends on the column's current state (e.g. `rowGroup`
  * renders "Group by" or "Un-Group by").
  */
-export type DefaultToolPanelItem = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot';
+export type DefaultToolPanelItem = 'scrollIntoView' | 'rowGroup' | 'value' | 'pivot' | 'moveUp' | 'moveDown';
+
+/** Built-in menu items for column drop-zone pills. */
+export type DefaultColumnDropZoneMenuItem = 'moveUp' | 'moveDown' | 'moveLeft' | 'moveRight' | 'separator';
 
 /**
  * The complete set of built-in menu item tokens usable with `columnMenuItems` / `getColumnMenuItems`

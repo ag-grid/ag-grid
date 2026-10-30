@@ -61,15 +61,14 @@ export class FlattenStage extends BeanStub implements _IRowNodeFlattenStage, Nam
             atLeastOneRowPresent &&
             grandTotalRow;
 
+        let footerNode: RowNode | undefined;
         if (includeGrandTotalRow) {
-            const footerNode = _createRowNodeFooter(rootNode, beans);
-            const pinnedFloat = _getGrandTotalPinnedFloat(grandTotalRow);
-            if (pinnedFloat) {
-                this.beans.pinnedRowModel?.setGrandTotalPinned(pinnedFloat);
-            } else {
+            footerNode = _createRowNodeFooter(rootNode, beans);
+            if (!_getGrandTotalPinnedFloat(grandTotalRow)) {
                 this.addRowNodeToRowsToDisplay(details, footerNode, result, 0, grandTotalRow === 'top');
             }
         }
+        beans.pinnedRowModel?.setGrandTotalNode(footerNode);
 
         return result;
     }

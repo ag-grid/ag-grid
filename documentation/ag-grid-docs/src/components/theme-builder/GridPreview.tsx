@@ -7,9 +7,15 @@ import { useApplicationConfigAtom } from '@ag-website-shared/theming/application
 import { useRenderedTheme } from '@ag-website-shared/theming/rendered-theme';
 import styled from '@emotion/styled';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
-import { memo, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 
-import { AllCommunityModule, ClientSideRowModelModule, type GridState, ModuleRegistry } from 'ag-grid-community';
+import {
+    AllCommunityModule,
+    type ChartModel,
+    ClientSideRowModelModule,
+    type GridState,
+    ModuleRegistry,
+} from 'ag-grid-community';
 import {
     AdvancedFilterModule,
     CellSelectionModule,
@@ -18,6 +24,7 @@ import {
     ColumnsToolPanelModule,
     ContextMenuModule,
     FiltersToolPanelModule,
+    FindModule,
     IntegratedChartsModule,
     PivotModule,
     RichSelectModule,
@@ -26,10 +33,12 @@ import {
     RowNumbersModule,
     SetFilterModule,
     StatusBarModule,
+    ToolbarModule,
 } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
 import { GridConfigDropdownButton } from './GridConfigDropdown';
+import { CHART_THEMES, CHART_THEME_NAME, useChartTheme } from './chartTheme';
 import { useGridOptions } from './grid-config-atom';
 import { allPresets } from './presets';
 
@@ -51,7 +60,27 @@ ModuleRegistry.registerModules([
     StatusBarModule,
     PivotModule,
     RowNumbersModule,
+    FindModule,
+    ToolbarModule,
 ]);
+
+// Chart themes are initial grid options, so a change rebuilds the grid; this spares every colour picker tick.
+const CHART_THEME_DEBOUNCE_MS = 300;
+
+const useDebouncedValue = <T,>(value: T, delay: number): T => {
+    const [debounced, setDebounced] = useState(value);
+    useEffect(() => {
+        const timeout = setTimeout(() => setDebounced(value), delay);
+        return () => clearTimeout(timeout);
+    }, [value, delay]);
+    return debounced;
+};
+
+interface RebuiltGrid {
+    previewKey: string;
+    state: GridState;
+    chartModels: ChartModel[];
+}
 
 const GridPreview = () => {
     const { config, gridOptions, previewKey } = useGridOptions();
@@ -65,12 +94,23 @@ const GridPreview = () => {
 
     const theme = useRenderedTheme();
 
+    const chartTheme = useDebouncedValue(useChartTheme(), CHART_THEME_DEBOUNCE_MS);
+    const customChartThemes = useMemo(() => ({ [CHART_THEME_NAME]: chartTheme }), [chartTheme]);
+    const chartThemeKey = useMemo(() => JSON.stringify(chartTheme), [chartTheme]);
+    // A grid rebuilt only for a new chart theme comes back as it was, open charts included.
+    const rebuiltGridRef = useRef<RebuiltGrid | undefined>(undefined);
+
     return (
         <Wrapper style={{ backgroundColor }}>
             <LoadFontFamilyMenuFonts />
             <GridConfigDropdownButton />
             <ColorPickerWrapper>
-                <ColorPicker value={backgroundColor} onChange={setBackground} preventTransparency />
+                <ColorPicker
+                    value={backgroundColor}
+                    onChange={setBackground}
+                    preventTransparency
+                    ariaLabel="Page background color"
+                />
                 <StyledInfoTooltip title="Page background color - this is not part of your theme" />
             </ColorPickerWrapper>
             <GridSizer>
@@ -85,8 +125,25 @@ const GridPreview = () => {
                             <AgGridReact
                                 theme={theme}
                                 loadThemeGoogleFonts={true}
+                                customChartThemes={customChartThemes}
+                                chartThemes={CHART_THEMES}
+                                onGridPreDestroyed={({ api }) => {
+                                    rebuiltGridRef.current = {
+                                        previewKey,
+                                        state: api.getState(),
+                                        chartModels: api.getChartModels() ?? [],
+                                    };
+                                }}
                                 onGridReady={({ api }) => {
-                                    if (config.showIntegratedChartPopup) {
+                                    const rebuilt = rebuiltGridRef.current;
+                                    rebuiltGridRef.current = undefined;
+                                    if (rebuilt?.previewKey === previewKey) {
+                                        api.setState(rebuilt.state);
+                                        // A saved palette would override the newly configured one.
+                                        rebuilt.chartModels.forEach((chartModel) =>
+                                            api.restoreChart({ ...chartModel, chartPalette: undefined })
+                                        );
+                                    } else if (config.showIntegratedChartPopup) {
                                         api.createRangeChart({
                                             cellRange: {
                                                 rowStartIndex: 0,
@@ -138,7 +195,7 @@ const GridPreview = () => {
                                             : api.getState().cellSelection,
                                     }));
                                 }}
-                                key={previewKey}
+                                key={`${previewKey}${chartThemeKey}`}
                                 {...gridOptions}
                             />
                         )}

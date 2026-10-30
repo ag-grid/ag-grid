@@ -2,6 +2,7 @@ export * from './polyfills/objectUrls';
 export * from './polyfills/canvasPolyfill';
 export * from './polyfills/mockGridLayout';
 export * from './polyfills/mockResizeObserver';
+export * from './polyfills/focusScroll';
 export * from './polyfills/filterLayoutMock';
 export * from './widgets/dropdowns';
 export * from './widgets/inputs';

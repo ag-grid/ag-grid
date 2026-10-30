@@ -544,7 +544,7 @@ export class GridChartComp extends Component {
     }
 
     private getThemeName(): string {
-        const availableChartThemes = this.gos.get('chartThemes') || DEFAULT_THEMES;
+        const availableChartThemes = this.gos.get('chartThemes') ?? DEFAULT_THEMES;
 
         if (availableChartThemes.length === 0) {
             throw this.beans.log.errorToThrow(254);
@@ -586,7 +586,7 @@ export class GridChartComp extends Component {
         const modelType = this.chartController.isCrossFilterChart() ? 'crossFilter' : this.getChartModel().modelType;
 
         // standalone requires that `undefined` / `null` values are supplied as `{}`
-        const chartThemeOverrides = this.gos.get('chartThemeOverrides') || {};
+        const chartThemeOverrides = this.gos.get('chartThemeOverrides') ?? {};
 
         this.update({
             type: `${modelType}ChartUpdate`,

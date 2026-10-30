@@ -1118,9 +1118,12 @@ describe('row spanning', () => {
             expect(spannedCell!.classList.contains('ag-spanned-cell')).toBe(true);
             expect(spannedCell!.getAttribute('aria-rowspan')).toBe('2');
 
-            // Covered rows do not render the spanning column in the regular center container.
-            expect(gridEl.querySelector('.ag-center-cols-container [row-index="0"] [col-id="name"]')).toBeNull();
-            expect(gridEl.querySelector('.ag-center-cols-container [row-index="1"] [col-id="name"]')).toBeNull();
+            // The covered rows are drawn, without the spanning column.
+            for (const rowIndex of ['0', '1']) {
+                const row = gridEl.querySelector(`.ag-row[row-index="${rowIndex}"]`);
+                expect(row).not.toBeNull();
+                expect(row!.querySelector('[col-id="name"]')).toBeNull();
+            }
 
             // The non-spanning row renders its column normally, without the span class.
             const row2NameCell = gridEl.querySelector('[row-index="2"] [col-id="name"]');

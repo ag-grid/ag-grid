@@ -9,6 +9,7 @@ export type {
     ImageValue,
     LengthValue,
     ScaleValue,
+    ScrollbarWidthValue,
     ShadowValue,
 } from 'ag-stack';
 export { getParamType, paramValueToCss } from 'ag-stack';
@@ -18,10 +19,12 @@ export type ParamType =
     | 'color'
     | 'length'
     | 'scale'
+    | 'ratio'
     | 'borderStyle'
     | 'border'
     | 'shadow'
     | 'image'
     | 'fontFamily'
     | 'fontWeight'
-    | 'duration';
+    | 'duration'
+    | 'scrollbarWidth';

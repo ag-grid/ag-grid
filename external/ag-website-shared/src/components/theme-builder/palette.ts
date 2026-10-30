@@ -1,6 +1,6 @@
 /**
  * The series palette: an ordered list of fill/stroke pairs, plus the three
- * financial accents. Host-agnostic, since AG Charts' `AgChartTheme.palette` and
+ * semantic accents. Host-agnostic, since AG Charts' `AgChartTheme.palette` and
  * Studio's numbered theme params both reduce to it, each adapting at its own
  * boundary. Colours are plain strings - `fills` also admits gradients and
  * patterns, which hosts narrow away rather than the editor defending against.
@@ -226,7 +226,7 @@ const toThemeAccent = ({ fill, stroke }: PaletteAccent, strokesEnabled: boolean)
 
 /**
  * A stored palette, with anything it has no opinion on taken from another. The
- * financial accents are why: a palette carrying none of `up`, `down` or
+ * semantic accents are why: a palette carrying none of `up`, `down` or
  * `neutral` is an *indexed* palette to AG Charts, which draws rising candles
  * hollow. Absent, not empty - a cleared colour is an opinion, and stays cleared.
  */
@@ -234,3 +234,42 @@ export const withPaletteDefaults = (palette: Palette, defaults: Palette): Palett
 
 export const paletteIsEmpty = (palette: Palette): boolean =>
     palette.fills.length === 0 && palette.strokes.length === 0 && !palette.up && !palette.down && !palette.neutral;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+    typeof value === 'object' && value != null && !Array.isArray(value);
+
+const readColor = (value: unknown): string | undefined => (typeof value === 'string' ? value : undefined);
+
+const readAccent = (value: unknown): PaletteAccent | undefined =>
+    isRecord(value) ? { fill: readColor(value.fill), stroke: readColor(value.stroke) } : undefined;
+
+/**
+ * An AG Charts theme palette in the editor's shape, the inverse of
+ * `toThemePalette`: fills no colour picker can show are dropped with their
+ * strokes, and strokes that all match their fills read back as strokes off.
+ */
+export const fromThemePalette = (themePalette: unknown): Palette | undefined => {
+    if (!isRecord(themePalette)) {
+        return undefined;
+    }
+    const fills = Array.isArray(themePalette.fills) ? themePalette.fills : [];
+    const strokes = Array.isArray(themePalette.strokes) ? themePalette.strokes : [];
+    const colors: SeriesColor[] = [];
+    fills.forEach((fill, index) => {
+        if (typeof fill === 'string') {
+            colors.push({ fill, stroke: readColor(strokes[index]) ?? fill });
+        }
+    });
+    const strokesOff = colors.length > 0 && colors.every(({ fill, stroke }) => fill === stroke);
+    const palette = fromSeriesColors(
+        {
+            ...EMPTY_PALETTE,
+            ...(strokesOff ? { strokesEnabled: false } : {}),
+            up: readAccent(themePalette.up),
+            down: readAccent(themePalette.down),
+            neutral: readAccent(themePalette.neutral),
+        },
+        colors
+    );
+    return paletteIsEmpty(palette) ? undefined : palette;
+};

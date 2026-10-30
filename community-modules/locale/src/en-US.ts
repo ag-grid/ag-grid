@@ -328,6 +328,10 @@ export const AG_GRID_LOCALE_EN_US = {
     enabled: 'Enabled',
 
     // Menu
+    moveLeft: 'Move Left',
+    moveRight: 'Move Right',
+    moveUp: 'Move Up',
+    moveDown: 'Move Down',
     pinColumn: 'Pin Column',
     pinLeft: 'Pin Left',
     pinRight: 'Pin Right',
@@ -765,6 +769,7 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaRowSelect: 'Press SPACE to select this row',
     ariaRowSelectionDisabled: 'Row Selection is disabled for this row',
     ariaSearch: 'Search',
+    ariaSortPriority: 'Sort priority ${priority} of ${count}',
     ariaSortableColumn: 'Press ENTER to sort',
     ariaSortableColumnWithCellSelection: 'Press ALT ENTER to sort',
     ariaToggleVisibility: 'Press SPACE to toggle visibility',
@@ -801,6 +806,10 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolute descending',
 
     ariaLabelDialog: 'Dialog',
+    ariaLabelClose: 'Close',
+    // dialog title bar toggle: enlarges the dialog to fill the grid, then returns it to its previous size
+    ariaLabelMaximize: 'Maximize',
+    ariaLabelRestore: 'Restore',
 
     ariaLabelColumnMenu: 'Column Menu',
     ariaLabelColumnFilter: 'Column Filter',

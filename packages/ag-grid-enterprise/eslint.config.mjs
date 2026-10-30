@@ -1,9 +1,11 @@
+import noMismatchedGenericArgs from '../../eslint-rules/no-mismatched-generic-args.mjs';
 import rootESLint, { sonarjsConfig } from '../../eslint.config.mjs';
 
 export default [
     ...rootESLint,
     ...sonarjsConfig,
     {
+        plugins: { ag: { rules: { 'no-mismatched-generic-args': noMismatchedGenericArgs } } },
         languageOptions: {
             parserOptions: {
                 // NOTE: Loading tsconfig.json references does not work, so
@@ -13,6 +15,7 @@ export default [
             },
         },
         rules: {
+            'ag/no-mismatched-generic-args': 'error',
             'no-fallthrough': 'error',
             'no-case-declarations': 'error',
             'no-prototype-builtins': 'error',
@@ -35,6 +38,9 @@ export default [
             '@typescript-eslint/no-this-alias': 'off',
             '@typescript-eslint/no-for-in-array': 'error',
             '@typescript-eslint/no-floating-promises': 'error',
+            '@typescript-eslint/prefer-regexp-exec': 'error',
+            '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'error',
+            '@typescript-eslint/prefer-nullish-coalescing': ['error', { ignorePrimitives: true }],
             'no-restricted-properties': [
                 'error',
                 { property: 'innerText', message: 'Prefer textContent where possible.' },

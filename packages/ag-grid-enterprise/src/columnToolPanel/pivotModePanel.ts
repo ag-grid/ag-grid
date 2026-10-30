@@ -3,8 +3,8 @@ import { RefPlaceholder } from 'ag-stack';
 import type { ElementParams, GridCheckbox } from 'ag-grid-community';
 import { AgToggleButtonSelector, Component } from 'ag-grid-community';
 
+import type { ColumnToolPanelChildParams } from './columnToolPanel';
 import { isDeferredMode } from './toolPanelDeferredUiUtils';
-import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
 
 const PivotModePanelElement: ElementParams = {
     tag: 'div',
@@ -21,7 +21,7 @@ export class PivotModePanel extends Component {
     private readonly cbPivotMode: GridCheckbox = RefPlaceholder;
 
     constructor(
-        private readonly params: ColumnStateUpdateParams,
+        private readonly params: ColumnToolPanelChildParams,
         private readonly onPivotModeValueChanged?: () => void
     ) {
         super();

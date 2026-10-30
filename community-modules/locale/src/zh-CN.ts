@@ -336,6 +336,10 @@ export const AG_GRID_LOCALE_ZH_CN = {
     enabled: '启用',
 
     // Menu
+    moveLeft: '向左移动',
+    moveRight: '向右移动',
+    moveUp: '向上移动',
+    moveDown: '向下移动',
     pinColumn: '固定列',
     pinLeft: '固定在左侧',
     pinRight: '固定在右侧',
@@ -759,6 +763,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     ariaRowSelect: '按 SPACE 选择此行',
     ariaRowSelectionDisabled: '此行的行选择功能被禁用',
     ariaSearch: '搜索',
+    ariaSortPriority: '排序优先级为第 ${priority} 位，共 ${count} 位',
     ariaSortableColumn: '按 ENTER 排序',
     ariaSortableColumnWithCellSelection: '按 ALT ENTER 排序',
     ariaToggleVisibility: '按 Space 切换可见性',
@@ -795,6 +800,9 @@ export const AG_GRID_LOCALE_ZH_CN = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: '绝对升序',
     ariaDropZoneColumnComponentSortAbsoluteDescending: '绝对降序',
     ariaLabelDialog: '对话框',
+    ariaLabelClose: '关闭',
+    ariaLabelMaximize: '最大化',
+    ariaLabelRestore: '还原',
     ariaLabelColumnMenu: '列菜单',
     ariaLabelColumnFilter: '列过滤器',
     ariaLabelSelectField: '选择字段',

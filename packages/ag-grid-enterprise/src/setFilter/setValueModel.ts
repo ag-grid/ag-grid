@@ -18,7 +18,7 @@ import { mapFormattedKeys, setFilterNullIfBlank, treeDataOrGroupingComparator } 
 
 type SetValueModelEvent = 'availableValuesChanged' | 'loadingStart' | 'loadingEnd' | 'destroyed';
 
-const DEFAULT_MAX_PRESERVED_VALUES = 100;
+const DEFAULT_MAX_PRESERVED_VALUES = 1000;
 
 enum SetFilterModelValuesType {
     PROVIDED_LIST,
@@ -660,7 +660,7 @@ const isOrderChanged = (
         oldParams.colDef.comparator !== newParams.colDef.comparator ||
         oldFilterParams.treeList !== newFilterParams.treeList ||
         // the order reads only whether there is one; the data type builds its own afresh with every definition
-        !oldFilterParams.treeListPathGetter !== !newFilterParams.treeListPathGetter
+        Boolean(oldFilterParams.treeListPathGetter) !== Boolean(newFilterParams.treeListPathGetter)
     );
 };
 

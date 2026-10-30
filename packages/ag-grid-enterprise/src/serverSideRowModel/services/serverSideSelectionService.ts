@@ -240,7 +240,7 @@ export class ServerSideSelectionService extends BaseSelectionService implements 
 
         // if the node was selected but node is not selectable, we deselect the node.
         // (could be due to user applying selected state directly, or a change in selectable)
-        if (isNodeSelected != false && !rowNode.selectable) {
+        if (isNodeSelected !== false && !rowNode.selectable) {
             this.selectionStrategy.setNodesSelected({
                 nodes: [rowNode],
                 newValue: false,

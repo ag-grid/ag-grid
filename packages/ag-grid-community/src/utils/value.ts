@@ -14,3 +14,11 @@ export function _getValueUsingDotPath(data: any, fields: string[]): any {
     }
     return currentObject;
 }
+
+/**
+ * True when `field` reaches `__proto__`: as any segment of its pre-split `fieldPath`, or as the whole field when it
+ * has no path. Such fields are neither read nor written.
+ */
+export function _isProtoField(field: string, fieldPath: string[] | null): boolean {
+    return fieldPath ? fieldPath.includes('__proto__') : field === '__proto__';
+}

@@ -1,5 +1,4 @@
 import { BeanStub } from '../context/beanStub';
-import type { Context } from '../context/context';
 
 /**
  * An EmptyBean can be used to manage the lifecycle of event handlers that are tied to a component instead of a controller.
@@ -10,20 +9,23 @@ import type { Context } from '../context/context';
  */
 export class EmptyBean extends BeanStub {}
 
-/**
- * Sets up the logic for managing the lifecycle of a compBean against a ctrl so that we always cleanup
- * our listeners and destroy the compBean when the ctrl is destroyed no matter which is destroyed first.
- * Closely related to React StrictMode as the compBean is provided from React so it can double render
- * and correctly cleanup listeners from the first render.
- * @param ctrl Ctrl that has setComp called against it
- * @param ctx  Context to use to destroy the compBean
- * @param compBean Optional compBean to use, if not provided, the ctrl will be used
- * @returns The compBean if provided, otherwise the ctrl
- */
-export function setupCompBean(ctrl: BeanStub<any>, ctx: Context, compBean: BeanStub<any> | undefined): BeanStub<any> {
-    if (compBean) {
-        // If the ctrl is destroyed first, we need to destroy the compBean
-        ctrl.addDestroyFunc(() => ctx.destroyBean(compBean));
-    }
+/** A ctrl whose comp may register on React's per-mount bean, which the ctrl destroys if it dies first. */
+export interface CompBeanOwner {
+    /** The last mount's bean; once that comp unmounts it is destroyed and holds nothing but grid singletons. */
+    compBean: BeanStub<any> | undefined;
+}
+
+/** Where the comp's listeners register: React's bean for this mount, or the ctrl for a vanilla comp, which dies with it. */
+export function setupCompBean(ctrl: BeanStub<any> & CompBeanOwner, compBean: BeanStub<any> | undefined): BeanStub<any> {
+    ctrl.compBean = compBean;
     return compBean ?? ctrl;
+}
+
+/** Destroys the comp's bean if the comp is still mounted as its ctrl dies; an unmounted comp destroyed its own. */
+export function destroyCompBean(ctrl: CompBeanOwner): void {
+    const compBean = ctrl.compBean;
+    ctrl.compBean = undefined;
+    if (compBean?.isAlive()) {
+        compBean.destroy();
+    }
 }

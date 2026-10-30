@@ -161,9 +161,7 @@ export class GroupEditService extends BeanStub implements _IGroupEditService {
                 newParent = target;
             }
 
-            if (!newParent) {
-                newParent = target?.parent ?? rootNode;
-            }
+            newParent ??= target?.parent ?? rootNode;
         }
 
         if (!fromNudge && target && canStartGroup && !(target.group && target.expanded)) {

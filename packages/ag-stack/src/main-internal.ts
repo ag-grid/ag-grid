@@ -33,7 +33,11 @@ export type {
 } from './interfaces/agComponent';
 export type { AgCoreBean, AgSingletonBean } from './interfaces/agCoreBean';
 export type { AgCoreBeanCollection } from './interfaces/agCoreBeanCollection';
-export type { AgFrameworkOverrides, FrameworkOverridesIncomingSource } from './interfaces/agFrameworkOverrides';
+export type {
+    AgFrameworkOverrides,
+    AgListenerWrapper,
+    FrameworkOverridesIncomingSource,
+} from './interfaces/agFrameworkOverrides';
 export type { AgCheckboxChangedEvent, AgStylesChangedEvent, BaseEvents } from './interfaces/baseEvents';
 export type { BaseProperties } from './interfaces/baseProperties';
 export type { AfterGuiAttachedParams } from './interfaces/iAfterGuiAttachedParams';
@@ -137,6 +141,7 @@ export {
     _setAriaMultiSelectable,
     _setAriaOrientation,
     _setAriaPosInSet,
+    _setAriaPressed,
     _setAriaReadOnly,
     _setAriaRole,
     _setAriaRowCount,
@@ -162,11 +167,9 @@ export {
 export { _parseBigIntOrNull } from './utils/bigInt';
 export {
     _getMaxDivHeight,
-    _getScrollbarWidth,
     _getTabIndex,
     _isBrowserFirefox,
     _isBrowserSafari,
-    _isInvisibleScrollbar,
     _isIOSUserAgent,
     _isMacOsUserAgent,
     _isRealCssEngine,
@@ -182,7 +185,9 @@ export {
 } from './utils/date';
 export {
     _getActiveDomElement,
+    _getDeepActiveElement,
     _getDocument,
+    _getElementRootNode,
     _getPageBody,
     _getRootNode,
     _getWindow,
@@ -249,7 +254,7 @@ export {
     _registerKeyboardFocusEvents,
     _scrollHorizontallyToShow,
 } from './utils/focus';
-export { _batchCall, _debounce, _doOnce, _throttle, _waitUntil } from './utils/function';
+export { _batchCall, _debounce, _doOnce, _throttle } from './utils/function';
 export { _fuzzySuggestions } from './utils/fuzzyMatch';
 export {
     _defaultComparator,
@@ -269,6 +274,7 @@ export {
     _escapeString,
     _isExpressionString,
     _isStringLargerThan,
+    _splitBracketed,
     _toString,
 } from './utils/string';
 export { _getValueUsingDotField } from './utils/value';

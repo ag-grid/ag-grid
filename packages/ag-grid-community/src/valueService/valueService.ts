@@ -387,7 +387,7 @@ export class ValueService extends BeanStub implements NamedBean {
                 } else if (data) {
                     // field read deferred to here — skipped entirely on the valueGetter branch above
                     const field = column.field;
-                    if (field) {
+                    if (field && !column.fieldHasProtoKey) {
                         const fieldPath = column.fieldPath;
                         treeValue = fieldPath ? _getValueUsingDotPath(data, fieldPath) : data[field];
                     }
@@ -439,7 +439,7 @@ export class ValueService extends BeanStub implements NamedBean {
             return ignoreSsrmAggData ? undefined : this.executeValueGetter(valueGetter, data, column, rowNode);
         }
         const field = column.field;
-        if (!field || !data || ignoreSsrmAggData) {
+        if (!field || !data || ignoreSsrmAggData || column.fieldHasProtoKey) {
             return undefined;
         }
         const fieldPath = column.fieldPath;
@@ -492,6 +492,10 @@ export class ValueService extends BeanStub implements NamedBean {
         suppliedFormatter?: (value: any) => string,
         useFormatterFromColumn = true
     ): string | null {
+        // preserve evaluated errors; ordinary strings and successful calculations still use the formatter
+        if (this.formula?.isFormulaErrorValue(column, node, value)) {
+            return value;
+        }
         let result: string | null = null;
         // supplied formatter wins (e.g. set filter items have their own); otherwise use the column's
         const formatter = suppliedFormatter ?? (useFormatterFromColumn ? column.valueFormatter : undefined);
@@ -773,7 +777,7 @@ export class ValueService extends BeanStub implements NamedBean {
             return this.expressionSvc?.evaluate(valueSetter, setterParams);
         }
 
-        if (!rowData || !field) {
+        if (!rowData || !field || column.fieldHasProtoKey) {
             return false;
         }
         const fieldPath = column.fieldPath;
@@ -784,11 +788,17 @@ export class ValueService extends BeanStub implements NamedBean {
                 rowData[field] = newValue;
             }
         } else {
-            // deep value — walk the pre-split path (must not mutate the column's cached `fieldPath`)
+            // deep value — walk the pre-split path (must not mutate the column's cached `fieldPath`). Only objects
+            // are written through, so a write never lands on a function (such as `constructor`) or a primitive.
             let currentObject = rowData;
             const lastIndex = fieldPath.length - 1;
             for (let i = 0; i < lastIndex && currentObject; ++i) {
-                currentObject = currentObject[fieldPath[i]];
+                const key = fieldPath[i];
+                const nextObject = currentObject[key];
+                if (nextObject != null && typeof nextObject !== 'object') {
+                    return this.refuseFieldWrite(field, key);
+                }
+                currentObject = nextObject;
             }
             if (currentObject) {
                 const lastPiece = fieldPath[lastIndex];
@@ -799,6 +809,12 @@ export class ValueService extends BeanStub implements NamedBean {
             }
         }
         return !valuesAreSame;
+    }
+
+    /** Warns (once per field and key) that a write through `field` was refused at `key`, and reports no change. */
+    private refuseFieldWrite(field: string, key: string): false {
+        this.beans.log.warn(339, { field, key });
+        return false;
     }
 
     private dispatchCellValueChangedEvent(

@@ -1,5 +1,7 @@
-import { _escapeString } from 'ag-stack';
+import type { IAgEventEmitter, IEventListener } from 'ag-stack';
+import { LocalEventService, _escapeString } from 'ag-stack';
 
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type {
     AgColumnGroupEvent,
@@ -20,7 +22,10 @@ export const isColumnGroup = (col: Column | ColumnGroup | string): col is AgColu
 // rather than the getters — the getters exist only for the public ColumnGroup interface, and
 // direct reads avoid method-call indirection in tight loops.
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> implements ColumnGroup<TValue> {
+export class AgColumnGroup<TValue = any>
+    extends BeanStub<AgColumnGroupEvent>
+    implements ColumnGroup<TValue>, IAgEventEmitter<AgColumnGroupEvent>
+{
     public readonly isColumn = false as const;
     public readonly uniqueId: HeaderColumnId;
 
@@ -139,6 +144,53 @@ export class AgColumnGroup<TValue = any> extends BeanStub<AgColumnGroupEvent> im
             this.dispatchLocalEvent({ type: 'leftChanged' });
         }
         return childrenChanged;
+    }
+
+    public __addEventListener<T extends AgColumnGroupEvent>(eventType: T, listener: IEventListener<T>): void {
+        let localEventService = this.localEventService;
+        if (!localEventService) {
+            localEventService = new LocalEventService();
+            this.localEventService = localEventService;
+        }
+        localEventService.addEventListener(eventType, listener);
+    }
+    public __removeEventListener<T extends AgColumnGroupEvent>(eventType: T, listener: IEventListener<T>): void {
+        this.localEventService?.removeEventListener(eventType, listener);
+    }
+
+    /** PUBLIC USE ONLY: grid code uses `__addEventListener` and `__removeEventListener`, which skip the wrapping. */
+    public override addEventListener<T extends AgColumnGroupEvent>(
+        eventType: T,
+        userListener: IEventListener<T>,
+        async?: boolean
+    ): void {
+        if (typeof userListener !== 'function') {
+            return; // ignoring non functions for compatibility
+        }
+        let localEventService = this.localEventService;
+        if (!localEventService) {
+            localEventService = new LocalEventService();
+            this.localEventService = localEventService;
+        }
+        // `beans` is null on a group the grid did not wire (export header structures)
+        const listener =
+            this.beans?.frameworkOverrides.wrapLocalListener?.(localEventService, eventType, userListener, async) ??
+            userListener;
+        localEventService.addEventListener(eventType, listener, async);
+    }
+
+    /** PUBLIC USE ONLY: grid code uses `__addEventListener` and `__removeEventListener`, which skip the wrapping. */
+    public override removeEventListener<T extends AgColumnGroupEvent>(
+        eventType: T,
+        userListener: IEventListener<T>,
+        async?: boolean
+    ): void {
+        const localEventService = this.localEventService;
+        if (!localEventService) {
+            return;
+        }
+        const listener = localEventService.listenerWrapper?.unwrap(eventType, userListener, async) ?? userListener;
+        localEventService.removeEventListener(eventType, listener, async);
     }
 
     public getPinned(): ColumnPinnedType {
@@ -364,4 +416,13 @@ export const getColGroupAtLevel = (column: AgColumn, level: number): AgColumnGro
         }
     }
     return groupPointer;
+};
+
+/** The displayed group at `columnGroup`'s level just after it, or null. */
+export const getColGroupAfter = (visibleCols: VisibleColsService, columnGroup: AgColumnGroup): AgColumnGroup | null => {
+    const last = edgeLeafColumn(columnGroup, true, true);
+    // a group's displayed leaves are contiguous, so the col after its last is outside it
+    const next = last && visibleCols.getColAfter(last);
+    const level = columnGroup.providedColumnGroup.level + columnGroup.getPaddingLevel();
+    return next ? getColGroupAtLevel(next, level) : null;
 };

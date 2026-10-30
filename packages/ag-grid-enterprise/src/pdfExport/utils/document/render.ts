@@ -51,20 +51,22 @@ export function renderDocumentHeading(
     const boxX = layout.margin.left + style.margin.left;
 
     if (style.backgroundColor) {
-        pageParts.push(`${formatColor(style.backgroundColor)} rg`);
-        pageParts.push(`${fmt(boxX)} ${fmt(boxBottom)} ${fmt(boxWidth)} ${fmt(boxHeight)} re f`);
+        pageParts.push(
+            `${formatColor(style.backgroundColor)} rg`,
+            `${fmt(boxX)} ${fmt(boxBottom)} ${fmt(boxWidth)} ${fmt(boxHeight)} re f`
+        );
     }
 
     if (style.borderColor && style.borderWidth > 0) {
-        pageParts.push(`${fmt(style.borderWidth)} w`);
-        pageParts.push(`${formatColor(style.borderColor)} RG`);
-        pageParts.push(`${fmt(boxX)} ${fmt(boxBottom)} ${fmt(boxWidth)} ${fmt(boxHeight)} re S`);
-        pageParts.push('0.5 w');
+        pageParts.push(
+            `${fmt(style.borderWidth)} w`,
+            `${formatColor(style.borderColor)} RG`,
+            `${fmt(boxX)} ${fmt(boxBottom)} ${fmt(boxWidth)} ${fmt(boxHeight)} re S`,
+            '0.5 w'
+        );
     }
 
-    pageParts.push(`${formatColor(style.textColor)} rg`);
-    pageParts.push('BT');
-    pageParts.push(`/${style.font.key} ${fmt(style.fontSize)} Tf`);
+    pageParts.push(`${formatColor(style.textColor)} rg`, 'BT', `/${style.font.key} ${fmt(style.fontSize)} Tf`);
     let textY = boxTop - style.padding.top - fontRegistry.getBaselineOffset(style.fontSize, style.font);
     for (const line of lines) {
         const encoded = fontRegistry.encodeText(line, style.font, style.direction, style.language);
@@ -148,9 +150,7 @@ export function renderPageFurniture(
         }
         if (line) {
             const encoded = fontRegistry.encodeText(line, style.font, style.direction, style.language);
-            pageParts.push(`${formatColor(style.textColor)} rg`);
-            pageParts.push('BT');
-            pageParts.push(`/${style.font.key} ${fmt(style.fontSize)} Tf`);
+            pageParts.push(`${formatColor(style.textColor)} rg`, 'BT', `/${style.font.key} ${fmt(style.fontSize)} Tf`);
             renderEncodedText(pageParts, encoded, textX, textY, style);
             pageParts.push('ET');
         }
@@ -188,18 +188,13 @@ export function renderWatermark(
     const originX = centerX - cosine * (textWidth / 2) + sine * textCenterY;
     const originY = centerY - sine * (textWidth / 2) - cosine * textCenterY;
 
-    pageParts.push('q');
-    pageParts.push('/Artifact BMC');
+    pageParts.push('q', '/Artifact BMC');
     if (watermark.graphicsState) {
         pageParts.push(`/${watermark.graphicsState.key} gs`);
     }
-    pageParts.push(`${formatColor(watermark.color)} rg`);
-    pageParts.push('BT');
-    pageParts.push(`/${watermark.font.key} ${fmt(watermark.fontSize)} Tf`);
+    pageParts.push(`${formatColor(watermark.color)} rg`, 'BT', `/${watermark.font.key} ${fmt(watermark.fontSize)} Tf`);
     renderRotatedEncodedText(pageParts, encoded, watermark.fontSize, cosine, sine, originX, originY, watermark);
-    pageParts.push('ET');
-    pageParts.push('EMC');
-    pageParts.push('Q');
+    pageParts.push('ET', 'EMC', 'Q');
 }
 
 /**
@@ -339,8 +334,10 @@ function renderCellBox(
     currentLineWidth: number
 ): number {
     if (cellStyle.backgroundColor) {
-        pageParts.push(`${formatColor(cellStyle.backgroundColor)} rg`);
-        pageParts.push(`${fmt(x)} ${fmt(rowBottom)} ${fmt(cellWidth)} ${fmt(rowHeight)} re f`);
+        pageParts.push(
+            `${formatColor(cellStyle.backgroundColor)} rg`,
+            `${fmt(x)} ${fmt(rowBottom)} ${fmt(cellWidth)} ${fmt(rowHeight)} re f`
+        );
     }
 
     if (drawCellBorders && cellStyle.borderColor && cellStyle.borderWidth > 0) {
@@ -348,8 +345,10 @@ function renderCellBox(
             pageParts.push(`${fmt(cellStyle.borderWidth)} w`);
             currentLineWidth = cellStyle.borderWidth;
         }
-        pageParts.push(`${formatColor(cellStyle.borderColor)} RG`);
-        pageParts.push(`${fmt(x)} ${fmt(rowBottom)} ${fmt(cellWidth)} ${fmt(rowHeight)} re S`);
+        pageParts.push(
+            `${formatColor(cellStyle.borderColor)} RG`,
+            `${fmt(x)} ${fmt(rowBottom)} ${fmt(cellWidth)} ${fmt(rowHeight)} re S`
+        );
     }
     return currentLineWidth;
 }
@@ -382,13 +381,13 @@ function renderCellText(
 
     const fontKey = cellStyle.font.key;
     // constrain fragment text to its cell content box.
-    pageParts.push('q');
     pageParts.push(
-        `${fmt(textBoxX + padding.left)} ${fmt(rowBottom + padding.bottom)} ${fmt(textWidthAvailable)} ${fmt(textHeightAvailable)} re W n`
+        'q',
+        `${fmt(textBoxX + padding.left)} ${fmt(rowBottom + padding.bottom)} ${fmt(textWidthAvailable)} ${fmt(textHeightAvailable)} re W n`,
+        'BT',
+        `${formatColor(cellStyle.textColor)} rg`,
+        `/${fontKey} ${fmt(cellStyle.fontSize)} Tf`
     );
-    pageParts.push('BT');
-    pageParts.push(`${formatColor(cellStyle.textColor)} rg`);
-    pageParts.push(`/${fontKey} ${fmt(cellStyle.fontSize)} Tf`);
     const textBlockHeight = lines.length * cellStyle.lineHeight;
     const verticalOffset = centreVertically ? Math.max((textHeightAvailable - textBlockHeight) / 2, 0) : 0;
     let lineTop = rowTop - padding.top - verticalOffset;
@@ -417,8 +416,7 @@ function renderCellText(
         textY -= cellStyle.lineHeight;
         lineTop -= cellStyle.lineHeight;
     }
-    pageParts.push('ET');
-    pageParts.push('Q');
+    pageParts.push('ET', 'Q');
 }
 
 function renderCellImage(
@@ -441,8 +439,8 @@ function renderCellImage(
     const imageX = imageOnRight ? cellX + cellWidth - padding.right - image.width : cellX + padding.left;
     const imageY = rowBottom + padding.bottom + (contentHeight - image.height) / 2;
 
-    pageParts.push('q');
     pageParts.push(
+        'q',
         `${fmt(cellX + padding.left)} ${fmt(rowBottom + padding.bottom)} ${fmt(contentWidth)} ${fmt(contentHeight)} re W n`
     );
     renderImage(pageParts, image, imageX, imageY);
@@ -450,13 +448,13 @@ function renderCellImage(
 }
 
 function renderImage(pageParts: string[], image: ResolvedPdfImage, x: number, y: number): void {
-    pageParts.push('q');
     pageParts.push(
-        image.altText ? `/Span << /ActualText ${encodePdfUnicodeString(image.altText)} >> BDC` : '/Artifact BMC'
+        'q',
+        image.altText ? `/Span << /ActualText ${encodePdfUnicodeString(image.altText)} >> BDC` : '/Artifact BMC',
+        `${fmt(image.width)} 0 0 ${fmt(image.height)} ${fmt(x)} ${fmt(y)} cm /${image.resource.key} Do`,
+        'EMC',
+        'Q'
     );
-    pageParts.push(`${fmt(image.width)} 0 0 ${fmt(image.height)} ${fmt(x)} ${fmt(y)} cm /${image.resource.key} Do`);
-    pageParts.push('EMC');
-    pageParts.push('Q');
 }
 
 function getTextX(

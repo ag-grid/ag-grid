@@ -26,6 +26,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
 
     // datasource tells us this
     private rowCount = -1;
+    private rowCountReady = false;
     private rowNodesByIndex: { [index: number]: RowNode } = {};
     private rowHeight: number;
     private datasource: IViewportDatasource;
@@ -61,7 +62,6 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         this.addManagedEventListeners({ viewportChanged: this.onViewportChanged.bind(this) });
         _addRowHeightChangedListener(this, () => this.refreshRowHeight());
         this.addManagedPropertyListener('viewportDatasource', () => this.updateDatasource());
-        this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeight());
     }
 
     private refreshRowHeight(): void {
@@ -158,7 +158,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
     public purgeRowsNotInViewport(): void {
         const rowNodesByIndex = this.rowNodesByIndex;
         for (const indexStr of Object.keys(rowNodesByIndex)) {
-            const index = parseInt(indexStr, 10);
+            const index = Number.parseInt(indexStr, 10);
             if (index < this.firstRow || index > this.lastRow) {
                 if (this.isRowFocused(index) || this.beans.editSvc?.isRowEditing(rowNodesByIndex[index])) {
                     continue;
@@ -317,7 +317,7 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         let callbackCount = 0;
 
         for (const indexStr of Object.keys(this.rowNodesByIndex)) {
-            const index = parseInt(indexStr, 10);
+            const index = Number.parseInt(indexStr, 10);
             const rowNode: RowNode = this.rowNodesByIndex[index];
             callback(rowNode, callbackCount);
             callbackCount++;
@@ -399,9 +399,10 @@ export class ViewportRowModel extends BeanStub implements NamedBean, IRowModel {
         this.rowCount = rowCount;
 
         const eventSvc = this.eventSvc;
-        eventSvc.dispatchEventOnce({
-            type: 'rowCountReady',
-        });
+        if (!this.rowCountReady) {
+            this.rowCountReady = true;
+            eventSvc.dispatchEvent({ type: 'rowCountReady' });
+        }
 
         eventSvc.dispatchEvent({
             type: 'modelUpdated',

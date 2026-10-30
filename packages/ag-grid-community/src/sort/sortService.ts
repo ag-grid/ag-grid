@@ -23,7 +23,7 @@ export class SortService extends BeanStub implements NamedBean {
     private cols: AgColumn[] | null = null;
     private map: Map<AgColumn, number> | null = null;
     private opts: SortOption[] | null = null;
-    private multi = false;
+    private displaySortCount = 0;
 
     public override destroy(): void {
         super.destroy();
@@ -114,7 +114,7 @@ export class SortService extends BeanStub implements NamedBean {
     private updateSortIndex(lastColToChange: AgColumn, source: ColumnEventType) {
         const { gos, colModel } = this.beans;
         const isCoupled = _isColumnsSortingCoupledToGroup(gos);
-        const lastSortIndexCol = isCoupled ? lastColToChange.showRowGroupCol || lastColToChange : lastColToChange;
+        const lastSortIndexCol = isCoupled ? (lastColToChange.showRowGroupCol ?? lastColToChange) : lastColToChange;
 
         // Read the old-order list before mutating sortIndex below.
         const sorted = this.getSortedCols();
@@ -246,7 +246,7 @@ export class SortService extends BeanStub implements NamedBean {
     }
 
     /** Col -> display index. Coupled mode: source row-group cols share their display col's index (which
-     *  counts display cols only). Sets `multi`. */
+     *  counts display cols only). */
     private loadIndexMap(sortedCols: AgColumn[]): Map<AgColumn, number> {
         const map = new Map<AgColumn, number>();
         const len = sortedCols.length;
@@ -261,7 +261,7 @@ export class SortService extends BeanStub implements NamedBean {
             }
             idx = len - 1;
         }
-        this.multi = idx >= 1;
+        this.displaySortCount = idx + 1;
         this.map = map;
         return map;
     }
@@ -319,8 +319,12 @@ export class SortService extends BeanStub implements NamedBean {
 
     /** `true` when the indicator should show ordinal numbers (2+ distinct display indices). */
     public isMultiSort(): boolean {
+        return this.getDisplaySortCount() > 1;
+    }
+
+    public getDisplaySortCount(): number {
         this.getIndexMap();
-        return this.multi;
+        return this.displaySortCount;
     }
 
     public setupHeader(comp: Component, column: AgColumn): void {

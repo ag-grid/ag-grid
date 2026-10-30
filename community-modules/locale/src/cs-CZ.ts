@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_CS_CZ = {
     enabled: 'Povoleno',
 
     // Menu
+    moveLeft: 'Přesunout doleva',
+    moveRight: 'Přesunout doprava',
+    moveUp: 'Přesunout nahoru',
+    moveDown: 'Přesunout dolů',
     pinColumn: 'Připnout sloupec',
     pinLeft: 'Připnout vlevo',
     pinRight: 'Připnout vpravo',
@@ -761,6 +765,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaRowSelect: 'Stiskněte SPACE pro výběr tohoto řádku',
     ariaRowSelectionDisabled: 'Výběr řádku je pro tento řádek zakázán',
     ariaSearch: 'Hledat',
+    ariaSortPriority: 'Priorita řazení ${priority} z ${count}',
     ariaSortableColumn: 'Stiskněte ENTER pro třídění',
     ariaSortableColumnWithCellSelection: 'Stiskněte ALT ENTER pro třídění',
     ariaToggleVisibility: 'Stiskněte SPACE pro přepnutí viditelnosti',
@@ -797,6 +802,9 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolutně stoupající',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolutně klesající',
     ariaLabelDialog: 'Dialog',
+    ariaLabelClose: 'Zavřít',
+    ariaLabelMaximize: 'Maximalizovat',
+    ariaLabelRestore: 'Obnovit',
     ariaLabelColumnMenu: 'Nabídka sloupců',
     ariaLabelColumnFilter: 'Filtr sloupců',
     ariaLabelSelectField: 'Vyberte pole',

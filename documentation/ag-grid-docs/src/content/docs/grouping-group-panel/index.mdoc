@@ -56,6 +56,12 @@ const gridOptions = {
 }
 ```
 
+## Reordering Columns
+
+Right-click a pill and choose **Move Left** or **Move Right** to change the grouping order. Vertical panels use **Move Up** and **Move Down**. With a pill focused, **Shift+F10** or the context-menu key opens the same menu.
+
+See [Drop Zone Menus](./tool-panel-columns-customising/#drop-zone-menus) for availability and customisation. This panel uses `source: 'rowGroup'` in `getColumnDropZoneMenuItems`.
+
 ## Prevent User Grouping from Hiding Columns
 
 After a user applies row grouping to a column, the column is hidden. If the user removes the row grouping, the column is made visible again.

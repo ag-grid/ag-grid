@@ -42,7 +42,7 @@ AG Grid minimises unnecessary change detection by running all internal operation
 
 The majority of application code run by AG Grid will be executed inside NgZone including:
 
-- Event handlers, grid, row, column, etc
+- Event handlers, grid, row, column, etc (a listener added through the API outside NgZone is not brought into it)
 - Menu actions triggers
 - Custom components
     - Angular lifecycle methods

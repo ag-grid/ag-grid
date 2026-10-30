@@ -32,6 +32,37 @@ export class NumberFilterHandler extends ScalarFilterHandler<NumberFilterModel, 
     }
 
     protected override isValid(value: number): boolean {
-        return !isNaN(value);
+        return !Number.isNaN(Number(value));
+    }
+
+    protected override toOwnModelValue(value: unknown): number | null {
+        if (typeof value !== 'string') {
+            return typeof value === 'number' && Number.isFinite(value) ? value : null;
+        }
+        // BigInt and Text Filter models hold numbers as text: plain decimal only, and only when no digit is lost.
+        const text = value.trim();
+        const number = DECIMAL_TEXT.test(text) ? Number(text) : Number.NaN;
+        if (!Number.isFinite(number)) {
+            return null;
+        }
+        const digits = mantissaDigits(text);
+        const isExact =
+            digits === '' ||
+            (digits.length <= 100 && mantissaDigits(number.toPrecision(digits.length), false) === digits);
+        return isExact ? number : null;
     }
 }
+
+const DECIMAL_TEXT = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i;
+
+/** Reads mantissa digits, keeping toPrecision's padding when trimFractionalZeros is false. */
+const mantissaDigits = (decimal: string, trimFractionalZeros = true): string => {
+    const mantissa = decimal.replace(/e.*/i, '');
+    let end = mantissa.length;
+    if (trimFractionalZeros && mantissa.includes('.')) {
+        while (mantissa[end - 1] === '0') {
+            end--;
+        }
+    }
+    return mantissa.slice(0, end).replace(/\D/g, '').replace(/^0+/, '');
+};

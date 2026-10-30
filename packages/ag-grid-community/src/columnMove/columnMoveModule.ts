@@ -3,6 +3,7 @@ import { SharedDragAndDropModule } from '../dragAndDrop/dragModule';
 import type { _ModuleWithApi } from '../interfaces/iModule';
 import { VERSION } from '../version';
 import columnMovingCSS from './column-moving.css';
+import columnWidthAnimationCSS from './column-width-animation.css';
 import { ColumnAnimationService } from './columnAnimationService';
 import { moveColumnByIndex, moveColumns } from './columnMoveApi';
 import { ColumnMoveService } from './columnMoveService';
@@ -20,5 +21,6 @@ export const ColumnMoveModule: _ModuleWithApi<_ColumnMoveApi> = {
         moveColumns,
     },
     dependsOn: [SharedDragAndDropModule],
-    css: [columnMovingCSS],
+    // width animation last, so its transition wins on cells that are moving and resizing at once
+    css: [columnMovingCSS, columnWidthAnimationCSS],
 };

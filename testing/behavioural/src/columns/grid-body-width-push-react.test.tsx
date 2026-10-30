@@ -220,4 +220,32 @@ describe('Grid body width push (React)', () => {
         act(() => api.ensureColumnVisible('a'));
         await waitFor(() => expect(sticky()).toBe(false));
     });
+
+    test('pushes the pinned widths the sticky group labels are offset by, and again on a resize', async () => {
+        let ready!: Promise<GridApi>;
+        // the pinned columns lay the grid body out again before the grid is ready
+        await act(async () => {
+            ready = renderGrid({
+                columnDefs: [
+                    { colId: 'left', width: 120, pinned: 'left' },
+                    { headerName: 'Group', children: [{ colId: 'a' }, { colId: 'b' }] },
+                    { colId: 'right', width: 150, pinned: 'right' },
+                ],
+                rowData: [{}],
+            });
+            await asyncSetTimeout(0);
+        });
+        const api = await ready;
+        const pinnedWidths = () => {
+            const style = document.querySelector<HTMLElement>('.ag-grid-viewport')!.style;
+            return [
+                style.getPropertyValue('--ag-internal-pinned-left-width'),
+                style.getPropertyValue('--ag-internal-pinned-right-width'),
+            ];
+        };
+        await waitFor(() => expect(pinnedWidths()).toEqual(['120px', '150px']));
+
+        act(() => api.setColumnWidths([{ key: 'right', newWidth: 210 }]));
+        await waitFor(() => expect(pinnedWidths()).toEqual(['120px', '210px']));
+    });
 });

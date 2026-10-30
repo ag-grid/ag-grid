@@ -139,7 +139,12 @@ const SectionHeader = ({
             {!hideHeader && (
                 <HeaderTag id={`reference-${id}`} style={{ position: 'relative' }}>
                     {displayName}
-                    <a tabIndex={0} href={`#reference-${id}`} className="docs-header-icon">
+                    <a
+                        tabIndex={0}
+                        href={`#reference-${id}`}
+                        className="docs-header-icon"
+                        aria-label={`Link to ${displayName}`}
+                    >
                         <Icon name="link" />
                     </a>
                 </HeaderTag>

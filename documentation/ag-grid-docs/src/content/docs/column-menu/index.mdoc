@@ -82,6 +82,8 @@ The following is a list of all the default built-in menu items with the rules ab
 - `columnFilter`: Show the column filter. Not included in the default items when `columnMenu = 'legacy'`, a filter is not enabled, or the header filter button or floating filter button are displayed.
 - `columnChooser`: Show the [Column Chooser](./column-chooser/). Not included in the default items when `columnMenu = 'legacy'`.
 - `pinSubMenu`: Sub-menu for pinning. Always shown.
+- `moveLeft`: Move the column or column group one available position to the left.
+- `moveRight`: Move the column or column group one available position to the right.
 - `valueAggSubMenu`: Sub-menu for value aggregation. Always shown.
 - `autoSizeThis`: Auto-size the current column. Always shown.
 - `autoSizeAll`: Auto-size all columns. Always shown.
@@ -92,6 +94,10 @@ The following is a list of all the default built-in menu items with the rules ab
 - `contractAll`: Collapse all groups. Only shown if grouping by at least one column.
 
 The `defaultItems` list will change on different calls, depending on, for example, which columns are currently used for grouping.
+
+The move items follow [Column Moving](./column-moving/) restrictions and keep columns within their pinned section. Pivot mode and `functionsReadOnly` do not restrict them.
+
+Customise labels using the `moveLeft` / `moveRight` [locale keys](./localisation/) and arrows using the `menuMoveLeft` / `menuMoveRight` [icon keys](./custom-icons/).
 
 If you do not override the list of menu items, then the items displayed will be based on the rules above.
 
@@ -106,6 +112,10 @@ Menu items can be grouped together by adding separators between groups. Separato
 ```js
 menuItems.push('separator')
 ```
+
+### Checkable Menu Items
+
+To show a check beside a custom menu item, or to have screen readers announce a set of items as radio options, see [Checkable Menu Items](./context-menu/#checkable-menu-items).
 
 ### Custom Menu Item Components
 

@@ -41,7 +41,7 @@ export class ColumnAnimationService extends BeanStub implements NamedBean {
         }
 
         const { gos, gridBodyCtrl } = this;
-        if (!gridBodyCtrl || gos.get('suppressColumnMoveAnimation')) {
+        if (!gridBodyCtrl || this.suppressAnimation || gos.get('suppressColumnMoveAnimation')) {
             return;
         }
 

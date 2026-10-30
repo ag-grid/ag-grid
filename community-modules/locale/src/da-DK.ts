@@ -339,6 +339,10 @@ export const AG_GRID_LOCALE_DA_DK = {
     enabled: 'Aktiveret',
 
     // Menu
+    moveLeft: 'Flyt til venstre',
+    moveRight: 'Flyt til højre',
+    moveUp: 'Flyt op',
+    moveDown: 'Flyt ned',
     pinColumn: 'Fastgør Kolonne',
     pinLeft: 'Fastgør Venstre',
     pinRight: 'Fastgør Højre',
@@ -763,6 +767,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaRowSelect: 'Tryk på MELLEMRUM for at vælge denne række',
     ariaRowSelectionDisabled: 'Rækkevalg er deaktiveret for denne række',
     ariaSearch: 'Søg',
+    ariaSortPriority: 'Sorteringsprioritet ${priority} af ${count}',
     ariaSortableColumn: 'Tryk på ENTER for at sortere',
     ariaSortableColumnWithCellSelection: 'Tryk på ALT ENTER for at sortere',
     ariaToggleVisibility: 'Tryk på MELLEMRUM for at skifte synlighed',
@@ -799,6 +804,9 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolut stigende',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolut faldende',
     ariaLabelDialog: 'Dialog',
+    ariaLabelClose: 'Luk',
+    ariaLabelMaximize: 'Maksimer',
+    ariaLabelRestore: 'Gendan',
     ariaLabelColumnMenu: 'Kolonnemenu',
     ariaLabelColumnFilter: 'Kolonnefilter',
     ariaLabelSelectField: 'Vælg felt',

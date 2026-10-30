@@ -10,6 +10,10 @@ import { _createElement } from './element';
 // If you change the list below, copy/paste the new content into the docs page custom-icons
 //
 export type IconName =
+    | 'menuMoveLeft'
+    | 'menuMoveRight'
+    | 'menuMoveUp'
+    | 'menuMoveDown'
     | 'columnGroupOpened'
     | 'columnGroupClosed'
     | 'columnSelectClosed'

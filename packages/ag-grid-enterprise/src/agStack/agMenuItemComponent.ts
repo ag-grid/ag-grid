@@ -44,6 +44,13 @@ export interface AgMenuItemLeafDef<TMenuActionParams extends TCommon, TCommon> {
     action?: (params: TMenuActionParams) => void;
     /** Set to true to provide a check beside the option. */
     checked?: boolean;
+    /**
+     * The aria role for a checkable item. Set to `'menuitemradio'` when the item is one of a set of mutually exclusive choices,
+     * or `'menuitem'` when the item is not part of a checkable group, so the check is not announced as a checked state.
+     * Ignored when `checked` is `undefined`, as the item is then always a `'menuitem'`.
+     * @default 'menuitemcheckbox'
+     */
+    menuItemRole?: 'menuitem' | 'menuitemcheckbox' | 'menuitemradio';
     /** The icon to display, either a DOM element or HTML string. */
     icon?: Element | string;
     /** CSS classes to apply to the menu item. */
@@ -72,7 +79,7 @@ export interface AgMenuItemDef<TMenuActionParams extends TCommon, TCommon> exten
     subMenuRole?: 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog';
     /**
      * Provide a custom menu item component.
-     * See [Menu Item Component](https://www.ag-grid.com/javascript-data-grid/component-menu-item/#implementing-a-menu-item-component) for framework specific implementation details.
+     * See [Menu Item Component](https://www.ag-grid.com/javascript-data-grid/component-menu-item/) for framework specific implementation details.
      */
     menuItem?: any;
     /**
@@ -606,11 +613,10 @@ export class AgMenuItemComponent<
 
     private applyAriaProperties(eGui: HTMLElement): void {
         const {
-            params: { checked, subMenu, subMenuRole, disabled },
+            params: { checked, menuItemRole, subMenu, subMenuRole, disabled },
         } = this;
 
-        const hasCheck = checked != null;
-        _setAriaRole(eGui, hasCheck ? 'menuitemcheckbox' : 'menuitem');
+        _setAriaRole(eGui, checked == null ? 'menuitem' : (menuItemRole ?? 'menuitemcheckbox'));
 
         if (subMenu) {
             _setAriaHasPopup(eGui, subMenuRole ?? 'menu');
@@ -629,7 +635,7 @@ export class AgMenuItemComponent<
         }
 
         const { suppressRootStyles, suppressTooltip, suppressAria, suppressTabIndex, suppressFocus } =
-            configParams || {};
+            configParams ?? {};
         const {
             params: { tooltip, disabled },
         } = this;

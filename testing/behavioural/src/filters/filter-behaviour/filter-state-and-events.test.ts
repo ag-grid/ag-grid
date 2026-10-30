@@ -1,5 +1,6 @@
 import { waitFor } from '@testing-library/dom';
 import {
+    ALL_SEVERITIES,
     ColumnFilterHarness,
     FilterDom,
     GridRows,
@@ -18,13 +19,18 @@ import type {
     GridState,
     IDoesFilterPassParams,
     IFilterComp,
+    IFilterParams,
+    IFloatingFilterComp,
 } from 'ag-grid-community';
 import {
+    AgPromise,
     ClientSideRowModelModule,
     CustomFilterModule,
+    ExternalFilterModule,
     GridStateModule,
     NumberFilterModule,
     TextFilterModule,
+    enableDevValidations,
     setupAgTestIds,
 } from 'ag-grid-community';
 import { FiltersToolPanelModule, SetFilterModule } from 'ag-grid-enterprise';
@@ -67,6 +73,7 @@ describe('Filter State & Events', () => {
             FiltersToolPanelModule,
             GridStateModule,
             CustomFilterModule,
+            ExternalFilterModule,
             ClientSideRowModelModule,
         ],
     });
@@ -76,7 +83,13 @@ describe('Filter State & Events', () => {
         installFilterLayoutMock();
     });
     afterAll(() => uninstallFilterLayoutMock());
-    afterEach(() => gridsManager.reset());
+    afterEach(() => {
+        try {
+            gridsManager.reset();
+        } finally {
+            vi.restoreAllMocks();
+        }
+    });
 
     test("a custom filter's initial model, cleared through the API, stays cleared when its column leaves the grid and comes back", async () => {
         class CountryFilter implements IFilterComp {
@@ -116,6 +129,370 @@ describe('Filter State & Events', () => {
         api.setGridOption('columnDefs', columnDefs);
         await asyncSetTimeout(0);
         expect([api.getFilterModel(), api.getDisplayedRowCount()]).toEqual([{}, ATHLETES.length]);
+    });
+
+    test.each([
+        'a filter change',
+        'adding a floating filter',
+        'destroyFilter',
+        'removing its column',
+        'destroying the grid',
+    ])(
+        'a custom filter without isFilterActive is inactive through %s, reported once, and never throws',
+        async (action) => {
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [67] });
+            const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+            class NoActiveStateFilter implements Omit<IFilterComp, 'isFilterActive'> {
+                private readonly eGui = document.createElement('div');
+                public init(): void {}
+                public getGui(): HTMLElement {
+                    return this.eGui;
+                }
+                public doesFilterPass(): boolean {
+                    return false;
+                }
+                public getModel(): null {
+                    return null;
+                }
+                public setModel(): void {}
+            }
+            const country = { field: 'country', filter: NoActiveStateFilter };
+            const columnDefs = [
+                { field: 'athlete' },
+                { ...country, floatingFilter: action !== 'adding a floating filter' },
+            ];
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', { columnDefs, rowData: ATHLETES });
+            await api.getColumnFilterInstance('country');
+
+            const errors: string[] = [];
+            try {
+                if (action === 'a filter change') {
+                    api.onFilterChanged();
+                } else if (action === 'adding a floating filter') {
+                    api.setGridOption('columnDefs', [{ field: 'athlete' }, { ...country, floatingFilter: true }]);
+                } else if (action === 'destroyFilter') {
+                    api.destroyFilter('country');
+                } else if (action === 'removing its column') {
+                    api.setGridOption('columnDefs', columnDefs.slice(0, 1));
+                } else {
+                    api.destroy();
+                }
+                await asyncSetTimeout(0);
+            } catch (e) {
+                errors.push(String(e));
+            }
+
+            const warnings67 = warnSpy.mock.calls.filter((args) => args.join(' ').includes('warning #67')).length;
+            if (action === 'destroying the grid') {
+                expect({ errors, warnings67 }).toEqual({ errors: [], warnings67: 1 });
+                return;
+            }
+            const countryColumn = api.getColumn('country');
+            expect({
+                errors,
+                warnings67,
+                countryActive: countryColumn?.isFilterActive(),
+                shown: api.getDisplayedRowCount(),
+            }).toEqual({
+                errors: [],
+                warnings67: 1,
+                countryActive: action === 'removing its column' ? undefined : false,
+                shown: ATHLETES.length,
+            });
+        }
+    );
+
+    test('a floating filter added to a column whose custom filter is already active shows its model', async () => {
+        class CountryFilter implements IFilterComp {
+            private model: string | null = null;
+            private readonly eGui = document.createElement('div');
+            public init(): void {}
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public isFilterActive(): boolean {
+                return this.model != null;
+            }
+            public doesFilterPass(params: IDoesFilterPassParams<Athlete>): boolean {
+                return params.data.country === this.model;
+            }
+            public getModel(): string | null {
+                return this.model;
+            }
+            public setModel(model: string | null): void {
+                this.model = model;
+            }
+        }
+        const shownByFloatingFilter: (string | null)[] = [];
+        class CountryFloatingFilter implements IFloatingFilterComp {
+            private readonly eGui = document.createElement('div');
+            public init(): void {}
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public onParentModelChanged(parentModel: string | null): void {
+                shownByFloatingFilter.push(parentModel);
+            }
+        }
+        const country = { field: 'country', filter: CountryFilter };
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'athlete' }, country],
+            rowData: ATHLETES,
+        });
+        await api.getColumnFilterInstance('country');
+        api.setFilterModel({ country: 'Russia' });
+        await asyncSetTimeout(0);
+
+        api.setGridOption('columnDefs', [
+            { field: 'athlete' },
+            { ...country, floatingFilter: true, floatingFilterComponent: CountryFloatingFilter },
+        ]);
+        await asyncSetTimeout(0);
+
+        expect(shownByFloatingFilter).toEqual(['Russia']);
+    });
+
+    test('a custom filter given a model while its init is pending filters nothing once destroyFilter is called, its model gone', async () => {
+        const pendingInits: (() => void)[] = [];
+        const destroyedFilterPasses: string[] = [];
+        class SlowCountryFilter implements IFilterComp {
+            private model: string | null = null;
+            private destroyed = false;
+            private readonly eGui = document.createElement('div');
+            public init(): AgPromise<void> {
+                return new AgPromise<void>((resolve) => pendingInits.push(resolve));
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public destroy(): void {
+                this.destroyed = true;
+            }
+            public isFilterActive(): boolean {
+                return this.model != null;
+            }
+            public doesFilterPass(params: IDoesFilterPassParams<Athlete>): boolean {
+                const data = params.data;
+                if (this.destroyed) {
+                    destroyedFilterPasses.push(data.athlete);
+                }
+                return data.country === this.model;
+            }
+            public getModel(): string | null {
+                return this.model;
+            }
+            public setModel(model: string | null): void {
+                this.model = model;
+            }
+        }
+        const resolveInits = async () => {
+            for (const resolve of pendingInits.splice(0)) {
+                resolve();
+            }
+            await asyncSetTimeout(0);
+        };
+        const columnDefs = [{ field: 'athlete' }, { field: 'country', filter: SlowCountryFilter }];
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', { columnDefs, rowData: ATHLETES });
+        api.setFilterModel({ country: 'Russia' });
+        await asyncSetTimeout(0);
+        expect(pendingInits.length).toBe(1);
+
+        api.destroyFilter('country');
+        await asyncSetTimeout(0);
+        // the filters are re-read while the destroyed one is still being built
+        api.setGridOption('rowData', [...ATHLETES]);
+        await asyncSetTimeout(0);
+        await resolveInits();
+        await resolveInits();
+
+        expect({
+            model: api.getFilterModel(),
+            displayed: api.getDisplayedRowCount(),
+            headerActive: api.getColumn('country')!.isFilterActive(),
+            destroyedFilterPasses,
+        }).toEqual({ model: {}, displayed: ATHLETES.length, headerActive: false, destroyedFilterPasses: [] });
+    });
+
+    test('a custom filter refreshed by new column definitions sees the columns laid out', async () => {
+        const displayedAtRefresh: string[][] = [];
+        class CountryFilter implements IFilterComp {
+            private api!: GridApi;
+            private readonly eGui = document.createElement('div');
+            public init({ api }: IFilterParams): void {
+                this.api = api;
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public isFilterActive(): boolean {
+                return false;
+            }
+            public doesFilterPass(): boolean {
+                return true;
+            }
+            public getModel(): null {
+                return null;
+            }
+            public setModel(): void {}
+            public refresh(): boolean {
+                displayedAtRefresh.push(this.api.getAllDisplayedColumns().map((col) => col.getColId()));
+                return true;
+            }
+        }
+        const col = (option: string) => ({ field: 'country', filter: CountryFilter, filterParams: { option } });
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'athlete' }, col('a')],
+            rowData: ATHLETES,
+        });
+        await api.getColumnFilterInstance('country');
+
+        api.setGridOption('columnDefs', [{ field: 'athlete' }, col('b')]);
+
+        expect(displayedAtRefresh).toEqual([['athlete', 'country']]);
+    });
+
+    test('a custom filter throwing on new column definitions leaves the next filter refreshed with its new params', async () => {
+        const refreshedWith: string[] = [];
+        class OptionFilter implements IFilterComp {
+            private readonly eGui = document.createElement('div');
+            public init(): void {}
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public isFilterActive(): boolean {
+                return false;
+            }
+            public doesFilterPass(): boolean {
+                return true;
+            }
+            public getModel(): null {
+                return null;
+            }
+            public setModel(): void {}
+            public refresh({ colDef, option }: IFilterParams & { option: string }): boolean {
+                if (option === 'throw') {
+                    throw new Error('refresh failed');
+                }
+                refreshedWith.push(`${colDef.field}:${option}`);
+                return true;
+            }
+        }
+        const cols = (athlete: string, country: string) => [
+            { field: 'athlete', filter: OptionFilter, filterParams: { option: athlete } },
+            { field: 'country', filter: OptionFilter, filterParams: { option: country } },
+        ];
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: cols('a', 'a'),
+            rowData: ATHLETES,
+        });
+        await api.getColumnFilterInstance('athlete');
+        await api.getColumnFilterInstance('country');
+
+        expect(() => api.setGridOption('columnDefs', cols('throw', 'b'))).toThrow('refresh failed');
+
+        expect(refreshedWith).toEqual(['country:b']);
+    });
+
+    test('new column definitions recreating a handler that holds a model filter the rows once', async () => {
+        const doesExternalFilterPass = vi.fn(() => true);
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            enableFilterHandlers: true,
+            columnDefs: [{ field: 'age', filter: 'agNumberColumnFilter' }],
+            rowData: ATHLETES,
+            isExternalFilterPresent: () => true,
+            doesExternalFilterPass,
+        });
+        api.setFilterModel({ age: { filterType: 'number', type: 'greaterThan', filter: 20 } });
+        await asyncSetTimeout(0);
+        doesExternalFilterPass.mockClear();
+
+        api.setGridOption('columnDefs', [{ field: 'age', filter: 'agTextColumnFilter' }]);
+        await asyncSetTimeout(0);
+
+        // one pass: every row once, and the first whose result changed once more
+        expect(doesExternalFilterPass).toHaveBeenCalledTimes(ATHLETES.length + 1);
+        expect([api.getFilterModel(), api.getDisplayedRowCount()]).toEqual([{}, ATHLETES.length]);
+    });
+
+    test('setColumnFilterModel applies to a custom filter whose setModel returns false instead of a promise', async () => {
+        class CountryFilter implements IFilterComp {
+            private model: string | null = null;
+            private readonly eGui = document.createElement('div');
+            public init(): void {}
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public isFilterActive(): boolean {
+                return this.model != null;
+            }
+            public doesFilterPass({ data }: IDoesFilterPassParams<Athlete>): boolean {
+                return data.country === this.model;
+            }
+            public getModel(): string | null {
+                return this.model;
+            }
+            // @ts-expect-error -- vanilla-JS filters are not held to the declared `void | AgPromise<void>` return type
+            public setModel(model: string | null): boolean {
+                this.model = model;
+                return false;
+            }
+        }
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'athlete' }, { field: 'country', filter: CountryFilter }],
+            rowData: ATHLETES,
+        });
+
+        await api.setColumnFilterModel('country', 'Russia');
+        api.onFilterChanged();
+
+        expect([api.getFilterModel(), api.getDisplayedRowCount()]).toEqual([{ country: 'Russia' }, 1]);
+    });
+
+    test('setColumnFilterModel resolves once the promise a custom filter setModel returns has settled', async () => {
+        let applyModel = () => {};
+        class CountryFilter implements IFilterComp {
+            private model: string | null = null;
+            private readonly eGui = document.createElement('div');
+            public init(): void {}
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public isFilterActive(): boolean {
+                return this.model != null;
+            }
+            public doesFilterPass({ data }: IDoesFilterPassParams<Athlete>): boolean {
+                return data.country === this.model;
+            }
+            public getModel(): string | null {
+                return this.model;
+            }
+            // @ts-expect-error -- framework filters may return a native promise, not the declared `AgPromise<void>`
+            public setModel(model: string | null): Promise<void> {
+                return new Promise((resolve) => {
+                    applyModel = () => {
+                        this.model = model;
+                        resolve();
+                    };
+                });
+            }
+        }
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'athlete' }, { field: 'country', filter: CountryFilter }],
+            rowData: ATHLETES,
+        });
+
+        let settled = false;
+        const modelSet = api.setColumnFilterModel('country', 'Russia').then(() => {
+            settled = true;
+        });
+        await asyncSetTimeout(0);
+        expect(settled).toBe(false);
+
+        applyModel();
+        await modelSet;
+        api.onFilterChanged();
+
+        expect([api.getFilterModel(), api.getDisplayedRowCount()]).toEqual([{ country: 'Russia' }, 1]);
     });
 
     // ===== STATE: getState() -> initialState round-trip (recreate grid) =====

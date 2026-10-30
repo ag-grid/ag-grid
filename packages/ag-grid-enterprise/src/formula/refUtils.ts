@@ -1,4 +1,4 @@
-const CELL_OR_RANGE_REGEX = /\$?[A-Za-z]+\$?[0-9]+(?::\$?[A-Za-z]+\$?[0-9]+)?/g;
+const CELL_OR_RANGE_REGEX = /\$?(?<![A-Za-z])[A-Za-z]+\$?[0-9]+(?::\$?[A-Za-z]+\$?[0-9]+)?/g;
 const FULL_CELL_OR_RANGE_REGEX = /^(\$?)([A-Za-z]+)(\$?)([0-9]+)(?::(\$?)([A-Za-z]+)(\$?)([0-9]+))?$/;
 const WORD_CHAR_REGEX = /[A-Za-z0-9]/;
 

@@ -340,6 +340,10 @@ export const AG_GRID_LOCALE_PL_PL = {
     enabled: 'Włączone',
 
     // Menu
+    moveLeft: 'Przenieś w lewo',
+    moveRight: 'Przenieś w prawo',
+    moveUp: 'Przenieś w górę',
+    moveDown: 'Przenieś w dół',
     pinColumn: 'Przypnij Kolumnę',
     pinLeft: 'Przypnij po Lewej',
     pinRight: 'Przypnij po Prawej',
@@ -765,6 +769,7 @@ export const AG_GRID_LOCALE_PL_PL = {
     ariaRowSelect: 'Naciśnij SPACJĘ, aby zaznaczyć ten wiersz',
     ariaRowSelectionDisabled: 'Zaznaczenie wiersza jest wyłączone dla tego wiersza',
     ariaSearch: 'Szukaj',
+    ariaSortPriority: 'Priorytet sortowania ${priority} z ${count}',
     ariaSortableColumn: 'Naciśnij ENTER, aby sortować',
     ariaSortableColumnWithCellSelection: 'Naciśnij ALT ENTER, aby sortować',
     ariaToggleVisibility: 'Naciśnij SPACJĘ, aby przełączyć widoczność',
@@ -801,6 +806,9 @@ export const AG_GRID_LOCALE_PL_PL = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'sortowanie absolutne rosnąco',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'sortowanie absolutne malejąco',
     ariaLabelDialog: 'Dialog',
+    ariaLabelClose: 'Zamknij',
+    ariaLabelMaximize: 'Maksymalizuj',
+    ariaLabelRestore: 'Przywróć',
     ariaLabelColumnMenu: 'Menu kolumny',
     ariaLabelColumnFilter: 'Filtr kolumny',
     ariaLabelSelectField: 'Wybierz pole',

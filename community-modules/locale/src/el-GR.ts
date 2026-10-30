@@ -342,6 +342,10 @@ export const AG_GRID_LOCALE_EL_GR = {
     enabled: 'Ενεργοποιημένο',
 
     // Menu
+    moveLeft: 'Μετακίνηση αριστερά',
+    moveRight: 'Μετακίνηση δεξιά',
+    moveUp: 'Μετακίνηση πάνω',
+    moveDown: 'Μετακίνηση κάτω',
     pinColumn: 'Καρφίτσωμα Στήλης',
     pinLeft: 'Καρφίτσωμα Αριστερά',
     pinRight: 'Καρφίτσωμα Δεξιά',
@@ -766,6 +770,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaRowSelect: 'Πατήστε SPACE για επιλογή αυτής της γραμμής',
     ariaRowSelectionDisabled: 'Η επιλογή γραμμής έχει απενεργοποιηθεί για αυτή τη γραμμή',
     ariaSearch: 'Αναζήτηση',
+    ariaSortPriority: 'Προτεραιότητα ταξινόμησης ${priority} από ${count}',
     ariaSortableColumn: 'Πατήστε ENTER για ταξινόμηση',
     ariaSortableColumnWithCellSelection: 'Πατήστε ALT ENTER για ταξινόμηση',
     ariaToggleVisibility: 'Πατήστε SPACE για αλλαγή ορατότητας',
@@ -802,6 +807,9 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'απόλυτη αύξουσα σειρά',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'απόλυτη φθίνουσα σειρά',
     ariaLabelDialog: 'Διαλογή',
+    ariaLabelClose: 'Κλείσιμο',
+    ariaLabelMaximize: 'Μεγιστοποίηση',
+    ariaLabelRestore: 'Επαναφορά',
     ariaLabelColumnMenu: 'Μενού Στήλης',
     ariaLabelColumnFilter: 'Φίλτρο Στήλης',
     ariaLabelSelectField: 'Επιλογή Πεδίου',

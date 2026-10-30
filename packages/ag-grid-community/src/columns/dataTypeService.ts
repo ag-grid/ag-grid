@@ -1,7 +1,5 @@
-import type { IEventListener } from 'ag-stack';
 import {
     KeyCode,
-    _getValueUsingDotField,
     _isValidDate,
     _isValidDateTime,
     _parseBigIntOrNull,
@@ -30,11 +28,11 @@ import type {
     ValueFormatterLiteParams,
     ValueParserLiteParams,
 } from '../entities/dataType';
-import type { AgGridEvent, ColumnEventType } from '../events';
+import type { ColumnEventType } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
 import { _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
-import type { ColumnEventName } from '../interfaces/iColumn';
+import { _getValueUsingDotPath, _isProtoField } from '../utils/value';
 import type { LogService } from '../validation/logService';
 import { _addColumnDefaultAndTypes } from './colDefUtils';
 import type { ColumnModel } from './columnModel';
@@ -118,7 +116,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
     private isColumnTypeOverrideInDataTypeDefinitions: boolean = false;
     // keep track of any column state updates whilst waiting for data types to be inferred
     private columnStateUpdatesPendingInference: { [colId: string]: Set<keyof ColumnStateParams> } = Object.create(null);
-    private columnStateUpdateListenerDestroyFuncs: (() => void)[] = [];
 
     public postConstruct(): void {
         this.processDataTypeDefinitions();
@@ -270,6 +267,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
     ): string | string[] | undefined {
         let { cellDataType } = userColDef;
 
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing -- an explicit null from the user means infer, not inherit
         if (cellDataType === undefined) {
             cellDataType = colDef.cellDataType;
         }
@@ -316,23 +314,9 @@ export class DataTypeService extends BeanStub implements NamedBean {
         colDef.cellEditor = 'agFormulaCellEditor';
     }
 
-    public addColumnListeners(column: AgColumn): void {
-        if (!this.isPendingInference) {
-            return;
-        }
-        const columnStateUpdates = this.columnStateUpdatesPendingInference[column.colId];
-        if (!columnStateUpdates) {
-            return;
-        }
-        const columnListener: IEventListener<ColumnEventName> = (
-            event: AgGridEvent<any, any, ColumnEventName> & { key: keyof ColumnStateParams }
-        ) => {
-            columnStateUpdates.add(event.key);
-        };
-        column.__addEventListener('columnStateUpdated', columnListener);
-        this.columnStateUpdateListenerDestroyFuncs.push(() =>
-            column.__removeEventListener('columnStateUpdated', columnListener)
-        );
+    /** Records a state key set on a column before its data type is inferred, which inference then keeps. */
+    public columnStateUpdated(column: AgColumn, key: keyof ColumnStateParams): void {
+        this.columnStateUpdatesPendingInference[column.colId]?.add(key);
     }
 
     private canInferCellDataType(colDef: ColDef, userColDef: ColDef): boolean {
@@ -362,12 +346,15 @@ export class DataTypeService extends BeanStub implements NamedBean {
         if (!field) {
             return undefined;
         }
-        const fieldContainsDots = field.includes('.') && !this.gos.get('suppressFieldDotNotation');
+        const fieldPath = field.includes('.') && !this.gos.get('suppressFieldDotNotation') ? field.split('.') : null;
+        if (_isProtoField(field, fieldPath)) {
+            return undefined;
+        }
         const getValue = (data: any) => {
             if (data == null) {
                 return undefined;
             }
-            return fieldContainsDots ? _getValueUsingDotField(data, field) : data[field];
+            return fieldPath ? _getValueUsingDotPath(data, fieldPath) : data[field];
         };
 
         let value: any;
@@ -437,7 +424,6 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     private processColumnsPendingInference(rowData: any[], columnTypeOverridesExist: boolean): void {
         this.initialData = rowData;
-        this.destroyColumnStateUpdateListeners();
         // one update, so a column redefined here is told once every inferred column holds its new definition
         const colModel = this.colModel;
         colModel.beginColUpdate();
@@ -478,7 +464,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
             }
         }
         if (state.length) {
-            _applyColumnState(beans, { state }, 'cellDataTypeInferred');
+            _applyColumnState(beans, { state }, 'cellDataTypeInferred', true);
         }
     }
 
@@ -718,7 +704,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                 if (params.value == null) {
                     return '';
                 }
-                if (!(params.value instanceof Date) || isNaN(params.value.getTime())) {
+                if (!(params.value instanceof Date) || Number.isNaN(params.value.getTime())) {
                     return translate('invalidDate', 'Invalid Date');
                 }
                 return _serialiseDate(params.value, includeTime) ?? '';
@@ -754,7 +740,7 @@ export class DataTypeService extends BeanStub implements NamedBean {
                     if (params.value == null) {
                         return '';
                     }
-                    if (typeof params.value !== 'number' || isNaN(params.value)) {
+                    if (typeof params.value !== 'number' || Number.isNaN(params.value)) {
                         return translate('invalidNumber', 'Invalid Number');
                     }
                     return String(params.value);
@@ -818,19 +804,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
         };
     }
 
-    private destroyColumnStateUpdateListeners(): void {
-        for (const destroyFunc of this.columnStateUpdateListenerDestroyFuncs) {
-            destroyFunc();
-        }
-        this.columnStateUpdateListenerDestroyFuncs = [];
-    }
-
     public override destroy(): void {
         this.dataTypeDefinitions = {};
         this.dataTypeMatchers = {};
         this.formatValueFuncs = {};
         this.columnStateUpdatesPendingInference = Object.create(null);
-        this.destroyColumnStateUpdateListeners();
         super.destroy();
     }
 }
@@ -875,6 +853,18 @@ function validateDataTypeDefinition(
 
 const isNumberOrBigintType = (v: unknown) => typeof v === 'bigint' || typeof v === 'number';
 const isNumberOrBigintBaseDataType = (v: string) => v === 'number' || v === 'bigint';
+const isDateValueOfBaseDataType = (baseDataType: string, value: unknown): boolean => {
+    switch (baseDataType) {
+        case 'date':
+        case 'dateTime':
+            return value instanceof Date;
+        case 'dateString':
+        case 'dateTimeString':
+            return typeof value === 'string';
+        default:
+            return false;
+    }
+};
 
 function createGroupSafeValueFormatter(
     dataTypeDefinition: DataTypeDefinition | CoreDataTypeDefinition,
@@ -897,6 +887,12 @@ function createGroupSafeValueFormatter(
                 }
 
                 const { baseDataType } = dataTypeDefinition;
+
+                // min / max of dates return one of the original values, so format it when the type still matches
+                if ((aggFunc === 'min' || aggFunc === 'max') && isDateValueOfBaseDataType(baseDataType, value)) {
+                    return dataTypeDefinition.valueFormatter!(params);
+                }
+
                 if (isNumberOrBigintBaseDataType(baseDataType) && aggFunc !== 'count') {
                     if (isNumberOrBigintType(value)) {
                         return dataTypeDefinition.valueFormatter!(params);

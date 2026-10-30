@@ -336,6 +336,10 @@ export const AG_GRID_LOCALE_AR_EG = {
     enabled: 'مُمكّن',
 
     // Menu
+    moveLeft: 'نقل إلى اليسار',
+    moveRight: 'نقل إلى اليمين',
+    moveUp: 'نقل إلى الأعلى',
+    moveDown: 'نقل إلى الأسفل',
     pinColumn: 'تثبيت العمود',
     pinLeft: 'تثبيت لليسار',
     pinRight: 'تثبيت لليمين',
@@ -759,6 +763,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaRowSelect: 'اضغط SPACE لتحديد هذا الصف',
     ariaRowSelectionDisabled: 'تحديد الصف معطل لهذا الصف',
     ariaSearch: 'بحث',
+    ariaSortPriority: 'أولوية الفرز ${priority} من ${count}',
     ariaSortableColumn: 'اضغط ENTER لفرز',
     ariaSortableColumnWithCellSelection: 'اضغط ALT ENTER لفرز',
     ariaToggleVisibility: 'اضغط SPACE لتبديل الرؤية',
@@ -795,6 +800,9 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'تصاعدي مطلق',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'تنازلي مطلق',
     ariaLabelDialog: 'حوار',
+    ariaLabelClose: 'إغلاق',
+    ariaLabelMaximize: 'تكبير',
+    ariaLabelRestore: 'استعادة',
     ariaLabelColumnMenu: 'قائمة الأعمدة',
     ariaLabelColumnFilter: 'تصفية العمود',
     ariaLabelSelectField: 'اختيار الحقل',

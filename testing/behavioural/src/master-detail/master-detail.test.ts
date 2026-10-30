@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/dom';
 import {
     ALL_SEVERITIES,
     GridColumns,
@@ -8,15 +9,22 @@ import {
     setRowDataChecked,
     waitForEvent,
 } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import type { MockInstance } from 'vitest';
 
-import type { GetDetailRowDataParams, GetRowIdParams, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnApiModule, enableDevValidations, getGridElement } from 'ag-grid-community';
+import type { GetDetailRowDataParams, GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    ColumnApiModule,
+    RowAutoHeightModule,
+    enableDevValidations,
+    getGridElement,
+} from 'ag-grid-community';
 import { MasterDetailModule } from 'ag-grid-enterprise';
 
 describe('ag-grid master detail', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnApiModule, MasterDetailModule],
+        modules: [ClientSideRowModelModule, ColumnApiModule, MasterDetailModule, RowAutoHeightModule],
     });
     let consoleErrorSpy: MockInstance | undefined;
     let consoleWarnSpy: MockInstance | undefined;
@@ -508,5 +516,234 @@ describe('ag-grid master detail', () => {
         await asyncSetTimeout(0);
         expect(sectionWidths()).toEqual(['0px', '150px', '0px']);
         expect(details.length).toBe(built);
+    });
+
+    test('with keepDetailRows, rows whose id is an object property name are drawn and redrawn', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'k' }],
+            rowData: [
+                { id: 'constructor', k: 'a' },
+                { id: 'toString', k: 'b' },
+            ],
+            getRowId: (params) => params.data.id,
+            masterDetail: true,
+            keepDetailRows: true,
+        });
+        const rowElement = (id: string) => getGridElement(api)!.querySelector(`.ag-row[row-id="${id}"]`);
+        await new GridRows(api, 'drawn').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── master collapsed id:constructor k:"a"
+            └── master collapsed id:toString k:"b"
+        `);
+        const drawnRow = rowElement('constructor');
+
+        api.redrawRows({ rowNodes: [api.getRowNode('constructor')!] });
+        await asyncSetTimeout(0);
+        const redrawnRow = rowElement('constructor');
+        expect({ shown: redrawnRow !== null, replaced: redrawnRow !== drawnRow }).toEqual({
+            shown: true,
+            replaced: true,
+        });
+    });
+
+    test('a kept detail row whose master row data was replaced reports virtualRowRemoved once the cache drops it', async () => {
+        const removedDetails: string[] = [];
+        class Detail {
+            private readonly eGui = document.createElement('div');
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                return true;
+            }
+        }
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'k' }],
+            rowData: [{ k: 'old' }],
+            masterDetail: true,
+            isRowMaster: () => true,
+            detailCellRenderer: Detail,
+            keepDetailRows: true,
+            keepDetailRowsCount: 1,
+            onVirtualRowRemoved: (event) => {
+                if (event.node.detail) {
+                    removedDetails.push(event.node.data.k);
+                }
+            },
+        });
+
+        api.getDisplayedRowAtIndex(0)!.setExpanded(true);
+        await asyncSetTimeout(0);
+        api.getDisplayedRowAtIndex(0)!.setExpanded(false);
+        await asyncSetTimeout(0);
+
+        // the new master row takes the old one's generated id
+        api.setGridOption('rowData', [{ k: 'new' }]);
+        api.getDisplayedRowAtIndex(0)!.setExpanded(true);
+        await asyncSetTimeout(0);
+        api.getDisplayedRowAtIndex(0)!.setExpanded(false);
+        await asyncSetTimeout(0);
+
+        await waitFor(() => expect(removedDetails).toEqual(['old']));
+    });
+
+    test('a kept detail row whose master row data was replaced leaves the new detail grid registered when the cache drops it, until its row is removed', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'k' }],
+            rowData: [{ k: 'old', kids: [{ c: 1 }] }],
+            masterDetail: true,
+            isRowMaster: () => true,
+            detailCellRendererParams: {
+                detailGridOptions: { columnDefs: [{ field: 'c' }] },
+                getDetailRowData: (params: GetDetailRowDataParams) => params.successCallback(params.data.kids),
+            },
+            keepDetailRows: true,
+            keepDetailRowsCount: 1,
+        });
+        const setExpanded = async (expanded: boolean) => {
+            api.getDisplayedRowAtIndex(0)!.setExpanded(expanded);
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(expanded ? 2 : 1));
+        };
+        await setExpanded(true);
+        await setExpanded(false);
+        // the new master row takes the old one's generated id
+        api.setGridOption('rowData', [{ k: 'new', kids: [{ c: 2 }] }]);
+        await setExpanded(true);
+        await waitFor(() => expect(api.getDetailGridInfo('detail_0')?.id).toBe('detail_0'));
+        const detailGridInfo = api.getDetailGridInfo('detail_0');
+
+        // caching the new detail row drops the old one
+        await setExpanded(false);
+        await setExpanded(true);
+
+        expect(api.getDetailGridInfo('detail_0')).toBe(detailGridInfo);
+
+        api.setGridOption('rowData', []);
+        await waitFor(() => expect(api.getDetailGridInfo('detail_0')).toBeUndefined());
+    });
+
+    test('redrawing a kept detail row removes it while collapsed and replaces it while shown, and a removed master row is destroyed', async () => {
+        let built = 0;
+        let destroyed = 0;
+        const removed: string[] = [];
+        class Detail {
+            private readonly eGui = document.createElement('div');
+            constructor() {
+                ++built;
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                return true;
+            }
+            public destroy(): void {
+                ++destroyed;
+            }
+        }
+        const fullWidthRowCount = () => getGridElement(api)!.querySelectorAll('.ag-full-width-row').length;
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'k' }],
+            rowData: [{ id: '1', k: 'a' }],
+            getRowId: (params) => params.data.id,
+            masterDetail: true,
+            isRowMaster: () => true,
+            detailCellRenderer: Detail,
+            keepDetailRows: true,
+            onVirtualRowRemoved: (event) => removed.push(event.node.detail ? 'detail' : event.node.id!),
+        });
+        const master = api.getRowNode('1')!;
+        master.setExpanded(true);
+        await asyncSetTimeout(0);
+        const detail = api.getDisplayedRowAtIndex(1)!;
+        master.setExpanded(false);
+        await asyncSetTimeout(0);
+
+        api.redrawRows({ rowNodes: [detail] });
+        await waitFor(() => expect(removed).toEqual(['detail']));
+        expect({ fullWidthRows: fullWidthRowCount(), destroyed }).toEqual({ fullWidthRows: 0, destroyed: 1 });
+
+        master.setExpanded(true);
+        await asyncSetTimeout(0);
+        expect({ fullWidthRows: fullWidthRowCount(), built }).toEqual({ fullWidthRows: 1, built: 2 });
+
+        // shown again from the cache, then redrawn while shown
+        master.setExpanded(false);
+        await asyncSetTimeout(0);
+        master.setExpanded(true);
+        await asyncSetTimeout(0);
+        expect(built).toBe(2);
+        api.redrawRows({ rowNodes: [detail] });
+        await waitFor(() => expect(removed).toEqual(['detail', 'detail']));
+        expect({ fullWidthRows: fullWidthRowCount(), built }).toEqual({ fullWidthRows: 1, built: 3 });
+
+        api.setGridOption('rowData', [{ id: '2', k: 'b' }]);
+        await waitFor(() => expect(removed).toContain('1'));
+        expect(getGridElement(api)!.querySelector('.ag-row[row-id="1"]')).toBeNull();
+    });
+
+    // The detail sizes itself to its grid: working the row heights out again must not put it back to its placeholder.
+    describe('an auto-height detail row', () => {
+        const DETAIL_HEIGHT = 150;
+        const TALL_CELL_HEIGHT = 60;
+
+        beforeAll(() => {
+            mockGridLayout.useRealOffsetDimensions = true;
+            mockGridLayout.elementHeightOverride = (el) => {
+                if (el.classList.contains('ag-details-row')) {
+                    return DETAIL_HEIGHT;
+                }
+                return el.classList.contains('ag-cell-wrapper') && el.closest('[col-id="tall"]')
+                    ? TALL_CELL_HEIGHT
+                    : undefined;
+            };
+        });
+
+        afterAll(() => {
+            mockGridLayout.resetOptions();
+        });
+
+        const createAutoHeightDetailGrid = async (columnDefs: GridOptions['columnDefs'] = [{ field: 'k' }]) => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs,
+                masterDetail: true,
+                detailRowAutoHeight: true,
+                rowData: [{ k: '1', records: [{ x: 'a' }] }],
+                detailCellRendererParams: {
+                    detailGridOptions: { columnDefs: [{ field: 'x' }] },
+                    getDetailRowData: (params: GetDetailRowDataParams) => params.successCallback(params.data.records),
+                },
+            });
+            api.getDisplayedRowAtIndex(0)!.setExpanded(true);
+            const detailHeight = () => api.getDisplayedRowAtIndex(1)!.rowHeight!;
+            await waitFor(() => expect(detailHeight()).toBeGreaterThanOrEqual(DETAIL_HEIGHT));
+            return { api, detailHeight, measured: detailHeight() };
+        };
+
+        test.each([
+            ['a rowHeight change', (api: GridApi) => api.setGridOption('rowHeight', 30)],
+            ['resetRowHeights', (api: GridApi) => api.resetRowHeights()],
+        ])('keeps its measured height through %s', async (_name, workHeightsOut) => {
+            const { api, detailHeight, measured } = await createAutoHeightDetailGrid();
+
+            workHeightsOut(api);
+            await asyncSetTimeout(0);
+
+            expect(detailHeight()).toBe(measured);
+        });
+
+        test('keeps its measured height when the last auto-height column of the master grid goes', async () => {
+            const { api, detailHeight, measured } = await createAutoHeightDetailGrid([
+                { field: 'k' },
+                { colId: 'tall', autoHeight: true },
+            ]);
+            const masterHeight = () => api.getDisplayedRowAtIndex(0)!.rowHeight;
+            await waitFor(() => expect(masterHeight()).toBe(TALL_CELL_HEIGHT));
+
+            api.setColumnsVisible(['tall'], false);
+            await waitFor(() => expect(masterHeight()).toBe(42));
+
+            expect(detailHeight()).toBe(measured);
+        });
     });
 });

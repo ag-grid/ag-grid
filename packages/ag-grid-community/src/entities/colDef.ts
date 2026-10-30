@@ -270,8 +270,8 @@ export type ToolPanelClass<TData = any, TValue = any, TContext = any> =
 /** @knipIgnore Used in tests */
 export type StringOrNumKeys<TObj> = keyof TObj & (string | number);
 /** @knipIgnore Used in tests */
-export type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth extends any[]> = TValue extends object
-    ? `${Prefix}.${TDepth['length'] extends 5 ? any : NestedFieldPaths<TValue, TValueNestedChild, TDepth>}`
+export type NestedPath<TData, Prefix extends string, TValue, TDepth extends any[]> = TData extends object
+    ? `${Prefix}.${TDepth['length'] extends 5 ? any : NestedFieldPaths<TData, TValue, TDepth>}`
     : never;
 
 // This type wrapper is needed for correct handling of union types in ColDefField
@@ -914,7 +914,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     enableValue?: boolean;
     /**
-     * Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function.
+     * Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. `min` and `max` support `number`, `bigint` and date values (`date`, `dateTime`, `dateString` and `dateTimeString` cell data types). Also accepts a custom aggregation name or an aggregation function.
      * @agModule `RowGroupingModule` / `PivotModule` / `TreeDataModule` / `ServerSideRowModelModule`
      */
     aggFunc?: string | IAggFunc<TData, TValue> | null;

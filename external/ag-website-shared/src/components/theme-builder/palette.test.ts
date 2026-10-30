@@ -5,6 +5,7 @@ import {
     type Palette,
     deriveStroke,
     fromSeriesColors,
+    fromThemePalette,
     paletteIsEmpty,
     strokesAreEnabled,
     toSeriesColors,
@@ -199,6 +200,32 @@ describe('toThemePalette', () => {
     });
 });
 
+describe('fromThemePalette', () => {
+    it('reads back what toThemePalette wrote', () => {
+        expect(toThemePalette(fromThemePalette(toThemePalette(palette))!)).toEqual(toThemePalette(palette));
+    });
+
+    it('reads strokes matching their fills as strokes off', () => {
+        const read = fromThemePalette(toThemePalette(withStrokesEnabled(palette, false)))!;
+
+        expect(strokesAreEnabled(read)).toBe(false);
+    });
+
+    it('drops a fill no colour picker can show, with its stroke', () => {
+        const gradient = { type: 'gradient', colorStops: [] };
+
+        expect(fromThemePalette({ fills: [gradient, '#bbb'], strokes: ['#111', '#222'] })).toMatchObject({
+            fills: ['#bbb'],
+            strokes: ['#222'],
+        });
+    });
+
+    it('finds nothing in a value that is not a palette', () => {
+        expect(fromThemePalette(undefined)).toBeUndefined();
+        expect(fromThemePalette({ fills: [] })).toBeUndefined();
+    });
+});
+
 describe('strokes switched off', () => {
     it('is on for a palette that has never said', () => {
         expect(strokesAreEnabled(palette)).toBe(true);
@@ -237,7 +264,7 @@ describe('completing a stored palette', () => {
         neutral: { fill: '#888', stroke: '#555' },
     };
 
-    it('supplies the financial colours a record was written without', () => {
+    it('supplies the semantic colours a record was written without', () => {
         // A palette with none of the three is an indexed palette to AG Charts,
         // which then draws rising candles hollow - so the outline is the whole
         // candle, and switching it off empties the chart.

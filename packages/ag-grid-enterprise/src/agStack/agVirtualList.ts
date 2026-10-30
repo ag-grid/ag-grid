@@ -20,13 +20,16 @@ import {
     _setAriaPosInSet,
     _setAriaRole,
     _setAriaSetSize,
-    _waitUntil,
 } from 'ag-stack';
 
 import { KeyCode } from 'ag-grid-community';
 
 import agVirtualListCSS from './agVirtualList.css';
 import type { VirtualListModel } from './iVirtualList';
+
+/** How long `awaitStable` polls for the container to reach its height before running the callbacks anyway. */
+const AWAIT_STABLE_TIMEOUT_MS = 100;
+const AWAIT_STABLE_POLL_MS = 10;
 
 export interface VirtualListParams<C> {
     cssIdentifier?: string;
@@ -94,6 +97,8 @@ export class AgVirtualList<
     private isHeightFromTheme: boolean = true;
     protected readonly eContainer: HTMLElement = RefPlaceholder;
     private awaitStableCallbacks: (() => void)[] = [];
+    /** 0 while nothing waits: timer handles are always positive. */
+    private awaitStableInterval = 0;
     private readonly moveItemCallback?: (item: C, isUp: boolean) => void;
 
     constructor(
@@ -103,7 +108,7 @@ export class AgVirtualList<
         super(getVirtualListTemplate(params?.cssIdentifier || 'default'));
         this.registerCSS(agVirtualListCSS);
 
-        const { cssIdentifier = 'default', ariaRole = 'listbox', listName, moveItemCallback } = params || {};
+        const { cssIdentifier = 'default', ariaRole = 'listbox', listName, moveItemCallback } = params ?? {};
 
         this.cssIdentifier = cssIdentifier;
         this.ariaRole = ariaRole;
@@ -340,7 +345,7 @@ export class AgVirtualList<
             return false;
         }
 
-        const rowTopPixel = index * this.rowHeight;
+        const rowTopPixel = this.eContainer.offsetTop + index * this.rowHeight;
         const rowBottomPixel = rowTopPixel + this.rowHeight;
         const eGui = this.getGui();
 
@@ -418,25 +423,35 @@ export class AgVirtualList<
     }
 
     public awaitStable(callback: () => void): void {
+        if (!this.isAlive()) {
+            return;
+        }
         this.awaitStableCallbacks.push(callback);
         if (this.awaitStableCallbacks.length > 1) {
             return;
         }
         const rowCount = this.model.getRowCount();
-        _waitUntil(
-            this,
-            () => this.eContainer.clientHeight >= rowCount * this.rowHeight,
-            () => {
-                if (!this.isAlive()) {
-                    return;
-                }
-                const callbacks = this.awaitStableCallbacks;
-                this.awaitStableCallbacks = [];
-                for (const c of callbacks) {
-                    c();
-                }
+        const startTime = Date.now();
+        const runIfStable = (): boolean => {
+            if (
+                this.eContainer.clientHeight < rowCount * this.rowHeight &&
+                Date.now() - startTime <= AWAIT_STABLE_TIMEOUT_MS
+            ) {
+                return false;
             }
-        );
+            // Cleared before the callbacks run: one of them may start the next wait.
+            window.clearInterval(this.awaitStableInterval);
+            this.awaitStableInterval = 0;
+            const callbacks = this.awaitStableCallbacks;
+            this.awaitStableCallbacks = [];
+            for (let i = 0, len = callbacks.length; i < len; ++i) {
+                callbacks[i]();
+            }
+            return true;
+        };
+        if (!runIfStable()) {
+            this.awaitStableInterval = window.setInterval(runIfStable, AWAIT_STABLE_POLL_MS);
+        }
     }
 
     private canSoftRefresh(softRefresh: boolean | undefined): boolean {
@@ -586,6 +601,8 @@ export class AgVirtualList<
         }
 
         this.clearVirtualRows();
+        window.clearInterval(this.awaitStableInterval);
+        this.awaitStableInterval = 0;
         this.awaitStableCallbacks.length = 0;
         super.destroy();
     }

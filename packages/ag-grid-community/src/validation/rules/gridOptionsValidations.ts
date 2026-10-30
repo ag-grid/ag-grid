@@ -1,5 +1,6 @@
 import { getSortDefFromInput } from '../../entities/agColumn';
 import type { DomLayoutType, GridOptions } from '../../entities/gridOptions';
+import type { CalculatedColumnsOptions } from '../../interfaces/iCalculatedColumns';
 import { _BOOLEAN_GRID_OPTIONS, _GET_ALL_GRID_OPTIONS, _NUMBER_GRID_OPTIONS } from '../../propertyKeys';
 import { _PUBLIC_EVENT_HANDLERS_MAP } from '../../publicEventHandlersMap';
 import { _mergeDeep } from '../../utils/mergeDeep';
@@ -143,6 +144,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     getLocaleText: 'Locale',
     getMainMenuItems: 'ColumnMenu',
     getColumnMenuItems: ['ColumnMenu', 'ColumnsToolPanel'],
+    getColumnDropZoneMenuItems: ['RowGroupingPanel', 'ColumnsToolPanel'],
     getRowClass: 'RowStyle',
     getRowStyle: 'RowStyle',
     groupTotalRow: (_options, gridOptions) =>
@@ -185,6 +187,48 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     viewportDatasource: 'ViewportRowModel',
 };
 
+const CALCULATED_COLUMNS_CALLBACKS = ['isColumnReferenceable', 'getValidationErrors', 'processColDef'] as const;
+const CALCULATED_COLUMNS_EXPRESSION_PICKERS = new Set(['columns', 'functions', 'operators']);
+
+function validateCalculatedColumnsOptions(options: CalculatedColumnsOptions): ValidationWarning | string | null {
+    for (const key of CALCULATED_COLUMNS_CALLBACKS) {
+        const callback = options[key];
+        if (callback != null && typeof callback !== 'function') {
+            return _createValidationWarning(321, { property: `calculatedColumns.${key}`, expected: 'a function' });
+        }
+    }
+    const { dataTypes, expressionPickers, applyMode, applyDebounce } = options;
+    if (
+        dataTypes != null &&
+        (!Array.isArray(dataTypes) || dataTypes.some((dataType) => typeof dataType !== 'string'))
+    ) {
+        return _createValidationWarning(321, {
+            property: 'calculatedColumns.dataTypes',
+            expected: 'an array of strings',
+        });
+    }
+    if (
+        expressionPickers != null &&
+        (!Array.isArray(expressionPickers) ||
+            expressionPickers.some((expressionPicker) => !CALCULATED_COLUMNS_EXPRESSION_PICKERS.has(expressionPicker)))
+    ) {
+        return "calculatedColumns.expressionPickers should contain only 'columns', 'functions' or 'operators'.";
+    }
+    if (applyMode != null && applyMode !== 'live' && applyMode !== 'deferred') {
+        return _createValidationWarning(320, {
+            property: 'calculatedColumns.applyMode',
+            allowed: ['live', 'deferred'],
+        });
+    }
+    if (applyDebounce !== undefined && (!Number.isInteger(applyDebounce) || applyDebounce < 0)) {
+        return _createValidationWarning(321, {
+            property: 'calculatedColumns.applyDebounce',
+            expected: 'a non-negative integer',
+        });
+    }
+    return null;
+}
+
 /**
  * Validation rules for gridOptions
  */
@@ -210,45 +254,7 @@ const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
                     });
                 }
 
-                const { dataTypes, expressionPickers, applyMode, isColumnReferenceable, getValidationErrors } =
-                    calculatedColumns;
-                if (isColumnReferenceable != null && typeof isColumnReferenceable !== 'function') {
-                    return _createValidationWarning(321, {
-                        property: 'calculatedColumns.isColumnReferenceable',
-                        expected: 'a function',
-                    });
-                }
-                if (getValidationErrors != null && typeof getValidationErrors !== 'function') {
-                    return _createValidationWarning(321, {
-                        property: 'calculatedColumns.getValidationErrors',
-                        expected: 'a function',
-                    });
-                }
-                if (dataTypes != null) {
-                    if (!Array.isArray(dataTypes) || dataTypes.some((dataType) => typeof dataType !== 'string')) {
-                        return _createValidationWarning(321, {
-                            property: 'calculatedColumns.dataTypes',
-                            expected: 'an array of strings',
-                        });
-                    }
-                }
-                if (expressionPickers != null) {
-                    const validExpressionPickers = new Set(['columns', 'functions', 'operators']);
-                    if (
-                        !Array.isArray(expressionPickers) ||
-                        expressionPickers.some((expressionPicker) => !validExpressionPickers.has(expressionPicker))
-                    ) {
-                        return "calculatedColumns.expressionPickers should contain only 'columns', 'functions' or 'operators'.";
-                    }
-                }
-                if (applyMode != null && applyMode !== 'live' && applyMode !== 'deferred') {
-                    return _createValidationWarning(320, {
-                        property: 'calculatedColumns.applyMode',
-                        allowed: ['live', 'deferred'],
-                    });
-                }
-
-                return null;
+                return validateCalculatedColumnsOptions(calculatedColumns);
             },
         },
         columnHeaderEdit: {

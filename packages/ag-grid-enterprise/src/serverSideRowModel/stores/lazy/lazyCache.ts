@@ -378,7 +378,7 @@ export class LazyCache extends BeanStub {
         if (isLastRowIndexKnown != null) {
             this.isLastRowKnown = isLastRowIndexKnown;
 
-            if (isLastRowIndexKnown === false) {
+            if (!isLastRowIndexKnown) {
                 this.numberOfRows += 1;
             }
         }
@@ -616,7 +616,7 @@ export class LazyCache extends BeanStub {
         const results: { [key: string]: any } = {};
         for (const blockStart of Object.keys(blockStates)) {
             const sortedStates = [...blockStates[blockStart]].sort(
-                (a, b) => (statePriorityMap[a] ?? 0) - (statePriorityMap[b] ?? 0)
+                (a, b) => (statePriorityMap[b] ?? 0) - (statePriorityMap[a] ?? 0)
             );
             const priorityState = sortedStates[0];
 
@@ -786,7 +786,9 @@ export class LazyCache extends BeanStub {
             const rowBlockStart = this.getBlockStartIndex(index);
             const rowBlockInViewport = rowBlockStart >= firstRowBlockStart && rowBlockStart <= lastRowBlockStart;
 
-            return !rowBlockInViewport && !this.isNodeCached(node);
+            return (
+                !rowBlockInViewport && !this.isNodeCached(node) && !this.lazyBlockLoadingSvc.isRowLoading(this, index)
+            );
         });
 
         if (disposableNodes.length === 0) {
@@ -1201,8 +1203,7 @@ export class LazyCache extends BeanStub {
     }
 
     public insertRowNodes(inserts: any[], indexToAdd?: number): RowNode[] {
-        // adjust row count to allow for footer row
-        const realRowCount = this.store.getRowCount() - (this.store.getParentNode().sibling ? 1 : 0);
+        const realRowCount = this.numberOfRows;
 
         // if missing and we know the last row, we're inserting at the end
         const addIndex = indexToAdd == null && this.isLastRowKnown ? realRowCount : indexToAdd;

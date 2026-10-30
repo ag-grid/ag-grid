@@ -378,7 +378,7 @@ export class ExcelCreator
 
     protected getMergedParams(params?: ExcelExportParams): ExcelExportParams {
         const baseParams = this.gos.get('defaultExcelExportParams');
-        return Object.assign({}, baseParams, params);
+        return { ...baseParams, ...params };
     }
 
     protected export(userParams?: ExcelExportParams): void {
@@ -466,7 +466,7 @@ export class ExcelCreator
 
     public createSerializingSession(params: ExcelExportParams): ExcelSerializingSession {
         const { colModel, colNames, rowGroupColsSvc, valueSvc, formula, gos, notesSvc, log } = this.beans;
-        const baseExcelStyles = gos.get('excelStyles') || [];
+        const baseExcelStyles = gos.get('excelStyles') ?? [];
         const styleLinker = this.createStyleLinker(baseExcelStyles);
 
         const config: ExcelGridSerializingParams = {
@@ -503,6 +503,7 @@ export class ExcelCreator
         });
 
         const { gos, cellStyles } = this.beans;
+        const defaultStyles = ['cell'];
 
         return (params) => {
             const { rowType, rowIndex, value, column, columnGroup, node } = params;
@@ -531,13 +532,15 @@ export class ExcelCreator
                 return headerClasses;
             }
 
-            const applicableStyles: string[] = ['cell'];
-
             if (!styleIds.length) {
-                return applicableStyles;
+                return defaultStyles;
             }
 
-            const colDef = (column as AgColumn).getDefinition();
+            const colDef = (column as AgColumn).getColDef();
+            if (!colDef.cellClass && !colDef.cellClassRules) {
+                return defaultStyles;
+            }
+            const applicableStyles: string[] = ['cell'];
             cellStyles?.processAllCellClasses(
                 colDef,
                 _addGridCommonParams(gos, {
@@ -555,6 +558,9 @@ export class ExcelCreator
                 }
             );
 
+            if (applicableStyles.length < 2) {
+                return applicableStyles;
+            }
             return applicableStyles.sort((left: string, right: string): number => {
                 const leftIdx = styleIdOrder.get(left) ?? -1;
                 const rightIdx = styleIdOrder.get(right) ?? -1;

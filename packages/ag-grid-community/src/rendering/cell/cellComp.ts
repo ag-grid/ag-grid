@@ -132,8 +132,8 @@ export class CellComp extends Component {
                 this.setRenderDetails(compDetails, valueToDisplay, force),
             setEditDetails: (compDetails, popup, position) => this.setEditDetails(compDetails, popup, position),
 
-            getCellEditor: () => this.cellEditor || null,
-            getCellRenderer: () => this.cellRenderer || null,
+            getCellEditor: () => this.cellEditor ?? null,
+            getCellRenderer: () => this.cellRenderer ?? null,
             getParentOfValue: () => this.getParentOfValue(),
             refreshEditStyles: (editing, isPopup) => this.refreshEditStyles(editing, isPopup),
         };
@@ -371,7 +371,7 @@ export class CellComp extends Component {
         }
 
         // take any custom params off of the user
-        const result = this.cellRenderer.refresh(compClassAndParams.params);
+        const result: unknown = this.cellRenderer.refresh(compClassAndParams.params);
 
         // NOTE on undefined: previous version of the cellRenderer.refresh() interface
         // returned nothing, if the method existed, we assumed it refreshed. so for
@@ -554,8 +554,7 @@ export class CellComp extends Component {
         const useModelPopup = gos.get('stopEditingWhenCellsLoseFocus');
 
         // see if position provided by colDef, if not then check old way of method on cellComp
-        const positionToUse: 'over' | 'under' | undefined =
-            position != null ? position : (cellEditor!.getPopupPosition?.() ?? 'over');
+        const positionToUse: 'over' | 'under' | undefined = position ?? cellEditor!.getPopupPosition?.() ?? 'over';
         const isRtl = gos.get('enableRtl');
 
         const positionParams: AgComponentPopupPositionParams<PopupPositionParams> = {

@@ -338,6 +338,10 @@ export const AG_GRID_LOCALE_TH_TH = {
     enabled: 'เปิดใช้งาน',
 
     // Menu
+    moveLeft: 'ย้ายไปทางซ้าย',
+    moveRight: 'ย้ายไปทางขวา',
+    moveUp: 'ย้ายขึ้น',
+    moveDown: 'ย้ายลง',
     pinColumn: 'ปักหมุดคอลัมน์',
     pinLeft: 'ปักหมุดซ้าย',
     pinRight: 'ปักหมุดขวา',
@@ -775,6 +779,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaRowSelect: 'กด SPACE เพื่อเลือกแถวนี้',
     ariaRowSelectionDisabled: 'การเลือกแถวถูกปิดใช้งานสำหรับแถวนี้',
     ariaSearch: 'ค้นหา',
+    ariaSortPriority: 'ลำดับความสำคัญในการเรียง ${priority} จาก ${count}',
     ariaSortableColumn: 'กด ENTER เพื่อเรียงลำดับ',
     ariaSortableColumnWithCellSelection: 'กด ALT ENTER เพื่อเรียงลำดับ',
     ariaToggleVisibility: 'กด SPACE เพื่อสลับการมองเห็น',
@@ -811,6 +816,12 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'ค่าสัมบูรณ์จากมากไปน้อย',
 
     ariaLabelDialog: 'กล่องโต้ตอบ',
+
+    ariaLabelClose: 'ปิด',
+
+    ariaLabelMaximize: 'ขยายใหญ่สุด',
+
+    ariaLabelRestore: 'คืนค่า',
 
     ariaLabelColumnMenu: 'เมนูคอลัมน์',
     ariaLabelColumnFilter: 'ตัวกรองคอลัมน์',

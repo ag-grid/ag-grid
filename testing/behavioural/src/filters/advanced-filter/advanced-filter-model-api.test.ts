@@ -1,7 +1,25 @@
-import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
+import {
+    ALL_SEVERITIES,
+    AdvancedFilterBuilderHarness,
+    AdvancedFilterHarness,
+    GridColumns,
+    GridRows,
+    TestGridsManager,
+    asyncSetTimeout,
+    installFilterLayoutMock,
+    uninstallFilterLayoutMock,
+} from 'ag-test-utils';
+import { onTestFinished } from 'vitest';
 
 import type { AdvancedFilterModel, ColumnAdvancedFilterModel, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, DateFilterModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    DateFilterModule,
+    GridStateModule,
+    NumberFilterModule,
+    TextFilterModule,
+    enableDevValidations,
+} from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
 // --- Shared test data ---
@@ -61,6 +79,7 @@ describe('Advanced Filter', () => {
             NumberFilterModule,
             DateFilterModule,
             AdvancedFilterModule,
+            GridStateModule,
             ClientSideRowModelModule,
         ],
     });
@@ -1241,6 +1260,382 @@ describe('Advanced Filter', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:2 athlete:"Usain Bolt" age:25 date:"2012-08-05" hasGold:true country:"Jamaica"
             `);
+        });
+    });
+
+    test('a model set with rows loaded filters them at once, reporting the change', async () => {
+        const sources: (string | undefined)[] = [];
+        const api = gridsManager.createGrid('grid1', {
+            ...DEFAULT_OPTIONS,
+            onFilterChanged: ({ source }) => sources.push(source),
+        });
+        await asyncSetTimeout(0);
+
+        api.setAdvancedFilterModel({ filterType: 'number', colId: 'age', type: 'lessThan', filter: 20 });
+        await asyncSetTimeout(0);
+        expect(getDisplayedAthletes(api)).toEqual(['Anna Kowalski']);
+        expect(sources).toEqual(['api']);
+    });
+
+    test.each([
+        {
+            call: 'setFilterModel',
+            run: (api: GridApi) => api.setFilterModel({ age: { filterType: 'number', type: 'lessThan', filter: 20 } }),
+        },
+        {
+            call: 'setColumnFilterModel',
+            run: (api: GridApi) =>
+                api.setColumnFilterModel('age', { filterType: 'number', type: 'lessThan', filter: 20 }),
+        },
+        { call: 'getColumnFilterInstance', run: (api: GridApi) => api.getColumnFilterInstance('age') },
+    ])('$call warns that column filters are off and leaves the advanced filter applied', async (row) => {
+        // the whole list of issues is asserted instead, as a suppressed id raises none
+        enableDevValidations({ throwOn: [] });
+        onTestFinished(() => enableDevValidations({ throwOn: ALL_SEVERITIES }));
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        onTestFinished(() => warnSpy.mockRestore());
+        const issues: string[] = [];
+        const api = gridsManager.createGrid('grid1', {
+            ...DEFAULT_OPTIONS,
+            onIssueRaised: (event) => issues.push(`${event.severity} #${event.id}`),
+        });
+        await asyncSetTimeout(0);
+        applyModel(api, { filterType: 'text', colId: 'athlete', type: 'contains', filter: 'Bolt' });
+
+        expect(await row.run(api)).toBeUndefined();
+        await asyncSetTimeout(0);
+        expect({
+            issues,
+            model: api.getFilterModel(),
+            columnFilterPresent: api.isColumnFilterPresent(),
+            athletes: getDisplayedAthletes(api),
+        }).toEqual({ issues: ['warning #68'], model: {}, columnFilterPresent: false, athletes: ['Usain Bolt'] });
+    });
+
+    describe('Model set before the rows arrive to infer data types from', () => {
+        const EMPTY_OPTIONS: GridOptions<TestRow> = { ...DEFAULT_OPTIONS, rowData: [] };
+        const UNDER_20: AdvancedFilterModel = { filterType: 'number', colId: 'age', type: 'lessThan', filter: 20 };
+        const OVER_24: AdvancedFilterModel = { filterType: 'number', colId: 'age', type: 'greaterThan', filter: 24 };
+        const ALL_ATHLETES = ['Michael Phelps', 'Emma Thompson', 'Usain Bolt', 'Anna Kowalski', 'Li Wei', ''];
+        const BOLT: AdvancedFilterModel = { filterType: 'text', colId: 'athlete', type: 'contains', filter: 'Bolt' };
+        const WITH_BUTTONS: GridOptions<TestRow> = {
+            ...EMPTY_OPTIONS,
+            advancedFilterParams: { buttons: ['apply', 'cancel', 'reset'] },
+        };
+        const clickButton = (action: 'cancel' | 'reset'): void =>
+            document
+                .querySelector<HTMLElement>(`.ag-advanced-filter-buttons [data-ref=${action}FilterButton]`)!
+                .click();
+
+        beforeAll(() => installFilterLayoutMock());
+        afterAll(() => uninstallFilterLayoutMock());
+
+        test('reads back at once as the caller’s own copy, and applies once rows arrive', async () => {
+            const api = gridsManager.createGrid('grid1', EMPTY_OPTIONS);
+            await asyncSetTimeout(0);
+
+            const model: AdvancedFilterModel = { ...UNDER_20 };
+            api.setAdvancedFilterModel(model);
+            model.filter = 99;
+            const retrieved = api.getAdvancedFilterModel();
+            expect(retrieved).toEqual(UNDER_20);
+            expect(retrieved).not.toBe(model);
+
+            api.setGridOption('rowData', []);
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toEqual(UNDER_20);
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toEqual(UNDER_20);
+            expect(getDisplayedAthletes(api)).toEqual(['Anna Kowalski']);
+            expect(AdvancedFilterHarness.get(api).value).toBe('[Age] < 20');
+        });
+
+        test('a set condition with no values reads back as set and applies once rows arrive', async () => {
+            const api = gridsManager.createGrid('grid1', EMPTY_OPTIONS);
+            await asyncSetTimeout(0);
+
+            const model = { filterType: 'set', colId: 'country' } as unknown as AdvancedFilterModel;
+            api.setAdvancedFilterModel(model);
+            expect(api.getAdvancedFilterModel()).toEqual(model);
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(getDisplayedAthletes(api)).toEqual(ALL_ATHLETES);
+        });
+
+        test('null after a model reads back null over an applied expression and leaves the rows unfiltered', async () => {
+            const api = gridsManager.createGrid('grid1', EMPTY_OPTIONS);
+            await asyncSetTimeout(0);
+            await AdvancedFilterHarness.get(api).applyExpression('[Athlete] contains "Bolt"');
+            await asyncSetTimeout(0);
+
+            api.setAdvancedFilterModel(UNDER_20);
+            api.setAdvancedFilterModel(null);
+            expect(api.getAdvancedFilterModel()).toBeNull();
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toBeNull();
+            expect(getDisplayedAthletes(api)).toEqual(ALL_ATHLETES);
+        });
+
+        test('several models apply the last once rows arrive, each filterChanged reading it', async () => {
+            const changes: unknown[] = [];
+            const api: GridApi<TestRow> = gridsManager.createGrid('grid1', {
+                ...EMPTY_OPTIONS,
+                onFilterChanged: ({ source }) => changes.push([source, api.getAdvancedFilterModel()]),
+            });
+            await asyncSetTimeout(0);
+
+            api.setAdvancedFilterModel(OVER_24);
+            api.setAdvancedFilterModel(UNDER_20);
+            await asyncSetTimeout(0);
+            expect(changes).toEqual([]);
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(changes).toEqual([
+                ['api', UNDER_20],
+                ['api', UNDER_20],
+            ]);
+            expect(getDisplayedAthletes(api)).toEqual(['Anna Kowalski']);
+        });
+
+        test('an initial state model reads back at once and applies once rows arrive as a state change', async () => {
+            const sources: (string | undefined)[] = [];
+            const api = gridsManager.createGrid('grid1', {
+                ...EMPTY_OPTIONS,
+                initialState: { filter: { advancedFilterModel: UNDER_20 } },
+                onFilterChanged: ({ source }) => sources.push(source),
+            });
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toEqual(UNDER_20);
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toEqual(UNDER_20);
+            expect(getDisplayedAthletes(api)).toEqual(['Anna Kowalski']);
+            expect(sources).toEqual(['advancedFilter']);
+        });
+
+        test('a model restored with setState reads back at once and applies once rows arrive', async () => {
+            const api = gridsManager.createGrid('grid1', EMPTY_OPTIONS);
+            await asyncSetTimeout(0);
+
+            api.setState({ filter: { advancedFilterModel: OVER_24 } });
+            expect(api.getAdvancedFilterModel()).toEqual(OVER_24);
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toEqual(OVER_24);
+            expect(getDisplayedAthletes(api)).toEqual(['Emma Thompson', 'Usain Bolt', 'Li Wei']);
+        });
+
+        test('an expression applied in the input after a model replaces it, before and after rows arrive', async () => {
+            const api = gridsManager.createGrid('grid1', EMPTY_OPTIONS);
+            await asyncSetTimeout(0);
+            api.setAdvancedFilterModel(UNDER_20);
+            await AdvancedFilterHarness.get(api).applyExpression('[Athlete] contains "Bolt"');
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toEqual(BOLT);
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toEqual(BOLT);
+            expect(getDisplayedAthletes(api)).toEqual(['Usain Bolt']);
+        });
+
+        test('an expression confirmed in the input after a model replaces it once rows arrive to make it valid', async () => {
+            const api = gridsManager.createGrid('grid1', EMPTY_OPTIONS);
+            await asyncSetTimeout(0);
+            api.setAdvancedFilterModel(UNDER_20);
+            const harness = AdvancedFilterHarness.get(api);
+            await harness.applyExpression('[Age] > 24');
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toBeNull();
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toEqual(OVER_24);
+            expect(getDisplayedAthletes(api)).toEqual(['Emma Thompson', 'Usain Bolt', 'Li Wei']);
+            expect(harness.value).toBe('[Age] > 24');
+        });
+
+        test('Cancel in the input keeps the model, before and after rows arrive', async () => {
+            const api = gridsManager.createGrid('grid1', WITH_BUTTONS);
+            await asyncSetTimeout(0);
+
+            api.setAdvancedFilterModel(UNDER_20);
+            const harness = AdvancedFilterHarness.get(api);
+            await harness.type('[Athlete] contains "x"');
+            clickButton('cancel');
+            await asyncSetTimeout(0);
+            expect(harness.value).toBe('');
+            expect(api.getAdvancedFilterModel()).toEqual(UNDER_20);
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toEqual(UNDER_20);
+            expect(getDisplayedAthletes(api)).toEqual(['Anna Kowalski']);
+        });
+
+        test('Reset in the input drops the model, before and after rows arrive', async () => {
+            const api = gridsManager.createGrid('grid1', WITH_BUTTONS);
+            await asyncSetTimeout(0);
+
+            api.setAdvancedFilterModel(UNDER_20);
+            clickButton('reset');
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toBeNull();
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toBeNull();
+            expect(getDisplayedAthletes(api)).toEqual(ALL_ATHLETES);
+        });
+
+        test('Reset in the builder drops the model, before and after rows arrive', async () => {
+            const api = gridsManager.createGrid('grid1', {
+                ...EMPTY_OPTIONS,
+                advancedFilterBuilderParams: { buttons: ['apply', 'reset'] },
+            });
+            await asyncSetTimeout(0);
+
+            api.setAdvancedFilterModel(UNDER_20);
+            await AdvancedFilterBuilderHarness.open(api);
+            document.querySelector<HTMLElement>('.ag-advanced-filter-builder [data-ref=resetFilterButton]')!.click();
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toBeNull();
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toBeNull();
+            expect(getDisplayedAthletes(api)).toEqual(ALL_ATHLETES);
+        });
+
+        test('a model applied in the builder replaces the model, before and after rows arrive', async () => {
+            const api = gridsManager.createGrid('grid1', EMPTY_OPTIONS);
+            await asyncSetTimeout(0);
+
+            await AdvancedFilterHarness.get(api).applyExpression('[Athlete] contains "x"');
+            api.setAdvancedFilterModel(UNDER_20);
+            const builder = await AdvancedFilterBuilderHarness.open(api);
+            await builder.setValue((await builder.conditionItems())[0], 'Bolt');
+            await builder.apply();
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toEqual(BOLT);
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toEqual(BOLT);
+            expect(getDisplayedAthletes(api)).toEqual(['Usain Bolt']);
+        });
+
+        test('a model set after an expression typed in the input applies once rows arrive', async () => {
+            const changes: unknown[] = [];
+            const api: GridApi<TestRow> = gridsManager.createGrid('grid1', {
+                ...EMPTY_OPTIONS,
+                onFilterChanged: ({ source }) => changes.push([source, api.getAdvancedFilterModel()]),
+            });
+            await asyncSetTimeout(0);
+
+            await AdvancedFilterHarness.get(api).applyExpression('[Age] > 24');
+            await asyncSetTimeout(0);
+            changes.length = 0;
+            api.setAdvancedFilterModel(UNDER_20);
+            expect(api.getAdvancedFilterModel()).toEqual(UNDER_20);
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(changes).toEqual([['api', UNDER_20]]);
+            expect(getDisplayedAthletes(api)).toEqual(['Anna Kowalski']);
+        });
+
+        test('disabling the advanced filter drops a model set before the rows arrive', async () => {
+            const api = gridsManager.createGrid('grid1', EMPTY_OPTIONS);
+            await asyncSetTimeout(0);
+
+            api.setAdvancedFilterModel(UNDER_20);
+            api.setGridOption('enableAdvancedFilter', false);
+            expect(api.getAdvancedFilterModel()).toBeNull();
+            expect(api.getState().filter).toBeUndefined();
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toBeNull();
+            expect(getDisplayedAthletes(api)).toEqual(ALL_ATHLETES);
+
+            api.setGridOption('enableAdvancedFilter', true);
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toBeNull();
+            expect(getDisplayedAthletes(api)).toEqual(ALL_ATHLETES);
+        });
+
+        test('disabling the advanced filter drops a model set before the rows arrive, though enabled again before they do', async () => {
+            const api = gridsManager.createGrid('grid1', EMPTY_OPTIONS);
+            await asyncSetTimeout(0);
+
+            api.setAdvancedFilterModel(UNDER_20);
+            api.setGridOption('enableAdvancedFilter', false);
+            api.setGridOption('enableAdvancedFilter', true);
+            expect(api.getAdvancedFilterModel()).toBeNull();
+            await asyncSetTimeout(0);
+            expect(AdvancedFilterHarness.get(api).value).toBe('');
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(api.getAdvancedFilterModel()).toBeNull();
+            expect(getDisplayedAthletes(api)).toEqual(ALL_ATHLETES);
+        });
+
+        test('with the advanced filter off at creation and on before rows load, no column filter is present and the initial advanced filter state applies once they do', async () => {
+            const api = gridsManager.createGrid('grid1', {
+                columnDefs: COLUMN_DEFS,
+                enableAdvancedFilter: false,
+                initialState: { filter: { advancedFilterModel: BOLT } },
+            });
+            await asyncSetTimeout(0);
+            api.setGridOption('enableAdvancedFilter', true);
+            await asyncSetTimeout(0);
+            expect(api.getFilterModel()).toEqual({});
+            expect(api.isColumnFilterPresent()).toBe(false);
+            expect(api.getColumn('athlete')!.isFilterActive()).toBe(false);
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(getDisplayedAthletes(api)).toEqual(['Usain Bolt']);
+        });
+
+        test('with filter handlers and the advanced filter on, a state restore leaves a column filter handler built meanwhile', async () => {
+            const api = gridsManager.createGrid('grid1', { ...DEFAULT_OPTIONS, enableFilterHandlers: true });
+            await asyncSetTimeout(0);
+            const handler = api.getColumnFilterHandler('age');
+            api.setState({ filter: { filterModel: { age: { filterType: 'number', type: 'lessThan', filter: 20 } } } });
+            await asyncSetTimeout(0);
+            expect(api.getColumnFilterHandler('age')).toBe(handler);
+        });
+
+        test('enabling the advanced filter drops a column filter model set before the rows arrive', async () => {
+            const api = gridsManager.createGrid('grid1', { ...EMPTY_OPTIONS, enableAdvancedFilter: false });
+            await asyncSetTimeout(0);
+
+            api.setFilterModel({ age: { filterType: 'number', type: 'lessThan', filter: 20 } });
+            const columnModelSettled = api.setColumnFilterModel('athlete', {
+                filterType: 'text',
+                type: 'contains',
+                filter: 'Bolt',
+            });
+            api.setGridOption('enableAdvancedFilter', true);
+            await columnModelSettled;
+            expect(api.getFilterModel()).toEqual({});
+
+            api.setGridOption('rowData', ROW_DATA);
+            await asyncSetTimeout(0);
+            expect(api.getFilterModel()).toEqual({});
+            expect(api.isColumnFilterPresent()).toBe(false);
+            expect(getDisplayedAthletes(api)).toEqual(ALL_ATHLETES);
         });
     });
 

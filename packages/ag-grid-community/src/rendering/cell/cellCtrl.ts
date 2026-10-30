@@ -6,10 +6,13 @@ import {
     _makeNull,
     _placeCaretAtEnd,
     _setAriaColIndex,
+    _setAriaColSpan,
     _setAriaRowIndex,
 } from 'ag-stack';
 
 import { isColumnSelectionCol, isRowNumberCol } from '../../columns/columnUtils';
+import type { CompBeanOwner } from '../../components/emptyBean';
+import { destroyCompBean, setupCompBean } from '../../components/emptyBean';
 import { _getCellRendererDetails, _getLoadingCellRendererDetails } from '../../components/framework/userCompUtils';
 import { BeanStub } from '../../context/beanStub';
 import type { BeanCollection } from '../../context/context';
@@ -99,7 +102,7 @@ let instanceIdSequence = 0;
 export type CellCtrlInstanceId = BrandedType<string, 'CellCtrlInstanceId'>;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export class CellCtrl extends BeanStub {
+export class CellCtrl extends BeanStub implements CompBeanOwner {
     public readonly instanceId: CellCtrlInstanceId;
     /** Scratch for a list diff, trusted only where the list diffed holds this at that index. */
     public diffIndex = 0;
@@ -109,10 +112,12 @@ export class CellCtrl extends BeanStub {
     /** The vanilla cell comp drawing this; a row has one row comp at a time, so the field is that comp's. */
     public drawnComp: CellComp | undefined = undefined;
     private drawnAriaColIndex = -1;
+    private drawnAriaColSpan = 1;
 
     public eGui: HTMLElement;
 
     public comp: ICellComp;
+    public compBean: BeanStub | undefined = undefined;
     public editCompDetails?: UserCompDetails;
 
     public printLayout: boolean;
@@ -276,8 +281,9 @@ export class CellCtrl extends BeanStub {
         this.comp = comp;
         this.eGui = eCell;
         this.drawnAriaColIndex = -1;
+        this.drawnAriaColSpan = 1;
         this.printLayout = printLayout;
-        compBean ??= this;
+        compBean = setupCompBean(this, compBean);
 
         this.addDomData(compBean);
         const isClientSideLoadingCell = this.isClientSideLoadingCell();
@@ -306,6 +312,7 @@ export class CellCtrl extends BeanStub {
         }
         this.refreshAriaRowIndex();
         this.refreshAriaColIndex();
+        this.refreshAriaColSpan();
 
         _initCellPosition(this.beans, this);
         if (!isClientSideLoadingCell) {
@@ -808,6 +815,20 @@ export class CellCtrl extends BeanStub {
         }
     }
 
+    public refreshAriaColSpan(): void {
+        const { eGui, colsSpanning } = this;
+        if (!eGui) {
+            return;
+        }
+        // hidden columns keep their aria slots, so the span runs from this column's slot to the last covered one's
+        const last = colsSpanning?.[colsSpanning.length - 1];
+        const ariaColSpan = last ? last.ariaColIndex - this.column.ariaColIndex + 1 : 1;
+        if (ariaColSpan !== this.drawnAriaColSpan) {
+            this.drawnAriaColSpan = ariaColSpan;
+            _setAriaColSpan(eGui, ariaColSpan > 1 ? ariaColSpan : undefined);
+        }
+    }
+
     public getRowPosition(): RowPosition {
         const { rowIndex, rowPinned } = this.cellPosition;
         return {
@@ -835,7 +856,7 @@ export class CellCtrl extends BeanStub {
         if (this.isClientSideLoadingCell()) {
             return;
         }
-        const { forceBrowserFocus = false, preventScrollOnBrowserFocus = false, sourceEvent } = params || {};
+        const { forceBrowserFocus = false, preventScrollOnBrowserFocus = false, sourceEvent } = params ?? {};
         const allowedTarget = this.editSvc?.allowedFocusTargetOnValidation(this);
         // if allowedTarget is set, then edit mode is active (with potential validation failures) and we should check if we can service the focus request
         if (allowedTarget && allowedTarget !== this) {
@@ -864,12 +885,8 @@ export class CellCtrl extends BeanStub {
         }
 
         const focus = () => {
-            if (!this.isAlive()) {
-                return;
-            }
-            const focusableElement = comp.getFocusableElement();
-            if (this.isCellFocused()) {
-                focusableElement.focus({ preventScroll: true });
+            if (this.isAlive() && this.isCellFocused() && focusSvc.isFocusFreeForGrid()) {
+                comp.getFocusableElement().focus({ preventScroll: true });
             }
         };
 
@@ -932,7 +949,10 @@ export class CellCtrl extends BeanStub {
     private setupFocus() {
         // when cell is created, if it should be focus the grid should take focus from the focused cell
         this.restoreFocus(true);
-        this.onCellFocused(this.focusEventWhileNotReady ?? undefined);
+        // only the focused cell uses the event, so only it pays to check the event is still current
+        this.onCellFocused(
+            this.checkCellFocused() ? this.beans.focusSvc.currentDeferredFocus(this.focusEventWhileNotReady) : undefined
+        );
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
@@ -946,6 +966,7 @@ export class CellCtrl extends BeanStub {
             // preserve event for when cell renders.
             if (event) {
                 this.focusEventWhileNotReady = event;
+                beans.focusSvc.deferFocus(event);
             }
             return;
         }
@@ -1003,7 +1024,7 @@ export class CellCtrl extends BeanStub {
         // normal cells fill the height of the row. autoHeight cells have no height to let them
         // fit the height of content.
 
-        const autoHeight = this.column.isAutoHeight() == true;
+        const autoHeight = this.column.isAutoHeight();
         comp.toggleCss(CSS_AUTO_HEIGHT, autoHeight);
         comp.toggleCss(CSS_NORMAL_HEIGHT, !autoHeight);
         this.setCalculatedColumnCss();
@@ -1032,7 +1053,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private setWrapText(): void {
-        const value = this.column.colDef.wrapText == true;
+        const value = this.column.colDef.wrapText === true;
 
         this.comp.toggleCss(CSS_CELL_WRAP_TEXT, value);
     }
@@ -1091,6 +1112,7 @@ export class CellCtrl extends BeanStub {
             this.beans.focusSvc.attemptToRecoverFocus();
         }
 
+        destroyCompBean(this);
         super.destroy();
     }
 

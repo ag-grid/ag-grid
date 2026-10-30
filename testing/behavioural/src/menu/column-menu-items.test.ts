@@ -1,4 +1,4 @@
-import { waitFor } from '@testing-library/dom';
+import { getByRole, waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { TestGridsManager, clickMenuOption, menuOption, openMenuOption, polyfillOffsetParent } from 'ag-test-utils';
 import type { Mock } from 'vitest';
@@ -40,6 +40,27 @@ describe('getColumnMenuItems / columnMenuItems on the column menu', () => {
         restoreOffsetParent?.();
         restoreOffsetParent = undefined;
         vi.resetAllMocks();
+    });
+
+    test.each(['new', 'legacy'] as const)('%s column menu labels its semantic container', async (columnMenu) => {
+        const api = await gridMgr.createGridAndWait('menu-accessible-name', {
+            columnDefs: [{ field: 'athlete' }],
+            rowData,
+            columnMenu,
+            localeText: { ariaLabelColumnMenu: 'Custom column actions' },
+            getColumnMenuItems: () => [{ name: 'Custom' }],
+        });
+
+        restoreOffsetParent = polyfillOffsetParent();
+        api.showColumnMenu('athlete');
+        await openMenuOption('Custom');
+
+        const menu = getByRole(document.body, columnMenu === 'new' ? 'menu' : 'dialog', {
+            name: 'Custom column actions',
+        });
+        expect(menu.closest('.ag-popup-child')).toBe(menu);
+        const itemContainer = columnMenu === 'new' ? menu : getByRole(menu, 'menu');
+        expect(getByRole(menu, 'menuitem', { name: 'Custom' }).closest('[role="menu"]')).toBe(itemContainer);
     });
 
     test('getColumnMenuItems fires for the column menu with source "columnMenu" and string-token defaults', async () => {
@@ -440,5 +461,174 @@ describe('getColumnMenuItems module requirement', () => {
             })
         ).toThrow(/getColumnMenuItems/);
         gridMgr.reset();
+    });
+});
+
+describe('checkable column menu items aria', () => {
+    const gridMgr = new TestGridsManager({ modules: [AllEnterpriseModule] });
+
+    const rowData = [
+        { athlete: 'Michael Phelps', age: 23 },
+        { athlete: 'Missy Franklin', age: 17 },
+    ];
+
+    afterEach(() => {
+        gridMgr.reset();
+        restoreOffsetParent?.();
+        restoreOffsetParent = undefined;
+    });
+
+    /** Each option of the open menu that contains `optionName`, keyed by its text, as `role aria-checked`. */
+    function menuOptionsAria(optionName: string): Record<string, string> {
+        const menu = menuOption(optionName)!.closest<HTMLElement>('[role="menu"]')!;
+        const options = Array.from(menu.querySelectorAll<HTMLElement>('.ag-menu-option'));
+        return Object.fromEntries(
+            options.map((option) => [
+                option.querySelector('.ag-menu-option-text')!.textContent!.trim(),
+                `${option.getAttribute('role')} ${option.getAttribute('aria-checked')}`,
+            ])
+        );
+    }
+
+    function checkedOptions(aria: Record<string, string>): string[] {
+        return Object.keys(aria).filter((name) => aria[name].endsWith(' true'));
+    }
+
+    test('pin submenu items are radio items with aria-checked on every option', async () => {
+        const api = await gridMgr.createGridAndWait('menu-pin-aria', {
+            columnDefs: [{ field: 'athlete' }, { field: 'age' }],
+            rowData,
+            getColumnMenuItems: () => ['pinSubMenu'],
+        });
+
+        restoreOffsetParent = polyfillOffsetParent();
+        api.showColumnMenu('age');
+        await clickMenuOption('Pin Column');
+        await openMenuOption('Pin Left');
+        expect(menuOptionsAria('Pin Left')).toEqual({
+            'No Pin': 'menuitemradio true',
+            'Pin Left': 'menuitemradio false',
+            'Pin Right': 'menuitemradio false',
+        });
+
+        await clickMenuOption('Pin Left');
+        api.showColumnMenu('age');
+        await clickMenuOption('Pin Column');
+        await openMenuOption('Pin Left');
+        expect(menuOptionsAria('Pin Left')).toEqual({
+            'No Pin': 'menuitemradio false',
+            'Pin Left': 'menuitemradio true',
+            'Pin Right': 'menuitemradio false',
+        });
+    });
+
+    test('value aggregation submenu items are radio items with aria-checked on every option', async () => {
+        const api = await gridMgr.createGridAndWait('menu-agg-aria', {
+            columnDefs: [
+                { field: 'athlete', rowGroup: true },
+                { field: 'age', aggFunc: 'sum' },
+            ],
+            rowData,
+            getColumnMenuItems: () => ['valueAggSubMenu'],
+        });
+
+        restoreOffsetParent = polyfillOffsetParent();
+        api.showColumnMenu('age');
+        await clickMenuOption('Value Aggregation');
+        await openMenuOption('Sum');
+        const aria = menuOptionsAria('Sum');
+        expect(Object.keys(aria).length).toBeGreaterThan(2);
+        expect(Object.values(aria).every((value) => value.startsWith('menuitemradio '))).toBe(true);
+        expect(Object.values(aria).every((value) => value.endsWith(' true') || value.endsWith(' false'))).toBe(true);
+        expect(checkedOptions(aria)).toEqual(['Sum']);
+    });
+
+    test('show values as submenu items are radio items with aria-checked on every option', async () => {
+        const api = await gridMgr.createGridAndWait('menu-sva-aria', {
+            columnDefs: [
+                { field: 'athlete', rowGroup: true, hide: true },
+                { field: 'age', aggFunc: 'sum', enableShowValuesAs: true },
+            ],
+            rowData,
+            getColumnMenuItems: () => ['showValuesAsSubMenu'],
+        });
+
+        restoreOffsetParent = polyfillOffsetParent();
+        api.showColumnMenu('age');
+        await clickMenuOption('Show Values As');
+        await openMenuOption('% of Grand Total');
+        const aria = menuOptionsAria('% of Grand Total');
+        expect(Object.keys(aria).length).toBeGreaterThan(2);
+        expect(Object.values(aria).every((value) => value.startsWith('menuitemradio '))).toBe(true);
+        expect(Object.values(aria).every((value) => value.endsWith(' true') || value.endsWith(' false'))).toBe(true);
+        expect(checkedOptions(aria)).toEqual(['None']);
+    });
+
+    test('custom checked items stay checkbox items and expose aria-checked when unchecked', async () => {
+        const api = await gridMgr.createGridAndWait('menu-custom-checked-aria', {
+            columnDefs: [{ field: 'athlete' }],
+            rowData,
+            getColumnMenuItems: () => [
+                { name: 'Checked', checked: true },
+                { name: 'Unchecked', checked: false },
+                { name: 'Plain' },
+            ],
+        });
+
+        restoreOffsetParent = polyfillOffsetParent();
+        api.showColumnMenu('athlete');
+        await openMenuOption('Plain');
+        expect(menuOptionsAria('Plain')).toEqual({
+            Checked: 'menuitemcheckbox true',
+            Unchecked: 'menuitemcheckbox false',
+            Plain: 'menuitem null',
+        });
+    });
+
+    test('custom checked items with menuItemRole menuitem are plain items without aria-checked', async () => {
+        const api = await gridMgr.createGridAndWait('menu-custom-plain-aria', {
+            columnDefs: [{ field: 'athlete' }],
+            rowData,
+            getColumnMenuItems: () => [
+                { name: 'Checked', checked: true, menuItemRole: 'menuitem' },
+                { name: 'Unchecked', checked: false, menuItemRole: 'menuitem' },
+            ],
+        });
+
+        restoreOffsetParent = polyfillOffsetParent();
+        api.showColumnMenu('athlete');
+        await openMenuOption('Checked');
+        expect(menuOptionsAria('Checked')).toEqual({
+            Checked: 'menuitem null',
+            Unchecked: 'menuitem null',
+        });
+        expect(menuOption('Checked')!.closest('.ag-menu-option')!.querySelector('.ag-icon-tick')).not.toBeNull();
+    });
+
+    test('custom items with menuItemRole menuitemradio are radio items, unless they are not checkable', async () => {
+        const api = await gridMgr.createGridAndWait('menu-custom-radio-aria', {
+            columnDefs: [{ field: 'athlete' }],
+            rowData,
+            getColumnMenuItems: () => [
+                {
+                    name: 'Size',
+                    subMenu: [
+                        { name: 'Small', checked: true, menuItemRole: 'menuitemradio' },
+                        { name: 'Large', checked: false, menuItemRole: 'menuitemradio' },
+                        { name: 'Plain', menuItemRole: 'menuitemradio' },
+                    ],
+                },
+            ],
+        });
+
+        restoreOffsetParent = polyfillOffsetParent();
+        api.showColumnMenu('athlete');
+        await clickMenuOption('Size');
+        await openMenuOption('Small');
+        expect(menuOptionsAria('Small')).toEqual({
+            Small: 'menuitemradio true',
+            Large: 'menuitemradio false',
+            Plain: 'menuitem null',
+        });
     });
 });

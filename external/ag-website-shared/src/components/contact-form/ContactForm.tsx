@@ -4,7 +4,13 @@ import { CONSENT_LABELS } from '@ag-website-shared/components/consent-fields/con
 import type { CaptchaTicker } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { initCaptcha } from '@ag-website-shared/components/contact-form/initCaptcha';
 import { Icon } from '@ag-website-shared/components/icon/Icon';
-import { CONSENT_FIELD_IDS, CONTACT_FORM_DATA, RECAPTCHA_URL, STUDIO_FORM_DATA } from '@ag-website-shared/constants';
+import {
+    CONSENT_FIELD_IDS,
+    CONTACT_FORM_DATA,
+    PRICING_FORM_FIELD_IDS,
+    RECAPTCHA_URL,
+    STUDIO_FORM_DATA,
+} from '@ag-website-shared/constants';
 import { LIBRARY } from '@constants';
 import { getIsDev, getIsProduction } from '@utils/env';
 import classnames from 'classnames';
@@ -34,6 +40,10 @@ const { marketingEmailConsentId, emailTrackingConsentId, franceOrItalyId } = get
     ? CONSENT_FIELD_IDS.production
     : CONSENT_FIELD_IDS.default;
 
+const { productOfInterestId, applicationAudienceId } = getIsProduction()
+    ? PRICING_FORM_FIELD_IDS.production
+    : PRICING_FORM_FIELD_IDS.default;
+
 const isDev = getIsDev();
 
 const ENQUIRY_TYPE_OPTIONS = [
@@ -45,16 +55,44 @@ const ENQUIRY_TYPE_OPTIONS = [
     'General',
 ] as const;
 
+const PRODUCT_OF_INTEREST_OPTIONS = ['AG Grid', 'AG Charts', 'Enterprise Bundle', 'AG Studio'] as const;
+
+const APPLICATION_AUDIENCE_OPTIONS = [
+    'Internal users',
+    'External customers or other external users',
+    'Both',
+    'Not sure',
+] as const;
+
+/**
+ * Field length limits match those of the backend the form submits to
+ */
+const MAX_LENGTHS = {
+    firstName: 40,
+    lastName: 80,
+    company: 255,
+    email: 80,
+} as const;
+
+const maxLengthRule = (value: number) => ({
+    value,
+    message: `Max ${value} characters`,
+});
+
 type FormValues = {
     first_name: string;
     last_name: string;
     email: string;
 } & Record<string, string>;
 
+export type ContactFormLocation =
+    'About page' | 'Grid pricing page' | 'Charts pricing page' | 'Studio pricing page' | 'Contact page';
+
 interface Props {
-    formLocation: 'About page' | 'Grid pricing page' | 'Charts pricing page' | 'Contact page';
+    formLocation: ContactFormLocation;
     hideMessage?: boolean;
     submitLabel?: string;
+    showPricingFields?: boolean;
 }
 
 const RECAPTCHA_READY_CALLBACK = 'agOnRecaptchaReady';
@@ -99,6 +137,7 @@ export const ContactForm: FunctionComponent<Props> = ({
     formLocation = 'About page',
     hideMessage,
     submitLabel,
+    showPricingFields,
 }: Props) => {
     const formRef = useRef<HTMLFormElement>(null);
     const captchaRef = useRef<HTMLDivElement>(null);
@@ -249,28 +288,41 @@ export const ContactForm: FunctionComponent<Props> = ({
                         id="first_name"
                         type="text"
                         placeholder="First Name"
-                        {...register('first_name', { required: 'First name is required', maxLength: 40 })}
+                        {...register('first_name', {
+                            required: 'First name is required',
+                            maxLength: maxLengthRule(MAX_LENGTHS.firstName),
+                        })}
                     />
                     <div className={styles.errorContainer}>
                         {errors.first_name && <p className="error">{errors.first_name.message}</p>}
                     </div>
                 </div>
-                <div className="input-field">
+                <div className={classnames('input-field', { 'input-error': errors.last_name })}>
                     <label htmlFor="last_name">Last Name</label>
                     <input
                         id="last_name"
                         type="text"
                         placeholder="Last Name"
-                        {...register('last_name', { maxLength: 80 })}
+                        {...register('last_name', {
+                            maxLength: maxLengthRule(MAX_LENGTHS.lastName),
+                        })}
                     />
                     <div className={styles.errorContainer}>
                         {errors.last_name && <p className="error">{errors.last_name.message}</p>}
                     </div>
                 </div>
             </div>
-            <div className="input-field">
+            <div className={classnames('input-field', { 'input-error': errors.company })}>
                 <label htmlFor="company">Company</label>
-                <input id="company" type="text" placeholder="Company" {...register('company', { maxLength: 40 })} />
+                <input
+                    id="company"
+                    type="text"
+                    placeholder="Company"
+                    {...register('company', { maxLength: maxLengthRule(MAX_LENGTHS.company) })}
+                />
+                <div className={styles.errorContainer}>
+                    {errors.company && <p className="error">{errors.company.message}</p>}
+                </div>
             </div>
             <div className={classnames('input-field', { 'input-error': errors.email })}>
                 <label htmlFor="email">Work email</label>
@@ -282,7 +334,7 @@ export const ContactForm: FunctionComponent<Props> = ({
                         placeholder="Work email"
                         {...register('email', {
                             required: 'Email is required',
-                            maxLength: 80,
+                            maxLength: maxLengthRule(MAX_LENGTHS.email),
                             pattern: {
                                 value: /^(?:[a-zA-Z0-9_'^&/+%!-]+(?:\.[a-zA-Z0-9_'^&/+%!-]+)*|"(?:[^"\\]|\\.)+")@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/,
                                 message: 'Enter a valid email',
@@ -314,6 +366,36 @@ export const ContactForm: FunctionComponent<Props> = ({
                         )}
                     </div>
                 </div>
+            )}
+            {showPricingFields && (
+                <>
+                    <div className="input-field">
+                        <label htmlFor={productOfInterestId}>Product of interest</label>
+                        <select id={productOfInterestId} defaultValue="" {...register(productOfInterestId)}>
+                            <option value="" disabled hidden>
+                                Please select
+                            </option>
+                            {PRODUCT_OF_INTEREST_OPTIONS.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="input-field">
+                        <label htmlFor={applicationAudienceId}>Application audience</label>
+                        <select id={applicationAudienceId} defaultValue="" {...register(applicationAudienceId)}>
+                            <option value="" disabled hidden>
+                                Please select
+                            </option>
+                            {APPLICATION_AUDIENCE_OPTIONS.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </>
             )}
 
             {!hideMessage && (

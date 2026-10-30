@@ -436,6 +436,23 @@ describe('SortService', () => {
             `);
         });
 
+        test('an autoGroupColumnDef update keeps a cleared sort: initialSort applies only when the column is created', () => {
+            const api = gridMgr.createGrid('g', {
+                columnDefs: [
+                    { field: 'b', rowGroup: true, hide: true },
+                    { colId: 'a', field: 'a' },
+                ],
+                autoGroupColumnDef: { field: 'a', initialSort: 'asc' },
+                rowData,
+            });
+            const autoCol = api.getColumn('ag-Grid-AutoColumn')!;
+            expect(autoCol.getSort()).toBe('asc');
+
+            api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: null }] });
+            api.setGridOption('autoGroupColumnDef', { field: 'a', initialSort: 'asc', headerName: 'Group' });
+            expect(autoCol.getSort()).toBeNull();
+        });
+
         test('sort cache is invalidated after reapplying identical columnDefs', async () => {
             // Regression guard: SortService caches sortedCols (an AgColumn[]). If setGridOption
             // produces a display tree that compares equal to the previous one, gridColumnsChanged

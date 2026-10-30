@@ -43,11 +43,11 @@ export class GridComp extends TabGuardComp {
             updateLayoutClasses: this.updateLayoutClasses.bind(this),
             getFocusableContainers: this.getFocusableContainers.bind(this),
             setUserSelect: (value) => {
-                this.getGui().style.userSelect = value != null ? value : '';
-                this.getGui().style.webkitUserSelect = value != null ? value : '';
+                this.getGui().style.userSelect = value ?? '';
+                this.getGui().style.webkitUserSelect = value ?? '';
             },
             setCursor: (value) => {
-                this.getGui().style.cursor = value != null ? value : '';
+                this.getGui().style.cursor = value ?? '';
             },
         };
 

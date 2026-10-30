@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_SK_SK = {
     enabled: 'Povolené',
 
     // Menu
+    moveLeft: 'Presunúť doľava',
+    moveRight: 'Presunúť doprava',
+    moveUp: 'Presunúť nahor',
+    moveDown: 'Presunúť nadol',
     pinColumn: 'Pripnúť stĺpec',
     pinLeft: 'Pripnúť vľavo',
     pinRight: 'Pripnúť vpravo',
@@ -761,6 +765,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     ariaRowSelect: 'Stlačte SPACE na výber tohto riadku',
     ariaRowSelectionDisabled: 'Výber riadku je pre tento riadok zakázaný',
     ariaSearch: 'Hľadať',
+    ariaSortPriority: 'Priorita zoradenia ${priority} z ${count}',
     ariaSortableColumn: 'Stlačte ENTER na zoradenie',
     ariaSortableColumnWithCellSelection: 'Stlačte ALT ENTER na zoradenie',
     ariaToggleVisibility: 'Stlačte SPACE na prepínanie viditeľnosti',
@@ -797,6 +802,9 @@ export const AG_GRID_LOCALE_SK_SK = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolútne vzostupne',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolútne zostupne',
     ariaLabelDialog: 'Dialóg',
+    ariaLabelClose: 'Zavrieť',
+    ariaLabelMaximize: 'Maximalizovať',
+    ariaLabelRestore: 'Obnoviť',
     ariaLabelColumnMenu: 'Ponuka stĺpcov',
     ariaLabelColumnFilter: 'Filter stĺpcov',
     ariaLabelSelectField: 'Vyberte pole',

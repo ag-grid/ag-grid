@@ -336,6 +336,10 @@ export const AG_GRID_LOCALE_ZH_TW = {
     enabled: '已啟用',
 
     // Menu
+    moveLeft: '向左移動',
+    moveRight: '向右移動',
+    moveUp: '向上移動',
+    moveDown: '向下移動',
     pinColumn: '固定欄位',
     pinLeft: '固定在左側',
     pinRight: '固定在右側',
@@ -759,6 +763,7 @@ export const AG_GRID_LOCALE_ZH_TW = {
     ariaRowSelect: '按 SPACE 鍵選取此行',
     ariaRowSelectionDisabled: '此行已禁用行選擇',
     ariaSearch: '搜尋',
+    ariaSortPriority: '排序優先順序為第 ${priority} 位，共 ${count} 位',
     ariaSortableColumn: '按 ENTER 鍵排序',
     ariaSortableColumnWithCellSelection: '按 ALT ENTER 鍵排序',
     ariaToggleVisibility: '按 SPACE 鍵切換可見性',
@@ -795,6 +800,9 @@ export const AG_GRID_LOCALE_ZH_TW = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: '絕對升序',
     ariaDropZoneColumnComponentSortAbsoluteDescending: '絕對降序',
     ariaLabelDialog: '對話框',
+    ariaLabelClose: '關閉',
+    ariaLabelMaximize: '最大化',
+    ariaLabelRestore: '還原',
     ariaLabelColumnMenu: '欄位選單',
     ariaLabelColumnFilter: '欄位篩選器',
     ariaLabelSelectField: '選擇欄位',

@@ -30,16 +30,21 @@
     border-radius: 1px;
     padding-left: 1px;
     padding-right: 1px;
-    transition: background-color 1s;
+    transition: background-color 1s var(--ag-internal-accessible-color-transition-mode);
 }
 
 .ag-value-change-value-highlight {
     background-color: var(--ag-value-change-value-highlight-background-color);
-    transition: background-color 0.1s;
+    transition: background-color 0.1s var(--ag-internal-accessible-color-transition-mode);
+
+    @media (forced-colors: active) {
+        background-color: Mark;
+        color: MarkText;
+    }
 }
 
 .ag-cell-data-changed {
-    /* stylelint-disable-next-line declaration-no-important -- This !important was added before we banned them in the codebase. It is probably unnecessary. If you can, remove it (see guide in grid-styling.md). If it is genuinely required, edit this comment to explain. */
+    /* stylelint-disable-next-line declaration-no-important -- !important required to override inline styles and prevent them from breaking the value change highlight feature */
     background-color: var(--ag-value-change-value-highlight-background-color) !important;
 }
 
@@ -218,6 +223,15 @@
     border: 1px solid transparent;
     line-height: var(--ag-internal-content-line-height);
     -webkit-font-smoothing: subpixel-antialiased;
+
+    /* forced colors paints transparent borders, doubling the column and row borders */
+    @media (forced-colors: active) {
+        border-color: Canvas;
+
+        /* no need for a corresponding color:MarkText, the browser draws a backplate behind the text to keep it readable */
+        --ag-value-change-value-highlight-background-color: Mark;
+        --ag-range-selection-highlight-color: Mark;
+    }
 }
 
 .ag-cell {
@@ -290,6 +304,12 @@
     border-color: var(--ag-range-selection-border-color);
     border-style: var(--ag-range-selection-border-style);
     outline: initial;
+
+    /* every border collapses to CanvasText, so only an outline can mark the focused cell */
+    @media (forced-colors: active) {
+        outline: 2px solid var(--ag-internal-forced-colors-cell-focus-outline-color, Highlight);
+        outline-offset: -2px;
+    }
 }
 
 /* remove the box shadow added by default to all focussed divs because rows
@@ -321,6 +341,9 @@
     content: var(--ag-internal-row-highlight-content, none);
     position: absolute;
     inset: var(--ag-internal-row-highlight-inset, auto);
+
+    /* only the section holding the row's group label resolves the anchor; the others start at their edge */
+    inset-inline-start: anchor(--ag-internal-row-highlight-label start, 0);
     height: var(--ag-row-drag-indicator-width);
     background-color: var(--ag-row-drag-indicator-color);
     border-radius: calc(var(--ag-row-drag-indicator-width) / 2);
@@ -330,6 +353,9 @@
 /* a nested grid must not inherit the highlight of the row hosting it */
 .ag-root-wrapper {
     --ag-internal-row-highlight-content: initial;
+    --ag-internal-row-highlight-anchor: initial;
+
+    anchor-scope: --ag-internal-row-highlight-label;
 }
 
 .ag-row-highlight-above {
@@ -342,12 +368,12 @@
     --ag-internal-row-highlight-inset: auto 0 0;
 }
 
-.ag-row-highlight-indent > .ag-grid-scrolling-cells::after,
-.ag-row-highlight-indent.ag-full-width-row:not(.ag-embedded-full-width-row)::after {
-    margin-left: calc(
-        2 * (var(--ag-cell-widget-spacing) + var(--ag-icon-size)) + var(--ag-cell-horizontal-padding) +
-            var(--ag-row-highlight-level) * var(--ag-row-group-indent-size)
-    );
+.ag-row-highlight-indent {
+    --ag-internal-row-highlight-anchor: --ag-internal-row-highlight-label;
+}
+
+:where(.ag-group-cell-all-levels) > .ag-group-value {
+    anchor-name: var(--ag-internal-row-highlight-anchor, none);
 }
 
 .ag-row-highlight-inside {
@@ -423,8 +449,21 @@
     );
 }
 
-.ag-column-hover {
+@media (forced-colors: active) {
+    .ag-row.ag-row-selected {
+        --ag-internal-row-overlay-color: SelectedItem;
+    }
+}
+
+:where(.ag-cell).ag-column-hover {
     background-color: var(--ag-column-hover-color);
+
+    --ag-internal-column-hover-image: linear-gradient(var(--ag-column-hover-color), var(--ag-column-hover-color));
+}
+
+/* use a background image to overlay on top of the background-color set by range selections with `enableHeaderHighlight` */
+:where(.ag-header-cell).ag-column-hover {
+    background-image: linear-gradient(var(--ag-column-header-hover-color), var(--ag-column-header-hover-color));
 }
 
 .ag-header-range-highlight {
@@ -508,7 +547,17 @@
     width: 100%;
     height: 1em;
     border-radius: 0.25rem;
-    animation: ag-skeleton-loading 1.5s ease-in-out 0.5s infinite;
+
+    @media (prefers-reduced-motion: no-preference) {
+        animation: ag-skeleton-loading 1.5s ease-in-out 0.5s infinite;
+    }
+
+    /* forced colors overrides non-system background colors, so dim a system color with opacity instead */
+    @media (forced-colors: active) {
+        background-color: CanvasText;
+        opacity: 0.3;
+        animation-name: ag-skeleton-loading-forced-colors;
+    }
 }
 
 .ag-right-aligned-cell .ag-skeleton-effect {
@@ -526,6 +575,20 @@
 
     100% {
         background-color: var(--ag-row-loading-skeleton-effect-color);
+    }
+}
+
+@keyframes ag-skeleton-loading-forced-colors {
+    0% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 0.12;
+    }
+
+    100% {
+        opacity: 0.3;
     }
 }
 

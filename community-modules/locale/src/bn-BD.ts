@@ -337,6 +337,10 @@ export const AG_GRID_LOCALE_BN_BD = {
     enabled: 'সক্রিয়',
 
     // Menu
+    moveLeft: 'বামে সরান',
+    moveRight: 'ডানে সরান',
+    moveUp: 'উপরে সরান',
+    moveDown: 'নিচে সরান',
     pinColumn: 'কলাম পিন করুন',
     pinLeft: 'বামে পিন করুন',
     pinRight: 'ডানে পিন করুন',
@@ -774,6 +778,7 @@ export const AG_GRID_LOCALE_BN_BD = {
     ariaRowSelect: 'এই সারি নির্বাচন করতে SPACE চাপুন',
     ariaRowSelectionDisabled: 'এই সারির জন্য সারি নির্বাচন নিষ্ক্রিয় করা আছে',
     ariaSearch: 'অনুসন্ধান করুন',
+    ariaSortPriority: 'সাজানোর অগ্রাধিকার ${count}টির মধ্যে ${priority}',
     ariaSortableColumn: 'সাজাতে ENTER চাপুন',
     ariaSortableColumnWithCellSelection: 'সাজাতে ALT ENTER চাপুন',
     ariaToggleVisibility: 'দৃশ্যমানতা টগল করতে SPACE চাপুন',
@@ -810,6 +815,12 @@ export const AG_GRID_LOCALE_BN_BD = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'পরম অধঃক্রম',
 
     ariaLabelDialog: 'ডায়ালগ',
+
+    ariaLabelClose: 'বন্ধ করুন',
+
+    ariaLabelMaximize: 'বড় করুন',
+
+    ariaLabelRestore: 'পুনরুদ্ধার করুন',
 
     ariaLabelColumnMenu: 'কলাম মেনু',
     ariaLabelColumnFilter: 'কলাম ফিল্টার',

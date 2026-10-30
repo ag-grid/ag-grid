@@ -387,6 +387,7 @@ export const _FUNCTION_GRID_OPTIONS: (CallbackKeys | FunctionKeys)[] = [
     'getContextMenuItems',
     'getMainMenuItems',
     'getColumnMenuItems',
+    'getColumnDropZoneMenuItems',
     'processRowPostCreate',
     'processCellForClipboard',
     'getGroupRowAgg',

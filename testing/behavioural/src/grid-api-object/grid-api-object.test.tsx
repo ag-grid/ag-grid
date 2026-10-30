@@ -1,11 +1,12 @@
-import { cleanup, render } from '@testing-library/react';
-import { ALL_SEVERITIES, waitForMissingModuleReports } from 'ag-test-utils';
+import { cleanup, render, waitFor } from '@testing-library/react';
+import { ALL_SEVERITIES, asyncSetTimeout, waitForMissingModuleReports } from 'ag-test-utils';
 import React from 'react';
 import type { MockInstance } from 'vitest';
 
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { AgPublicEventType, ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    EventApiModule,
     ModuleRegistry,
     RowApiModule,
     ValidationModule,
@@ -16,7 +17,7 @@ import {
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
-describe('ag-grid overlays state', () => {
+describe('grid api object', () => {
     let consoleWarnSpy: MockInstance | undefined;
     let consoleErrorSpy: MockInstance | undefined;
 
@@ -29,7 +30,7 @@ describe('ag-grid overlays state', () => {
     }
 
     beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, ValidationModule, RowApiModule]);
+        ModuleRegistry.registerModules([ClientSideRowModelModule, EventApiModule, ValidationModule, RowApiModule]);
     });
 
     beforeEach(() => {
@@ -241,6 +242,230 @@ describe('ag-grid overlays state', () => {
         expect(getGridApi('#myGrid')).toBeUndefined();
     });
 
+    test('a listener added twice is called once per event and removed by one remove', async () => {
+        const api = createMyGrid({ columnDefs: [{ field: 'a' }] });
+        const calls: string[] = [];
+        const listener = () => calls.push('event');
+        const globalListener = (eventType: string) => eventType === 'rowDataUpdated' && calls.push('global');
+        api.addEventListener('rowDataUpdated', listener);
+        api.addEventListener('rowDataUpdated', listener);
+        api.addGlobalListener(globalListener);
+        api.addGlobalListener(globalListener);
+
+        api.setGridOption('rowData', [{ a: 1 }]);
+        await asyncSetTimeout(0);
+        expect(calls).toEqual(['event', 'global']);
+
+        api.removeEventListener('rowDataUpdated', listener);
+        api.removeGlobalListener(globalListener);
+        api.setGridOption('rowData', [{ a: 2 }]);
+        await asyncSetTimeout(0);
+        expect(calls).toEqual(['event', 'global']);
+
+        api.destroy();
+    });
+
+    test('a global listener gets always-sync events during the call and the rest after it, internal ones included, until removed', async () => {
+        const api = createMyGrid({ columnDefs: [{ field: 'a' }], rowData: [{ a: 1 }] });
+        const watched = new Set(['rowDataUpdated', 'rowContainerHeightChanged', 'gridPreDestroyed', 'customEvent']);
+        let inCall = false;
+        const received: string[] = [];
+        const record = (name: string) => (eventType: string) => {
+            if (watched.has(eventType)) {
+                received.push(`${name}: ${eventType} ${inCall ? 'during' : 'after'} the call`);
+            }
+        };
+        const kept = record('kept');
+        const removed = record('removed');
+        api.addGlobalListener(kept);
+        api.addGlobalListener(removed);
+        // the API types name only the grid's events, but an application may dispatch and listen to its own
+        api.addEventListener('customEvent' as AgPublicEventType, () => record('type listener')('customEvent'));
+        const call = async (action: () => void) => {
+            inCall = true;
+            action();
+            inCall = false;
+            await asyncSetTimeout(0);
+        };
+
+        await call(() => api.setGridOption('rowData', [{ a: 2 }, { a: 3 }]));
+        await call(() => api.dispatchEvent({ type: 'customEvent' }));
+        await call(() => api.removeGlobalListener(removed));
+        await call(() => api.setGridOption('rowData', [{ a: 4 }]));
+        await call(() => api.addGlobalListener(removed));
+        await call(() => api.destroy());
+
+        expect(received).toEqual([
+            'kept: rowDataUpdated after the call',
+            'removed: rowDataUpdated after the call',
+            'kept: rowContainerHeightChanged after the call',
+            'removed: rowContainerHeightChanged after the call',
+            'type listener: customEvent after the call',
+            'kept: customEvent after the call',
+            'removed: customEvent after the call',
+            'kept: rowDataUpdated after the call',
+            'kept: rowContainerHeightChanged after the call',
+            'kept: gridPreDestroyed during the call',
+            'removed: gridPreDestroyed during the call',
+        ]);
+    });
+
+    test('a gridOptions handler runs after the call raising its event, after api listeners, and never for an internal event', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [307, 310] });
+        consoleWarnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+        const calls: string[] = [];
+        let ready = false;
+        const gridOptions: GridOptions = {
+            columnDefs: [{ field: 'a' }],
+            onGridReady: () => {
+                ready = true;
+            },
+            onRowDataUpdated: () => calls.push('rowDataUpdated: gridOptions'),
+        };
+        // internal events are not on the GridOptions type
+        Object.assign(gridOptions, { onDisplayedRowsChanged: () => calls.push('displayedRowsChanged: gridOptions') });
+        const api = createMyGrid(gridOptions);
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+            'AG Grid: warning #307',
+            expect.stringContaining('Invalid `gridOptions` property `onDisplayedRowsChanged`'),
+            expect.anything()
+        );
+        expect(consoleWarnSpy).toHaveBeenCalledWith(
+            'AG Grid: warning #310',
+            expect.stringContaining('One or more `gridOptions` properties are not recognised'),
+            expect.anything()
+        );
+        await waitFor(() => expect(ready).toBe(true));
+        api.addEventListener('rowDataUpdated', () => calls.push('rowDataUpdated: api'));
+        api.addGlobalListener((eventType: string) => {
+            if (eventType === 'rowDataUpdated' || eventType === 'displayedRowsChanged') {
+                calls.push(`${eventType}: api global`);
+            }
+        });
+
+        api.setGridOption('rowData', [{ a: 1 }]);
+        expect(calls).toEqual([]);
+
+        await asyncSetTimeout(0);
+        expect(calls.filter((call) => call.startsWith('rowDataUpdated'))).toEqual([
+            'rowDataUpdated: api',
+            'rowDataUpdated: gridOptions',
+            'rowDataUpdated: api global',
+        ]);
+        expect(calls.filter((call) => call.startsWith('displayedRowsChanged'))).toEqual([
+            'displayedRowsChanged: api global',
+        ]);
+
+        api.destroy();
+    });
+
+    test('a gridOptions handler set before its event is delivered receives it, and none runs once the grid is destroyed', async () => {
+        const calls: string[] = [];
+        let ready = false;
+        const api = createMyGrid({
+            columnDefs: [{ field: 'a' }],
+            onGridReady: () => {
+                ready = true;
+            },
+        });
+        await waitFor(() => expect(ready).toBe(true));
+
+        api.setGridOption('rowData', [{ a: 1 }]);
+        api.setGridOption('onRowDataUpdated', () => calls.push('rowDataUpdated'));
+        await asyncSetTimeout(0);
+        expect(calls).toEqual(['rowDataUpdated']);
+
+        api.setGridOption('rowData', [{ a: 2 }]);
+        api.destroy();
+        await asyncSetTimeout(0);
+        expect(calls).toEqual(['rowDataUpdated']);
+    });
+
+    test('a gridOptions handler runs before a timer set after a row data update earlier in the same turn', async () => {
+        const calls: string[] = [];
+        let ready = false;
+        const api = createMyGrid({
+            columnDefs: [{ field: 'a' }],
+            rowData: [{ a: 1 }],
+            onGridReady: () => {
+                ready = true;
+            },
+            onRowDataUpdated: () => calls.push('rowDataUpdated'),
+        });
+        await waitFor(() => expect(ready).toBe(true));
+        await asyncSetTimeout(0);
+        calls.length = 0;
+
+        api.getDisplayedRowAtIndex(0)!.updateData({ a: 2 });
+        setTimeout(() => calls.push('timer'), 0);
+        api.setGridOption('rowData', [{ a: 3 }]);
+        await asyncSetTimeout(0);
+
+        expect(calls).toEqual(['rowDataUpdated', 'timer']);
+        api.destroy();
+    });
+
+    test('events raised before gridReady reach their gridOptions handlers after onGridReady, in order', async () => {
+        const calls: string[] = [];
+        createMyGrid({
+            columnDefs: [{ field: 'a' }],
+            rowData: [{ a: 1 }],
+            onGridReady: () => calls.push('gridReady'),
+            onRowDataUpdated: () => calls.push('rowDataUpdated'),
+            onFirstDataRendered: () => calls.push('firstDataRendered'),
+        });
+        expect(calls).toEqual([]);
+
+        await waitFor(() => expect(calls).toEqual(['gridReady', 'rowDataUpdated', 'firstDataRendered']));
+    });
+
+    test('onGridPreDestroyed is called for a grid destroyed in or after onGridReady, and neither for one destroyed before', async () => {
+        const calls: string[] = [];
+        const createNamedGrid = (name: string, onReady?: (api: GridApi) => void) => {
+            const element = document.createElement('div');
+            document.body.appendChild(element);
+            return createMyGrid(
+                {
+                    columnDefs: [{ field: 'a' }],
+                    onGridReady: ({ api }) => {
+                        calls.push(`${name}: ready`);
+                        onReady?.(api);
+                    },
+                    onGridPreDestroyed: () => calls.push(`${name}: preDestroyed`),
+                },
+                element
+            );
+        };
+
+        createNamedGrid('before').destroy();
+        createNamedGrid('in', (api) => api.destroy());
+        const after = createNamedGrid('after');
+        await waitFor(() => expect(calls).toContain('after: ready'));
+        after.destroy();
+
+        expect(calls).toEqual(['in: ready', 'in: preDestroyed', 'after: ready', 'after: preDestroyed']);
+    });
+
+    test('a throwing onGridPreDestroyed handler still lets the grid be destroyed, and its error reaches the caller', async () => {
+        const element = document.getElementById('myGrid')!;
+        let ready = false;
+        const api = createMyGrid({
+            columnDefs: [{ field: 'a' }],
+            onGridReady: () => {
+                ready = true;
+            },
+            onGridPreDestroyed: () => {
+                throw new Error('handler failed');
+            },
+        });
+        await waitFor(() => expect(ready).toBe(true));
+        expect(element.childElementCount).toBe(1);
+
+        expect(() => api.destroy()).toThrow('handler failed');
+        expect(api.isDestroyed()).toBe(true);
+        expect(element.childElementCount).toBe(0);
+    });
+
     test('api.getGridElement() returns the correct wrapping DOM element', () => {
         const element = document.getElementById('myGrid')!;
 
@@ -254,6 +479,49 @@ describe('ag-grid overlays state', () => {
         expect(gridElement).toBe(helperElement);
 
         api.destroy();
+    });
+
+    test('an event handler prop dropped on re-render is no longer called, other dropped props keep their value (React)', async () => {
+        cleanup();
+        let gridRef: AgGridReact | null = null;
+        let handlerCalls = 0;
+        let apiListenerCalls = 0;
+        const onRowDataUpdated = () => handlerCalls++;
+        const columnDefs: ColDef[] = [{ field: 'a' }];
+        const ref = (r: AgGridReact | null) => {
+            gridRef = r;
+        };
+
+        const { rerender } = render(
+            <AgGridReact
+                ref={ref}
+                columnDefs={columnDefs}
+                rowData={[{ a: 1 }]}
+                rowHeight={40}
+                onRowDataUpdated={onRowDataUpdated}
+            />
+        );
+        await waitFor(() => expect(handlerCalls).toBe(1));
+        // an api listener is called in the same batch as, and before, the gridOptions handler
+        gridRef!.api.addEventListener('rowDataUpdated', () => apiListenerCalls++);
+
+        rerender(
+            <AgGridReact
+                ref={ref}
+                columnDefs={columnDefs}
+                rowData={[{ a: 2 }]}
+                rowHeight={40}
+                onRowDataUpdated={onRowDataUpdated}
+            />
+        );
+        await waitFor(() => expect(apiListenerCalls).toBe(1));
+        expect(handlerCalls).toBe(2);
+
+        rerender(<AgGridReact ref={ref} columnDefs={columnDefs} rowData={[{ a: 3 }]} />);
+        await waitFor(() => expect(apiListenerCalls).toBe(2));
+        expect(handlerCalls).toBe(2);
+        // only handlers are cleared: a dropped option keeps its value
+        expect(gridRef!.api.getGridOption('rowHeight')).toBe(40);
     });
 
     test('can get gridApi reference from DOM node (React)', () => {

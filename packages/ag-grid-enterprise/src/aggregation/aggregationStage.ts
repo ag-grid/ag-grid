@@ -61,6 +61,8 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
 
     /** Tracks whether the previous execute() call produced aggData, so we only clear once on transition. */
     private hadAgg = false;
+    /** The last aggregate was cleared and the getters reading it are not yet repainted. */
+    private aggCleared = false;
 
     /** The value columns the last full pass keyed aggData by, held as the service's own ref-stable array
      *  so identity alone answers whether the keys moved. */
@@ -79,9 +81,9 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
      */
     public refreshAggregateDependentCells(excludeNodes?: Set<RowNode> | null, excludePath?: ChangedPath | null): void {
         const beans = this.beans;
-        // Invariant for the whole sweep: a `valueGetter` can only derive from an aggregate once one
-        // exists, while an active Show Values As mode is a transform in its own right.
-        const hadAgg = this.hadAgg;
+        // A `valueGetter` derives only from an aggregate that exists or was just cleared; Show Values As always does.
+        const hadAgg = this.hadAgg || this.aggCleared;
+        this.aggCleared = false;
         const displayed = beans.visibleCols.allCols;
         let anyDependent = false;
         for (let i = 0, len = displayed.length; i < len; ++i) {
@@ -137,6 +139,7 @@ export class AggregationStage extends BeanStub implements NamedBean, _IRowNodeAg
                 // Skip during transaction updates (changedPath defined) — the config-change
                 // full refresh will handle it.
                 this.hadAgg = false;
+                this.aggCleared = true;
                 const colModel = beans.colModel;
                 const rowModel = beans.rowModel;
                 _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, undefined, (rowNode) => {

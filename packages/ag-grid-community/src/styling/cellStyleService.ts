@@ -51,7 +51,7 @@ export class CellStyleService extends BeanStub implements NamedBean {
             classOrClasses = [classOrClasses];
         }
 
-        return classOrClasses || [];
+        return Array.isArray(classOrClasses) ? classOrClasses : [];
     }
 
     public setupCellCustomStyle(cellCtrl: CellCtrl): void {

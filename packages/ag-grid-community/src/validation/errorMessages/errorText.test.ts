@@ -1,7 +1,8 @@
 import { BASE_URL } from '../../baseUrl';
+import { setValidationDocLink } from '../logging';
 import { AG_GRID_ERRORS, MAX_ERROR_ID } from './errorText';
 
-const trimTrailingSpaces = (s: string) => s.replace(/ +\n/g, '\n');
+const trimTrailingSpaces = (s: string) => s.replace(/(?<! ) +\n/g, '\n');
 
 describe('Validate AG_GRID_ERRORS', () => {
     test.each(Object.entries(AG_GRID_ERRORS))(
@@ -220,5 +221,15 @@ import { RichSelectModule } from 'ag-grid-enterprise';
 ModuleRegistry.registerModules([ RichSelectModule ]);
 
 For more info see: ${BASE_URL}/javascript-data-grid/modules/`);
+    });
+});
+
+describe('framework doc links', () => {
+    afterEach(() => setValidationDocLink(`${BASE_URL}/javascript-data-grid`));
+
+    test('a message built after a framework sets its doc link points at that framework', () => {
+        setValidationDocLink(`${BASE_URL}/react-data-grid`);
+
+        expect(AG_GRID_ERRORS[106]()).toContain(`${BASE_URL}/react-data-grid/theming-migration/`);
     });
 });

@@ -1,10 +1,11 @@
-import type { AgEvent, IAgEventEmitter } from 'ag-stack';
+import type { AgBeanStubEvent, AgEvent, IAgEventEmitter } from 'ag-stack';
 import { LocalEventService, _escapeString } from 'ag-stack';
 
 import { _addColumnDefaultAndTypes } from '../columns/colDefUtils';
 import type { QueuedEventOwner } from '../columns/columnModel';
 import { updateSomeColumnState } from '../columns/columnStateUtils';
-import type { ColumnState } from '../columns/columnStateUtils';
+import type { ColumnStateParams } from '../columns/columnStateUtils';
+import type { VisibleColsService } from '../columns/visibleColsService';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { ColumnEvent, ColumnEventType, ColumnStateUpdatedEvent } from '../events';
@@ -21,11 +22,11 @@ import type {
     ProvidedColumnGroup,
 } from '../interfaces/iColumn';
 import { ColumnHighlightPosition } from '../interfaces/iColumn';
-import type { IFrameworkEventListenerService } from '../interfaces/iFrameworkEventListenerService';
 import type { IRowNode } from '../interfaces/iRowNode';
 import type { SortDef, SortDirection, SortType } from '../interfaces/iSort';
 import { _mergedEqual } from '../utils/mergeDeep';
 import { _clamp } from '../utils/number';
+import { _isProtoField } from '../utils/value';
 import type { AgColumnGroup } from './agColumnGroup';
 import type { AgProvidedColumnGroup } from './agProvidedColumnGroup';
 import type {
@@ -126,6 +127,8 @@ const COL_FLAG_HIGHLIGHT_BEFORE = 0x00004000;
 const COL_FLAG_HIGHLIGHT_AFTER = 0x00008000;
 /** Its width was set since the last layout report, changed or not: the `width` state update follows, as for every other key. */
 const COL_FLAG_WIDTH_SET = 0x00010000;
+/** Redefined since its filter, if any, last derived its params. */
+const COL_FLAG_FILTER_REDEFINED = 0x00020000;
 
 // Runtime wrapper around a (logic-free) column definition, holding all runtime state plus logic.
 // Child of either the original or the displayed tree; each group class implements only its own tree's interface.
@@ -155,6 +158,8 @@ export class AgColumn<TValue = any>
     /** Cached split of a dotted `field` (`field.split('.')`); `null` when not dotted / dot-notation suppressed.
      *  Non-null doubles as the "field contains dots" indicator. Read per cell via `_getValueUsingDotPath`. */
     public fieldPath: string[] | null = null;
+    /** True when `field` reaches `__proto__`, so the column reads no value and refuses edits. */
+    public fieldHasProtoKey = false;
     public valueGetter: string | ValueGetterFunc<any, TValue> | undefined = undefined;
     public allowFormula: boolean = false;
     public showRowGroup: string | boolean | undefined = undefined;
@@ -174,7 +179,7 @@ export class AgColumn<TValue = any>
     /** The `actualWidth` its last `widthChanged` reported. */
     private reportedWidth: number = 0;
     public minWidth: number = 0;
-    private maxWidth: number = 0;
+    public maxWidth: number = 0;
     public flex: number | null = null;
     public pinned: ColumnPinnedType = null;
     /** `pinned` resolved to a lane; written wherever `pinned` is. */
@@ -199,9 +204,6 @@ export class AgColumn<TValue = any>
     // ── Cold ── structure, transient interaction state, indices, events.
     /** Position in the resolved `sortingOrder` of the last header-click sort. Internal, not saved. */
     public sortCycleIndex: number | undefined = undefined;
-    private frameworkEventListenerService: IFrameworkEventListenerService<any, any> | undefined = undefined;
-    // Lazy — most columns never get a listener; allocated on first __addEventListener/addEventListener.
-    private colEventSvc: LocalEventService<ColumnEventName> | null = null;
     public lastQueuedEventAt: number = 0;
 
     /** Most recent build token that claimed this col — used to detect "already used in this refresh". */
@@ -269,6 +271,8 @@ export class AgColumn<TValue = any>
     }
 
     public override destroy() {
+        // before super.destroy(): 'destroyed' is not a column event, so no column listener receives it
+        this.localEventService = null;
         super.destroy();
         this.allColsIndex = -1;
         this.colSpanIndex = -1;
@@ -277,8 +281,6 @@ export class AgColumn<TValue = any>
         this.inColsList = false;
         this.colFlags &= ~(COL_FLAG_LAST_LEFT_PINNED | COL_FLAG_FIRST_RIGHT_PINNED);
         this.beans.rowSpanSvc?.deregister(this);
-        // listeners stay until destroy, so a walk its own listener interrupted tells it nothing more
-        this.colEventSvc = null;
     }
 
     public getInstanceId(): ColumnInstanceId {
@@ -314,19 +316,27 @@ export class AgColumn<TValue = any>
             this.initCalculatedColumnState(colDef);
             return false;
         }
-        ++this.beans.colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
+        const { colModel, pivotResultCols, rowSpanSvc, showValuesAsSvc } = this.beans;
+        ++colModel.colDefsVersion; // a real colDef change invalidates anything derived from them
         this.colFlags &= ~COL_FLAG_SORT_TYPES_CACHED; // sort/initialSort/sortingOrder may have changed
         this.sortCycleIndex = undefined;
         this.initColDefHotFields();
-        this.beans.showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only
+        showValuesAsSvc?.resolveColumn(this, false); // colDef change — `initialShowValuesAs` is create-only
         this.initMinAndMaxWidths();
         this.initDotNotation();
         this.initTooltip();
         if (colDef.spanRows !== oldColDef.spanRows) {
-            this.beans.rowSpanSvc?.columnRowSpanChanged(this);
+            rowSpanSvc?.columnRowSpanChanged(this);
         }
-        this.dispatchColEvent('colDefChanged', source);
-        this.beans.pivotResultCols?.recreateColDefsForSource(this, source);
+        this.colFlags |= COL_FLAG_FILTER_REDEFINED;
+        // an update of its own when none is open, so the filter re-derives its params once the columns are final
+        colModel.beginColUpdate();
+        try {
+            this.dispatchColEvent('colDefChanged', source);
+            pivotResultCols?.recreateColDefsForSource(this, source);
+        } finally {
+            colModel.endColUpdate();
+        }
         return true;
     }
 
@@ -386,7 +396,7 @@ export class AgColumn<TValue = any>
     }
 
     private initDotNotation(): void {
-        const { field, tooltipField } = this.colDef;
+        const { field, tooltipField, valueGetter, valueSetter } = this.colDef;
         this.field = field;
         const suppress = this.gos.get('suppressFieldDotNotation');
         this.colFlags &= ~COL_FLAG_TOOLTIP_FIELD_CONTAINS_DOTS;
@@ -396,6 +406,13 @@ export class AgColumn<TValue = any>
             this.fieldPath = typeof field === 'string' && field.includes('.') ? field.split('.') : null;
             if (typeof tooltipField === 'string' && tooltipField.includes('.')) {
                 this.colFlags |= COL_FLAG_TOOLTIP_FIELD_CONTAINS_DOTS;
+            }
+        }
+        this.fieldHasProtoKey = false;
+        if (typeof field === 'string' && _isProtoField(field, this.fieldPath)) {
+            this.fieldHasProtoKey = true;
+            if (!valueGetter || !valueSetter) {
+                this.warn(340, { field });
             }
         }
     }
@@ -476,26 +493,22 @@ export class AgColumn<TValue = any>
         this.colFlags = flags;
     }
 
-    private getColEventSvc(): LocalEventService<ColumnEventName> {
-        let svc = this.colEventSvc;
-        if (!svc) {
-            svc = new LocalEventService();
-            this.colEventSvc = svc;
-        }
-        return svc;
-    }
-
     public __addEventListener<T extends ColumnEventName>(
         eventType: T,
         listener: (params: ColumnEvent<T>) => void
     ): void {
-        this.getColEventSvc().addEventListener(eventType, listener);
+        let localEventService = this.localEventService;
+        if (!localEventService) {
+            localEventService = new LocalEventService();
+            this.localEventService = localEventService;
+        }
+        localEventService.addEventListener(eventType, listener);
     }
     public __removeEventListener<T extends ColumnEventName>(
         eventType: T,
         listener: (params: ColumnEvent<T>) => void
     ): void {
-        this.colEventSvc?.removeEventListener(eventType, listener);
+        this.localEventService?.removeEventListener(eventType, listener);
     }
 
     /**
@@ -505,14 +518,18 @@ export class AgColumn<TValue = any>
         eventType: T,
         userListener: (params: ColumnEvent<T>) => void
     ): void {
-        const colEventSvc = this.getColEventSvc();
-        this.frameworkEventListenerService = this.beans.frameworkOverrides.createLocalEventListenerWrapper?.(
-            this.frameworkEventListenerService,
-            colEventSvc
-        );
-        const listener = this.frameworkEventListenerService?.wrap(eventType, userListener) ?? userListener;
-
-        colEventSvc.addEventListener(eventType, listener);
+        if (typeof userListener !== 'function') {
+            return; // ignoring non functions for compatibility
+        }
+        let localEventService = this.localEventService;
+        if (!localEventService) {
+            localEventService = new LocalEventService();
+            this.localEventService = localEventService;
+        }
+        const listener =
+            this.beans.frameworkOverrides.wrapLocalListener?.(localEventService, eventType, userListener) ??
+            userListener;
+        localEventService.addEventListener(eventType, listener);
     }
 
     /**
@@ -522,8 +539,12 @@ export class AgColumn<TValue = any>
         eventType: T,
         userListener: (params: ColumnEvent<T>) => void
     ): void {
-        const listener = this.frameworkEventListenerService?.unwrap(eventType, userListener) ?? userListener;
-        this.colEventSvc?.removeEventListener(eventType, listener);
+        const localEventService = this.localEventService;
+        if (!localEventService) {
+            return;
+        }
+        const listener = localEventService.listenerWrapper?.unwrap(eventType, userListener) ?? userListener;
+        localEventService.removeEventListener(eventType, listener);
     }
 
     public createColumnFunctionCallbackParams(rowNode: IRowNode): ColumnFunctionCallbackParams {
@@ -696,6 +717,13 @@ export class AgColumn<TValue = any>
         this.colFlags = active ? this.colFlags | COL_FLAG_FILTER_ACTIVE : this.colFlags & ~COL_FLAG_FILTER_ACTIVE;
     }
 
+    /** Whether its filter must re-derive its params, which it is then taken to do. */
+    public takeFilterRedefined(): boolean {
+        const flags = this.colFlags;
+        this.colFlags = flags & ~COL_FLAG_FILTER_REDEFINED;
+        return (flags & COL_FLAG_FILTER_REDEFINED) !== 0;
+    }
+
     /** @deprecated v33 Use `api.isColumnHovered(column)` instead. */
     public isHovered(): boolean {
         this.warn(261);
@@ -736,9 +764,8 @@ export class AgColumn<TValue = any>
     }
 
     public setVisible(visible: boolean, source: ColumnEventType): void {
-        const newValue = visible === true;
-        if (this.visible !== newValue) {
-            this.visible = newValue;
+        if (this.visible !== visible) {
+            this.visible = visible;
             let group = this.originalParent;
             while (group) {
                 if (!group.setExpandable()) {
@@ -989,10 +1016,10 @@ export class AgColumn<TValue = any>
     }
 
     public dispatchColEvent(type: ColumnEventName, source: ColumnEventType, additionalEventAttributes?: any): void {
-        const colEventSvc = this.colEventSvc;
-        if (colEventSvc?.hasListeners(type)) {
+        const localEventService = this.localEventService;
+        if (localEventService?.hasListeners(type)) {
             this.raise(
-                colEventSvc,
+                localEventService,
                 _addGridCommonParams<ColumnEvent>(this.gos, {
                     type,
                     column: this,
@@ -1005,11 +1032,15 @@ export class AgColumn<TValue = any>
     }
 
     /** `key` names the `ColumnState` property updated. */
-    public dispatchStateUpdatedEvent(key: keyof ColumnState, source: ColumnEventType): void {
-        const colEventSvc = this.colEventSvc;
-        if (colEventSvc?.hasListeners('columnStateUpdated')) {
+    public dispatchStateUpdatedEvent(key: keyof ColumnStateParams, source: ColumnEventType): void {
+        const dataTypeSvc = this.beans.dataTypeSvc;
+        if (dataTypeSvc?.isPendingInference) {
+            dataTypeSvc.columnStateUpdated(this, key);
+        }
+        const localEventService = this.localEventService;
+        if (localEventService?.hasListeners('columnStateUpdated')) {
             this.raise(
-                colEventSvc,
+                localEventService,
                 _addGridCommonParams<ColumnStateUpdatedEvent>(this.gos, {
                     type: 'columnStateUpdated',
                     column: this,
@@ -1021,18 +1052,21 @@ export class AgColumn<TValue = any>
         }
     }
 
-    private raise(colEventSvc: LocalEventService<ColumnEventName>, event: AgEvent<ColumnEventName>): void {
+    private raise(
+        localEventService: LocalEventService<ColumnEventName | AgBeanStubEvent>,
+        event: AgEvent<ColumnEventName>
+    ): void {
         const colModel = this.beans.colModel;
         if (colModel.colUpdateDepth > 0) {
             colModel.queueColEvent(this, event);
         } else {
-            colEventSvc.dispatchEvent(event);
+            localEventService.dispatchEvent(event);
         }
     }
 
     /** A column destroyed since the event was queued has dropped its listeners. */
     public raiseQueuedEvent(event: AgEvent<ColumnEventName>): void {
-        this.colEventSvc?.dispatchEvent(event);
+        this.localEventService?.dispatchEvent(event);
     }
 }
 
@@ -1184,4 +1218,14 @@ export const _laneOfPinned = (pinned: ColumnPinnedType): ColumnLane => {
         return 2;
     }
     return pinned === 'left' || pinned === true ? 0 : 1;
+};
+
+/** The column a shift resize of `col` takes from: a hidden one has none, though `getColAfter` answers the first. */
+export const getShiftPair = (visibleCols: VisibleColsService, col: AgColumn): AgColumn | null =>
+    col.allColsIndex >= 0 ? visibleCols.getColAfter(col) : null;
+
+/** -1 where dragging left grows the column: under RTL unless pinned left, or pinned right under LTR. */
+export const getDragSign = (isRtl: boolean, lane: ColumnLane): number => {
+    const inverted = isRtl ? lane !== 0 : lane === 2;
+    return inverted ? -1 : 1;
 };

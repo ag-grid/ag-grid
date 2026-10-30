@@ -46,6 +46,7 @@ import type {
 } from '../interfaces/autoSize';
 import type { CsvExportParams } from '../interfaces/exportParams';
 import type { GridState, GridStateKey } from '../interfaces/gridState';
+import type { RefreshCalculatedColumnsParams } from '../interfaces/iCalculatedColumns';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type {
     EditingCellPosition,
@@ -240,7 +241,7 @@ export interface _RowGridApi<TData> {
      *
      * Special IDs for built-in row types (import constants from `ag-grid-community`):
      * - `ROOT_NODE_ID` — the invisible root node (level -1, always a group)
-     * - `GRAND_TOTAL_ROW_ID` — the grand total footer row (when `grandTotalRow` is enabled)
+     * - `GRAND_TOTAL_ROW_ID` — the grand total footer row, when `grandTotalRow` is enabled and the grid shows rows; the Client-Side Row Model keeps it, not displayed, once its rows are removed or filtered out
      * - `GROUP_TOTAL_ROW_ID_PREFIX + groupId` — a group total footer row for the group with the given ID
      * - `DETAIL_ROW_ID_PREFIX + masterRowId` — the detail row for the master row with the given ID
      * @agModule `RowApiModule`
@@ -657,7 +658,7 @@ export interface _ColumnAutosizeApi {
 }
 
 export interface _ColumnResizeApi {
-    /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnResized` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */
+    /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event, which a finished call naming a column raises even when no width changes. The finished flag is intended for dragging, where a dragging action will produce many `columnResized` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. A width outside its column's `minWidth` and `maxWidth`, the `maxWidth` winning over a `minWidth` above it, leaves every width unchanged. With `colResizeDefault: 'shift'`, the column after each named column, or after a run of adjacent named columns, takes their change (the last column, or a hidden one, changes alone), and a change that column cannot take within its own `minWidth` and `maxWidth` also leaves every width unchanged. */
     setColumnWidths(
         columnWidths: { key: ColKey; newWidth: number }[],
         finished?: boolean,
@@ -1081,7 +1082,7 @@ export interface _ColumnFilterGridApi {
 
     /**
      * Gets the current filter model for the specified column.
-     * Will return `null` if no active filter.
+     * Will return `null` if the column has no filter model.
      * @param useUnapplied If `enableFilterHandlers = true` and value is `true`, will return the unapplied filter model.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
@@ -1091,6 +1092,8 @@ export interface _ColumnFilterGridApi {
      * Sets the filter model for the specified column.
      * Setting a `model` of `null` will reset the filter (make inactive).
      * Must wait on the response before calling `api.onFilterChanged()`.
+     * If inferring cell data types, and row data is initially empty or yet to be set,
+     * the filter model will be applied asynchronously after row data is added.
      * @agModule `TextFilterModule` / `NumberFilterModule` / `DateFilterModule` / `SetFilterModule` / `MultiFilterModule` / `CustomFilterModule`
      */
     setColumnFilterModel<TModel>(column: string | Column, model: TModel | null): Promise<void>;
@@ -1778,6 +1781,36 @@ export interface _ColumnChooserGridApi {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface _CalculatedColumnsGridApi<TData = any> {
+    /**
+     * Opens and focuses the dialog for an existing calculated column.
+     * Read-only calculated columns open in view mode. Reuses and brings forward an already-open dialog.
+     * On close, returns focus to the column's header, scrolling it into view if needed.
+     * Does nothing if Calculated Columns are disabled or the key does not resolve to a calculated column.
+     * @agModule `CalculatedColumnsModule`
+     */
+    openCalculatedColumnDialog(column: ColKey<TData>): void;
+    /**
+     * Opens the Add Calculated Column dialog, optionally after a source column as with the column menu.
+     * Without a source column, the new column is appended. Unknown or non-primary source columns are ignored.
+     * Uses the configured apply mode: live creates the column immediately, deferred creates it on Apply.
+     * Moves focus into the dialog. Does not open in pivot mode.
+     * On close, returns focus to the new column's header, or the source column if no column was created.
+     * @agModule `CalculatedColumnsModule`
+     */
+    openAddCalculatedColumnDialog(sourceColumn?: ColKey<TData>): void;
+    /**
+     * Revalidate committed calculated expressions against the current `getValidationErrors` and
+     * `isColumnReferenceable` callbacks, update saved errors and recalculate values and dependants.
+     * Applies to read-only columns too. Does not apply pending dialog edits. Empty expressions are allowed.
+     * Open dialogs revalidate their drafts without restarting pending live updates.
+     * Validation changes raise `calculatedColumnChanged` with `source: 'api'`.
+     * @agModule `CalculatedColumnsModule`
+     */
+    refreshCalculatedColumns(params?: RefreshCalculatedColumnsParams): void;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _FormulaGridApi<TData = any> {
     /**
      * Invalidate the grid's formula cache so the next render re-queries
@@ -2075,6 +2108,7 @@ export interface GridApi<TData = any>
         _ColumnChooserGridApi,
         _MasterDetailGridApi,
         _FormulaGridApi<TData>,
+        _CalculatedColumnsGridApi<TData>,
         _ExcelExportGridApi,
         _PdfExportGridApi,
         _ClipboardGridApi,

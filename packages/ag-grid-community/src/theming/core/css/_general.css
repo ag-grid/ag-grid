@@ -48,6 +48,16 @@
     background-color: var(--ag-data-background-color);
 }
 
+:where(.ag-body-horizontal-scroll:not(.ag-scrollbar-invisible)) > .ag-body-horizontal-scroll-viewport,
+:where(.ag-body-horizontal-scroll:not(.ag-scrollbar-invisible)) > .ag-body-horizontal-scroll-end-spacer {
+    border-top: var(--ag-body-scrollbar-border);
+}
+
+:where(.ag-body-vertical-scroll:not(.ag-scrollbar-invisible)) > .ag-body-vertical-scroll-viewport,
+.ag-scrollbar-probe {
+    border-inline-start: var(--ag-body-scrollbar-border);
+}
+
 .ag-viewport {
     position: relative;
 }
@@ -451,11 +461,18 @@
     flex: 1 1 auto;
 }
 
-/* stylelint-disable-next-line selector-max-specificity -- Justification comment missing as this disable comment was added before we required justifications - if you know why this was added, document it here. */
-.ag-cell-value:not(.ag-allow-overflow),
+.ag-cell-value:where(:not(.ag-allow-overflow)),
 .ag-group-value {
     overflow: hidden;
     text-overflow: ellipsis;
+
+    /* Work around a Firefox bug where a text selection drag ending in a scroll container
+     * selects the wrong text range. Use overflow:clip for the same visual effect
+     * without a scroll container. */
+    :where(.ag-selectable) & {
+        overflow: clip;
+        min-width: 0;
+    }
 }
 
 .ag-cell-wrap-text {

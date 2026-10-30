@@ -18,6 +18,7 @@ import { CSS_COLUMN_HEADER_EDIT_HIGHLIGHTED } from '../../../styling/columnHeade
 import type { ComponentTooltip } from '../../../tooltip/headerTooltipSource';
 import type { TooltipFeature } from '../../../tooltip/tooltipFeature';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
+import { createHeaderMenuSource } from '../../headerUtils';
 import type { IAbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellCtrl';
 import { AbstractHeaderCellCtrl } from '../abstractCell/abstractHeaderCellCtrl';
 import { _getHeaderClassesFromColDef } from '../cssClassApplier';
@@ -78,9 +79,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         compBean: BeanStub<any> | undefined
     ): void {
         const { column, beans } = this;
-        const { context, colNames, colHover, rangeSvc, colResize } = beans;
+        const { colNames, colHover, rangeSvc, colResize } = beans;
         this.comp = comp;
-        compBean = setupCompBean(this, context, compBean);
+        compBean = setupCompBean(this, compBean);
         // ahead of `setGui`, whose displayed-columns refresh writes `aria-colspan`
         this.ariaEl = eGui.querySelector<HTMLElement>('[role=columnheader]') ?? eGui;
         this.drawnAriaColSpan = null;
@@ -104,10 +105,12 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.setupUserComp();
         this.addHeaderMouseListeners(compBean, eHeaderCompWrapper);
 
-        this.addManagedPropertyListener('groupHeaderHeight', this.refreshMaxHeaderHeight.bind(this));
+        compBean.addManagedPropertyListener('groupHeaderHeight', this.refreshMaxHeaderHeight.bind(this));
         this.refreshMaxHeaderHeight();
 
         const leafCols = column.getProvidedColumnGroup().getLeafColumns();
+
+        this.addLeafColumnListeners(compBean, leafCols);
 
         colHover?.createHoverFeature(compBean, leafCols, eGui);
         rangeSvc?.createRangeHighlightFeature(compBean, column, comp);
@@ -128,11 +131,10 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
         this.addHighlightListeners(compBean, leafCols);
 
-        this.addManagedEventListeners({
-            cellSelectionChanged: () => this.refreshAnnouncement(),
+        compBean.addManagedPropertyListener('cellSelection', () => {
+            this.refreshSelectableCss();
+            this.refreshAnnouncement();
         });
-
-        compBean.addManagedPropertyListener('cellSelection', () => this.refreshAnnouncement());
         compBean.addManagedPropertyListener('suppressMovableColumns', this.onSuppressColMoveChange);
         this.addResizeAndMoveKeyboardListeners(compBean);
         // Make sure this is the last destroy func as it clears the gui and comp
@@ -171,6 +173,17 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         }
     }
 
+    private addLeafColumnListeners(compBean: BeanStub, leafCols: AgColumn[]): void {
+        compBean.addManagedEventListeners({
+            columnPinned: ({ columns }) => {
+                // All fragments can be reused for different pinned sections when the group splits or merges.
+                if (columns && leafCols.some((col) => columns.includes(col))) {
+                    this.refreshHeaderStyles();
+                }
+            },
+        });
+    }
+
     private addHighlightListeners(compBean: BeanStub, columns: AgColumn[]): void {
         if (!this.beans.gos.get('suppressMoveWhenColumnDragging')) {
             return;
@@ -193,7 +206,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         }
 
         const highlighted = column.getHighlighted();
-        const isColumnMoveAtThisLevel = !!this.rowCtrl.getHeaderCellCtrls().find((ctrl) => {
+        const isColumnMoveAtThisLevel = this.rowCtrl.getHeaderCellCtrls().some((ctrl) => {
             return ctrl.column.isMoving();
         });
 
@@ -247,16 +260,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
         this.comp.toggleCss('ag-hidden', width === 0);
     }
 
-    protected resizeHeader(delta: number, shiftKey: boolean): void {
-        const { resizeFeature } = this;
-        // check to avoid throwing when a component has not been setup yet (React 18)
-        if (!resizeFeature) {
-            return;
-        }
-
-        const initialValues = resizeFeature.getInitialValues(shiftKey);
-
-        resizeFeature.resizeColumns(initialValues, initialValues.resizeStartWidth + delta, 'uiColumnResized', true);
+    protected resizeHeader(delta: number, takeFromAdjacent: boolean): void {
+        this.resizeFeature?.resizeByKey(delta, takeFromAdjacent); // optional: a component not set up yet has none (React 18)
     }
 
     public resizeLeafColumnsToFit(source: ColumnEventType): void {
@@ -265,7 +270,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     }
 
     private createUserCompParams(): IHeaderGroupParams {
-        const { gos, enterpriseMenuFactory } = this.beans;
+        const beans = this.beans;
+        const { gos, enterpriseMenuFactory } = beans;
         const columnGroup = this.column;
         const providedColumnGroup = columnGroup.getProvidedColumnGroup();
         const componentClaim = this.headerCompGuard.provisionalClaim();
@@ -286,14 +292,17 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
                     providedColumnGroup,
                     buttonElement,
                     'columnMenu',
-                    onClosedCallback
+                    onClosedCallback,
+                    { getEventSource: createHeaderMenuSource(beans, columnGroup, buttonElement) }
                 ),
             showColumnMenuAfterMouseClick: (mouseEvent, onClosedCallback) =>
                 enterpriseMenuFactory?.showMenuAfterMouseEvent(
                     providedColumnGroup,
                     mouseEvent,
                     'columnMenu',
-                    onClosedCallback
+                    onClosedCallback,
+                    undefined,
+                    createHeaderMenuSource(beans, columnGroup, mouseEvent.target as HTMLElement)
                 ),
             eGridHeader: this.eGui,
         });
@@ -317,9 +326,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
     private addHeaderMouseListeners(compBean: BeanStub, eHeaderCompWrapper: HTMLElement): void {
         const {
             column,
-            comp,
             beans: { rangeSvc },
-            gos,
         } = this;
 
         const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
@@ -335,11 +342,15 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             contextmenu: contextMenuListener,
         });
 
-        comp.toggleCss('ag-header-group-cell-selectable', _getEnableColumnSelection(gos));
+        this.refreshSelectableCss();
         const mouseListener = rangeSvc?.createHeaderGroupCellMouseListenerFeature(this.column, eHeaderCompWrapper);
         if (mouseListener) {
-            this.createManagedBean(mouseListener);
+            compBean.createManagedBean(mouseListener);
         }
+    }
+
+    private refreshSelectableCss(): void {
+        this.comp.toggleCss('ag-header-group-cell-selectable', _getEnableColumnSelection(this.gos));
     }
 
     private handleMouseOverChange(isMouseOver: boolean): void {
@@ -505,7 +516,19 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             beans.rangeSvc?.handleColumnSelection(column, e);
         } else if (expandable) {
             const newExpandedValue = !column.isExpanded();
-            _setColGroupOpen(beans, column.getProvidedColumnGroup(), newExpandedValue, 'uiColumnExpanded');
+            const providedColumnGroup = column.getProvidedColumnGroup();
+            _setColGroupOpen(beans, providedColumnGroup, newExpandedValue, 'uiColumnExpanded');
+
+            if (!column.isEmptyGroup()) {
+                return;
+            }
+
+            const nextGroup = providedColumnGroup.displayInstances?.find((group) => !group.isEmptyGroup());
+            if (nextGroup) {
+                beans.focusSvc.focusHeaderPosition({
+                    headerPosition: { headerRowIndex: providedColumnGroup.getLevel(), column: nextGroup },
+                });
+            }
         }
     }
 

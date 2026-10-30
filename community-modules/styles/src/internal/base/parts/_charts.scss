@@ -173,7 +173,7 @@
         cursor: pointer;
     }
 
-    .ag-chart-mini-thumbnail-canvas {
+    .ag-chart-mini-thumbnail-svg {
         display: block;
     }
 
@@ -388,13 +388,13 @@
         display: grid;
         grid-template-columns: 60px 1fr 60px 1fr 60px;
 
-        .ag-chart-mini-thumbnail:nth-child(3n + 1) {
+        .ag-charts-settings-group-item:nth-child(3n + 1) {
             grid-column: 1;
         }
-        .ag-chart-mini-thumbnail:nth-child(3n + 2) {
+        .ag-charts-settings-group-item:nth-child(3n + 2) {
             grid-column: 3;
         }
-        .ag-chart-mini-thumbnail:nth-child(3n + 3) {
+        .ag-charts-settings-group-item:nth-child(3n + 3) {
             grid-column: 5;
         }
     }

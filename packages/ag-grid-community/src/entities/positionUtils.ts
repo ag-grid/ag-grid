@@ -6,14 +6,13 @@ import type { CellPosition } from '../interfaces/iCellPosition';
 import type { RowPinnedType } from '../interfaces/iRowNode';
 import type { RowPosition } from '../interfaces/iRowPosition';
 import type { CellCtrl } from '../rendering/cell/cellCtrl';
-import type { RowCtrl } from '../rendering/row/rowCtrl';
 import type { AgColumn } from './agColumn';
 import type { RowNode } from './rowNode';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _createCellId(cellPosition: CellPosition): string {
     const { rowIndex, rowPinned, column } = cellPosition;
-    return `${rowIndex}.${rowPinned == null ? 'null' : rowPinned}.${column.getId()}`;
+    return `${rowIndex}.${rowPinned ?? 'null'}.${column.getId()}`;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
@@ -225,8 +224,8 @@ export function _getRowBelow(beans: BeanCollection, rowPosition: RowPosition, ch
 }
 
 /**
- * Returns the next sticky row position based on the current row node and direction (up or down).
- * If there are no other sticky rows or the current row is not sticky, it returns undefined.
+ * Returns the next sticky row position when moving from a sticky row towards the grid body, skipping the rows hidden
+ * behind the sticky rows. Moving towards the grid edge returns undefined, so navigation scrolls to the adjacent row.
  */
 function getNextStickyPosition(beans: BeanCollection, rowNode?: RowNode, up = false): RowPosition | undefined {
     const { gos, rowRenderer } = beans;
@@ -240,19 +239,19 @@ function getNextStickyPosition(beans: BeanCollection, rowNode?: RowNode, up = fa
 
     // check isStickyBottom as it theoretically has less rows.
     const isStickyTop = !stickyBottomCtrls.some((ctrl) => ctrl.rowNode.rowIndex === rowNode.rowIndex);
-    const stickyRowCtrls = isStickyTop ? stickyTopCtrls : stickyBottomCtrls;
-
-    // invert for sticky top, as the order is flipped for rendering.
-    const increment = (up ? -1 : 1) * (isStickyTop ? -1 : 1);
-    let nextCtrl: RowCtrl | undefined;
-    for (let i = 0; i < stickyRowCtrls.length; i++) {
-        if (stickyRowCtrls[i].rowNode.rowIndex === rowNode.rowIndex) {
-            nextCtrl = stickyRowCtrls[i + increment];
-            break;
-        }
+    const movingTowardsBody = isStickyTop ? !up : up;
+    if (!movingTowardsBody) {
+        return;
     }
 
-    return nextCtrl ? { rowIndex: nextCtrl.rowNode.rowIndex!, rowPinned: null } : undefined;
+    // sticky ctrls are ordered from the row nearest the grid body outwards.
+    const stickyRowCtrls = isStickyTop ? stickyTopCtrls : stickyBottomCtrls;
+    const index = stickyRowCtrls.findIndex((ctrl) => ctrl.rowNode.rowIndex === rowNode.rowIndex);
+    if (index <= 0) {
+        return;
+    }
+
+    return { rowIndex: stickyRowCtrls[index - 1].rowNode.rowIndex!, rowPinned: null };
 }
 
 function isLastRowInContainer(beans: BeanCollection, rowPosition: RowPosition): boolean {

@@ -77,6 +77,10 @@ The Find and Quick Filter items' inputs share the grid-wide input behaviour (cle
 
 The Row Group Panel and Pivot Panel can both be embedded in the Quick Access Toolbar using `agRowGroupPanelToolbarItem` and `agPivotPanelToolbarItem`. Both panels are configured independently of the [Row Group Panel](./grouping-group-panel/) and the [Pivot Panel](./pivoting/#enabling-the-pivot-panel/), so you can display each panel in the Toolbar, above the grid, or both at the same time.
 
+Right-click a pill to reorder it using **Move Left** or **Move Right**. With a pill focused, **Shift+F10** or the context-menu key opens the same menu.
+
+Use `getColumnDropZoneMenuItems` to customise or suppress these [Drop Zone Menus](./tool-panel-columns-customising/#drop-zone-menus).
+
 The example below shows both panels in the toolbar along with a reset action button. Use the panels to rearrange columns, then click Reset to restore the initial layout.
 
 {% gridExampleRunner title="Row Group and Pivot Panels" name="row-group-pivot-panels" exampleHeight=350 /%}

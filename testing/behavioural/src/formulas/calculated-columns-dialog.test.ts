@@ -1,9 +1,9 @@
 import { waitFor } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
-import { GridColumns, GridRows, clickMenuOption } from 'ag-test-utils';
-import { vi } from 'vitest';
+import { GridColumns, GridRows, asyncSetTimeout, clickMenuOption } from 'ag-test-utils';
+import { onTestFinished, vi } from 'vitest';
 
-import type { ColGroupDef } from 'ag-grid-community';
+import type { ColGroupDef, IsColumnReferenceableParams } from 'ag-grid-community';
 
 import {
     clickDialogButton,
@@ -23,6 +23,64 @@ import {
 
 describe('ag-grid calculated columns', () => {
     setupCalculatedColumnsSuite();
+
+    test.each(['live', 'deferred'] as const)('the API opens and focuses an existing %s dialog', async (applyMode) => {
+        const api = createGrid('calculated-api-dialog', {
+            calculatedColumns: { applyMode },
+            columnDefs: [
+                { field: 'sales' },
+                { colId: 'profit', headerName: 'Profit', calculatedExpression: '[sales]' },
+            ],
+            rowData: [{ id: 'r1', sales: 10 }],
+        });
+        const trigger = document.createElement('button');
+        document.body.appendChild(trigger);
+        onTestFinished(() => trigger.remove());
+        trigger.focus();
+
+        api.openCalculatedColumnDialog('profit');
+        expect(getExpressionInput()).toHaveValue('[Sales]');
+        const dialog = getCalculatedColumnDialog();
+        expect(dialog.closest('.ag-dialog')).toContainElement(document.activeElement as HTMLElement);
+        trigger.focus();
+        api.openCalculatedColumnDialog(api.getColumn('profit')!);
+        api.openCalculatedColumnDialog(api.getColumn('profit')!.getColDef());
+        expect(document.querySelectorAll('.ag-calculated-column-form')).toHaveLength(1);
+        expect(getCalculatedColumnDialog()).toBe(dialog);
+        expect(dialog.closest('.ag-dialog')).toContainElement(document.activeElement as HTMLElement);
+
+        setExpression('[Sales] * 2');
+        if (applyMode === 'deferred') {
+            expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[sales]');
+            clickDialogButton('Apply');
+        }
+        await waitFor(() => expect(api.getColumn('profit')!.getColDef().calculatedExpression).toBe('[sales] * 2'));
+    });
+
+    test('the API opens read-only calculated columns in view mode', () => {
+        const api = createGrid('calculated-api-view-dialog', {
+            columnDefs: [
+                { field: 'sales' },
+                { colId: 'profit', calculatedExpression: '[sales]', calculatedColumnReadOnly: true },
+            ],
+            rowData: [{ id: 'r1', sales: 10 }],
+        });
+        api.openCalculatedColumnDialog('profit');
+        expect(getExpressionInput()).toHaveValue('[Sales]');
+        expect(getExpressionInput().readOnly).toBe(true);
+        expect(document.querySelector('.ag-panel-title-bar-title')).toHaveTextContent('View Calculated Column');
+    });
+
+    test.each([true, false])('the API ignores non-calculated columns with calculatedColumns=%s', (enabled) => {
+        const api = createGrid('calculated-api-dialog-noop', {
+            calculatedColumns: enabled,
+            columnDefs: [{ field: 'sales' }],
+            rowData: [{ id: 'r1', sales: 10 }],
+        });
+        api.openCalculatedColumnDialog('sales');
+        api.openCalculatedColumnDialog('missing');
+        expect(document.querySelector('.ag-calculated-column-form')).toBeNull();
+    });
 
     test('a new deferred dialog disables Apply until an expression is entered', async () => {
         const api = createGrid('calculated-initial-validation', {
@@ -327,14 +385,17 @@ describe('ag-grid calculated columns', () => {
     );
 
     test.each(['live', 'deferred'] as const)(
-        'a new %s column callback receives no calculated column',
+        'the %s reference callback receives the current column and a creation-only source column',
         async (applyMode) => {
-            const referenceable = vi.fn(() => true);
+            const referenceable = vi.fn(
+                ({ column, sourceColumn, calculatedColumn }: IsColumnReferenceableParams) =>
+                    column === sourceColumn || calculatedColumn?.getColId() === 'calculated_1'
+            );
             const api = createGrid('calculated-reference-callback-context', {
                 calculatedColumns: { applyMode, isColumnReferenceable: referenceable },
                 context: { key: 'context' },
-                columnDefs: [{ field: 'revenue' }],
-                rowData: [{ id: 'r1', revenue: 10 }],
+                columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+                rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
             });
             showColumnMenu(api, 'revenue');
             await clickMenuOption('Add Calculated Column');
@@ -344,9 +405,28 @@ describe('ag-grid calculated columns', () => {
                     context: { key: 'context' },
                     colDef: expect.objectContaining({ field: 'revenue' }),
                     column: api.getColumn('revenue'),
-                    calculatedColumn: null,
                 })
             );
+            const params = referenceable.mock.calls[0][0];
+            expect(params.calculatedColumn?.getColId() ?? null).toBe(applyMode === 'live' ? 'calculated_1' : null);
+            expect(params.sourceColumn).toBe(api.getColumn('revenue'));
+            clickDialogButton('Columns');
+            expect(getSuggestionLabels()).toEqual(applyMode === 'live' ? ['Revenue', 'Cost'] : ['Revenue']);
+
+            setExpression('[Revenue]');
+            if (applyMode === 'deferred') {
+                clickDialogButton('Apply');
+            } else {
+                document.querySelector<HTMLElement>('.ag-dialog .ag-panel-title-bar-button')!.click();
+            }
+            referenceable.mockClear();
+            await openEditDialogViaMenu(api, 'calculated_1');
+            for (const [params] of referenceable.mock.calls) {
+                expect(params.calculatedColumn).toBe(api.getColumn('calculated_1'));
+                expect(params.sourceColumn).toBeNull();
+            }
+            clickDialogButton('Columns');
+            expect(getSuggestionLabels()).toEqual(['Revenue', 'Cost']);
         }
     );
 
@@ -1002,5 +1082,47 @@ describe('ag-grid calculated columns', () => {
             expect(document.querySelector('.ag-autocomplete-list-popup')).toBeTruthy();
             expect(document.querySelector('.ag-select-list')).toBeFalsy();
         });
+    });
+
+    test('in a grid inside a shadow root, moving focus within the calculated column form keeps the suggestions open', async () => {
+        const host = document.body.appendChild(document.createElement('div'));
+        onTestFinished(() => host.remove());
+        const shadowRoot = host.attachShadow({ mode: 'open' });
+        const api = createGrid(shadowRoot.appendChild(document.createElement('div')), {
+            calculatedColumns: { applyMode: 'deferred' },
+            columnDefs: [{ field: 'revenue' }],
+            rowData: [{ id: 'r1', revenue: 10 }],
+        });
+
+        showColumnMenu(api, 'revenue');
+        const addOption = await waitFor(() => {
+            const option = Array.from(shadowRoot.querySelectorAll<HTMLElement>('.ag-menu-option-text')).find(
+                (element) => element.textContent?.trim() === 'Add Calculated Column'
+            );
+            expect(option).toBeInstanceOf(HTMLElement);
+            return option!;
+        });
+        addOption.closest<HTMLElement>('.ag-menu-option')!.click();
+        const form = await waitFor(() => {
+            const element = shadowRoot.querySelector<HTMLElement>('.ag-calculated-column-form');
+            expect(element).toBeInstanceOf(HTMLElement);
+            return element!;
+        });
+
+        const expression = form.querySelector('textarea')!;
+        expression.focus();
+        expression.value = 'SU';
+        expression.dispatchEvent(new Event('input', { bubbles: true }));
+        const listId = expression.getAttribute('aria-controls');
+        expect(listId).not.toBeNull();
+        expect(shadowRoot.getElementById(listId!)).toHaveAttribute('role', 'listbox');
+
+        const title = form.querySelector('input')!;
+        title.focus();
+        expect(shadowRoot.activeElement).toBe(title);
+        await asyncSetTimeout(0);
+
+        expect(expression).toHaveAttribute('aria-controls', listId);
+        expect(shadowRoot.getElementById(listId!)).toHaveAttribute('role', 'listbox');
     });
 });

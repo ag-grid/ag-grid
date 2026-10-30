@@ -1,7 +1,7 @@
-import { _findFocusableElements, _findNextFocusableElement } from 'ag-stack';
+import { TabGuardClassNames, _findFocusableElements } from 'ag-stack';
 
 import type { NamedBean } from 'ag-grid-community';
-import { BeanStub, TabGuardComp } from 'ag-grid-community';
+import { BeanStub, Component, KeyCode } from 'ag-grid-community';
 
 import { Dialog } from '../../../../widgets/dialog';
 import type { ChartTranslationService } from '../../services/chartTranslationService';
@@ -19,7 +19,7 @@ export class AdvancedSettingsMenuFactory extends BeanStub implements NamedBean {
 
         const menu = this.createBean(new AdvancedSettingsMenu(chartMenuContext));
 
-        this.activeDialog = this.createBean(
+        const dialog = this.createBean(
             new Dialog({
                 title: (this.beans.chartTranslation as ChartTranslationService).translate('advancedSettings'),
                 component: menu,
@@ -39,7 +39,12 @@ export class AdvancedSettingsMenuFactory extends BeanStub implements NamedBean {
                 },
             })
         );
+        const dialogGui = dialog.getGui();
+        dialog.addManagedElementListeners(dialogGui, {
+            keydown: (e: KeyboardEvent) => trapTabFocus(e, dialogGui),
+        });
 
+        this.activeDialog = dialog;
         this.activeMenu = menu;
     }
 
@@ -56,40 +61,36 @@ export class AdvancedSettingsMenuFactory extends BeanStub implements NamedBean {
     }
 }
 
-class AdvancedSettingsMenu extends TabGuardComp {
-    private advancedSettingsPanel: AdvancedSettingsPanel;
-
+class AdvancedSettingsMenu extends Component {
     constructor(private readonly chartMenuContext: ChartMenuContext) {
         super(/* html */ `<div class="ag-chart-advanced-settings"></div>`);
     }
 
     public postConstruct(): void {
-        this.advancedSettingsPanel = this.createManagedBean(new AdvancedSettingsPanel(this.chartMenuContext));
-        this.getGui().appendChild(this.advancedSettingsPanel.getGui());
-        this.initialiseTabGuard({
-            onTabKeyDown: this.onTabKeyDown.bind(this),
-            focusTrapActive: true,
-        });
+        const advancedSettingsPanel = this.createManagedBean(new AdvancedSettingsPanel(this.chartMenuContext));
+        this.getGui().appendChild(advancedSettingsPanel.getGui());
+    }
+}
+
+/** Tab cycles through the dialog's controls, title bar buttons included, without leaving the dialog. */
+function trapTabFocus(e: KeyboardEvent, root: HTMLElement): void {
+    if (e.key !== KeyCode.TAB || e.defaultPrevented) {
+        return;
     }
 
-    protected onTabKeyDown(e: KeyboardEvent) {
-        if (e.defaultPrevented) {
-            return;
-        }
+    e.preventDefault();
 
-        e.preventDefault();
-
-        const backwards = e.shiftKey;
-        const panelGui = this.advancedSettingsPanel.getGui();
-        const nextEl = _findNextFocusableElement({ beans: this.beans, rootNode: panelGui, backwards });
-
-        if (nextEl) {
-            nextEl.focus();
-        } else {
-            const focusableElements = _findFocusableElements(panelGui);
-            if (focusableElements.length) {
-                focusableElements[backwards ? focusableElements.length - 1 : 0].focus();
-            }
-        }
+    const focusableElements = _findFocusableElements(root, `.${TabGuardClassNames.TAB_GUARD}`);
+    const len = focusableElements.length;
+    if (!len) {
+        return;
     }
+
+    const backwards = e.shiftKey;
+    const index = focusableElements.findIndex((el) => el === e.target);
+    let nextIndex = backwards ? len - 1 : 0;
+    if (index >= 0) {
+        nextIndex = (index + (backwards ? -1 : 1) + len) % len;
+    }
+    focusableElements[nextIndex].focus();
 }

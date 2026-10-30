@@ -122,7 +122,8 @@ interface DataTypeSchema {
     readonly value: () => SchemaBuilder;
 }
 
-const dateValue = () => s.string({ pattern: '^\\d{4}-\\d{2}-\\d{2}$', description: 'Date value in YYYY-MM-DD format' });
+const dateValue = () =>
+    s.string({ pattern: String.raw`^\d{4}-\d{2}-\d{2}$`, description: 'Date value in YYYY-MM-DD format' });
 
 const DataTypeSchemas: Record<BaseCellDataType, DataTypeSchema> = {
     boolean: {
@@ -145,7 +146,7 @@ const DataTypeSchemas: Record<BaseCellDataType, DataTypeSchema> = {
         titleNoun: 'DateTime',
         value: () =>
             s.string({
-                pattern: '^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$',
+                pattern: String.raw`^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$`,
                 description: 'DateTime value in YYYY-MM-DDTHH:mm:ss format',
             }),
     },
@@ -155,7 +156,7 @@ const DataTypeSchemas: Record<BaseCellDataType, DataTypeSchema> = {
         titleNoun: 'DateTime string',
         value: () =>
             s.string({
-                pattern: '^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$',
+                pattern: String.raw`^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$`,
                 description: 'DateTime value in YYYY-MM-DD HH:mm:ss format',
             }),
     },
@@ -169,7 +170,7 @@ const DataTypeSchemas: Record<BaseCellDataType, DataTypeSchema> = {
         filterType: 'bigint',
         noun: 'bigint',
         titleNoun: 'BigInt',
-        value: () => s.string({ pattern: '^-?\\d+$', description: 'BigInt value to filter by' }),
+        value: () => s.string({ pattern: String.raw`^-?\d+$`, description: 'BigInt value to filter by' }),
     },
     text: { filterType: 'text', noun: 'text', titleNoun: 'Text', value: () => s.string('Text value to filter by') },
 };

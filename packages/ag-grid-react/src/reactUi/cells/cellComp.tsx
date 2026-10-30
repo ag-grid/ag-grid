@@ -165,7 +165,7 @@ const CellComp = ({
         }
 
         const result = cellRendererRef.current.refresh(newCompDetails.params);
-        if (result != true) {
+        if (result !== true) {
             // increasing the render key forces the refresh. this is undocumented (for React users,
             // we don't document the refresh method, instead we tell them to act on new params).
             // however the GroupCellRenderer has this logic in it and would need a small refactor

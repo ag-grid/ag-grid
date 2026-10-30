@@ -1,4 +1,4 @@
-import type { AgCartesianAxisType, AgChartThemeOverrides, AgChartThemePalette, IChartTheme } from 'ag-charts-types';
+import type { AgCartesianAxisType, AgChartThemeOverrides, AgChartThemePalette } from 'ag-charts-types';
 
 import type {
     BeanCollection,
@@ -408,24 +408,13 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     }
 
     public getThemeNames(): string[] {
-        return this.gos.get('chartThemes') || DEFAULT_THEMES;
-    }
-
-    public getThemes(): IChartTheme[] {
-        const themeNames = this.getThemeNames();
-
-        return themeNames.map((themeName) => {
-            const stockTheme = isStockTheme(themeName, this.agChartsExports._Theme);
-            const theme = stockTheme ? themeName : this.chartProxy.lookupCustomChartTheme(themeName);
-            return this.agChartsExports._Theme.getChartTheme(theme);
-        });
+        return this.gos.get('chartThemes') ?? DEFAULT_THEMES;
     }
 
     public getPalettes(): AgChartThemePalette[] {
-        const themes = this.getThemes();
-
-        return themes.map((theme) => {
-            return theme.palette;
+        return this.getThemeNames().map((themeName) => {
+            const theme = isStockTheme(themeName) ? themeName : this.chartProxy.lookupCustomChartTheme(themeName);
+            return this.agChartsExports._Theme.getChartTheme(theme).palette;
         });
     }
 
@@ -571,7 +560,7 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     public isEnterprise = () => this.agChartsExports.isEnterprise;
 
     private getCellRanges(): CellRange[] {
-        return [this.model.dimensionCellRange!, this.model.valueCellRange!].filter((r) => r);
+        return [this.model.dimensionCellRange!, this.model.valueCellRange!].filter(Boolean);
     }
 
     private createCellRange(
@@ -609,8 +598,8 @@ export class ChartController extends BeanStub<ChartControllerEvent> {
     private getCellRangeParams(): CellRangeParams {
         const cellRanges = this.getCellRanges();
         const firstCellRange = cellRanges[0];
-        const startRow = firstCellRange?.startRow || null;
-        const endRow = firstCellRange?.endRow || null;
+        const startRow = firstCellRange?.startRow ?? null;
+        const endRow = firstCellRange?.endRow ?? null;
 
         return {
             rowStartIndex: startRow?.rowIndex ?? null,

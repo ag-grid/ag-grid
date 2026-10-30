@@ -31,7 +31,8 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     // important.
     private readonly destroyTasks: (() => void)[] = [];
     private ticking = false;
-    public active: boolean;
+    /** Unset until postConstruct, so `verify` must not warn before then. */
+    public active?: boolean;
     private batchFrameworkComps: boolean;
 
     // we need to know direction of scroll, to build up rows in the direction of
@@ -40,6 +41,20 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
     private lastScrollTop = 0;
 
     private taskCount = 0;
+
+    private readonly onFrame = (): void => {
+        const { p1, p2, f1, destroyTasks } = this;
+        // a task that throws leaves the tasks after it to the next frame, so drawing goes on
+        try {
+            this.runFrameTasks(60);
+        } finally {
+            if (p1.list.length || p2.list.length || f1.list.length || destroyTasks.length) {
+                _requestAnimationFrame(this.beans, this.onFrame);
+            } else {
+                this.ticking = false;
+            }
+        }
+    };
 
     public setScrollTop(scrollTop: number): void {
         this.scrollGoingDown = scrollTop >= this.lastScrollTop;
@@ -119,7 +134,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
         this.schedule();
     }
 
-    private executeFrame(millis: number): void {
+    private runFrameTasks(millis: number): void {
         const { p1, p2, f1, destroyTasks, beans } = this;
         const { ctrlsSvc, frameworkOverrides } = beans;
 
@@ -141,13 +156,12 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
             const gridBodyDidSomething = scrollFeature.scrollGridIfNeeded();
 
             if (!gridBodyDidSomething) {
-                let task: () => void;
                 if (p1Tasks.length) {
                     this.sortTaskList(p1);
-                    task = p1Tasks.pop()!.task;
+                    p1Tasks.pop()!.task();
                 } else if (p2Tasks.length) {
                     this.sortTaskList(p2);
-                    task = p2Tasks.pop()!.task;
+                    p2Tasks.pop()!.task();
                 } else if (f1Tasks.length) {
                     // Assuming that framework tasks do not schedule p1 or p2 tasks so that it is safe
                     // to loop through all framework tasks for as long as we have time left
@@ -158,8 +172,7 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
                             if (!gridBodyDidSomething) {
                                 if (f1Tasks.length) {
                                     this.sortTaskList(f1);
-                                    task = f1Tasks.pop()!.task;
-                                    task();
+                                    f1Tasks.pop()!.task();
                                 } else {
                                     break;
                                 }
@@ -170,25 +183,14 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
                             duration = Date.now() - frameStart;
                         }
                     });
-
-                    // Empty task to avoid needing to check if task is defined in other path.
-                    task = () => {};
                 } else if (destroyTasks.length) {
-                    task = destroyTasks.pop()!;
+                    destroyTasks.pop()!();
                 } else {
                     break;
                 }
-
-                task();
             }
 
             duration = Date.now() - frameStart;
-        }
-
-        if (p1Tasks.length || p2Tasks.length || f1Tasks.length || destroyTasks.length) {
-            this.requestFrame();
-        } else {
-            this.ticking = false;
         }
     }
 
@@ -196,7 +198,8 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
         if (!this.active) {
             return;
         }
-        this.executeFrame(-1);
+        this.runFrameTasks(-1);
+        this.ticking = false;
     }
 
     public schedule(): void {
@@ -205,15 +208,8 @@ export class AnimationFrameService extends BeanStub implements NamedBean {
         }
         if (!this.ticking) {
             this.ticking = true;
-            this.requestFrame();
+            _requestAnimationFrame(this.beans, this.onFrame);
         }
-    }
-
-    private requestFrame(): void {
-        // check for the existence of requestAnimationFrame, and if
-        // it's missing, then we polyfill it with setTimeout()
-        const callback = this.executeFrame.bind(this, 60);
-        _requestAnimationFrame(this.beans, callback);
     }
 
     public isQueueEmpty(): boolean {

@@ -775,4 +775,22 @@ describe("a built-in filter given the author's `handler` or `doesFilterPass`", (
         expect(init).not.toHaveBeenCalled();
         expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #335');
     });
+
+    test('with filter handlers, a custom filter given neither `doesFilterPass` nor `handler` is warned about and lets every row pass', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [277] });
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        class DisplayComponent {
+            public getGui = () => document.createElement('div');
+        }
+        const api = await gridsManager.createGridAndWait('grid', {
+            enableFilterHandlers: true,
+            columnDefs: [{ field: 'id' }, { field: 'country', filter: DisplayComponent }],
+            rowData: ROWS,
+        });
+        await api.setColumnFilterModel('country', { value: 'Italy' });
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        expect(displayedIds(api)).toEqual([0, 1, 2, 3]);
+        expect(warnSpy.mock.calls.flat().join(' ')).toContain('warning #277');
+    });
 });

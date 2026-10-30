@@ -478,14 +478,11 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
                     .map((colId) => beans.colModel.getNonPivotColById(colId))
                     .filter((column): column is AgColumn => !!column && isPrimaryColDefColumn(column));
                 if (!beans.colModel.pivotMode) {
-                    for (let i = 0; i < orderedColumns.length; i++) {
-                        const column = orderedColumns[i];
-                        const allColumns = beans.colModel.colsList;
-                        const nonPrimaryPrefix = allColumns.findIndex((col) => isPrimaryColDefColumn(col));
-                        const targetIndex = (nonPrimaryPrefix >= 0 ? nonPrimaryPrefix : 0) + i;
-                        if (allColumns[targetIndex] !== column) {
-                            beans.colMoves?.moveColumns([column], targetIndex, operation.eventType, true);
-                        }
+                    const allColumns = beans.colModel.colsList;
+                    const targetIndex = Math.max(0, allColumns.findIndex(isPrimaryColDefColumn));
+                    if (orderedColumns.some((column, index) => allColumns[targetIndex + index] !== column)) {
+                        // Apply together so intermediate moves cannot split married groups.
+                        beans.colMoves?.moveColumns(orderedColumns, targetIndex, operation.eventType, true);
                     }
                 }
                 syncPrimaryColDefOrder(beans, orderedColumns);
@@ -643,8 +640,7 @@ class DeferredColumnStateUpdateStrategy implements ColumnStateConcreteUpdateStra
         for (const col of columns) {
             if (!liveValueColIds.has(col.colId) && !aggFuncs.values.has(col.colId)) {
                 const existingAggFunc = col.aggFunc;
-                const aggFunc =
-                    existingAggFunc != null ? existingAggFunc : this.beans.aggFuncSvc?.getDefaultAggFunc(col);
+                const aggFunc = existingAggFunc ?? this.beans.aggFuncSvc?.getDefaultAggFunc(col);
                 if (aggFunc != null) {
                     aggFuncs.values.set(col.colId, aggFunc);
                 }

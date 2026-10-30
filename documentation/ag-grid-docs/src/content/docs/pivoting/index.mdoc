@@ -99,6 +99,12 @@ const gridOptions = {
 }
 ```
 
+### Reordering Pivot Columns
+
+Right-click a pill and choose **Move Left** or **Move Right** to change the pivot order. Vertical panels use **Move Up** and **Move Down**. With a pill focused, **Shift+F10** or the context-menu key opens the same menu.
+
+See [Drop Zone Menus](./tool-panel-columns-customising/#drop-zone-menus) for availability and customisation. This panel uses `source: 'pivot'` in `getColumnDropZoneMenuItems`.
+
 ## Pivot Mode vs Pivot Active
 
 It is possible to have pivot mode turned on even though there is no pivot active, on the grid. A pivot is active when one or more of the pivot columns is used as a column label. In this scenario, the grid will display the data as normal but will strip out columns that have no grouping or value active.

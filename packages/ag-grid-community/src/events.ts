@@ -81,12 +81,12 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         undoEnded: UndoEndedEvent<TData, TContext>;
         redoStarted: RedoStartedEvent<TData, TContext>;
         redoEnded: RedoEndedEvent<TData, TContext>;
-        cellClicked: CellClickedEvent<TData, TContext>;
-        cellDoubleClicked: CellDoubleClickedEvent<TData, TContext>;
-        cellMouseDown: CellMouseDownEvent<TData, TContext>;
-        cellContextMenu: CellContextMenuEvent<TData, TContext>;
-        cellValueChanged: CellValueChangedEvent<TData, TContext>;
-        cellEditRequest: CellEditRequestEvent<TData, TContext>;
+        cellClicked: CellClickedEvent<TData, any, TContext>;
+        cellDoubleClicked: CellDoubleClickedEvent<TData, any, TContext>;
+        cellMouseDown: CellMouseDownEvent<TData, any, TContext>;
+        cellContextMenu: CellContextMenuEvent<TData, any, TContext>;
+        cellValueChanged: CellValueChangedEvent<TData, any, TContext>;
+        cellEditRequest: CellEditRequestEvent<TData, any, TContext>;
         rowValueChanged: RowValueChangedEvent<TData, TContext>;
         headerFocused: HeaderFocusedEvent<TData, TContext>;
         cellFocused: CellFocusedEvent<TData, TContext>;
@@ -94,9 +94,9 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         selectionChanged: SelectionChangedEvent<TData, TContext>;
         tooltipShow: TooltipShowEvent<TData, TContext>;
         tooltipHide: TooltipHideEvent<TData, TContext>;
-        cellKeyDown: FullWidthCellKeyDownEvent<TData, TContext> | CellKeyDownEvent<TData, TContext>;
-        cellMouseOver: CellMouseOverEvent<TData, TContext>;
-        cellMouseOut: CellMouseOutEvent<TData, TContext>;
+        cellKeyDown: FullWidthCellKeyDownEvent<TData, TContext> | CellKeyDownEvent<TData, any, TContext>;
+        cellMouseOver: CellMouseOverEvent<TData, any, TContext>;
+        cellMouseOut: CellMouseOutEvent<TData, any, TContext>;
         filterChanged: FilterChangedEvent<TData, TContext>;
         filterModified: FilterModifiedEvent<TData, TContext>;
         filterUiChanged: FilterUiChangedEvent<TData, TContext>;
@@ -117,8 +117,8 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         dragCancelled: DragCancelledEvent<TData, TContext>;
         rowEditingStarted: RowEditingStartedEvent<TData, TContext>;
         rowEditingStopped: RowEditingStoppedEvent<TData, TContext>;
-        cellEditingStarted: CellEditingStartedEvent<TData, TContext>;
-        cellEditingStopped: CellEditingStoppedEvent<TData, TContext>;
+        cellEditingStarted: CellEditingStartedEvent<TData, any, TContext>;
+        cellEditingStopped: CellEditingStoppedEvent<TData, any, TContext>;
         bodyScroll: BodyScrollEvent<TData, TContext>;
         bodyScrollEnd: BodyScrollEndEvent<TData, TContext>;
         paginationChanged: PaginationChangedEvent<TData, TContext>;
@@ -189,7 +189,7 @@ export type AgEventTypeParams<TData = any, TContext = any> = BuildEventTypeMap<
         overlayExclusiveChanged: AgEvent<'overlayExclusiveChanged'>;
         rowNodeDataChanged: RowNodeDataChangedEvent<TData, TContext>;
         columnsReset: ColumnsResetEvent<TData, TContext>;
-        cellEditValuesChanged: CellEditValuesChangedEvent<TData, TContext>;
+        cellEditValuesChanged: CellEditValuesChangedEvent<TData, any, TContext>;
         filterSwitched: FilterSwitchedEvent<TData, TContext>;
         batchEditingStarted: BatchEditingStartedEvent<TData, TContext>;
         batchEditingStopped: BatchEditingStoppedEvent<TData, TContext>;
@@ -711,6 +711,12 @@ export interface PasteEndEvent<TData = any, TContext = any> extends AgGlobalEven
 export type CalculatedColumnValidationReason = 'unknownReference' | 'invalidExpression';
 
 /**
+ * The validation state of a calculated column's expression: `'valid'`, or the {@link CalculatedColumnValidationReason}.
+ * An empty expression is `'valid'`.
+ */
+export type CalculatedColumnValidationState = 'valid' | CalculatedColumnValidationReason;
+
+/**
  * Shared shape for calculated-column events. Extends {@link ColumnEvent}, so consumers get
  * `column`, `columns`, and `source` (a {@link ColumnEventType}, e.g. `'api'` for programmatic mutations
  * or `'calculatedColumn'` for actions taken via the calculated-column dialog or menu).
@@ -733,13 +739,26 @@ export type CalculatedColumnChanges = {
     };
 };
 
+export interface CalculatedColumnExpressionValidation {
+    /**
+     * Whether the expression parses, its direct column references resolve, and it has no saved dialog validation
+     * error. Empty expressions pass built-in validation. Does not check row-specific evaluation errors or rerun
+     * application callbacks.
+     */
+    valid: boolean;
+    /** Why the expression is invalid. Only set when `valid` is `false`. */
+    reason?: CalculatedColumnValidationReason | 'restrictedReference' | 'customValidation';
+}
+
 export interface CalculatedColumnChangedEvent<TData = any, TContext = any> extends CalculatedColumnBaseEvent<
     'calculatedColumnChanged',
     TData,
     TContext
 > {
-    /** Changed definition properties and their previous/new values. Never empty; values are snapshots. */
+    /** Changed definition properties and their previous/new values. Empty when only expression validation changed; values are snapshots. */
     changes: CalculatedColumnChanges;
+    /** Validation snapshot of `expression` when this event was dispatched, including saved dialog restrictions and custom errors. */
+    expressionValidation: CalculatedColumnExpressionValidation;
 }
 
 export interface CalculatedColumnCreatedEvent<TData = any, TContext = any> extends CalculatedColumnBaseEvent<
@@ -1138,7 +1157,11 @@ export interface ColumnStateUpdatedEvent<TData = any, TContext = any> extends Co
 export interface ColumnResizedEvent<TData = any, TContext = any> extends ColumnEvent<'columnResized', TData, TContext> {
     /** Set to true for last event in a sequence of move events */
     finished: boolean;
-    /** Any columns resized due to flex */
+    /**
+     * The flex columns the change re-flexed, those held on their `minWidth` or `maxWidth` included.
+     * `null` when a resize of `columns` re-flexed every flex column, those before them too, as an auto-size or a
+     * group's header fit does: the flex columns are then not listed here.
+     */
     flexColumns: Column[] | null;
 }
 

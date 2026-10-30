@@ -2,6 +2,7 @@ import { _debounce, _getInnerWidth, _removeFromArray, _requestAnimationFrame } f
 
 import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
 import { getWidthOfColsInList, isSpecialCol } from '../columns/columnUtils';
+import { _setColumnWidthAnimation } from '../columns/columnWidthAnimation';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
@@ -26,6 +27,7 @@ import type {
     SizeColumnsToContentColumnLimits,
     SizeColumnsToContentStrategy,
 } from '../interfaces/autoSize';
+import type { PinnedColumnService } from '../pinnedColumns/pinnedColumnService';
 import { MIN_CENTER_VIEWPORT_WIDTH } from '../pinnedColumns/pinnedColumnService';
 import { _clamp } from '../utils/number';
 import { TouchListener } from '../widgets/touchListener';
@@ -169,7 +171,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     private autoSizeColsAsync(params: AutoSizeColumnParams): Promise<Set<AgColumn>> {
         const { colModel } = this.beans;
 
-        setWidthAnimation(this.beans, true);
+        _setColumnWidthAnimation(this.beans, true);
 
         const sized = this.innerAutoSizeCols(params).then((columnsAutoSized) => {
             if (!params.scaleUpToFitGridWidth) {
@@ -199,7 +201,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             return columnsAutoSized;
         });
 
-        return sized.finally(() => setWidthAnimation(this.beans, false));
+        return sized.finally(() => _setColumnWidthAnimation(this.beans, false));
     }
 
     private innerAutoSizeCols(params: AutoSizeColumnParams): Promise<Set<AgColumn>> {
@@ -227,7 +229,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             // the LHS sized, but RHS no. so we keep looping through the visible columns until
             // no more cols are available (rendered) to be resized
 
-            const { animationFrameSvc, renderStatus, colModel, autoWidthCalc, visibleCols } = this.beans;
+            const { animationFrameSvc, renderStatus, colModel, autoWidthCalc, visibleCols, pinnedCols } = this.beans;
 
             // we autosize after animation frames finish in case any cell renderers need to complete first. this can
             // happen eg if client code is calling api.autoSizeAllColumns() straight after grid is initialised, but grid
@@ -253,6 +255,8 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
             // keep track of which cols we have resized in here
             const columnsAutoSized = new Set<AgColumn>();
+            // joined after the loop, so a flex col re-flexed before it is rendered is still measured
+            let reflexedCols: AgColumn[] | undefined;
             // initialise with anything except 0 so that while loop executes at least once
             let changesThisTimeAround = -1;
 
@@ -261,14 +265,12 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             );
             const shouldSkipHeader = skipHeader ?? this.gos.get('skipHeaderOnAutoSize');
             const shouldSkipHeaderGroups = skipHeaderGroups ?? shouldSkipHeader;
+            const pinnedLimit = pinnedCols?.limitsAutoSize(source) ? pinnedCols : undefined;
 
             while (changesThisTimeAround !== 0) {
                 changesThisTimeAround = 0;
-                // only a real width change may refresh, else the events it dispatches re-trigger
-                // continuous auto-sizing indefinitely
-                let widthsChanged = false;
-
-                const updatedColumns: AgColumn[] = [];
+                const sizedCols: AgColumn[] = [];
+                const sizedWidths: number[] = [];
 
                 for (const key of colKeys) {
                     if (!key) {
@@ -292,20 +294,25 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
                         const columnLimit = columnLimitsIndex[column.colId] ?? {};
                         columnLimit.minWidth ??= defaultMinWidth;
                         columnLimit.maxWidth ??= defaultMaxWidth;
-                        const newWidth = normaliseColumnWidth(column, preferredWidth, columnLimit);
-                        widthsChanged ||= newWidth !== column.getActualWidth();
-                        column.setActualWidth(newWidth, source);
+                        sizedCols.push(column);
+                        sizedWidths.push(normaliseColumnWidth(column, preferredWidth, columnLimit));
                         columnsAutoSized.add(column);
                         changesThisTimeAround++;
                     }
-
-                    updatedColumns.push(column);
                 }
 
-                if (updatedColumns.length && widthsChanged) {
+                // only a real width change may refresh, else the events it dispatches re-trigger
+                // continuous auto-sizing indefinitely
+                if (setAutoSizedWidths(sizedCols, sizedWidths, source, pinnedLimit)) {
                     // skipTreeBuild=true: autosize only changes widths, leaving liveCols/pins/visibility — and
                     // thus the section/group trees — unchanged.
-                    visibleCols.refresh(source, true);
+                    reflexedCols = visibleCols.refresh(source, true);
+                }
+            }
+            // the last refresh lists every col still flexing; one an earlier refresh listed has since been sized
+            if (reflexedCols) {
+                for (let i = 0, len = reflexedCols.length; i < len; ++i) {
+                    columnsAutoSized.add(reflexedCols[i]);
                 }
             }
 
@@ -469,19 +476,32 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             return;
         }
 
-        const { beans } = this;
         const animate = params?.animate ?? true;
         if (animate) {
-            setWidthAnimation(beans, true);
+            _setColumnWidthAnimation(this.beans, true);
         }
+        try {
+            this.fitColumnsToWidth(gridWidth, source, silent, params);
+        } finally {
+            if (animate) {
+                _setColumnWidthAnimation(this.beans, false);
+            }
+        }
+    }
 
-        const limitsMap: { [colId: string]: Omit<IColumnLimit, 'key'> } = Object.create(null);
+    private fitColumnsToWidth(
+        gridWidth: number,
+        source: ColumnEventType,
+        silent: boolean | undefined,
+        params: FitColumnsParams | undefined
+    ): void {
+        const limitsMap: ColumnLimitsMap = Object.create(null);
         for (const { key, ...dimensions } of params?.columnLimits ?? []) {
             limitsMap[typeof key === 'string' ? key : key.getColId()] = dimensions;
         }
 
         // avoid divide by zero
-        const allDisplayedColumns = beans.visibleCols.allCols;
+        const allDisplayedColumns = this.beans.visibleCols.allCols;
 
         if (gridWidth <= 0 || !allDisplayedColumns.length) {
             return;
@@ -494,21 +514,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         }
 
         const doColumnsAlreadyFit = gridWidth === currentTotalColumnWidth;
-        if (doColumnsAlreadyFit) {
-            // if all columns fit, check they are within the min and max widths - if so, can quit early.
-            const doAllColumnsSatisfyConstraints = allDisplayedColumns.every((column) => {
-                if (column.colDef.suppressSizeToFit) {
-                    return true;
-                }
-                const widthOverride = limitsMap?.[column.getId()];
-                const minWidth = widthOverride?.minWidth ?? params?.defaultMinWidth;
-                const maxWidth = widthOverride?.maxWidth ?? params?.defaultMaxWidth;
-                const colWidth = column.getActualWidth();
-                return (minWidth == null || colWidth >= minWidth) && (maxWidth == null || colWidth <= maxWidth);
-            });
-            if (doAllColumnsSatisfyConstraints) {
-                return;
-            }
+        // if all columns fit, check they are within the min and max widths - if so, can quit early.
+        if (doColumnsAlreadyFit && allColumnsWithinLimits(allDisplayedColumns, limitsMap, params)) {
+            return;
         }
 
         const colsToSpread: AgColumn[] = [];
@@ -525,86 +533,9 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
 
         // make a copy of the cols that are going to be resized
         const colsToDispatchEventFor = colsToSpread.slice(0);
-        let finishedResizing = false;
 
-        const moveToNotSpread = (column: AgColumn) => {
-            _removeFromArray(colsToSpread, column);
-            colsToNotSpread.push(column);
-        };
-
-        const currentWidths: Partial<Record<string, number>> = Object.create(null);
-
-        // resetting cols to their original width makes the sizeColumnsToFit more deterministic,
-        // rather than depending on the current size of the columns. most users call sizeColumnsToFit
-        // immediately after grid is created, so will make no difference. however if application is calling
-        // sizeColumnsToFit repeatedly (eg after column group is opened / closed repeatedly) we don't want
-        // the columns to start shrinking / growing over time.
-        for (const column of colsToSpread) {
-            if (params?.onlyScaleUp) {
-                // When `onlyScaleUp`, we store the current widths to act as a true minimum because we don't
-                // want any columns to get smaller
-                currentWidths[column.colId] = column.getActualWidth();
-            }
-            column.resetActualWidth(source);
-
-            const widthOverride = limitsMap?.[column.getId()];
-            const minOverride = widthOverride?.minWidth ?? params?.defaultMinWidth ?? -Infinity;
-            const maxOverride = widthOverride?.maxWidth ?? params?.defaultMaxWidth ?? Infinity;
-
-            const colWidth = column.getActualWidth();
-            const targetWidth = _clamp(colWidth, minOverride, maxOverride);
-
-            if (targetWidth != colWidth) {
-                column.setActualWidth(targetWidth, source);
-            }
-        }
-
-        while (!finishedResizing) {
-            finishedResizing = true;
-            const availablePixels = gridWidth - getWidthOfColsInList(colsToNotSpread);
-            if (availablePixels <= 0) {
-                // no width, set everything to minimum
-                for (const column of colsToSpread) {
-                    const newWidth =
-                        limitsMap?.[column.getId()]?.minWidth ?? params?.defaultMinWidth ?? column.minWidth;
-                    column.setActualWidth(newWidth, source);
-                }
-            } else {
-                const scale = availablePixels / getWidthOfColsInList(colsToSpread);
-                // we set the pixels for the last col based on what's left, as otherwise
-                // we could be a pixel or two short or extra because of rounding errors.
-                let pixelsForLastCol = availablePixels;
-                // backwards through loop, as we are removing items as we go
-                for (let i = colsToSpread.length - 1; i >= 0; i--) {
-                    const column = colsToSpread[i];
-
-                    const id = column.colId;
-                    const prevWidth = currentWidths[id];
-                    const widthOverride = limitsMap?.[id];
-                    const minOverride = widthOverride?.minWidth ?? params?.defaultMinWidth ?? prevWidth;
-                    const maxOverride = widthOverride?.maxWidth ?? params?.defaultMaxWidth;
-                    const minWidth = Math.max(minOverride ?? -Infinity, column.getMinWidth());
-                    const maxWidth = Math.min(maxOverride ?? Infinity, column.getMaxWidth());
-                    let newWidth = Math.round(column.getActualWidth() * scale);
-
-                    if (newWidth < minWidth) {
-                        newWidth = minWidth;
-                        moveToNotSpread(column);
-                        finishedResizing = false;
-                    } else if (newWidth > maxWidth) {
-                        newWidth = maxWidth;
-                        moveToNotSpread(column);
-                        finishedResizing = false;
-                    } else if (i === 0) {
-                        // if this is the last column
-                        newWidth = pixelsForLastCol;
-                    }
-
-                    column.setActualWidth(newWidth, source);
-                    pixelsForLastCol -= newWidth;
-                }
-            }
-        }
+        const currentWidths = resetColumnWidths(colsToSpread, limitsMap, params, source);
+        spreadColumnWidths(gridWidth, colsToSpread, colsToNotSpread, currentWidths, limitsMap, params, source);
 
         const visibleCols = this.beans.visibleCols;
         visibleCols.updateBodyWidths(source, visibleCols.setLeftValues());
@@ -614,10 +545,6 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
         }
 
         dispatchColumnResizedEvent(this.eventSvc, colsToDispatchEventFor, true, source);
-
-        if (animate) {
-            setWidthAnimation(beans, false);
-        }
     }
 
     public applyAutosizeStrategy(): void {
@@ -949,7 +876,7 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
             if (measuresContent ? colDef.suppressAutoSize : colDef.suppressSizeToFit) {
                 continue;
             }
-            const flex = col.getFlex();
+            const flex = col.flex;
             if (flex != null && flex > 0) {
                 continue;
             }
@@ -979,19 +906,63 @@ export class ColumnAutosizeService extends BeanStub implements NamedBean {
     }
 }
 
+/** Sets the auto-sized widths, true when one changed; with `pinnedLimit`, pinned columns grow only into the room left
+ *  once the shrinking ones have freed theirs, as the pinned widths update only when the columns refresh. */
+function setAutoSizedWidths(
+    columns: AgColumn[],
+    widths: number[],
+    source: ColumnEventType,
+    pinnedLimit: PinnedColumnService | undefined
+): boolean {
+    let changed = false;
+    let freed = 0;
+    for (let i = 0, len = columns.length; i < len; ++i) {
+        const column = columns[i];
+        const actualWidth = column.actualWidth;
+        const width = widths[i];
+        const limited = pinnedLimit !== undefined && column.pinnedLane !== 1;
+        if (limited && width > actualWidth) {
+            continue;
+        }
+        column.setActualWidth(width, source);
+        // the width taken, not asked: the column's own bounds win over the auto-size limits
+        const taken = column.actualWidth - actualWidth;
+        changed ||= taken !== 0;
+        freed -= limited ? taken : 0;
+    }
+    if (!pinnedLimit) {
+        return changed;
+    }
+    // clamped after crediting what was freed, so the freed width first pays off any overflow
+    let room = pinnedLimit.getPinnedRoom(freed);
+    for (let i = 0, len = columns.length; i < len; ++i) {
+        const column = columns[i];
+        const actualWidth = column.actualWidth;
+        const width = widths[i];
+        if (column.pinnedLane === 1 || width <= actualWidth) {
+            continue;
+        }
+        column.setActualWidth(actualWidth + Math.min(width - actualWidth, room), source);
+        const taken = column.actualWidth - actualWidth;
+        changed ||= taken !== 0;
+        room -= taken;
+    }
+    return changed;
+}
+
 /** returns the width we can set to this col, taking into consideration min and max widths */
 function normaliseColumnWidth(
     column: AgColumn,
     newWidth: number,
     limits: { minWidth?: number; maxWidth?: number } = {}
 ): number {
-    const minWidth = limits.minWidth ?? column.getMinWidth();
+    const minWidth = limits.minWidth ?? column.minWidth;
 
     if (newWidth < minWidth) {
         newWidth = minWidth;
     }
 
-    const maxWidth = limits.maxWidth ?? column.getMaxWidth();
+    const maxWidth = limits.maxWidth ?? column.maxWidth;
     if (newWidth > maxWidth) {
         newWidth = maxWidth;
     }
@@ -1007,26 +978,152 @@ function isContinuousSupported(gos: GridOptionsService): boolean {
 function getAvailableWidth({ ctrlsSvc, scrollVisibleSvc }: BeanCollection): number {
     const gridBodyCtrl = ctrlsSvc.getGridBodyCtrl();
     const removeScrollWidth = scrollVisibleSvc.isVerticalScrollShowing();
-    const scrollWidthToRemove = removeScrollWidth ? scrollVisibleSvc.getScrollbarWidth() : 0;
+    const scrollWidthToRemove = removeScrollWidth ? (scrollVisibleSvc.getScrollbarWidth() ?? 0) : 0;
     // bodyViewportWidth should be calculated from eGridBody, not eBodyViewport
     // because we change the width of the bodyViewport to hide the real browser scrollbar
     const bodyViewportWidth = _getInnerWidth(gridBodyCtrl.eGridBody);
     return bodyViewportWidth - scrollWidthToRemove;
 }
 
-const WIDTH_ANIMATION_CLASS = 'ag-animate-autosize';
+type ColumnLimitsMap = { [colId: string]: Omit<IColumnLimit, 'key'> };
+type FitColumnsParams = ISizeColumnsToFitParams & { colKeys?: ColKey[]; onlyScaleUp?: boolean };
 
-function setWidthAnimation({ ctrlsSvc, gos }: BeanCollection, enable: boolean): void {
-    if (!gos.get('animateColumnResizing') || gos.get('enableRtl') || !ctrlsSvc.isAlive()) {
-        return;
+function allColumnsWithinLimits(
+    columns: AgColumn[],
+    limitsMap: ColumnLimitsMap,
+    params: FitColumnsParams | undefined
+): boolean {
+    return columns.every((column) => {
+        if (column.colDef.suppressSizeToFit) {
+            return true;
+        }
+        const widthOverride = limitsMap?.[column.colId];
+        const minWidth = widthOverride?.minWidth ?? params?.defaultMinWidth;
+        const maxWidth = widthOverride?.maxWidth ?? params?.defaultMaxWidth;
+        const colWidth = column.actualWidth;
+        return (minWidth == null || colWidth >= minWidth) && (maxWidth == null || colWidth <= maxWidth);
+    });
+}
+
+function resetColumnWidths(
+    colsToSpread: AgColumn[],
+    limitsMap: ColumnLimitsMap,
+    params: FitColumnsParams | undefined,
+    source: ColumnEventType
+): Partial<Record<string, number>> {
+    const currentWidths: Partial<Record<string, number>> = Object.create(null);
+
+    // resetting cols to their original width makes the sizeColumnsToFit more deterministic,
+    // rather than depending on the current size of the columns. most users call sizeColumnsToFit
+    // immediately after grid is created, so will make no difference. however if application is calling
+    // sizeColumnsToFit repeatedly (eg after column group is opened / closed repeatedly) we don't want
+    // the columns to start shrinking / growing over time.
+    for (const column of colsToSpread) {
+        if (params?.onlyScaleUp) {
+            // When `onlyScaleUp`, we store the current widths to act as a true minimum because we don't
+            // want any columns to get smaller
+            currentWidths[column.colId] = column.actualWidth;
+        }
+        column.resetActualWidth(source);
+
+        const widthOverride = limitsMap?.[column.colId];
+        const minOverride = widthOverride?.minWidth ?? params?.defaultMinWidth ?? -Infinity;
+        const maxOverride = widthOverride?.maxWidth ?? params?.defaultMaxWidth ?? Infinity;
+
+        const colWidth = column.actualWidth;
+        const targetWidth = _clamp(colWidth, minOverride, maxOverride);
+
+        if (targetWidth != colWidth) {
+            column.setActualWidth(targetWidth, source);
+        }
     }
 
-    const classList = ctrlsSvc.getGridBodyCtrl().eGridBody.classList;
-    if (enable) {
-        classList.add(WIDTH_ANIMATION_CLASS);
-    } else {
-        classList.remove(WIDTH_ANIMATION_CLASS);
+    return currentWidths;
+}
+
+function spreadColumnWidths(
+    gridWidth: number,
+    colsToSpread: AgColumn[],
+    colsToNotSpread: AgColumn[],
+    currentWidths: Partial<Record<string, number>>,
+    limitsMap: ColumnLimitsMap,
+    params: FitColumnsParams | undefined,
+    source: ColumnEventType
+): void {
+    let finishedResizing = false;
+    while (!finishedResizing) {
+        finishedResizing = spreadColumnWidthsPass(
+            gridWidth,
+            colsToSpread,
+            colsToNotSpread,
+            currentWidths,
+            limitsMap,
+            params,
+            source
+        );
     }
+}
+
+/** Returns `false` when a column hit its min or max width and left the spread, so another pass is needed. */
+function spreadColumnWidthsPass(
+    gridWidth: number,
+    colsToSpread: AgColumn[],
+    colsToNotSpread: AgColumn[],
+    currentWidths: Partial<Record<string, number>>,
+    limitsMap: ColumnLimitsMap,
+    params: FitColumnsParams | undefined,
+    source: ColumnEventType
+): boolean {
+    const availablePixels = gridWidth - getWidthOfColsInList(colsToNotSpread);
+    if (availablePixels <= 0) {
+        // no width, set everything to minimum
+        for (const column of colsToSpread) {
+            const newWidth = limitsMap?.[column.colId]?.minWidth ?? params?.defaultMinWidth ?? column.minWidth;
+            column.setActualWidth(newWidth, source);
+        }
+        return true;
+    }
+
+    const moveToNotSpread = (column: AgColumn) => {
+        _removeFromArray(colsToSpread, column);
+        colsToNotSpread.push(column);
+    };
+
+    let finishedResizing = true;
+    const scale = availablePixels / getWidthOfColsInList(colsToSpread);
+    // we set the pixels for the last col based on what's left, as otherwise
+    // we could be a pixel or two short or extra because of rounding errors.
+    let pixelsForLastCol = availablePixels;
+    // backwards through loop, as we are removing items as we go
+    for (let i = colsToSpread.length - 1; i >= 0; i--) {
+        const column = colsToSpread[i];
+
+        const id = column.colId;
+        const prevWidth = currentWidths[id];
+        const widthOverride = limitsMap?.[id];
+        const minOverride = widthOverride?.minWidth ?? params?.defaultMinWidth ?? prevWidth;
+        const maxOverride = widthOverride?.maxWidth ?? params?.defaultMaxWidth;
+        const minWidth = Math.max(minOverride ?? -Infinity, column.minWidth);
+        const maxWidth = Math.min(maxOverride ?? Infinity, column.maxWidth);
+        let newWidth = Math.round(column.actualWidth * scale);
+
+        if (newWidth < minWidth) {
+            newWidth = minWidth;
+            moveToNotSpread(column);
+            finishedResizing = false;
+        } else if (newWidth > maxWidth) {
+            newWidth = maxWidth;
+            moveToNotSpread(column);
+            finishedResizing = false;
+        } else if (i === 0) {
+            // if this is the last column
+            newWidth = pixelsForLastCol;
+        }
+
+        column.setActualWidth(newWidth, source);
+        pixelsForLastCol -= newWidth;
+    }
+    return finishedResizing;
 }
 
 function columnsMatch(column: AgColumn, key: ColKey): boolean {

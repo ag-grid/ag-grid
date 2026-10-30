@@ -64,6 +64,12 @@ describe('LicenseManager', () => {
         expect((console.warn as Mock).mock.calls[0][0]).toContain('AG Grid: warning #291');
     });
 
+    test('a key with an unclosed bracket is invalid rather than throwing', () => {
+        const manager = new LicenseManager(createMockDocument('example.com'));
+
+        expect(manager.getLicenseDetails(`[v3_${'x'.repeat(40)}`).valid).toBe(false);
+    });
+
     describe('isWebsiteUrl (via isDisplayWatermark)', () => {
         function createManagerWithWatermark(hostname: string): LicenseManager {
             const manager = new LicenseManager(createMockDocument(hostname));

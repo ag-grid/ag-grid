@@ -64,6 +64,11 @@ export interface CoreParams extends SharedThemeParams {
     autoHeightMinBodyHeight: LengthValue;
 
     /**
+     * Border along the edge of the grid's scrollbars that faces the grid content (above the horizontal scrollbar and beside the vertical scrollbar). The border takes up space in addition to the scrollbar. Not drawn for overlay scrollbars that only appear while scrolling.
+     */
+    bodyScrollbarBorder: BorderValue;
+
+    /**
      * Padding at the start and end of grid cells and header cells.
      */
     cellHorizontalPadding: LengthValue;
@@ -119,9 +124,14 @@ export interface CoreParams extends SharedThemeParams {
     columnDropCellBorder: BorderValue;
 
     /**
-     * Background color when hovering over columns in the grid. This is not visible unless enabled in the grid options.
+     * Background color of the cells in a column when hovering over that column in the grid. This is not visible unless enabled with the `columnHoverHighlight` grid option. Inside a cell selection it is overlaid on top of `rangeSelectionBackgroundColor`, so use a semi-transparent colour to keep the selection visible. See also `columnHeaderHoverColor`.
      */
     columnHoverColor: ColorValue;
+
+    /**
+     * Background color of the column header when hovering over that column in the grid. This is not visible unless enabled with the `columnHoverHighlight` grid option. Set to `transparent` to disable the hover effect. This differs from `headerCellHoverBackgroundColor` which applies when the header cell itself is hovered.
+     */
+    columnHeaderHoverColor: ColorValue;
 
     /**
      * Amount of indentation for each level of children when selecting grouped columns in the column select widget.
@@ -227,6 +237,11 @@ export interface CoreParams extends SharedThemeParams {
      * Horizontal borders above footer components like the pagination and status bars
      */
     footerRowBorder: BorderValue;
+
+    /**
+     * Horizontal border between the grand total row and the data rows: above it when the grand total is at the bottom, below it when at the top. This border is drawn on top of the existing border, so should be opaque to hide it.
+     */
+    grandTotalRowBorder: BorderValue;
 
     /**
      * Duration in seconds of the background color transition if headerCellHoverBackgroundColor or headerCellMovingBackgroundColor is set
@@ -482,6 +497,11 @@ export interface CoreParams extends SharedThemeParams {
      * Background color of the Row Numbers cells when the range selects all cells for that row.
      */
     rowNumbersSelectedColor: ColorValue;
+
+    /**
+     * Background color of the Row Numbers cell when hovering over its row in the grid. Set to `transparent` to disable the hover effect.
+     */
+    rowHeaderHoverColor: ColorValue;
 
     /**
      * Horizontal borders between rows.
@@ -854,11 +874,13 @@ export interface CoreParams extends SharedThemeParams {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> = {
     wrapperBorder: true,
+    bodyScrollbarBorder: false,
     rowBorder: true,
     headerRowBorder: true,
     footerRowBorder: {
         ref: 'rowBorder',
     },
+    grandTotalRowBorder: false,
     columnBorder: {
         style: 'solid',
         width: 1,
@@ -923,7 +945,9 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     calculatedColumnOperatorColor: { ref: 'foregroundColor' },
     calculatedColumnErrorUnderlineColor: { ref: 'invalidColor' },
     rowNumbersSelectedColor: accentMix(0.5),
+    rowHeaderHoverColor: { ref: 'rowHoverColor' },
     columnHoverColor: accentMix(0.05),
+    columnHeaderHoverColor: { ref: 'columnHoverColor' },
     selectedRowBackgroundColor: accentMix(0.12),
     modalOverlayBackgroundColor: {
         ref: 'backgroundColor',

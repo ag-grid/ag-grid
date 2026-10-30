@@ -8,8 +8,8 @@ import type {
     PdfHeaderFooterContent,
     PdfWatermark,
 } from 'ag-grid-community';
-import { _createElement } from 'ag-grid-community';
 
+import { _resolveCssColor } from '../../agStack/agColor';
 import { resolveCssColorValue } from './colors';
 import { isTransparentColorValue } from './pdfColor';
 
@@ -129,8 +129,8 @@ export function mergeWatermark(
         ...baseWatermark,
         ...overrideWatermark,
         style: {
-            ...(baseWatermark.style ?? {}),
-            ...(overrideWatermark.style ?? {}),
+            ...baseWatermark.style,
+            ...overrideWatermark.style,
         },
     };
 }
@@ -307,25 +307,7 @@ function resolveCssColor(value: string, eRootDiv: HTMLElement | undefined): stri
         return value;
     }
 
-    const probe = _createElement({ tag: 'span' });
-    const isCssVariable = /\bvar\(/i.test(value);
-    probe.style.color = value;
-
-    if (!probe.style.color && !isCssVariable) {
-        return '';
-    }
-
-    // keep the probe off-screen to avoid layout impact while still letting the browser resolve the colour.
-    probe.style.position = 'absolute';
-    probe.style.left = '-99999px';
-    probe.style.top = '-99999px';
-    probe.style.visibility = 'hidden';
-
-    eRootDiv.appendChild(probe);
-    const computed = getComputedStyle(probe).color;
-    probe.remove();
-
-    return computed || '';
+    return _resolveCssColor(value, eRootDiv);
 }
 
 /**

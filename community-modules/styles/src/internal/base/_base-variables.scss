@@ -57,8 +57,10 @@
         --ag-panel-border-color: var(--ag-border-color);
 
         --ag-row-hover-color: transparent;
+        --ag-row-header-hover-color: var(--ag-row-hover-color);
 
         --ag-column-hover-color: transparent;
+        --ag-column-header-hover-color: var(--ag-column-hover-color);
 
         --ag-range-selection-border-color: var(--ag-foreground-color);
 
@@ -96,6 +98,8 @@
         --ag-header-cell-moving-background-color: var(--ag-background-color);
 
         --ag-value-change-value-highlight-background-color: rgba(22, 160, 133, 0.5);
+
+        --ag-internal-accessible-color-transition-mode: ease;
 
         --ag-value-change-delta-up-color: #43a047;
         --ag-value-change-delta-down-color: #e53935;

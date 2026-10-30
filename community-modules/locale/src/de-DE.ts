@@ -341,6 +341,10 @@ export const AG_GRID_LOCALE_DE_DE = {
     enabled: 'Aktiviert',
 
     // Menu
+    moveLeft: 'Nach links verschieben',
+    moveRight: 'Nach rechts verschieben',
+    moveUp: 'Nach oben verschieben',
+    moveDown: 'Nach unten verschieben',
     pinColumn: 'Spalte anheften',
     pinLeft: 'Links anheften',
     pinRight: 'Rechts anheften',
@@ -768,6 +772,7 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaRowSelect: 'Drücken Sie LEERTASTE, um diese Zeile auszuwählen',
     ariaRowSelectionDisabled: 'Zeilenauswahl ist für diese Zeile deaktiviert',
     ariaSearch: 'Suche',
+    ariaSortPriority: 'Sortierpriorität ${priority} von ${count}',
     ariaSortableColumn: 'Drücken Sie EINGABETASTE, um zu sortieren',
     ariaSortableColumnWithCellSelection: 'Drücken Sie ALT EINGABETASTE, um zu sortieren',
     ariaToggleVisibility: 'Drücken Sie LEERTASTE, um die Sichtbarkeit umzuschalten',
@@ -804,6 +809,9 @@ export const AG_GRID_LOCALE_DE_DE = {
     ariaDropZoneColumnComponentSortAbsoluteAscending: 'absolut aufsteigend',
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolut absteigend',
     ariaLabelDialog: 'Dialog',
+    ariaLabelClose: 'Schließen',
+    ariaLabelMaximize: 'Maximieren',
+    ariaLabelRestore: 'Wiederherstellen',
     ariaLabelColumnMenu: 'Spaltenmenü',
     ariaLabelColumnFilter: 'Spaltenfilter',
     ariaLabelSelectField: 'Feld auswählen',
