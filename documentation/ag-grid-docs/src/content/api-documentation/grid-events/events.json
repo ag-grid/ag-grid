@@ -78,7 +78,7 @@
         "calculatedColumnCreated": {
             "more": {
                 "name": "Calculated Columns Events",
-                "url": "./calculated-columns/#events"
+                "url": "./calculated-columns-api/#events"
             }
         },
         "calculatedColumnChanged": {
@@ -87,19 +87,19 @@
             },
             "more": {
                 "name": "Calculated Columns Events",
-                "url": "./calculated-columns/#events"
+                "url": "./calculated-columns-api/#events"
             }
         },
         "calculatedColumnRemoved": {
             "more": {
                 "name": "Calculated Columns Events",
-                "url": "./calculated-columns/#events"
+                "url": "./calculated-columns-api/#events"
             }
         },
         "calculatedColumnValidationStateChanged": {
             "more": {
                 "name": "Calculated Columns Events",
-                "url": "./calculated-columns/#events"
+                "url": "./calculated-columns-api/#events"
             }
         }
     },

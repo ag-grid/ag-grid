@@ -1,0 +1,165 @@
+---
+title: "Calculated Columns - Restrictions & Validation"
+description: "Control what users can change in $framework Data Grid calculated columns: read-only columns, hidden menu items, restricted column references and custom validation of the Calculated Column dialog."
+enterprise: true
+---
+
+These options control what users can do to [Calculated Columns](./calculated-columns/) through the grid's menus and the Calculated Column dialog:
+
+| To                                                                | Use                                                            |
+| ----------------------------------------------------------------- | -------------------------------------------------------------- |
+| Let users view a column's definition, but not change or remove it | [`calculatedColumnReadOnly`](#read-only-calculated-columns)    |
+| Remove the add, edit and remove actions from the menus            | [Menu item filtering](#hiding-menu-items)                      |
+| Stop users referencing certain columns                            | [`isColumnReferenceable`](#iscolumnreferenceable)              |
+| Reject titles, types or expressions with your own messages        | [`getValidationErrors`](#getvalidationerrors)                  |
+| Recheck existing expressions after your rules change              | [`refreshCalculatedColumns()`](#refreshing-calculated-columns) |
+
+Read-only columns, hidden menu items, reference restrictions and custom validation apply to what users do in the grid's menus and dialog. Updating `columnDefs` and restoring [Grid State](./grid-state/) are not restricted by them, so none of them is a security boundary. Each section below gives the details.
+
+## Read-Only Calculated Columns
+
+Set `calculatedColumnReadOnly: true` to prevent users from changing a column's title, type or expression in the dialog. Users can choose **View Calculated Column** to inspect its definition. **Remove Calculated Column** is disabled in the column and cell context menus.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: true,
+    columnDefs: [
+        { field: 'revenue' },
+        { field: 'cost' },
+        {
+            colId: 'grossMargin',
+            calculatedExpression: '([revenue] - [cost]) / [revenue]',
+            cellDataType: 'number',
+            calculatedColumnReadOnly: true,
+        },
+    ],
+};
+```
+
+The example keeps **Gross Margin** read-only, while **Profit** and user-created calculated columns remain editable.
+
+{% gridExampleRunner title="Read-Only Calculated Columns" name="calculated-columns-read-only" /%}
+
+If a column becomes read-only while its edit dialog is open, the dialog closes and any pending edits are discarded. Changes already applied are kept.
+
+{% note %}
+This setting restricts UI changes only: updating `columnDefs` and restoring [Grid State](./grid-state/) can still change or remove the column. Dialog-created columns ignore `defaultColDef.calculatedColumnReadOnly`, but [processColDef](./calculated-columns-dialog/#processcoldef) can make them read-only.
+{% /note %}
+
+### Hiding Menu Items
+
+The calculated column actions are built-in menu items. To stop users adding, editing or removing calculated columns from the menus, filter them out of the default items with [getColumnMenuItems](./column-menu/#customising-the-menu-items) and [getContextMenuItems](./context-menu/#configuring-the-context-menu):
+
+- `calculatedColumn`: **Add Calculated Column**, in the column menu.
+- `editCalculatedColumn`: **Edit Calculated Column**, or **View Calculated Column** when the column is read-only, in the column menu.
+- `removeCalculatedColumn`: **Remove Calculated Column**, in the column menu and the cell context menu.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: true,
+    getColumnMenuItems: ({ defaultItems }) =>
+        defaultItems.filter(
+            item => item !== 'editCalculatedColumn' && item !== 'removeCalculatedColumn'
+        ),
+    getContextMenuItems: ({ defaultItems }) =>
+        defaultItems?.filter(item => item !== 'removeCalculatedColumn'),
+};
+```
+
+As with [read-only columns](#read-only-calculated-columns), this only removes the menu entries. Updating `columnDefs` and restoring Grid State can still change or remove the column.
+
+## Restricting Column References {% #iscolumnreferenceable %}
+
+Return `false` from `isColumnReferenceable` to exclude a column from the Columns picker, inline autocomplete and newly entered references. Use `calculatedColumn` to identify the column being edited, or `sourceColumn` for the column whose menu initiated **Add Calculated Column**. `sourceColumn` is only provided when adding a column; it is `null` when editing an existing column.
+
+This example allows Salary references only when editing Bonus:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: {
+        isColumnReferenceable: ({ colDef, calculatedColumn }) => {
+            if (colDef.field === 'salary') {
+                return calculatedColumn?.getColId() === 'bonus';
+            }
+            return true;
+        },
+    },
+};
+```
+
+{% interfaceDocumentation interfaceName="IsColumnReferenceableParams" /%}
+
+- The callback runs when the dialog opens.
+- Existing permitted expressions can remain unchanged, and programmatic expressions are unrestricted unless explicitly revalidated with [`refreshCalculatedColumns()`](#refreshing-calculated-columns).
+- Restricted edits disable Apply in deferred mode. In live mode, they are saved but display `#REF!` until corrected; reopening the dialog or restoring Grid State preserves the error.
+
+This is a UI restriction, not a security boundary.
+
+{% gridExampleRunner title="Dialog Reference Restrictions" name="calculated-columns-reference-restrictions" /%}
+
+In the example, edit **Bonus** and **Sales Target**: only **Bonus** can reference **Salary**.
+
+## Validating Dialog Fields {% #getvalidationerrors %}
+
+Use `getValidationErrors` to validate the dialog's title, type and expression. Return messages keyed by `headerName`, `cellDataType` or `calculatedExpression`, or `null` to accept the draft:
+
+- Omitted fields and empty arrays are valid.
+- Return or spread `internalErrors` to retain built-in feedback.
+- The callback runs while typing, so keep it quick.
+- Supply translated messages.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: {
+        applyMode: 'deferred',
+        getValidationErrors: ({ colDef, internalErrors }) => ({
+            ...internalErrors,
+            headerName: (colDef.headerName?.length ?? 0) > 30
+                ? ['Use a title of at most 30 characters.']
+                : internalErrors?.headerName,
+        }),
+    },
+};
+```
+
+Edit **Sales Bonus** and enter a title longer than 30 characters or an expression using `[Salary]` to see field-specific errors.
+
+{% gridExampleRunner title="Custom Dialog Validation" name="calculated-columns-custom-validation" /%}
+
+{% interfaceDocumentation interfaceName="CalculatedColumnValidationParams" /%}
+
+Editing the title or type revalidates the expression too, even when the expression is unchanged. Opening an editable live dialog rechecks expression rejections, even without edits.
+
+{% note %}
+This is a dialog guard, not a security boundary: `columnDefs` and Grid State restores do not run the callback. Rejections restored from Grid State remain blocked.
+{% /note %}
+
+### How Rejected Edits Behave
+
+Any field error blocks Apply in deferred mode. In live mode, the outcome depends on the field:
+
+| Rejected edit                                                         | Deferred mode      | Live mode                                                                                                                                                         |
+| --------------------------------------------------------------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Title or type rejected by `getValidationErrors`                       | Blocks **Apply**   | Keeps its last applied value, while other fields apply                                                                                                            |
+| Expression rejected by `getValidationErrors`                          | Blocks **Apply**   | Saved, and displays `#ERROR!`, including when the callback returns built-in expression errors                                                                     |
+| Expression referencing a column restricted by `isColumnReferenceable` | Disables **Apply** | Saved, and displays `#REF!` until corrected. Reference restrictions remain enforced, and use `#REF!` instead of `#ERROR!`, even when `getValidationErrors` is set |
+
+## Refreshing Calculated Columns
+
+Call `refreshCalculatedColumns()` after application validation rules change to revalidate expressions, update saved errors and recalculate cells and dependants without opening the dialog.
+
+```js
+api.refreshCalculatedColumns({ columns: ['profit'] });
+// Omit columns to refresh all calculated columns.
+api.refreshCalculatedColumns();
+```
+
+The refresh explicitly applies the current `getValidationErrors` and `isColumnReferenceable` rules:
+
+- It includes read-only and programmatically defined columns.
+- Applied expressions are checked with `sourceColumn: null`.
+- Removed rules clear their saved rejections.
+- Open dialogs also revalidate their drafts, without applying them or restarting the debounce.
+- Validation changes emit `calculatedColumnChanged` with `source: 'api'`.
+
+{% apiDocumentation source="grid-api/api.json" section="refresh" names=["refreshCalculatedColumns"] /%}
