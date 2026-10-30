@@ -96,7 +96,7 @@ Register the [Column Menu](./column-menu/) so users can add, edit and remove cal
 | **Edit Calculated Column**   | The header menu of a calculated column                                    | Opens the dialog to change its title, type and expression. A read-only column shows **View Calculated Column** instead |
 | **Remove Calculated Column** | The header menu of a calculated column, and the context menu of its cells | Removes the column. Disabled when the column is read-only                                                              |
 
-A column added from the header menu appears after the column it was created from.
+When adding a calculated column from a header menu or via the API with a source column, the new column uses the source column's current pinning. The new column appears next to the source: on the right in LTR and on the left in RTL.
 
 Calculated cell values cannot be changed through cell editing, paste, fill handle or delete operations. Users can still change a calculated column's title, type and expression through its [dialog](./calculated-columns-dialog/). To prevent these dialog edits and removal through the grid's menus, see [Read-Only Calculated Columns](./calculated-columns-validation/#read-only-calculated-columns).
 

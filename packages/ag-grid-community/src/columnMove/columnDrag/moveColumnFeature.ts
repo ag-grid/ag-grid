@@ -247,8 +247,7 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
         finished: boolean
     ): void {
         const allMovingColumns = this.getAllMovingColumns(draggingEvent);
-        const fromLeft =
-            normaliseDirection(draggingEvent.hDirection!, this.gos.get('enableRtl'), this.pinned) === 'right';
+        const fromLeft = normaliseDirection(draggingEvent.hDirection!, this.gos.get('enableRtl')) === 'right';
         const isFromHeader = draggingEvent.dragSource.type === DragSourceType.HeaderCell;
 
         const params = this.getMoveColumnParams({
@@ -482,20 +481,13 @@ export class MoveColumnFeature extends BeanStub implements DropListener {
     }
 
     private getNormalisedColumnLeft(col: AgColumn, padding: number): number | null {
-        const { gos } = this.beans;
         const left = col.getLeft();
 
         if (left == null) {
             return null;
         }
 
-        let diff = padding;
-
-        if (gos.get('enableRtl') && col.pinnedLane === 0) {
-            diff = col.getActualWidth() - padding;
-        }
-
-        return left + diff;
+        return left + padding;
     }
 
     private isAttemptingToPin(columns: AgColumn[]) {
