@@ -4,17 +4,7 @@ description: "Control what users can change in $framework Data Grid calculated c
 enterprise: true
 ---
 
-These options control what users can do to [Calculated Columns](./calculated-columns/) through the grid's menus and the Calculated Column dialog:
-
-| To                                                                | Use                                                            |
-| ----------------------------------------------------------------- | -------------------------------------------------------------- |
-| Let users view a column's definition, but not change or remove it | [`calculatedColumnReadOnly`](#read-only-calculated-columns)    |
-| Remove the add, edit and remove actions from the menus            | [Menu item filtering](#hiding-menu-items)                      |
-| Stop users referencing certain columns                            | [`isColumnReferenceable`](#iscolumnreferenceable)              |
-| Reject titles, types or expressions with your own messages        | [`getValidationErrors`](#getvalidationerrors)                  |
-| Recheck existing expressions after your rules change              | [`refreshCalculatedColumns()`](#refreshing-calculated-columns) |
-
-Read-only columns, hidden menu items, reference restrictions and custom validation apply to what users do in the grid's menus and dialog. Updating `columnDefs` and restoring [Grid State](./grid-state/) are not restricted by them, so none of them is a security boundary. Each section below gives the details.
+These options control what users can do to [Calculated Columns](./calculated-columns/) through the grid's menus and the Calculated Column dialog.
 
 ## Read-Only Calculated Columns
 
