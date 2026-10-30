@@ -16,13 +16,14 @@ import {
 import { useCollapsibleSections } from '@ag-website-shared/components/theme-builder/useCollapsibleSections';
 import styled from '@emotion/styled';
 
-import { useChartPalette, useStrokeDirection } from './chartTheme';
+import { useChartPalette, usePreviewStrokes, useStrokeDirection } from './chartTheme';
 
 const DEFAULT_OPEN_SECTIONS = ['General', 'All Parameters'];
 
 export const EditorPanel = () => {
     const sectionProps = useCollapsibleSections(DEFAULT_OPEN_SECTIONS);
     const [chartPalette, setChartPalette] = useChartPalette();
+    const [previewStrokes, setPreviewStrokes] = usePreviewStrokes();
     const strokeDirection = useStrokeDirection();
 
     return (
@@ -99,7 +100,13 @@ export const EditorPanel = () => {
                 <ParamEditor param="iconSize" label="Size" />
             </CollapsibleSection>
             <CollapsibleSection {...sectionProps('Chart palette')}>
-                <PaletteEditor value={chartPalette} onChange={setChartPalette} strokeDirection={strokeDirection} />
+                <PaletteEditor
+                    value={chartPalette}
+                    onChange={setChartPalette}
+                    strokeDirection={strokeDirection}
+                    previewStrokes={previewStrokes}
+                    onPreviewStrokesChange={setPreviewStrokes}
+                />
             </CollapsibleSection>
             <CollapsibleSection {...sectionProps('All Parameters')}>
                 <AdvancedParamSelector />

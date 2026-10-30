@@ -16,7 +16,7 @@ import {
 import type { Store } from '@ag-website-shared/theming/store';
 import { getThemeDefaultParams, paramToVariableName, reinterpretCSSValue } from '@ag-website-shared/theming/utils';
 import { _Theme } from 'ag-charts-community';
-import type { AgChartTheme, AgChartThemeName, AgChartThemeParams } from 'ag-charts-community';
+import type { AgChartTheme, AgChartThemeName, AgChartThemeOverrides, AgChartThemeParams } from 'ag-charts-community';
 import { useAtom, useAtomValue, useStore } from 'jotai';
 import { useCallback, useMemo } from 'react';
 
@@ -45,6 +45,11 @@ export const useChartPalette = () => {
     );
     return [stored ?? DEFAULT_PALETTE, setPalette] as const;
 };
+
+/** Whether the preview outlines its series. Not part of the palette or the theme: a theme cannot switch strokes on. */
+const previewStrokesAtom = atomWithJSONStorage<boolean>('grid-chart-preview-strokes', false);
+
+export const usePreviewStrokes = () => useAtom(previewStrokesAtom);
 
 export const setStoredChartPalette = (store: Store, palette: Palette | undefined) => store.set(paletteAtom, palette);
 
@@ -112,6 +117,39 @@ export const useChartTheme = (): AgChartTheme => {
     const { theme } = useRenderedThemeInfo();
     const json = JSON.stringify(buildChartTheme(theme, useAtomValue(paletteAtom)));
     return useMemo<AgChartTheme>(() => JSON.parse(json), [json]);
+};
+
+/**
+ * AG Charts draws most series' strokes at zero width unless the chart sets a stroke, so a palette's strokes
+ * would not show in the preview. These are the widths AG Charts itself uses once a stroke is set. Series that
+ * already outline themselves are left alone, as is waterfall, whose items take the up, down and neutral colours.
+ */
+const PREVIEW_STROKE_OVERRIDES = {
+    bar: { series: { strokeWidth: 2 } },
+    area: { series: { strokeWidth: 2 } },
+    'range-bar': { series: { strokeWidth: 2 } },
+    pie: { series: { strokeWidth: 2 } },
+    donut: { series: { strokeWidth: 2 } },
+    sunburst: { series: { strokeWidth: 2 } },
+    heatmap: { series: { strokeWidth: 2 } },
+    funnel: { series: { strokeWidth: 2 } },
+    'cone-funnel': { series: { strokeWidth: 2 } },
+    pyramid: { series: { strokeWidth: 2 } },
+    'radial-column': { series: { strokeWidth: 1 } },
+    'radial-bar': { series: { strokeWidth: 1 } },
+    // A line draws in its fill colour, leaving only the markers to show the strokes.
+    line: { series: { marker: { strokeWidth: 1 } } },
+    'radar-line': { series: { marker: { strokeWidth: 1 } } },
+} satisfies AgChartThemeOverrides;
+
+/** The exported theme, plus the stroke widths while the palette editor previews strokes. */
+export const usePreviewChartTheme = (): AgChartTheme => {
+    const chartTheme = useChartTheme();
+    const previewStrokes = useAtomValue(previewStrokesAtom);
+    return useMemo(
+        () => (previewStrokes ? { ...chartTheme, overrides: PREVIEW_STROKE_OVERRIDES } : chartTheme),
+        [chartTheme, previewStrokes]
+    );
 };
 
 export const CHART_THEMES = [CHART_THEME_NAME];

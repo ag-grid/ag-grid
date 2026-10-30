@@ -38,7 +38,7 @@ import {
 import { AgGridReact } from 'ag-grid-react';
 
 import { GridConfigDropdownButton } from './GridConfigDropdown';
-import { CHART_THEMES, CHART_THEME_NAME, useChartTheme } from './chartTheme';
+import { CHART_THEMES, CHART_THEME_NAME, usePreviewChartTheme } from './chartTheme';
 import { useGridOptions } from './grid-config-atom';
 import { allPresets } from './presets';
 
@@ -94,7 +94,7 @@ const GridPreview = () => {
 
     const theme = useRenderedTheme();
 
-    const chartTheme = useDebouncedValue(useChartTheme(), CHART_THEME_DEBOUNCE_MS);
+    const chartTheme = useDebouncedValue(usePreviewChartTheme(), CHART_THEME_DEBOUNCE_MS);
     const customChartThemes = useMemo(() => ({ [CHART_THEME_NAME]: chartTheme }), [chartTheme]);
     const chartThemeKey = useMemo(() => JSON.stringify(chartTheme), [chartTheme]);
     // A grid rebuilt only for a new chart theme comes back as it was, open charts included.
