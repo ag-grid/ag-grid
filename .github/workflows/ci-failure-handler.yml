@@ -1,0 +1,253 @@
+name: CI failure handler
+
+# Auto-investigates a failed run on `latest` of CI, the nightly documentation tests or the
+# changed-pages documentation tests, and where possible raises a fix PR. The agent runs
+# /ag-eng:ci-failure-fix, which re-runs a transient failure, opens a minimal `ci-fix/*` PR for a
+# real break, or posts a summary when it cannot safely fix it. Standalone (JIRA-free) sibling of
+# jira-agent-pipeline.yml: a mainline break has no ticket and no pre-existing PR. All behaviour
+# lives in the shared gha-ci-failure-{preflight,handler} actions from @ag-grid/dev-prompts; this
+# file owns only the trigger, the eligibility inputs and the repo-local setup.
+# See ag-dev-prompts docs/ai-workflow-ci-failure-handler.md.
+#
+#   Dry run:  gh workflow run ci-failure-handler.yml -f run_id=<failed run id>
+#   Pause:    disable this workflow in the Actions UI
+#
+# Both `workflow_run` and `workflow_dispatch` only fire workflows that exist on the default
+# branch, so nothing (including the dry run) can trigger this until it is merged to `latest`.
+#
+# Recursion guard: `branches: [latest]`. The agent's fix PR lands on a `ci-fix/*` branch, whose
+# CI never matches the filter. Transient re-runs are bounded by the preflight's re-run budget.
+#
+# Dedup is per commit (an open `ci-fix/*` PR naming the sha skips the launch), so when two of the
+# watched workflows fail on the same commit only the first is investigated.
+#
+# Chain depth: CI -> Documentation Tests (Changed Pages) -> this workflow is three `workflow_run`
+# levels, the most GitHub allows. Nothing can be chained off this workflow.
+#
+# Security model: the `handle` job runs an agent with write permissions whose main input is CI
+# log output, which can echo third-party strings (a prompt-injection surface). Mitigations:
+#   - Only trusted runs: this repo is public, and the `branches` filter matches a fork's PR from
+#     a branch it happens to name `latest`. The preflight `if` therefore also requires the run to
+#     come from this repository and from a push, schedule, workflow_run or manual dispatch, never
+#     a pull request.
+#   - No auto-merge: the agent's only write outcomes are a `ci-fix/*` push, a PR, and a re-run of
+#     the failed run. Every fix goes through human review and normal PR CI.
+#   - The App token is scoped to this repo only (`repos:` below).
+#   - The branch filter and re-run budget above stop self-amplification.
+#
+# Prerequisites (shared with jira-agent-pipeline.yml, same GitHub App):
+#   secrets: JIRA_AGENT_APP_PRIVATE_KEY, ANTHROPIC_API_KEY, SLACK_BOT_OAUTH_TOKEN
+#   vars:    JIRA_AGENT_APP_ID
+#            CI_FAILURE_BASE_BRANCH (optional) - base branch the fix PR targets on automatic
+#              runs; defaults to the failing branch (`latest`).
+#   The App needs contents:write, pull-requests:write and actions:write on this repo.
+
+on:
+    workflow_run:
+        workflows: ['CI', 'Documentation Tests', 'Documentation Tests (Changed Pages)']
+        types: [completed]
+        branches: [latest]
+    workflow_dispatch:
+        inputs:
+            run_id:
+                description: 'Failed run id to investigate (dry-run hatch).'
+                required: true
+            base_branch:
+                description: 'Branch the fix PR should target (default: the failing branch).'
+                required: false
+                default: ''
+
+# Restrictive default; both jobs declare their own `permissions:`, which replace this.
+permissions:
+    contents: read
+
+concurrency:
+    # One investigation per failing commit; do not cancel an in-flight one.
+    group: ci-failure-handler-${{ github.event.workflow_run.head_sha || inputs.run_id }}
+    cancel-in-progress: false
+
+env:
+    # Disable git's post-fetch background gc/maintenance for every git invocation in this
+    # workflow (via git's GIT_CONFIG_* protocol); otherwise it rewrites .git/shallow
+    # concurrently with the next chained `git fetch --depth 1`, intermittently failing job
+    # setup with "fatal: shallow file has changed since we read it". Fixed in git >= 2.55.
+    GIT_CONFIG_COUNT: 2
+    GIT_CONFIG_KEY_0: gc.auto
+    GIT_CONFIG_VALUE_0: '0'
+    GIT_CONFIG_KEY_1: maintenance.auto
+    GIT_CONFIG_VALUE_1: 'false'
+    DEV_PROMPTS_CHANNEL: latest
+    NX_NO_CLOUD: true
+    SHARP_IGNORE_GLOBAL_LIBVIPS: true
+    YARN_NPM_REGISTRY_SERVER: 'https://registry.ag-grid.com'
+    CHROMEDRIVER_SKIP_DOWNLOAD: 'true'
+
+jobs:
+    preflight:
+        # Only for a manual dry run, or a genuine failure of a trusted run (see the security
+        # model above): from this repository, and not from a pull request.
+        if: >
+            github.event_name == 'workflow_dispatch' ||
+            (github.event.workflow_run.conclusion == 'failure' &&
+             github.event.workflow_run.head_repository.full_name == github.repository &&
+             contains(fromJSON('["push","schedule","workflow_run","workflow_dispatch"]'), github.event.workflow_run.event))
+        runs-on: ubuntu-24.04
+        timeout-minutes: 5
+        permissions:
+            actions: read
+            contents: read
+            pull-requests: read
+            packages: read
+        outputs:
+            eligible: ${{ steps.pf.outputs.eligible }}
+            run_id: ${{ steps.pf.outputs.run_id }}
+            head_sha: ${{ steps.pf.outputs.head_sha }}
+            head_branch: ${{ steps.pf.outputs.head_branch }}
+            reruns_remaining: ${{ steps.pf.outputs.reruns_remaining }}
+            slack_channel: ${{ steps.pf.outputs.slack_channel }}
+            slack_thread_ts: ${{ steps.pf.outputs.slack_thread_ts }}
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 1
+
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+
+            - name: Resolve event context
+              id: ctx
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  REPO: ${{ github.repository }}
+                  EVENT_NAME: ${{ github.event_name }}
+                  WR_ID: ${{ github.event.workflow_run.id }}
+                  WR_SHA: ${{ github.event.workflow_run.head_sha }}
+                  WR_BRANCH: ${{ github.event.workflow_run.head_branch }}
+                  WR_ATTEMPT: ${{ github.event.workflow_run.run_attempt }}
+                  WR_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+                  INPUT_RUN_ID: ${{ inputs.run_id }}
+              run: |
+                  set -euo pipefail
+                  if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+                      RUN_ID="$INPUT_RUN_ID"
+                      META=$(gh run view "$RUN_ID" --repo "$REPO" --json headSha,headBranch,attempt,conclusion 2>/dev/null || echo '{}')
+                      SHA=$(echo "$META" | jq -r '.headSha // ""')
+                      BRANCH=$(echo "$META" | jq -r '.headBranch // ""')
+                      # The run's real attempt and conclusion, not a fresh "attempt 1, failed":
+                      # otherwise a dry run would reset the re-run budget of a run that has
+                      # used it, and investigate a run that has since gone green.
+                      ATTEMPT=$(echo "$META" | jq -r '.attempt // 1')
+                      CONCLUSION=$(echo "$META" | jq -r '.conclusion // ""')
+                      # Fail fast on a bad run id rather than emitting empty metadata that the
+                      # preflight would silently skip as "not a target branch".
+                      if [[ -z "$SHA" || -z "$BRANCH" ]]; then
+                          echo "::error::could not resolve run_id='$RUN_ID' in $REPO (empty headSha/headBranch) - check it is a real run this token can read." >&2
+                          exit 1
+                      fi
+                  else
+                      RUN_ID="$WR_ID"; SHA="$WR_SHA"; BRANCH="$WR_BRANCH"
+                      ATTEMPT="${WR_ATTEMPT:-1}"; CONCLUSION="$WR_CONCLUSION"
+                  fi
+                  {
+                      echo "run_id=${RUN_ID}"
+                      echo "head_sha=${SHA}"
+                      echo "head_branch=${BRANCH}"
+                      echo "run_attempt=${ATTEMPT}"
+                      echo "conclusion=${CONCLUSION}"
+                  } >> "$GITHUB_OUTPUT"
+
+            - name: Preflight gate
+              id: pf
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/gha-ci-failure-preflight
+              with:
+                  run_id: ${{ steps.ctx.outputs.run_id }}
+                  head_sha: ${{ steps.ctx.outputs.head_sha }}
+                  head_branch: ${{ steps.ctx.outputs.head_branch }}
+                  run_attempt: ${{ steps.ctx.outputs.run_attempt }}
+                  conclusion: ${{ steps.ctx.outputs.conclusion }}
+                  target_branches: latest
+                  # CI's `report` is the fan-in job that fails whenever an upstream job fails. If
+                  # every failed job matches it the run is skipped; a genuine break still shows
+                  # under its own job name. The Sonar jobs are not excluded: `report` treats a
+                  # Sonar failure as a CI failure. The documentation test workflows have no
+                  # fan-in job that fails on its own.
+                  excluded_jobs: report
+                  github_token: ${{ github.token }}
+                  slack_bot_token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+
+    handle:
+        needs: preflight
+        if: needs.preflight.outputs.eligible == 'true'
+        # Pinned like the documentation test jobs: Playwright's browsers need ubuntu-24.04's
+        # system libraries.
+        runs-on: ubuntu-24.04
+        # Above ag-charts' 60: reproducing a documentation test failure means a docs build.
+        timeout-minutes: 90
+        permissions:
+            contents: write
+            pull-requests: write
+            actions: write
+            packages: read
+        steps:
+            # Full history so the agent can diff since the last green run and branch its fix off
+            # origin/<base>. persist-credentials: false so the workflow GITHUB_TOKEN does not
+            # shadow the App token the handler installs: a GITHUB_TOKEN push would use the wrong
+            # identity and would not trigger CI on the fix PR.
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 0
+                  persist-credentials: false
+
+            # Lets the agent reproduce a failure (build, run a test, run a Playwright spec)
+            # rather than diagnosing from logs alone. `fetch_base: skip` because a shallow fetch
+            # into this full clone would truncate the history the agent diffs against.
+            # Best-effort: a broken install or registry outage may be the very failure under
+            # investigation, so it must not stop the agent from reading logs, re-running or
+            # proposing a fix.
+            - name: Setup
+              id: setup
+              continue-on-error: true
+              uses: ./.github/actions/setup-nx
+              with:
+                  cache_mode: 'ro'
+                  fetch_base: 'skip'
+
+            # The script directly rather than the Nx `test:interactive:setup:chromium` target:
+            # that target is Nx-cached with no outputs, so a cache hit would skip the install.
+            - name: Install Playwright browsers
+              id: playwright
+              if: steps.setup.outcome == 'success'
+              continue-on-error: true
+              run: bash scripts/ci/install-playwright.sh full chromium
+
+            - name: Report reproduction setup failure
+              if: steps.setup.outcome == 'failure' || steps.playwright.outcome == 'failure'
+              run: echo "::warning title=Reproduction setup failed::Dependency or browser setup failed, so the agent cannot run builds or tests locally and will investigate from the failed run's logs."
+
+            - name: Install @ag-grid/dev-prompts
+              uses: ./external/ag-shared/github/actions/install-ag-dev-prompts
+              with:
+                  channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+
+            - name: Investigate + fix
+              uses: ./.ag-dev-prompts/node_modules/@ag-grid/dev-prompts/.github/actions/gha-ci-failure-handler
+              with:
+                  run_id: ${{ needs.preflight.outputs.run_id }}
+                  head_sha: ${{ needs.preflight.outputs.head_sha }}
+                  head_branch: ${{ needs.preflight.outputs.head_branch }}
+                  base_branch: ${{ inputs.base_branch || vars.CI_FAILURE_BASE_BRANCH || needs.preflight.outputs.head_branch }}
+                  reruns_remaining: ${{ needs.preflight.outputs.reruns_remaining }}
+                  extra_context: ${{ (steps.setup.outcome == 'failure' || steps.playwright.outcome == 'failure') && 'Repo-local setup (dependency install or Playwright browser install) failed in this job, so local builds and tests will not work here. Investigate from the failed run''s logs; the setup failure may itself be the break or an infrastructure problem.' || '' }}
+                  slack_channel: ${{ needs.preflight.outputs.slack_channel }}
+                  slack_thread_ts: ${{ needs.preflight.outputs.slack_thread_ts }}
+                  # None of the watched workflows hand off an alert thread yet, so the handler
+                  # posts its own root message, into the channel all three already alert to.
+                  slack_channel_fallback: '#ci-grid-gate'
+                  slack_bot_token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+                  github_app_id: ${{ vars.JIRA_AGENT_APP_ID }}
+                  github_app_private_key: ${{ secrets.JIRA_AGENT_APP_PRIVATE_KEY }}
+                  anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+                  dev_prompts_channel: ${{ env.DEV_PROMPTS_CHANNEL }}
+                  repos: ${{ github.event.repository.name }}
