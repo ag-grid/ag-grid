@@ -41,6 +41,14 @@ export const useChartPalette = () => {
     return [stored ?? DEFAULT_PALETTE, setPalette] as const;
 };
 
+/**
+ * Whether the palette editor shows its stroke colours as previewed. Not part of the palette or the
+ * theme; the grid's integrated charts preview has no series outlines for it to switch yet.
+ */
+const previewStrokesAtom = atomWithJSONStorage<boolean>('grid-chart-preview-strokes', false);
+
+export const usePreviewStrokes = () => useAtom(previewStrokesAtom);
+
 export const setStoredChartPalette = (store: Store, palette: Palette | undefined) => store.set(paletteAtom, palette);
 
 /** Resolved to literal values, as AG Charts reads a CSS variable once rather than following it. */
