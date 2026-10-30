@@ -1,11 +1,11 @@
 {
   "name": "ag-grid-generate-example-files",
-  "version": "36.2.0-beta.20261030.1444",
+  "version": "36.3.0",
   "private": true,
   "dependencies": {
     "@nx/devkit": "20.8.4",
     "@swc/helpers": "0.5.23",
-    "ag-grid-community": "36.2.0-beta.20261030.1444",
+    "ag-grid-community": "36.3.0",
     "ag-shared": "0.0.1",
     "cheerio": "^1.2.0",
     "glob": "^11.1.0",
