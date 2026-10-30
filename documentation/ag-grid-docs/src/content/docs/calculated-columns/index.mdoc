@@ -80,9 +80,11 @@ The `currency` and `percentage` types are registered with `dataTypeDefinitions`,
 
 Register the [Column Menu](./column-menu/) so users can add, edit and remove calculated columns from the grid:
 
-- **Add Calculated Column**, in the header menu of any column except in pivot mode, opens the dialog to add a calculated column. A column added from the header menu appears after the column it was created from.
+- **Add Calculated Column**, in the header menu of any column except in pivot mode, opens the dialog to add a calculated column.
 - **Edit Calculated Column**, in the header menu of a calculated column, opens the dialog to change its title, type and expression. A read-only column shows **View Calculated Column** instead.
 - **Remove Calculated Column**, in the header menu of a calculated column and the context menu of its cells, removes the column. It is disabled when the column is read-only.
+
+When adding a calculated column from a header menu or via the API with a source column, the new column uses the source column's current pinning. The new column appears next to the source: on the right in LTR and on the left in RTL.
 
 In the [dialog](./calculated-columns-dialog/), users refer to columns by title instead of `colId`, for example `[Revenue]`. See [Referencing Columns](./calculated-columns-dialog/#references-with-column-groups) for how the dialog handles duplicate titles. Custom functions registered through `formulaFuncs` appear in the dialog's Functions picker and in autocomplete.
 

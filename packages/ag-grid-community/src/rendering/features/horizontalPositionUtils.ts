@@ -38,8 +38,9 @@ export function getPrintLayoutOffset(
     return leftWidth + physicalLeft;
 }
 
+// rtl reverses columns within every section; pinning only fixes the section's physical side.
 export const isRightAnchored = (lane: ColumnLane, isRtl: boolean, isPrintLayout: boolean): boolean =>
-    !isPrintLayout && (isRtl ? lane !== 0 : lane === 2);
+    !isPrintLayout && (isRtl || lane === 2);
 
 /** The `right` to write when right-anchored, else the `left`. */
 export const getAnchoredPosition = (
