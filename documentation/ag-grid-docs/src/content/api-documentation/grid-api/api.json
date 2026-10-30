@@ -341,7 +341,7 @@
         "refreshCalculatedColumns": {
             "more": {
                 "name": "Refreshing Calculated Columns",
-                "url": "./calculated-columns/#refreshing-calculated-columns"
+                "url": "./calculated-columns-validation/#refreshing-calculated-columns"
             }
         },
         "flashCells": {
@@ -974,13 +974,13 @@
         "openCalculatedColumnDialog": {
             "more": {
                 "name": "Calculated Column Dialog",
-                "url": "./calculated-columns/#opening-the-dialog"
+                "url": "./calculated-columns-dialog/#opening-the-dialog"
             }
         },
         "openAddCalculatedColumnDialog": {
             "more": {
                 "name": "Calculated Column Dialog",
-                "url": "./calculated-columns/#opening-the-dialog"
+                "url": "./calculated-columns-dialog/#opening-the-dialog"
             }
         },
         "showColumnChooser": {

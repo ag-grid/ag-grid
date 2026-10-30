@@ -693,7 +693,27 @@
                             "type": "item",
                             "title": "Calculated Columns",
                             "path": "calculated-columns",
-                            "isEnterprise": true
+                            "isEnterprise": true,
+                            "children": [
+                                {
+                                    "type": "item",
+                                    "title": "Dialog",
+                                    "path": "calculated-columns-dialog",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "Restrictions & Validation",
+                                    "path": "calculated-columns-validation",
+                                    "isEnterprise": true
+                                },
+                                {
+                                    "type": "item",
+                                    "title": "API, Events & State",
+                                    "path": "calculated-columns-api",
+                                    "isEnterprise": true
+                                }
+                            ]
                         }
                     ]
                 },
