@@ -42,7 +42,7 @@ describe('normalized (100% stacked) integrated charts', () => {
 
     function formatValueAxisLabel(chartRef: ChartRef, value: number, source: AgAxisLabelFormatterParams['source']) {
         const { axes } = chartRef.chart.getOptions() as AgCartesianChartOptions;
-        const formatter = axes!.y.label!.formatter!;
+        const formatter = axes!.y!.label!.formatter!;
         return formatter({ type: 'number', value, index: 0, domain: [0, 100], boundSeries: [], source });
     }
 
