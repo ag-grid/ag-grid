@@ -132,11 +132,14 @@ jobs:
                   set -euo pipefail
                   if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
                       RUN_ID="$INPUT_RUN_ID"
-                      META=$(gh run view "$RUN_ID" --repo "$REPO" --json headSha,headBranch 2>/dev/null || echo '{}')
+                      META=$(gh run view "$RUN_ID" --repo "$REPO" --json headSha,headBranch,attempt,conclusion 2>/dev/null || echo '{}')
                       SHA=$(echo "$META" | jq -r '.headSha // ""')
                       BRANCH=$(echo "$META" | jq -r '.headBranch // ""')
-                      ATTEMPT="1"
-                      CONCLUSION="failure"
+                      # The run's real attempt and conclusion, not a fresh "attempt 1, failed":
+                      # otherwise a dry run would reset the re-run budget of a run that has
+                      # used it, and investigate a run that has since gone green.
+                      ATTEMPT=$(echo "$META" | jq -r '.attempt // 1')
+                      CONCLUSION=$(echo "$META" | jq -r '.conclusion // ""')
                       # Fail fast on a bad run id rather than emitting empty metadata that the
                       # preflight would silently skip as "not a target branch".
                       if [[ -z "$SHA" || -z "$BRANCH" ]]; then
