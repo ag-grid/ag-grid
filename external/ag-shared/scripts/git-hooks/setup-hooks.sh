@@ -50,7 +50,7 @@ MAIN_REPO_ROOT=$(get_main_repo_root)
 
 # Use a path relative to the checkout this script lives in, so the config is
 # valid for all worktrees (each worktree has the same directory structure, and
-# git resolves a relative hooksPath against the worktree it runs in). Stripping
+# git resolves a relative hooksPath against the checkout a command runs in). Stripping
 # MAIN_REPO_ROOT instead only worked in the main checkout: run from a worktree
 # outside it, it stored an absolute path into that worktree, and deleting the
 # worktree silently switched the hooks off everywhere.
