@@ -46,4 +46,6 @@ The following event remains supported and continues to fire, but the replacement
 | ----------------------------------- | ------------------------------------------------------------------------ |
 | `calculatedColumnExpressionChanged` | `calculatedColumnChanged`, checking `event.changes.calculatedExpression` |
 
+Each locale in `@ag-grid-community/locale` is now exported under its full BCP47 tag, e.g. `AG_GRID_LOCALE_DA_DK` for `da-DK`. The older region-only names, e.g. `AG_GRID_LOCALE_DK`, remain supported but are deprecated. Use the full-tag names instead. See [Provided Locales](./localisation/#provided-locales).
+
 {% changelogSection version=$migrationVersion /%}
