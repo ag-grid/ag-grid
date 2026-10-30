@@ -76,9 +76,10 @@ fi
 export ROOT_WORKTREE_PATH="$CWD"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
+# A setup failure fails the hook (pipefail), rather than reporting a ready
+# worktree without its dependencies.
 if [[ -f "$WT_PATH/package.json" ]]; then
-    bash "$SCRIPT_DIR/setup-worktree.sh" "$WT_PATH" 2>&1 | while IFS= read -r line; do log "$line"; done || \
-        log "WARNING: worktree setup failed"
+    bash "$SCRIPT_DIR/setup-worktree.sh" "$WT_PATH" 2>&1 | while IFS= read -r line; do log "$line"; done
 fi
 
 log "Worktree ready at: ${WT_PATH}"
