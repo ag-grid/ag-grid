@@ -1,5 +1,10 @@
+import type { UtilBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { IEnvironment } from '../interfaces/iEnvironment';
+import { _getPageBody } from '../utils/document';
 import { _createAgElement } from '../utils/dom';
+
+const THEME_MODE_ATTRIBUTE = 'data-ag-theme-mode';
+const THEME_MODE_ANCESTOR = `.ag-theme-mode[${THEME_MODE_ATTRIBUTE}]`;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _initDetachedStyledRoot(
@@ -20,6 +25,39 @@ export function _initStyledRoot(env: IEnvironment, parent: HTMLElement | ShadowR
         destroy();
         element.remove();
     };
+}
+
+/**
+ * Appends `child` in a styled root to the page body, for grid-owned elements that follow the pointer. When the body
+ * is outside the grid's nearest `.ag-theme-mode` ancestor, that ancestor's theme mode is copied across.
+ *
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _initPointerOverlay(
+    beans: UtilBeanCollection,
+    env: IEnvironment,
+    child: HTMLElement
+): (() => void) | undefined {
+    const parent = _getPageBody(beans);
+    if (!parent) {
+        return undefined;
+    }
+    const [element, destroy] = _initDetachedStyledRoot(env, child);
+    const ancestor = beans.eRootDiv.closest(THEME_MODE_ANCESTOR);
+    const mode = ancestor?.contains(parent) ? null : ancestor?.getAttribute(THEME_MODE_ATTRIBUTE);
+    const overlay = mode == null ? element : wrapInThemeMode(element, mode);
+    parent.appendChild(overlay);
+    return () => {
+        destroy();
+        overlay.remove();
+    };
+}
+
+/** The styled root resets its own classes on theme change, so the mode goes on a wrapper. */
+function wrapInThemeMode(element: HTMLElement, mode: string): HTMLElement {
+    const wrapper = _createAgElement({ tag: 'div', cls: 'ag-theme-mode', attrs: { [THEME_MODE_ATTRIBUTE]: mode } });
+    wrapper.appendChild(element);
+    return wrapper;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
