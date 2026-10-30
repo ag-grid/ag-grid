@@ -6,7 +6,7 @@ enterprise: true
 
 Calculated Columns let your end users add read-only values to the grid without storing those values in row data. Each calculated column has an expression, such as `[revenue] - [cost]`, that derives its value from other columns.
 
-You can declare calculated columns in your column definitions, and users can add their own from the column menu. To let users write expressions in individual cells instead, see [Formulas](./formulas/).
+Declare calculated columns in your column definitions, or let users add their own from the column menu. To let users write expressions in individual cells instead, see [Formulas](./formulas/).
 
 ## Enabling Calculated Columns
 
@@ -35,23 +35,17 @@ Calculated columns declared in `columnDefs` must define a `colId` explicitly.
 
 {% gridExampleRunner title="Calculated Columns" name="calculated-columns" /%}
 
-In the example, **Profit** is a calculated column. Choose **Add Calculated Column** from any column's header menu to create your own.
+In the example, Profit is a calculated column. To create your own, choose **Add Calculated Column** from any column's header menu.
 
 ## Writing Expressions
 
-Expressions follow these rules:
+In `calculatedExpression`, a reference in square brackets, such as `[revenue]`, resolves to the same-row value from the column with that `colId`. The value inside the brackets must match a column `colId`, which defaults to the `field` when no explicit `colId` is provided. Calculated expressions do not need a leading equals sign (`=`).
 
-- In `calculatedExpression`, a reference in square brackets, such as `[revenue]`, resolves to the same-row value from the column with that `colId`. The value inside the brackets must match a column `colId`, which defaults to the `field` when no explicit `colId` is provided.
-- Calculated expressions do not need a leading equals sign (`=`).
-- Calculated columns can use the same [Mathematical Operators](./formula-reference/#mathematical-operators), [Provided Functions](./formula-reference/#provided-functions) and [Custom Functions](./formula-custom-functions/) as [formulas](./formulas/).
-
-Custom functions registered through `formulaFuncs` appear in the dialog's **Functions** picker and in autocomplete. Custom functions are read when the grid is created, so a function added to `formulaFuncs` later is not offered.
-
-The dialog shows references by column title instead, for example `[Revenue]`; see [Referencing Columns](./calculated-columns-dialog/#references-with-column-groups).
+Calculated columns can use the same [Mathematical Operators](./formula-reference/#mathematical-operators), [Provided Functions](./formula-reference/#provided-functions) and [Custom Functions](./formula-custom-functions/) as [formulas](./formulas/).
 
 ### Chaining Calculated Columns {% #advanced-calculated-columns %}
 
-Calculated columns can reference other calculated columns in the same row. This allows chained derived values such as profit, margin and status:
+Calculated columns can reference other calculated columns in the same row, which lets you chain derived values such as profit, margin and status:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -82,10 +76,6 @@ The `currency` and `percentage` types are registered with `dataTypeDefinitions`,
 
 {% gridExampleRunner title="Advanced Calculated Columns" name="calculated-columns-advanced" /%}
 
-### Formatting Results
-
-Register [Cell Data Types](./cell-data-types/) to give users formatting options to pick from when they create a column. The first example on this page provides a `currency` type; see [Data Types](./calculated-columns-dialog/#datatypes).
-
 ## Letting Users Add Columns
 
 Register the [Column Menu](./column-menu/) so users can add, edit and remove calculated columns from the grid:
@@ -94,7 +84,11 @@ Register the [Column Menu](./column-menu/) so users can add, edit and remove cal
 - **Edit Calculated Column**, in the header menu of a calculated column, opens the dialog to change its title, type and expression. A read-only column shows **View Calculated Column** instead.
 - **Remove Calculated Column**, in the header menu of a calculated column and the context menu of its cells, removes the column. It is disabled when the column is read-only.
 
-Calculated cell values cannot be changed through cell editing, paste, fill handle or delete operations. Users can still change a calculated column's title, type and expression through its [dialog](./calculated-columns-dialog/). To prevent these dialog edits and removal through the grid's menus, see [Read-Only Calculated Columns](./calculated-columns-validation/#read-only-calculated-columns).
+In the [dialog](./calculated-columns-dialog/), users refer to columns by title instead of `colId`, for example `[Revenue]`. See [Referencing Columns](./calculated-columns-dialog/#references-with-column-groups) for how the dialog handles duplicate titles. Custom functions registered through `formulaFuncs` appear in the dialog's Functions picker and in autocomplete.
+
+Register [Cell Data Types](./cell-data-types/) to give users formatting options to pick from when they create a column. The first example on this page provides a `currency` type; see [Data Types](./calculated-columns-dialog/#datatypes).
+
+Calculated cell values cannot be changed through cell editing, paste, fill handle or delete operations. Users can still change a calculated column's title, type and expression through its dialog. To prevent these dialog edits and removal through the grid's menus, see [Read-Only Calculated Columns](./calculated-columns-validation/#read-only-calculated-columns).
 
 ## Feature Interactions
 
@@ -104,25 +98,19 @@ For [Server-Side](./server-side-model/), [Infinite](./infinite-scrolling/) and [
 
 ### Row Groups and Tree Data
 
-A calculated column evaluates on rows that have their own data: leaf rows, and Tree Data parents that carry data. It stays blank on rows without data — row group rows, group footers, the grand-total row, and Tree Data filler nodes.
+A calculated column evaluates on leaf rows and on Tree Data parents that carry data. It stays blank on rows without data: row group rows, group footers, the grand total row and Tree Data filler nodes.
 
-To show a value on group rows, give the calculated column an `aggFunc`. Each leaf evaluates the expression, and the group aggregates those per-leaf results with the chosen function — the same as a column with a `valueGetter`:
-
-- `{ calculatedExpression: '[revenue] - [cost]', aggFunc: 'sum' }` shows the total of its rows' profits on a group.
-- A ratio has no meaningful aggregation, so a column like `[profit] / [revenue]` is left without an `aggFunc` and stays blank on group rows.
+To show a value on group rows, give the calculated column an `aggFunc`. Each leaf evaluates the expression, and the group aggregates those per-leaf results with the chosen function, the same as a column with a `valueGetter`. For example, `{ calculatedExpression: '[revenue] - [cost]', aggFunc: 'sum' }` shows the total of its rows' profits on a group. A ratio has no meaningful aggregation, so a column like `[profit] / [revenue]` is left without an `aggFunc` and stays blank on group rows.
 
 {% gridExampleRunner title="Row Groups with Calculated Columns" name="calculated-columns-row-groups" /%}
 
-In the example, **Profit** has an `aggFunc` and shows a total on each group row, while **Margin** stays blank there.
+In the example, Profit has an `aggFunc` and shows a total on each group row, while Margin stays blank there.
 
 #### Letting Users Choose an Aggregation
 
-The dialog has no aggregation field. Setting `enableValue`, for example in `defaultColDef`, lets users choose an aggregation for any calculated column, including one created in the dialog. Users make that choice in two places:
+The dialog has no aggregation field. Setting `enableValue`, for example in `defaultColDef`, lets users choose an aggregation for any calculated column, including one created in the dialog. To allow it only on the columns users create, return `enableValue` from [processColDef](./calculated-columns-dialog/#processcoldef) instead.
 
-- The **Value Aggregation** item of the column menu, while rows are grouped.
-- The **Values** section of the [Columns Tool Panel](./tool-panel-columns/#drop-zones).
-
-`allowedAggFuncs` restricts which aggregations users can choose, and `defaultAggFunc` sets the one applied when a column is added to **Values**; see [Configuring via the UI](./aggregation-columns/#configuring-via-the-ui).
+Users choose the aggregation from **Value Aggregation** in the column menu while rows are grouped, or by adding the column to the Values section of the [Columns Tool Panel](./tool-panel-columns/#drop-zones). To limit the choice, set `allowedAggFuncs` as in the example below. [Configuring via the UI](./aggregation-columns/#configuring-via-the-ui) covers this and `defaultAggFunc`.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -137,15 +125,17 @@ const gridOptions = {
 
 {% gridExampleRunner title="Choosing an Aggregation for a Calculated Column" name="calculated-columns-aggregation" /%}
 
-In the example, choose **Add Calculated Column** from the **Cost** header menu, set the type to Number and enter `[Revenue] - [Cost]` as the expression. Then close the dialog and open the new column's header menu: **Value Aggregation** offers only None, Sum, Average, Min and Max.
+In the example, choose **Add Calculated Column** from the Cost header menu and enter `[Revenue] - [Cost]` as the expression. Close the dialog, then open **Value Aggregation** in the new column's header menu. It offers only None, Sum, Average, Min and Max.
 
 ### Pivoting
 
 Under [Pivoting](./pivoting/), a calculated column behaves the same as a column with a `valueGetter`:
 
-- **With an `aggFunc`**, it is a value column: it evaluates per leaf and its results aggregate into the pivot result columns.
-- **Without an `aggFunc`**, it is not a value column, so it has no pivot result column and is absent from the cross-tab, like any other non-value column.
-- **As a pivot column** (`pivot: true`), its per-row result becomes the pivot key, so the grid creates a result column for each distinct calculated value.
+- With an `aggFunc`, it is a value column. It evaluates per leaf, and its results aggregate into the pivot result columns.
+- Without an `aggFunc`, it is not a value column, so it has no pivot result column and is absent from the cross-tab, like any other non-value column.
+- As a pivot column (`pivot: true`), its per-row result becomes the pivot key, so the grid creates a result column for each distinct calculated value.
+
+Users cannot add calculated columns while pivot mode is on.
 
 ## Styling
 
@@ -153,6 +143,6 @@ Header cells and grid cells for calculated columns include the `ag-calculated-co
 
 ## Next Steps
 
-- [Dialog](./calculated-columns-dialog/): configure the dialog users create and edit columns in: references, data types, expression pickers, when edits apply, and customising the columns users create.
-- [Restrictions & Validation](./calculated-columns-validation/): make columns read-only, hide menu items, restrict which columns users can reference, and validate dialog fields.
-- [API, Events & State](./calculated-columns-api/): manage calculated columns in code, save and restore them, react to changes, and the API reference.
+- [Dialog](./calculated-columns-dialog/): opening the dialog, column references, the expression editor, data types, when edits apply, and customising the columns users create.
+- [Restrictions & Validation](./calculated-columns-validation/): read-only columns, hidden menu items, restricted column references and custom validation.
+- [API, Events & State](./calculated-columns-api/): managing calculated columns in code, saving and restoring them, events, and the API reference.

@@ -26,7 +26,7 @@ const gridOptions = {
 };
 ```
 
-The example keeps **Gross Margin** read-only, while **Profit** and user-created calculated columns remain editable.
+The example keeps Gross Margin read-only, while Profit and user-created calculated columns remain editable.
 
 {% gridExampleRunner title="Read-Only Calculated Columns" name="calculated-columns-read-only" /%}
 
@@ -87,7 +87,7 @@ This is a UI restriction, not a security boundary.
 
 {% gridExampleRunner title="Dialog Reference Restrictions" name="calculated-columns-reference-restrictions" /%}
 
-In the example, edit **Bonus** and **Sales Target**: only **Bonus** can reference **Salary**.
+In the example, edit Bonus and Sales Target. Only Bonus can reference Salary.
 
 ## Validating Dialog Fields {% #getvalidationerrors %}
 
@@ -112,7 +112,7 @@ const gridOptions = {
 };
 ```
 
-Edit **Sales Bonus** and enter a title longer than 30 characters or an expression using `[Salary]` to see field-specific errors.
+In the example, edit Sales Bonus and enter a title longer than 30 characters or an expression using `[Salary]` to see field-specific errors.
 
 {% gridExampleRunner title="Custom Dialog Validation" name="calculated-columns-custom-validation" /%}
 
@@ -128,11 +128,11 @@ This is a dialog guard, not a security boundary: `columnDefs` and Grid State res
 
 Any field error blocks Apply in deferred mode. In live mode, the outcome depends on the field:
 
-| Rejected edit                                                         | Deferred mode      | Live mode                                                                                                                                                         |
-| --------------------------------------------------------------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Title or type rejected by `getValidationErrors`                       | Blocks **Apply**   | Keeps its last applied value, while other fields apply                                                                                                            |
-| Expression rejected by `getValidationErrors`                          | Blocks **Apply**   | Saved, and displays `#ERROR!`, including when the callback returns built-in expression errors                                                                     |
-| Expression referencing a column restricted by `isColumnReferenceable` | Disables **Apply** | Saved, and displays `#REF!` until corrected. Reference restrictions remain enforced, and use `#REF!` instead of `#ERROR!`, even when `getValidationErrors` is set |
+| Rejected edit                                                         | Deferred mode  | Live mode                                                                                                                                                         |
+| --------------------------------------------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Title or type rejected by `getValidationErrors`                       | Blocks Apply   | Keeps its last applied value, while other fields apply                                                                                                            |
+| Expression rejected by `getValidationErrors`                          | Blocks Apply   | Saved, and displays `#ERROR!`, including when the callback returns built-in expression errors                                                                     |
+| Expression referencing a column restricted by `isColumnReferenceable` | Disables Apply | Saved, and displays `#REF!` until corrected. Reference restrictions remain enforced, and use `#REF!` instead of `#ERROR!`, even when `getValidationErrors` is set |
 
 ## Refreshing Calculated Columns
 

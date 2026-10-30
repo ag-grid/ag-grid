@@ -11,8 +11,6 @@ test.agExample(import.meta, () => {
 
             const dialog = page.locator('.ag-calculated-column-form');
             await dialog.locator('input').fill('Profit');
-            await dialog.locator('.ag-select .ag-picker-field-wrapper').click();
-            await page.locator('.ag-select-list-item', { hasText: 'Number' }).click();
             await dialog.locator('textarea').fill('[Revenue] - [Cost]');
             await page.locator('.ag-dialog .ag-panel-title-bar-button').click();
             await expect(dialog).toHaveCount(0);

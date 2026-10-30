@@ -86,7 +86,10 @@ const gridOptions: GridOptions<SalesRow> = {
         },
     },
     calculatedColumns: {
+        // Show only the Columns picker beside the expression.
         expressionPickers: ['columns'],
+        // Don't highlight the column while its dialog is open.
+        suppressColumnHighlighting: true,
         dataTypes: ['currency', 'number', 'text', 'boolean'],
     },
     defaultColDef: {
