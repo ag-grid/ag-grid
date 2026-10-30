@@ -247,10 +247,18 @@ sys.exit(0 if r == 0 else 1)
 try_cow_clone_node_modules() {
     local source="$1"
 
-    # Already have node_modules? Skip.
+    # Already have node_modules? Keep the fast path only if an earlier run of
+    # this script cloned it for the current yarn.lock. The post-checkout hook
+    # clones when a worktree is created, and setup-worktree.sh runs this again
+    # later: in between, a checkout can change yarn.lock, and an installed tree
+    # is not proof of anything.
     if [[ -d "$REPO_ROOT/node_modules" ]]; then
-        log_info "node_modules/ already exists, skipping COW clone"
-        return 0
+        if [[ -n "$PREVIOUS_MARKER_LOCKFILE" && "$PREVIOUS_MARKER_LOCKFILE" == "$(lockfile_hash)" ]]; then
+            log_info "node_modules/ was already cloned for this yarn.lock, keeping it"
+            return 0
+        fi
+        log_info "node_modules/ already exists but was not cloned for this yarn.lock, fast path disabled"
+        return 1
     fi
 
     # Verify source has node_modules and matching lockfile
@@ -456,16 +464,26 @@ EOF
 # can skip yarn install and most postinstall steps.
 FAST_PATH_MARKER="$REPO_ROOT/node_modules/.ag-worktree-fast-path-ok"
 
+lockfile_hash() {
+    shasum -a 256 "$REPO_ROOT/yarn.lock" 2>/dev/null | awk '{print $1}'
+}
+
+# The yarn.lock hash an earlier run's marker was written for, read before the
+# marker is cleared, so try_cow_clone_node_modules can trust its own clone.
+PREVIOUS_MARKER_LOCKFILE=$(sed -n 's/^lockfile=//p' "$FAST_PATH_MARKER" 2>/dev/null || true)
+
 clear_fast_path_marker() {
     rm -f "$FAST_PATH_MARKER" 2>/dev/null || true
 }
 
 write_fast_path_marker() {
-    # Marker records the source path used for COW and a timestamp — handy
-    # for debugging stale fast paths.
+    # Marker records the source path used for COW, the yarn.lock it was
+    # cloned for (try_cow_clone_node_modules checks it on a later run) and a
+    # timestamp — handy for debugging stale fast paths.
     if [[ -d "$REPO_ROOT/node_modules" ]]; then
         {
             echo "source=$1"
+            echo "lockfile=$(lockfile_hash)"
             echo "timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
         } >"$FAST_PATH_MARKER" 2>/dev/null || true
     fi

@@ -6,7 +6,7 @@
 #
 # In most cases (yarn present + node_modules exists), exits immediately (~10ms).
 # When bootstrapping is needed, installs yarn/nx globally then delegates to
-# `yarn install`, which triggers preinstall-worktree.sh for COW cloning etc.
+# `yarn install`.
 
 set -euo pipefail
 
@@ -459,8 +459,6 @@ fi
 
 # ---------------------------------------------------------------------------
 # Fast path — if yarn exists and node_modules is present, nothing to do.
-# The preinstall-worktree.sh hook handles COW cloning and symlink fixes
-# when yarn install is eventually triggered.
 # ---------------------------------------------------------------------------
 
 if command -v yarn &>/dev/null && [[ -d node_modules ]]; then
@@ -568,9 +566,8 @@ main() {
         exit 2
     fi
 
-    # Delegate to yarn install — preinstall-worktree.sh handles COW cloning,
-    # symlink fixes, and .nx cache. Postinstall handles patches, plugins, etc.
-    log_info "Running yarn install (preinstall hook will handle COW cloning)"
+    # Delegate to yarn install. Postinstall handles patches, plugins, etc.
+    log_info "Running yarn install"
     if ! yarn install; then
         log_error "yarn install failed"
         exit 2
