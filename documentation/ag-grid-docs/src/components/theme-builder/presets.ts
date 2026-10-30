@@ -27,11 +27,12 @@ const toPalette = ({ series, up, down, neutral }: PaletteSpec): Palette =>
     fromSeriesColors(
         {
             ...EMPTY_PALETTE,
-            up: { fill: up[0], stroke: up[1] },
-            down: { fill: down[0], stroke: down[1] },
-            neutral: { fill: neutral[0], stroke: neutral[1] },
+            // Hand-tuned, so unlinked: a linked stroke would be re-derived from its fill.
+            up: { fill: up[0], stroke: up[1], strokeDerived: false },
+            down: { fill: down[0], stroke: down[1], strokeDerived: false },
+            neutral: { fill: neutral[0], stroke: neutral[1], strokeDerived: false },
         },
-        series.map(([fill, stroke]) => ({ fill, stroke }))
+        series.map(([fill, stroke]) => ({ fill, stroke, strokeDerived: false }))
     );
 
 export const lightModePreset: GridPreset = {
