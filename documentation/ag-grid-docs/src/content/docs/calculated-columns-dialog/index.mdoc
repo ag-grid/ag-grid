@@ -1,12 +1,12 @@
 ---
-title: "Calculated Columns - Dialog"
+title: "Calculated Columns - Dialog & Customisation"
 description: "Configure the dialog that $framework Data Grid users create and edit calculated columns in: opening it, column references, the expression editor, data types, when edits apply, and customising the columns users create."
 enterprise: true
 ---
 
-Users add and edit [Calculated Columns](./calculated-columns/) in the Calculated Column dialog, which has three fields: **Title**, **Type** and **Expression**.
+Configure the dialog users create and edit [calculated columns](./calculated-columns/) in, and customise the columns they create.
 
-Configure the dialog with the `calculatedColumns` grid option. Set `calculatedColumns: true` to enable the feature with default dialog options, or provide an options object to enable the feature and customise the dialog.
+The Calculated Column dialog has three fields: Title, Type and Expression. Configure the dialog with the `calculatedColumns` grid option. Set it to `true` to enable the feature with the default dialog, or to an options object to enable the feature and customise the dialog.
 
 ## Opening the Dialog
 
@@ -32,9 +32,9 @@ Closing the dialog returns focus to the calculated column's header, scrolling it
 
 The dialog shows references by header name, for example `[Revenue]`. It translates these display references back to `colId` references before updating the column definition. Some headers need more than the header name:
 
-- **Duplicate headers under column groups:** the dialog uses the shortest unique group path, such as `[2025 Q4]` and `[2026 Q4]`.
-- **Same header _and_ same group hierarchy:** the dialog falls back to appending the `colId`, for example `[2025 Q4 (revenue-q4)]`. This keeps the reference stable when columns are reordered. Give your columns distinct headers or group hierarchies to avoid this.
-- **A `]` in the header:** a literal `]` in a header name is escaped as `]]`. For example, the header `Revenue [USD]` appears as `[Revenue [USD]]]`. The Columns picker inserts the escaped reference automatically; stored `colId` references are unchanged.
+- Duplicate headers under column groups use the shortest unique group path, such as `[2025 Q4]` and `[2026 Q4]`.
+- When two columns have the same header and the same group hierarchy, the dialog appends the `colId`, for example `[2025 Q4 (revenue-q4)]`. This keeps the reference stable when columns are reordered. Give your columns distinct headers or group hierarchies to avoid this.
+- A literal `]` in a header name is escaped as `]]`. For example, the header `Revenue [USD]` appears as `[Revenue [USD]]]`. The Columns picker inserts the escaped reference automatically; stored `colId` references are unchanged.
 
 The following example has duplicate `Q1`, `Q2`, `Q3` and `Q4` headers under `2025` and `2026` column groups. The year groups start collapsed and show a calculated `Total` column; expanding a group reveals the quarter columns. The dialog shows grouped references such as `[2025 Q4]` and `[2026 Q4]`, while the source code stores stable `colId` references such as `[q4_2025]` and `[q4_2026]`.
 
@@ -42,13 +42,11 @@ The following example has duplicate `Q1`, `Q2`, `Q3` and `Q4` headers under `202
 
 ## Expression Editor
 
-The expression editor highlights references, functions and operators. Built-in errors mark the field invalid and have underlines, tooltips and accessible descriptions. Reference checks validate columns, not row availability.
-
-In live mode, invalid expressions still apply; empty expressions remain valid. [Custom validation and reference restrictions](./calculated-columns-validation/) still apply. In deferred edit dialogs, validation runs as you edit and on **Apply**, not when the dialog opens.
+The expression editor highlights references, functions and operators. Built-in errors mark the field invalid and have underlines, tooltips and accessible descriptions. Reference checks validate columns, not row availability. When validation runs, and what happens to invalid expressions, depends on the [apply mode](#applymode).
 
 ### Expression Pickers {% #expressionpickers %}
 
-Buttons beside the expression open the **Columns**, **Functions** and **Operators** pickers. Use `expressionPickers` to control which expression pickers appear; by default all three do:
+Buttons beside the expression open the Columns, Functions and Operators pickers. Use `expressionPickers` to control which pickers appear. By default all three do:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -60,15 +58,31 @@ const gridOptions = {
 
 {% interfaceDocumentation interfaceName="CalculatedColumnExpressionPicker" config={"asCode":true} /%}
 
-This only controls the expression picker buttons. Use an empty array or `null` to hide all picker buttons. Inline autocomplete while typing in the expression editor remains available.
+This only controls the expression picker buttons. Use an empty array or `null` to hide all picker buttons. Inline autocomplete while typing in the expression editor remains available. The example in [Column Highlighting](#suppresscolumnhighlighting) shows only the Columns picker.
 
-{% gridExampleRunner title="Dialog Expression Pickers" name="calculated-columns-dialog-helper-lists" /%}
+## Column Highlighting {% #suppresscolumnhighlighting %}
 
-In the example, edit **Profit** to see that only the **Columns** picker is shown.
+While a column's dialog is open, the grid highlights the column's header and cells. Customise the highlight colour with the `--ag-calculated-column-highlight-color` CSS variable.
+
+Use `suppressColumnHighlighting` to turn the highlight off. The default is `false`:
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    calculatedColumns: {
+        suppressColumnHighlighting: true,
+    },
+};
+```
+
+The following example sets both `expressionPickers: ['columns']` and `suppressColumnHighlighting: true`:
+
+{% gridExampleRunner title="Column Highlighting and Expression Pickers" name="calculated-columns-dialog-highlighting" /%}
+
+In the example, edit Profit. The dialog shows only the Columns picker, and the Profit column is not highlighted while the dialog is open. In the other examples on this page, the column being edited is highlighted.
 
 ## Data Types {% #datatypes %}
 
-Use `dataTypes` to control which cell data types appear in the dialog's **Type** dropdown. The default is `['text', 'number', 'date', 'boolean']`. The list can include built-in cell data types and custom types registered with `dataTypeDefinitions`:
+Use `dataTypes` to control which cell data types appear in the dialog's Type dropdown. The default is `['text', 'number', 'date', 'boolean']`. The list can include built-in cell data types and custom types registered with `dataTypeDefinitions`:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -96,35 +110,35 @@ const gridOptions = {
 };
 ```
 
-- Applying the type to your own columns as well means a user who picks **Currency** in the dialog gets the same formatting as the columns you declared.
+- Give your own columns the same types, as the snippet does for `revenue` and `cost`, so a user who picks Currency in the dialog gets the same formatting.
 - A `valueFormatter` on a column definition cannot be selected in the dialog, so it is not available to users.
 - Built-in types use the grid's locale text, while custom type names are converted to readable labels in the dialog.
 - If a selected value does not match a registered [Cell Data Type](./cell-data-types/), the grid's normal `cellDataType` validation applies when the calculated column is created.
 
-{% gridExampleRunner title="Dialog Data Types" name="calculated-columns-dialog-data-types" /%}
+{% gridExampleRunner title="Data Types" name="calculated-columns-dialog-data-types" /%}
 
-In the example, edit **Profit** and open the **Type** dropdown to see **Currency**, **Number** and **Boolean**.
+In the example, edit Profit and open the Type dropdown. It lists Currency, Number and Boolean.
 
 ## Applying Changes {% #applymode %}
 
 The `applyMode` option sets when dialog edits reach the column. The default is `'live'`:
 
-|                            | Live (default)                                                                                                                       | Deferred (`applyMode: 'deferred'`)                                                          |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
-| Title, type and expression | Update the column as you type                                                                                                        | Held until the user clicks **Apply**; the dialog shows **Apply** and **Cancel** buttons     |
-| **Add Calculated Column**  | Creates the column and opens the dialog over it                                                                                      | Creates the column when the user clicks **Apply**                                           |
-| Invalid expressions        | Still apply: invalid or incomplete expressions render formula errors until fixed. Restricted references are the exception: see below | Validated before applying                                                                   |
-| Rejected edits             | See [How Rejected Edits Behave](./calculated-columns-validation/#how-rejected-edits-behave)                                          | See [How Rejected Edits Behave](./calculated-columns-validation/#how-rejected-edits-behave) |
+|                            | Live (default)                                              | Deferred (`applyMode: 'deferred'`)                                          |
+| -------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Title, type and expression | Update the column as you type                               | Held until the user clicks Apply; the dialog shows Apply and Cancel buttons |
+| Add Calculated Column      | Creates the column and opens the dialog over it             | Creates the column when the user clicks Apply                               |
+| Invalid expressions        | Still apply, and render formula errors in cells until fixed | Validated as you edit and on Apply, and not applied while invalid           |
 
 In live mode:
 
+- Empty expressions remain valid.
+- [Custom validation and reference restrictions](./calculated-columns-validation/#how-rejected-edits-behave) still apply.
 - Closing the dialog keeps the latest state; remove the column with **Remove Calculated Column**.
-- An empty expression renders blank cells.
 - Expression edits containing references excluded by [`isColumnReferenceable`](./calculated-columns-validation/#iscolumnreferenceable) are saved but blocked from evaluation, preserving the full text for correction.
 
 ### Deferred Mode
 
-Set `applyMode: 'deferred'` to hold changes until you click **Apply** instead. The dialog shows Apply and Cancel buttons and validates edits before applying them:
+Set `applyMode: 'deferred'` to hold changes until the user clicks Apply:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -136,9 +150,11 @@ const gridOptions = {
 
 {% interfaceDocumentation interfaceName="CalculatedColumnApplyMode" config={"asCode":true} /%}
 
-{% gridExampleRunner title="Deferred Apply Mode" name="calculated-columns-apply-mode" /%}
+In deferred edit dialogs, validation runs as you edit and on Apply, not when the dialog opens.
 
-In the example, edit **Profit** and change its expression: the cells change only when you click **Apply**.
+{% gridExampleRunner title="Deferred Mode" name="calculated-columns-apply-mode" /%}
+
+In the example, edit Profit and change its expression. The cells change only when you click **Apply**.
 
 ### Debouncing Live Edits {% #applydebounce %}
 
@@ -156,24 +172,6 @@ const gridOptions = {
 - Closing the dialog applies any pending edit immediately; removing the column cancels it.
 - State and column-definition APIs report the last applied values while an edit is pending.
 - This option has no effect in deferred mode.
-
-## Column Highlighting {% #suppresscolumnhighlighting %}
-
-While a column's dialog is open, the grid highlights the column's header and cells. Customise the highlight colour with the `--ag-calculated-column-highlight-color` CSS variable.
-
-Use `suppressColumnHighlighting` to disable the highlight while the dialog is open. The default is `false`:
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    calculatedColumns: {
-        suppressColumnHighlighting: true,
-    },
-};
-```
-
-{% gridExampleRunner title="Suppress Dialog Column Highlighting" name="calculated-columns-dialog-highlighting" /%}
-
-In the example, edit **Profit**: the column is not highlighted while its dialog is open.
 
 ## Customising User-Created Columns {% #processcoldef %}
 
@@ -193,9 +191,9 @@ const gridOptions = {
 
 Spread `params.colDef` to preserve the user's settings. Omitted properties use normal column defaults, except `calculatedExpression`, which retains the user's expression.
 
-In the example, the **Profit** column is restored from Grid State as if a user had created it, so it has a filter button and can be aggregated from the column menu.
+In the example, the Profit column is restored from Grid State as if a user had created it, so it has a filter button and can be aggregated from the column menu.
 
-{% gridExampleRunner title="Customising Calculated Column Definitions" name="calculated-columns-process-col-def" /%}
+{% gridExampleRunner title="Customising User-Created Columns" name="calculated-columns-process-col-def" /%}
 
 {% interfaceDocumentation interfaceName="CalculatedColumnProcessColDefParams" /%}
 

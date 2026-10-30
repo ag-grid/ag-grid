@@ -4,7 +4,7 @@ description: "Manage $framework Data Grid calculated columns in code: read and u
 enterprise: true
 ---
 
-[Calculated Columns](./calculated-columns/) are managed through column definitions, saved with [Grid State](./grid-state/), and reported through grid events.
+Manage [calculated columns](./calculated-columns/) in code, save and restore them with [Grid State](./grid-state/), and respond to their events.
 
 ## Managing Columns with Column Definitions
 
@@ -16,13 +16,11 @@ The following example adds, edits and removes a Profit Margin column through the
 
 {% gridExampleRunner title="Calculated Columns API" name="calculated-columns-api" /%}
 
-In the example, use the buttons to add, edit and remove **Profit Margin**, and **Log Calculated Columns** to list the calculated columns in the grid.
+In the example, use the buttons to add, edit and remove Profit Margin, and click **Log Calculated Columns** to list the calculated columns in the grid.
 
 ## Saving and Restoring
 
 The dialog manages calculated columns inside the grid without mutating the `columnDefs` array supplied by the application. To persist user-created calculated columns, read the complete current definitions from `api.getColumnDefs()`, or use [Grid State](./grid-state/), which captures them and recreates them on restore.
-
-The two differ in what they keep:
 
 |                                 | Grid State                                                                                  | `api.getColumnDefs()`                                                                                                                     |
 | ------------------------------- | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
@@ -38,9 +36,9 @@ Grid State also captures user edits to, and removals of, calculated columns decl
 
 Use `calculatedColumnChanged` to track changes to `headerName`, `cellDataType`, `calculatedExpression` and `columnGroupShow`:
 
-- **Payload:** the `changes` object contains only changed properties, with their previous and new values. Cell values read in the handler already reflect the change, including in calculated columns that depend on it.
-- **Frequency:** Deferred Apply raises one event for all changes. Live mode raises one per applied update, with [applyDebounce](./calculated-columns-dialog/#applydebounce) combining edits after a pause in typing. Initialisation and Grid State restoration do not raise this event.
-- **Validation:** check `expressionValidation.valid` before saving an accepted expression. When invalid, `expressionValidation.reason` is `restrictedReference`, `customValidation`, `unknownReference` or `invalidExpression`. Updates that change only the validation result also raise this event, with an empty `changes` object and the unchanged `expression`.
+- The `changes` object contains only changed properties, with their previous and new values. Cell values read in the handler already reflect the change, including in calculated columns that depend on it.
+- Deferred Apply raises one event for all changes. Live mode raises one per applied update, with [applyDebounce](./calculated-columns-dialog/#applydebounce) combining edits after a pause in typing. Initialisation and Grid State restoration do not raise this event.
+- Check `expressionValidation.valid` before saving an accepted expression. When invalid, `expressionValidation.reason` is `restrictedReference`, `customValidation`, `unknownReference` or `invalidExpression`. Updates that change only the validation result also raise this event, with an empty `changes` object and the unchanged `expression`.
 
 `calculatedColumnValidationStateChanged` reports changes to built-in validation status after an edit is applied, not while it is pending. Callback rejections are reported through `calculatedColumnChanged.expressionValidation` instead.
 
@@ -68,5 +66,25 @@ Live expressions can be incomplete or invalid. Recognised references use stored 
 {% /note %}
 
 ## API Reference
+
+### Grid Options
+
+{% apiDocumentation source="grid-options/properties.json" section="columns" names=["calculatedColumns"] /%}
+
+{% interfaceDocumentation interfaceName="CalculatedColumnsOptions" /%}
+
+### Column Properties
+
+{% apiDocumentation source="column-properties/properties.json" section="calculatedColumns" names=["calculatedExpression"] /%}
+
+### Grid API
+
+These methods are explained in [Opening the Dialog](./calculated-columns-dialog/#opening-the-dialog) and [Refreshing Calculated Columns](./calculated-columns-validation/#refreshing-calculated-columns).
+
+{% apiDocumentation source="grid-api/api.json" section="accessories" names=["openCalculatedColumnDialog", "openAddCalculatedColumnDialog"] /%}
+
+{% apiDocumentation source="grid-api/api.json" section="refresh" names=["refreshCalculatedColumns"] /%}
+
+### Grid Events
 
 {% apiDocumentation source="grid-events/events.json" section="calculatedColumns" names=["calculatedColumnCreated", "calculatedColumnChanged", "calculatedColumnRemoved", "calculatedColumnValidationStateChanged"] /%}

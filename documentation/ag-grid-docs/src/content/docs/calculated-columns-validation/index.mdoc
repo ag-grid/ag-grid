@@ -4,17 +4,7 @@ description: "Control what users can change in $framework Data Grid calculated c
 enterprise: true
 ---
 
-These options control what users can do to [Calculated Columns](./calculated-columns/) through the grid's menus and the Calculated Column dialog:
-
-| To                                                                | Use                                                            |
-| ----------------------------------------------------------------- | -------------------------------------------------------------- |
-| Let users view a column's definition, but not change or remove it | [`calculatedColumnReadOnly`](#read-only-calculated-columns)    |
-| Remove the add, edit and remove actions from the menus            | [Menu item filtering](#hiding-menu-items)                      |
-| Stop users referencing certain columns                            | [`isColumnReferenceable`](#iscolumnreferenceable)              |
-| Reject titles, types or expressions with your own messages        | [`getValidationErrors`](#getvalidationerrors)                  |
-| Recheck existing expressions after your rules change              | [`refreshCalculatedColumns()`](#refreshing-calculated-columns) |
-
-Read-only columns, hidden menu items, reference restrictions and custom validation apply to what users do in the grid's menus and dialog. Updating `columnDefs` and restoring [Grid State](./grid-state/) are not restricted by them, so none of them is a security boundary. Each section below gives the details.
+Control what users can change: make [calculated columns](./calculated-columns/) read-only, hide their menu items, restrict which columns they can reference and validate what users enter.
 
 ## Read-Only Calculated Columns
 
@@ -36,7 +26,7 @@ const gridOptions = {
 };
 ```
 
-The example keeps **Gross Margin** read-only, while **Profit** and user-created calculated columns remain editable.
+The example keeps Gross Margin read-only, while Profit and user-created calculated columns remain editable.
 
 {% gridExampleRunner title="Read-Only Calculated Columns" name="calculated-columns-read-only" /%}
 
@@ -46,7 +36,7 @@ If a column becomes read-only while its edit dialog is open, the dialog closes a
 This setting restricts UI changes only: updating `columnDefs` and restoring [Grid State](./grid-state/) can still change or remove the column. Dialog-created columns ignore `defaultColDef.calculatedColumnReadOnly`, but [processColDef](./calculated-columns-dialog/#processcoldef) can make them read-only.
 {% /note %}
 
-### Hiding Menu Items
+## Hiding Menu Items
 
 The calculated column actions are built-in menu items. To stop users adding, editing or removing calculated columns from the menus, filter them out of the default items with [getColumnMenuItems](./column-menu/#customising-the-menu-items) and [getContextMenuItems](./context-menu/#configuring-the-context-menu):
 
@@ -95,9 +85,9 @@ const gridOptions = {
 
 This is a UI restriction, not a security boundary.
 
-{% gridExampleRunner title="Dialog Reference Restrictions" name="calculated-columns-reference-restrictions" /%}
+{% gridExampleRunner title="Restricting Column References" name="calculated-columns-reference-restrictions" /%}
 
-In the example, edit **Bonus** and **Sales Target**: only **Bonus** can reference **Salary**.
+In the example, edit Bonus and Sales Target. Only Bonus can reference Salary.
 
 ## Validating Dialog Fields {% #getvalidationerrors %}
 
@@ -106,7 +96,7 @@ Use `getValidationErrors` to validate the dialog's title, type and expression. R
 - Omitted fields and empty arrays are valid.
 - Return or spread `internalErrors` to retain built-in feedback.
 - The callback runs while typing, so keep it quick.
-- Supply translated messages.
+- Return translated messages; the grid shows them as you supply them.
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -122,9 +112,9 @@ const gridOptions = {
 };
 ```
 
-Edit **Sales Bonus** and enter a title longer than 30 characters or an expression using `[Salary]` to see field-specific errors.
+In the example, edit Sales Bonus and enter a title longer than 30 characters or an expression using `[Salary]` to see field-specific errors.
 
-{% gridExampleRunner title="Custom Dialog Validation" name="calculated-columns-custom-validation" /%}
+{% gridExampleRunner title="Validating Dialog Fields" name="calculated-columns-custom-validation" /%}
 
 {% interfaceDocumentation interfaceName="CalculatedColumnValidationParams" /%}
 
@@ -138,11 +128,11 @@ This is a dialog guard, not a security boundary: `columnDefs` and Grid State res
 
 Any field error blocks Apply in deferred mode. In live mode, the outcome depends on the field:
 
-| Rejected edit                                                         | Deferred mode      | Live mode                                                                                                                                                         |
-| --------------------------------------------------------------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Title or type rejected by `getValidationErrors`                       | Blocks **Apply**   | Keeps its last applied value, while other fields apply                                                                                                            |
-| Expression rejected by `getValidationErrors`                          | Blocks **Apply**   | Saved, and displays `#ERROR!`, including when the callback returns built-in expression errors                                                                     |
-| Expression referencing a column restricted by `isColumnReferenceable` | Disables **Apply** | Saved, and displays `#REF!` until corrected. Reference restrictions remain enforced, and use `#REF!` instead of `#ERROR!`, even when `getValidationErrors` is set |
+| Rejected edit                                                         | Deferred mode  | Live mode                                                                                                                                                         |
+| --------------------------------------------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Title or type rejected by `getValidationErrors`                       | Blocks Apply   | Keeps its last applied value, while other fields apply                                                                                                            |
+| Expression rejected by `getValidationErrors`                          | Blocks Apply   | Saved, and displays `#ERROR!`, including when the callback returns built-in expression errors                                                                     |
+| Expression referencing a column restricted by `isColumnReferenceable` | Disables Apply | Saved, and displays `#REF!` until corrected. Reference restrictions remain enforced, and use `#REF!` instead of `#ERROR!`, even when `getValidationErrors` is set |
 
 ## Refreshing Calculated Columns
 
