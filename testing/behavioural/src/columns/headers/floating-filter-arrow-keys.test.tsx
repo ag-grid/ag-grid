@@ -4,7 +4,7 @@ import React from 'react';
 import { afterEach, describe, expect, test } from 'vitest';
 
 import type { ColDef, GridApi, IFloatingFilterComp } from 'ag-grid-community';
-import { ClientSideRowModelModule, CustomFilterModule, TextFilterModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, CustomFilterModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 const ARROW_KEYS = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
@@ -13,7 +13,9 @@ const INPUT_SELECTOR = '.ag-floating-filter-input input';
 
 const columnDefs: ColDef[] = [{ field: 'athlete', filter: 'agTextColumnFilter', floatingFilter: true }];
 const rowData = [{ athlete: 'Michael Phelps' }];
-const modules = [ClientSideRowModelModule, TextFilterModule, CustomFilterModule];
+const modules = [ClientSideRowModelModule, TextFilterModule, NumberFilterModule, CustomFilterModule];
+
+const numberColumnDefs: ColDef[] = [{ field: 'age', filter: 'agNumberColumnFilter', floatingFilter: true }];
 
 class FormInputsFloatingFilter implements IFloatingFilterComp {
     private readonly eGui = document.createElement('div');
@@ -88,6 +90,12 @@ describe('floating filter arrow keys do not scroll the grid viewport', () => {
         const eGridDiv = await createGrid(formInputsColumnDefs);
 
         expect(pressKey(getElement(eGridDiv, 'input[type="radio"]'), key).defaultPrevented).toBe(false);
+    });
+
+    test.each(['ArrowUp', 'ArrowDown'])('%s in the number floating filter input keeps value stepping', async (key) => {
+        const eGridDiv = await createGrid(numberColumnDefs);
+
+        expect(pressKey(getElement(eGridDiv, 'input[type="number"]'), key).defaultPrevented).toBe(false);
     });
 });
 
