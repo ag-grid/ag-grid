@@ -66,7 +66,6 @@ export class NavigationService extends BeanStub implements NamedBean {
         const key = event.key;
         const alt = event.altKey;
         const ctrl = event.ctrlKey || event.metaKey;
-        const rangeServiceShouldHandleShift = !!this.beans.rangeSvc && event.shiftKey;
 
         // home and end can be processed without knowing the currently selected cell, this can occur for full width rows.
         const currentCell: CellPosition | null = _getCellPositionForEvent(this.gos, event);
@@ -89,12 +88,7 @@ export class NavigationService extends BeanStub implements NamedBean {
                 if (!currentCell) {
                     return false;
                 }
-                // handle when ctrl is pressed only, if shift is pressed
-                // it will be handled by the rangeService
-                if (ctrl && !alt && !rangeServiceShouldHandleShift) {
-                    this.onCtrlUpDownLeftRight(key, currentCell);
-                    processed = true;
-                }
+                processed = this.handleCtrlArrowKey(event, currentCell);
                 break;
             case KeyCode.PAGE_DOWN:
             case KeyCode.PAGE_UP:
@@ -110,6 +104,20 @@ export class NavigationService extends BeanStub implements NamedBean {
         }
 
         return processed;
+    }
+
+    /** Jumps to the first / last row or column for Ctrl + arrow. Returns false when the key is not a Ctrl jump. */
+    public handleCtrlArrowKey(event: KeyboardEvent, currentCell: CellPosition): boolean {
+        const ctrl = event.ctrlKey || event.metaKey;
+        // with shift pressed, the rangeService extends the range instead
+        const rangeServiceShouldHandleShift = !!this.beans.rangeSvc && event.shiftKey;
+
+        if (!ctrl || event.altKey || rangeServiceShouldHandleShift) {
+            return false;
+        }
+
+        this.onCtrlUpDownLeftRight(event.key, currentCell);
+        return true;
     }
 
     private handlePageUpDown(key: string, currentCell: CellPosition | null, fromFullWidth: boolean): boolean {
