@@ -34,16 +34,10 @@ async function dragRowTo(page: Page, handle: Locator, target: Locator) {
     await page.mouse.up();
 }
 
-// The React example resets `rowIdSequence` inside the component body and creates the initial rows in a
-// `useEffect`, which StrictMode runs twice in development, so the dev build shows shifted row ids and the
-// colour buttons reuse stale ids. Likely example bug; the production React build is unaffected.
-const REACT_DEV_ROW_ID_BUG = 'React dev build: StrictMode double effect shifts the row ids (example bug)';
-
 test.agExample(import.meta, () => {
     // The left grid starts with ids 100 (Red), 101 (Green), 102 (Blue); getRowId uses the id field.
     // The right grid starts empty.
-    test.eachFramework('dragging a row to the other grid copies it there', async ({ agFramework, page }) => {
-        test.fixme(agFramework === 'reactFunctionalTs_Dev', REACT_DEV_ROW_ID_BUG);
+    test.eachFramework('dragging a row to the other grid copies it there', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
         const left = gridFor(page, 0);
@@ -62,8 +56,7 @@ test.agExample(import.meta, () => {
         await expect(async () => expect(await rowIds(left.root)).toEqual(['100', '101', '102'])).toPass();
     });
 
-    test.eachFramework('rows can be dragged from the right grid to the left grid', async ({ agFramework, page }) => {
-        test.fixme(agFramework === 'reactFunctionalTs_Dev', REACT_DEV_ROW_ID_BUG);
+    test.eachFramework('rows can be dragged from the right grid to the left grid', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
         const left = gridFor(page, 0);
@@ -79,8 +72,7 @@ test.agExample(import.meta, () => {
         await expect(async () => expect(await rowIds(right.root)).toEqual(['103'])).toPass();
     });
 
-    test.eachFramework('a row already in the target grid is not added twice', async ({ agFramework, page }) => {
-        test.fixme(agFramework === 'reactFunctionalTs_Dev', REACT_DEV_ROW_ID_BUG);
+    test.eachFramework('a row already in the target grid is not added twice', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
         const left = gridFor(page, 0);
@@ -102,8 +94,7 @@ test.agExample(import.meta, () => {
         await expect(async () => expect(await rowIds(right.root)).toEqual(['100'])).toPass();
     });
 
-    test.eachFramework('dropping a row on the trash removes it from both grids', async ({ agFramework, page }) => {
-        test.fixme(agFramework === 'reactFunctionalTs_Dev', REACT_DEV_ROW_ID_BUG);
+    test.eachFramework('dropping a row on the trash removes it from both grids', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
         const left = gridFor(page, 0);
@@ -123,8 +114,7 @@ test.agExample(import.meta, () => {
         await expect(async () => expect(await rowIds(left.root)).toEqual(['101'])).toPass();
     });
 
-    test.eachFramework('the colour buttons add new rows to their grid', async ({ agFramework, page }) => {
-        test.fixme(agFramework === 'reactFunctionalTs_Dev', REACT_DEV_ROW_ID_BUG);
+    test.eachFramework('the colour buttons add new rows to their grid', async ({ page }) => {
         await ensureGridReady(page);
         await waitForGridContent(page);
         const left = gridFor(page, 0);
