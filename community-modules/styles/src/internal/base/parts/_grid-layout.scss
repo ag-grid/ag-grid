@@ -176,6 +176,9 @@
         content: var(--ag-internal-row-highlight-content, none);
         position: absolute;
         inset: var(--ag-internal-row-highlight-inset, auto);
+
+        // only the section holding the row's group label resolves the anchor; the others start at their edge
+        inset-inline-start: anchor(--ag-internal-row-highlight-label start, 0);
         height: var(--ag-row-drag-indicator-width);
         background-color: var(--ag-row-drag-indicator-color);
         border-radius: calc(var(--ag-row-drag-indicator-width) / 2);
@@ -194,14 +197,6 @@
 
     .ag-row-highlight-indent {
         --ag-internal-row-highlight-anchor: --ag-internal-row-highlight-label;
-
-        // only the section holding the row's group label resolves the anchor; the others start at their edge
-        > .ag-grid-pinned-left-cells::after,
-        > .ag-grid-scrolling-cells::after,
-        > .ag-grid-pinned-right-cells::after,
-        &.ag-full-width-row:not(.ag-embedded-full-width-row)::after {
-            inset-inline-start: anchor(--ag-internal-row-highlight-label start, 0);
-        }
     }
 
     :where(.ag-group-cell-all-levels) > .ag-group-value {
