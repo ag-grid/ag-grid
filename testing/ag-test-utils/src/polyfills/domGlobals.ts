@@ -1,6 +1,6 @@
 /**
  * The platform as tests and grid code expect it: constructors happy-dom implements but never puts on `window`,
- * recovered from live instances, and its wrong `ShadowRoot.activeElement` corrected.
+ * recovered from live instances, and its wrong `ShadowRoot.activeElement` and `Event.composedPath` corrected.
  */
 export function polyfillDomGlobals(): void {
     const global = globalThis as Record<string, unknown>;
@@ -26,6 +26,7 @@ export function polyfillDomGlobals(): void {
         global.Option = Option;
     }
     patchShadowRootActiveElement();
+    patchComposedPath();
 }
 
 /**
@@ -45,4 +46,67 @@ function patchShadowRootActiveElement(): void {
             return outer.activeElement === this.host ? read.call(this) : null;
         },
     });
+}
+
+/** happy-dom's `Event.composedPath` ignores closed shadow roots and `relatedTarget`, which a browser's path obeys. */
+function patchComposedPath(): void {
+    const proto = Event.prototype;
+    const read = proto.composedPath;
+    proto.composedPath = function (this: Event): EventTarget[] {
+        const path = cutAtRelatedTarget(read.call(this), 'relatedTarget' in this ? this.relatedTarget : null);
+        const current = this.currentTarget;
+        // happy-dom's own dispatch reads the path before any listener runs, and dispatches along it
+        if (!current) {
+            return path;
+        }
+        const listener = current instanceof Node ? current : document;
+        return path.filter((target) => !(target instanceof Node) || !isClosedShadowHidden(target, listener));
+    };
+}
+
+/** The DOM spec's dispatch: leaving a shadow tree, the path ends at a host the `relatedTarget` retargets to. */
+function cutAtRelatedTarget(path: EventTarget[], relatedTarget: unknown): EventTarget[] {
+    const firstTarget = path[0];
+    if (!(relatedTarget instanceof Node) || !(firstTarget instanceof Node)) {
+        return path;
+    }
+    let target: Node = firstTarget;
+    for (let i = 1, len = path.length; i < len; ++i) {
+        const parent = path[i];
+        if (!(parent instanceof Node) || isShadowIncludingInclusiveAncestor(target.getRootNode(), parent)) {
+            continue;
+        }
+        if (retarget(relatedTarget, parent) === parent) {
+            return path.slice(0, i);
+        }
+        target = parent;
+    }
+    return path;
+}
+
+/** The DOM spec's "retarget": `node` as `against` sees it, the host of each shadow tree `against` is outside of. */
+function retarget(node: Node, against: Node): Node {
+    let root = node.getRootNode();
+    while (root instanceof ShadowRoot && !isShadowIncludingInclusiveAncestor(root, against)) {
+        node = root.host;
+        root = node.getRootNode();
+    }
+    return node;
+}
+
+/** The DOM spec's "closed-shadow-hidden": `node` sits in a closed shadow tree `from` is outside of. */
+function isClosedShadowHidden(node: Node, from: Node): boolean {
+    const root = node.getRootNode();
+    if (!(root instanceof ShadowRoot) || isShadowIncludingInclusiveAncestor(root, from)) {
+        return false;
+    }
+    return root.mode === 'closed' || isClosedShadowHidden(root.host, from);
+}
+
+function isShadowIncludingInclusiveAncestor(ancestor: Node, node: Node): boolean {
+    let current: Node | null = node;
+    while (current && current !== ancestor) {
+        current = current instanceof ShadowRoot ? current.host : current.parentNode;
+    }
+    return current === ancestor;
 }
