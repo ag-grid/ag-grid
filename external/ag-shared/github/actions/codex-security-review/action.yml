@@ -51,7 +51,11 @@ inputs:
     shard-timeout-minutes:
         description: 'Time limit for each shard review'
         required: false
-        default: '60'
+        default: '45'
+    review-budget-minutes:
+        description: 'Time limit for all shards together. Keep it below the job timeout so the report still runs; shards that would start with less than 5 minutes left are reported as out-of-time.'
+        required: false
+        default: '300'
     codex-version:
         description: 'Version of the @openai/codex npm package to install'
         required: false
@@ -131,6 +135,7 @@ runs:
               MODEL: ${{ inputs.model }}
               REASONING_EFFORT: ${{ inputs.reasoning-effort }}
               SHARD_TIMEOUT_MINUTES: ${{ inputs.shard-timeout-minutes }}
+              REVIEW_BUDGET_MINUTES: ${{ inputs.review-budget-minutes }}
           run: '"$GITHUB_ACTION_PATH/run-shards.sh"'
 
         - name: Report to Slack

@@ -1,4 +1,4 @@
-// Posts the Codex security review results to Slack: one summary message, with each finding
+// Posts the Codex security review results to Slack: one summary message, with every finding
 // (at or above MIN_SEVERITY) as a threaded reply.
 //
 // Reads OUT_DIR/status.jsonl and OUT_DIR/<shard>.json written by run-shards.sh.
@@ -7,13 +7,20 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { sendSlackMessage } from '../../../scripts/slack/send-slack-message.mjs';
+
 const { SLACK_BOT_OAUTH_TOKEN, SLACK_CHANNEL, PRODUCT_NAME, OUT_DIR, RUN_URL, GITHUB_REPOSITORY, GITHUB_SHA, GITHUB_REF_NAME } =
     process.env;
 const MIN_SEVERITY = process.env.MIN_SEVERITY || 'medium';
 
 const SEVERITIES = ['critical', 'high', 'medium', 'low'];
 const SEVERITY_EMOJI = { critical: ':red_circle:', high: ':large_orange_circle:', medium: ':large_yellow_circle:', low: ':white_circle:' };
-const MAX_THREAD_REPLIES = 50;
+// Slack allows about one message per second per channel, so posts are spaced out, and rate-limited
+// posts are retried. Findings are deleted from the runner after this step, so a post that gives up
+// loses them.
+const POST_INTERVAL_MS = 1100;
+const RATE_LIMIT_BACKOFF_MS = 30_000;
+const MAX_RATE_LIMIT_RETRIES = 5;
 
 if (!SEVERITIES.includes(MIN_SEVERITY)) {
     console.log(`::error::Unknown min-severity [${MIN_SEVERITY}] - expected one of ${SEVERITIES.join(', ')}`);
@@ -21,18 +28,29 @@ if (!SEVERITIES.includes(MIN_SEVERITY)) {
 }
 
 const escape = (text) => String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+let lastPostAt = 0;
 
 async function post(text, threadTs) {
-    const response = await fetch('https://slack.com/api/chat.postMessage', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json; charset=utf-8', Authorization: `Bearer ${SLACK_BOT_OAUTH_TOKEN}` },
-        body: JSON.stringify({ channel: SLACK_CHANNEL, text, thread_ts: threadTs, unfurl_links: false, unfurl_media: false }),
-    });
-    const data = await response.json();
-    if (!data.ok) {
-        throw new Error(`Slack chat.postMessage failed: ${data.error}`);
+    for (let attempt = 0; ; attempt++) {
+        await sleep(Math.max(0, lastPostAt + POST_INTERVAL_MS - Date.now()));
+        lastPostAt = Date.now();
+
+        const result = await sendSlackMessage({
+            authToken: SLACK_BOT_OAUTH_TOKEN,
+            data: { channel: SLACK_CHANNEL, text, thread_ts: threadTs, unfurl_links: false, unfurl_media: false },
+        });
+        if (result.ok) {
+            return result.ts;
+        }
+        if (result.error === 'ratelimited' && attempt < MAX_RATE_LIMIT_RETRIES) {
+            console.log(`Slack rate limited the report - retrying in ${RATE_LIMIT_BACKOFF_MS / 1000}s`);
+            await sleep(RATE_LIMIT_BACKOFF_MS);
+            continue;
+        }
+        throw new Error(`Slack chat.postMessage failed: ${result.error}`);
     }
-    return data.ts;
 }
 
 const statusFile = join(OUT_DIR, 'status.jsonl');
@@ -80,7 +98,7 @@ const summary = [
 
 const threadTs = await post(summary);
 
-for (const f of reportable.slice(0, MAX_THREAD_REPLIES)) {
+for (const f of reportable) {
     const fileUrl = `https://github.com/${GITHUB_REPOSITORY}/blob/${GITHUB_SHA}/${f.file}#L${f.line}`;
     await post(
         [
@@ -94,10 +112,6 @@ for (const f of reportable.slice(0, MAX_THREAD_REPLIES)) {
         ].join('\n'),
         threadTs
     );
-}
-
-if (reportable.length > MAX_THREAD_REPLIES) {
-    await post(`…and ${reportable.length - MAX_THREAD_REPLIES} more not shown.`, threadTs);
 }
 
 console.log(`Posted the security review report to ${SLACK_CHANNEL}`);

@@ -5,7 +5,12 @@
 ##
 ## For each shard it writes, under $OUT_DIR:
 ##   <shard>.json   the findings, matching findings.schema.json (only when the review succeeds)
-##   status.jsonl   one {"shard", "status", "paths"} line per shard (status: ok | failed | timeout | invalid-output)
+##   status.jsonl   one {"shard", "status", "paths"} line per shard
+##                  (status: ok | failed | timeout | invalid-output | out-of-time)
+##
+## All shards share a budget of $REVIEW_BUDGET_MINUTES, so the job still has time to report what
+## finished before it hits its own timeout. Each shard gets at most $SHARD_TIMEOUT_MINUTES or what
+## is left of the budget, and shards with less than 5 minutes left are not started (out-of-time).
 ##
 ## Nothing Codex produces is printed: the repo may be public, and so is this log. stdout and
 ## stderr go to files under $OUT_DIR, and on failure only a canned classification is printed.
@@ -58,6 +63,9 @@ record_status() {
 }
 
 FAILED=()
+SHARD_TIMEOUT_MINUTES=${SHARD_TIMEOUT_MINUTES:-45}
+REVIEW_BUDGET_MINUTES=${REVIEW_BUDGET_MINUTES:-300}
+MIN_SHARD_MINUTES=5
 
 while IFS= read -r name
 do
@@ -113,11 +121,21 @@ do
         fi
     } > "$prompt_file"
 
-    echo "Reviewing shard [$name]: ${paths[*]}"
+    remaining=$(( REVIEW_BUDGET_MINUTES - SECONDS / 60 ))
+    if [ "$remaining" -lt "$MIN_SHARD_MINUTES" ]
+    then
+        echo "::error::Shard [$name] not started: the ${REVIEW_BUDGET_MINUTES}-minute review budget is used up"
+        record_status "$name" out-of-time "$paths_json"
+        FAILED+=("$name")
+        continue
+    fi
+    shard_minutes=$(( remaining < SHARD_TIMEOUT_MINUTES ? remaining : SHARD_TIMEOUT_MINUTES ))
+
+    echo "Reviewing shard [$name] (up to ${shard_minutes}m): ${paths[*]}"
     start=$SECONDS
 
     set +e
-    timeout "$(( ${SHARD_TIMEOUT_MINUTES:-60} * 60 ))" \
+    timeout "$(( shard_minutes * 60 ))" \
         codex exec "${CODEX_ARGS[@]}" --output-last-message "$output_file" - \
         < "$prompt_file" > "$log_file" 2>&1
     exit_code=$?
@@ -127,7 +145,7 @@ do
 
     if [ "$exit_code" -eq 124 ]
     then
-        echo "::error::Shard [$name] timed out after ${SHARD_TIMEOUT_MINUTES:-60} minutes"
+        echo "::error::Shard [$name] timed out after ${shard_minutes} minutes"
         record_status "$name" timeout "$paths_json"
         FAILED+=("$name")
     elif [ "$exit_code" -ne 0 ]
