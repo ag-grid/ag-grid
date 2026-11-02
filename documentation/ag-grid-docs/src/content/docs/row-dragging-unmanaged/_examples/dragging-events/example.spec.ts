@@ -25,6 +25,10 @@ function captureLogs(page: Page) {
  * leaving the button held so the caller can assert the mid-drag state.
  */
 async function startRowDrag(page: Page, handle: Locator, target: Locator) {
+    // After a sort, rows slide to their new positions with a CSS transition; measure only once it has finished.
+    await page.waitForFunction(() =>
+        Array.from(document.querySelectorAll('.ag-row')).every((row) => row.getAnimations().length === 0)
+    );
     const handleBox = (await handle.boundingBox())!;
     const targetBox = (await target.boundingBox())!;
     const startX = handleBox.x + handleBox.width / 2;
