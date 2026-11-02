@@ -27,28 +27,6 @@ Users can hold {% kbd "⇧ Shift" /%} and then click a checkbox to add a range o
 Ranges of rows can be selected by holding down {% kbd "⇧ Shift" /%} while clicking on checkboxes.
 This behaviour also applies when [Click Selection](#enable-click-selection--deselection) is enabled, and in [Group Selection](./grouping-row-selection).
 
-By default, the checkbox column:
-
-- is locked to the left edge of the grid (the right edge with [RTL](./rtl/)), and cannot be moved by users (`lockPosition`, `suppressMovable`)
-- is 50px wide, and cannot be resized (`initialWidth`, `resizable`)
-- cannot be sorted (`sortable`)
-- has no header menu button (`suppressHeaderMenuButton`)
-- is not editable, has no fill handle, and is not offered as chart data in [Integrated Charts](./integrated-charts/)
-
-The properties in brackets can be set in `selectionColumnDef`, see [Customising the Checkbox Column](#customising-the-checkbox-column). For example, set both `suppressMovable` and `lockPosition` to `false` to let users drag the column to reorder, pin or unpin it:
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    rowSelection: {
-        mode: 'multiRow'
-    },
-    selectionColumnDef: {
-        suppressMovable: false,
-        lockPosition: false,
-    },
-}
-```
-
 ## Removing Selection Checkboxes
 
 To prevent any row selection checkboxes from being rendered in rows, set `rowSelection.checkboxes` to `false`.
@@ -145,13 +123,22 @@ See [Row Grouping - Selecting Groups](./grouping-row-selection) for more on this
 
 ## Customising the Checkbox Column
 
-The checkbox column may be customised in a similar way to any other column, by specifying its column definition in the `selectionColumnDef` grid option.
+The checkbox column may be customised in a similar way to any other column, including custom renderers and tooltips, by specifying its column definition in the `selectionColumnDef` grid option.
+
+By default, the checkbox column:
+
+- is locked to the left edge of the grid (the right edge with [RTL](./rtl/)), and cannot be moved by users (`lockPosition`, `suppressMovable`)
+- is 50px wide, and cannot be resized (`initialWidth`, `resizable`)
+- cannot be sorted (`sortable`)
+- has no header menu button (`suppressHeaderMenuButton`)
+- is not editable, has no fill handle, and is not offered as chart data in [Integrated Charts](./integrated-charts/)
+
+Override any of these properties in `selectionColumnDef`. For example, set both `suppressMovable` and `lockPosition` to `false` to let users drag the column to reorder, pin or unpin it.
 
 Updating `selectionColumnDef` updates the column as [Updating Column Definitions](./column-updating-definitions/) does for any column: an attribute the update leaves out, such as `width`, `pinned` or `flex`, keeps its current state, `null` clears `pinned` or `flex`, and a `width` applies on every update that sets it unless the column is flexing. To give the column a starting width that the user's resizing keeps, set `initialWidth` instead of `width`. Setting an equal `selectionColumnDef` again changes nothing, as setting the same object does.
 
 {% apiDocumentation source="grid-options/properties.json" section="selection" names=["selectionColumnDef"] /%}
 
-The `SelectionColumnDef` allows for a great deal of customisation, including custom renderers, sorting, tooltips and more.
 The example below demonstrates the following configuration:
 
 - allowing sorting using the default sort order (selected first) via the header
