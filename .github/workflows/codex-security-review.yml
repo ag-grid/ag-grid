@@ -17,10 +17,6 @@ on:
                 options: [low, medium, high, critical]
                 default: medium
                 required: false
-            slack_channel:
-                description: 'Override the Slack channel for this run (e.g. for testing)'
-                type: string
-                required: false
     schedule:
         - cron: '0 2 * * 0' # Weekly, Sunday 02:00 UTC
 
@@ -61,5 +57,5 @@ jobs:
                   shard: ${{ inputs.shard }}
                   min-severity: ${{ inputs.min_severity || 'medium' }}
                   slack-bot-oauth-token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
-                  slack-channel: ${{ inputs.slack_channel || env.SLACK_CHANNEL }}
+                  slack-channel: ${{ env.SLACK_CHANNEL }}
                   product-name: AG Grid
