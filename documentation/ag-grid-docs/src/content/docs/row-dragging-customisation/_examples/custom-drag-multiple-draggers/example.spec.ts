@@ -98,11 +98,14 @@ test.agExample(import.meta, () => {
         await page.mouse.up();
         await waitForRowAnimations(page);
 
-        // rowDragMultiRow moves both selected rows as a block.
+        // rowDragMultiRow moves both selected rows as a block; the block's first row lands at the
+        // pointer's row index (4): 2, 3, 4, 5, 0, 1, 6.
         await expectRowIdAtIndex(page, 0, '2');
         await expectRowIdAtIndex(page, 1, '3');
         await expectRowIdAtIndex(page, 2, '4');
-        await expectRowIdAtIndex(page, 3, '0');
-        await expectRowIdAtIndex(page, 4, '1');
+        await expectRowIdAtIndex(page, 3, '5');
+        await expectRowIdAtIndex(page, 4, '0');
+        await expectRowIdAtIndex(page, 5, '1');
+        await expectRowIdAtIndex(page, 6, '6');
     });
 });

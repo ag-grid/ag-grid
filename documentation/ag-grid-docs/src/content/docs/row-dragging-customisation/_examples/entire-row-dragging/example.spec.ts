@@ -32,8 +32,8 @@ test.agExample(import.meta, () => {
         const ghost = page.locator('.ag-dnd-ghost');
         await dragTo(page, agIdFor.cell('0', 'sport'), agIdFor.cell('3', 'sport'), async () => {
             await expect(ghost).toBeVisible();
-            // Default drag text is the value of the cell that started the drag.
-            await expect(ghost.locator('.ag-dnd-ghost-label')).toHaveText('Swimming');
+            // Entire-row dragging has no column dragger to supply a value, so the default drag text is the row count.
+            await expect(ghost.locator('.ag-dnd-ghost-label')).toHaveText('1 row');
         });
         await waitForRowAnimations(page);
 
@@ -57,10 +57,13 @@ test.agExample(import.meta, () => {
         });
         await waitForRowAnimations(page);
 
+        // The block's first row lands at the pointer's row index (4): 2, 3, 4, 5, 0, 1, 6.
         await expectRowIdAtIndex(page, 0, '2');
         await expectRowIdAtIndex(page, 1, '3');
         await expectRowIdAtIndex(page, 2, '4');
-        await expectRowIdAtIndex(page, 3, '0');
-        await expectRowIdAtIndex(page, 4, '1');
+        await expectRowIdAtIndex(page, 3, '5');
+        await expectRowIdAtIndex(page, 4, '0');
+        await expectRowIdAtIndex(page, 5, '1');
+        await expectRowIdAtIndex(page, 6, '6');
     });
 });
