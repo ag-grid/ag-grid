@@ -122,16 +122,19 @@ test.agExample(import.meta, () => {
         await waitForRowAnimations(page);
         await expect(agIdFor.rowNode('5')).toHaveCount(0);
 
+        // Drag pdf into the adjacent txt folder. The only row crossed on the way is notes.txt, which lives
+        // in txt, so every live move along the path targets the same folder.
         await startRowDrag(page, agIdFor.dragHandle('4', AUTO_COL));
-        await dragOverRow(page, agIdFor.rowNode('11'), 'inside');
+        await dragOverRow(page, agIdFor.rowNode('2'), 'inside');
         await dropRow(page);
 
-        await expect(agIdFor.cell('11', 'size')).toContainText('18.8 MB');
-        await expect(agIdFor.rowNode('4')).toHaveClass(/ag-row-level-1/);
+        // txt: notes.txt 14.7 + pdf 4.5
+        await expect(agIdFor.cell('2', 'size')).toContainText('19.2 MB');
+        await expect(agIdFor.rowNode('4')).toHaveClass(/ag-row-level-2/);
         await expect(agIdFor.autoGroupContracted('4')).toBeVisible();
         await expect(agIdFor.rowNode('5')).toHaveCount(0);
 
         await agIdFor.autoGroupContracted('4').click();
-        await expect(agIdFor.rowNode('5')).toHaveClass(/ag-row-level-2/);
+        await expect(agIdFor.rowNode('5')).toHaveClass(/ag-row-level-3/);
     });
 });
