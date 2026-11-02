@@ -3,8 +3,8 @@ import { TestGridsManager } from 'ag-test-utils';
 import React from 'react';
 import { afterEach, describe, expect, test } from 'vitest';
 
-import type { ColDef, GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, TextFilterModule } from 'ag-grid-community';
+import type { ColDef, GridApi, IFloatingFilterComp } from 'ag-grid-community';
+import { ClientSideRowModelModule, CustomFilterModule, TextFilterModule } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
 const ARROW_KEYS = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
@@ -13,7 +13,30 @@ const INPUT_SELECTOR = '.ag-floating-filter-input input';
 
 const columnDefs: ColDef[] = [{ field: 'athlete', filter: 'agTextColumnFilter', floatingFilter: true }];
 const rowData = [{ athlete: 'Michael Phelps' }];
-const modules = [ClientSideRowModelModule, TextFilterModule];
+const modules = [ClientSideRowModelModule, TextFilterModule, CustomFilterModule];
+
+class FormInputsFloatingFilter implements IFloatingFilterComp {
+    private readonly eGui = document.createElement('div');
+
+    public init(): void {
+        this.eGui.innerHTML = '<input type="checkbox"><input type="radio" name="floating-filter-radio">';
+    }
+
+    public getGui(): HTMLElement {
+        return this.eGui;
+    }
+
+    public onParentModelChanged(): void {}
+}
+
+const formInputsColumnDefs: ColDef[] = [
+    {
+        field: 'athlete',
+        filter: 'agTextColumnFilter',
+        floatingFilter: true,
+        floatingFilterComponent: FormInputsFloatingFilter,
+    },
+];
 
 function pressKey(element: HTMLElement, key: string): KeyboardEvent {
     element.focus();
@@ -35,8 +58,11 @@ describe('floating filter arrow keys do not scroll the grid viewport', () => {
         gridsManager.reset();
     });
 
-    async function createGrid(): Promise<HTMLElement> {
-        const api: GridApi = await gridsManager.createGridAndWait('floating-filter-arrows', { columnDefs, rowData });
+    async function createGrid(gridColumnDefs: ColDef[] = columnDefs): Promise<HTMLElement> {
+        const api: GridApi = await gridsManager.createGridAndWait('floating-filter-arrows', {
+            columnDefs: gridColumnDefs,
+            rowData,
+        });
         return TestGridsManager.getHTMLElement(api)!;
     }
 
@@ -50,6 +76,18 @@ describe('floating filter arrow keys do not scroll the grid viewport', () => {
         const eGridDiv = await createGrid();
 
         expect(pressKey(getElement(eGridDiv, INPUT_SELECTOR), key).defaultPrevented).toBe(false);
+    });
+
+    test.each(ARROW_KEYS)('%s on a custom floating filter checkbox prevents the default scroll', async (key) => {
+        const eGridDiv = await createGrid(formInputsColumnDefs);
+
+        expect(pressKey(getElement(eGridDiv, 'input[type="checkbox"]'), key).defaultPrevented).toBe(true);
+    });
+
+    test.each(ARROW_KEYS)('%s on a custom floating filter radio keeps its default behaviour', async (key) => {
+        const eGridDiv = await createGrid(formInputsColumnDefs);
+
+        expect(pressKey(getElement(eGridDiv, 'input[type="radio"]'), key).defaultPrevented).toBe(false);
     });
 });
 
