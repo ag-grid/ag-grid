@@ -652,6 +652,12 @@ export class NavigationService extends BeanStub implements NamedBean {
             // setting it into the focused cell position we can try to force focus to this specific pos
             nextCell.setFocusedCellPosition(nextPosition);
 
+            // tabbing backwards lands on the last column of a col span, so scroll its first column into view too
+            const focusedPosition = nextCell.getFocusedCellPosition();
+            if (focusedPosition.column !== nextPosition.column) {
+                this.ensureCellVisible(focusedPosition);
+            }
+
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
             // consistent, we set into range here also.
             this.setRangeToCellIfSupported(nextPosition);
