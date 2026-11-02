@@ -298,7 +298,7 @@ See [Column Header Navigation](./keyboard-navigation/#column-header-navigation) 
 
 ## Shift Resizing
 
-If you hold the {% kbd "⇧ Shift" /%} key while dragging the resize handle, or while resizing with the keyboard, the column takes space from the column after it, so the total width of the columns stays the same. The resize stops where either column reaches its `minWidth` or `maxWidth`. The last column has no column after it, so it resizes alone.
+If you hold the {% kbd "⇧ Shift" /%} key while dragging the resize handle, or while resizing with the keyboard, the column takes space from the column after it, so the total width of the columns stays the same. The resize stops where either column reaches its `minWidth` or `maxWidth`. When there is no column after it, or that column is not resizable, the column resizes alone.
 
 A group takes space from the next group, or from the next column when that column is not in a group, and the resizable columns there share the change. The resize stops once every resizable column on one side has reached its bound. When there is nothing after the group to take from, or nothing there is resizable, the group resizes alone.
 
