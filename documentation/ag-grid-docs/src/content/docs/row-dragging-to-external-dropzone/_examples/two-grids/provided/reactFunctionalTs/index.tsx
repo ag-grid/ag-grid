@@ -57,7 +57,6 @@ const createDataItem = (color: string) => ({
     value2: Math.floor(Math.random() * 100),
 });
 
-// Created once at module level so React StrictMode's double-invoked effects can't advance the id sequence.
 const initialLeftRowData = ['Red', 'Green', 'Blue'].map((color) => createDataItem(color));
 
 const GridExample = () => {
