@@ -65,7 +65,7 @@ inputs:
         required: false
         default: 'medium'
     slack-bot-oauth-token:
-        description: 'Slack bot token used to post the report. Without it nothing is reported.'
+        description: 'Slack bot token used to post the report. The action fails before reviewing if it is missing, since Slack is the only destination for findings.'
         required: false
         default: ''
     slack-channel:
@@ -89,13 +89,19 @@ runs:
           shell: bash
           env:
               CODEX_API_KEY: ${{ inputs.codex-api-key }}
+              SLACK_BOT_OAUTH_TOKEN: ${{ inputs.slack-bot-oauth-token }}
           run: |
               if [ -z "${CODEX_API_KEY:-}" ]; then
                 echo "::warning::Skipping security review - no authentication configured (set CODEX_API_KEY secret)"
                 echo "skipped=true" >> $GITHUB_OUTPUT
-              else
-                echo "skipped=false" >> $GITHUB_OUTPUT
+                exit 0
               fi
+              # Slack is the only place findings go, so don't spend a review that can't be reported
+              if [ -z "${SLACK_BOT_OAUTH_TOKEN:-}" ]; then
+                echo "::error::No Slack token configured (set SLACK_BOT_OAUTH_TOKEN secret) - the findings would have nowhere to go"
+                exit 1
+              fi
+              echo "skipped=false" >> $GITHUB_OUTPUT
 
         - name: Install Codex CLI
           if: steps.check-auth.outputs.skipped != 'true'
@@ -148,12 +154,7 @@ runs:
               MIN_SEVERITY: ${{ inputs.min-severity }}
               OUT_DIR: ${{ runner.temp }}/codex-security-review
               RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          run: |
-              if [ -z "${SLACK_BOT_OAUTH_TOKEN:-}" ]; then
-                echo "::warning::No Slack token configured - the findings were not reported anywhere"
-                exit 0
-              fi
-              node "$GITHUB_ACTION_PATH/report-to-slack.mjs"
+          run: node "$GITHUB_ACTION_PATH/report-to-slack.mjs"
 
         - name: Clean Up
           if: always()
