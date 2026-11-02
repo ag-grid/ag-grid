@@ -1,4 +1,4 @@
-import React, { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
+import React, { StrictMode, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import type {
@@ -55,42 +55,34 @@ const defaultColDef: ColDef = {
     filter: true,
 };
 
+let rowIdSequence = 100;
+
+const createDataItem = (color: string) => ({
+    id: rowIdSequence++,
+    color: color,
+    value1: Math.floor(Math.random() * 100),
+    value2: Math.floor(Math.random() * 100),
+});
+
+const createRowBlock = (blocks: number) =>
+    Array.apply(null, Array(blocks || 1))
+        .map(() => ['Red', 'Green', 'Blue'].map((color) => createDataItem(color)))
+        .reduce((prev, curr) => prev.concat(curr), []);
+
+// Created once at module level so React StrictMode's double-invoked effects can't advance the id sequence.
+const initialLeftRowData = createRowBlock(2);
+const initialRightRowData = createRowBlock(2);
+
 const GridExample = () => {
     const [leftApi, setLeftApi] = useState<GridApi | null>(null);
     const [rightApi, setRightApi] = useState<GridApi | null>(null);
-    const [leftRowData, setLeftRowData] = useState<any[]>([]);
-    const [rightRowData, setRightRowData] = useState<any[]>([]);
+    const [leftRowData] = useState<any[]>(initialLeftRowData);
+    const [rightRowData] = useState<any[]>(initialRightRowData);
 
     const eLeftGrid = useRef(null);
     const eRightGrid = useRef(null);
     const eBin = useRef<HTMLElement>(null);
     const eBinIcon = useRef<HTMLElement>(null);
-
-    let rowIdSequence = 100;
-
-    const createDataItem = useCallback(
-        (color: string) => {
-            const obj = {
-                id: rowIdSequence++,
-                color: color,
-                value1: Math.floor(Math.random() * 100),
-                value2: Math.floor(Math.random() * 100),
-            };
-
-            return obj;
-        },
-        [rowIdSequence]
-    );
-
-    useEffect(() => {
-        const createRowBlock = (blocks: number) =>
-            Array.apply(null, Array(blocks || 1))
-                .map(() => ['Red', 'Green', 'Blue'].map((color) => createDataItem(color)))
-                .reduce((prev, curr) => prev.concat(curr), []);
-
-        setLeftRowData(createRowBlock(2));
-        setRightRowData(createRowBlock(2));
-    }, [createDataItem]);
 
     const getRowId = (params: GetRowIdParams) => String(params.data.id);
 
