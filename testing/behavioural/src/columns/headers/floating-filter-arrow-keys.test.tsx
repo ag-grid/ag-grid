@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom/vitest';
 import { cleanup, render, waitFor } from '@testing-library/react';
 import { TestGridsManager } from 'ag-test-utils';
 import React from 'react';
@@ -46,7 +47,7 @@ function focusElement(root: ParentNode, selector: string): void {
     const element = root.querySelector<HTMLElement>(selector);
     expect(element).not.toBeNull();
     element!.focus();
-    expect(document.activeElement).toBe(element);
+    expect(element).toHaveFocus();
 }
 
 describe('floating filter arrow keys do not scroll the grid viewport', () => {
