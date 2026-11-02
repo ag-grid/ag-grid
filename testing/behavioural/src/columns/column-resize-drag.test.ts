@@ -390,18 +390,16 @@ describe('header resize drag direction', () => {
         await dispatcher.movePointer(bar, 530, 10);
         await dispatcher.finishDrag();
         await asyncSetTimeout(0);
-        const dragged = widths();
+        expect(widths()).toEqual([130, 100, 100]);
+
         api.setFocusedHeader('a');
         const header = document.activeElement!;
         header.dispatchEvent(
             new KeyboardEvent('keydown', { key: 'ArrowRight', altKey: true, shiftKey: true, bubbles: true })
         );
         header.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowRight', bubbles: true }));
-
-        expect([dragged, widths()]).toEqual([
-            [130, 100, 100],
-            [132, 100, 100],
-        ]);
+        // the first key step is 2px
+        expect(widths()).toEqual([132, 100, 100]);
     });
 
     test('a shift-drag where the column, or the one it takes from, has its minWidth above its maxWidth changes neither, and ends reporting both', async () => {
