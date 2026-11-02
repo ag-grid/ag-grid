@@ -3406,6 +3406,7 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     // is not redirected: it is served as a bare document for the ecommerce site's iframe.
     { from: '/eula/AG-Grid-Enterprise-License-Latest.html', to: '/eula/commercial/' },
     { from: '/eula/AG-Grid-Community-License.html', to: '/eula/community/' },
+    { from: '/eula/AG-Grid-Enterprise-License-v12.0.html', to: '/eula/commercial/' },
 
     // Addresses still being requested (from external links and search results) where a live page exists under another name.
     // Absolute targets are left out of archive builds, so these two are not copied into other archives.
