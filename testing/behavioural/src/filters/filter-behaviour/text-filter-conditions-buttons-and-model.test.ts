@@ -219,8 +219,8 @@ describe('Text Filter — buttons & model round-trip', () => {
             });
 
             const filter = await ColumnFilterHarness.open(api, 'name');
-            // Outlast the test ID passes scheduled by opening, so only typing can stamp the radios it reveals.
-            await new Promise((resolve) => setTimeout(resolve, 600));
+            // eslint-disable-next-line no-restricted-syntax -- outlast TestIdService's 500ms delayed pass scheduled by opening, so only typing can stamp the radios it reveals
+            await asyncSetTimeout(600);
             await filter.setText('li');
 
             const orTestId = agTestIdFor.filterConditionRadioButton({ source: 'column-filter' }, 'OR');
