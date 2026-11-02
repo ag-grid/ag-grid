@@ -96,7 +96,7 @@ By default, the checkbox column:
 - has no header menu button (`suppressHeaderMenuButton`)
 - is not editable, has no fill handle, and is not offered as chart data in [Integrated Charts](./integrated-charts/)
 
-Override any of these properties in `selectionColumnDef`. For example, set both `suppressMovable` and `lockPosition` to `false` to let users drag the column to reorder, pin or unpin it.
+Override the properties in brackets in `selectionColumnDef`. For example, set both `suppressMovable` and `lockPosition` to `false` to let users drag the column to reorder, pin or unpin it.
 
 Updating `selectionColumnDef` updates the column as [Updating Column Definitions](./column-updating-definitions/) does for any column: an attribute the update leaves out, such as `width`, `pinned` or `flex`, keeps its current state, `null` clears `pinned` or `flex`, and a `width` applies on every update that sets it unless the column is flexing. To give the column a starting width that the user's resizing keeps, set `initialWidth` instead of `width`. Setting an equal `selectionColumnDef` again changes nothing, as setting the same object does.
 
