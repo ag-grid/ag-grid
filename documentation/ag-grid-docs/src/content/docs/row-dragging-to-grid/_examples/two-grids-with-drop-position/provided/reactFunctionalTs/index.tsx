@@ -69,7 +69,6 @@ const createRowBlock = (blocks: number) =>
         .map(() => ['Red', 'Green', 'Blue'].map((color) => createDataItem(color)))
         .reduce((prev, curr) => prev.concat(curr), []);
 
-// Created once at module level so React StrictMode's double-invoked effects can't advance the id sequence.
 const initialLeftRowData = createRowBlock(2);
 const initialRightRowData = createRowBlock(2);
 
