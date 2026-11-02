@@ -304,7 +304,9 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
             column: (lastFocusedCell?.column as AgColumn) ?? this.getNavigationColumn(),
         };
 
-        navigation?.navigateToNextCell(keyboardEvent, keyboardEvent.key, cellPosition, true);
+        if (!navigation?.handleCtrlArrowKey(keyboardEvent, cellPosition)) {
+            navigation?.navigateToNextCell(keyboardEvent, keyboardEvent.key, cellPosition, true);
+        }
         keyboardEvent.preventDefault();
     }
 
