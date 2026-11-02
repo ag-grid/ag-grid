@@ -2,6 +2,7 @@ import { TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
 import type { ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, RenderApiModule } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 
 const events: string[] = [];
 let refuseRefresh: string | null = null;
@@ -25,8 +26,40 @@ class SectionRenderer implements ICellRendererComp {
     }
 }
 
+class NoRefreshRenderer {
+    private readonly eGui = document.createElement('div');
+
+    public init(params: ICellRendererParams): void {
+        this.eGui.textContent = params.data.v;
+        events.push(`init ${params.data.v}`);
+    }
+
+    public getGui(): HTMLElement {
+        return this.eGui;
+    }
+}
+
+class GroupRowRenderer implements ICellRendererComp {
+    private readonly eGui = document.createElement('div');
+
+    public init(params: ICellRendererParams): void {
+        events.push(`init ${params.node.key}`);
+    }
+
+    public getGui(): HTMLElement {
+        return this.eGui;
+    }
+
+    public refresh(params: ICellRendererParams): boolean {
+        events.push(`refresh ${params.node.key}`);
+        return refuseRefresh !== 'group';
+    }
+}
+
 describe('embedded full width row refresh', () => {
-    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, RenderApiModule] });
+    const gridsManager = new TestGridsManager({
+        modules: [ClientSideRowModelModule, RenderApiModule, RowGroupingModule],
+    });
 
     afterEach(() => {
         gridsManager.reset();
@@ -67,6 +100,53 @@ describe('embedded full width row refresh', () => {
             ]);
             expect(events.slice(3).sort()).toEqual([`init center ${v}`, `init left ${v}`, `init right ${v}`]);
         }
+    });
+
+    test.each([true, false])(
+        'with embedFullWidthRows %s, an update re-creates a full width renderer that has no refresh method',
+        async (embedFullWidthRows) => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'l', pinned: 'left' }, { field: 'v' }, { field: 'r', pinned: 'right' }],
+                rowData: [{ id: '1', v: 'a' }],
+                getRowId: (params) => params.data.id,
+                isFullWidthRow: () => true,
+                embedFullWidthRows,
+                fullWidthCellRenderer: NoRefreshRenderer,
+            });
+            await asyncSetTimeout(0);
+            const initsOf = (v: string) =>
+                embedFullWidthRows ? [`init ${v}`, `init ${v}`, `init ${v}`] : [`init ${v}`];
+            expect(events).toEqual(initsOf('a'));
+
+            events.length = 0;
+            api.getRowNode('1')!.setData({ id: '1', v: 'b' });
+            await asyncSetTimeout(0);
+            expect(events).toEqual(initsOf('b'));
+        }
+    );
+
+    test('refreshCells on a group row refreshes a group row renderer that accepts it, and re-creates one that refuses', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'g', rowGroup: true, hide: true }, { field: 'v' }],
+            rowData: [{ id: '1', g: 'x', v: 'a' }],
+            getRowId: (params) => params.data.id,
+            groupDisplayType: 'groupRows',
+            groupRowRenderer: GroupRowRenderer,
+        });
+        await asyncSetTimeout(0);
+        const groupRow = api.getDisplayedRowAtIndex(0)!;
+        expect(events).toEqual(['init x']);
+
+        events.length = 0;
+        api.refreshCells({ rowNodes: [groupRow] });
+        await asyncSetTimeout(0);
+        expect(events).toEqual(['refresh x']);
+
+        events.length = 0;
+        refuseRefresh = 'group';
+        api.refreshCells({ rowNodes: [groupRow] });
+        await asyncSetTimeout(0);
+        expect(events).toEqual(['refresh x', 'init x']);
     });
 
     test('getCellRendererInstances returns every section renderer of an embedded row, and the one of a full width row', async () => {

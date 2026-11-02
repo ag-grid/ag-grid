@@ -1,6 +1,6 @@
 /**
  * The platform as tests and grid code expect it: constructors happy-dom implements but never puts on `window`,
- * recovered from live instances, and its wrong `ShadowRoot.activeElement` corrected.
+ * recovered from live instances, and its wrong `ShadowRoot.activeElement` and `Event.composedPath` corrected.
  */
 export function polyfillDomGlobals(): void {
     const global = globalThis as Record<string, unknown>;
@@ -26,6 +26,7 @@ export function polyfillDomGlobals(): void {
         global.Option = Option;
     }
     patchShadowRootActiveElement();
+    patchComposedPath();
 }
 
 /**
@@ -45,4 +46,37 @@ function patchShadowRootActiveElement(): void {
             return outer.activeElement === this.host ? read.call(this) : null;
         },
     });
+}
+
+/** happy-dom's `Event.composedPath` lists closed shadow trees' nodes to listeners outside them; a browser hides them. */
+function patchComposedPath(): void {
+    const proto = Event.prototype;
+    const read = proto.composedPath;
+    proto.composedPath = function (this: Event): EventTarget[] {
+        const path = read.call(this);
+        const current = this.currentTarget;
+        // happy-dom's own dispatch reads the whole path before any listener runs
+        if (!current) {
+            return path;
+        }
+        const listener = current instanceof Node ? current : document;
+        return path.filter((target) => !(target instanceof Node) || !isClosedShadowHidden(target, listener));
+    };
+}
+
+/** The DOM spec's "closed-shadow-hidden": `node` sits in a closed shadow tree `from` is outside of. */
+function isClosedShadowHidden(node: Node, from: Node): boolean {
+    const root = node.getRootNode();
+    if (!(root instanceof ShadowRoot) || isShadowIncludingInclusiveAncestor(root, from)) {
+        return false;
+    }
+    return root.mode === 'closed' || isClosedShadowHidden(root.host, from);
+}
+
+function isShadowIncludingInclusiveAncestor(ancestor: Node, node: Node): boolean {
+    let current: Node | null = node;
+    while (current && current !== ancestor) {
+        current = current instanceof ShadowRoot ? current.host : current.parentNode;
+    }
+    return current === ancestor;
 }

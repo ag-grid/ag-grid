@@ -65,5 +65,5 @@ export interface IPropertiesService<TProperties extends BaseProperties, TCommon>
 
     setInstanceDomData(element: HTMLElement): void;
 
-    isElementInThisInstance(element: HTMLElement): boolean;
+    isElementInThisInstance(element: Element): boolean;
 }

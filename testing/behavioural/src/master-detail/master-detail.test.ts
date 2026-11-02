@@ -11,11 +11,13 @@ import {
 } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import type { MockInstance } from 'vitest';
+import { onTestFinished, vi } from 'vitest';
 
 import type { GetDetailRowDataParams, GetRowIdParams, GridApi, GridOptions } from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
     ColumnApiModule,
+    RenderApiModule,
     RowAutoHeightModule,
     enableDevValidations,
     getGridElement,
@@ -24,7 +26,7 @@ import { MasterDetailModule } from 'ag-grid-enterprise';
 
 describe('ag-grid master detail', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ClientSideRowModelModule, ColumnApiModule, MasterDetailModule, RowAutoHeightModule],
+        modules: [ClientSideRowModelModule, ColumnApiModule, MasterDetailModule, RenderApiModule, RowAutoHeightModule],
     });
     let consoleErrorSpy: MockInstance | undefined;
     let consoleWarnSpy: MockInstance | undefined;
@@ -681,6 +683,79 @@ describe('ag-grid master detail', () => {
         await waitFor(() => expect(removed).toContain('1'));
         expect(getGridElement(api)!.querySelector('.ag-row[row-id="1"]')).toBeNull();
     });
+
+    test('a detail row collapsed while its detail grid has focus gives focus back to the master focused cell when drawn again, however later', async () => {
+        vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+        onTestFinished(() => {
+            vi.useRealTimers();
+        });
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'k', cellRenderer: 'agGroupCellRenderer' }, { field: 'v' }],
+            rowData: [{ k: 'a', v: 'v1', records: [{ x: 'x1' }] }],
+            masterDetail: true,
+            detailCellRendererParams: {
+                detailGridOptions: { columnDefs: [{ field: 'x' }] },
+                getDetailRowData: (params: GetDetailRowDataParams) => params.successCallback(params.data.records),
+            },
+        });
+        await vi.advanceTimersByTimeAsync(0);
+        api.setFocusedCell(0, 'v');
+        const master = api.getDisplayedRowAtIndex(0)!;
+        master.setExpanded(true);
+        await vi.advanceTimersByTimeAsync(0);
+        api.getDetailGridInfo('detail_0')!.api!.setFocusedCell(0, 'x');
+        await vi.advanceTimersByTimeAsync(0);
+        expect(document.activeElement?.textContent).toBe('x1');
+
+        api.setColumnsVisible(['v'], false);
+        master.setExpanded(false);
+        await vi.advanceTimersByTimeAsync(1000);
+        expect(document.activeElement).toBe(document.body);
+
+        api.setColumnsVisible(['v'], true);
+        await vi.advanceTimersByTimeAsync(0);
+        expect(document.activeElement).toBe(getGridElement(api)!.querySelector('.ag-cell[col-id="v"]'));
+    });
+
+    test.each(['', ', after its detail row was redrawn'])(
+        'a master focused cell drawn again leaves focus in the detail grid it moved to%s',
+        async (redrawn) => {
+            vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+            onTestFinished(() => {
+                vi.useRealTimers();
+            });
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'k', cellRenderer: 'agGroupCellRenderer' }, { field: 'v' }],
+                rowData: [{ k: 'a', v: 'v1', records: [{ x: 'x1' }] }],
+                masterDetail: true,
+                detailCellRendererParams: {
+                    detailGridOptions: { columnDefs: [{ field: 'x' }] },
+                    getDetailRowData: (params: GetDetailRowDataParams) => params.successCallback(params.data.records),
+                },
+            });
+            await vi.advanceTimersByTimeAsync(0);
+            api.setFocusedCell(0, 'v');
+            api.getDisplayedRowAtIndex(0)!.setExpanded(true);
+            await vi.advanceTimersByTimeAsync(0);
+            const detailApi = api.getDetailGridInfo('detail_0')!.api!;
+            detailApi.setFocusedCell(0, 'x');
+            await vi.advanceTimersByTimeAsync(0);
+            if (redrawn) {
+                api.redrawRows({ rowNodes: [api.getDisplayedRowAtIndex(1)!] });
+                await vi.advanceTimersByTimeAsync(0);
+                api.getDetailGridInfo('detail_0')!.api!.setFocusedCell(0, 'x');
+                await vi.advanceTimersByTimeAsync(0);
+            }
+            const detailCell = getGridElement(api)!.querySelector('.ag-details-row .ag-cell[col-id="x"]');
+            expect(document.activeElement).toBe(detailCell);
+
+            api.setColumnsVisible(['v'], false);
+            await vi.advanceTimersByTimeAsync(0);
+            api.setColumnsVisible(['v'], true);
+            await vi.advanceTimersByTimeAsync(0);
+            expect(document.activeElement).toBe(detailCell);
+        }
+    );
 
     // The detail sizes itself to its grid: working the row heights out again must not put it back to its placeholder.
     describe('an auto-height detail row', () => {

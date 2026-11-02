@@ -43,6 +43,6 @@ export interface UtilBeanCollection {
     gos: {
         get<K extends keyof BaseProperties>(prop: K): BaseProperties[K];
 
-        isElementInThisInstance(element: HTMLElement): boolean;
+        isElementInThisInstance(element: Element): boolean;
     };
 }

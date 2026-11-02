@@ -1,8 +1,9 @@
 import { act, cleanup, render, waitFor } from '@testing-library/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import type { GridApi, ICellRendererComp, ICellRendererParams } from 'ag-grid-community';
 import { ClientSideRowModelModule, ModuleRegistry, RenderApiModule, RowApiModule } from 'ag-grid-community';
+import { RowGroupingModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
 
 const events: string[] = [];
@@ -29,7 +30,7 @@ class SectionRenderer implements ICellRendererComp {
 
 describe('embedded full width row refresh (React)', () => {
     beforeAll(() => {
-        ModuleRegistry.registerModules([ClientSideRowModelModule, RenderApiModule, RowApiModule]);
+        ModuleRegistry.registerModules([ClientSideRowModelModule, RenderApiModule, RowApiModule, RowGroupingModule]);
     });
 
     afterEach(() => {
@@ -78,6 +79,43 @@ describe('embedded full width row refresh (React)', () => {
                 `refresh right right ${v}`,
             ]);
         }
+    });
+
+    test('refreshCells on a group row re-renders a function group row renderer in place with the new params', async () => {
+        let mounts = 0;
+        const GroupRow = (params: ICellRendererParams) => {
+            useEffect(() => {
+                ++mounts;
+            }, []);
+            return (
+                <span className="group-label">
+                    {params.context.label} {params.node.key}
+                </span>
+            );
+        };
+        let api: GridApi | undefined;
+        const container = render(
+            <AgGridReact
+                columnDefs={[{ field: 'g', rowGroup: true, hide: true }, { field: 'v' }]}
+                rowData={[{ id: '1', g: 'x', v: 'a' }]}
+                getRowId={(params) => params.data.id}
+                groupDisplayType="groupRows"
+                groupRowRenderer={GroupRow}
+                context={{ label: 'one' }}
+                onGridReady={(e) => {
+                    api = e.api;
+                }}
+            />
+        ).container;
+        const label = () => container.querySelector('.group-label')?.textContent;
+        await waitFor(() => expect(label()).toBe('one x'));
+
+        act(() => {
+            api!.setGridOption('context', { label: 'two' });
+            api!.refreshCells({ rowNodes: [api!.getDisplayedRowAtIndex(0)!] });
+        });
+        await waitFor(() => expect(label()).toBe('two x'));
+        expect(mounts).toBe(1);
     });
 
     test('getCellRendererInstances returns every section renderer of an embedded row, and the one of a full width row', async () => {

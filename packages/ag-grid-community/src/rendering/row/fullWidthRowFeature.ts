@@ -28,7 +28,6 @@ import type { IRowComp, RowCtrl } from './rowCtrl';
 export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
     private tooltips: FullWidthRowTooltips | undefined;
     private notesFeature: INotesFeature | undefined;
-    private focusEventWhileNotReady: CellFocusedEvent | null = null;
 
     public constructor(private readonly rowCtrl: RowCtrl) {
         super();
@@ -215,27 +214,32 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
 
     public setupFocus(): void {
         this.restoreFullWidthFocus(true);
-        this.onRowFocused(this.beans.focusSvc.currentDeferredFocus(this.focusEventWhileNotReady));
+        this.onRowFocused();
     }
 
     private restoreFullWidthFocus(waitForRender = false): void {
         const { focusSvc, editSvc } = this.beans;
         const { rowCtrl } = this;
-        if (editSvc?.isEditing(rowCtrl)) {
+        if (editSvc?.isEditing(rowCtrl) || !this.isFocused()) {
             return;
         }
-
-        if (!this.isFocused() || !focusSvc.shouldTakeFocus()) {
+        const owedEvent = focusSvc.takeOwedFocusEvent();
+        if (owedEvent) {
+            this.onRowFocused(owedEvent);
             return;
         }
+        const takeFocus = focusSvc.shouldTakeFocus();
 
-        const element = rowCtrl.getCurrentRowElement();
-        if (!element) {
-            return;
-        }
-
+        // owed focus is taken only as it lands, so a row destroyed before then leaves it to the next one drawn
         const focus = () => {
-            if (rowCtrl.isAlive() && this.isFocused() && focusSvc.isFocusFreeForGrid()) {
+            const element = rowCtrl.getCurrentRowElement();
+            if (
+                element &&
+                rowCtrl.isAlive() &&
+                this.isFocused() &&
+                (focusSvc.takeOwedFocus() || takeFocus) &&
+                focusSvc.isFocusFreeForGrid()
+            ) {
                 element.focus({ preventScroll: true });
             }
         };
@@ -267,14 +271,12 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
 
         if (!element) {
             if (event) {
-                this.focusEventWhileNotReady = event;
-                focusSvc.deferFocus(event);
+                focusSvc.oweFocus(event);
             }
             return;
         }
 
         element.classList.add('ag-full-width-focus');
-        this.focusEventWhileNotReady = null;
 
         if (event?.forceBrowserFocus) {
             element.focus({ preventScroll: true });
