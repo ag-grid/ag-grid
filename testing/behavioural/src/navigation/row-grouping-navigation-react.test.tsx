@@ -43,16 +43,22 @@ describe('Row Grouping Navigation (React)', () => {
         await flush();
 
         // Collapsed layout: 0 = group A, 1 = group B, 2 = group C
-        act(() => api!.setFocusedCell(0, 'value'));
+        act(() => {
+            api!.setFocusedCell(0, 'value');
+        });
         await flush();
         expect(document.activeElement?.classList.contains('ag-full-width-row')).toBe(true);
 
-        act(() => dispatchKeyDown(KeyCode.DOWN, { ctrlKey: true }));
+        act(() => {
+            dispatchKeyDown(KeyCode.DOWN, { ctrlKey: true });
+        });
         await flush();
         expect(getFocusedRowIndex(api!)).toBe(2);
         expect(document.activeElement?.getAttribute('row-index')).toBe('2');
 
-        act(() => dispatchKeyDown(KeyCode.UP, { ctrlKey: true }));
+        act(() => {
+            dispatchKeyDown(KeyCode.UP, { ctrlKey: true });
+        });
         await flush();
         expect(getFocusedRowIndex(api!)).toBe(0);
         expect(document.activeElement?.getAttribute('row-index')).toBe('0');
