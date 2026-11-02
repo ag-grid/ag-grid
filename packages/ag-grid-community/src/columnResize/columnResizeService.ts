@@ -61,8 +61,8 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
 
         named?.forEach((width, col) => {
             const before = visibleCols.getColBefore(col);
-            // a run of adjacent named cols is pushed whole from its first, then the col after it takes their change
-            if (before && named.has(before)) {
+            // a run of named shift pairs is pushed whole from its first, then the col after it takes their change
+            if (before && named.has(before) && getShiftPair(visibleCols, before) === col) {
                 return;
             }
             let change = 0;

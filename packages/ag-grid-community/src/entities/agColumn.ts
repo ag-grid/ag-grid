@@ -1220,9 +1220,11 @@ export const _laneOfPinned = (pinned: ColumnPinnedType): ColumnLane => {
     return pinned === 'left' || pinned === true ? 0 : 1;
 };
 
-/** The column a shift resize of `col` takes from: a hidden one has none, though `getColAfter` answers the first. */
-export const getShiftPair = (visibleCols: VisibleColsService, col: AgColumn): AgColumn | null =>
-    col.allColsIndex >= 0 ? visibleCols.getColAfter(col) : null;
+/** The column a shift resize of `col` takes from, when resizable: a hidden one has none, though `getColAfter` answers the first. */
+export const getShiftPair = (visibleCols: VisibleColsService, col: AgColumn): AgColumn | null => {
+    const next = col.allColsIndex >= 0 ? visibleCols.getColAfter(col) : null;
+    return next?.isResizable() ? next : null;
+};
 
 /** -1 where dragging left grows the column: under RTL unless pinned left, or pinned right under LTR. */
 export const getDragSign = (isRtl: boolean, lane: ColumnLane): number => {
