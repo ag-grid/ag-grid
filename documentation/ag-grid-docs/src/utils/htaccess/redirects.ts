@@ -3404,9 +3404,18 @@ export const SITE_301_REDIRECTS: Redirect[] = [
     { fromPattern: '^/(react|angular|vue|javascript)/(.*)', to: 'https://www.ag-grid.com/charts/$1/$2' },
     // SE-169: the static Word-export EULA files were replaced by the /eula/ pages. /eula/license-en.html
     // is not redirected: it is served as a bare document for the ecommerce site's iframe.
+    // Older versioned and translated EULA addresses also go to the current EULA.
     { from: '/eula/AG-Grid-Enterprise-License-Latest.html', to: '/eula/commercial/' },
     { from: '/eula/AG-Grid-Community-License.html', to: '/eula/community/' },
     { from: '/eula/AG-Grid-Enterprise-License-v12.0.html', to: '/eula/commercial/' },
+    { from: '/eula/AG-Grid-Enterprise-License-v13.0.html', to: '/eula/commercial/' },
+    { from: '/eula/AG-Grid-Enterprise-License-v14.0.html', to: '/eula/commercial/' },
+    { from: '/eula/AG-Grid-Enterprise-License-v15.0.html', to: '/eula/commercial/' },
+    { from: '/eula/AG-Grid-Enterprise-License-v15.1.html', to: '/eula/commercial/' },
+    { from: '/eula/AG_Grid_EULA_web_v38_20260325.html', to: '/eula/commercial/' },
+    { from: '/eula/license-de.html', to: '/eula/commercial/' },
+    { from: '/eula/license-es.html', to: '/eula/commercial/' },
+    { from: '/eula/license-fr.html', to: '/eula/commercial/' },
 
     // Addresses still being requested (from external links and search results) where a live page exists under another name.
     // Absolute targets are left out of archive builds, so these two are not copied into other archives.

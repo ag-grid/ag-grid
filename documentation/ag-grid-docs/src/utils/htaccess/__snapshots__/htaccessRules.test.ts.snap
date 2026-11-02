@@ -3013,6 +3013,14 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     Redirect 301 /eula/AG-Grid-Enterprise-License-Latest.html /eula/commercial/
     Redirect 301 /eula/AG-Grid-Community-License.html /eula/community/
     Redirect 301 /eula/AG-Grid-Enterprise-License-v12.0.html /eula/commercial/
+    Redirect 301 /eula/AG-Grid-Enterprise-License-v13.0.html /eula/commercial/
+    Redirect 301 /eula/AG-Grid-Enterprise-License-v14.0.html /eula/commercial/
+    Redirect 301 /eula/AG-Grid-Enterprise-License-v15.0.html /eula/commercial/
+    Redirect 301 /eula/AG-Grid-Enterprise-License-v15.1.html /eula/commercial/
+    Redirect 301 /eula/AG_Grid_EULA_web_v38_20260325.html /eula/commercial/
+    Redirect 301 /eula/license-de.html /eula/commercial/
+    Redirect 301 /eula/license-es.html /eula/commercial/
+    Redirect 301 /eula/license-fr.html /eula/commercial/
     Redirect 301 /archive/35.2.0/react-data-grid/licensing/ https://www.ag-grid.com/react-data-grid/community-vs-enterprise/
     Redirect 301 /ag-studio/ https://www.ag-grid.com/studio/
     Redirect 301 /javascript-data-grid/license-install/Kind/ /javascript-data-grid/license-install/
