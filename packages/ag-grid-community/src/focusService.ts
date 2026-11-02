@@ -196,13 +196,14 @@ export class FocusService extends BeanStub implements NamedBean {
         }
     };
 
-    /** Whether a press is on the grid as the listening root sees it; on a shadow host holding it, that root decides. */
+    /** Whether a press is on the grid as the listening root sees it: a closed root holding it shows only its host. */
     private mayPressBeOnGrid(event: Event): boolean {
         let gridNode: Node = this.beans.eRootDiv;
         let root = gridNode.getRootNode();
         while (root !== event.currentTarget && root instanceof ShadowRoot) {
-            gridNode = root.host;
-            root = gridNode.getRootNode();
+            const host = root.host;
+            gridNode = root.mode === 'closed' ? host : gridNode;
+            root = host.getRootNode();
         }
         return event.composedPath().includes(gridNode);
     }

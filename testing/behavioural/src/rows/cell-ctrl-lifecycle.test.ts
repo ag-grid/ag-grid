@@ -304,6 +304,34 @@ describe('cell ctrl lifecycle', () => {
         }
     );
 
+    test.each(['open', 'nested'] as const)(
+        'in a %s shadow root, a focused cell removed while holding focus stays unfocused after a press beside the grid in its root, its host stopping the press as it captures it',
+        async (mode) => {
+            vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+            onTestFinished(() => {
+                vi.useRealTimers();
+            });
+            const { gridDiv, gridRoot } = mountGridDiv(mode);
+            const api = gridsManager.createGrid(gridDiv, {
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+                rowData: ROW_DATA,
+            });
+            await vi.advanceTimersByTimeAsync(0);
+            const beside = gridRoot.appendChild(document.createElement('div'));
+            (gridRoot as ShadowRoot).host.addEventListener('pointerdown', (event) => event.stopPropagation(), true);
+            api.setFocusedCell(0, 'a');
+            await vi.advanceTimersByTimeAsync(0);
+            expect(gridRoot.activeElement).toBe(cellFor(api, 0, 'a'));
+            api.setColumnsVisible(['a'], false);
+            await vi.advanceTimersByTimeAsync(0);
+
+            beside.dispatchEvent(new Event('pointerdown', { bubbles: true, composed: true }));
+            api.setColumnsVisible(['a'], true);
+            await vi.advanceTimersByTimeAsync(0);
+            expect(gridRoot.activeElement).toBe(null);
+        }
+    );
+
     test.each(['light', 'nested closed'] as const)(
         'in a %s grid, destroyed while owing focus to a removed focused cell, no listener is left on the document or its shadow roots',
         async (mode) => {

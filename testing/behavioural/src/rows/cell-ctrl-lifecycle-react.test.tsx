@@ -353,20 +353,28 @@ describe('cell ctrl lifecycle (react)', () => {
         act(() => api!.setFocusedCell(0, 'a'));
         await waitFor(() => expect(document.activeElement).toBe(spannedCell()));
 
-        const listening = new Set<unknown>();
-        const add = vi.spyOn(document, 'addEventListener').mockImplementation(function (type, listener, options) {
-            listening.add(listener);
-            return EventTarget.prototype.addEventListener.call(document, type, listener, options);
+        // what the document still listens for: the event type, the capture flag and the listener, as removal matches them
+        const listening: [string, boolean, unknown][] = [];
+        const isCapture = (options?: boolean | EventListenerOptions) =>
+            typeof options === 'boolean' ? options : !!options?.capture;
+        const { addEventListener, removeEventListener } = document;
+        const add = vi.spyOn(document, 'addEventListener').mockImplementation((type, listener, options) => {
+            listening.push([type, isCapture(options), listener]);
+            addEventListener.call(document, type, listener, options);
         });
-        const remove = vi.spyOn(document, 'removeEventListener').mockImplementation(function (type, listener, options) {
-            listening.delete(listener);
-            return EventTarget.prototype.removeEventListener.call(document, type, listener, options);
+        const remove = vi.spyOn(document, 'removeEventListener').mockImplementation((type, listener, options) => {
+            const capture = isCapture(options);
+            const index = listening.findIndex((l) => l[0] === type && l[1] === capture && l[2] === listener);
+            if (index >= 0) {
+                listening.splice(index, 1);
+            }
+            removeEventListener.call(document, type, listener, options);
         });
         onTestFinished(() => {
             add.mockRestore();
             remove.mockRestore();
         });
         unmount();
-        expect(listening.size).toBe(0);
+        expect(listening.map(([type]) => type)).toEqual([]);
     });
 });
