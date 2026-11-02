@@ -2,8 +2,14 @@ import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, GROUP_AUTO_COLUMN_ID, KeyCode, RenderApiModule } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, NavigateToNextCellParams } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    GROUP_AUTO_COLUMN_ID,
+    KeyCode,
+    RenderApiModule,
+    getGridElement,
+} from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { dispatchKeyDown, getFocusedColId, getFocusedRowIndex } from './navigation-test-utils';
@@ -205,12 +211,16 @@ describe('Row Grouping Navigation', () => {
     });
 
     describe('full width group rows', () => {
-        function createGroupRowsGrid(groupDefaultExpanded: number): GridApi<RowData> {
+        function createGroupRowsGrid(
+            groupDefaultExpanded: number,
+            gridOptions: GridOptions<RowData> = {}
+        ): GridApi<RowData> {
             return gridsManager.createGrid('myGrid', {
                 columnDefs,
                 rowData: [...rowData, { category: 'C', value: 'v4' }],
                 groupDisplayType: 'groupRows',
                 groupDefaultExpanded,
+                ...gridOptions,
             } as GridOptions<RowData>);
         }
 
@@ -244,6 +254,37 @@ describe('Row Grouping Navigation', () => {
             expect(document.activeElement?.getAttribute('row-index')).toBe('2');
 
             dispatchKeyDown(KeyCode.UP, { ctrlKey: true });
+            expect(getFocusedRowIndex(api)).toBe(0);
+            expect(document.activeElement?.getAttribute('row-index')).toBe('0');
+        });
+
+        test('ctrl+down and ctrl+up between group rows reach rows that are not rendered', () => {
+            const api = createGroupRowsGrid(0, {
+                rowData: Array.from({ length: 100 }, (_, i) => ({ category: `C${i}`, value: `v${i}` })),
+                suppressRowVirtualisation: false,
+            });
+            const gridDiv = getGridElement(api)!;
+            expect(gridDiv.querySelector('.ag-row[row-index="99"]')).toBeNull();
+            focusFullWidthRow(api, 0);
+
+            dispatchKeyDown(KeyCode.DOWN, { ctrlKey: true });
+            expect(getFocusedRowIndex(api)).toBe(99);
+            expect(document.activeElement?.getAttribute('row-index')).toBe('99');
+
+            dispatchKeyDown(KeyCode.UP, { ctrlKey: true });
+            expect(getFocusedRowIndex(api)).toBe(0);
+            expect(document.activeElement?.getAttribute('row-index')).toBe('0');
+        });
+
+        test('navigateToNextCell is given the ctrl+down target from a group row, and returning null stays', () => {
+            const navigateToNextCell = vi.fn((_params: NavigateToNextCellParams<RowData>) => null);
+            const api = createGroupRowsGrid(-1, { navigateToNextCell });
+            focusFullWidthRow(api, 0);
+
+            dispatchKeyDown(KeyCode.DOWN, { ctrlKey: true });
+
+            expect(navigateToNextCell).toHaveBeenCalledTimes(1);
+            expect(navigateToNextCell.mock.calls[0][0].nextCellPosition?.rowIndex).toBe(6);
             expect(getFocusedRowIndex(api)).toBe(0);
             expect(document.activeElement?.getAttribute('row-index')).toBe('0');
         });
