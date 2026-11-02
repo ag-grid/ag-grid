@@ -1505,7 +1505,7 @@ describe('setColumnWidths', () => {
         expect(['a', 'b'].map((id) => api.getColumn(id)!.getActualWidth())).toEqual([130, 100]);
     });
 
-    test("under colResizeDefault 'shift', a named column that is not resizable after a named one keeps its width, and the column after it takes its change", () => {
+    test("under colResizeDefault 'shift', a named column that is not resizable still joins a run of named columns, whose next column takes their change", () => {
         const api = gridsManager.createGrid('apiShiftNamedNotResizable', {
             columnDefs: [
                 { colId: 'a', width: 100 },
@@ -1516,11 +1516,12 @@ describe('setColumnWidths', () => {
         });
 
         api.setColumnWidths([
-            { key: 'a', newWidth: 130 },
+            { key: 'a', newWidth: 110 },
             { key: 'b', newWidth: 70 },
         ]);
 
-        expect(['a', 'b', 'c'].map((id) => api.getColumn(id)!.getActualWidth())).toEqual([130, 70, 130]);
+        // the run of `a` and `b` shrinks by 20px, which `c` takes
+        expect(['a', 'b', 'c'].map((id) => api.getColumn(id)!.getActualWidth())).toEqual([110, 70, 120]);
     });
 
     test("under colResizeDefault 'shift', adjacent columns a call names keep their widths, in any order, and the column after them takes their whole change", async () => {

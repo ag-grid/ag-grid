@@ -2,7 +2,7 @@ import { dispatchColumnResizedEvent } from '../columns/columnEventUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { AgColumn } from '../entities/agColumn';
-import { getShiftPair } from '../entities/agColumn';
+import { getShiftNext, getShiftPair } from '../entities/agColumn';
 import type { AgColumnGroup } from '../entities/agColumnGroup';
 import { getColGroupAfter } from '../entities/agColumnGroup';
 import type { ColKey } from '../entities/colDef';
@@ -61,8 +61,8 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
 
         named?.forEach((width, col) => {
             const before = visibleCols.getColBefore(col);
-            // a run of named shift pairs is pushed whole from its first, then the col after it takes their change
-            if (before && named.has(before) && getShiftPair(visibleCols, before) === col) {
+            // a run of adjacent named cols is pushed whole from its first, then the col after it takes their change
+            if (before && named.has(before)) {
                 return;
             }
             let change = 0;
@@ -72,10 +72,11 @@ export class ColumnResizeService extends BeanStub implements NamedBean {
                 columns.push(runCol);
                 widths.push(runWidth);
                 change += runWidth - runCol.actualWidth;
-                runCol = getShiftPair(visibleCols, runCol);
+                runCol = getShiftNext(visibleCols, runCol);
                 runWidth = runCol ? named.get(runCol) : undefined;
             }
-            if (runCol) {
+            // a named col is set whatever its `resizable`, which only the col taking the change must be
+            if (runCol?.isResizable()) {
                 columns.push(runCol);
                 widths.push(runCol.actualWidth - change);
             }

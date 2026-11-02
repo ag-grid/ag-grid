@@ -1220,9 +1220,13 @@ export const _laneOfPinned = (pinned: ColumnPinnedType): ColumnLane => {
     return pinned === 'left' || pinned === true ? 0 : 1;
 };
 
-/** The column a shift resize of `col` takes from, when resizable: a hidden one has none, though `getColAfter` answers the first. */
+/** The column after `col` in a shift resize: a hidden one has none, though `getColAfter` answers the first. */
+export const getShiftNext = (visibleCols: VisibleColsService, col: AgColumn): AgColumn | null =>
+    col.allColsIndex >= 0 ? visibleCols.getColAfter(col) : null;
+
+/** The column a shift resize of `col` takes from: the one after it, when resizable. */
 export const getShiftPair = (visibleCols: VisibleColsService, col: AgColumn): AgColumn | null => {
-    const next = col.allColsIndex >= 0 ? visibleCols.getColAfter(col) : null;
+    const next = getShiftNext(visibleCols, col);
     return next?.isResizable() ? next : null;
 };
 
