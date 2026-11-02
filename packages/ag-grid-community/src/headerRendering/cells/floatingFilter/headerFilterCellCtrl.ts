@@ -27,6 +27,11 @@ import { _refreshCssClasses } from '../cssClassApplier';
 import { _addPopupToggleButtonListeners } from '../popupToggleButton';
 import type { IHeaderFilterCellComp } from './iHeaderFilterCellComp';
 
+function isTextEditingElement(element: HTMLElement): boolean {
+    const { tagName } = element;
+    return tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT' || element.isContentEditable;
+}
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCellComp, AgColumn> {
     private eButtonShowMainFilter: HTMLElement;
@@ -221,6 +226,10 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
                     return;
                 }
                 _stopPropagationForAgGrid(e);
+                if (!isTextEditingElement(e.target as HTMLElement)) {
+                    // the header sits inside the scrolling viewport, which the browser would otherwise scroll
+                    e.preventDefault();
+                }
             // eslint-disable-next-line no-fallthrough
             case KeyCode.ENTER:
                 if (wrapperHasFocus) {
