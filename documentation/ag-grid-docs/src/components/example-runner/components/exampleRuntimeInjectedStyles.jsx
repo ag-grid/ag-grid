@@ -84,6 +84,8 @@ html[data-color-scheme='dark'] select:not(.ag-root-wrapper select, .ag-chart sel
     min-width: 36px;
     padding: 6px 36px 6px 12px;
     border-radius: 4px;
+    font-size: 1em;
+    color: var(--example-text-color);
     background-repeat: no-repeat;
     background-position: center right 4px;
     transition: background-color .25s ease-in-out;
