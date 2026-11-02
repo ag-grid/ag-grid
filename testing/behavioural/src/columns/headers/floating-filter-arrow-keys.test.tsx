@@ -7,6 +7,8 @@ import type { ColDef, GridApi, IFloatingFilterComp } from 'ag-grid-community';
 import { ClientSideRowModelModule, CustomFilterModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 
+import { dispatchKeyDown } from '../../navigation/navigation-test-utils';
+
 const ARROW_KEYS = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
 const BUTTON_SELECTOR = '.ag-floating-filter-button-button';
 const INPUT_SELECTOR = '.ag-floating-filter-input input';
@@ -40,17 +42,11 @@ const formInputsColumnDefs: ColDef[] = [
     },
 ];
 
-function pressKey(element: HTMLElement, key: string): KeyboardEvent {
-    element.focus();
-    const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
-    element.dispatchEvent(event);
-    return event;
-}
-
-function getElement(root: ParentNode, selector: string): HTMLElement {
+function focusElement(root: ParentNode, selector: string): void {
     const element = root.querySelector<HTMLElement>(selector);
     expect(element).not.toBeNull();
-    return element!;
+    element!.focus();
+    expect(document.activeElement).toBe(element);
 }
 
 describe('floating filter arrow keys do not scroll the grid viewport', () => {
@@ -71,31 +67,36 @@ describe('floating filter arrow keys do not scroll the grid viewport', () => {
     test.each(ARROW_KEYS)('%s on the floating filter button prevents the default scroll', async (key) => {
         const eGridDiv = await createGrid();
 
-        expect(pressKey(getElement(eGridDiv, BUTTON_SELECTOR), key).defaultPrevented).toBe(true);
+        focusElement(eGridDiv, BUTTON_SELECTOR);
+        expect(dispatchKeyDown(key).defaultPrevented).toBe(true);
     });
 
     test.each(ARROW_KEYS)('%s in the floating filter input keeps its default behaviour', async (key) => {
         const eGridDiv = await createGrid();
 
-        expect(pressKey(getElement(eGridDiv, INPUT_SELECTOR), key).defaultPrevented).toBe(false);
+        focusElement(eGridDiv, INPUT_SELECTOR);
+        expect(dispatchKeyDown(key).defaultPrevented).toBe(false);
     });
 
     test.each(ARROW_KEYS)('%s on a custom floating filter checkbox prevents the default scroll', async (key) => {
         const eGridDiv = await createGrid(formInputsColumnDefs);
 
-        expect(pressKey(getElement(eGridDiv, 'input[type="checkbox"]'), key).defaultPrevented).toBe(true);
+        focusElement(eGridDiv, 'input[type="checkbox"]');
+        expect(dispatchKeyDown(key).defaultPrevented).toBe(true);
     });
 
     test.each(ARROW_KEYS)('%s on a custom floating filter radio keeps its default behaviour', async (key) => {
         const eGridDiv = await createGrid(formInputsColumnDefs);
 
-        expect(pressKey(getElement(eGridDiv, 'input[type="radio"]'), key).defaultPrevented).toBe(false);
+        focusElement(eGridDiv, 'input[type="radio"]');
+        expect(dispatchKeyDown(key).defaultPrevented).toBe(false);
     });
 
     test.each(['ArrowUp', 'ArrowDown'])('%s in the number floating filter input keeps value stepping', async (key) => {
         const eGridDiv = await createGrid(numberColumnDefs);
 
-        expect(pressKey(getElement(eGridDiv, 'input[type="number"]'), key).defaultPrevented).toBe(false);
+        focusElement(eGridDiv, 'input[type="number"]');
+        expect(dispatchKeyDown(key).defaultPrevented).toBe(false);
     });
 });
 
@@ -115,12 +116,14 @@ describe('React floating filter arrow keys do not scroll the grid viewport', () 
     test.each(ARROW_KEYS)('%s on the floating filter button prevents the default scroll', async (key) => {
         const container = await renderGrid();
 
-        expect(pressKey(getElement(container, BUTTON_SELECTOR), key).defaultPrevented).toBe(true);
+        focusElement(container, BUTTON_SELECTOR);
+        expect(dispatchKeyDown(key).defaultPrevented).toBe(true);
     });
 
     test.each(ARROW_KEYS)('%s in the floating filter input keeps its default behaviour', async (key) => {
         const container = await renderGrid();
 
-        expect(pressKey(getElement(container, INPUT_SELECTOR), key).defaultPrevented).toBe(false);
+        focusElement(container, INPUT_SELECTOR);
+        expect(dispatchKeyDown(key).defaultPrevented).toBe(false);
     });
 });
