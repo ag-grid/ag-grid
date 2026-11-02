@@ -66,7 +66,6 @@ export class NavigationService extends BeanStub implements NamedBean {
         const key = event.key;
         const alt = event.altKey;
         const ctrl = event.ctrlKey || event.metaKey;
-        const rangeServiceShouldHandleShift = !!this.beans.rangeSvc && event.shiftKey;
 
         // home and end can be processed without knowing the currently selected cell, this can occur for full width rows.
         const currentCell: CellPosition | null = _getCellPositionForEvent(this.gos, event);
@@ -89,9 +88,7 @@ export class NavigationService extends BeanStub implements NamedBean {
                 if (!currentCell) {
                     return false;
                 }
-                // handle when ctrl is pressed only, if shift is pressed
-                // it will be handled by the rangeService
-                if (ctrl && !alt && !rangeServiceShouldHandleShift) {
+                if (this.isCtrlArrowJump(event)) {
                     this.onCtrlUpDownLeftRight(key, currentCell);
                     processed = true;
                 }
@@ -110,6 +107,15 @@ export class NavigationService extends BeanStub implements NamedBean {
         }
 
         return processed;
+    }
+
+    /** Whether an arrow key press should jump to the first / last row or column. */
+    public isCtrlArrowJump(event: KeyboardEvent): boolean {
+        const ctrl = event.ctrlKey || event.metaKey;
+        // with shift pressed, the rangeService extends the range instead
+        const rangeServiceShouldHandleShift = !!this.beans.rangeSvc && event.shiftKey;
+
+        return ctrl && !event.altKey && !rangeServiceShouldHandleShift;
     }
 
     private handlePageUpDown(key: string, currentCell: CellPosition | null, fromFullWidth: boolean): boolean {
@@ -696,21 +702,24 @@ export class NavigationService extends BeanStub implements NamedBean {
         event: KeyboardEvent | null,
         key: string,
         currentCell: CellPosition,
-        allowUserOverride: boolean
+        allowUserOverride: boolean,
+        ctrlJump = false
     ) {
         const isVertical = key === KeyCode.UP || key === KeyCode.DOWN;
         const currentCellWithoutSpan =
             isVertical && this.currentColumnWithoutSpan
                 ? { ...currentCell, column: this.currentColumnWithoutSpan }
                 : currentCell;
-
-        // we keep searching for a next cell until we find one. this is how the group rows get skipped
-        let nextCell: CellPosition | null = currentCellWithoutSpan;
-        let hitEdgeOfGrid = false;
         const beans = this.beans;
         const { cellNavigation, focusSvc, gos } = beans;
 
-        while (nextCell && (nextCell === currentCellWithoutSpan || !this.isValidNavigateCell(nextCell))) {
+        // we keep searching for a next cell until we find one. this is how the group rows get skipped
+        let nextCell: CellPosition | null = ctrlJump
+            ? cellNavigation!.getNextCellToFocus(key, currentCellWithoutSpan, true)
+            : currentCellWithoutSpan;
+        let hitEdgeOfGrid = false;
+
+        while (!ctrlJump && nextCell && (nextCell === currentCellWithoutSpan || !this.isValidNavigateCell(nextCell))) {
             // if the current cell is spanning across multiple columns, we need to move
             // our current position to be the last cell on the right before finding the
             // the next target.
