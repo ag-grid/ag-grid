@@ -66,10 +66,11 @@ function patchComposedPath(): void {
 
 /** The DOM spec's dispatch: leaving a shadow tree, the path ends at a host the `relatedTarget` retargets to. */
 function cutAtRelatedTarget(path: EventTarget[], relatedTarget: unknown): EventTarget[] {
-    let target = path[0];
-    if (!(relatedTarget instanceof Node) || !(target instanceof Node)) {
+    const firstTarget = path[0];
+    if (!(relatedTarget instanceof Node) || !(firstTarget instanceof Node)) {
         return path;
     }
+    let target: Node = firstTarget;
     for (let i = 1, len = path.length; i < len; ++i) {
         const parent = path[i];
         if (!(parent instanceof Node) || isShadowIncludingInclusiveAncestor(target.getRootNode(), parent)) {

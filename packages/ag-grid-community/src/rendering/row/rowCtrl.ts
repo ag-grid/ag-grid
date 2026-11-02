@@ -557,8 +557,8 @@ export class RowCtrl extends BeanStub<RowCtrlEvent> implements CompBeanOwner {
         return this.rowType !== 'Normal';
     }
 
-    /** Called by NormalRowFeature after refreshing cells */
-    public onNormalRowRefreshed(): void {
+    /** Called after refreshing cells or retaining a full width renderer. */
+    public onRowRefreshed(): void {
         // push only what changed: an unchanged value still re-renders a React row
         if (_escapeString(this.rowNode.id) !== this.rowId) {
             this.setRowCompRowId();

@@ -70,6 +70,7 @@ export class FullWidthRowFeature extends BeanStub implements IRowModeFeature {
             return;
         }
 
+        this.rowCtrl.onRowRefreshed();
         this.notesFeature?.refresh();
     }
 
