@@ -304,6 +304,40 @@ describe('cell ctrl lifecycle', () => {
         }
     );
 
+    test.each(['light', 'open', 'closed', 'nested closed'] as const)(
+        'in a %s grid, a focused cell removed while a focus trap around the grid caught focus stays unfocused once the user tabbed from the trap to an input beside it and left that input',
+        async (mode) => {
+            vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+            onTestFinished(() => {
+                vi.useRealTimers();
+            });
+            const { gridDiv, gridRoot } = mountGridDiv(mode);
+            const parent = gridDiv.parentNode!;
+            const trap = parent.appendChild(document.createElement('div'));
+            trap.tabIndex = -1;
+            trap.appendChild(gridDiv);
+            const input = parent.appendChild(document.createElement('input'));
+            const api = gridsManager.createGrid(gridDiv, {
+                columnDefs: [{ field: 'a' }, { field: 'b' }],
+                rowData: ROW_DATA,
+            });
+            await vi.advanceTimersByTimeAsync(0);
+            api.setFocusedCell(0, 'a');
+            await vi.advanceTimersByTimeAsync(0);
+            expect(gridRoot.activeElement).toBe(cellFor(api, 0, 'a'));
+            api.setColumnsVisible(['a'], false);
+            await vi.advanceTimersByTimeAsync(0);
+            trap.focus();
+            expect(gridRoot.activeElement).toBe(trap);
+
+            input.focus();
+            input.blur();
+            api.setColumnsVisible(['a'], true);
+            await vi.advanceTimersByTimeAsync(0);
+            expect(gridRoot.activeElement).toBe(gridRoot === document ? document.body : null);
+        }
+    );
+
     test.each(['open', 'nested'] as const)(
         'in a %s shadow root, a focused cell removed while holding focus stays unfocused after a press beside the grid in its root, its host stopping the press as it captures it',
         async (mode) => {

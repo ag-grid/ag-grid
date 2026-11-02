@@ -55,7 +55,7 @@ interface OwedFocus {
     readonly header: AbstractHeaderCellCtrl | undefined;
     readonly event: CellFocusedEvent | undefined;
     readonly activeAtOwed: Element | null;
-    /** the shadow roots enclosing the grid, listened on for presses their hosts hide from the document */
+    /** the shadow roots enclosing the grid, listened on for presses and focus moves the document cannot see */
     readonly shadowRoots: readonly ShadowRoot[];
 }
 
@@ -144,6 +144,7 @@ export class FocusService extends BeanStub implements NamedBean {
                 root = root.host.getRootNode()
             ) {
                 root.addEventListener('pointerdown', this.onActionWhileFocusOwed, true);
+                root.addEventListener('focusin', this.onActionWhileFocusOwed, true);
                 roots.push(root);
             }
             shadowRoots = roots;
@@ -184,7 +185,9 @@ export class FocusService extends BeanStub implements NamedBean {
         doc.removeEventListener('focusin', this.onActionWhileFocusOwed, true);
         const shadowRoots = owed.shadowRoots;
         for (let i = 0, len = shadowRoots.length; i < len; ++i) {
-            shadowRoots[i].removeEventListener('pointerdown', this.onActionWhileFocusOwed, true);
+            const root = shadowRoots[i];
+            root.removeEventListener('pointerdown', this.onActionWhileFocusOwed, true);
+            root.removeEventListener('focusin', this.onActionWhileFocusOwed, true);
         }
     }
 

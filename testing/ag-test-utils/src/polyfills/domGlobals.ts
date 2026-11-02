@@ -48,20 +48,49 @@ function patchShadowRootActiveElement(): void {
     });
 }
 
-/** happy-dom's `Event.composedPath` lists closed shadow trees' nodes to listeners outside them; a browser hides them. */
+/** happy-dom's `Event.composedPath` ignores closed shadow roots and `relatedTarget`, which a browser's path obeys. */
 function patchComposedPath(): void {
     const proto = Event.prototype;
     const read = proto.composedPath;
     proto.composedPath = function (this: Event): EventTarget[] {
-        const path = read.call(this);
+        const path = cutAtRelatedTarget(read.call(this), 'relatedTarget' in this ? this.relatedTarget : null);
         const current = this.currentTarget;
-        // happy-dom's own dispatch reads the whole path before any listener runs
+        // happy-dom's own dispatch reads the path before any listener runs, and dispatches along it
         if (!current) {
             return path;
         }
         const listener = current instanceof Node ? current : document;
         return path.filter((target) => !(target instanceof Node) || !isClosedShadowHidden(target, listener));
     };
+}
+
+/** The DOM spec's dispatch: leaving a shadow tree, the path ends at a host the `relatedTarget` retargets to. */
+function cutAtRelatedTarget(path: EventTarget[], relatedTarget: unknown): EventTarget[] {
+    let target = path[0];
+    if (!(relatedTarget instanceof Node) || !(target instanceof Node)) {
+        return path;
+    }
+    for (let i = 1, len = path.length; i < len; ++i) {
+        const parent = path[i];
+        if (!(parent instanceof Node) || isShadowIncludingInclusiveAncestor(target.getRootNode(), parent)) {
+            continue;
+        }
+        if (retarget(relatedTarget, parent) === parent) {
+            return path.slice(0, i);
+        }
+        target = parent;
+    }
+    return path;
+}
+
+/** The DOM spec's "retarget": `node` as `against` sees it, the host of each shadow tree `against` is outside of. */
+function retarget(node: Node, against: Node): Node {
+    let root = node.getRootNode();
+    while (root instanceof ShadowRoot && !isShadowIncludingInclusiveAncestor(root, against)) {
+        node = root.host;
+        root = node.getRootNode();
+    }
+    return node;
 }
 
 /** The DOM spec's "closed-shadow-hidden": `node` sits in a closed shadow tree `from` is outside of. */
