@@ -23,6 +23,8 @@ lerna-debug.log
 npm-debug.log
 node_modules
 .scannerwork
+.scannerwork-*
+sonar*.log
 package-lock.json
 release*.zip
 archive*.zip
