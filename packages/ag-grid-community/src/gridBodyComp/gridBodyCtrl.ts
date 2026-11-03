@@ -95,9 +95,8 @@ export class GridBodyCtrl extends BeanStub {
 
     private columnWidthAnimationDepth = 0;
     private rowResizing = false;
-    /** Counts the pauses, so only the latest one brings the row animation back. */
-    private rowAnimationPauses = 0;
-    private rowAnimationPaused = false;
+    /** The latest pause, as only it brings the row animation back. */
+    private rowAnimationPause: object | null = null;
     private columnWidthAnimationTimeout: number | undefined;
 
     public setComp(
@@ -217,17 +216,15 @@ export class GridBodyCtrl extends BeanStub {
 
     /** Stops rows animating to their new positions until they have been painted there. */
     public pauseRowAnimation(): void {
-        const pause = ++this.rowAnimationPauses;
-        if (!this.rowAnimationPaused) {
-            this.rowAnimationPaused = true;
-            this.updatePreventRowAnimation();
-        }
+        const pause = {};
+        this.rowAnimationPause = pause;
+        this.updatePreventRowAnimation();
         // two frames, so the browser has applied the new positions before the transitions come back, counted from the
         // latest pause, as each update moves the rows again
         _requestAnimationFrame(this.beans, () =>
             _requestAnimationFrame(this.beans, () => {
-                if (this.isAlive() && pause === this.rowAnimationPauses) {
-                    this.rowAnimationPaused = false;
+                if (this.isAlive() && pause === this.rowAnimationPause) {
+                    this.rowAnimationPause = null;
                     this.updatePreventRowAnimation();
                 }
             })
@@ -235,7 +232,7 @@ export class GridBodyCtrl extends BeanStub {
     }
 
     private updatePreventRowAnimation(): void {
-        this.comp.setPreventRowAnimationCssOnContainers(this.rowResizing || this.rowAnimationPaused);
+        this.comp.setPreventRowAnimationCssOnContainers(this.rowResizing || !!this.rowAnimationPause);
     }
 
     private onGridColumnsChanged(): void {

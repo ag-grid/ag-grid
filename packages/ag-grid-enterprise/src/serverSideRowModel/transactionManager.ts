@@ -2,7 +2,6 @@ import type {
     BeanCollection,
     IServerSideTransactionManager,
     NamedBean,
-    RowRenderer,
     ServerSideTransaction,
     ServerSideTransactionResult,
     ValueCache,
@@ -21,13 +20,11 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
     beanName = 'ssrmTxnManager' as const;
 
     private valueCache?: ValueCache;
-    private rowRenderer: RowRenderer;
     private serverSideRowModel: ServerSideRowModel;
     private selectionSvc?: ServerSideSelectionService;
 
     public wireBeans(beans: BeanCollection): void {
         this.valueCache = beans.valueCache;
-        this.rowRenderer = beans.rowRenderer;
         this.serverSideRowModel = beans.rowModel as ServerSideRowModel;
         this.selectionSvc = beans.selectionSvc as ServerSideSelectionService;
     }
@@ -56,7 +53,7 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
         if (!this.asyncTransactions) {
             return;
         }
-        this.rowRenderer.maintainRowsInView(() => this.applyAsyncTransactions());
+        this.beans.rowRenderer.maintainRowsInView(() => this.applyAsyncTransactions());
     }
 
     private applyAsyncTransactions(): void {
@@ -131,7 +128,7 @@ export class TransactionManager extends BeanStub implements NamedBean, IServerSi
     }
 
     public applyTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined {
-        return this.rowRenderer.maintainRowsInView(() => this.applySyncTransaction(transaction));
+        return this.beans.rowRenderer.maintainRowsInView(() => this.applySyncTransaction(transaction));
     }
 
     private applySyncTransaction(transaction: ServerSideTransaction): ServerSideTransactionResult | undefined {

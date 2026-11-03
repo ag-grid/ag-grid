@@ -795,7 +795,7 @@ export class RowRenderer extends BeanStub implements NamedBean {
         } finally {
             this.rowsInViewAnchor = null;
             this.followRows = null;
-            const rowAutoHeight = this.beans.rowAutoHeight;
+            const rowAutoHeight = beans.rowAutoHeight;
             if (anchor && rowAutoHeight?.active) {
                 this.rowsInViewAnchorForHeights = anchor;
                 rowAutoHeight.requestCheckAutoHeight(); // so the anchor expires even if no height changes
@@ -805,27 +805,26 @@ export class RowRenderer extends BeanStub implements NamedBean {
 
     /** Runs a change of auto heights that redraws synchronously, keeping the rows in view where the data update left them. */
     public maintainRowsInViewForHeights(update: () => void): void {
-        const anchor = this.rowsInViewAnchorForHeights;
-        if (!anchor || this.rowsInViewAnchor) {
-            update();
-            return;
+        const anchor = this.rowsInViewAnchor ? null : this.rowsInViewAnchorForHeights;
+        if (anchor) {
+            // read the viewport itself, as a debounced scroll elsewhere may not have been handled yet
+            const scrollFeature = this.ctrlsSvc.getScrollFeature();
+            scrollFeature.invalidateVerticalScroll();
+            if (
+                this.gos.get('maintainRowsInViewOnDataUpdate') &&
+                scrollFeature.getVScrollPosition().top === anchor.scrollTop
+            ) {
+                this.rowsInViewAnchor = anchor;
+            } else {
+                this.rowsInViewAnchorForHeights = null;
+            }
         }
-        // read the viewport itself, as a debounced scroll elsewhere may not have been handled yet
-        const scrollFeature = this.ctrlsSvc.getScrollFeature();
-        scrollFeature.invalidateVerticalScroll();
-        if (
-            !this.gos.get('maintainRowsInViewOnDataUpdate') ||
-            scrollFeature.getVScrollPosition().top !== anchor.scrollTop
-        ) {
-            this.rowsInViewAnchorForHeights = null;
-            update();
-            return;
-        }
-        this.rowsInViewAnchor = anchor;
         try {
             update();
         } finally {
-            this.rowsInViewAnchor = null;
+            if (anchor) {
+                this.rowsInViewAnchor = null;
+            }
         }
     }
 

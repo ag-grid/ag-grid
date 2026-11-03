@@ -109,19 +109,14 @@ export function _recordRemovedRow(anchor: RowsInViewAnchor, rowNode: RowNode): v
     if (rowTop != null && rowHeight != null && rowTop <= firstVisiblePixel) {
         removed.push([rowTop, rowTop + rowHeight]);
     }
-    const storeRange = getStoreRange(rowNode);
-    if (storeRange && storeRange[0] < firstVisiblePixel) {
-        removed.push([storeRange[0], Math.min(storeRange[1], firstVisiblePixel)]);
+    // a server-side group's store covers its rows that are not loaded, which have no row nodes
+    const childStore = rowNode.childStore;
+    if (childStore?.getDisplayIndexStart() != null) {
+        const { topPx, heightPx } = childStore.getStoreBounds();
+        if (topPx < firstVisiblePixel) {
+            removed.push([topPx, Math.min(topPx + heightPx, firstVisiblePixel)]);
+        }
     }
-}
-
-/** The pixel range of a server-side group's rows, counting those not loaded, which have no row nodes. */
-function getStoreRange({ childStore }: RowNode): [top: number, bottom: number] | null {
-    if (childStore?.getDisplayIndexStart() == null) {
-        return null;
-    }
-    const { topPx, heightPx } = childStore.getStoreBounds();
-    return [topPx, topPx + heightPx];
 }
 
 /** The height of the rows the update removed from above the first visible pixel, counting overlapping ranges once. */
@@ -260,11 +255,9 @@ export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnch
         : getScrollTopForRowsInView(beans, anchor);
     // the capture read the viewport, and setting the position invalidates the cache, so the cache is current here
     const previousScrollTop = scrollFeature.getVScrollPosition().top;
-    anchor.scrollTop = previousScrollTop;
-    if (scrollTop === previousScrollTop) {
-        return false;
+    if (scrollTop !== previousScrollTop) {
+        scrollFeature.setVerticalScrollPosition(scrollTop);
     }
-    scrollFeature.setVerticalScrollPosition(scrollTop);
     anchor.scrollTop = scrollFeature.getVScrollPosition().top;
     // false when the viewport cannot scroll that far, so the caller stops retrying
     return anchor.scrollTop !== previousScrollTop;
