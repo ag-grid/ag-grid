@@ -1,6 +1,8 @@
 import type {
     AgAreaSeriesOptions,
     AgAxisLabelFormatterParams,
+    AgBaseCartesianThemeOptions,
+    AgCartesianAxisLabelOptions,
     AgCartesianAxisOptions,
     AgCartesianAxisPosition,
     AgCartesianAxisType,
@@ -10,7 +12,6 @@ import type {
     AgChartThemeName,
     AgChartThemeOverrides,
     AgLineSeriesOptions,
-    AgNumberAxisThemeOptions,
     AgRangeBarSeriesThemeableOptions,
 } from 'ag-charts-types';
 import { _parseDateTimeFromString } from 'ag-stack';
@@ -27,47 +28,69 @@ function formatNormalisedValueAxisLabel({ value, source }: AgAxisLabelFormatterP
     return source === 'tooltip' || source === 'series-label' ? undefined : Math.round(value) + '%';
 }
 
+type CartesianSeriesType =
+    | 'area'
+    | 'bar'
+    | 'histogram'
+    | 'line'
+    | 'scatter'
+    | 'bubble'
+    | 'waterfall'
+    | 'box-plot'
+    | 'range-area'
+    | 'range-bar';
+
 /** A theme as `createAgChartTheme` builds it: each layer of overrides nests the layers below it as its `baseTheme`. */
 type NestedChartTheme = Omit<AgChartTheme, 'baseTheme'> & { baseTheme?: AgChartThemeName | NestedChartTheme };
 
-type NumberAxisThemeOverrides = { axes?: { number?: AgNumberAxisThemeOptions } };
+/** The overrides of each layer of the theme, highest precedence first. */
+function getThemeOverrideLayers(theme: AgCartesianChartOptions['theme']): AgChartThemeOverrides[] {
+    const layers: AgChartThemeOverrides[] = [];
+    let layer = theme as NestedChartTheme['baseTheme'];
+    while (layer != null && typeof layer === 'object') {
+        if (layer.overrides) {
+            layers.push(layer.overrides);
+        }
+        layer = layer.baseTheme;
+    }
+    return layers;
+}
 
-/**
- * Whether any layer of the theme sets a label formatter for the number axis, under the series type or `common`,
- * either for every position or for the given one.
- */
-function hasThemeValueAxisLabelFormatter(
-    theme: AgCartesianChartOptions['theme'],
-    seriesType: keyof AgChartThemeOverrides,
+function hasLabelFormat(label: AgCartesianAxisLabelOptions | undefined): boolean {
+    return label?.formatter != null || label?.format != null;
+}
+
+function hasNumberAxisLabelFormat(
+    overrides: Pick<AgBaseCartesianThemeOptions, 'axes'> | undefined,
     position: AgCartesianAxisPosition | undefined
 ): boolean {
-    let layer = theme as NestedChartTheme['baseTheme'];
-    while (typeof layer === 'object') {
-        const overrides = layer.overrides;
-        layer = layer.baseTheme;
-        for (const typeOverrides of [overrides?.[seriesType], overrides?.common] as NumberAxisThemeOverrides[]) {
-            const numberAxis = typeOverrides?.axes?.number;
-            if (numberAxis?.label?.formatter || (position && numberAxis?.[position]?.label?.formatter)) {
-                return true;
-            }
+    const numberAxis = overrides?.axes?.number;
+    return hasLabelFormat(numberAxis?.label) || (position != null && hasLabelFormat(numberAxis?.[position]?.label));
+}
+
+/** Whether any layer of the theme formats the number axis labels at `position`, under the series type or `common`. */
+function hasThemeValueAxisLabelFormat(
+    theme: AgCartesianChartOptions['theme'],
+    seriesType: CartesianSeriesType,
+    position: AgCartesianAxisPosition | undefined
+): boolean {
+    const layers = getThemeOverrideLayers(theme);
+    for (let i = 0, len = layers.length; i < len; ++i) {
+        const overrides = layers[i];
+        if (
+            hasNumberAxisLabelFormat(overrides[seriesType], position) ||
+            hasNumberAxisLabelFormat(overrides.common, position)
+        ) {
+            return true;
         }
     }
     return false;
 }
 
-export abstract class CartesianChartProxy<
-    TSeries extends
-        | 'area'
-        | 'bar'
-        | 'histogram'
-        | 'line'
-        | 'scatter'
-        | 'bubble'
-        | 'waterfall'
-        | 'box-plot'
-        | 'range-area'
-        | 'range-bar',
-> extends ChartProxy<AgCartesianChartOptions, TSeries> {
+export abstract class CartesianChartProxy<TSeries extends CartesianSeriesType> extends ChartProxy<
+    AgCartesianChartOptions,
+    TSeries
+> {
     protected crossFilteringAllPoints = new Set<string>();
     protected crossFilteringSelectedPoints: string[] = [];
     protected isSingleSeries: boolean = false;
@@ -97,7 +120,7 @@ export abstract class CartesianChartProxy<
         valueAxis: AgCartesianAxisOptions,
         commonChartOptions: AgCartesianChartOptions
     ): void {
-        if (hasThemeValueAxisLabelFormatter(commonChartOptions.theme, this.standaloneChartType, valueAxis.position)) {
+        if (hasThemeValueAxisLabelFormat(commonChartOptions.theme, this.standaloneChartType, valueAxis.position)) {
             return;
         }
         valueAxis.label = { ...valueAxis.label, formatter: formatNormalisedValueAxisLabel };
@@ -272,20 +295,15 @@ export abstract class CartesianChartProxy<
         if (seriesType !== 'waterfall' && seriesType !== 'box-plot' && seriesType !== 'range-bar') {
             return false;
         }
-        const theme = commonChartOptions.theme;
-        const isHorizontal = (theme?: AgChartTheme | AgChartThemeName): boolean => {
-            const direction = (
-                (theme as AgChartTheme)?.overrides?.[seriesType]?.series as AgRangeBarSeriesThemeableOptions
-            )?.direction;
+        const layers = getThemeOverrideLayers(commonChartOptions.theme);
+        for (let i = 0, len = layers.length; i < len; ++i) {
+            const series = layers[i][seriesType]?.series as AgRangeBarSeriesThemeableOptions | undefined;
+            const direction = series?.direction;
             if (direction != null) {
                 return direction === 'horizontal';
             }
-            if (typeof (theme as AgChartTheme)?.baseTheme === 'object') {
-                return isHorizontal((theme as AgChartTheme).baseTheme as any);
-            }
-            return false;
-        };
-        return isHorizontal(theme);
+        }
+        return false;
     }
 
     protected override getSeriesChartThemeDefaults(): AgChartThemeOverrides[TSeries] {

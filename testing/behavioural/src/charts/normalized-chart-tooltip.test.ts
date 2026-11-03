@@ -49,10 +49,14 @@ describe('normalized (100% stacked) integrated charts', () => {
     }
 
     // Processed options re-key a horizontal chart's axes by direction, so find the value axis by type.
-    function formatValueAxisLabel(chartRef: ChartRef, value: number, source: AgAxisLabelFormatterParams['source']) {
+    function getValueAxisLabel(chartRef: ChartRef) {
         const { axes } = deproxy(chartRef.chart).chartOptions.processedOptions as AgCartesianChartOptions;
         const valueAxis = Object.values(axes!).find((axis) => axis?.type === 'number') as AgNumberAxisOptions;
-        const formatter = valueAxis.label!.formatter!;
+        return valueAxis.label!;
+    }
+
+    function formatValueAxisLabel(chartRef: ChartRef, value: number, source: AgAxisLabelFormatterParams['source']) {
+        const formatter = getValueAxisLabel(chartRef).formatter!;
         return formatter({ type: 'number', value, index: 0, domain: [0, 100], boundSeries: [], source });
     }
 
@@ -110,5 +114,31 @@ describe('normalized (100% stacked) integrated charts', () => {
         const chartRef = await createChart(chartType, gridOptions);
 
         expect(formatValueAxisLabel(chartRef, 40, 'axis-label')).toBe('40 pts');
+    });
+
+    test('a theme value axis label format string replaces the percentage', async () => {
+        const chartThemeOverrides: AgChartThemeOverrides = {
+            common: { axes: { number: { label: { format: '#{.1f} pts' } } } },
+        };
+        const chartRef = await createChart('normalizedColumn', { chartThemeOverrides });
+
+        const label = getValueAxisLabel(chartRef);
+        expect(label.format).toBe('#{.1f} pts');
+        expect(label.formatter).toBeUndefined();
+    });
+
+    test.each<{ name: string; chartThemeOverrides: AgChartThemeOverrides }>([
+        {
+            name: 'a formatter for the other axis position',
+            chartThemeOverrides: { common: { axes: { number: { left: { label: ptsFormatter } } } } },
+        },
+        {
+            name: 'the global formatter',
+            chartThemeOverrides: { common: { formatter: ({ value }) => `${value} pts` } },
+        },
+    ])('the value axis keeps the percentage with $name', async ({ chartThemeOverrides }) => {
+        const chartRef = await createChart('normalizedBar', { chartThemeOverrides });
+
+        expect(formatValueAxisLabel(chartRef, 40, 'axis-label')).toBe('40%');
     });
 });
