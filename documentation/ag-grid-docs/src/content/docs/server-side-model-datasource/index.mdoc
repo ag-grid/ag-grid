@@ -63,6 +63,8 @@ fetch data from the server.
 
 Rows fetched from the server are supplied to the grid via `params.success({ rowData: rows })`.
 
+Settle each request with exactly one call to either `params.success()` or `params.fail()`. Later calls for the same request are ignored and log a warning.
+
 ## Registering the Datasource
 
 The datasource is registered with the grid via either a) the grid property `serverSideDatasource` or b) the grid API.

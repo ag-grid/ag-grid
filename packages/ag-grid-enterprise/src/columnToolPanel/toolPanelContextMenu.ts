@@ -21,6 +21,7 @@ import { MENU_ITEM_SEPARATOR, _normaliseSeparators } from '../menu/menuSeparator
 import { getGroupingLocaleText, isRowGroupColLocked } from '../rowGrouping/rowGroupingUtils';
 import { _showMenuListPopup } from '../widgets/menuPopupUtils';
 import type { ToolPanelColumnMove } from './columnMoveUtils';
+import { isMoveBlocked } from './columnMoveUtils';
 import { isDeferredMode, refreshDeferredToolPanelUi } from './toolPanelDeferredUiUtils';
 import type { ColumnStateUpdateParams } from './updates/columnStateUpdateTypes';
 
@@ -89,7 +90,7 @@ export class ToolPanelContextMenu extends Component {
             colOrGroupDef = column.colDef;
         }
 
-        // Read-only functions retain navigation but omit movement and grouping actions.
+        // Read-only functions omit grouping, aggregation and pivot actions.
         const functionsReadOnly = gos.get('functionsReadOnly');
         let defaultItems: (DefaultToolPanelItem | 'separator')[];
         if (!this.isActive()) {
@@ -145,7 +146,7 @@ export class ToolPanelContextMenu extends Component {
             if (item === 'moveUp' || item === 'moveDown') {
                 const isUp = item === 'moveUp';
                 if (!this.isMoveSuppressed()) {
-                    const isDisabled = () => this.gos.get('functionsReadOnly') || !this.columnMove?.canMove(isUp);
+                    const isDisabled = () => !this.columnMove?.canMove(isUp);
                     expanded.push({
                         name: this.getLocaleTextFunc()(item, isUp ? 'Move Up' : 'Move Down'),
                         icon: _createIconNoSpan(isUp ? 'menuMoveUp' : 'menuMoveDown', this.beans, column),
@@ -370,13 +371,7 @@ export class ToolPanelContextMenu extends Component {
     }
 
     private isMoveSuppressed(): boolean {
-        const colMoves = this.beans.colMoves;
-        return (
-            this.gos.get('functionsReadOnly') ||
-            !this.columnMove ||
-            !colMoves ||
-            colMoves.isMovingSuppressed(this.columns)
-        );
+        return !this.columnMove || isMoveBlocked(this.beans, this.columns, this.params);
     }
 
     private getDefaultTokens(): (DefaultToolPanelItem | 'separator')[] {

@@ -9,6 +9,7 @@ export type {
     _AggregationGridApi,
     _AiToolkitGridApi,
     _BatchEditApi,
+    _CalculatedColumnsGridApi,
     _CellSelectionGridApi,
     _ClientSideRowModelGridApi,
     _ClipboardGridApi,
@@ -138,6 +139,7 @@ export { BaseGridSerializingSession } from './export/baseGridSerializingSession'
 
 export {
     _getFilterModel,
+    _isFilterCompActive,
     _refreshFilterUi,
     _refreshHandlerAndUi,
     _updateFilterModel,

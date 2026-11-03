@@ -33,7 +33,11 @@ export type {
 } from './interfaces/agComponent';
 export type { AgCoreBean, AgSingletonBean } from './interfaces/agCoreBean';
 export type { AgCoreBeanCollection } from './interfaces/agCoreBeanCollection';
-export type { AgFrameworkOverrides, FrameworkOverridesIncomingSource } from './interfaces/agFrameworkOverrides';
+export type {
+    AgFrameworkOverrides,
+    AgListenerWrapper,
+    FrameworkOverridesIncomingSource,
+} from './interfaces/agFrameworkOverrides';
 export type { AgCheckboxChangedEvent, AgStylesChangedEvent, BaseEvents } from './interfaces/baseEvents';
 export type { BaseProperties } from './interfaces/baseProperties';
 export type { AfterGuiAttachedParams } from './interfaces/iAfterGuiAttachedParams';
@@ -137,6 +141,7 @@ export {
     _setAriaMultiSelectable,
     _setAriaOrientation,
     _setAriaPosInSet,
+    _setAriaPressed,
     _setAriaReadOnly,
     _setAriaRole,
     _setAriaRowCount,
@@ -180,7 +185,9 @@ export {
 } from './utils/date';
 export {
     _getActiveDomElement,
+    _getDeepActiveElement,
     _getDocument,
+    _getElementRootNode,
     _getPageBody,
     _getRootNode,
     _getWindow,

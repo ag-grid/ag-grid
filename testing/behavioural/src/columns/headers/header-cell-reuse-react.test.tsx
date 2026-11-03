@@ -206,6 +206,43 @@ describe('React header cell reuse', () => {
         await waitFor(() => expect(document.activeElement).toBe(header()));
     });
 
+    it('a header asked for focus before it mounts leaves focus moved between two inputs of another component', async () => {
+        const apiRef: { current?: GridApi } = {};
+        render(
+            <React.StrictMode>
+                <AgGridReact
+                    rowData={rowData}
+                    columnDefs={columnDefs}
+                    modules={[AllCommunityModule]}
+                    onGridReady={(e: GridReadyEvent) => {
+                        apiRef.current = e.api;
+                    }}
+                />
+            </React.StrictMode>
+        );
+        const header = () => document.querySelector('.ag-header-cell[col-id="c2"]');
+        await waitFor(() => expect(screen.queryAllByRole('columnheader').length).toBe(ids.length));
+        const widget = document.body.appendChild(document.createElement('div'));
+        onTestFinished(() => widget.remove());
+        const widgetRoot = widget.attachShadow({ mode: 'open' });
+        const first = widgetRoot.appendChild(document.createElement('input'));
+        const second = widgetRoot.appendChild(document.createElement('input'));
+
+        act(() => apiRef.current!.setColumnsVisible(['c2'], false));
+        await waitFor(() => expect(header()).toBeNull());
+        first.focus();
+        act(() => {
+            apiRef.current!.setColumnsVisible(['c2'], true);
+            apiRef.current!.setFocusedHeader('c2');
+            second.focus();
+        });
+        await waitFor(() => expect(header()).not.toBeNull());
+        await act(async () => {
+            await asyncSetTimeout(0);
+        });
+        expect(widgetRoot.activeElement).toBe(second);
+    });
+
     it('of headers and cells asked for focus before they mount, the one asked last takes it', async () => {
         const apiRef: { current?: GridApi } = {};
         render(

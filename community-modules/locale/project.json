@@ -125,12 +125,7 @@
         }
       }
     },
-    "lint": {
-      "command": "eslint",
-      "options": {
-        "cwd": "{projectRoot}"
-      }
-    },
+    "lint": {},
     "test": {
       "command": "npx vitest run --config vitest.config.ts",
       "dependsOn": ["build:test"],

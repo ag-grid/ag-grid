@@ -780,6 +780,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaRowSelect: 'Притисните SPACE да изаберете овај ред',
     ariaRowSelectionDisabled: 'Избор реда је онемогућен за овај ред',
     ariaSearch: 'Претрага',
+    ariaSortPriority: 'Приоритет сортирања ${priority} од ${count}',
     ariaSortableColumn: 'Притисните ENTER за сортирање',
     ariaSortableColumnWithCellSelection: 'Притисните ALT ENTER за сортирање',
     ariaToggleVisibility: 'Притисните SPACE да промените видљивост',
@@ -816,6 +817,12 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'апсолутно опадајуће',
 
     ariaLabelDialog: 'Дијалог',
+
+    ariaLabelClose: 'Затвори',
+
+    ariaLabelMaximize: 'Максимизуј',
+
+    ariaLabelRestore: 'Врати',
 
     ariaLabelColumnMenu: 'Мени колоне',
     ariaLabelColumnFilter: 'Филтер колоне',

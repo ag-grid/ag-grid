@@ -2,6 +2,14 @@
 export type FrameworkOverridesIncomingSource = 'resize-observer' | 'ensureVisible' | 'popupPositioning';
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface AgListenerWrapper {
+    /** The listener to register for `userListener`, the same one until `unwrap`. */
+    wrap<T extends (e: any) => void>(eventType: string, userListener: T, async?: boolean): T;
+    /** The listener `wrap` returned for `userListener`, to remove; `userListener` itself when it was not wrapped. */
+    unwrap<T extends (e: any) => void>(eventType: string, userListener: T, async?: boolean): T;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface AgFrameworkOverrides {
     /**
      * This method is to cater for Angular's change detection.

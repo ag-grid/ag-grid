@@ -2,8 +2,8 @@ import type { ColumnTreeBuild } from '../columns/buildColumnTree';
 import type { ColumnState } from '../columns/columnStateUtils';
 import type { Bean } from '../context/bean';
 import type { AgColumn } from '../entities/agColumn';
-import type { ColDef } from '../entities/colDef';
-import type { CalculatedColumnValidationState, ColumnEventType } from '../events';
+import type { ColDef, ColKey } from '../entities/colDef';
+import type { CalculatedColumnExpressionValidation, ColumnEventType } from '../events';
 import type { Column } from './iColumn';
 import type { AgGridCommon } from './iCommon';
 import type { HeaderPosition } from './iHeaderPosition';
@@ -26,13 +26,13 @@ export interface CalculatedColumnProcessColDefParams<TData = any, TContext = any
      * from no column, or when that column is gone. A column restored from Grid State is not tied to the column it was
      * added from: it gets the last column of its group, or `null` if it is not in a group.
      */
-    sourceColumn: Column<TData> | null;
+    sourceColumn: Column | null;
     /**
-     * Whether `colDef.calculatedExpression` is currently valid: `'valid'`, `'unknownReference'` (it references a
-     * column that does not exist) or `'invalidExpression'` (it failed to parse). An empty expression is `'valid'`.
-     * While the Calculated Column dialog is open in `'live'` apply mode, the expression may be incomplete.
+     * Validation of `colDef.calculatedExpression`, including syntax, direct column references and saved dialog
+     * rejections from `getValidationErrors` or `isColumnReferenceable`. Does not rerun application callbacks or
+     * check row-specific evaluation errors. In `'live'` apply mode, the expression may be incomplete.
      */
-    validationState: CalculatedColumnValidationState;
+    expressionValidation: CalculatedColumnExpressionValidation;
 }
 
 export interface IsColumnReferenceableParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
@@ -49,6 +49,13 @@ export interface IsColumnReferenceableParams<TData = any, TContext = any> extend
     sourceColumn: Column | null;
 }
 
+/** Errors for individual Calculated Column dialog fields. Omitted fields and empty arrays are valid. */
+export interface CalculatedColumnValidationErrors {
+    headerName?: string[];
+    cellDataType?: string[];
+    calculatedExpression?: string[];
+}
+
 export interface CalculatedColumnValidationParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** A copy of the draft definition, with recognised references converted to stored `[colId]` references. */
     colDef: CalculatedColumnDef<TData>;
@@ -60,9 +67,14 @@ export interface CalculatedColumnValidationParams<TData = any, TContext = any> e
      */
     referencedColumns: readonly Column[];
     /** Built-in validation errors, or `null`. Include these in the callback result to retain built-in validation. */
-    internalErrors: string[] | null;
+    internalErrors: CalculatedColumnValidationErrors | null;
     /** The calculated column, or `null` when adding a column in deferred mode. */
     column: Column | null;
+    /**
+     * The column whose menu initiated Add Calculated Column. Only provided while adding a column, in either apply
+     * mode. `null` when editing an existing column or when there is no source column.
+     */
+    sourceColumn: Column | null;
 }
 
 export interface CalculatedColumnsOptions<TData = any, TContext = any> {
@@ -82,19 +94,24 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
      * Called when the dialog opens. Does not restrict programmatic `calculatedExpression` values.
      * Existing expressions can be kept unchanged; expression edits are checked against the restriction.
      * Live edits with restricted references are saved with an error and do not evaluate until corrected.
+     * `api.refreshCalculatedColumns()` explicitly rechecks existing expressions against this rule.
      */
     isColumnReferenceable?: (params: IsColumnReferenceableParams<TData, TContext>) => boolean;
     /**
-     * Synchronous validation for expressions entered in the dialog, including expressions with built-in errors.
+     * Synchronous validation for the dialog's title, type and expression, including drafts with built-in errors.
      * Receives `internalErrors`; the returned messages replace built-in validation feedback.
      * Column restrictions from `isColumnReferenceable` remain enforced.
-     * Return error messages to reject the expression, or `null` / an empty array to accept it.
-     * Deferred mode blocks Apply; live mode saves rejected expressions with an error and prevents evaluation.
+     * Return messages keyed by field to reject its value; `null`, omitted fields and empty arrays accept it.
+     * Deferred mode blocks Apply for any error. Live mode retains the committed title/type when rejected,
+     * while accepted fields still apply. Rejected expressions are saved with an error and do not evaluate.
      * Unlike `isColumnReferenceable`, unchanged expressions are revalidated on title/type edits and deferred Apply.
-     * In live mode, a title/type edit can therefore block a previously accepted expression.
-     * Not called during cell evaluation, for programmatic definitions, or when restoring state.
+     * Opening an editable live dialog also revalidates the expression, saving new rejections or clearing resolved ones.
+     * Not called during cell evaluation, when setting definitions, or when restoring state.
+     * Call `api.refreshCalculatedColumns()` to explicitly revalidate committed expressions.
      */
-    getValidationErrors?: (params: CalculatedColumnValidationParams<TData, TContext>) => string[] | null;
+    getValidationErrors?: (
+        params: CalculatedColumnValidationParams<TData, TContext>
+    ) => CalculatedColumnValidationErrors | null;
     /**
      * Suppress highlighting the calculated column currently being edited by the dialog.
      * @default false
@@ -119,12 +136,17 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
      * `columnDefs`.
      *
      * Called every time the column is built. Return the full Column Definition to use; returning `params.colDef`
-     * or `undefined` leaves the column unchanged. The returned definition takes precedence over `defaultColDef`
-     * and column types. `colId`, `editable`, `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor`
-     * and `cellEditorSelector` are always overridden for calculated columns.
+     * or `undefined` leaves the column unchanged. Spread `params.colDef` to preserve the user's settings: omitted
+     * properties use normal column defaults, except `calculatedExpression`, which retains the user's expression.
+     * The returned definition takes precedence over `defaultColDef` and column types. `colId`, `editable`,
+     * `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor` and `cellEditorSelector` are always
+     * overridden for calculated columns.
      *
      * In `'live'` `applyMode` it is also called while the user types in the dialog, so keep it cheap and use
-     * `params.validationState` to tell whether the expression is complete.
+     * `params.expressionValidation` to check the expression's validation status.
+     * `calculatedColumnReadOnly` takes effect after the initial Add dialog closes, including any pending live edit.
+     * In `'live'` `applyMode`, a returned `calculatedColumnReadOnly: true` locks the column when the Add dialog closes,
+     * even if its expression is empty or unfinished.
      *
      * The returned definition is not shown in the dialog and is not saved in grid state. Stateful properties
      * such as `width`, `sort` and `hide` apply when the column is created; prefer the `initial*` forms.
@@ -136,6 +158,11 @@ export interface CalculatedColumnsOptions<TData = any, TContext = any> {
 
 export type CalculatedColumnsGridOption<TData = any, TContext = any> =
     boolean | CalculatedColumnsOptions<TData, TContext>;
+
+export interface RefreshCalculatedColumnsParams {
+    /** Columns to revalidate. Omit to revalidate all calculated columns. Non-calculated and unknown columns are ignored. */
+    columns?: ColKey[];
+}
 
 /** Grid-managed validation state for a `calculatedExpression`, persisted in Grid State. */
 export type CalculatedExpressionError = {
@@ -167,6 +194,7 @@ export type CalculatedColumnUpdate<TData = any, TValue = any> = Partial<ColDef<T
 };
 
 export interface ICalculatedColumnsService extends Bean {
+    refreshCalculatedColumns(params?: RefreshCalculatedColumnsParams): void;
     removeCalculatedColumn(column: AgColumn | null | undefined): void;
     openCalculatedColumnDialog(
         column: AgColumn | null | undefined,

@@ -16,8 +16,9 @@ export const SITES = {
         // the in-flight patcher is part of the grid source: the harness runs the real one
         extra: ['scripts/uncached-archives.mjs'],
     },
-    charts: { pkg: 'packages/ag-charts-website', extra: [] },
-    studio: { pkg: 'packages/ag-studio-docs', extra: [] },
+    // `slug`: the page name the generators put in a sample path for a rule's wildcard
+    charts: { pkg: 'packages/ag-charts-website', extra: [], slug: 'bar-series' },
+    studio: { pkg: 'packages/ag-studio-docs', extra: [], slug: 'quick-start' },
 };
 
 /** Candidate sibling-repo locations, most specific first. */

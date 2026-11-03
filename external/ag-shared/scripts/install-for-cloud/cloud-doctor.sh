@@ -13,6 +13,7 @@ set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="${CLAUDE_PROJECT_DIR:-$(cd "$SCRIPT_DIR/../../../.." && pwd)}"
+. "$SCRIPT_DIR/registry-env.sh"
 if [[ -z "${AG_CLOUD_CACHE_DIR:-}" ]]; then
     # Matches install-for-cloud.sh: the shared path first, $HOME only as fallback.
     if [[ -d /opt/ag-cloud ]]; then

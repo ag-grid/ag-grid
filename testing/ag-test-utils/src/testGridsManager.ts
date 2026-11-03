@@ -86,10 +86,22 @@ export class TestGridsManager {
         return Array.from(this.gridsMap.values());
     }
 
-    /** Destroys all created grids, and eventually created html elements */
+    /** Destroys all created grids, and eventually created html elements; rethrows the first destroy that threw. */
     public destroyAllGrids(): void {
+        let failed = false;
+        let firstError: unknown;
         for (const grid of this.gridsMap.values()) {
-            grid.destroy();
+            try {
+                grid.destroy();
+            } catch (error) {
+                if (!failed) {
+                    failed = true;
+                    firstError = error;
+                }
+            }
+        }
+        if (failed) {
+            throw firstError;
         }
     }
 
@@ -98,9 +110,12 @@ export class TestGridsManager {
      * Makes sense to be called on beforeEach/afterEach
      */
     public reset(): void {
-        this.destroyAllGrids();
-        _doOnce._set.clear(); // Clear warnings and doOnce calls
-        _resetMissingModuleReports(); // Fresh page: clear the missing-module batch and its dedup
+        try {
+            this.destroyAllGrids();
+        } finally {
+            _doOnce._set.clear(); // Clear warnings and doOnce calls
+            _resetMissingModuleReports(); // Fresh page: clear the missing-module batch and its dedup
+        }
     }
 
     public createGrid<TData = any>(
@@ -158,20 +173,20 @@ export class TestGridsManager {
 
         const oldDestroy = api.destroy;
 
-        // Override the destroy method to remove the element from the map, and destroy the div if it was created
+        // Release the element and any div created for it even when destroy throws, so its id can be reused.
         api.destroy = (...args: any[]) => {
-            const result = oldDestroy.apply(api, args);
-
-            if (this.gridsMap.get(element) === api) {
-                this.gridsMap.delete(element);
-                if (elementCreated) {
-                    elementCreated.remove();
-                    elementCreated = null;
+            try {
+                return oldDestroy.apply(api, args);
+            } finally {
+                if (this.gridsMap.get(element) === api) {
+                    this.gridsMap.delete(element);
+                    if (elementCreated) {
+                        elementCreated.remove();
+                        elementCreated = null;
+                    }
+                    element = null!;
                 }
-                element = null!;
             }
-
-            return result;
         };
 
         return api;

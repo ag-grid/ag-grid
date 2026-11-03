@@ -136,7 +136,7 @@ describe('chart settings panel mini chart thumbnails', () => {
 
     function thumbnail(label: string, wrapper: HTMLElement = activeWrapper()): HTMLElement {
         const match = Array.from(wrapper.querySelectorAll<HTMLElement>('.ag-chart-mini-thumbnail')).find(
-            (el) => el.getAttribute('aria-label')?.split('. ')[0] === label
+            (el) => el.getAttribute('aria-label') === label
         );
         expect(match).toBeDefined();
         return match!;
@@ -266,20 +266,49 @@ describe('chart settings panel mini chart thumbnails', () => {
             expect(wrapper.querySelector('canvas')).toBeNull();
         });
 
-        test('clicking a thumbnail moves ag-selected and the selected aria-label suffix', async () => {
+        test('each chart family is a group named by its heading, holding its thumbnails as a list of buttons', () => {
+            const groups = Array.from(activeWrapper().querySelectorAll<HTMLElement>('.ag-charts-settings-group'));
+            expect(groups.length).toBeGreaterThan(0);
+            for (const group of groups) {
+                expect(group.getAttribute('role')).toBe('group');
+                expect(group.getAttribute('aria-label')).toBe(group.querySelector('.ag-group-title')!.textContent);
+
+                const list = group.querySelector<HTMLElement>('.ag-group-container')!;
+                expect(list.getAttribute('role')).toBe('list');
+                const listItems = Array.from(list.children);
+                expect(listItems.length).toBeGreaterThan(0);
+                for (const listItem of listItems) {
+                    expect(listItem.getAttribute('role')).toBe('listitem');
+                    expect(listItem.children).toHaveLength(1);
+                    expect(listItem.firstElementChild!.classList.contains('ag-chart-mini-thumbnail')).toBe(true);
+                    expect(listItem.firstElementChild!.getAttribute('role')).toBe('button');
+                }
+            }
+
+            const columnGroup = thumbnail('Grouped Column').closest('[role="group"]')!;
+            expect(columnGroup.getAttribute('aria-label')).toBe('Column');
+            expect(
+                Array.from(columnGroup.querySelectorAll('.ag-chart-mini-thumbnail')).map((el) =>
+                    el.getAttribute('aria-label')
+                )
+            ).toEqual(['Grouped Column', 'Stacked Column', '100% Stacked Column']);
+        });
+
+        test('clicking a thumbnail moves ag-selected and aria-pressed', async () => {
             expect(thumbnail('Grouped Column').classList.contains('ag-selected')).toBe(true);
-            expect(thumbnail('Grouped Column').getAttribute('aria-label')).toBe('Grouped Column. Selected');
+            expect(thumbnail('Grouped Column').getAttribute('aria-pressed')).toBe('true');
             expect(thumbnail('Stacked Column').classList.contains('ag-selected')).toBe(false);
-            expect(thumbnail('Stacked Column').getAttribute('aria-label')).toBe('Stacked Column');
+            expect(thumbnail('Stacked Column').getAttribute('aria-pressed')).toBe('false');
 
             thumbnail('Stacked Column').click();
 
             await waitFor(() => {
                 expect(thumbnail('Stacked Column').classList.contains('ag-selected')).toBe(true);
-                expect(thumbnail('Stacked Column').getAttribute('aria-label')).toBe('Stacked Column. Selected');
+                expect(thumbnail('Stacked Column').getAttribute('aria-pressed')).toBe('true');
                 expect(thumbnail('Grouped Column').classList.contains('ag-selected')).toBe(false);
-                expect(thumbnail('Grouped Column').getAttribute('aria-label')).toBe('Grouped Column');
+                expect(thumbnail('Grouped Column').getAttribute('aria-pressed')).toBe('false');
             });
+            expect(activeWrapper().querySelectorAll('[aria-pressed="true"]')).toHaveLength(1);
         });
     });
 

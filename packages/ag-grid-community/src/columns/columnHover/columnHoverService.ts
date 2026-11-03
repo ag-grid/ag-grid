@@ -4,6 +4,7 @@ import type { AgColumn } from '../../entities/agColumn';
 import type { IHeaderCellComp } from '../../headerRendering/cells/column/headerCellCtrl';
 import type { IHeaderFilterCellComp } from '../../headerRendering/cells/floatingFilter/iHeaderFilterCellComp';
 import type { ICellComp } from '../../rendering/cell/cellCtrl';
+import { isRowNumberCol } from '../columnUtils';
 import { HoverFeature } from './hoverFeature';
 
 const CSS_COLUMN_HOVER = 'ag-column-hover';
@@ -22,7 +23,10 @@ export class ColumnHoverService extends BeanStub implements NamedBean {
     }
 
     public setMouseOver(columns: AgColumn[]): void {
-        this.updateState(columns);
+        // don't highlight the row number column when mousing over a row number
+        // cell, for consistency with how we don't highlight a header row when
+        // hovering a header cell
+        this.updateState(columns.filter((column) => !isRowNumberCol(column)));
     }
 
     public clearMouseOver(): void {

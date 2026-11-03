@@ -12,6 +12,7 @@ export type FormattedInputProps = {
     onClear?: () => void;
     onFocus?: () => void;
     onBlur?: () => void;
+    ariaLabel?: string;
     valueToEditingString?: (value: string) => string;
     /**
      * Return the value for an editing string, or null if invalid
@@ -29,6 +30,7 @@ export const FormattedInput = ({
     onClear,
     onFocus,
     onBlur,
+    ariaLabel,
     valueToEditingString = String,
     validateEditingString: editingStringToValue = String,
     valueToDisplayString = String,
@@ -70,6 +72,7 @@ export const FormattedInput = ({
         <Wrapper>
             <Input
                 ref={inputRef}
+                ariaLabel={ariaLabel}
                 className={isValid ? undefined : 'is-error'}
                 value={editorValue}
                 onChange={handleInput}
@@ -113,9 +116,12 @@ export const FormattedInput = ({
                     onPointerDown={
                         getIconSwipeAdjustment
                             ? (e) => {
+                                  if (e.button !== 0) {
+                                      return;
+                                  }
                                   e.preventDefault();
-                                  const pointerId = e.pointerId;
                                   const wrapper = e.currentTarget;
+                                  wrapper.setPointerCapture(e.pointerId);
                                   inputRef.current?.blur();
                                   const startX = e.clientX;
                                   const startY = e.clientY;
@@ -127,15 +133,14 @@ export const FormattedInput = ({
                                           Math.abs(movementX) > Math.abs(movementY) ? movementX : movementY;
                                       onChange?.(getIconSwipeAdjustment(value, movement));
                                   };
-                                  const handleUp = () => {
+                                  // Capture ends however the drag does, including a cancel that never sends pointerup.
+                                  const handleEnd = () => {
                                       wrapper.removeEventListener('pointermove', handleMove);
-                                      wrapper.removeEventListener('pointerup', handleUp);
+                                      wrapper.removeEventListener('lostpointercapture', handleEnd);
                                       document.body.classList.remove('force-resize-cursor');
-                                      wrapper.releasePointerCapture(pointerId);
                                   };
                                   wrapper.addEventListener('pointermove', handleMove);
-                                  wrapper.addEventListener('pointerup', handleUp);
-                                  wrapper.setPointerCapture(pointerId);
+                                  wrapper.addEventListener('lostpointercapture', handleEnd);
                               }
                             : undefined
                     }

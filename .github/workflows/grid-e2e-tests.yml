@@ -44,10 +44,11 @@ permissions:
   contents: read
   actions: read
 
+# Pinned to ubuntu-24.04 because Playwright's WebKit can't launch on ubuntu-26.04 (now ubuntu-latest), which lacks the ICU 74 and libxml2.so.2 libraries it needs.
 jobs:
   grid-e2e:
     name: Grid e2e (${{ inputs.browsers || 'all' }} browsers)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

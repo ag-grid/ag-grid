@@ -51,6 +51,26 @@ describe('CSV export header layout', () => {
         expect(csv).toBe('Athlete Details,,Padded Group\r\nAthlete,Country,Age');
     });
 
+    test('removing, adding and removing a listener on the group passed to processGroupHeaderCallback leaves the export intact', () => {
+        const api = gridsManager.createGrid('csv-grouped-header-listener', {
+            columnDefs: [{ headerName: 'Athlete Details', children: [{ field: 'athlete' }] }],
+            rowData: [],
+        });
+
+        const csv = api.getDataAsCsv({
+            suppressQuotes: true,
+            processGroupHeaderCallback: ({ columnGroup }) => {
+                const listener = () => {};
+                columnGroup.removeEventListener('leftChanged', listener);
+                columnGroup.addEventListener('leftChanged', listener);
+                columnGroup.removeEventListener('leftChanged', listener);
+                return columnGroup.getColGroupDef()!.headerName!;
+            },
+        });
+
+        expect(csv).toBe('Athlete Details\r\nAthlete');
+    });
+
     test('suppressSpanHeaderHeight does not change CSV output', () => {
         const createCsv = (id: string, suppressSpanHeaderHeight: boolean): string => {
             const api = gridsManager.createGrid(id, {

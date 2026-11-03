@@ -68,6 +68,7 @@ export class GridBodyCtrl extends BeanStub {
     public eGridBody: HTMLElement;
     public eGridViewport: HTMLElement;
     public eScrollingRows: HTMLElement;
+    public isTreeGrid = false;
     private eTop: HTMLElement;
     private eTopExtraRows: HTMLElement;
     private eBottom: HTMLElement;
@@ -399,6 +400,12 @@ export class GridBodyCtrl extends BeanStub {
         }
 
         this.comp.setGridRole(isTreeGrid ? 'treegrid' : 'grid');
+        if (this.isTreeGrid !== isTreeGrid) {
+            this.isTreeGrid = isTreeGrid;
+            for (const rowCtrl of this.beans.rowRenderer.getAllRowCtrls()) {
+                rowCtrl.refreshAriaLevel();
+            }
+        }
     }
 
     private addFocusListeners(elements: HTMLElement[]): void {

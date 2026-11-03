@@ -190,6 +190,10 @@ export class BaseDragService<
                 addTempEventHandlers(drag.handlers, [eDocument, type, listener, options]);
             }
         }
+        if (rootEl !== eDocument) {
+            // `scroll` does not cross a shadow boundary, so the document listener above misses the grid's own scrolls.
+            addTempEventHandlers(drag.handlers, [rootEl, 'scroll', onScroll, { capture: true }]);
+        }
     }
 
     private destroyDrag(): void {

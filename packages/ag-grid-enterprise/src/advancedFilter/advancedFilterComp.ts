@@ -138,7 +138,7 @@ export class AdvancedFilterComp extends Component {
         this.setupButtons(buttons);
         this.setupBuilderButton(suppressBuilderButton);
 
-        this.beans.gos.addManagedPropertyListener('advancedFilterParams', (event) => {
+        this.addManagedPropertyListener('advancedFilterParams', (event) => {
             const currentValue = { ...DEFAULT_ADVANCED_FILTER_PARAMS, ...event.currentValue };
             const previousValue = { ...DEFAULT_ADVANCED_FILTER_PARAMS, ...event.previousValue };
 

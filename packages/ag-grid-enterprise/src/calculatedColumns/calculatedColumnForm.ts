@@ -1,6 +1,7 @@
 import {
     RefPlaceholder,
-    _getDocument,
+    _getActiveDomElement,
+    _getElementRootNode,
     _setAriaActiveDescendant,
     _setAriaAutoComplete,
     _setAriaControls,
@@ -13,6 +14,7 @@ import {
 
 import type {
     CalculatedColumnExpressionPicker,
+    CalculatedColumnValidationErrors,
     ElementParams,
     GridFieldSet,
     GridInputTextArea,
@@ -62,6 +64,7 @@ const CSS_PICKER_SUGGESTION_LIST = 'ag-calculated-column-picker-list';
 
 type CalculatedColumnAutocompleteEntry = AutocompleteEntry & { suggestion: ColumnSuggestion };
 type SuggestionSourceType = 'inline' | 'picker';
+type FieldFeedback = { message: string | null; tooltip?: TooltipFeature };
 
 /** Search string for an entry: grouped columns render segments, so the matched text and displayed text can differ. */
 function getSuggestionSearchValue(suggestion: ColumnSuggestion): string {
@@ -74,7 +77,19 @@ const CalculatedColumnFormElement: ElementParams = {
     cls: 'ag-calculated-column-form',
     children: [
         { tag: 'ag-input-text-field', ref: 'eTitle' },
+        {
+            tag: 'div',
+            ref: 'eTitleError',
+            cls: 'ag-aria-description-container',
+            attrs: { 'aria-live': 'polite', 'aria-atomic': 'true' },
+        },
         { tag: 'ag-select', ref: 'eType' },
+        {
+            tag: 'div',
+            ref: 'eTypeError',
+            cls: 'ag-aria-description-container',
+            attrs: { 'aria-live': 'polite', 'aria-atomic': 'true' },
+        },
         {
             tag: 'div',
             cls: 'ag-calculated-column-expression-wrap',
@@ -130,6 +145,8 @@ export class CalculatedColumnForm extends Component {
     private readonly eTitle: GridInputTextField = RefPlaceholder;
     private readonly eType: GridSelect<string> = RefPlaceholder;
     private readonly eExpression: GridInputTextArea = RefPlaceholder;
+    private readonly eTitleError: HTMLElement = RefPlaceholder;
+    private readonly eTypeError: HTMLElement = RefPlaceholder;
     private readonly eExpressionError: HTMLElement = RefPlaceholder;
     private readonly eColumns: HTMLButtonElement = RefPlaceholder;
     private readonly eFunctions: HTMLButtonElement = RefPlaceholder;
@@ -142,10 +159,9 @@ export class CalculatedColumnForm extends Component {
     private activeReplacement: { start: number; end: number } | null = null;
     private suggestionSource: HTMLElement | null = null;
     private hideSuggestionPopup: (() => void) | undefined;
-    private titleTooltipFeature?: TooltipFeature;
-    private expressionTooltipFeature?: TooltipFeature;
-    private titleValidationMessage: string | null = null;
-    private expressionValidationMessage: string | null = null;
+    private readonly titleFeedback: FieldFeedback = { message: null };
+    private readonly typeFeedback: FieldFeedback = { message: null };
+    private readonly expressionFeedback: FieldFeedback = { message: null };
     private readonly expressionPickers: ReadonlySet<CalculatedColumnExpressionPicker>;
     /** The open suggestion list, recreated whenever the picker type (column/function/operator) changes. */
     private autocompleteList: AgAutocompleteList | null = null;
@@ -161,12 +177,15 @@ export class CalculatedColumnForm extends Component {
         expressionPickers: readonly CalculatedColumnExpressionPicker[],
         private readonly getColumnSuggestions: () => ColumnSuggestion[],
         private readonly getFunctionSuggestions: () => ColumnSuggestion[],
-        private readonly inspectExpression: (expression: string) => CalculatedColumnExpressionPresentation,
-        private readonly onValidate: (draft: CalculatedColumnDraft) => string[] | null,
-        private readonly onApply: (draft: CalculatedColumnDraft) => string[] | null,
+        private readonly inspectExpression: (
+            expression: string,
+            errors: string[] | null
+        ) => CalculatedColumnExpressionPresentation,
+        private readonly onValidate: (draft: CalculatedColumnDraft) => CalculatedColumnValidationErrors | null,
+        private readonly onApply: (draft: CalculatedColumnDraft) => CalculatedColumnValidationErrors | null,
         private readonly onCancel: () => void,
         private readonly liveApply: boolean,
-        private readonly onDraftChange?: (draft: CalculatedColumnDraft) => string[] | null,
+        private readonly onDraftChange?: (draft: CalculatedColumnDraft) => CalculatedColumnValidationErrors | null,
         private readonly readOnly = false
     ) {
         super(CalculatedColumnFormElement, [
@@ -188,13 +207,10 @@ export class CalculatedColumnForm extends Component {
             this.addActionListeners();
             this.addFormListeners();
             this.addDestroyFunc(() => this.closeSuggestionPopup());
-            if (!this.liveApply) {
-                this.setTitleError(this.validateTitle());
-            }
         }
         // colour untouched deferred drafts without validating them; view mode still explains errors
-        this.setExpressionError(this.liveApply || this.readOnly ? this.onValidate(this.draft) : null);
-        if (!this.liveApply && !this.draft.calculatedExpression.trim()) {
+        this.setValidationErrors(this.liveApply || this.readOnly ? this.onValidate(this.draft) : null);
+        if (!this.liveApply && (!this.draft.calculatedExpression.trim() || !this.draft.headerName.trim())) {
             this.eApply.disabled = true;
         }
     }
@@ -202,6 +218,13 @@ export class CalculatedColumnForm extends Component {
     public hideSuggestions(): void {
         this.activeReplacement = null;
         this.closeSuggestionPopup();
+    }
+
+    public refreshValidation(
+        validate: (draft: CalculatedColumnDraft) => CalculatedColumnValidationErrors | null
+    ): void {
+        this.hideSuggestions();
+        this.setValidationErrors(validate(this.draft));
     }
 
     private setupFormFields(): void {
@@ -248,6 +271,8 @@ export class CalculatedColumnForm extends Component {
 
     private setupAria(): void {
         this.eExpressionError.id = `ag-calculated-column-expression-error-${this.getCompId()}`;
+        this.eTitleError.id = `ag-calculated-column-title-error-${this.getCompId()}`;
+        this.eTypeError.id = `ag-calculated-column-type-error-${this.getCompId()}`;
         if (this.readOnly) {
             return;
         }
@@ -286,16 +311,8 @@ export class CalculatedColumnForm extends Component {
     }
 
     private addFormFieldListeners(): void {
-        const initialHeaderName = this.draft.headerName;
         this.eTitle.onValueChange((value) => {
-            // Live mode applies every change to the column, so an empty title falls back to the
-            // initial one; deferred mode keeps the raw value and requires a title before Apply.
-            if (this.liveApply) {
-                this.updateDraft({ headerName: value || initialHeaderName });
-                return;
-            }
             this.updateDraft({ headerName: value ?? '' });
-            this.setTitleError(this.validateTitle());
         });
         this.eType.onValueChange((value) => {
             this.updateDraft({ cellDataType: value ?? this.dataTypeOptions[0]?.value ?? DEFAULT_DRAFT.cellDataType });
@@ -346,11 +363,7 @@ export class CalculatedColumnForm extends Component {
         if (!this.liveApply) {
             this.addManagedElementListeners(this.eApply, {
                 click: () => {
-                    const titleError = this.validateTitle();
-                    this.setTitleError(titleError);
-                    if (titleError == null) {
-                        this.setExpressionError(this.onApply(this.draft));
-                    }
+                    this.setValidationErrors(this.onApply(this.draft));
                 },
             });
             this.addManagedElementListeners(this.eCancel, {
@@ -368,72 +381,65 @@ export class CalculatedColumnForm extends Component {
             },
             focusout: () =>
                 window.setTimeout(() => {
-                    if (!this.getGui().contains(_getDocument(this.beans).activeElement)) {
-                        this.hideSuggestions();
+                    if (this.getGui().contains(_getActiveDomElement(this.beans))) {
+                        return;
                     }
+                    this.hideSuggestions();
                 }, 0),
         });
     }
 
-    private validateTitle(): string | null {
-        if (this.draft.headerName.trim().length > 0) {
-            return null;
-        }
-        return this.getLocaleTextFunc()('calculatedColumnTitleEmpty', 'Enter a title');
-    }
-
-    private setTitleError(message: string | null): void {
-        this.titleValidationMessage = message;
-        const inputEl = this.eTitle.getInputElement();
-        this.applyFieldError(inputEl, message);
-        if (message && !this.titleTooltipFeature) {
-            this.titleTooltipFeature = this.createValidationTooltip(
-                () => this.eTitle.getInputElement(),
-                () => this.titleValidationMessage
-            );
-        }
-        this.titleTooltipFeature?.setTooltipAndRefresh(message);
-        // set title to empty string to prevent default browser tooltip from showing when validation tooltip is active
-        inputEl.setAttribute('title', '');
-    }
-
-    private setExpressionError(errors: string[] | null): void {
+    private setValidationErrors(errors: CalculatedColumnValidationErrors | null): void {
         if (!this.isAlive()) {
             return;
         }
         const expression = this.draft.calculatedExpression;
-        const presentation = this.inspectExpression(expression);
-        // only underline a diagnostic whose message is part of the chosen validation feedback
-        if (!presentation.diagnostic || !errors?.includes(presentation.diagnostic.message)) {
-            presentation.diagnostic = undefined;
-        }
+        const expressionErrors = errors?.calculatedExpression ?? null;
+        const presentation = this.inspectExpression(expression, expressionErrors);
+        const displayedExpressionErrors =
+            expressionErrors ?? (presentation.diagnostic ? [presentation.diagnostic.message] : null);
         this.expressionEditor.refresh(expression, presentation);
-        const message = errors?.length ? errors.join('\n') : null;
-        if (message !== this.expressionValidationMessage) {
-            this.eExpressionError.textContent = message ?? '';
-        }
-        this.expressionValidationMessage = message;
-        const inputEl = this.eExpression.getInputElement();
-        _setAriaDescribedBy(inputEl, message ? this.eExpressionError.id : undefined);
-        this.applyFieldError(inputEl, message);
-        if (message && !this.expressionTooltipFeature) {
-            this.expressionTooltipFeature = this.createValidationTooltip(
-                () => this.eExpression.getInputElement(),
-                () => this.expressionValidationMessage
-            );
-        }
-        this.expressionTooltipFeature?.setTooltipAndRefresh(message);
-        // set title to empty string to prevent default browser tooltip from showing when validation tooltip is active
-        inputEl.setAttribute('title', '');
+        this.setFieldErrors(this.eTitle.getInputElement(), this.eTitleError, this.titleFeedback, errors?.headerName);
+        this.setFieldErrors(this.eType.getFocusableElement(), this.eTypeError, this.typeFeedback, errors?.cellDataType);
+        this.setFieldErrors(
+            this.eExpression.getInputElement(),
+            this.eExpressionError,
+            this.expressionFeedback,
+            displayedExpressionErrors
+        );
+        this.eTitle.getInputElement().setCustomValidity(errors?.headerName?.join('\n') ?? '');
+        this.eExpression.getInputElement().setCustomValidity(displayedExpressionErrors?.join('\n') ?? '');
+        this.eApply.disabled = !!(
+            errors?.headerName?.length ||
+            errors?.cellDataType?.length ||
+            expressionErrors?.length
+        );
     }
 
-    private applyFieldError(input: HTMLInputElement | HTMLTextAreaElement, message: string | null): void {
-        const isInvalid = !!message;
-
-        input.setCustomValidity(message ?? '');
-        input.classList.toggle('invalid', isInvalid);
-        _setAriaInvalid(input, isInvalid);
-        this.eApply.disabled = !!this.titleValidationMessage || !!this.expressionValidationMessage;
+    private setFieldErrors(
+        input: HTMLElement,
+        description: HTMLElement,
+        feedback: FieldFeedback,
+        errors: string[] | null | undefined
+    ): void {
+        const invalid = !!errors?.length;
+        const message = invalid ? errors.join('\n') : null;
+        if (message !== feedback.message) {
+            description.textContent = message ?? '';
+        }
+        feedback.message = message;
+        _setAriaDescribedBy(input, message ? description.id : undefined);
+        input.classList.toggle('invalid', invalid);
+        _setAriaInvalid(input, invalid);
+        if (message && !feedback.tooltip) {
+            feedback.tooltip = this.createValidationTooltip(
+                () => input,
+                () => feedback.message
+            );
+        }
+        feedback.tooltip?.setTooltipAndRefresh(message);
+        // suppress the browser's validation tooltip, including after the grid tooltip changes
+        input.setAttribute('title', '');
     }
 
     private createValidationTooltip(
@@ -454,7 +460,7 @@ export class CalculatedColumnForm extends Component {
     private updateDraft(partial: Partial<CalculatedColumnDraft>): void {
         this.draft = { ...this.draft, ...partial };
         const errors = this.onDraftChange ? this.onDraftChange(this.draft) : this.onValidate(this.draft);
-        this.setExpressionError(errors);
+        this.setValidationErrors(errors);
     }
 
     private rememberExpressionSelection(): void {
@@ -555,7 +561,9 @@ export class CalculatedColumnForm extends Component {
         const isInline = this.suggestionSourceType === 'inline';
         const activeOptionId = isInline ? this.autocompleteList.getActiveOptionId() : null;
         const renderedActiveOptionId =
-            activeOptionId && _getDocument(this.beans).getElementById(activeOptionId) ? activeOptionId : null;
+            activeOptionId && _getElementRootNode(expressionInputEl).getElementById(activeOptionId)
+                ? activeOptionId
+                : null;
 
         _setAriaControls(expressionInputEl, isInline ? listId : null);
         _setAriaActiveDescendant(expressionInputEl, renderedActiveOptionId);

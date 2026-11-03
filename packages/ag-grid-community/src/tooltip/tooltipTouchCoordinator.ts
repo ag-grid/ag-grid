@@ -78,7 +78,8 @@ export class TooltipTouchCoordinator extends BeanStub implements NamedBean {
 
     private recordTouchAt(event: Event): void {
         this.lastTouchEventTime = Date.now();
-        this.lastTouchTarget = event.target instanceof Node ? event.target : undefined;
+        const target = this.getEventPath(event)[0];
+        this.lastTouchTarget = target instanceof Node ? target : undefined;
     }
 
     private startTracking(event: TouchEvent): boolean {

@@ -14,7 +14,7 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { LAYOUT, emitLayout, resolveSources, tsxEval } from '../lib/sources.mjs';
+import { LAYOUT, SITES, emitLayout, resolveSources, tsxEval } from '../lib/sources.mjs';
 
 const GEN_DIR = fileURLToPath(new URL('.', import.meta.url));
 const OUT_DIR = resolve(GEN_DIR, '../expectations');
@@ -53,19 +53,19 @@ write('generated-grid.tsv', gen('gen-main-expectations.mjs', [ht('')]));
 write('generated-grid-archive.tsv', gen('gen-main-expectations.mjs', [ht(gridArchive), '--base', gridArchive]));
 write(
     'generated-charts.tsv',
-    gen('gen-subsite-expectations.mjs', [ht('/charts'), '--base', '/charts', '--slug', 'bar-series'])
+    gen('gen-subsite-expectations.mjs', [ht('/charts'), '--base', '/charts', '--slug', SITES.charts.slug])
 );
 write(
     'generated-charts-archive.tsv',
-    gen('gen-subsite-expectations.mjs', [ht(chartsArchive), '--base', chartsArchive, '--slug', 'bar-series'])
+    gen('gen-subsite-expectations.mjs', [ht(chartsArchive), '--base', chartsArchive, '--slug', SITES.charts.slug])
 );
 write(
     'generated-studio.tsv',
-    gen('gen-subsite-expectations.mjs', [ht('/studio'), '--base', '/studio', '--slug', 'quick-start'])
+    gen('gen-subsite-expectations.mjs', [ht('/studio'), '--base', '/studio', '--slug', SITES.studio.slug])
 );
 write(
     'generated-studio-archive.tsv',
-    gen('gen-subsite-expectations.mjs', [ht(studioArchive), '--base', studioArchive, '--slug', 'quick-start'])
+    gen('gen-subsite-expectations.mjs', [ht(studioArchive), '--base', studioArchive, '--slug', SITES.studio.slug])
 );
 
 // The markdown page registries, read from each site's source (patterns only).

@@ -1,5 +1,6 @@
 import type { IconName } from '@ag-website-shared/components/icon/Icon';
 import { ALL_INTERNAL_FRAMEWORKS, FRAMEWORKS } from '@constants';
+import { TECHNICAL_REVIEWER_KEYS } from '@utils/technicalReviewers';
 // NOTE: Use glob, instead of file for single object files unless the file is an
 // array of objects
 import { glob } from 'astro/loaders';
@@ -46,6 +47,12 @@ const docs = defineCollection({
          * name, titled from the nav, or an explicit `{ title, url }` for anything else.
          */
         related: z.array(z.union([z.string(), z.object({ title: z.string(), url: z.string() })])).optional(),
+
+        /**
+         * Credit a named engineer as the page's technical reviewer, shown under the title and
+         * emitted as the page's `reviewedBy` in JSON-LD. See `TECHNICAL_REVIEWERS`.
+         */
+        technicalReviewer: z.enum(TECHNICAL_REVIEWER_KEYS).optional(),
     }),
 });
 
@@ -411,6 +418,8 @@ const landingPages = defineCollection({
         packageName: z.string().optional(),
         docsPath: z.string(),
         analyticsPrefix: z.string(),
+        /** Named engineer credited as the page's technical reviewer. See `TECHNICAL_REVIEWERS`. */
+        technicalReviewer: z.enum(TECHNICAL_REVIEWER_KEYS).optional(),
 
         sections: z.array(
             z.discriminatedUnion('type', [

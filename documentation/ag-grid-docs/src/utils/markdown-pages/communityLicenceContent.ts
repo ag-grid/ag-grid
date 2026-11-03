@@ -47,6 +47,6 @@ export const COMMUNITY_LICENCE_CONTENT: PolicyContent = {
     // Unlike the other policy pages, the intro is rendered above these lines: they open the licence.
     meta: [COMMUNITY_LICENCE.name, COMMUNITY_LICENCE.copyright],
     intro: [
-        'AG Grid Community is free and open source under the MIT licence, reproduced below. <a href="/data-grid/community-vs-enterprise/">AG Grid Enterprise</a> is licensed separately under the <a href="/eula/commercial/">AG Grid Commercial End User Licence Agreement</a>.',
+        'AG Grid Community is free and open source under the MIT licence, reproduced below. <a href="/react-data-grid/community-vs-enterprise/" data-framework-link>AG Grid Enterprise</a> is licensed separately under the <a href="/eula/commercial/">AG Grid Commercial End User Licence Agreement</a>.',
     ],
 };

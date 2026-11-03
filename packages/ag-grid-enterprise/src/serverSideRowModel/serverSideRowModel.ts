@@ -96,6 +96,7 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     private storeParams: SSRMParams;
 
     private started = false;
+    private rowCountReady = false;
 
     private lastRowHeight?: number;
 
@@ -410,6 +411,14 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     private resetRowHeight(rowNode: RowNode): void {
         const rowHeight = _getRowHeightForNode(this.beans, rowNode);
         rowNode.setRowHeight(rowHeight.height, rowHeight.estimated);
+    }
+
+    /** Called by the root store as it is constructed: dispatches `rowCountReady` once per grid. */
+    public onRootStoreCreated(): void {
+        if (!this.rowCountReady) {
+            this.rowCountReady = true;
+            this.eventSvc.dispatchEvent({ type: 'rowCountReady' });
+        }
     }
 
     public resetRootStore(): void {

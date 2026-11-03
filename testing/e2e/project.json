@@ -7,12 +7,7 @@
     "build:test": {
       "dependsOn": ["^build:types"]
     },
-    "lint": {
-      "command": "eslint",
-      "options": {
-        "cwd": "{projectRoot}"
-      }
-    },
+    "lint": {},
     "setup": {
       "executor": "nx:run-commands",
       "options": {

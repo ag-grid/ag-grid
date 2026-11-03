@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { describeInternalLinkShapeIssue, getInternalLinkShapeIssues } from './internalLinkShape';
+import {
+    describeInternalLinkShapeIssue,
+    getCanonicalHostPath,
+    getInternalLinkShapeIssues,
+    isInternalHref,
+} from './internalLinkShape';
 
 const types = (href: string, options?: Parameters<typeof getInternalLinkShapeIssues>[1]) =>
     getInternalLinkShapeIssues(href, options).map((issue) => issue.type);
@@ -87,7 +92,7 @@ describe('getInternalLinkShapeIssues', () => {
             expect(types('/react-data-grid/side-bar#reference-ToolPanelDef-parent')).toEqual([
                 'missing-trailing-slash',
             ]);
-            expect(types('/charts/gallery?utm_source=x')).toEqual(['missing-trailing-slash']);
+            expect(types('/charts/gallery?ref=x')).toEqual(['missing-trailing-slash']);
         });
 
         it('reports the pathname that will be redirected to', () => {
@@ -157,6 +162,44 @@ describe('getInternalLinkShapeIssues', () => {
         });
     });
 
+    describe('utm parameters', () => {
+        it.each([
+            '/react-data-grid/getting-started/?utm_source=blog',
+            'https://www.ag-grid.com/charts/?ref=nav&utm_medium=email',
+            '/react-data-grid/getting-started/?UTM_Campaign=launch#quick-start',
+            '//www.ag-grid.com/charts/?utm_source=x',
+        ])('%s', (href) => {
+            expect(types(href)).toEqual(['utm-parameters']);
+        });
+
+        it('lists every utm parameter, and only those', () => {
+            const [issue] = getInternalLinkShapeIssues('/charts/?a=1&utm_source=x&utm_medium=y&b=2');
+            expect(issue).toEqual({
+                type: 'utm-parameters',
+                href: '/charts/?a=1&utm_source=x&utm_medium=y&b=2',
+                parameters: ['utm_source', 'utm_medium'],
+            });
+        });
+
+        it('reports alongside the other shape issues', () => {
+            expect(types('/charts?utm_source=x')).toEqual(['missing-trailing-slash', 'utm-parameters']);
+        });
+
+        it.each([
+            '/charts/?promo=banner-studio-launch-week',
+            '/charts/?theme=utm_quartz',
+            // A `?` after the fragment marker belongs to the fragment, not a query
+            '/charts/#section?utm_source=x',
+            // A parameter that merely contains utm_ is not a UTM parameter
+            '/charts/?not_utm_source=x',
+            // Another site's link is not ours to police
+            'https://github.com/ag-grid/ag-grid/?utm_source=x',
+            'https://blog.ag-grid.com/post/?utm_source=x',
+        ])('%s is left alone', (href) => {
+            expect(types(href)).toEqual([]);
+        });
+    });
+
     describe('double slash', () => {
         it.each(['/studio//', '/charts//react/', 'https://www.ag-grid.com/react-data-grid//getting-started/'])(
             '%s',
@@ -165,6 +208,52 @@ describe('getInternalLinkShapeIssues', () => {
             }
         );
     });
+});
+
+describe('getCanonicalHostPath', () => {
+    it.each([
+        ['https://www.ag-grid.com/charts/', '/charts/'],
+        ['http://www.ag-grid.com/charts/', '/charts/'],
+        ['//www.ag-grid.com/charts/', '/charts/'],
+        ['https://WWW.ag-grid.com/charts/?a=1#b', '/charts/?a=1#b'],
+        ['https://www.ag-grid.com', '/'],
+        ['https://www.ag-grid.com#top', '/#top'],
+        ['https://www.ag-grid.com?a=1', '/?a=1'],
+    ])('%s is served at %s', (href, path) => {
+        expect(getCanonicalHostPath(href)).toBe(path);
+    });
+
+    it.each([
+        '/charts/',
+        '#section',
+        'https://ag-grid.com/charts/',
+        'https://blog.ag-grid.com/post/',
+        'https://github.com/ag-grid/ag-grid',
+        'https://www.ag-grid.com.evil.example/charts/',
+    ])('%s is not on the canonical host', (href) => {
+        expect(getCanonicalHostPath(href)).toBeUndefined();
+    });
+});
+
+describe('isInternalHref', () => {
+    it.each([
+        '/charts/',
+        '/react-data-grid/getting-started/#quick-start',
+        '#section',
+        '#',
+        'https://www.ag-grid.com/charts/',
+        '//www.ag-grid.com/charts/',
+        'https://ag-grid.com/charts/',
+    ])('%s is internal', (href) => {
+        expect(isInternalHref(href)).toBe(true);
+    });
+
+    it.each(['', 'mailto:info@ag-grid.com', 'https://github.com/ag-grid/ag-grid', 'relative/path', './relative'])(
+        '%s is not',
+        (href) => {
+            expect(isInternalHref(href)).toBe(false);
+        }
+    );
 });
 
 describe('describeInternalLinkShapeIssue', () => {
@@ -179,6 +268,13 @@ describe('describeInternalLinkShapeIssue', () => {
         const [issue] = getInternalLinkShapeIssues('https://ag-grid.com/charts/');
         expect(describeInternalLinkShapeIssue(issue)).toBe(
             'Link https://ag-grid.com/charts/ points at ag-grid.com, which redirects to www.ag-grid.com; link to the canonical host directly.'
+        );
+    });
+
+    it('names the parameters of a UTM-tagged link', () => {
+        const [issue] = getInternalLinkShapeIssues('/charts/?utm_source=x&utm_medium=y');
+        expect(describeInternalLinkShapeIssue(issue)).toBe(
+            "Link /charts/?utm_source=x&utm_medium=y carries utm_source, utm_medium; UTM parameters on an internal link overwrite the visitor's original traffic source in analytics, so remove them."
         );
     });
 });

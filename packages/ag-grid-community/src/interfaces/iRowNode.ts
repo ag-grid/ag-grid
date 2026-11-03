@@ -415,15 +415,15 @@ export interface IRowNode<TData = any> extends BaseRowNode<TData>, GroupRowNode<
      *   Pass `from: 'value'` to always receive a scalar `TValue`.
      */
     getDataValue<TValue = any>(
-        colKey: ColKey<TValue>,
+        colKey: ColKey<TData, TValue>,
         from: 'value' | 'data-raw' | 'edit' | 'batch'
     ): TValue | null | undefined;
     getDataValue<TValue = any>(
-        colKey: ColKey<TValue>,
+        colKey: ColKey<TData, TValue>,
         from?: 'data'
     ): TValue | IAggFuncResult<TValue> | null | undefined;
     getDataValue<TValue = any>(
-        colKey: ColKey<TValue>,
+        colKey: ColKey<TData, TValue>,
         from?: DataValueFrom
     ): TValue | IAggFuncResult<TValue> | null | undefined;
 

@@ -46,6 +46,7 @@ import type {
 } from '../interfaces/autoSize';
 import type { CsvExportParams } from '../interfaces/exportParams';
 import type { GridState, GridStateKey } from '../interfaces/gridState';
+import type { RefreshCalculatedColumnsParams } from '../interfaces/iCalculatedColumns';
 import type { RenderedRowEvent } from '../interfaces/iCallbackParams';
 import type {
     EditingCellPosition,
@@ -1795,6 +1796,36 @@ export interface _ColumnChooserGridApi {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export interface _CalculatedColumnsGridApi<TData = any> {
+    /**
+     * Opens and focuses the dialog for an existing calculated column.
+     * Read-only calculated columns open in view mode. Reuses and brings forward an already-open dialog.
+     * On close, returns focus to the column's header, scrolling it into view if needed.
+     * Does nothing if Calculated Columns are disabled or the key does not resolve to a calculated column.
+     * @agModule `CalculatedColumnsModule`
+     */
+    openCalculatedColumnDialog(column: ColKey<TData>): void;
+    /**
+     * Opens the Add Calculated Column dialog, optionally after a source column as with the column menu.
+     * Without a source column, the new column is appended. Unknown or non-primary source columns are ignored.
+     * Uses the configured apply mode: live creates the column immediately, deferred creates it on Apply.
+     * Moves focus into the dialog. Does not open in pivot mode.
+     * On close, returns focus to the new column's header, or the source column if no column was created.
+     * @agModule `CalculatedColumnsModule`
+     */
+    openAddCalculatedColumnDialog(sourceColumn?: ColKey<TData>): void;
+    /**
+     * Revalidate committed calculated expressions against the current `getValidationErrors` and
+     * `isColumnReferenceable` callbacks, update saved errors and recalculate values and dependants.
+     * Applies to read-only columns too. Does not apply pending dialog edits. Empty expressions are allowed.
+     * Open dialogs revalidate their drafts without restarting pending live updates.
+     * Validation changes raise `calculatedColumnChanged` with `source: 'api'`.
+     * @agModule `CalculatedColumnsModule`
+     */
+    refreshCalculatedColumns(params?: RefreshCalculatedColumnsParams): void;
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export interface _FormulaGridApi<TData = any> {
     /**
      * Invalidate the grid's formula cache so the next render re-queries
@@ -2093,6 +2124,7 @@ export interface GridApi<TData = any>
         _ColumnChooserGridApi,
         _MasterDetailGridApi,
         _FormulaGridApi<TData>,
+        _CalculatedColumnsGridApi<TData>,
         _ExcelExportGridApi,
         _PdfExportGridApi,
         _ClipboardGridApi,

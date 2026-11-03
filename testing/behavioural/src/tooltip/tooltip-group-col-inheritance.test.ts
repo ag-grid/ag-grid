@@ -259,6 +259,32 @@ describe('Tooltip inheritance in group columns', () => {
         `);
     });
 
+    test('tree data group rows use autoGroupColumnDef tooltip', async () => {
+        const gridOptions: GridOptions = {
+            treeData: true,
+            groupDefaultExpanded: -1,
+            getDataPath: (data) => data.path,
+            autoGroupColumnDef: { tooltip: (params) => `Tooltip: ${params.value}` },
+            columnDefs: [{ field: 'size' }],
+            rowData: [{ path: ['Desktop', 'proposal.xlsx'], size: 512 }],
+            tooltipShowDelay: TOOLTIP_SHOW_DELAY,
+            tooltipSwitchShowDelay: TOOLTIP_SHOW_DELAY,
+        };
+
+        const api = await gridMgr.createGridAndWait('tooltip-tree-data-auto-col', gridOptions);
+        await new GridRows(api, 'tree data auto col tooltip setup').check(`
+            ROOT id:ROOT_NODE_ID
+            └─┬ Desktop filler id:row-group-0-Desktop ag-Grid-AutoColumn:"Desktop"
+            · └── proposal.xlsx LEAF id:0 ag-Grid-AutoColumn:"proposal.xlsx" size:512
+        `);
+
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        const groupCell = await waitFor(() => getByTestId(gridDiv, agTestIdFor.autoGroupCell('row-group-0-Desktop')));
+        await userEvent.hover(groupCell);
+        await waitForTooltips(1);
+        expect(getTooltips()[0]).toHaveTextContent('Tooltip: Desktop');
+    });
+
     // group rows always use underlying colDef tooltip even when autoGroupColumnDef also sets one
     test('group rows use underlying colDef tooltip, ignoring autoGroupColumnDef tooltipValueGetter', async () => {
         allowLegacyTooltipProperties();

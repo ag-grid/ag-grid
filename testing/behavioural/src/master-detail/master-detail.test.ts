@@ -518,6 +518,170 @@ describe('ag-grid master detail', () => {
         expect(details.length).toBe(built);
     });
 
+    test('with keepDetailRows, rows whose id is an object property name are drawn and redrawn', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'k' }],
+            rowData: [
+                { id: 'constructor', k: 'a' },
+                { id: 'toString', k: 'b' },
+            ],
+            getRowId: (params) => params.data.id,
+            masterDetail: true,
+            keepDetailRows: true,
+        });
+        const rowElement = (id: string) => getGridElement(api)!.querySelector(`.ag-row[row-id="${id}"]`);
+        await new GridRows(api, 'drawn').check(`
+            ROOT id:ROOT_NODE_ID
+            ├── master collapsed id:constructor k:"a"
+            └── master collapsed id:toString k:"b"
+        `);
+        const drawnRow = rowElement('constructor');
+
+        api.redrawRows({ rowNodes: [api.getRowNode('constructor')!] });
+        await asyncSetTimeout(0);
+        const redrawnRow = rowElement('constructor');
+        expect({ shown: redrawnRow !== null, replaced: redrawnRow !== drawnRow }).toEqual({
+            shown: true,
+            replaced: true,
+        });
+    });
+
+    test('a kept detail row whose master row data was replaced reports virtualRowRemoved once the cache drops it', async () => {
+        const removedDetails: string[] = [];
+        class Detail {
+            private readonly eGui = document.createElement('div');
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                return true;
+            }
+        }
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'k' }],
+            rowData: [{ k: 'old' }],
+            masterDetail: true,
+            isRowMaster: () => true,
+            detailCellRenderer: Detail,
+            keepDetailRows: true,
+            keepDetailRowsCount: 1,
+            onVirtualRowRemoved: (event) => {
+                if (event.node.detail) {
+                    removedDetails.push(event.node.data.k);
+                }
+            },
+        });
+
+        api.getDisplayedRowAtIndex(0)!.setExpanded(true);
+        await asyncSetTimeout(0);
+        api.getDisplayedRowAtIndex(0)!.setExpanded(false);
+        await asyncSetTimeout(0);
+
+        // the new master row takes the old one's generated id
+        api.setGridOption('rowData', [{ k: 'new' }]);
+        api.getDisplayedRowAtIndex(0)!.setExpanded(true);
+        await asyncSetTimeout(0);
+        api.getDisplayedRowAtIndex(0)!.setExpanded(false);
+        await asyncSetTimeout(0);
+
+        await waitFor(() => expect(removedDetails).toEqual(['old']));
+    });
+
+    test('a kept detail row whose master row data was replaced leaves the new detail grid registered when the cache drops it, until its row is removed', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'k' }],
+            rowData: [{ k: 'old', kids: [{ c: 1 }] }],
+            masterDetail: true,
+            isRowMaster: () => true,
+            detailCellRendererParams: {
+                detailGridOptions: { columnDefs: [{ field: 'c' }] },
+                getDetailRowData: (params: GetDetailRowDataParams) => params.successCallback(params.data.kids),
+            },
+            keepDetailRows: true,
+            keepDetailRowsCount: 1,
+        });
+        const setExpanded = async (expanded: boolean) => {
+            api.getDisplayedRowAtIndex(0)!.setExpanded(expanded);
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(expanded ? 2 : 1));
+        };
+        await setExpanded(true);
+        await setExpanded(false);
+        // the new master row takes the old one's generated id
+        api.setGridOption('rowData', [{ k: 'new', kids: [{ c: 2 }] }]);
+        await setExpanded(true);
+        await waitFor(() => expect(api.getDetailGridInfo('detail_0')?.id).toBe('detail_0'));
+        const detailGridInfo = api.getDetailGridInfo('detail_0');
+
+        // caching the new detail row drops the old one
+        await setExpanded(false);
+        await setExpanded(true);
+
+        expect(api.getDetailGridInfo('detail_0')).toBe(detailGridInfo);
+
+        api.setGridOption('rowData', []);
+        await waitFor(() => expect(api.getDetailGridInfo('detail_0')).toBeUndefined());
+    });
+
+    test('redrawing a kept detail row removes it while collapsed and replaces it while shown, and a removed master row is destroyed', async () => {
+        let built = 0;
+        let destroyed = 0;
+        const removed: string[] = [];
+        class Detail {
+            private readonly eGui = document.createElement('div');
+            constructor() {
+                ++built;
+            }
+            public getGui(): HTMLElement {
+                return this.eGui;
+            }
+            public refresh(): boolean {
+                return true;
+            }
+            public destroy(): void {
+                ++destroyed;
+            }
+        }
+        const fullWidthRowCount = () => getGridElement(api)!.querySelectorAll('.ag-full-width-row').length;
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [{ field: 'k' }],
+            rowData: [{ id: '1', k: 'a' }],
+            getRowId: (params) => params.data.id,
+            masterDetail: true,
+            isRowMaster: () => true,
+            detailCellRenderer: Detail,
+            keepDetailRows: true,
+            onVirtualRowRemoved: (event) => removed.push(event.node.detail ? 'detail' : event.node.id!),
+        });
+        const master = api.getRowNode('1')!;
+        master.setExpanded(true);
+        await asyncSetTimeout(0);
+        const detail = api.getDisplayedRowAtIndex(1)!;
+        master.setExpanded(false);
+        await asyncSetTimeout(0);
+
+        api.redrawRows({ rowNodes: [detail] });
+        await waitFor(() => expect(removed).toEqual(['detail']));
+        expect({ fullWidthRows: fullWidthRowCount(), destroyed }).toEqual({ fullWidthRows: 0, destroyed: 1 });
+
+        master.setExpanded(true);
+        await asyncSetTimeout(0);
+        expect({ fullWidthRows: fullWidthRowCount(), built }).toEqual({ fullWidthRows: 1, built: 2 });
+
+        // shown again from the cache, then redrawn while shown
+        master.setExpanded(false);
+        await asyncSetTimeout(0);
+        master.setExpanded(true);
+        await asyncSetTimeout(0);
+        expect(built).toBe(2);
+        api.redrawRows({ rowNodes: [detail] });
+        await waitFor(() => expect(removed).toEqual(['detail', 'detail']));
+        expect({ fullWidthRows: fullWidthRowCount(), built }).toEqual({ fullWidthRows: 1, built: 3 });
+
+        api.setGridOption('rowData', [{ id: '2', k: 'b' }]);
+        await waitFor(() => expect(removed).toContain('1'));
+        expect(getGridElement(api)!.querySelector('.ag-row[row-id="1"]')).toBeNull();
+    });
+
     // The detail sizes itself to its grid: working the row heights out again must not put it back to its placeholder.
     describe('an auto-height detail row', () => {
         const DETAIL_HEIGHT = 150;

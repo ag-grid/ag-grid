@@ -35,11 +35,10 @@ export class UndoRedoStack {
         return this.actionStack.pop();
     }
 
-    public push(item: UndoRedoAction): void {
-        const shouldAddActions = item.cellValueChanges && item.cellValueChanges.length > 0;
-
-        if (!shouldAddActions) {
-            return;
+    /** Adds item unless it changed no cell; returns whether it was added. */
+    public push(item: UndoRedoAction): boolean {
+        if (!item.cellValueChanges.length) {
+            return false;
         }
 
         if (this.actionStack.length === this.maxStackSize) {
@@ -47,6 +46,7 @@ export class UndoRedoStack {
         }
 
         this.actionStack.push(item);
+        return true;
     }
 
     public clear(): void {

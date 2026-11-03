@@ -211,6 +211,7 @@ export interface CustomHeaderGroupProps<TData = any, TContext = any> extends IHe
 /** Props provided to custom loading cell renderer components */
 export interface CustomLoadingCellRendererProps<TData = any, TContext = any> extends ILoadingCellRendererParams<
     TData,
+    any,
     TContext
 > {}
 

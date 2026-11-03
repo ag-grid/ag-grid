@@ -6,6 +6,7 @@ import {
     _makeNull,
     _placeCaretAtEnd,
     _setAriaColIndex,
+    _setAriaColSpan,
     _setAriaRowIndex,
 } from 'ag-stack';
 
@@ -111,6 +112,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     /** The vanilla cell comp drawing this; a row has one row comp at a time, so the field is that comp's. */
     public drawnComp: CellComp | undefined = undefined;
     private drawnAriaColIndex = -1;
+    private drawnAriaColSpan = 1;
 
     public eGui: HTMLElement;
 
@@ -279,6 +281,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         this.comp = comp;
         this.eGui = eCell;
         this.drawnAriaColIndex = -1;
+        this.drawnAriaColSpan = 1;
         this.printLayout = printLayout;
         compBean = setupCompBean(this, compBean);
 
@@ -309,6 +312,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         }
         this.refreshAriaRowIndex();
         this.refreshAriaColIndex();
+        this.refreshAriaColSpan();
 
         _initCellPosition(this.beans, this);
         if (!isClientSideLoadingCell) {
@@ -808,6 +812,20 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         if (ariaColIndex !== this.drawnAriaColIndex) {
             this.drawnAriaColIndex = ariaColIndex;
             _setAriaColIndex(this.eGui, ariaColIndex); // for react, we don't use JSX, as it slowed down column moving
+        }
+    }
+
+    public refreshAriaColSpan(): void {
+        const { eGui, colsSpanning } = this;
+        if (!eGui) {
+            return;
+        }
+        // hidden columns keep their aria slots, so the span runs from this column's slot to the last covered one's
+        const last = colsSpanning?.[colsSpanning.length - 1];
+        const ariaColSpan = last ? last.ariaColIndex - this.column.ariaColIndex + 1 : 1;
+        if (ariaColSpan !== this.drawnAriaColSpan) {
+            this.drawnAriaColSpan = ariaColSpan;
+            _setAriaColSpan(eGui, ariaColSpan > 1 ? ariaColSpan : undefined);
         }
     }
 

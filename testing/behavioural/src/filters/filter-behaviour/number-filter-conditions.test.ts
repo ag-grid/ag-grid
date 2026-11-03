@@ -38,6 +38,28 @@ describe('Number Filter — conditions coverage', () => {
 
     const MIXED = [{ val: -10 }, { val: -2.5 }, { val: 0 }, { val: 3 }, { val: 7.5 }, { val: 10 }];
 
+    test.each([false, true])(
+        'with enableFilterHandlers %s, an open filter given a model naming an option it lacks shows no model, as it applies none',
+        async (enableFilterHandlers) => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers,
+                columnDefs: [{ field: 'val', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0 } }],
+                rowData: MIXED,
+            });
+            const filter = await ColumnFilterHarness.open(api, 'val');
+
+            await api.setColumnFilterModel('val', { filterType: 'number', type: 'banana', filter: 3 });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+
+            expect({
+                model: api.getColumnFilterModel('val'),
+                displayed: api.getDisplayedRowCount(),
+                input: filter.input('number').value,
+            }).toEqual({ model: null, displayed: 6, input: '' });
+        }
+    );
+
     test('comparison operators over a mixed positive/negative/decimal dataset', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'val', filter: 'agNumberColumnFilter', filterParams: { debounceMs: 0 } }],

@@ -62,11 +62,11 @@ describe('cell selection drag with touch-like pointers', () => {
         ['touch', 'touch'],
         // assistive technology such as Android Voice Access injects touches with an empty pointerType
         ['an empty pointerType', ''],
-    ])('a swipe from %s does not start a range drag or block native scrolling', async (_name, pointerType) => {
+    ])('a swipe from %s selects nothing and does not block native scrolling', async (_name, pointerType) => {
         const { api, touchMovePrevented } = await swipeAcrossCells(pointerType);
 
         expect(touchMovePrevented).toBe(false);
-        assertSelectedCellRanges([{ rowStartIndex: 0, rowEndIndex: 0, columns: ['athlete'] }], api);
+        assertSelectedCellRanges([], api);
     });
 
     test('a mouse drag selects a range and blocks touch scrolling while dragging', async () => {

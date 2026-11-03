@@ -301,7 +301,6 @@
         "open_source": true,
         "stars": 60,
         "type": "Wrapper",
-        "link": "https://blog.bkkr.us/blazor-ag-grid/fetchdata",
         "frameworks": [".NET"],
         "tags": ["Wrapper"]
     },

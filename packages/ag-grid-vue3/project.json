@@ -4,12 +4,7 @@
   "sourceRoot": "packages/ag-grid-vue3/src",
   "projectType": "library",
   "targets": {
-    "lint": {
-      "command": "eslint",
-      "options": {
-        "cwd": "{projectRoot}"
-      }
-    },
+    "lint": {},
     "updateGridAndColumnProperties": {
       "executor": "nx:run-commands",
       "dependsOn": ["ag-grid-community:build:package"],

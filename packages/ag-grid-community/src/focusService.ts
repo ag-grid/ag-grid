@@ -1,4 +1,13 @@
-import { KeyCode, _focusInto, _getActiveDomElement, _last, _makeNull, _registerKeyboardFocusEvents } from 'ag-stack';
+import {
+    KeyCode,
+    _focusInto,
+    _getActiveDomElement,
+    _getDeepActiveElement,
+    _isNothingFocused,
+    _last,
+    _makeNull,
+    _registerKeyboardFocusEvents,
+} from 'ag-stack';
 
 import type { ColumnModel } from './columns/columnModel';
 import { isRowNumberCol } from './columns/columnUtils';
@@ -61,10 +70,10 @@ export class FocusService extends BeanStub implements NamedBean {
         this.overlays = beans.overlays;
     }
 
-    private focusedCell: CellPosition | null;
-    private previousCellFocusParams: CellFocusedParams | null;
+    private focusedCell: CellPosition | null = null;
+    private previousCellFocusParams: CellFocusedParams | null = null;
 
-    public focusedHeader: HeaderPosition | null;
+    public focusedHeader: HeaderPosition | null = null;
     private elementToReveal: HTMLElement | null = null;
     /** The latest focus waiting for its element to mount (a cell's event or the header asked), and what had focus then */
     private deferredFocusRequest: CellFocusedEvent | AbstractHeaderCellCtrl | undefined = undefined;
@@ -132,7 +141,7 @@ export class FocusService extends BeanStub implements NamedBean {
     public deferFocus(request: CellFocusedEvent | AbstractHeaderCellCtrl): void {
         if (request !== this.deferredFocusRequest || request instanceof AbstractHeaderCellCtrl) {
             this.deferredFocusRequest = request;
-            this.activeAtDeferredFocus = _getActiveDomElement(this.beans);
+            this.activeAtDeferredFocus = _getDeepActiveElement(this.beans);
         }
     }
 
@@ -145,19 +154,13 @@ export class FocusService extends BeanStub implements NamedBean {
     public isDeferredFocusCurrent(request: CellFocusedEvent | AbstractHeaderCellCtrl): boolean {
         return (
             request === this.deferredFocusRequest &&
-            (_getActiveDomElement(this.beans) === this.activeAtDeferredFocus || this.isFocusUnclaimed())
+            (_getDeepActiveElement(this.beans) === this.activeAtDeferredFocus || _isNothingFocused(this.beans))
         );
     }
 
     /** Whether the grid can take focus without stealing it: focus is unclaimed, or a grid row or cell has it. */
     public isFocusFreeForGrid(): boolean {
-        return this.isFocusUnclaimed() || this.doesRowOrCellHaveBrowserFocus();
-    }
-
-    /** Whether nothing has focus but what encloses the grid, such as the container a focus trap falls back to. */
-    private isFocusUnclaimed(): boolean {
-        const active = _getActiveDomElement(this.beans);
-        return !active || active.contains(this.beans.eRootDiv);
+        return _isNothingFocused(this.beans) || this.doesRowOrCellHaveBrowserFocus();
     }
 
     public onColumnEverythingChanged(): void {

@@ -322,7 +322,7 @@ describe('Column Autosize', () => {
             expect(widths()).toEqual([350, 600, 50]);
         });
 
-        test('an auto-size sizes the columns that sizing the rendered ones brings into view', async () => {
+        test('an auto-size sizes the columns that sizing the rendered ones brings into view, a flex column too', async () => {
             const measured = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (
                 this: HTMLElement
             ) {
@@ -330,9 +330,11 @@ describe('Column Autosize', () => {
             });
             try {
                 const columnDefs: ColDef[] = [];
-                for (let i = 0; i < 20; ++i) {
+                for (let i = 0; i < 10; ++i) {
                     columnDefs.push({ colId: `c${i}` });
                 }
+                // re-flexed by every pass before it is rendered and measured
+                columnDefs[9].flex = 1;
                 const api = gridsManager.createGrid('myGrid', {
                     columnDefs,
                     autoSizePadding: 0,
@@ -341,10 +343,11 @@ describe('Column Autosize', () => {
                 });
                 const widths = () => api.getAllDisplayedColumns().map((col) => col.getActualWidth());
                 // at 200px each only the first few are rendered, so measurable
-                expect(api.getAllDisplayedVirtualColumns().length).toBeLessThan(20);
+                expect(api.getAllDisplayedVirtualColumns().length).toBeLessThan(columnDefs.length);
 
                 api.autoSizeAllColumns();
 
+                // the flex col measures 50 too, where flex alone would give it the 550px left over
                 await waitFor(() => expect(widths()).toEqual(columnDefs.map(() => 50)));
             } finally {
                 measured.mockRestore();

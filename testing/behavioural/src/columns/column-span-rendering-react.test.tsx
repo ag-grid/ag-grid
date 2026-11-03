@@ -95,6 +95,50 @@ describe('colSpan follows row data updates (React)', () => {
         await waitFor(() => expect(renderedRow(api!, 0)).toBe('price:200px group:100px'));
     });
 
+    test('a spanning cell sets aria-colspan, following the span as the rowData prop changes', async () => {
+        let api: GridApi | undefined;
+        const Grid = ({ rowData }: { rowData: PriceRow[] }) => (
+            <StrictMode>
+                <AgGridReact
+                    rowData={rowData}
+                    columnDefs={columnDefs}
+                    getRowId={(params) => params.data.id}
+                    onGridReady={(e) => {
+                        api = e.api;
+                    }}
+                />
+            </StrictMode>
+        );
+        const ariaColSpans = () =>
+            [0, 1].map((rowIndex) =>
+                getGridElement(api!)!
+                    .querySelector(`.ag-row[row-index="${rowIndex}"] .ag-cell[col-id="price"]`)
+                    ?.getAttribute('aria-colspan')
+            );
+
+        const { rerender } = render(
+            <Grid
+                rowData={[
+                    { id: 'r0', price: 0, symbol: 'AAA', group: 'A' },
+                    { id: 'r1', price: 2, symbol: 'BBB', group: 'A' },
+                ]}
+            />
+        );
+        await waitFor(() => expect(renderedRow(api!, 1)).toBe('price:300px'));
+        expect(ariaColSpans()).toEqual([null, '3']);
+
+        rerender(
+            <Grid
+                rowData={[
+                    { id: 'r0', price: 1, symbol: 'AAA', group: 'A' },
+                    { id: 'r1', price: 0, symbol: 'BBB', group: 'A' },
+                ]}
+            />
+        );
+        await waitFor(() => expect(renderedRow(api!, 0)).toBe('price:200px group:100px'));
+        expect(ariaColSpans()).toEqual(['2', null]);
+    });
+
     test('showing a spanning column over the focused cell draws the span beneath it', async () => {
         let api: GridApi | undefined;
         render(

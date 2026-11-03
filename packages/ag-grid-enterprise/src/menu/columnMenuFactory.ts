@@ -30,15 +30,20 @@ export class ColumnMenuFactory extends BeanStub implements NamedBean {
         menuItems: (DefaultColumnMenuItem | MenuItemDef)[],
         column: AgColumn | undefined,
         sourceElement: () => HTMLElement,
-        columnGroup?: AgProvidedColumnGroup
+        columnGroup?: AgProvidedColumnGroup,
+        role?: 'menu' | 'presentation'
     ): MenuList {
         const menuList = parent.createManagedBean(
-            new MenuList(0, {
-                column: column ?? null,
-                columnGroup: columnGroup ?? null,
-                node: null,
-                value: null,
-            })
+            new MenuList(
+                0,
+                {
+                    column: column ?? null,
+                    columnGroup: columnGroup ?? null,
+                    node: null,
+                    value: null,
+                },
+                role
+            )
         );
 
         const menuItemsMapped = (this.beans.menuItemMapper as MenuItemMapper).mapWithStockItems(

@@ -10,12 +10,14 @@ export const LengthValueEditor = ({
     swipeAdjustmentDivisor,
     min,
     max,
+    label,
 }: ValueEditorProps<LengthValue>) => {
     const cssValue = paramValueToCss(param.property, value, null) || '';
     return (
         <LengthInput
             value={cssValue}
             onChange={onChange}
+            ariaLabel={label}
             icon={icon}
             swipeAdjustmentDivisor={swipeAdjustmentDivisor}
             min={min}

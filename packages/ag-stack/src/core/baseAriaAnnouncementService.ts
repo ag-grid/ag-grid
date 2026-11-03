@@ -65,8 +65,14 @@ export class BaseAriaAnnouncementService<
         this.updateAnnouncement();
     }
 
+    /** Drops the key's announcement if not yet delivered, leaving what was last announced untouched. */
+    public cancelAnnouncement(key: string): void {
+        this.announcementGenerations.set(key, (this.announcementGenerations.get(key) ?? 0) + 1);
+        this.pendingAnnouncements.delete(key);
+    }
+
     private updateAnnouncement(): void {
-        if (!this.descriptionContainer) {
+        if (!this.descriptionContainer || !this.pendingAnnouncements.size) {
             return;
         }
 
@@ -81,11 +87,13 @@ export class BaseAriaAnnouncementService<
         setTimeout(() => {
             // A same-key update may arrive after this batch left the debounce queue but before its delayed
             // delivery. Drop only the superseded entry; unrelated announcements in this batch still apply.
-            const value = announcements
-                .filter(({ generation, key }) => this.announcementGenerations.get(key) === generation)
-                .map(({ value }) => value)
-                .join('. ');
-            this.handleAnnouncementUpdate(value);
+            const current = announcements.filter(
+                ({ generation, key }) => this.announcementGenerations.get(key) === generation
+            );
+            if (!current.length) {
+                return;
+            }
+            this.handleAnnouncementUpdate(current.map(({ value }) => value).join('. '));
         }, ANNOUNCE_REPEAT_DELAY);
     }
 
