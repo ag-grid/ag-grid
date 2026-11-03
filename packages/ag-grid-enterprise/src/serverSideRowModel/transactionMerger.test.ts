@@ -81,8 +81,11 @@ function applySequentially(initial: Row[], transactions: ServerSideTransaction[]
 
 function applySequentiallyWithResults(initial: Row[], transactions: ServerSideTransaction[]) {
     const store = new FakeStore(initial);
+    const initialNodes = store.rows.slice();
     const results = transactions.map((tx) => store.apply(tx));
-    return { results, rows: store.snapshot() };
+    // nodes that exist before or after the stream, as opposed to rows added and removed again within it
+    const lastingNodes = new Set([...initialNodes, ...store.rows]);
+    return { results, rows: store.snapshot(), lastingNodes };
 }
 
 /** The id and final data of each node a result reports, by op. */
@@ -313,10 +316,17 @@ describe('_applyMergedTransactions', () => {
             const merged = applyMerged(start, transactions);
             const sequential = applySequentiallyWithResults(start, transactions);
             expect(merged.rows).toEqual(sequential.rows);
-            // a row added and removed in one batch is not reported, so only check what is reported is the same
+            // a row added and removed in one batch is not reported, so only rows that exist before or after the
+            // stream must be; everything that is reported must match
             merged.results.forEach((result, t) => {
-                const expected = reported(sequential.results[t]);
+                const sequentialResult = sequential.results[t];
+                expect(result.status).toBe(sequentialResult.status);
+                const expected = reported(sequentialResult);
                 reported(result).forEach((nodes, op) => expect(expected[op]).toEqual(expect.arrayContaining(nodes)));
+                for (const op of ['update', 'add', 'remove'] as const) {
+                    const lasting = sequentialResult[op]?.filter((node) => sequential.lastingNodes.has(node));
+                    expect(ids(result[op]) ?? []).toEqual(expect.arrayContaining(ids(lasting) ?? []));
+                }
             });
         }
     });
