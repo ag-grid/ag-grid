@@ -42,9 +42,9 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
     public pivotHasMarryChildren = false;
     /** Non-padding groups in `pivotTree`, keyed by `groupId`. Built by `_buildColumnTree`. */
     public pivotGroupsById: Map<string, AgProvidedColumnGroup> = new Map();
-    /** Cols in `pivotTree` keyed by colId / userProvidedColDef ref / field. Cached so the next
-     *  build's reuse lookup can skip the existing-tree DFS. */
+    /** Cols in `pivotTree` by colId and by `userProvidedColDef` ref: the next build's reuse lookup. */
     private pivotColsByKey: Map<string | ColDef, AgColumn> = new Map();
+    private pivotLaterColsByDef: Map<ColDef, AgColumn[]> | null = null;
     /** Every group (padding + non-padding) in `pivotTree`; the orphan sweep and `visibleColsService`
      *  (via `colModel.colsAllGroups`) need padding groups included when pruning/resetting `displayInstances`. */
     public pivotAllGroups: AgProvidedColumnGroup[] = [];
@@ -228,6 +228,16 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
         // Pick the cols/groups lists that pair with `previousTree` for the post-build sweep.
         const previousCols = currentPivotTree ? currentPivotCols! : (saved?.cols ?? null);
         const previousAllGroups = currentPivotTree ? this.pivotAllGroups : (saved?.groups ?? null);
+        if (previousCols) {
+            // A column whose value column was replaced is not reused by colId; new defs name the new value column.
+            const pivotColsByKey = this.pivotColsByKey;
+            for (let i = 0, len = previousCols.length; i < len; ++i) {
+                const col = previousCols[i];
+                if (col.pivotValueColumn?.isAlive() === false) {
+                    pivotColsByKey.delete(col.colId);
+                }
+            }
+        }
         const buildToken = beans.colModel.nextBuildToken();
         const balanced = _buildColumnTree(
             beans,
@@ -235,6 +245,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
             /* primaryColumns */ false,
             /* existingGroupsById */ this.pivotGroupsById,
             /* existingColsByKey */ this.pivotColsByKey,
+            /* existingLaterColsByDef */ this.pivotLaterColsByDef,
             /* existingColsById */ beans.colModel.colsById,
             /* source */ source,
             // Generated cols: re-apply their stateful attrs each pivot rebuild (pre-live-state-flag behaviour).
@@ -254,6 +265,7 @@ export class PivotResultColsService extends BeanStub implements NamedBean, IPivo
         this.pivotHasMarryChildren = balanced.marryChildren;
         this.pivotGroupsById = balanced.groupsById;
         this.pivotColsByKey = balanced.colsByKey;
+        this.pivotLaterColsByDef = balanced.laterColsByDef;
         this.pivotAllGroups = balanced.allGroups;
         this.savedPivot = null;
         this.dependentsByValueCol = null;

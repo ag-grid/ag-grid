@@ -1,3 +1,5 @@
+import { _pushToMapArray } from 'ag-stack';
+
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import { AgProvidedColumnGroup } from '../entities/agProvidedColumnGroup';
@@ -24,8 +26,10 @@ export interface ColumnTreeBuild {
     marryChildren: boolean;
     /** Non-padding groups by `groupId`; fed back as next call's `existingGroupsById`. */
     groupsById: Map<string, AgProvidedColumnGroup>;
-    /** Cols keyed by `colId` / `userProvidedColDef` ref / `field`; for O(1) reuse. */
+    /** Cols keyed by `colId`, and by `userProvidedColDef` ref for its first col; for O(1) reuse. */
     colsByKey: Map<string | ColDef, AgColumn>;
+    /** A colDef object's cols after its first, in build order; `null` unless one object built several. */
+    laterColsByDef: Map<ColDef, AgColumn[]> | null;
     source: ColumnEventType;
     /** True = user (re)set the definitions, so reused cols re-apply stateful attrs; see {@link AgColumn.reapplyColDef}. */
     newColDefs: boolean;
@@ -47,6 +51,7 @@ export function _buildColumnTree(
     primaryColumns: boolean,
     existingGroupsById: Map<string, AgProvidedColumnGroup>,
     existingColsByKey: Map<string | ColDef, AgColumn>,
+    existingLaterColsByDef: Map<ColDef, AgColumn[]> | null,
     existingColsById: { readonly [id: string]: AgColumn },
     source: ColumnEventType,
     newColDefs: boolean,
@@ -57,15 +62,72 @@ export function _buildColumnTree(
     const defaultColGroupDef = gos.get('defaultColGroupDef');
     // Stateless padded groups share one colGroupDef ref; the cast is safe (padding owns its own `children`).
     const paddingDef = (defaultColGroupDef ?? null) as ColGroupDef | null;
-    // Reserved = ids allocated this call + every live colId (primary / pivot / service / hierarchy).
-    const allocatedKeys = new Set<string>();
+    // Ids allocated this call; each held for a padding chain maps to its group.
+    const allocatedKeys = new Map<string, AgProvidedColumnGroup | null>();
     const reservedUserKeys = new Set<string>();
-    const isReserved = (id: string): boolean => allocatedKeys.has(id) || id in existingColsById;
 
-    // Pre-walk for maxDepth + anonymous-slot count. Padded ids start AFTER anonymous-col ids
-    // (`'0'..'<N-1>'` vs `'<N>'+`) so the streams stay disjoint — needed for master/slave determinism.
+    const isReusableUserCol = (col: AgColumn): boolean =>
+        col.colKind === 'user' && col.primary === primaryColumns && col.buildToken !== buildToken;
+    /** Allocated, or held by a live column kept or not reusable; read after every match, so the rest are swept. */
+    const isReserved = (id: string): boolean => {
+        if (allocatedKeys.has(id)) {
+            return true;
+        }
+        const live = existingColsById[id];
+        return live !== undefined && !isReusableUserCol(live);
+    };
+
+    // Per leaf, its column by `colId` or instance, taken before any key or positional match; `null`: dropped.
+    const leafClaims: (AgColumn | null | undefined)[] = [];
+    let leafOverrides: Map<number, ColDef> | undefined;
+    // Uses so far of each colDef object that built several cols last time.
+    let defUses: Map<ColDef, number> | undefined;
+
+    const claimLeaf = (colDef: ColDef): AgColumn | null | undefined => {
+        const override = userColumnSvc?.overrideFor(colDef);
+        if (override === null) {
+            return null;
+        }
+        if (override !== undefined) {
+            leafOverrides ??= new Map();
+            leafOverrides.set(leafClaims.length, override);
+            colDef = override; // a new object: matched by its colId, else by field
+        }
+        const colId = colDef.colId;
+        let claim: AgColumn | undefined;
+        if (colId != null) {
+            claim = existingColsByKey.get(colId);
+        } else if (override === undefined) {
+            const later = existingLaterColsByDef?.get(colDef);
+            if (later === undefined) {
+                claim = existingColsByKey.get(colDef);
+            } else {
+                // The object built several cols: its n-th use takes the n-th of them.
+                defUses ??= new Map();
+                const use = defUses.get(colDef) ?? 0;
+                defUses.set(colDef, use + 1);
+                claim = use === 0 ? existingColsByKey.get(colDef) : later[use - 1];
+            }
+        }
+        if (claim === undefined || !isReusableUserCol(claim)) {
+            return undefined;
+        }
+        allocatedKeys.set(claim.colId, null);
+        claim.buildToken = buildToken;
+        return claim;
+    };
+
+    // Pre-walk: depth, claims, user keys and the count of positional ids; padded ids start after the positional ones.
     let treeDepth = 0;
     let paddedIdHint = 0;
+    let anonymousLeafCount = 0;
+    // The last build's columns without colId or field, in order; read before any of them is re-applied.
+    let oldAnonymousCols: AgColumn[] | undefined;
+    // Leaves no claim took, keyed or with a positional candidate: their indexes and (override) defs.
+    let deferredLeaves: number[] | undefined;
+    let deferredDefs: ColDef[] | undefined;
+    // Positional ids: those below it that are not a user key.
+    let positionalEnd = 0;
     if (defs) {
         const measure = (nodes: (ColDef | ColGroupDef)[], level: number): void => {
             if (level > treeDepth) {
@@ -75,58 +137,156 @@ export function _buildColumnTree(
                 const def = nodes[i];
                 const childDefs = (def as ColGroupDef).children;
                 if (childDefs) {
-                    if ((def as ColGroupDef).groupId == null) {
-                        ++paddedIdHint;
-                    }
-                    measure(childDefs, level + 1);
-                } else {
-                    const base = (def as ColDef).colId ?? (def as ColDef).field;
-                    if (base == null) {
+                    const groupId = (def as ColGroupDef).groupId;
+                    if (groupId == null) {
                         ++paddedIdHint;
                     } else {
-                        reservedUserKeys.add(base);
+                        reservedUserKeys.add(groupId);
                     }
+                    measure(childDefs, level + 1);
+                    continue;
                 }
+                const colDef = def as ColDef;
+                const base = colDef.colId ?? colDef.field;
+                let claim = claimLeaf(colDef);
+                let deferredDef: ColDef | undefined;
+                if (base != null) {
+                    reservedUserKeys.add(base);
+                    if (claim === undefined) {
+                        deferredDef = leafOverrides?.get(leafClaims.length) ?? colDef;
+                    }
+                } else {
+                    ++paddedIdHint;
+                    if (claim === undefined) {
+                        oldAnonymousCols ??= collectAnonymousCols(existingColsByKey);
+                        claim = oldAnonymousCols[anonymousLeafCount];
+                        if (claim !== undefined) {
+                            deferredDef = colDef;
+                        }
+                    }
+                    ++anonymousLeafCount;
+                }
+                if (deferredDef !== undefined) {
+                    deferredLeaves ??= [];
+                    deferredDefs ??= [];
+                    deferredLeaves.push(leafClaims.length);
+                    deferredDefs.push(deferredDef);
+                }
+                leafClaims.push(claim);
             }
         };
         measure(defs, 0);
+    }
 
-        // Reserve reusable padding-chain ids before any allocation: a reused chain keeps its prior id, so a
-        // fresh group must not be handed it (keeps allocation collision-free regardless of def order).
-        if (treeDepth > 0) {
-            const reserveReusedPaddingIds = (nodes: (ColDef | ColGroupDef)[]): void => {
-                for (let i = 0, len = nodes.length; i < len; ++i) {
-                    const def = nodes[i];
-                    const childDefs = (def as ColGroupDef).children;
-                    if (childDefs) {
-                        reserveReusedPaddingIds(childDefs);
-                        continue;
+    // After every claim: a keyed leaf takes the first unclaimed column with its key, at its key or a suffix of it.
+    if (deferredLeaves) {
+        // A rename keeps the number of anonymous columns, drops the old header and gives one none of them had.
+        const canRename = oldAnonymousCols?.length === anonymousLeafCount;
+        // The old anonymous columns' and the new anonymous defs' `headerName`s, collected at the first header change.
+        let oldHeaders: Set<string | undefined> | undefined;
+        let newHeaders: Set<string | undefined> | undefined;
+        for (let i = 0, len = deferredLeaves.length; i < len; ++i) {
+            const index = deferredLeaves[i];
+            const def = deferredDefs![i];
+            const colId = def.colId;
+            const base = colId ?? def.field;
+            if (base != null) {
+                for (let count = 0; ; ++count) {
+                    const id: string = count === 0 ? base : `${base}_${count}`;
+                    const live: AgColumn | undefined = existingColsById[id];
+                    if (live === undefined) {
+                        break;
                     }
-                    const colDef = def as ColDef;
-                    const existing = existingColsByKey.get(colDef.colId ?? colDef.field ?? def);
-                    let node = existing ? innermostPaddingHead(existing, treeDepth) : null;
-                    while (node?.padding) {
-                        allocatedKeys.add(node.groupId);
-                        node = node.originalParent;
+                    // Only a column of this tree's last build its owner still offers for reuse.
+                    if (isReusableUserCol(live) && existingColsByKey.get(id) === live) {
+                        const liveDef: ColDef = live.userProvidedColDef!;
+                        if ((liveDef.colId ?? liveDef.field) === base) {
+                            allocatedKeys.set(id, null);
+                            live.buildToken = buildToken;
+                            leafClaims[index] = live;
+                            if (colId != null) {
+                                beans.log.warn(273, { providedId: colId, usedId: id }); // its own id was a claim
+                            }
+                            break;
+                        }
                     }
                 }
-            };
-            reserveReusedPaddingIds(defs);
+                continue;
+            }
+            // A positional candidate is kept when free and its header is the same or renamed.
+            const col = leafClaims[index]!;
+            const oldHeader = col.userProvidedColDef!.headerName;
+            const newHeader = def.headerName;
+            const free = isReusableUserCol(col) && !reservedUserKeys.has(col.colId);
+            let renamed = false;
+            if (free && canRename && oldHeader !== newHeader) {
+                if (oldHeaders === undefined) {
+                    oldHeaders = new Set();
+                    for (let j = 0, oldLen = oldAnonymousCols!.length; j < oldLen; ++j) {
+                        oldHeaders.add(oldAnonymousCols![j].userProvidedColDef!.headerName);
+                    }
+                    newHeaders = new Set();
+                    collectAnonymousHeaders(defs!, newHeaders);
+                }
+                renamed = !oldHeaders.has(newHeader) && !newHeaders!.has(oldHeader);
+            }
+            if (free && (oldHeader === newHeader || renamed)) {
+                allocatedKeys.set(col.colId, null);
+                col.buildToken = buildToken;
+            } else {
+                leafClaims[index] = undefined;
+            }
+        }
+    }
+
+    if (treeDepth > 0) {
+        let left = paddedIdHint;
+        while (left > 0) {
+            if (!reservedUserKeys.has(`${positionalEnd}`)) {
+                --left;
+            }
+            ++positionalEnd;
+        }
+        paddedIdHint = positionalEnd;
+        // Hold each kept column's old padding chain unless an id in it is now a user or positional id.
+        for (let i = 0, len = leafClaims.length; i < len; ++i) {
+            const claim = leafClaims[i];
+            const innermost = claim ? innermostPaddingHead(claim, treeDepth) : null;
+            let node = innermost;
+            while (node?.padding) {
+                const groupId = node.groupId;
+                if (Number(groupId) < positionalEnd || reservedUserKeys.has(groupId)) {
+                    break;
+                }
+                node = node.originalParent;
+            }
+            if (node?.padding) {
+                continue;
+            }
+            for (node = innermost; node?.padding; node = node.originalParent) {
+                allocatedKeys.set(node.groupId, node);
+            }
         }
     }
 
     let userIdHint = 0;
-    const getUniqueKey = (groupId: string | null | undefined): string => {
+    /** The next id by position among columns without colId or field and groups without groupId. */
+    const nextPositionalId = (): string => {
         let id: string;
+        do {
+            id = `${userIdHint++}`;
+        } while (isReserved(id) || reservedUserKeys.has(id));
+        allocatedKeys.set(id, null);
+        return id;
+    };
+
+    const getUniqueKey = (groupId: string | null | undefined): string => {
         if (groupId == null) {
-            do {
-                id = `${userIdHint++}`;
-            } while (isReserved(id) || reservedUserKeys.has(id));
-            allocatedKeys.add(id);
-            return id;
+            return nextPositionalId();
         }
+        let id: string;
         if (!isReserved(groupId)) {
-            allocatedKeys.add(groupId);
+            allocatedKeys.set(groupId, null);
             return groupId;
         }
         let count = 1;
@@ -134,7 +294,7 @@ export function _buildColumnTree(
             id = `${groupId}_${count++}`;
         } while (isReserved(id));
         beans.log.warn(273, { providedId: groupId, usedId: id });
-        allocatedKeys.add(id);
+        allocatedKeys.set(id, null);
         return id;
     };
 
@@ -144,109 +304,48 @@ export function _buildColumnTree(
     const allGroups: AgProvidedColumnGroup[] = [];
     let hasMarryChildren = false;
     const newColsByKey = new Map<string | ColDef, AgColumn>();
+    let newLaterColsByDef: Map<ColDef, AgColumn[]> | null = null;
 
-    const isReusableUserCol = (col: AgColumn): boolean =>
-        col.colKind === 'user' && col.primary === primaryColumns && col.buildToken !== buildToken;
-
-    /** Reuse/create an anonymous leaf (no colId/field) after the ref missed. Positional reuse on the
-     *  `userIdHint` stream keeps a recreated `{...}` def on its id instead of drifting (losing state). */
-    const buildAnonymousColumn = (def: ColDef): AgColumn => {
-        while (true) {
-            const id = `${userIdHint++}`;
-            if (allocatedKeys.has(id) || reservedUserKeys.has(id)) {
-                continue;
-            }
-            const existing = existingColsById[id];
-            if (existing !== undefined) {
-                const userDef = existing.userProvidedColDef;
-                if (isReusableUserCol(existing) && userDef && userDef.colId == null && userDef.field == null) {
-                    allocatedKeys.add(id);
-                    existing.buildToken = buildToken;
-                    existing.reapplyColDef(def, source, newColDefs);
-                    return existing;
-                }
-                continue;
-            }
-            allocatedKeys.add(id);
-            return _createUserColumn(beans, def, id, primaryColumns, buildToken);
-        }
-    };
-
-    /** Reuse/create a keyed (`colId`/`field`) leaf after the ref missed: key for the unique case, else a
-     *  positional scan so a replaced-ref duplicate keeps its state. `buildToken` skips a claimed col. */
-    const buildKeyedColumn = (def: ColDef, colId: string | undefined, field: string | undefined): AgColumn => {
-        const base = colId ?? field!;
-        const keyed = existingColsByKey.get(base);
-        if (keyed?.colId === base && isReusableUserCol(keyed)) {
-            keyed.buildToken = buildToken;
-            keyed.reapplyColDef(def, source, newColDefs);
-            return keyed;
-        }
-        let count = 0;
-        while (true) {
-            const id = count === 0 ? base : `${base}_${count}`;
-            count++;
-            if (allocatedKeys.has(id)) {
-                continue;
-            }
-            const existing = existingColsById[id];
-            if (existing !== undefined) {
-                const existingDef = existing.userProvidedColDef;
-                const existingBase = existingDef ? (existingDef.colId ?? existingDef.field) : null;
-                if (existingBase !== base || !isReusableUserCol(existing)) {
-                    continue; // a different col owns this id, it's already claimed, or it's not a reusable user col
-                }
-            }
-            allocatedKeys.add(id);
-            if (colId != null && id !== colId) {
-                beans.log.warn(273, { providedId: colId, usedId: id }); // colId collided; suffixed
-            }
-            if (existing !== undefined) {
-                existing.buildToken = buildToken;
-                existing.reapplyColDef(def, source, newColDefs);
-                return existing;
-            }
-            return _createUserColumn(beans, def, id, primaryColumns, buildToken);
-        }
-    };
-
-    /** Build/reuse a leaf for `def` (or `undefined` if a calc-col override dropped it). Identity is the
-     *  `colId` when present (reuse only the same-colId column — a changed colId is a new column even on a
-     *  retained colDef ref); without a colId it is the colDef ref, then field/positional in buildKeyedColumn. */
+    let leafIndex = 0;
+    /** The next leaf: the column it matched, else a new one at its key, first free suffix or position; `undefined` if dropped. */
     const buildColumn = (def: ColDef): AgColumn | undefined => {
-        const override = userColumnSvc?.overrideFor(def);
-        if (override === null) {
+        const index = leafIndex++;
+        let column = leafClaims[index];
+        if (column === null) {
             return undefined; // dropped (e.g. a column the user deleted): never built
         }
-        if (override !== undefined) {
-            def = override;
-        }
-        const colId = def.colId;
-        let column: AgColumn | undefined;
-        if (colId != null) {
-            const byId = existingColsByKey.get(colId);
-            column = byId?.colId === colId && isReusableUserCol(byId) ? byId : undefined;
+        def = leafOverrides?.get(index) ?? def;
+        if (column === undefined) {
+            const colId = def.colId;
+            const base = colId ?? def.field;
+            let id: string;
+            if (base == null) {
+                id = nextPositionalId();
+            } else {
+                id = base;
+                let count = 1;
+                while (isReserved(id)) {
+                    id = `${base}_${count}`;
+                    ++count;
+                }
+                allocatedKeys.set(id, null);
+                if (colId != null && id !== colId) {
+                    beans.log.warn(273, { providedId: colId, usedId: id });
+                }
+            }
+            column = _createUserColumn(beans, def, id, primaryColumns, buildToken);
         } else {
-            const byRef = existingColsByKey.get(def);
-            column = byRef !== undefined && isReusableUserCol(byRef) ? byRef : undefined;
+            column.reapplyColDef(def, source, newColDefs); // here, not at the claim: columns update in def order
         }
-        if (column !== undefined) {
-            column.buildToken = buildToken;
-            column.reapplyColDef(def, source, newColDefs);
-        } else {
-            const field = def.field;
-            column = colId == null && field == null ? buildAnonymousColumn(def) : buildKeyedColumn(def, colId, field);
-        }
-        // Hierarchy / service cols have no `userProvidedColDef` and are never looked up by ref / field.
+        // Hierarchy / service cols have no `userProvidedColDef` and are never looked up by ref.
         const userDef = column.userProvidedColDef;
         if (userDef) {
             newColsByKey.set(column.colId, column);
             if (!newColsByKey.has(userDef)) {
                 newColsByKey.set(userDef, column);
-            }
-            const userField = userDef.field;
-            if (userField && !newColsByKey.has(userField)) {
-                newColsByKey.set(userField, column);
+            } else {
+                newLaterColsByDef ??= new Map();
+                _pushToMapArray(newLaterColsByDef, userDef, column);
             }
         }
         return column;
@@ -275,6 +374,7 @@ export function _buildColumnTree(
             marryChildren: false,
             groupsById: newGroupsById,
             colsByKey: newColsByKey,
+            laterColsByDef: newLaterColsByDef,
             source,
             newColDefs,
             buildToken,
@@ -282,26 +382,51 @@ export function _buildColumnTree(
         };
     }
 
-    /** Reuse `col`'s prior padding chain when valid. Atomic chain builds mean validating only the
-     *  innermost padding suffices — the rest follows by invariant. */
+    /** Reuse `col`'s padding chain up to `level` when no id in it is taken or is now a user or positional id. */
     const tryReusePaddingChain = (
         col: AgColumn,
         level: number,
-        parent: AgProvidedColumnGroup | null
+        parent: AgProvidedColumnGroup | null,
+        payload: AgColumn[] | null
     ): AgProvidedColumnGroup | null => {
-        let node = innermostPaddingHead(col, treeDepth);
-        if (node === null || node.buildToken === buildToken) {
+        const innermost = innermostPaddingHead(col, treeDepth);
+        if (innermost === null || innermost.buildToken === buildToken) {
             return null;
         }
-        while (node.level > level) {
-            node.buildToken = buildToken;
-            allGroups.push(node);
-            node = node.originalParent!;
+        let top = innermost;
+        while (true) {
+            const groupId = top.groupId;
+            const owner = allocatedKeys.get(groupId);
+            if (
+                owner !== top &&
+                (owner !== undefined || Number(groupId) < positionalEnd || reservedUserKeys.has(groupId))
+            ) {
+                return null;
+            }
+            if (top.level === level) {
+                break;
+            }
+            const up = top.originalParent;
+            if (!up?.padding) {
+                return null;
+            }
+            top = up;
         }
-        node.buildToken = buildToken;
-        allGroups.push(node);
-        node.originalParent = parent;
-        return node;
+        for (let node = innermost; ; node = node.originalParent!) {
+            node.buildToken = buildToken;
+            allocatedKeys.set(node.groupId, node);
+            allGroups.push(node);
+            if (node === top) {
+                break;
+            }
+        }
+        top.originalParent = parent;
+        if (payload !== null) {
+            innermost.children = payload;
+        } else if (innermost.children.length !== 1) {
+            innermost.children = [col]; // it was shared: the others left
+        }
+        return top;
     };
 
     if (paddingDef) {
@@ -321,7 +446,7 @@ export function _buildColumnTree(
             do {
                 newId = `${paddedIdHint++}`;
             } while (isReserved(newId) || reservedUserKeys.has(newId));
-            allocatedKeys.add(newId);
+            allocatedKeys.set(newId, null);
             const padded = new AgProvidedColumnGroup(paddingDef, newId, true, j);
             padded.buildToken = buildToken;
             context.createBean(padded);
@@ -366,7 +491,7 @@ export function _buildColumnTree(
         candidate.buildToken = buildToken; // stamp only on success — also the "already claimed" guard
         // Refresh def ref so `getColGroupDef().children` reflects current children (excluded from compare).
         candidate.colGroupDef = merged;
-        allocatedKeys.add(candidate.groupId);
+        allocatedKeys.set(candidate.groupId, null);
         return { reused: candidate, existing: candidate };
     };
 
@@ -403,8 +528,7 @@ export function _buildColumnTree(
                 if (wrapped.length === 0) {
                     return wrapped; // every leaf removed — nothing to wrap (empty array)
                 }
-                // Reuse the chain only when every col still shares one innermost padding (this
-                // all-leaves chain existed last refresh); refresh children on reuse.
+                // Reuse the chain only when every col still shares one innermost padding.
                 const sharedInnermost = wrapped[0].originalParent;
                 let allShareChain = sharedInnermost !== null;
                 if (allShareChain) {
@@ -415,17 +539,8 @@ export function _buildColumnTree(
                         }
                     }
                 }
-                if (allShareChain) {
-                    const reusedTop = tryReusePaddingChain(wrapped[0], level, parent);
-                    if (reusedTop !== null) {
-                        sharedInnermost!.children = wrapped;
-                        for (let i = 0, wLen = wrapped.length; i < wLen; ++i) {
-                            wrapped[i].originalParent = sharedInnermost!;
-                        }
-                        return [reusedTop];
-                    }
-                }
-                return [buildPaddedChain(level, parent, wrapped)];
+                const reusedTop = allShareChain ? tryReusePaddingChain(wrapped[0], level, parent, wrapped) : null;
+                return [reusedTop ?? buildPaddedChain(level, parent, wrapped)];
             }
         }
         const result: (AgColumn | AgProvidedColumnGroup)[] = [];
@@ -470,7 +585,9 @@ export function _buildColumnTree(
                 columns.push(col);
                 if (needsPadding) {
                     // Naked col in a mixed level — pad under its own chain to preserve def order.
-                    result.push(tryReusePaddingChain(col, level, parent) ?? buildPaddedChain(level, parent, [col]));
+                    result.push(
+                        tryReusePaddingChain(col, level, parent, null) ?? buildPaddedChain(level, parent, [col])
+                    );
                 } else {
                     col.originalParent = parent;
                     result.push(col);
@@ -490,6 +607,7 @@ export function _buildColumnTree(
         marryChildren: hasMarryChildren,
         groupsById: newGroupsById,
         colsByKey: newColsByKey,
+        laterColsByDef: newLaterColsByDef,
         source,
         newColDefs,
         buildToken,
@@ -500,6 +618,32 @@ export function _buildColumnTree(
 const innermostPaddingHead = (col: AgColumn, maxDepth: number): AgProvidedColumnGroup | null => {
     const node = col.originalParent;
     return node != null && node.padding && node.level === maxDepth - 1 ? node : null;
+};
+
+const isAnonymousDef = (def: ColDef): boolean => def.colId == null && def.field == null;
+
+/** A build's columns without colId or field, in build order: its `colsByKey` holds each column's colId first. */
+const collectAnonymousCols = (colsByKey: Map<string | ColDef, AgColumn>): AgColumn[] => {
+    const cols: AgColumn[] = [];
+    colsByKey.forEach((col, key) => {
+        const userDef = col.userProvidedColDef;
+        if (typeof key === 'string' && userDef && isAnonymousDef(userDef)) {
+            cols.push(col);
+        }
+    });
+    return cols;
+};
+
+const collectAnonymousHeaders = (defs: (ColDef | ColGroupDef)[], headers: Set<string | undefined>): void => {
+    for (let i = 0, len = defs.length; i < len; ++i) {
+        const def = defs[i];
+        const children = (def as ColGroupDef).children;
+        if (children) {
+            collectAnonymousHeaders(children, headers);
+        } else if (isAnonymousDef(def as ColDef)) {
+            headers.add(def.headerName);
+        }
+    }
 };
 
 export const finalizeColumnTree = (build: ColumnTreeBuild): void => {

@@ -70,9 +70,9 @@ export class PivotColsSvc extends OrderedColsService implements NamedBean, IPivo
 
     public reRankByPivotGroupOrder(
         defColsList: AgColumn[],
-        stickyOrder: string[],
+        stickyOrder: AgColumn[],
         colsById: Record<string, AgColumn>
-    ): string[] {
+    ): AgColumn[] {
         const groupRank = new Map<string, number>();
         for (let i = 0, len = defColsList.length; i < len; ++i) {
             const key = pivotGroupKey(defColsList[i]);
@@ -82,19 +82,19 @@ export class PivotColsSvc extends OrderedColsService implements NamedBean, IPivo
         }
         // Cols absent from defColsList have no known group, so they rank last (after every known group).
         const unknownRank = groupRank.size;
-        const ranked: RankedColId[] = [];
+        const ranked: RankedCol[] = [];
         for (let i = 0, len = stickyOrder.length; i < len; ++i) {
-            const id = stickyOrder[i];
-            const col = colsById[id];
+            const stickyCol = stickyOrder[i];
+            const col = colsById[stickyCol.colId];
             if (col != null) {
-                ranked.push({ id, order: i, rank: groupRank.get(pivotGroupKey(col)) ?? unknownRank });
+                ranked.push({ col: stickyCol, order: i, rank: groupRank.get(pivotGroupKey(col)) ?? unknownRank });
             }
         }
         ranked.sort(byRankThenOrder);
         const rankedLen = ranked.length;
-        const result = new Array<string>(rankedLen);
+        const result = new Array<AgColumn>(rankedLen);
         for (let i = 0; i < rankedLen; ++i) {
-            result[i] = ranked[i].id;
+            result[i] = ranked[i].col;
         }
         return result;
     }
@@ -136,10 +136,10 @@ const pivotGroupKey = (col: AgColumn): string => {
  *  cannot start a `pivotKeys`-derived or group-derived key, so the two namespaces stay disjoint. */
 const ungroupedKey = (col: AgColumn): string => `\0${col.colId}`;
 
-interface RankedColId {
-    id: string;
+interface RankedCol {
+    col: AgColumn;
     order: number;
     rank: number;
 }
 
-const byRankThenOrder = (a: RankedColId, b: RankedColId): number => a.rank - b.rank || a.order - b.order;
+const byRankThenOrder = (a: RankedCol, b: RankedCol): number => a.rank - b.rank || a.order - b.order;

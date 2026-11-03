@@ -51,13 +51,6 @@ interface HierarchyPlanEntry {
     colId: string;
 }
 
-/** Reverse-lookup for a virtual col: source col + position in that source's bucket. The stored index
- *  lets `compareVirtualColumns` rank siblings in O(1) without re-scanning the bucket. */
-interface VirtualColInfo {
-    source: AgColumn;
-    index: number;
-}
-
 export class GroupHierarchyColService extends BeanStub implements NamedBean, IGroupHierarchyColService {
     beanName = 'groupHierarchyColSvc' as const;
 
@@ -67,11 +60,11 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
 
     /** Source col → its generated virtuals. */
     private readonly sourceColumnMap = new Map<AgColumn, AgColumn[]>();
-    /** Virtual col → `{ source, index }` — the inverse of `sourceColumnMap`. */
-    private readonly virtualColInfo = new Map<AgColumn, VirtualColInfo>();
+    /** Virtual col → its position in its source's bucket (the source is its `derivedFromCol`), for O(1) ranking. */
+    private readonly virtualColIndex = new Map<AgColumn, number>();
 
-    /** Plan the expected colIds: rebuild the cols when they differ, else refresh their defs in place so a
-     *  config / inline-part change is picked up without churning beans on a no-op refresh. */
+    /** Plan the expected colIds: rebuild the cols when they or their source cols differ, else refresh their defs
+     *  in place so a config / inline-part change is picked up without churning beans on a no-op refresh. */
     public contributeTo(build: ColumnTreeBuild): void {
         const { plan, matches } = this.planHierarchy(build.columns);
         if (plan.length === 0) {
@@ -102,21 +95,22 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         }
     }
 
-    /** Allocate fresh hierarchy AgColumns from a plan whose colIds differ from current. */
+    /** Allocate fresh hierarchy AgColumns from a plan whose colIds or source cols differ from current. */
     private rebuildColumns(plan: HierarchyPlanEntry[]): void {
-        const { sourceColumnMap, virtualColInfo, beans, gos } = this;
+        const { sourceColumnMap, virtualColIndex, beans, gos } = this;
         sourceColumnMap.clear();
-        virtualColInfo.clear();
+        virtualColIndex.clear();
         const cols: AgColumn[] = new Array(plan.length);
         for (let i = 0, len = plan.length; i < len; ++i) {
             const { sourceCol, part, colId } = plan[i];
             const colDef = this.createColDefForPart(part, sourceCol, colId);
             gos.validateColDef(colDef, colId, true);
             const col = new AgColumn(colDef, null, colId, true, 'hierarchy');
+            col.derivedFromCol = sourceCol;
             beans.context.createBean(col);
             cols[i] = col;
             const bucket = sourceColumnMap.get(sourceCol);
-            virtualColInfo.set(col, { source: sourceCol, index: bucket?.length ?? 0 });
+            virtualColIndex.set(col, bucket?.length ?? 0);
             if (bucket) {
                 bucket.push(col);
             } else {
@@ -126,8 +120,8 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
         this.columns = cols;
     }
 
-    /** Project the hierarchy cols expected for `colDefList`; `matches` is true when their colIds equal the
-     *  current `columns` (same count, same order), so the cols can be reused rather than rebuilt. */
+    /** Project the hierarchy cols expected for `colDefList`; `matches` is true when their colIds and source cols
+     *  equal the current `columns`' (same count, same order), so the cols can be reused rather than rebuilt. */
     private planHierarchy(colDefList: AgColumn[]): { plan: HierarchyPlanEntry[]; matches: boolean } {
         const config = this.gos.get('groupHierarchyConfig');
         const current = this.columns;
@@ -146,7 +140,10 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
                     continue;
                 }
                 const k = plan.length;
-                if (matches && (k >= current.length || current[k].colId !== colId)) {
+                if (
+                    matches &&
+                    (k >= current.length || current[k].colId !== colId || current[k].derivedFromCol !== sourceCol)
+                ) {
                     matches = false;
                 }
                 plan.push({ sourceCol, part, colId });
@@ -164,22 +161,22 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     private clearColumns(): void {
         this.columns = [];
         this.sourceColumnMap.clear();
-        this.virtualColInfo.clear();
+        this.virtualColIndex.clear();
     }
 
     public compareVirtualColumns(colA: AgColumn, colB: AgColumn): number | null {
-        const virtualInfo = this.virtualColInfo;
-        const infoA = virtualInfo.get(colA);
-        const infoB = virtualInfo.get(colB);
+        const virtualColIndex = this.virtualColIndex;
+        const indexA = virtualColIndex.get(colA);
+        const indexB = virtualColIndex.get(colB);
         // Both virtuals: same source ⇒ rank by stored bucket index; otherwise defer to caller (null).
-        if (infoA !== undefined && infoB !== undefined) {
-            return infoA.source === infoB.source ? infoA.index - infoB.index : null;
+        if (indexA !== undefined && indexB !== undefined) {
+            return colA.derivedFromCol === colB.derivedFromCol ? indexA - indexB : null;
         }
         // A virtual sorts BEFORE its own source col.
-        if (infoB?.source === colA) {
+        if (indexB !== undefined && colB.derivedFromCol === colA) {
             return 1;
         }
-        if (infoA?.source === colB) {
+        if (indexA !== undefined && colA.derivedFromCol === colB) {
             return -1;
         }
         return null;

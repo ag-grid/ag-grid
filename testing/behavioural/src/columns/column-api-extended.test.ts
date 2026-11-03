@@ -1392,6 +1392,42 @@ describe('Column API — extended coverage', () => {
         });
     });
 
+    describe('setPivotResultColumns', () => {
+        test('a pivot result column without colId or field does not take the id of a column without them', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { headerName: 'A', valueGetter: () => 1 },
+                    { field: 'year', pivot: true, hide: true },
+                ],
+                pivotMode: true,
+            });
+            expect(api.getColumns()!.map((col) => col.getColId())).toEqual(['0', 'year']);
+
+            api.setPivotResultColumns([{ headerName: 'P', valueGetter: () => 2 }]);
+
+            expect(api.getPivotResultColumns()!.map((col) => col.getColId())).toEqual(['1']);
+        });
+
+        test('pivot result columns restored after being cleared get distinct ids', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [
+                    { headerName: 'A', valueGetter: () => 1 },
+                    { field: 'year', pivot: true, hide: true },
+                ],
+                pivotMode: true,
+            });
+            api.setPivotResultColumns([{ headerName: 'P', valueGetter: () => 2 }]);
+            api.setPivotResultColumns(null);
+
+            api.setPivotResultColumns([
+                { headerName: 'P', valueGetter: () => 2 },
+                { headerName: 'Q', valueGetter: () => 3 },
+            ]);
+
+            expect(api.getPivotResultColumns()!.map((col) => col.getColId())).toEqual(['1', '2']);
+        });
+    });
+
     describe('edge cases — resetColumnState', () => {
         test('reset restores initial colDef order/visibility/pinning', async () => {
             const api = gridsManager.createGrid('myGrid', {
