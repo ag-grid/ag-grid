@@ -88,4 +88,37 @@ describe('Cell Selection fill handle (React)', () => {
 
         await waitFor(() => expect(sports(api)).toEqual(['tennis', 'tennis', 'tennis']));
     });
+
+    test('a fill drag over rows redrawn mid-drag outlines them once they mount', async () => {
+        const api = await renderGrid();
+        const cellAt = (rowIndex: number) =>
+            getGridElement(api)!.querySelector<HTMLElement>(
+                `.ag-row[row-index="${rowIndex}"] .ag-cell[col-id="sport"]`
+            )!;
+        const handle = sportCell(api)!.querySelector<HTMLElement>('.ag-fill-handle')!;
+
+        // As a live update would: redraw the rows not under the pointer before the grid handles the move.
+        const redrawOtherRows = (event: MouseEvent) => {
+            if (!document.body.classList.contains('ag-dragging-fill-handle')) {
+                return;
+            }
+            const hoveredRowIndex = (event.target as Element).closest('[row-index]')?.getAttribute('row-index');
+            const rowNodes = api.getRenderedNodes().filter((node) => String(node.rowIndex) !== hoveredRowIndex);
+            api.redrawRows({ rowNodes });
+        };
+        window.addEventListener('mousemove', redrawOtherRows, true);
+        try {
+            fireEvent.mouseDown(handle, { clientX: 0, clientY: 0 });
+            for (const rowIndex of [0, 1, 2]) {
+                fireEvent.mouseMove(cellAt(rowIndex), { clientX: 0, clientY: (rowIndex + 1) * 10 });
+            }
+        } finally {
+            window.removeEventListener('mousemove', redrawOtherRows, true);
+        }
+
+        await waitFor(() => expect(cellAt(1).classList.contains('ag-selection-fill-left')).toBe(true));
+
+        fireEvent.mouseUp(cellAt(2), { clientX: 0, clientY: 30 });
+        await waitFor(() => expect(sports(api)).toEqual(['tennis', 'tennis', 'tennis']));
+    });
 });

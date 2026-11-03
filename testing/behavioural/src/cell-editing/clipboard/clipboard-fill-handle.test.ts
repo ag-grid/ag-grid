@@ -411,7 +411,7 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
         `);
     });
 
-    test('dragging the fill handle over a cell whose component has not mounted yet does not throw, and outlines it once mounted', async () => {
+    test('dragging the fill handle over a cell whose component has not mounted yet does not throw', async () => {
         const api = await gridMgr.createGridAndWait('clipboardGridFillUnmountedComp', {
             cellSelection: { handle: { mode: 'fill', direction: 'y' } },
             columnDefs: [{ field: 'v', editable: true }],
@@ -450,9 +450,6 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
         }
 
         cellCtrl.comp = mountedComp;
-        const lateCell = await cellFor('ROW_2');
-        await waitFor(() => expect(lateCell.classList.contains('ag-selection-fill-left')).toBe(true));
-
         const fillEnd = waitForEvent('fillEnd', api);
         (await cellFor('ROW_3')).dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: 0, clientY }));
         await fillEnd;

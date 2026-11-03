@@ -15,6 +15,7 @@ import { CellRangeType, _isSameRow } from 'ag-grid-community';
 import { SelectionHandleType } from './abstractSelectionHandle';
 import type { AgFillHandle } from './agFillHandle';
 import type { AgRangeHandle } from './agRangeHandle';
+import type { RangeService } from './rangeService';
 
 const CSS_CELL_RANGE_SELECTED = 'ag-cell-range-selected';
 const CSS_CELL_RANGE_CHART = 'ag-cell-range-chart';
@@ -72,6 +73,7 @@ export class CellRangeFeature implements ICellRangeFeature {
         this.cellComp = cellComp;
         this.eGui = this.cellCtrl.eGui;
         this.onCellSelectionChanged();
+        (this.rangeSvc as RangeService).activeFillHandle?.onCellMounted(this.cellCtrl);
     }
 
     public unsetComp(): void {
