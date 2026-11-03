@@ -1,4 +1,4 @@
-import { _last, _toStringOrNull } from 'ag-stack';
+import { _last, _requestAnimationFrame, _toStringOrNull } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -110,6 +110,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
     private isUp: boolean = false;
     private isLeft: boolean = false;
     private isReduce: boolean = false;
+    private remarkPending: boolean = false;
 
     protected type = SelectionHandleType.FILL;
 
@@ -204,7 +205,34 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
         if (lastCellHovered) {
             this.markPathFrom(this.initialPosition, lastCellHovered);
+            this.remarkPathAfterMount();
         }
+    }
+
+    /** A marked cell whose comp has not mounted yet gets no fill classes, so mark the path again next frame. */
+    private remarkPathAfterMount(): void {
+        if (this.remarkPending || !this.hasUnmountedMarkedCell()) {
+            return;
+        }
+        this.remarkPending = true;
+        _requestAnimationFrame(this.beans, () => {
+            this.remarkPending = false;
+            const { initialPosition, lastCellMarked } = this;
+            if (!this.isAlive() || !initialPosition || !lastCellMarked) {
+                return;
+            }
+            this.markPathFrom(initialPosition, lastCellMarked);
+        });
+    }
+
+    private hasUnmountedMarkedCell(): boolean {
+        const markedCells = this.markedCells;
+        for (let i = 0, len = markedCells.length; i < len; ++i) {
+            if (!markedCells[i].comp) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected onDragEnd(e: MouseEvent) {
