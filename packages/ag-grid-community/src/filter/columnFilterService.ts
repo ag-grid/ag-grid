@@ -65,6 +65,7 @@ import {
 import type { FilterComp } from './filterComp';
 import type { ResolvedFilter } from './filterDefResolver';
 import { _resolveFilter, _setColDefPropsForDataType } from './filterDefResolver';
+import type { FilterChangedParams } from './filterManager';
 import type {
     FloatingFilterDisplayParams,
     IFloatingFilterParams,
@@ -92,6 +93,16 @@ interface HandlerDoesFilterPassWrapper {
 }
 
 type DoesFilterPassWrapper = CompDoesFilterPassWrapper | HandlerDoesFilterPassWrapper;
+
+/** Requests to filter again made while the API sets a model, by kind. */
+interface FilterChangeRequests {
+    /** Columns whose filters called `filterChangedCallback()` without event attributes. */
+    columns: Set<AgColumn>;
+    /** Sources `api.onFilterChanged` was called with, each fired as its own event with no columns. */
+    sources: Set<FilterChangedEventSourceType>;
+    /** `filterChangedCallback` calls with event attributes, each fired as its own event to keep them whole. */
+    attributed: FilterChangedParams[];
+}
 
 interface HandlerFunc {
     filterHandler: CreateFilterHandlerFunc;
@@ -247,10 +258,10 @@ export class ColumnFilterService
     // 100,000 rows and group by country. then do some filtering. all the cells flash, which is silly.
     private processingFilterChange = false;
 
-    /** Above zero while the API sets a model: a filter rewriting it before the call returns reports the call's result. */
+    /** Above zero while the API sets a model: a filter rewriting that model is part of the call, not its own change. */
     private applyingModelDepth = 0;
-    /** Filters asking meanwhile to filter again, by column with their event attributes: the call answers each once. */
-    private requestedFilterChanges: Map<AgColumn, any> | null = null;
+    /** Made while the API sets a model; the outermost call fires them as it ends. */
+    private filterChangeRequests: FilterChangeRequests | null = null;
 
     /** Model updates deferred until cell data types are inferred, in call order. */
     private modelUpdates: QueuedModelUpdate[] = [];
@@ -310,7 +321,6 @@ export class ColumnFilterService
         const allPromises: AgPromise<void>[] = [];
         const previousModel = this.getModel(true);
 
-        let requested: Map<AgColumn, any> | null;
         ++this.applyingModelDepth;
         try {
             if (model) {
@@ -351,30 +361,38 @@ export class ColumnFilterService
                     allPromises.push(this.setModelOnFilterWrapper(filterWrapper, null));
                 });
             }
-        } finally {
-            requested = this.endApplyingModel();
+        } catch (e) {
+            // no event follows a throw, so the requests made before it fire their own
+            this.fireFilterChangeRequests(this.endApplyingModel(), null);
+            throw e;
         }
+        const requests = this.endApplyingModel();
 
         AgPromise.all(allPromises).then(() => {
+            // a filter's plain callback makes its column one this call affects
+            const requestedColumns = requests?.columns;
             const currentModel = this.getModel(true);
-
             const columns: AgColumn[] = [];
+            let modelChanged = false;
             this.allColumnFilters.forEach((filterWrapper, colId) => {
                 const column = filterWrapper.column;
                 const before = previousModel ? previousModel[colId] : null;
                 const after = currentModel ? currentModel[colId] : null;
 
-                if (requested?.has(column) || !_jsonEquals(before, after)) {
+                if (!_jsonEquals(before, after)) {
+                    modelChanged = true;
+                    columns.push(column);
+                } else if (requestedColumns?.has(column)) {
                     columns.push(column);
                 }
             });
 
-            if (columns.length > 0) {
-                let additionalEventAttributes: any;
-                requested?.forEach((attributes) => {
-                    additionalEventAttributes = { ...additionalEventAttributes, ...attributes };
-                });
-                filterManager?.onFilterChanged({ columns, source, additionalEventAttributes });
+            if (requests) {
+                // as its own event would, a filter listed only for its request skips its own `onAnyFilterChanged`
+                const column = !modelChanged && columns.length === 1 ? columns[0] : undefined;
+                this.fireFilterChangeRequests(requests, columns.length > 0 ? { columns, column, source } : null);
+            } else if (columns.length > 0) {
+                filterManager?.onFilterChanged({ columns, source });
             } else if (forceUpdateActive) {
                 this.updateActive('filterChanged');
             }
@@ -676,16 +694,11 @@ export class ColumnFilterService
     // which results in React State getting applied in the main application, triggering a useEffect() to
     // be kicked off adn then the application calling the grid's API. in AG-6554, the custom filter was
     // getting it's useEffect() triggered in this way.
-    private callOnFilterChangedOutsideRenderCycle(params: {
-        source: FilterChangedEventSourceType;
-        additionalEventAttributes?: any;
-        column?: AgColumn;
-        columns: AgColumn[];
-    }): void {
+    private callOnFilterChangedOutsideRenderCycle(paramsList: FilterChangedParams[]): void {
         const { rowRenderer, filterManager } = this.beans;
         const action = () => {
             if (this.isAlive()) {
-                filterManager?.onFilterChanged(params);
+                filterManager?.onFiltersChanged(paramsList);
             }
         };
         if (rowRenderer.isRefreshInProgress()) {
@@ -1486,7 +1499,7 @@ export class ColumnFilterService
                 source === 'floating',
                 additionalEventAttributes
             );
-            // a filter rewriting the model the API gives it reports the call's result, not a change of its own
+            // a filter rewriting the model the API passes it is part of that call, not a change of its own
             if (this.applyingModelDepth === 0) {
                 refreshed.then(() => filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' }));
             }
@@ -1496,32 +1509,68 @@ export class ColumnFilterService
     private filterChangedCallbackFactory(column: AgColumn): (additionalEventAttributes?: any) => void {
         return (additionalEventAttributes?: any) => {
             if (this.applyingModelDepth === 0) {
-                this.announceFilterChanged(column, additionalEventAttributes);
+                this.callOnFilterChangedOutsideRenderCycle([
+                    columnFilterChangedParams(column, additionalEventAttributes),
+                ]);
                 return;
             }
-            const requested = (this.requestedFilterChanges ??= new Map());
-            requested.set(column, { ...requested.get(column), ...additionalEventAttributes });
+            const requests = this.getFilterChangeRequests();
+            if (additionalEventAttributes == null) {
+                requests.columns.add(column);
+            } else {
+                requests.attributed.push(columnFilterChangedParams(column, additionalEventAttributes));
+            }
         };
     }
 
-    /** The requests the API call ending now answers: none for a call made inside another, which answers them. */
-    private endApplyingModel(): Map<AgColumn, any> | null {
+    /** Returns false, leaving the caller to filter now, unless the API is setting a model: that call fires it. */
+    public requestFilterChanged(source: FilterChangedEventSourceType): boolean {
+        if (this.applyingModelDepth === 0) {
+            return false;
+        }
+        this.getFilterChangeRequests().sources.add(source);
+        return true;
+    }
+
+    private getFilterChangeRequests(): FilterChangeRequests {
+        let requests = this.filterChangeRequests;
+        if (!requests) {
+            requests = { columns: new Set(), sources: new Set(), attributed: [] };
+            this.filterChangeRequests = requests;
+        }
+        return requests;
+    }
+
+    /** The requests made during the API call ending now; `null` for a nested call, which leaves them to the outermost. */
+    private endApplyingModel(): FilterChangeRequests | null {
         --this.applyingModelDepth;
         if (this.applyingModelDepth > 0) {
             return null;
         }
-        const requested = this.requestedFilterChanges;
-        this.requestedFilterChanges = null;
-        return requested;
+        const requests = this.filterChangeRequests;
+        this.filterChangeRequests = null;
+        return requests;
     }
 
-    private announceFilterChanged(column: AgColumn, additionalEventAttributes: any): void {
-        this.callOnFilterChangedOutsideRenderCycle({
-            additionalEventAttributes,
-            columns: [column],
-            column,
-            source: additionalEventAttributes?.source ?? 'columnFilter',
-        });
+    /** Fires the requests an API call took, then its own event; the rows refresh once for all of them. */
+    private fireFilterChangeRequests(
+        requests: FilterChangeRequests | null,
+        callEvent: FilterChangedParams | null
+    ): void {
+        if (!requests) {
+            return;
+        }
+        const events = requests.attributed;
+        for (const source of requests.sources) {
+            events.push({ columns: [], source });
+        }
+        if (callEvent) {
+            events.push(callEvent);
+        } else if (requests.columns.size > 0) {
+            const columns = Array.from(requests.columns);
+            events.push({ columns, column: columns.length === 1 ? columns[0] : undefined, source: 'columnFilter' });
+        }
+        this.callOnFilterChangedOutsideRenderCycle(events);
     }
 
     /** Returns whether the model was cleared, which happens only when the handler could not take the new params. */
@@ -1847,20 +1896,14 @@ export class ColumnFilterService
 
     public setModelForColumnLegacy(key: string | AgColumn, model: any): AgPromise<void> {
         const column = this.beans.colModel.getNonPivotCol(key);
-        let applied: AgPromise<void>;
-        let requested: Map<AgColumn, any> | null;
-        // the caller filters again with `onFilterChanged`, unless a filter asks to itself
+        // the caller calls `onFilterChanged` to filter again; a filter's own `filterChangedCallback` still fires
         ++this.applyingModelDepth;
         try {
             const filterWrapper = column ? this.getOrCreateFilterWrapper(column, true) : null;
-            applied = filterWrapper ? this.setModelOnFilterWrapper(filterWrapper, model) : AgPromise.resolve();
+            return filterWrapper ? this.setModelOnFilterWrapper(filterWrapper, model) : AgPromise.resolve();
         } finally {
-            requested = this.endApplyingModel();
+            this.fireFilterChangeRequests(this.endApplyingModel(), null);
         }
-        requested?.forEach((additionalEventAttributes, requestingColumn) =>
-            this.announceFilterChanged(requestingColumn, additionalEventAttributes)
-        );
-        return applied;
     }
 
     public setColDefPropsForDataType(
@@ -2026,11 +2069,9 @@ export class ColumnFilterService
         });
         if (promises.length) {
             AgPromise.all(promises).then(() => {
-                this.callOnFilterChangedOutsideRenderCycle({
-                    source: 'columnFilter',
-                    additionalEventAttributes,
-                    columns: [],
-                });
+                this.callOnFilterChangedOutsideRenderCycle([
+                    { source: 'columnFilter', additionalEventAttributes, columns: [] },
+                ]);
             });
         }
     }
@@ -2149,4 +2190,13 @@ export class ColumnFilterService
         this.state.clear();
         this.activeFilterComps.clear();
     }
+}
+
+function columnFilterChangedParams(column: AgColumn, additionalEventAttributes: any): FilterChangedParams {
+    return {
+        additionalEventAttributes,
+        columns: [column],
+        column,
+        source: additionalEventAttributes?.source ?? 'columnFilter',
+    };
 }

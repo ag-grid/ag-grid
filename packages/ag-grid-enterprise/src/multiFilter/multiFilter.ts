@@ -68,7 +68,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     private params: MultiFilterParams;
     private wrappers: (MultiFilterWrapper | null)[] = [];
     private filterChangedCallback: ((additionalEventAttributes?: any) => void) | null;
-    /** Above zero while `setModel` gives the children their models: a child's rewrite of one is the call's result. */
+    /** Above zero while `setModel` passes the children their models: a child rewriting one is part of that call. */
     private settingModelDepth = 0;
     private readonly activeFilterIndices: number[] = [];
 
@@ -449,7 +449,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 newState,
                 'ui'
             );
-            // a child rewriting the model `setModel` gives it reports that call's result
+            // a child rewriting the model `setModel` passes it is part of that call, not a change of its own
             if (this.settingModelDepth === 0) {
                 refreshed.then(() => this.onHandlerModelChanged(index, wrapper.model, additionalEventAttributes));
             }
