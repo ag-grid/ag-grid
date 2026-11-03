@@ -1,27 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { findVarReferences, isMalformedToken, isPaletteToken, isTokenShaped, parseDeclaredTokens } from './tokens.mjs';
-
-describe('parseDeclaredTokens', () => {
-    test('finds every custom property declaration, including nested and Sass-indented ones', () => {
-        const source = `
-            :root {
-                --color-gray-500: #7d8796;
-                --text-fs-base:16px;
-
-                @media (prefers-color-scheme: dark) {
-                    --color-util-gray-500 : var(--color-gray-400);
-                }
-            }
-        `;
-
-        expect(parseDeclaredTokens(source)).toEqual(['--color-gray-500', '--text-fs-base', '--color-util-gray-500']);
-    });
-
-    test('ignores var() references that are not declarations', () => {
-        expect(parseDeclaredTokens('.a { color: var(--color-fg-primary); }')).toEqual([]);
-    });
-});
+import { findVarReferences, isMalformedToken, isPaletteToken, isTokenShaped } from './tokens.mjs';
 
 describe('findVarReferences', () => {
     test.each`

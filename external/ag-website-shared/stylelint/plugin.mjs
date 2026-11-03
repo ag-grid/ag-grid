@@ -1,12 +1,8 @@
+import { globSync, readFileSync } from 'node:fs';
+import postcssScss from 'postcss-scss';
 import stylelint from 'stylelint';
 
-import {
-    collectDeclaredTokens,
-    findVarReferences,
-    isMalformedToken,
-    isPaletteToken,
-    isTokenShaped,
-} from './tokens.mjs';
+import { findVarReferences, isMalformedToken, isPaletteToken, isTokenShaped } from './tokens.mjs';
 
 const {
     createPlugin,
@@ -22,6 +18,20 @@ const meta = {
 // lint instead of serving a stale set until it restarts.
 const CACHE_TTL_MS = 5000;
 let cached = null;
+
+function addDeclaredTokens(root, declared) {
+    root.walkDecls(/^--/, (decl) => declared.add(decl.prop));
+}
+
+// Parsed rather than matched as text, so that a commented-out declaration does
+// not count. postcss-scss also reads plain CSS.
+function collectDeclaredTokens(globs) {
+    const declared = new Set();
+    for (const file of globSync(globs)) {
+        addDeclaredTokens(postcssScss.parse(readFileSync(file, 'utf8'), { from: file }), declared);
+    }
+    return declared;
+}
 
 function getDeclaredTokens(tokenSources) {
     const key = tokenSources.join('\n');
@@ -69,7 +79,7 @@ const noUndeclaredToken = (primary, secondaryOptions) => (root, result) => {
     // be stale, e.g. while it is being edited.
     const declared = getDeclaredTokens(secondaryOptions.tokenSources);
     const declaredLocally = new Set();
-    root.walkDecls(/^--/, (decl) => declaredLocally.add(decl.prop));
+    addDeclaredTokens(root, declaredLocally);
 
     walkVarReferences(root, (decl, token) => {
         if (!isTokenShaped(token) || declared.has(token) || declaredLocally.has(token)) {

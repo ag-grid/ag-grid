@@ -9,7 +9,19 @@ import plugin from './plugin.mjs';
 
 const websiteRoot = mkdtempSync(join(tmpdir(), 'ag-website-stylelint-'));
 mkdirSync(join(websiteRoot, 'src'));
-writeFileSync(join(websiteRoot, 'src/tokens.scss'), ':root { --color-fg-primary: #000; --text-fs-base: 16px; }');
+writeFileSync(
+    join(websiteRoot, 'src/tokens.scss'),
+    `:root {
+        --color-fg-primary: #000;
+        --text-fs-base:16px;
+        // --color-fg-line-comment: #000;
+        /* --color-fg-block-comment: #000; */
+
+        @media (prefers-color-scheme: dark) {
+            --color-util-nested : #fff;
+        }
+    }`
+);
 
 const tokenSources = [`${websiteRoot}/src/**/*.{scss,css}`];
 
@@ -51,14 +63,23 @@ describe('ag-website/no-undeclared-token', () => {
     });
 
     test.each`
-        description                            | code
-        ${'a declared token'}                  | ${'.a { color: var(--color-fg-primary); font-size: var(--text-fs-base); }'}
-        ${'a component-local variable'}        | ${'.a { color: var(--btn-roll-i); }'}
-        ${'a token declared in the same file'} | ${'.a { --layout-local: 1px; } .b { gap: var(--layout-local); }'}
-        ${'a Sass-interpolated token name'}    | ${'.a { color: var(--color-code-#{$name}); }'}
-        ${'a var() inside a Sass map'}         | ${'$m: (a: 1); .a { color: map-get($m, a); }'}
+        description                             | code
+        ${'a declared token'}                   | ${'.a { color: var(--color-fg-primary); font-size: var(--text-fs-base); }'}
+        ${'a token declared inside an at-rule'} | ${'.a { color: var(--color-util-nested); }'}
+        ${'a component-local variable'}         | ${'.a { color: var(--btn-roll-i); }'}
+        ${'a token declared in the same file'}  | ${'.a { --layout-local: 1px; } .b { gap: var(--layout-local); }'}
+        ${'a Sass-interpolated token name'}     | ${'.a { color: var(--color-code-#{$name}); }'}
+        ${'a var() inside a Sass map'}          | ${'$m: (a: 1); .a { color: map-get($m, a); }'}
     `('allows $description', async ({ code }) => {
         expect(await warningsFor(code, config)).toEqual([]);
+    });
+
+    test.each`
+        token
+        ${'--color-fg-line-comment'}
+        ${'--color-fg-block-comment'}
+    `('flags $token, which is only declared in a comment', async ({ token }) => {
+        expect(await warningsFor(`.a { color: var(${token}); }`, config)).toHaveLength(1);
     });
 
     test('rejects a config with no token sources', async () => {
