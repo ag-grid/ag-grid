@@ -1,4 +1,4 @@
-import { getByRole } from '@testing-library/dom';
+import { getByRole, waitFor } from '@testing-library/dom';
 import {
     TestGridsManager,
     clickMenuOption,
@@ -7,7 +7,7 @@ import {
     polyfillOffsetParent,
 } from 'ag-test-utils';
 
-import type { MenuItemDef } from 'ag-grid-community';
+import type { IMenuConfigParams, IMenuItemComp, IMenuItemParams, MenuItemDef } from 'ag-grid-community';
 import { getGridElement } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
@@ -29,6 +29,26 @@ function rightClickFirstCell(gridDiv: HTMLElement): void {
     const cell = gridDiv.querySelector<HTMLElement>('[row-index="0"] [col-id="athlete"]')!;
     fireGridPointerDown(cell, { button: 2, buttons: 2 });
     cell.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 10, clientY: 10 }));
+}
+
+class CustomMenuItem implements IMenuItemComp {
+    private eGui!: HTMLElement;
+    private defaults!: boolean | IMenuConfigParams;
+
+    init(params: IMenuItemParams & { defaults: boolean | IMenuConfigParams }): void {
+        this.defaults = params.defaults;
+        this.eGui = document.createElement('div');
+        this.eGui.className = 'custom-menu-item';
+        this.eGui.innerHTML = `<span class="ag-menu-option-text">${params.name}</span>`;
+    }
+
+    getGui(): HTMLElement {
+        return this.eGui;
+    }
+
+    configureDefaults(): boolean | IMenuConfigParams {
+        return this.defaults;
+    }
 }
 
 async function menuContaining(optionName: string): Promise<HTMLElement> {
@@ -85,5 +105,34 @@ describe('MenuItemDef ariaLabel', () => {
 
         rightClickFirstCell(getGridElement(api)! as HTMLElement);
         await expectAccessibleNames();
+    });
+
+    test('custom menu item components get ariaLabel unless they suppress the default aria', async () => {
+        const api = await gridMgr.createGridAndWait('menu-aria-label-custom', {
+            columnDefs,
+            rowData,
+            getColumnMenuItems: () => [
+                {
+                    name: 'Defaults',
+                    ariaLabel: 'Defaults label',
+                    menuItem: CustomMenuItem,
+                    menuItemParams: { defaults: true },
+                },
+                {
+                    name: 'Suppressed',
+                    ariaLabel: 'Suppressed label',
+                    menuItem: CustomMenuItem,
+                    menuItemParams: { defaults: { suppressAria: true } },
+                },
+            ],
+        });
+
+        api.showColumnMenu('athlete');
+        const itemRoot = async (name: string) =>
+            (await openMenuOption(name)).closest<HTMLElement>('.custom-menu-item')!;
+
+        const defaults = await itemRoot('Defaults');
+        await waitFor(() => expect(defaults.getAttribute('aria-label')).toBe('Defaults label'));
+        expect((await itemRoot('Suppressed')).hasAttribute('aria-label')).toBe(false);
     });
 });
