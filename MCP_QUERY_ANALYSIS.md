@@ -160,4 +160,39 @@ Found while fixing the Angular inner header test (not from the log directly):
 
 - **Default header recreates its inner header on every column definition update**: `AgColumnHeader.refresh` compares a freshly built default template object by identity, so it always rebuilds the header; an `innerHeaderComponent` loses its state and its `refresh` is never called. `default-header-inner-header-component-not-refreshed.test.ts`.
 
+## Area reviews, 3 Nov
+
+Twelve feature areas where the log showed bugs were reviewed against their docs and source for new bugs of the same kind (Fable for seven areas, Opus for five), each candidate was handed to a Sonnet agent to write a failing test, and each failing test was checked against the docs. 28 candidates gave 24 bugs; 2 were dropped as repeats of a root cause already tested, 2 were dropped after an independent review (below), and 1 needed three attempts before its test waited long enough to show the original claim. The number in brackets is the clients whose searches name the bug's feature combination (a related search, not a confirmed report); "general" means only broader searches about the same feature matched.
+
+- **React grid shows old `rowData` after a Suspense hide and reveal** (0): when a sibling inside the same `<Suspense>` suspends, the grid is rebuilt from its first-render props, so rows changed since then are lost. `react-suspense-reveal-reverts-row-data.test.tsx`.
+- **React grid calls the first-render event handler after a Suspense reveal** (0): same cause; a handler swapped while visible is never called. `react-suspense-reveal-uses-first-render-handler.test.tsx`.
+- **`keepDetailRows` loses `getDetailGridInfo` for a re-created row** (general): after removing a master row and adding one with the same id, the expanded detail grid renders correctly, but `getDetailGridInfo('detail_<id>')` is undefined and `forEachDetailGridInfo` skips it, because the old detail grid's teardown deletes the new grid's registry entry; a later `redrawRows()` restores it. `master-detail-keep-detail-rows-recreated-row-loses-detail-grid-info.test.ts`.
+- **`popupParent: document.body` on a short page opens menus at the top** (1, React): the clamp uses the content height, not the viewport, so the docs' fix for small grids breaks. Playwright. `testing/e2e/e2e/mcp-log-popup-parent-body-short-page.spec.ts`.
+- **Static `popupParent` misplaces menus** (general): context and column menus open far from their anchor. Playwright. `testing/e2e/e2e/mcp-log-popup-parent-static.spec.ts`.
+- **Column Chooser opens off-screen on a long page** (7, React 31–35, Angular 34, Vue 35): with `popupParent: document.body` it is centred in the whole body. Playwright. `testing/e2e/e2e/mcp-log-popup-parent-body-column-chooser-long-page.spec.ts`.
+- **`detailRowAutoHeight` ignored with `embedFullWidthRows` or print layout** (8, all frameworks, v34–36): the detail row stays 1px. Playwright. `testing/e2e/e2e/mcp-log-detail-row-auto-height-embedded-full-width.spec.ts`.
+- **Vue `detailRowAutoHeight` with a renderer that loads first** (5, Vue 33–36): the Vue twin of the React bug; a `v-if` root also throws from `ResizeObserver.observe`. Playwright. `testing/e2e/e2e/mcp-log-vue-detail-row-auto-height-late-renderer.spec.ts`.
+- **`refreshStrategy: 'nothing'` ignored with `embedFullWidthRows`** (0): the pinned-section renderers reload, so `getDetailRowData` runs 3 times per master update. `master-detail-embedded-full-width-refresh-strategy-nothing.test.ts`.
+- **Set filter not refreshed by `rowNode.setData`/`updateData`** (general): the docs name `setData` as refreshing the values. `set-filter-values-not-refreshed-by-row-node-set-data.test.ts`.
+- **Set filter never refreshed with `suppressModelUpdateAfterUpdateTransaction`** (0): not even after `refreshClientSideRowModel('filter')`. `set-filter-values-not-refreshed-after-suppressed-transaction-update.test.ts`.
+- **SSRM `setServerSideSelectionState` leaves stale selected nodes** (5, Angular 34–35, React 35): `getSelectedNodes()` and `selectionChanged` report the rows selected before the call. `ssrm-set-selection-state-stale-selected-nodes.test.ts`.
+- **SSRM select all selects non-selectable rows after a reload** (5, React 34–35, Vue 35, Angular 35). `ssrm-select-all-reload-selects-non-selectable-rows.test.ts`.
+- **SSRM group stays indeterminate after its deselected child is removed** (1): with `groupSelects: 'descendants'` and a remove transaction. `ssrm-group-selects-transaction-remove-deselected-child.test.ts`.
+- **SSRM `selectionChanged` fires when nothing changed** (2): the client-side model does not. `ssrm-selection-changed-fires-without-change.test.ts`.
+- **Cell expressions not evaluated with `valueCache`** (0): a getter returning '=1+2' shows the raw text. `value-cache-cell-expression-getter-result-not-evaluated.test.ts`.
+- **`rowData` update with `getRowId` doesn't expire the value cache** (4) when it only adds or removes rows, though the docs list a `rowData` update as expiring it. `value-cache-not-expired-by-row-data-update-with-row-id.test.ts`.
+- **Pinned section not resized when a manually pinned row grows** (3): `setRowHeight` with `enableRowPinning`; static pinned rows resize. `pinned-bottom-row-taller-set-row-height-section-not-resized.test.ts`.
+- **`resetRowHeights()` skips manually pinned rows** (1). `reset-row-heights-skips-manually-pinned-rows.test.ts`.
+- **Chart tool panel close button submits a host form** (1). Playwright. `testing/e2e/e2e/mcp-log-chart-tool-panel-close-submits-form.spec.ts`.
+- **New Filters Tool Panel buttons submit a host form** (1): and Enter in an app field no longer submits it. Playwright. `testing/e2e/e2e/mcp-log-filters-tool-panel-buttons-in-form.spec.ts`. Every other grid button already sets `type="button"`.
+- **React removes row styles (inconsistent with vanilla)** (0): the row twin of the `cellStyle` bug. The docs say row styles aren't removed, but React's behaviour is arguably right, so either React-specific docs should be added or vanilla brought in line with React. `row-style-react-removes-stale-styles.test.tsx`.
+- **Undo of a pinned row edit logs warning #88** (2). `pinned-row-undo-logs-invalid-row-index-warning.test.ts`.
+- **Batch edit "Pending Change" announcement wrong on pinned rows** (0): it reads the body row at the same index. `batch-edit-pending-change-announced-for-wrong-row.test.ts`.
+
+Dropped after review: an SSRM row that becomes non-selectable stays selected (an existing test, `server-side-row-selection-group.test.ts:408-446`, pins that behaviour), and `valueCacheNeverExpires` being cleared by column changes (deliberate in `columnModel.ts:215`; only the sentence at `value-cache/index.mdoc:97` says otherwise, so it is a docs clarification). Tests moved to `tmp/ag-mcp-analysis/refuted-tests/area-review/`.
+
+Docs gap found by the reviews: the Cell Styles docs say old `cellClass` classes accumulate, but the code removes them and `testing/behavioural/src/styling/cell-custom-styles.test.ts` asserts that.
+
+Candidates, attempts and verdicts: `tmp/ag-mcp-analysis/areas/`.
+
 Refuted and unreviewed reproductions (202 files) moved out of the repo to `tmp/ag-mcp-analysis/refuted-tests/`; verdicts in `tmp/ag-mcp-analysis/sample_round_result.json`, `pass1/{testwrite,rc_testwrite}_result.json`, `pass2/testwrite_result.json`, `retest/testwrite_result.json` and `pass2r/testwrite_result.json`.
