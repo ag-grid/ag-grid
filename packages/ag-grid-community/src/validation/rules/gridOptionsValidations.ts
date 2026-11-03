@@ -123,6 +123,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     autoGenerateColumnDefs: 'AutoGenerateColumns',
     processFileInput: 'FileInputOverlay',
     alignedGrids: 'AlignedGrids',
+    alwaysShowGrandTotalRow: ['CsrmHierarchy', 'ServerSideRowModel'],
     allowContextMenuWithControlKey: 'ContextMenu',
     autoSizeStrategy: 'ColumnAutoSize',
     calculatedColumns: 'CalculatedColumns',
@@ -234,11 +235,6 @@ function validateCalculatedColumnsOptions(options: CalculatedColumnsOptions): Va
  */
 const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
     const definedValidations: Validations<GridOptions> = {
-        alwaysShowGrandTotalRow: {
-            dependencies: {
-                grandTotalRow: { required: ['top', 'bottom', 'pinnedTop', 'pinnedBottom'] },
-            },
-        },
         autoSizePadding: {
             validate({ autoSizePadding }) {
                 return toConstrainedNum('autoSizePadding', autoSizePadding, 0);

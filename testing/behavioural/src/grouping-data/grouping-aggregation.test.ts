@@ -651,22 +651,17 @@ describe('ag-grid grouping aggregation', () => {
         }
     );
 
-    test('alwaysShowGrandTotalRow without grandTotalRow warns that it needs one', () => {
-        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [315] });
+    test('alwaysShowGrandTotalRow does not warn while grandTotalRow is unset or turned off', () => {
         const warn = vitest.spyOn(console, 'warn').mockImplementation(() => {});
         try {
-            gridsManager.createGrid('myGrid', {
+            const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'amount', aggFunc: 'sum' }],
                 rowData: [],
                 alwaysShowGrandTotalRow: true,
             });
-            expect(warn).toHaveBeenCalledWith(
-                expect.stringContaining('warning #315'),
-                expect.stringContaining(
-                    '`alwaysShowGrandTotalRow` requires `grandTotalRow` to be one of `[top, bottom, pinnedTop, pinnedBottom]`'
-                ),
-                expect.any(String)
-            );
+            api.setGridOption('grandTotalRow', 'bottom');
+            api.setGridOption('grandTotalRow', undefined);
+            expect(warn).not.toHaveBeenCalled();
         } finally {
             warn.mockRestore();
         }
@@ -812,5 +807,32 @@ describe('ag-grid grouping aggregation', () => {
 
         expect(api.getDisplayedRowAtIndex(2)!.rowHeight).toBe(30);
         expect(callsBeforePositioned).toBe(0);
+    });
+});
+
+describe('alwaysShowGrandTotalRow without the row grouping modules', () => {
+    const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule] });
+
+    afterEach(() => {
+        gridsManager.reset();
+    });
+
+    test('reports the missing module', async () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [200] });
+        const error = vitest.spyOn(console, 'error').mockImplementation(() => {});
+        try {
+            gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'amount' }],
+                rowData: [],
+                alwaysShowGrandTotalRow: true,
+            });
+            await waitFor(() => {
+                const logged = error.mock.calls.flat().join(' ');
+                expect(logged).toContain('error #200');
+                expect(logged).toContain('`alwaysShowGrandTotalRow`');
+            });
+        } finally {
+            error.mockRestore();
+        }
     });
 });
