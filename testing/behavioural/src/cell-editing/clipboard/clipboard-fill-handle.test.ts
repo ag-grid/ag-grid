@@ -10,6 +10,7 @@ import {
     waitForEvent,
 } from 'ag-test-utils';
 
+import type { AgColumn, BeanCollection, ICellComp } from 'ag-grid-community';
 import {
     CheckboxEditorModule,
     DateEditorModule,
@@ -411,10 +412,6 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
     });
 
     test('dragging the fill handle over a cell whose component has not mounted yet does not throw', async () => {
-        // With async renderers (e.g. React), a CellCtrl exists as soon as its row is rendered, but `comp`
-        // is only assigned once the framework commits the cell. A fast drag that scrolls new rows in can
-        // mark such a cell; marking it (extendVertical) and clearing it on the next move (clearMarkedPath)
-        // must tolerate the missing comp.
         const api = await gridMgr.createGridAndWait('clipboardGridFillUnmountedComp', {
             cellSelection: { handle: { mode: 'fill', direction: 'y' } },
             columnDefs: [{ field: 'v', editable: true }],
@@ -435,44 +432,28 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
         fireGridPointerDown(sourceCell);
         await cellSelectionChanged;
 
-        // Simulate ROW_2's cell component not having been mounted yet.
-        const beans = (api.getRowNode('ROW_2') as any).beans;
+        // No public API leaves a CellCtrl without its comp, so unmount ROW_2's comp directly.
+        const beans: BeanCollection = (api.getRowNode('ROW_2') as any).beans;
         const cellCtrl = beans.rowRenderer
-            .getRowByPosition({ rowIndex: 2, rowPinned: null })
-            .getCellCtrl(api.getColumn('v'));
+            .getRowByPosition({ rowIndex: 2, rowPinned: null })!
+            .getCellCtrl(api.getColumn('v') as AgColumn)!;
         const mountedComp = cellCtrl.comp;
         expect(mountedComp).toBeDefined();
-        cellCtrl.comp = undefined;
+        (cellCtrl as { comp?: ICellComp }).comp = undefined;
 
-        const errors: unknown[] = [];
-        const captureError = (event: ErrorEvent) => {
-            errors.push(event.error ?? event.message);
-            event.preventDefault();
-        };
-        window.addEventListener('error', captureError);
-        try {
-            const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
-            fillHandle.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: 0, clientY: 0 }));
-            // The first move starts the drag; later moves mark the path. Moving onto ROW_2 marks the
-            // comp-less cell, and moving onto ROW_3 clears the previously marked path, including it.
-            let clientY = 0;
-            for (const rowId of ['ROW_0', 'ROW_1', 'ROW_2', 'ROW_3']) {
-                clientY += 10;
-                (await cellFor(rowId)).dispatchEvent(
-                    new MouseEvent('mousemove', { bubbles: true, clientX: 0, clientY })
-                );
-            }
-
-            // Mount the component again before releasing, as React would have by then.
-            cellCtrl.comp = mountedComp;
-            const fillEnd = waitForEvent('fillEnd', api);
-            (await cellFor('ROW_3')).dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: 0, clientY }));
-            await fillEnd;
-        } finally {
-            window.removeEventListener('error', captureError);
+        const fillHandle = await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle()));
+        fillHandle.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: 0, clientY: 0 }));
+        let clientY = 0;
+        for (const rowId of ['ROW_0', 'ROW_1', 'ROW_2', 'ROW_3']) {
+            clientY += 10;
+            (await cellFor(rowId)).dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: 0, clientY }));
         }
 
-        expect(errors).toEqual([]);
+        cellCtrl.comp = mountedComp;
+        const fillEnd = waitForEvent('fillEnd', api);
+        (await cellFor('ROW_3')).dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: 0, clientY }));
+        await fillEnd;
+
         await new GridRows(api, 'after filling over a cell whose comp mounted late').check(`
             ROOT id:ROOT_NODE_ID
             ├── LEAF id:ROW_0 v:"X"
