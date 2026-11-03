@@ -972,8 +972,20 @@ export const AG_GRID_ERRORS = {
         `The value for field \`${field}\` was not set, as \`${key}\` on that path is not an object. Use a \`valueSetter\` to set this value.` as const,
     340: ({ field }: { field: string }) =>
         `Field \`${field}\` contains \`__proto__\`, which field paths do not support, so the column shows no value and its edits are refused. Use a \`valueGetter\` and \`valueSetter\` instead.` as const,
-    341: ({ pinned, received }: { pinned: string | number; received: string | number }) =>
-        `The server-side datasource returned data version \`${received}\` for a level pinned to version \`${pinned}\`. The level keeps version \`${pinned}\` and the block's rows; read every block of the level from \`request.dataVersion\` (or a newer version when \`serverSideDataVersionMode\` is \`'stream'\`), or call \`refreshServerSide\` to drop the pinned version.` as const,
+    341: ({
+        pinned,
+        received,
+        unordered,
+    }: {
+        pinned: string | number;
+        received: string | number;
+        unordered: boolean;
+    }) =>
+        `The server-side datasource returned data version \`${received}\` for a level pinned to version \`${pinned}\`. The level keeps version \`${pinned}\` and the block's rows; ${
+            unordered
+                ? `\`serverSideDataVersionMode: 'stream'\` cannot tell which of the two versions is newer, so provide \`compareServerSideDataVersions\` to order versions that are not numbers.`
+                : `read every block of the level from \`request.dataVersion\` (or a newer version when \`serverSideDataVersionMode\` is \`'stream'\`), or call \`refreshServerSide\` to drop the pinned version.`
+        }` as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
 

@@ -282,6 +282,29 @@ describe('SSRM versioned transactions', () => {
             expect(api.getDisplayedRowCount()).toBe(47);
         });
 
+        test('a burst of delayed removes in one flush does not compare every cached row for each of them', async () => {
+            const compare = vi.fn((a: string | number, b: string | number) => Number(a) - Number(b));
+            const { api, settle } = await createGrid(5, {
+                serverSideDataVersionMode: 'stream',
+                compareServerSideDataVersions: compare,
+            });
+            await settle();
+            api.applyServerSideTransaction({ version: 9, update: [{ id: '5', value: 5 }] });
+            const loadedRows = api.getDisplayedRowCount();
+            compare.mockClear();
+
+            const results: ServerSideTransactionResult[] = [];
+            for (let version = 6; version <= 8; version++) {
+                const remove = [{ id: String(version), value: version }];
+                api.applyServerSideTransactionAsync({ version, remove }, (r) => results.push(r));
+            }
+            api.flushServerSideAsyncTransactions();
+            await waitFor(() => expect(results.length).toBe(3));
+
+            expect(results.every((r) => r.unapplied?.length === 1)).toBe(true);
+            expect(compare.mock.calls.length).toBeLessThan(2 * loadedRows);
+        });
+
         test('a newer remove is applied by position', async () => {
             const { api, settle } = await createGrid(5, { serverSideDataVersionMode: 'stream' });
             serverRows = serverRows.filter((row) => row.id !== '1');
@@ -573,6 +596,46 @@ describe('SSRM versioned transactions', () => {
             expect(api.getRowNode('22')).toBeUndefined();
             expect(value(api, '26')).toBe(2600);
             expectRowsInServerOrder(api);
+        });
+
+        test("'snapshot' loads a block read from an older version again, keeping the newer transactions applied", async () => {
+            const { warnSpy, versionWarnings } = spyOnWarnings();
+            try {
+                const { api, pending, settle } = await createGrid(5);
+                const lagging = serverRows;
+                setServerValue('1', 600);
+                api.applyServerSideTransaction({ version: 6, update: [{ id: '1', value: 600 }] });
+
+                // a replica that has not caught up with the pinned version answers from an older one
+                respond(await requestBlockOf(api, pending, 25), 4, lagging);
+
+                const again = await requestBlockOf(api, pending, 25);
+                expect(again.request.dataVersion).toBe(5);
+                respond(again, 5);
+                await settle();
+
+                expect(rootVersion(api)).toBe(5);
+                expect(value(api, '1')).toBe(600);
+                expect(value(api, '25')).toBe(25);
+                expect(versionWarnings()).toEqual([]);
+            } finally {
+                warnSpy.mockRestore();
+            }
+        });
+
+        test("'stream' with versions it cannot order warns that it needs compareServerSideDataVersions", async () => {
+            const { warnSpy } = spyOnWarnings();
+            try {
+                const { api, pending } = await createGrid('a', { serverSideDataVersionMode: 'stream' });
+                respond(await requestBlockOf(api, pending, 25), 'b');
+
+                expect(rootVersion(api)).toBe('a');
+                const warnings = warnSpy.mock.calls.filter((call) => String(call[0]).includes('#341'));
+                expect(warnings).toHaveLength(1);
+                expect(warnings[0].join(' ')).toContain('compareServerSideDataVersions');
+            } finally {
+                warnSpy.mockRestore();
+            }
         });
 
         test('switching from snapshot to stream moves the version forward from then on', async () => {

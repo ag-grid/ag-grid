@@ -82,6 +82,12 @@ export class LazyCache extends BeanStub {
     private readonly rowDataVersions = new WeakMap<RowNode, string | number>();
     /** The version of the block each row was loaded with, whose adds and removes its position includes. */
     private readonly rowLoadVersions = new WeakMap<RowNode, string | number>();
+    /**
+     * The oldest version that the rows not waiting to load again were read from, found by the last scan for rows older
+     * than a skipped change; a later skipped change at or before it has no rows to load again. `undefined` when no such
+     * row has a version, and `null` (unknown) once rows are loaded, created or moved, until the next scan.
+     */
+    private oldestRowLoadVersion: string | number | undefined | null = null;
     /** The version the grand total row was last loaded, updated or removed with, as it is not kept in the node map. */
     private grandTotalDataVersion: string | number | undefined;
     /** Bumped whenever the pinned data version is dropped, so versioned responses to older requests are discarded. */
@@ -502,6 +508,9 @@ export class LazyCache extends BeanStub {
      * @returns the new row node
      */
     private createRowAtIndex(atStoreIndex: number, data?: any, createNodeCallback?: (node: RowNode) => void): RowNode {
+        // a node may stop waiting to load again, keeping the version it was read from
+        this.oldestRowLoadVersion = null;
+
         // make sure an existing node isn't being overwritten
         const lazyNode = this.nodeMap.getBy('index', atStoreIndex);
 
@@ -960,15 +969,40 @@ export class LazyCache extends BeanStub {
         return { add, remove };
     }
 
-    /** Loads again the rows whose position was read from a version older than `version`. */
+    /**
+     * Loads again the rows whose position was read from a version older than `version`. Skips the scan of the rows
+     * when the last scan showed that every row not already waiting to load again was read from `version` or a newer one.
+     */
     private loadRowsOlderThan(version: string | number, comparator?: CompareServerSideDataVersions): void {
+        const checked = this.oldestRowLoadVersion;
+        if (checked === undefined || (checked !== null && compareDataVersions(checked, version, comparator) >= 0)) {
+            return;
+        }
+        let oldest: string | number | undefined | null = undefined;
         this.nodeMap.forEach(({ node }) => {
             const loadVersion = this.rowLoadVersions.get(node);
-            if (!node.stub && loadVersion != null && compareDataVersions(loadVersion, version, comparator) < 0) {
+            if (node.stub || loadVersion == null || this.nodesToRefresh.has(node)) {
+                return;
+            }
+            if (compareDataVersions(loadVersion, version, comparator) < 0) {
                 this.nodesToRefresh.add(node);
+            } else if (oldest !== null) {
+                const comparison = oldest === undefined ? -1 : compareDataVersions(loadVersion, oldest, comparator);
+                if (comparison < 0) {
+                    oldest = loadVersion;
+                } else if (Number.isNaN(comparison)) {
+                    // Versions that cannot be ordered leave the oldest unknown, so every later skipped change scans.
+                    oldest = null;
+                }
             }
         });
+        this.oldestRowLoadVersion = oldest;
         this.lazyBlockLoadingSvc.queueLoadCheck();
+    }
+
+    private setRowLoadVersion(node: RowNode, version: string | number): void {
+        this.rowLoadVersions.set(node, version);
+        this.oldestRowLoadVersion = null;
     }
 
     private setRowDataVersion(node: RowNode, version: string | number | undefined): void {
@@ -1019,30 +1053,35 @@ export class LazyCache extends BeanStub {
             return false;
         }
 
-        if (this.isStreamingVersions()) {
-            if (comparison > 0) {
-                this.dataVersion = received;
-                return false;
-            }
-            // Read from a version older than the newest the level has seen: load it again, at least at that version.
-            const retries = this.staleBlockRetries.get(firstRowIndex) ?? 0;
-            if (request && comparison < 0 && retries < MAX_STALE_BLOCK_RETRIES) {
-                this.staleBlockRetries.set(firstRowIndex, retries + 1);
-                return true;
-            }
-        } else if (request) {
-            // Requested before the level was pinned: load it again with the pinned version.
-            if (request.dataVersion == null) {
-                return true;
-            }
-            // The server no longer reads the pinned version, so the level is read again from the version it now reads.
-            if (this.store.reloadForDataVersion()) {
-                return true;
+        const isStreaming = this.isStreamingVersions();
+        if (isStreaming && comparison > 0) {
+            this.dataVersion = received;
+            return false;
+        }
+        if (request) {
+            if (comparison < 0) {
+                // Read from a version older than the level's: load it again, at least at the level's version. Reloading
+                // the level instead would pin the older version, and lose the newer transactions already applied.
+                const retries = this.staleBlockRetries.get(firstRowIndex) ?? 0;
+                if (retries < MAX_STALE_BLOCK_RETRIES) {
+                    this.staleBlockRetries.set(firstRowIndex, retries + 1);
+                    return true;
+                }
+            } else if (!isStreaming) {
+                // Requested before the level was pinned: load it again with the pinned version.
+                if (request.dataVersion == null) {
+                    return true;
+                }
+                // The server no longer reads the pinned version, so the level is read again from the version it now reads.
+                if (this.store.reloadForDataVersion()) {
+                    return true;
+                }
             }
         }
         if (!this.dataVersionWarned) {
             this.dataVersionWarned = true;
-            this.warn(341, { pinned, received });
+            // Streaming needs versions it can order, and these two cannot be ordered.
+            this.warn(341, { pinned, received, unordered: isStreaming && Number.isNaN(comparison) });
         }
         return false;
     }
@@ -1145,7 +1184,7 @@ export class LazyCache extends BeanStub {
                 this.rowLoadVersions.delete(node);
             } else {
                 this.rowDataVersions.set(node, dataVersion);
-                this.rowLoadVersions.set(node, dataVersion);
+                this.setRowLoadVersion(node, dataVersion);
             }
         }
 
@@ -1496,7 +1535,7 @@ export class LazyCache extends BeanStub {
             const node = this.createRowAtIndex(addIndex + uniqueInsertOffset, data);
             this.setRowDataVersion(node, version);
             if (version != null) {
-                this.rowLoadVersions.set(node, version);
+                this.setRowLoadVersion(node, version);
             }
             return node;
         });
