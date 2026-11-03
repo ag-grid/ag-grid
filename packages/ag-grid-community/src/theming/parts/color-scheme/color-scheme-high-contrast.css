@@ -56,3 +56,137 @@
 .ag-toolbar-input-field {
     font-weight: var(--ag-font-weight);
 }
+
+/* inset past the selected underline, which would otherwise hide the left edge of the focus ring */
+:where(.ag-side-button.ag-selected) .ag-side-button-button:focus-visible {
+    box-shadow: none;
+}
+
+:where(.ag-side-button.ag-selected) .ag-side-button-button:focus-visible::after {
+    content: '';
+    position: absolute;
+    inset: 0 0 0 var(--ag-side-button-selected-underline-width);
+    box-shadow: inset var(--ag-focus-shadow);
+    pointer-events: none;
+}
+
+/* enlarge the hit areas of small controls to at least 24px without enlarging their glyphs */
+:where(
+        .ag-header-cell-menu-button,
+        .ag-header-cell-filter-button,
+        .ag-panel-title-bar-button,
+        .ag-header-expand-icon,
+        .ag-column-group-icons,
+        .ag-set-filter-group-icons,
+        .ag-group-expanded,
+        .ag-group-contracted,
+        .ag-chart-settings-prev,
+        .ag-chart-settings-next,
+        .ag-group-title-bar-icon,
+        .ag-column-select-header-icon,
+        .ag-floating-filter-button-button,
+        .ag-filter-toolpanel-expand,
+        .ag-panel-title-bar-button-icon,
+        .ag-chart-menu-icon,
+        .ag-column-drop-cell-button
+    )
+    .ag-icon::after,
+.ag-icon:where(
+        .ag-column-select-header-icon,
+        .ag-filter-toolpanel-expand,
+        .ag-panel-title-bar-button-icon,
+        .ag-chart-menu-icon
+    )::after {
+    content: '';
+    position: absolute;
+    inset: min(0px, calc(50% - 12px));
+}
+
+/* the native inputs are transparent and take the clicks, so they can overflow their wrappers */
+@media not (forced-colors: active) {
+    .ag-checkbox-input,
+    .ag-radio-button-input,
+    .ag-toggle-button-input {
+        position: absolute;
+        inset: min(0px, calc(50% - 12px));
+        width: auto;
+        min-width: 0;
+        max-width: none;
+        height: auto;
+    }
+}
+
+/* header cells clip the 3px of the resize handle outside them, so extend 19px from the 5px inside */
+.ag-header-cell-resize::before {
+    content: '';
+    position: absolute;
+    inset: 0 -19px;
+}
+
+/* keep end-side icon hit areas clear of the 24px resize handle hit area */
+.ag-header-cell:where(:not(.ag-floating-filter)),
+.ag-header-group-cell {
+    padding-right: max(var(--ag-cell-horizontal-padding), calc(36px - var(--ag-icon-size) / 2));
+}
+
+.ag-skeleton-effect,
+.ag-color-dialog,
+.ag-chart-mini-thumbnail {
+    border-radius: 2px;
+}
+
+.ag-menu-option-part,
+.ag-compact-menu-option-part {
+    padding-block: calc(var(--ag-spacing) + 4px);
+}
+
+.ag-column-drop-cell {
+    padding-block: calc(var(--ag-spacing) * 0.25 + 2px);
+}
+
+.ag-pill {
+    padding-block: 2px;
+}
+
+.ag-status-name-value {
+    padding-block: calc(var(--ag-widget-container-vertical-padding) + 2px);
+}
+
+.ag-checkbox-input-wrapper {
+    width: calc(var(--ag-icon-size) + 2px);
+    height: calc(var(--ag-icon-size) + 2px);
+}
+
+@media (forced-colors: active) {
+    .ag-checkbox-input {
+        width: calc(var(--ag-icon-size) + 2px);
+        height: calc(var(--ag-icon-size) + 2px);
+    }
+}
+
+.ag-right-aligned-cell,
+.ag-row-number-cell,
+.ag-paging-number,
+.ag-paging-row-summary-panel-number,
+.ag-paging-row-summary-panel::before,
+.ag-paging-page-number,
+.ag-paging-page-number-ellipsis,
+.ag-toolbar-find-match-count,
+.ag-status-name-value-value {
+    font-family: var(--ag-numeric-font-family);
+}
+
+/* TODO: consider moving to _range.css (and Legacy Themes) so every theme gets a grab cursor on sliders */
+.ag-range-field-input {
+    cursor: grab;
+}
+
+.ag-range-field-input:active {
+    cursor: grabbing;
+}
+
+.ag-column-drop-horizontal-empty-message,
+.ag-column-drop-vertical-empty-message,
+:where(.ag-chart-tabbed-menu-header) .ag-tab {
+    font-size: 14px;
+}

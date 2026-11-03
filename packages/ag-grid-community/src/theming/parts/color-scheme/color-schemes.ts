@@ -1,8 +1,10 @@
+import type { FontFamilyValue } from 'ag-stack';
 import {
     accentColor,
     accentMix,
     backgroundColor,
     createPart,
+    defaultFontFamily,
     defaultLightColorSchemeParams,
     foregroundBackgroundMix,
     foregroundColor,
@@ -126,24 +128,36 @@ const makeColorSchemeVariableTreeShakeable = () =>
 
 export const colorSchemeVariable = /*#__PURE__*/ makeColorSchemeVariableTreeShakeable();
 
-// Applies to borders and dividers, primary should be 3:1 on every neutral background in both modes, secondary should be 2:1 on every neutral background in both modes
-const highContrastSeperatorColor = {
-    primary: foregroundBackgroundMix(0.6),
-    secondary: foregroundBackgroundMix(0.3),
-    tertiary: foregroundBackgroundMix(0.1),
+// Applies to borders and dividers, primary should be 7:1 on every neutral background in both modes
+const highContrastSeparatorColor = {
+    primary: foregroundBackgroundMix(0.8),
+    secondary: foregroundBackgroundMix(0.5),
+    tertiary: foregroundBackgroundMix(0.2),
 };
 
-type HighContrastSeparatorColor = typeof highContrastSeperatorColor;
+const highContrastBorderWidth = 2;
 
-const highContrastParams = (separatorColor: HighContrastSeparatorColor) =>
+const highContrastFontFamily = (): FontFamilyValue => [
+    { googleFont: 'Atkinson Hyperlegible Next' },
+    ...defaultFontFamily(),
+];
+
+const highContrastNumericFontFamily = (): FontFamilyValue => [
+    { googleFont: 'Atkinson Hyperlegible Mono' },
+    'monospace',
+];
+
+const highContrastBorderRadius = 2;
+
+const highContrastParams = () =>
     ({
-        borderColor: separatorColor.secondary, //foregroundMix(0.3),
-        rowBorder: { color: separatorColor.tertiary },
-        menuBorder: { color: separatorColor.secondary },
-        dialogBorder: { color: separatorColor.secondary },
-        selectCellBorder: { color: foregroundMix(0.26) },
+        borderColor: highContrastSeparatorColor.secondary,
+        rowBorder: { color: highContrastSeparatorColor.tertiary },
+        menuBorder: { color: highContrastSeparatorColor.secondary },
+        dialogBorder: { color: highContrastSeparatorColor.secondary },
+        selectCellBorder: { width: highContrastBorderWidth, color: highContrastSeparatorColor.primary },
         columnDropCellBackgroundColor: backgroundColor,
-        columnDropCellBorder: { color: separatorColor.primary },
+        columnDropCellBorder: { width: highContrastBorderWidth, color: highContrastSeparatorColor.primary },
         tabBarBackgroundColor: foregroundMix(0.025),
         menuBackgroundColor: { ref: 'chromeBackgroundColor' },
         subtleTextColor: foregroundBackgroundMix(0.7),
@@ -153,30 +167,46 @@ const highContrastParams = (separatorColor: HighContrastSeparatorColor) =>
         notePopupTextColor: { ref: 'subtleTextColor' },
         calculatedColumnParentSuggestionColor: { ref: 'subtleTextColor' },
         dragHandleColor: { ref: 'textColor' },
-        columnDropCellDragHandleColor: { ref: 'textColor' },
         columnDropCellButtonColor: { ref: 'textColor' },
         columnDropEmptyMessageTextColor: { ref: 'subtleTextColor' },
-        columnDropEmptyMessageBorderColor: separatorColor.secondary,
+        columnDropEmptyMessageBorderColor: highContrastSeparatorColor.secondary,
         chromeBackgroundColor: foregroundBackgroundMix(0.025),
         headerTextColor: { ref: 'subtleTextColor' },
         panelTitleBarIconColor: { ref: 'textColor' },
-        headerFontWeight: 500,
-        headerFontSize: 13,
+        fontFamily: highContrastFontFamily(),
+        numericFontFamily: highContrastNumericFontFamily(),
+        fontSize: 16,
+        iconSize: 18,
+        headerFontWeight: 400,
+        headerFontSize: 14,
         statusBarLabelColor: { ref: 'subtleTextColor' },
-        statusBarFontSize: 13,
-        statusBarLabelFontWeight: 500,
+        statusBarFontSize: 15,
+        rowVerticalPaddingScale: 30 / 26,
+        headerVerticalPaddingScale: 36 / 32,
+        listItemHeight: { calc: 'max(iconSize, dataFontSize) + widgetVerticalSpacing + 4px' },
+        inputHeight: { calc: 'max(iconSize, fontSize) + spacing * 2 + 4px' },
+        pickerFieldHeight: { calc: 'max(iconSize, fontSize) + spacing * 2 + 4px' },
+        buttonVerticalPadding: { calc: 'spacing + 2px' },
+        tabTopPadding: { calc: 'spacing + 2px' },
+        tabBottomPadding: { calc: 'spacing + 2px' },
+        toggleButtonHeight: 22,
+        toggleButtonWidth: 32,
+        statusBarLabelFontWeight: 400,
         statusBarValueFontWeight: 600,
-        headerRowBorder: { color: separatorColor.secondary },
-        footerRowBorder: { color: separatorColor.secondary },
+        headerRowBorder: { color: highContrastSeparatorColor.secondary },
+        footerRowBorder: { color: highContrastSeparatorColor.secondary },
         inputPlaceholderTextColor: { ref: 'subtleTextColor' },
         inputIconColor: { ref: 'subtleTextColor' },
         inputDisabledTextColor: { ref: 'textColor' },
-        inputBorder: { color: separatorColor.primary },
-        inputDisabledBorder: { color: foregroundMix(0.2) },
+        inputBorder: { width: highContrastBorderWidth, color: highContrastSeparatorColor.primary },
+        inputFocusBorder: { width: highContrastBorderWidth, color: accentColor },
+        inputInvalidBorder: { width: highContrastBorderWidth, color: { ref: 'invalidColor' } },
+        inputDisabledBorder: { width: highContrastBorderWidth, color: foregroundMix(0.2) },
         inputDisabledBackgroundColor: backgroundColor,
         pickerButtonBorder: { ref: 'inputBorder' },
         headerColumnResizeHandleColor: { ref: 'textColor' },
-        checkboxUncheckedBorderColor: separatorColor.primary,
+        checkboxBorderWidth: highContrastBorderWidth,
+        checkboxUncheckedBorderColor: highContrastSeparatorColor.primary,
         // opaque so the border, drawn over the background, isn't darker than it
         checkboxIndeterminateBackgroundColor: foregroundBackgroundMix(0.69),
         checkboxIndeterminateBorderColor: { ref: 'checkboxIndeterminateBackgroundColor' },
@@ -184,13 +214,13 @@ const highContrastParams = (separatorColor: HighContrastSeparatorColor) =>
         focusShadow: { spread: 3, color: { ref: 'accentColor', mix: 0.75 } },
         focusErrorShadow: { spread: 3, color: { ref: 'invalidColor', mix: 0.75 } },
         tabSelectedUnderlineColor: accentColor,
-        tabSelectedUnderlineWidth: 2,
+        tabSelectedUnderlineWidth: 3,
         sideButtonSelectedUnderlineColor: accentColor,
-        sideButtonSelectedBorder: { color: separatorColor.tertiary },
+        sideButtonSelectedUnderlineWidth: 3,
+        sideButtonSelectedBorder: { color: highContrastSeparatorColor.tertiary },
         sideButtonSelectedBackgroundColor: { ref: 'backgroundColor' },
         listItemHighlightOutlineColor: accentColor,
         listItemHighlightOutlineWidth: 2,
-        // selectedRowBackgroundColor: { ref: 'accentColor', mix: 0.08 },
         selectedRowBorder: { color: accentColor },
         selectedRowRangeSelectionBorderColor: accentColor,
         selectedRowDragIndicatorColor: accentColor,
@@ -199,35 +229,40 @@ const highContrastParams = (separatorColor: HighContrastSeparatorColor) =>
         selectedRowCheckboxCheckedBackgroundColor: accentColor,
         selectedRowCheckboxCheckedBorderColor: accentColor,
         selectedRowCheckboxCheckedShapeColor: backgroundColor,
-        valueChangeDeltaUpSelectedColor: { ref: 'valueChangeDeltaUpColor' },
-        valueChangeDeltaDownSelectedColor: { ref: 'valueChangeDeltaDownColor' },
         rowNumbersSelectedColor: { ref: 'accentColor', mix: 0.15 },
         calculatedColumnReferenceColor: { ref: 'formulaToken1Color' },
         calculatedColumnFunctionColor: { ref: 'formulaToken4Color' },
         chartMenuPaletteDotColor: 'transparent',
         chartMenuPaletteDotHoverColor: foregroundMix(0.2),
-        chartMenuPaletteDotBorder: { color: separatorColor.primary },
-        sliderThumbBorderColor: separatorColor.primary,
-        sliderTrackColor: separatorColor.primary,
-        chartMenuThumbnailBorderColor: separatorColor.tertiary,
-        // opaque equivalent of selectedRowBackgroundColor over the background
-        chartMenuThumbnailSelectedBorderColor: { ref: 'accentColor' },
+        chartMenuPaletteDotBorder: { width: highContrastBorderWidth, color: highContrastSeparatorColor.primary },
+        sliderThumbBorderWidth: highContrastBorderWidth,
+        sliderThumbBorderColor: highContrastSeparatorColor.primary,
+        sliderTrackColor: highContrastSeparatorColor.primary,
+        chartMenuThumbnailBorderColor: highContrastSeparatorColor.tertiary,
         iconColor: { ref: 'textColor' },
         buttonTextColor: { ref: 'foregroundColor' },
-        buttonBorder: { color: separatorColor.primary },
+        buttonBorder: { width: highContrastBorderWidth, color: highContrastSeparatorColor.primary },
+        buttonActiveBorder: { width: highContrastBorderWidth, color: accentColor },
         rowHoverColor: accentMix(0.08),
         selectedRowBackgroundColor: accentMix(0.16),
-        pinnedColumnBorder: { color: separatorColor.secondary },
-        sidePanelBorder: { color: separatorColor.secondary },
+        pinnedColumnBorder: { color: highContrastSeparatorColor.secondary },
+        sidePanelBorder: { color: highContrastSeparatorColor.secondary },
         toolbarTextColor: { ref: 'textColor' },
+        cellFocusBorderWidth: highContrastBorderWidth,
+        borderRadius: highContrastBorderRadius,
+        wrapperBorderRadius: highContrastBorderRadius,
+        iconButtonBorderRadius: highContrastBorderRadius,
+        colorPickerTrackBorderRadius: highContrastBorderRadius,
+        colorPickerColorBorderRadius: highContrastBorderRadius,
     }) as const;
 
-const highContrastLightParams = (separatorColor = highContrastSeperatorColor) =>
+const highContrastLightParams = () =>
     ({
         ...defaultLightColorSchemeParams,
-        ...highContrastParams(separatorColor),
+        ...highContrastParams(),
         foregroundColor: '#000',
-        accentColor: '#1255a2',
+        subtleTextColor: foregroundBackgroundMix(0.8),
+        accentColor: '#3730a3',
         invalidColor: '#901d1d',
         valueChangeDeltaUpColor: '#104819',
         valueChangeDeltaDownColor: '#791818',
@@ -252,13 +287,13 @@ const makeColorSchemeHighContrastLightTreeShakeable = () =>
 
 export const colorSchemeHighContrastLight = /*#__PURE__*/ makeColorSchemeHighContrastLightTreeShakeable();
 
-const highContrastDarkParams = (separatorColor = highContrastSeperatorColor) =>
+const highContrastDarkParams = () =>
     ({
         ...darkParams(),
-        ...highContrastParams(separatorColor),
+        ...highContrastParams(),
         backgroundColor: '#000',
         foregroundColor: '#fff',
-        accentColor: '#64b5f6',
+        accentColor: '#a5b4fc',
         invalidColor: '#ff8080',
         valueChangeDeltaUpColor: '#81c784',
         valueChangeDeltaDownColor: '#ff9c9c',
@@ -295,80 +330,3 @@ const makeColorSchemeHighContrastVariableTreeShakeable = () =>
     });
 
 export const colorSchemeHighContrastVariable = /*#__PURE__*/ makeColorSchemeHighContrastVariableTreeShakeable();
-
-// Each tier is one step stronger than high contrast, primary should be 7:1 on every neutral background in both modes
-const ultraHighContrastSeparatorColor: HighContrastSeparatorColor = {
-    primary: foregroundBackgroundMix(0.8),
-    secondary: foregroundBackgroundMix(0.5),
-    tertiary: foregroundBackgroundMix(0.2),
-};
-
-const ultraHighContrastBorderWidth = 2;
-
-const ultraHighContrastParams = () =>
-    ({
-        buttonBorder: { width: ultraHighContrastBorderWidth, color: ultraHighContrastSeparatorColor.primary },
-        buttonActiveBorder: { width: ultraHighContrastBorderWidth, color: accentColor },
-        inputBorder: { width: ultraHighContrastBorderWidth, color: ultraHighContrastSeparatorColor.primary },
-        inputFocusBorder: { width: ultraHighContrastBorderWidth, color: accentColor },
-        inputInvalidBorder: { width: ultraHighContrastBorderWidth, color: { ref: 'invalidColor' } },
-        inputDisabledBorder: { width: ultraHighContrastBorderWidth, color: foregroundMix(0.2) },
-        columnDropCellBorder: { width: ultraHighContrastBorderWidth, color: ultraHighContrastSeparatorColor.primary },
-        selectCellBorder: { width: ultraHighContrastBorderWidth, color: ultraHighContrastSeparatorColor.primary },
-        chartMenuPaletteDotBorder: {
-            width: ultraHighContrastBorderWidth,
-            color: ultraHighContrastSeparatorColor.primary,
-        },
-        checkboxBorderWidth: ultraHighContrastBorderWidth,
-        fontSize: 15,
-        headerFontSize: 14,
-        statusBarFontSize: 14,
-        tabSelectedUnderlineWidth: 3,
-        sideButtonSelectedUnderlineWidth: 3,
-        sliderThumbBorderWidth: ultraHighContrastBorderWidth,
-    }) as const;
-
-const ultraHighContrastLightParams = () =>
-    ({
-        ...highContrastLightParams(ultraHighContrastSeparatorColor),
-        ...ultraHighContrastParams(),
-        subtleTextColor: foregroundBackgroundMix(0.8),
-    }) as const;
-
-const makeColorSchemeUltraHighContrastLightTreeShakeable = () =>
-    createPart({
-        feature: 'colorScheme',
-        params: ultraHighContrastLightParams(),
-        css: colorSchemeHighContrastCSS,
-    });
-
-export const colorSchemeUltraHighContrastLight = /*#__PURE__*/ makeColorSchemeUltraHighContrastLightTreeShakeable();
-
-const ultraHighContrastDarkParams = () =>
-    ({
-        ...highContrastDarkParams(ultraHighContrastSeparatorColor),
-        ...ultraHighContrastParams(),
-    }) as const;
-
-const makeColorSchemeUltraHighContrastDarkTreeShakeable = () =>
-    createPart({
-        feature: 'colorScheme',
-        params: ultraHighContrastDarkParams(),
-        css: colorSchemeHighContrastCSS,
-    });
-
-export const colorSchemeUltraHighContrastDark = /*#__PURE__*/ makeColorSchemeUltraHighContrastDarkTreeShakeable();
-
-const makeColorSchemeUltraHighContrastVariableTreeShakeable = () =>
-    createPart({
-        feature: 'colorScheme',
-        params: ultraHighContrastLightParams(),
-        modeParams: {
-            light: ultraHighContrastLightParams(),
-            dark: ultraHighContrastDarkParams(),
-        },
-        css: colorSchemeHighContrastCSS,
-    });
-
-export const colorSchemeUltraHighContrastVariable =
-    /*#__PURE__*/ makeColorSchemeUltraHighContrastVariableTreeShakeable();

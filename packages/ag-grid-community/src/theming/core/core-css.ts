@@ -344,6 +344,11 @@ export interface CoreParams extends SharedThemeParams {
     cellFontFamily: FontFamilyValue;
 
     /**
+     * Font family of numbers in right-aligned cells, row numbers, pagination, the status bar and the find match count. Only used by the high contrast theme.
+     */
+    numericFontFamily: FontFamilyValue;
+
+    /**
      * Font size of text in grid cells
      */
     cellFontSize: LengthValue;
@@ -505,6 +510,11 @@ export interface CoreParams extends SharedThemeParams {
      * Border style around range selections.
      */
     rangeSelectionBorderStyle: BorderStyleValue;
+
+    /**
+     * Width of the border around the focused cell, and around a range selection containing a single cell
+     */
+    cellFocusBorderWidth: LengthValue;
 
     /**
      * Background color for cells that provide data to the current range chart
@@ -1042,6 +1052,9 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
     cellFontFamily: {
         ref: 'fontFamily',
     },
+    numericFontFamily: {
+        ref: 'fontFamily',
+    },
     cellFontSize: {
         ref: 'dataFontSize',
     },
@@ -1055,6 +1068,7 @@ export const coreDefaults: Readonly<Omit<CoreParams, keyof SharedThemeParams>> =
         ref: 'textColor',
     },
     rangeSelectionBorderStyle: 'solid',
+    cellFocusBorderWidth: 1,
     rangeSelectionBorderColor: accentColor,
     rangeSelectionBackgroundColor: accentMix(0.2),
     rangeSelectionChartBackgroundColor: '#0058FF1A',

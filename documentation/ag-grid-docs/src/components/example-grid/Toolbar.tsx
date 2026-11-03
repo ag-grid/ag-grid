@@ -41,7 +41,6 @@ const options: Record<string, string> = {
     material: 'Material',
     alpine: 'Alpine',
     'high-contrast': 'High Contrast',
-    'ultra-high-contrast': 'Ultra High Contrast',
 };
 
 export const Toolbar = ({
@@ -102,10 +101,7 @@ export const Toolbar = ({
         }));
     }, []);
     const themeOption = useMemo(
-        () =>
-            themeOptions.find((o) => o.value === gridTheme) ||
-            themeOptions.find((o) => gridTheme.includes(o.value)) ||
-            themeOptions[0],
+        () => themeOptions.find((o) => gridTheme.includes(o.value)) || themeOptions[0],
         [themeOptions, gridTheme]
     );
 

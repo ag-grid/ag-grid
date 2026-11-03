@@ -22,7 +22,6 @@ import {
     themeHighContrast,
     themeMaterial,
     themeQuartz,
-    themeUltraHighContrast,
 } from 'ag-grid-community';
 import {
     CellSelectionModule,
@@ -85,7 +84,6 @@ const themeMap: Record<string, Theme> = {
     material: themeMaterial,
     quartz: themeQuartz,
     'high-contrast': themeHighContrast,
-    'ultra-high-contrast': themeUltraHighContrast,
 };
 
 const modules = [
@@ -114,6 +112,7 @@ const modules = [
 ];
 
 const staticGridOptions: GridOptions = {
+    loadThemeGoogleFonts: true,
     statusBar: {
         statusPanels: [
             { statusPanel: 'agTotalAndFilteredRowCountComponent', key: 'totalAndFilter', align: 'left' },
