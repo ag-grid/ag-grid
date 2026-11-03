@@ -851,6 +851,26 @@ describe('ag-grid grouping selection', () => {
         expect(api.getSelectedNodes()).toEqual([]);
     });
 
+    test.each([
+        { hiddenBy: 'grandTotalRow unset', update: { grandTotalRow: undefined }, rootDisplayed: false },
+        { hiddenBy: 'pivot mode without row groups', update: { pivotMode: true }, rootDisplayed: true },
+    ])(
+        'once the grand total row is gone ($hiddenBy), the root can be selected whatever isRowSelectable said about that row',
+        ({ update, rootDisplayed }) => {
+            const api = createGrandTotalGrid(rejectsFooters, 'bottom');
+            const root = api.getRowNode('1')!.parent!;
+            expect(root.selectable).toBe(false);
+
+            api.updateGridOptions(update);
+
+            expect(api.getRowNode(GRAND_TOTAL_ROW_ID)).toBeUndefined();
+            expect(api.getDisplayedRowAtIndex(0) === root).toBe(rootDisplayed);
+            expect(root.selectable).toBe(true);
+            api.setNodesSelected({ nodes: [root], newValue: true, source: 'api' });
+            expect(root.isSelected()).toBe(true);
+        }
+    );
+
     test('with groupSelects descendants a grand total row is selectable while a row beneath it is, as the option switches', () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'athlete' }, { field: 'gold', aggFunc: 'sum' }],
