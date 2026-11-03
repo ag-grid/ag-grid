@@ -2,7 +2,7 @@ import { waitFor } from '@testing-library/dom';
 import { ALL_SEVERITIES, GridRows, TestGridsManager } from 'ag-test-utils';
 import { countLoadingRows, waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
-import type { GridOptions, IServerSideGetRowsParams } from 'ag-grid-community';
+import type { GridOptions, IRowNode, IServerSideGetRowsParams } from 'ag-grid-community';
 import { RowSelectionModule, enableDevValidations } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
@@ -316,6 +316,30 @@ describe('ag-grid SSRM treeData initial-load & selection (characterization)', ()
             expect(api.getSelectedNodes().length).toBe(3);
         });
 
+        test('a selected group isRowSelectable rejects keeps its selection, and so do its rows', async () => {
+            const { api } = createSelectionGrid('ssrmTreeRejectedGroup');
+            await waitForNoLoadingRows(api);
+            await expandById(api, '101');
+            await expandById(api, '102');
+            await expandById(api, '108');
+            api.getRowNode('108')!.setSelected(true);
+            const selectionState = api.getServerSideSelectionState();
+
+            api.setGridOption('rowSelection', {
+                mode: 'multiRow',
+                groupSelects: 'descendants',
+                isRowSelectable: (node) => node.id !== '108',
+            });
+
+            expect(api.getRowNode('108')!.selectable).toBe(false);
+            expect(api.getServerSideSelectionState()).toEqual(selectionState);
+            const selectedIds = api
+                .getSelectedNodes()
+                .map((n: any) => n.id)
+                .sort();
+            expect(selectedIds).toEqual(['108', '109', '110', '111', '112']);
+        });
+
         test('selecting a leaf selects only that leaf (no descendants, no ancestor cascade)', async () => {
             const { api } = createSelectionGrid('ssrmTreeSelectLeaf');
 
@@ -338,6 +362,92 @@ describe('ag-grid SSRM treeData initial-load & selection (characterization)', ()
             // Latent behaviour: isSelected() on the not-fully-selected parent group returns
             // `undefined` here (indeterminate), not `false`.
             expect(api.getRowNode('108')!.isSelected()).toBe(undefined);
+        });
+    });
+
+    describe('selection (groupSelects descendants) x a transaction turning a row between group and leaf', () => {
+        interface TreeRow {
+            id: string;
+            group: boolean;
+            rejected?: boolean;
+        }
+
+        async function createTree(isRowSelectable: (node: IRowNode<TreeRow>) => boolean) {
+            const tree: Record<string, TreeRow[]> = {
+                '': [
+                    { id: 'g', group: true },
+                    { id: 'x', group: false },
+                ],
+                g: [{ id: 'g1', group: false }],
+                x: [{ id: 'x1', group: false }],
+            };
+            const api = gridsManager.createGrid('ssrmTreeFlip', {
+                columnDefs: [{ field: 'id' }],
+                treeData: true,
+                rowModelType: 'serverSide',
+                getRowId: ({ data }) => data.id,
+                isServerSideGroup: (data: TreeRow) => data.group,
+                getServerSideGroupKey: (data: TreeRow) => data.id,
+                rowSelection: { mode: 'multiRow', groupSelects: 'descendants', isRowSelectable },
+                serverSideDatasource: {
+                    getRows: (params: IServerSideGetRowsParams) => {
+                        const groupKeys = params.request.groupKeys ?? [];
+                        const rows = (tree[groupKeys[groupKeys.length - 1] ?? ''] ?? []).map((row) => ({ ...row }));
+                        setTimeout(() => params.success({ rowData: rows, rowCount: rows.length }), 1);
+                    },
+                },
+            });
+            await waitForNoLoadingRows(api);
+            const emptyState = api.getServerSideSelectionState();
+            const sources: string[] = [];
+            api.addEventListener('selectionChanged', (event) => sources.push(event.source));
+            return { api, emptyState, sources };
+        }
+
+        const rejectsMarkedRows = (node: IRowNode<TreeRow>) => !node.data?.rejected;
+
+        test('a selected group a transaction turns into an un-selectable leaf is deselected', async () => {
+            const { api, emptyState, sources } = await createTree(rejectsMarkedRows);
+            api.getRowNode('g')!.setSelected(true);
+            await waitFor(() => expect(sources).toEqual(['api']));
+            sources.length = 0;
+
+            api.applyServerSideTransaction({ update: [{ id: 'g', group: false, rejected: true }] });
+
+            expect(api.getRowNode('g')!.isSelected()).toBe(false);
+            expect(api.getServerSideSelectionState()).toEqual(emptyState);
+            await waitFor(() => expect(sources).toEqual(['selectableChanged']));
+        });
+
+        test('an un-selectable group a transaction turns into a leaf loses its selection', async () => {
+            let groupAccepted = true;
+            const { api, emptyState } = await createTree((node) => groupAccepted || node.id !== 'g');
+            api.getRowNode('g')!.setSelected(true);
+            groupAccepted = false;
+            api.setGridOption('rowSelection', {
+                mode: 'multiRow',
+                groupSelects: 'descendants',
+                isRowSelectable: (node) => groupAccepted || node.id !== 'g',
+            });
+            expect(api.getRowNode('g')!.selectable).toBe(false);
+            expect(api.getRowNode('g')!.isSelected()).toBe(true);
+
+            api.applyServerSideTransaction({ update: [{ id: 'g', group: false }] });
+
+            expect(api.getRowNode('g')!.isSelected()).toBe(false);
+            expect(api.getServerSideSelectionState()).toEqual(emptyState);
+        });
+
+        test('a selected leaf a transaction turns into an un-selectable group keeps its selection', async () => {
+            const api = (await createTree(rejectsMarkedRows)).api;
+            api.getRowNode('x')!.setSelected(true);
+            const selectionState = api.getServerSideSelectionState();
+
+            api.applyServerSideTransaction({ update: [{ id: 'x', group: true, rejected: true }] });
+
+            expect(api.getRowNode('x')!.selectable).toBe(false);
+            expect(api.getRowNode('x')!.isSelected()).toBe(true);
+            expect(api.getServerSideSelectionState()).toEqual(selectionState);
         });
     });
 });

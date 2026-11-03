@@ -208,6 +208,55 @@ describe('Row Selection Grid Options', () => {
                 expect(groupAtCall[id]).toBe(true);
             }
         });
+
+        test('a row pinned through pinnedTopRowData is asked once when its data is replaced', () => {
+            const asked: string[] = [];
+            const [api] = createGrid(
+                {
+                    columnDefs,
+                    rowData,
+                    getRowId: (p) => p.data.sport,
+                    pinnedTopRowData: [{ sport: 'pinned' }],
+                    rowSelection: {
+                        mode: 'multiRow',
+                        isRowSelectable: (node) => {
+                            asked.push(node.data.sport);
+                            return true;
+                        },
+                    },
+                },
+                { modules: [RowSelectionModule, PinnedRowModule] }
+            );
+            asked.length = 0;
+
+            api.getPinnedTopRow(0)!.setData({ sport: 'pinned again' });
+
+            expect(asked).toEqual(['pinned again']);
+        });
+
+        test('a row whose data a rowSelected listener replaces while another row is deselected is asked too', () => {
+            const [api] = createGrid({
+                columnDefs: [{ field: 'id' }],
+                rowData: [
+                    { id: 'a', ok: true },
+                    { id: 'b', ok: true },
+                ],
+                getRowId: (p) => p.data.id,
+                rowSelection: { mode: 'multiRow', isRowSelectable: (node) => node.data.ok },
+            });
+            const a = api.getRowNode('a')!;
+            const b = api.getRowNode('b')!;
+            api.setNodesSelected({ nodes: [a], newValue: true, source: 'api' });
+            a.addEventListener('rowSelected', () => b.setData({ id: 'b', ok: false }));
+
+            a.setData({ id: 'a', ok: false });
+
+            expect({ a: a.selectable, b: b.selectable, selected: api.getSelectedNodes() }).toEqual({
+                a: false,
+                b: false,
+                selected: [],
+            });
+        });
     });
 
     describe('Cell Renderer', () => {
@@ -342,6 +391,29 @@ describe('Row Selection Grid Options', () => {
             await waitFor(() => assertSelectableByIndex([0, 2, 3, 4, 5, 6], api));
 
             api.forEachPinnedRow('top', (node) => expect(node.selectable).toBe(false));
+        });
+
+        test('a pinned row follows a new isRowSelectable rejecting its row', async () => {
+            const [api] = await createGridAndWait(
+                {
+                    columnDefs: [{ field: 'sport' }],
+                    rowData: structuredClone(rowData),
+                    rowSelection: { mode: 'multiRow' },
+                    enableRowPinning: true,
+                    isRowPinned: (node) => (node.data?.sport === 'rugby' ? 'top' : null),
+                },
+                { modules: [RowSelectionModule, PinnedRowModule] }
+            );
+            const pinned = api.getPinnedTopRow(0)!;
+            expect(pinned.selectable).toBe(true);
+
+            api.setGridOption('rowSelection', {
+                mode: 'multiRow',
+                isRowSelectable: (node) => node.data?.sport !== 'rugby',
+            });
+
+            expect(api.getRowNode('1')!.selectable).toBe(false);
+            expect(pinned.selectable).toBe(false);
         });
     });
 });

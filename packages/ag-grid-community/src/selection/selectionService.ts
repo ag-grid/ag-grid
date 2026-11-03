@@ -39,9 +39,10 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
 
     // Selection batch: while depth > 0, `selectionChanged` is coalesced into one pending event (carrying
     // the first source seen) and flushed when the outermost batch ends.
-    private selectionBatchDepth = 0;
     private pendingSelectionChanged = false;
     private pendingSelectionSource: SelectionEventSourceType | null = null;
+    /** Rows edited inside the batch, asked once when it ends, after the edit's aggregation. */
+    private editedRows: Set<RowNode> | null = null;
 
     public override postConstruct(): void {
         super.postConstruct();
@@ -52,25 +53,25 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         this.groupSelectsDescendants = _getGroupSelectsDescendants(gos);
         this.groupSelectsFiltered = _getGroupSelection(gos) === 'filteredDescendants';
         this.masterSelectsDetail = _getMasterSelects(gos) === 'detail';
+    }
 
-        this.addManagedPropertyListeners(['groupSelectsChildren', 'groupSelectsFiltered', 'rowSelection'], () => {
-            const groupSelectsDescendants = _getGroupSelectsDescendants(gos);
-            const selectionMode = _getRowSelectionMode(gos);
-            const groupSelectsFiltered = _getGroupSelection(gos) === 'filteredDescendants';
+    protected override refreshSelectionOptions(): boolean {
+        const gos = this.gos;
+        const groupSelectsDescendants = _getGroupSelectsDescendants(gos);
+        const selectionMode = _getRowSelectionMode(gos);
+        const groupSelectsFiltered = _getGroupSelection(gos) === 'filteredDescendants';
 
-            this.masterSelectsDetail = _getMasterSelects(gos) === 'detail';
+        this.masterSelectsDetail = _getMasterSelects(gos) === 'detail';
 
-            if (
-                groupSelectsDescendants !== this.groupSelectsDescendants ||
-                groupSelectsFiltered !== this.groupSelectsFiltered ||
-                selectionMode !== this.mode
-            ) {
-                this.deselectAllRowNodes({ source: 'api' });
-                this.groupSelectsDescendants = groupSelectsDescendants;
-                this.groupSelectsFiltered = groupSelectsFiltered;
-                this.mode = selectionMode;
-            }
-        });
+        const rollUpChanged = groupSelectsDescendants !== this.groupSelectsDescendants;
+        if (!rollUpChanged && groupSelectsFiltered === this.groupSelectsFiltered && selectionMode === this.mode) {
+            return false;
+        }
+        this.deselectAllRowNodes({ source: 'api' });
+        this.groupSelectsDescendants = groupSelectsDescendants;
+        this.groupSelectsFiltered = groupSelectsFiltered;
+        this.mode = selectionMode;
+        return rollUpChanged;
     }
 
     public override destroy(): void {
@@ -293,11 +294,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         return true;
     }
 
-    /**
-     * Drops a node leaving the model (destroyed, removed or detached) from the selection. Event-free
-     * and allocation-free: only updates the map, so callers can call it inline as they tear nodes down.
-     * The single `selectionChanged` and group roll-up are emitted by `updateSelectableAfterGrouping`.
-     */
+    /** Event- and allocation-free, for inline teardown; the refresh's selection batch emits `selectionChanged`. */
     public removeFromSelection(node: RowNode, source: SelectionEventSourceType): void {
         const id = node.id!;
         const selectedNodes = this.selectedNodes;
@@ -307,7 +304,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
             selectedNodes.delete(id);
             this.detailSelection.delete(id);
             node.__selected = false;
-            this.pendingSelectionChanged = true; // flushed by the pass that follows this refresh phase
+            this.pendingSelectionChanged = true; // flushed when the refresh's selection batch ends
             this.pendingSelectionSource ??= source;
         }
     }
@@ -757,12 +754,33 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         return selectable;
     }
 
-    /**
-     * Applies isRowSelectable to the affected nodes and deselects any that are no longer selectable. The
-     * callback runs once, on the fully-formed node. Scope: `changedPath` → changed subtree (hierarchical);
-     * `changedRowNodes` → added/updated rows only (flat); neither → all nodes (e.g. callback changed).
-     */
-    protected updateSelectable(changedPath?: ChangedPath, changedRowNodes?: ChangedRowNodes) {
+    protected override isRolledUpFromChildren(): boolean {
+        return !!this.csrm && this.groupSelectsDescendants;
+    }
+
+    /** The row is asked when its batch ends, after aggregation; a write outside any batch is a batch of its own. */
+    protected override updateEditedRowSelectable(rowNode: RowNode): void {
+        if (!this.isRowSelectable || (rowNode.rowPinned && rowNode.pinnedSibling)) {
+            return; // nothing to ask; a pinned copy's write sends its source row an event of its own
+        }
+        let editedRows = this.editedRows;
+        if (!editedRows) {
+            editedRows = new Set();
+            this.editedRows = editedRows;
+        }
+        editedRows.add(rowNode.primaryRow);
+        if (this.selectionBatchDepth === 0) {
+            ++this.selectionBatchDepth;
+            this.endSelectionBatch();
+        }
+    }
+
+    /** Asks isRowSelectable, deselecting rows it rejects, over `changedPath`'s subtree, else `changedRowNodes`, else all. */
+    protected updateSelectable(
+        changedPath?: ChangedPath,
+        changedRowNodes?: ChangedRowNodes,
+        groupsAskedLater?: boolean
+    ) {
         const { gos, rowModel } = this.beans;
 
         if (!_isRowSelection(gos)) {
@@ -770,7 +788,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
 
         const csrm = this.csrm;
-        const isCSRMGroupSelectsDescendants = !!csrm && this.groupSelectsDescendants;
+        const isCSRMGroupSelectsDescendants = this.isRolledUpFromChildren();
         const rootNode = csrm ? csrm.rootNode : null;
         // Without a delta every leaf may have changed; otherwise only added/updated leaves can have.
         const adds = changedRowNodes?.adds;
@@ -802,7 +820,7 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
                 // Hierarchical delta, or full recompute when there's no delta: groups/fillers recompute
                 // unconditionally (catches leaf↔group flips), leaves only when their own data changed.
                 _forEachChangedGroupDepthFirst(rootNode, rowModel.hierarchical, changedPath, (node) => {
-                    if (node !== rootNode) {
+                    if (!groupsAskedLater) {
                         this.recomputeSelectable(node);
                     }
                     const children = node.childrenAfterGroup!;
@@ -832,17 +850,15 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
     }
 
-    /** Single post-refresh selectable pass, owned by the CSRM and run for both flat and hierarchical grids. */
+    /** Post-grouping pass for leaves and the groupSelects roll-up; other groups are asked after aggregation. */
     public updateSelectableAfterGrouping(
         changedPath: ChangedPath | undefined,
         changedRowNodes?: ChangedRowNodes
     ): void {
-        // One batch over the whole pass: removals (already recorded by removeFromSelection), now-unselectable
-        // deselections, and the group roll-up coalesce into a single selectionChanged with the first source.
         ++this.selectionBatchDepth;
         try {
             if (this.isRowSelectable) {
-                this.updateSelectable(changedPath, changedRowNodes);
+                this.updateSelectable(changedPath, changedRowNodes, true);
             }
             if (
                 this.groupSelectsDescendants &&
@@ -853,6 +869,20 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         } finally {
             this.endSelectionBatch();
         }
+    }
+
+    /** Applies isRowSelectable to the groups and root on `changedPath` (all of them without one) once their totals are final. */
+    public updateGroupsSelectable(changedPath: ChangedPath | undefined): void {
+        if (!this.isRowSelectable || this.isRolledUpFromChildren()) {
+            return;
+        }
+        const rowModel = this.beans.rowModel;
+        const editedRows = this.editedRows;
+        // inside the caller's selection batch: the refresh, change detection's flush, or a paste
+        _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, changedPath, (node) => {
+            editedRows?.delete(node);
+            this.recomputeSelectable(node);
+        });
     }
 
     public refreshMasterNodeState(node: RowNode, e?: Event): void {
@@ -962,14 +992,66 @@ export class SelectionService extends BaseSelectionService implements NamedBean,
         }
     }
 
-    /** Close the batch; the outermost close flushes the single coalesced `selectionChanged`. Callers MUST
-     *  pair the opening `selectionBatchDepth++` with this in a `finally` so a throwing user callback can't
-     *  leak the depth and freeze future events. */
-    private endSelectionBatch(): void {
-        if (--this.selectionBatchDepth === 0) {
-            this.flushPendingSelectionChanged();
+    /** Closes the batch, in a `finally`; the outermost close asks the edited rows, then emits one `selectionChanged`. */
+    public endSelectionBatch(): void {
+        try {
+            let editedRows = this.selectionBatchDepth === 1 ? this.editedRows : null;
+            // a row a listener edits while these are asked joins this close
+            while (editedRows) {
+                this.editedRows = null;
+                if (this.isRolledUpFromChildren()) {
+                    this.rollUpEditedRows(editedRows);
+                } else {
+                    for (const node of editedRows) {
+                        this.updateRowSelectable(node);
+                    }
+                }
+                editedRows = this.editedRows;
+            }
+        } finally {
+            if (--this.selectionBatchDepth === 0) {
+                this.flushPendingSelectionChanged();
+            }
         }
     }
+
+    /** Asks each edited row, then rolls up the selectable and selected state of the groups above those that flipped. */
+    private rollUpEditedRows(editedRows: Set<RowNode>): void {
+        const { changedPathFactory, rowModel } = this.beans;
+        let flipped = false;
+        let flippedPath: ChangedPath | undefined; // no factory without ChangedPathModule, where the root is the only group
+        for (const node of editedRows) {
+            const wasSelectable = node.selectable;
+            if (this.recomputeSelectable(node) !== wasSelectable) {
+                if (!flipped) {
+                    flipped = true;
+                    flippedPath = changedPathFactory?.newPath(false);
+                }
+                flippedPath?.addRow(node.parent);
+            }
+        }
+        if (!flipped) {
+            return;
+        }
+        // deepest first: a group is selectable while any of its rows is
+        _forEachChangedGroupDepthFirst(rowModel.rootNode, rowModel.hierarchical, flippedPath, (group) =>
+            this.setRowSelectable(group, hasSelectableChild(group), true)
+        );
+        if (this.updateGroupsFromChildrenSelections('selectableChanged', flippedPath)) {
+            this.dispatchSelectionChanged('selectableChanged');
+        }
+    }
+}
+
+/** `_forEachChangedGroupDepthFirst` visits only groups whose `childrenAfterGroup` is set. */
+function hasSelectableChild(group: RowNode): boolean {
+    const children = group.childrenAfterGroup!;
+    const len = children.length;
+    let i = 0;
+    while (i < len && !children[i].selectable) {
+        ++i;
+    }
+    return i < len;
 }
 
 function _isAllSelected(api: GridApi): boolean | undefined {

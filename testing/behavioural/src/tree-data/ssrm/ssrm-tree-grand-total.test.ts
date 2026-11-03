@@ -2,7 +2,7 @@ import { GridRows, TestGridsManager } from 'ag-test-utils';
 import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
-import { GRAND_TOTAL_ROW_ID } from 'ag-grid-community';
+import { GRAND_TOTAL_ROW_ID, RowSelectionModule } from 'ag-grid-community';
 import {
     RowGroupingModule,
     ServerSideRowModelApiModule,
@@ -26,7 +26,13 @@ import {
  */
 describe('ag-grid SSRM treeData grand total / footer (characterization)', () => {
     const gridsManager = new TestGridsManager({
-        modules: [ServerSideRowModelApiModule, ServerSideRowModelModule, TreeDataModule, RowGroupingModule],
+        modules: [
+            ServerSideRowModelApiModule,
+            ServerSideRowModelModule,
+            TreeDataModule,
+            RowGroupingModule,
+            RowSelectionModule,
+        ],
     });
 
     beforeEach(() => {
@@ -126,6 +132,24 @@ describe('ag-grid SSRM treeData grand total / footer (characterization)', () => 
             ├── B GROUP collapsed id:B ag-Grid-AutoColumn:"Group B" id:"B"
             └─ footer id:rowGroupFooter_ROOT_NODE_ID ag-Grid-AutoColumn:"Total " id:"rowGroupFooter_ROOT_NODE_ID" value:60
         `);
+    });
+
+    test('with groupSelects descendants, a selected grand total row isRowSelectable rejects shows unselected and its rows stay selected', async () => {
+        const api = createTreeGrid('ssrmTreeGtRejected', {
+            grandTotalRow: 'bottom',
+            rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
+        }).api;
+        await waitForNoLoadingRows(api);
+        api.setNodesSelected({ nodes: [api.getRowNode(GRAND_TOTAL_ROW_ID)!], newValue: true });
+
+        api.setGridOption('rowSelection', {
+            mode: 'multiRow',
+            groupSelects: 'descendants',
+            isRowSelectable: (node) => !node.footer,
+        });
+
+        expect(api.getRowNode(GRAND_TOTAL_ROW_ID)!.isSelected()).toBe(false);
+        expect(api.getRowNode('A')!.isSelected()).toBe(true);
     });
 
     test('grandTotalRow:top renders the footer at the top', async () => {

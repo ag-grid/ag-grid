@@ -91,6 +91,8 @@ export class ServerSideRowModel extends BeanStub implements NamedBean, IServerSi
     }
 
     public rootNode: RowNode;
+    /** A store is giving a row new data, and asks the row's selectability itself once the row's group info is set. */
+    public refreshingData = false;
     private datasource: IServerSideDatasource | undefined;
 
     private storeParams: SSRMParams;

@@ -887,45 +887,51 @@ export class LazyCache extends BeanStub {
         const wasRefreshing = this.nodesToRefresh.size > 0;
         let skippedRowCount = 0;
         let grandTotalData: any = undefined;
-        for (let responseRowIndex = 0; responseRowIndex < response.rowData.length; responseRowIndex++) {
-            const data = response.rowData[responseRowIndex];
+        const selectionSvc = this.beans.selectionSvc;
+        selectionSvc?.beginSelectionBatch(); // one selectionChanged for the rows the block deselects
+        try {
+            for (let responseRowIndex = 0; responseRowIndex < response.rowData.length; responseRowIndex++) {
+                const data = response.rowData[responseRowIndex];
 
-            // Grand total rows are not regular store rows — collect and process after the loop
-            if (grandTotalId != null && this.getRowId(data) === grandTotalId) {
-                grandTotalData = data;
-                skippedRowCount++;
-                continue;
-            }
+                // Grand total rows are not regular store rows — collect and process after the loop
+                if (grandTotalId != null && this.getRowId(data) === grandTotalId) {
+                    grandTotalData = data;
+                    skippedRowCount++;
+                    continue;
+                }
 
-            const rowIndex = firstRowIndex + responseRowIndex - skippedRowCount;
-            const nodeFromCache = this.nodeMap.getBy('index', rowIndex);
+                const rowIndex = firstRowIndex + responseRowIndex - skippedRowCount;
+                const nodeFromCache = this.nodeMap.getBy('index', rowIndex);
 
-            // if stub, overwrite
-            if (nodeFromCache?.node?.stub) {
+                // if stub, overwrite
+                if (nodeFromCache?.node?.stub) {
+                    this.createRowAtIndex(rowIndex, data);
+                    continue;
+                }
+
+                // node already exists, and same as node at designated position, update data
+                if (nodeFromCache && this.doesNodeMatch(data, nodeFromCache.node)) {
+                    this.blockUtils.updateDataIntoRowNode(nodeFromCache.node, data);
+                    this.nodesToRefresh.delete(nodeFromCache.node);
+                    nodeFromCache.node.__needsRefreshWhenVisible = false;
+                    continue;
+                }
+                // create row will handle deleting the overwritten row
                 this.createRowAtIndex(rowIndex, data);
-                continue;
             }
 
-            // node already exists, and same as node at designated position, update data
-            if (nodeFromCache && this.doesNodeMatch(data, nodeFromCache.node)) {
-                this.blockUtils.updateDataIntoRowNode(nodeFromCache.node, data);
-                this.nodesToRefresh.delete(nodeFromCache.node);
-                nodeFromCache.node.__needsRefreshWhenVisible = false;
-                continue;
+            // grandTotalData field takes priority over in-array detection.
+            // null means explicit removal (clears cached data, setDisplayIndexes will destroy the node).
+            if (isRootStore) {
+                if (response.grandTotalData !== undefined) {
+                    grandTotalData = response.grandTotalData;
+                }
+                if (grandTotalData !== undefined) {
+                    this.setGrandTotalData(grandTotalData);
+                }
             }
-            // create row will handle deleting the overwritten row
-            this.createRowAtIndex(rowIndex, data);
-        }
-
-        // grandTotalData field takes priority over in-array detection.
-        // null means explicit removal (clears cached data, setDisplayIndexes will destroy the node).
-        if (isRootStore) {
-            if (response.grandTotalData !== undefined) {
-                grandTotalData = response.grandTotalData;
-            }
-            if (grandTotalData !== undefined) {
-                this.setGrandTotalData(grandTotalData);
-            }
+        } finally {
+            selectionSvc?.endSelectionBatch();
         }
 
         // Adjust for grand total rows extracted from the response
@@ -1141,6 +1147,8 @@ export class LazyCache extends BeanStub {
         newNode.setRowHeight(rowHeight.height, rowHeight.estimated);
 
         this.nodeManager.addRowNode(newNode);
+        // the root shows its selection through the new row
+        this.beans.selectionSvc?.refreshRowSelection?.(parentNode);
         return newNode;
     }
 

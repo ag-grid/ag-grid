@@ -3,7 +3,6 @@ import type {
     FilterManager,
     IColsService,
     IRowModel,
-    IRowNode,
     ISelectionService,
     IServerSideGroupSelectionState,
     IServerSideSelectionState,
@@ -334,7 +333,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         forEachNodeStateDepthFirst();
     }
 
-    private recursivelySelectNode([nextNode, ...nodes]: IRowNode[], selectedState: SelectionState, newValue: boolean) {
+    private recursivelySelectNode([nextNode, ...nodes]: RowNode[], selectedState: SelectionState, newValue: boolean) {
         if (!nextNode) {
             return;
         }
@@ -342,10 +341,10 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         // if this is the last node, hard add/remove based on its selectAllChildren state
         const isLastNode = !nodes.length;
         if (isLastNode) {
-            // if the node is not selectable, we should never have it in selection state
-            const isNodeSelectable = nextNode.selectable;
+            // an unselectable node is never in selection state, but for a group's deselection, which is its rows'
+            const isNodeKept = nextNode.selectable || (!newValue && nextNode.hasChildren());
             const doesNodeConform = selectedState.selectAllChildren === newValue;
-            if (doesNodeConform || !isNodeSelectable) {
+            if (doesNodeConform || !isNodeKept) {
                 selectedState.toggledNodes.delete(nextNode.id!);
                 return;
             }
