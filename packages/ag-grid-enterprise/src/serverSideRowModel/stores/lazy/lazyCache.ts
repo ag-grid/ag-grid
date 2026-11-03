@@ -161,10 +161,16 @@ export class LazyCache extends BeanStub {
 
     /**
      * While the first block is awaited, drops or restores the initial loading row to match the loading row type.
-     * The caller refreshes display indexes.
+     * Only child levels drop it: the root level keeps `serverSideInitialRowCount`, and hidden open parents rely
+     * on the first child row to display their group. The caller refreshes display indexes.
      */
     public syncInitialLoadingRow(): void {
-        const hide = this.isInitialLoadingRowHidden();
+        const { gos } = this;
+        const hide =
+            this.store.getParentNode().level > -1 &&
+            _getServerSideLoadingRowType(gos) === 'none' &&
+            !gos.get('groupHideOpenParents') &&
+            !gos.get('groupAllowUnbalanced');
         if (!this.awaitingFirstBlock || hide === this.firstBlockPending) {
             return;
         }
@@ -185,20 +191,6 @@ export class LazyCache extends BeanStub {
         this.firstBlockPending = true;
         this.numberOfRows = 0;
         this.lazyBlockLoadingSvc.queueLoadCheck();
-    }
-
-    /**
-     * Child levels drop their initial loading row. The root level keeps `serverSideInitialRowCount`, and hidden
-     * open parents rely on the first child row to display their group.
-     */
-    private isInitialLoadingRowHidden(): boolean {
-        const { gos } = this;
-        return (
-            this.store.getParentNode().level > -1 &&
-            _getServerSideLoadingRowType(gos) === 'none' &&
-            !gos.get('groupHideOpenParents') &&
-            !gos.get('groupAllowUnbalanced')
-        );
     }
 
     public isFirstBlockPending(): boolean {

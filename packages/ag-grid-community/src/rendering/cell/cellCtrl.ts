@@ -204,11 +204,6 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         return _isClientSideLoadingRow(this.gos, this.rowNode);
     }
 
-    private isServerSideLoadingHidden(): boolean {
-        const gos = this.gos;
-        return _isServerSideRowModel(gos) && _getServerSideLoadingRowType(gos) === 'none';
-    }
-
     private addFeatures(compBean: BeanStub): void {
         const { beans } = this;
 
@@ -423,7 +418,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     }
 
     private showValue(forceNewCellRendererInstance: boolean, skipRangeHandleRefresh: boolean): void {
-        const { beans, column, rowNode, rangeFeature } = this;
+        const { beans, column, rowNode, rangeFeature, gos } = this;
         const { userCompFactory } = beans;
         let valueToDisplay = this.getValueToDisplay();
         let compDetails: UserCompDetails | undefined;
@@ -436,7 +431,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
             const params = this.createCellRendererParams();
             if (!isLoading || isRowNumberCol(column)) {
                 compDetails = _getCellRendererDetails(userCompFactory, colDef, params);
-            } else if (this.isServerSideLoadingHidden()) {
+            } else if (_isServerSideRowModel(gos) && _getServerSideLoadingRowType(gos) === 'none') {
                 // serverSideLoadingRowType 'none' leaves loading cells empty
                 valueToDisplay = null;
             } else {
