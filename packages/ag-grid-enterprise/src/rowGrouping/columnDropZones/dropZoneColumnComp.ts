@@ -175,7 +175,17 @@ export class DropZoneColumnComp extends PillDragComp<AgColumn> {
     }
 
     public override isMovable(): boolean {
-        return this.isDraggable();
+        if (!this.isDraggable() || !this.column.primary) {
+            return false;
+        }
+        switch (this.dropZonePurpose) {
+            case 'rowGroup':
+                return this.column.isAllowRowGroup();
+            case 'pivot':
+                return this.column.isAllowPivot();
+            case 'aggregation':
+                return this.column.isAllowValue();
+        }
     }
 
     protected override isDraggable(): boolean {

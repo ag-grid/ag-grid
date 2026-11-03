@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { FloatingPortal, autoPlacement, autoUpdate, offset, useFloating } from '@floating-ui/react';
+import classnames from 'classnames';
 import { useEffect, useRef, useState } from 'react';
 import { HexAlphaColorPicker, HexColorPicker } from 'react-colorful';
 
@@ -13,10 +14,22 @@ export type ColorPickerProps = {
     onChange: (newValue: string | null) => void;
     /** Names the swatch for a screen reader, where a column heading cannot. */
     ariaLabel?: string;
+    /** Styled as disabled, with the swatch still showing the colour at full strength. */
+    muted?: boolean;
+    /** Called as the picker opens, before any edit. */
+    onOpen?: () => void;
     className?: string;
 };
 
-export const ColorPicker = ({ preventTransparency, value, onChange, ariaLabel, className }: ColorPickerProps) => {
+export const ColorPicker = ({
+    preventTransparency,
+    value,
+    onChange,
+    ariaLabel,
+    muted,
+    onOpen,
+    className,
+}: ColorPickerProps) => {
     const hexValue = coerceToValidValue(value, preventTransparency);
     const [editorValue, setEditorValue] = useState(hexValue || value);
     const [valid, setValid] = useState(() => colorIsValid(editorValue));
@@ -68,10 +81,11 @@ export const ColorPicker = ({ preventTransparency, value, onChange, ariaLabel, c
                 <StyledInput
                     ref={refs.setReference}
                     ariaLabel={ariaLabel}
-                    className={valid ? undefined : 'is-error'}
+                    className={classnames({ 'is-error': !valid, 'is-muted': muted })}
                     value={editorValue}
                     onChange={handleInput}
                     onFocus={() => {
+                        onOpen?.();
                         setShowPicker(true);
                         setEditorValue(coerceToValidValue(value, preventTransparency));
                     }}
@@ -85,7 +99,12 @@ export const ColorPicker = ({ preventTransparency, value, onChange, ariaLabel, c
                         }
                     }}
                 />
-                <ColorSwatch onClick={() => setShowPicker(!showPicker)}>
+                <ColorSwatch
+                    onClick={() => {
+                        if (!showPicker) onOpen?.();
+                        setShowPicker(!showPicker);
+                    }}
+                >
                     <ColorSwatchColor style={{ backgroundColor: hexValue }} />
                 </ColorSwatch>
             </Wrapper>
@@ -124,6 +143,11 @@ const Wrapper = styled('div')`
 
 const StyledInput = styled(Input)`
     padding-left: 38px !important;
+
+    &.is-muted {
+        background-color: var(--color-input-disabled-bg);
+        color: var(--color-input-disabled-fg);
+    }
 `;
 
 const alphaPatternSvg =

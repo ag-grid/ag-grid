@@ -227,8 +227,10 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         if (rowNode.detailGridInfo !== gridInfo) {
             return;
         }
-        if (!masterGridApi.isDestroyed()) {
-            masterGridApi.removeDetailGridInfo(rowNode.id!); // unregister from api
+        // a row reloaded under the same id may have registered its own detail grid under that id meanwhile
+        const rowId = rowNode.id!;
+        if (!masterGridApi.isDestroyed() && masterGridApi.getDetailGridInfo(rowId) === gridInfo) {
+            masterGridApi.removeDetailGridInfo(rowId); // unregister from api
         }
         rowNode.detailGridInfo = null; // unregister from node
     }

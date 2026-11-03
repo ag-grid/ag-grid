@@ -106,6 +106,8 @@
         "rowGroupIndentSize": {},
         "oddRowBackgroundColor": {},
         "columnHoverColor": {},
+        "columnHeaderHoverColor": {},
+        "rowHeaderHoverColor": {},
         "dataBackgroundColor": {},
         "footerRowBorder": {},
         "grandTotalRowBorder": {},

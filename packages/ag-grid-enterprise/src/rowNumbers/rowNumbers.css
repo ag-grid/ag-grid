@@ -32,6 +32,11 @@
     cursor: cell;
 }
 
+/* a background-image overlays the hover color on top of the header and range background colors */
+:where(.ag-row-hover:not(.ag-full-width-row)) .ag-row-number-cell {
+    background-image: linear-gradient(var(--ag-row-header-hover-color), var(--ag-row-header-hover-color));
+}
+
 .ag-row-number-range-highlight {
     background-color: var(--ag-range-header-highlight-color);
 }
@@ -42,6 +47,7 @@
 
 :where(.ag-ltr) {
     :where(.ag-row-number-header):not(.ag-header-cell-last-left-pinned),
+    :where(.ag-row-number-floating-filter),
     :where(.ag-cell.ag-row-number-cell):not(.ag-cell-last-left-pinned) {
         /* rtl:ignore */
         border-right: var(--ag-pinned-column-border);
@@ -56,6 +62,7 @@
 
 :where(.ag-rtl) {
     :where(.ag-row-number-header):not(.ag-header-cell-first-right-pinned),
+    :where(.ag-row-number-floating-filter),
     :where(.ag-cell.ag-row-number-cell):not(.ag-cell-first-right-pinned) {
         /* rtl:ignore */
         border-left: var(--ag-pinned-column-border);

@@ -405,7 +405,7 @@ const blogHostRedirectRules = `    # blog.ag-grid.com -> www.ag-grid.com/blog/ (
     # /amp/amp/ and case variants otherwise fell through to the catch-all and www's own
     # case-normalising redirect then served the live page, handing the spam links their equity.
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
-    RewriteRule ^/?whats-new-in-ag-grid-v24(?:/.*)?$ - [R=410,NC,L]
+    RewriteRule ^/?whats-new-in-ag-grid-v24(?:-part-2)?(?:/.*)?$ - [R=410,NC,L]
 
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?tag/react(?:/rss|/feed)/?$ https://www.ag-grid.com/blog/tag/react-data-grid/rss/ [R=301,NC,L]

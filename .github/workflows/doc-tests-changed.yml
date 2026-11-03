@@ -60,9 +60,10 @@ permissions:
   # read is sufficient: the only actions-scope consumer is `gh run list` for the baseline SHA.
   actions: read
 
+# Pinned to ubuntu-24.04 because Playwright's WebKit can't launch on ubuntu-26.04 (now ubuntu-latest), which lacks the ICU 74 and libxml2.so.2 libraries it needs.
 jobs:
   resolve:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     name: Resolve Changed Pages
     # Mirrors post-deploy-verification.yml: for workflow_run, only same-repo pushes whose CI run
@@ -132,7 +133,7 @@ jobs:
   test:
     needs: resolve
     if: ${{ needs.resolve.outputs.count != '0' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
     name: Test Changed Pages
     # Scoped to this job rather than the workflow: the credential is only needed by the requests
@@ -161,7 +162,7 @@ jobs:
   report:
     needs: [resolve, test]
     if: always() && needs.test.result != 'skipped'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     name: Report
     steps:

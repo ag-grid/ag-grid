@@ -10,6 +10,7 @@ import {
     waitForInput,
 } from 'ag-test-utils';
 
+import type { GridApi, GridOptions } from 'ag-grid-community';
 import {
     KeyCode,
     TextEditorModule,
@@ -346,5 +347,63 @@ describe('Cell Editing: undo/redo', () => {
 
         api.redoCellEditing();
         expect(ranges()).toEqual(selected);
+    });
+
+    test.each<[string, GridOptions, (api: GridApi) => void]>([
+        [
+            'Delete on a read-only cell',
+            {},
+            (api) => {
+                api.setFocusedCell(0, 'readOnly');
+                dispatchKeyDown(KeyCode.DELETE);
+            },
+        ],
+        [
+            'a full-row edit that changes nothing',
+            { editType: 'fullRow' },
+            (api) => {
+                api.startEditingCell({ rowIndex: 0, colKey: 'editable' });
+                api.stopEditing();
+            },
+        ],
+    ])('%s leaves the undo and redo stacks alone', (_, options, act) => {
+        const api = gridMgr.createGrid('noChangeKeepsRedo', {
+            ...options,
+            undoRedoCellEditing: true,
+            defaultColDef: { cellDataType: false },
+            columnDefs: [{ field: 'editable', editable: true }, { field: 'readOnly' }],
+            rowData: [{ editable: 'a', readOnly: 'b' }],
+        });
+        api.setFocusedCell(0, 'editable');
+        dispatchKeyDown(KeyCode.DELETE);
+        api.undoCellEditing();
+        expect(api.getCurrentRedoSize()).toBe(1);
+
+        act(api);
+
+        expect(api.getCurrentUndoSize()).toBe(0);
+        expect(api.getCurrentRedoSize()).toBe(1);
+        api.redoCellEditing();
+        expect(api.getDisplayedRowAtIndex(0)!.data).toEqual({ editable: null, readOnly: 'b' });
+    });
+
+    test('a staged edit in a batch clears the redo stack', () => {
+        const api = gridMgr.createGrid('batchStagedEditClearsRedo', {
+            undoRedoCellEditing: true,
+            defaultColDef: { cellDataType: false, editable: true },
+            columnDefs: [{ field: 'a' }, { field: 'b' }],
+            rowData: [{ a: 'a', b: 'b' }],
+        });
+        api.setFocusedCell(0, 'a');
+        dispatchKeyDown(KeyCode.DELETE);
+        api.undoCellEditing();
+        expect(api.getCurrentRedoSize()).toBe(1);
+
+        api.startBatchEdit();
+        api.setFocusedCell(0, 'b');
+        dispatchKeyDown(KeyCode.DELETE);
+
+        expect(api.getCurrentRedoSize()).toBe(0);
+        api.cancelBatchEdit();
     });
 });

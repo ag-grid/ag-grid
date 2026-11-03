@@ -1,4 +1,5 @@
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from 'ag-test-utils';
+import { onTestFinished } from 'vitest';
 
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ColumnMenuModule, ToolbarModule } from 'ag-grid-enterprise';
@@ -309,5 +310,27 @@ describe('Toolbar action button item with column chooser', () => {
                 ROOT id:ROOT_NODE_ID
                 └── LEAF id:0 name:"Alice" country:"Ireland"
             `);
+    });
+
+    test('pressing Escape from a column chooser opened from a button inside another component returns focus to that button', async () => {
+        const api = gridMgr.createGrid('column-chooser-opened-from-component', {
+            columnDefs: [{ field: 'name' }, { field: 'country' }],
+            rowData: [{ name: 'Alice', country: 'Ireland' }],
+        });
+        await waitForEvent('firstDataRendered', api);
+        const widget = document.body.appendChild(document.createElement('div'));
+        onTestFinished(() => widget.remove());
+        const button = widget.attachShadow({ mode: 'open' }).appendChild(document.createElement('button'));
+        button.focus();
+        api.showColumnChooser();
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        expect(gridDiv.querySelector('.ag-dialog')).not.toBeNull();
+        await asyncSetTimeout(0);
+
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+        await asyncSetTimeout(0);
+
+        expect(gridDiv.querySelector('.ag-dialog')).toBeNull();
+        expect(widget.shadowRoot!.activeElement).toBe(button);
     });
 });

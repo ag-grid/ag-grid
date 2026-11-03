@@ -103,6 +103,27 @@ describe('Set Filter — tree list with dates', () => {
         `);
     });
 
+    test('ArrowRight on a focused group expands it and ArrowLeft collapses it', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [{ field: 'when', filter: 'agSetColumnFilter', filterParams: { treeList: true } }],
+            rowData: DATE_ROWS,
+        });
+        await ColumnFilterHarness.open(api, 'when');
+        const pressOn = async (label: string, key: string) => {
+            const row = Array.from(
+                document.querySelectorAll<HTMLElement>(`${SET_LIST_SELECTOR} .ag-virtual-list-item`)
+            ).find((el) => el.querySelector('.ag-checkbox-label')?.textContent?.trim() === label)!;
+            row.focus();
+            row.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }));
+            await asyncSetTimeout(0);
+        };
+
+        await pressOn('2020', 'ArrowRight');
+        expect(setItemLabels()).toEqual(['(Select All)', '2020', 'January', 'June', '2021']);
+        await pressOn('2020', 'ArrowLeft');
+        expect(setItemLabels()).toEqual(['(Select All)', '2020', '2021']);
+    });
+
     test('deselecting a leaf makes its ancestor groups indeterminate and filters rows', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'when', filter: 'agSetColumnFilter', filterParams: { treeList: true } }],

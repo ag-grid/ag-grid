@@ -50,9 +50,11 @@ let batchScheduled = false;
 // setup up watches
 const propsAsRefs = toRefs<any>(props);
 // Per-option shallow vs deep watching — reduces overhead for options that don't need deep tracking
-const shallowOptions: Set<string> = new Set(_GET_SHALLOW_GRID_OPTIONS());
+// event handlers are not grid options; watched so one removed or replaced after mount takes effect
+const eventHandlerProps: string[] = Object.values(_PUBLIC_EVENT_HANDLERS_MAP);
+const shallowOptions: Set<string> = new Set([..._GET_SHALLOW_GRID_OPTIONS(), ...eventHandlerProps]);
 
-_GET_ALL_GRID_OPTIONS()
+[..._GET_ALL_GRID_OPTIONS(), ...eventHandlerProps]
     .filter((propertyName: string) => propertyName != 'gridOptions') // dealt with in AgGridVue itself
     .forEach((propertyName: string) => {
         const propRef = propsAsRefs[propertyName];

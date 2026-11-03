@@ -1,5 +1,6 @@
-import { waitFor } from '@testing-library/dom';
+import { waitFor, within } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
+import { userEvent } from '@testing-library/user-event';
 import { ALL_SEVERITIES, GridColumns, GridRows, clickMenuOption } from 'ag-test-utils';
 import { vi } from 'vitest';
 
@@ -355,5 +356,36 @@ describe('ag-grid calculated columns', () => {
                 └── LEAF id:r1 revenue:10 calculated_1:7 cost:3
             `
         );
+    });
+
+    test('dialog Close button is reached by reverse tabbing from the form and discards the new column on Enter', async () => {
+        const api = createGrid('calculated-dialog-close-button', {
+            calculatedColumns: { applyMode: 'deferred' },
+            rowData: [{ id: 'r1', revenue: 10, cost: 3 }],
+            columnDefs: [{ field: 'revenue' }, { field: 'cost' }],
+        });
+        const user = userEvent.setup();
+
+        showColumnMenu(api, 'revenue');
+        await clickMenuOption('Add Calculated Column');
+        await waitFor(() => getExpressionInput());
+        setExpression('[Revenue] - [Cost]');
+
+        const form = getCalculatedColumnDialog();
+        const dialog = form.closest<HTMLElement>('.ag-dialog')!;
+        const closeButton = within(dialog).getByRole('button', { name: 'Close' });
+        getExpressionInput().focus();
+        for (let i = 0; i < 10 && form.contains(document.activeElement); ++i) {
+            await user.tab({ shift: true });
+        }
+        expect(closeButton).toHaveFocus();
+
+        await user.keyboard('{Enter}');
+        expect(dialog.isConnected).toBe(false);
+        expect(api.getColumn('calculated_1')).toBeNull();
+        await new GridRows(api, `dialog Close button discards the new column final state`).check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:r1 revenue:10 cost:3
+        `);
     });
 });

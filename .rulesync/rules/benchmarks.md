@@ -1,7 +1,7 @@
 ---
 targets: ['*']
 description: 'Running and creating performance benchmarks for AG Grid'
-globs: ['**/benchmark*']
+globs: ['testing/behavioural/src/benchmarks/**']
 ---
 
 # Benchmarks Guide

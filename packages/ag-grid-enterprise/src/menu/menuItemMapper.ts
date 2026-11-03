@@ -153,6 +153,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               name: localeTextFunc('pinLeft', 'Pin Left'),
                               action: () => pinnedCols.setColsPinned([column], 'left', source),
                               checked: !!column && column.isPinnedLeft(),
+                              menuItemRole: 'menuitemradio',
                           }
                         : null;
                 case 'pinRight':
@@ -161,6 +162,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               name: localeTextFunc('pinRight', 'Pin Right'),
                               action: () => pinnedCols.setColsPinned([column], 'right', source),
                               checked: !!column && column.isPinnedRight(),
+                              menuItemRole: 'menuitemradio',
                           }
                         : null;
                 case 'clearPinned':
@@ -169,6 +171,7 @@ export class MenuItemMapper extends BeanStub implements NamedBean {
                               name: localeTextFunc('noPin', 'No Pin'),
                               action: () => pinnedCols.setColsPinned([column], null, source),
                               checked: !!column && !column.isPinned(),
+                              menuItemRole: 'menuitemradio',
                           }
                         : null;
                 case 'pinRowSubMenu': {
@@ -711,6 +714,7 @@ function createAggregationSubMenu(
             name: localeTextFunc('noAggregation', 'None'),
             action: () => valueColsSvc.removeColumns([columnToUse!], 'contextMenu'),
             checked: !columnIsAlreadyAggValue,
+            menuItemRole: 'menuitemradio',
         });
 
         for (const funcName of funcNames) {
@@ -719,6 +723,7 @@ function createAggregationSubMenu(
                 // activates the column too
                 action: () => valueColsSvc.setColumnAggFunc!(columnToUse, funcName, 'contextMenu'),
                 checked: columnIsAlreadyAggValue && columnToUse.aggFunc === funcName,
+                menuItemRole: 'menuitemradio',
             });
         }
     }

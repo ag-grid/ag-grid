@@ -780,6 +780,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaRowSelect: 'Pritisnite PRESLEDNICO za izbiro te vrstice',
     ariaRowSelectionDisabled: 'Izbira vrstice je onemogočena za to vrstico',
     ariaSearch: 'Iskanje',
+    ariaSortPriority: 'Prednost razvrščanja ${priority} od ${count}',
     ariaSortableColumn: 'Pritisnite ENTER za razvrščanje',
     ariaSortableColumnWithCellSelection: 'Pritisnite ALT ENTER za razvrščanje',
     ariaToggleVisibility: 'Pritisnite PRESLEDNICO za preklop vidnosti',
@@ -816,6 +817,12 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolutno padajoče',
 
     ariaLabelDialog: 'Pogovorno okno',
+
+    ariaLabelClose: 'Zapri',
+
+    ariaLabelMaximize: 'Povečaj',
+
+    ariaLabelRestore: 'Obnovi',
 
     ariaLabelColumnMenu: 'Meni stolpca',
     ariaLabelColumnFilter: 'Filter stolpca',

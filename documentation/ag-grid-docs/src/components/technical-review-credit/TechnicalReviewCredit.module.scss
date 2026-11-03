@@ -1,0 +1,15 @@
+@use 'design-system' as *;
+
+.credit {
+    margin: 0 0 $spacing-size-4;
+    font-size: var(--text-fs-sm);
+    color: var(--color-fg-secondary);
+}
+
+// Closes a marketing page, where there is no title block for the credit to sit under.
+.standalone {
+    margin-bottom: 0;
+    padding-top: $spacing-size-8;
+    padding-bottom: $spacing-size-16;
+    text-align: center;
+}

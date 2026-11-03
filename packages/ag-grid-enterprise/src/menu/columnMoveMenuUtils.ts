@@ -64,9 +64,6 @@ export const getColumnMoveMenuItem = (
         return null;
     }
     const getMove = () => {
-        if (beans.colModel.pivotMode || gos.get('functionsReadOnly')) {
-            return null;
-        }
         const moving = getMovingColumns();
         if (!moving) {
             return null;

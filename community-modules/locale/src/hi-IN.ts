@@ -782,6 +782,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaRowSelect: 'इस रो को चुनने के लिए SPACE दबाएं',
     ariaRowSelectionDisabled: 'इस रो के लिए रो चयन अक्षम है',
     ariaSearch: 'खोजें',
+    ariaSortPriority: 'क्रमबद्ध करने की प्राथमिकता ${count} में से ${priority}',
     ariaSortableColumn: 'क्रमबद्ध करने के लिए ENTER दबाएं',
     ariaSortableColumnWithCellSelection: 'क्रमबद्ध करने के लिए ALT ENTER दबाएं',
     ariaToggleVisibility: 'दृश्यता टॉगल करने के लिए SPACE दबाएं',
@@ -818,6 +819,12 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'एब्सोल्यूट अवरोही',
 
     ariaLabelDialog: 'डायलॉग',
+
+    ariaLabelClose: 'बंद करें',
+
+    ariaLabelMaximize: 'बड़ा करें',
+
+    ariaLabelRestore: 'पुनर्स्थापित करें',
 
     ariaLabelColumnMenu: 'कॉलम मेनू',
     ariaLabelColumnFilter: 'कॉलम फ़िल्टर',

@@ -16,6 +16,7 @@ import {
     _getInnerHeight,
     _getInnerWidth,
     _isVisible,
+    _setAriaLabel,
     _setDisplayed,
 } from 'ag-stack';
 
@@ -243,10 +244,15 @@ export class AgPanel<
         }
 
         if (closable) {
-            const closeButtonComp = (this.closeButtonComp = new AgComponentStub({ tag: 'div', cls: 'ag-button' }));
+            const closeButtonComp = (this.closeButtonComp = new AgComponentStub({
+                tag: 'button',
+                cls: 'ag-button',
+                attrs: { type: 'button' },
+            }));
             this.createBean(closeButtonComp);
 
             const eGui = closeButtonComp.getGui();
+            _setAriaLabel(eGui, this.getLocaleTextFunc()('ariaLabelClose', 'Close'));
             const child = this.beans.iconSvc.createIconNoSpan('close', this.beans)!;
             child.classList.add('ag-panel-title-bar-button-icon');
             eGui.appendChild(child);

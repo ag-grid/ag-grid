@@ -5,7 +5,6 @@ import {
     _batchCall,
     _exists,
     _getActiveDomElement,
-    _getDocument,
     _getVerticalPaddingAndBorder,
     _normaliseQwertyAzerty,
     _observeResize,
@@ -86,6 +85,7 @@ export abstract class AbstractHeaderCellCtrl<
     private drawnRightAnchored = false;
     /** The column `left` the cell was last placed for, so an animated move does not undo a later layout. */
     private targetLeft: number | null = null;
+    private userStyleKeys: string[] | undefined;
 
     protected abstract resizeHeader(delta: number, takeFromAdjacent: boolean): void;
     protected abstract getHeaderClassParams(): HeaderClassParams;
@@ -200,9 +200,29 @@ export abstract class AbstractHeaderCellCtrl<
             styles = headerStyle;
         }
 
+        styles = this.addHeaderStyleCleanup(styles);
         if (styles) {
             this.comp.setUserStyles(styles);
         }
+    }
+
+    private addHeaderStyleCleanup(styles: HeaderStyle | null | undefined): HeaderStyle | null | undefined {
+        const previousStyleKeys = this.userStyleKeys;
+        const styleKeys = styles ? Object.keys(styles) : [];
+        this.userStyleKeys = styleKeys;
+
+        if (!previousStyleKeys?.length) {
+            return styles;
+        }
+
+        const removedStyles: HeaderStyle = {};
+        for (const key of previousStyleKeys) {
+            if (!styleKeys.includes(key)) {
+                removedStyles[key] = '';
+            }
+        }
+        // clear removed properties first, so a longhand cannot erase a newly applied shorthand.
+        return { ...removedStyles, ...styles };
     }
 
     private onGuiFocus(): void {
@@ -234,8 +254,7 @@ export abstract class AbstractHeaderCellCtrl<
             if (timesCalled < 5) {
                 // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
                 // maybe it will be ready next VM turn
-                const doc = _getDocument(beans);
-                const notYetInDom = !doc?.contains(wrapperElement);
+                const notYetInDom = !wrapperElement.isConnected;
 
                 // this happens in React, where React hasn't put any content in. we say 'possibly'
                 // as a) may not be React and b) the cell could be empty anyway
@@ -604,7 +623,8 @@ export abstract class AbstractHeaderCellCtrl<
 
     protected clearComponent(): void {
         this.removeDragSource();
-        (this.resizeFeature as any) = null;
+        this.userStyleKeys = undefined;
+        this.resizeFeature = null;
         (this.comp as any) = null;
         (this.eGui as any) = null;
     }

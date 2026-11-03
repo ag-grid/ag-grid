@@ -1,5 +1,5 @@
 import type { AgComponentPopupPositionParams } from 'ag-stack';
-import { _getDocument } from 'ag-stack';
+import { _getActiveDomElement } from 'ag-stack';
 
 import type { BeanCollection, IFormulaService, PopupPositionParams } from 'ag-grid-community';
 import { BeanStub, KeyCode } from 'ag-grid-community';
@@ -243,7 +243,7 @@ export class FormulaInputAutocompleteFeature extends BeanStub {
     }
 
     private isContentFocused(): boolean {
-        return _getDocument(this.beans).activeElement === this.field.getContentElement();
+        return _getActiveDomElement(this.beans) === this.field.getContentElement();
     }
 }
 

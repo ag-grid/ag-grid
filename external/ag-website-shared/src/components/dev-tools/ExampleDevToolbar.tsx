@@ -118,6 +118,7 @@ export const ExampleDevToolbar: FunctionComponent<Props> = ({ framework, example
                 {!isGallery && (
                     <Select
                         isPopper
+                        triggerAriaLabel="Framework selector"
                         options={frameworkOptions}
                         value={frameworkOption}
                         onChange={(newValue) => handleFrameworkChange(newValue.value as Framework)}

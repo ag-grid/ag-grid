@@ -54,6 +54,14 @@ description: Brief description of the feature
 4. Link to related documentation
 5. Keep paragraphs concise
 
+## Keep Claims and Links True to the Change
+
+Automated review keeps flagging docs that drift from the code change they ship with. Before review:
+
+- Grep the docs and the option's JSDoc for the feature, and update every passage that describes the old behaviour.
+- Check each absolute claim ("every", "never", "always", "prevents") against the code, and name the exceptions the change keeps or adds.
+- When you rename or remove a heading, or renumber sections, grep the whole repo for links to the old anchor (`#old-anchor`), including JSDoc links in `packages/*/src`, and grep `documentation/` for cross-references to the old numbers. Update every match.
+
 ## Reference Component Descriptions
 
 The `interfaceDocumentation` and `apiDocumentation` components generate a default intro line from the interface name (e.g. *"Properties available on the `X` interface."*). This is a text string rendered above the interface table, **not** a heading — it does not create a section title or a navigable entry in the page's table of contents.

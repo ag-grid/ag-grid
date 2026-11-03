@@ -1,13 +1,16 @@
 ---
 title: "Calculated Columns"
+description: "Add columns to the $framework Data Grid whose values are calculated from other columns with a spreadsheet-style expression. Declare calculated columns in code, or let users create their own from the column menu."
 enterprise: true
 ---
 
-Calculated Columns let your end users add read-only values to the grid without storing those values in row data.
+Calculated Columns let your end users add read-only values to the grid without storing those values in row data. Each calculated column has an expression, such as `[revenue] - [cost]`, that derives its value from other columns.
+
+Declare calculated columns in your column definitions, or let users add their own from the column menu. To let users write expressions in individual cells instead, see [Formulas](./formulas/).
 
 ## Enabling Calculated Columns
 
-Calculated columns are enabled by setting `calculatedColumns: true`, and setting `calculatedExpression` on a column definition. In source code, bracket references such as `[revenue]` resolve to the same-row value from the column with that `colId`.
+Set the `calculatedColumns` grid option to `true`, and set `calculatedExpression` on a column definition:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -27,296 +30,22 @@ const gridOptions = {
 ```
 
 {% note %}
-Application-declared calculated columns must define a `colId` explicitly.
+Calculated columns declared in `columnDefs` must define a `colId` explicitly.
 {% /note %}
 
 {% gridExampleRunner title="Calculated Columns" name="calculated-columns" /%}
 
-Register [Cell Data Types](./cell-data-types/) to give users formatting options to pick from when they create a column. The example above provides a `currency` type — see [dataTypes](#datatypes).
+In the example, Profit is a calculated column. To create your own, choose **Add Calculated Column** from any column's header menu.
 
-Calculated expressions do not need a leading equals sign (`=`). The value inside brackets must match a column `colId`, which defaults to the `field` when no explicit `colId` is provided.
+## Writing Expressions
 
-Calculated Columns are supported with all row models.
+In `calculatedExpression`, a reference in square brackets, such as `[revenue]`, resolves to the same-row value from the column with that `colId`. The value inside the brackets must match a column `colId`, which defaults to the `field` when no explicit `colId` is provided. Calculated expressions do not need a leading equals sign (`=`).
 
-For Server-Side, Infinite and Viewport Row Models, sorting and filtering are datasource or server responsibilities. The grid displays calculated values for loaded rows, but does not client-sort or client-filter remote datasets by calculated results.
+Calculated columns can use the same [Mathematical Operators](./formula-reference/#mathematical-operators), [Provided Functions](./formula-reference/#provided-functions) and [Custom Functions](./formula-custom-functions/) as [formulas](./formulas/).
 
-Calculated cell values cannot be changed through cell editing, paste, fill handle or delete operations. Users can still change a calculated column's title, type and expression through its dialog. To prevent these dialog edits and removal through the grid's menus, see [Read-Only Calculated Columns](#read-only-calculated-columns).
+### Chaining Calculated Columns {% #advanced-calculated-columns %}
 
-## Row Groups and Tree Data
-
-Calculated columns are full columns, so [Row Grouping](./grouping/), [Tree Data](./tree-data/), [Sorting](./row-sorting/) and [Filtering](./filtering/), [Text Formatting](./value-formatters/) and [Cell Components](./component-cell-renderer/) apply to them the same way as any other column.
-
-A calculated column evaluates on rows that have their own data: leaf rows, and Tree Data parents that carry data. It stays blank on rows without data — row group rows, group footers, the grand-total row, and Tree Data filler nodes.
-
-To show a value on group rows, give the calculated column an `aggFunc`. Each leaf evaluates the expression, and the group aggregates those per-leaf results with the chosen function — the same as a column with a `valueGetter`. For example `{ calculatedExpression: '[revenue] - [cost]', aggFunc: 'sum' }` shows the total of its rows' profits on a group. A ratio has no meaningful aggregation, so a column like `[profit] / [revenue]` is left without an `aggFunc` and stays blank on group rows.
-
-Under [Pivoting](./pivoting/), a calculated column with an `aggFunc` is a value column: it evaluates per leaf and its results aggregate into the pivot result columns, the same as a column with a `valueGetter`. Without an `aggFunc` it is not a value column, so it has no pivot result column and is absent from the cross-tab, like any other non-value column.
-
-A calculated column can also be a pivot column (`pivot: true`): its per-row result becomes the pivot key, so the grid creates a result column for each distinct calculated value — the same as pivoting on a column with a `valueGetter`.
-
-{% gridExampleRunner title="Row Groups with Calculated Columns" name="calculated-columns-row-groups" /%}
-
-## References with Column Groups
-
-Register the Column Menu so users can add a calculated column from the header menu with **Add Calculated Column**. The header menu on a calculated column shows **Edit Calculated Column** to change its title, type and expression, and **Remove Calculated Column** to remove it. Right-clicking cells in a calculated column also shows **Remove Calculated Column**.
-
-The dialog shows references by header name, for example `[Revenue]`. When headers are duplicated under groups, it uses the shortest unique group path, such as `[2025 Q4]` and `[2026 Q4]`. It translates these display references back to `colId` references before updating the column definition.
-
-The expression editor highlights references, functions and operators. In deferred edit dialogs, validation runs as you edit and on Apply, not when the dialog opens. Built-in errors are underlined, explained in a tooltip and announced to assistive technology. Live mode shows reference-restriction and custom validation errors, but does not automatically show syntax errors in the editor; invalid expressions still produce formula errors in grid cells.
-
-In dialog references, a literal `]` in a header name is escaped as `]]`. For example, the header `Revenue [USD]` appears as `[Revenue [USD]]]`. The Columns picker inserts the escaped reference automatically; stored `colId` references are unchanged.
-
-If two columns share the same header _and_ the same group hierarchy, the dialog falls back to appending the `colId`, for example `[2025 Q4 (revenue-q4)]`. This keeps the reference stable when columns are reordered. Give your columns distinct headers or group hierarchies to avoid this.
-
-The following example has duplicate `Q1`, `Q2`, `Q3` and `Q4` headers under `2025` and `2026` column groups. The year groups start collapsed and show a calculated `Total` column; expanding a group reveals the quarter columns. The dialog shows grouped references such as `[2025 Q4]` and `[2026 Q4]`, while the source code stores stable `colId` references such as `[q4_2025]` and `[q4_2026]`.
-
-{% gridExampleRunner title="Column Groups with Duplicate Headers" name="calculated-columns-column-groups" /%}
-
-The dialog manages calculated columns inside the grid without mutating the `columnDefs` array supplied by the application. To persist user-created calculated columns, read the complete current definitions from `api.getColumnDefs()`, or use [Grid State](./grid-state/), which captures them and recreates them on restore.
-
-Grid State also captures user edits to, and removals of, calculated columns declared in `columnDefs`, and re-applies them over the declared definitions on restore — so a stored state takes precedence over a changed declaration.
-
-Use Grid State to preserve dialog validation errors as well. `api.getColumnDefs()` contains the column configuration, not validation errors; restoring definitions alone treats the expressions as programmatic definitions.
-
-## Read-Only Calculated Columns
-
-Set `calculatedColumnReadOnly: true` to prevent users from changing a column's title, type or expression in the dialog. Users can choose **View Calculated Column** to inspect its definition. **Remove Calculated Column** is disabled in the column and cell context menus.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    calculatedColumns: true,
-    columnDefs: [
-        { field: 'revenue' },
-        { field: 'cost' },
-        {
-            colId: 'grossMargin',
-            calculatedExpression: '([revenue] - [cost]) / [revenue]',
-            cellDataType: 'number',
-            calculatedColumnReadOnly: true,
-        },
-    ],
-};
-```
-
-The example keeps **Gross Margin** read-only, while **Profit** and user-created calculated columns remain editable.
-
-{% gridExampleRunner title="Read-Only Calculated Columns" name="calculated-columns-read-only" /%}
-
-{% note %}
-This setting restricts UI changes only: updating `columnDefs` and restoring [Grid State](./grid-state/) can still change or remove the column. Columns created through the dialog remain editable, even when `defaultColDef.calculatedColumnReadOnly` is `true`.
-{% /note %}
-
-### Hiding Menu Items
-
-The calculated column actions are built-in menu items. To stop users adding, editing or removing calculated columns from the menus, filter them out of the default items with [getColumnMenuItems](./column-menu/#customising-the-menu-items) and [getContextMenuItems](./context-menu/#configuring-the-context-menu):
-
-- `calculatedColumn`: **Add Calculated Column**, in the column menu.
-- `editCalculatedColumn`: **Edit Calculated Column**, or **View Calculated Column** when the column is read-only, in the column menu.
-- `removeCalculatedColumn`: **Remove Calculated Column**, in the column menu and the cell context menu.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    calculatedColumns: true,
-    getColumnMenuItems: ({ defaultItems }) =>
-        defaultItems.filter(
-            item => item !== 'editCalculatedColumn' && item !== 'removeCalculatedColumn'
-        ),
-    getContextMenuItems: ({ defaultItems }) =>
-        defaultItems?.filter(item => item !== 'removeCalculatedColumn'),
-};
-```
-
-As with [read-only columns](#read-only-calculated-columns), this only removes the menu entries. Updating `columnDefs` and restoring [Grid State](./grid-state/) can still change or remove the column.
-
-## Dialog Options
-
-The Calculated Column dialog can be configured with the `calculatedColumns` grid option. Set `calculatedColumns: true` to enable the feature with default dialog options, or provide an options object to enable the feature and customise the dialog.
-
-While a column's dialog is open, the grid highlights the column's header and cells. Customise the highlight colour with the `--ag-calculated-column-highlight-color` CSS variable.
-
-### dataTypes
-
-Use `dataTypes` to control which cell data types appear in the dialog type dropdown. The list can include built-in cell data types and custom types registered with `dataTypeDefinitions`:
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    dataTypeDefinitions: {
-        currency: {
-            extendsDataType: 'number',
-            baseDataType: 'number',
-            valueFormatter: params =>
-                params.value == null ? '' : `$${params.value.toLocaleString()}`,
-        },
-    },
-    calculatedColumns: {
-        dataTypes: ['currency', 'number', 'boolean'],
-    },
-    columnDefs: [
-        { field: 'revenue', cellDataType: 'currency' },
-        { field: 'cost', cellDataType: 'currency' },
-        {
-            colId: 'profit',
-            headerName: 'Profit',
-            calculatedExpression: '[revenue] - [cost]',
-            cellDataType: 'currency',
-        },
-    ],
-};
-```
-
-Applying the type to your own columns as well means a user who picks **Currency** in the dialog gets the same formatting as the columns you declared. A `valueFormatter` on a column definition cannot be selected in the dialog, so it is not available to users.
-
-Built-in types use the grid's locale text, while custom type names are converted to readable labels in the dialog. If a selected value does not match a registered [Cell Data Type](./cell-data-types/), the grid's normal `cellDataType` validation applies when the calculated column is created.
-
-{% gridExampleRunner title="Dialog Data Types" name="calculated-columns-dialog-data-types" /%}
-
-### expressionPickers
-
-Use `expressionPickers` to control which expression pickers appear:
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    calculatedColumns: {
-        expressionPickers: ['columns'],
-    },
-};
-```
-
-{% interfaceDocumentation interfaceName="CalculatedColumnExpressionPicker" config={"asCode":true} /%}
-
-This only controls the expression picker buttons. Use an empty array or `null` to hide all picker buttons. Inline autocomplete while typing in the expression editor remains available.
-
-{% gridExampleRunner title="Dialog Expression Pickers" name="calculated-columns-dialog-helper-lists" /%}
-
-### isColumnReferenceable
-
-Return `false` from `isColumnReferenceable` to exclude a column from the Columns picker, inline autocomplete and newly entered references. Use `calculatedColumn` to identify the column being edited, or `sourceColumn` for the column whose menu initiated Add Calculated Column. `sourceColumn` is only provided when adding a column; it is `null` when editing an existing column.
-
-This example allows Salary references only when editing Bonus:
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    calculatedColumns: {
-        isColumnReferenceable: ({ colDef, calculatedColumn }) => {
-            if (colDef.field === 'salary') {
-                return calculatedColumn?.getColId() === 'bonus';
-            }
-            return true;
-        },
-    },
-};
-```
-
-{% interfaceDocumentation interfaceName="IsColumnReferenceableParams" /%}
-
-The callback runs when the dialog opens. Existing permitted expressions can remain unchanged, and programmatic expressions are unrestricted. This is a UI restriction, not a security boundary.
-
-Restricted edits disable Apply in deferred mode. In live mode, they are saved but display `#REF!` until corrected; reopening the dialog or restoring Grid State preserves the error.
-
-{% gridExampleRunner title="Dialog Reference Restrictions" name="calculated-columns-reference-restrictions" /%}
-
-### getValidationErrors
-
-Use `getValidationErrors` to customise expression validation in either apply mode, including for invalid expressions. The callback receives built-in messages in `internalErrors`. Return the messages to show, or `null` or an empty array to accept the expression. Return `internalErrors` to keep the built-in validation.
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    calculatedColumns: {
-        applyMode: 'deferred',
-        getValidationErrors: ({ referencedColumns, internalErrors }) =>
-            referencedColumns.some(column => column.getColId() === 'salary')
-                ? ['Salary cannot be used in this report.']
-                : internalErrors,
-    },
-};
-```
-
-{% interfaceDocumentation interfaceName="CalculatedColumnValidationParams" /%}
-
-In the example, edit **Sales Bonus** and enter `[Salary]` to see the validation messages and disabled Apply button.
-
-{% gridExampleRunner title="Custom Dialog Validation" name="calculated-columns-custom-validation" /%}
-
-{% note %}
-Validation applies only in the dialog; programmatic definitions are unaffected. Errors block Apply in deferred mode. In live mode, rejected edits are saved but display `#ERROR!` until corrected. Title and type edits also revalidate unchanged expressions. Restrictions set by `isColumnReferenceable` remain enforced.
-{% /note %}
-
-### suppressColumnHighlighting
-
-Use `suppressColumnHighlighting` to disable the highlight while the dialog is open:
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    theme: myTheme,
-    calculatedColumns: {
-        suppressColumnHighlighting: true,
-    },
-};
-```
-
-{% gridExampleRunner title="Suppress Dialog Column Highlighting" name="calculated-columns-dialog-highlighting" /%}
-
-### applyMode
-
-By default, dialog edits apply to the column immediately: **Add Calculated Column** creates the column and opens the dialog over it, and title, type and expression changes update the column as you type. Closing the dialog keeps the latest state; remove the column with **Remove Calculated Column**. An empty expression renders blank cells, and invalid or incomplete expressions render formula errors until fixed. Expression edits containing references excluded by `isColumnReferenceable` are saved but blocked from evaluation, preserving the full text for correction.
-
-Set `applyMode: 'deferred'` to hold changes until you click **Apply** instead. The dialog shows Apply and Cancel buttons and validates edits before applying them:
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    calculatedColumns: {
-        applyMode: 'deferred',
-    },
-};
-```
-
-{% interfaceDocumentation interfaceName="CalculatedColumnApplyMode" config={"asCode":true} /%}
-
-{% gridExampleRunner title="Deferred Apply Mode" name="calculated-columns-apply-mode" /%}
-
-### applyDebounce
-
-Set `applyDebounce` to wait for a quiet period before applying live dialog edits. This delays both the cell repaint and calculated-column change events:
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    calculatedColumns: {
-        applyDebounce: 400,
-    },
-};
-```
-
-The default is `0`, which applies on the next animation frame. Closing the dialog applies any pending edit immediately; removing the column cancels it. State and column-definition APIs report the last applied values while an edit is pending. This option has no effect in deferred mode.
-
-### processColDef
-
-Use `processColDef` to customise calculated columns that users create in the dialog, for example to add a filter or allow aggregation. It receives the column's own definition, as set in the dialog, and returns the definition to use. The returned definition takes precedence over `defaultColDef` and column types:
-
-```{% frameworkTransform=true %}
-const gridOptions = {
-    calculatedColumns: {
-        processColDef: (params) => ({
-            ...params.colDef,
-            filter: true,
-            enableValue: params.colDef.cellDataType === 'number',
-        }),
-    },
-};
-```
-
-In the example, the **Profit** column is restored from Grid State as if a user had created it, so it has a filter button and can be aggregated from the column menu.
-
-{% gridExampleRunner title="Customising Calculated Column Definitions" name="calculated-columns-process-col-def" /%}
-
-{% interfaceDocumentation interfaceName="CalculatedColumnProcessColDefParams" /%}
-
-{% note %}
-The callback runs each time the column is built, including when dialog edits are applied and on restore from [Grid State](./grid-state/). It does not run for calculated columns declared in `columnDefs`. The dialog and Grid State keep the user's values, not the callback's. `colId`, `editable`, `suppressPaste`, `field`, `valueGetter`, `valueSetter`, `cellEditor` and `cellEditorSelector` are always overridden. Prefer `initial*` properties, such as `initialWidth`, to stateful ones.
-{% /note %}
-
-## Advanced Calculated Columns
-
-Calculated columns can use the same [Mathematical Operators](./formula-reference/#mathematical-operators) and [Provided Functions](./formula-reference/#provided-functions) as [formulas](./formulas/), and can reference other calculated columns in the same row. This allows chained derived values such as profit, margin and status.
+Calculated columns can reference other calculated columns in the same row, which lets you chain derived values such as profit, margin and status:
 
 ```{% frameworkTransform=true %}
 const gridOptions = {
@@ -343,55 +72,79 @@ const gridOptions = {
 };
 ```
 
-The `currency` and `percentage` types are registered with `dataTypeDefinitions`, as shown in [dataTypes](#datatypes).
+The `currency` and `percentage` types are registered with `dataTypeDefinitions`, as shown in [Data Types](./calculated-columns-dialog/#datatypes).
 
-{% gridExampleRunner title="Advanced Calculated Columns" name="calculated-columns-advanced" /%}
+{% gridExampleRunner title="Chaining Calculated Columns" name="calculated-columns-advanced" /%}
 
-Header cells and grid cells for calculated columns include the `ag-calculated-column` CSS class; use it for custom styling.
+## Letting Users Add Columns
 
-A column added from the header menu appears after the column it was created from.
+Register the [Column Menu](./column-menu/) so users can add, edit and remove calculated columns from the grid:
 
-## API
+- **Add Calculated Column**, in the header menu of any column, opens the dialog to add a calculated column. It is not shown in pivot mode.
+- **Edit Calculated Column**, in the header menu of a calculated column, opens the dialog to change its title, type and expression. A read-only column shows **View Calculated Column** instead.
+- **Remove Calculated Column**, in the header menu of a calculated column and the context menu of its cells, removes the column. It is disabled when the column is read-only.
 
-Manage calculated columns through column definitions, like other columns. Read the current definitions with `api.getColumnDefs()` and write them back with `api.setGridOption('columnDefs', ...)` to add, edit or remove a calculated column. To find the calculated columns in the grid, filter `api.getColumns()` by `calculatedExpression`.
+When adding a calculated column from a header menu or via the API with a source column, the new column uses the source column's current pinning. The new column appears next to the source: on the right in LTR and on the left in RTL.
 
-The dialog manages calculated columns inside the grid without mutating the `columnDefs` array supplied by the application. To persist user-created calculated columns, read the complete current definitions from `api.getColumnDefs()`.
+In the [dialog](./calculated-columns-dialog/), users refer to columns by title instead of `colId`, for example `[Revenue]`. See [Referencing Columns](./calculated-columns-dialog/#references-with-column-groups) for how the dialog handles duplicate titles. Custom functions registered through `formulaFuncs` appear in the dialog's Functions picker and in autocomplete.
 
-The following example adds, edits and removes a Profit Margin column through these APIs, and logs calculated-column changes:
+Register [Cell Data Types](./cell-data-types/) to give users formatting options to pick from when they create a column. The first example on this page provides a `currency` type; see [Data Types](./calculated-columns-dialog/#datatypes).
 
-{% gridExampleRunner title="Calculated Columns API" name="calculated-columns-api" /%}
+Calculated cell values cannot be changed through cell editing, paste, fill handle or delete operations. Users can still change a calculated column's title, type and expression through its dialog. To prevent these dialog edits and removal through the grid's menus, see [Read-Only Calculated Columns](./calculated-columns-validation/#read-only-calculated-columns).
 
-### Column Properties
+## Feature Interactions
 
-{% apiDocumentation source="column-properties/properties.json" section="calculatedColumns" names=["calculatedExpression"] /%}
+Calculated Columns are supported with all row models. Calculated columns are full columns, so [Row Grouping](./grouping/), [Tree Data](./tree-data/), [Pivoting](./pivoting/), [Sorting](./row-sorting/), [Filtering](./filtering/), [Text Formatting](./value-formatters/) and [Cell Components](./component-cell-renderer/) apply to them the same way as any other column.
 
-### Grid Options
+For [Server-Side](./server-side-model/), [Infinite](./infinite-scrolling/) and [Viewport](./viewport/) Row Models, sorting and filtering are datasource or server responsibilities. The grid displays calculated values for loaded rows, but does not client-sort or client-filter remote datasets by calculated results.
 
-{% apiDocumentation source="grid-options/properties.json" section="columns" names=["calculatedColumns"] /%}
+### Row Groups and Tree Data
 
-### Events
+A calculated column evaluates on leaf rows and on Tree Data parents that carry data. It stays blank on rows without data: row group rows, group footers, the grand total row and Tree Data filler nodes.
 
-Use `calculatedColumnChanged` to track changes to `headerName`, `cellDataType`, `calculatedExpression` and `columnGroupShow`. Its `changes` object contains only changed properties, with their previous and new values. Deferred Apply raises one event for all changes; live mode raises an event for each committed update. Initialisation and Grid State restoration do not raise this event.
+To show a value on group rows, give the calculated column an `aggFunc`. Each leaf evaluates the expression, and the group aggregates those per-leaf results with the chosen function, the same as a column with a `valueGetter`. For example, `{ calculatedExpression: '[revenue] - [cost]', aggFunc: 'sum' }` shows the total of its rows' profits on a group. A ratio has no meaningful aggregation, so a column like `[profit] / [revenue]` is left without an `aggFunc` and stays blank on group rows.
 
-```js
+{% gridExampleRunner title="Row Groups with Calculated Columns" name="calculated-columns-row-groups" /%}
+
+In the example, Profit has an `aggFunc` and shows a total on each group row, while Margin stays blank there.
+
+### Letting Users Choose an Aggregation
+
+The dialog has no aggregation field. Setting `enableValue`, for example in `defaultColDef`, lets users choose an aggregation for any calculated column, including one created in the dialog. To allow it only on the columns users create, return `enableValue` from [processColDef](./calculated-columns-dialog/#processcoldef) instead.
+
+Users choose the aggregation from **Value Aggregation** in the column menu while rows are grouped, or by adding the column to the Values section of the [Columns Tool Panel](./tool-panel-columns/#drop-zones). To limit the choice, set `allowedAggFuncs` as in the example below. [Configuring via the UI](./aggregation-columns/#configuring-via-the-ui) covers this and `defaultAggFunc`.
+
+```{% frameworkTransform=true %}
 const gridOptions = {
-    onCalculatedColumnChanged: event => {
-        const { headerName, cellDataType, calculatedExpression } = event.changes;
-        if (headerName) {
-            console.log('Title:', headerName.oldValue, headerName.newValue);
-        }
-        if (cellDataType) {
-            console.log('Type:', cellDataType.oldValue, cellDataType.newValue);
-        }
-        if (calculatedExpression) {
-            console.log('Expression:', calculatedExpression.oldValue, calculatedExpression.newValue);
-        }
+    calculatedColumns: true,
+    defaultColDef: {
+        enableValue: true,
+        allowedAggFuncs: ['sum', 'avg', 'min', 'max'],
     },
+    sideBar: 'columns',
 };
 ```
 
-{% note %}
-Live expressions can be incomplete or invalid. Recognised references use stored `colId` values, such as `[revenue]`; references the dialog cannot resolve remain as typed, so they can still contain header names.
-{% /note %}
+{% gridExampleRunner title="Letting Users Choose an Aggregation" name="calculated-columns-aggregation" /%}
 
-{% apiDocumentation source="grid-events/events.json" section="calculatedColumns" names=["calculatedColumnCreated", "calculatedColumnChanged", "calculatedColumnRemoved", "calculatedColumnValidationStateChanged"] /%}
+In the example, choose **Add Calculated Column** from the Cost header menu and enter `[Revenue] - [Cost]` as the expression. Close the dialog, then open **Value Aggregation** in the new column's header menu. It offers only None, Sum, Average, Min and Max.
+
+### Pivoting
+
+Under [Pivoting](./pivoting/), a calculated column behaves the same as a column with a `valueGetter`:
+
+- With an `aggFunc`, it is a value column. It evaluates per leaf, and its results aggregate into the pivot result columns.
+- Without an `aggFunc`, it is not a value column, so it has no pivot result column and is absent from the cross-tab, like any other non-value column.
+- As a pivot column (`pivot: true`), its per-row result becomes the pivot key, so the grid creates a result column for each distinct calculated value.
+
+Users cannot add calculated columns while pivot mode is on.
+
+## Styling
+
+Header cells and grid cells for calculated columns include the `ag-calculated-column` CSS class; use it for custom styling. To change the highlight shown while a column's dialog is open, see [Column Highlighting](./calculated-columns-dialog/#suppresscolumnhighlighting).
+
+## Next Steps
+
+- [Dialog & Customisation](./calculated-columns-dialog/): opening the dialog, column references, the expression editor, data types, when edits apply, and customising the columns users create.
+- [Restrictions & Validation](./calculated-columns-validation/): read-only columns, hidden menu items, restricted column references, custom validation and refreshing.
+- [API, Events & State](./calculated-columns-api/): managing calculated columns in code, saving and restoring them, events, and the API reference.

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import versionsData from '../../content/versions/ag-grid-versions.json';
 import { buildHomepageMarkdown } from './buildHomepageMarkdown';
 
 describe('buildHomepageMarkdown', () => {
@@ -64,8 +65,9 @@ describe('buildHomepageMarkdown', () => {
     });
 
     it('includes a What is New version highlight and an FAQ question', () => {
-        expect(output).toContain('### 36.0.0');
-        expect(output).toContain('- Calculated Columns');
+        const latestRelease = versionsData.find((entry) => entry.version.endsWith('.0') && entry.highlights)!;
+        expect(output).toContain(`### ${latestRelease.version}`);
+        expect(output).toContain(`- ${latestRelease.highlights![0].text}`);
         expect(output).toContain('### Can I build JavaScript Data Grids for free with AG Grid?');
     });
 

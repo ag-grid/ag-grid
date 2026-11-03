@@ -308,10 +308,12 @@ export type {
     CalculatedColumnsGridOption,
     CalculatedColumnsOptions,
     CalculatedColumnUpdate,
+    CalculatedColumnValidationErrors,
     CalculatedColumnValidationParams,
     CalculatedExpressionError,
     ICalculatedColumnsService,
     IsColumnReferenceableParams,
+    RefreshCalculatedColumnsParams,
 } from './interfaces/iCalculatedColumns';
 export type { ColumnHeaderEditApplyMode, ColumnHeaderEditOptions } from './interfaces/iColumnHeaderEdit';
 export type {

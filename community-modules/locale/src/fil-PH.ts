@@ -788,6 +788,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaRowSelect: 'Pindutin ang SPACE para piliin ang row na ito',
     ariaRowSelectionDisabled: 'Naka-disable ang Pagpili ng Row para sa row na ito',
     ariaSearch: 'Maghanap',
+    ariaSortPriority: 'Priyoridad sa pag-uuri ${priority} sa ${count}',
     ariaSortableColumn: 'Pindutin ang ENTER para mag-sort',
     ariaSortableColumnWithCellSelection: 'Pindutin ang ALT ENTER para mag-sort',
     ariaToggleVisibility: 'Pindutin ang SPACE para i-toggle ang visibility',
@@ -824,6 +825,12 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'absolute pababa',
 
     ariaLabelDialog: 'Dialog',
+
+    ariaLabelClose: 'Isara',
+
+    ariaLabelMaximize: 'I-maximize',
+
+    ariaLabelRestore: 'Ibalik',
 
     ariaLabelColumnMenu: 'Menu ng Column',
     ariaLabelColumnFilter: 'Filter ng Column',

@@ -33,6 +33,7 @@
     }
 
     // we do not want to color the range color when the cell is also focused
+    // column hover is not overlaid on range colours here: it is opaque in Balham and Material light
     .ag-cell-range-selected:not(.ag-cell-focus),
     .ag-cell-range-selected.ag-cell-range-chart,
     .ag-grid-viewport:not(.ag-has-focus) .ag-cell-range-single-cell:not(.ag-cell-inline-editing) {

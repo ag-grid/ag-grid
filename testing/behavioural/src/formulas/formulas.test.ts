@@ -35,6 +35,31 @@ describe('ag-grid formulas general behaviour', () => {
         }
     });
 
+    test.each([false, true])('preserves formula errors with a custom formatter: %s', (customFormatter) => {
+        const api = gridsManager.createGrid('formula-error-formatting', {
+            columnDefs: [
+                {
+                    field: 'value',
+                    allowFormula: true,
+                    cellDataType: 'number',
+                    ...(customFormatter ? { valueFormatter: ({ value }) => `formatted ${value}` } : {}),
+                },
+                { field: 'ordinary', cellDataType: 'number' },
+            ],
+            rowData: [{ value: '=1 / 0', ordinary: '#DIV/0!' }],
+        });
+        const rowNode = api.getDisplayedRowAtIndex(0)!;
+        const formatted = () => api.getCellValue({ rowNode, colKey: 'value', useFormatter: true });
+        expect(formatted()).toBe('#DIV/0!');
+        expect(api.getCellValue({ rowNode, colKey: 'ordinary', useFormatter: true })).toBe('Invalid Number');
+
+        rowNode.setData({ value: '=2 * 3', ordinary: '#DIV/0!' });
+        expect(formatted()).toBe(customFormatter ? 'formatted 6' : '6');
+
+        rowNode.setData({ value: '="#DIV/0!"', ordinary: '#DIV/0!' });
+        expect(formatted()).toBe(customFormatter ? 'formatted #DIV/0!' : 'Invalid Number');
+    });
+
     test('constants and cell references evaluate correctly', async () => {
         const rowData = [
             { id: 'value-a1', value: 10 },

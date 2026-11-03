@@ -33,6 +33,7 @@ lib/docroot.mjs              production-shaped docroot + placeholder files
 lib/rows.mjs                 expectation-row format and parser
 lib/probe.mjs                HTTP client, chain following, assertions
 lib/report.mjs               the verdict: a row's failures against its known-fail marker
+lib/liveRedirects.mjs        the live sites' redirect model, for the production edge tests (see "Production" below)
 *.test.mjs                   node --test self-tests of the verdict rules, run by run.sh before probing
 expectations/*.tsv           curated.tsv and edge.tsv (hand-written), generated-*.tsv (generated)
 generators/                  regenerate.mjs plus one generator per rule family (see below), and deployed-archives.mjs
@@ -284,8 +285,8 @@ count, checked by a self-test).
 
 | File                                                                                 | Generator                       | Source of the rows                                                                                                                                                              |
 | ------------------------------------------------------------------------------------ | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `generated-grid.tsv`, `-grid-archive`                                                | `gen-main-expectations.mjs`     | every `Redirect`/`RedirectMatch` and SE-64 single-hop rewrite in the grid file (an archive's rebased subset too)                                                                |
-| `generated-charts.tsv`, `-charts-archive`, `generated-studio.tsv`, `-studio-archive` | `gen-subsite-expectations.mjs`  | every `RewriteRule` redirect and `[G]` in the subsite file, on www, apex and blog                                                                                               |
+| `generated-grid.tsv`, `-grid-archive`                                                | `gen-main-expectations.mjs`     | every `Redirect`/`RedirectMatch` and SE-64 single-hop rewrite in the grid file (an archive's rebased subset too), and a few requests on each alias host the root file names     |
+| `generated-charts.tsv`, `-charts-archive`, `generated-studio.tsv`, `-studio-archive` | `gen-subsite-expectations.mjs`  | every `RewriteRule` redirect and `[G]` in the subsite file, on www, apex and blog, and a few requests on each other non-canonical host                                          |
 | `generated-markdown.tsv`                                                             | `gen-markdown-expectations.mjs` | each site's `*_MARKDOWN_PAGE_GROUPS` registry: `.md` negotiation, plus the HTML headers of each content class, live and archive; every archive `.md` is `X-Robots-Tag: noindex` |
 
 **The generators predict each row from the rule's own semantics**, not by asking Apache:
@@ -311,6 +312,21 @@ intended target and marks the row `known-fail`, naming only the assertions whose
 rule, unless a hand-written row in `curated.tsv` or `edge.tsv` requests a path the rule matches. A
 dropped rule would otherwise lose all its coverage silently. Each generated file's `@min-rows` is
 its full row count, so any row lost later fails the run too.
+
+**The generators also model each alias host, for the first hop only.** The grid root gives the apex
+its single-hop rewrites, then gives every alias host the slash and the host swap in one hop for a
+slash-less directory URL, or the host swap alone. A subsite answers its redirects the same on every
+host. The `*-alias-hosts` rows prove that on Apache with a few requests per host, which is what
+lets `firstHop` (below) answer any request on any host.
+
+### Production
+
+The production edge tests (`ag-devops/edge-tests`) check every live redirect against
+www.ag-grid.com itself, with the generators as the prediction. `lib/liveRedirects.mjs` emits the
+three live files from the deployed release branches and returns, per site, the hosts, each rule's
+www samples (with the known-fail marker where one applies) and `firstHop(host, path)`. The edge
+tests import it from the deployed grid branch, so a change to a generator's exports reaches them at
+the next release. Keep `mainExpectations`, `subsiteExpectations` and `liveRedirectModel` compatible.
 
 ### Regenerating
 

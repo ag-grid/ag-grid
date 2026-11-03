@@ -52,9 +52,11 @@ export class BaseEventService<
 
     public addGlobalListener(
         listener: AgEventServiceGlobalListener<keyof TGlobalEvents & string, TGlobalEvents>,
-        async = false
+        async = false,
+        eventTypes?: ReadonlySet<keyof TGlobalEvents & string>,
+        exceptEventTypes?: ReadonlySet<keyof TGlobalEvents & string>
     ): void {
-        this.globalSvc.addGlobalListener(listener, async);
+        this.globalSvc.addGlobalListener(listener, async, eventTypes, exceptEventTypes);
     }
 
     public removeGlobalListener(
@@ -66,9 +68,5 @@ export class BaseEventService<
 
     public dispatchEvent(event: AgRawEvents<TGlobalEvents, TCommon> | BaseEvents[keyof BaseEvents]): void {
         this.globalSvc.dispatchEvent(this.gos.addCommon<any>(event as any));
-    }
-
-    public dispatchEventOnce(event: AgRawEvents<TGlobalEvents, TCommon> | BaseEvents[keyof BaseEvents]): void {
-        this.globalSvc.dispatchEventOnce(this.gos.addCommon<any>(event as any));
     }
 }

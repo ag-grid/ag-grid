@@ -4,12 +4,7 @@
   "sourceRoot": "testing/behavioural",
   "projectType": "library",
   "targets": {
-    "lint": {
-      "command": "eslint",
-      "options": {
-        "cwd": "{projectRoot}"
-      }
-    },
+    "lint": {},
     "build:test": {
       "dependsOn": ["^build:types"]
     },
