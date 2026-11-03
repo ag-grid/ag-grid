@@ -12,11 +12,11 @@ import {
     _isServerSideRowModel,
 } from '../gridOptionsUtils';
 import type {
+    ViewportGroupRowRef,
     ViewportRow,
     ViewportRowRef,
     ViewportSubscriptionOptions,
     ViewportSubscriptionParams,
-    ViewportTreeRow,
 } from '../interfaces/iViewportSubscription';
 
 interface SubscribedRow {
@@ -129,8 +129,7 @@ export class ViewportSubscriptionService extends BeanStub implements NamedBean {
         this.sub = undefined;
         clearTimeout(sub.timer);
 
-        const refs: ViewportRowRef[] = [];
-        sub.rows.forEach((row) => refs.push(row.ref));
+        const refs = Array.from(sub.rows.values(), (row) => row.ref);
         sub.rows.clear();
         if (refs.length) {
             sub.options.onUnsubscribe(refs, this.createParams());
@@ -176,24 +175,21 @@ export class ViewportSubscriptionService extends BeanStub implements NamedBean {
     private flush(sub: ActiveSubscription): void {
         const inView = this.getViewportRows(sub);
 
-        // A row moved to another parent, or that gained or lost children, is passed again, as its captured ref is out of date.
+        // A stale row is unsubscribed and subscribed again, as its captured ref is out of date.
         const removed: ViewportRowRef[] = [];
         sub.rows.forEach((row, id) => {
             if (inView.get(id) !== row.node || this.isStale(row, row.node)) {
                 removed.push(row.ref);
+                sub.rows.delete(id);
             }
         });
         const added: RowNode[] = [];
         inView.forEach((node, id) => {
-            const existing = sub.rows.get(id);
-            if (existing?.node !== node || this.isStale(existing, node)) {
+            if (!sub.rows.has(id)) {
                 added.push(node);
             }
         });
 
-        for (let i = 0, len = removed.length; i < len; ++i) {
-            sub.rows.delete(removed[i].id);
-        }
         if (removed.length) {
             sub.options.onUnsubscribe(removed, this.createParams());
         }
@@ -208,14 +204,12 @@ export class ViewportSubscriptionService extends BeanStub implements NamedBean {
             return false;
         }
         // The `onUnsubscribe` handler can have scrolled the grid or changed the model.
-        const [first, last] = this.getRange(sub);
-        const pinned = this.getPinnedSourceRows();
+        const inView = this.getViewportRows(sub);
         const rows: ViewportRow[] = [];
         let rescheduleNeeded = false;
         for (let i = 0, len = nodes.length; i < len; ++i) {
             const node = nodes[i];
-            const inView = pinned.has(node) || this.isInRange(node, first, last);
-            if (!inView || !this.isSubscribable(node, sub.includeGroups)) {
+            if (inView.get(node.id!) !== node) {
                 // The next flush picks up whatever is in view and subscribable now.
                 rescheduleNeeded = true;
                 continue;
@@ -226,17 +220,6 @@ export class ViewportSubscriptionService extends BeanStub implements NamedBean {
             sub.options.onSubscribe(rows, this.createParams());
         }
         return rescheduleNeeded;
-    }
-
-    private isInRange(node: RowNode, first: number, last: number): boolean {
-        const index = node.rowIndex;
-        return (
-            !node.destroyed &&
-            index != null &&
-            index >= first &&
-            index <= last &&
-            this.beans.rowModel.getRow(index) === node
-        );
     }
 
     private getRange(sub: ActiveSubscription): [number, number] {
@@ -266,11 +249,11 @@ export class ViewportSubscriptionService extends BeanStub implements NamedBean {
         return [first, last];
     }
 
-    /** The subscribable rows in view, and the source rows of rows the user has pinned, by row ID. */
+    /** The subscribable rows in view, and the source rows of rows the user has pinned, as those are always in view, by row ID. */
     private getViewportRows(sub: ActiveSubscription): Map<string, RowNode> {
         const [first, last] = this.getRange(sub);
         const { includeGroups } = sub;
-        const rowModel = this.beans.rowModel;
+        const { rowModel, pinnedRowModel } = this.beans;
         const inView = new Map<string, RowNode>();
         const addIfSubscribable = (node: RowNode | undefined) => {
             const id = node?.id;
@@ -281,26 +264,17 @@ export class ViewportSubscriptionService extends BeanStub implements NamedBean {
         for (let i = first; i <= last; ++i) {
             addIfSubscribable(rowModel.getRow(i));
         }
-        this.getPinnedSourceRows().forEach(addIfSubscribable);
-        return inView;
-    }
-
-    /** Rows pinned by the user are always in view, so their source rows count as in view too. */
-    private getPinnedSourceRows(): Set<RowNode> {
-        const sources = new Set<RowNode>();
-        const pinnedRowModel = this.beans.pinnedRowModel;
-        if (!pinnedRowModel?.isManual()) {
-            return sources;
+        if (pinnedRowModel?.isManual()) {
+            const addSource = (pinned: RowNode) => {
+                const source = pinned.pinnedSibling;
+                if (!source?.destroyed) {
+                    addIfSubscribable(source);
+                }
+            };
+            pinnedRowModel.forEachPinnedRow('top', addSource);
+            pinnedRowModel.forEachPinnedRow('bottom', addSource);
         }
-        const addSource = (pinned: RowNode) => {
-            const source = pinned.pinnedSibling;
-            if (source && !source.destroyed) {
-                sources.add(source);
-            }
-        };
-        pinnedRowModel.forEachPinnedRow('top', addSource);
-        pinnedRowModel.forEachPinnedRow('bottom', addSource);
-        return sources;
+        return inView;
     }
 
     /** Stores the row as subscribed and returns the row to pass to `onSubscribe`. */
@@ -309,38 +283,36 @@ export class ViewportSubscriptionService extends BeanStub implements NamedBean {
         const isGroup = this.isGroup(node);
         sub.rows.set(id, { ref, node, isGroup });
         // Handlers get their own arrays: changing them must not affect the stored ref the move check compares.
-        const parentKeys = ref.parentKeys.slice();
-        const data = node.data;
-        switch (ref.type) {
-            case 'group':
-                return { ...ref, parentKeys, route: ref.route.slice(), data };
-            case 'tree': {
-                const row: ViewportTreeRow = { ...ref, parentKeys, hasChildren: isGroup, data };
-                if (ref.route) {
-                    row.route = ref.route.slice();
-                }
-                return row;
-            }
-            default:
-                return { ...ref, parentKeys, data };
+        const row = { ...ref, parentKeys: ref.parentKeys.slice(), data: node.data } as ViewportRow;
+        if (row.type !== 'leaf' && row.route) {
+            row.route = row.route.slice();
         }
+        if (row.type === 'tree') {
+            row.hasChildren = isGroup;
+        }
+        return row;
     }
 
     private createRef(id: string, node: RowNode): ViewportRowRef {
         const parentKeys = node.parent?.getRoute() ?? [];
         const level = node.level;
         const route = node.getRoute();
-        if (this.gos.get('treeData')) {
-            return route ? { type: 'tree', id, parentKeys, level, route } : { type: 'tree', id, parentKeys, level };
+        const type = this.gos.get('treeData') ? 'tree' : node.group ? 'group' : 'leaf';
+        const ref = { type, id, parentKeys, level } as ViewportRowRef;
+        if (type === 'group' || (type === 'tree' && route)) {
+            (ref as ViewportGroupRowRef).route = route ?? [];
         }
-        if (node.group) {
-            return { type: 'group', id, parentKeys, level, route: route ?? [] };
-        }
-        return { type: 'leaf', id, parentKeys, level };
+        return ref;
     }
 
-    private isStale(row: SubscribedRow, node: RowNode): boolean {
-        return row.isGroup !== this.isGroup(node) || hasMovedParent(row.ref, node);
+    /** A row that moved to another parent, or gained or lost children, has an out of date ref. */
+    private isStale({ ref, isGroup }: SubscribedRow, node: RowNode): boolean {
+        return (
+            isGroup !== this.isGroup(node) ||
+            ref.level !== node.level ||
+            !_areEqual(ref.parentKeys, node.parent?.getRoute() ?? []) ||
+            !_areEqual(ref.type === 'leaf' ? undefined : ref.route, node.getRoute())
+        );
     }
 
     private createParams(): ViewportSubscriptionParams {
@@ -363,13 +335,4 @@ export class ViewportSubscriptionService extends BeanStub implements NamedBean {
         const isFullWidthRow = this.gos.getCallback('isFullWidthRow');
         return !isFullWidthRow?.({ rowNode: node });
     }
-}
-
-function hasMovedParent(ref: ViewportRowRef, node: RowNode): boolean {
-    const route = ref.type === 'leaf' ? undefined : ref.route;
-    return (
-        ref.level !== node.level ||
-        !_areEqual(ref.parentKeys, node.parent?.getRoute() ?? []) ||
-        !_areEqual(route, node.getRoute())
-    );
 }
