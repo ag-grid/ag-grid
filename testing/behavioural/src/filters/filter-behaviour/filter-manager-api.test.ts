@@ -10,9 +10,18 @@ import {
     uninstallFilterLayoutMock,
 } from 'ag-test-utils';
 
-import type { FilterChangedEvent, GridApi, IRowNode, IssueRaisedEvent } from 'ag-grid-community';
+import type {
+    FilterChangedEvent,
+    GridApi,
+    IDoesFilterPassParams,
+    IFilterComp,
+    IFilterParams,
+    IRowNode,
+    IssueRaisedEvent,
+} from 'ag-grid-community';
 import {
     ClientSideRowModelModule,
+    CustomFilterModule,
     ExternalFilterModule,
     GridStateModule,
     NumberFilterModule,
@@ -20,7 +29,7 @@ import {
     enableDevValidations,
     setupAgTestIds,
 } from 'ag-grid-community';
-import { SetFilterModule } from 'ag-grid-enterprise';
+import { MultiFilterModule, SetFilterModule } from 'ag-grid-enterprise';
 
 interface Person {
     athlete: string;
@@ -49,6 +58,8 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
             TextFilterModule,
             NumberFilterModule,
             SetFilterModule,
+            MultiFilterModule,
+            CustomFilterModule,
             ExternalFilterModule,
             GridStateModule,
             ClientSideRowModelModule,
@@ -285,6 +296,112 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
         api.removeEventListener('filterChanged', listener);
     });
 
+    test.each([
+        {
+            name: 'a text model without its filterType',
+            model: { athlete: { type: 'contains', filter: 'Ryan' } },
+            applied: { athlete: { type: 'contains', filter: 'Ryan', filterType: 'text' } },
+            displayed: 1,
+        },
+        {
+            name: 'a set model without its filterType',
+            model: { country: { values: ['Russia'] } },
+            applied: { country: { filterType: 'set', values: ['Russia'] } },
+            displayed: 1,
+        },
+        {
+            name: 'a set model naming a value no row has',
+            model: { country: { filterType: 'set', values: ['Russia', 'Narnia'] } },
+            applied: { country: { filterType: 'set', values: ['Russia'] } },
+            displayed: 1,
+        },
+        {
+            name: 'a multi model without its filterType',
+            model: { age: { filterModels: [{ type: 'greaterThan', filter: 24 }] } },
+            applied: {
+                age: {
+                    filterType: 'multi',
+                    filterModels: [{ type: 'greaterThan', filter: 24, filterType: 'number' }, null],
+                },
+            },
+            displayed: 2,
+        },
+    ])(
+        'setFilterModel with $name filters the rows once, as the completed model would',
+        async ({ model, applied, displayed }) => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [
+                    { field: 'athlete', filter: 'agTextColumnFilter' },
+                    { field: 'age', filter: 'agMultiColumnFilter' },
+                    { field: 'country', filter: 'agSetColumnFilter' },
+                ],
+                rowData: PEOPLE,
+            });
+            const events: string[] = [];
+            api.addEventListener('filterChanged', (e: FilterChangedEvent) => events.push(`filterChanged ${e.source}`));
+            api.addEventListener('modelUpdated', () => events.push('modelUpdated'));
+
+            api.setFilterModel(model);
+            await asyncSetTimeout(0);
+
+            expect({ events, model: api.getFilterModel(), displayed: api.getDisplayedRowCount() }).toEqual({
+                events: ['filterChanged api', 'modelUpdated'],
+                model: applied,
+                displayed,
+            });
+        }
+    );
+
+    test('setFilterModel with a condition its filter lacks filters again only to clear an applied model', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: threeFilterCols,
+            rowData: PEOPLE,
+        });
+        const events: string[] = [];
+        api.addEventListener('filterChanged', (e: FilterChangedEvent) => events.push(`filterChanged ${e.source}`));
+        api.addEventListener('modelUpdated', () => events.push('modelUpdated'));
+        const lacking = { athlete: { filterType: 'text', type: 'noSuchOption', filter: 'Ryan' } };
+
+        api.setFilterModel(lacking);
+        await asyncSetTimeout(0);
+        expect({ step: 'unfiltered', events, model: api.getFilterModel() }).toEqual({
+            step: 'unfiltered',
+            events: [],
+            model: {},
+        });
+
+        api.setFilterModel({ athlete: { filterType: 'text', type: 'contains', filter: 'Ryan' } });
+        await asyncSetTimeout(0);
+        events.length = 0;
+        api.setFilterModel(lacking);
+        await asyncSetTimeout(0);
+        expect({
+            step: 'filtered',
+            events,
+            model: api.getFilterModel(),
+            displayed: api.getDisplayedRowCount(),
+        }).toEqual({
+            step: 'filtered',
+            events: ['filterChanged api', 'modelUpdated'],
+            model: {},
+            displayed: PEOPLE.length,
+        });
+    });
+
+    test('setState with a filter model its filter completes fires filterChanged once', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: threeFilterCols,
+            rowData: PEOPLE,
+        });
+        const sources: (string | undefined)[] = [];
+        api.addEventListener('filterChanged', (e: FilterChangedEvent) => sources.push(e.source));
+
+        api.setState({ filter: { filterModel: { athlete: { type: 'contains', filter: 'Ryan' } } } });
+        await asyncSetTimeout(0);
+
+        expect({ sources, displayed: api.getDisplayedRowCount() }).toEqual({ sources: ['api'], displayed: 1 });
+    });
+
     test('external filter alone filters rows and reports through isAnyFilterPresent', async () => {
         let maxAge = 20;
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
@@ -489,6 +606,265 @@ describe('Filter Manager API — whole-grid model & external filters', () => {
             ├── LEAF id:5 athlete:"Ryan Lochte" age:27 country:"United States"
             └── LEAF id:6 athlete:"Ian Thorpe" age:17 country:"Australia"
         `);
+    });
+
+    test('setColumnFilterModel filters nothing until onFilterChanged, also for a model its filter completes', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: threeFilterCols,
+            rowData: PEOPLE,
+        });
+        const events: string[] = [];
+        api.addEventListener('filterChanged', (e: FilterChangedEvent) => events.push(`filterChanged ${e.source}`));
+        api.addEventListener('modelUpdated', () => events.push('modelUpdated'));
+
+        await api.setColumnFilterModel('country', { values: ['Russia'] });
+        await api.setColumnFilterModel('athlete', { type: 'contains', filter: 'Nemov' });
+        await asyncSetTimeout(0);
+        expect({ step: 'models set', events, displayed: api.getDisplayedRowCount() }).toEqual({
+            step: 'models set',
+            events: [],
+            displayed: PEOPLE.length,
+        });
+
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        expect({ step: 'onFilterChanged', events, model: api.getFilterModel() }).toEqual({
+            step: 'onFilterChanged',
+            events: ['filterChanged api', 'modelUpdated'],
+            model: {
+                country: { filterType: 'set', values: ['Russia'] },
+                athlete: { type: 'contains', filter: 'Nemov', filterType: 'text' },
+            },
+        });
+        await new GridRows(api, 'both column models applied by one onFilterChanged').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:2 athlete:"Aleksey Nemov" age:24 country:"Russia"
+        `);
+
+        events.length = 0;
+        await api.setColumnFilterModel('country', null);
+        const popup = await ColumnFilterHarness.open(api, 'athlete');
+        await popup.setText('Ian');
+        await asyncSetTimeout(0);
+        expect({
+            step: 'edited in the popup',
+            told: events.includes('filterChanged columnFilter'),
+            displayed: api.getDisplayedRowCount(),
+        }).toEqual({ step: 'edited in the popup', told: true, displayed: 1 });
+    });
+
+    test('setColumnFilterModel on a multi filter completing the model filters nothing until onFilterChanged', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'athlete',
+                    filter: 'agMultiColumnFilter',
+                    filterParams: { filters: [{ filter: 'agTextColumnFilter', filterParams: { debounceMs: 0 } }] },
+                },
+                { field: 'age' },
+            ],
+            rowData: PEOPLE,
+        });
+        const events: string[] = [];
+        api.addEventListener('filterChanged', (e: FilterChangedEvent) => events.push(`filterChanged ${e.source}`));
+
+        await api.setColumnFilterModel('athlete', { filterModels: [{ type: 'contains', filter: 'Ryan' }] });
+        await asyncSetTimeout(0);
+        expect({ step: 'model set', events: [...events], displayed: api.getDisplayedRowCount() }).toEqual({
+            step: 'model set',
+            events: [],
+            displayed: PEOPLE.length,
+        });
+
+        api.onFilterChanged();
+        await asyncSetTimeout(0);
+        expect({ step: 'onFilterChanged', events: [...events], displayed: api.getDisplayedRowCount() }).toEqual({
+            step: 'onFilterChanged',
+            events: ['filterChanged api'],
+            displayed: 1,
+        });
+
+        events.length = 0;
+        const popup = await ColumnFilterHarness.open(api, 'athlete');
+        await popup.setText('Mi', 0);
+        await asyncSetTimeout(0);
+        expect({
+            step: 'edited in the popup',
+            told: events.includes('filterChanged columnFilter'),
+            displayed: api.getDisplayedRowCount(),
+        }).toEqual({ step: 'edited in the popup', told: true, displayed: 2 });
+    });
+
+    test('a custom filter calling filterChangedCallback from setModel filters once for each API call setting its model', async () => {
+        class CallbackInSetModelFilter implements IFilterComp {
+            private params!: IFilterParams;
+            private model: { value: string } | null = null;
+            public init(params: IFilterParams): void {
+                this.params = params;
+            }
+            public getGui(): HTMLElement {
+                return document.createElement('div');
+            }
+            public isFilterActive(): boolean {
+                return this.model != null;
+            }
+            public doesFilterPass(params: IDoesFilterPassParams<Person>): boolean {
+                return params.data.athlete.includes(this.model!.value);
+            }
+            public getModel() {
+                return this.model;
+            }
+            public setModel(model: { value: string } | null): void {
+                this.model = model;
+                this.params.filterChangedCallback({ fromSetModel: true });
+            }
+        }
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'athlete', filter: CallbackInSetModelFilter },
+                { field: 'age', filter: 'agNumberColumnFilter' },
+            ],
+            rowData: PEOPLE,
+        });
+        await api.getColumnFilterInstance('athlete');
+        const events: string[] = [];
+        api.addEventListener('filterChanged', (e: FilterChangedEvent) =>
+            events.push(`filterChanged ${e.source}${'fromSetModel' in e ? ' fromSetModel' : ''}`)
+        );
+        api.addEventListener('modelUpdated', () => events.push('modelUpdated'));
+
+        api.setFilterModel({ athlete: { value: 'Ian' } });
+        await asyncSetTimeout(0);
+        api.setFilterModel({ athlete: { value: 'Ian' } });
+        await asyncSetTimeout(0);
+        expect({ step: 'setFilterModel twice', events: [...events], displayed: api.getDisplayedRowCount() }).toEqual({
+            step: 'setFilterModel twice',
+            events: [
+                'filterChanged api fromSetModel',
+                'modelUpdated',
+                'filterChanged api fromSetModel',
+                'modelUpdated',
+            ],
+            displayed: 1,
+        });
+
+        events.length = 0;
+        await api.setColumnFilterModel('age', { filterType: 'number', type: 'greaterThan', filter: 0 });
+        await asyncSetTimeout(0);
+        expect({ step: 'another column set', events: [...events] }).toEqual({ step: 'another column set', events: [] });
+
+        await api.setColumnFilterModel('athlete', { value: 'Mi' });
+        await asyncSetTimeout(0);
+        expect({ step: 'setColumnFilterModel', events: [...events], displayed: api.getDisplayedRowCount() }).toEqual({
+            step: 'setColumnFilterModel',
+            events: ['filterChanged columnFilter fromSetModel', 'modelUpdated'],
+            displayed: 2,
+        });
+
+        events.length = 0;
+        await api.setColumnFilterModel('age', { filterType: 'number', type: 'lessThan', filter: 20 });
+        await asyncSetTimeout(0);
+        expect({ step: 'another column set again', events }).toEqual({ step: 'another column set again', events: [] });
+    });
+
+    test('a custom filter setting another column model from its setModel filters once for the outer setFilterModel', async () => {
+        class LinkedFilter implements IFilterComp {
+            private params!: IFilterParams;
+            private model: { value: string } | null = null;
+            public init(params: IFilterParams): void {
+                this.params = params;
+            }
+            public getGui(): HTMLElement {
+                return document.createElement('div');
+            }
+            public isFilterActive(): boolean {
+                return this.model != null;
+            }
+            public doesFilterPass(params: IDoesFilterPassParams<Person>): boolean {
+                return params.data.athlete.includes(this.model!.value);
+            }
+            public getModel() {
+                return this.model;
+            }
+            public setModel(model: { value: string } | null): void {
+                this.model = model;
+                this.params.filterChangedCallback();
+                void this.params.api.setColumnFilterModel('age', {
+                    filterType: 'number',
+                    type: 'lessThan',
+                    filter: 20,
+                });
+            }
+        }
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'athlete', filter: LinkedFilter },
+                { field: 'age', filter: 'agNumberColumnFilter' },
+            ],
+            rowData: PEOPLE,
+        });
+        await api.getColumnFilterInstance('athlete');
+        const events: string[] = [];
+        api.addEventListener('filterChanged', (e: FilterChangedEvent) =>
+            events.push(`${e.source}:${e.columns.map((column) => column.getColId()).join()}`)
+        );
+
+        api.setFilterModel({ athlete: { value: 'I' } });
+        await asyncSetTimeout(0);
+
+        // the outer model holds no age, so the age model the filter set is cleared again by the same call
+        expect({ events, displayed: api.getDisplayedRowCount() }).toEqual({ events: ['api:athlete'], displayed: 1 });
+    });
+
+    test('a custom filter asking to filter again and then throwing from setModel leaves no request for a later call', async () => {
+        class ThrowingFilter implements IFilterComp {
+            private params!: IFilterParams;
+            public init(params: IFilterParams): void {
+                this.params = params;
+            }
+            public getGui(): HTMLElement {
+                return document.createElement('div');
+            }
+            public isFilterActive(): boolean {
+                return false;
+            }
+            public doesFilterPass(): boolean {
+                return true;
+            }
+            public getModel() {
+                return null;
+            }
+            public setModel(): void {
+                this.params.filterChangedCallback();
+                throw new Error('setModel failed');
+            }
+        }
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'athlete', filter: ThrowingFilter },
+                { field: 'age', filter: 'agNumberColumnFilter' },
+            ],
+            rowData: PEOPLE,
+        });
+        await api.getColumnFilterInstance('athlete');
+        const columns: string[][] = [];
+        api.addEventListener('filterChanged', (e: FilterChangedEvent) =>
+            columns.push(e.columns.map((column) => column.getColId()))
+        );
+
+        const setAge = async (filter: number) => {
+            columns.length = 0;
+            await api.setColumnFilterModel('age', { filterType: 'number', type: 'lessThan', filter });
+            await asyncSetTimeout(0);
+            return [...columns];
+        };
+
+        await expect(api.setColumnFilterModel('athlete', { value: 'Ian' })).rejects.toThrow('setModel failed');
+        const afterColumnModel = await setAge(20);
+        expect(() => api.setFilterModel({ athlete: { value: 'Ian' } })).toThrow('setModel failed');
+        const afterWholeModel = await setAge(30);
+
+        expect({ afterColumnModel, afterWholeModel }).toEqual({ afterColumnModel: [], afterWholeModel: [] });
     });
 
     test('a model set before the rows arrive to infer data types from reads back at once', async () => {

@@ -247,6 +247,11 @@ export class ColumnFilterService
     // 100,000 rows and group by country. then do some filtering. all the cells flash, which is silly.
     private processingFilterChange = false;
 
+    /** Above zero while the API sets a model: a filter rewriting it before the call returns reports the call's result. */
+    private applyingModelDepth = 0;
+    /** Filters asking meanwhile to filter again, by column with their event attributes: the call answers each once. */
+    private requestedFilterChanges: Map<AgColumn, any> | null = null;
+
     /** Model updates deferred until cell data types are inferred, in call order. */
     private modelUpdates: QueuedModelUpdate[] = [];
 
@@ -305,43 +310,49 @@ export class ColumnFilterService
         const allPromises: AgPromise<void>[] = [];
         const previousModel = this.getModel(true);
 
-        if (model) {
-            // mark the filters as we set them, so any active filters left over we stop
-            const modelKeys = new Set(Object.keys(model));
+        let requested: Map<AgColumn, any> | null;
+        ++this.applyingModelDepth;
+        try {
+            if (model) {
+                // mark the filters as we set them, so any active filters left over we stop
+                const modelKeys = new Set(Object.keys(model));
 
-            this.allColumnFilters.forEach((filterWrapper, colId) => {
-                const newModel = model[colId];
+                this.allColumnFilters.forEach((filterWrapper, colId) => {
+                    const newModel = model[colId];
 
-                allPromises.push(this.setModelOnFilterWrapper(filterWrapper, newModel));
-                modelKeys.delete(colId);
-            });
+                    allPromises.push(this.setModelOnFilterWrapper(filterWrapper, newModel));
+                    modelKeys.delete(colId);
+                });
 
-            // at this point, processedFields contains data for which we don't have a filter working yet
-            modelKeys.forEach((colId) => {
-                const column = colModel.colsById[colId];
+                // at this point, processedFields contains data for which we don't have a filter working yet
+                modelKeys.forEach((colId) => {
+                    const column = colModel.colsById[colId];
 
-                if (!column) {
-                    this.warn(62, { colId });
-                    return;
-                }
+                    if (!column) {
+                        this.warn(62, { colId });
+                        return;
+                    }
 
-                if (!column.isFilterAllowed()) {
-                    this.warn(63, { colId });
-                    return;
-                }
+                    if (!column.isFilterAllowed()) {
+                        this.warn(63, { colId });
+                        return;
+                    }
 
-                const filterWrapper = this.getOrCreateFilterWrapper(column, true);
-                if (!filterWrapper) {
-                    this.warn(64, { colId });
-                    return;
-                }
-                allPromises.push(this.setModelOnFilterWrapper(filterWrapper, model[colId], true));
-            });
-        } else {
-            this.model = {};
-            this.allColumnFilters.forEach((filterWrapper) => {
-                allPromises.push(this.setModelOnFilterWrapper(filterWrapper, null));
-            });
+                    const filterWrapper = this.getOrCreateFilterWrapper(column, true);
+                    if (!filterWrapper) {
+                        this.warn(64, { colId });
+                        return;
+                    }
+                    allPromises.push(this.setModelOnFilterWrapper(filterWrapper, model[colId], true));
+                });
+            } else {
+                this.model = {};
+                this.allColumnFilters.forEach((filterWrapper) => {
+                    allPromises.push(this.setModelOnFilterWrapper(filterWrapper, null));
+                });
+            }
+        } finally {
+            requested = this.endApplyingModel();
         }
 
         AgPromise.all(allPromises).then(() => {
@@ -349,16 +360,21 @@ export class ColumnFilterService
 
             const columns: AgColumn[] = [];
             this.allColumnFilters.forEach((filterWrapper, colId) => {
+                const column = filterWrapper.column;
                 const before = previousModel ? previousModel[colId] : null;
                 const after = currentModel ? currentModel[colId] : null;
 
-                if (!_jsonEquals(before, after)) {
-                    columns.push(filterWrapper.column);
+                if (requested?.has(column) || !_jsonEquals(before, after)) {
+                    columns.push(column);
                 }
             });
 
             if (columns.length > 0) {
-                filterManager?.onFilterChanged({ columns, source });
+                let additionalEventAttributes: any;
+                requested?.forEach((attributes) => {
+                    additionalEventAttributes = { ...additionalEventAttributes, ...attributes };
+                });
+                filterManager?.onFilterChanged({ columns, source, additionalEventAttributes });
             } else if (forceUpdateActive) {
                 this.updateActive('filterChanged');
             }
@@ -1463,21 +1479,49 @@ export class ColumnFilterService
         const filterChangedCallback = this.filterChangedCallbackFactory(column);
         return (model, additionalEventAttributes) => {
             this.updateStoredModel(colId, model);
-            this.refreshHandlerAndUi(column, model, source, source === 'floating', additionalEventAttributes).then(() =>
-                filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' })
+            const refreshed = this.refreshHandlerAndUi(
+                column,
+                model,
+                source,
+                source === 'floating',
+                additionalEventAttributes
             );
+            // a filter rewriting the model the API gives it reports the call's result, not a change of its own
+            if (this.applyingModelDepth === 0) {
+                refreshed.then(() => filterChangedCallback({ ...additionalEventAttributes, source: 'columnFilter' }));
+            }
         };
     }
 
     private filterChangedCallbackFactory(column: AgColumn): (additionalEventAttributes?: any) => void {
         return (additionalEventAttributes?: any) => {
-            this.callOnFilterChangedOutsideRenderCycle({
-                additionalEventAttributes,
-                columns: [column],
-                column,
-                source: additionalEventAttributes?.source ?? 'columnFilter',
-            });
+            if (this.applyingModelDepth === 0) {
+                this.announceFilterChanged(column, additionalEventAttributes);
+                return;
+            }
+            const requested = (this.requestedFilterChanges ??= new Map());
+            requested.set(column, { ...requested.get(column), ...additionalEventAttributes });
         };
+    }
+
+    /** The requests the API call ending now answers: none for a call made inside another, which answers them. */
+    private endApplyingModel(): Map<AgColumn, any> | null {
+        --this.applyingModelDepth;
+        if (this.applyingModelDepth > 0) {
+            return null;
+        }
+        const requested = this.requestedFilterChanges;
+        this.requestedFilterChanges = null;
+        return requested;
+    }
+
+    private announceFilterChanged(column: AgColumn, additionalEventAttributes: any): void {
+        this.callOnFilterChangedOutsideRenderCycle({
+            additionalEventAttributes,
+            columns: [column],
+            column,
+            source: additionalEventAttributes?.source ?? 'columnFilter',
+        });
     }
 
     /** Returns whether the model was cleared, which happens only when the handler could not take the new params. */
@@ -1803,8 +1847,20 @@ export class ColumnFilterService
 
     public setModelForColumnLegacy(key: string | AgColumn, model: any): AgPromise<void> {
         const column = this.beans.colModel.getNonPivotCol(key);
-        const filterWrapper = column ? this.getOrCreateFilterWrapper(column, true) : null;
-        return filterWrapper ? this.setModelOnFilterWrapper(filterWrapper, model) : AgPromise.resolve();
+        let applied: AgPromise<void>;
+        let requested: Map<AgColumn, any> | null;
+        // the caller filters again with `onFilterChanged`, unless a filter asks to itself
+        ++this.applyingModelDepth;
+        try {
+            const filterWrapper = column ? this.getOrCreateFilterWrapper(column, true) : null;
+            applied = filterWrapper ? this.setModelOnFilterWrapper(filterWrapper, model) : AgPromise.resolve();
+        } finally {
+            requested = this.endApplyingModel();
+        }
+        requested?.forEach((additionalEventAttributes, requestingColumn) =>
+            this.announceFilterChanged(requestingColumn, additionalEventAttributes)
+        );
+        return applied;
     }
 
     public setColDefPropsForDataType(

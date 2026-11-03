@@ -68,6 +68,8 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
     private params: MultiFilterParams;
     private wrappers: (MultiFilterWrapper | null)[] = [];
     private filterChangedCallback: ((additionalEventAttributes?: any) => void) | null;
+    /** Above zero while `setModel` gives the children their models: a child's rewrite of one is the call's result. */
+    private settingModelDepth = 0;
     private readonly activeFilterIndices: number[] = [];
 
     private readonly afterFiltersReadyFuncs: (() => void)[] = [];
@@ -311,45 +313,50 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
 
         const promises: AgPromise<void>[] = [];
 
-        this.wrappers.forEach((wrapper, index) => {
-            if (!wrapper) {
-                return;
-            }
-            const modelForFilter = getFilterModelForIndex(model, index);
-            const { filter, filterParams, handler, handlerParams, state } = wrapper;
-            if (handler) {
-                const newState = {
-                    model: modelForFilter,
-                    state: state?.state,
-                };
-                wrapper.state = newState;
-                wrapper.model = modelForFilter;
-                promises.push(
-                    _refreshHandlerAndUi(
-                        // a child refusing the model has refreshed its ui with the one it stored instead
-                        () =>
-                            AgPromise.resolve(
-                                wrapper.state === newState
-                                    ? { filter: filter as any, filterParams: filterParams as any }
-                                    : undefined
-                            ),
-                        handler,
-                        handlerParams!,
-                        modelForFilter,
-                        newState,
-                        'api'
-                    ).then(() => {
-                        this.updateActiveListForHandler(index, wrapper.model);
-                    })
-                );
-            } else {
-                promises.push(
-                    setFilterModel(filter, modelForFilter).then(() => {
-                        this.updateActiveListForFilter(index, filter);
-                    })
-                );
-            }
-        });
+        ++this.settingModelDepth;
+        try {
+            this.wrappers.forEach((wrapper, index) => {
+                if (!wrapper) {
+                    return;
+                }
+                const modelForFilter = getFilterModelForIndex(model, index);
+                const { filter, filterParams, handler, handlerParams, state } = wrapper;
+                if (handler) {
+                    const newState = {
+                        model: modelForFilter,
+                        state: state?.state,
+                    };
+                    wrapper.state = newState;
+                    wrapper.model = modelForFilter;
+                    promises.push(
+                        _refreshHandlerAndUi(
+                            // a child refusing the model has refreshed its ui with the one it stored instead
+                            () =>
+                                AgPromise.resolve(
+                                    wrapper.state === newState
+                                        ? { filter: filter as any, filterParams: filterParams as any }
+                                        : undefined
+                                ),
+                            handler,
+                            handlerParams!,
+                            modelForFilter,
+                            newState,
+                            'api'
+                        ).then(() => {
+                            this.updateActiveListForHandler(index, wrapper.model);
+                        })
+                    );
+                } else {
+                    promises.push(
+                        setFilterModel(filter, modelForFilter).then(() => {
+                            this.updateActiveListForFilter(index, filter);
+                        })
+                    );
+                }
+            });
+        } finally {
+            --this.settingModelDepth;
+        }
         return AgPromise.all(promises).then(() => {});
     }
 
@@ -430,7 +437,7 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
             };
             wrapper.state = newState;
             wrapper.model = model;
-            _refreshHandlerAndUi(
+            const refreshed = _refreshHandlerAndUi(
                 () =>
                     AgPromise.resolve({
                         filter: wrapper.filter as any,
@@ -441,9 +448,11 @@ export class MultiFilter extends BaseMultiFilter<MultiFilterWrapper> implements 
                 model,
                 newState,
                 'ui'
-            ).then(() => {
-                this.onHandlerModelChanged(index, wrapper.model, additionalEventAttributes);
-            });
+            );
+            // a child rewriting the model `setModel` gives it reports that call's result
+            if (this.settingModelDepth === 0) {
+                refreshed.then(() => this.onHandlerModelChanged(index, wrapper.model, additionalEventAttributes));
+            }
         };
 
         const colFilter = beans.colFilter!;
