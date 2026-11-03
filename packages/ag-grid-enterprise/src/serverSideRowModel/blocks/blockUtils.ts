@@ -116,7 +116,12 @@ export class BlockUtils extends BeanStub implements NamedBean {
     }
 
     private setRowGroupInfo(rowNode: RowNode): void {
-        rowNode.key = this.getRowGroupKey(rowNode, rowNode.rowGroupColumn!);
+        const column = rowNode.rowGroupColumn!;
+        const key = this.gos.get('getServerSideRowGroupKey')?.(
+            this.gos.addCommon({ data: rowNode.data, node: rowNode, column })
+        );
+        // Use 'data' - group keys should be based on committed data, not pending edits
+        rowNode.key = key === undefined ? this.valueSvc.getValueFromData(column, rowNode) : key;
 
         if (rowNode.key === null || rowNode.key === undefined) {
             _doOnce(() => {
@@ -136,15 +141,6 @@ export class BlockUtils extends BeanStub implements NamedBean {
             const footerNode = _createRowNodeFooter(rowNode, this.beans);
             footerNode.uiLevel = rowNode.uiLevel + 1;
         }
-    }
-
-    private getRowGroupKey(rowNode: RowNode, column: AgColumn): any {
-        const getRowGroupKey = this.gos.get('getServerSideRowGroupKey');
-        const key = getRowGroupKey
-            ? getRowGroupKey(this.gos.addCommon({ data: rowNode.data, node: rowNode, column }))
-            : undefined;
-        // Use 'data' - group keys should be based on committed data, not pending edits
-        return key === undefined ? this.valueSvc.getValueFromData(column, rowNode) : key;
     }
 
     private setMasterDetailInfo(rowNode: RowNode): void {
