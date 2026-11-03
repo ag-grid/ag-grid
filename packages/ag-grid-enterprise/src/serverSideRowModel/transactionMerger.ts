@@ -53,22 +53,21 @@ export function _applyMergedTransactions(
     };
 
     const applyPlanned = () => {
-        if (planned.length === 0) {
-            return;
-        }
         let batch = new MergeBatch();
+        const applyBatch = () => {
+            batch.apply(transactions, target, results);
+            batch = new MergeBatch();
+        };
         for (let i = 0, len = planned.length; i < len; ++i) {
             const { index, entries } = planned[i];
             if (batch.mixesCachedAndUncachedRemoves(entries, target) || replacesOwnUpdateEffects(entries, target)) {
                 // a removal that misses some ids and deletes others marks rows for refresh, and a row updated twice
                 // with effects that can't be skipped needs both updates, so either must stay a call of its own
-                batch.apply(transactions, target, results);
-                batch = new MergeBatch();
+                applyBatch();
                 applyAlone(index, entries);
             } else {
                 if (batch.skipsUpdateEffects(entries, target)) {
-                    batch.apply(transactions, target, results);
-                    batch = new MergeBatch();
+                    applyBatch();
                 }
                 if (target.isAccepted(transactions[index])) {
                     batch.accept(index, entries, target);
@@ -134,13 +133,12 @@ function getRowEntries(
         for (let i = 0, len = rows.length; i < len; ++i) {
             const data = rows[i];
             const id = target.getRowId(data, op);
+            if (id != null) {
+                entries.push({ op, id, data });
+            }
             if (id == null || id === '' || id === GRAND_TOTAL_ROW_ID) {
-                if (id != null) {
-                    entries.push({ op, id, data });
-                }
                 return { entries, mergeable: false };
             }
-            entries.push({ op, id, data });
         }
     }
     return { entries, mergeable: true };
@@ -296,10 +294,6 @@ class MergeBatch {
         results: ServerSideTransactionResult[]
     ): void {
         const transactionIndexes = this.transactionIndexes;
-        if (transactionIndexes.length === 0) {
-            return;
-        }
-
         const merged: ServerSideTransaction = {};
         const rowIds = new Map<any, string>();
         const rowsByOp = { update: this.updates, add: this.adds, remove: this.removes };

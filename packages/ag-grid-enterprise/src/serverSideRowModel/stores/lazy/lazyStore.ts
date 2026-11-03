@@ -5,7 +5,6 @@ import type {
     IRowNode,
     ISelectionService,
     IServerSideStore,
-    IsApplyServerSideTransactionParams,
     LoadSuccessParams,
     RowBounds,
     RowNode,
@@ -14,7 +13,6 @@ import type {
     ServerSideTransaction,
     ServerSideTransactionResult,
     StoreRefreshAfterParams,
-    WithoutGridCommon,
 } from 'ag-grid-community';
 import {
     BeanStub,
@@ -165,15 +163,10 @@ export class LazyStore extends BeanStub implements IServerSideStore {
 
     public isTransactionAccepted(transaction: ServerSideTransaction): boolean {
         const applyCallback = this.gos.getCallback('isApplyServerSideTransaction');
-        if (!applyCallback) {
-            return true;
-        }
-        const params: WithoutGridCommon<IsApplyServerSideTransactionParams> = {
-            transaction: transaction,
-            parentNode: this.parentRowNode,
-            groupLevelInfo: this.info,
-        };
-        return !!applyCallback(params);
+        return (
+            !applyCallback ||
+            !!applyCallback({ transaction, parentNode: this.parentRowNode, groupLevelInfo: this.info })
+        );
     }
 
     public getRemoveRowId(idFunc: RowIdFunc, data: any): string {
