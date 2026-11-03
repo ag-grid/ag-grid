@@ -1330,12 +1330,8 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
          */
     grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom',
-    /** When `true`, the grand total row set by `grandTotalRow` is shown even while the grid has no rows, such as when
-         * the row data is empty or every row is filtered out. When `false`, it is shown only while the grid shows rows.
-         * With the Server-Side Row Model, the row needs the `grandTotalData` the server returns.
-         * With the Client-Side Row Model, the row is shown once row data is set, and pivot mode without row groups never
-         * adds one: its root row shows the aggregated values instead.
-         * An inline grand total row counts as a displayed row, as in `getDisplayedRowCount()`.
+    /** When `true`, the grand total row is shown even when the grid has no rows to display,
+         * for example when the row data is empty or all rows are filtered out.
          * @default false
          * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
          */
