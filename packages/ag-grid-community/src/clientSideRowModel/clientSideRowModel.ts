@@ -857,8 +857,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             return null;
         }
 
-        if (this.rootNode?._leafs?.length) {
-            if (beans.filterManager?.isAnyFilterPresent() && this.getRowCount() === 0) {
+        const rootNode = this.rootNode;
+        if (rootNode?._leafs?.length) {
+            // getRowCount counts an inline grand total row, which is not a matching row
+            const grandTotalRowCount = rootNode.sibling?.displayed ? 1 : 0;
+            if (beans.filterManager?.isAnyFilterPresent() && this.getRowCount() === grandTotalRowCount) {
                 return 'noMatchingRows';
             }
         } else if (this.rowCountReady || (gos.get('rowData')?.length ?? 0) == 0) {
@@ -956,7 +959,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
     public getRowIndexAtPixel(pixelToMatch: number): number {
         const rowsToRender = this.rowsToRender;
         const rowsToRenderLen = rowsToRender.length;
-        if (this.isEmpty() || rowsToRenderLen === 0) {
+        // rowsToRender of an empty grid may hold an empty pivot root, never drawn; only an inline grand total is
+        if (rowsToRenderLen === 0 || (this.isEmpty() && !this.rootNode?.sibling?.displayed)) {
             return -1;
         }
 

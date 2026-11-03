@@ -234,6 +234,11 @@ function validateCalculatedColumnsOptions(options: CalculatedColumnsOptions): Va
  */
 const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
     const definedValidations: Validations<GridOptions> = {
+        alwaysShowGrandTotalRow: {
+            dependencies: {
+                grandTotalRow: { required: ['top', 'bottom', 'pinnedTop', 'pinnedBottom'] },
+            },
+        },
         autoSizePadding: {
             validate({ autoSizePadding }) {
                 return toConstrainedNum('autoSizePadding', autoSizePadding, 0);

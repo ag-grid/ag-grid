@@ -11,7 +11,7 @@ A grand total row can be included in the grid by setting the `grandTotalRow` gri
 
 Setting a value of `"top"` or `"bottom"` renders the grand total row as the first or last row in the grid, respectively.
 Setting a value of `"pinnedTop"` or `"pinnedBottom"` renders the grand total row pinned to the top or bottom of the grid, respectively.
-The grand total row is shown only while the grid shows rows, so it leaves a grid whose rows are all removed or filtered out.
+The grand total row is shown only while the grid shows rows, so it leaves a grid whose rows are all removed or filtered out, unless [`alwaysShowGrandTotalRow`](#showing-the-grand-total-row-with-no-rows) is set.
 
 {% note %}
 Grand total rows are also supported with the [Server-Side Row Model](./server-side-model-grouping/#grand-total-row), including on flat grids without grouping.
@@ -26,6 +26,20 @@ The following configuration shows how grand total rows can be included at the bo
 ```{% frameworkTransform=true %}
 const gridOptions = {
     grandTotalRow: 'bottom',
+}
+```
+
+### Showing the Grand Total Row with No Rows
+
+To keep the grand total row while the grid has no rows, such as when the row data is empty or every row is filtered out, set `alwaysShowGrandTotalRow` to `true`. The grid still shows its no-rows or no-matching-rows overlay. An inline grand total row counts as a displayed row, as in `getDisplayedRowCount()`.
+With no rows, a `sum` in the grand total row is blank; the [Server-Side Row Model](./server-side-model-grouping/#grand-total-row) shows the `grandTotalData` the server returns.
+When every row is filtered out, the [Aggregation Filtering](./aggregation-filtering/) options decide whether the row totals the filtered-out rows instead.
+With the Client-Side Row Model, the row is shown once row data is set, and pivot mode without row groups never adds one: its root row shows the aggregated values instead.
+
+```{% frameworkTransform=true %}
+const gridOptions = {
+    grandTotalRow: 'bottom',
+    alwaysShowGrandTotalRow: true,
 }
 ```
 
