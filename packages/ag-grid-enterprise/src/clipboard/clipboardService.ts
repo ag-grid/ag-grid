@@ -92,7 +92,10 @@ function findHtmlElement(
 ): { start: number; end: number; content: string } | null {
     openRegex.lastIndex = 0;
     const open = openRegex.exec(html);
-    const contentStart = open ? findHtmlTagEnd(html, openRegex.lastIndex) : -1;
+    if (!open) {
+        return null;
+    }
+    const contentStart = findHtmlTagEnd(html, openRegex.lastIndex);
     if (contentStart < 0) {
         return null;
     }
@@ -101,7 +104,7 @@ function findHtmlElement(
     if (!close) {
         return null;
     }
-    return { start: open!.index, end: closeRegex.lastIndex, content: html.slice(contentStart, close.index) };
+    return { start: open.index, end: closeRegex.lastIndex, content: html.slice(contentStart, close.index) };
 }
 
 /** `html` with every complete `<!-- … -->` comment removed; an unterminated comment is left in place. */
@@ -519,7 +522,10 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             // every `<` must open a well-formed tag; a stray one means the HTML isn't a plain table
             HTML_TAG_NAME_REGEX.lastIndex = tagStart;
             const nameMatch = HTML_TAG_NAME_REGEX.exec(tableContent);
-            const tagEnd = nameMatch ? findHtmlTagEnd(tableContent, HTML_TAG_NAME_REGEX.lastIndex) : -1;
+            if (!nameMatch) {
+                return null;
+            }
+            const tagEnd = findHtmlTagEnd(tableContent, HTML_TAG_NAME_REGEX.lastIndex);
             if (tagEnd < 0) {
                 return null;
             }
@@ -529,7 +535,7 @@ export class ClipboardService extends BeanStub implements NamedBean, IClipboardS
             endOfPreviousTag = tagEnd;
 
             const tag = tableContent.slice(tagStart, tagEnd);
-            const [, closingSlash, tagName] = nameMatch!;
+            const [, closingSlash, tagName] = nameMatch;
             const isClosingTag = closingSlash === '/';
             const name = tagName.toLowerCase();
             if (
