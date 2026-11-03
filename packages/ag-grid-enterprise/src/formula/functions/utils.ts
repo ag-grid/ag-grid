@@ -120,7 +120,10 @@ type WildcardToken = string | typeof WILDCARD_ANY_RUN | typeof WILDCARD_ANY_ONE;
 /** Wildcards never match a line terminator, as `.` doesn't in a non-`s` regular expression. */
 const isLineTerminator = (ch: string): boolean => ch === '\n' || ch === '\r' || ch === '\u2028' || ch === '\u2029';
 
-/** Case folding of a case-insensitive, non-unicode regular expression (ECMAScript `Canonicalize`). */
+/**
+ * Case folding of a case-insensitive, non-unicode regular expression (ECMAScript `Canonicalize`): a character whose
+ * upper case is several characters (`ß`) or an ASCII one (`ı`) folds to itself.
+ */
 function foldCase(ch: string): string {
     const code = ch.charCodeAt(0);
     if (code < 128) {
@@ -128,19 +131,21 @@ function foldCase(ch: string): string {
         return code >= 97 && code <= 122 ? String.fromCharCode(code - 32) : ch;
     }
     const upper = ch.toUpperCase();
-    if (upper.length !== 1 || (ch.charCodeAt(0) >= 128 && upper.charCodeAt(0) < 128)) {
-        return ch;
-    }
-    return upper;
+    return upper.length === 1 && upper.charCodeAt(0) >= 128 ? upper : ch;
 }
 
-/** `*` matches any run of characters and `?` any single one; `~*` and `~?` match them literally. */
+/**
+ * `*` matches any run of characters and `?` any single one. `~*` and `~?` match those characters literally; any
+ * other `~` is an ordinary character.
+ */
 function compileWildcard(pattern: string): WildcardToken[] {
     const tokens: WildcardToken[] = [];
-    for (let i = 0; i < pattern.length; i++) {
+    for (let i = 0, len = pattern.length; i < len; ++i) {
         const ch = pattern[i];
-        if (ch === '~' && (pattern[i + 1] === '*' || pattern[i + 1] === '?')) {
-            tokens.push(pattern[++i]);
+        const next = pattern[i + 1];
+        if (ch === '~' && (next === '*' || next === '?')) {
+            tokens.push(next);
+            ++i;
         } else if (ch === '*') {
             // consecutive `*` are equivalent to one
             if (tokens[tokens.length - 1] !== WILDCARD_ANY_RUN) {
@@ -155,42 +160,45 @@ function compileWildcard(pattern: string): WildcardToken[] {
     return tokens;
 }
 
+function matchesChar(token: string | typeof WILDCARD_ANY_ONE, ch: string): boolean {
+    return token === WILDCARD_ANY_ONE ? !isLineTerminator(ch) : token === foldCase(ch);
+}
+
 /**
- * Case-insensitive, whole-string wildcard match. Greedy two-pointer scan that, on a mismatch, resumes from the
- * most recent `*` only, so it runs in O(text × pattern) time at worst.
+ * Case-insensitive, whole-string match in O(text × pattern) time. On a mismatch only the most recent `*` is widened:
+ * every earlier segment matched at its earliest position, so widening an earlier `*` cannot find a match this misses.
  */
 function matchesWildcard(tokens: WildcardToken[], text: string): boolean {
     const textLength = text.length;
     const tokenCount = tokens.length;
-    let t = 0;
-    let p = 0;
-    let starP = -1;
-    let starT = 0;
-    while (t < textLength) {
-        const token = tokens[p];
-        const ch = text[t];
-        if (
-            p < tokenCount &&
-            token !== WILDCARD_ANY_RUN &&
-            (token === WILDCARD_ANY_ONE ? !isLineTerminator(ch) : token === foldCase(ch))
-        ) {
-            p++;
-            t++;
-        } else if (p < tokenCount && token === WILDCARD_ANY_RUN) {
-            starP = p++;
-            starT = t;
-        } else if (starP >= 0 && !isLineTerminator(text[starT])) {
-            // let the last `*` absorb one more character and retry the rest of the pattern after it
-            p = starP + 1;
-            t = ++starT;
+    let textPos = 0;
+    let tokenPos = 0;
+    // the most recent `*` token, and the end of the text it has absorbed so far
+    let starTokenPos = -1;
+    let starTextEnd = 0;
+    while (textPos < textLength) {
+        const token = tokenPos < tokenCount ? tokens[tokenPos] : undefined;
+        if (token === WILDCARD_ANY_RUN) {
+            starTokenPos = tokenPos;
+            starTextEnd = textPos;
+            tokenPos++;
+        } else if (token !== undefined && matchesChar(token, text[textPos])) {
+            tokenPos++;
+            textPos++;
+        } else if (starTokenPos >= 0 && !isLineTerminator(text[starTextEnd])) {
+            // widen the `*` by one character (never a line terminator) and retry the tokens after it
+            starTextEnd++;
+            textPos = starTextEnd;
+            tokenPos = starTokenPos + 1;
         } else {
             return false;
         }
     }
-    while (p < tokenCount && tokens[p] === WILDCARD_ANY_RUN) {
-        p++;
+    // the text is used up, so the match succeeds only if every remaining token is a `*` matching nothing
+    while (tokenPos < tokenCount && tokens[tokenPos] === WILDCARD_ANY_RUN) {
+        tokenPos++;
     }
-    return p === tokenCount;
+    return tokenPos === tokenCount;
 }
 
 const COMPARE_VALUES = (op: OperatorSymbol, query: string, cell: unknown) => {
