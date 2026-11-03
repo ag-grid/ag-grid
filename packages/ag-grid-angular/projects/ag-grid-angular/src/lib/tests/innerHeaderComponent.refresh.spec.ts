@@ -6,8 +6,9 @@
  * `innerHeaderGroupComponent`) list none, unlike `headerComponent` which lists `refresh`.
  *
  * Setup: a column with `headerComponentParams.innerHeaderComponent` set to an Angular component
- * implementing `IInnerHeaderAngularComp`. The host's `columnDefs` input is then replaced with one
- * that has a new `headerName`.
+ * implementing `IInnerHeaderAngularComp`, plus the header `template` from the Column Headers docs (so
+ * the default header refreshes in place rather than being recreated). The host's `columnDefs` input
+ * is then replaced with one that has a new `headerName`.
  *
  * Expected: IHeader.refresh is documented as "Get the header to refresh. Gets called whenever Column
  * Defs are updated.", so `refresh` is called with the new params and the displayed name updates. A
@@ -15,10 +16,11 @@
  *
  * Actual: `refresh` is never called on the Angular inner header component.
  *
- * Reported on ag-grid-angular 34.3.1.
+ * Reported on ag-grid-angular 34.3.1 and 35.0.0.
  *
- * Source: AG Grid docs MCP search log analysis (AG-18665). A coding agent on Angular 34.3.1
- * searched, in May 2026: "inner header component refresh when columnDefs change innerHeaderComponent".
+ * Source: AG Grid docs MCP search log analysis (AG-18665). Coding agents on Angular searched twice:
+ * on 35.0.0 in February 2026 and on 34.3.1 in May 2026 (the latter: "inner header component refresh
+ * when columnDefs change innerHeaderComponent").
  */
 import { Component } from '@angular/core';
 import type { ComponentFixture } from '@angular/core/testing';
@@ -81,12 +83,21 @@ class TestHostComponent {
     columnDefs: ColDef[] = columnDefs('A', 'B');
 }
 
-const TEMPLATE = `<div class="ag-cell-label-container" role="presentation">
+// The header template from the Column Headers docs. Without a string template the default header is
+// recreated rather than refreshed, as its built-in template is a new object on every comparison.
+const template = `<div class="ag-cell-label-container" role="presentation">
+    <span data-ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>
+    <span data-ref="eFilterButton" class="ag-header-icon ag-header-cell-filter-button"></span>
     <div data-ref="eLabel" class="ag-header-cell-label" role="presentation">
-        <span data-ref="eText" class="ag-header-cell-text"></span>
+        <span data-ref="eSortOrder" class="ag-header-icon ag-sort-order ag-hidden"></span>
+        <span data-ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon ag-hidden"></span>
+        <span data-ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon ag-hidden"></span>
+        <span data-ref="eSortMixed" class="ag-header-icon ag-sort-mixed-icon ag-hidden"></span>
+        <span data-ref="eSortNone" class="ag-header-icon ag-sort-none-icon ag-hidden"></span>
+        <span data-ref="eText" class="ag-header-cell-text" role="columnheader"></span>
+        <span data-ref="eFilter" class="ag-header-icon ag-filter-icon"></span>
     </div>
 </div>`;
-let template: string | undefined = TEMPLATE;
 
 function columnDefs(ngHeaderName: string, jsHeaderName: string): ColDef[] {
     return [
@@ -140,31 +151,8 @@ describe('innerHeaderComponent refresh', () => {
         fixture.componentInstance.columnDefs = columnDefs('A', 'B2');
         fixture.detectChanges();
         await waitFor(fixture, () => jsRefreshedWith.length > 0);
-        // eslint-disable-next-line no-console
-        console.log('PROBE', fixture.nativeElement.querySelector('.ag-header')?.textContent, Array.from(fixture.nativeElement.querySelectorAll('.js-inner-header')).length);
 
         expect(jsRefreshedWith).toEqual(['B2']);
         expect(text('.js-inner-header')).toBe('B2');
-    });
-});
-
-describe('PROBE default template', () => {
-    let fixture: ComponentFixture<TestHostComponent>;
-    const text = (selector: string) => fixture.nativeElement.querySelector(selector)?.textContent;
-    beforeAll(() => (template = undefined));
-    afterAll(() => (template = TEMPLATE));
-
-    it('probe', async () => {
-        angularRefreshedWith = [];
-        await TestBed.configureTestingModule({ imports: [TestHostComponent] }).compileComponents();
-        fixture = TestBed.createComponent(TestHostComponent);
-        fixture.autoDetectChanges();
-        await waitFor(fixture, () => text('.ng-inner-header') === 'A');
-        fixture.componentInstance.columnDefs = columnDefs('A2', 'B');
-        fixture.detectChanges();
-        await waitFor(fixture, () => text('.ng-inner-header') === 'A2');
-        // eslint-disable-next-line no-console
-        console.log('PROBE-DEFAULT', text('.ng-inner-header'), JSON.stringify(angularRefreshedWith));
-        expect(true).toBe(true);
     });
 });
