@@ -10,7 +10,7 @@ export interface MenuItemLeafDef<TData = any, TContext = any> {
      * The accessible name announced by screen readers, for when `name` alone does not describe the item,
      * e.g. `'Delete row'` for an item named `'Delete'`.
      * This replaces the whole accessible name, so include any `shortcut` text that should still be announced.
-     * When not set, the accessible name is taken from the visible `name` and `shortcut`.
+     * When not set, the accessible name is taken from the item's visible content, such as `name` and `shortcut`.
      */
     ariaLabel?: string;
     /** Set to `true` to display the menu item as disabled. */

@@ -58,7 +58,7 @@ By default, screen readers announce a menu item using its visible `name` and `sh
 
 `ariaLabel` replaces the whole accessible name, so `shortcut` text is no longer announced. Include it in `ariaLabel` if screen reader users still need it.
 
-`ariaLabel` is not applied to a [Custom Menu Item Component](./component-menu-item/) that sets `suppressAria` in `configureDefaults`.
+For a [Custom Menu Item Component](./component-menu-item/), the grid applies `ariaLabel` only when `configureDefaults` enables the default behaviour without `suppressAria`. Otherwise, read `ariaLabel` from the component's params and set it yourself.
 
 ## Built In Menu Items
 
