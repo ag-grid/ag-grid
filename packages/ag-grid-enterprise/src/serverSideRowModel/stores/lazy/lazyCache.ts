@@ -1092,9 +1092,10 @@ export class LazyCache extends BeanStub {
             return;
         }
         if (this.firstBlockPending) {
-            // restore the initial row so the failed load has a row to retry from
+            // restore the initial row so the failed load has a row to retry from, keeping any rows a
+            // transaction or row count added while the block was pending
             this.firstBlockPending = false;
-            this.numberOfRows = 1;
+            this.numberOfRows = Math.max(this.numberOfRows, 1);
         }
         this.awaitingFirstBlock = false;
         const wasRefreshing = this.nodesToRefresh.size > 0;
@@ -1136,6 +1137,9 @@ export class LazyCache extends BeanStub {
         if (this.isLastRowKnown && this.numberOfRows === 0) {
             this.numberOfRows = 1;
             this.isLastRowKnown = false;
+            // the reload is awaited like a first block, so 'none' drops the placeholder row again
+            this.awaitingFirstBlock = true;
+            this.syncInitialLoadingRow();
             this.fireStoreUpdatedEvent();
         } else if (this.isLastRowKnown && this.isLastRowInferred) {
             // A refreshed response may be longer than the one which inferred the last row, so the

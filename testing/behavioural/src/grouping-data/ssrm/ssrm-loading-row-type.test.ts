@@ -4,7 +4,7 @@ import type { MockInstance } from 'vitest';
 
 import type { IServerSideDatasource, IServerSideGetRowsParams } from 'ag-grid-community';
 import { ValidationModule, enableDevValidations } from 'ag-grid-community';
-import { RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
 const columnDefs = [{ field: 'country', rowGroup: true, hide: true }, { field: 'medals' }];
 
@@ -46,7 +46,7 @@ function expectEmptyLoadingRows(count: number) {
 
 describe('SSRM serverSideLoadingRowType', () => {
     const gridManager = new TestGridsManager({
-        modules: [ServerSideRowModelModule, RowGroupingModule, ValidationModule],
+        modules: [ServerSideRowModelModule, ServerSideRowModelApiModule, RowGroupingModule, ValidationModule],
     });
     let consoleWarnSpy: MockInstance;
 
@@ -198,6 +198,63 @@ describe('SSRM serverSideLoadingRowType', () => {
         // eslint-disable-next-line no-restricted-syntax -- negative assertion: samples past the chained load check and blockLoadDebounceMillis timers that would issue a repeat request
         await asyncSetTimeout(20);
         expect(childRequests).toHaveLength(1);
+    });
+
+    test("'none' keeps rows added by a transaction when the first child block fails", async () => {
+        const childRequests: IServerSideGetRowsParams[] = [];
+        const api = gridManager.createGrid('myGrid', {
+            columnDefs,
+            rowModelType: 'serverSide',
+            serverSideLoadingRowType: 'none',
+            getRowId,
+            serverSideDatasource: createGroupDatasource(childRequests),
+        });
+        await waitFor(() => expect(api.getRowNode('group-UK')).toBeDefined());
+
+        api.getRowNode('group-UK')!.setExpanded(true);
+        await waitFor(() => expect(childRequests).toHaveLength(1));
+        api.applyServerSideTransaction({
+            route: ['UK'],
+            addIndex: 0,
+            add: [
+                { id: 'uk-1', country: 'UK', medals: 1 },
+                { id: 'uk-2', country: 'UK', medals: 2 },
+            ],
+        });
+        expect(api.getDisplayedRowCount()).toBe(4);
+
+        childRequests[0].fail();
+
+        await waitFor(() => expect(api.getDisplayedRowAtIndex(1)?.failedLoad).toBe(true));
+        expect(api.getDisplayedRowCount()).toBe(4);
+        expect(api.getDisplayedRowAtIndex(3)?.id).toBe('group-US');
+    });
+
+    test("'none' shows no placeholder row when a non-purge refresh reloads an empty group", async () => {
+        const childRequests: IServerSideGetRowsParams[] = [];
+        const api = gridManager.createGrid('myGrid', {
+            columnDefs,
+            rowModelType: 'serverSide',
+            serverSideLoadingRowType: 'none',
+            getRowId,
+            serverSideDatasource: createGroupDatasource(childRequests),
+        });
+        await waitFor(() => expect(api.getRowNode('group-UK')).toBeDefined());
+        api.getRowNode('group-UK')!.setExpanded(true);
+        await waitFor(() => expect(childRequests).toHaveLength(1));
+        childRequests[0].success({ rowData: [], rowCount: 0 });
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(2));
+
+        api.refreshServerSide({ route: ['UK'], purge: false });
+
+        expect(api.getDisplayedRowCount()).toBe(2);
+        await waitFor(() => expect(childRequests).toHaveLength(2));
+        expect(api.getDisplayedRowCount()).toBe(2);
+        expect(document.querySelectorAll('.ag-row-loading')).toHaveLength(0);
+
+        childRequests[1].success({ rowData: [{ id: 'uk-1', country: 'UK', medals: 1 }], rowCount: 1 });
+        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(3));
+        expect(api.getDisplayedRowAtIndex(1)?.id).toBe('uk-1');
     });
 
     test("switching to and from 'none' at runtime redraws loading rows", async () => {
