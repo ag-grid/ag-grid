@@ -1,7 +1,10 @@
 import type { AgGridCommon } from './iCommon';
 
 interface ViewportRowRefBase {
-    /** The row ID, as returned by `getRowId`. */
+    /**
+     * The row ID, the same as the row node's `id`.
+     * This is the value returned by `getRowId` when it is set; otherwise, and for group rows the grid creates, the grid generates the ID.
+     */
     id: string;
     /** The keys of the parent groups, from the top level down. Empty for top-level rows and for rows in flat data. */
     parentKeys: string[];
