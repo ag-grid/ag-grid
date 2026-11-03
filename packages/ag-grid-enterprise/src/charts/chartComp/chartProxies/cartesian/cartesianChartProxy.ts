@@ -2,6 +2,7 @@ import type {
     AgAreaSeriesOptions,
     AgAxisLabelFormatterParams,
     AgCartesianAxisOptions,
+    AgCartesianAxisPosition,
     AgCartesianAxisType,
     AgCartesianChartOptions,
     AgCartesianSeriesOptions,
@@ -9,6 +10,7 @@ import type {
     AgChartThemeName,
     AgChartThemeOverrides,
     AgLineSeriesOptions,
+    AgNumberAxisThemeOptions,
     AgRangeBarSeriesThemeableOptions,
 } from 'ag-charts-types';
 import { _parseDateTimeFromString } from 'ag-stack';
@@ -21,8 +23,36 @@ import { getSeriesHighlight } from '../chartTheme';
  * Shows the value axis of a 100% stacked chart as percentages. Tooltips and series labels inherit the axis label
  * formatter but show the raw values, so they are left to the default format.
  */
-export function formatNormalisedValueAxisLabel({ value, source }: AgAxisLabelFormatterParams): string | undefined {
+function formatNormalisedValueAxisLabel({ value, source }: AgAxisLabelFormatterParams): string | undefined {
     return source === 'tooltip' || source === 'series-label' ? undefined : Math.round(value) + '%';
+}
+
+/** A theme as `createAgChartTheme` builds it: each layer of overrides nests the layers below it as its `baseTheme`. */
+type NestedChartTheme = Omit<AgChartTheme, 'baseTheme'> & { baseTheme?: AgChartThemeName | NestedChartTheme };
+
+type NumberAxisThemeOverrides = { axes?: { number?: AgNumberAxisThemeOptions } };
+
+/**
+ * Whether any layer of the theme sets a label formatter for the number axis, under the series type or `common`,
+ * either for every position or for the given one.
+ */
+function hasThemeValueAxisLabelFormatter(
+    theme: AgCartesianChartOptions['theme'],
+    seriesType: keyof AgChartThemeOverrides,
+    position: AgCartesianAxisPosition | undefined
+): boolean {
+    let layer = theme as NestedChartTheme['baseTheme'];
+    while (typeof layer === 'object') {
+        const overrides = layer.overrides;
+        layer = layer.baseTheme;
+        for (const typeOverrides of [overrides?.[seriesType], overrides?.common] as NumberAxisThemeOverrides[]) {
+            const numberAxis = typeOverrides?.axes?.number;
+            if (numberAxis?.label?.formatter || (position && numberAxis?.[position]?.label?.formatter)) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 export abstract class CartesianChartProxy<
@@ -60,6 +90,17 @@ export abstract class CartesianChartProxy<
             axes,
             series: this.getSeries(params),
         };
+    }
+
+    /** Shows the value axis of a 100% stacked chart as percentages, unless the theme formats its labels. */
+    protected formatNormalisedValueAxis(
+        valueAxis: AgCartesianAxisOptions,
+        commonChartOptions: AgCartesianChartOptions
+    ): void {
+        if (hasThemeValueAxisLabelFormatter(commonChartOptions.theme, this.standaloneChartType, valueAxis.position)) {
+            return;
+        }
+        valueAxis.label = { ...valueAxis.label, formatter: formatNormalisedValueAxisLabel };
     }
 
     protected getData(params: UpdateParams, axes: Record<string, AgCartesianAxisOptions>): any[] {
