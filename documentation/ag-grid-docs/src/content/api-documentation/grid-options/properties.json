@@ -1213,6 +1213,12 @@
                 "url": "./aggregation-total-rows/#enabling-a-grand-total-row"
             }
         },
+        "alwaysShowGrandTotalRow": {
+            "more": {
+                "name": "Showing the Grand Total Row with No Rows",
+                "url": "./aggregation-total-rows/#showing-the-grand-total-row-with-no-rows"
+            }
+        },
         "suppressAggFuncInHeader": {
             "more": {
                 "name": "Omit Function Name from Header",

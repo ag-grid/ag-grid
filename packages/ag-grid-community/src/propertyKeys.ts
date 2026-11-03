@@ -251,6 +251,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'suppressAggFuncInHeader',
     'suppressColumnVirtualisation',
     'alwaysAggregateAtRootLevel',
+    'alwaysShowGrandTotalRow',
     'suppressFocusAfterRefresh',
     'functionsReadOnly',
     'animateRows',

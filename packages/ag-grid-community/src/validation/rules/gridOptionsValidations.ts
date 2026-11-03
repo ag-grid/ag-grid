@@ -123,6 +123,7 @@ export const GRID_OPTIONS_MODULES: Partial<Record<keyof GridOptions, RequiredMod
     autoGenerateColumnDefs: 'AutoGenerateColumns',
     processFileInput: 'FileInputOverlay',
     alignedGrids: 'AlignedGrids',
+    alwaysShowGrandTotalRow: ['CsrmHierarchy', 'ServerSideRowModel'],
     allowContextMenuWithControlKey: 'ContextMenu',
     autoSizeStrategy: 'ColumnAutoSize',
     calculatedColumns: 'CalculatedColumns',
