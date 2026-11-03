@@ -16,6 +16,7 @@ import {
     _setAriaDisabled,
     _setAriaExpanded,
     _setAriaHasPopup,
+    _setAriaLabel,
     _setAriaRole,
 } from 'ag-stack';
 
@@ -33,6 +34,13 @@ const SUB_MENU_OPEN_DELAY = FAST_TEST_TIMINGS ? 0 : 300;
 export interface AgMenuItemLeafDef<TMenuActionParams extends TCommon, TCommon> {
     /** Name of the menu item. */
     name: string;
+    /**
+     * The accessible name announced by screen readers, for when `name` alone does not describe the item,
+     * e.g. `'Delete row'` for an item named `'Delete'`.
+     * This replaces the whole accessible name, so include any `shortcut` text that should still be announced.
+     * When not set, the accessible name is taken from the visible `name` and `shortcut`.
+     */
+    ariaLabel?: string;
     /** Set to `true` to display the menu item as disabled. */
     disabled?: boolean;
     /**
@@ -613,10 +621,14 @@ export class AgMenuItemComponent<
 
     private applyAriaProperties(eGui: HTMLElement): void {
         const {
-            params: { checked, menuItemRole, subMenu, subMenuRole, disabled },
+            params: { ariaLabel, checked, menuItemRole, subMenu, subMenuRole, disabled },
         } = this;
 
         _setAriaRole(eGui, checked == null ? 'menuitem' : (menuItemRole ?? 'menuitemcheckbox'));
+
+        if (ariaLabel) {
+            _setAriaLabel(eGui, ariaLabel);
+        }
 
         if (subMenu) {
             _setAriaHasPopup(eGui, subMenuRole ?? 'menu');
