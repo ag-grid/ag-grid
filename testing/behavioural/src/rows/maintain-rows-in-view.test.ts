@@ -622,6 +622,30 @@ describe('maintainRowsInViewOnDataUpdate', () => {
             expect(getViewport(api).scrollTop).toBe(2 * SCROLL_TOP);
         });
 
+        test('does not keep the rows of an earlier update in view for auto height once its rows are measured', async () => {
+            const tallRows = new Set<string>();
+            mockGridLayout.elementHeightOverride = (el) => {
+                if (!el.classList.contains('ag-cell-wrapper') || !el.isConnected) {
+                    return undefined;
+                }
+                return tallRows.has(el.closest('.ag-row')?.getAttribute('row-id') ?? '') ? 3 * ROW_HEIGHT : 20;
+            };
+            const api = createGrid({ columnDefs: [{ field: 'value', autoHeight: true }] });
+            await asyncSetTimeout(0);
+            scrollTo(api, SCROLL_TOP);
+            api.applyTransaction({ remove: [{ id: 'r0', value: 0 }] });
+            await asyncSetTimeout(0);
+            const scrollTop = getViewport(api).scrollTop;
+
+            tallRows.add('r5');
+            api.redrawRows({ rowNodes: [api.getRowNode('r5')!] });
+            await waitFor(() => expect(api.getRowNode('r5')!.rowHeight).toBe(3 * ROW_HEIGHT));
+            await asyncSetTimeout(0);
+
+            // a row growing above the rows in view moves them, as without the option, since no data update moved them
+            expect(getViewport(api).scrollTop).toBe(scrollTop);
+        });
+
         test('does not keep the rows of an earlier update in view for auto height once the option is turned off', async () => {
             const tallRows = new Set<string>();
             mockGridLayout.elementHeightOverride = (el) => {

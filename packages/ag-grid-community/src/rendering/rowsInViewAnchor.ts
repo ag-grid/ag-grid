@@ -13,10 +13,7 @@ export interface RowsInViewAnchor {
     pixelOffset: number;
     /** Whether the viewport was scrolled to the bottom of the rows, to keep it there. */
     atBottom: boolean;
-    /**
-     * In display order, the rows displayed before the update from a view's height above the rows the user could see to
-     * a view's height below them.
-     */
+    /** In display order, the rows from a view's height above the rows in view to a view's height below them. */
     rows: RowNode[];
     /** The `rowTop` of each of `rows` before the update. */
     rowTops: number[];
@@ -30,15 +27,13 @@ export interface RowsInViewAnchor {
     removed: [top: number, bottom: number][];
     /** The height `removed` covers, worked out once as the restore can be repeated. */
     removedHeight?: number;
+    /** The index in `rows` of the row whose move the rows in view follow, worked out once as the restore can be repeated. */
+    followed?: number | null;
     /** The vertical scroll position the latest restore left the viewport at, to tell a scroll elsewhere apart. */
     scrollTop?: number;
 }
 
-/**
- * Records where the viewport is, or returns `null` when there is nothing to keep in view. A grid scrolled to its top,
- * at the top of the first page, is not anchored, so rows added at the top come into view. A grid scrolled to the bottom
- * of its rows, and not also at the top, is kept at the bottom, so rows added at the end come into view.
- */
+/** Records where the viewport is, or `null` at the top of the first page, so rows added at the top come into view. */
 export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | null {
     const { ctrlsSvc, pageBounds, rowContainerHeight, rowModel } = beans;
     const scrollFeature = ctrlsSvc.getScrollFeature();
@@ -103,13 +98,11 @@ export function _captureRowsInView(beans: BeanCollection): RowsInViewAnchor | nu
     };
 }
 
-/**
- * Records a row the update removed, before it loses its position, for when the update removes every row in view. A row
- * starting at the first visible pixel counts as above it. Pinned rows are positioned in their own containers.
- */
+/** Records a row the update removed, before it loses its position, for when the update removes every row in view. */
 export function _recordRemovedRow(anchor: RowsInViewAnchor, rowNode: RowNode): void {
     const { rowTop, rowHeight } = rowNode;
     const { firstVisiblePixel, removed } = anchor;
+    // pinned rows are positioned in their own containers
     if (rowNode.rowPinned) {
         return;
     }
@@ -122,10 +115,7 @@ export function _recordRemovedRow(anchor: RowsInViewAnchor, rowNode: RowNode): v
     }
 }
 
-/**
- * The pixel range of the rows of a server-side group, which counts its rows that are not loaded, as they have no row
- * nodes. Its rows can be displayed while the group itself is hidden, such as an unbalanced group.
- */
+/** The pixel range of a server-side group's rows, counting those not loaded, which have no row nodes. */
 function getStoreRange({ childStore }: RowNode): [top: number, bottom: number] | null {
     if (childStore?.getDisplayIndexStart() == null) {
         return null;
@@ -148,10 +138,7 @@ function getRemovedHeight(anchor: RowsInViewAnchor): number {
     return anchor.removedHeight;
 }
 
-/**
- * The indexes of the `values` in every longest sequence of them, not necessarily adjacent, that is in increasing order.
- * These are the values that kept their order, leaving out values that could swap places with others in the sequence.
- */
+/** The indexes of the `values` in every longest increasing subsequence of them: those that kept their order. */
 function getKeptInOrder(values: number[]): number[] {
     const longestEndingAt = values.map(() => 1);
     const longestStartingAt = values.map(() => 1);
@@ -179,31 +166,34 @@ function getKeptInOrder(values: number[]): number[] {
     return inLongest.filter((i) => countAtPlace.get(longestEndingAt[i]) === 1);
 }
 
-/**
- * How far the rows in view moved, or `null` when the update kept none of the rows captured. The top row in view that
- * kept its order, among the rows in view and the rows just outside them, is followed, so rows an update sorts
- * elsewhere, or reorders among themselves, count as having left the view, and rows added below it move only the rows
- * below them. With no row in view kept in order, the nearest row below the view that kept its order among all the
- * rows kept is followed, then the nearest above it. Rows in view that left from below the first visible pixel,
- * removed or moved below the followed row, are left for the rows after them to fill, and rows that left from between a
- * followed row above the view and the first visible pixel count as removed above the view.
- */
-function getRowsInViewMoved(beans: BeanCollection, anchor: RowsInViewAnchor): number | null {
-    const { rows, rowTops, rowHeights, firstInView, afterView, firstVisiblePixel } = anchor;
-    const { rowModel } = beans;
-    // a loading row counts as kept, as it is still there
-    const isKept = rows.map((rowNode) => isDisplayed(rowModel, rowNode) && rowNode.rowTop != null);
+/** The top row in view that kept its order, else the nearest kept in order below the view, then above it. */
+function getFollowedRow(anchor: RowsInViewAnchor, isKept: boolean[]): number | null {
+    const { rows, firstInView, afterView } = anchor;
     const kept = rows.flatMap((_, i) => (isKept[i] ? [i] : []));
     const keptInOrder = (candidates: number[]) =>
         getKeptInOrder(candidates.map((i) => rows[i].rowIndex!)).map((i) => candidates[i]);
-    // the rows far from the view take no part in the order of the rows in view, as a view sorted elsewhere as a whole
-    // would be as long as the rows below it
+    // a view sorted elsewhere as a whole would otherwise be outnumbered by the rows below it
     const near = kept.filter((i) => i >= firstInView - 1 && i <= afterView);
     const outside = keptInOrder(kept).filter((i) => i < firstInView || i >= afterView);
-    const followed =
+    return (
         keptInOrder(near).find((i) => i >= firstInView && i < afterView) ??
         outside.find((i) => i >= afterView) ??
-        outside.pop();
+        outside.pop() ??
+        null
+    );
+}
+
+/** How far the rows in view moved, or `null` when the update kept none of the rows captured. */
+function getRowsInViewMoved(beans: BeanCollection, anchor: RowsInViewAnchor): number | null {
+    const { rows, rowTops, rowHeights, firstVisiblePixel } = anchor;
+    const { rowModel } = beans;
+    // a loading row counts as kept, as it is still there
+    const isKept = rows.map((rowNode) => isDisplayed(rowModel, rowNode) && rowNode.rowTop != null);
+    // OPTIMIZATION: quadratic, and only heights change between restores of the same anchor
+    if (anchor.followed === undefined) {
+        anchor.followed = getFollowedRow(anchor, isKept);
+    }
+    const followed = anchor.followed;
     if (followed == null) {
         return null;
     }
@@ -233,9 +223,8 @@ function isDisplayed(rowModel: IRowModel, rowNode: RowNode | undefined): rowNode
 }
 
 /**
- * Records the row at a position before a data update, returning how to find the index of that row after the update.
- * A position whose row the update removed keeps its index, within the rows left, as without following. Pinned rows
- * keep their index, as data updates do not move them.
+ * Records the row at a position before a data update, returning how to find its index after it. A removed row's
+ * position keeps its index, within the rows left.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
 export function _followRow(beans: BeanCollection, { rowIndex, rowPinned }: RowPosition): () => number {
@@ -262,12 +251,7 @@ function getScrollTopForRowsInView(beans: BeanCollection, anchor: RowsInViewAnch
     return beans.rowContainerHeight.getScrollPositionForPixel(viewportTop);
 }
 
-/**
- * Scrolls by how far the rows the user could see moved, so they stay where they were, whether the update added,
- * removed, sorted or filtered the rows above them. With every row in view removed, scrolls by the height of the rows
- * removed above them instead. A viewport at the bottom of the rows scrolls to their new bottom. Returns `true` if the
- * grid scrolled.
- */
+/** Scrolls so the rows the user could see stay where they were, or to the bottom if it was there. True if it scrolled. */
 export function _restoreRowsInView(beans: BeanCollection, anchor: RowsInViewAnchor): boolean {
     // compared even when nothing was added or removed, as a change in height scaling can move the rows on screen
     const scrollFeature = beans.ctrlsSvc.getScrollFeature();
