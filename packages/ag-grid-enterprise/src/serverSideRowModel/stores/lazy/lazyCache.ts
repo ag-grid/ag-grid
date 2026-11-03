@@ -924,11 +924,9 @@ export class LazyCache extends BeanStub {
         version: string | number,
         comparator?: CompareServerSideDataVersions
     ): boolean {
-        let rowVersion = this.grandTotalDataVersion;
-        if (id !== GRAND_TOTAL_ROW_ID) {
-            const node = id == null ? undefined : this.nodeMap.getBy('id', id)?.node;
-            rowVersion = node && this.rowDataVersions.get(node);
-        }
+        const node = id == null ? undefined : this.nodeMap.getBy('id', id)?.node;
+        const rowVersion =
+            id === GRAND_TOTAL_ROW_ID ? this.grandTotalDataVersion : node && this.rowDataVersions.get(node);
         return rowVersion != null && compareDataVersions(rowVersion, version, comparator) > 0;
     }
 
@@ -955,7 +953,9 @@ export class LazyCache extends BeanStub {
                     : isIncluded;
                 if (isUnapplied) {
                     unapplied.push(data);
-                    isSkipped ||= !isGrandTotal;
+                    if (!isGrandTotal) {
+                        isSkipped = true;
+                    }
                 }
                 return !isUnapplied;
             });
