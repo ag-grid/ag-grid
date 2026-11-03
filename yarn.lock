@@ -14063,9 +14063,9 @@ __metadata:
     "@testing-library/user-event": "npm:^14.6.7"
     "@types/react": "npm:^18.3.23"
     "@types/react-dom": "npm:^18.3.7"
-    ag-grid-community: "npm:36.3.0-beta.20261103.846"
-    ag-grid-enterprise: "npm:36.3.0-beta.20261103.846"
-    ag-grid-react: "npm:36.3.0-beta.20261103.846"
+    ag-grid-community: "npm:36.3.0-beta.20261103.1152"
+    ag-grid-enterprise: "npm:36.3.0-beta.20261103.1152"
+    ag-grid-react: "npm:36.3.0-beta.20261103.1152"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
@@ -14073,82 +14073,82 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"ag-charts-angular@npm:14.3.0-beta.20261103":
-  version: 14.3.0-beta.20261103
-  resolution: "ag-charts-angular@npm:14.3.0-beta.20261103"
+"ag-charts-angular@npm:14.3.0-beta.20261103.1119":
+  version: 14.3.0-beta.20261103.1119
+  resolution: "ag-charts-angular@npm:14.3.0-beta.20261103.1119"
   dependencies:
-    ag-charts-community: "npm:14.3.0-beta.20261103"
+    ag-charts-community: "npm:14.3.0-beta.20261103.1119"
     tslib: "npm:^2.8.1"
   peerDependencies:
     "@angular/common": ">= 20.0.0"
     "@angular/core": ">= 20.0.0"
-  checksum: 10c0/5cfddc8da37a350337491703e952f3ce89b01fb997680100b7c3b303279ff4f3d0b86de9c9fbbf0c673b5f4bae2c0f651e0ea9b6c6c81cc706e0f38e5e8fc6a2
+  checksum: 10c0/4708d621a127f7f50f7faab5711f8d8b03e3bea0a6215e1b8e3a767d2891df1f97f397679a06963c8c33dab1e42d1d63c754f9f64d762f841eaadea39d6e5440
   languageName: node
   linkType: hard
 
-"ag-charts-community@npm:14.3.0-beta.20261103":
-  version: 14.3.0-beta.20261103
-  resolution: "ag-charts-community@npm:14.3.0-beta.20261103"
+"ag-charts-community@npm:14.3.0-beta.20261103.1119":
+  version: 14.3.0-beta.20261103.1119
+  resolution: "ag-charts-community@npm:14.3.0-beta.20261103.1119"
   dependencies:
-    ag-charts-core: "npm:14.3.0-beta.20261103"
-    ag-charts-locale: "npm:14.3.0-beta.20261103"
-    ag-charts-types: "npm:14.3.0-beta.20261103"
-  checksum: 10c0/06cd9659e7a21018af50718c818442cf31646a17d12d9d67a99050a313d182c5c566d9a95d75821085272136594b3df617e26d752964f452caa0957b1cb34e54
+    ag-charts-core: "npm:14.3.0-beta.20261103.1119"
+    ag-charts-locale: "npm:14.3.0-beta.20261103.1119"
+    ag-charts-types: "npm:14.3.0-beta.20261103.1119"
+  checksum: 10c0/506e4bf192d1b014e4b5e1b4433df96884f435efd07cc26e53883799aa966299b0493bfec52de63b03c7c9c2aeafb1a81b247ae68288c561268216e4a9c5fc97
   languageName: node
   linkType: hard
 
-"ag-charts-core@npm:14.3.0-beta.20261103":
-  version: 14.3.0-beta.20261103
-  resolution: "ag-charts-core@npm:14.3.0-beta.20261103"
+"ag-charts-core@npm:14.3.0-beta.20261103.1119":
+  version: 14.3.0-beta.20261103.1119
+  resolution: "ag-charts-core@npm:14.3.0-beta.20261103.1119"
   dependencies:
-    ag-charts-types: "npm:14.3.0-beta.20261103"
-  checksum: 10c0/6906d23e31cb588b666246538966af29b0bed41ee097e24ad08f75ea066c5b3460a00d59410a456f9d18273925bf002cad02f35c81589a95105ebde1485688c7
+    ag-charts-types: "npm:14.3.0-beta.20261103.1119"
+  checksum: 10c0/edfe7294bc9c712a72a66a1d40e2175b047b045646829b2b665af14ff9545e046bdc5d6e85e78fbdc5613d8861d574a29fe047624e9d0eed48dbdc0449f8e191
   languageName: node
   linkType: hard
 
-"ag-charts-enterprise@npm:14.3.0-beta.20261103":
-  version: 14.3.0-beta.20261103
-  resolution: "ag-charts-enterprise@npm:14.3.0-beta.20261103"
+"ag-charts-enterprise@npm:14.3.0-beta.20261103.1119":
+  version: 14.3.0-beta.20261103.1119
+  resolution: "ag-charts-enterprise@npm:14.3.0-beta.20261103.1119"
   dependencies:
-    ag-charts-community: "npm:14.3.0-beta.20261103"
-    ag-charts-core: "npm:14.3.0-beta.20261103"
-  checksum: 10c0/8cab72c425f84c5c30c6c39c30b25bece16378b920c4ee4992caeff880edb7566ae3bf9187cd5a9a56c7cbce2593b5b042a6c6af508354c33d94fe1a28e602d0
+    ag-charts-community: "npm:14.3.0-beta.20261103.1119"
+    ag-charts-core: "npm:14.3.0-beta.20261103.1119"
+  checksum: 10c0/eccfe642c783e3ba6ba1c58ed11bde58a76c76bb6af5b0caec875dc8f714e167c00d7f025414b0d74c3d85572d73eb8c459b7c4522c2dd710f1e80f50650c141
   languageName: node
   linkType: hard
 
-"ag-charts-locale@npm:14.3.0-beta.20261103":
-  version: 14.3.0-beta.20261103
-  resolution: "ag-charts-locale@npm:14.3.0-beta.20261103"
-  checksum: 10c0/1e06e496a5acd69c8e80cd938f855e4e66e7116f0d4f6b4fbd4c15062cc00ca7d625ce05eb459fb016a7de787aa8ccfbc33e6195199866a8cb1130b2bb1f8002
+"ag-charts-locale@npm:14.3.0-beta.20261103.1119":
+  version: 14.3.0-beta.20261103.1119
+  resolution: "ag-charts-locale@npm:14.3.0-beta.20261103.1119"
+  checksum: 10c0/f42eff4811a6bea39410ac697fcc1e712c3261fc7a0ad4e03e7333771aa314aa73ed190a648384c119907e4f89b2d35e2e8e86f45c07331defa7ad70acdb852d
   languageName: node
   linkType: hard
 
-"ag-charts-react@npm:14.3.0-beta.20261103":
-  version: 14.3.0-beta.20261103
-  resolution: "ag-charts-react@npm:14.3.0-beta.20261103"
+"ag-charts-react@npm:14.3.0-beta.20261103.1119":
+  version: 14.3.0-beta.20261103.1119
+  resolution: "ag-charts-react@npm:14.3.0-beta.20261103.1119"
   dependencies:
-    ag-charts-community: "npm:14.3.0-beta.20261103"
+    ag-charts-community: "npm:14.3.0-beta.20261103.1119"
   peerDependencies:
     react: ^18.0.0 || ^19.0.0
-  checksum: 10c0/6edd419497e53049ae193ab21c78906418dfeaa7181da84a29c40590507705eeb98f074933ff9e98757686893e472337b13b1faeab7cef0238c06d4ae82235b9
+  checksum: 10c0/91609ff9d1ad2a1affa0a0aa588a8d9a4d31b6f16000a1ce735b21325d7ddc7f0838e0031b496244999b3883ddec64e38f41db2ae73945e53318659101223f3e
   languageName: node
   linkType: hard
 
-"ag-charts-types@npm:14.3.0-beta.20261103":
-  version: 14.3.0-beta.20261103
-  resolution: "ag-charts-types@npm:14.3.0-beta.20261103"
-  checksum: 10c0/8b06fecd68480851c65b213dab7d7c351081e9c4956ed7e54972e0368c39180fe24d9748d78fc4499a811e23dceb86920a50da656e55a6318619a55ee5c4633e
+"ag-charts-types@npm:14.3.0-beta.20261103.1119":
+  version: 14.3.0-beta.20261103.1119
+  resolution: "ag-charts-types@npm:14.3.0-beta.20261103.1119"
+  checksum: 10c0/3126591469d1f74fcdedb50e8e42e4c8345e17b1c28afa9cfc0cdcbc28f5033f1cabcf9789bc59eecd510ac7cc778f1bde32ab5359c7883a1c06983bda6d8186
   languageName: node
   linkType: hard
 
-"ag-charts-vue3@npm:14.3.0-beta.20261103":
-  version: 14.3.0-beta.20261103
-  resolution: "ag-charts-vue3@npm:14.3.0-beta.20261103"
+"ag-charts-vue3@npm:14.3.0-beta.20261103.1119":
+  version: 14.3.0-beta.20261103.1119
+  resolution: "ag-charts-vue3@npm:14.3.0-beta.20261103.1119"
   dependencies:
-    ag-charts-community: "npm:14.3.0-beta.20261103"
+    ag-charts-community: "npm:14.3.0-beta.20261103.1119"
   peerDependencies:
     vue: ^3.5.0
-  checksum: 10c0/edc8770f5dd583bf8e5f887cf267d24c24afba0addd1c355f880fe2e443ea87097399d67e3d2428c92c0ffb9a2468abbde66feb341171c79ee70f56b6cce4027
+  checksum: 10c0/b5559767a13aadda3b80a05bcd75ea5066df320b9c32b9f8a225f5a5d0947aec827fa337f73222ba4cfd64eab964fe0fdea53342c4c15ac47683ed013282f21f
   languageName: node
   linkType: hard
 
@@ -14158,8 +14158,8 @@ __metadata:
   dependencies:
     "@playwright/test": "npm:^1.63.0"
     "@types/node": "npm:^22.15.3"
-    ag-grid-community: "npm:36.3.0-beta.20261103.846"
-    ag-grid-enterprise: "npm:36.3.0-beta.20261103.846"
+    ag-grid-community: "npm:36.3.0-beta.20261103.1152"
+    ag-grid-enterprise: "npm:36.3.0-beta.20261103.1152"
     playwright-ctrf-json-reporter: "npm:0.0.29"
   languageName: unknown
   linkType: soft
@@ -14177,11 +14177,11 @@ __metadata:
     "@angular/platform-browser-dynamic": "npm:^20.3.27"
     "@angular/router": "npm:^20.3.27"
     "@playwright/test": "npm:^1.63.0"
-    ag-charts-community: "npm:14.3.0-beta.20261103"
-    ag-charts-enterprise: "npm:14.3.0-beta.20261103"
-    ag-grid-angular: "npm:36.3.0-beta.20261103.846"
-    ag-grid-community: "npm:36.3.0-beta.20261103.846"
-    ag-grid-enterprise: "npm:36.3.0-beta.20261103.846"
+    ag-charts-community: "npm:14.3.0-beta.20261103.1119"
+    ag-charts-enterprise: "npm:14.3.0-beta.20261103.1119"
+    ag-grid-angular: "npm:36.3.0-beta.20261103.1152"
+    ag-grid-community: "npm:36.3.0-beta.20261103.1152"
+    ag-grid-enterprise: "npm:36.3.0-beta.20261103.1152"
     playwright: "npm:^1.63.0"
     rxjs: "npm:~7.8.2"
     tslib: "npm:^2.8.1"
@@ -14200,8 +14200,8 @@ __metadata:
     "@angular/platform-browser": "npm:^21.0.0"
     "@angular/platform-browser-dynamic": "npm:^21.0.0"
     "@types/jest": "npm:^30.0.0"
-    ag-grid-angular: "npm:36.3.0-beta.20261103.846"
-    ag-grid-community: "npm:36.3.0-beta.20261103.846"
+    ag-grid-angular: "npm:36.3.0-beta.20261103.1152"
+    ag-grid-community: "npm:36.3.0-beta.20261103.1152"
     jest: "npm:^30.5.2"
     jest-environment-jsdom: "npm:^30.5.2"
     jest-preset-angular: "npm:^17.0.0"
@@ -14212,7 +14212,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"ag-grid-angular@npm:36.3.0-beta.20261103.846, ag-grid-angular@workspace:packages/ag-grid-angular":
+"ag-grid-angular@npm:36.3.0-beta.20261103.1152, ag-grid-angular@workspace:packages/ag-grid-angular":
   version: 0.0.0-use.local
   resolution: "ag-grid-angular@workspace:packages/ag-grid-angular"
   dependencies:
@@ -14228,7 +14228,7 @@ __metadata:
     "@angular/platform-browser-dynamic": "npm:^20.3.27"
     "@types/jasmine": "npm:~6.0.0"
     "@types/node": "npm:^22.15.3"
-    ag-grid-community: "npm:36.3.0-beta.20261103.846"
+    ag-grid-community: "npm:36.3.0-beta.20261103.1152"
     jasmine-core: "npm:~5.9.0"
     karma: "npm:~6.4.4"
     karma-chrome-launcher: "npm:~3.2.0"
@@ -14245,12 +14245,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"ag-grid-community@npm:36.3.0-beta.20261103.846, ag-grid-community@workspace:packages/ag-grid-community":
+"ag-grid-community@npm:36.3.0-beta.20261103.1152, ag-grid-community@workspace:packages/ag-grid-community":
   version: 0.0.0-use.local
   resolution: "ag-grid-community@workspace:packages/ag-grid-community"
   dependencies:
-    ag-charts-types: "npm:14.3.0-beta.20261103"
-    ag-stack: "npm:36.3.0-beta.20261103.846"
+    ag-charts-types: "npm:14.3.0-beta.20261103.1119"
+    ag-stack: "npm:36.3.0-beta.20261103.1152"
     blob-polyfill: "npm:^9.0.20240710"
     compression-streams-polyfill: "npm:^0.1.7"
     text-encoding-polyfill: "npm:^0.6.7"
@@ -14300,17 +14300,17 @@ __metadata:
     "@types/he": "npm:^1.2.3"
     "@types/react": "npm:^18.2.47"
     "@types/react-dom": "npm:^18.2.18"
-    ag-charts-angular: "npm:14.3.0-beta.20261103"
-    ag-charts-community: "npm:14.3.0-beta.20261103"
-    ag-charts-enterprise: "npm:14.3.0-beta.20261103"
-    ag-charts-react: "npm:14.3.0-beta.20261103"
-    ag-charts-types: "npm:14.3.0-beta.20261103"
-    ag-charts-vue3: "npm:14.3.0-beta.20261103"
-    ag-grid-angular: "npm:36.3.0-beta.20261103.846"
-    ag-grid-community: "npm:36.3.0-beta.20261103.846"
-    ag-grid-enterprise: "npm:36.3.0-beta.20261103.846"
-    ag-grid-react: "npm:36.3.0-beta.20261103.846"
-    ag-grid-vue3: "npm:36.3.0-beta.20261103.846"
+    ag-charts-angular: "npm:14.3.0-beta.20261103.1119"
+    ag-charts-community: "npm:14.3.0-beta.20261103.1119"
+    ag-charts-enterprise: "npm:14.3.0-beta.20261103.1119"
+    ag-charts-react: "npm:14.3.0-beta.20261103.1119"
+    ag-charts-types: "npm:14.3.0-beta.20261103.1119"
+    ag-charts-vue3: "npm:14.3.0-beta.20261103.1119"
+    ag-grid-angular: "npm:36.3.0-beta.20261103.1152"
+    ag-grid-community: "npm:36.3.0-beta.20261103.1152"
+    ag-grid-enterprise: "npm:36.3.0-beta.20261103.1152"
+    ag-grid-react: "npm:36.3.0-beta.20261103.1152"
+    ag-grid-vue3: "npm:36.3.0-beta.20261103.1152"
     algoliasearch: "npm:^5.59.0"
     astro: "npm:7.3.4"
     cheerio: "npm:^1.2.0"
@@ -14346,14 +14346,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"ag-grid-enterprise@npm:36.3.0-beta.20261103.846, ag-grid-enterprise@workspace:packages/ag-grid-enterprise":
+"ag-grid-enterprise@npm:36.3.0-beta.20261103.1152, ag-grid-enterprise@workspace:packages/ag-grid-enterprise":
   version: 0.0.0-use.local
   resolution: "ag-grid-enterprise@workspace:packages/ag-grid-enterprise"
   dependencies:
-    ag-charts-community: "npm:14.3.0-beta.20261103"
-    ag-charts-enterprise: "npm:14.3.0-beta.20261103"
-    ag-grid-community: "npm:36.3.0-beta.20261103.846"
-    ag-stack: "npm:36.3.0-beta.20261103.846"
+    ag-charts-community: "npm:14.3.0-beta.20261103.1119"
+    ag-charts-enterprise: "npm:14.3.0-beta.20261103.1119"
+    ag-grid-community: "npm:36.3.0-beta.20261103.1152"
+    ag-stack: "npm:36.3.0-beta.20261103.1152"
     canvas: "npm:^3.2.3"
   dependenciesMeta:
     ag-charts-community:
@@ -14381,7 +14381,7 @@ __metadata:
   dependencies:
     "@nx/devkit": "npm:20.8.4"
     "@swc/helpers": "npm:0.5.23"
-    ag-grid-community: "npm:36.3.0-beta.20261103.846"
+    ag-grid-community: "npm:36.3.0-beta.20261103.1152"
     ag-shared: "npm:0.0.1"
     cheerio: "npm:^1.2.0"
     glob: "npm:^11.1.0"
@@ -14408,11 +14408,11 @@ __metadata:
     "@angular/platform-browser": "npm:^20.3.27"
     "@angular/platform-browser-dynamic": "npm:^20.3.27"
     "@angular/router": "npm:^20.3.27"
-    ag-charts-community: "npm:14.3.0-beta.20261103"
-    ag-charts-enterprise: "npm:14.3.0-beta.20261103"
-    ag-grid-angular: "npm:36.3.0-beta.20261103.846"
-    ag-grid-community: "npm:36.3.0-beta.20261103.846"
-    ag-grid-enterprise: "npm:36.3.0-beta.20261103.846"
+    ag-charts-community: "npm:14.3.0-beta.20261103.1119"
+    ag-charts-enterprise: "npm:14.3.0-beta.20261103.1119"
+    ag-grid-angular: "npm:36.3.0-beta.20261103.1152"
+    ag-grid-community: "npm:36.3.0-beta.20261103.1152"
+    ag-grid-enterprise: "npm:36.3.0-beta.20261103.1152"
     rxjs: "npm:~7.8.2"
     tslib: "npm:^2.8.1"
     typescript: "npm:~5.8.3"
@@ -14428,11 +14428,11 @@ __metadata:
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
     "@vitejs/plugin-react": "npm:^4.3.1"
-    ag-charts-community: "npm:14.3.0-beta.20261103"
-    ag-charts-enterprise: "npm:14.3.0-beta.20261103"
-    ag-grid-community: "npm:36.3.0-beta.20261103.846"
-    ag-grid-enterprise: "npm:36.3.0-beta.20261103.846"
-    ag-grid-react: "npm:36.3.0-beta.20261103.846"
+    ag-charts-community: "npm:14.3.0-beta.20261103.1119"
+    ag-charts-enterprise: "npm:14.3.0-beta.20261103.1119"
+    ag-grid-community: "npm:36.3.0-beta.20261103.1152"
+    ag-grid-enterprise: "npm:36.3.0-beta.20261103.1152"
+    ag-grid-react: "npm:36.3.0-beta.20261103.1152"
     eslint: "npm:^10.11.0"
     glob: "npm:^11.1.0"
     globals: "npm:^17.12.0"
@@ -14453,12 +14453,12 @@ __metadata:
   dependencies:
     "@playwright/test": "npm:^1.63.0"
     "@types/node": "npm:^22.15.3"
-    ag-grid-community: "npm:36.3.0-beta.20261103.846"
+    ag-grid-community: "npm:36.3.0-beta.20261103.1152"
     playwright: "npm:^1.63.0"
   languageName: unknown
   linkType: soft
 
-"ag-grid-react@npm:36.3.0-beta.20261103.846, ag-grid-react@workspace:packages/ag-grid-react":
+"ag-grid-react@npm:36.3.0-beta.20261103.1152, ag-grid-react@workspace:packages/ag-grid-react":
   version: 0.0.0-use.local
   resolution: "ag-grid-react@workspace:packages/ag-grid-react"
   dependencies:
@@ -14467,7 +14467,7 @@ __metadata:
     "@babel/runtime": "npm:^8.0.5"
     "@types/react": "npm:~18.3.26"
     "@types/react-dom": "npm:~18.3.7"
-    ag-grid-community: "npm:36.3.0-beta.20261103.846"
+    ag-grid-community: "npm:36.3.0-beta.20261103.1152"
     babel-preset-react-app: "npm:^10.1.0"
     prop-types: "npm:^15.6.2"
     react: "npm:^16.9.0"
@@ -14506,9 +14506,9 @@ __metadata:
     "@mobileaction/action-kit": "npm:^1.60.1"
     "@playwright/test": "npm:^1.63.0"
     "@vitejs/plugin-vue": "npm:^5.2.0"
-    ag-grid-community: "npm:36.3.0-beta.20261103.846"
-    ag-grid-enterprise: "npm:36.3.0-beta.20261103.846"
-    ag-grid-vue3: "npm:36.3.0-beta.20261103.846"
+    ag-grid-community: "npm:36.3.0-beta.20261103.1152"
+    ag-grid-enterprise: "npm:36.3.0-beta.20261103.1152"
+    ag-grid-vue3: "npm:36.3.0-beta.20261103.1152"
     decimal.js: "npm:^10.6.0"
     npm-run-all: "npm:^4.1.5"
     playwright: "npm:^1.63.0"
@@ -14520,7 +14520,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"ag-grid-vue3@npm:36.3.0-beta.20261103.846, ag-grid-vue3@workspace:packages/ag-grid-vue3":
+"ag-grid-vue3@npm:36.3.0-beta.20261103.1152, ag-grid-vue3@workspace:packages/ag-grid-vue3":
   version: 0.0.0-use.local
   resolution: "ag-grid-vue3@workspace:packages/ag-grid-vue3"
   dependencies:
@@ -14530,7 +14530,7 @@ __metadata:
     "@vitejs/plugin-vue-jsx": "npm:^4.0.0"
     "@vue/test-utils": "npm:^2.5.1"
     "@vue/tsconfig": "npm:^0.9.1"
-    ag-grid-community: "npm:36.3.0-beta.20261103.846"
+    ag-grid-community: "npm:36.3.0-beta.20261103.1152"
     npm-run-all2: "npm:^9.0.3"
     replace-in-file: "npm:9.0.0"
     typescript: "npm:~5.8.3"
@@ -14637,7 +14637,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"ag-stack@npm:36.3.0-beta.20261103.846, ag-stack@workspace:packages/ag-stack":
+"ag-stack@npm:36.3.0-beta.20261103.1152, ag-stack@workspace:packages/ag-stack":
   version: 0.0.0-use.local
   resolution: "ag-stack@workspace:packages/ag-stack"
   dependencies:

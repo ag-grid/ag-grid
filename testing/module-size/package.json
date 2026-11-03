@@ -1,7 +1,7 @@
 {
   "name": "ag-grid-module-size",
   "private": true,
-  "version": "36.3.0-beta.20261103.846",
+  "version": "36.3.0-beta.20261103.1152",
   "scripts": {
     "dev": "vite",
     "cp-app": "cp ./src/App_Src.tsx ./src/App_AUTO.tsx",
@@ -12,11 +12,11 @@
     "test:e2e": "tsx moduleCombinations.ts"
   },
   "dependencies": {
-    "ag-charts-community": "14.3.0-beta.20261103",
-    "ag-charts-enterprise": "14.3.0-beta.20261103",
-    "ag-grid-community": "36.3.0-beta.20261103.846",
-    "ag-grid-enterprise": "36.3.0-beta.20261103.846",
-    "ag-grid-react": "36.3.0-beta.20261103.846",
+    "ag-charts-community": "14.3.0-beta.20261103.1119",
+    "ag-charts-enterprise": "14.3.0-beta.20261103.1119",
+    "ag-grid-community": "36.3.0-beta.20261103.1152",
+    "ag-grid-enterprise": "36.3.0-beta.20261103.1152",
+    "ag-grid-react": "36.3.0-beta.20261103.1152",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
