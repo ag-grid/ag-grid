@@ -74,6 +74,7 @@ permissions:
   contents: read
   actions: read
 
+# Pinned to ubuntu-24.04 because Playwright's WebKit can't launch on ubuntu-26.04 (now ubuntu-latest), which lacks the ICU 74 and libxml2.so.2 libraries it needs.
 jobs:
 
   # Warms the node_modules cache once (rw) so the framework test jobs below can consume it
@@ -87,7 +88,7 @@ jobs:
         || github.event.inputs.skip_angular != 'true'
         || github.event.inputs.skip_vue3 != 'true' }}
     name: Initialise dependencies
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -126,7 +127,7 @@ jobs:
     needs: initialise
     if: ${{ github.event.inputs.skip_vanilla != 'true' }}
     name: Test vanilla Examples
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 90
     # Scoped to the jobs that request the deployed site. At workflow scope the bypass credential would
     # also be readable by publish-reports and the third-party actions it runs, which have no need for it.
@@ -152,7 +153,7 @@ jobs:
     needs: initialise
     if: ${{ github.event.inputs.skip_typescript != 'true' }}
     name: Test typescript Examples
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 90
     env:
       AWS_CI_BYPASS_SECRET: ${{ secrets.AWS_CI_BYPASS_SECRET }}
@@ -176,7 +177,7 @@ jobs:
     needs: initialise
     if: ${{ github.event.inputs.skip_reactFunctionalTs != 'true' }}
     name: Test reactFunctionalTs Examples
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 90
     env:
       AWS_CI_BYPASS_SECRET: ${{ secrets.AWS_CI_BYPASS_SECRET }}
@@ -200,7 +201,7 @@ jobs:
     needs: initialise
     if: ${{ github.event.inputs.skip_vue3 != 'true' }}
     name: Test vue3 Examples
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 90
     env:
       AWS_CI_BYPASS_SECRET: ${{ secrets.AWS_CI_BYPASS_SECRET }}
@@ -224,7 +225,7 @@ jobs:
     needs: initialise
     if: ${{ github.event.inputs.skip_angular != 'true' }}
     name: Test angular Examples
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 90
     env:
       AWS_CI_BYPASS_SECRET: ${{ secrets.AWS_CI_BYPASS_SECRET }}
@@ -248,7 +249,7 @@ jobs:
   test-recipes:
     if: ${{ github.event.inputs.skip_recipes != 'true' }}
     name: Test Public Testing Recipes
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 90
     strategy:
       fail-fast: false
@@ -288,7 +289,7 @@ jobs:
       - test-recipes
     env:
       IS_SUCCESS: ${{ needs.initialise.result != 'failure' && needs.test-angular.result != 'failure' && needs.test-reactFunctionalTs.result != 'failure' && needs.test-typescript.result != 'failure' && needs.test-vanilla.result != 'failure' && needs.test-vue3.result != 'failure' && needs.test-recipes.result != 'failure' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

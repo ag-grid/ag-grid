@@ -69,6 +69,30 @@ describe('Legacy colSpan rendering', () => {
         `);
     });
 
+    test('a spanning cell sets aria-colspan to the columns it covers, hidden columns included', () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [columnDefs[0], { colId: 'x', width: 100, hide: true }, columnDefs[1], columnDefs[2]],
+            rowData,
+        });
+        const ariaRow = (rowIndex: number) =>
+            Array.from(
+                getGridElement(api)!.querySelectorAll<HTMLElement>(`.ag-row[row-index="${rowIndex}"] .ag-cell`),
+                (cell) =>
+                    `${cell.getAttribute('col-id')}:${cell.getAttribute('aria-colindex')}/${cell.getAttribute('aria-colspan') ?? '-'}`
+            ).join(' ');
+        expect([ariaRow(0), ariaRow(1)]).toEqual(['a:1/- b:3/- c:4/-', 'a:1/3 c:4/-']);
+
+        api.setColumnsVisible(['x'], true);
+        expect(ariaRow(1)).toBe('a:1/2 b:3/- c:4/-');
+
+        api.setColumnsVisible(['x'], false);
+        api.moveColumns(['x'], 3);
+        expect(ariaRow(1)).toBe('a:1/2 c:3/-');
+
+        api.setGridOption('columnDefs', [{ ...columnDefs[0], colSpan: () => 1 }, columnDefs[1], columnDefs[2]]);
+        expect(ariaRow(1)).toBe('a:1/- b:2/- c:3/-');
+    });
+
     test('print layout drops the covered cell, and stops a span at the pinned lane edge', async () => {
         const api = gridsManager.createGrid('myGrid', { columnDefs, rowData, domLayout: 'print' });
         await waitFor(() => expect(renderedRow(api, 1)).toBe('a:200px c:100px'));

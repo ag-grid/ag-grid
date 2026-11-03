@@ -481,6 +481,7 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
                 name: localeTextFunc('showValuesAsNone', 'None'),
                 action: () => this.setColumnShowValuesAs(column, null),
                 checked: active == null,
+                menuItemRole: 'menuitemradio',
             },
         ];
         // The candidate columns are shared across the modes' submenus — built on first use.
@@ -526,6 +527,7 @@ export class ShowValuesAsService extends BeanStub implements NamedBean, IShowVal
         const item: MenuItemDef = {
             name: modeLabel(def, type),
             checked: isActive,
+            menuItemRole: 'menuitemradio',
             tooltip: this.modeTooltip(type, mode),
         };
         const menuFn = def.menu;

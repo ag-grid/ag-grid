@@ -104,7 +104,7 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
         return (
             <div
                 className={`${TabGuardClassNames.TAB_GUARD} ${className}`}
-                role="presentation"
+                aria-hidden="true"
                 ref={side === 'top' ? setTopRef : setBottomRef}
             ></div>
         );

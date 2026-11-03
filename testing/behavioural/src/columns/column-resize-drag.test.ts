@@ -17,6 +17,34 @@ describe('header resize drag direction', () => {
         gridsManager.reset();
     });
 
+    test('legacy mouse resizing receives moves and release outside the shadow root', async () => {
+        const host = document.createElement('div');
+        document.body.appendChild(host);
+        const gridDiv = document.createElement('div');
+        host.attachShadow({ mode: 'open' }).appendChild(gridDiv);
+        try {
+            const api = gridsManager.createGrid(gridDiv, {
+                columnDefs: [{ field: 'model', width: 100 }],
+                rowData: [{ model: 'Corolla' }],
+            });
+            const bar = gridDiv.querySelector('.ag-header-cell-resize')!;
+            const dispatcher = new DragEventDispatcher('mouse', null, false);
+
+            await dispatcher.startDrag(bar, 100, 10);
+            await dispatcher.movePointer(bar, 120, 10);
+            expect(api.getColumn('model')!.getActualWidth()).toBe(120);
+            await dispatcher.movePointer(document.body, 150, 10);
+            expect(api.getColumn('model')!.getActualWidth()).toBe(150);
+            await dispatcher.finishDrag();
+
+            await dispatcher.fire(bar, 'mousemove', { clientX: 200, clientY: 10, buttons: 0 });
+            expect(api.getColumn('model')!.getActualWidth()).toBe(150);
+        } finally {
+            gridsManager.reset();
+            host.remove();
+        }
+    });
+
     const createGrid = (pinned: ColumnPinnedType, enableRtl: boolean): GridApi => {
         // A group has no `pinned` of its own: it takes its lane from its children.
         const children: ColDef[] = [

@@ -30,7 +30,7 @@ type SelectProps<O> = {
 export function Select<O>({
     value,
     options,
-    triggerAriaLabel = 'Framework selector',
+    triggerAriaLabel,
     onChange,
     renderItem,
     getKey = defaultGetKey,

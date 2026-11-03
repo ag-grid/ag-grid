@@ -105,12 +105,7 @@
         "staging-report-only": { "args": "--env staging --mode report-only" }
       }
     },
-    "lint": {
-      "command": "eslint",
-      "options": {
-        "cwd": "{projectRoot}"
-      }
-    },
+    "lint": {},
     "generate-csp": {
       "command": "tsx scripts/csp/generate-csp.ts",
       "options": {

@@ -4,12 +4,7 @@
   "sourceRoot": "testing/ag-test-utils/src",
   "projectType": "library",
   "targets": {
-    "lint": {
-      "command": "eslint",
-      "options": {
-        "cwd": "{projectRoot}"
-      }
-    }
+    "lint": {}
   },
   "tags": ["test"]
 }

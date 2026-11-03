@@ -2028,6 +2028,8 @@ describe('htaccessRules', () => {
         it.each([
             '/whats-new-in-ag-grid-v24/',
             '/whats-new-in-ag-grid-v24/amp/amp/',
+            '/whats-new-in-ag-grid-v24-part-2/',
+            '/Whats-New-In-AG-Grid-V24-Part-2/amp/',
             '/Whats-New-In-AG-Grid-V24/feed/',
             '/avoiding-react-18-double-mount/',
             '/email-sign-up/',

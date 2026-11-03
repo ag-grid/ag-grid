@@ -1148,7 +1148,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
         }
         if (!this.rowCountReady && this.rowNodesCountReady) {
             this.rowCountReady = true; // only if row data has been set
-            this.eventSvc.dispatchEventOnce({ type: 'rowCountReady' });
+            this.eventSvc.dispatchEvent({ type: 'rowCountReady' });
         }
     }
 

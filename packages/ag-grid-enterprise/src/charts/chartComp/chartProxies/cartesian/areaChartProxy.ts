@@ -1,7 +1,7 @@
 import type { AgAreaSeriesOptions, AgCartesianAxisOptions } from 'ag-charts-types';
 
 import type { UpdateParams } from '../chartProxy';
-import { CartesianChartProxy } from './cartesianChartProxy';
+import { CartesianChartProxy, formatNormalisedValueAxisLabel } from './cartesianChartProxy';
 
 export class AreaChartProxy extends CartesianChartProxy<'area'> {
     protected override getAxes(params: UpdateParams): Record<string, AgCartesianAxisOptions> {
@@ -16,9 +16,8 @@ export class AreaChartProxy extends CartesianChartProxy<'area'> {
             },
         };
 
-        // Add a default label formatter to show '%' for normalized charts if none is provided
         if (this.isNormalised()) {
-            axes.y.label = { ...axes.y.label, formatter: (params) => Math.round(params.value) + '%' };
+            axes.y.label = { ...axes.y.label, formatter: formatNormalisedValueAxisLabel };
         }
 
         return axes;

@@ -1,5 +1,3 @@
-import type { HorizontalDirection } from 'ag-stack';
-
 import type { CtrlsService } from '../ctrlsService';
 import type { ColumnPinnedType } from '../interfaces/iColumn';
 import { clientXToSectionX, normaliseDirection, normaliseX } from './internalColumnMoveUtils';
@@ -60,11 +58,11 @@ describe('normaliseX', () => {
         expect(result).toBe(650);
     });
 
-    test('RTL leaves pinned-left untouched (left section is not mirrored)', () => {
+    test('RTL mirrors x within the pinned-left section width', () => {
         const viewport = createSectionElements({ left: 100, pinnedLeftWidth: 50, scrollingWidth: 900 });
         const result = normaliseX({ x: 30, pinned: 'left', isRtl: true, ctrlsSvc: createCtrlsSvc(viewport) });
 
-        expect(result).toBe(30);
+        expect(result).toBe(20);
     });
 
     test('RTL returns 0 when the section element is not found', () => {
@@ -77,25 +75,13 @@ describe('normaliseX', () => {
 
 describe('normaliseDirection', () => {
     test('returns the direction unchanged in LTR mode', () => {
-        expect(normaliseDirection('left', false, null)).toBe('left');
-        expect(normaliseDirection('right', false, null)).toBe('right');
+        expect(normaliseDirection('left', false)).toBe('left');
+        expect(normaliseDirection('right', false)).toBe('right');
     });
 
-    test('flips the direction in RTL for centre and pinned-right sections', () => {
-        const cases: [HorizontalDirection, ColumnPinnedType, HorizontalDirection][] = [
-            ['left', null, 'right'],
-            ['right', null, 'left'],
-            ['left', 'right', 'right'],
-            ['right', 'right', 'left'],
-        ];
-        for (const [input, pinned, expected] of cases) {
-            expect(normaliseDirection(input, true, pinned)).toBe(expected);
-        }
-    });
-
-    test('does not flip the pinned-left section in RTL', () => {
-        expect(normaliseDirection('left', true, 'left')).toBe('left');
-        expect(normaliseDirection('right', true, 'left')).toBe('right');
+    test('flips the direction in RTL for every section', () => {
+        expect(normaliseDirection('left', true)).toBe('right');
+        expect(normaliseDirection('right', true)).toBe('left');
     });
 });
 

@@ -274,6 +274,39 @@ describe('Advanced Filter — grid options', () => {
 
             parent.remove();
         });
+
+        test('an editor replaced by moving it to another parent no longer follows advancedFilterParams', async () => {
+            const firstParent = document.createElement('div');
+            const secondParent = document.createElement('div');
+            document.body.append(firstParent, secondParent);
+
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [
+                    { field: 'athlete', filter: true },
+                    { field: 'age', filter: true },
+                ],
+                rowData: ROW_DATA,
+                enableAdvancedFilter: true,
+                advancedFilterParent: firstParent,
+            });
+            const replaced = firstParent.querySelector<HTMLElement>('.ag-advanced-filter')!;
+            const buttonLabels = (editor: HTMLElement) =>
+                Array.from(editor.querySelectorAll('.ag-advanced-filter-buttons button'), (b) => b.textContent);
+            expect(buttonLabels(replaced)).toEqual(['Apply']);
+
+            api.setGridOption('advancedFilterParent', secondParent);
+            api.setGridOption('advancedFilterParams', { buttons: ['apply', 'clear'] });
+            await asyncSetTimeout(0);
+
+            expect(buttonLabels(secondParent.querySelector<HTMLElement>('.ag-advanced-filter')!)).toEqual([
+                'Apply',
+                'Clear',
+            ]);
+            expect(buttonLabels(replaced)).toEqual(['Apply']);
+
+            firstParent.remove();
+            secondParent.remove();
+        });
     });
 });
 

@@ -54,7 +54,13 @@ import {
     enableDevValidations,
     getGridElement,
 } from 'ag-grid-community';
-import { BatchEditModule, CellSelectionModule, ClipboardModule, RowGroupingModule } from 'ag-grid-enterprise';
+import {
+    BatchEditModule,
+    CellSelectionModule,
+    ClipboardModule,
+    RowGroupingModule,
+    RowNumbersModule,
+} from 'ag-grid-enterprise';
 
 import { allowLegacyTooltipProperties, resetLegacyTooltipProperties } from '../tooltip/legacyTooltipTestUtils';
 
@@ -912,6 +918,38 @@ describe('Column Features', () => {
             expect(widths(api1)[1]).not.toBe(300);
             expect(widths(api2)).toEqual(widths(api1));
         });
+
+        test.each([
+            ['fixed', { width: 150 }],
+            ['flexing with another factor', { flex: 2 }],
+        ])(
+            'an auto-size in one grid gives a column it re-flexed, %s in the other grid, its width, fixed',
+            async (_kind, colDefB) => {
+                const columnDefs = (b: ColDef) => [
+                    { colId: 'b', ...b },
+                    { colId: 'a', field: 'a', width: 300 },
+                ];
+                const rowData = [{ a: 'x' }];
+                const api1 = gridsManager.createGrid(
+                    'grid1',
+                    { columnDefs: columnDefs({ flex: 1 }), rowData },
+                    { modules: [ColumnAutoSizeModule] }
+                );
+                const api2 = gridsManager.createGrid(
+                    'grid2',
+                    { columnDefs: columnDefs(colDefB), rowData },
+                    { modules: [ColumnAutoSizeModule] }
+                );
+                api1.setGridOption('alignedGrids', [{ api: api2 }]);
+                const widths = (api: GridApi) => ['b', 'a'].map((id) => api.getColumn(id)!.getActualWidth());
+
+                api1.autoSizeColumns(['a']);
+
+                await waitFor(() => expect(widths(api2)[1]).not.toBe(300));
+                expect(widths(api2)).toEqual(widths(api1));
+                expect([api1.getColumn('b')!.getFlex(), api2.getColumn('b')!.getFlex()]).toEqual([1, null]);
+            }
+        );
 
         test('a group fit in one grid re-flexes every flex column in the other grid, those before the group too', async () => {
             const measured = vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (
@@ -2840,7 +2878,7 @@ describe('Column Features', () => {
 
     describe('column hover', () => {
         const hoverGridsManager = new TestGridsManager({
-            modules: [ClientSideRowModelModule, ColumnHoverModule, TextFilterModule],
+            modules: [ClientSideRowModelModule, ColumnHoverModule, TextFilterModule, RowNumbersModule],
         });
 
         afterEach(() => {
@@ -2899,6 +2937,35 @@ describe('Column Features', () => {
                 '',
                 '',
             ]);
+        });
+
+        test('hovering a row number cell or header does not mark the row numbers column as hovered', async () => {
+            const api = hoverGridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'a' }],
+                defaultColDef: { filter: 'agTextColumnFilter', floatingFilter: true },
+                rowData: [{ a: 'a1' }, { a: 'a2' }],
+                rowNumbers: true,
+                columnHoverHighlight: true,
+            });
+            await asyncSetTimeout(0);
+            const gridElement = TestGridsManager.getHTMLElement(api)!;
+            const rowNumbersCol = api.getColumn('ag-Grid-RowNumbersColumn')!;
+            const hovered = () =>
+                Array.from(
+                    gridElement.querySelectorAll('.ag-column-hover'),
+                    (element) => element.closest('[col-id]')?.getAttribute('col-id') ?? element.getAttribute('col-id')
+                ).join(' ');
+            const rowNumberCell = gridElement.querySelector('.ag-row[row-index="0"] .ag-row-number-cell')!;
+            const rowNumberHeader = gridElement.querySelector('.ag-row-number-header')!;
+
+            rowNumberCell.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+            expect(hovered()).toBe('');
+            expect(api.isColumnHovered(rowNumbersCol)).toBe(false);
+            rowNumberCell.dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
+
+            rowNumberHeader.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+            expect(hovered()).toBe('');
+            expect(api.isColumnHovered(rowNumbersCol)).toBe(false);
         });
     });
 });

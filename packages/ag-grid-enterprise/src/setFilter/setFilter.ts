@@ -27,6 +27,7 @@ import {
 } from 'ag-grid-community';
 
 import type { VirtualListModel } from '../agStack/iVirtualList';
+import { NoMatchesComp } from '../widgets/noMatchesComp';
 import { VirtualList } from '../widgets/virtualList';
 import { FlatSetDisplayValueModel } from './flatSetDisplayValueModel';
 import type { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
@@ -47,6 +48,9 @@ import {
 } from './setFilterUtils';
 import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
 
+/** `'state'` only syncs the UI to a model update; only `'ui'` (typing) announces. */
+type MiniFilterInputSource = 'ui' | 'api' | 'state';
+
 /** @param V type of value in the Set Filter */
 export class SetFilter<V = string>
     extends ProvidedFilter<SetFilterModel, V, ISetFilterParams<any, V> & FilterDisplayParams<any, any, SetFilterModel>>
@@ -58,7 +62,6 @@ export class SetFilter<V = string>
     private readonly eFilterLoading: HTMLElement = RefPlaceholder;
     private readonly eFilterLoadingIcon: HTMLElement = RefPlaceholder;
     private readonly eSetFilterList: HTMLElement = RefPlaceholder;
-    private readonly eFilterNoMatches: HTMLElement = RefPlaceholder;
 
     private virtualList: VirtualList<SetFilterListItem<V | string | null>, SetFilterModelTreeItem | string | null>;
 
@@ -72,6 +75,7 @@ export class SetFilter<V = string>
     private displayValueModel: ISetDisplayValueModel<V>;
 
     private miniFilterText: string | null = null;
+    private noMatchesComp: NoMatchesComp;
 
     /** When true, in excelMode = 'windows', it adds previously selected filter items to newly checked filter selection */
     private addCurrentSelectionToFilter: boolean = false;
@@ -241,12 +245,6 @@ export class SetFilter<V = string>
                     ],
                 },
                 { tag: 'ag-input-text-field', ref: 'eMiniFilter', cls: 'ag-mini-filter' },
-                {
-                    tag: 'div',
-                    ref: 'eFilterNoMatches',
-                    cls: 'ag-filter-no-matches ag-hidden',
-                    children: translateForSetFilter(this, 'noMatches'),
-                },
                 { tag: 'div', ref: 'eSetFilterList', cls: 'ag-set-filter-list', role: 'presentation' },
             ],
         };
@@ -257,6 +255,8 @@ export class SetFilter<V = string>
 
     public override postConstruct(): void {
         super.postConstruct();
+        this.noMatchesComp = this.createManagedBean(new NoMatchesComp('ag-filter-no-matches'));
+        this.eSetFilterList.insertAdjacentElement('beforebegin', this.noMatchesComp.getGui());
         this.createManagedBean(
             new ManagedFocusFeature(this.getFocusableElement(), {
                 handleKeyDown: this.handleKeyDown.bind(this),
@@ -680,6 +680,7 @@ export class SetFilter<V = string>
 
     public override afterGuiDetached(): void {
         super.afterGuiDetached();
+        this.noMatchesComp.cancelAnnouncement();
 
         const { column, excelMode, model, onStateChange } = this.params;
 
@@ -746,11 +747,11 @@ export class SetFilter<V = string>
         // we don't warn here because the multi filter can call this
     }
 
-    private onMiniFilterInput(forceImmediate = false, silent?: boolean) {
+    private onMiniFilterInput(forceImmediate = false, source: MiniFilterInputSource = 'ui') {
         if (!this.doSetMiniFilter(this.eMiniFilter.getValue())) {
             return;
         }
-        if (silent) {
+        if (source === 'state') {
             // update UI state only
             this.showOrHideResults();
             return;
@@ -766,10 +767,14 @@ export class SetFilter<V = string>
                   ? 'debounce'
                   : undefined;
 
-        this.updateUiAfterMiniFilterChange(updateSelections, apply);
+        this.updateUiAfterMiniFilterChange(updateSelections, apply, source === 'ui');
     }
 
-    private updateUiAfterMiniFilterChange(updateSelections: boolean, apply?: 'immediately' | 'debounce'): void {
+    private updateUiAfterMiniFilterChange(
+        updateSelections: boolean,
+        apply: 'immediately' | 'debounce' | undefined,
+        announce: boolean
+    ): void {
         let effectiveApply = apply;
         if (updateSelections) {
             const { excelMode, readOnly, model } = this.params;
@@ -788,13 +793,13 @@ export class SetFilter<V = string>
         this.checkAndRefreshVirtualList();
         this.onUiChanged(updateSelections ? effectiveApply : 'prevent');
 
-        this.showOrHideResults();
+        this.showOrHideResults(announce);
     }
 
-    private showOrHideResults(): void {
+    private showOrHideResults(announce = false): void {
         const hideResults = this.miniFilterText != null && this.displayValueModel.getDisplayedValueCount() < 1;
 
-        _setDisplayed(this.eFilterNoMatches, hideResults);
+        this.noMatchesComp.setNoMatches(hideResults, announce);
         _setDisplayed(this.eSetFilterList, !hideResults);
     }
 
@@ -806,7 +811,7 @@ export class SetFilter<V = string>
     private onMiniFilterKeyDown(e: KeyboardEvent): void {
         const { excelMode, readOnly } = this.params;
         if (e.key === KeyCode.ENTER && !excelMode && !readOnly) {
-            this.updateUiAfterMiniFilterChange(true, 'immediately');
+            this.updateUiAfterMiniFilterChange(true, 'immediately', true);
         }
     }
 
@@ -903,8 +908,9 @@ export class SetFilter<V = string>
     }
 
     public setMiniFilter(newMiniFilter: string | null, silent?: boolean): void {
-        this.eMiniFilter.setValue(newMiniFilter, silent);
-        this.onMiniFilterInput(false, silent);
+        // Field event suppressed so the change is handled here as API input, not as typing.
+        this.eMiniFilter.setValue(newMiniFilter, true);
+        this.onMiniFilterInput(false, silent ? 'state' : 'api');
     }
 
     /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */

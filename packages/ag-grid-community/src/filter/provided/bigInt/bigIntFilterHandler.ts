@@ -38,4 +38,10 @@ export class BigIntFilterHandler extends ScalarFilterHandler<BigIntFilterModel, 
     protected override isValid(value: bigint): boolean {
         return _parseBigIntOrNull(value) !== null;
     }
+
+    protected override toOwnModelValue(value: unknown): string | null {
+        // Past the safe integers a number may differ from the integer that was written.
+        const bigint = typeof value !== 'number' || Number.isSafeInteger(value) ? _parseBigIntOrNull(value) : null;
+        return bigint === null ? null : String(bigint);
+    }
 }

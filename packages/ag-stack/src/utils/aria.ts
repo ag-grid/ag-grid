@@ -85,7 +85,7 @@ export function _setAriaInvalid(element: Element, invalid: boolean) {
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
-export function _setAriaLevel(element: Element, level: number): void {
+export function _setAriaLevel(element: Element, level?: number): void {
     _toggleAriaAttribute(element, 'level', level);
 }
 
@@ -182,6 +182,11 @@ export function _removeAriaSort(element: Element): void {
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export function _setAriaSelected(element: Element, selected?: boolean): void {
     _toggleAriaAttribute(element, 'selected', selected);
+}
+
+/** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
+export function _setAriaPressed(element: Element, pressed: boolean): void {
+    _setAriaAttribute(element, 'pressed', pressed);
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

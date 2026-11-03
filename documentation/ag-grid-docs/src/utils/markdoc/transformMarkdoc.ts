@@ -45,7 +45,10 @@ export function transformMarkdoc({ framework, markdocContent, transformAst }: Pa
     // Strip outer document and p tag, so react will just render the
     // inline content
     const partialAst = ast.children[0]?.children[0] ?? ast;
-    const partialRenderTree = Markdoc.transform(partialAst as Node, config as ConfigType);
+    // Inline content, such as FAQ answers, is built once against a default framework, so mark the
+    // links that are meant to follow the visitor's framework for `FrameworkLinks` to retarget.
+    const partialConfig = { ...config, variables: { ...config.variables, markFrameworkLinks: true } };
+    const partialRenderTree = Markdoc.transform(partialAst as Node, partialConfig as ConfigType);
     const MarkdocContent = () => Markdoc.renderers.react(partialRenderTree, React);
 
     return {

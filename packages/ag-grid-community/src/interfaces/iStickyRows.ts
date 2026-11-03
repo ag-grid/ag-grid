@@ -28,6 +28,6 @@ export interface IStickyRowService {
     createStickyRowFeature(
         ctrl: BeanStub,
         createRowCon: (rowNode: RowNode, animate: boolean, afterScroll: boolean) => RowCtrl,
-        destroyRowCtrls: (rowCtrlsMap: Record<string, RowCtrl> | null | undefined, animate: boolean) => void
+        destroyRowCtrls: (rowCtrls: RowCtrl[]) => void
     ): IStickyRowFeature | undefined;
 }

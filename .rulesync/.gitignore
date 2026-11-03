@@ -39,6 +39,7 @@ mcp.json
 !/rules/grid-state.md
 !/rules/grid-styling.md
 !/rules/integrated-charts.md
+!/rules/scripts-and-ci.md
 !/rules/testing.md
 # docs-review-testing.md ships as a sibling asset of the ag-product docs-review
 # skill config (at skills/docs-review/ag-grid/), not as a top-level rule, so no

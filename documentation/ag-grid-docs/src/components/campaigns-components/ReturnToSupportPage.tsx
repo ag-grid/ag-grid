@@ -10,12 +10,11 @@ import RenewNowButton from './RenewNowButton';
 
 interface ReturnToSupportPageProps {
     versionsData: any;
-    utm: string;
 }
 
 const END_DATE = new Date('2025-08-31T23:59:59');
 
-const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData, utm }) => {
+const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData }) => {
     // Content states
     const [heroTitle, setHeroTitle] = useState<string | React.ReactElement>(
         'Welcome back to better support & new features'
@@ -269,7 +268,6 @@ const ReturnToSupportPage: React.FC<ReturnToSupportPageProps> = ({ versionsData,
 
             <ReleasesSection
                 versionsData={versionsData}
-                utm={utm}
                 title="Recent improvements"
                 subtitle="The latest updates and improvements to AG Grid"
                 viewAllButtonText="View recent releases"

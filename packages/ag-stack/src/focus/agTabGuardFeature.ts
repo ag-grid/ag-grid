@@ -4,7 +4,7 @@ import type { AgCoreBeanCollection } from '../interfaces/agCoreBeanCollection';
 import type { BaseEvents } from '../interfaces/baseEvents';
 import type { BaseProperties } from '../interfaces/baseProperties';
 import type { IPropertiesService } from '../interfaces/iProperties';
-import { _setAriaRole } from '../utils/aria';
+import { _setAriaHidden } from '../utils/aria';
 import { _getDocument } from '../utils/document';
 import { _clearElement, _isNodeOrElement, _removeFromParent } from '../utils/dom';
 import type { StopPropagationCallbacks } from './agManagedFocusFeature';
@@ -132,7 +132,7 @@ export class AgTabGuardFeature<
         const cls = side === 'top' ? TabGuardClassNames.TAB_GUARD_TOP : TabGuardClassNames.TAB_GUARD_BOTTOM;
 
         tabGuard.classList.add(TabGuardClassNames.TAB_GUARD, cls);
-        _setAriaRole(tabGuard, 'presentation');
+        _setAriaHidden(tabGuard, true);
 
         return tabGuard;
     }

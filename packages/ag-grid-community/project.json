@@ -190,10 +190,10 @@
     },
     "lint:depcruise": {},
     "lint": {
+      "inputs": ["default", "^default", "eslintConfig", "stylelintConfig"],
       "dependsOn": ["lint:knip", "lint:depcruise"],
-      "command": "eslint && stylelint './src/**/*css'",
       "options": {
-        "cwd": "{projectRoot}"
+        "command": "eslint && stylelint './src/**/*css'"
       }
     },
     "build:test": {},

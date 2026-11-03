@@ -3,7 +3,7 @@ import { Select } from '@ag-website-shared/components/select/Select';
 import { type FontWeightValue } from '../../theming/api';
 import type { ValueEditorProps } from './ValueEditorProps';
 
-export const FontWeightValueEditor = ({ value, onChange }: ValueEditorProps<FontWeightValue>) => {
+export const FontWeightValueEditor = ({ value, onChange, label }: ValueEditorProps<FontWeightValue>) => {
     const selectedOption =
         fontWeightOptions.find((o) => o.value === value || o.names?.includes(value as string)) || fontWeightOptions[0];
 
@@ -12,6 +12,7 @@ export const FontWeightValueEditor = ({ value, onChange }: ValueEditorProps<Font
             options={fontWeightOptions}
             value={selectedOption}
             onChange={(newValue) => onChange(newValue.value)}
+            triggerAriaLabel={label}
             renderItem={(o) => {
                 return <span>{o.label}</span>;
             }}

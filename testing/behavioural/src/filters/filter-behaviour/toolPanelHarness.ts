@@ -205,6 +205,18 @@ export class ToolPanelHarness {
         return input;
     }
 
+    /** True when the column-list search shows its "No matches" message. */
+    public isSearchNoMatchesShown(): boolean {
+        const el = this.panel.querySelector('.ag-filter-toolpanel-no-matches');
+        return !!el && !el.classList.contains('ag-hidden');
+    }
+
+    /** Text the grid last wrote to its screen-reader live region. */
+    public announcement(): string {
+        const root: ParentNode = (getGridElement(this.api) as HTMLElement | undefined) ?? document;
+        return textOf(root.querySelector('.ag-aria-description-container'));
+    }
+
     public isSearchPresent(): boolean {
         const field = this.panel.querySelector('.ag-filter-toolpanel-search-input');
         return !!field && !field.classList.contains('ag-hidden');
@@ -219,6 +231,12 @@ export class ToolPanelHarness {
         setNativeInputValue(this.searchInput(), text);
         // eslint-disable-next-line no-restricted-syntax -- waits for the 300ms search debounce in agFiltersToolPanelHeader.ts
         await asyncSetTimeout(350);
+        return this;
+    }
+
+    /** Types into the column-list search, leaving its 300ms debounce still pending. */
+    public startSearch(text: string): this {
+        setNativeInputValue(this.searchInput(), text);
         return this;
     }
 

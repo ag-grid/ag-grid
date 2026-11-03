@@ -103,7 +103,7 @@ export function ParamSearchSelector<T>({
 
     const filterWordHighlighter = makeFilterWordMatcher(inputValue);
 
-    const inputProps = getInputProps();
+    const inputProps = getInputProps({ 'aria-label': 'Search theme parameters' });
 
     // Floating UI and Downshift both want to set a ref, merged into one whose
     // identity must hold across renders: React reattaches a changed function ref
@@ -132,7 +132,7 @@ export function ParamSearchSelector<T>({
                             className="param-menu-content"
                             style={{ display: isOpen ? undefined : 'none' }}
                             {...getMenuProps(
-                                {},
+                                { 'aria-label': 'Theme parameters' },
                                 {
                                     // work around a bug in downshift that produces false
                                     // positive error messages when rendering in a portal

@@ -51,6 +51,7 @@ export interface RowNumbersOptions extends Pick<
     /**
      * The default width for the row number column.
      * When set, the column never auto-sizes narrower than it, unless `maxWidth` is smaller.
+     * Updating `rowNumbers` keeps a width the user has resized the column to, within its new `minWidth` and `maxWidth`, unless the update sets a different `width` of at least `minWidth`.
      * @default 60
      */
     width?: number;

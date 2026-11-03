@@ -59,8 +59,7 @@ function _createEventPath(event: { target: EventTarget }): EventTarget[] {
  * @param {Event| { target: EventTarget }} event
  * @returns {EventTarget[]}
  */
-
-function _getEventPath(event: Event | { target: EventTarget }): EventTarget[] {
+export function _getEventPath(event: Event | { target: EventTarget }): EventTarget[] {
     // This can be called with either a browser event or an AG Grid Event that has a target property.
     const eventNoType = event as any;
 

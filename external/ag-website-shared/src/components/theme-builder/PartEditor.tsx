@@ -14,7 +14,13 @@ export const PartEditor = withErrorBoundary((props: VariantSelectorProps) => {
     const [variant, setVariant] = useSelectedPart(feature);
     return (
         <FormField label={feature.label} docs={feature.docs}>
-            <Select options={feature.parts} value={variant} getKey={getVariantId} onChange={setVariant} />
+            <Select
+                options={feature.parts}
+                value={variant}
+                getKey={getVariantId}
+                onChange={setVariant}
+                triggerAriaLabel={feature.label}
+            />
         </FormField>
     );
 });

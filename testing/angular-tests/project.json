@@ -7,6 +7,7 @@
     "test:e2e": {
       "executor": "nx:run-script",
       "dependsOn": ["ag-grid-community:build:package", "ag-grid-angular:build"],
+      "inputs": ["default", "buildOutputExcludes", "allOutputs"],
       "options": {
         "script": "test:e2e"
       }

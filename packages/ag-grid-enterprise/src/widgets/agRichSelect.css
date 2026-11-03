@@ -44,6 +44,10 @@
     }
 }
 
+.ag-rich-select-no-matches {
+    justify-content: center;
+}
+
 .ag-rich-select-row {
     display: flex;
     flex: 1 1 auto;

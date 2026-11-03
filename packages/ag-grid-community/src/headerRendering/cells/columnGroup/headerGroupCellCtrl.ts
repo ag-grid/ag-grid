@@ -110,6 +110,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
 
         const leafCols = column.getProvidedColumnGroup().getLeafColumns();
 
+        this.addLeafColumnListeners(compBean, leafCols);
+
         colHover?.createHoverFeature(compBean, leafCols, eGui);
         rangeSvc?.createRangeHighlightFeature(compBean, column, comp);
         if (colResize) {
@@ -169,6 +171,17 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<
             comp.setHeaderWrapperHidden(false);
             comp.setHeaderWrapperMaxHeight(null);
         }
+    }
+
+    private addLeafColumnListeners(compBean: BeanStub, leafCols: AgColumn[]): void {
+        compBean.addManagedEventListeners({
+            columnPinned: ({ columns }) => {
+                // All fragments can be reused for different pinned sections when the group splits or merges.
+                if (columns && leafCols.some((col) => columns.includes(col))) {
+                    this.refreshHeaderStyles();
+                }
+            },
+        });
     }
 
     private addHighlightListeners(compBean: BeanStub, columns: AgColumn[]): void {

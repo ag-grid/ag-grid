@@ -569,4 +569,36 @@ describe('Clipboard Paste Behaviour: fill handle', () => {
             ]);
         }
     });
+
+    test('a fill over read-only cells leaves the undo and redo stacks alone', async () => {
+        const api = await gridMgr.createGridAndWait('fillNoChangeUndo', {
+            undoRedoCellEditing: true,
+            cellSelection: { handle: { mode: 'fill' } },
+            columnDefs: [{ field: 'editable', editable: true }, { field: 'readOnly' }],
+            rowData: [
+                { id: 'ROW_0', editable: 'a', readOnly: 'b' },
+                { id: 'ROW_1', editable: 'c', readOnly: 'd' },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+        const gridDiv = getGridElement(api)! as HTMLElement;
+        clipboardUtils.setText('X');
+        api.setFocusedCell(0, 'editable');
+        const pasteEnd = waitForEvent('pasteEnd', api);
+        api.pasteFromClipboard();
+        await pasteEnd;
+        api.undoCellEditing();
+        expect(api.getCurrentRedoSize()).toBe(1);
+
+        const cellSelectionChanged = waitForEvent('cellSelectionChanged', api);
+        fireGridPointerDown(await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('ROW_0', 'readOnly'))));
+        await cellSelectionChanged;
+        const fillEnd = waitForEvent('fillEnd', api);
+        await userEvent.dblClick(await waitFor(() => getByTestId(gridDiv, agTestIdFor.fillHandle())));
+        await fillEnd;
+
+        expect(api.getCurrentUndoSize()).toBe(0);
+        expect(api.getCurrentRedoSize()).toBe(1);
+        expect(api.getDisplayedRowAtIndex(1)?.data).toEqual({ id: 'ROW_1', editable: 'c', readOnly: 'd' });
+    });
 });

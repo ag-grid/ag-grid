@@ -29,6 +29,7 @@ const createColumn = (colId: string, headerName: string, groupNames: string[] = 
 };
 
 const mockBeans = {
+    colModel: { getCol: () => undefined },
     colNames: {
         getDisplayNameForColumn: (column: any) => column.__headerName,
         getDisplayNameForProvidedColumnGroup: (_columnGroup: any, providedColumnGroup: any) =>

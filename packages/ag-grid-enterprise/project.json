@@ -270,10 +270,10 @@
       }
     },
     "lint": {
+      "inputs": ["default", "^default", "eslintConfig", "stylelintConfig"],
       "dependsOn": ["lint:knip"],
-      "command": "eslint && stylelint './src/**/*css'",
       "options": {
-        "cwd": "{projectRoot}"
+        "command": "eslint && stylelint './src/**/*css'"
       }
     },
     "build:test": {},

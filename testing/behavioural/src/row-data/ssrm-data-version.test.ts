@@ -109,10 +109,10 @@ describe('SSRM data version', () => {
     describe('a block read from a version other than the pinned one', () => {
         /** Spies on console warnings, returning the data version mismatch warnings logged so far. */
         function spyOnVersionWarnings() {
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [339] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [341] });
             const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
             const versionWarnings = () =>
-                warnSpy.mock.calls.map((call) => String(call[0])).filter((message) => message.includes('warning #339'));
+                warnSpy.mock.calls.map((call) => String(call[0])).filter((message) => message.includes('warning #341'));
             return { warnSpy, versionWarnings };
         }
 
@@ -236,7 +236,7 @@ describe('SSRM data version', () => {
             laterVersion: string | number,
             extra: GridOptions = {}
         ) {
-            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [339] });
+            enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [341] });
             const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
             try {
                 const pending: IServerSideGetRowsParams[] = [];
@@ -254,7 +254,7 @@ describe('SSRM data version', () => {
                 expect(rootVersion(api)).toBe(pinnedVersion);
                 return warnSpy.mock.calls
                     .map((call) => String(call[0]))
-                    .filter((message) => message.includes('warning #339'));
+                    .filter((message) => message.includes('warning #341'));
             } finally {
                 warnSpy.mockRestore();
             }

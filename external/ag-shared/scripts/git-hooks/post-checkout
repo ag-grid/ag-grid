@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+#
+# post-checkout - COW-clone node_modules into a new worktree
+#
+# Git runs this after every checkout, including the one `git worktree add`
+# does, whatever created the worktree (git by hand, an IDE, Cursor or the
+# Claude Code WorktreeCreate hook). For a new worktree it runs
+# preinstall-worktree.sh, which COW-clones node_modules, .nx and
+# plugins/*/dist from the main checkout when they match, so the worktree has
+# dependencies before anyone installs. It never installs: setup-worktree.sh,
+# or a plain install, finishes the setup.
+#
+# Git passes: <previous-HEAD> <new-HEAD> <branch-checkout-flag>
+# The previous HEAD is all zeros only for a new worktree or clone.
+#
+
+HOOKS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=_run-hook-chain.sh
+source "$HOOKS_DIR/_run-hook-chain.sh"
+
+PREVIOUS_HEAD="${1:-}"
+
+if [[ "$PREVIOUS_HEAD" =~ ^0+$ ]]; then
+    REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || true)
+    PREINSTALL="$REPO_ROOT/external/ag-shared/scripts/setup-worktree/preinstall-worktree.sh"
+    # Its own checkout's copy, so an older branch without it is skipped. A
+    # failure here must not fail the checkout.
+    if [[ -n "$REPO_ROOT" && -x "$PREINSTALL" ]]; then
+        (cd "$REPO_ROOT" && "$PREINSTALL") || true
+    fi
+fi
+
+run_hook_chain "post-checkout" "$@"
+exit $?

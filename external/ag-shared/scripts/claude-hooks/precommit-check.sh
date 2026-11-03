@@ -47,6 +47,14 @@ printf '%s' "$CMD" | grep -Eq 'commit-tree|--dry-run' && allow
 ROOT=$(git -C "${CWD:-.}" rev-parse --show-toplevel 2>/dev/null) || allow
 cd "$ROOT" || allow
 
+# Gate only the registering project and its worktrees (same git common dir), as the
+# sibling hooks scope to CLAUDE_PROJECT_DIR: other repos follow their own rules.
+if [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
+    common_dir() { git -C "$1" rev-parse --path-format=absolute --git-common-dir 2>/dev/null; }
+    PROJECT_COMMON=$(common_dir "$CLAUDE_PROJECT_DIR") || allow
+    [ "$(common_dir "$ROOT")" = "$PROJECT_COMMON" ] || allow
+fi
+
 # Resolve the repo's prettier (same binary nx format uses). Fall back to npx.
 PRETTIER="$ROOT/node_modules/.bin/prettier"
 prettier_fmt() {

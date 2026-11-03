@@ -784,6 +784,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     ariaRowSelect: 'Pritisnite RAZMAK za izbor ovog reda',
     ariaRowSelectionDisabled: 'Izbor reda je onemogućen za ovaj red',
     ariaSearch: 'Pretraga',
+    ariaSortPriority: 'Prioritet sortiranja ${priority} od ${count}',
     ariaSortableColumn: 'Pritisnite ENTER za sortiranje',
     ariaSortableColumnWithCellSelection: 'Pritisnite ALT ENTER za sortiranje',
     ariaToggleVisibility: 'Pritisnite RAZMAK za uključivanje/isključivanje vidljivosti',
@@ -820,6 +821,12 @@ export const AG_GRID_LOCALE_BS_BA = {
     ariaDropZoneColumnComponentSortAbsoluteDescending: 'apsolutno opadajuće',
 
     ariaLabelDialog: 'Dijalog',
+
+    ariaLabelClose: 'Zatvori',
+
+    ariaLabelMaximize: 'Maksimiziraj',
+
+    ariaLabelRestore: 'Vrati',
 
     ariaLabelColumnMenu: 'Meni kolone',
     ariaLabelColumnFilter: 'Filter kolone',

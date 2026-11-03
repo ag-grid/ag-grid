@@ -15,6 +15,13 @@ ALLOWED_FILES="package.json|yarn.lock|version.ts|licenseManager.ts|.env|README.m
 # fails every job on the branch when the lockfile is stale, so run the same check here before the
 # push. `--immutable` aborts without writing anything when the lockfile would need to change, so
 # it doubles as a safe, side-effect-free staleness probe.
+#
+# Install scripts stay off, as in `bootstrap`, which has already run the allowed ones through
+# @lavamoat/allow-scripts. Yarn records those packages as never built, so with scripts on it would
+# build them again, and esbuild's install script then fails: it runs `node bin/esbuild --version`
+# on a file it has already replaced with the native binary.
+export YARN_ENABLE_SCRIPTS=false
+
 if ! yarn install --immutable > /dev/null 2>&1; then
   echo "yarn.lock is out of step with the bumped package.json files - running yarn install"
   yarn install || {

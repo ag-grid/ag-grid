@@ -260,8 +260,7 @@
     .ag-panel-title-bar-button {
         @include ag.theme-rtl(
             (
-                margin-left: calc(var(--ag-grid-size) * 2),
-                margin-right: var(--ag-grid-size),
+                margin-left: calc(var(--ag-grid-size) * 1.5),
             )
         );
     }

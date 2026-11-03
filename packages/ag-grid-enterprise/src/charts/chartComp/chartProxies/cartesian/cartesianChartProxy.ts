@@ -1,5 +1,6 @@
 import type {
     AgAreaSeriesOptions,
+    AgAxisLabelFormatterParams,
     AgCartesianAxisOptions,
     AgCartesianAxisType,
     AgCartesianChartOptions,
@@ -15,6 +16,14 @@ import { _parseDateTimeFromString } from 'ag-stack';
 import type { UpdateParams } from '../chartProxy';
 import { ChartProxy } from '../chartProxy';
 import { getSeriesHighlight } from '../chartTheme';
+
+/**
+ * Shows the value axis of a 100% stacked chart as percentages. Tooltips and series labels inherit the axis label
+ * formatter but show the raw values, so they are left to the default format.
+ */
+export function formatNormalisedValueAxisLabel({ value, source }: AgAxisLabelFormatterParams): string | undefined {
+    return source === 'tooltip' || source === 'series-label' ? undefined : Math.round(value) + '%';
+}
 
 export abstract class CartesianChartProxy<
     TSeries extends

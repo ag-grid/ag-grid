@@ -966,7 +966,13 @@ export const AG_GRID_ERRORS = {
         `\`calculatedColumns.processColDef\` returned \`${(properties ?? []).join('`, `')}\` for calculated column \`${colId}\`. These properties are always overridden for calculated columns and have been ignored.` as const,
     337: ({ colId }: { colId: string }) =>
         `\`setFilterCards\` on the New Filters Tool Panel was passed \`${colId}\`, which is not a column in the grid, so no card is shown for it.` as const,
-    339: ({ pinned, received }: { pinned: string | number; received: string | number }) =>
+    338: () =>
+        '`success()` or `fail()` was called more than once for the same Server-Side Row Model request, so the later call was ignored.' as const,
+    339: ({ field, key }: { field: string; key: string }) =>
+        `The value for field \`${field}\` was not set, as \`${key}\` on that path is not an object. Use a \`valueSetter\` to set this value.` as const,
+    340: ({ field }: { field: string }) =>
+        `Field \`${field}\` contains \`__proto__\`, which field paths do not support, so the column shows no value and its edits are refused. Use a \`valueGetter\` and \`valueSetter\` instead.` as const,
+    341: ({ pinned, received }: { pinned: string | number; received: string | number }) =>
         `The server-side datasource returned data version \`${received}\` for a level pinned to version \`${pinned}\`. The level keeps version \`${pinned}\` and the block's rows; read every block of the level from \`request.dataVersion\` (or a newer version when \`serverSideDataVersionMode\` is \`'stream'\`), or call \`refreshServerSide\` to drop the pinned version.` as const,
     // When adding a code above this line, raise `MAX_ERROR_ID` below to match.
 };
@@ -983,7 +989,7 @@ export type ErrorId = keyof ErrorMap;
  *
  * @knipIgnore Read by the docs site's error-page route
  */
-export const MAX_ERROR_ID = 339;
+export const MAX_ERROR_ID = 341;
 
 type ErrorValue<TId extends ErrorId | null> = TId extends ErrorId ? ErrorMap[TId] : never;
 export type GetErrorParams<TId extends ErrorId> =

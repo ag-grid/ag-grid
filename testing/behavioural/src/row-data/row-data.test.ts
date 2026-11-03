@@ -9,18 +9,21 @@ import {
     executeTransactionsAsync,
     setRowDataChecked,
 } from 'ag-test-utils';
+import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 import type { MockInstance } from 'vitest';
 
 import {
     ClientSideRowModelModule,
     ExternalFilterModule,
     NumberFilterModule,
+    PinnedRowModule,
     RenderApiModule,
     RowApiModule,
     ScrollApiModule,
     TextFilterModule,
 } from 'ag-grid-community';
-import type { GridOptions, IRowNode, ModelUpdatedEvent } from 'ag-grid-community';
+import type { GridOptions, IRowNode, ModelUpdatedEvent, RowNode } from 'ag-grid-community';
+import { TreeDataModule } from 'ag-grid-enterprise';
 
 describe('ag-grid row data', () => {
     const gridsManager = new TestGridsManager({
@@ -29,6 +32,7 @@ describe('ag-grid row data', () => {
             NumberFilterModule,
             ExternalFilterModule,
             ClientSideRowModelModule,
+            PinnedRowModule,
             RowApiModule,
             RenderApiModule,
             ScrollApiModule,
@@ -48,6 +52,112 @@ describe('ag-grid row data', () => {
         gridsManager.reset();
         consoleWarnSpy?.mockRestore();
         consoleErrorSpy?.mockRestore();
+    });
+
+    test('a row whose id is an object property name, drawn before, is drawn again when an update moves it into view', async () => {
+        const rowData = (value: string, constructorIndex: number) =>
+            Array.from({ length: 100 }, (_, i) => ({ id: i === constructorIndex ? 'constructor' : `row-${i}`, value }));
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [{ field: 'value' }],
+            rowData: rowData('before', 90),
+            getRowId: (p) => p.data.id,
+            rowHeight: 25,
+            suppressRowVirtualisation: false,
+        });
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        const constructorCell = () => gridDiv.querySelector('.ag-row[row-id="constructor"] .ag-cell')?.textContent;
+        api.ensureIndexVisible(90, 'top');
+        await waitFor(() => expect(constructorCell()).toBe('before'));
+        api.ensureIndexVisible(0, 'top');
+        await waitFor(() => expect(constructorCell()).toBeUndefined());
+
+        api.setGridOption('rowData', rowData('after', 0));
+
+        await waitFor(() => expect(constructorCell()).toBe('after'));
+    });
+
+    test('refreshCells for some rows refreshes those rows, pinned ones included, and leaves alone a rendered row whose id is an object property name', async () => {
+        const valueRowIds: string[] = [];
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [
+                {
+                    colId: 'id',
+                    valueGetter: (p) => {
+                        valueRowIds.push(p.data.id);
+                        return p.data.id;
+                    },
+                },
+            ],
+            rowData: [{ id: 'constructor' }, { id: 'row-1' }],
+            pinnedTopRowData: [{ id: 'top' }],
+            pinnedBottomRowData: [{ id: 'bottom' }],
+            getRowId: (p) => p.data.id,
+        });
+        valueRowIds.length = 0;
+
+        api.refreshCells({
+            rowNodes: [api.getRowNode('row-1')!, api.getPinnedTopRow(0)!, api.getPinnedBottomRow(0)!],
+            force: true,
+        });
+
+        expect([...new Set(valueRowIds)].sort()).toEqual(['bottom', 'row-1', 'top']);
+    });
+
+    test('refreshCells for some columns leaves alone a column whose id is an object property name', async () => {
+        const valueColIds: string[] = [];
+        const column = (colId: string) => ({
+            colId,
+            valueGetter: () => {
+                valueColIds.push(colId);
+                return colId;
+            },
+        });
+        const api = await gridsManager.createGridAndWait('myGrid', {
+            columnDefs: [column('a'), column('constructor')],
+            rowData: [{ id: 'row-0' }],
+        });
+        valueColIds.length = 0;
+
+        api.refreshCells({ columns: ['a'], force: true });
+
+        expect([...new Set(valueColIds)]).toEqual(['a']);
+    });
+
+    test('a tree data group whose id is an object property name, once it stops being sticky, is drawn in the body and its sticky row removed', async () => {
+        // sticky rows are budgeted from the viewport's measured height
+        mockGridLayout.useRealOffsetDimensions = true;
+        onTestFinished(() => mockGridLayout.resetOptions());
+        const removedRowIds: string[] = [];
+        const childRows = (parent: string) =>
+            Array.from({ length: 60 }, (_, i) => ({ id: `${parent}-${i}`, path: [parent, `${parent}-${i}`] }));
+        const api = await gridsManager.createGridAndWait(
+            'myGrid',
+            {
+                columnDefs: [{ field: 'id' }],
+                rowData: [{ id: '__proto__', path: ['__proto__'] }, ...childRows('__proto__')],
+                treeData: true,
+                getDataPath: (data) => data.path,
+                getRowId: (p) => p.data.id,
+                groupDefaultExpanded: -1,
+                rowHeight: 25,
+                suppressRowVirtualisation: false,
+                onVirtualRowRemoved: (event) => removedRowIds.push(event.node.id!),
+            },
+            { modules: [TreeDataModule] }
+        );
+        const gridDiv = TestGridsManager.getHTMLElement(api)!;
+        const groupRowContainers = () =>
+            Array.from(gridDiv.querySelectorAll('.ag-row[row-id="__proto__"]')).map((row) =>
+                row.closest('.ag-grid-sticky-top-rows-container') ? 'sticky' : 'body'
+            );
+        api.ensureIndexVisible(40, 'top');
+        await waitFor(() => expect(groupRowContainers()).toContain('sticky'));
+
+        api.ensureIndexVisible(0, 'top');
+
+        await waitFor(() => expect(groupRowContainers()).toEqual(['body']));
+        // drawn in the body, then sticky, then in the body again: each row left the DOM once
+        await waitFor(() => expect(removedRowIds.filter((id) => id === '__proto__')).toHaveLength(2));
     });
 
     test('onRowDataUpdated, onModelUpdated, suppressModelUpdateAfterUpdateTransaction', async () => {
@@ -709,6 +819,34 @@ describe('ag-grid row data', () => {
         expect(ten.rowTop).toBeNull();
         expect(ten.rowIndex).toBeNull();
         expect(ten.displayed).toBe(false);
+    });
+
+    test('an unrendered row stops calling a removed listener, and releases its event service with its last one', () => {
+        const api = gridsManager.createGrid('G', {
+            columnDefs: [{ field: 'name' }],
+            rowData: [{ name: 'Alice' }, { name: 'Bob' }],
+            getRowId: ({ data }) => data.name,
+            isExternalFilterPresent: () => true,
+            doesExternalFilterPass: (node) => node.data.name !== 'Bob',
+        });
+        const rowNode = api.getRowNode('Bob') as RowNode;
+        expect(api.getDisplayedRowCount()).toBe(1);
+        rowNode.removeEventListener('dataChanged', () => {});
+
+        const calls: string[] = [];
+        const removed = () => calls.push('removed');
+        const kept = () => calls.push('kept');
+        rowNode.addEventListener('dataChanged', removed);
+        rowNode.addEventListener('dataChanged', kept);
+        rowNode.removeEventListener('dataChanged', removed);
+        rowNode.setData({ name: 'Bob' });
+        expect(calls).toEqual(['kept']);
+
+        rowNode.removeEventListener('dataChanged', kept);
+        expect(rowNode.__localEventService).toBeNull();
+        rowNode.addEventListener('dataChanged', () => calls.push('added after'));
+        rowNode.setData({ name: 'Bob' });
+        expect(calls).toEqual(['kept', 'added after']);
     });
 
     describe('onModelUpdated event flags', () => {

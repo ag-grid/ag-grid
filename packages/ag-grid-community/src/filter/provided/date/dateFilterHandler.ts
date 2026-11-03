@@ -50,6 +50,11 @@ export class DateFilterHandler extends ScalarFilterHandler<DateFilterModel, Date
         return !isValidDate || isValidDate(value);
     }
 
+    /** Other filter types hold no dates: their values sit in `filter`, this filter's in `dateFrom`. */
+    protected override toOwnModelValue(): null {
+        return null;
+    }
+
     protected override evaluateNonNullValue(
         values: Tuple<Date>,
         cellValue: Date,

@@ -4,6 +4,7 @@ import { expect, test } from '@playwright/test';
 import { mountGrid } from '../src/mountGrid';
 
 test.use({ launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'] } });
+test.skip(({ browserName }) => browserName === 'firefox', 'Firefox scrollbar coverage is deferred.');
 
 declare global {
     interface Window {

@@ -25,7 +25,7 @@ import { AllEnterpriseModule, ColumnMenuModule, ColumnsToolPanelModule } from 'a
 
 import { openToolPanelContextMenu } from '../columnToolPanel/toolPanelContextMenuHarness';
 
-type Surface = 'header' | 'panel';
+type Surface = 'header' | 'panel' | 'chooser';
 
 describe('column movement menu actions', () => {
     const grids = new TestGridsManager({ modules: [AllEnterpriseModule] });
@@ -82,12 +82,27 @@ describe('column movement menu actions', () => {
         const grid = getGridElement(api) as HTMLElement;
         if (surface === 'panel') {
             await openToolPanelContextMenu(api.getToolPanelInstance('columns'), grid, name);
+        } else if (surface === 'chooser') {
+            api.showColumnChooser();
+            const dialog = await findByRole(grid, 'dialog');
+            const entry = await waitFor(() => {
+                // The virtual list renders no rows until its viewport reports a height.
+                const viewport = dialog.querySelector<HTMLElement>('.ag-column-select-virtual-list-viewport')!;
+                Object.defineProperty(viewport, 'offsetHeight', { value: 300, configurable: true });
+                viewport.dispatchEvent(new Event('scroll'));
+                const item = getByText(dialog, name).closest<HTMLElement>('.ag-virtual-list-item');
+                expect(item).not.toBeNull();
+                return item!;
+            });
+            entry.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
         } else {
             const header = group
                 ? getByText(grid, name, { selector: '.ag-header-group-text' }).closest<HTMLElement>(
                       '.ag-header-group-cell'
                   )!
-                : grid.querySelector<HTMLElement>(`.ag-header-cell[col-id="${name.toLowerCase()}"]`)!;
+                : grid.querySelector<HTMLElement>(
+                      `.ag-header-cell[col-id="${api.getColumn(name)?.getColId() ?? name.toLowerCase()}"]`
+                  )!;
             header.focus();
             header.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
         }
@@ -162,33 +177,22 @@ describe('column movement menu actions', () => {
         });
 
         test.each([false, true])(
-            'read-only functions prevent moves, changed after opening=%s',
+            'read-only functions allow column moves, changed after opening=%s',
             async (changeAfterOpening) => {
                 const api = await create({
                     functionsReadOnly: !changeAfterOpening,
-                    getColumnMenuItems: () =>
-                        surface === 'header'
-                            ? ['moveLeft', 'moveRight', { name: 'Custom action' }]
-                            : ['moveUp', 'moveDown', { name: 'Custom action' }],
                 });
                 const grid = await open(surface, api);
                 if (changeAfterOpening) {
                     api.setGridOption('functionsReadOnly', true);
                 }
                 for (const label of labels(surface)) {
-                    if (surface === 'panel' && !changeAfterOpening) {
-                        expect(queryByText(grid, label)).toBeNull();
-                        continue;
-                    }
-                    const item = getByText(grid, label).closest<HTMLElement>('[role="menuitem"]')!;
-                    if (!changeAfterOpening) {
-                        expect(item.getAttribute('aria-disabled')).toBe('true');
-                    }
-                    await userEvent.click(item);
-                    if (changeAfterOpening) {
-                        break;
-                    }
+                    expect(getByRole(grid, 'menuitem', { name: label }).getAttribute('aria-disabled')).not.toBe('true');
                 }
+                await userEvent.click(getByRole(grid, 'menuitem', { name: labels(surface)[0] }));
+                expect(order(api)).toEqual(['b', 'a', 'c', 'd']);
+                await open(surface, api);
+                await userEvent.click(getByRole(grid, 'menuitem', { name: labels(surface)[1] }));
                 expect(order(api)).toEqual(['a', 'b', 'c', 'd']);
             }
         );
@@ -372,23 +376,7 @@ describe('column movement menu actions', () => {
 
     test.each(['A', 'B'])('the column chooser disables unavailable directions for %s', async (name) => {
         const api = await create({ sideBar: undefined }, headerGrids);
-        api.showColumnChooser();
-        const dialog = await waitFor(() => {
-            const element = document.querySelector<HTMLElement>('[role="dialog"]');
-            expect(element).not.toBeNull();
-            return element!;
-        });
-        const entry = await waitFor(() => {
-            // The virtual list renders no rows until its viewport reports a height.
-            const viewport = dialog.querySelector<HTMLElement>('.ag-column-select-virtual-list-viewport')!;
-            Object.defineProperty(viewport, 'offsetHeight', { value: 300, configurable: true });
-            viewport.dispatchEvent(new Event('scroll'));
-            const item = getByText(dialog, name).closest<HTMLElement>('.ag-virtual-list-item');
-            expect(item).not.toBeNull();
-            return item!;
-        });
-        entry.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
-        const grid = getGridElement(api) as HTMLElement;
+        const grid = await open('chooser', api, name);
         const down = await findByText(grid, 'Move Down');
         expect(getByText(grid, 'Move Up').closest('[role="menuitem"]')!.getAttribute('aria-disabled') === 'true').toBe(
             name === 'A'
@@ -437,8 +425,8 @@ describe('column movement menu actions', () => {
         expect(order(api)).toEqual(['a', 'c', 'b', 'd']);
     });
 
-    describe.each<Surface>(['header', 'panel'])('pivot-mode %s menus', (surface) => {
-        test.each([false, true])('disables column moves with pivot active=%s', async (pivot) => {
+    describe.each<Surface>(['header', 'panel', 'chooser'])('pivot-mode %s menus', (surface) => {
+        test.each([false, true])('column movement with pivot active=%s', async (pivot) => {
             const api = await create({
                 pivotMode: true,
                 columnDefs: [
@@ -452,11 +440,68 @@ describe('column movement menu actions', () => {
             const name = surface === 'header' ? api.getAllDisplayedColumns().at(-1)!.getColId() : 'B';
             const grid = await open(surface, api, name);
             await findByText(grid, 'Custom action');
-            for (const label of labels(surface)) {
-                expect(getByText(grid, label).closest('[role="menuitem"]')!.getAttribute('aria-disabled')).toBe('true');
+            if (surface !== 'header') {
+                for (const label of labels(surface)) {
+                    expect(queryByText(grid, label)).toBeNull();
+                }
+            } else {
+                const columns = api.getAllDisplayedColumns();
+                const left = getByRole(grid, 'menuitem', { name: 'Move Left' });
+                expect(left.getAttribute('aria-disabled')).not.toBe('true');
+                await userEvent.click(left);
+                expect(api.getAllDisplayedColumns()).toEqual([
+                    ...columns.slice(0, -2),
+                    columns.at(-1)!,
+                    columns.at(-2)!,
+                ]);
             }
         });
     });
+
+    test.each(['auto group', 'pivot group', 'nested pivot group'] as const)(
+        'moves the %s header in both directions in pivot mode',
+        async (kind) => {
+            const api = await create({
+                pivotMode: true,
+                pivotDefaultExpanded: -1,
+                columnDefs: [
+                    { field: 'year', rowGroup: true },
+                    { field: 'country', pivot: true },
+                    { field: 'sport', pivot: true },
+                    { field: 'gold', aggFunc: 'sum' },
+                    { field: 'silver', aggFunc: 'sum' },
+                ],
+                rowData: [
+                    { year: 2024, country: 'Ireland', sport: 'Swimming', gold: 1, silver: 2 },
+                    { year: 2024, country: 'France', sport: 'Running', gold: 3, silver: 4 },
+                ],
+            });
+            const columns = api.getAllDisplayedColumns();
+            const isGroup = kind !== 'auto group';
+            const groupName = kind === 'pivot group' ? 'Ireland' : 'Swimming';
+            const name = isGroup ? groupName : columns[0].getColId();
+            const moving =
+                kind === 'auto group'
+                    ? [columns[0]]
+                    : columns.filter((column) => column.getColDef().pivotKeys?.[0] === 'Ireland');
+            const remaining = columns.filter((column) => !moving.includes(column));
+            const firstMove = kind === 'auto group' ? 'Move Right' : 'Move Left';
+            let grid = await open('header', api, name, isGroup);
+            const item = getByRole(grid, 'menuitem', { name: firstMove });
+            expect(item.getAttribute('aria-disabled')).not.toBe('true');
+            await userEvent.click(item);
+            const expected =
+                kind === 'auto group'
+                    ? [remaining[0], ...moving, ...remaining.slice(1)]
+                    : [...remaining.slice(0, -1), ...moving, remaining.at(-1)!];
+            expect(api.getAllDisplayedColumns()).toEqual(expected);
+            grid = await open('header', api, name, isGroup);
+            await userEvent.click(
+                getByRole(grid, 'menuitem', { name: firstMove === 'Move Left' ? 'Move Right' : 'Move Left' })
+            );
+            expect(api.getAllDisplayedColumns()).toEqual(columns);
+        }
+    );
 
     test('moves a collapsed tool-panel group as a block', async () => {
         const api = await create({ columnDefs: groupedColumns });
@@ -580,7 +625,7 @@ describe('column movement menu actions', () => {
 
             await open('panel', api);
             for (const name of ['Move Up', 'Move Down']) {
-                expect(getByRole(grid, 'menuitem', { name }).getAttribute('aria-disabled') === 'true').toBe(!pivotMode);
+                expect(queryByText(grid, name) !== null).toBe(pivotMode);
             }
             await userEvent.keyboard('{Escape}');
             const groupPanel = grid.querySelector<HTMLElement>('.ag-column-drop-vertical.ag-column-drop-rowgroup')!;
@@ -597,7 +642,7 @@ describe('column movement menu actions', () => {
             expect(groupPanel.querySelector('.ag-column-drop-cell-text')?.textContent).toBe('A');
             await open('panel', api);
             for (const name of ['Move Up', 'Move Down']) {
-                expect(getByRole(grid, 'menuitem', { name }).getAttribute('aria-disabled') === 'true').toBe(pivotMode);
+                expect(queryByText(grid, name) !== null).toBe(!pivotMode);
             }
         }
     );

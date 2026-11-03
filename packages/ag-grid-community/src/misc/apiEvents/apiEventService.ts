@@ -10,11 +10,8 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
 
     private readonly syncListeners: Map<AgEventType, Set<AgEventListener>> = new Map();
     private readonly asyncListeners: Map<AgEventType, Set<AgEventListener>> = new Map();
-    private readonly syncGlobalListeners: Set<AgGlobalEventListener> = new Set();
-    private readonly globalListenerPairs = new Map<
-        AgGlobalEventListener,
-        { syncListener: AgGlobalEventListener; asyncListener: AgGlobalEventListener }
-    >();
+    /** Each user global listener, to the listener registered for it on both the sync and the async side. */
+    private readonly globalListeners = new Map<AgGlobalEventListener, AgGlobalEventListener>();
     /** wraps events for frameworks */
     private wrapSvc?: IFrameworkEventListenerService<AgEventListener, AgGlobalEventListener>;
 
@@ -23,6 +20,9 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
     }
 
     public addListener<T extends AgEventType>(eventType: T, userListener: AgEventListener): void {
+        if (typeof userListener !== 'function') {
+            return; // ignoring non functions for compatibility
+        }
         const listener = this.wrapSvc?.wrap(eventType, userListener) ?? userListener;
 
         const async = !ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType);
@@ -44,39 +44,29 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
     }
 
     public addGlobalListener(userListener: AgGlobalEventListener): void {
+        if (typeof userListener !== 'function') {
+            return; // ignoring non functions for compatibility
+        }
+        const globalListeners = this.globalListeners;
+        if (globalListeners.has(userListener)) {
+            return;
+        }
         const listener = this.wrapSvc?.wrapGlobal(userListener) ?? userListener;
-
-        // if async then need to setup the global listener for sync to handle alwaysSyncGlobalEvents
-        const syncListener: AgGlobalEventListener = (eventType, event) => {
-            if (ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType)) {
-                listener(eventType, event);
-            }
-        };
-        const asyncListener: AgGlobalEventListener = (eventType, event) => {
-            if (!ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType)) {
-                listener(eventType, event);
-            }
-        };
-        this.globalListenerPairs.set(userListener, { syncListener, asyncListener });
+        globalListeners.set(userListener, listener);
+        // always-sync events reach the user synchronously, every other type (custom ones included) async
         const eventSvc = this.eventSvc;
-        eventSvc.addGlobalListener(syncListener, false);
-        eventSvc.addGlobalListener(asyncListener, true);
+        eventSvc.addGlobalListener(listener, false, ALWAYS_SYNC_GLOBAL_EVENTS);
+        eventSvc.addGlobalListener(listener, true, undefined, ALWAYS_SYNC_GLOBAL_EVENTS);
     }
 
     public removeGlobalListener(userListener: AgGlobalEventListener): void {
-        const { eventSvc, wrapSvc, globalListenerPairs } = this;
-        const listener = wrapSvc?.unwrapGlobal(userListener) ?? userListener;
-
-        const hasAsync = globalListenerPairs.has(listener);
-        if (hasAsync) {
-            // If it was async also remove the always sync listener we added
-            const { syncListener, asyncListener } = globalListenerPairs.get(listener)!;
-            eventSvc.removeGlobalListener(syncListener, false);
-            eventSvc.removeGlobalListener(asyncListener, true);
-            globalListenerPairs.delete(userListener);
-        } else {
-            this.syncGlobalListeners.delete(listener);
+        const globalListeners = this.globalListeners;
+        const listener = globalListeners.get(userListener);
+        if (listener) {
+            const eventSvc = this.eventSvc;
             eventSvc.removeGlobalListener(listener, false);
+            eventSvc.removeGlobalListener(listener, true);
+            globalListeners.delete(userListener);
         }
     }
 
@@ -88,24 +78,16 @@ export class ApiEventService extends BeanStub<AgEventType> implements NamedBean 
         map.clear();
     }
 
-    private destroyGlobalListeners(set: Set<AgGlobalEventListener>, async: boolean): void {
-        for (const listener of set) {
-            this.eventSvc.removeGlobalListener(listener, async);
-        }
-        set.clear();
-    }
-
     public override destroy(): void {
         super.destroy();
 
         this.destroyEventListeners(this.syncListeners, false);
         this.destroyEventListeners(this.asyncListeners, true);
-        this.destroyGlobalListeners(this.syncGlobalListeners, false);
-        const { globalListenerPairs, eventSvc } = this;
-        globalListenerPairs.forEach(({ syncListener, asyncListener }) => {
-            eventSvc.removeGlobalListener(syncListener, false);
-            eventSvc.removeGlobalListener(asyncListener, true);
+        const { globalListeners, eventSvc } = this;
+        globalListeners.forEach((listener) => {
+            eventSvc.removeGlobalListener(listener, false);
+            eventSvc.removeGlobalListener(listener, true);
         });
-        globalListenerPairs.clear();
+        globalListeners.clear();
     }
 }

@@ -13,7 +13,7 @@ import {
 import { afterEach, describe, expect, test } from 'vitest';
 
 import type { ColDef, ColGroupDef, GridApi } from 'ag-grid-community';
-import { ClientSideRowModelModule, ColumnApiModule, GridStateModule } from 'ag-grid-community';
+import { ClientSideRowModelModule, ColumnApiModule, ColumnAutoSizeModule, GridStateModule } from 'ag-grid-community';
 
 describe('Column Flex', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, ColumnApiModule] });
@@ -369,6 +369,36 @@ describe('Column Flex', () => {
         `);
         // the event names the cols the resize re-flexed with the one it resized
         await waitFor(() => expect(resized).toEqual([{ columns: ['b', 'c'], flexColumns: ['c'] }]));
+    });
+
+    test.each([
+        ['column state change', 700, (api: GridApi) => api.applyColumnState({ state: [{ colId: 'a', width: 300 }] })],
+        ['auto-size', 880, (api: GridApi) => api.autoSizeColumns(['a'])],
+    ])('a %s lists the flex columns it re-flexed with the column it resized', async (_change, expectedB, resize) => {
+        const api = gridsManager.createGrid(
+            'myGrid',
+            {
+                columnDefs: [
+                    { colId: 'a', field: 'a', width: 200, minWidth: 120 },
+                    { colId: 'b', flex: 1 },
+                ],
+                rowData: [{ a: 'x' }],
+            },
+            { modules: [ColumnAutoSizeModule] }
+        );
+        const resized: { columns: string[]; flexColumns: string[] | null }[] = [];
+        api.addEventListener('columnResized', (event) => {
+            resized.push({
+                columns: event.columns!.map((col) => col.getColId()),
+                flexColumns: event.flexColumns?.map((col) => col.getColId()) ?? null,
+            });
+        });
+
+        resize(api);
+
+        // every flex col re-flexed, so they are listed in `columns` and `flexColumns` is null
+        await waitFor(() => expect(resized).toEqual([{ columns: ['a', 'b'], flexColumns: null }]));
+        expect(api.getColumn('b')!.getActualWidth()).toBe(expectedB);
     });
 
     test.each([false, true])(

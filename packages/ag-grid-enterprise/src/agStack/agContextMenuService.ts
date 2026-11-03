@@ -349,7 +349,7 @@ class ContextMenu<
         private readonly callbacks: AgMenuItemCallbacks<TBeanCollection, TMenuActionParams, TCommon>,
         private readonly suppressInitialTooltip: boolean
     ) {
-        super({ tag: 'div', cls: CSS_MENU, role: 'presentation' });
+        super({ tag: 'div', cls: CSS_MENU, role: 'menu' });
     }
 
     public postConstruct(): void {
@@ -362,7 +362,7 @@ class ContextMenu<
                 TPropertiesService,
                 TComponentSelectorType,
                 TMenuActionParams
-            >(0, this.menuActionParams, this.callbacks)
+            >(0, this.menuActionParams, this.callbacks, 'presentation')
         );
         const menuItemsMapped = this.getMenuItems(() => this.getGui());
 

@@ -3,7 +3,7 @@ import { asyncSetTimeout } from 'ag-test-utils';
 import React from 'react';
 import { afterEach, describe, expect, it, onTestFinished } from 'vitest';
 
-import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import type { ColDef, GridApi, GridReadyEvent, HeaderStyle } from 'ag-grid-community';
 import { AllCommunityModule } from 'ag-grid-community';
 import { CellSelectionModule } from 'ag-grid-enterprise';
 import { AgGridReact } from 'ag-grid-react';
@@ -14,6 +14,80 @@ const ids = columnDefs.map((c) => c.colId!);
 
 describe('React header cell reuse', () => {
     afterEach(() => cleanup());
+
+    it('cleans up header styles when pinning and unpinning', async () => {
+        const apiRef: { current?: GridApi } = {};
+        const { container } = render(
+            <AgGridReact
+                rowData={rowData}
+                columnDefs={columnDefs.slice(0, 2)}
+                defaultColDef={{
+                    filter: 'agTextColumnFilter',
+                    floatingFilter: true,
+                    headerStyle: ({ column }): HeaderStyle =>
+                        column!.isPinned()
+                            ? {
+                                  backgroundColor: 'orange',
+                                  border: '1px solid black',
+                                  borderBottom: '3px solid orange',
+                              }
+                            : { border: '1px solid black' },
+                }}
+                modules={[AllCommunityModule]}
+                onGridReady={(e: GridReadyEvent) => {
+                    apiRef.current = e.api;
+                }}
+            />
+        );
+        const headers = () => Array.from(container.querySelectorAll<HTMLElement>('.ag-header-cell[col-id]'));
+        await waitFor(() => expect(headers()).toHaveLength(4));
+
+        for (const pinned of ['left', null, 'right', null] as const) {
+            act(() => apiRef.current!.setColumnsPinned(['c0', 'c1'], pinned));
+            await waitFor(() => {
+                for (const header of headers()) {
+                    expect(header.style.backgroundColor).toBe(pinned ? 'orange' : '');
+                    expect(header.style.borderBottom).toBe(pinned ? '3px solid orange' : '1px solid black');
+                }
+            });
+        }
+    });
+
+    it('refreshes group header styles when pinning, splitting and merging groups', async () => {
+        const apiRef: { current?: GridApi } = {};
+        const { container } = render(
+            <AgGridReact
+                rowData={rowData}
+                columnDefs={[{ groupId: 'group', children: columnDefs.slice(0, 2) }]}
+                defaultColGroupDef={{
+                    headerStyle: ({ columnGroup }) =>
+                        columnGroup!.getPinned() === 'left' ? { backgroundColor: 'orange' } : undefined,
+                }}
+                modules={[AllCommunityModule]}
+                onGridReady={(e: GridReadyEvent) => {
+                    apiRef.current = e.api;
+                }}
+            />
+        );
+        const backgrounds = () =>
+            Array.from(
+                container.querySelectorAll<HTMLElement>('.ag-header-group-cell[col-id]'),
+                (header) => header.style.backgroundColor
+            ).sort();
+        await waitFor(() => expect(backgrounds()).toEqual(['']));
+
+        for (const pinned of ['left', 'right', null] as const) {
+            act(() => apiRef.current!.setColumnsPinned(['c0'], pinned));
+            await waitFor(() => {
+                const expected = pinned === 'left' ? ['', 'orange'] : ['', ''];
+                expect(backgrounds()).toEqual(pinned ? expected : ['']);
+            });
+        }
+        act(() => apiRef.current!.setColumnsPinned(['c0', 'c1'], 'left'));
+        await waitFor(() => expect(backgrounds()).toEqual(['orange']));
+        act(() => apiRef.current!.setColumnsPinned(['c0', 'c1'], null));
+        await waitFor(() => expect(backgrounds()).toEqual(['']));
+    });
 
     it('hide-all then show-all renders correct headers (pooled-ctrl remount is safe)', async () => {
         const apiRef: { current?: GridApi } = {};
@@ -130,6 +204,43 @@ describe('React header cell reuse', () => {
             apiRef.current!.setFocusedHeader('c2');
         });
         await waitFor(() => expect(document.activeElement).toBe(header()));
+    });
+
+    it('a header asked for focus before it mounts leaves focus moved between two inputs of another component', async () => {
+        const apiRef: { current?: GridApi } = {};
+        render(
+            <React.StrictMode>
+                <AgGridReact
+                    rowData={rowData}
+                    columnDefs={columnDefs}
+                    modules={[AllCommunityModule]}
+                    onGridReady={(e: GridReadyEvent) => {
+                        apiRef.current = e.api;
+                    }}
+                />
+            </React.StrictMode>
+        );
+        const header = () => document.querySelector('.ag-header-cell[col-id="c2"]');
+        await waitFor(() => expect(screen.queryAllByRole('columnheader').length).toBe(ids.length));
+        const widget = document.body.appendChild(document.createElement('div'));
+        onTestFinished(() => widget.remove());
+        const widgetRoot = widget.attachShadow({ mode: 'open' });
+        const first = widgetRoot.appendChild(document.createElement('input'));
+        const second = widgetRoot.appendChild(document.createElement('input'));
+
+        act(() => apiRef.current!.setColumnsVisible(['c2'], false));
+        await waitFor(() => expect(header()).toBeNull());
+        first.focus();
+        act(() => {
+            apiRef.current!.setColumnsVisible(['c2'], true);
+            apiRef.current!.setFocusedHeader('c2');
+            second.focus();
+        });
+        await waitFor(() => expect(header()).not.toBeNull());
+        await act(async () => {
+            await asyncSetTimeout(0);
+        });
+        expect(widgetRoot.activeElement).toBe(second);
     });
 
     it('of headers and cells asked for focus before they mount, the one asked last takes it', async () => {

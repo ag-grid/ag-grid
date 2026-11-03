@@ -42,6 +42,21 @@ describe('Clipboard Paste Behaviour: paste into range / multi-range', () => {
         api.addCellRange(params);
     }
 
+    test('a paste made before onGridReady calls onPasteStart and onPasteEnd after it', async () => {
+        const calls: string[] = [];
+        const api = gridMgr.createGrid('pasteBeforeReady', {
+            ...gridOptions,
+            rowData: makeRowData(),
+            onGridReady: () => calls.push('ready'),
+            onPasteStart: () => calls.push('pasteStart'),
+            onPasteEnd: () => calls.push('pasteEnd'),
+        });
+        setRange(api, { rowStartIndex: 0, rowEndIndex: 1, columns: ['a'] });
+        api.copySelectedRangeDown();
+
+        await waitFor(() => expect(calls).toEqual(['ready', 'pasteStart', 'pasteEnd']));
+    });
+
     test('paste multi-value clipboard into single-column range', async () => {
         const api = await gridMgr.createGridAndWait('pasteRange1', {
             ...gridOptions,

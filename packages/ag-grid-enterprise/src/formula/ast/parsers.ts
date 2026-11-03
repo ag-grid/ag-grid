@@ -16,8 +16,14 @@ export interface FormulaSourceToken {
     type: 'reference' | 'function' | 'operator' | 'text';
 }
 
+export interface FormulaSourceReference {
+    cell: Cell;
+    range: { start: number; end: number };
+}
+
 interface FormulaExpressionSource {
     tokens: FormulaSourceToken[];
+    references: FormulaSourceReference[];
     error?: FormulaParseError;
 }
 
@@ -533,7 +539,17 @@ function parseExpression(
                 if (output.length > parenOutLen) {
                     fn.args.push(output.pop()!);
                 }
-                output.push({ type: 'operation', operation: fn.name, operands: fn.args });
+                const node: FormulaOperation = { type: 'operation', operation: fn.name, operands: fn.args };
+                output.push(node);
+                if (source) {
+                    const folded = tryFoldRefToCell(node);
+                    if (folded?.type === 'operand' && typeof folded.value === 'object' && folded.value) {
+                        source.references.push({
+                            cell: folded.value,
+                            range: { start: source.tokens[fn.index].start, end: source.tokens[i].end },
+                        });
+                    }
+                }
             }
 
             i++;
@@ -568,6 +584,10 @@ function parseExpression(
             throw errorAt(14, i, [token]);
         }
         output.push({ type: 'operand', value: parsed });
+        if (source && typeof parsed === 'object' && parsed) {
+            const { start, end } = source.tokens[i];
+            source.references.push({ cell: parsed, range: { start, end } });
+        }
         i++;
     }
 
@@ -615,19 +635,24 @@ export const parseFormula = (
 export function inspectFormulaExpression(
     beans: BeanCollection,
     expression: string
-): { tokens: FormulaSourceToken[]; error: FormulaError | null; range?: { start: number; end: number } } {
-    const source: FormulaExpressionSource = { tokens: [] };
+): {
+    tokens: FormulaSourceToken[];
+    references: FormulaSourceReference[];
+    error: FormulaError | null;
+    range?: { start: number; end: number };
+} {
+    const source: FormulaExpressionSource = { tokens: [], references: [] };
     const prefix = /^\s*=/.exec(expression)?.[0].length ?? 0;
     const body = expression.slice(prefix);
     const trimmedBody = body.trim();
     if (prefix && !trimmedBody) {
-        return { tokens: [], error: new FormulaError(16), range: { start: prefix - 1, end: prefix } };
+        return { tokens: [], references: [], error: new FormulaError(16), range: { start: prefix - 1, end: prefix } };
     }
     let error: FormulaError | null = null;
     let range: { start: number; end: number } | undefined;
     try {
         if (trimmedBody) {
-            const ast = normalizeRefCells(parseExpression(beans, body, true, source));
+            const ast = normalizeRefCells(parseExpression(beans, body, 'absolute', source));
             const invalidOperation = findFirstInvalidOperation(ast, (name) => !!beans.formula?.getFunction(name));
             if (invalidOperation) {
                 error = new FormulaError(27, [invalidOperation]);
@@ -642,12 +667,17 @@ export function inspectFormulaExpression(
             throw err;
         }
         error = err;
+        source.references.length = 0;
         if (err instanceof FormulaParseError && err.errorEnd > err.errorStart) {
             range = { start: err.errorStart, end: err.errorEnd };
         }
     }
     return {
         tokens: source.tokens.map((token) => ({ ...token, start: token.start + prefix, end: token.end + prefix })),
+        references: source.references.map(({ cell, range }) => ({
+            cell,
+            range: { start: range.start + prefix, end: range.end + prefix },
+        })),
         error,
         range: range && { start: range.start + prefix, end: range.end + prefix },
     };

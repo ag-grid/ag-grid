@@ -47,7 +47,7 @@
         -webkit-text-fill-color: currentcolor;
     }
 
-    .ag-text-area-mirror {
+    :where(.ag-text-area-mirror) {
         display: none;
     }
 }
