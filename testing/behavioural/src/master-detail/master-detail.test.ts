@@ -492,28 +492,27 @@ describe('ag-grid master detail', () => {
                     getGridElement(api)!.querySelector<HTMLElement>(`.ag-full-width-row .${section}`)?.style.width
             );
         const master = api.getRowNode('1')!;
+        const setExpanded = async (expanded: boolean) => {
+            master.setExpanded(expanded);
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(expanded ? 2 : 1));
+        };
 
-        master.setExpanded(true);
-        await asyncSetTimeout(0);
+        await setExpanded(true);
         expect(sectionWidths()).toEqual(['0px', '300px', '0px']);
         const built = details.length;
 
-        master.setExpanded(false);
-        await asyncSetTimeout(0);
+        await setExpanded(false);
         api.setColumnWidths([{ key: 'l', newWidth: 150 }]);
-        master.setExpanded(true);
-        await asyncSetTimeout(0);
+        await setExpanded(true);
         expect(sectionWidths()).toEqual(['0px', '350px', '0px']);
         // the kept row is shown again, not built anew
         expect(details.length).toBe(built);
         expect(getGridElement(api)!.querySelector('.ag-full-width-row')!.contains(details[0])).toBe(true);
 
         // a column refresh lays the hidden row out too
-        master.setExpanded(false);
-        await asyncSetTimeout(0);
+        await setExpanded(false);
         api.setColumnsVisible(['v'], false);
-        master.setExpanded(true);
-        await asyncSetTimeout(0);
+        await setExpanded(true);
         expect(sectionWidths()).toEqual(['0px', '150px', '0px']);
         expect(details.length).toBe(built);
     });
@@ -572,17 +571,18 @@ describe('ag-grid master detail', () => {
             },
         });
 
-        api.getDisplayedRowAtIndex(0)!.setExpanded(true);
-        await asyncSetTimeout(0);
-        api.getDisplayedRowAtIndex(0)!.setExpanded(false);
-        await asyncSetTimeout(0);
+        const setExpanded = async (expanded: boolean) => {
+            api.getDisplayedRowAtIndex(0)!.setExpanded(expanded);
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(expanded ? 2 : 1));
+        };
+
+        await setExpanded(true);
+        await setExpanded(false);
 
         // the new master row takes the old one's generated id
         api.setGridOption('rowData', [{ k: 'new' }]);
-        api.getDisplayedRowAtIndex(0)!.setExpanded(true);
-        await asyncSetTimeout(0);
-        api.getDisplayedRowAtIndex(0)!.setExpanded(false);
-        await asyncSetTimeout(0);
+        await setExpanded(true);
+        await setExpanded(false);
 
         await waitFor(() => expect(removedDetails).toEqual(['old']));
     });
@@ -653,25 +653,24 @@ describe('ag-grid master detail', () => {
             onVirtualRowRemoved: (event) => removed.push(event.node.detail ? 'detail' : event.node.id!),
         });
         const master = api.getRowNode('1')!;
-        master.setExpanded(true);
-        await asyncSetTimeout(0);
+        const setExpanded = async (expanded: boolean) => {
+            master.setExpanded(expanded);
+            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(expanded ? 2 : 1));
+        };
+        await setExpanded(true);
         const detail = api.getDisplayedRowAtIndex(1)!;
-        master.setExpanded(false);
-        await asyncSetTimeout(0);
+        await setExpanded(false);
 
         api.redrawRows({ rowNodes: [detail] });
         await waitFor(() => expect(removed).toEqual(['detail']));
         expect({ fullWidthRows: fullWidthRowCount(), destroyed }).toEqual({ fullWidthRows: 0, destroyed: 1 });
 
-        master.setExpanded(true);
-        await asyncSetTimeout(0);
+        await setExpanded(true);
         expect({ fullWidthRows: fullWidthRowCount(), built }).toEqual({ fullWidthRows: 1, built: 2 });
 
         // shown again from the cache, then redrawn while shown
-        master.setExpanded(false);
-        await asyncSetTimeout(0);
-        master.setExpanded(true);
-        await asyncSetTimeout(0);
+        await setExpanded(false);
+        await setExpanded(true);
         expect(built).toBe(2);
         api.redrawRows({ rowNodes: [detail] });
         await waitFor(() => expect(removed).toEqual(['detail', 'detail']));
