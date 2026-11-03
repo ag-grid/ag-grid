@@ -193,12 +193,14 @@ export function _buildColumnTree(
             if (base != null) {
                 for (let count = 0; ; ++count) {
                     const id: string = count === 0 ? base : `${base}_${count}`;
-                    const live: AgColumn | undefined = existingColsById[id];
+                    const keyed = existingColsByKey.get(id);
+                    // A column its owner keeps out of the grid (pivot result columns while cleared) holds no live id.
+                    const live: AgColumn | undefined = existingColsById[id] ?? keyed;
                     if (live === undefined) {
                         break;
                     }
                     // Only a column of this tree's last build its owner still offers for reuse.
-                    if (isReusableUserCol(live) && existingColsByKey.get(id) === live) {
+                    if (isReusableUserCol(live) && keyed === live) {
                         const liveDef: ColDef = live.userProvidedColDef!;
                         if ((liveDef.colId ?? liveDef.field) === base) {
                             allocatedKeys.set(id, null);

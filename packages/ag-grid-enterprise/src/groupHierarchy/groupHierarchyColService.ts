@@ -2,7 +2,6 @@ import type { LocaleTextFunc } from 'ag-stack';
 
 import type {
     ColDef,
-    ColumnEventType,
     ColumnTreeBuild,
     GroupHierarchyConfig,
     IGroupHierarchyColService,
@@ -60,70 +59,82 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
 
     /** Source col → its generated virtuals. */
     private readonly sourceColumnMap = new Map<AgColumn, AgColumn[]>();
-    /** Virtual col → its position in its source's bucket (the source is its `derivedFromCol`), for O(1) ranking. */
-    private readonly virtualColIndex = new Map<AgColumn, number>();
+    /** The `groupHierarchyConfig` the cols' defs were built from: their getters are reused only while it is. */
+    private builtConfig: GroupHierarchyConfig | undefined;
 
-    /** Plan the expected colIds: rebuild the cols when they or their source cols differ, else refresh their defs
-     *  in place so a config / inline-part change is picked up without churning beans on a no-op refresh. */
+    /** A planned col keeps the current col with its colId and source col, its def refreshed in place (the live
+     *  getters keep an unchanged part a `setColDef` no-op); every other planned col is created. */
     public contributeTo(build: ColumnTreeBuild): void {
-        const { plan, matches } = this.planHierarchy(build.columns);
-        if (plan.length === 0) {
+        const config = this.gos.get('groupHierarchyConfig');
+        const { plan, matches } = this.planHierarchy(build.columns, config);
+        const sameConfig = config === this.builtConfig;
+        this.builtConfig = config;
+        const len = plan.length;
+        if (len === 0) {
             if (this.columns.length > 0) {
                 this.clearColumns();
             }
             return;
         }
-        if (matches) {
-            this.reapplyDefs(plan, build.source);
-        } else {
-            this.rebuildColumns(plan);
-        }
-        prependWrappedColumnsToTree(build, this.columns);
-    }
-
-    /** Same colIds: refresh each def in place. Reusing the live getters keeps an unchanged part a `setColDef`
-     *  no-op, so only a real change (config / inline part / `defaultColDef`) re-applies. */
-    private reapplyDefs(plan: HierarchyPlanEntry[], source: ColumnEventType): void {
-        const { columns, gos } = this;
-        for (let i = 0, len = plan.length; i < len; ++i) {
-            const { sourceCol, part, colId } = plan[i];
-            const col = columns[i];
-            const colDef = this.createColDefForPart(part, sourceCol, colId, col.colDef);
-            if (col.setColDef(colDef, null, source)) {
-                gos.validateColDef(colDef, colId, true);
+        const { beans, gos, sourceColumnMap } = this;
+        const current = this.columns;
+        // Not in plan order: the current cols by colId, the first of a repeated colId kept, each taken once.
+        let reusable: Map<string, AgColumn> | null = null;
+        if (!matches) {
+            reusable = new Map();
+            for (let i = current.length - 1; i >= 0; --i) {
+                reusable.set(current[i].colId, current[i]);
             }
         }
-    }
-
-    /** Allocate fresh hierarchy AgColumns from a plan whose colIds or source cols differ from current. */
-    private rebuildColumns(plan: HierarchyPlanEntry[]): void {
-        const { sourceColumnMap, virtualColIndex, beans, gos } = this;
-        sourceColumnMap.clear();
-        virtualColIndex.clear();
-        const cols: AgColumn[] = new Array(plan.length);
-        for (let i = 0, len = plan.length; i < len; ++i) {
+        const cols: AgColumn[] = reusable ? new Array(len) : current;
+        for (let i = 0; i < len; ++i) {
             const { sourceCol, part, colId } = plan[i];
+            let col: AgColumn | undefined = current[i];
+            if (reusable) {
+                col = reusable.get(colId);
+                if (col?.derivedFromCol === sourceCol) {
+                    reusable.delete(colId);
+                } else {
+                    col = undefined;
+                }
+            }
+            if (col) {
+                const colDef = this.createColDefForPart(part, sourceCol, colId, sameConfig ? col.colDef : undefined);
+                if (col.setColDef(colDef, null, build.source)) {
+                    gos.validateColDef(colDef, colId, true);
+                }
+                cols[i] = col;
+                continue;
+            }
             const colDef = this.createColDefForPart(part, sourceCol, colId);
             gos.validateColDef(colDef, colId, true);
-            const col = new AgColumn(colDef, null, colId, true, 'hierarchy');
+            col = new AgColumn(colDef, null, colId, true, 'hierarchy');
             col.derivedFromCol = sourceCol;
             beans.context.createBean(col);
             cols[i] = col;
-            const bucket = sourceColumnMap.get(sourceCol);
-            virtualColIndex.set(col, bucket?.length ?? 0);
-            if (bucket) {
-                bucket.push(col);
-            } else {
-                sourceColumnMap.set(sourceCol, [col]);
+        }
+        if (reusable) {
+            this.columns = cols;
+            sourceColumnMap.clear();
+            for (let i = 0; i < len; ++i) {
+                const sourceCol = plan[i].sourceCol;
+                const bucket = sourceColumnMap.get(sourceCol);
+                if (bucket) {
+                    bucket.push(cols[i]);
+                } else {
+                    sourceColumnMap.set(sourceCol, [cols[i]]);
+                }
             }
         }
-        this.columns = cols;
+        prependWrappedColumnsToTree(build, cols);
     }
 
     /** Project the hierarchy cols expected for `colDefList`; `matches` is true when their colIds and source cols
-     *  equal the current `columns`' (same count, same order), so the cols can be reused rather than rebuilt. */
-    private planHierarchy(colDefList: AgColumn[]): { plan: HierarchyPlanEntry[]; matches: boolean } {
-        const config = this.gos.get('groupHierarchyConfig');
+     *  equal the current `columns`' (same count, same order), so each col is kept in its slot. */
+    private planHierarchy(
+        colDefList: AgColumn[],
+        config: GroupHierarchyConfig | undefined
+    ): { plan: HierarchyPlanEntry[]; matches: boolean } {
         const current = this.columns;
         const plan: HierarchyPlanEntry[] = [];
         let matches = true;
@@ -161,22 +172,21 @@ export class GroupHierarchyColService extends BeanStub implements NamedBean, IGr
     private clearColumns(): void {
         this.columns = [];
         this.sourceColumnMap.clear();
-        this.virtualColIndex.clear();
     }
 
     public compareVirtualColumns(colA: AgColumn, colB: AgColumn): number | null {
-        const virtualColIndex = this.virtualColIndex;
-        const indexA = virtualColIndex.get(colA);
-        const indexB = virtualColIndex.get(colB);
-        // Both virtuals: same source ⇒ rank by stored bucket index; otherwise defer to caller (null).
-        if (indexA !== undefined && indexB !== undefined) {
-            return colA.derivedFromCol === colB.derivedFromCol ? indexA - indexB : null;
+        const sourceA = colA.colKind === 'hierarchy' ? colA.derivedFromCol : null;
+        const sourceB = colB.colKind === 'hierarchy' ? colB.derivedFromCol : null;
+        // Both virtuals: same source ⇒ rank by their order in its bucket; otherwise defer to caller (null).
+        if (sourceA && sourceB) {
+            const bucket = sourceA === sourceB ? this.sourceColumnMap.get(sourceA) : undefined;
+            return bucket ? bucket.indexOf(colA) - bucket.indexOf(colB) : null;
         }
         // A virtual sorts BEFORE its own source col.
-        if (indexB !== undefined && colB.derivedFromCol === colA) {
+        if (sourceB === colA) {
             return 1;
         }
-        if (indexA !== undefined && colA.derivedFromCol === colB) {
+        if (sourceA === colB) {
             return -1;
         }
         return null;

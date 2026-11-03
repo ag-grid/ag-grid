@@ -1426,6 +1426,27 @@ describe('Column API — extended coverage', () => {
 
             expect(api.getPivotResultColumns()!.map((col) => col.getColId())).toEqual(['1', '2']);
         });
+
+        test('pivot result columns matched by field keep their widths when restored after being cleared', () => {
+            const api = gridsManager.createGrid('myGrid', {
+                columnDefs: [{ field: 'year', pivot: true, hide: true }],
+                pivotMode: true,
+            });
+            api.setPivotResultColumns([{ field: 'result' }, { field: 'result' }]);
+            const [first, second] = api.getPivotResultColumns()!;
+            api.setColumnWidths([
+                { key: first, newWidth: 333 },
+                { key: second, newWidth: 444 },
+            ]);
+            api.setPivotResultColumns(null);
+
+            api.setPivotResultColumns([{ field: 'result' }, { field: 'result' }]);
+
+            expect(api.getPivotResultColumns()!.map((col) => `${col.getColId()}:${col.getActualWidth()}`)).toEqual([
+                'result:333',
+                'result_1:444',
+            ]);
+        });
     });
 
     describe('edge cases — resetColumnState', () => {
