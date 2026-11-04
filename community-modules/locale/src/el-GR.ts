@@ -856,6 +856,8 @@ export const AG_GRID_LOCALE_EL_GR = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Λίστα Στηλών',
     ariaFilterPanelList: 'Λίστα Φίλτρων',
+    ariaFilterPanelExpandAll: 'Επέκταση Όλων των Ομάδων Φίλτρων',
+    ariaFilterPanelCollapseAll: 'Σύμπτυξη Όλων των Ομάδων Φίλτρων',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Προσθήκη πεδίου φίλτρου',

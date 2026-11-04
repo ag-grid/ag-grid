@@ -53,6 +53,19 @@
         );
     }
 
+    .ag-filter-toolpanel-expand {
+        position: relative;
+        border: 0;
+        background-color: unset;
+        padding: 0;
+    }
+
+    button.ag-filter-toolpanel-expand:focus {
+        box-shadow: none;
+    }
+
+    @include ag.keyboard-focus((ag-filter-toolpanel-expand), 0px);
+
     .ag-filter-toolpanel-group-title-bar {
         background-color: transparent;
     }

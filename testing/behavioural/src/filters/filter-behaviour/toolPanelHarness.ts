@@ -240,7 +240,7 @@ export class ToolPanelHarness {
         return this;
     }
 
-    private expandAllButton(): HTMLElement | null {
+    public expandAllButton(): HTMLElement | null {
         const button = this.panel.querySelector<HTMLElement>(
             '.ag-filter-toolpanel-search > .ag-filter-toolpanel-expand'
         );
