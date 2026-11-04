@@ -300,7 +300,7 @@ export class ChartTranslationService extends BeanStub implements NamedBean {
 
     public translate(toTranslate: ChartTranslationKey, variableValues?: string[]): string {
         const translate = this.getLocaleTextFunc();
-        let defaultTranslation: string = DEFAULT_CHART_TRANSLATIONS[toTranslate];
+        let defaultTranslation = DEFAULT_CHART_TRANSLATIONS[toTranslate];
         for (const value of variableValues ?? []) {
             defaultTranslation = defaultTranslation.replace('${variable}', () => value);
         }
