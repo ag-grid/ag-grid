@@ -26,6 +26,7 @@ import type {
     SeriesChartType,
     SortModelItem,
     UpdateChartParams,
+    UpdateRangeChartParams,
 } from 'ag-grid-community';
 import { Component, _addGridCommonParams, _focusGridInnerElement, _mergeDeep } from 'ag-grid-community';
 
@@ -51,6 +52,7 @@ import type { ChartMenuService } from './services/chartMenuService';
 import { CHART_TOOL_PANEL_MENU_OPTIONS } from './services/chartMenuService';
 import { ChartOptionsService } from './services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from './services/chartTranslationService';
+import { extractPaired } from './utils/pairedUtils';
 import { getCanonicalChartType, getSeriesType, isHierarchical } from './utils/seriesTypeMapper';
 
 export interface GridChartParams {
@@ -74,6 +76,7 @@ export interface GridChartParams {
     seriesChartTypes?: SeriesChartType[];
     crossFilteringResetCallback?: () => void;
     useGroupColumnAsCategory?: boolean;
+    paired?: boolean;
 }
 
 export class GridChartComp extends Component {
@@ -370,12 +373,23 @@ export class GridChartComp extends Component {
     }
 
     public update(params?: UpdateChartParams): void {
+        let legacyPaired: boolean | undefined;
+        if (params?.chartThemeOverrides) {
+            const extracted = extractPaired(params.chartThemeOverrides, params.chartType ?? this.chartType);
+            legacyPaired = extracted.paired;
+            params = { ...params, chartThemeOverrides: extracted.overrides };
+        }
+
         // update chart model for api.updateChart()
         if (params?.chartId) {
             const validUpdate = this.chartController.update(params);
             if (!validUpdate) {
                 return; // warning already logged!
             }
+        }
+
+        if (legacyPaired !== undefined && (params as UpdateRangeChartParams | undefined)?.paired === undefined) {
+            this.chartController.setPaired(legacyPaired);
         }
 
         const updatedChartType = this.chartTypeChanged(params);

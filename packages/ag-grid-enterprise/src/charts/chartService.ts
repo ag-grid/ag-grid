@@ -34,6 +34,7 @@ import type { AgChartsExports } from './agChartsExports';
 import type { GridChartParams } from './chartComp/gridChartComp';
 import { GridChartComp } from './chartComp/gridChartComp';
 import { validateCreateParams } from './chartComp/utils/chartParamsValidator';
+import { extractPaired } from './chartComp/utils/pairedUtils';
 import { getCanonicalChartType } from './chartComp/utils/seriesTypeMapper';
 import { upgradeChartModel } from './chartModelMigration';
 
@@ -55,6 +56,7 @@ export interface CommonCreateChartParams extends BaseCreateChartParams {
     seriesGroupType?: SeriesGroupType;
     focusDialogOnOpen?: boolean;
     useGroupColumnAsCategory?: boolean;
+    paired?: boolean;
 }
 
 export class ChartService extends BeanStub implements NamedBean, IChartService {
@@ -260,12 +262,25 @@ export class ChartService extends BeanStub implements NamedBean, IChartService {
         });
     }
 
+    private resolveLegacyPaired(params: CommonCreateChartParams): CommonCreateChartParams {
+        const { chartType, chartThemeOverrides, chartOptionsToRestore } = params;
+        const fromApiOverrides = extractPaired(chartThemeOverrides, chartType);
+        const fromRestoredOptions = extractPaired(chartOptionsToRestore, chartType);
+        return {
+            ...params,
+            chartThemeOverrides: fromApiOverrides.overrides,
+            chartOptionsToRestore: fromRestoredOptions.overrides,
+            paired: params.paired ?? fromApiOverrides.paired ?? fromRestoredOptions.paired,
+        };
+    }
+
     private createChart(params: CommonCreateChartParams): ChartRef | undefined {
         const validationResult = validateCreateParams(params, this.agChartsExports.isEnterprise, this.beans.log);
         if (!validationResult) {
             return undefined;
         }
         params = validationResult === true ? params : validationResult;
+        params = this.resolveLegacyPaired(params);
 
         const { chartType, chartContainer } = params;
 
