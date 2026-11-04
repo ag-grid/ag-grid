@@ -5,7 +5,7 @@ import type {
     BaseProperties,
     IPropertiesService,
 } from 'ag-stack';
-import { _getDocument } from 'ag-stack';
+import { _getDocument, _setAriaHasPopup } from 'ag-stack';
 
 import type { AgPickerFieldParams, _AgWidgetSelectorType } from 'ag-grid-community';
 import { AgPickerField, _createElement } from 'ag-grid-community';
@@ -56,9 +56,15 @@ export class AgColorPicker<
             pickerType: 'ag-list',
             className: 'ag-color-picker',
             pickerIcon: 'chartsColorPicker',
+            ariaRole: 'button',
             ...config,
         });
         this.registerCSS(agColorPickerCSS);
+    }
+
+    protected override setupAria(): void {
+        super.setupAria();
+        _setAriaHasPopup(this.getAriaElement(), 'dialog');
     }
 
     public override postConstruct() {
