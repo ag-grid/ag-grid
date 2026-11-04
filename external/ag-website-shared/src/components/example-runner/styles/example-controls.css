@@ -29,10 +29,8 @@
     --range-track-bg: #efefef;
 
     --row-gap: 6px;
-    /* Between the controls and the example beneath them. Matches the 8px the Charts examples have. */
     --controls-gap: 8px;
-    /* Inside a label that wraps its own control. Deliberately below `--row-gap` -- see the
-       `.example-controls label` rule for why the two must not be equal. */
+    /* Below `--row-gap`, so a wrapped control reads as attached to its own label text */
     --label-gap: 4px;
 
     --select-chevron: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23667085" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M6 9L12 15L18 9"/></svg>');
@@ -71,20 +69,8 @@
     --checkbox-tick-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232a343e' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17L4 12'/%3E%3C/svg%3E");
 }
 
-/* Example page layout.
- *
- * An example is a column: the controls sit at their natural height, and whatever else the
- * wrapper holds -- the grid, a chart, a canvas -- takes the height that is left.
- *
- * The grow rule keys off "not the controls" rather than naming the example's own element,
- * because that element differs per framework: a plain `div` in vanilla and React,
- * `ag-grid-angular` in Angular, `ag-grid-vue` in Vue. There is no one selector to name, and
- * a few examples put a second controls block underneath the grid.
- *
- * `.example-header` is the other block that must keep its natural height. It is sometimes a
- * wrapper around the controls and sometimes a line of prose about the example, so it cannot
- * be folded into `.example-controls`.
- */
+/* The controls and header keep their natural height and everything else grows. The grow rule says
+   "not the controls" because the example's element differs per framework, e.g. `ag-grid-angular`. */
 .example-wrapper {
     display: flex;
     flex-direction: column;
@@ -114,9 +100,7 @@ body > #highlighter {
     display: none;
 }
 
-/* `box-sizing` is scoped to the controls rather than reset globally, so a site with its own
-   example page reset can link this file alone. The controls size themselves with fixed heights
-   and padding, so they need border-box. */
+/* `box-sizing` is scoped, not reset globally, so a site with its own page reset can link this alone */
 .example-controls {
     display: flex;
     flex-direction: column;
@@ -131,9 +115,7 @@ body > #highlighter {
     margin: 0;
 }
 
-/* Icon fonts draw their glyph in `::before` with the font set on the icon element, so neither gets
-   the controls' font. `:where()` keeps this at the specificity of `.example-controls *`, so an
-   example's own class rules still override it. */
+/* Icon fonts set their own font on the icon; `:where()` lets an example's class rules still win */
 .example-controls *:where(:not(.fa, .fas, .far, .fab, .fal, .fa-solid, .fa-regular, .fa-brands)) {
     font-family: -apple-system, 'system-ui', sans-serif;
     font-size: 14px;
@@ -288,8 +270,7 @@ body > #highlighter {
     outline: none;
 }
 
-/* Primary button: the one action an example is built around, such as Export, stands out from the
-   controls that configure it. */
+/* The one action an example is built around, such as Export */
 .example-controls :is(button, input[type='submit']).primary {
     font-weight: 600;
     color: var(--button-primary-fg);
@@ -390,14 +371,10 @@ body > #highlighter {
         inset 0 0 0 2px var(--main-bg);
 }
 
-/* A label may wrap its control (implicit association) rather than sit beside it. Lay it out as a
-   row so the control and its text centre and space themselves the same way sibling controls in a
-   `.controls-row` do — without it the restyled control sits on the text baseline with no gap. */
+/* A label wrapping its control would otherwise sit the restyled control on the text baseline */
 .example-controls label {
     display: inline-flex;
     align-items: center;
-    /* Tighter than the gap between controls, so a wrapped control reads as attached to its own
-       text rather than equally to the next control along. */
     gap: var(--label-gap);
     /* A label toggles its control on click, so repeated clicks would otherwise select its text. */
     user-select: none;
@@ -412,9 +389,7 @@ body > #highlighter {
     border: 0;
 }
 
-/* A key explaining what the example's cell or header colours mean: a swatch followed by its text.
-   The swatch's colour comes from the example's own class, usually the same class that colours the
-   cells it describes, e.g. `<span class="legend-swatch locked-col"></span>`. */
+/* Colour key; the example's own class colours the swatch, e.g. `legend-swatch locked-col` */
 .example-controls .legend-item {
     display: inline-flex;
     align-items: center;
