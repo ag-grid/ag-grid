@@ -367,8 +367,8 @@ export class GridOptionsService
         (element as any)[GRID_DOM_KEY] = this.instanceId;
     }
 
-    public isElementInThisInstance(element: HTMLElement): boolean {
-        let pointer: HTMLElement | null = element;
+    public isElementInThisInstance(element: Element): boolean {
+        let pointer: Element | null = element;
         while (pointer) {
             const instanceId = (pointer as any)[GRID_DOM_KEY];
             if (_exists(instanceId)) {

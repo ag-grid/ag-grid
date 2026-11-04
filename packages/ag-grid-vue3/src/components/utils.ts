@@ -1331,6 +1331,12 @@ export interface Props<TData> {
          * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
          */
     grandTotalRow?: 'top' | 'bottom' | 'pinnedTop' | 'pinnedBottom',
+    /** When `true`, the grand total row is shown even when the grid has no rows to display,
+         * for example when the row data is empty or all rows are filtered out.
+         * @default false
+         * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
+         */
+    alwaysShowGrandTotalRow?: boolean,
     /** Suppress the sticky behaviour of the total rows, can be suppressed individually by passing `'grand'` or `'group'`.
          * @agModule `RowGroupingModule` / `ServerSideRowModelModule`
          */
@@ -2437,6 +2443,7 @@ export function getProps() {
         groupAggFiltering: undefined,
         groupTotalRow: undefined,
         grandTotalRow: undefined,
+        alwaysShowGrandTotalRow: undefined,
         suppressStickyTotalRow: undefined,
         groupSuppressBlankHeader: undefined,
         groupSelectsFiltered: undefined,

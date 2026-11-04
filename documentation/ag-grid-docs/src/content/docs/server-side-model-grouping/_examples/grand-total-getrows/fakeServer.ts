@@ -41,6 +41,12 @@ export function FakeServer(allData) {
         const sql = `SELECT ${selects.join(', ')} FROM ?` + whereSql({ ...request, groupKeys: [] });
         console.log('[FakeServer] - about to execute grand total query:', sql);
         const result = alasql(sql, [allData])[0] ?? {};
+        for (const col of valueCols) {
+            // the sum of no rows is 0, where SQL gives null
+            if (col.aggFunc === 'sum') {
+                result[col.id] ??= 0;
+            }
+        }
         return { id: GRAND_TOTAL_ROW_ID, ...result };
     }
 

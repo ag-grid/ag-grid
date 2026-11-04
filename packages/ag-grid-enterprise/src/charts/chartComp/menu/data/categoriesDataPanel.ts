@@ -43,6 +43,7 @@ export class CategoriesDataPanel extends DragDataPanel {
             (col) => col.displayName ?? '',
             'categoryAdd',
             'categorySelect',
+            this.title,
             () => !this.chartController.getAggFunc()
         );
         this.createAggFuncControls(this.dimensionCols);

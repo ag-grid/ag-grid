@@ -8,10 +8,9 @@ test.agExample(import.meta, () => {
     const findInput = (page: any) => page.locator('.ag-toolbar-find input');
     const matchCount = (page: any) => page.locator('.ag-toolbar-find-match-count');
 
-    // The Vue example transform drops the `id` from the control checkboxes, so target them by their
-    // label text instead — this resolves consistently across every framework.
-    const optionCheckbox = (page: any, label: string) =>
-        page.locator('label', { hasText: label }).locator('input[type="checkbox"]');
+    // Each checkbox sits beside its own `<label for>` rather than inside it, so reach it through
+    // that association — every framework variant keeps both the `id` and the `for`.
+    const optionCheckbox = (page: any, label: string) => page.getByLabel(label);
 
     test.eachFramework('caseSensitive controls whether casing must match', async ({ page }) => {
         await ensureGridReady(page);

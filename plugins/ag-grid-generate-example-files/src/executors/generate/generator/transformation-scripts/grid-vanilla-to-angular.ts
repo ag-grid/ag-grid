@@ -67,10 +67,6 @@ function addModuleImports(
 
     imports.push("import { AgGridAngular } from 'ag-grid-angular';");
 
-    if (allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
-    }
-
     const propertyInterfaces = getPropertyInterfaces(properties);
     const bImports = [...(bindingImports || [])];
     bImports.push({
@@ -83,6 +79,12 @@ function addModuleImports(
 
     if (bImports.length > 0) {
         addBindingImports(bImports, imports, true);
+    }
+
+    // After the binding imports, which include the grid's own stylesheets, so the example's
+    // styles load last and win over theme rules of equal specificity
+    if (allStylesheets && allStylesheets.length > 0) {
+        allStylesheets.forEach((styleSheet) => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
     imports.push(getEnableAGTestIdLogic());

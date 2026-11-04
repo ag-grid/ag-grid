@@ -1,15 +1,5 @@
-.wrapper {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
 #contents {
     height: 100%;
     display: grid;
     grid-template-rows: 60% 40%;
-}
-
-#buttons {
-    padding-bottom: 10px;
 }

@@ -793,6 +793,9 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaPageSizeSelectorLabel: 'पेज आकार',
     ariaChartMenuClose: 'चार्ट संपादन मेनू बंद करें',
     ariaChartSelected: 'चयनित',
+    ariaChartPalettePrevious: 'पिछला पैलेट',
+    ariaChartPaletteNext: 'अगला पैलेट',
+    ariaChartPalettePage: 'पैलेट ${variable} / ${variable}',
     ariaSparklineChartDescription:
         'स्पार्कलाइन - ${chartType} जिसमें ${min} और ${max} के बीच ${count} मान प्रदर्शित हैं। ${start} से शुरू होकर ${end} पर समाप्त होता है।',
     ariaSparklineChartDescriptionSingleValue: 'स्पार्कलाइन - ${chartType} जिसमें 1 मान, ${value} प्रदर्शित है।',
@@ -825,6 +828,11 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaLabelMaximize: 'बड़ा करें',
 
     ariaLabelRestore: 'पुनर्स्थापित करें',
+    ariaLabelColorPickerSpectrum: 'संतृप्ति और चमक',
+    ariaValueColorPickerSpectrum: 'संतृप्ति ${variable}%, चमक ${variable}%',
+    ariaLabelColorPickerHue: 'ह्यू',
+    ariaLabelColorPickerAlpha: 'अपारदर्शिता',
+    ariaLabelColorPickerHex: 'हेक्स रंग',
 
     ariaLabelColumnMenu: 'कॉलम मेनू',
     ariaLabelColumnFilter: 'कॉलम फ़िल्टर',

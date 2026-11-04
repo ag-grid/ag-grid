@@ -26,6 +26,21 @@ function convertStyles(code: string) {
     });
 }
 
+/** Rewrite HTML attributes to their JSX equivalents; `disabled=""` is falsy in React, so it becomes bare. */
+function convertAttributes(template: string) {
+    template = template
+        .replace(/,\s+event([),])/g, '$1')
+        .replace(/<input (.+?[^=])>/g, '<input $1 />')
+        .replace(/<input (.*)value=/g, '<input $1defaultValue=')
+        .replace(/(<input [^>]*?\s)checked(?:="[^"]*")?(?=[\s/>])/g, '$1defaultChecked')
+        .replace(/(<[^>]*?\s)disabled=""(?=[\s/>])/g, '$1disabled')
+        .replace(/ class=/g, ' className=')
+        .replace(/ for=/g, ' htmlFor=')
+        .replace(/ <option (.*)selected=""/g, '<option $1selected={true}');
+
+    return convertStyles(template);
+}
+
 export function convertTemplate(template: string) {
     // React events are case sensitive, so need to ensure casing is correct
     const caseSensitiveEvents = {
@@ -40,16 +55,7 @@ export function convertTemplate(template: string) {
         template = template.replace(matcher, `${jsEvent}={() => this.$1($2)}`);
     });
 
-    template = template
-        .replace(/,\s+event([),])/g, '$1')
-        .replace(/<input (.+?[^=])>/g, '<input $1 />')
-        .replace(/<input (.*)value=/g, '<input $1defaultValue=')
-        .replace(/(<input [^>]*?\s)checked(?:="[^"]*")?(?=[\s/>])/g, '$1defaultChecked')
-        .replace(/ class=/g, ' className=')
-        .replace(/ for=/g, ' htmlFor=')
-        .replace(/ <option (.*)selected=""/g, '<option $1selected={true}');
-
-    return convertStyles(template);
+    return convertAttributes(template);
 }
 
 export function convertFunctionalTemplate(template: string) {
@@ -81,16 +87,7 @@ export function convertFunctionalTemplate(template: string) {
         template = template.replace(matcher, `${jsEvent}={() => $1($2)}`);
     });
 
-    template = template
-        .replace(/,\s+event([),])/g, '$1')
-        .replace(/<input (.+?[^=])>/g, '<input $1 />')
-        .replace(/<input (.*)value=/g, '<input $1defaultValue=')
-        .replace(/(<input [^>]*?\s)checked(?:="[^"]*")?(?=[\s/>])/g, '$1defaultChecked')
-        .replace(/ class=/g, ' className=')
-        .replace(/ for=/g, ' htmlFor=')
-        .replace(/ <option (.*)selected=""/g, '<option $1selected={true}');
-
-    return convertStyles(template);
+    return convertAttributes(template);
 }
 
 export const getImport = (filename: string) => `import ${toTitleCase(filename.split('.')[0])} from './${filename}';`;

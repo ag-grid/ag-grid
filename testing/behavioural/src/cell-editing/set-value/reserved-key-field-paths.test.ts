@@ -386,18 +386,7 @@ describe('Reserved key handling in field paths', () => {
     });
 
     describe('autoGenerateColumnDefs', () => {
-        // rowData is supplied after creation: generating columns during grid init with an editing module
-        // registered currently fails in EditService.releaseColumnsLeaving
-        async function createGeneratedGrid(options: GridOptions, rowData: any[]) {
-            const api = gridMgr.createGrid('reservedKeyGrid', {
-                getRowId: ({ data }) => data.id,
-                suppressColumnVirtualisation: true,
-                ...options,
-            });
-            api.setGridOption('rowData', rowData);
-            await waitFor(() => expect(api.getDisplayedRowCount()).toBe(rowData.length));
-            return api;
-        }
+        const createGeneratedGrid = (options: GridOptions, rowData: any[]) => createGrid({ ...options, rowData });
 
         test('skips keys whose path has a `__proto__` segment', async () => {
             const api = await createGeneratedGrid({ autoGenerateColumnDefs: true }, [

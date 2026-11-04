@@ -18,7 +18,7 @@ interface AgPillSelectParams<TValue = string | null> {
     valueList?: TValue[];
     selectedValueList?: TValue[];
     valueFormatter?: (value: TValue) => string;
-    ariaLabel?: string;
+    ariaLabel: string;
     selectPlaceholder?: string;
     onValuesChange?: (params: AgPillSelectChangeParams<TValue>) => void;
     dragSourceId?: string;
@@ -42,9 +42,9 @@ export class AgPillSelect<TValue = string | null> extends Component {
     private valueFormatter: (value: TValue) => string;
     private onValuesChange?: (params: AgPillSelectChangeParams<TValue>) => void;
 
-    constructor(config?: AgPillSelectParams<TValue>) {
+    constructor(config: AgPillSelectParams<TValue>) {
         super(/* html */ `<div class="ag-pill-select" role="presentation"></div>`);
-        this.config = config ?? {};
+        this.config = config;
 
         const { selectedValueList, valueFormatter, valueList } = this.config;
         this.selectedValues = selectedValueList ?? [];
@@ -63,7 +63,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
                     isDraggable: () => this.selectedValues.length > 1,
                 },
                 (value) => this.valueFormatter(value),
-                ariaLabel!,
+                ariaLabel,
                 dragSourceId
             )
         );

@@ -12,8 +12,6 @@ import {
 } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -75,16 +73,18 @@ const GridExample = () => {
         <AgGridProvider modules={modules}>
             <div style={containerStyle}>
                 <div className="example-wrapper">
-                    <div className="example-header">
-                        <label>
-                            <span>removePivotHeaderRowWhenSingleValueColumn:</span>
-                            <input
-                                type="checkbox"
-                                id="removePivotHeaderRowWhenSingleValueColumn"
-                                onChange={togglePivotHeader}
-                                defaultChecked
-                            />
-                        </label>
+                    <div className="example-header example-controls">
+                        <div className="controls-row">
+                            <label>
+                                <span>removePivotHeaderRowWhenSingleValueColumn:</span>
+                                <input
+                                    type="checkbox"
+                                    id="removePivotHeaderRowWhenSingleValueColumn"
+                                    onChange={togglePivotHeader}
+                                    defaultChecked
+                                />
+                            </label>
+                        </div>
                     </div>
 
                     <div style={gridStyle}>

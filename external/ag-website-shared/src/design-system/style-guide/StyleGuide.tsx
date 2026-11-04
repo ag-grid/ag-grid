@@ -7,7 +7,6 @@ import { Buttons } from './Buttons';
 import { Colors } from './Colors';
 import { Icons } from './Icons';
 import { Inputs } from './Inputs';
-import { Layout } from './Layout';
 import { Radii } from './Radii';
 import { Shadows } from './Shadows';
 import { Spacing } from './Spacing';
@@ -21,7 +20,6 @@ export const StyleGuide: FunctionComponent = () => {
         <>
             <div className={classnames(styles.styleGuide, 'layout-max-width-small')}>
                 <h1>STYLE GUIDE</h1>
-                <Layout />
                 <Spacing />
                 <Radii />
                 <TextSizes />

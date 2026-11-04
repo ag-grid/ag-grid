@@ -3,6 +3,7 @@ import {
     _focusInto,
     _getActiveDomElement,
     _getDeepActiveElement,
+    _getDocument,
     _isNothingFocused,
     _last,
     _makeNull,
@@ -20,10 +21,8 @@ import { _areCellsEqual, _getFirstRow, _getLastRow, _getRowNode } from './entiti
 import type { CellFocusedEvent, CellFocusedParams, CommonCellFocusParams } from './events';
 import type { FilterManager } from './filter/filterManager';
 import { _getDomData, _isClientSideLoadingRow } from './gridOptionsUtils';
-import {
-    AbstractHeaderCellCtrl,
-    DOM_DATA_KEY_HEADER_CTRL,
-} from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
+import type { AbstractHeaderCellCtrl } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
+import { DOM_DATA_KEY_HEADER_CTRL } from './headerRendering/cells/abstractCell/abstractHeaderCellCtrl';
 import type { HeaderCellCtrl } from './headerRendering/cells/column/headerCellCtrl';
 import { getFocusHeaderRowCount, isHeaderPositionEqual } from './headerRendering/headerUtils';
 import type {
@@ -50,6 +49,16 @@ import {
 
 type FocusDirection = 'Before' | 'After' | null;
 
+/** Browser focus owed to the focused cell or row, or a header, until drawn, and what had focus when owed */
+interface OwedFocus {
+    /** the header waiting for its element to mount; none for the focused cell or row */
+    readonly header: AbstractHeaderCellCtrl | undefined;
+    readonly event: CellFocusedEvent | undefined;
+    readonly activeAtOwed: Element | null;
+    /** the shadow roots enclosing the grid, listened on for presses and focus moves the document cannot see */
+    readonly shadowRoots: readonly ShadowRoot[];
+}
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FocusService extends BeanStub implements NamedBean {
     beanName = 'focusSvc' as const;
@@ -75,15 +84,9 @@ export class FocusService extends BeanStub implements NamedBean {
 
     public focusedHeader: HeaderPosition | null = null;
     private elementToReveal: HTMLElement | null = null;
-    /** The latest focus waiting for its element to mount (a cell's event or the header asked), and what had focus then */
-    private deferredFocusRequest: CellFocusedEvent | AbstractHeaderCellCtrl | undefined = undefined;
-    private activeAtDeferredFocus: Element | null = null;
+    private owedFocus: OwedFocus | null = null;
     /** the column that had focus before it moved into the advanced filter */
     private advFilterFocusColumn: AgColumn | undefined;
-
-    /** If a cell was destroyed that previously had focus, focus needs restored when the cell reappears */
-    private focusFallbackTimeout: number | null = null;
-    private needsFocusRestored = false;
 
     public postConstruct(): void {
         const clearFocusedCellListener = this.clearFocusedCell.bind(this);
@@ -98,64 +101,137 @@ export class FocusService extends BeanStub implements NamedBean {
         this.addDestroyFunc(_registerKeyboardFocusEvents(this.beans));
     }
 
-    public attemptToRecoverFocus() {
-        this.needsFocusRestored = true;
-
-        if (this.focusFallbackTimeout != null) {
-            clearTimeout(this.focusFallbackTimeout);
-        }
-
-        // fallback; don't want to leave this flag hanging for a long time as the grid may steal focus later
-        // if this doesn't get consumed
-        this.focusFallbackTimeout = window.setTimeout(this.setFocusRecovered.bind(this), 100);
+    public override destroy(): void {
+        // cells destroyed after this service, as spanned cells are, then owe it nothing
+        this.focusedCell = null;
+        this.dropOwedFocus();
+        super.destroy();
     }
 
-    private setFocusRecovered() {
-        this.needsFocusRestored = false;
-        if (this.focusFallbackTimeout != null) {
-            clearTimeout(this.focusFallbackTimeout);
-            this.focusFallbackTimeout = null;
+    /** Owes browser focus to the focused cell or row: taken as it lands, dropped on a new target or a move away. */
+    public oweFocus(event?: CellFocusedEvent): void {
+        const owed = this.owedFocus;
+        // a header asked for focus after the cell or row was focused
+        if (owed?.header) {
+            return;
         }
+        this.setOwedFocus(
+            undefined,
+            event ?? owed?.event,
+            owed ? owed.activeAtOwed : _getDeepActiveElement(this.beans)
+        );
+    }
+
+    /** Owes browser focus to a header waiting for its element to mount, in place of any earlier owe. */
+    public deferFocus(header: AbstractHeaderCellCtrl): void {
+        this.setOwedFocus(header, undefined, _getDeepActiveElement(this.beans));
+    }
+
+    private setOwedFocus(
+        header: AbstractHeaderCellCtrl | undefined,
+        event: CellFocusedEvent | undefined,
+        activeAtOwed: Element | null
+    ): void {
+        let shadowRoots = this.owedFocus?.shadowRoots;
+        if (!shadowRoots) {
+            const doc = _getDocument(this.beans);
+            doc.addEventListener('pointerdown', this.onActionWhileFocusOwed, true);
+            doc.addEventListener('focusin', this.onActionWhileFocusOwed, true);
+            const roots: ShadowRoot[] = [];
+            for (
+                let root = this.beans.eRootDiv.getRootNode();
+                root instanceof ShadowRoot;
+                root = root.host.getRootNode()
+            ) {
+                root.addEventListener('pointerdown', this.onActionWhileFocusOwed, true);
+                root.addEventListener('focusin', this.onActionWhileFocusOwed, true);
+                roots.push(root);
+            }
+            shadowRoots = roots;
+        }
+        this.owedFocus = { header, event, activeAtOwed, shadowRoots };
+    }
+
+    /** Takes an owed focus event, replayed as its cell or row is drawn; other owes wait for takeOwedFocus. */
+    public takeOwedFocusEvent(): CellFocusedEvent | undefined {
+        const event = this.owedFocus?.event;
+        return event && this.takeOwedFocus() ? event : undefined;
     }
 
     /**
-     * Specifies whether to take focus, as grid either already has focus, or lost it due
-     * to a destroyed cell
-     * @returns true if the grid should re-take focus, otherwise false
+     * Takes a cell or row's owed focus once: false for none, a header's, one focus has since moved away from, or one
+     * without an event under suppressFocusAfterRefresh.
      */
-    public shouldTakeFocus(): boolean {
-        if (this.gos.get('suppressFocusAfterRefresh')) {
-            this.setFocusRecovered();
+    public takeOwedFocus(): boolean {
+        const owed = this.owedFocus;
+        if (!owed || owed.header) {
             return false;
         }
-
-        if (this.needsFocusRestored) {
-            this.setFocusRecovered();
-            return true;
+        this.dropOwedFocus();
+        if (!owed.event && this.gos.get('suppressFocusAfterRefresh')) {
+            return false;
         }
-
-        return this.doesRowOrCellHaveBrowserFocus();
+        return _getDeepActiveElement(this.beans) === owed.activeAtOwed || this.isFocusFreeForGrid();
     }
 
-    /** Records what has focus while a focus waits for its element to mount: once per cell event, anew per header ask. */
-    public deferFocus(request: CellFocusedEvent | AbstractHeaderCellCtrl): void {
-        if (request !== this.deferredFocusRequest || request instanceof AbstractHeaderCellCtrl) {
-            this.deferredFocusRequest = request;
-            this.activeAtDeferredFocus = _getDeepActiveElement(this.beans);
+    private dropOwedFocus(): void {
+        const owed = this.owedFocus;
+        if (!owed) {
+            return;
+        }
+        this.owedFocus = null;
+        const doc = _getDocument(this.beans);
+        doc.removeEventListener('pointerdown', this.onActionWhileFocusOwed, true);
+        doc.removeEventListener('focusin', this.onActionWhileFocusOwed, true);
+        const shadowRoots = owed.shadowRoots;
+        for (let i = 0, len = shadowRoots.length; i < len; ++i) {
+            const root = shadowRoots[i];
+            root.removeEventListener('pointerdown', this.onActionWhileFocusOwed, true);
+            root.removeEventListener('focusin', this.onActionWhileFocusOwed, true);
         }
     }
 
-    /** `event` while it is still the focus deferred for a cell or row to mount, so focus moving elsewhere drops it */
-    public currentDeferredFocus(event: CellFocusedEvent | null): CellFocusedEvent | undefined {
-        return event && this.isDeferredFocusCurrent(event) ? event : undefined;
+    /** A press outside the grid, or focus moved where the grid would not take it from, gives the owed focus up. */
+    private readonly onActionWhileFocusOwed = (event: Event): void => {
+        const staysWithGrid = event.type === 'focusin' ? this.isFocusFreeForGrid() : this.mayPressBeOnGrid(event);
+        if (!staysWithGrid) {
+            this.dropOwedFocus();
+        }
+    };
+
+    /** Whether a press is on the grid as the listening root sees it: a closed root holding it shows only its host. */
+    private mayPressBeOnGrid(event: Event): boolean {
+        let gridNode: Node = this.beans.eRootDiv;
+        let root = gridNode.getRootNode();
+        while (root !== event.currentTarget && root instanceof ShadowRoot) {
+            const host = root.host;
+            gridNode = root.mode === 'closed' ? host : gridNode;
+            root = host.getRootNode();
+        }
+        return event.composedPath().includes(gridNode);
     }
 
-    /** Whether a deferred focus may still be taken: it is the latest, and focus stayed put or is unclaimed. */
-    public isDeferredFocusCurrent(request: CellFocusedEvent | AbstractHeaderCellCtrl): boolean {
-        return (
-            request === this.deferredFocusRequest &&
-            (_getDeepActiveElement(this.beans) === this.activeAtDeferredFocus || _isNothingFocused(this.beans))
-        );
+    /** Whether a cell or row owed nothing takes focus: a grid row or cell has it, unless suppressFocusAfterRefresh. */
+    public shouldTakeFocus(): boolean {
+        return !this.gos.get('suppressFocusAfterRefresh') && this.doesRowOrCellHaveBrowserFocus();
+    }
+
+    /** A destroyed header gives up the focus owed to it, so later owes of cells and rows are kept. */
+    public dropOwedHeaderFocus(header: AbstractHeaderCellCtrl): void {
+        if (this.owedFocus?.header !== header) {
+            return;
+        }
+        this.dropOwedFocus();
+    }
+
+    /** Takes a header's owed focus, once: false unless it asked last and focus stayed put or is unclaimed. */
+    public takeOwedHeaderFocus(header: AbstractHeaderCellCtrl): boolean {
+        const owed = this.owedFocus;
+        if (owed?.header !== header) {
+            return false;
+        }
+        this.dropOwedFocus();
+        return _getDeepActiveElement(this.beans) === owed.activeAtOwed || _isNothingFocused(this.beans);
     }
 
     /** Whether the grid can take focus without stealing it: focus is unclaimed, or a grid row or cell has it. */
@@ -221,32 +297,25 @@ export class FocusService extends BeanStub implements NamedBean {
      */
     public doesRowOrCellHaveBrowserFocus() {
         const activeElement = _getActiveDomElement(this.beans);
+        // a grid nested in one of this grid's rows (a detail grid) holds its own focus
+        if (!activeElement || !this.gos.isElementInThisInstance(activeElement)) {
+            return false;
+        }
         // check for cell first
-        if (this.isDomDataPresentInHierarchy(activeElement, DOM_DATA_KEY_CELL_CTRL, true)) {
+        if (this.isDomDataPresentInHierarchy(activeElement, DOM_DATA_KEY_CELL_CTRL)) {
             return true;
         }
         // otherwise rows
-        return this.isDomDataPresentInHierarchy(activeElement, DOM_DATA_KEY_ROW_CTRL, true);
+        return this.isDomDataPresentInHierarchy(activeElement, DOM_DATA_KEY_ROW_CTRL);
     }
 
-    private isDomDataPresentInHierarchy(
-        eBrowserCell: Node | null,
-        key: string,
-        attemptToRefocusIfDestroyed?: boolean
-    ): boolean {
+    private isDomDataPresentInHierarchy(eBrowserCell: Node | null, key: string): boolean {
         let ePointer = eBrowserCell;
 
         while (ePointer) {
-            const data = _getDomData(this.gos, ePointer, key);
-
-            if (data) {
-                if (data.destroyed && attemptToRefocusIfDestroyed) {
-                    this.attemptToRecoverFocus();
-                    return false;
-                }
+            if (_getDomData(this.gos, ePointer, key)) {
                 return true;
             }
-
             ePointer = ePointer.parentNode;
         }
 
@@ -284,6 +353,9 @@ export class FocusService extends BeanStub implements NamedBean {
         const focusEventParams = this.getFocusEventParams(this.focusedCell);
 
         this.focusedCell = null;
+        if (!this.owedFocus?.header) {
+            this.dropOwedFocus();
+        }
 
         this.eventSvc.dispatchEvent({
             type: 'cellFocusCleared',
@@ -308,8 +380,8 @@ export class FocusService extends BeanStub implements NamedBean {
     }
 
     public setFocusedCell(params: CellFocusedParams): void {
-        // as focus has been set, reset the flag
-        this.setFocusRecovered();
+        // a new focused cell settles what was owed or waiting
+        this.dropOwedFocus();
 
         const {
             column,
@@ -420,7 +492,7 @@ export class FocusService extends BeanStub implements NamedBean {
         scroll?: boolean;
     }): boolean {
         // focusing header has been attempted; don't try to recover focus
-        this.setFocusRecovered();
+        this.dropOwedFocus();
 
         if (_isHeaderFocusSuppressed(this.beans)) {
             return false;

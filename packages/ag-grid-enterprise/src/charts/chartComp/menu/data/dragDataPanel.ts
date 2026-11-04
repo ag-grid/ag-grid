@@ -44,6 +44,7 @@ export abstract class DragDataPanel extends Component {
         valueFormatter: (colState: ColState) => string,
         selectLabelKey: ChartTranslationKey,
         dragSourceId: string,
+        ariaLabel: string,
         skipAnimation?: () => boolean
     ): void {
         if (this.allowMultipleSelection) {
@@ -55,6 +56,7 @@ export abstract class DragDataPanel extends Component {
                     valueFormatter,
                     selectPlaceholder: this.chartTranslation.translate(selectLabelKey),
                     dragSourceId,
+                    ariaLabel,
                     onValuesChange: (params) => this.onValueChange(params),
                     maxSelection: this.maxSelection,
                 })

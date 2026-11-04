@@ -791,6 +791,9 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaPageSizeSelectorLabel: 'Lehe suurus',
     ariaChartMenuClose: 'Sulge diagrammi muutmismenüü',
     ariaChartSelected: 'Valitud',
+    ariaChartPalettePrevious: 'Eelmine palett',
+    ariaChartPaletteNext: 'Järgmine palett',
+    ariaChartPalettePage: 'Palett ${variable}/${variable}',
     ariaSparklineChartDescription:
         'Väikediagramm - ${chartType} näitab ${count} väärtust vahemikus ${min} kuni ${max}. Algab ${start} ja lõpeb ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Väikediagramm - ${chartType} näitab 1 väärtust, ${value}.',
@@ -823,6 +826,11 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaLabelMaximize: 'Maksimeeri',
 
     ariaLabelRestore: 'Taasta',
+    ariaLabelColorPickerSpectrum: 'Küllastus ja heledus',
+    ariaValueColorPickerSpectrum: 'Küllastus ${variable}%, heledus ${variable}%',
+    ariaLabelColorPickerHue: 'Toon',
+    ariaLabelColorPickerAlpha: 'Läbipaistmatus',
+    ariaLabelColorPickerHex: 'Kuueteistkümnendvärv',
 
     ariaLabelColumnMenu: 'Veeru menüü',
     ariaLabelColumnFilter: 'Veeru filter',

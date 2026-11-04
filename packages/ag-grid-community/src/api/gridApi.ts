@@ -241,7 +241,7 @@ export interface _RowGridApi<TData> {
      *
      * Special IDs for built-in row types (import constants from `ag-grid-community`):
      * - `ROOT_NODE_ID` — the invisible root node (level -1, always a group)
-     * - `GRAND_TOTAL_ROW_ID` — the grand total footer row, when `grandTotalRow` is enabled and the grid shows rows; the Client-Side Row Model keeps it, not displayed, once its rows are removed or filtered out
+     * - `GRAND_TOTAL_ROW_ID` — the grand total footer row, when `grandTotalRow` is enabled and the grid shows rows, or with `alwaysShowGrandTotalRow` also while it has none, as that option describes (the Server-Side Row Model needs `grandTotalData` either way); without the option, the Client-Side Row Model keeps the row, not displayed, once its rows are removed or filtered out
      * - `GROUP_TOTAL_ROW_ID_PREFIX + groupId` — a group total footer row for the group with the given ID
      * - `DETAIL_ROW_ID_PREFIX + masterRowId` — the detail row for the master row with the given ID
      * @agModule `RowApiModule`
@@ -658,7 +658,7 @@ export interface _ColumnAutosizeApi {
 }
 
 export interface _ColumnResizeApi {
-    /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event, which a finished call naming a column raises even when no width changes. The finished flag is intended for dragging, where a dragging action will produce many `columnResized` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. A width outside its column's `minWidth` and `maxWidth`, the `maxWidth` winning over a `minWidth` above it, leaves every width unchanged. With `colResizeDefault: 'shift'`, the column after each named column, or after a run of adjacent named columns, takes their change (the last column, or a hidden one, changes alone), and a change that column cannot take within its own `minWidth` and `maxWidth` also leaves every width unchanged. */
+    /** Sets the column widths of the columns provided. The finished flag gets included in the resulting event, which a finished call naming a column raises even when no width changes. The finished flag is intended for dragging, where a dragging action will produce many `columnResized` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. A width outside its column's `minWidth` and `maxWidth`, the `maxWidth` winning over a `minWidth` above it, leaves every width unchanged. With `colResizeDefault: 'shift'`, the column after each named column, or after a run of adjacent named columns, takes their change, and a change that column cannot take within its own `minWidth` and `maxWidth` also leaves every width unchanged. When that column is not resizable, or there is none because the named column is the last or hidden, the named columns change alone. */
     setColumnWidths(
         columnWidths: { key: ColKey; newWidth: number }[],
         finished?: boolean,

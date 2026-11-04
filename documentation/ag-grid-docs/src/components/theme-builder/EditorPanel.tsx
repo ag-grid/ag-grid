@@ -106,6 +106,7 @@ export const EditorPanel = () => {
                     strokeDirection={strokeDirection}
                     previewStrokes={previewStrokes}
                     onPreviewStrokesChange={setPreviewStrokes}
+                    showSemanticColors={false}
                 />
             </CollapsibleSection>
             <CollapsibleSection {...sectionProps('All Parameters')}>
