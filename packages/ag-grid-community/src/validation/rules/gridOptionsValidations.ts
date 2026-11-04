@@ -234,6 +234,9 @@ function validateCalculatedColumnsOptions(options: CalculatedColumnsOptions): Va
  */
 const GRID_OPTION_VALIDATIONS: () => Validations<GridOptions> = () => {
     const definedValidations: Validations<GridOptions> = {
+        autoGenerateColumnDefs: {
+            supportedRowModels: ['clientSide', 'serverSide'],
+        },
         autoSizePadding: {
             validate({ autoSizePadding }) {
                 return toConstrainedNum('autoSizePadding', autoSizePadding, 0);
