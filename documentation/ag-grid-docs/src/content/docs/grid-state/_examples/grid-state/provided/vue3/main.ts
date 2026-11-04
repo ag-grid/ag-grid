@@ -15,8 +15,6 @@ import { ModuleRegistry, enableDevValidations } from 'ag-grid-community';
 import { AllEnterpriseModule } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();
@@ -28,14 +26,14 @@ const VueExample = defineComponent({
     template: `
         <div style="height: 100%">
             <div class="example-wrapper">
-                <div>
-                    <span class="button-group">
+                <div class="example-controls">
+                    <div class="controls-row">
                         <button v-on:click="recreateWithCurrentState()">Recreate with State</button>
                         <button v-on:click="saveState()">Save State</button>
                         <button v-on:click="recreateWithNoState()">Recreate without State</button>
                         <button v-on:click="setState()">Set State</button>
                         <button v-on:click="printState()">Print State</button>
-                    </span>
+                    </div>
                 </div>
                 <ag-grid-vue
                     v-if="gridVisible"

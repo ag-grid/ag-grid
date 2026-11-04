@@ -61,15 +61,15 @@ const GridExample = () => {
 
     return (
         <AgGridProvider modules={modules}>
-            <div className="test-container">
-                <div className="test-header">
-                    <div id="firstDataRendered">
+            <div className="example-wrapper">
+                <div className="example-controls">
+                    <div className="controls-row" id="firstDataRendered">
                         First Data Rendered: <span className="value">-</span>
                     </div>
-                    <div id="rowDataUpdated">
+                    <div className="controls-row" id="rowDataUpdated">
                         Row Data Updated: <span className="value">-</span>
                     </div>
-                    <div>
+                    <div className="controls-row">
                         <button disabled={loading} onClick={reloadData}>
                             Reload Data
                         </button>
