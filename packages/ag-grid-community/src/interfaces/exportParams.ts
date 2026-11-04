@@ -165,6 +165,15 @@ export interface CsvExportParams extends ExportParams<CsvCustomContent> {
      * @default false
      */
     suppressQuotes?: boolean;
+    /**
+     * Pass `true` to prefix a single quote (`'`) to values that spreadsheet applications could evaluate as formulas: those starting with `=`, `+`, `-`, `@`, their full-width forms, a tab, a carriage return or a line feed.
+     * Applies to cell values, including the results of `processCellCallback`, header names and `CsvCell` custom content.
+     * Numbers such as `-5` and number cells formatted with a leading sign such as `-1,000.50` are left unchanged.
+     * String custom content from `prependContent`, `appendContent` and `getCustomContentBelowRow` is written as given.
+     * With `suppressQuotes`, a separator or line break inside a value can still start a new cell with a formula character.
+     * @default false
+     */
+    sanitizeFormulas?: boolean;
 }
 
 export interface ShouldRowBeSkippedParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
