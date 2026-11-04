@@ -904,6 +904,8 @@ export const AG_GRID_LOCALE_HI_IN = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'कॉलम सूची',
     ariaFilterPanelList: 'फ़िल्टर सूची',
+    ariaFilterPanelExpandAll: 'सभी फ़िल्टर समूह विस्तृत करें',
+    ariaFilterPanelCollapseAll: 'सभी फ़िल्टर समूह संक्षिप्त करें',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'फ़िल्टर फ़ील्ड जोड़ें',

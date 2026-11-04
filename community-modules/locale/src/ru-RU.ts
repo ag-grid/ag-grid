@@ -905,6 +905,8 @@ export const AG_GRID_LOCALE_RU_RU = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Список столбцов',
     ariaFilterPanelList: 'Список фильтров',
+    ariaFilterPanelExpandAll: 'Развернуть все группы фильтров',
+    ariaFilterPanelCollapseAll: 'Свернуть все группы фильтров',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Поле добавления фильтра',

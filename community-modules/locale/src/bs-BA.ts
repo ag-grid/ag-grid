@@ -905,6 +905,8 @@ export const AG_GRID_LOCALE_BS_BA = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Lista kolona',
     ariaFilterPanelList: 'Lista filtera',
+    ariaFilterPanelExpandAll: 'Proširi sve grupe filtera',
+    ariaFilterPanelCollapseAll: 'Sažmi sve grupe filtera',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Dodaj polje filtera',

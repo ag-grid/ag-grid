@@ -22,11 +22,11 @@ test.agExample(import.meta, () => {
         await expect(athleteCollapsed).toBeHidden();
 
         // Collapse All -> Athlete collapses.
-        await page.getByRole('button', { name: 'Collapse All' }).click();
+        await page.getByRole('button', { name: 'Collapse All', exact: true }).click();
         await expect(athleteCollapsed).toBeVisible();
 
         // Expand All -> groups expand again.
-        await page.getByRole('button', { name: 'Expand All' }).click();
+        await page.getByRole('button', { name: 'Expand All', exact: true }).click();
         await expect(athleteCollapsed).toBeHidden();
         await expect(competitionCollapsed).toBeHidden();
     });
@@ -44,7 +44,7 @@ test.agExample(import.meta, () => {
         await expect(sportFilterBody).toHaveCount(0);
 
         // Expand All expands the real filter groups...
-        await page.getByRole('button', { name: 'Expand All' }).click();
+        await page.getByRole('button', { name: 'Expand All', exact: true }).click();
         await expect(agIdFor.filterToolPanelGroupCollapsedIcon('Athlete')).toBeHidden();
         await expect(agIdFor.filterToolPanelGroupCollapsedIcon('Competition')).toBeHidden();
         await expect(agIdFor.filterToolPanelGroupCollapsedIcon('Medals')).toBeHidden();

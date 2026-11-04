@@ -883,6 +883,8 @@ export const AG_GRID_LOCALE_BG_BG = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Списък с колони',
     ariaFilterPanelList: 'Списък с филтри',
+    ariaFilterPanelExpandAll: 'Разширяване на всички групи филтри',
+    ariaFilterPanelCollapseAll: 'Свиване на всички групи филтри',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Добавяне на поле за филтър',

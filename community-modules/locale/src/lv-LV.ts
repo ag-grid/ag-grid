@@ -903,6 +903,8 @@ export const AG_GRID_LOCALE_LV_LV = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Kolonnu saraksts',
     ariaFilterPanelList: 'Filtru saraksts',
+    ariaFilterPanelExpandAll: 'Izvērst visas filtru grupas',
+    ariaFilterPanelCollapseAll: 'Sakļaut visas filtru grupas',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Pievienot filtra lauku',
