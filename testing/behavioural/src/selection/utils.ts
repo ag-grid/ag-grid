@@ -130,8 +130,11 @@ export class GridActions {
     }
 }
 
+/** Simulates a full Space key press: keydown followed by keyup, as a real keyboard produces. */
 export function pressSpaceKey(element: HTMLElement, opts?: KeyboardEventInit): void {
-    element.dispatchEvent(new KeyboardEvent('keydown', { ...opts, key: KeyCode.SPACE, bubbles: true }));
+    const init: KeyboardEventInit = { ...opts, key: KeyCode.SPACE, bubbles: true };
+    element.dispatchEvent(new KeyboardEvent('keydown', init));
+    element.dispatchEvent(new KeyboardEvent('keyup', init));
 }
 
 export function pressAKey(element: HTMLElement, opts?: KeyboardEventInit): void {
