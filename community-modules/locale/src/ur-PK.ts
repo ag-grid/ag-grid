@@ -807,7 +807,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaLabelColorPickerSpectrum: 'سیچوریشن اور چمک',
     ariaValueColorPickerSpectrum: 'سیچوریشن ${variable}%، چمک ${variable}%',
     ariaLabelColorPickerHue: 'رنگت',
-    ariaLabelColorPickerAlpha: 'دھندلاپن',
+    ariaLabelColorPickerAlpha: 'غیر شفافیت',
     ariaLabelColorPickerHex: 'ہیکس رنگ',
     ariaLabelColumnMenu: 'کالم مینو',
     ariaLabelColumnFilter: 'کالم فلٹر',

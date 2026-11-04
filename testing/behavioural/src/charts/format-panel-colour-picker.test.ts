@@ -167,6 +167,45 @@ describe('chart format panel colour picker', () => {
             expect(hue.getAttribute('aria-valuenow')).toBe('240');
         });
 
+        test('arrow keys update the slider values', async () => {
+            const originalRect = Element.prototype.getBoundingClientRect;
+            vi.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element) {
+                if (this.classList.contains('ag-spectrum-tool')) {
+                    return { left: 0, right: 200, top: 0, bottom: 10, width: 200, height: 10, x: 0, y: 0 } as DOMRect;
+                }
+                if (this.classList.contains('ag-spectrum-val')) {
+                    return { left: 0, right: 200, top: 0, bottom: 100, width: 200, height: 100, x: 0, y: 0 } as DOMRect;
+                }
+                return originalRect.call(this);
+            });
+            const { area, hue, alpha, input } = await openColourDialog();
+            typeColour(input, '#40408080');
+
+            const valueNow = (el: HTMLElement) => Number(el.getAttribute('aria-valuenow'));
+            const brightness = () => Number(/Brightness (\d+)%/.exec(area.getAttribute('aria-valuetext')!)![1]);
+            const press = (el: HTMLElement, key: string) =>
+                el.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }));
+
+            const saturationBefore = valueNow(area);
+            press(area, 'ArrowRight');
+            expect(valueNow(area)).toBeGreaterThan(saturationBefore);
+
+            const brightnessBefore = brightness();
+            press(area, 'ArrowUp');
+            expect(brightness()).toBeGreaterThan(brightnessBefore);
+
+            const alphaBefore = valueNow(alpha);
+            press(alpha, 'ArrowRight');
+            expect(valueNow(alpha)).toBeGreaterThan(alphaBefore);
+
+            // The hue track runs from 360 on the left to 0 on the right, so Right lowers the hue.
+            expect(valueNow(hue)).toBe(240);
+            press(hue, 'ArrowRight');
+            expect(valueNow(hue)).toBeLessThan(240);
+            press(hue, 'ArrowLeft');
+            expect(valueNow(hue)).toBe(240);
+        });
+
         test('the hex input is named', async () => {
             const { input } = await openColourDialog();
 
