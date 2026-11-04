@@ -1024,7 +1024,12 @@ function resetColumnWidths(
             // want any columns to get smaller
             currentWidths[column.colId] = column.actualWidth;
         }
-        column.resetActualWidth(source);
+        // a scale-up spreads from the auto-sized width of a column with no width of its own, so the
+        // auto-sized ratios are kept rather than every such column growing from the same default width
+        const { width, initialWidth } = column.colDef;
+        if (!params?.onlyScaleUp || width != null || initialWidth != null) {
+            column.resetActualWidth(source);
+        }
 
         const widthOverride = limitsMap?.[column.colId];
         const minOverride = widthOverride?.minWidth ?? params?.defaultMinWidth ?? -Infinity;
