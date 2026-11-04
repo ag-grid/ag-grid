@@ -5,6 +5,7 @@ import { ClientSideRowModelModule, ModuleRegistry, enableDevValidations } from '
 import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
 
 import { CustomOverlayComponent } from './custom-overlay.component';
+import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

@@ -20,6 +20,9 @@ import {
 } from './parser-utils';
 import { getComponentName, getImport, toConst, toInput, toMemberWithType, toOutput } from './vue-utils';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const path = require('path');
+
 function getOnGridReadyCode(bindings: ParsedBindings): string {
     const { onGridReady, data } = bindings;
     const additionalLines = [];
@@ -131,7 +134,8 @@ function getPropertyBindings(
 function getModuleImports(
     bindings: ParsedBindings,
     exampleConfig: ExampleConfig,
-    componentFileNames: string[]
+    componentFileNames: string[],
+    allStylesheets: string[]
 ): string[] {
     const { properties } = bindings;
 
@@ -169,7 +173,12 @@ function getModuleImports(
     return imports;
 }
 
-function getImports(bindings: ParsedBindings, exampleConfig: ExampleConfig, componentFileNames: string[]): string[] {
+function getImports(
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    componentFileNames: string[],
+    allStylesheets: string[]
+): string[] {
     const imports = [];
 
     const localeImport = findLocaleImport(bindings.imports);
@@ -177,7 +186,7 @@ function getImports(bindings: ParsedBindings, exampleConfig: ExampleConfig, comp
         imports.push(`import { ${localeImport.imports.join(', ')} } from '@ag-grid-community/locale';`);
     }
 
-    imports.push(...getModuleImports(bindings, exampleConfig, componentFileNames));
+    imports.push(...getModuleImports(bindings, exampleConfig, componentFileNames, allStylesheets));
 
     addGenericInterfaceImport(imports, bindings.tData, bindings);
 
@@ -194,7 +203,8 @@ function getImports(bindings: ParsedBindings, exampleConfig: ExampleConfig, comp
 export function vanillaToVue3(
     bindings: ParsedBindings,
     exampleConfig: ExampleConfig,
-    componentFileNames: string[]
+    componentFileNames: string[],
+    allStylesheets: string[]
 ): () => string {
     const { typeDeclares, interfaces } = bindings;
 
@@ -212,7 +222,7 @@ export function vanillaToVue3(
     const genericParams = rowDataType !== 'any' ? `<${rowDataType}>` : '';
 
     return () => {
-        const imports = getImports(bindings, exampleConfig, componentFileNames);
+        const imports = getImports(bindings, exampleConfig, componentFileNames, allStylesheets);
         const [propertyAssignments, propertyAttributes, _, propertyNames] = getPropertyBindings(
             bindings,
             rowDataType,

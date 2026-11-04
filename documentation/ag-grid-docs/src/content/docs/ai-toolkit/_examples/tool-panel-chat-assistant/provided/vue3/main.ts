@@ -6,6 +6,7 @@ import { AgGridVue } from 'ag-grid-vue3';
 
 import { ITransaction, generateTransactions } from './generateTransactions';
 import { gridOptions } from './gridOptions';
+import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

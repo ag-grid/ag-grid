@@ -9,6 +9,8 @@ import {
     enableDevValidations,
 } from 'ag-grid-community';
 
+import './styles.css';
+
 // Opt into dev-only validation diagnostics, surfaced in an overlay over each grid.
 if (process.env.NODE_ENV !== 'production') {
     enableDevValidations();

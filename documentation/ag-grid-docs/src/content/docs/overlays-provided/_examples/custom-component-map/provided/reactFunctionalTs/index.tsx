@@ -6,6 +6,7 @@ import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-communit
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import CustomNoRowsOverlay from './customNoRowsOverlay';
+import './styles.css';
 
 interface IAthlete {
     athlete: string;

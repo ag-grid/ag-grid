@@ -1,6 +1,6 @@
 import { basename } from 'path';
 
-import { ANGULAR_GENERATED_MAIN_FILE_NAME } from '../constants';
+import { ANGULAR_GENERATED_MAIN_FILE_NAME, EXAMPLE_STYLE_FILE_NAME } from '../constants';
 import { vanillaToAngular } from '../transformation-scripts/grid-vanilla-to-angular';
 import { vanillaToReactFunctionalTs } from '../transformation-scripts/grid-vanilla-to-react-functional-ts';
 import { vanillaToTypescript } from '../transformation-scripts/grid-vanilla-to-typescript';
@@ -25,6 +25,13 @@ interface FrameworkFiles {
 }
 
 export type TransformEntryFile = (params: { entryFile: string }) => string;
+
+/**
+ * The example's own stylesheets, which generated framework entry files import so they load after
+ * the grid's theme CSS. The shared controls stylesheet is linked from `index.html` instead.
+ */
+const getImportedStylesheets = (styleFiles: FileContents) =>
+    Object.keys(styleFiles).filter((fileName) => fileName !== EXAMPLE_STYLE_FILE_NAME);
 
 type ConfigGenerator = ({
     entryFile,
@@ -157,13 +164,19 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         indexHtml,
         otherScriptFiles,
         componentScriptFiles,
+        styleFiles,
         transformEntryFile,
         exampleConfig,
     }) => {
         const internalFramework: InternalFramework = 'reactFunctional';
         const entryFileName = getEntryFileName(internalFramework)!;
         const componentNames = getComponentName(componentScriptFiles);
-        const indexTsx = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), exampleConfig, componentNames)();
+        const indexTsx = vanillaToReactFunctionalTs(
+            deepCloneObject(typedBindings),
+            exampleConfig,
+            componentNames,
+            getImportedStylesheets(styleFiles)
+        )();
 
         let indexJsx = convertTsxToJsx(indexTsx);
 
@@ -189,13 +202,19 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         indexHtml,
         otherScriptFiles,
         componentScriptFiles,
+        styleFiles,
         transformEntryFile,
         exampleConfig,
     }) => {
         const internalFramework: InternalFramework = 'reactFunctionalTs';
         const entryFileName = getEntryFileName(internalFramework)!;
         const componentNames = getComponentName(componentScriptFiles);
-        let indexTsx = vanillaToReactFunctionalTs(deepCloneObject(typedBindings), exampleConfig, componentNames)();
+        let indexTsx = vanillaToReactFunctionalTs(
+            deepCloneObject(typedBindings),
+            exampleConfig,
+            componentNames,
+            getImportedStylesheets(styleFiles)
+        )();
 
         if (transformEntryFile) {
             indexTsx = transformEntryFile({ entryFile: indexTsx });
@@ -218,6 +237,7 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         typedBindings,
         otherScriptFiles,
         componentScriptFiles,
+        styleFiles,
         transformEntryFile,
         exampleConfig,
     }) => {
@@ -226,7 +246,12 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         const boilerPlateFiles = await getBoilerPlateFiles(internalFramework);
 
         const componentNames = getComponentName(componentScriptFiles);
-        let appComponent = vanillaToAngular(deepCloneObject(typedBindings), exampleConfig, componentNames)();
+        let appComponent = vanillaToAngular(
+            deepCloneObject(typedBindings),
+            exampleConfig,
+            componentNames,
+            getImportedStylesheets(styleFiles)
+        )();
 
         if (transformEntryFile) {
             appComponent = transformEntryFile({ entryFile: appComponent });
@@ -253,12 +278,18 @@ export const frameworkFilesGenerator: Partial<Record<InternalFramework, ConfigGe
         typedBindings,
         otherScriptFiles,
         componentScriptFiles,
+        styleFiles,
         transformEntryFile,
         exampleConfig,
     }) => {
         const internalFramework: InternalFramework = 'vue3';
         const componentNames = getComponentName(componentScriptFiles);
-        let mainJs = vanillaToVue3(deepCloneObject(typedBindings), exampleConfig, componentNames)();
+        let mainJs = vanillaToVue3(
+            deepCloneObject(typedBindings),
+            exampleConfig,
+            componentNames,
+            getImportedStylesheets(styleFiles)
+        )();
 
         if (transformEntryFile) {
             mainJs = transformEntryFile({ entryFile: mainJs });

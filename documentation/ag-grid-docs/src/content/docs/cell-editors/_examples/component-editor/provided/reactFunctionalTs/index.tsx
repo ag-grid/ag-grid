@@ -12,6 +12,7 @@ import {
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import NumericEditor from './numericEditor';
+import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

@@ -42,13 +42,13 @@ describe('getCodeSandboxFilesToSubmit', () => {
     );
 
     it.each(['reactFunctional', 'reactFunctionalTs'] as InternalFramework[])(
-        'serves every stylesheet from public/ for %s, where the linking index.html lives',
+        'serves the linked shared stylesheet from public/ and imported stylesheets from src/ for %s',
         (internalFramework) => {
             const files = getPayloadFiles({ internalFramework });
 
             expect(files).toHaveProperty(['public/index.html']);
-            expect(files).toHaveProperty(['public/styles.css']);
             expect(files).toHaveProperty(['public/ag-example-styles.css']);
+            expect(files).toHaveProperty(['src/styles.css']);
         }
     );
 

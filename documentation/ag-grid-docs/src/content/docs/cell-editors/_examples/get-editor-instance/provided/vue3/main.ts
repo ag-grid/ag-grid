@@ -13,6 +13,7 @@ import {
 import { AgGridVue } from 'ag-grid-vue3';
 
 import MySimpleEditor from './mySimpleEditorVue.ts';
+import './style.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

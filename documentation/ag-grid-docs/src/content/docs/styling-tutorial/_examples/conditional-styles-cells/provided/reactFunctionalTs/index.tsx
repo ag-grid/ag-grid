@@ -17,6 +17,7 @@ import { AgGridReact } from 'ag-grid-react';
 
 import type { IProduct } from './data';
 import { getData } from './data';
+import './styles.css';
 
 type ThemeMode = 'light' | 'dark';
 

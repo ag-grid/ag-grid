@@ -15,6 +15,7 @@ import { FindModule, ToolbarModule } from 'ag-grid-enterprise';
 
 import { getData, getLatinText } from './data';
 import { FullWidthCellRenderer } from './full-width-cell-renderer.component';
+import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

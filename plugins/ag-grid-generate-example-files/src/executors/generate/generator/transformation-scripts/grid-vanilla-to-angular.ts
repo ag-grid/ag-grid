@@ -22,6 +22,9 @@ import {
 } from './parser-utils';
 import { toTitleCase } from './string-utils';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const path = require('path');
+
 function getOnGridReadyCode(
     readyCode: string,
     data: { url: string; callback: string },
@@ -54,7 +57,12 @@ function getOnGridReadyCode(
     }
 }
 
-function addModuleImports(imports: string[], bindings: ParsedBindings, exampleConfig: ExampleConfig): string[] {
+function addModuleImports(
+    imports: string[],
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    allStylesheets: string[]
+): string[] {
     const { imports: bindingImports, properties } = bindings;
 
     imports.push("import { AgGridAngular } from 'ag-grid-angular';");
@@ -89,7 +97,12 @@ function addModuleImports(imports: string[], bindings: ParsedBindings, exampleCo
     return imports;
 }
 
-function getImports(bindings: ParsedBindings, exampleConfig: ExampleConfig, componentFileNames: string[]): string[] {
+function getImports(
+    bindings: ParsedBindings,
+    exampleConfig: ExampleConfig,
+    componentFileNames: string[],
+    allStylesheets: string[]
+): string[] {
     const imports = ["import { Component } from '@angular/core';"];
 
     if (bindings.data) {
@@ -101,7 +114,7 @@ function getImports(bindings: ParsedBindings, exampleConfig: ExampleConfig, comp
         imports.push(`import { ${localeImport.imports.join(', ')} } from '@ag-grid-community/locale';`);
     }
 
-    addModuleImports(imports, bindings, exampleConfig);
+    addModuleImports(imports, bindings, exampleConfig, allStylesheets);
 
     if (componentFileNames) {
         imports.push(...componentFileNames.map(getImport));
@@ -135,7 +148,8 @@ function getTemplate(bindings: ParsedBindings, exampleConfig: ExampleConfig, att
 export function vanillaToAngular(
     bindings: ParsedBindings,
     exampleConfig: ExampleConfig,
-    componentFileNames: string[]
+    componentFileNames: string[],
+    allStylesheets: string[]
 ): () => string {
     const { data, properties, typeDeclares, interfaces, tData } = bindings;
     const rowDataType = tData || 'any';
@@ -152,7 +166,7 @@ export function vanillaToAngular(
     const genericParams = rowDataType !== 'any' ? `<${rowDataType}>` : '';
 
     return () => {
-        const imports = getImports(bindings, exampleConfig, componentFileNames);
+        const imports = getImports(bindings, exampleConfig, componentFileNames, allStylesheets);
         const propertyAttributes = [];
         const propertyAssignments = [];
 

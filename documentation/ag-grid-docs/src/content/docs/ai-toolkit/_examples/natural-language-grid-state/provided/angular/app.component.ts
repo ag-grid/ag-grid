@@ -9,6 +9,7 @@ import { AllEnterpriseModule } from 'ag-grid-enterprise';
 
 import { callChatGPT } from './chatgptApi';
 import { IOlympicData, gridOptions } from './gridOptions';
+import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

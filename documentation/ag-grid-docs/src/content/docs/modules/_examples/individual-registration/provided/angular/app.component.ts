@@ -18,6 +18,8 @@ import {
     SetFilterModule,
 } from 'ag-grid-enterprise';
 
+import './styles.css';
+
 const sharedModules = [ClientSideRowModelModule, ColumnMenuModule, ContextMenuModule];
 const leftModules = [SetFilterModule, ClipboardModule, CsvExportModule];
 const rightModules = [TextFilterModule, NumberFilterModule, CsvExportModule, ExcelExportModule];

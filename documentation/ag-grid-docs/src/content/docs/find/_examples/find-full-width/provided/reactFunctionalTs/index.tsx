@@ -16,6 +16,7 @@ import { AgGridReact } from 'ag-grid-react';
 
 import { getData, getLatinText } from './data';
 import FullWidthCellRenderer from './fullWidthCellRenderer';
+import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

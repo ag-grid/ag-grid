@@ -5,6 +5,7 @@ import { ClientSideRowModelModule, ModuleRegistry, enableDevValidations } from '
 import { AgGridVue } from 'ag-grid-vue3';
 
 import { StatusOverlay } from './statusOverlay';
+import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

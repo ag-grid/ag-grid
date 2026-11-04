@@ -1,11 +1,11 @@
 import fs from 'fs';
 
+import { EXAMPLE_STYLE_FILE_NAME } from '../constants';
 import { getFileList } from './fileUtils';
 
 // Relative to the repo root, which is the executor's working directory
 const EXAMPLE_CONTROLS_STYLES_PATH =
     './external/ag-website-shared/src/components/example-runner/styles/example-controls.css';
-const EXAMPLE_STYLE_FILE_NAME = 'ag-example-styles.css';
 
 /**
  * The shared controls sheet is commented for its maintainers, but users see the generated copy in
