@@ -56,10 +56,10 @@ export const _jsonEquals = <T1, T2>(val1: T1, val2: T2): boolean => {
 };
 
 /**
- * Compares a string `valueA` against `valueB` (of any type) for locale-specific sorting.
+ * Compares two strings for locale-specific sorting.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
-export type StringComparator = (valueA: string, valueB: any) => number;
+export type StringComparator = (valueA: string, valueB: string) => number;
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 // PERFORMANCE CRITICAL — called per comparison during sort (O(n log n)). Any change here can have
@@ -84,7 +84,9 @@ export const _defaultComparator = (valueA: any, valueB: any, stringComparator?: 
         return 1;
     }
 
-    if (!stringComparator || typeof valueA !== 'string') {
+    // The string comparator is only used when both values are strings, so a string and a non-string compare the
+    // same way whichever is first.
+    if (!stringComparator || typeof valueA !== 'string' || typeof valueB !== 'string') {
         if (valueA > valueB) {
             return 1;
         }

@@ -136,7 +136,11 @@ export function applyExcelModeOptions<V>(params: ISetFilterParams<any, V>, beans
     }
 }
 
-export function treeDataOrGroupingComparator(aValue: string[] | null, bValue: string[] | null): number {
+export function treeDataOrGroupingComparator(
+    aValue: string[] | null,
+    bValue: string[] | null,
+    compare: (a: string, b: string) => number = _defaultComparator
+): number {
     if (aValue == null) {
         return bValue == null ? 0 : -1;
     } else if (bValue == null) {
@@ -146,7 +150,7 @@ export function treeDataOrGroupingComparator(aValue: string[] | null, bValue: st
         if (i >= bValue.length) {
             return 1;
         }
-        const diff = _defaultComparator(aValue[i], bValue[i]);
+        const diff = compare(aValue[i], bValue[i]);
         if (diff !== 0) {
             return diff;
         }

@@ -719,7 +719,7 @@ export class ChartDataModel extends BeanStub {
                 });
             }
         });
-        _resolveSortOptions(sortOptions, this.beans.colModel, this.beans.rowNodeSorter);
+        _resolveSortOptions(sortOptions, this.beans.colModel);
         return sortOptions;
     }
 }

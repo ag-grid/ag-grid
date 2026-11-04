@@ -127,6 +127,25 @@ describe('accentedSort locale and collator options', () => {
         ]);
     });
 
+    test('a string and a non-string compare the same whichever comes first', () => {
+        // Strings are compared with the collator only against other strings; a string and a number are equal both
+        // ways, so each grid keeps its own row data order, whatever accentedSort is set to.
+        for (const accentedSort of [true, { locales: 'sv' }] as const) {
+            for (const values of [
+                ['b', 5],
+                [5, 'b'],
+            ]) {
+                const api = createGrid(`accented-mixed-${values.join()}-${JSON.stringify(accentedSort)}`, {
+                    columnDefs: [{ field: 'value' }],
+                    rowData: values.map((value) => ({ value })),
+                    accentedSort,
+                });
+                expect(sortedValues(api, 'value')).toEqual(values);
+                expect(sortedValues(api, 'value', 'desc')).toEqual(values);
+            }
+        }
+    });
+
     test('changing the grid option at runtime sorts again', () => {
         const api = createGrid('accented-runtime', {
             columnDefs: [{ field: 'name', sort: 'asc' }],

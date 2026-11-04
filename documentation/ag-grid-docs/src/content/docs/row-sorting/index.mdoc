@@ -181,7 +181,7 @@ const gridOptions = {
 };
 ```
 
-Locale-specific sort only applies when both values are strings. Other values, such as numbers and dates, are sorted as they are by default.
+Locale-specific sort only applies when both values are strings. Other values, such as numbers and dates, and a string compared with a non-string, are sorted as they are by default.
 
 Toggle the buttons in the following example to see the difference between default sorting and locale-aware sorting. Note that:
 
@@ -211,7 +211,9 @@ const gridOptions = {
 };
 ```
 
-`accentedSort` is not used when a column has a `comparator`, and it does not change the order of the values in the [Set Filter](./filter-set/) list.
+`accentedSort` is not used when a column has a `comparator`.
+
+The values in the [Set Filter](./filter-set/) list are sorted using the column's `accentedSort` too, unless a `comparator` is provided in the filter parameters or on the column.
 
 ## Post-Sort
 
