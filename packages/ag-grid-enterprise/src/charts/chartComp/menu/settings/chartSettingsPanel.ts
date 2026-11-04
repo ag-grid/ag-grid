@@ -87,7 +87,7 @@ export class ChartSettingsPanel extends Component {
     private addNavIcon(wrapper: HTMLElement, iconName: 'chartsThemePrevious' | 'chartsThemeNext'): void {
         const icon = _createIconNoSpan(iconName, this.beans)!;
         _setAriaHidden(icon, true);
-        wrapper.insertAdjacentElement('afterbegin', icon);
+        wrapper.prepend(icon);
     }
 
     private scrollSelectedIntoView(): void {
