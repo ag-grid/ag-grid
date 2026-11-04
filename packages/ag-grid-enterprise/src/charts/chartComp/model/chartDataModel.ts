@@ -715,6 +715,8 @@ export class ChartDataModel extends BeanStub {
                     leafComparator: undefined,
                     descending: false,
                     absolute: false,
+                    missingValues: undefined,
+                    formulaErrors: false,
                 });
             }
         });

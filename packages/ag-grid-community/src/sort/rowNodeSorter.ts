@@ -72,21 +72,37 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             const sortOption = sortOptions[i];
             const column = sortOption.column as AgColumn;
             const descending = sortOption.descending;
-            const valueA = this.getValue(nodeA, column);
-            const valueB = this.getValue(nodeB, column);
+            let valueA = this.getValue(nodeA, column);
+            let valueB = this.getValue(nodeB, column);
+
+            const missingValues = sortOption.missingValues;
+            if (missingValues !== undefined) {
+                // Placed the same way in both directions, so not reversed for descending.
+                const missingResult = compareMissingValues(valueA, valueB, missingValues);
+                if (missingResult !== undefined) {
+                    if (missingResult) {
+                        return missingResult;
+                    }
+                    continue;
+                }
+            }
 
             const comparator = sortOption.colComparator ?? (nodeA.group ? undefined : sortOption.leafComparator);
             let result: number;
             if (comparator) {
                 result = comparator(valueA, valueB, nodeA, nodeB, descending);
-            } else if (sortOption.absolute) {
-                result = _defaultComparator(
-                    absoluteValueTransformer(valueA),
-                    absoluteValueTransformer(valueB),
-                    accentedCompare
-                );
             } else {
-                result = _defaultComparator(valueA, valueB, accentedCompare);
+                if (sortOption.formulaErrors) {
+                    valueA = this.formulaErrorToNaN(column, nodeA, valueA);
+                    valueB = this.formulaErrorToNaN(column, nodeB, valueB);
+                }
+                result = sortOption.absolute
+                    ? _defaultComparator(
+                          absoluteValueTransformer(valueA),
+                          absoluteValueTransformer(valueB),
+                          accentedCompare
+                      )
+                    : _defaultComparator(valueA, valueB, accentedCompare);
             }
 
             // user comparators can return NaN for unhandled undefined values; NaN is falsy → treated as equal.
@@ -96,6 +112,11 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         }
 
         return 0;
+    }
+
+    /** Formula error values (e.g. `#REF!`) sort like `NaN`: equal to each other, and after all other values. */
+    private formulaErrorToNaN(column: AgColumn, node: RowNode, value: any): any {
+        return this.formula?.isFormulaErrorValue(column, node, value) ? Number.NaN : value;
     }
 
     private getValue(node: RowNode, column: AgColumn): any {
@@ -153,6 +174,36 @@ const defaultGetLeaf = (row: RowNode): RowNode | undefined => {
         }
         childrenAfterGroup = node.childrenAfterGroup;
     }
+};
+
+/** `null`, `undefined`, or an aggregation result (e.g. an empty `avg`) whose number value is missing. */
+const isMissingValue = (value: any): boolean =>
+    value == null || (typeof value === 'object' && typeof value.toNumber === 'function' && value.toNumber() == null);
+
+/**
+ * Orders two missing values: `null` before `undefined`. Return `0` instead to treat them as equal, which keeps
+ * their original order.
+ */
+const compareMissingKinds = (valueA: any, valueB: any): number =>
+    (valueA === undefined ? 1 : 0) - (valueB === undefined ? 1 : 0);
+
+/**
+ * Places missing values first or last, whatever the sort direction. Returns `undefined` when neither value is
+ * missing, so the values are compared as usual.
+ */
+const compareMissingValues = (valueA: any, valueB: any, missingValues: 'first' | 'last'): number | undefined => {
+    const missingA = isMissingValue(valueA);
+    const missingB = isMissingValue(valueB);
+    if (missingA) {
+        if (missingB) {
+            return compareMissingKinds(valueA, valueB);
+        }
+        return missingValues === 'first' ? -1 : 1;
+    }
+    if (missingB) {
+        return missingValues === 'first' ? 1 : -1;
+    }
+    return undefined;
 };
 
 const absoluteValueTransformer = (value: any): number | bigint | null => {

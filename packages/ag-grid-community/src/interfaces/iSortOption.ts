@@ -15,4 +15,11 @@ export interface SortOption {
     descending: boolean;
     /** `type === 'absolute'`, precomputed to avoid a per-comparison string compare. Filled by `_resolveSortOptions`. */
     absolute: boolean;
+    /**
+     * The column's `sortMissingValues` when it is `'first'` or `'last'` and no user comparator applies; otherwise
+     * `undefined`, so missing values sort as the smallest values. Filled by `_resolveSortOptions`.
+     */
+    missingValues: 'first' | 'last' | undefined;
+    /** `true` when the column can hold formula error values, which sort like `NaN`. Filled by `_resolveSortOptions`. */
+    formulaErrors: boolean;
 }

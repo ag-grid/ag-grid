@@ -84,6 +84,16 @@ describe('_defaultComparator', () => {
             expect(_defaultComparator('a', 'a')).toBe(0);
         });
 
+        it('sorts NaN after all other values, equal to other NaN values', () => {
+            expect(sign(_defaultComparator(Number.NaN, 1))).toBe(1);
+            expect(sign(_defaultComparator(1, Number.NaN))).toBe(-1);
+            expect(sign(_defaultComparator(Number.NaN, 'a'))).toBe(1);
+            expect(sign(_defaultComparator('a', Number.NaN))).toBe(-1);
+            expect(sign(_defaultComparator('a', Number.NaN, true))).toBe(-1);
+            expect(_defaultComparator(Number.NaN, Number.NaN)).toBe(0);
+            expect(sign(_defaultComparator(null, Number.NaN))).toBe(-1);
+        });
+
         it('uses localeCompare when accentedCompare is enabled for strings', () => {
             // accentedCompare delegates to localeCompare which handles collation (e.g. "é" vs "e")
             expect(sign(_defaultComparator('a', 'b', true))).toBe(-1);

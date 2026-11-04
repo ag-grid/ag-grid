@@ -375,6 +375,12 @@
         "initialSortIndex": {},
         "sortingOrder": {},
         "comparator": {},
+        "sortMissingValues": {
+            "more": {
+                "name": "Missing Values",
+                "url": "./row-sorting/#missing-values"
+            }
+        },
         "unSortIcon": {}
     },
     "filtering": {
