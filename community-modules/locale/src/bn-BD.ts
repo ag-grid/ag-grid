@@ -865,6 +865,7 @@ export const AG_GRID_LOCALE_BN_BD = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'কলাম তালিকা',
     ariaFilterPanelList: 'ফিল্টার তালিকা',
+    ariaFilterPanelExpandAll: 'সব ফিল্টার গ্রুপ প্রসারিত করুন',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'ফিল্টার ফিল্ড যোগ করুন',
