@@ -48,7 +48,13 @@ export class SeriesDataPanel extends DragDataPanel {
             this.groupComp.addItem(pairedModeToggle);
         }
 
-        this.createGroup(this.valueCols, this.generateGetSeriesLabel(this.valueCols), 'seriesAdd', 'seriesSelect');
+        this.createGroup(
+            this.valueCols,
+            this.generateGetSeriesLabel(this.valueCols),
+            'seriesAdd',
+            'seriesSelect',
+            this.title
+        );
 
         this.getGui().appendChild(this.groupComp.getGui());
     }
