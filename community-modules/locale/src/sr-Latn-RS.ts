@@ -826,6 +826,11 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     ariaLabelMaximize: 'Maksimizuj',
 
     ariaLabelRestore: 'Vrati',
+    ariaLabelColorPickerSpectrum: 'Zasićenost i osvetljenost',
+    ariaValueColorPickerSpectrum: 'Zasićenost ${variable}%, osvetljenost ${variable}%',
+    ariaLabelColorPickerHue: 'Nijansa',
+    ariaLabelColorPickerAlpha: 'Neprozirnost',
+    ariaLabelColorPickerHex: 'Heksadecimalna boja',
 
     ariaLabelColumnMenu: 'Meni kolone',
     ariaLabelColumnFilter: 'Filter kolone',

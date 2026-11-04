@@ -55,6 +55,11 @@ export class AgColorInput<
         });
     }
 
+    public override postConstruct(): void {
+        super.postConstruct();
+        this.setInputAriaLabel(this.getLocaleTextFunc()('ariaLabelColorPickerHex', 'Hex Color'));
+    }
+
     public setColor(color: AgColor): void {
         const rgbaColor = color.toRgbaString();
         this.setValue(AgColor.fromString(rgbaColor, _getDocument(this.beans)).toHexString().toUpperCase(), true);

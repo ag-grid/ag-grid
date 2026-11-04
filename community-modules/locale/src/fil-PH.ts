@@ -834,6 +834,11 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaLabelMaximize: 'I-maximize',
 
     ariaLabelRestore: 'Ibalik',
+    ariaLabelColorPickerSpectrum: 'Saturation at Liwanag',
+    ariaValueColorPickerSpectrum: 'Saturation ${variable}%, Liwanag ${variable}%',
+    ariaLabelColorPickerHue: 'Hue',
+    ariaLabelColorPickerAlpha: 'Opacity',
+    ariaLabelColorPickerHex: 'Hex na Kulay',
 
     ariaLabelColumnMenu: 'Menu ng Column',
     ariaLabelColumnFilter: 'Filter ng Column',

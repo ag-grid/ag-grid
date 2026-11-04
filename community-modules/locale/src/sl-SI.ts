@@ -826,6 +826,11 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaLabelMaximize: 'Povečaj',
 
     ariaLabelRestore: 'Obnovi',
+    ariaLabelColorPickerSpectrum: 'Nasičenost in svetlost',
+    ariaValueColorPickerSpectrum: 'Nasičenost ${variable} %, svetlost ${variable} %',
+    ariaLabelColorPickerHue: 'Odtenek',
+    ariaLabelColorPickerAlpha: 'Prekrivnost',
+    ariaLabelColorPickerHex: 'Šestnajstiška barva',
 
     ariaLabelColumnMenu: 'Meni stolpca',
     ariaLabelColumnFilter: 'Filter stolpca',

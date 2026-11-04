@@ -829,6 +829,11 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaLabelMaximize: 'Maksimalkan',
 
     ariaLabelRestore: 'Pulihkan',
+    ariaLabelColorPickerSpectrum: 'Saturasi dan Kecerahan',
+    ariaValueColorPickerSpectrum: 'Saturasi ${variable}%, Kecerahan ${variable}%',
+    ariaLabelColorPickerHue: 'Rona',
+    ariaLabelColorPickerAlpha: 'Opasitas',
+    ariaLabelColorPickerHex: 'Warna Heksadesimal',
 
     ariaLabelColumnMenu: 'Menu Kolom',
     ariaLabelColumnFilter: 'Filter Kolom',

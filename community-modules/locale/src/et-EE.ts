@@ -826,6 +826,11 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaLabelMaximize: 'Maksimeeri',
 
     ariaLabelRestore: 'Taasta',
+    ariaLabelColorPickerSpectrum: 'Küllastus ja heledus',
+    ariaValueColorPickerSpectrum: 'Küllastus ${variable}%, heledus ${variable}%',
+    ariaLabelColorPickerHue: 'Toon',
+    ariaLabelColorPickerAlpha: 'Läbipaistmatus',
+    ariaLabelColorPickerHex: 'Kuueteistkümnendvärv',
 
     ariaLabelColumnMenu: 'Veeru menüü',
     ariaLabelColumnFilter: 'Veeru filter',

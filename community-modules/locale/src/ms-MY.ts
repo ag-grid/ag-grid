@@ -830,6 +830,11 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaLabelMaximize: 'Maksimumkan',
 
     ariaLabelRestore: 'Pulihkan',
+    ariaLabelColorPickerSpectrum: 'Ketepuan dan Kecerahan',
+    ariaValueColorPickerSpectrum: 'Ketepuan ${variable}%, Kecerahan ${variable}%',
+    ariaLabelColorPickerHue: 'Rona',
+    ariaLabelColorPickerAlpha: 'Kelegapan',
+    ariaLabelColorPickerHex: 'Warna Heks',
 
     ariaLabelColumnMenu: 'Menu Lajur',
     ariaLabelColumnFilter: 'Penapis Lajur',

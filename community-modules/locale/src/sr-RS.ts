@@ -826,6 +826,11 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaLabelMaximize: 'Максимизуј',
 
     ariaLabelRestore: 'Врати',
+    ariaLabelColorPickerSpectrum: 'Засићеност и осветљеност',
+    ariaValueColorPickerSpectrum: 'Засићеност ${variable}%, осветљеност ${variable}%',
+    ariaLabelColorPickerHue: 'Нијанса',
+    ariaLabelColorPickerAlpha: 'Непрозирност',
+    ariaLabelColorPickerHex: 'Хексадецимална боја',
 
     ariaLabelColumnMenu: 'Мени колоне',
     ariaLabelColumnFilter: 'Филтер колоне',
