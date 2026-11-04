@@ -13,6 +13,7 @@ import type {
 } from 'ag-grid-community';
 import {
     _addGridCommonParams,
+    _createCellId,
     _getCellByPosition,
     _getFillHandle,
     _getLastRow,
@@ -112,8 +113,8 @@ export class AgFillHandle extends AbstractSelectionHandle {
     private initialXY: { x: number; y: number } | null;
     private lastCellMarked: CellPosition | undefined;
     private readonly markedCells: CellCtrl[] = [];
-    /** Bit `i` set means `FILL_CSS_CLASSES[i]` is on for that cell. */
-    private readonly fillCssByCell = new Map<CellCtrl, number>();
+    /** By cell id, as a redrawn row replaces the ctrl. Bit `i` set means `FILL_CSS_CLASSES[i]` is on. */
+    private readonly fillCssByCellId = new Map<string, number>();
     private readonly cellValues: FillValues[][] = [];
 
     private dragAxis?: FillDirection;
@@ -218,9 +219,9 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
     }
 
-    /** A cell marked before its comp mounted could not be styled then, so style it once it mounts. */
+    /** A cell that mounts on the marked path missed the marking, so give it its part of the outline now. */
     public onCellMounted(cell: CellCtrl): void {
-        const mask = this.fillCssByCell.get(cell);
+        const mask = this.fillCssByCellId.get(_createCellId(cell.cellPosition));
         if (mask === undefined) {
             return;
         }
@@ -231,8 +232,9 @@ export class AgFillHandle extends AbstractSelectionHandle {
 
     private toggleFillCss(cell: CellCtrl, cssClass: FillCssClass, on: boolean): void {
         const bit = 1 << FILL_CSS_CLASSES.indexOf(cssClass);
-        const mask = this.fillCssByCell.get(cell) ?? 0;
-        this.fillCssByCell.set(cell, on ? mask | bit : mask & ~bit);
+        const cellId = _createCellId(cell.cellPosition);
+        const mask = this.fillCssByCellId.get(cellId) ?? 0;
+        this.fillCssByCellId.set(cellId, on ? mask | bit : mask & ~bit);
         cell.comp?.toggleCss(cssClass, on);
     }
 
@@ -686,10 +688,12 @@ export class AgFillHandle extends AbstractSelectionHandle {
     }
 
     private clearMarkedPath() {
-        for (const cell of this.markedCells) {
-            const { comp } = cell;
+        for (const marked of this.markedCells) {
+            // a redrawn row replaces the marked cell, and its replacement takes the outline on mount
+            const cell = marked.isAlive() ? marked : _getCellByPosition(this.beans, marked.cellPosition);
             // comp may be missing if the cell's component hasn't mounted yet (e.g. React hasn't committed it)
-            if (!cell.isAlive() || !comp) {
+            const comp = cell?.comp;
+            if (!comp) {
                 continue;
             }
             for (let i = 0, len = FILL_CSS_CLASSES.length; i < len; ++i) {
@@ -698,7 +702,7 @@ export class AgFillHandle extends AbstractSelectionHandle {
         }
 
         this.markedCells.length = 0;
-        this.fillCssByCell.clear();
+        this.fillCssByCellId.clear();
 
         this.isUp = false;
         this.isLeft = false;

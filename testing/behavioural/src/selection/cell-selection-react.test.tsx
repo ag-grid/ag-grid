@@ -112,6 +112,8 @@ describe('Cell Selection fill handle (React)', () => {
             for (const rowIndex of [0, 1, 2]) {
                 fireEvent.mouseMove(cellAt(rowIndex), { clientX: 0, clientY: (rowIndex + 1) * 10 });
             }
+            // Staying in the same cell redraws the path again without re-marking it.
+            fireEvent.mouseMove(cellAt(2), { clientX: 5, clientY: 32 });
         } finally {
             window.removeEventListener('mousemove', redrawOtherRows, true);
         }
