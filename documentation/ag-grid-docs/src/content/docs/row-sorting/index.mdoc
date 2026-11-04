@@ -166,7 +166,7 @@ const gridOptions = {
 
 {% apiDocumentation source="column-properties/properties.json" section="sort" names=["sortMissingValues"] /%}
 
-When `sortMissingValues` is `'first'` or `'last'`, `null` values are placed before `undefined` values. With the default `'inOrder'`, they are treated as equal and keep their original order. An empty string (`''`) is not a missing value, and is sorted as text.
+`null` and `undefined` values are treated as equal, so they keep their original order. An empty string (`''`) is not a missing value, and is sorted as text.
 
 `sortMissingValues` is not used when the column has a `comparator`, as the comparator decides where missing values go.
 

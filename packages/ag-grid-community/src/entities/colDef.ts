@@ -1067,7 +1067,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * - `'first'`: missing values are always first, in both directions.
      * - `'last'`: missing values are always last, in both directions, as in Excel.
      *
-     * With `'first'` or `'last'`, `null` values are placed before `undefined` values.
+     * Missing values are equal to each other, so they keep their original order.
      * Not used when a `comparator` is provided.
      * @default 'inOrder'
      */

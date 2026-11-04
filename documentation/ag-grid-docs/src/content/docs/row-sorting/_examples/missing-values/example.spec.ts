@@ -19,12 +19,12 @@ test.agExample(import.meta, () => {
         await ensureGridReady(page);
         await waitForGridContent(page);
 
-        // sortMissingValues: 'last' and ascending on load. NaN sorts after numbers; null before undefined.
-        await expectOrder(page, ['-2', '0', '5', '7', 'NaN', 'null', 'undefined']);
+        // sortMissingValues: 'last' and ascending on load. NaN sorts after numbers; missing values keep the row data order.
+        await expectOrder(page, ['-2', '0', '5', '7', 'NaN', 'undefined', 'null']);
 
         await agIdFor.headerCell('amount').click();
         await waitForRowAnimations(page);
-        await expectOrder(page, ['NaN', '7', '5', '0', '-2', 'null', 'undefined']);
+        await expectOrder(page, ['NaN', '7', '5', '0', '-2', 'undefined', 'null']);
     });
 
     test.eachFramework('First places missing values first in both directions', async ({ agIdFor, page }) => {
@@ -33,11 +33,11 @@ test.agExample(import.meta, () => {
 
         await page.getByRole('button', { name: 'First', exact: true }).click();
         await waitForRowAnimations(page);
-        await expectOrder(page, ['null', 'undefined', '-2', '0', '5', '7', 'NaN']);
+        await expectOrder(page, ['undefined', 'null', '-2', '0', '5', '7', 'NaN']);
 
         await agIdFor.headerCell('amount').click();
         await waitForRowAnimations(page);
-        await expectOrder(page, ['null', 'undefined', 'NaN', '7', '5', '0', '-2']);
+        await expectOrder(page, ['undefined', 'null', 'NaN', '7', '5', '0', '-2']);
     });
 
     test.eachFramework('In Order sorts missing values as the smallest values', async ({ agIdFor, page }) => {

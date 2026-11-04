@@ -53,18 +53,18 @@ describe('Sorting missing values and NaN', () => {
             }
         );
 
-        test("'first' places missing values first in both directions, null before undefined", () => {
+        test("'first' places missing values first in both directions, keeping their original order", () => {
             const api = createGrid('first', { columnDefs: valueColumn('first'), rowData: valuesRowData() });
 
-            expect(sortedLabels(api, 'value', 'asc')).toEqual(['null', 'undefined', '-2', '0', '5', '7', 'NaN']);
-            expect(sortedLabels(api, 'value', 'desc')).toEqual(['null', 'undefined', 'NaN', '7', '5', '0', '-2']);
+            expect(sortedLabels(api, 'value', 'asc')).toEqual(['undefined', 'null', '-2', '0', '5', '7', 'NaN']);
+            expect(sortedLabels(api, 'value', 'desc')).toEqual(['undefined', 'null', 'NaN', '7', '5', '0', '-2']);
         });
 
-        test("'last' places missing values last in both directions, null before undefined", () => {
+        test("'last' places missing values last in both directions, keeping their original order", () => {
             const api = createGrid('last', { columnDefs: valueColumn('last'), rowData: valuesRowData() });
 
-            expect(sortedLabels(api, 'value', 'asc')).toEqual(['-2', '0', '5', '7', 'NaN', 'null', 'undefined']);
-            expect(sortedLabels(api, 'value', 'desc')).toEqual(['NaN', '7', '5', '0', '-2', 'null', 'undefined']);
+            expect(sortedLabels(api, 'value', 'asc')).toEqual(['-2', '0', '5', '7', 'NaN', 'undefined', 'null']);
+            expect(sortedLabels(api, 'value', 'desc')).toEqual(['NaN', '7', '5', '0', '-2', 'undefined', 'null']);
         });
 
         test("'last' with absolute sort", () => {

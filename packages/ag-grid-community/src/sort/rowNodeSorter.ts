@@ -181,22 +181,16 @@ const isMissingValue = (value: any): boolean =>
     value == null || (typeof value === 'object' && typeof value.toNumber === 'function' && value.toNumber() == null);
 
 /**
- * Orders two missing values: `null` before `undefined`. Return `0` instead to treat them as equal, which keeps
- * their original order.
- */
-const compareMissingKinds = (valueA: any, valueB: any): number =>
-    (valueA === undefined ? 1 : 0) - (valueB === undefined ? 1 : 0);
-
-/**
- * Places missing values first or last, whatever the sort direction. Returns `undefined` when neither value is
- * missing, so the values are compared as usual.
+ * Places missing values first or last, whatever the sort direction. Missing values are equal to each other, so
+ * they keep their original order. Returns `undefined` when neither value is missing, so the values are compared
+ * as usual.
  */
 const compareMissingValues = (valueA: any, valueB: any, missingValues: 'first' | 'last'): number | undefined => {
     const missingA = isMissingValue(valueA);
     const missingB = isMissingValue(valueB);
     if (missingA) {
         if (missingB) {
-            return compareMissingKinds(valueA, valueB);
+            return 0;
         }
         return missingValues === 'first' ? -1 : 1;
     }
