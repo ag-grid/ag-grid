@@ -842,6 +842,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: '列リスト',
     ariaFilterPanelList: 'フィルターリスト',
+    ariaFilterPanelExpandAll: 'すべてのフィルターグループを展開',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'フィルターフィールドを追加',

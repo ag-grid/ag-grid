@@ -843,6 +843,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Danh sách Cột',
     ariaFilterPanelList: 'Danh sách Bộ lọc',
+    ariaFilterPanelExpandAll: 'Mở Rộng Tất Cả Các Nhóm Bộ Lọc',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Thêm Trường Bộ Lọc',

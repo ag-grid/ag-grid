@@ -870,6 +870,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     // ARIA Labels for the Side Bar
     ariaColumnPanelList: 'Stulpelių sąrašas',
     ariaFilterPanelList: 'Filtrų sąrašas',
+    ariaFilterPanelExpandAll: 'Išskleisti visas filtrų grupes',
 
     // ARIA labels for new Filters Tool Panel
     ariaLabelAddFilterField: 'Pridėti filtro laukas',
