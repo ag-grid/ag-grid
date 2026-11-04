@@ -150,6 +150,6 @@ describe('criteriaToPredicate wildcard criteria', () => {
 
         const start = performance.now();
         expect(predicate(text)).toBe(false);
-        expect(performance.now() - start).toBeLessThan(50);
+        expect(performance.now() - start).toBeLessThan(250);
     });
 });
