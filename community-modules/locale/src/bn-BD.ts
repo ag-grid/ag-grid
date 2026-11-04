@@ -821,6 +821,11 @@ export const AG_GRID_LOCALE_BN_BD = {
     ariaLabelMaximize: 'বড় করুন',
 
     ariaLabelRestore: 'পুনরুদ্ধার করুন',
+    ariaLabelColorPickerSpectrum: 'স্যাচুরেশন ও উজ্জ্বলতা',
+    ariaValueColorPickerSpectrum: 'স্যাচুরেশন ${variable}%, উজ্জ্বলতা ${variable}%',
+    ariaLabelColorPickerHue: 'হিউ',
+    ariaLabelColorPickerAlpha: 'অস্বচ্ছতা',
+    ariaLabelColorPickerHex: 'হেক্স রঙ',
 
     ariaLabelColumnMenu: 'কলাম মেনু',
     ariaLabelColumnFilter: 'কলাম ফিল্টার',

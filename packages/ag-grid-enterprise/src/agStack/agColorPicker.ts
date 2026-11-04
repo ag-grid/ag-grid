@@ -94,6 +94,7 @@ export class AgColorPicker<
                 TComponentSelectorType
             >(
                 {
+                    title: this.getDialogAriaLabel(),
                     closable: false,
                     modal: true,
                     hideTitleBar: true,
@@ -112,6 +113,13 @@ export class AgColorPicker<
         );
 
         return colorDialog;
+    }
+
+    /** The dialog is never titled visibly, so this only names it for assistive technology. */
+    private getDialogAriaLabel(): string {
+        const label = this.getLabel();
+        const text = (typeof label === 'string' ? label : label?.textContent)?.trim();
+        return text || this.getLocaleTextFunc()('color', 'Color');
     }
 
     protected override renderAndPositionPicker(): () => void {

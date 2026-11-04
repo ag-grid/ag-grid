@@ -826,6 +826,11 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaLabelMaximize: 'Развернуть',
 
     ariaLabelRestore: 'Восстановить',
+    ariaLabelColorPickerSpectrum: 'Насыщенность и яркость',
+    ariaValueColorPickerSpectrum: 'Насыщенность ${variable}%, яркость ${variable}%',
+    ariaLabelColorPickerHue: 'Оттенок',
+    ariaLabelColorPickerAlpha: 'Непрозрачность',
+    ariaLabelColorPickerHex: 'Шестнадцатеричный цвет',
 
     ariaLabelColumnMenu: 'Меню столбца',
     ariaLabelColumnFilter: 'Фильтр столбца',

@@ -810,6 +810,13 @@ export const AG_GRID_LOCALE_EN_US = {
     // dialog title bar toggle: enlarges the dialog to fill the grid, then returns it to its previous size
     ariaLabelMaximize: 'Maximize',
     ariaLabelRestore: 'Restore',
+    // colour picker dialog: the 2-D saturation/brightness area, the hue and opacity sliders, and the hex text input
+    ariaLabelColorPickerSpectrum: 'Saturation and Brightness',
+    // screen reader value of the saturation/brightness area, format: Saturation {percent}%, Brightness {percent}%
+    ariaValueColorPickerSpectrum: 'Saturation ${variable}%, Brightness ${variable}%',
+    ariaLabelColorPickerHue: 'Hue',
+    ariaLabelColorPickerAlpha: 'Opacity',
+    ariaLabelColorPickerHex: 'Hex Color',
 
     ariaLabelColumnMenu: 'Column Menu',
     ariaLabelColumnFilter: 'Column Filter',

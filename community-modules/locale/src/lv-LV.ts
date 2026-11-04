@@ -825,6 +825,11 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaLabelMaximize: 'Maksimizēt',
 
     ariaLabelRestore: 'Atjaunot',
+    ariaLabelColorPickerSpectrum: 'Piesātinājums un spilgtums',
+    ariaValueColorPickerSpectrum: 'Piesātinājums ${variable}%, spilgtums ${variable}%',
+    ariaLabelColorPickerHue: 'Nokrāsa',
+    ariaLabelColorPickerAlpha: 'Necaurredzamība',
+    ariaLabelColorPickerHex: 'Heksadecimālā krāsa',
 
     ariaLabelColumnMenu: 'Kolonnas izvēlne',
     ariaLabelColumnFilter: 'Kolonnas filtrs',

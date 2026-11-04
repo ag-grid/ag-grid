@@ -822,6 +822,11 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaLabelMaximize: 'ขยายใหญ่สุด',
 
     ariaLabelRestore: 'คืนค่า',
+    ariaLabelColorPickerSpectrum: 'ความอิ่มตัวและความสว่าง',
+    ariaValueColorPickerSpectrum: 'ความอิ่มตัว ${variable}%, ความสว่าง ${variable}%',
+    ariaLabelColorPickerHue: 'เฉดสี',
+    ariaLabelColorPickerAlpha: 'ความทึบแสง',
+    ariaLabelColorPickerHex: 'สีฐานสิบหก',
 
     ariaLabelColumnMenu: 'เมนูคอลัมน์',
     ariaLabelColumnFilter: 'ตัวกรองคอลัมน์',

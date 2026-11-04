@@ -99,4 +99,79 @@ describe('chart format panel colour picker', () => {
         expect(input.validationMessage).toBe('Color value is invalid');
         expect(label.textContent).toBe(initialHex);
     });
+
+    describe('dialog accessibility', () => {
+        async function openColourDialog() {
+            const { picker } = await openFirstColourPicker();
+            picker
+                .querySelector('.ag-picker-field-wrapper')!
+                .dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+            const dialog = await waitFor(() => {
+                const el = document.querySelector<HTMLElement>('.ag-color-dialog');
+                expect(el).not.toBeNull();
+                return el!;
+            });
+            return {
+                picker,
+                dialog,
+                area: dialog.querySelector<HTMLElement>('.ag-spectrum-color')!,
+                hue: dialog.querySelector<HTMLElement>('.ag-spectrum-hue .ag-spectrum-slider')!,
+                alpha: dialog.querySelector<HTMLElement>('.ag-spectrum-alpha .ag-spectrum-slider')!,
+                input: dialog.querySelector<HTMLInputElement>('.ag-color-panel input')!,
+            };
+        }
+
+        function typeColour(input: HTMLInputElement, value: string) {
+            input.value = value;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+
+        test('the dialog is named after the picker label', async () => {
+            const { picker, dialog } = await openColourDialog();
+            const pickerLabel = picker.querySelector('.ag-label')!.textContent!.trim();
+
+            expect(pickerLabel).toBe('Color');
+            expect(dialog.getAttribute('aria-label')).toBe(pickerLabel);
+        });
+
+        test('the colour area and both sliders are named sliders with a range', async () => {
+            const { area, hue, alpha } = await openColourDialog();
+
+            for (const [el, name, max] of [
+                [area, 'Saturation and Brightness', '100'],
+                [hue, 'Hue', '360'],
+                [alpha, 'Opacity', '100'],
+            ] as const) {
+                expect(el.getAttribute('role')).toBe('slider');
+                expect(el.getAttribute('aria-label')).toBe(name);
+                expect(el.getAttribute('aria-valuemin')).toBe('0');
+                expect(el.getAttribute('aria-valuemax')).toBe(max);
+                expect(el.getAttribute('aria-valuenow')).toMatch(/^\d+$/);
+            }
+            expect(area.getAttribute('aria-valuetext')).toMatch(/^Saturation \d+%, Brightness \d+%$/);
+        });
+
+        test('the slider values follow the colour', async () => {
+            const { area, hue, alpha, input } = await openColourDialog();
+
+            typeColour(input, 'rgba(255, 0, 0, 0.5)');
+
+            expect(area.getAttribute('aria-valuenow')).toBe('100');
+            expect(area.getAttribute('aria-valuetext')).toBe('Saturation 100%, Brightness 100%');
+            expect(hue.getAttribute('aria-valuenow')).toBe('0');
+            expect(alpha.getAttribute('aria-valuenow')).toBe('50');
+
+            typeColour(input, '#00008080');
+
+            expect(area.getAttribute('aria-valuetext')).toBe('Saturation 100%, Brightness 50%');
+            expect(hue.getAttribute('aria-valuenow')).toBe('240');
+        });
+
+        test('the hex input is named', async () => {
+            const { input } = await openColourDialog();
+
+            expect(input.getAttribute('aria-label')).toBe('Hex Color');
+            expect(input.hasAttribute('aria-labelledby')).toBe(false);
+        });
+    });
 });

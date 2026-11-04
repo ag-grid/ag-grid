@@ -827,6 +827,11 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaLabelMaximize: 'Padidinti',
 
     ariaLabelRestore: 'Atkurti',
+    ariaLabelColorPickerSpectrum: 'Sodrumas ir ryškumas',
+    ariaValueColorPickerSpectrum: 'Sodrumas ${variable} %, ryškumas ${variable} %',
+    ariaLabelColorPickerHue: 'Atspalvis',
+    ariaLabelColorPickerAlpha: 'Nepermatomumas',
+    ariaLabelColorPickerHex: 'Šešioliktainė spalva',
 
     ariaLabelColumnMenu: 'Stulpelio meniu',
     ariaLabelColumnFilter: 'Stulpelio filtras',
