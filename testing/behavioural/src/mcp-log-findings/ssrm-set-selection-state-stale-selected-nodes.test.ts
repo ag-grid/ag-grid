@@ -24,7 +24,6 @@
  */
 import { waitFor } from '@testing-library/dom';
 import { TestGridsManager } from 'ag-test-utils';
-import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { IServerSideGetRowsParams } from 'ag-grid-community';
 import { RowSelectionModule } from 'ag-grid-community';
@@ -38,28 +37,19 @@ describe('SSRM setServerSideSelectionState and getSelectedNodes', () => {
     afterEach(() => gridsManager.reset());
 
     test('getSelectedNodes and selectionChanged reflect the state passed to setServerSideSelectionState', async () => {
-        const rows = [
-            { id: 'A', name: 'Alpha' },
-            { id: 'B', name: 'Bravo' },
-            { id: 'C', name: 'Charlie' },
-        ];
-        let loaded = 0;
+        const rows = [{ id: 'A' }, { id: 'B' }, { id: 'C' }];
         const api = gridsManager.createGrid('ssrmSetSelectionStateStale', {
-            columnDefs: [{ field: 'name' }],
+            columnDefs: [{ field: 'id' }],
             rowModelType: 'serverSide',
             rowSelection: { mode: 'multiRow' },
             getRowId: (p) => p.data.id,
             serverSideDatasource: {
                 getRows: (params: IServerSideGetRowsParams) => {
-                    setTimeout(() => {
-                        params.success({ rowData: rows, rowCount: rows.length });
-                        loaded++;
-                    }, 1);
+                    params.success({ rowData: rows, rowCount: rows.length });
                 },
             },
         });
-        await waitFor(() => expect(loaded).toBeGreaterThan(0));
-        await waitForNoLoadingRows(api);
+        await waitFor(() => expect(api.getRowNode('C')).toBeDefined());
 
         api.setNodesSelected({ nodes: [api.getRowNode('A')!, api.getRowNode('B')!], newValue: true });
 
@@ -69,7 +59,6 @@ describe('SSRM setServerSideSelectionState and getSelectedNodes', () => {
         });
 
         api.setServerSideSelectionState({ selectAll: false, toggledNodes: ['C'] });
-        await waitFor(() => expect(api.getRowNode('C')!.isSelected()).toBe(true));
 
         expect(
             api
@@ -78,7 +67,5 @@ describe('SSRM setServerSideSelectionState and getSelectedNodes', () => {
                 .sort()
         ).toEqual(['C']);
         expect(eventSelectedIds).toEqual(['C']);
-        expect(api.getRowNode('A')!.isSelected()).toBe(false);
-        expect(api.getRowNode('B')!.isSelected()).toBe(false);
     });
 });

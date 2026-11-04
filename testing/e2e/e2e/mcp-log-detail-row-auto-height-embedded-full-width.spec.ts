@@ -31,10 +31,8 @@ import { mountGrid } from '../src/mountGrid';
  */
 
 /** Expands the first row and checks the detail row grew to fit its five-row detail grid. */
-async function expectDetailRowSizedToDetailGrid({ grid, withApi }: MountedGrid) {
-    await expect(grid.locator('.ag-row[row-index="0"]')).toBeVisible();
+async function expectDetailRowSizedToDetailGrid({ withApi }: MountedGrid) {
     await withApi((api) => api.getDisplayedRowAtIndex(0)!.setExpanded(true));
-    await expect(grid.locator('.ag-details-grid .ag-row')).toHaveCount(5);
 
     // five detail rows plus a header need well over 100px
     await expect
@@ -45,7 +43,6 @@ async function expectDetailRowSizedToDetailGrid({ grid, withApi }: MountedGrid) 
 test('control: detail row grows to fit its detail grid', async ({ page }) => {
     const mounted = await mountGrid(page, {
         enterprise: true,
-        width: 600,
         height: 600,
         options: () => ({
             masterDetail: true,
@@ -64,7 +61,6 @@ test('control: detail row grows to fit its detail grid', async ({ page }) => {
 test('detail row grows to fit its detail grid with embedFullWidthRows', async ({ page }) => {
     const mounted = await mountGrid(page, {
         enterprise: true,
-        width: 600,
         height: 600,
         options: () => ({
             embedFullWidthRows: true,
@@ -84,7 +80,6 @@ test('detail row grows to fit its detail grid with embedFullWidthRows', async ({
 test('detail row grows to fit its detail grid in print layout', async ({ page }) => {
     const mounted = await mountGrid(page, {
         enterprise: true,
-        width: 600,
         height: 600,
         options: () => ({
             domLayout: 'print',

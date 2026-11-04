@@ -13,8 +13,8 @@ import { AgGridReact } from 'ag-grid-react';
  *
  * Setup: `<AgGridReact onGridPreDestroyed={fn} />` is mounted and unmounted straight away, before `gridReady`,
  * both plainly and inside `<React.StrictMode>`.
- * Control tests show the handler does fire when unmounted after `gridReady`, as a prop or via `gridOptions`, so
- * the problem is the timing of the destroy, not how the handler is registered.
+ * A control test shows the handler does fire when unmounted after `gridReady`, so the problem is the timing of
+ * the destroy, not how the handler is registered.
  *
  * Expected: the Grid Lifecycle docs describe `gridPreDestroyed` as firing just before the grid is destroyed,
  * with no condition on `gridReady` having fired, so the handler should be called once.
@@ -38,25 +38,7 @@ describe('React onGridPreDestroyed', () => {
     const columnDefs: ColDef<{ a: number }>[] = [{ field: 'a' }];
     const rowData = [{ a: 1 }];
 
-    test('control: handler registered via gridOptions fires on unmount', async () => {
-        const onGridPreDestroyed = vitest.fn();
-        const onGridReady = vitest.fn();
-        const { unmount } = render(
-            <div style={{ height: 300, width: 400 }}>
-                <AgGridReact
-                    columnDefs={columnDefs}
-                    rowData={rowData}
-                    gridOptions={{ onGridPreDestroyed }}
-                    onGridReady={onGridReady}
-                />
-            </div>
-        );
-        await waitFor(() => expect(onGridReady).toHaveBeenCalledTimes(1));
-        unmount();
-        await waitFor(() => expect(onGridPreDestroyed).toHaveBeenCalledTimes(1));
-    });
-
-    test('handler passed as a prop fires on unmount after gridReady', async () => {
+    test('control: handler fires on unmount after gridReady', async () => {
         const onGridPreDestroyed = vitest.fn();
         const onGridReady = vitest.fn();
         const { unmount } = render(

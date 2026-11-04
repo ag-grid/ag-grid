@@ -31,33 +31,25 @@ describe('Advanced Filter blank and notBlank on a dateString column', () => {
 
     afterEach(() => gridsManager.reset());
 
-    const rowData = [
-        { id: 'null', d: null },
-        { id: 'empty', d: '' },
-        { id: 'jan', d: '2024-01-15' },
-        { id: 'mar', d: '2024-03-20' },
-    ];
-
-    async function expectDisplayedIds(type: 'blank' | 'notBlank', expected: string[]): Promise<void> {
+    async function expectFilteredValues(type: 'blank' | 'notBlank', expected: Array<string | null>): Promise<void> {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
-            columnDefs: [{ field: 'id' }, { field: 'd', cellDataType: 'dateString' }],
-            rowData,
+            columnDefs: [{ field: 'd', cellDataType: 'dateString' }],
+            rowData: [{ d: null }, { d: '' }, { d: '2024-01-15' }],
             enableAdvancedFilter: true,
-            getRowId: (p) => p.data.id,
         });
         api.setAdvancedFilterModel({ filterType: 'dateString', colId: 'd', type } as AdvancedFilterModel);
         await waitFor(() => {
-            const ids: string[] = [];
-            api.forEachNodeAfterFilter((n) => ids.push(n.data.id));
-            expect(ids).toEqual(expected);
+            const values: Array<string | null> = [];
+            api.forEachNodeAfterFilter((n) => values.push(n.data.d));
+            expect(values).toEqual(expected);
         });
     }
 
     test('blank shows the rows with no date', async () => {
-        await expectDisplayedIds('blank', ['null', 'empty']);
+        await expectFilteredValues('blank', [null, '']);
     });
 
     test('notBlank shows the rows with a date', async () => {
-        await expectDisplayedIds('notBlank', ['jan', 'mar']);
+        await expectFilteredValues('notBlank', ['2024-01-15']);
     });
 });

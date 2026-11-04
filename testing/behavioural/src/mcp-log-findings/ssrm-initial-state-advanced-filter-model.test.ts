@@ -46,12 +46,12 @@ describe('SSRM initialState advancedFilterModel', () => {
     const expectFirstRequestFiltered = async (athleteColDef: ColDef) => {
         const requests: IServerSideGetRowsRequest[] = [];
         const options: GridOptions = {
-            columnDefs: [athleteColDef, { field: 'age' }],
+            columnDefs: [athleteColDef],
             rowModelType: 'serverSide',
             serverSideDatasource: {
                 getRows: (params: IServerSideGetRowsParams) => {
                     requests.push(params.request);
-                    params.success({ rowData: [{ athlete: 'Anna', age: 1 }], rowCount: 1 });
+                    params.success({ rowData: [{ athlete: 'Anna' }], rowCount: 1 });
                 },
             },
             enableAdvancedFilter: true,

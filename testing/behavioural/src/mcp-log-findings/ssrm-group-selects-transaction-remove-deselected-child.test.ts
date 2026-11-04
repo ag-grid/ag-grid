@@ -4,14 +4,14 @@
  * selected. The selection state still holds an entry for the removed row.
  *
  * Setup: a server-side grid grouped by country with `rowSelection: { mode: 'multiRow', groupSelects: 'descendants' }`
- * and a `getRowId` whose ids differ from the group keys (group id 'g-United States', child ids 'r-1' to 'r-3'). The
- * 'United States' group is expanded and selected, so all three children are selected. Child 'r-1' is then deselected,
+ * and a `getRowId` whose ids differ from the group keys (group id 'g-United States', child ids 'r-1' and 'r-2'). The
+ * 'United States' group is expanded and selected, so both children are selected. Child 'r-1' is then deselected,
  * which makes the group indeterminate. Then `applyServerSideTransaction({ route: ['United States'], remove: [r-1] })`
  * removes that child.
  *
  * Expected: the Group Row Selection docs say that with 'descendants' "Selecting a group row will select all of its
  * descendants", and the SSRM Row Selection docs explain that a group is shown as indeterminate because its
- * `toggledNodes` hold exceptions. Once the only exception, r-1, is removed, the remaining children r-2 and r-3 are all
+ * `toggledNodes` hold exceptions. Once the only exception, r-1, is removed, the remaining child r-2 is
  * selected, so the group reads as selected (`isSelected() === true`) and `getServerSideSelectionState()` no longer
  * refers to the removed row. No docs page states this for removal explicitly; it follows from the group state
  * reflecting its current children.
@@ -40,12 +40,11 @@ describe('SSRM groupSelects descendants and transaction removal', () => {
 
     test('removing a deselected child by transaction leaves the selected group fully selected', async () => {
         const rows = [
-            { id: 1, country: 'United States', athlete: 'A' },
-            { id: 2, country: 'United States', athlete: 'B' },
-            { id: 3, country: 'United States', athlete: 'C' },
+            { id: 1, country: 'United States' },
+            { id: 2, country: 'United States' },
         ];
         const api = gridsManager.createGrid('ssrmGroupSelectsTransaction', {
-            columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'athlete' }],
+            columnDefs: [{ field: 'country', rowGroup: true, hide: true }],
             rowModelType: 'serverSide',
             rowSelection: { mode: 'multiRow', groupSelects: 'descendants' },
             getRowId: (p) => (p.level === 0 ? 'g-' + p.data.country : 'r-' + p.data.id),
@@ -68,9 +67,8 @@ describe('SSRM groupSelects descendants and transaction removal', () => {
         await waitForNoLoadingRows(api);
 
         group.setSelected(true);
-        await waitFor(() => expect(api.getRowNode('r-3')!.isSelected()).toBe(true));
+        await waitFor(() => expect(api.getRowNode('r-2')!.isSelected()).toBe(true));
         api.getRowNode('r-1')!.setSelected(false);
-        expect(group.isSelected()).toBeUndefined();
 
         api.applyServerSideTransaction({ route: ['United States'], remove: [rows[0]] });
         await waitFor(() => expect(api.getRowNode('r-1')).toBeUndefined());

@@ -43,7 +43,6 @@ describe('redrawRows with pinned rows', () => {
             Array.from(document.querySelectorAll<HTMLElement>('.ag-row')).find(
                 (row) => !row.closest('.ag-grid-pinned-top-rows')
             );
-        await waitFor(() => expect(pinnedRow()?.style.backgroundColor).toBe('red'));
 
         colour = 'blue';
         api.redrawRows();

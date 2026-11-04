@@ -67,11 +67,8 @@ describe('agDateStringCellEditor with a text cellDataType', () => {
             let thrown: unknown;
             try {
                 await userEvent.dblClick(cell);
-                const input = (await waitForInput(gridDiv, cell)) as HTMLInputElement;
-                await userEvent.clear(input);
-                await userEvent.type(input, '2025-02-02');
+                await waitForInput(gridDiv, cell);
                 api.stopEditing();
-                await waitFor(() => expect(api.getEditingCells()).toHaveLength(0));
             } catch (e) {
                 thrown = e;
             }

@@ -35,15 +35,13 @@ describe('resetRowHeights with manually pinned rows', () => {
         let height = 50;
         const api = await gridMgr.createGridAndWait('grid', {
             columnDefs: [{ field: 'sport' }],
-            rowData: [{ sport: 'football' }, { sport: 'rugby' }, { sport: 'tennis' }],
+            rowData: [{ sport: 'football' }, { sport: 'rugby' }],
             enableRowPinning: true,
             isRowPinned: (node) => (node.data?.sport === 'football' ? 'bottom' : null),
             getRowHeight: () => height,
         });
         const pinnedSection = () =>
             TestGridsManager.getHTMLElement(api)!.querySelector<HTMLElement>('.ag-grid-pinned-bottom-rows-container')!;
-
-        await waitFor(() => expect(api.getPinnedBottomRow(0)?.rowHeight).toBe(50));
 
         height = 90;
         api.resetRowHeights();

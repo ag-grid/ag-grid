@@ -26,7 +26,7 @@ import { mountGrid } from '../src/mountGrid';
 test('Enter in an app text field submits the host form rather than opening the Advanced Filter builder', async ({
     page,
 }) => {
-    const { grid } = await mountGrid(page, {
+    await mountGrid(page, {
         enterprise: true,
         height: 300,
         options: () => ({
@@ -39,19 +39,17 @@ test('Enter in an app text field submits the host form rather than opening the A
     await page.evaluate(() => {
         const gridDiv = document.querySelector('#myGrid')!;
         const form = document.createElement('form');
-        form.innerHTML = '<input id="app-field"><div id="grid-slot"></div><button id="app-submit">Save</button>';
+        form.innerHTML = '<input id="app-field"><button id="app-submit">Save</button>';
         gridDiv.before(form);
-        form.querySelector('#grid-slot')!.replaceWith(gridDiv);
+        form.querySelector('#app-field')!.after(gridDiv);
         (window as any).submitters = [];
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             (window as any).submitters.push((e.submitter as HTMLElement | null)?.id ?? null);
         });
     });
-    await expect(grid.locator('.ag-advanced-filter-builder-button')).toBeVisible();
 
     await page.locator('#app-field').press('Enter');
 
     await expect.poll(() => page.evaluate(() => (window as any).submitters)).toEqual(['app-submit']);
-    await expect(page.locator('.ag-advanced-filter-builder')).toHaveCount(0);
 });

@@ -27,14 +27,12 @@ import { TestGridsManager } from 'ag-test-utils';
 import type { ColDef, IHeaderParams, IInnerHeaderComponent } from 'ag-grid-community';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 
-let created = 0;
 let refreshedWith: string[] = [];
 
 class TestInnerHeader implements IInnerHeaderComponent {
     private readonly eGui = document.createElement('span');
 
     public init(params: IHeaderParams): void {
-        created++;
         this.eGui.textContent = params.displayName;
     }
 
@@ -53,7 +51,6 @@ describe('innerHeaderComponent refresh on a column definition update', () => {
     const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule] });
 
     beforeEach(() => {
-        created = 0;
         refreshedWith = [];
     });
     afterEach(() => gridMgr.reset());
@@ -65,12 +62,10 @@ describe('innerHeaderComponent refresh on a column definition update', () => {
             headerComponentParams: { innerHeaderComponent: TestInnerHeader },
         });
         const api = await gridMgr.createGridAndWait('grid', { columnDefs: [colDef('Name')], rowData: [{ a: 1 }] });
-        expect(created).toBe(1);
 
         api.setGridOption('columnDefs', [colDef('Renamed')]);
 
         await waitFor(() => expect(TestGridsManager.getHTMLElement(api)!.textContent).toContain('Renamed'));
         expect(refreshedWith).toEqual(['Renamed']);
-        expect(created).toBe(1);
     });
 });

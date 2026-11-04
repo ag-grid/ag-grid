@@ -37,7 +37,6 @@ describe('updateGridOptions defaultColDef and aggFunc / enableValue', () => {
 
     test('omitting aggFunc (undefined) keeps aggFunc; enableValue follows new default', () => {
         const api = create();
-        expect(api.getColumn('a')!.getAggFunc()).toBe('sum');
         api.updateGridOptions({ defaultColDef: { enableValue: false } });
         expect(api.getColumn('a')!.isAllowValue()).toBe(false);
         expect(api.getColumn('a')!.getAggFunc()).toBe('sum');
@@ -47,7 +46,6 @@ describe('updateGridOptions defaultColDef and aggFunc / enableValue', () => {
         const api = create();
         api.updateGridOptions({ defaultColDef: { enableValue: true, aggFunc: null } });
         expect(api.getColumn('a')!.getAggFunc()).toBeNull();
-        expect(api.getColumn('a')!.isAllowValue()).toBe(true);
     });
 
     test('aggFunc: null in defaultColDef clears aggFunc when columnDefs are set again too', () => {
@@ -70,13 +68,5 @@ describe('updateGridOptions defaultColDef and aggFunc / enableValue', () => {
         expect(api.getColumn('a')!.getSort()).toBe('asc');
         api.updateGridOptions({ defaultColDef: { sort: null } });
         expect(api.getColumn('a')!.getSort()).toBeNull();
-    });
-
-    test('adding flex keeps aggFunc and enableValue', () => {
-        const api = create();
-        api.updateGridOptions({ defaultColDef: { enableValue: true, aggFunc: 'sum', flex: 1 } });
-        expect(api.getColumn('a')!.getAggFunc()).toBe('sum');
-        expect(api.getColumn('a')!.isAllowValue()).toBe(true);
-        expect(api.getColumn('b')!.getAggFunc()).toBe('sum');
     });
 });

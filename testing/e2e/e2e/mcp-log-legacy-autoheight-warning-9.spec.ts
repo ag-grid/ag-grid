@@ -40,7 +40,7 @@ test('legacy theme with autoHeight does not warn that styles are missing', async
         }
     });
 
-    const { cell } = await mountGrid(page, {
+    await mountGrid(page, {
         className: 'ag-theme-quartz',
         css: legacyCss,
         options: () => ({
@@ -50,7 +50,6 @@ test('legacy theme with autoHeight does not warn that styles are missing', async
             rowData: [{ a: 1 }],
         }),
     });
-    await cell(0, 'a').waitFor();
 
     const stylesNotLoaded = () => warnings.filter((w) => /warning #9\b|No value for `--ag-/.test(w));
     await expect.poll(stylesNotLoaded).toEqual([]);

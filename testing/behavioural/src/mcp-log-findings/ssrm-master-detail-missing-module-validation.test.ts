@@ -38,9 +38,7 @@ describe('masterDetail without MasterDetailModule', () => {
     test('Client-Side Row Model reports MasterDetailModule as missing', () => {
         expect(() =>
             gridMgr.createGrid('csrm-md-no-module', {
-                columnDefs: [{ field: 'id' }],
                 masterDetail: true,
-                rowData: [{ id: 'a' }],
             })
         ).toThrow(/#200.*MasterDetailModule/s);
     });
@@ -48,10 +46,8 @@ describe('masterDetail without MasterDetailModule', () => {
     test('Server-Side Row Model reports MasterDetailModule as missing', () => {
         expect(() =>
             gridMgr.createGrid('ssrm-md-no-module', {
-                columnDefs: [{ field: 'id' }],
                 rowModelType: 'serverSide',
                 masterDetail: true,
-                serverSideDatasource: { getRows: () => {} },
             })
         ).toThrow(/#200.*MasterDetailModule/s);
     });

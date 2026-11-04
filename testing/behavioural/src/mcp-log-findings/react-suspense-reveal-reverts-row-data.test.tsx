@@ -84,7 +84,6 @@ describe('React rowData after a Suspense hide and reveal', () => {
         const { findByTestId, queryByTestId } = render(<Wrapper />);
 
         await waitFor(() => expect(apis).toHaveLength(1));
-        expect(apis[0].getDisplayedRowCount()).toBe(2);
 
         act(() => setRowData(rows('a', 'b', 'c')));
         await waitFor(() => expect(apis[0].getDisplayedRowCount()).toBe(3));
@@ -99,11 +98,6 @@ describe('React rowData after a Suspense hide and reveal', () => {
         await waitFor(() => expect(queryByTestId('fallback')).toBeNull());
         await waitFor(() => expect(apis).toHaveLength(2));
 
-        const api = apis[apis.length - 1];
-        const displayedIds: string[] = [];
-        for (let i = 0; i < api.getDisplayedRowCount(); i++) {
-            displayedIds.push(api.getDisplayedRowAtIndex(i)!.data!.id);
-        }
-        expect(displayedIds).toEqual(['a', 'b', 'c']);
+        expect(apis[1].getRenderedNodes().map((node) => node.data!.id)).toEqual(['a', 'b', 'c']);
     });
 });

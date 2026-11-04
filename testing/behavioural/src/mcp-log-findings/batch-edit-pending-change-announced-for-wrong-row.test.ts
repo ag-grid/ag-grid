@@ -48,8 +48,7 @@ describe('batch edit pending change announcement on pinned rows', () => {
 
         api.startEditingCell({ rowIndex: 0, rowPinned: 'top', colKey: 'a' });
         const input = await waitForInput(gridElement);
-        await user.clear(input);
-        await user.type(input, 'pinned edited{Enter}');
+        await user.type(input, 'x{Enter}');
 
         api.setFocusedCell(0, 'a');
         api.setFocusedCell(0, 'a', 'top');

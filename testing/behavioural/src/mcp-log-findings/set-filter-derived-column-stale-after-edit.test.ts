@@ -43,16 +43,15 @@ describe('Set Filter values for a derived column after editing a source column',
                 },
             ],
             rowData: [
-                { id: '1', x: 1, y: 1 },
-                { id: '2', x: 2, y: 2 },
+                { x: 1, y: 1 },
+                { x: 2, y: 2 },
             ],
-            getRowId: (p) => p.data.id,
         });
 
         const handler = (await api.getColumnFilterHandler('total')) as SetFilterHandler;
         await waitFor(() => expect(handler.getFilterKeys().sort()).toEqual(['2', '4']));
 
-        api.getRowNode('1')!.setDataValue('x', 10);
+        api.getDisplayedRowAtIndex(0)!.setDataValue('x', 10);
 
         await waitFor(() => expect(handler.getFilterKeys().sort()).toEqual(['11', '4']));
     });

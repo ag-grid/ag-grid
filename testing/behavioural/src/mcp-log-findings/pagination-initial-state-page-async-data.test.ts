@@ -37,17 +37,18 @@ describe('Pagination initialState page with async rowData', () => {
 
     test('restored page survives until async rowData arrives', async () => {
         const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [{ field: 'name' }],
+            columnDefs: [{ field: 'a' }],
             pagination: true,
             paginationPageSize: 10,
             paginationPageSizeSelector: false,
-            getRowId: (params) => params.data.id,
             initialState: { pagination: { page: 2 } },
             rowData: [],
         });
 
-        const rowData = Array.from({ length: 50 }, (_, i) => ({ id: String(i), name: `Row ${i}` }));
-        api.setGridOption('rowData', rowData);
+        api.setGridOption(
+            'rowData',
+            Array.from({ length: 50 }, (_, i) => ({ a: i }))
+        );
 
         await waitFor(() => expect(api.paginationGetTotalPages()).toBe(5));
 

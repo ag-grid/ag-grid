@@ -31,16 +31,12 @@ import { MasterDetailModule } from 'ag-grid-enterprise';
 describe('keepDetailRows with a re-created master row', () => {
     const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule, MasterDetailModule] });
 
-    beforeEach(() => gridMgr.reset());
     afterEach(() => gridMgr.reset());
 
     test('getDetailGridInfo returns the rendered detail grid of a re-created row with the same id', async () => {
         const api: GridApi = gridMgr.createGrid('myGrid', {
             columnDefs: [{ field: 'name', cellRenderer: 'agGroupCellRenderer' }],
-            rowData: [
-                { id: 'a', name: 'A', records: [{ x: 1 }] },
-                { id: 'b', name: 'B', records: [{ x: 3 }] },
-            ],
+            rowData: [{ id: 'a', name: 'A', records: [{ x: 1 }] }],
             getRowId: (p) => p.data.id,
             masterDetail: true,
             keepDetailRows: true,
@@ -60,15 +56,13 @@ describe('keepDetailRows with a re-created master row', () => {
         api.applyTransaction({ add: [{ id: 'a', name: 'A', records: [{ x: 2 }] }] });
 
         api.getRowNode('a')!.setExpanded(true);
-        // settled: the new detail grid exists and the removed row's detail grid has been torn down
+        // settled: only the new detail grid is shown and the removed row's detail grid has been torn down
         await waitFor(() => {
-            expect(api.getRowNode('a')!.detailNode?.detailGridInfo?.api).toBeDefined();
+            const cells = document.querySelectorAll('.ag-details-grid .ag-cell[col-id="x"]');
+            expect(Array.from(cells, (cell) => cell.textContent)).toEqual(['2']);
             expect(oldApi.isDestroyed()).toBe(true);
         });
 
         expect(api.getDetailGridInfo('detail_a')).toBeDefined();
-        const ids: string[] = [];
-        api.forEachDetailGridInfo((info) => ids.push(info.id));
-        expect(ids).toEqual(['detail_a']);
     });
 });

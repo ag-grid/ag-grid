@@ -34,7 +34,6 @@ describe('SSRM pagination initialState page', () => {
     });
 
     test('restored page is kept after the datasource returns the row count', async () => {
-        const requested: { startRow?: number; endRow?: number }[] = [];
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'name' }],
             rowModelType: 'serverSide',
@@ -44,12 +43,9 @@ describe('SSRM pagination initialState page', () => {
             initialState: { pagination: { page: 3, pageSize: 10 } },
             serverSideDatasource: {
                 getRows: (params) => {
-                    const { startRow, endRow } = params.request;
-                    requested.push({ startRow, endRow });
                     void Promise.resolve().then(() => {
-                        const rowData = Array.from({ length: (endRow ?? 0) - (startRow ?? 0) }, (_, i) => ({
-                            name: `Row ${(startRow ?? 0) + i}`,
-                        }));
+                        const { startRow = 0, endRow = 0 } = params.request;
+                        const rowData = Array.from({ length: endRow - startRow }, (_, i) => ({ name: `Row ${startRow + i}` }));
                         params.success({ rowData, rowCount: 1000 });
                     });
                 },

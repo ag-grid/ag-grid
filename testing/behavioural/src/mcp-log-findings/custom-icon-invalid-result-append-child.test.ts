@@ -50,24 +50,22 @@ describe('custom icon returning an unusable value', () => {
 
     const warnings = () => consoleWarnSpy.mock.calls.map((args) => args.join(' ')).join('\n');
 
-    const options = (icons: Record<string, () => any>) => ({
-        columnDefs: [{ field: 'a' }, { field: 'b' }],
-        rowData: [{ a: 1, b: 2 }],
-        icons,
-    });
+    const columnDefs = [{ field: 'a' }, { field: 'b' }];
 
     test('control: a function returning an SVG string is shown in the drag ghost', async () => {
-        gridsManager.createGrid('icon-valid', options({ columnMoveHide: () => '<svg class="my-icon"></svg>' }));
+        gridsManager.createGrid('icon-valid', {
+            columnDefs,
+            icons: { columnMoveHide: () => '<svg class="my-icon"></svg>' },
+        });
         let iconInDom = false;
         await dragHeader(() => {
             iconInDom = !!document.querySelector('.my-icon');
         });
         expect(iconInDom).toBe(true);
-        expect(warnings()).not.toContain('133');
     });
 
     test('a function returning an object does not throw when a column drag starts', async () => {
-        gridsManager.createGrid('icon-invalid', options({ columnMoveMove: () => ({}) }));
+        gridsManager.createGrid('icon-invalid', { columnDefs, icons: { columnMoveMove: () => ({}) } });
         await expect(dragHeader()).resolves.toBeUndefined();
         expect(warnings()).toContain('133');
     });

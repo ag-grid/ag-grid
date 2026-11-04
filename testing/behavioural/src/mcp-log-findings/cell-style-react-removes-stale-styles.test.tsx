@@ -10,7 +10,7 @@ import { AgGridReact } from 'ag-grid-react';
  * Issue: the React wrapper removes inline cell styles that a refreshed `cellStyle` no longer returns,
  * whereas the documented (and vanilla JavaScript) behaviour is that the grid never removes styles.
  *
- * Setup: a column with `cellStyle: (p) => p.value > 80 ? { color: 'red', fontWeight: 'bold' } : { color: 'red' }`.
+ * Setup: a column with `cellStyle: (p) => p.value > 80 ? { fontWeight: 'bold' } : {}`.
  * The cell starts at value 90 (bold), then the data is changed to 10 and the cell refreshed.
  *
  * Expected: the cell-styles docs ("Style Refresh") say: "If a new style is not present, the old style is
@@ -45,8 +45,7 @@ describe('cellStyle refresh keeps previously applied styles (React)', () => {
                     columnDefs={[
                         {
                             field: 'score',
-                            cellStyle: (p): CellStyle =>
-                                p.value > 80 ? { color: 'red', fontWeight: 'bold' } : { color: 'red' },
+                            cellStyle: (p): CellStyle => (p.value > 80 ? { fontWeight: 'bold' } : {}),
                         },
                     ]}
                     rowData={[{ id: 'r1', score: 90 }]}

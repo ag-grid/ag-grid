@@ -58,19 +58,14 @@ async function expectDetailRowSizedToContent(page: Page, pattern: LoadingPattern
             const { AgGridReact } = w.AgGridReact;
             const h = React.createElement;
 
-            const useDetailData = () => {
-                const [data, setData] = React.useState(undefined);
-                React.useEffect(() => {
-                    const timer = setTimeout(() => setData('detail content'), 50);
-                    return () => clearTimeout(timer);
-                }, []);
-                return data;
-            };
             const content = (data: string) =>
                 h('div', { className: 'test-detail-content', style: { height: contentHeight } }, data);
 
             const DetailRenderer = () => {
-                const data = useDetailData();
+                const [data, setData] = React.useState(undefined);
+                React.useEffect(() => {
+                    setTimeout(() => setData('detail content'), 50);
+                }, []);
                 if (pattern === 'stableRoot') {
                     return h('div', { className: 'test-detail-root' }, data ? content(data) : 'Loading...');
                 }
@@ -99,7 +94,6 @@ async function expectDetailRowSizedToContent(page: Page, pattern: LoadingPattern
 
     await page.waitForFunction(() => (window as any).gridApi?.getDisplayedRowAtIndex(0));
     await page.evaluate(() => (window as any).gridApi.getDisplayedRowAtIndex(0).setExpanded(true));
-    await expect(page.locator('.test-detail-content')).toBeVisible();
 
     await expect
         .poll(() => page.evaluate(() => (window as any).gridApi.getDisplayedRowAtIndex(1)?.rowHeight), {

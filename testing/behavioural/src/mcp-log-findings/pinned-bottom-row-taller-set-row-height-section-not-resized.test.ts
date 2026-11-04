@@ -31,12 +31,11 @@ describe('pinned bottom row height change via setRowHeight', () => {
 
     test('the pinned bottom container follows the only pinned row growing', async () => {
         const api = await gridMgr.createGridAndWait('grid', {
-            columnDefs: [{ field: 'sport' }],
-            rowData: [{ sport: 'tennis' }, { sport: 'golf' }, { sport: 'football' }],
+            columnDefs: [{ field: 'a' }],
+            rowData: [{ a: 1 }, { a: 2 }],
             enableRowPinning: true,
-            isRowPinned: (node) => (node.data?.sport === 'football' ? 'bottom' : null),
+            isRowPinned: (node) => (node.data?.a === 2 ? 'bottom' : null),
         });
-        await waitFor(() => expect(api.getPinnedBottomRowCount()).toBe(1));
 
         const container = document.querySelector<HTMLElement>('.ag-grid-pinned-bottom-rows-container')!;
         const rowHeight = api.getPinnedBottomRow(0)!.rowHeight!;

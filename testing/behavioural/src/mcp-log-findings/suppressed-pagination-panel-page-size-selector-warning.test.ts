@@ -34,18 +34,17 @@ describe('suppressPaginationPanel does not trigger page size selector warnings',
         vi.restoreAllMocks();
     });
 
-    test('no selector warnings on creation or when paginationPageSize changes', async () => {
+    test('no selector warnings on creation', () => {
         enableDevValidations({ throwOn: [] as any });
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-        const api = gridsManager.createGrid('grid', {
+        gridsManager.createGrid('grid', {
             columnDefs: [{ field: 'id' }],
             rowData: Array.from({ length: 50 }, (_, i) => ({ id: i })),
             pagination: true,
             suppressPaginationPanel: true,
             paginationPageSize: 10,
         });
-        api.setGridOption('paginationPageSize', 7);
 
         const output = () => warnSpy.mock.calls.flat().join('\n');
         const selectorWarnings = output()

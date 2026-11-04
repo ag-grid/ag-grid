@@ -30,10 +30,7 @@ test('column chooser opened with popupParent document.body on a long page is wit
         options: () => ({
             popupParent: document.body,
             columnDefs: [{ field: 'a' }, { field: 'b' }],
-            rowData: [
-                { a: 1, b: 1 },
-                { a: 2, b: 2 },
-            ],
+            rowData: [{ a: 1, b: 1 }],
         }),
     });
 

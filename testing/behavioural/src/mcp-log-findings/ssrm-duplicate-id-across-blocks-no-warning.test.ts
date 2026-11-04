@@ -38,7 +38,7 @@ describe('SSRM same row id in two blocks', () => {
         const blockSize = 5;
         const requested: number[] = [];
 
-        const api = gridsManager.createGrid(null, {
+        gridsManager.createGrid(null, {
             columnDefs: [{ field: 'id' }],
             rowModelType: 'serverSide',
             cacheBlockSize: blockSize,
@@ -56,7 +56,6 @@ describe('SSRM same row id in two blocks', () => {
             },
         });
 
-        await waitFor(() => expect(api.getDisplayedRowCount()).toBe(blockSize * 2));
         await waitFor(() => expect(requested).toEqual(expect.arrayContaining([0, blockSize])));
 
         const messages = warn.mock.calls.map((args) => args.join(' '));

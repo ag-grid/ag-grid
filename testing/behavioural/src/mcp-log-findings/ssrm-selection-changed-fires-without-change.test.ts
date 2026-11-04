@@ -38,7 +38,6 @@ describe('SSRM selectionChanged when selection does not change', () => {
             { id: 'B', name: 'Bravo' },
             { id: 'C', name: 'Charlie' },
         ];
-        let loaded = false;
         const api = gridMgr.createGrid('ssrmSelectionNoChange', {
             columnDefs: [{ field: 'name' }],
             rowModelType: 'serverSide',
@@ -47,11 +46,10 @@ describe('SSRM selectionChanged when selection does not change', () => {
             serverSideDatasource: {
                 getRows: (params) => {
                     params.success({ rowData: data, rowCount: data.length });
-                    loaded = true;
                 },
             },
         });
-        await waitFor(() => expect(loaded).toBe(true));
+        await waitFor(() => expect(api.getRowNode('C')).toBeDefined());
         await waitForNoLoadingRows(api);
 
         api.getRowNode('A')!.setSelected(true);

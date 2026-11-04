@@ -38,7 +38,6 @@ describe('Row group expansion initialState with async rowData', () => {
     test('restored group expansion applies once async rowData arrives', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'country', rowGroup: true, hide: true }, { field: 'name' }],
-            getRowId: (params) => params.data.id,
             initialState: {
                 rowGroupExpansion: { expandedRowGroupIds: ['row-group-country-Ireland'] },
             },
@@ -46,12 +45,10 @@ describe('Row group expansion initialState with async rowData', () => {
         });
 
         api.setGridOption('rowData', [
-            { id: '1', country: 'Ireland', name: 'Alice' },
-            { id: '2', country: 'France', name: 'Bob' },
+            { country: 'Ireland', name: 'Alice' },
+            { country: 'France', name: 'Bob' },
         ]);
 
-        await waitFor(() => expect(api.getRowNode('row-group-country-Ireland')).toBeDefined());
-
-        expect(api.getRowNode('row-group-country-Ireland')?.expanded).toBe(true);
+        await waitFor(() => expect(api.getRowNode('row-group-country-Ireland')?.expanded).toBe(true));
     });
 });

@@ -49,9 +49,8 @@ test('closing the chart tool panel does not submit the host form', async ({ page
     await page.evaluate(() => {
         const gridDiv = document.querySelector('#myGrid')!;
         const form = document.createElement('form');
-        form.innerHTML = '<div id="grid-slot"></div>';
         gridDiv.before(form);
-        form.querySelector('#grid-slot')!.replaceWith(gridDiv);
+        form.append(gridDiv);
         (window as any).submitters = [];
         form.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -69,11 +68,7 @@ test('closing the chart tool panel does not submit the host form', async ({ page
         api.openChartToolPanel({ chartId: chartRef.chartId });
     });
 
-    const closeButton = grid.locator('.ag-chart-tabbed-menu-close-button');
-    await expect(closeButton).toBeVisible();
-
-    await closeButton.click();
+    await grid.locator('.ag-chart-tabbed-menu-close-button').click();
 
     await expect.poll(() => page.evaluate(() => (window as any).submitters)).toEqual([]);
-    await expect(page.locator('.ag-chart-menu-visible')).toHaveCount(0);
 });

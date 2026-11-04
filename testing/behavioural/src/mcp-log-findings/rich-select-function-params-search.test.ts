@@ -1,9 +1,10 @@
 import { waitFor } from '@testing-library/dom';
 import { userEvent } from '@testing-library/user-event';
 import { TestGridsManager, fakeElementAttribute } from 'ag-test-utils';
+import { ALL_SEVERITIES } from 'ag-test-utils/dev-validations';
 
-import { getGridElement } from 'ag-grid-community';
-import type { GridApi } from 'ag-grid-community';
+import type { ColDef } from 'ag-grid-community';
+import { enableDevValidations, getGridElement } from 'ag-grid-community';
 import { RichSelectModule } from 'ag-grid-enterprise';
 
 /**
@@ -11,21 +12,22 @@ import { RichSelectModule } from 'ag-grid-enterprise';
  *
  * Setup: a column using `agRichSelectCellEditor` with object values, a `colDef.keyCreator` that returns
  * an id-like code, and `cellEditorParams` supplied as a function returning `values`, `formatValue`,
- * `allowTyping` and `filterList`. Typing in the editor should filter the list.
+ * `allowTyping`, `filterList` and `searchType: 'match'` (the default fuzzy search re-orders non-matches rather
+ * than removing them). Typing in the editor should filter the list.
  *
  * Expected: the resolved `formatValue` drives the search strings, exactly as it does when
  * `cellEditorParams` is a plain object. Sources: the Rich Select Cell Editor docs page (provided-cell-editors-rich-select)
  * documents `formatValue` for complex objects, and the Cell Editors docs page (cell-editors) documents that
- * `colDef.cellEditorParams` may be a function returning the params. Typing "Ger" narrows the list to "Germany".
+ * `colDef.cellEditorParams` may be a function returning the params. Typing "Ger" narrows the list to "Germany",
+ * as it does with the same params supplied as a plain object (control below).
  *
  * Actual: the editor checks `colDef.cellEditorParams?.formatValue`, which is undefined for a function,
  * so it falls back to the `keyCreator` branch (warning 266) and searches on the codes ("IE", "FR", "DE").
  * Typing "Ger" matches nothing.
  *
  * Note: warning 266 ("using `keyCreator` with the Rich Select Editor has been deprecated ... requires the
- * `formatValue` callback") surfaces as a thrown error in the behavioural environment, so this test may fail on
- * that warning (when the editor starts) before reaching the typing/search assertion at the end. Either way it
- * is the same defect: the function-valued `formatValue` was not seen.
+ * `formatValue` callback") would surface as a thrown error in the behavioural environment when the editor
+ * starts. The test suppresses it so that it reaches the typing/search assertion at the end.
  *
  * Reported on: AG Grid 33.3.2 (Angular).
  *
@@ -41,18 +43,29 @@ describe('Rich Select with function cellEditorParams', () => {
 
     beforeEach(() => {
         fakeElementAttribute('offsetHeight', 100, '.ag-virtual-list-viewport');
+        // Warning 266 is a symptom of the bug; let it log so the test reaches the search assertion.
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [266] });
     });
 
     afterEach(() => gridMgr.reset());
 
-    test('typing filters object values by the resolved formatValue, not the keyCreator', async () => {
-        type Country = { code: string; name: string };
-        const values: Country[] = [
-            { code: 'IE', name: 'Ireland' },
-            { code: 'FR', name: 'France' },
-            { code: 'DE', name: 'Germany' },
-        ];
-        const api: GridApi = await gridMgr.createGridAndWait('grid', {
+    type Country = { code: string; name: string };
+    const values: Country[] = [
+        { code: 'IE', name: 'Ireland' },
+        { code: 'FR', name: 'France' },
+        { code: 'DE', name: 'Germany' },
+    ];
+    const params = {
+        values,
+        formatValue: (value: Country) => value?.name ?? '',
+        allowTyping: true,
+        filterList: true,
+        searchType: 'match' as const,
+    };
+
+    /** Opens the editor, types "Ger", and returns a function reading the list's labels. */
+    async function typeGer(cellEditorParams: ColDef['cellEditorParams']) {
+        const api = await gridMgr.createGridAndWait('grid', {
             columnDefs: [
                 {
                     field: 'a',
@@ -60,30 +73,17 @@ describe('Rich Select with function cellEditorParams', () => {
                     cellDataType: false,
                     cellEditor: 'agRichSelectCellEditor',
                     keyCreator: (p: { value: Country }) => p.value.code,
-                    cellEditorParams: () => ({
-                        values,
-                        formatValue: (value: Country) => value?.name ?? '',
-                        allowTyping: true,
-                        filterList: true,
-                    }),
+                    cellEditorParams,
                     valueFormatter: (p: { value?: Country }) => p.value?.name ?? '',
                 },
             ],
-            rowData: [{ id: '0', a: values[0] }],
-            getRowId: (p) => p.data.id,
+            rowData: [{ a: values[0] }],
         });
         const gridDiv = getGridElement(api)! as HTMLElement;
 
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-        const popup = await waitFor(() => {
-            const el = gridDiv.querySelector<HTMLElement>('.ag-popup');
-            if (!el || !gridDiv.querySelector('.ag-rich-select-list')) {
-                throw new Error('Rich Select picker did not open');
-            }
-            return el;
-        });
         const labels = () =>
-            Array.from(popup.querySelectorAll<HTMLElement>('.ag-rich-select-row')).map(
+            Array.from(gridDiv.querySelectorAll<HTMLElement>('.ag-popup .ag-rich-select-row')).map(
                 (row) => row.textContent?.trim() ?? ''
             );
         await waitFor(() => expect(labels()).toEqual(['Ireland', 'France', 'Germany']));
@@ -92,7 +92,16 @@ describe('Rich Select with function cellEditorParams', () => {
         input.focus();
         await userEvent.clear(input);
         await userEvent.type(input, 'Ger');
+        return labels;
+    }
 
-        await waitFor(() => expect(labels()).toEqual(['Germany']), { timeout: 2000 });
+    test('typing filters object values by the resolved formatValue, not the keyCreator', async () => {
+        const labels = await typeGer(() => params);
+        await waitFor(() => expect(labels()).toEqual(['Germany']));
+    });
+
+    test('control: typing filters by formatValue when cellEditorParams is a plain object', async () => {
+        const labels = await typeGer(params);
+        await waitFor(() => expect(labels()).toEqual(['Germany']));
     });
 });

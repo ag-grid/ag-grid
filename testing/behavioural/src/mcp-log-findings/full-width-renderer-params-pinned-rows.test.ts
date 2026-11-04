@@ -59,9 +59,6 @@ describe('fullWidthCellRendererParams change with pinned rows', () => {
                 (el) => !el.closest('.ag-grid-pinned-top-rows')
             )?.textContent;
 
-        await waitFor(() => expect(pinnedText()).toBe('old'));
-        await waitFor(() => expect(bodyText()).toBe('old'));
-
         api.setGridOption('fullWidthCellRendererParams', { label: 'new' });
 
         await waitFor(() => expect(bodyText()).toBe('new'));

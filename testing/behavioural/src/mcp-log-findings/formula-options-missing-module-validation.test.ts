@@ -34,12 +34,7 @@ describe('formula grid options without FormulaModule', () => {
     test('formulaDataSource reports FormulaModule as missing', () => {
         expect(() =>
             gridMgr.createGrid('formula-data-source-no-module', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [{ a: '=1+1' }],
-                formulaDataSource: {
-                    getFormula: () => undefined,
-                    setFormula: () => {},
-                } as any,
+                formulaDataSource: {} as any,
             })
         ).toThrow(/#200.*FormulaModule/s);
     });
@@ -47,9 +42,7 @@ describe('formula grid options without FormulaModule', () => {
     test('formulaFuncs reports FormulaModule as missing', () => {
         expect(() =>
             gridMgr.createGrid('formula-funcs-no-module', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [{ a: '=1+1' }],
-                formulaFuncs: { DOUBLE: { func: (params: any) => params.args[0] * 2 } } as any,
+                formulaFuncs: {} as any,
             })
         ).toThrow(/#200.*FormulaModule/s);
     });

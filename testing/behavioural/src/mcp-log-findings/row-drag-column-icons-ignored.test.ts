@@ -17,7 +17,6 @@
  * Source: AG Grid docs MCP search log analysis (AG-18665). A coding agent on React 34.2.0 searched, in
  * August 2026, "rowDrag column drag handle icon not showing custom icons.rowDrag".
  */
-import { waitFor } from '@testing-library/dom';
 import { TestGridsManager } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, RowDragModule } from 'ag-grid-community';
@@ -27,7 +26,6 @@ describe('rowDrag column icons', () => {
         modules: [ClientSideRowModelModule, RowDragModule],
     });
 
-    beforeEach(() => gridsManager.reset());
     afterEach(() => gridsManager.reset());
 
     test('colDef.icons.rowDrag is used for the row drag handle', async () => {
@@ -38,9 +36,6 @@ describe('rowDrag column icons', () => {
             rowData: [{ name: 'a' }, { name: 'b' }],
         });
 
-        await waitFor(() => {
-            expect(document.querySelector('.ag-row .ag-drag-handle')).not.toBeNull();
-        });
         expect(document.querySelector('.ag-row .ag-drag-handle .custom-row-drag')).not.toBeNull();
     });
 });

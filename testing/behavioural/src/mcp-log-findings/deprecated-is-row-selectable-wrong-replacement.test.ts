@@ -36,8 +36,6 @@ describe('deprecated isRowSelectable grid option', () => {
         let message = '';
         try {
             gridMgr.createGrid('is-row-selectable-deprecated', {
-                columnDefs: [{ field: 'a' }],
-                rowData: [{ a: 1 }],
                 rowSelection: { mode: 'multiRow' },
                 isRowSelectable: () => true,
             });

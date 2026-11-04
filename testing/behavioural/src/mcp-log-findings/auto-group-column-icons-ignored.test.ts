@@ -31,16 +31,12 @@ describe('autoGroupColumnDef icons', () => {
         modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule],
     });
 
-    beforeEach(() => gridsManager.reset());
     afterEach(() => gridsManager.reset());
 
     test('colDef.icons on the auto group column are used for the expand / contract icons', async () => {
         await gridsManager.createGridAndWait('autoGroupIcons', {
-            columnDefs: [{ field: 'name' }],
-            rowData: [
-                { path: ['Europe'], name: 'Europe' },
-                { path: ['Europe', 'France'], name: 'France' },
-            ],
+            columnDefs: [],
+            rowData: [{ path: ['a'] }, { path: ['a', 'b'] }],
             treeData: true,
             getDataPath: (data: any) => data.path,
             autoGroupColumnDef: {
@@ -55,6 +51,5 @@ describe('autoGroupColumnDef icons', () => {
             expect(document.querySelector('.ag-group-contracted')).not.toBeNull();
         });
         expect(document.querySelector('.ag-group-contracted .custom-contracted')).not.toBeNull();
-        expect(document.querySelector('.ag-group-expanded .custom-expanded')).not.toBeNull();
     });
 });

@@ -33,22 +33,14 @@ describe('CSRM setting rowData with a duplicate getRowId id', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
         const api = gridsManager.createGrid(null, {
-            columnDefs: [{ field: 'v' }],
             getRowId: (params) => params.data.id,
-            rowData: [
-                { id: 'a', v: 1 },
-                { id: 'b', v: 2 },
-            ],
+            rowData: [{ id: 'a' }],
         });
 
         // In the test environment grid warnings are thrown as errors, so capture either form.
         const messages: string[] = [];
         try {
-            api.setGridOption('rowData', [
-                { id: 'a', v: 1 },
-                { id: 'a', v: 2 },
-                { id: 'b', v: 3 },
-            ]);
+            api.setGridOption('rowData', [{ id: 'a' }, { id: 'a' }]);
         } catch (e) {
             messages.push(String((e as Error).message));
         }

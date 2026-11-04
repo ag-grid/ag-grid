@@ -35,11 +35,7 @@ test('whenTruncated shows no tooltip for a non-truncated cell with a custom cell
                     field: 'custom',
                     width: 250,
                     tooltipField: 'custom',
-                    cellRenderer: (params: { value: string }) => {
-                        const span = document.createElement('span');
-                        span.textContent = params.value;
-                        return span;
-                    },
+                    cellRenderer: (params: { value: string }) => params.value,
                 },
             ],
             rowData: [{ plain: 'short', custom: 'short' }],

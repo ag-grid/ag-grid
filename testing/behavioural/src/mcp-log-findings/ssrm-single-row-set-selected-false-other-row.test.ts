@@ -50,7 +50,6 @@ describe('SSRM single row selection: setSelected(false) on an unselected row', (
         await waitFor(() => expect(api.getRowNode('B')).toBeDefined());
 
         api.getRowNode('A')!.setSelected(true);
-        expect(api.getSelectedNodes().map((n) => n.id)).toEqual(['A']);
 
         api.getRowNode('B')!.setSelected(false);
 

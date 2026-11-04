@@ -11,7 +11,7 @@ import { SetFilterModule } from 'ag-grid-enterprise';
  *
  * Setup: client-side row model, `SetFilterModule`, a column `col1` with `agSetColumnFilter` and two rows with values
  * 'A' and 'B'. The Set Filter has been created and has read the grid's values. Then row 1 is changed to 'X' with
- * `rowNode.setData({ id: '1', col1: 'X' })`.
+ * `rowNode.setData({ col1: 'X' })`.
  *
  * Expected: the Set Filter data updates docs page (filter-set-data-updates, "Row / Cell Updates") says: "Using the grid's
  * Single Row / Cell Update API i.e. `rowNode.setData(data)` and `rowNode.setDataValue(col,value)` API methods. Filter
@@ -37,11 +37,7 @@ describe('Set Filter values after replacing a row node data', () => {
     async function createGridWithSetFilter(): Promise<{ api: GridApi; handler: SetFilterHandler }> {
         const api: GridApi = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'col1', filter: 'agSetColumnFilter' }],
-            rowData: [
-                { id: '1', col1: 'A' },
-                { id: '2', col1: 'B' },
-            ],
-            getRowId: (p) => p.data.id,
+            rowData: [{ col1: 'A' }, { col1: 'B' }],
         });
 
         const handler = (await api.getColumnFilterHandler('col1')) as SetFilterHandler;
@@ -52,7 +48,7 @@ describe('Set Filter values after replacing a row node data', () => {
     test('values reflect the new data after rowNode.setData', async () => {
         const { api, handler } = await createGridWithSetFilter();
 
-        api.getRowNode('1')!.setData({ id: '1', col1: 'X' });
+        api.getDisplayedRowAtIndex(0)!.setData({ col1: 'X' });
 
         await waitFor(() => expect(handler.getFilterKeys().sort()).toEqual(['B', 'X']));
     });
@@ -60,7 +56,7 @@ describe('Set Filter values after replacing a row node data', () => {
     test('values reflect the new data after rowNode.updateData', async () => {
         const { api, handler } = await createGridWithSetFilter();
 
-        api.getRowNode('1')!.updateData({ id: '1', col1: 'X' });
+        api.getDisplayedRowAtIndex(0)!.updateData({ col1: 'X' });
 
         await waitFor(() => expect(handler.getFilterKeys().sort()).toEqual(['B', 'X']));
     });

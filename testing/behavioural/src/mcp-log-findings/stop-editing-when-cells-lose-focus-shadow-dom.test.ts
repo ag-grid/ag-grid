@@ -19,7 +19,7 @@
 import { waitFor } from '@testing-library/dom';
 import { TestGridsManager } from 'ag-test-utils';
 
-import { ClientSideRowModelModule, TextEditorModule, getGridElement } from 'ag-grid-community';
+import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
 
 describe('stopEditingWhenCellsLoseFocus inside Shadow DOM', () => {
     const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule, TextEditorModule] });
@@ -44,7 +44,6 @@ describe('stopEditingWhenCellsLoseFocus inside Shadow DOM', () => {
             rowData: [{ name: 'a' }],
             stopEditingWhenCellsLoseFocus: true,
         });
-        expect(getGridElement(api)).toBeTruthy();
 
         await waitFor(() => expect(gridDiv.querySelector('[col-id="name"]')).toBeTruthy());
         api.startEditingCell({ rowIndex: 0, colKey: 'name' });

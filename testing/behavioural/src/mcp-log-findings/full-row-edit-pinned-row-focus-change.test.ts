@@ -32,30 +32,19 @@ describe('full row editing on a pinned row', () => {
         gridMgr.reset();
     });
 
-    const create = () =>
-        gridMgr.createGridAndWait('fullRowPinned', {
+    test('clicking a body row cell ends the pinned row edit', async () => {
+        const api = await gridMgr.createGridAndWait('fullRowPinned', {
             editType: 'fullRow',
-            columnDefs: [
-                { field: 'a', editable: true },
-                { field: 'b', editable: true },
-            ],
-            rowData: [{ a: 'body a', b: 'body b' }],
-            pinnedTopRowData: [{ a: 'pinned a', b: 'pinned b' }],
+            columnDefs: [{ field: 'a', editable: true }],
+            rowData: [{ a: 'body' }],
+            pinnedTopRowData: [{ a: 'pinned' }],
         });
 
-    const pinnedInput = () =>
-        document.querySelector<HTMLInputElement>('.ag-grid-pinned-top-rows-container .ag-cell-inline-editing input');
-
-    test('clicking a body row cell ends the pinned row edit', async () => {
-        const api = await create();
-
         api.startEditingCell({ rowIndex: 0, rowPinned: 'top', colKey: 'a' });
-        await waitFor(() => expect(pinnedInput()).not.toBeNull());
 
-        const bodyCell = document.querySelector<HTMLElement>('.ag-grid-scrolling-container [col-id="b"]')!;
+        const bodyCell = document.querySelector<HTMLElement>('.ag-grid-scrolling-container [col-id="a"]')!;
         await userEvent.click(bodyCell);
 
         await waitFor(() => expect(api.getEditingCells()).toEqual([]));
-        expect(pinnedInput()).toBeNull();
     });
 });

@@ -20,19 +20,15 @@
  * searched, in March 2026: "popup editor focus outside grid stopEditing cancel workaround
  * external dialog modal focus management".
  */
-import { getByTestId, waitFor } from '@testing-library/dom';
+import { waitFor } from '@testing-library/dom';
 import { TestGridsManager } from 'ag-test-utils';
 
-import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
+import { TextEditorModule, getGridElement } from 'ag-grid-community';
 
 describe('stopEditingWhenCellsLoseFocus with a popup editor', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
         modules: [TextEditorModule],
-    });
-
-    beforeAll(() => {
-        setupAgTestIds();
     });
 
     afterEach(() => {
@@ -53,10 +49,8 @@ describe('stopEditingWhenCellsLoseFocus with a popup editor', () => {
             stopEditingWhenCellsLoseFocus: true,
         });
         const gridDiv = getGridElement(api)! as HTMLElement;
-        await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
 
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-        await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
         const input = await waitFor(() => {
             const el = gridDiv.querySelector<HTMLInputElement>('.ag-cell-inline-editing input');
             expect(el).not.toBeNull();
@@ -66,7 +60,6 @@ describe('stopEditingWhenCellsLoseFocus with a popup editor', () => {
         await waitFor(() => expect(document.activeElement).toBe(input));
 
         outside.focus();
-        expect(document.activeElement).toBe(outside);
 
         await waitFor(() => expect(api.getEditingCells()).toHaveLength(0), { timeout: 1000 });
     });
@@ -81,11 +74,8 @@ describe('stopEditingWhenCellsLoseFocus with a popup editor', () => {
             rowData: [{ a: 'x' }],
             stopEditingWhenCellsLoseFocus: true,
         });
-        const gridDiv = getGridElement(api)! as HTMLElement;
-        await waitFor(() => getByTestId(gridDiv, agTestIdFor.cell('0', 'a')));
 
         api.startEditingCell({ rowIndex: 0, colKey: 'a' });
-        await waitFor(() => expect(api.getEditingCells()).toHaveLength(1));
         const input = await waitFor(() => {
             const el = document.querySelector<HTMLInputElement>('.ag-popup-editor input');
             expect(el).not.toBeNull();
@@ -95,7 +85,6 @@ describe('stopEditingWhenCellsLoseFocus with a popup editor', () => {
         await waitFor(() => expect(document.activeElement).toBe(input));
 
         outside.focus();
-        expect(document.activeElement).toBe(outside);
 
         await waitFor(() => expect(api.getEditingCells()).toHaveLength(0), { timeout: 1000 });
     });

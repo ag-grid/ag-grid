@@ -55,7 +55,6 @@ describe('global grid options deep merge with per-grid theme', () => {
         createGrid(document.getElementById('refBalham')!, { theme: themeBalham });
         const alpineClasses = rootClasses('refAlpine');
         const balhamClasses = rootClasses('refBalham');
-        expect(alpineClasses).not.toEqual(balhamClasses);
 
         provideGlobalGridOptions({ theme: themeAlpine }, 'deep');
 

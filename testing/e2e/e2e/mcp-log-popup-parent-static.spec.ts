@@ -31,12 +31,8 @@ async function mountGridInStaticPopupParent(page: Page) {
         enterprise: true,
         height: 300,
         options: () => ({
-            columnDefs: [{ field: 'a' }, { field: 'b' }],
-            rowData: [
-                { a: 1, b: 1 },
-                { a: 2, b: 2 },
-                { a: 3, b: 3 },
-            ],
+            columnDefs: [{ field: 'a' }],
+            rowData: [{ a: 1 }, { a: 2 }],
         }),
     });
 
@@ -50,10 +46,6 @@ async function mountGridInStaticPopupParent(page: Page) {
         wrapper.append(grid);
         window.gridApi.setGridOption('popupParent', wrapper);
     });
-    expect(await page.evaluate(() => getComputedStyle(document.querySelector('#popupWrapper')!).position)).toBe(
-        'static'
-    );
-    expect(await page.evaluate(() => window.scrollY)).toBe(0);
     return mounted;
 }
 

@@ -28,20 +28,20 @@ describe('Value cache expiry when rowData is updated with getRowId', () => {
     afterEach(() => gridsManager.reset());
 
     test('setting rowData that only adds a row expires the cache', () => {
-        const rowA = { id: 'a', v: 1 };
-        const rowB = { id: 'b', v: 2 };
+        const rowA = { id: 'a' };
+        const rowB = { id: 'b' };
 
         const api = gridsManager.createGrid('myGrid', {
             valueCache: true,
             getRowId: (p) => p.data.id,
             rowData: [rowA, rowB],
-            columnDefs: [{ field: 'v' }, { colId: 'count', valueGetter: (p) => p.api.getDisplayedRowCount() }],
+            columnDefs: [{ colId: 'count', valueGetter: (p) => p.api.getDisplayedRowCount() }],
         });
 
         const readCount = () => api.getCellValue({ rowNode: api.getRowNode('a')!, colKey: 'count' });
-        expect(readCount()).toBe(2);
+        readCount(); // populates the cache
 
-        api.setGridOption('rowData', [rowA, rowB, { id: 'c', v: 3 }]);
+        api.setGridOption('rowData', [rowA, rowB, { id: 'c' }]);
 
         expect(readCount()).toBe(3);
     });

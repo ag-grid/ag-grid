@@ -28,11 +28,8 @@ test('column menu opens under its button when popupParent is a scrolled containe
         enterprise: true,
         height: 300,
         options: () => ({
-            columnDefs: [{ field: 'a' }, { field: 'b' }],
-            rowData: [
-                { a: 1, b: 1 },
-                { a: 2, b: 2 },
-            ],
+            columnDefs: [{ field: 'a' }],
+            rowData: [{ a: 1 }],
         }),
     });
 
@@ -40,7 +37,7 @@ test('column menu opens under its button when popupParent is a scrolled containe
         const grid = document.querySelector<HTMLElement>('#myGrid')!;
         const wrapper = document.createElement('div');
         wrapper.id = 'popupWrapper';
-        wrapper.style.cssText = 'position:relative;overflow:auto;height:500px;width:900px;';
+        wrapper.style.cssText = 'position:relative;overflow:auto;height:500px;';
         grid.before(wrapper);
         const before = document.createElement('div');
         before.style.height = '400px';
@@ -50,7 +47,6 @@ test('column menu opens under its button when popupParent is a scrolled containe
         wrapper.scrollTop = 300;
         window.gridApi.setGridOption('popupParent', wrapper);
     });
-    expect(await page.evaluate(() => document.querySelector('#popupWrapper')!.scrollTop)).toBe(300);
 
     const header = headerCell('a');
     await header.hover();

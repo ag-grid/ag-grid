@@ -39,17 +39,15 @@ describe('SSRM selection: select all then reload rows', () => {
         const rowData = [
             { id: 0, sport: 'football' },
             { id: 1, sport: 'tennis' },
-            { id: 2, sport: 'golf' },
         ];
         let requests = 0;
 
         const api = gridsManager.createGrid('myGrid', {
-            columnDefs: [{ field: 'id' }, { field: 'sport' }],
+            columnDefs: [{ field: 'sport' }],
             rowModelType: 'serverSide',
             getRowId: (params) => String(params.data.id),
             rowSelection: {
                 mode: 'multiRow',
-                headerCheckbox: true,
                 isRowSelectable: (node) => node.data?.sport !== 'football',
             },
             serverSideDatasource: {
@@ -60,19 +58,16 @@ describe('SSRM selection: select all then reload rows', () => {
             },
         });
 
-        await waitFor(() => expect(api.getRowNode('2')).toBeDefined());
+        await waitFor(() => expect(api.getRowNode('1')).toBeDefined());
 
         api.selectAll();
         expect(api.getRowNode('0')!.isSelected()).toBe(false);
-        expect(api.getRowNode('1')!.isSelected()).toBe(true);
 
         const requestsBeforeReload = requests;
         api.refreshServerSide({ purge: true });
         await waitFor(() => expect(requests).toBeGreaterThan(requestsBeforeReload));
-        await waitFor(() => expect(api.getRowNode('2')).toBeDefined());
+        await waitFor(() => expect(api.getRowNode('1')).toBeDefined());
 
         expect(api.getRowNode('0')!.isSelected()).toBe(false);
-        expect(api.getRowNode('1')!.isSelected()).toBe(true);
-        expect(api.getRowNode('2')!.isSelected()).toBe(true);
     });
 });

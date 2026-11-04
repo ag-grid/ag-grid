@@ -33,11 +33,8 @@ async function mountSmallGridWithBodyPopupParent(page: Parameters<typeof mountGr
         height: 150,
         options: () => ({
             popupParent: document.body,
-            columnDefs: [{ field: 'a' }, { field: 'b' }],
-            rowData: [
-                { a: 1, b: 1 },
-                { a: 2, b: 2 },
-            ],
+            columnDefs: [{ field: 'a' }],
+            rowData: [{ a: 1 }],
         }),
     });
 }

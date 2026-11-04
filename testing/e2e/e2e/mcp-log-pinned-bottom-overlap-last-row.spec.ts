@@ -29,28 +29,21 @@ import { mountGrid } from '../src/mountGrid';
  * of a wrapText + autoHeight column with a replaced pinnedBottomRowData.
  */
 test('pinned bottom rows do not cover the last body row after pinnedBottomRowData is replaced', async ({ page }) => {
-    const { grid, withApi } = await mountGrid(page, {
+    const { withApi } = await mountGrid(page, {
         width: 500,
         height: 400,
         options: () => ({
-            columnDefs: [
-                { field: 'id', width: 80 },
-                { field: 'text', width: 100, wrapText: true, autoHeight: true },
-            ],
-            rowData: Array.from({ length: 50 }, (_, i) => ({ id: i, text: `Row ${i}` })),
-            pinnedBottomRowData: [
-                { id: 'p1', text: 'Pinned one' },
-                { id: 'p2', text: 'Pinned two' },
-            ],
+            columnDefs: [{ field: 'text', width: 100, wrapText: true, autoHeight: true }],
+            rowData: Array.from({ length: 50 }, (_, i) => ({ text: `Row ${i}` })),
+            pinnedBottomRowData: [{ text: 'Pinned one' }, { text: 'Pinned two' }],
         }),
     });
-    await expect(grid.locator('.ag-row').first()).toBeVisible();
 
     await withApi((api) =>
         api.setGridOption('pinnedBottomRowData', [
-            { id: 'p1', text: 'A much longer pinned text that wraps over several lines' },
-            { id: 'p2', text: 'Pinned two' },
-            { id: 'p3', text: 'Pinned three' },
+            { text: 'A much longer pinned text that wraps over several lines' },
+            { text: 'Pinned two' },
+            { text: 'Pinned three' },
         ])
     );
 
@@ -67,10 +60,7 @@ test('pinned bottom rows do not cover the last body row after pinnedBottomRowDat
         });
     };
 
-    await expect.poll(gap).not.toBeNull();
     await expect
-        .poll(async () => (await gap())! >= 0, {
-            message: 'last body row must not extend below the top of the pinned bottom rows',
-        })
-        .toBe(true);
+        .poll(gap, { message: 'last body row must not extend below the top of the pinned bottom rows' })
+        .toBeGreaterThanOrEqual(0);
 });

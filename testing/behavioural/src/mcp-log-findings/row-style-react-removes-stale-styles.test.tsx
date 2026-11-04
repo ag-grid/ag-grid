@@ -15,7 +15,7 @@ import { AgGridReact } from 'ag-grid-react';
  * expects the row to show what `getRowStyle` currently returns. So either React-specific docs should be added,
  * or vanilla brought in line with React. This test asserts the documented behaviour until that is decided.
  *
- * Setup: `getRowStyle: (p) => p.data.score > 80 ? { color: 'red', fontWeight: 'bold' } : { color: 'red' }`.
+ * Setup: `getRowStyle: (p) => p.data.score > 80 ? { fontWeight: 'bold' } : {}`.
  * The row starts at score 90 (bold), then the score is changed to 10, which re-applies the row styles.
  *
  * Expected: the row-styles docs ("Refresh of Styles") say: "rowStyle: All new styles are applied. Style
@@ -50,7 +50,7 @@ describe('getRowStyle refresh keeps previously applied styles (React)', () => {
                     rowData={[{ id: 'r1', score: 90 }]}
                     getRowId={(p) => p.data.id}
                     getRowStyle={(p): RowStyle =>
-                        p.data!.score > 80 ? { color: 'red', fontWeight: 'bold' } : { color: 'red' }
+                        p.data!.score > 80 ? { fontWeight: 'bold' } : {}
                     }
                     onGridReady={(e) => {
                         api = e.api;

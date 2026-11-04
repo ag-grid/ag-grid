@@ -71,7 +71,6 @@ describe('Toolbar update with open menu', () => {
         const gridDiv = TestGridsManager.getHTMLElement(api)!;
         const button = gridDiv.querySelector<HTMLButtonElement>('.ag-toolbar-button')!;
         button.click();
-        expect(gridDiv.querySelector('.ag-popup')).not.toBeNull();
 
         api.updateGridOptions({ toolbar: { ...toolbar, items: [...toolbar.items] } });
 
