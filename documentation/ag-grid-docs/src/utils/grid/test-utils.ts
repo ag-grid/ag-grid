@@ -670,6 +670,31 @@ export async function waitForRowAnimations(page: Page) {
     });
 }
 
+export type RowDropZone = 'above' | 'inside' | 'below';
+
+/** Presses the mouse on a row drag handle and moves it a few pixels so the grid starts the drag. */
+export async function startRowDrag(page: Page, handle: Locator) {
+    const box = (await handle.boundingBox())!;
+    const x = box.x + box.width / 2;
+    const y = box.y + box.height / 2;
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.mouse.move(x, y + 5, { steps: 5 });
+}
+
+/** Moves the dragged row over the upper quarter, the middle or the lower quarter of the target row. */
+export async function dragOverRow(page: Page, row: Locator, zone: RowDropZone) {
+    const box = (await row.boundingBox())!;
+    const ratio = zone === 'above' ? 0.1 : zone === 'inside' ? 0.5 : 0.9;
+    await page.mouse.move(box.x + box.width / 3, box.y + box.height * ratio, { steps: 10 });
+}
+
+/** Releases a row drag started with `startRowDrag` and waits for the moved rows to settle. */
+export async function dropRow(page: Page) {
+    await page.mouse.up();
+    await waitForRowAnimations(page);
+}
+
 /**
  * Assert which row-id occupies a given `row-index` once the grid has settled after a sort.
  *

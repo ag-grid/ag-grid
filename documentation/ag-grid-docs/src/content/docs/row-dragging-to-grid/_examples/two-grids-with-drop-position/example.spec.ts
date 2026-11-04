@@ -62,6 +62,7 @@ test.agExample(import.meta, () => {
 
         // suppressMoveWhenRowDragging: nothing moves in either grid until the drop.
         await expect(async () => expect(await rowIds(right.root)).toEqual(rightStart)).toPass();
+        await expect(async () => expect(await rowIds(left.root)).toEqual(leftStart)).toPass();
         await page.mouse.up();
         await expect(right.ids.rowNode('109')).not.toHaveClass(/ag-row-highlight-above/);
     });
