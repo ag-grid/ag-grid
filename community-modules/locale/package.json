@@ -40,9 +40,9 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "devDependencies": {
-    "@types/node": "^22.15.3",
-    "@typescript-eslint/eslint-plugin": "8.70.1",
-    "@typescript-eslint/parser": "8.70.1",
+    "@types/node": "^22.20.5",
+    "@typescript-eslint/eslint-plugin": "8.72.0",
+    "@typescript-eslint/parser": "8.72.0",
     "typescript": "~5.8.3"
   },
   "publishConfig": {

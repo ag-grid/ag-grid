@@ -11,13 +11,13 @@
     "@angular/compiler": "^19.0.0",
     "@angular/core": "^19.0.0",
     "@angular/platform-browser": "^19.0.0",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0",
-    "vue": "^3.5.43",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "vue": "^3.5.44",
     "zone.js": "~0.15.1"
   },
   "devDependencies": {
-    "@analogjs/vite-plugin-angular": "^2.7.2",
+    "@analogjs/vite-plugin-angular": "^2.9.2",
     "@angular/build": "^19.0.0",
     "@angular/compiler-cli": "^19.0.0",
     "@types/react": "^19.3.0",
