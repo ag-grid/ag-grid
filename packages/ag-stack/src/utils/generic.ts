@@ -55,10 +55,16 @@ export const _jsonEquals = <T1, T2>(val1: T1, val2: T2): boolean => {
     return val1Json === val2Json;
 };
 
+/**
+ * Compares a string `valueA` against `valueB` (of any type) for locale-specific sorting.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export type StringComparator = (valueA: string, valueB: any) => number;
+
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 // PERFORMANCE CRITICAL — called per comparison during sort (O(n log n)). Any change here can have
 // a large impact across grouping, filtering, and rendering. Run the sort benchmark to verify.
-export const _defaultComparator = (valueA: any, valueB: any, accentedCompare: boolean = false): number => {
+export const _defaultComparator = (valueA: any, valueB: any, stringComparator?: StringComparator | null): number => {
     // Unwrap `IAggFuncResult`-shaped wrappers (e.g. built-in `avg` / `count`) BEFORE the nullish
     // check so wrappers carrying a nullish payload (`toNumber() => null` for empty aggregations)
     // sort with bare nullish instead of being coerced to `0` by the `<` / `>` path.
@@ -78,7 +84,7 @@ export const _defaultComparator = (valueA: any, valueB: any, accentedCompare: bo
         return 1;
     }
 
-    if (!accentedCompare || typeof valueA !== 'string') {
+    if (!stringComparator || typeof valueA !== 'string') {
         if (valueA > valueB) {
             return 1;
         }
@@ -88,6 +94,6 @@ export const _defaultComparator = (valueA: any, valueB: any, accentedCompare: bo
         return 0;
     }
 
-    // localeCompare also handles Chinese / accented collation.
-    return valueA.localeCompare(valueB);
+    // Locale-specific comparison, which also handles Chinese / accented collation.
+    return stringComparator(valueA, valueB);
 };

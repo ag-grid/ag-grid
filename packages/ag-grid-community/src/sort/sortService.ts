@@ -284,10 +284,11 @@ export class SortService extends BeanStub implements NamedBean {
                         leafComparator: undefined,
                         descending: false,
                         absolute: false,
+                        stringComparator: undefined,
                     });
                 }
             }
-            _resolveSortOptions(opts, this.beans.colModel);
+            _resolveSortOptions(opts, this.beans.colModel, this.beans.rowNodeSorter);
             this.opts = opts;
         }
         return opts;

@@ -715,10 +715,11 @@ export class ChartDataModel extends BeanStub {
                     leafComparator: undefined,
                     descending: false,
                     absolute: false,
+                    stringComparator: undefined,
                 });
             }
         });
-        _resolveSortOptions(sortOptions, this.beans.colModel);
+        _resolveSortOptions(sortOptions, this.beans.colModel, this.beans.rowNodeSorter);
         return sortOptions;
     }
 }

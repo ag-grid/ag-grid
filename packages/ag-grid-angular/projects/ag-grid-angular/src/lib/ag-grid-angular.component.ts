@@ -16,6 +16,7 @@ import type { AgChartThemeOverrides } from 'ag-charts-types';
 
 // @START_IMPORTS@
 import type {
+    AccentedSortOptions,
     AdvancedFilterBuilderVisibleChangedEvent,
     AlignedGrid,
     AlwaysPassFilter,
@@ -1880,9 +1881,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public sortingOrder: SortDirection[] | undefined = undefined;
     /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower.
+     *
+     * Provide an object to sort using a specific locale and collator options, such as `{ locales: 'de', options: { sensitivity: 'accent' } }`.
+     * Only applies when both values are strings.
+     *
+     * Can be overridden per column with `colDef.accentedSort`.
      * @default false
      */
-    @Input({ transform: booleanAttribute }) public accentedSort: boolean | undefined = undefined;
+    @Input() public accentedSort: boolean | AccentedSortOptions | undefined = undefined;
     /** Set to `true` to show the 'no sort' icon.
      * @default false
      * @deprecated v33 Use `defaultColDef.unSortIcon` instead

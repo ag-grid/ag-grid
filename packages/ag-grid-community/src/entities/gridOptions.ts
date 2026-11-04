@@ -200,7 +200,7 @@ import type { RowModelType } from '../interfaces/iRowModel';
 import type { IRowNode, RowPinnedType } from '../interfaces/iRowNode';
 import type { IServerSideDatasource } from '../interfaces/iServerSideDatasource';
 import type { SideBarDef } from '../interfaces/iSideBar';
-import type { SortDirection } from '../interfaces/iSort';
+import type { AccentedSortOptions, SortDirection } from '../interfaces/iSort';
 import type { StatusBar } from '../interfaces/iStatusPanel';
 import type { Toolbar } from '../interfaces/iToolbar';
 import type { IViewportDatasource } from '../interfaces/iViewportDatasource';
@@ -2076,9 +2076,14 @@ export interface GridOptions<TData = any> {
     sortingOrder?: SortDirection[];
     /**
      * Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower.
+     *
+     * Provide an object to sort using a specific locale and collator options, such as `{ locales: 'de', options: { sensitivity: 'accent' } }`.
+     * Only applies when both values are strings.
+     *
+     * Can be overridden per column with `colDef.accentedSort`.
      * @default false
      */
-    accentedSort?: boolean;
+    accentedSort?: boolean | AccentedSortOptions;
     /**
      * Set to `true` to show the 'no sort' icon.
      * @default false

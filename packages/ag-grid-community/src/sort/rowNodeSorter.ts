@@ -1,3 +1,4 @@
+import type { StringComparator } from 'ag-stack';
 import { _defaultComparator } from 'ag-stack';
 
 import { _csrmFirstLeaf } from '../clientSideRowModel/clientSideRowModelUtils';
@@ -9,6 +10,7 @@ import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import { _isClientSideRowModel, _isColumnsSortingCoupledToGroup, _isGroupUseEntireRow } from '../gridOptionsUtils';
 import type { IFormulaService } from '../interfaces/formulas';
+import type { AccentedSortOptions } from '../interfaces/iSort';
 import type { SortOption } from '../interfaces/iSortOption';
 import type { ValueService } from '../valueService/valueService';
 
@@ -18,7 +20,10 @@ import type { ValueService } from '../valueService/valueService';
 export class RowNodeSorter extends BeanStub implements NamedBean {
     beanName = 'rowNodeSorter' as const;
 
-    private accentedSort: boolean = false;
+    /** String comparator from the `accentedSort` grid option; a column's own `accentedSort` overrides it. */
+    private gridStringComparator: StringComparator | undefined;
+    /** One comparator per distinct locale and collator options, so each `Intl.Collator` is built once. */
+    private readonly collatorComparators = new Map<string, StringComparator>();
     private primaryColumnsSortGroups: boolean = false;
     private pivotActive: boolean = false;
     private firstLeaf: (row: RowNode) => RowNode | undefined;
@@ -36,7 +41,7 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
 
         const updateOptions = () => {
             const gos = this.gos;
-            this.accentedSort = !!gos.get('accentedSort');
+            this.gridStringComparator = this.getStringComparator(gos.get('accentedSort'));
             this.primaryColumnsSortGroups = _isColumnsSortingCoupledToGroup(gos);
         };
 
@@ -57,13 +62,32 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
         this.valueSvc = beans.valueSvc;
     }
 
+    /** Resolves an `accentedSort` value to the comparator used for string values, or `undefined` when it is off. */
+    public getStringComparator(accentedSort: boolean | AccentedSortOptions | undefined): StringComparator | undefined {
+        if (!accentedSort) {
+            return undefined;
+        }
+        if (accentedSort === true) {
+            return localeStringComparator;
+        }
+        const { locales, options } = accentedSort;
+        const key = JSON.stringify([locales, options]);
+        const comparators = this.collatorComparators;
+        let comparator = comparators.get(key);
+        if (!comparator) {
+            comparator = createCollatorComparator(locales, options);
+            comparators.set(key, comparator);
+        }
+        return comparator;
+    }
+
     public doFullSortInPlace(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
         // This relies on stable sorting, present since ECMAScript 2019 - all browser within AG Grid's support matrix
         return rowNodes.sort((a, b) => this.compareRowNodes(sortOptions, a, b));
     }
 
     public compareRowNodes(sortOptions: SortOption[], nodeA: RowNode, nodeB: RowNode): number {
-        const accentedCompare = this.accentedSort;
+        const gridStringComparator = this.gridStringComparator;
 
         // Iterate columns, return the first that doesn't match. Comparators are resolved up front
         // (see _resolveSortOptions): a col comparator applies to every row; a row-group display col falls back
@@ -79,14 +103,16 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             let result: number;
             if (comparator) {
                 result = comparator(valueA, valueB, nodeA, nodeB, descending);
-            } else if (sortOption.absolute) {
-                result = _defaultComparator(
-                    absoluteValueTransformer(valueA),
-                    absoluteValueTransformer(valueB),
-                    accentedCompare
-                );
             } else {
-                result = _defaultComparator(valueA, valueB, accentedCompare);
+                const colStringComparator = sortOption.stringComparator;
+                const stringComparator = colStringComparator === undefined ? gridStringComparator : colStringComparator;
+                result = sortOption.absolute
+                    ? _defaultComparator(
+                          absoluteValueTransformer(valueA),
+                          absoluteValueTransformer(valueB),
+                          stringComparator
+                      )
+                    : _defaultComparator(valueA, valueB, stringComparator);
             }
 
             // user comparators can return NaN for unhandled undefined values; NaN is falsy → treated as equal.
@@ -153,6 +179,29 @@ const defaultGetLeaf = (row: RowNode): RowNode | undefined => {
         }
         childrenAfterGroup = node.childrenAfterGroup;
     }
+};
+
+/** `accentedSort: true` keeps its original behaviour: `localeCompare` with the browser's default locale. */
+const localeStringComparator: StringComparator = (valueA, valueB) => valueA.localeCompare(valueB);
+
+/** Compares with an `Intl.Collator` when both values are strings; other values keep the default `<` / `>` order. */
+const createCollatorComparator = (
+    locales: string | string[] | undefined,
+    options: Intl.CollatorOptions | undefined
+): StringComparator => {
+    let compare: (valueA: string, valueB: string) => number;
+    try {
+        compare = new Intl.Collator(locales, options).compare;
+    } catch {
+        // An invalid locale tag throws a RangeError; validation warns, and the browser's default locale is used.
+        return localeStringComparator;
+    }
+    return (valueA, valueB) => {
+        if (typeof valueB === 'string') {
+            return compare(valueA, valueB);
+        }
+        return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+    };
 };
 
 const absoluteValueTransformer = (value: any): number | bigint | null => {
