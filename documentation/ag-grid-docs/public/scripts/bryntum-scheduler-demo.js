@@ -1,5 +1,5 @@
 /* global bryntumDemoInit */
-// Bryntum Scheduler "Try it yourself!" demo — UMD port of
+// Bryntum Scheduler "Try it yourself!" demo — port of
 // https://bryntum.com/demos/live/scheduler/drag-from-grid/app.module.js
 // Bootstrap lives in bryntum-demo-bootstrap.js.
 
