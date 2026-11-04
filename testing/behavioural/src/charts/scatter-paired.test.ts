@@ -252,7 +252,7 @@ describe('scatter and bubble paired mode', () => {
         const { api, chartRef } = await createChart('scatter', { paired: true });
         enableDevValidations({ suppress: [22] });
 
-        api.setGridOption('chartThemeOverrides', { scatter: { paired: false } } as any);
+        api.updateGridOptions({ chartThemeOverrides: { scatter: { paired: false } } } as any);
         await chartRef.chart.waitForUpdate();
 
         expect(getModel(api).paired).toBe(true);
