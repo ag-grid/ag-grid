@@ -1582,7 +1582,7 @@ export class RangeService extends BeanStub implements NamedBean, IRangeService, 
     }
 
     public createCellRangeFeature(ctrl: CellCtrl): ICellRangeFeature {
-        return new CellRangeFeature(this.beans, ctrl);
+        return new CellRangeFeature(this.beans, ctrl, this);
     }
 
     public createHeaderGroupCellMouseListenerFeature(column: AgColumnGroup, eGui: HTMLElement): BeanStub {

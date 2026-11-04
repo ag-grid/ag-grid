@@ -8,7 +8,6 @@ import type {
     GridOptionsService,
     ICellComp,
     ICellRangeFeature,
-    IRangeService,
 } from 'ag-grid-community';
 import { CellRangeType, _isSameRow } from 'ag-grid-community';
 
@@ -49,7 +48,6 @@ function _isFillHandleEnabled(gos: GridOptionsService): boolean {
 }
 
 export class CellRangeFeature implements ICellRangeFeature {
-    private readonly rangeSvc: IRangeService;
     private cellComp: ICellComp;
     private eGui: HTMLElement;
 
@@ -63,17 +61,15 @@ export class CellRangeFeature implements ICellRangeFeature {
 
     constructor(
         private readonly beans: BeanCollection,
-        private readonly cellCtrl: CellCtrl
-    ) {
-        // We know these are defined otherwise the feature wouldn't be registered
-        this.rangeSvc = beans.rangeSvc!;
-    }
+        private readonly cellCtrl: CellCtrl,
+        private readonly rangeSvc: RangeService
+    ) {}
 
     public setComp(cellComp: ICellComp): void {
         this.cellComp = cellComp;
         this.eGui = this.cellCtrl.eGui;
         this.onCellSelectionChanged();
-        (this.rangeSvc as RangeService).activeFillHandle?.onCellMounted(this.cellCtrl);
+        this.rangeSvc.activeFillHandle?.onCellMounted(this.cellCtrl);
     }
 
     public unsetComp(): void {

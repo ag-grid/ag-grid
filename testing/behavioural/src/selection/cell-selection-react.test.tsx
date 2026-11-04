@@ -97,7 +97,7 @@ describe('Cell Selection fill handle (React)', () => {
             )!;
         const handle = sportCell(api)!.querySelector<HTMLElement>('.ag-fill-handle')!;
 
-        // As a live update would: redraw the rows not under the pointer before the grid handles the move.
+        // Redraw the rows not under the pointer before the grid handles each move, as a live update might.
         const redrawOtherRows = (event: MouseEvent) => {
             if (!document.body.classList.contains('ag-dragging-fill-handle')) {
                 return;
