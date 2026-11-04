@@ -24,7 +24,8 @@ const resolveComparator = (
 /**
  * Resolves each option's comparators in place so the sorter reads them directly per comparison: a comparator on
  * the col applies to every row; a row-group display col otherwise falls back to its primary column's comparator
- * (the sorter applies that fallback to leaf rows only). `sortMissingValues` only applies when no user comparator does.
+ * (the sorter applies that fallback to leaf rows only). `sortMissingValues` only applies to rows no user comparator
+ * applies to.
  * Call once after building an option array, before sorting.
  * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
  */
@@ -49,13 +50,11 @@ export const _resolveSortOptions = (options: SortOption[], colModel: ColumnModel
         sortOption.leafComparator = leafComparator;
         sortOption.descending = sortOption.sort === 'desc';
         sortOption.absolute = type === 'absolute';
+        sortOption.userComparator = _isUserComparator(colComparator);
+        sortOption.userLeafComparator = _isUserComparator(colComparator ?? leafComparator);
         const sortMissingValues = column.colDef.sortMissingValues;
         sortOption.missingValues =
-            (sortMissingValues === 'first' || sortMissingValues === 'last') &&
-            !_isUserComparator(colComparator) &&
-            !_isUserComparator(leafComparator)
-                ? sortMissingValues
-                : undefined;
+            sortMissingValues === 'first' || sortMissingValues === 'last' ? sortMissingValues : undefined;
         sortOption.formulaErrors = column.allowFormula || column.isCalculatedCol;
     }
 };

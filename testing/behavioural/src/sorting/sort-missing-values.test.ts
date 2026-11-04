@@ -3,11 +3,11 @@ import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 
 import type { ColDef, GridApi, GridOptions, IServerSideGetRowsParams, SortMissingValues } from 'ag-grid-community';
 import { ClientSideRowModelModule, CsvExportModule } from 'ag-grid-community';
-import { FormulaModule, RowGroupingModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
+import { FormulaModule, RowGroupingModule, ServerSideRowModelModule, TreeDataModule } from 'ag-grid-enterprise';
 
 describe('Sorting missing values and NaN', () => {
     const gridMgr = new TestGridsManager({
-        modules: [ClientSideRowModelModule, RowGroupingModule, CsvExportModule],
+        modules: [ClientSideRowModelModule, RowGroupingModule, TreeDataModule, CsvExportModule],
     });
 
     afterEach(() => {
@@ -176,6 +176,40 @@ describe('Sorting missing values and NaN', () => {
             `);
         });
 
+        test('applies to group rows of an auto group column whose primary column has a user comparator', () => {
+            // The primary column's comparator only orders leaf rows, so group rows still use the grid's rules.
+            const comparator = vi.fn((a: any, b: any) => (a ?? -Infinity) - (b ?? -Infinity));
+            const api = createGrid('auto-group-field-comparator', {
+                columnDefs: [{ field: 'value', comparator }],
+                autoGroupColumnDef: { field: 'value', sortMissingValues: 'last' },
+                treeData: true,
+                getDataPath: (data) => data.path,
+                rowData: [
+                    { path: ['A'], value: 2 },
+                    { path: ['A', 'a'], value: 1 },
+                    { path: ['B'], value: null },
+                    { path: ['B', 'b'], value: 1 },
+                    { path: ['C'], value: 1 },
+                    { path: ['C', 'c'], value: 1 },
+                ],
+                groupDefaultExpanded: 0,
+            });
+
+            const groupKeys = (direction: 'asc' | 'desc') => {
+                api.applyColumnState({ state: [{ colId: 'ag-Grid-AutoColumn', sort: direction }] });
+                const keys: (string | null)[] = [];
+                api.forEachNodeAfterFilterAndSort((node) => {
+                    if (node.group) {
+                        keys.push(node.key);
+                    }
+                });
+                return keys;
+            };
+
+            expect(groupKeys('asc')).toEqual(['C', 'A', 'B']);
+            expect(groupKeys('desc')).toEqual(['A', 'C', 'B']);
+        });
+
         test('treats an empty aggregation result as a missing value', () => {
             const api = createGrid('aggregation', {
                 columnDefs: [
@@ -261,6 +295,37 @@ describe('Sorting formula error values', () => {
                 { id: 'c', total: 2 },
                 { id: 'd', total: '=1 / 0' },
                 { id: 'e', total: 9 },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+        const ids = (direction: 'asc' | 'desc') => {
+            api.applyColumnState({ state: [{ colId: 'total', sort: direction }] });
+            const result: string[] = [];
+            api.forEachNodeAfterFilterAndSort((node) => result.push(node.id!));
+            return result;
+        };
+
+        expect(ids('asc')).toEqual(['c', 'a', 'e', 'b', 'd']);
+        expect(ids('desc')).toEqual(['b', 'd', 'e', 'a', 'c']);
+    });
+});
+
+describe('Sorting formula error values with a built-in comparator', () => {
+    const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule, FormulaModule] });
+
+    afterEach(() => {
+        gridMgr.reset();
+    });
+
+    test('bigint formula errors are grouped together after the other values, like NaN', () => {
+        const api = gridMgr.createGrid('bigint-formula-errors', {
+            columnDefs: [{ field: 'total', allowFormula: true, cellDataType: 'bigint' }],
+            rowData: [
+                { id: 'a', total: BigInt(5) },
+                { id: 'b', total: '=1 / 0' },
+                { id: 'c', total: BigInt(2) },
+                { id: 'd', total: '=1 / 0' },
+                { id: 'e', total: BigInt(9) },
             ],
             getRowId: (params) => params.data.id,
         });

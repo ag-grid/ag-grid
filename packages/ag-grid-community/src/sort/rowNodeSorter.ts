@@ -75,34 +75,39 @@ export class RowNodeSorter extends BeanStub implements NamedBean {
             let valueA = this.getValue(nodeA, column);
             let valueB = this.getValue(nodeB, column);
 
-            const missingValues = sortOption.missingValues;
-            if (missingValues !== undefined) {
-                // Placed the same way in both directions, so not reversed for descending.
-                const missingResult = compareMissingValues(valueA, valueB, missingValues);
-                if (missingResult !== undefined) {
-                    if (missingResult) {
-                        return missingResult;
-                    }
-                    continue;
-                }
-            }
-
-            const comparator = sortOption.colComparator ?? (nodeA.group ? undefined : sortOption.leafComparator);
+            const isGroup = nodeA.group;
+            const comparator = sortOption.colComparator ?? (isGroup ? undefined : sortOption.leafComparator);
             let result: number;
-            if (comparator) {
-                result = comparator(valueA, valueB, nodeA, nodeB, descending);
+            if (isGroup ? sortOption.userComparator : sortOption.userLeafComparator) {
+                result = comparator!(valueA, valueB, nodeA, nodeB, descending);
             } else {
+                // The grid's own ordering rules apply to its default comparator and to its built-in ones (e.g. `bigint`).
+                const missingValues = sortOption.missingValues;
+                if (missingValues !== undefined) {
+                    // Placed the same way in both directions, so not reversed for descending.
+                    const missingResult = compareMissingValues(valueA, valueB, missingValues);
+                    if (missingResult !== undefined) {
+                        if (missingResult) {
+                            return missingResult;
+                        }
+                        continue;
+                    }
+                }
                 if (sortOption.formulaErrors) {
                     valueA = this.formulaErrorToNaN(column, nodeA, valueA);
                     valueB = this.formulaErrorToNaN(column, nodeB, valueB);
                 }
-                result = sortOption.absolute
-                    ? _defaultComparator(
-                          absoluteValueTransformer(valueA),
-                          absoluteValueTransformer(valueB),
-                          accentedCompare
-                      )
-                    : _defaultComparator(valueA, valueB, accentedCompare);
+                if (comparator) {
+                    result = compareNaN(valueA, valueB) ?? comparator(valueA, valueB, nodeA, nodeB, descending);
+                } else if (sortOption.absolute) {
+                    result = _defaultComparator(
+                        absoluteValueTransformer(valueA),
+                        absoluteValueTransformer(valueB),
+                        accentedCompare
+                    );
+                } else {
+                    result = _defaultComparator(valueA, valueB, accentedCompare);
+                }
             }
 
             // user comparators can return NaN for unhandled undefined values; NaN is falsy → treated as equal.
@@ -174,6 +179,19 @@ const defaultGetLeaf = (row: RowNode): RowNode | undefined => {
         }
         childrenAfterGroup = node.childrenAfterGroup;
     }
+};
+
+/**
+ * `NaN` values are equal to each other and sort after all other values, as in `_defaultComparator`. Returns
+ * `undefined` when neither value is `NaN`. Used before a built-in comparator, which may not order `NaN` itself.
+ */
+const compareNaN = (valueA: any, valueB: any): number | undefined => {
+    const nanA = Number.isNaN(valueA);
+    const nanB = Number.isNaN(valueB);
+    if (nanA) {
+        return nanB ? 0 : 1;
+    }
+    return nanB ? -1 : undefined;
 };
 
 /** `null`, `undefined`, or an aggregation result (e.g. an empty `avg`) whose number value is missing. */
