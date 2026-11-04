@@ -25,8 +25,18 @@ describe('chart format panel shadow colour picker', () => {
         gridsManager.reset();
     });
 
+    interface ShadowOptions {
+        enabled?: boolean;
+        blur?: number;
+        xOffset?: number;
+        yOffset?: number;
+        color?: string;
+        fill?: string;
+        fillOpacity?: number;
+    }
+
     /** Theme overrides for the bar series shadow. `fill` and `fillOpacity` are not in the 14.3.0 option types yet. */
-    const barShadow = (shadow: Record<string, unknown>): AgChartThemeOverrides => ({
+    const barShadow = (shadow: ShadowOptions): AgChartThemeOverrides => ({
         bar: { series: { shadow: shadow as any } },
     });
 
@@ -64,8 +74,22 @@ describe('chart format panel shadow colour picker', () => {
         const picker = group.querySelector<HTMLElement>('.ag-color-picker')!;
         const label = picker.querySelector<HTMLElement>('.ag-color-picker-value')!;
 
-        // What the chart draws the first series' shadow with: the resolved options, not the user's input.
-        const shadow = () => (chartRef.chart as any).chart.series[0].options.shadow;
+        /** What the picker has written: the shadow in the chart's public theme overrides. */
+        const writtenShadow = (): ShadowOptions => {
+            const theme = chartRef.chart.getOptions().theme as { overrides?: AgChartThemeOverrides };
+            return (theme.overrides?.bar?.series?.shadow as ShadowOptions | undefined) ?? {};
+        };
+
+        /**
+         * What the first bar is drawn with: the shadow the series resolved from the theme and the overrides.
+         * Only the series node carries this, so it is the one place the suite reads chart internals.
+         */
+        const drawnShadow = (): ShadowOptions => {
+            const series = (chartRef.chart as any).chart.series[0] as {
+                datumSelection: { nodes(): { fillShadow: ShadowOptions }[] };
+            };
+            return series.datumSelection.nodes()[0].fillShadow;
+        };
 
         /** Types a colour into the picker's dialog, as a user would, and lets the chart settle. */
         const pick = async (colour: string) => {
@@ -82,15 +106,15 @@ describe('chart format panel shadow colour picker', () => {
             await chartRef.chart.waitForUpdate();
         };
 
-        return { label, shadow, pick };
+        return { label, writtenShadow, drawnShadow, pick };
     }
 
     test('shows the theme default shadow colour with its opacity, not an opaque colour', async () => {
-        const { label, shadow } = await openShadowPicker();
+        const { label, drawnShadow } = await openShadowPicker();
 
         // The theme default is a black `fill` with a separate, partial `fillOpacity`.
-        expect(shadow().fill).toBe('#000');
-        expect(shadow().fillOpacity).toBeLessThan(1);
+        expect(drawnShadow().fill).toBe('#000');
+        expect(drawnShadow().fillOpacity).toBeLessThan(1);
         expect(label.textContent).toBe('#00000080');
     });
 
@@ -103,49 +127,78 @@ describe('chart format panel shadow colour picker', () => {
     test('shows a fully opaque shadow without an alpha', async () => {
         const { label } = await openShadowPicker(barShadow({ fill: '#336699', fillOpacity: 1 }));
 
-        expect(label.textContent).toMatch(/^#336699(FF)?$/);
+        expect(label.textContent).toBe('#336699');
     });
 
     test('keeps the colour of a shadow set through the legacy colour option', async () => {
-        const { label, shadow } = await openShadowPicker(barShadow({ color: 'rgba(255, 0, 0, 0.5)' }));
+        const { label } = await openShadowPicker(barShadow({ color: 'rgba(255, 0, 0, 0.5)' }));
 
-        expect(shadow().fill).toBeDefined();
         expect(label.textContent).toBe('#FF000080');
     });
 
-    test('a pick changes the shadow fill and fillOpacity the chart draws with, and the label follows', async () => {
-        const { label, shadow, pick } = await openShadowPicker();
+    test('a pick writes the colour as an opaque fill and the alpha as fillOpacity', async () => {
+        const { label, writtenShadow, pick } = await openShadowPicker();
 
         await pick('rgba(255, 0, 0, 0.2)');
 
-        // The colour is opaque and the alpha lives in `fillOpacity` alone, so the opacity is not applied twice.
-        expect(shadow().fill).toBe('rgb(255, 0, 0)');
-        expect(shadow().fillOpacity).toBe(0.2);
+        // The alpha lives in `fillOpacity` alone, so the opacity is not applied twice.
+        expect(writtenShadow()).toEqual({ fill: 'rgb(255, 0, 0)', fillOpacity: 0.2 });
         expect(label.textContent).toBe('#FF000033');
     });
 
     test('a pick of an opaque colour sets the fillOpacity to 1', async () => {
-        const { label, shadow, pick } = await openShadowPicker();
+        const { label, writtenShadow, pick } = await openShadowPicker();
 
         await pick('rgb(0, 128, 0)');
 
-        expect(shadow().fill).toBe('rgb(0, 128, 0)');
-        expect(shadow().fillOpacity).toBe(1);
-        expect(label.textContent).toMatch(/^#008000(FF)?$/);
+        expect(writtenShadow()).toEqual({ fill: 'rgb(0, 128, 0)', fillOpacity: 1 });
+        expect(label.textContent).toBe('#008000');
     });
 
-    test('a pick leaves the rest of the shadow alone', async () => {
-        const { shadow, pick } = await openShadowPicker();
-        const { enabled, blur, xOffset, yOffset } = shadow();
+    test('a pick changes the colour and opacity of a shadow that is cast', async () => {
+        const { drawnShadow, pick } = await openShadowPicker(barShadow({ enabled: true, blur: 11 }));
+        expect(drawnShadow().enabled).toBe(true);
 
         await pick('rgba(255, 0, 0, 0.2)');
 
-        expect({
-            enabled: shadow().enabled,
-            blur: shadow().blur,
-            xOffset: shadow().xOffset,
-            yOffset: shadow().yOffset,
-        }).toEqual({ enabled, blur, xOffset, yOffset });
+        expect(drawnShadow()).toMatchObject({
+            enabled: true,
+            blur: 11,
+            fill: 'rgb(255, 0, 0)',
+            fillOpacity: 0.2,
+        });
+    });
+
+    test('a pick on a chart that already has a legacy shadow colour changes the shadow it draws', async () => {
+        const { label, writtenShadow, drawnShadow, pick } = await openShadowPicker(
+            barShadow({ enabled: true, color: 'rgba(255, 0, 0, 0.5)' })
+        );
+
+        await pick('rgba(0, 0, 255, 0.2)');
+
+        // The saved `color` is still in the chart's options, so the pick only works if `fill` takes precedence.
+        expect(writtenShadow()).toEqual({ fill: 'rgb(0, 0, 255)', fillOpacity: 0.2 });
+        expect(drawnShadow()).toMatchObject({ enabled: true, fill: 'rgb(0, 0, 255)', fillOpacity: 0.2 });
+        expect(label.textContent).toBe('#0000FF33');
+    });
+
+    test('a pick leaves the rest of the shadow alone', async () => {
+        const { writtenShadow, drawnShadow, pick } = await openShadowPicker(
+            barShadow({ enabled: true, blur: 11, xOffset: 7, yOffset: -2 })
+        );
+
+        await pick('rgba(255, 0, 0, 0.2)');
+
+        // Only the colour is written, and the shadow drawn still has the seeded values around it.
+        expect(writtenShadow()).toEqual({ fill: 'rgb(255, 0, 0)', fillOpacity: 0.2 });
+        expect(drawnShadow()).toMatchObject({
+            enabled: true,
+            blur: 11,
+            xOffset: 7,
+            yOffset: -2,
+            fill: 'rgb(255, 0, 0)',
+            fillOpacity: 0.2,
+        });
     });
 
     test('a pick raises no chart warning or error', async () => {
