@@ -153,21 +153,18 @@ export class ChartSettingsPanel extends Component {
 
         _setDisplayed(this.eNavBar, this.palettes.length > 1);
         _radioCssClass(this.cardItems[this.activePaletteIndex], 'ag-selected', 'ag-not-selected');
-        this.updatePageLabel();
+        _setAriaLabel(this.eCardSelector, this.getPageLabel());
     }
 
-    /** Exposes the current palette page to assistive technology, e.g. "Palette 1 of 5". */
-    private updatePageLabel(): string | undefined {
+    private getPageLabel(): string | null {
         if (this.activePaletteIndex < 0) {
-            return undefined;
+            return null;
         }
 
-        const label = this.chartTranslation.translate('ariaChartPalettePage', [
+        return this.chartTranslation.translate('ariaChartPalettePage', [
             String(this.activePaletteIndex + 1),
             String(this.palettes.length),
         ]);
-        _setAriaLabel(this.eCardSelector, label);
-        return label;
     }
 
     private addCardLink(index: number): void {
@@ -224,11 +221,10 @@ export class ChartSettingsPanel extends Component {
 
         this.activePaletteIndex = index;
 
-        const pageLabel = this.updatePageLabel();
-        if (pageLabel) {
-            // focus stays on the arrow button, so announce the change explicitly
-            this.beans.ariaAnnounce?.announceValue(pageLabel, 'chartPalette');
-        }
+        const pageLabel = this.getPageLabel()!;
+        _setAriaLabel(this.eCardSelector, pageLabel);
+        // focus stays on the arrow button, so announce the change explicitly
+        this.beans.ariaAnnounce?.announceValue(pageLabel, 'chartPalette');
 
         this.isAnimating = true;
 
