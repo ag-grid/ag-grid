@@ -1,12 +1,11 @@
 import { waitFor } from '@testing-library/dom';
 import { AgChartsEnterpriseModule } from 'ag-charts-enterprise';
+import type { AgBubbleSeriesOptions, AgCartesianChartOptions, AgScatterSeriesOptions } from 'ag-charts-types';
 import { TestGridsManager, canvasPolyfill } from 'ag-test-utils';
 
 import type { ChartModel, ChartRef, ChartType, GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, enableDevValidations, setupAgTestIds } from 'ag-grid-community';
 import { CellSelectionModule, IntegratedChartsModule } from 'ag-grid-enterprise';
-
-import { deproxy } from '../../../../packages/ag-grid-enterprise/src/charts/chartComp/utils/integration';
 
 describe('scatter and bubble paired mode', () => {
     const gridsManager = new TestGridsManager({
@@ -53,12 +52,19 @@ describe('scatter and bubble paired mode', () => {
         return { api, chartRef };
     }
 
-    function getSeries(chartRef: ChartRef): { xKey: string; yKey: string; sizeKey?: string }[] {
-        return (deproxy(chartRef.chart).chartOptions.processedOptions as any).series;
+    function getSeries(chartRef: ChartRef): (AgScatterSeriesOptions | AgBubbleSeriesOptions)[] {
+        const { series = [] } = chartRef.chart.getOptions() as AgCartesianChartOptions;
+        return series.filter(
+            (s): s is AgScatterSeriesOptions | AgBubbleSeriesOptions => s.type === 'scatter' || s.type === 'bubble'
+        );
     }
 
     function pairs(chartRef: ChartRef) {
         return getSeries(chartRef).map((s) => [s.xKey, s.yKey]);
+    }
+
+    function bubbleTriples(chartRef: ChartRef) {
+        return getSeries(chartRef).map((s) => [s.xKey, s.yKey, 'sizeKey' in s ? s.sizeKey : undefined]);
     }
 
     function getModel(api: GridApi): ChartModel {
@@ -109,13 +115,11 @@ describe('scatter and bubble paired mode', () => {
     test('bubble with paired false alternates Y and size after the X column', async () => {
         const columns = FIELDS;
         const paired = await createChart('bubble', {}, columns);
-        expect(getSeries(paired.chartRef).map((s) => [s.xKey, s.yKey, s.sizeKey])).toEqual([
-            ['gold', 'silver', 'bronze'],
-        ]);
+        expect(bubbleTriples(paired.chartRef)).toEqual([['gold', 'silver', 'bronze']]);
         gridsManager.reset();
 
         const unpaired = await createChart('bubble', { paired: false }, columns);
-        expect(getSeries(unpaired.chartRef).map((s) => [s.xKey, s.yKey, s.sizeKey])).toEqual([
+        expect(bubbleTriples(unpaired.chartRef)).toEqual([
             ['gold', 'silver', 'bronze'],
             ['gold', 'total', 'extra'],
         ]);
