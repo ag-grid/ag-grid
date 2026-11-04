@@ -795,6 +795,9 @@ export const AG_GRID_LOCALE_BS_BA = {
     ariaPageSizeSelectorLabel: 'Veličina stranice',
     ariaChartMenuClose: 'Zatvori meni uređivanja grafikona',
     ariaChartSelected: 'Izabrano',
+    ariaChartPalettePrevious: 'Prethodna paleta',
+    ariaChartPaletteNext: 'Sljedeća paleta',
+    ariaChartPalettePage: 'Paleta ${variable} od ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} prikazuje ${count} vrijednosti između ${min} i ${max}. Počinje na ${start} i završava na ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} prikazuje 1 vrijednost, ${value}.',

@@ -778,6 +778,9 @@ export const AG_GRID_LOCALE_UK_UA = {
     ariaPageSizeSelectorLabel: 'Розмір сторінки',
     ariaChartMenuClose: 'Закрити меню редагування діаграми',
     ariaChartSelected: 'Вибрано',
+    ariaChartPalettePrevious: 'Попередня палітра',
+    ariaChartPaletteNext: 'Наступна палітра',
+    ariaChartPalettePage: 'Палітра ${variable} з ${variable}',
     ariaSparklineChartDescription:
         'Спарклайн - ${chartType}, відображає ${count} значень між ${min} і ${max}. Починається з ${start} і закінчується на ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Спарклайн - ${chartType}, показує 1 значення: ${value}.',

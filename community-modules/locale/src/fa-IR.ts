@@ -777,6 +777,9 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaPageSizeSelectorLabel: 'اندازه صفحه',
     ariaChartMenuClose: 'بستن منوی ویرایش نمودار',
     ariaChartSelected: 'انتخاب شده',
+    ariaChartPalettePrevious: 'پالت قبلی',
+    ariaChartPaletteNext: 'پالت بعدی',
+    ariaChartPalettePage: 'پالت ${variable} از ${variable}',
     ariaSparklineChartDescription:
         'اسپارک‌لاین - ${chartType}، ${count} مقدار را بین ${min} و ${max} نمایش می‌دهد. از ${start} شروع می‌شود و در ${end} پایان می‌یابد.',
     ariaSparklineChartDescriptionSingleValue: 'اسپارک‌لاین - ${chartType} یک مقدار را نمایش می‌دهد: ${value}.',

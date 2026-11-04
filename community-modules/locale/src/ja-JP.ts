@@ -775,6 +775,9 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaPageSizeSelectorLabel: 'ページサイズ',
     ariaChartMenuClose: 'チャート編集メニューを閉じる',
     ariaChartSelected: '選択済み',
+    ariaChartPalettePrevious: '前のパレット',
+    ariaChartPaletteNext: '次のパレット',
+    ariaChartPalettePage: 'パレット ${variable} / ${variable}',
     ariaSparklineChartDescription:
         'スパークライン - ${chartType} は ${count} 個の値を ${min} から ${max} の範囲で表示します。${start} で始まり ${end} で終わります。',
     ariaSparklineChartDescriptionSingleValue: 'スパークライン - ${chartType} は 1 つの値 ${value} を表示します。',

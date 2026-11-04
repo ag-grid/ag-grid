@@ -774,6 +774,9 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaPageSizeSelectorLabel: 'גודל עמוד',
     ariaChartMenuClose: 'סגור תפריט עריכת תרשים',
     ariaChartSelected: 'נבחר',
+    ariaChartPalettePrevious: 'הפלטה הקודמת',
+    ariaChartPaletteNext: 'הפלטה הבאה',
+    ariaChartPalettePage: 'פלטה ${variable} מתוך ${variable}',
     ariaSparklineChartDescription:
         'ספארקליין - ${chartType} מציג ${count} ערכים בין ${min} ל-${max}. מתחיל ב-${start} ומסתיים ב-${end}.',
     ariaSparklineChartDescriptionSingleValue: 'ספארקליין - ${chartType} מציג ערך אחד: ${value}.',
