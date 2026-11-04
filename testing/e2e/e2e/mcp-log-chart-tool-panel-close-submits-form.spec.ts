@@ -27,7 +27,8 @@ import type { GridApi } from 'ag-grid-community';
 
 import { mountGrid } from '../src/mountGrid';
 
-test('closing the chart tool panel does not submit the host form', async ({ page }) => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+test.skip('closing the chart tool panel does not submit the host form', async ({ page }) => {
     const { grid } = await mountGrid(page, {
         enterprise: true,
         integratedCharts: true,

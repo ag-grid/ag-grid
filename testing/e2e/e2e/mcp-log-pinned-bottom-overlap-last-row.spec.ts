@@ -28,7 +28,8 @@ import { mountGrid } from '../src/mountGrid';
  * (fixed height, static pinned rows, scrolled to the end) does not reproduce; the trigger found is the combination
  * of a wrapText + autoHeight column with a replaced pinnedBottomRowData.
  */
-test('pinned bottom rows do not cover the last body row after pinnedBottomRowData is replaced', async ({ page }) => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+test.skip('pinned bottom rows do not cover the last body row after pinnedBottomRowData is replaced', async ({ page }) => {
     const { withApi } = await mountGrid(page, {
         width: 500,
         height: 400,

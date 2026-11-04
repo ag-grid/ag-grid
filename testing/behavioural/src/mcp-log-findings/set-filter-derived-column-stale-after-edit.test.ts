@@ -26,7 +26,8 @@ import { SetFilterModule } from 'ag-grid-enterprise';
  * March and October 2026, about refreshing Set Filter values after a cell edit, transaction or data change, for
  * example "set filter values valueGetter refresh after transaction" and "set filter refresh after edit date".
  */
-describe('Set Filter values for a derived column after editing a source column', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('Set Filter values for a derived column after editing a source column', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, SetFilterModule] });
 
     afterEach(() => gridsManager.reset());

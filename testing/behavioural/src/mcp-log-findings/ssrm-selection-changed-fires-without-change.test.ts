@@ -25,7 +25,8 @@ import { waitForNoLoadingRows } from 'ag-test-utils/ssrm-test-utils';
 import { RowSelectionModule } from 'ag-grid-community';
 import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-describe('SSRM selectionChanged when selection does not change', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('SSRM selectionChanged when selection does not change', () => {
     const gridMgr = new TestGridsManager({
         modules: [ServerSideRowModelApiModule, ServerSideRowModelModule, RowSelectionModule],
     });

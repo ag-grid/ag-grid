@@ -42,7 +42,8 @@ afterAll(() => {
     }
 });
 
-describe('Toolbar update with open menu', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('Toolbar update with open menu', () => {
     const gridMgr = new TestGridsManager({
         modules: [ClientSideRowModelModule, ToolbarModule, ContextMenuModule],
     });

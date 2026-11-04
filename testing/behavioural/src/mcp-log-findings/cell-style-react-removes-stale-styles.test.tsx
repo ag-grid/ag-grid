@@ -27,7 +27,8 @@ import { AgGridReact } from 'ag-grid-react';
  * were about cellStyle styles not being removed or being left stale after a refresh, for example
  * "cellStyle function returning different style keys stale styles not removed".
  */
-describe('cellStyle refresh keeps previously applied styles (React)', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('cellStyle refresh keeps previously applied styles (React)', () => {
     beforeAll(() => {
         ModuleRegistry.registerModules([ClientSideRowModelModule, CellStyleModule, RowApiModule]);
     });

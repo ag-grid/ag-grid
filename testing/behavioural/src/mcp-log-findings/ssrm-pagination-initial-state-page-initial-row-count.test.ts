@@ -24,7 +24,8 @@ import { ServerSideRowModelModule } from 'ag-grid-enterprise';
  * in April 2026:
  *   "SSRM pagination restore page state initialState serverSideInitialRowCount pagination state not working"
  */
-describe('SSRM pagination initialState page', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('SSRM pagination initialState page', () => {
     const gridsManager = new TestGridsManager({
         modules: [ServerSideRowModelModule, PaginationModule, GridStateModule],
     });

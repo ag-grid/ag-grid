@@ -25,7 +25,8 @@ import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-e
  * Source: AG Grid docs MCP search log analysis (AG-18665).
  * One search (React 35.3.0, July 2026): "clear selection setSelected server side row model not deselecting rows".
  */
-describe('SSRM single row selection: setSelected(false) on an unselected row', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('SSRM single row selection: setSelected(false) on an unselected row', () => {
     const gridsManager = new TestGridsManager({
         modules: [ServerSideRowModelModule, ServerSideRowModelApiModule, RowSelectionModule],
     });

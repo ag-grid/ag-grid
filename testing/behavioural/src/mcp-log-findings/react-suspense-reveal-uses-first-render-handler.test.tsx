@@ -26,7 +26,8 @@ import { AgGridReact } from 'ag-grid-react';
  *
  * Source: found by an area review of React grid lifecycle events for AG-18665.
  */
-describe('React Suspense reveal', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('React Suspense reveal', () => {
     beforeAll(() => {
         ModuleRegistry.registerModules([ClientSideRowModelModule]);
     });

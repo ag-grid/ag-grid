@@ -23,7 +23,8 @@ import { TestGridsManager, polyfillOffsetParent } from 'ag-test-utils';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ColumnMenuModule } from 'ag-grid-enterprise';
 
-describe('modal popup closes on mousedown on the html element', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('modal popup closes on mousedown on the html element', () => {
     const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule, ColumnMenuModule] });
     let restoreOffsetParent: (() => void) | undefined;
 

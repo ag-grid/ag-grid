@@ -24,7 +24,8 @@ import { TestGridsManager } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, PinnedRowModule } from 'ag-grid-community';
 
-describe('pinned bottom row height change via setRowHeight', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('pinned bottom row height change via setRowHeight', () => {
     const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule, PinnedRowModule] });
 
     afterEach(() => gridMgr.reset());

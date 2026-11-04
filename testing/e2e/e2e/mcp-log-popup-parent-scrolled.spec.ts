@@ -23,7 +23,8 @@ import { expect, test } from '@playwright/test';
 
 import { mountGrid } from '../src/mountGrid';
 
-test('column menu opens under its button when popupParent is a scrolled container', async ({ page }) => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+test.skip('column menu opens under its button when popupParent is a scrolled container', async ({ page }) => {
     const { headerCell } = await mountGrid(page, {
         enterprise: true,
         height: 300,

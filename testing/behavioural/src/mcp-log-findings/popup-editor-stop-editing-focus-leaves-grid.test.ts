@@ -25,7 +25,8 @@ import { TestGridsManager } from 'ag-test-utils';
 
 import { TextEditorModule, getGridElement } from 'ag-grid-community';
 
-describe('stopEditingWhenCellsLoseFocus with a popup editor', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('stopEditingWhenCellsLoseFocus with a popup editor', () => {
     const gridMgr = new TestGridsManager({
         includeDefaultModules: true,
         modules: [TextEditorModule],

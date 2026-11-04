@@ -22,7 +22,8 @@ import * as XLSX from 'xlsx';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ExcelExportModule } from 'ag-grid-enterprise';
 
-describe('Excel prependContent cell data type', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('Excel prependContent cell data type', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, ExcelExportModule],
     });

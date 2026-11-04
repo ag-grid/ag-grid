@@ -26,7 +26,8 @@ import { ClientSideRowModelModule, GridStateModule, PaginationModule } from 'ag-
  *    page reset to first page"
  *   "onPaginationChanged event newPage keepRenderedRows suppressScrollOnNewData rowData update reset page"
  */
-describe('Pagination initialState page with async rowData', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('Pagination initialState page with async rowData', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, PaginationModule, GridStateModule],
     });

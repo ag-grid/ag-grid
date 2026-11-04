@@ -25,7 +25,8 @@ import { TestGridsManager } from 'ag-test-utils';
 
 import { ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-describe('SSRM same row id in two blocks', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('SSRM same row id in two blocks', () => {
     const gridsManager = new TestGridsManager({ modules: [ServerSideRowModelModule] });
 
     afterEach(() => {

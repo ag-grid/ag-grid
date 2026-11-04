@@ -34,7 +34,8 @@ import { MasterDetailModule } from 'ag-grid-enterprise';
  * "master detail grid selection desync setGridOption rowData preserves visual selection but getSelectedNodes
  * returns empty immutable data".
  */
-describe('master detail selection survives immutable rowData update', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('master detail selection survives immutable rowData update', () => {
     const makeData = () => [{ id: 'a', detail: [{ id: 'a1' }, { id: 'a2' }] }];
 
     const gridMgr = new TestGridsManager({

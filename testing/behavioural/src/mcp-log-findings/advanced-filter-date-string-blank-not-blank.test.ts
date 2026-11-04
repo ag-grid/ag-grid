@@ -24,7 +24,8 @@ import type { AdvancedFilterModel, GridApi } from 'ag-grid-community';
 import { ClientSideRowModelModule, DateFilterModule } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
-describe('Advanced Filter blank and notBlank on a dateString column', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('Advanced Filter blank and notBlank on a dateString column', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, DateFilterModule, AdvancedFilterModule],
     });

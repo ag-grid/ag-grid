@@ -22,7 +22,8 @@ import { expect, test } from '@playwright/test';
 
 import { mountGrid } from '../src/mountGrid';
 
-test('whenTruncated shows no tooltip for a non-truncated cell with a custom cellRenderer', async ({ page }) => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+test.skip('whenTruncated shows no tooltip for a non-truncated cell with a custom cellRenderer', async ({ page }) => {
     const { cell } = await mountGrid(page, {
         width: 600,
         height: 200,

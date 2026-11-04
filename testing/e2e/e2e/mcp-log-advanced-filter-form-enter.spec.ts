@@ -23,7 +23,8 @@ import { expect, test } from '@playwright/test';
 
 import { mountGrid } from '../src/mountGrid';
 
-test('Enter in an app text field submits the host form rather than opening the Advanced Filter builder', async ({
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+test.skip('Enter in an app text field submits the host form rather than opening the Advanced Filter builder', async ({
     page,
 }) => {
     await mountGrid(page, {

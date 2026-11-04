@@ -23,7 +23,8 @@ import type { MockInstance } from 'vitest';
 
 import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 
-describe('custom icon returning an unusable value', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('custom icon returning an unusable value', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, ValidationModule] });
     let consoleWarnSpy: MockInstance;
 

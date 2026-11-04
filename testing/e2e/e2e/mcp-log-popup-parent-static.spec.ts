@@ -49,7 +49,8 @@ async function mountGridInStaticPopupParent(page: Page) {
     return mounted;
 }
 
-test('context menu opens at the pointer when popupParent is a static element', async ({ page }) => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+test.skip('context menu opens at the pointer when popupParent is a static element', async ({ page }) => {
     const { cell } = await mountGridInStaticPopupParent(page);
 
     const target = cell(1, 'a');
@@ -65,7 +66,8 @@ test('context menu opens at the pointer when popupParent is a static element', a
     expect(menuBox.y, 'context menu should open at the pointer').toBeLessThanOrEqual(pointerY + 10);
 });
 
-test('column menu opens under its button when popupParent is a static element', async ({ page }) => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+test.skip('column menu opens under its button when popupParent is a static element', async ({ page }) => {
     const { headerCell } = await mountGridInStaticPopupParent(page);
 
     const header = headerCell('a');

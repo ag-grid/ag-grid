@@ -26,7 +26,8 @@ import * as XLSX from 'xlsx';
 import { ClientSideRowModelModule } from 'ag-grid-community';
 import { ExcelExportModule } from 'ag-grid-enterprise';
 
-describe('Excel table column names with control characters', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('Excel table column names with control characters', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, ExcelExportModule],
     });

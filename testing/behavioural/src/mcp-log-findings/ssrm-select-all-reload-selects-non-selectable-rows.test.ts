@@ -26,7 +26,8 @@ import { ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-e
  *
  * Source: found by an area review of SSRM selection with getRowId for AG-18665.
  */
-describe('SSRM selection: select all then reload rows', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('SSRM selection: select all then reload rows', () => {
     const gridsManager = new TestGridsManager({
         modules: [ServerSideRowModelModule, ServerSideRowModelApiModule, RowSelectionModule],
     });

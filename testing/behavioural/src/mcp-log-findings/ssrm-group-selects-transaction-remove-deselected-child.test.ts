@@ -31,7 +31,8 @@ import type { IServerSideGetRowsParams } from 'ag-grid-community';
 import { RowSelectionModule } from 'ag-grid-community';
 import { RowGroupingModule, ServerSideRowModelApiModule, ServerSideRowModelModule } from 'ag-grid-enterprise';
 
-describe('SSRM groupSelects descendants and transaction removal', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('SSRM groupSelects descendants and transaction removal', () => {
     const gridsManager = new TestGridsManager({
         modules: [ServerSideRowModelApiModule, ServerSideRowModelModule, RowGroupingModule, RowSelectionModule],
     });

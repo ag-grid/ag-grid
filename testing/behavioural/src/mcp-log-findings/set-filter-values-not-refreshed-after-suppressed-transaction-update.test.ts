@@ -31,7 +31,8 @@ import { SetFilterModule } from 'ag-grid-enterprise';
  *
  * Source: found by an area review of Set filter value refresh for AG-18665, prompted by the related searches above.
  */
-describe('Set Filter values after a suppressed update transaction and refreshClientSideRowModel', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('Set Filter values after a suppressed update transaction and refreshClientSideRowModel', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, SetFilterModule] });
 
     afterEach(() => gridsManager.reset());

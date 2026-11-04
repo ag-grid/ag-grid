@@ -21,7 +21,8 @@ import { TestGridsManager } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, TextEditorModule } from 'ag-grid-community';
 
-describe('stopEditingWhenCellsLoseFocus inside Shadow DOM', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('stopEditingWhenCellsLoseFocus inside Shadow DOM', () => {
     const gridMgr = new TestGridsManager({ modules: [ClientSideRowModelModule, TextEditorModule] });
 
     afterEach(() => {

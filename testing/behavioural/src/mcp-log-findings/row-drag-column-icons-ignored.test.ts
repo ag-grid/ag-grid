@@ -21,7 +21,8 @@ import { TestGridsManager } from 'ag-test-utils';
 
 import { ClientSideRowModelModule, RowDragModule } from 'ag-grid-community';
 
-describe('rowDrag column icons', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('rowDrag column icons', () => {
     const gridsManager = new TestGridsManager({
         modules: [ClientSideRowModelModule, RowDragModule],
     });

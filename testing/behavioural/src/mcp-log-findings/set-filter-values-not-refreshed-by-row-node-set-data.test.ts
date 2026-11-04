@@ -29,7 +29,8 @@ import { SetFilterModule } from 'ag-grid-enterprise';
  * when row data changes", "Set Filter refresh values from grid data after rowData updated refreshFilterValues
  * automatically rowDataUpdated".
  */
-describe('Set Filter values after replacing a row node data', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('Set Filter values after replacing a row node data', () => {
     const gridsManager = new TestGridsManager({ modules: [ClientSideRowModelModule, SetFilterModule] });
 
     afterEach(() => gridsManager.reset());

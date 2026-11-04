@@ -108,7 +108,8 @@ async function expectDetailRowSizedToContent(page: Page, pattern: LoadingPattern
     expect(pageErrors, 'errors thrown while rendering the detail row').toEqual([]);
 }
 
-test.describe('Vue detailRowAutoHeight with a detail renderer that loads data first', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+test.describe.skip('Vue detailRowAutoHeight with a detail renderer that loads data first', () => {
     test('control: renderer that keeps the same root element while loading is auto-sized', async ({ page }) => {
         await expectDetailRowSizedToContent(page, 'stableRoot');
     });

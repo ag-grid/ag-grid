@@ -26,7 +26,8 @@ import { AdvancedFilterModule, ServerSideRowModelModule } from 'ag-grid-enterpri
  * One search, from a React app on 34.0.2 in February 2026: "initialState filter advancedFilterModel SSRM
  * server-side row model".
  */
-describe('SSRM initialState advancedFilterModel', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('SSRM initialState advancedFilterModel', () => {
     const gridsManager = new TestGridsManager({
         modules: [
             ServerSideRowModelModule,

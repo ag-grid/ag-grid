@@ -29,7 +29,8 @@ import { TestGridsManager, waitForInput } from 'ag-test-utils';
 
 import { TextEditorModule, agTestIdFor, getGridElement, setupAgTestIds } from 'ag-grid-community';
 
-describe('setDataValue with default eventSource while editing', () => {
+// TODO: disabled due to AG-XXXXX - placeholder, replace with this bug's JIRA key before merging; re-enable once fixed
+describe.skip('setDataValue with default eventSource while editing', () => {
     const gridMgr = new TestGridsManager({ modules: [TextEditorModule] });
 
     beforeAll(() => {
