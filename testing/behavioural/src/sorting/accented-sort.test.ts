@@ -276,4 +276,33 @@ describe('accentedSort locale and collator options', () => {
 
         expect(sortedValues(api, 'name')).toEqual(['a', 'à', 'b']);
     });
+
+    test('an invalid locale tag keeps the collator options', () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [322] });
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const api = createGrid('accented-invalid-options', {
+            columnDefs: [{ field: 'name' }],
+            rowData: ['item10', 'item2', 'item1'].map((name) => ({ name })),
+            accentedSort: { locales: 'not a locale!', options: { numeric: true } },
+        });
+
+        expect(sortedValues(api, 'name')).toEqual(['item1', 'item2', 'item10']);
+    });
+
+    test('invalid collator options fall back to the default locale comparison', () => {
+        enableDevValidations({ throwOn: ALL_SEVERITIES, suppress: [322] });
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        const api = createGrid('accented-invalid-option-value', {
+            columnDefs: [{ field: 'name' }],
+            rowData: ['b', 'à', 'a'].map((name) => ({ name })),
+            accentedSort: {
+                locales: 'sv',
+                options: { sensitivity: 'not a sensitivity' as Intl.CollatorOptions['sensitivity'] },
+            },
+        });
+
+        expect(sortedValues(api, 'name')).toEqual(['a', 'à', 'b']);
+    });
 });

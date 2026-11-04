@@ -14,11 +14,16 @@ const createCollatorComparator = (
     locales: string | string[] | undefined,
     options: Intl.CollatorOptions | undefined
 ): StringComparator => {
+    // An invalid locale tag or option value throws a RangeError; validation warns.
+    // Fall back to the browser's default locale, keeping the options when they are valid.
     try {
         return new Intl.Collator(locales, options).compare;
     } catch {
-        // An invalid locale tag throws a RangeError; validation warns, and the browser's default locale is used.
-        return localeStringComparator;
+        try {
+            return new Intl.Collator(undefined, options).compare;
+        } catch {
+            return localeStringComparator;
+        }
     }
 };
 

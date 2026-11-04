@@ -2272,6 +2272,22 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public isRowValidDropPosition: IsRowValidDropPositionCallback<TData> | undefined = undefined;
 
+    static ngAcceptInputType_autoGenerateColumnDefs:
+        boolean | AutoGenerateColumnDefsOptions | undefined | '' | 'true' | 'false';
+    static ngAcceptInputType_cellSelection: boolean | CellSelectionOptions<any> | undefined | '' | 'true' | 'false';
+    static ngAcceptInputType_sideBar:
+        SideBarDef | string | string[] | boolean | null | undefined | '' | 'true' | 'false';
+    static ngAcceptInputType_rowNumbers: boolean | RowNumbersOptions | undefined | '' | 'true' | 'false';
+    static ngAcceptInputType_loadingRows: boolean | LoadingRowsOptions | undefined | '' | 'true' | 'false';
+    static ngAcceptInputType_suppressGroupChangesColumnVisibility:
+        boolean | 'suppressHideOnGroup' | 'suppressShowOnUngroup' | undefined | '' | 'true' | 'false';
+    static ngAcceptInputType_groupAggFiltering: boolean | IsRowFilterable<any> | undefined | '' | 'true' | 'false';
+    static ngAcceptInputType_suppressStickyTotalRow: boolean | 'grand' | 'group' | undefined | '' | 'true' | 'false';
+    static ngAcceptInputType_groupHideParentOfSingleChild:
+        boolean | 'leafGroupsOnly' | undefined | '' | 'true' | 'false';
+    static ngAcceptInputType_enableRowPinning: boolean | 'top' | 'bottom' | undefined | '' | 'true' | 'false';
+    static ngAcceptInputType_accentedSort: boolean | AccentedSortOptions | undefined | '' | 'true' | 'false';
+
     /** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel.
      */
     @Output() public toolPanelVisibleChanged: EventEmitter<ToolPanelVisibleChangedEvent<TData>> = new EventEmitter<
@@ -2826,8 +2842,11 @@ const booleanMixedGridOptions = new Set<string>(_BOOLEAN_MIXED_GRID_OPTIONS);
 function getValueOrCoercedValue(key: string, valueToUse: any): any {
     if (booleanMixedGridOptions.has(key)) {
         // Handle plain HTML boolean attributes and convert them to boolean values
-        // Also handle the false string case to match Angular boolean attributes
-        return valueToUse === '' ? true : valueToUse === 'false' ? false : valueToUse;
+        // Also handle the 'true' / 'false' strings to match Angular boolean attributes
+        if (valueToUse === '' || valueToUse === 'true') {
+            return true;
+        }
+        return valueToUse === 'false' ? false : valueToUse;
     }
     return valueToUse;
 }
