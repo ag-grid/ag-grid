@@ -364,7 +364,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
                 const gridOptions: GridOptions = {};
                 for (const key of Object.keys(changes)) {
                     const value = changes[key];
-                    gridOptions[key as keyof GridOptions] = value.currentValue;
+                    gridOptions[key as keyof GridOptions] = getValueOrCoercedValue(key, value.currentValue);
                 }
                 _processOnChange(gridOptions, this.api);
             });
