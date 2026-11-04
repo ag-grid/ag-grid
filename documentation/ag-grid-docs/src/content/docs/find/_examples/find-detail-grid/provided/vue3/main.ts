@@ -17,7 +17,6 @@ import { FindModule, MasterDetailModule, ToolbarModule } from 'ag-grid-enterpris
 import { AgGridVue } from 'ag-grid-vue3';
 
 import { getData } from './data';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

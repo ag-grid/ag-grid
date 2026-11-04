@@ -13,7 +13,6 @@ import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule } from 'ag-
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import NumericCellEditor from './numericCellEditor';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

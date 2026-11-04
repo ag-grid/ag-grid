@@ -19,7 +19,6 @@ import { CellSelectionModule } from 'ag-grid-enterprise';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
 import CustomButtonComponent from './customButtonComponent';
-import './styles.css';
 
 const modules = [
     ClientSideRowModelModule,

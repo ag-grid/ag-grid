@@ -15,6 +15,8 @@ const getPayloadFiles = ({
         files: {
             'index.html': '<html></html>',
             'main.js': 'console.log("example");',
+            'styles.css': '.example {}',
+            'ag-example-styles.css': '.example-controls {}',
             'package.json': '{ "name": "example" }',
         },
         boilerPlateFiles,
@@ -38,6 +40,24 @@ describe('getCodeSandboxFilesToSubmit', () => {
             expect(hasPackageJson(getPayloadFiles({ internalFramework }))).toBe(false);
         }
     );
+
+    it.each(['reactFunctional', 'reactFunctionalTs'] as InternalFramework[])(
+        'serves every stylesheet from public/ for %s, where the linking index.html lives',
+        (internalFramework) => {
+            const files = getPayloadFiles({ internalFramework });
+
+            expect(files).toHaveProperty(['public/index.html']);
+            expect(files).toHaveProperty(['public/styles.css']);
+            expect(files).toHaveProperty(['public/ag-example-styles.css']);
+        }
+    );
+
+    it('keeps stylesheets beside index.html on the static sandbox runtime', () => {
+        const files = getPayloadFiles({ internalFramework: 'vanilla' });
+
+        expect(files).toHaveProperty(['index.html']);
+        expect(files).toHaveProperty(['styles.css']);
+    });
 
     it('omits a boilerplate-supplied package.json for the static sandbox runtime', () => {
         const files = getPayloadFiles({

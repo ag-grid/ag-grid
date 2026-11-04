@@ -12,7 +12,6 @@ import { ColumnMenuModule, ColumnsToolPanelModule, ContextMenuModule, MasterDeta
 import { AgGridVue } from 'ag-grid-vue3';
 
 import DetailCellRenderer from './detailCellRendererVue';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

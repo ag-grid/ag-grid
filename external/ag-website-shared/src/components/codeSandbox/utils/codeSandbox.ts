@@ -1,6 +1,6 @@
 import type { InternalFramework } from '@ag-grid-types';
 import type { FileContents } from '@components/example-generator/types';
-import { DEBUG_SCRIPT_FILE_NAME, EXAMPLE_STYLE_FILE_NAME } from '@constants';
+import { DEBUG_SCRIPT_FILE_NAME } from '@constants';
 import { isReactInternalFramework } from '@utils/framework';
 import { getParameters } from 'codesandbox-import-utils/lib/api/define';
 
@@ -27,13 +27,12 @@ const getPathForFile = ({
         return `public/index.html`;
     }
 
-    if (fileName === DEBUG_SCRIPT_FILE_NAME) {
-        return `public/${DEBUG_SCRIPT_FILE_NAME}`;
-    } else if (fileName === EXAMPLE_STYLE_FILE_NAME) {
-        return `public/${EXAMPLE_STYLE_FILE_NAME}`;
+    // Stylesheets are linked from `public/index.html`, so they must be served from `public/` too
+    if (fileName === DEBUG_SCRIPT_FILE_NAME || fileName.endsWith('.css')) {
+        return `public/${fileName}`;
     }
 
-    if (/(.js|.jsx|.tsx|.ts|.css)$/.test(fileName)) {
+    if (/(.js|.jsx|.tsx|.ts)$/.test(fileName)) {
         if (fileName.endsWith('.js')) {
             return `public/${fileName}`;
         }

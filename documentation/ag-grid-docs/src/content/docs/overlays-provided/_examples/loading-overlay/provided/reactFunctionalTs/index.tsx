@@ -5,8 +5,6 @@ import { ClientSideRowModelModule, enableDevValidations } from 'ag-grid-communit
 import type { ColDef } from 'ag-grid-community';
 import { AgGridProvider, AgGridReact } from 'ag-grid-react';
 
-import './styles.css';
-
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development
     enableDevValidations();

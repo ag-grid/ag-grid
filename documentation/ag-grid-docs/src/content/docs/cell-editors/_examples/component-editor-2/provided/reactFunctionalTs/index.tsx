@@ -17,7 +17,6 @@ import GenderRenderer from './genderRenderer';
 import MoodEditor from './moodEditor';
 import MoodRenderer from './moodRenderer';
 import SimpleTextEditor from './simpleTextEditor';
-import './styles.css';
 
 if (process.env.NODE_ENV !== 'production') {
     // Enable extended validations only for development

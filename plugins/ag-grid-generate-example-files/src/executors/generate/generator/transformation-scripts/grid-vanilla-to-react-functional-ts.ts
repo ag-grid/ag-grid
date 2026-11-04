@@ -1,6 +1,4 @@
 /* eslint-disable no-lonely-if */
-import { basename } from 'path';
-
 import type { ExampleConfig, ParsedBindings } from '../types';
 import { templatePlaceholder } from './grid-vanilla-src-parser';
 import {
@@ -32,8 +30,7 @@ function getModuleImports(
     bindings: ParsedBindings,
     exampleConfig: ExampleConfig,
     componentFilenames: string[],
-    extraCoreTypes: string[],
-    allStylesheets: string[]
+    extraCoreTypes: string[]
 ): string[] {
     const imports = [
         "import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react';",
@@ -77,7 +74,6 @@ function getImports(
     exampleConfig: ExampleConfig,
     componentFileNames: string[],
     extraCoreTypes: string[],
-    allStylesheets: string[],
     useFetchHook: boolean = false
 ): string[] {
     const imports = [];
@@ -86,7 +82,7 @@ function getImports(
         imports.push(`import { ${localeImport.imports.join(', ')} } from '@ag-grid-community/locale';`);
     }
 
-    imports.push(...getModuleImports(bindings, exampleConfig, componentFileNames, extraCoreTypes, allStylesheets));
+    imports.push(...getModuleImports(bindings, exampleConfig, componentFileNames, extraCoreTypes));
 
     if (useFetchHook) {
         imports.push(`import { useFetchJson } from './useFetchJson';`);
@@ -155,8 +151,7 @@ function extractComponentInformation(properties, componentFilenames: string[]): 
 export function vanillaToReactFunctionalTs(
     bindings: ParsedBindings,
     exampleConfig: ExampleConfig,
-    componentFilenames: string[],
-    allStylesheets: string[]
+    componentFilenames: string[]
 ): () => string {
     const { properties, data, tData, inlineGridStyles, onGridReady, typeDeclares, interfaces } = bindings;
 
@@ -233,7 +228,6 @@ export function vanillaToReactFunctionalTs(
             exampleConfig,
             componentFilenames,
             extraCoreTypes,
-            allStylesheets,
             useFetchHook !== undefined
         );
 
