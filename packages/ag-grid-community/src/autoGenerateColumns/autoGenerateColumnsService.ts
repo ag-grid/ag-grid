@@ -11,15 +11,15 @@ import { _isProtoField } from '../utils/value';
 export class AutoGenerateColumnsService extends BeanStub implements NamedBean {
     beanName = 'autoGenColsSvc' as const;
 
-    /** Under the Server-Side Row Model, `autoGenerateColumnDefs` is read once, at grid initialisation. */
-    private serverSideOption: boolean | AutoGenerateColumnDefsOptions | undefined;
-    private serverSideGenerated = false;
+    /** Under the Server-Side Row Model, true while columns are still to be generated from the next root-level rows. */
+    private serverSidePending = false;
 
     public postConstruct(): void {
         const gos = this.gos;
-        // Under the Server-Side Row Model, columns are generated from the first root-level response instead
+        // Under the Server-Side Row Model, columns are generated from root-level responses instead of `rowData`
         if (_isServerSideRowModel(gos)) {
-            this.serverSideOption = gos.get('autoGenerateColumnDefs');
+            this.serverSidePending = !!gos.get('autoGenerateColumnDefs');
+            this.addManagedPropertyListener('autoGenerateColumnDefs', () => this.onServerSideOptionChanged());
             return;
         }
         if (!_isClientSideRowModel(gos)) {
@@ -35,21 +35,48 @@ export class AutoGenerateColumnsService extends BeanStub implements NamedBean {
      * so that it requests the rows the columns are generated from.
      */
     public getInitialColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
-        return this.serverSideOption ? [] : undefined;
+        return this.serverSidePending ? [] : undefined;
     }
 
     /**
-     * Called by the Server-Side Row Model with the rows of each root-level response. Columns are generated once, so
-     * refetches after sort, filter or refresh keep the user's column state.
+     * Called by the Server-Side Row Model with the rows of each root-level response. Columns are generated from the
+     * first response with rows only, so refetches after sort, filter or refresh keep the user's column state.
      */
     public onServerSideRootRowsLoaded(rowData: any[]): void {
-        const optionValue = this.serverSideOption;
-        if (!optionValue || this.serverSideGenerated) {
+        if (this.serverSidePending) {
+            this.generateServerSideColumns(rowData);
+        }
+    }
+
+    /** As with `rowData` under the Client-Side Row Model, columns are generated from the root-level rows already loaded. */
+    private onServerSideOptionChanged(): void {
+        const gos = this.gos;
+        if (!gos.get('autoGenerateColumnDefs')) {
+            this.serverSidePending = false;
+            return;
+        }
+        const loadedRows: any[] = [];
+        this.beans.rowModel.forEachNode((node) => {
+            if (node.level === 0 && !node.stub && node.data != null) {
+                loadedRows.push(node.data);
+            }
+        });
+        this.serverSidePending = true;
+        this.generateServerSideColumns(loadedRows);
+        if (this.serverSidePending && !gos.get('columnDefs')) {
+            // the grid has not started yet, as it had no columns; start it without any to request the rows
+            gos.updateGridOptions({ options: { columnDefs: [] }, source: 'optionsUpdated' });
+        }
+    }
+
+    private generateServerSideColumns(rowData: any[]): void {
+        const optionValue = this.gos.get('autoGenerateColumnDefs');
+        if (!optionValue) {
             return;
         }
         const columnDefs = this.createColumnDefs(rowData, optionValue);
         if (columnDefs) {
-            this.serverSideGenerated = true;
+            this.serverSidePending = false;
             this.gos.updateGridOptions({ options: { columnDefs }, source: 'optionsUpdated' });
         }
     }

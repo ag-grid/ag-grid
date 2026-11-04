@@ -2543,7 +2543,7 @@ export interface GridOptions<TData = any> {
     /**
      * When enabled, column definitions are generated automatically from the first row of `rowData` whenever row data is set or updated.
      * Set to `true` to use default settings, or provide an `AutoGenerateColumnDefsOptions` object to customise how values are handled.
-     * With the Server-Side Row Model, columns are generated once, from the first root-level response containing a row, and only the initial value of this option is used.
+     * With the Server-Side Row Model, columns are generated from the first root-level response containing a row, or from the loaded root-level rows when this option changes.
      * @default false
      * @agModule `AutoGenerateColumnsModule`
      */

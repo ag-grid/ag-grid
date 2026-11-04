@@ -157,21 +157,61 @@ describe('Auto-Generate Column Defs with the Server-Side Row Model', () => {
     });
 
     describe('runtime changes to autoGenerateColumnDefs', () => {
-        test('enabling it after initialisation does nothing', async () => {
-            const { datasource } = createDatasource();
+        test('enabling it generates from the loaded root rows without a refetch', async () => {
+            const { datasource, requests } = createDatasource();
             const api = await createGrid({ columnDefs: [{ field: 'name' }] }, datasource);
 
             api.setGridOption('autoGenerateColumnDefs', true);
-            api.refreshServerSide({ purge: true });
+
+            await new GridColumns(api, 'generated from loaded rows').checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                └── age "Age" width:200
+            `);
+            await waitForNoLoadingRows(api);
+            expect(requests).toHaveLength(1);
+        });
+
+        test('enabling it with no columns starts the grid and generates from the first response', async () => {
+            const { datasource, requests } = createDatasource();
+            const api = gridsManager.createGrid('myGrid', {
+                rowModelType: 'serverSide',
+                getRowId: ({ data }) => data.id,
+                serverSideDatasource: datasource,
+            });
+            expect(requests).toHaveLength(0);
+
+            api.setGridOption('autoGenerateColumnDefs', true);
+            await vi.waitFor(() => expect(requests).toHaveLength(1));
             await waitForNoLoadingRows(api);
 
-            await new GridColumns(api, 'still the supplied columns').checkColumns(`
+            await new GridColumns(api, 'generated from first response').checkColumns(`
                 CENTER
-                └── name "Name" width:200
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                └── age "Age" width:200
             `);
         });
 
-        test('disabling it after initialisation does not stop generation', async () => {
+        test('changing the options object regenerates from the loaded root rows', async () => {
+            const { datasource, requests } = createDatasource((params) =>
+                params.success({ rowData: [{ id: 'a', address: { city: 'Paris' } }], rowCount: 1 })
+            );
+            const api = await createGrid({ autoGenerateColumnDefs: true }, datasource);
+
+            api.setGridOption('autoGenerateColumnDefs', { objectValues: 'flatten' });
+
+            await new GridColumns(api, 'flattened').checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                └── address.city "City" width:200
+            `);
+            await waitForNoLoadingRows(api);
+            expect(requests).toHaveLength(1);
+        });
+
+        test('disabling it keeps the generated columns and stops later generation', async () => {
             let respond: (() => void) | undefined;
             const { datasource } = createDatasource((params) => {
                 respond = () => params.success({ rowData: rows, rowCount: 2 });
@@ -188,24 +228,20 @@ describe('Auto-Generate Column Defs with the Server-Side Row Model', () => {
             respond!();
             await waitForNoLoadingRows(api);
 
-            await new GridColumns(api, 'generated from the initial value').checkColumns(`
-                CENTER
-                ├── id "Id" width:200
-                ├── name "Name" width:200
-                └── age "Age" width:200
-            `);
+            await new GridColumns(api, 'nothing generated').checkColumns('empty');
         });
 
-        test('does not clear columnDefs when changed at runtime', async () => {
+        test('disabling it after generation keeps the columns', async () => {
             const { datasource } = createDatasource();
-            const api = await createGrid({ columnDefs: [{ field: 'name' }] }, datasource);
+            const api = await createGrid({ autoGenerateColumnDefs: true }, datasource);
 
-            api.setGridOption('autoGenerateColumnDefs', true);
             api.setGridOption('autoGenerateColumnDefs', false);
 
             await new GridColumns(api, 'columns kept').checkColumns(`
                 CENTER
-                └── name "Name" width:200
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                └── age "Age" width:200
             `);
         });
     });
