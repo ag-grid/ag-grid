@@ -37,8 +37,8 @@
     --checkbox-tick-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17L4 12'/%3E%3C/svg%3E");
 }
 
-/* Each site marks a dark example page with its own attribute: AG Charts sets `data-dark-mode`
-   from its init script, AG Grid sets `data-color-scheme` from the example runner. */
+/* Both sites set `data-dark-mode`; AG Grid also sets `data-color-scheme` on examples that follow
+   the site theme */
 :root[data-dark-mode='true'],
 :root[data-color-scheme='dark'] {
     --main-fg: #fff;

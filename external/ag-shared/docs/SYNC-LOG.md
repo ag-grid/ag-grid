@@ -276,14 +276,14 @@ The hollowing relies on yarn v1 internals (an entry counts as cached when `.yarn
 ### Changes
 
 - **[ag-website-shared: src/components/example-runner/styles/example-page-reset.css]** New file, holding the page-level reset `example-controls.css` used to carry: the global `box-sizing: border-box` and `:root, body { height: 100%; width: 100%; margin: 0; overflow: hidden }`.
-- **[ag-website-shared: src/components/example-runner/styles/example-controls.css]** Those reset rules are gone from this file. `box-sizing: border-box` is re-applied scoped to `.example-controls` and its descendants — the controls size themselves with fixed heights and padding, so that is all they need — which lets a site that already resets its example pages link the controls stylesheet on its own. The dark palette now also triggers on `:root[data-color-scheme='dark']` alongside `:root[data-dark-mode='true']`: AG Charts sets the latter from its init script, AG Grid's example runner sets the former.
-- **[ag-website-shared: src/components/codeSandbox/utils/codeSandbox.ts]** Every `.css` file now maps to `public/`, not only `ag-example-styles.css`. The stylesheets are linked from `public/index.html`, so a sheet left at the sandbox root 404s. `EXAMPLE_STYLE_FILE_NAME` is no longer imported here.
+- **[ag-website-shared: src/components/example-runner/styles/example-controls.css]** Those reset rules are gone from this file. `box-sizing: border-box` is re-applied scoped to `.example-controls` and its descendants — the controls size themselves with fixed heights and padding, so that is all they need — which lets a site that already resets its example pages link the controls stylesheet on its own. The dark palette now also triggers on `:root[data-color-scheme='dark']` alongside `:root[data-dark-mode='true']`. AG Charts sets `data-dark-mode` from its init script. AG Grid's example runner sets `data-dark-mode` from the site theme, even for examples that suppress dark mode, and sets `data-color-scheme` only for examples that follow the site theme.
+- **[ag-website-shared: src/components/codeSandbox/utils/codeSandbox.test.ts]** New cases pin the existing stylesheet mapping: on the React sandbox runtime `ag-example-styles.css` goes to `public/`, because `public/index.html` links it, and the example's own stylesheets go to `src/`, because the entry file imports them. On the static runtime every stylesheet stays beside `index.html`. `codeSandbox.ts` itself is unchanged.
 
 ### Migration Actions
 
 - [ ] **AG Charts: link `example-page-reset.css` alongside `example-controls.css`** wherever the controls stylesheet is linked today. Without it those example pages silently lose the global `box-sizing` and the `:root, body` sizing, because those rules no longer travel with the controls sheet. Tracked as a follow-up ticket on the charts side.
 - [ ] **AG Studio: decide whether to link `example-page-reset.css`.** Studio resets its example pages itself, so it is only needed if a studio example relies on the global `box-sizing` -- see the AG Studio note under 2026-10-02.
-- [ ] Sync `codeSandbox.ts` together with its test — the test asserts the new `public/` mapping.
+- [ ] Sync `codeSandbox.test.ts`. No change to `codeSandbox.ts` is needed.
 
 ### Notes
 
