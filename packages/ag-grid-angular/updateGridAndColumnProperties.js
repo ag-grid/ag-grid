@@ -90,7 +90,8 @@ function generateAngularInputOutputs({ typeLookup, eventTypeLookup, docLookup })
             // Lets strict template type checking accept the plain HTML attribute forms coerced by getValueOrCoercedValue.
             // Static members cannot reference the class type parameters, so TData is widened to any.
             const acceptedType = inputType.replace(/\bTData\b/g, 'any');
-            acceptedAttributeTypes += `    static ngAcceptInputType_${property}: ${acceptedType} | '' | 'true' | 'false';${EOL}`;
+            const attributeTypes = acceptedType.split(' | ').includes('string') ? '' : ` | '' | 'true' | 'false'`;
+            acceptedAttributeTypes += `    static readonly ngAcceptInputType_${property}: ${acceptedType}${attributeTypes};${EOL}`;
         }
     }
 

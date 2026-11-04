@@ -2272,21 +2272,23 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      */
     @Input() public isRowValidDropPosition: IsRowValidDropPositionCallback<TData> | undefined = undefined;
 
-    static ngAcceptInputType_autoGenerateColumnDefs:
+    static readonly ngAcceptInputType_autoGenerateColumnDefs:
         boolean | AutoGenerateColumnDefsOptions | undefined | '' | 'true' | 'false';
-    static ngAcceptInputType_cellSelection: boolean | CellSelectionOptions<any> | undefined | '' | 'true' | 'false';
-    static ngAcceptInputType_sideBar:
-        SideBarDef | string | string[] | boolean | null | undefined | '' | 'true' | 'false';
-    static ngAcceptInputType_rowNumbers: boolean | RowNumbersOptions | undefined | '' | 'true' | 'false';
-    static ngAcceptInputType_loadingRows: boolean | LoadingRowsOptions | undefined | '' | 'true' | 'false';
-    static ngAcceptInputType_suppressGroupChangesColumnVisibility:
+    static readonly ngAcceptInputType_cellSelection:
+        boolean | CellSelectionOptions<any> | undefined | '' | 'true' | 'false';
+    static readonly ngAcceptInputType_sideBar: SideBarDef | string | string[] | boolean | null | undefined;
+    static readonly ngAcceptInputType_rowNumbers: boolean | RowNumbersOptions | undefined | '' | 'true' | 'false';
+    static readonly ngAcceptInputType_loadingRows: boolean | LoadingRowsOptions | undefined | '' | 'true' | 'false';
+    static readonly ngAcceptInputType_suppressGroupChangesColumnVisibility:
         boolean | 'suppressHideOnGroup' | 'suppressShowOnUngroup' | undefined | '' | 'true' | 'false';
-    static ngAcceptInputType_groupAggFiltering: boolean | IsRowFilterable<any> | undefined | '' | 'true' | 'false';
-    static ngAcceptInputType_suppressStickyTotalRow: boolean | 'grand' | 'group' | undefined | '' | 'true' | 'false';
-    static ngAcceptInputType_groupHideParentOfSingleChild:
+    static readonly ngAcceptInputType_groupAggFiltering:
+        boolean | IsRowFilterable<any> | undefined | '' | 'true' | 'false';
+    static readonly ngAcceptInputType_suppressStickyTotalRow:
+        boolean | 'grand' | 'group' | undefined | '' | 'true' | 'false';
+    static readonly ngAcceptInputType_groupHideParentOfSingleChild:
         boolean | 'leafGroupsOnly' | undefined | '' | 'true' | 'false';
-    static ngAcceptInputType_enableRowPinning: boolean | 'top' | 'bottom' | undefined | '' | 'true' | 'false';
-    static ngAcceptInputType_accentedSort: boolean | AccentedSortOptions | undefined | '' | 'true' | 'false';
+    static readonly ngAcceptInputType_enableRowPinning: boolean | 'top' | 'bottom' | undefined | '' | 'true' | 'false';
+    static readonly ngAcceptInputType_accentedSort: boolean | AccentedSortOptions | undefined | '' | 'true' | 'false';
 
     /** The tool panel visibility has changed. Fires twice if switching between panels - once with the old panel and once with the new panel.
      */
