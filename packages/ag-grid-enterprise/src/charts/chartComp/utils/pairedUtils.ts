@@ -4,10 +4,7 @@ import type { ChartType } from 'ag-grid-community';
 
 type XYSeriesType = 'scatter' | 'bubble';
 
-/**
- * Reads the legacy `scatter.paired` / `bubble.paired` theme override, which is not an AG Charts option, and returns a copy
- * of the overrides without it. The supplied overrides are never mutated.
- */
+/** The supplied overrides may be the caller's own object, so they are copied rather than mutated. */
 export function extractPaired(
     overrides: AgChartThemeOverrides | undefined,
     chartType: ChartType | undefined
