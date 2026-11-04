@@ -25,7 +25,8 @@ test.agExample(import.meta, () => {
 
             // sorting requests rows again but does not regenerate the columns
             await agIdFor.headerCell('age').click();
-            await expect(agIdFor.cell('0', 'age')).toHaveText('15');
+            // the refetched rows get new row ids, so locate the first row by its index
+            await expect(page.locator('.ag-row[row-index="0"] [col-id="age"]').first()).toHaveText('15');
             await expect(page.locator('.ag-header-cell')).toHaveCount(10);
         }
     );
