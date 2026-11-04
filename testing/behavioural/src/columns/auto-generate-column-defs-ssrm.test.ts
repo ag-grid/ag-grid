@@ -98,11 +98,112 @@ describe('Auto-Generate Column Defs with the Server-Side Row Model', () => {
             await new GridColumns(api, 'not enabled').checkColumns('empty');
         });
 
-        test('does not replace columnDefs supplied by the application', async () => {
+        test('replaces columnDefs supplied by the application, as with the Client-Side Row Model', async () => {
             const { datasource } = createDatasource();
             const api = await createGrid({ autoGenerateColumnDefs: true, columnDefs: [{ field: 'name' }] }, datasource);
 
-            await new GridColumns(api, 'explicit').checkColumns(`
+            await new GridColumns(api, 'explicit columns replaced').checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                └── age "Age" width:200
+            `);
+        });
+
+        test('generates from rows supplied to the root with applyServerSideRowData', async () => {
+            // a datasource that never answers, so the only rows are the ones the application applies
+            const { datasource } = createDatasource(() => {});
+            const api = gridsManager.createGrid('myGrid', {
+                rowModelType: 'serverSide',
+                getRowId: ({ data }) => data.id,
+                serverSideDatasource: datasource,
+                autoGenerateColumnDefs: true,
+            });
+
+            api.applyServerSideRowData({ successParams: { rowData: rows, rowCount: 2 } });
+
+            await new GridColumns(api, 'generated from applied rows').checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                └── age "Age" width:200
+            `);
+            await new GridRows(api, 'applied rows').check(`
+                ROOT id:<no-id>
+                ├── LEAF id:a id:"a" name:"Alice" age:30
+                └── LEAF id:b id:"b" name:"Bob" age:25
+            `);
+        });
+
+        test('generates alongside pivot result columns supplied by the server', async () => {
+            const { datasource } = createDatasource((params) =>
+                params.success({ rowData: rows, rowCount: 2, pivotResultFields: ['2020_age', '2021_age'] })
+            );
+            const api = await createGrid({ autoGenerateColumnDefs: true, pivotMode: true }, datasource);
+
+            expect(
+                api
+                    .getColumns()
+                    ?.map((col) => col.getColId())
+                    .sort()
+            ).toEqual(['age', 'id', 'name']);
+            expect(
+                api
+                    .getPivotResultColumns()
+                    ?.map((col) => col.getColId())
+                    .sort()
+            ).toEqual(['2020_age', '2021_age']);
+        });
+    });
+
+    describe('runtime changes to autoGenerateColumnDefs', () => {
+        test('enabling it after initialisation does nothing', async () => {
+            const { datasource } = createDatasource();
+            const api = await createGrid({ columnDefs: [{ field: 'name' }] }, datasource);
+
+            api.setGridOption('autoGenerateColumnDefs', true);
+            api.refreshServerSide({ purge: true });
+            await waitForNoLoadingRows(api);
+
+            await new GridColumns(api, 'still the supplied columns').checkColumns(`
+                CENTER
+                └── name "Name" width:200
+            `);
+        });
+
+        test('disabling it after initialisation does not stop generation', async () => {
+            let respond: (() => void) | undefined;
+            const { datasource } = createDatasource((params) => {
+                respond = () => params.success({ rowData: rows, rowCount: 2 });
+            });
+            const api = gridsManager.createGrid('myGrid', {
+                rowModelType: 'serverSide',
+                getRowId: ({ data }) => data.id,
+                serverSideDatasource: datasource,
+                autoGenerateColumnDefs: true,
+            });
+            await vi.waitFor(() => expect(respond).toBeDefined());
+
+            api.setGridOption('autoGenerateColumnDefs', false);
+            respond!();
+            await waitForNoLoadingRows(api);
+
+            await new GridColumns(api, 'generated from the initial value').checkColumns(`
+                CENTER
+                ├── id "Id" width:200
+                ├── name "Name" width:200
+                └── age "Age" width:200
+            `);
+        });
+
+        test('does not clear columnDefs when changed at runtime', async () => {
+            const { datasource } = createDatasource();
+            const api = await createGrid({ columnDefs: [{ field: 'name' }] }, datasource);
+
+            api.setGridOption('autoGenerateColumnDefs', true);
+            api.setGridOption('autoGenerateColumnDefs', false);
+
+            await new GridColumns(api, 'columns kept').checkColumns(`
                 CENTER
                 └── name "Name" width:200
             `);
@@ -194,6 +295,26 @@ describe('Auto-Generate Column Defs with the Server-Side Row Model', () => {
                 CENTER
                 └── name "Name" width:200
             `);
+        });
+
+        test('setting only aggFunc does not refetch', async () => {
+            const { datasource, requests } = createDatasource();
+            const api = await createGrid(
+                {
+                    autoGenerateColumnDefs: true,
+                    processAutoGeneratedColumnDefs: ({ columnDefs }) => {
+                        for (const colDef of columnDefs) {
+                            if ('field' in colDef && colDef.field === 'age') {
+                                colDef.aggFunc = 'sum';
+                            }
+                        }
+                    },
+                },
+                datasource
+            );
+
+            expect(requests).toHaveLength(1);
+            expect(api.getColumn('age')?.getAggFunc()).toBe('sum');
         });
 
         test('adding rowGroup makes exactly one extra request carrying the grouping', async () => {

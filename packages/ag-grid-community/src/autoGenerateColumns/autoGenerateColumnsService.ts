@@ -11,9 +11,18 @@ import { _isProtoField } from '../utils/value';
 export class AutoGenerateColumnsService extends BeanStub implements NamedBean {
     beanName = 'autoGenColsSvc' as const;
 
+    /** Under the Server-Side Row Model, `autoGenerateColumnDefs` is read once, at grid initialisation. */
+    private serverSideOption: boolean | AutoGenerateColumnDefsOptions | undefined;
+    private serverSideGenerated = false;
+
     public postConstruct(): void {
-        // Under the Server-Side Row Model, columns are generated from the first root-level block response instead
-        if (!_isClientSideRowModel(this.gos)) {
+        const gos = this.gos;
+        // Under the Server-Side Row Model, columns are generated from the first root-level response instead
+        if (_isServerSideRowModel(gos)) {
+            this.serverSideOption = gos.get('autoGenerateColumnDefs');
+            return;
+        }
+        if (!_isClientSideRowModel(gos)) {
             return;
         }
         this.generateColumns(true);
@@ -26,32 +35,33 @@ export class AutoGenerateColumnsService extends BeanStub implements NamedBean {
      * so that it requests the rows the columns are generated from.
      */
     public getInitialColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
-        const gos = this.gos;
-        return gos.get('autoGenerateColumnDefs') && _isServerSideRowModel(gos) ? [] : undefined;
+        return this.serverSideOption ? [] : undefined;
     }
 
     /**
-     * Called by the Server-Side Row Model with the rows of each root-level block response. Columns are generated
-     * once, while the grid has no columns, so refetches after sort, filter or refresh keep the user's column state.
+     * Called by the Server-Side Row Model with the rows of each root-level response. Columns are generated once, so
+     * refetches after sort, filter or refresh keep the user's column state.
      */
     public onServerSideRootRowsLoaded(rowData: any[]): void {
-        const gos = this.gos;
-        if (!gos.get('autoGenerateColumnDefs') || gos.get('columnDefs')?.length) {
+        const optionValue = this.serverSideOption;
+        if (!optionValue || this.serverSideGenerated) {
             return;
         }
-        const columnDefs = this.createColumnDefs(rowData);
+        const columnDefs = this.createColumnDefs(rowData, optionValue);
         if (columnDefs) {
-            gos.updateGridOptions({ options: { columnDefs }, source: 'optionsUpdated' });
+            this.serverSideGenerated = true;
+            this.gos.updateGridOptions({ options: { columnDefs }, source: 'optionsUpdated' });
         }
     }
 
     private generateColumns(isInitial: boolean): void {
         const gos = this.gos;
-        if (!gos.get('autoGenerateColumnDefs')) {
+        const optionValue = gos.get('autoGenerateColumnDefs');
+        if (!optionValue) {
             return;
         }
 
-        const columnDefs = this.createColumnDefs(gos.get('rowData') ?? []);
+        const columnDefs = this.createColumnDefs(gos.get('rowData') ?? [], optionValue);
         if (!columnDefs && isInitial) {
             return;
         }
@@ -59,9 +69,11 @@ export class AutoGenerateColumnsService extends BeanStub implements NamedBean {
     }
 
     /** Builds column definitions from the first plain-object row, or returns `undefined` when there is none. */
-    private createColumnDefs(rowData: any[]): (ColDef | ColGroupDef)[] | undefined {
+    private createColumnDefs(
+        rowData: any[],
+        optionValue: true | AutoGenerateColumnDefsOptions
+    ): (ColDef | ColGroupDef)[] | undefined {
         const gos = this.gos;
-        const optionValue = gos.get('autoGenerateColumnDefs');
         const config: AutoGenerateColumnDefsOptions = typeof optionValue === 'object' ? optionValue : {};
         let firstRow: Record<string, unknown> | undefined;
         for (let i = 0, len = rowData.length; i < len; ++i) {
