@@ -36,6 +36,7 @@ export class SelectCellEditor<TValue = any> extends AgAbstractCellEditor<SelectC
 
     protected readonly eEditor: GridSelect<TValue> = RefPlaceholder;
     private startedByEnter: boolean = false;
+    private startCharacter: string | null = null;
     /** Read off the widget, which falls back to `values[0]` when the stored value is not an option,
      * so an untouched commit would write that option over it. */
     private seededValue: TValue | null | undefined | this = this;
@@ -59,6 +60,7 @@ export class SelectCellEditor<TValue = any> extends AgAbstractCellEditor<SelectC
         }
 
         this.startedByEnter = eventKey != null ? eventKey === KeyCode.ENTER : false;
+        this.startCharacter = eventKey?.length === 1 ? eventKey : null;
 
         let hasValue = false;
         values.forEach((currentValue: any) => {
@@ -109,9 +111,15 @@ export class SelectCellEditor<TValue = any> extends AgAbstractCellEditor<SelectC
             this.eEditor.getFocusableElement().focus();
         }
 
-        if (this.startedByEnter) {
+        const { startedByEnter, startCharacter } = this;
+        if (startedByEnter || startCharacter != null) {
             setTimeout(() => {
-                if (this.isAlive()) {
+                if (!this.isAlive()) {
+                    return;
+                }
+                if (startCharacter != null) {
+                    this.eEditor.typeCharacter(startCharacter);
+                } else {
                     this.eEditor.showPicker();
                 }
             });
