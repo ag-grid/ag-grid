@@ -1177,6 +1177,38 @@ describe('Column Autosize', () => {
         });
     });
 
+    /** AG-18502: the scale-up pass spreads the free space in proportion to each column's width. */
+    describe('scaleUpToFitGridWidth width ratios', () => {
+        /** Content sizing falls back to `minWidth` in happy-dom, so `minWidth` stands in for the content width. */
+        const autoSizeAndScaleUp = async (columnDefs: ColDef[]): Promise<number[]> => {
+            const api = gridsManager.createGrid('myGrid', { columnDefs, rowData: [{}] });
+            // the scale-up measures the body's computed width, which happy-dom takes from the inline style
+            api.getGridElement()!.querySelector<HTMLElement>('.ag-root')!.style.width = '600px';
+            api.autoSizeAllColumns({ scaleUpToFitGridWidth: true });
+            const widths = () => api.getAllDisplayedColumns().map((col) => col.getActualWidth());
+            await waitFor(() => expect(widths().reduce((total, width) => total + width, 0)).toBe(600));
+            return widths();
+        };
+
+        test('without colDef widths, keeps the ratio of the auto-sized widths', async () => {
+            expect(
+                await autoSizeAndScaleUp([
+                    { colId: 'a', minWidth: 100 },
+                    { colId: 'b', minWidth: 50 },
+                ])
+            ).toEqual([400, 200]);
+        });
+
+        test('with colDef widths, keeps the ratio of the colDef widths', async () => {
+            expect(
+                await autoSizeAndScaleUp([
+                    { colId: 'a', width: 200, minWidth: 60 },
+                    { colId: 'b', width: 100, minWidth: 60 },
+                ])
+            ).toEqual([400, 200]);
+        });
+    });
+
     describe('autoSizeStrategy grid option', () => {
         test('fitProvidedWidth sizes to the explicit width on first render', async () => {
             const api = gridsManager.createGrid('myGrid', {
