@@ -119,7 +119,7 @@
     "test": {
       "executor": "nx:noop",
       "dependsOn": ["test:vitest", "test:validate-example-specs", "test:validate-example-dev-validations"],
-      "inputs": ["default", "buildOutputExcludes", "^production", "generators"],
+      "inputs": ["default", "buildOutputExcludes", "^production", "generators", "exampleSpecs"],
       "outputs": [],
       "options": {
         "cwd": "{projectRoot}"
@@ -349,6 +349,7 @@
       "{workspaceRoot}/plugins/ag-grid-generate-example-files/src/**/*",
       "{workspaceRoot}/plugins/ag-grid-generate-code-reference-files/src/**/*",
       "{workspaceRoot}/plugins/ag-grid-task-autogen/src/**/*"
-    ]
+    ],
+    "exampleSpecs": ["{workspaceRoot}/documentation/ag-grid-docs/src/content/docs/**/_examples/*/*.spec.*"]
   }
 }
