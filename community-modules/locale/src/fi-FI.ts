@@ -781,6 +781,9 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaChartMenuClose: 'Sulje kaavion muokkausvalikko',
     ariaChartSelected: 'Valittu',
     ariaChartSeriesChartType: '${variable} – kaavion tyyppi',
+    ariaChartPalettePrevious: 'Edellinen paletti',
+    ariaChartPaletteNext: 'Seuraava paletti',
+    ariaChartPalettePage: 'Paletti ${variable}/${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType}, joka näyttää ${count} arvoa välillä ${min} ja ${max}. Alkaa arvosta ${start} ja päättyy arvoon ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType}, 1 arvo, ${value}.',

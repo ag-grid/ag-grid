@@ -784,6 +784,9 @@ export const AG_GRID_LOCALE_IT_IT = {
     ariaChartMenuClose: 'Chiudi Menu Modifica Grafico',
     ariaChartSelected: 'Selezionato',
     ariaChartSeriesChartType: 'Tipo di grafico per ${variable}',
+    ariaChartPalettePrevious: 'Tavolozza precedente',
+    ariaChartPaletteNext: 'Tavolozza successiva',
+    ariaChartPalettePage: 'Tavolozza ${variable} di ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} che mostra ${count} valori tra ${min} e ${max}. Inizia da ${start} e termina a ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} che mostra 1 valore: ${value}.',

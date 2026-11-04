@@ -796,6 +796,9 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaChartMenuClose: 'Uždaryti diagramos redagavimo meniu',
     ariaChartSelected: 'Pasirinkta',
     ariaChartSeriesChartType: '${variable} diagramos tipas',
+    ariaChartPalettePrevious: 'Ankstesnė paletė',
+    ariaChartPaletteNext: 'Kita paletė',
+    ariaChartPalettePage: 'Paletė ${variable} iš ${variable}',
     ariaSparklineChartDescription:
         'Mini diagrama - ${chartType} rodanti ${count} reikšmes tarp ${min} ir ${max}. Pradedama ${start} ir baigiama ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Mini diagrama - ${chartType} rodanti 1 reikšmę, ${value}.',

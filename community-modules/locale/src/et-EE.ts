@@ -792,6 +792,9 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaChartMenuClose: 'Sulge diagrammi muutmismenüü',
     ariaChartSelected: 'Valitud',
     ariaChartSeriesChartType: '${variable} diagrammi tüüp',
+    ariaChartPalettePrevious: 'Eelmine palett',
+    ariaChartPaletteNext: 'Järgmine palett',
+    ariaChartPalettePage: 'Palett ${variable}/${variable}',
     ariaSparklineChartDescription:
         'Väikediagramm - ${chartType} näitab ${count} väärtust vahemikus ${min} kuni ${max}. Algab ${start} ja lõpeb ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Väikediagramm - ${chartType} näitab 1 väärtust, ${value}.',

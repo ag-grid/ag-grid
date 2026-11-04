@@ -786,6 +786,9 @@ export const AG_GRID_LOCALE_FR_FR = {
     ariaChartMenuClose: "Fermer le menu d'édition de graphique",
     ariaChartSelected: 'Sélectionné',
     ariaChartSeriesChartType: 'Type de graphique pour ${variable}',
+    ariaChartPalettePrevious: 'Palette précédente',
+    ariaChartPaletteNext: 'Palette suivante',
+    ariaChartPalettePage: 'Palette ${variable} sur ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} affichant ${count} valeurs entre ${min} et ${max}. Commence à ${start} et se termine à ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} affichant 1 valeur : ${value}.',

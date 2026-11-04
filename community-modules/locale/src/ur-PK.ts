@@ -776,6 +776,9 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaChartMenuClose: 'چارٹ ایڈیٹ مینو بند کریں',
     ariaChartSelected: 'منتخب شدہ',
     ariaChartSeriesChartType: '${variable} چارٹ قسم',
+    ariaChartPalettePrevious: 'پچھلا پیلیٹ',
+    ariaChartPaletteNext: 'اگلا پیلیٹ',
+    ariaChartPalettePage: 'پیلیٹ ${variable} از ${variable}',
     ariaSparklineChartDescription:
         'اسپارک لائن - ${chartType}، ${count} اقدار دکھاتا ہے، ${min} اور ${max} کے درمیان۔ ${start} سے شروع ہوتا ہے اور ${end} پر ختم ہوتا ہے۔',
     ariaSparklineChartDescriptionSingleValue: 'اسپارک لائن - ${chartType}، 1 قدر دکھاتا ہے: ${value}۔',

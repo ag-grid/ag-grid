@@ -794,6 +794,9 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaChartMenuClose: 'Aizvērt diagrammas rediģēšanas izvēlni',
     ariaChartSelected: 'Atlasīts',
     ariaChartSeriesChartType: '${variable} diagrammas tips',
+    ariaChartPalettePrevious: 'Iepriekšējā palete',
+    ariaChartPaletteNext: 'Nākamā palete',
+    ariaChartPalettePage: 'Palete ${variable} no ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType}, kas rāda ${count} vērtības starp ${min} un ${max}. Sākas ar ${start} un beidzas ar ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType}, kas rāda 1 vērtību, ${value}.',

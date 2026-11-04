@@ -777,6 +777,9 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaChartMenuClose: 'Lukk diagramredigeringsmeny',
     ariaChartSelected: 'Valgt',
     ariaChartSeriesChartType: 'Diagramtype for ${variable}',
+    ariaChartPalettePrevious: 'Forrige palett',
+    ariaChartPaletteNext: 'Neste palett',
+    ariaChartPalettePage: 'Palett ${variable} av ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} som viser ${count} verdier mellom ${min} og ${max}. Starter på ${start} og slutter på ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} viser 1 verdi, ${value}.',

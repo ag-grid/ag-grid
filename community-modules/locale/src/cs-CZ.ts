@@ -777,6 +777,9 @@ export const AG_GRID_LOCALE_CS_CZ = {
     ariaChartMenuClose: 'Zavřít nabídku úpravy grafu',
     ariaChartSelected: 'Vybráno',
     ariaChartSeriesChartType: 'Typ grafu pro ${variable}',
+    ariaChartPalettePrevious: 'Předchozí paleta',
+    ariaChartPaletteNext: 'Další paleta',
+    ariaChartPalettePage: 'Paleta ${variable} z ${variable}',
     ariaSparklineChartDescription:
         'Mini graf - ${chartType} zobrazuje ${count} hodnot mezi ${min} a ${max}. Začíná na ${start} a končí na ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Mini graf - ${chartType} zobrazuje 1 hodnotu: ${value}.',

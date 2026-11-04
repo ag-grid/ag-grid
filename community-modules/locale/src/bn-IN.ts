@@ -792,6 +792,9 @@ export const AG_GRID_LOCALE_BN_IN = {
     ariaChartMenuClose: 'চার্ট এডিট মেনু বন্ধ করুন',
     ariaChartSelected: 'নির্বাচিত',
     ariaChartSeriesChartType: '${variable} চার্ট ধরণ',
+    ariaChartPalettePrevious: 'পূর্ববর্তী প্যালেট',
+    ariaChartPaletteNext: 'পরবর্তী প্যালেট',
+    ariaChartPalettePage: 'প্যালেট ${variable} এর মধ্যে ${variable}',
     ariaSparklineChartDescription:
         'স্পার্কলাইন - ${chartType} যাতে ${min} এবং ${max} এর মধ্যে ${count}টি মান দেখানো হচ্ছে। শুরু হয় ${start} থেকে এবং শেষ হয় ${end} এ।',
     ariaSparklineChartDescriptionSingleValue: 'স্পার্কলাইন - ${chartType} যাতে ১টি মান, ${value} দেখানো হচ্ছে।',

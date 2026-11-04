@@ -781,6 +781,9 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaChartMenuClose: 'Închide meniul de editare a graficului',
     ariaChartSelected: 'Selectat',
     ariaChartSeriesChartType: 'Tip grafic pentru ${variable}',
+    ariaChartPalettePrevious: 'Paleta anterioară',
+    ariaChartPaletteNext: 'Paleta următoare',
+    ariaChartPalettePage: 'Paleta ${variable} din ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} afișează ${count} valori între ${min} și ${max}. Începe la ${start} și se termină la ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} afișează 1 valoare: ${value}.',

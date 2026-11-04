@@ -782,6 +782,9 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaChartMenuClose: 'Κλείσιμο Μενού Επεξεργασίας Γραφήματος',
     ariaChartSelected: 'Επιλεγμένο',
     ariaChartSeriesChartType: 'Τύπος γραφήματος για ${variable}',
+    ariaChartPalettePrevious: 'Προηγούμενη παλέτα',
+    ariaChartPaletteNext: 'Επόμενη παλέτα',
+    ariaChartPalettePage: 'Παλέτα ${variable} από ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} που εμφανίζει ${count} τιμές μεταξύ ${min} και ${max}. Ξεκινά από ${start} και τελειώνει στο ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} εμφανίζει 1 τιμή, ${value}.',

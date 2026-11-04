@@ -775,6 +775,9 @@ export const AG_GRID_LOCALE_ZH_CN = {
     ariaChartMenuClose: '关闭图表编辑菜单',
     ariaChartSelected: '已选择',
     ariaChartSeriesChartType: '${variable} 图表类型',
+    ariaChartPalettePrevious: '上一个调色板',
+    ariaChartPaletteNext: '下一个调色板',
+    ariaChartPalettePage: '调色板 ${variable} / ${variable}',
     ariaSparklineChartDescription:
         '迷你图 - ${chartType} 显示 ${count} 个值，范围在 ${min} 到 ${max} 之间。起始于 ${start}，结束于 ${end}。',
     ariaSparklineChartDescriptionSingleValue: '迷你图 - ${chartType} 显示 1 个值：${value}。',

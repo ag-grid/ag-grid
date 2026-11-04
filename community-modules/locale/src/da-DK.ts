@@ -779,6 +779,9 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaChartMenuClose: 'Luk Diagram Redigeringsmenu',
     ariaChartSelected: 'Valgt',
     ariaChartSeriesChartType: 'Diagramtype for ${variable}',
+    ariaChartPalettePrevious: 'Forrige palet',
+    ariaChartPaletteNext: 'Næste palet',
+    ariaChartPalettePage: 'Palet ${variable} af ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} viser ${count} værdier mellem ${min} og ${max}. Starter ved ${start} og slutter ved ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} viser 1 værdi, ${value}.',

@@ -795,6 +795,9 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaChartMenuClose: 'Закрыть меню редактирования диаграммы',
     ariaChartSelected: 'Выбрано',
     ariaChartSeriesChartType: 'Тип диаграммы для ${variable}',
+    ariaChartPalettePrevious: 'Предыдущая палитра',
+    ariaChartPaletteNext: 'Следующая палитра',
+    ariaChartPalettePage: 'Палитра ${variable} из ${variable}',
     ariaSparklineChartDescription:
         'Спарклайн - ${chartType}, отображающий ${count} значений между ${min} и ${max}. Начинается с ${start} и заканчивается на ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Спарклайн - ${chartType}, отображающий 1 значение, ${value}.',

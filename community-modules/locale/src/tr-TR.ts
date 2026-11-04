@@ -781,6 +781,9 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaChartMenuClose: 'Grafik Düzenleme Menüsünü Kapat',
     ariaChartSelected: 'Seçildi',
     ariaChartSeriesChartType: '${variable} Grafik Tipi',
+    ariaChartPalettePrevious: 'Önceki palet',
+    ariaChartPaletteNext: 'Sonraki palet',
+    ariaChartPalettePage: 'Palet ${variable} / ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType}, ${count} değer gösterir, ${min} ile ${max} arasında. ${start} ile başlar ve ${end} ile biter.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType}, 1 değer gösterir: ${value}.',

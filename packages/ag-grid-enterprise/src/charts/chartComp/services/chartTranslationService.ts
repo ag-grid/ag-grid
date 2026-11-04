@@ -269,6 +269,9 @@ const DEFAULT_CHART_TRANSLATIONS = {
     ariaChartMenuClose: 'Close Chart Edit Menu',
     ariaChartSelected: 'Selected',
     ariaChartSeriesChartType: '${variable} Chart Type',
+    ariaChartPalettePrevious: 'Previous palette',
+    ariaChartPaletteNext: 'Next palette',
+    ariaChartPalettePage: 'Palette ${variable} of ${variable}',
 
     // group
     group: 'Group',

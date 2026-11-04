@@ -777,6 +777,9 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaChartMenuClose: 'Đóng Menu Chỉnh sửa Biểu đồ',
     ariaChartSelected: 'Đã chọn',
     ariaChartSeriesChartType: 'Loại biểu đồ của ${variable}',
+    ariaChartPalettePrevious: 'Bảng màu trước',
+    ariaChartPaletteNext: 'Bảng màu tiếp theo',
+    ariaChartPalettePage: 'Bảng màu ${variable} trên ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} hiển thị ${count} giá trị trong khoảng từ ${min} đến ${max}. Bắt đầu tại ${start} và kết thúc tại ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} hiển thị 1 giá trị, ${value}.',

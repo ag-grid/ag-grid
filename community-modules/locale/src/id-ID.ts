@@ -795,6 +795,9 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaChartMenuClose: 'Tutup Menu Edit Grafik',
     ariaChartSelected: 'Dipilih',
     ariaChartSeriesChartType: 'Tipe Grafik ${variable}',
+    ariaChartPalettePrevious: 'Palet sebelumnya',
+    ariaChartPaletteNext: 'Palet berikutnya',
+    ariaChartPalettePage: 'Palet ${variable} dari ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} menampilkan ${count} nilai antara ${min} dan ${max}. Dimulai pada ${start} dan berakhir pada ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} menampilkan 1 nilai, ${value}.',
