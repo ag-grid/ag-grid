@@ -372,11 +372,11 @@ export class GridChartComp extends Component {
         }
     }
 
-    public update(params?: UpdateChartParams): void {
+    public update(params?: UpdateChartParams, fromGridOptions?: boolean): void {
         let legacyPaired: boolean | undefined;
         if (params?.chartThemeOverrides) {
             const extracted = extractPaired(params.chartThemeOverrides, params.chartType ?? this.chartType);
-            legacyPaired = extracted.paired;
+            legacyPaired = fromGridOptions ? undefined : extracted.paired;
             params = { ...params, chartThemeOverrides: extracted.overrides };
         }
 
@@ -388,7 +388,7 @@ export class GridChartComp extends Component {
             }
         }
 
-        if (legacyPaired !== undefined && (params as UpdateRangeChartParams | undefined)?.paired === undefined) {
+        if (legacyPaired !== undefined && (params as UpdateRangeChartParams | undefined)?.paired == null) {
             this.chartController.setPaired(legacyPaired);
         }
 
@@ -602,11 +602,14 @@ export class GridChartComp extends Component {
         // standalone requires that `undefined` / `null` values are supplied as `{}`
         const chartThemeOverrides = this.gos.get('chartThemeOverrides') ?? {};
 
-        this.update({
-            type: `${modelType}ChartUpdate`,
-            chartId,
-            chartThemeOverrides,
-        });
+        this.update(
+            {
+                type: `${modelType}ChartUpdate`,
+                chartId,
+                chartThemeOverrides,
+            },
+            true
+        );
     }
 
     private raiseChartCreatedEvent(): void {

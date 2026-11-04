@@ -19,7 +19,7 @@ export function extractPaired(
     let strippedOverrides: Record<string, any> | undefined;
     for (const seriesType of lookupOrder) {
         const seriesOverrides = legacyOverrides?.[seriesType];
-        if (seriesOverrides == null || !('paired' in seriesOverrides)) {
+        if (typeof seriesOverrides !== 'object' || seriesOverrides === null || !('paired' in seriesOverrides)) {
             continue;
         }
 
