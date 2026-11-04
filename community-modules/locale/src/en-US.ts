@@ -780,6 +780,9 @@ export const AG_GRID_LOCALE_EN_US = {
     ariaPageSizeSelectorLabel: 'Page Size',
     ariaChartMenuClose: 'Close Chart Edit Menu',
     ariaChartSelected: 'Selected',
+    ariaChartPalettePrevious: 'Previous palette',
+    ariaChartPaletteNext: 'Next palette',
+    ariaChartPalettePage: 'Palette ${variable} of ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} displaying ${count} values between ${min} and ${max}. Starts at ${start} and ends at ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} displaying 1 value, ${value}.',

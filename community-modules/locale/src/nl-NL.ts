@@ -778,6 +778,9 @@ export const AG_GRID_LOCALE_NL_NL = {
     ariaPageSizeSelectorLabel: 'Pagina Grootte',
     ariaChartMenuClose: 'Sluit Grafiek Bewerkmenu',
     ariaChartSelected: 'Geselecteerd',
+    ariaChartPalettePrevious: 'Vorig palet',
+    ariaChartPaletteNext: 'Volgend palet',
+    ariaChartPalettePage: 'Palet ${variable} van ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} met ${count} waarden tussen ${min} en ${max}. Begint bij ${start} en eindigt bij ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} met 1 waarde, ${value}.',

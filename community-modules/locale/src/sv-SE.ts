@@ -779,6 +779,9 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaPageSizeSelectorLabel: 'Sidstorlek',
     ariaChartMenuClose: 'Stäng diagramredigeringsmeny',
     ariaChartSelected: 'Vald',
+    ariaChartPalettePrevious: 'Föregående palett',
+    ariaChartPaletteNext: 'Nästa palett',
+    ariaChartPalettePage: 'Palett ${variable} av ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} som visar ${count} värden mellan ${min} och ${max}. Börjar på ${start} och slutar på ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} visar 1 värde, ${value}.',

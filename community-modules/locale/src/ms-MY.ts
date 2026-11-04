@@ -795,6 +795,9 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaPageSizeSelectorLabel: 'Saiz Halaman',
     ariaChartMenuClose: 'Tutup Menu Sunting Carta',
     ariaChartSelected: 'Dipilih',
+    ariaChartPalettePrevious: 'Palet sebelumnya',
+    ariaChartPaletteNext: 'Palet seterusnya',
+    ariaChartPalettePage: 'Palet ${variable} daripada ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} memaparkan ${count} nilai antara ${min} dan ${max}. Bermula pada ${start} dan berakhir pada ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} memaparkan 1 nilai, ${value}.',
