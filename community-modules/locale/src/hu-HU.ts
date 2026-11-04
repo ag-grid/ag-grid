@@ -783,6 +783,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaPageSizeSelectorLabel: 'Oldal méret',
     ariaChartMenuClose: 'Diagram szerkesztési menü bezárása',
     ariaChartSelected: 'Kiválasztva',
+    ariaChartSeriesChartType: '${variable} diagramtípusa',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType}, ${count} értéket jelenít meg ${min} és ${max} között. ${start} értéknél kezdődik és ${end} értéknél végződik.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType}, 1 értéket jelenít meg: ${value}.',

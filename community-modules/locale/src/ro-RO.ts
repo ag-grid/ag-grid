@@ -780,6 +780,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaPageSizeSelectorLabel: 'Dimensiunea Paginii',
     ariaChartMenuClose: 'Închide meniul de editare a graficului',
     ariaChartSelected: 'Selectat',
+    ariaChartSeriesChartType: 'Tip grafic pentru ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} afișează ${count} valori între ${min} și ${max}. Începe la ${start} și se termină la ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} afișează 1 valoare: ${value}.',

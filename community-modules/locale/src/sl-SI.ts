@@ -791,6 +791,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaPageSizeSelectorLabel: 'Velikost strani',
     ariaChartMenuClose: 'Zapri meni za urejanje grafikona',
     ariaChartSelected: 'Izbrano',
+    ariaChartSeriesChartType: 'Vrsta grafikona za ${variable}',
     ariaSparklineChartDescription:
         'Iskrivi grafikon - ${chartType} prikazuje ${count} vrednosti med ${min} in ${max}. Začne se pri ${start} in konča pri ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Iskrivi grafikon - ${chartType} prikazuje 1 vrednost, ${value}.',

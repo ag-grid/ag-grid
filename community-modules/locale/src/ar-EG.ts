@@ -774,6 +774,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaPageSizeSelectorLabel: 'حجم الصفحة',
     ariaChartMenuClose: 'إغلاق قائمة تحرير الرسم البياني',
     ariaChartSelected: 'محدد',
+    ariaChartSeriesChartType: 'نوع الرسم البياني لـ ${variable}',
     ariaSparklineChartDescription:
         'مخطط شراري - ${chartType} يعرض ${count} قيمة بين ${min} و ${max}. يبدأ عند ${start} وينتهي عند ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'مخطط شراري - ${chartType} يعرض قيمة واحدة، ${value}.',

@@ -778,6 +778,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaPageSizeSelectorLabel: 'Sidestørrelse',
     ariaChartMenuClose: 'Luk Diagram Redigeringsmenu',
     ariaChartSelected: 'Valgt',
+    ariaChartSeriesChartType: 'Diagramtype for ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} viser ${count} værdier mellem ${min} og ${max}. Starter ved ${start} og slutter ved ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} viser 1 værdi, ${value}.',

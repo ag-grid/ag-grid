@@ -791,6 +791,7 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     ariaPageSizeSelectorLabel: 'Veličina strane',
     ariaChartMenuClose: 'Zatvori meni uređivanja grafikona',
     ariaChartSelected: 'Izabrano',
+    ariaChartSeriesChartType: 'Tip grafikona za ${variable}',
     ariaSparklineChartDescription:
         'Sparklajn - ${chartType} prikazuje ${count} vrednosti između ${min} i ${max}. Počinje na ${start} i završava se na ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparklajn - ${chartType} prikazuje 1 vrednost, ${value}.',

@@ -794,6 +794,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaPageSizeSelectorLabel: 'Ukuran Halaman',
     ariaChartMenuClose: 'Tutup Menu Edit Grafik',
     ariaChartSelected: 'Dipilih',
+    ariaChartSeriesChartType: 'Tipe Grafik ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} menampilkan ${count} nilai antara ${min} dan ${max}. Dimulai pada ${start} dan berakhir pada ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} menampilkan 1 nilai, ${value}.',

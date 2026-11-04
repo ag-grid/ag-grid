@@ -778,6 +778,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     ariaPageSizeSelectorLabel: 'Veličina stranice',
     ariaChartMenuClose: 'Zatvori izbornik uređivanja grafikona',
     ariaChartSelected: 'Odabrano',
+    ariaChartSeriesChartType: 'Vrsta grafikona za ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} prikazuje ${count} vrijednosti između ${min} i ${max}. Počinje na ${start} i završava na ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} prikazuje 1 vrijednost: ${value}.',

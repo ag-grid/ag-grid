@@ -799,6 +799,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaPageSizeSelectorLabel: 'Laki ng Pahina',
     ariaChartMenuClose: 'Isara ang Menu ng Pag-edit ng Chart',
     ariaChartSelected: 'Napili',
+    ariaChartSeriesChartType: 'Uri ng Chart ng ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} na nagpapakita ng ${count} na halaga sa pagitan ng ${min} at ${max}. Nagsisimula sa ${start} at nagtatapos sa ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} na nagpapakita ng 1 halaga, ${value}.',

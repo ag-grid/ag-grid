@@ -780,6 +780,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaPageSizeSelectorLabel: 'Sayfa Boyutu',
     ariaChartMenuClose: 'Grafik Düzenleme Menüsünü Kapat',
     ariaChartSelected: 'Seçildi',
+    ariaChartSeriesChartType: '${variable} Grafik Tipi',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType}, ${count} değer gösterir, ${min} ile ${max} arasında. ${start} ile başlar ve ${end} ile biter.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType}, 1 değer gösterir: ${value}.',

@@ -780,6 +780,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaPageSizeSelectorLabel: 'Sivun koko',
     ariaChartMenuClose: 'Sulje kaavion muokkausvalikko',
     ariaChartSelected: 'Valittu',
+    ariaChartSeriesChartType: '${variable} – kaavion tyyppi',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType}, joka näyttää ${count} arvoa välillä ${min} ja ${max}. Alkaa arvosta ${start} ja päättyy arvoon ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType}, 1 arvo, ${value}.',

@@ -774,6 +774,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     ariaPageSizeSelectorLabel: '頁面大小',
     ariaChartMenuClose: '關閉圖表編輯菜單',
     ariaChartSelected: '已選擇',
+    ariaChartSeriesChartType: '${variable} 圖表類型',
     ariaSparklineChartDescription:
         '迷你圖 - ${chartType} 顯示 ${count} 個值，介乎 ${min} 至 ${max}。由 ${start} 開始，至 ${end} 結束。',
     ariaSparklineChartDescriptionSingleValue: '迷你圖 - ${chartType} 顯示 1 個數值：${value}。',

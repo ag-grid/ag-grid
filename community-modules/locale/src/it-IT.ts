@@ -783,6 +783,7 @@ export const AG_GRID_LOCALE_IT_IT = {
     ariaPageSizeSelectorLabel: 'Dimensione della Pagina',
     ariaChartMenuClose: 'Chiudi Menu Modifica Grafico',
     ariaChartSelected: 'Selezionato',
+    ariaChartSeriesChartType: 'Tipo di grafico per ${variable}',
     ariaSparklineChartDescription:
         'Sparkline - ${chartType} che mostra ${count} valori tra ${min} e ${max}. Inizia da ${start} e termina a ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Sparkline - ${chartType} che mostra 1 valore: ${value}.',

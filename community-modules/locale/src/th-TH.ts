@@ -790,6 +790,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaPageSizeSelectorLabel: 'ขนาดหน้า',
     ariaChartMenuClose: 'ปิดเมนูแก้ไขชาร์ต',
     ariaChartSelected: 'ถูกเลือก',
+    ariaChartSeriesChartType: 'ชนิดชาร์ตของ ${variable}',
     ariaSparklineChartDescription:
         'สปาร์กไลน์ - ${chartType} แสดงค่า ${count} ค่าระหว่าง ${min} และ ${max} เริ่มต้นที่ ${start} และสิ้นสุดที่ ${end}',
     ariaSparklineChartDescriptionSingleValue: 'สปาร์กไลน์ - ${chartType} แสดง 1 ค่า คือ ${value}',

@@ -780,6 +780,7 @@ export const AG_GRID_LOCALE_PL_PL = {
     ariaPageSizeSelectorLabel: 'Rozmiar Strony',
     ariaChartMenuClose: 'Zamknij Menu Edycji Wykresu',
     ariaChartSelected: 'Wybrane',
+    ariaChartSeriesChartType: 'Typ wykresu dla ${variable}',
     ariaSparklineChartDescription:
         'Wykres iskrowy - ${chartType} wyświetla ${count} wartości między ${min} a ${max}. Zaczyna się od ${start} i kończy na ${end}.',
     ariaSparklineChartDescriptionSingleValue: 'Wykres iskrowy - ${chartType} wyświetla 1 wartość: ${value}.',
