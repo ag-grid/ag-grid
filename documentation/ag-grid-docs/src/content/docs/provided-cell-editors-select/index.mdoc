@@ -2,7 +2,7 @@
 title: "Select Cell Editor"
 ---
 
-Simple editor that uses HTML `select`, allowing users to select a cell value from a list of provided values.
+Simple editor that shows a dropdown list, allowing users to select a cell value from a list of provided values.
 
 ## Enabling Select Cell Editor
 
@@ -23,6 +23,10 @@ columnDefs: [
     }
 ]
 ```
+
+## Keyboard Navigation
+
+Start editing by typing a character to open the list on the next option that starts with it. Keep typing to move to a matching option, and press {% kbd "↵ Enter" /%} to select it. See [Dropdown Lists](./keyboard-navigation/#dropdown-lists) for how typed text is matched.
 
 ## Customisation
 
@@ -74,18 +78,7 @@ columnDefs: [
 {% interfaceDocumentation interfaceName="ISelectCellEditorParams" names=["values", "valueListGap", "valueListMaxHeight", "valueListMaxWidth"] /%}
 
 {% note %}
-We have found the standard HTML Select doesn't have an API that's rich enough to play
-properly with the grid. When a cell is double clicked to start editing, it is desired that
-the Select is a) shown and b) opened ready for selection. There is no API to open a browsers
-Select. For this reason to edit there are two interactions needed 1) double click to start
-editing and 2) single click to open the Select.
+Double clicking a cell starts editing without opening the list. Click the editor or press {% kbd "↵ Enter" /%} to open it.
 
-We also observed different results while using keyboard navigation to control editing, e.g.
-while using `Enter` to start editing. Some browsers would open the Select, others would not.
-This is down to the browser implementation and given there is no API for opening the
-Select, there is nothing the grid can do.
-
-If you are unhappy with the additional click required, we advise you don't depend on the
-browsers standard Select (ie avoid `agSelectCellEditor`) and instead use [Rich Select Cell Editor](./provided-cell-editors-rich-select/) or
-create your own using a [Cell Editor Component](./cell-editors/).
+If you want to avoid the additional interaction, use the [Rich Select Cell Editor](./provided-cell-editors-rich-select/) or create your own using a [Cell Editor Component](./cell-editors/).
 {% /note %}
