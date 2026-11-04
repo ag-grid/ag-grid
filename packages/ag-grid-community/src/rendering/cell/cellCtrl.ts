@@ -160,7 +160,6 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     /** A start requested before this cell had a component, replayed by the edit service once it attaches. */
     public pendingEditStart: StartEditParams | null = null;
 
-    private focusEventWhileNotReady: CellFocusedEvent | null = null;
     // if cell has been focused, check if it's focused when destroyed
     private hasBeenFocused = false;
 
@@ -880,12 +879,24 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
             beans: { editSvc, focusSvc },
             comp,
         } = this;
-        if (!comp || editSvc?.isEditing(this) || !this.isCellFocused() || !focusSvc.shouldTakeFocus()) {
+        if (!comp || editSvc?.isEditing(this) || !this.isCellFocused()) {
             return;
         }
+        const owedEvent = focusSvc.takeOwedFocusEvent();
+        if (owedEvent) {
+            this.onCellFocused(owedEvent);
+            return;
+        }
+        const takeFocus = focusSvc.shouldTakeFocus();
 
+        // owed focus is taken only as it lands, so a cell destroyed before then leaves it to the next one drawn
         const focus = () => {
-            if (this.isAlive() && this.isCellFocused() && focusSvc.isFocusFreeForGrid()) {
+            if (
+                this.isAlive() &&
+                this.isCellFocused() &&
+                (focusSvc.takeOwedFocus() || takeFocus) &&
+                focusSvc.isFocusFreeForGrid()
+            ) {
                 comp.getFocusableElement().focus({ preventScroll: true });
             }
         };
@@ -949,10 +960,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
     private setupFocus() {
         // when cell is created, if it should be focus the grid should take focus from the focused cell
         this.restoreFocus(true);
-        // only the focused cell uses the event, so only it pays to check the event is still current
-        this.onCellFocused(
-            this.checkCellFocused() ? this.beans.focusSvc.currentDeferredFocus(this.focusEventWhileNotReady) : undefined
-        );
+        this.onCellFocused();
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
@@ -964,9 +972,8 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
         if (!this.comp) {
             // scenario: focusing event on cell outside viewport causes cells to force render
             // preserve event for when cell renders.
-            if (event) {
-                this.focusEventWhileNotReady = event;
-                beans.focusSvc.deferFocus(event);
+            if (event && this.isCellFocused()) {
+                beans.focusSvc.oweFocus(event);
             }
             return;
         }
@@ -993,10 +1000,6 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
             const preventScroll = event ? event.preventScrollOnBrowserFocus : true;
             focusEl.focus({ preventScroll });
             _placeCaretAtEnd(beans, focusEl);
-        }
-
-        if (cellFocused && this.focusEventWhileNotReady) {
-            this.focusEventWhileNotReady = null;
         }
 
         // require event to announce so we only announce
@@ -1109,7 +1112,7 @@ export class CellCtrl extends BeanStub implements CompBeanOwner {
 
         // if this was focused; (e.g cell span status changes) then we need to restore focus
         if (this.isCellFocused() && this.hasBrowserFocus()) {
-            this.beans.focusSvc.attemptToRecoverFocus();
+            this.beans.focusSvc.oweFocus();
         }
 
         destroyCompBean(this);

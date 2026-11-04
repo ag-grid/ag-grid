@@ -42,6 +42,8 @@ export interface PaletteEditorProps {
     /** Whether the host's previews draw strokes. Not part of the palette or the theme. */
     previewStrokes: boolean;
     onPreviewStrokesChange: (preview: boolean) => void;
+    /** Off for a host whose charts have no series that reads the up, down and neutral colours. */
+    showSemanticColors?: boolean;
 }
 
 /** A new slot when there is no previous colour to clone - AG Charts' first fill. */
@@ -68,6 +70,7 @@ export const PaletteEditor = ({
     strokeDirection = 'darken',
     previewStrokes,
     onPreviewStrokesChange,
+    showSemanticColors = true,
 }: PaletteEditorProps) => {
     const colors = toSeriesColors(value, strokeDirection);
     const canAdd = maxSeriesColors == null || colors.length < maxSeriesColors;
@@ -158,22 +161,24 @@ export const PaletteEditor = ({
             )}
             {/* One group rather than three fields, so the two columns are named
                 once and the three rows read as the set they are. */}
-            <FormField
-                label="Semantic Colors"
-                docs="Rising, falling and unchanged values, such as prices in candlestick, OHLC and HLC series. A palette that leaves these unset is treated as an indexed one, and those series fall back to the series colours above."
-            >
-                <Rows>
-                    <ColumnHeadings gutter={ACCENT_LABEL_WIDTH} />
-                    {PALETTE_ACCENT_KEYS.map((key) => (
-                        <AccentEditor
-                            key={key}
-                            label={ACCENT_LABELS[key]}
-                            value={resolveAccent(value[key], strokeDirection)}
-                            onChange={(accent) => onChange(withAccentColors(value, key, accent))}
-                        />
-                    ))}
-                </Rows>
-            </FormField>
+            {showSemanticColors && (
+                <FormField
+                    label="Semantic Colors"
+                    docs="Rising, falling and unchanged values, such as prices in candlestick, OHLC and HLC series. A palette that leaves these unset is treated as an indexed one, and those series fall back to the series colours above."
+                >
+                    <Rows>
+                        <ColumnHeadings gutter={ACCENT_LABEL_WIDTH} />
+                        {PALETTE_ACCENT_KEYS.map((key) => (
+                            <AccentEditor
+                                key={key}
+                                label={ACCENT_LABELS[key]}
+                                value={resolveAccent(value[key], strokeDirection)}
+                                onChange={(accent) => onChange(withAccentColors(value, key, accent))}
+                            />
+                        ))}
+                    </Rows>
+                </FormField>
+            )}
         </Fields>
     );
 };

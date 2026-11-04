@@ -2,8 +2,14 @@ import { waitFor } from '@testing-library/dom';
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 import { mockGridLayout } from 'ag-test-utils/polyfills/mockGridLayout';
 
-import type { ColDef, GridApi, GridOptions } from 'ag-grid-community';
-import { ClientSideRowModelModule, GROUP_AUTO_COLUMN_ID, KeyCode, RenderApiModule } from 'ag-grid-community';
+import type { ColDef, GridApi, GridOptions, NavigateToNextCellParams } from 'ag-grid-community';
+import {
+    ClientSideRowModelModule,
+    GROUP_AUTO_COLUMN_ID,
+    KeyCode,
+    RenderApiModule,
+    getGridElement,
+} from 'ag-grid-community';
 import { RowGroupingModule } from 'ag-grid-enterprise';
 
 import { dispatchKeyDown, getFocusedColId, getFocusedRowIndex } from './navigation-test-utils';
@@ -202,6 +208,93 @@ describe('Row Grouping Navigation', () => {
         dispatchKeyDown(KeyCode.TAB);
         expect(getFocusedRowIndex(api)).toBe(1);
         expect(getFocusedColId(api)).toBe(GROUP_AUTO_COLUMN_ID);
+    });
+
+    describe('full width group rows', () => {
+        function createGroupRowsGrid(
+            groupDefaultExpanded: number,
+            gridOptions: GridOptions<RowData> = {}
+        ): GridApi<RowData> {
+            return gridsManager.createGrid('myGrid', {
+                columnDefs,
+                rowData: [...rowData, { category: 'C', value: 'v4' }],
+                groupDisplayType: 'groupRows',
+                groupDefaultExpanded,
+                ...gridOptions,
+            } as GridOptions<RowData>);
+        }
+
+        function focusFullWidthRow(api: GridApi<RowData>, rowIndex: number): void {
+            api.setFocusedCell(rowIndex, 'value');
+            expect(document.activeElement?.getAttribute('row-index')).toBe(String(rowIndex));
+            expect(document.activeElement?.classList.contains('ag-full-width-row')).toBe(true);
+        }
+
+        // Expanded layout: 0 = group A, 1-2 = A leaves, 3 = group B, 4 = B leaf, 5 = group C, 6 = C leaf
+        test('ctrl+down from a group row moves to last displayed row', () => {
+            const api = createGroupRowsGrid(-1);
+            focusFullWidthRow(api, 0);
+            dispatchKeyDown(KeyCode.DOWN, { ctrlKey: true });
+            expect(getFocusedRowIndex(api)).toBe(6);
+        });
+
+        test('ctrl+up from a group row moves to first displayed row', () => {
+            const api = createGroupRowsGrid(-1);
+            focusFullWidthRow(api, 5);
+            dispatchKeyDown(KeyCode.UP, { ctrlKey: true });
+            expect(getFocusedRowIndex(api)).toBe(0);
+        });
+
+        test('ctrl+down and ctrl+up between collapsed group rows move to the last and first group', () => {
+            // Collapsed layout: 0 = group A, 1 = group B, 2 = group C
+            const api = createGroupRowsGrid(0);
+            focusFullWidthRow(api, 0);
+            dispatchKeyDown(KeyCode.DOWN, { ctrlKey: true });
+            expect(getFocusedRowIndex(api)).toBe(2);
+            expect(document.activeElement?.getAttribute('row-index')).toBe('2');
+
+            dispatchKeyDown(KeyCode.UP, { ctrlKey: true });
+            expect(getFocusedRowIndex(api)).toBe(0);
+            expect(document.activeElement?.getAttribute('row-index')).toBe('0');
+        });
+
+        test('ctrl+down and ctrl+up between group rows reach rows that are not rendered', () => {
+            const api = createGroupRowsGrid(0, {
+                rowData: Array.from({ length: 100 }, (_, i) => ({ category: `C${i}`, value: `v${i}` })),
+                suppressRowVirtualisation: false,
+            });
+            const gridDiv = getGridElement(api)!;
+            expect(gridDiv.querySelector('.ag-row[row-index="99"]')).toBeNull();
+            focusFullWidthRow(api, 0);
+
+            dispatchKeyDown(KeyCode.DOWN, { ctrlKey: true });
+            expect(getFocusedRowIndex(api)).toBe(99);
+            expect(document.activeElement?.getAttribute('row-index')).toBe('99');
+
+            dispatchKeyDown(KeyCode.UP, { ctrlKey: true });
+            expect(getFocusedRowIndex(api)).toBe(0);
+            expect(document.activeElement?.getAttribute('row-index')).toBe('0');
+        });
+
+        test('navigateToNextCell is given the ctrl+down target from a group row, and returning null stays', () => {
+            const navigateToNextCell = vi.fn((_params: NavigateToNextCellParams<RowData>) => null);
+            const api = createGroupRowsGrid(-1, { navigateToNextCell });
+            focusFullWidthRow(api, 0);
+
+            dispatchKeyDown(KeyCode.DOWN, { ctrlKey: true });
+
+            expect(navigateToNextCell).toHaveBeenCalledTimes(1);
+            expect(navigateToNextCell.mock.calls[0][0].nextCellPosition?.rowIndex).toBe(6);
+            expect(getFocusedRowIndex(api)).toBe(0);
+            expect(document.activeElement?.getAttribute('row-index')).toBe('0');
+        });
+
+        test('down arrow without ctrl from a group row moves to the next row', () => {
+            const api = createGroupRowsGrid(0);
+            focusFullWidthRow(api, 0);
+            dispatchKeyDown(KeyCode.DOWN);
+            expect(getFocusedRowIndex(api)).toBe(1);
+        });
     });
 
     describe('sticky group rows', () => {

@@ -95,6 +95,7 @@ export const GRID_OPTION_DEFAULTS = {
     functionsReadOnly: false,
     suppressAggFuncInHeader: false,
     alwaysAggregateAtRootLevel: false,
+    alwaysShowGrandTotalRow: false,
     aggregateOnlyChangedColumns: false,
     suppressAggFilteredOnly: false,
     removePivotHeaderRowWhenSingleValueColumn: false,
