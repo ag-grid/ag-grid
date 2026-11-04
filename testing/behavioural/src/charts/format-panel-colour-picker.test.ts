@@ -101,6 +101,8 @@ describe('chart format panel colour picker', () => {
     });
 
     describe('dialog accessibility', () => {
+        afterEach(() => vi.restoreAllMocks());
+
         async function openColourDialog() {
             const { picker } = await openFirstColourPicker();
             picker
