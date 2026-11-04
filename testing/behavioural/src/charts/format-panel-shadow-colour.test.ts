@@ -211,4 +211,36 @@ describe('chart format panel shadow colour picker', () => {
         expect(warnSpy).not.toHaveBeenCalled();
         expect(errorSpy).not.toHaveBeenCalled();
     });
+
+    test('opens on a chart with no series, with the Shadow group present and the picker blank', async () => {
+        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+        const api = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                { field: 'country', chartDataType: 'category' },
+                { field: 'gold', chartDataType: 'series' },
+            ],
+            rowData: [{ country: 'Russia', gold: 3 }],
+            cellSelection: true,
+            popupParent: document.body,
+        });
+        // Only the category column is charted, so the chart has no series and no resolved shadow.
+        const chartRef = api.createRangeChart({
+            cellRange: { columns: ['country'] },
+            chartType: 'groupedColumn',
+        })!;
+        await chartRef.chart.waitForUpdate();
+
+        api.openChartToolPanel({ chartId: chartRef.chartId, panel: 'format' });
+        await chartRef.chart.waitForUpdate();
+
+        const title = await waitFor(() => {
+            const el = Array.from(document.querySelectorAll<HTMLElement>('.ag-toggle-button-label')).find(
+                (label) => label.textContent === 'Shadow'
+            );
+            expect(el).toBeDefined();
+            return el!;
+        });
+        expect(title.closest('.ag-group')!.querySelector('.ag-color-picker-value')!.textContent).toBe('');
+        expect(errorSpy).not.toHaveBeenCalled();
+    });
 });

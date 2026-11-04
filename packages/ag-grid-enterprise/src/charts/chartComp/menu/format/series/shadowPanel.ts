@@ -71,10 +71,13 @@ export class ShadowPanel extends Component {
         const doc = _getDocument(this.beans);
 
         const params = this.chartMenuUtils.getDefaultColorPickerParams(fillExpression);
-        const fill = chartOptions.getValue<string>(fillExpression);
-        const fillColor = AgColor.fromString(fill, doc);
-        const fillOpacity = chartOptions.getValue<number | undefined>(fillOpacityExpression) ?? 1;
-        params.value = new AgColor(fillColor.r, fillColor.g, fillColor.b, fillColor.a * fillOpacity).toRgbaString();
+        const fill = chartOptions.getValue<string | undefined>(fillExpression);
+        // A chart with no series has no resolved shadow, so leave the picker blank as before
+        if (fill != null) {
+            const fillColor = AgColor.fromString(fill, doc);
+            const fillOpacity = chartOptions.getValue<number | undefined>(fillOpacityExpression) ?? 1;
+            params.value = new AgColor(fillColor.r, fillColor.g, fillColor.b, fillColor.a * fillOpacity).toRgbaString();
+        }
         params.onValueChange = (value) => {
             const color = AgColor.fromString(value, doc);
             chartOptions.setValues<string | number>([
