@@ -1,15 +1,3 @@
-.details > label {
-    margin-bottom: 10px;
-}
-
-.details > label:first-of-type {
-    margin-top: 10px;
-}
-
-.details > label:last-of-type {
-    margin-bottom: 0;
-}
-
 .option {
     display: block;
     margin: 5px 10px 5px 0;
@@ -22,10 +10,4 @@
 .grid-wrapper > div {
     width: 100%;
     height: 100%;
-}
-
-.columns {
-    display: flex;
-    flex-direction: row;
-    gap: 16px;
 }

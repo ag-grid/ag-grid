@@ -26,15 +26,7 @@ label {
     text-align: right;
 }
 
-.test-grid {
-    flex-grow: 1;
-}
-
 .example-wrapper {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 14px;
-}
-
-.example-header {
-    margin-left: 20px;
 }

@@ -7,8 +7,3 @@
 .example-field input {
     width: 140px;
 }
-
-.example-header {
-    flex: 1 1 320px;
-    color: var(--ag-secondary-foreground-color);
-}
