@@ -28,7 +28,7 @@ export const POLICY_CONTENT = {
         metaTitle: 'Privacy Policy',
         description:
             'We take your privacy very seriously at AG Grid. This page outlines our privacy policy which we have updated in light of GDPR.',
-        meta: ['Last Updated: 2 September 2026'],
+        meta: ['Last Updated: 4 November 2026'],
         intro: [
             'Welcome to the Privacy Policy of AG Grid Ltd (<strong>AG Grid</strong>).',
             '<strong>Your privacy is important to us.</strong>',
