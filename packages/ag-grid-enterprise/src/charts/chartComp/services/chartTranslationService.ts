@@ -272,6 +272,7 @@ const DEFAULT_CHART_TRANSLATIONS = {
     ariaChartPalettePrevious: 'Previous palette',
     ariaChartPaletteNext: 'Next palette',
     ariaChartPalettePage: 'Palette ${variable} of ${variable}',
+    ariaLabelAggregationFunction: 'Aggregation Function',
 
     // group
     group: 'Group',

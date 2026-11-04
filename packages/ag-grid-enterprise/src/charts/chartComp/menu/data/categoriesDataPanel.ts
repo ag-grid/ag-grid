@@ -92,7 +92,7 @@ export class CategoriesDataPanel extends DragDataPanel {
                         { value: 'avg', text: this.chartTranslation.translate('avg') },
                     ],
                     value: typeof aggFunc === 'string' ? aggFunc : undefined,
-                    ariaLabel: this.getLocaleTextFunc()('ariaLabelAggregationFunction', 'Aggregation Function'),
+                    ariaLabel: this.chartTranslation.translate('ariaLabelAggregationFunction'),
                     onValueChange: (value) => {
                         this.chartController.setAggFunc(value);
                     },
