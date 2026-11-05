@@ -69,7 +69,7 @@ jobs:
                 } = require('./scripts/ci/_utils.mjs');
                 
                 const gh_user_jira_mapping = JSON.parse(process.env.GH_USER_JIRA_MAPPING || '{}');
-                const regex = /(fix(es)?)? \[?((AG|RTI)-\d{3,})/gi;
+                const regex = /(fix(es)?)? \[?#?((AG|RTI)-\d{3,})/gi;
                 const paragraph = content => ({"type": "paragraph",
                     "content": Array.isArray(content) ? content : [content]});
                 const txt = (text) => ({text, type: 'text'});
