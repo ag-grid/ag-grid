@@ -1,0 +1,171 @@
+name: codex-security-review
+description: Run a Codex security review over selected source directories and report the findings privately to Slack - no findings appear in workflow logs
+#
+# Flow Overview:
+#
+# 1. CHECK AUTH: Skip with a warning when no Codex API key is configured
+# 2. SETUP: Install the Codex CLI and make sure its sandbox can start on the runner
+# 3. REVIEW: For each shard in the shards file, run `codex exec` read-only over the shard's paths,
+#    writing structured findings (findings.schema.json) to $RUNNER_TEMP
+# 4. REPORT: Post a summary message to Slack, with each finding as a threaded reply
+# 5. CLEANUP: Remove the findings, prompts and Codex session files from the runner
+#
+# Log hygiene: consumer repos may be public, so their workflow logs, job summaries, artifacts and
+# caches are public too. Nothing from Codex is printed or uploaded: stdout and stderr go to files
+# under $RUNNER_TEMP, and only per-shard pass/fail status and canned error classifications reach
+# the log. Slack is the only place findings are sent.
+#
+# Shards file format (JSON, path relative to the repo root):
+#
+#   {
+#     "context": "What the product is and how it is used, for the threat model",
+#     "shards": [
+#       { "name": "community", "paths": ["packages/ag-grid-community/src"], "focus": "Optional extra guidance" }
+#     ]
+#   }
+#
+inputs:
+    codex-api-key:
+        description: 'Codex API key for Codex CLI authentication'
+        required: false
+        default: ''
+    shards-file:
+        description: 'Path to the shards JSON file (see format above)'
+        required: true
+    shard:
+        description: 'Only run the shard with this name. Empty runs every shard.'
+        required: false
+        default: ''
+    prompt-file:
+        description: 'Path to the review prompt. Defaults to prompt.md next to this action.'
+        required: false
+        default: ''
+    model:
+        description: 'Codex model. Empty uses the Codex CLI default.'
+        required: false
+        default: ''
+    reasoning-effort:
+        description: 'Codex reasoning effort (low | medium | high | xhigh)'
+        required: false
+        default: 'high'
+    shard-timeout-minutes:
+        description: 'Time limit for each shard review'
+        required: false
+        default: '45'
+    review-budget-minutes:
+        description: 'Time limit for all shards together. Keep it below the job timeout so the report still runs; shards that would start with less than 5 minutes left are reported as out-of-time.'
+        required: false
+        default: '300'
+    codex-version:
+        description: 'Version of the @openai/codex npm package to install'
+        required: false
+        default: 'latest'
+    min-severity:
+        description: 'Lowest severity to report (low | medium | high | critical)'
+        required: false
+        default: 'medium'
+    slack-bot-oauth-token:
+        description: 'Slack bot token used to post the report. The action fails before reviewing if it is missing, since Slack is the only destination for findings.'
+        required: false
+        default: ''
+    slack-channel:
+        description: 'Slack channel for the report. Findings are undisclosed vulnerabilities, so this should be a private channel.'
+        required: true
+    product-name:
+        description: 'Product name used in the Slack report, e.g. AG Grid'
+        required: true
+outputs:
+    skipped:
+        description: 'Whether the review was skipped due to missing authentication'
+        value: ${{ steps.check-auth.outputs.skipped }}
+    failed-shards:
+        description: 'Space-separated names of shards whose review failed'
+        value: ${{ steps.review.outputs.failed_shards }}
+runs:
+    using: composite
+    steps:
+        - name: Check Authentication
+          id: check-auth
+          shell: bash
+          env:
+              CODEX_API_KEY: ${{ inputs.codex-api-key }}
+              SLACK_BOT_OAUTH_TOKEN: ${{ inputs.slack-bot-oauth-token }}
+          run: |
+              if [ -z "${CODEX_API_KEY:-}" ]; then
+                echo "::warning::Skipping security review - no authentication configured (set CODEX_API_KEY secret)"
+                echo "skipped=true" >> $GITHUB_OUTPUT
+                exit 0
+              fi
+              # Slack is the only place findings go, so don't spend a review that can't be reported
+              if [ -z "${SLACK_BOT_OAUTH_TOKEN:-}" ]; then
+                echo "::error::No Slack token configured (set SLACK_BOT_OAUTH_TOKEN secret) - the findings would have nowhere to go"
+                exit 1
+              fi
+              echo "skipped=false" >> $GITHUB_OUTPUT
+
+        - name: Install Codex CLI
+          if: steps.check-auth.outputs.skipped != 'true'
+          shell: bash
+          env:
+              CODEX_VERSION: ${{ inputs.codex-version }}
+          run: npm install -g "@openai/codex@${CODEX_VERSION}"
+
+        - name: Enable Codex Sandbox
+          # Codex sandboxes the commands it runs with unprivileged user namespaces, which Ubuntu
+          # 24.04's AppArmor policy blocks on hosted runners. Lift that restriction, then check the
+          # sandbox actually starts, so a broken sandbox fails here rather than inside every shard.
+          if: steps.check-auth.outputs.skipped != 'true'
+          shell: bash
+          run: |
+              if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+                sudo sysctl -q -w kernel.apparmor_restrict_unprivileged_userns=0
+              fi
+              if ! codex sandbox -- true; then
+                echo "::error::The Codex sandbox could not start on this runner"
+                exit 1
+              fi
+
+        - name: Run Codex Security Review
+          if: steps.check-auth.outputs.skipped != 'true'
+          id: review
+          shell: bash
+          env:
+              CODEX_API_KEY: ${{ inputs.codex-api-key }}
+              OPENAI_API_KEY: ${{ inputs.codex-api-key }}
+              CODEX_HOME: ${{ runner.temp }}/codex-home
+              OUT_DIR: ${{ runner.temp }}/codex-security-review
+              SHARDS_FILE: ${{ inputs.shards-file }}
+              SHARD_FILTER: ${{ inputs.shard }}
+              PROMPT_FILE: ${{ inputs.prompt-file || format('{0}/prompt.md', github.action_path) }}
+              SCHEMA_FILE: ${{ github.action_path }}/findings.schema.json
+              MODEL: ${{ inputs.model }}
+              REASONING_EFFORT: ${{ inputs.reasoning-effort }}
+              SHARD_TIMEOUT_MINUTES: ${{ inputs.shard-timeout-minutes }}
+              REVIEW_BUDGET_MINUTES: ${{ inputs.review-budget-minutes }}
+          run: '"$GITHUB_ACTION_PATH/run-shards.sh"'
+
+        - name: Report to Slack
+          if: steps.check-auth.outputs.skipped != 'true' && !cancelled()
+          shell: bash
+          env:
+              SLACK_BOT_OAUTH_TOKEN: ${{ inputs.slack-bot-oauth-token }}
+              SLACK_CHANNEL: ${{ inputs.slack-channel }}
+              PRODUCT_NAME: ${{ inputs.product-name }}
+              MIN_SEVERITY: ${{ inputs.min-severity }}
+              OUT_DIR: ${{ runner.temp }}/codex-security-review
+              RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          run: node "$GITHUB_ACTION_PATH/report-to-slack.mjs"
+
+        - name: Clean Up
+          if: always()
+          shell: bash
+          run: rm -rf "$RUNNER_TEMP/codex-security-review" "$RUNNER_TEMP/codex-home"
+
+        - name: Fail If Any Shard Failed
+          if: steps.check-auth.outputs.skipped != 'true' && steps.review.outputs.failed_shards != ''
+          shell: bash
+          env:
+              FAILED_SHARDS: ${{ steps.review.outputs.failed_shards }}
+          run: |
+              echo "::error::Security review failed for: ${FAILED_SHARDS}"
+              exit 1
