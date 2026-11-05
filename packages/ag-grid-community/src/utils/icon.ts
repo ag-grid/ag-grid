@@ -1,3 +1,4 @@
+import type { IconValue } from 'ag-stack';
 import { _isNodeOrElement, _loadTemplate } from 'ag-stack';
 
 import type { BeanCollection } from '../context/context';
@@ -136,6 +137,9 @@ export type IconName =
     | 'radioButtonOff'; // deprecated v33
 
 export type Icons = { [key: string]: ((...args: any[]) => any) | string };
+
+/** A provided icon name, or the key of a custom icon set with the `icons` grid option. */
+export type IconKey = IconName | IconValue | (string & {});
 
 /**
  * If icon provided, use this (either a string, or a function callback).

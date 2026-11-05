@@ -1,3 +1,4 @@
+import type { IconKey } from '../utils/icon';
 import type { Component, ComponentSelector } from '../widgets/component';
 import type { SideBarState } from './gridState';
 import type { IToolPanel } from './iToolPanel';
@@ -48,7 +49,7 @@ export interface ToolPanelDef {
      */
     width?: number;
     /** The key of the icon to be used as a graphical aid beside the label in the side bar. */
-    iconKey: string;
+    iconKey: IconKey;
 
     /**
      * The tool panel component to use as the panel.
