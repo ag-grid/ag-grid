@@ -638,6 +638,10 @@ RequestHeader edit* If-None-Match '-gzip"' '"'
     RewriteRule ^/?(rss|(?:tag|author)/[^/]+/rss)/?$ https://www.ag-grid.com/blog/$1/ [R=301,NC,L]
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?(sitemap[^/]*\\.xml)$ https://www.ag-grid.com/blog/$1 [R=301,NC,L]
+    # SE-89 / SE-4: robots.txt goes to the root robots.txt, as it does on the apex host. The
+    # catch-all would send it to /blog/robots.txt, which is a 404.
+    RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
+    RewriteRule ^/?robots\\.txt$ https://www.ag-grid.com/robots.txt [R=301,NC,L]
 
     RewriteCond %{HTTP_HOST} ^blog\\.ag-grid\\.com$ [NC]
     RewriteRule ^/?(.*)$ https://www.ag-grid.com/blog/$1 [R=301,NC,L]
