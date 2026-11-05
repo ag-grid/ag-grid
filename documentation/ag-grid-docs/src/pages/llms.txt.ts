@@ -9,10 +9,12 @@ import {
     DISABLE_MARKDOWN_DOCS,
     LIVE_SITEMAP_URL,
     PRODUCTION_GRID_SITE_URL,
+    SITE_BASE_URL,
     agGridVersion,
 } from '@constants';
-import { buildLlmsTxt } from '@utils/agentReadinessFiles';
+import { archiveRoot, buildLlmsTxt } from '@utils/agentReadinessFiles';
 import { navPageNames, navSectionsToIndex } from '@utils/docsNavIndex';
+import { getIsArchive } from '@utils/env';
 import { buildSitePageIndex } from '@utils/sitePageIndex';
 import { type CollectionEntry, getEntry } from 'astro:content';
 
@@ -65,6 +67,7 @@ export async function GET() {
         docsIndex,
         siteIndex,
         indexDocsPrefix: getFrameworkPath(CANONICAL_FRAMEWORK),
+        archive: getIsArchive() ? { root: archiveRoot(siteRoot, SITE_BASE_URL), version: agGridVersion } : undefined,
     });
 
     return new Response(output, {
