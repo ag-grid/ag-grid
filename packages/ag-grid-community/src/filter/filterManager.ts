@@ -1,12 +1,13 @@
 import { AgPromise } from 'ag-stack';
 
+import { _getClientSideRowModel } from '../api/rowModelApiUtils';
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
 import type { BeanCollection } from '../context/context';
 import type { AgColumn } from '../entities/agColumn';
 import type { RowNode } from '../entities/rowNode';
 import type { FilterChangedEvent, FilterChangedEventSourceType } from '../events';
-import { _getGroupAggFiltering } from '../gridOptionsUtils';
+import { _getGroupAggFiltering, _isAnimateRows } from '../gridOptionsUtils';
 import type { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import type { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
 import type { WithoutGridCommon } from '../interfaces/iCommon';
@@ -16,6 +17,13 @@ import type { IRowNode } from '../interfaces/iRowNode';
 import { _mergeDeep } from '../utils/mergeDeep';
 import type { ColumnFilterService } from './columnFilterService';
 import type { QuickFilterChangedEvent, QuickFilterService } from './quickFilterService';
+
+export interface FilterChangedParams {
+    source?: FilterChangedEventSourceType;
+    additionalEventAttributes?: any;
+    column?: AgColumn;
+    columns?: AgColumn[];
+}
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */
 export class FilterManager extends BeanStub implements NamedBean {
@@ -181,31 +189,52 @@ export class FilterManager extends BeanStub implements NamedBean {
         }
     }
 
-    public onFilterChanged(
-        params: {
-            source?: FilterChangedEventSourceType;
-            additionalEventAttributes?: any;
-            column?: AgColumn;
-            columns?: AgColumn[];
-        } = {}
-    ): void {
-        const { source, additionalEventAttributes, columns = [] } = params;
+    public onFilterChanged(params: FilterChangedParams = {}): void {
+        this.onFiltersChanged([params]);
+    }
+
+    /** Fires `filterChanged` for each, in order, then refreshes the client-side rows once for them all. */
+    public onFiltersChanged(paramsList: readonly FilterChangedParams[]): void {
+        const colFilter = this.colFilter;
+        let pending = paramsList.length;
+        let rowsFiltered = false;
+        let primaryOrQuickFilterChanged = false;
         this.externalFilterPresent = this.isExternalFilterPresentCallback();
-        (this.colFilter ? this.colFilter.updateBeforeFilterChanged(params) : AgPromise.resolve()).then(() => {
-            const filterChangedEvent: WithoutGridCommon<FilterChangedEvent> = {
-                source,
-                type: 'filterChanged',
-                columns,
-            };
+        for (let i = 0, len = paramsList.length; i < len; ++i) {
+            const params = paramsList[i];
+            (colFilter ? colFilter.updateBeforeFilterChanged(params) : AgPromise.resolve()).then(() => {
+                const { source, additionalEventAttributes, columns = [] } = params;
+                const filterChangedEvent: WithoutGridCommon<FilterChangedEvent> = {
+                    source,
+                    type: 'filterChanged',
+                    columns,
+                };
 
-            if (additionalEventAttributes) {
-                _mergeDeep(filterChangedEvent, additionalEventAttributes);
-            }
+                if (additionalEventAttributes) {
+                    _mergeDeep(filterChangedEvent, additionalEventAttributes);
+                }
 
-            this.eventSvc.dispatchEvent(filterChangedEvent);
+                this.eventSvc.dispatchEvent(filterChangedEvent);
 
-            this.colFilter?.updateAfterFilterChanged();
-        });
+                const { afterDataChange, columns: eventColumns } = filterChangedEvent;
+                if (!afterDataChange) {
+                    rowsFiltered = true;
+                    primaryOrQuickFilterChanged ||=
+                        eventColumns.length === 0 || eventColumns.some((col) => col.isPrimary());
+                }
+                --pending;
+                if (pending === 0) {
+                    if (rowsFiltered) {
+                        _getClientSideRowModel(this.beans)?.refreshModel({
+                            step: primaryOrQuickFilterChanged ? 'filter' : 'filter_aggregates',
+                            keepRenderedRows: true,
+                            animate: _isAnimateRows(this.gos),
+                        });
+                    }
+                    colFilter?.updateAfterFilterChanged();
+                }
+            });
+        }
     }
 
     public isSuppressFlashingCellsBecauseFiltering(): boolean {

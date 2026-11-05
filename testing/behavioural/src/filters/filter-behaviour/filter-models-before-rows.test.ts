@@ -714,7 +714,7 @@ describe('a change before rows load to a filter holding none of the model set fo
         expect(told.sort()).toEqual(['model', 'rows']);
     });
 
-    test('with filter handlers, a built filter rejecting the model set before rows load tells only its own change', async () => {
+    test('with filter handlers, a built filter rejecting the model set before rows load fires no filterChanged, as nothing applied changes', async () => {
         const events: string[] = [];
         const api: GridApi = gridsManager.createGrid('grid1', {
             columnDefs: BASE_COLS,
@@ -726,7 +726,7 @@ describe('a change before rows load to a filter holding none of the model set fo
         api.setFilterModel({ age: { filterType: 'text', type: 'contains', filter: '2' } });
         api.setGridOption('rowData', ROWS);
         await asyncSetTimeout(0);
-        expect(events).toEqual(['columnFilter:age']);
+        expect(events).toEqual([]);
         expect(api.getFilterModel()).toEqual({});
     });
 });

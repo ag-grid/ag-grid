@@ -5,7 +5,6 @@ import { BeanStub } from '../context/beanStub';
 import type { GridOptions } from '../entities/gridOptions';
 import { RowNode } from '../entities/rowNode';
 import { _nearestDisplayedRow } from '../entities/rowNodeUtils';
-import type { FilterChangedEvent } from '../events';
 import {
     _addRowHeightChangedListener,
     _canScrollVertically,
@@ -143,7 +142,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
             columnValueChanged: this.onValueChanged.bind(this),
             columnPivotChanged: this.onPivotChanged.bind(this),
             columnPivotModeChanged: () => this.refreshModel({ step: 'group' }),
-            filterChanged: this.onFilterChanged.bind(this),
             sortChanged: this.onSortChanged.bind(this),
             gridReady: this.onGridReady.bind(this),
             rowExpansionStateChanged: this.onRowGroupOpened.bind(this),
@@ -595,14 +593,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel,
 
     private onRowGroupOpened(): void {
         this.refreshModel({ step: 'map', keepRenderedRows: true, animate: _isAnimateRows(this.gos) });
-    }
-
-    private onFilterChanged({ afterDataChange, columns }: FilterChangedEvent): void {
-        if (!afterDataChange) {
-            const primaryOrQuickFilterChanged = columns.length === 0 || columns.some((col) => col.isPrimary());
-            const step: ClientSideRowModelStage = primaryOrQuickFilterChanged ? 'filter' : 'filter_aggregates';
-            this.refreshModel({ step: step, keepRenderedRows: true, animate: _isAnimateRows(this.gos) });
-        }
     }
 
     private onPivotChanged(): void {
