@@ -90,7 +90,7 @@ The example below shows both panels in the toolbar along with a reset action but
 Use the `agMenuToolbarItem` to render a dropdown of [Menu Items](./component-menu-item/). Configure the button and menu contents using the following properties:
 
 - `label`: Visible text rendered next to the icon. Omit to render an icon-only button.
-- `icon`: Icon displayed on the button. Accepts any [provided icon](./custom-icons/#provided-icons), or the key of a custom icon set with the [icons](./custom-icons/#replacing-individual-icons) grid option.
+- `icon`: Icon displayed on the button. Accepts the CSS name of any [provided icon](./custom-icons/#provided-icons), a [grid icon name](./custom-icons/#icon-names), or a custom key set with the [icons](./custom-icons/#set-the-icons-through-gridoptions-javascript) grid option.
 - `tooltip`: Hover tooltip and `aria-label`. Falls back to `label` when omitted.
 - `toolbarItemParams.menuItems`: Items to include in the dropdown. Each entry is either a `MenuItemDef` or one of the [built-in](./context-menu/#built-in-menu-items) menu item names as used by the Context Menu.
 
@@ -115,7 +115,7 @@ const gridOptions = {
 Action buttons provide a convenient way to trigger custom behaviour on click of a toolbar item. Configure an action button using the following properties:
 
 - `label`: Visible text rendered next to the icon. Omit to render an icon-only button.
-- `icon`: Icon displayed on the button. Accepts any [provided icon](./custom-icons/#provided-icons), or the key of a custom icon set with the [icons](./custom-icons/#replacing-individual-icons) grid option.
+- `icon`: Icon displayed on the button. Accepts the CSS name of any [provided icon](./custom-icons/#provided-icons), a [grid icon name](./custom-icons/#icon-names), or a custom key set with the [icons](./custom-icons/#set-the-icons-through-gridoptions-javascript) grid option.
 - `tooltip`: Hover tooltip and `aria-label`. Falls back to `label` when omitted.
 - `action`: Callback fired on click. Receives the grid `api`, `context`, and the item `key`.
 

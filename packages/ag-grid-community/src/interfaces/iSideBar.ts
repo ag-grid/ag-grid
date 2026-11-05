@@ -48,7 +48,7 @@ export interface ToolPanelDef {
      * @default $side-bar-panel-width (theme variable)
      */
     width?: number;
-    /** The key of the icon to be used as a graphical aid beside the label in the side bar. */
+    /** Icon shown beside the label in the side bar: a provided icon's CSS name, a grid icon name, or a custom key from the `icons` grid option. */
     iconKey: IconKey;
 
     /**
