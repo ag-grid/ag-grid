@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     advancedFilterCancel: 'Kanselahin',
     advancedFilterClear: 'I-clear',
     advancedFilterBuilder: 'Builder',
+    advancedFilterPlaceholder: 'Advanced Filter',
     advancedFilterValidationMissingColumn: 'Kulang ang column',
     advancedFilterValidationMissingOption: 'Kulang ang opsyon',
     advancedFilterValidationMissingValue: 'Kulang ang halaga',

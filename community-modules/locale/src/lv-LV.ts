@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     advancedFilterCancel: 'Atcelt',
     advancedFilterClear: 'Notīrīt',
     advancedFilterBuilder: 'Konstruktors',
+    advancedFilterPlaceholder: 'Papildu filtrs',
     advancedFilterValidationMissingColumn: 'Trūkst kolonnas',
     advancedFilterValidationMissingOption: 'Trūkst opcijas',
     advancedFilterValidationMissingValue: 'Trūkst vērtības',

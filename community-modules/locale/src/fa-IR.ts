@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     advancedFilterCancel: 'لغو',
     advancedFilterClear: 'پاک کردن',
     advancedFilterBuilder: 'سازنده',
+    advancedFilterPlaceholder: 'فیلتر پیشرفته',
     advancedFilterValidationMissingColumn: 'ستون گمشده است',
     advancedFilterValidationMissingOption: 'گزینه گمشده است',
     advancedFilterValidationMissingValue: 'مقدار گمشده است',

@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     advancedFilterCancel: 'Отказ',
     advancedFilterClear: 'Изчисти',
     advancedFilterBuilder: 'Създател',
+    advancedFilterPlaceholder: 'Разширен филтър',
     advancedFilterValidationMissingColumn: 'Колоната липсва',
     advancedFilterValidationMissingOption: 'Опцията липсва',
     advancedFilterValidationMissingValue: 'Стойността липсва',

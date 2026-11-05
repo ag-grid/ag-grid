@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_NL_NL = {
     advancedFilterCancel: 'Annuleren',
     advancedFilterClear: 'Wissen',
     advancedFilterBuilder: 'Bouwer',
+    advancedFilterPlaceholder: 'Geavanceerde Filter',
     advancedFilterValidationMissingColumn: 'Kolom ontbreekt',
     advancedFilterValidationMissingOption: 'Optie ontbreekt',
     advancedFilterValidationMissingValue: 'Waarde ontbreekt',

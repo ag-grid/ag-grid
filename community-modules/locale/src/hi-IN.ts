@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     advancedFilterCancel: 'रद्द करें',
     advancedFilterClear: 'साफ़ करें',
     advancedFilterBuilder: 'बिल्डर',
+    advancedFilterPlaceholder: 'उन्नत फ़िल्टर',
     advancedFilterValidationMissingColumn: 'कॉलम गायब है',
     advancedFilterValidationMissingOption: 'विकल्प गायब है',
     advancedFilterValidationMissingValue: 'मान गायब है',

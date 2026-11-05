@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     advancedFilterCancel: 'ביטול',
     advancedFilterClear: 'נקה',
     advancedFilterBuilder: 'בונה',
+    advancedFilterPlaceholder: 'סינון מתקדם',
     advancedFilterValidationMissingColumn: 'עמודה חסרה',
     advancedFilterValidationMissingOption: 'אפשרות חסרה',
     advancedFilterValidationMissingValue: 'ערך חסר',

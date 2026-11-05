@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_ZH_HK = {
     advancedFilterCancel: '取消',
     advancedFilterClear: '清除',
     advancedFilterBuilder: '建造者',
+    advancedFilterPlaceholder: '高級篩選器',
     advancedFilterValidationMissingColumn: '缺少列',
     advancedFilterValidationMissingOption: '缺少選項',
     advancedFilterValidationMissingValue: '缺少值',

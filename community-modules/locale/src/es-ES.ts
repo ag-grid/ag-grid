@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_ES_ES = {
     advancedFilterCancel: 'Cancelar',
     advancedFilterClear: 'Limpiar',
     advancedFilterBuilder: 'Constructor',
+    advancedFilterPlaceholder: 'Filtro Avanzado',
     advancedFilterValidationMissingColumn: 'Falta la columna',
     advancedFilterValidationMissingOption: 'Falta la opción',
     advancedFilterValidationMissingValue: 'Falta el valor',

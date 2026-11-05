@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     advancedFilterCancel: 'Batal',
     advancedFilterClear: 'Bersihkan',
     advancedFilterBuilder: 'Pembuat',
+    advancedFilterPlaceholder: 'Filter Lanjutan',
     advancedFilterValidationMissingColumn: 'Kolom tidak ada',
     advancedFilterValidationMissingOption: 'Opsi tidak ada',
     advancedFilterValidationMissingValue: 'Nilai tidak ada',

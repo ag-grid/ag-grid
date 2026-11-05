@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     advancedFilterCancel: 'Annuller',
     advancedFilterClear: 'Ryd',
     advancedFilterBuilder: 'Builder',
+    advancedFilterPlaceholder: 'Avanceret Filter',
     advancedFilterValidationMissingColumn: 'Kolonne mangler',
     advancedFilterValidationMissingOption: 'Valgmulighed mangler',
     advancedFilterValidationMissingValue: 'Værdi mangler',

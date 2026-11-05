@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     advancedFilterCancel: 'Batal',
     advancedFilterClear: 'Kosongkan',
     advancedFilterBuilder: 'Pembina',
+    advancedFilterPlaceholder: 'Penapis Lanjutan',
     advancedFilterValidationMissingColumn: 'Lajur tiada',
     advancedFilterValidationMissingOption: 'Pilihan tiada',
     advancedFilterValidationMissingValue: 'Nilai tiada',

@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     advancedFilterCancel: 'Отмена',
     advancedFilterClear: 'Очистить',
     advancedFilterBuilder: 'Конструктор',
+    advancedFilterPlaceholder: 'Расширенный фильтр',
     advancedFilterValidationMissingColumn: 'Отсутствует столбец',
     advancedFilterValidationMissingOption: 'Отсутствует вариант',
     advancedFilterValidationMissingValue: 'Отсутствует значение',

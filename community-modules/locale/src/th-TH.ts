@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     advancedFilterCancel: 'ยกเลิก',
     advancedFilterClear: 'ล้าง',
     advancedFilterBuilder: 'ตัวสร้าง',
+    advancedFilterPlaceholder: 'ตัวกรองขั้นสูง',
     advancedFilterValidationMissingColumn: 'ไม่มีคอลัมน์',
     advancedFilterValidationMissingOption: 'ไม่มีตัวเลือก',
     advancedFilterValidationMissingValue: 'ไม่มีค่า',

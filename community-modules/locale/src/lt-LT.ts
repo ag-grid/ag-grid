@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     advancedFilterCancel: 'Atšaukti',
     advancedFilterClear: 'Išvalyti',
     advancedFilterBuilder: 'Kūrimo įrankis',
+    advancedFilterPlaceholder: 'Papildomas filtras',
     advancedFilterValidationMissingColumn: 'Trūksta stulpelio',
     advancedFilterValidationMissingOption: 'Trūksta parinkties',
     advancedFilterValidationMissingValue: 'Trūksta reikšmės',

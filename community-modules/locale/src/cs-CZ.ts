@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_CS_CZ = {
     advancedFilterCancel: 'Zrušit',
     advancedFilterClear: 'Vymazat',
     advancedFilterBuilder: 'Stavitel',
+    advancedFilterPlaceholder: 'Pokročilý filtr',
     advancedFilterValidationMissingColumn: 'Chybí sloupec',
     advancedFilterValidationMissingOption: 'Chybí možnost',
     advancedFilterValidationMissingValue: 'Chybí hodnota',

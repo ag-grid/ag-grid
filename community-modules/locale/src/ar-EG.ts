@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     advancedFilterCancel: 'إلغاء',
     advancedFilterClear: 'مسح',
     advancedFilterBuilder: 'المنشئ',
+    advancedFilterPlaceholder: 'الفلترة المتقدمة',
     advancedFilterValidationMissingColumn: 'العمود مفقود',
     advancedFilterValidationMissingOption: 'الخيار مفقود',
     advancedFilterValidationMissingValue: 'القيمة مفقودة',

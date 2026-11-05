@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     advancedFilterCancel: 'Zrušiť',
     advancedFilterClear: 'Vymazať',
     advancedFilterBuilder: 'Tvorca',
+    advancedFilterPlaceholder: 'Pokročilý filter',
     advancedFilterValidationMissingColumn: 'Chýba stĺpec',
     advancedFilterValidationMissingOption: 'Chýba možnosť',
     advancedFilterValidationMissingValue: 'Chýba hodnota',

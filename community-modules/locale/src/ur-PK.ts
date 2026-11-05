@@ -173,6 +173,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     advancedFilterCancel: 'منسوخ کریں',
     advancedFilterClear: 'صاف کریں',
     advancedFilterBuilder: 'بلڈر',
+    advancedFilterPlaceholder: 'ایڈوانسڈ فلٹر',
     advancedFilterValidationMissingColumn: 'کالم غائب ہے',
     advancedFilterValidationMissingOption: 'آپشن غائب ہے',
     advancedFilterValidationMissingValue: 'قدر غائب ہے',

@@ -174,6 +174,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     advancedFilterCancel: 'Otkaži',
     advancedFilterClear: 'Očisti',
     advancedFilterBuilder: 'Graditelj',
+    advancedFilterPlaceholder: 'Napredni filter',
     advancedFilterValidationMissingColumn: 'Nedostaje kolona',
     advancedFilterValidationMissingOption: 'Nedostaje opcija',
     advancedFilterValidationMissingValue: 'Nedostaje vrijednost',
