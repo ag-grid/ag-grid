@@ -5,6 +5,7 @@ import { _errorToThrowWithoutAttribution } from 'ag-grid-community';
 
 import { VERSION } from '../version';
 import { ALL_AXIS_TYPES, getLegacyAxisType } from './chartComp/utils/axisTypeMapper';
+import { extractPaired } from './chartComp/utils/pairedUtils';
 import { getCanonicalChartType, getSeriesType, isPieChartSeries } from './chartComp/utils/seriesTypeMapper';
 
 const DEBUG = false;
@@ -383,8 +384,18 @@ function cleanup(model: ChartModel) {
     model = jsonDelete('chartOptions.*.width', model);
     model = jsonDelete('chartOptions.*.height', model);
     model = jsonBackfill('chartOptions.*.axes.category.label.autoRotate', true, model);
+    model = migratePaired(model);
 
     return model;
+}
+
+/** Paired mode used to be saved as `scatter.paired` / `bubble.paired` in `chartOptions`; it is now `ChartModel.paired`. */
+function migratePaired(model: ChartModel): ChartModel {
+    const { paired, overrides } = extractPaired(model.chartOptions, model.chartType);
+    if (overrides === model.chartOptions) {
+        return model;
+    }
+    return { ...model, chartOptions: overrides!, paired: model.paired ?? paired };
 }
 
 /** @knipIgnore Used in tests */

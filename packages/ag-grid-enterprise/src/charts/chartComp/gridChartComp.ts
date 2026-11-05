@@ -26,7 +26,6 @@ import type {
     SeriesChartType,
     SortModelItem,
     UpdateChartParams,
-    UpdateRangeChartParams,
 } from 'ag-grid-community';
 import { Component, _addGridCommonParams, _focusGridInnerElement, _mergeDeep } from 'ag-grid-community';
 
@@ -52,7 +51,6 @@ import type { ChartMenuService } from './services/chartMenuService';
 import { CHART_TOOL_PANEL_MENU_OPTIONS } from './services/chartMenuService';
 import { ChartOptionsService } from './services/chartOptionsService';
 import type { ChartTranslationKey, ChartTranslationService } from './services/chartTranslationService';
-import { extractPaired } from './utils/pairedUtils';
 import { getCanonicalChartType, getSeriesType, isHierarchical } from './utils/seriesTypeMapper';
 
 export interface GridChartParams {
@@ -372,24 +370,13 @@ export class GridChartComp extends Component {
         }
     }
 
-    public update(params?: UpdateChartParams, fromGridOptions?: boolean): void {
-        let legacyPaired: boolean | undefined;
-        if (params?.chartThemeOverrides) {
-            const extracted = extractPaired(params.chartThemeOverrides, params.chartType ?? this.chartType);
-            legacyPaired = fromGridOptions ? undefined : extracted.paired;
-            params = { ...params, chartThemeOverrides: extracted.overrides };
-        }
-
+    public update(params?: UpdateChartParams): void {
         // update chart model for api.updateChart()
         if (params?.chartId) {
             const validUpdate = this.chartController.update(params);
             if (!validUpdate) {
                 return; // warning already logged!
             }
-        }
-
-        if (legacyPaired !== undefined && (params as UpdateRangeChartParams | undefined)?.paired == null) {
-            this.chartController.setPaired(legacyPaired);
         }
 
         const updatedChartType = this.chartTypeChanged(params);
@@ -602,14 +589,11 @@ export class GridChartComp extends Component {
         // standalone requires that `undefined` / `null` values are supplied as `{}`
         const chartThemeOverrides = this.gos.get('chartThemeOverrides') ?? {};
 
-        this.update(
-            {
-                type: `${modelType}ChartUpdate`,
-                chartId,
-                chartThemeOverrides,
-            },
-            true
-        );
+        this.update({
+            type: `${modelType}ChartUpdate`,
+            chartId,
+            chartThemeOverrides,
+        });
     }
 
     private raiseChartCreatedEvent(): void {

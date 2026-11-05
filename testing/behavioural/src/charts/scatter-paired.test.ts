@@ -198,6 +198,8 @@ describe('scatter and bubble paired mode', () => {
             const { paired: _, ...rest } = saved;
             const legacy: ChartModel = {
                 ...rest,
+                // A model saved before paired moved to ChartModel; an older version routes it through upgradeChartModel.
+                version: '36.2.0',
                 chartOptions: {
                     ...saved.chartOptions,
                     scatter: { ...saved.chartOptions.scatter, paired: false } as any,
@@ -240,27 +242,5 @@ describe('scatter and bubble paired mode', () => {
         await update(api, chartRef, { chartType: 'scatter' });
         expect(getModel(api).paired).toBe(false);
         expect(pairs(chartRef)).toHaveLength(2);
-    });
-
-    test('a legacy chartThemeOverrides scatter.paired on update unpairs and is stripped from the saved options', async () => {
-        const { api, chartRef } = await createChart('scatter');
-
-        await update(api, chartRef, { chartThemeOverrides: { scatter: { paired: false } } });
-
-        expect(getModel(api).paired).toBe(false);
-        expect(pairs(chartRef)).toHaveLength(2);
-        expect((getModel(api).chartOptions as any).scatter?.paired).toBeUndefined();
-    });
-
-    test('a scatter.paired key in the chartThemeOverrides grid option does not override the chart mode', async () => {
-        const { api, chartRef } = await createChart('scatter', { paired: true });
-        enableDevValidations({ suppress: [22] });
-
-        api.updateGridOptions({ chartThemeOverrides: { scatter: { paired: false } } } as any);
-        await chartRef.chart.waitForUpdate();
-
-        expect(getModel(api).paired).toBe(true);
-        expect(pairs(chartRef)).toEqual([['gold', 'silver']]);
-        expect((getModel(api).chartOptions as any).scatter?.paired).toBeUndefined();
     });
 });
