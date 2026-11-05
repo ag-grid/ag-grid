@@ -880,7 +880,6 @@ jobs:
 
           case "${WORKFLOW_STATUS}" in
             success) state="success"; description="Manual CI run passed" ;;
-            partial) state="success"; description="Manual CI run passed (Sonar failed)" ;;
             failure) state="failure"; description="Manual CI run failed" ;;
             *)
               echo "::warning::No workflow status for this run, so no manual run status was posted."
