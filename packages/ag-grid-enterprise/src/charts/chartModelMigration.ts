@@ -33,6 +33,7 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
     model = migrateIfBefore('33.0.0', model, migrateV33);
     model = migrateIfBefore('34.0.0', model, migrateV34);
     model = migrateIfBefore('36.0.0', model, migrateV36);
+    model = migrateIfBefore('37.0.0', model, migrateV37);
     model = cleanup(model);
 
     // Bump version to latest.
@@ -379,22 +380,21 @@ function migrateV36(model: ChartModel) {
     return model;
 }
 
-function cleanup(model: ChartModel) {
-    // Remove fixed width/height - this has never been supported via UI configuration.
-    model = jsonDelete('chartOptions.*.width', model);
-    model = jsonDelete('chartOptions.*.height', model);
-    model = jsonBackfill('chartOptions.*.axes.category.label.autoRotate', true, model);
-    model = migratePaired(model);
-
-    return model;
-}
-
-function migratePaired(model: ChartModel): ChartModel {
+function migrateV37(model: ChartModel): ChartModel {
     const { paired, overrides } = extractPaired(model.chartOptions, model.chartType);
     if (overrides === model.chartOptions) {
         return model;
     }
     return { ...model, chartOptions: overrides!, paired: model.paired ?? paired };
+}
+
+function cleanup(model: ChartModel) {
+    // Remove fixed width/height - this has never been supported via UI configuration.
+    model = jsonDelete('chartOptions.*.width', model);
+    model = jsonDelete('chartOptions.*.height', model);
+    model = jsonBackfill('chartOptions.*.axes.category.label.autoRotate', true, model);
+
+    return model;
 }
 
 /** @knipIgnore Used in tests */
