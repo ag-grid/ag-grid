@@ -67,5 +67,9 @@
 }
 
 .pageHeroContent {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     width: 100%;
+    gap: $spacing-size-2;
 }

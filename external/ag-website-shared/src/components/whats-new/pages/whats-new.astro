@@ -38,7 +38,9 @@ const { data: docsNavData } = (await getEntry('docsNav', 'nav')) as CollectionEn
                     .slice(0, 12)
                     .map((versionInfo, index) => {
                         const { major, minor } = parseVersion(versionInfo.version);
-                        const blogUrl = `${minor ? `${blogPrefix}${major}-${minor}` : `${blogPrefix}${major}`}/`;
+                        const blogUrl =
+                            versionInfo.blogUrl ??
+                            `${minor ? `${blogPrefix}${major}-${minor}` : `${blogPrefix}${major}`}/`;
 
                         return (
                             <Version
