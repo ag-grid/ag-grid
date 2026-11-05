@@ -389,7 +389,6 @@ function cleanup(model: ChartModel) {
     return model;
 }
 
-/** Paired mode used to be saved as `scatter.paired` / `bubble.paired` in `chartOptions`; it is now `ChartModel.paired`. */
 function migratePaired(model: ChartModel): ChartModel {
     const { paired, overrides } = extractPaired(model.chartOptions, model.chartType);
     if (overrides === model.chartOptions) {
