@@ -1,6 +1,5 @@
 ---
 import { decorateBryntumHtml } from '@utils/bryntumCampaignAssets';
-import { versionedPublicUrl } from '@utils/versionedPublicUrl';
 
 import BryntumCtaList from './BryntumCtaList.astro';
 import { MINI_DEMO_CONFIG } from './miniDemoProducts';
@@ -53,6 +52,6 @@ const config = MINI_DEMO_CONFIG[demoKind];
             </div>
         </section>
 
-        <script is:inline src={versionedPublicUrl(config.scriptPath)} defer></script>
+        <script is:inline src={config.scriptUrl} defer></script>
     </>
 )}

@@ -25,6 +25,7 @@ window.bryntumDemoInit = function (namespace, mountId, factory) {
             // Bryntum UMD bundle did not load (CDN failure, CSP block, or
             // upstream rename). Warn so the empty demo frame doesn't look like
             // an unexplained bug to anyone inspecting the page.
+            // eslint-disable-next-line no-console
             console.warn(
                 '[bryntum-demo] window.bryntum.' + namespace + ' not loaded; skipping live demo for #' + mountId + '.'
             );

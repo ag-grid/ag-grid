@@ -408,6 +408,7 @@ bryntumDemoInit('gantt', 'live-gantt-demo', function (api) {
         .catch((err) => {
             // Data fetch from bryntum.com failed (offline, CDN/path change, or
             // CSP block). Warn rather than leaving an unexplained empty Gantt.
+            // eslint-disable-next-line no-console
             console.warn('[bryntum-demo] Gantt data failed to load:', err);
         });
 });

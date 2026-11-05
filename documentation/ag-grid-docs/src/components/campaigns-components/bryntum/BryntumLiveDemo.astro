@@ -1,6 +1,4 @@
 ---
-import { versionedPublicUrl } from '@utils/versionedPublicUrl';
-
 import { LIVE_DEMO_PRODUCT_CONFIG } from './liveDemoProducts';
 import type { BryntumLiveDemoSection } from './types';
 
@@ -26,6 +24,6 @@ const config = LIVE_DEMO_PRODUCT_CONFIG[productSlug];
             </div>
         </section>
 
-        <script is:inline src={versionedPublicUrl(`/scripts/bryntum-${productSlug}-demo.js`)} defer></script>
+        <script is:inline src={config.scriptUrl} defer></script>
     </>
 )}
