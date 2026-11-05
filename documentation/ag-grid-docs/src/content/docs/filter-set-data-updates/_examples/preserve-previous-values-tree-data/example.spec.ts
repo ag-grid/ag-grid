@@ -9,7 +9,7 @@ test.agExample(import.meta, () => {
     };
     const itemAt = (page: any, position: number) =>
         page.locator(`.ag-filter-toolpanel .ag-virtual-list-item[aria-posinset="${position}"] .ag-checkbox-label`);
-    const listSize = (page: any) => page.locator('.ag-filter-toolpanel .ag-virtual-list-item').first();
+    const firstListItem = (page: any) => page.locator('.ag-filter-toolpanel .ag-virtual-list-item').first();
     const listViewport = (page: any) => page.locator('.ag-filter-toolpanel .ag-virtual-list-viewport');
     const scrollList = (page: any, to: 'top' | 'end') =>
         listViewport(page).evaluate((el: HTMLElement, top: number) => (el.scrollTop = top), to === 'top' ? 0 : 1e6);
@@ -24,7 +24,7 @@ test.agExample(import.meta, () => {
 
         await expect(itemAt(page, 2)).toHaveText('Applications');
         await expect(itemAt(page, 4)).toHaveText('Documents');
-        await expect(listSize(page)).toHaveAttribute('aria-setsize', '13');
+        await expect(firstListItem(page)).toHaveAttribute('aria-setsize', '13');
         await expect
             .poll(() => listViewport(page).evaluate((el: HTMLElement) => el.scrollHeight - el.clientHeight))
             .toBeGreaterThan(0);
@@ -38,7 +38,7 @@ test.agExample(import.meta, () => {
         await click(page, 'Remove beach.jpg');
 
         await scrollList(page, 'end');
-        await expect(listSize(page)).toHaveAttribute('aria-setsize', '14');
+        await expect(firstListItem(page)).toHaveAttribute('aria-setsize', '14');
         await expect(itemAt(page, 14)).toHaveText('Archive/old.zip');
         await expect(filterItem(page, 'Archive/old.zip')).toHaveClass(/ag-set-filter-item-missing/);
         await expect(filterItem(page, 'Archive/old.zip')).toHaveClass(/ag-set-filter-add-group-indent/);
@@ -76,7 +76,7 @@ test.agExample(import.meta, () => {
         await click(page, 'Clear Preserved Values');
 
         // (Select All) and the 12 folders, without 'Archive/old.zip'.
-        await expect(listSize(page)).toHaveAttribute('aria-setsize', '13');
+        await expect(firstListItem(page)).toHaveAttribute('aria-setsize', '13');
         await expandGroup(page, 'Pictures');
         await expect(itemAt(page, 8)).toHaveText('city.jpg');
         await expect(itemAt(page, 9)).toHaveText('sunset.jpg');

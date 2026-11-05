@@ -9,7 +9,7 @@ test.agExample(import.meta, () => {
     };
     const itemAt = (page: any, position: number) =>
         page.locator(`.ag-filter-toolpanel .ag-virtual-list-item[aria-posinset="${position}"] .ag-checkbox-label`);
-    const listSize = (page: any) => page.locator('.ag-filter-toolpanel .ag-virtual-list-item').first();
+    const firstListItem = (page: any) => page.locator('.ag-filter-toolpanel .ag-virtual-list-item').first();
     const listViewport = (page: any) => page.locator('.ag-filter-toolpanel .ag-virtual-list-viewport');
     const scrollList = (page: any, to: 'top' | 'end') =>
         listViewport(page).evaluate((el: HTMLElement, top: number) => (el.scrollTop = top), to === 'top' ? 0 : 1e6);
@@ -24,7 +24,7 @@ test.agExample(import.meta, () => {
 
         await expect(itemAt(page, 2)).toHaveText('Australia');
         await expect(itemAt(page, 5)).toHaveText('France');
-        await expect(listSize(page)).toHaveAttribute('aria-setsize', '15');
+        await expect(firstListItem(page)).toHaveAttribute('aria-setsize', '15');
         await expect
             .poll(() => listViewport(page).evaluate((el: HTMLElement) => el.scrollHeight - el.clientHeight))
             .toBeGreaterThan(0);
@@ -38,7 +38,7 @@ test.agExample(import.meta, () => {
         await click(page, 'Remove Rome');
 
         await scrollList(page, 'end');
-        await expect(listSize(page)).toHaveAttribute('aria-setsize', '16');
+        await expect(firstListItem(page)).toHaveAttribute('aria-setsize', '16');
         await expect(itemAt(page, 16)).toHaveText('Spain#Madrid');
         await expect(filterItem(page, 'Spain#Madrid')).toHaveClass(/ag-set-filter-item-missing/);
         await expect(filterItem(page, 'Spain#Madrid')).toHaveClass(/ag-set-filter-add-group-indent/);
@@ -76,7 +76,7 @@ test.agExample(import.meta, () => {
         await click(page, 'Clear Preserved Values');
 
         // (Select All) and the 14 countries, without 'Spain#Madrid'.
-        await expect(listSize(page)).toHaveAttribute('aria-setsize', '15');
+        await expect(firstListItem(page)).toHaveAttribute('aria-setsize', '15');
         await expandGroup(page, 'Italy');
         await expect(itemAt(page, 8)).toHaveText('Milan');
         await expect(itemAt(page, 9)).toHaveText('Naples');
