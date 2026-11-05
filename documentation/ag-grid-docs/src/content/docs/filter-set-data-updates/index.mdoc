@@ -155,7 +155,7 @@ Selected values are always kept. Unselected values that are no longer in the dat
 
 When the limit is exceeded, the value that left the data first is discarded first. Discarding an unselected value does not change which rows pass the applied filter: it is not in the model, so if its rows return it is added back as a new, unselected value and its rows stay filtered out, exactly as if it had been kept. The limit only decides which of these values stay listed, and in memory, while their rows are away.
 
-Values are discarded when the values next reload, for example when the data changes or `refreshFilterValues` is called, not when a value is deselected. Only the applied filter model, and an applied Advanced Filter expression, protect a value: with an **Apply** button, a value selected but not yet applied can be discarded by such a reload.
+Values are discarded when the values next reload, for example when the data changes or [refreshFilterValues](./filter-set-api/#reference-SetFilterHandler-refreshFilterValues) is called on the filter handler (`api.getColumnFilterHandler(colKey)`), not when a value is deselected. Only the applied filter model, and an applied Advanced Filter expression, protect a value: with an **Apply** button, a value selected but not yet applied can be discarded by such a reload.
 
 While the filter is inactive there is no model, so every retained value counts as unselected and the limit still applies. If a filter is applied later, a discarded value that returns is added back as a new, unselected value.
 
