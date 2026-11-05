@@ -238,4 +238,25 @@ describe('Select cell editor', () => {
             expect(getAllRows(api)[0].data.a).toBe('x');
         });
     });
+
+    describe('combobox accessible name (WCAG 4.1.2)', () => {
+        test.each([
+            ['the header name', { headerName: 'Sport Type' }, 'Sport Type'],
+            ['the generated header name', {}, 'A'],
+            ['the generic name when the header is empty', { headerName: '' }, 'Select Field'],
+        ])('names the focused combobox with %s', async (_label, colDefOverrides, expectedName) => {
+            const api = await createGrid({
+                columnDefs: [{ ...baseColDef(), ...colDefOverrides }],
+                rowData: [{ id: '0', a: 'Alpha' }],
+                getRowId: (p) => p.data.id,
+            });
+
+            await openEditor(api, 0, 'a');
+
+            const combobox = document.activeElement as HTMLElement;
+            expect(combobox.getAttribute('role')).toBe('combobox');
+            expect(combobox.getAttribute('aria-label')).toBe(expectedName);
+            expect(combobox.hasAttribute('aria-labelledby')).toBe(false);
+        });
+    });
 });
