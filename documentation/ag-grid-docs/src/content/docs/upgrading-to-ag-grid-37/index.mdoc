@@ -15,6 +15,16 @@ NOTE: This will not show if the current library version is the same as the migra
 To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads this migration guide, checks it against your repository, and produces a plan of the changes needed.
 {% /note %}
 
+{% if isFramework("react") %}
+
+## Breaking Changes
+
+### Frameworks
+
+- React 16 support is no longer available due to reaching its end of life. The minimum React version is now v17.
+
+{% /if %}
+
 ## Behaviour Changes
 
 ### Status Bar
