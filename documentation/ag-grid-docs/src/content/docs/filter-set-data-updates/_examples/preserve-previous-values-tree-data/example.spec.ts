@@ -13,9 +13,13 @@ test.agExample(import.meta, () => {
     const listViewport = (page: any) => page.locator('.ag-filter-toolpanel .ag-virtual-list-viewport');
     const scrollList = (page: any, to: 'top' | 'end') =>
         listViewport(page).evaluate((el: HTMLElement, top: number) => (el.scrollTop = top), to === 'top' ? 0 : 1e6);
-    // The Tree List collapses its groups whenever the data or the model changes.
-    const expandGroup = (page: any, label: string) =>
-        filterItem(page, label).locator('.ag-set-filter-group-closed-icon:not(.ag-hidden)').click();
+    const expandGroup = async (page: any, label: string) => {
+        await expect(filterItem(page, label)).toBeVisible();
+        const closedIcon = filterItem(page, label).locator('.ag-set-filter-group-closed-icon:not(.ag-hidden)');
+        if ((await closedIcon.count()) > 0) {
+            await closedIcon.click();
+        }
+    };
     const click = (page: any, name: string) => page.getByRole('button', { name }).click();
 
     test.eachFramework('the Filters Tool Panel shows the File filter, and its list scrolls', async ({ page }) => {
