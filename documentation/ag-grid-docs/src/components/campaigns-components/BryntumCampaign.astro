@@ -1,5 +1,5 @@
 ---
-import { urlWithBaseUrl } from '@utils/urlWithBaseUrl';
+import { versionedPublicUrl } from '@utils/versionedPublicUrl';
 
 import BrandsSection from './bryntum/BrandsSection.astro';
 import BryntumLiveDemo from './bryntum/BryntumLiveDemo.astro';
@@ -77,7 +77,7 @@ const altTextMediaSections = new WeakSet<object>();
  */}
 {bryntumProducts.length > 0 && (
     <>
-        <link rel="stylesheet" href={urlWithBaseUrl('/styles/bryntum-demo.css')} />
+        <link rel="stylesheet" href={versionedPublicUrl('/styles/bryntum-demo.css')} />
         {bryntumProducts.map(({ slug, base }) => (
             <>
                 <link rel="stylesheet" href={`${base}/fontawesome/css/fontawesome.css`} />
@@ -98,7 +98,7 @@ const altTextMediaSections = new WeakSet<object>();
                  * product pages that render the same Bryntum classes.
                  */}
                 {LIVE_DEMO_PRODUCT_CONFIG[slug]?.demoCss && (
-                    <link rel="stylesheet" href={urlWithBaseUrl(LIVE_DEMO_PRODUCT_CONFIG[slug].demoCss!)} />
+                    <link rel="stylesheet" href={versionedPublicUrl(LIVE_DEMO_PRODUCT_CONFIG[slug].demoCss!)} />
                 )}
             </>
         ))}
@@ -135,7 +135,7 @@ const altTextMediaSections = new WeakSet<object>();
                     })();
                 `}
         ></script>
-        <script is:inline src={urlWithBaseUrl('/scripts/bryntum-demo-bootstrap.js')}></script>
+        <script is:inline src={versionedPublicUrl('/scripts/bryntum-demo-bootstrap.js')}></script>
         {bryntumProducts.map(({ slug, base }) => (
             <script is:inline src={`${base}/${slug}.umd.js`}></script>
         ))}
