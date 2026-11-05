@@ -1,7 +1,9 @@
 import { GridColumns, GridRows, TestGridsManager, asyncSetTimeout, waitForEvent } from 'ag-test-utils';
+import type { MockInstance } from 'vitest';
 import { onTestFinished } from 'vitest';
 
-import { ClientSideRowModelModule } from 'ag-grid-community';
+import type { IconName } from 'ag-grid-community';
+import { ClientSideRowModelModule, ValidationModule, enableDevValidations } from 'ag-grid-community';
 import { ColumnMenuModule, ToolbarModule } from 'ag-grid-enterprise';
 
 // Column chooser dialog focus management checks visibility via `offsetParent`. happy-dom does not
@@ -250,6 +252,82 @@ describe('Toolbar action button item', () => {
             ROOT id:ROOT_NODE_ID
             └── LEAF id:0 name:"Alice"
         `);
+    });
+});
+
+describe('Toolbar action button item with the filter-remove provided icon', () => {
+    const gridMgr = new TestGridsManager({
+        modules: [ClientSideRowModelModule, ToolbarModule, ValidationModule],
+    });
+
+    // The toolbar `icon` property is typed `IconName`, which does not include the kebab-case provided icon values.
+    const filterRemoveIcon = 'filter-remove' as unknown as IconName;
+
+    let warnSpy: MockInstance;
+
+    beforeEach(() => {
+        enableDevValidations({ throwOn: [] });
+        warnSpy = vitest.spyOn(console, 'warn').mockImplementation(() => {});
+    });
+
+    afterEach(() => {
+        gridMgr.reset();
+        warnSpy.mockRestore();
+    });
+
+    test('renders the provided filter-remove icon without an unknown icon warning', async () => {
+        const api = gridMgr.createGrid('action-button-filter-remove', {
+            columnDefs: [{ field: 'name' }],
+            rowData: [{ name: 'Alice' }],
+            toolbar: {
+                items: [
+                    {
+                        key: 'clearFilters',
+                        tooltip: 'Clear Filters',
+                        icon: filterRemoveIcon,
+                        action: (params) => params.api.setFilterModel(null),
+                    },
+                ],
+            },
+        });
+        await new GridRows(api, 'filter-remove icon setup').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
+
+        await waitForEvent('firstDataRendered', api);
+
+        const button = TestGridsManager.getHTMLElement(api)!.querySelector<HTMLButtonElement>('.ag-toolbar-button')!;
+        expect(button.querySelector('span.ag-icon.ag-icon-filter-remove')).not.toBeNull();
+        expect(warnSpy.mock.calls.flat().join(' ')).not.toContain('warning #134');
+    });
+
+    test('a gridOptions.icons override for filter-remove replaces the provided icon', async () => {
+        const api = gridMgr.createGrid('action-button-filter-remove-override', {
+            columnDefs: [{ field: 'name' }],
+            rowData: [{ name: 'Alice' }],
+            icons: { 'filter-remove': '<span class="custom-filter-remove"></span>' },
+            toolbar: {
+                items: [
+                    {
+                        key: 'clearFilters',
+                        tooltip: 'Clear Filters',
+                        icon: filterRemoveIcon,
+                        action: (params) => params.api.setFilterModel(null),
+                    },
+                ],
+            },
+        });
+        await new GridRows(api, 'filter-remove icon override setup').check(`
+            ROOT id:ROOT_NODE_ID
+            └── LEAF id:0 name:"Alice"
+        `);
+
+        await waitForEvent('firstDataRendered', api);
+
+        const button = TestGridsManager.getHTMLElement(api)!.querySelector<HTMLButtonElement>('.ag-toolbar-button')!;
+        expect(button.querySelector('.custom-filter-remove')).not.toBeNull();
+        expect(button.querySelector('.ag-icon-filter-remove')).toBeNull();
     });
 });
 

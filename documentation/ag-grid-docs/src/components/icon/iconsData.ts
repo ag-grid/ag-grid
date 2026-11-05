@@ -31,6 +31,7 @@ export const ICON_NAMES = [
     'eye',
     'filter',
     'filter-add',
+    'filter-remove',
     'first',
     'fx',
     'grip',
