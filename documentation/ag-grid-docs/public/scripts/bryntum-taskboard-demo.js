@@ -1,5 +1,5 @@
 /* global bryntumDemoInit */
-// Bryntum Task Board "Try it yourself!" demo — UMD port of
+// Bryntum Task Board "Try it yourself!" demo — port of
 // https://bryntum.com/demos/live/taskboard/zooming/app.js
 // Bootstrap lives in bryntum-demo-bootstrap.js.
 
