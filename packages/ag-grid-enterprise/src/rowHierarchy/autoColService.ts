@@ -121,7 +121,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
         }
 
         // Cheap "same as before?" check — bench-critical: refreshCols runs on every pivot / grouping
-        // transaction. Matches colIds element-by-element (no intermediate array); reuse the instances in place.
+        // transaction. Matches source cols element-by-element (no intermediate array); reuse the instances in place.
         if (autoColsInOrder(currentCols, rowGroupCols, doingMultiAutoColumn)) {
             // Existing col instances stay; refresh their colDefs so options changes propagate.
             for (let i = 0, len = currentCols.length; i < len; ++i) {
@@ -182,7 +182,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
     }
 
     /** Reconcile the auto-col set to `rowGroupCols` (undefined ⇒ the single shared auto col): reuse existing
-     *  instances by colId, create only genuinely new cols, and destroy only the ones no longer present. */
+     *  instances by colId and source col, create only genuinely new cols, and destroy only the ones no longer present. */
     private reconcileAutoCols(
         currentCols: AgColumn[],
         rowGroupCols: readonly AgColumn[] | undefined,
@@ -221,8 +221,10 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
     ): AgColumn {
         const colId = autoColId(rowGroupCol);
         const existing = survivors.get(colId);
-        if (existing !== undefined) {
+        const sourceCol = rowGroupCol ?? null;
+        if (existing !== undefined && isSameSourceCol(existing.derivedFromCol, sourceCol)) {
             survivors.delete(colId);
+            existing.derivedFromCol = sourceCol;
             existing.setColDef(this.createAutoColDef(colId, rowGroupCol, index), null, source);
             return existing;
         }
@@ -243,6 +245,7 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
     private createOneAutoCol(colId: string, rowGroupCol: AgColumn | undefined, index: number | undefined): AgColumn {
         const colDef = this.createAutoColDef(colId, rowGroupCol, index);
         const newCol = new AgColumn(colDef, null, colId, true, 'auto-group');
+        newCol.derivedFromCol = rowGroupCol ?? null;
         this.beans.context.createBean(newCol);
         return newCol;
     }
@@ -488,8 +491,11 @@ export class AutoColService extends BeanStub implements NamedBean, IAutoColServi
 const autoColId = (rowGroupCol?: AgColumn): string =>
     rowGroupCol ? `${GROUP_AUTO_COLUMN_ID}-${rowGroupCol.colId}` : GROUP_AUTO_COLUMN_ID;
 
-/** True when `currentCols` already matches the colIds `rowGroupCols` implies, in order — the no-allocation
- *  fast path skipping the reconcile. */
+/** The same column, or (looked up by its group column's id, so the same part) a hierarchy column rebuilt for the same source. */
+const isSameSourceCol = (prev: AgColumn | null, current: AgColumn | null): boolean =>
+    prev === current || (current?.colKind === 'hierarchy' && prev?.derivedFromCol === current.derivedFromCol);
+
+/** True when `currentCols` were generated for `rowGroupCols`, in order: the fast path skipping the reconcile. */
 const autoColsInOrder = (
     currentCols: readonly AgColumn[],
     rowGroupCols: readonly AgColumn[] | undefined,
@@ -503,7 +509,7 @@ const autoColsInOrder = (
         return false;
     }
     for (let i = 0; i < len; ++i) {
-        if (currentCols[i].colId !== autoColId(rowGroupCols[i])) {
+        if (currentCols[i].derivedFromCol !== rowGroupCols[i]) {
             return false;
         }
     }

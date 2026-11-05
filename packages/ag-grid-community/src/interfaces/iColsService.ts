@@ -58,9 +58,9 @@ export interface IPivotColsService extends IOrderedColsService {
      *  keeping each group's within-group (user) column order. Stable: equal group rank keeps sticky order. */
     reRankByPivotGroupOrder(
         defColsList: AgColumn[],
-        stickyOrder: string[],
+        stickyOrder: AgColumn[],
         colsById: Record<string, AgColumn>
-    ): string[];
+    ): AgColumn[];
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.  */

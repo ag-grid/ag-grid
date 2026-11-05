@@ -142,7 +142,7 @@ There are a few items to note on specific state attributes. They are as follows:
 
 ### Column IDs
 
-Column state is keyed by [Column ID](./column-updating-definitions/#matching-columns), so give every column a `colId` or a `field` if you intend to save and re-apply its state. A column with neither is identified by its position in `columnDefs`, which means state saved before a reorder is re-applied to a different column. See [Grid State](./grid-state/#column-and-group-ids) for details.
+Column state is keyed by [Column ID](./column-updating-definitions/#matching-columns), so give every column a `colId` or a `field` if you intend to save and re-apply its state. When the grid is created, a column with neither gets its ID from its position among the columns that have neither and the groups without a `groupId`, so adding, removing or reordering those columns or groups can re-apply saved state to a different column. A column kept when `columnDefs` are updated keeps its ID, which can then differ from the one a new grid gives it. See [Grid State](./grid-state/#column-and-group-ids) for details.
 
 ### null vs undefined
 
