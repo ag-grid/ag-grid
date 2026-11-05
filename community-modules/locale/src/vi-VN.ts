@@ -819,6 +819,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaLabelSelectField: 'Chọn Trường',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Trình chỉnh sửa ô',
     ariaValidationErrorPrefix: 'Xác nhận lỗi trình chỉnh sửa ô',
     ariaFullRowValidationError: 'Xác thực toàn bộ hàng: ${variable}',
     ariaFullRowEditValidationFailed: 'Không thể hoàn tất chỉnh sửa hàng. ${variable}',

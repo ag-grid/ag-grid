@@ -817,6 +817,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaLabelSelectField: 'שדה בחירה',
 
     // Cell Editor
+    ariaLabelCellEditor: 'עורך תא',
     ariaValidationErrorPrefix: 'אימות עורך תא',
     ariaFullRowValidationError: 'אימות שורה מלאה: ${variable}',
     ariaFullRowEditValidationFailed: 'לא ניתן להשלים את עריכת השורה. ${variable}',

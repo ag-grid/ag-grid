@@ -821,6 +821,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     ariaLabelSelectField: 'Odaberi polje',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Uređivač ćelija',
     ariaValidationErrorPrefix: 'Validacija Uređivača ćelija',
     ariaFullRowValidationError: 'Provjera cijelog retka: ${variable}',
     ariaFullRowEditValidationFailed: 'Uređivanje retka nije moguće dovršiti. ${variable}',

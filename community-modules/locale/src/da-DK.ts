@@ -821,6 +821,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaLabelSelectField: 'Vælg felt',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Celleditor',
     ariaValidationErrorPrefix: 'Celleditorvalidering',
     ariaFullRowValidationError: 'Validering af hele rækken: ${variable}',
     ariaFullRowEditValidationFailed: 'Rækkeredigeringen kan ikke fuldføres. ${variable}',

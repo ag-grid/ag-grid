@@ -842,6 +842,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaLabelSelectField: 'Выберите поле',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Редактор ячейки',
     ariaValidationErrorPrefix: 'Проверка редактора ячейки',
     ariaFullRowValidationError: 'Проверка всей строки: ${variable}',
     ariaFullRowEditValidationFailed: 'Не удалось завершить редактирование строки. ${variable}',

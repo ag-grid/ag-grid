@@ -823,6 +823,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     ariaLabelSelectField: 'Избор на поле',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Редактор на клетки',
     ariaValidationErrorPrefix: 'Валидиране на редактор на клетки',
     ariaFullRowValidationError: 'Валидация на целия ред: ${variable}',
     ariaFullRowEditValidationFailed: 'Редактирането на реда не може да бъде завършено. ${variable}',

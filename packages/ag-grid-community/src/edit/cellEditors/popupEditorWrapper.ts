@@ -1,4 +1,4 @@
-import { AgPopupComponent } from 'ag-stack';
+import { AgPopupComponent, _setAriaLabel } from 'ag-stack';
 
 import type { BeanCollection } from '../../context/context';
 import type { AgColumn } from '../../entities/agColumn';
@@ -28,6 +28,13 @@ export class PopupEditorWrapper extends AgPopupComponent<
     public postConstruct(): void {
         _setDomData(this.gos, this.getGui(), 'popupEditorWrapper', true);
         this.addKeyDownListener();
+        this.setAriaLabel();
+    }
+
+    private setAriaLabel(): void {
+        const columnName = this.beans.colNames.getDisplayNameForColumn(this.params.column as AgColumn, 'header');
+        const label = columnName || this.getLocaleTextFunc()('ariaLabelCellEditor', 'Cell Editor');
+        _setAriaLabel(this.getGui(), label);
     }
 
     private addKeyDownListener(): void {

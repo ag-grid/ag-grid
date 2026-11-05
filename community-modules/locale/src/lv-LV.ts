@@ -841,6 +841,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaLabelSelectField: 'Atlases lauks',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Šūnas redaktors',
     ariaValidationErrorPrefix: 'Šūnas redaktora validācija',
     ariaFullRowValidationError: 'Pilnas rindas validācija: ${variable}',
     ariaFullRowEditValidationFailed: 'Nevar pabeigt rindas rediģēšanu. ${variable}',

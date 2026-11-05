@@ -847,6 +847,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaLabelSelectField: 'Piliin ang Field',
 
     // Cell Editor
+    ariaLabelCellEditor: 'Cell Editor',
     ariaValidationErrorPrefix: 'Validation ng Cell Editor',
     ariaFullRowValidationError: 'Validation ng Buong Row: ${variable}',
     ariaFullRowEditValidationFailed: 'Hindi makumpleto ang pag-edit ng row. ${variable}',
