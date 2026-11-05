@@ -1,6 +1,5 @@
 import react from '@vitejs/plugin-react';
 import fs from 'fs';
-import { globSync } from 'glob';
 import path from 'path';
 import { build } from 'vite';
 import zlib from 'zlib';
@@ -105,7 +104,7 @@ async function measureCombination(
 
     await build(createBuildConfig());
 
-    const files = globSync(distFilePattern);
+    const files = fs.globSync(distFilePattern);
     if (files.length === 0) {
         throw new Error(`No dist file matched pattern for modules: ${modules.join(', ')}`);
     }

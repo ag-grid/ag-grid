@@ -1,6 +1,6 @@
 import type { ExecutorContext } from '@nx/devkit';
 import { spawnSync } from 'child_process';
-import * as glob from 'glob';
+import { globSync } from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 
@@ -50,8 +50,7 @@ export function exampleOutputPath({
 }
 
 export function findExampleEntryFiles(parentProject: string) {
-    return glob
-        .sync(`documentation/${parentProject}/src/**/_examples/*/main.ts`)
+    return globSync(`documentation/${parentProject}/src/**/_examples/*/main.ts`)
         .map((p) => p.split(path.sep).join('/'))
         .sort();
 }
@@ -98,7 +97,7 @@ function generateViaPerExampleTasks(
     // Then confirm every example this executor was asked to produce actually has output. Deliberately
     // an existence check and not an mtime check: with the Nx daemon, outputs already matching the
     // cache are left untouched, so a freshness test would fail a perfectly correct cache hit.
-    const missing = expected.filter(({ outputPath }) => glob.sync(`${outputPath}/*/contents.json`).length === 0);
+    const missing = expected.filter((entry) => globSync(`${entry.outputPath}/*/contents.json`).length === 0);
     if (missing.length > 0) {
         const sample = missing
             .slice(0, 5)

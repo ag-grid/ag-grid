@@ -1,13 +1,9 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": ["../../tsconfig.base.json", "../../tsconfig.paths.json"],
   "compilerOptions": {
-    "emitDecoratorMetadata": false,
     "useDefineForClassFields": false,
-    "module": "commonjs",
-    "moduleResolution": "node",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["node"],
-    "noEmit": true
+    "types": ["node"]
   },
   "include": ["playwright.config.ts", "src/**/*.ts", "e2e/**/*.ts", "../../packages/ag-grid-community/src/typings.ts"]
 }
