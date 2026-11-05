@@ -273,7 +273,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                             value = value.value;
                         }
 
-                        // string values are counted but never coerced to numbers
                         if ((typeof value === 'number' && !Number.isNaN(value)) || typeof value === 'bigint') {
                             addValue(value);
                         }
