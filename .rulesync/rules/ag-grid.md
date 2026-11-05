@@ -148,7 +148,7 @@ Limits:
 - Jobs and steps that only run on `pull_request` (the PR preview) don't run.
 - `/ci` only sets `nx_command`, and `run_package_tests` defaults to off, so package tests don't run.
 - The run tests the branch head, not the merge ref, so it can pass where the merge would fail.
-- Marking the PR ready re-runs CI only for those bases. On any other base (a stacked PR, say) no PR run starts, so a red `CI (manual)` isn't superseded until the PR gets a run after a push or a retarget.
+- Marking the PR ready re-runs CI only for those bases. On any other base (a stacked PR, say) no PR run starts, so a red `CI (manual)` stays on that commit. A new commit starts without the status.
 
 ### Technical Requirements
 
