@@ -119,7 +119,7 @@ bryntumDemoInit('scheduler', 'live-scheduler-demo', function (api) {
         onDrop({ context }) {
             const me = this;
             const { schedule } = me;
-            const { task, target, resource, valid, startDate } = context;
+            const { task, target, resource, valid, element, startDate } = context;
             me.tip?.hide();
             schedule.disableScrollingCloseToEdges(me.schedule.timeAxisSubGrid);
             context.valid = valid && target && startDate;
