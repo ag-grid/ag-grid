@@ -774,6 +774,7 @@ export const AG_GRID_LOCALE_AR_EG = {
     ariaPageSizeSelectorLabel: 'حجم الصفحة',
     ariaChartMenuClose: 'إغلاق قائمة تحرير الرسم البياني',
     ariaChartSelected: 'محدد',
+    ariaChartSeriesChartType: 'نوع الرسم البياني لـ ${variable}',
     ariaChartPalettePrevious: 'لوحة الألوان السابقة',
     ariaChartPaletteNext: 'لوحة الألوان التالية',
     ariaChartPalettePage: 'لوحة الألوان ${variable} من ${variable}',

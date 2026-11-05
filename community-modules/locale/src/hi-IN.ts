@@ -793,6 +793,7 @@ export const AG_GRID_LOCALE_HI_IN = {
     ariaPageSizeSelectorLabel: 'पेज आकार',
     ariaChartMenuClose: 'चार्ट संपादन मेनू बंद करें',
     ariaChartSelected: 'चयनित',
+    ariaChartSeriesChartType: '${variable} चार्ट प्रकार',
     ariaChartPalettePrevious: 'पिछला पैलेट',
     ariaChartPaletteNext: 'अगला पैलेट',
     ariaChartPalettePage: 'पैलेट ${variable} / ${variable}',

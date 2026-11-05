@@ -776,6 +776,7 @@ export const AG_GRID_LOCALE_VI_VN = {
     ariaPageSizeSelectorLabel: 'Kích thước Trang',
     ariaChartMenuClose: 'Đóng Menu Chỉnh sửa Biểu đồ',
     ariaChartSelected: 'Đã chọn',
+    ariaChartSeriesChartType: 'Loại biểu đồ của ${variable}',
     ariaChartPalettePrevious: 'Bảng màu trước',
     ariaChartPaletteNext: 'Bảng màu tiếp theo',
     ariaChartPalettePage: 'Bảng màu ${variable} trên ${variable}',

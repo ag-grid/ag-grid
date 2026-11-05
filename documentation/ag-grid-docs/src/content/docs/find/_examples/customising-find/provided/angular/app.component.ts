@@ -42,9 +42,7 @@ ModuleRegistry.registerModules([
                 <input id="caseSensitive" type="checkbox" (change)="toggleCaseSensitive($event)" checked="" />
                 <label for="currentPageOnly" class="gap-left">currentPageOnly:</label>
                 <input id="currentPageOnly" type="checkbox" (change)="toggleCurrentPageOnly($event)" checked="" />
-            </div>
-            <div class="controls-row">
-                <label for="find-goto">Go to match:</label>
+                <label for="find-goto" class="gap-left">Go to match:</label>
                 <input #goToInput type="number" id="find-goto" min="1" />
                 <button (click)="goToFind()">Go To</button>
             </div>

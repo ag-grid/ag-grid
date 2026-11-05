@@ -794,6 +794,7 @@ export const AG_GRID_LOCALE_ID_ID = {
     ariaPageSizeSelectorLabel: 'Ukuran Halaman',
     ariaChartMenuClose: 'Tutup Menu Edit Grafik',
     ariaChartSelected: 'Dipilih',
+    ariaChartSeriesChartType: 'Tipe Grafik ${variable}',
     ariaChartPalettePrevious: 'Palet sebelumnya',
     ariaChartPaletteNext: 'Palet berikutnya',
     ariaChartPalettePage: 'Palet ${variable} dari ${variable}',

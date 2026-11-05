@@ -794,6 +794,7 @@ export const AG_GRID_LOCALE_RU_RU = {
     ariaPageSizeSelectorLabel: 'Размер страницы',
     ariaChartMenuClose: 'Закрыть меню редактирования диаграммы',
     ariaChartSelected: 'Выбрано',
+    ariaChartSeriesChartType: 'Тип диаграммы для ${variable}',
     ariaChartPalettePrevious: 'Предыдущая палитра',
     ariaChartPaletteNext: 'Следующая палитра',
     ariaChartPalettePage: 'Палитра ${variable} из ${variable}',

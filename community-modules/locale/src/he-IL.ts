@@ -774,6 +774,7 @@ export const AG_GRID_LOCALE_HE_IL = {
     ariaPageSizeSelectorLabel: 'גודל עמוד',
     ariaChartMenuClose: 'סגור תפריט עריכת תרשים',
     ariaChartSelected: 'נבחר',
+    ariaChartSeriesChartType: 'סוג תרשים עבור ${variable}',
     ariaChartPalettePrevious: 'הפלטה הקודמת',
     ariaChartPaletteNext: 'הפלטה הבאה',
     ariaChartPalettePage: 'פלטה ${variable} מתוך ${variable}',

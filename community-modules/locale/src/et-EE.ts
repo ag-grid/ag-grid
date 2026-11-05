@@ -791,6 +791,7 @@ export const AG_GRID_LOCALE_ET_EE = {
     ariaPageSizeSelectorLabel: 'Lehe suurus',
     ariaChartMenuClose: 'Sulge diagrammi muutmismenüü',
     ariaChartSelected: 'Valitud',
+    ariaChartSeriesChartType: '${variable} diagrammi tüüp',
     ariaChartPalettePrevious: 'Eelmine palett',
     ariaChartPaletteNext: 'Järgmine palett',
     ariaChartPalettePage: 'Palett ${variable}/${variable}',

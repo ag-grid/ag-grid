@@ -5,6 +5,7 @@ import { _errorToThrowWithoutAttribution } from 'ag-grid-community';
 
 import { VERSION } from '../version';
 import { ALL_AXIS_TYPES, getLegacyAxisType } from './chartComp/utils/axisTypeMapper';
+import { extractPaired } from './chartComp/utils/pairedUtils';
 import { getCanonicalChartType, getSeriesType, isPieChartSeries } from './chartComp/utils/seriesTypeMapper';
 
 const DEBUG = false;
@@ -32,6 +33,7 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
     model = migrateIfBefore('33.0.0', model, migrateV33);
     model = migrateIfBefore('34.0.0', model, migrateV34);
     model = migrateIfBefore('36.0.0', model, migrateV36);
+    model = migrateIfBefore('37.0.0', model, migrateV37);
     model = cleanup(model);
 
     // Bump version to latest.
@@ -376,6 +378,14 @@ function migrateV36(model: ChartModel) {
     model = jsonRename('chartOptions.bubble.series.size', 'minSize', model);
 
     return model;
+}
+
+function migrateV37(model: ChartModel): ChartModel {
+    const { paired, overrides } = extractPaired(model.chartOptions, model.chartType);
+    if (overrides === model.chartOptions) {
+        return model;
+    }
+    return { ...model, chartOptions: overrides!, paired: model.paired ?? paired };
 }
 
 function cleanup(model: ChartModel) {

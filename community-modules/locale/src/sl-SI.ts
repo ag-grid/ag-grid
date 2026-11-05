@@ -791,6 +791,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaPageSizeSelectorLabel: 'Velikost strani',
     ariaChartMenuClose: 'Zapri meni za urejanje grafikona',
     ariaChartSelected: 'Izbrano',
+    ariaChartSeriesChartType: 'Vrsta grafikona za ${variable}',
     ariaChartPalettePrevious: 'Prejšnja paleta',
     ariaChartPaletteNext: 'Naslednja paleta',
     ariaChartPalettePage: 'Paleta ${variable} od ${variable}',

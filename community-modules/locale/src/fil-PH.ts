@@ -799,6 +799,7 @@ export const AG_GRID_LOCALE_FIL_PH = {
     ariaPageSizeSelectorLabel: 'Laki ng Pahina',
     ariaChartMenuClose: 'Isara ang Menu ng Pag-edit ng Chart',
     ariaChartSelected: 'Napili',
+    ariaChartSeriesChartType: 'Uri ng Chart ng ${variable}',
     ariaChartPalettePrevious: 'Nakaraang palette',
     ariaChartPaletteNext: 'Susunod na palette',
     ariaChartPalettePage: 'Palette ${variable} ng ${variable}',

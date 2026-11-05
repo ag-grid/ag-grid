@@ -795,6 +795,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaPageSizeSelectorLabel: 'Saiz Halaman',
     ariaChartMenuClose: 'Tutup Menu Sunting Carta',
     ariaChartSelected: 'Dipilih',
+    ariaChartSeriesChartType: 'Jenis Carta ${variable}',
     ariaChartPalettePrevious: 'Palet sebelumnya',
     ariaChartPaletteNext: 'Palet seterusnya',
     ariaChartPalettePage: 'Palet ${variable} daripada ${variable}',

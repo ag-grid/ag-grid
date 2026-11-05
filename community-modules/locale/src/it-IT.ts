@@ -783,6 +783,7 @@ export const AG_GRID_LOCALE_IT_IT = {
     ariaPageSizeSelectorLabel: 'Dimensione della Pagina',
     ariaChartMenuClose: 'Chiudi Menu Modifica Grafico',
     ariaChartSelected: 'Selezionato',
+    ariaChartSeriesChartType: 'Tipo di grafico per ${variable}',
     ariaChartPalettePrevious: 'Tavolozza precedente',
     ariaChartPaletteNext: 'Tavolozza successiva',
     ariaChartPalettePage: 'Tavolozza ${variable} di ${variable}',

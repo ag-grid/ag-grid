@@ -793,6 +793,7 @@ export const AG_GRID_LOCALE_LV_LV = {
     ariaPageSizeSelectorLabel: 'Lappuses izmērs',
     ariaChartMenuClose: 'Aizvērt diagrammas rediģēšanas izvēlni',
     ariaChartSelected: 'Atlasīts',
+    ariaChartSeriesChartType: '${variable} diagrammas tips',
     ariaChartPalettePrevious: 'Iepriekšējā palete',
     ariaChartPaletteNext: 'Nākamā palete',
     ariaChartPalettePage: 'Palete ${variable} no ${variable}',

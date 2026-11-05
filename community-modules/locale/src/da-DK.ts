@@ -778,6 +778,7 @@ export const AG_GRID_LOCALE_DA_DK = {
     ariaPageSizeSelectorLabel: 'Sidestørrelse',
     ariaChartMenuClose: 'Luk Diagram Redigeringsmenu',
     ariaChartSelected: 'Valgt',
+    ariaChartSeriesChartType: 'Diagramtype for ${variable}',
     ariaChartPalettePrevious: 'Forrige palet',
     ariaChartPaletteNext: 'Næste palet',
     ariaChartPalettePage: 'Palet ${variable} af ${variable}',

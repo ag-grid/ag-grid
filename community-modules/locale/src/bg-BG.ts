@@ -780,6 +780,7 @@ export const AG_GRID_LOCALE_BG_BG = {
     ariaPageSizeSelectorLabel: 'Размер на страницата',
     ariaChartMenuClose: 'Затворете менюто за редактиране на диаграмата',
     ariaChartSelected: 'Избрано',
+    ariaChartSeriesChartType: 'Тип на диаграмата за ${variable}',
     ariaChartPalettePrevious: 'Предишна палитра',
     ariaChartPaletteNext: 'Следваща палитра',
     ariaChartPalettePage: 'Палитра ${variable} от ${variable}',

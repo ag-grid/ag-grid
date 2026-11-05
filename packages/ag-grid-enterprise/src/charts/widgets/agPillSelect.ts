@@ -101,6 +101,7 @@ export class AgPillSelect<TValue = string | null> extends Component {
             new AgSelect({
                 options,
                 placeholder,
+                ariaLabel: placeholder,
                 onValueChange: (value) => this.addValue(value),
                 pickerIcon: 'chartsMenuAdd',
             })

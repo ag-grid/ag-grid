@@ -780,6 +780,7 @@ export const AG_GRID_LOCALE_TR_TR = {
     ariaPageSizeSelectorLabel: 'Sayfa Boyutu',
     ariaChartMenuClose: 'Grafik Düzenleme Menüsünü Kapat',
     ariaChartSelected: 'Seçildi',
+    ariaChartSeriesChartType: '${variable} Grafik Tipi',
     ariaChartPalettePrevious: 'Önceki palet',
     ariaChartPaletteNext: 'Sonraki palet',
     ariaChartPalettePage: 'Palet ${variable} / ${variable}',

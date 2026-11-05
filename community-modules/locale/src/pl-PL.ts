@@ -780,6 +780,7 @@ export const AG_GRID_LOCALE_PL_PL = {
     ariaPageSizeSelectorLabel: 'Rozmiar Strony',
     ariaChartMenuClose: 'Zamknij Menu Edycji Wykresu',
     ariaChartSelected: 'Wybrane',
+    ariaChartSeriesChartType: 'Typ wykresu dla ${variable}',
     ariaChartPalettePrevious: 'Poprzednia paleta',
     ariaChartPaletteNext: 'Następna paleta',
     ariaChartPalettePage: 'Paleta ${variable} z ${variable}',

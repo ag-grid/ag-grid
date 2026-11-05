@@ -790,6 +790,7 @@ export const AG_GRID_LOCALE_TH_TH = {
     ariaPageSizeSelectorLabel: 'ขนาดหน้า',
     ariaChartMenuClose: 'ปิดเมนูแก้ไขชาร์ต',
     ariaChartSelected: 'ถูกเลือก',
+    ariaChartSeriesChartType: 'ชนิดชาร์ตของ ${variable}',
     ariaChartPalettePrevious: 'จานสีก่อนหน้า',
     ariaChartPaletteNext: 'จานสีถัดไป',
     ariaChartPalettePage: 'จานสี ${variable} จาก ${variable}',

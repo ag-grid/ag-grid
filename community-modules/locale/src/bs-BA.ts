@@ -795,6 +795,7 @@ export const AG_GRID_LOCALE_BS_BA = {
     ariaPageSizeSelectorLabel: 'Veličina stranice',
     ariaChartMenuClose: 'Zatvori meni uređivanja grafikona',
     ariaChartSelected: 'Izabrano',
+    ariaChartSeriesChartType: 'Tip grafikona za ${variable}',
     ariaChartPalettePrevious: 'Prethodna paleta',
     ariaChartPaletteNext: 'Sljedeća paleta',
     ariaChartPalettePage: 'Paleta ${variable} od ${variable}',

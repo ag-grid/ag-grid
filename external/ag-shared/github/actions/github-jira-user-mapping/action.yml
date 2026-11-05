@@ -1,0 +1,32 @@
+name: github-jira-user-mapping
+description: >-
+    Reads the GitHub login to JIRA user mapping from the Notion user directory (the same one the Slack
+    notifications use). Never fails the job: when Notion is unavailable it outputs `{}` with a warning.
+    Needs `external/ag-shared/scripts/slack` and `external/ag-shared/scripts/jira` in the checkout.
+inputs:
+    NOTION_API_TOKEN:
+        description: Notion API token for reading the user directory.
+        required: true
+    NOTION_DATA_SOURCE_ID:
+        description: Notion data source id of the user directory.
+        required: true
+    NOTION_API_VERSION:
+        description: Notion API version.
+        required: false
+        default: '2026-03-11'
+outputs:
+    mapping:
+        description: 'JSON object of the form { "<github-login>": ["<jira-account-id>", "<full name>"] }.'
+        value: ${{ steps.mapping.outputs.mapping }}
+
+runs:
+    using: composite
+    steps:
+        - name: Read GitHub to JIRA user mapping
+          id: mapping
+          shell: bash
+          env:
+              NOTION_API_TOKEN: ${{ inputs.NOTION_API_TOKEN }}
+              NOTION_DATA_SOURCE_ID: ${{ inputs.NOTION_DATA_SOURCE_ID }}
+              NOTION_API_VERSION: ${{ inputs.NOTION_API_VERSION }}
+          run: node ./external/ag-shared/scripts/jira/write-github-jira-user-mapping.mjs

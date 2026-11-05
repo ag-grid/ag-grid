@@ -1005,7 +1005,6 @@ exports[`chartModelMigration > upgradeChartModel > should upgrade 22.1.0-scatter
         "right": 20,
         "top": 20,
       },
-      "paired": false,
       "series": {
         "highlightStyle": {
           "item": {
@@ -1044,6 +1043,7 @@ exports[`chartModelMigration > upgradeChartModel > should upgrade 22.1.0-scatter
   },
   "chartThemeName": "ag-default",
   "chartType": "scatter",
+  "paired": false,
 }
 `;
 

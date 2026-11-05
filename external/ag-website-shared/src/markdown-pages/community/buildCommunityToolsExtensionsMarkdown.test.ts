@@ -21,6 +21,10 @@ describe('buildCommunityToolsExtensionsMarkdown', () => {
         expect(bullets.length).toBeGreaterThan(3);
     });
 
+    it('links tools without a link to their repo', () => {
+        expect(output).toContain('[Blazor AG Grid](https://github.com/ebekker/blazor-ag-grid)');
+    });
+
     it('ends with a single trailing newline', () => {
         expect(output.endsWith('\n')).toBe(true);
         expect(output.endsWith('\n\n')).toBe(false);

@@ -32,9 +32,7 @@ ModuleRegistry.registerModules([FindModule, ClientSideRowModelModule]);
                 <button (click)="previous()">Previous</button>
                 <button (click)="next()">Next</button>
                 <span>{{ activeMatchNum }}</span>
-            </div>
-            <div class="controls-row">
-                <label for="find-goto">Go to match:</label>
+                <label for="find-goto" class="gap-left">Go to match:</label>
                 <input #goToInput type="number" id="find-goto" min="1" />
                 <button (click)="goToFind()">Go To</button>
             </div>

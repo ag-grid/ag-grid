@@ -268,9 +268,11 @@ const DEFAULT_CHART_TRANSLATIONS = {
     // aria
     ariaChartMenuClose: 'Close Chart Edit Menu',
     ariaChartSelected: 'Selected',
+    ariaChartSeriesChartType: '${variable} Chart Type',
     ariaChartPalettePrevious: 'Previous palette',
     ariaChartPaletteNext: 'Next palette',
     ariaChartPalettePage: 'Palette ${variable} of ${variable}',
+    ariaLabelAggregationFunction: 'Aggregation Function',
 
     // group
     group: 'Group',
@@ -302,9 +304,9 @@ export class ChartTranslationService extends BeanStub implements NamedBean {
 
     public translate(toTranslate: ChartTranslationKey, variableValues?: string[]): string {
         const translate = this.getLocaleTextFunc();
-        let defaultTranslation: string = DEFAULT_CHART_TRANSLATIONS[toTranslate];
+        let defaultTranslation = DEFAULT_CHART_TRANSLATIONS[toTranslate];
         for (const value of variableValues ?? []) {
-            defaultTranslation = defaultTranslation.replace('${variable}', value);
+            defaultTranslation = defaultTranslation.replace('${variable}', () => value);
         }
         return translate(toTranslate, defaultTranslation, variableValues);
     }

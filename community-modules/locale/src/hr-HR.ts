@@ -778,6 +778,7 @@ export const AG_GRID_LOCALE_HR_HR = {
     ariaPageSizeSelectorLabel: 'Veličina stranice',
     ariaChartMenuClose: 'Zatvori izbornik uređivanja grafikona',
     ariaChartSelected: 'Odabrano',
+    ariaChartSeriesChartType: 'Vrsta grafikona za ${variable}',
     ariaChartPalettePrevious: 'Prethodna paleta',
     ariaChartPaletteNext: 'Sljedeća paleta',
     ariaChartPalettePage: 'Paleta ${variable} od ${variable}',

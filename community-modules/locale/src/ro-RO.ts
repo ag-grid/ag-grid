@@ -780,6 +780,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaPageSizeSelectorLabel: 'Dimensiunea Paginii',
     ariaChartMenuClose: 'Închide meniul de editare a graficului',
     ariaChartSelected: 'Selectat',
+    ariaChartSeriesChartType: 'Tip grafic pentru ${variable}',
     ariaChartPalettePrevious: 'Paleta anterioară',
     ariaChartPaletteNext: 'Paleta următoare',
     ariaChartPalettePage: 'Paleta ${variable} din ${variable}',

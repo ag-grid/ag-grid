@@ -780,6 +780,7 @@ export const AG_GRID_LOCALE_FI_FI = {
     ariaPageSizeSelectorLabel: 'Sivun koko',
     ariaChartMenuClose: 'Sulje kaavion muokkausvalikko',
     ariaChartSelected: 'Valittu',
+    ariaChartSeriesChartType: '${variable} – kaavion tyyppi',
     ariaChartPalettePrevious: 'Edellinen paletti',
     ariaChartPaletteNext: 'Seuraava paletti',
     ariaChartPalettePage: 'Paletti ${variable}/${variable}',
