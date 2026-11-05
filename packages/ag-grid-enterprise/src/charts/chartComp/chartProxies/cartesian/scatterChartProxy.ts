@@ -26,8 +26,7 @@ export class ScatterChartProxy extends CartesianChartProxy<'scatter' | 'bubble'>
 
     protected override getSeries(params: UpdateParams): (AgScatterSeriesOptions | AgBubbleSeriesOptions)[] {
         const [category] = params.categories;
-        const paired = this.isPaired();
-        const seriesDefinitions = this.getSeriesDefinitions(params.fields, paired);
+        const seriesDefinitions = this.getSeriesDefinitions(params.fields, params.paired);
         const labelFieldDefinition = category.id === DEFAULT_CHART_CATEGORY ? undefined : category;
 
         const series = seriesDefinitions.map((seriesDefinition) => {

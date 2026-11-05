@@ -112,6 +112,13 @@ const switchCategorySeriesValidation: (isEnterprise: boolean) => ValidationFunct
     warnIfFixed: true,
 });
 
+const createPairedValidation: ValidationFunction<any> = {
+    property: 'paired',
+    validationFn: validateIfDefined<boolean, undefined>((paired) => isBoolean(paired) || undefined),
+    warnMessage: createWarnMessage('paired', 'boolean'),
+    warnIfFixed: true,
+};
+
 const commonUpdateValidations: (log: LogService) => ValidationFunction<any>[] = (log) => [
     { property: 'chartId', validationFn: isString, warnMessage: createWarnMessage('chartId', 'string') },
     {
@@ -181,7 +188,11 @@ export function validateCreateParams(
 ): boolean | CommonCreateChartParams {
     return validateProperties(
         params,
-        [enterpriseChartTypeValidation(isEnterprise), switchCategorySeriesValidation(isEnterprise)],
+        [
+            enterpriseChartTypeValidation(isEnterprise),
+            switchCategorySeriesValidation(isEnterprise),
+            createPairedValidation,
+        ],
         log
     );
 }
@@ -206,6 +217,11 @@ function validateUpdateRangeChartParams(
             validationFn: isBoolean,
             warnMessage: createWarnMessage('useGroupColumnAsCategory', 'boolean'),
         },
+        {
+            property: 'paired',
+            validationFn: validateIfDefined(isBoolean),
+            warnMessage: createWarnMessage('paired', 'boolean'),
+        },
     ];
 
     return validateProperties(
@@ -221,6 +237,7 @@ function validateUpdateRangeChartParams(
             'seriesChartTypes',
             'seriesGroupType',
             'useGroupColumnAsCategory',
+            'paired',
         ],
         'UpdateRangeChartParams'
     );

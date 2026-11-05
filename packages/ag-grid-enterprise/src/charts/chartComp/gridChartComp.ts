@@ -74,6 +74,7 @@ export interface GridChartParams {
     seriesChartTypes?: SeriesChartType[];
     crossFilteringResetCallback?: () => void;
     useGroupColumnAsCategory?: boolean;
+    paired?: boolean;
 }
 
 export class GridChartComp extends Component {
