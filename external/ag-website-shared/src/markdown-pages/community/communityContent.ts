@@ -48,7 +48,8 @@ export interface ShowcaseItem {
 interface ToolItem {
     title: string;
     description: string;
-    link: string;
+    link?: string;
+    repo?: string;
 }
 interface Video {
     title: string;
@@ -142,8 +143,11 @@ export function allTools(): ToolItem[] {
     return tools as ToolItem[];
 }
 
+// Mirror the ToolsExtensions component: fall back to the repo when a tool has no link.
 export function renderTools(list: ToolItem[], siteRoot?: string): string {
-    return list.map((tool) => `- **${mdLink(tool.title, tool.link, siteRoot)}** — ${tool.description}`).join('\n');
+    return list
+        .map((tool) => `- **${mdLink(tool.title, tool.link || tool.repo, siteRoot)}** — ${tool.description}`)
+        .join('\n');
 }
 
 export function renderVideosTable(siteRoot?: string): string {
