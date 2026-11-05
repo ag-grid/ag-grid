@@ -1,10 +1,4 @@
-import {
-    KeyCode,
-    _isValidDateTime,
-    _parseBigIntOrNull,
-    _serialiseDate,
-    _toStringOrNull,
-} from 'ag-stack';
+import { KeyCode, _isValidDateTime, _parseBigIntOrNull, _serialiseDate, _toStringOrNull } from 'ag-stack';
 
 import type { NamedBean } from '../context/bean';
 import { BeanStub } from '../context/beanStub';
@@ -514,6 +508,14 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     public getDateTimeParser(includeTime: boolean): ReturnType<typeof _getDateTimeParser> {
         return _getDateTimeParser(this.gos, includeTime);
+    }
+
+    /** A native input's `min` and `max` only read local datetimes, so a `Z` or offset is resolved to local time. */
+    public getDateInputBound(bound: string | Date, includeTime: boolean | undefined): string | Date {
+        if (typeof bound !== 'string' || !includeTime || this.gos.get('suppressTimezoneConversion')) {
+            return bound;
+        }
+        return _serialiseDate(this.getDateTimeParser(true)(bound)) ?? bound;
     }
 
     public getDataTypeDefinition(column: AgColumn): DataTypeDefinition | CoreDataTypeDefinition | undefined {

@@ -904,6 +904,8 @@ describe('Date Filter — conditions coverage', () => {
             api.forEachNodeAfterFilter((node) => ids.push(node.data.id));
             return ids;
         };
+        const toLocalInput = (instant: Date) =>
+            new Date(instant.getTime() - instant.getTimezoneOffset() * 60000).toISOString().slice(0, 19);
         const applyModel = async (api: GridApi, model: Record<string, unknown>) => {
             await api.setColumnFilterModel('date', { filterType: 'date', ...model });
             api.onFilterChanged();
@@ -1091,9 +1093,46 @@ describe('Date Filter — conditions coverage', () => {
 
             await applyModel(api, { type: 'equals', dateFrom: '2020-10-10T12:10:10+02:00' });
 
-            const instant = INSTANTS[2].date;
-            const localTime = new Date(instant.getTime() - instant.getTimezoneOffset() * 60000);
-            expect(FloatingFilterHarness.get(api, 'date').input().value).toBe(localTime.toISOString().slice(0, 19));
+            expect(FloatingFilterHarness.get(api, 'date').input().value).toBe(toLocalInput(INSTANTS[2].date));
+        });
+
+        test('minValidDate with an offset bounds the filter at that instant', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [dateColumn('dateTime', { minValidDate: '2020-10-10T12:00:00+02:00' })],
+                rowData: INSTANTS,
+            });
+
+            const filter = await ColumnFilterHarness.open(api, 'date');
+            await filter.selectOperator('Equals');
+
+            await filter.setDate(toLocalInput(new Date(Date.UTC(2020, 9, 10, 9, 0, 0))), 0);
+            await asyncSetTimeout(0);
+            expect(filter.getModel()).toBeNull();
+
+            await filter.setDate(toLocalInput(new Date(Date.UTC(2020, 9, 10, 11, 0, 0))), 0);
+            await asyncSetTimeout(0);
+            expect(filter.getModel()).toMatchObject({ dateFrom: '2020-10-10T11:00:00.000Z' });
+        });
+
+        test('re-entering the instant of a saved local-time model is not a filter change', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [dateColumn('dateTime')],
+                rowData: INSTANTS,
+            });
+            const savedInput = toLocalInput(INSTANTS[0].date);
+            await applyModel(api, { type: 'equals', dateFrom: savedInput.replace('T', ' '), dateTo: null });
+
+            const onFilterChanged = vi.fn();
+            api.addEventListener('filterChanged', onFilterChanged);
+            const filter = await ColumnFilterHarness.open(api, 'date');
+
+            await filter.setDate(savedInput, 0);
+            await asyncSetTimeout(0);
+            expect(onFilterChanged).not.toHaveBeenCalled();
+
+            await filter.setDate(toLocalInput(INSTANTS[1].date), 0);
+            await asyncSetTimeout(0);
+            expect(onFilterChanged).toHaveBeenCalledTimes(1);
         });
 
         test('the dateTime value parser honours an offset', async () => {

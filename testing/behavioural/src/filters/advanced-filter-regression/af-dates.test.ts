@@ -286,6 +286,47 @@ describe('Advanced Filter — date expressions (text parser)', () => {
             expect(displayedAthletes(api)).toEqual(['Exact']);
         });
 
+        test.each([
+            ['dateTime', new Date(2020, 9, 10, 8, 0, 0)],
+            ['dateTimeString', new Date(2020, 9, 10, 8, 0, 0).toISOString()],
+        ])('a %s expression in local time produces a UTC model that restores', async (cellDataType, at) => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'athlete' }, { field: 'at', cellDataType, filter: true }],
+                rowData: [{ athlete: 'Match', at }],
+                enableAdvancedFilter: true,
+            });
+            const expected = new Date(2020, 9, 10, 8, 0, 0).toISOString();
+
+            await AdvancedFilterHarness.get(api).applyExpression('[At] = "2020-10-10T08:00:00"');
+            await asyncSetTimeout(0);
+
+            const model = api.getAdvancedFilterModel();
+            expect(model).toEqual({ filterType: cellDataType, colId: 'at', type: 'equals', filter: expected });
+            expect(displayedAthletes(api)).toEqual(['Match']);
+
+            api.setAdvancedFilterModel(null);
+            await asyncSetTimeout(0);
+            api.setAdvancedFilterModel(model);
+            await asyncSetTimeout(0);
+
+            expect(AdvancedFilterHarness.get(api).value).toBe('[At] = "2020-10-10T08:00:00"');
+            expect(displayedAthletes(api)).toEqual(['Match']);
+        });
+
+        test('suppressTimezoneConversion produces a local model', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                suppressTimezoneConversion: true,
+                columnDefs: [{ field: 'athlete' }, { field: 'at', cellDataType: 'dateTime', filter: true }],
+                rowData: OFFSET_ROWS,
+                enableAdvancedFilter: true,
+            });
+
+            await AdvancedFilterHarness.get(api).applyExpression('[At] = "2020-10-10T12:10:10"');
+            await asyncSetTimeout(0);
+
+            expect(api.getAdvancedFilterModel()).toMatchObject({ filter: '2020-10-10T12:10:10' });
+        });
+
         test('suppressTimezoneConversion reads a model value as local time', async () => {
             const api = await gridsManager.createGridAndWait('grid1', {
                 suppressTimezoneConversion: true,

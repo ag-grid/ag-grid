@@ -701,6 +701,48 @@ describe('Cell editing validation — editor types and custom hooks', () => {
         });
     });
 
+    describe.each([
+        { cellEditor: 'agDateCellEditor', value: new Date(Date.UTC(2020, 9, 10, 11, 0, 0)) },
+        { cellEditor: 'agDateStringCellEditor', value: '2020-10-10T11:00:00Z' },
+    ])('$cellEditor — min with a UTC offset', ({ cellEditor, value }) => {
+        const MIN = '2020-10-10T12:00:00+02:00';
+        const toLocalInput = (instant: Date) =>
+            new Date(instant.getTime() - instant.getTimezoneOffset() * 60000).toISOString().slice(0, 19);
+
+        const startEditing = async (gridOptions: GridOptions = {}) => {
+            const api = await gridsManager.createGridAndWait('date-offset-bound', {
+                ...gridOptions,
+                columnDefs: [
+                    { field: 'when', editable: true, cellEditor, cellEditorParams: { includeTime: true, min: MIN } },
+                ],
+                rowData: [{ when: value }],
+                invalidEditValueMode: 'block',
+            });
+            api.startEditingCell({ rowIndex: 0, colKey: 'when' });
+            return { api, input: cell(api, 0, 'when').querySelector<HTMLInputElement>('input')! };
+        };
+
+        test('the native input and the validation both read the instant', async () => {
+            const { api, input } = await startEditing();
+
+            expect(input.getAttribute('min')).toBe(toLocalInput(new Date(Date.UTC(2020, 9, 10, 10, 0, 0))));
+
+            input.value = toLocalInput(new Date(Date.UTC(2020, 9, 10, 11, 0, 0)));
+            api.validateEdit();
+            expect(api.getEditValidationErrors()).toEqual([]);
+
+            input.value = toLocalInput(new Date(Date.UTC(2020, 9, 10, 9, 0, 0)));
+            api.validateEdit();
+            expect(api.getEditValidationErrors()).toHaveLength(1);
+        });
+
+        test('suppressTimezoneConversion leaves the native input bound as given', async () => {
+            const { input } = await startEditing({ suppressTimezoneConversion: true });
+
+            expect(input.getAttribute('min')).toBe(MIN);
+        });
+    });
+
     describe('fullRow — per-cell custom validation blocks the whole row', () => {
         const columnDefs: ColDef<PersonRow>[] = [
             { field: 'athlete' },

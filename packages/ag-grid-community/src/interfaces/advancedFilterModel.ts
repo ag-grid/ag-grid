@@ -144,7 +144,11 @@ export interface DateTimeAdvancedFilterModel {
     colId: string;
     /** The filter option that is being applied. */
     type: DateAdvancedFilterModelType | CustomFilterOptionKey;
-    /** The value to filter on. This is in format `YYYY-MM-DDTHH:mm:ss`. */
+    /**
+     * The value to filter on, as a UTC ISO 8601 string in format `YYYY-MM-DDTHH:mm:ss.sssZ`.
+     * If `suppressTimezoneConversion = true`, this is instead local time in format `YYYY-MM-DDTHH:mm:ss`.
+     * When setting a model, a value with a `Z` or UTC offset is read as that instant, and a value with neither is read as local time.
+     */
     filter?: string;
     /** The second value to filter on, where the filter option takes two. */
     filterTo?: string;
@@ -156,7 +160,11 @@ export interface DateTimeStringAdvancedFilterModel {
     colId: string;
     /** The filter option that is being applied. */
     type: DateAdvancedFilterModelType | CustomFilterOptionKey;
-    /** The value to filter on. This is in format `YYYY-MM-DD HH:mm:ss`. */
+    /**
+     * The value to filter on, as a UTC ISO 8601 string in format `YYYY-MM-DDTHH:mm:ss.sssZ`.
+     * If `suppressTimezoneConversion = true`, this is instead local time in format `YYYY-MM-DDTHH:mm:ss`.
+     * When setting a model, a value with a `Z` or UTC offset is read as that instant, and a value with neither is read as local time.
+     */
     filter?: string;
     /** The second value to filter on, where the filter option takes two. */
     filterTo?: string;

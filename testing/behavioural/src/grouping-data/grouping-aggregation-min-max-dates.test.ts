@@ -183,4 +183,20 @@ describe('ag-grid grouping min / max aggregation of dates', () => {
         const phelps = api.getRowNode('row-group-athlete-Michael Phelps')!;
         expect(phelps.aggData.dateString).toBeNull();
     });
+
+    test('dateTimeString values with a UTC offset are compared by the instant they denote', async () => {
+        const api = gridsManager.createGrid('myGrid', {
+            columnDefs: [
+                { field: 'country', rowGroup: true, hide: true },
+                { field: 'at', cellDataType: 'dateTimeString', aggFunc: 'max' },
+            ],
+            rowData: [
+                { id: '1', country: 'A', at: '2020-10-10T23:00:00+05:00' },
+                { id: '2', country: 'A', at: '2020-10-10T20:00:00Z' },
+            ],
+            getRowId: (params) => params.data.id,
+        });
+
+        expect(api.getRowNode('row-group-country-A')!.aggData.at).toBe('2020-10-10T20:00:00Z');
+    });
 });

@@ -189,17 +189,17 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
             return parsed == null ? null : String(parsed);
         },
         date: (operand, column, baseCellDataType) =>
-            _serialiseDate(
+            this.serialiseDateModelValue(
                 this.valueSvc.parseValue(column, null, operand, undefined) as Date,
-                !!this.dataTypeSvc?.getDateIncludesTimeFlag(baseCellDataType)
+                baseCellDataType
             ),
         dateTime: (...args) => this.operandModelValueGetters.date(...args),
         dateString: (operand, column, baseCellDataType) => {
             const parsedDateString = this.valueSvc.parseValue(column, null, operand, undefined);
             if (this.dataTypeSvc) {
-                return _serialiseDate(
+                return this.serialiseDateModelValue(
                     this.dataTypeSvc.getDateParserFunction(column)(parsedDateString) ?? null,
-                    this.dataTypeSvc.getDateIncludesTimeFlag(baseCellDataType)
+                    baseCellDataType
                 );
             }
             return parsedDateString;
@@ -213,6 +213,30 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
     public parseDateModelValue(value: unknown, dataType: BaseCellDataType): Date | null {
         const includeTime = !!this.dataTypeSvc?.getDateIncludesTimeFlag(dataType);
         return _getDateTimeParser(this.gos, includeTime)(_toStringOrNull(value));
+    }
+
+    private isUtcDateModelValue(dataType: BaseCellDataType): boolean {
+        return !!this.dataTypeSvc?.getDateIncludesTimeFlag(dataType) && !this.gos.get('suppressTimezoneConversion');
+    }
+
+    private serialiseDateModelValue(date: Date | null, dataType: BaseCellDataType): string | null {
+        if (this.isUtcDateModelValue(dataType)) {
+            return date && !Number.isNaN(date.getTime()) ? date.toISOString() : null;
+        }
+        return _serialiseDate(date, !!this.dataTypeSvc?.getDateIncludesTimeFlag(dataType));
+    }
+
+    /** A native date input only reads local datetimes, so a UTC model value is shown in local time. */
+    public getDateInputValue(modelValue: string, dataType: BaseCellDataType): string {
+        return this.isUtcDateModelValue(dataType)
+            ? (_serialiseDate(this.parseDateModelValue(modelValue, dataType)) ?? modelValue)
+            : modelValue;
+    }
+
+    public getDateModelValueFromInput(inputValue: string, dataType: BaseCellDataType): string {
+        return this.isUtcDateModelValue(dataType)
+            ? (this.serialiseDateModelValue(this.parseDateModelValue(inputValue, dataType), dataType) ?? inputValue)
+            : inputValue;
     }
 
     private getDateOperand(model: { filter?: string | number; colId: string }, dataType: BaseCellDataType) {
@@ -231,8 +255,7 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         }
         const { filter } = model;
         const dateFormatFn = this.dataTypeSvc?.getDateFormatterFunction(column);
-        const dateStringStringValue =
-            dateFormatFn?.(this.parseDateModelValue(filter, dataType) ?? undefined) ?? filter;
+        const dateStringStringValue = dateFormatFn?.(this.parseDateModelValue(filter, dataType) ?? undefined) ?? filter;
         return this.valueSvc.formatValue(column, null, dateStringStringValue);
     }
 

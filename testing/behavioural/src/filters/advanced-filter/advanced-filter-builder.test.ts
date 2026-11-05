@@ -3,7 +3,7 @@ import '@testing-library/jest-dom/vitest';
 import { userEvent } from '@testing-library/user-event';
 import { AdvancedFilterBuilderHarness, GridColumns, GridRows, TestGridsManager, asyncSetTimeout } from 'ag-test-utils';
 
-import type { GridApi, GridOptions } from 'ag-grid-community';
+import type { AdvancedFilterModel, GridApi, GridOptions } from 'ag-grid-community';
 import { ClientSideRowModelModule, DateFilterModule, NumberFilterModule, TextFilterModule } from 'ag-grid-community';
 import { AdvancedFilterModule } from 'ag-grid-enterprise';
 
@@ -160,6 +160,64 @@ describe('Advanced Filter - Builder UI', () => {
     });
 
     afterEach(() => gridsManager.reset());
+
+    describe.each(['dateTime', 'dateTimeString'])('a %s operand', (cellDataType) => {
+        const rowDate = new Date(2020, 9, 10, 8, 0, 0);
+        const toLocalInput = (instant: Date) =>
+            new Date(instant.getTime() - instant.getTimezoneOffset() * 60000).toISOString().slice(0, 19);
+        const createGrid = (suppressTimezoneConversion: boolean) =>
+            gridsManager.createGridAndWait('grid1', {
+                suppressTimezoneConversion,
+                enableAdvancedFilter: true,
+                columnDefs: [{ field: 'at', cellDataType, filter: true }],
+                rowData: [{ at: cellDataType === 'dateTime' ? rowDate : rowDate.toISOString() }],
+            });
+
+        test('is edited in local time and stored as UTC', async () => {
+            const api = await createGrid(false);
+            api.setAdvancedFilterModel({
+                filterType: cellDataType,
+                colId: 'at',
+                type: 'equals',
+                filter: '2020-10-10T12:10:10+02:00',
+            } as AdvancedFilterModel);
+            await asyncSetTimeout(0);
+
+            const builder = await AdvancedFilterBuilderHarness.open(api);
+            const [item] = await builder.conditionItems();
+            const editor = await builder.openValueEditor(item);
+            expect(editor.type).toBe('datetime-local');
+            expect(editor.value).toBe(toLocalInput(new Date(Date.UTC(2020, 9, 10, 10, 10, 10))));
+            editor.blur();
+            await asyncSetTimeout(0);
+
+            await builder.setValue(item, toLocalInput(rowDate));
+            await builder.apply();
+            await asyncSetTimeout(0);
+
+            expect(api.getAdvancedFilterModel()).toMatchObject({ filter: rowDate.toISOString() });
+            expect(api.getDisplayedRowCount()).toBe(1);
+        });
+
+        test('suppressTimezoneConversion stores local time', async () => {
+            const api = await createGrid(true);
+            api.setAdvancedFilterModel({
+                filterType: cellDataType,
+                colId: 'at',
+                type: 'equals',
+                filter: '2020-10-10T12:10:10',
+            } as AdvancedFilterModel);
+            await asyncSetTimeout(0);
+
+            const builder = await AdvancedFilterBuilderHarness.open(api);
+            const [item] = await builder.conditionItems();
+            await builder.setValue(item, toLocalInput(rowDate));
+            await builder.apply();
+            await asyncSetTimeout(0);
+
+            expect(api.getAdvancedFilterModel()).toMatchObject({ filter: toLocalInput(rowDate) });
+        });
+    });
 
     describe('Opening and closing', () => {
         test('showAdvancedFilterBuilder opens the builder dialog', async () => {

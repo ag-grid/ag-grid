@@ -41,22 +41,23 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         this.params = params;
 
         const { browserAutoComplete, min, max, step, colDef } = params;
+        const dataTypeSvc = this.getDataTypeService();
+        const includeTime = params.includeTime ?? dataTypeSvc?.getDateIncludesTimeFlag?.(colDef.cellDataType);
 
         eEditor.setAutoComplete(browserAutoComplete);
 
         if (min != null) {
-            eEditor.setMin(min);
+            eEditor.setMin(dataTypeSvc?.getDateInputBound(min, includeTime) ?? min);
         }
 
         if (max != null) {
-            eEditor.setMax(max);
+            eEditor.setMax(dataTypeSvc?.getDateInputBound(max, includeTime) ?? max);
         }
 
         if (step != null) {
             eEditor.setStep(step);
         }
-        this.includeTime =
-            params.includeTime ?? this.getDataTypeService()?.getDateIncludesTimeFlag?.(colDef.cellDataType);
+        this.includeTime = includeTime;
         if (this.includeTime != null) {
             eEditor.setIncludeTime(this.includeTime);
         }
@@ -87,8 +88,7 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         const { min, max } = this.params;
         const translate = this.getLocaleTextFunc();
         const errors: string[] = [];
-        const parseBound =
-            this.getDataTypeService()?.getDateTimeParser(!!this.includeTime) ?? _parseDateTimeFromString;
+        const parseBound = this.getDataTypeService()?.getDateTimeParser(!!this.includeTime) ?? _parseDateTimeFromString;
 
         // Bounds parse with the same parser as the input, or a `yyyy-mm-dd` string would be read as UTC
         // and compared against a local-time entry.

@@ -1479,6 +1479,27 @@ describe('getStructuredSchema - advanced filter', () => {
         );
     });
 
+    test.each([
+        [false, '2024-01-01T10:00:00.000Z', '2024-01-01T10:00:00'],
+        [true, '2024-01-01T10:00:00', '2024-01-01T10:00:00.000Z'],
+    ])(
+        'dateTime model schema with suppressTimezoneConversion %s accepts %s and rejects %s',
+        (suppressTimezoneConversion, accepted, rejected) => {
+            const api = gridsManager.createGrid('myGrid', {
+                suppressTimezoneConversion,
+                enableAdvancedFilter: true,
+                columnDefs: [{ field: 'date', cellDataType: 'dateTime' }],
+                rowData: [{ date: new Date(2024, 0, 1) }],
+            });
+
+            const defs = toJSON(api.getStructuredSchema()).$defs;
+            const filter = resolveNullable(defs.dateTimeAdvancedFilterModel.properties.filter);
+            const pattern = new RegExp(filter.pattern);
+            expect(pattern.test(accepted)).toBe(true);
+            expect(pattern.test(rejected)).toBe(false);
+        }
+    );
+
     test('advanced filter references advancedFilterModel def', async () => {
         const api = gridsManager.createGrid('myGrid', {
             columnDefs: [{ field: 'name', cellDataType: 'text' }],

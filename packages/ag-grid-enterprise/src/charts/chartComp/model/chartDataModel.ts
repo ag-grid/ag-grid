@@ -322,7 +322,8 @@ export class ChartDataModel extends BeanStub {
 
     public getConvertTime(colId: string): ((date: string | undefined) => Date | undefined) | undefined {
         const column = this.chartColSvc.getColumn(colId);
-        if (column?.colDef.cellDataType === 'dateString') {
+        const cellDataType = column?.colDef.cellDataType;
+        if (cellDataType === 'dateString' || cellDataType === 'dateTimeString') {
             return this.beans.dataTypeSvc?.getDateParserFunction(column);
         }
         return undefined;

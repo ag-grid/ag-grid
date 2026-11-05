@@ -119,9 +119,12 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
     }
 
     private createOperandPill(index: number): void {
-        // Date inputs want iso string, so read straight from model. For numbers, convert to string
+        // Date inputs want iso string in local time. For numbers, convert to string
         const value = this.getOperandModelValue(index);
-        const key = (typeof value === 'number' || typeof value === 'bigint' ? _toStringOrNull(value) : value) ?? '';
+        const key =
+            typeof value === 'string'
+                ? this.advFilterExpSvc.getDateInputValue(value, this.baseCellDataType)
+                : (_toStringOrNull(value) ?? '');
         // Read from the model, not from the text handed in: an edit is stored through the column's own
         // parser, and the display is produced by the default one, which need not read the same syntax.
         const valueFormatter = () =>
@@ -300,12 +303,13 @@ export class ConditionPillWrapperComp extends Component<AdvancedFilterBuilderEve
     }
 
     private setOperand(operand: string, index: number): void {
-        // Number comes back as string from input, so convert. Dates are already in iso string format.
+        // Number comes back as string from input, so convert. Datetimes come back in local time.
         // An emptied pill holds nothing to filter on, so the slot goes rather than keeping an empty string.
+        const { advFilterExpSvc, baseCellDataType } = this;
         const value =
-            this.baseCellDataType === 'number' && operand
-                ? (this.advFilterExpSvc.getNumberParser(this.column)(operand) ?? '')
-                : operand;
+            baseCellDataType === 'number' && operand
+                ? (advFilterExpSvc.getNumberParser(this.column)(operand) ?? '')
+                : advFilterExpSvc.getDateModelValueFromInput(operand, baseCellDataType);
         this.setOperandModelValue(index, value === '' ? undefined : value);
         this.validate();
     }

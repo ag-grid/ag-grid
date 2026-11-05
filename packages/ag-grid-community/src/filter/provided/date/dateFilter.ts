@@ -282,8 +282,24 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
 
     protected areSimpleModelsEqual(aSimple: DateFilterModel, bSimple: DateFilterModel): boolean {
         return (
-            aSimple.dateFrom === bSimple.dateFrom && aSimple.dateTo === bSimple.dateTo && aSimple.type === bSimple.type
+            this.isSameDateValue(aSimple.dateFrom, bSimple.dateFrom) &&
+            this.isSameDateValue(aSimple.dateTo, bSimple.dateTo) &&
+            aSimple.type === bSimple.type
         );
+    }
+
+    /** A saved model can write the instant a UI produces differently, such as in local time rather than UTC. */
+    private isSameDateValue(a: string | null | undefined, b: string | null | undefined): boolean {
+        if (a === b) {
+            return true;
+        }
+        const { beans, params } = this;
+        if (!isUtcDateFilterModel(beans, params)) {
+            return false;
+        }
+        const aDate = parseDateFilterModelValue(beans, params, a, true);
+        const bDate = parseDateFilterModelValue(beans, params, b, true);
+        return !!aDate && !!bDate && aDate.getTime() === bDate.getTime();
     }
 
     protected createCondition(position: number): DateFilterModel {

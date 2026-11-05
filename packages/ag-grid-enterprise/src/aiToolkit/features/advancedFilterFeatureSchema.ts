@@ -43,7 +43,7 @@ function getColumnOperatorKeysByOperands(
     return byOperands;
 }
 
-export const buildAdvancedFilterFeatureSchema = ({ colModel, dataTypeSvc, advFilterExpSvc }: BeanCollection) => {
+export const buildAdvancedFilterFeatureSchema = ({ colModel, dataTypeSvc, advFilterExpSvc, gos }: BeanCollection) => {
     if (!dataTypeSvc || !advFilterExpSvc) {
         return;
     }
@@ -84,7 +84,7 @@ export const buildAdvancedFilterFeatureSchema = ({ colModel, dataTypeSvc, advFil
         const count = (refCounts[name] ?? 0) + 1;
         refCounts[name] = count;
         const ref = `${name}AdvancedFilterModel${count > 1 ? count : ''}`;
-        defs[ref] = buildFilterSchema(group).toJSON();
+        defs[ref] = buildFilterSchema(group, !gos.get('suppressTimezoneConversion')).toJSON();
         columnFilterModels.push({ $ref: `#/$defs/${ref}` });
     }
 
@@ -119,11 +119,17 @@ interface DataTypeSchema {
     readonly filterType: string;
     readonly noun: string;
     readonly titleNoun: string;
-    readonly value: () => SchemaBuilder;
+    readonly value: (useUtcDateTime: boolean) => SchemaBuilder;
 }
 
 const dateValue = () =>
     s.string({ pattern: String.raw`^\d{4}-\d{2}-\d{2}$`, description: 'Date value in YYYY-MM-DD format' });
+
+const utcDateTimeValue = () =>
+    s.string({
+        pattern: String.raw`^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$`,
+        description: 'DateTime value in UTC YYYY-MM-DDTHH:mm:ss.sssZ format',
+    });
 
 const DataTypeSchemas: Record<BaseCellDataType, DataTypeSchema> = {
     boolean: {
@@ -144,21 +150,25 @@ const DataTypeSchemas: Record<BaseCellDataType, DataTypeSchema> = {
         filterType: 'dateTime',
         noun: 'datetime',
         titleNoun: 'DateTime',
-        value: () =>
-            s.string({
-                pattern: String.raw`^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$`,
-                description: 'DateTime value in YYYY-MM-DDTHH:mm:ss format',
-            }),
+        value: (useUtcDateTime) =>
+            useUtcDateTime
+                ? utcDateTimeValue()
+                : s.string({
+                      pattern: String.raw`^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$`,
+                      description: 'DateTime value in YYYY-MM-DDTHH:mm:ss format',
+                  }),
     },
     dateTimeString: {
         filterType: 'dateTimeString',
         noun: 'datetime string',
         titleNoun: 'DateTime string',
-        value: () =>
-            s.string({
-                pattern: String.raw`^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$`,
-                description: 'DateTime value in YYYY-MM-DD HH:mm:ss format',
-            }),
+        value: (useUtcDateTime) =>
+            useUtcDateTime
+                ? utcDateTimeValue()
+                : s.string({
+                      pattern: String.raw`^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$`,
+                      description: 'DateTime value in YYYY-MM-DD HH:mm:ss format',
+                  }),
     },
     number: {
         filterType: 'number',
@@ -176,7 +186,7 @@ const DataTypeSchemas: Record<BaseCellDataType, DataTypeSchema> = {
 };
 
 /** One operand kind per schema, so the value slots it declares are exactly the ones its operators require. */
-function buildFilterSchema(group: OperatorGroup): SchemaBuilder {
+function buildFilterSchema(group: OperatorGroup, useUtcDateTime: boolean): SchemaBuilder {
     const schemaName = group.schemaName;
     // A list option takes the values themselves, not the one-or-two operands every data type writes.
     if (schemaName === 'set') {
@@ -197,10 +207,10 @@ function buildFilterSchema(group: OperatorGroup): SchemaBuilder {
     // Required: the parser rejects a condition short of its operands, and that discards the whole model.
     const numOperands = OPERAND_COUNT[group.operands];
     if (numOperands > 0) {
-        props.filter = value().nullable();
+        props.filter = value(useUtcDateTime).nullable();
     }
     if (numOperands > 1) {
-        props.filterTo = value().nullable();
+        props.filterTo = value(useUtcDateTime).nullable();
     }
     return s.object(props);
 }

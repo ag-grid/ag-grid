@@ -62,6 +62,26 @@ describe('Set Filter — tree list with dates', () => {
         { when: new Date(2021, 2, 10) },
     ];
 
+    test('a dateTimeString column with a UTC offset groups under the local day of its instant', async () => {
+        const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+            columnDefs: [
+                {
+                    field: 'when',
+                    cellDataType: 'dateTimeString',
+                    filter: 'agSetColumnFilter',
+                    filterParams: { treeList: true },
+                },
+            ],
+            rowData: [{ when: '2020-10-11T00:30:00+02:00' }],
+        });
+
+        await ColumnFilterHarness.open(api, 'when');
+        await toggleGroupExpand('2020');
+        await toggleGroupExpand('October');
+
+        expect(setItemLabels()).toEqual(['(Select All)', '2020', 'October', '10']);
+    });
+
     test('date values group into a year → month → day tree, collapsed by default', async () => {
         const api: GridApi = await gridsManager.createGridAndWait('grid1', {
             columnDefs: [{ field: 'when', filter: 'agSetColumnFilter', filterParams: { treeList: true } }],

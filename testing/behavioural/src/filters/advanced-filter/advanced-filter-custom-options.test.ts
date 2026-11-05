@@ -1192,8 +1192,8 @@ describe('Advanced Filter - custom filter options', () => {
                 filterType: 'dateTime',
                 colId: 'moment',
                 type: 'betweenExclusive',
-                filter: '2012-08-10T00:00:00',
-                filterTo: '2012-08-25T00:00:00',
+                filter: '2012-08-10T00:00:00.000Z',
+                filterTo: '2012-08-25T00:00:00.000Z',
             });
             await new GridRows(api, 'the date-time pair filters').check(`
                 ROOT id:ROOT_NODE_ID
@@ -1287,8 +1287,8 @@ describe('Advanced Filter - custom filter options', () => {
                 filterType: 'dateTimeString',
                 colId: 'stamp',
                 type: 'betweenExclusive',
-                filter: '2012-08-10T00:00:00',
-                filterTo: '2012-08-25T00:00:00',
+                filter: '2012-08-10T00:00:00.000Z',
+                filterTo: '2012-08-25T00:00:00.000Z',
             });
             expect(seen[0]).toEqual([true, true, 'string']);
             await new GridRows(api, 'betweenExclusive dateTimeString').check(`
@@ -1307,8 +1307,8 @@ describe('Advanced Filter - custom filter options', () => {
                 filterType: 'dateTimeString',
                 colId: 'stamp',
                 type: 'betweenExclusive',
-                filter: '2012-08-10T00:00:00',
-                filterTo: '2012-08-25T00:00:00',
+                filter: '2012-08-10T00:00:00.000Z',
+                filterTo: '2012-08-25T00:00:00.000Z',
             });
         });
 
