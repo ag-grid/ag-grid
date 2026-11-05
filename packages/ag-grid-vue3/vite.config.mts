@@ -1,7 +1,6 @@
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import { URL, fileURLToPath } from 'node:url';
-import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import vueDevTools from 'vite-plugin-vue-devtools';
 
@@ -13,7 +12,7 @@ export default defineConfig({
         sourcemap: false, //process.env.NX_TASK_TARGET_CONFIGURATION !== 'production', sourcemaps arent currently working currectly - perhaps due to vfcs
         lib: {
             // Could also be a dictionary or array of multiple entry points
-            entry: resolve(__dirname, 'src/main.ts'),
+            entry: fileURLToPath(new URL('./src/main.ts', import.meta.url)),
             name: 'AgGridVue',
             // the proper extensions will be added
             fileName: 'main',

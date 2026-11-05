@@ -7,8 +7,8 @@
   "license": "MIT",
   "devDependencies": {
     "@playwright/test": "^1.64.1",
-    "@types/node": "^22.20.5",
+    "@types/node": "^24.19.2",
     "playwright": "^1.64.1",
-    "playwright-ctrf-json-reporter": "0.0.29"
+    "playwright-ctrf-json-reporter": "0.2.0"
   }
 }
