@@ -870,6 +870,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaLabelAddFilterField: 'Додај поље филтера',
     ariaLabelFilterCardDelete: 'Обриши филтер',
     ariaLabelFilterCardHasEdits: 'Има измене',
+    ariaLabelFilterCardType: 'Тип филтера',
     ariaHasNote: 'Ова ћелија има напомену.',
 
     // Number Format (Status Bar, Pagination Panel)

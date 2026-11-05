@@ -874,6 +874,7 @@ export const AG_GRID_LOCALE_MS_MY = {
     ariaLabelAddFilterField: 'Tambah Medan Penapis',
     ariaLabelFilterCardDelete: 'Padam Penapis',
     ariaLabelFilterCardHasEdits: 'Mempunyai Suntingan',
+    ariaLabelFilterCardType: 'Jenis Penapis',
     ariaHasNote: 'Sel ini mempunyai nota.',
 
     // Number Format (Status Bar, Pagination Panel)

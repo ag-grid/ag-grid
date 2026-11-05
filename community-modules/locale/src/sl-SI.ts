@@ -870,6 +870,7 @@ export const AG_GRID_LOCALE_SL_SI = {
     ariaLabelAddFilterField: 'Dodaj polje filtra',
     ariaLabelFilterCardDelete: 'Izbriši filter',
     ariaLabelFilterCardHasEdits: 'Ima spremembe',
+    ariaLabelFilterCardType: 'Vrsta filtra',
     ariaHasNote: 'Ta celica ima opombo.',
 
     // Number Format (Status Bar, Pagination Panel)

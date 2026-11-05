@@ -845,6 +845,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     ariaLabelAddFilterField: '添加过滤字段',
     ariaLabelFilterCardDelete: '删除过滤器',
     ariaLabelFilterCardHasEdits: '有编辑',
+    ariaLabelFilterCardType: '过滤器类型',
     ariaHasNote: '此单元格有备注。',
 
     // Number Format (Status Bar, Pagination Panel)

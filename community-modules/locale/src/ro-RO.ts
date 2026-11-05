@@ -851,6 +851,7 @@ export const AG_GRID_LOCALE_RO_RO = {
     ariaLabelAddFilterField: 'Adaugă Câmp de Filtrare',
     ariaLabelFilterCardDelete: 'Șterge Filtrul',
     ariaLabelFilterCardHasEdits: 'Are Modificări',
+    ariaLabelFilterCardType: 'Tip de Filtru',
     ariaHasNote: 'Această celulă are o notă.',
 
     // Number Format (Status Bar, Pagination Panel)
