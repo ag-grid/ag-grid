@@ -128,13 +128,13 @@ const GridExample = () => {
                                 onChange={toggleCurrentPageOnly}
                                 checked={findOptions.currentPageOnly}
                             />
-                        </div>
-                        <div className="example-controls">
-                            <span>Go to match:</span>
-                            <input type="number" min="1" ref={goToRef} />
+                            <label htmlFor="find-goto" className="gap-left">
+                                Go to match:
+                            </label>
+                            <input type="number" id="find-goto" min="1" ref={goToRef} />
                             <button onClick={goToFind}>Go To</button>
                         </div>
-                        <div>{activeMatch}</div>
+                        <div className="controls-row">{activeMatch}</div>
                     </div>
 
                     <div style={gridStyle}>
