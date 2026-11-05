@@ -40,37 +40,6 @@ This section provides an overview of the chart types available in Integrated Cha
 - [Scatter Series](https://www.ag-grid.com/charts/javascript/scatter-series/)
 - [Bubble Series](https://www.ag-grid.com/charts/javascript/bubble-series/)
 
-### Paired Mode
-
-Scatter and bubble charts assign the selected columns to X, Y and size values in one of two modes.
-
-- **Paired** (default): columns alternate between X and Y values, and between X, Y and size values for bubble charts.
-- **Unpaired**: the first column provides the X values and every other column is plotted against it as Y values. For bubble charts, the remaining columns alternate between Y and size values.
-
-Users switch modes with the "Paired Mode" toggle in the [Set Up Panel](./integrated-charts-chart-tool-panels/#set-up-tool-panel).
-
-Set the `paired` option on `createRangeChart()` to choose the mode when creating a chart:
-
-```{% frameworkTransform=true %}
-api.createRangeChart({
-    chartType: 'scatter',
-    cellRange: { columns: ['gold', 'silver', 'bronze'] },
-    paired: false,
-});
-```
-
-Change the mode of an existing chart with `updateChart()`:
-
-```{% frameworkTransform=true %}
-api.updateChart({
-    type: 'rangeChartUpdate',
-    chartId,
-    paired: false,
-});
-```
-
-The mode is saved as `paired` on the `ChartModel` returned by `getChartModels()`, so `restoreChart()` keeps it. See [Range Chart API](./integrated-charts-api-range-chart/) and [Save / Restore Charts](./integrated-charts-api-save-restore-charts/).
-
 ## Polar
 
 {% gridExampleRunner title="Polar" name="polar"  exampleHeight=850 /%}
