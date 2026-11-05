@@ -1989,6 +1989,8 @@ describe('htaccessRules', () => {
             ['/author/sean/rss/', 'https://www.ag-grid.com/blog/author/sean/rss/'],
             ['/page/2/', 'https://www.ag-grid.com/blog/page/2/'],
             ['/sitemap-posts.xml', 'https://www.ag-grid.com/blog/sitemap-posts.xml'],
+            // SE-89 / SE-4: the root robots.txt, as on the apex host, not /blog/robots.txt (a 404)
+            ['/robots.txt', 'https://www.ag-grid.com/robots.txt'],
             ['/content/images/2020/a.png', 'https://www.ag-grid.com/blog/content/images/2020/a.png'],
             // renamed tags map directly, not via the old tag
             ['/tag/react/', 'https://www.ag-grid.com/blog/tag/react-data-grid/'],
