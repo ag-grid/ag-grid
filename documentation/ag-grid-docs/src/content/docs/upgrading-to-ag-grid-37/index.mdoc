@@ -1,0 +1,24 @@
+---
+title: "Upgrading to AG Grid 37"
+description: "See what's new in AG Grid, view a full list of changes and migrate your $framework Data Grid to version v37."
+migrationVersion: "37.0.0"
+---
+
+<!--
+Documentation to the highest patch release of the major/minor
+NOTE: This will not show if the current library version is the same as the migration version
+-->
+
+{% documentationArchiveSection version=migrationVersionPatch() /%}
+
+{% note %}
+To automate the upgrade, use the [`ag-update` AI skill](./skills), which reads this migration guide, checks it against your repository, and produces a plan of the changes needed.
+{% /note %}
+
+## Behaviour Changes
+
+### Status Bar
+
+- The Aggregation Panel (`agAggregationComponent`) no longer converts string values to numbers. String values are still included in `count`, but numeric-looking strings such as `'1001'` no longer contribute to `sum`, `min`, `max` or `avg`. To aggregate numbers supplied as strings, convert them to numbers in the row data or with a [Value Getter](./value-getters/). See [Status Bar Configuration](./status-bar/#configuration).
+
+{% changelogSection version=$migrationVersion /%}
