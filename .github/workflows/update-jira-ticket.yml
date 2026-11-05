@@ -33,8 +33,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          sparse-checkout:
-            'scripts/ci/_utils.mjs'
+          sparse-checkout: |
+            scripts/ci/_utils.mjs
+            external/ag-shared/github/actions/github-jira-user-mapping
+            external/ag-shared/scripts/jira
+            external/ag-shared/scripts/slack
+      - name: Read GitHub to JIRA user mapping
+        id: jira-users
+        uses: ./external/ag-shared/github/actions/github-jira-user-mapping
+        continue-on-error: true
+        with:
+          NOTION_API_TOKEN: ${{ secrets.SLACK_USER_CONFIG_NOTION_API_TOKEN }}
+          NOTION_DATA_SOURCE_ID: ${{ secrets.SLACK_USER_CONFIG_NOTION_DATA_SOURCE_ID }}
       - name: Check if PR is merged
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         continue-on-error: true
@@ -43,7 +53,7 @@ jobs:
           DEBUG_JIRA_TICKET: ${{ github.event.inputs.debug_jira_ticket }}
           DEBUG_SKIP_MERGE_CHECK: ${{ github.event.inputs.debug_skip_merge_check }}
           JIRA_API_AUTH: ${{ secrets.JIRA_API_AUTH }}
-          GH_USER_JIRA_MAPPING: ${{ secrets.GH_USER_JIRA_MAPPING }}
+          GH_USER_JIRA_MAPPING: ${{ steps.jira-users.outputs.mapping }}
           JOB_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         with:
           result-encoding: string
@@ -67,14 +77,17 @@ jobs:
                     text: text,
                     marks: [{type: 'link', attrs: {href: url, title: text}}]});
                 const mention = (gh_user) => {
-                    if (!gh_user_jira_mapping[gh_user]) {
+                    const [id, text] = gh_user_jira_mapping[gh_user] ?? [];
+                    if (!id) {
+                        // Named by GitHub login rather than dropped, which left "Reviewed by ." behind
                         console.warn(`No JIRA mapping found for GitHub user: ${gh_user}`);
+                        return txt(gh_user);
                     }
                     return ({
                         "type": "mention",
                         "attrs": {
-                            "id": gh_user_jira_mapping[gh_user]?.[0],
-                            "text": gh_user_jira_mapping[gh_user]?.[1],
+                            "id": id,
+                            "text": text,
                             "userType": "APP"
                         }
                     });
@@ -150,7 +163,7 @@ jobs:
                         const blocks = [];
                         if (reviewers.length) {
                             blocks.push(txt(reviewedByText));
-                            blocks.push(...reviewers.map((r) => mention(r)).filter((r) => r.attrs.id && r.attrs.text));
+                            blocks.push(...reviewers.flatMap((r, i) => (i ? [txt(', '), mention(r)] : [mention(r)])));
                             blocks.push(txt(`. `));
                         }
                         if (mergedBy && !samePerson) {
