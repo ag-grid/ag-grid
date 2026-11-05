@@ -1,5 +1,5 @@
-import calendarMiniDemoUrl from './assets/bryntum-calendar-mini-demo.js?url&no-inline';
-import ganttMiniDemoUrl from './assets/bryntum-gantt-mini-demo.js?url&no-inline';
+import calendarMiniDemoUrl from '../../../../public/scripts/bryntum-calendar-mini-demo.js?url&no-inline';
+import ganttMiniDemoUrl from '../../../../public/scripts/bryntum-gantt-mini-demo.js?url&no-inline';
 
 export interface MiniDemoConfig {
     productSlug: string;

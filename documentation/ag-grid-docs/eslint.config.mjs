@@ -51,7 +51,7 @@ export default [
     },
     // Public files
     {
-        files: ['public/**/*[.js|.ts]', 'src/components/campaigns-components/bryntum/assets/*.js'],
+        files: ['public/**/*[.js|.ts]'],
         rules: {
             '@typescript-eslint/no-unused-vars': 'off',
             'no-console': 'off',

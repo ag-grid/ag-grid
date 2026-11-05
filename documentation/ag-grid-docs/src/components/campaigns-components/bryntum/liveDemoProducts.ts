@@ -1,9 +1,9 @@
-import ganttDemoUrl from './assets/bryntum-gantt-demo.js?url&no-inline';
-import schedulerDemoCssUrl from './assets/bryntum-scheduler-demo.css?url&no-inline';
-import schedulerDemoUrl from './assets/bryntum-scheduler-demo.js?url&no-inline';
-import schedulerProDemoUrl from './assets/bryntum-schedulerpro-demo.js?url&no-inline';
-import taskboardDemoCssUrl from './assets/bryntum-taskboard-demo.css?url&no-inline';
-import taskboardDemoUrl from './assets/bryntum-taskboard-demo.js?url&no-inline';
+import ganttDemoUrl from '../../../../public/scripts/bryntum-gantt-demo.js?url&no-inline';
+import schedulerDemoCssUrl from '../../../../public/styles/bryntum-scheduler-demo.css?url&no-inline';
+import schedulerDemoUrl from '../../../../public/scripts/bryntum-scheduler-demo.js?url&no-inline';
+import schedulerProDemoUrl from '../../../../public/scripts/bryntum-schedulerpro-demo.js?url&no-inline';
+import taskboardDemoCssUrl from '../../../../public/styles/bryntum-taskboard-demo.css?url&no-inline';
+import taskboardDemoUrl from '../../../../public/scripts/bryntum-taskboard-demo.js?url&no-inline';
 
 // `scriptUrl` and `demoCss` are imported with `?url&no-inline` so the build emits
 // them under /_astro/ with a content hash in the filename, and a deploy that
