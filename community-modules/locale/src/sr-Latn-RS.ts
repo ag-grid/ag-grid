@@ -791,6 +791,7 @@ export const AG_GRID_LOCALE_SR_LATN_RS = {
     ariaPageSizeSelectorLabel: 'Veličina strane',
     ariaChartMenuClose: 'Zatvori meni uređivanja grafikona',
     ariaChartSelected: 'Izabrano',
+    ariaChartSeriesChartType: 'Tip grafikona za ${variable}',
     ariaChartPalettePrevious: 'Prethodna paleta',
     ariaChartPaletteNext: 'Sledeća paleta',
     ariaChartPalettePage: 'Paleta ${variable} od ${variable}',

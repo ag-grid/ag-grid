@@ -779,6 +779,7 @@ export const AG_GRID_LOCALE_SV_SE = {
     ariaPageSizeSelectorLabel: 'Sidstorlek',
     ariaChartMenuClose: 'Stäng diagramredigeringsmeny',
     ariaChartSelected: 'Vald',
+    ariaChartSeriesChartType: 'Diagramtyp för ${variable}',
     ariaChartPalettePrevious: 'Föregående palett',
     ariaChartPaletteNext: 'Nästa palett',
     ariaChartPalettePage: 'Palett ${variable} av ${variable}',

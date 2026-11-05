@@ -776,6 +776,7 @@ export const AG_GRID_LOCALE_NB_NO = {
     ariaPageSizeSelectorLabel: 'Sidestørrelse',
     ariaChartMenuClose: 'Lukk diagramredigeringsmeny',
     ariaChartSelected: 'Valgt',
+    ariaChartSeriesChartType: 'Diagramtype for ${variable}',
     ariaChartPalettePrevious: 'Forrige palett',
     ariaChartPaletteNext: 'Neste palett',
     ariaChartPalettePage: 'Palett ${variable} av ${variable}',

@@ -785,6 +785,7 @@ export const AG_GRID_LOCALE_FR_FR = {
     ariaPageSizeSelectorLabel: 'Taille de page',
     ariaChartMenuClose: "Fermer le menu d'édition de graphique",
     ariaChartSelected: 'Sélectionné',
+    ariaChartSeriesChartType: 'Type de graphique pour ${variable}',
     ariaChartPalettePrevious: 'Palette précédente',
     ariaChartPaletteNext: 'Palette suivante',
     ariaChartPalettePage: 'Palette ${variable} sur ${variable}',

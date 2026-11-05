@@ -783,6 +783,7 @@ export const AG_GRID_LOCALE_HU_HU = {
     ariaPageSizeSelectorLabel: 'Oldal méret',
     ariaChartMenuClose: 'Diagram szerkesztési menü bezárása',
     ariaChartSelected: 'Kiválasztva',
+    ariaChartSeriesChartType: '${variable} diagramtípusa',
     ariaChartPalettePrevious: 'Előző paletta',
     ariaChartPaletteNext: 'Következő paletta',
     ariaChartPalettePage: '${variable}/${variable}. paletta',

@@ -775,6 +775,7 @@ export const AG_GRID_LOCALE_JA_JP = {
     ariaPageSizeSelectorLabel: 'ページサイズ',
     ariaChartMenuClose: 'チャート編集メニューを閉じる',
     ariaChartSelected: '選択済み',
+    ariaChartSeriesChartType: '${variable} のチャートタイプ',
     ariaChartPalettePrevious: '前のパレット',
     ariaChartPaletteNext: '次のパレット',
     ariaChartPalettePage: 'パレット ${variable} / ${variable}',

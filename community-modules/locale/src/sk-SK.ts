@@ -776,6 +776,7 @@ export const AG_GRID_LOCALE_SK_SK = {
     ariaPageSizeSelectorLabel: 'Veľkosť Strany',
     ariaChartMenuClose: 'Zatvoriť Menu Úpravy Grafu',
     ariaChartSelected: 'Vybrané',
+    ariaChartSeriesChartType: 'Typ grafu pre ${variable}',
     ariaChartPalettePrevious: 'Predchádzajúca paleta',
     ariaChartPaletteNext: 'Ďalšia paleta',
     ariaChartPalettePage: 'Paleta ${variable} z ${variable}',

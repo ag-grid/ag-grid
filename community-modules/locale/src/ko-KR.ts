@@ -775,6 +775,7 @@ export const AG_GRID_LOCALE_KO_KR = {
     ariaPageSizeSelectorLabel: '페이지 크기',
     ariaChartMenuClose: '차트 편집 메뉴 닫기',
     ariaChartSelected: '선택됨',
+    ariaChartSeriesChartType: '${variable} 차트 유형',
     ariaChartPalettePrevious: '이전 팔레트',
     ariaChartPaletteNext: '다음 팔레트',
     ariaChartPalettePage: '팔레트 ${variable} / ${variable}',

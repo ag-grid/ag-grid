@@ -795,6 +795,7 @@ export const AG_GRID_LOCALE_LT_LT = {
     ariaPageSizeSelectorLabel: 'Puslapio dydis',
     ariaChartMenuClose: 'Uždaryti diagramos redagavimo meniu',
     ariaChartSelected: 'Pasirinkta',
+    ariaChartSeriesChartType: '${variable} diagramos tipas',
     ariaChartPalettePrevious: 'Ankstesnė paletė',
     ariaChartPaletteNext: 'Kita paletė',
     ariaChartPalettePage: 'Paletė ${variable} iš ${variable}',

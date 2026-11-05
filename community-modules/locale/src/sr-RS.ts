@@ -791,6 +791,7 @@ export const AG_GRID_LOCALE_SR_RS = {
     ariaPageSizeSelectorLabel: 'Величина стране',
     ariaChartMenuClose: 'Затвори мени уређивања графикона',
     ariaChartSelected: 'Изабрано',
+    ariaChartSeriesChartType: 'Тип графикона за ${variable}',
     ariaChartPalettePrevious: 'Претходна палета',
     ariaChartPaletteNext: 'Следећа палета',
     ariaChartPalettePage: 'Палета ${variable} од ${variable}',

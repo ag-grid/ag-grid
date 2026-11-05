@@ -777,6 +777,7 @@ export const AG_GRID_LOCALE_FA_IR = {
     ariaPageSizeSelectorLabel: 'اندازه صفحه',
     ariaChartMenuClose: 'بستن منوی ویرایش نمودار',
     ariaChartSelected: 'انتخاب شده',
+    ariaChartSeriesChartType: 'نوع نمودار ${variable}',
     ariaChartPalettePrevious: 'پالت قبلی',
     ariaChartPaletteNext: 'پالت بعدی',
     ariaChartPalettePage: 'پالت ${variable} از ${variable}',

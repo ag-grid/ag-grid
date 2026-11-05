@@ -775,6 +775,7 @@ export const AG_GRID_LOCALE_UR_PK = {
     ariaPageSizeSelectorLabel: 'صفہ کا سائز',
     ariaChartMenuClose: 'چارٹ ایڈیٹ مینو بند کریں',
     ariaChartSelected: 'منتخب شدہ',
+    ariaChartSeriesChartType: '${variable} چارٹ قسم',
     ariaChartPalettePrevious: 'پچھلا پیلیٹ',
     ariaChartPaletteNext: 'اگلا پیلیٹ',
     ariaChartPalettePage: 'پیلیٹ ${variable} از ${variable}',

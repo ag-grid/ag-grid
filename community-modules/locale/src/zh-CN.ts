@@ -774,6 +774,7 @@ export const AG_GRID_LOCALE_ZH_CN = {
     ariaPageSizeSelectorLabel: '页面大小',
     ariaChartMenuClose: '关闭图表编辑菜单',
     ariaChartSelected: '已选择',
+    ariaChartSeriesChartType: '${variable} 图表类型',
     ariaChartPalettePrevious: '上一个调色板',
     ariaChartPaletteNext: '下一个调色板',
     ariaChartPalettePage: '调色板 ${variable} / ${variable}',

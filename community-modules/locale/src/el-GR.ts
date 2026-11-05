@@ -781,6 +781,7 @@ export const AG_GRID_LOCALE_EL_GR = {
     ariaPageSizeSelectorLabel: 'Μέγεθος Σελίδας',
     ariaChartMenuClose: 'Κλείσιμο Μενού Επεξεργασίας Γραφήματος',
     ariaChartSelected: 'Επιλεγμένο',
+    ariaChartSeriesChartType: 'Τύπος γραφήματος για ${variable}',
     ariaChartPalettePrevious: 'Προηγούμενη παλέτα',
     ariaChartPaletteNext: 'Επόμενη παλέτα',
     ariaChartPalettePage: 'Παλέτα ${variable} από ${variable}',

@@ -789,6 +789,7 @@ export const AG_GRID_LOCALE_BN_BD = {
     ariaPageSizeSelectorLabel: 'পৃষ্ঠার আকার',
     ariaChartMenuClose: 'চার্ট সম্পাদনা মেনু বন্ধ করুন',
     ariaChartSelected: 'নির্বাচিত',
+    ariaChartSeriesChartType: '${variable} চার্ট ধরন',
     ariaChartPalettePrevious: 'পূর্ববর্তী প্যালেট',
     ariaChartPaletteNext: 'পরবর্তী প্যালেট',
     ariaChartPalettePage: 'প্যালেট ${variable} এর মধ্যে ${variable}',
