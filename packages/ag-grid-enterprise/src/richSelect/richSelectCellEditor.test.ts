@@ -317,6 +317,7 @@ describe('RichSelectCellEditor', () => {
 
         const richSelect = {
             addCss: vi.fn(),
+            setAriaLabel: vi.fn(),
             showPicker: vi.fn(),
             setValueList: vi.fn(),
             setAsyncValuesSource: vi.fn(),
