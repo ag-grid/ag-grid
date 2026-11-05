@@ -111,8 +111,11 @@ function buildColumnFilterSchema(
             ? [..._classifyFilterOptions(userFilterOptions, () => {}, _ADVANCED_FILTER_ONLY_OPTIONS).offered.keys()]
             : undefined;
         const useIsoSeparator = filterParams?.useIsoSeparator || false;
+        const includeTime =
+            filterParams?.includeTime ?? beans.dataTypeSvc?.getDateIncludesTimeFlag(column.colDef.cellDataType) ?? true;
+        const useUtcDateTime = includeTime && !beans.gos.get('suppressTimezoneConversion');
 
-        return buildSimpleFilterSchema(filterKey, { maxConditions, filterOptions, useIsoSeparator });
+        return buildSimpleFilterSchema(filterKey, { maxConditions, filterOptions, useIsoSeparator, useUtcDateTime });
     } else if (filterKey === SetFilterKey) {
         return buildSetFilterSchema(getKeys);
     } else if (filterKey === MultiFilterKey) {
@@ -126,6 +129,7 @@ type SimpleFilterSchemaParams = {
     filterOptions?: string[];
     maxConditions?: number;
     useIsoSeparator: boolean;
+    useUtcDateTime: boolean;
 };
 
 const buildSimpleFilterSchema = (filterKey: string, params: SimpleFilterSchemaParams) => {
@@ -218,21 +222,19 @@ const buildDateFilterSchema = (params: SimpleFilterSchemaParams) => {
         'notBlank',
     ];
 
-    const pattern = params.useIsoSeparator
+    const { useUtcDateTime, useIsoSeparator } = params;
+    const localPattern = useIsoSeparator
         ? String.raw`^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$`
         : String.raw`^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$`;
+    const pattern = useUtcDateTime ? String.raw`^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$` : localPattern;
+    const format = useUtcDateTime ? 'UTC YYYY-MM-DDTHH:mm:ss.sssZ' : 'YYYY-MM-DD HH:mm:ss';
 
     const schema = s.object({
         filterType: s.literal('date', 'Filter type identifier for date filters'),
         type: s.enum(options, 'Date filter operation type'),
-        dateFrom: s
-            .string({ pattern, description: 'Primary date filter value in YYYY-MM-DD HH:mm:ss format' })
-            .nullable(),
+        dateFrom: s.string({ pattern, description: `Primary date filter value in ${format} format` }).nullable(),
         dateTo: s
-            .string({
-                pattern,
-                description: 'Secondary date filter value for range operations in YYYY-MM-DD HH:mm:ss format',
-            })
+            .string({ pattern, description: `Secondary date filter value for range operations in ${format} format` })
             .nullable(),
     });
 

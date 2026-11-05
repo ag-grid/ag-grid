@@ -1,9 +1,10 @@
-import { _dateToFormattedString, _parseDateTimeFromString } from 'ag-stack';
+import { _dateToFormattedString } from 'ag-stack';
 
 import type { AgColumn } from '../../../entities/agColumn';
 import type { SharedFilterParams } from '../../../interfaces/iFilter';
 import { translateFilterOptionKey } from '../../filterLocaleText';
 import { SCALAR_FILTER_TYPE_KEYS, SimpleFilterModelFormatter } from '../simpleFilterModelFormatter';
+import { parseDateFilterModelValue } from './dateFilterUtils';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
 
 export class DateFilterModelFormatter extends SimpleFilterModelFormatter<
@@ -30,8 +31,9 @@ export class DateFilterModelFormatter extends SimpleFilterModelFormatter<
     ): string {
         const { type } = condition;
 
-        const dateFrom = _parseDateTimeFromString(condition.dateFrom);
-        const dateTo = _parseDateTimeFromString(condition.dateTo);
+        const { beans, filterParams } = this;
+        const dateFrom = parseDateFilterModelValue(beans, filterParams, condition.dateFrom);
+        const dateTo = parseDateFilterModelValue(beans, filterParams, condition.dateTo);
 
         const format = this.filterParams.inRangeFloatingFilterDateFormat;
 

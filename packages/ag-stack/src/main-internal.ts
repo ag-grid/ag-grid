@@ -180,6 +180,7 @@ export {
     _isValidDate,
     _isValidDateTime,
     _parseDateTimeFromString,
+    _parseDateTimeWithOffset,
     _serialiseDate,
     MONTHS,
 } from './utils/date';

@@ -1,4 +1,4 @@
-import { RefPlaceholder, _debounce, _parseDateTimeFromString, _serialiseDate, _setDisplayed } from 'ag-stack';
+import { RefPlaceholder, _debounce, _serialiseDate, _setDisplayed } from 'ag-stack';
 
 import { AgInputTextFieldSelector } from '../../../agWidgets/agInputTextField';
 import type { AgColumn } from '../../../entities/agColumn';
@@ -16,6 +16,7 @@ import { DateCompWrapper } from './dateCompWrapper';
 import type { DateFilter } from './dateFilter';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
 import { DateFilterModelFormatter } from './dateFilterModelFormatter';
+import { isUtcDateFilterModel, parseDateFilterModelValue, toUtcDateFilterModelValue } from './dateFilterUtils';
 import type { DateFilterModel, DateFilterParams, IDateFilterParams } from './iDateFilter';
 
 const DateFloatingFilterElement: ElementParams = {
@@ -72,7 +73,9 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
         this.setEditable(allowEditing);
 
         if (allowEditing) {
-            const dateModel = (model as DateFilterModel) ? _parseDateTimeFromString(model.dateFrom) : null;
+            const dateModel = (model as DateFilterModel)
+                ? parseDateFilterModelValue(this.beans, this.params.filterParams as IDateFilterParams, model.dateFrom)
+                : null;
             this.dateComp.setDate(dateModel);
 
             this.eReadOnlyText.setValue('');
@@ -104,7 +107,9 @@ export class DateFloatingFilter extends SimpleFloatingFilter<IFloatingFilterPara
             reactiveParams.onUiChange();
 
             const model = reactiveParams.model;
-            const filterValueText = _serialiseDate(filterValueDate);
+            const filterValueText = isUtcDateFilterModel(this.beans, this.params.filterParams as IDateFilterParams)
+                ? toUtcDateFilterModelValue(filterValueDate)
+                : _serialiseDate(filterValueDate);
             const newModel =
                 filterValueText == null
                     ? null

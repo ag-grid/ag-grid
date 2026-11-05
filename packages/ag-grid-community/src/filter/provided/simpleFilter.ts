@@ -93,7 +93,7 @@ export abstract class SimpleFilter<
 
     constructor(
         filterNameKey: FilterLocaleTextKey,
-        private readonly mapValuesFromModel: MapValuesFromSimpleFilterModel<M, V>,
+        private readonly mapValuesFromModel: MapValuesFromSimpleFilterModel<M, V, P>,
         private readonly defaultOptions: string[]
     ) {
         super(filterNameKey, 'simple-filter');
@@ -905,7 +905,7 @@ export abstract class SimpleFilter<
 
     // puts model values into the UI
     private setConditionIntoUi(model: M | null, position: number): void {
-        const values = this.mapValuesFromModel(model, this.optionsFactory);
+        const values = this.mapValuesFromModel(model, this.optionsFactory, this.beans, this.params);
         this.forEachInput((element, index, elPosition) => {
             if (elPosition !== position) {
                 return;

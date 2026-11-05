@@ -46,7 +46,7 @@ export abstract class SimpleFilterHandler<
     private readonly warnedKeys = new Set<FilterOptionKey | null | undefined>();
 
     constructor(
-        private readonly mapValuesFromModel: MapValuesFromSimpleFilterModel<TModel, TValue>,
+        private readonly mapValuesFromModel: MapValuesFromSimpleFilterModel<TModel, TValue, TParams>,
         private readonly defaultOptions: string[]
     ) {
         super();
@@ -252,7 +252,7 @@ export abstract class SimpleFilterHandler<
     /** returns true if the row passes the said condition */
     private individualConditionPasses(params: IDoesFilterPassParams, filterModel: TModel, cellValue: any) {
         const optionsFactory = this.optionsFactory;
-        const values = this.mapValuesFromModel(filterModel, optionsFactory);
+        const values = this.mapValuesFromModel(filterModel, optionsFactory, this.beans, this.params.filterParams);
         const customFilterOption = optionsFactory.getCustomOption(filterModel.type);
 
         const customFilterResult = evaluateCustomFilter<TValue>(

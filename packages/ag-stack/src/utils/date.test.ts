@@ -1,4 +1,10 @@
-import { _isValidDate, _isValidDateTime, _parseDateTimeFromString, _serialiseDate } from './date';
+import {
+    _isValidDate,
+    _isValidDateTime,
+    _parseDateTimeFromString,
+    _parseDateTimeWithOffset,
+    _serialiseDate,
+} from './date';
 
 describe('_serialiseDate', () => {
     it('returns null if no date is supplied', () => {
@@ -116,6 +122,57 @@ describe('_parseDateTimeFromString', () => {
         expect(result!.getFullYear()).toBe(87);
         expect(result!.getMonth()).toBe(0);
         expect(result!.getDate()).toBe(1);
+    });
+});
+
+describe('_parseDateTimeWithOffset', () => {
+    it.each([
+        ['2020-10-10T10:10:10Z', '2020-10-10T10:10:10.000Z'],
+        ['2020-10-10 10:10:10Z', '2020-10-10T10:10:10.000Z'],
+        ['2020-10-10T10:10:10.000Z', '2020-10-10T10:10:10.000Z'],
+        ['2020-10-10T12:10:10+02:00', '2020-10-10T10:10:10.000Z'],
+        ['2020-10-10T12:10:10+0200', '2020-10-10T10:10:10.000Z'],
+        ['2020-10-10T12:10:10+02', '2020-10-10T10:10:10.000Z'],
+        ['2020-10-10T05:10:10-05:00', '2020-10-10T10:10:10.000Z'],
+        ['2020-10-10T15:40+05:30', '2020-10-10T10:10:00.000Z'],
+    ])('reads %s as the instant it denotes', (value, expected) => {
+        expect(_parseDateTimeWithOffset(value)!.toISOString()).toBe(expected);
+    });
+
+    it('ignores fractional seconds', () => {
+        expect(_parseDateTimeWithOffset('2020-10-10T10:10:10.500Z')!.toISOString()).toBe('2020-10-10T10:10:10.000Z');
+    });
+
+    it('reads a time inside a local DST gap unchanged', () => {
+        const gaps = ['2020-03-08T02:30:00Z', '2020-03-29T01:30:00Z'];
+        expect(gaps.map((value) => _parseDateTimeWithOffset(value)!.toISOString().slice(0, 19) + 'Z')).toEqual(gaps);
+    });
+
+    it('does not shift a year before 100AD into the 1900s', () => {
+        expect(_parseDateTimeWithOffset('0087-03-04T10:00:00Z')!.getUTCFullYear()).toBe(87);
+    });
+
+    it.each([
+        '2020-02-30T10:10:10Z',
+        '2020-10-10T24:00:00Z',
+        '2020-10-10T10:60:00Z',
+        '2020-10-10T10:10:60Z',
+        '2020-10-10T10:10:10+24:00',
+        '2020-10-10T10:10:10+02:60',
+    ])('returns null for %s', (value) => {
+        expect(_parseDateTimeWithOffset(value)).toBeNull();
+    });
+
+    it.each(['2020-10-10T10:10:10', '2020-10-10 10:10:10', '2020-10-10T10:10', '2020-10-10', 'not-a-date', '', null])(
+        'matches _parseDateTimeFromString when there is no offset: %s',
+        (value) => {
+            expect(_parseDateTimeWithOffset(value)).toStrictEqual(_parseDateTimeFromString(value));
+        }
+    );
+
+    it('round-trips the output of toISOString', () => {
+        const date = new Date(2020, 9, 10, 10, 10, 10);
+        expect(_parseDateTimeWithOffset(date.toISOString())).toStrictEqual(date);
     });
 });
 

@@ -587,6 +587,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      * or can be custom data types.
      */
     @Input() public dataTypeDefinitions: DataTypeDefinitions<TData> | undefined = undefined;
+    /** By default, datetime strings with a `Z` or UTC offset are read as that instant, and Date Filter models for
+     * datetime columns are UTC ISO 8601 strings. Set to `true` to read these strings as local time, ignoring any
+     * `Z` or offset, and to write these filter models as local time with no offset.
+     * @default false
+     * @initial
+     */
+    @Input({ transform: booleanAttribute }) public suppressTimezoneConversion: boolean | undefined = undefined;
     /** Enables and configures Calculated Columns.
      * @agModule `CalculatedColumnsModule`
      */

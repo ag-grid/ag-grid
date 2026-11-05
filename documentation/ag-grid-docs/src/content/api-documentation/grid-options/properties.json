@@ -232,6 +232,7 @@
                 "url": "./cell-data-types/#providing-custom-cell-data-types"
             }
         },
+        "suppressTimezoneConversion": {},
         "calculatedColumns": {
             "description": "Enables Calculated Columns. Set to `true` for defaults or provide options to configure the dialog. Disabled when omitted or `false`.",
             "more": {

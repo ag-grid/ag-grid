@@ -424,6 +424,13 @@ export interface Props<TData> {
          * or can be custom data types.
          */
     dataTypeDefinitions?: DataTypeDefinitions<TData>,
+    /** By default, datetime strings with a `Z` or UTC offset are read as that instant, and Date Filter models for
+         * datetime columns are UTC ISO 8601 strings. Set to `true` to read these strings as local time, ignoring any
+         * `Z` or offset, and to write these filter models as local time with no offset.
+         * @default false
+         * @initial
+         */
+    suppressTimezoneConversion?: boolean,
     /** Enables and configures Calculated Columns.
          * @agModule `CalculatedColumnsModule`
          */
@@ -2260,6 +2267,7 @@ export function getProps() {
         defaultColGroupDef: undefined,
         columnTypes: undefined,
         dataTypeDefinitions: undefined,
+        suppressTimezoneConversion: undefined,
         calculatedColumns: undefined,
         columnHeaderEdit: undefined,
         maintainColumnOrder: undefined,

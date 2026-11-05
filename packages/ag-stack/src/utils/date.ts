@@ -13,6 +13,10 @@ const DATE_TIME_REGEXP = new RegExp(
     String.raw`^\d{4}-\d{2}-\d{2}([${DATE_TIME_SEPARATOR} ]\d{2}:\d{2}(:\d{2})?(\.\d+)?(Z|[+-]\d{2}(:?\d{2})?)?)?$`
 );
 
+const OFFSET_DATE_TIME_REGEXP = new RegExp(
+    String.raw`^(\d{4})-(\d{2})-(\d{2})[${DATE_TIME_SEPARATOR} ](\d{2}):(\d{2})(?::(\d{2}))?(?:\.\d+)?(?:Z|([+-])(\d{2})(?::?(\d{2}))?)$`
+);
+
 function _padStartWidthZeros(value: number, totalStringSize: number): string {
     return value.toString().padStart(totalStringSize, '0');
 }
@@ -238,4 +242,43 @@ export function _parseDateTimeFromString(
     }
 
     return date;
+}
+
+/**
+ * Parses a datetime string to the instant it denotes, honouring a `Z` or UTC offset. Without either, the string is
+ * local time and `_parseDateTimeFromString` reads it. Fractional seconds are ignored.
+ *
+ * The instant is built from UTC fields because a local `Date` would move wall times that fall in a local DST gap.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _parseDateTimeWithOffset(
+    value?: string | null,
+    bailIfInvalidTime = false,
+    skipValidation?: boolean
+): Date | null {
+    const match = value ? OFFSET_DATE_TIME_REGEXP.exec(value) : null;
+    if (!match) {
+        return _parseDateTimeFromString(value, bailIfInvalidTime, skipValidation);
+    }
+
+    const [year, month, day, hours, minutes, seconds] = match.slice(1, 7).map((part) => Number(part ?? 0));
+    const offsetHours = Number(match[8] ?? 0);
+    const offsetMinutes = Number(match[9] ?? 0);
+
+    if (hours > 23 || minutes > 59 || seconds > 59 || offsetHours > 23 || offsetMinutes > 59) {
+        return null;
+    }
+
+    const utc = new Date(0);
+    // setUTCFullYear rather than Date.UTC, which maps years 0-99 into the 1900s
+    utc.setUTCFullYear(year, month - 1, day);
+
+    if (utc.getUTCFullYear() !== year || utc.getUTCMonth() !== month - 1 || utc.getUTCDate() !== day) {
+        return null;
+    }
+
+    utc.setUTCHours(hours, minutes, seconds);
+
+    const offsetMs = (offsetHours * 60 + offsetMinutes) * 60000;
+    return new Date(utc.getTime() + (match[7] === '-' ? offsetMs : -offsetMs));
 }

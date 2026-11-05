@@ -1,4 +1,4 @@
-import { _getOwn, _parseBigIntOrNull, _parseDateTimeFromString, _serialiseDate, _toStringOrNull } from 'ag-stack';
+import { _getOwn, _parseBigIntOrNull, _serialiseDate, _toStringOrNull } from 'ag-stack';
 
 import type {
     AgColumn,
@@ -26,6 +26,7 @@ import {
     _bindFilterCallback,
     _classifyFilterOptions,
     _filterCallbackParams,
+    _getDateTimeParser,
     _getDefaultSimpleFilter,
     _isGridSuppliedFilterParam,
     _resolveFilter,
@@ -169,32 +170,10 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
                 this.bindBigIntParser(column, params)
             );
         },
-        date: (model) => {
-            const column = this.colModel.getNonPivotCol(model.colId);
-            if (!column) {
-                return null;
-            }
-            return this.valueSvc.formatValue(
-                column,
-                null,
-                _parseDateTimeFromString(_toStringOrNull(model.filter) ?? ''),
-                undefined,
-                true
-            );
-        },
-        dateTime: (model) => this.filterOperandGetters.date(model),
-        dateString: (model) => {
-            const column = this.colModel.getNonPivotCol(model.colId);
-            if (!column) {
-                return null;
-            }
-            const { filter } = model;
-            const dateFormatFn = this.dataTypeSvc?.getDateFormatterFunction(column);
-            const dateStringStringValue =
-                dateFormatFn?.(_parseDateTimeFromString(_toStringOrNull(model.filter) ?? '') ?? undefined) ?? filter;
-            return this.valueSvc.formatValue(column, null, dateStringStringValue);
-        },
-        dateTimeString: (model) => this.filterOperandGetters.dateString(model),
+        date: (model) => this.getDateOperand(model, 'date'),
+        dateTime: (model) => this.getDateOperand(model, 'dateTime'),
+        dateString: (model) => this.getDateStringOperand(model, 'dateString'),
+        dateTimeString: (model) => this.getDateStringOperand(model, 'dateTimeString'),
         boolean: () => null,
         object: () => null,
         text: () => null,
@@ -230,6 +209,32 @@ export class AdvancedFilterExpressionService extends BeanStub implements NamedBe
         object: (operand) => operand,
         text: (operand) => operand,
     };
+
+    public parseDateModelValue(value: unknown, dataType: BaseCellDataType): Date | null {
+        const includeTime = !!this.dataTypeSvc?.getDateIncludesTimeFlag(dataType);
+        return _getDateTimeParser(this.gos, includeTime)(_toStringOrNull(value));
+    }
+
+    private getDateOperand(model: { filter?: string | number; colId: string }, dataType: BaseCellDataType) {
+        const column = this.colModel.getNonPivotCol(model.colId);
+        if (!column) {
+            return null;
+        }
+        const date = this.parseDateModelValue(model.filter, dataType);
+        return this.valueSvc.formatValue(column, null, date, undefined, true);
+    }
+
+    private getDateStringOperand(model: { filter?: string | number; colId: string }, dataType: BaseCellDataType) {
+        const column = this.colModel.getNonPivotCol(model.colId);
+        if (!column) {
+            return null;
+        }
+        const { filter } = model;
+        const dateFormatFn = this.dataTypeSvc?.getDateFormatterFunction(column);
+        const dateStringStringValue =
+            dateFormatFn?.(this.parseDateModelValue(filter, dataType) ?? undefined) ?? filter;
+        return this.valueSvc.formatValue(column, null, dateStringStringValue);
+    }
 
     public wireBeans(beans: BeanCollection): void {
         this.valueSvc = beans.valueSvc;

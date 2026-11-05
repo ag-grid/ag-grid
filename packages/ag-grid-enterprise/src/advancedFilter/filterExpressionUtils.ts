@@ -1,4 +1,4 @@
-import { _parseDateTimeFromString, _toStringOrNull } from 'ag-stack';
+import { _toStringOrNull } from 'ag-stack';
 
 import { _getDefaultSimpleFilter, _isRangeOutOfOrder, _toFiniteNumber } from 'ag-grid-community';
 import type {
@@ -146,7 +146,7 @@ function getModelOperandBound(
     if (baseCellDataType === 'number') {
         return typeof value === 'number' ? _toFiniteNumber(value) : advFilterExpSvc.getNumberParser(column)(value);
     }
-    return _parseDateTimeFromString(_toStringOrNull(value));
+    return advFilterExpSvc.parseDateModelValue(value, baseCellDataType);
 }
 
 /** A condition the Builder is still assembling: each slot is absent until the user has chosen it. */

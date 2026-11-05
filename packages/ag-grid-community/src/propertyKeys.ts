@@ -297,6 +297,7 @@ export const _BOOLEAN_GRID_OPTIONS: KeysWithType<boolean>[] = [
     'suppressPropertyNamesCheck',
     'rowMultiSelectWithClick',
     'suppressRowHoverHighlight',
+    'suppressTimezoneConversion',
     'suppressRowTransform',
     'suppressContentVisibilityAuto',
     'enableContentVisibilityAuto',

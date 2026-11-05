@@ -1,3 +1,4 @@
+import type { BeanCollection } from '../../context/context';
 import type { AdvancedFilterOnlyOptionKey } from '../../interfaces/advancedFilterModel';
 import type { IAutoCompleteComponentParams } from '../../interfaces/iAutoComplete';
 import type { FilterInputCallbackParams, IFilterParams } from '../../interfaces/iFilter';
@@ -158,7 +159,9 @@ export function isCombinedFilterModel<M extends ISimpleFilterModel>(
 
 export type Tuple<T> = (T | null)[];
 
-export type MapValuesFromSimpleFilterModel<TModel extends ISimpleFilterModel, TValue> = (
+export type MapValuesFromSimpleFilterModel<TModel extends ISimpleFilterModel, TValue, TParams = any> = (
     filterModel: TModel | null,
-    optionsFactory: OptionsFactory
+    optionsFactory: OptionsFactory,
+    beans: BeanCollection,
+    filterParams: TParams
 ) => Tuple<TValue>;

@@ -1,4 +1,4 @@
-import { _isBrowserFirefox, _parseDateTimeFromString, _serialiseDate } from 'ag-stack';
+import { _isBrowserFirefox, _serialiseDate } from 'ag-stack';
 
 import { _addGridCommonParams } from '../../../gridOptionsUtils';
 import type { IDateParams } from '../../../interfaces/dateComponent';
@@ -12,7 +12,13 @@ import { getValidityMessageKey, removeItems } from '../simpleFilterUtils';
 import { DateCompWrapper } from './dateCompWrapper';
 import type { ValidationReportMode } from './dateCompWrapper';
 import { DEFAULT_DATE_FILTER_OPTIONS } from './dateFilterConstants';
-import { mapValuesFromDateFilterModel } from './dateFilterUtils';
+import {
+    dateFilterIncludesTime,
+    isUtcDateFilterModel,
+    mapValuesFromDateFilterModel,
+    parseDateFilterModelValue,
+    toUtcDateFilterModelValue,
+} from './dateFilterUtils';
 import type { DateFilterModel, IDateFilterParams } from './iDateFilter';
 
 const DEFAULT_MIN_YEAR = 1000;
@@ -72,10 +78,13 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
 
         const { minValidDate, maxValidDate } = params;
 
-        const parsedMinValidDate = minValidDate instanceof Date ? minValidDate : _parseDateTimeFromString(minValidDate);
+        const parseValidDate = (date: Date | string | undefined) =>
+            date instanceof Date ? date : parseDateFilterModelValue(this.beans, params, date);
+
+        const parsedMinValidDate = parseValidDate(minValidDate);
         this.minValidDate = parsedMinValidDate;
 
-        const parsedMaxValidDate = maxValidDate instanceof Date ? maxValidDate : _parseDateTimeFromString(maxValidDate);
+        const parsedMaxValidDate = parseValidDate(maxValidDate);
         this.maxValidDate = parsedMaxValidDate;
 
         if (parsedMinValidDate && parsedMaxValidDate && parsedMinValidDate > parsedMaxValidDate) {
@@ -281,17 +290,18 @@ export class DateFilter extends SimpleFilter<DateFilterModel, Date, DateCompWrap
         const type = this.getConditionType(position);
         const model: Partial<DateFilterModel> = {};
         const { params, filterType, beans } = this;
-        const dataTypeSvc = beans.dataTypeSvc;
         const values = this.getValues(position);
-        const includeDateTime =
-            params.includeTime ?? dataTypeSvc?.getDateIncludesTimeFlag(params.colDef.cellDataType) ?? true;
+        const includeDateTime = dateFilterIncludesTime(beans, params);
+        const useUtc = isUtcDateFilterModel(beans, params);
 
         const separator = params.useIsoSeparator ? 'T' : ' ';
+        const serialise = (date: Date | null) =>
+            useUtc ? toUtcDateFilterModelValue(date) : _serialiseDate(date, includeDateTime, separator);
         if (values.length > 0) {
-            model.dateFrom = _serialiseDate(values[0], includeDateTime, separator);
+            model.dateFrom = serialise(values[0]);
         }
         if (values.length > 1) {
-            model.dateTo = _serialiseDate(values[1], includeDateTime, separator);
+            model.dateTo = serialise(values[1]);
         }
 
         return {

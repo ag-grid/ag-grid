@@ -69,6 +69,7 @@ export const INITIAL_GRID_OPTION_KEYS = {
     suppressPreventDefaultOnMouseWheel: true,
     scrollbarWidth: true,
     icons: true,
+    suppressTimezoneConversion: true,
     suppressRowTransform: true,
     suppressContentVisibilityAuto: true,
     enableContentVisibilityAuto: true,

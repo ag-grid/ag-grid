@@ -1,4 +1,4 @@
-import { _doOnce, _missing } from 'ag-stack';
+import { _doOnce, _missing, _parseDateTimeFromString, _parseDateTimeWithOffset } from 'ag-stack';
 
 import type { GridApi } from './api/gridApi';
 import type { BeanStub } from './context/beanStub';
@@ -66,6 +66,14 @@ export function _getClientSideLoadingRowCount(gos: GridOptionsService): number {
         return 10;
     }
     return Number.isInteger(loadingRows.rowCount) && loadingRows.rowCount > 0 ? loadingRows.rowCount : 10;
+}
+
+/**
+ * Offsets only apply to values that include a time: a date-only type keeps the calendar date in its string.
+ * @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time.
+ */
+export function _getDateTimeParser(gos: GridOptionsService, includeTime: boolean): typeof _parseDateTimeFromString {
+    return includeTime && !gos.get('suppressTimezoneConversion') ? _parseDateTimeWithOffset : _parseDateTimeFromString;
 }
 
 /** @internal AG_GRID_INTERNAL - Not for public use. Can change / be removed at any time. */

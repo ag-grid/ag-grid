@@ -1,9 +1,7 @@
 import {
     KeyCode,
-    _isValidDate,
     _isValidDateTime,
     _parseBigIntOrNull,
-    _parseDateTimeFromString,
     _serialiseDate,
     _toStringOrNull,
 } from 'ag-stack';
@@ -30,7 +28,7 @@ import type {
 } from '../entities/dataType';
 import type { ColumnEventType } from '../events';
 import type { GridOptionsService } from '../gridOptionsService';
-import { _isClientSideRowModel } from '../gridOptionsUtils';
+import { _getDateTimeParser, _isClientSideRowModel } from '../gridOptionsUtils';
 import type { IClientSideRowModel } from '../interfaces/iClientSideRowModel';
 import { _getValueUsingDotPath, _isProtoField } from '../utils/value';
 import type { LogService } from '../validation/logService';
@@ -514,6 +512,10 @@ export class DataTypeService extends BeanStub implements NamedBean {
         return cellDataType === 'dateTime' || cellDataType === 'dateTimeString';
     }
 
+    public getDateTimeParser(includeTime: boolean): ReturnType<typeof _getDateTimeParser> {
+        return _getDateTimeParser(this.gos, includeTime);
+    }
+
     public getDataTypeDefinition(column: AgColumn): DataTypeDefinition | CoreDataTypeDefinition | undefined {
         const colDef = column.colDef;
         if (!colDef.cellDataType) {
@@ -696,10 +698,11 @@ export class DataTypeService extends BeanStub implements NamedBean {
     private getDateObjectTypeDef<T extends 'date' | 'dateTime'>(baseDataType: T) {
         const translate = this.getLocaleTextFunc();
         const includeTime = this.getDateIncludesTimeFlag(baseDataType);
+        const parseDate = _getDateTimeParser(this.gos, includeTime);
         return {
             baseDataType,
             valueParser: (params: ValueParserLiteParams<any, Date>) =>
-                _parseDateTimeFromString(params.newValue && String(params.newValue)),
+                parseDate(params.newValue && String(params.newValue)),
             valueFormatter: (params: ValueFormatterLiteParams<any, Date>) => {
                 if (params.value == null) {
                     return '';
@@ -715,15 +718,17 @@ export class DataTypeService extends BeanStub implements NamedBean {
 
     private getDateStringTypeDef<T extends 'dateString' | 'dateTimeString'>(baseDataType: T) {
         const includeTime = this.getDateIncludesTimeFlag(baseDataType);
+        const parseDate = _getDateTimeParser(this.gos, includeTime);
+        const isValidDate = (value: string) => !!parseDate(value);
         return {
             baseDataType,
-            dateParser: (value: string | undefined) => _parseDateTimeFromString(value) ?? undefined,
+            dateParser: (value: string | undefined) => parseDate(value) ?? undefined,
             dateFormatter: (value: Date | undefined) => _serialiseDate(value ?? null, includeTime) ?? undefined,
             valueParser: (params: ValueParserLiteParams<any, string>) =>
-                _isValidDate(String(params.newValue)) ? params.newValue : null,
+                isValidDate(String(params.newValue)) ? params.newValue : null,
             valueFormatter: (params: ValueFormatterLiteParams<any, string>) =>
-                _isValidDate(String(params.value)) ? String(params.value) : '',
-            dataTypeMatcher: (value: any) => typeof value === 'string' && _isValidDate(value),
+                isValidDate(String(params.value)) ? String(params.value) : '',
+            dataTypeMatcher: (value: any) => typeof value === 'string' && isValidDate(value),
         };
     }
 

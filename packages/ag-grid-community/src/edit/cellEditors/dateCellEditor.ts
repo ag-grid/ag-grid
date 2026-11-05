@@ -87,11 +87,13 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         const { min, max } = this.params;
         const translate = this.getLocaleTextFunc();
         const errors: string[] = [];
+        const parseBound =
+            this.getDataTypeService()?.getDateTimeParser(!!this.includeTime) ?? _parseDateTimeFromString;
 
         // Bounds parse with the same parser as the input, or a `yyyy-mm-dd` string would be read as UTC
         // and compared against a local-time entry.
         if (min) {
-            const minValue = min instanceof Date ? min : _parseDateTimeFromString(min);
+            const minValue = min instanceof Date ? min : parseBound(min);
             if (minValue && date < minValue) {
                 const minDateString = minValue.toLocaleDateString();
                 errors.push(translate('minDateValidation', `Date must be after ${minDateString}`, [minDateString]));
@@ -99,7 +101,7 @@ class DateCellEditorInput implements CellEditorInput<Date, IDateCellEditorParams
         }
 
         if (max) {
-            const maxValue = max instanceof Date ? max : _parseDateTimeFromString(max);
+            const maxValue = max instanceof Date ? max : parseBound(max);
             if (maxValue && date > maxValue) {
                 const maxDateString = maxValue.toLocaleDateString();
                 errors.push(translate('maxDateValidation', `Date must be before ${maxDateString}`, [maxDateString]));

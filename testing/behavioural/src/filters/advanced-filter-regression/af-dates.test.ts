@@ -258,6 +258,53 @@ describe('Advanced Filter — date expressions (text parser)', () => {
             expect(AdvancedFilterHarness.get(api).value).toBe('[When] > "2012-08-05"');
         });
     });
+
+    describe('datetime columns with a UTC offset in the model', () => {
+        const OFFSET_ROWS = [
+            { athlete: 'Exact', at: new Date(Date.UTC(2020, 9, 10, 10, 10, 10)) },
+            { athlete: 'Wall time', at: new Date(2020, 9, 10, 12, 10, 10) },
+        ];
+
+        test('a model value is read as the instant its offset denotes', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ field: 'athlete' }, { field: 'at', cellDataType: 'dateTime', filter: true }],
+                rowData: OFFSET_ROWS,
+                enableAdvancedFilter: true,
+            });
+
+            api.setAdvancedFilterModel({
+                filterType: 'dateTime',
+                colId: 'at',
+                type: 'equals',
+                filter: '2020-10-10T12:10:10+02:00',
+            });
+            await asyncSetTimeout(0);
+
+            const instant = OFFSET_ROWS[0].at;
+            const localTime = new Date(instant.getTime() - instant.getTimezoneOffset() * 60000);
+            expect(AdvancedFilterHarness.get(api).value).toBe(`[At] = "${localTime.toISOString().slice(0, 19)}"`);
+            expect(displayedAthletes(api)).toEqual(['Exact']);
+        });
+
+        test('suppressTimezoneConversion reads a model value as local time', async () => {
+            const api = await gridsManager.createGridAndWait('grid1', {
+                suppressTimezoneConversion: true,
+                columnDefs: [{ field: 'athlete' }, { field: 'at', cellDataType: 'dateTime', filter: true }],
+                rowData: OFFSET_ROWS,
+                enableAdvancedFilter: true,
+            });
+
+            api.setAdvancedFilterModel({
+                filterType: 'dateTime',
+                colId: 'at',
+                type: 'equals',
+                filter: '2020-10-10T12:10:10+02:00',
+            });
+            await asyncSetTimeout(0);
+
+            expect(displayedAthletes(api)).toEqual(['Wall time']);
+        });
+    });
 });
 
 describe('Date Filter — relative date presets reuse surface', () => {

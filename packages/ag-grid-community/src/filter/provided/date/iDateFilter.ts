@@ -19,9 +19,10 @@ export interface DateFilterModel extends ISimpleFilterModel {
     filterType?: 'date';
     /**
      * The date value(s) associated with the filter.
-     * The type is `string` and the format is `YYYY-MM-DD hh:mm:ss`, e.g. 2019-05-24 00:00:00.
-     * If `useIsoSeparator = true`, the format is instead `YYYY-MM-DDThh:mm:ss`.
+     * The type is `string`. When the filter includes time, the format is a UTC ISO 8601 string, `YYYY-MM-DDThh:mm:ss.sssZ`, e.g. 2019-05-24T09:30:00.000Z.
      * If `includeTime = false`, or `cellDataType = 'date'` (and `includeTime` is not set), the time part is omitted and the format is `YYYY-MM-DD`, e.g. 2019-05-24.
+     * If `suppressTimezoneConversion = true`, a filter that includes time instead uses local time in the format `YYYY-MM-DD hh:mm:ss`, or `YYYY-MM-DDThh:mm:ss` if `useIsoSeparator = true`.
+     * When setting a model, a value with a `Z` or UTC offset is read as that instant, and a value with neither is read as local time.
      * Custom filters can have no values (hence both are optional). Range filter has two values (from and to).
      */
     dateFrom: string | null | undefined;
@@ -122,7 +123,8 @@ export interface IDateFilterParams extends IScalarFilterParams {
      */
     includeTime?: boolean;
     /**
-     * By default, the `dateFrom` and `dateTo` values in the filter model will be in the format `YYYY-MM-DD hh:mm:ss`.
+     * Only applies when the grid option `suppressTimezoneConversion = true`, where the `dateFrom` and `dateTo` values
+     * in the filter model will be in the format `YYYY-MM-DD hh:mm:ss`.
      * Set this to `true` to instead use the format `YYYY-MM-DDThh:mm:ss`.
      */
     useIsoSeparator?: boolean;

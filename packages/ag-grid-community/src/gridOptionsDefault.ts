@@ -178,6 +178,7 @@ export const GRID_OPTION_DEFAULTS = {
     alwaysMultiSort: false,
     suppressMaintainUnsortedOrder: false,
     suppressRowHoverHighlight: false,
+    suppressTimezoneConversion: false,
     suppressRowTransform: false,
     suppressContentVisibilityAuto: true,
     contentVisibilityAutoDelay: 1000,

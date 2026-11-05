@@ -885,6 +885,232 @@ describe('Date Filter — conditions coverage', () => {
             └── LEAF id:3 date:"2024-07-04"
         `);
     });
+
+    // The suite runs in UTC, so each case uses a non-zero offset to separate an honoured offset from an ignored one.
+    describe('UTC offsets on datetime columns', () => {
+        const INSTANTS = [
+            { id: 'r1', date: new Date(Date.UTC(2020, 9, 10, 8, 10, 10)) },
+            { id: 'r2', date: new Date(Date.UTC(2020, 9, 10, 9, 10, 10)) },
+            { id: 'r3', date: new Date(Date.UTC(2020, 9, 10, 10, 10, 10)) },
+        ];
+        const dateColumn = (cellDataType: string, filterParams = {}) => ({
+            field: 'date',
+            filter: 'agDateColumnFilter',
+            cellDataType,
+            filterParams: { debounceMs: 0, ...filterParams },
+        });
+        const displayedIds = (api: GridApi) => {
+            const ids: string[] = [];
+            api.forEachNodeAfterFilter((node) => ids.push(node.data.id));
+            return ids;
+        };
+        const applyModel = async (api: GridApi, model: Record<string, unknown>) => {
+            await api.setColumnFilterModel('date', { filterType: 'date', ...model });
+            api.onFilterChanged();
+            await asyncSetTimeout(0);
+        };
+
+        describe.each([false, true])('enableFilterHandlers: %s', (enableFilterHandlers) => {
+            test.each([
+                ['2020-10-10T12:10:10+02:00', ['r3']],
+                ['2020-10-10T10:10:10+0200', ['r1']],
+                ['2020-10-10T11:10:10+02', ['r2']],
+                ['2020-10-10T05:10:10-05:00', ['r3']],
+            ])('a filter model value of %s keeps the row at that instant', async (dateFrom, expected) => {
+                const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                    enableFilterHandlers,
+                    columnDefs: [dateColumn('dateTime')],
+                    rowData: INSTANTS,
+                });
+
+                await applyModel(api, { type: 'equals', dateFrom });
+
+                expect(displayedIds(api)).toEqual(expected);
+            });
+
+            test.each(['2020-10-10 09:10:10', '2020-10-10T09:10:10'])(
+                'a filter model value of %s with no offset is local time',
+                async (dateFrom) => {
+                    const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                        enableFilterHandlers,
+                        columnDefs: [dateColumn('dateTime')],
+                        rowData: [
+                            { id: 'match', date: new Date(2020, 9, 10, 9, 10, 10) },
+                            { id: 'other', date: new Date(2020, 9, 10, 9, 10, 11) },
+                        ],
+                    });
+
+                    await applyModel(api, { type: 'equals', dateFrom });
+
+                    expect(displayedIds(api)).toEqual(['match']);
+                }
+            );
+
+            test('both inRange bounds honour their offsets', async () => {
+                const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                    enableFilterHandlers,
+                    columnDefs: [dateColumn('dateTime')],
+                    rowData: INSTANTS,
+                });
+
+                await applyModel(api, {
+                    type: 'inRange',
+                    dateFrom: '2020-10-10T10:00:00+02:00',
+                    dateTo: '2020-10-10T12:00:00+02:00',
+                });
+
+                expect(displayedIds(api)).toEqual(['r1', 'r2']);
+            });
+
+            test('dateTimeString cells are compared by the instant their offset denotes', async () => {
+                const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                    enableFilterHandlers,
+                    columnDefs: [dateColumn('dateTimeString')],
+                    rowData: [
+                        { id: 'offset', date: '2020-10-10T12:10:10+02:00' },
+                        { id: 'utc', date: '2020-10-10T12:10:10Z' },
+                    ],
+                });
+
+                await applyModel(api, { type: 'equals', dateFrom: '2020-10-10T10:10:10Z' });
+
+                expect(displayedIds(api)).toEqual(['offset']);
+            });
+
+            test('a dateString column keeps the calendar date in its string', async () => {
+                const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                    enableFilterHandlers,
+                    columnDefs: [dateColumn('dateString')],
+                    rowData: [{ id: 'early', date: '2020-10-10T01:00:00+05:00' }],
+                });
+
+                // 01:00 local on the 10th passes; honouring the offset would make it 20:00 UTC on the 9th.
+                await applyModel(api, { type: 'greaterThan', dateFrom: '2020-10-10' });
+
+                expect(displayedIds(api)).toEqual(['early']);
+            });
+
+            test('suppressTimezoneConversion reads every value as local time', async () => {
+                const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                    enableFilterHandlers,
+                    suppressTimezoneConversion: true,
+                    columnDefs: [dateColumn('dateTimeString')],
+                    rowData: [
+                        { id: 'offset', date: '2020-10-10T12:10:10+02:00' },
+                        { id: 'other', date: '2020-10-10T10:10:10Z' },
+                    ],
+                });
+
+                await applyModel(api, { type: 'equals', dateFrom: '2020-10-10T12:10:10-05:00' });
+
+                expect(displayedIds(api)).toEqual(['offset']);
+            });
+        });
+
+        test.each(['dateTime', 'dateTimeString'])(
+            'the filter UI produces a UTC model on a %s column that restores to the same rows',
+            async (cellDataType) => {
+                const rowDate = new Date(2020, 9, 10, 8, 30, 0);
+                const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                    columnDefs: [dateColumn(cellDataType, { useIsoSeparator: false })],
+                    rowData: [{ id: 'a', date: cellDataType === 'dateTime' ? rowDate : rowDate.toISOString() }],
+                });
+
+                const filter = await ColumnFilterHarness.open(api, 'date');
+                await filter.selectOperator('Between');
+                await filter.setDate('2020-10-10T08:00:00', 0);
+                await filter.setDate('2020-10-10T09:00:00', 1);
+                await asyncSetTimeout(0);
+
+                const model = filter.getModel();
+                expect(model).toMatchObject({
+                    dateFrom: new Date(2020, 9, 10, 8, 0, 0).toISOString(),
+                    dateTo: new Date(2020, 9, 10, 9, 0, 0).toISOString(),
+                });
+                expect(displayedIds(api)).toEqual(['a']);
+
+                await api.setColumnFilterModel('date', null);
+                await applyModel(api, model as Record<string, unknown>);
+                expect(displayedIds(api)).toEqual(['a']);
+            }
+        );
+
+        test.each([
+            [{}, '2020-10-10 08:00:00'],
+            [{ useIsoSeparator: true }, '2020-10-10T08:00:00'],
+        ])('suppressTimezoneConversion produces a local model with params %j', async (filterParams, expected) => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                suppressTimezoneConversion: true,
+                columnDefs: [dateColumn('dateTime', filterParams)],
+                rowData: INSTANTS,
+            });
+
+            const filter = await ColumnFilterHarness.open(api, 'date');
+            await filter.selectOperator('Equals');
+            await filter.setDate('2020-10-10T08:00:00', 0);
+            await asyncSetTimeout(0);
+
+            expect(filter.getModel()).toMatchObject({ dateFrom: expected });
+        });
+
+        test('a date column model stays date-only', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [dateColumn('date')],
+                rowData: [{ id: 'a', date: new Date(2020, 9, 10) }],
+            });
+
+            const filter = await ColumnFilterHarness.open(api, 'date');
+            await filter.selectOperator('Equals');
+            await filter.setDate('2020-10-10', 0);
+            await asyncSetTimeout(0);
+
+            expect(filter.getModel()).toMatchObject({ dateFrom: '2020-10-10' });
+        });
+
+        test('the floating filter writes a UTC model when filter handlers are enabled', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                enableFilterHandlers: true,
+                columnDefs: [{ ...dateColumn('dateTime'), floatingFilter: true }],
+                rowData: INSTANTS,
+            });
+            await asyncSetTimeout(0);
+
+            await FloatingFilterHarness.get(api, 'date').setValue('2020-10-10T08:10:10');
+            await asyncSetTimeout(0);
+
+            expect(api.getColumnFilterModel('date')).toMatchObject({
+                dateFrom: new Date(2020, 9, 10, 8, 10, 10).toISOString(),
+            });
+        });
+
+        test('the floating filter shows the local time of a model with an offset', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [{ ...dateColumn('dateTime'), floatingFilter: true }],
+                rowData: INSTANTS,
+            });
+
+            await applyModel(api, { type: 'equals', dateFrom: '2020-10-10T12:10:10+02:00' });
+
+            const instant = INSTANTS[2].date;
+            const localTime = new Date(instant.getTime() - instant.getTimezoneOffset() * 60000);
+            expect(FloatingFilterHarness.get(api, 'date').input().value).toBe(localTime.toISOString().slice(0, 19));
+        });
+
+        test('the dateTime value parser honours an offset', async () => {
+            const api: GridApi = await gridsManager.createGridAndWait('grid1', {
+                columnDefs: [dateColumn('dateTime')],
+                rowData: INSTANTS,
+            });
+
+            const valueParser = api.getColumn('date')!.getColDef().valueParser as unknown as (params: {
+                newValue: string;
+            }) => Date;
+
+            expect(valueParser({ newValue: '2020-10-10T12:10:10+02:00' }).toISOString()).toBe(
+                '2020-10-10T10:10:10.000Z'
+            );
+        });
+    });
 });
 
 /** Reads `dd/mm/yyyy` and reports "equal" for anything it cannot parse. */

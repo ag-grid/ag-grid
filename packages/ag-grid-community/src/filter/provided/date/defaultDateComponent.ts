@@ -1,6 +1,7 @@
 import { RefPlaceholder, _isBrowserSafari, _parseDateTimeFromString, _serialiseDate } from 'ag-stack';
 
 import { AgInputTextFieldSelector } from '../../../agWidgets/agInputTextField';
+import { _getDateTimeParser } from '../../../gridOptionsUtils';
 import type { IDateComp, IDateParams } from '../../../interfaces/dateComponent';
 import type { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import type { ElementParams } from '../../../utils/element';
@@ -112,8 +113,9 @@ export class DefaultDateComponent extends Component implements IDateComp {
         } else {
             this.eDateInput.setInputType('text');
         }
-        const parsedMinValidDate = parseOrConstructDate(this.beans.log, minValidDate, minValidYear, true);
-        const parsedMaxValidDate = parseOrConstructDate(this.beans.log, maxValidDate, maxValidYear, false);
+        const parseDate = _getDateTimeParser(this.gos, this.includesTime(params));
+        const parsedMinValidDate = parseOrConstructDate(this.beans.log, parseDate, minValidDate, minValidYear, true);
+        const parsedMaxValidDate = parseOrConstructDate(this.beans.log, parseDate, maxValidDate, maxValidYear, false);
 
         if (parsedMinValidDate && parsedMaxValidDate && parsedMinValidDate.getTime() > parsedMaxValidDate.getTime()) {
             this.beans.log.warn(87);
@@ -172,6 +174,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
 function parseOrConstructDate(
     log: LogService,
+    parseDate: typeof _parseDateTimeFromString,
     date: string | Date | undefined,
     year: number | undefined,
     isMin: boolean
@@ -183,7 +186,7 @@ function parseOrConstructDate(
         return date;
     }
     if (date) {
-        return _parseDateTimeFromString(date);
+        return parseDate(date);
     } else if (year) {
         return _parseDateTimeFromString(`${year}-${isMin ? '01-01' : '12-31'}`);
     }

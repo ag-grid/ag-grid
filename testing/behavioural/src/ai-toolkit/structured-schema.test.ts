@@ -644,6 +644,26 @@ describe('getStructuredSchema - filter feature', () => {
             `);
         });
 
+        test.each([
+            [false, '2024-01-01T10:00:00.000Z', '2024-01-01 10:00:00'],
+            [true, '2024-01-01 10:00:00', '2024-01-01T10:00:00.000Z'],
+        ])(
+            'dateTime filter schema with suppressTimezoneConversion %s accepts %s and rejects %s',
+            (suppressTimezoneConversion, accepted, rejected) => {
+                const api = gridsManager.createGrid('myGrid', {
+                    suppressTimezoneConversion,
+                    columnDefs: [{ field: 'date', filter: 'agDateColumnFilter', cellDataType: 'dateTime' }],
+                    rowData: [{ date: new Date(2024, 0, 1) }],
+                });
+
+                const schema = toJSON(api.getStructuredSchema());
+                const dateFilter = resolveNullable(schema.properties.filter.properties.filterModel.properties.date);
+                const pattern = new RegExp(dateFilter.properties.conditions.items.properties.dateFrom.pattern);
+                expect(pattern.test(accepted)).toBe(true);
+                expect(pattern.test(rejected)).toBe(false);
+            }
+        );
+
         test('omits filter feature when no columns are filterable', async () => {
             const api = gridsManager.createGrid('myGrid', {
                 columnDefs: [{ field: 'name', filter: false }],

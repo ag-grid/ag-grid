@@ -225,6 +225,7 @@ export {
     _getGridOption,
     _getGroupAggFiltering,
     _getGroupSelection,
+    _getDateTimeParser,
     _getGroupSelectsDescendants,
     _getGroupTotalRowCallback,
     _getHeaderCheckbox,
